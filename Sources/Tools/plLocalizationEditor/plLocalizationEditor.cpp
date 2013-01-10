@@ -223,7 +223,7 @@ LRESULT CALLBACK HandleCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
             bInfo.pidlRoot = NULL;
             bInfo.pszDisplayName = path;
             bInfo.lpszTitle = L"Select a localization data directory:";
-            bInfo.ulFlags = BIF_EDITBOX;
+            bInfo.ulFlags = BIF_USENEWUI | BIF_VALIDATE | BIF_RETURNONLYFSDIRS | BIF_NONEWFOLDERBUTTON;
 
             itemList = SHBrowseForFolder(&bInfo);
             if (itemList != NULL)
@@ -242,7 +242,7 @@ LRESULT CALLBACK HandleCommand(HWND hWnd, WPARAM wParam, LPARAM lParam)
                 delete [] sPath;
 
                 plLocTreeView::ClearTreeView(gTreeView);
-                plLocTreeView::FillTreeViewFromData(gTreeView, L"");
+                plLocTreeView::FillTreeViewFromData(gTreeView, "");
 
                 gCurPath = path;
                 SetWindowTitle(hWnd, path);

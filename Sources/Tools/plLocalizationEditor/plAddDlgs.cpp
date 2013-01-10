@@ -151,7 +151,7 @@ BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             int index = (int)SendMessage(GetDlgItem(hDlg, IDC_PARENTAGE), CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_PARENTAGE), CB_GETLBTEXT, (WPARAM)index, (LPARAM)buff);
 
-            pthis->fAgeName = buff;
+            pthis->fAgeName = plString::FromWchar(buff);
             pthis->fAgeChanged = true;
             pthis->IUpdateDlg(hDlg);
         }
@@ -160,7 +160,7 @@ BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             wchar_t buff[256];
             GetDlgItemTextW(hDlg, IDC_PARENTAGE, buff, 256);
 
-            pthis->fAgeName = buff;
+            pthis->fAgeName = plString::FromWchar(buff);
             pthis->fAgeChanged = true;
             pthis->IUpdateDlg(hDlg, false);
         }
@@ -171,7 +171,7 @@ BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             int index = (int)SendMessage(GetDlgItem(hDlg, IDC_PARENTSET), CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_PARENTSET), CB_GETLBTEXT, (WPARAM)index, (LPARAM)buff);
 
-            pthis->fSetName = buff;
+            pthis->fSetName = plString::FromWchar(buff);
             pthis->IUpdateDlg(hDlg);
         }
         else if (HIWORD(wParam) == CBN_EDITCHANGE && LOWORD(wParam) == IDC_PARENTSET)
@@ -179,14 +179,14 @@ BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
             wchar_t buff[256];
             GetDlgItemTextW(hDlg, IDC_PARENTSET, buff, 256);
 
-            pthis->fSetName = buff;
+            pthis->fSetName = plString::FromWchar(buff);
             pthis->IUpdateDlg(hDlg, false);
         }
         else if (HIWORD(wParam) == EN_UPDATE && LOWORD(wParam) == IDC_ELEMENTNAME)
         {
             wchar_t buff[256];
             GetDlgItemTextW(hDlg, IDC_ELEMENTNAME, buff, 256);
-            pthis->fElementName = buff;
+            pthis->fElementName = plString::FromWchar(buff);
 
             pthis->IUpdateDlg(hDlg);
         }
@@ -207,7 +207,7 @@ BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
 bool plAddElementDlg::IInitDlg(HWND hDlg)
 {
     HWND listCtrl = GetDlgItem(hDlg, IDC_PARENTAGE);
-    std::vector<std::wstring> ageNames = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<plString> ageNames = pfLocalizationDataMgr::Instance().GetAgeList();
 
     // add the age names to the list
     for (int i = 0; i < ageNames.size(); i++)
@@ -229,15 +229,15 @@ bool plAddElementDlg::IInitDlg(HWND hDlg)
 
 void plAddElementDlg::IUpdateDlg(HWND hDlg, bool setFocus)
 {
-    std::wstring pathStr = L"Path: " + fAgeName + L"." + fSetName + L"." + fElementName;
-    SetDlgItemTextW(hDlg, IDC_PATH, pathStr.c_str());
+    plString pathStr = plString::Format("Path: %s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());
+    SetDlgItemTextW(hDlg, IDC_PATH, pathStr.ToWchar());
 
     if (fAgeChanged) // we only update this if the age changed (saves time and prevents weird bugs, like typing backwards)
     {
         // now add the sets
         HWND listCtrl = GetDlgItem(hDlg, IDC_PARENTSET);
         SendMessage(listCtrl, CB_RESETCONTENT, (WPARAM)0, (LPARAM)0);
-        std::vector<std::wstring> setNames = pfLocalizationDataMgr::Instance().GetSetList(fAgeName);
+        std::vector<plString> setNames = pfLocalizationDataMgr::Instance().GetSetList(fAgeName);
 
         // add the set names to the list
         for (int i = 0; i < setNames.size(); i++)
@@ -246,24 +246,24 @@ void plAddElementDlg::IUpdateDlg(HWND hDlg, bool setFocus)
         // select the set we currently have
         int ret = (int)SendMessage(listCtrl, CB_SELECTSTRING, (WPARAM)-1, (LPARAM)fSetName.c_str());
         if (ret == CB_ERR) // couldn't find the string, so just set it as the current string in the edit box
-            SetDlgItemTextW(hDlg, IDC_PARENTSET, fSetName.c_str());
+            SetDlgItemTextW(hDlg, IDC_PARENTSET, fSetName.ToWchar());
 
         fAgeChanged = false;
     }
 
-    if (fSetName != L"" && setFocus)
+    if (!fSetName.IsEmpty() && setFocus)
         SetFocus(GetDlgItem(hDlg, IDC_ELEMENTNAME));
 
-    if (fSetName != L"" && fElementName != L"")
+    if (!fSetName.IsEmpty() && fElementName.IsEmpty())
         EnableWindow(GetDlgItem(hDlg, IDOK), TRUE);
     else
         EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
 }
 
-plAddElementDlg::plAddElementDlg(std::wstring parentPath)
+plAddElementDlg::plAddElementDlg(plString parentPath)
 {
     // throw away vars
-    std::wstring element, lang;
+    plString element, lang;
 
     SplitLocalizationPath(parentPath, fAgeName, fSetName, element, lang);
 }
@@ -309,7 +309,7 @@ BOOL CALLBACK plAddLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam,
             int index = (int)SendMessage(GetDlgItem(hDlg, IDC_LANGUAGE), CB_GETCURSEL, (WPARAM)0, (LPARAM)0);
             SendMessage(GetDlgItem(hDlg, IDC_LANGUAGE), CB_GETLBTEXT, (WPARAM)index, (LPARAM)buff);
 
-            pthis->fLanguageName = buff;
+            pthis->fLanguageName = plString::FromWchar(buff);
             pthis->IUpdateDlg(hDlg);
         }
         break;
@@ -326,16 +326,16 @@ BOOL CALLBACK plAddLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam,
     return FALSE;
 }
 
-std::vector<std::wstring> IGetAllLanguageNames()
+std::vector<plString> IGetAllLanguageNames()
 {
     int numLocales = plLocalization::GetNumLocales();
-    std::vector<std::wstring> retVal;
+    std::vector<plString> retVal;
 
     for (int curLocale = 0; curLocale <= numLocales; curLocale++)
     {
         const char *name = plLocalization::GetLanguageName((plLocalization::Language)curLocale);
         wchar_t *wName = hsStringToWString(name);
-        retVal.push_back(wName);
+        retVal.push_back(plString::FromWchar(wName));
         delete [] wName;
     }
 
@@ -344,13 +344,13 @@ std::vector<std::wstring> IGetAllLanguageNames()
 
 bool plAddLocalizationDlg::IInitDlg(HWND hDlg)
 {
-    std::wstring pathStr = L"Path: " + fAgeName + L"." + fSetName + L"." + fElementName;
-    SetDlgItemTextW(hDlg, IDC_PATH, pathStr.c_str());
+    plString pathStr = plString::Format("Path: %s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());
+    SetDlgItemTextW(hDlg, IDC_PATH, pathStr.ToWchar());
 
-    std::vector<std::wstring> existingLanguages;
+    std::vector<plString> existingLanguages;
     existingLanguages = pfLocalizationDataMgr::Instance().GetLanguages(fAgeName, fSetName, fElementName);
 
-    std::vector<std::wstring> missingLanguages = IGetAllLanguageNames();
+    std::vector<plString> missingLanguages = IGetAllLanguageNames();
     for (int i = 0; i < existingLanguages.size(); i++) // remove all languages we already have
     {
         for (int j = 0; j < missingLanguages.size(); j++)
@@ -382,7 +382,7 @@ bool plAddLocalizationDlg::IInitDlg(HWND hDlg)
     // and put it's value into the internal variable
     wchar_t buff[256];
     GetDlgItemText(hDlg, IDC_LANGUAGE, buff, 256);
-    fLanguageName = buff;
+    fLanguageName = plString::FromWchar(buff);
 
     IUpdateDlg(hDlg);
     return true;
@@ -390,16 +390,16 @@ bool plAddLocalizationDlg::IInitDlg(HWND hDlg)
 
 void plAddLocalizationDlg::IUpdateDlg(HWND hDlg)
 {
-    if (fLanguageName != L"")
+    if (!fLanguageName.IsEmpty())
         EnableWindow(GetDlgItem(hDlg, IDOK), TRUE);
     else
         EnableWindow(GetDlgItem(hDlg, IDOK), FALSE);
 }
 
-plAddLocalizationDlg::plAddLocalizationDlg(std::wstring parentPath)
+plAddLocalizationDlg::plAddLocalizationDlg(plString parentPath)
 {
     // throw away vars
-    std::wstring lang;
+    plString lang;
 
     SplitLocalizationPath(parentPath, fAgeName, fSetName, fElementName, lang);
 }
