@@ -412,24 +412,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
     plString name;
     std::vector<plString> argList;
 
-    // convert name from a string or unicode string
-    if (PyUnicode_Check(nameObj))
-    {
-        int len = PyUnicode_GetSize(nameObj);
-        wchar_t* buffer = new wchar_t[len + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)nameObj, buffer, len);
-        buffer[len] = L'\0';
-        name = plString::FromWchar(buffer);
-        delete [] buffer;
-    }
-    else if (PyString_Check(nameObj))
-    {
-        char* temp = PyString_AsString(nameObj);
-        wchar_t* wTemp = hsStringToWString(temp);
-        name = plString::FromWchar(wTemp);
-        delete [] wTemp;
-    }
-    else
+    // convert name from a string
+    name = PyString_AsStringEx(nameObj);
+    if (name.IsNull())
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;
@@ -451,29 +436,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
             plString arg = "INVALID ARG";
             if (item == Py_None) // none is allowed, but treated as a blank string
                 arg = "";
-            else if (PyUnicode_Check(item))
-            {
-                int strLen = PyUnicode_GetSize(item);
-                wchar_t* buffer = new wchar_t[strLen + 1];
-                PyUnicode_AsWideChar((PyUnicodeObject*)item, buffer, strLen);
-                buffer[strLen] = L'\0';
-                arg = plString::FromWchar(buffer);
-                delete [] buffer;
-            }
-            else if (PyString_Check(item))
-            {
-                char* temp = PyString_AsString(item);
-                wchar_t* wTemp = hsStringToWString(temp);
-                arg = plString::FromWchar(wTemp);
-                delete [] wTemp;
-            }
+            arg = PyString_AsStringEx(item);
             // everything else won't throw an error, but will show up as INVALID ARG in the string
             argList.push_back(arg);
         }
     }
 
-    plString retVal = cyMisc::GetLocalizedString(name, argList);
-    return PyUnicode_FromWideChar(retVal.ToWchar(), retVal.GetSize());
+    return PyUnicode_FromStringEx(cyMisc::GetLocalizedString(name, argList));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")
