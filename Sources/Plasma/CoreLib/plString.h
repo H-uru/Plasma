@@ -594,7 +594,7 @@ public:
     /** Construct a new empty string stream.  The first STRING_STACK_SIZE
      *  bytes are allocated on the stack for further efficiency.
      */
-    plStringStream() : fLength(0) { }
+    plStringStream() : fBufSize(STRING_STACK_SIZE), fLength(0) { }
 
     /** Destructor, frees any allocated heap memory owned by the stream. */
     ~plStringStream() { if (ICanHasHeap()) delete [] fBuffer; }
@@ -638,19 +638,23 @@ public:
     size_t GetLength() const { return fLength; }
 
     /** Convert the stream's data to a UTF-8 string. */
-    plString GetString() { return plString::FromUtf8(GetRawBuffer(), fLength); }
+    plString GetString() const { return plString::FromUtf8(GetRawBuffer(), fLength); }
+
+    /** Reset the stream's append pointer back to the beginning.
+     *  This does not incur a reallocation of the buffer -- it is left
+     *  with as much space as it had before, making this method more
+     *  useful for re-using string streams in loops.
+     */
+    void Truncate() { fLength = 0; }
 
 private:
     union {
-        struct {
-            char *fBuffer;
-            size_t fBufSize;
-        };
+        char *fBuffer;
         char fShort[STRING_STACK_SIZE];
     };
-    size_t fLength;
+    size_t fBufSize, fLength;
 
-    bool ICanHasHeap() const { return fLength > STRING_STACK_SIZE; }
+    bool ICanHasHeap() const { return fBufSize > STRING_STACK_SIZE; }
 };
 
 /** \p strlen implementation for UniChar based C-style string buffers. */
