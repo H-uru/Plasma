@@ -69,8 +69,8 @@ pfLocalizedString::pfLocalizedString(const plString & plainText)
 void pfLocalizedString::IParameterize(const plString & inString)
 {
     textBlock curTextBlock;
-    fNumArguments = 0;		// Reset the argument count.
-    fText.clear();			// Reset the text blocks.
+    fNumArguments = 0;      // Reset the argument count.
+    fText.clear();          // Reset the text blocks.
 
     plString remainder = inString;
     plStringStream newText;
@@ -79,61 +79,77 @@ void pfLocalizedString::IParameterize(const plString & inString)
 
     while (!remainder.IsEmpty())
     {
-	    // Check if we have any params.
-	    nextToken = remainder.Find("%");
-	    if (nextToken != -1)
-	    {
-		    // Check it's not escaped.
-		    if ((nextToken > 0) && (remainder.CharAt(nextToken-1) != '\\'))
-		    {
-			    // Check if it has an end.
-			    int endToken = remainder.Substr(nextToken).Find("s");
-			    if (endToken != -1)
-			    {
-                    // Store existing block.
-                    newText << remainder;
+        // Check if we have any params.
+        nextToken = remainder.Find("%");
+        if (nextToken != -1)
+        {
+            // Check it's not escaped.
+            if ((nextToken == 0) || ((nextToken > 0) && (remainder.CharAt(nextToken-1) != '\\')))
+            {
+                // Check if it has an end (ignoring any terminators we need to cross a space to find).
+                int endToken = remainder.Substr(nextToken).Find("s");
+                if ((endToken != -1) && (remainder.Substr(nextToken, endToken).Find(" ") == -1))
+                {
+                    // Store existing block if it contains anything.
+                    newText << remainder.Substr(0, nextToken);
                     curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
-                    fText.push_back(curTextBlock);
+                    if (!curTextBlock.fText.IsEmpty())
+                    {
+                        fText.push_back(curTextBlock);
+                        newText.Truncate();
+                    }
 
-				    if (endToken == nextToken + 1)
-				    {
+                    if (endToken == nextToken + 1)
+                    {
                         // Store non-indexed param block.
                         curTextBlock.fIsParam = true;
                         curTextBlock.fParamIndex = curParameter++;
                         curTextBlock.fText = "";
                         fText.push_back(curTextBlock);
-				    }
-				    else
-				    {
+                    }
+                    else
+                    {
                         // Store indexed param block.
                         curTextBlock.fIsParam = true;
-                        curTextBlock.fParamIndex = remainder.Substr(nextToken, endToken-1).ToInt(10) - 1; // args start at 1
+                        curTextBlock.fParamIndex = remainder.Substr(nextToken + 1, endToken - 1).ToInt(10) - 1; // args start at 1
                         curTextBlock.fText = "";
                         fText.push_back(curTextBlock);
-				    }
+                    }
                     curTextBlock.fIsParam = false;
                     curTextBlock.fParamIndex = 0;
                     fNumArguments++;
 
-                    // Continue using the remaining string.
-                    remainder = remainder.Substr(endToken+1);
-			    }
-		    }
-		    else
-		    {
+                    // Continue, using the remaining string.
+                    remainder = remainder.Substr(nextToken + endToken + 1);
+                }
+                else
+                {
+                    // We have an unescaped but unterminated %.
+                    // For now, let's just pretend it was escaped;
+                    // This way they'll show up visibly in-game and will be reported.
+                    newText << "%";
+                    remainder = remainder.Substr(nextToken + 1);
+                }
+            }
+            else
+            {
                 // Copy the text up to the escape character, skip it, and continue.
                 newText << remainder.Substr(0, nextToken - 1) << '%';
                 remainder = remainder.Substr(nextToken + 1);
-		    }
-	    }
-	    else
-	    {
+            }
+        }
+        else
+        {
             // We're done.  Copy the remaining text and finish.
             newText << remainder;
             remainder = "";
             curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
-            fText.push_back(curTextBlock);
-	    }
+            if (!curTextBlock.fText.IsEmpty())
+            {
+                fText.push_back(curTextBlock);
+                newText.Truncate();
+            }
+        }
     }
 }
 
@@ -159,7 +175,7 @@ void pfLocalizedString::IUpdatePlainText()
         if (curTextBlock.fIsParam)
         {
             // Fill in parameter value.
-            ss << plString::Format("%%%ds", curTextBlock.fParamIndex + 1);
+            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
@@ -192,8 +208,7 @@ void pfLocalizedString::IUpdateXML()
         if (curTextBlock.fIsParam)
         {
             // Fill in parameter value.
-            plString paramStr = plString::Format("%%%ds", curTextBlock.fParamIndex + 1);
-            ss << paramStr;
+            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
