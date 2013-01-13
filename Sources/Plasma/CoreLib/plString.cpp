@@ -946,3 +946,23 @@ plFileName plFileName::StripFileExt() const
 
     return *this;
 }
+
+plFileName plFileName::Join(const plFileName &base, const plFileName &path)
+{
+    if (base.IsEmpty())
+        return path;
+    if (path.IsEmpty())
+        return base;
+
+    char last = base.CharAt(base.GetSize() - 1);
+    char first = path.CharAt(0);
+    if (last != '/' && last != '\\') {
+        if (first != '/' && first != '\\')
+            return plString::Format("%s" PATH_SEPARATOR_STR "%s", base.c_str(), path.c_str());
+        return base + path;
+    } else if (first != '/' && first != '\\') {
+        return base + path;
+    }
+    // Both have a slash, but we only need one
+    return base + path.Substr(1);
+}
