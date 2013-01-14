@@ -129,20 +129,20 @@ HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HT
 
 void plPickLocalizationDlg::IAddLocalizations(std::string ageName, std::string setName, std::string itemName)
 {
-    std::vector<std::wstring> ages = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<plString> ages = pfLocalizationDataMgr::Instance().GetAgeList();
 
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
-        HTREEITEM hAgeItem = IAddVar(WStringToString(ages[curAge]), ageName, TVI_ROOT);
+        HTREEITEM hAgeItem = IAddVar(ages[curAge].c_str(), ageName, TVI_ROOT);
 
-        std::vector<std::wstring> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
+        std::vector<plString> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
         for (int curSet = 0; curSet < sets.size(); curSet++)
         {
-            std::vector<std::wstring> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
+            std::vector<plString> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
-            HTREEITEM hSetItem = IAddVar(WStringToString(sets[curSet]), setName, hAgeItem);
+            HTREEITEM hSetItem = IAddVar(sets[curSet].c_str(), setName, hAgeItem);
             for (int curElement = 0; curElement < elements.size(); curElement++)
-                IAddVar(WStringToString(elements[curElement]), itemName, hSetItem);
+                IAddVar(elements[curElement].c_str(), itemName, hSetItem);
         }
     }
 }

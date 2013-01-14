@@ -230,7 +230,7 @@ DWORD PlasmaMax::Start()
     {
         std::string clientPath(pathTemp);
         clientPath += "dat";
-        pfLocalizationMgr::Initialize(clientPath);
+        pfLocalizationMgr::Initialize(clientPath.c_str());
     }
 
     return GUPRESULT_KEEP;
