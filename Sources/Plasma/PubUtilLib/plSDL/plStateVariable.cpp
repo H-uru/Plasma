@@ -116,7 +116,7 @@ void plStateVarNotificationInfo::Write(hsStream* s, uint32_t writeOptions) const
 {
     uint8_t saveFlags=0;              // unused   
     s->WriteLE(saveFlags);
-    s->WriteSafeString(fHintString.c_str());
+    s->WriteSafeString(fHintString);
 }
 
 /////////////////////////////////////////////////////
@@ -2325,7 +2325,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
     plString logMsg = plString::Format( "%sSimpleVar, name:%s[%d]", pad.c_str(), GetName().c_str(), GetCount());
     if (GetCount()>1)
     {
-        stream->WriteString(logMsg.c_str());    // it's going to be a long msg, so print it on its own line
+        stream->WriteString(logMsg);    // it's going to be a long msg, so print it on its own line
         logMsg = "";
     }
     
@@ -2348,7 +2348,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
         if ( !dirtyOnly )
             logMsg += plString::Format( " dirty:%d", IsDirty() );
 
-        stream->WriteString(logMsg.c_str());
+        stream->WriteString(logMsg);
         logMsg = "";
     }
 }
@@ -2704,7 +2704,7 @@ void plSDStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int level
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
     stream->WriteString(plString::Format( "%sSDVar, name:%s dirtyOnly:%d count:%d",
-        pad.c_str(), GetName().c_str(), dirtyOnly, cnt).c_str());
+        pad.c_str(), GetName().c_str(), dirtyOnly, cnt));
 
     for(i=0;i<GetCount();i++)
     {

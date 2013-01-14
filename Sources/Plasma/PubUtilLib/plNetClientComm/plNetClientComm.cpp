@@ -601,7 +601,7 @@ static void INetCliAuthAgeRequestCallback (
 
         LogMsg(
             kLogPerf,
-            L"Connecting to game server %s, ageInstId %s",
+            L"Connecting to game server %S, ageInstId %S",
             gameAddrStr.c_str(),
             ageInstIdStr.c_str()
         );

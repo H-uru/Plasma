@@ -54,19 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
-#if HS_BUILD_FOR_WIN32
-# define PATH_SEPARATOR     '\\'
-# define WPATH_SEPARATOR    L'\\'
-# define PATH_SEPARATOR_STR "\\"
-# define WPATH_SEPARATOR_STR L"\\"
-#elif HS_BUILD_FOR_UNIX
-# define PATH_SEPARATOR     '/'
-# define WPATH_SEPARATOR    L'/'
-# define PATH_SEPARATOR_STR "/"
-# define WPATH_SEPARATOR_STR L"/"
-#endif
-
-
 ///////////////////////////////////////////////////////////////////////
 
 class hsFile {

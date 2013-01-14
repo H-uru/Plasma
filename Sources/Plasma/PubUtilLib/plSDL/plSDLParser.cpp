@@ -310,7 +310,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         }
     }
 
-    DebugMsg((char*)dbgStr.c_str());
+    DebugMsg(dbgStr.c_str());
 
     return skipNext;
 }

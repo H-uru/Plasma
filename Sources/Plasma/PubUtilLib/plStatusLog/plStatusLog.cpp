@@ -145,13 +145,13 @@ void    plStatusLogMgr::IPathAppend( wchar_t *base, const wchar_t *extra, unsign
 
     bool needsSeparator = false;
     if (baseLen >= 1)
-        needsSeparator = (base[baseLen - 1] != WPATH_SEPARATOR);
+        needsSeparator = (base[baseLen - 1] != PATH_SEPARATOR);
 
     if (needsSeparator)
     {
         if ((baseLen + 1 + 1) >= maxLen)
             return; // abort, buffer isn't big enough
-        base[baseLen] = WPATH_SEPARATOR;
+        base[baseLen] = PATH_SEPARATOR;
         ++baseLen;
         base[baseLen] = '\0';
     }
@@ -533,12 +533,11 @@ void    plStatusLog::IFini( void )
     delete [] fColors;
 }
 
-
 void plStatusLog::IParseFileName(wchar_t* file, size_t fnsize, wchar_t* fileNoExt, wchar_t** ext) const
 {
     const wchar_t *base = plStatusLogMgr::IGetBasePath();
     if( wcslen( base ) != nil )
-        hsSnwprintf( file, fnsize, L"%s%s%s", base, WPATH_SEPARATOR_STR, fFilename.c_str() );
+        hsSnwprintf( file, fnsize, L"%s%S%s", base, PATH_SEPARATOR_STR, fFilename.c_str() );
     else
         wcscpy( file, fFilename.c_str() );
 

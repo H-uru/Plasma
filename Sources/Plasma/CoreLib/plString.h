@@ -660,4 +660,82 @@ private:
 /** \p strlen implementation for UniChar based C-style string buffers. */
 size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 
+
+#if HS_BUILD_FOR_WIN32
+#   define PATH_SEPARATOR       '\\'
+#   define PATH_SEPARATOR_STR   "\\"
+#else
+#   define PATH_SEPARATOR       '/'
+#   define PATH_SEPARATOR_STR   "/"
+#endif
+
+/** Subclass of plString with specific methods to help deal with common
+ *  filename manipulation tasks.
+ */
+class plFileName : public plString
+{
+public:
+    /** Construct an empty filename. */
+    plFileName() { }
+
+    /** Construct a filename from the UTF-8 character data in \a cstr. */
+    plFileName(const char *cstr) : plString(cstr) { }
+
+    /** Construct a filename from the plString argument \a copy. */
+    plFileName(const plString &copy) : plString(copy) { }
+
+    /** Copy constructor. */
+    plFileName(const plFileName &copy) : plString(copy) { }
+
+    /** Return the name portion of the path (including extension).
+     *  For example:
+     *  <pre>plFileName("C:\\Path\\Filename.ext") => "Filename.ext"</pre>
+     */
+    plString GetFileName() const;
+
+    /** Return the file extension from the filename.
+     *  For example:
+     *  <pre>plFileName("C:\\Path\\Filename.ext") => "ext"</pre>
+     */
+    plString GetFileExt() const;
+
+    /** Return the name portion of the path, excluding its extension.
+     *  For example:
+     *  <pre>plFileName("C:\\Path\\Filename.ext") => "Filename"</pre>
+     */
+    plString GetFileNameNoExt() const;
+
+    /** Return the path with the filename portion stripped off.
+     *  For example:
+     *  <pre>plFileName("C:\\Path\\Filename.ext") => "C:\\Path"</pre>
+     */
+    plFileName StripFileName() const;
+
+    /** Return the filename with the extension stripped off.
+     *  For example:
+     *  <pre>plFileName("C:\\Path\\Filename.ext") => "C:\\Path\\Filename"</pre>
+     */
+    plFileName StripFileExt() const;
+
+    /** Join two path components together with the correct path separator.
+     *  For example:
+     *  <pre>plFileName::Join("C:\\Path", "Filename.ext") => "C:\\Path\\Filename.ext"</pre>
+     */
+    static plFileName Join(const plFileName &base, const plFileName &path);
+
+    /** Join three path components together with the correct path separator.
+     *  \todo Make this more efficient.
+     */
+    static plFileName Join(const plFileName &base, const plFileName &path,
+                           const plFileName& path2)
+    { return Join(Join(base, path), path2); }
+
+    /** Join four path components together with the correct path separator.
+     *  \todo Make this more efficient.
+     */
+    static plFileName Join(const plFileName &base, const plFileName &path,
+                           const plFileName& path2, const plFileName &path3)
+    { return Join(Join(Join(base, path), path2), path3); }
+};
+
 #endif //plString_Defined

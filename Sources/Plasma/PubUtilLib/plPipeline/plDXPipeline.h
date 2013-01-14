@@ -709,7 +709,7 @@ public:
     static void             AllocManagedVertex(uint32_t sz) { fVtxManaged += sz; }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    static void ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, char *id);
+    static void ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, const char *id);
 #endif // PLASMA_EXTERNAL_RELEASE
 
     //  From a D3DFORMAT enumeration, return the bit depth associated with it.
