@@ -929,7 +929,7 @@ plFileName plFileName::StripFileName() const
     if (end < 0)
         return *this;
 
-    return Left(end + 1);
+    return Left(end);
 }
 
 plFileName plFileName::StripFileExt() const
