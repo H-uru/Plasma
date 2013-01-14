@@ -822,17 +822,16 @@ plString operator+(const char *left, const plString &right)
 
 plStringStream &plStringStream::append(const char *data, size_t length)
 {
-    size_t bufSize = ICanHasHeap() ? fBufSize : STRING_STACK_SIZE;
     char *bufp = ICanHasHeap() ? fBuffer : fShort;
 
-    if (fLength + length > bufSize) {
-        size_t bigSize = bufSize;
+    if (fLength + length > fBufSize) {
+        size_t bigSize = fBufSize;
         do {
             bigSize *= 2;
         } while (fLength + length > bigSize);
 
         char *bigger = new char[bigSize];
-        memcpy(bigger, GetRawBuffer(), bufSize);
+        memcpy(bigger, GetRawBuffer(), fBufSize);
         if (ICanHasHeap())
             delete [] fBuffer;
         fBuffer = bufp = bigger;
