@@ -472,7 +472,7 @@ void D3DSURF_MEMDEL(IDirect3DCubeTexture9* cTex) {}
 #endif // PLASMA_EXTERNAL_RELEASE
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, char *id)
+void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, const char *id)
 {
     switch( poolType )
     {

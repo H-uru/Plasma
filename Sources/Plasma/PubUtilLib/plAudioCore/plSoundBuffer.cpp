@@ -275,7 +275,7 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
             s->WriteSafeString( fFileName );
     }
     else
-        s->WriteSafeString( nil );
+        s->WriteSafeString( "" );
 
     s->WriteLE( fHeader.fFormatTag );
     s->WriteLE( fHeader.fNumChannels );
