@@ -48,22 +48,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "res\resource.h"
 
 #include <vector>
-#include <string>
-
+#include <list>
 
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 extern HINSTANCE gInstance;
 
-std::wstring plLocTreeView::fPath = L"";
+plString plLocTreeView::fPath = "";
 
-HTREEITEM AddLeaf(HWND hTree, HTREEITEM hParent, std::wstring text, bool sort = true)
+HTREEITEM AddLeaf(HWND hTree, HTREEITEM hParent, plString text, bool sort = true)
 {
+    // Semi-hack to keep these around as Win32 expects
+    static std::list<plStringBuffer<wchar_t>> bufs;
+    plStringBuffer<wchar_t> buf = text.ToWchar();
+    bufs.push_back(buf);
+
     TVITEM tvi = {0};
-    tvi.mask       = TVIF_TEXT | TVIF_PARAM;
-    tvi.pszText    = (wchar_t*)text.c_str();
-    tvi.cchTextMax = (int)text.length();
-    tvi.lParam     = NULL;
+    tvi.mask = TVIF_TEXT | TVIF_PARAM;
+    tvi.pszText = const_cast<LPWSTR>(buf.GetData());
+    tvi.cchTextMax = static_cast<int>(text.GetSize());
+    tvi.lParam = NULL;
 
     TVINSERTSTRUCT tvins = {0};
     tvins.item         = tvi;
@@ -76,15 +80,15 @@ HTREEITEM AddLeaf(HWND hTree, HTREEITEM hParent, std::wstring text, bool sort = 
     return TreeView_InsertItem(hTree, &tvins);
 }
 
-void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, std::wstring selectionPath)
+void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
 {
-    std::wstring targetAge, targetSet, targetElement, targetLang;
+    plString targetAge, targetSet, targetElement, targetLang;
     SplitLocalizationPath(selectionPath, targetAge, targetSet, targetElement, targetLang);
     bool ageMatched = false;
     bool setMatched = false;
     bool elementMatched = false;
 
-    std::vector<std::wstring> ages = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<plString> ages = pfLocalizationDataMgr::Instance().GetAgeList();
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
         // add the age to the tree
@@ -99,10 +103,10 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, std::wstring selectionPa
         else
             ageMatched = false;
 
-        std::vector<std::wstring> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
+        std::vector<plString> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
         for (int curSet = 0; curSet < sets.size(); curSet++)
         {
-            std::vector<std::wstring> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
+            std::vector<plString> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
             HTREEITEM setItem = AddLeaf(treeCtrl, ageItem, sets[curSet]);
 
@@ -125,13 +129,13 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, std::wstring selectionPa
                     TreeView_EnsureVisible(treeCtrl, subItem);
                     elementMatched = true;
 
-                    if (targetLang.empty())
-                        targetLang = L"English";
+                    if (targetLang.IsEmpty())
+                        targetLang = "English";
                 }
                 else
                     elementMatched = false;
 
-                std::vector<std::wstring> languages = pfLocalizationDataMgr::Instance().GetLanguages(ages[curAge], sets[curSet], elements[curElement]);
+                std::vector<plString> languages = pfLocalizationDataMgr::Instance().GetLanguages(ages[curAge], sets[curSet], elements[curElement]);
                 for (int curLang = 0; curLang < languages.size(); curLang++)
                 {
                     HTREEITEM langItem = AddLeaf(treeCtrl, subItem, languages[curLang]);
@@ -155,8 +159,8 @@ void plLocTreeView::ClearTreeView(HWND treeCtrl)
 void plLocTreeView::SelectionChanged(HWND treeCtrl)
 {
     HTREEITEM hItem = TreeView_GetSelection(treeCtrl);
-    std::vector<std::wstring> path;
-    fPath = L"";
+    std::vector<plString> path;
+    fPath = "";
 
     while (hItem)
     {
@@ -167,7 +171,7 @@ void plLocTreeView::SelectionChanged(HWND treeCtrl)
         tvi.pszText = s;
         tvi.cchTextMax = 200;
         TreeView_GetItem(treeCtrl, &tvi);
-        path.push_back(tvi.pszText);
+        path.push_back(plString::FromWchar(tvi.pszText));
         hItem = TreeView_GetParent(treeCtrl, hItem);
     }
 
@@ -177,15 +181,15 @@ void plLocTreeView::SelectionChanged(HWND treeCtrl)
 
         path.pop_back();
         if (!path.empty())
-            fPath += L".";
+            fPath += ".";
     }
 }
 
 void plLocTreeView::SelectionDblClicked(HWND treeCtrl)
 {
     HTREEITEM hItem = TreeView_GetSelection(treeCtrl);
-    std::vector<std::wstring> path;
-    fPath = L"";
+    std::vector<plString> path;
+    fPath = "";
 
     while (hItem)
     {
@@ -196,7 +200,7 @@ void plLocTreeView::SelectionDblClicked(HWND treeCtrl)
         tvi.pszText = s;
         tvi.cchTextMax = 200;
         TreeView_GetItem(treeCtrl, &tvi);
-        path.push_back(tvi.pszText);
+        path.push_back(plString::FromWchar(tvi.pszText));
         hItem = TreeView_GetParent(treeCtrl, hItem);
     }
 
@@ -206,6 +210,6 @@ void plLocTreeView::SelectionDblClicked(HWND treeCtrl)
 
         path.pop_back();
         if (!path.empty())
-            fPath += L".";
+            fPath += ".";
     }
 }
