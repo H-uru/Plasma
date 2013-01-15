@@ -51,10 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfLocalizedString.h"
 
-// MinGW sucks
-#if defined(_WIN32) && !defined(_MSC_VER)
-#   define swprintf _snwprintf
-#endif
 
 //////////////////////////////////////////////////////////////////////
 //// pfLocalizedString functions /////////////////////////////////////
@@ -62,93 +58,106 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructors ////////////////////////////////////////////////////
 
-pfLocalizedString::pfLocalizedString(const wchar_t *plainText)
+pfLocalizedString::pfLocalizedString(const plString & plainText)
+    : fNumArguments(0)
 {
-    fNumArguments = 0;
     IConvertFromPlainText(plainText);
 }
 
-pfLocalizedString::pfLocalizedString(const std::wstring & plainText)
+//// IParameterize ///////////////////////////////////////////////////
+
+void pfLocalizedString::IParameterize(const plString & inString)
 {
-    fNumArguments = 0;
-    IConvertFromPlainText(plainText);
+    textBlock curTextBlock;
+    fNumArguments = 0;      // Reset the argument count.
+    fText.clear();          // Reset the text blocks.
+
+    plString remainder = inString;
+    plStringStream newText;
+    int curParameter = 0;
+    int nextToken = -1;
+
+    while (!remainder.IsEmpty())
+    {
+        // Check if we have any params.
+        nextToken = remainder.Find("%");
+        if (nextToken != -1)
+        {
+            // Check it's not escaped.
+            if ((nextToken == 0) || ((nextToken > 0) && (remainder.CharAt(nextToken-1) != '\\')))
+            {
+                // Check if it has an end (ignoring any terminators we need to cross a space to find).
+                int endToken = remainder.Substr(nextToken).Find("s");
+                if ((endToken != -1) && (remainder.Substr(nextToken, endToken).Find(" ") == -1))
+                {
+                    // Store existing block if it contains anything.
+                    newText << remainder.Substr(0, nextToken);
+                    curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
+                    if (!curTextBlock.fText.IsEmpty())
+                    {
+                        fText.push_back(curTextBlock);
+                        newText.Truncate();
+                    }
+
+                    if (endToken == nextToken + 1)
+                    {
+                        // Store non-indexed param block.
+                        curTextBlock.fIsParam = true;
+                        curTextBlock.fParamIndex = curParameter++;
+                        curTextBlock.fText = "";
+                        fText.push_back(curTextBlock);
+                    }
+                    else
+                    {
+                        // Store indexed param block.
+                        curTextBlock.fIsParam = true;
+                        curTextBlock.fParamIndex = remainder.Substr(nextToken + 1, endToken - 1).ToInt(10) - 1; // args start at 1
+                        curTextBlock.fText = "";
+                        fText.push_back(curTextBlock);
+                    }
+                    curTextBlock.fIsParam = false;
+                    curTextBlock.fParamIndex = 0;
+                    fNumArguments++;
+
+                    // Continue, using the remaining string.
+                    remainder = remainder.Substr(nextToken + endToken + 1);
+                }
+                else
+                {
+                    // We have an unescaped but unterminated %.
+                    // For now, let's just pretend it was escaped;
+                    // This way they'll show up visibly in-game and will be reported.
+                    newText << "%";
+                    remainder = remainder.Substr(nextToken + 1);
+                }
+            }
+            else
+            {
+                // Copy the text up to the escape character, skip it, and continue.
+                newText << remainder.Substr(0, nextToken - 1) << '%';
+                remainder = remainder.Substr(nextToken + 1);
+            }
+        }
+        else
+        {
+            // We're done.  Copy the remaining text and finish.
+            newText << remainder;
+            remainder = "";
+            curTextBlock.fText = newText.GetString().Replace("\\\\", "\\");
+            if (!curTextBlock.fText.IsEmpty())
+            {
+                fText.push_back(curTextBlock);
+                newText.Truncate();
+            }
+        }
+    }
 }
 
 //// IConvertFromPlainText ///////////////////////////////////////////
 
-void pfLocalizedString::IConvertFromPlainText(const std::wstring & plainText)
+void pfLocalizedString::IConvertFromPlainText(const plString & plainText)
 {
-    textBlock curTextBlock;
-    fText.clear();
-    fPlainTextRep = plainText;
-    fNumArguments = 0; // reset the argument count
-    int curParameter = 0;
-
-    for (std::wstring::size_type curIndex = 0; curIndex < plainText.size(); curIndex++)
-    {
-        wchar_t curChar = plainText[curIndex];
-        bool isLastChar = (curIndex == (plainText.length() - 1));
-        switch (curChar)
-        {
-        case L'\\':
-            if (!isLastChar)
-            {
-                // we need to see the next character
-                curIndex++;
-                wchar_t nextChar = plainText[curIndex];
-                if ((nextChar == L'%')||(nextChar == L'\\'))
-                {
-                    // we recognize it as an escaped character, so add it to the text
-                    curTextBlock.fText += nextChar;
-                }
-                // otherwise we don't recognize it and it will be skipped
-            }
-            // if it's the last char, just drop it
-            break;
-        case L'%':
-            if (!isLastChar)
-            {
-                // we need to grab the trailing s character
-                std::wstring::size_type endArgPos = plainText.find(L"s", curIndex);
-                if (endArgPos != std::wstring::npos) // make sure the s exists
-                {
-                    if (endArgPos == (curIndex + 1)) // no number specifier
-                    {
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = true;
-                        curTextBlock.fParamIndex = curParameter;
-                        curParameter++;
-                        curTextBlock.fText = L"";
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = false;
-                        curTextBlock.fParamIndex = 0;
-                    }
-                    else // number specified
-                    {
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = true;
-                        curTextBlock.fText = L"";
-
-                        std::wstring number = plainText.substr(curIndex + 1, (endArgPos - (curIndex + 1)));
-                        curTextBlock.fParamIndex = (uint8_t)wcstol(number.c_str(), NULL, 10) - 1; // args are 1-based, vectors are 0-based
-                        fText.push_back(curTextBlock);
-
-                        curTextBlock.fIsParam = false;
-                        curTextBlock.fParamIndex = 0;
-                    }
-                    fNumArguments++; // increment our argument count
-                    curIndex = endArgPos; // update our position
-                }
-                // if s didn't exist, we just skip this % sign
-            }
-            // if it was the last char, we just skip this % sign
-            break;
-        default:
-            curTextBlock.fText += curChar;
-            break;
-        }
-    }
-    fText.push_back(curTextBlock);
+    IParameterize(plainText);
 
     IUpdateXML();
 }
@@ -157,153 +166,62 @@ void pfLocalizedString::IConvertFromPlainText(const std::wstring & plainText)
 
 void pfLocalizedString::IUpdatePlainText()
 {
-    fPlainTextRep = L"";
-    for (std::vector<std::wstring>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
+    plStringStream ss;
+
+    for (std::vector<textBlock>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
     {
         textBlock curTextBlock = fText[curIndex];
 
         if (curTextBlock.fIsParam)
         {
-            std::wstring paramStr = L"%";
-            wchar_t buff[256];
-            swprintf(buff, 256, L"%d", curTextBlock.fParamIndex + 1);
-            paramStr += buff;
-            paramStr += L"s";
-            fPlainTextRep += paramStr;
+            // Fill in parameter value.
+            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
-            // otherwise, we need to copy all the text over, making sure that % and \ are properly escaped
-            for (std::wstring::size_type curChar = 0; curChar < curTextBlock.fText.size(); curChar++)
-            {
-                if ((curTextBlock.fText[curChar] == L'\\')||(curTextBlock.fText[curChar] == L'%'))
-                    fPlainTextRep += L"\\";
-                fPlainTextRep += curTextBlock.fText[curChar];
-            }
+            // Escape special characters.
+            ss << curTextBlock.fText.Replace("\\","\\\\").Replace("%","\\%");
         }
     }
+    fPlainTextRep = ss.GetString();
 }
 
 //// IConvertFromXML /////////////////////////////////////////////////
 
-void pfLocalizedString::IConvertFromXML(const std::wstring & xml)
+void pfLocalizedString::IConvertFromXML(const plString & xml)
 {
-    textBlock curTextBlock;
-    fText.clear();
-    fNumArguments = 0; // reset the argument counter
-    int curParameter = 0;
-
-    for (std::wstring::size_type curIndex = 0; curIndex < xml.length(); curIndex++)
-    {
-        wchar_t curChar = xml[curIndex];
-        bool isLastChar = (curIndex == (xml.length() - 1));
-        switch (curChar)
-        { // expat handles the &gt; &lt; and so on stuff for us
-        case L'\\': // but we want to be able to escape the % sign and the \ character
-            if (!isLastChar)
-            {
-                // we need to see the next character
-                curIndex++;
-                wchar_t nextChar = xml[curIndex];
-                if ((nextChar == L'%')||(nextChar == L'\\'))
-                {
-                    // we recognize it as an escaped character, so add it to the text
-                    curTextBlock.fText += nextChar;
-                }
-                // otherwise we don't recognize it and it will be skipped
-            }
-            // if it's the last char, just drop it
-            break;
-        case L'%':
-            if (!isLastChar)
-            {
-                // we need to grab the trailing s character
-                std::wstring::size_type endArgPos = xml.find(L"s", curIndex);
-                if (endArgPos != std::wstring::npos) // make sure the s exists
-                {
-                    if (endArgPos == (curIndex + 1)) // no number specifier
-                    {
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = true;
-                        curTextBlock.fParamIndex = curParameter;
-                        curParameter++;
-                        curTextBlock.fText = L"";
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = false;
-                        curTextBlock.fParamIndex = 0;
-                    }
-                    else // number specified
-                    {
-                        fText.push_back(curTextBlock);
-                        curTextBlock.fIsParam = true;
-                        curTextBlock.fText = L"";
-
-                        std::wstring number = xml.substr(curIndex + 1, (endArgPos - (curIndex + 1)));
-                        curTextBlock.fParamIndex = (uint8_t)wcstol(number.c_str(), nil, 10) - 1; // args are 1-based, vectors are 0-based
-                        fText.push_back(curTextBlock);
-
-                        curTextBlock.fIsParam = false;
-                        curTextBlock.fParamIndex = 0;
-                    }
-                    fNumArguments++; // increment the number of arguments
-                    curIndex = endArgPos; // update our position
-                }
-                // if s didn't exist, we just skip this % sign
-            }
-            // if it was the last char, we just skip this % sign
-            break;
-        default:
-            curTextBlock.fText += curChar;
-            break;
-        }
-    }
-    fText.push_back(curTextBlock);
+    IParameterize(xml);
 
     IUpdatePlainText();
-    IUpdateXML(); // we don't really get pure xml from the parser (since it auto translates all the &x; stuff)
+    IUpdateXML();
 }
 
 //// IUpdateXML //////////////////////////////////////////////////////
 
 void pfLocalizedString::IUpdateXML()
 {
-    fXMLRep = L"";
-    for (std::vector<std::wstring>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
+    plStringStream ss;
+    for (std::vector<plString>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
     {
         textBlock curTextBlock = fText[curIndex];
 
         if (curTextBlock.fIsParam)
         {
-            std::wstring paramStr = L"%";
-            wchar_t buff[256];
-            swprintf(buff, 256, L"%d", curTextBlock.fParamIndex + 1);
-            paramStr += buff;
-            paramStr += L"s";
-            fXMLRep += paramStr;
+            // Fill in parameter value.
+            ss << "%%" << curTextBlock.fParamIndex + 1 << "s";
         }
         else
         {
-            // otherwise, we need to copy all the text over, making sure that %, &, <, and > are properly converted
-            for (std::wstring::size_type curChar = 0; curChar < curTextBlock.fText.size(); curChar++)
-            {
-                if (curTextBlock.fText[curChar] == L'%')
-                    fXMLRep += L"\\%";
-                else if (curTextBlock.fText[curChar] == L'&')
-                    fXMLRep += L"&amp;";
-                else if (curTextBlock.fText[curChar] == L'<')
-                    fXMLRep += L"&lt;";
-                else if (curTextBlock.fText[curChar] == L'>')
-                    fXMLRep += L"&gt;";
-                else
-                    fXMLRep += curTextBlock.fText[curChar];
-            }
+            // Encode XML entities.
+            ss << curTextBlock.fText.Replace("%", "\\%").Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;");
         }
     }
+    fXMLRep = ss.GetString();
 }
 
 //// FromXML /////////////////////////////////////////////////////////
 
-void pfLocalizedString::FromXML(const std::wstring & xml)
+void pfLocalizedString::FromXML(const plString & xml)
 {
     IConvertFromXML(xml);
 }
@@ -312,32 +230,32 @@ void pfLocalizedString::FromXML(const std::wstring & xml)
 
 bool pfLocalizedString::operator<(pfLocalizedString &obj)
 {
-    return (fPlainTextRep < obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) < 0);
 }
 
 bool pfLocalizedString::operator>(pfLocalizedString &obj)
 {
-    return (fPlainTextRep > obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) > 0);
 }
 
 bool pfLocalizedString::operator==(pfLocalizedString &obj)
 {
-    return (fPlainTextRep == obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) == 0);
 }
 
 bool pfLocalizedString::operator<=(pfLocalizedString &obj)
 {
-    return (fPlainTextRep <= obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) <= 0);
 }
 
 bool pfLocalizedString::operator>=(pfLocalizedString &obj)
 {
-    return (fPlainTextRep >= obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) >= 0);
 }
 
 bool pfLocalizedString::operator!=(pfLocalizedString &obj)
 {
-    return (fPlainTextRep != obj.fPlainTextRep);
+    return (fPlainTextRep.Compare(obj.fPlainTextRep) != 0);
 }
 
 pfLocalizedString pfLocalizedString::operator+(pfLocalizedString &obj)
@@ -354,31 +272,25 @@ pfLocalizedString &pfLocalizedString::operator+=(pfLocalizedString &obj)
     return *this;
 }
 
-pfLocalizedString &pfLocalizedString::operator=(const std::wstring & plainText)
+pfLocalizedString &pfLocalizedString::operator=(const plString & plainText)
 {
     IConvertFromPlainText(plainText);
     return *this;
 }
 
-pfLocalizedString &pfLocalizedString::operator=(const wchar_t *plainText)
+plString pfLocalizedString::operator%(const std::vector<plString> & arguments)
 {
-    IConvertFromPlainText(plainText);
-    return *this;
-}
-
-std::wstring pfLocalizedString::operator%(const std::vector<std::wstring> & arguments)
-{
-    std::wstring retVal = L"";
-    for (std::vector<std::wstring>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
+    plStringStream ss;
+    for (std::vector<plString>::size_type curIndex = 0; curIndex < fText.size(); curIndex++)
     {
         if (fText[curIndex].fIsParam)
         {
             int curParam = fText[curIndex].fParamIndex;
             if (curParam < arguments.size())
-                retVal += arguments[curParam];
+                ss << arguments[curParam];
         }
         else
-            retVal += fText[curIndex].fText;
+            ss << fText[curIndex].fText;
     }
-    return retVal;
+    return ss.GetString();
 }

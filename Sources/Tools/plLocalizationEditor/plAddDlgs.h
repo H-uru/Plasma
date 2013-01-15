@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
-#include <string>
+#include "plString.h"
 
 class plAddElementDlg
 {
@@ -55,13 +55,13 @@ protected:
     bool IInitDlg(HWND hDlg);
     void IUpdateDlg(HWND hDlg, bool setFocus = true);
 
-    std::wstring fAgeName, fSetName, fElementName;
+    plString fAgeName, fSetName, fElementName;
     bool fAgeChanged;
 public:
-    plAddElementDlg(std::wstring parentPath);
+    plAddElementDlg(plString parentPath);
 
     bool DoPick(HWND parent); // returns true if [Ok] clicked, false otherwise.
-    std::wstring GetValue() {return fAgeName + L"." + fSetName + L"." + fElementName;}
+    plString GetValue() {return plString::Format("%s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());}
 };
 
 class plAddLocalizationDlg
@@ -72,12 +72,12 @@ protected:
     bool IInitDlg(HWND hDlg);
     void IUpdateDlg(HWND hDlg);
 
-    std::wstring fAgeName, fSetName, fElementName, fLanguageName;
+    plString fAgeName, fSetName, fElementName, fLanguageName;
 public:
-    plAddLocalizationDlg(std::wstring parentPath);
+    plAddLocalizationDlg(plString parentPath);
 
     bool DoPick(HWND parent); // returns true if [Ok] clicked, false otherwise.
-    std::wstring GetValue() {return fLanguageName;}
+    plString GetValue() {return fLanguageName;}
 };
 
 #endif

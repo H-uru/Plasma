@@ -121,7 +121,7 @@ void    pfGUITextBoxMod::IUpdate( void )
 
     std::wstring drawStr;
     if (fUseLocalizationPath && !fLocalizationPath.IsEmpty() && pfLocalizationMgr::InstanceValid())
-        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath.ToWchar().GetData());
+        drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).ToWchar().GetData();
     else
     {
         if( fText != nil )

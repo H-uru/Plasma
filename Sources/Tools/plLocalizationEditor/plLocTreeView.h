@@ -43,21 +43,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plLocTreeView_h
 
 #include "HeadSpin.h"
-#include <string>
+#include "plString.h"
 
 class plLocTreeView
 {
 protected:
-    static std::wstring fPath;
+    static plString fPath;
 
 public:
-    static void    FillTreeViewFromData(HWND treeCtrl, std::wstring selectionPath);
+    static void    FillTreeViewFromData(HWND treeCtrl, plString selectionPath);
     static void    ClearTreeView(HWND treeCtrl);
 
     static void SelectionChanged(HWND treeCtrl);
     static void    SelectionDblClicked(HWND treeCtrl);
 
-    static std::wstring GetPath() {return fPath;}
+    static plString GetPath() {return fPath;}
 };
 
 #endif //_plLocTreeView_h

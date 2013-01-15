@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
 
-
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
 #include <map>
@@ -55,64 +54,40 @@ extern HINSTANCE gInstance;
 extern HWND gTreeView;
 
 // global data for this dialog
-std::wstring gCurrentPath = L"";
+plString gCurrentPath;
 
 // split a subtitle path up into its component parts
-void SplitLocalizationPath(std::wstring path, std::wstring &ageName, std::wstring &setName, std::wstring &locName, std::wstring &locLanguage)
+void SplitLocalizationPath(plString path, plString &ageName, plString &setName, plString &locName, plString &locLanguage)
 {
-    ageName = setName = locName = locLanguage = L"";
+    ageName = setName = locName = locLanguage = "";
 
-    std::wstring::size_type lastPos = 0, curPos = 0;
-    // separate the age name out
-    curPos = path.find(L".");
-    if (curPos == std::wstring::npos)
-    {
-        ageName = path;
-        return;
-    }
-    ageName = path.substr(0, curPos);
-    path = path.substr(curPos + 1, path.length());
-
-    // separate the set name out
-    curPos = path.find(L".");
-    if (curPos == std::wstring::npos)
-    {
-        setName = path;
-        return;
-    }
-    setName = path.substr(0, curPos);
-    path = path.substr(curPos + 1, path.length());
-
-    // separate the element out
-    curPos = path.find(L".");
-    if (curPos == std::wstring::npos)
-    {
-        locName = path;
-        return;
-    }
-    locName = path.substr(0, curPos);
-    path = path.substr(curPos + 1, path.length());
-
-    // what's left is the language
-    locLanguage = path;
+    std::vector<plString> tokens = path.Tokenize(".");
+    if (tokens.size() >= 1)
+        ageName = tokens[0];
+    if (tokens.size() >= 2)
+        setName = tokens[1];
+    if (tokens.size() >= 3)
+        locName = tokens[2];
+    if (tokens.size() >= 4)
+        locLanguage = tokens[3];
 }
 
 // saves the current localization text to the data manager
 void SaveLocalizationText()
 {
-    if (gCurrentPath == L"")
+    if (gCurrentPath.IsEmpty())
         return; // no path to save
 
     uint32_t textLen = (uint32_t)SendMessage(GetDlgItem(gEditDlg, IDC_LOCALIZATIONTEXT), WM_GETTEXTLENGTH, (WPARAM)0, (LPARAM)0);
     wchar_t *buffer = new wchar_t[textLen + 2];
     GetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, buffer, textLen + 1);
     buffer[textLen + 1] = 0;
-    std::wstring plainTextData = buffer;
+    plString plainTextData = plString::FromWchar(buffer);
     delete [] buffer;
-    std::wstring ageName, setName, elementName, elementLanguage;
+    plString ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
 
-    std::wstring name = ageName + L"." + setName + L"." + elementName;
+    plString name = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
     pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, plainTextData);
 }
 
@@ -132,38 +107,37 @@ void EnableDlg(BOOL enable)
 }
 
 // updates the edit dialog based on the path specified
-void UpdateEditDlg(std::wstring locPath)
+void UpdateEditDlg(plString locPath)
 {
     if (locPath == gCurrentPath)
         return;
 
     gCurrentPath = locPath;
 
-    std::wstring itemText = L"Text (";
-    itemText += locPath + L"):";
-    SetDlgItemTextW(gEditDlg, IDC_LOCPATH, itemText.c_str());
+    plString itemText = plString::Format("Text (%s):", locPath.c_str());
+    SetDlgItemTextW(gEditDlg, IDC_LOCPATH, itemText.ToWchar());
 
-    std::wstring ageName = L"", setName = L"", elementName = L"", elementLanguage = L"";
+    plString ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
 
     // now make sure they've drilled down deep enough to enable the dialog
-    if (elementLanguage == L"") // not deep enough
+    if (elementLanguage.IsEmpty()) // not deep enough
         EnableDlg(FALSE);
     else
     {
         EnableDlg(TRUE);
-        std::wstring key = ageName + L"." + setName + L"." + elementName;
-        std::wstring elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
-        SetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, elementText.c_str());
+        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+        plString elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
+        SetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, elementText.ToWchar());
     }
 
     // now to setup the add/delete buttons
-    if (elementLanguage != L"") // they have selected a language
+    if (!elementLanguage.IsEmpty()) // they have selected a language
     {
         SetDlgItemText(gEditDlg, IDC_ADD, L"Add Localization");
         EnableWindow(GetDlgItem(gEditDlg, IDC_ADD), TRUE);
         SetDlgItemText(gEditDlg, IDC_DELETE, L"Delete Localization");
-        if (elementLanguage != L"English") // don't allow them to delete the default language
+        if (elementLanguage != "English") // don't allow them to delete the default language
             EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), TRUE);
         else
             EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), FALSE);
@@ -173,9 +147,9 @@ void UpdateEditDlg(std::wstring locPath)
         SetDlgItemText(gEditDlg, IDC_ADD, L"Add Element");
         EnableWindow(GetDlgItem(gEditDlg, IDC_ADD), TRUE);
         SetDlgItemText(gEditDlg, IDC_DELETE, L"Delete Element");
-        if (elementName != L"") // the have selected an individual element
+        if (!elementName.IsEmpty()) // they have selected an individual element
         {
-            std::vector<std::wstring> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
+            std::vector<plString> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
             if (elementNames.size() > 1) // they can't delete the only subtitle in a set
                 EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), TRUE);
             else
@@ -201,43 +175,43 @@ BOOL HandleCommandMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 SaveLocalizationText(); // save any current changes to the database
 
-                std::wstring buttonText;
+                plString buttonText;
                 wchar_t buff[256];
                 GetDlgItemText(gEditDlg, IDC_ADD, buff, 256);
-                buttonText = buff;
+                buttonText = plString::FromWchar(buff);
 
-                if (buttonText == L"Add Element")
+                if (buttonText == "Add Element")
                 {
                     plAddElementDlg dlg(gCurrentPath);
                     if (dlg.DoPick(gEditDlg))
                     {
-                        std::wstring path = dlg.GetValue(); // path is age.set.name
+                        plString path = dlg.GetValue(); // path is age.set.name
                         if (!pfLocalizationDataMgr::Instance().AddElement(path))
                             MessageBox(gEditDlg, L"Couldn't add new element because one already exists with that name!", L"Error", MB_ICONERROR | MB_OK);
                         else
                         {
-                            gCurrentPath = L"";
+                            gCurrentPath = "";
                             plLocTreeView::ClearTreeView(gTreeView);
                             plLocTreeView::FillTreeViewFromData(gTreeView, path);
                             UpdateEditDlg(path);
                         }
                     }
                 }
-                else if (buttonText == L"Add Localization")
+                else if (buttonText == "Add Localization")
                 {
                     plAddLocalizationDlg dlg(gCurrentPath);
                     if (dlg.DoPick(gEditDlg))
                     {
-                        std::wstring newLanguage = dlg.GetValue();
-                        std::wstring ageName, setName, elementName, elementLanguage;
+                        plString newLanguage = dlg.GetValue();
+                        plString ageName, setName, elementName, elementLanguage;
                         SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
-                        std::wstring key = ageName + L"." + setName + L"." + elementName;
+                        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
                         if (!pfLocalizationDataMgr::Instance().AddLocalization(key, newLanguage))
                             MessageBox(gEditDlg, L"Couldn't add additional localization!", L"Error", MB_ICONERROR | MB_OK);
                         else
                         {
-                            std::wstring path = key + L"." + newLanguage; // select the new language
-                            gCurrentPath = L"";
+                            plString path = plString::Format("%s.%s", key.c_str(), newLanguage.c_str());
+                            gCurrentPath = "";
                             plLocTreeView::ClearTreeView(gTreeView);
                             plLocTreeView::FillTreeViewFromData(gTreeView, path);
                             UpdateEditDlg(path);
@@ -250,39 +224,39 @@ BOOL HandleCommandMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
             {
                 SaveLocalizationText(); // save any current changes to the database
 
-                std::wstring messageText = L"Are you sure that you want to delete " + gCurrentPath + L"?";
-                int res = MessageBoxW(gEditDlg, messageText.c_str(), L"Delete", MB_ICONQUESTION | MB_YESNO);
+                plString messageText = plString::Format("Are you sure that you want to delete %s?", gCurrentPath.c_str());
+                int res = MessageBoxW(gEditDlg, messageText.ToWchar(), L"Delete", MB_ICONQUESTION | MB_YESNO);
                 if (res == IDYES)
                 {
-                    std::wstring buttonText;
+                    plString buttonText;
                     wchar_t buff[256];
                     GetDlgItemText(gEditDlg, IDC_DELETE, buff, 256);
-                    buttonText = buff;
+                    buttonText = plString::FromWchar(buff);
 
-                    if (buttonText == L"Delete Element")
+                    if (buttonText == "Delete Element")
                     {
                         if (!pfLocalizationDataMgr::Instance().DeleteElement(gCurrentPath))
                             MessageBox(gEditDlg, L"Couldn't delete element!", L"Error", MB_ICONERROR | MB_OK);
                         else
                         {
-                            std::wstring path = gCurrentPath;
-                            gCurrentPath = L"";
+                            plString path = gCurrentPath;
+                            gCurrentPath = "";
                             plLocTreeView::ClearTreeView(gTreeView);
                             plLocTreeView::FillTreeViewFromData(gTreeView, path);
                             UpdateEditDlg(path);
                         }
                     }
-                    else if (buttonText == L"Delete Localization")
+                    else if (buttonText == "Delete Localization")
                     {
-                        std::wstring ageName, setName, elementName, elementLanguage;
+                        plString ageName, setName, elementName, elementLanguage;
                         SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
-                        std::wstring key = ageName + L"." + setName + L"." + elementName;
+                        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
                         if (!pfLocalizationDataMgr::Instance().DeleteLocalization(key, elementLanguage))
                             MessageBox(gEditDlg, L"Couldn't delete localization!", L"Error", MB_ICONERROR | MB_OK);
                         else
                         {
-                            std::wstring path = gCurrentPath;
-                            gCurrentPath = L"";
+                            plString path = gCurrentPath;
+                            gCurrentPath = "";
                             plLocTreeView::ClearTreeView(gTreeView);
                             plLocTreeView::FillTreeViewFromData(gTreeView, path);
                             UpdateEditDlg(path);

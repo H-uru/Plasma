@@ -73,7 +73,7 @@ pfLocalizationMgr::~pfLocalizationMgr()
 
 //// Initialize //////////////////////////////////////////////////////
 
-void pfLocalizationMgr::Initialize(const std::string & dataPath)
+void pfLocalizationMgr::Initialize(const plString & dataPath)
 {
     if (fInstance)
         return;
@@ -95,13 +95,13 @@ void pfLocalizationMgr::Shutdown()
 
 //// GetString ///////////////////////////////////////////////////////
 
-std::wstring pfLocalizationMgr::GetString(const std::wstring & path, const std::vector<std::wstring> & args)
+plString pfLocalizationMgr::GetString(const plString & path, const std::vector<plString> & args)
 {
     return pfLocalizationDataMgr::Instance().GetElement(path) % args;
 }
 
-std::wstring pfLocalizationMgr::GetString(const std::wstring & path)
+plString pfLocalizationMgr::GetString(const plString & path)
 {
-    std::vector<std::wstring> args; // blank args so that % signs are still handled correctly
+    std::vector<plString> args; // blank args so that % signs are still handled correctly
     return pfLocalizationDataMgr::Instance().GetElement(path) % args;
 }
