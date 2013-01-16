@@ -880,88 +880,107 @@ size_t ustrlen(const UniChar *ustr, size_t max)
 
 
 /* plFileName */
+static_assert(sizeof(plFileName) == sizeof(plString),
+              "plFileName should be a thin wrapper around plString");
+
 plString plFileName::GetFileName() const
 {
-    int end = FindLast('/');
+    int end = fName.FindLast('/');
     if (end < 0)
-        end = FindLast('\\');
+        end = fName.FindLast('\\');
     if (end < 0)
-        return *this;
+        return fName;
 
-    return Substr(end + 1);
+    return fName.Substr(end + 1);
 }
 
 plString plFileName::GetFileExt() const
 {
-    int dot = FindLast('.');
+    int dot = fName.FindLast('.');
 
     // Be sure not to get a dot in the directory!
-    int end = FindLast('/');
+    int end = fName.FindLast('/');
     if (end < 0)
-        end = FindLast('\\');
+        end = fName.FindLast('\\');
 
     if (dot > end)
-        return Substr(dot + 1);
+        return fName.Substr(dot + 1);
 
     return plString::Null;
 }
 
 plString plFileName::GetFileNameNoExt() const
 {
-    int dot = FindLast('.');
+    int dot = fName.FindLast('.');
 
-    int end = FindLast('/');
+    int end = fName.FindLast('/');
     if (end < 0)
-        end = FindLast('\\');
+        end = fName.FindLast('\\');
 
     // Be sure not to get a dot in the directory!
     if (dot > end)
-        return Substr(end + 1, dot - end - 1);
-    return Substr(end + 1);
+        return fName.Substr(end + 1, dot - end - 1);
+    return fName.Substr(end + 1);
 }
 
 plFileName plFileName::StripFileName() const
 {
-    int end = FindLast('/');
+    int end = fName.FindLast('/');
     if (end < 0)
-        end = FindLast('\\');
+        end = fName.FindLast('\\');
     if (end < 0)
         return *this;
 
-    return Left(end);
+    return fName.Left(end);
 }
 
 plFileName plFileName::StripFileExt() const
 {
-    int dot = FindLast('.');
+    int dot = fName.FindLast('.');
 
     // Be sure not to get a dot in the directory!
-    int end = FindLast('/');
+    int end = fName.FindLast('/');
     if (end < 0)
-        end = FindLast('\\');
+        end = fName.FindLast('\\');
 
     if (dot > end)
-        return Left(dot);
+        return fName.Left(dot);
 
     return *this;
 }
 
+plFileName plFileName::Normalize(char slash) const
+{
+    plStringBuffer<char> norm;
+    char *norm_p = norm.CreateWritableBuffer(fName.GetSize());
+    for (const char *p = fName.c_str(); *p; ++p) {
+        if (*p == '/' || *p == '\\')
+            *norm_p++ = slash;
+        else
+            *norm_p++ = *p;
+    }
+    *norm_p = 0;
+    return plString(norm);
+}
+
 plFileName plFileName::Join(const plFileName &base, const plFileName &path)
 {
-    if (base.IsEmpty())
+    if (!base.IsValid())
         return path;
-    if (path.IsEmpty())
+    if (!path.IsValid())
         return base;
 
-    char last = base.CharAt(base.GetSize() - 1);
-    char first = path.CharAt(0);
+    char last = base.fName.CharAt(base.GetSize() - 1);
+    char first = path.fName.CharAt(0);
     if (last != '/' && last != '\\') {
-        if (first != '/' && first != '\\')
-            return plString::Format("%s" PATH_SEPARATOR_STR "%s", base.c_str(), path.c_str());
-        return base + path;
+        if (first != '/' && first != '\\') {
+            return plString::Format("%s" PATH_SEPARATOR_STR "%s",
+                                    base.fName.c_str(), path.fName.c_str());
+        }
+        return base.fName + path.fName;
     } else if (first != '/' && first != '\\') {
-        return base + path;
+        return base.fName + path.fName;
     }
     // Both have a slash, but we only need one
-    return base + path.Substr(1);
+    return base.fName + path.fName.Substr(1);
 }

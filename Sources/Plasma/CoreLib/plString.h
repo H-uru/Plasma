@@ -672,20 +672,52 @@ size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
 /** Subclass of plString with specific methods to help deal with common
  *  filename manipulation tasks.
  */
-class plFileName : public plString
+class plFileName
 {
 public:
     /** Construct an empty filename. */
     plFileName() { }
 
     /** Construct a filename from the UTF-8 character data in \a cstr. */
-    plFileName(const char *cstr) : plString(cstr) { }
+    plFileName(const char *cstr) : fName(cstr) { }
 
     /** Construct a filename from the plString argument \a copy. */
-    plFileName(const plString &copy) : plString(copy) { }
+    plFileName(const plString &copy) : fName(copy) { }
 
     /** Copy constructor. */
-    plFileName(const plFileName &copy) : plString(copy) { }
+    plFileName(const plFileName &copy) : fName(copy.fName) { }
+
+    /** Assignment operator.  Same as plFileName(const char *). */
+    plFileName &operator=(const char *cstr)
+    {
+        fName.operator=(cstr);
+        return *this;
+    }
+
+    /** Assignment operator.  Same as plFileName(const plString &). */
+    plFileName &operator=(const plString &copy)
+    {
+        fName.operator=(copy);
+        return *this;
+    }
+
+    /** Assignment operator.  Same as plFileName(const plFileName &). */
+    plFileName &operator=(const plFileName &copy)
+    {
+        fName.operator=(copy.fName);
+        return *this;
+    }
+
+    /** Return whether this filename is valid (not empty). */
+    bool IsValid() const { return !fName.IsEmpty(); }
+
+    /** Return the length of the filename string (UTF-8). */
+    size_t GetSize() const { return fName.GetSize(); }
+
+    /** Convert the filename to a string.  This does not resolve relative
+     *  paths or normalize slashes, it just returns the stored name string.
+     */
+    const plString &AsString() const { return fName; }
 
     /** Return the name portion of the path (including extension).
      *  For example:
@@ -717,6 +749,13 @@ public:
      */
     plFileName StripFileExt() const;
 
+    /** Normalize slashes to a particular format.  By default, we use the
+     *  OS's native slash format.
+     *  For example:
+     *  <pre>plFileName("C:\\Path/Filename.ext").Normalize("\\") => "C:\\Path\\Filename.ext"</pre>
+     */
+    plFileName Normalize(char slash = PATH_SEPARATOR) const;
+
     /** Join two path components together with the correct path separator.
      *  For example:
      *  <pre>plFileName::Join("C:\\Path", "Filename.ext") => "C:\\Path\\Filename.ext"</pre>
@@ -736,6 +775,9 @@ public:
     static plFileName Join(const plFileName &base, const plFileName &path,
                            const plFileName& path2, const plFileName &path3)
     { return Join(Join(Join(base, path), path2), path3); }
+
+private:
+    plString fName;
 };
 
 #endif //plString_Defined
