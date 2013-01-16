@@ -84,4 +84,10 @@ typedef TCHAR MCHAR;
 #define INIT_CUSTOM_CONTROLS(instance)
 #endif
 
+#if MAX_VERSION_MAJOR <= 10 // Max 2008
+#define GETNAME_RETURN_TYPE TCHAR*
+#else
+#define GETNAME_RETURN_TYPE const TCHAR*
+#endif
+
 #endif // _PLASMA_MAXCOMPAT_H

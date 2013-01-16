@@ -235,7 +235,7 @@ public:
     ReferenceTarget *Clone(RemapDir &remap = DEFAULTREMAP);
     virtual bool CheckCopyAttribTo(ICustAttribContainer *to) { return true; }
     
-    const TCHAR* GetName() { return (const TCHAR*)_T(fClassDesc->ClassName()); }
+    GETNAME_RETURN_TYPE GetName() { return (GETNAME_RETURN_TYPE)_T(fClassDesc->ClassName()); }
     void DeleteThis() { delete this; }
 };
 
