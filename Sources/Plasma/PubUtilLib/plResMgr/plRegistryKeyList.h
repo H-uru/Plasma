@@ -42,22 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plRegistryKeyList_h_inc
 #define plRegistryKeyList_h_inc
 
-#include "HeadSpin.h"
-#include "pnKeyedObject/plKeyImp.h"
 #include <vector>
-#include <set>
 
+class plKeyImp;
 class plRegistryKeyIterator;
-
-class KeySorter
-{
-public:
-    bool operator() (plKeyImp* k1, plKeyImp* k2) const
-    {
-        hsAssert(k1 && k2, "Should have valid keys here");
-        return k1->GetName().Compare(k2->GetName(), plString::kCaseInsensitive) < 0;
-    }
-};
+class hsStream;
+class plString;
+class plUoid;
 
 //
 //  List of keys for a single class type.
@@ -68,59 +59,40 @@ protected:
     friend class plKeyFinder;
 
     uint16_t fClassType;
-    // Lock counter for iterating. If this is >0, don't do any ops that
-    // can change key positions in the array (instead, just leave holes)
-    uint16_t fLocked;
+    uint32_t fLocked;
+    uint32_t fReffedKeys;
 
-    enum Flags { kStaticUnsorted = 0x1 };
-    uint8_t fFlags;
-
-    // Static keys are one's we read off disk.  These don't change and are
-    // assumed to be already sorted when they're read in.
-    typedef std::vector<plKeyImp*> StaticVec;
-    StaticVec fStaticKeys;
-    uint32_t fReffedStaticKeys;   // Number of static keys that are loaded
-
-    // Dynamic keys are anything created at runtime.  They are put in the
-    // correct sorted position when they are added
-    typedef std::set<plKeyImp*, KeySorter> DynSet;
-    DynSet fDynamicKeys;
+    std::vector<plKeyImp*> fKeys;
 
     plRegistryKeyList() {}
 
-    void ILock();
-    void IUnlock();
-
     void IRepack();
+    void ILock() { ++fLocked; }
+    void IUnlock() { --fLocked; }
 
 public:
-    plRegistryKeyList(uint16_t classType);
+    enum LoadStatus
+    {
+        kNoChange,
+        kTypeLoaded,
+        kTypeUnloaded
+    };
+
+    plRegistryKeyList(uint16_t classType)
+        : fClassType(classType), fReffedKeys(0), fLocked(0)
+    { }
     ~plRegistryKeyList();
 
     uint16_t GetClassType() const { return fClassType; }
 
-    // Find a key by name (case-insensitive)
-    plKeyImp* FindKey(const plString& keyName);
-    // Find a key by uoid index.
-    plKeyImp* FindKey(const plUoid& uoid);
+    plKeyImp* FindKey(const plString& keyName) const;
+    plKeyImp* FindKey(const plUoid& uoid) const;
 
     bool IterateKeys(plRegistryKeyIterator* iterator);
 
-    // Changes in our load status that can be caused by loading or unloading a key
-    enum LoadStatus
-    {
-        kNoChange,
-        kDynLoaded,
-        kDynUnloaded,
-        kStaticUnloaded,
-    };
     void AddKey(plKeyImp* key, LoadStatus& loadStatusChange);
-    void SetKeyUsed(plKeyImp* key);
+    void SetKeyUsed(plKeyImp* key) { ++fReffedKeys; }
     bool SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange);
-
-    // Export time only.  Before we write to disk, assign all the static keys
-    // object ID's that they can use to do fast lookups at load time.
-    void PrepForWrite();
 
     void Read(hsStream* s);
     void Write(hsStream* s);
