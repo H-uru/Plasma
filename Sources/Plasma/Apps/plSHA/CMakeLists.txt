@@ -13,7 +13,7 @@ set(plSHA_SOURCES
 )
 
 add_executable(plSHA ${plSHA_SOURCES})
-target_link_libraries(plSHA CoreLib pnUtils pnProduct pnEncryption)
+target_link_libraries(plSHA CoreLib pnUtils pnEncryption)
 target_link_libraries(plSHA ${OPENSSL_LIBRARIES})
 
 if(USE_VLD)

@@ -1,6 +1,16 @@
 project(Plasma)
 cmake_minimum_required(VERSION 2.8)
 
+# Set up Product Identification parameters
+set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
+set(PRODUCT_BUILD_ID    "912"       CACHE STRING "Build ID")
+set(PRODUCT_BUILD_TYPE  "50"        CACHE STRING "Build Type")
+set(PRODUCT_CORE_NAME   "UruLive"   CACHE STRING "Product Core Name")
+set(PRODUCT_SHORT_NAME  "UruLive"   CACHE STRING "Product Short Name")
+set(PRODUCT_LONG_NAME   "Uru Live"  CACHE STRING "Product Long Name")
+set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
+                                    CACHE STRING "Product UUID")
+
 # Detect Clang compiler
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(CMAKE_COMPILER_IS_CLANGXX 1)

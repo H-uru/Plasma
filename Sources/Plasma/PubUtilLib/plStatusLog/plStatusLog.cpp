@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog.h"
 #include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 #include "plEncryptLogLine.h"
 
@@ -99,7 +99,7 @@ plStatusLogMgr::plStatusLogMgr()
     delete[] temp;
 #endif
 
-    plFileUtils::ConcatFileName(fBasePath, ProductLongName());
+    plFileUtils::ConcatFileName(fBasePath, plProduct::LongName().ToWchar());
     plFileUtils::ConcatFileName(fBasePath, L"Log");
     plFileUtils::EnsureFilePathExists(fBasePath);
 }

@@ -869,12 +869,7 @@ void InitAsyncCore () {
         return;
     AsyncCoreInitialize();
 
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-
-    char* log = hsWStringToString(productString);
-    plStatusLog::AddLineS("patcher.log", log);
-    delete[] log;
+    plStatusLog::AddLineS("patcher.log", plProduct::ProductString().c_str());
 }
 
 //============================================================================

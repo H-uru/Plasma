@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../pnUtils.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 
 /*****************************************************************************
@@ -361,7 +361,7 @@ void PathGetUserDirectory (
         StrCopy(temp, L"C:\\", arrsize(temp));
 
     // append the product name
-    PathAddFilename(dst, temp, ProductLongName(), dstChars);
+    PathAddFilename(dst, temp, plProduct::LongName().ToWchar(), dstChars);
 
     // ensure it exists
     if (!PathDoesDirectoryExist(dst))

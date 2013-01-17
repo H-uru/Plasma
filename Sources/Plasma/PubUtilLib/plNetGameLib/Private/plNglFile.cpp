@@ -518,9 +518,9 @@ static void Connect (CliFileConn * conn) {
     connect.hdr.connType    = kConnTypeCliToFile;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
     connect.hdr.buildId     = kFileSrvBuildId;
-    connect.hdr.buildType   = BUILD_TYPE_LIVE;
-    connect.hdr.branchId    = BranchId();
-    connect.hdr.productId   = ProductId();
+    connect.hdr.buildType   = plProduct::BuildType();
+    connect.hdr.branchId    = plProduct::BranchId();
+    connect.hdr.productId   = plProduct::UUID();
     connect.data.buildId    = conn->buildId;
     connect.data.serverType = conn->serverType;
     connect.data.dataBytes  = sizeof(connect.data);
@@ -1347,7 +1347,7 @@ void NetCliFileStartConnect (
     // TEMP: Only connect to one file server until we fill out this module
     // to choose the "best" file connection.
     fileAddrCount = min(fileAddrCount, 1);
-    s_connectBuildId = isPatcher ? kFileSrvBuildId : BuildId();
+    s_connectBuildId = isPatcher ? kFileSrvBuildId : plProduct::BuildId();
     s_serverType = kSrvTypeNone;
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {

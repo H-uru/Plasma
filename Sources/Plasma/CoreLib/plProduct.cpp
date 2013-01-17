@@ -39,29 +39,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnProduct/Private/pnPrBuildString.cpp
-*   
-***/
 
-#include "../Pch.h"
-#pragma hdrstop
+#include "plProduct.h"
+#include "plString.h"
+
+static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
+static_assert(PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
+static_assert(PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
+
+uint32_t plProduct::BuildId() { return PRODUCT_BUILD_ID; }
+uint32_t plProduct::BuildType() { return PRODUCT_BUILD_TYPE; }
+
+uint32_t plProduct::BranchId()
+{
+#ifndef PATCHER
+    return PRODUCT_BRANCH_ID;
+#else
+    return 0;
+#endif
+}
+
+plString plProduct::CoreName()
+{
+    static plString _coreName = PRODUCT_CORE_NAME;
+    return _coreName;
+}
+
+plString plProduct::ShortName()
+{
+    static plString _shortName = PRODUCT_SHORT_NAME;
+    return _shortName;
+}
+
+plString plProduct::LongName()
+{
+    static plString _longName = PRODUCT_LONG_NAME;
+    return _longName;
+}
+
+const char *plProduct::UUID() { return PRODUCT_UUID; }
 
 
+#ifdef PLASMA_EXTERNAL_RELEASE
+#   define RELEASE_ACCESS "External"
+#else
+#   define RELEASE_ACCESS "Internal"
+#endif
 
-/*****************************************************************************
-*
-*   Exports
-*
-***/
+#ifdef HS_DEBUGGING
+#   define RELEASE_TYPE "Debug"
+#else
+#   define RELEASE_TYPE "Release"
+#endif
 
-//============================================================================
-const wchar_t * ProductBuildString () {
-    // This string is replaced by plMarkBuild.exe with the following string:
-    // "date:YYMMDD time:HHMMSS user:%USERNAME%"
-    static const wchar_t PRODUCT_BUILD_STRING[64] = {
-        L"PRODUCT_BUILD_STRING                                           "
-    };
-    return PRODUCT_BUILD_STRING;
+plString plProduct::ProductString()
+{
+    static plString _cache = plString::Format(
+            "%s.%u.%u - " RELEASE_ACCESS "." RELEASE_TYPE,
+            CoreName().c_str(), BranchId(), BuildId());
+    return _cache;
 }

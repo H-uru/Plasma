@@ -12,7 +12,7 @@ set(plFileEncrypt_SOURCES
 )
 
 add_executable(plFileEncrypt ${plFileEncrypt_SOURCES})
-target_link_libraries(plFileEncrypt CoreLib pnProduct plFile)
+target_link_libraries(plFileEncrypt CoreLib plFile)
 
 if(USE_VLD)
     target_link_libraries(plFileEncrypt ${VLD_LIBRARY})

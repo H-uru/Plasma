@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetObjectDebugger.h"
 
 #include "pnUtils/pnUtils.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plNetServers.h"
 #include "pnNetCommon/plSDLTypes.h"
@@ -1330,7 +1330,7 @@ void plNetClientMgr::IDisableNet () {
             {
                 // KI may not be loaded
                 char title[256];
-                StrPrintf(title, arrsize(title), "%S Error", ProductCoreName());
+                snprintf(title, arrsize(title), "%s Error", plProduct::CoreName().c_str());
                 hsMessageBox(fDisableMsg->str, title, hsMessageBoxNormal, hsMessageBoxIconError );
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));

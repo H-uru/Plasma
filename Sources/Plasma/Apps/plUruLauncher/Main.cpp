@@ -449,13 +449,10 @@ static void WindowThreadProc(void *) {
 
     ::SetDlgItemText( s_dialog, IDC_TEXT, "Initializing patcher...");
     SetTimer(s_dialog, kEventTimer, 250, 0);
-    
-    char productString[256];
-    wchar_t productStringW[256];
-    ProductString(productStringW, arrsize(productStringW));
-    StrToAnsi(productString, productStringW, arrsize(productString));
-    SendMessage(GetDlgItem(s_dialog, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) productString);
-    
+
+    SendMessage(GetDlgItem(s_dialog, IDC_PRODUCTSTRING), WM_SETTEXT, 0,
+                (LPARAM)plProduct::ProductString().c_str());
+
     s_dialogCreateEvent.Signal();
 
     MessagePump(s_dialog);
