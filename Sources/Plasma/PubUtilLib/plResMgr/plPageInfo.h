@@ -90,6 +90,7 @@ public:
 
     const plString& GetAge() const  { return fAge; }
     const plString& GetPage() const { return fPage; }
+    plString StringIze() const;
 
     plPageInfo &operator=( const plPageInfo &src );
 
@@ -102,6 +103,7 @@ public:
     void                SetLocation(const plLocation& loc);
     const plLocation&   GetLocation() const { return fLocation; }
 
+    uint32_t  GetFlags() const { return fFlags; }
     bool      HasFlag(uint32_t flag) const { return hsCheckBits(fFlags, flag); }
     void      SetFlag(uint32_t flag, bool on=true)
     {
@@ -110,6 +112,7 @@ public:
         else
             hsClearBits(fFlags, flag);
     }
+    void      SetFlags(uint32_t flags) { fFlags = flags; }
 
     uint16_t  GetMajorVersion() const { return fMajorVersion; }
     void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }

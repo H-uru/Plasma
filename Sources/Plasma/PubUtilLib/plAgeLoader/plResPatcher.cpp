@@ -301,25 +301,17 @@ void PatcherLog(PatcherLogType type, const char* format, ...)
     case kError:        color = plStatusLog::kRed;      break;
     }
 
-    static plStatusLog* gStatusLog = nil;
-    if (!gStatusLog)
-    {
-        gStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(
-            20,
-            "patcher.log",
-            plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kDeleteForMe);
-    }
-
     va_list args;
     va_start(args, format);
 
+    plStatusLog* log = plStatusLogMgr::GetInstance().FindLog("patcher.log", true);
     if (type == kError)
     {
         sLastError = new char[1024]; // Deleted by Finish(false)
         vsprintf(sLastError, format, args);
-        gStatusLog->AddLine(sLastError, color);
+        log->AddLine(sLastError, color);
     } else
-        gStatusLog->AddLineV(color, format, args);
+        log->AddLineV(color, format, args);
 
     va_end(args);
 }

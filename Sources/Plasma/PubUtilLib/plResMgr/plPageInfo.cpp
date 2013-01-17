@@ -111,6 +111,11 @@ void    plPageInfo::SetLocation( const plLocation &loc )
     fLocation = loc;
 }
 
+plString plPageInfo::StringIze() const
+{
+    return plString::Format("%s_%s", fAge.c_str(), fPage.c_str());
+}
+
 void plPageInfo::AddClassVersion(uint16_t classIdx, uint16_t version)
 {
     ClassVersion cv;

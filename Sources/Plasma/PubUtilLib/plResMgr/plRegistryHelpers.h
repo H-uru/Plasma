@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plKey;
 class plRegistryPageNode;
+class hsStream;
 
 //// Little Iterator Class Defs //////////////////////////////////////////////
 
@@ -96,6 +97,21 @@ public:
 
     bool EatKey(const plKey& key) { return true; }
     bool EatPage(plRegistryPageNode* page);
+};
+
+//// plWriteIterator /////////////////////////////////////////////////////////
+//  Key iterator for writing objects
+class plWriteIterator : public plRegistryKeyIterator
+{
+protected:
+    hsStream* fStream;
+
+public:
+    plWriteIterator() : fStream(nullptr) { }
+    plWriteIterator(hsStream* const s) : fStream(s) { }
+
+    void SetStream(hsStream* const s) { fStream = s; }
+    virtual bool EatKey(const plKey& key);
 };
 
 #endif // _plRegistryHelpers_h

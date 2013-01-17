@@ -1,4 +1,5 @@
 add_subdirectory(plLocalizationEditor)
+add_subdirectory(plPatchUtil)
 add_subdirectory(plResBrowser)
 
 if(FREETYPE_FOUND)

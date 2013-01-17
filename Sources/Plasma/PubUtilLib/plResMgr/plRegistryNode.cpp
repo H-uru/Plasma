@@ -82,6 +82,15 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
                 fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str()));
 }
 
+plRegistryPageNode::plRegistryPageNode(const plPageInfo& info)
+    : fValid(kPageOk)
+    , fPageInfo(info)
+    , fLoadedTypes(0)
+    , fOpenRequests(0)
+    , fIsNewPage(true)
+{
+}
+
 plRegistryPageNode::~plRegistryPageNode()
 {
     UnloadKeys();
@@ -194,25 +203,7 @@ void plRegistryPageNode::UnloadKeys()
     fLoadedTypes = 0;
 }
 
-//// plWriteIterator /////////////////////////////////////////////////////////
-//  Key iterator for writing objects
-class plWriteIterator : public plRegistryKeyIterator
-{
-protected:
-    hsStream* fStream;
-
-public:
-    plWriteIterator(hsStream* s) : fStream(s) {}
-
-    virtual bool EatKey(const plKey& key)
-    {
-        plKeyImp* imp = (plKeyImp*)key;
-        imp->WriteObject(fStream);
-        return true;
-    }
-};
-
-void plRegistryPageNode::Write()
+void plRegistryPageNode::Write(plWriteIterator* writeIter)
 {
     hsAssert(fOpenRequests == 0, "Trying to write while the page is open for reading");
 
@@ -240,8 +231,16 @@ void plRegistryPageNode::Write()
     fPageInfo.SetDataStart(fStream.GetPosition());
 
     // Write all our objects
-    plWriteIterator writer(&fStream);
-    IterateKeys(&writer);
+    if (writeIter)
+    {
+        writeIter->SetStream(&fStream);
+        IterateKeys(writeIter);
+    }
+    else
+    {
+        plWriteIterator writer(&fStream);
+        IterateKeys(&writer);
+    }
 
     fPageInfo.SetIndexStart(fStream.GetPosition());
 

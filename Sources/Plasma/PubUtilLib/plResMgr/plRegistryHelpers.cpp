@@ -39,6 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include "pnKeyedObject/plKeyImp.h"
 #include "plRegistryHelpers.h"
 #include "plRegistryNode.h"
 
@@ -55,5 +57,12 @@ bool plKeyCollector::EatKey(const plKey& key)
 bool plIndirectUnloadIterator::EatPage(plRegistryPageNode* page)
 {
     page->IterateKeys(this);
+    return true;
+}
+
+bool plWriteIterator::EatKey(const plKey& key)
+{
+    plKeyImp* imp = (plKeyImp*)key;
+    imp->WriteObject(fStream);
     return true;
 }

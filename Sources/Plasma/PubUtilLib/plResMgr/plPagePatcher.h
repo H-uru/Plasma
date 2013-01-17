@@ -26,75 +26,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plPagePatcher_h_inc
 #define plPagePatcher_h_inc
 
-#include "hsTemplates.h"
-#include "pnKeyedObject/plKey.h"
-#include "pnKeyedObject/plKeyImp.h"
-#include "plRegistryHelpers.h"
-
+class plFileName;
+class plKey;
 class plRegistryPageNode;
 
-//// plKeyImpPublic //////////////////////////////////////////////////////////
-//  Key class that stores objects as buffers for patching
-class plKeyImpPublic : public plKeyImp
+namespace plPagePatcher
 {
-public:
-    void SetObjectPtrDirect(void* pointer);
-    void KillBuffer();
-    void MoveFrom(plKeyImp* src);
-    void WriteBuffer(hsStream* stream);
-    void PatchUsingOldKey(plKeyImpPublic* oldPKey);
-};
-
-
-//// plReadObjectIterator ////////////////////////////////////////////////////
-//  Helper key iterator that reads objects as buffers
-class plReadObjectIterator : public plRegistryKeyIterator
-{
-protected:
-    hsStream* fStream;
-
-public:
-    plReadObjectIterator(hsStream* stream);
-    virtual bool EatKey(const plKey& key);
-
-private:
-    bool IReadObjectBuffer(plKeyImpPublic* pKey);
-};
-
-
-//// plWriteAndClearIterator /////////////////////////////////////////////////
-//  Helper key iterator that writes object buffers to a stream
-class plWriteAndClearIterator : public plRegistryKeyIterator
-{
-protected:
-    hsStream* fStream;
-
-public:
-    plWriteAndClearIterator(hsStream* s);
-    virtual bool EatKey(const plKey& key);
-};
-
-
-//// plPatchKeyIterator //////////////////////////////////////////////////////
-//  Helper key iterator that applies patches to objects
-class plPatchKeyIterator : public plRegistryKeyIterator
-{
-public:
-    enum Errors { kNoError, kOldKeyNotFound, kOldKeyLengthInvalid };
-
-    Errors fError;
-    plUoid fErrorUoid;
-
-protected:
-    hsTArray<plRegistryPageNode*>& fPages;
-    bool fIsPartial;
-
-public:
-    plPatchKeyIterator(hsTArray<plRegistryPageNode*>& pages, bool isPartial);
-    virtual bool EatKey(const plKey& key);
-
-private:
-    plKeyImp* IFindOldKey(plUoid& uoid);
+    plRegistryPageNode* GeneratePatch(const plFileName& oldPage, const plFileName& newPage);
+    plRegistryPageNode* PatchPage(const plFileName& oldpage, const plFileName& patchpage);
+    void WriteAndClear(plRegistryPageNode* const page, const plFileName& path);
 };
 
 #endif
