@@ -246,9 +246,9 @@ uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t new
             dblen+=lenf;
             eblen+=(scan-lenb)-(lastscan+lenf);
 
-            IWriteUnsignedint8_t(lenf,cb+cblen);
-            IWriteUnsignedint8_t((scan-lenb)-(lastscan+lenf),cb+cblen+8);
-            IWriteUnsignedint8_t((pos-lenb)-(lastpos+lenf),cb+cblen+16);
+            IWriteUnsignedByte(lenf,cb+cblen);
+            IWriteUnsignedByte((scan-lenb)-(lastscan+lenf),cb+cblen+8);
+            IWriteUnsignedByte((pos-lenb)-(lastpos+lenf),cb+cblen+16);
             cblen+=24;
 
             lastscan=scan-lenb;
@@ -257,9 +257,9 @@ uint32_t plBSDiffBuffer::Diff( uint32_t oldLength, void *oldBuffer, uint32_t new
         };
     };
 
-    IWriteUnsignedint8_t(cblen,header+8);
-    IWriteUnsignedint8_t(dblen,header+16);
-    IWriteUnsignedint8_t(newLength,header+24);
+    IWriteUnsignedByte(cblen,header+8);
+    IWriteUnsignedByte(dblen,header+16);
+    IWriteUnsignedByte(newLength,header+24);
 
     fPatchLength = 32 + cblen + dblen + eblen;
     fPatchBuffer = nil;
@@ -375,9 +375,9 @@ uint32_t plBSDiffBuffer::Patch( uint32_t oldLength, void *oldBuffer, uint32_t &n
 
     if(!version) return (-1);
 
-    ctrllen=IReadUnsignedint8_t(fPatchBuffer+8);
-    datalen=IReadUnsignedint8_t(fPatchBuffer+16);
-    newLength=IReadUnsignedint8_t(fPatchBuffer+24);
+    ctrllen=IReadUnsignedByte(fPatchBuffer+8);
+    datalen=IReadUnsignedByte(fPatchBuffer+16);
+    newLength=IReadUnsignedByte(fPatchBuffer+24);
     if((ctrllen<0) || (datalen<0) || (newLength<0) ||
         ((version==1) && (32+ctrllen+datalen!=fPatchLength)))
         return (-1);
@@ -398,7 +398,7 @@ uint32_t plBSDiffBuffer::Patch( uint32_t oldLength, void *oldBuffer, uint32_t &n
     while(newpos<newend) {
         for(i=0;i<=version;i++) {
             if(ctrlend-ctrlpipe < 8) return (-1);
-            ctrl[i]=IReadUnsignedint8_t(ctrlpipe);
+            ctrl[i]=IReadUnsignedByte(ctrlpipe);
             ctrlpipe += 8;
         };
 
@@ -445,7 +445,7 @@ uint32_t plBSDiffBuffer::Patch( uint32_t oldLength, void *oldBuffer, uint32_t &n
 
 // Reads in an 8-uint8_t unsigned integer least significant uint8_t first and returns a
 // uint32_t. We'll ignore the top four bytes.
-uint32_t plBSDiffBuffer::IReadUnsignedint8_t(unsigned char *buf)
+uint32_t plBSDiffBuffer::IReadUnsignedByte(unsigned char *buf)
 {
     uint32_t y;
 
@@ -466,7 +466,7 @@ uint32_t plBSDiffBuffer::IReadUnsignedint8_t(unsigned char *buf)
     return y;
 }
 
-void plBSDiffBuffer::IWriteUnsignedint8_t(uint32_t x,unsigned char *buf)
+void plBSDiffBuffer::IWriteUnsignedByte(uint32_t x,unsigned char *buf)
 {
     uint32_t y;
     int32_t signedY, signedX = (int32_t)x;
