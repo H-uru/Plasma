@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore/plSoundBuffer.h"
 #include "hsStream.h"
 
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 
 //// Globals /////////////////////////////////////////////////////////////////
@@ -67,9 +67,7 @@ bool DumpSounds();
 //// PrintVersion ///////////////////////////////////////////////////////////////
 void PrintVersion()
 {
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-    printf("%S\n\n", productString);
+    printf("%s\n\n", plProduct::ProductString().c_str());
 }
 
 //// PrintHelp ///////////////////////////////////////////////////////////////

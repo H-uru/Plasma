@@ -62,6 +62,7 @@ public:
     };
 
     plUUID();
+    plUUID(const char* s);
     plUUID(const plString& s);
     plUUID(const plUUID& other);
 
@@ -73,7 +74,6 @@ public:
     int      CompareTo(const plUUID* v) const;
     bool     IsEqualTo(const plUUID* v) const;
     bool     FromString(const char* str);
-    bool     FromString(const plString& str) { return FromString(str.c_str()); }
     bool     ToString(plString& out) const;
     plString AsString() const;
     void     Read(hsStream* s);

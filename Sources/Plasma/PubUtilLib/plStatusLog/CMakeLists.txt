@@ -16,7 +16,7 @@ set(plStatusLog_HEADERS
 )
 
 add_library(plStatusLog STATIC ${plStatusLog_SOURCES} ${plStatusLog_HEADERS})
-target_link_libraries(plStatusLog CoreLib plFile plUnifiedTime pnProduct)
+target_link_libraries(plStatusLog CoreLib plFile plUnifiedTime)
 
 source_group("Source Files" FILES ${plStatusLog_SOURCES})
 source_group("Header Files" FILES ${plStatusLog_HEADERS})

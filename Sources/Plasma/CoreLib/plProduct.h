@@ -39,17 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnProduct/pnProduct.h
-*
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNPRODUCT_PNPRODUCT_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNPRODUCT_PNPRODUCT_H
+#include <stdint.h>
 
+class plString;
 
-#include "Private/pnPrAllIncludes.h"
+// Note:  These are all implemented in plProduct.cpp, so that only CoreLib
+//        has to get the product product ID compiler flags passed in.
+namespace plProduct
+{
+    uint32_t BuildId();
+    uint32_t BuildType();
+    uint32_t BranchId();
 
+    plString CoreName();
+    plString ShortName();
+    plString LongName();
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNPRODUCT_PNPRODUCT_H
+    const char *UUID();
+
+    /** Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <External|Internal>.<Debug|Release>"
+     *  Example: "Uru.3.204 - External.Release"
+     */
+    plString ProductString();
+}

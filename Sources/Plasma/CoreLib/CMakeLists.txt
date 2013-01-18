@@ -1,5 +1,13 @@
 add_definitions(-D_LIB)
 
+add_definitions(-DPRODUCT_BRANCH_ID=${PRODUCT_BRANCH_ID})
+add_definitions(-DPRODUCT_BUILD_ID=${PRODUCT_BUILD_ID})
+add_definitions(-DPRODUCT_BUILD_TYPE=${PRODUCT_BUILD_TYPE})
+add_definitions(-DPRODUCT_CORE_NAME="${PRODUCT_CORE_NAME}")
+add_definitions(-DPRODUCT_SHORT_NAME="${PRODUCT_SHORT_NAME}")
+add_definitions(-DPRODUCT_LONG_NAME="${PRODUCT_LONG_NAME}")
+add_definitions(-DPRODUCT_UUID="${PRODUCT_UUID}")
+
 if(NOT WCHAR_BYTES)
     include(CheckTypeSize)
 
@@ -35,6 +43,7 @@ set(CoreLib_SOURCES
     pcSmallRect.cpp
     plGeneric.cpp
     plLoadMask.cpp
+    plProduct.cpp
     plString.cpp
     plViewTransform.cpp
 )
@@ -78,6 +87,7 @@ set(CoreLib_HEADERS
     pcSmallRect.h
     plGeneric.h
     plLoadMask.h
+    plProduct.h
     plQuality.h
     plString.h
     plTweak.h

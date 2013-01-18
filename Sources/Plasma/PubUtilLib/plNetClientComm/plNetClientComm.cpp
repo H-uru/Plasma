@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClientComm.h"
 
 #include "pnAsyncCore/pnAsyncCore.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 #include "pnNetCli/pnNetCli.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "pnEncryption/plChallengeHash.h"
@@ -747,9 +747,7 @@ void NetCommStartup () {
     s_shutdown = false;
 
     AsyncCoreInitialize();
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-    LogMsg(kLogPerf, L"Client: %s", productString);
+    LogMsg(kLogPerf, "Client: %s", plProduct::ProductString().c_str());
 
     NetClientInitialize();
     NetClientSetErrorHandler(IPreInitNetErrorCallback);
