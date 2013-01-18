@@ -60,9 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plKey plPluginResManager::NameToLoc(const plString& age, const plString& page, int32_t sequenceNumber, bool itinerant)
 {
-    // Hack for now--always prefer paging out sceneNodes first
-    fPageOutHint = plSceneNode::Index();
-
     // Get or create our page
     plRegistryPageNode* pageNode = INameToPage(age, page, sequenceNumber, itinerant);
     hsAssert(pageNode != nil, "No page returned from INameToPage(), shouldn't be possible");

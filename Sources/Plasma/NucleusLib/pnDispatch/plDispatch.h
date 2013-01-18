@@ -131,6 +131,8 @@ public:
 
     virtual bool    SetMsgBuffering(bool on); // On starts deferring msg delivery until buffering is set to off again.
 
+    virtual void    BeginShutdown();
+
     static void SetMsgRecieveCallback(MsgRecieveCallback callback) { fMsgRecieveCallback = callback; }
 };
 
@@ -146,8 +148,10 @@ public:
 
 
     virtual bool MsgSend(plMessage* msg) { return true; }
-    virtual void    MsgQueue(plMessage* msg) {}
-    virtual void    MsgQueueProcess() {}
+    virtual void MsgQueue(plMessage* msg) {}
+    virtual void MsgQueueProcess() {}
+
+    virtual void BeginShutdown() {}
 
 };
 
