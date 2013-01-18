@@ -61,23 +61,13 @@ plZlibStream::~plZlibStream()
     hsAssert(!fOutput && !fZStream, "plZlibStream not closed");
 }
 
-bool plZlibStream::Open(const char* filename, const char* mode)
-{
-    wchar_t* wFilename = hsStringToWString(filename);
-    wchar_t* wMode = hsStringToWString(mode);
-    bool ret = Open(wFilename, wMode);
-    delete [] wFilename;
-    delete [] wMode;
-    return ret;
-}
-
-bool plZlibStream::Open(const wchar_t* filename, const wchar_t* mode)
+bool plZlibStream::Open(const plFileName& filename, const char* mode)
 {
     fFilename = filename;
     fMode = mode;
 
     fOutput = new hsUNIXStream;
-    return fOutput->Open(filename, L"wb");
+    return fOutput->Open(filename, "wb");
 }
 
 bool plZlibStream::Close()
@@ -298,7 +288,7 @@ void plZlibStream::Rewind()
 {
     // hack so rewind will work (someone thought it would be funny to not implement base class functions)
     Close();
-    Open(fFilename.c_str(), fMode.c_str());
+    Open(fFilename, fMode);
     fHeader = kNeedMoreData;
     fDecompressedOk = false;
 }

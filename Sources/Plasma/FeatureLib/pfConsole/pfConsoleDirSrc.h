@@ -57,9 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <vector>
-#include <string>
 
 #include "pfConsoleCore/pfConsoleEngine.h"
+#include "plFileSystem.h"
 
 //// pfConsoleDirSrc Class Definition ////////////////////////////////////////
 
@@ -69,23 +69,17 @@ class pfConsoleDirSrc
         pfConsoleEngine     *fEngine;
         struct FileName
         {
-            std::wstring fPath;
-            std::wstring fFile;
-            FileName() : fPath(L""), fFile(L"") {}
-            FileName(const std::wstring& p, const std::wstring& f) : fPath(p), fFile(f) {}
+            plFileName fPath;
+            plFileName fFile;
+            FileName() : fPath(""), fFile("") {}
+            FileName(const plFileName& p, const plFileName& f) : fPath(p), fFile(f) {}
         };
         std::vector<FileName*> fProcessedFiles;     // list of init files we've already executed
         bool fCheckProcessedFiles;        // set to check and skip files init files we've already executed
     public:
         pfConsoleDirSrc(pfConsoleEngine *engine) : fCheckProcessedFiles(false) { fEngine = engine; }
-        pfConsoleDirSrc(pfConsoleEngine *engine, const std::string& path, const std::string& mask = "*.ini") :
-            fCheckProcessedFiles(false)
-        {
-            fEngine = engine;
-            ParseDirectory(path, mask);
-        }
-        pfConsoleDirSrc(pfConsoleEngine *engine, const std::wstring& path, const std::wstring& mask = L"*.ini") :
-            fCheckProcessedFiles(false)
+        pfConsoleDirSrc(pfConsoleEngine *engine, const plFileName& path, const plString& mask = "*.ini")
+            : fCheckProcessedFiles(false)
         {
             fEngine = engine;
             ParseDirectory(path, mask);
@@ -94,12 +88,11 @@ class pfConsoleDirSrc
         ~pfConsoleDirSrc() { ResetProcessedFiles(); }
 
         // Steps through the given directory and executes all files with the console engine
-        bool    ParseDirectory(const std::string& path, const std::string& mask = "*.*");
-        bool    ParseDirectory(const std::wstring& path, const std::wstring& mask = L"*.*");
+        bool ParseDirectory(const plFileName& path, const plString& mask = "*.*");
 
         void ResetProcessedFiles();
-        bool AlreadyProcessedFile(const std::wstring& path, const std::wstring& file);
-        void AddProcessedFile(const std::wstring& path, const std::wstring& file);
+        bool AlreadyProcessedFile(const plFileName& path, const plFileName& file);
+        void AddProcessedFile(const plFileName& path, const plFileName& file);
         void SetCheckProcessedFiles(bool c) { fCheckProcessedFiles=c; }       
 };
 

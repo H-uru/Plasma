@@ -6064,7 +6064,7 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
 PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed days and fractions" )
 {
     hsUNIXStream s;
-    if (!s.Open(params[0]))
+    if (!s.Open(static_cast<const char *>(params[0])))
     {
         PrintString("Couldn't open age defn file!");
         return;
@@ -6085,7 +6085,7 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
 PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days and fractions" )
 {
     hsUNIXStream s;
-    if (!s.Open(params[0]))
+    if (!s.Open(static_cast<const char *>(params[0])))
     {
         PrintString("Couldn't open age defn file!");
         return;

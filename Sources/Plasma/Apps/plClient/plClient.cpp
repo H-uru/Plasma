@@ -231,13 +231,12 @@ plClient::plClient()
     plAgeLoader::SetInstance(new plAgeLoader);
 
     // Use it to parse the init directory
-    wchar_t initFolder[MAX_PATH];
-    PathGetInitDirectory(initFolder, arrsize(initFolder));
-    pfConsoleDirSrc     dirSrc( fConsoleEngine, initFolder, L"*.ini" );
-    
+    plFileName initFolder = plFileSystem::GetInitPath();
+    pfConsoleDirSrc dirSrc(fConsoleEngine, initFolder, "*.ini");
+
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds also parse the local init folder
-    dirSrc.ParseDirectory( L"init", L"*.ini" );
+    dirSrc.ParseDirectory("init", "*.ini");
 #endif
 
     /// End of console stuff
@@ -467,9 +466,7 @@ void plClient::InitInputs()
 void plClient::ISetGraphicsDefaults()
 {
     // couldn't find display mode set defaults write to ini file
-    wchar_t graphicsIniFile[MAX_PATH];
-    PathGetInitDirectory(graphicsIniFile, arrsize(graphicsIniFile));
-    PathAddFilename(graphicsIniFile, graphicsIniFile, L"graphics.ini", arrsize(graphicsIniFile));
+    plFileName graphicsIniFile = plFileName::Join(plFileSystem::GetInitPath(), "graphics.ini");
     IWriteDefaultGraphicsSettings(graphicsIniFile);
     plPipeline::fInitialPipeParams.Windowed = plPipeline::fDefaultPipeParams.Windowed;
     plPipeline::fInitialPipeParams.AntiAliasingAmount = plPipeline::fDefaultPipeParams.AntiAliasingAmount;
@@ -1624,12 +1621,12 @@ void    plClient::IPatchGlobalAgeFiles( void )
     plResPatcher* patcher = plResPatcher::GetInstance();
     if (!gDataServerLocal)
     {
-        patcher->RequestManifest(L"CustomAvatars");
-        patcher->RequestManifest(L"GlobalAnimations");
-        patcher->RequestManifest(L"GlobalAvatars");
-        patcher->RequestManifest(L"GlobalClothing");
-        patcher->RequestManifest(L"GlobalMarkers");
-        patcher->RequestManifest(L"GUI");
+        patcher->RequestManifest("CustomAvatars");
+        patcher->RequestManifest("GlobalAnimations");
+        patcher->RequestManifest("GlobalAvatars");
+        patcher->RequestManifest("GlobalClothing");
+        patcher->RequestManifest("GlobalMarkers");
+        patcher->RequestManifest("GUI");
     }
 
     plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
@@ -2344,18 +2341,15 @@ void plClient::IDetectAudioVideoSettings()
     int val = 0;
     hsStream *stream = nil;
     hsUNIXStream s;
-    wchar_t audioIniFile[MAX_PATH], graphicsIniFile[MAX_PATH];
-    PathGetInitDirectory(audioIniFile, arrsize(audioIniFile));
-    StrCopy(graphicsIniFile, audioIniFile, arrsize(audioIniFile));
-    PathAddFilename(audioIniFile, audioIniFile, L"audio.ini", arrsize(audioIniFile));
-    PathAddFilename(graphicsIniFile, graphicsIniFile, L"graphics.ini", arrsize(graphicsIniFile));
+    plFileName audioIniFile = plFileName::Join(plFileSystem::GetInitPath(), "audio.ini");
+    plFileName graphicsIniFile = plFileName::Join(plFileSystem::GetInitPath(), "graphics.ini");
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local dir
-    if (PathDoesFileExist(L"init//audio.ini"))
-        StrCopy(audioIniFile, L"init//audio.ini", arrsize(audioIniFile));
-    if (PathDoesFileExist(L"init//graphics.ini"))
-        StrCopy(graphicsIniFile, L"init//graphics.ini", arrsize(audioIniFile));
+    if (plFileInfo("init//audio.ini").Exists())
+        audioIniFile = "init//audio.ini";
+    if (plFileInfo("init//graphics.ini").Exists())
+        graphicsIniFile = "init//graphics.ini";
 #endif
 
     //check to see if audio.ini exists
@@ -2398,7 +2392,7 @@ void plClient::IDetectAudioVideoSettings()
     }
 }
 
-void plClient::IWriteDefaultGraphicsSettings(const wchar_t* destFile)
+void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
 {
     hsStream *stream = plEncryptedStream::OpenEncryptedFileWrite(destFile);
 
@@ -2408,7 +2402,7 @@ void plClient::IWriteDefaultGraphicsSettings(const wchar_t* destFile)
     WriteBool(stream, "Graphics.Windowed", plPipeline::fDefaultPipeParams.Windowed);
     WriteInt(stream, "Graphics.AntiAliasAmount", plPipeline::fDefaultPipeParams.AntiAliasingAmount);
     WriteInt(stream, "Graphics.AnisotropicLevel", plPipeline::fDefaultPipeParams.AnisotropicLevel );
-    WriteInt(stream, "Graphics.TextureQuality",plPipeline::fDefaultPipeParams.TextureQuality);
+    WriteInt(stream, "Graphics.TextureQuality", plPipeline::fDefaultPipeParams.TextureQuality);
     WriteInt(stream, "Quality.Level", plPipeline::fDefaultPipeParams.VideoQuality);
     WriteInt(stream, "Graphics.Shadow.Enable", plPipeline::fDefaultPipeParams.Shadows);
     WriteInt(stream, "Graphics.EnablePlanarReflections", plPipeline::fDefaultPipeParams.PlanarReflections);
@@ -2487,25 +2481,24 @@ void plClient::IOnAsyncInitComplete () {
 
     /// Now parse final init files (*.fni). These are files just like ini files, only to be run
     /// after all hell has broken loose in the client.
-    wchar_t initFolder[MAX_PATH];
-    PathGetInitDirectory(initFolder, arrsize(initFolder));
-    pfConsoleDirSrc     dirSrc( fConsoleEngine, initFolder, L"net*.fni" );  // connect to net first
+    plFileName initFolder = plFileSystem::GetInitPath();
+    pfConsoleDirSrc dirSrc(fConsoleEngine, initFolder, "net*.fni");  // connect to net first
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds also parse the local init folder
-    dirSrc.ParseDirectory( L"init", L"net*.fni" );
+    dirSrc.ParseDirectory("init", "net*.fni");
 #endif
 
-    dirSrc.ParseDirectory( initFolder, L"*.fni" );
+    dirSrc.ParseDirectory(initFolder, "*.fni");
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds also parse the local init folder
-    dirSrc.ParseDirectory( L"init", L"*.fni" );
+    dirSrc.ParseDirectory("init", "*.fni");
 #endif
 
     // run fni in the Aux Init dir
     if (fpAuxInitDir)
     {   
-        dirSrc.ParseDirectory(fpAuxInitDir, "net*.fni" );   // connect to net first
-        dirSrc.ParseDirectory(fpAuxInitDir, "*.fni" );
+        dirSrc.ParseDirectory(fpAuxInitDir, "net*.fni");   // connect to net first
+        dirSrc.ParseDirectory(fpAuxInitDir, "*.fni");
     }
 
     fNumLoadingRooms--;

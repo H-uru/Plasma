@@ -235,25 +235,25 @@ void plResManager::IShutdown()
     fInited = false;
 }
 
-void plResManager::AddSinglePage(const char* pagePath)
+void plResManager::AddSinglePage(const plFileName& pagePath)
 {
     plRegistryPageNode* node = new plRegistryPageNode(pagePath);
     AddPage(node);
 }
 
-plRegistryPageNode* plResManager::FindSinglePage(const char* path) const
+plRegistryPageNode* plResManager::FindSinglePage(const plFileName& path) const
 {
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
     {
-        if ((it->second)->GetPagePath().CompareI(path) == 0)
+        if (it->second->GetPagePath().AsString().CompareI(path.AsString()) == 0)
             return it->second;
     }
 
     return nil;
 }
 
-void plResManager::RemoveSinglePage(const char* path)
+void plResManager::RemoveSinglePage(const plFileName& path)
 {
     plRegistryPageNode* node = FindSinglePage(path);
     if (node)
@@ -1383,16 +1383,14 @@ static void ICatPageNames(hsTArray<plRegistryPageNode*>& pages, char* buf, int b
             break;
         }
 
-        const char* pagePath = pages[i]->GetPagePath().c_str();
-        const char* pageFile = plFileUtils::GetFileName(pagePath);
-
-        if (strlen(buf) + strlen(pageFile) > bufSize - 5)
+        plString pageFile = pages[i]->GetPagePath().GetFileName();
+        if (strlen(buf) + pageFile.GetSize() > bufSize - 5)
         {
             strcat(buf, "...\n");
             break;
         }
 
-        strcat(buf, pageFile);
+        strcat(buf, pageFile.c_str());
         strcat(buf, "\n");
     }
 }

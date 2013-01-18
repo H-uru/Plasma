@@ -78,7 +78,7 @@ protected:
     int fStaticLoadedTypes; // The number of key types that have all their keys loaded
 
     PageCond    fValid;         // Condition of the page
-    plString    fPath;          // Path to the page file
+    plFileName  fPath;          // Path to the page file
     plPageInfo  fPageInfo;      // Info about this page
 
     hsBufferedStream fStream;   // Stream for reading/writing our page
@@ -93,10 +93,11 @@ protected:
 
 public:
     // For reading a page off disk
-    plRegistryPageNode(const plString& path);
+    plRegistryPageNode(const plFileName& path);
 
     // For creating a new page.
-    plRegistryPageNode(const plLocation& location, const plString& age, const plString& page, const plString& dataPath);
+    plRegistryPageNode(const plLocation& location, const plString& age,
+                       const plString& page, const plFileName& dataPath);
     ~plRegistryPageNode();
 
     bool IsValid() const { return fValid == kPageOk; }
@@ -143,7 +144,7 @@ public:
     void Write();
     void DeleteSource();
 
-    const plString& GetPagePath() const { return fPath; }
+    const plFileName& GetPagePath() const { return fPath; }
 };
 
 #endif // plRegistryNode_h_inc

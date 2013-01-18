@@ -60,7 +60,9 @@ protected:
     Validate fHeader;
     std::vector<uint8_t> fHeaderCache;
 
-    std::wstring fFilename, fMode; // needed for rewind function
+    // needed for rewind function
+    plFileName fFilename;
+    const char* fMode;
 
     int IValidateGzHeader(uint32_t byteCount, const void* buffer);
 
@@ -68,8 +70,7 @@ public:
     plZlibStream();
     virtual ~plZlibStream();
 
-    virtual bool     Open(const char* filename, const char* mode);
-    virtual bool     Open(const wchar_t* filename, const wchar_t* mode);
+    virtual bool     Open(const plFileName& filename, const char* mode);
     virtual bool     Close();
     virtual uint32_t Write(uint32_t byteCount, const void* buffer);
 

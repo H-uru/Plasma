@@ -55,6 +55,7 @@ class plRegistryDataStream;
 class plResAgeHolder;
 class plResManagerHelper;
 class plDispatch;
+class plFileName;
 
 // plProgressProc is a proc called every time an object loads, to keep a progress bar for
 // loading ages up-to-date.
@@ -70,9 +71,9 @@ public:
     void SetDataPath(const char* path) { fDataPath = path; }
 
     // Mainly for external tools.
-    void                AddSinglePage(const char* path);
-    plRegistryPageNode* FindSinglePage(const char* path) const;
-    void                RemoveSinglePage(const char* path);
+    void                AddSinglePage(const plFileName& path);
+    plRegistryPageNode* FindSinglePage(const plFileName& path) const;
+    void                RemoveSinglePage(const plFileName& path);
 
     //---------------------------
     //  Load and Unload

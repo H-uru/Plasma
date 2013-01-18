@@ -42,10 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plProduct.h"
 #include "pnEncryption/plChecksum.h"
+#include "plFileSystem.h"
 
 #include <stdio.h>
 
-int main (int argc, char ** argv) {
+int main (int argc, const char ** argv) {
 
     if (argc < 2) {
         fprintf(stderr, "ERROR: Please specify filename.\n");

@@ -418,40 +418,28 @@ void plProfileManagerFull::IPrintGroup(hsStream* s, const char* groupName, bool 
     }
 }
 
-void plProfileManagerFull::LogStats(const char* ageName, const char* spawnName)
+void plProfileManagerFull::LogStats(const plString& ageName, const plString& spawnName)
 {
     fLogStats = true;
-    wchar_t* temp = hsStringToWString(ageName);
-    fLogAgeName = temp;
-    delete [] temp;
+    fLogAgeName = ageName;
     fLogSpawnName = spawnName;
 }
 
-const wchar_t* plProfileManagerFull::GetProfilePath()
+plFileName plProfileManagerFull::GetProfilePath()
 {
-    static wchar_t profilePath[MAX_PATH];
-    static bool initialized = false;
+    static plFileName profilePath;
 
-    if (!initialized)
+    if (!profilePath.IsValid())
     {
-        initialized = true;
-
         plUnifiedTime curTime = plUnifiedTime::GetCurrent(plUnifiedTime::kLocal);
 
-        PathGetUserDirectory(profilePath, arrsize(profilePath));
-        PathAddFilename(profilePath, profilePath, L"Profile", arrsize(profilePath));
-        plFileUtils::CreateDir(profilePath);
-    
-        wchar_t buff[256];
-        hsSnwprintf(buff, 256, L"%02d-%02d-%04d_%02d-%02d//",
-            curTime.GetMonth(),
-            curTime.GetDay(),
-            curTime.GetYear(),
-            curTime.GetHour(),
-            curTime.GetMinute());
+        profilePath = plFileName::Join(plFileSystem::GetUserDataPath(), "Profile",
+            plString::Format("%02d-%02d-%04d_%02d-%02d",
+                             curTime.GetMonth(), curTime.GetDay(),
+                             curTime.GetYear(), curTime.GetHour(),
+                             curTime.GetMinute()));
 
-        PathAddFilename(profilePath, profilePath, buff, arrsize(profilePath));
-        plFileUtils::CreateDir(profilePath);
+        plFileSystem::CreateDir(profilePath, true);
     }
 
     return profilePath;
@@ -459,13 +447,12 @@ const wchar_t* plProfileManagerFull::GetProfilePath()
 
 void plProfileManagerFull::ILogStats()
 {
-    wchar_t statFilename[256];
-    hsSnwprintf(statFilename, 256, L"%s%s.csv", GetProfilePath(), fLogAgeName.c_str());
+    plFileName statFilename = plFileName::Join(GetProfilePath(), fLogAgeName + ".csv");
 
-    bool exists = plFileUtils::FileExists(statFilename);
+    bool exists = plFileInfo(statFilename).Exists();
 
     hsUNIXStream s;
-    if (s.Open(statFilename, L"ab"))
+    if (s.Open(statFilename, "ab"))
     {
         GroupSet groups;
         GetGroups(groups);
@@ -474,7 +461,7 @@ void plProfileManagerFull::ILogStats()
 
         if (!exists)
         {
-            const char* kSpawn = "Spawn";
+            static const char kSpawn[] = "Spawn";
             s.Write(strlen(kSpawn), kSpawn);
             s.WriteByte(',');
 
@@ -487,7 +474,7 @@ void plProfileManagerFull::ILogStats()
             s.WriteByte('\n');
         }
 
-        s.Write(fLogSpawnName.length(), fLogSpawnName.c_str());
+        s.Write(fLogSpawnName.GetSize(), fLogSpawnName.c_str());
         s.WriteByte(',');
 
         for (it = groups.begin(); it != groups.end(); it++)
@@ -502,7 +489,7 @@ void plProfileManagerFull::ILogStats()
     }
 
     fLogStats = false;
-    fLogAgeName = L"";
+    fLogAgeName = "";
     fLogSpawnName = "";
 }
 

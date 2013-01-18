@@ -5514,8 +5514,8 @@ void NetCliAuthAccountActivateRequest (
 
 //============================================================================
 void NetCliAuthFileListRequest (
-    const wchar_t                         dir[],
-    const wchar_t                         ext[],
+    const wchar_t                       dir[],
+    const wchar_t                       ext[],
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 ) {
@@ -5530,7 +5530,7 @@ void NetCliAuthFileListRequest (
 
 //============================================================================
 void NetCliAuthFileRequest (
-    const wchar_t                     filename[],
+    const wchar_t                   filename[],
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param

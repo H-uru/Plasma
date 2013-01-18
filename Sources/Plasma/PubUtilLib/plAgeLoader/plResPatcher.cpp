@@ -59,25 +59,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plResDownloadStream : public plZlibStream
 {
     plOperationProgress* fProgress;
-    char* fFilename;
+    plFileName fFilename;
     bool fIsZipped;
 
 public:
-    plResDownloadStream(plOperationProgress* prog, const wchar_t* reqFile)
-        : fProgress(prog), fFilename(nil)
+    plResDownloadStream(plOperationProgress* prog, const plFileName& reqFile)
+        : fProgress(prog)
     { 
-        fIsZipped = wcscmp(plFileUtils::GetFileExt(reqFile), L"gz") == 0;
+        fIsZipped = reqFile.GetFileExt().CompareI("gz") == 0;
     }
 
-    virtual ~plResDownloadStream()
+    virtual bool Open(const plFileName& filename, const char* mode)
     {
-        if (fFilename)
-            delete[] fFilename;
-    }
-
-    virtual bool Open(const char* filename, const char* mode)
-    {
-        fFilename = hsStrcpy(filename);
+        fFilename = filename;
         return plZlibStream::Open(filename, mode);
     }
 
@@ -91,7 +85,7 @@ public:
     }
 
     bool IsZipped() const { return fIsZipped; }
-    void Unlink() const { plFileUtils::RemoveFile(fFilename); }
+    void Unlink() const { plFileSystem::Unlink(fFilename); }
 };
 
 /////////////////////////////////////////////////////////////////////////////
@@ -140,56 +134,51 @@ static void FileDownloaded(
 }
 
 static void ManifestDownloaded(
-    ENetError                     result, 
-    void*                         param, 
-    const wchar_t                 group[], 
-    const NetCliFileManifestEntry manifest[], 
-    uint32_t                        entryCount)
+    ENetError                     result,
+    void*                         param,
+    const wchar_t                 group[],
+    const NetCliFileManifestEntry manifest[],
+    uint32_t                      entryCount)
 {
     plResPatcher* patcher = (plResPatcher*)param;
-    char* name = hsWStringToString(group);
+    plString name = plString::FromWchar(group);
     if (IS_NET_SUCCESS(result))
-        PatcherLog(kInfo, "    Downloaded manifest %s", name);
+        PatcherLog(kInfo, "    Downloaded manifest %s", name.c_str());
     else {
-        PatcherLog(kError, "    Failed to download manifest %s", name);
+        PatcherLog(kError, "    Failed to download manifest %s", name.c_str());
         patcher->Finish(false);
-        delete[] name;
         return;
     }
 
     for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliFileManifestEntry mfs = manifest[i];
-        char* fileName = hsWStringToString(mfs.clientName);
+        plFileName fileName = plString::FromWchar(mfs.clientName);
+        plFileName downloadName = plString::FromWchar(mfs.downloadName);
 
         // See if the files are the same
         // 1. Check file size before we do time consuming md5 operations
         // 2. Do wasteful md5. We should consider implementing a CRC instead.
-        if (plFileUtils::GetFileSize(fileName) == mfs.fileSize)
+        if (plFileInfo(fileName).FileSize() == mfs.fileSize)
         {
             plMD5Checksum cliMD5(fileName);
             plMD5Checksum srvMD5;
-            char* eapSucksString = hsWStringToString(mfs.md5);
-            srvMD5.SetFromHexString(eapSucksString);
-            delete[] eapSucksString;
+            srvMD5.SetFromHexString(plString::FromWchar(mfs.md5).c_str());
 
             if (cliMD5 == srvMD5)
-            {
-                delete[] fileName;
                 continue;
-            } else
-                PatcherLog(kInfo, "    Enqueueing %s: MD5 Checksums Differ", fileName);
+            else
+                PatcherLog(kInfo, "    Enqueueing %s: MD5 Checksums Differ", fileName.AsString().c_str());
         } else
-            PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName);
+            PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName.AsString().c_str());
 
         // If we're still here, then we need to update the file.
         float size = mfs.zipSize ? (float)mfs.zipSize : (float)mfs.fileSize;
         patcher->GetProgress()->SetLength(size + patcher->GetProgress()->GetMax());
-        patcher->RequestFile(mfs.downloadName, mfs.clientName);
+        patcher->RequestFile(downloadName, fileName);
     }
 
     patcher->IssueRequest();
-    delete[] name;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -234,25 +223,24 @@ void plResPatcher::IssueRequest()
         plString title;
         if (req.fType == kManifest)
         {
-            PatcherLog(kMajorStatus, "    Downloading manifest... %S", req.fFile.c_str());
-            title = plString::Format("Checking %S for updates...", req.fFile.c_str());
-            NetCliFileManifestRequest(ManifestDownloaded, this, req.fFile.c_str());
+            PatcherLog(kMajorStatus, "    Downloading manifest... %s", req.fFile.AsString().c_str());
+            title = plString::Format("Checking %s for updates...", req.fFile.AsString().c_str());
+            NetCliFileManifestRequest(ManifestDownloaded, this, req.fFile.AsString().ToWchar());
         } else if (req.fType == kFile) {
-            PatcherLog(kMajorStatus, "    Downloading file... %S", req.fFriendlyName.c_str());
-            title = plString::Format("Downloading... %S", plFileUtils::GetFileName(req.fFriendlyName.c_str()));
+            PatcherLog(kMajorStatus, "    Downloading file... %s", req.fFriendlyName.AsString().c_str());
+            title = plString::Format("Downloading... %s", req.fFriendlyName.GetFileName().c_str());
 
             // If this is a PRP, we need to unload it from the ResManager
 
-            plString filename = plString::FromWchar(req.fFriendlyName.c_str());
-            if (stricmp(plFileUtils::GetFileExt(filename.c_str()), "prp") == 0)
-                ((plResManager*)hsgResMgr::ResMgr())->RemoveSinglePage(filename.c_str());
+            if (req.fFriendlyName.GetFileExt().CompareI("prp") == 0)
+                ((plResManager*)hsgResMgr::ResMgr())->RemoveSinglePage(req.fFriendlyName);
 
-            plFileUtils::EnsureFilePathExists(req.fFriendlyName.c_str());
-            plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile.c_str());
-            if (stream->Open_TEMP(filename, "wb"))
-                NetCliFileDownloadRequest(req.fFile.c_str(), stream, FileDownloaded, this);
+            plFileSystem::CreateDir(req.fFriendlyName.StripFileName(), true);
+            plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile);
+            if (stream->Open(req.fFriendlyName, "wb"))
+                NetCliFileDownloadRequest(req.fFile.AsString().ToWchar(), stream, FileDownloaded, this);
             else {
-                PatcherLog(kError, "    Unable to create file %s", filename.c_str());
+                PatcherLog(kError, "    Unable to create file %s", req.fFriendlyName.AsString().c_str());
                 Finish(false);
             }
         }
@@ -282,12 +270,12 @@ void plResPatcher::Finish(bool success)
     pMsg->Send(); // whoosh... off it goes
 }
 
-void plResPatcher::RequestFile(const wchar_t* srvName, const wchar_t* cliName)
+void plResPatcher::RequestFile(const plFileName& srvName, const plFileName& cliName)
 {
     fRequests.push(Request(srvName, kFile, cliName));
 }
 
-void plResPatcher::RequestManifest(const wchar_t* age)
+void plResPatcher::RequestManifest(const plString& age)
 {
     fRequests.push(Request(age, kManifest));
 }

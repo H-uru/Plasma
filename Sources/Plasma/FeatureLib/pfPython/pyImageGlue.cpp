@@ -152,24 +152,9 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsJPEG, args)
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyUnicode_Check(filenameObj))
-    {
-        int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
-        text[strLen] = L'\0';
-        self->fThis->SaveAsJPEG(text, quality);
-        delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(filenameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        self->fThis->SaveAsJPEG(wText, quality);
-        delete [] wText;
-        PYTHON_RETURN_NONE;
+    if (PyString_CheckEx(filenameObj)) {
+        self->fThis->SaveAsJPEG(PyString_AsStringEx(filenameObj), quality);
+        Py_RETURN_NONE;
     }
     else
     {
@@ -187,23 +172,9 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsPNG, args)
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyUnicode_Check(filenameObj))
+    if (PyString_CheckEx(filenameObj))
     {
-        int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
-        text[strLen] = L'\0';
-        self->fThis->SaveAsPNG(text);
-        delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(filenameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        self->fThis->SaveAsPNG(wText);
-        delete [] wText;
+        self->fThis->SaveAsPNG(PyString_AsStringEx(filenameObj));
         PYTHON_RETURN_NONE;
     }
     else
@@ -290,8 +261,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadJPEGFromDisk, args, "Params: filename,widt
 
     if (PyString_CheckEx(filenameObj))
     {
-        plString text = PyString_AsStringEx(filenameObj);
-        PyObject* ret = pyImage::LoadJPEGFromDisk(text.ToWchar(), width, height);
+        plFileName filename = PyString_AsStringEx(filenameObj);
+        PyObject* ret = pyImage::LoadJPEGFromDisk(filename, width, height);
         return ret;
     }
     else
@@ -312,8 +283,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadPNGFromDisk, args, "Params: filename,width
     }
     if (PyString_CheckEx(filenameObj))
     {
-        plString text = PyString_AsStringEx(filenameObj);
-        PyObject* ret = pyImage::LoadPNGFromDisk(text.ToWchar(), width, height);
+        plFileName filename = PyString_AsStringEx(filenameObj);
+        PyObject* ret = pyImage::LoadPNGFromDisk(filename, width, height);
         return ret;
     }
     else

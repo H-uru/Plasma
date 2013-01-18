@@ -232,20 +232,12 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
     return newMipmap;
 }
 
-plMipmap*   plJPEG::ReadFromFile( const char *fileName )
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    plMipmap* retVal = ReadFromFile(wFilename);
-    delete [] wFilename;
-    return retVal;
-}
-
-plMipmap*   plJPEG::ReadFromFile( const wchar_t *fileName )
+plMipmap*   plJPEG::ReadFromFile( const plFileName &fileName )
 {
     // we use a stream because the IJL can't handle unicode
     hsRAMStream tempstream;
     hsUNIXStream in;
-    if (!in.Open(fileName, L"rb"))
+    if (!in.Open(fileName, "rb"))
         return nil;
 
     // The stream reader for JPEGs expects a 32-bit size at the start,
@@ -360,20 +352,12 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
     return result;
 }
 
-bool    plJPEG::WriteToFile( const char *fileName, plMipmap *sourceData )
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool retVal = WriteToFile(wFilename, sourceData);
-    delete [] wFilename;
-    return retVal;
-}
-
-bool    plJPEG::WriteToFile( const wchar_t *fileName, plMipmap *sourceData )
+bool    plJPEG::WriteToFile( const plFileName &fileName, plMipmap *sourceData )
 {
     // we use a stream because the IJL can't handle unicode
     hsRAMStream tempstream;
     hsUNIXStream out;
-    if (!out.Open(fileName, L"wb"))
+    if (!out.Open(fileName, "wb"))
         return false;
     bool ret = IWrite(sourceData, &tempstream);
     if (ret)

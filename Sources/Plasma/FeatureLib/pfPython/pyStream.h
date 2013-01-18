@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 class hsStream;
+class plFileName;
 
 class pyStream
 {
@@ -75,7 +76,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    virtual bool Open(const wchar_t* fileName, const wchar_t* flags);
+    virtual bool Open(const plFileName& fileName, const char* flags);
     virtual std::vector<std::string> ReadLines();
     virtual bool WriteLines(const std::vector<std::string> & lines);
     virtual void Close();

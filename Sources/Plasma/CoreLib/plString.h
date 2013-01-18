@@ -284,6 +284,14 @@ public:
         return str;
     }
 
+    /** Create a new plString object from the UTF-32 formatted data in \a utf32. */
+    static inline plString FromUtf32(const UniChar *utf32, size_t size = kSizeAuto)
+    {
+        plString str;
+        str.IConvertFromUtf32(utf32, size);
+        return str;
+    }
+
     /** Create a new plString object from the ISO-8859-1 formatted data in \a astr. */
     static inline plString FromIso8859_1(const char *astr, size_t size = kSizeAuto)
     {

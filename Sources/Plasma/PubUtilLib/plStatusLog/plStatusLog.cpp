@@ -87,21 +87,8 @@ plStatusLogMgr::plStatusLogMgr()
     fDrawer = nil;
     fLastLogChangeTime = 0;
 
-#if HS_BUILD_FOR_WIN32
-    SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
-//#elif HS_BUILD_FOR_DARWIN
-// Do some Mac specific thing here eventually
-#else
-    const char* home = getenv("HOME");
-    if (!home) home = "";
-    wchar_t* temp = hsStringToWString(home);
-    swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
-    delete[] temp;
-#endif
-
-    plFileUtils::ConcatFileName(fBasePath, plProduct::LongName().ToWchar());
-    plFileUtils::ConcatFileName(fBasePath, L"Log");
-    plFileUtils::EnsureFilePathExists(fBasePath);
+    // Ensure the log path is created
+    plFileSystem::GetLogPath();
 }
 
 plStatusLogMgr::~plStatusLogMgr()

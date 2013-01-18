@@ -117,21 +117,11 @@ void plEncryptedStream::IDecipher(uint32_t* const v)
     v[0]=y; v[1]=z;
 }
 
-bool plEncryptedStream::Open(const char* name, const char* mode)
+bool plEncryptedStream::Open(const plFileName& name, const char* mode)
 {
-    wchar_t* wName = hsStringToWString(name);
-    wchar_t* wMode = hsStringToWString(mode);
-    bool ret = Open(wName, wMode);
-    delete [] wName;
-    delete [] wMode;
-    return ret;
-}
-
-bool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
-{
-    if (wcscmp(mode, L"rb") == 0)
+    if (strcmp(mode, "rb") == 0)
     {
-        fRef = hsWFopen(name, mode);
+        fRef = plFileSystem::Open(name, mode);
         fPosition = 0;
 
         if (!fRef)
@@ -156,11 +146,10 @@ bool plEncryptedStream::Open(const wchar_t* name, const wchar_t* mode)
 
         return true;
     }
-    else if (wcscmp(mode, L"wb") == 0)
+    else if (strcmp(mode, "wb") == 0)
     {
         fRAMStream = new hsVectorStream;
-        fWriteFileName = new wchar_t[wcslen(name) + 1];
-        wcscpy(fWriteFileName, name);
+        fWriteFileName = name;
         fPosition = 0;
 
         fOpenMode = kOpenWrite;
@@ -197,12 +186,7 @@ bool plEncryptedStream::Close()
         fRAMStream = nil;
     }
 
-    if (fWriteFileName)
-    {
-        delete [] fWriteFileName;
-        fWriteFileName = nil;
-    }
-
+    fWriteFileName = plString::Null;
     fActualFileSize = 0;
     fBufferedStream = false;
     fOpenMode = kOpenFail;
@@ -389,11 +373,11 @@ uint32_t plEncryptedStream::Write(uint32_t bytes, const void* buffer)
     return fRAMStream->Write(bytes, buffer);
 }
 
-bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar_t* outputFile)
+bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const plFileName& outputFile)
 {
     hsUNIXStream outputStream;
 
-    if (!outputStream.Open(outputFile, L"wb"))
+    if (!outputStream.Open(outputFile, "wb"))
         return false;
 
     outputStream.Write(kMagicStringLen, kMagicString);
@@ -439,15 +423,7 @@ bool plEncryptedStream::IWriteEncypted(hsStream* sourceStream, const wchar_t* ou
     return true;
 }
 
-bool plEncryptedStream::FileEncrypt(const char* fileName)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool ret = FileEncrypt(wFilename);
-    delete [] wFilename;
-    return ret;
-}
-
-bool plEncryptedStream::FileEncrypt(const wchar_t* fileName)
+bool plEncryptedStream::FileEncrypt(const plFileName& fileName)
 {
     hsUNIXStream sIn;
     if (!sIn.Open(fileName))
@@ -462,36 +438,28 @@ bool plEncryptedStream::FileEncrypt(const wchar_t* fileName)
     sIn.Rewind();
 
     plEncryptedStream sOut;
-    bool wroteEncrypted = sOut.IWriteEncypted(&sIn, L"crypt.dat");
+    bool wroteEncrypted = sOut.IWriteEncypted(&sIn, "crypt.dat");
 
     sIn.Close();
     sOut.Close();
 
     if (wroteEncrypted)
     {
-        plFileUtils::RemoveFile(fileName);
-        plFileUtils::FileMove(L"crypt.dat", fileName);
+        plFileSystem::Unlink(fileName);
+        plFileSystem::Move("crypt.dat", fileName);
     }
 
     return true;
 }
 
-bool plEncryptedStream::FileDecrypt(const char* fileName)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool ret = FileDecrypt(wFilename);
-    delete [] wFilename;
-    return ret;
-}
-
-bool plEncryptedStream::FileDecrypt(const wchar_t* fileName)
+bool plEncryptedStream::FileDecrypt(const plFileName& fileName)
 {
     plEncryptedStream sIn;
     if (!sIn.Open(fileName))
         return false;
 
     hsUNIXStream sOut;
-    if (!sOut.Open(L"crypt.dat", L"wb"))
+    if (!sOut.Open("crypt.dat", "wb"))
     {
         sIn.Close();
         return false;
@@ -508,32 +476,23 @@ bool plEncryptedStream::FileDecrypt(const wchar_t* fileName)
     sIn.Close();
     sOut.Close();
 
-    plFileUtils::RemoveFile(fileName);
-    plFileUtils::FileMove(L"crypt.dat", fileName);
+    plFileSystem::Unlink(fileName);
+    plFileSystem::Move("crypt.dat", fileName);
 
     return true;
 }
 
 bool plEncryptedStream::ICheckMagicString(FILE* fp)
 {
-    char magicString[kMagicStringLen+1];
+    char magicString[kMagicStringLen];
     fread(&magicString, kMagicStringLen, 1, fp);
-    magicString[kMagicStringLen] = '\0';
-    return strcmp(magicString, kMagicString) == 0 ||
-           strcmp(magicString, kOldMagicString) == 0;
+    return memcmp(magicString, kMagicString, kMagicStringLen) == 0 ||
+           memcmp(magicString, kOldMagicString, kMagicStringLen) == 0;
 }
 
-bool plEncryptedStream::IsEncryptedFile(const char* fileName)
+bool plEncryptedStream::IsEncryptedFile(const plFileName& fileName)
 {
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool ret = IsEncryptedFile(wFilename);
-    delete [] wFilename;
-    return ret;
-}
-
-bool plEncryptedStream::IsEncryptedFile(const wchar_t* fileName)
-{
-    FILE* fp = hsWFopen(fileName, L"rb");
+    FILE* fp = plFileSystem::Open(fileName, "rb");
     if (!fp)
         return false;
 
@@ -544,15 +503,7 @@ bool plEncryptedStream::IsEncryptedFile(const wchar_t* fileName)
     return isEncrypted;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFile(const char* fileName, uint32_t* cryptKey)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    hsStream* ret = OpenEncryptedFile(wFilename, cryptKey);
-    delete [] wFilename;
-    return ret;
-}
-
-hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, uint32_t* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey)
 {
 
     bool isEncrypted = IsEncryptedFile(fileName);
@@ -563,19 +514,11 @@ hsStream* plEncryptedStream::OpenEncryptedFile(const wchar_t* fileName, uint32_t
     else
         s = new hsUNIXStream;
 
-    s->Open(fileName, L"rb");
+    s->Open(fileName, "rb");
     return s;
 }
 
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const char* fileName, uint32_t* cryptKey)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    hsStream* ret = OpenEncryptedFileWrite(wFilename, cryptKey);
-    delete [] wFilename;
-    return ret;
-}
-
-hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey)
+hsStream* plEncryptedStream::OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey)
 {
     hsStream* s = nil;
     if (IsEncryptedFile(fileName))
@@ -583,6 +526,6 @@ hsStream* plEncryptedStream::OpenEncryptedFileWrite(const wchar_t* fileName, uin
     else
         s = new hsUNIXStream;
 
-    s->Open(fileName, L"wb");
+    s->Open(fileName, "wb");
     return s;
 }

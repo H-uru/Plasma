@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plVersion.h"
 
-plRegistryPageNode::plRegistryPageNode(const plString& path)
+plRegistryPageNode::plRegistryPageNode(const plFileName& path)
     : fValid(kPageCorrupt)
     , fPath(path)
     , fDynLoadedTypes(0)
@@ -69,9 +69,9 @@ plRegistryPageNode::plRegistryPageNode(const plString& path)
     }
 }
 
-plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plString& age, const plString& page, const plString& dataPath)
+plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plString& age,
+                                       const plString& page, const plFileName& dataPath)
     : fValid(kPageOk)
-    , fPath(nil)
     , fPageInfo(location)
     , fDynLoadedTypes(0)
     , fStaticLoadedTypes(0)
@@ -82,7 +82,8 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
 
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    fPath = plString::Format("%s" PATH_SEPARATOR_STR "%s_District_%s.prp", dataPath.c_str(), fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str());
+    fPath = plFileName::Join(dataPath, plString::Format("%s_District_%s.prp",
+                fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str()));
 }
 
 plRegistryPageNode::~plRegistryPageNode()
@@ -129,7 +130,7 @@ hsStream* plRegistryPageNode::OpenStream()
 {
     if (fOpenRequests == 0)
     {
-        if (!fStream.Open_TEMP(fPath, "rb"))
+        if (!fStream.Open(fPath, "rb"))
             return nil;
     }
     fOpenRequests++;
@@ -220,7 +221,7 @@ void plRegistryPageNode::Write()
 {
     hsAssert(fOpenRequests == 0, "Trying to write while the page is open for reading");
 
-    if (!fStream.Open(fPath.c_str(), "wb"))
+    if (!fStream.Open(fPath, "wb"))
     {
         hsAssert(0, "Couldn't open file for writing");
         return;
@@ -400,6 +401,5 @@ plRegistryKeyList* plRegistryPageNode::IGetKeyList(uint16_t classType) const
 void plRegistryPageNode::DeleteSource()
 {
     hsAssert(fOpenRequests == 0, "Deleting a stream that's open for reading");
-    plFileUtils::RemoveFile(fPath.c_str());
+    plFileSystem::Unlink(fPath);
 }
-
