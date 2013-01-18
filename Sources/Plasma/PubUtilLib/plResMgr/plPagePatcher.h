@@ -34,6 +34,7 @@ namespace plPagePatcher
 {
     plRegistryPageNode* GeneratePatch(const plFileName& oldPage, const plFileName& newPage);
     plRegistryPageNode* PatchPage(const plFileName& oldpage, const plFileName& patchpage);
+    bool ValidatePatch(const plFileName& sourcePage, const plFileName& patchedPage);
     void WriteAndClear(plRegistryPageNode* const page, const plFileName& path);
 };
 

@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFileSystem.h"
 
-#include <iostream>
-
 #include "pnEncryption/plChecksum.h"
 #include "plResMgr/plPagePatcher.h"
 #include "plResMgr/plRegistryNode.h"
@@ -64,14 +62,12 @@ REGISTER_NONCREATABLE(plResPatcherMsg);
 bool g_Validate = false;
 plFileName g_OldPage, g_NewPage;
 plFileName g_PatchPage = "prp.pat";
+plStatusLog* g_Log;
 
-static void DoMd5(const plFileName& file, const char* tag, plMD5Checksum* md5=nullptr)
+static void DoMd5(const plFileName& file, const char* tag)
 {
-    plMD5Checksum hash;
-    if (!md5)
-        md5 = &hash;
-    md5->CalcFromFile(file);
-    std::cout << tag << " Page: " << md5->GetAsHexString() << std::endl;
+    plMD5Checksum hash(file);
+    g_Log->AddLineF("%s Page: %s", tag, hash.GetAsHexString());
 }
 
 static bool CheckFile(const plFileName& file)
@@ -81,9 +77,9 @@ static bool CheckFile(const plFileName& file)
 
 static void PrintUsage()
 {
-    std::cout << "plPatchUtil [-validate] <old> <new> [output]" << std::endl << std::endl;
-    std::cout << "Generates a patch for a given pair of plRegistryPageNodes" << std::endl;
-    std::cout << "Optionally will attempt to eat dogfood to test the implementation";
+    g_Log->AddLine("plPatchUtil [-validate] <old> <new> [output]\n");
+    g_Log->AddLine("Generates a patch for a given pair of plRegistryPageNodes");
+    g_Log->AddLine("Optionally will attempt to eat dogfood to test the implementation");
 }
 
 static bool ParseArguments(int argc, char** argv)
@@ -117,31 +113,30 @@ static bool ParseArguments(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    if (!ParseArguments(argc, argv))
-        return 1;
 
-    if (!CheckFile(g_OldPage))
-    {
-        std::cout << "File Not Found: " << g_OldPage.AsString().c_str();
-        return 1;
-    }
-    if (!CheckFile(g_NewPage))
-    {
-        std::cout << "File Not Found: " << g_NewPage.AsString().c_str();
-        return 1;
-    }
-
-    plStatusLogMgr::GetInstance().CreateStatusLog(
+    g_Log = plStatusLogMgr::GetInstance().CreateStatusLog(
         0,
         "patcher.log",
         plStatusLog::kStdout | plStatusLog::kDeleteForMe
     );
 
+    if (!ParseArguments(argc, argv))
+        return 1;
+
+    if (!CheckFile(g_OldPage))
+    {
+        g_Log->AddLineF("File Not Found: %s", g_OldPage.AsString().c_str());
+        return 1;
+    }
+    if (!CheckFile(g_NewPage))
+    {
+        g_Log->AddLineF("File Not Found: %s", g_NewPage.AsString().c_str());
+        return 1;
+    }
+
     // Spit out md5sums
     DoMd5(g_OldPage, "Old");
-    plMD5Checksum newMD5;
-    DoMd5(g_NewPage, "New", &newMD5);
-    std::cout << std::endl;
+    DoMd5(g_NewPage, "New");
 
     // Do the dirty.
     plRegistryPageNode* patch = plPagePatcher::GeneratePatch(g_OldPage, g_NewPage);
@@ -152,22 +147,18 @@ int main(int argc, char** argv)
 
     if (g_Validate)
     {
-        std::cout << std::endl;
         plFileName fn = g_PatchPage + ".prp";
         plRegistryPageNode* roundtrip = plPagePatcher::PatchPage(g_OldPage, g_PatchPage);
         if (!roundtrip)
             return 1;
         plPagePatcher::WriteAndClear(roundtrip, fn);
         delete roundtrip;
-        std::cout << std::endl;
 
-        // Verify hash
-        plMD5Checksum patchedMD5;
-        DoMd5(fn, "Validation", &patchedMD5);
-        if (newMD5 == patchedMD5)
-            std::cout << "Validation success!";
+        // Verification
+        if (plPagePatcher::ValidatePatch(g_NewPage, fn))
+            return 0;
         else
-            std::cout << "Validation FAILED";
+            return 1;
     }
 
     return 0;

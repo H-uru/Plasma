@@ -30,6 +30,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plBSDiffBuffer.h"
 #include "plDiffBuffer.h"
 #include "plFileSystem.h"
+#include "pnEncryption/plChecksum.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "plRegistryHelpers.h"
 #include "plRegistryNode.h"
@@ -306,6 +307,49 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
+class plValidatePatchIterator : public plRegistryKeyIterator
+{
+    plRegistryPageNode* fPage;
+
+public:
+    plValidatePatchIterator(plRegistryPageNode* const patched)
+        : fPage(patched)
+    { }
+
+    bool EatKey(const plKey& key)
+    {
+        plKeyImpPublic* srcKey = KeyToKeyImpPublic(key);
+        plKeyImpPublic* patchedKey = static_cast<plKeyImpPublic*>(fPage->FindKey(srcKey->GetUoid()));
+        PatcherLog(kMajorStatus, "\t%s", srcKey->GetUoid().StringIze().c_str());
+
+        plMD5Checksum srcMD5(srcKey->GetDataLen(), reinterpret_cast<uint8_t*>(srcKey->GetObjectPtr()));
+        PatcherLog(kStatus, "\t\tSource: %s", srcMD5.GetAsHexString());
+        plMD5Checksum patchedMD5;
+        if (patchedKey)
+        {
+            patchedMD5.Start();
+            patchedMD5.AddTo(patchedKey->GetDataLen(), reinterpret_cast<uint8_t*>(patchedKey->GetObjectPtr()));
+            patchedMD5.Finish();
+            PatcherLog(kStatus, "\t\tPatched: %s", patchedMD5.GetAsHexString());
+        }
+        else
+            PatcherLog(kStatus, "\t\tPatched: NULL KEY");
+
+        if (srcMD5 == patchedMD5)
+            PatcherLog(kStatus, "\t\tValidation Success!");
+        else
+            PatcherLog(kStatus, "\t\tValidation FAILED!");
+
+        // Should be sufficient to unload all the buffers. If not, your data really sucks.
+        srcKey->KillBuffer();
+        if (patchedKey)
+            patchedKey->KillBuffer();
+        return true;
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+
 class plWriteAndClearIterator : public plWriteIterator
 {
 public:
@@ -320,7 +364,7 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-static inline bool ICheckPages(const plRegistryPageNode* const p1, const plRegistryPageNode* const p2)
+static bool ICheckPages(const plRegistryPageNode* const p1, const plRegistryPageNode* const p2)
 {
     const plLocation& l1 = p1->GetPageInfo().GetLocation();
     const plLocation& l2 = p2->GetPageInfo().GetLocation();
@@ -469,6 +513,42 @@ plRegistryPageNode* plPagePatcher::PatchPage(const plFileName& oldpage, const pl
     // Done!
     PatcherLog(kHeader, "--- Patch Successful for %s ---", patchnode.GetPageInfo().StringIze().c_str());
     return newnode;
+}
+
+bool plPagePatcher::ValidatePatch(const plFileName& sourcePage, const plFileName& patchedPage)
+{
+    // Step 1: Basic MD5 of both files
+    plMD5Checksum sourceMD5(sourcePage.AsString().c_str());
+    plMD5Checksum patchedMD5(patchedPage.AsString().c_str());
+
+    PatcherLog(kMajorStatus, "Source Page: %s\nPatched Page: %s",
+                sourceMD5.GetAsHexString(),
+                patchedMD5.GetAsHexString());
+
+    // Step 2: Load pages for detailed validation
+    plRegistryPageNode source;
+    if (!IOpenPage(source, sourcePage))
+        return false;
+    plRegistryPageNode patched;
+    if (!IOpenPage(patched, patchedPage))
+        return false;
+    PatcherLog(kHeader, "--- Begin Validation for %s ---", source.GetPageInfo().StringIze().c_str());
+
+    // Step 3: Load all keys
+    source.LoadKeys();
+    patched.LoadKeys();
+
+    // Step 3.1: Load Object Buffers
+    ILoadObjectBuffers(&source);
+    ILoadObjectBuffers(&patched);
+
+    // Step 4: Iterate through the keys in the source file and compare with those in the patched file
+    //         Unlike the other steps like this one, this one does totally kill off object buffers
+    plValidatePatchIterator iter(&patched);
+    source.IterateKeys(&iter);
+
+    PatcherLog(kHeader, "--- End Validation for %s ---", source.GetPageInfo().StringIze().c_str());
+    return false; // file checksums are different so it failed anyway
 }
 
 void plPagePatcher::WriteAndClear(plRegistryPageNode* const page, const plFileName& path)
