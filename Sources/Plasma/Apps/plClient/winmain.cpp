@@ -305,11 +305,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                 bool active = (LOWORD(wParam) == WA_ACTIVE || LOWORD(wParam) == WA_CLICKACTIVE);
                 bool minimized = (HIWORD(wParam) != 0);
 
-                DebugMsgF("Got WM_ACTIVATE, active=%s, minimized=%s, clicked=%s",
-                    active ? "true" : "false",
-                    minimized ? "true" : "false",
-                    (LOWORD(wParam) == WA_CLICKACTIVE) ? "true" : "false");
-
                 if (gClient && !minimized && !gClient->GetDone())
                 {
                     gClient->WindowActivate(active);
@@ -324,7 +319,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // Let go of the mouse if the window is being moved.
         case WM_ENTERSIZEMOVE:
-            DebugMsgF("Got WM_ENTERSIZEMOVE%s", gClient ? "" : ", no client, ignoring");
             gDragging = true;
             if( gClient )
                 gClient->WindowActivate(false);
@@ -332,7 +326,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
         // Redo the mouse capture if the window gets moved
         case WM_EXITSIZEMOVE:
-            DebugMsgF("Got WM_EXITSIZEMOVE%s", gClient ? "" : ", no client, ignoring");
             gDragging = false;
             if( gClient )
                 gClient->WindowActivate(true);
@@ -342,12 +335,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         // and his cool program that bumps windows out from under the taskbar)
         case WM_MOVE:
             if (!gDragging && gClient && gClient->GetInputManager())
-            {
                 gClient->GetInputManager()->Activate(true);
-                DebugMsgF("Got WM_MOVE");
-            }
-            else
-                DebugMsgF("Got WM_MOVE, but ignoring");
             break;
 
         /// Resize the window
@@ -358,7 +346,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         //  size, not when the window is minimized or restored)
         case WM_SIZING:
             {
-                DebugMsgF("Got WM_SIZING");
                 RECT r;
                 ::GetClientRect(hWnd, &r);
                 gClient->GetPipeline()->Resize(r.right - r.left, r.bottom - r.top);
@@ -369,14 +356,12 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             // Let go of the mouse if the window is being minimized
             if (wParam == SIZE_MINIMIZED)
             {
-                DebugMsgF("Got WM_SIZE, SIZE_MINIMIZED%s", gClient ? "" : ", but no client, ignoring");
                 if (gClient)
                     gClient->WindowActivate(false);
             }
             // Redo the mouse capture if the window gets restored
             else if (wParam == SIZE_RESTORED)
             {
-                DebugMsgF("Got WM_SIZE, SIZE_RESTORED%s", gClient ?  "" : ", but no client, ignoring");
                 if (gClient)
                     gClient->WindowActivate(true);
             }
@@ -653,32 +638,40 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
 //
 // For error logging
 //
-static FILE* gDebugFile=NULL;
-void DebugMessageProc(const char* msg)
+static plStatusLog* s_DebugLog = nullptr;
+static void _DebugMessageProc(const char* msg)
 {
-    OutputDebugString(msg);
-    OutputDebugString("\n");
-    if (gDebugFile != NULL)
-    {
-        fprintf(gDebugFile, "%s\n", msg);
-        fflush(gDebugFile);
-    }
+#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+    s_DebugLog->AddLine(msg, plStatusLog::kRed);
+#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
-void DebugMsgF(const char* format, ...)
+static void _StatusMessageProc(const char* msg)
 {
-#ifndef PLASMA_EXTERNAL_RELEASE
+#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+    s_DebugLog->AddLine(msg);
+#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+}
+
+static void DebugMsgF(const char* format, ...)
+{
+#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     va_list args;
     va_start(args, format);
-
-    char buf[256];
-    int numWritten = _vsnprintf(buf, sizeof(buf), format, args);
-    hsAssert(numWritten > 0, "Buffer too small");
-
+    s_DebugLog->AddLineV(plStatusLog::kYellow, format, args);
     va_end(args);
+#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+}
 
-    DebugMessageProc(buf);
-#endif
+static void DebugInit()
+{
+#if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+    plStatusLogMgr& mgr = plStatusLogMgr::GetInstance();
+    s_DebugLog = mgr.CreateStatusLog(30, "plasmadbg.log", plStatusLog::kFilledBackground |
+                 plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop | plStatusLog::kTimestamp);
+    hsSetDebugMessageProc(_DebugMessageProc);
+    hsSetStatusMessageProc(_StatusMessageProc);
+#endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
 static void AuthFailedStrings (ENetError authError,
@@ -1203,6 +1196,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
 
+#include "plResMgr/plVersion.h"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
     PF_CONSOLE_INIT_ALL()
@@ -1398,22 +1392,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     //
     // Set up to log errors by using hsDebugMessage
     //
-    gDebugFile = NULL;
-    if ( !plStatusLog::fLoggingOff )
-    {
-        wchar_t fileAndPath[MAX_PATH];
-        PathGetLogDirectory(fileAndPath, arrsize(fileAndPath));
-        PathAddFilename(fileAndPath, fileAndPath, L"plasmalog.txt", arrsize(fileAndPath));
-        gDebugFile = _wfopen(fileAndPath, L"wt");
-        hsAssert(gDebugFile != NULL, "Error creating debug file plasmalog.txt");
-        hsSetDebugMessageProc(DebugMessageProc);
-        if (gDebugFile != NULL)
-        {
-            fputs(plProduct::ProductString().c_str(), gDebugFile);
-            fputs("\n", gDebugFile);
-            fflush(gDebugFile);
-        }
-    }
+    DebugInit();
+    DebugMsgF("Plasma 2.0.%i.%i - %s", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString().c_str());
 
     for (;;) {
         // Create Window
@@ -1485,32 +1465,17 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         break;
     }
 
-#ifndef _DEBUG
-    try
+    //
+    // Cleanup
+    //
+    if (gClient)
     {
-#endif
-        // 
-        // Cleanup
-        //
-        if (gClient)
-        {
-            gClient->Shutdown(); // shuts down PhysX for us
-            gClient = nil;
-        }
-        hsAssert(hsgResMgr::ResMgr()->RefCnt()==1, "resMgr has too many refs, expect mem leaks");
-        hsgResMgr::Shutdown();  // deletes fResMgr
-        DeInitNetClientComm();
-#ifndef _DEBUG
-    } catch (...)
-    {
-        // just catch all the crashes on exit... just to keep GameTap from complaining
-        if (gDebugFile)
-            fprintf(gDebugFile, "Crashed on shutdown.\n");
+        gClient->Shutdown(); // shuts down PhysX for us
+        gClient = nil;
     }
-#endif
-
-    if (gDebugFile)
-        fclose(gDebugFile);
+    hsAssert(hsgResMgr::ResMgr()->RefCnt()==1, "resMgr has too many refs, expect mem leaks");
+    hsgResMgr::Shutdown();  // deletes fResMgr
+    DeInitNetClientComm();
 
     // Uninstall our unhandled exception filter, if we installed one
 #ifndef HS_DEBUGGING

@@ -103,12 +103,16 @@ plDispatch::plDispatch()
 
 plDispatch::~plDispatch()
 {
-    int i;
-    for( i = 0; i < fRegisteredExactTypes.GetCount(); i++ )
-        delete fRegisteredExactTypes[i];
-
+    hsAssert(fRegisteredExactTypes.GetCount() == 0, "registered type after Dispatch shutdown");
     ITrashUndelivered();
+}
 
+void plDispatch::BeginShutdown()
+{
+    for (int i = 0; i < fRegisteredExactTypes.Count(); ++i)
+        delete fRegisteredExactTypes[i];
+    fRegisteredExactTypes.Reset();
+    ITrashUndelivered();
 }
 
 void plDispatch::ITrashUndelivered()

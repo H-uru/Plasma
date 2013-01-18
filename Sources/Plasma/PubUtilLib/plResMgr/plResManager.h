@@ -209,7 +209,6 @@ protected:
     plRegistryPageNode* CreatePage(const plLocation& location, const char* age, const char* page);
 
     bool          fInited;
-    uint16_t      fPageOutHint;
 
     // True if we're reading in an object. We only read one object at a time
     bool               fReadingObject;
