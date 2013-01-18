@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCrashSrv.h"
 #include "plCrash_Private.h"
 #include "plFile/plFileUtils.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
+#include "plString.h"
 
 #ifdef HS_BUILD_FOR_WIN32
 
@@ -80,7 +81,7 @@ void plCrashSrv::IHandleCrash()
     // Begin Hackiness
     wchar_t dumpPath[1024];
     SHGetSpecialFolderPathW(NULL, dumpPath, CSIDL_LOCAL_APPDATA, TRUE);
-    plFileUtils::ConcatFileName(dumpPath, ProductLongName());
+    plFileUtils::ConcatFileName(dumpPath, plProduct::LongName().ToWchar());
     plFileUtils::ConcatFileName(dumpPath, L"Log");
     plFileUtils::EnsureFilePathExists(dumpPath);
     plFileUtils::ConcatFileName(dumpPath, L"crash.dmp");

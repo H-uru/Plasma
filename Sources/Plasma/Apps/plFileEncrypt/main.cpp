@@ -41,15 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plFile/hsFiles.h"
 #include "plFile/plEncryptedStream.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 
 void EncryptFiles(const char* dir, const char* ext, bool encrypt);
 
-void print_version(){
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-    printf("%S\n\n", productString);
+void print_version() {
+    printf("%s\n\n", plProduct::ProductString().c_str());
 }
 
 void print_help() {

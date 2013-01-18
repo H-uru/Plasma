@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <unistd.h>
 #endif
 
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plFixedKey.h"
@@ -212,8 +212,9 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     nc->DebugMsg( "Net: Loading age %s", fAgeName);
 
     if ((fFlags & kLoadMask) != 0)
-        ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%S will now exit.", ProductShortName());
-        
+        ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%s will now exit.",
+                                        plProduct::ShortName().c_str());
+
     fFlags |= kLoadingAge;
     
     plAgeBeginLoadingMsg* ageBeginLoading = new plAgeBeginLoadingMsg();

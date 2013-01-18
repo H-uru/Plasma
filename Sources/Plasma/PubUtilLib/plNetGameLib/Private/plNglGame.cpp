@@ -375,10 +375,10 @@ static void Connect (
     Cli2Game_Connect connect;
     connect.hdr.connType    = kConnTypeCliToGame;
     connect.hdr.hdrBytes    = sizeof(connect.hdr);
-    connect.hdr.buildId     = BuildId();
-    connect.hdr.buildType   = BUILD_TYPE_LIVE;
-    connect.hdr.branchId    = BranchId();
-    connect.hdr.productId   = ProductId();
+    connect.hdr.buildId     = plProduct::BuildId();
+    connect.hdr.buildType   = plProduct::BuildType();
+    connect.hdr.branchId    = plProduct::BranchId();
+    connect.hdr.productId   = plProduct::UUID();
     connect.data.dataBytes  = sizeof(connect.data);
 
     AsyncSocketConnect(

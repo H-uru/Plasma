@@ -42,16 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/hsFiles.h"
 #include "plFile/plFileUtils.h"
 #include "plFile/plSecureStream.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 
 
 #include <time.h>
 #include <string>
 
 void print_version() {
-    wchar_t productString[256];
-    ProductString(productString, arrsize(productString));
-    printf("%S\n\n", productString);
+    printf("%s\n\n", plProduct::ProductString().c_str());
 }
 
 void print_help() {

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 #include "pnEncryption/plChecksum.h"
 
 #include <stdio.h>

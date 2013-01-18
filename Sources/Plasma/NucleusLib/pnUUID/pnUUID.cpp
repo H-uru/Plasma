@@ -51,6 +51,11 @@ plUUID::plUUID()
     Clear();
 }
 
+plUUID::plUUID(const char* s)
+{
+    FromString(s);
+}
+
 plUUID::plUUID(const plString& s)
 {
     FromString(s.c_str());

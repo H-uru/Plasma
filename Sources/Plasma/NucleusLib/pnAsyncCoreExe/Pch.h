@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
 
 #include "pnUtils/pnUtils.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "hsThread.h"

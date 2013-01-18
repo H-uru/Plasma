@@ -13,7 +13,6 @@ endif(PLASMA_EXTERNAL_RELEASE)
 target_link_libraries(plCrashHandler CoreLib)
 target_link_libraries(plCrashHandler pfCrashHandler)
 target_link_libraries(plCrashHandler plFile)
-target_link_libraries(plCrashHandler pnProduct)
 
 if(USE_VLD)
     target_link_libraries(plCrashHandler ${VLD_LIBRARY})

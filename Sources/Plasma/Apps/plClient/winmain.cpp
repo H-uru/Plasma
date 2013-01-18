@@ -73,7 +73,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnEncryption/plChallengeHash.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "pnProduct/pnProduct.h"
+#include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plFile/plFileUtils.h"
 
@@ -623,16 +623,11 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
     /// 8.11.2000 - Test for OpenGL fullscreen, and if so use no border, no caption;
     /// else, use our normal styles
 
-    char windowName[256];
-    wchar_t productString[256];
-    StrCopy(productString, ProductLongName(), arrsize(productString));
-    StrToAnsi(windowName, productString, arrsize(windowName));
-    
     // Create a window
     HWND hWnd = CreateWindow(
-        CLASSNAME, windowName, 
+        CLASSNAME, plProduct::LongName().c_str(),
         WS_OVERLAPPEDWINDOW,
-        0, 0, 
+        0, 0,
         800 + gWinBorderDX * 2,
         600 + gWinBorderDY * 2 + gWinMenuDY,
          NULL, NULL, hInst, NULL
@@ -1011,11 +1006,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                 showAuthFailed = true;
             }
 
-            char windowName[256];
-            wchar_t productString[256];
-            ProductString(productString, arrsize(productString));
-            StrToAnsi(windowName, productString, arrsize(windowName));
-            SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0, (LPARAM) windowName);
+            SendMessage(GetDlgItem(hwndDlg, IDC_PRODUCTSTRING), WM_SETTEXT, 0,
+                        (LPARAM)plProduct::ProductString().c_str());
 
             for (int i = 0; i < plLocalization::GetNumLocales(); i++)
             {
@@ -1417,11 +1409,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         hsSetDebugMessageProc(DebugMessageProc);
         if (gDebugFile != NULL)
         {
-            char prdName[256];
-            wchar_t prdString[256];
-            ProductString(prdString, arrsize(prdString));
-            StrToAnsi(prdName, prdString, arrsize(prdName));
-            fprintf(gDebugFile, "%s\n", prdName);
+            fputs(plProduct::ProductString().c_str(), gDebugFile);
+            fputs("\n", gDebugFile);
             fflush(gDebugFile);
         }
     }

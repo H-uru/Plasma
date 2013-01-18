@@ -28,8 +28,8 @@ set(plLocalizationEditor_RESOURCES
 add_executable(plLocalizationEditor WIN32 ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_RESOURCES})
 
 target_link_libraries(plLocalizationEditor CoreLib)
-target_link_libraries(plLocalizationEditor pnProduct)
 target_link_libraries(plLocalizationEditor pnSceneObject)
+target_link_libraries(plLocalizationEditor pnUUID)
 target_link_libraries(plLocalizationEditor plResMgr)
 target_link_libraries(plLocalizationEditor pfLocalizationMgr)
 target_link_libraries(plLocalizationEditor ${EXPAT_LIBRARY})

@@ -135,7 +135,6 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
         std::string curInst = fAgeInfo.GetAgeInstanceName();
         std::string y = curInst + guid;
 
-        plUUID instanceGuid;
         plMD5Checksum hash;
         hash.Start();
         hash.AddTo(y.length(), (uint8_t*)y.c_str());
@@ -150,7 +149,7 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
             if (i == 3 || i == 5 || i == 7 || i == 9)
                 ss << '-';
         }
-        instanceGuid.FromString(ss.GetString());
+        plUUID instanceGuid(ss.GetString());
         fAgeInfo.SetAgeInstanceGuid(&instanceGuid);
     }
     else {
