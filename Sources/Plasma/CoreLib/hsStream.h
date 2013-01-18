@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsMemory.h"
-#include "plString.h"
+#include "plFileSystem.h"
 
 
 // Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
