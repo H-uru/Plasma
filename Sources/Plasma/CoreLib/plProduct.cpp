@@ -49,15 +49,7 @@ static_assert(PRODUCT_BRANCH_ID > 0, "Branch ID cannot be zero");
 
 uint32_t plProduct::BuildId() { return PRODUCT_BUILD_ID; }
 uint32_t plProduct::BuildType() { return PRODUCT_BUILD_TYPE; }
-
-uint32_t plProduct::BranchId()
-{
-#ifndef PATCHER
-    return PRODUCT_BRANCH_ID;
-#else
-    return 0;
-#endif
-}
+uint32_t plProduct::BranchId() { return PRODUCT_BRANCH_ID; }
 
 plString plProduct::CoreName()
 {
