@@ -719,6 +719,8 @@ bool plStatusLog::AddLineF( uint32_t color, const char *format, ... )
 bool plStatusLog::AddLineS( const char *filename, const char *format, ... )
 {
     plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
+    if (!log)
+        return false;
 
     if(fLoggingOff && !log->fForceLog)
         return true;
@@ -732,6 +734,8 @@ bool plStatusLog::AddLineS( const char *filename, const char *format, ... )
 bool plStatusLog::AddLineS( const char *filename, uint32_t color, const char *format, ... )
 {
     plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
+    if (!log)
+        return false;
 
     if(fLoggingOff && !log->fForceLog)
         return true;
