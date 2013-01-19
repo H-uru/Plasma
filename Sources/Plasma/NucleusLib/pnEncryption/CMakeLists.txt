@@ -16,6 +16,7 @@ set(pnEncryption_HEADERS
 )
 
 add_library(pnEncryption STATIC ${pnEncryption_SOURCES} ${pnEncryption_HEADERS})
+target_link_libraries(pnEncryption CoreLib)
 target_link_libraries(pnEncryption ${OPENSSL_LIBRARIES})
 
 source_group("Source Files" FILES ${pnEncryption_SOURCES})
