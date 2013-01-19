@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <sys/types.h>
 #   include <cstdlib>
 #   include <functional>
+#   include <memory>
 #endif
 #include <sys/stat.h>
 #include "plProduct.h"
@@ -162,7 +163,7 @@ plFileName plFileName::AbsolutePath() const
         path = plString::FromWchar(path_sm);
     }
 #else
-    char *path_a = realpath(path.c_str(), nullptr);
+    char *path_a = realpath(path.fName.c_str(), nullptr);
     hsAssert(path_a, "Failure to get absolute path (unsupported libc?)");
     path = path_a;
     free(path_a);
@@ -307,7 +308,7 @@ bool plFileSystem::Copy(const plFileName &from, const plFileName &to)
         count = fread(buffer, sizeof(uint8_t), arrsize(buffer), ffrom.get());
         if (ferror(ffrom.get()))
             return false;
-        fwrite(data, sizeof(uint8_t), count, fto.get());
+        fwrite(buffer, sizeof(uint8_t), count, fto.get());
     }
 
     return true;

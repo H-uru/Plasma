@@ -651,7 +651,7 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
         FILE_ATTRIBUTE_NORMAL,  // normal file attributes
         NULL);          // no template
 #elif HS_BUILD_FOR_UNIX
-    fp = plFileSystem::Open(fileName);
+    fp = plFileSystem::Open(fileName, "rb");
 #endif
 
     if (fp == INVALID_HANDLE_VALUE)

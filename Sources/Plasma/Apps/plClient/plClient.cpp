@@ -2346,10 +2346,10 @@ void plClient::IDetectAudioVideoSettings()
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local dir
-    if (plFileInfo("init//audio.ini").Exists())
-        audioIniFile = "init//audio.ini";
-    if (plFileInfo("init//graphics.ini").Exists())
-        graphicsIniFile = "init//graphics.ini";
+    if (plFileInfo("init/audio.ini").Exists())
+        audioIniFile = "init/audio.ini";
+    if (plFileInfo("init/graphics.ini").Exists())
+        graphicsIniFile = "init/graphics.ini";
 #endif
 
     //check to see if audio.ini exists
