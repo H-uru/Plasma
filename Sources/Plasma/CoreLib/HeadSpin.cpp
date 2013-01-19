@@ -442,7 +442,7 @@ char    *hsWStringToString( const wchar_t *str )
     for (i = 0; i < len; i++)
     {
         char temp = wctob(str[i]);
-        if (temp == WEOF)
+        if (temp == EOF)
         {
             sStr[i] = '\0';
             i = len;
