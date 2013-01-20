@@ -187,11 +187,11 @@ struct File2Cli_BuildIdUpdate : Cli2File_MsgHeader {
 // ManifestReply
 struct File2Cli_ManifestReply : Cli2File_MsgHeader {
     uint32_t       transId;
-    ENetError   result;
+    ENetError      result;
     uint32_t       readerId;
     uint32_t       numFiles;           // total number of files
-    uint32_t       wchar_tCount;         // size of the buffer
-    wchar_t       manifestData[1];    // manifestData[wchar_tCount], actually
+    uint32_t       shortCount;         // size of the buffer
+    uint16_t       manifestData[1];    // manifestData[shortCount], actually
 };
 
 // FileDownloadReply

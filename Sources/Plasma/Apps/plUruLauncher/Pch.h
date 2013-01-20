@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNetGameLib.h"
 #include "pnEncryption/plChecksum.h"
 
+#include "plAgeDescription/plAgeManifest.h"
 #include "plCompression/plZlibStream.h"
 #include "plClientPatcher/UruPlayer.h"
 

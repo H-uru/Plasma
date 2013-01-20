@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResPatcher.h"
 #include "hsResMgr.h"
 
+#include "plAgeDescription/plAgeManifest.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "plCompression/plZlibStream.h"
 #include "pnEncryption/plChecksum.h"
@@ -134,8 +135,7 @@ static void ManifestDownloaded(
     ENetError                     result,
     void*                         param,
     const wchar_t                 group[],
-    const NetCliFileManifestEntry manifest[],
-    uint32_t                      entryCount)
+    const plManifest*             manifest)
 {
     plResPatcher* patcher = (plResPatcher*)param;
     plString name = plString::FromWchar(group);
@@ -147,32 +147,28 @@ static void ManifestDownloaded(
         return;
     }
 
-    for (uint32_t i = 0; i < entryCount; ++i)
+    for (auto it = manifest->GetFiles().begin(); it != manifest->GetFiles().end(); ++it)
     {
-        const NetCliFileManifestEntry mfs = manifest[i];
-        plFileName fileName = plString::FromWchar(mfs.clientName);
-        plFileName downloadName = plString::FromWchar(mfs.downloadName);
+        const plManifestFile* file = *it;
 
         // See if the files are the same
         // 1. Check file size before we do time consuming md5 operations
         // 2. Do wasteful md5. We should consider implementing a CRC instead.
-        if (plFileInfo(fileName).FileSize() == mfs.fileSize)
+        if (plFileInfo(file->GetFileName()).FileSize() == file->GetFileSize())
         {
-            plMD5Checksum cliMD5(fileName);
-            plMD5Checksum srvMD5;
-            srvMD5.SetFromHexString(plString::FromWchar(mfs.md5, 32).c_str());
+            plMD5Checksum cliMD5(file->GetFileName());
+            plMD5Checksum srvMD5 = file->GetChecksum();
 
             if (cliMD5 == srvMD5)
                 continue;
             else
-                PatcherLog(kInfo, "    Enqueueing %s: MD5 Checksums Differ", fileName.AsString().c_str());
+                PatcherLog(kInfo, "    Enqueueing %s: MD5 Checksums Differ", file->GetFileName().AsString().c_str());
         } else
-            PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", fileName.AsString().c_str());
+            PatcherLog(kInfo, "    Enqueueing %s: File Sizes Differ", file->GetFileName().AsString().c_str());
 
         // If we're still here, then we need to update the file.
-        float size = mfs.zipSize ? (float)mfs.zipSize : (float)mfs.fileSize;
-        patcher->GetProgress()->SetLength(size + patcher->GetProgress()->GetMax());
-        patcher->RequestFile(downloadName, fileName);
+        patcher->GetProgress()->SetLength(file->GetDownloadSize() + patcher->GetProgress()->GetMax());
+        patcher->RequestFile(file->GetDownloadPath(), file->GetFileName());
     }
 
     patcher->IssueRequest();

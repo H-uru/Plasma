@@ -82,7 +82,7 @@ public:
     void Finish();
     void Shutdown();
 
-    void PreloadManifest(const NetCliFileManifestEntry manifestEntries[], uint32_t entryCount);
+    void PreloadManifest(const class plManifest* manifest);
     void PreloadManifest(const NetCliAuthFileInfo manifestEntries[], uint32_t entryCount);
     void PreloadNextFile();
     void FilePreloaded(const plFileName& filename, hsStream* stream);

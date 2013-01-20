@@ -39,219 +39,159 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plManifest - Collection of version-specific info about an age, such     //
-//                  as the actual files constructing it, timestamps, and    //
-//                  release versions.                                       //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
+#include <algorithm>
+#include <wchar.h>
+
 #include "plAgeManifest.h"
+#include "hsStream.h"
 
+static const char* s_TimeFormat = "%m/%d/%y %H:%M:%S";
 
-#include "plFile/plInitFileReader.h"
-#include "hsStringTokenizer.h"
-
-
-//// plManifestFile ///////////////////////////////////////////////////////
-
-plManifestFile::plManifestFile(const plFileName& name, const plFileName& serverPath,
-                               const plMD5Checksum& check, uint32_t size, uint32_t zippedSize,
-                               uint32_t flags, bool md5Now) :
-    fName(name),
-    fServerPath(serverPath),
-    fChecksum(check),
-    fSize(size),
-    fZippedSize(zippedSize),
-    fFlags(flags),
-    fMd5Checked(md5Now)
+plMfsLine::plMfsLine(const plString& data)
 {
-    if (md5Now)
+    std::vector<plString> toks = data.Tokenize(",");
+    if (toks.size() >= 6)
     {
-        DoMd5Check();
+        fName = toks[0];
+        fDownload = toks[1];
+        fSize = toks[2].ToUInt();
+        fModifyTime.FromString(toks[3].c_str(), s_TimeFormat);
+        fChecksum.SetFromHexString(toks[4].c_str());
+        fFlags = toks[5].ToUInt();
+        if ((fFlags & plManifestFile::kFlagZipped) && toks.size() >= 7)
+            fCompressedSize = toks[6].ToUInt();
     }
+    else
+        hsAssert(false, "invalid manifest line size");
 }
 
 plManifestFile::~plManifestFile()
 {
+    std::for_each(fPatches.begin(), fPatches.end(),
+        [] (Patch* patch) { delete patch; }
+    );
 }
 
-void plManifestFile::DoMd5Check()
+plManifestFile::Patch::Patch(const plString& data)
 {
-    if (plFileInfo(fName).Exists())
+    std::vector<plString> toks = data.Tokenize(",");
+    if (toks.size() >= 7)
     {
-        plMD5Checksum localFile(fName);
-        fIsLocalUpToDate = (localFile == fChecksum);
-        fLocalExists = true;
+        fName = toks[0];
+        fDownload = toks[1];
+        fSize = toks[2].ToUInt();
+        fModifyTime.FromString(toks[3].c_str(), s_TimeFormat);
+        fBeforeChecksum.SetFromHexString(toks[4].c_str());
+        fAfterChecksum.SetFromHexString(toks[5].c_str());
+        fFlags = toks[6].ToUInt();
+        if ((fFlags & plManifestFile::kFlagZipped) && toks.size() >= 8)
+            fCompressedSize = toks[7].ToUInt();
     }
     else
-    {
-        fIsLocalUpToDate = false;
-        fLocalExists = false;
-    }
-
-    fMd5Checked = true;
+        hsAssert(false, "invalid patch line size");
 }
-
-bool plManifestFile::IsLocalUpToDate()
-{
-    if (!fMd5Checked)
-        DoMd5Check();
-
-    return fIsLocalUpToDate;
-}
-
-bool plManifestFile::LocalExists()
-{
-    if (!fMd5Checked)
-        DoMd5Check();
-
-    return fLocalExists;
-}
-
-//// plManifest ///////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////////////////
 
-const char* plManifest::fTimeFormat = "%m/%d/%y %H:%M:%S";
-static const uint32_t kLatestFormatVersion = 5;
-
-plManifest::plManifest()
-{
-    fFormatVersion = kLatestFormatVersion;
-    fAgeName = nil;
-}
-
 plManifest::~plManifest()
 {
-    IReset();
+    std::for_each(fFiles.begin(), fFiles.end(),
+        [] (plManifestFile* file) { delete file; }
+    );
 }
 
-void plManifest::IReset()
+static bool IReadEapString(hsStream* const s, plString& result)
 {
-    fFormatVersion = 0;
-
-    delete [] fAgeName;
-
-    int i;
-    for (i = 0; i < fFiles.GetCount(); i++)
-        delete fFiles[i];
-    fFiles.Reset();
+    uint16_t dest[260];
+    for (size_t i = 0; i < arrsize(dest); ++i)
+    {
+        dest[i] = s->ReadLE16();
+        if (dest[i] == 0)
+        {
+            result = plString::FromUtf16(dest, i);
+            break;
+        }
+    }
+    if (result.IsEmpty())
+        return false;
+    return !(s->AtEnd());
 }
 
-//// Read and helpers ////////////////////////////////////////////////////////
-
-class plVersSection : public plInitSectionTokenReader   
+static bool IReadEapUInt(hsStream* const s, uint32_t& result)
 {
-protected:
-    plManifest* fDest;
-
-    virtual const char* GetSectionName() const { return "version"; }
-
-    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
-    {
-        if (stricmp(token, "format") == 0)
-            fDest->SetFormatVersion(atoi(tokenizer->next()));
-
-        return true;
-    }
-
-public:
-    plVersSection(plManifest* dest) : plInitSectionTokenReader(), fDest(dest) {}
-};
-
-class plGenericSection : public plInitSectionTokenReader    
-{
-protected:
-    plManifest* fDest;
-
-    virtual void AddFile(plManifestFile* file) = 0;
-
-    plManifestFile* IReadManifestFile(const char* token, hsStringTokenizer* tokenizer, uint32_t userData, bool isPage)
-    {
-        char name[256];
-        strcpy(name, token);
-        uint32_t size = atoi(tokenizer->next());
-        plMD5Checksum sum;
-        sum.SetFromHexString(tokenizer->next());
-        uint32_t flags = atoi(tokenizer->next());
-        uint32_t zippedSize = 0;
-        if (hsCheckBits(flags, plManifestFile::kFlagZipped))
-            zippedSize = atoi(tokenizer->next());
-
-        return new plManifestFile(name, "", sum, size, zippedSize, flags);
-    }
-
-    virtual bool IParseToken(const char* token, hsStringTokenizer* tokenizer, uint32_t userData)
-    {
-        plManifestFile* file = IReadManifestFile(token, tokenizer, userData, false);
-        AddFile(file);
-        return true;
-    }
-
-public:
-    plGenericSection(plManifest* dest) : plInitSectionTokenReader(), fDest(dest) {}
-};
-
-class plBaseSection : public plGenericSection
-{
-public:
-    plBaseSection(plManifest* dest) : plGenericSection(dest) {}
-
-protected:
-    virtual void        AddFile(plManifestFile* file) { fDest->AddFile(file); }
-    virtual const char* GetSectionName() const { return "base"; }
-};
-
-
-bool plManifest::Read(hsStream* stream)
-{
-    plVersSection   versReader(this);
-    plBaseSection   baseReader(this);
-
-    plInitSectionReader* readers[] = { &versReader, &baseReader, nil };
-    
-    plInitFileReader reader(readers, 4096);     // Allow extra long lines
-    reader.SetUnhandledSectionReader(&baseReader);
-
-    if (!reader.Open(stream))
+    if (s->GetSizeLeft() < (3 * sizeof(uint16_t)))
         return false;
+    result = (s->ReadLE16() << 16 | s->ReadLE16() & 0xFFFF);
+    return s->ReadLE16() == 0;
+}
 
-    // Clear out before we read
-    IReset();
+bool plManifest::ReadLegacy(hsStream* const s)
+{
+    while (!s->AtEnd())
+    {
+        // Read in a ManifestFile
+        plString filename;
+        if (!IReadEapString(s, filename))
+            return false;
+        plString download;
+        if (!IReadEapString(s, download))
+            return false;
+        plString md5;
+        if (!IReadEapString(s, md5))
+            return false;
+        plString zipMd5;
+        if (!IReadEapString(s, zipMd5))
+            return false;
+        uint32_t fileSize;
+        if (!IReadEapUInt(s, fileSize))
+            return false;
+        uint32_t zipSize;
+        if (!IReadEapUInt(s, zipSize))
+            return false;
+        uint32_t flags;
+        if (!IReadEapUInt(s, flags))
+            return false;
 
-    if (!reader.Parse())
-        return false;
+        // Fix the hash
+        plMD5Checksum theMd5;
+        theMd5.SetFromHexString(md5.c_str());
+        // All files from legacy sources are zipped
+        flags |= plManifestFile::kFlagZipped;
 
+        plManifestFile* file = new plManifestFile(filename, download, theMd5, fileSize, zipSize, flags, plUnifiedTime::GetCurrent());
+        fFiles.push_back(file);
+
+        // A null short means we're done
+        if (!s->AtEnd())
+        {
+            if (s->ReadLE16() == 0)
+                break;
+            else
+                s->SetPosition(s->GetPosition()-sizeof(uint16_t));
+        }
+    }
     return true;
 }
 
-bool plManifest::Read(const char* filename)
+bool plManifest::ReadLegacy(const void* buf, size_t bufsz)
 {
-    plVersSection   versReader(this);
-    plBaseSection   baseReader(this);
-
-    plInitSectionReader* readers[] = { &versReader, &baseReader, nil };
-    
-    plInitFileReader reader(readers, 4096);     // Allow extra long lines
-    reader.SetUnhandledSectionReader(&baseReader);
-    
-    if (!reader.Open(filename))
-        return false;
-
-    // Clear out before we read
-    IReset();
-
-    if (!reader.Parse())
-        return false;
-
-    return true;
+    hsReadOnlyStream stream(bufsz, buf);
+    return ReadLegacy(&stream);
 }
 
-void plManifest::AddFile(plManifestFile* file)
+NetCliFileManifestEntry::NetCliFileManifestEntry(const plManifestFile& mfs)
+        : md5(mfs.GetChecksum()), fileSize(mfs.GetFileSize()),
+          zipSize(mfs.GetCompressedSize()), flags(mfs.GetFlags())
 {
-    fFiles.Append(file);
+    wcsncpy(clientName, mfs.GetFileName().AsString().ToWchar(), arrsize(clientName));
+    wcsncpy(downloadName, mfs.GetDownloadPath().AsString().ToWchar(), arrsize(downloadName));
 }
 
+NetCliFileManifestEntry* NetCliFileManifestEntry::FromManifest(const plManifest* const mfs)
+{
+    NetCliFileManifestEntry* arr = new NetCliFileManifestEntry[mfs->GetFiles().size()];
+    for (size_t i = 0; i < mfs->GetFiles().size(); ++i)
+        arr[i] = *(mfs->GetFiles().at(i));
+    return arr;
+}
