@@ -462,7 +462,7 @@ PF_CONSOLE_BASE_CMD( PrevStatusLog, "", "Cycles backwards through the status log
 
 PF_CONSOLE_BASE_CMD( ShowStatusLog, "string logName", "Advances the status log display to the given log" )
 {
-    plStatusLogMgr::GetInstance().SetCurrStatusLog( params[ 0 ] );
+    plStatusLogMgr::GetInstance().SetCurrStatusLog(static_cast<const char *>(params[0]));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -481,7 +481,7 @@ PF_CONSOLE_BASE_CMD( EnableLogging, "", "Turns on logging" )
 
 PF_CONSOLE_BASE_CMD( DumpLogs, "string folderName", "Dumps all current logs to the folder specified, relative to the log folder" )
 {
-    plStatusLogMgr::GetInstance().DumpLogs( params[ 0 ] );
+    plStatusLogMgr::GetInstance().DumpLogs(static_cast<const char *>(params[0]));
 }
 
 
@@ -6064,7 +6064,7 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
 PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed days and fractions" )
 {
     hsUNIXStream s;
-    if (!s.Open(params[0]))
+    if (!s.Open(static_cast<const char *>(params[0])))
     {
         PrintString("Couldn't open age defn file!");
         return;
@@ -6085,7 +6085,7 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
 PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days and fractions" )
 {
     hsUNIXStream s;
-    if (!s.Open(params[0]))
+    if (!s.Open(static_cast<const char *>(params[0])))
     {
         PrintString("Couldn't open age defn file!");
         return;

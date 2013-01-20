@@ -60,19 +60,18 @@ class pfSecurePreloader : public hsKeyedObject
 private:
 
     static pfSecurePreloader*     fInstance;
-    std::queue<const wchar_t*>    fManifestEntries;
-    std::queue<const wchar_t*>    fDownloadEntries;
+    std::queue<plFileName>        fManifestEntries;
+    std::queue<plFileName>        fDownloadEntries;
     plOperationProgress*          fProgress;
-    uint32_t                        fEncryptionKey[4];
+    uint32_t                      fEncryptionKey[4];
     bool                          fLegacyMode;
 
-    hsRAMStream* LoadToMemory(const wchar_t* file) const;
-    void SaveFile(hsStream* file, const wchar_t* name) const;
-    bool IsZipped(const wchar_t* filename) const;
+    hsRAMStream* LoadToMemory(const plFileName& file) const;
+    void SaveFile(hsStream* file, const plFileName& name) const;
+    bool IsZipped(const plFileName& filename) const;
 
 public:
-    pfSecurePreloader();
-    ~pfSecurePreloader();
+    pfSecurePreloader() : fProgress(nil), fLegacyMode(false) { }
 
     CLASSNAME_REGISTER(pfSecurePreloader);
     GETINTERFACE_ANY(pfSecurePreloader, hsKeyedObject);

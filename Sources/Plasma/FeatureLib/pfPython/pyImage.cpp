@@ -178,24 +178,24 @@ uint32_t pyImage::GetHeight()
     return 0;
 }
 
-void pyImage::SaveAsJPEG(const wchar_t* fileName, uint8_t quality)
+void pyImage::SaveAsJPEG(const plFileName& fileName, uint8_t quality)
 {
     if (quality <= 0 || quality > 100)
     {
             quality = 75;
     }
 
-    plJPEG::Instance().SetWriteQuality( quality );
-    plJPEG::Instance().WriteToFile( fileName, this->GetImage() );
+    plJPEG::Instance().SetWriteQuality(quality);
+    plJPEG::Instance().WriteToFile(fileName, this->GetImage());
 }
 
-void pyImage::SaveAsPNG(const wchar_t* fileName)
+void pyImage::SaveAsPNG(const plFileName& fileName)
 {
 
-    plPNG::Instance().WriteToFile( fileName, this->GetImage() );
+    plPNG::Instance().WriteToFile(fileName, this->GetImage());
 }
 
-PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height)
+PyObject* pyImage::LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height)
 {
     plMipmap* theMipmap = plJPEG::Instance().ReadFromFile(filename);
     if (theMipmap)
@@ -210,7 +210,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uin
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plString::Format("PtImageFromDisk_%S", filename);
+        plString name = plString::Format("PtImageFromDisk_%s", filename.AsString().c_str());
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
         
@@ -220,7 +220,7 @@ PyObject* pyImage::LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uin
         PYTHON_RETURN_NONE;
 }
 
-PyObject* pyImage::LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height)
+PyObject* pyImage::LoadPNGFromDisk(const plFileName& filename, uint16_t width, uint16_t height)
 {
     plMipmap* theMipmap = plPNG::Instance().ReadFromFile(filename);
     if (theMipmap)
@@ -235,7 +235,7 @@ PyObject* pyImage::LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint
         }
 
         // let's create a nice name for this thing based on the filename
-        plString name = plString::Format("PtImageFromDisk_%S", filename);
+        plString name = plString::Format("PtImageFromDisk_%s", filename.AsString().c_str());
 
         hsgResMgr::ResMgr()->NewKey(name, theMipmap, plLocation::kGlobalFixedLoc);
 

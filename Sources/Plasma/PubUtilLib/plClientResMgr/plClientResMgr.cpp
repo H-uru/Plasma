@@ -84,10 +84,9 @@ void plClientResMgr::ILoadResources(const char* resfile)
         return;
     }
 
-    wchar_t* wFilename = hsStringToWString(resfile);
     hsUNIXStream in;
 
-    if (in.Open(wFilename, L"rb")) {
+    if (in.Open(resfile, "rb")) {
         uint32_t header = in.ReadLE32();
         uint32_t version = in.ReadLE32();
         uint32_t num_resources = 0;
@@ -133,8 +132,6 @@ void plClientResMgr::ILoadResources(const char* resfile)
 
         in.Close();
     }
-
-    delete wFilename;
 }
 
 plMipmap* plClientResMgr::getResource(const char* resname)

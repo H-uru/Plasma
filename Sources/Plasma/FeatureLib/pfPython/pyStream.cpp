@@ -61,12 +61,12 @@ pyStream::~pyStream()
 }
 
 
-bool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
+bool pyStream::Open(const plFileName& fileName, const char* flags)
 {
     // make sure its closed first
     Close();
 
-    if (fileName)
+    if (fileName.IsValid())
     {
         if (flags)
         {
@@ -74,13 +74,13 @@ bool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
             bool writeflag = false;
             bool encryptflag = false;
             int i;
-            for (i=0 ; i < wcslen(flags) ; i++ )
+            for (i=0 ; i < strlen(flags) ; i++ )
             {
-                if ( flags[i] == L'r' || flags[i] == L'R' )
+                if ( flags[i] == 'r' || flags[i] == 'R' )
                     readflag = true;
-                if ( flags[i] == L'w' || flags[i] == L'W' )
+                if ( flags[i] == 'w' || flags[i] == 'W' )
                     writeflag = true;
-                if ( flags[i] == L'e' || flags[i] == L'E' )
+                if ( flags[i] == 'e' || flags[i] == 'E' )
                     encryptflag = true;
             }
             // if there is a write flag, it takes priorty over read
@@ -90,7 +90,7 @@ bool pyStream::Open(const wchar_t* fileName, const wchar_t* flags)
                 if (encryptflag)
                 {
                     fStream = new plEncryptedStream;
-                    fStream->Open(fileName, L"wb");
+                    fStream->Open(fileName, "wb");
                 }
                 else
                     fStream = plEncryptedStream::OpenEncryptedFileWrite(fileName);

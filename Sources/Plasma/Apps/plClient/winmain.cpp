@@ -843,17 +843,14 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     // FIXME: Real OS detection
     NetCommSetAuthTokenAndOS(nil, L"win");
 
-    wchar_t fileAndPath[MAX_PATH];
-    PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
-    PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
+    plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory
-    wchar_t localFileAndPath[MAX_PATH];
-    StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
-    if (PathDoesFileExist(localFileAndPath))
-        StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
+    plFileName local("init\\login.dat");
+    if (plFileInfo(local).Exists())
+        loginDat = local;
 #endif
-    hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(fileAndPath, cryptKey);
+    hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(loginDat, cryptKey);
     if (stream)
     {
         stream->Write(sizeof(cryptKey), cryptKey);
@@ -877,17 +874,14 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
 
-    wchar_t fileAndPath[MAX_PATH];
-    PathGetInitDirectory(fileAndPath, arrsize(fileAndPath));
-    PathAddFilename(fileAndPath, fileAndPath, L"login.dat", arrsize(fileAndPath));
+    plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory
-    wchar_t localFileAndPath[MAX_PATH];
-    StrCopy(localFileAndPath, L"init\\login.dat", arrsize(localFileAndPath));
-    if (PathDoesFileExist(localFileAndPath))
-        StrCopy(fileAndPath, localFileAndPath, arrsize(localFileAndPath));
+    plFileName local("init\\login.dat");
+    if (plFileInfo(local).Exists())
+        loginDat = local;
 #endif
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileAndPath, cryptKey);
+    hsStream* stream = plEncryptedStream::OpenEncryptedFile(loginDat, cryptKey);
     if (stream && !stream->AtEnd())
     {
         uint32_t savedKey[4];
@@ -1062,9 +1056,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     // The code to write general.ini really doesn't belong here, but it works... for now.
                     // When general.ini gets expanded, this will need to find a proper home somewhere.
                     {
-                        wchar_t gipath[MAX_PATH];
-                        PathGetInitDirectory(gipath, arrsize(gipath));
-                        PathAddFilename(gipath, gipath, L"general.ini", arrsize(gipath));
+                        plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
                         plString ini_str = plString::Format("App.SetLanguage %s\n", plLocalization::GetLanguageName(new_language));
                         hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
                         gini->WriteString(ini_str);
@@ -1215,9 +1207,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         gDataServerLocal = true;
 #endif
 
-    const wchar_t *serverIni = L"server.ini";
+    plFileName serverIni = "server.ini";
     if (cmdParser.IsSpecified(kArgServerIni))
-        serverIni = cmdParser.GetString(kArgServerIni);
+        serverIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
 
     // check to see if we were launched from the patcher
     bool eventExists = false;
@@ -1272,10 +1264,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #endif
 
     // Load an optional general.ini
-    wchar_t gipath[MAX_PATH];
-    PathGetInitDirectory(gipath, arrsize(gipath));
-    PathAddFilename(gipath, gipath, L"general.ini", arrsize(gipath));
-    FILE *generalini = _wfopen(gipath, L"rb");
+    plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
+    FILE *generalini = plFileSystem::Open(gipath, "rb");
     if (generalini)
     {
         fclose(generalini);
@@ -1312,7 +1302,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
-    FILE *serverIniFile = _wfopen(serverIni, L"rb");
+    FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile)
     {
         fclose(serverIniFile);

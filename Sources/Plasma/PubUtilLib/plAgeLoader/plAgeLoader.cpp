@@ -178,10 +178,8 @@ void plAgeLoader::UpdateAge(const char ageName[])
         plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg);
     else
     {
-        wchar_t* wideAgeName = hsStringToWString(ageName);
-        plResPatcher::GetInstance()->RequestManifest(wideAgeName);
+        plResPatcher::GetInstance()->RequestManifest(ageName);
         plResPatcher::GetInstance()->Start();
-        delete[] wideAgeName;
     }
 }
 

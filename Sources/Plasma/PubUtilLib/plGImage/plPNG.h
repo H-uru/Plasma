@@ -58,12 +58,10 @@ protected:
 public:
 
     plMipmap* ReadFromStream(hsStream* inStream) { return IRead(inStream); }
-    plMipmap* ReadFromFile(const char* fileName);
-    plMipmap* ReadFromFile(const wchar_t* fileName);
+    plMipmap* ReadFromFile(const plFileName& fileName);
 
     bool WriteToStream(hsStream* outStream, plMipmap* sourceData) { return IWrite(sourceData, outStream); }
-    bool WriteToFile(const char* fileName, plMipmap* sourceData);
-    bool WriteToFile(const wchar_t* fileName, plMipmap* sourceData);
+    bool WriteToFile(const plFileName& fileName, plMipmap* sourceData);
 
     static plPNG& Instance(void);
 };

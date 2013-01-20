@@ -61,7 +61,7 @@ protected:
 
     hsStream* fRAMStream;
 
-    wchar_t* fWriteFileName;
+    plFileName fWriteFileName;
 
     enum OpenMode { kOpenRead, kOpenWrite, kOpenFail };
     OpenMode fOpenMode;
@@ -73,7 +73,7 @@ protected:
     void IEncipher(uint32_t* const v);
     void IDecipher(uint32_t* const v);
 
-    bool IWriteEncypted(hsStream* sourceStream, const wchar_t* outputFile);
+    bool IWriteEncypted(hsStream* sourceStream, const plFileName& outputFile);
 
     static bool ICheckMagicString(FILE* fp);
 
@@ -82,8 +82,7 @@ public:
     plEncryptedStream(uint32_t* key=nil);
     ~plEncryptedStream();
 
-    virtual bool    Open(const char* name, const char* mode = "rb");
-    virtual bool    Open(const wchar_t* name, const wchar_t* mode = L"rb");
+    virtual bool    Open(const plFileName& name, const char* mode = "rb");
     virtual bool    Close();
 
     virtual uint32_t  Read(uint32_t byteCount, void* buffer);
@@ -96,21 +95,16 @@ public:
 
     uint32_t GetActualFileSize() const { return fActualFileSize;}
 
-    static bool FileEncrypt(const char* fileName);
-    static bool FileEncrypt(const wchar_t* fileName);
-    static bool FileDecrypt(const char* fileName);
-    static bool FileDecrypt(const wchar_t* fileName);
+    static bool FileEncrypt(const plFileName& fileName);
+    static bool FileDecrypt(const plFileName& fileName);
 
-    static bool IsEncryptedFile(const char* fileName);
-    static bool IsEncryptedFile(const wchar_t* fileName);
+    static bool IsEncryptedFile(const plFileName& fileName);
 
     // Attempts to create a read-binary stream for the requested file.  If it's
     // encrypted, you'll get a plEncryptedStream, otherwise just a standard
     // hsUNIXStream.  Remember to delete the stream when you're done with it.
-    static hsStream* OpenEncryptedFile(const char* fileName, uint32_t* cryptKey = nil);
-    static hsStream* OpenEncryptedFile(const wchar_t* fileName, uint32_t* cryptKey = nil);
-    static hsStream* OpenEncryptedFileWrite(const char* fileName, uint32_t* cryptKey = nil);
-    static hsStream* OpenEncryptedFileWrite(const wchar_t* fileName, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFile(const plFileName& fileName, uint32_t* cryptKey = nil);
+    static hsStream* OpenEncryptedFileWrite(const plFileName& fileName, uint32_t* cryptKey = nil);
 };
 
 #endif // plEncryptedStream_h_inc

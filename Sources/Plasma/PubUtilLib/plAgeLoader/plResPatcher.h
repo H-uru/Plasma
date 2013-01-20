@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plResPatcher_h_inc
 
 #include "HeadSpin.h"
+#include "plFileSystem.h"
 #include <queue>
 #include <string>
 
@@ -53,16 +54,12 @@ class plResPatcher
     enum { kManifest, kFile };
     struct Request
     {
-        std::wstring fFile;
-        std::wstring fFriendlyName;
-        uint8_t      fType;
+        plFileName  fFile;
+        plFileName  fFriendlyName;
+        uint8_t     fType;
 
-        Request(const wchar_t* file, uint8_t type, const wchar_t* friendly = nil)
-            : fFile(file), fType(type)
-        {
-            if (friendly)
-                fFriendlyName = std::wstring(friendly);
-        }
+        Request(const plFileName& file, uint8_t type, const plFileName& friendly = "")
+            : fFile(file), fFriendlyName(friendly), fType(type) { }
     };
 
     static plResPatcher*       fInstance;
@@ -81,8 +78,8 @@ public:
 
     void Finish(bool success = true);
     void IssueRequest();
-    void RequestFile(const wchar_t* file, const wchar_t* friendlyName);
-    void RequestManifest(const wchar_t* age);
+    void RequestFile(const plFileName& file, const plFileName& friendlyName);
+    void RequestManifest(const plString& age);
     void Start();
 };
 

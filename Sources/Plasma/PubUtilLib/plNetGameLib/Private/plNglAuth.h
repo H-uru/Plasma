@@ -348,7 +348,7 @@ void NetCliAuthGetEncryptionKey (
 // File List
 //============================================================================
 struct NetCliAuthFileInfo {
-    wchar_t       filename[MAX_PATH];
+    wchar_t     filename[MAX_PATH];
     unsigned    filesize;
 };
 typedef void (*FNetCliAuthFileListRequestCallback)(
@@ -358,8 +358,8 @@ typedef void (*FNetCliAuthFileListRequestCallback)(
     unsigned                    infoCount
 );
 void NetCliAuthFileListRequest (
-    const wchar_t                         dir[],
-    const wchar_t                         ext[],
+    const wchar_t                       dir[],
+    const wchar_t                       ext[],
     FNetCliAuthFileListRequestCallback  callback,
     void *                              param
 );
@@ -370,11 +370,11 @@ void NetCliAuthFileListRequest (
 typedef void (*FNetCliAuthFileRequestCallback)(
     ENetError       result,
     void *          param,
-    const wchar_t     filename[],
+    const wchar_t   filename[],
     hsStream *      writer
 );
 void NetCliAuthFileRequest (
-    const wchar_t                     filename[],
+    const wchar_t                   filename[],
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param

@@ -143,10 +143,10 @@ public:
     PyObject *GetColorLoc(const pyColor &color); // returns the x,y position of a color (x and y from 0 to 1) - returns pyPoint3
     uint32_t GetWidth(); // returns the width of the image
     uint32_t GetHeight(); // returns the height of the image
-    void SaveAsJPEG(const wchar_t* fileName, uint8_t quality = 75);
-    void SaveAsPNG(const wchar_t* fileName);
-    static PyObject* LoadJPEGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height); // returns pyImage
-    static PyObject* LoadPNGFromDisk(const wchar_t* filename, uint16_t width, uint16_t height); // returns pyImage
+    void SaveAsJPEG(const plFileName& fileName, uint8_t quality = 75);
+    void SaveAsPNG(const plFileName& fileName);
+    static PyObject* LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
+    static PyObject* LoadPNGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
 #endif
 };
 

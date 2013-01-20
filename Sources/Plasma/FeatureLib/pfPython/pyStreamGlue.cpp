@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pyStream.h"
+#include "plFileSystem.h"
 
 
 // glue functions
@@ -67,23 +68,10 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::wstring filename;
-    if (PyUnicode_Check(filenameObj))
+    plFileName filename;
+    if (PyString_CheckEx(filenameObj))
     {
-        int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
-        text[strLen] = L'\0';
-        filename = text;
-        delete [] text;
-    }
-    else if (PyString_Check(filenameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        filename = wText;
-        delete [] wText;
+        filename = PyString_AsStringEx(filenameObj);
     }
     else
     {
@@ -91,23 +79,10 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::wstring flags;
-    if (PyUnicode_Check(flagsObj))
+    plString flags;
+    if (PyString_CheckEx(flagsObj))
     {
-        int strLen = PyUnicode_GetSize(flagsObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)flagsObj, text, strLen);
-        text[strLen] = L'\0';
-        flags = text;
-        delete [] text;
-    }
-    else if (PyString_Check(flagsObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(flagsObj);
-        wchar_t* wText = hsStringToWString(text);
-        flags = wText;
-        delete [] wText;
+        flags = PyString_AsStringEx(flagsObj);
     }
     else
     {
@@ -115,7 +90,7 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
         PYTHON_RETURN_ERROR;
     }
 
-    PYTHON_RETURN_BOOL(self->fThis->Open(filename.c_str(), flags.c_str()));
+    PYTHON_RETURN_BOOL(self->fThis->Open(filename, flags.c_str()));
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptStream, readlines)

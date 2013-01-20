@@ -77,7 +77,8 @@ void plSDLParser::DebugMsgV(const char* fmt, va_list args) const
 // read name, version
 // return true to skip the next token read
 //
-bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc) const
+bool plSDLParser::IParseStateDesc(const plFileName& fileName, hsStream* stream, char token[],
+                                  plStateDescriptor*& curDesc) const
 {   
     plSDL::DescriptorList* descList = &plSDLMgr::GetInstance()->fDescriptors;
 
@@ -108,7 +109,8 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         if (!strcmp(token, "VERSION"))
         {
             // read desc version
-            hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                               fileName.AsString().c_str()).c_str());
             if (stream->GetToken(token, kTokenLen))
             {
                 int v=atoi(token);
@@ -119,13 +121,14 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         else
         {
             hsAssert(false, plString::Format("Error parsing state desc, missing VERSION, fileName=%s",
-                fileName).c_str());
+                                             fileName.AsString().c_str()).c_str());
             ok = false;
         }
     }
     else
     {
-        hsAssert(false, plString::Format("Error parsing state desc, fileName=%s", fileName).c_str());
+        hsAssert(false, plString::Format("Error parsing state desc, fileName=%s",
+                                         fileName.AsString().c_str()).c_str());
         ok = false;
     }
 
@@ -134,8 +137,8 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
         ok = ( plSDLMgr::GetInstance()->FindDescriptor(curDesc->GetName(), curDesc->GetVersion())==nil );
         if ( !ok )
         {
-            plString err = plString::Format( "Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s",
-                                             curDesc->GetName().c_str(), curDesc->GetVersion(), fileName );
+            plString err = plString::Format("Found duplicate SDL descriptor for %s version %d.\nFailed to parse file: %s",
+                                            curDesc->GetName().c_str(), curDesc->GetVersion(), fileName.AsString().c_str());
             plNetApp::StaticErrorMsg( err.c_str() );
             hsAssert( false, err.c_str() );
         }
@@ -159,10 +162,11 @@ bool plSDLParser::IParseStateDesc(const char* fileName, hsStream* stream, char t
 // read type, name, count [default]
 // return true to skip the next token read
 //
-bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc, 
-                                plVarDescriptor*& curVar) const
+bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, char token[],
+                                plStateDescriptor*& curDesc, plVarDescriptor*& curVar) const
 {
-    hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+    hsAssert(curDesc, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                      fileName.AsString().c_str()).c_str());
     if ( !curDesc )
         return false;
 
@@ -181,7 +185,7 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         char* sdlName = token+1;
         plStateDescriptor* stateDesc = plSDLMgr::GetInstance()->FindDescriptor(sdlName, plSDL::kLatestVersion);
         hsAssert(stateDesc, plString::Format("can't find nested state desc reference %s, fileName=%s",
-                sdlName, fileName).c_str());
+                 sdlName, fileName.AsString().c_str()).c_str());
         curVar = new plSDVarDescriptor(stateDesc);
     }
     else
@@ -189,7 +193,8 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
     
     curDesc->AddVar(curVar);
     bool ok=curVar->SetType(token);
-    hsAssert(ok, plString::Format("Variable 'type' syntax problem with .sdl file, type=%s, fileName=%s", token, fileName).c_str());
+    hsAssert(ok, plString::Format("Variable 'type' syntax problem with .sdl file, type=%s, fileName=%s",
+                                  token, fileName.AsString().c_str()).c_str());
     dbgStr = plString::Format("\tVAR Type=%s ", token);
     
     //
@@ -198,10 +203,11 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
     if (stream->GetToken(token, kTokenLen))
     {
         hsAssert(strstr(token, "[") && strstr(token, "]"), plString::Format("invalid var syntax, missing [x], fileName=%s",
-                fileName).c_str());
+                fileName.AsString().c_str()).c_str());
         char* ptr = strtok( token, seps );  // skip [
         
-        hsAssert(curVar, plString::Format("Missing current var.  Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+        hsAssert(curVar, plString::Format("Missing current var.  Syntax problem with .sdl file, fileName=%s",
+                                          fileName.AsString().c_str()).c_str());
         curVar->SetName(token);
         //
         // COUNT
@@ -221,7 +227,8 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
     {
         if (!strcmp(token, "DEFAULT"))
         {
-            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                              fileName.AsString().c_str()).c_str());
             // read state var type
             
             plString defaultStr;
@@ -248,7 +255,8 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         else
         if (!strcmp(token, "DISPLAYOPTION"))
         {
-            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                              fileName.AsString().c_str()).c_str());
             dbgStr += plString(" ") + token;
 
             bool read=stream->GetToken(token, kTokenLen);
@@ -265,13 +273,15 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
             }
             else
             {
-                hsAssert(false, plString::Format("missing displayOption string, fileName=%s", fileName).c_str());
+                hsAssert(false, plString::Format("missing displayOption string, fileName=%s",
+                                                 fileName.AsString().c_str()).c_str());
             }
         }
         else
         if (!strcmp(token, "DEFAULTOPTION"))
         {
-            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                              fileName.AsString().c_str()).c_str());
             dbgStr += plString(" ") + token;
 
             bool read=stream->GetToken(token, kTokenLen);
@@ -283,7 +293,8 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
             }
             else
             {
-                hsAssert(false, plString::Format("missing defaultOption string, fileName=%s", fileName).c_str());
+                hsAssert(false, plString::Format("missing defaultOption string, fileName=%s",
+                                                 fileName.AsString().c_str()).c_str());
             }
         }
 
@@ -291,14 +302,16 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
         else
         if (!strcmp(token, "INTERNAL"))
         {
-            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                              fileName.AsString().c_str()).c_str());
             curVar->SetInternal(true);
             dbgStr += plString(" ") + token;
         }
         else
         if (!strcmp(token, "PHASED"))
         {
-            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s", fileName).c_str());
+            hsAssert(curVar, plString::Format("Syntax problem with .sdl file, fileName=%s",
+                                              fileName.AsString().c_str()).c_str());
             curVar->SetAlwaysNew(true);
             dbgStr += plString(" ") + token;
         }
@@ -319,13 +332,11 @@ bool plSDLParser::IParseVarDesc(const char* fileName, hsStream* stream, char tok
 // create state descriptor from sdl file.
 // return false on err.
 //
-bool plSDLParser::ILoadSDLFile(const char* fileName) const
+bool plSDLParser::ILoadSDLFile(const plFileName& fileName) const
 {
-    DebugMsg("Parsing SDL file %s", fileName);
-    
-    wchar_t* temp = hsStringToWString(fileName);
-    hsStream* stream = plStreamSource::GetInstance()->GetFile(temp);
-    delete [] temp;
+    DebugMsg("Parsing SDL file %s", fileName.AsString().c_str());
+
+    hsStream* stream = plStreamSource::GetInstance()->GetFile(fileName);
     if (!stream)
         return false;
 
@@ -393,33 +404,27 @@ bool plSDLParser::ILoadSDLFile(const char* fileName) const
 //
 bool plSDLParser::IReadDescriptors() const
 {
-    std::string sdlDir = plSDLMgr::GetInstance()->GetSDLDir();
-    DebugMsg("SDL: Reading latest descriptors from directory %s", sdlDir.c_str());
-
-    wchar_t* temp = hsStringToWString(sdlDir.c_str());
-    std::wstring wSDLDir = temp;
-    delete [] temp;
+    plFileName sdlDir = plSDLMgr::GetInstance()->GetSDLDir();
+    DebugMsg("SDL: Reading latest descriptors from directory %s", sdlDir.AsString().c_str());
 
     // Get the names of all the sdl files
-    std::vector<std::wstring> files = plStreamSource::GetInstance()->GetListOfNames(wSDLDir, L".sdl");
+    std::vector<plFileName> files = plStreamSource::GetInstance()->GetListOfNames(sdlDir, "sdl");
 
     bool ret=true;
     int cnt=0;
     for (int i = 0; i < files.size(); i++)
     {
-        char* str = hsWStringToString(files[i].c_str());
-        if (!ILoadSDLFile(str))
+        if (!ILoadSDLFile(files[i]))
         {
             plNetApp* netApp = plSDLMgr::GetInstance()->GetNetApp();
             if (netApp)
-                netApp->ErrorMsg("Error loading SDL file %s", str);
+                netApp->ErrorMsg("Error loading SDL file %s", files[i].AsString().c_str());
             else
-                hsStatusMessageF("Error loading SDL file %s", str);
+                hsStatusMessageF("Error loading SDL file %s", files[i].AsString().c_str());
             ret=false;
         }
         else
             cnt++;
-        delete [] str;
     }
     DebugMsg("Done reading SDL files"); 
 

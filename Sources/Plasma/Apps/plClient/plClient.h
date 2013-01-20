@@ -296,7 +296,7 @@ public:
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync = false);
     void ResizeDisplayDevice(int Width, int Height, bool Windowed);
     void IDetectAudioVideoSettings();
-    void IWriteDefaultGraphicsSettings(const wchar_t* destFile);
+    void IWriteDefaultGraphicsSettings(const plFileName& destFile);
 
     plAnimDebugList *fAnimDebugList;
 

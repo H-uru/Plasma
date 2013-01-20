@@ -54,15 +54,14 @@ class plStreamSource
 private:
     struct fileData
     {
-        std::wstring    fFilename; // includes path
-        std::wstring    fDir; // parent directory
-        std::wstring    fExt;
+        plFileName      fFilename; // includes path
+        plFileName      fDir; // parent directory
+        plString        fExt;
         hsStream*       fStream; // we own this pointer, so clean it up
     };
-    std::map<std::wstring, fileData> fFileData; // key is filename
+    std::map<plFileName, fileData, plFileName::less_i> fFileData; // key is filename
 
     void ICleanup(); // closes all file pointers and cleans up after itself
-    void IBreakupFilename(std::wstring filename, std::wstring& dir, std::wstring& ext);
 
     plStreamSource() {}
 public:
@@ -72,11 +71,11 @@ public:
     void Cleanup() {ICleanup();}
 
     // File access functions
-    hsStream* GetFile(std::wstring filename); // internal builds will read from disk if it doesn't exist
-    std::vector<std::wstring> GetListOfNames(std::wstring dir, std::wstring ext); // internal builds merge from disk
+    hsStream* GetFile(const plFileName& filename); // internal builds will read from disk if it doesn't exist
+    std::vector<plFileName> GetListOfNames(const plFileName& dir, const plString& ext); // internal builds merge from disk
 
     // For other classes to insert files (takes ownership of the stream if successful)
-    bool InsertFile(std::wstring filename, hsStream* stream);
+    bool InsertFile(const plFileName& filename, hsStream* stream);
 
     // Instance handling
     static plStreamSource* GetInstance();

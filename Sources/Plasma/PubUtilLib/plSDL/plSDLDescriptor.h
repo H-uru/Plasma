@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include "HeadSpin.h"
-#include "plString.h"
-#include <string>
+#include "plFileSystem.h"
 
 //
 // Describes a variable in a state descriptor.
@@ -226,7 +225,7 @@ private:
     VarsList fVarsList;
     int fVersion;
     plString fName;
-    std::string fFilename;  // the filename this descriptor was read from
+    plFileName fFilename;  // the filename this descriptor was read from
 
     void IDeInit();
 public:
@@ -238,14 +237,14 @@ public:
     int GetNumVars() const { return fVarsList.size(); }
     plVarDescriptor* GetVar(int i) const { return fVarsList[i]; }
     int GetVersion() const { return fVersion; }
-    const char * GetFilename() const { return fFilename.c_str();}
-    
+    plFileName GetFilename() const { return fFilename; }
+
     // setters
     void SetVersion(int v) { fVersion=v; }
     void SetName(const plString& n) { fName=n; }
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
-    void SetFilename( const char * n ) { fFilename=n;}
-    
+    void SetFilename(const plFileName& n) { fFilename=n;}
+
     plVarDescriptor* FindVar(const plString& name, int* idx=nil) const;
 
     // IO

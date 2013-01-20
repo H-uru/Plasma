@@ -76,7 +76,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// plStatusLogMgr Stuff ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-wchar_t       plStatusLogMgr::fBasePath[ MAX_PATH ] = L"";
+plFileName plStatusLogMgr::IGetBasePath()
+{
+    static plFileName _basePath = plFileSystem::GetLogPath();
+    return _basePath;
+}
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
@@ -86,22 +90,6 @@ plStatusLogMgr::plStatusLogMgr()
     fCurrDisplay = nil;
     fDrawer = nil;
     fLastLogChangeTime = 0;
-
-#if HS_BUILD_FOR_WIN32
-    SHGetSpecialFolderPathW(NULL, fBasePath, CSIDL_LOCAL_APPDATA, TRUE);
-//#elif HS_BUILD_FOR_DARWIN
-// Do some Mac specific thing here eventually
-#else
-    const char* home = getenv("HOME");
-    if (!home) home = "";
-    wchar_t* temp = hsStringToWString(home);
-    swprintf(fBasePath, MAX_PATH, L"%S/.cache", temp);
-    delete[] temp;
-#endif
-
-    plFileUtils::ConcatFileName(fBasePath, plProduct::LongName().ToWchar());
-    plFileUtils::ConcatFileName(fBasePath, L"Log");
-    plFileUtils::EnsureFilePathExists(fBasePath);
 }
 
 plStatusLogMgr::~plStatusLogMgr()
@@ -124,52 +112,6 @@ plStatusLogMgr  &plStatusLogMgr::GetInstance( void )
     return theManager;
 }
 
-//// IEnsurePathExists ///////////////////////////////////////////////////////
-
-void    plStatusLogMgr::IEnsurePathExists( const wchar_t *dirName )
-{
-    // Note: this creates the directory if it doesn't exist, or if it does,
-    // returns false
-    plFileUtils::CreateDir( dirName );
-}
-
-//// IPathAppend /////////////////////////////////////////////////////////////
-
-void    plStatusLogMgr::IPathAppend( wchar_t *base, const wchar_t *extra, unsigned maxLen )
-{
-    if (!base || !extra)
-        return;
-
-    unsigned baseLen = wcslen(base);
-    unsigned extraLen = wcslen(extra);
-
-    bool needsSeparator = false;
-    if (baseLen >= 1)
-        needsSeparator = (base[baseLen - 1] != PATH_SEPARATOR);
-
-    if (needsSeparator)
-    {
-        if ((baseLen + 1 + 1) >= maxLen)
-            return; // abort, buffer isn't big enough
-        base[baseLen] = PATH_SEPARATOR;
-        ++baseLen;
-        base[baseLen] = '\0';
-    }
-    
-    // concat the strings, making sure not to overrun the buffer
-    unsigned curExtraPos = 0;
-    for (unsigned curBasePos = baseLen; curBasePos < maxLen; ++curBasePos)
-    {
-        base[curBasePos] = extra[curExtraPos];
-        if (extra[curExtraPos] == '\0')
-            break; // done
-        ++curExtraPos;
-    }
-
-    // ensure we are null-terminated
-    base[maxLen - 1] = '\0';
-}
-
 //// Draw ////////////////////////////////////////////////////////////////////
 
 void    plStatusLogMgr::Draw( void )
@@ -187,24 +129,16 @@ void    plStatusLogMgr::Draw( void )
 
 //// CreateStatusLog /////////////////////////////////////////////////////////
 
-plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const char *filename, uint32_t flags )
+plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags )
 {
-    wchar_t* wFilename = hsStringToWString(filename);
-    plStatusLog* ret = CreateStatusLog(numDisplayLines, wFilename, flags);
-    delete [] wFilename;
-    return ret;
-}
-
-plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
-{
-    IEnsurePathExists( fBasePath );
+    plFileSystem::CreateDir(IGetBasePath(), true);
     plStatusLog *log = new plStatusLog( numDisplayLines, filename, flags );
 
     // Put the new log in its alphabetical position
     plStatusLog** nextLog = &fDisplays;
     while (*nextLog)
     {
-        if (wcsicmp(filename, (*nextLog)->GetFileNameW()) <= 0)
+        if (filename.AsString().CompareI((*nextLog)->GetFileName().AsString()) <= 0)
             break;
         nextLog = &(*nextLog)->fNext;
     }
@@ -229,14 +163,7 @@ void    plStatusLogMgr::ToggleStatusLog( plStatusLog *logToDisplay )
 
 //// SetCurrStatusLog ////////////////////////////////////////////////////////
 
-void plStatusLogMgr::SetCurrStatusLog(const char* logName)
-{
-    wchar_t* wLogName = hsStringToWString(logName);
-    SetCurrStatusLog(wLogName);
-    delete [] wLogName;
-}
-
-void plStatusLogMgr::SetCurrStatusLog(const wchar_t* logName)
+void plStatusLogMgr::SetCurrStatusLog(const plFileName& logName)
 {
     plStatusLog* log = FindLog(logName, false);
     if (log != nil)
@@ -277,21 +204,13 @@ void    plStatusLogMgr::PrevStatusLog( void )
 
 //// FindLog ////////////////////////////////////////////////////////////////
 
-plStatusLog *plStatusLogMgr::FindLog( const char *filename, bool createIfNotFound )
-{
-    wchar_t* wFilename = hsStringToWString(filename);
-    plStatusLog* ret = FindLog(wFilename, createIfNotFound);
-    delete [] wFilename;
-    return ret;
-}
-
-plStatusLog *plStatusLogMgr::FindLog( const wchar_t *filename, bool createIfNotFound )
+plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfNotFound )
 {
     plStatusLog *log = fDisplays;
 
     while( log != nil )
     {
-        if( wcsicmp( log->GetFileNameW(), filename ) == 0 )
+        if (log->GetFileName().AsString().CompareI(filename.AsString()) == 0)
             return log;
 
         log = log->fNext;
@@ -306,21 +225,6 @@ plStatusLog *plStatusLogMgr::FindLog( const wchar_t *filename, bool createIfNotF
 
     return log;
 }
-
-//// SetBasePath ////////////////////////////////////////////////////////////////
-
-void plStatusLogMgr::SetBasePath( const char * path )
-{
-    wchar_t* wPath = hsStringToWString(path);
-    SetBasePath(wPath);
-    delete [] wPath;
-}
-
-void plStatusLogMgr::SetBasePath( const wchar_t * path )
-{
-    wcscpy( fBasePath, path );
-}
-
 
 //// BounceLogs ///////////////////////////////////////////////////////////////
 
@@ -338,34 +242,21 @@ void plStatusLogMgr::BounceLogs()
 
 //// DumpLogs ////////////////////////////////////////////////////////////////
 
-bool plStatusLogMgr::DumpLogs( const char *newFolderName )
-{
-    wchar_t* wFolderName = hsStringToWString(newFolderName);
-    bool ret = DumpLogs(wFolderName);
-    delete [] wFolderName;
-    return ret;
-}
-
-bool plStatusLogMgr::DumpLogs( const wchar_t *newFolderName )
+bool plStatusLogMgr::DumpLogs( const plFileName &newFolderName )
 {
     bool retVal = true; // assume success
-    // create root path and make sure it exists
-    wchar_t temp[MAX_PATH];
-    std::wstring newPath = L"";
-    if (fBasePath)
-    {
-        wcsncpy(temp, fBasePath, MAX_PATH);
-        IPathAppend(temp, newFolderName, MAX_PATH);
-        newPath = temp;
-    }
+    plFileName newPath;
+    plFileName basePath = IGetBasePath();
+    if (basePath.IsValid())
+        newPath = plFileName::Join(basePath, newFolderName);
     else
         newPath = newFolderName;
-    IEnsurePathExists(newPath.c_str());
+    plFileSystem::CreateDir(newPath, true);
 
 #if HS_BUILD_FOR_WIN32
     hsWFolderIterator folderIterator;
-    if (fBasePath)
-        folderIterator.SetPath(fBasePath);
+    if (basePath.IsValid())
+        folderIterator.SetPath(basePath.AsString().ToWchar());
     else
         folderIterator.SetPath(L".");
 
@@ -374,24 +265,15 @@ bool plStatusLogMgr::DumpLogs( const wchar_t *newFolderName )
         if (folderIterator.IsDirectory())
             continue;
 
-        std::wstring baseFilename = folderIterator.GetFileName();
-        std::wstring source;
-        if (fBasePath)
-        {
-            wcsncpy(temp, fBasePath, MAX_PATH);
-            IPathAppend(temp, baseFilename.c_str(), MAX_PATH);
-            source = temp;
-        }
+        plFileName baseFilename = plString::FromWchar(folderIterator.GetFileName());
+        plFileName source;
+        if (basePath.IsValid())
+            source = plFileName::Join(basePath, baseFilename);
         else
             source = baseFilename;
-        
-        std::wstring destination;
-        wcsncpy(temp, newPath.c_str(), MAX_PATH);
-        IPathAppend(temp, baseFilename.c_str(), MAX_PATH);
-        destination = temp;
 
-        bool succeeded = (CopyFileW(source.c_str(), destination.c_str(), FALSE) != 0);
-        retVal = retVal && succeeded;
+        plFileName destination = plFileName::Join(newPath, baseFilename);
+        retVal = (plFileSystem::Copy(source, destination) != 0);
     }
 #endif
     return retVal;
@@ -403,7 +285,7 @@ bool plStatusLogMgr::DumpLogs( const wchar_t *newFolderName )
 
 uint32_t plStatusLog::fLoggingOff = false;
 
-plStatusLog::plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint32_t flags )
+plStatusLog::plStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags )
 {
     fFileHandle = nil;
     fSema = nil;
@@ -411,19 +293,14 @@ plStatusLog::plStatusLog( uint8_t numDisplayLines, const wchar_t *filename, uint
     fForceLog = false;
 
     fMaxNumLines = numDisplayLines;
-    if( filename != nil )
+    if (filename.IsValid())
     {
         fFilename = filename;
-        char* temp = hsWStringToString(filename);
-        fCFilename = temp;
-        delete [] temp;
-
-        fSema = new hsSemaphore(1, fCFilename.c_str());
+        fSema = new hsSemaphore(1, fFilename.AsString().c_str());
     }
     else
     {
-        fFilename = L"";
-        fCFilename = "";
+        fFilename = "";
         flags |= kDontWriteFile;
 
         fSema = new hsSemaphore(1);
@@ -469,31 +346,29 @@ bool plStatusLog::IReOpen( void )
     // Open the file, clearing it, if necessary
     if(!(fFlags & kDontWriteFile))
     {
-        wchar_t file[ MAX_PATH ];
-        wchar_t fileNoExt[MAX_PATH];
-        wchar_t* ext=nil;
-        IParseFileName(file, MAX_PATH, fileNoExt, &ext);
-        wchar_t fileToOpen[MAX_PATH];
-        hsSnwprintf(fileToOpen, MAX_PATH, L"%s.0%s", fileNoExt, ext);
+        plFileName fileNoExt;
+        plString ext;
+        IParseFileName(fileNoExt, ext);
+        plFileName fileToOpen = plString::Format("%s.0.%s", fileNoExt.AsString().c_str(), ext.c_str());
         if (!(fFlags & kDontRotateLogs))
         {
-            wchar_t work[MAX_PATH], work2[MAX_PATH];
-            hsSnwprintf(work, MAX_PATH, L"%s.3%s",fileNoExt,ext);
-            plFileUtils::RemoveFile(work);
-            hsSnwprintf(work2, MAX_PATH, L"%s.2%s",fileNoExt,ext);
-            plFileUtils::FileMove(work2, work);
-            hsSnwprintf(work, MAX_PATH, L"%s.1%s",fileNoExt,ext);
-            plFileUtils::FileMove(work, work2);
-            plFileUtils::FileMove(fileToOpen, work);
+            plFileName work, work2;
+            work = plString::Format("%s.3.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            plFileSystem::Unlink(work);
+            work2 = plString::Format("%s.2.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            plFileSystem::Move(work2, work);
+            work = plString::Format("%s.1.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            plFileSystem::Move(work, work2);
+            plFileSystem::Move(fileToOpen, work);
         }
         
         if (fFlags & kAppendToLast)
         {
-            fFileHandle = hsWFopen( fileToOpen, L"at" );
+            fFileHandle = plFileSystem::Open(fileToOpen, "at");
         }
         else
         {
-            fFileHandle = hsWFopen( fileToOpen, L"wt" );
+            fFileHandle = plFileSystem::Open(fileToOpen, "wt");
             // if we need to reopen lets just append
             fFlags |= kAppendToLast;
         }
@@ -533,31 +408,20 @@ void    plStatusLog::IFini( void )
     delete [] fColors;
 }
 
-void plStatusLog::IParseFileName(wchar_t* file, size_t fnsize, wchar_t* fileNoExt, wchar_t** ext) const
+void plStatusLog::IParseFileName(plFileName& fileNoExt, plString& ext) const
 {
-    const wchar_t *base = plStatusLogMgr::IGetBasePath();
-    if( wcslen( base ) != nil )
-        hsSnwprintf( file, fnsize, L"%s%S%s", base, PATH_SEPARATOR_STR, fFilename.c_str() );
+    plFileName base = plStatusLogMgr::IGetBasePath();
+    plFileName file;
+    if (base.IsValid())
+        file = plFileName::Join(base, fFilename);
     else
-        wcscpy( file, fFilename.c_str() );
+        file = fFilename;
 
-    plFileUtils::EnsureFilePathExists( file );
-    
+    plFileSystem::CreateDir(file.StripFileName(), true);
+
     // apache-style file backup
-    
-    *ext = wcsrchr(file, L'.');
-    if (*ext)
-    {
-        int fileLen = *ext - file;
-        wcsncpy(fileNoExt, file, fileLen);
-        fileNoExt[fileLen] = L'\0';
-    }
-    else
-    {
-        wcscpy(fileNoExt, file);
-        *ext = L'\0';
-    }
-    
+    fileNoExt = file.StripFileExt();
+    ext = file.GetFileExt();
 }
 
 //// IUnlink /////////////////////////////////////////////////////////////////
@@ -716,7 +580,7 @@ bool plStatusLog::AddLineF( uint32_t color, const char *format, ... )
 
 //// AddLine Static Variations ///////////////////////////////////////////////
 
-bool plStatusLog::AddLineS( const char *filename, const char *format, ... )
+bool plStatusLog::AddLineS( const plFileName &filename, const char *format, ... )
 {
     plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
     if (!log)
@@ -731,7 +595,7 @@ bool plStatusLog::AddLineS( const char *filename, const char *format, ... )
     return log->AddLineV( format, arguments );
 }
 
-bool plStatusLog::AddLineS( const char *filename, uint32_t color, const char *format, ... )
+bool plStatusLog::AddLineS( const plFileName &filename, uint32_t color, const char *format, ... )
 {
     plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
     if (!log)
