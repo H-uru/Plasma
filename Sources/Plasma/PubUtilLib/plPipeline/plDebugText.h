@@ -97,11 +97,17 @@ class plDebugText
 
         static plDebugText  &Instance( void ) { return fInstance; }
 
-        uint32_t  CalcStringWidth( const char *string );
+        uint32_t CalcStringWidth(const char *string);
+        uint32_t CalcStringWidth_TEMP(const plString &string) { return CalcStringWidth(string.c_str()); }
 
-        void    DrawString( uint16_t x, uint16_t y, const char *string, uint32_t hexColor, uint8_t style = 0 );
+        void DrawString(uint16_t x, uint16_t y, const char *string, uint32_t hexColor, uint8_t style = 0);
 
-        void    DrawString( uint16_t x, uint16_t y, const char *string, hsColorRGBA &color, uint8_t style = 0 )
+        void DrawString_TEMP(uint16_t x, uint16_t y, const plString &string, uint32_t hexColor, uint8_t style = 0)
+        {
+            DrawString(x, y, string.c_str(), hexColor, style);
+        }
+
+        void DrawString(uint16_t x, uint16_t y, const plString &string, hsColorRGBA &color, uint8_t style = 0)
         {
             uint32_t  hex;
             uint8_t   r, g, b, a;
@@ -113,12 +119,12 @@ class plDebugText
             a = (uint8_t)( color.a * 255.0 );
             hex = ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b );
 
-            DrawString( x, y, string, hex, style );
+            DrawString_TEMP(x, y, string, hex, style);
         }
 
-        void    DrawString( uint16_t x, uint16_t y, const char *string, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255, uint8_t style = 0 )
+        void DrawString(uint16_t x, uint16_t y, const plString &string, uint8_t r = 255, uint8_t g = 255, uint8_t b = 255, uint8_t a = 255, uint8_t style = 0)
         {
-            DrawString( x, y, string, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style );
+            DrawString_TEMP(x, y, string, (uint32_t)( ( a << 24 ) | ( r << 16 ) | ( g << 8 ) | ( b ) ), style);
         }
 
         void    SetDrawOnTopMode( bool enable ) { fDrawOnTopMode = enable; }
@@ -138,7 +144,7 @@ class plDebugText
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
         void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
-        const char      *GetFontFace( void ) { return fFontFace; }
+        const char     *GetFontFace( void ) { return fFontFace; }
         uint16_t        GetFontSize( void ) { return fFontSize; }
         uint16_t        GetFontHeight();
 
