@@ -849,33 +849,35 @@ void plPXPhysicalControllerCore::IProcessDynamicHits()
 
 void plPXPhysicalControllerCore::IDrawDebugDisplay()
 {
-    plDebugText     &debugTxt = plDebugText::Instance();
-    char            strBuf[ 2048 ];
-    int             lineHeight = debugTxt.GetFontSize() + 4;
-    uint32_t        scrnWidth, scrnHeight;
-
-    debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
-    int y = 10;
+    plDebugText &debugTxt = plDebugText::Instance();
+    plString debugString;
+    int y = 10;     // Initial draw position
     int x = 10;
+    int lineHeight = debugTxt.GetFontSize() + 4;
 
-    sprintf(strBuf, "Controller Count: %d", gControllers.size());
-    debugTxt.DrawString(x, y, strBuf);
+    debugString = plString::Format("Controller Count: %d", gControllers.size());
+    debugTxt.DrawString(x, y, debugString.c_str());
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, "Avatar Collisions:");
-    y += lineHeight;
-
-    int i;
-    for (i = 0; i < fDbgCollisionInfo.GetCount(); i++)
+    // Only display avatar collisions if any exist...
+    int collisionCount = fDbgCollisionInfo.GetCount();
+    if (collisionCount > 0)
     {
-        hsVector3 normal = fDbgCollisionInfo[i].fNormal;
-        char *overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
-        float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
-        sprintf(strBuf, "    Obj: %s, Normal: (%.2f, %.2f, %.2f), Angle(%.1f), Overlap(%3s)",
-                fDbgCollisionInfo[i].fSO->GetKeyName(),
-                normal.fX, normal.fY, normal.fZ, angle, overlapStr);
-        debugTxt.DrawString(x, y, strBuf);
+        debugTxt.DrawString(x, y, "Avatar Collisions:");
         y += lineHeight;
+
+        for (int i = 0; i < collisionCount; i++)
+        {
+            hsVector3 normal = fDbgCollisionInfo[i].fNormal;
+            const char* overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
+            float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
+            debugString = plString::Format("\tObj: %s, Normal: (%.2f, %.2f, %.2f), Angle(%.1f), Overlap(%s)",
+                    fDbgCollisionInfo[i].fSO->GetKeyName().c_str(),
+                    normal.fX, normal.fY, normal.fZ, angle,
+                    overlapStr);
+            debugTxt.DrawString(x, y, debugString.c_str());
+            y += lineHeight;
+        }
     }
 }
 #endif PLASMA_EXTERNAL_RELEASE
