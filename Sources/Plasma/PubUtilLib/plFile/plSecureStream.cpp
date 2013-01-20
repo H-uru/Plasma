@@ -72,7 +72,6 @@ fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
 fRAMStream(nil),
-fWriteFileName(nil),
 fOpenMode(kOpenFail),
 fDeleteOnExit(deleteOnExit)
 {
@@ -87,7 +86,6 @@ fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
 fRAMStream(nil),
-fWriteFileName(nil),
 fOpenMode(kOpenFail),
 fDeleteOnExit(false)
 {

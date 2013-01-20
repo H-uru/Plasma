@@ -63,7 +63,6 @@ plEncryptedStream::plEncryptedStream(uint32_t* key) :
     fActualFileSize(0),
     fBufferedStream(false),
     fRAMStream(nil),
-    fWriteFileName(nil),
     fOpenMode(kOpenFail)
 {
     if (key)

@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
 #include "plFileSystem.h"
 
 #if HS_BUILD_FOR_WIN32
@@ -250,6 +251,15 @@ plFileName plFileSystem::GetCWD()
     return cwd;
 }
 
+bool plFileSystem::SetCWD(const plFileName &cwd)
+{
+#if HS_BUILD_FOR_WIN32
+    return SetCurrentDirectoryW(cwd.AsString().ToWchar());
+#else
+    return (chdir(cwd.AsString().c_str()) == 0);
+#endif
+}
+
 FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 {
 #if HS_BUILD_FOR_WIN32
@@ -365,4 +375,94 @@ plFileName plFileSystem::GetLogPath()
     static plFileName _logPath = plFileName::Join(GetUserDataPath(), "Log");
     plFileSystem::CreateDir(_logPath);
     return _logPath;
+}
+
+#if !HS_BUILD_FOR_WIN32
+static plFileName _CheckReadlink(const char *link_path)
+{
+    plFileInfo info(link_path);
+    if (info.Exists()) {
+        char *path = new char[info.FileSize()];
+        readlink(link_path, path, info.FileSize());
+        plFileName appPath = plString::FromUtf8(path, info.FileSize());
+        delete [] path;
+        return appPath;
+    }
+
+    return "";
+}
+#endif
+
+plFileName plFileSystem::GetCurrentAppPath()
+{
+    plFileName appPath;
+
+    // Neither OS makes this one simple...
+#if HS_BUILD_FOR_WIN32
+    wchar_t path[MAX_PATH];
+    size_t size = GetModuleFileNameW(nullptr, path, MAX_PATH);
+    if (size >= MAX_PATH) {
+        // Buffer not big enough
+        size_t bigger = MAX_PATH;
+        do {
+            bigger *= 2;
+            wchar_t *path_lg = new wchar_t[bigger];
+            size = GetModuleFileNameW(nullptr, path_lg, bigger);
+            if (size < bigger)
+                appPath = plString::FromWchar(path_lg);
+            delete [] path_lg;
+        } while (!appPath.IsValid());
+    } else {
+        appPath = plString::FromWchar(path);
+    }
+
+    return appPath;
+#else
+    // Look for /proc/self/exe (Linux), /proc/curproc/file (FreeBSD / Mac),
+    // then /proc/self/path/a.out (Solaris).  If none were found, you're SOL
+    appPath = _CheckReadlink("/proc/self/exe");
+    if (appPath.IsValid())
+        return appPath;
+
+    appPath = _CheckReadlink("/proc/curproc/file");
+    if (appPath.IsValid())
+        return appPath;
+
+    appPath = _CheckReadlink("/proc/self/path/a.out");
+    if (appPath.IsValid())
+        return appPath;
+
+    hsAssert(0, "Your OS doesn't make life easy, does it?");
+#endif
+}
+
+plFileName plFileSystem::GetTempFilename(const char *prefix, const plFileName &path)
+{
+#if HS_BUILD_FOR_WIN32
+    // GetTempFileName() never uses more than 3 chars for the prefix
+    wchar_t wprefix[4];
+    for (size_t i=0; i<4; ++i)
+        wprefix[i] = prefix[i];
+    wprefix[3] = 0;
+
+    wchar_t temp[MAX_PATH];
+    if (GetTempFileNameW(path.AsString().ToWchar(), wprefix, 0, temp))
+        return plString::FromWchar(temp);
+
+    return "";
+#else
+    plFileName tmpdir = path;
+    if (!tmpdir.IsValid())
+        tmpdir = "/tmp";
+
+    // "/tmp/prefixXXXXXX"
+    size_t temp_len = tmpdir.GetSize() + strlen(prefix) + 7;
+    char *temp = new char[temp_len + 1];
+    snprintf(temp, temp_len + 1, "%s/%sXXXXXX", tmpdir.AsString().c_str(), prefix);
+    mktemp(temp);
+    plFileName result = temp;
+    delete [] temp;
+
+    return result;
+#endif
 }
