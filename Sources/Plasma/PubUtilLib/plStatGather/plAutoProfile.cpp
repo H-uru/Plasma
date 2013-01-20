@@ -174,20 +174,13 @@ void plAutoProfileImp::IInit()
 void plAutoProfileImp::IShutdown()
 {
     // KLUDGE - Copy the load timing log, in case we used it
-    #define kTimingLog L"readtimings.0.log"
-    #define kAgeTimingLog L"agetimings.0.log"
-    wchar_t destPath[MAX_PATH];
-    wchar_t sourcePath[MAX_PATH];
+    #define kTimingLog      "readtimings.0.log"
+    #define kAgeTimingLog   "agetimings.0.log"
 
-    PathAddFilename(destPath, plProfileManagerFull::Instance().GetProfilePath(), kTimingLog, arrsize(destPath));
-    PathGetLogDirectory(sourcePath, arrsize(sourcePath));
-    PathAddFilename(sourcePath, sourcePath, kTimingLog, arrsize(sourcePath));
-    plFileUtils::FileCopy(sourcePath, destPath);
-
-    PathAddFilename(destPath, plProfileManagerFull::Instance().GetProfilePath(), kAgeTimingLog, arrsize(destPath));
-    PathGetLogDirectory(sourcePath, arrsize(sourcePath));
-    PathAddFilename(sourcePath, sourcePath, kAgeTimingLog, arrsize(sourcePath));
-    plFileUtils::FileCopy(sourcePath, destPath);
+    plFileSystem::Copy(plFileName::Join(plFileSystem::GetLogPath(), kTimingLog),
+                       plFileName::Join(plProfileManagerFull::Instance().GetProfilePath(), kTimingLog));
+    plFileSystem::Copy(plFileName::Join(plFileSystem::GetLogPath(), kAgeTimingLog),
+                       plFileName::Join(plProfileManagerFull::Instance().GetProfilePath(), kAgeTimingLog));
 
 #ifdef HS_BUILD_FOR_WIN32
     ShellExecute(nil, nil, "PostRun.bat", nil, nil, SW_SHOWNORMAL);
@@ -219,7 +212,7 @@ void plAutoProfileImp::INextProfile()
         if (!fLastSpawnPointName.IsNull())
         {
             const char * ageName = NetCommGetAge()->ageDatasetName;
-            plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName.c_str());
+            plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName);
 
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))

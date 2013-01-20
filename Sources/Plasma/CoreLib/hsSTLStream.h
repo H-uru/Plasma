@@ -60,8 +60,7 @@ public:
     hsVectorStream(uint32_t chunkSize);
     virtual ~hsVectorStream();
 
-    virtual bool      Open(const char *, const char *)    { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
-    virtual bool      Open(const wchar_t *, const wchar_t *)  { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
+    virtual bool      Open(const plFileName &, const char *) { hsAssert(0, "hsVectorStream::Open Not Implemented"); return false; }
     virtual bool      Close()             { hsAssert(0, "hsVectorStream::Close Not Implemented"); return false; }
     
     virtual bool      AtEnd();

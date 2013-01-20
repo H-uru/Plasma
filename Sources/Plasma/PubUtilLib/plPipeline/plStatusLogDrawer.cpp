@@ -62,7 +62,7 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
     plStatusLog* iLog = firstLog;
     while (iLog)
     {
-        width = hsMaximum(drawText.CalcStringWidth(iLog->GetFileName()) + 4, width);
+        width = hsMaximum(drawText.CalcStringWidth_TEMP(iLog->GetFileName().AsString()) + 4, width);
         iLog = iLog->fNext;
         numLogs++;
     }
@@ -75,9 +75,9 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
     while (iLog)
     {
         if (iLog == curLog)
-            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName(), 0, 255, 0);
+            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName().AsString(), 0, 255, 0);
         else
-            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName());
+            drawText.DrawString(2, (uint16_t)yPos, iLog->GetFileName().AsString());
 
         iLog = iLog->fNext;
         yPos += height;
@@ -110,7 +110,7 @@ void    plStatusLogDrawer::Draw(plStatusLog* curLog, plStatusLog* firstLog)
     if( IGetFlags( curLog ) & plStatusLog::kFilledBackground )
         drawText.DrawRect( x, y, x + width, y + height, 0, 0, 0, 127 );
 
-    drawText.DrawString( x + 2, y + ( lineHt >> 1 ), IGetFilename( curLog ), 127, 127, 255, 255, plDebugText::kStyleBold );
+    drawText.DrawString( x + 2, y + ( lineHt >> 1 ), IGetFilename( curLog ).AsString(), 127, 127, 255, 255, plDebugText::kStyleBold );
     drawText.DrawRect( x + 2,               y + ( lineHt << 1 ) + 1, 
                         x + width - 8,      y + ( lineHt << 1 ) + 2, 127, 127, 255, 255 );
 

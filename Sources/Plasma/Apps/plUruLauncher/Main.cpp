@@ -647,12 +647,12 @@ int __stdcall WinMain (
 
     curl_global_init(CURL_GLOBAL_ALL);
 
-    const wchar_t *serverIni = L"server.ini";
-    if(cmdParser.IsSpecified(kArgServerIni))
-        serverIni = cmdParser.GetString(kArgServerIni);
+    plFileName serverIni = "server.ini";
+    if (cmdParser.IsSpecified(kArgServerIni))
+        serverIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
 
     // Load the server.ini so we know what to connect to
-    FILE *serverini = _wfopen(serverIni, L"rb");
+    FILE *serverini = plFileSystem::Open(serverIni, "rb");
     if (serverini)
     {
         fclose(serverini);

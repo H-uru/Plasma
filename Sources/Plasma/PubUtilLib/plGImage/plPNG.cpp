@@ -178,19 +178,11 @@ plMipmap* plPNG::IRead(hsStream* inStream)
     return newMipmap;
 }
 
-plMipmap* plPNG::ReadFromFile(const char* fileName)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    plMipmap* retVal = ReadFromFile(wFilename);
-    delete [] wFilename;
-    return retVal;
-}
-
-plMipmap* plPNG::ReadFromFile(const wchar_t* fileName)
+plMipmap* plPNG::ReadFromFile(const plFileName& fileName)
 {
     hsUNIXStream in;
 
-    if (!in.Open(fileName, L"rb")) {
+    if (!in.Open(fileName, "rb")) {
         return nil;
     }
 
@@ -248,19 +240,11 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream)
     return result;
 }
 
-bool plPNG::WriteToFile(const char* fileName, plMipmap* sourceData)
-{
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool retVal = WriteToFile(wFilename, sourceData);
-    delete [] wFilename;
-    return retVal;
-}
-
-bool plPNG::WriteToFile(const wchar_t* fileName, plMipmap* sourceData)
+bool plPNG::WriteToFile(const plFileName& fileName, plMipmap* sourceData)
 {
     hsUNIXStream out;
 
-    if (!out.Open(fileName, L"wb")) {
+    if (!out.Open(fileName, "wb")) {
         return false;
     }
 

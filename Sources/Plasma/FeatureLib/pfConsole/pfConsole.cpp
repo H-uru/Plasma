@@ -283,7 +283,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     {
         if( cmd->GetCmd() == plConsoleMsg::kExecuteFile )
         {
-            if( !fEngine->ExecuteFile( (char *)cmd->GetString() ) )
+            if( !fEngine->ExecuteFile( cmd->GetString() ) )
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing

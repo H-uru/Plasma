@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include <marshal.h>
 #include <time.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <string>
 
 #include "HeadSpin.h"
@@ -125,7 +123,7 @@ bool plPythonPack::Open()
     fPackNotFound = true;
 
     // Get the names of all the pak files
-    std::vector<std::wstring> files = plStreamSource::GetInstance()->GetListOfNames(L"python", L".pak");
+    std::vector<plFileName> files = plStreamSource::GetInstance()->GetListOfNames("python", "pak");
 
     std::vector<time_t> modTimes; // the modification time for each of the streams (to resolve duplicate file issues)
 
@@ -139,13 +137,11 @@ bool plPythonPack::Open()
             fPackStream->Rewind(); // make sure we're at the beginning of the file
             fPackNotFound = false;
 
-            char* tempFilename = hsWStringToString(files[curName].c_str());
-            struct stat buf;
             time_t curModTime = 0;
-            if (stat(tempFilename,&buf)==0)
-                curModTime = buf.st_mtime;
+            plFileInfo info(files[curName]);
+            if (info.Exists())
+                curModTime = info.ModifyTime();
             modTimes.push_back(curModTime);
-            delete [] tempFilename;
 
             // read the index data
             int numFiles = fPackStream->ReadLE32();
@@ -191,9 +187,8 @@ void plPythonPack::Close()
         // do NOT close or delete the streams, the preloader will do that for us
         fPackStreams[i] = nil;
     }
-    
-    fPackStreams.clear();
 
+    fPackStreams.clear();
     fFileOffsets.clear();
 }
 

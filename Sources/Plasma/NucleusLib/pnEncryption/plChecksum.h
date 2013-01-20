@@ -60,6 +60,7 @@ public:
 };
 
 class hsStream;
+class plFileName;
 
 class plMD5Checksum
 {
@@ -72,13 +73,13 @@ class plMD5Checksum
         plMD5Checksum(size_t size, uint8_t *buffer);
         plMD5Checksum();
         plMD5Checksum(const plMD5Checksum &rhs);
-        plMD5Checksum(const char *fileName);
+        plMD5Checksum(const plFileName &fileName);
         plMD5Checksum(hsStream* stream);
 
         bool    IsValid() const { return fValid; }
         void    Clear();
 
-        void    CalcFromFile(const char *fileName);
+        void    CalcFromFile(const plFileName &fileName);
         void    CalcFromStream(hsStream* stream);
 
         void    Start();
@@ -116,13 +117,13 @@ class plSHAChecksum
         plSHAChecksum(size_t size, uint8_t* buffer);
         plSHAChecksum();
         plSHAChecksum(const plSHAChecksum& rhs);
-        plSHAChecksum(const char* fileName);
+        plSHAChecksum(const plFileName& fileName);
         plSHAChecksum(hsStream* stream);
 
         bool IsValid() const { return fValid; }
         void Clear();
 
-        void CalcFromFile(const char* fileName);
+        void CalcFromFile(const plFileName& fileName);
         void CalcFromStream(hsStream* stream);
 
         void Start();
@@ -155,13 +156,13 @@ class plSHA1Checksum
         plSHA1Checksum(size_t size, uint8_t* buffer);
         plSHA1Checksum();
         plSHA1Checksum(const plSHA1Checksum& rhs);
-        plSHA1Checksum(const char* fileName);
+        plSHA1Checksum(const plFileName& fileName);
         plSHA1Checksum(hsStream* stream);
 
         bool IsValid() const { return fValid; }
         void Clear();
 
-        void CalcFromFile(const char* fileName);
+        void CalcFromFile(const plFileName& fileName);
         void CalcFromStream(hsStream* stream);
 
         void Start();

@@ -493,7 +493,7 @@ uint32_t  plFileUtils::GetFileSize( const wchar_t *path )
     uint32_t len = 0;
 
     hsUNIXStream str;
-    if (str.Open(path, L"rb"))
+    if (str.Open(plString::FromWchar(path), "rb"))
     {
         len = str.GetEOF();
         str.Close();

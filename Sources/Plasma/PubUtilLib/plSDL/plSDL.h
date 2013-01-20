@@ -510,10 +510,11 @@ class plSDLParser
 {
 private:
     bool IReadDescriptors() const;
-    bool ILoadSDLFile(const char* fileName) const;
-    bool IParseVarDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc, 
-        plVarDescriptor*& curVar) const;
-    bool IParseStateDesc(const char* fileName, hsStream* stream, char token[], plStateDescriptor*& curDesc) const;
+    bool ILoadSDLFile(const plFileName& fileName) const;
+    bool IParseVarDesc(const plFileName& fileName, hsStream* stream, char token[],
+                       plStateDescriptor*& curDesc, plVarDescriptor*& curVar) const;
+    bool IParseStateDesc(const plFileName& fileName, hsStream* stream, char token[],
+                         plStateDescriptor*& curDesc) const;
 
     void DebugMsg(const char* fmt, ...) const;
     void DebugMsgV(const char* fmt, va_list args) const;

@@ -684,17 +684,10 @@ hsUNIXStream::~hsUNIXStream()
     // Don't Close here, because Sub classes Don't always want that behaviour!
 }
 
-bool hsUNIXStream::Open(const char *name, const char *mode)
+bool hsUNIXStream::Open(const plFileName &name, const char *mode)
 {
     fPosition = 0;
-    fRef = hsFopen(name, mode);
-    return (fRef) ? true : false;
-}
-
-bool hsUNIXStream::Open(const wchar_t *name, const wchar_t *mode)
-{
-    fPosition = 0;
-    fRef = hsWFopen(name, mode);
+    fRef = plFileSystem::Open(name, mode);
     return (fRef) ? true : false;
 }
 
@@ -1222,23 +1215,15 @@ hsBufferedStream::hsBufferedStream()
 , fBufferReadOut(0)
 , fReadDirect(0)
 , fLastReadPos(0)
-, fFilename(nil)
 , fCloseReason(nil)
 #endif
 {
 }
 
-hsBufferedStream::~hsBufferedStream()
-{
-#ifdef LOG_BUFFERED
-    delete [] fFilename;
-#endif // LOG_BUFFERED
-}
-
-bool hsBufferedStream::Open(const char* name, const char* mode)
+bool hsBufferedStream::Open(const plFileName& name, const char* mode)
 {
     hsAssert(!fRef, "hsBufferedStream:Open Stream already opened");
-    fRef = hsFopen(name, mode);
+    fRef = plFileSystem::Open(name, mode);
     if (!fRef)
         return false;
 
@@ -1247,18 +1232,11 @@ bool hsBufferedStream::Open(const char* name, const char* mode)
 #ifdef LOG_BUFFERED
     fBufferHits = fBufferMisses = 0;
     fBufferReadIn = fBufferReadOut = fReadDirect = fLastReadPos = 0;
-    delete [] fFilename;
-    fFilename = hsStrdup(name);
+    fFilename = name;
     fCloseReason = nil;
 #endif // LOG_BUFFERED
 
     return true;
-}
-
-bool hsBufferedStream::Open(const wchar_t *name, const wchar_t *mode)
-{
-    hsAssert(0, "hsFileStream::Open  NotImplemented for wchar_t");
-    return false;
 }
 
 bool hsBufferedStream::Close()
@@ -1285,7 +1263,7 @@ bool hsBufferedStream::Close()
         wasted -= int((float(fBufferReadOut+fReadDirect) / float(fBufferReadIn+fReadDirect)) * 100.f);
 
     s.WriteFmt("%s,%d,%d,%u,%u,%u,%d,%s\n",
-        fFilename, fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
+        fFilename.c_str(), fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
         wasted,
         fCloseReason ? fCloseReason : "Unknown");
 

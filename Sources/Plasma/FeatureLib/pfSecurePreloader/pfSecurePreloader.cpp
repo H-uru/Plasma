@@ -189,28 +189,9 @@ public:
 
 /////////////////////////////////////////////////////////////////////
 
-pfSecurePreloader::pfSecurePreloader()
-    : fProgress(nil), fLegacyMode(false)
-{ }
-
-pfSecurePreloader::~pfSecurePreloader()
+hsRAMStream* pfSecurePreloader::LoadToMemory(const plFileName& file) const
 {
-    while (fDownloadEntries.size())
-    {
-        free((void*)fDownloadEntries.front());
-        fDownloadEntries.pop();
-    }
-
-    while (fManifestEntries.size())
-    {
-        free((void*)fManifestEntries.front());
-        fManifestEntries.pop();
-    }
-}
-
-hsRAMStream* pfSecurePreloader::LoadToMemory(const wchar_t* file) const
-{
-    if (!plFileUtils::FileExists(file))
+    if (!plFileInfo(file).Exists())
         return nil;
 
     hsUNIXStream s;
@@ -228,10 +209,10 @@ hsRAMStream* pfSecurePreloader::LoadToMemory(const wchar_t* file) const
     return ram;
 }
 
-void pfSecurePreloader::SaveFile(hsStream* file, const wchar_t* name) const
+void pfSecurePreloader::SaveFile(hsStream* file, const plFileName& name) const
 {
     hsUNIXStream s;
-    s.Open(name, L"wb");
+    s.Open(name, "wb");
     uint32_t pos = file->GetPosition();
     file->Rewind();
 
@@ -244,9 +225,9 @@ void pfSecurePreloader::SaveFile(hsStream* file, const wchar_t* name) const
     delete[] buf;
 }
 
-bool pfSecurePreloader::IsZipped(const wchar_t* filename) const
+bool pfSecurePreloader::IsZipped(const plFileName& filename) const
 {
-    return wcscmp(plFileUtils::GetFileExt(filename), L"gz") == 0;
+    return filename.GetFileExt().CompareI("gz") == 0;
 }
 
 void pfSecurePreloader::PreloadNextFile()
@@ -257,14 +238,14 @@ void pfSecurePreloader::PreloadNextFile()
         return;
     }
 
-    const wchar_t* filename = fDownloadEntries.front();
+    plFileName filename = fDownloadEntries.front();
     hsStream* s = new pfSecurePreloaderStream(fProgress, IsZipped(filename));
     
     // Thankfully, both callbacks have the same arguments
     if (fLegacyMode)
-        NetCliAuthFileRequest(filename, s, FileDownloaded, this);
+        NetCliAuthFileRequest(filename.AsString().ToWchar(), s, FileDownloaded, this);
     else
-        NetCliFileDownloadRequest(filename, s, FileDownloaded, this);
+        NetCliFileDownloadRequest(filename.AsString().ToWchar(), s, FileDownloaded, this);
 }
 
 void pfSecurePreloader::Init()
@@ -340,15 +321,12 @@ void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries
     for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliAuthFileInfo mfs = manifestEntries[i];
-        fDownloadEntries.push(wcsdup(mfs.filename));
-        if (IsZipped(mfs.filename))
-        {
-            wchar_t* name = wcsdup(mfs.filename);
-            plFileUtils::StripExt(name);
-            fManifestEntries.push(name);
-            
-        } else
-            fManifestEntries.push(wcsdup(mfs.filename));
+        plFileName filename = plString::FromWchar(mfs.filename);
+        fDownloadEntries.push(filename);
+        if (IsZipped(filename))
+            fManifestEntries.push(filename.StripFileExt());
+        else
+            fManifestEntries.push(filename);
 
         totalBytes += mfs.filesize;
     }
@@ -368,10 +346,12 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
         const NetCliFileManifestEntry mfs = manifestEntries[i];
         bool fetchMe = true;
         hsRAMStream* s = nil;
+        plFileName clientName = plString::FromWchar(mfs.clientName);
+        plFileName downloadName = plString::FromWchar(mfs.downloadName);
 
-        if (plFileUtils::FileExists(mfs.clientName))
+        if (plFileInfo(clientName).Exists())
         {
-            s = LoadToMemory(mfs.clientName);
+            s = LoadToMemory(clientName);
             if (s)
             {
                 // Damn this
@@ -389,15 +369,15 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
 
         if (fetchMe)
         {
-            fManifestEntries.push(wcsdup(mfs.clientName));
-            fDownloadEntries.push(wcsdup(mfs.downloadName));
-            if (IsZipped(mfs.downloadName))
+            fManifestEntries.push(clientName);
+            fDownloadEntries.push(downloadName);
+            if (IsZipped(downloadName))
                 totalBytes += mfs.zipSize;
             else
                 totalBytes += mfs.fileSize;
         } else {
             plSecureStream* ss = new plSecureStream(s, fEncryptionKey);
-            plStreamSource::GetInstance()->InsertFile(mfs.clientName, ss);
+            plStreamSource::GetInstance()->InsertFile(clientName, ss);
         }
 
         if (s)
@@ -418,12 +398,12 @@ void pfSecurePreloader::FilePreloaded(const wchar_t* file, hsStream* stream)
 {
     // Clear out queue
     fDownloadEntries.pop();
-    const wchar_t* clientName = fManifestEntries.front(); // Stolen by plStreamSource
+    plFileName clientName = fManifestEntries.front();
     fManifestEntries.pop();
 
     if (!fLegacyMode) // AuthSrv data caching is useless
     {
-        plFileUtils::EnsureFilePathExists(clientName);
+        plFileSystem::CreateDir(clientName.StripFileName(), true);
         SaveFile(stream, clientName);
     }
 

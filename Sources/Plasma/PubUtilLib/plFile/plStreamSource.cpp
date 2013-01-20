@@ -51,25 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #    include <wctype.h>
 #endif
 
-void ToLower(std::wstring& str)
-{
-    for (unsigned i = 0; i < str.length(); i++)
-        str[i] = towlower(str[i]);
-}
-
-void ReplaceSlashes(std::wstring& path, wchar_t replaceWith)
-{
-    for (unsigned i = 0; i < path.length(); i++)
-    {
-        if ((path[i] == L'\\') || (path[i] == L'/'))
-            path[i] = replaceWith;
-    }
-}
-
 void plStreamSource::ICleanup()
 {
     // loop through all the file data records, and delete the streams
-    std::map<std::wstring, fileData>::iterator curData;
+    decltype(fFileData.begin()) curData;
     for (curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
         curData->second.fStream->Close();
@@ -80,137 +65,85 @@ void plStreamSource::ICleanup()
     fFileData.clear();
 }
 
-void plStreamSource::IBreakupFilename(std::wstring filename, std::wstring& dir, std::wstring& ext)
+hsStream* plStreamSource::GetFile(const plFileName& filename)
 {
-    // break the filename up into its parts
-    char* temp = hsWStringToString(filename.c_str());
-    std::string sFilename = temp;
-    std::string sExt = plFileUtils::GetFileExt(temp);
-    plFileUtils::StripFile(temp);
-    std::string sDir = temp;
-    delete [] temp;
-
-    if (sDir == sFilename) // no directory
-        sDir = "";
-    if (sDir != "")
-        if ((sDir[sDir.length()-1] == '/') || (sDir[sDir.length()-1] == '\\'))
-            sDir = sDir.substr(0, sDir.length() - 1); // trim the slash, if it has one
-
-    wchar_t* wTemp;
-    wTemp = hsStringToWString(sDir.c_str());
-    dir = wTemp;
-    delete [] wTemp;
-    wTemp = hsStringToWString(sExt.c_str());
-    ext = wTemp;
-    delete [] wTemp;
-}
-
-hsStream* plStreamSource::GetFile(std::wstring filename)
-{
-    ToLower(filename);
-    ReplaceSlashes(filename, L'/');
-
-    if (fFileData.find(filename) == fFileData.end())
+    plFileName sFilename = filename.Normalize('/');
+    if (fFileData.find(sFilename) == fFileData.end())
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         // internal releases can pull from disk
-        char* temp = hsWStringToString(filename.c_str());
-        std::string sFilename = temp;
-        delete [] temp;
-
-        if (plFileUtils::FileExists(sFilename.c_str()))
+        if (plFileInfo(filename).Exists())
         {
             // file exists on disk, cache it
-            std::wstring dir, ext;
-            IBreakupFilename(filename, dir, ext);
-            fFileData[filename].fFilename = filename;
-            fFileData[filename].fDir = dir;
-            fFileData[filename].fExt = ext;
-            if (plSecureStream::IsSecureFile(sFilename.c_str()))
+            fFileData[sFilename].fFilename = sFilename;
+            fFileData[sFilename].fDir = sFilename.StripFileName();
+            fFileData[sFilename].fExt = sFilename.GetFileExt();
+            if (plSecureStream::IsSecureFile(filename))
             {
                 uint32_t encryptionKey[4];
-                if (!plSecureStream::GetSecureEncryptionKey(sFilename.c_str(), encryptionKey, 4))
+                if (!plSecureStream::GetSecureEncryptionKey(filename, encryptionKey, 4))
                 {
                     FATAL("Hey camper... You need an NTD key file!");
                     return nil;
                 }
 
-                fFileData[filename].fStream = plSecureStream::OpenSecureFile(sFilename.c_str(), 0, encryptionKey);
+                fFileData[sFilename].fStream = plSecureStream::OpenSecureFile(filename, 0, encryptionKey);
             }
             else // otherwise it is an encrypted or plain stream, this call handles both
-                fFileData[filename].fStream = plEncryptedStream::OpenEncryptedFile(sFilename.c_str());
+                fFileData[sFilename].fStream = plEncryptedStream::OpenEncryptedFile(filename);
 
-            return fFileData[filename].fStream;
+            return fFileData[sFilename].fStream;
         }
 #endif // PLASMA_EXTERNAL_RELEASE
         return nil;
     }
-    return fFileData[filename].fStream;
+    return fFileData[sFilename].fStream;
 }
 
-std::vector<std::wstring> plStreamSource::GetListOfNames(std::wstring dir, std::wstring ext)
+std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, const plString& ext)
 {
-    ToLower(ext);
-    ToLower(dir);
-    ReplaceSlashes(dir, L'/');
-
-    if (ext[0] == L'.')
-        ext = ext.substr(1, ext.length()); // trim the dot, if it has one
-    if (dir != L"")
-        if ((dir[dir.length()-1] == L'/') || (dir[dir.length()-1] == L'\\'))
-            dir = dir.substr(0, dir.length() - 1); // trim the slash, if it has one
+    plFileName sDir = dir.Normalize('/');
+    hsAssert(ext.CharAt(0) != '.', "Don't add a dot");
 
     // loop through all the file data records, and create the list
-    std::vector<std::wstring> retVal;
-    std::map<std::wstring, fileData>::iterator curData;
+    std::vector<plFileName> retVal;
+    decltype(fFileData.begin()) curData;
     for (curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
-        if ((curData->second.fDir == dir.c_str()) && (curData->second.fExt == ext))
+        if ((curData->second.fDir == sDir) && (curData->second.fExt == ext))
             retVal.push_back(curData->second.fFilename);
     }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // in internal releases, we can use on-disk files if they exist
     // Build the search string as "dir/*.ext"
-    std::wstring wSearchStr = dir + L"/*." + ext;
-    char* temp = hsWStringToString(wSearchStr.c_str());
-    std::string searchStr = temp;
-    delete [] temp;
+    plString searchStr = plFileName::Join(sDir, "*." + ext).AsString();
 
     hsFolderIterator folderIter(searchStr.c_str(), true);
     while (folderIter.NextFile())
     {
-        const char* filename = folderIter.GetFileName();
-        wchar_t* wTemp = hsStringToWString(filename);
-        std::wstring wFilename = dir + L"/" + wTemp;
-        delete [] wTemp;
-        ToLower(wFilename);
-        
-        if (fFileData.find(wFilename) == fFileData.end()) // we haven't added it yet
-            retVal.push_back(wFilename);
+        plFileName filename = plFileName::Join(sDir, folderIter.GetFileName());
+
+        if (fFileData.find(filename) == fFileData.end()) // we haven't added it yet
+            retVal.push_back(filename);
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
     return retVal;
 }
 
-bool plStreamSource::InsertFile(std::wstring filename, hsStream* stream)
+bool plStreamSource::InsertFile(const plFileName& filename, hsStream* stream)
 {
-    ToLower(filename);
-    ReplaceSlashes(filename, L'/');
+    plFileName sFilename = filename.Normalize('/');
 
-    if (fFileData.find(filename) != fFileData.end())
+    if (fFileData.find(sFilename) != fFileData.end())
         return false; // duplicate entry, return failure
 
-    // break the filename up into its parts
-    std::wstring dir, ext;
-    IBreakupFilename(filename, dir, ext);
-
     // copy the data over (takes ownership of the stream!)
-    fFileData[filename].fFilename = filename;
-    fFileData[filename].fDir = dir;
-    fFileData[filename].fExt = ext;
-    fFileData[filename].fStream = stream;
+    fFileData[sFilename].fFilename = sFilename;
+    fFileData[sFilename].fDir = sFilename.StripFileName();
+    fFileData[sFilename].fExt = sFilename.GetFileExt();
+    fFileData[sFilename].fStream = stream;
 
     return true;
 }

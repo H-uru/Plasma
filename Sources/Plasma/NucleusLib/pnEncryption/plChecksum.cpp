@@ -123,7 +123,7 @@ plMD5Checksum::plMD5Checksum( const plMD5Checksum &rhs )
     fValid = rhs.fValid;
 }
 
-plMD5Checksum::plMD5Checksum( const char *fileName )
+plMD5Checksum::plMD5Checksum( const plFileName &fileName )
 {
     CalcFromFile( fileName );
 }
@@ -139,7 +139,7 @@ void plMD5Checksum::Clear()
     fValid = false;
 }
 
-void plMD5Checksum::CalcFromFile( const char *fileName )
+void plMD5Checksum::CalcFromFile( const plFileName &fileName )
 {
     hsUNIXStream s;
     fValid = false;
@@ -249,7 +249,7 @@ plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
     fValid = rhs.fValid;
 }
 
-plSHAChecksum::plSHAChecksum(const char* fileName)
+plSHAChecksum::plSHAChecksum(const plFileName& fileName)
 {
     CalcFromFile(fileName);
 }
@@ -265,7 +265,7 @@ void plSHAChecksum::Clear()
     fValid = false;
 }
 
-void plSHAChecksum::CalcFromFile(const char* fileName)
+void plSHAChecksum::CalcFromFile(const plFileName& fileName)
 {
     hsUNIXStream s;
     fValid = false;
@@ -375,7 +375,7 @@ plSHA1Checksum::plSHA1Checksum(const plSHA1Checksum& rhs)
     fValid = rhs.fValid;
 }
 
-plSHA1Checksum::plSHA1Checksum(const char* fileName)
+plSHA1Checksum::plSHA1Checksum(const plFileName& fileName)
 {
     CalcFromFile(fileName);
 }
@@ -391,7 +391,7 @@ void plSHA1Checksum::Clear()
     fValid = false;
 }
 
-void plSHA1Checksum::CalcFromFile(const char* fileName)
+void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
 {
     hsUNIXStream s;
     fValid = false;

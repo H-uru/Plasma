@@ -490,11 +490,10 @@ public:
     MaxStream(ILoad* iload) : fSave(nil), fLoad(iload) {}
 
     // Don't support any of this
-    virtual bool Open(const char *, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
-    virtual bool Open(const wchar_t *, const wchar_t * = L"rb") { hsAssert(0, "Not supported"); return false; }
+    virtual bool Open(const plFileName &, const char * = "rb") { hsAssert(0, "Not supported"); return false; }
     virtual bool Close() {  hsAssert(0, "Not supported"); return false; }
-    virtual void   Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
-    virtual void   Rewind() { hsAssert(0, "Not supported"); }
+    virtual void Skip(uint32_t deltaByteCount) { hsAssert(0, "Not supported"); }
+    virtual void Rewind() { hsAssert(0, "Not supported"); }
 
     virtual uint32_t  GetEOF() { return (uint32_t)fLoad->CurChunkLength(); }
 

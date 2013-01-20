@@ -247,18 +247,10 @@ void    DummyPrintFn( const char *line )
 
 //// ExecuteFile /////////////////////////////////////////////////////////////
 
-bool    pfConsoleEngine::ExecuteFile( const char *fileName )
+bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
 {
-    wchar_t* wFilename = hsStringToWString(fileName);
-    bool ret = ExecuteFile(wFilename);
-    delete [] wFilename;
-    return ret;
-}
-
-bool    pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
-{
-    char            string[ 512 ];
-    int             line;
+    char    string[ 512 ];
+    int     line;
 
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(fileName);
 
@@ -273,13 +265,14 @@ bool    pfConsoleEngine::ExecuteFile( const wchar_t *fileName )
         return true;
     }
 
-    for( line = 1; stream->ReadLn( string, sizeof( string ) ); line++ )
+    for( line = 1; stream->ReadLn( string, arrsize( string ) ); line++ )
     {
-        strncpy( fLastErrorLine, string, sizeof( fLastErrorLine ) );
+        strncpy( fLastErrorLine, string, arrsize( fLastErrorLine ) );
 
         if( !RunCommand( string, DummyPrintFn ) )
         {
-            sprintf( string, "Error in console file %S, command line %d: %s", fileName, line, fErrorMsg );
+            snprintf(string, arrsize(string), "Error in console file %s, command line %d: %s",
+                     fileName.AsString().c_str(), line, fErrorMsg);
             ISetErrorMsg( string );
             stream->Close();
             delete stream;

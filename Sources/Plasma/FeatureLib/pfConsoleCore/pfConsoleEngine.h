@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+class plFileName;
 
 
 //// pfConsoleEngine Class Definition ////////////////////////////////////////
@@ -94,8 +95,7 @@ class pfConsoleEngine
         bool    RunCommand( char *line, void (*PrintFn)( const char * ) );
 
         // Executes the given file as a sequence of console commands
-        bool    ExecuteFile( const char *fileName );
-        bool    ExecuteFile( const wchar_t *fileName );
+        bool    ExecuteFile( const plFileName &fileName );
 
         // Get the last reported error
         const char  *GetErrorMsg( void ) { return fErrorMsg; }
