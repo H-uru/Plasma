@@ -36,12 +36,12 @@ set(plResMgr_HEADERS
 )
 
 add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
+
 target_link_libraries(plResMgr CoreLib)
 target_link_libraries(plResMgr pnDispatch)
 target_link_libraries(plResMgr pnFactory)
 target_link_libraries(plResMgr pnKeyedObject)
 target_link_libraries(plResMgr pnMessage)
-target_link_libraries(plResMgr pnTimer)
 target_link_libraries(plResMgr plFile)
 target_link_libraries(plResMgr plStatusLog)
 

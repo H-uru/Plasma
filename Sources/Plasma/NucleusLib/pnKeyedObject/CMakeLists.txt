@@ -24,7 +24,9 @@ set(pnKeyedObject_SOURCES
 )
 
 add_library(pnKeyedObject STATIC ${pnKeyedObject_HEADERS} ${pnKeyedObject_SOURCES})
-target_link_libraries(pnKeyedObject CoreLib pnMessage)
+
+target_link_libraries(pnKeyedObject CoreLib)
+target_link_libraries(pnKeyedObject pnMessage)
 
 source_group("Header Files" FILES ${pnKeyedObject_HEADERS})
 source_group("Source Files" FILES ${pnKeyedObject_SOURCES})

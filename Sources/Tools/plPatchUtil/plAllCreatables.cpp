@@ -39,47 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plResPatcher_h_inc
-#define plResPatcher_h_inc
-
 #include "HeadSpin.h"
-#include "plFileSystem.h"
-#include <queue>
-#include <string>
 
-class plOperationProgress;
+#include "pnFactory/plCreator.h"
 
-class plResPatcher
-{
-    enum { kManifest, kFile };
-    struct Request
-    {
-        plFileName  fFile;
-        plFileName  fFriendlyName;
-        uint8_t     fType;
+#include "plgDispatch.h"
+REGISTER_NONCREATABLE( plDispatchBase );
 
-        Request(const plFileName& file, uint8_t type, const plFileName& friendly = "")
-            : fFile(file), fFriendlyName(friendly), fType(type) { }
-    };
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnTimer/pnTimerCreatable.h"
 
-    static plResPatcher*       fInstance;
-    std::queue<Request>        fRequests;
-    plOperationProgress*       fProgress;
-    bool                       fPatching;
+#include "plResMgr/plResMgrCreatable.h"
 
-    plResPatcher();
-    ~plResPatcher();
+#include "plMessage/plResMgrHelperMsg.h"
+REGISTER_CREATABLE(plResMgrHelperMsg);
 
-public:
-    static plResPatcher* GetInstance();
-    static void Shutdown();
-
-    plOperationProgress* GetProgress() { return fProgress; }
-
-    void Finish(bool success = true);
-    void IssueRequest();
-    void RequestFile(const plFileName& file, const plFileName& friendlyName);
-    void RequestManifest(const plString& age);
-    void Start();
-};
-#endif // _plResPatcher_h

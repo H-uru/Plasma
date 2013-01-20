@@ -48,17 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plRegistryNode.h"
 #include "plStatusLog/plStatusLog.h"
 
-// Begin Stupid Shit
-#include "pnAllCreatables.h"
-#include "plResMgr/plResMgrCreatable.h"
-
-#include "plMessage/plResMgrHelperMsg.h"
-REGISTER_NONCREATABLE(plResMgrHelperMsg);
-
-#include "plMessage/plResPatcherMsg.h"
-REGISTER_NONCREATABLE(plResPatcherMsg);
-// End Stupid Shit
-
 bool g_Validate = false;
 plFileName g_OldPage, g_NewPage;
 plFileName g_PatchPage = "prp.pat";

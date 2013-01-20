@@ -38,4 +38,15 @@ namespace plPagePatcher
     void WriteAndClear(plRegistryPageNode* const page, const plFileName& path);
 };
 
+
+enum PatcherLogType
+{
+    kHeader,
+    kInfo,
+    kMajorStatus,
+    kStatus,
+    kError,
+};
+void PatcherLog(PatcherLogType type, const char* format, ...);
+
 #endif
