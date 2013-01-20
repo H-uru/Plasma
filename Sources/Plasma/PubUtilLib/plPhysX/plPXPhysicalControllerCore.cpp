@@ -872,7 +872,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay()
         char *overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
         float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
         sprintf(strBuf, "    Obj: %s, Normal: (%.2f, %.2f, %.2f), Angle(%.1f), Overlap(%3s)",
-                fDbgCollisionInfo[i].fSO->GetKeyName(),
+                fDbgCollisionInfo[i].fSO->GetKeyName().c_str(),
                 normal.fX, normal.fY, normal.fZ, angle, overlapStr);
         debugTxt.DrawString(x, y, strBuf);
         y += lineHeight;
