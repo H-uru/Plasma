@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        printf("plPageOptimizer: wrong number of arguments\n");
+        puts("plPageOptimizer: wrong number of arguments");
         return 1;
     }
 
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
         hsgResMgr::Init(resMgr);
 #ifndef _DEBUG
     } catch (...) {
-        printf(" ***crashed on init\n");
+        puts(" ***crashed on init");
         return 2;
     }
 #endif
@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     }
 #ifndef _DEBUG
     catch (...) {
-        printf(" ***crashed on optimizing\n");
+        puts(" ***crashed on optimizing");
         return 2;
     }
 #endif
@@ -93,7 +93,7 @@ int main(int argc, char* argv[])
         hsgResMgr::Shutdown();
 #ifndef _DEBUG
     } catch (...) {
-        printf(" ***crashed on shutdown\n");
+        puts(" ***crashed on shutdown");
         return 2;
     }
 #endif
