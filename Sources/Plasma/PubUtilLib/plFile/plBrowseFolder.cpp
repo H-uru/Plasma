@@ -45,22 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <shlobj.h>
 
-bool plBrowseFolder::GetFolder(char *path, const char *startPath, const char *title, HWND hwndOwner)
+plFileName plBrowseFolder::GetFolder(const plFileName &startPath, const plString &title, HWND hwndOwner)
 {
-    BROWSEINFO bi;
+    BROWSEINFOW bi;
     memset(&bi, 0, sizeof(bi));
     bi.hwndOwner    = hwndOwner;
-    bi.lpszTitle    = title;
+    bi.lpszTitle    = title.ToWchar();
     bi.lpfn         = BrowseCallbackProc;
-    bi.lParam       = (LPARAM) startPath;
+    bi.lParam       = (LPARAM) startPath.AsString().ToWchar().GetData();
 
-    ITEMIDLIST *iil = SHBrowseForFolder(&bi);
-    // Browse failed, or cancel was selected
-    if (!iil)
-        return false;
-    // Browse succeded.  Get the path.
-    else
-        SHGetPathFromIDList(iil, path);
+    LPITEMIDLIST iil = SHBrowseForFolderW(&bi);
+    plFileName path;
+    if (!iil) {
+        // Browse failed, or cancel was selected
+        path = "";
+    } else {
+        // Browse succeded.  Get the path.
+        wchar_t buffer[MAX_PATH];
+        SHGetPathFromIDListW(iil, buffer);
+        path = plString::FromWchar(buffer);
+    }
 
     // Free the memory allocated by SHBrowseForFolder
     LPMALLOC pMalloc;
@@ -68,7 +72,7 @@ bool plBrowseFolder::GetFolder(char *path, const char *startPath, const char *ti
     pMalloc->Free(iil);
     pMalloc->Release();
 
-    return true;
+    return path;
 }
 
 int CALLBACK plBrowseFolder::BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)

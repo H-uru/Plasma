@@ -71,7 +71,7 @@ public:
     void SetExportTime() { fExportTime = true; }
 
     // Console backdoor
-    static plKey SpawnClone(const char* cloneName, const char* cloneAge, const hsMatrix44& pos, plKey requestor);
+    static plKey SpawnClone(const plString& cloneName, const plString& cloneAge, const hsMatrix44& pos, plKey requestor);
 };
 
 #endif // plCloneSpawnModifier_inc

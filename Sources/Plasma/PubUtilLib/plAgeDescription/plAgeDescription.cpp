@@ -53,44 +53,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
-plAgePage::plAgePage( const char *name, uint32_t seqSuffix, uint8_t flags )
+plAgePage::plAgePage( const plString &name, uint32_t seqSuffix, uint8_t flags )
 {
-    fName = name != nil ? hsStrcpy( name ) : nil;
+    fName = name;
     fSeqSuffix = seqSuffix;
     fFlags = flags;
 }
 
-plAgePage::plAgePage( char *stringFrom ) : fName(nil)
+plAgePage::plAgePage( const plString &stringFrom )
 {
     SetFromString( stringFrom );
 }
 
 plAgePage::plAgePage()
 {
-    fName = nil;
+    fName = "";
     fFlags = 0;
     fSeqSuffix = 0;
 }
 
-plAgePage::plAgePage( const plAgePage &src ) : fName(nil)
+plAgePage::plAgePage( const plAgePage &src )
 {
-    fName = src.fName != nil ? hsStrcpy( src.fName ) : nil;
+    fName = src.fName;
     fSeqSuffix = src.fSeqSuffix;
     fFlags = src.fFlags;
-}
-
-plAgePage::~plAgePage()
-{
-    delete [] fName;
 }
 
 plAgePage &plAgePage::operator=( const plAgePage &src )
 {
-    delete [] fName;
-    fName = src.fName != nil ? hsStrcpy( src.fName ) : nil;
+    fName = src.fName;
     fSeqSuffix = src.fSeqSuffix;
     fFlags = src.fFlags;
-    
+
     return *this;
 }
 
@@ -103,54 +97,31 @@ void plAgePage::SetFlags(uint8_t f, bool on)
 }
 
 // now preservs original string
-bool    plAgePage::SetFromString( const char *stringIn )
+bool plAgePage::SetFromString( const plString &stringIn )
 {
-    char    *c, seps[] = ", \n";
-    std::string string = stringIn;
-
     // Parse. Format is going to be "pageName[,seqSuffix[,flags]]"
-    c = strtok( (char*)string.c_str(), seps );
-    if( c == nil )
+    std::vector<plString> toks = stringIn.Tokenize(", \n");
+    if (toks.size() == 0)
         return false;
 
-    delete [] fName;
-    fName = hsStrcpy( c );
+    fName = toks[0];
+    fSeqSuffix = kInvalidSeqSuffix;
+    fFlags = 0;
 
-    // Look for seqSuffix
-    c = strtok( nil, seps );
-    if( c != nil )
-    {
-        fSeqSuffix = atoi( c );
-
-        // Look for flags
-        c = strtok( nil, seps );
-        if( c != nil )
-        {
-            fFlags = atoi( c );
-        }
-        else
-            fFlags = 0;
-    }
-    else
-    {
-        fSeqSuffix = kInvalidSeqSuffix;
-        fFlags = 0;
-    }
+    if (toks.size() > 1)
+        fSeqSuffix = toks[1].ToUInt();
+    if (toks.size() > 2)
+        fFlags = toks[2].ToUInt();
 
     return true;
 }
 
-char    *plAgePage::GetAsString( void ) const
+plString plAgePage::GetAsString( void ) const
 {
-    static char str[ 256 ];
+    if (fFlags)
+        return plString::Format("%s,%d,%d", fName.c_str(), fSeqSuffix, fFlags);
 
-
-    // Format is "pageName[,seqSuffix[,flags]]"
-    if( fFlags != 0 )
-        sprintf( str, "%s,%d,%d", fName, fSeqSuffix, fFlags );
-    else
-        sprintf( str, "%s,%d", fName, fSeqSuffix );
-    return str;
+    return plString::Format("%s,%d", fName.c_str(), fSeqSuffix);
 }
 
 
@@ -179,10 +150,9 @@ plAgeDescription::~plAgeDescription()
 void plAgeDescription::IDeInit()
 {
     ClearPageList();
-    delete [] fName;    
 }
 
-plAgeDescription::plAgeDescription( const char *fileNameToReadFrom ) : plInitSectionTokenReader()
+plAgeDescription::plAgeDescription( const plFileName &fileNameToReadFrom ) : plInitSectionTokenReader()
 {
     ReadFromFile(fileNameToReadFrom);
 }
@@ -190,7 +160,7 @@ plAgeDescription::plAgeDescription( const char *fileNameToReadFrom ) : plInitSec
 //
 // Reads from a file, returns false if failed.
 //
-bool plAgeDescription::ReadFromFile( const char *fileNameToReadFrom )
+bool plAgeDescription::ReadFromFile( const plFileName &fileNameToReadFrom )
 {
     IInit();
 
@@ -206,38 +176,20 @@ bool plAgeDescription::ReadFromFile( const char *fileNameToReadFrom )
     return true;
 }
 
-void    plAgeDescription::SetAgeNameFromPath( const char *path )
+void plAgeDescription::SetAgeNameFromPath( const plFileName &path )
 {
-    delete [] fName;
-
-    if( path == nil )
+    if (!path.IsValid())
     {
-        fName = nil;
+        fName = "";
         return;
     }
 
-    // Construct our name from the path
-    const char *pathSep1 = strrchr( path, '\\' );
-    const char *pathSep2 = strrchr( path, '/' );
-    if( pathSep2 > pathSep1 )
-        pathSep1 = pathSep2;
-    if( pathSep1 == nil )
-        pathSep1 = (char *)path;
-    else
-        pathSep1++; // Get past the actual character we found
-
-    char    temp[ 512 ];
-    strcpy( temp, pathSep1 );
-    char *end = strrchr( temp, '.' );
-    if( end != nil )
-        *end = 0;
-
-    fName = hsStrcpy( temp );
+    fName = path.GetFileNameNoExt();
 }
 
-void    plAgeDescription::IInit( void )
+void plAgeDescription::IInit( void )
 {
-    fName = nil;
+    fName = "";
     fDayLength = 24.0f;
     fMaxCapacity = -1;
     fLingerTime = 180;  // seconds
@@ -248,14 +200,12 @@ void    plAgeDescription::IInit( void )
     fPageIterator = -1;
 }
 
-struct SzDelete {   void operator()(char * str) { delete [] str;} };
 void plAgeDescription::ClearPageList()
 {
     fPages.Reset();
 }
 
-
-void    plAgeDescription::AppendPage( const char *name, int seqSuffix, uint8_t flags )
+void    plAgeDescription::AppendPage( const plString &name, int seqSuffix, uint8_t flags )
 {
     fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
 }
@@ -280,35 +230,30 @@ plAgePage   *plAgeDescription::GetNextPage( void )
     return ret;
 }
 
-void    plAgeDescription::RemovePage( const char *page )
+void plAgeDescription::RemovePage( const plString &page )
 {
-    int     i;
-
-    for( i = 0; i < fPages.GetCount(); i++ )
+    for (int i = 0; i < fPages.GetCount(); i++)
     {
-        if( strcmp( page, fPages[ i ].GetName() ) == 0 )
+        if (page == fPages[i].GetName())
         {
-            fPages.Remove( i );
+            fPages.Remove(i);
             return;
         }
     }
 }
 
-plAgePage   *plAgeDescription::FindPage( const char *name ) const
+plAgePage *plAgeDescription::FindPage( const plString &name ) const
 {
-    int     i;
-
-
-    for( i = 0; i < fPages.GetCount(); i++ )
+    for (int i = 0; i < fPages.GetCount(); i++)
     {
-        if( strcmp( name, fPages[ i ].GetName() ) == 0 )
-            return &fPages[ i ];
+        if (name == fPages[i].GetName())
+            return &fPages[i];
     }
 
     return nil;
 }
 
-plLocation  plAgeDescription::CalcPageLocation( const char *page ) const
+plLocation  plAgeDescription::CalcPageLocation( const plString &page ) const
 {
     plAgePage *ap = FindPage( page );
     if( ap != nil )
@@ -334,10 +279,10 @@ plLocation  plAgeDescription::CalcPageLocation( const char *page ) const
         else
         {
             plLocation ret = plLocation::MakeNormal( combined );
-            if (page && !stricmp(page, "builtin"))
+            if (!page.CompareI("builtin"))
                 ret.SetFlags(plLocation::kBuiltIn);
             return ret;
-        }       
+        }
     }
 
     // Just make a blank (invalid) one
@@ -380,7 +325,7 @@ void plAgeDescription::Write(hsStream* stream) const
     int i;
     for( i = 0; i < fPages.GetCount(); i++ )
     {
-        sprintf(buf, "Page=%s\n", fPages[ i ].GetAsString() );
+        sprintf(buf, "Page=%s\n", fPages[ i ].GetAsString().c_str() );
         stream->WriteString(buf);
     }
 }
@@ -537,7 +482,7 @@ void    plAgeDescription::AppendCommonPages( void )
 void    plAgeDescription::CopyFrom(const plAgeDescription& other)
 {
     IDeInit();
-    fName = hsStrcpy(other.GetAgeName());
+    fName = other.GetAgeName();
     int i;
     for(i=0;i<other.fPages.GetCount(); i++)
         fPages.Append( other.fPages[ i ] );

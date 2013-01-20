@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "plFile/plFileUtils.h"
 
 #include "plAnimComponent.h"
 #include "plAudioComponents.h"
@@ -588,21 +587,20 @@ uint32_t  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
     return bufferFlags;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
+plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const plFileName &fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
 {
     plSoundBuffer* sb = IGetSourceBuffer(fileName, srcNode, srcBufferFlags);
 
-    const char* plasmaDir = plMaxConfig::GetClientPath();
-    if (plasmaDir)
+    plFileName plasmaDir = plMaxConfig::GetClientPath();
+    if (plasmaDir.IsValid())
     {
-        char sfxPath[MAX_PATH];
-        sprintf(sfxPath, "%ssfx\\%s", plasmaDir, plFileUtils::GetFileName(fileName));
-    
+        plFileName sfxPath = plFileName::Join(plasmaDir, "sfx", fileName.GetFileName());
+
         // Export any localized versions as well
         for (int i = 0; i < plLocalization::GetNumLocales(); i++)
         {
-            char localName[MAX_PATH];
-            if (plLocalization::ExportGetLocalized(sfxPath, i, localName))
+            plFileName localName = plLocalization::ExportGetLocalized(sfxPath, i);
+            if (localName.IsValid())
             {
                 IGetSourceBuffer(localName, srcNode, srcBufferFlags);
             }
@@ -612,58 +610,45 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const char *fileN
     return sb;
 }
 
-plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags )
+plSoundBuffer *plBaseSoundEmitterComponent::IGetSourceBuffer(const plFileName &fileName, plMaxNode *srcNode, uint32_t srcBufferFlags)
 {
     plKey       key;
-    plString    keyName;
-    char        fullPath[ MAX_PATH ];
-
-
-    // ***TEMP plString REVISIT***
-    char        tempPath[ MAX_PATH ];
-    strncpy(tempPath, fileName, MAX_PATH);
-    ::PathStripPath( tempPath );
-    keyName = tempPath;
+    plString    keyName = fileName.GetFileName();
 
     // TEMP HACK until we get packed sounds: 
     // Given the source filename, we check to see if it's in our plasma game directory. If not, or if
     // it's out of date, we copy it over. We'll truncate the filename inside plSoundBuffer when we're ready.
 
-    const char *plasmaDir = plMaxConfig::GetClientPath();
-    if( plasmaDir != nil )
+    plFileName plasmaDir = plMaxConfig::GetClientPath();
+    plFileName rfilename = fileName;
+    if (plasmaDir.IsValid())
     {
-        strcpy( fullPath, plasmaDir );
-        strcat( fullPath, "sfx\\" );
+        plFileName fullPath = plFileName::Join(plasmaDir, "sfx");
 
         // Before we finish our path, make sure that directory EXISTS
-        plFileUtils::CreateDir( fullPath );
+        plFileSystem::CreateDir(fullPath);
 
         // Now finish the path...
-        strcat( fullPath, keyName.c_str() );
+        fullPath = plFileName::Join(fullPath, keyName);
 
         // Check filestamp
-        WIN32_FILE_ATTRIBUTE_DATA   oldFileAttrib, newFileAttrib;
-        BOOL                        oldOK, newOK;
+        plFileInfo oldInfo(fileName);
+        plFileInfo newInfo(fullPath);
 
-        oldOK = GetFileAttributesEx( fileName, GetFileExInfoStandard, &oldFileAttrib );
-        newOK = GetFileAttributesEx( fullPath, GetFileExInfoStandard, &newFileAttrib );
-
-        if( oldOK && newOK )
+        if (oldInfo.Exists() && newInfo.Exists())
         {
             // Only copy if the file is newer
-            if( ::CompareFileTime( &oldFileAttrib.ftLastWriteTime, &newFileAttrib.ftLastWriteTime ) > 0 )
-            {
-                ::CopyFile( fileName, fullPath, FALSE );
-            }
+            if (oldInfo.ModifyTime() > newInfo.ModifyTime())
+                plFileSystem::Copy(fileName, fullPath);
         }
         else
         {
             // Can't compare, so either there was an error or the target file doesn't exist. Copy no matter what.
-            ::CopyFile( fileName, fullPath, FALSE );
+            plFileSystem::Copy(fileName, fullPath);
         }
 
         // Point to our new sound file
-        fileName = fullPath;
+        rfilename = fullPath;
     }
 
     // Additional info for the keyName--need some flag mangling, specifically for the left/right channel mangling
@@ -672,12 +657,12 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IGetSourceBuffer( const char *file
     else if( srcBufferFlags & plSoundBuffer::kOnlyRightChannel )
         keyName += ":R";
 
-    key = srcNode->FindPageKey( plSoundBuffer::Index(), keyName );  
+    key = srcNode->FindPageKey( plSoundBuffer::Index(), keyName );
     if( key != nil )
         return plSoundBuffer::ConvertNoRef( key->GetObjectPtr() );
 
     // Not yet created, so make a new one
-    plSoundBuffer   *buffer = new plSoundBuffer( fileName, srcBufferFlags );
+    plSoundBuffer   *buffer = new plSoundBuffer( rfilename, srcBufferFlags );
     if( !buffer->IsValid() )
     {
         // Invalid, so delete and return nil
@@ -2258,29 +2243,18 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
         }
 
         // Grab the buffer for this sound directly from the original source
-        const char *fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
+        plFileName fileName = groupArray[ i ]->GetSoundFileName( kBaseSound );
 
         plSoundBuffer   *buffer = new plSoundBuffer( fileName );
         if( !buffer->IsValid() || !buffer->EnsureInternal() )
         {
             // OK, because some *cough* machines are completely stupid and don't load AssetMan scenes with 
             // AssetMan plugins, we need to do a really stupid fallback search to the current exporting directory.
-            const char *plasmaDir = plMaxConfig::GetClientPath();
+            plFileName plasmaDir = plMaxConfig::GetClientPath();
             bool worked = false;
-            if( plasmaDir != nil )
+            if (plasmaDir.IsValid())
             {
-                char newPath[ MAX_PATH ];
-                strcpy( newPath, plasmaDir );
-                strcat( newPath, "sfx\\" );
-                
-                const char* c = strrchr( fileName, '\\' );
-                if( c == nil )
-                    c = strrchr( fileName, '/' );
-                if( c == nil )
-                    c = fileName;
-                else
-                    c++;
-                strcat( newPath, c );
+                plFileName newPath = plFileName::Join(plasmaDir, "sfx", fileName.GetFileName());
 
                 // Got a path to try, so try it!
                 delete buffer;
@@ -2292,7 +2266,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
             if( !worked )
             {
                 char msg[ 512 ];
-                sprintf( msg, "The sound file %s cannot be loaded for component %s.", fileName, groupArray[ i ]->GetINode()->GetName() );
+                sprintf( msg, "The sound file %s cannot be loaded for component %s.", fileName.AsString().c_str(), groupArray[ i ]->GetINode()->GetName() );
                 IShowError( kSrcBufferInvalid, msg, baseNode->GetName(), pErrMsg );
                 delete buffer;
 
@@ -2312,7 +2286,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
             {
                 char msg[ 512 ];
                 sprintf( msg, "The format for sound file %s does not match the format for the other grouped sounds on node %s. "
-                            "Make sure the sounds are all the same format.", fileName, baseNode->GetName() );
+                              "Make sure the sounds are all the same format.", fileName.AsString().c_str(), baseNode->GetName() );
                 IShowError( kMergeSourceFormatMismatch, msg, baseNode->GetName(), pErrMsg );
                 delete buffer;
 

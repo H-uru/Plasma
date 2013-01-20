@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnUtils/pnUtils.h"
 #include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plFileUtils.h"
 
 plProfileManagerFull::plProfileManagerFull() :
     fVars(plProfileManager::Instance().fVars),

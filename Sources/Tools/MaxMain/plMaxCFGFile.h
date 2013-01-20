@@ -39,18 +39,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+class plFileName;
+
 namespace plMaxConfig
 {
     // Get the full path to the ini file to write settings to
-    const char *GetPluginIni();
+    plFileName GetPluginIni();
 
     // Gets the path to the Plasma working directory
     // If the user hasn't set one before, it prompts them to
     // Set getNew to true to force the user to set a new path
     // If a path is returned, it will end with a slash
-    const char *GetClientPath(bool getNew=false, bool quiet=false);
+    plFileName GetClientPath(bool getNew=false, bool quiet=false);
     // For the rare case where you need to set the client path manually
-    void SetClientPath(const char *path);
+    void SetClientPath(const plFileName &path);
 
     // option to disable the plugin's assetman interface
     bool AssetManInterfaceDisabled();

@@ -60,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAgeLoadedMsg.h"
 #include "pnMessage/plClientMsg.h"
 #include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
 #include "pnFactory/plCreator.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plNetApp.h"
@@ -131,7 +130,7 @@ bool plResManager::IInit()
     {
         // We want to go through all the data files in our data path and add new
         // plRegistryPageNodes to the regTree for each
-        hsFolderIterator pathIterator(fDataPath.c_str());
+        hsFolderIterator pathIterator(fDataPath.AsString().c_str());
         while (pathIterator.NextFileSuffix(".prp"))
         {
             char fileName[kFolderIterator_MaxPath];
@@ -517,10 +516,10 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
     // If we're running localized, try to find a localized version first
     if ((!objectName.IsNull()) && plLocalization::IsLocalized())
     {
-        char localName[256];
-        if (plLocalization::GetLocalized(objectName.c_str(), localName))
+        plFileName localName = plLocalization::GetLocalized(objectName.c_str());
+        if (localName.IsValid())
         {
-            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName);
+            plKeyImp* localKey = page->FindKey(uoid.GetClassType(), localName.AsString());
             if (localKey != nil)
                 return localKey;
         }
@@ -585,7 +584,7 @@ plKey plResManager::FindKey(const plUoid& uoid)
     return key;
 }
 
-const plLocation& plResManager::FindLocation(const char* age, const char* page) const
+const plLocation& plResManager::FindLocation(const plString& age, const plString& page) const
 {
     static plLocation invalidLoc;
 
@@ -596,16 +595,16 @@ const plLocation& plResManager::FindLocation(const char* age, const char* page) 
     return invalidLoc;
 }
 
-void plResManager::GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const
+void plResManager::GetLocationStrings(const plLocation& loc, plString* ageBuffer, plString* pageBuffer) const
 {
     plRegistryPageNode* page = FindPage(loc);
     const plPageInfo& info = page->GetPageInfo();
 
     // Those buffers better be big enough...
     if (ageBuffer)
-        hsStrcpy(ageBuffer, info.GetAge().c_str());
+        *ageBuffer = info.GetAge();
     if (pageBuffer)
-        hsStrcpy(pageBuffer, info.GetPage().c_str());
+        *pageBuffer = info.GetPage();
 }
 
 bool plResManager::AddViaNotify(plRefMsg* msg, plRefFlags::Type flags)
@@ -996,10 +995,10 @@ class plResAgeHolder : public hsRefCnt
 {
     public:
         hsTArray<plKey> fKeys;
-        std::string     fAge;
+        plString        fAge;
 
         plResAgeHolder() {}
-        plResAgeHolder( const char* age ) : fAge( age ) {}
+        plResAgeHolder( const plString& age ) : fAge( age ) {}
         ~plResAgeHolder() { fKeys.Reset(); }
 };
 
@@ -1009,11 +1008,11 @@ class plResHolderIterator : public plRegistryPageIterator
 {
 protected:
     hsTArray<plKey>& fKeys;
-    const char* fAgeName;
+    plString fAgeName;
     plResManager* fResMgr;
 
 public:
-    plResHolderIterator(const char* age, hsTArray<plKey>& keys, plResManager* resMgr) 
+    plResHolderIterator(const plString& age, hsTArray<plKey>& keys, plResManager* resMgr)
             : fAgeName(age), fKeys(keys), fResMgr(resMgr) {}
 
     virtual bool EatPage(plRegistryPageNode* page)
@@ -1031,21 +1030,21 @@ public:
 
 //// LoadAndHoldAgeKeys //////////////////////////////////////////////////////
 
-void plResManager::LoadAgeKeys(const char* age)
+void plResManager::LoadAgeKeys(const plString& age)
 {
-    hsAssert(age && age[0] != '\0', "age is nil");
+    hsAssert(!age.IsEmpty(), "age is nil");
     HeldAgeKeyMap::const_iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
     {
-        kResMgrLog(1, ILog(1, "Reffing age keys for age %s", age));
-        hsStatusMessageF("*** Reffing age keys for age %s ***\n", age);
+        kResMgrLog(1, ILog(1, "Reffing age keys for age %s", age.c_str()));
+        hsStatusMessageF("*** Reffing age keys for age %s ***\n", age.c_str());
         plResAgeHolder* holder = it->second;
         holder->Ref();
     }
     else
     {
-        kResMgrLog(1, ILog(1, "Loading age keys for age %s", age));
-        hsStatusMessageF("*** Loading age keys for age %s ***\n", age);
+        kResMgrLog(1, ILog(1, "Loading age keys for age %s", age.c_str()));
+        hsStatusMessageF("*** Loading age keys for age %s ***\n", age.c_str());
 
         plResAgeHolder* holder = new plResAgeHolder(age);
         fHeldAgeKeys[age] = holder;
@@ -1057,7 +1056,7 @@ void plResManager::LoadAgeKeys(const char* age)
 
 //// DropAgeKeys /////////////////////////////////////////////////////////////
 
-void plResManager::DropAgeKeys(const char* age)
+void plResManager::DropAgeKeys(const plString& age)
 {
     HeldAgeKeyMap::iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
@@ -1066,12 +1065,12 @@ void plResManager::DropAgeKeys(const char* age)
         if (holder->RefCnt() == 1)
         {
             // Found it!
-            kResMgrLog(1, ILog(1, "Dropping held age keys for age %s", age));
+            kResMgrLog(1, ILog(1, "Dropping held age keys for age %s", age.c_str()));
             fHeldAgeKeys.erase(it);
         }
         else
         {
-            kResMgrLog(1, ILog(1, "Unreffing age keys for age %s", age));
+            kResMgrLog(1, ILog(1, "Unreffing age keys for age %s", age.c_str()));
         }
 
         holder->UnRef();
@@ -1236,11 +1235,11 @@ class plPageInAgeIter : public plRegistryPageIterator
 {
 private:
     plKey       fDestKey;
-    const char* fAgeName;
+    plString    fAgeName;
     std::vector<plLocation> fLocations;
 
 public:
-    plPageInAgeIter(plKey destKey, const char *ageName) : fDestKey(destKey), fAgeName(ageName) {}
+    plPageInAgeIter(plKey destKey, const plString &ageName) : fDestKey(destKey), fAgeName(ageName) {}
     ~plPageInAgeIter()
     {
         plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoomHold);
@@ -1263,7 +1262,7 @@ public:
 
 // PageInAge is intended for bulk global ages, like GlobalAnimations or GlobalClothing
 // that store a lot of data we always want available. (Used to be known as PageInHold)
-void plResManager::PageInAge(const char *age)
+void plResManager::PageInAge(const plString &age)
 {
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
     plUoid lu(kClient_KEY);
@@ -1492,9 +1491,9 @@ void plResManager::DumpUnusedKeys(plRegistryPageNode* page) const
     page->IterateKeys(&reffer);
 }
 
-plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const char* age, const char* page)
+plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const plString& age, const plString& page)
 {
-    plRegistryPageNode* pageNode = new plRegistryPageNode(location, age, page, fDataPath.c_str());
+    plRegistryPageNode* pageNode = new plRegistryPageNode(location, age, page, fDataPath);
     fAllPages[location] = pageNode;
 
     return pageNode;

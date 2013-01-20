@@ -101,10 +101,10 @@ protected:
     
     // Save the settings for the last age and load the settings for the currently one
     void IUpdateCurAge();
-    void ISaveCurAge( const char *path, bool checkSeqNum = false );
-    void ILoadAge( const char *path, bool checkSeqNum = false );
+    void ISaveCurAge( const plFileName &path, bool checkSeqNum = false );
+    void ILoadAge( const plFileName &path, bool checkSeqNum = false );
 
-    static bool IGetLocalAgePath(char *path);
+    static plFileName IGetLocalAgePath();
 
     // Fill out the age tree view
     void IFillAgeTree( void );

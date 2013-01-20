@@ -73,7 +73,7 @@ pfLocalizationMgr::~pfLocalizationMgr()
 
 //// Initialize //////////////////////////////////////////////////////
 
-void pfLocalizationMgr::Initialize(const plString & dataPath)
+void pfLocalizationMgr::Initialize(const plFileName & dataPath)
 {
     if (fInstance)
         return;

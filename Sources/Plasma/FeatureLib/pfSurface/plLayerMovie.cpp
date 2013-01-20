@@ -51,8 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsGDeviceRef.h"
 
 plLayerMovie::plLayerMovie()
-:   fMovieName(nil),
-    fCurrentFrame(-1),
+:   fCurrentFrame(-1),
     fLength(0),
     fWidth(32),
     fHeight(32)
@@ -66,8 +65,6 @@ plLayerMovie::plLayerMovie()
 
 plLayerMovie::~plLayerMovie()
 {
-    delete [] fMovieName;
-
     delete *fTexture;
 }
 
@@ -75,10 +72,10 @@ bool plLayerMovie::ISetFault(const char* errStr)
 {
 #ifdef HS_DEBUGGING
     char buff[256];
-    sprintf(buff, "ERROR %s: %s\n", fMovieName, errStr);
+    sprintf(buff, "ERROR %s: %s\n", fMovieName.AsString().c_str(), errStr);
     hsStatusMessage(buff);
 #endif // HS_DEBUGGING
-    *fMovieName = 0;
+    fMovieName = "";
     return true;
 }
 
@@ -115,7 +112,7 @@ bool plLayerMovie::ISetupBitmap()
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
-        plString name = plString::Format( "%s_BMap", fMovieName );
+        plString name = plString::Format( "%s_BMap", fMovieName.AsString().c_str() );
         hsgResMgr::ResMgr()->NewKey( name, b, plLocation::kGlobalFixedLoc );
 
         *fTexture = (plBitmap *)b;
@@ -183,18 +180,19 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Read(s, mgr);
 
-    delete [] fMovieName;
     int len = s->ReadLE32();
     if( len )
     {
-        fMovieName = new char[len+1];
-        s->Read(len, fMovieName);
-        fMovieName[len] = 0;
+        plStringBuffer<char> movieName;
+        char *buf = movieName.CreateWritableBuffer(len);
+        s->Read(len, buf);
+        buf[len] = 0;
+        fMovieName = plString(movieName);
     }
     else
     {
         hsAssert(false, "Reading empty string for movie name");
-        fMovieName = nil;
+        fMovieName = "";
     }
 }
 
@@ -202,16 +200,8 @@ void plLayerMovie::Write(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimation::Write(s, mgr);
 
-    int len = (fMovieName) ? strlen(fMovieName) : 0;
-    s->WriteLE32(len);
-    if( len )
-        s->Write(len, fMovieName);
-}
-
-void plLayerMovie::SetMovieName(const char* n)
-{
-    delete [] fMovieName;
-    fMovieName = hsStrcpy(n);
+    s->WriteLE32(fMovieName.GetSize());
+    s->Write(fMovieName.GetSize(), fMovieName.AsString().c_str());
 }
 
 bool plLayerMovie::MsgReceive(plMessage* msg)

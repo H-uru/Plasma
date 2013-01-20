@@ -318,19 +318,18 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
     SendMessage(hAge, CB_RESETCONTENT, 0, 0);
 
     // Get the path to the description folder
-    char agePath[MAX_PATH];
-    const char *plasmaPath = plMaxConfig::GetClientPath();
-    if (!plasmaPath)
+    plFileName plasmaPath = plMaxConfig::GetClientPath();
+    if (!plasmaPath.IsValid())
         return;
-    strcpy(agePath, plasmaPath);
-    strcat(agePath, plAgeDescription::kAgeDescPath);
+
+    plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
     const char *savedName = pb->GetStr(kLinkAgeFilename);
     if (!savedName)
         savedName = "";
 
     // Iterate through the age descriptions
-    hsFolderIterator ageFolder(agePath);
+    hsFolderIterator ageFolder(agePath.AsString().c_str());
     while (ageFolder.NextFileSuffix(".age")) 
     {
         char ageFile[MAX_PATH];
@@ -355,19 +354,17 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
     SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)"<None>");
 
     // Get the path to the description folder
-    char agePath[MAX_PATH];
-    const char *plasmaPath = plMaxConfig::GetClientPath();
-    if (!plasmaPath)
+    plFileName plasmaPath = plMaxConfig::GetClientPath();
+    if (!plasmaPath.IsValid())
         return;
-    strcpy(agePath, plasmaPath);
-    strcat(agePath, plAgeDescription::kAgeDescPath);
+    plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
     const char *savedName = pb->GetStr(kLinkParentAgeFilename);
     if (!savedName)
         savedName = "<None>";
 
     // Iterate through the age descriptions
-    hsFolderIterator ageFolder(agePath);
+    hsFolderIterator ageFolder(agePath.AsString().c_str());
     while (ageFolder.NextFileSuffix(".age")) 
     {
         char ageFile[MAX_PATH];

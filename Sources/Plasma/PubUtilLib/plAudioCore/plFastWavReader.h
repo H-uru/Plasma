@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plFastWavReader_h
 
 #include "plAudioFileReader.h"
+#include "plFileSystem.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -60,7 +61,7 @@ class plRIFFChunk;
 class plFastWAV : public plAudioFileReader
 {
 public:
-    plFastWAV( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    plFastWAV( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
     virtual ~plFastWAV();
 
     virtual plWAVHeader &GetHeader( void );
@@ -83,13 +84,13 @@ protected:
         kPCMFormatTag = 1
     };
 
-    char            fFilename[ 512 ];
+    plFileName      fFilename;
     FILE *          fFileHandle;
     plWAVHeader     fHeader, fFakeHeader;
-    uint32_t          fDataStartPos, fCurrDataPos, fDataSize;
-    uint32_t          fChunkStart;
+    uint32_t        fDataStartPos, fCurrDataPos, fDataSize;
+    uint32_t        fChunkStart;
     plAudioCore::ChannelSelect  fWhichChannel;
-    uint32_t                      fChannelAdjust, fChannelOffset;
+    uint32_t        fChannelAdjust, fChannelOffset;
 
     void    IError( const char *msg );
     bool    ISeekToChunk( const char *type, plRIFFChunk *c );

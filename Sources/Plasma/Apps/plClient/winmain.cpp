@@ -75,7 +75,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
-#include "plFile/plFileUtils.h"
 
 #include "plPhysX/plSimulationMgr.h"
 
@@ -542,7 +541,7 @@ bool    InitClient( HWND hWnd )
     resMgr->SetDataPath("dat");
     hsgResMgr::Init(resMgr);
 
-    if(!plFileUtils::FileExists("resource.dat"))
+    if (!plFileInfo("resource.dat").Exists())
     {
         hsMessageBox("Required file 'resource.dat' not found.", "Error", hsMessageBoxNormal);
         return false;

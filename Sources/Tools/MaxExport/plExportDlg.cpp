@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/resource.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plMaxNode.h"
+#include "plFileSystem.h"
 
 extern HINSTANCE hInstance;
 
@@ -69,7 +70,7 @@ protected:
     bool fPhysicalsOnly;
     bool fLightMap;
     char fExportPage[256];
-    char fExportSourceDir[MAX_PATH];
+    plFileName fExportSourceDir;
     bool fExporting;
     bool fAutoExporting;
     bool fExportFile;
@@ -108,30 +109,34 @@ public:
 
 plExportDlgImp::plExportDlgImp() : fDlg(NULL), fPreshade(true), fPhysicalsOnly(false), fLightMap(true), fLastExportTime(0), fExporting(false), fAutoExporting(false)
 {
-    const char* path = plMaxConfig::GetPluginIni();
-    fXPos = GetPrivateProfileInt("Export", "X", 0, path);
-    fYPos = GetPrivateProfileInt("Export", "Y", 30, path);
+    plFileName path = plMaxConfig::GetPluginIni();
+    fXPos = GetPrivateProfileIntW(L"Export", L"X", 0, path.AsString().ToWchar());
+    fYPos = GetPrivateProfileIntW(L"Export", L"Y", 30, path.AsString().ToWchar());
 
-    GetPrivateProfileString("Export", "Dir", "", fExportSourceDir, sizeof(fExportSourceDir), path);
+    wchar_t buffer[MAX_PATH];
+    GetPrivateProfileStringW(L"Export", L"Dir", L"", buffer, sizeof(buffer),
+                             path.AsString().ToWchar());
+    fExportSourceDir = plString::FromWchar(buffer);
 
     memset(fExportPage, 0, sizeof(fExportPage));
 }
 
-BOOL WritePrivateProfileInt(LPCSTR lpAppName, LPCSTR lpKeyName, int val, LPCSTR lpFileName)
+BOOL WritePrivateProfileIntW(LPCWSTR lpAppName, LPCWSTR lpKeyName, int val, LPCWSTR lpFileName)
 {
-    char buf[30];
-    itoa(val, buf, 10);
+    wchar_t buf[12];
+    snwprintf(buf, 12, L"%d", val);
 
-    return WritePrivateProfileString(lpAppName, lpKeyName, buf, lpFileName);
+    return WritePrivateProfileStringW(lpAppName, lpKeyName, buf, lpFileName);
 }
 
 plExportDlgImp::~plExportDlgImp()
 {
-    const char* path = plMaxConfig::GetPluginIni();
-    WritePrivateProfileInt("Export", "X", fXPos, path);
-    WritePrivateProfileInt("Export", "Y", fYPos, path);
+    plFileName path = plMaxConfig::GetPluginIni();
+    WritePrivateProfileIntW(L"Export", L"X", fXPos, path.AsString().ToWchar());
+    WritePrivateProfileIntW(L"Export", L"Y", fYPos, path.AsString().ToWchar());
 
-    WritePrivateProfileString("Export", "Dir", fExportSourceDir, path);
+    WritePrivateProfileStringW(L"Export", L"Dir", fExportSourceDir.AsString().ToWchar(),
+                               path.AsString().ToWchar());
 }
 
 plExportDlg& plExportDlg::Instance()
@@ -185,8 +190,8 @@ void plExportDlgImp::IGetRadio(HWND hDlg)
 void plExportDlgImp::IInitDlg(HWND hDlg)
 {
     // Set the client path
-    const char* path = plMaxConfig::GetClientPath(false, true);
-    SetDlgItemText(hDlg, IDC_CLIENT_PATH, path);
+    plFileName path = plMaxConfig::GetClientPath(false, true);
+    SetDlgItemText(hDlg, IDC_CLIENT_PATH, path.AsString().c_str());
 
     // Set the preshade button
     CheckDlgButton(hDlg, IDC_PRESHADE_CHECK, fPreshade ? BST_CHECKED : BST_UNCHECKED);
@@ -232,7 +237,7 @@ void plExportDlgImp::IInitDlg(HWND hDlg)
     CheckRadioButton(hDlg, IDC_RADIO_FILE, IDC_RADIO_DIR, IDC_RADIO_FILE);
     IGetRadio(hDlg);
 
-    SetDlgItemText(hDlg, IDC_EXPORT_PATH, fExportSourceDir);
+    SetDlgItemTextW(hDlg, IDC_EXPORT_PATH, fExportSourceDir.AsString().ToWchar());
 }
 
 #include "plFile/plBrowseFolder.h"
@@ -280,9 +285,9 @@ BOOL plExportDlgImp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 else if (resID == IDC_DIR)
                 {
                     // Get a new client path
-                    const char* path = plMaxConfig::GetClientPath(true);
-                    if (path)
-                        SetDlgItemText(hDlg, IDC_CLIENT_PATH, path);
+                    plFileName path = plMaxConfig::GetClientPath(true);
+                    if (path.IsValid())
+                        SetDlgItemText(hDlg, IDC_CLIENT_PATH, path.AsString().c_str());
                     return TRUE;
                 }
                 else if (resID == IDC_RADIO_FILE || resID == IDC_RADIO_DIR)
@@ -292,11 +297,10 @@ BOOL plExportDlgImp::DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
                 }
                 else if (resID == IDC_BROWSE_EXPORT)
                 {
-                    plBrowseFolder::GetFolder(fExportSourceDir,
-                                                fExportSourceDir,
-                                                "Choose the source directory",
-                                                hDlg);
-                    SetDlgItemText(hDlg, IDC_EXPORT_PATH, fExportSourceDir);
+                    fExportSourceDir = plBrowseFolder::GetFolder(fExportSourceDir,
+                                              "Choose the source directory",
+                                              hDlg);
+                    SetDlgItemTextW(hDlg, IDC_EXPORT_PATH, fExportSourceDir.AsString().ToWchar());
                     return TRUE;
                 }
             }
@@ -347,7 +351,7 @@ void plExportDlgImp::IDoExport()
         IExportCurrentFile(exportPath);
     else
     {
-        hsFolderIterator sourceDir(fExportSourceDir);
+        hsFolderIterator sourceDir(fExportSourceDir.AsString().c_str());
         while (sourceDir.NextFileSuffix(".max")) 
         {
             char exportFile[MAX_PATH];

@@ -94,7 +94,7 @@ public:
 
 protected:
     bool fWeExploded; // alternative to massive error stack
-    plString fFilename;
+    plFileName fFilename;
     XML_Parser fParser;
 
     struct tagInfo
@@ -121,7 +121,7 @@ protected:
 public:
     LocalizationXMLFile() : fWeExploded(false) { }
 
-    bool Parse(const plString & fileName); // returns false on failure
+    bool Parse(const plFileName & fileName); // returns false on failure
     void AddError(const plString & errorText);
 };
 
@@ -354,7 +354,7 @@ void LocalizationXMLFile::IHandleTranslationTag(const LocalizationXMLFile::tagIn
 
 //// Parse() /////////////////////////////////////////////////////////
 
-bool LocalizationXMLFile::Parse(const plString& fileName)
+bool LocalizationXMLFile::Parse(const plFileName& fileName)
 {
     fFilename = fileName;
 
@@ -382,10 +382,10 @@ bool LocalizationXMLFile::Parse(const plString& fileName)
     XML_SetCharacterDataHandler(fParser, HandleData);
     XML_SetUserData(fParser, (void*)this);
 
-    hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName.c_str());
+    hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!xmlStream)
     {
-        pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Can't open file stream for %s", fileName.c_str());
+        pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Can't open file stream for %s", fileName.AsString().c_str());
         return false;
     }
 
@@ -437,15 +437,15 @@ void LocalizationXMLFile::AddError(const plString& errorText)
 class LocalizationDatabase
 {
 protected:
-    plString fDirectory; // the directory we're supposed to parse
+    plFileName fDirectory; // the directory we're supposed to parse
 
     std::vector<LocalizationXMLFile> fFiles; // the various XML files in that directory
 
     LocalizationXMLFile::ageMap fData;
 
-    LocalizationXMLFile::element IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plString & fileName, const plString & path);
-    LocalizationXMLFile::set IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plString & fileName, const plString & path);
-    LocalizationXMLFile::age IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plString & fileName, const plString & path);
+    LocalizationXMLFile::element IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plFileName & fileName, const plString & path);
+    LocalizationXMLFile::set IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plFileName & fileName, const plString & path);
+    LocalizationXMLFile::age IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plFileName & fileName, const plString & path);
     void IMergeData(); // merge all localization data in the files
 
     void IVerifyElement(const plString &ageName, const plString &setName, LocalizationXMLFile::set::iterator& curElement);
@@ -456,7 +456,7 @@ protected:
 public:
     LocalizationDatabase() {}
 
-    void Parse(const plString & directory);
+    void Parse(const plFileName & directory);
     LocalizationXMLFile::ageMap GetData() {return fData;}
 };
 
@@ -466,7 +466,7 @@ public:
 
 //// IMergeElementData ///////////////////////////////////////////////
 
-LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plString & fileName, const plString & path)
+LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(LocalizationXMLFile::element firstElement, LocalizationXMLFile::element secondElement, const plFileName & fileName, const plString & path)
 {
     // copy the data over, alerting the user to any duplicate translations
     LocalizationXMLFile::element::iterator curTranslation;
@@ -475,7 +475,7 @@ LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(Localizatio
         if (firstElement.find(curTranslation->first) != firstElement.end())
         {
             pfLocalizationDataMgr::GetLog()->AddLineF("Duplicate %s translation for %s found in file %s. Ignoring second translation.",
-                curTranslation->first.c_str(), path.c_str(), fileName.c_str());
+                curTranslation->first.c_str(), path.c_str(), fileName.AsString().c_str());
         }
         else
             firstElement[curTranslation->first] = curTranslation->second;
@@ -486,7 +486,7 @@ LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(Localizatio
 
 //// IMergeSetData ///////////////////////////////////////////////////
 
-LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plString & fileName, const plString & path)
+LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile::set firstSet, LocalizationXMLFile::set secondSet, const plFileName & fileName, const plString & path)
 {
     // Merge all the elements
     LocalizationXMLFile::set::iterator curElement;
@@ -505,7 +505,7 @@ LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile
 
 //// IMergeAgeData ///////////////////////////////////////////////////
 
-LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plString & fileName, const plString & path)
+LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile::age firstAge, LocalizationXMLFile::age secondAge, const plFileName & fileName, const plString & path)
 {
     // Merge all the sets
     LocalizationXMLFile::age::iterator curSet;
@@ -640,14 +640,14 @@ void LocalizationDatabase::IVerifyData()
 
 //// Parse() /////////////////////////////////////////////////////////
 
-void LocalizationDatabase::Parse(const plString & directory)
+void LocalizationDatabase::Parse(const plFileName & directory)
 {
     fDirectory = directory;
     fFiles.clear();
 
     char filename[255];
-    hsFolderIterator xmlFolder((directory + PATH_SEPARATOR_STR).c_str());
-    while(xmlFolder.NextFileSuffix(".loc"))
+    hsFolderIterator xmlFolder(directory.AsString().c_str());
+    while (xmlFolder.NextFileSuffix(".loc"))
     {
         xmlFolder.GetPathAndName(filename);
 
@@ -822,7 +822,7 @@ plStatusLog             *pfLocalizationDataMgr::fLog = nil; // output logfile
 
 //// Constructor/Destructor //////////////////////////////////////////
 
-pfLocalizationDataMgr::pfLocalizationDataMgr(const plString & path)
+pfLocalizationDataMgr::pfLocalizationDataMgr(const plFileName & path)
 {
     hsAssert(!fInstance, "Tried to create the localization data manager more than once!");
     fInstance = this;
@@ -932,7 +932,7 @@ void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const plString & cu
 
 //// IWriteText //////////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::IWriteText(const plString & filename, const plString & ageName, const plString & languageName)
+void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plString & ageName, const plString & languageName)
 {
     bool weWroteData = false; // did we actually write any data of consequence?
     bool setEmpty = true;
@@ -980,7 +980,7 @@ void pfLocalizationDataMgr::IWriteText(const plString & filename, const plString
     if (weWroteData)
     {
         // now spit the results out to the file
-        hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename.c_str());
+        hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
         xmlStream->Write(fileData.GetLength(), fileData.GetString().c_str());
         xmlStream->Close();
         delete xmlStream;
@@ -989,7 +989,7 @@ void pfLocalizationDataMgr::IWriteText(const plString & filename, const plString
 
 //// Initialize //////////////////////////////////////////////////////
 
-void pfLocalizationDataMgr::Initialize(const plString & path)
+void pfLocalizationDataMgr::Initialize(const plFileName & path)
 {
     if (fInstance)
         return;
@@ -1194,7 +1194,7 @@ bool pfLocalizationDataMgr::DeleteElement(const plString & name)
 
 //// WriteDatabaseToDisk /////////////////////////////////////////////
 
-void pfLocalizationDataMgr::WriteDatabaseToDisk(const plString & path)
+void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
 {
     std::vector<plString> ageNames = GetAgeList();
     std::vector<plString> languageNames = IGetAllLanguageNames();
@@ -1202,7 +1202,9 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const plString & path)
     {
         for (int curLanguage = 0; curLanguage < languageNames.size(); curLanguage++)
         {
-            IWriteText(plString::Format("%s/%s%s.loc", path, ageNames[curAge].c_str(), languageNames[curLanguage].c_str()), ageNames[curAge], languageNames[curLanguage]);
+            plFileName locPath = plFileName::Join(path, plString::Format("%s%s.loc",
+                                    ageNames[curAge].c_str(), languageNames[curLanguage].c_str()));
+            IWriteText(locPath, ageNames[curAge], languageNames[curLanguage]);
         }
     }
 }

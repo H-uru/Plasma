@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plFile/plEncryptedStream.h"
-#include "plFile/plFileUtils.h"
 #include "plInputCore/plInputManager.h"
 #include "plInputCore/plInputInterfaceMgr.h"
 #include "plInputCore/plInputDevice.h"

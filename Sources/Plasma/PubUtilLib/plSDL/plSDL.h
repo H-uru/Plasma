@@ -533,10 +533,10 @@ class plSDLMgr
 {
     friend class plSDLParser;
 private:
-    std::string fSDLDir;
+    plFileName  fSDLDir;
     plSDL::DescriptorList fDescriptors;
     plNetApp*   fNetApp;
-    uint32_t      fBehaviorFlags;
+    uint32_t    fBehaviorFlags;
 
     void IDeleteDescriptors(plSDL::DescriptorList* dl);
 public:
@@ -548,8 +548,8 @@ public:
     
     const plSDL::DescriptorList * GetDescriptors( void ) const { return &fDescriptors;}
 
-    void SetSDLDir(const char* s) { fSDLDir=s; }
-    const char* GetSDLDir() const { return fSDLDir.c_str(); }
+    void SetSDLDir(const plFileName& s) { fSDLDir=s; }
+    plFileName GetSDLDir() const { return fSDLDir; }
 
     void SetNetApp(plNetApp* a) { fNetApp=a; }
     plNetApp* GetNetApp() const { return fNetApp; }

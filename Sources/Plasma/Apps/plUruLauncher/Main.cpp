@@ -601,7 +601,7 @@ static const CmdArgDef s_cmdLineArgs[] = {
 PF_CONSOLE_LINK_FILE(Core)
 
 //============================================================================
-int __stdcall WinMain (      
+int __stdcall WinMain (
     HINSTANCE hInstance,
     HINSTANCE hPrevInstance,
     LPSTR lpCmdLine,
@@ -619,18 +619,15 @@ int __stdcall WinMain (
     while (*appCmdLine == L' ')
         ++appCmdLine;
 
-    wchar_t curPatcherFile[MAX_PATH];
-    wchar_t newPatcherFile[MAX_PATH];
     bool isTempPatcher = false;
 
-    PathGetProgramName(curPatcherFile, arrsize(curPatcherFile));
-    PathRemoveFilename(newPatcherFile, curPatcherFile, arrsize(newPatcherFile));
-    PathAddFilename(newPatcherFile, newPatcherFile, kPatcherExeFilename, arrsize(newPatcherFile));
+    plFileName curPatcherFile = plFileSystem::GetCurrentAppPath();
+    plFileName newPatcherFile = plFileName::Join(curPatcherFile.StripFileName(), kPatcherExeFilename);
 
     // If our exe name doesn't match the "real" patcher exe name, then we are a newly
     // downloaded patcher that needs to be copied over to the "real" exe.. so do that,
     // exec it, and exit.
-    if (0 != StrCmpI(curPatcherFile, newPatcherFile)) {
+    if (0 != curPatcherFile.AsString().CompareI(newPatcherFile.AsString())) {
         isTempPatcher = true;
     }
 
@@ -683,12 +680,12 @@ int __stdcall WinMain (
 
     for (;;) {
         // Wait for previous process to exit. This will happen if we just patched.
-        HANDLE mutex = CreateMutexW(NULL, TRUE, kPatcherExeFilename);
+        HANDLE mutex = CreateMutexW(NULL, TRUE, kPatcherExeFilename.AsString().ToWchar());
         DWORD wait = WaitForSingleObject(mutex, 0);
         while(!s_shutdown && wait != WAIT_OBJECT_0)
             wait = WaitForSingleObject(mutex, 100);
 
-        // User canceled            
+        // User canceled
         if (s_shutdown)
             break;
 
@@ -701,7 +698,7 @@ int __stdcall WinMain (
             // Wait for the other process to exit
             Sleep(1000);
             
-            if (!plFileUtils::RemoveFile(newPatcherFile)) {
+            if (!plFileSystem::Unlink(newPatcherFile)) {
                 wchar_t error[256];
                 DWORD errorCode = GetLastError();
                 wchar_t *msg = TranslateErrorCode(errorCode);
@@ -711,7 +708,7 @@ int __stdcall WinMain (
                 LocalFree(msg);
                 break;
             }
-            if (!plFileUtils::FileMove(curPatcherFile, newPatcherFile)) {
+            if (!plFileSystem::Move(curPatcherFile, newPatcherFile)) {
                 wchar_t error[256];
                 DWORD errorCode = GetLastError();
                 wchar_t *msg = TranslateErrorCode(errorCode);
@@ -719,7 +716,7 @@ int __stdcall WinMain (
                 StrPrintf(error, arrsize(error), L"Failed to replace old patcher executable. %s", msg);
                 MessageBoxW(GetTopWindow(nil), error, L"Error", MB_OK);
                 // attempt to clean up this tmp file
-                plFileUtils::RemoveFile(curPatcherFile);
+                plFileSystem::Unlink(curPatcherFile);
                 LocalFree(msg);
                 break;
             }
@@ -732,7 +729,7 @@ int __stdcall WinMain (
             si.cb = sizeof(si);
 
             wchar_t cmdline[MAX_PATH];
-            StrPrintf(cmdline, arrsize(cmdline), L"%s %s", newPatcherFile, s_launcherInfo.cmdLine);
+            StrPrintf(cmdline, arrsize(cmdline), L"%S %s", newPatcherFile.AsString().c_str(), s_launcherInfo.cmdLine);
             
             // we have only successfully patched if we actually launch the new version of the patcher
             (void)CreateProcessW( 
@@ -758,12 +755,11 @@ int __stdcall WinMain (
 
         // Clean up old temp files
         ARRAY(PathFind) paths;
-        wchar_t fileSpec[MAX_PATH];
-        PathGetProgramDirectory(fileSpec, arrsize(fileSpec));
-        PathAddFilename(fileSpec, fileSpec, L"*.tmp", arrsize(fileSpec));
-        PathFindFiles(&paths, fileSpec, kPathFlagFile);
+        plFileName fileSpec = plFileSystem::GetCurrentAppPath().StripFileName();
+        fileSpec = plFileName::Join(fileSpec, "*.tmp");
+        PathFindFiles(&paths, fileSpec.AsString().ToWchar(), kPathFlagFile);
         for (PathFind * path = paths.Ptr(); path != paths.Term(); ++path)
-            plFileUtils::RemoveFile(path->name);
+            plFileSystem::Unlink(plString::FromWchar(path->name));
 
         SetConsoleCtrlHandler(CtrlHandler, TRUE);
         InitAsyncCore();    // must do this before self patch, since it needs to connect to the file server

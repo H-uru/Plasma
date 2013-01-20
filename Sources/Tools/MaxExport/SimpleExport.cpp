@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
-#include "plFile/plFileUtils.h"
 #include "hsStream.h"
 
 #include <bitmap.h>
@@ -319,19 +318,13 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
 
     // We want to incorporate any SDL changes since the last export, so we DeInit()
     // and re-initialize.
-    char buf[MAX_PATH];
-    strcpy(buf, plMaxConfig::GetClientPath());
-    strcat(buf, "sdl");
-    plSDLMgr::GetInstance()->SetSDLDir(buf);
+    plSDLMgr::GetInstance()->SetSDLDir(plFileName::Join(plMaxConfig::GetClientPath(), "sdl"));
     plSDLMgr::GetInstance()->DeInit();
     plSDLMgr::GetInstance()->Init();
 
     // Add disk source for writing
-    char datPath[MAX_PATH];
-    strcpy(datPath, out_path);
-    plFileUtils::AddSlash(datPath);
-    strcat(datPath, "dat\\");
-    CreateDirectory(datPath, NULL);
+    plFileName datPath = plFileName::Join(out_path, "dat");
+    CreateDirectoryW(datPath.AsString().ToWchar(), NULL);
     plPluginResManager::ResMgr()->SetDataPath(datPath);
 
     if (hsgResMgr::Reset())

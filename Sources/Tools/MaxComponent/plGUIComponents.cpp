@@ -1449,8 +1449,8 @@ void    plGUIDialogProc::ILoadPages( HWND hWnd, IParamBlock2 *pb )
 
     while( ( page = aged->GetNextPage() ) != nil )
     {
-        int idx = ComboBox_AddString( hWnd, page->GetName() );
-        if( selPageName && stricmp( page->GetName(), selPageName ) == 0 )
+        int idx = ComboBox_AddString( hWnd, page->GetName().c_str() );
+        if( selPageName && page->GetName().CompareI( selPageName ) == 0 )
             ComboBox_SetCurSel( hWnd, idx );
     }
 

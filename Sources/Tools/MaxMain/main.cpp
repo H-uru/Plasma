@@ -168,16 +168,15 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 
         plPythonMgr::Instance().LoadPythonFiles();
 
-        const char *clientPath = plMaxConfig::GetClientPath(false, true);
-        if (clientPath)
+        plFileName clientPath = plMaxConfig::GetClientPath(false, true);
+        if (clientPath.IsValid())
         {
-            char oldCwd[kFolderIterator_MaxPath];
-            _getcwd(oldCwd, sizeof(oldCwd));
-            _chdir(clientPath);
+            plFileName oldCwd = plFileSystem::GetCWD();
+            plFileSystem::SetCWD(clientPath);
             plSDLMgr::GetInstance()->Init();
-            _chdir(oldCwd);
+            plFileSystem::SetCWD(oldCwd);
         }
-        
+
         // Initialize the ResManager
         plResManager* pRmgr = new plPluginResManager;
         hsgResMgr::Init(pRmgr);

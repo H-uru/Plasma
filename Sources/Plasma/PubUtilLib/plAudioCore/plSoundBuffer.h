@@ -56,16 +56,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioCore.h"
 #include "plAudioFileReader.h"
 #include "hsThread.h"
+#include "plFileSystem.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 
 class plUnifiedTime;
 class plAudioFileReader;
 class plSoundBuffer : public hsKeyedObject
-{       
+{
 public:
     plSoundBuffer();
-    plSoundBuffer( const char *fileName, uint32_t flags = 0 );
+    plSoundBuffer( const plFileName &fileName, uint32_t flags = 0 );
     ~plSoundBuffer();
     
     CLASSNAME_REGISTER( plSoundBuffer );
@@ -93,14 +94,14 @@ public:
     virtual void    Write( hsStream *s, hsResMgr *mgr );
 
     plWAVHeader &GetHeader( void )              { return fHeader; }
-    uint32_t      GetDataLength( void ) const     { return fDataLength; }
+    uint32_t    GetDataLength( void ) const     { return fDataLength; }
     void        SetDataLength(unsigned length)  { fDataLength = length; } 
-    void        *GetData( void ) const          { return fData; }
-    const char  *GetFileName( void ) const      { return fFileName; }
+    void       *GetData( void ) const           { return fData; }
+    plFileName  GetFileName( void ) const       { return fFileName; }
     bool        IsValid( void ) const           { return fValid; }
-    float    GetDataLengthInSecs( void ) const;
+    float       GetDataLengthInSecs( void ) const;
 
-    void                SetFileName( const char *name );
+    void                SetFileName( const plFileName &name );
     bool                HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
     void                SetFlag( uint32_t flag, bool yes = true ) { if( yes ) fFlags |= flag; else fFlags &= ~flag; }
 
@@ -135,22 +136,22 @@ protected:
 
     bool            IGrabHeaderInfo( void );
     void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );
-    void            IGetFullPath( char *destStr );
-    
-    uint32_t          fFlags;
+    plFileName      IGetFullPath();
+
+    uint32_t        fFlags;
     bool            fValid;
-    uint32_t          fDataRead;
-    char            *fFileName;
-    
+    uint32_t        fDataRead;
+    plFileName      fFileName;
+
     bool            fLoaded;
     bool            fLoading;
     bool            fError;
     
-    plAudioFileReader * fReader;    
-    uint8_t *             fData;
+    plAudioFileReader * fReader;
+    uint8_t *           fData;
     plWAVHeader         fHeader;
-    uint32_t              fDataLength;
-    uint32_t              fAsyncLoadLength;
+    uint32_t            fDataLength;
+    uint32_t            fAsyncLoadLength;
     plAudioFileReader::StreamType fStreamType;
 
     // for plugins only

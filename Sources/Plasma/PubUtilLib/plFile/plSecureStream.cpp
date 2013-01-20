@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSecureStream.h"
 #include "hsWindows.h"
 
-#include "plFileUtils.h"
 #include "hsSTLStream.h"
 
 #include <time.h>

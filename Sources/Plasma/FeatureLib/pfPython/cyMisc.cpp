@@ -208,7 +208,7 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
         const char* theAge = ageName;
         if ( ageName[0] == 0 )
             theAge = nil;
-        key=plKeyFinder::Instance().StupidSearch(theAge,nil,plSceneObject::Index(), name, false);
+        key=plKeyFinder::Instance().StupidSearch(theAge, "", plSceneObject::Index(), name, false);
     }
 
     if ( key == nil )
@@ -1457,7 +1457,7 @@ void cyMisc::PageOutNode(const char* nodeName)
         plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kUnloadRoom);
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
         pMsg1->AddReceiver( clientKey );
-        pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation(nil, nodeName));
+        pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation("", nodeName));
         plgDispatch::MsgSend(pMsg1);
     }
 }
@@ -2484,7 +2484,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
 
     if ( !name.IsEmpty() )
     {
-        key=plKeyFinder::Instance().StupidSearch(nil,nil,plSceneObject::Index(), name, false);
+        key=plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }
     if ( key == nil )
     {
@@ -2685,7 +2685,7 @@ void cyMisc::FakeLinkToObjectNamed(const plString& name)
     plKey key = nil;
     if ( !name.IsEmpty() )
     {
-        key = plKeyFinder::Instance().StupidSearch(nil,nil,plSceneObject::Index(), name, false);
+        key = plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }
 
     if (!key)
@@ -2790,28 +2790,24 @@ bool cyMisc::DumpLogs(const std::wstring & folder)
     return retVal;
 }
 
-bool cyMisc::FileExists(const std::wstring & filename)
+bool cyMisc::FileExists(const plFileName & filename)
 {
-    return PathDoesFileExist(filename.c_str());
+    return plFileInfo(filename).Exists();
 }
 
-bool cyMisc::CreateDir(const std::wstring & directory)
+bool cyMisc::CreateDir(const plFileName & directory)
 {
-    return PathCreateDirectory(directory.c_str(), kPathCreateDirFlagEntireTree) == kPathCreateDirSuccess;
+    return plFileSystem::CreateDir(directory, true);
 }
 
-std::wstring cyMisc::GetUserPath()
+plFileName cyMisc::GetUserPath()
 {
-    wchar_t path[MAX_PATH];
-    PathGetUserDirectory(path, arrsize(path));
-    return path;
+    return plFileSystem::GetUserDataPath();
 }
 
-std::wstring cyMisc::GetInitPath()
+plFileName cyMisc::GetInitPath()
 {
-    wchar_t path[MAX_PATH];
-    PathGetInitDirectory(path, arrsize(path));
-    return path;
+    return plFileSystem::GetInitPath();
 }
 
 void cyMisc::SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp)

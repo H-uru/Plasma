@@ -151,8 +151,8 @@ struct Cli2File_ManifestEntryAck : Cli2File_MsgHeader {
 
 // FileDownloadRequest
 struct Cli2File_FileDownloadRequest : Cli2File_MsgHeader {
-    uint32_t       transId;
-    wchar_t       filename[MAX_PATH];
+    uint32_t    transId;
+    wchar_t     filename[MAX_PATH];
     unsigned    buildId; // 0 = newest
 };
 struct Cli2File_FileDownloadChunkAck : Cli2File_MsgHeader {

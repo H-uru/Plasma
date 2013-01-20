@@ -91,9 +91,6 @@ plWin32StreamingSound::~plWin32StreamingSound()
     IUnloadDataBuffer();
 
     delete fDataStream;
-    fDataStream = nil;
-    fSrcFilename[ 0 ] = 0;
-
     delete fDeswizzler;
 }
 
@@ -117,11 +114,11 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
 {
     if(fPlayWhenStopped)
         return plSoundBuffer::kPending;
-    bool sfxPath = fNewFilename.size() ? false : true;
-    
-    if( fDataStream != nil && fNewFilename.size() == 0)
+    bool sfxPath = fNewFilename.IsValid() ? false : true;
+
+    if (fDataStream != nil && !fNewFilename.IsValid())
         return plSoundBuffer::kSuccess;     // Already loaded
-        
+
     if(!ILoadDataBuffer())
     {
         return plSoundBuffer::kError;
@@ -131,11 +128,11 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         return plSoundBuffer::kError;
     
     // The databuffer also needs to know if the source is compressed or not
-    if(fNewFilename.length())
+    if (fNewFilename.IsValid())
     {
-        buffer->SetFileName(fNewFilename.c_str());
+        buffer->SetFileName(fNewFilename);
         buffer->SetFlag(plSoundBuffer::kStreamCompressed, fIsCompressed);
-        fNewFilename.clear();
+        fNewFilename = "";
         if(fReallyPlaying)
         {
             fPlayWhenStopped = true;
@@ -172,8 +169,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             }
         }
         
-        char str[ 256 ];
-        strncpy( fSrcFilename, buffer->GetFileName(), sizeof( fSrcFilename ) );
+        fSrcFilename = buffer->GetFileName();
         bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
 
         delete fDataStream;
@@ -185,20 +181,14 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
 
             /// Open da file
-            char strPath[ kFolderIterator_MaxPath ];
-                
-            getcwd(strPath, kFolderIterator_MaxPath);
-            if(sfxPath)
-                strcat( strPath, "\\sfx\\" );
-            else
-            {
-                // if we've changing the filename don't append 'sfx', just append a '\' since a path to the folder is expected
-                strcat( strPath, "\\");
-            }
-            strcat( strPath, fSrcFilename );
+            plFileName strPath = plFileSystem::GetCWD();
+
+            if (sfxPath)
+                strPath = plFileName::Join(strPath, "sfx");
+            strPath = plFileName::Join(strPath, fSrcFilename);
             fDataStream = plAudioFileReader::CreateReader(strPath, select,type);
-        }           
-        
+        }
+
         if( fDataStream == nil || !fDataStream->IsValid() )
         {
             delete fDataStream;
@@ -206,8 +196,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             return plSoundBuffer::kError;
         }
 
-        sprintf( str, "   Readied file %s for streaming", fSrcFilename );
-        IPrintDbgMessage( str );
+        IPrintDbgMessage(plString::Format("   Readied file %s for streaming", fSrcFilename.AsString().c_str()).c_str());
 
         // dont free sound data until we have a chance to use it in load sound
 
@@ -227,11 +216,11 @@ void plWin32StreamingSound::IFreeBuffers( void )
         if(!plgAudioSys::IsRestarting())
         {
             // we are deleting the stream, we must release the sound data.
-            FreeSoundData();    
+            FreeSoundData();
             delete fDataStream;
             fDataStream = nil;
         }
-        fSrcFilename[ 0 ] = 0;
+        fSrcFilename = "";
     }
 }
 
@@ -303,9 +292,10 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         delete fDSoundBuffer;
         fDSoundBuffer = nil;
 
-        char str[256];
-        sprintf(str, "Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file. Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.", GetFileName());
-        IPrintDbgMessage( str, true );
+        plString str = plString::Format("Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file."
+                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                        GetFileName().AsString().c_str());
+        IPrintDbgMessage(str.c_str(), true);
         fFailed = true;
         return false;
     }

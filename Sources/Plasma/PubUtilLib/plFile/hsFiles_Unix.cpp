@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <glob.h>
 #include <string>
 #include "hsTemplates.h"
-#include "plFileUtils.h"
 
 struct hsFolderIterator_Data {
     glob_t fGlobBuf;
@@ -122,8 +121,8 @@ const char* hsFolderIterator::GetFileName() const
     if (!fData->fInited || fData->fCnt > fData->fGlobBuf.gl_pathc)
         throw "end of folder";
 
-    const char* fn=fData->fGlobBuf.gl_pathv[fData->fCnt-1];
-    return plFileUtils::GetFileName(fn);
+    plFileName fn = fData->fGlobBuf.gl_pathv[fData->fCnt-1];
+    return fn.GetFileName().c_str();
 }
 
 bool    hsFolderIterator::IsDirectory( void ) const

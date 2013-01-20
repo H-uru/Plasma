@@ -600,22 +600,19 @@ void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, 
 
 void plPythonMgr::LoadPythonFiles()
 {
-    const char *clientPath = plMaxConfig::GetClientPath(false, true);
-    if (clientPath)
+    plFileName clientPath = plMaxConfig::GetClientPath(false, true);
+    if (clientPath.IsValid())
     {
-        char oldCwd[MAX_PATH];
-        _getcwd(oldCwd, sizeof(oldCwd));
-        _chdir(clientPath);
+        plFileName oldCwd = plFileSystem::GetCWD();
+        plFileSystem::SetCWD(clientPath);
 
         // Get the path to the Python subdirectory of the client
-        char pythonPath[MAX_PATH];
-        strcpy(pythonPath, clientPath);
-        strcat(pythonPath, "Python");
+        plFileName pythonPath = plFileName::Join(clientPath, "Python");
 
         PythonInterface::initPython();
 
         // Iterate through all the Python files in the folder
-        hsFolderIterator folder(pythonPath);
+        hsFolderIterator folder(pythonPath.AsString().c_str());
         while (folder.NextFileSuffix(".py"))
         {
             // Get the filename without the ".py" (module name)
@@ -628,7 +625,7 @@ void plPythonMgr::LoadPythonFiles()
 
         PythonInterface::finiPython();
 
-        _chdir(oldCwd);
+        plFileSystem::SetCWD(oldCwd);
     }
 }
 

@@ -111,8 +111,8 @@ void    plStatusLogDrawer::Draw(plStatusLog* curLog, plStatusLog* firstLog)
         drawText.DrawRect( x, y, x + width, y + height, 0, 0, 0, 127 );
 
     drawText.DrawString( x + 2, y + ( lineHt >> 1 ), IGetFilename( curLog ).AsString(), 127, 127, 255, 255, plDebugText::kStyleBold );
-    drawText.DrawRect( x + 2,               y + ( lineHt << 1 ) + 1, 
-                        x + width - 8,      y + ( lineHt << 1 ) + 2, 127, 127, 255, 255 );
+    drawText.DrawRect( x + 2,               y + ( lineHt << 1 ) + 1,
+                       x + width - 8,      y + ( lineHt << 1 ) + 2, 127, 127, 255, 255 );
 
     y += lineHt * 2;
     for( i = 0; i < IGetMaxNumLines( curLog ); i++ )

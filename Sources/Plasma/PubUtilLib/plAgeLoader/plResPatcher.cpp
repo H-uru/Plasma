@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeLoader/plAgeLoader.h"
 #include "plCompression/plZlibStream.h"
 #include "pnEncryption/plChecksum.h"
-#include "plFile/plFileUtils.h"
 #include "plMessage/plResPatcherMsg.h"
 #include "pnNetBase/pnNbError.h"
 #include "plNetGameLib/plNetGameLib.h"
@@ -91,33 +90,32 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 
 static void FileDownloaded(
-    ENetError       result,
-    void*           param,
-    const wchar_t   filename[],
-    hsStream*       writer) 
+    ENetError           result,
+    void*               param,
+    const plFileName &  filename,
+    hsStream*           writer)
 {
     plResPatcher* patcher = (plResPatcher*)param;
-    char* name = hsWStringToString(filename);
+    plFileName file = filename;
     if (((plResDownloadStream*)writer)->IsZipped())
-        plFileUtils::StripExt(name); // Kill off .gz
+        file = file.StripFileExt(); // Kill off .gz
     writer->Close();
 
     switch (result)
     {
         case kNetSuccess:
-            PatcherLog(kStatus, "    Download Complete: %s", name);
+            PatcherLog(kStatus, "    Download Complete: %s", file.AsString().c_str());
             
             // If this is a PRP, then we need to add it to the ResManager
-            if (stricmp(plFileUtils::GetFileExt(name), "prp") == 0)
-                ((plResManager*)hsgResMgr::ResMgr())->AddSinglePage(name);
+            if (file.AsString().CompareI("prp") == 0)
+                ((plResManager*)hsgResMgr::ResMgr())->AddSinglePage(file);
 
             // Continue down the warpath
             patcher->IssueRequest();
-            delete[] name;
             delete writer;
             return;
         case kNetErrFileNotFound:
-            PatcherLog(kError, "    Download Failed: %s not found", name);
+            PatcherLog(kError, "    Download Failed: %s not found", file.AsString().c_str());
             break;
         default:
             char* error = hsWStringToString(NetErrorToString(result));
@@ -129,7 +127,6 @@ static void FileDownloaded(
     // Failure case
     ((plResDownloadStream*)writer)->Unlink();
     patcher->Finish(false);
-    delete[] name;
     delete writer;
 }
 
@@ -153,8 +150,8 @@ static void ManifestDownloaded(
     for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliFileManifestEntry mfs = manifest[i];
-        plFileName fileName = plString::FromWchar(mfs.clientName);
-        plFileName downloadName = plString::FromWchar(mfs.downloadName);
+        plFileName fileName = mfs.clientName;
+        plFileName downloadName = mfs.downloadName;
 
         // See if the files are the same
         // 1. Check file size before we do time consuming md5 operations
@@ -163,7 +160,7 @@ static void ManifestDownloaded(
         {
             plMD5Checksum cliMD5(fileName);
             plMD5Checksum srvMD5;
-            srvMD5.SetFromHexString(plString::FromWchar(mfs.md5).c_str());
+            srvMD5.SetFromHexString(mfs.md5.c_str());
 
             if (cliMD5 == srvMD5)
                 continue;
@@ -238,7 +235,7 @@ void plResPatcher::IssueRequest()
             plFileSystem::CreateDir(req.fFriendlyName.StripFileName(), true);
             plResDownloadStream* stream = new plResDownloadStream(fProgress, req.fFile);
             if (stream->Open(req.fFriendlyName, "wb"))
-                NetCliFileDownloadRequest(req.fFile.AsString().ToWchar(), stream, FileDownloaded, this);
+                NetCliFileDownloadRequest(req.fFile, stream, FileDownloaded, this);
             else {
                 PatcherLog(kError, "    Unable to create file %s", req.fFriendlyName.AsString().c_str());
                 Finish(false);

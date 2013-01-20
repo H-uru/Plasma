@@ -211,9 +211,9 @@ public:
     virtual void        Update();
     
     plSoundBuffer *     GetDataBuffer( void ) const { return (plSoundBuffer *)fDataBufferKey->ObjectIsLoaded(); }
-    float            QueryCurrVolume( void ) const;  // Returns the current volume, attenuated
+    float               QueryCurrVolume( void ) const;  // Returns the current volume, attenuated
 
-    const char *        GetFileName( void ) const;
+    plFileName          GetFileName( void ) const;
     virtual double      GetLength();
 
     void                SetProperty( Property prop, bool on ) { if( on ) fProperties |= prop; else fProperties &= ~prop; }

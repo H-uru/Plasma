@@ -8,7 +8,6 @@ set(plFile_SOURCES
     hsFiles.cpp
     plBrowseFolder.cpp
     plEncryptedStream.cpp
-    plFileUtils.cpp
     plInitFileReader.cpp
     plSecureStream.cpp
     plStreamSource.cpp
@@ -26,7 +25,6 @@ set(plFile_HEADERS
     hsFiles.h
     plBrowseFolder.h
     plEncryptedStream.h
-    plFileUtils.h
     plInitFileReader.h
     plSecureStream.h
     plStreamSource.h

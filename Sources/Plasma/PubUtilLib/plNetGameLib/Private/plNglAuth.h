@@ -368,13 +368,13 @@ void NetCliAuthFileListRequest (
 // File Download
 //============================================================================
 typedef void (*FNetCliAuthFileRequestCallback)(
-    ENetError       result,
-    void *          param,
-    const wchar_t   filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 );
 void NetCliAuthFileRequest (
-    const wchar_t                   filename[],
+    const plFileName &              filename,
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param

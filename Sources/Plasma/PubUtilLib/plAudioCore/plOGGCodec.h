@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plOGGCodec_h
 
 #include "plAudioFileReader.h"
+#include "plFileSystem.h"
 
 
 //// Class Definition ////////////////////////////////////////////////////////
@@ -59,7 +60,7 @@ class plOGGCodec : public plAudioFileReader
 {
 public:
 
-    plOGGCodec( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    plOGGCodec( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
     virtual ~plOGGCodec();
 
     enum DecodeFormat
@@ -88,7 +89,7 @@ public:
 
     static void     SetDecodeFormat( DecodeFormat f ) { fDecodeFormat = f; }
     static void     SetDecodeFlag( uint8_t flag, bool on ) { if( on ) fDecodeFlags |= flag; else fDecodeFlags &= ~flag; }
-    static uint8_t    GetDecodeFlags( void ) { return fDecodeFlags; }
+    static uint8_t  GetDecodeFlags( void ) { return fDecodeFlags; }
     void            ResetWaveHeaderRef() { fCurHeaderPos = 0; }
     void            BuildActualWaveHeader();
     bool            ReadFromHeader(int numBytes, void *data); // read from Actual wave header
@@ -100,23 +101,23 @@ protected:
         kPCMFormatTag = 1
     };
 
-    char            fFilename[ 512 ];
-    FILE            *fFileHandle;
-    OggVorbis_File  *fOggFile;
+    plFileName      fFilename;
+    FILE           *fFileHandle;
+    OggVorbis_File *fOggFile;
 
     plWAVHeader     fHeader, fFakeHeader;
-    uint32_t          fDataStartPos, fCurrDataPos, fDataSize;
+    uint32_t        fDataStartPos, fCurrDataPos, fDataSize;
 
     plAudioCore::ChannelSelect  fWhichChannel;
-    uint32_t                      fChannelAdjust, fChannelOffset;
+    uint32_t                    fChannelAdjust, fChannelOffset;
 
     static DecodeFormat fDecodeFormat;
-    static uint8_t        fDecodeFlags;
-    uint8_t *             fHeadBuf;
+    static uint8_t      fDecodeFlags;
+    uint8_t *           fHeadBuf;
     int                 fCurHeaderPos;
 
     void    IError( const char *msg );
-    void    IOpen( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    void    IOpen( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
 };
 
 #endif //_plOGGCodec_h

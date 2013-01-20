@@ -64,4 +64,4 @@ void UruStartProc (void * param);
 void PlayerTerminateProc (void * param);
 void PlayerStopProc (void * param);
 
-extern const wchar_t kPatcherExeFilename[];
+extern plFileName kPatcherExeFilename;

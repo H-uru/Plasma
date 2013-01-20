@@ -60,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
-#include "plFile/plFileUtils.h"
 #include "plStatusLog.h"
 #include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
@@ -220,7 +219,7 @@ plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfN
         return nil;
 
     // Didn't find one, so create one! (make it a nice default one :)
-    log = CreateStatusLog( kDefaultNumLines, filename, plStatusLog::kFilledBackground | 
+    log = CreateStatusLog( kDefaultNumLines, filename, plStatusLog::kFilledBackground |
                                                        plStatusLog::kDeleteForMe );
 
     return log;
@@ -753,4 +752,3 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     return ret;
 }
-

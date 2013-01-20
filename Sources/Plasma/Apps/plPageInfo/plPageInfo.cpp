@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTimer.h"
 #include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrSettings.h"
 
@@ -61,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plResManager* gResMgr = nil;
 
-bool DumpStats(const char* patchDir);
+bool DumpStats(const plFileName& patchDir);
 bool DumpSounds();
 
 //// PrintVersion ///////////////////////////////////////////////////////////////
@@ -117,7 +116,7 @@ int main(int argc, char* argv[])
     }
 
     // Make sure we have 1 arg left after getting the options
-    char* pageFile = nil;
+    plFileName pageFile;
     if (arg < argc)
         pageFile = argv[arg];
     else
@@ -134,12 +133,7 @@ int main(int argc, char* argv[])
     if (sounds)
         DumpSounds();
     if (stats)
-    {
-        char path[256];
-        strcpy(path, pageFile);
-        plFileUtils::StripFile(path);
-        DumpStats(path);
-    }
+        DumpStats(pageFile.StripFileName());
 
     hsgResMgr::Shutdown();
 
@@ -180,12 +174,12 @@ bool DumpSounds()
             buffer->GetKey()->RefObject();
 
             // Get the filename from it and add that file if necessary
-            const char* filename = buffer->GetFileName();
-            if (filename)
+            plFileName filename = buffer->GetFileName();
+            if (filename.IsValid())
             {
                 uint32_t flags = 0;
 
-                if (stricmp(plFileUtils::GetFileExt(filename), "wav") != 0)
+                if (filename.GetFileExt().CompareI("wav") != 0)
                 {
                     if (buffer->HasFlag(plSoundBuffer::kOnlyLeftChannel) ||
                         buffer->HasFlag(plSoundBuffer::kOnlyRightChannel))
@@ -196,9 +190,9 @@ bool DumpSounds()
                         hsSetBits(flags, plManifestFile::kSndFlagCacheStereo);
                 }
 
-                printf("%s,%u\n", filename, flags);
+                printf("%s,%u\n", filename.AsString().c_str(), flags);
             }
-                
+
             // Unref the object so it goes away
             buffer->GetKey()->UnRefObject();
         }
@@ -218,11 +212,11 @@ bool DumpSounds()
 class plStatDumpIterator : public plRegistryPageIterator, public plRegistryKeyIterator
 {
 protected:
-    const char* fOutputDir;
+    plFileName fOutputDir;
     hsUNIXStream fStream;
 
 public:
-    plStatDumpIterator(const char* outputDir) : fOutputDir(outputDir) {}
+    plStatDumpIterator(const plFileName& outputDir) : fOutputDir(outputDir) {}
 
     bool EatKey(const plKey& key)
     {
@@ -246,8 +240,8 @@ public:
     {
         const plPageInfo& info = page->GetPageInfo();
 
-        char fileName[256];
-        sprintf(fileName, "%s%s_%s.csv", fOutputDir, info.GetAge().c_str(), info.GetPage().c_str());
+        plFileName fileName = plFileName::Join(fOutputDir,
+                plString::Format("%s_%s.csv", info.GetAge().c_str(), info.GetPage().c_str()));
         fStream.Open(fileName, "wt");
 
         page->LoadKeys();
@@ -259,7 +253,7 @@ public:
     }
 };
 
-bool DumpStats(const char* patchDir)
+bool DumpStats(const plFileName& patchDir)
 {
     plStatDumpIterator statDump(patchDir);
     gResMgr->IterateAllPages(&statDump);

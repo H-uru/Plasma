@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnFactory/plFactory.h"
 #include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
 
 #include "plVersion.h"
 

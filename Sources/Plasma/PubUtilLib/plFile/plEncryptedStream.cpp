@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plEncryptedStream.h"
 
-#include "plFileUtils.h"
 #include "hsSTLStream.h"
 
 #include <time.h>

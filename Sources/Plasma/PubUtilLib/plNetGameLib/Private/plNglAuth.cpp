@@ -555,13 +555,13 @@ struct FileDownloadRequestTrans : NetAuthTrans {
     FNetCliAuthFileRequestCallback  m_callback;
     void *                          m_param;
 
-    wchar_t                           m_filename[MAX_PATH];
+    plFileName                      m_filename;
     hsStream *                      m_writer;
 
     FileDownloadRequestTrans (
         FNetCliAuthFileRequestCallback  callback,
         void *                          param,
-        const wchar_t                   filename[],
+        const plFileName &              filename,
         hsStream *                      writer
     );
 
@@ -3572,14 +3572,14 @@ bool FileListRequestTrans::Recv (
 FileDownloadRequestTrans::FileDownloadRequestTrans (
     FNetCliAuthFileRequestCallback  callback,
     void *                          param,
-    const wchar_t                     filename[],
+    const plFileName &              filename,
     hsStream *                      writer
 ) : NetAuthTrans(kFileDownloadRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
+,   m_filename(filename)
 ,   m_writer(writer)
 {
-    StrCopy(m_filename, filename, arrsize(m_filename));
     // This transaction issues "sub transactions" which must complete
     // before this one even though they were issued after us.
     m_hasSubTrans = true;
@@ -3593,7 +3593,7 @@ bool FileDownloadRequestTrans::Send () {
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
         m_transId,
-        (uintptr_t) m_filename,
+        reinterpret_cast<uintptr_t>(m_filename.AsString().ToWchar().GetData()),
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -5530,7 +5530,7 @@ void NetCliAuthFileListRequest (
 
 //============================================================================
 void NetCliAuthFileRequest (
-    const wchar_t                   filename[],
+    const plFileName &              filename,
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param

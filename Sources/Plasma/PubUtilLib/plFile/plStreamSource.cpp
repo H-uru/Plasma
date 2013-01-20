@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStreamSource.h"
 #include "plSecureStream.h"
 #include "plEncryptedStream.h"
-#include "plFileUtils.h"
 
 #if HS_BUILD_FOR_UNIX
 #    include <wctype.h>

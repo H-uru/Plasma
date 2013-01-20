@@ -76,9 +76,9 @@ const unsigned kPathFlagRecurse     = 1<<4;   // also set if "**" used in filesp
 
 struct PathFind {
     unsigned    flags;
-    uint64_t       fileLength;
-    uint64_t       lastWriteTime;
-    wchar_t       name[MAX_PATH];
+    uint64_t    fileLength;
+    uint64_t    lastWriteTime;
+    wchar_t     name[MAX_PATH];
 };
 
 
@@ -90,16 +90,12 @@ struct PathFind {
 
 void PathFindFiles (
     ARRAY(PathFind) *   paths,
-    const wchar_t         fileSpec[],
+    const wchar_t       fileSpec[],
     unsigned            pathFlags
 );
 void PathGetProgramName (
-    wchar_t *     dst,
+    wchar_t *   dst,
     unsigned    dstChars
-);
-
-bool PathDoesFileExist (
-    const wchar_t fileName[]
 );
 
 
@@ -110,20 +106,20 @@ bool PathDoesFileExist (
 ***/
 
 void PathSplitPath (
-    const wchar_t     path[],
-    wchar_t *         drive,
-    wchar_t *         dir,
-    wchar_t *         fname,
-    wchar_t *         ext
+    const wchar_t   path[],
+    wchar_t *       drive,
+    wchar_t *       dir,
+    wchar_t *       fname,
+    wchar_t *       ext
 );
 
 void PathMakePath (
-    wchar_t *         path,
+    wchar_t *       path,
     unsigned        chars,
-    const wchar_t     drive[],
-    const wchar_t     dir[],
-    const wchar_t     fname[],
-    const wchar_t     ext[]
+    const wchar_t   drive[],
+    const wchar_t   dir[],
+    const wchar_t   fname[],
+    const wchar_t   ext[]
 );
 
 // c:\dir1 + dir2\file.txt => c:\dir1\dir2\file.txt
@@ -148,51 +144,9 @@ void PathRemoveFilename (
 *
 ***/
 
-// Create directory
-enum EPathCreateDirError {
-    kPathCreateDirSuccess,
-    kPathCreateDirErrInvalidPath,
-    kPathCreateDirErrAccessDenied,
-    kPathCreateDirErrFileWithSameName,
-    kPathCreateDirErrDirExists,         // Directory exists and kPathCreateDirFlagCreateNew was specified
-};
-
-// Setting this flag causes the function to create the entire directory
-// tree from top to bottom. Clearing this flag causes the function to
-// create only the last entry in the path.
-const unsigned kPathCreateDirFlagEntireTree = 1<<0;
-
-// Setting this flag causes the function to create the last entry in the path
-// ONLY if it doesn't already exist. If it does exist the function will return
-// kPathCreateDirErrDirExistes.
-const unsigned kPathCreateDirFlagCreateNew  = 1<<1;
-
-
-EPathCreateDirError PathCreateDirectory (
-    const wchar_t path[],
-    unsigned    flags
-);
-
-
-
 // Get directory
 void PathGetProgramDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-
-
-// Product and user-specific common directory locations
-void PathGetUserDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-void PathGetLogDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-);
-void PathGetInitDirectory (
-    wchar_t *     dst,
+    wchar_t *   dst,
     unsigned    dstChars
 );
 
@@ -206,13 +160,13 @@ void PathGetInitDirectory (
 // you may send nil for any fields you don't care about
 void PathSplitEmail (
     const wchar_t emailAddr[],
-    wchar_t *     user,
+    wchar_t *   user,
     unsigned    userChars,
-    wchar_t *     domain,
+    wchar_t *   domain,
     unsigned    domainChars,
-    wchar_t *     tld,
+    wchar_t *   tld,
     unsigned    tldChars,
-    wchar_t *     subDomains,     // (wchar_t *)&subs   --> wchar_t subs[16][256];
+    wchar_t *   subDomains,     // (wchar_t *)&subs   --> wchar_t subs[16][256];
     unsigned    subDomainChars, // arrsize(subs[0]) --> 256
     unsigned    subDomainCount  // arrsize(subs)    --> 16
 );

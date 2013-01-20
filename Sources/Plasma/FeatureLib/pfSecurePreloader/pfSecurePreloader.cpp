@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plCompression/plZlibStream.h"
 #include "pnEncryption/plChecksum.h"
-#include "plFile/plFileUtils.h"
 #include "plFile/plSecureStream.h"
 #include "plFile/plStreamSource.h"
 #include "plMessage/plNetCommMsgs.h"
@@ -96,7 +95,7 @@ void GotFileSrvManifest(
     void*                         param, 
     const wchar_t                 group[], 
     const NetCliFileManifestEntry manifest[], 
-    uint32_t                        entryCount
+    uint32_t                      entryCount
 ) {
     pfSecurePreloader* sp = (pfSecurePreloader*)param;
     if (result == kNetErrFileNotFound)
@@ -116,10 +115,10 @@ void GotFileSrvManifest(
 }
 
 void FileDownloaded(
-    ENetError       result,
-    void*           param,
-    const wchar_t   filename[],
-    hsStream*       writer
+    ENetError           result,
+    void*               param,
+    const plFileName &  filename,
+    hsStream*           writer
 ) {
     pfSecurePreloader* sp = (pfSecurePreloader*)param;
     if (IS_NET_ERROR(result))
@@ -243,9 +242,9 @@ void pfSecurePreloader::PreloadNextFile()
     
     // Thankfully, both callbacks have the same arguments
     if (fLegacyMode)
-        NetCliAuthFileRequest(filename.AsString().ToWchar(), s, FileDownloaded, this);
+        NetCliAuthFileRequest(filename, s, FileDownloaded, this);
     else
-        NetCliFileDownloadRequest(filename.AsString().ToWchar(), s, FileDownloaded, this);
+        NetCliFileDownloadRequest(filename, s, FileDownloaded, this);
 }
 
 void pfSecurePreloader::Init()
@@ -346,8 +345,8 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
         const NetCliFileManifestEntry mfs = manifestEntries[i];
         bool fetchMe = true;
         hsRAMStream* s = nil;
-        plFileName clientName = plString::FromWchar(mfs.clientName);
-        plFileName downloadName = plString::FromWchar(mfs.downloadName);
+        plFileName clientName = mfs.clientName;
+        plFileName downloadName = mfs.downloadName;
 
         if (plFileInfo(clientName).Exists())
         {
@@ -355,10 +354,8 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
             if (s)
             {
                 // Damn this
-                const char* md5 = hsWStringToString(mfs.md5);
                 plMD5Checksum srvHash;
-                srvHash.SetFromHexString(md5);
-                delete[] md5;
+                srvHash.SetFromHexString(mfs.md5.c_str());
 
                 // Now actually copare the hashes
                 plMD5Checksum lclHash;
@@ -394,7 +391,7 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
     PreloadNextFile();
 }
 
-void pfSecurePreloader::FilePreloaded(const wchar_t* file, hsStream* stream)
+void pfSecurePreloader::FilePreloaded(const plFileName& file, hsStream* stream)
 {
     // Clear out queue
     fDownloadEntries.pop();

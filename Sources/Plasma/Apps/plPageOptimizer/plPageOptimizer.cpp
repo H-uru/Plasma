@@ -50,21 +50,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plFactory.h"
 #include "pnKeyedObject/plKeyImp.h"
 
-#include "plFile/plFileUtils.h"
 #include "hsStream.h"
 
 plPageOptimizer* plPageOptimizer::fInstance = nil;
 
-plPageOptimizer::plPageOptimizer(const char* pagePath) :
+plPageOptimizer::plPageOptimizer(const plFileName& pagePath) :
     fOptimized(true),
     fPageNode(nil),
     fPagePath(pagePath)
 {
     fInstance = this;
 
-    strcpy(fTempPagePath, fPagePath);
-    plFileUtils::StripExt(fTempPagePath);
-    strcat(fTempPagePath, "_opt.prp");
+    fTempPagePath = fPagePath.StripFileExt() + "_opt.prp";
 
     fResMgr = (plResManager*)hsgResMgr::ResMgr();
 }
@@ -135,8 +132,8 @@ void plPageOptimizer::Optimize()
     if (loaded)
         IRewritePage();
 
-    uint32_t oldSize = plFileUtils::GetFileSize(fPagePath);
-    uint32_t newSize = plFileUtils::GetFileSize(fTempPagePath);
+    uint64_t oldSize = plFileInfo(fPagePath).FileSize();
+    uint64_t newSize = plFileInfo(fTempPagePath).FileSize();
 
     if (!loaded)
     {
@@ -144,19 +141,19 @@ void plPageOptimizer::Optimize()
     }
     else if (fOptimized)
     {
-        plFileUtils::RemoveFile(fTempPagePath);
+        plFileSystem::Unlink(fTempPagePath);
         puts("already optimized.");
     }
     else if (oldSize == newSize)
     {
-        plFileUtils::RemoveFile(fPagePath, true);
-        plFileUtils::FileMove(fTempPagePath, fPagePath);
+        plFileSystem::Unlink(fPagePath);
+        plFileSystem::Move(fTempPagePath, fPagePath);
 
         puts("complete");
     }
     else
     {
-        plFileUtils::RemoveFile(fTempPagePath);
+        plFileSystem::Unlink(fTempPagePath);
         puts("failed.  File sizes different");
     }
 }

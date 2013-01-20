@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pfMovieEventMsg_h_inc
 
 #include "pnMessage/plMessage.h"
+#include "plFileSystem.h"
 
 class pfMovieEventMsg : public plMessage
 {
@@ -54,22 +55,17 @@ public:
     Reason fReason;
 
 
-    char* fMovieName;
+    plFileName fMovieName;
 
-    pfMovieEventMsg(const char* movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
+    pfMovieEventMsg(const plFileName& movieName, Reason reason=kMovieDone) : plMessage(nil, nil, nil)
     {
         fReason = reason;
-        if (movieName)
-            fMovieName = hsStrcpy(movieName);
-        else
-            fMovieName = nil;
+        fMovieName = movieName;
     }
 
-    pfMovieEventMsg() : plMessage(nil, nil, nil), fMovieName(nil), fReason(kMovieDone)
+    pfMovieEventMsg() : plMessage(nil, nil, nil), fReason(kMovieDone)
     {
     }
-
-    virtual ~pfMovieEventMsg();
 
 
     CLASSNAME_REGISTER(pfMovieEventMsg);

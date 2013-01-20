@@ -102,16 +102,6 @@ static const wchar_t * SkipUncDrive (const wchar_t path[]) {
 }
 
 //===========================================================================
-static wchar_t * PathSkipOverSeparator (wchar_t * path) {
-    for (; *path; ++path) {
-        if (IsSlash(*path))
-            return path + 1;
-    }
-
-    return path;
-}
-
-//===========================================================================
 const wchar_t * PathFindFilename (
     const wchar_t path[]
 ) {
@@ -144,16 +134,6 @@ static void GetProgramName (
     }
 }
 
-//============================================================================
-bool PathDoesDirectoryExist (const wchar_t directory[]) {
-    uint32_t attributes = GetFileAttributesW(directory);
-    if (attributes == (uint32_t) -1)
-        return false;
-    if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-        return true;
-    return false;
-}
-
 
 /****************************************************************************
 *
@@ -167,39 +147,6 @@ void PathGetProgramName (
     unsigned     dstChars
 ) {
     GetProgramName(nil, dst, dstChars);
-}
-
-//===========================================================================
-bool PathFromString (
-    wchar_t *      dst, 
-    const wchar_t  src[], 
-    unsigned     dstChars
-) {
-    ASSERT(dst);
-    ASSERT(src);
-    ASSERT(dstChars);
-
-    for (;;) {
-        // enable src and dst to be the same buffer
-        wchar_t temp[MAX_PATH];
-        if (dst == src) {
-            StrCopy(temp, src, arrsize(temp));
-            src = temp;
-        }
-
-        DWORD const result = GetFullPathNameW(src, dstChars, dst, 0);
-        if (!result)
-            break;
-        if (dstChars < result)
-            break;
-        if (!dst[0])
-            break;
-
-        return true;
-    }
-
-    *dst = 0;
-    return false;
 }
 
 //===========================================================================
@@ -349,52 +296,6 @@ void PathMakePath (
 }
 
 //===========================================================================
-void PathGetUserDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(dstChars);
-
-    wchar_t temp[MAX_PATH]; // GetSpecialFolder path requires a buffer of MAX_PATH size or larger
-    if (SHGetSpecialFolderPathW(NULL, temp, CSIDL_LOCAL_APPDATA, TRUE) == FALSE)
-        StrCopy(temp, L"C:\\", arrsize(temp));
-
-    // append the product name
-    PathAddFilename(dst, temp, plProduct::LongName().ToWchar(), dstChars);
-
-    // ensure it exists
-    if (!PathDoesDirectoryExist(dst))
-        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
-}
-
-//============================================================================
-void PathGetLogDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(dstChars);
-    PathGetUserDirectory(dst, dstChars);
-    PathAddFilename(dst, dst, L"Log", dstChars);
-    if (!PathDoesDirectoryExist(dst))
-        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
-}
-
-//============================================================================
-void PathGetInitDirectory (
-    wchar_t *     dst,
-    unsigned    dstChars
-) {
-    ASSERT(dst);
-    ASSERT(dstChars);
-    PathGetUserDirectory(dst, dstChars);
-    PathAddFilename(dst, dst, L"Init", dstChars);
-    if (!PathDoesDirectoryExist(dst))
-        PathCreateDirectory(dst, kPathCreateDirFlagEntireTree);
-}
-
-//===========================================================================
 void PathFindFiles (
     ARRAY(PathFind) *   paths,
     const wchar_t         fileSpec[],
@@ -504,82 +405,3 @@ void PathFindFiles (
     } while (FindNextFileW(find, &fd));
     FindClose(find);
 }
-
-//===========================================================================
-EPathCreateDirError PathCreateDirectory (const wchar_t path[], unsigned flags) {
-    ASSERT(path);
-
-    // convert from relative path to full path
-    wchar_t dir[MAX_PATH];
-    if (!PathFromString(dir, path, arrsize(dir))) {
-        return kPathCreateDirErrInvalidPath;
-    }
-
-    // are we going to build the entire directory tree?
-    wchar_t * dirEnd;
-    if (flags & kPathCreateDirFlagEntireTree) {
-        dirEnd = dir;
-
-        // skip over leading slashes in UNC paths
-        while (IsSlash(*dirEnd))
-            ++dirEnd;
-
-        // skip forward to first directory
-        dirEnd = PathSkipOverSeparator(dirEnd);
-    }
-    // we're only creating the very last entry in the path
-    else {
-        dirEnd = dir + StrLen(dir);
-    }
-
-    bool result = true;
-    for (wchar_t saveChar = L' '; saveChar; *dirEnd++ = saveChar) {
-        // find the end of the current directory string and terminate it
-        dirEnd = PathSkipOverSeparator(dirEnd);
-        saveChar = *dirEnd;
-        *dirEnd = 0;
-
-        // create the directory and track the result from the last call
-        result = CreateDirectoryW(dir, (LPSECURITY_ATTRIBUTES) nil);
-    }
-
-    // if we successfully created the directory then we're done
-    if (result) {
-        // Avoid check for kPathCreateDirFlagOsError
-        static_assert(kPathCreateDirSuccess == NO_ERROR, "Path creation success and NO_ERROR constants differ");
-        return kPathCreateDirSuccess;
-    }
-
-    unsigned error = GetLastError();
-    switch (error) {
-        case ERROR_ACCESS_DENIED:
-        return kPathCreateDirErrAccessDenied;
-
-        case ERROR_ALREADY_EXISTS: {
-            DWORD attrib;
-            if (0xffffffff == (attrib = GetFileAttributesW(dir)))
-                return kPathCreateDirErrInvalidPath;
-
-            if (! (attrib & FILE_ATTRIBUTE_DIRECTORY))
-                return kPathCreateDirErrFileWithSameName;
-
-            if (flags & kPathCreateDirFlagCreateNew)
-                return kPathCreateDirErrDirExists;
-        }
-        return kPathCreateDirSuccess;
-
-        default:
-        return kPathCreateDirErrInvalidPath;
-    }
-}
-
-//===========================================================================
-bool PathDoesFileExist (const wchar_t fileName[]) {
-    uint32_t attributes = GetFileAttributesW(fileName);
-    if (attributes == (uint32_t) -1)
-        return false;
-    if (attributes & FILE_ATTRIBUTE_DIRECTORY)
-        return false;
-    return true;
-}
-
