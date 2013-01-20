@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <map>
-#include <string>
 
 #include "pfLocalizedString.h"
 #include "plFileSystem.h"
@@ -63,9 +62,6 @@ class LocalizationDatabase;
 struct LocElementInfo;
 struct LocSetInfo;
 struct LocAgeInfo;
-
-// Temporary helper (until everything is plString-ized)
-typedef std::vector<std::wstring> WStringVector;
 
 class pfLocalizationDataMgr
 {
