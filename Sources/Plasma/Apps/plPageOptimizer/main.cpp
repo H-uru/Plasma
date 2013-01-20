@@ -40,40 +40,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plResMgr/plResManager.h"
-#include "pfPython/plPythonFileMod.h"
-#include "plGImage/plFontCache.h"
-#include "plPhysX/plSimulationMgr.h"
-#include "plAvatar/plAvatarMgr.h"
 
 #include "plPageOptimizer.h"
 #include "plFile/plFileUtils.h"
+#include "pnNetCommon/plSynchedObject.h"
 
 int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        printf("plPageOptimizer: wrong number of arguments");
+        puts("plPageOptimizer: wrong number of arguments");
         return 1;
     }
 
     printf("Optimizing %s...", plFileUtils::GetFileName(argv[1]));
 
-    plFontCache* fontCache;
 #ifndef _DEBUG
-    try
-    {
+    try {
 #endif
         plResManager* resMgr = new plResManager;
         hsgResMgr::Init(resMgr);
-
-        // Setup all the crap that needs to be around to load
-        plSimulationMgr::Init();
-        fontCache = new plFontCache;
-        plPythonFileMod::SetAtConvertTime();
 #ifndef _DEBUG
-    } catch (...)
-    {
-        printf(" ***crashed on init");
+    } catch (...) {
+        puts(" ***crashed on init");
         return 2;
     }
 #endif
@@ -86,22 +75,15 @@ int main(int argc, char* argv[])
         optimizer.Optimize();
     }
 #ifndef _DEBUG
-    catch (...)
-    {
-        printf(" ***crashed on optimizing");
+    catch (...) {
+        puts(" ***crashed on optimizing");
         return 2;
     }
 #endif
 
 #ifndef _DEBUG
-    try
-    {
+    try {
 #endif
-        // Deinit the crap
-        fontCache->UnRegisterAs(kFontCache_KEY);
-        fontCache = nil;
-        plSimulationMgr::Shutdown();
-
         // Reading in objects may have generated dirty state which we're obviously
         // not sending out. Clear it so that we don't have leaked keys before the
         // ResMgr goes away.
@@ -110,9 +92,8 @@ int main(int argc, char* argv[])
 
         hsgResMgr::Shutdown();
 #ifndef _DEBUG
-    } catch (...)
-    {
-        printf(" ***crashed on shutdown");
+    } catch (...) {
+        puts(" ***crashed on shutdown");
         return 2;
     }
 #endif

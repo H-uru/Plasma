@@ -140,24 +140,24 @@ void plPageOptimizer::Optimize()
 
     if (!loaded)
     {
-        printf("no scene node.\n");
+        puts("no scene node.");
     }
     else if (fOptimized)
     {
         plFileUtils::RemoveFile(fTempPagePath);
-        printf("already optimized.\n");
+        puts("already optimized.");
     }
     else if (oldSize == newSize)
     {
         plFileUtils::RemoveFile(fPagePath, true);
         plFileUtils::FileMove(fTempPagePath, fPagePath);
 
-        printf("complete\n");
+        puts("complete");
     }
     else
     {
         plFileUtils::RemoveFile(fTempPagePath);
-        printf("failed.  File sizes different\n");
+        puts("failed.  File sizes different");
     }
 }
 
