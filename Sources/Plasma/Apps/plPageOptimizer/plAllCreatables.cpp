@@ -39,16 +39,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "pfCharacter/pfCharacterCreatable.h"
-#include "pfCamera/pfCameraCreatable.h"
-#include "pfAnimation/pfAnimationCreatable.h"
-#include "pfConditional/plConditionalObjectCreatable.h"
-//#include "pfConsole/pfConsoleCreatable.h"
-#include "pfSurface/pfSurfaceCreatable.h"
-#include "pfMessage/pfMessageCreatable.h"
-#include "pfAudio/pfAudioCreatable.h"
-#include "pfPython/pfPythonCreatable.h"
-#include "pfGameGUIMgr/pfGameGUIMgrCreatable.h"
-#include "pfCCR/plCCRCreatable.h"
-#include "pfJournalBook/pfJournalBookCreatable.h"
-#include "pfGameMgr/pfGameMgrCreatables.h"
+#include "HeadSpin.h"
+
+#include "pnFactory/plCreator.h"
+
+#include "plAudible.h"
+REGISTER_NONCREATABLE( plAudible );
+
+#include "plDrawable.h"
+REGISTER_NONCREATABLE( plDrawable );
+
+#include "plPhysical.h"
+REGISTER_NONCREATABLE( plPhysical );
+
+#include "plgDispatch.h"
+REGISTER_NONCREATABLE( plDispatchBase );
+
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnTimer/pnTimerCreatable.h"
+
+#include "plResMgr/plResMgrCreatable.h"
+
+#include "plMessage/plResMgrHelperMsg.h"
+REGISTER_CREATABLE(plResMgrHelperMsg);
