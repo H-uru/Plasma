@@ -97,6 +97,8 @@ set(CoreLib_HEADERS
 )
 
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
+target_link_libraries(CoreLib ${PCRE_LIBRARY})
+
 if(UNIX)
     target_link_libraries(CoreLib pthread)
 endif(UNIX)
