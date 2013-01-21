@@ -438,15 +438,9 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
     plRegistryKeyList* keyList = page->IGetKeyList(CLASS_INDEX_SCOPED(plSceneNode));
     if (keyList)
     {
-        if (keyList->fStaticKeys.size() == 1)
+        if (keyList->fKeys.size() == 1)
         {
-            return plKey::Make((plKeyData*)keyList->fStaticKeys[0]);
-        }
-        else if (keyList->fDynamicKeys.size() == 1) // happens during export
-        {
-            plRegistryKeyList::DynSet::const_iterator it = keyList->fDynamicKeys.begin();
-            plKeyImp* keyImp = *it;
-            return plKey::Make(keyImp);
+            return plKey::Make((plKeyData*)keyList->fKeys[0]);
         }
     }
 
@@ -459,9 +453,9 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
     // Get the list of all sceneNodes
     plKey retVal(nil);
     keyList = page->IGetKeyList(CLASS_INDEX_SCOPED(plSceneNode));
-    if (keyList && keyList->fStaticKeys.size() == 1)
+    if (keyList && keyList->fKeys.size() == 1)
     {
-        retVal = plKey::Make((plKeyData*)keyList->fStaticKeys[0]);
+        retVal = plKey::Make((plKeyData*)keyList->fKeys[0]);
     }
     // If we just loaded up all the keys for this page, then we
     // may have a bunch of keys with a refcount of 0. For any of 

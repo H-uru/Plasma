@@ -39,83 +39,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plRegistryKeyList.h"
-#include "plRegistryHelpers.h"
-#include "hsStream.h"
+
 #include <algorithm>
 
-plRegistryKeyList::plRegistryKeyList(uint16_t classType)
-{
-    fClassType = classType;
-    fReffedStaticKeys = 0;
-    fLocked = 0;
-    fFlags = 0;
-}
+#include "HeadSpin.h"
+#include "hsStream.h"
+
+#include "pnKeyedObject/plKeyImp.h"
+#include "plRegistryHelpers.h"
+#include "plRegistryKeyList.h"
 
 plRegistryKeyList::~plRegistryKeyList()
 {
-    hsAssert(fLocked == 0, "Key list still locked on delete");
-
-    for (int i = 0; i < fStaticKeys.size(); i++)
-    {
-        plKeyImp* keyImp = fStaticKeys[i];
-        if (!keyImp->ObjectIsLoaded())
-            delete keyImp;
-    }
+    std::for_each(fKeys.begin(), fKeys.end(),
+        [] (plKeyImp* key) { if (!key->ObjectIsLoaded()) delete key; }
+    );
 }
 
-// Special dummy key that lets us set the return value of the GetName call.
-// Makes it easier to do STL searches.
-class plSearchKeyImp : public plKeyImp
+plKeyImp* plRegistryKeyList::FindKey(const plString& keyName) const
 {
-public:
-    plString fSearchKeyName;
-    const plString& GetName() const { return fSearchKeyName; }
-};
-
-plKeyImp* plRegistryKeyList::FindKey(const plString& keyName)
-{
-    static plSearchKeyImp searchKey;
-    searchKey.fSearchKeyName = keyName;
-
-    // Search the static key list
-    if (fFlags & kStaticUnsorted)
-    {
-        // We're unsorted, brute force it.  May do a separate search table in the
-        // future if this is a bottlneck
-        for (int i = 0; i < fStaticKeys.size(); i++)
-        {
-            plKeyImp* curKey = fStaticKeys[i];
-            if (curKey && !keyName.Compare(curKey->GetName(), plString::kCaseInsensitive))
-                return curKey;
-        }
-    }
+    auto it = std::find_if(fKeys.begin(), fKeys.end(),
+        [&] (plKeyImp* key) { return key->GetName().CompareI(keyName) == 0; }
+    );
+    if (it != fKeys.end())
+        return *it;
     else
-    {
-        // We're sorted, do a fast lookup
-        StaticVec::const_iterator it = std::lower_bound(fStaticKeys.begin(), fStaticKeys.end(), &searchKey, KeySorter());
-        if (it != fStaticKeys.end() && !keyName.Compare((*it)->GetName(), plString::kCaseInsensitive))
-            return *it;
-    }
-
-    // Search the dynamic key list
-    DynSet::const_iterator dynIt = fDynamicKeys.find(&searchKey);
-    if (dynIt != fDynamicKeys.end())
-        return *dynIt;
-
-    return nil;
+        return nullptr;
 }
 
-plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid)
+plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
 {
     uint32_t objectID = uoid.GetObjectID();
 
-    // Key is dynamic or doesn't know it's index.  Do a find by name.
+    // Key is dynamic or doesn't know its index.  Do a find by name.
     if (objectID == 0)
         return FindKey(uoid.GetObjectName());
 
     // Direct lookup
-    if (objectID <= fStaticKeys.size())
+    if (objectID <= fKeys.size())
     {
 #ifdef PLASMA_EXTERNAL_RELEASE
         return fStaticKeys[objectID-1];
@@ -123,8 +84,8 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid)
         // If this is an internal release, our objectIDs might not match
         // because of local data. Verify that we have the right key by
         // name, and if it's wrong, do the slower find-by-name.
-        plKeyImp *keyImp = fStaticKeys[objectID-1];
-        if (keyImp->GetName().Compare(uoid.GetObjectName(), plString::kCaseInsensitive) != 0)
+        plKeyImp *keyImp = fKeys[objectID-1];
+        if (keyImp->GetName().CompareI(uoid.GetObjectName()) != 0)
             return FindKey(uoid.GetObjectName());
         else
             return keyImp;
@@ -135,47 +96,23 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid)
     // because no one was using them. No worries. The resManager will catch this and 
     // reload our keys, then try again.
 
-    return nil;
-}
-
-void plRegistryKeyList::ILock()
-{
-    fLocked++;
-}
-
-void plRegistryKeyList::IUnlock()
-{
-    fLocked--;
-    if (fLocked == 0)
-        IRepack();
+    return nullptr;
 }
 
 bool plRegistryKeyList::IterateKeys(plRegistryKeyIterator* iterator)
 {
     ILock();
 
-    for (int i = 0; i < fStaticKeys.size(); i++)
+    for (auto it = fKeys.begin(); it != fKeys.end(); ++it)
     {
-        plKeyImp* keyImp = fStaticKeys[i];
-        if (keyImp != nil)
+        plKeyImp* keyImp = *it;
+        if (keyImp)
         {
             if (!iterator->EatKey(plKey::Make(keyImp)))
             {
                 IUnlock();
                 return false;
             }
-        }
-    }
-
-    DynSet::const_iterator it;
-    for (it = fDynamicKeys.begin(); it != fDynamicKeys.end(); it++)
-    {
-        plKeyImp* keyImp = *it;
-        hsAssert(keyImp, "Shouldn't ever have a nil dynamic key");
-        if (!iterator->EatKey(plKey::Make(keyImp)))
-        {
-            IUnlock();
-            return false;
         }
     }
 
@@ -188,23 +125,30 @@ void plRegistryKeyList::AddKey(plKeyImp* key, LoadStatus& loadStatusChange)
     loadStatusChange = kNoChange;
 
     hsAssert(fLocked == 0, "Don't currently support adding keys while locked");
-    if (fLocked == 0 && key != nil)
+    if (fLocked == 0 && key)
     {
-        // If this is the first key added, we just became loaded
-        if (fDynamicKeys.empty())
-            loadStatusChange = kDynLoaded;
+        hsAssert(std::find(fKeys.begin(), fKeys.end(), key) == fKeys.end(), "Key already added");
 
-        hsAssert(fDynamicKeys.find(key) == fDynamicKeys.end(), "Key already added");
-        fDynamicKeys.insert(key);
+        // first key to be added?
+        if (fKeys.empty())
+            loadStatusChange = kTypeLoaded;
+
+        // Objects that already have an object ID will be respected.
+        // Totally new keys will not have one, but keys from other sources (patches) will.
+        if (key->GetUoid().GetObjectID() == 0)
+        {
+            fKeys.push_back(key);
+            key->SetObjectID(fKeys.size());
+        }
+        else
+        {
+            uint32_t id = key->GetUoid().GetObjectID();
+            if (fKeys.size() < id)
+                fKeys.resize(id);
+            fKeys[id - 1] = key;
+        }
+        ++fReffedKeys;
     }
-}
-
-void plRegistryKeyList::SetKeyUsed(plKeyImp* key)
-{
-    // If this is a static key, mark that we used it.  Otherwise, just ignore it.
-    uint32_t id = key->GetUoid().GetObjectID();
-    if (id > 0)
-        fReffedStaticKeys++;
 }
 
 bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange)
@@ -219,122 +163,50 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
         return true;
     }
 
-    // Check if it's a static key
     uint32_t id = key->GetUoid().GetObjectID();
-    hsAssert(id <= fStaticKeys.size(), "Bad static key id");
-    if (id != 0 && id <= fStaticKeys.size())
+    hsAssert(id <= fKeys.size(), "Bad static key id");
+
+    // Fixed Keys will have id == 0. Let's just make sure we have it before we toss it.
+    if (id == 0)
     {
-        fReffedStaticKeys--;
-        if (fLocked == 0)
-            IRepack();
-
-        // That was our last used static key, we're static unloaded
-        if (fReffedStaticKeys == 0)
-            loadStatusChange = kStaticUnloaded;
-
-        return true;
-    }
-
-    // Try to find it in the dynamic key list
-    DynSet::iterator dynIt = fDynamicKeys.find(key);
-    if (dynIt != fDynamicKeys.end())
-    {
-        hsAssert(fLocked == 0, "Don't currently support removing dynamic keys while locked");
-        if (fLocked == 0)
+        hsAssert(key->GetUoid().GetLocation() == plLocation::kGlobalFixedLoc, "key id == 0 but not fixed?");
+        if (!FindKey(key->GetName()))
         {
-            fDynamicKeys.erase(dynIt);
-            delete key;
-
-            // That was our last dynamic key, notify of dynamic unloaded
-            if (fDynamicKeys.empty())
-                loadStatusChange = kDynUnloaded;
-
-            return true;
+            hsAssert(false, "Couldn't find fixed key!");
+            return false;
         }
+    }
+    else if (id > fKeys.size())
         return false;
-    }
 
-    hsAssert(0, "Couldn't find this key, what is it?");
-    return false;
-}
-
-//// IRepack /////////////////////////////////////////////////////////////////
-//  Frees the memory for our static key array if none of them are loaded
-void plRegistryKeyList::IRepack()
-{
-    if (fReffedStaticKeys == 0 && !fStaticKeys.empty())
-    {
-
-        for (int i = 0; i < fStaticKeys.size(); i++)
-            delete fStaticKeys[i];
-
-        fStaticKeys.clear();
-    }
-}
-
-void plRegistryKeyList::PrepForWrite()
-{
-    // If we have any static keys already, we were read in.  To keep from
-    // invalidating old key indexes any new keys have to go on the end, hence we're
-    // unsorted now.
-    if (!fStaticKeys.empty())
-        fFlags |= kStaticUnsorted;
-
-    // If a dynamic keys doesn't have an object assigned to it, we're not writing
-    // it out.  Figure out how many valid keys we have.
-    int numDynKeys = 0;
-    DynSet::const_iterator cIt;
-    for (cIt = fDynamicKeys.begin(); cIt != fDynamicKeys.end(); cIt++)
-    {
-        plKeyImp* key = *cIt;
-        // We're only going to write out keys that have objects
-        if (key->ObjectIsLoaded())
-            numDynKeys++;
-    }
-
-    // Start our new object id's after any already created ones
-    uint32_t objectID = fStaticKeys.size()+1;
-    // Make room for our new keys
-    fStaticKeys.resize(fStaticKeys.size()+numDynKeys);
-
-    DynSet::iterator it = fDynamicKeys.begin();
-    while (it != fDynamicKeys.end())
-    {
-        plKeyImp* key = *it;
-        it++;
-
-        // If we're gonna use this key, tag it with it's object id and move it to the static array.
-        if (key->ObjectIsLoaded())
-        {
-            key->SetObjectID(objectID);
-            fStaticKeys[objectID-1] = key;
-
-            objectID++;
-            fReffedStaticKeys++;
-            fDynamicKeys.erase(key);
-        }
-    }
+    // Got that key, decrement the key counter
+    --fReffedKeys;
+    if (fReffedKeys == 0)
+        loadStatusChange = kTypeUnloaded;
+    return true;
 }
 
 void plRegistryKeyList::Read(hsStream* s)
 {
     uint32_t keyListLen = s->ReadLE32();
-    if (!fStaticKeys.empty())
+    if (!fKeys.empty())
     {
         s->Skip(keyListLen);
         return;
     }
 
-    fFlags = s->ReadByte();
+    // deprecated flags. used to indicate alphabetically sorted keys for some "optimization"
+    // that really appeared to do nothing. no loss.
+    s->ReadByte();
 
     uint32_t numKeys = s->ReadLE32();
-    fStaticKeys.resize(numKeys);
+    fKeys.reserve(numKeys);
 
-    for (int i = 0; i < numKeys; i++)
+    for (uint32_t i = 0; i < numKeys; ++i)
     {
         plKeyImp* newKey = new plKeyImp;
         newKey->Read(s);
-        fStaticKeys[i] = newKey;
+        fKeys.push_back(newKey);
     }
 }
 
@@ -343,17 +215,13 @@ void plRegistryKeyList::Write(hsStream* s)
     // Save space for the length of our data
     uint32_t beginPos = s->GetPosition();
     s->WriteLE32(0);
-    s->WriteByte(fFlags);
+    s->WriteByte(0); // Deprecated flags
 
-    int numKeys = fStaticKeys.size();
-    s->WriteLE32(numKeys);
+    s->WriteLE32(fKeys.size());
 
-    // Write out all our keys (anything in dynamic is unused, so just ignore those)
-    for (int i = 0; i < numKeys; i++)
-    {
-        plKeyImp* key = fStaticKeys[i];
-        key->Write(s);
-    }
+    // Write out all our keys
+    for (auto it = fKeys.begin(); it != fKeys.end(); ++it)
+        (*it)->Write(s);
 
     // Go back to the start and write the length of our data
     uint32_t endPos = s->GetPosition();

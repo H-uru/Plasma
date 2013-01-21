@@ -55,8 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plRegistryPageNode::plRegistryPageNode(const plFileName& path)
     : fValid(kPageCorrupt)
     , fPath(path)
-    , fDynLoadedTypes(0)
-    , fStaticLoadedTypes(0)
+    , fLoadedTypes(0)
     , fOpenRequests(0)
     , fIsNewPage(false)
 {
@@ -73,8 +72,7 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
                                        const plString& page, const plFileName& dataPath)
     : fValid(kPageOk)
     , fPageInfo(location)
-    , fDynLoadedTypes(0)
-    , fStaticLoadedTypes(0)
+    , fLoadedTypes(0)
     , fOpenRequests(0)
     , fIsNewPage(true)
 {
@@ -182,7 +180,7 @@ void plRegistryPageNode::LoadKeys()
 
     stream->SetPosition(oldPos);
     CloseStream();
-    fStaticLoadedTypes = fKeyLists.size();
+    fLoadedTypes = fKeyLists.size();
 }
 
 void plRegistryPageNode::UnloadKeys()
@@ -195,8 +193,7 @@ void plRegistryPageNode::UnloadKeys()
     }
     fKeyLists.clear();
 
-    fDynLoadedTypes = 0;
-    fStaticLoadedTypes = 0;
+    fLoadedTypes = 0;
 }
 
 //// plWriteIterator /////////////////////////////////////////////////////////
@@ -235,8 +232,6 @@ void plRegistryPageNode::Write()
     for (it = fKeyLists.begin(); it != fKeyLists.end(); it++)
     {
         plRegistryKeyList* keyList = it->second;
-        keyList->PrepForWrite();
-
         int ver = plVersion::GetCreatableVersion(keyList->GetClassType());
         fPageInfo.AddClassVersion(keyList->GetClassType(), ver);
     }
@@ -358,8 +353,8 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
     plRegistryKeyList::LoadStatus loadStatusChange;
     keys->AddKey(key, loadStatusChange);
 
-    if (loadStatusChange == plRegistryKeyList::kDynLoaded)
-        fDynLoadedTypes++;
+    if (loadStatusChange == plRegistryKeyList::kTypeLoaded)
+        ++fLoadedTypes;
 }
 
 void plRegistryPageNode::SetKeyUsed(plKeyImp* key)
@@ -381,10 +376,8 @@ bool plRegistryPageNode::SetKeyUnused(plKeyImp* key)
     bool removed = keys->SetKeyUnused(key, loadStatusChange);
 
     // If the key type just changed load status, update our load counts
-    if (loadStatusChange == plRegistryKeyList::kDynUnloaded)
-        fDynLoadedTypes--;
-    else if (loadStatusChange == plRegistryKeyList::kStaticUnloaded)
-        fStaticLoadedTypes--;
+    if (loadStatusChange == plRegistryKeyList::kTypeUnloaded)
+        --fLoadedTypes;
 
     return removed;
 }
