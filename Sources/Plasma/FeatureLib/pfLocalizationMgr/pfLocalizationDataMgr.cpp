@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plLocalization.h"
 
-#include "plFile/hsFiles.h"
 #include "plFile/plEncryptedStream.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -645,19 +644,16 @@ void LocalizationDatabase::Parse(const plFileName & directory)
     fDirectory = directory;
     fFiles.clear();
 
-    char filename[255];
-    hsFolderIterator xmlFolder(directory.AsString().c_str());
-    while (xmlFolder.NextFileSuffix(".loc"))
+    std::vector<plFileName> locFiles = plFileSystem::ListDir(directory, "*.loc");
+    for (auto iter = locFiles.begin(); iter != locFiles.end(); ++iter)
     {
-        xmlFolder.GetPathAndName(filename);
-
         LocalizationXMLFile newFile;
-        bool retVal = newFile.Parse(filename);
+        bool retVal = newFile.Parse(*iter);
         if (!retVal)
-            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file %s", filename);
+            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file %s", iter->GetFileName().c_str());
 
         fFiles.push_back(newFile);
-        pfLocalizationDataMgr::GetLog()->AddLineF("File %s parsed and added to database", filename);
+        pfLocalizationDataMgr::GetLog()->AddLineF("File %s parsed and added to database", iter->GetFileName().c_str());
     }
 
     IMergeData();

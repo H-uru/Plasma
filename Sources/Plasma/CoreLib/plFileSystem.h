@@ -312,6 +312,11 @@ namespace plFileSystem
     std::vector<plFileName> ListDir(const plFileName &path,
                                     const char *pattern = nullptr);
 
+    /** Fetch a list of subdirectories in the specified \a path.
+     *  The returned list does not include the "." or ".." entries.
+     */
+    std::vector<plFileName> ListSubdirs(const plFileName &path);
+
     /** Get the User's data directory.  If it doesn't exist, this will
      *  create it.
      */

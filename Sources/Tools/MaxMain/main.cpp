@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plFile/hsFiles.h"
 #include "hsTemplates.h"
 
 #include "MaxComponent/plComponentMgr.h"

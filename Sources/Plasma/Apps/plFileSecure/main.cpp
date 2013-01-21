@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plFile/hsFiles.h"
 #include "plFile/plSecureStream.h"
 #include "plProduct.h"
 
@@ -48,26 +47,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 
 void print_version() {
-    printf("%s\n\n", plProduct::ProductString().c_str());
+    puts(plProduct::ProductString().c_str());
+    puts("");
 }
 
 void print_help() {
-    printf("plFileSecure - Secures Uru files and generates encryption.key files.\n\n");
+    puts  ("plFileSecure - Secures Uru files and generates encryption.key files.\n");
     print_version();
-    printf("Usage:\n");
-    printf("\tplFileSecure (<directory> <ext>)|[/generate /default]\n");
-    printf("\n");
-    printf("<directory> <ext>    : The directory and extension of files to secure. Cannot\n");
+    puts  ("Usage:");
+    puts  ("\tplFileSecure (<directory> <ext>)|[/generate /default]");
+    puts  ("");
+    puts  ("<directory> <ext>    : The directory and extension of files to secure. Cannot");
     printf("                       be used with /generate. Uses the %s file in\n", plSecureStream::kKeyFilename);
-    printf("                       the current directory (or default key if no file exists)\n");
+    puts  ("                       the current directory (or default key if no file exists)");
     printf("/generate            : Generates a random key and writes it to a %s\n", plSecureStream::kKeyFilename);
-    printf("                       file in the current directory. Cannot be used with\n");
-    printf("                       <directory> <ext>\n");
+    puts  ("                       file in the current directory. Cannot be used with");
+    puts  ("                       <directory> <ext>");
     printf("/default             : If used with /generate, creates a %s file\n", plSecureStream::kKeyFilename);
-    printf("                       with the default key. If used with <directory> <ext>, it\n");
-    printf("                       secures with the default key instead of the\n");
+    puts  ("                       with the default key. If used with <directory> <ext>, it");
+    puts  ("                       secures with the default key instead of the");
     printf("                       %s file's key\n", plSecureStream::kKeyFilename);
-    printf("\n");
+    puts  ("");
 }
 
 void GenerateKey(bool useDefault)
@@ -105,16 +105,13 @@ void GenerateKey(bool useDefault)
     out.Close();
 }
 
-void SecureFiles(std::string dir, std::string ext, uint32_t* key)
+void SecureFiles(const plFileName& dir, const plString& ext, uint32_t* key)
 {
-    char filePath[256];
-
-    hsFolderIterator folder(dir.c_str());
-    while (folder.NextFileSuffix(ext.c_str()))
+    std::vector<plFileName> files = plFileSystem::ListDir(dir, ext.c_str());
+    for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        folder.GetPathAndName(filePath);
-        printf("securing: %s\n", folder.GetFileName());
-        plSecureStream::FileEncrypt(filePath, key);
+        printf("securing: %s\n", iter->GetFileName());
+        plSecureStream::FileEncrypt(*iter, key);
     }
 }
 
@@ -122,8 +119,8 @@ int main(int argc, char *argv[])
 {
     bool generatingKey = false;
     bool useDefault = false;
-    std::string directory;
-    std::string ext;
+    plFileName directory;
+    plString ext;
 
     if (argc > 1)
     {
@@ -163,9 +160,9 @@ int main(int argc, char *argv[])
             else
             {
                 // else it is a directory or extension
-                if (directory == "")
+                if (!directory.IsValid())
                     directory = argv[i];
-                else if (ext == "")
+                else if (ext.IsEmpty())
                     ext = argv[i];
                 else
                 {
@@ -175,7 +172,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (generatingKey && ((directory != "") || (ext != "")))
+        if (generatingKey && ((directory.IsValid()) || (!ext.IsEmpty())))
         {
             print_help();
             return 0;
@@ -193,8 +190,11 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    if (ext[0] != '.')
-        ext = "." + ext; // tack on the dot if necessary
+    // Make sure ext is a real pattern, or we won't find anything
+    if (ext.CharAt(0) == '.')
+        ext = "*" + ext;
+    else if (ext.CharAt(0) != '*')
+        ext = "*." + ext;
 
     if (useDefault)
         SecureFiles(directory, ext, nil);

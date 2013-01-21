@@ -5,7 +5,6 @@ include_directories("../../PubUtilLib")
 include_directories(${ZLIB_INCLUDE_DIR})
 
 set(plFile_SOURCES
-    hsFiles.cpp
     plBrowseFolder.cpp
     plEncryptedStream.cpp
     plInitFileReader.cpp
@@ -13,16 +12,7 @@ set(plFile_SOURCES
     plStreamSource.cpp
 )
 
-if(WIN32 AND NOT CYGWIN)
-    set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Win.cpp)
-endif(WIN32 AND NOT CYGWIN)
-
-if(UNIX)
-    set(plFile_SOURCES ${plFile_SOURCES} hsFiles_Unix.cpp)
-endif(UNIX)
-
 set(plFile_HEADERS
-    hsFiles.h
     plBrowseFolder.h
     plEncryptedStream.h
     plInitFileReader.h

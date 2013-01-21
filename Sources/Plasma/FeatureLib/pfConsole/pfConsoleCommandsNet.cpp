@@ -84,8 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime/plUnifiedTime.h"
 //end for agedefn test
 
-#include "plFile/hsFiles.h"
-
 #include "plStatusLog/plStatusLog.h"
 
 #include "hsTemplates.h"

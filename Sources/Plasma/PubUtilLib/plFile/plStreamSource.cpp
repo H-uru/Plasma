@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <string>
-#include "hsFiles.h"
 #include "plStreamSource.h"
 #include "plSecureStream.h"
 #include "plEncryptedStream.h"
@@ -106,8 +105,7 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
 
     // loop through all the file data records, and create the list
     std::vector<plFileName> retVal;
-    decltype(fFileData.begin()) curData;
-    for (curData = fFileData.begin(); curData != fFileData.end(); curData++)
+    for (auto curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
         if ((curData->second.fDir == sDir) && (curData->second.fExt == ext))
             retVal.push_back(curData->second.fFilename);
@@ -116,15 +114,11 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
 #ifndef PLASMA_EXTERNAL_RELEASE
     // in internal releases, we can use on-disk files if they exist
     // Build the search string as "dir/*.ext"
-    plString searchStr = plFileName::Join(sDir, "*." + ext).AsString();
-
-    hsFolderIterator folderIter(searchStr.c_str(), true);
-    while (folderIter.NextFile())
+    std::vector<plFileName> files = plFileSystem::ListDir(sDir, ("*." + ext).c_str());
+    for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        plFileName filename = plFileName::Join(sDir, folderIter.GetFileName());
-
-        if (fFileData.find(filename) == fFileData.end()) // we haven't added it yet
-            retVal.push_back(filename);
+        if (fFileData.find(*iter) == fFileData.end()) // we haven't added it yet
+            retVal.push_back(*iter);
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 

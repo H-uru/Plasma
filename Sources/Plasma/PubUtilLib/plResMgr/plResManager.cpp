@@ -59,7 +59,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plObjRefMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "pnMessage/plClientMsg.h"
-#include "plFile/hsFiles.h"
 #include "pnFactory/plCreator.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plNetApp.h"
@@ -130,13 +129,10 @@ bool plResManager::IInit()
     {
         // We want to go through all the data files in our data path and add new
         // plRegistryPageNodes to the regTree for each
-        hsFolderIterator pathIterator(fDataPath.AsString().c_str());
-        while (pathIterator.NextFileSuffix(".prp"))
+        std::vector<plFileName> prpFiles = plFileSystem::ListDir(fDataPath, "*.prp");
+        for (auto iter = prpFiles.begin(); iter != prpFiles.end(); ++iter)
         {
-            char fileName[kFolderIterator_MaxPath];
-            pathIterator.GetPathAndName(fileName);
-
-            plRegistryPageNode* node = new plRegistryPageNode(fileName);
+            plRegistryPageNode* node = new plRegistryPageNode(*iter);
             plPageInfo pi = node->GetPageInfo();
             fAllPages[pi.GetLocation()] = node;
         }

@@ -84,7 +84,7 @@ public:
     static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    static void BuildAgeFileList( hsTArray<char *> &ageList );
+    static hsTArray<plFileName> BuildAgeFileList();
 
 protected:
     static int IFindAge(const char* ageName, std::vector<plAgeFile*>& ageFiles);

@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plFile/hsFiles.h"
 
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
@@ -259,8 +258,7 @@ protected:
         HWND hAgeCombo = GetDlgItem(fhDlg, IDC_COMP_LOCATION_AGECOMBO);
         IClearAges( hAgeCombo );
 
-        hsTArray<char *>    ageFiles;
-        plAgeDescInterface::BuildAgeFileList( ageFiles );
+        hsTArray<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
 
         const char *curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
         if (!curAge || *curAge == '\0')
@@ -268,14 +266,13 @@ protected:
 
         for( int i = 0; i < ageFiles.GetCount(); i++ )
         {
-            char ageName[_MAX_FNAME];
-            _splitpath( ageFiles[ i ], nil, nil, ageName, nil );
+            plString ageName = ageFiles[i].GetFileNameNoExt();
 
-            int idx = ComboBox_AddString( hAgeCombo, ageName );
+            int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[ i ] );
+            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[i].AsString().c_str() );
 
-            if( !strcmp( ageName, curAge ) )
+            if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
         }
         

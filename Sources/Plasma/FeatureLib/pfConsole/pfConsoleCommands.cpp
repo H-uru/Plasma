@@ -155,7 +155,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime/plUnifiedTime.h"
 //end for agedefn test
 
-#include "plFile/hsFiles.h"
 #include "pnSceneObject/plAudioInterface.h"
 
 #include "plStatusLog/plStatusLog.h"
@@ -3930,32 +3929,6 @@ PF_CONSOLE_CMD( Nav, PageInNode,    // Group name, Function name
     pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
     pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation("", static_cast<const char *>(params[0])));
     plgDispatch::MsgSend(pMsg1);
-}
-
-PF_CONSOLE_CMD( Nav, PageInNodeList,    // Group name, Function name
-               "string roomNameBase",           // Params
-               "Pages in all scene nodes that start with name." )   // Help string
-{
-/* This is really old and hasn't worked since 2002 anyways. */
-#if HS_BUILD_FOR_WIN32
-    plSynchEnabler ps(false);   // disable dirty tracking while paging in
-
-    std::string pageInNodesStr;
-    pageInNodesStr += "dat\\";
-    pageInNodesStr += (char*)params[0];
-    pageInNodesStr += "*.prx";
-    hsFolderIterator pageInNodesIter(pageInNodesStr.data(), true);
-
-    plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoom);
-    while (pageInNodesIter.NextFile()) 
-    {
-        char nodeName[255];
-        _splitpath(pageInNodesIter.GetFileName(), NULL, NULL, nodeName, NULL);
-        pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation("", nodeName));
-    }
-    pMsg1->AddReceiver( plClient::GetInstance()->GetKey() );
-    plgDispatch::MsgSend(pMsg1);
-#endif
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS

@@ -40,14 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plFile/hsFiles.h"
 #include "hsStream.h"
 #include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include <max.h>
-#include <string>
-#include <vector>
 
 #include "resource.h"
 #pragma hdrstop
@@ -63,8 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #include "plMaxAccelerators.h"
 
-using std::string;
-
 extern HINSTANCE hInstance;
 
 //// Tree Data Wrapper Class //////////////////////////////////////////////////
@@ -72,19 +67,17 @@ extern HINSTANCE hInstance;
 class plAgeFile
 {
 protected:
-    void IGetAgeName(const char* path)
+    void IGetAgeName(const plFileName& path)
     {
-        char name[_MAX_FNAME];
-        _splitpath(path, nil, nil, name, nil);
-        fAgeName = name;
+        fAgeName = path.GetFileNameNoExt();
     }
 
 public:
 #ifdef MAXASS_VAILABLE
     jvUniqueId fAssetID;
 #endif
-    string  fPath;
-    string  fAgeName;
+    plFileName  fPath;
+    plString    fAgeName;
 
     enum Types
     {
@@ -93,17 +86,16 @@ public:
     };
     Types fType;
 
-    plAgeFile(Types type) : fType(type), fPath(nil) { }
-    plAgeFile(Types type, const char *path) : fType(type)
+    plAgeFile(Types type) : fType(type) { }
+    plAgeFile(Types type, const plFileName &path) : fPath(path), fType(type)
     {
-        fPath = path;
         IGetAgeName(path);
     }
 
 #ifdef MAXASS_AVAILABLE
-    plAgeFile(Types type, const char *path, jvUniqueId& id) : fType(type), fAssetID(id)
+    plAgeFile(Types type, const plFileName &path, jvUniqueId& id)
+        : fPath(path), fType(type), fAssetID(id)
     {
-        fPath = path;
         IGetAgeName(path);
     }
 #endif
@@ -716,7 +708,7 @@ void    plAgeDescInterface::IUpdateCurAge( void )
     else
 #endif
         // Load the local age, also check its sequence #s
-        ILoadAge( currAge->fPath.c_str(), true );
+        ILoadAge( currAge->fPath, true );
 }
 
 static const int kDefaultCapacity = 10;
@@ -851,19 +843,15 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
 {
     IClearAgeFiles(ageFiles);
 
-    char agePath[MAX_PATH];
-
     // Make list of "local" ages. This might contain copies of those in AssetMan, so we make the
     // list first and take out the ones that are in AssetMan
     plFileName localPath = IGetLocalAgePath();
     if (localPath.IsValid())
     {
-        hsFolderIterator ageFolder(localPath.AsString().c_str());
-        while (ageFolder.NextFileSuffix(".age"))
+        std::vector<plFileName> files = plFileSystem::ListDir(localPath, "*.age");
+        for (auto iter = files.begin(); iter != files.end(); ++iter)
         {
-            ageFolder.GetPathAndName(agePath);
-
-            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, agePath);
+            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, *iter);
             ageFiles.push_back(age);
         }
     }
@@ -881,6 +869,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
         {
             if( doneAssets.Find( (*assets)[ i ] ) == doneAssets.kMissingIndex )
             {
+                char agePath[MAX_PATH];
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
                 {
                     plAgeFile* age = new plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
@@ -911,16 +900,19 @@ void plAgeDescInterface::IClearAgeFiles(std::vector<plAgeFile*>& ageFiles)
     ageFiles.clear();
 }
 
-void plAgeDescInterface::BuildAgeFileList( hsTArray<char *> &ageList )
+hsTArray<plFileName> plAgeDescInterface::BuildAgeFileList()
 {
     std::vector<plAgeFile*> tempAgeFiles;
     IGetAgeFiles(tempAgeFiles);
 
+    hsTArray<plFileName> ageList;
     for (int i = 0; i < tempAgeFiles.size(); i++)
     {
-        ageList.Push(hsStrcpy(tempAgeFiles[i]->fPath.c_str()));
+        ageList.Push(tempAgeFiles[i]->fPath);
         delete tempAgeFiles[ i ];
     }
+
+    return ageList;
 }
 
 //// IFillAgeTree /////////////////////////////////////////////////////////////
@@ -1310,7 +1302,7 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
     for( i = 0; i < fAgeFiles.size(); i++ )
     {
         hsUNIXStream stream;
-        if( stream.Open( fAgeFiles[ i ]->fPath.c_str(), "rt" ) )
+        if( stream.Open( fAgeFiles[ i ]->fPath, "rt" ) )
         {
             ages[ i ].Read( &stream );
             stream.Close();

@@ -49,7 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pnMessage/plRefMsg.h"
-#include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"

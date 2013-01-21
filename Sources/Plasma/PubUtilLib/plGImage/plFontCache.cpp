@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFont.h"
 #include "plStatusLog/plStatusLog.h"
-#include "plFile/hsFiles.h"
 #include "pnMessage/plRefMsg.h"
 
 #include "hsResMgr.h"
@@ -71,7 +70,6 @@ plFontCache *plFontCache::fInstance = nil;
 
 plFontCache::plFontCache()
 {
-    fCustFontDir = nil;
     RegisterAs( kFontCache_KEY );
     fInstance = this;
 }
@@ -79,7 +77,6 @@ plFontCache::plFontCache()
 plFontCache::~plFontCache()
 {
     Clear();
-    delete [] fCustFontDir;
     fInstance = nil;
 }
 
@@ -151,46 +148,38 @@ plFont  *plFontCache::GetFont( const char *face, uint8_t size, uint32_t fontFlag
     return nil;
 }
 
-void    plFontCache::LoadCustomFonts( const char *dir )
+void plFontCache::LoadCustomFonts( const plFileName &dir )
 {
-    delete [] fCustFontDir;
-    fCustFontDir = ( dir != nil ) ? hsStrcpy( dir ) : nil;
-
+    fCustFontDir = dir;
     ILoadCustomFonts();
 }
 
-void    plFontCache::ILoadCustomFonts( void )
+void plFontCache::ILoadCustomFonts( void )
 {
-    if( fCustFontDir == nil )
+    if (!fCustFontDir.IsValid())
         return;
 
     // Iterate through all the custom fonts in our dir
-    hsFolderIterator    iter( fCustFontDir );
-    char                fileName[ kFolderIterator_MaxPath ];
-
-
-    hsFolderIterator iter2( fCustFontDir );
-    while( iter2.NextFileSuffix( ".p2f" ) )
+    std::vector<plFileName> fonts = plFileSystem::ListDir(fCustFontDir, "*.p2f");
+    for (auto iter = fonts.begin(); iter != fonts.end(); ++iter)
     {
-        iter2.GetPathAndName( fileName );
-
         plFont *font = new plFont;
-        if( !font->LoadFromP2FFile( fileName ) )
+        if (!font->LoadFromP2FFile(*iter))
             delete font;
         else
         {
             plString keyName;
-            if( font->GetKey() == nil )
+            if (font->GetKey() == nil)
             {
                 keyName = plString::Format( "%s-%d", font->GetFace(), font->GetSize() );
                 hsgResMgr::ResMgr()->NewKey( keyName, font, plLocation::kGlobalFixedLoc );
             }
 
-            hsgResMgr::ResMgr()->AddViaNotify( font->GetKey(), 
-                                                new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, -1 ), 
-                                                plRefFlags::kActiveRef );
+            hsgResMgr::ResMgr()->AddViaNotify( font->GetKey(),
+                                               new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, 0, -1 ),
+                                               plRefFlags::kActiveRef );
 
-            //plStatusLog::AddLineS( "pipeline.log", "FontCache: Added custom font %s", keyName );
+            //plStatusLog::AddLineS( "pipeline.log", "FontCache: Added custom font %s", keyName.c_str() );
 
         }
     }

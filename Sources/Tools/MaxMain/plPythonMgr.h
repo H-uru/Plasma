@@ -48,7 +48,7 @@ class plPythonMgr
 protected:
     plPythonMgr();
 
-    bool IQueryPythonFile(char *fileName);
+    bool IQueryPythonFile(const char *fileName);
 
     void IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
     void IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);

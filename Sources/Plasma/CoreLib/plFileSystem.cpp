@@ -297,7 +297,8 @@ bool plFileSystem::Unlink(const plFileName &filename)
 bool plFileSystem::Move(const plFileName &from, const plFileName &to)
 {
 #if HS_BUILD_FOR_WIN32
-    return MoveFileW(from.AsString().ToWchar(), to.AsString().ToWchar());
+    return MoveFileExW(from.AsString().ToWchar(), to.AsString().ToWchar(),
+                       MOVEFILE_REPLACE_EXISTING);
 #else
     if (!Copy(from, to))
         return false;
@@ -396,6 +397,46 @@ std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char
     return contents;
 }
 
+std::vector<plFileName> plFileSystem::ListSubdirs(const plFileName &path)
+{
+    std::vector<plFileName> contents;
+
+#if HS_BUILD_FOR_WIN32
+    plFileName searchPattern = plFileName::Join(path, "*");
+
+    WIN32_FIND_DATAW findData;
+    HANDLE hFind = FindFirstFileW(searchPattern.AsString().ToWchar(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE)
+        return contents;
+
+    do {
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            plFileName name = plString::FromWchar(findData.cFileName);
+            if (name != "." && name != "..")
+                contents.push_back(plFileName::Join(path, name));
+        }
+    } while (FindNextFileW(hFind, &findData));
+
+    FindClose(hFind);
+#else
+    DIR *dir = opendir(path.AsString().c_str());
+    if (!dir)
+        return contents;
+
+    struct dirent *de;
+    while (de = readdir(dir)) {
+        if (plFileInfo(de->d_name).IsDirectory()) {
+            plFileName name = de->d_name;
+            if (name != "." && name != "..")
+                contents.push_back(plFileName::Join(path, name);
+        }
+    }
+
+    closedir(dir);
+#endif
+
+    return contents;
+}
 
 plFileName plFileSystem::GetUserDataPath()
 {

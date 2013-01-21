@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "hsThread.h"
-#include "plFile/hsFiles.h"
 #include <algorithm>
 #pragma hdrstop
 

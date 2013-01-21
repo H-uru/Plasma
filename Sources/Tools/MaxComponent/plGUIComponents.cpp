@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plgDispatch.h"
-#include "plFile/hsFiles.h"
 #include "hsTemplates.h"
 
 #include "plComponent.h"
@@ -1464,19 +1463,17 @@ BOOL plGUIDialogProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT ms
         case WM_INITDIALOG:
             // Load the age combo box
             {
-                int                 i, idx, selIdx = 0;
-                HWND                ageCombo = GetDlgItem( hWnd, IDC_GUIDLG_AGE );
-                hsTArray<char *>    ageList;
+                int     i, idx, selIdx = 0;
+                HWND    ageCombo = GetDlgItem( hWnd, IDC_GUIDLG_AGE );
 
-                plAgeDescInterface::BuildAgeFileList( ageList );
+                hsTArray<plFileName> ageList = plAgeDescInterface::BuildAgeFileList();
                 ComboBox_ResetContent( ageCombo );
                 for( i = 0; i < ageList.GetCount(); i++ )
                 {
-                    char ageName[ _MAX_FNAME ];
-                    _splitpath( ageList[ i ], nil, nil, ageName, nil );
+                    plString ageName = ageList[i].GetFileNameNoExt();
 
-                    idx = ComboBox_AddString( ageCombo, ageName );
-                    if( stricmp( ageName, pmap->GetParamBlock()->GetStr( plGUIDialogComponent::kRefAgeName ) ) == 0 )
+                    idx = ComboBox_AddString( ageCombo, ageName.c_str() );
+                    if( ageName.CompareI( pmap->GetParamBlock()->GetStr( plGUIDialogComponent::kRefAgeName ) ) == 0 )
                     {
                         selIdx = idx;
                     }

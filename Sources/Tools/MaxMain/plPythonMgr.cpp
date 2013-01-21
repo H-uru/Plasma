@@ -40,9 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plFile/hsFiles.h"
 #include "plgDispatch.h"
 #include "hsWindows.h"
+#include "plFileSystem.h"
 
 #include <Python.h>
 #include <string>
@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamb2.h>
 #include <max.h>
 #pragma hdrstop
+
+#include <direct.h>
 
 #include "plPythonMgr.h"
 #include "plMaxCFGFile.h"
@@ -229,7 +231,7 @@ void IExtractVisInfo(PyObject* tuple, int* id, std::vector<std::string>* vec)
     }
 }
 
-bool plPythonMgr::IQueryPythonFile(char *fileName)
+bool plPythonMgr::IQueryPythonFile(const char *fileName)
 {
     PyObject *module = PyImport_ImportModule(fileName);
     if (module)
@@ -596,8 +598,6 @@ void plPythonMgr::IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, 
     autoUI->AddPickGrassComponentButton(id, nil, paramName.c_str(), vid, vstates);
 }
 
-#include <direct.h>
-
 void plPythonMgr::LoadPythonFiles()
 {
     plFileName clientPath = plMaxConfig::GetClientPath(false, true);
@@ -612,15 +612,13 @@ void plPythonMgr::LoadPythonFiles()
         PythonInterface::initPython();
 
         // Iterate through all the Python files in the folder
-        hsFolderIterator folder(pythonPath.AsString().c_str());
-        while (folder.NextFileSuffix(".py"))
+        std::vector<plFileName> pys = plFileSystem::ListDir(pythonPath, "*.py");
+        for (auto iter = pys.begin(); iter != pys.end(); ++iter)
         {
             // Get the filename without the ".py" (module name)
-            const char *fullFileName = folder.GetFileName();
-            char fileName[_MAX_FNAME];
-            _splitpath(fullFileName, NULL, NULL, fileName, NULL);
+            plString fileName = iter->GetFileNameNoExt();
 
-            IQueryPythonFile(fileName);
+            IQueryPythonFile(fileName.c_str());
         }
 
         PythonInterface::finiPython();

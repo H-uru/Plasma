@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "hsStream.h"
 
 #include <bitmap.h>
 #include <iparamb2.h>
@@ -330,8 +331,6 @@ void plExportDlgImp::IExportCurrentFile(const char* exportPath)
     GetCOREInterface()->ExportToFile(exportPath);
 }
 
-#include "plFile/hsFiles.h"
-
 void plExportDlgImp::IDoExport()
 {
     fExporting = true;
@@ -351,13 +350,10 @@ void plExportDlgImp::IDoExport()
         IExportCurrentFile(exportPath);
     else
     {
-        hsFolderIterator sourceDir(fExportSourceDir.AsString().c_str());
-        while (sourceDir.NextFileSuffix(".max")) 
+        std::vector<plFileName> sources = plFileSystem::ListDir(fExportSourceDir, "*.max");
+        for (auto iter = sources.begin(); iter != sources.end(); ++iter)
         {
-            char exportFile[MAX_PATH];
-            sourceDir.GetPathAndName(exportFile);
-
-            if (GetCOREInterface()->LoadFromFile(exportFile))
+            if (GetCOREInterface()->LoadFromFile(iter->AsString().c_str()))
                 IExportCurrentFile(exportPath);
         }
     }
@@ -390,18 +386,18 @@ void plExportDlgImp::Show()
         fDlg = CreateDialog(hInstance, MAKEINTRESOURCE(IDD_EXPORT), GetCOREInterface()->GetMAXHWnd(), ForwardDlgProc);
 }
 
-static bool IsExcluded(const char* fileName, std::vector<std::string>& excludeFiles)
+static bool IsExcluded(const plFileName& fileName, std::vector<plFileName>& excludeFiles)
 {
     for (int i = 0; i < excludeFiles.size(); i++)
     {
-        if (!strcmp(fileName, excludeFiles[i].c_str()))
+        if (fileName == excludeFiles[i])
             return true;
     }
 
     return false;
 }
 
-static bool AutoExportDir(const char* inputDir, const char* outputDir, const char* groupFiles, std::vector<std::string>& excludeFiles)
+static bool AutoExportDir(const char* inputDir, const char* outputDir, const plFileName& groupFiles, std::vector<plFileName>& excludeFiles)
 {
     bool exportedFile = false;
 
@@ -417,37 +413,33 @@ static bool AutoExportDir(const char* inputDir, const char* outputDir, const cha
 
     // Don't give missing bitmap warnings
     TheManager->SetSilentMode(TRUE);
-    
-    hsFolderIterator sourceDir(inputDir);
-    while (sourceDir.NextFileSuffix(".max")) 
-    {
-        char exportFile[MAX_PATH];
-        sourceDir.GetPathAndName(exportFile);
 
-        if (IsExcluded(sourceDir.GetFileName(), excludeFiles))
+    std::vector<plFileName> sources = plFileSystem::ListDir(inputDir, "*.max");
+    for (auto iter = sources.begin(); iter != sources.end(); ++iter)
+    {
+        if (IsExcluded(iter->GetFileName(), excludeFiles))
             continue;
 
         // If we're doing grouped files, and this isn't one, keep looking
-        if (groupFiles && strncmp(sourceDir.GetFileName(), groupFiles, strlen(groupFiles)) != 0)
+        if (groupFiles.IsValid() && groupFiles != iter->GetFileName())
             continue;
 
         hsUNIXStream log;
         if (log.Open(outputLog, "ab"))
         {
-            log.WriteFmt("%s\r\n", sourceDir.GetFileName());
+            log.WriteFmt("%s\r\n", iter->GetFileName().c_str());
             log.Close();
         }
 
-        if (GetCOREInterface()->LoadFromFile(exportFile))
+        if (GetCOREInterface()->LoadFromFile(iter->AsString().c_str()))
         {
-            sprintf(doneDir, "%s\\Done\\%s", inputDir, sourceDir.GetFileName());
-            MoveFileEx(exportFile, doneDir, MOVEFILE_REPLACE_EXISTING);
+            plFileSystem::Move(*iter, plFileName::Join(inputDir, "Done", iter->GetFileName()));
 
             GetCOREInterface()->ExportToFile(outputFileName, TRUE);
             exportedFile = true;
 
             // If we're not doing grouped files, this is it, we exported our one file
-            if (!groupFiles)
+            if (!groupFiles.IsValid())
                 break;
         }
     }
@@ -471,7 +463,7 @@ static void ShutdownMax()
     PostMessage(GetCOREInterface()->GetMAXHWnd(), WM_CLOSE, 0, 0);
 }
 
-static void GetStringSection(const char* configFile, const char* keyName, std::vector<std::string>& strings)
+static void GetFileNameSection(const char* configFile, const char* keyName, std::vector<plFileName>& strings)
 {
     char source[256];
     GetPrivateProfileString("Settings", keyName, "", source, sizeof(source), configFile);
@@ -506,18 +498,18 @@ void plExportDlgImp::StartAutoExport()
     hsMessageBox_SuppressPrompts = true;
 
     // Files to ignore
-    std::vector<std::string> excludeFiles;
-    GetStringSection(configFile, "ExcludeFiles", excludeFiles);
+    std::vector<plFileName> excludeFiles;
+    GetFileNameSection(configFile, "ExcludeFiles", excludeFiles);
 
     //
     // Get the file substrings to export in one session
     //
-    std::vector<std::string> groupedFiles;
-    GetStringSection(configFile, "GroupedFiles", groupedFiles);
+    std::vector<plFileName> groupedFiles;
+    GetFileNameSection(configFile, "GroupedFiles", groupedFiles);
 
     for (int i = 0; i < groupedFiles.size(); i++)
     {
-        if (AutoExportDir(inputDir, outputDir, groupedFiles[i].c_str(), excludeFiles))
+        if (AutoExportDir(inputDir, outputDir, groupedFiles[i], excludeFiles))
         {
             ShutdownMax();
             fAutoExporting = false;
@@ -525,7 +517,7 @@ void plExportDlgImp::StartAutoExport()
         }
     }
 
-    if (AutoExportDir(inputDir, outputDir, NULL, excludeFiles))
+    if (AutoExportDir(inputDir, outputDir, "", excludeFiles))
     {
         ShutdownMax();
         fAutoExporting = false;
