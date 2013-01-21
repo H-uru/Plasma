@@ -49,75 +49,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsExceptions.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-
-#include "hsWindows.h"
-#include <sstream>
-
-
 //// ParseDirectory //////////////////////////////////////////////////////////
 
-bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const plString& mask /* = L"*.*" */)
+bool pfConsoleDirSrc::ParseDirectory(const plFileName& path, const char* mask /* = L"*.*" */)
 {
-    WIN32_FIND_DATAW    findInfo;
-    HANDLE              handle;
-
     hsAssert( fEngine != nil, "Cannot do a dir execute without an engine!" );
 
-    handle = FindFirstFileW(plFileName::Join(path, mask).AsString().ToWchar(), &findInfo);
-    if (handle == INVALID_HANDLE_VALUE)
-        return false;
-
-    do
+    std::vector<plFileName> files = plFileSystem::ListDir(path, mask);
+    for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        if (!( findInfo.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+        plFileName name = iter->GetFileName();
+        if (AlreadyProcessedFile(path, name))
+            continue;
+        AddProcessedFile(path, name);
+        if (!fEngine->ExecuteFile(*iter))
         {
-            plFileName name = plString::FromWchar(findInfo.cFileName);
-            plFileName fileAndPath = plFileName::Join(path, name);
-            if (AlreadyProcessedFile(path, name))
-                continue;
-            AddProcessedFile(path, name);
-            if (!fEngine->ExecuteFile(fileAndPath))
-            {
-                // Change the following line once we have a better way of reporting
-                // errors in the parsing
-                std::wstringstream error;
-                std::wstringstream caption;
-                wchar_t* errorMsg = hsStringToWString(fEngine->GetErrorMsg());
-                wchar_t* errorLine = hsStringToWString(fEngine->GetLastErrorLine());
+            // Change the following line once we have a better way of reporting
+            // errors in the parsing
+            plStringStream error, caption;
 
-                caption << L"Error parsing " << findInfo.cFileName;
-                error << errorMsg << L":\n\nCommand: '" << errorLine << L"'\n\nPress OK to continue parsing files.";
+            caption << "Error parsing " << name.AsString();
+            error << fEngine->GetErrorMsg() << ":\n\nCommand: '" << fEngine->GetLastErrorLine()
+                  << "'\n\nPress OK to continue parsing files.";
 
-                hsMessageBox(error.str().c_str(), caption.str().c_str(), hsMessageBoxNormal);
+            hsMessageBox(error.GetString().c_str(), caption.GetString().c_str(), hsMessageBoxNormal);
 
-                delete [] errorMsg;
-                delete [] errorLine;
-
-                FindClose(handle);
-                SetCheckProcessedFiles(true);
-                return false;
-            }
+            SetCheckProcessedFiles(true);
+            return false;
         }
-    } while (FindNextFileW(handle, &findInfo) != 0);
+    }
 
-    FindClose(handle);
     SetCheckProcessedFiles(true);
     return true;
 }
-
-#else
-
-#error This needs to be implemented for this platform!!!!
-
-#endif
 
 void pfConsoleDirSrc::ResetProcessedFiles()
 {
     int i;
     for(i=0;i<fProcessedFiles.size(); i++)
         delete fProcessedFiles[i];
-    fProcessedFiles.clear();    
+    fProcessedFiles.clear();
 }
 
 //

@@ -1203,14 +1203,14 @@ static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
-static wchar_t                        s_accountName[kMaxAccountNameLength];
+static wchar_t                      s_accountName[kMaxAccountNameLength];
 static ShaDigest                    s_accountNamePassHash;
-static wchar_t                        s_authToken[kMaxPublisherAuthKeyLength];
-static wchar_t                        s_os[kMaxGTOSIdLength];
+static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
+static wchar_t                      s_os[kMaxGTOSIdLength];
 
 static long                         s_perf[kNumPerf];
 
-static uint32_t                       s_encryptionKey[4];
+static uint32_t                     s_encryptionKey[4];
 
 static FNetCliAuthRecvBufferHandler         s_bufRcvdCb;
 static FNetCliAuthConnectCallback           s_connectedCb;
@@ -2635,13 +2635,11 @@ bool LoginRequestTrans::Send () {
     ShaDigest challengeHash;
     uint32_t clientChallenge = 0;
 
-    wchar_t domain[15];
-    PathSplitEmail(s_accountName, nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
-
-    if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
+    // Regex search for primary email domain
+    std::vector<plString> match = plString::FromWchar(s_accountName).RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    if (match.empty() || match[2].CompareI("gametap") == 0) {
         memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
-    }
-    else {
+    } else {
         CryptCreateRandomSeed(
             sizeof(clientChallenge),
             (uint8_t *) &clientChallenge
@@ -5243,10 +5241,10 @@ void NetCliAuthAccountExistsRequest (
 
 //============================================================================
 void NetCliAuthLoginRequest (
-    const wchar_t                     accountName[],
+    const wchar_t                   accountName[],
     const ShaDigest *               accountNamePassHash,
-    const wchar_t                     authToken[],
-    const wchar_t                     os[],
+    const wchar_t                   authToken[],
+    const wchar_t                   os[],
     FNetCliAuthLoginRequestCallback callback,
     void *                          param
 ) {

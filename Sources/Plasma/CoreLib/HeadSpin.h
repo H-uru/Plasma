@@ -440,6 +440,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wch
 #   include <limits.h>
 #   define MAX_PATH PATH_MAX
 #endif
+#define MAX_EXT     (256)
 
 // Useful floating point utilities
 inline float hsDegreesToRadians(float deg) { return float(deg * (M_PI / 180)); }

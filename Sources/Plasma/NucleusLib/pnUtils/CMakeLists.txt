@@ -12,7 +12,6 @@ set(pnUtils_HEADERS
     pnUtHash.h
     pnUtList.h
     pnUtMisc.h
-    pnUtPath.h
     pnUtPragma.h
     pnUtPriQ.h
     pnUtRef.h
@@ -28,7 +27,6 @@ set(pnUtils_SOURCES
     pnUtHash.cpp
     pnUtList.cpp
     pnUtMisc.cpp
-    pnUtPath.cpp
     pnUtStr.cpp
     pnUtTime.cpp
 )
@@ -36,7 +34,6 @@ set(pnUtils_SOURCES
 if(WIN32)
     set(pnUtils_WIN32
         Win32/pnUtW32Misc.cpp
-        Win32/pnUtW32Path.cpp
         Win32/pnUtW32Str.cpp
     )
 else()

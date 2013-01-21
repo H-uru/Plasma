@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <limits.h>
 #   include <unistd.h>
 #   include <sys/types.h>
+#   include <dirent.h>
+#   include <fnmatch.h>
 #   include <cstdlib>
 #   include <functional>
 #   include <memory>
@@ -283,8 +285,11 @@ FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 bool plFileSystem::Unlink(const plFileName &filename)
 {
 #if HS_BUILD_FOR_WIN32
-    return _wunlink(filename.AsString().ToWchar()) == 0;
+    plStringBuffer<wchar_t> wfilename = filename.AsString().ToWchar();
+    _wchmod(wfilename, S_IWRITE);
+    return _wunlink(wfilename) == 0;
 #else
+    chmod(filename.AsString().c_str(), S_IWRITE);
     return unlink(filename.AsString().c_str()) == 0;
 #endif
 }
@@ -342,6 +347,55 @@ bool plFileSystem::CreateDir(const plFileName &dir, bool checkParents)
     return (mkdir(dir.AsString().c_str(), 0755) == 0);
 #endif
 }
+
+std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char *pattern)
+{
+    std::vector<plFileName> contents;
+
+#if HS_BUILD_FOR_WIN32
+    if (!pattern || !pattern[0])
+        pattern = "*";
+    plFileName searchPattern = plFileName::Join(path, pattern);
+
+    WIN32_FIND_DATAW findData;
+    HANDLE hFind = FindFirstFileW(searchPattern.AsString().ToWchar(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE)
+        return contents;
+
+    do {
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            // Should also handle . and ..
+            continue;
+        }
+
+        contents.push_back(plFileName::Join(path, plString::FromWchar(findData.cFileName)));
+    } while (FindNextFileW(hFind, &findData));
+
+    FindClose(hFind);
+#else
+    DIR *dir = opendir(path.AsString().c_str());
+    if (!dir)
+        return contents;
+
+    struct dirent *de;
+    while (de = readdir(dir)) {
+        if (plFileInfo(de->d_name).IsDirectory()) {
+            // Should also handle . and ..
+            continue;
+        }
+
+        if (pattern && pattern[0] && fnmatch(pattern, de->d_name))
+            contents.push_back(plFileName::Join(path, de->d_name));
+        else if (!pattern || !pattern[0])
+            contents.push_back(plFileName::Join(path, de->d_name));
+    }
+
+    closedir(dir);
+#endif
+
+    return contents;
+}
+
 
 plFileName plFileSystem::GetUserDataPath()
 {

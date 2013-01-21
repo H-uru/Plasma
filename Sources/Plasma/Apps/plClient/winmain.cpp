@@ -816,10 +816,10 @@ static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
     // loaded the namePassHash from the file
     if (thePass.Compare(FAKE_PASS_STRING) != 0)
     {
-        wchar_t domain[15];
-        PathSplitEmail(theUser.ToWchar(), nil, 0, domain, arrsize(domain), nil, 0, nil, 0, 0);
+        // Regex search for primary email domain
+        std::vector<plString> match = theUser.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
 
-        if (StrLen(domain) == 0 || StrCmpI(domain, L"gametap") == 0) {
+        if (match.empty() || match[2].CompareI("gametap") == 0) {
             plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
             uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
             const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());

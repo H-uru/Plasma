@@ -303,6 +303,15 @@ namespace plFileSystem
      */
     bool CreateDir(const plFileName &dir, bool checkParents = false);
 
+    /** Fetch a list of files contained in the supplied \a path.
+     *  If \a pattern is specified (e.g. "*.tmp"), use that to filter
+     *  matches.  Otherwise, all files in the path will be returned.
+     *  Note that returned filenames include the provided path -- to
+     *  get only the filename, call .GetFileName() on an entry.
+     */
+    std::vector<plFileName> ListDir(const plFileName &path,
+                                    const char *pattern = nullptr);
+
     /** Get the User's data directory.  If it doesn't exist, this will
      *  create it.
      */

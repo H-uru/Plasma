@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "hsThread.h"
+#include "plFile/hsFiles.h"
+#include <algorithm>
 #pragma hdrstop
 
 
@@ -128,7 +130,7 @@ static hsSemaphore              s_dialogCreateEvent(0);
 static hsMutex                  s_critsect;
 static LISTDECL(WndEvent, link) s_eventQ;
 static hsSemaphore              s_shutdownEvent(0);
-static wchar_t                  s_workingDir[MAX_PATH];
+static plFileName               s_workingDir;
 static hsSemaphore              s_statusEvent(0);
 static char                     s_curlError[CURL_ERROR_SIZE];
 
@@ -633,9 +635,9 @@ int __stdcall WinMain (
 
     CCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
     cmdParser.Parse();
-    
+
     if (!cmdParser.IsSpecified(kArgCwd))
-        PathGetProgramDirectory(s_workingDir, arrsize(s_workingDir));
+        s_workingDir = plFileSystem::GetCurrentAppPath().StripFileName();
 
     s_hInstance = hInstance;
     memset(&s_launcherInfo, 0, sizeof(s_launcherInfo));
@@ -754,12 +756,11 @@ int __stdcall WinMain (
         }
 
         // Clean up old temp files
-        ARRAY(PathFind) paths;
         plFileName fileSpec = plFileSystem::GetCurrentAppPath().StripFileName();
-        fileSpec = plFileName::Join(fileSpec, "*.tmp");
-        PathFindFiles(&paths, fileSpec.AsString().ToWchar(), kPathFlagFile);
-        for (PathFind * path = paths.Ptr(); path != paths.Term(); ++path)
-            plFileSystem::Unlink(plString::FromWchar(path->name));
+        std::vector<plFileName> tmpFiles = plFileSystem::ListDir(fileSpec, "*.tmp");
+        std::for_each(tmpFiles.begin(), tmpFiles.end(), [](const plFileName &tmp) {
+            plFileSystem::Unlink(tmp);
+        });
 
         SetConsoleCtrlHandler(CtrlHandler, TRUE);
         InitAsyncCore();    // must do this before self patch, since it needs to connect to the file server
@@ -768,7 +769,7 @@ int __stdcall WinMain (
         ENetError selfPatchResult;
         if (false == (SelfPatch(cmdParser.IsSpecified(kArgNoSelfPatch), &s_shutdown, &selfPatchResult, &s_launcherInfo)) && IS_NET_SUCCESS(selfPatchResult)) {
             // We didn't self-patch, so check for client updates and download them, then exec the client
-            StrCopy(s_launcherInfo.path, s_workingDir, arrsize(s_launcherInfo.path));
+            StrCopy(s_launcherInfo.path, s_workingDir.AsString().ToWchar(), arrsize(s_launcherInfo.path));
             s_launcherInfo.prepCallback         = PrepCallback;
             s_launcherInfo.initCallback         = InitCallback;
             s_launcherInfo.startCallback        = StartCallback;

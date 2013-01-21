@@ -71,14 +71,14 @@ class pfConsoleDirSrc
         {
             plFileName fPath;
             plFileName fFile;
-            FileName() : fPath(""), fFile("") {}
+            FileName() {}
             FileName(const plFileName& p, const plFileName& f) : fPath(p), fFile(f) {}
         };
         std::vector<FileName*> fProcessedFiles;     // list of init files we've already executed
         bool fCheckProcessedFiles;        // set to check and skip files init files we've already executed
     public:
         pfConsoleDirSrc(pfConsoleEngine *engine) : fCheckProcessedFiles(false) { fEngine = engine; }
-        pfConsoleDirSrc(pfConsoleEngine *engine, const plFileName& path, const plString& mask = "*.ini")
+        pfConsoleDirSrc(pfConsoleEngine *engine, const plFileName& path, const char* mask = "*.ini")
             : fCheckProcessedFiles(false)
         {
             fEngine = engine;
@@ -88,7 +88,7 @@ class pfConsoleDirSrc
         ~pfConsoleDirSrc() { ResetProcessedFiles(); }
 
         // Steps through the given directory and executes all files with the console engine
-        bool ParseDirectory(const plFileName& path, const plString& mask = "*.*");
+        bool ParseDirectory(const plFileName& path, const char* mask = "*.*");
 
         void ResetProcessedFiles();
         bool AlreadyProcessedFile(const plFileName& path, const plFileName& file);
