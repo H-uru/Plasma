@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdlib>
 #include <wchar.h>
 #include <memory>
+#include <functional>
+#include <pcre.h>
 
 const plString plString::Null;
 
@@ -598,6 +600,70 @@ int plString::Find(const char *str, CaseSensitivity sense) const
 
         return -1;
     }
+}
+
+bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
+{
+    int opts = PCRE_UTF8;
+    if (sense == kCaseInsensitive)
+        opts |= PCRE_CASELESS;
+
+    plString pat_full = plString::Format("(?:%s)\\z", pattern);
+    const char *errptr;
+    int erroffs;
+    std::unique_ptr<pcre, std::function<void (pcre *)>>
+        re(pcre_compile(pat_full.c_str(), opts, &errptr, &erroffs, nullptr), pcre_free);
+    if (!re.get()) {
+        hsAssert(0, plString::Format("Invalid Regex pattern: %s (at %d)", errptr, erroffs).c_str());
+        return false;
+    }
+
+    int result = pcre_exec(re.get(), nullptr, c_str(), GetSize(), 0,
+                           PCRE_ANCHORED, nullptr, 0);
+    if (result >= 0)
+        return true;
+
+    hsAssert(result == PCRE_ERROR_NOMATCH, plString::Format("Regex match error: %d", result).c_str());
+    return false;
+}
+
+std::vector<plString> plString::RESearch(const char *pattern,
+                                         CaseSensitivity sense) const
+{
+    int opts = PCRE_UTF8;
+    if (sense == kCaseInsensitive)
+        opts |= PCRE_CASELESS;
+
+    const char *errptr;
+    int erroffs;
+    std::unique_ptr<pcre, std::function<void (pcre *)>>
+        re(pcre_compile(pattern, opts, &errptr, &erroffs, nullptr), pcre_free);
+    if (!re.get()) {
+        hsAssert(0, plString::Format("Invalid Regex pattern: %s (at %d)", errptr, erroffs).c_str());
+        return std::vector<plString>();
+    }
+
+    int ncaps = 0;
+    pcre_fullinfo(re.get(), nullptr, PCRE_INFO_CAPTURECOUNT, &ncaps);
+
+    ncaps += 1;     // For the whole-pattern capture
+    std::unique_ptr<int> outvec(new int[ncaps * 3]);
+    memset(outvec.get(), -1, sizeof(int) * ncaps * 3);
+    int result = pcre_exec(re.get(), nullptr, c_str(), GetSize(), 0, 0,
+                           outvec.get(), ncaps * 3);
+    if (result >= 0) {
+        std::vector<plString> caps;
+        caps.resize(ncaps);
+        for (int i = 0; i < ncaps; ++i) {
+            int start = outvec.get()[i*2], end = outvec.get()[i*2+1];
+            if (start >= 0)
+                caps[i] = Substr(start, end - start);
+        }
+        return caps;
+    }
+
+    hsAssert(result == PCRE_ERROR_NOMATCH, plString::Format("Regex search error: %d", result).c_str());
+    return std::vector<plString>();
 }
 
 static bool in_set(char key, const char *charset)
