@@ -31,6 +31,7 @@ Plasma currently utilizes the following third-party libraries:
 - libPNG  - http://www.libpng.org/
 - speex  - http://www.speex.org/downloads/
 - zlib  - http://zlib.net/
+- PCRE  - http://www.pcre.org/
 
 - PyGTK  - http://www.pygtk.org/downloads.html
 - PIL  - http://www.pythonware.com/products/pil/

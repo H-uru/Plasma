@@ -172,10 +172,6 @@ target_link_libraries(plClient ${Vorbis_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
 target_link_libraries(plClient ${CURL_LIBRARY})
 
-if(Bink_SDK_AVAILABLE)
-    target_link_libraries(plClient ${Bink_LIBRARIES})
-endif()
-
 if(USE_VLD)
     target_link_libraries(plClient ${VLD_LIBRARY})
 endif()
