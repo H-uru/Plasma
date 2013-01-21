@@ -333,7 +333,7 @@ uint16_t plCoordinateInterface::GetReasons()
 
 void plCoordinateInterface::ClearReasons()
 {
-    fReason = nil;
+    fReason = 0;
 }
 
 void plCoordinateInterface::SetLocalToParent(const hsMatrix44& l2p, const hsMatrix44& p2l)

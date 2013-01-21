@@ -770,7 +770,7 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
     for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
         if (op->hSocket != INVALID_SOCKET) {
             closesocket(op->hSocket);
-            op->hSocket = nil;
+            op->hSocket = 0;
         }
         INtConnPostOperation(nil, op, 0);
     }

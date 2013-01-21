@@ -344,12 +344,12 @@ BOOL CALLBACK ResListWndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lPa
 
         case WM_COMMAND:
             if( wParam == IDCANCEL )
-                EndDialog( hWnd, nil );
+                EndDialog( hWnd, 0 );
             else
             {
                 int idx = SendDlgItemMessage( hWnd, IDC_RESLIST, LB_GETCURSEL, 0, 0 );
                 if( idx == LB_ERR )
-                    EndDialog( hWnd, nil );
+                    EndDialog( hWnd, 0 );
                 else
                 {
                     ResRecord *rec = (ResRecord *)SendDlgItemMessage( hWnd, IDC_RESLIST, LB_GETITEMDATA, idx, 0 );
@@ -719,7 +719,7 @@ BOOL CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
 
         case WM_DROPFILES:
             {
-                int     i, fileCount = DragQueryFile( (HDROP)wParam, -1, nil, nil );
+                int     i, fileCount = DragQueryFile( (HDROP)wParam, -1, nil, 0 );
                 char    path[ MAX_PATH ];
 
 

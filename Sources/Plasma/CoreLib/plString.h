@@ -215,6 +215,15 @@ private:
     void IConvertFromUtf32(const UniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
+    // Constructing and comparing with nil or nullptr won't break plString,
+    // but it's preferred not to do so with the constants.  That is to say,
+    // you can construct with a const char * which points to null, but
+    // don't actually write `plString foo = nil;`
+    plString(std::nullptr_t) { }
+    void operator=(std::nullptr_t) { }
+    void operator==(std::nullptr_t) const { }
+    void operator!=(std::nullptr_t) const { }
+
 public:
     /** Construct a valid, empty string. */
     plString() { }

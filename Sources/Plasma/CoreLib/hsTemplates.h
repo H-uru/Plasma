@@ -734,7 +734,7 @@ template <class T> void hsTArray<T>::SetCountAndZero(int count)
     }
     int i;
     for( i = 0; i < fTotalCount; i++ )
-        fArray[i] = nil;
+        fArray[i] = 0;
     fUseCount = count;
 }
 
@@ -746,7 +746,7 @@ template <class T> void hsTArray<T>::ExpandAndZero(int count)
         Expand(count);
         int i;
         for( i = n; i < count; i++ )
-            fArray[i] = nil;
+            fArray[i] = 0;
     }
     if( fUseCount < count )
         fUseCount = count;

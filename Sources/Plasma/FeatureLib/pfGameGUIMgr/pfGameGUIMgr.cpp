@@ -615,7 +615,7 @@ bool    pfGameGUIMgr::IHandleKeyPress( wchar_t key, uint8_t modifiers )
     pfGUIDialogMod  *dlg;
 
     // Really... Don't handle any nil keypresses
-    if (key == nil)
+    if (!key)
         return false;
 
     for( dlg = fActiveDialogs; dlg != nil; dlg = dlg->GetNext() )
