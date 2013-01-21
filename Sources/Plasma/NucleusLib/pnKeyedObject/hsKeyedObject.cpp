@@ -107,6 +107,10 @@ plKey hsKeyedObject::RegisterAs(plFixedKeyId fixedKey)
     if (key == nil)
     {
         key = hsgResMgr::ResMgr()->NewKey(meUoid, this);
+
+        //  the key list "helpfully" assigns us an object id.
+        // we don't want one for fixed keys however (initialization order might bite us in the ass)
+        static_cast<plKeyImp*>(key)->SetObjectID(0);
     }
     else
     {
