@@ -63,6 +63,12 @@ if(CURL_IS_STATIC)
     add_definitions(-DCURL_STATICLIB)
 endif(CURL_IS_STATIC)
 
+#libpcre isn't smart enough to detect this either
+option(PCRE_IS_STATIC "Using the static version of libpcre?" ON)
+if(PCRE_IS_STATIC)
+    add_definitions(-DPCRE_STATIC)
+endif(PCRE_IS_STATIC)
+
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)
     add_definitions(-DPLASMA_EXTERNAL_RELEASE)
