@@ -74,7 +74,7 @@ public:
 
     uint32_t GetFlags() { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
-    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = nil) {;}
+    virtual void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0) {;}
     virtual void HandleMouseEvent(plOSMsg message, plMouseState state)  {;}
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd) {;}
     virtual bool MsgReceive(plMessage* msg) {return false;}
@@ -116,7 +116,7 @@ public:
     void SetControlMode(int i) { fControlMode = i; }
 
     const char* GetInputName() { return "keyboard"; }
-    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = nil);
+    void HandleKeyEvent(plOSMsg message, plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0);
     virtual void HandleWindowActivate(bool bActive, hsWindowHndl hWnd);
     virtual bool IsCapsLockKeyOn();
     virtual void Shutdown();

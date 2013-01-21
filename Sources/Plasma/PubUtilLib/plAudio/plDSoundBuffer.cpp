@@ -125,7 +125,7 @@ void    plDSoundBuffer::IRelease( void )
 
     // Release stuff
     fEAXSource.Release();
-    alSourcei(source, AL_BUFFER, nil);
+    alSourcei(source, AL_BUFFER, 0);
     alDeleteSources(1, &source);
     if(buffer)
         alDeleteBuffers( 1, &buffer );
@@ -173,7 +173,7 @@ bool plDSoundBuffer::FillBuffer(void *data, unsigned bytes, plWAVHeader *header)
 {
     if(source)
     {
-        alSourcei(source, AL_BUFFER, nil);
+        alSourcei(source, AL_BUFFER, 0);
         alDeleteSources(1, &source);
     }
     if(buffer)
@@ -278,7 +278,7 @@ bool plDSoundBuffer::SetupStreamingSource(plAudioFileReader *stream)
         plStatusLog::AddLineS("audio.log", "Failed to create audio source %d %d", error, source);
         return false;
     }
-    alSourcei(source, AL_BUFFER, nil);
+    alSourcei(source, AL_BUFFER, 0);
     SetScalarVolume(0);
     
     
@@ -344,7 +344,7 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
         plStatusLog::AddLineS("audio.log", "Failed to create audio source %d %d", error, source);
         return false;
     }
-    alSourcei(source, AL_BUFFER, nil);
+    alSourcei(source, AL_BUFFER, 0);
     SetScalarVolume(0);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
@@ -512,7 +512,7 @@ bool plDSoundBuffer::SetupVoiceSource()
     {
         return false;
     }
-    alSourcei(source, AL_BUFFER, nil);
+    alSourcei(source, AL_BUFFER, 0);
     alGetError();
     //alSourcei(source, AL_PITCH, 0);
 

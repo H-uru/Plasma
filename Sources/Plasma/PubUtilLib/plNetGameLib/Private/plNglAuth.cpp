@@ -1719,15 +1719,15 @@ void CliAuConn::StopAutoPing () {
 void CliAuConn::TimerPing () {
     // Send a ping request
     pingSendTimeMs = GetNonZeroTimeMs();
-        
+
     const uintptr_t msg[] = {
         kCli2Auth_PingRequest,
         pingSendTimeMs,
         0,      // not a transaction
         0,      // no payload
-        nil
+        reinterpret_cast<uintptr_t>(nullptr)
     };
-        
+
     Send(msg, arrsize(msg));
 }
 
@@ -5093,8 +5093,7 @@ bool AuthQueryConnected () {
     bool result;
     s_critsect.Enter();
     {
-        if (nil != (result = s_active))
-            result &= (nil != s_active->cli);
+        result = (s_active && s_active->cli);
     }
     s_critsect.Leave();
     return result;

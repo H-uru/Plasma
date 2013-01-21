@@ -403,11 +403,9 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     const char* buf = m->GetVoiceData();
     uint8_t flags = m->GetFlags();
     uint8_t numFrames = m->GetNumFrames();
-    plKey key = NULL;
+    plKey key;
 
     // plKey key=hsgResMgr::ResMgr()->FindKey(m->ObjectInfo()->GetUoid());
-
-    
 
     // Filter ignored sender
     if ( VaultAmIgnoringPlayer( m->GetPlayerID() ) )

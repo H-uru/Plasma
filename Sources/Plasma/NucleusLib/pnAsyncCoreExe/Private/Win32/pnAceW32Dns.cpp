@@ -306,7 +306,7 @@ void AsyncAddressLookupName (
             sizeof(lookup->buffer)
         );
         if (!lookup->cancelHandle) {
-            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, nil, (unsigned) -1);
+            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
         }
     }
     s_critsect.Leave();
@@ -356,7 +356,7 @@ void AsyncAddressLookupAddr (
             sizeof(lookup->buffer)
         );
         if (!lookup->cancelHandle) {
-            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, nil, (unsigned) -1);
+            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
         }
     }
     s_critsect.Leave();
@@ -381,7 +381,7 @@ void AsyncAddressLookupCancel (
         lookup->cancelHandle = nil;
 
         // initiate user callback
-        PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, nil, (unsigned) -1);
+        PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
     }
     s_critsect.Leave();
 }

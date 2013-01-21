@@ -103,7 +103,7 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
         PYTHON_RETURN_INIT_ERROR;
     }
 
-    self->fThis->Init(key, name.c_str(), pid, distSeq);
+    self->fThis->Init(key->getKey(), name.c_str(), pid, distSeq);
     PYTHON_RETURN_INIT_OK;
 }
 

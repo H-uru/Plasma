@@ -61,9 +61,9 @@ class plKey
 {
 public:
     // Constructors and destructors and copy stuff
-    plKey();
+    plKey() : fKeyData(nullptr) { }
+    plKey(std::nullptr_t) : fKeyData(nullptr) { }
     plKey(const plKey& rhs);
-    plKey(void* ptr);   // For constructing a nil key
     ~plKey();
     plKey& operator=(const plKey& rhs);
 
@@ -77,7 +77,7 @@ public:
 
     operator plKeyImp*() const { return (plKeyImp*)fKeyData; }
 
-    static plKey Make(plKeyData* data) { return plKey(data, false); }
+    static plKey Make(plKeyData* data) { return plKey(data); }
 
 protected:
     // Pointer to our real key
@@ -86,7 +86,7 @@ protected:
     void IDecRef();
 
     // Internal constructor, extra param is to distinguish it from the void* constructor
-    plKey(plKeyData* data, bool ignore);
+    plKey(plKeyData* data);
 };
 
 //// plKeyData ///////////////////////////////////////////////////////////////

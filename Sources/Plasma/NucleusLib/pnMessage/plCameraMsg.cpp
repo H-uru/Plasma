@@ -53,13 +53,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 //
 
-plCameraMsg::plCameraMsg() : 
+plCameraMsg::plCameraMsg() :
 fNewCam(nil),
 fTriggerer(nil),
 fTransTime(0),
 fSubject(nil),
 fPipe(nil),
-fConfig(nil),
 fActivated(false)
 {
 }
@@ -70,7 +69,6 @@ fTriggerer(nil),
 fTransTime(0),
 fSubject(nil),
 fPipe(nil),
-fConfig(nil),
 fActivated(false),
 plMessage(s, r, t)
 {

@@ -279,7 +279,7 @@ const char* ProcessTab(const char* fmt)
 //
 bool plNetClientMgr::Log(const char* str) const
 {
-    if (strlen(str)==nil)
+    if (strlen(str) == 0)
         return true;
 
     // prepend raw time

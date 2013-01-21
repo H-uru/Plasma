@@ -154,7 +154,7 @@ void plFactory::IUnRegister(uint16_t hClass)
 uint16_t plFactory::Register(uint16_t hClass, plCreator* worker)
 {
     if( !theFactory && !ICreateTheFactory() )
-            return nil;
+        return 0;
 
     hsRefCnt_SafeRef(theFactory);
     return theFactory->IRegister(hClass, worker);

@@ -375,7 +375,7 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
 
         case WM_DROPFILES:
             {
-                int     i, j, fileCount = DragQueryFile( (HDROP)wParam, -1, nil, nil );
+                int     i, j, fileCount = DragQueryFile( (HDROP)wParam, -1, nil, 0 );
                 char    path[ MAX_PATH ];
 
                 plWaitCursor    myWaitCursor;

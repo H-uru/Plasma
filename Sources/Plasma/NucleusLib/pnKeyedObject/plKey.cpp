@@ -120,15 +120,6 @@ static const char* CloneString(const plKeyData* keyData)
 #endif
 
 
-plKey::plKey() : fKeyData(nil)
-{
-}
-
-plKey::plKey(void* ptr) : fKeyData(nil)
-{
-    hsAssert(!ptr, "Attempting to publically construct a non-nil key");
-}
-
 plKey::plKey(const plKey& rhs) : fKeyData(rhs.fKeyData)
 {
 #if TRACK_REFS  // FOR DEBUGGING ONLY
@@ -143,13 +134,13 @@ plKey::plKey(const plKey& rhs) : fKeyData(rhs.fKeyData)
     IIncRef();
 }
 
-plKey::plKey(plKeyData* data, bool ignore) : fKeyData(data)
+plKey::plKey(plKeyData* data) : fKeyData(data)
 {
 #if TRACK_REFS  // FOR DEBUGGING ONLY
     if( IsTracked(fKeyData) )
     {
         char msg[ 512 ];
-        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKeyData*, bool) constructor", keyNameToLookFor, CloneString(fKeyData) );
+        sprintf( msg, "C: Key %s %s is being constructed using the plKey(plKeyData*) constructor", keyNameToLookFor, CloneString(fKeyData) );
         //hsAssert( false, msg );
         hsStatusMessageF(msg);
     }

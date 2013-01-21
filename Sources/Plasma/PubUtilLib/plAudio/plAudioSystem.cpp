@@ -198,7 +198,7 @@ void plAudioSystem::IEnumerateDevices()
     char *devices = (char *)alcGetString(nil, ALC_DEVICE_SPECIFIER);
     int major, minor;
 
-    while(*devices != nil)
+    while (*devices)
     {
         ALCdevice *device = alcOpenDevice(devices);
         if (device) 

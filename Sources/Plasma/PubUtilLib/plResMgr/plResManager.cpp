@@ -1715,7 +1715,7 @@ public:
 bool plResManager::IterateKeys(plRegistryKeyIterator* iterator)
 {
     plKeyIterEater myEater(iterator);
-    return IteratePages(&myEater, nil);
+    return IteratePages(&myEater);
 }
 
 bool plResManager::IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo)

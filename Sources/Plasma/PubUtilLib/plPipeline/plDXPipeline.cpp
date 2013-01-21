@@ -752,7 +752,7 @@ void    plDXPipeline::IClearMembers()
     fULutTextureRef = nil;
     for( i = 0; i < kMaxRenderTargetNext; i++ )
         fBlurVBuffers[i] = nil;
-    fBlurVSHandle = nil;
+    fBlurVSHandle = 0;
 
     fD3DObject = nil;
     fD3DDevice = nil;
@@ -4352,7 +4352,7 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
     surface->UnlockRect();
     ReleaseObject( surface );
 
-    if( desiredWidth != 0 && desiredHeight != nil )
+    if( desiredWidth != 0 && desiredHeight != 0 )
     {
         // Rescale to the right size
         dest->ResizeNicely( desiredWidth, desiredHeight, plMipmap::kDefaultFilter );
@@ -11889,7 +11889,7 @@ void    plDXPipeline::ISetErrorMessage( char *errStr )
         plStatusLog::AddLineS("pipeline.log", fSettings.fErrorStr);
     }
     else
-        fSettings.fErrorStr[ 0 ] = nil;
+        fSettings.fErrorStr[ 0 ] = 0;
 }
 
 // IGetD3DError /////////////////////////////////////////////////////////////////

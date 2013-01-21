@@ -243,7 +243,7 @@ bool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plKey nilKey = nil;
     plKey target = node->GetSceneObject()->GetKey();
     plClimbMsg *enterMsg = nil;
-    if(enterCommand != plClimbMsg::kNoCommand)
+    if (enterCommand != plClimbMsg::kNoCommand)
     {
         enterMsg = new plClimbMsg(nilKey, nilKey, enterCommand, direction, enterStatus, target);
         enterMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
@@ -252,7 +252,7 @@ bool plClimbTriggerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     }
 
     plClimbMsg *exitMsg = nil;
-    if(exitCommand != nil)
+    if (exitCommand != plClimbMsg::kNoCommand)
     {
         exitMsg = new plClimbMsg(nilKey, nilKey, exitCommand, direction, exitStatus, target);
         exitMsg->SetBCastFlag(plMessage::kPropagateToModifiers);
