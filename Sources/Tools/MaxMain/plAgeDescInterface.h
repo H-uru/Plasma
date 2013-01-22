@@ -84,7 +84,7 @@ public:
     static BOOL CALLBACK ForwardDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     BOOL DlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
-    static void BuildAgeFileList( hsTArray<char *> &ageList );
+    static hsTArray<plFileName> BuildAgeFileList();
 
 protected:
     static int IFindAge(const char* ageName, std::vector<plAgeFile*>& ageFiles);
@@ -101,10 +101,10 @@ protected:
     
     // Save the settings for the last age and load the settings for the currently one
     void IUpdateCurAge();
-    void ISaveCurAge( const char *path, bool checkSeqNum = false );
-    void ILoadAge( const char *path, bool checkSeqNum = false );
+    void ISaveCurAge( const plFileName &path, bool checkSeqNum = false );
+    void ILoadAge( const plFileName &path, bool checkSeqNum = false );
 
-    static bool IGetLocalAgePath(char *path);
+    static plFileName IGetLocalAgePath();
 
     // Fill out the age tree view
     void IFillAgeTree( void );

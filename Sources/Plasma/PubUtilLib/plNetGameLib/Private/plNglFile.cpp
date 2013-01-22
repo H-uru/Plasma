@@ -145,7 +145,7 @@ struct BuildIdRequestTrans : NetFileTrans {
 struct ManifestRequestTrans : NetFileTrans {
     FNetCliFileManifestRequestCallback  m_callback;
     void *                              m_param;
-    wchar_t                               m_group[MAX_PATH];
+    wchar_t                             m_group[MAX_PATH];
     unsigned                            m_buildId;
 
     ARRAY(NetCliFileManifestEntry)      m_manifest;
@@ -154,7 +154,7 @@ struct ManifestRequestTrans : NetFileTrans {
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
         void *                              param,
-        const wchar_t                         group[],
+        const wchar_t                       group[],
         unsigned                            buildId
     );
 
@@ -173,7 +173,7 @@ struct DownloadRequestTrans : NetFileTrans {
     FNetCliFileDownloadRequestCallback  m_callback;
     void *                              m_param;
 
-    wchar_t                               m_filename[MAX_PATH];
+    plFileName                          m_filename;
     hsStream *                          m_writer;
     unsigned                            m_buildId;
     
@@ -182,7 +182,7 @@ struct DownloadRequestTrans : NetFileTrans {
     DownloadRequestTrans (
         FNetCliFileDownloadRequestCallback  callback,
         void *                              param,
-        const wchar_t                         filename[],
+        const plFileName &                  filename,
         hsStream *                          writer,
         unsigned                            buildId
     );
@@ -943,11 +943,9 @@ void ManifestRequestTrans::Post () {
 }
 
 //============================================================================
-void ReadStringFromMsg(const wchar_t* curMsgPtr, wchar_t str[], unsigned maxStrLen, unsigned* length) {
-    StrCopy(str, curMsgPtr, maxStrLen);
-    str[maxStrLen - 1] = L'\0'; // make sure it's terminated
-
-    (*length) = StrLen(str);
+plString ReadStringFromMsg(const wchar_t* curMsgPtr, unsigned* length) {
+    (*length) = wcslen(curMsgPtr);
+    return plString::FromWchar(curMsgPtr, *length);
 }
 
 //============================================================================
@@ -1004,7 +1002,7 @@ bool ManifestRequestTrans::Recv (
         // --------------------------------------------------------------------
         // read in the clientFilename
         unsigned filenameLen;
-        ReadStringFromMsg(curChar, entry.clientName, arrsize(entry.clientName), &filenameLen);
+        entry.clientName = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1016,7 +1014,7 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the downloadFilename
-        ReadStringFromMsg(curChar, entry.downloadName, arrsize(entry.downloadName), &filenameLen);
+        entry.downloadName = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1028,7 +1026,7 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the md5
-        ReadStringFromMsg(curChar, entry.md5, arrsize(entry.md5), &filenameLen);
+        entry.md5 = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1040,7 +1038,7 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
-        ReadStringFromMsg(curChar, entry.md5compressed, arrsize(entry.md5compressed), &filenameLen);
+        entry.md5compressed = ReadStringFromMsg(curChar, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1129,17 +1127,17 @@ bool ManifestRequestTrans::Recv (
 DownloadRequestTrans::DownloadRequestTrans (
     FNetCliFileDownloadRequestCallback  callback,
     void *                              param,
-    const wchar_t                         filename[],
+    const plFileName &                  filename,
     hsStream *                          writer,
     unsigned                            buildId
 ) : NetFileTrans(kDownloadRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
+,   m_filename(filename)
 ,   m_writer(writer)
 ,   m_totalBytesReceived(0)
 ,   m_buildId(buildId)
 {
-    StrCopy(m_filename, filename, arrsize(m_filename));
     // This transaction issues "sub transactions" which must complete
     // before this one even though they were issued after us.
     m_hasSubTrans = true;
@@ -1151,7 +1149,7 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename, arrsize(m_filename));
+    StrCopy(filedownloadReq.filename, m_filename.AsString().ToWchar(), arrsize(filedownloadReq.filename));
     filedownloadReq.messageId = kCli2File_FileDownloadRequest;
     filedownloadReq.transId = m_transId;
     filedownloadReq.messageBytes = sizeof(filedownloadReq);
@@ -1443,7 +1441,7 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                         group[],
+    const wchar_t                       group[],
     unsigned                            buildId /* = 0 */
 ) {
     ManifestRequestTrans * trans = new ManifestRequestTrans(
@@ -1457,7 +1455,7 @@ void NetCliFileManifestRequest (
 
 //============================================================================
 void NetCliFileDownloadRequest (
-    const wchar_t                         filename[],
+    const plFileName &                  filename,
     hsStream *                          writer,
     FNetCliFileDownloadRequestCallback  callback,
     void *                              param,

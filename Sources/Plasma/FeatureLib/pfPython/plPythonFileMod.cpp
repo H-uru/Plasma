@@ -438,12 +438,8 @@ bool plPythonFileMod::ILoadPythonCode()
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
-    char pathandfile[256];
-    sprintf(pathandfile, ".\\python\\%s.py",fPythonFile);
-    wchar_t *wPathandfile = hsStringToWString(pathandfile);
-    bool exists = PathDoesFileExist(wPathandfile);
-    delete [] wPathandfile;
-    if (exists)
+    plFileName pyfile = plFileName::Join(".", "python", plString::Format("%s.py", fPythonFile));
+    if (plFileInfo(pyfile).Exists())
     {
         char fromLoad[256];
         //sprintf(fromLoad,"from %s import *", fPythonFile);
@@ -453,7 +449,7 @@ bool plPythonFileMod::ILoadPythonCode()
         if ( PythonInterface::RunString( fromLoad, fModule) )
         {
             // we've loaded the code into our module
-        // now attach the glue python code to the end
+            // now attach the glue python code to the end
             if ( !PythonInterface::RunString("execfile('.\\\\python\\\\plasma\\\\glue.py')", fModule) )
             {
                 // display any output (NOTE: this would be disabled in production)

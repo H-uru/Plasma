@@ -65,7 +65,7 @@ uint8_t                       plOGGCodec::fDecodeFlags = 0;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plOGGCodec::plOGGCodec( const char *path, plAudioCore::ChannelSelect whichChan ) : fFileHandle( nil )
+plOGGCodec::plOGGCodec( const plFileName &path, plAudioCore::ChannelSelect whichChan ) : fFileHandle( nil )
 {
     fOggFile = nil;
     IOpen( path, whichChan );
@@ -112,17 +112,17 @@ bool plOGGCodec::ReadFromHeader(int numBytes, void *data)
     return false;
 }
 
-void    plOGGCodec::IOpen( const char *path, plAudioCore::ChannelSelect whichChan )
+void    plOGGCodec::IOpen( const plFileName &path, plAudioCore::ChannelSelect whichChan )
 {
-    hsAssert( path != nil, "Invalid path specified in plOGGCodec reader" );
+    hsAssert( path.IsValid(), "Invalid path specified in plOGGCodec reader" );
 
     // plNetClientApp::StaticDebugMsg("Ogg Open %s, t=%f, start", path, hsTimer::GetSeconds());
 
-    strncpy( fFilename, path, sizeof( fFilename ) );
+    fFilename = path;
     fWhichChannel = whichChan;
 
     /// Open the file as a plain binary stream
-    fFileHandle = fopen( path, "rb" );
+    fFileHandle = plFileSystem::Open(path, "rb");
     if( fFileHandle != nil )
     {
         /// Create the OGG data struct

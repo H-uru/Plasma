@@ -279,8 +279,6 @@ void SceneSync::IClearDirtyRecur(plMaxNode *node)
         IClearDirtyRecur((plMaxNode*)node->GetChildNode(i));
 }
 
-#include "../plFile/hsFiles.h"
-
 void SceneSync::IDeletePath(const char *path)
 {
     // Remove any files in the dat directory

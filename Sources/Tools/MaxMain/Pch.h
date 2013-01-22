@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "plgDispatch.h"
 #include "hsFastMath.h"
-#include "plFile/hsFiles.h"
 #include "hsGeometry3.h"
 #include "pnKeyedObject/plKey.h"
 #include "plLoadMask.h"
@@ -71,6 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 #include "hsTemplates.h"
+#include "plFileSystem.h"
 
 // Windows
 #include "hsWindows.h"

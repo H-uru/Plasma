@@ -88,8 +88,8 @@ public:
     static plKeyFinder& Instance();
 
     // These are Stupid search because they just do string searchs on the objects.
-    plKey StupidSearch(const char * age, const char * rm, const char *className, const plString &obName, bool subString=false);
-    plKey StupidSearch(const char * age, const char * rm, uint16_t objType, const plString &obName, bool subString=false);
+    plKey StupidSearch(const plString & age, const plString & rm, const char *className, const plString &obName, bool subString=false);
+    plKey StupidSearch(const plString & age, const plString & rm, uint16_t objType, const plString &obName, bool subString=false);
 
     eErrCodes   GetLastErrorCode() { return fLastError; }
     const char* GetLastErrorString(); // For Console display
@@ -102,11 +102,11 @@ public:
     void GetActivatorNames(std::vector<plString>& names);
     void GetResponderNames(std::vector<plString>& names);
 
-    plKey FindSceneNodeKey(const char* pageOrFullLocName) const;
-    plKey FindSceneNodeKey(const char* ageName, const char* pageName) const;
+    plKey FindSceneNodeKey(const plString& pageOrFullLocName) const;
+    plKey FindSceneNodeKey(const plString& ageName, const plString& pageName) const;
     plKey FindSceneNodeKey(const plLocation& location) const;
 
-    const plLocation& FindLocation(const char* age, const char* page) const;
+    const plLocation& FindLocation(const plString& age, const plString& page) const;
     const plPageInfo* GetLocationInfo(const plLocation& loc) const;
 
 protected:

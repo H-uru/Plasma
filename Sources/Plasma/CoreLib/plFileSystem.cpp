@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
 #include "plFileSystem.h"
 
 #if HS_BUILD_FOR_WIN32
@@ -49,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <limits.h>
 #   include <unistd.h>
 #   include <sys/types.h>
+#   include <dirent.h>
+#   include <fnmatch.h>
 #   include <cstdlib>
 #   include <functional>
 #   include <memory>
@@ -250,6 +253,15 @@ plFileName plFileSystem::GetCWD()
     return cwd;
 }
 
+bool plFileSystem::SetCWD(const plFileName &cwd)
+{
+#if HS_BUILD_FOR_WIN32
+    return SetCurrentDirectoryW(cwd.AsString().ToWchar());
+#else
+    return (chdir(cwd.AsString().c_str()) == 0);
+#endif
+}
+
 FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 {
 #if HS_BUILD_FOR_WIN32
@@ -273,8 +285,11 @@ FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 bool plFileSystem::Unlink(const plFileName &filename)
 {
 #if HS_BUILD_FOR_WIN32
-    return _wunlink(filename.AsString().ToWchar()) == 0;
+    plStringBuffer<wchar_t> wfilename = filename.AsString().ToWchar();
+    _wchmod(wfilename, S_IWRITE);
+    return _wunlink(wfilename) == 0;
 #else
+    chmod(filename.AsString().c_str(), S_IWRITE);
     return unlink(filename.AsString().c_str()) == 0;
 #endif
 }
@@ -282,7 +297,8 @@ bool plFileSystem::Unlink(const plFileName &filename)
 bool plFileSystem::Move(const plFileName &from, const plFileName &to)
 {
 #if HS_BUILD_FOR_WIN32
-    return MoveFileW(from.AsString().ToWchar(), to.AsString().ToWchar());
+    return MoveFileExW(from.AsString().ToWchar(), to.AsString().ToWchar(),
+                       MOVEFILE_REPLACE_EXISTING);
 #else
     if (!Copy(from, to))
         return false;
@@ -333,6 +349,95 @@ bool plFileSystem::CreateDir(const plFileName &dir, bool checkParents)
 #endif
 }
 
+std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char *pattern)
+{
+    std::vector<plFileName> contents;
+
+#if HS_BUILD_FOR_WIN32
+    if (!pattern || !pattern[0])
+        pattern = "*";
+    plFileName searchPattern = plFileName::Join(path, pattern);
+
+    WIN32_FIND_DATAW findData;
+    HANDLE hFind = FindFirstFileW(searchPattern.AsString().ToWchar(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE)
+        return contents;
+
+    do {
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            // Should also handle . and ..
+            continue;
+        }
+
+        contents.push_back(plFileName::Join(path, plString::FromWchar(findData.cFileName)));
+    } while (FindNextFileW(hFind, &findData));
+
+    FindClose(hFind);
+#else
+    DIR *dir = opendir(path.AsString().c_str());
+    if (!dir)
+        return contents;
+
+    struct dirent *de;
+    while (de = readdir(dir)) {
+        if (plFileInfo(de->d_name).IsDirectory()) {
+            // Should also handle . and ..
+            continue;
+        }
+
+        if (pattern && pattern[0] && fnmatch(pattern, de->d_name))
+            contents.push_back(plFileName::Join(path, de->d_name));
+        else if (!pattern || !pattern[0])
+            contents.push_back(plFileName::Join(path, de->d_name));
+    }
+
+    closedir(dir);
+#endif
+
+    return contents;
+}
+
+std::vector<plFileName> plFileSystem::ListSubdirs(const plFileName &path)
+{
+    std::vector<plFileName> contents;
+
+#if HS_BUILD_FOR_WIN32
+    plFileName searchPattern = plFileName::Join(path, "*");
+
+    WIN32_FIND_DATAW findData;
+    HANDLE hFind = FindFirstFileW(searchPattern.AsString().ToWchar(), &findData);
+    if (hFind == INVALID_HANDLE_VALUE)
+        return contents;
+
+    do {
+        if (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+            plFileName name = plString::FromWchar(findData.cFileName);
+            if (name != "." && name != "..")
+                contents.push_back(plFileName::Join(path, name));
+        }
+    } while (FindNextFileW(hFind, &findData));
+
+    FindClose(hFind);
+#else
+    DIR *dir = opendir(path.AsString().c_str());
+    if (!dir)
+        return contents;
+
+    struct dirent *de;
+    while (de = readdir(dir)) {
+        if (plFileInfo(de->d_name).IsDirectory()) {
+            plFileName name = de->d_name;
+            if (name != "." && name != "..")
+                contents.push_back(plFileName::Join(path, name);
+        }
+    }
+
+    closedir(dir);
+#endif
+
+    return contents;
+}
+
 plFileName plFileSystem::GetUserDataPath()
 {
     static plFileName _userData;
@@ -365,4 +470,94 @@ plFileName plFileSystem::GetLogPath()
     static plFileName _logPath = plFileName::Join(GetUserDataPath(), "Log");
     plFileSystem::CreateDir(_logPath);
     return _logPath;
+}
+
+#if !HS_BUILD_FOR_WIN32
+static plFileName _CheckReadlink(const char *link_path)
+{
+    plFileInfo info(link_path);
+    if (info.Exists()) {
+        char *path = new char[info.FileSize()];
+        readlink(link_path, path, info.FileSize());
+        plFileName appPath = plString::FromUtf8(path, info.FileSize());
+        delete [] path;
+        return appPath;
+    }
+
+    return "";
+}
+#endif
+
+plFileName plFileSystem::GetCurrentAppPath()
+{
+    plFileName appPath;
+
+    // Neither OS makes this one simple...
+#if HS_BUILD_FOR_WIN32
+    wchar_t path[MAX_PATH];
+    size_t size = GetModuleFileNameW(nullptr, path, MAX_PATH);
+    if (size >= MAX_PATH) {
+        // Buffer not big enough
+        size_t bigger = MAX_PATH;
+        do {
+            bigger *= 2;
+            wchar_t *path_lg = new wchar_t[bigger];
+            size = GetModuleFileNameW(nullptr, path_lg, bigger);
+            if (size < bigger)
+                appPath = plString::FromWchar(path_lg);
+            delete [] path_lg;
+        } while (!appPath.IsValid());
+    } else {
+        appPath = plString::FromWchar(path);
+    }
+
+    return appPath;
+#else
+    // Look for /proc/self/exe (Linux), /proc/curproc/file (FreeBSD / Mac),
+    // then /proc/self/path/a.out (Solaris).  If none were found, you're SOL
+    appPath = _CheckReadlink("/proc/self/exe");
+    if (appPath.IsValid())
+        return appPath;
+
+    appPath = _CheckReadlink("/proc/curproc/file");
+    if (appPath.IsValid())
+        return appPath;
+
+    appPath = _CheckReadlink("/proc/self/path/a.out");
+    if (appPath.IsValid())
+        return appPath;
+
+    hsAssert(0, "Your OS doesn't make life easy, does it?");
+#endif
+}
+
+plFileName plFileSystem::GetTempFilename(const char *prefix, const plFileName &path)
+{
+#if HS_BUILD_FOR_WIN32
+    // GetTempFileName() never uses more than 3 chars for the prefix
+    wchar_t wprefix[4];
+    for (size_t i=0; i<4; ++i)
+        wprefix[i] = prefix[i];
+    wprefix[3] = 0;
+
+    wchar_t temp[MAX_PATH];
+    if (GetTempFileNameW(path.AsString().ToWchar(), wprefix, 0, temp))
+        return plString::FromWchar(temp);
+
+    return "";
+#else
+    plFileName tmpdir = path;
+    if (!tmpdir.IsValid())
+        tmpdir = "/tmp";
+
+    // "/tmp/prefixXXXXXX"
+    size_t temp_len = tmpdir.GetSize() + strlen(prefix) + 7;
+    char *temp = new char[temp_len + 1];
+    snprintf(temp, temp_len + 1, "%s/%sXXXXXX", tmpdir.AsString().c_str(), prefix);
+    mktemp(temp);
+    plFileName result = temp;
+    delete [] temp;
+
+    return result;
+#endif
 }

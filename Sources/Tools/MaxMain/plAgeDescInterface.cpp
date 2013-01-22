@@ -40,14 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "HeadSpin.h"
-#include "plFile/hsFiles.h"
 #include "hsStream.h"
 #include "hsTemplates.h"
 #include "hsWindows.h"
 
 #include <max.h>
-#include <string>
-#include <vector>
 
 #include "resource.h"
 #pragma hdrstop
@@ -63,8 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #include "plMaxAccelerators.h"
 
-using std::string;
-
 extern HINSTANCE hInstance;
 
 //// Tree Data Wrapper Class //////////////////////////////////////////////////
@@ -72,19 +67,17 @@ extern HINSTANCE hInstance;
 class plAgeFile
 {
 protected:
-    void IGetAgeName(const char* path)
+    void IGetAgeName(const plFileName& path)
     {
-        char name[_MAX_FNAME];
-        _splitpath(path, nil, nil, name, nil);
-        fAgeName = name;
+        fAgeName = path.GetFileNameNoExt();
     }
 
 public:
 #ifdef MAXASS_VAILABLE
     jvUniqueId fAssetID;
 #endif
-    string  fPath;
-    string  fAgeName;
+    plFileName  fPath;
+    plString    fAgeName;
 
     enum Types
     {
@@ -93,17 +86,16 @@ public:
     };
     Types fType;
 
-    plAgeFile(Types type) : fType(type), fPath(nil) { }
-    plAgeFile(Types type, const char *path) : fType(type)
+    plAgeFile(Types type) : fType(type) { }
+    plAgeFile(Types type, const plFileName &path) : fPath(path), fType(type)
     {
-        fPath = path;
         IGetAgeName(path);
     }
 
 #ifdef MAXASS_AVAILABLE
-    plAgeFile(Types type, const char *path, jvUniqueId& id) : fType(type), fAssetID(id)
+    plAgeFile(Types type, const plFileName &path, jvUniqueId& id)
+        : fPath(path), fType(type), fAssetID(id)
     {
-        fPath = path;
         IGetAgeName(path);
     }
 #endif
@@ -716,7 +708,7 @@ void    plAgeDescInterface::IUpdateCurAge( void )
     else
 #endif
         // Load the local age, also check its sequence #s
-        ILoadAge( currAge->fPath.c_str(), true );
+        ILoadAge( currAge->fPath, true );
 }
 
 static const int kDefaultCapacity = 10;
@@ -823,20 +815,19 @@ void plAgeDescInterface::IEnablePageControls(bool enable)
     EnableWindow(GetDlgItem(fhDlg, IDC_ADM_VOLATILE), enable);
 }
 
-bool plAgeDescInterface::IGetLocalAgePath(char *path)
+plFileName plAgeDescInterface::IGetLocalAgePath()
 {
     // Get the path to the description folder
-    const char *plasmaPath = plMaxConfig::GetClientPath();
-    if (!plasmaPath)
-        return false;
+    plFileName plasmaPath = plMaxConfig::GetClientPath();
+    if (!plasmaPath.IsValid())
+        return "";
 
-    strcpy(path, plasmaPath);
-    strcat(path, plAgeDescription::kAgeDescPath);
+    plFileName path = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
     // Make sure the desc folder exists
-    CreateDirectory(path, NULL);
+    plFileSystem::CreateDir(path);
 
-    return true;
+    return path;
 }
 
 int plAgeDescInterface::IFindAge(const char* ageName, std::vector<plAgeFile*>& ageFiles)
@@ -852,19 +843,15 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
 {
     IClearAgeFiles(ageFiles);
 
-    char agePath[MAX_PATH];
-
     // Make list of "local" ages. This might contain copies of those in AssetMan, so we make the
     // list first and take out the ones that are in AssetMan
-    char localPath[MAX_PATH];
-    if (IGetLocalAgePath(localPath))
+    plFileName localPath = IGetLocalAgePath();
+    if (localPath.IsValid())
     {
-        hsFolderIterator ageFolder(localPath);
-        while (ageFolder.NextFileSuffix(".age"))
+        std::vector<plFileName> files = plFileSystem::ListDir(localPath, "*.age");
+        for (auto iter = files.begin(); iter != files.end(); ++iter)
         {
-            ageFolder.GetPathAndName(agePath);
-
-            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, agePath);
+            plAgeFile* age = new plAgeFile(plAgeFile::kLocalFile, *iter);
             ageFiles.push_back(age);
         }
     }
@@ -882,6 +869,7 @@ void plAgeDescInterface::IGetAgeFiles(std::vector<plAgeFile*>& ageFiles)
         {
             if( doneAssets.Find( (*assets)[ i ] ) == doneAssets.kMissingIndex )
             {
+                char agePath[MAX_PATH];
                 if (assetMan->GetLatestVersionFile((*assets)[i], agePath, sizeof(agePath)))
                 {
                     plAgeFile* age = new plAgeFile(plAgeFile::kAssetFile, agePath, (*assets)[i]);
@@ -912,16 +900,19 @@ void plAgeDescInterface::IClearAgeFiles(std::vector<plAgeFile*>& ageFiles)
     ageFiles.clear();
 }
 
-void plAgeDescInterface::BuildAgeFileList( hsTArray<char *> &ageList )
+hsTArray<plFileName> plAgeDescInterface::BuildAgeFileList()
 {
     std::vector<plAgeFile*> tempAgeFiles;
     IGetAgeFiles(tempAgeFiles);
 
+    hsTArray<plFileName> ageList;
     for (int i = 0; i < tempAgeFiles.size(); i++)
     {
-        ageList.Push(hsStrcpy(tempAgeFiles[i]->fPath.c_str()));
+        ageList.Push(tempAgeFiles[i]->fPath);
         delete tempAgeFiles[ i ];
     }
+
+    return ageList;
 }
 
 //// IFillAgeTree /////////////////////////////////////////////////////////////
@@ -960,22 +951,25 @@ void plAgeDescInterface::IFillAgeTree( void )
 
 BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static char *name = nil;
+    static plString *name = nil;
 
     switch (msg)
     {
     case WM_INITDIALOG:
-        name = (char*)lParam;
-        SetWindowText(hDlg, name);
+        name = reinterpret_cast<plString *>(lParam);
+        SetWindowText(hDlg, name->c_str());
         return TRUE;
 
     case WM_COMMAND:
         if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDOK)
         {
-            if (GetDlgItemText(hDlg, IDC_AGE_NAME, name, _MAX_FNAME) > 0)
+            char buffer[_MAX_FNAME];
+            if (GetDlgItemText(hDlg, IDC_AGE_NAME, buffer, _MAX_FNAME) > 0) {
                 EndDialog(hDlg, 1);
-            else
+                *name = buffer;
+            } else {
                 EndDialog(hDlg, 0);
+            }
             return TRUE;
         }
         else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDCANCEL)
@@ -1008,7 +1002,7 @@ BOOL CALLBACK NewSeqNumberProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam
     case WM_INITDIALOG:
         SetDlgItemText( hDlg, IDC_INFOMSG, msg1 );
         SetDlgItemText( hDlg, IDC_ADMMSG, msg2 );
-        sprintf( msg3, "Age: %s", (char *)lParam );
+        sprintf( msg3, "Age: %s", (const char *)lParam );
         SetDlgItemText( hDlg, IDC_AGEMSG, msg3 );
         return TRUE;
 
@@ -1034,29 +1028,28 @@ void plAgeDescInterface::INewAge()
         makeAsset = false;
 #endif
 
-    char    newAssetFilename[ MAX_PATH ];
+    plFileName newAssetFilename;
 #ifdef MAXASS_AVAILABLE
     if (!fAssetManIface)
         makeAsset = false;
 #endif
 
-    if( !IGetLocalAgePath( newAssetFilename ) )
+    newAssetFilename = IGetLocalAgePath();
+    if (!newAssetFilename.IsValid())
         return;
 
-    char name[_MAX_FNAME];
-    strcpy(name, "New Age Name");
+    plString name = "New Age Name";
 
     // Get the name of the new age from the user
     int ret = DialogBoxParam(hInstance,
                MAKEINTRESOURCE(IDD_AGE_NAME),
                GetCOREInterface()->GetMAXHWnd(),
                NewAgeDlgProc,
-               (LPARAM)name);
+               (LPARAM)&name);
     if (ret != 1)
         return;
 
-    strcat(newAssetFilename, name);
-    strcat(newAssetFilename, ".age");
+    newAssetFilename = plFileName::Join(newAssetFilename, name + ".age");
 
 #ifdef MAXASS_AVAILABLE
     if( !makeAsset )
@@ -1066,7 +1059,7 @@ void plAgeDescInterface::INewAge()
     fForceSeqNumLocal = false;
 
     if( makeAsset )
-        (*fAssetManIface)->AddNewAsset(newAssetFilename);
+        (*fAssetManIface)->AddNewAsset(newAssetFilename.AsString().c_str());
 #endif
 
     // Refresh the tree now
@@ -1075,15 +1068,14 @@ void plAgeDescInterface::INewAge()
 
 void plAgeDescInterface::INewPage()
 {
-    char name[256];
-    strcpy(name, "New Page Name");
+    plString name = "New Page Name";
 
     // Get the name of the new age from the user
     int ret = DialogBoxParam(hInstance,
                             MAKEINTRESOURCE(IDD_AGE_NAME),
                             GetCOREInterface()->GetMAXHWnd(),
                             NewAgeDlgProc,
-                            (LPARAM)name);
+                            (LPARAM)&name);
     if (ret != 1)
         return;
 
@@ -1095,12 +1087,12 @@ void plAgeDescInterface::INewPage()
     {
         char pageName[256];
         ListBox_GetText(hPages, i, pageName);
-        if (!strcmp(pageName, name))
+        if (!name.CompareI(pageName))
             return;
     }
 
     // Add the new page and select it
-    int idx = ListBox_AddString(hPages, name);
+    int idx = ListBox_AddString(hPages, name.c_str());
 
     // Choose a new sequence suffix for it
     plAgePage *newPage = new plAgePage( name, IGetFreePageSeqSuffix( hPages ), 0 );
@@ -1131,7 +1123,7 @@ uint32_t  plAgeDescInterface::IGetFreePageSeqSuffix( HWND pageCombo )
     return searchSeq;
 }
 
-void plAgeDescInterface::ISaveCurAge( const char *path, bool checkSeqNum )
+void plAgeDescInterface::ISaveCurAge( const plFileName &path, bool checkSeqNum )
 {
     hsUNIXStream s;
     if( !s.Open( path, "wt" ) )
@@ -1197,7 +1189,7 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
         // Ask about the sequence #
         int ret = DialogBoxParam( hInstance, MAKEINTRESOURCE( IDD_AGE_SEQNUM ),
                                     GetCOREInterface()->GetMAXHWnd(),
-                                        NewSeqNumberProc, (LPARAM)aged.GetAgeName() );
+                                    NewSeqNumberProc, (LPARAM)aged.GetAgeName().c_str() );
         if( ret == IDYES )
         {
             aged.SetSequencePrefix( IGetNextFreeSequencePrefix( false ) );
@@ -1211,7 +1203,7 @@ void    plAgeDescInterface::ICheckSequenceNumber( plAgeDescription &aged )
     }
 }
 
-void plAgeDescInterface::ILoadAge( const char *path, bool checkSeqNum )
+void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
 {
     ISetControlDefaults();
     
@@ -1221,15 +1213,14 @@ void plAgeDescInterface::ILoadAge( const char *path, bool checkSeqNum )
     plAgeDescription aged( path );
 
     // Get the name of the age
-    char ageName[_MAX_FNAME];
-    _splitpath( path, nil, nil, ageName, nil );
+    plString ageName = path.GetFileNameNoExt();
 
     // Check the sequence prefix #
     if( checkSeqNum )
         ICheckSequenceNumber( aged );
 
     char str[ _MAX_FNAME + 30 ];
-    sprintf( str, "Description for %s", ageName );
+    sprintf( str, "Description for %s", ageName.c_str() );
     SetDlgItemText( fhDlg, IDC_AGEDESC, str );
 
     // Set up the Dlgs
@@ -1288,7 +1279,7 @@ void plAgeDescInterface::ILoadAge( const char *path, bool checkSeqNum )
     HWND hPage = GetDlgItem(fhDlg, IDC_PAGE_LIST);
     while( ( page = aged.GetNextPage() ) != nil )
     {
-        int idx = ListBox_AddString( hPage, page->GetName() );
+        int idx = ListBox_AddString( hPage, page->GetName().c_str() );
         ListBox_SetItemData( hPage, idx, (LPARAM)new plAgePage( *page ) );
     }
 }
@@ -1311,7 +1302,7 @@ uint32_t  plAgeDescInterface::IGetNextFreeSequencePrefix( bool getReservedPrefix
     for( i = 0; i < fAgeFiles.size(); i++ )
     {
         hsUNIXStream stream;
-        if( stream.Open( fAgeFiles[ i ]->fPath.c_str(), "rt" ) )
+        if( stream.Open( fAgeFiles[ i ]->fPath, "rt" ) )
         {
             ages[ i ].Read( &stream );
             stream.Close();

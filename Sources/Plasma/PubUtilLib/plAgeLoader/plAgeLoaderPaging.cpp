@@ -301,11 +301,11 @@ bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const char *ageName 
         return true;
 
     // check exclude list
-    const char* pageName = page->GetName();
+    plString pageName = page->GetName();
     int     i;
     for( i = 0; i < sExcludeList.GetCount(); i++ )
     {
-        if( stricmp( pageName, sExcludeList[ i ].fPageName ) == 0 )
+        if( pageName.CompareI( sExcludeList[ i ].fPageName ) == 0 )
         {
             if( ageName == nil || sExcludeList[ i ].fAgeName == nil ||
                 stricmp( ageName, sExcludeList[ i ].fAgeName ) == 0 )

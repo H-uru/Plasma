@@ -53,17 +53,17 @@ class hsResMgr;
 class plLayerMovie : public plLayerAnimation
 {
 protected:
-    char*                       fMovieName;
+    plFileName                  fMovieName;
 
 //  plAnimTimeConvert           fTimeConvert;
 
-    int32_t                       fCurrentFrame;
-    float                         fLength;
-    uint32_t                      fWidth, fHeight;
+    int32_t                     fCurrentFrame;
+    float                       fLength;
+    uint32_t                    fWidth, fHeight;
 
-    virtual int32_t               ISecsToFrame(float secs) = 0;
+    virtual int32_t             ISecsToFrame(float secs) = 0;
 
-    bool                        IGetFault() const { return !(fMovieName &&  *fMovieName); }
+    bool                        IGetFault() const { return !fMovieName.IsValid(); }
     bool                        ISetFault(const char* errStr);
     bool                        ICheckBitmap();
     bool                        IMovieIsIdle(); // will call IRelease();
@@ -82,15 +82,15 @@ public:
     CLASSNAME_REGISTER( plLayerMovie );
     GETINTERFACE_ANY( plLayerMovie, plLayerAnimation );
 
-    virtual uint32_t          Eval(double secs, uint32_t frame, uint32_t ignore);
+    virtual uint32_t        Eval(double secs, uint32_t frame, uint32_t ignore);
 
     virtual void            Read(hsStream* s, hsResMgr* mgr);
     virtual void            Write(hsStream* s, hsResMgr* mgr);
 
     bool                    IsStopped() { return fTimeConvert.IsStopped(); }
 
-    void                    SetMovieName(const char* n);
-    const char*             GetMovieName() const { return fMovieName; }
+    void                    SetMovieName(const plFileName& n) { fMovieName = n; }
+    const plFileName&       GetMovieName() const { return fMovieName; }
 
     virtual bool            MsgReceive(plMessage* msg);
 

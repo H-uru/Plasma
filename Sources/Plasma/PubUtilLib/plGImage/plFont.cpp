@@ -1063,7 +1063,7 @@ uint8_t   *plFont::IGetFreeCharData( uint32_t &newOffset )
 //// LoadFromP2FFile //////////////////////////////////////////////////////////
 //  Handy quick wrapper 
 
-bool    plFont::LoadFromP2FFile( const char *path )
+bool    plFont::LoadFromP2FFile( const plFileName &path )
 {
     hsUNIXStream    stream;
     if( stream.Open( path, "rb" ) )

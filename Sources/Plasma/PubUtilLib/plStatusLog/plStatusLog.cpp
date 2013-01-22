@@ -60,9 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
-#include "plFile/plFileUtils.h"
 #include "plStatusLog.h"
-#include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plProduct.h"
 
@@ -220,7 +218,7 @@ plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfN
         return nil;
 
     // Didn't find one, so create one! (make it a nice default one :)
-    log = CreateStatusLog( kDefaultNumLines, filename, plStatusLog::kFilledBackground | 
+    log = CreateStatusLog( kDefaultNumLines, filename, plStatusLog::kFilledBackground |
                                                        plStatusLog::kDeleteForMe );
 
     return log;
@@ -253,29 +251,12 @@ bool plStatusLogMgr::DumpLogs( const plFileName &newFolderName )
         newPath = newFolderName;
     plFileSystem::CreateDir(newPath, true);
 
-#if HS_BUILD_FOR_WIN32
-    hsWFolderIterator folderIterator;
-    if (basePath.IsValid())
-        folderIterator.SetPath(basePath.AsString().ToWchar());
-    else
-        folderIterator.SetPath(L".");
-
-    while (folderIterator.NextFile())
-    {
-        if (folderIterator.IsDirectory())
-            continue;
-
-        plFileName baseFilename = plString::FromWchar(folderIterator.GetFileName());
-        plFileName source;
-        if (basePath.IsValid())
-            source = plFileName::Join(basePath, baseFilename);
-        else
-            source = baseFilename;
-
-        plFileName destination = plFileName::Join(newPath, baseFilename);
-        retVal = (plFileSystem::Copy(source, destination) != 0);
+    std::vector<plFileName> files = plFileSystem::ListDir(basePath);
+    for (auto iter = files.begin(); iter != files.end(); ++iter) {
+        plFileName destination = plFileName::Join(newPath, iter->GetFileName());
+        retVal = plFileSystem::Copy(*iter, destination);
     }
-#endif
+
     return retVal;
 }
 
@@ -753,4 +734,3 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     return ret;
 }
-

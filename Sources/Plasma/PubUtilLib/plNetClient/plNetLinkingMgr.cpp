@@ -63,7 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetMessage/plNetMessage.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
-#include "plFile/hsFiles.h"
 
 
 /*****************************************************************************
@@ -305,15 +304,14 @@ void plNetLinkingMgr::SetEnabled( bool b )
 ////////////////////////////////////////////////////////////////////
 
 // static
-std::string plNetLinkingMgr::GetProperAgeName( const char * ageName )
+plString plNetLinkingMgr::GetProperAgeName( const plString & ageName )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-    hsFolderIterator it("dat" PATH_SEPARATOR_STR "*.age", true);
-    while ( it.NextFile() )
+    std::vector<plFileName> files = plFileSystem::ListDir("dat", "*.age");
+    for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        std::string work = it.GetFileName();
-        work.erase( work.find( ".age" ) );
-        if ( stricmp( ageName, work.c_str() )==0 )
+        plString work = iter->GetFileNameNoExt();
+        if (ageName.CompareI(work) == 0)
             return work;
     }
     return ageName;

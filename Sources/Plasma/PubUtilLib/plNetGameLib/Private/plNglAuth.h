@@ -135,10 +135,10 @@ typedef void (*FNetCliAuthLoginRequestCallback)(
     unsigned                    playerCount
 );
 void NetCliAuthLoginRequest (
-    const wchar_t                     accountName[],  // nil --> reuse previous acct name
+    const wchar_t                   accountName[],  // nil --> reuse previous acct name
     const ShaDigest *               accountNamePassHash,  // nil --> reuse previous acct pass
-    const wchar_t                     authToken[],  // nil --> reuse previous auth token
-    const wchar_t                     os[],  // nil --> reuse previous os
+    const wchar_t                   authToken[],  // nil --> reuse previous auth token
+    const wchar_t                   os[],  // nil --> reuse previous os
     FNetCliAuthLoginRequestCallback callback,
     void *                          param
 );
@@ -368,13 +368,13 @@ void NetCliAuthFileListRequest (
 // File Download
 //============================================================================
 typedef void (*FNetCliAuthFileRequestCallback)(
-    ENetError       result,
-    void *          param,
-    const wchar_t   filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 );
 void NetCliAuthFileRequest (
-    const wchar_t                   filename[],
+    const plFileName &              filename,
     hsStream *                      writer,
     FNetCliAuthFileRequestCallback  callback,
     void *                          param

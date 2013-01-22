@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plUoid.h"
+#include "plFileSystem.h"
 #include <vector>
 #include <set>
 
@@ -63,8 +64,8 @@ protected:
 
     bool fOptimized;        // True after optimization if the page was already optimized
 
-    const char* fPagePath;          // Path to our page
-    char fTempPagePath[512];        // Path to the temp output page
+    plFileName fPagePath;           // Path to our page
+    plFileName fTempPagePath;       // Path to the temp output page
     plLocation fLoc;                // Location of our page
     plRegistryPageNode* fPageNode;  // PageNode for our page
 
@@ -78,7 +79,7 @@ protected:
     void IRewritePage();
 
 public:
-    plPageOptimizer(const char* pagePath);
+    plPageOptimizer(const plFileName& pagePath);
 
     void Optimize();
 };

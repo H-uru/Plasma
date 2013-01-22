@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "plFileSystem.h"
 
 #include <max.h>
 #pragma hdrstop
@@ -49,53 +50,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxCFGFile.h"
 #include "plFile/plBrowseFolder.h"
 
-const char *plMaxConfig::GetPluginIni()
+plFileName plMaxConfig::GetPluginIni()
 {
     // Get the plugin CFG dir
-    static char plugDir[MAX_PATH];
-    strcpy(plugDir, GetCOREInterface()->GetDir(APP_PLUGCFG_DIR));
-    strcat(plugDir, "\\PlasmaMAX2.ini");
-
-    return plugDir;
+    return plFileName::Join(GetCOREInterface()->GetDir(APP_PLUGCFG_DIR), "PlasmaMAX2.ini");
 }
 
-const char *plMaxConfig::GetClientPath(bool getNew, bool quiet)
+plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
 {
-    static char plasmaPath[MAX_PATH];
-    plasmaPath[0] = '\0';
-    
     // Get the plugin CFG dir
-    const char *plugDir = GetPluginIni();
+    plFileName plugDir = GetPluginIni();
 
     // Get the saved path
-    uint32_t len = GetPrivateProfileString("SceneViewer", "Directory", "", plasmaPath, MAX_PATH, plugDir);
+    wchar_t buffer[MAX_PATH];
+    uint32_t len = GetPrivateProfileStringW(L"SceneViewer", L"Directory", L"", buffer, MAX_PATH,
+                                            plugDir.AsString().ToWchar());
+    plFileName plasmaPath = plString::FromWchar(buffer);
 
     // If we didn't find a path, or we want a new one, ask the user for one
     if ((len == 0 || getNew) && !quiet)
     {
         // If the user selects one, save it
-        if (plBrowseFolder::GetFolder(plasmaPath, plasmaPath, "Specify your client folder"))
-            WritePrivateProfileString("SceneViewer", "Directory", plasmaPath, plugDir);
+        plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Specify your client folder");
+        if (plasmaPath.IsValid())
+            WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.AsString().ToWchar(),
+                                       plugDir.AsString().ToWchar());
     }
 
     // Return the path if we got one
-    if (plasmaPath[0] != '\0')
-    {
-        // Make sure the path ends with a slash
-        char lastChar = plasmaPath[strlen(plasmaPath)-1];
-        if (lastChar != '/' && lastChar != '\\')
-            strcat(plasmaPath, "\\");
-        
-        return plasmaPath;
-    }
-
-    return nil;
+    return plasmaPath;
 }
 
-void plMaxConfig::SetClientPath(const char *path)
+void plMaxConfig::SetClientPath(const plFileName &path)
 {
-    const char *plugDir = GetPluginIni();
-    WritePrivateProfileString("SceneViewer", "Directory", path, plugDir);
+    plFileName plugDir = GetPluginIni();
+    WritePrivateProfileStringW(L"SceneViewer", L"Directory", path.AsString().ToWchar(),
+                               plugDir.AsString().ToWchar());
 }
 
 bool plMaxConfig::AssetManInterfaceDisabled()
@@ -105,13 +95,14 @@ bool plMaxConfig::AssetManInterfaceDisabled()
 
     if (!inited)
     {
-        char configstr[MAX_PATH];
+        wchar_t configstr[MAX_PATH];
         configstr[0] = '\0';
-        
-        const char *plugDir = GetPluginIni();
-        uint32_t len = GetPrivateProfileString("AssetMan", "Disable", "", configstr, MAX_PATH, plugDir);
 
-        if (strcmp(configstr, "1") == 0 || stricmp(configstr, "true") == 0)
+        plFileName plugDir = GetPluginIni();
+        uint32_t len = GetPrivateProfileStringW(L"AssetMan", L"Disable", L"", configstr, MAX_PATH,
+                                                plugDir.AsString().ToWchar());
+
+        if (wcscmp(configstr, L"1") == 0 || wcsicmp(configstr, L"true") == 0)
             disabled = true;
         else
             disabled = false;

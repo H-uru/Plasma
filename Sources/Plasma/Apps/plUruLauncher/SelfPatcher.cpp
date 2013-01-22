@@ -77,7 +77,7 @@ static bool         s_downloadComplete;
 static long         s_numFiles;
 static ENetError    s_patchResult;
 static bool         s_updated;
-static wchar_t        s_newPatcherFile[MAX_PATH];
+static plFileName   s_newPatcherFile;
 
 
 /*****************************************************************************
@@ -106,10 +106,10 @@ static void NetErrorHandler (ENetProtocol protocol, ENetError error) {
 
 //============================================================================
 static void DownloadCallback (
-    ENetError       result,
-    void *          param,
-    const wchar_t     filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 ) {
     if(IS_NET_ERROR(result)) {
         switch (result) {
@@ -140,14 +140,12 @@ static void DownloadCallback (
 }
 
 //============================================================================
-static bool MD5Check (const char filename[], const wchar_t md5[]) {
+static bool MD5Check (const plFileName &filename, const char *md5) {
     // Do md5 check
-    char md5copy[MAX_PATH];
     plMD5Checksum existingMD5(filename);
     plMD5Checksum latestMD5;
 
-    StrToAnsi(md5copy, md5, arrsize(md5copy));
-    latestMD5.SetFromHexString(md5copy);
+    latestMD5.SetFromHexString(md5);
     return (existingMD5 == latestMD5);
 }
 
@@ -155,7 +153,7 @@ static bool MD5Check (const char filename[], const wchar_t md5[]) {
 static void ManifestCallback (
     ENetError                       result,
     void *                          param,
-    const wchar_t                     group[],
+    const wchar_t                   group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 ) {
@@ -183,24 +181,19 @@ static void ManifestCallback (
     }
 #endif
 
-    char ansi[MAX_PATH];
-
     // MD5 check current patcher against value in manifest
     ASSERT(entryCount == 1);
-    wchar_t curPatcherFile[MAX_PATH];
-    PathGetProgramName(curPatcherFile, arrsize(curPatcherFile));
-    StrToAnsi(ansi, curPatcherFile, arrsize(ansi));
-    if (!MD5Check(ansi, manifest[0].md5)) {
+    plFileName curPatcherFile = plFileSystem::GetCurrentAppPath();
+    if (!MD5Check(curPatcherFile, manifest[0].md5.c_str())) {
 //      MessageBox(GetTopWindow(nil), "MD5 failed", "Msg", MB_OK);
         SelfPatcherStream::totalBytes += manifest[0].zipSize;
 
         AtomicAdd(&s_numFiles, 1);
         SetText("Downloading new patcher...");
 
-        StrToAnsi(ansi, s_newPatcherFile, arrsize(ansi));
         SelfPatcherStream * stream = new SelfPatcherStream;
-        if (!stream->Open(ansi, "wb"))
-            ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", ansi, errno);
+        if (!stream->Open(s_newPatcherFile, "wb"))
+            ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", s_newPatcherFile.AsString().c_str(), errno);
 
         NetCliFileDownloadRequest(manifest[0].downloadName, stream, DownloadCallback, nil);
     }
@@ -213,7 +206,7 @@ static void ManifestCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar_t     addr[]
+    const wchar_t   addr[]
 ) {
     NetCliGateKeeperDisconnect();
 
@@ -230,9 +223,9 @@ static void FileSrvIpAddressCallback (
     NetCliFileStartConnect(&caddr, 1, true);
     delete[] caddr;
 
-    PathGetProgramDirectory(s_newPatcherFile, arrsize(s_newPatcherFile));
-    GetTempFileNameW(s_newPatcherFile, kPatcherExeFilename, 0, s_newPatcherFile);
-    plFileUtils::RemoveFile(s_newPatcherFile);
+    s_newPatcherFile = plFileSystem::GetCurrentAppPath().StripFileName();
+    s_newPatcherFile = plFileSystem::GetTempFilename(kPatcherExeFilename.AsString().c_str(), s_newPatcherFile);
+    plFileSystem::Unlink(s_newPatcherFile);
 
     NetCliFileManifestRequest(ManifestCallback, nil, s_manifest);
 }
@@ -279,7 +272,7 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
         si.cb = sizeof(si);
 
         wchar_t cmdline[MAX_PATH];
-        StrPrintf(cmdline, arrsize(cmdline), L"%s %s", s_newPatcherFile, info->cmdLine);
+        StrPrintf(cmdline, arrsize(cmdline), L"%s %s", s_newPatcherFile.AsString().ToWchar(), info->cmdLine);
 
         // we have only successfully patched if we actually launch the new version of the patcher
         patched = CreateProcessW(

@@ -57,9 +57,9 @@ class hsStream;
 class plAgePage
 {
     protected:
-        char    *fName;
-        uint32_t  fSeqSuffix;
-        uint8_t    fFlags;
+        plString    fName;
+        uint32_t    fSeqSuffix;
+        uint8_t     fFlags;
 
     public:
 
@@ -73,21 +73,20 @@ class plAgePage
             kIsVolatile         = 0x08,
         };
 
-        plAgePage( const char *name, uint32_t seqSuffix, uint8_t flags );
-        plAgePage( char *stringFrom );
+        plAgePage( const plString &name, uint32_t seqSuffix, uint8_t flags );
+        plAgePage( const plString &stringFrom );
         plAgePage( const plAgePage &src );
         plAgePage();
-        ~plAgePage();
 
-        const char  *GetName( void ) const { return fName; }
-        uint32_t      GetSeqSuffix( void ) const { return fSeqSuffix; }
-        uint8_t        GetFlags( void ) const { return fFlags; }
+        plString    GetName( void ) const { return fName; }
+        uint32_t    GetSeqSuffix( void ) const { return fSeqSuffix; }
+        uint8_t     GetFlags( void ) const { return fFlags; }
 
         void        SetSeqSuffix( uint32_t s ) { fSeqSuffix = s; }
         void        SetFlags(uint8_t f, bool on=true);
 
-        bool        SetFromString( const char *string );
-        char        *GetAsString( void ) const;
+        bool        SetFromString( const plString &string );
+        plString    GetAsString( void ) const;
 
         plAgePage &operator=( const plAgePage &src );
 };
@@ -98,16 +97,16 @@ class plAgeDescription : public plInitSectionTokenReader
 {
 private:
 
-    char    *fName;
+    plString    fName;
 
-    int32_t               fPageIterator;
+    int32_t     fPageIterator;
     hsTArray<plAgePage> fPages;
 
     plUnifiedTime fStart;
 
     float fDayLength;
     short fMaxCapacity;
-    short   fLingerTime;        // seconds game instance should linger after last player leaves. -1 means never exit.
+    short fLingerTime;        // seconds game instance should linger after last player leaves. -1 means never exit.
 
     int32_t   fSeqPrefix;
     uint32_t  fReleaseVersion;    // 0 for pre-release, 1+ for actual released ages
@@ -124,7 +123,7 @@ public:
     static char kAgeDescPath[];
 
     plAgeDescription();
-    plAgeDescription( const char *fileNameToReadFrom );
+    plAgeDescription( const plFileName &fileNameToReadFrom );
     plAgeDescription( const plAgeDescription &src )
     {
         IInit();
@@ -132,28 +131,28 @@ public:
     }
     ~plAgeDescription();
 
-    bool ReadFromFile( const char *fileNameToReadFrom ) ;
+    bool ReadFromFile( const plFileName &fileNameToReadFrom );
     void Read(hsStream* stream);
     void Write(hsStream* stream) const;
 
     // Overload for plInitSectionTokenReader
     virtual const char  *GetSectionName( void ) const;
 
-    const char  *GetAgeName( void ) const { return fName; }
-    void        SetAgeNameFromPath( const char *path );
-    void        SetAgeName(const char* ageName) { delete [] fName; fName=hsStrcpy(ageName); }
+    plString    GetAgeName( void ) const { return fName; }
+    void        SetAgeNameFromPath( const plFileName &path );
+    void        SetAgeName(const plString& ageName) { fName = ageName; }
 
     // Page list
     void    ClearPageList();
-    void    RemovePage( const char *page );
-    void    AppendPage( const char *name, int seqSuffix = -1, uint8_t flags = 0 );
+    void    RemovePage( const plString &page );
+    void    AppendPage( const plString &name, int seqSuffix = -1, uint8_t flags = 0 );
 
     void        SeekFirstPage( void );
     plAgePage   *GetNextPage( void );
     int         GetNumPages() const { return fPages.GetCount(); }
-    plAgePage   *FindPage( const char *name ) const;
+    plAgePage   *FindPage( const plString &name ) const;
     bool FindLocation(const plLocation& loc) const;
-    plLocation  CalcPageLocation( const char *page ) const;
+    plLocation  CalcPageLocation( const plString &page ) const;
 
     // Getters
     short GetStartMonth() const { return fStart.GetMonth(); }

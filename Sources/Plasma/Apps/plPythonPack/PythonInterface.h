@@ -44,14 +44,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string>
 
+class plFileName;
+
 namespace PythonInterface
 {
-    void initPython(std::string rootDir);
+    void initPython(const plFileName& rootDir);
     void finiPython();
     // So the Python packer can add extra paths
-    void addPythonPath(std::string dir);
+    void addPythonPath(const plFileName& dir);
 
-    PyObject* CompileString(const char *command, const char* filename);
+    PyObject* CompileString(const char *command, const plFileName& filename);
     bool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
     int getOutputAndReset(char** line=nil);
     PyObject* CreateModule(const char* module);

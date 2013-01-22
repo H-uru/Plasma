@@ -45,10 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "eval.h"
 #include "marshal.h"
 #include "cStringIO.h"
+#include "plFileSystem.h"
 
 static PyObject* stdFile;   // python object of the stdout and err file
 
-void PythonInterface::initPython(std::string rootDir)
+void PythonInterface::initPython(const plFileName& rootDir)
 {
     // if haven't been initialized then do it
     if ( Py_IsInitialized() == 0 )
@@ -77,27 +78,27 @@ void PythonInterface::initPython(std::string rootDir)
             PyObject* sys_dict = PyModule_GetDict(sysmod);
             if (stdFile != nil)
             {
-                PyDict_SetItemString(sys_dict,"stdout", stdFile);
-                PyDict_SetItemString(sys_dict,"stderr", stdFile);
+                PyDict_SetItemString(sys_dict, "stdout", stdFile);
+                PyDict_SetItemString(sys_dict, "stderr", stdFile);
             }
             // NOTE: we will reset the path to not include paths
             // ...that Python may have found in the registery
             PyObject* path_list = PyList_New(0);
             printf("Setting up include dirs:\n");
-            printf("%s\n",rootDir.c_str());
-            PyObject* more_path = PyString_FromString(rootDir.c_str());
+            printf("%s\n", rootDir.AsString().c_str());
+            PyObject* more_path = PyString_FromString(rootDir.AsString().c_str());
             PyList_Append(path_list, more_path);
             // make sure that our plasma libraries are gotten before the system ones
-            std::string temp = rootDir + "plasma";
-            printf("%s\n",temp.c_str());
-            PyObject* more_path3 = PyString_FromString(temp.c_str());
+            plFileName temp = plFileName::Join(rootDir, "plasma");
+            printf("%s\n", temp.AsString().c_str());
+            PyObject* more_path3 = PyString_FromString(temp.AsString().c_str());
             PyList_Append(path_list, more_path3);
-            temp = rootDir + "system";
-            printf("%s\n\n",temp.c_str());
+            temp = plFileName::Join(rootDir, "system");
+            printf("%s\n\n", temp.AsString().c_str());
             PyObject* more_path2 = PyString_FromString("system");
             PyList_Append(path_list, more_path2);
             // set the path to be this one
-            PyDict_SetItemString(sys_dict,"path",path_list);
+            PyDict_SetItemString(sys_dict, "path", path_list);
 
 
             Py_DECREF(sysmod);
@@ -106,7 +107,7 @@ void PythonInterface::initPython(std::string rootDir)
 //  initialized++;
 }
 
-void PythonInterface::addPythonPath(std::string path)
+void PythonInterface::addPythonPath(const plFileName& path)
 {
     PyObject* sysmod = PyImport_ImportModule("sys");
     if (sysmod != NULL)
@@ -114,8 +115,8 @@ void PythonInterface::addPythonPath(std::string path)
         PyObject* sys_dict = PyModule_GetDict(sysmod);
         PyObject* path_list = PyDict_GetItemString(sys_dict, "path");
 
-        printf("Adding path %s\n", path.c_str());
-        PyObject* more_path = PyString_FromString(path.c_str());
+        printf("Adding path %s\n", path.AsString().c_str());
+        PyObject* more_path = PyString_FromString(path.AsString().c_str());
         PyList_Append(path_list, more_path);
 
         Py_DECREF(sysmod);
@@ -138,9 +139,9 @@ void PythonInterface::finiPython()
 //
 //  PURPOSE    : run a python string in a specific module name
 //
-PyObject* PythonInterface::CompileString(const char *command, const char* filename)
+PyObject* PythonInterface::CompileString(const char *command, const plFileName& filename)
 {
-    PyObject* pycode = Py_CompileString(command, filename, Py_file_input);
+    PyObject* pycode = Py_CompileString(command, filename.AsString().c_str(), Py_file_input);
     return pycode;
 }
 

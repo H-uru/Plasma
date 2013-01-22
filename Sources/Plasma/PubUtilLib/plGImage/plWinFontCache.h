@@ -90,10 +90,9 @@ class plWinFontCache
         class plCustFont
         {
             public:
-                char    *fFilename;
+                plFileName fFilename;
 
-                plCustFont( const char *c ) { fFilename = hsStrcpy( c ); }
-                ~plCustFont() { delete [] fFilename; }
+                plCustFont(const plFileName &c) { fFilename = c; }
         };
 
         bool    fInShutdown;

@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h"
+#include "plFileSystem.h"
 
 //
 // Gets a directory using the "Browse for Folder" dialog.
@@ -63,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBrowseFolder
 {
 public:
-    static bool GetFolder(char *path, const char *startPath = NULL, const char *title = NULL, HWND hwndOwner = NULL);
+    static plFileName GetFolder(const plFileName &startPath = "", const plString &title = "", HWND hwndOwner = NULL);
 
 protected:
     static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);

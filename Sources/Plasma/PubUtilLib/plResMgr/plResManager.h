@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 #include <vector>
 #include <string>
+#include "plFileSystem.h"
 
 class plRegistryPageNode;
 class plRegistryKeyIterator;
@@ -55,7 +56,6 @@ class plRegistryDataStream;
 class plResAgeHolder;
 class plResManagerHelper;
 class plDispatch;
-class plFileName;
 
 // plProgressProc is a proc called every time an object loads, to keep a progress bar for
 // loading ages up-to-date.
@@ -68,7 +68,7 @@ public:
     virtual ~plResManager();
 
     // If the ResManager has already been initialized, you should call Reset after setting this
-    void SetDataPath(const char* path) { fDataPath = path; }
+    void SetDataPath(const plFileName& path) { fDataPath = path; }
 
     // Mainly for external tools.
     void                AddSinglePage(const plFileName& path);
@@ -87,9 +87,9 @@ public:
     //---------------------------
     plKey               FindOriginalKey(const plUoid&);
     virtual plKey       FindKey(const plUoid&); // Same as above, but will check the uoid for clones
-    const plLocation&   FindLocation(const char* age, const char* page) const;
+    const plLocation&   FindLocation(const plString& age, const plString& page) const;
     // Use nil for any strings you don't need
-    void                GetLocationStrings(const plLocation& loc, char* ageBuffer, char* pageBuffer) const;
+    void                GetLocationStrings(const plLocation& loc, plString* ageBuffer, plString* pageBuffer) const;
 
     //---------------------------
     //  Establish reference linkage 
@@ -134,10 +134,10 @@ public:
     //---------------------------
     //  Load optimizations
     //---------------------------
-    void LoadAgeKeys(const char* age);
-    void DropAgeKeys(const char* age);
+    void LoadAgeKeys(const plString& age);
+    void DropAgeKeys(const plString& age);
     void PageInRoom(const plLocation& page, uint16_t objClassToRef, plRefMsg* refMsg);
-    void PageInAge(const char* age);
+    void PageInAge(const plString& age);
 
     // Usually, a page file is kept open during load because the first keyed object
     // read causes all the other objects to be read before it returns.  In some
@@ -152,7 +152,7 @@ public:
     void LogReadTimes(bool logReadTimes);
 
     // All keys version
-    bool IterateKeys(plRegistryKeyIterator* iterator);    
+    bool IterateKeys(plRegistryKeyIterator* iterator);
     // Single page version
     bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
@@ -185,7 +185,7 @@ protected:
     virtual void    IKeyReffed(plKeyImp* key);
     virtual void    IKeyUnreffed(plKeyImp* key);
 
-    virtual bool    IReset();   
+    virtual bool    IReset();
     virtual bool    IInit();
     virtual void    IShutdown();
 
@@ -207,7 +207,7 @@ protected:
     // Adds a key to the registry. Assumes uoid already set
     void AddKey(plKeyImp* key);
 
-    plRegistryPageNode* CreatePage(const plLocation& location, const char* age, const char* page);
+    plRegistryPageNode* CreatePage(const plLocation& location, const plString& age, const plString& page);
 
     bool          fInited;
 
@@ -215,7 +215,7 @@ protected:
     bool               fReadingObject;
     std::vector<plKey> fQueuedReads;
 
-    std::string fDataPath;
+    plFileName      fDataPath;
 
     plDispatch*     fDispatch;
 
@@ -223,7 +223,7 @@ protected:
     uint32_t fCurClonePlayerID;
     uint32_t fCloningCounter; // Next clone ID to use.
 
-    typedef std::map<std::string,plResAgeHolder*>   HeldAgeKeyMap;
+    typedef std::map<plString, plResAgeHolder*>   HeldAgeKeyMap;
     HeldAgeKeyMap   fHeldAgeKeys;
     plProgressProc  fProgressProc;
 

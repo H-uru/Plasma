@@ -289,7 +289,7 @@ class plFont : public hsKeyedObject
         bool    LoadFromBDF( const char *path, plBDFConvertCallback *callback );
         bool    LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback );
 
-        bool    LoadFromP2FFile( const char *path );
+        bool    LoadFromP2FFile( const plFileName &path );
 
         bool    ReadRaw( hsStream *stream );
         bool    WriteRaw( hsStream *stream );

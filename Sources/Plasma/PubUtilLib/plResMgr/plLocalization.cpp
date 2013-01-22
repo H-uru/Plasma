@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include "plLocalization.h"
-#include "plFile/plFileUtils.h"
 
 
 plLocalization::Language plLocalization::fLanguage = plLocalization::kEnglish;
@@ -87,36 +86,28 @@ plLocalization::encodingTypes plLocalization::fUnicodeEncoding[] =
     Enc_UTF8,       // kJapanese
 };
 
-bool plLocalization::IGetLocalized(const char* name, Language lang, char* localizedName)
+plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)
 {
-    const char* underscore = strrchr(name, '_');
-    
-    if (underscore)
-    {
-        char langTag[kLangTagLen+1];
-        strncpy(langTag,underscore,kLangTagLen);
-        langTag[kLangTagLen] = '\0';
-        
-        if (strncmp(langTag, fLangTags[kEnglish], kLangTagLen) == 0)
-        {
-            if (localizedName)
-            {
-                strcpy(localizedName, name);
-                int underscorePos = underscore - name;
-                memcpy(localizedName + underscorePos, fLangTags[lang], kLangTagLen);
-            }
+    int underscore = name.AsString().FindLast('_');
 
-            return true;
-        }
+    if (underscore >= 0)
+    {
+        plString langTag = name.AsString().Substr(underscore, kLangTagLen);
+
+        if (langTag == fLangTags[kEnglish])
+            return name.AsString().Left(underscore) + fLangTags[lang];
     }
 
-    return false;
+    return "";
 }
 
-bool plLocalization::ExportGetLocalized(const char* name, int lang, char* localizedName)
+plFileName plLocalization::ExportGetLocalized(const plFileName& name, int lang)
 {
-    return IGetLocalized(name, Language(lang+1), localizedName) &&
-            plFileUtils::FileExists(localizedName);
+    plFileName localizedName = IGetLocalized(name, Language(lang+1));
+    if (plFileInfo(localizedName).Exists())
+        return localizedName;
+
+    return "";
 }
 
 std::string plLocalization::LocalToString(const std::vector<std::string> & localizedText)

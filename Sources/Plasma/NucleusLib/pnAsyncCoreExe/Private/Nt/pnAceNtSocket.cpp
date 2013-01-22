@@ -805,17 +805,15 @@ static void StartListenThread () {
 #ifdef HS_DEBUGGING
 #include <StdIo.h>
 static void __cdecl DumpInvalidData (
-    const wchar_t filename[],
+    const plFileName & filename,
     unsigned    bytes,
     const uint8_t  data[],
     const char  fmt[],
     ...
 ) {
-    wchar_t path[MAX_PATH];
-    PathGetProgramDirectory(path, arrsize(path));
-    PathAddFilename(path, path, L"Log", arrsize(path));
-    PathAddFilename(path, path, filename, arrsize(path));
-    if (FILE * f = _wfopen(path, L"wb")) {
+    plFileName path = plFileSystem::GetCurrentAppPath().StripFileName();
+    path = plFileName::Join(path, "Log", filename);
+    if (FILE * f = plFileSystem::Open(path, "wb")) {
         va_list args;
         va_start(args, fmt);
         vfprintf(f, fmt, args);
@@ -1027,7 +1025,7 @@ void INtSocketOpCompleteSocketRead (
                 static long s_once;
                 if (!AtomicAdd(&s_once, 1)) {
                     DumpInvalidData(
-                        L"NtSockErr.log",
+                        "NtSockErr.log",
                         sizeof(sock->buffer),
                         sock->buffer,
                         "SocketDispatchRead error for %p: %d %d %d\r\n",

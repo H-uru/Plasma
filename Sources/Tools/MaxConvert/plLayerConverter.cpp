@@ -1062,7 +1062,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
     {
         if( upperLayer )
         {
-            if( fErrorMsg->Set( !( fWarned & kWarnedUpperTextureMissing ), "Plasma Export Error", sWarnUpperTextureMissing, maxNode->GetName(), bd->fileName ).CheckAskOrCancel() )
+            if( fErrorMsg->Set( !( fWarned & kWarnedUpperTextureMissing ), "Plasma Export Error", sWarnUpperTextureMissing, maxNode->GetName(), bd->fileName.AsString().c_str() ).CheckAskOrCancel() )
                 fWarned |= kWarnedUpperTextureMissing; 
             fErrorMsg->Set( false );
 
@@ -1071,7 +1071,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
         }
         else
         {
-            if( fErrorMsg->Set( !( fWarned & kWarnedNoBaseTexture ), "Plasma Export Error", sWarnBaseTextureMissing, maxNode->GetName(), bd->fileName ).CheckAskOrCancel() )
+            if( fErrorMsg->Set( !( fWarned & kWarnedNoBaseTexture ), "Plasma Export Error", sWarnBaseTextureMissing, maxNode->GetName(), bd->fileName.AsString().c_str() ).CheckAskOrCancel() )
                 fWarned |= kWarnedNoBaseTexture; 
             fErrorMsg->Set( false );
 

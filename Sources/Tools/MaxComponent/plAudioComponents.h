@@ -65,6 +65,7 @@ class plMaxNode;
 class plSoundBuffer;
 class plSound;
 class plAudioBaseComponentProc;
+class plFileName;
 
 namespace plAudioComp
 {
@@ -117,7 +118,7 @@ class plBaseSoundEmitterComponent : public plComponent
             return -1;
         }
 
-        static plSoundBuffer    *GetSourceBuffer( const char *fileName, plMaxNode *node, uint32_t srcBufferFlags );
+        static plSoundBuffer    *GetSourceBuffer( const plFileName &fileName, plMaxNode *node, uint32_t srcBufferFlags );
         static bool             LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg );
 
         virtual void    UpdateSoundFileSelection( void );
@@ -177,7 +178,7 @@ class plBaseSoundEmitterComponent : public plComponent
 
         virtual uint32_t ICalcSourceBufferFlags() const;
 
-        static plSoundBuffer *IGetSourceBuffer( const char *fileName, plMaxNode *srcNode, uint32_t srcBufferFlags );
+        static plSoundBuffer *IGetSourceBuffer( const plFileName &fileName, plMaxNode *srcNode, uint32_t srcBufferFlags );
 
         plSoundBuffer   *IProcessSourceBuffer( plMaxNode *maxNode, plErrorMsg *errMsg );
 

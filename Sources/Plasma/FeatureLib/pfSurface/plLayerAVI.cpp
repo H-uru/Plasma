@@ -85,10 +85,10 @@ plLayerAVI::~plLayerAVI()
 bool plLayerAVI::IInit()
 {
 #if HS_BUILD_FOR_WIN32
-    int ret = AVIStreamOpenFromFile( &fAVIInfo->fAVIStream, 
-                                fMovieName,                                                 
-                                streamtypeVIDEO, 
-                                0, 
+    int ret = AVIStreamOpenFromFileW( &fAVIInfo->fAVIStream,
+                                fMovieName.AsString().ToWchar(),
+                                streamtypeVIDEO,
+                                0,
                                 OF_READ,
                                 NULL);
 

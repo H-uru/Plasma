@@ -43,8 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plFile/plFileUtils.h"
-#include "plFile/hsFiles.h"
 
 #include "plComponentReg.h"
 #include "plMiscComponents.h"
@@ -237,8 +235,8 @@ protected:
         aged.SeekFirstPage();
         while( ( page = aged.GetNextPage() ) != nil )
         {
-            int idx = ComboBox_AddString(hPageCombo, page->GetName() );
-            if (curPage && !strcmp(page->GetName(), curPage))
+            int idx = ComboBox_AddString(hPageCombo, page->GetName().c_str() );
+            if (curPage && (page->GetName() == curPage))
                 ComboBox_SetCurSel(hPageCombo, idx);
             ComboBox_SetItemData( hPageCombo, idx, (int)page->GetSeqSuffix() );
         }
@@ -260,8 +258,7 @@ protected:
         HWND hAgeCombo = GetDlgItem(fhDlg, IDC_COMP_LOCATION_AGECOMBO);
         IClearAges( hAgeCombo );
 
-        hsTArray<char *>    ageFiles;
-        plAgeDescInterface::BuildAgeFileList( ageFiles );
+        hsTArray<plFileName> ageFiles = plAgeDescInterface::BuildAgeFileList();
 
         const char *curAge = fPB->GetStr(plPageInfoComponent::kInfoAge);
         if (!curAge || *curAge == '\0')
@@ -269,14 +266,13 @@ protected:
 
         for( int i = 0; i < ageFiles.GetCount(); i++ )
         {
-            char ageName[_MAX_FNAME];
-            _splitpath( ageFiles[ i ], nil, nil, ageName, nil );
+            plString ageName = ageFiles[i].GetFileNameNoExt();
 
-            int idx = ComboBox_AddString( hAgeCombo, ageName );
+            int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[ i ] );
+            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[i].AsString().c_str() );
 
-            if( !strcmp( ageName, curAge ) )
+            if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
         }
         
@@ -576,33 +572,32 @@ const char *plPageInfoComponent::GetAgeName()
 //  Checks in assetMan to make sure we have the latest .age file to export 
 //  with.
 
-void    plPageInfoComponent::IVerifyLatestAgeAsset( const char *ageName, const char *localPath, plErrorMsg *errMsg )
+void    plPageInfoComponent::IVerifyLatestAgeAsset( const plString &ageName, const plFileName &localPath, plErrorMsg *errMsg )
 {
 #ifdef MAXASS_AVAILABLE
-    char                ageFileName[ MAX_PATH ], assetPath[ MAX_PATH ];
-
+    plFileName ageFileName, assetPath;
 
    MaxAssInterface *assetMan = GetMaxAssInterface();
    if( assetMan == nil )
        return;      // No AssetMan available
 
     // Try to find it in assetMan
-    sprintf( ageFileName, "%s.age", ageName );
+    ageFileName = ageName + ".age";
     jvUniqueId assetId;
-    if (assetMan->FindAssetByFilename(ageFileName, assetId))
+    if (assetMan->FindAssetByFilename(ageFileName.AsString().c_str(), assetId))
     {
         // Get the latest version
         if (!assetMan->GetLatestVersionFile(assetId, assetPath, sizeof(assetPath)))
         {
             errMsg->Set( true, "PageInfo Convert Error",
-                        "Unable to update age file for '%s' because AssetMan was unable to get the latest version. Using local copy instead.", ageName ).Show();
+                "Unable to update age file for '%s' because AssetMan was unable to get the latest version. Using local copy instead.", ageName.c_str() ).Show();
             errMsg->Set( false );
             return;
         }
 
         // Got the latest version, just copy over and roll!
-        plFileUtils::RemoveFile( localPath );
-        plFileUtils::FileCopy( assetPath, localPath );
+        plFileSystem::Unlink(localPath);
+        plFileSystem::Copy(assetPath, localPath);
     }
     else
     {
@@ -625,10 +620,8 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     // Mark us as updated
     fCompPB->SetValue( kRefVolatile_PageInfoUpdated, 0, (int)true );
 
-    char path[MAX_PATH];
-
-    const char *ageFolder = plPageInfoUtils::GetAgeFolder();
-    if( ageFolder == nil )
+    plFileName ageFolder = plPageInfoUtils::GetAgeFolder();
+    if (!ageFolder.IsValid())
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
@@ -653,7 +646,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
         return;
     }
-    sprintf(path, "%s%s.age", ageFolder, curAge);
+    plFileName path = plFileName::Join(ageFolder, plString::Format("%s.age", curAge));
 
     IVerifyLatestAgeAsset( curAge, path, errMsg );
 
@@ -699,12 +692,12 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
 
     while( ( page = aged.GetNextPage() ) != nil )
     {
-        if( stricmp( page->GetName(), compPBPageName ) == 0 )
+        if( page->GetName().CompareI( compPBPageName ) == 0 )
         {
             fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, (char *)page->GetName() );
+            fCompPB->SetValue( kInfoPage, 0, (const char *)page->GetName().c_str() );
             return;
         }
     }
@@ -720,28 +713,20 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
 }
 
-const char *plPageInfoUtils::GetAgeFolder()
+plFileName plPageInfoUtils::GetAgeFolder()
 {
-    static char ageFolder[MAX_PATH];
-    static bool initialized = false;
+    static plFileName ageFolder;
 
-    if (!initialized)
+    if (!ageFolder.IsValid())
     {
-        initialized = true;
-        ageFolder[0] = '\0';
+        plFileName plasmaPath = plMaxConfig::GetClientPath();
+        if (!plasmaPath.IsValid())
+            return "";
 
-        const char *plasmaPath = plMaxConfig::GetClientPath();
-        if (!plasmaPath)
-            return nil;
-
-        strcpy(ageFolder, plasmaPath);
-        strcat(ageFolder, plAgeDescription::kAgeDescPath);
+        ageFolder = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
     }
 
-    if (ageFolder[0] != '\0')
-        return ageFolder;
-    else
-        return nil;
+    return ageFolder;
 }
 
 int32_t   plPageInfoUtils::CombineSeqNum( int prefix, int suffix )
@@ -789,7 +774,7 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
     aged->SeekFirstPage();
     while( ( page = aged->GetNextPage() ) != nil )
     {
-        if( stricmp( pageName, page->GetName() ) == 0 )
+        if (page->GetName().CompareI(pageName) == 0)
         {
             seqSuffix = page->GetSeqSuffix();
             break;
@@ -801,18 +786,14 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
     return CombineSeqNum( seqPrefix, seqSuffix );
 }
 
-plAgeDescription    *plPageInfoUtils::GetAgeDesc( const char *ageName )
+plAgeDescription *plPageInfoUtils::GetAgeDesc( const plString &ageName )
 {
-    char                path[ MAX_PATH ];
-
-    const char *ageFolder = plPageInfoUtils::GetAgeFolder();
-    if( ageFolder == nil || ageName == nil )
+    plFileName ageFolder = plPageInfoUtils::GetAgeFolder();
+    if (!ageFolder.IsValid() || ageName.IsNull())
         return nil;
 
-    sprintf( path, "%s%s.age", ageFolder, ageName );
-
     hsUNIXStream s;
-    if( !s.Open( path ) )
+    if (!s.Open(plFileName::Join(ageFolder, ageName + ".age")))
         return nil;
 
     // Create and read the age desc

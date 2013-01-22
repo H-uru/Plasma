@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plString_Defined
 #define plString_Defined
 
-#include "HeadSpin.h"
+#include <stdint.h>
 #include <vector>
 
 /** Single Unicode character code unit */
@@ -416,8 +416,8 @@ public:
      */
     int Compare(const char *str, CaseSensitivity sense = kCaseSensitive) const
     {
-        return (sense == kCaseSensitive) ? strcmp(c_str(), str)
-                                         : stricmp(c_str(), str);
+        return (sense == kCaseSensitive) ? strcmp(c_str(), str ? str : "")
+                                         : stricmp(c_str(), str ? str : "");
     }
 
     /** Compare up to but never exceeding the first \a count bytes of this
@@ -436,8 +436,8 @@ public:
      */
     int CompareN(const char *str, size_t count, CaseSensitivity sense = kCaseSensitive) const
     {
-        return (sense == kCaseSensitive) ? strncmp(c_str(), str, count)
-                                         : strnicmp(c_str(), str, count);
+        return (sense == kCaseSensitive) ? strncmp(c_str(), str ? str : "", count)
+                                         : strnicmp(c_str(), str ? str : "", count);
     }
 
     /** Shortcut for Compare(str, kCaseInsensitive). */
