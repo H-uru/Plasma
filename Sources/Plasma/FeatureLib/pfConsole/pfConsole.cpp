@@ -844,7 +844,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
     {
         fWorkingCursor = 0;
     }
-    else if (msg->GetKeyChar() != nil)
+    else if (msg->GetKeyChar())
     {
         key = msg->GetKeyChar();
         // do they want to go into help mode?

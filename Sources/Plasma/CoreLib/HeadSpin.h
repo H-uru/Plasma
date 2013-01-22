@@ -116,7 +116,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #ifndef nil
-#   define nil (0)
+#   define nil (nullptr)
 #endif
 
 typedef int32_t   hsError;

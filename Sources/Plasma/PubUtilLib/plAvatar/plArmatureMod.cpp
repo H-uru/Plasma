@@ -1339,7 +1339,7 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
         }
         else
         {
-            if (cloneMsg->GetCloneKey() == GetFollowerParticleSystemSO())
+            if (cloneMsg->GetCloneKey() == GetFollowerParticleSystemSO()->GetKey())
             {
                 SetFollowerParticleSystemSO(nil);
                 return true;

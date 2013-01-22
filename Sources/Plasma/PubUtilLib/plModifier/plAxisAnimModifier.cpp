@@ -335,12 +335,12 @@ bool plAxisAnimModifier::MsgReceive(plMessage* msg)
                 hsRefCnt_SafeUnRef( pCall1 );
                 hsRefCnt_SafeUnRef( pCall2 );
 
-                plgDispatch::MsgSend(pMsg);     
+                plgDispatch::MsgSend(pMsg);
             }
             else 
             if (pRefMsg->fType == kTypeLogic)
             {
-                SetNotificationKey(pRefMsg->GetRef());
+                SetNotificationKey(pRefMsg->GetRef()->GetKey());
             }
         }
         else

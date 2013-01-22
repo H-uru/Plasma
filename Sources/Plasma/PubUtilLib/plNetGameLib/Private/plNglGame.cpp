@@ -756,8 +756,7 @@ bool GameQueryConnected () {
     bool result;
     s_critsect.Enter();
     {
-        if (nil != (result = s_active))
-            result &= (nil != s_active->cli);
+        result = (s_active && s_active->cli);
     }
     s_critsect.Leave();
     return result;

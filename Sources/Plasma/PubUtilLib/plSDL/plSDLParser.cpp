@@ -67,7 +67,7 @@ void plSDLParser::DebugMsg(const char* fmt, ...) const
 
 void plSDLParser::DebugMsgV(const char* fmt, va_list args) const
 {
-    if (strlen(fmt)==nil)
+    if (strlen(fmt) == 0)
         return;
     hsStatusMessage(plString::IFormat(fmt,args).c_str());
 }

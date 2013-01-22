@@ -88,7 +88,7 @@ size_t wcsnlen(const wchar_t *s, size_t maxlen)
 
 void plString::IConvertFromUtf8(const char *utf8, size_t size)
 {
-    if (utf8 == nil) {
+    if (!utf8) {
         fUtf8Buffer = plStringBuffer<char>();
         return;
     }
@@ -134,7 +134,7 @@ plString &plString::operator=(const plStringBuffer<char> &init)
 void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
 {
     fUtf8Buffer = plStringBuffer<char>();
-    if (utf16 == nil)
+    if (!utf16)
         return;
 
     if ((int32_t)size < 0)
@@ -213,7 +213,7 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
 void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
 {
     fUtf8Buffer = plStringBuffer<char>();
-    if (ustr == nil)
+    if (!ustr)
         return;
 
     if ((int32_t)size < 0)
@@ -271,7 +271,7 @@ void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
 void plString::IConvertFromIso8859_1(const char *astr, size_t size)
 {
     fUtf8Buffer = plStringBuffer<char>();
-    if (astr == nil)
+    if (!astr)
         return;
 
     if ((int32_t)size < 0)
@@ -477,23 +477,23 @@ plUnicodeBuffer plString::GetUnicodeArray() const
 
 int plString::ToInt(int base) const
 {
-    return static_cast<int>(strtol(c_str(), nil, base));
+    return static_cast<int>(strtol(c_str(), nullptr, base));
 }
 
 unsigned int plString::ToUInt(int base) const
 {
-    return static_cast<unsigned int>(strtoul(c_str(), nil, base));
+    return static_cast<unsigned int>(strtoul(c_str(), nullptr, base));
 }
 
 float plString::ToFloat() const
 {
     // strtof is C99, which MS doesn't support...
-    return (float)strtod(c_str(), nil);
+    return (float)strtod(c_str(), nullptr);
 }
 
 double plString::ToDouble() const
 {
-    return strtod(c_str(), nil);
+    return strtod(c_str(), nullptr);
 }
 
 // Microsoft doesn't provide this for us

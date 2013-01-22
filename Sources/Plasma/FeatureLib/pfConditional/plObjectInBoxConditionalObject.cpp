@@ -172,7 +172,7 @@ bool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
                             if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
                             {
                                 plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                if((am->IsLocalAI())==nil)
+                                if (!am->IsLocalAI())
                                 {
                                     return false;
                                 }
@@ -221,7 +221,7 @@ bool plVolumeSensorConditionalObject::MsgReceive(plMessage* msg)
                                     if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
                                     {
                                         plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                        if((am->IsLocalAI())==nil)
+                                        if (!am->IsLocalAI())
                                         {
                                             return false;
                                         }
@@ -332,7 +332,7 @@ bool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
                             if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
                             {
                                 plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                if((am->IsLocalAI())==nil)
+                                if (!am->IsLocalAI())
                                 {
                                     return false;
                                 }
@@ -382,7 +382,7 @@ bool plVolumeSensorConditionalObjectNoArbitration::MsgReceive(plMessage* msg)
                                     if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pActivateMsg->fHitterObj)
                                     {
                                         plArmatureMod *am=const_cast<plArmatureMod*>( plArmatureMod::ConvertNoRef(pObj->GetModifier(i)));
-                                        if((am->IsLocalAI())==nil)
+                                        if (!am->IsLocalAI())
                                         {
                                             return false;
                                         }

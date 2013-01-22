@@ -61,7 +61,7 @@ plPageInfo::plPageInfo( const plLocation &loc )
 
 void plPageInfo::IInit()
 {
-    fAge = fPage = nil;
+    fAge = fPage = "";
     fLocation.Invalidate();
     SetMajorVersion(plVersion::GetMajorVersion());
     fClassVersions.clear();
@@ -71,7 +71,7 @@ void plPageInfo::IInit()
 
 plPageInfo::~plPageInfo()
 {
-    SetStrings( nil, nil );
+    SetStrings("", "");
 }
 
 plPageInfo::plPageInfo( const plPageInfo &src )

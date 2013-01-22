@@ -120,7 +120,7 @@ void    plDXTextFont::ICreateTexture( uint16_t *data )
     // Lock the texture and write our values out
     fD3DTexture->LockRect( 0, &lockInfo, 0, 0 );
     memcpy( lockInfo.pBits, data, fTextureWidth * fTextureHeight * sizeof( uint16_t ) );
-    fD3DTexture->UnlockRect( nil );
+    fD3DTexture->UnlockRect( 0 );
 }
 
 void plDXTextFont::CreateShared(IDirect3DDevice9* device)
