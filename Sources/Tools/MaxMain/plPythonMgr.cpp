@@ -50,9 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <iparamb2.h>
 #include <max.h>
-#pragma hdrstop
-
 #include <direct.h>
+#pragma hdrstop
 
 #include "plPythonMgr.h"
 #include "plMaxCFGFile.h"

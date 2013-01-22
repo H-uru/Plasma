@@ -70,6 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsStringTokenizer.h"
 #include "hsTemplates.h"
+#include "plFileSystem.h"
 
 // Windows
 #include "hsWindows.h"
