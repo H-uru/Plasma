@@ -101,6 +101,115 @@ plManifest::~plManifest()
     );
 }
 
+enum { kMfsVersion = 6 };
+enum Section { kNone, kVersion, kPages, kPatchList, kOther };
+
+plManifestFile* plManifest::FindFile(const plFileName& name)
+{
+    auto it = std::find_if(fFiles.begin(), fFiles.end(),
+        [&name] (const plManifestFile* mfs) { return mfs->GetFileName() == name; }
+    );
+    if (it != fFiles.end())
+    {
+        plManifestFile* mfs = *it;
+        return mfs;
+    }
+    return nullptr;
+}
+
+bool plManifest::Read(hsStream* const s)
+{
+    Section currSection = kNone;
+    plManifestFile* currFile = nullptr; // for patches
+    bool gotVersion = false;
+
+    while (!s->AtEnd())
+    {
+        plString line;
+        {
+            char thissucks[2048];
+            if (!s->ReadLn(thissucks, arrsize(thissucks)))
+                break; // EOF
+            line = plString(thissucks);
+        }
+
+        // First, check to see if this is a section
+        if (line.CharAt(0) == '[' && line.CharAt(line.GetSize()-1) == ']')
+        {
+            plString section = line.Substr(1, line.GetSize()-2);
+            if (section.CompareI("version") == 0)
+            {
+                currSection = kVersion;
+                continue;
+            }
+            else if (section.CompareI("pages") == 0)
+            {
+                currSection = kPages;
+                continue;
+            }
+            else if (section.CompareI("other") == 0)
+            {
+                currSection = kOther;
+                continue;
+            }
+            else if ((currFile = FindFile(section)))
+            {
+                currSection = kPatchList;
+                continue;
+            }
+            hsAssert(false, plString::Format("wtf section: %s", line.c_str()).c_str());
+        }
+
+        hsAssert(currSection != kNone, "invalid manifest?");
+        switch (currSection)
+        {
+        case kVersion:
+            {
+                std::vector<plString> fmt = line.Split("=", 1);
+                ASSERT(fmt.size() == 2); // this will blow the client up
+                hsAssert(fmt[0].CompareI("format") == 0, "version block doesn't have format");
+
+                if (fmt[1].ToUInt() != kMfsVersion)
+                {
+                    hsAssert(false, "invalid mfs format version");
+                    fFiles.clear();
+                    return false;
+                }
+                gotVersion = true;
+            }
+            break;
+        case kPages:
+        case kOther:
+            {
+                if (!gotVersion)
+                {
+                    hsAssert(false, "got file before format version");
+                    return false;
+                }
+                fFiles.push_back(new plManifestFile(line));
+            }
+            break;
+        case kPatchList:
+            {
+                if (!gotVersion)
+                {
+                    hsAssert(false, "got patch before format version");
+                    return false;
+                }
+                currFile->GetPatches().push_back(new plManifestFile::Patch(line));
+            }
+            break;
+        }
+    }
+    return true;
+}
+
+bool plManifest::Read(const void* buf, size_t bufsz)
+{
+    hsReadOnlyStream stream(bufsz, buf);
+    return Read(&stream);
+}
+
 static bool IReadEapString(hsStream* const s, plString& result)
 {
     uint16_t dest[260];

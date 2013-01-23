@@ -974,6 +974,21 @@ bool ManifestRequestTrans::Recv (
             return true;
         }
         break;
+
+    case kFile2Cli_ManifestReplyEx:
+        {
+            const File2Cli_ManifestReplyEx & reply = *(const File2Cli_ManifestReplyEx *) msg;
+
+            // Read in new/old style age manifest
+            if (!m_manifest.Read(reinterpret_cast<const void*>(reply.buf), reply.bufsz))
+                break;
+
+            // No acks, just signal completion.
+            m_result = reply.result;
+            m_state = kTransStateComplete;
+            return true;
+        }
+        break;
     }
 
     return false;
