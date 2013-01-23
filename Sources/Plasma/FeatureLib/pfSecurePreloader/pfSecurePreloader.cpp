@@ -345,8 +345,8 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
         const NetCliFileManifestEntry mfs = manifestEntries[i];
         bool fetchMe = true;
         hsRAMStream* s = nil;
-        plFileName clientName = mfs.clientName;
-        plFileName downloadName = mfs.downloadName;
+        plFileName clientName = plString::FromWchar(mfs.clientName);
+        plFileName downloadName = plString::FromWchar(mfs.downloadName);
 
         if (plFileInfo(clientName).Exists())
         {
@@ -355,7 +355,7 @@ void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEn
             {
                 // Damn this
                 plMD5Checksum srvHash;
-                srvHash.SetFromHexString(mfs.md5.c_str());
+                srvHash.SetFromHexString(plString::FromWchar(mfs.md5, 32).c_str());
 
                 // Now actually copare the hashes
                 plMD5Checksum lclHash;

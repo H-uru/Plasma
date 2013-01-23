@@ -150,8 +150,8 @@ static void ManifestDownloaded(
     for (uint32_t i = 0; i < entryCount; ++i)
     {
         const NetCliFileManifestEntry mfs = manifest[i];
-        plFileName fileName = mfs.clientName;
-        plFileName downloadName = mfs.downloadName;
+        plFileName fileName = plString::FromWchar(mfs.clientName);
+        plFileName downloadName = plString::FromWchar(mfs.downloadName);
 
         // See if the files are the same
         // 1. Check file size before we do time consuming md5 operations
@@ -160,7 +160,7 @@ static void ManifestDownloaded(
         {
             plMD5Checksum cliMD5(fileName);
             plMD5Checksum srvMD5;
-            srvMD5.SetFromHexString(mfs.md5.c_str());
+            srvMD5.SetFromHexString(plString::FromWchar(mfs.md5, 32).c_str());
 
             if (cliMD5 == srvMD5)
                 continue;

@@ -184,7 +184,7 @@ static void ManifestCallback (
     // MD5 check current patcher against value in manifest
     ASSERT(entryCount == 1);
     plFileName curPatcherFile = plFileSystem::GetCurrentAppPath();
-    if (!MD5Check(curPatcherFile, manifest[0].md5.c_str())) {
+    if (!MD5Check(curPatcherFile, plString::FromWchar(manifest[0].md5, 32).c_str())) {
 //      MessageBox(GetTopWindow(nil), "MD5 failed", "Msg", MB_OK);
         SelfPatcherStream::totalBytes += manifest[0].zipSize;
 
@@ -195,7 +195,7 @@ static void ManifestCallback (
         if (!stream->Open(s_newPatcherFile, "wb"))
             ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", s_newPatcherFile.AsString().c_str(), errno);
 
-        NetCliFileDownloadRequest(manifest[0].downloadName, stream, DownloadCallback, nil);
+        NetCliFileDownloadRequest(plString::FromWchar(manifest[0].downloadName), stream, DownloadCallback, nil);
     }
     else {
         s_downloadComplete = true;
@@ -272,7 +272,8 @@ static bool SelfPatcherProc (bool * abort, plLauncherInfo *info) {
         si.cb = sizeof(si);
 
         wchar_t cmdline[MAX_PATH];
-        StrPrintf(cmdline, arrsize(cmdline), L"%s %s", s_newPatcherFile.AsString().ToWchar(), info->cmdLine);
+        StrPrintf(cmdline, arrsize(cmdline), L"%s %s",
+                  s_newPatcherFile.AsString().ToWchar().GetData(), info->cmdLine);
 
         // we have only successfully patched if we actually launch the new version of the patcher
         patched = CreateProcessW(
