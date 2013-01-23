@@ -472,9 +472,9 @@ static void ProcessManifestEntry (void * param, ENetError error) {
         StrPrintf(text, arrsize(text), "Checking for updates...  %S", p->mr->manifest[p->index].clientName);
         p->mr->info->SetText(text);
 #endif
-    plFileName path = plFileName::Join(s_workingDir, p->mr->manifest[p->index].clientName);
+    plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(p->mr->manifest[p->index].clientName));
     uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
-    if (!MD5Check(path, p->mr->manifest[p->index].md5.c_str())) {
+    if (!MD5Check(path, plString::FromWchar(p->mr->manifest[p->index].md5, 32).c_str())) {
         p->mr->critsect.Lock();
         p->mr->indices.Add(p->index);
         p->mr->critsect.Unlock();
@@ -547,7 +547,7 @@ static void ProcessManifest (void * param) {
         p->index = i;
         p->mr = mr;
         p->exists = false;
-        plFileName path = plFileName::Join(s_workingDir, mr->manifest[i].clientName);
+        plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(mr->manifest[i].clientName));
         fd = plFileSystem::Open(path, "r");
         if (fd)
         {
@@ -589,13 +589,13 @@ static void ProcessManifest (void * param) {
                 if(s_running)
                 {
                     unsigned index = mr->indices[i];
-                    plFileName path = plFileName::Join(s_workingDir, manifest[index].clientName);
+                    plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(manifest[index].clientName));
                     plFileSystem::CreateDir(path.StripFileName(), true);
 
                     ManifestFile* mf = new ManifestFile(
-                        manifest[index].clientName,
-                        manifest[index].downloadName,
-                        manifest[index].md5,
+                        plString::FromWchar(manifest[index].clientName),
+                        plString::FromWchar(manifest[index].downloadName),
+                        plString::FromWchar(manifest[index].md5),
                         manifest[index].flags,
                         mr->info
                     );
@@ -733,8 +733,8 @@ static void ThinManifestCallback (
         if (!s_running)
             return;
 
-        plFileName path = plFileName::Join(s_workingDir, manifest[i].clientName);
-        if (!MD5Check(path, manifest[i].md5.c_str())) {
+        plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(manifest[i].clientName));
+        if (!MD5Check(path, plString::FromWchar(manifest[i].md5, 32).c_str())) {
             s_patchComplete = false;
             NetCliFileManifestRequest(ManifestCallback, info, s_manifest, info->buildId);
             break;
@@ -746,7 +746,7 @@ static void ThinManifestCallback (
         info->progressCallback(kStatusPending, &patchInfo);
 #ifndef PLASMA_EXTERNAL_RELEASE
         char text[256];
-        StrPrintf(text, arrsize(text), "Checking for updates...  %s", manifest[i].clientName.AsString().c_str());
+        StrPrintf(text, arrsize(text), "Checking for updates...  %S", manifest[i].clientName);
         info->SetText(text);
 #endif
     }
