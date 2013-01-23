@@ -906,7 +906,7 @@ bool BuildIdRequestTrans::Recv (
 ManifestRequestTrans::ManifestRequestTrans (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                         group[],
+    const wchar_t                       group[],
     unsigned                            buildId
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(callback)
@@ -943,9 +943,13 @@ void ManifestRequestTrans::Post () {
 }
 
 //============================================================================
-plString ReadStringFromMsg(const wchar_t* curMsgPtr, unsigned* length) {
-    (*length) = wcslen(curMsgPtr);
-    return plString::FromWchar(curMsgPtr, *length);
+void ReadStringFromMsg(const wchar_t* curMsgPtr, wchar_t* destPtr, unsigned* length) {
+    if (!(*length)) {
+        size_t maxlen = wcsnlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
+        (*length) = maxlen;
+        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
+    }
+    memcpy(destPtr, curMsgPtr, *length * sizeof(wchar_t));
 }
 
 //============================================================================
@@ -1001,8 +1005,8 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the clientFilename
-        unsigned filenameLen;
-        entry.clientName = ReadStringFromMsg(curChar, &filenameLen);
+        unsigned filenameLen = 0;
+        ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1014,7 +1018,8 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the downloadFilename
-        entry.downloadName = ReadStringFromMsg(curChar, &filenameLen);
+        filenameLen = 0;
+        ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1026,7 +1031,8 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the md5
-        entry.md5 = ReadStringFromMsg(curChar, &filenameLen);
+        filenameLen = 32;
+        ReadStringFromMsg(curChar, entry.md5, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
@@ -1038,7 +1044,8 @@ bool ManifestRequestTrans::Recv (
 
         // --------------------------------------------------------------------
         // read in the md5 for compressed files
-        entry.md5compressed = ReadStringFromMsg(curChar, &filenameLen);
+        filenameLen = 32;
+        ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
         curChar += filenameLen; // advance the pointer
         wchar_tCount -= filenameLen; // keep track of the amount remaining
         if ((*curChar != L'\0') || (wchar_tCount <= 0))
