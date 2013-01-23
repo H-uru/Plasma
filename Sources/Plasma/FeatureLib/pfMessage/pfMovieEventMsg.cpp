@@ -43,19 +43,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 
-pfMovieEventMsg::~pfMovieEventMsg()
-{
-    delete [] fMovieName;
-}
-
-
 void pfMovieEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
     fReason = (Reason)stream->ReadByte();
 
-    fMovieName = stream->ReadSafeString();
+    fMovieName = stream->ReadSafeString_TEMP();
 }
 
 void pfMovieEventMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -64,6 +58,6 @@ void pfMovieEventMsg::Write(hsStream* stream, hsResMgr* mgr)
 
     stream->WriteByte(fReason);
 
-    stream->WriteSafeString(fMovieName);
+    stream->WriteSafeString(fMovieName.AsString());
 }
 

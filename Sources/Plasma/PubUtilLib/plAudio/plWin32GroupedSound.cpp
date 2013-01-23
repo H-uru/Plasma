@@ -228,14 +228,14 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     IFillCurrentSound( 0 );
 
     // Logging
-    plString str = plString::Format("   Grouped %s %s allocated (%d msec).", buffer->GetFileName() != nil ? "file" : "buffer",
-                                            buffer->GetFileName() != nil ? buffer->GetFileName() : buffer->GetKey()->GetUoid().GetObjectName().c_str(),
-                                            //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
-                                            //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
+    plString str = plString::Format("   Grouped %s %s allocated (%d msec).", buffer->GetFileName().IsValid() ? "file" : "buffer",
+                                    buffer->GetFileName().IsValid() ? buffer->GetFileName().AsString().c_str() : buffer->GetKey()->GetUoid().GetObjectName().c_str(),
+                                    //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
+                                    //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
 #ifdef PL_PROFILE_ENABLED
-                                            gProfileVarStaticSndShoveTime.GetValue() );
+                                    gProfileVarStaticSndShoveTime.GetValue() );
 #else
-                                            0 );
+                                    0 );
 #endif
     IPrintDbgMessage( str.c_str() );
     if( GetKey() != nil && GetKeyName().Find( "Footstep" ) >= 0 )

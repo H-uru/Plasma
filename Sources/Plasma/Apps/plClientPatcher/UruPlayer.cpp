@@ -66,21 +66,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct ManifestFile
 {
-    ManifestFile(const wchar_t clientName[], const wchar_t downloadName[], const wchar_t md5val[], int flags, plLauncherInfo *info)
+    ManifestFile(const plFileName &clientName, const plFileName &downloadName, const plString &md5val, int flags, plLauncherInfo *info)
     {
-        StrCopy(filename, clientName, arrsize(filename));
-        StrCopy(zipName, downloadName, arrsize(zipName));
-        StrCopy(md5, md5val, arrsize(md5));
+        filename = clientName;
+        zipName = downloadName;
+        md5 = md5val;
         this->flags = flags;
         this->info = info;
-        md5failed = false;  
+        md5failed = false;
     }
 
-    wchar_t filename[MAX_PATH];
-    wchar_t zipName[MAX_PATH];
-    wchar_t md5[MAX_PATH];
+    plFileName filename;
+    plFileName zipName;
+    plString md5;
     int flags;
-    bool md5failed;     
+    bool md5failed;
     plLauncherInfo *info;
 };
 
@@ -117,10 +117,10 @@ struct ManifestResult {
 
 
 static void DownloadCallback (
-    ENetError       result,
-    void *          param,
-    const wchar_t   filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 );
 
 
@@ -140,7 +140,7 @@ static unsigned                         s_fileListRequests;
 static bool                             s_patchComplete;
 static PROCESS_INFORMATION              s_pi;
 static long                             s_numFiles;
-static char                             s_workingDir[MAX_PATH];
+static plFileName                       s_workingDir;
 static bool                             s_patchError;
 static long                             s_asyncCoreInitCount;
 static long                             s_numConnectFailures;
@@ -179,9 +179,9 @@ double              ProcessManifestEntryParam::startTime = 0;
 //              leaving clients with older patchers "dead in the water", without
 //              a way to play Uru.
 #ifdef PLASMA_EXTERNAL_RELEASE
-const wchar_t kPatcherExeFilename[] = L"UruLauncher.exe";
+plFileName kPatcherExeFilename = "UruLauncher.exe";
 #else
-const wchar_t kPatcherExeFilename[] = L"plUruLauncher.exe";
+plFileName kPatcherExeFilename = "plUruLauncher.exe";
 #endif
 
 
@@ -285,14 +285,11 @@ static void WaitUruExitProc (void * param) {
 */
 
 //============================================================================
-static bool MD5Check (const char filename[], const wchar_t md5[]) {
-    // Do md5 check
-    char md5copy[MAX_PATH];
+static bool MD5Check (const plFileName& filename, const char *md5) {
     plMD5Checksum existingMD5(filename);
     plMD5Checksum latestMD5;
 
-    StrToAnsi(md5copy, md5, arrsize(md5copy));
-    latestMD5.SetFromHexString(md5copy);
+    latestMD5.SetFromHexString(md5);
     return (existingMD5 == latestMD5);
 }
 
@@ -304,9 +301,8 @@ static void DecompressOgg (ManifestFile *mf) {
         // decompress ogg if necessary
         if ( (hsCheckBits(flags, plManifestFile::kSndFlagCacheSplit) || hsCheckBits(flags, plManifestFile::kSndFlagCacheStereo)) )
         {
-            char path[MAX_PATH];
-            StrPrintf(path, arrsize(path), "%s%S", s_workingDir, mf->filename);
-            
+            plFileName path = plFileName::Join(s_workingDir, mf->filename);
+
             plAudioFileReader* reader = plAudioFileReader::CreateReader(path, plAudioCore::kAll, plAudioFileReader::kStreamNative);
             if (!reader)
             {
@@ -355,12 +351,8 @@ static void RequestNextManifestFile () {
     ManifestFile* nextfile = manifestQueue.front();
     manifestQueue.pop();
 
-    char  path[MAX_PATH];
-    wchar_t basePath[MAX_PATH];
-    StrPrintf(path, arrsize(path), "%s%S", s_workingDir, nextfile->filename);
-    StrToUnicode(basePath, path, arrsize(basePath));
-    PathRemoveFilename(basePath, basePath, arrsize(basePath));
-    PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
+    plFileName path = plFileName::Join(s_workingDir, nextfile->filename);
+    plFileSystem::CreateDir(path.StripFileName(), true);
 
     ProgressStream *writer = new ProgressStream();   // optimization: dont delete and recreate. Doesn't seem to be working currently, ZLibStream is breaking
     if(!writer->Open(path, "wb"))
@@ -374,7 +366,7 @@ static void RequestNextManifestFile () {
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         char text[256];
-        StrPrintf(text, arrsize(text), "Updating URU...  %S", nextfile->filename);
+        StrPrintf(text, arrsize(text), "Updating URU...  %s", nextfile->filename.AsString().c_str());
         nextfile->info->SetText(text);
 #endif
         NetCliFileDownloadRequest(nextfile->zipName, writer, DownloadCallback, nextfile, nextfile->info->buildId);
@@ -383,19 +375,18 @@ static void RequestNextManifestFile () {
 
 //============================================================================
 static void DownloadCallback (
-    ENetError       result,
-    void *          param,
-    const wchar_t   filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 ) {
     s_numConnectFailures = 0;
     
     ManifestFile *mf = (ManifestFile *)param;
     if (IS_NET_ERROR(result) && s_running && !s_patchError) {
         if (result == kNetErrFileNotFound) {
-            char str[256];
-            StrPrintf(str, arrsize(str), "File not found on server: %S", filename);
-            MessageBox(nil, str, "URU Launcher", MB_ICONERROR);
+            plString str = plString::Format("File not found on server: %s", filename.AsString().c_str());
+            MessageBox(nil, str.c_str(), "URU Launcher", MB_ICONERROR);
             s_patchError = true;
         }
         else if (result == kNetErrRemoteShutdown) {
@@ -414,24 +405,17 @@ static void DownloadCallback (
     writer->Close();
     delete writer;      // delete our stream
 
-    char path[MAX_PATH];    
-    StrPrintf(
-        path,
-        arrsize(path),
-        "%s%S",
-        s_workingDir,
-        mf->filename
-    );
-    if(s_running)
+    plFileName path = plFileName::Join(s_workingDir, mf->filename);
+    if (s_running)
     {
-        if(!MD5Check(path, mf->md5)) {  
-            if(mf->md5failed)
+        if (!MD5Check(path, mf->md5.c_str())) {
+            if (mf->md5failed)
             {
 #ifdef PLASMA_EXTERNAL_RELEASE
                 MessageBox(nil, s_md5CheckError, "URU Launcher", MB_ICONERROR);
 #else
                 char str[256];
-                StrPrintf(str, arrsize(str), "%s %s ", path, s_md5CheckError);
+                StrPrintf(str, arrsize(str), "%s %s ", path.AsString().c_str(), s_md5CheckError);
                 MessageBox(nil, str, "URU Launcher", MB_ICONERROR);
 #endif // PLASMA_EXTERNAL_RELEASE
                 Shutdown(mf->info);
@@ -442,7 +426,7 @@ static void DownloadCallback (
                 MessageBox(nil, s_fileOpenError, "URU Launcher", MB_ICONERROR);
 #else
                 char str[256];
-                StrPrintf(str, arrsize(str), "%s %s", s_fileOpenError, path);
+                StrPrintf(str, arrsize(str), "%s %s", s_fileOpenError, path.AsString().c_str());
                 MessageBox(nil, str, "URU Launcher", MB_ICONERROR);
 #endif // PLASMA_EXTERNAL_RELEASE
                 Shutdown(mf->info);
@@ -456,11 +440,9 @@ static void DownloadCallback (
 
     AtomicAdd(&s_numFiles, -1);
 
-    if(s_running)
+    if (s_running)
     {
-        wchar_t ext[MAX_EXT];
-        PathSplitPath(mf->filename, nil, nil, nil, ext);
-        if(!StrCmpI(L".ogg", ext))
+        if (!mf->filename.GetFileExt().CompareI("ogg"))
         {
             DecompressOgg(mf);
         }
@@ -490,16 +472,9 @@ static void ProcessManifestEntry (void * param, ENetError error) {
         StrPrintf(text, arrsize(text), "Checking for updates...  %S", p->mr->manifest[p->index].clientName);
         p->mr->info->SetText(text);
 #endif
-    char path[MAX_PATH];    
-    StrPrintf(
-        path,
-        arrsize(path),
-        "%s%S",
-        s_workingDir,
-        p->mr->manifest[p->index].clientName
-    );
+    plFileName path = plFileName::Join(s_workingDir, p->mr->manifest[p->index].clientName);
     uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
-    if(!MD5Check(path, p->mr->manifest[p->index].md5)) {
+    if (!MD5Check(path, p->mr->manifest[p->index].md5.c_str())) {
         p->mr->critsect.Lock();
         p->mr->indices.Add(p->index);
         p->mr->critsect.Unlock();
@@ -547,10 +522,8 @@ static void ProcessManifest (void * param) {
     VLDEnable();
 #endif
 
-    wchar_t basePath[MAX_PATH];
-    char path[MAX_PATH];    
     AtomicAdd(&s_perf[kPerfThreadTaskCount], 1);
-        
+
     ManifestResult * mr = (ManifestResult *)param;
 
     PatchInfo patchInfo;
@@ -574,14 +547,13 @@ static void ProcessManifest (void * param) {
         p->index = i;
         p->mr = mr;
         p->exists = false;
-        StrPrintf(path, arrsize(path), "%s%S", s_workingDir, mr->manifest[i].clientName);
-        fd = fopen(path, "r");
-        if(fd)
+        plFileName path = plFileName::Join(s_workingDir, mr->manifest[i].clientName);
+        fd = plFileSystem::Open(path, "r");
+        if (fd)
         {
             p->exists = true;
             p->totalSize += p->mr->manifest[i].zipSize;
             fclose(fd);
-            
         }
     }
     
@@ -617,10 +589,8 @@ static void ProcessManifest (void * param) {
                 if(s_running)
                 {
                     unsigned index = mr->indices[i];
-                    StrPrintf(path, arrsize(path), "%s%S", s_workingDir, manifest[index].clientName);
-                    StrToUnicode(basePath, path, arrsize(basePath));
-                    PathRemoveFilename(basePath, basePath, arrsize(basePath));
-                    PathCreateDirectory(basePath, kPathCreateDirFlagEntireTree);
+                    plFileName path = plFileName::Join(s_workingDir, manifest[index].clientName);
+                    plFileSystem::CreateDir(path.StripFileName(), true);
 
                     ManifestFile* mf = new ManifestFile(
                         manifest[index].clientName,
@@ -637,7 +607,7 @@ static void ProcessManifest (void * param) {
                             MessageBox(nil, s_fileOpenError, "URU Launcher", MB_ICONERROR);
 #else
                             char str[256];
-                            StrPrintf(str, arrsize(str), "%s %s", path, s_fileOpenError);
+                            StrPrintf(str, arrsize(str), "%s %s", path.AsString().c_str(), s_fileOpenError);
                             MessageBox(nil, str, "URU Launcher", MB_ICONERROR);
 #endif
                             Shutdown(mr->info);
@@ -711,10 +681,10 @@ static void ManifestCallback (
     noDuplicates.Reserve(mr->manifest.Count());
     for(unsigned i = 0; i < entryCount - 1; ++i)
     {
-        if(StrCmp(mr->manifest[i].clientName, mr->manifest[i+1].clientName))
+        if (mr->manifest[i].clientName != mr->manifest[i+1].clientName)
         {
             noDuplicates.Add(mr->manifest[i]);
-        }       
+        }
     }
     noDuplicates.Add(mr->manifest[entryCount - 1]);
     
@@ -759,11 +729,12 @@ static void ThinManifestCallback (
         return;
     }
     s_patchComplete = true;
-    char                path[MAX_PATH];
     for (unsigned i = 0; i < entryCount; ++i) {
-        if(!s_running) return;
-        StrPrintf(path, arrsize(path), "%s%S", s_workingDir, manifest[i].clientName);
-        if(!MD5Check(path, manifest[i].md5)){
+        if (!s_running)
+            return;
+
+        plFileName path = plFileName::Join(s_workingDir, manifest[i].clientName);
+        if (!MD5Check(path, manifest[i].md5.c_str())) {
             s_patchComplete = false;
             NetCliFileManifestRequest(ManifestCallback, info, s_manifest, info->buildId);
             break;
@@ -775,7 +746,7 @@ static void ThinManifestCallback (
         info->progressCallback(kStatusPending, &patchInfo);
 #ifndef PLASMA_EXTERNAL_RELEASE
         char text[256];
-        StrPrintf(text, arrsize(text), "Checking for updates...  %S", manifest[i].clientName);
+        StrPrintf(text, arrsize(text), "Checking for updates...  %s", manifest[i].clientName.AsString().c_str());
         info->SetText(text);
 #endif
     }
@@ -894,9 +865,8 @@ void UruPrepProc (void * param) {
     s_running = true;
 
     plLauncherInfo *info = (plLauncherInfo *) param;
+    s_workingDir = plString::FromWchar(info->path);
 
-    StrToAnsi(s_workingDir, info->path, arrsize(s_workingDir)); 
-    
     InitAsyncCore();
     NetClientInitialize();
     NetClientSetErrorHandler(NetErrorHandler);

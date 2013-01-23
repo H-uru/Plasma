@@ -63,7 +63,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWinFontCache.h"
 
 #include "plStatusLog/plStatusLog.h"
-#include "plFile/hsFiles.h"
 #include "plGImage/plDynSurfaceWriter.h"
 
 #if HS_BUILD_FOR_WIN32
@@ -234,11 +233,11 @@ void    plWinFontCache::Clear( void )
     for( i = 0; i < fCustFonts.GetCount(); i++ )
     {
 #if (_WIN32_WINNT >= 0x0500)
-        if( plDynSurfaceWriter::CanHandleLotsOfThem() )
-            RemoveFontResourceEx( fCustFonts[ i ]->fFilename, FR_PRIVATE, 0 );
+        if (plDynSurfaceWriter::CanHandleLotsOfThem())
+            RemoveFontResourceExW(fCustFonts[i]->fFilename.AsString().ToWchar(), FR_PRIVATE, 0);
         else
 #endif
-            if( RemoveFontResource( fCustFonts[ i ]->fFilename ) == 0 )
+            if (RemoveFontResourceW(fCustFonts[i]->fFilename.AsString().ToWchar()) == 0)
             {
                 int q= 0;
                 DWORD e = GetLastError();
@@ -267,31 +266,27 @@ void    plWinFontCache::ILoadCustomFonts( void )
         return;
 
     // Iterate through all the custom fonts in our dir
-    hsFolderIterator    iter( fCustFontDir );
-    char                fileName[ kFolderIterator_MaxPath ];
-    int                 numAdded;
+    int numAdded;
 
-
-    while( iter.NextFileSuffix( kCustFontExtension ) )
+    std::vector<plFileName> fonts = plFileSystem::ListDir(fCustFontDir, kCustFontExtension);
+    for (auto iter = fonts.begin(); iter != fonts.end(); ++iter)
     {
-        iter.GetPathAndName( fileName );
-    
         // Note that this call can be translated as "does my OS suck?"
 #if (_WIN32_WINNT >= 0x0500)
         if( plDynSurfaceWriter::CanHandleLotsOfThem() )
-            numAdded = AddFontResourceEx( fileName, FR_PRIVATE, 0 );
+            numAdded = AddFontResourceExW(iter->AsString().ToWchar(), FR_PRIVATE, 0);
         else
 #endif
-            numAdded = AddFontResource( fileName );
+            numAdded = AddFontResourceW(iter->AsString().ToWchar());
 
         if( numAdded > 0 )
         {
-            plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Added custom font %s, %d fonts", fileName, numAdded );
-            fCustFonts.Append( new plCustFont( fileName ) );
+            plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Added custom font %s, %d fonts", iter->GetFileName().c_str(), numAdded );
+            fCustFonts.Append(new plCustFont(*iter));
         }
         else
         {
-            plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Unable to load custom font %s", fileName );
+            plStatusLog::AddLineS( "pipeline.log", "WinFontCache: Unable to load custom font %s", iter->GetFileName().c_str() );
         }
     }
 }

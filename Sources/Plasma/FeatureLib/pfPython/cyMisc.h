@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef cyMisc_h
 #define cyMisc_h
 
-#include <string>
-
 /////////////////////////////////////////////////////////////////////////////
 //
 // NAME: cyMisc
@@ -67,6 +65,7 @@ class pyGUIDialog;
 class plPipeline;
 class plDisplayMode;
 class plUUID;
+class plFileName;
 struct PipelineParams;
 
 typedef struct _object PyObject;
@@ -934,11 +933,11 @@ public:
 
     static bool DumpLogs(const std::wstring & folder);
 
-    static bool FileExists(const std::wstring & filename);
-    static bool CreateDir(const std::wstring & directory);
+    static bool FileExists(const plFileName & filename);
+    static bool CreateDir(const plFileName & directory);
 
-    static std::wstring GetUserPath();
-    static std::wstring GetInitPath();
+    static plFileName GetUserPath();
+    static plFileName GetInitPath();
 
     static void SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp);
     static void SendFriendInvite(const wchar_t email[], const wchar_t toName[]);

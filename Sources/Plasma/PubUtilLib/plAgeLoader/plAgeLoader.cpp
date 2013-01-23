@@ -294,14 +294,14 @@ bool plAgeLoader::ILoadAge(const char ageName[])
     {
         if( IsPageExcluded( page, fAgeName) )
         {
-            nc->DebugMsg( "\tExcluding page %s\n", page->GetName() );
+            nc->DebugMsg("\tExcluding page %s\n", page->GetName().c_str());
             continue;
         }
 
         nPages++;
 
         pMsg1->AddRoomLoc(ad.CalcPageLocation(page->GetName()));
-        nc->DebugMsg("\tPaging in room %s\n", page->GetName());
+        nc->DebugMsg("\tPaging in room %s\n", page->GetName().c_str());
     }
 
     pMsg1->Send(clientKey);

@@ -868,14 +868,14 @@ plSoundBuffer::ELoadReturnVal plSound::IPreLoadBuffer( bool playWhenLoaded, bool
     }
 }
 
-const char *plSound::GetFileName( void ) const
+plFileName plSound::GetFileName( void ) const
 {
-    if(fDataBufferKey->ObjectIsLoaded())
+    if (fDataBufferKey->ObjectIsLoaded())
     {
         return ((plSoundBuffer *)fDataBufferKey->ObjectIsLoaded())->GetFileName();
     }
 
-    return nil;
+    return "";
 }
 
 /////////////////////////////////////////////////////////////////////////

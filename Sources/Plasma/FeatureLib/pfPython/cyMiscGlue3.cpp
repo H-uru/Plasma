@@ -632,24 +632,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFileExists, args, "Params: filename\nReturns t
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyUnicode_Check(filenameObj))
+    if (PyString_CheckEx(filenameObj))
     {
-        int strLen = PyUnicode_GetSize(filenameObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)filenameObj, text, strLen);
-        text[strLen] = L'\0';
-        bool retVal = cyMisc::FileExists(text);
-        delete [] text;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else if (PyString_Check(filenameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(filenameObj);
-        wchar_t* wText = hsStringToWString(text);
-        bool retVal = cyMisc::FileExists(wText);
-        delete [] wText;
-        PYTHON_RETURN_BOOL(retVal);
+        PYTHON_RETURN_BOOL(cyMisc::FileExists(PyString_AsStringEx(filenameObj)));
     }
     else
     {
@@ -667,24 +652,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyUnicode_Check(directoryObj))
+    if (PyString_CheckEx(directoryObj))
     {
-        int strLen = PyUnicode_GetSize(directoryObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)directoryObj, text, strLen);
-        text[strLen] = L'\0';
-        bool retVal = cyMisc::CreateDir(text);
-        delete [] text;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else if (PyString_Check(directoryObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(directoryObj);
-        wchar_t* wText = hsStringToWString(text);
-        bool retVal = cyMisc::CreateDir(wText);
-        delete [] wText;
-        PYTHON_RETURN_BOOL(retVal);
+        PYTHON_RETURN_BOOL(cyMisc::CreateDir(PyString_AsStringEx(directoryObj)));
     }
     else
     {
@@ -695,14 +665,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
 {
-    std::wstring val = cyMisc::GetUserPath();
-    return PyUnicode_FromWideChar(val.c_str(), val.length());
+    return PyUnicode_FromStringEx(cyMisc::GetUserPath().AsString());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
 {
-    std::wstring val = cyMisc::GetInitPath();
-    return PyUnicode_FromWideChar(val.c_str(), val.length());
+    return PyUnicode_FromStringEx(cyMisc::GetInitPath().AsString());
 }
 
 ///////////////////////////////////////////////////////////////////////////

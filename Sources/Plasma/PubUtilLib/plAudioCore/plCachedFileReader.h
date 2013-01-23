@@ -54,13 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plcachedfilereader_h
 
 #include "plAudioFileReader.h"
+#include "plFileSystem.h"
 
 //// Class Definition ////////////////////////////////////////////////////////
 
 class plCachedFileReader : public plAudioFileReader
 {
 public:
-    plCachedFileReader(const char *path,
+    plCachedFileReader(const plFileName &path,
                     plAudioCore::ChannelSelect whichChan = plAudioCore::kAll);
     virtual ~plCachedFileReader();
 
@@ -75,7 +76,7 @@ public:
     virtual bool    Read(uint32_t numBytes, void *buffer);
     virtual uint32_t  NumBytesLeft();
 
-    virtual bool    OpenForWriting(const char *path, plWAVHeader &header);
+    virtual bool    OpenForWriting(const plFileName &path, plWAVHeader &header);
     virtual uint32_t  Write(uint32_t bytes, void *buffer);
 
     virtual bool    IsValid() { return fFileHandle != nil; }
@@ -86,11 +87,11 @@ protected:
         kPCMFormatTag = 1
     };
 
-    char            fFilename[512];
+    plFileName      fFilename;
     FILE *          fFileHandle;
     plWAVHeader     fHeader;
-    uint32_t          fDataLength;
-    uint32_t          fCurPosition;
+    uint32_t        fDataLength;
+    uint32_t        fCurPosition;
 
     void IError(const char *msg);
 };

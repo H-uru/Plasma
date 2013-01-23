@@ -55,16 +55,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plCachedFileReader::plCachedFileReader(const char *path,
+plCachedFileReader::plCachedFileReader(const plFileName &path,
                                        plAudioCore::ChannelSelect whichChan)
-        : fFileHandle(nil), fCurPosition(0)
+        : fFilename(path), fFileHandle(nil), fCurPosition(0)
 {
-    hsAssert(path != nil, "Invalid path specified in plCachedFileReader");
-
-    strncpy(fFilename, path, sizeof(fFilename));
+    hsAssert(path.IsValid(), "Invalid path specified in plCachedFileReader");
 
     /// Open the file as a plain binary stream
-    fFileHandle = fopen(path, "rb");
+    fFileHandle = plFileSystem::Open(path, "rb");
     if (fFileHandle != nil)
     {
         if (fread(&fHeader, 1, sizeof(plWAVHeader), fFileHandle)
@@ -162,17 +160,17 @@ uint32_t plCachedFileReader::NumBytesLeft()
     return fDataLength - fCurPosition;
 }
 
-bool plCachedFileReader::OpenForWriting(const char *path, plWAVHeader &header)
+bool plCachedFileReader::OpenForWriting(const plFileName &path, plWAVHeader &header)
 {
-    hsAssert(path != nil, "Invalid path specified in plCachedFileReader");
+    hsAssert(path.IsValid(), "Invalid path specified in plCachedFileReader");
 
     fHeader = header;
     fCurPosition = 0;
     fDataLength = 0;
-    strncpy(fFilename, path, sizeof(fFilename));
+    fFilename = path;
 
     /// Open the file as a plain binary stream
-    fFileHandle = fopen(path, "wb");
+    fFileHandle = plFileSystem::Open(path, "wb");
 
     if (fFileHandle != nil)
     {

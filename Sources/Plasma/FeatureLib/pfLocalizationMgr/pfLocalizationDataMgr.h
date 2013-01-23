@@ -53,9 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <map>
 
 #include "pfLocalizedString.h"
+#include "plFileSystem.h"
 
 class plStatusLog;
-class plString;
 
 // Helper classes/structs that are only used in this main class
 class LocalizationDatabase;
@@ -106,7 +106,7 @@ protected:
     // Contains all localized strings, the key is the Age.Set.Name specified by XML, in localizedElement, the key is the language string
     pf3PartMap<localizedElement> fLocalizedElements;
 
-    plString fDataPath;
+    plFileName fDataPath;
 
     localizedElement ICreateLocalizedElement(); // ease of use function that creates a basic localized element object
 
@@ -117,13 +117,13 @@ protected:
     void IConvertSet(LocSetInfo *setInfo, const plString & curPath);
     void IConvertAge(LocAgeInfo *ageInfo, const plString & curPath);
 
-    void IWriteText(const plString & filename, const plString & ageName, const plString & languageName); // Write localization text to the specified file
+    void IWriteText(const plFileName & filename, const plString & ageName, const plString & languageName); // Write localization text to the specified file
 
-    pfLocalizationDataMgr(const plString & path);
+    pfLocalizationDataMgr(const plFileName & path);
 public:
     virtual ~pfLocalizationDataMgr();
 
-    static void Initialize(const plString & path);
+    static void Initialize(const plFileName & path);
     static void Shutdown();
     static pfLocalizationDataMgr &Instance(void) {return *fInstance;}
     static bool InstanceValid(void) {return fInstance != nil;}
@@ -162,7 +162,7 @@ public:
     bool DeleteElement(const plString & name);
 
     // Writes the current database to the disk (editor only). It will create all the files and put them into path
-    void WriteDatabaseToDisk(const plString & path);
+    void WriteDatabaseToDisk(const plFileName & path);
 
     void OutputTreeToLog(); // prints the localization tree to the log file
 };

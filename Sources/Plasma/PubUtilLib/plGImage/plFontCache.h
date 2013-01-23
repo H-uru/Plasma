@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsTemplates.h"
 #include "pnKeyedObject/hsKeyedObject.h"
+#include "plFileSystem.h"
 
 
 //// Class Definition /////////////////////////////////////////////////////////
@@ -69,9 +70,9 @@ class plFontCache : public hsKeyedObject
     protected:  
 
         hsTArray<plFont *>      fCache;
-        char                    *fCustFontDir;
+        plFileName              fCustFontDir;
 
-        static plFontCache      *fInstance;
+        static plFontCache     *fInstance;
 
         void    ILoadCustomFonts( void );
 
@@ -96,7 +97,7 @@ class plFontCache : public hsKeyedObject
 //      void    FreeFont( HFONT font );
         void    Clear( void );
 
-        void    LoadCustomFonts( const char *dir );
+        void    LoadCustomFonts( const plFileName &dir );
 
         // Our custom font extension
         static const char* kCustFontExtension;

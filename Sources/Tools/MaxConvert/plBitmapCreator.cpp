@@ -134,7 +134,7 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
 
     // Load the bitmap
     BitmapInfo bi;
-    bi.SetName(bd->fileName);
+    bi.SetName(bd->fileName.AsString().c_str());
 
 #if 0 // This isn't really an issue since the textures are packed -Colin
     const int kMaxFileNameLength = 30;
@@ -267,20 +267,20 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
 //
 // Verify that bitmap is the correct type/size
 //
-void plBitmapCreator::ICheckOutBitmap(BitmapInfo* bInfo, Bitmap* bm, const char *fileName)
+void plBitmapCreator::ICheckOutBitmap(BitmapInfo* bInfo, Bitmap* bm, const plFileName& fileName)
 {
     hsGuardBegin("hsConverterUtils::ICheckOutBitmap");
 
     // Check out bitmap
     if (bm->Flags() & MAP_FLIPPED)
-        MessageBox(GetActiveWindow(), "Bitmap is flipped horizontally", fileName, MB_OK);   
+        MessageBox(GetActiveWindow(), "Bitmap is flipped horizontally", fileName.AsString().c_str(), MB_OK);
     if (bm->Flags() & MAP_INVERTED)
-        MessageBox(GetActiveWindow(), "Bitmap is inverted vertically", fileName, MB_OK);    
+        MessageBox(GetActiveWindow(), "Bitmap is inverted vertically", fileName.AsString().c_str(), MB_OK);
 
     if (bInfo->Flags() & MAP_FLIPPED)
-        MessageBox(GetActiveWindow(), "BI:Bitmap is flipped horizontally", fileName, MB_OK);    
+        MessageBox(GetActiveWindow(), "BI:Bitmap is flipped horizontally", fileName.AsString().c_str(), MB_OK);
     if (bInfo->Flags() & MAP_INVERTED)
-        MessageBox(GetActiveWindow(), "BI:Bitmap is inverted vertically", fileName, MB_OK); 
+        MessageBox(GetActiveWindow(), "BI:Bitmap is inverted vertically", fileName.AsString().c_str(), MB_OK);
 
     hsGuardEnd;
 }
@@ -480,10 +480,10 @@ plBitmap *plBitmapCreator::CreateTexture(plBitmapData *bd, const plLocation &loc
 
     for (int i = 0; i < plLocalization::GetNumLocales(); i++)
     {
-        char localName[MAX_PATH];
-        if (plLocalization::ExportGetLocalized(bd->fileName, i, localName))
+        plFileName localName = plLocalization::ExportGetLocalized(bd->fileName, i);
+        if (localName.IsValid())
         {
-            const char* oldName = bd->fileName;
+            plFileName oldName = bd->fileName;
             bd->fileName = localName;
             ICreateTexture(bd, loc, clipID);
             bd->fileName = oldName;
@@ -517,40 +517,39 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
         return nil;
     }
 
-    if( bd->fileName == nil || bd->fileName[ 0 ] == 0 )
+    if (!bd->fileName.IsValid())
     {
         fErrorMsg->Set( true, "Bitmap Error", "Material texture has null bitmap name." ).Show();
-        fErrorMsg->Set();   
+        fErrorMsg->Set();
         return nil;
     }
 
     // Get and mangle key name
     plString name;
-    char temp[ 256 ];
-    _splitpath(bd->fileName, NULL, NULL, temp, NULL);
+    plString temp = bd->fileName.GetFileNameNoExt();
 
     // Somehow, sometimes, we get the same file in with different cases. So we need to force the
     // case identical all the time, else the patching process for dat files will think they're
     // "different" when they're really not
-    strlwr( temp );
+    temp = temp.ToLower();
 
     /// Mangle name for detail textures, so we don't end up overwriting settings elsewhere
     if( bd->createFlags & plMipmap::kCreateDetailMask )
     {   
         // Mangle of the form: name@dropStart&dropStop&max&min
         if( clipID != -1 )
-            name = plString::Format( "%s*%x#%d@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags, clipID,
+            name = plString::Format( "%s*%x#%d@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp.c_str(), bd->texFlags, clipID,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags & plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
         else
-            name = plString::Format( "%s*%x@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp, bd->texFlags,
+            name = plString::Format( "%s*%x@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp.c_str(), bd->texFlags,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags == plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
     }
     else if( clipID != -1 )
-        name = plString::Format( "%s*%x#%d", temp, bd->texFlags, clipID );
+        name = plString::Format( "%s*%x#%d", temp.c_str(), bd->texFlags, clipID );
     else
-        name = plString::Format( "%s*%x", temp, bd->texFlags );
+        name = plString::Format( "%s*%x", temp.c_str(), bd->texFlags );
     if( bd->invertAlpha )
         name += "_inva";
     name += ".hsm";
@@ -566,7 +565,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     if( texture )
     {
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesEx(bd->fileName, GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.AsString().ToWchar(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
 
         // If this texture has been modified since the last export, delete the old version but reuse the key
@@ -652,7 +651,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
 
         // Texture reuse optimization
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesEx(bd->fileName, GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.AsString().ToWchar(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
         texture->SetModifiedTime(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
 

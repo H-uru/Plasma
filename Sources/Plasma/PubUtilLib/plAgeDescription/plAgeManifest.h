@@ -63,12 +63,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plManifestFile
 {
 protected:
-    std::string     fName;
-    std::string     fServerPath;
+    plFileName      fName;
+    plFileName      fServerPath;
     plMD5Checksum   fChecksum;
-    uint32_t          fSize;
-    uint32_t          fZippedSize;
-    uint32_t          fFlags;
+    uint32_t        fSize;
+    uint32_t        fZippedSize;
+    uint32_t        fFlags;
 
     bool            fMd5Checked;
     bool            fIsLocalUpToDate;
@@ -86,11 +86,12 @@ public:
         kFlagZipped                 = 1<<3,
     };
 
-    plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
+    plManifestFile(const plFileName& name, const plFileName& serverPath, const plMD5Checksum& check,
+                   uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
     virtual ~plManifestFile();
 
-    const char* GetName() const { return fName.c_str(); }
-    const char* GetServerPath() const { return fServerPath.c_str(); }
+    const plFileName &GetName() const { return fName; }
+    const plFileName &GetServerPath() const { return fServerPath; }
     const plMD5Checksum& GetChecksum() const { return fChecksum; }
     uint32_t GetDiskSize() const { return fSize; }
     uint32_t GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }

@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string.h>
 #include "HeadSpin.h"
 #include "plBufferedFileReader.h"
+#include "plFileSystem.h"
 //#include "plProfile.h"
 
 
@@ -64,14 +65,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-plBufferedFileReader::plBufferedFileReader( const char *path, plAudioCore::ChannelSelect whichChan )
+plBufferedFileReader::plBufferedFileReader( const plFileName &path, plAudioCore::ChannelSelect whichChan )
 {
     // Init some stuff
     fBufferSize = 0;
     fBuffer = nil;
     fCursor = 0;
 
-    hsAssert( path != nil, "Invalid path specified in plBufferedFileReader" );
+    hsAssert( path.IsValid(), "Invalid path specified in plBufferedFileReader" );
 
     // Ask plAudioFileReader for another reader to get this file
     // Note: have this reader do the chanSelect for us

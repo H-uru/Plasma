@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 #include <string>
+#include "plFileSystem.h"
 
 class plLocalization
 {
@@ -81,7 +82,7 @@ protected:
     static bool fUsesUnicode[kNumLanguages];
     static encodingTypes fUnicodeEncoding[kNumLanguages];
 
-    static bool IGetLocalized(const char* name, Language lang, char* localizedName);
+    static plFileName IGetLocalized(const plFileName& name, Language lang);
 
 public:
     static void SetLanguage(Language lang) { fLanguage = lang; }
@@ -97,8 +98,8 @@ public:
     static bool IsLocalized() { return fLanguage != kEnglish; }
 
     // Pass in a key name and this will give you the localized name
-    // Returns false if the original keyname is not for a localized asset
-    static bool GetLocalized(const char* name, char* localizedName) { return IGetLocalized(name, fLanguage, localizedName); }
+    // Returns an invalid filename if the original keyname is not for a localized asset
+    static plFileName GetLocalized(const plFileName& name) { return IGetLocalized(name, fLanguage); }
 
     //
     // Export only
@@ -116,9 +117,9 @@ public:
     // }
     //
     static int GetNumLocales() { return kNumLanguages - 1; }
-    static bool ExportGetLocalized(const char* name, int lang, char* localizedName);
+    static plFileName ExportGetLocalized(const plFileName& name, int lang);
     // Just tells us if this is localized, doesn't actually convert it for us
-    static bool IsLocalizedName(const char* name) { return IGetLocalized(name, kEnglish, nil); }
+    static bool IsLocalizedName(const plFileName& name) { return IGetLocalized(name, kEnglish).IsValid(); }
 
     // Converts a vector of translated strings to a encoded string that can be decoded by StringToLocal()
     // The index in the vector of a string is it's language

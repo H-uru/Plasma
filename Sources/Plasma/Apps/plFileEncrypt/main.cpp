@@ -39,25 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plFile/hsFiles.h"
 #include "plFile/plEncryptedStream.h"
 #include "plProduct.h"
 
 
-void EncryptFiles(const char* dir, const char* ext, bool encrypt);
+void EncryptFiles(const plFileName& dir, const char* ext, bool encrypt);
 
 void print_version() {
-    printf("%s\n\n", plProduct::ProductString().c_str());
+    puts(plProduct::ProductString().c_str());
+    puts("");
 }
 
 void print_help() {
-    printf("plFileEncrypt - Encrypts and Decrypts Uru Files.\n\n");
+    puts("plFileEncrypt - Encrypts and Decrypts Uru Files.\n");
     print_version();
-    printf("Usage: plFileEncrypt \t[(encrypt|-e)|(decrypt|-d|)|(--help|-h|-?|/h)|(-v)]\n");
-    printf("\tencrypt|-e\t - Encrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
-    printf("\tdecrypt|-d\t - Decrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.\n");
-    printf("\t--help|-h|-?|/h\t - Prints Help. This Screen.\n");
-    printf("\t-v|--version\t - Prints build version information\n");
+    puts("Usage: plFileEncrypt \t[(encrypt|-e)|(decrypt|-d|)|(--help|-h|-?|/h)|(-v)]");
+    puts("\tencrypt|-e\t - Encrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.");
+    puts("\tdecrypt|-d\t - Decrypts All .age, .fni, .ini, .csv, and .sdl files in the current folder.");
+    puts("\t--help|-h|-?|/h\t - Prints Help. This Screen.");
+    puts("\t-v|--version\t - Prints build version information");
 }
 
 int main(int argc, char *argv[])
@@ -87,37 +87,34 @@ int main(int argc, char *argv[])
         } 
         else if (ARGCMP("-v") || ARGCMP("--version"))
         {
-            print_version();            
+            print_version();
             return 0;
         }
     }
 #undef ARGCMP
 
-    EncryptFiles(dir, ".age", encrypt);
-    EncryptFiles(dir, ".fni", encrypt);
-    EncryptFiles(dir, ".ini", encrypt);
-    EncryptFiles(dir, ".sdl", encrypt);
-    EncryptFiles(dir, ".csv", encrypt);
+    EncryptFiles(dir, "*.age", encrypt);
+    EncryptFiles(dir, "*.fni", encrypt);
+    EncryptFiles(dir, "*.ini", encrypt);
+    EncryptFiles(dir, "*.sdl", encrypt);
+    EncryptFiles(dir, "*.csv", encrypt);
     return 0;
 }
 
-void EncryptFiles(const char* dir, const char* ext, bool encrypt)
+void EncryptFiles(const plFileName& dir, const char* ext, bool encrypt)
 {
-    char filePath[256];
-
-    hsFolderIterator folder(dir);
-    while (folder.NextFileSuffix(ext))
+    std::vector<plFileName> files = plFileSystem::ListDir(dir, ext);
+    for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        folder.GetPathAndName(filePath);
         if (encrypt)
         {
-            printf("encrypting: %s\n", folder.GetFileName());
-            plEncryptedStream::FileEncrypt(filePath);
+            printf("encrypting: %s\n", iter->GetFileName().c_str());
+            plEncryptedStream::FileEncrypt(*iter);
         }
         else
         { 
-            printf("decrypting: %s\n", folder.GetFileName());
-            plEncryptedStream::FileDecrypt(filePath);
+            printf("decrypting: %s\n", iter->GetFileName().c_str());
+            plEncryptedStream::FileDecrypt(*iter);
         }
     }
 }

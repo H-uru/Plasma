@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSecureStream.h"
 #include "hsWindows.h"
 
-#include "plFileUtils.h"
 #include "hsSTLStream.h"
 
 #include <time.h>
@@ -72,7 +71,6 @@ fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
 fRAMStream(nil),
-fWriteFileName(nil),
 fOpenMode(kOpenFail),
 fDeleteOnExit(deleteOnExit)
 {
@@ -87,7 +85,6 @@ fRef(INVALID_HANDLE_VALUE),
 fActualFileSize(0),
 fBufferedStream(false),
 fRAMStream(nil),
-fWriteFileName(nil),
 fOpenMode(kOpenFail),
 fDeleteOnExit(false)
 {

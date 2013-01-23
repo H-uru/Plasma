@@ -71,7 +71,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "UserPropMgr.h"
-#include "plFile/plFileUtils.h"
 
 #include "hsConverterUtils.h"
 #include "hsControlConverter.h"
@@ -1981,18 +1980,17 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
     if( !bi || !bi->Name() || !*bi->Name() )
         return layerIFace;
 
-    const char* fileName = bi->Name();
+    plFileName fileName = bi->Name();
 
     plAnimStealthNode* stealth = IGetEntireAnimation(mtl);
 
-    const char* ext = plFileUtils::GetFileExt(fileName);
-    bool isBink = ext && (stricmp(ext, "bik") == 0);
-    bool isAvi  = ext &&(stricmp(ext, "avi") == 0);
+    plString ext = fileName.GetFileExt();
+    bool isBink = (ext.CompareI("bik") == 0);
+    bool isAvi  = (ext.CompareI("avi") == 0);
 
     if (isBink || isAvi)
     {
-        char movieName[256];
-        sprintf(movieName, "avi/%s", plFileUtils::GetFileName(fileName));
+        plFileName movieName = plFileName::Join("avi", fileName.GetFileName());
 
         plLayerMovie* movieLayer = nil;
         plString moviePostfix;

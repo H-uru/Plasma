@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClientMsg.h"
 #include "HeadSpin.h"
 
-void plClientMsg::IReset() 
+void plClientMsg::IReset()
 { 
-    fMsgFlag = 0; 
-    fAgeName = nil;
+    fMsgFlag = 0;
+    fAgeName = "";
 }
 
 void plClientMsg::AddRoomLoc(plLocation loc)

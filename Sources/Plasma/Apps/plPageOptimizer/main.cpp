@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 
 #include "plPageOptimizer.h"
-#include "plFile/plFileUtils.h"
 #include "pnNetCommon/plSynchedObject.h"
 
 int main(int argc, char* argv[])
@@ -53,7 +52,8 @@ int main(int argc, char* argv[])
         return 1;
     }
 
-    printf("Optimizing %s...", plFileUtils::GetFileName(argv[1]));
+    plFileName filename = argv[1];
+    printf("Optimizing %s...", filename.GetFileName().c_str());
 
 #ifndef _DEBUG
     try {

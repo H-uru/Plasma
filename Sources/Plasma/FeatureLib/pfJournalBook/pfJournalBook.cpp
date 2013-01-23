@@ -2535,10 +2535,10 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     // Do a search through our current age with just the name given
     if( plNetClientMgr::GetInstance() != nil )
     {
-        const char *thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if( thisAge != nil )
+        plString thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
+        if (!thisAge.IsNull())
         {
-            key = plKeyFinder::Instance().StupidSearch( thisAge, nil, plMipmap::Index(), cName, true );
+            key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
             if( key != nil )
             {
                 return key;

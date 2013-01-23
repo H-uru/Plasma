@@ -85,7 +85,7 @@ public:
     void PreloadManifest(const NetCliFileManifestEntry manifestEntries[], uint32_t entryCount);
     void PreloadManifest(const NetCliAuthFileInfo manifestEntries[], uint32_t entryCount);
     void PreloadNextFile();
-    void FilePreloaded(const wchar_t* filename, hsStream* stream);
+    void FilePreloaded(const plFileName& filename, hsStream* stream);
    
     plOperationProgress* GetProgressBar() { return fProgress; }
 

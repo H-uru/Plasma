@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Class Definition ////////////////////////////////////////////////////////
 
+class plFileName;
 class plUnifiedTime;
 class plWAVHeader;
 class plAudioFileReader
@@ -80,20 +81,20 @@ public:
     virtual bool    Read( uint32_t numBytes, void *buffer ) = 0;
     virtual uint32_t  NumBytesLeft( void ) = 0;
 
-    virtual bool    OpenForWriting( const char *path, plWAVHeader &header ) { return false; }
+    virtual bool    OpenForWriting( const plFileName& path, plWAVHeader &header ) { return false; }
     virtual uint32_t  Write( uint32_t bytes, void *buffer ) { return 0; }
 
     virtual bool    IsValid( void ) = 0;
 
-    static plAudioFileReader* CreateReader(const char* path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
-    static plAudioFileReader* CreateWriter(const char* path, plWAVHeader& header);
+    static plAudioFileReader* CreateReader(const plFileName& path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll, StreamType type = kStreamWAV);
+    static plAudioFileReader* CreateWriter(const plFileName& path, plWAVHeader& header);
 
     // Decompresses a compressed file to the cache directory
-    static void CacheFile(const char* path, bool splitChannels=false, bool noOverwrite=false);
+    static void CacheFile(const plFileName& path, bool splitChannels=false, bool noOverwrite=false);
 
 protected:
-    static void IGetCachedPath(const char* path, char* cachedPath, plAudioCore::ChannelSelect whichChan);
-    static void ICacheFile(const char* path, bool noOverwrite, plAudioCore::ChannelSelect whichChan);   
+    static plFileName IGetCachedPath(const plFileName& path, plAudioCore::ChannelSelect whichChan);
+    static void ICacheFile(const plFileName& path, bool noOverwrite, plAudioCore::ChannelSelect whichChan);
 };
 
 #endif //_plAudioFileReader_h

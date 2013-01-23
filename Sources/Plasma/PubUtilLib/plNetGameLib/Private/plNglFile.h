@@ -97,10 +97,10 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 // Manifest
 //============================================================================
 struct NetCliFileManifestEntry {
-    wchar_t     clientName[MAX_PATH]; // path and file on client side (for comparison)
-    wchar_t     downloadName[MAX_PATH]; // path and file on server side (for download)
-    wchar_t     md5[MAX_PATH];
-    wchar_t     md5compressed[MAX_PATH]; // md5 for the compressed file
+    plFileName  clientName; // path and file on client side (for comparison)
+    plFileName  downloadName; // path and file on server side (for download)
+    plString    md5;
+    plString    md5compressed; // md5 for the compressed file
     unsigned    fileSize;
     unsigned    zipSize;
     unsigned    flags;
@@ -108,14 +108,14 @@ struct NetCliFileManifestEntry {
 typedef void (*FNetCliFileManifestRequestCallback)(
     ENetError                       result,
     void *                          param,
-    const wchar_t                     group[],
+    const wchar_t                   group[],
     const NetCliFileManifestEntry   manifest[],
     unsigned                        entryCount
 );
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,
     void *                              param,
-    const wchar_t                         group[], // the group of files you want (empty or nil = all)
+    const wchar_t                       group[], // the group of files you want (empty or nil = all)
     unsigned                            buildId = 0 // 0 = get latest, other = get particular build (servers only)
 );
 
@@ -123,13 +123,13 @@ void NetCliFileManifestRequest (
 // File Download
 //============================================================================
 typedef void (*FNetCliFileDownloadRequestCallback)(
-    ENetError       result,
-    void *          param,
-    const wchar_t     filename[],
-    hsStream *      writer
+    ENetError           result,
+    void *              param,
+    const plFileName &  filename,
+    hsStream *          writer
 );
 void NetCliFileDownloadRequest (
-    const wchar_t                         filename[],
+    const plFileName &                  filename,
     hsStream *                          writer,
     FNetCliFileDownloadRequestCallback  callback,
     void *                              param,

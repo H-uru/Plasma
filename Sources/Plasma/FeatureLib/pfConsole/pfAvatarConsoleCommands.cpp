@@ -112,9 +112,9 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 //
 /////////////////////////////////////////////////////////////////
 
-plKey FindSceneObjectByName(const plString& name, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const plString& name, int type, const char* ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const plString& name, const char* typeName, const char* ageName,
+plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const plString& name, int type, const plString& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const plString& name, const char* typeName, const plString& ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -361,7 +361,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMouseTurnSensitivity, "float sensitivity", "Set 
 PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the named Multistage Animation component")
 {
     char str[256];
-    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plMultistageBehMod", nil, str, true);
+    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plMultistageBehMod", "", str, true);
     PrintString(str);
 
     if (key)
@@ -499,7 +499,7 @@ PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpo
     if(avatar)
     {
         char buff[256];
-        plKey seekKey = FindSceneObjectByName(spName, nil, buff);
+        plKey seekKey = FindSceneObjectByName(spName, "", buff);
         plSeekPointMod *mod = plAvatarMgr::GetInstance()->FindSeekPoint(spName);
         
         if(mod)
@@ -596,7 +596,7 @@ PF_CONSOLE_CMD( Avatar, FakeLinkToObj, "string objName", "Pseudo-Link the avatar
 {
     plString spName = plString::FromUtf8(params[0]);
     char buff[256];
-    plKey seekKey = FindSceneObjectByName(spName, nil, buff);
+    plKey seekKey = FindSceneObjectByName(spName, "", buff);
     if (!seekKey)
     {
         PrintString("Can't find object with that name, fake link failed.");

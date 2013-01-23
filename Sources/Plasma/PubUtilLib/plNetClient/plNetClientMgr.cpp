@@ -1474,8 +1474,7 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const char* ageName) const
     if (!loc.IsValid())
     {
         // check current age des
-        if (plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName() &&
-            !strcmp(plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName(), ageName))
+        if (plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName() == ageName)
             loc=plAgeLoader::GetInstance()->GetCurrAgeDesc().CalcPageLocation("BuiltIn");
 
         if (!loc.IsValid())

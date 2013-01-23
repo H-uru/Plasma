@@ -70,15 +70,15 @@ public:
     virtual bool        MsgReceive( plMessage *pMsg );
     
 protected:
-    float            fTimeAtBufferStart;
-    plAudioFileReader   *fDataStream;
-    float            fBufferLengthInSecs;
-    uint8_t               fBlankBufferFillCounter;
-    plSoundDeswizzler   *fDeswizzler;
-    char                fSrcFilename[ 256 ];
+    float               fTimeAtBufferStart;
+    plAudioFileReader  *fDataStream;
+    float               fBufferLengthInSecs;
+    uint8_t             fBlankBufferFillCounter;
+    plSoundDeswizzler  *fDeswizzler;
+    plFileName          fSrcFilename;
     StreamType          fStreamType;
     bool                fIsCompressed;      // this applies only to the new sound file specified in fNewFilename, so we can play both ogg's and wav's
-    std::string         fNewFilename;       // allow the filename to be changed so we can play from a different source.
+    plFileName          fNewFilename;       // allow the filename to be changed so we can play from a different source.
                                             // ultimately this filename will be given to fDataBuffer, but since it's not always around we'll store it here
     bool                fStopping;  
 
@@ -86,7 +86,7 @@ protected:
     bool                fPlayWhenStopped;
     unsigned            fStartPos;
 
-    float            IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
+    float               IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
     virtual void        SetStartPos(unsigned bytes);
 
     virtual void        IDerivedActuallyPlay( void );

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plString.h"
 #include <cstdio>
+#include <cstddef>
 
 #if HS_BUILD_FOR_WIN32
 #   define PATH_SEPARATOR       '\\'
@@ -187,9 +188,41 @@ public:
                            const plFileName& path2, const plFileName &path3)
     { return Join(Join(Join(base, path), path2), path3); }
 
+    /** Append UTF-8 data from a C-style string pointer to the end of this
+     *  filename object.  Not to be confused with Join() -- do not use this
+     *  for joining path components, or you will be shot by Zrax.
+     */
+    plFileName &operator+=(const char *cstr) { return operator=(fName + cstr); }
+
+    /** Append the string \a str to the end of this filename object.
+     *  Not to be confused with Join() -- do not use this for joining path
+     *  components, or you will be shot by Zrax.
+     */
+    plFileName &operator+=(const plString &str) { return operator=(fName + str); }
+
 private:
     plString fName;
+
+    // See the comments in plString's nullptr_t constructors for more info:
+    plFileName(std::nullptr_t) { }
+    void operator=(std::nullptr_t) { }
+    void operator==(std::nullptr_t) const { }
+    void operator!=(std::nullptr_t) const { }
 };
+
+/** Concatentate a plFileName with a string constant.  Not to be confused with
+ *  plFileName::Join() -- do not use this for joining path components, or you
+ *  will be shot by Zrax.
+ */
+inline plFileName operator+(const plFileName &left, const char *right)
+{ return left.AsString() + right; }
+
+/** Concatentate a plFileName with a string constant.  Not to be confused with
+ *  plFileName::Join() -- do not use this for joining path components, or you
+ *  will be shot by Zrax.
+ */
+inline plFileName operator+(const char *left, const plFileName &right)
+{ return left + right.AsString(); }
 
 
 /** Structure to get information about a file by name.
@@ -250,6 +283,9 @@ namespace plFileSystem
     /** Get the current working directory of the application. */
     plFileName GetCWD();
 
+    /** Change the current working directory. */
+    bool SetCWD(const plFileName &cwd);
+
     /** Open a file using the correct platform fopen API. */
     FILE *Open(const plFileName &filename, const char *mode);
 
@@ -267,6 +303,20 @@ namespace plFileSystem
      */
     bool CreateDir(const plFileName &dir, bool checkParents = false);
 
+    /** Fetch a list of files contained in the supplied \a path.
+     *  If \a pattern is specified (e.g. "*.tmp"), use that to filter
+     *  matches.  Otherwise, all files in the path will be returned.
+     *  Note that returned filenames include the provided path -- to
+     *  get only the filename, call .GetFileName() on an entry.
+     */
+    std::vector<plFileName> ListDir(const plFileName &path,
+                                    const char *pattern = nullptr);
+
+    /** Fetch a list of subdirectories in the specified \a path.
+     *  The returned list does not include the "." or ".." entries.
+     */
+    std::vector<plFileName> ListSubdirs(const plFileName &path);
+
     /** Get the User's data directory.  If it doesn't exist, this will
      *  create it.
      */
@@ -279,6 +329,15 @@ namespace plFileSystem
     /** Get the Log output directory.  If it doesn't exist, this will
      *  create it. */
     plFileName GetLogPath();
+
+    /** Get the full path and filename of the current process. */
+    plFileName GetCurrentAppPath();
+
+    /** Create a temporary filename.  If path is specified, the returned
+     *  filename will be relative to the supplied path -- otherwise, the
+     *  system temp path is used.
+     */
+    plFileName GetTempFilename(const char *prefix = "tmp", const plFileName &path = "");
 }
 
 #endif // plFileSystem_Defined

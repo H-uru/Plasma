@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plFile/hsFiles.h"
 #include "hsResMgr.h"
 
 #include "plComponentBase.h"
@@ -318,30 +317,23 @@ void plResponderLinkProc::ILoadAgeFilenamesCombo(HWND hWnd, IParamBlock2 *pb)
     SendMessage(hAge, CB_RESETCONTENT, 0, 0);
 
     // Get the path to the description folder
-    char agePath[MAX_PATH];
-    const char *plasmaPath = plMaxConfig::GetClientPath();
-    if (!plasmaPath)
+    plFileName plasmaPath = plMaxConfig::GetClientPath();
+    if (!plasmaPath.IsValid())
         return;
-    strcpy(agePath, plasmaPath);
-    strcat(agePath, plAgeDescription::kAgeDescPath);
+
+    plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
     const char *savedName = pb->GetStr(kLinkAgeFilename);
     if (!savedName)
         savedName = "";
 
     // Iterate through the age descriptions
-    hsFolderIterator ageFolder(agePath);
-    while (ageFolder.NextFileSuffix(".age")) 
+    std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
+    for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        char ageFile[MAX_PATH];
-        ageFolder.GetPathAndName(ageFile);
+        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
 
-        char name[_MAX_FNAME];
-        _splitpath(ageFile, nil, nil, name, nil);
-
-        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
-
-        if (strcmp(name, savedName) == 0)
+        if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }
@@ -355,30 +347,22 @@ void plResponderLinkProc::ILoadParentAgeFilenamesCombo(HWND hWnd, IParamBlock2 *
     SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)"<None>");
 
     // Get the path to the description folder
-    char agePath[MAX_PATH];
-    const char *plasmaPath = plMaxConfig::GetClientPath();
-    if (!plasmaPath)
+    plFileName plasmaPath = plMaxConfig::GetClientPath();
+    if (!plasmaPath.IsValid())
         return;
-    strcpy(agePath, plasmaPath);
-    strcat(agePath, plAgeDescription::kAgeDescPath);
+    plFileName agePath = plFileName::Join(plasmaPath, plAgeDescription::kAgeDescPath);
 
     const char *savedName = pb->GetStr(kLinkParentAgeFilename);
     if (!savedName)
         savedName = "<None>";
 
     // Iterate through the age descriptions
-    hsFolderIterator ageFolder(agePath);
-    while (ageFolder.NextFileSuffix(".age")) 
+    std::vector<plFileName> ages = plFileSystem::ListDir(agePath, "*.age");
+    for (auto iter = ages.begin(); iter != ages.end(); ++iter)
     {
-        char ageFile[MAX_PATH];
-        ageFolder.GetPathAndName(ageFile);
+        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)iter->GetFileNameNoExt().c_str());
 
-        char name[_MAX_FNAME];
-        _splitpath(ageFile, nil, nil, name, nil);
-
-        int idx = SendMessage(hAge, CB_ADDSTRING, 0, (LPARAM)name);
-
-        if (strcmp(name, savedName) == 0)
+        if (iter->GetFileNameNoExt() == savedName)
             SendMessage(hAge, CB_SETCURSEL, idx, 0);
     }
 }

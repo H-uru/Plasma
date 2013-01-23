@@ -51,24 +51,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeManifest.h"
 
 
-#include "plFile/hsFiles.h"
-#include "plFile/plFileUtils.h"
 #include "plFile/plInitFileReader.h"
 #include "hsStringTokenizer.h"
 
 
 //// plManifestFile ///////////////////////////////////////////////////////
 
-plManifestFile::plManifestFile(const char* name, const char* serverPath, const plMD5Checksum& check, uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now) :
+plManifestFile::plManifestFile(const plFileName& name, const plFileName& serverPath,
+                               const plMD5Checksum& check, uint32_t size, uint32_t zippedSize,
+                               uint32_t flags, bool md5Now) :
+    fName(name),
+    fServerPath(serverPath),
     fChecksum(check),
     fSize(size),
     fZippedSize(zippedSize),
     fFlags(flags),
     fMd5Checked(md5Now)
 {
-    fName = name;
-    fServerPath = serverPath;
-
     if (md5Now)
     {
         DoMd5Check();
@@ -81,9 +80,9 @@ plManifestFile::~plManifestFile()
 
 void plManifestFile::DoMd5Check()
 {
-    if (plFileUtils::FileExists(fName.c_str()))
+    if (plFileInfo(fName).Exists())
     {
-        plMD5Checksum localFile(fName.c_str());
+        plMD5Checksum localFile(fName);
         fIsLocalUpToDate = (localFile == fChecksum);
         fLocalExists = true;
     }

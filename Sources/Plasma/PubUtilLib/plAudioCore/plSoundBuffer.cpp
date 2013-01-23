@@ -49,35 +49,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "pnMessage/plRefMsg.h"
-#include "plFile/plFileUtils.h"
-#include "plFile/hsFiles.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"
 
-static void GetFullPath( const char filename[], char *destStr )
+static plFileName GetFullPath(const plFileName &filename)
 {
-    char    path[ kFolderIterator_MaxPath ];
+    if (filename.StripFileName().IsValid())
+        return filename;
 
-    if( strchr( filename, '\\' ) != nil )
-        strcpy( path, filename );
-    else
-        sprintf( path, "sfx\\%s", filename );
-
-    strcpy( destStr, path );
+    return plFileName::Join("sfx", filename);
 }
 
 //// IGetReader //////////////////////////////////////////////////////////////
 //  Makes sure the sound is ready to load without any extra processing (like
 //  decompression or the like), then opens a reader for it.
 //  fullpath tells the function whether to append 'sfx' to the path or not (we don't want to do this if were providing the full path)
-static plAudioFileReader *CreateReader( bool fullpath, const char filename[], plAudioFileReader::StreamType type, plAudioCore::ChannelSelect channel )
+static plAudioFileReader *CreateReader( bool fullpath, const plFileName &filename, plAudioFileReader::StreamType type, plAudioCore::ChannelSelect channel )
 {
-    char path[512];
-    if(fullpath) GetFullPath(filename, path);
+    plFileName path;
+    if (fullpath)
+        path = GetFullPath(filename);
     else
-        strcpy(path, filename);
-    
+        path = filename;
+
     plAudioFileReader* reader = plAudioFileReader::CreateReader(path, channel, type);
 
     if( reader == nil || !reader->IsValid() )
@@ -115,11 +110,11 @@ hsError plSoundPreloader::Run()
 
                 if (buf->GetData())
                 {
-                    reader = CreateReader(true, buf->GetFileName(), buf->GetAudioReaderType(), buf->GetReaderSelect());  
+                    reader = CreateReader(true, buf->GetFileName(), buf->GetAudioReaderType(), buf->GetReaderSelect());
                     
                     if( reader )
                     {
-                        unsigned readLen = buf->GetAsyncLoadLength() ? buf->GetAsyncLoadLength() : buf->GetDataLength(); 
+                        unsigned readLen = buf->GetAsyncLoadLength() ? buf->GetAsyncLoadLength() : buf->GetDataLength();
                         reader->Read( readLen, buf->GetData() );
                         buf->SetAudioReader(reader);     // give sound buffer reader, since we may need it later
                     }
@@ -166,7 +161,7 @@ plSoundBuffer::plSoundBuffer()
     IInitBuffer();
 }
 
-plSoundBuffer::plSoundBuffer( const char *fileName, uint32_t flags ) 
+plSoundBuffer::plSoundBuffer( const plFileName &fileName, uint32_t flags )
 {
     IInitBuffer();
     SetFileName( fileName );
@@ -186,7 +181,6 @@ plSoundBuffer::~plSoundBuffer()
         }
     }
 
-    delete [] fFileName;
     UnLoad();
 }
 
@@ -194,7 +188,7 @@ void plSoundBuffer::IInitBuffer()
 {
     fError = false;
     fValid = false;
-    fFileName = nil;
+    fFileName = "";
     fData = nil;
     fDataLength = 0;
     fFlags = 0;
@@ -225,7 +219,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
 
     s->ReadLE( &fFlags );
     s->ReadLE( &fDataLength );
-    fFileName = s->ReadSafeString();
+    fFileName = s->ReadSafeString_TEMP();
 
     s->ReadLE( &fHeader.fFormatTag );
     s->ReadLE( &fHeader.fNumChannels );
@@ -266,16 +260,10 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
     s->WriteLE( fDataLength );
     
     // Truncate the path to just a file name on write
-    if( fFileName != nil )
-    {
-        char *nameOnly = strrchr( fFileName, '\\' );
-        if( nameOnly != nil )
-            s->WriteSafeString( nameOnly + 1 );
-        else
-            s->WriteSafeString( fFileName );
-    }
+    if (fFileName.IsValid())
+        s->WriteSafeString(fFileName.GetFileName());
     else
-        s->WriteSafeString( "" );
+        s->WriteSafeString("");
 
     s->WriteLE( fHeader.fFormatTag );
     s->WriteLE( fHeader.fNumChannels );
@@ -290,7 +278,7 @@ void    plSoundBuffer::Write( hsStream *s, hsResMgr *mgr )
 
 //// SetFileName /////////////////////////////////////////////////////////////
 
-void    plSoundBuffer::SetFileName( const char *name )
+void    plSoundBuffer::SetFileName( const plFileName &name )
 {
     if(fLoading)
     {
@@ -298,11 +286,7 @@ void    plSoundBuffer::SetFileName( const char *name )
         return;
     }
 
-    delete [] fFileName;
-    if( name != nil )
-        fFileName = hsStrcpy( name );
-    else
-        fFileName = nil;
+    fFileName = name;
 
     // Data is no longer valid
     UnLoad();
@@ -325,22 +309,17 @@ plAudioCore::ChannelSelect  plSoundBuffer::GetReaderSelect( void ) const
 //// IGetFullPath ////////////////////////////////////////////////////////////
 //  Construct our current full path to our sound.
 
-void    plSoundBuffer::IGetFullPath( char *destStr )
+plFileName plSoundBuffer::IGetFullPath()
 {
-    if(!fFileName)
+    if (!fFileName.IsValid())
     {
-        *destStr = 0;
-        return;
+        return plFileName();
     }
-    char    path[ kFolderIterator_MaxPath ];
 
+    if (fFileName.StripFileName().IsValid())
+        return fFileName;
 
-    if( strchr( fFileName, '\\' ) != nil )
-        strcpy( path, fFileName );
-    else
-        sprintf( path, "sfx\\%s", fFileName );
-
-    strcpy( destStr, path );
+    return plFileName::Join("sfx", fFileName);
 }
 
 
@@ -459,8 +438,9 @@ void plSoundBuffer::SetLoaded(bool loaded)
 
 void    plSoundBuffer::SetInternalData( plWAVHeader &header, uint32_t length, uint8_t *data )
 {
-    if(fLoading) return;
-    fFileName = nil;
+    if (fLoading)
+        return;
+    fFileName = "";
     fHeader = header;
     fFlags = 0;
 
@@ -509,11 +489,9 @@ plSoundBuffer::ELoadReturnVal plSoundBuffer::EnsureInternal()
 //// IGrabHeaderInfo /////////////////////////////////////////////////////////
 bool    plSoundBuffer::IGrabHeaderInfo( void )
 {
-    static char path[ 512 ];
-
-    if( fFileName != nil )
+    if (fFileName.IsValid())
     {
-        IGetFullPath( path );
+        plFileName path = IGetFullPath();
 
         // Go grab from the WAV file
         if(!fReader)
@@ -545,10 +523,11 @@ bool    plSoundBuffer::IGrabHeaderInfo( void )
 //  fullpath tells the function whether to append 'sfx' to the path or not (we don't want to do this if were providing the full path)
 plAudioFileReader   *plSoundBuffer::IGetReader( bool fullpath )
 {
-    char path[512];
-    if(fullpath) IGetFullPath(path);
+    plFileName path;
+    if (fullpath)
+        path = IGetFullPath();
     else
-        strcpy(path, fFileName);
+        path = fFileName;
 
     // Go grab from the WAV file
     plAudioFileReader::StreamType type = plAudioFileReader::kStreamWAV;

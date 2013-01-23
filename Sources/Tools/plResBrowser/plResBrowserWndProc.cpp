@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plResMgrSettings.h"
 #include "plWinRegistryTools.h"
-#include "plFile/hsFiles.h"
 
 #define IDC_REGTREEVIEW     1000
 
@@ -139,14 +138,10 @@ LRESULT CALLBACK HandleCommand( HWND hWnd, WPARAM wParam, LPARAM lParam )
                 // Load that source
                 plResManager *mgr = (plResManager *)hsgResMgr::ResMgr();
 
-                hsFolderIterator pathIterator(path);
-                while (pathIterator.NextFileSuffix(".prp"))
-                {
-                    char fileName[kFolderIterator_MaxPath];
-                    pathIterator.GetPathAndName(fileName);
-                    mgr->AddSinglePage(fileName);
-                }
-    
+                std::vector<plFileName> prpFiles = plFileSystem::ListDir(path, "*.prp");
+                for (auto iter = prpFiles.begin(); iter != prpFiles.end(); ++iter)
+                    mgr->AddSinglePage(*iter);
+
                 plResTreeView::FillTreeViewFromRegistry( gTreeView );
 
                 SetWindowTitle( hWnd, path );
@@ -388,13 +383,9 @@ LRESULT CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam 
                     ( (char *)PathFindExtension( path ) )[ 0 ] == 0 )
                 {
                     // Must be a directory
-                    hsFolderIterator pathIterator(path);
-                    while (pathIterator.NextFileSuffix(".prp"))
-                    {
-                        char fileName[kFolderIterator_MaxPath];
-                        pathIterator.GetPathAndName(fileName);
-                        mgr->AddSinglePage(fileName);
-                    }
+                    std::vector<plFileName> prpFiles = plFileSystem::ListDir(path, "*.prp");
+                    for (auto iter = prpFiles.begin(); iter != prpFiles.end(); ++iter)
+                        mgr->AddSinglePage(*iter);
                 }
                 else
                 {

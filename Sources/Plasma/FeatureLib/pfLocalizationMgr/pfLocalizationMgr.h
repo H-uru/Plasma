@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+class plFileName;
+
 class pfLocalizationMgr
 {
 private:
@@ -60,7 +62,7 @@ protected:
 public:
     virtual ~pfLocalizationMgr();
 
-    static void Initialize(const plString & dataPath);
+    static void Initialize(const plFileName & dataPath);
     static void Shutdown();
     static pfLocalizationMgr &Instance(void) {return *fInstance;}
     static bool InstanceValid(void) {return fInstance != nil;}

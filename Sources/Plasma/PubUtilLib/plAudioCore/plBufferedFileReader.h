@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBufferedFileReader : public plAudioFileReader
 {
 public:
-    plBufferedFileReader( const char *path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
+    plBufferedFileReader( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
     virtual ~plBufferedFileReader();
 
     virtual plWAVHeader &GetHeader( void );
@@ -72,10 +72,10 @@ public:
     virtual bool    IsValid( void ) { return ( fBuffer != nil ) ? true : false; }
 
 protected:
-    uint32_t          fBufferSize;
-    uint8_t           *fBuffer;
+    uint32_t        fBufferSize;
+    uint8_t        *fBuffer;
     plWAVHeader     fHeader;
-    uint32_t          fCursor;
+    uint32_t        fCursor;
     void            IError( const char *msg );
 };
 

@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTimer.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "plFile/plEncryptedStream.h"
-#include "plFile/plFileUtils.h"
 #include "plInputCore/plInputManager.h"
 #include "plInputCore/plInputInterfaceMgr.h"
 #include "plInputCore/plInputDevice.h"
@@ -84,7 +83,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsole/pfConsoleDirSrc.h"
 #include "plScene/plPageTreeMgr.h"
 #include "plScene/plVisMgr.h"
-#include "plFile/hsFiles.h"
 
 #include "pfKI/pfKI.h"
 
@@ -1636,19 +1634,17 @@ void    plClient::IPatchGlobalAgeFiles( void )
 void plClient::InitDLLs()
 {
     hsStatusMessage("Init dlls client\n");
-    char str[255];
     typedef void (*PInitGlobalsFunc) (hsResMgr *, plFactory *, plTimerCallbackManager *, plTimerShare*,
         plNetClientApp*);
 
-    hsFolderIterator modDllFolder("ModDLL\\");
-    while (modDllFolder.NextFileSuffix(".dll")) 
+    std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
+    for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
     {
-        modDllFolder.GetPathAndName(str);
-        HMODULE hMod = LoadLibrary(str);
+        HMODULE hMod = LoadLibraryW(iter->AsString().ToWchar());
         if (hMod)
         {
             PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");
-            initGlobals(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(), 
+            (*initGlobals)(hsgResMgr::ResMgr(), plFactory::GetTheFactory(), plgTimerCallbackMgr::Mgr(),
                 hsTimer::GetTheTimer(), plNetClientApp::GetInstance());
             fLoadedDLLs.Append(hMod);
         }
@@ -2496,7 +2492,7 @@ void plClient::IOnAsyncInitComplete () {
 
     // run fni in the Aux Init dir
     if (fpAuxInitDir)
-    {   
+    {
         dirSrc.ParseDirectory(fpAuxInitDir, "net*.fni");   // connect to net first
         dirSrc.ParseDirectory(fpAuxInitDir, "*.fni");
     }

@@ -60,8 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudible.h"
 #include "plCreatableIndex.h"
 #include "plgDispatch.h"
-#include "plFile/plFileUtils.h"
-#include "plFile/hsFiles.h"
 #include "hsGeometry3.h"
 #include "plLoadMask.h"
 #include "hsMatrix44.h"

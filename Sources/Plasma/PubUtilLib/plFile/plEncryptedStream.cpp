@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plEncryptedStream.h"
 
-#include "plFileUtils.h"
 #include "hsSTLStream.h"
 
 #include <time.h>
@@ -63,7 +62,6 @@ plEncryptedStream::plEncryptedStream(uint32_t* key) :
     fActualFileSize(0),
     fBufferedStream(false),
     fRAMStream(nil),
-    fWriteFileName(nil),
     fOpenMode(kOpenFail)
 {
     if (key)
