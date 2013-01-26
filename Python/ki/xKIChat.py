@@ -48,6 +48,7 @@ import time
 from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
+from PlasmaNetConstants import *
 from PlasmaTypes import *
 
 import xLocTools
@@ -1236,3 +1237,66 @@ class CommandsProcessor:
                 self.chatMgr.AddChatLine(None, pOut, 0)
         else:
             self.chatMgr.AddChatLine(None, "There is nothing there but lint.", 0)
+
+    def PartyTime(self, params):
+        """Implements the `/party` command"""
+
+        # First, find the PartyAge chronicle in the global inbox
+        party = None
+        vault = ptVault()
+        inbox = vault.getGlobalInbox()
+        for childRef in inbox.getChildNodeRefList():
+            child = childRef.getChild()
+            if not child:
+                continue
+            child = child.upcastToChronicleNode()
+            if not child:
+                continue
+            if child.chronicleGetName() == kChron.Party:
+                party = child
+                break
+
+        # Let's see what we need to do
+        if not params:
+            # No params = LINK ME!
+            if party and party.chronicleGetValue() != "":
+                data = party.chronicleGetValue().split(";", 3)
+                ageInfo = ptAgeInfoStruct()
+                ageInfo.setAgeFilename(data[0])
+                ageInfo.setAgeInstanceGuid(data[1])
+
+                ageLink = ptAgeLinkStruct()
+                ageLink.setAgeInfo(ageInfo)
+                ageLink.setLinkingRules(PtLinkingRules.kBasicLink)
+                ageLink.setSpawnPoint(ptSpawnPointInfo(data[2], data[2]))
+
+                # Player is not really linking--this is an OOC cheat.
+                nlm = ptNetLinkingMgr()
+                nlm.linkToAge(ageLink, linkInSfx=False, linkOutSfx=False)
+            else:
+                self.chatMgr.AddChatLine(None, "There is no party to crash!", kChat.SystemMessage)
+                return
+        elif PtIsInternalRelease():
+            try:
+                PtFindSceneobject(params, PtGetAgeName())
+            except NameError:
+                # Garbage SO = kill party
+                if party:
+                    party.chronicleSetValue("")
+                    party.save()
+                    self.chatMgr.AddChatLine(None, "Party Crashed.", 0)
+                else:
+                    self.chatMgr.AddChatLine(None, "No party. Your link-in-point is invalid.", kChat.SystemMessage)
+            else:
+                # Got a LIP... Need to set the chronicle
+                ageInfo = PtGetAgeInfo()
+                data = "%s;%s;%s" % (ageInfo.getAgeFilename(), ageInfo.getAgeInstanceGuid(), params[0])
+                if not party:
+                    party = ptVaultChronicleNode()
+                    party.chronicleSetName(kChron.Party)
+                    party.chronicleSetValue(data)
+                    party.save() # creates node on server (and blocks) so we can add it to the global inbox
+                    inbox.addNode(party)
+                else:
+                    party.chronicleSetValue(data)
+                    party.save()

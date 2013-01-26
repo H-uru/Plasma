@@ -4412,7 +4412,7 @@ class xKI(ptModifier):
             if isinstance(content, ptVaultNodeRef):
                 element = content.getChild()
                 if element is not None:
-                    if element.getType() == PtVaultNodeTypes.kFolderNode:
+                    if element.getType() == PtVaultNodeTypes.kFolderNode or element.getType() == PtVaultNodeTypes.kChronicleNode:
                         removeList.insert(0, contentidx)
         for removeidx in removeList:
             del self.BKContentList[removeidx]

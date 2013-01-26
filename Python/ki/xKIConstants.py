@@ -193,6 +193,7 @@ class kChron:
     BuddiesOnRequest = "PlayerKIBuddiesOnRequest"
     BuddiesOnRequestType = 2
     CGZPlaying = "CGZPlaying"
+    Party = "PartyAge"
 
 ## Color definitions.
 class kColors:
@@ -250,7 +251,8 @@ class kCommands:
                 "/restart" : "RestartGame"}
     EasterEggs = {"/look" : "LookAround",
                   "/get feather" : "GetFeather",
-                  "/look in pocket" : "LookForFeathers"}
+                  "/look in pocket" : "LookForFeathers",
+                  "/party" : "PartyTime"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
 
