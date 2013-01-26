@@ -556,6 +556,7 @@ int plString::Find(char ch, CaseSensitivity sense) const
         while (*cp) {
             if (tolower(*cp) == tolower(ch))
                 return cp - c_str();
+            cp++;
         }
         return -1;
     }
