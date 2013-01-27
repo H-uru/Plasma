@@ -51,7 +51,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Standard Library
 #include <algorithm>
 #include <float.h>
+#include <functional>
 #include <math.h>
+#include <memory>
 #include <string.h>
 #include <vector>
 
