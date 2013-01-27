@@ -55,16 +55,6 @@ struct plNCAgeLeaver;
 
 class plNetLinkingMgr
 {
-public:
-    enum LinkSfx
-    {
-        kPlayNone = 0,
-        kPlayLinkIn = 1<<0,
-        kPlayLinkOut = 1<<1,
-        kPlayBoth = (kPlayLinkIn | kPlayLinkOut)
-    };
-
-private:
     static void NCAgeJoinerCallback (
         plNCAgeJoiner *         joiner,
         unsigned                type,
@@ -120,7 +110,7 @@ private:
     void IDoLink(plLinkToAgeMsg* link);
     bool IProcessVaultNotifyMsg(plVaultNotifyMsg* msg);
 
-    bool IDispatchMsg( plMessage* msg, LinkSfx sfx, uint32_t playerID );
+    bool IDispatchMsg( plMessage* msg, uint32_t playerID );
 
 
 public:
@@ -135,23 +125,23 @@ public:
     bool Linking () const  { return !fLinkedIn && !fLinkingEnabled; }
 
     // Link to an age.
-    void LinkToAge( plAgeLinkStruct * link, LinkSfx sfx=kPlayBoth, uint32_t playerID=kInvalidPlayerID );
-    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, LinkSfx sfx=kPlayBoth, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
 
     // Link to my last age.
-    void LinkToPrevAge( LinkSfx sfx=kPlayBoth, uint32_t playerID=kInvalidPlayerID ); 
+    void LinkToPrevAge( uint32_t playerID=kInvalidPlayerID );
 
     // Link to my Personal Age
-    void LinkToMyPersonalAge( LinkSfx sfx=kPlayBoth, uint32_t playerID=kInvalidPlayerID );
+    void LinkToMyPersonalAge( uint32_t playerID=kInvalidPlayerID );
 
     // Link to my Neighborhood Age
-    void LinkToMyNeighborhoodAge( LinkSfx sfx=kPlayBoth, uint32_t playerID=kInvalidPlayerID );
+    void LinkToMyNeighborhoodAge( uint32_t playerID=kInvalidPlayerID );
 
     // Link a player here.
-    void LinkPlayerHere( uint32_t playerID, LinkSfx sfx=kPlayBoth );
+    void LinkPlayerHere( uint32_t playerID );
 
     // Link player to specified age
-    void LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID, LinkSfx sfx=kPlayBoth );
+    void LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID );
 
     // Link player back to his last age
     void LinkPlayerToPrevAge( uint32_t playerID );

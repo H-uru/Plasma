@@ -547,14 +547,12 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
 
 ////////////////////////////////////////////////////////////////////
 
-bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, LinkSfx sfx, uint32_t playerID )
+bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, uint32_t playerID )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
     msg->AddReceiver( plNetClientMgr::GetInstance()->GetKey() );
 
     plLinkToAgeMsg* linkToAge = plLinkToAgeMsg::ConvertNoRef(msg);
-    if (linkToAge)
-        linkToAge->PlayLinkSfx(hsTestBits(sfx, kPlayLinkIn), hsTestBits(sfx, kPlayLinkOut));
     if ( playerID!=kInvalidPlayerID && playerID!=nc->GetPlayerID() )
     {
         msg->SetBCastFlag( plMessage::kNetAllowInterAge );
@@ -570,12 +568,12 @@ bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, LinkSfx sfx, uint32_t player
 
 ////////////////////////////////////////////////////////////////////
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, LinkSfx sfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
-    LinkToAge(link, nil, sfx, playerID);
+    LinkToAge(link, nil, linkInSfx, linkOutSfx, playerID);
 }
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, LinkSfx sfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -586,11 +584,12 @@ void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, L
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
     if (linkAnim)
         pMsg->SetLinkInAnimName(linkAnim);
-    IDispatchMsg( pMsg, sfx, playerID );
+    pMsg->PlayLinkSfx(linkInSfx, linkOutSfx);
+    IDispatchMsg( pMsg, playerID );
 }
 
 // link myself back to my last age
-void plNetLinkingMgr::LinkToPrevAge( LinkSfx sfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToPrevAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -601,7 +600,7 @@ void plNetLinkingMgr::LinkToPrevAge( LinkSfx sfx, uint32_t playerID )
     if (GetPrevAgeLink()->GetAgeInfo()->HasAgeFilename())
     {
         plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( GetPrevAgeLink() );
-        IDispatchMsg( pMsg, sfx, playerID );
+        IDispatchMsg( pMsg, playerID );
     }
     else
     {
@@ -609,7 +608,7 @@ void plNetLinkingMgr::LinkToPrevAge( LinkSfx sfx, uint32_t playerID )
     }
 }
 
-void plNetLinkingMgr::LinkToMyPersonalAge( LinkSfx sfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToMyPersonalAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -627,10 +626,10 @@ void plNetLinkingMgr::LinkToMyPersonalAge( LinkSfx sfx, uint32_t playerID )
     link.SetSpawnPoint(hutSpawnPoint);
 
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
-    IDispatchMsg( pMsg, sfx, playerID );
+    IDispatchMsg( pMsg, playerID );
 }
 
-void plNetLinkingMgr::LinkToMyNeighborhoodAge( LinkSfx sfx, uint32_t playerID )
+void plNetLinkingMgr::LinkToMyNeighborhoodAge( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -646,10 +645,10 @@ void plNetLinkingMgr::LinkToMyNeighborhoodAge( LinkSfx sfx, uint32_t playerID )
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
 
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
-    IDispatchMsg( pMsg, sfx, playerID );
+    IDispatchMsg( pMsg, playerID );
 }
 
-void plNetLinkingMgr::LinkPlayerHere( uint32_t playerID, LinkSfx sfx )
+void plNetLinkingMgr::LinkPlayerHere( uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -661,10 +660,10 @@ void plNetLinkingMgr::LinkPlayerHere( uint32_t playerID, LinkSfx sfx )
     // send the player our current age info so they can link here.
     plAgeLinkStruct link;
     link.GetAgeInfo()->CopyFrom( GetAgeLink()->GetAgeInfo() );
-    LinkPlayerToAge( &link, playerID, sfx );
+    LinkPlayerToAge( &link, playerID );
 }
 
-void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID, LinkSfx sfx )
+void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -676,7 +675,7 @@ void plNetLinkingMgr::LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID
     // send the player the age link so they can link there.
     link->SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
-    IDispatchMsg( pMsg, sfx, playerID );
+    IDispatchMsg( pMsg, playerID );
 }
 
 //
@@ -695,7 +694,7 @@ void plNetLinkingMgr::LinkPlayerToPrevAge( uint32_t playerID )
 
     plLinkingMgrMsg* pMsg = new plLinkingMgrMsg();
     pMsg->SetCmd( kLinkPlayerToPrevAge);
-    IDispatchMsg( pMsg, kPlayBoth, playerID );
+    IDispatchMsg( pMsg, playerID );
 }
 
 void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
@@ -711,7 +710,7 @@ void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
     plLinkingMgrMsg* pMsg = new plLinkingMgrMsg();
     pMsg->SetCmd( kLinkPlayerHere );
     pMsg->GetArgs()->AddInt( 0, NetCommGetPlayer()->playerInt );    // send them our id.
-    IDispatchMsg( pMsg, kPlayBoth, playerID );
+    IDispatchMsg( pMsg, playerID );
 }
 
 ////////////////////////////////////////////////////////////////////
