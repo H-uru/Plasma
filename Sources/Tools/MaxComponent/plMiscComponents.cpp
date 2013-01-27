@@ -272,7 +272,7 @@ protected:
 
             int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[i].AsString().c_str() );
+            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)hsStrcpy(ageFiles[i].AsString().c_str()) );
 
             if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
