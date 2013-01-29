@@ -217,15 +217,27 @@ void plRegistryKeyList::Write(hsStream* s)
     s->WriteLE32(0);
     s->WriteByte(0); // Deprecated flags
 
-    s->WriteLE32(fKeys.size());
+    // We only write out keys with data. Fill this value in later...
+    uint32_t countPos = s->GetPosition();
+    s->WriteLE32(0);
 
-    // Write out all our keys
+    // Write out all our keys with data
+    uint32_t keyCount = 0;
     for (auto it = fKeys.begin(); it != fKeys.end(); ++it)
-        (*it)->Write(s);
+    {
+        plKeyImp* key = *it;
+        if (key->ObjectIsLoaded())
+        {
+            ++keyCount;
+            key->Write(s);
+        }
+    }
 
-    // Go back to the start and write the length of our data
+    // Rewind and write out data size and key count
     uint32_t endPos = s->GetPosition();
     s->SetPosition(beginPos);
     s->WriteLE32(endPos-beginPos-sizeof(uint32_t));
+    s->SetPosition(countPos);
+    s->WriteLE32(keyCount);
     s->SetPosition(endPos);
 }
