@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 
-#include <math.h>
+#include <cmath>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 

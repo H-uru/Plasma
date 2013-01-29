@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "MaxComponent/plComponent.h"
 
-#include <math.h>
+#include <cmath>
 #include <float.h>
 
 #include <commdlg.h>

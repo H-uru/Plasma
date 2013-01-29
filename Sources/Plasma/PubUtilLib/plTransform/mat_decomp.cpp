@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Gems IV. Polar Decomp
 //
-#include <math.h>
+#include <cmath>
 #include "mat_decomp.h"
 
 /******* Matrix Preliminaries *******/

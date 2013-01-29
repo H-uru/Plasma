@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVertCoder.h"
 
 #include "hsStream.h"
-#include <math.h>
+#include <cmath>
 #include "plGBufferGroup.h"
 
 const float kPosQuantum = 1.f / float(1 << 10);

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
-#include <math.h>
+#include <cmath>
 #include "plTriUtils.h"
 
 static const float kAlmostZero = 1.e-5f;

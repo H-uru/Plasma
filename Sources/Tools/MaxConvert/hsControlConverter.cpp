@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsWindows.h"
 #include <commdlg.h>
-#include <math.h>
+#include <cmath>
 #include <stdmat.h>
 #include <bmmlib.h>
 #include <istdplug.h>

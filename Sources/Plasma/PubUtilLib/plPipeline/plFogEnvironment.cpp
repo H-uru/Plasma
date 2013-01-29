@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plFogEnvironment.h"
 
-#include <math.h>
+#include <cmath>
 #include "plTweak.h"
 
 //// Constructors & Destructor ///////////////////////////////////////////////

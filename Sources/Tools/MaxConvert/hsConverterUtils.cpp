@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsHashTable.h"
 #include "hsStringTokenizer.h"
 #include "hsResMgr.h"
-#include <math.h>
+#include <cmath>
 
 #include <max.h>
 #include <stdmat.h>
