@@ -263,6 +263,9 @@ void plNetLinkingMgr::ExecNextOp () {
             );
         }
         break;
+
+        default:
+            break;
     }
 
     s_opqueue.remove(op);
@@ -1091,7 +1094,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                       info,
                       &childLink))
                 {
-                    case hsFail:
+                    case static_cast<uint8_t>(hsFail):
                         success = kLinkFailed;
                         break;
                     case false:

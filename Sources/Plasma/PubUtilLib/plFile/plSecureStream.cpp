@@ -40,13 +40,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <string>
+#include <ctime>
 
 #include "plSecureStream.h"
 #include "hsWindows.h"
 
 #include "hsSTLStream.h"
-
-#include <time.h>
 
 #if !HS_BUILD_FOR_WIN32
 #define INVALID_HANDLE_VALUE 0

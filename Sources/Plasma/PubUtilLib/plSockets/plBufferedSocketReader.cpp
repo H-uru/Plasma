@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plBufferedSocketReader.h"
 #include "plTcpSocket.h"
-#include <string.h>
+#include <cstring>
 
 
 plBufferedSocketReader::plBufferedSocketReader(int size)

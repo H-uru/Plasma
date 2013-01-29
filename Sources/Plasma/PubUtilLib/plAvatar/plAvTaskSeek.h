@@ -75,7 +75,7 @@ public:
     plAvTaskSeek();
     plAvTaskSeek(plKey target);
     plAvTaskSeek(plAvSeekMsg *msg);
-    plAvTaskSeek(plKey target, plAvAlignment align, const char *animName, bool moving);
+    plAvTaskSeek(plKey target, plAvAlignment align, const plString& animName, bool moving);
 
     void SetTarget(plKey target);
     void SetTarget(hsPoint3 &pos, hsPoint3 &lookAt);
@@ -153,7 +153,7 @@ protected:
     // for example, you can say "find a good start point so that you can play this animation
     // and have your handle wind up here" i.e: aligntype = "kAlignHandleAnimEnd"
     plAvAlignment   fAlign;     // how to line up with the seek point
-    const char * fAnimName;                 // an (optional) anim to use to line up our target
+    plString fAnimName;                     // an (optional) anim to use to line up our target
                                             // so you can say "seek to a place where your hand
                                             // will be here after you play animation foo"
 

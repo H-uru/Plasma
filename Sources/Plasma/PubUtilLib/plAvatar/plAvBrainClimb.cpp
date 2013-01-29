@@ -244,18 +244,19 @@ bool plAvBrainClimb::Apply(double time, float elapsed)
 // MSGRECEIVE
 bool plAvBrainClimb::MsgReceive(plMessage *msg)
 {
-    plClimbMsg *climbMsg;
-    plLOSHitMsg *losMsg;
-
-    if(climbMsg = plClimbMsg::ConvertNoRef(msg))
+    plClimbMsg* climbMsg = plClimbMsg::ConvertNoRef(msg);
+    if (climbMsg)
     {
         return IHandleClimbMsg(climbMsg);
-    } else if(losMsg = plLOSHitMsg::ConvertNoRef(msg))
+    }
+
+    plLOSHitMsg *losMsg = plLOSHitMsg::ConvertNoRef(msg);
+    if (losMsg)
     {
         return IHandleLOSMsg(losMsg);
-    } else {
-        return plArmatureBrain::MsgReceive(msg);
     }
+
+    return plArmatureBrain::MsgReceive(msg);
 }
 
 // IHANDLECLIMBMSG
@@ -296,6 +297,8 @@ bool plAvBrainClimb::IHandleClimbMsg(plClimbMsg *msg)
             
         break;
         }
+    default:
+        break;
     }
     return true;
 }
@@ -1047,6 +1050,6 @@ const char *plAvBrainClimb::ModeStr(Mode mode)
     case kFallingOff:
         return "FallingOff";
     default:
-        return "WTF???!!!";
+        return "WTF?!";
     }
 }

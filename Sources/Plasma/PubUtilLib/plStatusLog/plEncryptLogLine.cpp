@@ -51,8 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plEncryptLogLine.h"
 
-#include <string.h>
-
 void    plStatusEncrypt::Decrypt( uint8_t *line, int32_t len, uint8_t hint )
 {
     // Da reverse, of course!

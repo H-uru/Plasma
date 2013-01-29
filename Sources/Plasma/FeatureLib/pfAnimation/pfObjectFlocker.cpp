@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //#include "../plPipeline/plDebugGeometry.h"
 
-#include <math.h>
+#include <cmath>
 #include <algorithm>
 
 #include "pfObjectFlocker.h"

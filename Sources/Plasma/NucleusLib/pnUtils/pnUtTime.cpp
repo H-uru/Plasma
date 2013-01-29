@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtTime.h"
 
 #if HS_BUILD_FOR_UNIX
-#include <time.h>
+#include <ctime>
 #include <sys/time.h>
 #endif
 

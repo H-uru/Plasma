@@ -189,7 +189,7 @@ public:
     // tors
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
-                plAvAlignment align = kAlignHandle, char *animName = nil, bool noSeek = false, 
+                plAvAlignment align = kAlignHandle, const plString& animName = "", bool noSeek = false, 
                 uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol
@@ -212,7 +212,7 @@ public:
     float fDuration;            // take this much time to do the move (only if smartSeek is false)
     bool fSmartSeek;          // seek by walking rather than floating
     bool fNoSeek;
-    char *fAnimName;
+    plString fAnimName;
     plAvAlignment fAlignType;
     uint8_t fFlags;
     plKey fFinishKey;
@@ -257,7 +257,6 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
 
     // public members
-    plString fAnimName;             // the name of the animation we're going to use
     bool fDrivable;               // are we animated by time or by mouse movement?
     bool fReversible;             // can we play backwards?
     plOneShotCallbacks *fCallbacks; // Callbacks given to us by a one-shot modifier

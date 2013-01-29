@@ -2380,7 +2380,7 @@ bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
     return false;
 }
 
-plString plArmatureMod::MakeAnimationName(const char *baseName) const
+plString plArmatureMod::MakeAnimationName(const plString& baseName) const
 {
     return fAnimationPrefix + baseName;
 }
@@ -2395,7 +2395,7 @@ void plArmatureMod::SetRootName(const plString &name)
     fRootName = name;
 }
 
-plAGAnim *plArmatureMod::FindCustomAnim(const char *baseName) const
+plAGAnim *plArmatureMod::FindCustomAnim(const plString& baseName) const
 {
     plString customName = MakeAnimationName(baseName);
     plAGAnim *result = plAGAnim::FindAnim(customName);

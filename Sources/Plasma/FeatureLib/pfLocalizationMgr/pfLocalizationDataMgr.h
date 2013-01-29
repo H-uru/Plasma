@@ -63,9 +63,6 @@ struct LocElementInfo;
 struct LocSetInfo;
 struct LocAgeInfo;
 
-// Temporary helper (until everything is plString-ized)
-typedef std::vector<std::wstring> WStringVector;
-
 class pfLocalizationDataMgr
 {
 private:

@@ -286,14 +286,14 @@ void plNetObjectDebugger::LogMsgIfMatch(const char* msg) const
 
         char objName[128];
         int i=0;
-        
+
         // copy objName token
         while(*c && *c != ',' && *c != ' ' && i<127)
-            objName[i++] = *c++;    
+            objName[i++] = *c++;
         objName[i]=0;
 
         DebugObjectList::const_iterator it = fDebugObjects.begin();
-        for( objName[0]; it != fDebugObjects.end(); it++)
+        for(; it != fDebugObjects.end(); it++)
         {
             if ((*it) && (*it)->StringMatches(objName))
             {

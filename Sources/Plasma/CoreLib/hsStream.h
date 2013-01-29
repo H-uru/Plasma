@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsStream_Defined
 #define hsStream_Defined
 
-#include <stdarg.h> // Included for GCC 3.2.2+
-
 #include "HeadSpin.h"
 #include "hsMemory.h"
 #include "plFileSystem.h"

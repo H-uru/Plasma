@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define OBJECT_FLOCKER_H
 
 #include "pnModifier/plSingleModifier.h"
+#include <algorithm>
 
 class hsStream;
 class hsResMgr;

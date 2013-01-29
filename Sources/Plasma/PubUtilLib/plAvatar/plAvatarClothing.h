@@ -259,7 +259,7 @@ public:
     GETINTERFACE_ANY( plClothingMgr, hsKeyedObject );
 
     plClothingLayout *GetLayout(char *name);
-    plClothingElement *FindElementByName(char *name);
+    plClothingElement *FindElementByName(const char *name);
 
 
     // Functions that just relate to the clothing you have permission to wear (closet)

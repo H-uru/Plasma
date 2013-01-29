@@ -389,6 +389,8 @@ bool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
             IChatOn();
             return true;
             break;
+        default:
+            break;
         }
     } else {
         switch(moveCode)
@@ -397,6 +399,8 @@ bool plAvBrainHuman::IHandleControlMsg(plControlEventMsg* msg)
             fAvMod->SetInputFlag(S_PUSH_TO_TALK, false);            
             IChatOff();
             return true;
+            break;
+        default:
             break;
         }
     }
@@ -514,6 +518,8 @@ bool plAvBrainHuman::IHandleClimbMsg(plClimbMsg *msg)
             break;
         case plClimbMsg::kRight:
             startMode = plAvBrainClimb::kMountingRight;
+            break;
+        default:
             break;
         }
         plAvBrainClimb *brain = new plAvBrainClimb(startMode);

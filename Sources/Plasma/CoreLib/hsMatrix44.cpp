@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsQuat.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
-#include <math.h>
+#include <cmath>
 
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE

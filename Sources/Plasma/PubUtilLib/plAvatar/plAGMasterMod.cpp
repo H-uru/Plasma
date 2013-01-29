@@ -614,10 +614,6 @@ void plAGMasterMod::DumpCurrentAnims(const char *header)
 // receive trigger messages
 bool plAGMasterMod::MsgReceive(plMessage* msg)
 {
-    plAnimCmdMsg* cmdMsg;
-    plAGCmdMsg* agMsg;
-    int i;
-
     plSDLNotificationMsg* nMsg = plSDLNotificationMsg::ConvertNoRef(msg);
     if (nMsg)
     {
@@ -626,7 +622,8 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
         return true;
     }
 
-    if (cmdMsg = plAnimCmdMsg::ConvertNoRef(msg))
+    plAnimCmdMsg* cmdMsg = plAnimCmdMsg::ConvertNoRef(msg);
+    if (cmdMsg)
     {
         plString targetName = cmdMsg->GetAnimName();
 
@@ -638,7 +635,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
         {
             if (cmdMsg->CmdChangesAnimTime())
             {
-                for (i = 0; i < GetNumAnimations(); i++)
+                for (int i = 0; i < GetNumAnimations(); i++)
                 {
                     plAGAnimInstance *currInst = GetAnimInstance(i);
                     if (currInst != inst && currInst->GetAnimation()->SharesPinsWith(inst->GetAnimation()))
@@ -653,7 +650,8 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
         return true;
     }
 
-    if (agMsg = plAGCmdMsg::ConvertNoRef(msg))
+    plAGCmdMsg* agMsg = plAGCmdMsg::ConvertNoRef(msg);
+    if (agMsg)
     {
         if (agMsg->Cmd(plAGCmdMsg::kSetAnimTime))
         {
@@ -678,7 +676,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
     }
 
     plAGInstanceCallbackMsg *agicMsg = plAGInstanceCallbackMsg::ConvertNoRef(msg);
-    if (agicMsg != nil)
+    if (agicMsg)
     {
         if (agicMsg->fEvent == kStart)
         {
@@ -697,16 +695,16 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
     }
 
     plAGDetachCallbackMsg *detachMsg = plAGDetachCallbackMsg::ConvertNoRef(msg);
-    if (detachMsg != nil)
+    if (detachMsg)
     {
         DetachAnimation(detachMsg->GetAnimName());
     }
 
-    plGenRefMsg *genRefMsg;
-    if (genRefMsg = plGenRefMsg::ConvertNoRef(msg))
+    plGenRefMsg *genRefMsg = plGenRefMsg::ConvertNoRef(msg);
+    if (genRefMsg)
     {
-        plAGAnim *anim;
-        if (anim = plAGAnim::ConvertNoRef(genRefMsg->GetRef()))
+        plAGAnim *anim = plAGAnim::ConvertNoRef(genRefMsg->GetRef());
+        if (anim)
         {
             if (genRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest))
             {
@@ -733,8 +731,9 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
 
             return true;
         }
-        plAGModifier *agmod;
-        if (agmod = plAGModifier::ConvertNoRef(genRefMsg->GetRef()))
+
+        plAGModifier *agmod = plAGModifier::ConvertNoRef(genRefMsg->GetRef());
+        if (agmod)
         {
             if (genRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest))
                 fChannelMods[agmod->GetChannelName()] = agmod;
@@ -743,8 +742,9 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
 
             return true;
         }
-        plMsgForwarder *msgfwd;
-        if (msgfwd = plMsgForwarder::ConvertNoRef(genRefMsg->GetRef()))
+
+        plMsgForwarder *msgfwd = plMsgForwarder::ConvertNoRef(genRefMsg->GetRef());
+        if (msgfwd)
         {
             if (genRefMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest))
                 fMsgForwarder = msgfwd;
@@ -754,8 +754,9 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
             return true;
         }
     }
+
     plRefMsg* refMsg = plRefMsg::ConvertNoRef(msg);
-    if( refMsg )
+    if (refMsg)
     {
         if( refMsg->GetContext() & (plRefMsg::kOnCreate|plRefMsg::kOnRequest|plRefMsg::kOnReplace) )
             AddTarget(plSceneObject::ConvertNoRef(refMsg->GetRef()));

@@ -586,6 +586,8 @@ bool plAvBrainSwim::IHandleControlMsg(plControlEventMsg* msg)
                 return true;
             }
             break;
+        default:
+            break;
         }
     }
     return false;
@@ -610,6 +612,8 @@ void plAvBrainSwim::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *str
             break;
         case kAbort:
             sprintf(strBuf, "Mode: Abort (you should never see this)");
+            break;
+        default:
             break;
     }
     debugTxt.DrawString(x, y, strBuf);

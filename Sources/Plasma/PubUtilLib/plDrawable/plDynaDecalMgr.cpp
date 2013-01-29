@@ -737,7 +737,7 @@ void plDynaDecalMgr::IAllocAuxSpan(plAuxSpan* aux, uint32_t maxNumVerts, uint32_
 
     uint16_t* dataPtr = nil;
     grp->ReserveIndexStorage(maxNumIdx, &aux->fIBufferIdx, &aux->fIStartIdx, &dataPtr);
-    aux->fIStartIdx /* should be assigning something? */;
+    //aux->fIStartIdx /* should be assigning something? */;
 
     aux->fILength = 0;
 
