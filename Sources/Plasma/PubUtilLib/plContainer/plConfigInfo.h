@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plConfigInfo_h_inc
 
 #include "plKeysAndValues.h"
-#include <stdarg.h>
 
 /////////////////////////////////////////////////
 

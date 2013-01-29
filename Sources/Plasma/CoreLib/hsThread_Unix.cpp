@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/errno.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <string.h>
+#include <cstring>
 
 #define NO_POSIX_CLOCK 1
 
@@ -146,8 +146,8 @@ void hsThread::ThreadYield()
 //#define MUTEX_TIMING
 #ifdef MUTEX_TIMING
 
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 #include <unistd.h>
 #include "hsWide.h"
 
@@ -168,8 +168,8 @@ static void InitMutexTimerFile()
 //#define EVENT_LOGGING
 #ifdef EVENT_LOGGING
 
-#include <time.h>
-#include <stdio.h>
+#include <ctime>
+#include <cstdio>
 #include <unistd.h>
 #include "NucleusLib/inc/hsTimer.h"
 

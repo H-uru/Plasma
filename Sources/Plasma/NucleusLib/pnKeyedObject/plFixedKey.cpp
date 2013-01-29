@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 #include "plUoid.h"
-#include <string.h>
 
 #include "plFixedKey.h"
 #include "plCreatableIndex.h"

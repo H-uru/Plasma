@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <algorithm>
 #include <float.h>
 #include <math.h>
-#include <string.h>
+#include <cstring>
 #include <vector>
 
 // Core Plasma

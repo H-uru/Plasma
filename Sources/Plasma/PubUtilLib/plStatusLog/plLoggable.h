@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLoggable_inc
 #define plLoggable_inc
 
-#include <stdio.h>
 #include "HeadSpin.h"
 #include "plString.h"
 

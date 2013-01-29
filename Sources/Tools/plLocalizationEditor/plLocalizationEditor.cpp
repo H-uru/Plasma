@@ -66,7 +66,6 @@ REGISTER_CREATABLE(plInitialAgeStateLoadedMsg);
 
 #include "HeadSpin.h"
 #include <Commdlg.h>
-#include <stdio.h>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include <shlobj.h>

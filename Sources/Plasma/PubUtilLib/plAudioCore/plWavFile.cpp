@@ -39,7 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <stdio.h>
 #include "plWavFile.h"
 
 #ifdef BUILDING_MAXPLUGIN
@@ -51,8 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include <dsound.h>
-
-#include <stdio.h>
 
 #pragma comment(lib, "winmm.lib")
 #ifdef PATCHER

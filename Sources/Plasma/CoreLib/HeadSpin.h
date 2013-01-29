@@ -54,8 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
-#include <stdarg.h>
-#include <stdint.h>
+#include <cstdarg>
+#include <cstdint>
 
 //======================================
 // Winblows Hacks
@@ -77,7 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     // even more bloated than before!
     struct HWND__; typedef struct HWND__ *HWND;
     struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
-    
+
     typedef HWND hsWindowHndl;
     typedef HINSTANCE hsWindowInst;
     typedef HINSTANCE HMODULE;

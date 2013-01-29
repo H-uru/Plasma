@@ -45,8 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 
-#include <stdarg.h>
-
 hsBitVector::hsBitVector(int b, ...)
 :   fBitVectors(nil),
     fNumBitVectors(0)
