@@ -43,8 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plString_Defined
 #define plString_Defined
 
-#include <stdint.h>
 #include <vector>
+#include <cstdint>
+#include <cstddef>
+#include <cstdarg>
+#include <cstring>
 
 /** Single Unicode character code unit */
 typedef unsigned int UniChar;
@@ -52,6 +55,21 @@ typedef unsigned int UniChar;
 #define SSO_CHARS (16)
 #define STRING_STACK_SIZE (256)
 #define WHITESPACE_CHARS " \t\n\r"
+
+// Use "correct" stricmp based on the selected compiler / library
+#if _MSC_VER
+#    define stricmp     _stricmp
+#    define strnicmp    _strnicmp
+#    define wcsicmp     _wcsicmp
+#    define wcsnicmp    _wcsnicmp
+#    define strlwr      _strlwr
+#else
+#    define stricmp     strcasecmp
+#    define strnicmp    strncasecmp
+#    define wcsicmp     wcscasecmp
+#    define wcsnicmp    wcsncasecmp
+#    define strlwr      hsStrLower
+#endif
 
 /** Ref-counted string data buffer.
  *  This is used to store actual string data in any (unchecked) encoding format,

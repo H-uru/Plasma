@@ -341,21 +341,6 @@ void    hsStrLower(char *s);
 char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned memory.
 char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
 
-// Use "correct" stricmp based on the selected compiler / library
-#if _MSC_VER
-#    define stricmp     _stricmp
-#    define strnicmp    _strnicmp
-#    define wcsicmp     _wcsicmp
-#    define wcsnicmp    _wcsnicmp
-#    define strlwr      _strlwr
-#else
-#    define stricmp     strcasecmp
-#    define strnicmp    strncasecmp
-#    define wcsicmp     wcscasecmp
-#    define wcsnicmp    wcsncasecmp
-#    define strlwr      hsStrLower
-#endif
-
 inline char* hsStrcpy(const char src[])
 {
     return hsStrcpy(nil, src);

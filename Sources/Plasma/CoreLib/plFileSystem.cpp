@@ -380,15 +380,16 @@ std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char
 
     struct dirent *de;
     while (de = readdir(dir)) {
-        if (plFileInfo(de->d_name).IsDirectory()) {
+        plFileName dir_name = plFileName::Join(path, de->d_name);
+        if (plFileInfo(dir_name).IsDirectory()) {
             // Should also handle . and ..
             continue;
         }
 
-        if (pattern && pattern[0] && fnmatch(pattern, de->d_name))
-            contents.push_back(plFileName::Join(path, de->d_name));
+        if (pattern && pattern[0] && fnmatch(pattern, de->d_name, 0))
+            contents.push_back(dir_name);
         else if (!pattern || !pattern[0])
-            contents.push_back(plFileName::Join(path, de->d_name));
+            contents.push_back(dir_name);
     }
 
     closedir(dir);
@@ -428,7 +429,7 @@ std::vector<plFileName> plFileSystem::ListSubdirs(const plFileName &path)
         if (plFileInfo(de->d_name).IsDirectory()) {
             plFileName name = de->d_name;
             if (name != "." && name != "..")
-                contents.push_back(plFileName::Join(path, name);
+                contents.push_back(plFileName::Join(path, name));
         }
     }
 
