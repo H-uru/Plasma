@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plNetCommon/plNetCommon.h"
 
-#include <float.h>
+#include <cfloat>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //

@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <float.h>
+#include <cfloat>
 #include <cmath>
 #include "plUnifiedTime.h"
 #include "hsWindows.h"

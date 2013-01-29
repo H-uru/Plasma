@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Standard Library
 #include <algorithm>
-#include <float.h>
+#include <cfloat>
 #include <cmath>
 #include <cstring>
 #include <vector>

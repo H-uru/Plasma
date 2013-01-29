@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plComponent.h"
 
 #include <cmath>
-#include <float.h>
+#include <cfloat>
 
 #include <commdlg.h>
 #include <bmmlib.h>
