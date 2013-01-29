@@ -192,24 +192,6 @@ void HSExport2::ShowAbout(HWND hWnd)
 {
 }
 
-void IGetPath(const char* name, char* path)
-{
-    int i;
-    // find the last backslash in the full path
-    for ( i=strlen(name)-1; i>=0 ; i-- )
-    {
-        if ( name[i] == '\\' )
-            break;
-    }
-    if ( i >= 0 && i < 256)     // if either we couldn't the backslash or the path was too big
-    {
-        strncpy(path,name,i+1);
-        path[i+1] = '\0';       //null terminate string (cause strncpy might not)
-    }
-    else
-        path[0] = '\0';         // otherwise just make it a null string
-}
-
 // Another little helper class to help write out a list of textures to a log file
 class plTextureLoggerCBack : public plRegistryKeyIterator
 {
@@ -269,10 +251,10 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     BroadcastNotification(NOTIFY_PRE_EXPORT);
 
     // get just the path (not the file) of where we are going to export to
-    char out_path[256];
-    IGetPath(name, out_path);
+    plFileName out_path = plFileName(name).StripFileName();
+
     // Apparently this was implied by the open dialog, but not if you call Max's ExportToFile() func
-    SetCurrentDirectory(out_path);
+    SetCurrentDirectoryW(out_path.AsString().ToWchar());
 
     // 
     // Setup ErrorMsg
@@ -286,7 +268,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     if (dot)
         *dot = 0;
     char ErrorLogName[512];
-    sprintf(ErrorLogName, "%s%s.err", out_path, fName);
+    sprintf(ErrorLogName, "%s%s.err", out_path.AsString().c_str(), fName);
     plExportLogErrorMsg logonly_errorMessage(ErrorLogName);     // This errorMessage just writes it all to a file
 
     // now decide which errorMessage object to use
@@ -341,7 +323,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
         bool convertOK = plConvert::Instance().Convert();
 
         // Free the material cache.  This will delete unused materials.
-        hsMaterialConverter::Instance().FreeMaterialCache(out_path);
+        hsMaterialConverter::Instance().FreeMaterialCache(out_path.AsString().c_str());
 
         if (convertOK)
         {
