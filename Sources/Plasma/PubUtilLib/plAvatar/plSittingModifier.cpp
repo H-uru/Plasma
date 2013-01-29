@@ -353,11 +353,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
             brain->AddStage(sitStage);
             brain->AddStage(idleStage);
             brain->AddStage(standStage);
-#if HS_BUILD_FOR_WIN32
-            *pAnimName = _strdup(sitAnimName);
-#else
-            *pAnimName = strdup(sitAnimName);
-#endif
+            *pAnimName = sitAnimName;
 
             brain->SetType(plAvBrainGeneric::kSit);
             brain->SetRecipient(GetKey());

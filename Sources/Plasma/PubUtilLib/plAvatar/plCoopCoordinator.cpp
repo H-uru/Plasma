@@ -327,7 +327,7 @@ void plCoopCoordinator::IStartGuest()
         const plSceneObject *targetBone = hostAv->FindBone(fSynchBone);
         if(targetBone)
         {
-            plAvSeekMsg *seekMsg = new plAvSeekMsg( nil, nil,targetBone->GetKey(), 0, true, kAlignHandle, nil, false, plAvSeekMsg::kSeekFlagNoWarpOnTimeout, GetKey());
+            plAvSeekMsg *seekMsg = new plAvSeekMsg( nil, nil,targetBone->GetKey(), 0, true, kAlignHandle, "", false, plAvSeekMsg::kSeekFlagNoWarpOnTimeout, GetKey());
             plAvTaskSeek *seekT = new plAvTaskSeek(seekMsg);
             plAvTaskMsg *seekM = new plAvTaskMsg(GetKey(), fGuestKey, seekT);
             seekM->SetBCastFlag(plMessage::kPropagateToModifiers);
