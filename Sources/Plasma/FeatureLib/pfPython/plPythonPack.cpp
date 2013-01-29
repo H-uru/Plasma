@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include <marshal.h>
-#include <time.h>
+#include <ctime>
 #include <string>
 
 #include "HeadSpin.h"

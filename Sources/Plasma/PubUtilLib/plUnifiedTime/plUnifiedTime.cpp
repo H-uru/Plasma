@@ -41,9 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include <cfloat>
 #include <cmath>
+#include <ctime>
 #include "plUnifiedTime.h"
 #include "hsWindows.h"
-
+#include "hsStream.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/time.h>
@@ -53,11 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #include <sys/timeb.h>  // for timeb
 #endif
-
-
-
-#include <time.h>
-#include "hsStream.h"
 
 
 #if HS_BUILD_FOR_WIN32

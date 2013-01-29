@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shlobj.h>
 #include <commdlg.h>
 #include <commctrl.h>
-#include <time.h>
+#include <ctime>
 
 #include "hsStream.h"
 #include "hsResMgr.h"

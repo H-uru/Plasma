@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsSTLStream.h"
 
-#include <time.h>
+#include <ctime>
 #include <wchar.h>
 
 static const uint32_t kDefaultKey[4] = { 0x6c0a5452, 0x3827d0f, 0x3a170b92, 0x16db7fc2 };
