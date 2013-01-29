@@ -694,7 +694,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
             fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, (const char *)page->GetName().c_str() );
+            fCompPB->SetValue( kInfoPage, 0, const_cast<char*>(page->GetName().c_str()) );
             return;
         }
     }

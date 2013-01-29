@@ -43,7 +43,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class Class_ID;
 class Interface;
 class plMaxNode;
-struct NotifyInfo;
+
+#include <maxversion.h>
+#if MAX_VERSION_MAJOR >= 9
+    struct NotifyInfo;
+#else
+    // Max headers are more minimalistic in pre-9 maxes
+#   include <notify.h>
+#endif
 
 class plComponentDlg
 {

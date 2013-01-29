@@ -77,24 +77,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <CommCtrl.h>
 #include <commdlg.h>
 
-// MaxComponent
-#include "MaxComponent/plComponent.h"
-
 // 3ds Max SDK
 // This stuff should ALWAYS come after hsWindows.h
+#include <max.h>
 #include <bmmlib.h>
 #include <dummy.h>
 #include <keyreduc.h>
 #include <INode.h>
+#include <iparamm2.h> // needs to be above ISkin.h for Max 7
 #include <ISkin.h>
 #include <istdplug.h>
-#include <iparamm2.h>
 #include <maxversion.h>
 #include <meshdlib.h> 
 #include <modstack.h>
 #include <notify.h>
 #include <stdmat.h>
 #include <texutil.h>
+
+// MaxComponent
+#include "MaxComponent/plComponent.h"
 
 #if MAX_VERSION_MAJOR >= 13
 #    include <INamedSelectionSetManager.h>

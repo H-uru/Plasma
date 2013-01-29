@@ -3944,7 +3944,7 @@ bool hsMaterialConverter::IClearDoneMaterial(Mtl* mtl, plMaxNode* node)
 
 static BMM_Color_64 green64 = BMMCOLOR(0, (1<<16)-1, 0, (1<<16)-1)
 
-BMM_Color_64 hsMaterialConverter::ICubeSample(Bitmap *bitmap[6], double phi, double theta) 
+static BMM_Color_64 ICubeSample(plErrorMsg* const msg, Bitmap *bitmap[6], double phi, double theta)
 {
     hsGuardBegin("hsMaterialConverter::ICubeSample");
 
@@ -4024,7 +4024,7 @@ BMM_Color_64 hsMaterialConverter::ICubeSample(Bitmap *bitmap[6], double phi, dou
     iMap = (int)(xMap * (map->Width()-1));
     jMap = (int)(yMap * (map->Height()-1));
 
-    fErrorMsg->Set(!map, "CubeSample", "Bad fallthrough in spherefromcube").Check();
+    msg->Set(!map, "CubeSample", "Bad fallthrough in spherefromcube").Check();
     BMM_Color_64 c;
     map->GetLinearPixels(iMap,jMap,1,&c);
     return c;
@@ -4050,7 +4050,7 @@ void hsMaterialConverter::IBuildSphereMap(Bitmap *bitmap[6], Bitmap *bm)
             phi = (0.5 + j) * delPhi;
             theta = PI - (0.5 + i) * delThe;
 
-            pb[i] = ICubeSample(bitmap, phi, theta);
+            pb[i] = ICubeSample(fErrorMsg, bitmap, phi, theta);
         }
         bm->PutPixels(0,j, bm->Width(), pb);
     }

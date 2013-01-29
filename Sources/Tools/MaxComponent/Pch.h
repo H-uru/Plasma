@@ -79,6 +79,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <shlwapi.h>
 #include <windowsx.h>
 
+// 3ds Max SDK
+// This stuff should ALWAYS come after hsWindows.h
+#include <max.h>
+#include <bmmlib.h>
+#include <CS/bipexp.h>
+#include <decomp.h>
+#include <dummy.h>
+#include <iparamm2.h>
+#include <meshdlib.h>
+#include <notetrck.h>
+#include <notify.h>
+#include <stdmat.h>
+
 // These MaxComponent headers will trigger a rebuild if they are changed
 // So it's probably best to precompile them anyway.
 // Some of these may include 3dsm headers, so ensure they come after hsWindows.h
@@ -102,18 +115,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxCompat.h"
 #include "MaxMain/plMaxNode.h"
 #include "MaxMain/plMaxNodeData.h"
-
-// 3ds Max SDK
-// This stuff should ALWAYS come after hsWindows.h
-#include <bmmlib.h>
-#include <CS/bipexp.h>
-#include <decomp.h>
-#include <dummy.h>
-#include <iparamm2.h>
-#include <meshdlib.h>
-#include <notetrck.h>
-#include <notify.h>
-#include <stdmat.h>
 
 #if MAX_VERSION_MAJOR >= 13
 #   include <INamedSelectionSetManager.h>

@@ -51,43 +51,46 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <maxversion.h>
 
 #if MAX_VERSION_MAJOR <= 9
-#define BMMCOLOR(x, y, z, w) \
-    {x, y, x, w};
+#   define BMMCOLOR(x, y, z, w) \
+        {x, y, x, w};
 
-#define DEFAULTREMAP NoRemap()
+#   define DEFAULTREMAP NoRemap()
 
-#define ENUMDEPENDENTS(maxObject, proc) \
-    maxObject->EnumDependents(proc);
+#   define ENUMDEPENDENTS(maxObject, proc) \
+        maxObject->EnumDependents(proc);
 
-typedef TCHAR MCHAR;
+    typedef TCHAR MCHAR;
 #else
-#define BMMCOLOR(x, y, z, w) \
-    BMM_Color_64(x, y, z, w);
+#   define BMMCOLOR(x, y, z, w) \
+        BMM_Color_64(x, y, z, w);
 
-#define DEFAULTREMAP DefaultRemapDir()
+#   define DEFAULTREMAP DefaultRemapDir()
 
-#define ENUMDEPENDENTS(maxObject, proc) \
-    maxObject->DoEnumDependents(proc);
+#   define ENUMDEPENDENTS(maxObject, proc) \
+        maxObject->DoEnumDependents(proc);
 #endif //MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 13
-#define GetParamBlock2Controller(pb, id) pb->GetController(id)
-#define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)
+#   define GetParamBlock2Controller(pb, id) pb->GetController(id)
+#   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)
 #else
-#define GetParamBlock2Controller(pb, id) pb->GetControllerByID(id)
-#define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetControllerByID(id, tab, ctl)
+#   define GetParamBlock2Controller(pb, id) pb->GetControllerByID(id)
+#   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetControllerByID(id, tab, ctl)
 #endif // MAX_VERSION_MAJOR
 
 #if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
-#define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
+#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
 #else
-#define INIT_CUSTOM_CONTROLS(instance)
+#   define INIT_CUSTOM_CONTROLS(instance)
 #endif
 
 #if MAX_VERSION_MAJOR <= 10 // Max 2008
-#define GETNAME_RETURN_TYPE TCHAR*
+#   define GETNAME_RETURN_TYPE TCHAR*
 #else
-#define GETNAME_RETURN_TYPE const TCHAR*
+#   define GETNAME_RETURN_TYPE const TCHAR*
 #endif
+
+// Old versions of Max define this as an integer, not a Class_ID
+#define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
 
 #endif // _PLASMA_MAXCOMPAT_H
