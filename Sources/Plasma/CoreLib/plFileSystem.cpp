@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plFileSystem.h"
 
 #if HS_BUILD_FOR_WIN32
 #   include "hsWindows.h"
@@ -57,6 +56,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <memory>
 #endif
 #include <sys/stat.h>
+#pragma hdrstop
+
+#include "plFileSystem.h"
 #include "plProduct.h"
 
 /* NOTE For this file:  Windows uses UTF-16 filenames, and does not support

@@ -39,19 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <cctype>
+#if HS_BUILD_FOR_WIN32
+#   include <io.h>
+#endif
+#pragma hdrstop
+
 #include "hsStream.h"
 #include "hsMemory.h"
-
 #include "hsTemplates.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <unistd.h>
 #endif
-
-#if HS_BUILD_FOR_WIN32
-#include <io.h>
-#endif
-
 //////////////////////////////////////////////////////////////////////////////////
 
 void hsStream::FastFwd()

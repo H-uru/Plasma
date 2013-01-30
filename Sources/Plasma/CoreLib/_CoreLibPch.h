@@ -40,55 +40,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <cmath>
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cctype>
+#include <functional>
+#include <limits.h>
+#include <memory>
+#include <stdarg.h>
+#include <stdint.h>
+#include <wchar.h>
+
 #include "HeadSpin.h"
-#pragma hdrstop
+#include "hsWindows.h"
 
-#include "hsCritSect.h"
+#include <sys/stat.h>
+#include <sys/types.h>
 
+#if HS_BUILD_FOR_WIN32
+#   include <io.h>
+#   include <process.h>
+#   include <shlobj.h>
+#else
+#   include <unistd.h>
+#   include <dirent.h>
+#   include <fnmatch.h>
+#endif
 
-/****************************************************************************
-*
-*   Critical section implementation
-*
-***/
-
-#ifdef HS_BUILD_FOR_WIN32
-//===========================================================================
-CCritSect::CCritSect () {
-    InitializeCriticalSection(&m_handle);
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-    DeleteCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    EnterCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    LeaveCriticalSection(&m_handle);
-}
-#elif HS_BUILD_FOR_UNIX
-//===========================================================================
-CCritSect::CCritSect () {
-    m_handle = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    pthread_mutex_lock(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    pthread_mutex_unlock(&m_handle);
-}
+#ifdef _MSC_VER
+#   include <crtdbg.h>
 #endif
