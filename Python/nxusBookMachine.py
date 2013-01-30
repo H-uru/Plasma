@@ -419,14 +419,22 @@ class nxusBookMachine(ptModifier):
         psnlSDL = xPsnlVaultSDL()
         showGuildPub = psnlSDL["guildAlliance"][0]
         if showGuildPub:
-            guild = kGuildPubs[showGuildPub - 1]
-            filename = "GuildPub-" + guild
-            PtDebugPrint("nxusBookMachine.OnServerInitComplete() - member of guild: %s" % (guild))
-            guildPubEntry.linkVisible = 1
-            guildPubEntry.guild = guild
-            guildPubEntry.ageFilename = filename
-            #rename old entry
-            self.publicAges[filename] = guildPubEntry
+            if PtIsInternalRelease():
+                for guild in kGuildPubs:
+                    filename = "GuildPub-%s" % guild
+                    data = AgeData(filename, 0, 1)
+                    data.guild = guild # for name formatting
+                    self.publicAges[filename] = data
+                    PtDebugPrint("nxusBookMachine.OnServerInitComplete() - showing guild pub: %s" % guild)
+            else:
+                guild = kGuildPubs[showGuildPub - 1]
+                filename = "GuildPub-" + guild
+                PtDebugPrint("nxusBookMachine.OnServerInitComplete() - member of guild: %s" % (guild))
+                guildPubEntry.linkVisible = 1
+                guildPubEntry.guild = guild
+                guildPubEntry.ageFilename = filename
+                #rename old entry
+                self.publicAges[filename] = guildPubEntry
 
         del self.publicAges['guildPub']
 
