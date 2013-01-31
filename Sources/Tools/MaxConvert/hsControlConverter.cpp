@@ -40,12 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <functional>
+#include <math.h>
+#include <memory>
+
 #include "HeadSpin.h"
 #include "hsExceptionStack.h"
 #include "hsTemplates.h"
 #include "hsWindows.h"
 #include <commdlg.h>
-#include <math.h>
 #include <stdmat.h>
 #include <bmmlib.h>
 #include <istdplug.h>
@@ -71,6 +74,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plAnimComponent.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
+
+typedef std::unique_ptr<IKey, std::function<void(IKey*)>> ikey_ptr;
+
+/** Allocates a managed buffer to store derivatives of IKey */
+static ikey_ptr IAllocKey(size_t size)
+{
+    return ikey_ptr(
+        reinterpret_cast<IKey*>(new uint8_t[size]),
+        [](IKey* ptr) { delete[] reinterpret_cast<uint8_t*>(ptr); });
+}
+
+//////////////////////////////////////////////////////////////////////////
 
 extern UserPropMgr gUserPropMgr;
 
@@ -760,7 +775,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
             return NULL;
         }
 
-        IKey* key=(IKey*)(new uint8_t[ikeys->GetKeySize()]);
+        ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         plLeafController* pc = new plLeafController;
 
         uint8_t compressLevel = node->GetAnimCompress();
@@ -776,7 +791,7 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
         for(int i = startIdx; i <= endIdx; i++)
         {
             // Get key
-            ikeys->GetKey(i, key);
+            ikeys->GetKey(i, key.get());
             const float kMaxRads = M_PI*  0.5f;
             Tab<TimeValue> kTimes;
             kTimes.ZeroCount();
@@ -791,12 +806,12 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
                 if (keyType == hsKeyFrame::kQuatKeyFrame)
                 {
                     hsQuatKey *hsKey = pc->GetQuatKey(i - startIdx);
-                    ICreateHSInterpKey(control, key, kTimes[k], hsKey, node, camRot);
+                    ICreateHSInterpKey(control, key.get(), kTimes[k], hsKey, node, camRot);
                 }
                 else if (keyType == hsKeyFrame::kCompressedQuatKeyFrame64)
                 {
                     hsQuatKey tempKey;
-                    ICreateHSInterpKey(control, key, kTimes[k], &tempKey, node, camRot);
+                    ICreateHSInterpKey(control, key.get(), kTimes[k], &tempKey, node, camRot);
                     hsCompressedQuatKey64 *compKey = pc->GetCompressedQuatKey64(i - startIdx);
                     compKey->fFrame = tempKey.fFrame;
                     compKey->SetQuat(tempKey.fValue);
@@ -804,14 +819,13 @@ plLeafController* hsControlConverter::ICreateQuatController(plMaxNode* node, Con
                 else
                 {
                     hsQuatKey tempKey;
-                    ICreateHSInterpKey(control, key, kTimes[k], &tempKey, node, camRot);
+                    ICreateHSInterpKey(control, key.get(), kTimes[k], &tempKey, node, camRot);
                     hsCompressedQuatKey32 *compKey = pc->GetCompressedQuatKey32(i - startIdx);
                     compKey->fFrame = tempKey.fFrame;
                     compKey->SetQuat(tempKey.fValue);
                 }
             }
         }
-        delete [] key;
 
         return pc;
     }
@@ -840,22 +854,21 @@ plLeafController* hsControlConverter::ICreateScaleValueController(plMaxNode* nod
             return NULL;
         }
 
-        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
             // Get key
-            ikeys->GetKey(i, key);
+            ikeys->GetKey(i, key.get());
             hsScaleKey *hsKey = pc->GetScaleKey(i - startIdx);
             if (hsKey)
-                ICreateHSInterpKey(control, key, key->time, hsKey, node);
+                ICreateHSInterpKey(control, key.get(), key->time, hsKey, node);
 
             hsBezScaleKey *bezKey = pc->GetBezScaleKey(i - startIdx);
             if (bezKey)
-                ICreateHSInterpKey(control, key, key->time, bezKey, node);
+                ICreateHSInterpKey(control, key.get(), key->time, bezKey, node);
         }
-        delete [] key;
         return pc;
     }
     
@@ -881,23 +894,22 @@ plLeafController* hsControlConverter::ICreateScalarController(plMaxNode* node, C
             return NULL;
         }
 
-        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
             // Get key
-            ikeys->GetKey(i, key);
+            ikeys->GetKey(i, key.get());
             hsScalarKey *hsKey = pc->GetScalarKey(i - startIdx);
             if (hsKey)
-                ICreateHSInterpKey(control, key, key->time, hsKey);
+                ICreateHSInterpKey(control, key.get(), key->time, hsKey);
 
             hsBezScalarKey *bezKey = pc->GetBezScalarKey(i - startIdx);
             if (bezKey)
-                ICreateHSInterpKey(control, key, key->time, bezKey);
+                ICreateHSInterpKey(control, key.get(), key->time, bezKey);
         }
 
-        delete [] key;
         return pc;
     }
     return nil;
@@ -923,22 +935,21 @@ plLeafController* hsControlConverter::ICreateSimplePosController(plMaxNode* node
             return NULL;
         }
 
-        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         plLeafController* pc = new plLeafController;
         pc->AllocKeys(endIdx - startIdx + 1, GetKeyType(control));
         for(int i = startIdx; i <= endIdx; i++)
         {
             // Get key
-            ikeys->GetKey(i, key);
+            ikeys->GetKey(i, key.get());
             hsPoint3Key *hsKey = pc->GetPoint3Key(i - startIdx);
             if (hsKey)
-                ICreateHSInterpKey(control, key, key->time, hsKey);
+                ICreateHSInterpKey(control, key.get(), key->time, hsKey);
 
             hsBezPoint3Key *bezKey = pc->GetBezPoint3Key(i - startIdx);
             if (bezKey)
-                ICreateHSInterpKey(control, key, key->time, bezKey);
+                ICreateHSInterpKey(control, key.get(), key->time, bezKey);
         }
-        delete [] key;
         return pc;
     }
 
@@ -979,13 +990,13 @@ int hsControlConverter::IAddPartsKeys(Control* control,
         //
         // Traverse all keys of controller
         //
-        IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+        ikey_ptr key = IAllocKey(ikeys->GetKeySize());
         bool mb=false;
         plMaxNode* xformParent = GetXformParent(node);
         for(i = startIdx; i <= endIdx; i++)
         {
             // Get key
-            ikeys->GetKey(i, key);
+            ikeys->GetKey(i, key.get());
             float frameTime = key->time / GetTicksPerSec();
             int frameNum = key->time / GetTicksPerFrame();
             hsAssert(frameNum <= hsKeyFrame::kMaxFrameNumber, "Anim is too long.");
@@ -1023,7 +1034,6 @@ int hsControlConverter::IAddPartsKeys(Control* control,
             // Add key to list
             kfArray->Append(hKey);
         }
-        delete [] key;
     }
     else
     {
@@ -1099,8 +1109,8 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
 
 
     IKeyControl* ikeys = GetKeyControlInterface(control);
-    IKey* key=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
-    IKey* lastKey=(IKey*)(new uint8_t [ikeys->GetKeySize()]);
+    ikey_ptr key = IAllocKey(ikeys->GetKeySize());
+    ikey_ptr lastKey = IAllocKey(ikeys->GetKeySize());
 
     int i;
     for( i = iLo; i < iHi; i++ )
@@ -1120,17 +1130,17 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
         //      key[i] = key[i-1] * key[i]
         // or pass in the previous key and do it here.
         ///////////////////////////////////////
-        ikeys->GetKey(i-1, lastKey);
-        ikeys->GetKey(i, key);
+        ikeys->GetKey(i-1, lastKey.get());
+        ikeys->GetKey(i, key.get());
         if( cID == Class_ID(TCBINTERP_ROTATION_CLASS_ID, 0) )  
         {
-            ITCBRotKey* tcbRotKey = (ITCBRotKey*)key;
+            ITCBRotKey* tcbRotKey = (ITCBRotKey*)key.get();
             rads = tcbRotKey->val.angle;
         }
         else 
         if( cID == Class_ID(LININTERP_ROTATION_CLASS_ID, 0) )  
         {
-            ILinRotKey* linRotKey = (ILinRotKey*)key;
+            ILinRotKey* linRotKey = (ILinRotKey*)key.get();
 
             Point3 axis;
             AngAxisFromQ(linRotKey->val, &rads, axis);
@@ -1138,7 +1148,7 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
         else 
         if( cID == Class_ID(HYBRIDINTERP_ROTATION_CLASS_ID, 0) )  
         {
-            IBezQuatKey* bezRotKey = (IBezQuatKey*)key;
+            IBezQuatKey* bezRotKey = (IBezQuatKey*)key.get();
 
             Point3 axis;
             AngAxisFromQ(bezRotKey->val, &rads, axis);
@@ -1146,26 +1156,26 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
         else 
         if( cID == Class_ID(TCBINTERP_FLOAT_CLASS_ID, 0) )
         {
-            ITCBFloatKey* fKey = (ITCBFloatKey*)key;
+            ITCBFloatKey* fKey = (ITCBFloatKey*)key.get();
 
             rads = fKey->val;
-            fKey = (ITCBFloatKey*)lastKey;
+            fKey = (ITCBFloatKey*)lastKey.get();
             rads -= fKey->val;
         }
         else
         if( cID == Class_ID(LININTERP_FLOAT_CLASS_ID, 0) )
         {
-            ILinFloatKey* fKey = (ILinFloatKey*)key;
+            ILinFloatKey* fKey = (ILinFloatKey*)key.get();
             rads = fKey->val;
-            fKey = (ILinFloatKey*)lastKey;
+            fKey = (ILinFloatKey*)lastKey.get();
             rads -= fKey->val;
         }
         else
         if( cID == Class_ID(HYBRIDINTERP_FLOAT_CLASS_ID, 0) )
         {
-            IBezFloatKey* fKey = (IBezFloatKey*)key;
+            IBezFloatKey* fKey = (IBezFloatKey*)key.get();
             rads = fKey->val;
-            fKey = (IBezFloatKey*)lastKey;
+            fKey = (IBezFloatKey*)lastKey.get();
             rads -= fKey->val;
         }
 
@@ -1188,9 +1198,6 @@ void hsControlConverter::IGetControlSampleTimes(Control* control, int iLo, int i
         ///////////////////////////////////////
     }
 
-    delete [] key;
-    delete [] lastKey;
-    
     hsGuardEnd;
 }
 
@@ -1443,13 +1450,13 @@ int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* co
     if (numKeys == 0)
         return 0;
 
-    IKey* key=(IKey*)(new uint8_t [keys->GetKeySize()]);
+    ikey_ptr key = IAllocKey(keys->GetKeySize());
 
     start = numKeys;
     for (int i=0; i<numKeys; i++)
     {
-        keys->GetKey(i, key);
-        if (IIsKeyInRange(key))
+        keys->GetKey(i, key.get());
+        if (IIsKeyInRange(key.get()))
         {
             if (start > i)
                 start = i;
@@ -1464,7 +1471,7 @@ int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* co
     {
         for (int i = 0; i < numKeys; i++)
         {
-            keys->GetKey(i, key);
+            keys->GetKey(i, key.get());
             if (key->time < fSegStart)
                 start = i;
         }
@@ -1472,7 +1479,6 @@ int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* co
         if ((start == numKeys) ||       // no keys before the start time
             (start == numKeys - 1))     // no keys after end (since the latest key is before start)
         {
-            delete [] key;
             return 0;
         }
 
@@ -1480,16 +1486,14 @@ int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* co
     }
     else
     {
-        keys->GetKey(start, key);
+        keys->GetKey(start, key.get());
         if (key->time > fSegStart && start > 0)
             start -= 1;
 
-        keys->GetKey(end, key);
+        keys->GetKey(end, key.get());
         if (key->time < fSegEnd && end < numKeys - 1)
             end += 1;
     }
-
-    delete [] key;
 
     //fErrorMsg->Set(numInRange>1 && numInRange!=numKeys, nodeName ? nodeName : "?", 
 //          "Warning: Object has controller with keyframes outside of animation interval").CheckAndAsk();

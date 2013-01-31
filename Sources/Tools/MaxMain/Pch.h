@@ -78,14 +78,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <comutil.h>
 #include <direct.h>
 
-// PlasmaMax Stuff included everywhere
-// Some of these files may pull in Max SDK headers, so put this below hsWindows.h!
-#include "plMaxNode.h"
-#include "plMaxNodeData.h"
-#include "MaxComponent/plComponent.h"
-#include "MaxComponent/plComponentReg.h"
-
 // Misc Max SDK
+#include <max.h>
 #include <bmmlib.h>
 #include <CustAttrib.h>
 #include <ICustAttribContainer.h>
@@ -93,13 +87,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <guplib.h>
 #include <iMenuMan.h>
 #include <IMtlEdit.h>
-#include <iskin.h>
+#include <iparamb2.h> // above ISkin.h for Max 7
+#include <ISkin.h>
 #include <istdplug.h>
 #include <maxversion.h>
 #include <mnmath.h>
 #include <modstack.h>
 #include <notify.h>
 #include <pbbitmap.h>
+
+// PlasmaMax Stuff included everywhere
+// Some of these files may pull in Max SDK headers, so put this below hsWindows.h!
+#include "plMaxNode.h"
+#include "plMaxNodeData.h"
+#include "MaxComponent/plComponent.h"
+#include "MaxComponent/plComponentReg.h"
 
 // Utility
 #include "MaxCompat.h"

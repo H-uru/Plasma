@@ -59,21 +59,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <commdlg.h>
 #include <windowsx.h>
 
-// MaxMain
-#include "MaxMain/plMaxNode.h"
-#include "MaxMain/MaxCompat.h"
-
 // Misc 3dsm SDK
+#include <max.h>
 #include <bmmlib.h>
 #include <iparamm2.h>
 #include <istdplug.h>
-#include <max.h>
 #include <maxicon.h>
 #include <notetrck.h>
 #include <notify.h>
 #include <stdmat.h>
 #include <texutil.h>
 #include <triobj.h>
+
+// MaxMain
+#include "MaxMain/plMaxNode.h"
+#include "MaxMain/MaxCompat.h"
 
 // Local
 #include "resource.h"

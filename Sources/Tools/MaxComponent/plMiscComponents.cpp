@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "resource.h"
 
 #include <iparamm2.h>
+#include <memory>
 #include <notify.h>
 #pragma hdrstop
 
@@ -96,6 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Location Related
 #include "plAgeDescription/plAgeDescription.h"
+#include "plFile/plEncryptedStream.h"
 #include "MaxMain/plMaxCFGFile.h"
 #include "MaxMain/plAgeDescInterface.h"
 #include "plResMgr/plPageInfo.h"
@@ -270,7 +272,7 @@ protected:
 
             int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
-            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)ageFiles[i].AsString().c_str() );
+            ComboBox_SetItemData( hAgeCombo, idx, (LPARAM)hsStrcpy(ageFiles[i].AsString().c_str()) );
 
             if (ageName == curAge)
                 ComboBox_SetCurSel( hAgeCombo, idx );
@@ -649,9 +651,9 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     plFileName path = plFileName::Join(ageFolder, plString::Format("%s.age", curAge));
 
     IVerifyLatestAgeAsset( curAge, path, errMsg );
+    std::unique_ptr<plAgeDescription> aged(plPageInfoUtils::GetAgeDesc(curAge));
 
-    hsUNIXStream s;
-    if (!s.Open(path))
+    if (!aged)
     {
         errMsg->Set( true,
                      "PageInfo Convert Error",
@@ -664,13 +666,8 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         return;
     }
 
-    // create and read the age desc
-    plAgeDescription aged;
-    aged.Read(&s);
-    s.Close();
-
     // Update based on the age file now
-    fCompPB->SetValue( kInfoSeqPrefix, 0, (int)aged.GetSequencePrefix() );
+    fCompPB->SetValue( kInfoSeqPrefix, 0, (int)aged->GetSequencePrefix() );
 
     // Find our page
     const char *compPBPageName = fCompPB->GetStr( kInfoPage );
@@ -688,16 +685,16 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
     }
 
     plAgePage   *page;
-    aged.SeekFirstPage();
+    aged->SeekFirstPage();
 
-    while( ( page = aged.GetNextPage() ) != nil )
+    while( ( page = aged->GetNextPage() ) != nil )
     {
         if( page->GetName().CompareI( compPBPageName ) == 0 )
         {
             fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
 
             // Also re-copy the page name, just to make sure the case is correct
-            fCompPB->SetValue( kInfoPage, 0, (const char *)page->GetName().c_str() );
+            fCompPB->SetValue( kInfoPage, 0, const_cast<char*>(page->GetName().c_str()) );
             return;
         }
     }
@@ -790,18 +787,16 @@ plAgeDescription *plPageInfoUtils::GetAgeDesc( const plString &ageName )
 {
     plFileName ageFolder = plPageInfoUtils::GetAgeFolder();
     if (!ageFolder.IsValid() || ageName.IsNull())
-        return nil;
+        return nullptr;
 
-    hsUNIXStream s;
-    if (!s.Open(plFileName::Join(ageFolder, ageName + ".age")))
-        return nil;
-
-    // Create and read the age desc
-    plAgeDescription *aged = new plAgeDescription;
-    aged->Read( &s );
-    s.Close();
-
-    return aged;
+    plAgeDescription* aged = new plAgeDescription;
+    if (aged->ReadFromFile(plFileName::Join(ageFolder, ageName + ".age")))
+        return aged;
+    else
+    {
+        delete aged;
+        return nullptr;
+    }
 }
 
 const char* LocCompGetPage(plComponentBase* comp)

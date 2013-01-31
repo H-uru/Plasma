@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "hsWindows.h"
 
-#include <iparamb2.h>
 #include <max.h>
+#include <iparamb2.h>
 
 extern TCHAR *GetString(int id);
 extern HINSTANCE hInstance;
@@ -67,7 +67,6 @@ class INode;
 class INodeTab;
 class IObjParam;
 class ObjectState;
-enum  IOResult;
 class IParamBlock2;
 enum  RefResult;
 class RemapDir;

@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class Class_ID;
 class IParamBlock2;
-struct PB2Value;
 class ReferenceMaker;
 
 
