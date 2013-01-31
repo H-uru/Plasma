@@ -75,20 +75,12 @@ plProfile_Extern(MemMipmaps);
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
-plDynamicTextMap::plDynamicTextMap() : plMipmap()
+plDynamicTextMap::plDynamicTextMap()
+    : fVisWidth(0), fVisHeight(0), fHasAlpha(false), fJustify(kLeftJustify),
+      fInitBuffer(nullptr), fFontFace(nullptr), fFontSize(0), fFontFlags(0),
+      fFontAntiAliasRGB(false), fFontBlockRGB(false), fHasCreateBeenCalled(false)
 {
-    fVisWidth = fVisHeight = 0;
-    fHasAlpha = false;
-    fJustify = kLeftJustify;
-    fInitBuffer = nil;
-    fFontFace = nil;
-    fFontSize = 0;
-    fFontFlags = 0;
-    fFontAntiAliasRGB = false;
-    fFontColor.Set( 0, 0, 0, 1 );
-    fFontBlockRGB = false;
-    fHasCreateBeenCalled = false;
-
+    fFontColor.Set(0, 0, 0, 1);
 }
 
 plDynamicTextMap::~plDynamicTextMap()
@@ -96,10 +88,9 @@ plDynamicTextMap::~plDynamicTextMap()
     Reset();
 }
 
-plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight ) : plMipmap()
+plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight )
+    : fInitBuffer(nullptr), fFontFace(nullptr)
 {
-    fInitBuffer = nil;
-    fFontFace = nil;
     Create( width, height, hasAlpha, extraWidth, extraHeight );
 }
 
@@ -139,7 +130,7 @@ void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha
 
     fRowBytes = fWidth << 2;
     fNumLevels = 1;
-    fFlags |= plMipmap::kDontThrowAwayImage;
+    fFlags |= plMipmap::kDontThrowAwayImage | plMipmap::kAutoGenMipmap;
     fCompressionType = plMipmap::kUncompressed;
     fUncompressedInfo.fType = plMipmap::UncompressedInfo::kRGB8888;
 

@@ -76,7 +76,8 @@ class plDXTextureRef : public plDXDeviceRef
             kProjection         = kPerspProjection | kOrthoProjection,
             kOffscreenRT        = 0x00000040,   // Offscreen renderTarget. Never used as an actual texture,
                                                 // but handy to still have it as a textureRef
-            kUVWNormal          = 0x00000080    // Use the normal as the UVW src
+            kUVWNormal          = 0x00000080,   // Use the normal as the UVW src
+            kAutoGenMipmap      = 0x00000100    // DirectX should generate mip levels for us
         };
 
         IDirect3DBaseTexture9   *fD3DTexture;
@@ -94,7 +95,7 @@ class plDXTextureRef : public plDXDeviceRef
 
         void*       fData;          // for reloading
 
-        uint32_t      GetFlags( void ) { return fFlags; }
+        uint32_t      GetFlags() const { return fFlags; }
         void        SetFlags( uint32_t flag ) { fFlags = flag; }
 
         plDXTextureRef& Set( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed=false, bool renderTarget = false );

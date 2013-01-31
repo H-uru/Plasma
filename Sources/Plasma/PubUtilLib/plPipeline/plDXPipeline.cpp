@@ -8292,6 +8292,14 @@ void    plDXPipeline::IReloadTexture( plDXTextureRef *ref )
     }
 }
 
+static uint32_t IGetD3DTextureUsage(const plDXTextureRef* ref)
+{
+    uint32_t usage = 0;
+    if (ref->GetFlags() & plDXTextureRef::kAutoGenMipmap)
+        usage |= D3DUSAGE_AUTOGENMIPMAP;
+    return usage;
+}
+
 //// IMakeD3DTexture //////////////////////////////////////////////////////////
 //  Makes a DX Texture object based on the ref given.
 
@@ -8302,7 +8310,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
     fManagedAlloced = true;
     if( FAILED( fSettings.fDXError = fD3DDevice->CreateTexture( ref->fMaxWidth, ref->fMaxHeight, 
                                           ref->fMMLvs,
-                                          0,
+                                          IGetD3DTextureUsage(ref),
                                           formatType,
                                           poolType,
                                           &texPtr, NULL ) ) )
@@ -8473,6 +8481,11 @@ hsGDeviceRef    *plDXPipeline::MakeTextureRef( plLayerInterface* layer, plMipmap
         // Re-linking
         ref->Link( &fTextureRefList );
     }
+
+    // NOTE: This is just a hint, so setting it on a device with no support for it
+    //       or mipmaps in general won't do any damage.
+    if (original->GetFlags() & plMipmap::kAutoGenMipmap)
+        ref->SetFlags(ref->GetFlags() | plDXTextureRef::kAutoGenMipmap);
 
     /// Copy the data into the ref
     IReloadTexture( ref );

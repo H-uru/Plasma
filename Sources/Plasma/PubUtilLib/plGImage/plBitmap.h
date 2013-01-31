@@ -90,6 +90,7 @@ class plBitmap : public hsKeyedObject
             kUserOwnsBitmap     = 0x0200,
             kForceRewrite       = 0x0400,
             kForceNonCompressed = 0x0800,
+            kAutoGenMipmap      = 0x1000,   // prompts DirectX to generate mipmaps for us automagically
             // For renderTargets:
             kIsTexture          = 0x1000,
             kIsOffscreen        = 0x2000,
