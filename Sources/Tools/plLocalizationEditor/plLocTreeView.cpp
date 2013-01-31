@@ -66,7 +66,7 @@ HTREEITEM AddLeaf(HWND hTree, HTREEITEM hParent, plString text, bool sort = true
     TVITEM tvi = {0};
     tvi.mask = TVIF_TEXT | TVIF_PARAM;
     tvi.pszText = const_cast<LPWSTR>(buf.GetData());
-    tvi.cchTextMax = static_cast<int>(text.GetSize());
+    tvi.cchTextMax = static_cast<int>(buf.GetSize());
     tvi.lParam = NULL;
 
     TVINSERTSTRUCT tvins = {0};
