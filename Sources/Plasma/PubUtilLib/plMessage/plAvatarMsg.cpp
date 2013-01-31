@@ -240,7 +240,6 @@ plAvSeekMsg::plAvSeekMsg()
   fDuration(0),
   fSmartSeek(true),
   fAlignType(kAlignHandle),
-  fAnimName(nil),
   fNoSeek(false),
   fFlags(kSeekFlagForce3rdPersonOnStart)
 {
