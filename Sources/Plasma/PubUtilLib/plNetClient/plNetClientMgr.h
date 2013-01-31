@@ -249,9 +249,6 @@ public:
 
     static plNetClientMgr* GetInstance() { return plNetClientMgr::ConvertNoRef(fInstance); }
 
-    void StartLinkOutFX();
-    void StartLinkInFX();
-
     bool MsgReceive(plMessage* msg);
     void Shutdown();
     int  Init();

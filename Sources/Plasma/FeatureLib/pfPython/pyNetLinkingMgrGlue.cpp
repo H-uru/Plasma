@@ -79,11 +79,13 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, setEnabled, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkToAge, args)
+PYTHON_METHOD_DEFINITION_WKEY(ptNetLinkingMgr, linkToAge, args, kwargs)
 {
+    char* kwlist[] = { "ageLink", "anim", "linkInSfx", "linkOutSfx", nullptr };
     PyObject* ageLinkObj = NULL;
     char* linkAnim = NULL;
-    if (!PyArg_ParseTuple(args, "O|s", &ageLinkObj, &linkAnim))
+    bool linkInSfx, linkOutSfx = true;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|sbb", kwlist, &ageLinkObj, &linkAnim, &linkInSfx, &linkOutSfx))
     {
         PyErr_SetString(PyExc_TypeError, "linkToAge expects a ptAgeLinkStruct and an optional link anim name");
         PYTHON_RETURN_ERROR;
@@ -94,7 +96,7 @@ PYTHON_METHOD_DEFINITION(ptNetLinkingMgr, linkToAge, args)
         PYTHON_RETURN_ERROR;
     }
     pyAgeLinkStruct* ageLink = pyAgeLinkStruct::ConvertFrom(ageLinkObj);
-    self->fThis->LinkToAge(*ageLink, linkAnim);
+    self->fThis->LinkToAge(*ageLink, linkAnim, linkInSfx, linkOutSfx);
     PYTHON_RETURN_NONE;
 }
 
@@ -158,7 +160,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptNetLinkingMgr, getPrevAgeLink)
 PYTHON_START_METHODS_TABLE(ptNetLinkingMgr)
     PYTHON_METHOD_NOARGS(ptNetLinkingMgr, isEnabled, "True if linking is enabled."),
     PYTHON_METHOD(ptNetLinkingMgr, setEnabled, "Params: enable\nEnable/Disable linking."),
-    PYTHON_METHOD(ptNetLinkingMgr, linkToAge, "Params: ageLink, linkAnim\nLinks to ageLink (ptAgeLinkStruct, string)"),
+    PYTHON_METHOD_WKEY(ptNetLinkingMgr, linkToAge, "Params: ageLink, linkAnim\nLinks to ageLink (ptAgeLinkStruct, string)"),
     PYTHON_BASIC_METHOD(ptNetLinkingMgr, linkToMyPersonalAge, "Link to my Personal Age"),
     PYTHON_BASIC_METHOD(ptNetLinkingMgr, linkToMyPersonalAgeWithYeeshaBook, "Link to my Personal Age with the YeeshaBook"),
     PYTHON_BASIC_METHOD(ptNetLinkingMgr, linkToMyNeighborhoodAge, "Link to my Neighborhood Age"),
