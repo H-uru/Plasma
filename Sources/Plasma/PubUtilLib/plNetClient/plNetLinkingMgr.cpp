@@ -100,6 +100,7 @@ struct NlmOpWaitOp : NlmOp {
 
 struct NlmJoinAgeOp : NlmOp {
     NetCommAge  age;
+    bool muteSfx;
     NlmJoinAgeOp ()
     : NlmOp(kNlmOpJoinAgeOp)
     { }
@@ -107,6 +108,7 @@ struct NlmJoinAgeOp : NlmOp {
 
 struct NlmLeaveAgeOp : NlmOp {
     bool    quitting;
+    bool    muteSfx;
     NlmLeaveAgeOp ()
     : NlmOp(kNlmOpLeaveAgeOp), quitting(false)
     { }
@@ -237,6 +239,7 @@ void plNetLinkingMgr::ExecNextOp () {
             NCAgeJoinerCreate(
                 &s_ageJoiner,
                 joinAgeOp->age,
+                joinAgeOp->muteSfx,
                 NCAgeJoinerCallback,
                 waitOp
             );
@@ -258,6 +261,7 @@ void plNetLinkingMgr::ExecNextOp () {
             NCAgeLeaverCreate(
                 &s_ageLeaver,
                 leaveAgeOp->quitting,
+                leaveAgeOp->muteSfx,
                 NCAgeLeaverCallback,
                 waitOp
             );
@@ -419,12 +423,14 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
         }
         // Queue leave op
         NlmLeaveAgeOp * leaveAgeOp = new NlmLeaveAgeOp;
+        leaveAgeOp->muteSfx = !msg->PlayLinkOutSfx();
         QueueOp(leaveAgeOp);
     }
 
     // Queue join op
     NlmJoinAgeOp * joinAgeOp = new NlmJoinAgeOp;
     joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
+    joinAgeOp->muteSfx = !msg->PlayLinkInSfx();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
         GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
@@ -541,12 +547,12 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
 
 ////////////////////////////////////////////////////////////////////
 
-bool plNetLinkingMgr::IDispatchMsg( plMessage * msg, uint32_t playerID )
+bool plNetLinkingMgr::IDispatchMsg( plMessage* msg, uint32_t playerID )
 {
     plNetClientMgr * nc = plNetClientMgr::GetInstance();
-
     msg->AddReceiver( plNetClientMgr::GetInstance()->GetKey() );
 
+    plLinkToAgeMsg* linkToAge = plLinkToAgeMsg::ConvertNoRef(msg);
     if ( playerID!=kInvalidPlayerID && playerID!=nc->GetPlayerID() )
     {
         msg->SetBCastFlag( plMessage::kNetAllowInterAge );
@@ -557,17 +563,17 @@ bool plNetLinkingMgr::IDispatchMsg( plMessage * msg, uint32_t playerID )
         msg->AddNetReceiver( playerID );
     }
 
-    return ( msg->Send()!=0 );
+    return msg->Send();
 }
 
 ////////////////////////////////////////////////////////////////////
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, uint32_t playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
-    LinkToAge(link, nil, playerID);
+    LinkToAge(link, nil, linkInSfx, linkOutSfx, playerID);
 }
 
-void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, uint32_t playerID )
+void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx, bool linkOutSfx, uint32_t playerID )
 {
     if ( !fLinkingEnabled )
     {
@@ -578,6 +584,7 @@ void plNetLinkingMgr::LinkToAge( plAgeLinkStruct * link, const char* linkAnim, u
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( link );
     if (linkAnim)
         pMsg->SetLinkInAnimName(linkAnim);
+    pMsg->PlayLinkSfx(linkInSfx, linkOutSfx);
     IDispatchMsg( pMsg, playerID );
 }
 

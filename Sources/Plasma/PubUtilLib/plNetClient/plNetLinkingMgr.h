@@ -110,7 +110,7 @@ class plNetLinkingMgr
     void IDoLink(plLinkToAgeMsg* link);
     bool IProcessVaultNotifyMsg(plVaultNotifyMsg* msg);
 
-    bool IDispatchMsg( plMessage * msg, uint32_t playerID );
+    bool IDispatchMsg( plMessage* msg, uint32_t playerID );
 
 
 public:
@@ -125,26 +125,35 @@ public:
     bool Linking () const  { return !fLinkedIn && !fLinkingEnabled; }
 
     // Link to an age.
-    void LinkToAge( plAgeLinkStruct * link, uint32_t playerID=kInvalidPlayerID );
-    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
+    void LinkToAge( plAgeLinkStruct * link, const char* linkAnim, bool linkInSfx=true, bool linkOutSfx=true, uint32_t playerID=kInvalidPlayerID );
+
     // Link to my last age.
-    void LinkToPrevAge( uint32_t playerID=kInvalidPlayerID ); 
+    void LinkToPrevAge( uint32_t playerID=kInvalidPlayerID );
+
     // Link to my Personal Age
     void LinkToMyPersonalAge( uint32_t playerID=kInvalidPlayerID );
+
     // Link to my Neighborhood Age
     void LinkToMyNeighborhoodAge( uint32_t playerID=kInvalidPlayerID );
+
     // Link a player here.
     void LinkPlayerHere( uint32_t playerID );
+
     // Link player to specified age
     void LinkPlayerToAge( plAgeLinkStruct * link, uint32_t playerID );
+
     // Link player back to his last age
     void LinkPlayerToPrevAge( uint32_t playerID );
+
     // Link us to a players age.
     void LinkToPlayersAge( uint32_t playerID );
+
     // Offer a link to player.
     void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID, plKey replyKey );
     void OfferLinkToPlayer( const plAgeInfoStruct * info, uint32_t playerID );
     void OfferLinkToPlayer( const plAgeLinkStruct * info, uint32_t playerID );
+
     // Leave the current age
     void LeaveAge (bool quitting);
 

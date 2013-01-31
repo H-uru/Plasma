@@ -365,6 +365,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         BCMsg->fLinkKey = linkKey;
         BCMsg->SetLinkFlag(plLinkEffectBCMsg::kLeavingAge, pTriggerMsg->IsLeavingAge());
         BCMsg->SetLinkFlag(plLinkEffectBCMsg::kSendCallback, true);
+        BCMsg->SetLinkFlag(plLinkEffectBCMsg::kMute, pTriggerMsg->MuteLinkSfx());
         
         // Check if you have a Yeesha book, and mute sound if you don't.
         // 'CleftSolved' gets set when you click on the linking panel in the cleft,
@@ -393,7 +394,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
                 if ( linkToACA || linkFromACA || linkToStartup || linkFromStartup || linkToFissureDrop || linkToDsntFromShell)
                 {
                     BCMsg->SetLinkFlag(plLinkEffectBCMsg::kMute);
-                }           
+                }
             }
         }
         

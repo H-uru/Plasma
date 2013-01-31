@@ -85,6 +85,7 @@ typedef void (* FNCAgeJoinerCallback)(
 void NCAgeJoinerCreate (
     plNCAgeJoiner **        joiner,
     const NetCommAge &      age,
+    bool                    muteSfx,
     FNCAgeJoinerCallback    callback,
     void *                  userState
 );

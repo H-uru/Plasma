@@ -85,6 +85,7 @@ typedef void (* FNCAgeLeaverCallback)(
 void NCAgeLeaverCreate (
     plNCAgeLeaver **        leaver,
     bool                    quitting,
+    bool                    muteSfx,
     FNCAgeLeaverCallback    callback,
     void *                  userState
 );

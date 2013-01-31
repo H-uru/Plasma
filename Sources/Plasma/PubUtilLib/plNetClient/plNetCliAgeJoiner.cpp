@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeJoiner.h"
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
+#include "plNetObjectDebugger.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -59,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm/plNetClientComm.h"
 #include "plAgeLoader/plAgeLoader.h"
+#include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plVault/plVault.h"
 
@@ -100,11 +102,13 @@ struct plNCAgeJoiner {
     FNCAgeJoinerCallback    callback;
     void *                  userState;
     bool                    complete;
+    bool                    muteLinkSfx;
 
     plOperationProgress*    progressBar;
 
     plNCAgeJoiner (
         const NetCommAge &      age,
+        bool                    muteSfx,
         FNCAgeJoinerCallback    callback,
         void *                  userState
     );
@@ -157,10 +161,12 @@ void AgeVaultDownloadCallback (
 //============================================================================
 plNCAgeJoiner::plNCAgeJoiner (
     const NetCommAge &      age,
+    bool                    muteSfx,
     FNCAgeJoinerCallback    callback,
     void *                  userState
 ) : nextOp(kNoOp)
 ,   age(age)
+,   muteLinkSfx(muteSfx)
 ,   callback(callback)
 ,   userState(userState)
 ,   complete(false)
@@ -354,7 +360,7 @@ void plNCAgeJoiner::ExecNextOp () {
             nc->SetFlagsBit(plNetClientApp::kPlayingGame);
             nc->SetFlagsBit(plNetClientApp::kNeedToSendInitialAgeStateLoadedMsg);
             plAgeLoader::GetInstance()->NotifyAgeLoaded(true);
-            Complete(true, "Age joined");
+            nextOp = kNoOp;
         }
         break;
 
@@ -448,6 +454,36 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         nextOp = kDestroyProgressBar;
         return true;
     }
+
+    //========================================================================
+    // Done loading all states. Time to link in!
+    //========================================================================
+    plInitialAgeStateLoadedMsg * stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef(msg);
+    if(stateMsg) {
+        plNetObjectDebugger::GetInstance()->LogMsg("OnServerInitComplete");
+        nc->SetFlagsBit(plNetClientApp::kLoadingInitialAgeState, false);
+
+        const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
+
+        plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
+        lem->SetLeavingAge(false);  // linking in
+        lem->SetLinkKey(nc->GetLocalPlayerKey());
+        plKey animKey = avMod->GetLinkInAnimKey();
+        lem->SetLinkInAnimKey(animKey);
+
+        // indicate if we are invisible
+        if (avMod && avMod->IsInStealthMode() && avMod->GetTarget(0))
+            lem->SetInvisLevel(avMod->GetStealthLevel());
+
+        lem->SetBCastFlag(plMessage::kNetPropagate);
+        lem->MuteLinkSfx(muteLinkSfx);
+        lem->AddReceiver(hsgResMgr::ResMgr()->FindKey(plUoid(kLinkEffectsMgr_KEY)));
+        lem->AddReceiver(hsgResMgr::ResMgr()->FindKey(plUoid(kClient_KEY)));
+        lem->Send();
+
+        Complete(true, "Age joined");
+        return true;
+    }
     
     return false;
 }
@@ -469,6 +505,7 @@ void plNCAgeJoiner::Update () {
 void NCAgeJoinerCreate (
     plNCAgeJoiner **        pjoiner,
     const NetCommAge &      age,
+    bool                    muteSfx,
     FNCAgeJoinerCallback    callback,
     void *                  userState
 ) {
@@ -478,6 +515,7 @@ void NCAgeJoinerCreate (
     plNCAgeJoiner * joiner;
     *pjoiner = joiner = new plNCAgeJoiner(
         age,
+        muteSfx,
         callback,
         userState
     );

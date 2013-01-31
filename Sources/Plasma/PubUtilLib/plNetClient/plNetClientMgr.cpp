@@ -438,55 +438,6 @@ void plNetClientMgr::IUnloadNPCs()
 }
 
 //
-// begin linking out sounds and gfx
-//
-void plNetClientMgr::StartLinkOutFX()
-{
-    // send msg to trigger link out effect
-    if (fLocalPlayerKey)
-    {
-        plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
-
-        plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
-        lem->SetLeavingAge(true);
-        lem->SetLinkKey(fLocalPlayerKey);
-        lem->SetBCastFlag(plMessage::kNetPropagate);
-        lem->SetBCastFlag(plMessage::kNetForce);    // Necessary?
-        lem->AddReceiver(hsgResMgr::ResMgr()->FindKey(plUoid(kLinkEffectsMgr_KEY)));
-        lem->Send();
-    }
-}
-
-//
-// beging linking in sounds snd gfx
-//
-void plNetClientMgr::StartLinkInFX()
-{
-    if (fLocalPlayerKey)
-    {
-        const plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
-
-        plLinkEffectsTriggerMsg* lem = new plLinkEffectsTriggerMsg();
-        lem->SetLeavingAge(false);  // linking in
-        lem->SetLinkKey(fLocalPlayerKey);
-        plKey animKey = avMod->GetLinkInAnimKey();
-        lem->SetLinkInAnimKey(animKey);
-        
-        // indicate if we are invisible 
-        if (avMod && avMod->IsInStealthMode() && avMod->GetTarget(0))
-        {
-            lem->SetInvisLevel(avMod->GetStealthLevel());
-        }
-
-        lem->SetBCastFlag(plMessage::kNetPropagate);
-
-        lem->AddReceiver(hsgResMgr::ResMgr()->FindKey(plUoid(kLinkEffectsMgr_KEY)));
-        lem->AddReceiver(hsgResMgr::ResMgr()->FindKey(plUoid(kClient_KEY)));
-        plgDispatch::MsgSend(lem);
-    }
-}
-
-//
 // compute the difference between our clock and the server's in unified time
 //
 void plNetClientMgr::UpdateServerTimeOffset(plNetMessage* msg)
@@ -1054,20 +1005,6 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         DebugMsg("Setting Silence to %d", silence->fSilence);
         SetFlagsBit(kSilencePlayer, silence->fSilence);
         return true;
-    }
-
-
-    plInitialAgeStateLoadedMsg *stateMsg = plInitialAgeStateLoadedMsg::ConvertNoRef( msg );
-    if( stateMsg != nil )
-    {
-        // done receiving the initial state of the age from the server
-        plNetObjectDebugger::GetInstance()->LogMsg("OnServerInitComplete");
-
-        // delete fProgressBar;
-        // fProgressBar=nil;
-
-        SetFlagsBit(kLoadingInitialAgeState, false);
-        StartLinkInFX();
     }
 
     plNetVoiceListMsg* voxList = plNetVoiceListMsg::ConvertNoRef(msg);

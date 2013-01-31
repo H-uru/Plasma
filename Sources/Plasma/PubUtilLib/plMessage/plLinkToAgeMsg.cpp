@@ -53,11 +53,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // plLinkToAgeMsg
 
-plLinkToAgeMsg::plLinkToAgeMsg() : fLinkInAnimName(nil)
+plLinkToAgeMsg::plLinkToAgeMsg() : fLinkInAnimName(nil), fFlags(0)
 {
 }
 
-plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fLinkInAnimName(nil)
+plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fLinkInAnimName(nil), fFlags(0)
 {
     fAgeLink.CopyFrom( link );
 }
@@ -67,12 +67,22 @@ plLinkToAgeMsg::~plLinkToAgeMsg()
     delete [] fLinkInAnimName;
 }
 
-// StreamVersion needed for back compatibility.
-uint8_t   plLinkToAgeInfo_StreamVersion = 0;
+void plLinkToAgeMsg::PlayLinkSfx(bool linkIn, bool linkOut)
+{
+    if (linkIn)
+        fFlags &= ~kMuteLinkInSfx;
+    else
+        fFlags |= kMuteLinkInSfx;
+    if (linkOut)
+        fFlags &= ~kMuteLinkOutSfx;
+    else
+        fFlags |= kMuteLinkOutSfx;
+}
+
 void plLinkToAgeMsg::Read(hsStream* stream, hsResMgr* mgr)  
 {
     plMessage::IMsgRead( stream, mgr );
-    uint8_t ltaVer = stream->ReadByte();
+    fFlags = stream->ReadByte();
     fAgeLink.Read( stream, mgr );
     fLinkInAnimName = stream->ReadSafeString();
 }
@@ -80,7 +90,7 @@ void plLinkToAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
 void plLinkToAgeMsg::Write(hsStream* stream, hsResMgr* mgr) 
 {
     plMessage::IMsgWrite( stream, mgr );
-    stream->WriteByte( plLinkToAgeInfo_StreamVersion );
+    stream->WriteByte( fFlags );
     fAgeLink.Write( stream, mgr );
     stream->WriteSafeString(fLinkInAnimName);
 }
@@ -185,6 +195,14 @@ plLinkEffectsTriggerMsg::~plLinkEffectsTriggerMsg()
 {
 }
 
+void plLinkEffectsTriggerMsg::MuteLinkSfx(bool mute)
+{
+    if (mute)
+        fFlags |= kMuteLinkSfx;
+    else
+        fFlags &= ~kMuteLinkSfx;
+}
+
 void plLinkEffectsTriggerMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead( stream, mgr );
@@ -192,11 +210,7 @@ void plLinkEffectsTriggerMsg::Read(hsStream* stream, hsResMgr* mgr)
     fInvisLevel = stream->ReadLE32();
     fLeavingAge = stream->ReadBool();
     fLinkKey = mgr->ReadKey(stream);
-
-    // This variable is for internal use only. Still read/written for backwards compatability.
-    fEffects = stream->ReadLE32();
-    fEffects = 0; 
-
+    fFlags = stream->ReadLE32();
     fLinkInAnimKey = mgr->ReadKey(stream);
 }
 
@@ -207,7 +221,7 @@ void plLinkEffectsTriggerMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(fInvisLevel);
     stream->WriteBool(fLeavingAge);
     mgr->WriteKey(stream, fLinkKey);
-    stream->WriteLE32(fEffects);
+    stream->WriteLE32(fFlags);
     mgr->WriteKey(stream, fLinkInAnimKey);
 }
 

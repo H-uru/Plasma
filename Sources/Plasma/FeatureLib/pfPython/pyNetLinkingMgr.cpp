@@ -65,9 +65,9 @@ void pyNetLinkingMgr::SetEnabled( bool b ) const
     plNetLinkingMgr::GetInstance()->SetEnabled( b );
 }
 
-void pyNetLinkingMgr::LinkToAge( pyAgeLinkStruct & link, const char* linkAnim )
+void pyNetLinkingMgr::LinkToAge( pyAgeLinkStruct & link, const char* linkAnim, bool linkInSfx, bool linkOutSfx )
 {
-    plNetLinkingMgr::GetInstance()->LinkToAge( link.GetAgeLink(), linkAnim );
+    plNetLinkingMgr::GetInstance()->LinkToAge( link.GetAgeLink(), linkAnim, linkInSfx, linkOutSfx );
 }
 
 void pyNetLinkingMgr::LinkToMyPersonalAge()
