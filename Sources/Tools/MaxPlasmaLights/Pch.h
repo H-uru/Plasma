@@ -54,13 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Windows
 #include "hsWindows.h"
 
+// Max SDK
+#include <max.h>
+#include <decomp.h>
+#include <hsv.h>
+
 // Base MaxPlasmaLights stuff...
 #include "plRealTimeLightBase.h"
 #include "plRealTimeLights.h"
-
-// Max SDK
-#include <decomp.h>
-#include <hsv.h>
 
 // Utility
 #include "MaxMain/MaxCompat.h"

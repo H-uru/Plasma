@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNodeBase.h"
 #include "plMaxNodeData.h"
 #include "MaxComponent/plComponentBase.h"
+#include "MaxCompat.h"
 
 #include <guplib.h>
 #include <iparamm2.h>
@@ -483,7 +484,7 @@ bool plMaxNodeBase::IsXRef()
 {
     // Is this an XRef'd object?
     Object *obj = GetObjectRef();
-    if (obj->SuperClassID() == SYSTEM_CLASS_ID && obj->ClassID() == XREFOBJ_CLASS_ID)
+    if (obj->SuperClassID() == SYSTEM_CLASS_ID && obj->ClassID() == XREFOBJ_COMPAT_CLASS_ID)
         return true;
 
     //
