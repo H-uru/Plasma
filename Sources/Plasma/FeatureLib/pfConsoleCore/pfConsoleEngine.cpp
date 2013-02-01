@@ -187,12 +187,11 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     }
 
     /// That's it!
-    sprintf( string, "\nHelp for the command %s:", cmd->GetName() );
-    PrintFn( string );
-    sprintf( string, "\\i%s", cmd->GetHelp() );
-    PrintFn( string );
-    sprintf( string, "\\iUsage: %s", cmd->GetSignature() );
-    PrintFn( string );
+    plStringStream ss;
+    ss << "\nHelp for the command " << cmd->GetName() << ":\n";
+    ss << "\\i" << cmd->GetHelp() << "\n";
+    ss << "\\iUsage: " << cmd->GetSignature();
+    PrintFn(ss.GetString().c_str());
 
     return true;
 }
@@ -204,7 +203,6 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
     const char          *ptr;
-    static char         string[ 512 ];
 
     
     /// Scan for subgroups. This can be an empty loop
@@ -236,7 +234,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
     }
 
     /// That's it!
-    return (char *)cmd->GetSignature();
+    return cmd->GetSignature();
 }
 
 //// Dummy Local Function ////////////////////////////////////////////////////

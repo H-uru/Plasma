@@ -287,34 +287,28 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                static char str[ 256 ];
-                static char msg[ 1024 ];
-
-                sprintf( str, "Error parsing %s", cmd->GetString() );
-                sprintf( msg, "%s:\n\nCommand: '%s'\n%s", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
+                plString str = plString::Format("Error parsing %s", cmd->GetString());
+                plString msg = plString::Format("%s:\n\nCommand: '%s'\n%s", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
 #ifdef HS_DEBUGGING
                         "" );
 
-                hsAssert( false, msg );
+                hsAssert( false, msg.c_str() );
 #else
                         "\nPress OK to continue parsing files." );
 
-                hsMessageBox( msg, str, hsMessageBoxNormal );
+                hsMessageBox( msg.c_str(), str.c_str(), hsMessageBoxNormal );
 #endif
             }
         }
         else if( cmd->GetCmd() == plConsoleMsg::kAddLine )
-            IAddParagraph( (char *)cmd->GetString() );
+            IAddParagraph( cmd->GetString() );
         else if( cmd->GetCmd() == plConsoleMsg::kExecuteLine )
         {
             if( !fEngine->RunCommand( (char *)cmd->GetString(), IAddLineCallback ) )
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                static char msg[ 1024 ];
-
-                sprintf( msg, "%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine() );
-                IAddLineCallback( msg ); 
+                AddLineF("%s:\n\nCommand: '%s'\n", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine());
             }
         }
             
@@ -755,9 +749,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                 // if there was a line then bump num lines
                 if ( fWorkingLine[0] != 0 )
                 {
-                    char displine[300];
-                    sprintf(displine,"... %s",fWorkingLine);
-                    AddLine( displine );
+                    AddLineF("... %s", fWorkingLine);
                     fPythonMultiLines++;
                 }
 
@@ -795,9 +787,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                 // was there actually anything in the input buffer?
                 if ( fWorkingLine[0] != 0 )
                 {
-                    char displine[300];
-                    sprintf(displine,">>> %s",fWorkingLine);
-                    AddLine( displine );
+                    AddLineF(">>> %s", fWorkingLine);
                     // check to see if this is going to be a multi line mode ( a ':' at the end)
                     if ( fWorkingLine[eol-1] == ':' )
                     {

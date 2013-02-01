@@ -232,14 +232,6 @@ char * hsFormatStrV(const char * fmt, va_list args)
     return hsStrcpy(buf.c_str());
 }
 
-static char hsStrBuf[100];
-
-char *hsScalarToStr(float s)
-{
-    sprintf(hsStrBuf, "%f", s);
-    return hsStrBuf;
-}
-
 class hsMinimizeClientGuard
 {
 #ifdef CLIENT

@@ -305,7 +305,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
         plLayerLinkAnimation* animLayer;
 
         char suff[10];
-        sprintf(suff, "%d", k);
+        snprintf(suff, arrsize(suff), "%d", k);
         
         opaCtl = new plLeafController;
         opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
