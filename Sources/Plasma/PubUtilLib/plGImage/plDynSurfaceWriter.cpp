@@ -960,7 +960,6 @@ uint16_t      plDynSurfaceWriter::CalcStringWidth( const char *text, uint16_t *h
     IEnsureSurfaceUpdated();
 
 #if HS_BUILD_FOR_WIN32
-
     SIZE size;
     ::GetTextExtentPoint32( fRGBSurface.fDC, text, strlen( text ), &size );
 
@@ -968,6 +967,8 @@ uint16_t      plDynSurfaceWriter::CalcStringWidth( const char *text, uint16_t *h
         *height = (uint16_t)size.cy;
 
     return (uint16_t)size.cx;
+#else
+    return 0;
 #endif
 }
 

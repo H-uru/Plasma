@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plShadowSlave.h"
 #include "plTweak.h"
 
-#include <float.h>
-#include <math.h>
+#include <cfloat>
+#include <cmath>
 
 #ifdef HS_BUILD_FOR_WIN32
 #define isnan _isnan

@@ -220,8 +220,8 @@ void plSittingModifier::Trigger(const plArmatureMod *avMod, plNotifyMsg *enterNo
         // send the SEEK message
 
 
-        char *animName = nil;   // this will be the name of our sit animation, which we
-                                // need to know so we can seek properly.
+        const char *animName = nil;   // this will be the name of our sit animation, which we
+                                      // need to know so we can seek properly.
         
         plAvBrainGeneric *brain = IBuildSitBrain(avModKey, seekKey, &animName, enterNotify, exitNotify);
         if(brain)
@@ -298,7 +298,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
 // IBuildSitBrain ---------------------------------------------------------------------
 // ----------------
 plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKey,
-                    char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify)
+                    const char **pAnimName, plNotifyMsg *enterNotify, plNotifyMsg *exitNotify)
 {
     plArmatureMod *avatar = plArmatureMod::ConvertNoRef(avModKey->ObjectIsLoaded());
     plSceneObject *seekObj = plSceneObject::ConvertNoRef(seekKey->ObjectIsLoaded());
@@ -308,8 +308,8 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
     float closestDist = 0.0f;
     uint8_t closestApproach = 0;
     hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
-    char * sitAnimName = nil;
-    char * standAnimName = "StandUpFront";      // always prefer to stand facing front
+    const char* sitAnimName = nil;
+    const char* standAnimName = "StandUpFront";      // always prefer to stand facing front
 
     bool frontClear = fMiscFlags & kApproachFront;
     plAvBrainGeneric *brain = nil;

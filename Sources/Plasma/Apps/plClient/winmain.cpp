@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
-#include <stdio.h>
 #include <direct.h>     // windows directory handling fxns (for chdir)
 #include <process.h>
 #include <shellapi.h>   // ShellExecuteA

@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // See Gems IV, Ken Shoemake
 //////////////////////////////////////////////////////////////////////////
 //
-#include <float.h>  // for FLT_EPSILON
-#include <math.h>
+#include <cfloat>  // for FLT_EPSILON
+#include <cmath>
 #include "hsEuler.h"
 #include "hsQuat.h"
 #include "hsMatrix44.h"

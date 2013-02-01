@@ -54,8 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdlib>
 #include <cstring>
 #include <cctype>
-#include <stdarg.h>
-#include <stdint.h>
+#include <cstdarg>
+#include <cstdint>
 
 //======================================
 // Winblows Hacks
@@ -77,7 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     // even more bloated than before!
     struct HWND__; typedef struct HWND__ *HWND;
     struct HINSTANCE__; typedef struct HINSTANCE__ *HINSTANCE;
-    
+
     typedef HWND hsWindowHndl;
     typedef HINSTANCE hsWindowInst;
     typedef HINSTANCE HMODULE;
@@ -340,21 +340,6 @@ char*   hsStrcpy(char dstOrNil[], const char src[]);
 void    hsStrLower(char *s);
 char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned memory.
 char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
-
-// Use "correct" stricmp based on the selected compiler / library
-#if _MSC_VER
-#    define stricmp     _stricmp
-#    define strnicmp    _strnicmp
-#    define wcsicmp     _wcsicmp
-#    define wcsnicmp    _wcsnicmp
-#    define strlwr      _strlwr
-#else
-#    define stricmp     strcasecmp
-#    define strnicmp    strncasecmp
-#    define wcsicmp     wcscasecmp
-#    define wcsnicmp    wcsncasecmp
-#    define strlwr      hsStrLower
-#endif
 
 inline char* hsStrcpy(const char src[])
 {

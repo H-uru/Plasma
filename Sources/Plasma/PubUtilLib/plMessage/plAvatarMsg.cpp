@@ -240,7 +240,6 @@ plAvSeekMsg::plAvSeekMsg()
   fDuration(0),
   fSmartSeek(true),
   fAlignType(kAlignHandle),
-  fAnimName(nil),
   fNoSeek(false),
   fFlags(kSeekFlagForce3rdPersonOnStart)
 {
@@ -249,7 +248,7 @@ plAvSeekMsg::plAvSeekMsg()
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
                          const plKey &seekKey, float duration, bool smartSeek,
-                         plAvAlignment alignType, char *animName, bool noSeek, 
+                         plAvAlignment alignType, const plString& animName, bool noSeek, 
                          uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
@@ -359,7 +358,7 @@ plAvOneShotMsg::plAvOneShotMsg()
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, bool smartSeek,
                          const plString &animName, bool drivable, bool reversible)
-: plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek), fAnimName(animName),
+: plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek, kAlignHandle, animName),
   fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
 {
 }

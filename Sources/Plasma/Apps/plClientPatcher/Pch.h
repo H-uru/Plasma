@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsWindows.h"
 #include <process.h>
-#include <time.h>
+#include <ctime>
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnAsyncCore/pnAsyncCore.h"

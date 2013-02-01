@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "hsStringTable.h"
-#include <stdlib.h>
+
 #if HS_BUILD_FOR_UNIX
-#include <ctype.h>
+#include <cctype>
 #endif
+
 //
 // hsStringTable
 //

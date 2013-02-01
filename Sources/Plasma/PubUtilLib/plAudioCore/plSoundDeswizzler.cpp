@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plSoundDeswizzler.h"
-#include <string.h>
 
 
 plSoundDeswizzler::plSoundDeswizzler( void *srcPtr, uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize )

@@ -46,13 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "plNetGroup.h"
 
-#include "pnKeyedObject/hsKeyedObject.h"        
+#include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
 
-
 #include "plStatusLog/plLoggable.h"
-
-#include <stdarg.h>
 
 #define plVerifyConditionRet(NetApp,cond,ret,str)   \
     do {    \

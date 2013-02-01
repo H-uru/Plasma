@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plNetCommon/plNetCommon.h"
 
-#include <float.h>
+#include <cfloat>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -226,7 +226,7 @@ public:
     virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
     virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);
     plAGModifier *GetRootAGMod();
-    plAGAnim *FindCustomAnim(const char *baseName) const;
+    plAGAnim *FindCustomAnim(const plString& baseName) const;
 
     virtual void Spawn(double timeNow);
     virtual void SpawnAt(int which, double timeNow);
@@ -305,7 +305,7 @@ public:
     int  GetBodyType(int type) { return fBodyType; }
     int  GetCurrentGenericType();
     bool FindMatchingGenericBrain(const char *names[], int count);
-    plString MakeAnimationName(const char * baseName) const;
+    plString MakeAnimationName(const plString& baseName) const;
     plString GetRootName();
     void SetRootName(const plString &name);
     

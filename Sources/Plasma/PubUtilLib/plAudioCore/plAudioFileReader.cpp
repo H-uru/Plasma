@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  3.5.2001 - Created by mcn.                                              //
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
-#include <string.h>
 
 #include "HeadSpin.h"
 #include "plAudioFileReader.h"

@@ -255,7 +255,7 @@ void plAvLadderMod::EmitCommand(const plKey receiver)
                 plSceneObject *seekObj = GetTarget();
                 plKey seekKey = seekObj->GetKey();      // this modifier's target is the seek object
 
-                char *mountName, *dismountName, *traverseName;
+                const char *mountName, *dismountName, *traverseName;
 
                 if(fGoingUp)
                 {

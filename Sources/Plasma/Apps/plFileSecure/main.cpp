@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 
 
-#include <time.h>
+#include <ctime>
 #include <string>
 
 void print_version() {

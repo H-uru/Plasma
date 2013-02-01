@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 
 // Platform Library Includes
-#include <time.h>
+#include <ctime>
 #include <sys/types.h>
 #include <sys/stat.h>
 

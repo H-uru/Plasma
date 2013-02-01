@@ -120,7 +120,6 @@ void plMultistageBehMod::IDeleteStageVec()
 
 bool plMultistageBehMod::MsgReceive(plMessage* msg)
 {
-    plMultistageModMsg *multiMsg = nil;
     plNotifyMsg* notifyMsg = plNotifyMsg::ConvertNoRef(msg);
     if (notifyMsg)
     {
@@ -187,8 +186,10 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
         }
 
         return true;
-    } 
-    else if (multiMsg = plMultistageModMsg::ConvertNoRef(msg))
+    }
+
+    plMultistageModMsg *multiMsg = plMultistageModMsg::ConvertNoRef(msg);
+    if (multiMsg)
     {
         if (multiMsg->GetCommand(plMultistageModMsg::kSetLoopCount))
         {
@@ -196,9 +197,8 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
         }
         return true;
     }
-    else {
-        return plSingleModifier::MsgReceive(msg);
-    }
+
+    return plSingleModifier::MsgReceive(msg);
 }
 
 void plMultistageBehMod::Read(hsStream *stream, hsResMgr *mgr)

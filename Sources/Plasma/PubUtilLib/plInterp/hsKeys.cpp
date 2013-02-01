@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsKeys.h"
 #include "hsStream.h"
-#include <math.h>
+#include <cmath>
 
 const int hsKeyFrame::kMaxFrameNumber = 65535;
 
