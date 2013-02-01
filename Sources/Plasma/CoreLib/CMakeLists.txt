@@ -1,3 +1,5 @@
+include_directories(${PCRE_INCLUDE_DIR})
+
 add_definitions(-D_LIB)
 
 add_definitions(-DPRODUCT_BRANCH_ID=${PRODUCT_BRANCH_ID})
