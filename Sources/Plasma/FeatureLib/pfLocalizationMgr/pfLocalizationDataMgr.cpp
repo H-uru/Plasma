@@ -935,7 +935,7 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plStri
 
     // we will try to pretty print it all so it's easy to read for the devs
     plStringStream fileData;
-    fileData << "<?xml version=\"1.0\" encoding=\"utf-16\"?>\n"; // stores the xml we are going to write to the file (UTF-16 format)
+    fileData << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     fileData << "<localizations>\n";
     fileData << plString::Format("\t<age name=\"%s\">\n", ageName.c_str());
 
@@ -977,7 +977,7 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plStri
     {
         // now spit the results out to the file
         hsStream *xmlStream = plEncryptedStream::OpenEncryptedFileWrite(filename);
-        xmlStream->Write(fileData.GetLength(), fileData.GetString().c_str());
+        xmlStream->Write(fileData.GetLength(), fileData.GetRawBuffer());
         xmlStream->Close();
         delete xmlStream;
     }
