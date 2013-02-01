@@ -123,14 +123,14 @@ void    plPlate::SetPosition( float x, float y, float z )
 
 //// SetSize /////////////////////////////////////////////////////////////////
 
-void    plPlate::SetSize( float width, float height, bool adjustByAspectRation )
+void    plPlate::SetSize( float width, float height, bool adjustByAspectRatio )
 {
     hsVector3   size;
 
     width *= fDepth / 1.0f;
     height *= fDepth / 1.0f;
 
-    size.fX = adjustByAspectRation ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width;
+    size.fX = adjustByAspectRatio ? (width * ((float)plPlateManager::Instance().GetPipeHeight() / (float)plPlateManager::Instance().GetPipeWidth())) : width;
     size.fY = height;
     size.fZ = 1.0f;
 
