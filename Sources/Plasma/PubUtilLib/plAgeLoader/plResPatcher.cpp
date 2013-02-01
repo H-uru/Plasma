@@ -323,7 +323,7 @@ void PatcherLog(PatcherLogType type, const char* format, ...)
     if (type == kError)
     {
         sLastError = new char[1024]; // Deleted by Finish(false)
-        vsprintf(sLastError, format, args);
+        vsnprintf(sLastError, 1024, format, args);
         gStatusLog->AddLine(sLastError, color);
     } else
         gStatusLog->AddLineV(color, format, args);

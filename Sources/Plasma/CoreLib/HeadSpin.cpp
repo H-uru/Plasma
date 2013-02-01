@@ -202,7 +202,7 @@ void hsStatusMessage(const char message[])
 void hsStatusMessageV(const char * fmt, va_list args)
 {
     char  buffer[2000];
-    vsprintf(buffer, fmt, args);
+    vsnprintf(buffer, arrsize(buffer), fmt, args);
     hsStatusMessage(buffer);
 }
 
