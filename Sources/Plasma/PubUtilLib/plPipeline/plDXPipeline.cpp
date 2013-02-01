@@ -1100,16 +1100,28 @@ void plDXPipeline::ISetGraphicsCapability(uint32_t v)
 {
     int pixelMajor = D3DSHADER_VERSION_MAJOR(v);
     int pixelMinor = D3DSHADER_VERSION_MINOR(v);
-    if( pixelMajor > 1 )
+
+    switch (pixelMajor)
     {
-        plQuality::SetCapability(plQuality::kPS_2_Plus);
-    }
-    else if( pixelMajor > 0 )
-    {
-        if( pixelMinor >= 4 )
+    case 1:
+        if (pixelMinor >= 4)
             plQuality::SetCapability(plQuality::kPS_1_4);
-        else if( pixelMinor > 0 )
+        else if (pixelMinor > 0)
             plQuality::SetCapability(plQuality::kPS_1_1);
+        break;
+    case 2:
+        plQuality::SetCapability(plQuality::kPS_2);
+        break;
+    case 3:
+        plQuality::SetCapability(plQuality::kPS_3);
+        break;
+    default:
+        // Hopefully this is always FALSE. If not, may gawd have mercy upon your soul.
+        if (pixelMajor == 0)
+            plQuality::SetCapability(plQuality::kMinimum);
+        else
+            plQuality::SetCapability(plQuality::kPS_3);
+        break;
     }
 }
 
