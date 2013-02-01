@@ -2155,6 +2155,10 @@ namespace _VaultFindNodesAndWait {
         ARRAY(unsigned)     nodeIds;
         ENetError           result;
         bool                complete;
+
+        _FindNodeParam()
+            : result(kNetPending), complete(false)
+        { }
     };
     static void _FindNodeCallback (
         ENetError           result,
@@ -2175,10 +2179,8 @@ void VaultFindNodesAndWait (
     ARRAY(unsigned) *       nodeIds
 ) {
     using namespace _VaultFindNodesAndWait;
-    
+
     _FindNodeParam  param;
-    memset(&param, 0, sizeof(param));
-    
     NetCliAuthVaultNodeFind(
         templateNode,
         _FindNodeCallback,
@@ -2190,7 +2192,7 @@ void VaultFindNodesAndWait (
         plgDispatch::Dispatch()->MsgQueueProcess();
         AsyncSleep(10);
     }
-    
+
     if (IS_NET_SUCCESS(param.result))
         nodeIds->Add(param.nodeIds.Ptr(), param.nodeIds.Count());
 }
