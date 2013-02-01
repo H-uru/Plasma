@@ -347,7 +347,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
 
     // Debug info
     char str[ 256 ];
-    sprintf( str, "   Streaming %s.", fSrcFilename);
+    snprintf( str, arrsize(str), "   Streaming %s.", fSrcFilename.AsString().c_str() );
     IPrintDbgMessage( str );
 
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",
