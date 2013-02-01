@@ -87,9 +87,9 @@ class plRenderTarget : public plBitmap
 
         bool        fApplyTexQuality;
         bool        fProportionalViewport;
-        uint8_t       fZDepth, fStencilDepth;
-    
-        plCubicRenderTarget *fParent;   
+        uint8_t     fZDepth, fStencilDepth;
+
+        plCubicRenderTarget* fParent;
 
         virtual void SetKey(plKey k);
 
@@ -101,18 +101,12 @@ class plRenderTarget : public plBitmap
         GETINTERFACE_ANY( plRenderTarget, plBitmap );
 
         plRenderTarget()
+            : fWidth(0), fHeight(0), fZDepth(0), fStencilDepth(0), fApplyTexQuality(false),
+              fProportionalViewport(true), fParent(nullptr)
         {
-            fWidth = 0;
-            fHeight = 0;
-            fPixelSize = 0;
-            fZDepth = 0;
-            fStencilDepth = 0;
-            fApplyTexQuality = false;
-            fProportionalViewport = true;
-            SetViewport( 0, 0, 1.f, 1.f );
             fFlags = 0;
-            fParent = nil;
-
+            fPixelSize = 0;
+            SetViewport( 0, 0, 1.f, 1.f );
             plPipeResReq::Request();
         }
 
@@ -175,8 +169,8 @@ class plRenderTarget : public plBitmap
             fViewport.fProportional.fBottom = bottom;
         }
 
-        uint16_t  GetWidth( void ) { return fWidth; }
-        uint16_t  GetHeight( void ) { return fHeight; }
+        uint16_t  GetWidth( void ) const { return fWidth; }
+        uint16_t  GetHeight( void ) const { return fHeight; }
         uint8_t   GetZDepth( void ) { return fZDepth; }
         uint8_t   GetStencilDepth( void ) { return fStencilDepth; }
 
