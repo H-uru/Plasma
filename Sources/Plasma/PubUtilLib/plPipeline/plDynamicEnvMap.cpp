@@ -537,6 +537,22 @@ void plDynamicCamMap::Init()
     plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
 }
 
+void plDynamicCamMap::ResizeViewport(const plViewTransform& vt)
+{
+    if (!fProportionalViewport)
+    {
+        fWidth = vt.GetViewPortWidth();
+        fHeight = vt.GetViewPortHeight();
+
+        fViewport.fAbsolute.fBottom = vt.GetViewPortBottom();
+        fViewport.fAbsolute.fLeft = vt.GetViewPortLeft();
+        fViewport.fAbsolute.fRight = vt.GetViewPortRight();
+        fViewport.fAbsolute.fTop = vt.GetViewPortTop();
+
+        fReq.SetViewTransform(vt);
+    }
+}
+
 void plDynamicCamMap::SetRefreshRate(float secs)
 {
     fRefreshRate = secs;

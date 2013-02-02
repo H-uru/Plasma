@@ -50,9 +50,10 @@ public:
     {
         kMinimum    = 0,
 
-        kPS_1_1     = 2,
-        kPS_1_4     = 3,
-        kPS_2_Plus  = 4
+        kPS_1_1     = 2, // DirectX 8.0
+        kPS_1_4     = 3, // DirectX 8.1
+        kPS_2       = 4, // DirectX 9
+        kPS_3       = 5, // DirectX 9.0c
     };
 protected:
     // These two are instanciated in plLoadMask.cpp, as well as
