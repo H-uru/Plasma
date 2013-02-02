@@ -2665,7 +2665,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
                             idx--;
                         break;
                     }
-                    if( chunk->fText[ lastChar ] != 0 )
+                    if (lastChar < chunk->fText.size() && chunk->fText[lastChar] != 0)
                     {
                         // Didn't get to render the whole paragraph in this go, so we're going to cheat
                         // and split the paragraph up into two so that we can handle it properly. Note:
