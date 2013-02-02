@@ -210,6 +210,7 @@ public:
 
     void ReRender();
     void Init();
+    void ResizeViewport(const plViewTransform& vt);
 
     void        SetIncludeCharacters(bool b);
     void        SetRefreshRate(float secs);

@@ -1008,33 +1008,38 @@ void    plDXPipeline::ISetCaps()
     fSettings.fD3DCaps = kCapsNone;
 
     // Set relevant caps (ones we can do something about).
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DEPTHBIAS)
         fSettings.fD3DCaps |= kCapsZBias;
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGRANGE)
         fSettings.fD3DCaps |= kCapsRangeFog;
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE)
         fSettings.fD3DCaps |= kCapsLinearFog | kCapsExpFog | kCapsExp2Fog | kCapsPixelFog;
     else
         fSettings.fD3DCaps |= kCapsLinearFog;
-    if( fCurrentDevice->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR )
+    if (fCurrentDevice->fDDCaps.TextureFilterCaps & D3DPTFILTERCAPS_MIPFLINEAR)
         fSettings.fD3DCaps |= kCapsMipmap;
-    if( fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP )
+    if (fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP)
         fSettings.fD3DCaps |= kCapsCubicMipmap;
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER)
         fSettings.fD3DCaps |= kCapsWBuffer;
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DITHER )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DITHER)
         fSettings.fD3DCaps |= kCapsDither;
-    if( fSettings.fNumAASamples > 0 )
+    if (fSettings.fNumAASamples > 0)
         fSettings.fD3DCaps |= kCapsFSAntiAlias;
-    if( fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WFOG )
+    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WFOG)
         fSettings.fD3DCaps |= kCapsDoesWFog;
-    if( fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP )
+    if (fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_CUBEMAP)
         fSettings.fD3DCaps |= kCapsCubicTextures;
 
+    // Unconditional Non-Power of Two Textures
+    // To make life easy for us, we can have non POT textures or we can't
+    if (!(fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_POW2 &&
+          fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_NONPOW2CONDITIONAL))
+          fSettings.fD3DCaps |= kCapsNpotTextures;
+
     /// New 1.5.2000 - cull out mixed vertex processing
-    if( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT
-        && fCurrentMode->fDDBehavior == D3DCREATE_HARDWARE_VERTEXPROCESSING 
-        )
+    if (fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT &&
+        fCurrentMode->fDDBehavior == D3DCREATE_HARDWARE_VERTEXPROCESSING)
         fSettings.fD3DCaps |= kCapsHWTransform;
 
 
@@ -1046,14 +1051,14 @@ void    plDXPipeline::ISetCaps()
     fSettings.fD3DCaps |= kCapsDoesSmallTextures;
 
     /// Look for supported texture formats
-    if( IFindCompressedFormats() )
+    if ( IFindCompressedFormats() )
         fSettings.fD3DCaps |= kCapsCompressTextures;
-    if( IFindLuminanceFormats() )
+    if ( IFindLuminanceFormats() )
         fSettings.fD3DCaps |= kCapsLuminanceTextures;
 
     /// Max # of hardware lights
     fSettings.fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
-    if( fSettings.fMaxNumLights > kD3DMaxTotalLights )
+    if ( fSettings.fMaxNumLights > kD3DMaxTotalLights )
         fSettings.fMaxNumLights = kD3DMaxTotalLights;
 
     // Intel Extreme chips report 0 lights, meaning T&L is done
@@ -1062,7 +1067,7 @@ void    plDXPipeline::ISetCaps()
     // since the extreme can't really afford them, and record
     // the fact this is the extreme for other driver problem
     // workarounds.
-    if( !fSettings.fMaxNumLights )
+    if ( !fSettings.fMaxNumLights )
     {
         fSettings.fMaxNumLights = kD3DMaxTotalLights;
         fSettings.fIsIntel = true;
@@ -1071,7 +1076,7 @@ void    plDXPipeline::ISetCaps()
 
     /// Max # of textures at once
     fSettings.fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
-    if( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
+    if ( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
         fSettings.fMaxLayersAtOnce = 1;
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
@@ -1100,16 +1105,28 @@ void plDXPipeline::ISetGraphicsCapability(uint32_t v)
 {
     int pixelMajor = D3DSHADER_VERSION_MAJOR(v);
     int pixelMinor = D3DSHADER_VERSION_MINOR(v);
-    if( pixelMajor > 1 )
+
+    switch (pixelMajor)
     {
-        plQuality::SetCapability(plQuality::kPS_2_Plus);
-    }
-    else if( pixelMajor > 0 )
-    {
-        if( pixelMinor >= 4 )
+    case 1:
+        if (pixelMinor >= 4)
             plQuality::SetCapability(plQuality::kPS_1_4);
-        else if( pixelMinor > 0 )
+        else if (pixelMinor > 0)
             plQuality::SetCapability(plQuality::kPS_1_1);
+        break;
+    case 2:
+        plQuality::SetCapability(plQuality::kPS_2);
+        break;
+    case 3:
+        plQuality::SetCapability(plQuality::kPS_3);
+        break;
+    default:
+        // Hopefully this is always FALSE. If not, may gawd have mercy upon your soul.
+        if (pixelMajor == 0)
+            plQuality::SetCapability(plQuality::kMinimum);
+        else
+            plQuality::SetCapability(plQuality::kPS_3);
+        break;
     }
 }
 
@@ -4378,14 +4395,20 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     IDirect3DCubeTexture9   *cTexture = nil;
     D3DFORMAT               surfFormat = D3DFMT_UNKNOWN, depthFormat = D3DFMT_UNKNOWN;
     D3DRESOURCETYPE         resType;
-    int                     i;
     plCubicRenderTarget     *cubicRT;
-    uint16_t                  width, height;
 
     hsAssert(!fManagedAlloced, "Allocating non-managed resource with managed resources alloc'd");
-    
+
+    // If we have Shader Model 3 and support non-POT textures, let's make reflections the pipe size
+    plDynamicCamMap* camMap = plDynamicCamMap::ConvertNoRef(owner);
+    if (camMap)
+    {
+        if ((plQuality::GetCapability() > plQuality::kPS_2) && fSettings.fD3DCaps & kCapsNpotTextures)
+            camMap->ResizeViewport(IGetViewTransform());
+    }
+
     /// Check--is this renderTarget really a child of a cubicRenderTarget?
-    if( owner->GetParent() != nil )
+    if( owner->GetParent() )
     {
         /// This'll create the deviceRefs for all of its children as well
         MakeRenderTargetRef( owner->GetParent() );
@@ -4393,7 +4416,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     }
 
     // If we already have a rendertargetref, we just need it filled out with D3D resources.
-    if( owner->GetDeviceRef() != nil )
+    if( owner->GetDeviceRef() )
         ref = (plDXRenderTargetRef *)owner->GetDeviceRef();
 
     // Look for supported format. Note that the surfFormat and depthFormat are
@@ -4404,7 +4427,6 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
         hsAssert( false, "Error getting renderTarget info" );
         return nil;
     }
-
 
     /// Create the render target now
     // Start with the depth surface.
@@ -4455,19 +4477,19 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     // See if it's a cubic render target. 
     // Primary consumer here is the vertex/pixel shader water.
     cubicRT = plCubicRenderTarget::ConvertNoRef( owner );
-    if( cubicRT != nil )
+    if( cubicRT )
     {
         /// And create the ref (it'll know how to set all the flags)
-        if( ref != nil )
+        if( ref )
             ref->Set( surfFormat, 0, owner );
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
+        if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
                                                         D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, NULL ) ) )
         {
             /// Create a CUBIC texture
-            for( i = 0; i < 6; i++ )
+            for( int i = 0; i < 6; i++ )
             {
                 plRenderTarget          *face = cubicRT->GetFace( i );
                 plDXRenderTargetRef *fRef;
@@ -4487,7 +4509,7 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
                     hsRefCnt_SafeUnRef( face->GetDeviceRef() );
                 }
             }
-        
+
             D3DSURF_MEMNEW(cTexture);
 
             ref->SetTexture( cTexture, depthSurface );
@@ -4504,12 +4526,12 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     else if( owner->GetFlags() & plRenderTarget::kIsTexture )
     {
         /// Create a normal texture
-        if( ref != nil )
+        if( ref )
             ref->Set( surfFormat, 0, owner );
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
-        if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
+        if( !FAILED( fD3DDevice->CreateTexture( owner->GetWidth(), owner->GetHeight(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
                                                         D3DPOOL_DEFAULT, (IDirect3DTexture9 **)&texture, NULL ) ) )
         {
             D3DSURF_MEMNEW(texture);
@@ -4534,19 +4556,16 @@ hsGDeviceRef    *plDXPipeline::MakeRenderTargetRef( plRenderTarget *owner )
     else if( owner->GetFlags() & plRenderTarget::kIsOffscreen )
     {
         /// Create a blank surface
-        if( ref != nil )
+        if( ref )
             ref->Set( surfFormat, 0, owner );
         else
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
-
-        width = owner->GetWidth();
-        height = owner->GetHeight();
 
         // Specify true for lockable, otherwise I'm not sure what we'd do with it. I guess we
         // could copyrect to another surface, presumably a texture. But right now the only
         // thing we use this for is to render a snapshot and copy it to sysmem, which implies
         // lockable.
-        if( !FAILED( fD3DDevice->CreateRenderTarget( width, height, surfFormat, 
+        if( !FAILED( fD3DDevice->CreateRenderTarget( owner->GetWidth(), owner->GetHeight(), surfFormat,
                             D3DMULTISAMPLE_NONE, 0,
                             TRUE, &surface, NULL ) ) )
         {
@@ -4662,7 +4681,7 @@ hsGDeviceRef* plDXPipeline::SharedRenderTargetRef(plRenderTarget* share, plRende
             ref = new plDXRenderTargetRef( surfFormat, 0, owner );
 
         hsAssert(!fManagedAlloced, "Alloc default with managed alloc'd");
-        if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat, 
+        if( !FAILED( fD3DDevice->CreateCubeTexture( owner->GetWidth(), 1, D3DUSAGE_RENDERTARGET, surfFormat,
                                                         D3DPOOL_DEFAULT, (IDirect3DCubeTexture9 **)&cTexture, NULL ) ) )
         {
 
@@ -4798,13 +4817,16 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
         if( flags & plRenderTarget::kIsTexture )
         {
             /// Do an extra check for width and height here
-            for( i = width >> 1, j = 0; i != 0; i >>= 1, j++ );
-            if( width != ( 1 << j ) )
-                return false;
+            if (!(fSettings.fD3DCaps & kCapsNpotTextures))
+            {
+                for( i = width >> 1, j = 0; i != 0; i >>= 1, j++ );
+                if( width != ( 1 << j ) )
+                    return false;
 
-            for( i = height >> 1, j = 0; i != 0; i >>= 1, j++ );
-            if( height!= ( 1 << j ) )
-                return false;
+                for( i = height >> 1, j = 0; i != 0; i >>= 1, j++ );
+                if( height!= ( 1 << j ) )
+                    return false;
+            }
 
             resType = D3DRTYPE_TEXTURE;
         }
