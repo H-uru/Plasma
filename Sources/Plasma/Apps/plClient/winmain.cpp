@@ -1237,7 +1237,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        cmdLine << plString::FromWchar(s_patcherExeName);
+        cmdLine << "\\" << plString::FromWchar(s_patcherExeName);
 
         GetAuthSrvHostnames(&addrs);
         if(strlen(addrs[0]))

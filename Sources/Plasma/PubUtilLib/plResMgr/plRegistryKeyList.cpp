@@ -79,7 +79,7 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
     if (objectID <= fKeys.size())
     {
 #ifdef PLASMA_EXTERNAL_RELEASE
-        return fStaticKeys[objectID-1];
+        return fKeys[objectID-1];
 #else
         // If this is an internal release, our objectIDs might not match
         // because of local data. Verify that we have the right key by
