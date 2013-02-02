@@ -966,7 +966,7 @@ void  UruStartProc (void * param) {
     //fprintf(stderr, "URUPlayer StartProc gamePath is:%ws\n", workDir);
 
     wchar_t cmdLine[MAX_PATH];
-    StrPrintf(cmdLine, arrsize(cmdLine), L"%s%s %s", workDir, s_clientExeName, info->cmdLine);
+    StrPrintf(cmdLine, arrsize(cmdLine), L"%s\\%s %s", workDir, s_clientExeName, info->cmdLine);
     
     // Create the named event so the client won't restart us (Windows will clean it up when we exit)
     HANDLE hPatcherEvent = CreateEventW(nil, TRUE, FALSE, L"UruPatcherEvent");
