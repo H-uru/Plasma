@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plPlates.h"
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plArmatureMod.h"
-#include "hsQuat.h"
 #include "plAudioCore/plAudioCore.h"
 
 // DEBUG for printing to the console
@@ -74,7 +73,7 @@ bool                    plVoiceRecorder::fCompress =                true;
 bool                    plVoiceRecorder::fRecording =               true;
 bool                    plVoiceRecorder::fNetVoice =                false;
 short                   plVoiceRecorder::fSampleRate =              FREQUENCY;
-float                plVoiceRecorder::fRecordThreshhold =        200.0f;
+float                   plVoiceRecorder::fRecordThreshhold =        200.0f;
 bool                    plVoiceRecorder::fShowIcons =               true;
 bool                    plVoiceRecorder::fMicAlwaysOpen =           false;
 bool                    plVoicePlayer::fEnabled =                   true;
@@ -84,13 +83,13 @@ plVoiceRecorder::plVoiceRecorder()
     plPlateManager::Instance().CreatePlate( &fDisabledIcon );
     fDisabledIcon->CreateFromResource( MICROPHONE );
     fDisabledIcon->SetPosition(-0.90, -0.90);
-    fDisabledIcon->SetSize(0.0675, 0.09);
+    fDisabledIcon->SetSize(0.064, 0.064, true);
     fDisabledIcon->SetVisible(false);
 
     plPlateManager::Instance().CreatePlate( &fTalkIcon );
     fTalkIcon->CreateFromResource( TALKING );
     fTalkIcon->SetPosition(-0.9,-0.9);
-    fTalkIcon->SetSize(0.0675, 0.09);
+    fTalkIcon->SetSize(0.064, 0.064, true);
     fTalkIcon->SetVisible(false);
 }
 
@@ -148,7 +147,7 @@ void plVoiceRecorder::SetQuality(int quality)
     }
     else
     {
-        plSpeex::GetInstance()->SetQuality(quality);        
+        plSpeex::GetInstance()->SetQuality(quality);
     }
 }
 
@@ -208,13 +207,16 @@ void plVoiceRecorder::DrawDisabledIcon(bool b)
         {
             fDisabledIcon->CreateFromResource( MICROPHONE );
             fDisabledIcon->SetPosition(-0.90, -0.90);
-            fDisabledIcon->SetSize(0.0675, 0.09);
+            fDisabledIcon->SetSize(0.064, 0.064, true);
             fDisabledIcon->SetVisible(false);
         }
     }
 
     if (fDisabledIcon)
+    {
+        fDisabledIcon->SetSize(0.064, 0.064, true);     // Re-compute plate size in case the aspect ratio has changed.
         fDisabledIcon->SetVisible(b);
+    }
 }
 
 void plVoiceRecorder::DrawTalkIcon(bool b)
@@ -225,13 +227,14 @@ void plVoiceRecorder::DrawTalkIcon(bool b)
         if (fTalkIcon)
         {   fTalkIcon->CreateFromResource( TALKING );
             fTalkIcon->SetPosition(-0.9,-0.9);
-            fTalkIcon->SetSize(0.0675, 0.09);
+            fTalkIcon->SetSize(0.064, 0.064, true);
             fTalkIcon->SetVisible(false);
         }   
     }
 
     if (fTalkIcon)
     {
+        fTalkIcon->SetSize(0.064, 0.064, true);     // Re-compute plate size in case the aspect ratio has changed.
         fTalkIcon->SetVisible(b);
     }
 }
@@ -564,7 +567,7 @@ bool plSpeex::Init(Mode mode)
     speex_encoder_ctl(fEncoderState, SPEEX_SET_VBR, &fVBR);                         // use variable bit rate
     speex_encoder_ctl(fEncoderState, SPEEX_SET_ABR, &fAverageBitrate);              // default to 8kb
     
-    speex_decoder_ctl(fDecoderState, SPEEX_SET_ENH, &fENH);                         // perceptual enhancement               
+    speex_decoder_ctl(fDecoderState, SPEEX_SET_ENH, &fENH);                         // perceptual enhancement
 
     fInitialized = true;
 
@@ -622,7 +625,7 @@ bool plSpeex::Encode(short *data, int numFrames, int *packedLength, hsRAMStream 
 
         // write data - length and bytes
         out->WriteLE(frameLength);
-        *packedLength += sizeof(frameLength);   // add length of encoded frame                      
+        *packedLength += sizeof(frameLength);   // add length of encoded frame
         out->Write(frameLength, frameData);
         *packedLength += frameLength;           // update length
 
