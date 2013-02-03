@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plPreloaderMsg.h"
 #include "plProgressMgr/plProgressMgr.h"
 
-extern bool gDataServerLocal;
+bool gSkipPreload = false;
 pfSecurePreloader* pfSecurePreloader::fInstance = nil;
 
 /////////////////////////////////////////////////////////////////////
@@ -261,8 +261,9 @@ void pfSecurePreloader::Init()
 void pfSecurePreloader::Start()
 {
 #ifndef PLASMA_EXTERNAL_RELEASE
-    // Using local data? Move along, move along...
-    if (gDataServerLocal)
+    // Finer grained control of the preloader allows us to have synched data but our own python/SDL
+    // This is useful on outdated/black-box shards like MOULa
+    if (gSkipPreload)
     {
         Finish();
         return;
@@ -272,7 +273,7 @@ void pfSecurePreloader::Start()
     NetCliAuthGetEncryptionKey(fEncryptionKey, 4);
     
     // TODO: Localize
-    fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0f, "Checking for Updates", plProgressMgr::kUpdateText, false, true);
+    fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0f, "Checking for updates", plProgressMgr::kUpdateText, false, true);
 
     // Now, we need to fetch the "SecurePreloader" manifest from the file server, which will contain the python and SDL files.
     // We're basically reimplementing plResPatcher here, except preferring to keep everything in memory, then flush to disk 
