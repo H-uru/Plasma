@@ -1232,26 +1232,25 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     memset(&pi, 0, sizeof(pi));
     si.cb = sizeof(si);
 
-    plStringStream cmdLine;
     const char** addrs;
     
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        cmdLine << "\\" << plString::FromWchar(s_patcherExeName);
+        plStringStream cmdLine;
 
         GetAuthSrvHostnames(&addrs);
-        if(strlen(addrs[0]))
-            cmdLine << plString::Format(" /AuthSrv=%s", addrs[0]);
+        if (strlen(addrs[0]))
+            cmdLine << " /AuthSrv=" << addrs[0];
 
         GetFileSrvHostnames(&addrs);
-        if(strlen(addrs[0]))
-            cmdLine << plString::Format(" /FileSrv=%s", addrs[0]);
+        if (strlen(addrs[0]))
+            cmdLine << " /FileSrv=" << addrs[0];
 
         GetGateKeeperSrvHostnames(&addrs);
-        if(strlen(addrs[0]))
-            cmdLine << plString::Format(" /GateKeeperSrv=%s", addrs[0]);
+        if (strlen(addrs[0]))
+            cmdLine << " /GateKeeperSrv=" << addrs[0];
 
-        if(!CreateProcessW(NULL, (LPWSTR)cmdLine.GetString().ToUtf16().GetData(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+        if(!CreateProcessW(s_patcherExeName, (LPWSTR)cmdLine.GetString().ToUtf16().GetData(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         {
             hsMessageBox("Failed to launch patcher", "Error", hsMessageBoxNormal);
         }
