@@ -107,7 +107,8 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
     std::vector<plFileName> retVal;
     for (auto curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
-        if ((curData->second.fDir == sDir) && (curData->second.fExt == ext))
+        if ((curData->second.fDir.AsString().CompareI(sDir.AsString()) == 0) &&
+            (curData->second.fExt.CompareI(ext) == 0))
             retVal.push_back(curData->second.fFilename);
     }
 
