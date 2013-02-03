@@ -83,6 +83,7 @@ public:
             return fOutput->Write(count, buf);
     }
 
+    plFileName GetFileName() const { return fFilename; }
     bool IsZipped() const { return fIsZipped; }
     void Unlink() const { plFileSystem::Unlink(fFilename); }
 };
@@ -104,16 +105,22 @@ static void FileDownloaded(
     switch (result)
     {
         case kNetSuccess:
+        {
             PatcherLog(kStatus, "    Download Complete: %s", file.AsString().c_str());
             
             // If this is a PRP, then we need to add it to the ResManager
-            if (file.AsString().CompareI("prp") == 0)
-                ((plResManager*)hsgResMgr::ResMgr())->AddSinglePage(file);
+            plFileName clientPath = static_cast<plResDownloadStream*>(writer)->GetFileName();
+            if (clientPath.GetFileExt().CompareI("prp") == 0)
+            {
+                plResManager* clientResMgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
+                clientResMgr->AddSinglePage(clientPath);
+            }
 
             // Continue down the warpath
             patcher->IssueRequest();
             delete writer;
             return;
+        }
         case kNetErrFileNotFound:
             PatcherLog(kError, "    Download Failed: %s not found", file.AsString().c_str());
             break;
@@ -125,7 +132,7 @@ static void FileDownloaded(
     }
 
     // Failure case
-    ((plResDownloadStream*)writer)->Unlink();
+    static_cast<plResDownloadStream*>(writer)->Unlink();
     patcher->Finish(false);
     delete writer;
 }

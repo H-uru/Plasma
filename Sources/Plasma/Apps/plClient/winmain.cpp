@@ -97,18 +97,21 @@ bool gHasMouse = false;
 ITaskbarList3* gTaskbarList = nil; // NT 6.1+ taskbar stuff
 
 extern bool gDataServerLocal;
+extern bool gSkipPreload;
 
 enum
 {
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
+    kArgSkipPreload
 };
 
 static const CmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
     { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
+    { kCmdArgFlagged  | kCmdTypeBool,       L"SkipPreload",     kArgSkipPreload },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1199,10 +1202,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     bool doIntroDialogs = true;
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if(cmdParser.IsSpecified(kArgSkipLoginDialog))
+    if (cmdParser.IsSpecified(kArgSkipLoginDialog))
         doIntroDialogs = false;
-    if(cmdParser.IsSpecified(kArgLocalData))
+    if (cmdParser.IsSpecified(kArgLocalData))
+    {
         gDataServerLocal = true;
+        gSkipPreload = true;
+    }
+    if (cmdParser.IsSpecified(kArgSkipPreload))
+        gSkipPreload = true;
 #endif
 
     plFileName serverIni = "server.ini";
