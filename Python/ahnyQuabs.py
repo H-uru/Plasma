@@ -97,7 +97,7 @@ class ahnyQuabs(ptModifier, object):
         #               server shut down. Therefore, we will already have quabs... So we don't want
         #               to spawn another 20 or so dupe avatar clones.
         if len(self.brains) != 0:
-            PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... and they were already spawned!" % self.quabs, level=kWarningLevel)
+            PtDebugPrint("ahnyQuabs.OnServerInitComplete():\t... and they were already spawned!", level=kWarningLevel)
             for brain in self.brains:
                 self._PrepCritterBrain(brain[0])
             return
