@@ -32,7 +32,7 @@ set(pfSurface_HEADERS
     plLayerMovie.h
 )
 
-add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSources_HEADERS})
+add_library(pfSurface STATIC ${pfSurface_SOURCES} ${pfSurface_HEADERS})
 
 source_group("Source Files" FILES ${pfSurface_SOURCES})
 source_group("Header Files" FILES ${pfSurface_HEADERS})
