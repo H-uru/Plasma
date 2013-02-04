@@ -311,6 +311,8 @@ class plMipmap : public plBitmap
         void    IWriteRLEImage( hsStream *stream, plMipmap *mipmap );
         void    IReadJPEGImage( hsStream *stream );
         void    IWriteJPEGImage( hsStream *stream );
+        void    IReadPNGImage( hsStream *stream );
+        void    IWritePNGImage( hsStream *stream );
         void    IBuildLevelSizes();
 
         void    IColorLevel( uint8_t level, const uint8_t *colorMask );

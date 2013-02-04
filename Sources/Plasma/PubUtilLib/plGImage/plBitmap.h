@@ -105,7 +105,8 @@ class plBitmap : public hsKeyedObject
         {
             kUncompressed       = 0x0,
             kDirectXCompression = 0x1,
-            kJPEGCompression    = 0x2
+            kJPEGCompression    = 0x2,
+            kPNGCompression     = 0x3
         };
 
         struct DirectXInfo
