@@ -441,6 +441,15 @@ public:
 
     /////////////////////////////////////////////////////////////////////////////
     //
+    //  Function   : GetNPC
+    //  PARAMETERS : npcID  - is the ID of a NPC
+    //
+    //  PURPOSE    : Returns a pySceneobject of a NPC
+    //
+    static PyObject* GetNPC(int npcID);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
     //  Function   : SendRTChat
     //  PARAMETERS : from   - is a pyPlayer of the person who is sending this
     //             : tolist  - is a python list object, if empty then broadcast message

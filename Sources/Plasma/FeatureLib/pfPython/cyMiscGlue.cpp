@@ -188,6 +188,18 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientIDFromAvatarKey, args, "Params: avata
     return PyInt_FromLong(cyMisc::GetClientIDFromAvatarKey(*key));
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "This will return the NPC with a specific ID")
+{
+    int npcID;
+    if (!PyArg_ParseTuple(args, "i", &npcID))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtGetNPCByID expects an integer");
+        PYTHON_RETURN_ERROR;
+    }
+
+    return cyMisc::GetNPC(npcID);
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumRemotePlayers, "Returns the number of remote players in this Age with you.")
 {
     return PyInt_FromLong(cyMisc::GetNumRemotePlayers());
@@ -507,6 +519,7 @@ void cyMisc::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtMaxListenDistSq);
     PYTHON_GLOBAL_METHOD(methods, PtGetAvatarKeyFromClientID);
     PYTHON_GLOBAL_METHOD(methods, PtGetClientIDFromAvatarKey);
+    PYTHON_GLOBAL_METHOD(methods, PtGetNPCByID);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNumRemotePlayers);
 
     PYTHON_GLOBAL_METHOD(methods, PtValidateKey);
