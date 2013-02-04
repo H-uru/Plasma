@@ -234,13 +234,14 @@ def FilterAgeName(ageName):
     # This fixes a bug in which avatars' names containing words like Garden
     # incorrectly get replaced.
     for Age, replacement in kAges.Replace.iteritems():
-        ageNameList = ageName.rsplit(Age, 1)
-        ageName = replacement.join(ageNameList)
+        # Only replace if the replacement is not already in there...
+        # Otherwise we wend up with junk like "Eder Eder Gira"
+        if ageName.find(replacement) == -1:
+            ageNameList = ageName.rsplit(Age, 1)
+            ageName = replacement.join(ageNameList)
 
     # Find the appropriate display name.
-    if ageName == "GreatZero'":
-        ageName = "D'ni-Rezeero'"
-    elif ageName == "???" or ageName == "BahroCave":
+    if ageName == "???" or ageName == "BahroCave":
         sdl = xPsnlVaultSDL()
         if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
             ageName = "D'ni-Rudenna"
