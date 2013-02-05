@@ -229,6 +229,10 @@ def CMPNodeDate(nodeA, nodeB):
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.
 def FilterAgeName(ageName):
+    # Many age instance names without a possessive component have a spurious
+    # apostrophe at the end of the name. Let's correct that before we do anything
+    if ageName.endswith("'"):
+        ageName = ageName[:-1]
 
     # Replace file names with display names - only once, from the right.
     # This fixes a bug in which avatars' names containing words like Garden
