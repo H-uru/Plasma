@@ -333,19 +333,25 @@ bool plFileSystem::Copy(const plFileName &from, const plFileName &to)
 
 bool plFileSystem::CreateDir(const plFileName &dir, bool checkParents)
 {
+    plFileName fdir = dir;
+    if (fdir.GetFileName().IsEmpty()) {
+        hsDebugMessage("WARNING: CreateDir called with useless trailing slash", 0);
+        fdir = fdir.StripFileName();
+    }
+
     if (checkParents) {
-        plFileName parent = dir.StripFileName();
+        plFileName parent = fdir.StripFileName();
         if (parent.IsValid() && !plFileInfo(parent).Exists() && !CreateDir(parent, true))
             return false;
     }
 
-    if (plFileInfo(dir).Exists())
+    if (plFileInfo(fdir).Exists())
         return true;
 
 #if HS_BUILD_FOR_WIN32
-    return CreateDirectoryW(dir.AsString().ToWchar(), nullptr);
+    return CreateDirectoryW(fdir.AsString().ToWchar(), nullptr);
 #else
-    return (mkdir(dir.AsString().c_str(), 0755) == 0);
+    return (mkdir(fdir.AsString().c_str(), 0755) == 0);
 #endif
 }
 
