@@ -56,7 +56,7 @@ import PlasmaControlKeys
 import xEnum
 
 # define the attributes that will be entered in max
-Activate = ptAttribActivator(1, "Region Sensor",netForce=1)
+Activate = ptAttribActivator(1, "Region Sensor")
 MultiStage01 = ptAttribBehavior(2, "NPC Multistage behavior",netForce=1)
 NpcSpawner = ptAttribActivator(3, "NPC Spawn point")
 
@@ -142,6 +142,11 @@ class clftNpcZandi(ptModifier):
                 print "Zandi is already talking"
 
         elif id == Activate.id:
+            # Zandi himself will activate the region when he spawns...
+            # So, only let the avatar who enters do this. Zandi != local avatar, so win
+            if PtFindAvatar(events) != PtGetLocalAvatar():
+                return
+
             for event in events:
                 if event[0]==1 and event[1]==1: # avatar physically approached Zandi
                     self.NearZandi = 1
