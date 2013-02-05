@@ -70,7 +70,7 @@ plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float
     fMovementStrategy(nil),
     fSimLength(0.0f),
     fLocalRotation(0.0f, 0.0f, 0.0f, 1.0f),
-    fLocalPosition(0.0f, 0.0f, 0.0f),
+    fLocalPosition(0.0f, 0.0f, -2000.0f),
     fLastLocalPosition(0.0f, 0.0f, 0.0f),
     fLinearVelocity(0.0f, 0.0f, 0.0f),
     fAchievedLinearVelocity(0.0f, 0.0f, 0.0f),
