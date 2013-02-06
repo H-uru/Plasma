@@ -472,6 +472,10 @@ def PtGetMouseTurnSensitivity():
     """Returns the sensitivity"""
     pass
 
+def PtGetNPCByID(npcID):
+    """This will return the NPC with a specific ID"""
+    pass
+
 def PtGetNumCameras():
     """returns camera stack size"""
     pass
