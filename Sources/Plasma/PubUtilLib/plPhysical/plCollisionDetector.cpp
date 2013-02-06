@@ -669,6 +669,10 @@ bool plPanicLinkRegion::MsgReceive(plMessage* msg)
         if (plNetClientApp::GetInstance()->GetLocalPlayerKey() != pCollMsg->fOtherKey)
             return true;
 
+        // If the avatar is disabled (flying around), don't trigger
+        if (IIsDisabledAvatar(pCollMsg->fOtherKey))
+            return false;
+
         if (pCollMsg->fEntering)
         {
             plArmatureMod* avMod = IGetAvatarModifier(pCollMsg->fOtherKey);
