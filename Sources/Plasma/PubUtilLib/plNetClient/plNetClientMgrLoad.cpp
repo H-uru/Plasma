@@ -105,6 +105,12 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 
     if(pCloneMsg->GetIsLoading())
     {
+        if (!cloneKey)
+        {
+            DebugMsg("ILoadClone: got a null clone key... either a loading race or someone is being naughty.");
+            return nullptr;
+        }
+
         if (cloneKey->ObjectIsLoaded())
         {
             DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze().c_str());
