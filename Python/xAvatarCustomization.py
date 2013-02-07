@@ -1035,12 +1035,9 @@ class xAvatarCustomization(ptModifier):
                     elif btnID == kAvatarCameraID:
                         print "ACA: Taking a picture!"
                         picCam = ptCamera()
-                        PicCamAspect = picCam.getAspectRatio()
                         picCam.setAspectRatio(4/3)
-                        picCam.refreshFOV()
                         AvCustGUI.dialog.hide()
                         PtStartScreenCapture(self.key, 1024, 768)
-                        picCam.setAspectRatio(PicCamAspect)
 
                 elif isinstance(control,ptGUIControlCheckBox):
                     chkBoxID = control.getTagID()
@@ -1065,11 +1062,10 @@ class xAvatarCustomization(ptModifier):
                 pass
         else:
             pass
-    
+
     def OnScreenCaptureDone(self,image):
         AvCustGUI.dialog.show()
-        picCam = ptCamera()
-        picCam.refreshFOV()
+        ptCamera().refreshFOV() # restores proper FOV from pipeline
         avatar = PtGetLocalAvatar()
         currentgender = avatar.avatar.getAvatarClothingGroup()
         if currentgender == 1:
