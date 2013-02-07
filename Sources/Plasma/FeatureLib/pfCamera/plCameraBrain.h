@@ -128,7 +128,7 @@ public:
 
     void    SetGoal(hsPoint3 pt) { fGoal = pt; }
     void    SetPOAGoal(hsPoint3 pt) { fPOAGoal = pt; }
-    void    SetFOVGoal(float h, double t);
+    void    SetFOVGoal(float w, float h, double t);
     void    SetZoomParams(float max, float min, float rate);
     
     void    SetXPanLimit(float x) {fXPanLimit = x;}
@@ -173,16 +173,17 @@ protected:
     void IMoveTowardGoal(double time);
     void IPointTowardGoal(double time);
     void IAnimateFOV(double time);
-    void IAdjustVelocity(float adjAccelRate, 
-                         float adjDecelRate, 
-                         hsVector3* dir, 
-                         hsVector3* vel, 
-                         float maxSpeed, 
+    void IAdjustVelocity(float adjAccelRate,
+                         float adjDecelRate,
+                         hsVector3* dir,
+                         hsVector3* vel,
+                         float maxSpeed,
                          float distToGoal,
                          double elapsedTime);
 
     float IClampVelocity(hsVector3* vel, float maxSpeed, double elapsedTime);
-    bool     IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
+    bool  IShouldDecelerate(float decelSpeed, float curSpeed, float distToGoal);
+    float IMakeFOVwZoom(float fovH) const;
 
     plCameraModifier1*  fCamera;
     plKey               fSubjectKey;
@@ -197,25 +198,25 @@ protected:
     float            fPOAVelocity;
     float            fPOAAccel;
     float            fPOADecel;
-    hsVector3           fPOAOffset;
-    hsPoint3            fGoal;
-    hsPoint3            fPOAGoal;
+    hsVector3        fPOAOffset;
+    hsPoint3         fGoal;
+    hsPoint3         fPOAGoal;
     float            fXPanLimit;
     float            fZPanLimit;
     float            fPanSpeed;
-    float            fFOVGoal;
-    double              fFOVStartTime;
-    double              fFOVEndTime;
-    float            fFOVAnimRate; 
+    float            fFOVwGoal, fFOVhGoal;
+    double           fFOVStartTime;
+    double           fFOVEndTime;
+    float            fFOVwAnimRate, fFOVhAnimRate;
     float            fZoomRate;
     float            fZoomMax;
     float            fZoomMin;
-    hsBitVector         fMoveFlags;
-    hsBitVector         fFlags;
-    hsMatrix44          fTargetMatrix;
+    hsBitVector      fMoveFlags;
+    hsBitVector      fFlags;
+    hsMatrix44       fTargetMatrix;
     float            fOffsetLength;
     float            fOffsetPct;
-    double              fFallTimer;
+    double           fFallTimer;
 };
 
 class plControlEventMsg;

@@ -123,17 +123,18 @@ public:
     void Init();
 
     virtual bool MsgReceive(plMessage* msg);
-    static void SetFOV(float w, float h);
-    static void SetFOV(float w, float h, plCameraModifier1* pCam);
+    static void SetFOV(float x, float y);
+    static void SetFOV(plCameraModifier1* pCam);
     static void SetDepth(float h, float y);
     static float GetFOVw() { return fFOVw; }
     static float GetFOVh() { return fFOVh; }
     static float GetHither() { return fHither; }
     static float GetYon()    { return fYon; }
     static void  SetOffset(float x, float y, float z);
-    static void  SetAspectRatio(float aspect) { fAspectRatio = aspect; }
+    static void Refresh();
     static float GetAspectRatio() { return fAspectRatio; }
-    
+    static void SetAspectRatio(float ratio);
+
     bool InTransition() { return fTransPos != POS_TRANS_OFF; }
     plCameraModifier1* GetCurrentCamera();
     plCameraModifier1* GetCurrentStackCamera();
@@ -231,7 +232,7 @@ private:
     double              fUnPanEndTime;
     double              fInterpPanLimitTime;
     float               fRetainedFY;
-    
+
     // built-in cameras
     plCameraModifier1*  fDriveCamera; // for driving around 
     plCameraModifier1*  fTransitionCamera; // transitions between cameras placed in scenes
@@ -241,11 +242,11 @@ private:
     plCameraModifier1*  fThirdPersonCam; // built in third person cam for ccr's when they jump about
 
     static float fFOVh, fFOVw;
+    static float fAspectRatio;
     static float fHither, fYon;
     static plVirtualCam1* fInstance;
     static bool printFOV; 
     static float fPanResponseTime;
-    static float fAspectRatio;
     bool fForceCutOnce;
 
 };

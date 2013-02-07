@@ -128,8 +128,9 @@ public:
     void            SetTargetPOA(hsPoint3 pos) { fAt = pos; }
     void            SetSubworldPos(hsPoint3 pos) { fLastSubPos = pos; }
     void            SetSubworldPOA(hsPoint3 pos) { fLastSubPOA = pos; }
-    float        GetFOVw() { return fFOVw; }
-    float        GetFOVh() { return fFOVh; }
+    float           GetFOVw() const { return fFOVw; }
+    float           GetFOVh() const { return fFOVh; }
+    void            SetFOV(float w, float h, bool fUpdateVCam = true); 
     void            SetFOVw(float f, bool fUpdateVCam = true); 
     void            SetFOVh(float f, bool fUpdateVCam = true); 
     bool            GetInSubworld() { return fInSubLastUpdate; }
