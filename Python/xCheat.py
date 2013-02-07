@@ -731,63 +731,101 @@ def GetChildInfo(args):
 
 
 def GetSDL(varName):
+    """
+    GetSDL is used to get the value of an Age SDL variable by name.
+    Expects one argument:
+     (string) VariableName
+    """
     import Plasma
+
+    if not varName:
+        print("xCheat.GetSDL(): GetSDL takes one argument: SDL variable name is required.\n Use 'all' to list all variables for the current Age.")
+        return
+
     ageName = Plasma.PtGetAgeName()
-    ageSDL = Plasma.PtGetAgeSDL()
+    try:
+        ageSDL = Plasma.PtGetAgeSDL()
+    except:
+        print("xCheat.GetSDL(): Unable to retrieve SDL for '{}'.".format(ageName))
+        return
+
     varList = []
     if varName == "all":
-        vault = Plasma.ptVault()
-#        myAges = vault.getAgesIOwnFolder()
-#        myAges = myAges.getChildNodeRefList()
-#        for ageInfo in myAges:
-#            link = ageInfo.getChild()
-#            link = link.upcastToAgeLinkNode()
-#            info = link.getAgeInfo()
-#            if not info:
-#                continue
-#            tmpAgeName = info.getAgeFilename()
-#            if ageName == tmpAgeName:
-
         if ageName == "Personal":
-            varRecord = vault.getPsnlAgeSDL()
-            varList = varRecord.getVarList()
+            varRecord = Plasma.ptVault().getPsnlAgeSDL()
+            if varRecord:
+                varList = varRecord.getVarList()
         else:
-            #link = ageInfo.getChild()
-            #if link.getType() == PlasmaVaultConstants.PtVaultNodeTypes.kSDLNode:
-            #thisSDL = link.upcastToSDLNode()
-            #thisSDL = info.getAgeSDL()
-            #varRecord = ageSDL.getStateDataRecord()
-            #varList = ageSDL.getVarList()
-            pass
+            vault = Plasma.ptAgeVault()
+            if vault:
+                varRecord = vault.getAgeSDL()
+                if varRecord:
+                    varList = varRecord.getVarList()
 
-        if varList == []:
-            print "xCheat.GetSDL(): couldn't retrieve SDL list"
+        if not varList:
+            print("xCheat.GetSDL(): Couldn't retrieve SDL list.")
             return
+
+        maxlen = len(max(varList, key=len))
         for var in varList:
             try:
-                val = ageSDL[var][0]
-                print "xCheat.GetSDL():\t%s\t\t=  %d" % (var,val)
+                if len(ageSDL[var]) == 0:
+                    val = ""
+                else:
+                    val = ageSDL[var][0]
+                print("xCheat.GetSDL(): {:>{width}}  =  {}".format(var, val, width=maxlen))
             except:
-                pass
+                print("xCheat.GetSDL(): Error retrieving value for '{}'.".format(var))
     else:
         try:
-            val = ageSDL[varName][0]
-            print "xCheat.GetSDL(): %s = %d" % (varName,val)
+            if len(ageSDL[varName]) == 0:
+                print("xCheat.GetSDL():  SDL variable '{}' is not set.".format(varName))
+            else:
+                print("xCheat.GetSDL(): {}  =  {}".format(varName, ageSDL[varName][0]))
         except:
-            print "xCheat.GetSDL(): %s not found!" % (varName)
+            print("xCheat.GetSDL(): SDL variable '{}' not found.".format(varName))
+            return
 
 
 def SetSDL(varNameAndVal):
+    """
+    SetSDL is used to set an Age SDL variable by name. It expects two arguments:
+    (string) VariableName, (int) NewValue
+    """
     import Plasma
-    ageSDL = Plasma.PtGetAgeSDL()
-    varNameAndValList = varNameAndVal.split("_")
-    varName = varNameAndValList[0]
-    newval = int(varNameAndValList[1])
-    oldval = ageSDL[varName][0]
-    if newval == oldval:
-        print "xCheat.SetSDL(): won't change, %s is already = %d" % (varName,newval)
+
+    if not varNameAndVal:
+        print("xCheat.SetSDL(): SetSDL takes two arguments: SDL variable name and new value are required.")
         return
+
+    varNameAndValList = varNameAndVal.split("_")
+    if (len(varNameAndValList) < 2) or varNameAndValList[1] == "":
+        print("xCheat.SetSDL(): No new value specified.")
+        return
+    varName = varNameAndValList[0]
+    try:
+        newval = int(varNameAndValList[1])
+    except ValueError:
+        print("xCheat.SetSDL(): Can't use '{}'. Only numerical SDL values are supported.".format(varNameAndValList[1]))
+        return
+
     ageName = Plasma.PtGetAgeName()
+    try:
+        ageSDL = Plasma.PtGetAgeSDL()
+    except:
+        print("xCheat.SetSDL(): Unable to retrieve SDL for '{}'.".format(ageName))
+        return
+
+    try:
+        oldval = ageSDL[varName][0]
+    except KeyError:
+        print("xCheat.SetSDL(): SDL variable '{}' not found.".format(varName))
+        return
+
+    if newval == oldval:
+        print("xCheat.SetSDL(): Not changing value, '{}' is already {}.".format(varName, newval))
+        return
+
     if ageName == "Personal":
         vault = Plasma.ptVault()
         psnlSDL = vault.getPsnlAgeSDL()
@@ -795,12 +833,11 @@ def SetSDL(varNameAndVal):
         FoundValue.setInt(newval)
         vault.updatePsnlAgeSDL(psnlSDL)
     else:
-        ageSDL.setFlags(varName,1,1)
+        ageSDL.setFlags(varName, 1, 1)
         ageSDL.sendToClients(varName)
-        #ageSDL.setNotify(self.key,varName,0.0)
         ageSDL[varName] = (newval,)
 
-    print "xCheat.SetSDL(): changing %s to %d" % (varName,newval)    
+    print("xCheat.SetSDL(): Setting '{}' to {} (was {}).".format(varName, newval, oldval))
 
 
 def InstaPellets(args):
