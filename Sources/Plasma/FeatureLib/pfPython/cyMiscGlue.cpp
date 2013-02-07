@@ -200,6 +200,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "This will return the NPC wi
     return cyMisc::GetNPC(npcID);
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNPCCount, "Returns the number of NPCs in the current age")
+{
+    return cyMisc::GetNPCCount();
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumRemotePlayers, "Returns the number of remote players in this Age with you.")
 {
     return PyInt_FromLong(cyMisc::GetNumRemotePlayers());
@@ -520,6 +525,7 @@ void cyMisc::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD(methods, PtGetAvatarKeyFromClientID);
     PYTHON_GLOBAL_METHOD(methods, PtGetClientIDFromAvatarKey);
     PYTHON_GLOBAL_METHOD(methods, PtGetNPCByID);
+    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNPCCount);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetNumRemotePlayers);
 
     PYTHON_GLOBAL_METHOD(methods, PtValidateKey);

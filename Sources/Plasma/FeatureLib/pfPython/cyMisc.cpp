@@ -978,6 +978,11 @@ PyObject* cyMisc::GetNPC(int npcID)
     PYTHON_RETURN_ERROR;
 }
 
+PyObject* cyMisc::GetNPCCount()
+{
+    return PyInt_FromLong(plNetClientMgr::GetInstance()->NPCKeys().size());
+}
+
 #if 1
 #include "plStatusLog/plStatusLog.h"
 //

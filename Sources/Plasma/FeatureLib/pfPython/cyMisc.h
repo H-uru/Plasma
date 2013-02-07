@@ -447,6 +447,7 @@ public:
     //  PURPOSE    : Returns a pySceneobject of a NPC
     //
     static PyObject* GetNPC(int npcID);
+    static PyObject* GetNPCCount();
 
     /////////////////////////////////////////////////////////////////////////////
     //
