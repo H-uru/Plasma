@@ -135,20 +135,28 @@ plSceneObject* plCameraModifier1::GetSubject()
         return GetBrain()->GetSubject();
     else
         return fSubObj;
-}   
+} 
+
+void plCameraModifier1::SetFOV(float w, float h, bool fUpdateVCam) 
+{ 
+    fFOVw = w;
+    fFOVh = h;
+    if (plVirtualCam1::Instance() && fUpdateVCam)
+        plVirtualCam1::SetFOV(this); 
+}
 
 void plCameraModifier1::SetFOVw(float f, bool fUpdateVCam) 
 { 
     fFOVw = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
-        plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
+        plVirtualCam1::SetFOV(this); 
 }
 
 void plCameraModifier1::SetFOVh(float f, bool fUpdateVCam) 
 { 
     fFOVh = f; 
     if (plVirtualCam1::Instance() && fUpdateVCam)
-        plVirtualCam1::SetFOV(fFOVw, fFOVh, this); 
+        plVirtualCam1::SetFOV(this); 
 }
 
 bool plCameraModifier1::SetFaded(bool b)
@@ -192,8 +200,9 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
         double time2 = (double)pEventMsg->fEventTime;
         time = hsABS(time - time2);
         float h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
+        float w = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVw;
         if (GetBrain())
-            GetBrain()->SetFOVGoal(h, time);
+            GetBrain()->SetFOVGoal(w, h, time);
     }
 
     plAnimCmdMsg* pAnimMsg = plAnimCmdMsg::ConvertNoRef(msg);

@@ -88,25 +88,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsQuat.h"
 
-float plVirtualCam1::fFOVw           =  45.0f;
-float plVirtualCam1::fFOVh           =  33.75f;
-float plVirtualCam1::fHither         =   0.3f;
-float plVirtualCam1::fYon            = 500.0f;
-bool     plVirtualCam1::printFOV        = false;
-bool     plVirtualCam1::fUseAccelOverride   = 1;
-bool     plVirtualCam1::freeze  = 0;
-//float plVirtualCam1::fAccel            = 5.0f;
-//float plVirtualCam1::fDecel            = 5.0f;
-//float plVirtualCam1::fVel          = 10.0f;
-float plVirtualCam1::fAccel          = 50.0f;
-float plVirtualCam1::fDecel          = 50.0f;
-float plVirtualCam1::fVel            = 100.0f;
-float plVirtualCam1::fPanResponseTime    = 3.0f;
-float plVirtualCam1::fFallTimerDelay = 0.25f;
-bool     plVirtualCam1::alwaysCutForColin = false;
-bool     plVirtualCam1::WalkPan3rdPerson = false;
-bool       plVirtualCam1::StayInFirstPersonForever = false;
-float    plVirtualCam1::fAspectRatio = fFOVw / fFOVh;
+float plVirtualCam1::fFOVw                    = 45.0f;
+float plVirtualCam1::fFOVh                    = 33.75f;
+float plVirtualCam1::fAspectRatio             = 4.f/3.f;
+float plVirtualCam1::fHither                  = 0.3f;
+float plVirtualCam1::fYon                     = 500.0f;
+bool  plVirtualCam1::printFOV                 = false;
+bool  plVirtualCam1::fUseAccelOverride        = 1;
+bool  plVirtualCam1::freeze                   = 0;
+float plVirtualCam1::fAccel                   = 50.0f;
+float plVirtualCam1::fDecel                   = 50.0f;
+float plVirtualCam1::fVel                     = 100.0f;
+float plVirtualCam1::fPanResponseTime         = 3.0f;
+float plVirtualCam1::fFallTimerDelay          = 0.25f;
+bool  plVirtualCam1::alwaysCutForColin        = false;
+bool  plVirtualCam1::WalkPan3rdPerson         = false;
+bool  plVirtualCam1::StayInFirstPersonForever = false;
 
 // #define STATUS_LOG
 
@@ -269,7 +266,7 @@ void plVirtualCam1::RebuildStack(const plKey& key)
         pMsg->AddReceiver(plNetClientMgr::GetInstance()->GetLocalPlayerKey());
         plgDispatch::MsgSend(pMsg);
     }
-    
+
     fForceCutOnce=true;
     
 }
@@ -286,54 +283,43 @@ void plVirtualCam1::SetOffset(float x, float y, float z)
 }
 
 // static function
-void plVirtualCam1::SetFOV(float x, float y)
+void plVirtualCam1::SetFOV(float w, float h)
 {
+    static float fourXthree = (4.f/3.f);
 
-    float fovW = y * fAspectRatio;
-
-    fFOVw = fovW;
-    fFOVh = y;
-
-    if (! plVirtualCam1::Instance()->fPipe) 
-        return;
-
+    fFOVh = h;
+    if (fAspectRatio == fourXthree)
+        fFOVw = w;
+    else
+    {
+        float scale = fAspectRatio / fourXthree;
+        fFOVw = 2 * hsRadiansToDegrees(atan(scale * tan(hsDegreesToRadians(w/2))));
+    }
     plVirtualCam1::Instance()->SetFlags(plVirtualCam1::kSetFOV);
-
-    #ifdef STATUS_LOG
-if (printFOV)
-        camLog->AddLineF("FOV changed by console command to %f", fFOVw);
-#endif
-
 }
 // static function
-void plVirtualCam1::SetFOV(float x, float y, plCameraModifier1* pCam)
+void plVirtualCam1::SetFOV(plCameraModifier1* pCam)
 {
     if (plVirtualCam1::Instance()->GetCurrentCamera() != pCam)
         return;
+    SetFOV(pCam->GetFOVw(), pCam->GetFOVh());
+}
 
-    float diff = hsABS(fFOVw - x);
-    if (diff > 10.0f)
-    {
-#ifdef STATUS_LOG
-        camLog->AddLineF("Radical FOV change of %f", diff);
-#endif
+void plVirtualCam1::Refresh()
+{
+    plPipeline* pipe = plVirtualCam1::Instance()->fPipe;
+    SetAspectRatio((float)pipe->Width() / (float)pipe->Height());
+}
 
-    }
+void plVirtualCam1::SetAspectRatio(float ratio)
+{
+    fAspectRatio = ratio;
 
-    float fovW = y * fAspectRatio;
-
-    fFOVw = fovW;
-    fFOVh = y;
-
-    if (! plVirtualCam1::Instance()->fPipe) 
-        return;
-    
-    plVirtualCam1::Instance()->SetFlags(plVirtualCam1::kSetFOV);
-    
-#ifdef STATUS_LOG
-    if (printFOV)
-        camLog->AddLineF("FOV changed to %f", fFOVw);
-#endif
+    // resize the FOV accordingly
+    plCameraModifier1* pCam = plVirtualCam1::Instance()->GetCurrentCamera();
+    hsAssert(pCam, "CameraModifier1 shouldn't be nullptr?");
+    if (pCam)
+        SetFOV(pCam->GetFOVw(), pCam->GetFOVh());
 }
 
 // static function
@@ -913,7 +899,7 @@ void plVirtualCam1::FirstPersonOverride()
 #ifdef STATUS_LOG
         camLog->AddLineF("Built-In First Person Camera Disabled");
 #endif
-        SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
+        SetFOV(GetCurrentStackCamera()); 
         GetCurrentStackCamera()->Push(!HasFlags(kAvatarWalking));
         plAvatarInputInterface::GetInstance()->CameraInThirdPerson(true);
         FreezeOutput(2);    
@@ -938,7 +924,7 @@ void plVirtualCam1::FirstPersonOverride()
             fFirstPersonOverride = (plCameraModifier1*)pKey->GetObjectPtr();
             GetCurrentStackCamera()->Pop();
             fFirstPersonOverride->Push(!HasFlags(kAvatarWalking));
-            SetFOV(fFirstPersonOverride->GetFOVw(), fFirstPersonOverride->GetFOVh(), fFirstPersonOverride); 
+            SetFOV(fFirstPersonOverride); 
             plAvatarInputInterface::GetInstance()->CameraInThirdPerson(false);
             // no need to keep transitioning if we are currently...
             if (fTransPos == POS_TRANS_FOLLOW)
@@ -1178,12 +1164,12 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
 #endif
                 if (fFirstPersonOverride)
                 {
-                    SetFOV(fFirstPersonOverride->GetFOVw(), fFirstPersonOverride->GetFOVh(), fFirstPersonOverride);
+                    SetFOV(fFirstPersonOverride);
                     fFirstPersonOverride->Push(!HasFlags(kAvatarWalking));
                 }
                 else
                 {
-                    SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
+                    SetFOV(GetCurrentStackCamera()); 
                     GetCurrentStackCamera()->Push(!HasFlags(kAvatarWalking));
                 }
                 
@@ -1243,7 +1229,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                         pTrans->fCutPOA = pTrans->fCutPos = true; 
                     StartTransition(pTrans);
                     delete(pTrans);
-                    SetFOV(fPythonOverride->GetFOVw(), fPythonOverride->GetFOVh(), fPythonOverride);
+                    SetFOV(fPythonOverride);
                     ClearFlags(kFirstPersonEnabled);
                 }
             }
@@ -1289,7 +1275,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
 #ifdef STATUS_LOG
                     camLog->AddLineF("Forcing 3rd Person from scripts");
 #endif
-                    SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
+                    SetFOV(GetCurrentStackCamera()); 
                 }
             }
         }
@@ -1320,7 +1306,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
 #ifdef STATUS_LOG
                 camLog->AddLineF("Forcing 3rd Person from code");
 #endif
-                SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera());
+                SetFOV(GetCurrentStackCamera());
             }
             ClearFlags(kFirstPersonEnabled);
 #ifdef STATUS_LOG
@@ -1673,9 +1659,9 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG   
         camLog->AddLineF("Camera %s is now the DEFAULT camera for this age", pCam->GetKeyName().c_str());
-#endif  
+#endif
     }
-    SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
+    SetFOV(GetCurrentStackCamera()); 
 }
 
 void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
@@ -1812,7 +1798,7 @@ void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
             fCameraStack.erase(it);
     }
     if (!InTransition())
-        SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
+        SetFOV(GetCurrentStackCamera()); 
 }
 
 void plVirtualCam1::PopAll()
@@ -1831,7 +1817,6 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         {
             GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
             GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPosOnce);
-            SetFOV(GetCurrentStackCamera()->GetFOVw(), GetCurrentStackCamera()->GetFOVh(), GetCurrentStackCamera()); 
             fXPanLimit = GetCurrentStackCamera()->GetBrain()->GetXPanLimit();
             fZPanLimit = GetCurrentStackCamera()->GetBrain()->GetZPanLimit();
             StartInterpPanLimits();
@@ -1877,7 +1862,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
 //          pAvBrain->SetFlags(plCameraBrain1::kCutPOA);
 //      }
         pAvBrain->SetSubject(pCam->GetBrain()->GetSubject());
-        pBrain = pAvBrain;  
+        pBrain = pAvBrain;
     }
     else
     {
@@ -1960,12 +1945,12 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     if (transition->fCutPOA)
     {   
         pBrain->SetFlags(plCameraBrain1::kCutPOA);
-        pCam->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);    
+        pCam->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
     }
     fTransitionCamera->SetBrain(pBrain);
     pBrain->SetCamera(fTransitionCamera);
 
-    // deal with FOV - 
+    // deal with FOV -
     float diffH = hsABS(pCam->GetFOVh() - fPrevCam->GetFOVh());
     if ( diffH )
     {
@@ -1982,13 +1967,9 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
             hsPoint3 posdist = fTransitionCamera->GetTargetPos() - pCam->GetTargetPos();
             dist.Set(&posdist);
         }
-        
-        time = (double)(dist.Magnitude() / pBrain->GetVelocity());
-        
-        // set up the transition camera to the current FOV
-        fTransitionCamera->SetFOVh(GetFOVh(), false);
-        fTransitionCamera->SetFOVw(GetFOVw(), false);
-        fTransitionCamera->GetBrain()->SetFOVGoal(pCam->GetFOVh(), time);
+
+        time = (dist.Magnitude() / pBrain->GetVelocity());
+        fTransitionCamera->GetBrain()->SetFOVGoal(pCam->GetFOVw(), pCam->GetFOVh(), time);
 
     }
     StartInterpPanLimits();

@@ -2241,9 +2241,8 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     plBitmap::SetGlobalLevelChopCount(2 - fDefaultPipeParams.TextureQuality);
 
     // adjust camera properties
-    plVirtualCam1::SetAspectRatio((float)fSettings.fOrigWidth / (float)fSettings.fOrigHeight);
-    plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh());
-    
+    plVirtualCam1::Refresh();
+
     // fire off a message to the client so we can write defaults to the ini file, and adjust the window size
     plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
     plClientMsg* clientMsg = new plClientMsg(plClientMsg::kSetGraphicsDefaults);
@@ -2406,12 +2405,10 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     // Force a device reset
     fDeviceLost = true;
     fForceDeviceReset = true;
-    
-    plVirtualCam1::SetAspectRatio((float)Width / (float)Height);
-    plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh());
-    
+
+    plVirtualCam1::Refresh();
     IResetDevice();
-    
+
 
     return;
 }
@@ -9257,7 +9254,6 @@ void plDXPipeline::SetViewTransform(const plViewTransform& v)
     }
 
     IUpdateViewFlags();
-
     IWorldToCameraToD3D();
 }
 

@@ -267,7 +267,7 @@ void cyCamera::SetFOV(float fov, double t)
                 plCameraBrain1* camBrain = curCam->GetBrain();
                 if (camBrain)
                 {
-                    camBrain->SetFOVGoal(fov,t);
+                    camBrain->SetFOVGoal(0.f, fov, t);
                 }
             }
         }
