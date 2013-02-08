@@ -75,8 +75,6 @@ public:
     // Advance the simulation by the given number of seconds
     void Advance(float delSecs);
 
-    bool MsgReceive(plMessage* msg);
-
     // The simulation won't run at all if it is suspended
     void Suspend() { fSuspended = true; }
     void Resume() { fSuspended = false; }
