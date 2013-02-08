@@ -248,10 +248,7 @@ void plSimulationMgr::Init()
     hsAssert(!gTheInstance, "Initializing the sim when it's already been done");
     gTheInstance = new plSimulationMgr();
     if (gTheInstance->InitSimulation())
-    {
         gTheInstance->RegisterAs(kSimulationMgr_KEY);
-        plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
-    }
     else
     {
         // There was an error when creating the PhysX simulation
@@ -267,7 +264,6 @@ void plSimulationMgr::Shutdown()
     hsAssert(gTheInstance, "Simulation manager missing during shutdown.");
     if (gTheInstance)
     {
-        plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), gTheInstance->GetKey());
         gTheInstance->UnRegisterAs(kSimulationMgr_KEY);     // this will destroy the instance
         gTheInstance = nil;
     }
@@ -622,18 +618,6 @@ void plSimulationMgr::ISendUpdates()
 //          fNeedLOSCullPhase = false;
 //      }
     }
-}
-
-bool plSimulationMgr::MsgReceive(plMessage *msg)
-{
-    // Suspend/resume the simulation based on whether or not we're in an age...
-    if (plAgeLoadedMsg* aMsg = plAgeLoadedMsg::ConvertNoRef(msg))
-    {
-        fSuspended = !aMsg->fLoaded;
-        return true;
-    }
-
-    return hsKeyedObject::MsgReceive(msg);
 }
 
 /////////////////////////////////////////////////////////////////

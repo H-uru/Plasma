@@ -1370,20 +1370,27 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
         IFireBehaviorNotify(plHBehavior::kBehaviorTypeLinkIn, false);
         return true;
     }
-    
+
     plAgeLoadedMsg *ageLoadMsg = plAgeLoadedMsg::ConvertNoRef(msg);
     if (ageLoadMsg) 
     {
         if (ageLoadMsg->fLoaded)
-        {
             // only the local player gets these
             NetworkSynch(hsTimer::GetSysSeconds(), true);
-            EnablePhysics(true);
-        } else
+        else
             fIsLinkedIn = false;
         return true;
     }
-    
+
+    plAgeLoaded2Msg *agePreLoadMsg = plAgeLoaded2Msg::ConvertNoRef(msg);
+    if (agePreLoadMsg)
+    {
+        // all the age data is loaded -- add our physical controller to the age
+        ValidatePhysics();
+        EnablePhysics(true);
+        return true;
+    }
+
     plAnimCmdMsg *cmdMsg = plAnimCmdMsg::ConvertNoRef(msg);
     if (cmdMsg)
     {
@@ -1651,7 +1658,8 @@ void plArmatureMod::AddTarget(plSceneObject* so)
     // non-players will unregister when they learn the truth.
     if (IsLocallyOwned())
         plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
-    
+    plgDispatch::Dispatch()->RegisterForType(plAgeLoaded2Msg::Index(), GetKey());
+
     // attach a clothingSDLModifier to handle clothing saveState
     delete fClothingSDLMod;
     fClothingSDLMod = new plClothingSDLModifier;

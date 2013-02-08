@@ -1680,19 +1680,9 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
 
 void plVirtualCam1::PopCamera(plCameraModifier1* pCam)
 {
-        // sanity / new default camera check
+    // sanity / new default camera check
     if (fCameraStack.size() <= 1)
         return;
-    
-    // Crazy Special Casing Turd: [based on some Cyan crap]
-    // is it the current camera AND the same camera we would otherwise switch to?
-    // if so, pop off the dupe if we're going to the age default... otherwise, go crazy.
-    if (fCameraStack.size() > 2 && pCam == GetCurrentStackCamera())
-    {
-        int theDupe = fCameraStack.size() - 1;
-        if (pCam == fCameraStack[theDupe] && theDupe == 2)
-            fCameraStack.pop_back();
-    }
 
     // are we mouse-looking?
     bool mLook = false;
