@@ -114,7 +114,7 @@ public:
 
     virtual void SetAspectRatio(float aspectratio) { plVirtualCam1::SetAspectRatio(aspectratio); }
     virtual float GetAspectRatio() const { return plVirtualCam1::GetAspectRatio(); }
-    virtual void RefreshFOV() { plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh()); }
+    virtual void RefreshFOV() { plVirtualCam1::Refresh(); }
 };
 
 

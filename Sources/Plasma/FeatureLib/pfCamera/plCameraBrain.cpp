@@ -177,17 +177,31 @@ void plCameraBrain1::Pop()
 }
 
 // set the goal to which we want to animate the fov
-void plCameraBrain1::SetFOVGoal(float h, double t)
+void plCameraBrain1::SetFOVGoal(float w, float h, double t)
 { 
-    if (fFOVGoal == h || h == fCamera->GetFOVh())
+    if (fFOVhGoal == h || h == fCamera->GetFOVh() &&
+        fFOVwGoal == w || w == fCamera->GetFOVw())
         return;
-    
-    float dif = h - fCamera->GetFOVh();
-    fFOVAnimRate = dif / ((float)t);
 
-    fFOVGoal = h; 
+    float dif = h - fCamera->GetFOVh();
+    fFOVhAnimRate = dif / ((float)t);
+
+    fFOVhGoal = h; 
     fFOVStartTime = hsTimer::GetSysSeconds();
     fFOVEndTime = fFOVStartTime + t; 
+
+    if (w == 0.f)
+    {
+        fFOVwGoal = IMakeFOVwZoom(h);
+        dif = fFOVwGoal - fCamera->GetFOVw();
+        fFOVwAnimRate = dif / ((float)t);
+    }
+    else
+    {
+        dif = w - fCamera->GetFOVw();
+        fFOVwAnimRate = dif / ((float)t);
+        fFOVwGoal = w;
+    }
 
     fFlags.SetBit(kAnimateFOV); 
 }
@@ -241,20 +255,25 @@ void plCameraBrain1::Update(bool forced)
 // adjust FOV based on elapsed time
 void plCameraBrain1::IAnimateFOV(double time)
 {
-    float dH = fFOVAnimRate * hsTimer::GetDelSysSeconds();
-    
+    float dH = fFOVhAnimRate * hsTimer::GetDelSysSeconds();
+    float dW = fFOVwAnimRate * hsTimer::GetDelSysSeconds();
     dH += fCamera->GetFOVh();
+    dW += fCamera->GetFOVw();
 
-    if ( (fFOVAnimRate < 0.0f && dH <= fFOVGoal) ||
-         (fFOVAnimRate > 0.0f && dH >= fFOVGoal)  )
+    if ( (fFOVhAnimRate < 0.0f && dH <= fFOVhGoal) ||
+         (fFOVhAnimRate > 0.0f && dH >= fFOVhGoal)  )
     {
-        fFlags.ClearBit(kAnimateFOV);
-        dH = fFOVGoal;
+        dH = fFOVhGoal;
+    }
+    if ( (fFOVwAnimRate < 0.0f && dW <= fFOVwGoal) ||
+         (fFOVwAnimRate > 0.0f && dW >= fFOVwGoal)  )
+    {
+        dW = fFOVwGoal;
     }
 
-    fCamera->SetFOVw( (float)(dH * plVirtualCam1::Instance()->GetAspectRatio()) );
-    fCamera->SetFOVh( dH );
-
+    if (dW == fFOVwGoal && dH == fFOVhGoal)
+        fFlags.ClearBit(kAnimateFOV);
+    fCamera->SetFOV( dW, dH );
 }
 
 // move the camera's origin point (not where it is looking) toward where it is going
@@ -262,7 +281,7 @@ void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
 {
     bool current = plVirtualCam1::Instance()->IsCurrentCamera(GetCamera());
 
-    if (fFlags.IsBitSet(kCutPos) || fFlags.IsBitSet(kNonPhys) || !current) 
+    if (fFlags.IsBitSet(kCutPos) || fFlags.IsBitSet(kNonPhys) || !current)
     {
         fCamera->SetTargetPos(fGoal);
         return;
@@ -280,12 +299,12 @@ void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
     //smooth out stoppage...
     float adjMaxVel = fVelocity;
     if (distToGoal <= 5.0f && distToGoal > 0.1f)
-    {   
+    {
         float mult = (distToGoal - 5.0f)*0.1f;
         adjMaxVel = fVelocity - hsABS(fVelocity*mult);
-    }   
+    }
 
-    
+
     if (distToGoal > 0.0f)
         dir.Normalize();
 
@@ -536,6 +555,14 @@ void plCameraBrain1::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEFloat(fZoomMin);
     stream->WriteLEFloat(fZoomMax);
 }
+
+float plCameraBrain1::IMakeFOVwZoom(float fovH) const
+{
+    float num = tan(hsDegreesToRadians(fovH / 2)) * tan(hsDegreesToRadians(fCamera->GetFOVw() / 2));
+    float denom = tan(hsDegreesToRadians(fCamera->GetFOVh() / 2));
+    return 2 * hsABS(hsRadiansToDegrees(atan(num / denom)));
+}
+
 bool plCameraBrain1::MsgReceive(plMessage* msg)
 {
     plCameraMsg* pCamMsg = plCameraMsg::ConvertNoRef(msg);
@@ -544,16 +571,18 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
         if (pCamMsg->Cmd(plCameraMsg::kStartZoomIn))
         {
             fFlags.SetBit(kAnimateFOV);
-            fFOVGoal = fZoomMin;
-            fFOVAnimRate = -1*fZoomRate;
+            fFOVhGoal = fZoomMin;
+            fFOVwGoal = IMakeFOVwZoom(fZoomMin);
+            fFOVwAnimRate = fFOVhAnimRate = -1*fZoomRate;
             return true;
         }
         else
         if (pCamMsg->Cmd(plCameraMsg::kStartZoomOut))
         {
             fFlags.SetBit(kAnimateFOV);
-            fFOVGoal = fZoomMax;
-            fFOVAnimRate = fZoomRate;
+            fFOVhGoal = fZoomMax;
+            fFOVwGoal = IMakeFOVwZoom(fZoomMax);
+            fFOVwAnimRate = fFOVhAnimRate = fZoomRate;
             return true;
         }
         else
@@ -637,8 +666,9 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             if (pCMsg->GetControlCode() == B_CAMERA_ZOOM_IN && fFlags.IsBitSet(kZoomEnabled))
             {
                 fFlags.SetBit(kAnimateFOV);
-                fFOVGoal = fZoomMin;
-                fFOVAnimRate = -1*fZoomRate;
+                fFOVhGoal = fZoomMin;
+                fFOVwGoal = IMakeFOVwZoom(fZoomMin);
+                fFOVwAnimRate = fFOVhAnimRate = -1*fZoomRate;
                 fFOVEndTime = hsTimer::GetSysSeconds() + 60;
                 return true;
             }
@@ -646,8 +676,9 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             if (pCMsg->GetControlCode() == B_CAMERA_ZOOM_OUT && fFlags.IsBitSet(kZoomEnabled))
             {
                 fFlags.SetBit(kAnimateFOV);
-                fFOVGoal = fZoomMax;
-                fFOVAnimRate = fZoomRate;
+                fFOVhGoal = fZoomMax;
+                fFOVwGoal = IMakeFOVwZoom(fZoomMin);
+                fFOVwAnimRate = fFOVhAnimRate = fZoomRate;
                 fFOVEndTime = hsTimer::GetSysSeconds() + 60;
                 return true;
             }
@@ -657,11 +688,12 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
                 if (fFlags.IsBitSet(kZoomEnabled))
                 {
                     fFlags.SetBit(kAnimateFOV);
-                    fFOVGoal = fZoomMin + ((fZoomMax - fZoomMin) / 2);
-                    if (fCamera->GetFOVw() >= fFOVGoal)
-                        fFOVAnimRate = -1*fZoomRate;
+                    fFOVhGoal = fZoomMin + ((fZoomMax - fZoomMin) / 2);
+                    fFOVwGoal = IMakeFOVwZoom(fFOVhGoal);
+                    if (fCamera->GetFOVh() >= fFOVhGoal)
+                        fFOVwAnimRate = fFOVhAnimRate = -1*fZoomRate;
                     else
-                        fFOVAnimRate = fZoomRate;
+                        fFOVwAnimRate = fFOVhAnimRate = fZoomRate;
                     fFOVEndTime = hsTimer::GetSysSeconds() + 60;
                 }
                 return true;

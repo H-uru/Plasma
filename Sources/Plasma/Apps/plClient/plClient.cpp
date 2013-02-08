@@ -1578,11 +1578,8 @@ bool plClient::StartInit()
     fNewCamera->Init();
     fNewCamera->SetPipeline( GetPipeline() );
 
-    float aspectratio = (float)fPipeline->Width() / (float)fPipeline->Height();
-    plVirtualCam1::SetAspectRatio(aspectratio);
-    plVirtualCam1::SetFOV(plVirtualCam1::GetFOVw(), plVirtualCam1::GetFOVh());
-
-    pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
+    plVirtualCam1::Refresh();
+    pfGameGUIMgr::GetInstance()->SetAspectRatio( (float)fPipeline->Width() / (float)fPipeline->Height() );
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
 
