@@ -229,18 +229,23 @@ def CMPNodeDate(nodeA, nodeB):
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.
 def FilterAgeName(ageName):
+    # Many age instance names without a possessive component have a spurious
+    # apostrophe at the end of the name. Let's correct that before we do anything
+    if ageName.endswith("'"):
+        ageName = ageName[:-1]
 
     # Replace file names with display names - only once, from the right.
     # This fixes a bug in which avatars' names containing words like Garden
     # incorrectly get replaced.
     for Age, replacement in kAges.Replace.iteritems():
-        ageNameList = ageName.rsplit(Age, 1)
-        ageName = replacement.join(ageNameList)
+        # Only replace if the replacement is not already in there...
+        # Otherwise we wend up with junk like "Eder Eder Gira"
+        if ageName.find(replacement) == -1:
+            ageNameList = ageName.rsplit(Age, 1)
+            ageName = replacement.join(ageNameList)
 
     # Find the appropriate display name.
-    if ageName == "GreatZero'":
-        ageName = "D'ni-Rezeero'"
-    elif ageName == "???" or ageName == "BahroCave":
+    if ageName == "???" or ageName == "BahroCave":
         sdl = xPsnlVaultSDL()
         if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
             ageName = "D'ni-Rudenna"

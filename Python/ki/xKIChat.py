@@ -1135,7 +1135,7 @@ class CommandsProcessor:
                 people = kEasterEggs[currentAge]["people"]
 
         ## Display the info.
-        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(self.chatMgr.GetAgeName(), see, people, exits), 0)
+        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(GetAgeName(), see, people, exits), 0)
 
     ## Get a feather in the current Age.
     def GetFeather(self, params):
