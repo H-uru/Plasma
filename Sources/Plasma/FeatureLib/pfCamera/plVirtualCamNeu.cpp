@@ -288,7 +288,10 @@ void plVirtualCam1::SetFOV(float w, float h)
     static float fourXthree = (4.f/3.f);
 
     fFOVh = h;
-    if (fAspectRatio == fourXthree)
+    if (w == 0.f)
+        // calculate an appropriate FOV from the height
+        fFOVw = 2 * hsRadiansToDegrees(atan(fAspectRatio * tan(hsDegreesToRadians(h/2))));
+    else if (fAspectRatio == fourXthree)
         fFOVw = w;
     else
     {
@@ -1419,8 +1422,7 @@ void plVirtualCam1::CreateDefaultCamera(plSceneObject* subject)
         plgDispatch::Dispatch()->RegisterForExactType(plEvalMsg::Index(), pMod->GetKey());
         plgDispatch::Dispatch()->RegisterForExactType(plCameraMsg::Index(), pMod->GetKey());
         
-        pMod->SetFOVw(90.0f);
-        pMod->SetFOVh(66.7f);
+        pMod->SetFOV(0.f, 60.f);
         // set up the brain and to be first-person 
         hsVector3 pt(0,0.0f,5.5);
         pBrain->SetOffset(pt);
