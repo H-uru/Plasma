@@ -2004,8 +2004,8 @@ PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
 {
     static bool on = true;
 
-    if (!on) {
-        on = !on;
+    on = !on;
+    if (on) {
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kNormal);
     } else {
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kNormal);
@@ -2021,8 +2021,8 @@ PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visi
     static bool on = false;
     static uint32_t oldMask = plDrawableSpans::kNormal;
 
-    if (!on) {
-        on = !on;
+    on = !on;
+    if (on) {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
         pfConsole::GetPipeline()->SetDrawableTypeMask(plDrawableSpans::kNormal);
     } else {
