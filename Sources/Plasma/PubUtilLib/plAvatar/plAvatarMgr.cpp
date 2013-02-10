@@ -728,7 +728,7 @@ plArmatureMod* plAvatarMgr::FindAvatarByPlayerID(uint32_t pid)
     return nil;
 }
 
-plArmatureMod *plAvatarMgr::FindAvatarByModelName(char *name)
+plArmatureMod *plAvatarMgr::FindAvatarByModelName(const plString& name)
 {
     plAvatarVec::iterator it;
     for (it = fAvatars.begin(); it != fAvatars.end(); ++it)

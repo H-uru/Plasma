@@ -96,12 +96,12 @@ class pfConsoleCmdGroup
 
         static pfConsoleCmdGroup    *GetBaseGroup( void );
 
-        pfConsoleCmd        *FindCommand( char *name );
-        pfConsoleCmd        *FindCommandNoCase( char *name, uint8_t flags = 0, pfConsoleCmd *start = nil );
+        pfConsoleCmd        *FindCommand( const char *name );
+        pfConsoleCmd        *FindCommandNoCase( const char *name, uint8_t flags = 0, pfConsoleCmd *start = nil );
         pfConsoleCmd        *FindNestedPartialCommand( char *name, uint32_t *counter );
 
-        pfConsoleCmdGroup   *FindSubGroup( char *name );
-        pfConsoleCmdGroup   *FindSubGroupNoCase( char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nil );
+        pfConsoleCmdGroup   *FindSubGroup( const char *name );
+        pfConsoleCmdGroup   *FindSubGroupNoCase( const char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nil );
 
         pfConsoleCmd        *GetFirstCommand( void ) { return fCommands; }
         pfConsoleCmdGroup   *GetFirstSubGroup( void ) { return fSubGroups; }
@@ -120,7 +120,7 @@ class pfConsoleCmdParam
 
         uint8_t   fType;
 
-        typedef char    *CharPtr;
+        typedef char* CharPtr;
 
         union
         {
@@ -153,7 +153,7 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator const CharPtr() const { return IToString(); }
+        operator CharPtr() const { return IToString(); }
         operator char() const { return IToChar(); }
 
         uint8_t   GetType( void ) { return fType; }
