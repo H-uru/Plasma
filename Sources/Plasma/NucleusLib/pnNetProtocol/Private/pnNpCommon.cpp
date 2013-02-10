@@ -333,7 +333,7 @@ NetVaultNode::~NetVaultNode () {
 }
 
 //============================================================================
-unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], unsigned bufsz, unsigned rwOpts) {
+unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], uint32_t bufsz, unsigned rwOpts) {
 
     DeallocNodeFields();
 
@@ -775,12 +775,12 @@ void NetVaultNode::SetText_2 (const wchar_t v[]) {
 }
 
 //============================================================================
-void NetVaultNode::SetBlob_1 (const uint8_t v[], unsigned len) {
+void NetVaultNode::SetBlob_1 (const uint8_t v[], uint32_t len) {
     IVaultNodeSetBlob(kBlob_1, &blob_1, &blob_1Length, v, len);
 }
 
 //============================================================================
-void NetVaultNode::SetBlob_2 (const uint8_t v[], unsigned len) {
+void NetVaultNode::SetBlob_2 (const uint8_t v[], uint32_t len) {
     IVaultNodeSetBlob(kBlob_2, &blob_2, &blob_2Length, v, len);
 }
 
