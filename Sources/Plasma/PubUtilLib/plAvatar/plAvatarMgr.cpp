@@ -190,14 +190,7 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
         const plLocation& maleLoc = plKeyFinder::Instance().FindLocation("GlobalAvatars", "Male");
         const plLocation& custLoc = plKeyFinder::Instance().FindLocation("CustomAvatars", name);
 
-#ifdef PLASMA_EXTERNAL_RELEASE
-        // Try global. If that doesn't work, players default to male.
-        // If not a player, try custLoc. If that doesn't work, fall back to male
-        const plLocation& loc = (globalLoc.IsValid() ? globalLoc : isPlayer ? maleLoc : custLoc.IsValid() ? custLoc : maleLoc);
-#else
-        // Try global. If that doesn't work try custom. Otherwise fall back to male
         const plLocation& loc = (globalLoc.IsValid() ? globalLoc : custLoc.IsValid() ? custLoc : maleLoc);
-#endif
 
         plString theName = name;
         if ( loc == maleLoc )

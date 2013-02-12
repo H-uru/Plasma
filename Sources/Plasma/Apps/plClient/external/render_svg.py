@@ -91,8 +91,8 @@ cursorOffsetList = {
 }
 
 textList = {
-	"xLoading_Linking_Text": ["background", "circles", "textLinking"],
-	"xLoading_Updating_Text": ["background", "circles", "textUpdating"]
+	"xLoading_Linking_Text": ["background", "circles", "textLinking"]
+	#"xLoading_Updating_Text": ["background", "circles", "textUpdating"]
 }
 
 voiceList = {
@@ -256,6 +256,6 @@ if __name__ == '__main__':
 	## Do the work!
 	print("Rendering SVGs...")
 	render_cursors(inpath, outpath)
-	render_loading_books(inpath, outpath)
+	#render_loading_books(inpath, outpath)
 	render_loading_text(inpath, outpath)
 	render_voice_icons(inpath, outpath)

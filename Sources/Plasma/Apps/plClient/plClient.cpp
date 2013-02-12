@@ -1556,6 +1556,8 @@ bool plClient::StartInit()
     //if( GetDone() ) return false;
     IPlayIntroBink("avi/intro1.bik", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
     if( GetDone() ) return false;
+    IPlayIntroBink("avi/intro2.bik", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    if( GetDone() ) return false;
     plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
     //

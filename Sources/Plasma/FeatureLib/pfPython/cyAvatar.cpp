@@ -1608,7 +1608,6 @@ void cyAvatar::PlaySimpleAnimation(const plString& animName)
 //
 void cyAvatar::ChangeAvatar(const char* genderName)
 {
-#ifndef PLASMA_EXTERNAL_RELEASE
     plClothingMgr::ChangeAvatar((char*)genderName);
     
     wchar_t wStr[MAX_PATH];
@@ -1620,7 +1619,6 @@ void cyAvatar::ChangeAvatar(const char* genderName)
         plr.SetAvatarShapeName(wStr);
         rvnPlr->DecRef();
     }
-#endif
 }
 
 /////////////////////////////////////////////////////////////////////////////

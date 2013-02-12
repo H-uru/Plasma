@@ -697,7 +697,7 @@ static void AuthFailedStrings (ENetError authError,
             switch (authError)
             {
                 case kNetErrAccountNotFound:
-                    *ppStr2 = "Account Not Found.";
+                    *ppStr2 = "Invalid account name or password.";
                     break;
                 case kNetErrAccountNotActivated:
                     *ppStr2 = "Account Not Activated.";
@@ -709,14 +709,14 @@ static void AuthFailedStrings (ENetError authError,
                     *ppStr2 = "Disconnected from Myst Online.";
                     break;
                 case kNetErrAuthenticationFailed:
-                    *ppStr2 = "Incorrect password.\n\nMake sure CAPS LOCK is not on.";
+                    *ppStr2 = "Invalid account name or password.";
                     break;
                 case kNetErrGTServerError:
                 case kNetErrGameTapConnectionFailed:
                     *ppStr2 = "Unable to connect to GameTap, please try again in a few minutes.";
                     break;
                 case kNetErrAccountBanned:
-                    *ppStr2 = "Your account has been banned from accessing Myst Online.  If you are unsure as to why this happened please contact customer support.";
+                    *ppStr2 = "Your account is either inactive or has been banned.\nIf you are unsure as to why this happened please check your e-mails or contact the support.";
                     break;
                 default:
                     *ppWStr =  NetErrorToString (authError);

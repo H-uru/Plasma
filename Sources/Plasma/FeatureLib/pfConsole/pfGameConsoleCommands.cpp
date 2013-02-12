@@ -444,7 +444,6 @@ PF_CONSOLE_CMD( Game_Emote, Sit, "", "")
     PushSimpleMultiStage(avatar, "SitDownGround", "SitIdleGround", "SitStandGround", true, true, plAGAnim::kBodyLower, plAvBrainGeneric::kSitOnGround);
 }
 
-#ifndef PLASMA_EXTERNAL_RELEASE
 PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages from this client appear as admin messages" )
 {
 //  pfKI::GetInstance()->SetTextChatAdminMode( (bool)params[ 0 ] );
@@ -452,7 +451,6 @@ PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages
     msg->SetFlags( params[0] ? pfKIMsg::kAdminMsg : 0 );
     plgDispatch::MsgSend( msg );
 }
-#endif
 
 #include "pfConditional/plObjectInBoxConditionalObject.h"
 
