@@ -265,36 +265,17 @@ def FilterAgeName(ageName):
 ## Returns an Age's name the way a player should see it.
 # This display is used in the top-right corner of the BigKI.
 def GetAgeName(ageInfo=None):
-
-    isSubAge = False
-    ageVault = ptAgeVault()
-    if ageInfo is None:
-        ageInfo = ageVault.getAgeInfo()
-
-    if ageInfo is None:
+    ageLink = ptNetLinkingMgr().getCurrAgeLink()
+    if not ageLink:
         return "?UNKNOWN?"
-
-    isChildAge = False
-    parent = ageInfo.getParentAgeLink()
-    if parent:
-        parentInfo = parent.getAgeInfo()
-        if parentInfo:
-            isChildAge = True
-
-    if ageInfo.getAgeFilename() != "Neighborhood":
-        subAges = ageVault.getSubAgesFolder()
-        if subAges and subAges.getChildNodeCount() > 0:
-            isSubAge = True
+    ageInfo = ageLink.getAgeInfo()
+    if not ageInfo:
+        return "?UNKNOWN?"
 
     if ageInfo.getAgeFilename() == "BahroCave":
         sdl = xPsnlVaultSDL()
         if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
             return "D'ni-Rudenna"
-
-    if ageInfo.getAgeInstanceName() == "Ae'gura" or ageInfo.getAgeFilename() == "city":
-        if isChildAge:
-            return "D'ni-Ae'gura'"
-        return "D'ni-Ae'gura"
 
     if ageInfo.getAgeFilename() in kAges.Hide:
         return "Unknown"
@@ -302,19 +283,7 @@ def GetAgeName(ageInfo=None):
     if ageInfo.getAgeFilename() in kAges.Display:
         return kAges.Display[ageInfo.getAgeFilename()]
 
-    # Don't include the owner's name on D'ni locations.
-    if ageInfo.getAgeInstanceName().startswith("D'ni"):
-        return ageInfo.getAgeInstanceName()
-
-    # For some reason it thinks Er'cana and Ahnonay are sub-Ages. Get their
-    # display name instead.
-    if (isChildAge or isSubAge) and not (ageInfo.getAgeFilename() == "Ercana" or ageInfo.getAgeFilename()[:7] == "Ahnonay"):
-        localizeName = ageInfo.getAgeInstanceName()
-        if isChildAge:
-            localizeName += "'"
-    else:
-        localizeName = ageInfo.getDisplayName()
-
+    localizeName = ageInfo.getDisplayName()
     return FilterAgeName(xLocTools.LocalizeAgeName(localizeName))
 
 ## Find the player's neighborhood.
