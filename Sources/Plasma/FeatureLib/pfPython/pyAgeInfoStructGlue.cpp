@@ -234,7 +234,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeLanguage, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getDisplayName)
 {
-    return PyString_FromString(self->fThis->GetDisplayName());
+    return PyString_FromPlString(self->fThis->GetDisplayName());
 }
 
 PYTHON_START_METHODS_TABLE(ptAgeInfoStruct)
@@ -410,7 +410,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeSequenceNumber, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getDisplayName)
 {
-    return PyString_FromString(self->fThis->GetDisplayName());
+    return PyString_FromPlString(self->fThis->GetDisplayName());
 }
 
 PYTHON_START_METHODS_TABLE(ptAgeInfoStructRef)
