@@ -136,6 +136,18 @@ kLeftFootClothingItem=6
 kRightFootClothingItem=7
 kAccessoryClothingItem=8
 
+kRandomExcludeClothing = ["Icon","Suit","DniHelmet","DniFace","Atrus","Catherine","Santa","PattysHat"]
+
+kRandomHairColors = [ptColor(0,0,0),ptColor(1,1,1),
+                     ptColor(0.46,0.15,0.15),ptColor(0.60,0.25,0.11),
+                     ptColor(0.48,0.22,0.12),ptColor(0.68,0.37,0.15),
+                     ptColor(0.98,0.81,0.58),ptColor(0.5,0.5,0.5)]
+kRandomSkinColors = [ptColor(0.94,0.83,0.64),ptColor(0.94,0.77,0.59),
+                     ptColor(0.88,0.66,0.49),ptColor(0.61,0.41,0.31),
+                     ptColor(0.26,0.18,0.14)]
+kRandomPantColors = [ptColor(0,0.27,0.74),ptColor(0.53,0.75,1),
+                     ptColor(0.85,1,0.57),ptColor(0.38,0.16,0)]
+
 #Debug print levels
 kDebugDumpLevel = 1
 kWarningLevel = 2
@@ -219,7 +231,68 @@ def PtFindAvatar(events):
             return event[3]
     # didn't find one
     return None
-    
+
+def PtWearRandomOutfit(avatar, seed=None):
+    """Randomizes avatar's outfit. seed is a hashable object, used to initalize the random number generator.
+If seed is None, the system time is used."""
+    import random
+    random.seed(seed)
+
+    Hair = avatar.avatar.getClosetClothingList(kHairClothingItem)
+    Shirt = avatar.avatar.getClosetClothingList(kShirtClothingItem)
+    Pants = avatar.avatar.getClosetClothingList(kPantsClothingItem)
+    Shoes = avatar.avatar.getClosetClothingList(kLeftFootClothingItem)
+    Acc = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
+
+    for group in Hair,Shirt,Pants,Shoes,Acc:
+        r = []
+        for item in group:
+            for ex in kRandomExcludeClothing:
+                if(item[0].find(ex) >= 0):
+                    r.append(item)
+                    break
+        for item in r:
+            group.pop(group.index(item))
+
+    a = random.randint(0,len(Hair)-1)
+    hItem = Hair[a][0]
+    a = random.randint(0,len(Shirt)-1)
+    sItem = Shirt[a][0]
+    a = random.randint(0,len(Pants)-1)
+    pItem = Pants[a][0]
+    a = random.randint(0,len(Shoes)-1)
+    shItem = Shoes[a][0]
+    match = avatar.avatar.getMatchingClothingItem(shItem)
+    a = random.randint(0,len(Acc)-1)
+    aItem = Acc[a][0]
+
+    avatar.avatar.wearClothingItem(hItem)
+    avatar.avatar.wearClothingItem(sItem)
+    avatar.avatar.wearClothingItem(pItem)
+    avatar.avatar.wearClothingItem(shItem)
+    avatar.avatar.wearClothingItem(match[0])
+    avatar.avatar.wearClothingItem(aItem)
+
+    a = random.randint(0,len(kRandomHairColors)-1)
+    hColor = kRandomHairColors[a]
+    a = random.randint(0,len(kRandomSkinColors)-1)
+    fColor = kRandomSkinColors[a]
+    a = random.randint(0,len(kRandomPantColors)-1)
+    pColor = kRandomPantColors[a]
+    sColor = ptColor(random.randint(0,255)/255.,random.randint(0,255)/255.,random.randint(0,255)/255.)
+
+    avatar.avatar.tintSkin(fColor)
+    avatar.avatar.tintClothingItem(hItem,hColor)
+    avatar.avatar.tintClothingItem(sItem,sColor)
+    avatar.avatar.tintClothingItem(pItem,pColor)
+
+    morph = 2*random.random() - 1
+
+    if (avatar.avatar.getAvatarClothingGroup() == kMaleClothingGroup):
+        avatar.avatar.setMorph("MFace",0,morph)
+    else:
+        avatar.avatar.setMorph("FFace",0,morph)
+
 ####################################
 # Exceptions
 ####################################

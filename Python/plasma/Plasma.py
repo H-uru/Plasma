@@ -472,6 +472,14 @@ def PtGetMouseTurnSensitivity():
     """Returns the sensitivity"""
     pass
 
+def PtGetNPCCount():
+    """This will return the number of NPCs in the current age"""
+    pass
+
+def PtGetNPCByID(npcID):
+    """This will return the NPC with a specific ID"""
+    pass
+
 def PtGetNumCameras():
     """returns camera stack size"""
     pass
