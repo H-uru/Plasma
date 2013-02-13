@@ -559,94 +559,64 @@ int plNetClientMgr::Update(double secs)
 //
 void plNetClientMgr::ICheckPendingStateLoad(double secs)
 {
-    if ((!fPendingLoads.empty() && GetFlagsBit(kPlayingGame)) || (GetFlagsBit(kLoadingInitialAgeState) && !GetFlagsBit(kNeedInitialAgeStateCount)))
+    // We only care if we're in an age or loading state
+    if (!(GetFlagsBit(kPlayingGame) || (GetFlagsBit(kLoadingInitialAgeState) && !GetFlagsBit(kNeedInitialAgeStateCount))))
+        return;
+
+    for (auto it = fPendingLoads.begin(); it != fPendingLoads.end();)
     {
-        PendingLoadsList::iterator it = fPendingLoads.begin();
-        while ( it!=fPendingLoads.end() )
+        PendingLoad* load = *it;
+
+        // If no key has been cached, we need to find it.
+        if (!load->fKey)
         {
-            PendingLoad * pl = (*it);
+            load->fKey = hsgResMgr::ResMgr()->FindKey(load->fUoid);
 
-            // cache rcvr key
-            if (!pl->fKey)
+            // By this point, we should have all the age's keys downloaded from filesrv
+            // So, if fKey is null at this point, this state is garbage
+            if (!load->fKey)
             {
-                // check for existence of key in dataset, excluding clone info.
-                plUoid tmpUoid = pl->fUoid;
-                tmpUoid.SetClone(0,0);
-                if ( !hsgResMgr::ResMgr()->FindKey( tmpUoid ) )
-                {
-                    // discard the state if object not found in dataset.
-                    hsLogEntry( DebugMsg( "Failed to find object %s in dataset. Discarding pending state '%s'",
-                        tmpUoid.StringIze().c_str(),
-                        pl->fSDRec->GetDescriptor()->GetName().c_str() ) );
-                    delete pl;
-                    it = fPendingLoads.erase(it);
-                    continue;
-                }
-                // find and cache the real key.
-                pl->fKey = hsgResMgr::ResMgr()->FindKey(pl->fUoid);
-            }
-                        
-            // deliver state if possible
-            plSynchedObject*so = pl->fKey ? plSynchedObject::ConvertNoRef(pl->fKey->ObjectIsLoaded()) : nil;
-            if (so && so->IsFinal())
-            {               
-                plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(pl->fSDRec->GetDescriptor()->GetName(), 
-                    plSDLModifierMsg::kRecv);
-                sdlMsg->SetState( pl->fSDRec, true/*delete pl->fSDRec for us*/ );
-                sdlMsg->SetPlayerID( pl->fPlayerID );
-
-#ifdef HS_DEBUGGING
-                if (plNetObjectDebugger::GetInstance()->IsDebugObject(so))
-                {
-                    hsLogEntry( DebugMsg( "Delivering SDL state %s:%s", pl->fKey->GetName().c_str(),
-                        pl->fSDRec->GetDescriptor()->GetName().c_str() ) );
-//                  hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(plString::Format("Dispatching SDL state, type %s to object:%s, locallyOwned=%d, st=%.3f rt=%.3f", 
-//                      pl->fSDRec->GetDescriptor()->GetName().c_str(), pl->fKey->GetName().c_str(), 
-//                      so->IsLocallyOwned()==plSynchedObject::kYes, secs, hsTimer::GetSeconds()).c_str()));
-//                  hsLogEntry( pl->fSDRec->DumpToObjectDebugger( "Delivering SDL state", false, 0 ) );
-                }
-#endif
-
-                sdlMsg->Send(pl->fKey);
-
-                pl->fSDRec = nil;   // so it won't be deleted in the PendingLoad dtor.
-                delete pl;
+                ErrorMsg("Key `%s` not found. Discarding state for `%s`",
+                          load->fUoid.GetObjectName().c_str(),
+                          load->fSDRec->GetDescriptor()->GetName().c_str());
                 it = fPendingLoads.erase(it);
-            }
-            else
-            {
-                // report old pending state
-                double rawSecs = hsTimer::GetSeconds();
-                if ((rawSecs - pl->fQueuedTime) > 60.f /*secs*/)
-                {
-                    if (pl->fQueueTimeResets >= 5)
-                    {
-                        // if this is our fifth time in here then we've been queued
-                        // for around 5 minutes and its time to go
-
-                        WarningMsg( "Pending state '%s' for object [uoid:%s,key:%s] has been queued for about %f secs. Removing...",
-                            pl->fSDRec && pl->fSDRec->GetDescriptor() ? pl->fSDRec->GetDescriptor()->GetName().c_str() : "?",
-                            pl->fUoid.StringIze().c_str(), pl->fKey ? pl->fKey->GetUoid().StringIze().c_str() : "?",
-                            ( rawSecs - pl->fQueuedTime ) * pl->fQueueTimeResets);
-
-                        delete pl;
-                        it = fPendingLoads.erase(it);
-                        continue;
-                    }
-
-                    WarningMsg( "Pending state '%s' for object [uoid:%s,key:%s] has been queued for about %f secs. %s",
-                        pl->fSDRec && pl->fSDRec->GetDescriptor() ? pl->fSDRec->GetDescriptor()->GetName().c_str() : "?",
-                        pl->fUoid.StringIze().c_str(), pl->fKey ? pl->fKey->GetUoid().StringIze().c_str() : "?",
-                        ( rawSecs - pl->fQueuedTime ) * pl->fQueueTimeResets,
-                        so ? "(not loaded)" : "(not final)" );
-                    // reset queue time so we don't spew too many log msgs.
-                    pl->fQueuedTime = rawSecs;
-                    pl->fQueueTimeResets += 1;
-                }
-
-                it++;
+                delete load;
+                continue;
             }
         }
+
+        // Time to deliver the state!
+        plSynchedObject* synchObj = plSynchedObject::ConvertNoRef(load->fKey->ObjectIsLoaded());
+        if (synchObj && synchObj->IsFinal())
+        {
+            plSDLModifierMsg* msg = new plSDLModifierMsg(load->fSDRec->GetDescriptor()->GetName(), plSDLModifierMsg::kRecv);
+            msg->SetState(load->fSDRec, true);
+            load->fSDRec = nullptr;
+            msg->SetPlayerID(load->fPlayerID);
+
+#ifdef HS_DEBUGGING
+            if (plNetObjectDebugger::GetInstance()->IsDebugObject(synchObj))
+            {
+                DebugMsg("Delivering SDL State '%s' to %s owned key %s",
+                    msg->GetState()->GetDescriptor()->GetName().c_str(),
+                    (synchObj->IsLocallyOwned() == plSynchedObject::kYes) ? "locally" : "remote",
+                    load->fUoid.StringIze().c_str());
+            }
+#endif
+            msg->Send(load->fKey);
+            it = fPendingLoads.erase(it);
+            delete load;
+        }
+        else if (GetFlagsBit(kPlayingGame))
+        {
+            // If we're playing the game and object isn't loaded/final, then this state is probably
+            // never going to be useful (it's from some paged in hack or something that's been deleted)
+            // Throw it away.
+            it = fPendingLoads.erase(it);
+            delete load;
+        }
+        else
+            ++it;
     }
 }
 
@@ -1437,11 +1407,10 @@ plUoid plNetClientMgr::GetAgeSDLObjectUoid(const char* ageName) const
 //
 void plNetClientMgr::AddPendingLoad(PendingLoad *pl) 
 { 
-    pl->fQueuedTime = hsTimer::GetSeconds();    // timestamp
-
     // find corresponding key
     pl->fKey = hsgResMgr::ResMgr()->FindKey(pl->fUoid);
 
+#ifdef HS_DEBUGGING
     // check for age SDL state
     if (!pl->fUoid.GetObjectName().IsNull() && !pl->fUoid.GetObjectName().Compare(plSDL::kAgeSDLObjectName))
     {
@@ -1451,6 +1420,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
         else
             DebugMsg("Found age hook object");
     }
+#endif
 
     // check if object is ready
     if (pl->fKey)
@@ -1468,7 +1438,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
     }
 
     // add entry
-    fPendingLoads.push_back(pl);    
+    fPendingLoads.push_back(pl);
 }
 
 void plNetClientMgr::AddPendingPagingRoomMsg( plNetMsgPagingRoom * msg )
