@@ -98,6 +98,7 @@ set(CoreLib_HEADERS
     plViewTransform.h
 )
 
+use_precompiled_header(_CoreLibPch.h Pch.cpp CoreLib_HEADERS CoreLib_SOURCES)
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
 target_link_libraries(CoreLib ${PCRE_LIBRARY})
 

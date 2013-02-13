@@ -41,13 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plString.h"
-
-#include <cstring>
-#include <cstdlib>
-#include <wchar.h>
-#include <memory>
 #include <functional>
+#include <memory>
+#include <wchar.h>
+#pragma hdrstop
+
+#include "plString.h"
 #include <pcre.h>
 
 const plString plString::Null;

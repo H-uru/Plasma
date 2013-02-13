@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#pragma hdrstop
+
 #include "hsMatrix33.h"
 #include "hsStream.h"
 

@@ -40,12 +40,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#include <cmath>
 #include "HeadSpin.h"
+#pragma hdrstop
+
 #include "hsGeometry3.h"
 #include "hsQuat.h"
 #include "hsMatrix44.h"
 #include "hsStream.h"
-#include <cmath>
 
 #ifdef HS_SIMD_INCLUDE
 #  include HS_SIMD_INCLUDE

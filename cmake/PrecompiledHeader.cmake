@@ -14,7 +14,6 @@ function(use_precompiled_header PrecompiledHeader PrecompiledSource Headers Sour
             get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
             set(PrecompiledBinary ${PrecompiledBasename}.pch)
 
-            add_definitions(/Fp"${PrecompiledBinary}")
             add_definitions(/Yu"${PrecompiledHeader}")
             add_definitions(/FI"${PrecompiledHeader}")
             set_source_files_properties(${PrecompiledSource} PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\"")
