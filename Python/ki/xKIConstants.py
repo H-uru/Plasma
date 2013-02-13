@@ -130,7 +130,10 @@ class kAges:
                "philRelto" : "Phil's Relto",
                "Shaft" : "D'ni-Tiwah",
                "Spy Room" : "D'ni-Ae'gura",
-               "spyroom" : "D'ni-Ae'gura"}
+               "spyroom" : "D'ni-Ae'gura",
+               "Trebivdil" : "Tre'bivdil",
+               "trebivdil" : "Tre'bivdil",
+               "vothol" : "Vothol Gallery"}
     Hide = ["BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"]
     NoInvite = ["Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
                 "BahroCave", "LiveBahroCave", "LiveBahroCaves", 
