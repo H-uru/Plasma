@@ -40,9 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "hsThread.h"
 #include "hsWindows.h"
 #include <process.h>
+#pragma hdrstop
+
+#include "hsThread.h"
 #include "hsExceptions.h"
 #include "hsMemory.h"
 

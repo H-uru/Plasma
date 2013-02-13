@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef _MSC_VER
 #   include <crtdbg.h>
 #endif
+#pragma hdrstop
 
 #include "hsTemplates.h"
 #include "plString.h"
