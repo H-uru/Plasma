@@ -960,7 +960,28 @@ PyObject* cyMisc::GetLocalPlayer()
                         0.0 );
 }
 
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : GetNPC
+//  PARAMETERS : npcID  - is the ID of an NPC
+//
+//  PURPOSE    : Returns a pySceneobject of an NPC
+//
+PyObject* cyMisc::GetNPC(int npcID)
+{
+    plSceneObject *so = plSceneObject::ConvertNoRef(plNetClientMgr::GetInstance()->GetNPC(npcID));
+    if ( so )
+        return pySceneObject::New(so->GetKey());
 
+    char* errmsg = "NPC not found";
+    PyErr_SetString(PyExc_NameError, errmsg);
+    PYTHON_RETURN_ERROR;
+}
+
+PyObject* cyMisc::GetNPCCount()
+{
+    return PyInt_FromLong(plNetClientMgr::GetInstance()->NPCKeys().size());
+}
 
 #if 1
 #include "plStatusLog/plStatusLog.h"
