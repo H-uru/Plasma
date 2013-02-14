@@ -677,7 +677,7 @@ bool plCameraBrain1::MsgReceive(plMessage* msg)
             {
                 fFlags.SetBit(kAnimateFOV);
                 fFOVhGoal = fZoomMax;
-                fFOVwGoal = IMakeFOVwZoom(fZoomMin);
+                fFOVwGoal = IMakeFOVwZoom(fZoomMax);
                 fFOVwAnimRate = fFOVhAnimRate = fZoomRate;
                 fFOVEndTime = hsTimer::GetSysSeconds() + 60;
                 return true;
