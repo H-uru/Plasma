@@ -1436,10 +1436,6 @@ bool plClient::StartInit()
 
     plgAudioSys::Activate(true);
 
-    IPlayIntroMovie("avi/CyanWorlds.avi", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
-    if( GetDone() ) return false;
-    plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
-
     //
     // Init Net before loading things
     //
@@ -1453,7 +1449,7 @@ bool plClient::StartInit()
     pModMsg2->SetCmd(plCmdIfaceModMsg::kAdd);
     plgDispatch::MsgSend(pModMsg2);
 
-    // create new the virtual camera
+    // create new virtual camera
     fNewCamera = new plVirtualCam1;
     fNewCamera->RegisterAs( kVirtualCamera1_KEY ); 
     fNewCamera->Init();
@@ -1463,6 +1459,10 @@ bool plClient::StartInit()
     pfGameGUIMgr::GetInstance()->SetAspectRatio( (float)fPipeline->Width() / (float)fPipeline->Height() );
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
+
+    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    if(GetDone()) return false;
+    plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
     // create the listener for the audio system:
     plListener* pLMod = new plListener;
