@@ -3935,17 +3935,10 @@ PF_CONSOLE_GROUP( Movie ) // Defines a main command group
 PF_CONSOLE_CMD( Movie,
                     Start,
                    "string filename",
-                   "Start of movie with this filename" )
+                   "Start movie with this filename" )
 {
     char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStart);
-
-//#define MF_TEST_MOVIECALLBACKS
-#ifdef MF_TEST_MOVIECALLBACKS
-    plMovieMsg* cb = new plMovieMsg("avi/intro0.bik", plMovieMsg::kStart);
-    mov->AddCallback(cb);
-    mov->SetCmd(mov->GetCmd() | plMovieMsg::kAddCallbacks);
-#endif // MF_TEST_MOVIECALLBACKS
 
     mov->Send();
 
