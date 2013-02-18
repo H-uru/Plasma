@@ -66,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 #include "pySDL.h"
+#include "pyPlayer.h"
 
 #include "pnKeyedObject/plKey.h"
 
@@ -315,7 +316,33 @@ PyObject* pyVault::GetLinkToCity() const
 
     PYTHON_RETURN_NONE;
 }
+// Get all online Players
+PyObject* pyVault::GetAllOnlinePlayers()
+{
+    NetVaultNode *tempNode = new NetVaultNode();
+    PyObject *playerList = PyList_New(0);
 
+    tempNode->SetInt32_1(1); // SetOnline
+    tempNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+
+    ARRAY(unsigned) nodeIds;
+    VaultFindNodesAndWait(tempNode, &nodeIds);
+
+    if (nodeIds.Count())
+    {
+        for(int i=0; i<nodeIds.Count()-1; i++) // HACK: The last node doesn't seem to contain a player
+        {
+            VaultFetchNodesAndWait(&nodeIds[i], 1);
+
+            VaultPlayerInfoNode playerNode(VaultGetNodeIncRef(nodeIds[i]));
+
+            plString playerName = plString::FromWchar(playerNode.GetPlayerName());
+            PyObject *player = pyPlayer::New(playerName.c_str(), playerNode.GetPlayerId());
+            PyList_Append(playerList, player);
+        }
+    }
+    return playerList;
+}
 
 // Owned ages
 PyObject* pyVault::GetOwnedAgeLink( const pyAgeInfoStruct & info )

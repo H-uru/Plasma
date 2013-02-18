@@ -121,6 +121,9 @@ public:
     PyObject* GetLinkToMyNeighborhood() const; // returns pyVaultAgeLinkNode
     PyObject* GetLinkToCity() const; // returns pyVaultAgeLinkNode
     ///////////////
+    // All online Players
+    PyObject* GetAllOnlinePlayers();
+    ///////////////
     // Owned ages
     PyObject* GetOwnedAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     // Visit ages

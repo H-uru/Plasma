@@ -245,6 +245,11 @@ PYTHON_METHOD_DEFINITION(ptVault, sendToDevice, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getAllOnlinePlayers)
+{
+    return self->fThis->GetAllOnlinePlayers();
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getPsnlAgeSDL)
 {
     return self->fThis->GetPsnlAgeSDL();
@@ -494,6 +499,7 @@ PYTHON_START_METHODS_TABLE(ptVault)
 #endif
     PYTHON_METHOD(ptVault, findNode, "Params: templateNode\nFind the node matching the template"),
     PYTHON_METHOD(ptVault, sendToDevice, "Params: node,deviceName\nSends a ptVaultNode object to an Age's device by deviceName."),
+    PYTHON_METHOD_NOARGS(ptVault, getAllOnlinePlayers, "Returns a list of all online ptPlayer's"),
     PYTHON_METHOD_NOARGS(ptVault, getPsnlAgeSDL, "Returns the personal age SDL"),
     PYTHON_METHOD(ptVault, updatePsnlAgeSDL, "Params: pyrec\nUpdates the personal age SDL to the specified data"),
     PYTHON_METHOD_NOARGS(ptVault, inMyPersonalAge, "Are we in the player's personal age?"),
