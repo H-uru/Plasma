@@ -161,7 +161,7 @@ class pfKIMsg : public plMessage
             kPrivateMsg     = 0x00000001,
             kAdminMsg       = 0x00000002,
             kDead           = 0x00000004,
-            kUNUSED1        = 0x00000008,
+            kInterAgeMsg    = 0x00000008,
             kStatusMsg      = 0x00000010,
             kNeighborMsg    = 0x00000020,   // sending to all the neighbors
             kChannelMask    = 0x0000ff00

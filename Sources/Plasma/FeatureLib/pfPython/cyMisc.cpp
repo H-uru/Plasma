@@ -1122,7 +1122,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 
     if (tolist.size() > 0)
     {
-        if (flags & 8/* kRTChatInterAge in PlasmaKITypes.py */)
+        if (flags & pfKIMsg::kInterAgeMsg)
         {
             // allow inter-age routing of this msg
             msg->SetBCastFlag( plMessage::kNetAllowInterAge );
@@ -1156,7 +1156,7 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 
     if (tolist.size() > 0)
     {
-        if (flags & 8/* kRTChatInterAge in PlasmaKITypes.py */)
+        if (flags & pfKIMsg::kInterAgeMsg)
         {
             // allow inter-age routing of this msg
             msg->SetBCastFlag( plMessage::kNetAllowInterAge );
