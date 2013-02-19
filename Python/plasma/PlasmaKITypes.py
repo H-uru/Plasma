@@ -465,14 +465,14 @@ def PtUpdateGZGamesChonicles(GZPlaying,MarkerGottenColor,MarkerToGetColor,Marker
         pass
 
 
-# OnRTChat flags
-# NOTE: kRTChatInterAge = 8 is being used in cyMisc.cpp SendRTChat (hard coded) so don't change here unless you change that too
-kRTChatPrivate=1
-kRTChatAdmin=2
-kRTChatPrivateAdmin=3
-kRTChatInterAge=8
-kRTChatStatusMsg=16
-kRTChatNeighborsMsg=32
+# OnRTChat flags (see pfKIMsg.h)
+kRTChatPrivate = 0x01
+kRTChatAdmin = 0x02
+kRTChatPrivateAdmin= kRTChatPrivate | kRTChatAdmin
+kRTChatGlobal = 0x04
+kRTChatInterAge = 0x08
+kRTChatStatusMsg = 0x10
+kRTChatNeighborsMsg = 0x20
 
 # flags channel mask
 kRTChatFlagMask = 65535
