@@ -1122,11 +1122,14 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 
     if (tolist.size() > 0)
     {
+#ifndef PLASMA_EXTERNAL_RELEASE
+        // this goes to everybody on the shard
+        if (flags & pfKIMsg::kGlobalMsg)
+            msg->SetAllBCastFlags(plMessage::kCCRSendToAllPlayers);
+#endif
+        // allow inter-age routing of this msg
         if (flags & pfKIMsg::kInterAgeMsg)
-        {
-            // allow inter-age routing of this msg
             msg->SetBCastFlag( plMessage::kNetAllowInterAge );
-        }
         // add net rcvrs to msg
         int i;
         for ( i=0 ; i<tolist.size() ; i++ )
@@ -1156,11 +1159,14 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
 
     if (tolist.size() > 0)
     {
+#ifndef PLASMA_EXTERNAL_RELEASE
+        // this goes to everybody on the shard
+        if (flags & pfKIMsg::kGlobalMsg)
+            msg->SetAllBCastFlags(plMessage::kCCRSendToAllPlayers);
+#endif
+        // allow inter-age routing of this msg
         if (flags & pfKIMsg::kInterAgeMsg)
-        {
-            // allow inter-age routing of this msg
             msg->SetBCastFlag( plMessage::kNetAllowInterAge );
-        }
         // add net rcvrs to msg
         for ( int i = 0 ; i < tolist.size() ; i++ )
         {
