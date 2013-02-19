@@ -350,7 +350,7 @@ class nxusBookMachine(ptModifier):
         self.publicAges = {
             'city' : AgeData(ageFilename = 'city', defaultMaxPop = 20, linkVisible = 1),
             'GreatTreePub' : AgeData(ageFilename = 'GreatTreePub', defaultMaxPop = 100, linkVisible = 0),
-            'guildPub' : AgeData(ageFilename = '', defaultMaxPop = 100, linkVisible = 0),
+            'guildPub' : AgeData(ageFilename = '', defaultMaxPop = 0, linkVisible = 0),
             'Neighborhood02' : AgeData(ageFilename = 'Neighborhood02', defaultMaxPop = 100, linkVisible = 0),
             'Kveer' : AgeData(ageFilename = 'Kveer', defaultMaxPop = 100, linkVisible = 0),
             }
@@ -419,14 +419,22 @@ class nxusBookMachine(ptModifier):
         psnlSDL = xPsnlVaultSDL()
         showGuildPub = psnlSDL["guildAlliance"][0]
         if showGuildPub:
-            guild = kGuildPubs[showGuildPub - 1]
-            filename = "GuildPub-" + guild
-            PtDebugPrint("nxusBookMachine.OnServerInitComplete() - member of guild: %s" % (guild))
-            guildPubEntry.linkVisible = 1
-            guildPubEntry.guild = guild
-            guildPubEntry.ageFilename = filename
-            #rename old entry
-            self.publicAges[filename] = guildPubEntry
+            if PtIsInternalRelease():
+                for guild in kGuildPubs:
+                    filename = "GuildPub-%s" % guild
+                    data = AgeData(filename, 0, 1)
+                    data.guild = guild # for name formatting
+                    self.publicAges[filename] = data
+                    PtDebugPrint("nxusBookMachine.OnServerInitComplete() - showing guild pub: %s" % guild)
+            else:
+                guild = kGuildPubs[showGuildPub - 1]
+                filename = "GuildPub-" + guild
+                PtDebugPrint("nxusBookMachine.OnServerInitComplete() - member of guild: %s" % (guild))
+                guildPubEntry.linkVisible = 1
+                guildPubEntry.guild = guild
+                guildPubEntry.ageFilename = filename
+                #rename old entry
+                self.publicAges[filename] = guildPubEntry
 
         del self.publicAges['guildPub']
 
@@ -688,7 +696,20 @@ class nxusBookMachine(ptModifier):
             respKISlot.run(self.key, events = events) #Insert KI
         else:
             for ageFilename in self.publicAges.keys():
-                PtGetPublicAgeList(ageFilename, self)
+                # don't ask the server about hardcoded ages...
+                # crappy server software (Cyan) might throw away the request, leaving us dead in the water
+                # true for GuildPub-Cartographers
+                try:
+                    hardcoded = kHardcodedInstances[ageFilename]
+                except KeyError:
+                    PtGetPublicAgeList(ageFilename, self)
+                else:
+                    if len(self.publicAges[ageFilename].instances) == 0:
+                        ageInfo = ptAgeInfoStruct()
+                        ageInfo.setAgeFilename(ageFilename)
+                        ageInfo.setAgeInstanceGuid(hardcoded)
+                        instance = AgeInstance((ageInfo, 0, 0))
+                        self.publicAges[ageFilename].instances.append(instance)
             PtGetPublicAgeList('Neighborhood', self)
 
             # set up the camera so when the one shot returns it gets set up right (one shot was fighting with python for camera control)
@@ -1215,22 +1236,9 @@ class nxusBookMachine(ptModifier):
                 #instance with lowest population (minimal load ballancing, if multiple public instanes ever go back)
                 #minPop = min(entry.instances, key = lambda age: age.population)
                 #but for now, lets just stick to oldest instance (with lowest node id)
-                try:
-                    #if it has hardcoded instance, we will try to find it
-                    guid = kHardcodedInstances[ageFilename]
-                    for instance in entry.instances:
-                        if str(instance.ageInfo.getAgeInstanceGuid()) == guid:
-                            entry.selected = instance
-                            break
-                    else:
-                        PtDebugPrint("nxsuBookMachine.IChoosePublicInstances(): Couldn't find hardcoded GUID %s in %s public instances" % (guid, ageFilename))
-                        #ageData.selected = minPop
-                        entry.selected = entry.instances[0]
-                except KeyError:
-                    #ageData.selected = minPop
-                    entry.selected = entry.instances[0]
+                entry.selected = entry.instances[0]
             else:
-                    entry.selected = None
+                entry.selected = None
 
     #######################################
     # Methods for generating link list
@@ -1269,18 +1277,22 @@ class nxusBookMachine(ptModifier):
             if ageData.selected is None or not ageData.linkVisible:
                 continue
 
-            #check if selected instance is full
-            entryEnabled = (ageData.selected.population <= ageData.maxPop)
-
-            #try to find translated description
-            try:
-                (textFull, textPopulation) = kPublicAgesDescription[ageData.ageFilename]
-                if entryEnabled:
-                    description = PtGetLocalizedString(textPopulation, [str(ageData.selected.population), str(ageData.maxPop)])
-                else:
-                    description = PtGetLocalizedString(textFull)
-            except KeyError:
+            if ageData.maxPop == 0:
+                # maxPop == 0 means don't show it
                 description = U""
+            else:
+                #check if selected instance is full
+                entryEnabled = (ageData.selected.population <= ageData.maxPop)
+
+                #try to find translated description
+                try:
+                    (textFull, textPopulation) = kPublicAgesDescription[ageData.ageFilename]
+                    if entryEnabled:
+                        description = PtGetLocalizedString(textPopulation, [str(ageData.selected.population), str(ageData.maxPop)])
+                    else:
+                        description = PtGetLocalizedString(textFull)
+                except KeyError:
+                    description = U""
 
             #special case: Ae'gura multiple link points
             if ageData.ageFilename == 'city':
