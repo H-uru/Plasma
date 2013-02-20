@@ -6,17 +6,11 @@ endif(WIN32)
 
 set(AssShader_SOURCES
     main.cpp
-    StdAfx.cpp
-)
-
-set(AssShader_HEADERS
-    StdAfx.h
 )
 
 
-add_executable(AssShader ${AssShader_SOURCES} ${AssShader_HEADERS})
+add_executable(AssShader ${AssShader_SOURCES})
 target_link_libraries(AssShader ${DirectX_LIBRARIES})
 target_link_libraries(AssShader CoreLib)
 
 source_group("Source Files" FILES ${AssShader_SOURCES})
-source_group("Header Files" FILES ${AssShader_HEADERS})
