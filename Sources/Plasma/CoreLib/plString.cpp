@@ -722,10 +722,10 @@ plString plString::Substr(int start, size_t size) const
 {
     size_t maxSize = GetSize();
 
+     if (start < 0)
+        start = 0;
     if (start > maxSize)
         return Null;
-    if (start < 0)
-        start = 0;
     if (start + size > maxSize)
         size = maxSize - start;
 
