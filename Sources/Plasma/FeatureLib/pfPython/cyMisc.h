@@ -462,8 +462,7 @@ public:
     //
     //  RETURNS    : the flags that were sent with the message (may be modified)
     //
-    static uint32_t SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const char* message, uint32_t flags);
-    static uint32_t SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const wchar_t* message, uint32_t flags);
+    static uint32_t SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const plString& message, uint32_t flags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
