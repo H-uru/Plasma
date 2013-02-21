@@ -333,7 +333,7 @@ NetVaultNode::~NetVaultNode () {
 }
 
 //============================================================================
-unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], uint32_t bufsz, unsigned rwOpts) {
+uint32_t NetVaultNode::Read_LCS (const uint8_t inbuffer[], uint32_t bufsz, unsigned rwOpts) {
 
     DeallocNodeFields();
 
@@ -391,7 +391,7 @@ unsigned NetVaultNode::Read_LCS (const uint8_t inbuffer[], uint32_t bufsz, unsig
 }
 
 //============================================================================
-unsigned NetVaultNode::Write_LCS (ARRAY(uint8_t) * buffer, unsigned rwOpts) {
+uint32_t NetVaultNode::Write_LCS (ARRAY(uint8_t) * buffer, unsigned rwOpts) {
 
     unsigned pos = buffer->Count();
 
