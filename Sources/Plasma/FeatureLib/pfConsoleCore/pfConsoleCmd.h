@@ -153,7 +153,7 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator CharPtr() const { return IToString(); }
+        operator const CharPtr() const { return IToString(); }
         operator char() const { return IToChar(); }
 
         uint8_t   GetType( void ) { return fType; }
