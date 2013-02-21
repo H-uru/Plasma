@@ -35,7 +35,6 @@ add_subdirectory(plProgressMgr)
 add_subdirectory(plResMgr)
 add_subdirectory(plScene)
 add_subdirectory(plSDL)
-#add_subdirectory(plSDLBrowser)         # Not being used by any current slns
 add_subdirectory(plSockets)
 add_subdirectory(plStatGather)
 add_subdirectory(plStatusLog)
