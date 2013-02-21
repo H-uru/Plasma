@@ -248,8 +248,8 @@ private:
     wchar_t *   istring64_2;
     wchar_t *   text_1;
     wchar_t *   text_2;
-    uint8_t *   blob_1; size_t blob_1Length;
-    uint8_t *   blob_2; size_t blob_2Length;
+    uint8_t *   blob_1; uint32_t blob_1Length;
+    uint8_t *   blob_2; uint32_t blob_2Length;
 
     void IVaultNodeSetString (
         uint64_t        bit,
@@ -320,7 +320,7 @@ public:
     ~NetVaultNode ();
 
     // Threaded apps: Must be called with node->critsect locked
-    uint32_t Read_LCS (const uint8_t buffer[], size_t bufsz, uint32_t rwOpts);   // returns number of bytes read
+    uint32_t Read_LCS (const uint8_t buffer[], uint32_t bufsz, uint32_t rwOpts);   // returns number of bytes read
     uint32_t Write_LCS (ARRAY(uint8_t) * buffer, uint32_t rwOpts);               // returns number of bytes written
 
     bool Matches (const NetVaultNode * other);
@@ -365,8 +365,8 @@ public:
     void SetIString64_2 (const wchar_t v[]);
     void SetText_1 (const wchar_t v[]);
     void SetText_2 (const wchar_t v[]);
-    void SetBlob_1 (const uint8_t v[], size_t len);
-    void SetBlob_2 (const uint8_t v[], size_t len);
+    void SetBlob_1 (const uint8_t v[], uint32_t len);
+    void SetBlob_2 (const uint8_t v[], uint32_t len);
 
     uint32_t GetNodeId () const { return nodeId; }
     uint32_t GetCreateTime () const { return createTime; }
