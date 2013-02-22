@@ -49,6 +49,7 @@ from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
+from PlasmaVaultConstants import *
 
 import xLocTools
 
@@ -827,6 +828,16 @@ class CommandsProcessor:
             if message[-1:] == "s":
                 v = "are"
             self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
+            return None
+        elif PtIsInternalRelease() and msg.startswith("/system "):
+            send = message[len("/system "):]
+            cFlags = ChatFlags(0)
+            cFlags.admin = 1
+            cFlags.ccrBcast = 1
+            cFlags.toSelf = 1
+            PtSendRTChat(PtGetLocalPlayer(), [], send, cFlags.flags)
+            fldr = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAllPlayersFolder)
+            self.chatMgr.AddChatLine(ptPlayer(fldr, 0), send, cFlags)
             return None
 
         # Is it an emote, a "/me" or invalid command?
