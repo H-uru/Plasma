@@ -262,6 +262,16 @@ def FilterAgeName(ageName):
     ageName = ageName.replace("(null)", "").strip()
     return ageName
 
+def FilterPlayerInfoList(playerInfoList):
+    """Removes yourself from a list of player info nodes"""
+    myID = PtGetLocalPlayer().getPlayerID()
+    for i, playerInfo in enumerate(playerInfoList):
+        playerInfo = playerInfo.getChild().upcastToPlayerInfoNode()
+        if not playerInfo:
+            continue
+        if playerInfo.playerGetID() == myID:
+            del playerInfoList[i]
+
 ## Returns an Age's name the way a player should see it.
 # This display is used in the top-right corner of the BigKI.
 def GetAgeName(ageInfo=None):
