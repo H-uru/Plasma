@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
+#include "plString.h"
 #include "pfConsoleCmd.h"
 
 
@@ -141,7 +142,7 @@ void    pfConsoleCmdGroup::AddSubGroup( pfConsoleCmdGroup *group )
 //// FindCommand /////////////////////////////////////////////////////////////
 //  No longer recursive.
 
-pfConsoleCmd    *pfConsoleCmdGroup::FindCommand( char *name )
+pfConsoleCmd    *pfConsoleCmdGroup::FindCommand( const char *name )
 {
     pfConsoleCmd    *cmd;
 
@@ -198,7 +199,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindNestedPartialCommand( char *name, uint32
 
 //// FindSubGroup ////////////////////////////////////////////////////////////
 
-pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroup( char *name )
+pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroup( const char *name )
 {
     pfConsoleCmdGroup   *group;
 
@@ -249,7 +250,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupRecurse( const char *name )
 //// FindCommandNoCase ///////////////////////////////////////////////////////
 //  Case-insensitive version of FindCommand.
 
-pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, uint8_t flags, pfConsoleCmd *start )
+pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( const char *name, uint8_t flags, pfConsoleCmd *start )
 {
     pfConsoleCmd    *cmd;
 
@@ -284,7 +285,7 @@ pfConsoleCmd    *pfConsoleCmdGroup::FindCommandNoCase( char *name, uint8_t flags
 
 //// FindSubGroupNoCase //////////////////////////////////////////////////////
 
-pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( char *name, uint8_t flags, pfConsoleCmdGroup *start )
+pfConsoleCmdGroup   *pfConsoleCmdGroup::FindSubGroupNoCase( const char *name, uint8_t flags, pfConsoleCmdGroup *start )
 {
     pfConsoleCmdGroup   *group;
 

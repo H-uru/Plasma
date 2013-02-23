@@ -199,7 +199,7 @@ public:
     //  PURPOSE    : run a python string in a specific module name
     //             : Interactive mode (displays results)
     //
-    static bool RunStringInteractive(char *command, PyObject* module);
+    static bool RunStringInteractive(const char *command, PyObject* module);
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -210,7 +210,7 @@ public:
     //
     //  PURPOSE    : run a python string in a specific module name
     //
-    static bool RunString(char *command, PyObject* module);
+    static bool RunString(const char *command, PyObject* module);
 
 
     /////////////////////////////////////////////////////////////////////////////

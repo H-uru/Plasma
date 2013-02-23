@@ -2533,7 +2533,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnMovieEvent],
                     (char*)fFunctionNames[kfunc_OnMovieEvent],
-                    "si", moviemsg->fMovieName, (uint32_t)moviemsg->fReason);
+                    "si", moviemsg->fMovieName.AsString().c_str(), (uint32_t)moviemsg->fReason);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE

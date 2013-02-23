@@ -677,7 +677,7 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor,
 
 PF_CONSOLE_CMD( Avatar_Anim, PlaySimpleAnim, "string AvatarName, string Animation", "Play a simple (root not animated) one time animation on the avatar")
 {
-    plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName(params[0]);
+    plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName((const char*)params[0]);
     if (avatar)
         avatar->PlaySimpleAnim(plString::FromUtf8(params[1]));
 }
