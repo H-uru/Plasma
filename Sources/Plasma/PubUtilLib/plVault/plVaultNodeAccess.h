@@ -79,7 +79,7 @@ struct NetVaultNodeAccess {
 
 private:
     NetVaultNodeAccess (const NetVaultNodeAccess &) { }
-    const NetVaultNodeAccess & operator= (const NetVaultNodeAccess &) { }
+    void operator= (const NetVaultNodeAccess &) { }
 };
 
 #define VNODE_ACCESSOR(type, name, basename) \

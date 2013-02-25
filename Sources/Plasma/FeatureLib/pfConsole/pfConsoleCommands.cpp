@@ -2003,10 +2003,13 @@ PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry
 PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
 {
     static bool on = true;
-    if( on = !on )
+
+    on = !on;
+    if (on) {
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kNormal);
-    else
+    } else {
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kNormal);
+    }
 
     char    str[ 256 ];
     sprintf( str, "Normal geometry now %s", on ? "visible" : "invisible" );
@@ -2017,15 +2020,15 @@ PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visi
 {
     static bool on = false;
     static uint32_t oldMask = plDrawableSpans::kNormal;
-    if( on = !on )
-    {
+
+    on = !on;
+    if (on) {
         oldMask = pfConsole::GetPipeline()->GetDrawableTypeMask();
         pfConsole::GetPipeline()->SetDrawableTypeMask(plDrawableSpans::kNormal);
-    }
-    else
-    {
+    } else {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
+
     char    str[ 256 ];
     sprintf( str, on ? "Now showing only normal geometry" : "Restoring previous render state" );
     PrintString( str );
@@ -3384,6 +3387,7 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
         case plgAudioSys::kAmbience:    sprintf( msg, "Setting Ambience master volume to %4.2f", vol ); break;
         case plgAudioSys::kGUI:         sprintf( msg, "Setting GUI master volume to %4.2f", vol ); break;
         case plgAudioSys::kNPCVoice:    sprintf( msg, "Setting NPC Voice master volume to %4.2f", vol ); break;
+        default: break;
     }
     PrintString( msg );
 }

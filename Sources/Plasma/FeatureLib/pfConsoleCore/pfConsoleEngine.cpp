@@ -58,7 +58,7 @@ static const char kTokenSeparators[] = " =\r\n\t,";
 static const char kTokenGrpSeps[] = " =\r\n._\t,";
 
 //WARNING: Potentially increments the pointer passed to it.
-static char *console_strtok( char *&line, bool haveCommand )
+static const char *console_strtok( char *&line, bool haveCommand )
 {
     char *begin = line;
 
@@ -122,7 +122,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    char                *ptr;
+    const char          *ptr;
     static char         string[ 512 ];
     static char         tempString[ 512 ];
     uint32_t              i;
@@ -203,7 +203,7 @@ const char  *pfConsoleEngine::GetCmdSignature( char *name )
 {
     pfConsoleCmd        *cmd;
     pfConsoleCmdGroup   *group, *subGrp;
-    char                *ptr;
+    const char          *ptr;
     static char         string[ 512 ];
 
     
@@ -297,7 +297,7 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
     pfConsoleCmdGroup   *group, *subGrp;
     int32_t               numParams, i, numQuotedParams = 0;
     pfConsoleCmdParam   paramArray[ fMaxNumParams + 1 ];
-    char                *ptr;
+    const char          *ptr;
     bool                valid = true;
 
 
@@ -395,9 +395,9 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
 //  Converts a null-terminated string representing a parameter to a 
 //  pfConsoleCmdParam argument.
 
-bool    pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleCmdParam *param )
+bool    pfConsoleEngine::IConvertToParam( uint8_t type, const char *string, pfConsoleCmdParam *param )
 {
-    char    *c, expChars[] = "dDeE+-.";
+    const char *c, expChars[] = "dDeE+-.";
     bool    hasDecimal = false, hasLetters = false;
 
 
@@ -422,12 +422,12 @@ bool    pfConsoleEngine::IConvertToParam( uint8_t type, char *string, pfConsoleC
     if( type == pfConsoleCmd::kAny )
     {
         /// Want "any"
-        param->SetAny( string );
+        param->SetAny( (char*)string );
     }
     else if( type == pfConsoleCmd::kString )
     {
         /// Want just a string
-        param->SetString( string );
+        param->SetString( (char*)string );
     }
     else if( type == pfConsoleCmd::kFloat )
     {
@@ -469,7 +469,8 @@ bool    pfConsoleEngine::FindPartialCmd( char *line, bool findAgain, bool preser
     pfConsoleCmdGroup   *group, *subGrp;
     bool                foundMore = false;
 
-    static char                 *ptr = nil, *insertLoc = nil;
+    static const char           *ptr = nil;
+    static char                 *insertLoc = nil;
     static pfConsoleCmd         *lastCmd = nil;
     static pfConsoleCmdGroup    *lastGroup = nil, *lastParentGroup = nil;
     static char                 newStr[ 256 ];
