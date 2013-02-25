@@ -1,5 +1,6 @@
 add_subdirectory(plLocalizationEditor)
 add_subdirectory(plResBrowser)
+add_subdirectory(plShaderAssembler)
 
 if(FREETYPE_FOUND)
     add_subdirectory(plFontConverter)
