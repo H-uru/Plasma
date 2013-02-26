@@ -156,6 +156,7 @@ protected:
     plString fAnimName;                     // an (optional) anim to use to line up our target
                                             // so you can say "seek to a place where your hand
                                             // will be here after you play animation foo"
+    plMessage* fFinishMsg;
 
     hsPoint3 fPosition;                     // our current position
     hsQuat fRotation;                       // our current rotation

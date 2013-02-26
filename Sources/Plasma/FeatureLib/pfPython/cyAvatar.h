@@ -104,6 +104,7 @@ public:
     // oneShot Avatar 
     virtual void RunBehavior(pyKey &behKey, bool netForce, bool netProp);
     virtual void RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce, bool netProp);
+    virtual void RunCoopAnim(pyKey &targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float dist, bool move);
 
     // for the multistage behaviors
     virtual void NextStage(pyKey &behKey, float transTime, bool setTime, float newTime,
@@ -507,6 +508,24 @@ public:
     //             : more specific in future version
     //
     static bool ExitPBMode();
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    //  Function   : EnterAnimMode
+    //  PARAMETERS : animName - string
+    //
+    //  PURPOSE    : Makes the avatar enter a custom anim loop.
+    //
+    static void EnterAnimMode(plString animName);
+
+    /////////////////////////////////////////////////////////////////////////////
+    //
+    //  Function   : ExitAnimMode
+    //  PARAMETERS : animName - string
+    //
+    //  PURPOSE    : Makes the avatar stop the custom anim loop.
+    //
+    static void ExitAnimMode(plString animName);
     
     /////////////////////////////////////////////////////////////////////////////
     //

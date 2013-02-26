@@ -68,6 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"        // needed to call the emote
 #include "plAvatar/plAGAnim.h"          // to get the BodyUsage enum
+#include "plAvatar/plAvatarTasks.h"
 #include "plInputCore/plAvatarInputInterface.h"
 #include "plMessage/plSimStateMsg.h"
 
@@ -353,6 +354,55 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
         plgDispatch::MsgSend( pNMsg );
     }
 
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : RunCoopAnim
+//  PARAMETERS : targetKey - target avatar pyKey
+//               activeAvatarAnim - animation name
+//               targetAvatarAnim - animation name
+//               dist - how close shall the avatar move? (default in glue: 3)
+//               move - shall he move at all? (default in glue: true)
+//
+//  PURPOSE    : Seek near another avatar and run animations on both
+//
+void cyAvatar::RunCoopAnim(pyKey &targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float dist, bool move)
+{
+    if (fRecvr.Count() > 0 && fRecvr[0] != nil) {
+        // get the participating avatars
+        plArmatureMod *activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
+        plArmatureMod *targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
+        if (activeAv && targetAv) {
+            // set seek position and rotation of the avatars
+            hsPoint3 avPos, targetPos;
+            activeAv->GetPositionAndRotationSim(&avPos, nil);
+            targetAv->GetPositionAndRotationSim(&targetPos, nil);
+            hsVector3 av2target(&targetPos, &avPos); //targetPos - avPos
+            av2target.Normalize();
+            if (move)
+                avPos = targetPos - dist * av2target;
+            // create the messages and let one task queue the next
+            plAvOneShotMsg *avAnim = new plAvOneShotMsg(nil, fRecvr[0], fRecvr[0], 0, true, activeAvatarAnim, false, false);
+            avAnim->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+            plAvOneShotMsg *targetAnim = new plAvOneShotMsg(nil, targetKey.getKey(), targetKey.getKey(), 0, true, targetAvatarAnim, false, false);
+            targetAnim->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+            targetAnim->fFinishMsg = avAnim;
+            plAvSeekMsg *targetSeek = new plAvSeekMsg(nil, targetKey.getKey(), nil, 0, true);
+            targetSeek->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+            targetSeek->fTargetPos = targetPos;
+            targetSeek->fTargetLookAt = avPos;
+            targetSeek->fFinishMsg = targetAnim;
+            plAvSeekMsg *avSeek = new plAvSeekMsg(nil, fRecvr[0], nil, 0, true);
+            avSeek->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+            avSeek->fTargetPos = avPos;
+            avSeek->fTargetLookAt = targetPos;
+            avSeek->fFinishMsg = targetSeek;
+            // start the circus
+            avSeek->Send();
+        }
+    }
 }
 
 
@@ -1745,6 +1795,44 @@ bool cyAvatar::EnterPBMode()
 bool cyAvatar::ExitPBMode()
 {
     return IExitTopmostGenericMode();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : EnterAnimMode
+//  PARAMETERS : animName - string
+//
+//  PURPOSE    : Makes the avatar enter a custom anim loop.
+//
+void cyAvatar::EnterAnimMode(plString animName)
+{
+    plArmatureMod *fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    if (!fAvMod->FindAnimInstance(animName)) {
+        plKey avKey = fAvMod->GetKey();
+        plAvAnimTask *animTask = new plAvAnimTask(animName, 0.0, 1.0, 1.0, 0.0, true, true, true);
+        plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
+        taskMsg->SetBCastFlag(plMessage::kNetPropagate);
+        taskMsg->Send();
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : ExitAnimMode
+//  PARAMETERS : animName - string
+//
+//  PURPOSE    : Makes the avatar stop the custom anim loop.
+//
+void cyAvatar::ExitAnimMode(plString animName)
+{
+    plArmatureMod *fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    if (fAvMod->FindAnimInstance(animName)) {
+        plKey avKey = fAvMod->GetKey();
+        plAvAnimTask *animTask = new plAvAnimTask(animName, -1.0);
+        plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
+        taskMsg->SetBCastFlag(plMessage::kNetPropagate);
+        taskMsg->Send();
+    }
 }
 
 

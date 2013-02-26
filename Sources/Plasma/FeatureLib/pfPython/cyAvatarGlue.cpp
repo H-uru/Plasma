@@ -139,6 +139,29 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runBehaviorSetNotify, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptAvatar, runCoopAnim, args)
+{
+    PyObject* keyObj;
+    char* animAv1;
+    char* animAv2;
+    float dist = 3;
+    bool move = true;
+    if (!PyArg_ParseTuple(args, "Oss|fb", &keyObj, &animAv1, &animAv2, &dist, &move))
+    {
+        PyErr_SetString(PyExc_TypeError, "runCoopAnim expects a ptkey and two strings and an optional float and boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    if (!pyKey::Check(keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "runCoopAnim expects a ptkey and two strings and an optional float and boolean");
+        PYTHON_RETURN_ERROR;
+    }
+
+    pyKey* key = pyKey::ConvertFrom(keyObj);
+    self->fThis->RunCoopAnim(*key, animAv1, animAv2, dist, move);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_METHOD_DEFINITION(ptAvatar, nextStage, args)
 {
     PyObject* keyObj = NULL;
@@ -605,6 +628,7 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, oneShot, "Params: seekKey,duration,usePhysicsFlag,animationName,drivableFlag,reversibleFlag\nPlays a one-shot animation on the avatar"),
     PYTHON_METHOD(ptAvatar, runBehavior, "Params: behaviorKey,netForceFlag\nRuns a behavior on the avatar. Can be a single or multi-stage behavior."),
     PYTHON_METHOD(ptAvatar, runBehaviorSetNotify, "Params: behaviorKey,replyKey,netForceFlag\nSame as runBehavior, except send notifications to specified keyed object"),
+    PYTHON_METHOD(ptAvatar, runCoopAnim, "Params: targetKey,activeAvatarAnim,targetAvatarAnim,dist,move\nSeek near another avatar and run animations on both."),
     PYTHON_METHOD(ptAvatar, nextStage, "Params: behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to the next stage (Why does Matt like so many parameters?)"),
     PYTHON_METHOD(ptAvatar, previousStage, "Params: behaviorKey,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to the previous stage"),
     PYTHON_METHOD(ptAvatar, gotoStage, "Params: behaviorKey,stage,transitionTime,setTimeFlag,newTime,SetDirectionFlag,isForward,netForce\nTells a multistage behavior to go to a particular stage"),
@@ -750,6 +774,32 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtAvatarExitAFK, "Tells the local avatar 
     PYTHON_RETURN_BOOL(cyAvatar::ExitAFKMode());
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarEnterAnimMode, args, "Params: animName\nEnter a custom anim loop (netpropagated)")
+{
+    char* animName;
+    if (!PyArg_ParseTuple(args, "s", &animName))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtAvatarEnterAnimMode expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyAvatar::EnterAnimMode(animName);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarExitAnimMode, args, "Params: animName\nExit a custom anim loop (netpropagated)")
+{
+    char* animName;
+    if (!PyArg_ParseTuple(args, "s", &animName))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtAvatarExitAnimMode expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+
+    cyAvatar::ExitAnimMode(animName);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtDisableMovementKeys, cyAvatar::DisableMovementControls, "Disable avatar movement input")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtEnableMovementKeys, cyAvatar::EnableMovementControls, "Enable avatar movement input")
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtDisableMouseMovement, cyAvatar::DisableMouseMovement, "Disable avatar mouse movement input")
@@ -843,6 +893,8 @@ void cyAvatar::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitUsePersBook);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterAFK);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitAFK);
+    PYTHON_GLOBAL_METHOD(methods, PtAvatarEnterAnimMode);
+    PYTHON_GLOBAL_METHOD(methods, PtAvatarExitAnimMode);
 
     // Suspend avatar input
     PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableMovementKeys);
