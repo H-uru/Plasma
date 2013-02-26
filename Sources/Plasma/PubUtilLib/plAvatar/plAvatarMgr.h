@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <map>
 
+#include "plFileSystem.h"
 #include "hsGeometry3.h"
 
 #include "pnKeyedObject/hsKeyedObject.h"
@@ -181,6 +182,11 @@ public:
     bool IsACoopRunning();
     plStatusLog *GetLog() { return fLog; }
 
+    // The local avatar will fetch the clothing from this file on reload
+    void SetClothingFile(plFileName file) { fClothingFile = file; }
+    void ResetClothingFile() { fClothingFile = ""; }
+    plFileName GetClothingFile() { return fClothingFile; }
+
 protected:
     /** Dump all internal data. */
     void IReset();
@@ -235,7 +241,9 @@ protected:
     plCoopMap fActiveCoops;
 
     hsTArray<plLoadCloneMsg*> fCloneMsgQueue;
-    plStatusLog *fLog;  
+    plStatusLog *fLog;
+
+    plFileName fClothingFile;
 };
 
 
