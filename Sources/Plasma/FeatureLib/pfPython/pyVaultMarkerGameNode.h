@@ -76,14 +76,12 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-//==================================================================
-// class RelVaultNode : public plVaultNode
-//
     plString        GetGameName () const;
     void            SetGameName (const plString& name);
 
-    plUUID          GetGameGuid() const;
-    void            SetGameGuid (const char v[]);
+    /** Returns a tuple of tuples */
+    PyObject*       GetMarkers() const;
+    void            SetMarkers(const std::vector<struct VaultMarker>& markers);
 };
 
 #endif // _pyVaultMarkerGameNode_h_
