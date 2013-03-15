@@ -101,7 +101,7 @@ public:
     void    SetAgeSequenceNumber( int32_t v );
     int32_t   GetAgeLanguage() const;
     void    SetAgeLanguage( int32_t v );
-    const char * GetDisplayName() const;
+    plString GetDisplayName() const;
 };
 
 class pyAgeInfoStructRef
@@ -142,7 +142,7 @@ public:
     void    SetAgeInstanceGuid( const char * guid );
     int32_t   GetAgeSequenceNumber() const;
     void    SetAgeSequenceNumber( int32_t v );
-    const char * GetDisplayName() const;
+    plString GetDisplayName() const;
 };
 
 #endif // pyAgeInfoStruct_h_inc

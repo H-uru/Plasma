@@ -958,7 +958,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         // set user-defined name
                         plString title;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
-                        if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                        if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
                             title = plString::Format("%s'", nc->GetPlayerName().c_str());
                         else
                             title = plString::Format("%s's", nc->GetPlayerName().c_str());
@@ -969,7 +969,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         // set description
                         plString desc;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
-                        if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                        if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
                             desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                         else
                             desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
@@ -997,7 +997,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 // set user-defined name
                                 plString title;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
-                                if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                                if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
                                     title = plString::Format("%s'", nc->GetPlayerName().c_str());
                                 else
                                     title = plString::Format("%s's", nc->GetPlayerName().c_str());
@@ -1009,7 +1009,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 // set description
                                 plString desc;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
-                                if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+                                if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
                                     desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
                                 else
                                     desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());

@@ -178,14 +178,22 @@ void pyAgeInfoStruct::SetAgeLanguage( int32_t v )
     fAgeInfo.SetAgeLanguage( v );
 }
 
-const char * pyAgeInfoStruct::GetDisplayName() const
+plString pyAgeInfoStruct::GetDisplayName() const
 {
-    int32_t seq = GetAgeSequenceNumber();
-    if ( seq>0 )
-        fDisplayName = plString::Format( "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
+    const char* instance = GetAgeInstanceName();
+    const char* user = GetAgeUserDefinedName();
+    bool namesEqual = (stricmp(user, instance) == 0); // Ae'gura Ae'gura
+
+    if (namesEqual)
+        return instance;
     else
-        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
-    return fDisplayName.c_str();
+    {
+        int32_t seq = GetAgeSequenceNumber();
+        if (seq > 0)
+            return plString::Format("%s (%d) %s", user, seq, instance);
+        else
+            return plString::Format("%s %s", user, instance);
+    }
 }
 
 
@@ -255,12 +263,20 @@ void pyAgeInfoStructRef::SetAgeSequenceNumber( int32_t v )
     fAgeInfo.SetAgeSequenceNumber( v );
 }
 
-const char * pyAgeInfoStructRef::GetDisplayName() const
+plString pyAgeInfoStructRef::GetDisplayName() const
 {
-    int32_t seq = GetAgeSequenceNumber();
-    if ( seq>0 )
-        fDisplayName = plString::Format( "%s (%d) %s", GetAgeUserDefinedName(), seq, GetAgeInstanceName() );
+    const char* instance = GetAgeInstanceName();
+    const char* user = GetAgeUserDefinedName();
+    bool namesEqual = (stricmp(user, instance) == 0); // Ae'gura Ae'gura
+
+    if (namesEqual)
+        return instance;
     else
-        fDisplayName = plString::Format( "%s %s", GetAgeUserDefinedName(), GetAgeInstanceName() );
-    return fDisplayName.c_str();
+    {
+        int32_t seq = GetAgeSequenceNumber();
+        if (seq > 0)
+            return plString::Format("%s (%d) %s", user, seq, instance);
+        else
+            return plString::Format("%s %s", user, instance);
+    }
 }
