@@ -40,12 +40,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
-#  include <intrin.h>
-#  define MSC_COMPATIBLE
-#elif defined(__GNUC__)
-#  include <cpuid.h>
-#  define GCC_COMPATIBLE
+#if defined(HAVE_CPUID)
+#  if defined(_MSC_VER) || ((defined(_WIN32) || defined(_WIN64)) && defined(__INTEL_COMPILER))
+#    include <intrin.h>
+#    define MSC_COMPATIBLE
+#  elif defined(__GNUC__)
+#    include <cpuid.h>
+#    define GCC_COMPATIBLE
+#  else
+#    define SOFTWARE_ONLY
+#  endif
+#else
+#  define SOFTWARE_ONLY
 #endif
 
 #include "hsCpuID.h"
@@ -57,7 +63,7 @@ hsCpuId::hsCpuId() {
     const unsigned int ssse3_flag = 1<<9;
     const unsigned int sse41_flag = 1<<19;
     const unsigned int sse42_flag = 1<<20;
-    const unsigned int avx_flag = 1 << 28;
+    const unsigned int avx_flag = 1<<28;
 
     unsigned int ax = 0, bx = 0, cx = 0, dx = 0;
 

@@ -21,6 +21,16 @@ if(NOT WCHAR_BYTES)
 endif(NOT WCHAR_BYTES)
 add_definitions(-DWCHAR_BYTES=${WCHAR_BYTES})
 
+try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp
+            OUTPUT_VARIABLE OUTPUT)
+if(HAVE_CPUID)
+    add_definitions(-DHAVE_CPUID)
+    message("CPUID header found -- using hardware math acceleration when available")
+else()
+    message("CPUID header not found -- using software math")
+endif()
+
 set(CoreLib_SOURCES
     HeadSpin.cpp
     hsBitVector.cpp
