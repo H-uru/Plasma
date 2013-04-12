@@ -157,7 +157,7 @@ protected:
     void IProcessDynamicHits();
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    void IDrawDebugDisplay();
+    void IDrawDebugDisplay(int controllerIdx);
     hsTArray<plDbgCollisionInfo> fDbgCollisionInfo;
 #endif
 
