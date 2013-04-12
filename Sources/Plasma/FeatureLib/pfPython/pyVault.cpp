@@ -121,7 +121,7 @@ static PyObject * GetAgeInfoList (unsigned folderType) {
 }
 
 //////////////////////////////////////////////////
-PyObject* pyVault::GetPlayerInfo( void )
+PyObject* pyVault::GetPlayerInfo()
 {
     PyObject * result = nil;
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
@@ -140,7 +140,7 @@ PyObject* pyVault::GetPlayerInfo( void )
 }
 
 
-PyObject* pyVault::GetAvatarOutfitFolder( void )
+PyObject* pyVault::GetAvatarOutfitFolder()
 {
     PyObject * result = GetFolder(plVault::kAvatarOutfitFolder);
     
@@ -152,7 +152,7 @@ PyObject* pyVault::GetAvatarOutfitFolder( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetAvatarClosetFolder( void )
+PyObject* pyVault::GetAvatarClosetFolder()
 {
     PyObject * result = GetFolder(plVault::kAvatarClosetFolder);
     
@@ -164,7 +164,7 @@ PyObject* pyVault::GetAvatarClosetFolder( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetChronicleFolder( void )
+PyObject* pyVault::GetChronicleFolder()
 {
     PyObject * result = GetFolder(plVault::kChronicleFolder);
 
@@ -176,7 +176,7 @@ PyObject* pyVault::GetChronicleFolder( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetInbox( void )
+PyObject* pyVault::GetInbox()
 {
     PyObject * result = GetFolder(plVault::kInboxFolder);
 
@@ -188,7 +188,7 @@ PyObject* pyVault::GetInbox( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetAgeJournalsFolder( void )
+PyObject* pyVault::GetAgeJournalsFolder()
 {
     PyObject * result = GetFolder(plVault::kAgeJournalsFolder);
     
@@ -249,8 +249,18 @@ PyObject* pyVault::GetKIUsage(void)
     return retVal;
 }
 
+PyObject* pyVault::GetAllPlayersFolder()
+{
+#ifndef PLASMA_EXTERNAL_RELEASE
+    PyObject* result = GetPlayerInfoList(plVault::kAllPlayersFolder);
+    if (result)
+        return result;
+#endif
 
-PyObject* pyVault::GetIgnoreListFolder( void )
+    PYTHON_RETURN_NONE;
+}
+
+PyObject* pyVault::GetIgnoreListFolder()
 {
     PyObject * result = GetPlayerInfoList(plVault::kIgnoreListFolder);
     
@@ -262,7 +272,7 @@ PyObject* pyVault::GetIgnoreListFolder( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetBuddyListFolder( void )
+PyObject* pyVault::GetBuddyListFolder()
 {
     PyObject * result = GetPlayerInfoList(plVault::kBuddyListFolder);
     
@@ -274,7 +284,7 @@ PyObject* pyVault::GetBuddyListFolder( void )
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyVault::GetPeopleIKnowAboutFolder( void )
+PyObject* pyVault::GetPeopleIKnowAboutFolder()
 {
     PyObject * result = GetPlayerInfoList(plVault::kPeopleIKnowAboutFolder);
     
@@ -389,7 +399,7 @@ void pyVault::SendToDevice( pyVaultNode& node, const char * deviceName )
 }
 
 
-PyObject* pyVault::GetAgesICanVisitFolder(void)
+PyObject* pyVault::GetAgesICanVisitFolder()
 {
     PyObject * result = GetAgeInfoList(plVault::kAgesICanVisitFolder);
     
@@ -402,7 +412,7 @@ PyObject* pyVault::GetAgesICanVisitFolder(void)
 }
 
 
-PyObject* pyVault::GetAgesIOwnFolder(void)
+PyObject* pyVault::GetAgesIOwnFolder()
 {
     PyObject * result = GetAgeInfoList(plVault::kAgesIOwnFolder);
     
@@ -415,7 +425,7 @@ PyObject* pyVault::GetAgesIOwnFolder(void)
 }
 
 
-PyObject* pyVault::GetInviteFolder(void)
+PyObject* pyVault::GetInviteFolder()
 {
     PyObject * result = GetFolder(plVault::kPlayerInviteFolder);
     
@@ -506,12 +516,12 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
     templateNode->DecRef();
 }
 
-bool pyVault::InMyPersonalAge( void ) const
+bool pyVault::InMyPersonalAge() const
 {
     return VaultAmInMyPersonalAge();
 }
 
-bool pyVault::InMyNeighborhoodAge( void ) const
+bool pyVault::InMyNeighborhoodAge() const
 {
     return VaultAmInMyNeighborhoodAge();
 }
@@ -684,7 +694,7 @@ bool pyVault::SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic )
 }
 
 
-PyObject* pyVault::GetGlobalInbox( void )
+PyObject* pyVault::GetGlobalInbox()
 {
     PyObject * result = nil;
     if (RelVaultNode * rvnGlobalInbox = VaultGetGlobalInboxIncRef()) {
@@ -725,5 +735,3 @@ PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
     
     PYTHON_RETURN_NONE;
 }
-
-

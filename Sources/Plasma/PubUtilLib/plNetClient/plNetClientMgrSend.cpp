@@ -359,12 +359,9 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     //
     bool ccrSendToAllPlayers = false;
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if ( AmCCR() )
-    {
-        ccrSendToAllPlayers = msg->HasBCastFlag( plMessage::kCCRSendToAllPlayers );
-        if ( ccrSendToAllPlayers )
-            netMsgWrap->SetBit( plNetMessage::kRouteToAllPlayers );
-    }
+    ccrSendToAllPlayers = msg->HasBCastFlag( plMessage::kCCRSendToAllPlayers );
+    if ( ccrSendToAllPlayers )
+        netMsgWrap->SetBit( plNetMessage::kRouteToAllPlayers );
 #endif
 
     //
@@ -382,13 +379,13 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     if (msg->HasBCastFlag(plMessage::kNetSendUnreliable) && 
         !(synchedObj && (synchedObj->GetSynchFlags() & plSynchedObject::kSendReliably)) )
         netMsgWrap->SetBit(plNetMessage::kNeedsReliableSend, 0);    // clear reliable net send bit
-    
+
 #ifdef HS_DEBUGGING
     int16_t type=*(int16_t*)netMsgWrap->StreamInfo()->GetStreamBuf();
     hsAssert(type>=0 && type<plCreatableIndex::plNumClassIndices, "garbage type out");
 #endif
-                                
-    netMsgWrap->SetPlayerID(GetPlayerID()); 
+
+    netMsgWrap->SetPlayerID(GetPlayerID());
     netMsgWrap->SetNetProtocol(kNetProtocolCli2Game);
     int ret = SendMsg(netMsgWrap);
 
@@ -403,7 +400,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     #endif
     }
 
-    delete netMsgWrap;  
+    delete netMsgWrap;
     return ret;
 }
 
