@@ -1370,6 +1370,11 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 }
             }
         }
+        else
+        if (pCam->Cmd(plCameraMsg::kRefreshFOV))
+        {
+            Refresh();
+        }
     }
     plGenRefMsg* pRefMsg = plGenRefMsg::ConvertNoRef(msg);
     if (pRefMsg )
