@@ -233,60 +233,47 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
     PyObject* fromPlayerObj = NULL;
     PyObject* toPlayerListObj = NULL;
     PyObject* message = NULL;
-    unsigned long msgFlags;
-    if (!PyArg_ParseTuple(args, "OOOl", &fromPlayerObj, &toPlayerListObj, &message, &msgFlags))
+    uint32_t msgFlags = 0;
+    const char* err = "PtSendRTChat expects a ptPlayer, a sequence of ptPlayers, a string, and an optional long";
+
+    if (!PyArg_ParseTuple(args, "OOO|l", &fromPlayerObj, &toPlayerListObj, &message, &msgFlags))
     {
-        PyErr_SetString(PyExc_TypeError, "PtSendRTChat expects a ptPlayer, a list of ptPlayers, a string, and a long");
+        PyErr_SetString(PyExc_TypeError, err);
         PYTHON_RETURN_ERROR;
     }
+
     if (!pyPlayer::Check(fromPlayerObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtSendRTChat expects a ptPlayer, a list of ptPlayers, a string, and a long");
+        PyErr_SetString(PyExc_TypeError, err);
         PYTHON_RETURN_ERROR;
     }
+    pyPlayer* sender = pyPlayer::ConvertFrom(fromPlayerObj);
 
-    pyPlayer* fromPlayer = pyPlayer::ConvertFrom(fromPlayerObj);
-
-    std::vector<pyPlayer*> toPlayerList;
-    if (PyList_Check(toPlayerListObj))
+    if (!PySequence_Check(toPlayerListObj))
     {
-        int listSize = PyList_Size(toPlayerListObj);
-        for (int i = 0; i < listSize; i++)
+        PyErr_SetString(PyExc_TypeError, err);
+        PYTHON_RETURN_ERROR;
+    }
+    std::vector<pyPlayer*> toPlayers;
+    toPlayers.reserve(PySequence_Size(toPlayerListObj));
+    for (Py_ssize_t i = 0; i < PySequence_Size(toPlayerListObj); ++i)
+    {
+        PyObject* item = PySequence_GetItem(toPlayerListObj, i);
+        if (!pyPlayer::Check(item))
         {
-            PyObject* listItem = PyList_GetItem(toPlayerListObj, i);
-            if (!pyPlayer::Check(listItem))
-            {
-                PyErr_SetString(PyExc_TypeError, "PtSendRTChat expects a ptPlayer, a list of ptPlayers, a string, and a long");
-                PYTHON_RETURN_ERROR;
-            }
-            toPlayerList.push_back(pyPlayer::ConvertFrom(listItem));
+            PyErr_SetString(PyExc_TypeError, err);
+            PYTHON_RETURN_ERROR;
         }
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtSendRTChat expects a ptPlayer, a list of ptPlayers, a string, and a long");
-        PYTHON_RETURN_ERROR;
+        toPlayers.push_back(pyPlayer::ConvertFrom(item));
     }
 
-    if (PyString_Check(message))
+    if (!PyString_CheckEx(message))
     {
-        char* msg = PyString_AsString(message);
-        return PyLong_FromUnsignedLong(cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags));
-    }
-    else if (PyUnicode_Check(message))
-    {
-        int size = PyUnicode_GetSize(message);
-        wchar_t* msg = new wchar_t[size + 1]; msg[size] = 0;
-        PyUnicode_AsWideChar((PyUnicodeObject*)message, msg, size);
-        uint32_t retval = cyMisc::SendRTChat(*fromPlayer, toPlayerList, msg, msgFlags);
-        delete msg;
-        return PyLong_FromUnsignedLong(retval);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtSendRTChat expects a ptPlayer, a list of ptPlayers, a string, and a long");
+        PyErr_SetString(PyExc_TypeError, err);
         PYTHON_RETURN_ERROR;
     }
+    plString chatmsg = PyString_AsStringEx(message);
+    return PyLong_FromUnsignedLong(cyMisc::SendRTChat(*sender, toPlayers, chatmsg, msgFlags));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nSends a command message to the KI frontend.\n"

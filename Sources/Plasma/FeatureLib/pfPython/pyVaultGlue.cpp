@@ -101,6 +101,11 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getAgeJournalsFolder)
     return self->fThis->GetAgeJournalsFolder();
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getAllPlayersFolder)
+{
+    return self->fThis->GetAllPlayersFolder();
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getIgnoreListFolder)
 {
     return self->fThis->GetIgnoreListFolder();
@@ -204,10 +209,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVault, getGlobalInbox)
 {
     return self->fThis->GetGlobalInbox();
 }
-
-#ifdef GlobalInboxTestCode
-PYTHON_BASIC_METHOD_DEFINITION(ptVault, createGlobalInbox, CreateGlobalInbox)
-#endif
 
 PYTHON_METHOD_DEFINITION(ptVault, findNode, args)
 {
@@ -476,6 +477,7 @@ PYTHON_START_METHODS_TABLE(ptVault)
                 "Returns a ptVaultFolderNode of the avatars outfit in their closet."),
     PYTHON_METHOD_NOARGS(ptVault, getChronicleFolder, "Returns a ptVaultFolderNode of the current player's chronicle folder."),
     PYTHON_METHOD_NOARGS(ptVault, getAgeJournalsFolder, "Returns a ptVaultFolderNode of the current player's age journals folder."),
+    PYTHON_METHOD_NOARGS(ptVault, getAllPlayersFolder, "Returns a ptVaultPlayerInfoListNode of the all players folder."),
     PYTHON_METHOD_NOARGS(ptVault, getIgnoreListFolder, "Returns a ptVaultPlayerInfoListNode of the current player's ignore list folder."),
     PYTHON_METHOD_NOARGS(ptVault, getBuddyListFolder, "Returns a ptVaultPlayerInfoListNode of the current player's buddy list folder."),
     PYTHON_METHOD_NOARGS(ptVault, getPeopleIKnowAboutFolder, "Returns a ptVaultPlayerInfoListNode of the current player's people I know about (Recent) list folder."),
