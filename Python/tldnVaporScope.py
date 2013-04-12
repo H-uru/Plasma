@@ -385,11 +385,12 @@ class tldnVaporScope(ptModifier):
         "Disengage and exit the telescope mode"
         global LocalAvatar
         global boolScopeOperator
-        # exit every thing
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        # exit everything
+        if Vignette.value and Vignette.value != "":
             PtHideDialog(Vignette.value)
         virtCam = ptCamera()
         virtCam.restore(Camera.sceneobject.getKey())
+        virtCam.refreshFOV()
         # exit behavior...which is in the next stage
         # ... but just gotoStage the last stage by number because of a bug in the SDL send state
         Behavior.gotoStage(LocalAvatar,2)
@@ -401,8 +402,7 @@ class tldnVaporScope(ptModifier):
         self.SDL["boolOperated"] = (0,)
         self.SDL["OperatorID"] = (-1,)
         #Re-enable first person camera
-        cam = ptCamera()
-        cam.enableFirstPersonOverride()
+        virtCam.enableFirstPersonOverride()
         PtAtTimeCallback(self.key,kTimerDisengageTime,kTimerDisengage) # wait for player to finish exit one-shot, then reenable clickable
         PtDebugPrint("tldnVaporScope.IQuitTelescope:\tdelaying clickable reenable")
         
