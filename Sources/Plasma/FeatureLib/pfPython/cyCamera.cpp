@@ -373,3 +373,11 @@ bool cyCamera::IsStayInFirstPerson()
     }
     return false;
 }
+
+void cyCamera::RefreshFOV()
+{
+    plCameraMsg* pMsg = new plCameraMsg();
+    pMsg->SetSender(fSender);
+    pMsg->SetCmd(plCameraMsg::kRefreshFOV);
+    pMsg->Send(fTheCam);
+}
