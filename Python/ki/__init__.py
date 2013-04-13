@@ -3040,32 +3040,44 @@ class xKI(ptModifier):
             self.previouslySelectedPlayer = None
         self.BKPlayerList = []
         vault = ptVault()
-        # Get the AgeMember and Buddy folders and fill them.
+
+        # Age Players
         ageMembers = KIFolder(PtVaultStandardNodes.kAgeMembersFolder)
         if ageMembers is not None:
             self.BKPlayerList.append(ageMembers)
             self.BKPlayerList += PtGetPlayerListDistanceSorted()
         else:
             self.BKPlayerList.append("?NOAgeMembers?")
+
+        # Buddies List
         buddies = vault.getBuddyListFolder()
         if buddies is not None:
             self.BKPlayerList.append(buddies)
             self.BKPlayerList += self.RemoveOfflinePlayers(buddies.getChildNodeRefList())
         else:
             self.BKPlayerList.append("?NOBuddies?")
+
+        # Neighbors List
         neighbors = GetNeighbors()
         if neighbors is not None:
             self.BKPlayerList.append(neighbors)
             onlinePlayers = self.RemoveOfflinePlayers(neighbors.getChildNodeRefList())
-            localPlayer = PtGetLocalPlayer()
-            for idx in range(len(onlinePlayers)):
-                PLR = onlinePlayers[idx].getChild().upcastToPlayerInfoNode()
-                if PLR.playerGetID() == localPlayer.getPlayerID():
-                    del onlinePlayers[idx]
-                    break
+            FilterPlayerInfoList(onlinePlayers)
             self.BKPlayerList += onlinePlayers
         else:
             self.BKPlayerList.append("NEIGHBORS")
+
+        # All Players (INTERNAL CLIENT ONLY)
+        if PtIsInternalRelease():
+            allPlayers = vault.getAllPlayersFolder()
+            if allPlayers:
+                self.BKPlayerList.append(allPlayers)
+                onlinePlayers = self.RemoveOfflinePlayers(allPlayers.getChildNodeRefList())
+                FilterPlayerInfoList(onlinePlayers)
+                self.BKPlayerList += onlinePlayers
+            # don't append a dummy -- we don't care if our vault doesn't have a copy of AllPlayers
+
+        # Age Devices
         if self.folderOfDevices and BigKI.dialog.isEnabled() and not forceSmall:
             self.BKPlayerList.append(self.folderOfDevices)
             for device in self.folderOfDevices:
@@ -3845,6 +3857,10 @@ class xKI(ptModifier):
         if folder.folderGetType() == PtVaultStandardNodes.kHoodMembersFolder:
             return False
 
+        # Oh hayll no, you can't change AllPlayers
+        if folder.folderGetType() == PtVaultStandardNodes.kAllPlayersFolder:
+            return False
+
         # Check for neighborhood CanVisit folder (actually half-mutable, they can delete).
         if folder.folderGetType() == PtVaultStandardNodes.kAgeOwnersFolder:
             return False
@@ -4073,6 +4089,7 @@ class xKI(ptModifier):
         # Get the player lists.
         self.BKPlayerFolderDict.clear()
         self.BKPlayerListOrder = []
+
         ageMembers = KIFolder(PtVaultStandardNodes.kAgeMembersFolder)
         if ageMembers is not None:
             if xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAgeMembersFolder) not in self.BKPlayerFolderDict:
@@ -4082,6 +4099,7 @@ class xKI(ptModifier):
             PtDebugPrint(u"xKI.BigKIRefreshFolderList(): Updating ageMembers.", level=kDebugDumpLevel)
         else:
             PtDebugPrint(u"xKI.BigKIRefreshFolderList(): AgeMembers folder is missing.", level=kWarningLevel)
+
         buddies = vault.getBuddyListFolder()
         if buddies is not None:
             if xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kBuddyListFolder) not in self.BKPlayerFolderDict:
@@ -4090,8 +4108,10 @@ class xKI(ptModifier):
             self.BKPlayerFolderDict[xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kBuddyListFolder)] = buddies
         else:
             PtDebugPrint(u"xKI.BigKIRefreshFolderList(): Buddies folder is missing.", level=kWarningLevel)
+
         # Update the neighborhood folder.
         self.BigKIRefreshNeighborFolder()
+
         # Update the Recent people folder.
         PIKA = vault.getPeopleIKnowAboutFolder()
         if PIKA is not None:
@@ -4109,6 +4129,16 @@ class xKI(ptModifier):
             self.BKPlayerFolderDict[xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kIgnoreListFolder)] = ignores
         else:
             PtDebugPrint(u"xKI.BigKIRefreshFolderList(): IgnoreList folder is missing.", level=kWarningLevel)
+
+        # All Players
+        if PtIsInternalRelease():
+            ap = vault.getAllPlayersFolder()
+            if ap:
+                name = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAllPlayersFolder)
+                if name not in self.BKPlayerFolderDict:
+                    # Add the new player folder.
+                    self.BKPlayerListOrder.append(name)
+                self.BKPlayerFolderDict[name] = ap
 
         # Age Visitors.
         visSep = SeparatorFolder(PtGetLocalizedString("KI.Folders.VisLists"))

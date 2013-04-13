@@ -49,6 +49,7 @@ from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
+from PlasmaVaultConstants import *
 
 import xLocTools
 
@@ -351,11 +352,21 @@ class xKIChat(object):
                     if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                         fldrType = PtVaultStandardNodes.kHoodMembersFolder
                         cFlags.neighbors = True
-                    selPlyrList = self.GetOnlinePlayers(toPlyr.getChildNodeRefList())
-                    if len(selPlyrList) == 0:
-                        self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in list"]), kChat.SystemMessage)
-                        return
-                    cFlags.interAge = 1
+
+                    # Special rules for AllPlayers: ccr message and NOT directed!
+                    if fldrType == PtVaultStandardNodes.kAllPlayersFolder:
+                        selPlyrList = []
+                        listenerOnly = False
+                        cFlags.admin = 1
+                        cFlags.ccrBcast = 1
+                        pre = ""
+                    else:
+                        selPlyrList = self.GetOnlinePlayers(toPlyr.getChildNodeRefList())
+                        if len(selPlyrList) == 0:
+                            self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in list"]), kChat.SystemMessage)
+                            return
+                        cFlags.interAge = 1
+
                     message = pre + message
                     goesToFolder = xLocTools.FolderIDToFolderName(fldrType)
 
@@ -461,6 +472,16 @@ class xKIChat(object):
                     if cFlags.private:
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         self.AddPlayerToRecents(player.getPlayerID())
+
+            # Is it a ccr broadcast?
+            elif cFlags.ccrBcast:
+                headerColor = kColors.ChatHeaderAdmin
+                if cFlags.toSelf:
+                    pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
+                else:
+                    pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
+                forceKI = True
+                self.AddPlayerToRecents(player.getPlayerID())
 
             # Is it an admin message?
             elif cFlags.admin:
@@ -668,6 +689,11 @@ class ChatFlags:
         else:
             self.__dict__["admin"] = False
 
+        if flags & kRTChatGlobal:
+            self.__dict__["ccrBcast"] = True
+        else:
+            self.__dict__["ccrBcast"] = False
+
         if flags & kRTChatInterAge:
             self.__dict__["interAge"] = True
         else:
@@ -689,6 +715,13 @@ class ChatFlags:
 
         if name == "broadcast" and value:
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+
+        elif name == "ccrBcast":
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatGlobal
+            if value:
+                self.__dict__["flags"] |= kRTChatGlobal
+            else:
+                self.__dict__["flags"] &= ~kRTChatGlobal
 
         elif name == "private":
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
@@ -741,6 +774,8 @@ class ChatFlags:
             string += "status "
         if self.neighbors:
             string += "neighbors "
+        if self.ccrBcast:
+            string += "ccrBcast "
         string += "channel = {} ".format(self.channel)
         string += "flags = {}".format(self.flags)
         return string
@@ -793,6 +828,16 @@ class CommandsProcessor:
             if message[-1:] == "s":
                 v = "are"
             self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
+            return None
+        elif PtIsInternalRelease() and msg.startswith("/system "):
+            send = message[len("/system "):]
+            cFlags = ChatFlags(0)
+            cFlags.admin = 1
+            cFlags.ccrBcast = 1
+            cFlags.toSelf = 1
+            PtSendRTChat(PtGetLocalPlayer(), [], send, cFlags.flags)
+            fldr = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAllPlayersFolder)
+            self.chatMgr.AddChatLine(ptPlayer(fldr, 0), send, cFlags)
             return None
 
         # Is it an emote, a "/me" or invalid command?

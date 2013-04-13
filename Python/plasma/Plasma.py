@@ -6441,6 +6441,10 @@ class ptVault:
         """Returns a ptVaultFolderNode of ages that I own"""
         pass
 
+    def getAllPlayersFolder(self):
+        """Returns a ptVaultPlayerInfoListNode of the all players folder."""
+        pass
+
     def getAvatarClosetFolder(self):
         """Do not use.
 Returns a ptVaultFolderNode of the avatars outfit in their closet."""
