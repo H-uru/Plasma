@@ -45,7 +45,7 @@
 #	below the current one and make your changes there.
 #==============================================================
 
-STATEDESC PhilRelto
+STATEDESC philRelto
 {
     VERSION 1
 
@@ -54,7 +54,7 @@ STATEDESC PhilRelto
     VAR BOOL    philDRCVest[1]      		DEFAULT=1
 }
 
-STATEDESC PhilRelto
+STATEDESC philRelto
 {
     VERSION 2
 
