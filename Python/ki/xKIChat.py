@@ -468,10 +468,12 @@ class xKIChat(object):
                                         self.AddPlayerToRecents(buddyID)
                         except ValueError:
                             pass
-                    # Save the player's ID for replying.
+
+                    # PM Processing: Save playerID and flash client window
                     if cFlags.private:
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
                         self.AddPlayerToRecents(player.getPlayerID())
+                        PtFlashWindow()
 
             # Is it a ccr broadcast?
             elif cFlags.ccrBcast:
@@ -514,9 +516,11 @@ class xKIChat(object):
                     headerColor = kColors.ChatHeaderPrivate
                     pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
-                    # Save the player's ID for replying.
+
+                    # PM Processing: Save playerID and flash client window
                     self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 0)
                     self.AddPlayerToRecents(player.getPlayerID())
+                    PtFlashWindow()
 
         # Otherwise, cFlags is just a number.
         else:
@@ -527,9 +531,7 @@ class xKIChat(object):
                 headerColor = kColors.ChatHeaderBroadcast
                 pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
 
-        # If the KI is being forced open, flash the window for the player.
         if forceKI:
-            PtFlashWindow()
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
         if player is not None:
