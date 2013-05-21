@@ -182,9 +182,8 @@ public:
     // This weeds those out.
     bool IsDynamic() const;
     
-    //Hack to check if there is an overlap with the capsule
-    //this partially for exclude regions vs avatar capsule
-    virtual bool OverlapWithCapsule(NxCapsule& cap);
+    //Hack to check if there is an overlap with the avatar controller
+    bool OverlapWithController(const class plPXPhysicalControllerCore* controller);
 
     virtual float GetMass() {return fMass;}
 protected:
