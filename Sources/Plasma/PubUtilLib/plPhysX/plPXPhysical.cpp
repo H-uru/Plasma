@@ -1080,8 +1080,10 @@ void plPXPhysical::ExcludeRegionHack(bool cleared)
     plPXPhysicalControllerCore::RebuildCache();
 
 }
-bool plPXPhysical::OverlapWithCapsule(NxCapsule& cap)
+bool plPXPhysical::OverlapWithController(const plPXPhysicalControllerCore* controller)
 {
+    NxCapsule cap;
+    controller->GetWorldSpaceCapsule(cap);
     NxShape* shape = fActor->getShapes()[0];
     return shape->checkOverlapCapsule(cap);
 }

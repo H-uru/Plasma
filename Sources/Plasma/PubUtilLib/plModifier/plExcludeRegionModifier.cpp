@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //for hack
 #include "plPhysX/plPXPhysical.h"
 #include "plPhysX/plPXPhysicalControllerCore.h"
-#include <NxCapsule.h>
+
 static plPhysical* GetPhysical(plSceneObject* obj)
 {
     if (obj)
@@ -309,10 +309,8 @@ void plExcludeRegionModifier::IMoveAvatars()
             int actualCount = plPXPhysicalControllerCore::GetControllersInThisSubWorld(phys->GetWorldKey(), numControllers, controllers);
             
             for (int i=0;i<actualCount;i++)
-            {   
-                NxCapsule cap;
-                controllers[i]->GetWorldSpaceCapsule(cap);
-                if(phys->OverlapWithCapsule(cap))
+            {
+                if (phys->OverlapWithController(controllers[i]))
                 {
                     plSceneObject* so = plSceneObject::ConvertNoRef(controllers[i]->GetOwner()->ObjectIsLoaded());
                     const plArmatureMod* constAvMod = (plArmatureMod*)so->GetModifierByType(plArmatureMod::Index());
