@@ -73,7 +73,6 @@ namespace plPXConvert
     inline void Matrix(const hsMatrix44& fromMat, NxMat34& toMat) { toMat.setRowMajor44(&fromMat.fMap[0][0]); }
     inline void Matrix(const NxMat34& fromMat, hsMatrix44& toMat) { toMat.NotIdentity(); fromMat.getRowMajor44(&toMat.fMap[0][0]); }
 
-    bool Validate();
 };
 
 #endif // plPXConvert_h_inc
