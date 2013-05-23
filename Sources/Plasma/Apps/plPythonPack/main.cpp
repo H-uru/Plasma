@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 static const char* kPackFileName = "python.pak";
+static const char* kModuleFile = "__init__.py";
 #if HS_BUILD_FOR_WIN32
     static const char* kGlueFile = ".\\plasma\\glue.py";
 #else
@@ -338,11 +339,15 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
         std::vector<plFileName> packagePathNames;
         plFileName packagePath = plFileName::Join(path, packages[i]);
         FindFiles(packageFileNames, packagePathNames, packagePath);
-        for (int j = 0; j < packageFileNames.size(); j++) {
-            fileNames.push_back(packageName+"."+packageFileNames[j].AsString());
-            pathNames.push_back(packagePathNames[j]);
+
+        // Check for the magic file to make sure this is really a package...
+        if (std::find(packageFileNames.begin(), packageFileNames.end(), kModuleFile) != packageFileNames.end()) {
+            for (int j = 0; j < packageFileNames.size(); j++) {
+                fileNames.push_back(packageName+"."+packageFileNames[j].AsString());
+                pathNames.push_back(packagePathNames[j]);
+            }
+            FindPackages(fileNames, pathNames, packagePath, packageName);
         }
-        FindPackages(fileNames, pathNames, packagePath, packageName);
     }
 }
 
@@ -473,9 +478,13 @@ int main(int argc, char *argv[])
     }
 
     PackDirectory(rootPath, rootPath, plFileName::Join(rootPath, kPackFileName), dirNames, true);
-    for (int i=0; i<dirNames.size(); i++)
+    for (auto it = dirNames.begin(); it != dirNames.end(); ++it)
     {
-        PackDirectory(dirNames[i], rootPath, plFileName::Join(rootPath, dirNames[i]+".pak"), dirNames);
+        // Make sure this subdirectory is not just a python module. Those are packed into the
+        // main python root package...
+        plFileName dir = plFileName::Join(rootPath, *it);
+        if (plFileSystem::ListDir(dir, kModuleFile).empty())
+            PackDirectory(*it, rootPath, plFileName::Join(rootPath, *it + ".pak"), dirNames);
     }
 
     return 0;
