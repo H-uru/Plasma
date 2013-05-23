@@ -39,30 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "HeadSpin.h"
 
-#include "pnKeyedObject/plKeyImp.h"
-#include "plRegistryHelpers.h"
-#include "plRegistryNode.h"
+#include "pnFactory/plCreator.h"
 
-plKeyCollector::plKeyCollector( hsTArray<plKey> &keys ) : fKeys( keys )
-{
-}
+#include "plgDispatch.h"
+REGISTER_NONCREATABLE( plDispatchBase );
 
-bool plKeyCollector::EatKey(const plKey& key)
-{
-    fKeys.Append(key);
-    return true;
-}
+#include "pnDispatch/pnDispatchCreatable.h"
+#include "pnKeyedObject/pnKeyedObjectCreatable.h"
+#include "pnMessage/pnMessageCreatable.h"
+#include "pnModifier/pnModifierCreatable.h"
+#include "pnNetCommon/pnNetCommonCreatable.h"
+#include "pnTimer/pnTimerCreatable.h"
 
-bool plIndirectUnloadIterator::EatPage(plRegistryPageNode* page)
-{
-    page->IterateKeys(this);
-    return true;
-}
+#include "plResMgr/plResMgrCreatable.h"
 
-bool plWriteIterator::EatKey(const plKey& key)
-{
-    plKeyImp* imp = (plKeyImp*)key;
-    imp->WriteObject(fStream);
-    return true;
-}
+#include "plMessage/plResMgrHelperMsg.h"
+REGISTER_CREATABLE(plResMgrHelperMsg);
+

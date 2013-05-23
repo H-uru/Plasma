@@ -249,7 +249,11 @@ void plKey::IIncRef()
 #endif
 
     if (fKeyData->fRefCount == 1)
-        hsgResMgr::ResMgr()->IKeyReffed((plKeyImp*)fKeyData);
+    {
+        hsResMgr* mgr = hsgResMgr::ResMgr();
+        if (mgr)
+            mgr->IKeyReffed((plKeyImp*)fKeyData);
+    }
 }
 
 void plKey::IDecRef()
@@ -278,8 +282,9 @@ void plKey::IDecRef()
     }
 #endif
 
-    if (fKeyData->fRefCount == 0)
-        hsgResMgr::ResMgr()->IKeyUnreffed((plKeyImp*)fKeyData);
+    hsResMgr* mgr = hsgResMgr::ResMgr();
+    if (mgr)
+        mgr->IKeyUnreffed((plKeyImp*)fKeyData);
 }
 
 //// plKeyData ///////////////////////////////////////////////////////////////

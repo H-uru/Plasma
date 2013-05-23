@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetGameLib/plNetGameLib.h"
 #include "plProgressMgr/plProgressMgr.h"
 #include "plResMgr/plResManager.h"
+#include "plResMgr/plPagePatcher.h"
 #include "plStatusLog/plStatusLog.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -187,7 +188,7 @@ static void ManifestDownloaded(
 
 /////////////////////////////////////////////////////////////////////////////
 
-static char*  sLastError              = nil;
+extern char* g_PatcherError;
 plResPatcher* plResPatcher::fInstance = nil;
 
 plResPatcher* plResPatcher::GetInstance()
@@ -269,8 +270,8 @@ void plResPatcher::Finish(bool success)
     }
     delete fProgress; fProgress = nil;
 
-    plResPatcherMsg* pMsg = new plResPatcherMsg(success, sLastError);
-    delete[] sLastError; sLastError = nil;
+    plResPatcherMsg* pMsg = new plResPatcherMsg(success, g_PatcherError);
+    delete[] g_PatcherError; g_PatcherError = nil;
     pMsg->Send(); // whoosh... off it goes
 }
 
@@ -292,41 +293,4 @@ void plResPatcher::Start()
     fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0, "Checking for updates...",
         plProgressMgr::kUpdateText, false, true);
     IssueRequest();
-}
-
-/////////////////////////////////////////////////////////////////////////////
-
-void PatcherLog(PatcherLogType type, const char* format, ...)
-{
-    uint32_t color = 0;
-    switch (type)
-    {
-    case kHeader:       color = plStatusLog::kWhite;    break;
-    case kInfo:         color = plStatusLog::kBlue;     break;
-    case kMajorStatus:  color = plStatusLog::kYellow;   break;
-    case kStatus:       color = plStatusLog::kGreen;    break;
-    case kError:        color = plStatusLog::kRed;      break;
-    }
-
-    static plStatusLog* gStatusLog = nil;
-    if (!gStatusLog)
-    {
-        gStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(
-            20,
-            "patcher.log",
-            plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kDeleteForMe);
-    }
-
-    va_list args;
-    va_start(args, format);
-
-    if (type == kError)
-    {
-        sLastError = new char[1024]; // Deleted by Finish(false)
-        vsprintf(sLastError, format, args);
-        gStatusLog->AddLine(sLastError, color);
-    } else
-        gStatusLog->AddLineV(color, format, args);
-
-    va_end(args);
 }

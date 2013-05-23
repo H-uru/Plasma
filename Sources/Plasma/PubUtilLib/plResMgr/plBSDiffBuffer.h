@@ -108,8 +108,8 @@ class plBSDiffBuffer
 
     private:
         
-        uint32_t  IReadUnsignedint8_t(unsigned char *buf);
-        void    IWriteUnsignedint8_t(uint32_t x,unsigned char *buf);
+        uint32_t  IReadUnsignedByte(unsigned char *buf);
+        void    IWriteUnsignedByte(uint32_t x,unsigned char *buf);
         void    ISafeMemcpy(unsigned char *dest, unsigned char *src, size_t nBytes,
                             unsigned char *destend, unsigned char *srcend);
         void    ISplit(int32_t *I,int32_t *V,uint32_t start,uint32_t len,uint32_t h);

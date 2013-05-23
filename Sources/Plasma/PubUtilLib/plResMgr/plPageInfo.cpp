@@ -45,7 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plUoid.h"
 #include "plVersion.h"
 
-static uint32_t       sCurrPageInfoVersion = 6;
+static uint32_t s_MinPageInfoVersion = 6;
+static uint32_t s_CurrPageInfoVersion = 7;
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 plPageInfo::plPageInfo()
@@ -63,6 +64,7 @@ void plPageInfo::IInit()
 {
     fAge = fPage = "";
     fLocation.Invalidate();
+    fFlags = 0;
     SetMajorVersion(plVersion::GetMajorVersion());
     fClassVersions.clear();
     fChecksum = 0;
@@ -89,7 +91,7 @@ plPageInfo &plPageInfo::operator=( const plPageInfo &src )
 void    plPageInfo::ISetFrom( const plPageInfo &src )
 {
     fLocation = src.fLocation;
-
+    fFlags = src.fFlags;
     SetStrings( src.fAge, src.fPage );
     fMajorVersion = src.fMajorVersion;
     fClassVersions = src.fClassVersions;
@@ -109,6 +111,11 @@ void    plPageInfo::SetLocation( const plLocation &loc )
     fLocation = loc;
 }
 
+plString plPageInfo::StringIze() const
+{
+    return plString::Format("%s_%s", fAge.c_str(), fPage.c_str());
+}
+
 void plPageInfo::AddClassVersion(uint16_t classIdx, uint16_t version)
 {
     ClassVersion cv;
@@ -121,71 +128,64 @@ void plPageInfo::Read( hsStream *s )
 {
     IInit();
 
-    // 5 is the earliest version since we began working again on the P20 codebase in Sep 2005,
-    // after Uru's online component was cancelled in Feb 2004, so I've removed support for
-    // anything prior to that to clean things up a bit.
-    uint32_t version = s->ReadLE32();
-    if (version > sCurrPageInfoVersion || version < 5)
+    // Only support data from Myst Online: Uru Live Again and later
+    // This means page info versions 6 and above. 5 is just way too old.
+    uint32_t version = s->ReadLE32(); // HINT: Plasma21 reads an LE16
+    if (version > s_CurrPageInfoVersion)
     {
-        hsAssert( false, "Invalid header version in plPageInfo::Read()" );
+        hsAssert(false, plString::Format("PageInfo version %d is too new", version).c_str());
         return;
     }
-    if (version >= 5)
+    else if (version < s_MinPageInfoVersion)
     {
-        fLocation.Read( s );
-        fAge = s->ReadSafeString_TEMP();
-        if (version < 6)
-            s->ReadSafeString_TEMP(); // fChapter was never used, and always "District".
-        fPage = s->ReadSafeString_TEMP();
-
-        s->ReadLE( &fMajorVersion );
-
-        if (version < 6)
-        {
-            uint16_t unusedMinorVersion;
-            s->ReadLE(&unusedMinorVersion);
-            int32_t unusedReleaseVersion;
-            s->ReadLE(&unusedReleaseVersion); // This was always zero... yanked.
-            uint32_t unusedFlags;
-            s->ReadLE(&unusedFlags);
-        }
-
-        s->ReadLE( &fChecksum );
-        s->ReadLE( &fDataStart );
-        s->ReadLE( &fIndexStart );
+        hsAssert(false, plString::Format("PageInfo version %d is too old", version).c_str());
+        return;
     }
 
-    if (version >= 6)
+    fLocation.Read(s);
+    fAge = s->ReadSafeString_TEMP();
+    fPage = s->ReadSafeString_TEMP();
+    s->LogReadLE(&fMajorVersion, "major version");
+    if (version > 6)
+        s->LogReadLE(&fFlags, "page flags"); // restored in 7
+    s->LogReadLE(&fChecksum, "checksum");
+    s->LogReadLE(&fDataStart, "data start offset");
+    s->LogReadLE(&fIndexStart, "index start offset");
+
+    uint16_t numClassVersions = s->ReadLE16();
+    fClassVersions.reserve(numClassVersions);
+    for (uint16_t i = 0; i < numClassVersions; i++)
     {
-        uint16_t numClassVersions = s->ReadLE16();
-        fClassVersions.reserve(numClassVersions);
-        for (uint16_t i = 0; i < numClassVersions; i++)
-        {
-            ClassVersion cv;
-            cv.Class = s->ReadLE16();
-            cv.Version = s->ReadLE16();
-            fClassVersions.push_back(cv);
-        }
+        ClassVersion cv;
+        cv.Class = s->ReadLE16();
+        cv.Version = s->ReadLE16();
+        fClassVersions.push_back(cv);
     }
 }
 
 void    plPageInfo::Write( hsStream *s )
 {
-    s->WriteLE32( sCurrPageInfoVersion );
+    // Try to maintain some semblence of compatibility. If there are no page flags,
+    // let's dump out a Cyan-compatible PRP.
+    if (fFlags == 0)
+        s->WriteLE32( s_MinPageInfoVersion );
+    else
+        s->WriteLE32( s_CurrPageInfoVersion );
     fLocation.Write( s );
     s->WriteSafeString( fAge );
     s->WriteSafeString( fPage );
     s->WriteLE( fMajorVersion );
+    if (fFlags != 0)
+        s->WriteLE( fFlags );
     s->WriteLE( fChecksum );
     s->WriteLE( fDataStart );
     s->WriteLE( fIndexStart );
-    uint16_t numClassVersions = uint16_t(fClassVersions.size());
-    s->WriteLE16(numClassVersions);
-    for (uint16_t i = 0; i < numClassVersions; i++)
+
+    s->WriteLE16(fClassVersions.size());
+    for (auto it = fClassVersions.begin(); it != fClassVersions.end(); ++it)
     {
-        ClassVersion& cv = fClassVersions[i];
-        s->WriteLE16(cv.Class);
-        s->WriteLE16(cv.Version);
+        s->WriteLE16((*it).Class);
+        s->WriteLE16((*it).Version);
     }
 }
 

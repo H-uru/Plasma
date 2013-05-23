@@ -60,6 +60,7 @@ enum PageCond
     kPageOutOfDate,
     kPageTooNew,
     kPageCorrupt,
+    kNodeNotReady,
 };
 
 //
@@ -85,18 +86,19 @@ protected:
                                 // zero if it's closed)
     bool fIsNewPage;          // True if this page is new (not read off disk)
 
-    plRegistryPageNode() {}
-
     plRegistryKeyList* IGetKeyList(uint16_t classType) const;
     PageCond IVerify();
 
 public:
+    plRegistryPageNode() : fValid(kNodeNotReady), fPath("") { }
+
     // For reading a page off disk
     plRegistryPageNode(const plFileName& path);
 
     // For creating a new page.
     plRegistryPageNode(const plLocation& location, const plString& age,
                        const plString& page, const plFileName& dataPath);
+    plRegistryPageNode(const plPageInfo& info);
     ~plRegistryPageNode();
 
     bool IsValid() const { return fValid == kPageOk; }
@@ -140,10 +142,11 @@ public:
     void        CloseStream();
 
     // Takes care of everything involved in writing this page to disk
-    void Write();
+    void Write(class plWriteIterator* writeIter=nullptr);
     void DeleteSource();
 
     const plFileName& GetPagePath() const { return fPath; }
+    void SetPagePathDirect(const plFileName& path) { fPath = path; }
 };
 
 #endif // plRegistryNode_h_inc

@@ -65,6 +65,7 @@ protected:
     plLocation  fLocation;
     plString    fAge;
     plString    fPage;
+    uint32_t    fFlags;
     uint16_t    fMajorVersion;
     ClassVerVec fClassVersions;
     uint32_t    fChecksum;
@@ -75,6 +76,13 @@ protected:
 
 public:
 
+    enum
+    {
+        kPartialPatchFile = 0x1,
+        kPatchHeaderOnly = 0x10,
+        kPatchFlags = kPatchHeaderOnly | kPartialPatchFile
+    };
+
     plPageInfo();
     plPageInfo( const plLocation &loc );
     plPageInfo( const plPageInfo &src );
@@ -82,6 +90,7 @@ public:
 
     const plString& GetAge() const  { return fAge; }
     const plString& GetPage() const { return fPage; }
+    plString StringIze() const;
 
     plPageInfo &operator=( const plPageInfo &src );
 
@@ -93,6 +102,17 @@ public:
 
     void                SetLocation(const plLocation& loc);
     const plLocation&   GetLocation() const { return fLocation; }
+
+    uint32_t  GetFlags() const { return fFlags; }
+    bool      HasFlag(uint32_t flag) const { return hsCheckBits(fFlags, flag); }
+    void      SetFlag(uint32_t flag, bool on=true)
+    {
+        if (on)
+            hsSetBits(fFlags, flag);
+        else
+            hsClearBits(fFlags, flag);
+    }
+    void      SetFlags(uint32_t flags) { fFlags = flags; }
 
     uint16_t  GetMajorVersion() const { return fMajorVersion; }
     void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }

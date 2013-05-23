@@ -82,14 +82,4 @@ public:
     void RequestManifest(const plString& age);
     void Start();
 };
-
-enum PatcherLogType
-{
-    kHeader,
-    kInfo,
-    kMajorStatus,
-    kStatus,
-    kError,
-};
-void PatcherLog(PatcherLogType type, const char* format, ...);
 #endif // _plResPatcher_h

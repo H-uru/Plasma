@@ -9,6 +9,7 @@ set(plResMgr_SOURCES
     plKeyFinder.cpp
     plLocalization.cpp
     plPageInfo.cpp
+    plPagePatcher.cpp
     plRegistryHelpers.cpp
     plRegistryKeyList.cpp
     plRegistryNode.cpp
@@ -23,6 +24,7 @@ set(plResMgr_HEADERS
     plKeyFinder.h
     plLocalization.h
     plPageInfo.h
+    plPagePatcher.h
     plRegistryHelpers.h
     plRegistryKeyList.h
     plRegistryNode.h
@@ -34,12 +36,12 @@ set(plResMgr_HEADERS
 )
 
 add_library(plResMgr STATIC ${plResMgr_SOURCES} ${plResMgr_HEADERS})
+
 target_link_libraries(plResMgr CoreLib)
 target_link_libraries(plResMgr pnDispatch)
 target_link_libraries(plResMgr pnFactory)
 target_link_libraries(plResMgr pnKeyedObject)
 target_link_libraries(plResMgr pnMessage)
-target_link_libraries(plResMgr pnTimer)
 target_link_libraries(plResMgr plFile)
 target_link_libraries(plResMgr plStatusLog)
 
