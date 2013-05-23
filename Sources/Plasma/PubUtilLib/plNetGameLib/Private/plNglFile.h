@@ -96,21 +96,11 @@ void NetCliFileRegisterBuildIdUpdate (FNetCliFileBuildIdUpdateCallback callback)
 //============================================================================
 // Manifest
 //============================================================================
-struct NetCliFileManifestEntry {
-    wchar_t     clientName[MAX_PATH]; // path and file on client side (for comparison)
-    wchar_t     downloadName[MAX_PATH]; // path and file on server side (for download)
-    wchar_t     md5[32];
-    wchar_t     md5compressed[32]; // md5 for the compressed file
-    unsigned    fileSize;
-    unsigned    zipSize;
-    unsigned    flags;
-};
 typedef void (*FNetCliFileManifestRequestCallback)(
     ENetError                       result,
     void *                          param,
     const wchar_t                   group[],
-    const NetCliFileManifestEntry   manifest[],
-    unsigned                        entryCount
+    const class plManifest*         manifest
 );
 void NetCliFileManifestRequest (
     FNetCliFileManifestRequestCallback  callback,

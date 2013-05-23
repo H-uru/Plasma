@@ -140,13 +140,10 @@ static void DownloadCallback (
 }
 
 //============================================================================
-static bool MD5Check (const plFileName &filename, const char *md5) {
+static bool MD5Check (const plFileName &filename, const plMD5Checksum& md5) {
     // Do md5 check
     plMD5Checksum existingMD5(filename);
-    plMD5Checksum latestMD5;
-
-    latestMD5.SetFromHexString(md5);
-    return (existingMD5 == latestMD5);
+    return (existingMD5 == md5);
 }
 
 //============================================================================
@@ -154,13 +151,12 @@ static void ManifestCallback (
     ENetError                       result,
     void *                          param,
     const wchar_t                   group[],
-    const NetCliFileManifestEntry   manifest[],
-    unsigned                        entryCount
+    const plManifest*               mfs
 ) {
     if(IS_NET_ERROR(result)) {
         switch (result) {
             case kNetErrTimeout:
-                NetCliFileManifestRequest(ManifestCallback, nil, s_manifest);
+                NetCliFileManifestRequest(ManifestCallback, nullptr, s_manifest);
             break;
             
             default:
@@ -175,18 +171,19 @@ static void ManifestCallback (
     }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if (entryCount == 0)  { // dataserver does not contain a patcher
+    if (mfs->GetFiles().empty())  { // dataserver does not contain a patcher
         s_downloadComplete = true;
         return;
     }
 #endif
 
     // MD5 check current patcher against value in manifest
-    ASSERT(entryCount == 1);
+    ASSERT(mfs->GetFiles().size() == 1);
+    const plManifestFile* file = mfs->GetFiles()[0];
     plFileName curPatcherFile = plFileSystem::GetCurrentAppPath();
-    if (!MD5Check(curPatcherFile, plString::FromWchar(manifest[0].md5, 32).c_str())) {
+    if (!MD5Check(curPatcherFile, file->GetChecksum())) {
 //      MessageBox(GetTopWindow(nil), "MD5 failed", "Msg", MB_OK);
-        SelfPatcherStream::totalBytes += manifest[0].zipSize;
+        SelfPatcherStream::totalBytes += file->GetCompressedSize();
 
         AtomicAdd(&s_numFiles, 1);
         SetText("Downloading new patcher...");
@@ -195,7 +192,7 @@ static void ManifestCallback (
         if (!stream->Open(s_newPatcherFile, "wb"))
             ErrorAssert(__LINE__, __FILE__, "Failed to create file: %s, errno: %u", s_newPatcherFile.AsString().c_str(), errno);
 
-        NetCliFileDownloadRequest(plString::FromWchar(manifest[0].downloadName), stream, DownloadCallback, nil);
+        NetCliFileDownloadRequest(file->GetDownloadPath(), stream, DownloadCallback, nil);
     }
     else {
         s_downloadComplete = true;

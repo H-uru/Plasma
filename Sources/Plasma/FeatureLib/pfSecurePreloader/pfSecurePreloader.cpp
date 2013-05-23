@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsStream.h"
 #include "plgDispatch.h"
+#include "plAgeDescription/plAgeManifest.h"
 #include "plCompression/plZlibStream.h"
 #include "pnEncryption/plChecksum.h"
 #include "plFile/plSecureStream.h"
@@ -91,11 +92,10 @@ void GotAuthSrvManifest(
 }
 
 void GotFileSrvManifest(
-    ENetError                     result, 
-    void*                         param, 
-    const wchar_t                 group[], 
-    const NetCliFileManifestEntry manifest[], 
-    uint32_t                      entryCount
+    ENetError                     result,
+    void*                         param,
+    const wchar_t                 group[],
+    const plManifest*             manifest
 ) {
     pfSecurePreloader* sp = (pfSecurePreloader*)param;
     if (result == kNetErrFileNotFound)
@@ -105,13 +105,13 @@ void GotFileSrvManifest(
         params->fFileGroups.push(WcharPair(L"SDL", L"sdl"));
         ProcAuthDownloadParams(params);
         return;
-    } else if (!entryCount) {
+    } else if (manifest->GetFiles().empty()) {
         FATAL("SecurePreloader manifest empty!");
         sp->Terminate();
         return;
     }
 
-    sp->PreloadManifest(manifest, entryCount);
+    sp->PreloadManifest(manifest);
 }
 
 void FileDownloaded(
@@ -271,7 +271,7 @@ void pfSecurePreloader::Start()
 #endif
 
     NetCliAuthGetEncryptionKey(fEncryptionKey, 4);
-    
+
     // TODO: Localize
     fProgress = plProgressMgr::GetInstance()->RegisterOperation(0.0f, "Checking for updates", plProgressMgr::kUpdateText, false, true);
 
@@ -338,44 +338,34 @@ void pfSecurePreloader::PreloadManifest(const NetCliAuthFileInfo manifestEntries
     }
 }
 
-void pfSecurePreloader::PreloadManifest(const NetCliFileManifestEntry manifestEntries[], uint32_t entryCount)
+void pfSecurePreloader::PreloadManifest(const plManifest* manifest)
 {
     uint32_t totalBytes = 0;
-    for (uint32_t i = 0; i < entryCount; ++i)
+    for (auto it = manifest->GetFiles().begin(); it != manifest->GetFiles().end(); ++it)
     {
-        const NetCliFileManifestEntry mfs = manifestEntries[i];
+        const plManifestFile* file = *it;
         bool fetchMe = true;
         hsRAMStream* s = nil;
-        plFileName clientName = plString::FromWchar(mfs.clientName);
-        plFileName downloadName = plString::FromWchar(mfs.downloadName);
 
-        if (plFileInfo(clientName).Exists())
+        if (plFileInfo(file->GetFileName()).Exists())
         {
-            s = LoadToMemory(clientName);
+            s = LoadToMemory(file->GetFileName());
             if (s)
             {
-                // Damn this
-                plMD5Checksum srvHash;
-                srvHash.SetFromHexString(plString::FromWchar(mfs.md5, 32).c_str());
-
-                // Now actually copare the hashes
                 plMD5Checksum lclHash;
                 lclHash.CalcFromStream(s);
-                fetchMe = (srvHash != lclHash);
+                fetchMe = (file->GetChecksum() != lclHash);
             }
         }
 
         if (fetchMe)
         {
-            fManifestEntries.push(clientName);
-            fDownloadEntries.push(downloadName);
-            if (IsZipped(downloadName))
-                totalBytes += mfs.zipSize;
-            else
-                totalBytes += mfs.fileSize;
+            fManifestEntries.push(file->GetFileName());
+            fDownloadEntries.push(file->GetDownloadPath());
+            totalBytes += file->GetDownloadSize();
         } else {
             plSecureStream* ss = new plSecureStream(s, fEncryptionKey);
-            plStreamSource::GetInstance()->InsertFile(clientName, ss);
+            plStreamSource::GetInstance()->InsertFile(file->GetFileName(), ss);
         }
 
         if (s)

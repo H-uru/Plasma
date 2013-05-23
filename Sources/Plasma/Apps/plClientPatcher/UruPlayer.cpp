@@ -66,21 +66,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct ManifestFile
 {
-    ManifestFile(const plFileName &clientName, const plFileName &downloadName, const plString &md5val, int flags, plLauncherInfo *info)
-    {
-        filename = clientName;
-        zipName = downloadName;
-        md5 = md5val;
-        this->flags = flags;
-        this->info = info;
-        md5failed = false;
-    }
+    ManifestFile(const plFileName &clientName, const plFileName &downloadName, const plMD5Checksum &md5val, int flags, plLauncherInfo *info)
+        : filename(clientName), zipName(downloadName), md5(md5val), flags(flags), info(info), md5failed(false)
+    { }
 
-    plFileName filename;
-    plFileName zipName;
-    plString md5;
-    int flags;
-    bool md5failed;
+    plFileName      filename;
+    plFileName      zipName;
+    plMD5Checksum   md5;
+    int             flags;
+    bool            md5failed;
     plLauncherInfo *info;
 };
 
@@ -285,12 +279,11 @@ static void WaitUruExitProc (void * param) {
 */
 
 //============================================================================
-static bool MD5Check (const plFileName& filename, const char *md5) {
+static bool MD5Check (const plFileName& filename, const plMD5Checksum& md5) {
     plMD5Checksum existingMD5(filename);
     plMD5Checksum latestMD5;
 
-    latestMD5.SetFromHexString(md5);
-    return (existingMD5 == latestMD5);
+    return (existingMD5 == md5);
 }
 
 //============================================================================
@@ -408,7 +401,7 @@ static void DownloadCallback (
     plFileName path = plFileName::Join(s_workingDir, mf->filename);
     if (s_running)
     {
-        if (!MD5Check(path, mf->md5.c_str())) {
+        if (!MD5Check(path, mf->md5)) {
             if (mf->md5failed)
             {
 #ifdef PLASMA_EXTERNAL_RELEASE
@@ -474,7 +467,7 @@ static void ProcessManifestEntry (void * param, ENetError error) {
 #endif
     plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(p->mr->manifest[p->index].clientName));
     uint32_t start = (uint32_t)(TimeGetTime() / kTimeIntervalsPerMs);
-    if (!MD5Check(path, plString::FromWchar(p->mr->manifest[p->index].md5, 32).c_str())) {
+    if (!MD5Check(path, p->mr->manifest[p->index].md5)) {
         p->mr->critsect.Lock();
         p->mr->indices.Add(p->index);
         p->mr->critsect.Unlock();
@@ -595,7 +588,7 @@ static void ProcessManifest (void * param) {
                     ManifestFile* mf = new ManifestFile(
                         plString::FromWchar(manifest[index].clientName),
                         plString::FromWchar(manifest[index].downloadName),
-                        plString::FromWchar(manifest[index].md5),
+                        manifest[index].md5,
                         manifest[index].flags,
                         mr->info
                     );
@@ -637,8 +630,7 @@ static void ManifestCallback (
     ENetError                       result,
     void *                          param,
     const wchar_t                   group[],
-    const NetCliFileManifestEntry   manifest[],
-    unsigned                        entryCount
+    const plManifest*               newMfs
 ){
     s_numConnectFailures = 0;
 
@@ -648,7 +640,7 @@ static void ManifestCallback (
         if (s_running && !s_patchError) {
             switch (result) {
                 case kNetErrTimeout:
-                    NetCliFileManifestRequest(ManifestCallback, param, group);
+                    NetCliFileManifestRequest(ManifestCallback, info, group);
                 break;
                 
                 default: {
@@ -662,7 +654,12 @@ static void ManifestCallback (
         }
         return;
     }
-    
+
+    // Legacy manifest here because eap is insane. I'm not fooling with this mess.
+    NetCliFileManifestEntry* manifest = NetCliFileManifestEntry::FromManifest(newMfs);
+    unsigned entryCount = newMfs->GetFiles().size();
+
+
     ManifestResult * mr = new ManifestResult();
     StrCopy(mr->group, group, arrsize(mr->group));
     mr->manifest.Set(manifest, entryCount);
@@ -691,8 +688,9 @@ static void ManifestCallback (
     // adjust our array and set data
     mr->manifest.ShrinkBy(mr->manifest.Count() - noDuplicates.Count());
     mr->manifest.Set(noDuplicates.Ptr(), noDuplicates.Count());
-    
+
     (void)_beginthread(ProcessManifest, 0, mr);
+    delete manifest;
 }
 
 //============================================================================
@@ -700,8 +698,7 @@ static void ThinManifestCallback (
     ENetError                       result,
     void *                          param,
     const wchar_t                   group[],
-    const NetCliFileManifestEntry   manifest[],
-    unsigned                        entryCount
+    const plManifest*               newMfs
 ){
     s_numConnectFailures = 0;
 
@@ -714,7 +711,7 @@ static void ThinManifestCallback (
         if (s_running && !s_patchError) {
             switch (result) {
                 case kNetErrTimeout:
-                    NetCliFileManifestRequest(ManifestCallback, param, group);
+                    NetCliFileManifestRequest(ManifestCallback, info, group);
                 break;
                 
                 default: {
@@ -729,12 +726,13 @@ static void ThinManifestCallback (
         return;
     }
     s_patchComplete = true;
-    for (unsigned i = 0; i < entryCount; ++i) {
+    for (auto it = newMfs->GetFiles().begin(); it != newMfs->GetFiles().end(); ++it) {
         if (!s_running)
             return;
+        const plManifestFile* file = *it;
 
-        plFileName path = plFileName::Join(s_workingDir, plString::FromWchar(manifest[i].clientName));
-        if (!MD5Check(path, plString::FromWchar(manifest[i].md5, 32).c_str())) {
+        plFileName path = plFileName::Join(s_workingDir, file->GetFileName());
+        if (!MD5Check(path, file->GetChecksum())) {
             s_patchComplete = false;
             NetCliFileManifestRequest(ManifestCallback, info, s_manifest, info->buildId);
             break;
@@ -742,12 +740,11 @@ static void ThinManifestCallback (
         PatchInfo patchInfo;
         patchInfo.stage = 0;
         patchInfo.progressStage = 0;
-        patchInfo.progress = (unsigned)((float)i / (float)entryCount * 1000.0f);
+        patchInfo.progress = unsigned(float(it - newMfs->GetFiles().begin()) / float(newMfs->GetFiles().size()) * 1000);
         info->progressCallback(kStatusPending, &patchInfo);
 #ifndef PLASMA_EXTERNAL_RELEASE
-        char text[256];
-        StrPrintf(text, arrsize(text), "Checking for updates...  %S", manifest[i].clientName);
-        info->SetText(text);
+        plString text = plString::Format("Checking for updates...  %s", file->GetFileName().AsString().c_str());
+        info->SetText(text.c_str());
 #endif
     }
 }

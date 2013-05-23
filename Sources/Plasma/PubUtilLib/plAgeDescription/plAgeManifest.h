@@ -39,97 +39,130 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plAgeManifest - Collection of version-specific info about an age, such  //
-//                  as the actual files constructing it, timestamps, and    //
-//                  release versions.                                       //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
 #ifndef _plAgeManifest_h
 #define _plAgeManifest_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include "plFileSystem.h"
+#include <vector>
 
-#include "plUnifiedTime/plUnifiedTime.h"
-#include "plFile/plInitFileReader.h"
 #include "pnEncryption/plChecksum.h"
+#include "plUnifiedTime/plUnifiedTime.h"
 
+class hsStream;
 
-//// Small Container Classes for a Single File ///////////////////////////////
-
-class plManifestFile
+class plMfsLine
 {
 protected:
-    plFileName      fName;
-    plFileName      fServerPath;
-    plMD5Checksum   fChecksum;
-    uint32_t        fSize;
-    uint32_t        fZippedSize;
-    uint32_t        fFlags;
+    plFileName fName, fDownload;
+    plMD5Checksum fChecksum;
+    uint32_t fSize, fCompressedSize, fFlags;
+    plUnifiedTime fModifyTime;
 
-    bool            fMd5Checked;
-    bool            fIsLocalUpToDate;
-    bool            fLocalExists;
+    plMfsLine() { }
 
 public:
-    // fUser flags
-    enum
+    enum Flags
     {
-        // Sound files only
+        // DEAD: Sound Flags
         kSndFlagCacheSplit          = 1<<0,
         kSndFlagStreamCompressed    = 1<<1,
         kSndFlagCacheStereo         = 1<<2,
+
         // Any file
         kFlagZipped                 = 1<<3,
     };
 
-    plManifestFile(const plFileName& name, const plFileName& serverPath, const plMD5Checksum& check,
-                   uint32_t size, uint32_t zippedSize, uint32_t flags, bool md5Now = true);
-    virtual ~plManifestFile();
+    plMfsLine(const plString& data);
+    plMfsLine(const plFileName& fn, const plFileName& dload, const plMD5Checksum& md5, uint32_t size,
+              uint32_t zipSize, uint32_t flags, const plUnifiedTime& tm)
+              : fName(fn), fDownload(dload), fChecksum(md5), fSize(size), fCompressedSize(zipSize),
+                fFlags(flags), fModifyTime(tm)
+    { }
 
-    const plFileName &GetName() const { return fName; }
-    const plFileName &GetServerPath() const { return fServerPath; }
-    const plMD5Checksum& GetChecksum() const { return fChecksum; }
-    uint32_t GetDiskSize() const { return fSize; }
-    uint32_t GetDownloadSize() const { return hsCheckBits(fFlags, kFlagZipped) ? fZippedSize : fSize; }
+    const uint32_t GetDownloadSize() const
+    {
+        if (fFlags & kFlagZipped)
+            return fCompressedSize;
+        else
+            return fSize;
+    }
+
+    const plFileName& GetFileName() const { return fName; }
+    const plFileName& GetDownloadPath() const { return fDownload; }
+    uint32_t GetFileSize() const { return fSize; }
+    uint32_t GetCompressedSize() const { return fCompressedSize; }
     uint32_t GetFlags() const { return fFlags; }
-
-    void    DoMd5Check();
-    bool    IsLocalUpToDate();
-    bool    LocalExists();
+    const plUnifiedTime& GetModifyTime() const { fModifyTime; }
 };
 
-//// Actual Manifest Class ///////////////////////////////////////////////////
+class plManifestFile : public plMfsLine
+{
+public:
+    class Patch : public plMfsLine
+    {
+        plMD5Checksum fBeforeChecksum;
+        plMD5Checksum fAfterChecksum;
+
+    public:
+        Patch(const plString& data);
+
+        const plMD5Checksum& GetAfterChecksum() const { return fAfterChecksum; }
+        const plMD5Checksum& GetBeforeChecksum() const { return fBeforeChecksum; }
+    };
+
+private:
+    std::vector<Patch*> fPatches;
+
+public:
+    plManifestFile(const plString& data) : plMfsLine(data) { }
+    plManifestFile(const plFileName& fn, const plFileName& dload, const plMD5Checksum& md5, uint32_t size,
+                   uint32_t zipSize, uint32_t flags, const plUnifiedTime& tm)
+                   : plMfsLine(fn, dload, md5, size, zipSize, flags, tm)
+    { }
+    ~plManifestFile();
+
+    const plMD5Checksum& GetChecksum() const { return fChecksum; }
+    std::vector<Patch*>& GetPatches() { return fPatches; }
+};
 
 class plManifest
 {
-protected:
-    uint32_t fFormatVersion;
-    char* fAgeName;     // Mostly just for debugging
-
-    hsTArray<plManifestFile*> fFiles;
-    
-    void IReset();
+    std::vector<plManifestFile*> fFiles;
 
 public:
-    static const char* fTimeFormat;       // Standard string for the printed version of our timestamps
+    plManifest() { }
+    ~plManifest();
 
-    void SetFormatVersion(uint32_t v) { fFormatVersion = v; }
-    void AddFile(plManifestFile* file);
+    plManifestFile* FindFile(const plFileName& name);
 
-    plManifest();
-    virtual ~plManifest();
+    const std::vector<plManifestFile*>& GetFiles() const { return fFiles; }
+    std::vector<plManifestFile*>& GetFiles() { return fFiles; }
 
-    bool Read(const char* filename);
-    bool Read(hsStream* stream);
+    bool Read(hsStream* const s);
+    bool Read(const void* buf, size_t bufsz);
+    bool ReadLegacy(hsStream* const s);
+    bool ReadLegacy(const void* buf, size_t bufsz);
+    void Write(hsStream* const s) const;
+};
 
-    uint32_t GetFormatVersion() const { return fFormatVersion; }
+/** Deprecated -- Only for use in plUruLauncher **/
+struct NetCliFileManifestEntry {
+    wchar_t       clientName[_MAX_PATH];   // path and file on client side (for comparison)
+    wchar_t       downloadName[_MAX_PATH]; // path and file on server side (for download)
+    plMD5Checksum md5;
+    uint32_t      fileSize;
+    uint32_t      zipSize;
+    uint32_t      flags;
 
-    uint32_t GetNumFiles() const { return fFiles.GetCount(); }
-    const plManifestFile& GetFile(uint32_t i) const { return *fFiles[i]; }
+    NetCliFileManifestEntry()
+        : fileSize(0), zipSize(0), flags(0)
+    { }
+
+    NetCliFileManifestEntry(const plManifestFile& mfs);
+
+    static NetCliFileManifestEntry* FromManifest(const plManifest* const mfs);
 };
 
 #endif //_plAgeManifest_h

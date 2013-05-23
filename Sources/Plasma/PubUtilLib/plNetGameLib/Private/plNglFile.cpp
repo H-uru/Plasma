@@ -147,9 +147,7 @@ struct ManifestRequestTrans : NetFileTrans {
     void *                              m_param;
     wchar_t                             m_group[MAX_PATH];
     unsigned                            m_buildId;
-
-    ARRAY(NetCliFileManifestEntry)      m_manifest;
-    unsigned                            m_numEntriesReceived;
+    plManifest                          m_manifest;
 
     ManifestRequestTrans (
         FNetCliFileManifestRequestCallback  callback,
@@ -911,7 +909,6 @@ ManifestRequestTrans::ManifestRequestTrans (
 ) : NetFileTrans(kManifestRequestTrans)
 ,   m_callback(callback)
 ,   m_param(param)
-,   m_numEntriesReceived(0)
 ,   m_buildId(buildId)
 {
     if (group)
@@ -932,29 +929,14 @@ bool ManifestRequestTrans::Send () {
     manifestReq.messageBytes = sizeof(manifestReq);
     manifestReq.buildId = m_buildId;
 
-    m_conn->Send(&manifestReq, manifestReq.messageBytes);   
+    m_conn->Send(&manifestReq, manifestReq.messageBytes);
 
     return true;
 }
 
 //============================================================================
 void ManifestRequestTrans::Post () {
-    m_callback(m_result, m_param, m_group, m_manifest.Ptr(), m_manifest.Count());
-}
-
-//============================================================================
-void ReadStringFromMsg(const wchar_t* curMsgPtr, wchar_t* destPtr, unsigned* length) {
-    if (!(*length)) {
-        size_t maxlen = wcsnlen(curMsgPtr, MAX_PATH - 1);   // Hacky sack
-        (*length) = maxlen;
-        destPtr[maxlen] = 0;    // Don't do this on fixed length, because there's no room for it
-    }
-    memcpy(destPtr, curMsgPtr, *length * sizeof(wchar_t));
-}
-
-//============================================================================
-void ReadUnsignedFromMsg(const wchar_t* curMsgPtr, unsigned* val) {
-    (*val) = ((*curMsgPtr) << 16) + (*(curMsgPtr + 1));
+    m_callback(m_result, m_param, m_group, &m_manifest);
 }
 
 //============================================================================
@@ -964,164 +946,52 @@ bool ManifestRequestTrans::Recv (
 ) {
     m_timeoutAtMs = TimeGetMs() + NetTransGetTimeoutMs(); // Reset the timeout counter
 
-    const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
-
-    uint32_t numFiles = reply.numFiles;
-    uint32_t wchar_tCount = reply.wchar_tCount;
-    const wchar_t* curChar = reply.manifestData; // the pointer is not yet dereferenced here!
-
-    // tell the server we got the data
-    Cli2File_ManifestEntryAck manifestAck;
-    manifestAck.messageId = kCli2File_ManifestEntryAck;
-    manifestAck.transId = reply.transId;
-    manifestAck.messageBytes = sizeof(manifestAck);
-    manifestAck.readerId = reply.readerId;
-
-    m_conn->Send(&manifestAck, manifestAck.messageBytes);   
-
-    // if wchar_tCount is 2 or less, the data only contains the terminator "\0\0" and we
-    // don't need to convert anything (and we are done)
-    if ((IS_NET_ERROR(reply.result)) || (wchar_tCount <= 2)) {
-        // we have a problem... or we have nothing to so, so we're done
-        m_result    = reply.result;
-        m_state     = kTransStateComplete;
-        return true;
-    }
-
-    if (numFiles > m_manifest.Count())
-        m_manifest.SetCount(numFiles); // reserve the space ahead of time
-
-    // manifestData format: "clientFile\0downloadFile\0md5\0filesize\0zipsize\0flags\0...\0\0"
-    bool done = false;
-    while (!done) {
-        if (wchar_tCount == 0)
-        {
-            done = true;
-            break;
-        }
-
-        // copy the data over to our array (m_numEntriesReceived is the current index)
-        NetCliFileManifestEntry& entry = m_manifest[m_numEntriesReceived];
-
-        // --------------------------------------------------------------------
-        // read in the clientFilename
-        unsigned filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.clientName, &filenameLen);
-        curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // something is screwy, abort and disconnect
-
-        // point it at the downloadFile
-        curChar++;
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        // read in the downloadFilename
-        filenameLen = 0;
-        ReadStringFromMsg(curChar, entry.downloadName, &filenameLen);
-        curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // something is screwy, abort and disconnect
-
-        // point it at the md5
-        curChar++;
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        // read in the md5
-        filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5, &filenameLen);
-        curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // something is screwy, abort and disconnect
-
-        // point it at the md5 for compressed files
-        curChar++; 
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        // read in the md5 for compressed files
-        filenameLen = 32;
-        ReadStringFromMsg(curChar, entry.md5compressed, &filenameLen);
-        curChar += filenameLen; // advance the pointer
-        wchar_tCount -= filenameLen; // keep track of the amount remaining
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // something is screwy, abort and disconnect
-
-        // point it at the first part of the filesize value (format: 0xHHHHLLLL)
-        curChar++; 
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
-            return false; // screwy data
-        ReadUnsignedFromMsg(curChar, &entry.fileSize);
-        curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // screwy data
-
-        // point it at the first part of the zipsize value (format: 0xHHHHLLLL)
-        curChar++; 
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
-            return false; // screwy data
-        ReadUnsignedFromMsg(curChar, &entry.zipSize);
-        curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // screwy data
-
-        // point it at the first part of the flags value (format: 0xHHHHLLLL)
-        curChar++; 
-        wchar_tCount--;
-
-        // --------------------------------------------------------------------
-        if (wchar_tCount < 2) // we have to have 2 chars for the size
-            return false; // screwy data
-        ReadUnsignedFromMsg(curChar, &entry.flags);
-        curChar += 2;
-        wchar_tCount -= 2;
-        if ((*curChar != L'\0') || (wchar_tCount <= 0))
-            return false; // screwy data
-
-        // --------------------------------------------------------------------
-        // point it at either the second part of the terminator, or the next filename
-        curChar++;
-        wchar_tCount--;
-
-        // do sanity checking
-        if (*curChar == L'\0') {
-            // we hit the terminator
-            if (wchar_tCount != 1)
-                return false; // invalid data, we shouldn't have any more
-            done = true; // we're done
-        }
-        else if (wchar_tCount < 14)
-            // we must have at least three 1-char strings, three nulls, three 32-bit ints, and 2-char terminator left (3+3+6+2)
-            return false; // screwy data
-
-        // increment entries received
-        m_numEntriesReceived++;
-        if ((m_numEntriesReceived >= numFiles) && !done) {
-            // too much data, abort
-            return false;
-        }
-    }
-    
-    // check for completion
-    if (m_numEntriesReceived >= numFiles)
+    uint32_t msgId = (uint32_t)*(msg + sizeof(uint32_t));
+    switch (msgId)
     {
-        // all entires received, mark as complete
-        m_result    = reply.result;
-        m_state     = kTransStateComplete;
+    case kFile2Cli_ManifestReply:
+        {
+            const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
+
+            // tell the server we got the data
+            Cli2File_ManifestEntryAck manifestAck;
+            manifestAck.messageId = kCli2File_ManifestEntryAck;
+            manifestAck.transId = reply.transId;
+            manifestAck.messageBytes = sizeof(manifestAck);
+            manifestAck.readerId = reply.readerId;
+            m_conn->Send(&manifestAck, manifestAck.messageBytes);
+
+            // Read this... garbage... in as an age manifest
+            const void* buf = reinterpret_cast<const void*>(reply.manifestData);
+            size_t bufsz = reply.shortCount * sizeof(uint16_t);
+            m_manifest.GetFiles().reserve(reply.numFiles);
+            if (!m_manifest.ReadLegacy(buf, bufsz))
+                break;
+
+            // Signal the trans is done
+            m_result = reply.result;
+            m_state = kTransStateComplete;
+            return true;
+        }
+        break;
+
+    case kFile2Cli_ManifestReplyEx:
+        {
+            const File2Cli_ManifestReplyEx & reply = *(const File2Cli_ManifestReplyEx *) msg;
+
+            // Read in new/old style age manifest
+            if (!m_manifest.Read(reinterpret_cast<const void*>(reply.buf), reply.bufsz))
+                break;
+
+            // No acks, just signal completion.
+            m_result = reply.result;
+            m_state = kTransStateComplete;
+            return true;
+        }
+        break;
     }
-    return true;
+
+    return false;
 }
 
 /*****************************************************************************
