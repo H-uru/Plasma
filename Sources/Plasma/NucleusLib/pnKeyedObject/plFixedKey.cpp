@@ -126,10 +126,10 @@ plKeySeed SeedList[] = {
 #undef _TCFL
 
 
+#ifdef HS_DEBUGGING
 //// plFixedKeyValidator /////////////////////////////////////////////////////
 //  Static class that validates the fixed key list on startup, to make sure
 //  you didn't mess up the array.
-
 class plFixedKeyValidator
 {
     private:
@@ -157,6 +157,7 @@ class plFixedKeyValidator
 };
 
 plFixedKeyValidator plFixedKeyValidator::fValidator;
+#endif
 
 //// The plUoid Fixed-Key Constructor ////////////////////////////////////////
 //  Put here because a) it's fixedKey dependant and b) it ensures that this
