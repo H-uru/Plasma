@@ -134,11 +134,11 @@ class kAges:
                "Trebivdil" : "Tre'bivdil",
                "trebivdil" : "Tre'bivdil",
                "vothol" : "Vothol Gallery"}
-    Hide = ["BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"]
-    NoInvite = ["Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
+    Hide = {"BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"}
+    NoInvite = {"Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
                 "BahroCave", "LiveBahroCave", "LiveBahroCaves", 
                 "BaronCityOffice", "ErcanaCitySilo", "GreatZero", "Shaft",
-                "Descent", "Spyroom"]
+                "Descent", "Spyroom", "Myst"}
     Replace = {"Ercana" : "Er'cana",
                "Garden" : "Eder Kemo",
                "Garrison" : "Gahreesen",

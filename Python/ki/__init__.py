@@ -4175,7 +4175,7 @@ class xKI(ptModifier):
                 myAgeLink = myAgeLink.upcastToAgeLinkNode()
                 myAge = myAgeLink.getAgeInfo()
                 if myAge is not None:
-                    if self.CanAgeInviteVistors(myAge, myAgeLink) and myAge.getAgeFilename() not in kAges.Hide and myAge.getAgeFilename() != "Myst":
+                    if self.CanAgeInviteVistors(myAge, myAgeLink) and myAge.getAgeFilename() not in kAges.Hide:
                         PtDebugPrint(u"xKI.BigKIRefreshAgeVisitorFolders(): Refreshing visitor list for {}.".format(GetAgeName(myAge)), level=kDebugDumpLevel)
                         folderName = xCensor.xCensor(PtGetLocalizedString("KI.Config.OwnerVisitors", [GetAgeName(myAge)]), self.censorLevel)
                         if folderName not in self.BKPlayerFolderDict:

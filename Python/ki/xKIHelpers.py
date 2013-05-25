@@ -275,12 +275,13 @@ def FilterPlayerInfoList(playerInfoList):
 ## Returns an Age's name the way a player should see it.
 # This display is used in the top-right corner of the BigKI.
 def GetAgeName(ageInfo=None):
-    ageLink = ptNetLinkingMgr().getCurrAgeLink()
-    if not ageLink:
-        return "?UNKNOWN?"
-    ageInfo = ageLink.getAgeInfo()
     if not ageInfo:
-        return "?UNKNOWN?"
+        ageLink = ptNetLinkingMgr().getCurrAgeLink()
+        if not ageLink:
+            return "?UNKNOWN?"
+        ageInfo = ageLink.getAgeInfo()
+        if not ageInfo:
+            return "?UNKNOWN?"
 
     if ageInfo.getAgeFilename() == "BahroCave":
         sdl = xPsnlVaultSDL()
