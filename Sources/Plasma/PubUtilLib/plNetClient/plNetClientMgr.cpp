@@ -131,8 +131,7 @@ plNetClientMgr::plNetClientMgr() :
         fLocalPlayerKey(nil),
         fMsgHandler(this),
         fJoinOrder(0),
-        // fProgressBar( nil ),
-        fTaskProgBar( nil ),
+        fTaskProgBar(nullptr),
         fMsgRecorder(nil),
         fServerTimeOffset(0),
         fTimeSamples(0),
@@ -168,8 +167,8 @@ plNetClientMgr::~plNetClientMgr()
 
     if (this==GetInstance())
         SetInstance(nil);       // we're going down boys
-    
     IClearPendingLoads();
+    delete fTaskProgBar;
 }
 
 //
@@ -1467,6 +1466,16 @@ void plNetClientMgr::ClearPendingPagingRoomMsgs()
     fPendingPagingRoomMsgs.clear();
 }
 
+void plNetClientMgr::BeginTask()
+{
+    fTaskProgBar = plProgressMgr::GetInstance()->RegisterOverallOperation(0.f);
+}
+
+void plNetClientMgr::EndTask()
+{
+    delete fTaskProgBar;
+    fTaskProgBar = nullptr;
+}
 
 bool plNetClientMgr::DebugMsgV(const char* fmt, va_list args) const 
 {

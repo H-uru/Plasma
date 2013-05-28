@@ -338,6 +338,7 @@ void plNCAgeJoiner::ExecNextOp () {
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(nil);
             delete progressBar;
             progressBar = nil;
+            nc->EndTask();
 
             nextOp = kEnableClickables;
         }

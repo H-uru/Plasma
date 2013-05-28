@@ -134,9 +134,8 @@ public:
     };
 
 private:
-    // plOperationProgress  *fProgressBar;
-    plOperationProgress *fTaskProgBar;
-    
+    plOperationProgress* fTaskProgBar;
+
     typedef std::list<PendingLoad*> PendingLoadsList;
     PendingLoadsList fPendingLoads;
             
@@ -369,8 +368,10 @@ public:
     
     void NotifyRcvdAllSDLStates();
 
-    plOperationProgress* GetTaskProgBar() { return fTaskProgBar;    }
-    
+    plOperationProgress* GetTaskProgBar() { return fTaskProgBar; }
+    void BeginTask();
+    void EndTask();
+
     bool DebugMsgV(const char* fmt, va_list args) const;
     bool ErrorMsgV(const char* fmt, va_list args) const; 
     bool WarningMsgV(const char* fmt, va_list args) const; 
