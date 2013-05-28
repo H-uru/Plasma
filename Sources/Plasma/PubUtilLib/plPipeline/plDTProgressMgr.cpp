@@ -203,25 +203,32 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
         if( drawWidth > 0 )
             text.DrawRect( drawX, y, rightX, y + height, color );
 
-        int timeRemain = prog->fRemainingSecs;
-        char remainStr[1024];
-        strcpy(remainStr, "APPROXIMATELY ");
-        if (timeRemain > 3600)
-        {
-            const char* term = ((timeRemain / 3600) > 1) ? "HOURS" : "HOUR";
-            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 3600), term);
-            timeRemain %= 3600;
+        uint32_t timeRemain = prog->fRemainingSecs;
+        if (timeRemain > 0) {
+            plStringStream ss;
+            ss << "APPROXIMATELY ";
+            if (timeRemain > 3600)
+            {
+                uint32_t hours = timeRemain / 3600;
+                const char* plural = (hours > 1) ? "S" : "";
+                ss << hours << " HOUR" << plural << " ";
+                timeRemain %= 3600;
+            }
+            if (timeRemain > 60)
+            {
+                uint32_t minutes = timeRemain / 60;
+                const char* plural = (minutes > 1) ? "S" : "";
+                ss << minutes << " MINUTE" << plural << " ";
+                timeRemain %= 60;
+            }
+            if (timeRemain > 0)
+            {
+                const char* plural = (timeRemain > 1) ? "S" : "";
+                ss << timeRemain << " SECOND" << plural << " ";
+            }
+            ss << "REMAINING";
+            text.DrawString(x, y + height + 2, ss.GetString().c_str(), (uint32_t)0xff635e6d);
         }
-        if (timeRemain > 60)
-        {
-            const char* term = ((timeRemain / 60) > 1) ? "MINUTES" : "MINUTE";
-            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 60), term);
-            timeRemain %= 60;
-        }
-        const char* unitTerm = (timeRemain == 1) ? "SECOND" : "SECONDS";
-        sprintf(remainStr, "%s%d %s REMAINING", remainStr, timeRemain, unitTerm);
-
-        text.DrawString(x, y + height + 2, remainStr, (uint32_t)0xff635e6d );
 
         x -= 2;
         y -= 2;
