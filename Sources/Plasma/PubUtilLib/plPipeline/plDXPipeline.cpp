@@ -11079,6 +11079,25 @@ void plDXPipeline::ISetPipeConsts(plShader* shader)
     }
 }
 
+static plDXShader* ISetupShader(plShader* shader, plDXDeviceRef* list)
+{
+    plDXShader* ref = static_cast<plDXShader*>(shader->GetDeviceRef());
+    if (!ref) {
+        if (shader->IsVertexShader())
+            ref = new plDXVertexShader(shader);
+        else if (shader->IsPixelShader())
+            ref = new plDXPixelShader(shader);
+        else
+            hsAssert(0, "ISetupShader wants a VS or PS--got something else?!");
+    }
+
+    if (!ref->IsLinked()) {
+        ref->Link(&list);
+        ref->UnRef(); // the deviceref list steals this reference
+    }
+    return ref;
+}
+
 // ISetShaders /////////////////////////////////////////////////////////////////////////////////////
 // Setup to render using the input vertex and pixel shader. Either or both may
 // be nil, in which case the fixed function pipeline is indicated.
@@ -11086,69 +11105,38 @@ void plDXPipeline::ISetPipeConsts(plShader* shader)
 // Lastly, all constants will be set (as a block) for any non-FFP vertex or pixel shader.
 HRESULT plDXPipeline::ISetShaders(plShader* vShader, plShader* pShader)
 {
-    IDirect3DVertexShader9 *vsHandle = NULL;
-    if( vShader )
-    {
-        hsAssert(vShader->IsVertexShader(), "Wrong type shader as vertex shader");
-        ISetPipeConsts(vShader);
-
-        plDXVertexShader* vRef = (plDXVertexShader*)vShader->GetDeviceRef();
-        if( !vRef )
-        {
-            vRef = new plDXVertexShader(vShader);
-            hsRefCnt_SafeUnRef(vRef);
-        }
-        if( !vRef->IsLinked() )
-            vRef->Link(&fVShaderRefList);
-        vsHandle = vRef->GetShader(this);
-
-        // This is truly obnoxious, but D3D insists that, while using the progammable pipeline,
-        // all stages be set up like this, not just the ones we're going to use. We have to
-        // do this if we have either a vertex or a pixel shader. See below. Whatever. mf
-        int i;
-        for( i = 0; i < 8; i++ )
-        {
+    // This is truly obnoxious, but D3D insists that, while using the progammable pipeline,
+    // all stages be set up like this, not just the ones we're going to use. We have to
+    // do this if we have either a vertex or a pixel shader. See below. Whatever. mf
+    if (pShader || vShader) {
+        for (int i = 0; i < 8; ++i) {
             fD3DDevice->SetTextureStageState(i, D3DTSS_TEXCOORDINDEX, fLayerUVWSrcs[i] = i);
             fD3DDevice->SetTextureStageState(i, D3DTSS_TEXTURETRANSFORMFLAGS, fLayerXformFlags[i] = 0);
         }
     }
 
-    IDirect3DPixelShader9 *psHandle = NULL;
-    if( pShader )
-    {
-        hsAssert(pShader->IsPixelShader(), "Wrong type shader as pixel shader");
-
-        ISetPipeConsts(pShader);
-
-        plDXPixelShader* pRef = (plDXPixelShader*)pShader->GetDeviceRef();
-        if( !pRef )
-        {
-            pRef = new plDXPixelShader(pShader);
-            hsRefCnt_SafeUnRef(pRef);
-        }
-        if( !pRef->IsLinked() )
-            pRef->Link(&fPShaderRefList);
-        psHandle = pRef->GetShader(this);
-
-        if( !vShader )
-        {
-            int i;
-            for( i = 0; i < 8; i++ )
-            {
-                fD3DDevice->SetTextureStageState(i, D3DTSS_TEXCOORDINDEX, fLayerUVWSrcs[i] = i);
-                fD3DDevice->SetTextureStageState(i, D3DTSS_TEXTURETRANSFORMFLAGS, fLayerXformFlags[i] = 0);
-            }
-        }
+    IDirect3DVertexShader9* vsHandle = nullptr;
+    if (vShader) {
+        hsAssert(vShader->IsVertexShader(), "not a vertex shader");
+        ISetPipeConsts(vShader);
+        plDXShader* ref = ISetupShader(vShader, fVShaderRefList);
+        vsHandle = static_cast<plDXVertexShader*>(ref)->GetShader(this);
     }
 
-    if( vsHandle != fSettings.fCurrVertexShader )
-    {
+    IDirect3DPixelShader9* psHandle = nullptr;
+    if (pShader) {
+        hsAssert(pShader->IsPixelShader(), "not a pixel shader");
+        ISetPipeConsts(pShader);
+        plDXShader* ref = ISetupShader(pShader, fPShaderRefList);
+        psHandle = static_cast<plDXPixelShader*>(ref)->GetShader(this);
+    }
+
+    if (vsHandle != fSettings.fCurrVertexShader) {
         HRESULT hr = fD3DDevice->SetVertexShader(fSettings.fCurrVertexShader = vsHandle);
         hsAssert(!FAILED(hr), "Error setting vertex shader");
     }
 
-    if( psHandle != fSettings.fCurrPixelShader )
-    {
+    if (psHandle != fSettings.fCurrPixelShader) {
         HRESULT hr = fD3DDevice->SetPixelShader(fSettings.fCurrPixelShader = psHandle);
         hsAssert(!FAILED(hr), "Error setting pixel shader");
     }

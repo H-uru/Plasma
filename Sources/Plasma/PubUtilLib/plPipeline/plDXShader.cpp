@@ -57,12 +57,14 @@ plDXShader::plDXShader(plShader* owner)
     fErrorString(nil),
     fPipe(nil)
 {
+    owner->Ref();
     owner->SetDeviceRef(this);
 }
 
 plDXShader::~plDXShader()
 {
     fPipe = nil;
+    fOwner->UnRef();
 
     ISetError(nil);
 }
