@@ -348,11 +348,11 @@ void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayFPS))
     {
-        sprintf(buf, "%.1f", 1000.0f / TicksToMSec(value));
+        sprintf(buf, "%.2f", 1000.0f / TicksToMSec(value));
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayTime))
     {
-        sprintf(buf, "%.1f", TicksToMSec(value));
+        sprintf(buf, "%.2f", TicksToMSec(value));
         if (printType)
             strcat(buf, " ms");
     }
@@ -361,7 +361,7 @@ void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
         if (printType)
         {
             if (value > (1024*1000))
-                sprintf(buf, "%.1f MB", float(value) / (1024.f * 1024.f));
+                sprintf(buf, "%.2f MB", float(value) / (1024.f * 1024.f));
             else if (value > 1024)
                 sprintf(buf, "%d KB", value / 1024);
             else
