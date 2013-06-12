@@ -1045,10 +1045,10 @@ void    plDrawableSpans::Read( hsStream* s, hsResMgr* mgr )
 
     /// Read in the matrix palette (if any)
     count = s->ReadLE32();
-    fLocalToWorlds.SetCount(count);
-    fWorldToLocals.SetCount(count);
-    fLocalToBones.SetCount(count);
-    fBoneToLocals.SetCount(count);
+    fLocalToWorlds.resize(count);
+    fWorldToLocals.resize(count);
+    fLocalToBones.resize(count);
+    fBoneToLocals.resize(count);
     for( i = 0; i < count; i++ )
     {
         fLocalToWorlds[i].Read(s);
@@ -2209,16 +2209,12 @@ uint32_t  plDrawableSpans::AppendDIMatrixSpans(int n)
     if( fNeedCleanup )
         IRemoveGarbage();
 
-    uint32_t baseIdx = fLocalToWorlds.GetCount();
-    fLocalToWorlds.Expand(baseIdx + n);
-    fLocalToWorlds.SetCount(baseIdx + n);
-    fWorldToLocals.Expand(baseIdx + n);
-    fWorldToLocals.SetCount(baseIdx + n);
+    uint32_t baseIdx = fLocalToWorlds.size();
+    fLocalToWorlds.resize(baseIdx + n);
+    fWorldToLocals.resize(baseIdx + n);
 
-    fLocalToBones.Expand(baseIdx + n);
-    fLocalToBones.SetCount(baseIdx + n);
-    fBoneToLocals.Expand(baseIdx + n);
-    fBoneToLocals.SetCount(baseIdx + n);
+    fLocalToBones.resize(baseIdx + n);
+    fBoneToLocals.resize(baseIdx + n);
 
     int i;
     for( i = baseIdx; i < baseIdx + n; i++ )
@@ -2267,7 +2263,7 @@ uint32_t plDrawableSpans::FindBoneBaseMatrix(const hsTArray<hsMatrix44>& initL2B
         // runtime, a sharable bone pallete won't be found by scanning fSpans.
         // We have to do a larger search through all bone matrices.
         int i;
-        for( i = 0; i + initL2B.GetCount() < fLocalToBones.GetCount(); i++ )
+        for( i = 0; i + initL2B.GetCount() < fLocalToBones.size(); i++ )
         {
             int j;
             for( j = 0; j < initL2B.GetCount(); j++ )
@@ -2894,7 +2890,7 @@ void    plDrawableSpans::ICleanupMatrices()
         }
     }
 
-    for( j = 0; j < fLocalToWorlds.GetCount(); j++ )
+    for( j = 0; j < fLocalToWorlds.size(); j++ )
     {
         if( !usedMatrices.IsBitSet(j) )
         {
@@ -2910,7 +2906,7 @@ void    plDrawableSpans::ICleanupMatrices()
                     }
                 }
             }
-            for( i = j+1; i < fLocalToWorlds.GetCount(); i++ )
+            for( i = j+1; i < fLocalToWorlds.size(); i++ )
             {
                 fLocalToWorlds[i] = fLocalToWorlds[i-1];
                 fWorldToLocals[i] = fWorldToLocals[i-1];

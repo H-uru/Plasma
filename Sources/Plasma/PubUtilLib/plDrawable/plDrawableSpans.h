@@ -70,6 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBounds.h"
 #include "hsMatrix44.h"
 #include "plSpanTypes.h"
+#include <vector>
 
 class plPipeline;
 class plMessage;
@@ -131,11 +132,11 @@ class plDrawableSpans : public plDrawable
         hsMatrix44          fLocalToWorld;
         hsMatrix44          fWorldToLocal;
 
-        hsTArray<hsMatrix44>    fLocalToWorlds;
-        hsTArray<hsMatrix44>    fWorldToLocals;
+        std::vector<hsMatrix44> fLocalToWorlds;
+        std::vector<hsMatrix44> fWorldToLocals;
 
-        hsTArray<hsMatrix44>    fLocalToBones;
-        hsTArray<hsMatrix44>    fBoneToLocals;
+        std::vector<hsMatrix44> fLocalToBones;
+        std::vector<hsMatrix44> fBoneToLocals;
 
         hsTArray<hsGMaterial *> fMaterials;
 
@@ -283,7 +284,7 @@ class plDrawableSpans : public plDrawable
         virtual uint32_t                     GetNumSpans( void ) const { return fSpans.GetCount(); }
         virtual const hsTArray<plSpan *>    &GetSpanArray( void ) const { return fSpans; }
 
-        hsMatrix44* GetMatrixPalette(int baseMatrix) const { return &fLocalToWorlds[baseMatrix]; }
+        hsMatrix44* GetMatrixPalette(int baseMatrix) const { return const_cast<hsMatrix44*>(&fLocalToWorlds[baseMatrix]); }
         const hsMatrix44& GetPaletteMatrix(int i) const { return fLocalToWorlds[i]; }
         void SetInitialBone(int i, const hsMatrix44& l2b, const hsMatrix44& b2l);
 
