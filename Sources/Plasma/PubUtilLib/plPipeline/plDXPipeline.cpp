@@ -10619,9 +10619,9 @@ inline void inlTESTPOINT(const hsPoint3& destP,
 #define MATRIXMULTBEGIN_SSE3(xfm, wgt) \
         __m128 mc0, mc1, mc2, mwt, msr, _x, _y, _z, hbuf1, hbuf2; \
         ALIGN(16) float hack[4]; \
-        mc0 = _mm_loadu_ps(xfm.fMap[0]); \
-        mc1 = _mm_loadu_ps(xfm.fMap[1]); \
-        mc2 = _mm_loadu_ps(xfm.fMap[2]); \
+        mc0 = _mm_load_ps(xfm.fMap[0]); \
+        mc1 = _mm_load_ps(xfm.fMap[1]); \
+        mc2 = _mm_load_ps(xfm.fMap[2]); \
         mwt = _mm_set_ps1(wgt);
 #define MATRIXMULTPOINTADD_SSE3(dst, src) \
         msr = _mm_set_ps(1.f, src.fZ, src.fY, src.fX); \

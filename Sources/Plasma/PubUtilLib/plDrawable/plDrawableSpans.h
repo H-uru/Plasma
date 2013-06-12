@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDrawableSpans_h
 #define _plDrawableSpans_h
 
-
+#include "hsAlignedAllocator.hpp"
 #include "hsBitVector.h"
 #include "hsTemplates.h"
 #include "plDrawable.h"
@@ -132,7 +132,7 @@ class plDrawableSpans : public plDrawable
         hsMatrix44          fLocalToWorld;
         hsMatrix44          fWorldToLocal;
 
-        std::vector<hsMatrix44> fLocalToWorlds;
+        std::vector<hsMatrix44, hsAlignedAllocator<hsMatrix44>> fLocalToWorlds; // used in SIMD skinning
         std::vector<hsMatrix44> fWorldToLocals;
 
         std::vector<hsMatrix44> fLocalToBones;
