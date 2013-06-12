@@ -216,6 +216,7 @@ void plNCAgeLeaver::ExecNextOp () {
 
         //====================================================================
         case kUnloadAge: {
+            nc->BeginTask();
             NetCliGameDisconnect();
 
             // Cull nodes that were part of this age vault (but not shared by the player's vault)

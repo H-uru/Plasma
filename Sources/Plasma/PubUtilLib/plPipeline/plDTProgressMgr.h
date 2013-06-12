@@ -61,7 +61,7 @@ class plPipeline;
 class plDTProgressMgr : public plProgressMgr
 {
     protected:
-        int32_t       fCurrentImage;
+        int32_t     fCurrentImage;
         float       fLastDraw;
         plPlate*    fActivePlate;
         plPlate*    fStaticTextPlate;
@@ -70,8 +70,8 @@ class plDTProgressMgr : public plProgressMgr
         void    Activate();
         void    Deactivate();
 
-        void    IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-                                        uint16_t x, uint16_t y, uint16_t width, uint16_t height );
+        bool    IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
+                                     uint16_t x, uint16_t y, uint16_t width, uint16_t height );
 
     public:
 
