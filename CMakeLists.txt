@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
-set(PRODUCT_BUILD_ID    "912"       CACHE STRING "Build ID")
+set(PRODUCT_BUILD_ID    "918"       CACHE STRING "Build ID")
 set(PRODUCT_BUILD_TYPE  "50"        CACHE STRING "Build Type")
 set(PRODUCT_CORE_NAME   "UruLive"   CACHE STRING "Product Core Name")
 set(PRODUCT_SHORT_NAME  "UruLive"   CACHE STRING "Product Short Name")
