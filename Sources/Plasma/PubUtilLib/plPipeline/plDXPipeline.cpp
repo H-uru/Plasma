@@ -217,10 +217,10 @@ inline uint8_t* inlStuffUInt32( uint8_t* ptr, const uint32_t uint )
     *(uint32_t*)ptr = uint;
     return ptr + sizeof(uint);
 }
-inline uint8_t* inlExtractPoint( const uint8_t* ptr, const hsScalarTriple& pt )
+inline uint8_t* inlExtractPoint( const uint8_t* ptr, hsScalarTriple* pt )
 {
     register const float* src = (float*)ptr;
-    register float* dst = (float*)&pt.fX;
+    register float* dst = (float*)&pt->fX;
     *dst++ = *src++;
     *dst++ = *src++;
     *dst++ = *src++;
@@ -10623,8 +10623,8 @@ inline void inlTESTPOINT(const hsPoint3& destP,
         mc1 = _mm_load_ps(xfm.fMap[1]); \
         mc2 = _mm_load_ps(xfm.fMap[2]); \
         mwt = _mm_set_ps1(wgt);
-#define MATRIXMULTPOINTADD_SSE3(dst, src) \
-        msr = _mm_set_ps(1.f, src.fZ, src.fY, src.fX); \
+#define MATRIXMULTBUFADD_SSE3(dst, src) \
+        msr = _mm_load_ps(src); \
         _x  = _mm_mul_ps(_mm_mul_ps(mc0, msr), mwt); \
         _y  = _mm_mul_ps(_mm_mul_ps(mc1, msr), mwt); \
         _z  = _mm_mul_ps(_mm_mul_ps(mc2, msr), mwt); \
@@ -10656,11 +10656,15 @@ hsFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend_ve
 
 // Temporary macros for IBlendVertsIntoBuffer dispatch code de-duplication
 #define BLENDVERTSTART \
-    uint8_t     numUVs, numWeights; \
-    uint32_t    i, j, indices, color, specColor, uvChanSize; \
-    float       weights[ 4 ], weightSum; \
-    hsPoint3    pt, tempPt, destPt; \
-    hsVector3   vec, tempNorm, destNorm; \
+    uint8_t         numUVs, numWeights; \
+    uint32_t        i, j, indices, color, specColor, uvChanSize; \
+    float           weights[ 4 ], weightSum; \
+    ALIGN(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f }; \
+    ALIGN(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f }; \
+    hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf); \
+    hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf); \
+    hsPoint3        destPt; \
+    hsVector3       destNorm; \
     \
     /* Get some counts */\
     switch( format & plGBufferGroup::kSkinWeightMask ) \
@@ -10772,7 +10776,7 @@ hsFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend_ve
             uint8_t k; \
             for( k = 0; k < numUVs; k++ ) \
             { \
-                src = inlExtractPoint( src, srcUVWs[k] ); \
+                src = inlExtractPoint( src, &srcUVWs[k] ); \
             } \
             memcpy( dstUVWs, srcUVWs, uvChanSize); \
             dstUVWs[loChan].Set(0,0,0); \
@@ -10823,13 +10827,13 @@ void plDXPipeline::blend_vert_buffer_fpu( plSpan* span,
     BLENDVERTSTART
                     MATRIXMULTBEGIN_FPU(matrixPalette[indices & 0xff], weights[j]);
 
-                    MATRIXMULTPOINTADD_FPU(destPt, pt);
-                    MATRIXMULTVECTORADD_FPU(destNorm, vec);
+                    MATRIXMULTPOINTADD_FPU(destPt, (*pt));
+                    MATRIXMULTVECTORADD_FPU(destNorm, (*vec));
     BLENDVERTMID
                     MATRIXMULTBEGIN_FPU(matrixPalette[indices & 0xff], weights[j]);
 
-                    MATRIXMULTPOINTADD_FPU(destPt, pt);
-                    MATRIXMULTVECTORADD_FPU(destNorm, vec);
+                    MATRIXMULTPOINTADD_FPU(destPt, (*pt));
+                    MATRIXMULTVECTORADD_FPU(destNorm, (*vec));
                     MATRIXMULTVECTORADD_FPU(dstUVWs[loChan], srcUVWs[loChan]);
                     MATRIXMULTVECTORADD_FPU(dstUVWs[hiChan], srcUVWs[hiChan]);
 
@@ -10846,13 +10850,13 @@ void plDXPipeline::blend_vert_buffer_sse3( plSpan* span,
     BLENDVERTSTART
                     MATRIXMULTBEGIN_SSE3(matrixPalette[indices & 0xff], weights[j]);
 
-                    MATRIXMULTPOINTADD_SSE3(destPt, pt);
-                    MATRIXMULTVECTORADD_SSE3(destNorm, vec);
+                    MATRIXMULTBUFADD_SSE3(destPt, pt_buf);
+                    MATRIXMULTBUFADD_SSE3(destNorm, vec_buf);
     BLENDVERTMID
                     MATRIXMULTBEGIN_SSE3(matrixPalette[indices & 0xff], weights[j]);
 
-                    MATRIXMULTPOINTADD_SSE3(destPt, pt);
-                    MATRIXMULTVECTORADD_SSE3(destNorm, vec);
+                    MATRIXMULTBUFADD_SSE3(destPt, pt_buf);
+                    MATRIXMULTBUFADD_SSE3(destNorm, vec_buf);
                     MATRIXMULTVECTORADD_SSE3(dstUVWs[loChan], srcUVWs[loChan]);
                     MATRIXMULTVECTORADD_SSE3(dstUVWs[hiChan], srcUVWs[hiChan]);
     BLENDVERTEND
