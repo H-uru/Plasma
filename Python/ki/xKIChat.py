@@ -1094,7 +1094,7 @@ class CommandsProcessor:
         for script in pythonScripts:
             if script.getName() == kJalakPythonComponent:
                 PtDebugPrint(u"xKIChat.SaveColumns(): Found Jalak's python component.", level=kDebugDumpLevel)
-                SendNote(self.chatMgr.key, "SaveColumns;" + fName)
+                SendNote(self.chatMgr.key, script, "SaveColumns;" + fName)
                 return
         PtDebugPrint(u"xKIChat.SaveColumns(): Did not find Jalak's python component.", level=kErrorLevel)
 

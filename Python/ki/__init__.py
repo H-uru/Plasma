@@ -6066,15 +6066,8 @@ class xKI(ptModifier):
                             pass
                         elif isinstance(self.BKPlayerSelected, Device):
                             if self.BKPlayerSelected.name in self.imagerMap:
-                                notify = ptNotify(self.key)
-                                notify.clearReceivers()
-                                notify.addReceiver(self.imagerMap[self.BKPlayerSelected.name])
-                                notify.netPropagate(1)
-                                notify.netForce(1)
-                                notify.setActivate(1.0)
                                 sName = "Upload={}".format(self.BKPlayerSelected.name)
-                                notify.addVarNumber(sName, sendElement.getID())
-                                notify.send()
+                                SendNote(self.key, self.imagerMap[self.BKPlayerSelected.name], sName, sendElement.getID(), True)
                             toPlayerBtn.hide()
                         elif isinstance(self.BKPlayerSelected, ptVaultNode):
                             if self.BKPlayerSelected.getType() == PtVaultNodeTypes.kPlayerInfoListNode:
