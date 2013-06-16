@@ -316,13 +316,13 @@ def GetNeighbors():
         return None
 
 ## Sends a notification message to a script.
-def SendNote(key, script, extraInfo):
+def SendNote(key, script, name, varValue=1.0, net=False):
 
     note = ptNotify(key)
     note.clearReceivers()
     note.addReceiver(script)
-    note.netPropagate(0)
-    note.netForce(0)
+    note.netPropagate(net)
+    note.netForce(net)
     note.setActivate(1.0)
-    note.addVarNumber(str(extraInfo), 1.0)
+    note.addVarNumber(str(name), varValue)
     note.send()
