@@ -484,6 +484,31 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all cur
     }
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")
+{
+    PyObject* keyObj = NULL;
+    char loading = 0;
+    if (!PyArg_ParseTuple(args, "O|b", &keyObj, &loading) || !pyKey::Check(keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtCloneKey expects a ptKey and bool");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey* key = pyKey::ConvertFrom(keyObj);
+    return cyMisc::CloneKey(key, loading);
+}
+
+PYTHON_GLOBAL_METHOD_DEFINITION(PtFindClones, args, "Params: key\nFinds all clones")
+{
+    PyObject* keyObj = NULL;
+    if (!PyArg_ParseTuple(args, "O", &keyObj) || !pyKey::Check(keyObj))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtFindClones expects a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+    pyKey* key = pyKey::ConvertFrom(keyObj);
+    return cyMisc::FindClones(key);
+}
+
 ///////////////////////////////////////////////////////////////////////////
 //
 // AddPlasmaMethods - the python method definitions
@@ -530,6 +555,8 @@ void cyMisc::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD(methods, PtGetLocalizedString);
 
     PYTHON_GLOBAL_METHOD(methods, PtDumpLogs);
+    PYTHON_GLOBAL_METHOD(methods, PtCloneKey);
+    PYTHON_GLOBAL_METHOD(methods, PtFindClones);
 
     AddPlasmaMethods2(methods);
     AddPlasmaMethods3(methods);

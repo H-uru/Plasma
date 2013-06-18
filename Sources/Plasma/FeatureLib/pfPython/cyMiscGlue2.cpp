@@ -183,11 +183,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetFrameDeltaTime, "Returns the amount 
     return PyFloat_FromDouble(cyMisc::GetDelSysSeconds());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, ageName=\"\"\nPages in node, or a list of nodes")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=false, ageName=\"\"\nPages in node, or a list of nodes")
 {
     PyObject* nodeNameObj = NULL;
     char* ageName = NULL;
-    if (!PyArg_ParseTuple(args, "O|s", &nodeNameObj, &ageName))
+    char netForce = 0;
+    if (!PyArg_ParseTuple(args, "O|bs", &nodeNameObj, &netForce, &ageName))
     {
         PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
         PYTHON_RETURN_ERROR;
@@ -217,19 +218,20 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, ageName=\
         PYTHON_RETURN_ERROR;
     }
 
-    cyMisc::PageInNodes(nodeNames, ageName);
+    cyMisc::PageInNodes(nodeNames, ageName, netForce);
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName\nPages out a node")
+PYTHON_GLOBAL_METHOD_DEFINITION(PtPageOutNode, args, "Params: nodeName, netForce = false\nPages out a node")
 {
     char* nodeName;
-    if (!PyArg_ParseTuple(args, "s", &nodeName))
+    char netForce = 0;
+    if (!PyArg_ParseTuple(args, "s|b", &nodeName, &netForce))
     {
-        PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string");
+        PyErr_SetString(PyExc_TypeError, "PtPageOutNode expects a string and bool");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::PageOutNode(nodeName);
+    cyMisc::PageOutNode(nodeName, netForce);
     PYTHON_RETURN_NONE;
 }
 

@@ -190,6 +190,17 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobject, args, "Params: name,ageName\n
     return cyMisc::FindSceneObject(plString::FromUtf8(name), ageName);
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobjects, args, "Params: name\nThis will try to find a any sceneobject containing string in name")
+{
+    char* name = NULL;
+    if (!PyArg_ParseTuple(args, "s", &name))
+    {
+        PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects string");
+        PYTHON_RETURN_ERROR;
+    }
+    return cyMisc::FindSceneObjects(plString::FromUtf8(name));
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will try to find an activator based on its name\n"
             "- it will return a ptKey if found"
             "- it will return None if not found")
@@ -223,65 +234,67 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWasLocallyNotified, args, "Params: selfKey\nRe
     PYTHON_RETURN_BOOL(cyMisc::WasLocallyNotified(*key));
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent\nAttach child to parent based on ptKey or ptSceneobject\n"
+PYTHON_GLOBAL_METHOD_DEFINITION(PtAttachObject, args, "Params: child,parent,netForce=false\nAttach child to parent based on ptKey or ptSceneobject\n"
             "- childKey is the ptKey or ptSceneobject of the one being attached\n"
             "- parentKey is the ptKey or ptSceneobject of the one being attached to\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")
 {
     PyObject* childObj = NULL;
     PyObject* parentObj = NULL;
-    if (!PyArg_ParseTuple(args, "OO", &childObj, &parentObj))
+    char netForce = 0;
+    if (!PyArg_ParseTuple(args, "OO|b", &childObj, &parentObj, &netForce))
     {
-        PyErr_SetString(PyExc_TypeError, "PtAttachObject expects either two ptKeys or two ptSceneobjects");
+        PyErr_SetString(PyExc_TypeError, "PtAttachObject expects either two ptKeys or two ptSceneobjects and bool");
         PYTHON_RETURN_ERROR;
     }
     if ((pyKey::Check(childObj)) && (pyKey::Check(parentObj)))
     {
         pyKey* child = pyKey::ConvertFrom(childObj);
         pyKey* parent = pyKey::ConvertFrom(parentObj);
-        cyMisc::AttachObject(*child, *parent);
+        cyMisc::AttachObject(*child, *parent, netForce);
     }
     else if ((pySceneObject::Check(childObj)) && (pySceneObject::Check(parentObj)))
     {
         pySceneObject* child = pySceneObject::ConvertFrom(childObj);
         pySceneObject* parent = pySceneObject::ConvertFrom(parentObj);
-        cyMisc::AttachObjectSO(*child, *parent);
+        cyMisc::AttachObjectSO(*child, *parent, netForce);
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "PtAttachObject expects either two ptKeys or two ptSceneobjects");
+        PyErr_SetString(PyExc_TypeError, "PtAttachObject expects either two ptKeys or two ptSceneobjects and bool");
         PYTHON_RETURN_ERROR;
     }
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent\nDetach child from parent based on ptKey or ptSceneobject\n"
+PYTHON_GLOBAL_METHOD_DEFINITION(PtDetachObject, args, "Params: child,parent,netForce=false\nDetach child from parent based on ptKey or ptSceneobject\n"
             "- child is the ptKey or ptSceneobject of the one being detached\n"
             "- parent is the ptKey or ptSceneobject of the one being detached from\n"
             "(both arguments must be ptKeys or ptSceneobjects, you cannot mix types)")
 {
     PyObject* childObj = NULL;
     PyObject* parentObj = NULL;
-    if (!PyArg_ParseTuple(args, "OO", &childObj, &parentObj))
+    char netForce = 0;
+    if (!PyArg_ParseTuple(args, "OO|b", &childObj, &parentObj, &netForce))
     {
-        PyErr_SetString(PyExc_TypeError, "PtDetachObject expects either two ptKeys or two ptSceneobjects");
+        PyErr_SetString(PyExc_TypeError, "PtDetachObject expects either two ptKeys or two ptSceneobjects and bool");
         PYTHON_RETURN_ERROR;
     }
     if ((pyKey::Check(childObj)) && (pyKey::Check(parentObj)))
     {
         pyKey* child = pyKey::ConvertFrom(childObj);
         pyKey* parent = pyKey::ConvertFrom(parentObj);
-        cyMisc::DetachObject(*child, *parent);
+        cyMisc::DetachObject(*child, *parent, netForce);
     }
     else if ((pySceneObject::Check(childObj)) && (pySceneObject::Check(parentObj)))
     {
         pySceneObject* child = pySceneObject::ConvertFrom(childObj);
         pySceneObject* parent = pySceneObject::ConvertFrom(parentObj);
-        cyMisc::DetachObjectSO(*child, *parent);
+        cyMisc::DetachObjectSO(*child, *parent, netForce);
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "PtDetachObject expects either two ptKeys or two ptSceneobjects");
+        PyErr_SetString(PyExc_TypeError, "PtDetachObject expects either two ptKeys or two ptSceneobjects and bool");
         PYTHON_RETURN_ERROR;
     }
     PYTHON_RETURN_NONE;
@@ -698,6 +711,7 @@ void cyMisc::AddPlasmaMethods3(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD(methods, PtClearTimerCallbacks);
     
     PYTHON_GLOBAL_METHOD(methods, PtFindSceneobject);
+    PYTHON_GLOBAL_METHOD(methods, PtFindSceneobjects);
     PYTHON_GLOBAL_METHOD(methods, PtFindActivator);
     PYTHON_BASIC_GLOBAL_METHOD(methods, PtClearCameraStack);
     PYTHON_GLOBAL_METHOD(methods, PtWasLocallyNotified);
