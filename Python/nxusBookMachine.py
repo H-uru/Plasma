@@ -694,7 +694,7 @@ class nxusBookMachine(ptModifier):
         print "nxusBookMachine.OnNotify:\tplayer ki level is %d" % kiLevel
         if kiLevel < kNormalKI:
             respKISlot.run(self.key, events = events) #Insert KI
-        else:
+        elif state:
             for ageFilename in self.publicAges.keys():
                 # don't ask the server about hardcoded ages...
                 # crappy server software (Cyan) might throw away the request, leaving us dead in the water
