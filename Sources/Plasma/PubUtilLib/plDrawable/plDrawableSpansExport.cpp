@@ -163,7 +163,7 @@ void    plDrawableSpans::Write( hsStream* s, hsResMgr* mgr )
             fSourceSpans[ i ]->Write( s );
     }
 
-    count = fLocalToWorlds.GetCount();
+    count = fLocalToWorlds.size();
     s->WriteLE32(count);
     for( i = 0; i < count; i++ )
     {

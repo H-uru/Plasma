@@ -74,6 +74,7 @@ endif(UNIX)
 
 set(CoreLib_HEADERS
     HeadSpin.h
+    hsAlignedAllocator.hpp
     hsBiExpander.h
     hsBitVector.h
     hsBounds.h
