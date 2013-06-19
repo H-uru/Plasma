@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 from xAgeSDLBoolRespond import *
-useVaultSDL.value = True
+
+# Redfine this attribute so as to not screw up the generic one
+useVaultSDL = ptAttribBoolean(8, "Use Vault SDL?", default=True)
 
 class psnlVaultSDLBoolRespond(xAgeSDLBoolRespond):
     """Hacked VaultSDL xAgeSDLBoolRespond for the immutable Relto PRPs"""

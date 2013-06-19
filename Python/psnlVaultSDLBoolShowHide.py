@@ -41,9 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-# This module is used for Personal and wants the vault SDL
 from xAgeSDLBoolShowHide import *
-useVaultSDL.value = True
+
+# Redfine this attribute so as to not screw up the generic one
+useVaultSDL = ptAttribBoolean(5, "Use Vault SDL?", default=True)
 
 class psnlVaultSDLBoolShowHide(xAgeSDLBoolShowHide):
     """Hacked VaultSDL xAgeSDLBoolShowHide for the immutable Relto PRPs"""
