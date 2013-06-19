@@ -40,108 +40,94 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: xAgeSDLBoolShowHide
-Age: global
-Date: February 2003
-Author: Bill Slease
-Detects age SDL bool type variable change and shows (on true) or hides (on false) the object it's attached to
-"""
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
-stringVarName = ptAttribString(1,"Age SDL Var Name")
-boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)
-boolDefault = ptAttribBoolean(3,"Default setting",0)
-boolFirstUpdate = ptAttribBoolean(4,"Eval On First Update?",0)
+sdlName = ptAttribString(1, "Age SDL Var Name")
+showOnTrue = ptAttribBoolean(2, "Show on true", default=True)
+defaultValue = ptAttribBoolean(3, "Default setting", default=False)
+evalOnFirstUpdate = ptAttribBoolean(4, "Eval On First Update?", default=False)
+useVaultSDL = ptAttribBoolean(5, "Use Vault SDL?", default=False)
 
-class xAgeSDLBoolShowHide(ptMultiModifier):
+class xAgeSDLBoolShowHide(ptMultiModifier, object):
+    """Shows or hides attached SceneObjects based on the value of an SDL boolean variable"""
 
-    def __init__(self):
-        ptMultiModifier.__init__(self)
-        self.id = 5037
-        self.version = 1
-
-    def OnFirstUpdate(self):
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
-            PtDebugPrint("ERROR: xAgeSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-            pass
-
-        if boolFirstUpdate.value:
-            try:
-                ageSDL = PtGetAgeSDL()
-                if type(stringVarName.value) == type("") and stringVarName.value != "":
-                    ageSDL.setFlags(stringVarName.value,1,1)
-                    ageSDL.sendToClients(stringVarName.value)
-                    ageSDL.setNotify(self.key,stringVarName.value,0.0)
-                    if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
-                        self.EnableObject()
-                    else:
-                        self.DisableObject()
-                else:
-                    PtDebugPrint("ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-                    self.runDefault()
-            except:
-                self.runDefault()
-
-    def OnServerInitComplete(self):
-        if not boolFirstUpdate.value:
-            try:
-                ageSDL = PtGetAgeSDL()
-                if type(stringVarName.value) == type("") and stringVarName.value != "":
-                    ageSDL.setFlags(stringVarName.value,1,1)
-                    ageSDL.sendToClients(stringVarName.value)
-                    ageSDL.setNotify(self.key,stringVarName.value,0.0)
-                    if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
-                        self.EnableObject()
-                    else:
-                        self.DisableObject()
-                else:
-                    PtDebugPrint("ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-                    self.runDefault()
-            except:
-                self.runDefault()
-
-    def runDefault(self):
-        PtDebugPrint("xAgeSDLBoolShowHide: running internal default")
-        if boolDefault.value:
-            self.EnableObject()
-        else:
-            self.DisableObject()
-
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):        
-        if VARname != stringVarName.value:
-            return
-        ageSDL = PtGetAgeSDL()
-        #PtDebugPrint("Received SDLNotify on %s" % self.sceneobject.getName())
-        try:
-            if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
-                self.EnableObject()
-            else:
-                self.DisableObject()
-        except:
-            PtDebugPrint("ERROR: xAgeSDLBoolShowHide.OnServerInitComplete():\tERROR reading age SDL on %s" % self.sceneobject.getName())
-            pass
-
-    def EnableObject(self):
-        PtDebugPrint("DEBUG: xAgeSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
-        self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
-
-    def DisableObject(self):
-        PtDebugPrint("DEBUG: xAgeSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
-        self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+    id = 5037
+    version = 2
 
     def OnBackdoorMsg(self, target, param):
-        if type(stringVarName.value) != type(None) and stringVarName.value != "":
-            if target == stringVarName.value:
-                if param.lower() in ("on", "1", "true"):
-                    self.EnableObject()
-                elif param.lower() in ("off", "0", "false"):
-                    self.DisableObject()
+        if sdlName.value:
+            if target == sdlName.value:
+                if param.lower() in {"on", "1", "true"}:
+                    self._EnableObject()
+                elif param.lower() in {"off", "0", "false"}:
+                    self._DisableObject()
                 else:
-                    PtDebugPrint("DEBUG: xAgeSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s" % self.sceneobject.getName())
-                    pass
+                    PtDebugPrint("xAgeSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s" % self.sceneobject.getName())
+
+    def OnFirstUpdate(self):
+        if evalOnFirstUpdate.value:
+            self._Setup()
+
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
+        if VARname == sdlName.value:
+            ageSDL = PtGetAgeSDL()
+            self.sdl_value = ageSDL[sdlName.value][0]
+
+    def OnServerInitComplete(self):
+        if not evalOnFirstUpdate.value:
+            self._Setup()
+
+    def _DisableObject(self):
+        PtDebugPrint("xAgeSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName(), level=kDebugDumpLevel)
+        self.sceneobject.draw.disable()
+        self.sceneobject.physics.suppress(True)
+
+    def _EnableObject(self):
+        PtDebugPrint("xAgeSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName(), level=kDebugDumpLevel)
+        self.sceneobject.draw.enable()
+        self.sceneobject.physics.suppress(False)
+
+    if useVaultSDL.value:
+        def _Setup(self):
+            vault = ptAgeVault()
+            if not vault:
+                self._Raise("Age Vault for '%s' is None" % PtGetAgeName())
+            ageSDL = vault.getAgeSDL()
+            if not ageSDL:
+                self._Raise("Vault SDL for %s' is None" % PtGetAgeName())
+
+            var = ageSDL.findVar(sdlName.value)
+            if not var:
+                self._Raise("Invalid variable '%s' for descriptor '%s'" % (sdlName.value, ageSDL.getName()))
+            self.sdl_value = var.getBool()
+    else:
+        def _Setup(self):
+            ageSDL = PtGetAgeSDL()
+            if not ageSDL:
+                self._Raise("xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend.")
+
+            if sdlName.value:
+                ageSDL.setFlags(sdlName.value, 1, 1)
+                ageSDL.sendToClients(sdlName.value)
+                ageSDL.setNotify(self.key, sdlName.value, 0.0)
+                # Cyan's server will generate some interesting blobs... If this fails, just eat it.
+                # It happens because Cyan sucks, and there's nothing we can do about it.
+                try:
+                    self.sdl_value = ageSDL[sdlName.value][0]
+                except IndexError:
+                    self.sdl_value = defaultValue.value
+            else:
+                self._Raise("You forgot to set the SDL Variable Name!")
+
+    def _Raise(self, msg):
+        self.sdl_value = defaultValue.value
+        raise RuntimeEror(msg)
+
+    def _set_sdl_value(self, value):
+        if value ^ showOnTrue.value:
+            self._DisableObject()
+        else:
+            self._EnableObject()
+    sdl_value = property(fset=_set_sdl_value)

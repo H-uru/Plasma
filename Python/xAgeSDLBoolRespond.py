@@ -40,104 +40,97 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: xAgeSDLBoolRespond
-Age: global
-Date: January 2003
-Author: Bill Slease
-Detects age SDL bool type variable change and runs
-one of two responders depending on new state
-"""
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
-# ---------
-# max wiring
-# ---------
-
-stringVarName = ptAttribString(1,"Age SDL Var Name")
-respBoolTrue = ptAttribResponder(2,"Run if bool true:")
-respBoolFalse = ptAttribResponder(3,"Run if bool false:")
-boolVltMgrFastForward = ptAttribBoolean(4,"F-Forward on VM notify", 1)
-boolFFOnInit = ptAttribBoolean(5,"F-Forward on Init",1)
-boolDefault = ptAttribBoolean(6,"Default setting",0)
-boolFirstUpdate = ptAttribBoolean(7,"Init SDL On First Update?",0)
-
+sdlName = ptAttribString(1, "Age SDL Var Name")
+respTrue = ptAttribResponder(2, "Run if bool true:")
+respFalse = ptAttribResponder(3, "Run if bool false:")
+vmFastFwd = ptAttribBoolean(4, "F-Forward on VM notify", default=True)
+initFastFwd = ptAttribBoolean(5, "F-Forward on Init", default=True)
+defaultValue = ptAttribBoolean(6, "Default setting", default=False)
+evalOnFirstUpdate = ptAttribBoolean(7, "Init SDL On First Update?", default=False)
+useVaultSDL = ptAttribBoolean(8, "Use Vault SDL?", default=False)
 
 
 class xAgeSDLBoolRespond(ptResponder):
+    """Runs a given responder based on the value of an SDL boolean"""
 
-    def __init__(self):
-        ptResponder.__init__(self)
-        self.id = 5034
-        self.version = 1
+    id = 5034
+    version = 2
+
+    def OnBackdoorMsg(self, target, param):
+        if target == sdlName.value:
+            value = param.lower() in {"on", "true", "1"}
+            self._Execute(value, False)
 
     def OnFirstUpdate(self):
-        PtDebugPrint("xAgeSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s" % self.sceneobject.getName())
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
-            PtDebugPrint("ERROR: xAgeSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name")
-            pass
+        if evalOnFirstUpdate.value:
+            self._Setup()
 
-        if boolFirstUpdate.value == 1:
-            self.IFinishInit()
-            
-    def OnServerInitComplete(self):
-        if boolFirstUpdate.value == 0:
-            self.IFinishInit()
-        
-    def IFinishInit(self):
-        try:
-            ageSDL = PtGetAgeSDL()
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
-                ageSDL.setFlags(stringVarName.value,1,1)
-                ageSDL.sendToClients(stringVarName.value)
-                ageSDL.setNotify(self.key,stringVarName.value,0.0)
-                if ageSDL[stringVarName.value][0]:
-                    PtDebugPrint("DEBUG: xAgeSDLBoolRespond.IFinishInit():\tRunning true responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolFFOnInit.value))
-                    respBoolTrue.run(self.key,fastforward=boolFFOnInit.value)
-                else:
-                    PtDebugPrint("DEBUG: xAgeSDLBoolRespond.IFinishInit():\tRunning false responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolFFOnInit.value))
-                    respBoolFalse.run(self.key,fastforward=boolFFOnInit.value)
-            else:
-                PtDebugPrint("ERROR: xAgeSDLBoolRespond.IFinishInit():\tERROR: missing SDL var name")
-                self.runDefault()
-                pass
-        except:
-            self.runDefault()
-
-
-
-    def runDefault(self):
-        PtDebugPrint("xAgeSDLBoolRespond: running internal default")
-        if boolDefault.value:
-            respBoolTrue.run(self.key,fastforward=boolFFOnInit.value)
-        else:
-            respBoolFalse.run(self.key,fastforward=boolFFOnInit.value)
-
-    # in case someone other than me changes my var(s)
-    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        
-        # is it a var we care about?
-        if VARname != stringVarName.value:
+    def OnSDLNotify(self, VARname, SDLname, playerID, tag):
+        if VARname != sdlName.value:
             return
-        ageSDL = PtGetAgeSDL()
-        PtDebugPrint("DEBUG: xAgeSDLBoolRespond.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d" % (VARname,SDLname,tag,ageSDL[stringVarName.value][0]))
-            
-        # is state change from player or vault manager?
-        if playerID: # non-zero means it's a player
-            objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID),self.key)
-            fastforward = 0
-        else:   # invalid player aka Vault Manager
-            objAvatar = None
-            fastforward = boolVltMgrFastForward.value # we need to skip any one-shots
-        PtDebugPrint("DEBUG: xAgeSDLBoolRespond.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
-        # run the appropriate responder!
-        if ageSDL[stringVarName.value][0]:
-            PtDebugPrint("DEBUG: xAgeSDLBoolRespond.OnSDLNotify:\tRunning true responder on %s, fastforward=%d" % (self.sceneobject.getName(), fastforward))
-            respBoolTrue.run(self.key,avatar=objAvatar,fastforward=fastforward)
+        ageSDL = PtGetAgeSDL()
+        value = ageSDL[sdlName.value][0]
+        PtDebugPrint("xAgeSDLBoolRespond.OnSDLNotify():\tVARname:%s, SDLname:%s, value:%d, playerID:%d" % (VARname, SDLname, value, playerID), level=kDebugDumpLevel)
+
+        # A playerID of zero indicates a vault mangler change
+        if playerID:
+            try:
+                avatar = PtGetAvatarKeyFromClientID(playerID).getSceneObject()
+            except:
+                avatar = None
+            ff = False
         else:
-            PtDebugPrint("DEBUG: xAgeSDLBoolRespond.OnSDLNotify:\tRunning false responder on %s, fastforward=%d" % (self.sceneobject.getName(), fastforward))
-            respBoolFalse.run(self.key,avatar=objAvatar,fastforward=fastforward)
+            avatar = None
+            ff = vmFastFwd.value
+        self._Execute(value, ff, avatar)
+
+    def OnServerInitComplete(self):
+        if not evalOnFirstUpdate.value:
+            self._Setup()
+
+    def _Execute(self, value, ff, avatar=None):
+        resps = ("FALSE", "TRUE")
+        PtDebugPrint("xAgeSDLBoolRespond._Execute():\tRunning %s responder on %s ff=%d" % (resps[int(value)], self.sceneobject.getName(), ff), level=kDebugDumpLevel)
+        if value:
+            respTrue.run(self.key, avatar=avatar, fastforward=ff)
+        else:
+            respFalse.run(self.key, avatar=avatar, fastforward=ff)
+
+    def _Setup(self):
+        if not sdlName.value:
+            raise self._Raise("Missing SDL variable name")
+
+        if useVaultSDL.value:
+            vault = ptAgeVault()
+            if not vault:
+                self._Raise("Age Vault for '%s' is None" % PtGetAgeName())
+            ageSDL = vault.getAgeSDL()
+            if not ageSDL:
+                self._Raise("Vault SDL for %s' is None" % PtGetAgeName())
+
+            var = ageSDL.findVar(sdlName.value)
+            if not var:
+                self._Raise("Invalid variable '%s' for descriptor '%s'" % (sdlName.value, ageSDL.getName()))
+            self._Execute(var.getBool(), initFastFwd.value)
+        else:
+            ageSDL = PtGetAgeSDL()
+            if not ageSDL:
+                self._Raise("xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing '%s' to its default" % self.sceneobject.getName())
+                return
+
+            # Setup the SDL for notifications
+            ageSDL.setFlags(sdlName.value, 1, 1)
+            ageSDL.sendToClients(sdlName.value)
+            ageSDL.setNotify(self.key, sdlName.value, 0.0)
+
+            # Now do the nasty
+            self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)
+
+    def _Raise(self, msg):
+        self._Execute(defaultValue.value, initFastFwd.value)
+        raise RuntimeEror(msg)
