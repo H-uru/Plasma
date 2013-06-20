@@ -51,14 +51,15 @@ vmFastFwd = ptAttribBoolean(4, "F-Forward on VM notify", default=True)
 initFastFwd = ptAttribBoolean(5, "F-Forward on Init", default=True)
 defaultValue = ptAttribBoolean(6, "Default setting", default=False)
 evalOnFirstUpdate = ptAttribBoolean(7, "Init SDL On First Update?", default=False)
-useVaultSDL = ptAttribBoolean(8, "Use Vault SDL?", default=False)
 
 
 class xAgeSDLBoolRespond(ptResponder):
     """Runs a given responder based on the value of an SDL boolean"""
 
-    id = 5034
-    version = 2
+    def __init__(self):
+        ptResponder.__init__(self)
+        self.id = 5034
+        self.version = 2
 
     def OnBackdoorMsg(self, target, param):
         if target == sdlName.value:
@@ -103,34 +104,18 @@ class xAgeSDLBoolRespond(ptResponder):
 
     def _Setup(self):
         if not sdlName.value:
-            raise self._Raise("Missing SDL variable name")
+            raise RuntimeError("Missing SDL variable name")
 
-        if useVaultSDL.value:
-            vault = ptAgeVault()
-            if not vault:
-                self._Raise("Age Vault for '%s' is None" % PtGetAgeName())
-            ageSDL = vault.getAgeSDL()
-            if not ageSDL:
-                self._Raise("Vault SDL for %s' is None" % PtGetAgeName())
+        ageSDL = PtGetAgeSDL()
+        if not ageSDL:
+            PtDebugPrint("xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing %s to its default" % self.sceneobject.getName())
+            self._Execute(defaultValue.value, initFastFwd.value)
+            return
 
-            var = ageSDL.findVar(sdlName.value)
-            if not var:
-                self._Raise("Invalid variable '%s' for descriptor '%s'" % (sdlName.value, ageSDL.getName()))
-            self._Execute(var.getBool(), initFastFwd.value)
-        else:
-            ageSDL = PtGetAgeSDL()
-            if not ageSDL:
-                self._Raise("xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing '%s' to its default" % self.sceneobject.getName())
-                return
+        # Setup the SDL for notifications
+        ageSDL.setFlags(sdlName.value, 1, 1)
+        ageSDL.sendToClients(sdlName.value)
+        ageSDL.setNotify(self.key, sdlName.value, 0.0)
 
-            # Setup the SDL for notifications
-            ageSDL.setFlags(sdlName.value, 1, 1)
-            ageSDL.sendToClients(sdlName.value)
-            ageSDL.setNotify(self.key, sdlName.value, 0.0)
-
-            # Now do the nasty
-            self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)
-
-    def _Raise(self, msg):
-        self._Execute(defaultValue.value, initFastFwd.value)
-        raise RuntimeEror(msg)
+        # Now do the nasty
+        self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)

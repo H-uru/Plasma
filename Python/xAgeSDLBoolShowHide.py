@@ -48,13 +48,14 @@ sdlName = ptAttribString(1, "Age SDL Var Name")
 showOnTrue = ptAttribBoolean(2, "Show on true", default=True)
 defaultValue = ptAttribBoolean(3, "Default setting", default=False)
 evalOnFirstUpdate = ptAttribBoolean(4, "Eval On First Update?", default=False)
-useVaultSDL = ptAttribBoolean(5, "Use Vault SDL?", default=False)
 
 class xAgeSDLBoolShowHide(ptMultiModifier, object):
     """Shows or hides attached SceneObjects based on the value of an SDL boolean variable"""
 
-    id = 5037
-    version = 2
+    def __init__(self):
+        ptMultiModifier.__init__(self)
+        self.id = 5037
+        self.version = 2
 
     def OnBackdoorMsg(self, target, param):
         if sdlName.value:
@@ -89,41 +90,26 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
         self.sceneobject.draw.enable()
         self.sceneobject.physics.suppress(False)
 
-    if useVaultSDL.value:
-        def _Setup(self):
-            vault = ptAgeVault()
-            if not vault:
-                self._Raise("Age Vault for '%s' is None" % PtGetAgeName())
-            ageSDL = vault.getAgeSDL()
-            if not ageSDL:
-                self._Raise("Vault SDL for %s' is None" % PtGetAgeName())
+    def _Setup(self):
+        ageSDL = PtGetAgeSDL()
+        if not ageSDL:
+            PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend.")
+            self.sdl_value = defaultValue.value # start at default
+            return None
 
-            var = ageSDL.findVar(sdlName.value)
-            if not var:
-                self._Raise("Invalid variable '%s' for descriptor '%s'" % (sdlName.value, ageSDL.getName()))
-            self.sdl_value = var.getBool()
-    else:
-        def _Setup(self):
-            ageSDL = PtGetAgeSDL()
-            if not ageSDL:
-                self._Raise("xAgeSDLBoolShowHide._Setup():\tAgeSDLHook is null... You've got problems, friend.")
-
-            if sdlName.value:
-                ageSDL.setFlags(sdlName.value, 1, 1)
-                ageSDL.sendToClients(sdlName.value)
-                ageSDL.setNotify(self.key, sdlName.value, 0.0)
-                # Cyan's server will generate some interesting blobs... If this fails, just eat it.
-                # It happens because Cyan sucks, and there's nothing we can do about it.
-                try:
-                    self.sdl_value = ageSDL[sdlName.value][0]
-                except IndexError:
-                    self.sdl_value = defaultValue.value
-            else:
-                self._Raise("You forgot to set the SDL Variable Name!")
-
-    def _Raise(self, msg):
-        self.sdl_value = defaultValue.value
-        raise RuntimeEror(msg)
+        if sdlName.value:
+            ageSDL.setFlags(sdlName.value, 1, 1)
+            ageSDL.sendToClients(sdlName.value)
+            ageSDL.setNotify(self.key, sdlName.value, 0.0)
+            # Cyan's server will generate some interesting blobs... If this fails, just eat it.
+            # It happens because Cyan sucks, and there's nothing we can do about it.
+            try:
+                self.sdl_value = ageSDL[sdlName.value][0]
+            except IndexError:
+                self.sdl_value = defaultValue.value
+        else:
+            self.sdl_value = defaultValue.value # start at default
+            raise RuntimeError("You forgot to set the SDL Variable Name!")
 
     def _set_sdl_value(self, value):
         if value ^ showOnTrue.value:

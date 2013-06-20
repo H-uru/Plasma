@@ -40,12 +40,104 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
+"""
+Module: psnlVaultSDLBoolShowHide
+Age: global
+Date: August 2007
+Author: Adam Van Ornum (based on xAgeSDLBoolShowHide)
+Detects Psnl Vault SDL bool type variable change and shows (on true) or hides (on false) the object it's attached to
+Use only in the Personal age
+"""
 
-from xAgeSDLBoolShowHide import *
+from Plasma import *
+from PlasmaTypes import *
+from xPsnlVaultSDL import *
+import string
 
-# Redfine this attribute so as to not screw up the generic one
-useVaultSDL = ptAttribBoolean(5, "Use Vault SDL?", default=True)
+stringVarName = ptAttribString(1,"Psnl SDL Var Name")
+boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)
+boolDefault = ptAttribBoolean(3,"Default setting",0)
+boolFirstUpdate = ptAttribBoolean(4,"Eval On First Update?",0)
 
-class psnlVaultSDLBoolShowHide(xAgeSDLBoolShowHide):
-    """Hacked VaultSDL xAgeSDLBoolShowHide for the immutable Relto PRPs"""
-    id = 5351
+class psnlVaultSDLBoolShowHide(ptMultiModifier):
+
+    def __init__(self):
+        ptMultiModifier.__init__(self)
+        self.id = 5351
+        self.version = 1
+
+    def OnFirstUpdate(self):
+        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+            PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+            pass
+
+        if boolFirstUpdate.value:
+            try:
+                ageSDL = xPsnlVaultSDL(1)
+                if type(stringVarName.value) == type("") and stringVarName.value != "":
+                    if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
+                        self.EnableObject()
+                    else:
+                        self.DisableObject()
+                else:
+                    PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+                    self.runDefault()
+            except:
+                self.runDefault()
+
+    def OnServerInitComplete(self):
+        if not boolFirstUpdate.value:
+            try:
+                ageSDL = xPsnlVaultSDL(1)
+                if type(stringVarName.value) == type("") and stringVarName.value != "":
+                    if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
+                        self.EnableObject()
+                    else:
+                        self.DisableObject()
+                else:
+                    PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
+                    self.runDefault()
+            except:
+                self.runDefault()
+
+    def runDefault(self):
+        PtDebugPrint("psnlVaultSDLBoolShowHide: running internal default")
+        if boolDefault.value:
+            self.EnableObject()
+        else:
+            self.DisableObject()
+
+    def OnSDLNotify(self,VARname,SDLname,playerID,tag):        
+        if VARname != stringVarName.value:
+            return
+        ageSDL = xPsnlVaultSDL(1)
+        #PtDebugPrint("Received SDLNotify on %s" % self.sceneobject.getName())
+        try:
+            if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
+                self.EnableObject()
+            else:
+                self.DisableObject()
+        except:
+            PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnServerInitComplete():\tERROR reading age SDL on %s" % self.sceneobject.getName())
+            pass
+
+    def EnableObject(self):
+        PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
+        self.sceneobject.draw.enable()
+        self.sceneobject.physics.suppress(false)
+
+    def DisableObject(self):
+        PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
+        self.sceneobject.draw.disable()
+        self.sceneobject.physics.suppress(true)
+
+    def OnBackdoorMsg(self, target, param):
+        if type(stringVarName.value) != type(None) and stringVarName.value != "":
+            if target == stringVarName.value:
+                if param.lower() in ("on", "1", "true"):
+                    self.EnableObject()
+                elif param.lower() in ("off", "0", "false"):
+                    self.DisableObject()
+                else:
+                    PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.OnBackDoorMsg:  Received unexpected parameter on %s" % self.sceneobject.getName())
+                    pass
