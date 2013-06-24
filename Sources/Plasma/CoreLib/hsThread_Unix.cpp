@@ -284,6 +284,7 @@ hsSemaphore::hsSemaphore(int initialValue, const char* name)
     } else {
         /* Anonymous semaphore shared between threads */
         int shared = 0; // 1 if sharing between processes
+        fPSema = (sem_t*)malloc(sizeof(sem_t));
         int status = sem_init(fPSema, shared, initialValue);
         hsThrowIfOSErr(status);
     }
@@ -321,7 +322,10 @@ bool hsSemaphore::TryWait()
 {
 #ifdef USE_SEMA
     int status = ::sem_trywait(fPSema);
-    return status != EAGAIN;
+    if (status != 0) {
+        return errno != EAGAIN;
+    }
+    return true;
 #else
     int status = ::pthread_mutex_trylock(&fPMutex);
     hsThrowIfOSErr(status);
