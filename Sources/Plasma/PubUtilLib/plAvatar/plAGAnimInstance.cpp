@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
+#include <algorithm>
+
 // singular
 #include "plAGAnimInstance.h"
 
