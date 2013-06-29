@@ -16,7 +16,7 @@ Related Projects
 Library Dependencies
 --------------------
 
-Plasma currently utilizes the following third-party libraries:
+Plasma currently requires the following third-party libraries:
 
 - nVidia PhysX 2.6.4 - http://www.nvidia.com/object/physx_archives.html#SDK
 - Creative Labs' OpenAL SDK 1.1 - http://connect.creativelabs.com/openal/Downloads/OpenAL11CoreSDK.zip
@@ -33,9 +33,12 @@ Plasma currently utilizes the following third-party libraries:
 - zlib - http://zlib.net/
 - PCRE - http://www.pcre.org/
 - libcurl - http://curl.haxx.se/
-- PyGTK - http://www.pygtk.org/downloads.html
-- PIL - http://www.pythonware.com/products/pil/
-- (optional, for plFontConverter) Freetype - http://freetype.org/
+
+The following libraries are optional:
+
+- (for building resource.dat) PyGTK - http://www.pygtk.org/downloads.html
+- (for building resource.dat) PIL - http://www.pythonware.com/products/pil/
+- (for plFontConverter) Freetype - http://freetype.org/
 
 Reducing the use of proprietary libraries is a focus of development and should be expected to change.
 
