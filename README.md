@@ -20,9 +20,7 @@ Plasma currently requires the following third-party libraries:
 
 - nVidia PhysX 2.6.4 - http://www.nvidia.com/object/physx_archives.html#SDK
 - Creative Labs' OpenAL SDK 1.1 - http://connect.creativelabs.com/openal/Downloads/OpenAL11CoreSDK.zip
-- Microsoft DirectX SDK
-  - November 2008: http://www.microsoft.com/downloads/en/details.aspx?FamilyID=5493f76a-6d37-478d-ba17-28b1cca4865a or
-  - June 2010: http://www.microsoft.com/downloads/en/details.aspx?familyid=3021d52b-514e-41d3-ad02-438a3ba730ba
+- Microsoft DirectX SDK - http://www.microsoft.com/downloads/en/details.aspx?familyid=3021d52b-514e-41d3-ad02-438a3ba730ba
 - Python 2.7 - http://www.python.org/download/releases/2.7/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
