@@ -203,40 +203,60 @@ void plReleaseObject(IUnknown* x)
 //// Local Static Stuff ///////////////////////////////////////////////////////
 
 /// Macros for getting/setting data in a D3D vertex buffer
-inline uint8_t* inlStuffPoint( uint8_t* ptr, const hsScalarTriple* point )
+template<typename T>
+static inline void inlCopy(uint8_t*& src, uint8_t*& dst)
 {
-    register float* dst = (float*)ptr;
-    register const float* src = (float*)&point->fX;
-    *dst++ = *src++;
-    *dst++ = *src++;
-    *dst++ = *src++;
-    return (uint8_t*)dst;
+    T* src_ptr = reinterpret_cast<T*>(src);
+    T* dst_ptr = reinterpret_cast<T*>(dst);
+    *dst_ptr = *src_ptr;
+    src += sizeof(T);
+    dst += sizeof(T);
 }
-inline uint8_t* inlStuffUInt32( uint8_t* ptr, const uint32_t uint )
+
+template<typename T>
+static inline const uint8_t* inlExtract(const uint8_t* src, T* val)
 {
-    *(uint32_t*)ptr = uint;
-    return ptr + sizeof(uint);
+    const T* ptr = reinterpret_cast<const T*>(src);
+    *val = *ptr++;
+    return reinterpret_cast<const uint8_t*>(ptr);
 }
-inline uint8_t* inlExtractPoint( const uint8_t* ptr, hsScalarTriple* pt )
+
+template<>
+static inline const uint8_t* inlExtract<hsPoint3>(const uint8_t* src, hsPoint3* val)
 {
-    register const float* src = (float*)ptr;
-    register float* dst = (float*)&pt->fX;
-    *dst++ = *src++;
-    *dst++ = *src++;
-    *dst++ = *src++;
-    return (uint8_t*)src;
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 1.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
 }
-inline uint8_t* inlExtractFloat( const uint8_t*& ptr, float& f )
+
+template<>
+static inline const uint8_t* inlExtract<hsVector3>(const uint8_t* src, hsVector3* val)
 {
-    register const float* src = (float*)ptr;
-    f = *src++;
-    return (uint8_t*)src;
+    const float* src_ptr = reinterpret_cast<const float*>(src);
+    float* dst_ptr = reinterpret_cast<float*>(val);
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr++ = *src_ptr++;
+    *dst_ptr = 0.f;
+    return reinterpret_cast<const uint8_t*>(src_ptr);
 }
-inline uint8_t* inlExtractUInt32( const uint8_t*& ptr, uint32_t& uint )
+
+template<typename T, size_t N>
+static inline void inlSkip(uint8_t*& src)
 {
-    const uint32_t* src = (uint32_t*)ptr;
-    uint = *src++;
-    return (uint8_t*)src;
+    src += sizeof(T) * N;
+}
+
+template<typename T>
+static inline uint8_t* inlStuff(uint8_t* dst, const T* val)
+{
+    T* ptr = reinterpret_cast<T*>(dst);
+    *ptr++ = *val;
+    return reinterpret_cast<uint8_t*>(ptr);
 }
 
 inline DWORD F2DW( FLOAT f ) 
@@ -9960,6 +9980,30 @@ void plDXPipeline::IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBuffe
     ref->SetDirty(false);
 }
 
+void plDXPipeline::IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
+{
+    uint8_t* dst = ref->fData;
+    uint8_t* src = group->GetVertBufferData(idx);
+
+    size_t uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
+    uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
+
+    for (uint32_t i = 0; i < ref->fCount; ++i) {
+        inlCopy<hsPoint3>(src, dst); // pre-pos
+        src += numWeights * sizeof(float); // weights
+        if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
+            inlSkip<uint32_t, 1>(src); // indices
+        inlCopy<hsVector3>(src, dst); // pre-normal
+        inlCopy<uint32_t>(src, dst); // diffuse
+        inlCopy<uint32_t>(src, dst); // specular
+
+        // UVWs
+        memcpy(dst, src, uvChanSize);
+        src += uvChanSize;
+        dst += uvChanSize;
+    }
+}
+
 // OpenAccess ////////////////////////////////////////////////////////////////////////////////////////
 // Lock the managed buffer and setup the accessSpan to point into the buffers data.
 bool plDXPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* drawable, const plVertexSpan* span, bool readOnly)
@@ -10114,6 +10158,7 @@ void plDXPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
         if( !vRef->fData && (vRef->fFormat != owner->GetVertexFormat()) )
         {
             vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
+            IFillVolatileVertexBufferRef(vRef, owner, idx);
         }
     }
 }
@@ -10664,47 +10709,39 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
 {
     ALIGN(16) float pt_buf[] = { 0.f, 0.f, 0.f, 1.f };
     ALIGN(16) float vec_buf[] = { 0.f, 0.f, 0.f, 0.f };
-    ALIGN(16) float destPt_buf[4], destNorm_buf[4];
     hsPoint3*       pt = reinterpret_cast<hsPoint3*>(pt_buf);
-    hsPoint3*       destPt = reinterpret_cast<hsPoint3*>(destPt_buf);
     hsVector3*      vec = reinterpret_cast<hsVector3*>(vec_buf);
-    hsVector3*      destNorm = reinterpret_cast<hsVector3*>(destNorm_buf);
 
-    uint8_t         numUVs;
-    uint32_t        indices, color, specColor, uvChanSize;
+    uint32_t        indices;
     float           weights[4];
-
-    numUVs = plGBufferGroup::CalcNumUVs(format);
-    uvChanSize = numUVs * sizeof(float) * 3;
-    uint8_t numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
 
     // Dropped support for localUVWChans at templatization of code
     hsAssert(localUVWChans == 0, "support for skinned UVWs dropped. reimplement me?");
+    const size_t uvChanSize = plGBufferGroup::CalcNumUVs(format) * sizeof(float) * 3;
+    uint8_t numWeights = (format & plGBufferGroup::kSkinWeightMask) >> 4;
 
     for (uint32_t i = 0; i < count; ++i) {
         // Extract data
-        src = inlExtractPoint( src, pt );
+        src = inlExtract<hsPoint3>(src, pt);
 
         float weightSum = 0.f;
         for (uint8_t j = 0; j < numWeights; ++j) {
-            src = inlExtractFloat(src, weights[j]);
+            src = inlExtract<float>(src, &weights[j]);
             weightSum += weights[j];
         }
         weights[numWeights] = 1.f - weightSum;
 
         if (format & plGBufferGroup::kSkinIndices)
-            src = inlExtractUInt32( src, indices );
+            src = inlExtract<uint32_t>(src, &indices);
         else
             indices = 1 << 8;
-        src = inlExtractPoint( src, vec );
-        src = inlExtractUInt32( src, color );
-        src = inlExtractUInt32( src, specColor );
+        src = inlExtract<hsVector3>(src, vec);
+
+        // Destination buffers (float4 for SSE alignment)
+        ALIGN(16) float destNorm_buf[] = { 0.f, 0.f, 0.f, 0.f };
+        ALIGN(16) float destPt_buf[] = { 0.f, 0.f, 0.f, 1.f };
 
         // Blend
-        destPt->Set(0.f, 0.f, 0.f);
-        destPt_buf[3] = 1.f;
-        destNorm->Set(0.f, 0.f, 0.f);
-        destNorm_buf[3] = 0.f;
         for (uint32_t j = 0; j < numWeights + 1; ++j) {
             if (weights[j])
                 T(matrixPalette[indices & 0xFF], weights[j], pt_buf, destPt_buf, vec_buf, destNorm_buf);
@@ -10715,13 +10752,12 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
         /* hsFastMath::NormalizeAppr(destNorm); */
 
         // Slam data into position now
-        dest = inlStuffPoint( dest, destPt );
-        dest = inlStuffPoint( dest, destNorm );
-        dest = inlStuffUInt32( dest, color );
-        dest = inlStuffUInt32( dest, specColor );
-        memcpy( dest, src, uvChanSize );
-        src += uvChanSize;
-        dest += uvChanSize;
+        dest = inlStuff<hsPoint3>(dest, reinterpret_cast<hsPoint3*>(destPt_buf));
+        dest = inlStuff<hsVector3>(dest, reinterpret_cast<hsVector3*>(destNorm_buf));
+
+        // Jump past colors and UVws
+        dest += sizeof(uint32_t) * 2 + uvChanSize;
+        src  += sizeof(uint32_t) * 2 + uvChanSize;
     }
 }
 

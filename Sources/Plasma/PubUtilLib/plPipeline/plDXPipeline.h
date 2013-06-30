@@ -354,6 +354,7 @@ protected:
     void            ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
     void            ICheckIndexBuffer(plDXIndexBufferRef* iRef);
     void            IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx);
+    void            IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
     void            IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
     void            ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef);
     void            ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef);
