@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pfMessage/pfGameGUIMsg.h"
+#include "plMessage/plDeviceRecreateMsg.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plAudioInterface.h"
@@ -572,14 +573,16 @@ plProfile_CreateTimer("Gui", "RenderSetup", GUITime);
 bool    pfGUIControlMod::MsgReceive( plMessage *msg )
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef( msg );
+    plDeviceRecreateMsg* device = plDeviceRecreateMsg::ConvertNoRef(msg);
+    if (rend || device) {
+        plPipeline* pipe = rend ? rend->Pipeline() : device->Pipeline();
 
-    if( rend )
-    {
         plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
-        // Only need it once
-        if( ISetUpDynTextMap( rend->Pipeline() ) )
-            plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), GetKey() );
+        ISetUpDynTextMap(pipe);
         plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
+
+        if (rend)
+            plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
         return true;
     }
 
@@ -591,12 +594,16 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             {
                 fDynTextMap = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
-                // Register for a render msg so we can leech the material when we finally
-                // have a pipeline to work with
+
+                // These tell us when we need to (re-)initialize the DTM
                 plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), GetKey() );
+                plgDispatch::Dispatch()->RegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
             }
             else
-                fDynTextMap = nil;
+            {
+                fDynTextMap = nullptr;
+                plgDispatch::Dispatch()->UnRegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
+            }
             return true;
         }
         else if( refMsg->fType == kRefDynTextLayer )
