@@ -379,6 +379,17 @@ void    plDynamicTextMap::IClearFromBuffer( uint32_t *clearBuffer )
     }
 }
 
+//// IPropagateFlags //////////////////////////////////////////////////////////
+
+void    plDynamicTextMap::IPropagateFlags()
+{
+    SetJustify(fJustify);
+    fCurrFont->SetRenderFlag(plFont::kRenderShadow, fFontFlags & kFontShadowed);
+    fCurrFont->SetRenderFlag(plFont::kRenderIntoAlpha, fFontBlockRGB);
+    fCurrFont->SetRenderFlag(plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha);
+    fCurrFont->SetRenderColor(fFontColor.ToARGB32());
+}
+
 //// ClearToColor /////////////////////////////////////////////////////////////
 
 void    plDynamicTextMap::ClearToColor( hsColorRGBA &color )
@@ -450,6 +461,8 @@ void    plDynamicTextMap::SetFont( const plString &face, uint16_t size, uint8_t 
     // This will be nil if we're just running the page optimizer.
     if (fCurrFont)
     {
+        if (fFontFlags & kFontShadowed)
+            fCurrFont->SetRenderFlag(plFont::kRenderShadow, true);
         fCurrFont->SetRenderYJustify( plFont::kRenderJustYTop );
         SetJustify( fJustify );
     }
@@ -496,12 +509,9 @@ void    plDynamicTextMap::DrawString( uint16_t x, uint16_t y, const wchar_t *tex
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderFlag( plFont::kRenderWrap | plFont::kRenderClip, false );
 	fCurrFont->SetRenderClipRect( 0, 0, fVisWidth, fVisHeight );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
-    fCurrFont->SetRenderFlag( plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha );
     fCurrFont->RenderString( this, x, y, text );
 }
 
@@ -518,11 +528,8 @@ void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderClipping( x, y, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
-    fCurrFont->SetRenderFlag( plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha );
     fCurrFont->RenderString( this, x, y, text );
 }
 
@@ -539,10 +546,8 @@ void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderClipping( clipX, clipY, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha );
     fCurrFont->RenderString( this, x, y, text );
 }
 
@@ -559,11 +564,8 @@ void    plDynamicTextMap::DrawWrappedString( uint16_t x, uint16_t y, const wchar
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderWrapping( x, y, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
-    fCurrFont->SetRenderFlag( plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha );
     fCurrFont->RenderString( this, x, y, text, lastX, lastY );
 }
 

@@ -117,6 +117,7 @@ class plFont : public hsKeyedObject
                                                 // leave the alpha as-is
                                                 // This flag has no effect on monochrome fonts
             kRenderAlphaPremultiplied = 0x00001000, // Destination has color values premultiplied by alpha
+            kRenderShadow             = 0x00002000, // Render text shadows
         };
 
         enum Flags

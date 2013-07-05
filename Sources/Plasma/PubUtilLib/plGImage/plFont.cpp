@@ -336,7 +336,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             {
                 if( fRenderInfo.fFlags & kRenderAlphaPremultiplied )
                 {
-                    if (1)//( ( fRenderInfo.fColor & 0x00ffffff ) == 0x00ffffff ) //FIXME
+                    if (fRenderInfo.fFlags & kRenderShadow)
                         fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremShadow;
                     else
                         fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremultiplied;
