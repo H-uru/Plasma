@@ -14,13 +14,7 @@ set(plPythonPack_HEADERS
 
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
 target_link_libraries(plPythonPack CoreLib plFile)
-
-if(PYTHON_DEBUG_LIBRARY)
-    target_link_libraries(plPythonPack debug ${PYTHON_DEBUG_LIBRARY})
-    target_link_libraries(plPythonPack optimized ${PYTHON_LIBRARY})
-else()
-    target_link_libraries(plPythonPack ${PYTHON_LIBRARY})
-endif()
+target_link_libraries(plPythonPack ${PYTHON_LIBRARIES})
 
 if(USE_VLD)
     target_link_libraries(plPythonPack ${VLD_LIBRARY})
