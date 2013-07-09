@@ -99,6 +99,11 @@ if(PLASMA_TARGETS STREQUAL "Ethereal")
     add_definitions(-DSTREAM_LOGGER)
 endif(PLASMA_TARGETS STREQUAL "Ethereal")
 
+#Allow us to disable certain parts of the build
+option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON)
+option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
+option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
+
 option(USE_VLD "Build and link with Visual Leak Detector (MSVC only)" OFF)
 if(USE_VLD)
     add_definitions(-DUSE_VLD)

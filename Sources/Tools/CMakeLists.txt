@@ -1,9 +1,10 @@
-add_subdirectory(plLocalizationEditor)
-add_subdirectory(plResBrowser)
-add_subdirectory(plShaderAssembler)
-
-if(FREETYPE_FOUND)
-    add_subdirectory(plFontConverter)
+if(PLASMA_BUILD_TOOLS)
+    add_subdirectory(plLocalizationEditor)
+    add_subdirectory(plResBrowser)
+    add_subdirectory(plShaderAssembler)
+    if(FREETYPE_FOUND)
+        add_subdirectory(plFontConverter)
+    endif()
 endif()
 
 # Max Stuff goes below here...
