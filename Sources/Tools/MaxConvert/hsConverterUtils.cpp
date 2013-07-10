@@ -238,10 +238,9 @@ char *hsConverterUtils::MangleReference(char *mangName, const char *nodeName, co
         // no room so make global
         // Default is to make it global, but you can set another default (like same
         // room as referencer) with defRoom.
-        char tempName[256];
 
-        sprintf(tempName, "%s..%s", defRoom, nodeName);
-        return hsStrcpy(mangName, tempName);
+        plString tempName = plString::Format("%s..%s", defRoom, nodeName);
+        return hsStrcpy(mangName, tempName.c_str());
     }
 
     return MangleReference(mangName, node);
@@ -255,8 +254,7 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
     if (!node)
         return nil;
 
-    char tempName[256];
-
+    plString tempName;
     char *nodeName = node->GetName();
     char *roomName = nil;
     TSTR sdata;
@@ -273,18 +271,18 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
     }
 
     if (('.' == nodeName[0])&&('.' == nodeName[1]))
-        hsStrcpy(tempName, nodeName + 2);
+        tempName = (nodeName + 2);
     else if (!*nodeName 
             || strstr(nodeName, "..")
             || IsReservedKeyword(nodeName)
     )
-        hsStrcpy(tempName, nodeName);
+        tempName = nodeName;
     else if (roomName && *roomName)
-        sprintf(tempName, "%s..%s", roomName, nodeName);
+        tempName = plString::Format("%s..%s", roomName, nodeName);
     else
-        sprintf(tempName, "%s..%s", defRoom, nodeName);
+        tempName = plString::Format("%s..%s", defRoom, nodeName);
 
-    return hsStrcpy(mangName, tempName);
+    return hsStrcpy(mangName, tempName.c_str());
 
     hsGuardEnd; 
 }

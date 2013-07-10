@@ -935,9 +935,8 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    char errmsg[256];
-    sprintf(errmsg,"GUIDialog TagID %d not found",tag);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString errmsg = plString::Format("GUIDialog TagID %d not found", tag);
+    PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
 
@@ -952,9 +951,8 @@ PyObject* cyMisc::GetDialogFromString(const char* name)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    char errmsg[256];
-    sprintf(errmsg,"GUIDialog %s not found",name);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString errmsg = plString::Format("GUIDialog %s not found", name);
+    PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
 
@@ -989,9 +987,7 @@ PyObject* cyMisc::GetLocalAvatar()
     if ( so )
         return pySceneObject::New(so->GetKey());
 
-    char errmsg[256];
-    sprintf(errmsg,"Local avatar not found");
-    PyErr_SetString(PyExc_NameError, errmsg);
+    PyErr_SetString(PyExc_NameError, "Local avatar not found");
     return nil; // returns nil, cause we threw an error
 }
 
@@ -1570,14 +1566,14 @@ void cyMisc::FogSetDefExp2(float end, float density)
 void cyMisc::SetClearColor(float red, float green, float blue)
 {
     // do this command via the console to keep the maxplugins from barfing
-    char command[256];
-    sprintf(command,"Graphics.Renderer.SetClearColor %f %f %f",red,green,blue);
+    plString command = plString::Format("Graphics.Renderer.SetClearColor %f %f %f", red, green, blue);
+
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
     pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
     pMsg->SetControlActivated(true);
-    pMsg->SetCmdString(command);
+    pMsg->SetCmdString(command.c_str());
     plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 }
 

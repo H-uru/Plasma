@@ -456,13 +456,13 @@ class plDemoDebugFile
         ~plDemoDebugFile() { IDDFClose(); }
 
         // Static function to write a string to the DDF
-        static void Write( char *string );
+        static void Write( const char *string );
 
         // Static function to write two strings to the DDF
-        static void Write( char *string1, char *string2 );
+        static void Write( const char *string1, const char *string2 );
 
         // Static function to write a string and a signed integer value to the DDF
-        static void Write( char *string1, int32_t value );
+        static void Write( const char *string1, int32_t value );
 
         // Enables or disables the DDF class
         static void Enable( bool yes ) { fEnabled = yes; }

@@ -202,7 +202,7 @@ void hsStatusMessage(const char message[])
 void hsStatusMessageV(const char * fmt, va_list args)
 {
     char  buffer[2000];
-    vsprintf(buffer, fmt, args);
+    vsnprintf(buffer, arrsize(buffer), fmt, args);
     hsStatusMessage(buffer);
 }
 
@@ -230,14 +230,6 @@ char * hsFormatStrV(const char * fmt, va_list args)
 {
     plString buf = plString::IFormat(fmt, args);
     return hsStrcpy(buf.c_str());
-}
-
-static char hsStrBuf[100];
-
-char *hsScalarToStr(float s)
-{
-    sprintf(hsStrBuf, "%f", s);
-    return hsStrBuf;
 }
 
 class hsMinimizeClientGuard

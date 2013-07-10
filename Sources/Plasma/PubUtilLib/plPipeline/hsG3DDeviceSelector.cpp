@@ -554,9 +554,8 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
             }
             else
             {
-                char str[ 256 ];
-                sprintf( str, "   Keeping mode (%dx%d) on device %s", modes[j].GetWidth(), modes[j].GetHeight(), fRecords[ i ].GetDriverDesc() );
-                plDemoDebugFile::Write( str );
+                plString log = plString::Format("   Keeping mode (%dx%d) on device %s", modes[j].GetWidth(), modes[j].GetHeight(), fRecords[ i ].GetDriverDesc());
+                plDemoDebugFile::Write( log.c_str() );
             }
         }
 
@@ -605,10 +604,9 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
             // Remove Direct3D devices with less than 11 megs of RAM
             else if (bTough && ( totalMem = IAdjustDirectXMemory( fRecords[i].GetMemoryBytes() ) ) < 11*1024*1024 )
             {
-                char str[ 256 ];
-                sprintf( str, "   Removing Direct3D device with < 11MB RAM. Device RAM (in kB): %d (Description: %s)",
-                                        totalMem / 1024, fRecords[ i ].GetDriverDesc() );
-                plDemoDebugFile::Write( str );
+                plString log = plString::Format("   Removing Direct3D device with < 11MB RAM. Device RAM (in kB): %d (Description: %s)",
+                                                totalMem / 1024, fRecords[ i ].GetDriverDesc() );
+                plDemoDebugFile::Write( log.c_str() );
                 fRecords[i].SetDiscarded(true);
             }
             else
@@ -1958,7 +1956,7 @@ void    plDemoDebugFile::IDDFClose( void )
 //// Write ////////////////////////////////////////////////////////////////////
 //  Writes a string to the DDF. If the DDF isn't open, opens it.
 
-void    plDemoDebugFile::Write( char *string )
+void    plDemoDebugFile::Write( const char *string )
 {
 #if M3DDEMOINFO // Demo Debug Build
     if( !fIsOpen )
@@ -1969,7 +1967,7 @@ void    plDemoDebugFile::Write( char *string )
 #endif
 }
 
-void    plDemoDebugFile::Write( char *string1, char *string2 )
+void    plDemoDebugFile::Write( const char *string1, const char *string2 )
 {
 #if M3DDEMOINFO // Demo Debug Build
     if( !fIsOpen )
@@ -1980,7 +1978,7 @@ void    plDemoDebugFile::Write( char *string1, char *string2 )
 #endif
 }
 
-void    plDemoDebugFile::Write( char *string1, int32_t value )
+void    plDemoDebugFile::Write( const char *string1, int32_t value )
 {
 #if M3DDEMOINFO // Demo Debug Build
     if( !fIsOpen )

@@ -250,10 +250,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, Respawn,"", "Moves the avatar back to the start po
 PF_CONSOLE_CMD( Avatar_Spawn, SetSpawnOverride, "string spawnPointName", "Overrides the normal spawn point choice to be the object specified.")
 {
     plArmatureMod::SetSpawnPointOverride( (const char *)params[ 0 ] );
-    
-    char str1[ 512 ];
-    sprintf( str1, "Spawn point override set to object %s", (const char *)params[ 0 ] );
-    PrintString( str1 );
+    PrintStringF(PrintString, "Spawn point override set to object %s", (const char *)params[ 0 ]);
 }
 
 PF_CONSOLE_CMD( Avatar_Spawn, DontPanic,"", "Toggles the Don't panic link flag.")
@@ -263,9 +260,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, DontPanic,"", "Toggles the Don't panic link flag."
     if (avatar)
     {
         bool state = avatar->ToggleDontPanicLinkFlag();
-        char str1[256];
-        sprintf(str1, "DontPanic set to %s", state?"true":"false");
-        PrintString( str1 );
+        PrintStringF(PrintString, "DontPanic set to %s", state ? "true" : "false");
     }
 }
 
@@ -484,10 +479,8 @@ PF_CONSOLE_CMD( Avatar,
 {
     plRelevanceMgr *mgr = plRelevanceMgr::Instance();
     mgr->SetEnabled(!mgr->GetEnabled());
-    
-    char buff[256];
-    sprintf(buff, "All relevance regions are now %s", (mgr->GetEnabled() ? "ENABLED" : "DISABLED"));
-    PrintString(buff);
+
+    PrintStringF(PrintString, "All relevance regions are now %s", (mgr->GetEnabled() ? "ENABLED" : "DISABLED"));
 }
 
 PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpoint.")
@@ -756,10 +749,7 @@ PF_CONSOLE_CMD( Avatar_LOD, SetLODDistance, "float newDist", "Set Distance for s
 
 PF_CONSOLE_CMD( Avatar_LOD,  GetLODDistance, "", "Get Distance for switching Avatar LOD" )
 {
-    char buffer[256];
-    
-    sprintf(buffer, "Lod Distance = %f", plArmatureLODMod::fLODDistance);
-    PrintString(buffer);
+    PrintStringF(PrintString, "Lod Distance = %f", plArmatureLODMod::fLODDistance);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -346,9 +346,8 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     IRefreshEAXSettings( true );
 
     // Debug info
-    char str[ 256 ];
-    snprintf( str, arrsize(str), "   Streaming %s.", fSrcFilename.AsString().c_str() );
-    IPrintDbgMessage( str );
+    plString dbg = plString::Format("   Streaming %s.", fSrcFilename.AsString().c_str());
+    IPrintDbgMessage(dbg.c_str());
 
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",
                            fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName().c_str() );

@@ -1267,9 +1267,8 @@ PyObject* cyAvatar::GetTintClothingItemL(const char* clothing_name, uint8_t laye
         }
     }
 
-    char errmsg[256];
-    sprintf(errmsg,"Cannot find clothing item %s to find out what tint it is",clothing_name);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString errmsg = plString::Format("Cannot find clothing item %s to find out what tint it is", clothing_name);
+    PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     // returning nil means an error occurred
     return nil;
 }
@@ -1332,10 +1331,8 @@ PyObject* cyAvatar::GetTintSkin()
             return pyColor::New(tint);
         }
     }
-    
-    char errmsg[256];
-    sprintf(errmsg,"Cannot find the skin of the player. Whatever that means!");
-    PyErr_SetString(PyExc_KeyError, errmsg);
+
+    PyErr_SetString(PyExc_KeyError, "Cannot find the skin of the player. Whatever that means!");
     // returning nil means an error occurred
     return nil;
 }

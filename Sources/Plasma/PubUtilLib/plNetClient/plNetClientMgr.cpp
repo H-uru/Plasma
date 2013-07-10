@@ -1235,9 +1235,8 @@ void plNetClientMgr::IDisableNet () {
             if (!GetFlagsBit(plNetClientApp::kPlayingGame))
             {
                 // KI may not be loaded
-                char title[256];
-                snprintf(title, arrsize(title), "%s Error", plProduct::CoreName().c_str());
-                hsMessageBox(fDisableMsg->str, title, hsMessageBoxNormal, hsMessageBoxIconError );
+                plString title = plString::Format("%s Error", plProduct::CoreName().c_str());
+                hsMessageBox(fDisableMsg->str, title.c_str(), hsMessageBoxNormal, hsMessageBoxIconError );
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
             }
