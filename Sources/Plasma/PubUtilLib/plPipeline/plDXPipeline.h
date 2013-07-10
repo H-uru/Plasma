@@ -354,6 +354,7 @@ protected:
     void            ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
     void            ICheckIndexBuffer(plDXIndexBufferRef* iRef);
     void            IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx);
+    void            IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
     void            IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
     void            ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef);
     void            ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef);
@@ -804,8 +805,6 @@ public:
     //  CPU-optimized functions
 protected:
     typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
-    static void blend_vert_buffer_fpu(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
-    static void blend_vert_buffer_sse3(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
     static hsFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 };
 
