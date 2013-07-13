@@ -141,7 +141,8 @@ class ahnyQuabs(ptModifier, object):
             # Make sure this isn't the player jumping into the water for a quick swim
             # Musing: Ideally, we would despawn the clone here since it's now useless,
             #         but removing the brain without causing rampant issues might be problematic...
-            if PtFindAvatar(events) != PtGetLocalAvatar():
+            colso = PtFindAvatar(events)
+            if colso.isAvatar() and not colso.isHuman():
                 self.quabs -= 1
                 PtDebugPrint("ahnyQuabs.OnNotify():\tQuabs remaining: %i" % self.quabs, level=kWarningLevel)
                 return
