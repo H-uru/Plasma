@@ -1035,9 +1035,9 @@ class xAvatarCustomization(ptModifier):
                     elif btnID == kAvatarCameraID:
                         print "ACA: Taking a picture!"
                         picCam = ptCamera()
-                        picCam.setAspectRatio(4/3)
+                        picCam.setAspectRatio(1)
                         AvCustGUI.dialog.hide()
-                        PtStartScreenCapture(self.key, 1024, 768)
+                        PtStartScreenCapture(self.key, 1024, 1024)
 
                 elif isinstance(control,ptGUIControlCheckBox):
                     chkBoxID = control.getTagID()
@@ -1070,10 +1070,10 @@ class xAvatarCustomization(ptModifier):
         currentgender = avatar.avatar.getAvatarClothingGroup()
         if currentgender == 1:
             print "Female Screenshot"
-            TestMap.textmap.drawImageClipped(0, 0, image, 55, 200, 512, 512, 0)
+            TestMap.textmap.drawImageClipped(0, 0, image, 55, 250, 512, 512, 0)
         else:
             print "Male Screenshot"
-            TestMap.textmap.drawImageClipped(0, 0, image, 55, 60, 512, 512, 0)
+            TestMap.textmap.drawImageClipped(0, 0, image, 55, 80, 512, 512, 0)
         TestMap.textmap.flush()
         PtAtTimeCallback(self.key, 0, 999)
 
