@@ -98,6 +98,11 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
             return None
 
         if sdlName.value:
+            # So, apparently, Cyan's artists like trailing whitespace...
+            if sdlName.value.find(" ") != -1:
+                PtDebugPrint("xAgeSDLBoolShowHide._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!" % (self.sceneobject.getName(), sdlName.value))
+                sdlName.value = sdlName.value.replace(" ", "")
+
             ageSDL.setFlags(sdlName.value, 1, 1)
             ageSDL.sendToClients(sdlName.value)
             ageSDL.setNotify(self.key, sdlName.value, 0.0)
@@ -105,7 +110,7 @@ class xAgeSDLBoolShowHide(ptMultiModifier, object):
             # It happens because Cyan sucks, and there's nothing we can do about it.
             try:
                 self.sdl_value = ageSDL[sdlName.value][0]
-            except IndexError:
+            except KeyError:
                 self.sdl_value = defaultValue.value
         else:
             self.sdl_value = defaultValue.value # start at default

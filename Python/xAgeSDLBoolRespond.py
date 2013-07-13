@@ -106,6 +106,11 @@ class xAgeSDLBoolRespond(ptResponder):
         if not sdlName.value:
             raise RuntimeError("Missing SDL variable name")
 
+        # So, apparently, Cyan's artists like trailing whitespace...
+        if sdlName.value.find(" ") != -1:
+            PtDebugPrint("xAgeSDLBoolRespond._Setup():\tWARNING: %s's SDL variable '%s' has whitespace. Removing!" % (self.sceneobject.getName(), sdlName.value))
+            sdlName.value = sdlName.value.replace(" ", "")
+
         ageSDL = PtGetAgeSDL()
         if not ageSDL:
             PtDebugPrint("xAgeSDLBoolRespond._Initialize():\tAgeSDL is None. Initing %s to its default" % self.sceneobject.getName())
