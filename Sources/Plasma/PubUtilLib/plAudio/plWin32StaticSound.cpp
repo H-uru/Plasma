@@ -153,7 +153,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         if( !fDSoundBuffer->IsValid() )
         {
             char str[256];
-            sprintf(str, "Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file. Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.", GetFileName());
+            sprintf(str, "Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file. Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.", GetFileName().AsString().c_str());
             IPrintDbgMessage( str, true );
             fFailed = true;
 
