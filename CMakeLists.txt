@@ -34,6 +34,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 
 # Find all 3rd-party libraries that are required
+set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(OpenSSL REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(PythonLibs REQUIRED)
