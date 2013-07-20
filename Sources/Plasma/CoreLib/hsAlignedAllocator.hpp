@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _HS_ALIGNED_ALLOCATOR_H
 
 #include "HeadSpin.h"
+#include <stdexcept>
 
 template<class T, size_t ALIGNMENT=16>
 
@@ -56,10 +57,10 @@ class hsAlignedAllocator
     hsAlignedAllocator& operator=(const hsAlignedAllocator&) { }
 
 public:
-    template <typename U, size_t ALIGNMENT=16>
+    template <typename U, size_t ALIGN=16>
     struct rebind
     {
-        typedef hsAlignedAllocator<U, ALIGNMENT> other;
+        typedef hsAlignedAllocator<U, ALIGN> other;
     };
 
     typedef T* pointer;
