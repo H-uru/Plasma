@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#ifdef HS_BUILD_FOR_WIN32
+
 #include "hsWindows.h"
 
 #include <ddraw.h>
@@ -72,3 +74,5 @@ HMODULE hsGDDrawDllLoad::GetD3DDll()
 {
     return staticDllLoad.fD3DDll;
 }
+
+#endif //HS_BUILD_FOR_WIN32

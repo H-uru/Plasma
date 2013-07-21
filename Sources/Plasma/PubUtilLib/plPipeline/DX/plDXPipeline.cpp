@@ -70,20 +70,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #include <dxerr.h>
 #endif
 
-#include "hsWinRef.h"
+#include "plPipeline/hsWinRef.h"
 
 #include "HeadSpin.h"
 #include "plDXPipeline.h"
-#include "plPipelineCreate.h"
-#include "plDebugText.h"
+#include "plPipeline/plPipelineCreate.h"
+#include "plPipeline/plDebugText.h"
 #include "plDXEnumerate.h"
-#include "hsG3DDeviceSelector.h"
-#include "hsGDDrawDllLoad.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
+#include "plPipeline/hsGDDrawDllLoad.h"
 #include "hsResMgr.h"
-#include "plStatusLogDrawer.h"
+#include "plPipeline/plStatusLogDrawer.h"
 #include "plQuality.h"
 
-#include "plPipeDebugFlags.h"
+#include "plPipeline/plPipeDebugFlags.h"
 
 #include "hsTemplates.h"
 //#include "hsGEnviron.h"
@@ -110,17 +110,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem/plParticleEmitter.h"
 #include "plParticleSystem/plParticle.h"
 #include "plAvatar/plAvatarClothing.h"
-#include "plDebugText.h"
-#include "plFogEnvironment.h"
+#include "plPipeline/plDebugText.h"
+#include "plPipeline/plFogEnvironment.h"
 #include "plDXTextFont.h"
-#include "plGBufferGroup.h"
+#include "plPipeline/plGBufferGroup.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
-#include "plRenderTarget.h"
-#include "plCubicRenderTarget.h"
-#include "plDynamicEnvMap.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plPipeline/plCubicRenderTarget.h"
+#include "plPipeline/plDynamicEnvMap.h"
 #include "pfCamera/plVirtualCamNeu.h"
 
 #include "plDXBufferRefs.h"
@@ -158,7 +158,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #endif
 
-#include "plCullTree.h"
+#include "plPipeline/plCullTree.h"
 
 #include "plTweak.h"
 

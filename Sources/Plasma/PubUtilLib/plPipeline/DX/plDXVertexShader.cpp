@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSurface/plShader.h"
 
-#include "plGBufferGroup.h"
+#include "plPipeline/plGBufferGroup.h"
 #include "plDXPipeline.h"
 
 plDXVertexShader::plDXVertexShader(plShader* owner)
