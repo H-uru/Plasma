@@ -63,7 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsPoint2.h"
 #include "plPipeline/plCullTree.h"
 #include "plPipeline/hsWinRef.h"
-#include "plPipeline/plViewTransform.h"
+#include "plViewTransform.h"
 
 //// General Settings /////////////////////////////////////////////////////////
 
