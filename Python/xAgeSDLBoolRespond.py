@@ -96,7 +96,7 @@ class xAgeSDLBoolRespond(ptResponder):
 
     def _Execute(self, value, ff, avatar=None):
         resps = ("FALSE", "TRUE")
-        PtDebugPrint("xAgeSDLBoolRespond._Execute():\tRunning %s responder on %s ff=%d" % (resps[int(value)], self.sceneobject.getName(), ff), level=kDebugDumpLevel)
+        PtDebugPrint("xAgeSDLBoolRespond._Execute():\tRunning %s responder on %s ff=%d" % (resps[min(value, 1)], self.sceneobject.getName(), ff), level=kDebugDumpLevel)
         if value:
             respTrue.run(self.key, avatar=avatar, fastforward=ff)
         else:
@@ -122,5 +122,9 @@ class xAgeSDLBoolRespond(ptResponder):
         ageSDL.sendToClients(sdlName.value)
         ageSDL.setNotify(self.key, sdlName.value, 0.0)
 
-        # Now do the nasty
-        self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)
+        # Now do the nasty and hide any Cyan artist failures
+        try:
+            self._Execute(ageSDL[sdlName.value][0], initFastFwd.value)
+        except LookupError:
+            PtDebugPrint("xAgeSDLBoolRespond._Setup():\tVariable '%s' is invalid on object '%s'" % (sdlName.value, self.sceneobject.getName()))
+            self._Execute(defaultValue.value, initFastFwd.value)
