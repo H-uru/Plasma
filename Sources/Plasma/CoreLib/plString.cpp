@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "plString.h"
-#include <pcre.h>
+#include <regex>
 
 const plString plString::Null;
 
@@ -605,66 +605,44 @@ ssize_t plString::Find(const char *str, CaseSensitivity sense) const
 
 bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
 {
-    int opts = PCRE_UTF8;
+    auto opts = std::regex_constants::ECMAScript;
     if (sense == kCaseInsensitive)
-        opts |= PCRE_CASELESS;
+        opts |= std::regex_constants::icase;
 
-    plString pat_full = plString::Format("(?:%s)\\z", pattern);
-    const char *errptr;
-    int erroffs;
-    std::unique_ptr<pcre, std::function<void (pcre *)>>
-        re(pcre_compile(pat_full.c_str(), opts, &errptr, &erroffs, nullptr), pcre_free);
-    if (!re.get()) {
-        hsAssert(0, plString::Format("Invalid Regex pattern: %s (at %d)", errptr, erroffs).c_str());
-        return false;
+    std::regex re;
+    try {
+        re = std::regex(pattern, opts);
+        if (std::regex_match(c_str(), re))
+            return true;
+    } catch (const std::regex_error& e) {
+        hsAssert(0, plString::Format("Regex match error: %s", e.what()).c_str());
     }
 
-    int result = pcre_exec(re.get(), nullptr, c_str(), GetSize(), 0,
-                           PCRE_ANCHORED, nullptr, 0);
-    if (result >= 0)
-        return true;
-
-    hsAssert(result == PCRE_ERROR_NOMATCH, plString::Format("Regex match error: %d", result).c_str());
     return false;
 }
 
 std::vector<plString> plString::RESearch(const char *pattern,
                                          CaseSensitivity sense) const
 {
-    int opts = PCRE_UTF8;
+    auto opts = std::regex_constants::ECMAScript;
     if (sense == kCaseInsensitive)
-        opts |= PCRE_CASELESS;
+        opts |= std::regex_constants::icase;
 
-    const char *errptr;
-    int erroffs;
-    std::unique_ptr<pcre, std::function<void (pcre *)>>
-        re(pcre_compile(pattern, opts, &errptr, &erroffs, nullptr), pcre_free);
-    if (!re.get()) {
-        hsAssert(0, plString::Format("Invalid Regex pattern: %s (at %d)", errptr, erroffs).c_str());
-        return std::vector<plString>();
+    std::vector<plString> substrings;
+
+    try {
+        std::regex re(pattern, opts);
+        std::cmatch matches;
+        std::regex_search(c_str(), matches, re);
+        substrings.resize(matches.size());
+
+        for (size_t i = 0; i < matches.size(); ++i)
+            substrings[i] = matches[i].str().c_str();
+    } catch (const std::regex_error& e) {
+        hsAssert(0, plString::Format("Regex search error: %s", e.what()).c_str());
     }
 
-    int ncaps = 0;
-    pcre_fullinfo(re.get(), nullptr, PCRE_INFO_CAPTURECOUNT, &ncaps);
-
-    ncaps += 1;     // For the whole-pattern capture
-    std::unique_ptr<int> outvec(new int[ncaps * 3]);
-    memset(outvec.get(), -1, sizeof(int) * ncaps * 3);
-    int result = pcre_exec(re.get(), nullptr, c_str(), GetSize(), 0, 0,
-                           outvec.get(), ncaps * 3);
-    if (result >= 0) {
-        std::vector<plString> caps;
-        caps.resize(ncaps);
-        for (int i = 0; i < ncaps; ++i) {
-            int start = outvec.get()[i*2], end = outvec.get()[i*2+1];
-            if (start >= 0)
-                caps[i] = Substr(start, end - start);
-        }
-        return caps;
-    }
-
-    hsAssert(result == PCRE_ERROR_NOMATCH, plString::Format("Regex search error: %d", result).c_str());
-    return std::vector<plString>();
+    return substrings;
 }
 
 static bool in_set(char key, const char *charset)

@@ -1,5 +1,3 @@
-include_directories(${PCRE_INCLUDE_DIR})
-
 add_definitions(-D_LIB)
 
 add_definitions(-DPRODUCT_BRANCH_ID=${PRODUCT_BRANCH_ID})
@@ -111,7 +109,6 @@ set(CoreLib_HEADERS
 
 use_precompiled_header(_CoreLibPch.h Pch.cpp CoreLib_HEADERS CoreLib_SOURCES)
 add_library(CoreLib STATIC ${CoreLib_SOURCES} ${CoreLib_HEADERS})
-target_link_libraries(CoreLib ${PCRE_LIBRARY})
 
 if(UNIX)
     target_link_libraries(CoreLib pthread)
