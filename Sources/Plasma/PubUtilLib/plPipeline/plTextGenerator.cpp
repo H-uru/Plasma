@@ -204,7 +204,7 @@ uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t hei
 
     return (uint32_t *)fWinRGBBits;
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 

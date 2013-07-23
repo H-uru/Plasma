@@ -205,7 +205,7 @@ bool    plCubicRenderTargetModifier::MsgReceive( plMessage* msg )
                 for (int i = 0; i < 6; i++)
                 {
                     delete fRequests[i];
-                    fRequests[i] = nil;
+                    fRequests[i] = nullptr;
                 }
             }
         }
