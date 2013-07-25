@@ -203,6 +203,8 @@ uint32_t      *plTextGenerator::IAllocateOSSurface( uint16_t width, uint16_t hei
     SelectObject( fWinAlphaDC, fWinAlphaBitmap );
 
     return (uint32_t *)fWinRGBBits;
+#else
+    return nullptr;
 #endif
 }
 
@@ -448,6 +450,8 @@ uint16_t      plTextGenerator::CalcStringWidth( const wchar_t *text, uint16_t *h
         *height = (uint16_t)size.cy;
 
     return (uint16_t)size.cx;
+#else
+    return 0;
 #endif
 }
 

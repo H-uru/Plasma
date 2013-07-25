@@ -76,6 +76,7 @@ plTextFont::~plTextFont()
 
 uint16_t  *plTextFont::IInitFontTexture( void )
 {
+#ifdef HS_BUILD_FOR_WIN32
     int     nHeight, x, y, c;
     char    myChar[ 2 ] = "x";
     uint16_t  *tBits;
@@ -190,6 +191,9 @@ uint16_t  *plTextFont::IInitFontTexture( void )
     DeleteObject( hFont );
 
     return data;
+#else
+    return nullptr;
+#endif
 }
 
 //// Create ///////////////////////////////////////////////////////////////////

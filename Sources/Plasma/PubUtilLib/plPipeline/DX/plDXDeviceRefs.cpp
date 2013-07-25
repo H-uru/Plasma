@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <d3d9.h>
 #include <ddraw.h>
 
-#include "hsWinRef.h"
+#include "plPipeline/hsWinRef.h"
 
 #include "plDXPipeline.h"
 #include "plDXDeviceRef.h"
@@ -64,13 +64,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXLightRef.h"
 #include "plDXTextureRef.h"
 #include "plDXRenderTargetRef.h"
-#include "plGBufferGroup.h"
+#include "plPipeline/plGBufferGroup.h"
 #include "plDrawable/plGeometrySpan.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plGLight/plLightInfo.h"
-#include "plRenderTarget.h"
-#include "plCubicRenderTarget.h"
-#include "plDynamicEnvMap.h"
+#include "plPipeline/plRenderTarget.h"
+#include "plPipeline/plCubicRenderTarget.h"
+#include "plPipeline/plDynamicEnvMap.h"
 
 #include "plProfile.h"
 #include "plStatusLog/plStatusLog.h"
