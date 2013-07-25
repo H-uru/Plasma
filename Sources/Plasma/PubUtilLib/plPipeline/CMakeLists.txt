@@ -95,5 +95,10 @@ else()
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS})
 endif()
 
-source_group("Source Files" FILES ${plPipeline_SOURCES} ${plDXPipeline_SOURCES})
-source_group("Header Files" FILES ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
+source_group("Source Files" FILES ${plPipeline_SOURCES})
+source_group("Header Files" FILES ${plPipeline_HEADERS})
+
+if(WIN32)
+    source_group("DX\Source Files" FILES ${plDXPipeline_SOURCES})
+    source_group("DX\Header Files" FILES ${plDXPipeline_HEADERS})
+endif()
