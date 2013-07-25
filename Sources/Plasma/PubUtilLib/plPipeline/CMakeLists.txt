@@ -99,6 +99,6 @@ source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})
 
 if(WIN32)
-    source_group("DX\Source Files" FILES ${plDXPipeline_SOURCES})
-    source_group("DX\Header Files" FILES ${plDXPipeline_HEADERS})
+    source_group("DX\\Source Files" FILES ${plDXPipeline_SOURCES})
+    source_group("DX\\Header Files" FILES ${plDXPipeline_HEADERS})
 endif()
