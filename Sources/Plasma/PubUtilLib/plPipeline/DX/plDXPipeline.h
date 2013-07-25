@@ -47,19 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSurface/plLayerInterface.h"
 #include "hsMatrix44.h"
-#include "plFogEnvironment.h"
-#include "hsG3DDeviceSelector.h"
+#include "plPipeline/plFogEnvironment.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
-#include "hsGDeviceRef.h"
+#include "plPipeline/hsGDeviceRef.h"
 #include "hsPoint2.h"
 
 class plAccessSpan;
 class plAuxSpan;
 class plVertexSpan;
 
-#include "plPlates.h"   // Used to define plDXPlateManager
+#include "plPipeline/plPlates.h"   // Used to define plDXPlateManager
 
 
 //// Defines and Konstants and Other Nifty Stuff //////////////////////////////

@@ -39,44 +39,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-///////////////////////////////////////////////////////////////////////////////
-//                                                                           //
-//  plDXDeviceRef.h - Header for the generic DX DeviceRef type               //
-//  Cyan, Inc.                                                               //
-//                                                                           //
-//// Version History //////////////////////////////////////////////////////////
-//                                                                           //
-//  4.25.2001 mcn - Created.                                                 //
-//                                                                           //
-///////////////////////////////////////////////////////////////////////////////
+#ifndef _plDXTextFont_h
+#define _plDXTextFont_h
 
-#ifndef _plDXDeviceRef_h
-#define _plDXDeviceRef_h
-
-#include "HeadSpin.h"
-#include "hsGDeviceRef.h"
+#include "plPipeline/plTextFont.h"
+//#include "hsGDirect3DTnLDevice.h"
 
 
-//// Definition ///////////////////////////////////////////////////////////////
+//// plDXTextFont Class Definition ///////////////////////////////////////////
 
-class plDXDeviceRef : public hsGDeviceRef
+struct IDirect3DTexture9;
+struct IDirect3DDevice9;
+struct IDirect3DStateBlock9;
+class plPipeline;
+
+class plDXTextFont : public plTextFont
 {
-    protected:
-        plDXDeviceRef   *fNext;
-        plDXDeviceRef   **fBack;
+protected:
+    IDirect3DTexture9           *fD3DTexture;
+    IDirect3DDevice9            *fDevice; 
 
-    public:
+    static IDirect3DVertexBuffer9       *fBuffer;
+    static uint32_t                       fBufferCursor;
 
-        void            Unlink( void );
-        void            Link( plDXDeviceRef **back );
-        plDXDeviceRef   *GetNext( void ) { return fNext; }
-        bool            IsLinked( void ) { return fBack != nil; }
-        virtual void            Release( void ) { }
+    IDirect3DStateBlock9 *fOldStateBlock;
+    IDirect3DStateBlock9 *fTextStateBlock;
 
-        plDXDeviceRef();
+    virtual void    ICreateTexture( uint16_t *data );
+    virtual void    IInitStateBlocks( void );
+    virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array );
+    virtual void    IDrawLines( uint32_t count, plFontVertex *array );
 
-        virtual ~plDXDeviceRef();
+public:
+    plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );
+    ~plDXTextFont();
+
+    static  void CreateShared(IDirect3DDevice9* device);
+    static  void ReleaseShared(IDirect3DDevice9* device);
+
+    virtual void    FlushDraws( void );
+    virtual void    SaveStates( void );
+    virtual void    RestoreStates( void );
+    virtual void    DestroyObjects( void );
+
+    static const DWORD kFVF;
 };
 
 
-#endif // _plDXDeviceRef_h
+#endif // _plDXTextFont_h
+

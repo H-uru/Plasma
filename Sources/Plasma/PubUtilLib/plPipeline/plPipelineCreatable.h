@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <d3d9.h>
 
-#include "plDXPipeline.h"
+#include "DX/plDXPipeline.h"
 
 REGISTER_NONCREATABLE( plDXPipeline );
 
