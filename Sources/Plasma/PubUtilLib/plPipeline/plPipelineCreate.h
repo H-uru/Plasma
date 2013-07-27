@@ -65,6 +65,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plPipelineCreate_h
 #define _plPipelineCreate_h
 
+#include "hsG3DDeviceSelector.h"
+#include "hsWinRef.h"
 
 //// plPipelineCreate Class Definition ////////////////////////////////////////
 

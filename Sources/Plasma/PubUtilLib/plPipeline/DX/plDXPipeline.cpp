@@ -822,6 +822,9 @@ void    plDXPipeline::IClearMembers()
 // Reset - Initialize the ViewSettings to default (normal/neutral) values.
 void plDXViewSettings::Reset()
 {
+    // dpogue -- Done
+    // fView.Reset()
+
     // Normal render, on clear, clear the color buffer and depth buffer.
     fRenderState = plPipeline::kRenderNormal | plPipeline::kRenderClearColor | plPipeline::kRenderClearDepth;
 
@@ -3257,6 +3260,8 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
 // account.
 bool plDXPipeline::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList)
 {
+    // dpogue -- Done
+    // fView.HarvestVisible(space, visList);
     if( !space )
         return false;
 
@@ -3280,6 +3285,8 @@ bool plDXPipeline::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList
 //  See plCullTree (in plPipeline) and plSpaceTree (in plDrawable) and plVisMgr (in plScene).
 void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr )
 {
+    // dpogue -- Done
+    // fView.GetVisibleSpans(drawable, visList, visMgr)
     static hsTArray<int16_t> tmpVis;
     tmpVis.SetCount(0);
     visList.SetCount(0);
@@ -5119,6 +5126,8 @@ void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
 // Set the color and depth clear values.
 void plDXPipeline::SetClear(const hsColorRGBA* col, const float* depth)
 {
+    // dpogue -- Done
+    // fView.SetClear(col, depth)
     if( col )
         fView.fClearColor = inlGetD3DColor(*col);
     if( depth )
@@ -5129,6 +5138,8 @@ void plDXPipeline::SetClear(const hsColorRGBA* col, const float* depth)
 // Return the current clear color.
 hsColorRGBA plDXPipeline::GetClearColor() const
 {
+    // dpogue -- Done
+    // fView.GetClearColor()
     return hsColorRGBA().FromARGB32(fView.fClearColor);
 }
 
@@ -5136,6 +5147,8 @@ hsColorRGBA plDXPipeline::GetClearColor() const
 // Return the current clear depth.
 float plDXPipeline::GetClearDepth() const
 {
+    // dpogue -- Done
+    // fView.GetClearDepth()
     return fView.fClearDepth;
 }
 
@@ -9002,6 +9015,9 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 // Check if the world space bounds are visible within the current view frustum.
 bool plDXPipeline::TestVisibleWorld( const hsBounds3Ext& wBnd )
 {
+    // dpogue -- Done
+    // fView.TestVisibleWorld(wBnd)
+
     if( fView.fCullTreeDirty )
         IRefreshCullTree();
     if (wBnd.GetType() == kBoundsNormal)
@@ -9012,6 +9028,7 @@ bool plDXPipeline::TestVisibleWorld( const hsBounds3Ext& wBnd )
 
 bool plDXPipeline::TestVisibleWorld( const plSceneObject* sObj )
 {
+    // dpogue -- Done
     const plDrawInterface* di = sObj->GetDrawInterface();
     if( !di )
         return false;
@@ -9055,6 +9072,7 @@ bool plDXPipeline::TestVisibleWorld( const plSceneObject* sObj )
 // Get the current view direction, up and direction X up.
 void    plDXPipeline::GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const
 {
+    // dpogue -- Done
     axes[ 0 ] = GetViewAcrossWorld();
     axes[ 1 ] = GetViewUpWorld();
     axes[ 2 ] = GetViewDirWorld();
@@ -9064,6 +9082,7 @@ void    plDXPipeline::GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const
 // Get the current FOV in degrees.
 void    plDXPipeline::GetFOV(float& fovX, float& fovY) const
 {
+    // dpogue -- Done
     fovX = GetViewTransform().GetFovXDeg();
     fovY = GetViewTransform().GetFovYDeg();
 }
@@ -9079,6 +9098,7 @@ void    plDXPipeline::SetFOV( float fovX, float fovY )
 // Get the orthogonal projection view size in world units (e.g. feet).
 void    plDXPipeline::GetSize( float& width, float& height ) const
 {
+    // dpogue -- Done
     width = GetViewTransform().GetScreenWidth();
     height = GetViewTransform().GetScreenHeight();
 }
@@ -9096,6 +9116,7 @@ void    plDXPipeline::SetSize( float width, float height )
 // Get the current hither and yon.
 void plDXPipeline::GetDepth(float& hither, float& yon) const
 {
+    // dpogue -- Done
     GetViewTransform().GetDepth(hither, yon);
 }
 
@@ -9110,6 +9131,7 @@ void plDXPipeline::SetDepth(float hither, float yon)
 // Return current world to camera transform.
 const hsMatrix44& plDXPipeline::GetWorldToCamera() const
 {
+    // dpogue -- Done
     return fView.GetWorldToCamera();
 }
 
@@ -9117,6 +9139,7 @@ const hsMatrix44& plDXPipeline::GetWorldToCamera() const
 // Return current camera to world transform.
 const hsMatrix44& plDXPipeline::GetCameraToWorld() const
 {
+    // dpogue -- Done
     return fView.GetCameraToWorld();
 }
 
@@ -9176,6 +9199,7 @@ void plDXPipeline::SetViewTransform(const plViewTransform& v)
 // object is being rendered, so this function is pretty worthless.
 const hsMatrix44& plDXPipeline::GetWorldToLocal() const
 {
+    // dpogue -- Done
     return fView.fWorldToLocal;
 }
 
@@ -9185,6 +9209,7 @@ const hsMatrix44& plDXPipeline::GetWorldToLocal() const
 
 const hsMatrix44& plDXPipeline::GetLocalToWorld() const
 {
+    // dpogue -- Done
     return fView.fLocalToWorld;
 }
 
@@ -9250,6 +9275,8 @@ void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX,
 // BSP tree. See plCullTree.h. It must be recomputed any time the camera moves.
 void plDXPipeline::IRefreshCullTree()
 {
+    // dpogue -- Done
+    // fView.RefreshCullTree()
     if( fView.fCullTreeDirty )
     {
         plProfile_BeginTiming(DrawOccBuild);
@@ -9307,6 +9334,8 @@ void plDXPipeline::IRefreshCullTree()
 // BSP tree and renders it until told to stop.
 void plDXPipeline::IMakeOcclusionSnap()
 {
+    // dpogue -- Done
+    // fView.MakeOcclusionSnap()
     hsTArray<hsPoint3>& pos = fView.fCullTree.GetCaptureVerts();
     hsTArray<hsVector3>& norm = fView.fCullTree.GetCaptureNorms();
     hsTArray<hsColorRGBA>& color = fView.fCullTree.GetCaptureColors();
@@ -9360,6 +9389,8 @@ void plDXPipeline::IMakeOcclusionSnap()
 // Add the input polys into the list of polys from which to generate the cull tree.
 bool plDXPipeline::SubmitOccluders(const hsTArray<const plCullPoly*>& polyList)
 {
+    // dpogue -- Done
+    // fView.SubmitOccluders(polyList)
     fCullPolys.SetCount(0);
     fCullHoles.SetCount(0);
     int i;

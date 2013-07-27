@@ -10,6 +10,7 @@ endif(WIN32)
 
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
+    pl3DPipeline.cpp
     plCaptureRender.cpp
     plCubicRenderTargetModifier.cpp
     plCullTree.cpp
@@ -17,6 +18,7 @@ set(plPipeline_SOURCES
     plDTProgressMgr.cpp
     plDynamicEnvMap.cpp
     plFogEnvironment.cpp
+    plPipelineViewSettings.cpp
     plPlates.cpp
     plRenderTarget.cpp
     plStatusLogDrawer.cpp
@@ -36,10 +38,16 @@ set(plDXPipeline_SOURCES
     DX/plDXVertexShader.cpp
 )
 
+set(plGLPipeline_SOURCES
+    GL/plGLDeviceRefs.cpp
+    GL/plGLPipeline.cpp
+)
+
 set(plPipeline_HEADERS
     hsFogControl.h
     hsG3DDeviceSelector.h
     hsWinRef.h
+    pl3DPipeline.h
     plCaptureRender.h
     plCubicRenderTarget.h
     plCubicRenderTargetModifier.h
@@ -52,6 +60,7 @@ set(plPipeline_HEADERS
     plFogEnvironment.h
     plPipelineCreatable.h
     plPipelineCreate.h
+    plPipelineViewSettings.h
     plPlates.h
     plRenderTarget.h
     plStatusLogDrawer.h
@@ -77,11 +86,16 @@ set(plDXPipeline_HEADERS
     DX/plDXVertexShader.h
 )
 
+set(plGLPipeline_HEADERS
+    GL/plGLDeviceRef.h
+    GL/plGLPipeline.h
+)
+
 if(WIN32)
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
     target_link_libraries(plPipeline ${DirectX_LIBRARIES})
 else()
-    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS})
+    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plGLPipeline_SOURCES} ${plPipeline_HEADERS} ${plGLPipeline_HEADERS})
 endif()
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
@@ -90,4 +104,7 @@ source_group("Header Files" FILES ${plPipeline_HEADERS})
 if(WIN32)
     source_group("DX\\Source Files" FILES ${plDXPipeline_SOURCES})
     source_group("DX\\Header Files" FILES ${plDXPipeline_HEADERS})
+else()
+    source_group("GL\\Source Files" FILES ${plGLPipeline_SOURCES})
+    source_group("GL\\Header Files" FILES ${plGLPipeline_HEADERS})
 endif()
