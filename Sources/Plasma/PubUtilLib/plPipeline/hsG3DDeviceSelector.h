@@ -124,9 +124,6 @@ public:
     void    AddFSAAType( uint8_t type ) { fFSAATypes.Append( type ); }
 
     void    SetCanRenderToCubics( bool can ) { fCanRenderToCubics = can; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s) const;
 };
 
 class hsG3DDeviceRecord
@@ -145,23 +142,6 @@ public:
     };
 
 protected:
-
-    uint32_t          fRecordVersion;     /// Version starts at 2 (see .cpp for explanation)
-    enum {
-        kCurrRecordVersion = 0x0b
-        /// Version history:
-        ///     1 - Initial version (had no version #)
-        ///     2 - Added Z and LOD bias
-        ///     3 - Changed Z and LOD bias to floats, added fog tweaks
-        ///     4 - Changed values for fog tweaks; force reload through version #
-        ///     5 - Same as #4, updated fog end bias to be based solely on fog quantization/bit depth
-        ///     6 - Updated values for the ATI boards, Matrox, and i810
-        ///     7 - Added fog knee tweaks
-        ///     8 - Added support for multiple depth/stencil formats per mode
-        ///     9 - Added multisample types to the mode record
-        ///     A - Added anisotropic sample field
-        ///     B - Added flag for cubic textures support
-    };
 
     /// Version < 2 Data
     uint32_t          fFlags;
@@ -272,16 +252,8 @@ public:
     void Clear();
     void RemoveDiscarded();
 
-    // PlaceHolder - Whether a mode can window is restricted by the current setup
-    // of the PC. E.g. if the user changes from 16 bit to TrueColor, the Modes that
-    // can window are pretty much flipped. So we'll have to pass in enough info (like
-    // the hWnd?) to find out what the current setup is to make sure it's compatible.
-    bool ModeCanWindow(void* ctx, hsG3DDeviceMode* mode) { return false; } 
     void SetPixelShaderVersion(int major, int minor) { fPixelShaderMajorVer = major; fPixelShaderMinorVer = minor; }
     void GetPixelShaderVersion(int &major, int &minor) { major = fPixelShaderMajorVer; minor = fPixelShaderMinorVer; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s) const;
 };
 
 class hsG3DDeviceModeRecord

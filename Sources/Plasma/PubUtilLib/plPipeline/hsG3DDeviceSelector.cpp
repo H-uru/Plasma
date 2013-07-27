@@ -94,61 +94,13 @@ void hsG3DDeviceMode::Clear()
     fFSAATypes.Reset();
 }
 
-void hsG3DDeviceMode::Read( hsStream* s )
-{
-    Clear();
-
-    fFlags = s->ReadLE32();
-    fWidth = s->ReadLE32();
-    fHeight = s->ReadLE32();
-    fDepth = s->ReadLE32();
-
-    fZStencilDepths.Reset();
-    uint8_t   count= s->ReadByte();
-    while( count-- )
-        fZStencilDepths.Append( s->ReadLE16() );
-
-    /// Version 9
-    fFSAATypes.Reset();
-    count = s->ReadByte();
-    while( count-- )
-        fFSAATypes.Append( s->ReadByte() );
-
-    fCanRenderToCubics = s->ReadBool();
-}
-
-void hsG3DDeviceMode::Write( hsStream* s ) const
-{
-    s->WriteLE32(fFlags);
-    s->WriteLE32(fWidth);
-    s->WriteLE32(fHeight);
-    s->WriteLE32(fDepth);
-
-    uint8_t   i, count = (uint8_t)fZStencilDepths.GetCount();
-    s->WriteByte( count );
-    for( i = 0; i < count; i++ )
-        s->WriteLE16( fZStencilDepths[ i ] );
-
-    /// Version 9
-    count = (uint8_t)fFSAATypes.GetCount();
-    s->WriteByte( count );
-    for( i = 0; i < count; i++ )
-        s->WriteByte( fFSAATypes[ i ] );
-
-    s->WriteBool( fCanRenderToCubics );
-}
-
-///////////////////////////////////////////////////
-///////////////////////////////////////////////////
-///////////////////////////////////////////////////
-
 hsG3DDeviceRecord::hsG3DDeviceRecord()
 :   fFlags(kNone),
     fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
     fG3DDriverDesc(nil), fG3DDriverName(nil), fG3DDriverVersion(nil), fG3DDeviceDesc(nil),
     fLayersAtOnce(0), fMemoryBytes(0),
     fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
-    fZBiasRating( 0 ), fRecordVersion( kCurrRecordVersion ), fLODBiasRating( 0 ),
+    fZBiasRating( 0 ), fLODBiasRating( 0 ),
     fFogExpApproxStart( 0.0 ), fFogExp2ApproxStart( 0.0 ), fFogEndBias( 0.0 ), fMaxAnisotropicSamples( 1 )
 {
     SetFogKneeParams( kFogExp, 0, 0 );
@@ -165,7 +117,7 @@ hsG3DDeviceRecord::hsG3DDeviceRecord(const hsG3DDeviceRecord& src)
     fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
     fG3DDriverDesc(nil), fG3DDriverName(nil), fG3DDriverVersion(nil), fG3DDeviceDesc(nil),
     fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
-    fZBiasRating( src.fZBiasRating ), fRecordVersion( kCurrRecordVersion ), fLODBiasRating( 0 ),
+    fZBiasRating( src.fZBiasRating ), fLODBiasRating( 0 ),
     fFogExpApproxStart( src.fFogExpApproxStart ), fFogExp2ApproxStart( src.fFogExp2ApproxStart ), 
     fFogEndBias( src.fFogEndBias ), fMaxAnisotropicSamples( src.fMaxAnisotropicSamples )
 {
@@ -310,149 +262,6 @@ void hsG3DDeviceRecord::Clear()
     fAASetting = 0;
     fMaxAnisotropicSamples = 1;
 }
-
-//// Read /////////////////////////////////////////////////////////////////////
-//  9.6.2000 mcn - Updated to reflect version 2 format
-//  9.8.2000 mcn - (temporary?) set to invalid on old (<2) versions
-
-void hsG3DDeviceRecord::Read(hsStream* s)
-{
-    Clear();
-
-    /// Read version
-    fRecordVersion = s->ReadLE32();
-    hsAssert( fRecordVersion <= kCurrRecordVersion, "Invalid version number in hsG3DDeviceRecord::Read()" );
-    if( fRecordVersion == kCurrRecordVersion )
-    {
-        fFlags = s->ReadLE32();
-    }
-    else
-    {
-        SetInvalid();
-        return;
-//      fFlags = fRecordVersion;
-//      fRecordVersion = 1;
-//      hsStatusMessage( "WARNING: Old version of hsG3DDeviceRecord found. Attempting to read." );
-    }
-
-    /// Now read everything else in as normal
-    fG3DDeviceType = s->ReadLE32();
-
-    int len;
-
-    len = s->ReadLE32();
-    fG3DDriverDesc = new char[len + 1];
-    s->Read(len, fG3DDriverDesc);
-    fG3DDriverDesc[len] = 0;
-
-    len = s->ReadLE32();
-    fG3DDriverName = new char[len + 1];
-    s->Read(len, fG3DDriverName);
-    fG3DDriverName[len] = 0;
-
-    len = s->ReadLE32();
-    fG3DDriverVersion = new char[len + 1];
-    s->Read(len, fG3DDriverVersion);
-    fG3DDriverVersion[len] = 0;
-
-    len = s->ReadLE32();
-    fG3DDeviceDesc = new char[len + 1];
-    s->Read(len, fG3DDeviceDesc);
-    fG3DDeviceDesc[len] = 0;
-
-
-    fCaps.Read(s);
-    fLayersAtOnce = s->ReadLE32();
-    fMemoryBytes = s->ReadLE32();
-
-    len = s->ReadLE32();
-    fModes.SetCount(len);
-    int i;
-    for( i = 0; i < len; i++ )
-        fModes[i].Read( s );
-
-    /// Version 3 stuff
-    fZBiasRating = s->ReadLEFloat();
-    fLODBiasRating = s->ReadLEFloat();
-    fFogExpApproxStart = s->ReadLEFloat();
-    fFogExp2ApproxStart = s->ReadLEFloat();
-    fFogEndBias = s->ReadLEFloat();
-
-    /// Version 7 stuff
-    float       knee, kneeVal;
-    knee = s->ReadLEFloat(); kneeVal = s->ReadLEFloat();
-    SetFogKneeParams( kFogExp, knee, kneeVal );
-    knee = s->ReadLEFloat(); kneeVal = s->ReadLEFloat();
-    SetFogKneeParams( kFogExp2, knee, kneeVal );
-
-    /// Version 9 stuff
-    fAASetting = s->ReadByte();
-
-    /// Version A stuff
-    fMaxAnisotropicSamples = s->ReadByte();
-
-    /// Reset record version now
-    fRecordVersion = kCurrRecordVersion;
-}
-
-void hsG3DDeviceRecord::Write(hsStream* s) const
-{
-    s->WriteLE32( fRecordVersion );
-
-    s->WriteLE32(fFlags);
-
-    s->WriteLE32(fG3DDeviceType);
-
-    int len;
-
-    len = strlen(fG3DDriverDesc);
-    s->WriteLE32(len);
-    s->Write(len, fG3DDriverDesc);
-
-    len = strlen(fG3DDriverName);
-    s->WriteLE32(len);
-    s->Write(len, fG3DDriverName);
-
-    len = strlen(fG3DDriverVersion);
-    s->WriteLE32(len);
-    s->Write(len, fG3DDriverVersion);
-
-    len = strlen(fG3DDeviceDesc);
-    s->WriteLE32(len);
-    s->Write(len, fG3DDeviceDesc);
-
-    fCaps.Write(s);
-    s->WriteLE32(fLayersAtOnce);
-    s->WriteLE32(fMemoryBytes);
-
-    s->WriteLE32(fModes.GetCount());
-    int i;
-    for( i = 0; i < fModes.GetCount(); i++ )
-        fModes[i].Write( s );
-
-    /// Version 3 data
-    s->WriteLEFloat( fZBiasRating );
-    s->WriteLEFloat( fLODBiasRating );
-    s->WriteLEFloat( fFogExpApproxStart );
-    s->WriteLEFloat( fFogExp2ApproxStart );
-    s->WriteLEFloat( fFogEndBias );
-
-    /// Version 7 data
-    s->WriteLEFloat( fFogKnees[ kFogExp ] );
-    s->WriteLEFloat( fFogKneeVals[ kFogExp ] );
-    s->WriteLEFloat( fFogKnees[ kFogExp2 ] );
-    s->WriteLEFloat( fFogKneeVals[ kFogExp2 ] );
-
-    /// Version 9 data
-    s->WriteByte( fAASetting );
-
-    /// Version A stuff
-    s->WriteByte( fMaxAnisotropicSamples );
-}
-
-///////////////////////////////////////////////////
-///////////////////////////////////////////////////
-///////////////////////////////////////////////////
 
 hsG3DDeviceModeRecord::hsG3DDeviceModeRecord(const hsG3DDeviceRecord& devRec, const hsG3DDeviceMode& devMode)
 : fDevice(devRec), fMode(devMode)
