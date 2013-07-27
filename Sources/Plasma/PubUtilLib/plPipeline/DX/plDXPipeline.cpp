@@ -890,7 +890,6 @@ void    plDXGeneralSettings::Reset()
     fNoGammaCorrect = false;
     fMaxUVWSrc = 8;
     fCantProj = false;
-    fLimitedProj = false;
     fBadManaged = false;
     fShareDepth = false;
     fCurrAnisotropy = false;
@@ -929,7 +928,7 @@ void    plDXPipeline::IInitDeviceState()
 
     fD3DDevice->SetRenderState( D3DRS_ZFUNC,        D3DCMP_LESSEQUAL );
     fD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
-    fD3DDevice->SetRenderState( D3DRS_ZENABLE,      ( fSettings.fD3DCaps & kCapsWBuffer ) ? D3DZB_USEW : D3DZB_TRUE );
+    fD3DDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
     fD3DDevice->SetRenderState( D3DRS_CLIPPING,     TRUE ); 
     fD3DDevice->SetRenderState( D3DRS_CULLMODE,     fCurrCullMode );
     ISetCullMode();
@@ -941,7 +940,7 @@ void    plDXPipeline::IInitDeviceState()
     fD3DDevice->SetRenderState( D3DRS_MULTISAMPLEANTIALIAS, ( fSettings.fD3DCaps & kCapsFSAntiAlias ) ? TRUE : FALSE );
     fD3DDevice->SetRenderState( D3DRS_ANTIALIASEDLINEENABLE,        FALSE );
 
-    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     ( fSettings.fD3DCaps & kCapsDither ) ? TRUE : FALSE );
+    fD3DDevice->SetRenderState( D3DRS_DITHERENABLE,     FALSE );
     fD3DDevice->SetRenderState( D3DRS_SPECULARENABLE,   FALSE );
     fD3DDevice->SetRenderState( D3DRS_LIGHTING,         FALSE );    
     fCurrD3DLiteState = false;
@@ -1038,10 +1037,6 @@ void    plDXPipeline::ISetCaps()
         fSettings.fD3DCaps |= kCapsMipmap;
     if (fCurrentDevice->fDDCaps.TextureCaps & D3DPTEXTURECAPS_MIPCUBEMAP)
         fSettings.fD3DCaps |= kCapsCubicMipmap;
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER)
-        fSettings.fD3DCaps |= kCapsWBuffer;
-    if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_DITHER)
-        fSettings.fD3DCaps |= kCapsDither;
     if (fSettings.fNumAASamples > 0)
         fSettings.fD3DCaps |= kCapsFSAntiAlias;
     if (fCurrentDevice->fDDCaps.RasterCaps & D3DPRASTERCAPS_WFOG)
@@ -1165,16 +1160,8 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
         fSettings.fD3DCaps &= ~kCapsMipmap;
     if( !devRec.GetCap( hsG3DDeviceSelector::kCapsCubicMipmap ) )
         fSettings.fD3DCaps &= ~kCapsCubicMipmap;
-    if( !devRec.GetCap( hsG3DDeviceSelector::kCapsWBuffer ) )
-        fSettings.fD3DCaps &= ~kCapsWBuffer;
     if( !devRec.GetCap( hsG3DDeviceSelector::kCapsZBias ) )
         fSettings.fD3DCaps &= ~kCapsZBias;
-//  if( !devRec.GetCap( hsG3DDeviceSelector::kCapsHWTransform ) )
-//      fSettings.fD3DCaps &= ~kCapsHWTransform;
-    if( !devRec.GetCap( hsG3DDeviceSelector::kCapsDither ) )
-        fSettings.fD3DCaps &= ~kCapsDither;
-//  if( devRec.GetAASetting() == 0 )
-//      fSettings.fD3DCaps &= ~kCapsFSAntiAlias;
     if( !devRec.GetCap( hsG3DDeviceSelector::kCapsFogExp ) )
         fSettings.fD3DCaps &= ~kCapsExpFog;
     if( !devRec.GetCap( hsG3DDeviceSelector::kCapsCubicTextures ) )
@@ -1185,8 +1172,6 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 
     if( devRec.GetCap(hsG3DDeviceSelector::kCapsCantProj) )
         fSettings.fCantProj = true;
-    if( devRec.GetCap(hsG3DDeviceSelector::kCapsLimitedProj) )
-        fSettings.fLimitedProj = true;
     if( devRec.GetCap(hsG3DDeviceSelector::kCapsBadManaged) )
         fSettings.fBadManaged = true;
     if( devRec.GetCap(hsG3DDeviceSelector::kCapsShareDepth) )
@@ -1201,11 +1186,6 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
     /// 9.22.2000 mcn - dFlag for bad (savage4) yon fix
     if( devRec.GetCap( hsG3DDeviceSelector::kCapsBadYonStuff ) )
         fSettings.fD3DCaps |= kCapsHasBadYonStuff;
-
-    /// 10.31.2000 mcn - Flag for can't-handle-under-8-pixel-dimensions-on-textures
-    /// (see, isn't the name flag actually better in retrospect? :)
-    if( devRec.GetCap( hsG3DDeviceSelector::kCapsNoKindaSmallTexs ) )
-        fSettings.fD3DCaps |= kCapsNoKindaSmallTexs;
 
     /// Note: the following SHOULD be here, but we later detect for texture
     /// formats and reset this flag. It should only be set if it is set already,
@@ -1268,15 +1248,8 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
             fManagedCutoff = 1;
     }
 
-    //// Our temp debug flag to force z-buffering...
-    if( !( fDbgSetupInitFlags & 0x00000001 ) )
-        fSettings.fD3DCaps &= ~kCapsWBuffer;
-
-    /// Set up the z-bias scale values, based on z- or w-buffering
-    if( fSettings.fD3DCaps & kCapsWBuffer )
-        fTweaks.fDefaultPerspLayerScale = kPerspLayerScaleW;
-    else
-        fTweaks.fDefaultPerspLayerScale = kPerspLayerScale;
+    /// Set up the z-bias scale values
+    fTweaks.fDefaultPerspLayerScale = kPerspLayerScale;
 
 
     // Less than 4 layers at once means we have to fallback on uv bumpmapping
@@ -3909,9 +3882,7 @@ bool plDXPipeline::BeginRender()
         }
 
         // Superfluous setting of Z state.
-        fD3DDevice->SetRenderState( D3DRS_ZENABLE, 
-                                    ( fView.IsPerspective() && ( fSettings.fD3DCaps & kCapsWBuffer ) ) 
-                                    ? D3DZB_USEW : D3DZB_TRUE );
+        fD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
 
         /// If we have a renderTarget active, use its viewport
         ISetViewport();
@@ -8693,11 +8664,6 @@ bool  plDXPipeline::IProcessMipmapLevels( plMipmap *mipmap, uint32_t &numLevels,
         {
             uint32_t          sizeMask = 0x03;
 
-            /// 10.31.2000 - If we have this flag set, we really have to cut out
-            /// sizes under 8x8. So far only true on the KYRO...
-            if( fSettings.fD3DCaps & kCapsNoKindaSmallTexs )
-                sizeMask = 0x07;
-
             int maxLevel = mipmap->GetNumLevels() - 1;
 
             /// 9.7.2000 - Also do this test if the card doesn't support
@@ -9713,34 +9679,15 @@ hsMatrix44 plDXPipeline::IGetCameraToNDC()
         // is [x/w, y/w, z/w + t/s, 1/sw]
 
 
-        if( fSettings.fD3DCaps & kCapsWBuffer )
-        {
-            // W-buffering is only true w-buffering on 3dfx cards. On everything else, 
-            // they REALLY base it off the Z value. So we want to scale (but NOT translate)
-            // the Z...
-            // Note: the base value for perspLayerScale should be 0.001 for w-buffering,
-            // not the normal 0.00001
-            float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
+        float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
+        float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
 
-            cam2ndc.fMap[0][0] *= scale;
-            cam2ndc.fMap[1][1] *= scale;
-            cam2ndc.fMap[2][2] *= scale;
-            cam2ndc.fMap[3][2] *= scale;
-        }
-        else
-        {
-            // Z-buffering, so do it the traditional way
-            float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
-//              scale = -1.f;
-            float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
+        cam2ndc.fMap[0][0] *= scale;
+        cam2ndc.fMap[1][1] *= scale;
 
-            cam2ndc.fMap[0][0] *= scale;
-            cam2ndc.fMap[1][1] *= scale;
-
-            cam2ndc.fMap[2][2] *= scale;
-            cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
-            cam2ndc.fMap[3][2] *= scale;
-        }
+        cam2ndc.fMap[2][2] *= scale;
+        cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
+        cam2ndc.fMap[3][2] *= scale;
     }
     else
     {
@@ -11408,9 +11355,6 @@ void plDXPipeline::IRenderProjectionEach(const plRenderPrimFunc& render, hsGMate
 
     int iNextPass = iPass + fCurrNumLayers;
 
-    if( fSettings.fLimitedProj && (material->GetLayer(iPass)->GetUVWSrc() & ~plLayerInterface::kUVWIdxMask) )
-        return;
-
     // For each projector:
     int k;
     for( k = 0; k < fLights.fProjEach.GetCount(); k++ )
@@ -12237,12 +12181,6 @@ void plDXPipeline::SubmitShadowSlave(plShadowSlave* slave)
 {
     // Check that it's a valid slave.
     if( !(slave && slave->fCaster && slave->fCaster->GetKey()) )
-        return;
-
-    // A board with limited projection capability (i.e. GeForce1) can't 
-    // do perspective shadows (from point source lights) because it
-    // requires a count3 uvw on 2 texture units (0,1) simultaneously. Just skip.
-    if( (fSettings.fLimitedProj || fSettings.fCantProj) && slave->fView.GetPerspective() )
         return;
 
     // Ref the shadow caster so we're sure it will still be around when we go to

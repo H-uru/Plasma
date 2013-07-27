@@ -143,7 +143,6 @@ public:
 
 protected:
 
-    /// Version < 2 Data
     uint32_t          fFlags;
 
     uint32_t          fG3DDeviceType;
@@ -161,7 +160,6 @@ protected:
 
     hsTArray<hsG3DDeviceMode> fModes;
 
-    /// New to Version 3
     float   fZBiasRating;
     float   fLODBiasRating;
     float   fFogExpApproxStart;
@@ -170,14 +168,11 @@ protected:
                             // (i.e. for Z fog, it's a percentage of 1 to add on,
                             // for W fog, it's a percentage of the yon)
 
-    /// Version 7 - Fog Knee values
     float   fFogKnees[ kNumFogTypes ];
     float   fFogKneeVals[ kNumFogTypes ];
 
-    /// Version 9 - The actual AA setting we use
     uint8_t   fAASetting;
 
-    /// Version A - the anisotropic level we use
     uint8_t   fMaxAnisotropicSamples; // 1 to disable, up to max allowed in hardware
 
 public:
@@ -289,24 +284,18 @@ public:
     };
     enum {
         kCapsNone           = 0,
-        kCapsNoWindow,
         kCapsMipmap,
         kCapsPerspective,
         kCapsHardware,
-        kCapsWBuffer,
         kCapsCompressTextures,
         kCapsHWTransform,
-        kCapsDither,
         kCapsFogLinear,
         kCapsFogExp,
         kCapsFogExp2,
         kCapsFogRange,
-        kCapsLODWatch,
-        kCapsUNUSED,
         kCapsDoesSmallTextures,
         kCapsPixelFog,
         kCapsBadYonStuff,
-        kCapsNoKindaSmallTexs,
         kCapsCubicTextures,
         kCapsCubicMipmap,
         kCapsZBias,
@@ -317,7 +306,6 @@ public:
         kCapsCantShadow,
         kCapsMaxUVWSrc2,
         kCapsCantProj,
-        kCapsLimitedProj,
         kCapsShareDepth,
         kCapsBadManaged,
         kCapsNoAniso,

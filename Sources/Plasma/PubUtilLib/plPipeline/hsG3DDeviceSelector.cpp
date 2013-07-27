@@ -552,7 +552,6 @@ namespace
         kDefaultChipset = 0x00,
         kIntelI810Chipset,
         kS3GenericChipset,
-        kKYROChipset,
         kATIRadeonChipset,
         kATIR8X00Chipset,
         kMatroxParhelia,
@@ -603,30 +602,19 @@ namespace
                     };
 
     uint32_t  dsATIR8X00CapsClr[] = {
-                    2,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsWBuffer,
+                    1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
     uint32_t  dsDefaultCapsClr[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    uint32_t  dsKYROCapsClr[] = {
-                    2,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures,
-                    hsG3DDeviceSelector::kCapsPixelFog };
-
-    uint32_t  dsKYROCapsSet[] = {
-                    1,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsNoKindaSmallTexs };
-
     CFTable dsCFTable[] = 
-        { 
+        {
             // Chipset ID              // F2Set             // F2Clear          // ZSuck    // MaxLayers    // LODBias    // Fog Value Tables
             { kDefaultChipset,         nullptr,             dsDefaultCapsClr,   0,          0,              0,            &dsDefaultFogVals },
             { kNVidiaGeForceFXChipset, dsGeForceFXCapsSet,  nullptr,            0,          0,              0,            &dsDefaultFogVals },
             { kIntelI810Chipset,       nullptr,             dsDefaultCapsClr,   4.5f,       1,              -0.5f,        &dsi810FogVals },
-            { kKYROChipset,            dsKYROCapsSet,       dsKYROCapsClr,      -151.0f,    1,              0,            &dsDefaultFogVals },
             { kATIR8X00Chipset,        dsATIR8X00CapsSet,   dsATIR8X00CapsClr,  0,          0,              0,            &dsRadeonFogVals  },
         };
 
@@ -709,12 +697,6 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
-    }
-    /// Detect STMicroelectronics KYRO chipset
-    else if( deviceID == 0x00000010 && ( strstr( desc, "kyro" ) != nil ) )
-    {
-        hsStatusMessage( "== Using fudge factors for a KYRO chipset ==\n" );
-        ISetFudgeFactors( kKYROChipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
     else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce fx 5200" ) != nil )

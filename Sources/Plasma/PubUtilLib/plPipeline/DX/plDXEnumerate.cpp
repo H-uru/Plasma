@@ -729,10 +729,6 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG
         devRec.SetCap(kCapsPerspective);
     if( devInfo->fIsHardware )
         devRec.SetCap( kCapsHardware );
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_DITHER )
-        devRec.SetCap(kCapsDither);
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER )
-        devRec.SetCap(kCapsWBuffer);
     if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE )
     {
         devRec.SetCap( kCapsFogLinear );
