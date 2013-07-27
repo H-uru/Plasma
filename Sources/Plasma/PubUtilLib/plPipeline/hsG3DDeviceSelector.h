@@ -306,20 +306,15 @@ class hsG3DDeviceSelector : public hsRefCnt
 public:
     enum {
         kDevTypeUnknown     = 0,
-        kDevTypeGlide,
         kDevTypeDirect3D,
         kDevTypeOpenGL,
-        kDevTypeDirect3DTnL,
 
         kNumDevTypes
     };
     enum {
         kHHTypeUnknown      = 0,
         kHHD3DNullDev,
-        kHHD3DRampDev,
-        kHHD3DRGBDev,
         kHHD3DHALDev,
-        kHHD3DMMXDev,
         kHHD3DTnLHalDev,
         kHHD3DRefDev,
 
@@ -376,10 +371,12 @@ protected:
 
     char    fErrorString[ 128 ];
 
+    void IClear();
+    void IRemoveDiscarded();
+
     void ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
     void ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo);
     void ITryDirect3DTnL(hsWinRef winRef);
-    bool IInitDirect3D( void );
 
     void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                 D3DEnum_DriverInfo *driverInfo, D3DEnum_DeviceInfo *deviceInfo );
@@ -388,82 +385,16 @@ protected:
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
 
-    void        ITryOpenGL( hsWinRef winRef );
-    void        IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec );
-    void        IGetOpenGLModes( hsG3DDeviceRecord &devRec, char *driverName );
-    bool        ITestOpenGLRes( int width, int height, int bitDepth, 
-                                hsG3DDeviceRecord &devRec, char *driverName );
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    uint32_t      ICreateTempOpenGLContext( HDC hDC, bool makeItFull );
-#endif
-#endif
-
     void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
 public:
     hsG3DDeviceSelector();
     virtual ~hsG3DDeviceSelector();
 
-    void Clear();
-    void RemoveDiscarded();
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    bool  Init( void );   // Returns false if couldn't init
-    const char  *GetErrorString( void ) { return fErrorString; }
-
     void Enumerate(hsWinRef winRef);
-    hsTArray<hsG3DDeviceRecord>& GetDeviceRecords() { return fRecords; }
 
     bool GetDefault(hsG3DDeviceModeRecord *dmr);
-
-    hsG3DDeviceRecord* GetRecord(int i) { return &fRecords[i]; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s);
 };
-
-
-#define M3DDEMOINFO 1       /// Always compiled now, but only enabled if
-                            /// WIN_INIT has DemoInfoOutput in it
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Demo Debug File header file stuff
-//  Created 10.10.2000 by Mathew Burrack @ Cyan, Inc.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-#include "HeadSpin.h"
-
-class plDemoDebugFile
-{
-    public:
-        plDemoDebugFile() { fDemoDebugFP = nil; fIsOpen = false; fEnabled = false; }
-        ~plDemoDebugFile() { IDDFClose(); }
-
-        // Static function to write a string to the DDF
-        static void Write( const char *string );
-
-        // Static function to write two strings to the DDF
-        static void Write( const char *string1, const char *string2 );
-
-        // Static function to write a string and a signed integer value to the DDF
-        static void Write( const char *string1, int32_t value );
-
-        // Enables or disables the DDF class
-        static void Enable( bool yes ) { fEnabled = yes; }
-
-    protected:
-        static bool     fIsOpen;
-        static FILE     *fDemoDebugFP;
-        static bool     fEnabled;
-
-        // Opens the DDF for writing
-        static bool     IDDFOpen( void );
-
-        // Closes the DDF
-        static void     IDDFClose( void );
-};
-
-
 #endif // hsG3DDeviceSelector_inc

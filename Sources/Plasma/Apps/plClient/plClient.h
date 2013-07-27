@@ -135,8 +135,6 @@ protected:
 
     pfGameGUIMgr            *fGameGUIMgr;
 
-    virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
-
     bool                    IUpdate();
     bool                    IDraw();
     bool                    IDrawProgress();

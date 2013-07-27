@@ -47,20 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <ctime>
 
-
-
 #include "hsG3DDeviceSelector.h"
 #include "hsStream.h"
 
 #include "plPipeline.h"
-
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-#include <gls.h>
-#include <glswgl.h>
-#include <glext.h>
-#endif
-#endif
 
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
@@ -248,7 +238,6 @@ const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
 {
     static const char* deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
         "Unknown",
-        "Glide",
         "Direct3D",
         "OpenGL"
     };
@@ -499,10 +488,10 @@ hsG3DDeviceSelector::hsG3DDeviceSelector()
 
 hsG3DDeviceSelector::~hsG3DDeviceSelector()
 {
-    Clear();
+    IClear();
 }
 
-void hsG3DDeviceSelector::RemoveDiscarded()
+void hsG3DDeviceSelector::IRemoveDiscarded()
 {
     int i;
     for( i = 0; i < fRecords.GetCount(); )
@@ -519,7 +508,7 @@ void hsG3DDeviceSelector::RemoveDiscarded()
     }
 }
 
-void hsG3DDeviceSelector::Clear()
+void hsG3DDeviceSelector::IClear()
 {
     int i;
     for( i = 0; i < fRecords.GetCount(); i++ )
@@ -529,7 +518,6 @@ void hsG3DDeviceSelector::Clear()
 
 void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
 {
-    plDemoDebugFile::Write( "Removing unusable devices and modes..." );
     for (int i = 0; i < fRecords.GetCount(); i++)
     {
         //
@@ -543,19 +531,12 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
                 (modes[j].GetHeight() == 0) &&
                 (modes[j].GetColorDepth() == 0))
             {
-                plDemoDebugFile::Write( "   Removing windowed mode on ", (char *)fRecords[ i ].GetDriverDesc() );
                 modes[j].SetDiscarded(true);
             }
             // If tough, remove modes less than 640x480
             else if (bTough && ((modes[j].GetWidth() < 640) || (modes[j].GetHeight() < 480)))
             {
-                plDemoDebugFile::Write( "   Removing mode < 640x480 on ", (char *)fRecords[ i ].GetDriverDesc() );
                 modes[j].SetDiscarded(true);
-            }
-            else
-            {
-                plString log = plString::Format("   Keeping mode (%dx%d) on device %s", modes[j].GetWidth(), modes[j].GetHeight(), fRecords[ i ].GetDriverDesc());
-                plDemoDebugFile::Write( log.c_str() );
             }
         }
 
@@ -564,11 +545,9 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
         //
         if (fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeUnknown)
         {
-            plDemoDebugFile::Write( "   Removing unknown device. Description", (char *)fRecords[ i ].GetDriverDesc() );
             fRecords[i].SetDiscarded(true);
         }
-        else if( fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D ||
-                 fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3DTnL )
+        else if (fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D)
         {
             uint32_t      totalMem;  
 
@@ -576,22 +555,12 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
             if ((fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
                 (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev))
             {
-                plDemoDebugFile::Write( "   Removing software Direct3D device. Description", (char *)fRecords[ i ].GetDriverDesc() );
                 fRecords[i].SetDiscarded(true);
             }
-            else
-            {
-                if( fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3DTnL )
-                    plDemoDebugFile::Write( "   Keeping DX8 Direct3D device", (char *)fRecords[ i ].GetDriverDesc() );
-                else
-                    plDemoDebugFile::Write( "   Keeping Direct3D device", (char *)fRecords[ i ].GetDriverDesc() );
-            }
         }
-        else
-            plDemoDebugFile::Write( "   Keeping device", (char *)fRecords[ i ].GetDriverDesc() );
     }
 
-    RemoveDiscarded();
+    IRemoveDiscarded();
 }
 
 //// IAdjustDirectXMemory /////////////////////////////////////////////////////
@@ -621,20 +590,9 @@ uint32_t  hsG3DDeviceSelector::IAdjustDirectXMemory( uint32_t cardMem )
 #endif
 }
 
-bool    hsG3DDeviceSelector::Init( void )
-{
-    // See if we're all capable of initing
-    if( !IInitDirect3D() )
-    {
-        return false;
-    }
-
-    return true;
-}
-
 void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 {
-    Clear();
+    IClear();
 
 #ifdef HS_BUILD_FOR_WIN32
     /// 9.6.2000 - Create the class to use as our temporary window class
@@ -650,10 +608,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     hsAssert(ret, "Cannot create temporary window class to test for device modes" );
 #endif
 
-    /// Now try our devices
     ITryDirect3DTnL(winRef);
-
-//  ITryOpenGL(winRef);
 
 #ifdef HS_BUILD_FOR_WIN32
     /// Get rid of the class
@@ -674,7 +629,6 @@ bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
             switch (fRecords[i].GetG3DDeviceType())
             {
             case kDevTypeDirect3D:
-            case kDevTypeDirect3DTnL:
                 if (fRecords[i].GetG3DHALorHEL() == kHHD3DTnLHalDev)
                 {
                     if (iTnL == -1 
@@ -753,437 +707,6 @@ bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
 
     return true;
 }
-
-//// ITryOpenGL ///////////////////////////////////////////////////////////////
-//  Updated 8.24.2000 mcn to (hopefully) detect OpenGL drivers.
-
-void hsG3DDeviceSelector::ITryOpenGL(hsWinRef winRef)
-{
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    int                 i, numDrivers;
-    int                 modeRes[ 6 ][ 3 ] = { { 640, 480, 16 }, { 800, 600, 16 }, { 1024, 768, 16 }, 
-                                                { 1152, 864, 16 }, { 1280, 1024, 16 }, { 1600, 1200, 16 } };
-    gls_driver_info     driverInfo;
-    hsG3DDeviceRecord   devRec;
-    hsG3DDeviceMode     devMode;
-    char                str[ 128 ];
-    HDC                 hDC;
-    HGLRC               tempContext;
-    HWND                testWindow = nil, testWindow2 = nil;
-
-    WINDOWPLACEMENT         oldWindowPlace;
-
-
-    /// Save old window position
-    oldWindowPlace.length = sizeof( oldWindowPlace );
-    GetWindowPlacement( (HWND)winRef, &oldWindowPlace );
-
-    /// Use the GLS API to get us a list of all OpenGL drivers available on
-    /// this system and their capabilities
-    numDrivers = glsGetNumberOfDrivers();
-    for( i = 0; i < numDrivers; i++ )
-    {
-        /// Get main driver info
-        glsGetDriverInfo( i, &driverInfo );
-
-        devRec.SetG3DDeviceType( kDevTypeOpenGL );
-
-        devRec.SetDriverDesc( driverInfo.aDriverDescription );
-        devRec.SetDriverName( driverInfo.GLDriver.aDriverFilePath );
-
-        sprintf( str, "%d.%d", driverInfo.GLDriver.DriverFileVersionHigh, 
-                                driverInfo.GLDriver.DriverFileVersionLow );
-        devRec.SetDriverVersion( str );
-        
-        devRec.SetCap( kCapsMipmap );
-        devRec.SetCap( kCapsMipmap );
-        devRec.SetCap( kCapsPerspective );
-
-        if( driverInfo.DriverFlags & GLS_FLAGS_FULLSCREEN_ONLY )
-            devRec.SetCap( kCapsNoWindow );
-        if( !( driverInfo.DriverFlags & GLS_FLAGS_SOFTWARE_ONLY ) )
-            devRec.SetCap( kCapsHardware );
-        devRec.SetCap( kCapsDoesSmallTextures );
-
-        /// We have a problem here--OpenGL has no way of detecting the rest of
-        /// the information we want, so we'll have to guess/kludge on most of it.
-
-        glsLoadDriver( i );
-        sprintf( str, "ITryOpenGL(): FOUND OpenGL Driver: %s (%s)\n", driverInfo.aDriverDescription,
-                        driverInfo.GLDriver.aDriverFilePath );
-        hsStatusMessage( str );
-
-        /// (and of COURSE we have to open a bloody rendering context for 
-        ///  glGetString to work...whose bright idea was THAT?)
-        testWindow = CreateWindowEx( WS_EX_APPWINDOW, fTempWinClass, "OpenGL Screen Test Window", 
-                                        WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
-                                        0, 0, 640, 480, nil, nil, GetModuleHandle( nil ), 0 );
-        hDC = GetDC( testWindow );
-        tempContext = (HGLRC)ICreateTempOpenGLContext( hDC, 
-                                driverInfo.DriverFlags & GLS_FLAGS_FULLSCREEN_ONLY ); 
-        if( tempContext != nil )
-        {
-            wglMakeCurrent( hDC, tempContext );
-
-            IGetExtOpenGLInfo( devRec );
-
-            /// Reset everything back now
-            wglMakeCurrent( nil, nil );
-            wglDeleteContext( tempContext );
-            ReleaseDC( testWindow, hDC );
-        }
-
-        /// Resize window to hide what we're about to do
-        SetWindowPos( testWindow, nil, 0, 0, 1600, 1200, SWP_NOZORDER | SWP_NOMOVE );
-
-        /// Check for windowed screen mode (which SOMEBODY decided to test for
-        /// bitdepth of 0 instead of the caps flag we're setting....hmmmm wasn't me....)
-        if( !( driverInfo.DriverFlags & GLS_FLAGS_FULLSCREEN_ONLY ) )
-        {
-            devMode.Clear();
-            devMode.SetWidth( 0 );
-            devMode.SetHeight( 0 );
-            devMode.SetColorDepth( 0 );
-            devRec.GetModes().Append( devMode );
-        }
-        
-        /// Go get the screen modes
-        IGetOpenGLModes( devRec, driverInfo.aDriverDescription );
-
-        /// Get rid of the window now
-        DestroyWindow( testWindow );
-
-        /// Unload this driver now
-        glsUnloadDriver();
-    }
-
-    /// Restore old window position
-    SetWindowPlacement( (HWND)winRef, &oldWindowPlace );
-#endif
-#endif
-}
-
-//// IGetOpenGLModes //////////////////////////////////////////////////////////
-//  Scans through all the possible imaginable combinations of screen modes,
-//  pixel formats whatnot and adds the final, culled-down list of graphics
-//  modes to the given device record.
-
-void    hsG3DDeviceSelector::IGetOpenGLModes( hsG3DDeviceRecord &devRec, char *driverName )
-{
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    int                 j;
-    int                 maxMode, mode;
-    int                 modeRes[ 6 ][ 3 ] = { { 640, 480, 16 }, { 800, 600, 16 }, { 1024, 768, 16 }, 
-                                                { 1152, 864, 16 }, { 1280, 1024, 16 }, { 1600, 1200, 16 } };
-    int                 bitDepths[ 3 ] = { 32, 24, 16 }, bitDepth;
-    hsG3DDeviceMode     devMode;
-    DEVMODE             modeInfo;
-    HWND                testWindow = nil, testWindow2 = nil;
-    char                str[ 128 ];
-
-    
-    /// Find the maximum resolution that we can support on this monitor--then
-    /// we'll start there and work down until we find a mode supported by OpenGL
-    modeInfo.dmSize = sizeof( modeInfo );
-    maxMode = -1;
-    for( j = 0; EnumDisplaySettings( nil, j, &modeInfo ) != 0; j++ )
-    {
-        for( mode = 0; mode < sizeof( modeRes ) / sizeof( modeRes[ 0 ] ); mode++ )
-        {
-            if( modeRes[ mode ][ 0 ] == modeInfo.dmPelsWidth &&
-                modeRes[ mode ][ 1 ] == modeInfo.dmPelsHeight )
-            {
-                if( modeInfo.dmBitsPerPel > modeRes[ mode ][ 2 ] )
-                    modeRes[ mode ][ 2 ] = modeInfo.dmBitsPerPel;
-
-                if( mode > maxMode )
-                {
-                    maxMode = mode;
-                    break;
-                }
-            }
-        }
-    }
-    if( maxMode != -1 )
-    {
-        /// Outer loop: loop through color depths
-        for( bitDepth = 0; bitDepth < 3; bitDepth++ )
-        {
-            /// Loop through each of the display settings, starting at
-            /// the maxMode and going down, happily get pixel formats for each
-            modeInfo.dmSize = sizeof( modeInfo );
-            modeInfo.dmFields = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
-            for( mode = maxMode; mode >= 0; mode-- )
-            {
-                /// Does this resolution work at this bit depth?
-                if( modeRes[ mode ][ 2 ] < bitDepths[ bitDepth ] )
-                    continue;
-
-                /// Attempt to set this screen mode
-                modeInfo.dmPelsWidth = modeRes[ mode ][ 0 ];
-                modeInfo.dmPelsHeight = modeRes[ mode ][ 1 ];
-                modeInfo.dmBitsPerPel = bitDepths[ bitDepth ];
-                if( ChangeDisplaySettings( &modeInfo, CDS_FULLSCREEN ) == DISP_CHANGE_SUCCESSFUL )
-                {
-                    if( ITestOpenGLRes( modeRes[ mode ][ 0 ], modeRes[ mode ][ 1 ],
-                                    bitDepths[ bitDepth ],
-                                    devRec, driverName ) )
-                    {
-                        /// Go and add the rest of 'em (we just assume that we can get
-                        /// lower resolutions if we got this one)
-                        for( mode--; mode >= 0; mode-- )
-                        {
-                            devMode.SetWidth( modeRes[ mode ][ 0 ] );
-                            devMode.SetHeight( modeRes[ mode ][ 1 ] );
-                            devMode.SetColorDepth( bitDepths[ bitDepth ] );
-                            devRec.GetModes().Append( devMode );
-
-                            sprintf( str, "ITryOpenGL(): Assuming mode: %dx%dx%dbpp, %s\n", 
-                                        modeRes[ mode ][ 0 ], modeRes[ mode ][ 1 ], bitDepths[ bitDepth ], driverName );
-                            hsStatusMessage( str );
-                        }
-                    }
-                }
-            }
-        }
-
-        /// Note: this will also reset the screen after any mode changes from
-        /// creating our context
-        ChangeDisplaySettings( nil, 0 );
-
-        if( devRec.GetModes().GetCount() )
-            fRecords.Append( devRec );
-    }
-#endif
-#endif
-}
-
-//// ITestOpenGLRes ///////////////////////////////////////////////////////////
-//  Tests all the possible OpenGL settings once the screen has been set
-//  to a given test resolution.
-
-bool hsG3DDeviceSelector::ITestOpenGLRes( int width, int height, int bitDepth,
-                                            hsG3DDeviceRecord &devRec, char *driverName )
-{
-    bool                retValue = false;
-
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    int                 j, bitDepthFlags, myBitDepth;
-    hsG3DDeviceMode     devMode;
-    char                str[ 128 ];
-    HDC                 hDC, hDC2;
-    HGLRC               tempContext;
-    HWND                testWindow = nil, testWindow2 = nil;
-
-    PIXELFORMATDESCRIPTOR   pfd;
-
-    
-    /// Create test window #1
-    testWindow = CreateWindowEx( WS_EX_APPWINDOW, fTempWinClass, "OpenGL Screen Test Window", 
-                                WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
-                                0, 0, width, height,
-                                nil, nil, GetModuleHandle( nil ), 0 );
-    hDC = GetDC( testWindow );
-
-    /// Loop through using DescribePixelFormat in an attempt to find all the
-    /// pixel formats we actually do support using this OpenGL driver
-    devMode.Clear();
-    pfd.nSize = sizeof( pfd );
-    bitDepthFlags = 0;
-    for( j = 1; retValue == false && DescribePixelFormat( hDC, j, sizeof( pfd ), &pfd ) != 0; j++ )
-    {
-        /// Can we use this one?
-        if( pfd.cColorBits != bitDepth )
-            continue;
-
-        myBitDepth = ( pfd.cColorBits == 32 ) ? 0x04 : ( pfd.cColorBits == 24 ) ? 0x02 : 0x01;
-
-        if( ( pfd.dwFlags & PFD_SUPPORT_OPENGL ) &&
-            ( pfd.dwFlags & PFD_DRAW_TO_WINDOW ) &&
-            ( pfd.dwFlags & PFD_DOUBLEBUFFER ) &&
-            ( pfd.iPixelType == PFD_TYPE_RGBA ) &&
-            ( pfd.iLayerType == PFD_MAIN_PLANE ) &&
-            ( ( bitDepthFlags & myBitDepth ) == 0 ) )
-        {
-            /// Looks like it! But is it REALLY?
-            testWindow2 = CreateWindowEx( WS_EX_APPWINDOW, fTempWinClass, "OpenGL Screen Test Window #2", 
-                                        WS_POPUP | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_VISIBLE,
-                                        0, 0, width, height,
-                                        nil, nil, GetModuleHandle( nil ), 0 );
-            hDC2 = GetDC( testWindow2 );
-
-            if( SetPixelFormat( hDC2, j, &pfd ) )
-            {
-                tempContext = wglCreateContext( hDC2 );
-                if( tempContext != nil )
-                {
-                    if( wglMakeCurrent( hDC2, tempContext ) )
-                    {
-                        /// Guess it really does work...
-                        devMode.SetWidth( width );
-                        devMode.SetHeight( height );
-                        devMode.SetColorDepth( pfd.cColorBits );
-                        devRec.GetModes().Append( devMode );
-                        bitDepthFlags |= myBitDepth;
-
-                        sprintf( str, "ITryOpenGL(): Adding mode: %dx%dx%dbpp, %s\n", 
-                                        width, height, pfd.cColorBits, driverName );
-                        hsStatusMessage( str );
-
-                        wglMakeCurrent( nil, nil );
-                        retValue = true;        /// Break us out
-                    }
-                    wglDeleteContext( tempContext );
-                }
-            }
-            ReleaseDC( testWindow2, hDC2 );
-            DestroyWindow( testWindow2 );
-        }
-    }
-    ReleaseDC( testWindow, hDC );
-    DestroyWindow( testWindow );
-
-#endif
-#endif
-    return retValue;
-}
-
-
-//// IGetExtOpenGLInfo ////////////////////////////////////////////////////////
-//  Gets extended info--i.e. info requiring an OpenGL context. Assumes the
-//  said context is already created and active.
-
-void    hsG3DDeviceSelector::IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec )
-{
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    GLint   numTMUs;
-    char    *extString, *c, *c2;
-    char    str[ 128 ];
-    int     j;
-
-
-    if( ( extString = (char *)glGetString( GL_RENDERER ) ) != nil )
-    {
-        devRec.SetDeviceDesc( extString );
-
-        /// Can we guess at the amount of texture memory?
-        c = strstr( extString, "MB" );
-        if( c != nil && c != extString && ( isdigit( *( c - 1 ) ) || isspace( *( c - 1 ) ) ) )
-        {
-            /// Looks like we found a "xxMB" texture memory specification--use it
-            /// as our guess
-            c2 = c;
-            do {
-                c2--;
-            } while( c2 >= extString && ( isdigit( *c2 ) || isspace( *c2 ) ) );
-            c2++;
-            
-            strncpy( str, c2, (uint32_t)c - (uint32_t)c2 );
-            j = atoi( str );
-            sprintf( str, "ITryOpenGL():   Device has %d MB texture memory\n", j );
-            hsStatusMessage( str );
-
-            j *= 1024 * 1024;       /// Translate to bytes
-            devRec.SetMemoryBytes( j );
-        }
-        else
-        {
-            devRec.SetMemoryBytes( 4 * 1024 * 1024 );
-            hsStatusMessage( "ITryOpenGL():   WARNING: Cannot determine texture memory for this card, assuming 4MB\n" );
-        }
-    }
-    else
-    {
-        devRec.SetDeviceDesc( "" );
-        devRec.SetMemoryBytes( 4 * 1024 * 1024 );
-        hsStatusMessage( "ITryOpenGL():   WARNING: Cannot determine texture memory for this card, assuming 4MB\n" );
-    }
-
-
-    if( ( extString = (char *)glGetString( GL_EXTENSIONS ) ) != nil )
-    {
-        /// For the number of TMUs, we'll detect for the availability of the 
-        /// multitexture extension--if it's there, we'll assume we have two TMUs
-        /// (if we don't, OpenGL will probably handle it for us--or rather, it BETTER).
-        if( strstr( extString, "ARB_multitexture" ) )
-            devRec.SetLayersAtOnce( 2 );
-        else
-            devRec.SetLayersAtOnce( 1 );
-
-        /// Can we use compressed textures?
-        if( strstr( extString, "ARB_texture_compression" ) )
-            devRec.SetCap( kCapsCompressTextures );
-    }
-
-    /// Get TMU count
-    glGetIntegerv( GL_MAX_TEXTURE_UNITS_ARB, &numTMUs );    
-    if( numTMUs <= 0 )
-        numTMUs = 0;
-    devRec.SetLayersAtOnce( numTMUs );
-#endif
-#endif
-}
-
-//// ICreateTempOpenGLContext /////////////////////////////////////////////////
-//  Creates a temporary context for testing OpenGL stuff with.
-
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-
-uint32_t  hsG3DDeviceSelector::ICreateTempOpenGLContext( HDC hDC, bool32 makeItFull )
-{
-    DEVMODE     modeInfo;
-    int         pixFmt;
-
-
-    if( makeItFull )
-    {
-        /// Attempt resolution change to 640x480x32bpp
-        memset( &modeInfo, 0, sizeof( modeInfo ) );
-        modeInfo.dmSize = sizeof( modeInfo );
-        modeInfo.dmBitsPerPel = 16;
-        modeInfo.dmPelsWidth = 640;
-        modeInfo.dmPelsHeight = 480;
-        if( ChangeDisplaySettings( &modeInfo, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
-        {
-            return nil;         /// We want fullscreen, can't get it, oops.
-        }
-    }
-
-    /// Now try to set a pixel format
-    PIXELFORMATDESCRIPTOR pfd = { 
-        sizeof(PIXELFORMATDESCRIPTOR),    // size of this pfd 
-        1,                                // version number 
-        PFD_DRAW_TO_WINDOW |              // support window 
-        PFD_SUPPORT_OPENGL |              // support OpenGL 
-        PFD_DOUBLEBUFFER,                 // double buffered 
-        PFD_TYPE_RGBA,                    // RGBA type 
-        16,                               // 24-bit color depth 
-        0, 0, 0, 0, 0, 0,                 // color bits ignored 
-        0,                                // no alpha buffer 
-        0,                                // shift bit ignored 
-        0,                                // no accumulation buffer 
-        0, 0, 0, 0,                       // accum bits ignored 
-        0,                                // 32-bit z-buffer     
-        0,                                // no stencil buffer 
-        0,                                // no auxiliary buffer 
-        PFD_MAIN_PLANE,        // main layer 
-        0,                     // reserved 
-        0, 0, 0                // layer masks ignored 
-        }; 
-
-    pixFmt = ChoosePixelFormat( hDC, &pfd );
-    if( pixFmt > 0 && SetPixelFormat( hDC, pixFmt, &pfd ) )
-        return (uint32_t)wglCreateContext( hDC );
-
-    return 0;
-}
-#endif
-#endif
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Fudging Routines /////////////////////////////////////////////////////////
@@ -1315,7 +838,7 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
 
 
     /// Send it off to each D3D device, respectively
-    if( record.GetG3DDeviceType() == kDevTypeDirect3DTnL )
+    if( record.GetG3DDeviceType() == kDevTypeDirect3D )
     {
         if( !IGetD3DCardInfo( record, driverInfo, deviceInfo, &vendorID, &deviceID, &szDriver, &szDesc ) )
         {
@@ -1349,13 +872,11 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                 if( (series >= 8000) && (series < 9000) )
                 {
                     hsStatusMessage( "== Using fudge factors for ATI Radeon 8X00 chipset ==\n" );
-                    plDemoDebugFile::Write( "   Using fudge factors for ATI Radeon 8X00 chipset" );
                     ISetFudgeFactors( kATIR8X00Chipset, record );
                 }
                 else if (series >= 9000)
                 {
                     hsStatusMessage("== Using fudge factors for ATI Radeon 9X00 chipset ==\n");
-                    plDemoDebugFile::Write("   Using fudge factors for ATI Radeon 9X00 chipset");
                     ISetFudgeFactors(kATIRadeonChipset, record);
                 }
                 else
@@ -1367,7 +888,6 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
         if (series == 0)
         {
             hsStatusMessage("== Using fudge factors for ATI/AMD Radeon X/HD/R chipset ==\n");
-            plDemoDebugFile::Write("   Using fudge factors for ATI/AMD Radeon X/HD/R chipset");
             ISetFudgeFactors(kDefaultChipset, record);
         }
     }
@@ -1379,29 +899,24 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                   || ( strstr( desc, "intel" ) != nil && strstr( desc, "810" ) != nil ) ) )
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an Intel i810 chipset" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect STMicroelectronics KYRO chipset
     else if( deviceID == 0x00000010 && ( strstr( desc, "kyro" ) != nil ) )
     {
         hsStatusMessage( "== Using fudge factors for a KYRO chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a KYRO chipset" );
         ISetFudgeFactors( kKYROChipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
     else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce fx 5200" ) != nil )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForceFX-based chipset" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
     }
-
     /// Default fudge values
     else
     {
         hsStatusMessage( "== Using default fudge factors ==\n" );
-        plDemoDebugFile::Write( "   Using default fudge factors" );
         ISetFudgeFactors( kDefaultChipset, record );
     }
 }
@@ -1468,126 +983,3 @@ void    hsG3DDeviceSelector::ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRec
         }
     }
 }
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Demo Debug File functions
-//  Created 10.10.2000 by Mathew Burrack @ Cyan, Inc.
-//  Modified 10.11 mcn to conform (more) to coding standards.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-//// Local Globals ////////////////////////////////////////////////////////////
-
-#if M3DDEMOINFO // Demo Debug Build
-static plDemoDebugFile      sMyDDFWriter;
-
-bool    plDemoDebugFile::fIsOpen = false;
-FILE    *plDemoDebugFile::fDemoDebugFP = nil;
-bool    plDemoDebugFile::fEnabled = false;
-#endif
-
-
-//// IDDFOpen /////////////////////////////////////////////////////////////////
-//  Internal function--opens the demo debug file for writing. Returns true
-//  if successful, false otherwise.
-
-bool    plDemoDebugFile::IDDFOpen( void )
-{
-#if M3DDEMOINFO // Demo Debug Build
-    char    fileName[] = "log/debug_info.dat";
-    time_t  currTime;
-    struct tm   *localTime;
-    char    timeString[ 27 ];       // see definition of asctime()
-    char    *c;
-
-
-    /// Don't open if we're not enabled
-    if( !fEnabled )
-        return false;
-
-    /// Open the file
-    if( fDemoDebugFP == nil )
-        fDemoDebugFP = fopen( fileName, "wt" );
-
-    if( fDemoDebugFP == nil )
-        return( fIsOpen = false );
-
-    /// Write out a header line
-    time( &currTime );
-    localTime = localtime( &currTime );
-
-    // Note: asctime includes a carriage return. Gotta strip...
-    strcpy( timeString, asctime( localTime ) );
-    c = strchr( timeString, '\n' );
-    if( c != nil )
-        *c = 0;
-
-    fprintf( fDemoDebugFP, "\n--- Demo Debug Info File (Created %s) ---\n", timeString );
-
-    /// All done!
-    return( fIsOpen = true );
-#else
-    return false;
-#endif
-}
-
-//// IDDFClose ////////////////////////////////////////////////////////////////
-//  "Whatcha gonna do when the lightning strikes and hits you...."
-//                          -- "Lightning Strikes", Yes, 1999
-
-
-void    plDemoDebugFile::IDDFClose( void )
-{
-#if M3DDEMOINFO // Demo Debug Build
-    if( fDemoDebugFP != nil )
-    {
-        // Write an exit line (fun fun)
-        fputs( "--- End of Demo Debug Info File ---\n\n", fDemoDebugFP );
-
-        // Close
-        fclose( fDemoDebugFP );
-    }
-
-    fIsOpen = false;
-#endif
-}
-
-//// Write ////////////////////////////////////////////////////////////////////
-//  Writes a string to the DDF. If the DDF isn't open, opens it.
-
-void    plDemoDebugFile::Write( const char *string )
-{
-#if M3DDEMOINFO // Demo Debug Build
-    if( !fIsOpen )
-        IDDFOpen();
-
-    if( fIsOpen )
-        fprintf( fDemoDebugFP, "%s\n", string );
-#endif
-}
-
-void    plDemoDebugFile::Write( const char *string1, const char *string2 )
-{
-#if M3DDEMOINFO // Demo Debug Build
-    if( !fIsOpen )
-        IDDFOpen();
-
-    if( fIsOpen )
-        fprintf( fDemoDebugFP, "%s: %s\n", string1, string2 );
-#endif
-}
-
-void    plDemoDebugFile::Write( const char *string1, int32_t value )
-{
-#if M3DDEMOINFO // Demo Debug Build
-    if( !fIsOpen )
-        IDDFOpen();
-
-    if( fIsOpen )
-        fprintf( fDemoDebugFP, "%s: %d (0x%x)\n", string1, value, value );
-#endif
-}
-

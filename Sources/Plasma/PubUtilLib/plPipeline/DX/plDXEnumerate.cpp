@@ -367,12 +367,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
                 /// Confirm that HW vertex processing works on this device
                 if (deviceInfo->fDDCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
                 {
-#if 0
-                    behavior[iFormat] = D3DCREATE_HARDWARE_VERTEXPROCESSING |
-                        D3DCREATE_PUREDEVICE;
-#else
                     behavior[iFormat] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-#endif
                     if (SUCCEEDED(IConfirmDevice(&deviceInfo->fDDCaps, behavior[iFormat],
                         currFormat)))
                     {
@@ -638,38 +633,11 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
     adapterInfo = &driverD3DInfo->fAdapterInfo;
 
-    /// Print out to our demo data file
-    plDemoDebugFile::Write( "DeviceSelector detected DX Direct3D device. Info:" );
-    plDemoDebugFile::Write( "   Driver Description", (char *)adapterInfo->Description );
-    plDemoDebugFile::Write( "   Driver Name", (char *)adapterInfo->Driver );
-    plDemoDebugFile::Write( "   Vendor ID", (int32_t)adapterInfo->VendorId );
-    plDemoDebugFile::Write( "   Device ID", (int32_t)adapterInfo->DeviceId );
-    plDemoDebugFile::Write( "   Version", (char *)record.GetDriverVersion() );
-    plDemoDebugFile::Write( "   Memory size (in MB)", record.GetMemoryBytes() / ( 1024 * 1024 ) );
-    plDemoDebugFile::Write( "   Memory size (in bytes)", record.GetMemoryBytes() );
-
     *vendorID = adapterInfo->VendorId;
     *deviceID = adapterInfo->DeviceId;
     *driverString = adapterInfo->Driver;
     *descString = adapterInfo->Description;
 
-    return true;
-}
-
-//// IInitDirect3D ////////////////////////////////////////////////////////////
-
-bool    hsG3DDeviceSelector::IInitDirect3D( void )
-{
-    // Create a D3D object to use
-    IDirect3D9      *pD3D = Direct3DCreate9( D3D_SDK_VERSION );
-    if( pD3D == nil )
-    {
-        strcpy( fErrorString, "Cannot load DirectX!" );
-        return false;
-    }
-    pD3D->Release();
-
-    fErrorString[ 0 ] = 0;
     return true;
 }
 
@@ -694,7 +662,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 {
     hsG3DDeviceRecord devRec;
     devRec.Clear();
-    devRec.SetG3DDeviceType( kDevTypeDirect3DTnL );
+    devRec.SetG3DDeviceType( kDevTypeDirect3D );
 
     devRec.SetDriverName( drivInfo->fAdapterInfo.Driver );
     devRec.SetDriverDesc( drivInfo->fAdapterInfo.Description );
