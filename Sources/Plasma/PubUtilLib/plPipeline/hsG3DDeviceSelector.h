@@ -179,8 +179,6 @@ protected:
 
     /// Version A - the anisotropic level we use
     uint8_t   fMaxAnisotropicSamples; // 1 to disable, up to max allowed in hardware
-    int fPixelShaderMajorVer;
-    int fPixelShaderMinorVer;
 
 public:
     hsG3DDeviceRecord();
@@ -251,9 +249,6 @@ public:
     void ClearModes();
     void Clear();
     void RemoveDiscarded();
-
-    void SetPixelShaderVersion(int major, int minor) { fPixelShaderMajorVer = major; fPixelShaderMinorVer = minor; }
-    void GetPixelShaderVersion(int &major, int &minor) { major = fPixelShaderMajorVer; minor = fPixelShaderMinorVer; }
 };
 
 class hsG3DDeviceModeRecord

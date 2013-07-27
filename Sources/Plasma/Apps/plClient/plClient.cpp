@@ -2163,8 +2163,6 @@ void plClient::IDetectAudioVideoSettings()
     const hsG3DDeviceMode *mode = dmr.GetMode();
 
     bool pixelshaders = rec->GetCap(hsG3DDeviceSelector::kCapsPixelShader);
-    int psMajor = 0, psMinor = 0;
-    rec->GetPixelShaderVersion(psMajor, psMinor);
 
     plPipeline::fDefaultPipeParams.ColorDepth = hsG3DDeviceSelector::kDefaultDepth;
 #if defined(HS_DEBUGGING) || defined(DEBUG)
@@ -2185,28 +2183,18 @@ void plClient::IDetectAudioVideoSettings()
         plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
     }
 
-    plPipeline::fDefaultPipeParams.Shadows = 0;
-    // enable shadows if TnL is available, meaning not an intel extreme.
-    if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DTnLHalDev)
-        plPipeline::fDefaultPipeParams.Shadows = 1;
+    plPipeline::fDefaultPipeParams.Shadows = 1;
 
     // enable planar reflections if pixelshaders are available
     plPipeline::fDefaultPipeParams.PlanarReflections = 1;
 
     // enable 2x antialiasing and anisotropic to 2 samples if pixelshader version is greater that 2.0
-    if(psMajor >= 2)
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = rec->GetMaxAnisotropicSamples() ? 2 : 0;
-        plPipeline::fDefaultPipeParams.AnisotropicLevel = mode->GetNumFSAATypes() ? 2 : 0;
-    }
-    else
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = 0;
-        plPipeline::fDefaultPipeParams.AnisotropicLevel = 0;
-    }
+    plPipeline::fDefaultPipeParams.AntiAliasingAmount = rec->GetMaxAnisotropicSamples() ? 2 : 0;
+    plPipeline::fDefaultPipeParams.AnisotropicLevel = mode->GetNumFSAATypes() ? 2 : 0;
 
-    plPipeline::fDefaultPipeParams.TextureQuality = psMajor >= 2 ? 2 : 1;
+    plPipeline::fDefaultPipeParams.TextureQuality = pixelshaders ? 2 : 1;
     plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
+
     plPipeline::fDefaultPipeParams.VSync = false;
 
     int val = 0;
