@@ -103,16 +103,17 @@ public:
 #ifndef BUILDING_PYPLASMA
 
     //////////////////////////////////////////////////
-    PyObject* GetPlayerInfo( void ); // returns pyVaultNode
-    PyObject* GetKIUsage(void);
-    PyObject* GetAvatarOutfitFolder( void ); // returns pyVaultFolderNode
-    PyObject* GetAvatarClosetFolder( void ); // returns pyVaultFolderNode
-    PyObject* GetInbox( void ); // returns pyVaultFolderNode
-    PyObject* GetChronicleFolder( void ); // returns pyVaultFolderNode
-    PyObject* GetAgeJournalsFolder( void ); // returns pyVaultFolderNode
-    PyObject* GetIgnoreListFolder( void ); // returns pyVaultPlayerInfoListNode
-    PyObject* GetBuddyListFolder( void ); // returns pyVaultPlayerInfoListNode
-    PyObject* GetPeopleIKnowAboutFolder( void ); // returns pyVaultPlayerInfoListNode
+    PyObject* GetPlayerInfo(); // returns pyVaultNode
+    PyObject* GetKIUsage();
+    PyObject* GetAvatarOutfitFolder(); // returns pyVaultFolderNode
+    PyObject* GetAvatarClosetFolder(); // returns pyVaultFolderNode
+    PyObject* GetInbox(); // returns pyVaultFolderNode
+    PyObject* GetChronicleFolder(); // returns pyVaultFolderNode
+    PyObject* GetAgeJournalsFolder(); // returns pyVaultFolderNode
+    PyObject* GetAllPlayersFolder();
+    PyObject* GetIgnoreListFolder(); // returns pyVaultPlayerInfoListNode
+    PyObject* GetBuddyListFolder(); // returns pyVaultPlayerInfoListNode
+    PyObject* GetPeopleIKnowAboutFolder(); // returns pyVaultPlayerInfoListNode
     PyObject* GetAgesICanVisitFolder(); // returns pyVaultFolderNode
     PyObject* GetAgesIOwnFolder(); // returns pyVaultFolderNode
     PyObject* GetInviteFolder(); // returns pyVaultFolderNode
@@ -139,9 +140,9 @@ public:
 
     ///////////////
     // true if we are joined to our personal age.
-    bool InMyPersonalAge( void ) const;
+    bool InMyPersonalAge() const;
     // true if we are joined to our neighborhood age.
-    bool InMyNeighborhoodAge( void ) const;
+    bool InMyNeighborhoodAge() const;
     // true if we own the age we are in
     bool AmOwnerOfCurrentAge() const;
     // true if we are czar of the age we are in
@@ -175,9 +176,6 @@ public:
     bool SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic );
 
     PyObject* GetGlobalInbox( void ); // returns pyVaultFolderNode
-#ifdef GlobalInboxTestCode
-    void CreateGlobalInbox( void );
-#endif
 
     // find matching node
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode

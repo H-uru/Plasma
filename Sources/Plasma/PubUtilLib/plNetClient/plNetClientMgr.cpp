@@ -131,8 +131,7 @@ plNetClientMgr::plNetClientMgr() :
         fLocalPlayerKey(nil),
         fMsgHandler(this),
         fJoinOrder(0),
-        // fProgressBar( nil ),
-        fTaskProgBar( nil ),
+        fTaskProgBar(nullptr),
         fMsgRecorder(nil),
         fServerTimeOffset(0),
         fTimeSamples(0),
@@ -168,8 +167,8 @@ plNetClientMgr::~plNetClientMgr()
 
     if (this==GetInstance())
         SetInstance(nil);       // we're going down boys
-    
     IClearPendingLoads();
+    delete fTaskProgBar;
 }
 
 //
@@ -1236,9 +1235,8 @@ void plNetClientMgr::IDisableNet () {
             if (!GetFlagsBit(plNetClientApp::kPlayingGame))
             {
                 // KI may not be loaded
-                char title[256];
-                snprintf(title, arrsize(title), "%s Error", plProduct::CoreName().c_str());
-                hsMessageBox(fDisableMsg->str, title, hsMessageBoxNormal, hsMessageBoxIconError );
+                plString title = plString::Format("%s Error", plProduct::CoreName().c_str());
+                hsMessageBox(fDisableMsg->str, title.c_str(), hsMessageBoxNormal, hsMessageBoxIconError );
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
             }
@@ -1467,6 +1465,16 @@ void plNetClientMgr::ClearPendingPagingRoomMsgs()
     fPendingPagingRoomMsgs.clear();
 }
 
+void plNetClientMgr::BeginTask()
+{
+    fTaskProgBar = plProgressMgr::GetInstance()->RegisterOverallOperation(0.f);
+}
+
+void plNetClientMgr::EndTask()
+{
+    delete fTaskProgBar;
+    fTaskProgBar = nullptr;
+}
 
 bool plNetClientMgr::DebugMsgV(const char* fmt, va_list args) const 
 {

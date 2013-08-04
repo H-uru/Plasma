@@ -138,9 +138,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
     width = scrnWidth - 64;
     height = 16;
     x = ( scrnWidth - width ) >> 1;
-    y = scrnHeight - 32 - height;
-    if( fOperations->GetNext() == nil )
-        y -= text.GetFontSize() + 8 + height + 4;
+    y = scrnHeight - 44 - (2 * height) - text.GetFontSize();
 
 
     text.SetDrawOnTopMode( true );
@@ -166,8 +164,8 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 
     for( prog = fOperations; prog != nil; prog = prog->GetNext() )
     {
-        IDrawTheStupidThing( p, prog, x, y, width, height );
-        y -= text.GetFontSize() + 8 + height + 4;
+        if (IDrawTheStupidThing(p, prog, x, y, width, height))
+            y -= text.GetFontSize() + 8 + height + 4;
     }
 
     text.SetDrawOnTopMode( false );
@@ -175,10 +173,11 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 
 //// IDrawTheStupidThing /////////////////////////////////////////////////////
 
-void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress *prog, 
-                                            uint16_t x, uint16_t y, uint16_t width, uint16_t height )
+bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress *prog,
+                                             uint16_t x, uint16_t y, uint16_t width, uint16_t height)
 {
     plDebugText &text = plDebugText::Instance();
+    bool drew_something = false;
 
     // Lets just set the color to blue
     uint32_t color = 0xff302b3a;
@@ -204,48 +203,63 @@ void    plDTProgressMgr::IDrawTheStupidThing( plPipeline *p, plOperationProgress
         if( drawWidth > 0 )
             text.DrawRect( drawX, y, rightX, y + height, color );
 
-        int timeRemain = prog->fRemainingSecs;
-        char remainStr[1024];
-        strcpy(remainStr, "APPROXIMATELY ");
-        if (timeRemain > 3600)
-        {
-            const char* term = ((timeRemain / 3600) > 1) ? "HOURS" : "HOUR";
-            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 3600), term);
-            timeRemain %= 3600;
+        uint32_t timeRemain = prog->fRemainingSecs;
+        if (timeRemain > 0) {
+            plStringStream ss;
+            ss << "APPROXIMATELY ";
+            if (timeRemain > 3600)
+            {
+                uint32_t hours = timeRemain / 3600;
+                const char* plural = (hours > 1) ? "S" : "";
+                ss << hours << " HOUR" << plural << " ";
+                timeRemain %= 3600;
+            }
+            if (timeRemain > 60)
+            {
+                uint32_t minutes = timeRemain / 60;
+                const char* plural = (minutes > 1) ? "S" : "";
+                ss << minutes << " MINUTE" << plural << " ";
+                timeRemain %= 60;
+            }
+            if (timeRemain > 0)
+            {
+                const char* plural = (timeRemain > 1) ? "S" : "";
+                ss << timeRemain << " SECOND" << plural << " ";
+            }
+            ss << "REMAINING";
+            text.DrawString(x, y + height + 2, ss.GetString().c_str(), (uint32_t)0xff635e6d);
         }
-        if (timeRemain > 60)
-        {
-            const char* term = ((timeRemain / 60) > 1) ? "MINUTES" : "MINUTE";
-            sprintf(remainStr, "%s%d %s ", remainStr, (timeRemain / 60), term);
-            timeRemain %= 60;
-        }
-        const char* unitTerm = (timeRemain == 1) ? "SECOND" : "SECONDS";
-        sprintf(remainStr, "%s%d %s REMAINING", remainStr, timeRemain, unitTerm);
-
-        text.DrawString(x, y + height + 2, remainStr, (uint32_t)0xff635e6d );
 
         x -= 2;
         y -= 2;
+        drew_something = true;
     }
 
     y -= ( text.GetFontSize() << 1 ) + 4;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    bool drawText = true;
+    static bool drawText = true;
 #else
-    bool drawText = false;
+    static bool drawText = false;
 #endif
 
     if (drawText)
     {
-        if( prog->GetTitle()[ 0 ] != 0 )
+        if (prog->GetTitle())
         {
             text.DrawString( x, y, prog->GetTitle(), (uint32_t)0xccb0b0b0 );
             x += (uint16_t)text.CalcStringWidth( prog->GetTitle() );
+            drew_something = true;
         }
 
-        if( prog->GetStatusText()[ 0 ] != 0 )
+        if (prog->GetStatusText())
+        {
             text.DrawString( x, y, prog->GetStatusText(), (uint32_t)0xccb0b0b0 );
+            drew_something = true;
+        }
     }
+
+    // return whether or not we drew stuff
+    return drew_something;
 }
 

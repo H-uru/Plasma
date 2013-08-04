@@ -118,8 +118,9 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
     std::vector<plFileName> files = plFileSystem::ListDir(sDir, ("*." + ext).c_str());
     for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        if (fFileData.find(*iter) == fFileData.end()) // we haven't added it yet
-            retVal.push_back(*iter);
+        plFileName norm = iter->Normalize('/');
+        if (fFileData.find(norm) == fFileData.end()) // we haven't added it yet
+            retVal.push_back(norm);
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 

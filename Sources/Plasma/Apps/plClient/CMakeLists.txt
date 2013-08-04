@@ -23,11 +23,9 @@ if(PYTHONINTERP_FOUND)
     find_python_module(rsvg)
     find_python_module(Image)
     if((DEFINED PY_RSVG) AND (DEFINED PY_IMAGE))
-        set(BUILD_RESOURCE_DAT ON)
+        set(CAN_BUILD_RESOURCE_DAT ON)
     endif((DEFINED PY_RSVG) AND (DEFINED PY_IMAGE))
 endif(PYTHONINTERP_FOUND)
-
-add_subdirectory(external)
 
 set(plClient_HEADERS
     plClient.h
@@ -63,9 +61,10 @@ set(plClient_RESOURCES
 add_executable(plClient WIN32 ${plClient_SOURCES} ${plClient_HEADERS}
                               ${plClient_TEXT} ${plClient_RESOURCES})
 
-if(BUILD_RESOURCE_DAT)
+if(CAN_BUILD_RESOURCE_DAT AND PLASMA_BUILD_RESOURCE_DAT)
+    add_subdirectory(external)
     add_dependencies(plClient externalResources)
-endif(BUILD_RESOURCE_DAT)
+endif()
 
 if(PLASMA_EXTERNAL_RELEASE)
     set_target_properties(plClient PROPERTIES OUTPUT_NAME "UruExplorer")
@@ -153,13 +152,7 @@ target_link_libraries(plClient pnTimer)
 target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUUID)
 
-if(PYTHON_DEBUG_LIBRARY)
-    target_link_libraries(plClient debug ${PYTHON_DEBUG_LIBRARY})
-    target_link_libraries(plClient optimized ${PYTHON_LIBRARY})
-else()
-    target_link_libraries(plClient ${PYTHON_LIBRARY})
-endif()
-
+target_link_libraries(plClient ${PYTHON_LIBRARIES})
 target_link_libraries(plClient ${OPENAL_LIBRARY})
 target_link_libraries(plClient ${OPENSSL_LIBRARIES})
 target_link_libraries(plClient ${EXPAT_LIBRARY})

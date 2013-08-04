@@ -66,7 +66,7 @@ void PrintStringF(void pfun(const char *),const char * fmt, ...)
 
     char buffy[512];
     va_start(args, fmt);
-    vsprintf(buffy, fmt, args);
+    vsnprintf(buffy, arrsize(buffy), fmt, args);
     va_end(args);
     pfun(buffy);
 }

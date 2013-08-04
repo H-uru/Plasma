@@ -207,6 +207,7 @@ public:
         kNonPhysOn,
         kNonPhysOff,
         kResetPanning,
+        kRefreshFOV,
         kNumCmds
     };
 

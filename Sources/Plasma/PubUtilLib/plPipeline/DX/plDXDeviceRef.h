@@ -39,52 +39,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plDXTextFont_h
-#define _plDXTextFont_h
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  plDXDeviceRef.h - Header for the generic DX DeviceRef type               //
+//  Cyan, Inc.                                                               //
+//                                                                           //
+//// Version History //////////////////////////////////////////////////////////
+//                                                                           //
+//  4.25.2001 mcn - Created.                                                 //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
-#include "plTextFont.h"
-//#include "hsGDirect3DTnLDevice.h"
+#ifndef _plDXDeviceRef_h
+#define _plDXDeviceRef_h
+
+#include "HeadSpin.h"
+#include "plPipeline/hsGDeviceRef.h"
 
 
-//// plDXTextFont Class Definition ///////////////////////////////////////////
+//// Definition ///////////////////////////////////////////////////////////////
 
-struct IDirect3DTexture9;
-struct IDirect3DDevice9;
-struct IDirect3DStateBlock9;
-class plPipeline;
-
-class plDXTextFont : public plTextFont
+class plDXDeviceRef : public hsGDeviceRef
 {
-protected:
-    IDirect3DTexture9           *fD3DTexture;
-    IDirect3DDevice9            *fDevice; 
+    protected:
+        plDXDeviceRef   *fNext;
+        plDXDeviceRef   **fBack;
 
-    static IDirect3DVertexBuffer9       *fBuffer;
-    static uint32_t                       fBufferCursor;
+    public:
 
-    IDirect3DStateBlock9 *fOldStateBlock;
-    IDirect3DStateBlock9 *fTextStateBlock;
+        void            Unlink( void );
+        void            Link( plDXDeviceRef **back );
+        plDXDeviceRef   *GetNext( void ) { return fNext; }
+        bool            IsLinked( void ) { return fBack != nil; }
+        virtual void            Release( void ) { }
 
-    virtual void    ICreateTexture( uint16_t *data );
-    virtual void    IInitStateBlocks( void );
-    virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array );
-    virtual void    IDrawLines( uint32_t count, plFontVertex *array );
+        plDXDeviceRef();
 
-public:
-    plDXTextFont( plPipeline *pipe, IDirect3DDevice9 *device );
-    ~plDXTextFont();
-
-    static  void CreateShared(IDirect3DDevice9* device);
-    static  void ReleaseShared(IDirect3DDevice9* device);
-
-    virtual void    FlushDraws( void );
-    virtual void    SaveStates( void );
-    virtual void    RestoreStates( void );
-    virtual void    DestroyObjects( void );
-
-    static const DWORD kFVF;
+        virtual ~plDXDeviceRef();
 };
 
 
-#endif // _plDXTextFont_h
-
+#endif // _plDXDeviceRef_h

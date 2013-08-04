@@ -47,19 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plSurface/plLayerInterface.h"
 #include "hsMatrix44.h"
-#include "plFogEnvironment.h"
-#include "hsG3DDeviceSelector.h"
+#include "plPipeline/plFogEnvironment.h"
+#include "plPipeline/hsG3DDeviceSelector.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
-#include "hsGDeviceRef.h"
+#include "plPipeline/hsGDeviceRef.h"
 #include "hsPoint2.h"
 
 class plAccessSpan;
 class plAuxSpan;
 class plVertexSpan;
 
-#include "plPlates.h"   // Used to define plDXPlateManager
+#include "plPipeline/plPlates.h"   // Used to define plDXPlateManager
 
 
 //// Defines and Konstants and Other Nifty Stuff //////////////////////////////
@@ -354,6 +354,7 @@ protected:
     void            ICheckStaticVertexBuffer(plDXVertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
     void            ICheckIndexBuffer(plDXIndexBufferRef* iRef);
     void            IFillStaticVertexBufferRef(plDXVertexBufferRef *ref, plGBufferGroup *group, uint32_t idx);
+    void            IFillVolatileVertexBufferRef(plDXVertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
     void            IFillIndexBufferRef(plDXIndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
     void            ISetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXVertexBufferRef* vRef);
     void            ISetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, plDXIndexBufferRef* iRef);
@@ -804,8 +805,6 @@ public:
     //  CPU-optimized functions
 protected:
     typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
-    static void blend_vert_buffer_fpu(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
-    static void blend_vert_buffer_sse3(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
     static hsFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 };
 

@@ -144,13 +144,11 @@ bool plNetClientMsgScreener::AllowIncomingMessage(const plMessage* msg) const
 
 bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
 {
-    // Why would you EVER send a RefMsg accross the network???
-    if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
-        return false;
-
     // Blacklist some obvious hacks here...
     switch (msg->ClassIndex())
     {
+    case CLASS_INDEX_SCOPED(plAttachMsg):
+        return true;
     case CLASS_INDEX_SCOPED(plAudioSysMsg):
         // This message has a flawed read/write
         return false;
@@ -170,4 +168,8 @@ bool plNetClientMsgScreener::IScreenIncoming(const plMessage* msg) const
         // might break something that we really shouldn't...
         return true;
     }
+
+    // Toss non-attach plRefMsgs
+    if (plFactory::DerivesFrom(CLASS_INDEX_SCOPED(plRefMsg), msg->ClassIndex()))
+        return false;
 }

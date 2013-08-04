@@ -90,18 +90,6 @@ void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, con
 //
 plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(int16_t classIndex, const plNetGameMember* gm) const
 {
-    // Check based on baseclass
-    if (plFactory::DerivesFrom(plCCRMessage::Index(), classIndex))
-    {
-        ILogCCRMessage(classIndex, gm);
-        Answer ans=IIsSenderCCR(gm) ? kYes : kNo;
-        if (ans==kNo)
-        {
-            IRejectLogMsg(classIndex, "Not a CCR", gm);
-        }
-        return ans;
-    }
-    
     // Check based on exact type
     switch(classIndex)
     {
@@ -128,20 +116,10 @@ plNetMsgScreener::Answer plNetMsgScreener::IAllowMessageType(int16_t classIndex,
     case CLASS_INDEX_SCOPED(plEnableMsg):
     case CLASS_INDEX_SCOPED(plLinkToAgeMsg):
     case CLASS_INDEX_SCOPED(plSubWorldMsg):
+    case CLASS_INDEX_SCOPED(plDynamicTextMsg):
         return kYes;
-        
-        // definitely yes or no (based on whether sender is a CCR)
-    case CLASS_INDEX_SCOPED(plWarpMsg):
-        {
-            Answer ans=IIsSenderCCR(gm) ? kYes : kNo;
-            if (ans==kNo)
-            {
-                IRejectLogMsg(classIndex, "Not a CCR", gm);
-            }
-            return ans;
-        }
-        
-        // conditionally yes, requires further validation of msg contents
+
+    // conditionally yes, requires further validation of msg contents
     case CLASS_INDEX_SCOPED(plAnimCmdMsg):
     case CLASS_INDEX_SCOPED(pfKIMsg):
     case CLASS_INDEX_SCOPED(plAvTaskMsg):

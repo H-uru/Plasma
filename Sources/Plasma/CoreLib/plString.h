@@ -71,6 +71,15 @@ typedef unsigned int UniChar;
 #    define strlwr      hsStrLower
 #endif
 
+// ssize_t doesn't exist in MSVC2010
+#if _MSC_VER
+#   ifdef _WIN64
+        typedef __int64 ssize_t;
+#   else
+        typedef int ssize_t;
+#   endif
+#endif
+
 /** Ref-counted string data buffer.
  *  This is used to store actual string data in any (unchecked) encoding format,
  *  including both the internal UTF-8 data of plString itself as well as the
@@ -488,22 +497,22 @@ public:
     /** Find the index of the first instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
-    int Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
     /** Find the index of the last instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
-    int FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
     /** Find the index of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
-    int Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
 
     /** Find the index of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
-    int Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
+    ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
     { return Find(str.c_str(), sense); }
 
     /** Check that this string matches the specified regular expression.
@@ -541,7 +550,7 @@ public:
      *  number of characters left in the string after \a start, Substr will
      *  return the remainder of the string.
      */
-    plString Substr(int start, size_t size = kSizeAuto) const;
+    plString Substr(ssize_t start, size_t size = kSizeAuto) const;
 
     /** Return a substring containing at most \a size characters from the left
      *  of the string.  Equivalent to Substr(0, size).

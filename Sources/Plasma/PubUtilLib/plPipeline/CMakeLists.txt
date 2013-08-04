@@ -20,12 +20,6 @@ set(plPipeline_SOURCES
     plCullTree.cpp
     plDebugText.cpp
     plDTProgressMgr.cpp
-    plDXEnumerate.cpp
-    plDXPipeline.cpp
-    plDXPixelShader.cpp
-    plDXShader.cpp
-    plDXTextFont.cpp
-    plDXVertexShader.cpp
     plDynamicEnvMap.cpp
     plFogEnvironment.cpp
     plGBufferGroup.cpp
@@ -38,11 +32,22 @@ set(plPipeline_SOURCES
     plVertCoder.cpp
 )
 
+set(plDXPipeline_SOURCES
+    DX/plDXDeviceRefs.cpp
+    DX/plDXEnumerate.cpp
+    DX/plDXPipeline.cpp
+    DX/plDXPixelShader.cpp
+    DX/plDXShader.cpp
+    DX/plDXTextFont.cpp
+    DX/plDXVertexShader.cpp
+)
+
 set(plPipeline_HEADERS
     hsFogControl.h
     hsG3DDeviceSelector.h
     hsGColorizer.h
     hsGDDrawDllLoad.h
+    hsGDeviceRef.h
     hsWinRef.h
     plBinkPlayer.h
     plCaptureRender.h
@@ -53,13 +58,6 @@ set(plPipeline_HEADERS
     plDebugText.h
     plDrawPrim.h
     plDTProgressMgr.h
-    plDXEnumerate.h
-    plDXPipeline.h
-    plDXPixelShader.h
-    plDXSettings.h
-    plDXShader.h
-    plDXTextFont.h
-    plDXVertexShader.h
     plDynamicEnvMap.h
     plFogEnvironment.h
     plGBufferGroup.h
@@ -76,18 +74,31 @@ set(plPipeline_HEADERS
     plVertCoder.h
 )
 
-set(plPipeline_DEVICEREFS
-    hsGDeviceRef.h
-    plDXBufferRefs.h
-    plDXDeviceRef.h
-    plDXDeviceRefs.cpp
-    plDXLightRef.h
-    plDXRenderTargetRef.h
-    plDXTextureRef.h
+set(plDXPipeline_HEADERS
+    DX/plDXBufferRefs.h
+    DX/plDXDeviceRef.h
+    DX/plDXEnumerate.h
+    DX/plDXLightRef.h
+    DX/plDXPipeline.h
+    DX/plDXPixelShader.h
+    DX/plDXRenderTargetRef.h
+    DX/plDXSettings.h
+    DX/plDXShader.h
+    DX/plDXTextFont.h
+    DX/plDXTextureRef.h
+    DX/plDXVertexShader.h
 )
 
-add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS} ${plPipeline_DEVICEREFS})
+if(WIN32)
+    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
+else()
+    add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS})
+endif()
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})
-source_group("DeviceRefs" FILES ${plPipeline_DEVICEREFS})
+
+if(WIN32)
+    source_group("DX\\Source Files" FILES ${plDXPipeline_SOURCES})
+    source_group("DX\\Header Files" FILES ${plDXPipeline_HEADERS})
+endif()

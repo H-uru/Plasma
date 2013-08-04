@@ -54,15 +54,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDXSettings_h
 
 #include "hsMatrix44.h"
-#include "plFogEnvironment.h"
+#include "plPipeline/plFogEnvironment.h"
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
 #include "hsBitVector.h"
-#include "plStencil.h"
+#include "plPipeline/plStencil.h"
 #include "hsPoint2.h"
-#include "plCullTree.h"
-#include "hsWinRef.h"
+#include "plPipeline/plCullTree.h"
+#include "plPipeline/hsWinRef.h"
 #include "plViewTransform.h"
 
 //// General Settings /////////////////////////////////////////////////////////

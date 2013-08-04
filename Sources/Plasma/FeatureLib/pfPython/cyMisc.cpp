@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "plgDispatch.h"
+#include "hsResMgr.h"
 #include "pyKey.h"
 #pragma hdrstop
 
@@ -49,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plResMgr/plKeyFinder.h"
 #include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plKeyImp.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plLinkToAgeMsg.h"
 #include "plMessage/plConsoleMsg.h"
@@ -220,6 +222,23 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
     return pySceneObject::New(key);
 }
 
+PyObject* cyMisc::FindSceneObjects(const plString& name)
+{
+    // assume that we won't find the sceneobject (key is equal to nil)
+    std::vector<plKey> keys;
+
+    if ( !name.IsNull() )
+        plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plSceneObject::Index(), keys);
+
+    PyObject* result = PyList_New(keys.size());
+    for (size_t i=0; i < keys.size(); i++)
+        PyList_SET_ITEM(result, i, pySceneObject::New(keys[i]));
+
+    return result;
+}
+
+
+
 PyObject* cyMisc::FindActivator(const plString& name)
 {
     plKey key = nil;
@@ -302,7 +321,7 @@ void cyMisc::ClearTimerCallbacks(pyKey& selfkey)
 //
 //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
 //
-void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey)
+void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey, bool netForce)
 {
     plKey childKey = ckey.getKey();
     plKey parentKey = pkey.getKey();
@@ -312,10 +331,16 @@ void cyMisc::AttachObject(pyKey& ckey, pyKey& pkey)
     {
         // create the attach message to attach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+        
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+        
         plgDispatch::MsgSend( pMsg );
     }
 }
-void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
+void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netForce)
 {
     plKey childKey = cobj.getObjKey();
     plKey parentKey = pobj.getObjKey();
@@ -325,6 +350,12 @@ void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     {
         // create the attach message to attach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRequest);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -338,7 +369,7 @@ void cyMisc::AttachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
 //
 //  PURPOSE    : Attach an object to another object, knowing only their pyKeys
 //
-void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey)
+void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey, bool netForce)
 {
     plKey childKey = ckey.getKey();
     plKey parentKey = pkey.getKey();
@@ -348,10 +379,16 @@ void cyMisc::DetachObject(pyKey& ckey, pyKey& pkey)
     {
         // create the attach message to detach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
-void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
+void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netForce)
 {
     plKey childKey = cobj.getObjKey();
     plKey parentKey = pobj.getObjKey();
@@ -361,6 +398,12 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj)
     {
         // create the attach message to detach the child
         plAttachMsg* pMsg = new plAttachMsg(parentKey, childKey->GetObjectPtr(), plRefMsg::kOnRemove);
+
+        if (netForce) {
+            pMsg->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg->SetBCastFlag(plMessage::kNetForce);
+        }
+
         plgDispatch::MsgSend( pMsg );
     }
 }
@@ -892,9 +935,8 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    char errmsg[256];
-    sprintf(errmsg,"GUIDialog TagID %d not found",tag);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString errmsg = plString::Format("GUIDialog TagID %d not found", tag);
+    PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
 
@@ -909,9 +951,8 @@ PyObject* cyMisc::GetDialogFromString(const char* name)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    char errmsg[256];
-    sprintf(errmsg,"GUIDialog %s not found",name);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString errmsg = plString::Format("GUIDialog %s not found", name);
+    PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
 
@@ -946,9 +987,7 @@ PyObject* cyMisc::GetLocalAvatar()
     if ( so )
         return pySceneObject::New(so->GetKey());
 
-    char errmsg[256];
-    sprintf(errmsg,"Local avatar not found");
-    PyErr_SetString(PyExc_NameError, errmsg);
+    PyErr_SetString(PyExc_NameError, "Local avatar not found");
     return nil; // returns nil, cause we threw an error
 }
 
@@ -1110,7 +1149,7 @@ float cyMisc::GetMaxListenDistSq()
 //
 //  RETURNS    : the flags that were sent with the message (may be modified)
 //
-uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const char* message, uint32_t flags)
+uint32_t cyMisc::SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const plString& message, uint32_t flags)
 {
     // create the messge that will contain the chat message
     pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
@@ -1120,61 +1159,23 @@ uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolis
     msg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
     msg->SetBCastFlag(plMessage::kLocalPropagate, 0);
 
-    if (tolist.size() > 0)
+    // this goes to everybody on the shard
+    if (flags & pfKIMsg::kGlobalMsg)
+        msg->SetBCastFlag(plMessage::kCCRSendToAllPlayers);
+    // allow inter-age routing of this msg
+    if (flags & pfKIMsg::kInterAgeMsg)
+        msg->SetBCastFlag( plMessage::kNetAllowInterAge );
+
+    // add net rcvrs to msg
+    for ( auto it = tolist.begin(); it != tolist.end(); ++it )
     {
-        if (flags & 8/* kRTChatInterAge in PlasmaKITypes.py */)
-        {
-            // allow inter-age routing of this msg
-            msg->SetBCastFlag( plMessage::kNetAllowInterAge );
-        }
-        // add net rcvrs to msg
-        int i;
-        for ( i=0 ; i<tolist.size() ; i++ )
-        {
-            if ( !VaultAmIgnoringPlayer( tolist[i]->GetPlayerID() ) )
-                msg->AddNetReceiver(tolist[i]->GetPlayerID());
-        }
+        pyPlayer* to = *it;
+        if ( !VaultAmIgnoringPlayer( to->GetPlayerID() ) )
+            msg->AddNetReceiver(to->GetPlayerID());
     }
 
-    uint32_t msgFlags = msg->GetFlags();
-
-    if (tolist.size() == 0 || (msg->GetNetReceivers() && msg->GetNetReceivers()->size() > 0))
-        msg->Send();
-
-    return msgFlags;
-}
-
-uint32_t cyMisc::SendRTChat(pyPlayer& from, const std::vector<pyPlayer*> & tolist, const wchar_t* message, uint32_t flags)
-{
-    // create the messge that will contain the chat message
-    pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
-    msg->SetString( plString::FromWchar(message) );
-    msg->SetUser( from.GetPlayerName(), from.GetPlayerID() );
-    msg->SetFlags( flags );
-    msg->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce);
-    msg->SetBCastFlag(plMessage::kLocalPropagate, 0);
-
-    if (tolist.size() > 0)
-    {
-        if (flags & 8/* kRTChatInterAge in PlasmaKITypes.py */)
-        {
-            // allow inter-age routing of this msg
-            msg->SetBCastFlag( plMessage::kNetAllowInterAge );
-        }
-        // add net rcvrs to msg
-        for ( int i = 0 ; i < tolist.size() ; i++ )
-        {
-            if ( !VaultAmIgnoringPlayer( tolist[i]->GetPlayerID() ) )
-                msg->AddNetReceiver(tolist[i]->GetPlayerID());
-        }
-    }
-
-    uint32_t msgFlags = msg->GetFlags();
-
-    if (tolist.size() == 0 || (msg->GetNetReceivers() && msg->GetNetReceivers()->size() > 0))
-        msg->Send();
-
-    return msgFlags;
+    msg->Send();
+    return flags;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1453,7 +1454,7 @@ int cyMisc::GetNumRemotePlayers()
 //  PURPOSE    : page in, hold or out a particular node
 //
 
-void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char* age)
+void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char* age, bool netForce)
 {
     if (hsgResMgr::ResMgr())
     {
@@ -1461,6 +1462,11 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
         plClientMsg* msg = new plClientMsg(plClientMsg::kLoadRoom);
         plKey clientKey = hsgResMgr::ResMgr()->FindKey(kClient_KEY);
         msg->AddReceiver(clientKey);
+
+        if (netForce) {
+            msg->SetBCastFlag(plMessage::kNetPropagate);
+            msg->SetBCastFlag(plMessage::kNetForce);
+        }
 
         int numNames = nodeNames.size();
         for (int i = 0; i < numNames; i++)
@@ -1470,7 +1476,7 @@ void cyMisc::PageInNodes(const std::vector<std::string> & nodeNames, const char*
     }
 }
 
-void cyMisc::PageOutNode(const char* nodeName)
+void cyMisc::PageOutNode(const char* nodeName, bool netForce)
 {
     if ( hsgResMgr::ResMgr() )
     {
@@ -1479,6 +1485,11 @@ void cyMisc::PageOutNode(const char* nodeName)
         plKey clientKey = hsgResMgr::ResMgr()->FindKey( kClient_KEY );
         pMsg1->AddReceiver( clientKey );
         pMsg1->AddRoomLoc(plKeyFinder::Instance().FindLocation("", nodeName));
+
+        if (netForce) {
+            pMsg1->SetBCastFlag(plMessage::kNetPropagate);
+            pMsg1->SetBCastFlag(plMessage::kNetForce);
+        }
         plgDispatch::MsgSend(pMsg1);
     }
 }
@@ -1555,14 +1566,14 @@ void cyMisc::FogSetDefExp2(float end, float density)
 void cyMisc::SetClearColor(float red, float green, float blue)
 {
     // do this command via the console to keep the maxplugins from barfing
-    char command[256];
-    sprintf(command,"Graphics.Renderer.SetClearColor %f %f %f",red,green,blue);
+    plString command = plString::Format("Graphics.Renderer.SetClearColor %f %f %f", red, green, blue);
+
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
     pMsg->SetBCastFlag(plMessage::kBCastByType);
     pMsg->SetControlCode(B_CONTROL_CONSOLE_COMMAND);
     pMsg->SetControlActivated(true);
-    pMsg->SetCmdString(command);
+    pMsg->SetCmdString(command.c_str());
     plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
 }
 
@@ -2903,4 +2914,38 @@ void cyMisc::VaultDownload(unsigned nodeId)
         nil,
         nil
     );
+}
+
+PyObject* cyMisc::CloneKey(pyKey* object, bool loading) {
+
+    plKey obj = object->getKey();
+    plUoid uoid = obj->GetUoid();
+
+    plLoadCloneMsg* cloneMsg;
+    if (uoid.IsClone())
+        cloneMsg = new plLoadCloneMsg(obj, plNetClientMgr::GetInstance()->GetKey(), 0, loading);
+    else 
+        cloneMsg = new plLoadCloneMsg(uoid, plNetClientMgr::GetInstance()->GetKey(), 0);
+
+    cloneMsg->SetBCastFlag(plMessage::kNetPropagate);
+    cloneMsg->SetBCastFlag(plMessage::kNetForce);
+    cloneMsg->Send();
+
+    return pyKey::New(cloneMsg->GetCloneKey());
+}
+
+PyObject* cyMisc::FindClones(pyKey* object) {
+    plKey obj = object->getKey();
+    plUoid uoid = obj->GetUoid();
+
+    plKeyImp* imp = ((plKeyImp*)obj);
+    uint32_t cloneNum = imp->GetNumClones();
+    PyObject* keyList = PyList_New(cloneNum);
+
+    for (int i=0; i < cloneNum; i++) {
+        PyObject* key = pyKey::New(imp->GetCloneByIdx(i));
+        PyList_SET_ITEM(keyList, i, key);
+    }
+
+    return keyList;
 }

@@ -561,7 +561,7 @@ void plPXPhysicalControllerCore::Update(int numSubSteps, float alpha)
 
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (fDebugDisplay)
-            controller->IDrawDebugDisplay();
+            controller->IDrawDebugDisplay(i);
 #endif
     }
 }
@@ -847,23 +847,28 @@ void plPXPhysicalControllerCore::IProcessDynamicHits()
 #ifndef PLASMA_EXTERNAL_RELEASE
 #include "../plPipeline/plDebugText.h"
 
-void plPXPhysicalControllerCore::IDrawDebugDisplay()
+void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
 {
     plDebugText &debugTxt = plDebugText::Instance();
     plString debugString;
-    int y = 10;     // Initial draw position
-    int x = 10;
     int lineHeight = debugTxt.GetFontSize() + 4;
-
-    debugString = plString::Format("Controller Count: %d", gControllers.size());
-    debugTxt.DrawString(x, y, debugString.c_str());
-    y += lineHeight;
+    int x = 10;     // Initial draw position
+    static int y = 10;
+    if (controllerIdx == 0)
+    {
+        y = 10;
+        debugString = plString::Format("Controller Count: %d", gControllers.size());
+        debugTxt.DrawString(x, y, debugString.c_str());
+        y += lineHeight;
+    }
 
     // Only display avatar collisions if any exist...
     int collisionCount = fDbgCollisionInfo.GetCount();
     if (collisionCount > 0)
     {
-        debugTxt.DrawString(x, y, "Avatar Collisions:");
+        debugString = plString::Format("Controller #%d (%s) Collisions:",
+            controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName().c_str());
+        debugTxt.DrawString(x, y, debugString.c_str());
         y += lineHeight;
 
         for (int i = 0; i < collisionCount; i++)
