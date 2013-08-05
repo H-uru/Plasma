@@ -60,6 +60,7 @@ class plRenderRequest;
 class pl3DPipeline;
 class plDrawableSpans;
 class plVisMgr;
+class plSceneObject;
 
 
 // plPipelineViewSettings are just a convenience member struct to segregate the
@@ -200,7 +201,7 @@ public:
      * This is the normal path for visibility culling at a gross level (e.g.
      * which SceneNodes to bother with, which drawables within the SceneNode).
      * For finer objects, like the spans themselves, the culling is done via
-     * IGetVisibleSpans, which also takes the plVisMgr into account.
+     * GetVisibleSpans, which also takes the plVisMgr into account.
      */
     bool    HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList);
 
@@ -228,6 +229,13 @@ public:
      * frustum.
      */
     bool    TestVisibleWorld(const hsBounds3Ext& wBnd);
+
+
+    /**
+     * Check if the object space bounds are visible within the current view
+     * frustum.
+     */
+    bool    TestVisibleWorld(const plSceneObject* sObj);
 };
 
 #endif //_plPipelineViewSettings_inc_

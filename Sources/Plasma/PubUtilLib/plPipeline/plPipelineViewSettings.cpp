@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plSpaceTree.h"
 #include "plDrawable/plDrawableGenerator.h"
 #include "plDrawable/plSpanTypes.h"
+#include "pnSceneObject/plDrawInterface.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "plScene/plVisMgr.h"
 #include "plPipeDebugFlags.h"
 
 plProfile_CreateTimer("Harvest", "Draw", Harvest);
@@ -367,4 +370,45 @@ bool plPipelineViewSettings::TestVisibleWorld(const hsBounds3Ext& wBnd)
         return fCullTree.BoundsVisible(wBnd);
     else
         return false;
+}
+
+bool plPipelineViewSettings::TestVisibleWorld(const plSceneObject* sObj)
+{
+    const plDrawInterface* di = sObj->GetDrawInterface();
+    if (!di)
+        return false;
+
+    const int numDraw = di->GetNumDrawables();
+    int i;
+    for (i = 0; i < numDraw; i++)
+    {
+        plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(i));
+        if (!dr)
+            continue;
+
+        plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(i));
+        if (diIndex.IsMatrixOnly())
+            continue;
+
+        const int numSpan = diIndex.GetCount();
+        int j;
+        for (j = 0; j < numSpan; j++)
+        {
+            const plSpan* span = dr->GetSpan(diIndex[j]);
+
+            if (span->fProps & plSpan::kPropNoDraw)
+                continue;
+
+            if (!span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisSet())
+                || span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisNot()))
+
+                continue;
+
+            if (!TestVisibleWorld(span->fWorldBounds))
+                continue;
+
+            return true;
+        }
+    }
+    return false;
 }

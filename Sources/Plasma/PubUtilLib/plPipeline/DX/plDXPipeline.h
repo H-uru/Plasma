@@ -239,7 +239,6 @@ protected:
     plDXVertexShader*       fVShaderRefList;
     plDXPixelShader*        fPShaderRefList;
 
-    hsGMaterial*            fCurrMaterial;
     plLayerInterface*       fCurrLay;
     uint32_t                  fCurrLayerIdx, fCurrNumLayers, fCurrRenderLayer;
     uint32_t                  fCurrLightingMethod;    // Based on plSpan flags
@@ -272,7 +271,6 @@ protected:
     uint32_t        fLayerXformFlags[ 8 ];
     uint32_t        fLastEndingStage;
     bool            fTexturing;
-    bool            fForceMatHandle;
 
     uint32_t          fInSceneDepth;
     uint32_t          fTextUseTime;       // inc'd every frame - stat gather only
@@ -370,7 +368,6 @@ protected:
     void            IRestoreSpanLights();
     void            ISelectLights( plSpan *span, int numLights, bool proj );
     void            IEnableLights( plSpan *span );
-    void            IMakeLightLists(plVisMgr* visMgr);
     void            ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
     inline void     inlEnsureLightingOff();
     inline void     inlEnsureLightingOn();
@@ -624,9 +621,6 @@ public:
     virtual bool                        EndRender();
     virtual void                        RenderScreenElements();
 
-    virtual void                        BeginVisMgr(plVisMgr* visMgr);
-    virtual void                        EndVisMgr(plVisMgr* visMgr);
-
     virtual bool                        IsFullScreen() const { return fSettings.fFullscreen; }
     virtual uint32_t                      ColorDepth() const { return fSettings.fColorDepth; }
     virtual void                        Resize( uint32_t width, uint32_t height );
@@ -682,19 +676,11 @@ public:
     virtual void                        RegisterLight(plLightInfo* light);
     virtual void                        UnRegisterLight(plLightInfo* light);
 
-    // Overrides, always push returns whatever is necessary to restore on pop.
-    virtual hsGMaterial*                PushOverrideMaterial(hsGMaterial* mat);
-    virtual void                        PopOverrideMaterial(hsGMaterial* restore);
-
     virtual plLayerInterface*           AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false);
     virtual plLayerInterface*           RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false);
 
     virtual plLayerInterface*           PushPiggyBackLayer(plLayerInterface* li);
     virtual plLayerInterface*           PopPiggyBackLayer(plLayerInterface* li);
-
-    virtual hsGMatState                 PushMaterialOverride(const hsGMatState& state, bool on);
-    virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on);
-    virtual void                        PopMaterialOverride(const hsGMatState& restore, bool on);
 
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);

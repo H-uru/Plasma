@@ -322,14 +322,11 @@ plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
 plProfile_CreateCounter("Material Change", "Draw", MatChange);
 plProfile_CreateCounter("Layer Change", "Draw", LayChange);
 
-plProfile_Extern(DrawOccBuild);
-
 plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
 
 plProfile_CreateTimer("RenderScene", "PipeT", RenderScene);
 plProfile_CreateTimer("VisEval", "PipeT", VisEval);
 plProfile_CreateTimer("VisSelect", "PipeT", VisSelect);
-plProfile_CreateTimer("FindSceneLights", "PipeT", FindSceneLights);
 plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
 plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
 plProfile_CreateTimer("  Skin", "PipeT", Skin);
@@ -369,10 +366,6 @@ plProfile_CreateMemCounterReset("fVtxUsed", "PipeC", fVtxUsed);
 plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
 plProfile_CreateMemCounter("ManSeen", "PipeC", ManSeen);
 plProfile_CreateCounterNoReset("ManEvict", "PipeC", ManEvict);
-plProfile_CreateCounter("LightOn", "PipeC", LightOn);
-plProfile_CreateCounter("LightVis", "PipeC", LightVis);
-plProfile_CreateCounter("LightChar", "PipeC", LightChar);
-plProfile_CreateCounter("LightActive", "PipeC", LightActive);
 plProfile_CreateCounter("Lights Found", "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found", "PipeC", FindLightsPerm);
 plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
@@ -2795,96 +2788,6 @@ void    plDXPipeline::Render( plDrawable *d, const hsTArray<int16_t>& visList )
     }
 }
 
-// IMakeLightLists ///////////////////////////////////////////////////////////
-// Look through all the current lights, and fill out two lists.
-// Only active lights (not disabled, not exactly black, and not
-// ignored because of visibility regions by plVisMgr) will
-// be considered.
-// The first list is lights that will affect the avatar and similar
-// indeterminately mobile (physical) objects - fLights.fCharLights.
-// The second list is lights that aren't restricted by light include
-// lists. 
-// These two abbreviated lists will be further refined for each object
-// and avatar to find the strongest 8 lights which affect that object.
-// A light with an include list, or LightGroup Component) has
-// been explicitly told which objects it affects, so they don't
-// need to be in the search lists.
-// These lists are only constructed once per render, but searched
-// multiple times
-void plDXPipeline::IMakeLightLists(plVisMgr* visMgr)
-{
-    plProfile_BeginTiming(FindSceneLights);
-    fLights.fCharLights.SetCount(0);
-    fLights.fVisLights.SetCount(0);
-    if( visMgr )
-    {
-        const hsBitVector& visSet = visMgr->GetVisSet();
-        const hsBitVector& visNot = visMgr->GetVisNot();
-        plLightInfo* light;
-        for( light = fLights.fActiveList; light != nil; light = light->GetNext() )
-        {
-            plProfile_IncCount(LightActive, 1);
-            if( !light->IsIdle() && !light->InVisNot(visNot) && light->InVisSet(visSet) )
-            {
-                plProfile_IncCount(LightOn, 1);
-                if( light->GetProperty(plLightInfo::kLPHasIncludes) )
-                {
-                    if( light->GetProperty(plLightInfo::kLPIncludesChars) )
-                        fLights.fCharLights.Append(light);
-                }
-                else
-                {
-                    fLights.fVisLights.Append(light);
-                    fLights.fCharLights.Append(light);
-                }
-            }
-        }
-    }
-    else
-    {
-        plLightInfo* light;
-        for( light = fLights.fActiveList; light != nil; light = light->GetNext() )
-        {
-            plProfile_IncCount(LightActive, 1);
-            if( !light->IsIdle() )
-            {
-                plProfile_IncCount(LightOn, 1);
-                if( light->GetProperty(plLightInfo::kLPHasIncludes) )
-                {
-                    if( light->GetProperty(plLightInfo::kLPIncludesChars) )
-                        fLights.fCharLights.Append(light);
-                }
-                else
-                {
-                    fLights.fVisLights.Append(light);
-                    fLights.fCharLights.Append(light);
-                }
-            }
-        }
-    }
-    plProfile_IncCount(LightVis, fLights.fVisLights.GetCount());
-    plProfile_IncCount(LightChar, fLights.fCharLights.GetCount());
-
-    plProfile_EndTiming(FindSceneLights);
-}
-
-// BeginVisMgr /////////////////////////////////////////////////////////
-// Marks the beginning of a render with the given visibility manager.
-// In particular, we cache which lights the visMgr believes to be
-// currently active
-void plDXPipeline::BeginVisMgr(plVisMgr* visMgr)
-{
-    IMakeLightLists(visMgr);
-}
-
-// EndVisMgr ///////////////////////////////////////////////////////////
-// Marks the end of a render with the given visibility manager.
-void plDXPipeline::EndVisMgr(plVisMgr* visMgr)
-{
-    fLights.fCharLights.SetCount(0);
-    fLights.fVisLights.SetCount(0);
-}
-
 // ICheckLighting ///////////////////////////////////////////////////////
 // For every span in the list of visible span indices, find the list of
 // lights that currently affect the span with an estimate of the strength
@@ -2991,19 +2894,19 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     if( isChar )
     {
         int i;
-        for( i = 0; i < fLights.fCharLights.GetCount(); i++ )
+        for( i = 0; i < fCharLights.GetCount(); i++ )
         {
-            if( fLights.fCharLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
-                lightList.Append(fLights.fCharLights[i]);
+            if( fCharLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
+                lightList.Append(fCharLights[i]);
         }
     }
     else
     {
         int i;
-        for( i = 0; i < fLights.fVisLights.GetCount(); i++ )
+        for( i = 0; i < fVisLights.GetCount(); i++ )
         {
-            if( fLights.fVisLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
-                lightList.Append(fLights.fVisLights[i]);
+            if( fVisLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
+                lightList.Append(fVisLights[i]);
         }
     }
     plProfile_EndTiming(FindActiveLights);
@@ -5476,10 +5379,7 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
 // ready to illuminate the scene.
 void plDXPipeline::RegisterLight(plLightInfo* liInfo)
 {
-    if( liInfo->IsLinked() )
-        return;
-
-    liInfo->Link( &fLights.fActiveList );
+    pl3DPipeline::RegisterLight(liInfo);
     liInfo->SetDeviceRef( IMakeLightRef( liInfo ) );
     fLights.fTime++;
 }
@@ -5489,8 +5389,7 @@ void plDXPipeline::RegisterLight(plLightInfo* liInfo)
 // no longer illuminate the scene.
 void plDXPipeline::UnRegisterLight(plLightInfo* liInfo)
 {
-    liInfo->SetDeviceRef( nil );
-    liInfo->Unlink();
+    pl3DPipeline::UnRegisterLight(liInfo);
 
     fLights.fTime++;
 }
@@ -6005,10 +5904,6 @@ void    plDXLightSettings::Release()
         ref->Release();
         ref->Unlink();
     }
-
-    // Tell the light infos to unlink themselves
-    while( fActiveList )
-        fPipeline->UnRegisterLight( fActiveList );
 
     fShadowLights.SetCount(fShadowLights.GetNumAlloc());
     int i;
@@ -8939,105 +8834,6 @@ void    plDXPipeline::RefreshMatrices()
     RefreshScreenMatrices();
 }
 
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-//// Overrides ////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// PushOverrideMaterial /////////////////////////////////////////////////////
-// Push a material to be used instead of the material associated with objects
-// for rendering.
-// Must be matched with a PopOverrideMaterial.
-hsGMaterial *plDXPipeline::PushOverrideMaterial( hsGMaterial *mat )
-{
-    hsGMaterial *ret = GetOverrideMaterial();
-    hsRefCnt_SafeRef( mat );
-    fOverrideMat.Push( mat );
-    fForceMatHandle = true;
-
-    return ret;
-}
-
-//// PopOverrideMaterial //////////////////////////////////////////////////////
-// Stop overriding with the current override material.
-// Must match a preceding PushOverrideMaterial.
-void plDXPipeline::PopOverrideMaterial( hsGMaterial *restore )
-{
-    hsGMaterial *pop = fOverrideMat.Pop();
-    hsRefCnt_SafeUnRef( pop );
-
-    if( fCurrMaterial == pop )
-    {
-        fForceMatHandle = true;
-    }
-}
-
-//// PushMaterialOverride /////////////////////////////////////////////////////
-// Force material state bits on or off. If you use this, save the return value
-// as input to PopMaterialOverride, to restore previous values.
-hsGMatState plDXPipeline::PushMaterialOverride( const hsGMatState& state, bool on )
-{
-    hsGMatState ret = GetMaterialOverride( on );
-    if( on )
-    {
-        fMatOverOn |= state;
-        fMatOverOff -= state;
-    }
-    else
-    {
-        fMatOverOff |= state;
-        fMatOverOn -= state;
-    }
-    fForceMatHandle = true;
-    return ret;
-}
-
-// PushMaterialOverride ///////////////////////////////////////////////////////
-// Force material state bits on or off. If you use this, save the return value
-// as input to PopMaterialOverride, to restore previous values.
-// This version just sets for one category (e.g. Z flags).
-hsGMatState plDXPipeline::PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on)
-{
-    hsGMatState ret = GetMaterialOverride( on );
-    if( on )
-    {
-        fMatOverOn[ cat ] |= which;
-        fMatOverOff[ cat ] &= ~which;
-    }
-    else
-    {
-        fMatOverOn[ cat ] &= ~which;
-        fMatOverOff[ cat ] |= which;
-    }
-    fForceMatHandle = true;
-    return ret;
-}
-
-//// PopMaterialOverride //////////////////////////////////////////////////////
-// Restore the previous settings returned from the matching PushMaterialOverride.
-void plDXPipeline::PopMaterialOverride(const hsGMatState& restore, bool on)
-{
-    if( on )
-    {
-        fMatOverOn = restore;
-        fMatOverOff.Clear( restore );
-    }
-    else
-    {
-        fMatOverOff = restore;
-        fMatOverOn.Clear( restore );
-    }
-    fForceMatHandle = true;
-}
-
-//// GetMaterialOverride //////////////////////////////////////////////////////
-// Return the current material state bits force to on or off, depending on input <on>.
-const hsGMatState& plDXPipeline::GetMaterialOverride(bool on) const
-{
-    return on ? fMatOverOn : fMatOverOff;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
