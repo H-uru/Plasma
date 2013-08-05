@@ -319,7 +319,6 @@ plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
 plProfile_CreateCounter("Polys", "General", DrawTriangles);
 plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
 plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateTimer("Harvest", "Draw", Harvest);
 plProfile_CreateCounter("Material Change", "Draw", MatChange);
 plProfile_CreateCounter("Layer Change", "Draw", LayChange);
 
@@ -379,8 +378,6 @@ plProfile_CreateCounter("Perms Found", "PipeC", FindLightsPerm);
 plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("OccPoly", "PipeC", OccPolyUsed);
-plProfile_CreateCounter("OccNode", "PipeC", OccNodeUsed);
 plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
@@ -694,10 +691,10 @@ plDXPipeline::~plDXPipeline()
     fCurrLay = nil;
     hsAssert( fCurrMaterial == nil, "Current material not unrefed properly" );
 
-    // fCullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
+    // CullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
     // plScene/plOccluder.cpp and plScene/plOccluderProxy.cpp for more info
-    if( fCullProxy )
-        fCullProxy->GetKey()->UnRefObject();
+    if( fView.HasCullProxy() )
+        fView.GetCullProxy()->GetKey()->UnRefObject();
     delete fCurrentDriver;
     delete fCurrentDevice;
     delete fCurrentMode;
@@ -795,9 +792,7 @@ void    plDXPipeline::IClearMembers()
     fMatOverOff.Reset();
 //  SetMaterialOverride( hsGMatState::kShade, hsGMatState::kShadeSpecularHighlight, false );
 
-    fView.Reset();
-
-    fCullProxy = nil;
+    fView.Reset(this);
 
     fTime = 0;
     fFrame = 0;
@@ -815,49 +810,6 @@ void    plDXPipeline::IClearMembers()
     fAvRTShrinkValidSince = 0;
     fAvRTWidth = 1024;
     fAvNextFreeRT = 0;
-}
-
-// plDXViewSettings are just a convenience member struct to segregate the current view settings.
-//
-// Reset - Initialize the ViewSettings to default (normal/neutral) values.
-void plDXViewSettings::Reset()
-{
-    // dpogue -- Done
-    // fView.Reset()
-
-    // Normal render, on clear, clear the color buffer and depth buffer.
-    fRenderState = plPipeline::kRenderNormal | plPipeline::kRenderClearColor | plPipeline::kRenderClearDepth;
-
-    fRenderRequest = nil;
-
-    fDrawableTypeMask = plDrawable::kNormal;
-    fSubDrawableTypeMask = plDrawable::kSubNormal;
-
-    // Clear color to black, depth to yon.
-    fClearColor = 0;
-    fClearDepth = 1.f;
-    fDefaultFog.Clear();
-
-    // Want to limit the number of nodes in the cull tree. After adding so many nodes,
-    // the benefits (#objects culled) falls off, but the cost (evaluating objects against
-    // node planes) keeps rising.
-    const uint16_t kCullMaxNodes = 250;
-    fCullTree.Reset();
-    fCullTreeDirty = true;
-    fCullMaxNodes = kCullMaxNodes;
-
-    // Object Local to world transform and its inverse.
-    fLocalToWorld.Reset();
-    fWorldToLocal.Reset();
-
-    // see Core/plViewTransform.h
-    fTransform.Reset();
-
-    fTransform.SetScreenSize(800, 600);
-
-    // Keep track of handedness of local to world and camera transform for winding.
-    fLocalToWorldLeftHanded = false;
-    fWorldToCamLeftHanded = false;
 }
 
 //// plDXGeneralSettings::Reset //////////////////////////////////////////////
@@ -1511,41 +1463,6 @@ bool      plDXPipeline::ITextureFormatAllowed( D3DFORMAT format )
         return false;
 
     return true;
-}
-
-//// SetDebugFlag /////////////////////////////////////////////////////////////
-// Debug flags should never be employed to do a game effect, although they can
-// be useful for developing effects. Mostly they help in diagnosing problems
-// in rendering or performance.
-void        plDXPipeline::SetDebugFlag( uint32_t flag, bool on )
-{
-    fDebugFlags.SetBit(flag, on);
-
-    if (flag == plPipeDbg::kFlagColorizeMipmaps)
-    {
-        // Force textures to reload
-        plDXTextureRef      *ref = fTextureRefList;
-        while( ref != nil )
-        {
-            ref->SetDirty( true );
-            ref = ref->GetNext();
-        }
-
-        // Reset mipmap filtering state (usually is LINEAR, but we set it to POINT for coloring)
-        int i;
-        for( i = 0; i < 8; i++ )
-            fD3DDevice->SetSamplerState( i, D3DSAMP_MIPFILTER, on ? D3DTEXF_POINT : D3DTEXF_LINEAR );
-    }
-
-    if (flag == plPipeDbg::kFlagNoAnisotropy)
-    {
-        ISetAnisotropy(!on);
-    }
-}
-
-bool plDXPipeline::IsDebugFlagSet( uint32_t flag ) const
-{
-    return fDebugFlags.IsBitSet(flag);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -2570,7 +2487,7 @@ bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList,
     plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
         return false;
-    if( ( ds->GetType() & fView.fDrawableTypeMask ) == 0 )
+    if( ( ds->GetType() & fView.GetDrawableTypeMask() ) == 0 )
         return false;
 
     IGetVisibleSpans( ds, visList, visMgr );
@@ -2834,7 +2751,7 @@ void    plDXPipeline::Draw( plDrawable *d )
 
     if( ds )
     {
-        if( ( ds->GetType() & fView.fDrawableTypeMask ) == 0 )
+        if( ( ds->GetType() & fView.GetDrawableTypeMask() ) == 0 )
             return;
 
         static hsTArray<int16_t>visList;
@@ -3250,35 +3167,6 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     plProfile_EndTiming(FindLights);
 }
 
-// HarvestVisible ////////////////////////////////////////////////////////////////////////
-// Contruct a list of the indices of leaf nodes in the given spacetree which are currently
-// visible according to the current cull tree. The cull tree factors in camera frustum and
-// occluder polys, but _not_ the current visibility regions, plVisMgr.
-// This is the normal path for visibility culling at a gross level (e.g. which SceneNodes
-// to bother with, which drawables within the SceneNode). For finer objects, like the spans
-// themselves, the culling is done via IGetVisibleSpans, which also takes the plVisMgr into
-// account.
-bool plDXPipeline::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList)
-{
-    // dpogue -- Done
-    // fView.HarvestVisible(space, visList);
-    if( !space )
-        return false;
-
-    space->SetViewPos(GetViewPositionWorld());
-
-    space->Refresh();
-
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-
-    plProfile_BeginTiming(Harvest);
-    fView.fCullTree.Harvest(space, visList);
-    plProfile_EndTiming(Harvest);
-
-    return visList.GetCount() != 0;
-}
-
 //// IGetVisibleSpans /////////////////////////////////////////////////////
 //  Given a drawable, returns a list of visible span indices. Disabled spans will not
 //  show up in the list, behaving as if they were culled. 
@@ -3286,80 +3174,7 @@ bool plDXPipeline::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList
 void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr )
 {
     // dpogue -- Done
-    // fView.GetVisibleSpans(drawable, visList, visMgr)
-    static hsTArray<int16_t> tmpVis;
-    tmpVis.SetCount(0);
-    visList.SetCount(0);
-
-    drawable->GetSpaceTree()->SetViewPos(GetViewPositionWorld());
-
-    drawable->GetSpaceTree()->Refresh();
-
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-
-    const float viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
-
-    const hsTArray<plSpan *>    &spans = drawable->GetSpanArray();
-
-    plProfile_BeginTiming(Harvest);
-    if( visMgr )
-    {
-        drawable->SetVisSet(visMgr);
-        fView.fCullTree.Harvest(drawable->GetSpaceTree(), tmpVis);
-        drawable->SetVisSet(nil);
-    }
-    else
-    {
-        fView.fCullTree.Harvest(drawable->GetSpaceTree(), tmpVis);
-    }
-
-    // This is a big waste of time, As a desparate "optimization" pass, the artists
-    // insist on going through and marking objects to fade or pop out of rendering
-    // past a certain distance. This breaks the batching and requires more CPU to
-    // check the objects by distance. Since there is no pattern to the distance at
-    // which objects will be told not to draw, there's no way to make this hierarchical,
-    // which is what it would take to make it a performance win. So they succeed in
-    // reducing the poly count, but generally the frame rate goes _down_ as well.
-    // Unfortunately, this technique actually does work in a few key areas, so
-    // I haven't been able to purge it.
-    if (IsDebugFlagSet(plPipeDbg::kFlagSkipVisDist))
-    {
-        int i;
-        for( i = 0; i < tmpVis.GetCount(); i++ )
-        {
-            if( spans[tmpVis[i]]->fSubType & GetSubDrawableTypeMask() )
-            {
-                visList.Append(tmpVis[i]);
-            }
-        }
-    }
-    else
-    {
-        int i;
-        for( i = 0; i < tmpVis.GetCount(); i++ )
-        {
-            if( spans[tmpVis[i]]->fSubType & GetSubDrawableTypeMask() )
-            {
-                // We'll check here for spans we can discard because they've completely distance faded out.
-                // Note this is based on view direction distance (because the fade is), rather than the
-                // preferrable distance to camera we sort by.
-                float minDist, maxDist;
-                if( drawable->GetSubVisDists(tmpVis[i], minDist, maxDist) )
-                {
-                    const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(tmpVis[i]).fWorldBounds;
-                    hsPoint2 depth;
-                    bnd.TestPlane(GetViewDirWorld(), depth);
-                    if( (0 < minDist + viewDist - depth.fY)
-                            ||(0 > maxDist + viewDist - depth.fX) )
-                        continue;
-                }
-
-                visList.Append(tmpVis[i]);
-            }
-        }
-    }
-    plProfile_EndTiming(Harvest);
+    fView.GetVisibleSpans(drawable, visList, visMgr);
 }
 
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
@@ -3903,8 +3718,8 @@ void    plDXPipeline::RenderScreenElements()
         fBSpansToDelete.Reset();
     }
 #endif
-    if( fCullProxy )
-        Draw( fCullProxy );
+    if( fView.HasCullProxy())
+        Draw( fView.GetCullProxy() );
 
 #ifdef MF_ENABLE_HACKOFF
     //WHITE
@@ -4920,12 +4735,12 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
 void plDXPipeline::PushRenderRequest(plRenderRequest* req)
 {
     // Save these, since we want to copy them to our current view
-    hsMatrix44 l2w = fView.fLocalToWorld;
-    hsMatrix44 w2l = fView.fWorldToLocal;
+    hsMatrix44 l2w = fView.GetLocalToWorld();
+    hsMatrix44 w2l = fView.GetWorldToLocal();
 
-    plFogEnvironment defFog = fView.fDefaultFog;
+    plFogEnvironment defFog = fView.GetDefaultFog();
 
-    fSettings.fViewStack.Push(fView);
+    fViewStack.push(fView);
 
     SetViewTransform(req->GetViewTransform());
 
@@ -4938,16 +4753,17 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
     SetDrawableTypeMask(req->GetDrawableMask());
     SetSubDrawableTypeMask(req->GetSubDrawableMask());
 
-    fView.fClearColor = inlGetD3DColor( req->GetClearColor() );
-    fView.fClearDepth = req->GetClearDepth();
+    float depth = req->GetClearDepth();
+    fView.SetClear(&req->GetClearColor(), &depth);
 
     if( req->GetFogStart() < 0 )
     {
-        fView.fDefaultFog = defFog;
+        fView.SetDefaultFog(defFog);
     }
     else
     {
-        fView.fDefaultFog.Set( req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
+        defFog.Set(req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
+        fView.SetDefaultFog(defFog);
         fCurrFog.fEnvPtr = nil;
     }
 
@@ -4955,13 +4771,13 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
         PushOverrideMaterial(req->GetOverrideMat());
 
     // Set from our saved ones...
-    fView.fWorldToLocal = w2l;
-    fView.fLocalToWorld = l2w;
+    fView.SetWorldToLocal(w2l);
+    fView.SetLocalToWorld(l2w);
 
     RefreshMatrices();
 
     if (req->GetIgnoreOccluders())
-        fView.fCullMaxNodes = 0;
+        fView.SetMaxCullNodes(0);
 
     fView.fCullTreeDirty = true;
 }
@@ -4974,7 +4790,8 @@ void plDXPipeline::PopRenderRequest(plRenderRequest* req)
         PopOverrideMaterial(nil);
 
     hsRefCnt_SafeUnRef(fView.fRenderRequest);
-    fView = fSettings.fViewStack.Pop();
+    fView = fViewStack.top();
+    fViewStack.pop();
 
     // Force the next thing drawn to update the fog settings.
     fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -5122,36 +4939,6 @@ void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
     ISetViewport();
 }
 
-// SetClear /////////////////////////////////////////////////////////////////////
-// Set the color and depth clear values.
-void plDXPipeline::SetClear(const hsColorRGBA* col, const float* depth)
-{
-    // dpogue -- Done
-    // fView.SetClear(col, depth)
-    if( col )
-        fView.fClearColor = inlGetD3DColor(*col);
-    if( depth )
-        fView.fClearDepth = *depth;
-}
-
-// GetClearColor ////////////////////////////////////////////////////////////////
-// Return the current clear color.
-hsColorRGBA plDXPipeline::GetClearColor() const
-{
-    // dpogue -- Done
-    // fView.GetClearColor()
-    return hsColorRGBA().FromARGB32(fView.fClearColor);
-}
-
-// GetClearDepth ////////////////////////////////////////////////////////////////
-// Return the current clear depth.
-float plDXPipeline::GetClearDepth() const
-{
-    // dpogue -- Done
-    // fView.GetClearDepth()
-    return fView.fClearDepth;
-}
-
 //// ClearRenderTarget ////////////////////////////////////////////////////////
 // Clear the current color and depth buffers. If a drawable is passed in, then
 // the color buffer will be cleared by rendering that drawable.
@@ -5175,26 +4962,26 @@ void plDXPipeline::ClearRenderTarget( plDrawable* d )
 
         if( useRect )
         {
-            WEAK_ERROR_CHECK( fD3DDevice->Clear( 1, &r, D3DCLEAR_ZBUFFER, 0, fView.fClearDepth, 0L ) );
+            WEAK_ERROR_CHECK( fD3DDevice->Clear( 1, &r, D3DCLEAR_ZBUFFER, 0, fView.GetClearDepth(), 0L ) );
         }
         else
         {
-            WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER, 0, fView.fClearDepth, 0L ) );
+            WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER, 0, fView.GetClearDepth(), 0L ) );
 // debug, clears to red         WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, 0xffff0000, fView.fClearDepth, 0L ) );
         }
     }
 
     uint32_t s = fView.fRenderState;
-    uint32_t dtm = fView.fDrawableTypeMask;
-    uint32_t sdtm = fView.fSubDrawableTypeMask;
+    uint32_t dtm = fView.GetDrawableTypeMask();
+    uint32_t sdtm = fView.GetSubDrawableTypeMask();
     
-    fView.fDrawableTypeMask = plDrawable::kNormal;
-    fView.fSubDrawableTypeMask = uint32_t(-1);
+    fView.SetDrawableTypeMask(plDrawable::kNormal);
+    fView.SetSubDrawableTypeMask(uint32_t(-1));
 
     Draw(d);
 
-    fView.fSubDrawableTypeMask = sdtm;
-    fView.fDrawableTypeMask = dtm;
+    fView.SetSubDrawableTypeMask(sdtm);
+    fView.SetDrawableTypeMask(dtm);
     fView.fRenderState = s;
 
 }
@@ -5230,7 +5017,7 @@ void    plDXPipeline::ClearRenderTarget( const hsColorRGBA *col, const float* de
     if( fView.fRenderState & (kRenderClearColor | kRenderClearDepth) )
     {
         DWORD clearColor = inlGetD3DColor(col ? *col : GetClearColor());
-        float clearDepth = depth ? *depth : fView.fClearDepth;
+        float clearDepth = depth ? *depth : fView.GetClearDepth();
 
         DWORD   dwFlags = 0;//fStencil.fDepth > 0 ? D3DCLEAR_STENCIL : 0;
         if( fView.fRenderState & kRenderClearColor )
@@ -5312,7 +5099,7 @@ void plDXPipeline::ISetFogParameters(const plSpan* span, const plLayerInterface*
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-    plFogEnvironment* fog = (span ? (span->fFogEnvironment ? span->fFogEnvironment : &fView.fDefaultFog) : nil);
+    const plFogEnvironment* fog = (span ? (span->fFogEnvironment ? span->fFogEnvironment : &fView.GetDefaultFog()) : nil);
 
     uint8_t isVertex = 0;
     uint8_t isShader = false;
@@ -9010,139 +8797,6 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 //// View Stuff ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-
-//// TestVisibleWorld /////////////////////////////////////////////////////////
-// Check if the world space bounds are visible within the current view frustum.
-bool plDXPipeline::TestVisibleWorld( const hsBounds3Ext& wBnd )
-{
-    // dpogue -- Done
-    // fView.TestVisibleWorld(wBnd)
-
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-    if (wBnd.GetType() == kBoundsNormal)
-        return fView.fCullTree.BoundsVisible(wBnd);
-    else
-        return false;
-}
-
-bool plDXPipeline::TestVisibleWorld( const plSceneObject* sObj )
-{
-    // dpogue -- Done
-    const plDrawInterface* di = sObj->GetDrawInterface();
-    if( !di )
-        return false;
-
-    const int numDraw = di->GetNumDrawables();
-    int i;
-    for( i = 0; i < numDraw; i++ )
-    {
-        plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(i));
-        if( !dr )
-            continue;
-
-        plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(i));
-        if( diIndex.IsMatrixOnly() )
-            continue;
-
-        const int numSpan = diIndex.GetCount();
-        int j;
-        for( j = 0; j < numSpan; j++ )
-        {
-            const plSpan* span = dr->GetSpan(diIndex[j]);
-
-            if( span->fProps & plSpan::kPropNoDraw )
-                continue;
-
-            if( !span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisSet())
-                || span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisNot()) )
-
-                continue;
-
-            if( !TestVisibleWorld(span->fWorldBounds) )
-                continue;
-
-            return true;
-        }
-    }
-    return false;
-}
-
-//// GetViewAxesWorld /////////////////////////////////////////////////////////
-// Get the current view direction, up and direction X up.
-void    plDXPipeline::GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const
-{
-    // dpogue -- Done
-    axes[ 0 ] = GetViewAcrossWorld();
-    axes[ 1 ] = GetViewUpWorld();
-    axes[ 2 ] = GetViewDirWorld();
-}
-
-//// GetFOV ///////////////////////////////////////////////////////////////////
-// Get the current FOV in degrees.
-void    plDXPipeline::GetFOV(float& fovX, float& fovY) const
-{
-    // dpogue -- Done
-    fovX = GetViewTransform().GetFovXDeg();
-    fovY = GetViewTransform().GetFovYDeg();
-}
-
-//// SetFOV ///////////////////////////////////////////////////////////////////
-// Set the current FOV in degrees. Forces perspective rendering to be true.
-void    plDXPipeline::SetFOV( float fovX, float fovY )
-{
-    IGetViewTransform().SetFovDeg(fovX, fovY);
-    IGetViewTransform().SetPerspective(true);
-}
-
-// Get the orthogonal projection view size in world units (e.g. feet).
-void    plDXPipeline::GetSize( float& width, float& height ) const
-{
-    // dpogue -- Done
-    width = GetViewTransform().GetScreenWidth();
-    height = GetViewTransform().GetScreenHeight();
-}
-
-// Set the orthogonal projection view size in world units (e.g. feet).
-// Forces projection to orthogonal if it wasn't.
-void    plDXPipeline::SetSize( float width, float height )
-{
-    IGetViewTransform().SetWidth(width);
-    IGetViewTransform().SetHeight(height);
-    IGetViewTransform().SetOrthogonal(true);
-}
-
-//// GetDepth /////////////////////////////////////////////////////////////////
-// Get the current hither and yon.
-void plDXPipeline::GetDepth(float& hither, float& yon) const
-{
-    // dpogue -- Done
-    GetViewTransform().GetDepth(hither, yon);
-}
-
-//// SetDepth /////////////////////////////////////////////////////////////////
-// Set the current hither and yon.
-void plDXPipeline::SetDepth(float hither, float yon)
-{
-    IGetViewTransform().SetDepth(hither, yon);
-}
-
-//// GetWorldToCamera /////////////////////////////////////////////////////////
-// Return current world to camera transform.
-const hsMatrix44& plDXPipeline::GetWorldToCamera() const
-{
-    // dpogue -- Done
-    return fView.GetWorldToCamera();
-}
-
-//// GetCameraToWorld /////////////////////////////////////////////////////////
-// Return current camera to world transform.
-const hsMatrix44& plDXPipeline::GetCameraToWorld() const
-{
-    // dpogue -- Done
-    return fView.GetCameraToWorld();
-}
-
 // IUpdateViewFlags /////////////////////////////////////////////////////////
 // Dirty anything cached dependent on the current camera matrix.
 void plDXPipeline::IUpdateViewFlags()
@@ -9183,34 +8837,15 @@ void plDXPipeline::IWorldToCameraToD3D()
 // Set plViewTransform.h
 void plDXPipeline::SetViewTransform(const plViewTransform& v)
 {
-    fView.fTransform = v;
+    fView.SetViewTransform(v);
 
     if( !v.GetScreenWidth() || !v.GetScreenHeight() )
     {
-        fView.fTransform.SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
+        fView.GetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
     }
 
     IUpdateViewFlags();
     IWorldToCameraToD3D();
-}
-
-//// GetWorldToLocal //////////////////////////////////////////////////////////
-// Return current World to Local transform. Note that this is only meaningful while an
-// object is being rendered, so this function is pretty worthless.
-const hsMatrix44& plDXPipeline::GetWorldToLocal() const
-{
-    // dpogue -- Done
-    return fView.fWorldToLocal;
-}
-
-//// GetLocalToWorld //////////////////////////////////////////////////////////
-// Return current Local to World transform. Note that this is only meaningful while an
-// object is being rendered, so this function is pretty worthless.
-
-const hsMatrix44& plDXPipeline::GetLocalToWorld() const
-{
-    // dpogue -- Done
-    return fView.fLocalToWorld;
 }
 
 //// ISetLocalToWorld /////////////////////////////////////////////////////////
@@ -9219,13 +8854,13 @@ const hsMatrix44& plDXPipeline::GetLocalToWorld() const
 void    plDXPipeline::ISetLocalToWorld( const hsMatrix44& l2w, const hsMatrix44& w2l )
 {
     
-    fView.fLocalToWorld = l2w;
-    fView.fWorldToLocal = w2l;
+    fView.SetLocalToWorld(l2w);
+    fView.SetWorldToLocal(w2l);
 
     fView.fViewVectorsDirty = true;
 
     // We keep track of parity for winding order culling.
-    fView.fLocalToWorldLeftHanded = fView.fLocalToWorld.GetParity();
+    fView.fLocalToWorldLeftHanded = fView.GetLocalToWorld().GetParity();
 
     ILocalToWorldToD3D();
 }
@@ -9236,11 +8871,11 @@ void plDXPipeline::ILocalToWorldToD3D()
 {
     D3DXMATRIX  mat;
 
-    if( fView.fLocalToWorld.fFlags & hsMatrix44::kIsIdent )
+    if( fView.GetLocalToWorld().fFlags & hsMatrix44::kIsIdent )
         fD3DDevice->SetTransform( D3DTS_WORLD, &d3dIdentityMatrix );
     else
     {
-        IMatrix44ToD3DMatrix( mat, fView.fLocalToWorld );
+        IMatrix44ToD3DMatrix( mat, fView.GetLocalToWorld() );
         fD3DDevice->SetTransform( D3DTS_WORLD, &mat );
     }
 
@@ -9253,7 +8888,7 @@ void plDXPipeline::ILocalToWorldToD3D()
 
 bool  plDXPipeline::IIsViewLeftHanded()
 {
-    return fView.fTransform.GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
+    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
 }
 
 //// ScreenToWorldPoint ///////////////////////////////////////////////////////
@@ -9276,57 +8911,7 @@ void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX,
 void plDXPipeline::IRefreshCullTree()
 {
     // dpogue -- Done
-    // fView.RefreshCullTree()
-    if( fView.fCullTreeDirty )
-    {
-        plProfile_BeginTiming(DrawOccBuild);
-
-        fView.fCullTree.Reset();
-
-        fView.fCullTree.SetViewPos(GetViewPositionWorld());
-
-        if (fCullProxy && !IsDebugFlagSet(plPipeDbg::kFlagOcclusionSnap))
-        {
-            fCullProxy->GetKey()->UnRefObject();
-            fCullProxy = nil;
-            SetDrawableTypeMask(GetDrawableTypeMask() & ~plDrawable::kOccSnapProxy);
-        }
-        bool doCullSnap = IsDebugFlagSet(plPipeDbg::kFlagOcclusionSnap)&& !fCullProxy && !fSettings.fViewStack.GetCount();
-        if( doCullSnap )
-        {
-            fView.fCullTree.BeginCapturePolys();
-            fView.fCullTree.SetVisualizationYon(GetViewTransform().GetYon());
-        }
-        fView.fCullTree.InitFrustum(GetViewTransform().GetWorldToNDC());
-        fView.fCullTreeDirty = false;
-
-        if( fView.fCullMaxNodes )
-        {
-            int i;
-            for( i = 0; i < fCullPolys.GetCount(); i++ )
-            {
-                fView.fCullTree.AddPoly(*fCullPolys[i]);
-                if( fView.fCullTree.GetNumNodes() >= fView.fCullMaxNodes )
-                    break;
-            }
-            fCullPolys.SetCount(0);
-            plProfile_Set(OccPolyUsed, i);
-
-            for( i = 0; i < fCullHoles.GetCount(); i++ )
-            {
-                fView.fCullTree.AddPoly(*fCullHoles[i]);
-            }
-            fCullHoles.SetCount(0);
-            plProfile_Set(OccNodeUsed, fView.fCullTree.GetNumNodes());
-        }
-        if( doCullSnap )
-        {
-            fView.fCullTree.EndCapturePolys();
-            IMakeOcclusionSnap();
-        }
-
-        plProfile_EndTiming(DrawOccBuild);
-    }
+    fView.RefreshCullTree();
 }
 
 // IMakeOcclusionSnap /////////////////////////////////////////////////////////////////////
@@ -9335,75 +8920,7 @@ void plDXPipeline::IRefreshCullTree()
 void plDXPipeline::IMakeOcclusionSnap()
 {
     // dpogue -- Done
-    // fView.MakeOcclusionSnap()
-    hsTArray<hsPoint3>& pos = fView.fCullTree.GetCaptureVerts();
-    hsTArray<hsVector3>& norm = fView.fCullTree.GetCaptureNorms();
-    hsTArray<hsColorRGBA>& color = fView.fCullTree.GetCaptureColors();
-    hsTArray<uint16_t>& tris = fView.fCullTree.GetCaptureTris();
-
-    if( tris.GetCount() )
-    {
-        hsMatrix44 ident;
-        ident.Reset();
-
-        hsGMaterial* mat = new hsGMaterial;
-        hsgResMgr::ResMgr()->NewKey( "OcclusionSnapMat", mat, plLocation::kGlobalFixedLoc );
-        plLayer *lay = mat->MakeBaseLayer();
-        lay->SetZFlags(hsGMatState::kZNoZWrite);
-        lay->SetPreshadeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));
-        lay->SetRuntimeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));
-        lay->SetAmbientColor(hsColorRGBA().Set(0,0,0,1.f));
-        lay->SetOpacity(0.5f);
-        lay->SetBlendFlags(lay->GetBlendFlags() | hsGMatState::kBlendAlpha);
-
-        fCullProxy = plDrawableGenerator::GenerateDrawable(pos.GetCount(), 
-                                            pos.AcquireArray(),
-                                            norm.AcquireArray(),
-                                            nil,
-                                            0,
-                                            color.AcquireArray(),
-                                            true,
-                                            nil,
-                                            tris.GetCount(),
-                                            tris.AcquireArray(),
-                                            mat,
-                                            ident,
-                                            true,
-                                            nil,
-                                            nil);
-
-        if( fCullProxy )
-        {
-            fCullProxy->GetKey()->RefObject();
-            fCullProxy->SetType(plDrawable::kOccSnapProxy);
-
-            SetDrawableTypeMask(GetDrawableTypeMask() | plDrawable::kOccSnapProxy);
-            
-            fCullProxy->PrepForRender(this);
-        }
-    }
-    fView.fCullTree.ReleaseCapture();
-}
-
-// SubmitOccluders /////////////////////////////////////////////////////////////
-// Add the input polys into the list of polys from which to generate the cull tree.
-bool plDXPipeline::SubmitOccluders(const hsTArray<const plCullPoly*>& polyList)
-{
-    // dpogue -- Done
-    // fView.SubmitOccluders(polyList)
-    fCullPolys.SetCount(0);
-    fCullHoles.SetCount(0);
-    int i;
-    for( i = 0; i < polyList.GetCount(); i++ )
-    {
-        if( polyList[i]->IsHole() )
-            fCullHoles.Append(polyList[i]);
-        else
-            fCullPolys.Append(polyList[i]);
-    }
-    fView.fCullTreeDirty = true;
-
-    return true;
+    fView.MakeOcclusionSnap();
 }
 
 //// RefreshScreenMatrices ////////////////////////////////////////////////////
@@ -9455,27 +8972,6 @@ void plDXPipeline::PopOverrideMaterial( hsGMaterial *restore )
     {
         fForceMatHandle = true;
     }
-}
-
-//// GetOverrideMaterial //////////////////////////////////////////////////////
-// Return the current override material, or nil if there isn't any.
-hsGMaterial *plDXPipeline::GetOverrideMaterial() const
-{
-    return fOverrideMat.GetCount() ? fOverrideMat.Peek() : nil;
-}
-
-//// GetMaterialOverrideOn ////////////////////////////////////////////////////
-// Return the current bits set to be always on for the given category (e.g. ZFlags).
-uint32_t  plDXPipeline::GetMaterialOverrideOn( hsGMatState::StateIdx category ) const
-{
-    return fMatOverOn.Value(category);
-}
-
-//// GetMaterialOverrideOff ///////////////////////////////////////////////////
-// Return the current bits set to be always off for the given category (e.g. ZFlags).
-uint32_t  plDXPipeline::GetMaterialOverrideOff( hsGMatState::StateIdx category ) const
-{
-    return fMatOverOff.Value(category);
 }
 
 //// PushMaterialOverride /////////////////////////////////////////////////////
@@ -12818,8 +12314,8 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     fLayerState[0].fShadeFlags &= ~hsGMatState::kShadeSpecular;
 
     // Push the shadow slave's view transform as our current render state.
-    fSettings.fViewStack.Push(fView);
-    fView.fCullMaxNodes = 0;
+    fViewStack.push(fView);
+    fView.SetMaxCullNodes(0);
     SetViewTransform(slave->fView);
     IProjectionMatrixToD3D();
 
@@ -12950,7 +12446,7 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     }
 
     // Bring the viewport in (AFTER THE CLEAR) to protect the alpha boundary.
-    fView.fTransform.SetViewPort(1, 1, (float)(slave->fWidth-2), (float)(slave->fHeight-2), false);
+    fView.GetViewTransform().SetViewPort(1, 1, (float)(slave->fWidth-2), (float)(slave->fHeight-2), false);
     ISetViewport();
 
     inlEnsureLightingOff();
@@ -13053,7 +12549,8 @@ plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
 // a different shadow caster, or go on to our main render.
 bool plDXPipeline::IPopShadowCastState(plShadowSlave* slave)
 {
-    fView = fSettings.fViewStack.Pop();
+    fView = fViewStack.top();
+    fViewStack.pop();
 
     PopRenderTarget();
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;

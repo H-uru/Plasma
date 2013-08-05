@@ -104,6 +104,23 @@ void plPipelineViewSettings::Reset(pl3DPipeline* pipeline)
     fWorldToCamLeftHanded = false;
 }
 
+void plPipelineViewSettings::SetDepth(float hither, float yon) {
+    fTransform.SetDepth(hither, yon);
+}
+
+
+void plPipelineViewSettings::SetFOV(float fovX, float fovY) {
+    fTransform.SetFovDeg(fovX, fovY);
+    fTransform.SetPerspective(true);
+}
+
+
+void plPipelineViewSettings::SetSize(float width, float height) {
+    fTransform.SetWidth(width);
+    fTransform.SetHeight(height);
+    fTransform.SetOrthogonal(true);
+}
+
 
 void plPipelineViewSettings::SetClear(const hsColorRGBA* col, const float* depth)
 {

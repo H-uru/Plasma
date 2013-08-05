@@ -128,7 +128,7 @@ void    plFogEnvironment::SetExp( FogType type, float end, float density, const 
 //  Gets the parameters. Sets start to 0 if the type is not linear (can be
 //  nil).
 
-void    plFogEnvironment::GetParameters( float *start, float *end, float *density, hsColorRGBA *color )
+void    plFogEnvironment::GetParameters( float *start, float *end, float *density, hsColorRGBA *color ) const
 {
     hsAssert( fType != kLinearFog || start != nil, "Trying to get non-linear paramters on linear fog!" );
     hsAssert( end != nil && density != nil && color != nil, "Bad pointer to plFogEnvironment::GetParameters()" );
@@ -149,7 +149,7 @@ void    plFogEnvironment::GetParameters( float *start, float *end, float *densit
 //  scale our end value out by the density. The whole formula is:
 //      pipelineEnd = ( end - start ) / density + start
 
-void    plFogEnvironment::GetPipelineParams( float *start, float *end, hsColorRGBA *color )
+void    plFogEnvironment::GetPipelineParams( float *start, float *end, hsColorRGBA *color ) const
 {
 //  hsAssert( fType == kLinearFog, "Getting linear pipeline params on non-linear fog!" );
 
@@ -184,7 +184,7 @@ void    plFogEnvironment::GetPipelineParams( float *start, float *end, hsColorRG
 //  to modulate the density by the end value so that it actually ends at the
 //  right spot. 
 
-void    plFogEnvironment::GetPipelineParams( float *density, hsColorRGBA *color )
+void    plFogEnvironment::GetPipelineParams( float *density, hsColorRGBA *color ) const
 {
     const float ln256       = logf( 256.f );
     const float sqrtLn256   = sqrtf( ln256 );

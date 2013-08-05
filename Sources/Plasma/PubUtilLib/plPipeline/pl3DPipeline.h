@@ -208,20 +208,26 @@ public:
         fovY = GetViewTransform().GetFovYDeg();
     }
 
-    //virtual void SetFOV(float fovX, float fovY) = 0;
+    virtual void SetFOV(float fovX, float fovY) {
+        fView.SetFOV(fovX, fovY);
+    }
 
     virtual void GetSize(float& width, float& height) const {
         width = GetViewTransform().GetScreenWidth();
         height = GetViewTransform().GetScreenHeight();
     }
 
-    //virtual void SetSize(float width, float height) = 0;
+    virtual void SetSize(float width, float height) {
+        fView.SetSize(width, height);
+    }
 
     virtual void GetDepth(float& hither, float& yon) const {
         GetViewTransform().GetDepth(hither, yon);
     }
 
-    //virtual void SetDepth(float hither, float yon) = 0;
+    virtual void SetDepth(float hither, float yon) {
+        fView.SetDepth(hither, yon);
+    }
 
     //virtual void SetZBiasScale(float scale) = 0;
     //virtual float GetZBiasScale() const = 0;
@@ -245,7 +251,7 @@ public:
     }
 
     virtual const plViewTransform& GetViewTransform() const {
-        return fView.GetViewTransform();
+        return fView.GetConstViewTransform();
     }
 
     //virtual void ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut) = 0;

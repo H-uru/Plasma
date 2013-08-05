@@ -79,22 +79,22 @@ protected:
 
     plViewTransform             fTransform;
 
-    hsMatrix44              fLocalToWorld;
-    hsMatrix44              fWorldToLocal;
+    hsMatrix44                  fLocalToWorld;
+    hsMatrix44                  fWorldToLocal;
 
     // Occluder & Culling stuff
     hsTArray<const plCullPoly*> fCullPolys;
     hsTArray<const plCullPoly*> fCullHoles;
+    plCullTree                  fCullTree;
     plDrawableSpans*            fCullProxy;
 
-    uint16_t                fMaxCullNodes;
+    uint16_t                    fMaxCullNodes;
 
 public:
     uint32_t                fRenderState;
 
     plRenderRequest*        fRenderRequest;
 
-    plCullTree              fCullTree;
     bool                    fCullTreeDirty;
 
     enum XformResets
@@ -115,6 +115,9 @@ public:
     const hsMatrix44&       GetLocalToWorld() const { return fLocalToWorld; }
     const hsMatrix44&       GetWorldToLocal() const { return fWorldToLocal; }
 
+    void                    SetLocalToWorld(const hsMatrix44& l2w) { fLocalToWorld = l2w; }
+    void                    SetWorldToLocal(const hsMatrix44& w2l) { fWorldToLocal = w2l; }
+
     const hsMatrix44&       GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
     const hsMatrix44&       GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
     bool                    IsPerspective() const { return fTransform.GetPerspective(); }
@@ -131,11 +134,14 @@ public:
     void                    SetMaxCullNodes(uint16_t max) { fMaxCullNodes = max; }
 
     const plFogEnvironment& GetDefaultFog() const { return fDefaultFog; }
+    void                    SetDefaultFog(const plFogEnvironment& fog) { fDefaultFog = fog; }
 
     hsColorRGBA             GetClearColor() const { return fClearColor; }
     float                   GetClearDepth() const { return fClearDepth; }
 
-    const plViewTransform&  GetViewTransform() const { return fTransform; }
+    const plViewTransform&  GetConstViewTransform() const { return fTransform; }
+    plViewTransform&        GetViewTransform() { return fTransform; }
+    void                    SetViewTransform(const plViewTransform& vt) { fTransform = vt; }
 
     uint32_t                GetDrawableTypeMask() const { return fDrawableTypeMask; }
     void                    SetDrawableTypeMask(uint32_t mask) { fDrawableTypeMask = mask; }
@@ -147,6 +153,20 @@ public:
     /** Initialize the ViewSettings to default (normal/neutral) values. */
     void    Reset(pl3DPipeline* pipeline);
 
+    /** Set the current hither and yon. */
+    void    SetDepth(float hither, float yon);
+
+    /**
+     * Set the current FOV in degrees. Forces perspective rendering to be
+     * true.
+     */
+    void    SetFOV(float fovX, float fovY);
+
+    /**
+     * Set the orthogonal projection view size in world units (e.g. feet).
+     * Forces projection to orthogonal if it wasn't.
+     */
+    void    SetSize(float width, float height);
 
     /** Set the color and depth clear values. */
     void    SetClear(const hsColorRGBA* col=nullptr, const float* depth=nullptr);

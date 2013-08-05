@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plDX9Pipeline_h
 #define _plDX9Pipeline_h
 
-#include "plPipeline.h"
+#include "plPipeline/pl3DPipeline.h"
 #include "plDXSettings.h"
 
 #include "plSurface/plLayerInterface.h"
@@ -172,7 +172,7 @@ class plCubicEnvironmap;
 class plDXRenderTargetRef;
 class plStatusLogDrawer;
 
-class plDXPipeline : public plPipeline
+class plDXPipeline : public pl3DPipeline
 {
 protected:
     enum {
@@ -231,10 +231,6 @@ protected:
     bool                    fDeviceLost;
     bool                    fDevWasLost;
 
-    hsTArray<const plCullPoly*> fCullPolys;
-    hsTArray<const plCullPoly*> fCullHoles;
-    plDrawableSpans*            fCullProxy;
-    
     plDXVertexBufferRef*    fVtxBuffRefList;
     plDXIndexBufferRef*     fIdxBuffRefList;
     plDXTextureRef*         fTextureRefList;
@@ -249,10 +245,6 @@ protected:
     uint32_t                  fCurrLightingMethod;    // Based on plSpan flags
 
     D3DCULL                 fCurrCullMode;
-    hsGMatState                 fMatOverOn;
-    hsGMatState                 fMatOverOff;
-    hsTArray<hsGMaterial*>      fOverrideMat;
-    hsGMaterial*                fHoldMat;
     bool                        fCurrD3DLiteState;
 
     hsMatrix44                  fBumpDuMatrix;
@@ -296,10 +288,6 @@ protected:
     uint32_t          fFrame;             // inc'd every time the camera moves.
     uint32_t          fRenderCnt;         // inc'd every begin scene.
 
-    // View stuff
-    plDXViewSettings            fView;
-
-    hsBitVector     fDebugFlags;
     uint32_t          fDebugSpanGraphY;
 
     // Fog
@@ -524,7 +512,7 @@ protected:
     void            ISetCullMode(bool flip=false);
     bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);
-    plViewTransform& IGetViewTransform() { return fView.fTransform; }
+    plViewTransform& IGetViewTransform() { return fView.GetViewTransform(); }
     void            IUpdateViewFlags();
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 
@@ -610,7 +598,7 @@ public:
     virtual ~plDXPipeline();
 
     CLASSNAME_REGISTER( plDXPipeline );
-    GETINTERFACE_ANY( plDXPipeline, plPipeline );
+    GETINTERFACE_ANY( plDXPipeline, pl3DPipeline );
 
     virtual IDirect3DDevice9*           GetD3DDevice() const { return fD3DDevice; }
 
@@ -627,9 +615,6 @@ public:
 
     virtual void                        ClearRenderTarget( plDrawable* d );
     virtual void                        ClearRenderTarget( const hsColorRGBA* col = nil, const float* depth = nil );
-    virtual void                        SetClear(const hsColorRGBA* col=nil, const float* depth=nil);
-    virtual hsColorRGBA                 GetClearColor() const;
-    virtual float                    GetClearDepth() const;
     virtual hsGDeviceRef*               MakeRenderTargetRef( plRenderTarget *owner );
     virtual hsGDeviceRef*               SharedRenderTargetRef(plRenderTarget* sharer, plRenderTarget *owner);
     virtual void                        PushRenderTarget( plRenderTarget *target );
@@ -643,24 +628,8 @@ public:
     virtual void                        EndVisMgr(plVisMgr* visMgr);
 
     virtual bool                        IsFullScreen() const { return fSettings.fFullscreen; }
-    virtual uint32_t                      Width() const { return fView.fTransform.GetViewPortWidth(); }
-    virtual uint32_t                      Height() const { return fView.fTransform.GetViewPortHeight(); }
     virtual uint32_t                      ColorDepth() const { return fSettings.fColorDepth; }
     virtual void                        Resize( uint32_t width, uint32_t height );
-
-    // Culling. Might be used in Update before bothering to do any serious computation.
-    virtual bool                        TestVisibleWorld(const hsBounds3Ext& wBnd);
-    virtual bool                        TestVisibleWorld(const plSceneObject* sObj);
-    virtual bool                        HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList);
-    virtual bool                        SubmitOccluders(const hsTArray<const plCullPoly*>& polyList);
-
-    // Debug flags
-    virtual void                        SetDebugFlag( uint32_t flag, bool on );
-    virtual bool                        IsDebugFlagSet( uint32_t flag ) const;
-
-    // These are also only for debugging.
-    virtual void                        SetMaxCullNodes(uint16_t n) { fView.fCullMaxNodes = n; }
-    virtual uint16_t                      GetMaxCullNodes() const { return fView.fCullMaxNodes; }
 
     virtual bool                        CheckResources();
     virtual void                        LoadResources();    // Tells us where it's a good time to load in unmanaged resources.
@@ -670,12 +639,6 @@ public:
     virtual bool                        GetProperty( uint32_t prop ) const { return ( fSettings.fProperties & prop ) ? true : false; }
 
     virtual uint32_t                      GetMaxLayersAtOnce() const { return fSettings.fMaxLayersAtOnce; }
-
-    // Drawable type mask
-    virtual void                        SetDrawableTypeMask( uint32_t mask ) { fView.fDrawableTypeMask = mask; }
-    virtual uint32_t                      GetDrawableTypeMask() const { return fView.fDrawableTypeMask; }
-    virtual void                        SetSubDrawableTypeMask( uint32_t mask ) { fView.fSubDrawableTypeMask = mask; }
-    virtual uint32_t                      GetSubDrawableTypeMask() const { return fView.fSubDrawableTypeMask; }
 
     // Create a debug text font object
     virtual plTextFont      *MakeTextFont( char *face, uint16_t size );
@@ -701,37 +664,14 @@ public:
     static short    GetDXBitDepth( D3DFORMAT format );
 
     // Default fog settings
-    virtual void                        SetDefaultFogEnviron( plFogEnvironment *fog ) { fView.fDefaultFog = *fog; fCurrFog.fEnvPtr = nil; }
-    virtual const plFogEnvironment      &GetDefaultFogEnviron() const { return fView.fDefaultFog; }
-
-    // View state
-    virtual hsPoint3                    GetViewPositionWorld() const { return GetViewTransform().GetPosition(); }
-    virtual hsVector3                   GetViewAcrossWorld() const { return GetViewTransform().GetAcross(); }
-    virtual hsVector3                   GetViewUpWorld() const { return GetViewTransform().GetUp(); }
-    virtual hsVector3                   GetViewDirWorld() const { return GetViewTransform().GetDirection(); }
-    virtual void                        GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const;
-
-    virtual void                        GetFOV(float& fovX, float& fovY) const;
-    virtual void                        SetFOV(float fovX, float fovY);
-
-    virtual void                        GetSize(float& width, float& height) const;
-    virtual void                        SetSize(float width, float height);
-
-    virtual void                        GetDepth(float& hither, float& yon) const;
-    virtual void                        SetDepth(float hither, float yon);
+    virtual void                        SetDefaultFogEnviron( plFogEnvironment *fog ) { fView.SetDefaultFog(*fog); fCurrFog.fEnvPtr = nil; }
 
     virtual float                       GetZBiasScale() const;
     virtual void                        SetZBiasScale(float scale);
 
-    virtual const hsMatrix44&           GetWorldToCamera() const;
-    virtual const hsMatrix44&           GetCameraToWorld() const;
     virtual void                        SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w);
 
     virtual void                        SetViewTransform(const plViewTransform& trans);
-    virtual const plViewTransform&      GetViewTransform() const { return fView.fTransform; }
-
-    virtual const hsMatrix44&           GetWorldToLocal() const;
-    virtual const hsMatrix44&           GetLocalToWorld() const;
 
     virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
                                                     float dist, uint32_t strideOut, hsPoint3 *worldOut );
@@ -745,7 +685,6 @@ public:
     // Overrides, always push returns whatever is necessary to restore on pop.
     virtual hsGMaterial*                PushOverrideMaterial(hsGMaterial* mat);
     virtual void                        PopOverrideMaterial(hsGMaterial* restore);
-    virtual hsGMaterial*                GetOverrideMaterial() const;
 
     virtual plLayerInterface*           AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false);
     virtual plLayerInterface*           RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false);
@@ -753,13 +692,9 @@ public:
     virtual plLayerInterface*           PushPiggyBackLayer(plLayerInterface* li);
     virtual plLayerInterface*           PopPiggyBackLayer(plLayerInterface* li);
 
-    virtual uint32_t                      GetMaterialOverrideOn(hsGMatState::StateIdx category) const;
-    virtual uint32_t                      GetMaterialOverrideOff(hsGMatState::StateIdx category) const;
-
     virtual hsGMatState                 PushMaterialOverride(const hsGMatState& state, bool on);
     virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on);
     virtual void                        PopMaterialOverride(const hsGMatState& restore, bool on);
-    virtual const hsGMatState&          GetMaterialOverride(bool on) const;
 
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);

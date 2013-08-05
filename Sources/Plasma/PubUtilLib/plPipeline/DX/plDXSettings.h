@@ -74,60 +74,6 @@ class plDXDeviceRef;
 class plDXVertexBufferRef;
 class plDXIndexBufferRef;
 
-class plDXViewSettings
-{
-public:
-    uint32_t                  fRenderState;
-
-    plRenderRequest*        fRenderRequest;
-
-    uint32_t                  fDrawableTypeMask;
-    uint32_t                  fSubDrawableTypeMask;
-
-    DWORD                   fClearColor;
-    float                   fClearDepth;
-
-    plFogEnvironment        fDefaultFog;
-
-    plCullTree              fCullTree;
-    bool                    fCullTreeDirty;
-    uint16_t                  fCullMaxNodes;
-
-    enum XformResets
-    {
-        kResetProjection    = 0x01,
-        kResetCamera        = 0x02,
-        kResetL2W           = 0x04,
-
-        kResetAll           = 0x07
-    };
-
-    uint8_t                   fXformResetFlags;
-    bool                    fLocalToWorldLeftHanded;
-    bool                    fWorldToCamLeftHanded;
-
-    mutable hsVector3       fDirection;
-    mutable hsVector3       fUp;
-    mutable hsVector3       fAcross;
-    hsPoint3                fWorldPos;
-
-    mutable bool            fViewVectorsDirty;
-
-    hsMatrix44              fLocalToWorld;
-    hsMatrix44              fWorldToLocal;
-
-    const hsMatrix44&       GetLocalToWorld() const { return fLocalToWorld; }
-    const hsMatrix44&       GetWorldToLocal() const { return fWorldToLocal; }
-
-    plViewTransform         fTransform;
-
-    const hsMatrix44&       GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
-    const hsMatrix44&       GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
-    bool                    IsPerspective() const { return fTransform.GetPerspective(); }
-
-    void            Reset();
-};
-
 class plDXGeneralSettings
 {
     public:
@@ -159,7 +105,6 @@ class plDXGeneralSettings
         IDirect3DSurface9       *fCurrD3DMainSurface;
         IDirect3DSurface9       *fCurrD3DDepthSurface;
 
-        hsTArray<plDXViewSettings>      fViewStack; // One for the main view, then one for each rendertarget
         hsTArray<plRenderTarget *>      fRenderTargets;
         plRenderTarget                  *fCurrRenderTarget;
         plRenderTarget                  *fCurrBaseRenderTarget;
@@ -216,7 +161,7 @@ class plDXTweakSettings
 class plDXFogSettings
 {
     public:
-        plFogEnvironment*   fEnvPtr;        // nil means no fog
+        const plFogEnvironment*   fEnvPtr;        // nil means no fog
         D3DFOGMODE          fMode;
         uint8_t               fIsVertex;
         uint8_t               fIsShader;
