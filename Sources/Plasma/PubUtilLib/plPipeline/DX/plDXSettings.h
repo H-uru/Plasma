@@ -83,12 +83,7 @@ class plDXGeneralSettings
         uint32_t                  fColorDepth;
         uint8_t                   fNumAASamples;
         uint32_t                  fD3DCaps, fBoardKluge, fStageEnd;
-        uint32_t                  fMaxNumLights;
-        uint32_t                  fMaxNumProjectors;
-        uint32_t                  fMaxLayersAtOnce;
-        uint32_t                  fMaxPiggyBacks;
         int32_t                   fBoundsDrawLevel;
-        uint32_t                  fProperties;
         DWORD                   fClearColor;
         uint8_t                   fMaxAnisotropicSamples;
         D3DPRESENT_PARAMETERS   fPresentParams;

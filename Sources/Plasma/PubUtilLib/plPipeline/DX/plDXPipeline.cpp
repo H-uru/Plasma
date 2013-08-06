@@ -787,6 +787,11 @@ void    plDXPipeline::IClearMembers()
 
     fView.Reset(this);
 
+    fMaxNumLights = kD3DMaxTotalLights;
+    fMaxNumProjectors = kMaxProjectors;
+    fMaxLayersAtOnce = 1;
+    fMaxPiggyBacks = 0;
+
     fTime = 0;
     fFrame = 0;
 
@@ -818,13 +823,8 @@ void    plDXGeneralSettings::Reset()
     fD3DCaps = 0;
     fBoardKluge = 0;
     fStageEnd = 0;
-    fMaxNumLights = kD3DMaxTotalLights;
-    fMaxNumProjectors = kMaxProjectors;
-    fMaxLayersAtOnce = 1;
-    fMaxPiggyBacks = 0;
     fBoundsDrawLevel = -1;
 
-    fProperties = 0;
     fClearColor = 0;
 
     fNoGammaCorrect = false;
@@ -1010,9 +1010,9 @@ void    plDXPipeline::ISetCaps()
         fSettings.fD3DCaps |= kCapsLuminanceTextures;
 
     /// Max # of hardware lights
-    fSettings.fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
-    if ( fSettings.fMaxNumLights > kD3DMaxTotalLights )
-        fSettings.fMaxNumLights = kD3DMaxTotalLights;
+    fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
+    if ( fMaxNumLights > kD3DMaxTotalLights )
+        fMaxNumLights = kD3DMaxTotalLights;
 
     // Intel Extreme chips report 0 lights, meaning T&L is done
     // in software, so you can have as many lights as you want.
@@ -1020,23 +1020,23 @@ void    plDXPipeline::ISetCaps()
     // since the extreme can't really afford them, and record
     // the fact this is the extreme for other driver problem
     // workarounds.
-    if ( !fSettings.fMaxNumLights )
+    if ( !fMaxNumLights )
     {
-        fSettings.fMaxNumLights = kD3DMaxTotalLights;
+        fMaxNumLights = kD3DMaxTotalLights;
         fSettings.fIsIntel = true;
         plShadowCaster::SetCanShadowCast(false);
     }
 
     /// Max # of textures at once
-    fSettings.fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
+    fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
     if ( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
-        fSettings.fMaxLayersAtOnce = 1;
+        fMaxLayersAtOnce = 1;
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
-    fSettings.fMaxPiggyBacks = fSettings.fMaxLayersAtOnce >> 1; 
+    fMaxPiggyBacks = fMaxLayersAtOnce >> 1; 
 
     // Less than 4 layers at once means we have to fallback on uv bumpmapping
-    if (fSettings.fMaxLayersAtOnce < 4)
+    if (fMaxLayersAtOnce < 4)
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
 
     fSettings.fMaxAnisotropicSamples = (uint8_t)(fCurrentDevice->fDDCaps.MaxAnisotropy);
@@ -1145,15 +1145,15 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 
     // Max # of layers
     uint32_t max = devRec.GetLayersAtOnce();
-    if( max > 0 && max < fSettings.fMaxLayersAtOnce )
-        fSettings.fMaxLayersAtOnce = max;
+    if( max > 0 && max < fMaxLayersAtOnce )
+        fMaxLayersAtOnce = max;
 
     /// Debug flag to force high-level cards down to GeForce 2 caps
     if( fDbgSetupInitFlags & 0x00000004 )
     {
         fSettings.fD3DCaps &= ~kCapsFSAntiAlias;
-        if( fSettings.fMaxLayersAtOnce > 2 )
-            fSettings.fMaxLayersAtOnce = 2;
+        if( fMaxLayersAtOnce > 2 )
+            fMaxLayersAtOnce = 2;
         fSettings.fMaxAnisotropicSamples = 0;
 
         plQuality::SetCapability(plQuality::kMinimum);
@@ -1193,7 +1193,7 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 
 
     // Less than 4 layers at once means we have to fallback on uv bumpmapping
-    if( fSettings.fMaxLayersAtOnce < 4 )
+    if( fMaxLayersAtOnce < 4 )
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
 
     if( ( fSettings.fD3DCaps & kCapsHWTransform ) && ( fCurrentMode->fDDBehavior == D3DCREATE_SOFTWARE_VERTEXPROCESSING ) )
@@ -2483,7 +2483,7 @@ bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList,
     if( ( ds->GetType() & fView.GetDrawableTypeMask() ) == 0 )
         return false;
 
-    IGetVisibleSpans( ds, visList, visMgr );
+    fView.GetVisibleSpans( ds, visList, visMgr );
 
 #if MCN_BOUNDS_SPANS
     if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowAllBounds) )
@@ -3068,16 +3068,6 @@ void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     IAttachShadowsToReceivers(drawable, visList);
 
     plProfile_EndTiming(FindLights);
-}
-
-//// IGetVisibleSpans /////////////////////////////////////////////////////
-//  Given a drawable, returns a list of visible span indices. Disabled spans will not
-//  show up in the list, behaving as if they were culled. 
-//  See plCullTree (in plPipeline) and plSpaceTree (in plDrawable) and plVisMgr (in plScene).
-void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr )
-{
-    // dpogue -- Done
-    fView.GetVisibleSpans(drawable, visList, visMgr);
 }
 
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
@@ -5403,12 +5393,12 @@ void plDXPipeline::UnRegisterLight(plLightInfo* liInfo)
 void    plDXPipeline::IEnableLights( plSpan *span )
 {
     plProfile_BeginTiming(SelectLights);
-    ISelectLights( span, fSettings.fMaxNumLights, false );
+    ISelectLights( span, fMaxNumLights, false );
     plProfile_EndTiming(SelectLights);
     if( !(fView.fRenderState & kRenderNoProjection) )
     {
         plProfile_BeginTiming(SelectProj);
-        ISelectLights( span, fSettings.fMaxNumProjectors, true );
+        ISelectLights( span, fMaxNumProjectors, true );
         plProfile_EndTiming(SelectProj);
     }
 }
@@ -6367,7 +6357,7 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
     }
 
     // More cleanup for the DX9.0c 2 texture limitation. See ILayersAtOnce()
-    if (fSettings.fMaxLayersAtOnce == 2)
+    if (fMaxLayersAtOnce == 2)
     {
         if ((fLayerState[0].fBlendFlags & hsGMatState::kBlendAdd)
             && (newMat->GetNumLayers() > fCurrLayerIdx + 1)
@@ -6386,8 +6376,8 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
     {
         /// Tack lightmap onto last stage if we have one
         numActivePiggyBacks = fActivePiggyBacks;
-        if( numActivePiggyBacks > fSettings.fMaxLayersAtOnce - fCurrNumLayers )
-            numActivePiggyBacks = fSettings.fMaxLayersAtOnce - fCurrNumLayers;
+        if( numActivePiggyBacks > fMaxLayersAtOnce - fCurrNumLayers )
+            numActivePiggyBacks = fMaxLayersAtOnce - fCurrNumLayers;
         if( numActivePiggyBacks )
         {
             int i;
@@ -6797,7 +6787,7 @@ void    plDXPipeline::IHandleStageBlend(int stage)
             fD3DDevice->SetTextureStageState( stage, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG2 );
             fD3DDevice->SetTextureStageState( stage, D3DTSS_ALPHAARG2, D3DTA_CURRENT ); 
             
-            if (fSettings.fMaxLayersAtOnce == 2 && stage == 1)
+            if (fMaxLayersAtOnce == 2 && stage == 1)
             {
                 // On these boards, the only way we can do 2 textures plus diffuse is to
                 // multiply it in during stage 0, but that only gives the same result
@@ -7709,7 +7699,7 @@ void    plDXPipeline::IStageStop( uint32_t stage )
         // See ILayersAtOnce()
         if ((fLayerState[0].fBlendFlags & hsGMatState::kBlendNoTexColor)
             || (fLayerState[1].fBlendFlags & hsGMatState::kBlendNoTexColor)
-            || fSettings.fMaxLayersAtOnce == 2)
+            || fMaxLayersAtOnce == 2)
         {
             fD3DDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
             disableStage = 2;
@@ -7855,7 +7845,7 @@ uint32_t  plDXPipeline::ILayersAtOnce( hsGMaterial *mat, uint32_t which )
     // We used to be able to set stage 0 and 1 to textures, and set stage 2 to the
     // diffuse color. With DX9.0c we just get two texture stages. Period. 
     // Either we give up a texture or the diffuse color.
-    if (fSettings.fMaxLayersAtOnce == 2)
+    if (fMaxLayersAtOnce == 2)
     {
         if ((mat->GetNumLayers() > which + 1)
             && !(mat->GetLayer(which + 1)->GetBlendFlags() & hsGMatState::kBlendNoTexColor))
@@ -7867,12 +7857,12 @@ uint32_t  plDXPipeline::ILayersAtOnce( hsGMaterial *mat, uint32_t which )
     }
 
     int i;
-    int maxLayersAtOnce = fSettings.fMaxLayersAtOnce;
+    int maxLayersAtOnce = fMaxLayersAtOnce;
 
     // Now Reserve space for piggy backs, and see if there are 
     // are any more layers we can pick up.
     // 
-    maxLayersAtOnce = fSettings.fMaxLayersAtOnce - fActivePiggyBacks;
+    maxLayersAtOnce = fMaxLayersAtOnce - fActivePiggyBacks;
     if( which + maxLayersAtOnce > mat->GetNumLayers() )
         maxLayersAtOnce = mat->GetNumLayers() - which;
 
@@ -8786,38 +8776,6 @@ bool  plDXPipeline::IIsViewLeftHanded()
     return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
 }
 
-//// ScreenToWorldPoint ///////////////////////////////////////////////////////
-// Given a screen space pixel position, and a world space distance from the camera, return a
-// full world space position. I.e. cast a ray through a screen pixel dist feet, and where
-// is it.
-void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, float dist, uint32_t strideOut, hsPoint3 *worldOut )
-{
-    while( n-- )
-    {
-        hsPoint3 scrP;
-        scrP.Set(float(*scrX++), float(*scrY++), float(dist));
-        *worldOut++ = GetViewTransform().ScreenToWorld(scrP);
-    }
-}
-
-// IRefreshCullTree ////////////////////////////////////////////////////////////////////
-// The cull tree captures the view frustum and any occluders in the scene into a single
-// BSP tree. See plCullTree.h. It must be recomputed any time the camera moves.
-void plDXPipeline::IRefreshCullTree()
-{
-    // dpogue -- Done
-    fView.RefreshCullTree();
-}
-
-// IMakeOcclusionSnap /////////////////////////////////////////////////////////////////////
-// Debugging visualization tool only. Takes a snapshot of the current occlusion
-// BSP tree and renders it until told to stop.
-void plDXPipeline::IMakeOcclusionSnap()
-{
-    // dpogue -- Done
-    fView.MakeOcclusionSnap();
-}
-
 //// RefreshScreenMatrices ////////////////////////////////////////////////////
 // Force a refresh of cached state when the projection matrix changes.
 void    plDXPipeline::RefreshScreenMatrices()
@@ -8825,15 +8783,6 @@ void    plDXPipeline::RefreshScreenMatrices()
     fView.fCullTreeDirty = true;
     IProjectionMatrixToD3D();
 }   
-
-//// RefreshMatrices //////////////////////////////////////////////////////////
-//  Just a wrapper
-
-void    plDXPipeline::RefreshMatrices()
-{
-    RefreshScreenMatrices();
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
@@ -11091,67 +11040,6 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
     }
 }
 
-// PushPiggyBackLayer /////////////////////////////////////////////////////
-// Push a piggy back onto the stack.
-plLayerInterface* plDXPipeline::PushPiggyBackLayer(plLayerInterface* li)
-{
-    fPiggyBackStack.Push(li);
-
-    ISetNumActivePiggyBacks();
-
-    fForceMatHandle = true;
-
-    return li;
-}
-
-// PopPiggyBackLayer ///////////////////////////////////////////////////////////////////
-// Pull the piggy back out of the stack (if it's there).
-plLayerInterface* plDXPipeline::PopPiggyBackLayer(plLayerInterface* li)
-{
-    int idx = fPiggyBackStack.Find(li);
-    if( fPiggyBackStack.kMissingIndex == idx )
-        return nil;
-    fPiggyBackStack.Remove(idx);
-
-    ISetNumActivePiggyBacks();
-
-    fForceMatHandle = true;
-
-    return li;
-}
-
-// AppendLayerInterface ///////////////////////////////////////////////////////////////////
-// Setup a layer wrapper to wrap around either all layers rendered with or just the base layers.
-// Note that a single material has multiple base layers if it takes mutliple passes to render.
-// Stays in effect until removed by RemoveLayerInterface.
-plLayerInterface* plDXPipeline::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
-{
-    fForceMatHandle = true;
-    if( onAllLayers )
-        return fOverAllLayer = li->Attach(fOverAllLayer);
-    else
-        return fOverBaseLayer = li->Attach(fOverBaseLayer);
-}
-
-// RemoveLayerInterface //////////////////////////////////////////////////////////////////
-// Removes a layer wrapper installed by AppendLayerInterface.
-plLayerInterface* plDXPipeline::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
-{
-    fForceMatHandle = true;
-
-    if( onAllLayers )
-    {
-        if( !fOverAllLayer )
-            return nil;
-        return fOverAllLayer = fOverAllLayer->Remove(li);
-    }
-    
-    if( !fOverBaseLayer )
-        return nil;
-
-    return fOverBaseLayer = fOverBaseLayer->Remove(li);
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //// ShadowSection
 //// Shadow specific internal functions
@@ -11459,7 +11347,7 @@ void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderT
     // Figure out how many passes we'll need.
 //  const int kNumSamples = 1 << kL2NumSamples; // HACKSAMPLE
     const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-    int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+    int nPasses = (int)ceil(float(kNumSamples) / fMaxLayersAtOnce);
     int nSamplesPerPass = kNumSamples / nPasses;
 
     // Attenuate by number of passes, to average as we sum.
@@ -12164,7 +12052,7 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     if( slave->fBlurScale > 0 )
     {
         const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-        int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+        int nPasses = (int)ceil(float(kNumSamples) / fMaxLayersAtOnce);
         int nSamplesPerPass = kNumSamples / nPasses;
         DWORD k = int(128.f / float(nSamplesPerPass));
         intens = (0xff << 24)
@@ -12848,7 +12736,7 @@ void plDXPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
 
     // If mat's base layer is alpha'd, and we have > 3 TMU's factor
     // in the base layer's alpha.   
-    if( (fSettings.fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
+    if( (fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
     {
         plLayerInterface* layer = mat->GetLayer(0);
 
@@ -13097,7 +12985,7 @@ bool plDXPipeline::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
     if( span->fProps & (plSpan::kPropSkipProjection | plSpan::kPropProjAsVtx) )
         return false;
 
-    if( (fSettings.fMaxLayersAtOnce < 3) 
+    if( (fMaxLayersAtOnce < 3) 
         && mat->GetLayer(0)->GetTexture() 
         && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
         return false;

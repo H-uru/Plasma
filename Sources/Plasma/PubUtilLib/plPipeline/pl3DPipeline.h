@@ -63,11 +63,23 @@ protected:
     hsBitVector                         fDebugFlags;
     uint32_t                            fProperties;
 
+    uint32_t                            fMaxLayersAtOnce;
+    uint32_t                            fMaxPiggyBacks;
+    uint32_t                            fMaxNumLights;
+    uint32_t                            fMaxNumProjectors;
+
     hsGMatState                         fMatOverOn;
     hsGMatState                         fMatOverOff;
     hsTArray<hsGMaterial*>              fOverrideMat;
     hsGMaterial*                        fHoldMat;
     bool                                fForceMatHandle;
+
+    hsTArray<plLayerInterface*>         fOverLayerStack;
+    plLayerInterface*                   fOverBaseLayer;
+    plLayerInterface*                   fOverAllLayer;
+    hsTArray<plLayerInterface*>         fPiggyBackStack;
+    int32_t                             fMatPiggyBacks;
+    int32_t                             fActivePiggyBacks;
 
     hsGMaterial*                        fCurrMaterial;
 
@@ -238,39 +250,51 @@ public:
         on ? fProperties |= prop : fProperties &= ~prop;
     }
 
+
     virtual bool GetProperty(uint32_t prop) const {
         return (fProperties & prop) ? true : false;
     }
 
-    //virtual uint32_t GetMaxLayersAtOnce() const = 0;
+
+    virtual uint32_t GetMaxLayersAtOnce() const {
+        return fMaxLayersAtOnce;
+    }
+
 
     virtual void SetDrawableTypeMask(uint32_t mask) {
         fView.SetDrawableTypeMask(mask);
     }
 
+
     virtual uint32_t GetDrawableTypeMask() const {
         return fView.GetDrawableTypeMask();
     }
+
 
     virtual void SetSubDrawableTypeMask(uint32_t mask) {
         fView.SetSubDrawableTypeMask(mask);
     }
 
+
     virtual uint32_t GetSubDrawableTypeMask() const {
         return fView.GetSubDrawableTypeMask();
     }
+
 
     virtual hsPoint3 GetViewPositionWorld() const {
         return GetViewTransform().GetPosition();
     }
 
+
     virtual hsVector3 GetViewAcrossWorld() const {
         return GetViewTransform().GetAcross();
     }
 
+
     virtual hsVector3 GetViewUpWorld() const {
         return GetViewTransform().GetUp();
     }
+
 
     virtual hsVector3 GetViewDirWorld() const {
         return GetViewTransform().GetDirection();
@@ -368,8 +392,22 @@ public:
         return fView.GetConstViewTransform();
     }
 
-    //virtual void ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut) = 0;
-    //virtual void RefreshMatrices() = 0;
+
+    /**
+     * Given a screen space pixel position, and a world space distance from
+     * the camera, return a full world space position.
+     * I.e. cast a ray through a screen pixel dist feet, and where is it.
+     */
+    virtual void ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut);
+
+
+    /**
+     * Force a refresh of cached state when the projection matrix changes.
+     */
+    virtual void RefreshMatrices() {
+        RefreshScreenMatrices();
+    }
+
     //virtual void RefreshScreenMatrices() = 0;
 
 
@@ -393,8 +431,21 @@ public:
         return fOverrideMat.GetCount() ? fOverrideMat.Peek() : nullptr;
     }
 
-    //virtual plLayerInterface* AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false) = 0;
-    //virtual plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false) = 0;
+
+    /**
+     * Set up a layer wrapper to wrap around either all layers rendered with
+     * or just the base layers.
+     * Note that a single material has multiple base layers if it takes
+     * multiple passes to render.
+     *
+     * Stays in effect until removed by RemoveLayerInterface.
+     */
+    virtual plLayerInterface* AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false);
+
+
+    /** Removes a layer wrapper installed by AppendLayerInterface. */
+    virtual plLayerInterface* RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false);
+
 
     /**
      * Return the current bits set to be always on for the given category
@@ -459,6 +510,13 @@ public:
     //virtual int GetMaxAnisotropicSamples() = 0;
     //virtual int GetMaxAntiAlias(int Width, int Height, int ColorDepth) = 0;
     //virtual void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) = 0;
+
+    /** Push a piggy back onto the stack. */
+    virtual plLayerInterface* PushPiggyBackLayer(plLayerInterface* li);
+
+
+    /** Pull the piggy back out of the stack (if it's there). */
+    virtual plLayerInterface* PopPiggyBackLayer(plLayerInterface* li);
 };
 
 #endif //_pl3DPipeline_inc_

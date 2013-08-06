@@ -250,13 +250,6 @@ protected:
     hsMatrix44                  fBumpDvMatrix;
     hsMatrix44                  fBumpDwMatrix;
 
-    hsTArray<plLayerInterface*>         fOverLayerStack;
-    plLayerInterface*                   fOverBaseLayer;
-    plLayerInterface*                   fOverAllLayer;
-    hsTArray<plLayerInterface*>         fPiggyBackStack;
-    int32_t                               fMatPiggyBacks;
-    int32_t                               fActivePiggyBacks;
-
     UINT                    fCurrentAdapter;
     D3DEnum_DriverInfo*     fCurrentDriver;
     D3DEnum_DeviceInfo*     fCurrentDevice;
@@ -628,12 +621,6 @@ public:
     virtual bool                        CheckResources();
     virtual void                        LoadResources();    // Tells us where it's a good time to load in unmanaged resources.
 
-    // Properties
-    virtual void                        SetProperty( uint32_t prop, bool on ) { on ? fSettings.fProperties |= prop : fSettings.fProperties &= ~prop; }
-    virtual bool                        GetProperty( uint32_t prop ) const { return ( fSettings.fProperties & prop ) ? true : false; }
-
-    virtual uint32_t                      GetMaxLayersAtOnce() const { return fSettings.fMaxLayersAtOnce; }
-
     // Create a debug text font object
     virtual plTextFont      *MakeTextFont( char *face, uint16_t size );
 
@@ -667,20 +654,10 @@ public:
 
     virtual void                        SetViewTransform(const plViewTransform& trans);
 
-    virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
-                                                    float dist, uint32_t strideOut, hsPoint3 *worldOut );
-    
-    virtual void                        RefreshMatrices();
     virtual void                        RefreshScreenMatrices();
 
     virtual void                        RegisterLight(plLightInfo* light);
     virtual void                        UnRegisterLight(plLightInfo* light);
-
-    virtual plLayerInterface*           AppendLayerInterface(plLayerInterface* li, bool onAllLayers = false);
-    virtual plLayerInterface*           RemoveLayerInterface(plLayerInterface* li, bool onAllLayers = false);
-
-    virtual plLayerInterface*           PushPiggyBackLayer(plLayerInterface* li);
-    virtual plLayerInterface*           PopPiggyBackLayer(plLayerInterface* li);
 
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);

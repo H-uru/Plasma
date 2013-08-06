@@ -179,6 +179,17 @@ void pl3DPipeline::EndVisMgr(plVisMgr* visMgr)
 }
 
 
+void pl3DPipeline::ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int32_t* scrY, float dist, uint32_t strideOut, hsPoint3* worldOut)
+{
+    while( n-- )
+    {
+        hsPoint3 scrP;
+        scrP.Set(float(*scrX++), float(*scrY++), float(dist));
+        *worldOut++ = GetViewTransform().ScreenToWorld(scrP);
+    }
+}
+
+
 hsGMaterial* pl3DPipeline::PushOverrideMaterial(hsGMaterial* mat)
 {
     hsGMaterial* ret = GetOverrideMaterial();
@@ -199,6 +210,34 @@ void pl3DPipeline::PopOverrideMaterial(hsGMaterial* restore)
     {
         fForceMatHandle = true;
     }
+}
+
+
+plLayerInterface* pl3DPipeline::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
+{
+    fForceMatHandle = true;
+    if (onAllLayers)
+        return fOverAllLayer = li->Attach(fOverAllLayer);
+    else
+        return fOverBaseLayer = li->Attach(fOverBaseLayer);
+}
+
+
+plLayerInterface* pl3DPipeline::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
+{
+    fForceMatHandle = true;
+
+    if (onAllLayers)
+    {
+        if (!fOverAllLayer)
+            return nullptr;
+        return fOverAllLayer = fOverAllLayer->Remove(li);
+    }
+    
+    if (!fOverBaseLayer)
+        return nullptr;
+
+    return fOverBaseLayer = fOverBaseLayer->Remove(li);
 }
 
 
@@ -251,4 +290,32 @@ void pl3DPipeline::PopMaterialOverride(const hsGMatState& restore, bool on)
         fMatOverOn.Clear(restore);
     }
     fForceMatHandle = true;
+}
+
+
+plLayerInterface* pl3DPipeline::PushPiggyBackLayer(plLayerInterface* li)
+{
+    fPiggyBackStack.Push(li);
+
+    fActivePiggyBacks = hsMinimum(fMaxPiggyBacks, fPiggyBackStack.GetCount());
+
+    fForceMatHandle = true;
+
+    return li;
+}
+
+
+plLayerInterface* pl3DPipeline::PopPiggyBackLayer(plLayerInterface* li)
+{
+    int idx = fPiggyBackStack.Find(li);
+    if (fPiggyBackStack.kMissingIndex == idx)
+        return nullptr;
+    
+    fPiggyBackStack.Remove(idx);
+
+    fActivePiggyBacks = hsMinimum(fMaxPiggyBacks, fPiggyBackStack.GetCount());
+
+    fForceMatHandle = true;
+
+    return li;
 }
