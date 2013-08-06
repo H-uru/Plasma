@@ -288,7 +288,6 @@ protected:
     plDXLightSettings   fLights;
 
     // Shadows
-    hsTArray<plShadowSlave*>        fShadows;
     hsTArray<plRenderTarget*>       fRenderTargetPool512;
     hsTArray<plRenderTarget*>       fRenderTargetPool256;
     hsTArray<plRenderTarget*>       fRenderTargetPool128;
@@ -361,7 +360,6 @@ protected:
     void            IRestoreSpanLights();
     void            ISelectLights( plSpan *span, int numLights, bool proj );
     void            IEnableLights( plSpan *span );
-    void            ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
     inline void     inlEnsureLightingOff();
     inline void     inlEnsureLightingOn();
     void            IRenderProjection(const plRenderPrimFunc& render, plLightInfo* li);
@@ -542,13 +540,6 @@ protected:
     plRenderTarget*     IFindRenderTarget(uint32_t& w, uint32_t& h, bool ortho);
     void                IReleaseRenderTargetPools();
 
-    // Selection
-    void    IAttachSlaveToReceivers(int iSlave, plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
-    void    IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
-    bool    IAcceptsShadow(const plSpan* span, plShadowSlave* slave);
-    bool    IReceivesShadows(const plSpan* span, hsGMaterial* mat);
-    void    ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo);
-
     // Application  
     void    IRenderShadowsOntoSpan(const plRenderPrimFunc& render, const plSpan* span, hsGMaterial* mat);
     void    ISetupShadowRcvTextureStages(hsGMaterial* mat);
@@ -596,8 +587,7 @@ public:
     virtual bool                        PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil);
     virtual bool                        PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil);
     virtual void                        Render(plDrawable* d, const hsTArray<int16_t>& visList);
-    virtual void                        Draw(plDrawable* d);
-    
+
     virtual void                        PushRenderRequest(plRenderRequest* req);
     virtual void                        PopRenderRequest(plRenderRequest* req);
 
@@ -656,10 +646,10 @@ public:
 
     virtual void                        RefreshScreenMatrices();
 
+    // Overriden (Un)Register Light methods
     virtual void                        RegisterLight(plLightInfo* light);
     virtual void                        UnRegisterLight(plLightInfo* light);
 
-    virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);
 
     virtual bool                        SetGamma(float eR, float eG, float eB);

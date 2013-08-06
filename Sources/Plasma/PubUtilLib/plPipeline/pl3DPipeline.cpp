@@ -41,23 +41,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pl3DPipeline.h"
+#include "plPipeDebugFlags.h"
+
 #include "plProfile.h"
 
 #include "hsGMatState.inl"
 
 #include "plSurface/hsGMaterial.h"
 #include "plDrawable/plDrawableSpans.h"
+#include "plDrawable/plSpaceTree.h"
+#include "plDrawable/plSpanTypes.h"
 #include "plGLight/plLightInfo.h"
+#include "plGLight/plShadowSlave.h"
+#include "plGLight/plShadowCaster.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "plScene/plVisMgr.h"
 
-plProfile_CreateTimer("FindSceneLights", "PipeT", FindSceneLights);
+plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
+plProfile_CreateTimer("  Find Lights",          "PipeT", FindLights);
+plProfile_CreateTimer("    Find Perms",         "PipeT", FindPerm);
+plProfile_CreateTimer("    FindSpan",           "PipeT", FindSpan);
+plProfile_CreateTimer("    FindActiveLights",   "PipeT", FindActiveLights);
+plProfile_CreateTimer("    ApplyActiveLights",  "PipeT", ApplyActiveLights);
+plProfile_CreateTimer("      ApplyMoving",      "PipeT", ApplyMoving);
+plProfile_CreateTimer("      ApplyToSpec",      "PipeT", ApplyToSpec);
+plProfile_CreateTimer("      ApplyToMoving",    "PipeT", ApplyToMoving);
 
-plProfile_CreateCounter("LightOn", "PipeC", LightOn);
-plProfile_CreateCounter("LightVis", "PipeC", LightVis);
-plProfile_CreateCounter("LightChar", "PipeC", LightChar);
-plProfile_CreateCounter("LightActive", "PipeC", LightActive);
+plProfile_CreateCounter("LightOn",              "PipeC", LightOn);
+plProfile_CreateCounter("LightVis",             "PipeC", LightVis);
+plProfile_CreateCounter("LightChar",            "PipeC", LightChar);
+plProfile_CreateCounter("LightActive",          "PipeC", LightActive);
+plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
+plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
+
 
 pl3DPipeline::pl3DPipeline()
     : fActiveLights(nullptr)
@@ -78,6 +95,25 @@ pl3DPipeline::~pl3DPipeline()
         UnRegisterLight(fActiveLights);
 }
 
+
+void pl3DPipeline::Draw(plDrawable* d)
+{
+    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
+
+    if (ds)
+    {
+        if (( ds->GetType() & fView.GetDrawableTypeMask()) == 0)
+            return;
+
+        static hsTArray<int16_t>visList;
+
+        PreRender(ds, visList);
+        PrepForRender(ds, visList);
+        Render(ds, visList);
+    }
+}
+
+
 void pl3DPipeline::BeginVisMgr(plVisMgr* visMgr)
 {
     // Make Light Lists /////////////////////////////////////////////////////
@@ -88,7 +124,7 @@ void pl3DPipeline::BeginVisMgr(plVisMgr* visMgr)
     // The first list is lights that will affect the avatar and similar
     // indeterminately mobile (physical) objects - fCharLights.
     // The second list is lights that aren't restricted by light include
-    // lists. 
+    // lists.
     // These two abbreviated lists will be further refined for each object
     // and avatar to find the strongest 8 lights which affect that object.
     // A light with an include list, or LightGroup Component) has
@@ -233,7 +269,7 @@ plLayerInterface* pl3DPipeline::RemoveLayerInterface(plLayerInterface* li, bool 
             return nullptr;
         return fOverAllLayer = fOverAllLayer->Remove(li);
     }
-    
+
     if (!fOverBaseLayer)
         return nullptr;
 
@@ -293,6 +329,32 @@ void pl3DPipeline::PopMaterialOverride(const hsGMatState& restore, bool on)
 }
 
 
+void pl3DPipeline::SubmitShadowSlave(plShadowSlave* slave)
+{
+    // Check that it's a valid slave.
+    if (!(slave && slave->fCaster && slave->fCaster->GetKey()))
+        return;
+
+    // Ref the shadow caster so we're sure it will still be around when we go to
+    // render it.
+    slave->fCaster->GetKey()->RefObject();
+
+    // Keep the shadow slaves in a priority sorted list. For performance reasons,
+    // we may want only the strongest N or those of a minimum priority.
+    int i;
+    for (i = 0; i < fShadows.GetCount(); i++)
+    {
+        if (slave->fPriority <= fShadows[i]->fPriority)
+            break;
+    }
+
+    // Note that fIndex is no longer the index in the fShadows list, but
+    // is still used as a unique identifier for this slave.
+    slave->fIndex = fShadows.GetCount();
+    fShadows.Insert(i, slave);
+}
+
+
 plLayerInterface* pl3DPipeline::PushPiggyBackLayer(plLayerInterface* li)
 {
     fPiggyBackStack.Push(li);
@@ -310,7 +372,7 @@ plLayerInterface* pl3DPipeline::PopPiggyBackLayer(plLayerInterface* li)
     int idx = fPiggyBackStack.Find(li);
     if (fPiggyBackStack.kMissingIndex == idx)
         return nullptr;
-    
+
     fPiggyBackStack.Remove(idx);
 
     fActivePiggyBacks = hsMinimum(fMaxPiggyBacks, fPiggyBackStack.GetCount());
@@ -318,4 +380,383 @@ plLayerInterface* pl3DPipeline::PopPiggyBackLayer(plLayerInterface* li)
     fForceMatHandle = true;
 
     return li;
+}
+
+
+
+
+/*** PROTECTED METHODS *******************************************************/
+
+void pl3DPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
+{
+    plShadowSlave* slave = fShadows[which];
+
+    // Whether the drawable is a character affects which lights/shadows affect it.
+    bool isChar = drawable->GetNativeProperty(plDrawable::kPropCharacter);
+
+    // If the shadow is part of a light group, it gets handled in ISetShadowFromGroup.
+    // Unless the drawable is a character (something that moves around indeterminately,
+    // like the avatar or a physical object), and the shadow affects all characters.
+    if (slave->ObeysLightGroups() && !(slave->IncludesChars() && isChar))
+        return;
+
+    // Do a space tree harvest looking for spans that are visible and whose bounds
+    // intercect the shadow volume.
+    plSpaceTree* space = drawable->GetSpaceTree();
+
+    static hsBitVector cache;
+    cache.Clear();
+    space->EnableLeaves(visList, cache);
+
+    static hsTArray<int16_t> hitList;
+    hitList.SetCount(0);
+    space->HarvestEnabledLeaves(slave->fIsect, cache, hitList);
+
+    // For the visible spans that intercect the shadow volume, attach the shadow
+    // to all appropriate for receiving this shadow map.
+    for (size_t i = 0; i < hitList.GetCount(); i++)
+    {
+        const plSpan* span = drawable->GetSpan(hitList[i]);
+        hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
+
+        // Check that the span isn't flagged as unshadowable, or has
+        // a material that we can't shadow onto.
+        if (!IReceivesShadows(span, mat))
+            continue;
+
+        // Check for self shadowing. If the shadow doesn't want self shadowing,
+        // and the span is part of the shadow caster, then skip.
+        if (!IAcceptsShadow(span, slave))
+            continue;
+
+        // Add it to this span's shadow list for this frame.
+        span->AddShadowSlave(fShadows[which]->fIndex);
+    }
+}
+
+
+void pl3DPipeline::IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
+{
+    for (size_t i = 0; i < fShadows.GetCount(); i++)
+        IAttachSlaveToReceivers(i, drawable, visList);
+}
+
+
+bool pl3DPipeline::IAcceptsShadow(const plSpan* span, plShadowSlave* slave)
+{
+    // The span's shadow bits records which shadow maps that span was rendered
+    // into.
+    return slave->SelfShadow() || !span->IsShadowBitSet(slave->fIndex);
+}
+
+
+bool pl3DPipeline::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
+{
+    if (span->fProps & plSpan::kPropNoShadow)
+        return false;
+
+    if (span->fProps & plSpan::kPropForceShadow)
+        return true;
+
+    if (span->fProps & (plSpan::kPropSkipProjection | plSpan::kPropProjAsVtx))
+        return false;
+
+    if ((fMaxLayersAtOnce < 3) &&
+        (mat->GetLayer(0)->GetTexture()) &&
+        (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha))
+        return false;
+
+    return true;
+}
+
+
+void pl3DPipeline::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo)
+{
+    hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
+
+    // Check that this span/material combo can receive shadows at all.
+    if (!IReceivesShadows(span, mat))
+        return;
+
+    const hsBitVector& slaveBits = liInfo->GetSlaveBits();
+
+    for (size_t i = 0; i < fShadows.GetCount(); i++)
+    {
+        if (slaveBits.IsBitSet(fShadows[i]->fIndex))
+        {
+            // Check self shadowing.
+            if (IAcceptsShadow(span, fShadows[i]))
+            {
+                // Check for overlapping bounds.
+                if (fShadows[i]->fIsect->Test(span->fWorldBounds) != kVolumeCulled)
+                    span->AddShadowSlave(fShadows[i]->fIndex);
+            }
+        }
+    }
+}
+
+
+void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr)
+{
+    if (fView.fRenderState & kRenderNoLights)
+        return;
+
+    if (!visList.GetCount())
+        return;
+
+    plLightInfo* light;
+
+    plProfile_BeginTiming(FindLights);
+
+    // First add in the explicit lights (from LightGroups).
+    // Refresh the lights as they are added (actually a lazy eval).
+    plProfile_BeginTiming(FindPerm);
+    for (size_t j = 0; j < visList.GetCount(); j++)
+    {
+        drawable->GetSpan(visList[j])->ClearLights();
+
+        if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
+            continue;
+
+        // Set the bits for the lights added from the permanent lists (during ClearLights()).
+        const hsTArray<plLightInfo*>& permaLights = drawable->GetSpan(visList[j])->fPermaLights;
+        for (size_t k = 0; k < permaLights.GetCount(); k++)
+        {
+            permaLights[k]->Refresh();
+            if (permaLights[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLights[k]->IsIdle())
+            {
+                // If it casts a shadow, attach the shadow now.
+                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaLights[k]);
+            }
+        }
+
+        const hsTArray<plLightInfo*>& permaProjs = drawable->GetSpan(visList[j])->fPermaProjs;
+        for (size_t k = 0; k < permaProjs.GetCount(); k++)
+        {
+            permaProjs[k]->Refresh();
+            if (permaProjs[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProjs[k]->IsIdle())
+            {
+                // If it casts a shadow, attach the shadow now.
+                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaProjs[k]);
+            }
+        }
+    }
+    plProfile_EndTiming(FindPerm);
+
+    if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
+    {
+        plProfile_EndTiming(FindLights);
+        return;
+    }
+
+    // Sort the incoming spans as either
+    // A) moving - affected by all lights - moveList
+    // B) specular - affected by specular lights - specList
+    // C) visible - affected by moving lights - visList
+    static hsTArray<int16_t> tmpList;
+    static hsTArray<int16_t> moveList;
+    static hsTArray<int16_t> specList;
+
+    moveList.SetCount(0);
+    specList.SetCount(0);
+
+    plProfile_BeginTiming(FindSpan);
+    for (size_t k = 0; k < visList.GetCount(); k++)
+    {
+        const plSpan* span = drawable->GetSpan(visList[k]);
+
+        if (span->fProps & plSpan::kPropRunTimeLight)
+        {
+            moveList.Append(visList[k]);
+            specList.Append(visList[k]);
+        }
+        else if (span->fProps & plSpan::kPropMatHasSpecular)
+        {
+             specList.Append(visList[k]);
+        }
+    }
+    plProfile_EndTiming(FindSpan);
+
+    // Make a list of lights that can potentially affect spans in this drawable
+    // based on the drawables bounds and properties.
+    // If the drawable has the PropCharacter property, it is affected by lights
+    // in fCharLights, else only by the smaller list of fVisLights.
+
+    plProfile_BeginTiming(FindActiveLights);
+    static hsTArray<plLightInfo*> lightList;
+    lightList.SetCount(0);
+
+    if (drawable->GetNativeProperty(plDrawable::kPropCharacter))
+    {
+        for (size_t i = 0; i < fCharLights.GetCount(); i++)
+        {
+            if (fCharLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()))
+                lightList.Append(fCharLights[i]);
+        }
+    }
+    else
+    {
+        for (size_t i = 0; i < fVisLights.GetCount(); i++)
+        {
+            if (fVisLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()))
+                lightList.Append(fVisLights[i]);
+        }
+    }
+    plProfile_EndTiming(FindActiveLights);
+
+    // Loop over the lights and for each light, extract a list of the spans that light
+    // affects. Append the light to each spans list with a scalar strength of how strongly
+    // the light affects it. Since the strength is based on the object's center position,
+    // it's not very accurate, but good enough for selecting which lights to use.
+
+    plProfile_BeginTiming(ApplyActiveLights);
+    for (size_t k = 0; k < lightList.GetCount(); k++)
+    {
+        light = lightList[k];
+
+        tmpList.SetCount(0);
+        if (light->GetProperty(plLightInfo::kLPMovable))
+        {
+            plProfile_BeginTiming(ApplyMoving);
+
+            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                visList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nil != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (size_t j = 0; j < litList.GetCount(); j++)
+            {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litList[j]);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection)))
+                {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0)
+                    {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyMoving);
+        }
+        else if (light->GetProperty(plLightInfo::kLPHasSpecular))
+        {
+            if (!specList.GetCount())
+                continue;
+
+            plProfile_BeginTiming(ApplyToSpec);
+
+            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                specList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nil != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (size_t j = 0; j < litList.GetCount(); j++)
+            {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litList[j]);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection)))
+                {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0)
+                    {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyToSpec);
+        }
+        else
+        {
+            if (!moveList.GetCount())
+                continue;
+
+            plProfile_BeginTiming(ApplyToMoving);
+
+            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(),
+                moveList,
+                tmpList,
+                drawable->GetNativeProperty(plDrawable::kPropCharacter));
+
+            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
+            bool proj = nil != light->GetProjection();
+            if (fView.fRenderState & kRenderNoProjection)
+                proj = false;
+
+            for (size_t j = 0; j < litList.GetCount(); j++)
+            {
+                // Use the light IF light is enabled and
+                //      1) light is movable
+                //      2) span is movable, or
+                //      3) Both the light and the span have specular
+                const plSpan* span = drawable->GetSpan(litList[j]);
+                bool currProj = proj;
+
+                if (span->fProps & plSpan::kPropProjAsVtx)
+                    currProj = false;
+
+                if (!(currProj && (span->fProps & plSpan::kPropSkipProjection)))
+                {
+                    float strength, scale;
+
+                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
+
+                    // We can't pitch a light because it's "strength" is zero, because the strength is based
+                    // on the center of the span and isn't conservative enough. We can pitch based on the
+                    // scale though, since a light scaled down to zero will have no effect no where.
+                    if (scale > 0)
+                    {
+                        plProfile_Inc(FindLightsFound);
+                        span->AddLight(light, strength, scale, currProj);
+                    }
+                }
+            }
+            plProfile_EndTiming(ApplyToMoving);
+        }
+    }
+    plProfile_EndTiming(ApplyActiveLights);
+
+    IAttachShadowsToReceivers(drawable, visList);
+
+    plProfile_EndTiming(FindLights);
 }

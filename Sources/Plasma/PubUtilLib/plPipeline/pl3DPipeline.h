@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsGMaterial;
 class plLightInfo;
+class plShadowSlave;
+class plSpan;
 
 
 class pl3DPipeline : public plPipeline
@@ -87,6 +89,9 @@ protected:
     hsTArray<plLightInfo*>              fCharLights;
     hsTArray<plLightInfo*>              fVisLights;
 
+    hsTArray<plShadowSlave*>            fShadows;
+
+
 public:
     pl3DPipeline();
     virtual ~pl3DPipeline();
@@ -101,7 +106,18 @@ public:
     //virtual bool PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
     //virtual bool PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
     //virtual void Render(plDrawable* d, const hsTArray<int16_t>& visList) = 0;
-    //virtual void Draw(plDrawable* d) = 0;
+
+
+    /**
+     * Convenience function for a drawable that needs to get drawn outside of
+     * the normal scene graph render (i.e. something not managed by the
+     * plPageTreeMgr).
+     *
+     * Not nearly as efficient, so only useful as a special case.
+     */
+    virtual void Draw(plDrawable* d);
+
+
     //virtual plTextFont* MakeTextFont(char* face, uint16_t size) = 0;
     //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
     //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
@@ -499,7 +515,15 @@ public:
         return on ? fMatOverOn : fMatOverOff;
     }
 
-    //virtual void SubmitShadowSlave(plShadowSlave* slave) = 0;
+
+    /**
+     * Puts the slave in a list valid for this frame only.
+     * The list will be preprocessed at BeginRender.
+     *
+     * See IPreprocessShadows.
+     */
+    virtual void SubmitShadowSlave(plShadowSlave* slave);
+
     //virtual void SubmitClothingOutfit(plClothingOutfit* co) = 0;
     //virtual bool SetGamma(float eR, float eG, float eB) = 0;
     //virtual bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0;
@@ -517,6 +541,76 @@ public:
 
     /** Pull the piggy back out of the stack (if it's there). */
     virtual plLayerInterface* PopPiggyBackLayer(plLayerInterface* li);
+
+
+
+protected:
+
+    /**
+     * Find all the visible spans in this drawable affected by this shadow map,
+     * and attach it to them.
+     */
+    void IAttachSlaveToReceivers(int iSlave, plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
+
+
+    /**
+     * For each active shadow map (in fShadows), attach it to all of the
+     * visible spans in drawable that it affects. Shadows explicitly attached
+     * via light groups are handled separately in ISetShadowFromGroup.
+     */
+    void IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList);
+
+
+    /** Only allow self shadowing if requested. */
+    bool IAcceptsShadow(const plSpan* span, plShadowSlave* slave);
+
+
+    /**
+     * Want artists to be able to just disable shadows for spans where they'll
+     * either look goofy, or won't contribute.
+     *
+     * Also, if we have less than 3 simultaneous textures, we want to skip
+     * anything with an alpha'd base layer, unless it's been overriden.
+     */
+    bool IReceivesShadows(const plSpan* span, hsGMaterial* mat);
+
+
+    /**
+     * The light casting this shadow has been explicitly attached to this span,
+     * so no need for checking bounds, but we do anyway because the artists
+     * aren't very conservative along those lines. The light has a bitvector
+     * indicating which of the current shadows are from it (there will be a
+     * shadow map for each shadow-light/shadow-caster pair), so we look through
+     * those shadow maps and if they are acceptable, attach them to the span.
+     *
+     * Note that a shadow slave corresponds to a shadow map.
+     */
+    void ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo);
+
+
+    /**
+     * For every span in the list of visible span indices, find the list of
+     * lights that currently affect the span with an estimate of the strength
+     * of how much the light affects it. The strongest 8 lights will be used to
+     * illuminate that span.
+     *
+     * For projective lights, there is no limit on how many are supported,
+     * other than performance (usually fill rate limited).
+     *
+     * The permaLights and permaProjs are lights explicitly selected for a span
+     * via the LightGroup component.
+     *
+     * For static objects and static lights, the lighting was done offline and
+     * stored in the vertex diffuse color.
+     *
+     * So here we're only looking for:
+     *  A) moving objects, which can't be staticly lit, so are affected by all
+     *  runtime lights.
+     *  B) moving lights, which can't staticly light, so affect all objects
+     *  C) specular objects + specular lights, since specular can't be
+     *  precomputed.
+     */
+    void ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
 };
 
 #endif //_pl3DPipeline_inc_
