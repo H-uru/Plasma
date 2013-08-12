@@ -128,4 +128,4 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)
-#add_subdirectory(Sources/Tests)
+add_subdirectory(Sources/Tests)
