@@ -83,6 +83,15 @@ TEST(PlStringTest,FindChar)
     result=0;
     result = input.Find('f',plString::kCaseInsensitive);
     EXPECT_EQ(-1,result);
+
+    plString input1 = plString("abCdcBÁèab");
+    //available accented char, case sensitive
+    result = input1.Find('Á',plString::kCaseSensitive);
+    EXPECT_EQ(7,result);
+
+    //available accented char, case insensitive
+    result = input1.Find('è',plString::kCaseInsensitive);
+    EXPECT_EQ(9,result);
 }
 
 TEST(PlStringTest,FindLast)
@@ -106,6 +115,15 @@ TEST(PlStringTest,FindLast)
     result=0;
     result = input.FindLast('f',plString::kCaseInsensitive);
     EXPECT_EQ(-1,result);
+
+	plString input1 = plString("éeÉß");
+    //available accented char, case sensitive
+    result = input1.FindLast('e',plString::kCaseSensitive);
+    EXPECT_EQ(2,result);
+
+    //available accented char, case insensitive
+    result = input1.FindLast('ß',plString::kCaseInsensitive);
+    EXPECT_EQ(6,result);
 }
 
 TEST(PlStringTest,FindString)
