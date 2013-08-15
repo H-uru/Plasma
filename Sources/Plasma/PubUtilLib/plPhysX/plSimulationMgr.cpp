@@ -370,7 +370,7 @@ NxScene* plSimulationMgr::GetScene(plKey world)
         scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, true);
         scene->setGroupCollisionFlag(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamicBlocker, true);
         scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, true);
-        scene->setGroupCollisionFlag( plSimDefs::kGroupStatic, plSimDefs::kGroupAvatar, true);
+        scene->setGroupCollisionFlag(plSimDefs::kGroupStatic, plSimDefs::kGroupAvatar, true);
         scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, true);
 
         // Kinematically controlled avatars interact with detectors and dynamics
@@ -650,7 +650,10 @@ int plSimulationMgr::GetMaterialIdx(NxScene* scene, float friction, float restit
     desc.dynamicFriction = friction;
     desc.staticFriction = friction;
     NxMaterial* mat = scene->createMaterial(desc);
-    return mat->getMaterialIndex();
+    if (mat)
+        return mat->getMaterialIndex();
+    else
+        return NULL;
 }
 
 /////////////////////////////////////////////////////////////////
