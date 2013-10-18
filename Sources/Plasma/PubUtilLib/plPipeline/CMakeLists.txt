@@ -8,7 +8,10 @@ if(Bink_SDK_AVAILABLE)
     include_directories(${Bink_INCLUDE_DIR})
 endif()
 if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
+    # NOTE: Includes of Windows SDK must be used BEFORE includes of DirectX SDK.
+    #       Otherwise, it can make error about PVOID64!
+    get_filename_component(WindowsSdkDir "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" ABSOLUTE CACHE)
+    include_directories("${WindowsSdkDir}/include" ${DirectX_INCLUDE_DIR})
 endif(WIN32)
 
 set(plPipeline_SOURCES

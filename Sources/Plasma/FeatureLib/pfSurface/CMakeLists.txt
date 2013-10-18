@@ -8,7 +8,6 @@ if(Bink_SDK_AVAILABLE)
 endif()
 
 if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
     add_definitions(-DWIN32)
 endif(WIN32)
 
