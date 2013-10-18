@@ -1,55 +1,72 @@
 option(DirectX_OLD_SDK "Is this an old (November 2008) version of the SDK?" OFF)
 
-if (DirectX_OLD_SDK)
+if(NOT DirectX_FOUND)
+    FIND_PATH(DirectX_INCLUDE_DIR d3dx9.h
+        "$ENV{DXSDK_DIR}/Include"
+        "C:/Program Files/Microsoft Visual Studio .NET 2003/Vc7/PlatformSDK/Include"
+        "C:/Program Files/Microsoft DirectX SDK (February 2006)/Include"
+        "C:/Program Files/Microsoft DirectX 9.0 SDK (June 2005)/Include"
+        "C:/DXSDK/Include"
+        DOC "path of directx includes files"
+    )
+
+    # Figure out the arch for the path suffixes
+    if(CMAKE_SIZEOF_VOID_P MATCHES "8")
+        set(_dxarch "x64")
+    else()
+        set(_dxarch "x86")
+    endif()
+
+    get_filename_component(_dxpath ${DirectX_INCLUDE_DIR} PATH)
+
+    find_library(DirectX_d3d9 NAMES d3d9
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+    find_library(DirectX_d3dx9 NAMES d3dx9
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+    find_library(DirectX_dinput8 NAMES dinput8
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+    find_library(DirectX_dsound NAMES dsound
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+    find_library(DirectX_dxguid NAMES dxguid
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+    find_library(DirectX_dxerr NAMES dxerr dxerr9
+                 PATHS "${_dxpath}/Lib/${_dxarch}" "${_dxpath}/Lib"
+    )
+
+
+    if(DirectX_INCLUDE_DIR)
+        if (DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dinput8
+                         AND DirectX_dsound AND DirectX_dxguid AND DirectX_dxerr)
+            set(DirectX_FOUND TRUE CACHE BOOL "")
+            mark_as_advanced(DirectX_FOUND)
+            message(STATUS "Found DirectX SDK: ${_dxpath}")
+        elseif(DirectX_FIND_REQUIRED)
+            message(FATAL_ERROR "Could not find DirectX SDK libraries")
+        endif()
+    elseif(DirectX_FIND_REQUIRED)
+        message(FATAL_ERROR
+                "DirectX SDK not found, install it or set DirectX_INCLUDE_DIR manually."
+        )
+    endif()
+    
+    if (DirectX_dxerr MATCHES ".*/[dD][xX][eE][rR][rR]9.*")
+        message(STATUS "old Directx SDK detected")
+    endif()
+endif(NOT DirectX_FOUND)
+
+if (DirectX_dxerr MATCHES ".*/[dD][xX][eE][rR][rR]9.*")
     add_definitions(-DDX_OLD_SDK)
-endif(DirectX_OLD_SDK)
-
-
-if(DirectX_INCLUDE_DIR)
-    set(DirectX_FIND_QUIETLY TRUE)
 endif()
-
-# Figure out the arch for the path suffixes
-if(CMAKE_SIZEOF_VOID_P MATCHES "8")
-    set(_dxarch "x64")
-else()
-    set(_dxarch "x86")
-endif()
-
-
-find_path(DirectX_INCLUDE_DIR d3dx9.h
-          PATHS "$ENV{DXSDK_DIR}/Include"
-)
-
-find_library(DirectX_d3d9 NAMES d3d9
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
-find_library(DirectX_d3dx9 NAMES d3dx9
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
-find_library(DirectX_dinput8 NAMES dinput8
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
-find_library(DirectX_dsound NAMES dsound
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
-find_library(DirectX_dxguid NAMES dxguid
-             PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-)
-
-if (DirectX_OLD_SDK)
-    find_library(DirectX_dxerr NAMES dxerr9
-                 PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-    )
-else()
-    find_library(DirectX_dxerr NAMES DxErr
-                 PATHS "$ENV{DXSDK_DIR}/Lib/${_dxarch}"
-    )
-endif(DirectX_OLD_SDK)
 
 set(DirectX_LIBRARIES
     ${DirectX_d3d9}
@@ -59,19 +76,3 @@ set(DirectX_LIBRARIES
     ${DirectX_dxguid}
     ${DirectX_dxerr}
 )
-
-
-if(DirectX_INCLUDE_DIR AND DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dinput8
-                       AND DirectX_dsound AND DirectX_dxguid AND DirectX_dxerr)
-    set(DirectX_FOUND TRUE)
-endif()
-
-if (DirectX_FOUND)
-    if(NOT DirectX_FIND_QUIETLY)
-        message(STATUS "Found DirectX SDK: ${DirectX_INCLUDE_DIR}")
-    endif()
-else()
-    if(DirectX_FIND_REQUIRED)
-        message(FATAL_ERROR "Could not find DirectX SDK")
-    endif()
-endif()
