@@ -47,7 +47,7 @@ if(NOT DirectX_FOUND)
     if(DirectX_INCLUDE_DIR)
         if (DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dinput8
                          AND DirectX_dsound AND DirectX_dxguid AND DirectX_dxerr)
-            set(DirectX_FOUND TRUE CACHE BOOL "")
+            set(DirectX_FOUND TRUE CACHE BOOL "" FORCE)
             mark_as_advanced(DirectX_FOUND)
             message(STATUS "Found DirectX SDK: ${_dxpath}")
         elseif(DirectX_FIND_REQUIRED)
@@ -60,13 +60,22 @@ if(NOT DirectX_FOUND)
     endif()
     
     if (DirectX_dxerr MATCHES ".*/[dD][xX][eE][rR][rR]9.*")
+        set(DirectX_OLD_SDK ON CACHE BOOL "Is this an old (November 2008) version of the SDK?" FORCE)
         message(STATUS "old Directx SDK detected")
     endif()
 endif(NOT DirectX_FOUND)
 
-if (DirectX_dxerr MATCHES ".*/[dD][xX][eE][rR][rR]9.*")
+if (${DirectX_OLD_SDK})
     add_definitions(-DDX_OLD_SDK)
 endif()
+
+# NOTE: In some cases, includes of Windows SDK must be used BEFORE includes of DirectX SDK.
+#       Otherwise, it can make error about PVOID64!
+get_filename_component(WindowsSdkDir
+    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]"
+    ABSOLUTE CACHE
+)
+set(DirectX_INCLUDE_DIR "${WindowsSdkDir}/include" "${DirectX_INCLUDE_DIR}")
 
 set(DirectX_LIBRARIES
     ${DirectX_d3d9}
