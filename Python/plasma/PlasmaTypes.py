@@ -159,19 +159,6 @@ def PtAssert(cond, msg):
     "Plasma assert. Just like the Python one but we can set it to NOP in release"
     assert cond,msg
 
-def PtDebugPrint(*msgs,**keywords):
-    "Plasma debug print. Will be NOP'd when released"
-    try:
-        level = keywords['level']
-    except LookupError:
-        level = kErrorLevel
-    if level >= PtGetPythonLoggingLevel():
-        if level == 4:
-            PtAssert(0,msgs[0])
-        else:
-            for msg in msgs:
-                print msg
-
 def PtGetObjectName(obj):
     "Given a ptSceneobject, return its name"
     if isinstance(obj,ptSceneobject):
