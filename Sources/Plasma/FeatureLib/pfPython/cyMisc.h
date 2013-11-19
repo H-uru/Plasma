@@ -853,6 +853,7 @@ public:
     // PURPOSE    : debugging
     //
     static void DebugAssert( bool cond, const char * msg );
+    static void DebugPrint(const plString& msg, uint32_t level);
 
 
     //////////////////////////////////////////////////////////////////////////////
