@@ -387,7 +387,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
             );
             LogMsg(kLogPerf, L"AgeJoiner: Next:kNoOp (age updated)");
         } else
-            Complete(false, resMsg->GetError());
+            Complete(false, resMsg->GetError().c_str());
         return true;
     }
 

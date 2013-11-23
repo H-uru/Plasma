@@ -153,6 +153,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfSecurePreloader/pfSecurePreloader.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pfPatcher/plManifests.h"
 
 #include "plTweak.h"
 
@@ -1613,19 +1614,10 @@ bool plClient::StartInit()
 //============================================================================
 void    plClient::IPatchGlobalAgeFiles( void )
 {
-    plResPatcher* patcher = plResPatcher::GetInstance();
-    if (!gDataServerLocal)
-    {
-        patcher->RequestManifest("CustomAvatars");
-        patcher->RequestManifest("GlobalAnimations");
-        patcher->RequestManifest("GlobalAvatars");
-        patcher->RequestManifest("GlobalClothing");
-        patcher->RequestManifest("GlobalMarkers");
-        patcher->RequestManifest("GUI");
-    }
-
     plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
-    patcher->Start();
+
+    plResPatcher* patcher = plResPatcher::GetInstance();
+    patcher->Update(plManifest::EssentialGameManifests());
 }
 
 void plClient::InitDLLs()
@@ -2550,7 +2542,7 @@ void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
     plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
 
     if (!msg->Success()) {
-        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError());
+        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError().c_str());
         return;
     }
 
