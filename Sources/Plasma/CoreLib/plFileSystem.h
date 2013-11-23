@@ -338,6 +338,9 @@ namespace plFileSystem
      *  system temp path is used.
      */
     plFileName GetTempFilename(const char *prefix = "tmp", const plFileName &path = "");
+
+    /** Convert a file size from bytes to a human readable size. */
+    plString ConvertFileSize(uint64_t size);
 }
 
 #endif // plFileSystem_Defined

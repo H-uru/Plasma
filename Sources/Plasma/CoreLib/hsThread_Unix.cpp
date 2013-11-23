@@ -76,6 +76,7 @@ extern "C" {
         pthread_mutex_lock(((hsThread*)param)->GetStartupMutex());
         void* ret = (void*)(uintptr_t)((hsThread*)param)->Run();
         pthread_mutex_unlock(((hsThread*)param)->GetStartupMutex());
+        ((hsThread*)param)->OnQuit();
         pthread_exit(ret);
         return ret;
     }
