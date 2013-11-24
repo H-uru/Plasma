@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plProgressMgr_h
 
 #include "HeadSpin.h"
-
+#include "plString.h"
 
 class plPipeline;
 class plPlate;
@@ -74,10 +74,10 @@ class plOperationProgress
     protected:
 
         float    fValue, fMax;
-        char        fStatusText[ 256 ];
-        char        fTitle[ 256 ];
-        uint32_t      fContext;
-        double      fStartTime;
+        plString fTitle;
+        plString fStatusText;
+        uint32_t fContext;
+        double   fStartTime;
 
         uint32_t fElapsedSecs, fRemainingSecs;
         float fAmtPerSec;
@@ -109,11 +109,11 @@ class plOperationProgress
 
         ~plOperationProgress();
 
-        float GetMax( void ) const { return fMax; }
-        float GetProgress( void ) const { return fValue; }
-        const char * GetTitle( void ) const { return fTitle; }
-        const char * GetStatusText( void ) const { return fStatusText; }
-        uint32_t  GetContext( void ) const { return fContext; }
+        float GetMax() const { return fMax; }
+        float GetProgress() const { return fValue; }
+        plString GetTitle() const { return fTitle; }
+        plString GetStatusText() const { return fStatusText; }
+        uint32_t  GetContext() const { return fContext; }
         uint32_t GetElapsedSecs() { return fElapsedSecs; }
         uint32_t GetRemainingSecs() { return fRemainingSecs; }
         float GetAmtPerSec() { return fAmtPerSec; }
@@ -127,16 +127,16 @@ class plOperationProgress
         // Set the length
         void    SetLength( float length );
 
-        // Sets the display text above the bar (nil for nothing)
-        void    SetStatusText( const char *text );
+        /** Sets the progress bar's status text */
+        void    SetStatusText(const plString& status) { fStatusText = status; }
 
-        // Sets the title
-        void    SetTitle( const char *title );
+        /** Sets the progress bar's title */
+        void    SetTitle(const plString& title) { fTitle = title; }
 
         // Application data
         void    SetContext( uint32_t context ) { fContext = context;}
 
-        bool    IsDone( void ) { return ( fValue < fMax ) ? false : true; }
+        bool    IsDone() { return ( fValue < fMax ) ? false : true; }
 
         // True if this is the initial update (progress was just created)
         bool IsInitUpdate() { return hsCheckBits(fFlags, kInitUpdate); }

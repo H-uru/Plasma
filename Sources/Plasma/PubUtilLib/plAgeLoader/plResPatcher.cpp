@@ -249,7 +249,7 @@ void plResPatcher::IssueRequest()
             }
         }
 
-        fProgress->SetTitle(title.c_str());
+        fProgress->SetTitle(title);
     }
 }
 

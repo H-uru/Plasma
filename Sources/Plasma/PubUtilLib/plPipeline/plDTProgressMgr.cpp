@@ -245,16 +245,16 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
 
     if (drawText)
     {
-        if (prog->GetTitle())
+        if (!prog->GetTitle().IsEmpty())
         {
-            text.DrawString( x, y, prog->GetTitle(), (uint32_t)0xccb0b0b0 );
-            x += (uint16_t)text.CalcStringWidth( prog->GetTitle() );
+            text.DrawString_TEMP( x, y, prog->GetTitle(), (uint32_t)0xccb0b0b0 );
+            x += (uint16_t)text.CalcStringWidth_TEMP( prog->GetTitle() );
             drew_something = true;
         }
 
-        if (prog->GetStatusText())
+        if (!prog->GetStatusText().IsEmpty())
         {
-            text.DrawString( x, y, prog->GetStatusText(), (uint32_t)0xccb0b0b0 );
+            text.DrawString_TEMP( x, y, prog->GetStatusText(), (uint32_t)0xccb0b0b0 );
             drew_something = true;
         }
     }
