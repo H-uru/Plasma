@@ -76,6 +76,7 @@ class plOperationProgress
         float    fValue, fMax;
         plString fTitle;
         plString fStatusText;
+        plString fInfoText;
         uint32_t fContext;
         double   fStartTime;
 
@@ -113,6 +114,7 @@ class plOperationProgress
         float GetProgress() const { return fValue; }
         plString GetTitle() const { return fTitle; }
         plString GetStatusText() const { return fStatusText; }
+        plString GetInfoText() const { return fInfoText; }
         uint32_t  GetContext() const { return fContext; }
         uint32_t GetElapsedSecs() { return fElapsedSecs; }
         uint32_t GetRemainingSecs() { return fRemainingSecs; }
@@ -127,7 +129,10 @@ class plOperationProgress
         // Set the length
         void    SetLength( float length );
 
-        /** Sets the progress bar's status text */
+        /** Sets the progress bar's right justified info text */
+        void SetInfoText(const plString& info) { fInfoText = info; }
+
+        /** Sets the progress bar's left justified status text */
         void    SetStatusText(const plString& status) { fStatusText = status; }
 
         /** Sets the progress bar's title */
