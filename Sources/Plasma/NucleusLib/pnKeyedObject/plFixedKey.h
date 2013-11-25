@@ -85,7 +85,6 @@ enum plFixedKeyId
     kJournalBookMgr_KEY,
     kAgeLoader_KEY,
     kBuiltIn3rdPersonCamera_KEY,
-    kSecurePreloader_KEY,
 
     kLast_Fixed_KEY
 };

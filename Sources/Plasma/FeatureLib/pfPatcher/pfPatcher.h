@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plFileName;
 class plStatusLog;
+class hsStream;
 
 /** Plasma File Patcher
  *  This is used to patch the client with one or many manifests at once. It assumes that
@@ -71,6 +72,11 @@ public:
 
     /** Represents a function that takes (const plFileName&) on an interesting file operation. */
     typedef std::function<void(const plFileName&)> FileDownloadFunc;
+
+    /** Represents a function that takes (const plFileName&, hsStream*) on game code discovery.
+     *  You are responsible for closing and deleting the provided stream.
+     */
+    typedef std::function<bool(const plFileName&, hsStream*)> GameCodeDiscoverFunc;
 
     /** Represents a function that takes (bytesDLed, totalBytes, statsStr) as a progress indicator. */
     typedef std::function<void(uint64_t, uint64_t, const plString&)> ProgressTickFunc;
@@ -94,12 +100,19 @@ public:
      */
     void OnFileDownloaded(FileDownloadFunc cb);
 
+    /** This is called when the patcher discovers an up-to-date Python package or SDL file.
+    *   \remarks This can be called from any thread when the patcher downloads or encounters an up-to-date
+    *   python package or SDL file that the server knows about.
+    */
+    void OnGameCodeDiscovery(GameCodeDiscoverFunc cb);
+
     /** Set a callback that will be fired when the patcher receives a chunk from the server. The status string
      *  will contain the current download speed.
      *  \remarks This will be called from the network thread.
      */
     void OnProgressTick(ProgressTickFunc cb);
 
+    void RequestGameCode();
     void RequestManifest(const plString& mfs);
     void RequestManifest(const std::vector<plString>& mfs);
 

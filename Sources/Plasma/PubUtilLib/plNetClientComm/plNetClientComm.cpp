@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 #include "plMessage/plAccountUpdateMsg.h"
 #include "plNetClient/plNetClientMgr.h"
+#include "plFile/plStreamSource.h"
 
 #include "pfMessage/pfKIMsg.h"
 
@@ -414,6 +415,9 @@ static void INetCliAuthLoginRequestCallback (
             if (!wantsStartUpAge && 0 == StrCmpI(s_players[i].playerName, s_iniStartupPlayerName, (unsigned)-1))
                 s_player = &s_players[i];
         }
+
+        // store this server's encryption key for posterity
+        NetCliAuthGetEncryptionKey(plStreamSource::GetInstance()->GetEncryptionKey(), 4);
     }
     else
         s_account.accountUuid = kNilUuid;

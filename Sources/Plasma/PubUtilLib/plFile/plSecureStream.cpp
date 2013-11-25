@@ -667,17 +667,13 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
 hsStream* plSecureStream::OpenSecureFile(const plFileName& fileName, const uint32_t flags /* = kRequireEncryption */, uint32_t* key /* = nil */)
 {
     bool requireEncryption = flags & kRequireEncryption;
-#ifndef PLASMA_EXTERNAL_RELEASE
-    requireEncryption = false;
-#endif
-
     bool deleteOnExit = flags & kDeleteOnExit;
     bool isEncrypted = IsSecureFile(fileName);
 
-    hsStream* s = nil;
+    hsStream* s = nullptr;
     if (isEncrypted)
         s = new plSecureStream(deleteOnExit, key);
-    else if (!requireEncryption) // If this isn't an external release, let them use unencrypted data
+    else if (!requireEncryption)
         s = new hsUNIXStream;
 
     if (s)

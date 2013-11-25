@@ -45,12 +45,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #include "plAgeLoader/plAgeLoader.h"
+#include "plFile/plEncryptedStream.h"
+#include "plFile/plStreamSource.h"
+#include "plFile/plSecureStream.h"
 #include "plMessage/plResPatcherMsg.h"
 #include "pfPatcher/pfPatcher.h"
 #include "plProgressMgr/plProgressMgr.h"
 #include "plResMgr/plResManager.h"
 
 extern bool gDataServerLocal;
+bool gSkipPreload = false;
 
 /////////////////////////////////////////////////////////////////////////////
 
@@ -98,6 +102,21 @@ void plResPatcher::OnFileDownloaded(const plFileName& file)
     }
 }
 
+bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream)
+{
+    plSecureStream* ss = new plSecureStream(false, plStreamSource::GetInstance()->GetEncryptionKey());
+    if (ss->Open(stream)) {
+        plStreamSource::GetInstance()->InsertFile(file, ss);
+
+        // SecureStream will hold a decrypted buffer...
+        stream->Close();
+        delete stream;
+    } else
+        plStreamSource::GetInstance()->InsertFile(file, stream);
+
+    return true; // ASSume success for now...
+}
+
 void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const plString& msg)
 {
     if (dl && total) {
@@ -121,6 +140,14 @@ pfPatcher* plResPatcher::CreatePatcher()
     patcher->OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
     patcher->OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
     patcher->OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+    // sneaky hax: do the old SecurePreloader thing.... except here
+    if (!fRequestedGameCode && !gSkipPreload) {
+        patcher->OnGameCodeDiscovery(std::bind(&plResPatcher::OnGameCodeDiscovered, this, std::placeholders::_1, std::placeholders::_2));
+        patcher->RequestGameCode();
+        fRequestedGameCode = true;
+    }
+
     return patcher;
 }
 
@@ -133,7 +160,7 @@ void plResPatcher::InitProgress()
 /////////////////////////////////////////////////////////////////////////////
 
 plResPatcher::plResPatcher()
-    : fProgress(nullptr) { }
+    : fProgress(nullptr), fRequestedGameCode(false) { }
 
 plResPatcher::~plResPatcher()
 {

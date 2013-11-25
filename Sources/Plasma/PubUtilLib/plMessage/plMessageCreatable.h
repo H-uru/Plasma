@@ -319,9 +319,6 @@ REGISTER_CREATABLE(plNetCommPublicAgeListMsg);
 REGISTER_CREATABLE(plNetCommPublicAgeMsg);
 REGISTER_CREATABLE(plNetCommRegisterAgeMsg);
 
-#include "plPreloaderMsg.h"
-REGISTER_CREATABLE(plPreloaderMsg);
-
 #include "plNetClientMgrMsg.h"
 REGISTER_CREATABLE(plNetClientMgrMsg);
 

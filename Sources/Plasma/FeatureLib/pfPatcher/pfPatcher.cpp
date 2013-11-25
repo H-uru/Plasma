@@ -68,7 +68,7 @@ struct pfPatcherWorker : public hsThread
     /** Represents a File/Auth download request */
     struct Request
     {
-        enum { kFile, kManifest };
+        enum { kFile, kManifest, kSecurePreloader, kAuthFile, kPythonList, kSdlList };
 
         plString fName;
         uint8_t fType;
@@ -101,6 +101,7 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::CompletionFunc fOnComplete;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
     pfPatcher::FileDownloadFunc fFileDownloaded;
+    pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
     pfPatcher::ProgressTickFunc fProgressTick;
 
     pfPatcher* fParent;
@@ -119,6 +120,7 @@ struct pfPatcherWorker : public hsThread
     bool IssueRequest();
     virtual hsError Run();
     void ProcessFile();
+    void WhitelistFile(const plFileName& file, bool justDownloaded, hsStream* s=nullptr);
 };
 
 // ===================================================
@@ -150,6 +152,13 @@ class pfPatcherStream : public plZlibStream
     }
 
 public:
+    pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, uint64_t size)
+        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0)
+    {
+        fParent->fTotalBytes += size;
+        fOutput = new hsRAMStream;
+    }
+
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, const NetCliFileManifestEntry& entry)
         : fParent(parent), fFlags(entry.flags), fBytesWritten(0)
     {
@@ -179,6 +188,15 @@ public:
             return fOutput->Write(count, buf);
     }
 
+    virtual bool AtEnd() { return fOutput->AtEnd(); }
+    virtual uint32_t GetEOF() { return fOutput->GetEOF(); }
+    virtual uint32_t GetPosition() const { return fOutput->GetPosition(); }
+    virtual uint32_t GetSizeLeft() const { return fOutput->GetSizeLeft(); }
+    virtual uint32_t Read(uint32_t count, void* buf) { return fOutput->Read(count, buf); }
+    virtual void Rewind() { fOutput->Rewind(); }
+    virtual void SetPosition(uint32_t pos) { fOutput->SetPosition(pos); }
+    virtual void Skip(uint32_t deltaByteCount) { fOutput->Skip(deltaByteCount); }
+
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
     plFileName GetFileName() const { return fFilename; }
     void Unlink() const { plFileSystem::Unlink(fFilename); }
@@ -186,20 +204,94 @@ public:
 
 // ===================================================
 
-static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName& filename, hsStream* writer)
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
 
     if (IS_NET_SUCCESS(result)) {
-        PatcherLogGreen("\tDownloaded Manifest '%S'", group);
+        PatcherLogGreen("\tDownloaded Legacy File '%s'", filename.AsString().c_str());
+        patcher->IssueRequest();
+
+        // Now, we pass our RAM-backed file to the game code handlers. In the main client,
+        // this will trickle down and add a new friend to plStreamSource. This should never
+        // happen in any other app...
+        writer->Rewind();
+        patcher->WhitelistFile(filename, true, writer);
+    } else {
+        PatcherLogRed("\tDownloaded Failed: File '%s'", filename.AsString().c_str());
+        patcher->EndPatch(result, filename.AsString());
+    }
+}
+
+static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFileInfo infoArr[], unsigned infoCount)
+{
+    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
+
+    if (IS_NET_SUCCESS(result)) {
+        // so everything goes directly into the Requests deque because AuthSrv lists
+        // don't have any hashes attached. WHY did eap think this was a good idea?!?!
         {
-            hsTempMutexLock lock(patcher->fFileMut);
-            for (unsigned i = 0; i < entryCount; ++i)
-                patcher->fQueuedFiles.push_back(manifest[i]);
-            patcher->fFileSignal.Signal();
+            hsTempMutexLock lock(patcher->fRequestMut);
+            for (unsigned i = 0; i < infoCount; ++i) {
+                PatcherLogYellow("\tEnqueuing Legacy File '%S'", infoArr[i].filename);
+
+                plFileName fn = plString::FromWchar(infoArr[i].filename);
+                plFileSystem::CreateDir(fn.StripFileName());
+
+                // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
+                // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
+                pfPatcherStream* s = new pfPatcherStream(patcher, fn, infoArr[i].filesize);
+                pfPatcherWorker::Request req = pfPatcherWorker::Request(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
+                patcher->fRequests.push_back(req);
+            }
         }
         patcher->IssueRequest();
     } else {
+        PatcherLogRed("\tSHIT! Some legacy manifest phailed");
+        patcher->EndPatch(result, "SecurePreloader failed");
+    }
+}
+
+static void IHandleManifestDownload(pfPatcherWorker* patcher, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+{
+    PatcherLogGreen("\tDownloaded Manifest '%S'", group);
+    {
+        hsTempMutexLock lock(patcher->fFileMut);
+        for (unsigned i = 0; i < entryCount; ++i)
+            patcher->fQueuedFiles.push_back(manifest[i]);
+        patcher->fFileSignal.Signal();
+    }
+    patcher->IssueRequest();
+}
+
+static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+{
+    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
+
+    if (IS_NET_SUCCESS(result))
+        IHandleManifestDownload(patcher, group, manifest, entryCount);
+    else {
+        PatcherLogYellow("\tWARNING: *** Falling back to AuthSrv file lists to get game code ***");
+
+        // so, we need to ask the AuthSrv about our game code
+        {
+            hsTempMutexLock lock(patcher->fRequestMut);
+            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kPythonList));
+            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kSdlList));
+        }
+
+        // continue pumping requests
+        patcher->IssueRequest();
+    }
+}
+
+static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
+{
+    pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
+
+    if (IS_NET_SUCCESS(result))
+        IHandleManifestDownload(patcher, group, manifest, entryCount);
+    else {
         PatcherLogRed("\tDownload Failed: Manifest '%S'", group);
         patcher->EndPatch(result, plString::FromWchar(group));
     }
@@ -213,8 +305,7 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
-        if (patcher->fFileDownloaded)
-            patcher->fFileDownloaded(stream->GetFileName());
+        patcher->WhitelistFile(stream->GetFileName(), true);
         patcher->IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
@@ -299,6 +390,25 @@ bool pfPatcherWorker::IssueRequest()
         case Request::kManifest:
             NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.ToWchar());
             break;
+        case Request::kSecurePreloader:
+            // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
+            // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
+            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.ToWchar());
+            break;
+        case Request::kAuthFile:
+            // ffffffuuuuuu
+            req.fStream->Begin();
+            if (fFileBeginDownload)
+                fFileBeginDownload(req.fStream->GetFileName());
+
+            NetCliAuthFileRequest(req.fName, req.fStream, IAuthThingDownloadCB, this);
+            break;
+        case Request::kPythonList:
+            NetCliAuthFileListRequest(L"Python", L"pak", IGotAuthFileList, this);
+            break;
+        case Request::kSdlList:
+            NetCliAuthFileListRequest(L"SDL", L"sdl", IGotAuthFileList, this);
+            break;
         DEFAULT_FATAL(req.fType);
     }
 
@@ -347,7 +457,7 @@ void pfPatcherWorker::ProcessFile()
         const NetCliFileManifestEntry& entry = fQueuedFiles.front();
 
         // eap sucks
-        plString clName = plString::FromWchar(entry.clientName);
+        plFileName clName = plString::FromWchar(entry.clientName);
         plString dlName = plString::FromWchar(entry.downloadName);
 
         // Check to see if ours matches
@@ -358,6 +468,7 @@ void pfPatcherWorker::ProcessFile()
             srvMD5.SetFromHexString(plString::FromWchar(entry.md5, 32).c_str());
 
             if (cliMD5 == srvMD5) {
+                WhitelistFile(clName, false);
                 fQueuedFiles.pop_front();
                 continue;
             }
@@ -377,6 +488,33 @@ void pfPatcherWorker::ProcessFile()
         if (!fRequestActive)
             IssueRequest();
     } while (!fQueuedFiles.empty());
+}
+
+void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded, hsStream* stream)
+{
+    // if this is a newly downloaded file, fire off a completion callback
+    if (justDownloaded && fFileDownloaded)
+        fFileDownloaded(file);
+
+    // we want to whitelist our game code, so here we go...
+    if (fGameCodeDiscovered) {
+        plString ext = file.GetFileExt();
+        if (ext.CompareI("pak") == 0 || ext.CompareI("sdl") == 0) {
+            if (!stream) {
+                stream = new hsUNIXStream;
+                stream->Open(file, "rb");
+            }
+
+            // if something terrible goes wrong (eg bad encryption), we can exit sanely
+            // callback eats stream
+            if (!fGameCodeDiscovered(file, stream))
+                EndPatch(kNetErrInternalError, "SecurePreloader failed.");
+        }
+    } else if (stream) {
+        // no dad gum memory leaks, m'kay?
+        stream->Close();
+        delete stream;
+    }
 }
 
 // ===================================================
@@ -414,12 +552,23 @@ void pfPatcher::OnFileDownloaded(FileDownloadFunc cb)
     fWorker->fFileDownloaded = cb;
 }
 
+void pfPatcher::OnGameCodeDiscovery(GameCodeDiscoverFunc cb)
+{
+    fWorker->fGameCodeDiscovered = cb;
+}
+
 void pfPatcher::OnProgressTick(ProgressTickFunc cb)
 {
     fWorker->fProgressTick = cb;
 }
 
 // ===================================================
+
+void pfPatcher::RequestGameCode()
+{
+    hsTempMutexLock lock(fWorker->fRequestMut);
+    fWorker->fRequests.push_back(pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
+}
 
 void pfPatcher::RequestManifest(const plString& mfs)
 {
@@ -447,4 +596,3 @@ bool pfPatcher::Start()
     }
     return false;
 }
-

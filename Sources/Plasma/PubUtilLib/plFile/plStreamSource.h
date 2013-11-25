@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plStreamSource_h_inc
 
 #include <map>
-#include <string>
 #include "hsStream.h"
+#include "hsThread.h"
 
 // A class for holding and accessing file streams. The preloader will insert
 // files in here once they are loaded. In internal builds, if a requested file
@@ -60,10 +60,12 @@ private:
         hsStream*       fStream; // we own this pointer, so clean it up
     };
     std::map<plFileName, fileData, plFileName::less_i> fFileData; // key is filename
+    hsMutex fMutex;
+    uint32_t fServerKey[4];
 
     void ICleanup(); // closes all file pointers and cleans up after itself
 
-    plStreamSource() {}
+    plStreamSource();
 public:
     ~plStreamSource() {ICleanup();}
 
@@ -76,6 +78,9 @@ public:
 
     // For other classes to insert files (takes ownership of the stream if successful)
     bool InsertFile(const plFileName& filename, hsStream* stream);
+
+    /** Gets a pointer to our encryption key */
+    uint32_t* GetEncryptionKey() { return fServerKey; }
 
     // Instance handling
     static plStreamSource* GetInstance();

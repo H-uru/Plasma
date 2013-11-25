@@ -58,12 +58,14 @@ class plResPatcher
 {
     plOperationProgress* fProgress;
     static plResPatcher* fInstance;
+    bool                 fRequestedGameCode;
 
     friend class plAgeLoader;
 
     void OnCompletion(ENetError, const plString& msg);
     void OnFileDownloadBegin(const plFileName& file);
     void OnFileDownloaded(const plFileName& file);
+    bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
     void OnProgressTick(uint64_t dl, uint64_t total, const plString& msg);
 
     class pfPatcher* CreatePatcher();
