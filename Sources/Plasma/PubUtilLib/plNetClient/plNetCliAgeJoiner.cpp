@@ -224,13 +224,18 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0)
+    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
-    else
+
+        // no need to update if we're not using a GameSrv
+        plgDispatch::MsgSend(new plResPatcherMsg());
+    } else {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge, false);
 
-    plAgeLoader* al = plAgeLoader::GetInstance();
-    al->UpdateAge(age.ageDatasetName);
+        // we only need to update the age if we're using a GameSrv
+        plAgeLoader* al = plAgeLoader::GetInstance();
+        al->UpdateAge(age.ageDatasetName);
+    }
 }
 
 //============================================================================

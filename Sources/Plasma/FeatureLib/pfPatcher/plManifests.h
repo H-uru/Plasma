@@ -67,7 +67,6 @@ namespace plManifest
 
     /** Get a vector containing all manifests the game requires to initialize. */
     std::vector<plString> EssentialGameManifests();
-
 }
 
 #endif // _plManifests_inc_

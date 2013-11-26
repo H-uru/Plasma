@@ -84,6 +84,7 @@ std::vector<plString> plManifest::EssentialGameManifests()
     mfs.push_back("GlobalClothing");
     mfs.push_back("GlobalMarkers");
     mfs.push_back("GUI");
+    mfs.push_back("StartUp");
 
     return mfs;
 }
