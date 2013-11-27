@@ -89,6 +89,10 @@ struct pfPatcherWorker : public hsThread
 
         // Any file
         kFlagZipped                 = 1<<3,
+
+        // Begin internal flags
+        kLastManifestFlag           = 1<<4,
+        kSelfPatch                  = 1<<5,
     };
 
     std::deque<Request> fRequests;
@@ -103,6 +107,7 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::FileDownloadFunc fFileDownloaded;
     pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
     pfPatcher::ProgressTickFunc fProgressTick;
+    pfPatcher::FileDownloadFunc fSelfPatch;
 
     pfPatcher* fParent;
     volatile bool fStarted;
@@ -199,6 +204,7 @@ public:
 
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
     plFileName GetFileName() const { return fFilename; }
+    bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
     void Unlink() const { plFileSystem::Unlink(fFilename); }
 };
 
@@ -306,6 +312,8 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
         patcher->WhitelistFile(stream->GetFileName(), true);
+        if (patcher->fSelfPatch && stream->IsSelfPatch())
+            patcher->fSelfPatch(stream->GetFileName());
         patcher->IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
@@ -454,7 +462,7 @@ hsError pfPatcherWorker::Run()
 void pfPatcherWorker::ProcessFile()
 {
     do {
-        const NetCliFileManifestEntry& entry = fQueuedFiles.front();
+        NetCliFileManifestEntry& entry = fQueuedFiles.front();
 
         // eap sucks
         plFileName clName = plString::FromWchar(entry.clientName);
@@ -477,6 +485,15 @@ void pfPatcherWorker::ProcessFile()
         // If you got here, they're different.
         PatcherLogYellow("\tEnqueuing '%S'", entry.clientName);
         plFileSystem::CreateDir(plFileName(clName).StripFileName());
+
+        // If someone registered for SelfPatch notifications, then we should probably
+        // let them handle the gruntwork... Otherwise, go nuts!
+        if (fSelfPatch) {
+            if (clName == plFileSystem::GetCurrentAppPath().GetFileName()) {
+                clName += ".tmp"; // don't overwrite myself!
+                entry.flags |= kSelfPatch;
+            }
+        }
 
         pfPatcherStream* s = new pfPatcherStream(this, dlName, entry);
         s->Open(clName, "wb");
@@ -560,6 +577,11 @@ void pfPatcher::OnGameCodeDiscovery(GameCodeDiscoverFunc cb)
 void pfPatcher::OnProgressTick(ProgressTickFunc cb)
 {
     fWorker->fProgressTick = cb;
+}
+
+void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
+{
+    fWorker->fSelfPatch = cb;
 }
 
 // ===================================================

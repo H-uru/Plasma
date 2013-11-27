@@ -112,6 +112,9 @@ public:
      */
     void OnProgressTick(ProgressTickFunc cb);
 
+    /** This is called when the current application has been updated. */
+    void OnSelfPatch(FileDownloadFunc cb);
+
     void RequestGameCode();
     void RequestManifest(const plString& mfs);
     void RequestManifest(const std::vector<plString>& mfs);
