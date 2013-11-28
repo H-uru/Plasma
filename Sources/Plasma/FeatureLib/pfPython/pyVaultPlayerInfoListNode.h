@@ -78,8 +78,8 @@ public:
 //==================================================================
 // class RelVaultNode : public plVaultFolderNode
 //
-    virtual bool  HasPlayer( uint32_t playerID );
-    bool    AddPlayer( uint32_t playerID );
+    bool    HasPlayer( uint32_t playerID );
+    void    AddPlayer( uint32_t playerID );
     void    RemovePlayer( uint32_t playerID );
     PyObject * GetPlayer( uint32_t playerID ); // returns pyVaultPlayerInfoNode
 

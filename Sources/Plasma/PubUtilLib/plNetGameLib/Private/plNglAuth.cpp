@@ -3588,10 +3588,13 @@ bool FileDownloadRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    wchar_t filename[MAX_PATH];
+    wcsncpy(filename, m_filename.AsString().ToWchar(), arrsize(filename));
+
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
         m_transId,
-        reinterpret_cast<uintptr_t>(m_filename.AsString().ToWchar().GetData()),
+        reinterpret_cast<uintptr_t>(filename),
     };
 
     m_conn->Send(msg, arrsize(msg));

@@ -496,8 +496,8 @@ double plString::ToDouble() const
     return strtod(c_str(), nullptr);
 }
 
-// Microsoft doesn't provide this for us
-#ifdef _MSC_VER
+// Microsoft doesn't provide this for us until VC++2013
+#if defined(_MSC_VER) && _MSC_VER < 1800
 #define va_copy(dest, src)  (dest) = (src)
 #endif
 

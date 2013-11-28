@@ -95,7 +95,7 @@ plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)
         plString langTag = name.AsString().Substr(underscore, kLangTagLen);
 
         if (langTag == fLangTags[kEnglish])
-            return name.AsString().Left(underscore) + fLangTags[lang];
+            return name.AsString().Replace(fLangTags[kEnglish], fLangTags[lang]);
     }
 
     return "";
