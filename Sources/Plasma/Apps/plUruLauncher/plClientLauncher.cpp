@@ -164,6 +164,11 @@ plString plClientLauncher::GetAppArgs() const
     plStringStream ss;
     ss << "-ServerIni=";
     ss << fServerIni.AsString();
+
+    // optional args
+    if (hsCheckBits(fFlags, kClientImage))
+        ss << " -Image";
+
     return ss.GetString();
 }
 
@@ -195,9 +200,12 @@ void plClientLauncher::PatchClient()
     patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
     patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
 
-    if (hsCheckBits(fFlags, kHaveSelfPatched))
-        patcher->RequestManifest(plManifest::ClientManifest());
-    else
+    if (hsCheckBits(fFlags, kHaveSelfPatched)) {
+        if (hsCheckBits(fFlags, kClientImage))
+            patcher->RequestManifest(plManifest::ClientImageManifest());
+        else
+            patcher->RequestManifest(plManifest::ClientManifest());
+    } else
         patcher->RequestManifest(plManifest::PatcherManifest());
     patcher->Start();
 }
@@ -324,20 +332,27 @@ bool plClientLauncher::LoadServerIni() const
 
 void plClientLauncher::ParseArguments()
 {
-    enum { kArgServerIni, kArgNoSelfPatch };
+#define APPLY_FLAG(arg, flag) \
+    if (cmdParser.GetBool(arg)) \
+        fFlags |= flag;
+
+    enum { kArgServerIni, kArgNoSelfPatch, kArgImage };
     const CmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, L"ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, L"NoSelfPatch", kArgNoSelfPatch },
+        { kCmdArgFlagged | kCmdTypeBool, L"Image", kArgImage },
     };
 
     CCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
     cmdParser.Parse();
 
     // cache 'em
-    if (cmdParser.GetBool(kArgNoSelfPatch))
-        hsSetBits(fFlags, kHaveSelfPatched);
     if (cmdParser.IsSpecified(kArgServerIni))
         fServerIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
+    APPLY_FLAG(kArgNoSelfPatch, kHaveSelfPatched);
+    APPLY_FLAG(kArgImage, kClientImage);
+
+#undef APPLY_FLAG
 }
 
 void plClientLauncher::SetErrorProc(ErrorFunc proc)

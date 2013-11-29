@@ -61,6 +61,7 @@ private:
     enum Flags
     {
         kHaveSelfPatched = 1<<0,
+        kClientImage = 1<<1,
     };
 
     uint32_t   fFlags;
