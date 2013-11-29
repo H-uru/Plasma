@@ -70,6 +70,9 @@ public:
     /** Represents a function that takes the status and an optional message on completion. */
     typedef std::function<void(ENetError, const plString&)> CompletionFunc;
 
+    /** Represents a function that takes (const plFileName&) and approves it. */
+    typedef std::function<bool(const plFileName&)> FileDesiredFunc;
+
     /** Represents a function that takes (const plFileName&) on an interesting file operation. */
     typedef std::function<void(const plFileName&)> FileDownloadFunc;
 
@@ -94,6 +97,12 @@ public:
      *  \remarks This will be called from the network thread.
      */
     void OnFileDownloadBegin(FileDownloadFunc cb);
+
+    /** Set a callback that will be fired when the patcher wants to download a file. You are
+     *  given the ability to approve or veto the download. With great power comes great responsibility...
+     *  \remarks This will be called from the patcher thread.
+     */
+    void OnFileDownloadDesired(FileDesiredFunc cb);
 
     /** Set a callback that will be fired when the patcher has finished downloading a file from the server.
      *  \remarks This will be called from the network thread.

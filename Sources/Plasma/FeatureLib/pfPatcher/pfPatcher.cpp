@@ -104,6 +104,7 @@ struct pfPatcherWorker : public hsThread
 
     pfPatcher::CompletionFunc fOnComplete;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
+    pfPatcher::FileDesiredFunc fFileDownloadDesired;
     pfPatcher::FileDownloadFunc fFileDownloaded;
     pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
     pfPatcher::ProgressTickFunc fProgressTick;
@@ -482,7 +483,16 @@ void pfPatcherWorker::ProcessFile()
             }
         }
 
-        // If you got here, they're different.
+        // It's different... but do we want it?
+        if (fFileDownloadDesired) {
+            if (!fFileDownloadDesired(clName)) {
+                PatcherLogRed("\tDeclined '%S'", entry.clientName);
+                fQueuedFiles.pop_front();
+                continue;
+            }
+        }
+
+        // If you got here, they're different and we want it.
         PatcherLogYellow("\tEnqueuing '%S'", entry.clientName);
         plFileSystem::CreateDir(plFileName(clName).StripFileName());
 
@@ -562,6 +572,11 @@ void pfPatcher::OnCompletion(CompletionFunc cb)
 void pfPatcher::OnFileDownloadBegin(FileDownloadFunc cb)
 {
     fWorker->fFileBeginDownload = cb;
+}
+
+void pfPatcher::OnFileDownloadDesired(FileDesiredFunc cb)
+{
+    fWorker->fFileDownloadDesired = cb;
 }
 
 void pfPatcher::OnFileDownloaded(FileDownloadFunc cb)

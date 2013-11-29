@@ -161,6 +161,11 @@ plClientLauncher::~plClientLauncher() { }
 
 plString plClientLauncher::GetAppArgs() const
 {
+    // If -Repair was specified, there are no args for the next call...
+    if (hsCheckBits(fFlags, kRepairGame)) {
+        return "";
+    }
+
     plStringStream ss;
     ss << "-ServerIni=";
     ss << fServerIni.AsString();
@@ -190,16 +195,33 @@ void plClientLauncher::IOnPatchComplete(ENetError result, const plString& msg)
         s_errorProc(result, msg);
 }
 
+bool plClientLauncher::IApproveDownload(const plFileName& file)
+{
+    // So, for a repair, what we want to do is quite simple.
+    // That is: download everything that is NOT in the root directory.
+    plFileName path = file.StripFileName();
+    return !path.AsString().IsEmpty();
+}
+
 void plClientLauncher::PatchClient()
 {
-    if (fStatusFunc)
-        fStatusFunc("Checking for updates...");
+    if (fStatusFunc) {
+        if (hsCheckBits(fFlags, kGameDataOnly))
+            fStatusFunc("Verifying game data...");
+        else
+            fStatusFunc("Checking for updates...");
+    }
     hsAssert(fPatcherFactory, "why is the patcher factory nil?");
 
     pfPatcher* patcher = fPatcherFactory();
     patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
     patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
 
+    // If this is a repair, we need to approve the downloads...
+    if (hsCheckBits(fFlags, kGameDataOnly))
+        patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
+
+    // Let's get 'er done.
     if (hsCheckBits(fFlags, kHaveSelfPatched)) {
         if (hsCheckBits(fFlags, kClientImage))
             patcher->RequestManifest(plManifest::ClientImageManifest());
@@ -336,11 +358,12 @@ void plClientLauncher::ParseArguments()
     if (cmdParser.GetBool(arg)) \
         fFlags |= flag;
 
-    enum { kArgServerIni, kArgNoSelfPatch, kArgImage };
+    enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame };
     const CmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, L"ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, L"NoSelfPatch", kArgNoSelfPatch },
         { kCmdArgFlagged | kCmdTypeBool, L"Image", kArgImage },
+        { kCmdArgFlagged | kCmdTypeBool, L"Repair", kArgRepairGame },
     };
 
     CCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
@@ -351,6 +374,11 @@ void plClientLauncher::ParseArguments()
         fServerIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
     APPLY_FLAG(kArgNoSelfPatch, kHaveSelfPatched);
     APPLY_FLAG(kArgImage, kClientImage);
+    APPLY_FLAG(kArgRepairGame, kRepairGame);
+
+    // last chance setup
+    if (hsCheckBits(fFlags, kRepairGame))
+        fClientExecutable = plManifest::PatcherExecutable();
 
 #undef APPLY_FLAG
 }

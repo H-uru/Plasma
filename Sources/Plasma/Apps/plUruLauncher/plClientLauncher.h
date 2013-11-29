@@ -62,6 +62,9 @@ private:
     {
         kHaveSelfPatched = 1<<0,
         kClientImage = 1<<1,
+        kGameDataOnly = (1<<2),
+
+        kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };
 
     uint32_t   fFlags;
@@ -77,6 +80,7 @@ private:
     plString GetAppArgs() const;
 
     void IOnPatchComplete(ENetError result, const plString& msg);
+    bool IApproveDownload(const plFileName& file);
 
 public:
     plClientLauncher();
