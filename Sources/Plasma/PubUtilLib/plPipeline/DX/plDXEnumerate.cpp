@@ -39,10 +39,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plDXEnumerate.h"
-#include <ddraw.h>
 
-#include "plPipeline/hsGDDrawDllLoad.h"
+#include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 
 
@@ -219,8 +217,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                 {
                     if( dwFlags & D3DENUM_CANWINDOW )
                     {
-                        if( (pDriver == &fDrivers[0])
-                            &&( pDevice->fDDCaps.Caps2 & DDCAPS2_CANRENDERWINDOWED ) )
+                        if( (pDriver == &fDrivers[0]) )
                         {
                             if( ( pDevice->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT )
                                 ^ !(dwFlags & D3DENUM_TNLHAL) )
@@ -286,26 +283,8 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     fCurrentDriver = NULL;      // The selected DD driver
     fDrivers.Reset();       // List of DD drivers
 
-
-    /// New DX Enumeration
-
-    // Get a pointer to the creation function
-    if( hsGDDrawDllLoad::GetD3DDll() == nil )
-    {
-        strcpy( fEnumeErrorStr, "Cannot load Direct3D driver!" );
-        return; 
-    }
-
-    Direct3DCreateProc      procPtr;
-    procPtr = (Direct3DCreateProc)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "Direct3DCreate9" );
-    if( procPtr == nil )
-    {
-        strcpy( fEnumeErrorStr, "Cannot load D3D Create Proc!" );
-        return;
-    }
-
     // Create a D3D object to use
-    IDirect3D9 *pD3D = procPtr( D3D_SDK_VERSION );
+    IDirect3D9 *pD3D = Direct3DCreate9( D3D_SDK_VERSION );
     if( pD3D == nil )
     {
         strcpy( fEnumeErrorStr, "Cannot load DirectX!" );
@@ -684,22 +663,8 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
 bool    hsG3DDeviceSelector::IInitDirect3D( void )
 {
-    if( hsGDDrawDllLoad::GetD3DDll() == nil )
-    {
-        strcpy( fErrorString, "Cannot load Direct3D driver!" );
-        return false;   
-    }
-
-    Direct3DCreateProc      procPtr;
-    procPtr = (Direct3DCreateProc)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "Direct3DCreate9" );
-    if( procPtr == nil )
-    {
-        strcpy( fErrorString, "Cannot load D3D Create Proc!" );
-        return false;
-    }
-
     // Create a D3D object to use
-    IDirect3D9      *pD3D = procPtr( D3D_SDK_VERSION );
+    IDirect3D9      *pD3D = Direct3DCreate9( D3D_SDK_VERSION );
     if( pD3D == nil )
     {
         strcpy( fErrorString, "Cannot load DirectX!" );

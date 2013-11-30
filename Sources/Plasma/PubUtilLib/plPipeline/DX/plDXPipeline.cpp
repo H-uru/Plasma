@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsWindows.h"
 
 #include <d3d9.h>
-#include <ddraw.h>
 #include <d3dx9mesh.h>
 
 #if defined(DX_OLD_SDK) || defined(__MINGW32__)
@@ -78,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDebugText.h"
 #include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
-#include "plPipeline/hsGDDrawDllLoad.h"
 #include "hsResMgr.h"
 #include "plPipeline/plStatusLogDrawer.h"
 #include "plQuality.h"
@@ -1593,16 +1591,7 @@ bool plDXPipeline::ICreateMaster()
     hsAssert( !fD3DObject, "ICreateMaster() should only be called for Master Direct3DDevice" );
 
     /// The new DirectX Way: Create a Direct3D object, out of which everything else springs
-    if( hsGDDrawDllLoad::GetD3DDll() == nil )
-        return ICreateFail( "Cannot load Direct3D driver!" );
-
-    Direct3DCreateProc      procPtr;
-    procPtr = (Direct3DCreateProc)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "Direct3DCreate9" );
-    if( procPtr == nil )
-        return ICreateFail( "Cannot load D3D Create Proc!" );
-
-    // Create a D3D object to use
-    fD3DObject = procPtr( D3D_SDK_VERSION );
+    fD3DObject = Direct3DCreate9( D3D_SDK_VERSION );
 
     if( fD3DObject == nil )
         return ICreateFail( "Cannot create Direct3D object" );

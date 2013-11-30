@@ -53,16 +53,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
+#include <functional>
+#include <memory>
+
 #if HS_BUILD_FOR_WIN32
-#include <ddraw.h>
-#include <d3d9.h>
+#   include "hsWindows.h"
+#   include <ddraw.h>
+#   include <d3d9.h>
 #endif
 
 #include "hsDXTDirectXCodec.h"
 #include "hsColorRGBA.h"
 #include "plMipmap.h"
 #include "hsCodecManager.h"
-#include "plPipeline/hsGDDrawDllLoad.h"
 
 #if HS_BUILD_FOR_WIN32
 namespace {
@@ -144,26 +147,20 @@ bool    hsDXTDirectXCodec::IInitialize()
 {
     fFlags |= kInitialized;
 
-//  if( hsGDDrawDllLoad::GetDDrawDll() == nil )
-//      return false;   
-
-    DIRECTDRAWCREATEEX DirectDrawCreateEx = 0;
+    DIRECTDRAWCREATEEX DirectDrawCreateEx = nullptr;
 
     // Initialize DirectDraw
-    HRESULT hr;
-    DirectDrawCreateEx = (DIRECTDRAWCREATEEX)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "DirectDrawCreateEx" );
-    if( DirectDrawCreateEx == nil )
+    std::unique_ptr<HINSTANCE__, std::function<BOOL(HMODULE)>> ddraw(LoadLibraryA("ddraw.dll"), FreeLibrary);
+    DirectDrawCreateEx = (DIRECTDRAWCREATEEX)GetProcAddress(ddraw.get(), "DirectDrawCreateEx");
+    if (!DirectDrawCreateEx)
         return false;
 
     /// Using EMULATIONONLY here usually fails--using NULL forces the
     /// use of the standard display driver, which DOES work.
-    if (FAILED(hr = DirectDrawCreateEx((GUID FAR *)NULL/*DDCREATE_EMULATIONONLY*/, (VOID**)&fDirectDraw, IID_IDirectDraw7, NULL)))
+    if (FAILED(DirectDrawCreateEx((GUID FAR *)NULL/*DDCREATE_EMULATIONONLY*/, (VOID**)&fDirectDraw, IID_IDirectDraw7, NULL)))
         return false;
 
-    if (FAILED(hr = fDirectDraw->SetCooperativeLevel(NULL, DDSCL_NORMAL)))
-        return false;
-
-    return true;
+    return SUCCEEDED(fDirectDraw->SetCooperativeLevel(NULL, DDSCL_NORMAL));
 }
 #endif
 
