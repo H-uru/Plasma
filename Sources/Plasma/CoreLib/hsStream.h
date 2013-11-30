@@ -350,7 +350,7 @@ public:
     virtual     ~hsRAMStream();
 
     virtual bool  Open(const plFileName &, const char *) { hsAssert(0, "hsRAMStream::Open  NotImplemented"); return false; }
-    virtual bool  Close()             { hsAssert(0, "hsRAMStream::Close  NotImplemented"); return false; }
+    virtual bool  Close() { return false; }
 
     
     virtual bool      AtEnd();

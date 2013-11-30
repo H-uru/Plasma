@@ -57,6 +57,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTimer.h"
 
+// Draw Colors
+enum
+{
+    kTitleColor = 0xccb0b0b0,
+    kProgressBarColor = 0xff302b3a,
+    kInfoColor = 0xff635e6d,
+};
+
 
 //// Constructor & Destructor ////////////////////////////////////////////////
 
@@ -178,85 +186,51 @@ bool    plDTProgressMgr::IDrawTheStupidThing(plPipeline *p, plOperationProgress 
 {
     plDebugText &text = plDebugText::Instance();
     bool drew_something = false;
+    uint16_t downsz = (text.GetFontSize() << 1) + 4;
 
-    // Lets just set the color to blue
-    uint32_t color = 0xff302b3a;
+    // draw the title
+    if (!prog->GetTitle().IsEmpty()) {
+        y -= downsz;
+        text.DrawString_TEMP(x, y, prog->GetTitle(), kTitleColor);
+        y += downsz;
+        drew_something = true;
+    }
 
-    if( prog->GetMax() > 0.f )
-    {
-        text.Draw3DBorder(x, y, x + width - 1, y + height - 1, color, color);
+    // draw a progress bar
+    if (prog->GetMax() > 0.f) {
+        text.Draw3DBorder(x, y, x + width - 1, y + height - 1, kProgressBarColor, kProgressBarColor);
 
         x += 2;
         y += 2;
         width -= 4;
         height -= 4;
 
-        uint16_t drawWidth    = width;
-        int16_t drawX         = x;
-        uint16_t rightX       = drawX + drawWidth;
+        uint16_t drawWidth = width;
+        int16_t drawX = x;
+        uint16_t rightX = drawX + drawWidth;
 
         if (prog->GetProgress() <= prog->GetMax())
-            drawWidth = (uint16_t)( (float)width * prog->GetProgress() / prog->GetMax() );
+            drawWidth = (uint16_t)((float)width * prog->GetProgress() / prog->GetMax());
 
         rightX = drawX + drawWidth;
+        if (drawWidth > 0)
+            text.DrawRect(drawX, y, rightX, y + height, kProgressBarColor);
+        y += height + 2;
 
-        if( drawWidth > 0 )
-            text.DrawRect( drawX, y, rightX, y + height, color );
-
-        uint32_t timeRemain = prog->fRemainingSecs;
-        if (timeRemain > 0) {
-            plStringStream ss;
-            ss << "APPROXIMATELY ";
-            if (timeRemain > 3600)
-            {
-                uint32_t hours = timeRemain / 3600;
-                const char* plural = (hours > 1) ? "S" : "";
-                ss << hours << " HOUR" << plural << " ";
-                timeRemain %= 3600;
-            }
-            if (timeRemain > 60)
-            {
-                uint32_t minutes = timeRemain / 60;
-                const char* plural = (minutes > 1) ? "S" : "";
-                ss << minutes << " MINUTE" << plural << " ";
-                timeRemain %= 60;
-            }
-            if (timeRemain > 0)
-            {
-                const char* plural = (timeRemain > 1) ? "S" : "";
-                ss << timeRemain << " SECOND" << plural << " ";
-            }
-            ss << "REMAINING";
-            text.DrawString(x, y + height + 2, ss.GetString().c_str(), (uint32_t)0xff635e6d);
-        }
-
-        x -= 2;
-        y -= 2;
         drew_something = true;
     }
 
-    y -= ( text.GetFontSize() << 1 ) + 4;
+    // draw the left justified status text
+    if (!prog->GetStatusText().IsEmpty()) {
+        text.DrawString_TEMP(x, y, prog->GetStatusText(), kInfoColor);
+        drew_something = true;
+    }
 
-#ifndef PLASMA_EXTERNAL_RELEASE
-    static bool drawText = true;
-#else
-    static bool drawText = false;
-#endif
-
-    if (drawText)
-    {
-        if (prog->GetTitle())
-        {
-            text.DrawString( x, y, prog->GetTitle(), (uint32_t)0xccb0b0b0 );
-            x += (uint16_t)text.CalcStringWidth( prog->GetTitle() );
-            drew_something = true;
-        }
-
-        if (prog->GetStatusText())
-        {
-            text.DrawString( x, y, prog->GetStatusText(), (uint32_t)0xccb0b0b0 );
-            drew_something = true;
-        }
+    // draw the right justified info text
+    if (!prog->GetInfoText().IsEmpty()) {
+        uint16_t right_x = 2 + x + width - text.CalcStringWidth_TEMP(prog->GetInfoText());
+        text.DrawString_TEMP(right_x, y, prog->GetInfoText(), kInfoColor);
+        drew_something = true;
     }
 
     // return whether or not we drew stuff

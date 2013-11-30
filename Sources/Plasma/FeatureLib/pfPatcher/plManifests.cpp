@@ -33,35 +33,59 @@ the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
 work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
- or by snail mail at:
-      Cyan Worlds, Inc.
-      14617 N Newport Hwy
-      Mead, WA   99021
+or by snail mail at:
+Cyan Worlds, Inc.
+14617 N Newport Hwy
+Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plMessage/plPreloaderMsg.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
+#include "plManifests.h"
+#include "plFileSystem.h"
 
-#include "pnMessage/plMessage.h"
+// Helper that returns the appropriate string per build
+#ifdef PLASMA_EXTERNAL_RELEASE
+#   define MANIFEST(in, ex) ex
+#else
+#   define MANIFEST(in, ex) in
+#endif // PLASMA_EXTERNAL_RELEASE
 
-class plPreloaderMsg : public plMessage {
-public:
-    bool    fSuccess;
+plFileName plManifest::ClientExecutable()
+{
+    return MANIFEST("plClient.exe", "UruExplorer.exe");
+}
 
-    plPreloaderMsg () { SetBCastFlag(kBCastByExactType); }
-    
-    CLASSNAME_REGISTER(plPreloaderMsg);
-    GETINTERFACE_ANY(plPreloaderMsg, plMessage);
+plFileName plManifest::PatcherExecutable()
+{
+    return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
+}
 
-    void Read (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Read"); }
-    void Write (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Write"); }
-};
+plString plManifest::ClientManifest()
+{
+    return MANIFEST("ThinInternal", "ThinExternal");
+}
 
+plString plManifest::ClientImageManifest()
+{
+    return MANIFEST("Internal", "External");
+}
 
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
+plString plManifest::PatcherManifest()
+{
+    return MANIFEST("InternalPatcher", "ExternalPatcher");
+}
+
+std::vector<plString> plManifest::EssentialGameManifests()
+{
+    std::vector<plString> mfs;
+    mfs.push_back("CustomAvatars");
+    mfs.push_back("GlobalAnimations");
+    mfs.push_back("GlobalAvatars");
+    mfs.push_back("GlobalClothing");
+    mfs.push_back("GlobalMarkers");
+    mfs.push_back("GUI");
+    mfs.push_back("StartUp");
+
+    return mfs;
+}
+

@@ -570,3 +570,27 @@ plFileName plFileSystem::GetTempFilename(const char *prefix, const plFileName &p
     return result;
 #endif
 }
+
+plString plFileSystem::ConvertFileSize(uint64_t size)
+{
+    const char* labels[] = { "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+    if (size < 1024)
+        return plString::Format("%i B");
+
+    uint64_t last_div = size;
+    for (size_t i = 0; i < arrsize(labels); ++i) {
+        uint64_t my_div = last_div / 1024;
+        if (my_div < 1024) {
+            float decimal = static_cast<float>(last_div) / 1024.f;
+            // Kilobytes are so small that we only care about whole numbers
+            if (i < 1)
+                return plString::Format("%.0f %s", decimal, labels[i]);
+            else
+                return plString::Format("%.2f %s", decimal, labels[i]);
+        }
+        last_div = my_div;
+    }
+
+    // this should never happen
+    return plString::Format("%i %s", last_div, labels[arrsize(labels) - 1]);
+}

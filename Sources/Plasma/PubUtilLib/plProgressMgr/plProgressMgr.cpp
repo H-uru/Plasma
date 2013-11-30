@@ -268,8 +268,6 @@ plOperationProgress::plOperationProgress( float length ) :
     fRemainingSecs(0),
     fAmtPerSec(0.f)
 {
-    memset( fStatusText, 0, sizeof( fStatusText ) );
-    memset( fTitle, 0, sizeof( fTitle ) );
 }
 
 plOperationProgress::~plOperationProgress()
@@ -345,28 +343,6 @@ void    plOperationProgress::SetHowMuch( float howMuch )
     IUpdateStats();
 
     plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
-}
-
-//// SetStatusText ///////////////////////////////////////////////////////////
-
-void    plOperationProgress::SetStatusText( const char *text )
-{
-    if( text != nil )
-        strncpy( fStatusText, text, sizeof( fStatusText ) );
-    else
-        fStatusText[ 0 ] = 0;
-}
-
-//// SetTitle ////////////////////////////////////////////////////////////////
-
-void    plOperationProgress::SetTitle( const char *text )
-{
-    if (text != nil)
-    {
-        strncpy(fTitle, text, sizeof(fTitle));
-    }
-    else
-        fTitle[0] = 0;
 }
 
 //// SetLength ///////////////////////////////////////////////////////////////

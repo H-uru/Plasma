@@ -73,7 +73,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCameraMsg.h"
 #include "plMessage/plTransitionMsg.h"
 #include "plMessage/plLinkToAgeMsg.h"
-#include "plMessage/plPreloaderMsg.h"
 #include "plMessage/plNetCommMsgs.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plResPatcherMsg.h"
@@ -151,8 +150,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon/plNetCommonConstants.h"
 #include "plNetGameLib/plNetGameLib.h"
 
-#include "pfSecurePreloader/pfSecurePreloader.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
+#include "pfPatcher/plManifests.h"
 
 #include "plTweak.h"
 
@@ -310,11 +309,6 @@ bool plClient::Shutdown()
         plAgeLoader::GetInstance()->Shutdown();
         plAgeLoader::GetInstance()->UnRegisterAs(kAgeLoader_KEY);           // deletes instance
         plAgeLoader::SetInstance(nil);
-    }
-    
-    if (pfSecurePreloader::GetInstance())
-    {
-        pfSecurePreloader::GetInstance()->Shutdown(); // will unregister itself
     }
 
     if (fInputManager)
@@ -853,14 +847,6 @@ bool plClient::MsgReceive(plMessage* msg)
     }
 
     //============================================================================
-    // plPreloaderMsg
-    //============================================================================
-    if (plPreloaderMsg * preloaderMsg = plPreloaderMsg::ConvertNoRef(msg)) {
-        IHandlePreloaderMsg(preloaderMsg);
-        return true;
-    }
-
-    //============================================================================
     // plResPatcherMsg
     //============================================================================
     if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
@@ -1196,7 +1182,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
             };
 
             char name[256];
-            strcpy(name, &fProgressBar->GetTitle()[strlen("Loading ")]);
+            strcpy(name, &fProgressBar->GetTitle().c_str()[strlen("Loading ")]);
             name[strlen(name)-3] = '\0';
 
             // Get the precalculated value for how many messages will be
@@ -1222,7 +1208,7 @@ void plClient::IRoomLoaded(plSceneNode* node, bool hold)
             
 #ifndef PLASMA_EXTERNAL_RELEASE
             if (plDispatchLogBase::IsLogging())
-                plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "displaying messages");
+                plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "displaying messages");
 #endif // PLASMA_EXTERNAL_RELEASE
 #endif
         }
@@ -1349,7 +1335,7 @@ void    plClient::IStartProgress( const char *title, float len )
         fProgressBar = plProgressMgr::GetInstance()->RegisterOperation(len, title, plProgressMgr::kNone, false, true);
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (plDispatchLogBase::IsLogging())
-            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "starting");
+            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "starting");
 #endif // PLASMA_EXTERNAL_RELEASE
 
         ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IReadKeyedObjCallback);
@@ -1371,7 +1357,7 @@ void    plClient::IStopProgress( void )
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (plDispatchLogBase::IsLogging())
-            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle(), "done");
+            plDispatchLogBase::GetInstance()->LogStatusBarChange(fProgressBar->GetTitle().c_str(), "done");
 #endif // PLASMA_EXTERNAL_RELEASE
 
         plDispatch::SetMsgRecieveCallback(nil);
@@ -1564,8 +1550,7 @@ bool plClient::StartInit()
     plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
     plNetClientMgr::GetInstance()->Init();
     plAgeLoader::GetInstance()->Init();
-    pfSecurePreloader::GetInstance()->Init();
-    
+
     plCmdIfaceModMsg* pModMsg2 = new plCmdIfaceModMsg;
     pModMsg2->SetBCastFlag(plMessage::kBCastByExactType);
     pModMsg2->SetSender(fConsole->GetKey());
@@ -1613,19 +1598,10 @@ bool plClient::StartInit()
 //============================================================================
 void    plClient::IPatchGlobalAgeFiles( void )
 {
-    plResPatcher* patcher = plResPatcher::GetInstance();
-    if (!gDataServerLocal)
-    {
-        patcher->RequestManifest("CustomAvatars");
-        patcher->RequestManifest("GlobalAnimations");
-        patcher->RequestManifest("GlobalAvatars");
-        patcher->RequestManifest("GlobalClothing");
-        patcher->RequestManifest("GlobalMarkers");
-        patcher->RequestManifest("GUI");
-    }
-
     plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
-    patcher->Start();
+
+    plResPatcher* patcher = plResPatcher::GetInstance();
+    patcher->Update(plManifest::EssentialGameManifests());
 }
 
 void plClient::InitDLLs()
@@ -2525,32 +2501,11 @@ void plClient::ICompleteInit () {
 }
 
 //============================================================================
-void plClient::IHandlePreloaderMsg (plPreloaderMsg * msg) {
-
-    plgDispatch::Dispatch()->UnRegisterForExactType(plPreloaderMsg::Index(), GetKey());
-    if (pfSecurePreloader* sp = pfSecurePreloader::GetInstance())
-        sp->Shutdown();
-    
-    if (!msg->fSuccess) {
-        char str[1024];
-        StrPrintf(
-            str,
-            arrsize(str),
-            "Secure file preloader failed"
-        );
-        plNetClientApp::GetInstance()->QueueDisableNet(true, str);
-        return;
-    }
-    
-    IPatchGlobalAgeFiles();
-}
-
-//============================================================================
 void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
     plgDispatch::Dispatch()->UnRegisterForExactType(plResPatcherMsg::Index(), GetKey());
 
     if (!msg->Success()) {
-        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError());
+        plNetClientApp::GetInstance()->QueueDisableNet(true, msg->GetError().c_str());
         return;
     }
 
@@ -2577,8 +2532,6 @@ void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
         return;
     }
 
-    plgDispatch::Dispatch()->RegisterForExactType(plPreloaderMsg::Index(), GetKey());
-
-    // Precache our secure files
-    pfSecurePreloader::GetInstance()->Start();
+    // Patch them global files!
+    IPatchGlobalAgeFiles();
 }

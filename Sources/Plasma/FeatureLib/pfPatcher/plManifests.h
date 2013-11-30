@@ -39,19 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/FeatureLib/pfSecurePreloader/pfSecurePreloaderCreatable.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_FEATURELIB_PFSECUREPRELOADER_PFSECUREPRELOADERCREATABLE_H
-#define PLASMA20_SOURCES_PLASMA_FEATURELIB_PFSECUREPRELOADER_PFSECUREPRELOADERCREATABLE_H
+#ifndef _plManifests_inc_
+#define _plManifests_inc_
 
-#include "pnFactory/plCreator.h"
+#include <vector>
 
-#include "pfSecurePreloader.h"
-REGISTER_NONCREATABLE(pfSecurePreloader);
+class plFileName;
+class plString;
 
+namespace plManifest
+{
+    /** Get the name of the client executable for this build type.*/
+    plFileName ClientExecutable();
 
-#endif // PLASMA20_SOURCES_PLASMA_FEATURELIB_PFSECUREPRELOADER_PFSECUREPRELOADERCREATABLE_H
+    /** Get the name of the patcher executable for this build type.*/
+    plFileName PatcherExecutable();
+
+    /** Get the name of the baseline client manifest for this build type. */
+    plString ClientManifest();
+
+    /** Get the name of the full game manifest for this build type. */
+    plString ClientImageManifest();
+
+    /** Get the name of the patcher manifest for this build type. */
+    plString PatcherManifest();
+
+    /** Get a vector containing all manifests the game requires to initialize. */
+    std::vector<plString> EssentialGameManifests();
+}
+
+#endif // _plManifests_inc_
