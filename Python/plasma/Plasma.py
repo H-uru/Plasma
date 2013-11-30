@@ -164,6 +164,10 @@ def PtDebugAssert(cond, msg):
     """Debug only: Assert if condition is false."""
     pass
 
+def PtDebugPrint(*msgs, **kwargs):
+    """Prints msgs to the Python log given the message's level"""
+    pass
+
 def PtDeletePlayer(playerInt):
     """Deletes a player associated with the current account"""
     pass
