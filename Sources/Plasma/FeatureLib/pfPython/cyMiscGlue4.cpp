@@ -416,6 +416,40 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDebugAssert, args, "Params: cond, msg\nDebug o
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, **kwargs\nPrints msgs to the Python log given the message's level")
+{
+    uint32_t  level = cyMisc::kErrorLevel;
+
+    do {
+        // Grabbin' levelz
+        if (kwargs && PyDict_Check(kwargs)) {
+            PyObject* value = PyDict_GetItem(kwargs, PyString_FromString("level"));
+            if (value) {
+                if (PyInt_Check(value))
+                    level = PyInt_AsLong(value);
+                else
+                    break;
+            }
+        }
+
+        for (size_t i = 0; i < PySequence_Fast_GET_SIZE(args); ++i) {
+            PyObject* theMsg = PySequence_Fast_GET_ITEM(args, i);
+            if (!PyString_CheckEx(theMsg))
+                theMsg = PyObject_Repr(theMsg);
+
+            if (theMsg)
+                cyMisc::DebugPrint(PyString_AsStringEx(theMsg), level);
+            else
+                break;
+        }
+        PYTHON_RETURN_NONE;
+    } while (false);
+
+    // fell through to the type error case
+    PyErr_SetString(PyExc_TypeError, "PtDebugPrint expects a sequence of strings and an optional int");
+    PYTHON_RETURN_ERROR;
+}
+
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetAlarm, args, "Params: secs, cbObject, cbContext\nsecs is the amount of time before your alarm goes off.\n"
             "cbObject is a python object with the method onAlarm(int context)\ncbContext is an integer.")
 {
@@ -812,6 +846,7 @@ void cyMisc::AddPlasmaMethods4(std::vector<PyMethodDef> &methods)
     
     PYTHON_GLOBAL_METHOD(methods, PtSetGlobalClickability);
     PYTHON_GLOBAL_METHOD(methods, PtDebugAssert);
+    PYTHON_GLOBAL_METHOD(methods, PtDebugPrint);
     PYTHON_GLOBAL_METHOD(methods, PtSetAlarm);
     
     PYTHON_GLOBAL_METHOD(methods, PtSaveScreenShot);
