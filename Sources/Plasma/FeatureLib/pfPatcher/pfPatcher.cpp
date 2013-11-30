@@ -90,9 +90,12 @@ struct pfPatcherWorker : public hsThread
         // Any file
         kFlagZipped                 = 1<<3,
 
+        // Executable flags
+        kRedistUpdate               = 1<<4,
+
         // Begin internal flags
-        kLastManifestFlag           = 1<<4,
-        kSelfPatch                  = 1<<5,
+        kLastManifestFlag           = 1<<5,
+        kSelfPatch                  = 1<<6,
     };
 
     std::deque<Request> fRequests;
@@ -108,6 +111,7 @@ struct pfPatcherWorker : public hsThread
     pfPatcher::FileDownloadFunc fFileDownloaded;
     pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
     pfPatcher::ProgressTickFunc fProgressTick;
+    pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
     pfPatcher::FileDownloadFunc fSelfPatch;
 
     pfPatcher* fParent;
@@ -205,6 +209,7 @@ public:
 
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
     plFileName GetFileName() const { return fFilename; }
+    bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }
     bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
     void Unlink() const { plFileSystem::Unlink(fFilename); }
 };
@@ -315,6 +320,8 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
         patcher->WhitelistFile(stream->GetFileName(), true);
         if (patcher->fSelfPatch && stream->IsSelfPatch())
             patcher->fSelfPatch(stream->GetFileName());
+        if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
+            patcher->fRedistUpdateDownloaded(stream->GetFileName());
         patcher->IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
@@ -592,6 +599,11 @@ void pfPatcher::OnGameCodeDiscovery(GameCodeDiscoverFunc cb)
 void pfPatcher::OnProgressTick(ProgressTickFunc cb)
 {
     fWorker->fProgressTick = cb;
+}
+
+void pfPatcher::OnRedistUpdate(FileDownloadFunc cb)
+{
+    fWorker->fRedistUpdateDownloaded = cb;
 }
 
 void pfPatcher::OnSelfPatch(FileDownloadFunc cb)

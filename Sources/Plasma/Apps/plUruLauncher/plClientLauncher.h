@@ -54,6 +54,7 @@ class plClientLauncher
 public:
     typedef std::function<class pfPatcher*(void)> CreatePatcherFunc;
     typedef std::function<void(ENetError, const plString&)> ErrorFunc;
+    typedef std::function<bool(const plFileName&)> InstallRedistFunc;
     typedef std::function<void(const plFileName&, const plString&)> LaunchClientFunc;
     typedef std::function<void(const plString&)> StatusFunc;
 
@@ -71,7 +72,9 @@ private:
     plFileName fServerIni;
 
     plFileName fClientExecutable;
-    std::unique_ptr<class plShardStatus> fStatusThread;
+
+    std::unique_ptr<class plShardStatus>   fStatusThread;
+    std::unique_ptr<class plRedistUpdater> fInstallerThread;
 
     CreatePatcherFunc fPatcherFactory;
     LaunchClientFunc  fLaunchClientFunc;
@@ -85,6 +88,11 @@ private:
 public:
     plClientLauncher();
     ~plClientLauncher();
+
+    /** Launch whatever client we think is appropriate. Please note that you should not call this unless you know
+     *  absolutely without question what you are doing!
+     */
+    void LaunchClient() const;
 
     /** Begin the next logical patch operation. We are internally tracking if this is a self patch or a client patch.
      *  All you need to do is make certain the doggone callbacks are set so that your UI will update. In theory, you
@@ -128,6 +136,11 @@ public:
      *  \remarks This will be called from the network thread.
      */
     void SetErrorProc(ErrorFunc proc);
+
+    /** Set a callback that will execute and wait for redistributable installers.
+    *  \remarks This will be called from a worker thread.
+    */
+    void SetInstallerProc(InstallRedistFunc proc);
 
     /** Set a patcher factory. */
     void SetPatcherFactory(CreatePatcherFunc factory) { fPatcherFactory = factory; }

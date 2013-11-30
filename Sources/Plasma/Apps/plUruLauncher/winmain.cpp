@@ -52,6 +52,7 @@ Mead, WA   99021
 #include "hsWindows.h"
 #include "resource.h"
 #include <commctrl.h>
+#include <shellapi.h>
 #include <shlobj.h>
 
 // ===================================================
@@ -207,6 +208,108 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const plStri
 
 // ===================================================
 
+static void ISetDownloadStatus(const plString& status)
+{
+    SetDlgItemTextW(s_dialog, IDC_TEXT, status.ToWchar());
+
+    // consider this a reset of the download status...
+    IShowMarquee();
+    SetDlgItemTextW(s_dialog, IDC_DLSIZE, L"");
+    SetDlgItemTextW(s_dialog, IDC_DLSPEED, L"");
+
+    if (s_taskbar)
+        s_taskbar->SetProgressState(s_dialog, TBPF_INDETERMINATE);
+}
+
+
+static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
+{
+    STARTUPINFOW        si;
+    PROCESS_INFORMATION pi;
+    memset(&si, 0, sizeof(si));
+    memset(&pi, 0, sizeof(pi));
+    si.cb = sizeof(si);
+
+    // Create wchar things and stuff :/
+    plString cmd = plString::Format("%s %s", exe.AsString().c_str(), args.c_str());
+    plStringBuffer<wchar_t> file = exe.AsString().ToWchar();
+    plStringBuffer<wchar_t> params = cmd.ToWchar();
+
+    // Guess what? CreateProcess isn't smart enough to throw up an elevation dialog... We need ShellExecute for that.
+    // But guess what? ShellExecute won't run ".exe.tmp" files. GAAAAAAAAHHHHHHHHH!!!!!!!
+    BOOL result = CreateProcessW(
+        file,
+        const_cast<wchar_t*>(params.GetData()),
+        nullptr,
+        nullptr,
+        FALSE,
+        DETACHED_PROCESS,
+        nullptr,
+        nullptr,
+        &si,
+        &pi
+    );
+
+    // So maybe it needs elevation... Or maybe everything arseploded.
+    if (result != FALSE) {
+        CloseHandle(pi.hThread);
+        return pi.hProcess;
+    } else if (GetLastError() == ERROR_ELEVATION_REQUIRED) {
+        SHELLEXECUTEINFOW info;
+        memset(&info, 0, sizeof(info));
+        info.cbSize = sizeof(info);
+        info.lpFile = file.GetData();
+        info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
+        info.lpParameters = args.ToWchar();
+        hsAssert(ShellExecuteExW(&info), "ShellExecuteExW phailed");
+
+        return info.hProcess;
+    } else {
+        wchar_t buf[2048];
+        FormatMessageW(
+            FORMAT_MESSAGE_FROM_SYSTEM,
+            nullptr,
+            GetLastError(),
+            LANG_USER_DEFAULT,
+            buf,
+            arrsize(buf),
+            nullptr
+        );
+        hsMessageBox(buf, L"Error", hsMessageBoxNormal, hsMessageBoxIconError);
+    }
+
+    return nullptr;
+}
+
+static bool IInstallRedist(const plFileName& exe)
+{
+    ISetDownloadStatus(plString::Format("Installing... %s", exe.AsString().c_str()));
+    Sleep(2500); // let's Sleep for a bit so the user can see that we're doing something before the UAC dialog pops up!
+
+    // Try to guess some arguments... Unfortunately, the file manifest format is fairly immutable.
+    plStringStream ss;
+    if (exe.AsString().CompareI("oalinst.exe") == 0)
+        ss << "/s"; // rarg nonstandard
+    else
+        ss << "/q";
+    if (exe.AsString().Find("vcredist", plString::kCaseInsensitive) != -1)
+        ss << " /norestart"; // I don't want to image the accusations of viruses and hacking if this happened...
+
+    // Now fire up the process...
+    HANDLE process = ICreateProcess(exe, ss.GetString());
+    if (process) {
+        WaitForSingleObject(process, INFINITE);
+
+        // Get the exit code so we can indicate success/failure to the redist thread
+        DWORD code = PLASMA_OK;
+        hsAssert(GetExitCodeProcess(process, &code), "failed to get redist exit code");
+        CloseHandle(process);
+
+        return code != PLASMA_PHAILURE;
+    }
+    return PLASMA_PHAILURE;
+}
+
 static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
 {
     // Once we start launching something, we no longer need to trumpet any taskbar status
@@ -216,38 +319,16 @@ static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
     // Only launch a client executable if we're given one. If not, that's probably a cue that we're
     // done with some service operation and need to go away.
     if (!exe.AsString().IsEmpty()) {
-        STARTUPINFOW        si;
-        PROCESS_INFORMATION pi;
-        memset(&si, 0, sizeof(si));
-        memset(&pi, 0, sizeof(pi));
-        si.cb = sizeof(si);
-
-        // This event will prevent the game from restarting the patcher
         HANDLE hEvent = CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent");
-
-        // Fire up ye olde new process
-        plString cmd = plString::Format("%s %s", exe.AsString().c_str(), args.c_str());
-        CreateProcessW(
-            exe.AsString().ToWchar(),
-            const_cast<wchar_t*>(cmd.ToWchar().GetData()), // windows claims that it may modify this... let's hope that doesn't happen.
-            nullptr,
-            nullptr,
-            FALSE,
-            DETACHED_PROCESS,
-            nullptr,
-            plFileSystem::GetCWD().AsString().ToWchar(),
-            &si,
-            &pi
-        );
+        HANDLE process = ICreateProcess(exe, args);
 
         // if this is the real game client, then we need to make sure it gets this event...
         if (plManifest::ClientExecutable().AsString().CompareI(exe.AsString()) == 0) {
-            WaitForInputIdle(pi.hProcess, 1000);
+            WaitForInputIdle(process, 1000);
             WaitForSingleObject(hEvent, INFINITE);
         }
 
-        CloseHandle(pi.hThread);
-        CloseHandle(pi.hProcess);
+        CloseHandle(process);
         CloseHandle(hEvent);
     }
 
@@ -263,19 +344,6 @@ static void IOnNetError(ENetError result, const plString& msg)
     plString text = plString::Format("Error: %S\r\n%s", NetErrorAsString(result), msg.c_str());
     hsMessageBox(text.c_str(), "Error", hsMessageBoxNormal);
     IQuit(PLASMA_PHAILURE);
-}
-
-static void ISetDownloadStatus(const plString& status)
-{
-    SetDlgItemTextW(s_dialog, IDC_TEXT, status.ToWchar());
-
-    // consider this a reset of the download status...
-    IShowMarquee();
-    SetDlgItemTextW(s_dialog, IDC_DLSIZE, L"");
-    SetDlgItemTextW(s_dialog, IDC_DLSPEED, L"");
-
-    if (s_taskbar)
-        s_taskbar->SetProgressState(s_dialog, TBPF_INDETERMINATE);
 }
 
 static void ISetShardStatus(const plString& status)
@@ -299,6 +367,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     // Let's initialize our plClientLauncher friend
     s_launcher.ParseArguments();
     s_launcher.SetErrorProc(IOnNetError);
+    s_launcher.SetInstallerProc(IInstallRedist);
     s_launcher.SetLaunchClientProc(ILaunchClientExecutable);
     s_launcher.SetPatcherFactory(IPatcherFactory);
     s_launcher.SetShardProc(ISetShardStatus);

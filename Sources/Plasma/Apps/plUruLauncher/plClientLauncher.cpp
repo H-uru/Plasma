@@ -58,7 +58,9 @@ Mead, WA   99021
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_FILE(Core)
 
+#include <algorithm>
 #include <curl/curl.h>
+#include <deque>
 
 plClientLauncher::ErrorFunc s_errorProc = nullptr; // don't even ask, cause I'm not happy about this.
 
@@ -145,12 +147,69 @@ void plShardStatus::Update()
 
 // ===================================================
 
+class plRedistUpdater : public hsThread
+{
+    bool fSuccess;
+
+public:
+    plClientLauncher* fParent;
+    plClientLauncher::InstallRedistFunc fInstallProc;
+    std::deque<plFileName> fRedistQueue;
+
+    plRedistUpdater()
+        : fSuccess(true)
+    { }
+
+    ~plRedistUpdater()
+    {
+        // If anything is left in the deque, it was not installed.
+        // We should unlink them so the next launch will redownload and install them.
+        std::for_each(fRedistQueue.begin(), fRedistQueue.end(),
+            [] (const plFileName& file) {
+                plFileSystem::Unlink(file);
+            }
+        );
+    }
+
+    virtual void OnQuit()
+    {
+        // If we succeeded, then we should launch the game client...
+        if (fSuccess)
+            fParent->LaunchClient();
+    }
+
+    virtual hsError Run()
+    {
+        while (!fRedistQueue.empty()) {
+            if (fInstallProc(fRedistQueue.back()))
+                fRedistQueue.pop_back();
+            else {
+                s_errorProc(kNetErrInternalError, fRedistQueue.back().AsString());
+                fSuccess = false;
+                return hsFail;
+            }
+        }
+        return hsOK;
+    }
+
+    virtual void Start()
+    {
+        if (fRedistQueue.empty())
+            OnQuit();
+        else
+            hsThread::Start();
+    }
+};
+
+// ===================================================
+
 plClientLauncher::plClientLauncher() :
     fFlags(0),
     fServerIni("server.ini"),
     fPatcherFactory(nullptr),
     fClientExecutable(plManifest::ClientExecutable()),
-    fStatusThread(new plShardStatus())
+    fStatusThread(new plShardStatus()),
+    fInstallerThread(new plRedistUpdater())
 {
     pfPatcher::GetLog()->AddLine(plProduct::ProductString().c_str());
 }
@@ -188,9 +247,11 @@ void plClientLauncher::IOnPatchComplete(ENetError result, const plString& msg)
             // case 1
             hsSetBits(fFlags, kHaveSelfPatched);
             PatchClient();
-        } else
-            // cases 2 & 3
-            fLaunchClientFunc(fClientExecutable, GetAppArgs());
+        } else {
+            // cases 2 & 3 -- update any redistributables, then launch the client.
+            fInstallerThread->fParent = this;
+            fInstallerThread->Start();
+        }
     } else if (s_errorProc)
         s_errorProc(result, msg);
 }
@@ -201,6 +262,13 @@ bool plClientLauncher::IApproveDownload(const plFileName& file)
     // That is: download everything that is NOT in the root directory.
     plFileName path = file.StripFileName();
     return !path.AsString().IsEmpty();
+}
+
+void plClientLauncher::LaunchClient() const
+{
+    if (fStatusFunc)
+        fStatusFunc("Launching...");
+    fLaunchClientFunc(fClientExecutable, GetAppArgs());
 }
 
 void plClientLauncher::PatchClient()
@@ -216,6 +284,7 @@ void plClientLauncher::PatchClient()
     pfPatcher* patcher = fPatcherFactory();
     patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
     patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
+    patcher->OnRedistUpdate([&](const plFileName& file) { fInstallerThread->fRedistQueue.push_back(file); });
 
     // If this is a repair, we need to approve the downloads...
     if (hsCheckBits(fFlags, kGameDataOnly))
@@ -386,6 +455,11 @@ void plClientLauncher::ParseArguments()
 void plClientLauncher::SetErrorProc(ErrorFunc proc)
 {
     s_errorProc = proc;
+}
+
+void plClientLauncher::SetInstallerProc(InstallRedistFunc proc)
+{
+    fInstallerThread->fInstallProc = proc;
 }
 
 void plClientLauncher::SetShardProc(StatusFunc proc)

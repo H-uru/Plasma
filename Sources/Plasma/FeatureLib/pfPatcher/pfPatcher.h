@@ -121,6 +121,12 @@ public:
      */
     void OnProgressTick(ProgressTickFunc cb);
 
+    /** Set a callback that will be fired when the patcher downloads an updated redistributable. Such as
+     *  the Visual C++ runtime (vcredist_x86.exe). You are responsible for installing it.
+     *  \remarks This will be called from the network thread.
+     */
+    void OnRedistUpdate(FileDownloadFunc cb);
+
     /** This is called when the current application has been updated. */
     void OnSelfPatch(FileDownloadFunc cb);
 
