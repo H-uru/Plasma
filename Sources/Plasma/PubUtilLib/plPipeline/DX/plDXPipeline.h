@@ -208,7 +208,6 @@ protected:
     plDXPlateManager*           fPlateMgr;
 
     // The main D3D interfaces
-    LPDIRECT3D9             fD3DObject;     // The main D3D object
     LPDIRECT3DDEVICE9       fD3DDevice;     // The D3D rendering device
     IDirect3DSurface9*      fD3DMainSurface;
     IDirect3DSurface9*      fD3DDepthSurface;
@@ -502,7 +501,6 @@ protected:
     void    ISetCurrentDevice( D3DEnum_DeviceInfo *dev );
     void    ISetCurrentMode( D3DEnum_ModeInfo *mode );
 
-    bool        ICreateMaster();
     bool        ICreateDevice(bool windowed);
     bool        ICreateNormalSurfaces();
 

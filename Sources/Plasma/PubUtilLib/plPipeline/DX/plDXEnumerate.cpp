@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
+#include "hsGDirect3D.h"
 
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
@@ -281,8 +282,8 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     fDrivers.Reset();       // List of DD drivers
 
     // Create a D3D object to use
-    IDirect3D9 *pD3D = Direct3DCreate9( D3D_SDK_VERSION );
-    if( pD3D == nil )
+    IDirect3D9* pD3D = hsGDirect3D::GetDirect3D();
+    if (!pD3D)
     {
         strcpy( fEnumeErrorStr, "Cannot load DirectX!" );
         return;
@@ -309,9 +310,6 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
         /// Do the mode and device enumeration for this adapter
         IEnumAdapterDevices( pD3D, iAdapter, newDriver );       
     }
-
-    // Cleanup
-    pD3D->Release();
 }
 
 //// IEnumAdapterDevices //////////////////////////////////////////////////////
@@ -645,7 +643,7 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
 void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
 {
-    hsGDirect3DTnLEnumerate d3dEnum;
+    hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
 
     int i;
     for( i = 0; i < d3dEnum.GetNumDrivers(); i++ )

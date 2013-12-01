@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <d3d9.h>
 #include <d3dx9mesh.h>
+#include "hsGDirect3D.h"
 
 #if defined(DX_OLD_SDK) || defined(__MINGW32__)
     #include <dxerr9.h>
@@ -623,7 +624,7 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     else
         fSettings.fNumAASamples = devMode->GetFSAAType( devRec->GetAASetting() - 1 );
 
-    hsGDirect3DTnLEnumerate d3dEnum;
+    hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
     if( d3dEnum.GetEnumeErrorStr()[ 0 ] )
     {
         IShowErrorMessage( (char *)d3dEnum.GetEnumeErrorStr() );
@@ -634,16 +635,6 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     {
         IShowErrorMessage( (char *)d3dEnum.GetEnumeErrorStr() );
         return;
-    }
-
-    // Gotta create this very first, so that the device/driver init works
-    if( !fD3DObject )
-    {
-        if( ICreateMaster() )
-        {
-            IShowErrorMessage( "Cannot create D3D master object" );
-            return;
-        }
     }
 
     // Record the requested mode/setup.
@@ -693,6 +684,8 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
         plStatusLog::AddLineS("pipeline.log", "%d, %d, %d", temp[i].Width, temp[i].Height, 32);
     }*/
 
+    // We don't need the TnL enumeration for the lifetime of the game, so say goodbye!
+    hsGDirect3D::ReleaseTnLEnum();
 }
 
 // Cleanup - Most happens in IReleaseDeviceObject().
@@ -720,7 +713,7 @@ plDXPipeline::~plDXPipeline()
 // built from. For example, the fD3DObject pointer is set to nil so that it's safe
 // to delete or set to a valid pointer. It must be set to a valid pointer
 // before the pipeline can be used for much.
-// After the core initialization is done (in ICreateMaster and ICreateDeviceObjects)
+// After the core initialization is done (in ICreateDeviceObjects)
 // render state will be initialized in IInitDeviceState.
 
 void    plDXPipeline::IClearMembers()
@@ -772,7 +765,6 @@ void    plDXPipeline::IClearMembers()
         fBlurVBuffers[i] = nil;
     fBlurVSHandle = 0;
 
-    fD3DObject = nil;
     fD3DDevice = nil;
     fD3DBackBuff = nil;
     fD3DDepthSurface = nil;
@@ -1388,11 +1380,13 @@ void    plDXPipeline::ISetCurrentDriver( D3DEnum_DriverInfo *driv )
     fCurrentDriver->fCurrentDevice = nil;
 
     /// Go looking for an adapter to match this one
+    IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
     UINT    iAdapter;
-    for( fCurrentAdapter = 0, iAdapter = 0; iAdapter < fD3DObject->GetAdapterCount(); iAdapter++ )
+
+    for( fCurrentAdapter = 0, iAdapter = 0; iAdapter < d3d->GetAdapterCount(); iAdapter++ )
     {
         D3DADAPTER_IDENTIFIER9      adapterInfo;
-        fD3DObject->GetAdapterIdentifier( iAdapter, 0, &adapterInfo );
+        d3d->GetAdapterIdentifier( iAdapter, 0, &adapterInfo );
 
         if( adapterInfo.DeviceIdentifier == fCurrentDriver->fAdapterInfo.DeviceIdentifier )
         {
@@ -1469,9 +1463,9 @@ bool  plDXPipeline::IFindCompressedFormats()
 
     for( i = 0; toCheckFor[ i ] != D3DFMT_UNKNOWN; i++ )
     {
-        if( FAILED( fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType,
-                                                    fCurrentMode->fDDmode.Format,
-                                                    0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
+        if( FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType,
+                                                                   fCurrentMode->fDDmode.Format,
+                                                                   0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
             return false;
     }
 
@@ -1491,9 +1485,9 @@ bool  plDXPipeline::IFindLuminanceFormats()
 
     for( i = 0; toCheckFor[ i ] != D3DFMT_UNKNOWN; i++ )
     {
-        if( FAILED( fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType,
-                                                    fCurrentMode->fDDmode.Format,
-                                                    0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
+        if (FAILED(hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentDevice->fDDType,
+                                                                 fCurrentMode->fDDmode.Format,
+                                                                 0, D3DRTYPE_TEXTURE, toCheckFor[ i ] ) ) )
             return false;
     }
 
@@ -1508,9 +1502,9 @@ bool  plDXPipeline::IFindLuminanceFormats()
 
 bool      plDXPipeline::ITextureFormatAllowed( D3DFORMAT format )
 {
-    if( FAILED( fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType,
-                                                fCurrentMode->fDDmode.Format,
-                                                0, D3DRTYPE_TEXTURE, format ) ) )
+    if (FAILED( hsGDirect3D::GetDirect3D()->CheckDeviceFormat(fCurrentAdapter, fCurrentDevice->fDDType,
+                                                              fCurrentMode->fDDmode.Format,
+                                                              0, D3DRTYPE_TEXTURE, format ) ) )
         return false;
 
     return true;
@@ -1555,23 +1549,6 @@ bool plDXPipeline::IsDebugFlagSet( uint32_t flag ) const
 //// Device Creation //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-//// ICreateMaster ////////////////////////////////////////////////////////////
-//  Creates the master Direct3D objects. I guess just in case you want
-//  multiple Direct3D devices.... :~
-
-bool plDXPipeline::ICreateMaster()
-{
-    hsAssert( !fD3DObject, "ICreateMaster() should only be called for Master Direct3DDevice" );
-
-    /// The new DirectX Way: Create a Direct3D object, out of which everything else springs
-    fD3DObject = Direct3DCreate9( D3D_SDK_VERSION );
-
-    if( fD3DObject == nil )
-        return ICreateFail( "Cannot create Direct3D object" );
-
-    return false;
-}
-
 //// ICreateDevice ////////////////////////////////////////////////////
 //
 //  Creates the device. Surfaces, buffers, etc. created separately (in case of lost device).
@@ -1587,7 +1564,11 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     char                        msg[ 256 ];
 #endif // DBG_WRITE_FORMATS
 
-    INIT_ERROR_CHECK( fD3DObject->GetAdapterDisplayMode( fCurrentAdapter, &dispMode ),
+    IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
+    if (!d3d)
+        return ICreateFail("Failed to get Direct3D Object");
+
+    INIT_ERROR_CHECK( d3d->GetAdapterDisplayMode( fCurrentAdapter, &dispMode ),
         "Cannot get desktop display mode" );
 
     // save desktop properties
@@ -1684,10 +1665,10 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     UINT adapter;
-    for (adapter = 0; adapter < fD3DObject->GetAdapterCount(); adapter++)
+    for (adapter = 0; adapter < d3d->GetAdapterCount(); adapter++)
     {
         D3DADAPTER_IDENTIFIER9 id;
-        fD3DObject->GetAdapterIdentifier(adapter, 0, &id);
+        d3d->GetAdapterIdentifier(adapter, 0, &id);
 
         // We should be matching against "NVIDIA NVPerfHUD", but the space
         // in the description seems to be bogus. This seems to be a fair
@@ -1705,9 +1686,9 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-    INIT_ERROR_CHECK( fD3DObject->CreateDevice( fCurrentAdapter, fCurrentDevice->fDDType, 
-                                              fSettings.fHWnd, fCurrentMode->fDDBehavior,
-                                              &params, &fD3DDevice ),
+    INIT_ERROR_CHECK( d3d->CreateDevice( fCurrentAdapter, fCurrentDevice->fDDType,
+                                         fSettings.fHWnd, fCurrentMode->fDDBehavior,
+                                         &params, &fD3DDevice ),
                         "Cannot create primary display surface via CreateDevice()" );
 
     fSettings.fPresentParams = params;
@@ -1736,6 +1717,8 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 // will work.
 bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
 {
+    IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
+
     // Okay, we're not using the stencil buffer right now, and it's bringing out
     // some painful driver bugs on the GeForce2. So rather than go out of our way
     // looking for trouble, we're going to look for a depth buffer with NO STENCIL.
@@ -1747,11 +1730,11 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
             ||(fmt == D3DFMT_D24X8)
             ||(fmt == D3DFMT_D16) )
         {
-            HRESULT hr = fD3DObject->CheckDeviceMultiSampleType(fCurrentAdapter, 
-                                                                fCurrentDevice->fDDType,
-                                                                fmt, 
-                                                                fCurrentMode->fWindowed ? TRUE : FALSE,
-                                                                params.MultiSampleType, NULL);
+            HRESULT hr = d3d->CheckDeviceMultiSampleType(fCurrentAdapter,
+                                                         fCurrentDevice->fDDType,
+                                                         fmt,
+                                                         fCurrentMode->fWindowed ? TRUE : FALSE,
+                                                         params.MultiSampleType, NULL);
             if( !FAILED(hr) )
             {
                 params.AutoDepthStencilFormat = fmt;
@@ -1767,11 +1750,11 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
             D3DFORMAT fmt = fCurrentMode->fDepthFormats[ i ];
             if( fmt == D3DFMT_D15S1 || fmt == D3DFMT_D24X4S4 || fmt == D3DFMT_D24S8 )
             {
-                HRESULT hr = fD3DObject->CheckDeviceMultiSampleType(fCurrentAdapter, 
-                                                                    fCurrentDevice->fDDType,
-                                                                    fmt, 
-                                                                    fCurrentMode->fWindowed ? TRUE : FALSE,
-                                                                    params.MultiSampleType, NULL);
+                HRESULT hr = d3d->CheckDeviceMultiSampleType(fCurrentAdapter,
+                                                             fCurrentDevice->fDDType,
+                                                             fmt,
+                                                             fCurrentMode->fWindowed ? TRUE : FALSE,
+                                                             params.MultiSampleType, NULL);
                 if( !FAILED(hr) )
                 {
                     params.AutoDepthStencilFormat = fmt;
@@ -2031,16 +2014,6 @@ void    plDXPipeline::IReleaseDeviceObjects()
             hsStatusMessageF("%d - Error releasing device", ret);
         }
         fD3DDevice = nil;
-    }
-
-    if( fD3DObject != nil )
-    {
-        LONG ret;
-        while( ret = fD3DObject->Release() )
-        {
-            hsStatusMessageF("%d - Error releasing Direct3D Object", ret);
-        }
-        fD3DObject = nil;
     }
 
     fManagedAlloced = false;
@@ -2541,13 +2514,10 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     }
 
     // Recreate
-    if( !fD3DObject )
+    if( hsGDirect3D::GetDirect3D(true) )
     {
-        if( ICreateMaster() )
-        {
-            IShowErrorMessage( "Cannot create D3D master object" );
-            return;
-        }
+        IShowErrorMessage( "Cannot create D3D master object" );
+        return;
     }
 
     // Go recreate surfaces and DX-dependent objects
@@ -4780,6 +4750,7 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
     uint16_t      flags, width, height;
     int8_t        bitDepth, zDepth, stencilDepth, stencilIndex;
     D3DFORMAT   depthFormats[] = { D3DFMT_D24X8, D3DFMT_D24X4S4, D3DFMT_D24S8 };
+    IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
 
 
     flags = owner->GetFlags();
@@ -4846,8 +4817,8 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
         }
 
         /// Check the device format
-        if( FAILED( fSettings.fDXError = fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                    D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
+        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                 D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
         {
             if( bitDepth == 16 )
             {
@@ -4859,8 +4830,8 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 bitDepth = 16;
                 surfFormat = D3DFMT_A4R4G4B4;
             }
-            if( FAILED( fSettings.fDXError = fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                        D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
+            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                     D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
             {
                 IGetD3DError();
                 return false;
@@ -4869,8 +4840,8 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
 
         if( zDepth )
         {
-            while( FAILED( fSettings.fDXError = fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                        D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, depthFormat ) ) )
+            while( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                        D3DUSAGE_DEPTHSTENCIL, D3DRTYPE_SURFACE, depthFormat ) ) )
             {
                 if( stencilIndex < sizeof( depthFormats ) / sizeof( depthFormats[ 0 ] ) - 1 )
                 {
@@ -4884,8 +4855,8 @@ bool  plDXPipeline::IPrepRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 }
             }
 
-            if( FAILED( fSettings.fDXError = fD3DObject->CheckDepthStencilMatch( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                        surfFormat, depthFormat ) ) )
+            if( FAILED( fSettings.fDXError = d3d->CheckDepthStencilMatch( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                          surfFormat, depthFormat ) ) )
             {
                 IGetD3DError();
                 return false;
@@ -4912,6 +4883,7 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
     height = owner->GetHeight();
     bitDepth = owner->GetPixelSize();
 
+    IDirect3D9* d3d = hsGDirect3D::GetDirect3D();
     if( flags != 0 )
     {
         if( flags & plRenderTarget::kIsTexture )
@@ -4932,8 +4904,8 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
         }
 
         /// Check the device format
-        if( FAILED( fSettings.fDXError = fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                    D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
+        if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                 D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
         {
             if( bitDepth == 16 )
             {
@@ -4945,8 +4917,8 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
                 bitDepth = 16;
                 surfFormat = D3DFMT_A4R4G4B4;
             }
-            if( FAILED( fSettings.fDXError = fD3DObject->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
-                                                        D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
+            if( FAILED( fSettings.fDXError = d3d->CheckDeviceFormat( fCurrentAdapter, fCurrentDevice->fDDType, fCurrentMode->fDDmode.Format,
+                                                                     D3DUSAGE_RENDERTARGET, resType, surfFormat ) ) )
             {
                 IGetD3DError();
                 return false;

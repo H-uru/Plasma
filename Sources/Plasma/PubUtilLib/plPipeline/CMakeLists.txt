@@ -32,6 +32,7 @@ set(plPipeline_SOURCES
 )
 
 set(plDXPipeline_SOURCES
+    DX/hsGDirect3D.cpp
     DX/plDXDeviceRefs.cpp
     DX/plDXEnumerate.cpp
     DX/plDXPipeline.cpp
@@ -73,6 +74,7 @@ set(plPipeline_HEADERS
 )
 
 set(plDXPipeline_HEADERS
+    DX/hsGDirect3D.h
     DX/plDXBufferRefs.h
     DX/plDXDeviceRef.h
     DX/plDXEnumerate.h
