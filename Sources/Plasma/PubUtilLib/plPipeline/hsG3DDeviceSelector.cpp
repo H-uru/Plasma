@@ -1218,28 +1218,12 @@ namespace
 
     enum {
         kDefaultChipset = 0x00,
-        kSavage4Chipset,
-        kATIRageFuryChipset,
-        kATIRageProChipset,
-        kNVidiaTNTChipset,
-        kNVidiaGeForceChipset,
-        kMatroxG400Chipset,
         kIntelI810Chipset,
-        kSavage2000Chipset,
         kS3GenericChipset,
-        kATIGenericChipset,
-        kMatroxGenericChipset,
         kKYROChipset,
-        kSavage3DChipset,
         kATIRadeonChipset,
-        kATIR7X00Chipset,
-        kATIR7500Chipset,
         kATIR8X00Chipset,
         kMatroxParhelia,
-        kNVidiaGeForce2Chipset,
-        kNVidiaGeForce3Chipset,
-        kNVidiaGeForce4MXChipset,
-        kNVidiaGeForce4Chipset,
         kNVidiaGeForceFXChipset
     };
 
@@ -1255,8 +1239,6 @@ namespace
     } FogTweakTable;
 
     FogTweakTable   dsDefaultFogVals =  { 0,    0,      254.0 / 255.0,  0.5f, 0.15f, 0.5f, 0.15f };
-    FogTweakTable   dsATIFogVals =      { 0.1f, 0.1f,   254.0 / 255.0,  0.85f, 0.15f, 0.5f, 0.15f };
-    FogTweakTable   dsS3DFogVals =      { 0,    0,      254.0 / 255.0,  1.0f, 1.0f,  1.0f, 1.0f  };
     FogTweakTable   dsi810FogVals =     { 0,    0,      254.0 / 255.0,  0.6f, 0.15f, 0.4f, 0.15f };
     FogTweakTable   dsRadeonFogVals =   { 0,    0,      254.0 / 255.0,  0.7f, 0.15f, 0.5f, 0.2f };
 
@@ -1271,83 +1253,15 @@ namespace
         FogTweakTable   *fFogTweaks;
     } CFTable;
 
-    uint32_t  dsSavageCapsClr[] = {
-                    4,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsCompressTextures,
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
-    uint32_t  dsSavageCapsSet[] = {
+    uint32_t  dsGeForceFXCapsSet[] = {
                     1,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsBadYonStuff };
-                    
-    uint32_t  dsSavage2kCapsClr[] = {
-                    5,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsCompressTextures,
-                    hsG3DDeviceSelector::kCapsPixelFog,
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
+                    hsG3DDeviceSelector::kCapsNoAA };
 
     uint32_t  dsS3GenerCapsClr[] = {
                     4,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsCompressTextures,
                     hsG3DDeviceSelector::kCapsFogExp,
                     hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
-    uint32_t  dsATIFuryCapsClr[] = {
-                    3,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsPixelFog };
-
-    uint32_t  dsATIRageCapsClr[] = {
-                    4,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures,
-                    hsG3DDeviceSelector::kCapsPixelFog };
-
-    uint32_t  dsATIGenerCapsClr[] = {
-                    4,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsPixelFog,
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
-    uint32_t  dsATIRadeonCapsSet[] = {
-                    2,              // First integer is always the length
-                        hsG3DDeviceSelector::kCapsBadManaged,
-                        hsG3DDeviceSelector::kCapsShareDepth
-                    };
-
-    uint32_t  dsATIRadeonCapsClr[] = {
-                    2,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsWBuffer,
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
-    uint32_t  dsATIR7X00CapsSet[] = {
-                    4,              // First integer is always the length
-                        hsG3DDeviceSelector::kCapsCantShadow,
-                        hsG3DDeviceSelector::kCapsBadManaged,
-                        hsG3DDeviceSelector::kCapsShareDepth,
-                        hsG3DDeviceSelector::kCapsNoAniso
-                    };
-
-    uint32_t  dsATIR7500CapsSet[] = {
-                    5,              // First integer is always the length
-                        hsG3DDeviceSelector::kCapsMaxUVWSrc2,
-                        hsG3DDeviceSelector::kCapsCantShadow,
-                        hsG3DDeviceSelector::kCapsBadManaged,
-                        hsG3DDeviceSelector::kCapsShareDepth,
-                        hsG3DDeviceSelector::kCapsNoAniso
-                    };
-
-    uint32_t  dsATIR7X00CapsClr[] = {
-                    2,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsWBuffer,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
     uint32_t  dsATIR8X00CapsSet[] = {
@@ -1361,15 +1275,7 @@ namespace
                     hsG3DDeviceSelector::kCapsWBuffer,
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
-    uint32_t  dsTNTCapsClr[] = {
-                    1,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
     uint32_t  dsDefaultCapsClr[] = {
-                    1,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsDoesSmallTextures };
-
-    uint32_t  dsMG400CapsClr[] = {
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsDoesSmallTextures };
 
@@ -1382,59 +1288,14 @@ namespace
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsNoKindaSmallTexs };
 
-    uint32_t  dsMatroxParheliaSet[] = {
-                    1,
-                        hsG3DDeviceSelector::kCapsNoAA };
-
-    uint32_t  dsGeForceSet[] = {
-                    2,
-                        hsG3DDeviceSelector::kCapsCantProj,
-                        hsG3DDeviceSelector::kCapsDoubleFlush };
-
-    uint32_t  dsGeForce2Set[] = {
-                    1,
-                        hsG3DDeviceSelector::kCapsDoubleFlush };
-
-    uint32_t  dsGeForce3Set[] = {
-                    1,
-                        hsG3DDeviceSelector::kCapsSingleFlush };
-
-    uint32_t  dsGeForce4MXSet[] = {
-                    1,
-                        hsG3DDeviceSelector::kCapsSingleFlush };
-
-    uint32_t  dsGeForce4Set[] = {
-                    1,
-                        hsG3DDeviceSelector::kCapsSingleFlush
-                    };
-
     CFTable dsCFTable[] = 
         { 
-            // Chipset ID           // F2Set            // F2Clear          // ZSuck    // MaxLayers    // LODBias      // Fog Value Tables
-            { kDefaultChipset,      nil,                dsDefaultCapsClr,   0,          0,              0,              &dsDefaultFogVals },
-            { kATIRageFuryChipset,  nil,                dsATIFuryCapsClr,   4.25f,      1,              0,              &dsATIFogVals },
-            { kATIRageProChipset,   nil,                dsATIRageCapsClr,   4.25f,      1,              0,              &dsATIFogVals },
-            { kATIGenericChipset,   nil,                dsATIGenerCapsClr,  4.25f,      1,              0,              &dsATIFogVals },
-            { kNVidiaTNTChipset,    nil,                dsTNTCapsClr,       0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForce2Chipset,dsGeForce2Set,     nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForce3Chipset,dsGeForce3Set,     nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForce4MXChipset,dsGeForce4MXSet, nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForce4Chipset,dsGeForce4Set,     nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForceChipset,dsGeForceSet,       nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kNVidiaGeForceFXChipset,nil,              nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kMatroxG400Chipset,   nil,                dsMG400CapsClr,     3.25f,      0,              0,              &dsDefaultFogVals },
-            { kMatroxParhelia,      dsMatroxParheliaSet,nil,                0,          0,              0,              &dsDefaultFogVals },
-            { kMatroxGenericChipset,nil,                dsMG400CapsClr,     3.25f,      0,              0,              &dsDefaultFogVals },
-            { kIntelI810Chipset,    nil,                dsDefaultCapsClr,   4.5f,       1,              -0.5f,          &dsi810FogVals },
-            { kSavage4Chipset,      dsSavageCapsSet,    dsSavageCapsClr,    4.0f,       1,              0,              &dsDefaultFogVals },        // LOD bias should be -0.5 here
-            { kSavage2000Chipset,   dsSavageCapsSet,    dsSavage2kCapsClr,  4.0f,       1,              0,              &dsDefaultFogVals },
-            { kS3GenericChipset,    dsSavageCapsSet,    dsS3GenerCapsClr,   4.0f,       1,              0,              &dsDefaultFogVals },
-            { kKYROChipset,         dsKYROCapsSet,      dsKYROCapsClr,      -151.0f,    1,              0,              &dsDefaultFogVals },
-            { kSavage3DChipset,     nil,                dsDefaultCapsClr,   0,          0,              0,              &dsS3DFogVals },
-            { kATIRadeonChipset,    dsATIRadeonCapsSet, dsATIRadeonCapsClr, 0,          0,              0,              &dsRadeonFogVals },
-            { kATIR7X00Chipset,     dsATIR7X00CapsSet,  dsATIR7X00CapsClr,  3.f,        2,              0,              &dsRadeonFogVals  },
-            { kATIR7500Chipset,     dsATIR7500CapsSet,  dsATIR7X00CapsClr,  3.f,        2,              0,              &dsRadeonFogVals  },
-            { kATIR8X00Chipset,     dsATIR8X00CapsSet,  dsATIR8X00CapsClr,  0,          0,              0,              &dsRadeonFogVals  },
+            // Chipset ID              // F2Set             // F2Clear          // ZSuck    // MaxLayers    // LODBias    // Fog Value Tables
+            { kDefaultChipset,         nullptr,             dsDefaultCapsClr,   0,          0,              0,            &dsDefaultFogVals },
+            { kNVidiaGeForceFXChipset, dsGeForceFXCapsSet,  nullptr,            0,          0,              0,            &dsDefaultFogVals },
+            { kIntelI810Chipset,       nullptr,             dsDefaultCapsClr,   4.5f,       1,              -0.5f,        &dsi810FogVals },
+            { kKYROChipset,            dsKYROCapsSet,       dsKYROCapsClr,      -151.0f,    1,              0,            &dsDefaultFogVals },
+            { kATIR8X00Chipset,        dsATIR8X00CapsSet,   dsATIR8X00CapsClr,  0,          0,              0,            &dsRadeonFogVals  },
         };
 
 };
@@ -1471,202 +1332,47 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     hsAssert( strlen( szDesc ) < sizeof( desc ), "D3D device description longer than expected!" );
     hsStrcpy( desc, szDesc );
     hsStrLower( desc ); 
-        
-    //// S3-based Cards ///////////////////////////////////////////////////////
-    /// Detect Savage 4 chipset
-    if( deviceID == 0x00008a22 || stricmp( szDriver, "s3savg4.dll" ) == 0 ||
-        ( strstr( desc, "diamond" ) != nil && strstr( desc, "stealth iii" ) != nil ) ||
-        strstr( desc, "savage4 " ) != nil )
-    {
-        /// Yup, Savage 4.
-        hsStatusMessage( "== Using fudge factors for a Savage 4 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a Savage 4 chipset" );
-        ISetFudgeFactors( kSavage4Chipset, record );
-    }
-    /// Detect Savage 2000 chipset
-    else if( deviceID == 0x00009102 || 
-        stricmp( szDriver, "s3sav2k.dll" ) == 0 ||
-        ( strstr( desc, "diamond" ) != nil &&
-           strstr( desc, "viperii" ) != nil ) ||
-        strstr( desc, "savage2000 " ) != nil )
-    {
-        /// Yup, Savage 2000.
-        hsStatusMessage( "== Using fudge factors for a Savage 2000 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a Savage 2000 chipset" );
-        ISetFudgeFactors( kSavage2000Chipset, record );
-    }
-    /// Detect Savage3D chipset
-    else if( deviceID == 0x00008a20 || 
-        stricmp( szDriver, "s3_6.dll" ) == 0 ||
-        strstr( desc, "savage3d" ) != nil )
-    {
-        /// Yup, Savage3D.
-        hsStatusMessage( "== Using fudge factors for a Savage3D chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a Savage3D chipset" );
-        ISetFudgeFactors( kSavage3DChipset, record );
-    }
-    /// Detect Generic S3 chipset
-    else if( ( strncmp( szDriver, "s3", 2 ) == 0 ) || ( strstr( desc, "savage" ) != nil ) )
-    {
-        /// Yup, Generic S3.
-        hsStatusMessage( "== Using fudge factors for a generic S3 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a generic S3 chipset" );
-        ISetFudgeFactors( kS3GenericChipset, record );
-    }
 
-    //// ATI-based Cards //////////////////////////////////////////////////////
-    /// Detect ATI Radeon HD
-    else if (strstr( desc, "radeon hd" ) != nullptr)
-    {
-        hsStatusMessage( "== Using fudge factors for an ATI Radeon HD chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an ATI Radeon HD chipset" );
-        ISetFudgeFactors( kDefaultChipset, record );
-    }
-
-    /// Detect ATI Rage 128 Pro chipset
-    else if( ( deviceID == 0x00005046 &&            // Normal ATI Rage 128 Pro detection
-                ( stricmp( szDriver, "ati2dvaa.dll" ) == 0 
-                || strstr( desc, "rage 128 pro" ) != nil ) ) ||
-            ( deviceID == 0x00005246 &&             // ATI All-in-wonder--same chipset, diff values
-                ( stricmp( szDriver, "ati3draa.dll" ) == 0
-                || strstr( desc, "all-in-wonder 128" ) != nil ) ) )
-    {
-        hsStatusMessage( "== Using fudge factors for an ATI Rage 128 Pro chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an ATI Rage 128 Pro chipset" );
-        ISetFudgeFactors( kATIRageProChipset, record );
-    }
-    /// Detect(detest?) ATI Rage FURY MAXX chipset
-    else if( deviceID == 0x00005046 &&
-             ( stricmp( szDriver, "ati3drau.dll" ) == 0 
-               || strstr( desc, "rage fury" ) != nil ) )
-    {
-        hsStatusMessage( "== Using fudge factors for an ATI Rage Fury MAXX chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an ATI Rage Fury MAXX chipset" );
-        ISetFudgeFactors( kATIRageFuryChipset, record );
-    }
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    else if( // deviceID == 0x00005144 && 
-                ( stricmp( szDriver, "ati2dvag.dll" ) == 0
-                    || strstr( desc, "radeon" ) != nil ) )
+    if (stricmp(szDriver, "ati2dvag.dll") == 0 || strstr(desc, "radeon") != nullptr)
     {
         int series = 0;
         const char* str = strstr(desc, "radeon");
         if( str )
             str += strlen("radeon");
-        else
-        {
-            str = strstr(desc, "all-in-wonder");
-            if( str )
-                str += strlen("all-in-wonder");
-        }
         if( str )
         {
             if( 1 == sscanf(str, "%d", &series) )
             {
-                if( (series == 7500) || (series == 7200) )
-                {
-                    hsStatusMessage( "== Using fudge factors for ATI Radeon 7200/7500 chipset ==\n" );
-                    plDemoDebugFile::Write( "   Using fudge factors for ATI Radeon 7200/7500 chipset" );
-                    ISetFudgeFactors( kATIR7500Chipset, record );
-                }
-                else
-                if( (series >= 7000) && (series < 8000) )
-                {
-                    hsStatusMessage( "== Using fudge factors for ATI Radeon 7X00 chipset ==\n" );
-                    plDemoDebugFile::Write( "   Using fudge factors for ATI Radeon 7X00 chipset" );
-                    ISetFudgeFactors( kATIR7X00Chipset, record );
-                }
-                else 
                 if( (series >= 8000) && (series < 9000) )
                 {
                     hsStatusMessage( "== Using fudge factors for ATI Radeon 8X00 chipset ==\n" );
                     plDemoDebugFile::Write( "   Using fudge factors for ATI Radeon 8X00 chipset" );
                     ISetFudgeFactors( kATIR8X00Chipset, record );
                 }
+                else if (series >= 9000)
+                {
+                    hsStatusMessage("== Using fudge factors for ATI Radeon 9X00 chipset ==\n");
+                    plDemoDebugFile::Write("   Using fudge factors for ATI Radeon 9X00 chipset");
+                    ISetFudgeFactors(kATIRadeonChipset, record);
+                }
                 else
                 {
                     series = 0;
                 }
             }
-            else
-            {
-                series = 0;
-
-                // Skip white space
-                while( *str && (*str <= 0x32) )
-                    str++;
-
-                // I've still never seen either of these, so I'm just going by ATI's site.
-                // Don't have the option of using device-id's.
-                if( (str[0] == 'v') && (str[1] == 'e') )
-                {
-                    // Got an alias here. If it's an All-in-Wonder VE, it's really a 7500.
-                    // If it's a Radeon VE, it's really a 7000.
-                    if( strstr(desc, "radeon") )
-                        series = 7000;
-                    else if( strstr(desc, "all-in-wonder") )
-                        series = 7500;
-                }
-            }
         }
-        if( !series )
+        if (series == 0)
         {
-            hsStatusMessage( "== Using fudge factors for ATI Radeon chipset ==\n" );
-            plDemoDebugFile::Write( "   Using fudge factors for ATI Radeon chipset" );
-            ISetFudgeFactors( kATIRadeonChipset, record );
+            hsStatusMessage("== Using fudge factors for ATI/AMD Radeon X/HD/R chipset ==\n");
+            plDemoDebugFile::Write("   Using fudge factors for ATI/AMD Radeon X/HD/R chipset");
+            ISetFudgeFactors(kDefaultChipset, record);
         }
-    }
-    /// Detect generic ATI chipset
-    else if( ( strncmp( szDriver, "ati", 3 ) == 0 ) || ( strstr( desc, "ati " ) != nil ) )
-    {
-        hsStatusMessage( "== Using fudge factors for a generic ATI chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a generic ATI chipset" );
-        ISetFudgeFactors( kATIGenericChipset, record );
-    }
-
-    //// Matrox-based Cards ///////////////////////////////////////////////////
-    else if( (deviceID == 0x527)
-        || strstr(desc, "parhelia") )
-    {
-        hsStatusMessage( "== Using fudge factors for a Matrox Parhelia chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a Matrox Millenium G400 chipset" );
-        ISetFudgeFactors( kMatroxParhelia, record );
-    }
-    /// Detect Matrox G400 chipset
-    else if( deviceID == 0x00000525 &&
-                ( stricmp( szDriver, "g400d.dll" ) == 0 
-                  || ( strstr( desc, "matrox" ) != nil && strstr( desc, "g400" ) != nil ) ) )
-    {
-        hsStatusMessage( "== Using fudge factors for a Matrox Millenium G400 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a Matrox Millenium G400 chipset" );
-        ISetFudgeFactors( kMatroxG400Chipset, record );
-    }
-    /// Detect generic Matrox chipset
-    else if( strstr( desc, "matrox" ) != nil )
-    {
-        hsStatusMessage( "== Using fudge factors for a generic Matrox chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a generic Matrox chipset" );
-        ISetFudgeFactors( kMatroxGenericChipset, record );
     }
 
     //// Other Cards //////////////////////////////////////////////////////////
-    /// Detect NVidia RIVA TNT chipset
-    else if( deviceID == 0x00000020 &&
-             ( stricmp( szDriver, "nvdd32.dll" ) == 0 
-               || strstr( desc, "nvidia riva tnt" ) != nil ) )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia RIVA TNT chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia RIVA TNT chipset" );
-        ISetFudgeFactors( kNVidiaTNTChipset, record );
-        if( record.GetMemoryBytes() < 16 * 1024 * 1024 )
-        {
-            hsStatusMessage( "== (also fudging memory up to 16MB) ==\n" );
-            plDemoDebugFile::Write( "   (also fudging memory up to 16MB)" );
-            record.SetMemoryBytes( 16 * 1024 * 1024 );
-        }
-    }
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
                 ( stricmp( szDriver, "i81xdd.dll" ) == 0 
@@ -1683,57 +1389,12 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
         plDemoDebugFile::Write( "   Using fudge factors for a KYRO chipset" );
         ISetFudgeFactors( kKYROChipset, record );
     }
-    /// Detect for a GeForce-class card. We can be loose here because we want 
-    /// to get ALL GeForce/2/256 cards
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce2" ) != nil )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForce2-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForce2-based chipset" );
-        ISetFudgeFactors( kNVidiaGeForce2Chipset, record );
-    }
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce3" ) != nil )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForce3-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForce3-based chipset" );
-        ISetFudgeFactors( kNVidiaGeForce3Chipset, record );
-    }
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce4 mx" ) != nil )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForce4MX-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForce4MX-based chipset" );
-        ISetFudgeFactors( kNVidiaGeForce4MXChipset, record );
-    }
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce4" ) != nil )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForce4-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForce4-based chipset" );
-        ISetFudgeFactors( kNVidiaGeForce4Chipset, record );
-    }
-    else if( 
-        strstr( desc, "nvidia" ) && strstr( desc, "geforce" )
-        && (
-            (deviceID == 0x101)
-            ||(deviceID == 0x100)
-            ||strstr(desc, "256")
-            )
-        )
-    {
-        hsStatusMessage( "== Using fudge factors for an NVidia GeForce-based chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForce-based chipset" );
-        ISetFudgeFactors( kNVidiaGeForceChipset, record );
-    }
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce" ) != nil )
+    /// Detect for a GeForc FX card. We only need to nerf the really low end one.
+    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce fx 5200" ) != nil )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         plDemoDebugFile::Write( "   Using fudge factors for an NVidia GeForceFX-based chipset" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
-    }
-    /// Detect for a TNT-based card and force it to >= 16MB memory, so we always use it
-    else if( strstr( desc, "tnt" ) != nil && record.GetMemoryBytes() < 16 * 1024 * 1024 )
-    {
-        hsStatusMessage( "== NVidia TNT-based card detected. Fudging memory reading to 16MB ==\n" );
-        plDemoDebugFile::Write( "   NVidia TNT-based card detected. Fudging memory reading to 16MB" );
-        record.SetMemoryBytes( 16 * 1024 * 1024 );
     }
 
     /// Default fudge values

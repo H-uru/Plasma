@@ -2281,13 +2281,6 @@ void plClient::IDetectAudioVideoSettings()
     plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
     plPipeline::fDefaultPipeParams.VSync = false;
 
-    // card specific overrides
-    if(rec->GetDriverDesc() && strstr(rec->GetDriverDesc(), "FX 5200"))
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = 0;
-    }
-
-
     int val = 0;
     hsStream *stream = nil;
     hsUNIXStream s;
