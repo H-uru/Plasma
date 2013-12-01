@@ -570,35 +570,17 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
         else if( fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D ||
                  fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3DTnL )
         {
-            uint32_t      totalMem;
-            char        devDesc[ 256 ];
-
-
-            // For our 3dfx test later
-            strncpy( devDesc, fRecords[i].GetDriverDesc(), sizeof( devDesc ) - 1 );
-            hsStrLower( devDesc );      
+            uint32_t      totalMem;  
 
             // Remove software Direct3D devices
             if ((fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
-                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev) &&
-                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3D3dfxDev) &&
-                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3D3dfxVoodoo5Dev) 
+                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev)
 #ifdef HS_ALLOW_D3D_REF_DRIVER
-                && (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DRefDev) 
+                && (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DRefDev)
 #endif
                 )
             {
                 plDemoDebugFile::Write( "   Removing software Direct3D device. Description", (char *)fRecords[ i ].GetDriverDesc() );
-                fRecords[i].SetDiscarded(true);
-            }
-            // Remove 3Dfx Direct3D devices, take 2
-            // 10.13.2000 mcn - Now we do it even when we're wimpy
-            // 10.25.2000 mcn - Think again.
-            // 11.3.2000 mcn - Shesh, is this EVER going to be stable??
-            else if( bTough && fRecords[i].GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3D3dfxDev )
-//          else if( bTough && ( strstr( devDesc, "3dfx" ) || strstr( devDesc, "voodoo" ) ) )
-            {
-                plDemoDebugFile::Write( "   Removing 3Dfx non-Voodoo5 Direct3D device (We only support Glide on 3Dfx). Description", (char *)fRecords[ i ].GetDriverDesc() );
                 fRecords[i].SetDiscarded(true);
             }
             // Remove Direct3D devices with less than 11 megs of RAM
@@ -720,7 +702,7 @@ bool hsG3DDeviceSelector::GetDefault (hsG3DDeviceModeRecord *dmr)
                         iTnL = i;
                     }
                 }
-                else if (fRecords[i].GetG3DHALorHEL() == kHHD3DHALDev || fRecords[i].GetG3DHALorHEL() == kHHD3D3dfxVoodoo5Dev )
+                else if (fRecords[i].GetG3DHALorHEL() == kHHD3DHALDev)
                 {
                     if (iD3D == -1
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1264,7 +1246,6 @@ namespace
         kATIGenericChipset,
         kMatroxGenericChipset,
         kKYROChipset,
-        k3dfxV5Chipset,
         kSavage3DChipset,
         kATIRadeonChipset,
         kATIR7X00Chipset,
@@ -1417,11 +1398,6 @@ namespace
                     1,              // First integer is always the length
                     hsG3DDeviceSelector::kCapsNoKindaSmallTexs };
 
-    uint32_t  ds3dfxV5CapsClr[] = {
-                    2,              // First integer is always the length
-                    hsG3DDeviceSelector::kCapsFogExp,
-                    hsG3DDeviceSelector::kCapsFogExp2 };
-
     uint32_t  dsMatroxParheliaSet[] = {
                     1,
                         hsG3DDeviceSelector::kCapsNoAA };
@@ -1470,7 +1446,6 @@ namespace
             { kSavage2000Chipset,   dsSavageCapsSet,    dsSavage2kCapsClr,  4.0f,       1,              0,              &dsDefaultFogVals },
             { kS3GenericChipset,    dsSavageCapsSet,    dsS3GenerCapsClr,   4.0f,       1,              0,              &dsDefaultFogVals },
             { kKYROChipset,         dsKYROCapsSet,      dsKYROCapsClr,      -151.0f,    1,              0,              &dsDefaultFogVals },
-            { k3dfxV5Chipset,       nil,                ds3dfxV5CapsClr,    3.5f,       0,              0,              &dsDefaultFogVals },
             { kSavage3DChipset,     nil,                dsDefaultCapsClr,   0,          0,              0,              &dsS3DFogVals },
             { kATIRadeonChipset,    dsATIRadeonCapsSet, dsATIRadeonCapsClr, 0,          0,              0,              &dsRadeonFogVals },
             { kATIR7X00Chipset,     dsATIR7X00CapsSet,  dsATIR7X00CapsClr,  3.f,        2,              0,              &dsRadeonFogVals  },
@@ -1733,14 +1708,6 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
         hsStatusMessage( "== Using fudge factors for a KYRO chipset ==\n" );
         plDemoDebugFile::Write( "   Using fudge factors for a KYRO chipset" );
         ISetFudgeFactors( kKYROChipset, record );
-    }
-    /// Detect for a 3dfx Voodoo5
-    else if( vendorID == 0x121a && deviceID == 0x00000009 && 
-            stricmp( szDriver, "3dfxvs.dll" ) == 0 )
-    {
-        hsStatusMessage( "== Using fudge factors for a 3dfx Voodoo5 chipset ==\n" );
-        plDemoDebugFile::Write( "   Using fudge factors for a 3dfx Voodoo5 chipset" );
-        ISetFudgeFactors( k3dfxV5Chipset, record );
     }
     /// Detect for a GeForce-class card. We can be loose here because we want 
     /// to get ALL GeForce/2/256 cards

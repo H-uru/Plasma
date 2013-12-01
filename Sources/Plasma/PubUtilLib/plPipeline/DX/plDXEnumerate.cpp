@@ -723,29 +723,6 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 
         /// Done first now, so we can alter the D3D type later
         ITryDirect3DTnLDevice( &drivInfo->fDevices[i], currDevRec );
-
-        /// Check the vendor ID to see if it's 3dfx (#0x121a). If it is, don't add it.
-        /// (we don't support 3dfx D3D devices) -mcn
-        /// 11.25.2000 mcn - Knew this was going to come back and bite me. Now we just
-        /// append (3dfx) to the end of the device description, so that our latter test
-        /// can throw it out or not, depending on whether we're "strong".
-
-        if( drivInfo->fAdapterInfo.VendorId == 0x121a && 
-            ( currDevRec.GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DHALDev ||
-            currDevRec.GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DTnLHalDev ) )
-        {   
-            if( drivInfo->fAdapterInfo.DeviceId >= 0x00000009 )
-            {
-                currDevRec.SetG3DHALorHEL( kHHD3D3dfxVoodoo5Dev );
-                plDemoDebugFile::Write( "  Tagging device as a 3dfx Voodoo5 or above" );
-            }
-            else
-            {
-                currDevRec.SetG3DHALorHEL( kHHD3D3dfxDev );
-                plDemoDebugFile::Write( "  Tagging device as a non-V5 3dfx card" );
-            }
-        }
-
         IFudgeDirectXDevice( currDevRec, (D3DEnum_DriverInfo *)drivInfo, (D3DEnum_DeviceInfo *)&drivInfo->fDevices[ i ] );
 
         if( currDevRec.GetModes().GetCount() )

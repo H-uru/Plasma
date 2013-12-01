@@ -325,8 +325,6 @@ public:
         kHHD3DMMXDev,
         kHHD3DTnLHalDev,
         kHHD3DRefDev,
-        kHHD3D3dfxDev,
-        kHHD3D3dfxVoodoo5Dev,
 
         kNumHHTypes
     };
