@@ -2237,9 +2237,6 @@ void plClient::IDetectAudioVideoSettings()
     bool pixelshaders = rec->GetCap(hsG3DDeviceSelector::kCapsPixelShader);
     int psMajor = 0, psMinor = 0;
     rec->GetPixelShaderVersion(psMajor, psMinor);
-    bool refDevice = false;
-    if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DRefDev)
-        refDevice = true;
 
     plPipeline::fDefaultPipeParams.ColorDepth = hsG3DDeviceSelector::kDefaultDepth;
 #if defined(HS_DEBUGGING) || defined(DEBUG)
@@ -2266,17 +2263,10 @@ void plClient::IDetectAudioVideoSettings()
         plPipeline::fDefaultPipeParams.Shadows = 1;
 
     // enable planar reflections if pixelshaders are available
-    if(pixelshaders && !refDevice)
-    {
     plPipeline::fDefaultPipeParams.PlanarReflections = 1;
-    }
-    else
-    {
-    plPipeline::fDefaultPipeParams.PlanarReflections = 0;
-    }
 
     // enable 2x antialiasing and anisotropic to 2 samples if pixelshader version is greater that 2.0
-    if(psMajor >= 2 && !refDevice)
+    if(psMajor >= 2)
     {
         plPipeline::fDefaultPipeParams.AntiAliasingAmount = rec->GetMaxAnisotropicSamples() ? 2 : 0;
         plPipeline::fDefaultPipeParams.AnisotropicLevel = mode->GetNumFSAATypes() ? 2 : 0;
@@ -2287,17 +2277,8 @@ void plClient::IDetectAudioVideoSettings()
         plPipeline::fDefaultPipeParams.AnisotropicLevel = 0;
     }
 
-    if(refDevice)
-    {
-        plPipeline::fDefaultPipeParams.TextureQuality = 0;
-        plPipeline::fDefaultPipeParams.VideoQuality = 0;
-
-    }
-    else
-    {
-        plPipeline::fDefaultPipeParams.TextureQuality = psMajor >= 2 ? 2 : 1;
-        plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
-    }
+    plPipeline::fDefaultPipeParams.TextureQuality = psMajor >= 2 ? 2 : 1;
+    plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
     plPipeline::fDefaultPipeParams.VSync = false;
 
     // card specific overrides

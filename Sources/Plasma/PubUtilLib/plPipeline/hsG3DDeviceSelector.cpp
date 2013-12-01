@@ -574,21 +574,9 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
 
             // Remove software Direct3D devices
             if ((fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
-                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev)
-#ifdef HS_ALLOW_D3D_REF_DRIVER
-                && (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DRefDev)
-#endif
-                )
+                (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev))
             {
                 plDemoDebugFile::Write( "   Removing software Direct3D device. Description", (char *)fRecords[ i ].GetDriverDesc() );
-                fRecords[i].SetDiscarded(true);
-            }
-            // Remove Direct3D devices with less than 11 megs of RAM
-            else if (bTough && ( totalMem = IAdjustDirectXMemory( fRecords[i].GetMemoryBytes() ) ) < 11*1024*1024 )
-            {
-                plString log = plString::Format("   Removing Direct3D device with < 11MB RAM. Device RAM (in kB): %d (Description: %s)",
-                                                totalMem / 1024, fRecords[ i ].GetDriverDesc() );
-                plDemoDebugFile::Write( log.c_str() );
                 fRecords[i].SetDiscarded(true);
             }
             else
@@ -663,10 +651,6 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 #endif
 
     /// Now try our devices
-#ifdef HS_SELECT_DX7
-    ITryDirect3D(winRef);
-#endif // HS_SELECT_DX7
-
     ITryDirect3DTnL(winRef);
 
 //  ITryOpenGL(winRef);
@@ -1478,16 +1462,6 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
             hsAssert( false, "Trying to fudge D3D device but D3D support isn't in this EXE!" );
         }
     }
-#ifdef HS_SELECT_DX7
-    else if( record.GetG3DDeviceType() == kDevTypeDirect3D )
-    {
-        if( !IGetD3D7CardInfo( record, driverInfo, deviceInfo, &vendorID, &deviceID, &szDriver, &szDesc ) )
-        {
-            // {} to make VC6 happy in release build
-            hsAssert( false, "Trying to fudge D3D7 device but D3D7 support isn't in this EXE!" );
-        }
-    }
-#endif // HS_SELECT_DX7
     else
     {
         hsAssert( false, "IFudgeDirectXDevice got a device type that support wasn't compiled for!" );

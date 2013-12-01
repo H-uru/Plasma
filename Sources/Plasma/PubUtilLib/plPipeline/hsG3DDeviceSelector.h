@@ -69,9 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define DYNAHEADER 1
 #endif // HS_BUILD_FOR_WIN32
 
-/// #define the following to allow selection of the D3D reference driver
-#define HS_ALLOW_D3D_REF_DRIVER 1
-
 
 class hsStream;
 struct D3DEnum_DeviceInfo;
@@ -384,21 +381,12 @@ protected:
     void ITryDirect3DTnL(hsWinRef winRef);
     bool IInitDirect3D( void );
 
-#ifdef HS_SELECT_DX7
-    void ITryDirect3DDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
-    void ITryDirect3DDriver(D3DEnum_DriverInfo* drivInfo);
-    void ITryDirect3D(hsWinRef winRef);
-#endif // HS_SELECT_DX7
     void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                 D3DEnum_DriverInfo *driverInfo, D3DEnum_DeviceInfo *deviceInfo );
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
-#ifdef HS_SELECT_DX7
-    bool    IGetD3D7CardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
-#endif // HS_SELECT_DX7
 
     void        ITryOpenGL( hsWinRef winRef );
     void        IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec );

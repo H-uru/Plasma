@@ -100,9 +100,6 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
     if( !colorDepth )
         enumFlags |= D3DENUM_CANWINDOW;
     enumFlags |= D3DENUM_TNLHAL;
-#ifdef HS_ALLOW_D3D_REF_DRIVER
-    enumFlags |= D3DENUM_REFERENCERAST;
-#endif
 
     D3DEnum_SelectDefaultDriver(enumFlags);
 
