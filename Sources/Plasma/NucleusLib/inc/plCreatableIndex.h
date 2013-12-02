@@ -951,6 +951,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(pfGameScoreListMsg),
     CLASS_INDEX(pfGameScoreTransferMsg),
     CLASS_INDEX(pfGameScoreUpdateMsg),
+    CLASS_INDEX(plLoadClothingMsg),
 CLASS_INDEX_LIST_END
 
 #endif // plCreatableIndex_inc

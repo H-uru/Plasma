@@ -355,6 +355,9 @@ REGISTER_CREATABLE(plLoadCloneMsg);
 # include "plLoadAvatarMsg.h"
 REGISTER_CREATABLE(plLoadAvatarMsg);
 
+#include "plLoadClothingMsg.h"
+REGISTER_CREATABLE(plLoadClothingMsg);
+
 # include "plAvCoopMsg.h"
 REGISTER_CREATABLE(plAvCoopMsg);
 

@@ -83,6 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plMemberUpdateMsg.h"
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plLoadClothingMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -211,6 +212,11 @@ plKey plAvatarMgr::LoadAvatar(plString name, plString accountName, bool isPlayer
         {
             plUoid uID(loc, plSceneObject::Index(), name);
             plLoadAvatarMsg *cloneMsg = new plLoadAvatarMsg(uID, requestor, 0, isPlayer, spawnPoint, initialTask, userStr);
+            if (clothingFile.IsValid())
+            {
+                plLoadClothingMsg *clothingMsg = new plLoadClothingMsg(clothingFile);
+                cloneMsg->SetTriggerMsg(clothingMsg);
+            }
             result =  cloneMsg->GetCloneKey();
             
             // the clone message is automatically addressed to the net client manager
