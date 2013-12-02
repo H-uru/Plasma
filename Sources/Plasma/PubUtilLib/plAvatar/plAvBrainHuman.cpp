@@ -193,8 +193,10 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
     
     if (fAvMod->GetClothingOutfit() && fAvMod->GetClothingOutfit()->fGroup != plClothingMgr::kClothingBaseNoOptions)
     {
-        if (fAvMod->IsLocalAvatar()) 
-            fAvMod->GetClothingOutfit()->ReadFromVault();
+        if (fAvMod->IsLocalAvatar())
+        {
+            fAvMod->GetClothingOutfit()->ReadClothing();
+        }
         else 
         {
             fAvMod->GetClothingOutfit()->WearDefaultClothing();

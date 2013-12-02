@@ -84,6 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plListenerMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plLoadClothingMsg.h"
 
 #include "plParticleSystem/plParticleSystem.h"
 #include "plParticleSystem/plParticleSDLMod.h"
@@ -1293,6 +1294,8 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             }
         }
 
+        // We also want to use the trigger msg when loading an avatar
+        MsgReceive(avLoadMsg->GetTriggerMsg());
 
         return true;
     }
@@ -1332,6 +1335,15 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
                 return true;
             }
         }
+    }
+
+    plLoadClothingMsg *clothingMsg = plLoadClothingMsg::ConvertNoRef(msg);
+    if (clothingMsg)
+    {
+        // We got a clothing file and are supposed to load our avatar from it.
+        // Let's tell our outfit to do so!
+        fClothingOutfit->SetClothingFile(clothingMsg->GetClothingFile());
+        return true;
     }
 
     plLinkEffectBCMsg *linkBCMsg = plLinkEffectBCMsg::ConvertNoRef(msg);
