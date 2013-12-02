@@ -281,7 +281,7 @@ public:
     plClothingItem *GetLRMatch(plClothingItem *item);
     bool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
 
-    static void ChangeAvatar(char *name);
+    static void ChangeAvatar(const char* name, const plFileName &clothingFile = "");
     
     static plClothingMgr *GetClothingMgr() { return fInstance; }    
     static void Init();

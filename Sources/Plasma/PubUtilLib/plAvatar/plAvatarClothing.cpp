@@ -1832,9 +1832,8 @@ void plClothingMgr::IAddItem(plClothingItem *item)
         hsAssert(false, "Couldn't match all elements of added clothing item.");
 }
 
-void plClothingMgr::ChangeAvatar(char *name)
+void plClothingMgr::ChangeAvatar(const char* name, const plFileName &clothingFile)
 {
     plAvatarMgr::GetInstance()->UnLoadLocalPlayer();
-    plAvatarMgr::GetInstance()->LoadPlayer(name, nil);
+    plAvatarMgr::GetInstance()->LoadPlayerFromFile(name, "", clothingFile);
 }
-

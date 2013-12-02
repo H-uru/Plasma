@@ -281,7 +281,7 @@ void plNCAgeJoiner::ExecNextOp () {
                 else
                     avatarName = NetCommGetPlayer()->avatarDatasetName;
                 plString linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
-                am->LoadPlayer( avatarName, nil, linkInName.c_str() );
+                am->LoadPlayer(avatarName, "", linkInName);
             }
             else {
                 LogMsg(kLogPerf, L"AgeJoiner: Next:kPropagatePlayer");

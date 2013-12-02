@@ -784,29 +784,22 @@ void plArmatureMod::WindowActivate(bool active)
     }
 }
 
-char    *plArmatureMod::fSpawnPointOverride = nil;
+plString plArmatureMod::fSpawnPointOverride;
 
-void    plArmatureMod::SetSpawnPointOverride( const char *overrideObjName )
+void plArmatureMod::SetSpawnPointOverride(const plString &overrideObjName)
 {
-    delete [] fSpawnPointOverride;
-    if( overrideObjName == nil )
-        fSpawnPointOverride = nil;
-    else
-    {
-        fSpawnPointOverride = hsStrcpy( overrideObjName );
-        strlwr( fSpawnPointOverride );
-    }
+    fSpawnPointOverride = overrideObjName.ToLower();
 }
 
-int plArmatureMod::IFindSpawnOverride( void )
+int plArmatureMod::IFindSpawnOverride()
 {
-    if( fSpawnPointOverride == nil || fSpawnPointOverride[ 0 ] == 0 )
+    if (fSpawnPointOverride.IsEmpty())
         return -1;
-    int     i;
+    int i;
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
-    for( i = 0; i < mgr->NumSpawnPoints(); i++ )
+    for (i = 0; i < mgr->NumSpawnPoints(); i++)
     {
-        const plString &name = mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName();
+        const plString &name = mgr->GetSpawnPoint(i)->GetTarget(0)->GetKeyName();
         if (name.Find(fSpawnPointOverride, plString::kCaseInsensitive) >= 0)
             return i; // Found it!
     }
@@ -1300,15 +1293,9 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             }
         }
 
-        // copy the user string over
-        const char* userStr = avLoadMsg->GetUserStr();
-        if (userStr)
-            fUserStr = userStr;
-        else
-            fUserStr = "";
 
         return true;
-    }   
+    }
 
     plLoadCloneMsg *cloneMsg = plLoadCloneMsg::ConvertNoRef(msg);
     if (cloneMsg)
