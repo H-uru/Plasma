@@ -1594,6 +1594,60 @@ void cyAvatar::PlaySimpleAnimation(const plString& animName)
 
 /////////////////////////////////////////////////////////////////////////////
 //
+//  Function   : SaveClothingToFile
+//  PARAMETERS : filename - file to save to
+//
+//  PURPOSE    : Save the avatar's clothing to a file. If only a filename is
+//               given, it will write to UserData/Avatars.
+//
+bool cyAvatar::SaveClothingToFile(plFileName filename)
+{
+    if (fRecvr.Count() > 0) {
+        plArmatureMod* avatar = plAvatarMgr::FindAvatar(fRecvr[0]);
+        if (avatar) {
+            plClothingOutfit* cl = avatar->GetClothingOutfit();
+            if (cl) {
+                // Save file in UserData/Avatars if only a filename is given
+                if (!filename.StripFileName().IsValid()) {
+                    plFileName path = plFileName::Join(plFileSystem::GetUserDataPath(), "Avatars");
+                    plFileSystem::CreateDir(path, true);
+                    filename = plFileName::Join(path, filename);
+                }
+                return cl->WriteToFile(filename);
+            }
+        }
+    }
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : LoadClothingFromFile
+//  PARAMETERS : filename - file to load from
+//
+//  PURPOSE    : Load the avatar's clothing from a file. If only a filename is
+//               given, it will read from UserData/Avatars.
+//
+bool cyAvatar::LoadClothingFromFile(plFileName filename)
+{
+    if (fRecvr.Count() > 0) {
+        plArmatureMod* avatar = plAvatarMgr::FindAvatar(fRecvr[0]);
+        if (avatar) {
+            plClothingOutfit* cl = avatar->GetClothingOutfit();
+            if (cl) {
+                // Search for file in UserData/Avatars if only a filename is given
+                if (!filename.StripFileName().IsValid())
+                    filename = plFileName::Join(plFileSystem::GetUserDataPath(), "Avatars", filename);
+                cl->SetClothingFile(filename);
+                return cl->ReadClothing();
+            }
+        }
+    }
+    return false;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
 //  Function   : ChangeAvatar
 //  PARAMETERS : gender name  - is a string of the name of the gender to go to
 //

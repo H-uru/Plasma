@@ -597,6 +597,30 @@ PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptAvatar, saveClothingToFile, args)
+{
+    PyObject* filename;
+    if (!PyArg_ParseTuple(args, "O", &filename) || !PyString_CheckEx(filename))
+    {
+        PyErr_SetString(PyExc_TypeError, "saveClothingToFile expects a string object");
+        PYTHON_RETURN_ERROR;
+    }
+
+    PYTHON_RETURN_BOOL(self->fThis->SaveClothingToFile(PyString_AsStringEx(filename)));
+}
+
+PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
+{
+    PyObject* filename;
+    if (!PyArg_ParseTuple(args, "O", &filename) || !PyString_CheckEx(filename))
+    {
+        PyErr_SetString(PyExc_TypeError, "loadClothingFromFile expects a string object");
+        PYTHON_RETURN_ERROR;
+    }
+
+    PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(PyString_AsStringEx(filename)));
+}
+
 PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, netForce, "Params: forceFlag\nSpecify whether this object needs to use messages that are forced to the network\n"
                 "- This is to be used if your Python program is running on only one client\n"
@@ -651,6 +675,9 @@ PYTHON_START_METHODS_TABLE(ptAvatar)
     PYTHON_METHOD(ptAvatar, unRegisterForBehaviorNotify, "Params: selfKey\nThis will unregister behavior notifications"),
 
     PYTHON_METHOD(ptAvatar, playSimpleAnimation, "Params: animName\nPlay simple animation on avatar"),
+
+    PYTHON_METHOD(ptAvatar, saveClothingToFile, "Params: filename\nSave avatar clothing to a file"),
+    PYTHON_METHOD(ptAvatar, loadClothingFromFile, "Params: filename\nLoad avatar clothing from a file"),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorLoopCount, args, "Params: behaviorKey,stage,loopCount,netForce\nThis will set the loop count for a particular stage in a multistage behavior")
