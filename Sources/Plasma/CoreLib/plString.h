@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plString_Defined
 #define plString_Defined
 
-#include <vector>
-#include <cstdint>
 #include <cstddef>
-#include <cstdarg>
+#include <cstdlib>
 #include <cstring>
+#include <cstdarg>
+#include <cstdint>
+#include <vector>
 
 /** Single Unicode character code unit */
 typedef unsigned int UniChar;
