@@ -61,6 +61,7 @@ Mead, WA   99021
 #define PLASMA_OK 0
 
 static HWND             s_dialog;
+static plString         s_error; // This is highly unfortunate.
 static plClientLauncher s_launcher;
 static UINT             s_taskbarCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 static ITaskbarList3*   s_taskbar = nullptr;
@@ -86,6 +87,12 @@ static void WaitForOldPatcher()
 }
 
 // ===================================================
+
+static inline void IShowErrorDialog(const wchar_t* msg)
+{
+    // This bypasses all that hsClientMinimizeGuard crap we have in CoreLib.
+    MessageBoxW(nullptr, msg, L"Error", MB_ICONERROR | MB_OK);
+}
 
 static inline void IQuit(int exitCode=PLASMA_OK)
 {
@@ -127,6 +134,7 @@ BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         if (s_taskbar)
             s_taskbar->Release();
         PostQuitMessage(PLASMA_OK);
+        s_dialog = nullptr;
         break;
     case WM_NCHITTEST:
         SetWindowLongW(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
@@ -135,11 +143,9 @@ BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         s_launcher.ShutdownNetCore();
         DestroyWindow(hwndDlg);
         break;
-    default:
-        return DefWindowProcW(hwndDlg, uMsg, wParam, lParam);
     }
 
-    return TRUE;
+    return DefWindowProcW(hwndDlg, uMsg, wParam, lParam);
 }
 
 static void ShowPatcherDialog(HINSTANCE hInstance)
@@ -265,17 +271,18 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
 
         return info.hProcess;
     } else {
-        wchar_t buf[2048];
+        wchar_t* msg = nullptr;
         FormatMessageW(
-            FORMAT_MESSAGE_FROM_SYSTEM,
+            FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
             nullptr,
             GetLastError(),
             LANG_USER_DEFAULT,
-            buf,
-            arrsize(buf),
+            msg,
+            0,
             nullptr
         );
-        hsMessageBox(buf, L"Error", hsMessageBoxNormal, hsMessageBoxIconError);
+        s_error = plString::FromWchar(msg);
+        LocalFree(msg);
     }
 
     return nullptr;
@@ -341,8 +348,7 @@ static void IOnNetError(ENetError result, const plString& msg)
     if (s_taskbar)
         s_taskbar->SetProgressState(s_dialog, TBPF_ERROR);
 
-    plString text = plString::Format("Error: %S\r\n%s", NetErrorAsString(result), msg.c_str());
-    hsMessageBox(text.c_str(), "Error", hsMessageBoxNormal);
+    s_error = plString::Format("Error: %S\r\n%s", NetErrorAsString(result), msg.c_str());
     IQuit(PLASMA_PHAILURE);
 }
 
@@ -380,14 +386,14 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // Load the doggone server.ini
     if (!s_launcher.LoadServerIni()) {
-        hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
+        IShowErrorDialog(L"No server.ini file found.  Please check your URU installation.");
         return PLASMA_PHAILURE;
     }
 
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
-        hsMessageBox(plString::Format("%s is already running", plProduct::LongName().c_str()).c_str(), "Error",
-                     hsMessageBoxNormal, hsMessageBoxIconError);
+        plString text = plString::Format("%s is already running", plProduct::LongName().c_str());
+        IShowErrorDialog(text.ToWchar());
         return PLASMA_OK;
     }
     HANDLE _onePatcherMut = CreatePatcherMutex();
@@ -400,6 +406,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     ShowPatcherDialog(hInstance);
     PumpMessages();
 
+    // So there appears to be some sort of issue with calling MessageBox once we've set up our dialog...
+    // WTF?!?! So, to hack around that, we'll wait until everything shuts down to display any error.
+    if (!s_error.IsEmpty())
+        IShowErrorDialog(s_error.ToWchar());
+
     // Alrighty now we just need to clean up behind ourselves!
     // NOTE: We shut down the netcore in the WM_QUIT handler so
     //       we don't have a windowless, zombie process if that takes
@@ -408,7 +419,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     CloseHandle(_onePatcherMut);
 
     // kthxbai
-    return PLASMA_OK;
+    return s_error.IsEmpty() ? PLASMA_OK : PLASMA_PHAILURE;
 }
 
 /* Enable themes in Windows XP and later */
