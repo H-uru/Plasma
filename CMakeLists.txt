@@ -45,7 +45,6 @@ find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the clie
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
 find_package(CURL REQUIRED)
-find_package(PCRE REQUIRED)
 
 if(WIN32)
     find_package(PhysX REQUIRED)  #TODO: Not required if we aren't building the client
@@ -63,12 +62,6 @@ option(CURL_IS_STATIC "Using the static version of libcurl?" ON)
 if(CURL_IS_STATIC)
     add_definitions(-DCURL_STATICLIB)
 endif(CURL_IS_STATIC)
-
-#libpcre isn't smart enough to detect this either
-option(PCRE_IS_STATIC "Using the static version of libpcre?" ON)
-if(PCRE_IS_STATIC)
-    add_definitions(-DPCRE_STATIC)
-endif(PCRE_IS_STATIC)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)
