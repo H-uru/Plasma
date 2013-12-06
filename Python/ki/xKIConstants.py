@@ -250,6 +250,8 @@ class kCommands:
                   "/look in pocket" : "LookForFeathers"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
+    Other = {"/saveclothing" : "SaveClothing",
+             "/loadclothing" : "LoadClothing"}
 
 ## Numeric limits for the KI.
 class kLimits:

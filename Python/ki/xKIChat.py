@@ -806,6 +806,7 @@ class CommandsProcessor:
         if PtIsInternalRelease():
             commands.update(kCommands.Internal)
         commands.update(kCommands.EasterEggs)
+        commands.update(kCommands.Other)
 
         # Does the message contain a standard command?
         for command, function in commands.iteritems():
@@ -1283,3 +1284,28 @@ class CommandsProcessor:
                 self.chatMgr.AddChatLine(None, pOut, 0)
         else:
             self.chatMgr.AddChatLine(None, "There is nothing there but lint.", 0)
+
+    ## Export the local avatar's clothing to a file
+    def SaveClothing(self, file):
+        if not file:
+            self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
+            return
+        file = file + ".clo"
+        if PtGetLocalAvatar().avatar.saveClothingToFile("./" + file):
+            self.chatMgr.AddChatLine(None, "Outfit exported to " + file, 0)
+        else:
+            self.chatMgr.AddChatLine(None, "Could not export to " + file, kChat.SystemMessage)
+
+    ## Import the local avatar's clothing from a file
+    def LoadClothing(self, file):
+        if not file:
+            self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
+            return
+        if PtGetPlayerList() and not PtIsInternalRelease():
+            self.chatMgr.AddChatLine(None, "You have to be alone to change your clothes!", kChat.SystemMessage)
+            return
+        file = file + ".clo"
+        if PtGetLocalAvatar().avatar.loadClothingFromFile("./" + file):
+            self.chatMgr.AddChatLine(None, "Outfit imported from " + file, 0)
+        else:
+            self.chatMgr.AddChatLine(None, file + " not found", kChat.SystemMessage)
