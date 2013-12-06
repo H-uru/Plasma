@@ -784,7 +784,9 @@ plSynchedObject* plNetClientMgr::GetLocalPlayer(bool forceLoad) const
 
 plSynchedObject* plNetClientMgr::GetNPC(uint32_t i) const
 {
-    return fNPCKeys[i] ? plSynchedObject::ConvertNoRef(fNPCKeys[i]->ObjectIsLoaded()) : nil; 
+    if (i >= fNPCKeys.size())
+        return nullptr;
+    return plSynchedObject::ConvertNoRef(fNPCKeys[i]->ObjectIsLoaded()); 
 }
 
 void plNetClientMgr::AddNPCKey(const plKey& npc)
