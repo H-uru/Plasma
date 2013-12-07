@@ -144,7 +144,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDynaBulletMgr.h"
 
 #include "plGImage/plMipmap.h"
-#include "plGImage/plTGAWriter.h"
 
 #include "plGLight/plShadowCaster.h"
 #include "plGLight/plShadowMaster.h"
@@ -1533,44 +1532,6 @@ static bool MakeUniqueFileName(const char* prefix, const char* ext, char* fileNa
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-
-PF_CONSOLE_CMD( Graphics_Renderer, TakeScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
-{
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
-
-    plMipmap        myMipmap;
-    char            fileName[ 512 ];
-
-
-    if( numParams > 1 )
-    {
-        PrintString( "Too many parameters to TakeScreenshot" );
-        return;
-    }
-    else if( numParams == 1 )
-        strcpy( fileName, (char *)params[ 0 ] );
-    else
-    {
-        // Think up a filename
-        if (!MakeUniqueFileName("screen", "tga", fileName))
-        {
-            PrintString( "Out of filenames for TakeScreenshot" );
-            return;
-        }
-    }
-
-    if( !pfConsole::GetPipeline()->CaptureScreen( &myMipmap ) )
-        PrintString( "Error capturing screenshot" );
-    else
-    {
-        char    str[ 512 ];
-
-        plTGAWriter::Instance().WriteMipmap( fileName, &myMipmap );
-        sprintf( str, "Screenshot written to '%s'.", fileName );
-        PrintString( str );
-    }
-}
-
 #include "pfSurface/plGrabCubeMap.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap, 
@@ -1603,56 +1564,6 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
     const char* pref = params[1];
     plGrabCubeMap grabCube;
     grabCube.GrabCube(pfConsole::GetPipeline(), pos, pref, clearColor);
-}
-
-#include "plGImage/plJPEG.h"
-
-PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
-{
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
-
-    plMipmap        myMipmap;
-    char            fileName[ 512 ];
-
-
-    if( numParams > 2 )
-    {
-        PrintString( "Too many parameters to TakeScreenshot" );
-        return;
-    }
-    else if( numParams > 0 )
-        strcpy( fileName, (char *)params[ 0 ] );
-    else
-    {
-        // Think up a filename
-        if (!MakeUniqueFileName("screen", "jpg", fileName))
-        {
-            PrintString( "Out of filenames for TakeScreenshot" );
-            return;
-        }
-    }
-
-    if( !pfConsole::GetPipeline()->CaptureScreen( &myMipmap ) )
-        PrintString( "Error capturing screenshot" );
-    else
-    {
-        char    str[ 512 ];
-        uint8_t   quality = 75;
-
-
-        if( numParams == 2 )
-            quality = (int)params[ 1 ];
-
-        plJPEG::Instance().SetWriteQuality( quality );
-
-        if( !plJPEG::Instance().WriteToFile( fileName, &myMipmap ) )
-        {
-            sprintf( str, "JPEG write failed (%s).", plJPEG::Instance().GetLastError() );
-        }
-        else
-            sprintf( str, "Screenshot written to '%s', quality of %d%%.", fileName, quality );
-        PrintString( str );
-    }
 }
 
 #include "plGImage/plAVIWriter.h"
