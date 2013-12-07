@@ -81,9 +81,10 @@ protected:
     
 
     void Output();
+    void SetOutputFOV();
     void IUpdate();
     void INext();
-        
+
 public:
     enum flags
     {
