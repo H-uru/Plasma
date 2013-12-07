@@ -1164,7 +1164,6 @@ class xKI(ptModifier):
     def OnRTChat(self, player, message, flags):
 
         if message is not None:
-            message = unicode(message, kCharSet)
             cFlags = xKIChat.ChatFlags(flags)
             # Is it a private channel message that can't be listened to?
             if cFlags.broadcast and cFlags.channel != self.chatMgr.privateChatChannel:
