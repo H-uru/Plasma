@@ -48,10 +48,6 @@ from PlasmaTypes import *
 # Uru modules.
 import xEnum
 
-## Character set constant.
-# @todo Update this when the p2fs really support unicode.
-kCharSet = "cp1252"
-
 ## Number of items to scroll through in content list.
 kContentListScrollSize = 5
 

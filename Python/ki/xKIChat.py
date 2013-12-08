@@ -187,12 +187,6 @@ class xKIChat(object):
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
             PtAvatarExitAFK()
 
-        try:
-            message = unicode(message, kCharSet)
-        except UnicodeError:
-            message = None
-            self.AddChatLine(None, PtGetLocalizedString("KI.Errors.TextOnly"), kChat.SystemMessage)
-
         # Check for special commands.
         message = self.commandsProcessor(message)
         if not message:
