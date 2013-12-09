@@ -60,7 +60,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxCFGFile.h"
 #include "plResCollector.h"
 #include "plAgeDescInterface.h"
-#include "MaxSceneViewer/SceneViewer.h"
 #include "plNodeLock.h"
 #include "plResetXform.h"
 #include "plTextureSearch.h"
@@ -81,7 +80,7 @@ enum
     kActionResCollect,
     kActionAgeDesc,
     kActionCompCopy,
-    kActionSceneViewer,
+    kActionSceneViewer, // DEAD. But I don't dare remove it--don't want to break stuff :/
     kActionLock,
     kActionUnlock,
     kActionTexSearch,
@@ -200,15 +199,6 @@ bool DoAction(int id)
     case kActionCompCopy:
         CopyComponents();
         return true;
-
-    case kActionSceneViewer:
-#ifdef MAXSCENEVIEWER_ENABLED
-        SceneViewer::Instance().Show();
-        return true;
-#else
-        hsMessageBox("The SceneViewer has been disabled in this build", "Disabled", 0);
-        return true;
-#endif
 
     case kActionLock:
         plNodeLock().Lock();
@@ -414,18 +404,6 @@ void plCreateMenu()
         pMenuItem = GetIMenuItem();
         pMenuItem->SetActionItem(pActionTable->GetAction(kActionAgeDesc));
         pPlasmaMenu->AddItem(pMenuItem);
-
-        // Add a separator
-        pMenuItem = GetIMenuItem();
-        pMenuItem->ActAsSeparator();
-        pPlasmaMenu->AddItem(pMenuItem);
-
-#ifdef MAXSCENEVIEWER_ENABLED
-        // Add the SceneViewer to the menu
-        pMenuItem = GetIMenuItem();
-        pMenuItem->SetActionItem(pActionTable->GetAction(kActionSceneViewer));
-        pPlasmaMenu->AddItem(pMenuItem);
-#endif
 
         // Add a separator
         pMenuItem = GetIMenuItem();

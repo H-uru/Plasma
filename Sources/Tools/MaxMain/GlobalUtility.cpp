@@ -52,12 +52,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "GlobalUtility.h"
 
-#include "MaxSceneViewer/SceneSync.h"
-
 #include "MaxComponent/ComponentDummies.h"
 #include "plActionTableMgr.h"
 #include "plMaxMenu.h"
-#include "MaxSceneViewer/plMaxFileData.h"
 #include "pfPython/cyPythonInterface.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 
@@ -203,15 +200,6 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncClimbTrigger();
     DummyCodeIncludeFuncObjectFlocker();
     DummyCodeIncludeFuncGrassShader();
-    
-    // Register the SceneViewer with Max
-#ifdef MAXSCENEVIEWER_ENABLED
-    SceneSync::Instance();
-#endif
-
-#ifdef MAXSCENEVIEWER_ENABLED
-    InitMaxFileData();
-#endif
 
     // Setup the localization mgr
     // Dirty hacks are because Cyan sucks...

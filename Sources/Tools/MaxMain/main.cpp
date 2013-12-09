@@ -123,11 +123,7 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
         case 4:
             return GetComponentMgrDesc();
         case 5:
-#ifdef MAXSCENEVIEWER_ENABLED
             return GetMaxFileDataDesc();
-#else
-            return 0;
-#endif
         case 6:
             return GetMaxUtilsDesc();
         default: 
