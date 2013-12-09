@@ -186,7 +186,7 @@ BOOL plLayerTex::SetDlgThing(ParamDlg* dlg)
 
 int plLayerTex::NumRefs()
 {
-    return 2;
+    return 3;
 }
 
 //From ReferenceMaker
@@ -223,15 +223,19 @@ void plLayerTex::SetReference(int i, RefTargetHandle rtarg)
 
 int plLayerTex::NumParamBlocks()
 {
-    return 1;
+    return 2;
 }
 
 IParamBlock2* plLayerTex::GetParamBlock(int i)
 {
     switch (i)
     {
-    case 0: return fBitmapPB;
-    default: return NULL;
+    case kRefBasic:
+        // So this was something... a long time ago. It probably doesn't exist anymore.
+        // We'll pretend it's a bitmap to keep everyone happy.
+    case kRefBitmap:
+        return fBitmapPB;
+    default: return nullptr;
     }
 }
 
@@ -256,7 +260,7 @@ RefTargetHandle plLayerTex::Clone(RemapDir &remap)
 
 int plLayerTex::NumSubs()
 {
-    return 2;
+    return 3;
 }
 
 Animatable* plLayerTex::SubAnim(int i) 

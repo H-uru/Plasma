@@ -164,26 +164,27 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     }
 
     uint32_t id = key->GetUoid().GetObjectID();
-    hsAssert(id <= fKeys.size(), "Bad static key id");
+    plKeyImp* foundKey = nullptr;
 
-    // Fixed Keys will have id == 0. Let's just make sure we have it before we toss it.
+    // Fixed Keys use ID == 0
     if (id == 0)
-    {
         hsAssert(key->GetUoid().GetLocation() == plLocation::kGlobalFixedLoc, "key id == 0 but not fixed?");
-        if (!FindKey(key->GetName()))
-        {
-            hsAssert(false, "Couldn't find fixed key!");
-            return false;
-        }
+    else if (id < fKeys.size()) {
+        if (fKeys[id]->GetUoid().GetObjectID() == id)
+            foundKey = fKeys[id];
     }
-    else if (id > fKeys.size())
-        return false;
+
+    // Last chance: do a slow name search for that key.
+    if (!foundKey)
+        foundKey = FindKey(key->GetUoid().GetObjectName());
 
     // Got that key, decrement the key counter
-    --fReffedKeys;
-    if (fReffedKeys == 0)
-        loadStatusChange = kTypeUnloaded;
-    return true;
+    if (foundKey) {
+        --fReffedKeys;
+        if (fReffedKeys == 0)
+            loadStatusChange = kTypeUnloaded;
+    }
+    return foundKey != nullptr;
 }
 
 void plRegistryKeyList::Read(hsStream* s)

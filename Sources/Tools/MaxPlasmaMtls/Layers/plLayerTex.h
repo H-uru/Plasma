@@ -76,12 +76,14 @@ public:
     enum
     {
         kRefUVGen,
+        kRefBasic, // DEAD, but left in so we don't die.
         kRefBitmap,
     };
 
     // Block ID's
     enum
     {
+        kBlkBasic,
         kBlkBitmap,
     };
 
