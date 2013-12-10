@@ -1164,7 +1164,6 @@ class xKI(ptModifier):
     def OnRTChat(self, player, message, flags):
 
         if message is not None:
-            message = unicode(message, kCharSet)
             cFlags = xKIChat.ChatFlags(flags)
             # Is it a private channel message that can't be listened to?
             if cFlags.broadcast and cFlags.channel != self.chatMgr.privateChatChannel:
@@ -5692,8 +5691,8 @@ class xKI(ptModifier):
         elif event == kAction or event == kValueChanged:
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
-                if not control.wasEscaped() and control.getString() != "":
-                    self.chatMgr.SendMessage(control.getString())
+                if not control.wasEscaped() and control.getStringW() != "":
+                    self.chatMgr.SendMessage(control.getStringW())
                 self.chatMgr.ToggleChatMode(0)
             elif ctrlID == kGUI.ChatDisplayArea:
                 self.KillFadeTimer()
@@ -5776,8 +5775,8 @@ class xKI(ptModifier):
         elif event == kAction or event == kValueChanged:
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
-                if not control.wasEscaped() and control.getString() != "":
-                    self.chatMgr.SendMessage(control.getString())
+                if not control.wasEscaped() and control.getStringW() != u"":
+                    self.chatMgr.SendMessage(control.getStringW())
                 self.chatMgr.ToggleChatMode(0)
                 self.StartFadeTimer()
             elif ctrlID == kGUI.PlayerList:
