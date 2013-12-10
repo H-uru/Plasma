@@ -2162,11 +2162,13 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
+                plStringBuffer<wchar_t> wMessage = pkimsg->GetString().ToWchar();
+                PyObject* uMessage = PyUnicode_FromWideChar(wMessage, wMessage.GetSize());
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_RTChat],
                         (char*)fFunctionNames[kfunc_RTChat],
-                        "Osl", player, pkimsg->GetString().c_str(),
-                        pkimsg->GetFlags());
+                        "OOl", player, uMessage, pkimsg->GetFlags());
+                Py_DECREF(uMessage);
                 if ( retVal == nil )
                 {
 #ifndef PLASMA_EXTERNAL_RELEASE
