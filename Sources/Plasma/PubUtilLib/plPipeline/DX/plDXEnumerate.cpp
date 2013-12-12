@@ -39,11 +39,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plDXEnumerate.h"
-#include <ddraw.h>
 
-#include "plPipeline/hsGDDrawDllLoad.h"
+#include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
+#include "hsGDirect3D.h"
 
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
@@ -102,9 +101,6 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
     if( !colorDepth )
         enumFlags |= D3DENUM_CANWINDOW;
     enumFlags |= D3DENUM_TNLHAL;
-#ifdef HS_ALLOW_D3D_REF_DRIVER
-    enumFlags |= D3DENUM_REFERENCERAST;
-#endif
 
     D3DEnum_SelectDefaultDriver(enumFlags);
 
@@ -219,8 +215,7 @@ HRESULT hsGDirect3DTnLEnumerate::D3DEnum_SelectDefaultDriver( DWORD dwFlags )
                 {
                     if( dwFlags & D3DENUM_CANWINDOW )
                     {
-                        if( (pDriver == &fDrivers[0])
-                            &&( pDevice->fDDCaps.Caps2 & DDCAPS2_CANRENDERWINDOWED ) )
+                        if( (pDriver == &fDrivers[0]) )
                         {
                             if( ( pDevice->fDDCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT )
                                 ^ !(dwFlags & D3DENUM_TNLHAL) )
@@ -286,27 +281,9 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
     fCurrentDriver = NULL;      // The selected DD driver
     fDrivers.Reset();       // List of DD drivers
 
-
-    /// New DX Enumeration
-
-    // Get a pointer to the creation function
-    if( hsGDDrawDllLoad::GetD3DDll() == nil )
-    {
-        strcpy( fEnumeErrorStr, "Cannot load Direct3D driver!" );
-        return; 
-    }
-
-    Direct3DCreateProc      procPtr;
-    procPtr = (Direct3DCreateProc)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "Direct3DCreate9" );
-    if( procPtr == nil )
-    {
-        strcpy( fEnumeErrorStr, "Cannot load D3D Create Proc!" );
-        return;
-    }
-
     // Create a D3D object to use
-    IDirect3D9 *pD3D = procPtr( D3D_SDK_VERSION );
-    if( pD3D == nil )
+    IDirect3D9* pD3D = hsGDirect3D::GetDirect3D();
+    if (!pD3D)
     {
         strcpy( fEnumeErrorStr, "Cannot load DirectX!" );
         return;
@@ -333,9 +310,6 @@ hsGDirect3DTnLEnumerate::hsGDirect3DTnLEnumerate()
         /// Do the mode and device enumeration for this adapter
         IEnumAdapterDevices( pD3D, iAdapter, newDriver );       
     }
-
-    // Cleanup
-    pD3D->Release();
 }
 
 //// IEnumAdapterDevices //////////////////////////////////////////////////////
@@ -391,12 +365,7 @@ void    hsGDirect3DTnLEnumerate::IEnumAdapterDevices( IDirect3D9 *pD3D, UINT iAd
                 /// Confirm that HW vertex processing works on this device
                 if (deviceInfo->fDDCaps.DevCaps & D3DDEVCAPS_PUREDEVICE)
                 {
-#if 0
-                    behavior[iFormat] = D3DCREATE_HARDWARE_VERTEXPROCESSING |
-                        D3DCREATE_PUREDEVICE;
-#else
                     behavior[iFormat] = D3DCREATE_HARDWARE_VERTEXPROCESSING;
-#endif
                     if (SUCCEEDED(IConfirmDevice(&deviceInfo->fDDCaps, behavior[iFormat],
                         currFormat)))
                     {
@@ -662,16 +631,6 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
 
     adapterInfo = &driverD3DInfo->fAdapterInfo;
 
-    /// Print out to our demo data file
-    plDemoDebugFile::Write( "DeviceSelector detected DX Direct3D device. Info:" );
-    plDemoDebugFile::Write( "   Driver Description", (char *)adapterInfo->Description );
-    plDemoDebugFile::Write( "   Driver Name", (char *)adapterInfo->Driver );
-    plDemoDebugFile::Write( "   Vendor ID", (int32_t)adapterInfo->VendorId );
-    plDemoDebugFile::Write( "   Device ID", (int32_t)adapterInfo->DeviceId );
-    plDemoDebugFile::Write( "   Version", (char *)record.GetDriverVersion() );
-    plDemoDebugFile::Write( "   Memory size (in MB)", record.GetMemoryBytes() / ( 1024 * 1024 ) );
-    plDemoDebugFile::Write( "   Memory size (in bytes)", record.GetMemoryBytes() );
-
     *vendorID = adapterInfo->VendorId;
     *deviceID = adapterInfo->DeviceId;
     *driverString = adapterInfo->Driver;
@@ -680,42 +639,11 @@ bool    hsG3DDeviceSelector::IGetD3DCardInfo( hsG3DDeviceRecord &record,        
     return true;
 }
 
-//// IInitDirect3D ////////////////////////////////////////////////////////////
-
-bool    hsG3DDeviceSelector::IInitDirect3D( void )
-{
-    if( hsGDDrawDllLoad::GetD3DDll() == nil )
-    {
-        strcpy( fErrorString, "Cannot load Direct3D driver!" );
-        return false;   
-    }
-
-    Direct3DCreateProc      procPtr;
-    procPtr = (Direct3DCreateProc)GetProcAddress( hsGDDrawDllLoad::GetD3DDll(), "Direct3DCreate9" );
-    if( procPtr == nil )
-    {
-        strcpy( fErrorString, "Cannot load D3D Create Proc!" );
-        return false;
-    }
-
-    // Create a D3D object to use
-    IDirect3D9      *pD3D = procPtr( D3D_SDK_VERSION );
-    if( pD3D == nil )
-    {
-        strcpy( fErrorString, "Cannot load DirectX!" );
-        return false;
-    }
-    pD3D->Release();
-
-    fErrorString[ 0 ] = 0;
-    return true;
-}
-
 //// ITryDirect3DTnL //////////////////////////////////////////////////////////
 
 void hsG3DDeviceSelector::ITryDirect3DTnL(hsWinRef winRef)
 {
-    hsGDirect3DTnLEnumerate d3dEnum;
+    hsGDirect3DTnLEnumerate& d3dEnum = hsGDirect3D::EnumerateTnL();
 
     int i;
     for( i = 0; i < d3dEnum.GetNumDrivers(); i++ )
@@ -732,7 +660,7 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 {
     hsG3DDeviceRecord devRec;
     devRec.Clear();
-    devRec.SetG3DDeviceType( kDevTypeDirect3DTnL );
+    devRec.SetG3DDeviceType( kDevTypeDirect3D );
 
     devRec.SetDriverName( drivInfo->fAdapterInfo.Driver );
     devRec.SetDriverDesc( drivInfo->fAdapterInfo.Description );
@@ -758,29 +686,6 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo)
 
         /// Done first now, so we can alter the D3D type later
         ITryDirect3DTnLDevice( &drivInfo->fDevices[i], currDevRec );
-
-        /// Check the vendor ID to see if it's 3dfx (#0x121a). If it is, don't add it.
-        /// (we don't support 3dfx D3D devices) -mcn
-        /// 11.25.2000 mcn - Knew this was going to come back and bite me. Now we just
-        /// append (3dfx) to the end of the device description, so that our latter test
-        /// can throw it out or not, depending on whether we're "strong".
-
-        if( drivInfo->fAdapterInfo.VendorId == 0x121a && 
-            ( currDevRec.GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DHALDev ||
-            currDevRec.GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DTnLHalDev ) )
-        {   
-            if( drivInfo->fAdapterInfo.DeviceId >= 0x00000009 )
-            {
-                currDevRec.SetG3DHALorHEL( kHHD3D3dfxVoodoo5Dev );
-                plDemoDebugFile::Write( "  Tagging device as a 3dfx Voodoo5 or above" );
-            }
-            else
-            {
-                currDevRec.SetG3DHALorHEL( kHHD3D3dfxDev );
-                plDemoDebugFile::Write( "  Tagging device as a non-V5 3dfx card" );
-            }
-        }
-
         IFudgeDirectXDevice( currDevRec, (D3DEnum_DriverInfo *)drivInfo, (D3DEnum_DeviceInfo *)&drivInfo->fDevices[ i ] );
 
         if( currDevRec.GetModes().GetCount() )
@@ -822,10 +727,6 @@ void hsG3DDeviceSelector::ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG
         devRec.SetCap(kCapsPerspective);
     if( devInfo->fIsHardware )
         devRec.SetCap( kCapsHardware );
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_DITHER )
-        devRec.SetCap(kCapsDither);
-    if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_WBUFFER )
-        devRec.SetCap(kCapsWBuffer);
     if( devInfo->fDDCaps.RasterCaps & D3DPRASTERCAPS_FOGTABLE )
     {
         devRec.SetCap( kCapsFogLinear );

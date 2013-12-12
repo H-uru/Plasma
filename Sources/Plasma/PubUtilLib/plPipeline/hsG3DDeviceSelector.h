@@ -69,9 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define DYNAHEADER 1
 #endif // HS_BUILD_FOR_WIN32
 
-/// #define the following to allow selection of the D3D reference driver
-#define HS_ALLOW_D3D_REF_DRIVER 1
-
 
 class hsStream;
 struct D3DEnum_DeviceInfo;
@@ -127,9 +124,6 @@ public:
     void    AddFSAAType( uint8_t type ) { fFSAATypes.Append( type ); }
 
     void    SetCanRenderToCubics( bool can ) { fCanRenderToCubics = can; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s) const;
 };
 
 class hsG3DDeviceRecord
@@ -149,24 +143,6 @@ public:
 
 protected:
 
-    uint32_t          fRecordVersion;     /// Version starts at 2 (see .cpp for explanation)
-    enum {
-        kCurrRecordVersion = 0x0b
-        /// Version history:
-        ///     1 - Initial version (had no version #)
-        ///     2 - Added Z and LOD bias
-        ///     3 - Changed Z and LOD bias to floats, added fog tweaks
-        ///     4 - Changed values for fog tweaks; force reload through version #
-        ///     5 - Same as #4, updated fog end bias to be based solely on fog quantization/bit depth
-        ///     6 - Updated values for the ATI boards, Matrox, and i810
-        ///     7 - Added fog knee tweaks
-        ///     8 - Added support for multiple depth/stencil formats per mode
-        ///     9 - Added multisample types to the mode record
-        ///     A - Added anisotropic sample field
-        ///     B - Added flag for cubic textures support
-    };
-
-    /// Version < 2 Data
     uint32_t          fFlags;
 
     uint32_t          fG3DDeviceType;
@@ -184,7 +160,6 @@ protected:
 
     hsTArray<hsG3DDeviceMode> fModes;
 
-    /// New to Version 3
     float   fZBiasRating;
     float   fLODBiasRating;
     float   fFogExpApproxStart;
@@ -193,17 +168,12 @@ protected:
                             // (i.e. for Z fog, it's a percentage of 1 to add on,
                             // for W fog, it's a percentage of the yon)
 
-    /// Version 7 - Fog Knee values
     float   fFogKnees[ kNumFogTypes ];
     float   fFogKneeVals[ kNumFogTypes ];
 
-    /// Version 9 - The actual AA setting we use
     uint8_t   fAASetting;
 
-    /// Version A - the anisotropic level we use
     uint8_t   fMaxAnisotropicSamples; // 1 to disable, up to max allowed in hardware
-    int fPixelShaderMajorVer;
-    int fPixelShaderMinorVer;
 
 public:
     hsG3DDeviceRecord();
@@ -274,17 +244,6 @@ public:
     void ClearModes();
     void Clear();
     void RemoveDiscarded();
-
-    // PlaceHolder - Whether a mode can window is restricted by the current setup
-    // of the PC. E.g. if the user changes from 16 bit to TrueColor, the Modes that
-    // can window are pretty much flipped. So we'll have to pass in enough info (like
-    // the hWnd?) to find out what the current setup is to make sure it's compatible.
-    bool ModeCanWindow(void* ctx, hsG3DDeviceMode* mode) { return false; } 
-    void SetPixelShaderVersion(int major, int minor) { fPixelShaderMajorVer = major; fPixelShaderMinorVer = minor; }
-    void GetPixelShaderVersion(int &major, int &minor) { major = fPixelShaderMajorVer; minor = fPixelShaderMinorVer; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s) const;
 };
 
 class hsG3DDeviceModeRecord
@@ -309,47 +268,34 @@ class hsG3DDeviceSelector : public hsRefCnt
 public:
     enum {
         kDevTypeUnknown     = 0,
-        kDevTypeGlide,
         kDevTypeDirect3D,
         kDevTypeOpenGL,
-        kDevTypeDirect3DTnL,
 
         kNumDevTypes
     };
     enum {
         kHHTypeUnknown      = 0,
         kHHD3DNullDev,
-        kHHD3DRampDev,
-        kHHD3DRGBDev,
         kHHD3DHALDev,
-        kHHD3DMMXDev,
         kHHD3DTnLHalDev,
         kHHD3DRefDev,
-        kHHD3D3dfxDev,
-        kHHD3D3dfxVoodoo5Dev,
 
         kNumHHTypes
     };
     enum {
         kCapsNone           = 0,
-        kCapsNoWindow,
         kCapsMipmap,
         kCapsPerspective,
         kCapsHardware,
-        kCapsWBuffer,
         kCapsCompressTextures,
         kCapsHWTransform,
-        kCapsDither,
         kCapsFogLinear,
         kCapsFogExp,
         kCapsFogExp2,
         kCapsFogRange,
-        kCapsLODWatch,
-        kCapsUNUSED,
         kCapsDoesSmallTextures,
         kCapsPixelFog,
         kCapsBadYonStuff,
-        kCapsNoKindaSmallTexs,
         kCapsCubicTextures,
         kCapsCubicMipmap,
         kCapsZBias,
@@ -360,7 +306,6 @@ public:
         kCapsCantShadow,
         kCapsMaxUVWSrc2,
         kCapsCantProj,
-        kCapsLimitedProj,
         kCapsShareDepth,
         kCapsBadManaged,
         kCapsNoAniso,
@@ -381,37 +326,19 @@ protected:
 
     char    fErrorString[ 128 ];
 
+    void IClear();
+    void IRemoveDiscarded();
+
     void ITryDirect3DTnLDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
     void ITryDirect3DTnLDriver(D3DEnum_DriverInfo* drivInfo);
     void ITryDirect3DTnL(hsWinRef winRef);
-    bool IInitDirect3D( void );
 
-#ifdef HS_SELECT_DX7
-    void ITryDirect3DDevice(D3DEnum_DeviceInfo* devInfo, hsG3DDeviceRecord& srcDevRec);
-    void ITryDirect3DDriver(D3DEnum_DriverInfo* drivInfo);
-    void ITryDirect3D(hsWinRef winRef);
-#endif // HS_SELECT_DX7
     void IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                 D3DEnum_DriverInfo *driverInfo, D3DEnum_DeviceInfo *deviceInfo );
     uint32_t  IAdjustDirectXMemory( uint32_t cardMem );
 
     bool      IGetD3DCardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
-#ifdef HS_SELECT_DX7
-    bool    IGetD3D7CardInfo( hsG3DDeviceRecord &record, void *driverInfo, void *deviceInfo,
-                                uint32_t *vendorID, uint32_t *deviceID, char **driverString, char **descString );
-#endif // HS_SELECT_DX7
-
-    void        ITryOpenGL( hsWinRef winRef );
-    void        IGetExtOpenGLInfo( hsG3DDeviceRecord &devRec );
-    void        IGetOpenGLModes( hsG3DDeviceRecord &devRec, char *driverName );
-    bool        ITestOpenGLRes( int width, int height, int bitDepth, 
-                                hsG3DDeviceRecord &devRec, char *driverName );
-#ifdef HS_OPEN_GL
-#if HS_BUILD_FOR_WIN32
-    uint32_t      ICreateTempOpenGLContext( HDC hDC, bool makeItFull );
-#endif
-#endif
 
     void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
@@ -419,65 +346,10 @@ public:
     hsG3DDeviceSelector();
     virtual ~hsG3DDeviceSelector();
 
-    void Clear();
-    void RemoveDiscarded();
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release
 
-    bool  Init( void );   // Returns false if couldn't init
-    const char  *GetErrorString( void ) { return fErrorString; }
-
     void Enumerate(hsWinRef winRef);
-    hsTArray<hsG3DDeviceRecord>& GetDeviceRecords() { return fRecords; }
 
     bool GetDefault(hsG3DDeviceModeRecord *dmr);
-
-    hsG3DDeviceRecord* GetRecord(int i) { return &fRecords[i]; }
-
-    void Read(hsStream* s);
-    void Write(hsStream* s);
 };
-
-
-#define M3DDEMOINFO 1       /// Always compiled now, but only enabled if
-                            /// WIN_INIT has DemoInfoOutput in it
-///////////////////////////////////////////////////////////////////////////////
-//
-//  Demo Debug File header file stuff
-//  Created 10.10.2000 by Mathew Burrack @ Cyan, Inc.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-#include "HeadSpin.h"
-
-class plDemoDebugFile
-{
-    public:
-        plDemoDebugFile() { fDemoDebugFP = nil; fIsOpen = false; fEnabled = false; }
-        ~plDemoDebugFile() { IDDFClose(); }
-
-        // Static function to write a string to the DDF
-        static void Write( const char *string );
-
-        // Static function to write two strings to the DDF
-        static void Write( const char *string1, const char *string2 );
-
-        // Static function to write a string and a signed integer value to the DDF
-        static void Write( const char *string1, int32_t value );
-
-        // Enables or disables the DDF class
-        static void Enable( bool yes ) { fEnabled = yes; }
-
-    protected:
-        static bool     fIsOpen;
-        static FILE     *fDemoDebugFP;
-        static bool     fEnabled;
-
-        // Opens the DDF for writing
-        static bool     IDDFOpen( void );
-
-        // Closes the DDF
-        static void     IDDFClose( void );
-};
-
-
 #endif // hsG3DDeviceSelector_inc

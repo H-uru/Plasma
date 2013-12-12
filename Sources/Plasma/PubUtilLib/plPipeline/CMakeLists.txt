@@ -14,7 +14,6 @@ endif(WIN32)
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
     hsGColorizer.cpp
-    hsGDDrawDllLoad.cpp
     plCaptureRender.cpp
     plCubicRenderTargetModifier.cpp
     plCullTree.cpp
@@ -33,6 +32,7 @@ set(plPipeline_SOURCES
 )
 
 set(plDXPipeline_SOURCES
+    DX/hsGDirect3D.cpp
     DX/plDXDeviceRefs.cpp
     DX/plDXEnumerate.cpp
     DX/plDXPipeline.cpp
@@ -46,7 +46,6 @@ set(plPipeline_HEADERS
     hsFogControl.h
     hsG3DDeviceSelector.h
     hsGColorizer.h
-    hsGDDrawDllLoad.h
     hsGDeviceRef.h
     hsWinRef.h
     plBinkPlayer.h
@@ -75,6 +74,7 @@ set(plPipeline_HEADERS
 )
 
 set(plDXPipeline_HEADERS
+    DX/hsGDirect3D.h
     DX/plDXBufferRefs.h
     DX/plDXDeviceRef.h
     DX/plDXEnumerate.h
@@ -91,6 +91,7 @@ set(plDXPipeline_HEADERS
 
 if(WIN32)
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
+    target_link_libraries(plPipeline ${DirectX_LIBRARIES})
 else()
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plPipeline_HEADERS})
 endif()

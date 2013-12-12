@@ -40,39 +40,43 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifdef HS_BUILD_FOR_WIN32
+#include "hsGDirect3D.h"
+#include "plDXEnumerate.h"
 
-#include "hsWindows.h"
+#include <d3d9.h>
+#include <functional>
+#include <memory>
 
-#include <ddraw.h>
-
-#include "hsGDDrawDllLoad.h"
-
-static hsGDDrawDllLoad staticDllLoad;
-
-hsGDDrawDllLoad::hsGDDrawDllLoad()
+static std::unique_ptr<hsGDirect3DTnLEnumerate> s_tnlEnum;
+hsGDirect3DTnLEnumerate& hsGDirect3D::EnumerateTnL(bool reenum)
 {
-    hsAssert(!staticDllLoad.fD3DDll, "Don't make instances of this class, just use GetDDrawDll func");
+    if (reenum || !s_tnlEnum.get())
+        s_tnlEnum.reset(new hsGDirect3DTnLEnumerate());
 
-    fD3DDll = LoadLibrary( "D3D9.DLL" );
-    if (fD3DDll)
-        hsStatusMessage( "--- D3D9.DLL loaded successfully.\n" );
-    else
-        hsStatusMessage( "--- Unable to load D3D9.DLL successfully.\n" );
+    // Be nice to legacy code and return a reference...
+    hsGDirect3DTnLEnumerate* ptr = s_tnlEnum.get();
+    return *ptr;
 }
 
-hsGDDrawDllLoad::~hsGDDrawDllLoad()
+void hsGDirect3D::ReleaseTnLEnum()
 {
-    if (fD3DDll != nil)
-    {
-        hsStatusMessage( "--- Unloading D3D.DLL.\n" );
-        FreeLibrary(fD3DDll);
+    s_tnlEnum.release();
+}
+
+static void IDeleteDirect3D(IDirect3D9* d3d)
+{
+    while (d3d->Release()) { }
+}
+
+static std::unique_ptr<IDirect3D9, std::function<void(IDirect3D9*)>> s_direct3d(nullptr, IDeleteDirect3D);
+IDirect3D9* hsGDirect3D::GetDirect3D(bool recreate)
+{
+    if (recreate || !s_direct3d.get()) {
+        IDirect3D9* ptr = Direct3DCreate9(D3D_SDK_VERSION);
+        hsAssert(ptr, "failed to create Direct3D");
+
+        s_direct3d.reset(ptr);
     }
+    return s_direct3d.get();
 }
 
-HMODULE hsGDDrawDllLoad::GetD3DDll()
-{
-    return staticDllLoad.fD3DDll;
-}
-
-#endif //HS_BUILD_FOR_WIN32

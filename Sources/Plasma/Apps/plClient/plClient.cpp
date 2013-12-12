@@ -2070,78 +2070,6 @@ void plClient::IAddRenderRequest(plRenderRequest* req)
     }
 }
 
-hsG3DDeviceModeRecord plClient::ILoadDevMode(const char* devModeFile)
-{
-    hsStatusMessage("Load DevMode client\n");
-    HWND hWnd = fWindowHndl;
-
-    hsUNIXStream    stream;
-    bool            gottaCreate = false;
-
-    // If DevModeFind is specified, use the old method
-//  if ((GetGameFlags() & kDevModeFind))
-//      FindAndSaveDevMode(hWnd, devModeFile);
-    // Otherwise, use the new method
-    hsG3DDeviceModeRecord dmr;
-    if (stream.Open(devModeFile, "rb"))
-    {
-        /// It's there, but is the device record valid?
-        hsG3DDeviceRecord selRec;
-        hsG3DDeviceMode selMode;
-
-        selRec.Read(&stream);
-        if( selRec.IsInvalid() )
-        {
-            hsStatusMessage( "WARNING: Old DeviceRecord found on file. Setting defaults..." );
-            gottaCreate = true;
-        }
-        else
-        {
-            /// Read the rest in
-            selMode.Read(&stream);
-
-            uint16_t performance = stream.ReadLE16();
-
-            if( performance < 25 )
-                plBitmap::SetGlobalLevelChopCount( 2 );
-            else if( performance < 75 )
-                plBitmap::SetGlobalLevelChopCount( 1 );
-            else
-                plBitmap::SetGlobalLevelChopCount( 0 );
-        }
-        stream.Close();
-
-        dmr = hsG3DDeviceModeRecord(selRec, selMode);
-    }
-    else
-        gottaCreate = true;
-
-    if( gottaCreate )
-    {
-
-        hsG3DDeviceSelector devSel;
-        devSel.Enumerate(hWnd);
-        devSel.RemoveUnusableDevModes(true);
-
-        if (!devSel.GetDefault(&dmr))
-        {
-            //hsAssert(0, "plGame::LoadDevMode - No acceptable hardware found");
-            hsMessageBox("No suitable rendering devices found.","realMYST",hsMessageBoxNormal);
-            return dmr;
-        }
-
-        if (stream.Open(devModeFile, "wb"))
-        {
-            dmr.GetDevice()->Write(&stream);
-            dmr.GetMode()->Write(&stream);
-            stream.WriteLE16((uint16_t)(0*100));
-            stream.Close();
-        }
-
-    }
-    return dmr;
-}
-
 void plClient::ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync)
 {
     if(!fPipeline) return;
@@ -2235,11 +2163,6 @@ void plClient::IDetectAudioVideoSettings()
     const hsG3DDeviceMode *mode = dmr.GetMode();
 
     bool pixelshaders = rec->GetCap(hsG3DDeviceSelector::kCapsPixelShader);
-    int psMajor = 0, psMinor = 0;
-    rec->GetPixelShaderVersion(psMajor, psMinor);
-    bool refDevice = false;
-    if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DRefDev)
-        refDevice = true;
 
     plPipeline::fDefaultPipeParams.ColorDepth = hsG3DDeviceSelector::kDefaultDepth;
 #if defined(HS_DEBUGGING) || defined(DEBUG)
@@ -2260,52 +2183,19 @@ void plClient::IDetectAudioVideoSettings()
         plPipeline::fDefaultPipeParams.Height = hsG3DDeviceSelector::kDefaultHeight;
     }
 
-    plPipeline::fDefaultPipeParams.Shadows = 0;
-    // enable shadows if TnL is available, meaning not an intel extreme.
-    if(rec->GetG3DHALorHEL() == hsG3DDeviceSelector::kHHD3DTnLHalDev)
-        plPipeline::fDefaultPipeParams.Shadows = 1;
+    plPipeline::fDefaultPipeParams.Shadows = 1;
 
     // enable planar reflections if pixelshaders are available
-    if(pixelshaders && !refDevice)
-    {
     plPipeline::fDefaultPipeParams.PlanarReflections = 1;
-    }
-    else
-    {
-    plPipeline::fDefaultPipeParams.PlanarReflections = 0;
-    }
 
     // enable 2x antialiasing and anisotropic to 2 samples if pixelshader version is greater that 2.0
-    if(psMajor >= 2 && !refDevice)
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = rec->GetMaxAnisotropicSamples() ? 2 : 0;
-        plPipeline::fDefaultPipeParams.AnisotropicLevel = mode->GetNumFSAATypes() ? 2 : 0;
-    }
-    else
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = 0;
-        plPipeline::fDefaultPipeParams.AnisotropicLevel = 0;
-    }
+    plPipeline::fDefaultPipeParams.AntiAliasingAmount = rec->GetMaxAnisotropicSamples() ? 2 : 0;
+    plPipeline::fDefaultPipeParams.AnisotropicLevel = mode->GetNumFSAATypes() ? 2 : 0;
 
-    if(refDevice)
-    {
-        plPipeline::fDefaultPipeParams.TextureQuality = 0;
-        plPipeline::fDefaultPipeParams.VideoQuality = 0;
+    plPipeline::fDefaultPipeParams.TextureQuality = pixelshaders ? 2 : 1;
+    plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
 
-    }
-    else
-    {
-        plPipeline::fDefaultPipeParams.TextureQuality = psMajor >= 2 ? 2 : 1;
-        plPipeline::fDefaultPipeParams.VideoQuality = pixelshaders ? 2 : 1;
-    }
     plPipeline::fDefaultPipeParams.VSync = false;
-
-    // card specific overrides
-    if(rec->GetDriverDesc() && strstr(rec->GetDriverDesc(), "FX 5200"))
-    {
-        plPipeline::fDefaultPipeParams.AntiAliasingAmount = 0;
-    }
-
 
     int val = 0;
     hsStream *stream = nil;

@@ -40,23 +40,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef hsGDDrawDllLoad_inc
-#define hsGDDrawDllLoad_inc
+#ifndef _hsGDirect3D_inc_
+#define _hsGDirect3D_inc_
 
-#include "HeadSpin.h"
+class hsGDirect3DTnLEnumerate;
+struct IDirect3D9;
 
-#if HS_BUILD_FOR_WIN32
-class hsGDDrawDllLoad
+namespace hsGDirect3D
 {
-private:
-    HMODULE     fD3DDll;
+    hsGDirect3DTnLEnumerate& EnumerateTnL(bool reenum=false);
+    void ReleaseTnLEnum();
 
-public:
-    hsGDDrawDllLoad();
-    ~hsGDDrawDllLoad();
+    /** Get a root Direct3D object.
+     *  \remarks You should not hold this pointer.
+     */
+    IDirect3D9* GetDirect3D(bool recreate=false);
+}
 
-    static HMODULE GetD3DDll();
-};
-#endif
-
-#endif // hsGDDrawDllLoad_inc
+#endif // _hsGDirect3D_inc_
