@@ -215,25 +215,49 @@ public:
     void IInstanceSharedMeshes(plClothingItem *item);
     void IRemoveSharedMeshes(plClothingItem *item);
 
-    void ReadFromVault();
+    /** This will load the avatar clothing. If a clothing file is set,
+     *  we will load from the file, otherwise from the vault.
+     */
+    bool ReadClothing();
+
     void WriteToVault();
     void WriteToVault(const ARRAY(plStateDataRecord*) & SDRs);
+
+    /** Write the avatar clothing to a file */
+    bool WriteToFile(const plFileName &filename);
 
     void SetupMorphSDL();
 
     // XXX Don't use this. Temp function for a temp HACK console command.
     void DirtyTileset(int tileset);
 
+    /** Instruct this plClothingOutfit to read clothing from the given file */
+    void SetClothingFile(const plFileName &file) { fClothingFile = file; }
+
+    /** Returns the clothing file of this outfit. If there is none, an empty string
+     *  will be returned.
+     */
+    plFileName GetClothingFile() const { return fClothingFile; }
+
 protected:
     hsBitVector fDirtyItems;
     bool fVaultSaveEnabled;
     bool fMorphsInitDone;
+    plFileName fClothingFile;
 
     void IAddItem(plClothingItem *item);
     void IRemoveItem(plClothingItem *item);
     bool ITintItem(plClothingItem *item, hsColorRGBA color, uint8_t layer);
     bool IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight);
     void IHandleMorphSDR(plStateDataRecord *sdr);
+
+    bool IReadFromVault();
+
+    /** Read the avatar clothing from a file.
+     *  A local avatar will change the clothing group to the one in the file.
+     *  A local avatar will be invisible if the file does not exist. (used in the Startup age)
+     */
+    bool IReadFromFile(const plFileName &filename);
         
     void IUpdate();
 
@@ -281,7 +305,7 @@ public:
     plClothingItem *GetLRMatch(plClothingItem *item);
     bool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
 
-    static void ChangeAvatar(char *name);
+    static void ChangeAvatar(const char* name, const plFileName &clothingFile = "");
     
     static plClothingMgr *GetClothingMgr() { return fInstance; }    
     static void Init();

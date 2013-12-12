@@ -430,7 +430,8 @@ bool plClothingBase::MsgReceive(plMessage* msg)
 /////////////////////////////////////////////////////////////////////////////
 
 plClothingOutfit::plClothingOutfit() : 
-    fTargetLayer(nil), fBase(nil), fGroup(0), fAvatar(nil), fSynchClients(false), fMaterial(nil), fVaultSaveEnabled(true), fMorphsInitDone(false)
+    fTargetLayer(nullptr), fBase(nullptr), fGroup(0), fAvatar(nullptr), fSynchClients(false), fMaterial(nullptr),
+    fVaultSaveEnabled(true), fMorphsInitDone(false)
 {
     fSkinTint.Set(1.f, 0.84, 0.71, 1.f);
     fItems.Reset();
@@ -802,15 +803,24 @@ void plClothingOutfit::IHandleMorphSDR(plStateDataRecord *sdr)
         morph->SetCurrentStateFrom(sdr);
 }
 
-void plClothingOutfit::ReadFromVault()
+bool plClothingOutfit::ReadClothing()
+{
+    // Have we set a clothing file? If that's the case, load from there.
+    if (fClothingFile.IsValid())
+        return IReadFromFile(fClothingFile);
+    else
+        return IReadFromVault();
+}
+
+bool plClothingOutfit::IReadFromVault()
 {
     SetupMorphSDL();
 
     WearDefaultClothing();
 
-    RelVaultNode * rvn;
-    if (nil == (rvn = VaultGetAvatarOutfitFolderIncRef()))
-        return;
+    RelVaultNode * rvn = VaultGetAvatarOutfitFolderIncRef();
+    if (!rvn)
+        return false;
 
     ARRAY(RelVaultNode*) nodes;
     rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);    
@@ -844,6 +854,7 @@ void plClothingOutfit::ReadFromVault()
     ForceUpdate(true);
     
     rvn->DecRef();
+    return true;
 }
 
 void plClothingOutfit::SaveCustomizations(bool retry /* = true */)
@@ -1135,7 +1146,7 @@ void plClothingOutfit::WearMaintainerOutfit()
 
 void plClothingOutfit::RemoveMaintainerOutfit()
 {
-    ReadFromVault();
+    ReadClothing();
 
     fVaultSaveEnabled = true;
 }
@@ -1480,6 +1491,91 @@ void plClothingOutfit::SetupMorphSDL()
 
         fMorphsInitDone = true;
     }
+}
+
+bool plClothingOutfit::WriteToFile(const plFileName &filename)
+{
+    if (!filename.IsValid())
+        return false;
+
+    RelVaultNode* rvn = VaultGetAvatarOutfitFolderIncRef();
+    if (!rvn)
+        return false;
+
+    hsUNIXStream S;
+    if (!S.Open(filename, "wb")) {
+        rvn->DecRef();
+        return false;
+    }
+
+    S.WriteByte(fGroup);
+
+    ARRAY(RelVaultNode*) nodes;
+    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);
+    S.WriteLE32(nodes.Count());
+    for (size_t i = 0; i < nodes.Count(); i++) {
+        VaultSDLNode sdl(nodes[i]);
+        S.WriteLE32(sdl.GetSDLDataLength());
+        if (sdl.GetSDLDataLength())
+            S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
+        nodes[i]->DecRef();
+    }
+    rvn->DecRef();
+
+    S.Close();
+    return true;
+}
+
+bool plClothingOutfit::IReadFromFile(const plFileName &filename)
+{
+    if (!filename.IsValid())
+        return false;
+
+    hsUNIXStream S;
+    if (!S.Open(filename))
+        return false;
+
+    bool isLocalAvatar = plAvatarMgr::GetInstance()->GetLocalAvatar()->GetClothingOutfit() == this;
+
+    uint8_t gender = S.ReadByte();
+    if (gender != fGroup) {
+        if (isLocalAvatar) {
+            if (gender == plClothingMgr::kClothingBaseMale)
+                plClothingMgr::ChangeAvatar("Male", filename);
+            else if (gender == plClothingMgr::kClothingBaseFemale)
+                plClothingMgr::ChangeAvatar("Female", filename);
+        }
+        S.Close();
+        return true;
+    }
+
+    StripAccessories();
+
+    uint32_t nodeCount = S.ReadLE32();
+    for (size_t i = 0; i < nodeCount; i++) {
+        uint32_t dataLen = S.ReadLE32();
+        if (dataLen) {
+            plString sdlRecName;
+            int sdlRecVersion;
+            plStateDataRecord::ReadStreamHeader(&S, &sdlRecName, &sdlRecVersion);
+            plStateDescriptor* desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
+            if (desc) {
+                plStateDataRecord sdlDataRec(desc);
+                if (sdlDataRec.Read(&S, 0)) {
+                    if (sdlRecName == kSDLMorphSequence)
+                        IHandleMorphSDR(&sdlDataRec);
+                    else
+                        plClothingSDLModifier::HandleSingleSDR(&sdlDataRec, this);
+                }
+            }
+        }
+    }
+
+    S.Close();
+    fSynchClients = true;
+    ForceUpdate(true);
+    SaveCustomizations(); // Sync with the vault
+    return true;
 }
 
 
@@ -1832,9 +1928,8 @@ void plClothingMgr::IAddItem(plClothingItem *item)
         hsAssert(false, "Couldn't match all elements of added clothing item.");
 }
 
-void plClothingMgr::ChangeAvatar(char *name)
+void plClothingMgr::ChangeAvatar(const char* name, const plFileName &clothingFile)
 {
     plAvatarMgr::GetInstance()->UnLoadLocalPlayer();
-    plAvatarMgr::GetInstance()->LoadPlayer(name, nil);
+    plAvatarMgr::GetInstance()->LoadPlayerFromFile(name, "", clothingFile);
 }
-

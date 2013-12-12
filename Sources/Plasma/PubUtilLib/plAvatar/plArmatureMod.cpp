@@ -84,6 +84,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plListenerMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plParticleUpdateMsg.h"
+#include "plMessage/plLoadClothingMsg.h"
 
 #include "plParticleSystem/plParticleSystem.h"
 #include "plParticleSystem/plParticleSDLMod.h"
@@ -784,29 +785,22 @@ void plArmatureMod::WindowActivate(bool active)
     }
 }
 
-char    *plArmatureMod::fSpawnPointOverride = nil;
+plString plArmatureMod::fSpawnPointOverride;
 
-void    plArmatureMod::SetSpawnPointOverride( const char *overrideObjName )
+void plArmatureMod::SetSpawnPointOverride(const plString &overrideObjName)
 {
-    delete [] fSpawnPointOverride;
-    if( overrideObjName == nil )
-        fSpawnPointOverride = nil;
-    else
-    {
-        fSpawnPointOverride = hsStrcpy( overrideObjName );
-        strlwr( fSpawnPointOverride );
-    }
+    fSpawnPointOverride = overrideObjName.ToLower();
 }
 
-int plArmatureMod::IFindSpawnOverride( void )
+int plArmatureMod::IFindSpawnOverride()
 {
-    if( fSpawnPointOverride == nil || fSpawnPointOverride[ 0 ] == 0 )
+    if (fSpawnPointOverride.IsEmpty())
         return -1;
-    int     i;
+    int i;
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
-    for( i = 0; i < mgr->NumSpawnPoints(); i++ )
+    for (i = 0; i < mgr->NumSpawnPoints(); i++)
     {
-        const plString &name = mgr->GetSpawnPoint( i )->GetTarget(0)->GetKeyName();
+        const plString &name = mgr->GetSpawnPoint(i)->GetTarget(0)->GetKeyName();
         if (name.Find(fSpawnPointOverride, plString::kCaseInsensitive) >= 0)
             return i; // Found it!
     }
@@ -1300,15 +1294,11 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             }
         }
 
-        // copy the user string over
-        const char* userStr = avLoadMsg->GetUserStr();
-        if (userStr)
-            fUserStr = userStr;
-        else
-            fUserStr = "";
+        // We also want to use the trigger msg when loading an avatar
+        MsgReceive(avLoadMsg->GetTriggerMsg());
 
         return true;
-    }   
+    }
 
     plLoadCloneMsg *cloneMsg = plLoadCloneMsg::ConvertNoRef(msg);
     if (cloneMsg)
@@ -1345,6 +1335,15 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
                 return true;
             }
         }
+    }
+
+    plLoadClothingMsg *clothingMsg = plLoadClothingMsg::ConvertNoRef(msg);
+    if (clothingMsg)
+    {
+        // We got a clothing file and are supposed to load our avatar from it.
+        // Let's tell our outfit to do so!
+        fClothingOutfit->SetClothingFile(clothingMsg->GetClothingFile());
+        return true;
     }
 
     plLinkEffectBCMsg *linkBCMsg = plLinkEffectBCMsg::ConvertNoRef(msg);

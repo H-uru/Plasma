@@ -198,9 +198,6 @@ void plNetClientMgr::Shutdown()
 
     IRemoveCloneRoom();
 
-    // RATHER BAD DEBUG HACK: Clear the spawn override in armatureMod so there's no memory leak
-    plArmatureMod::SetSpawnPointOverride( nil );
-
     VaultDestroy();
 }
 

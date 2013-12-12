@@ -83,6 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plMemberUpdateMsg.h"
 #include "plMessage/plAvatarMsg.h"
 #include "plMessage/plAvCoopMsg.h"
+#include "plMessage/plLoadClothingMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -149,12 +150,12 @@ void plAvatarMgr::IReset()
     fActiveCoops.clear();
 }
 
-plKey plAvatarMgr::LoadPlayer(const char *name, const char *account)
+plKey plAvatarMgr::LoadPlayer(const plString &name, const plString &account)
 {
-    return LoadAvatar(name, account, true, nil, nil);
+    return LoadAvatar(name, account, true, nullptr, nullptr);
 }
 
-plKey plAvatarMgr::LoadPlayer(const char *name, const char *account, const char *linkInName)
+plKey plAvatarMgr::LoadPlayer(const plString &name, const plString &account, const plString &linkInName)
 {
     // what we'd like to do is turn the linkInName into a spawn point key and
     // put that into the plLoadAvatarMsg, which is already set up to handle
@@ -163,29 +164,34 @@ plKey plAvatarMgr::LoadPlayer(const char *name, const char *account, const char 
     // so we're goin to do this the "old way" for now.
     
     plArmatureMod::SetSpawnPointOverride(linkInName);
-    return LoadAvatar(name, account, true, nil, nil);
+    return LoadAvatar(name, account, true, nullptr, nullptr);
 }
 
+plKey plAvatarMgr::LoadPlayerFromFile(const plString &name, const plString &account, const plFileName &clothingFile)
+{
+    return LoadAvatar(name, account, true, nullptr, nullptr, "", clothingFile);
+}
 
-plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask, const char *userStr /*=nil*/)
+plKey plAvatarMgr::LoadAvatar(plString name, plString accountName, bool isPlayer, plKey spawnPoint, plAvTask *initialTask,
+                              const plString &userStr, const plFileName &clothingFile)
 {
     // *** account is currently unused. the idea is that eventually an NPC will
     // *** be able to use a customization account
-    plKey result = nil;
+    plKey result = nullptr;
     plKey requestor = GetKey(); // avatar manager is always the requestor for avatar loads
     plNetClientMgr *netMgr = plNetClientMgr::GetInstance();
 
     if(netMgr)      // can't clone without the net manager
     {
-        hsAssert(name, "name required by LoadPlayer fxn");
-        netMgr->DebugMsg("Local: Loading player %s", name); 
+        hsAssert(!name.IsEmpty(), "name required by LoadPlayer fxn");
+        netMgr->DebugMsg("Local: Loading player %s", name.c_str());
 
         // look up player by key name provided by user.
         // this string search should be replaced with some other method of 
         // avatar selection and key lookup.
 
         // Get the location for the player first
-        plKey playerKey = nil;
+        plKey playerKey = nullptr;
         const plLocation& globalLoc = plKeyFinder::Instance().FindLocation("GlobalAvatars", name);
         const plLocation& maleLoc = plKeyFinder::Instance().FindLocation("GlobalAvatars", "Male");
         const plLocation& custLoc = plKeyFinder::Instance().FindLocation("CustomAvatars", name);
@@ -199,14 +205,18 @@ plKey plAvatarMgr::LoadAvatar(const char *name, const char *accountName, bool is
         const plLocation& loc = (globalLoc.IsValid() ? globalLoc : custLoc.IsValid() ? custLoc : maleLoc);
 #endif
 
-        plString theName = name;
-        if ( loc == maleLoc )
-            theName = "Male";
+        if (loc == maleLoc)
+            name = "Male";
 
         if (loc.IsValid())
         {
-            plUoid uID(loc, plSceneObject::Index(), theName);
-            plLoadAvatarMsg *cloneMsg = new plLoadAvatarMsg (uID, requestor, 0, isPlayer, spawnPoint, initialTask, userStr);
+            plUoid uID(loc, plSceneObject::Index(), name);
+            plLoadAvatarMsg *cloneMsg = new plLoadAvatarMsg(uID, requestor, 0, isPlayer, spawnPoint, initialTask, userStr);
+            if (clothingFile.IsValid())
+            {
+                plLoadClothingMsg *clothingMsg = new plLoadClothingMsg(clothingFile);
+                cloneMsg->SetTriggerMsg(clothingMsg);
+            }
             result =  cloneMsg->GetCloneKey();
             
             // the clone message is automatically addressed to the net client manager

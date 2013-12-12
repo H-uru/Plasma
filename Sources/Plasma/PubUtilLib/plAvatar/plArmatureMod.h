@@ -329,7 +329,7 @@ public:
     static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
     static float GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
     
-    static void SetSpawnPointOverride( const char *overrideObjName );
+    static void SetSpawnPointOverride(const plString &overrideObjName);
     static void WindowActivate(bool active);
     void SetFollowerParticleSystemSO(plSceneObject *follower);
     plSceneObject *GetFollowerParticleSystemSO();
@@ -426,7 +426,7 @@ protected:
     hsTArray<const plSceneObject*> fClothToSOMap;
     plArmatureEffectsMgr *fEffects;
     plSceneObject *fFollowerParticleSystemSO;
-    static char *fSpawnPointOverride;
+    static plString fSpawnPointOverride;
 
     // These vectors are used with relevance regions for culling out other objects
     hsBitVector fRegionsImIn;

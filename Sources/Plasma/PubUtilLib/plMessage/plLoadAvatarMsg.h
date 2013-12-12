@@ -83,7 +83,7 @@ public:
         \param userStr - a string that the user can set
         */
     plLoadAvatarMsg(const plUoid &uoidToClone, const plKey &requestorKey, uint32_t userData,
-                    bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const char *userStr = nil);
+                    bool isPlayer, const plKey &spawnPoint, plAvTask *initialTask, const plString &userStr = "");
 
     /** Use this form if you're sending a message about an existing clone -- either
         to propagate it to other machines or to tell them to unload it.
@@ -97,21 +97,19 @@ public:
         \param userStr - a string that the user can set
         */
     plLoadAvatarMsg(const plKey &existing, const plKey &requestorKey, uint32_t userData,
-                    bool isPlayer, bool isLoading, const char *userStr = nil);
+                    bool isPlayer, bool isLoading, const plString &userStr = "");
 
-    virtual ~plLoadAvatarMsg();
+    void SetIsPlayer(bool is) { fIsPlayer = is; }
+    bool GetIsPlayer() { return fIsPlayer; }
 
-    void SetIsPlayer(bool is);
-    bool GetIsPlayer();
+    void SetSpawnPoint(const plKey &spawnPoint) { fSpawnPoint = spawnPoint; }
+    plKey GetSpawnPoint() { return fSpawnPoint; }
 
-    void SetSpawnPoint(const plKey &spawnSceneObjectKey);
-    plKey GetSpawnPoint();
+    void SetInitialTask(plAvTask *task) { fInitialTask = task; }
+    plAvTask * GetInitialTask() { return fInitialTask; }
 
-    void SetInitialTask(plAvTask *task);
-    plAvTask * GetInitialTask();
-
-    void SetUserStr(const char *userStr);
-    const char* GetUserStr();
+    void SetUserStr(const plString &userStr) { fUserStr = userStr; }
+    plString GetUserStr() { return fUserStr; }
 
     CLASSNAME_REGISTER(plLoadAvatarMsg);
     GETINTERFACE_ANY(plLoadAvatarMsg, plLoadCloneMsg);
@@ -126,7 +124,7 @@ protected:
     bool fIsPlayer;
     plKey fSpawnPoint;
     plAvTask *fInitialTask;
-    char *fUserStr;
+    plString fUserStr;
 };
 
 

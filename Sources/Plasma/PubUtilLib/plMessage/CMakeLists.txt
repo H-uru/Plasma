@@ -80,6 +80,7 @@ set(plMessage_HEADERS
     plLoadAgeMsg.h
     plLoadAvatarMsg.h
     plLoadCloneMsg.h
+    plLoadClothingMsg.h
     plLOSHitMsg.h
     plLOSRequestMsg.h
     plMatRefMsg.h
