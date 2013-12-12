@@ -1553,6 +1553,10 @@ The color will be a ptColor object."""
         """Tells a multistage behavior to go to a particular stage"""
         pass
 
+    def loadClothingFromFile(self,filename):
+        """Load avatar clothing from a file"""
+        pass
+
     def netForce(self,forceFlag):
         """Specify whether this object needs to use messages that are forced to the network
 - This is to be used if your Python program is running on only one client
@@ -1593,6 +1597,10 @@ Such as a game master, only running on the client that owns a particular object"
 
     def saveClothing(self):
         """Saves the current clothing options (including morphs) to the vault"""
+        pass
+
+    def saveClothingToFile(self,filename):
+        """Save avatar clothing to a file"""
         pass
 
     def setMorph(self,clothing_name,layer,value):
