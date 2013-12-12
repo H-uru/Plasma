@@ -1285,7 +1285,7 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
             return
         file = file + ".clo"
-        if PtGetLocalAvatar().avatar.saveClothingToFile("./" + file):
+        if PtGetLocalAvatar().avatar.saveClothingToFile(file):
             self.chatMgr.AddChatLine(None, "Outfit exported to " + file, 0)
         else:
             self.chatMgr.AddChatLine(None, "Could not export to " + file, kChat.SystemMessage)
@@ -1299,7 +1299,7 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, "You have to be alone to change your clothes!", kChat.SystemMessage)
             return
         file = file + ".clo"
-        if PtGetLocalAvatar().avatar.loadClothingFromFile("./" + file):
+        if PtGetLocalAvatar().avatar.loadClothingFromFile(file):
             self.chatMgr.AddChatLine(None, "Outfit imported from " + file, 0)
         else:
             self.chatMgr.AddChatLine(None, file + " not found", kChat.SystemMessage)
