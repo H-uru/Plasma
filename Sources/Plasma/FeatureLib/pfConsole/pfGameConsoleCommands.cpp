@@ -72,19 +72,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCore/pfConsoleCmd.h"
 #include "pfConsole.h"
 
-#include "plPipeline.h"
 #include "plgDispatch.h"
-#include "plGImage/plMipmap.h"
-#include "plGImage/plTGAWriter.h"
-#include "pfMessage/pfGameGUIMsg.h"
+#include "plPipeline.h"
 #include "hsResMgr.h"
-#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
-#include "plAvatar/plAvatarMgr.h"
+
 #include "plAvatar/plAnimStage.h"
 #include "plAvatar/plAvBrainGeneric.h"
 #include "plAvatar/plAvBrainHuman.h"
-#include "plMessage/plAvatarMsg.h"
+#include "plAvatar/plAvatarMgr.h"
+#include "plGImage/plMipmap.h"
+#include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 #include "pnKeyedObject/plFixedKey.h"
+#include "plMessage/plAvatarMsg.h"
+#include "pfMessage/pfGameGUIMsg.h"
+#include "plPipeline/plCaptureRender.h"
 
 
 #define PF_SANITY_CHECK( cond, msg ) { if( !( cond ) ) { PrintString( msg ); return; } }
@@ -115,52 +116,19 @@ static bool     plDoesFileExist( const char *path )
 
 PF_CONSOLE_GROUP( Game )
 
-#ifndef LIMIT_CONSOLE_COMMANDS
-PF_CONSOLE_CMD( Game, TakeScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
+PF_CONSOLE_CMD( Game, TakeScreenshot, "int width, int height", "Captures a screenshot" )
 {
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
+    hsAssert(pfConsole::GetPipeline(), "Game.TakeScreenShot needs a plPipeline!");
 
-    plMipmap        myMipmap;
-    char            fileName[ 512 ];
-    uint32_t          uniqueNumber;   
+    int width = params[0];
+    int height = params[1];
 
-
-    if( numParams > 1 )
-    {
-        PrintString( "Too many parameters to TakeScreenshot" );
-        return;
-    }
-    else if( numParams == 1 )
-        strcpy( fileName, (char *)params[ 0 ] );
-    else
-    {
-        // Think up a filename
-        for( uniqueNumber = 1; uniqueNumber < 1000; uniqueNumber++ )
-        {
-            sprintf( fileName, "screen%03d.tga", uniqueNumber );
-            if( !plDoesFileExist( fileName ) )
-                break;
-        }
-        if( uniqueNumber == 1000 )
-        {
-            PrintString( "Out of filenames for TakeScreenshot" );
-            return;
-        }
-    }
-
-    if( !pfConsole::GetPipeline()->CaptureScreen( &myMipmap ) )
-        PrintString( "Error capturing screenshot" );
-    else
-    {
-        char    str[ 512 ];
-
-
-        plTGAWriter::Instance().WriteMipmap( fileName, &myMipmap );
-        sprintf( str, "Screenshot written to '%s'.", fileName );
-        PrintString( str );
-    }
+    // Let's use plCaptureRender so that we have a really nice image.
+    // We'll take care of saving in pfConsole::MsgReceive
+    plCaptureRender::Capture(pfConsole::GetInstance()->GetKey(), width, height);
 }
 
+#ifndef LIMIT_CONSOLE_COMMANDS
 PF_CONSOLE_CMD( Game, LoadDialog, "string dlgName", "Loads the given GUI dialog into memory" )
 {
     plUoid lu( kGameGUIMgr_KEY );

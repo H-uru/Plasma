@@ -5186,14 +5186,12 @@ void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
         /// Set to main screen
         main = fD3DMainSurface;
         depth = fD3DDepthSurface;
-        ISetAnisotropy(true);
     }
     else
     {
         /// Set to this target
         main = ref->GetColorSurface();
         depth = ref->fD3DDepthSurface;
-        ISetAnisotropy(false);
     }
 
     if( main != fSettings.fCurrD3DMainSurface || depth != fSettings.fCurrD3DDepthSurface )

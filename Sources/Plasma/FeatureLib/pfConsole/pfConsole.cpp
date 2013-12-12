@@ -45,26 +45,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "pfPython/cyPythonInterface.h"
-
-#include "HeadSpin.h"
 #include "pfConsole.h"
 #include "pfConsoleCore/pfConsoleEngine.h"
-#include "plPipeline/plDebugText.h"
+
+#include "HeadSpin.h"
+#include "plFileSystem.h"
+#include "plgDispatch.h"
+#include "plPipeline.h"
+#include "hsTimer.h"
+
+#include "plGImage/plPNG.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputInterface.h"
 #include "plInputCore/plInputInterfaceMgr.h"
-#include "pnInputCore/plKeyMap.h"
 #include "pnInputCore/plKeyDef.h"
+#include "pnInputCore/plKeyMap.h"
+#include "pnKeyedObject/plFixedKey.h"
 #include "plMessage/plInputEventMsg.h"
+#include "plMessage/plCaptureRenderMsg.h"
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plInputIfaceMgrMsg.h"
-#include "pnKeyedObject/plFixedKey.h"
-#include "hsTimer.h"
-#include "plgDispatch.h"
-#include "plPipeline.h"
-
 #include "plNetClient/plNetClientMgr.h"
+#include "plPipeline/plDebugText.h"
+#include "pfPython/cyPythonInterface.h"
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 #include "pfGameMgr/pfGameMgr.h"
@@ -265,8 +268,42 @@ void    pfConsole::ISetMode( uint8_t mode )
 
 //// MsgReceive //////////////////////////////////////////////////////////////
 
+#include <algorithm>
 bool    pfConsole::MsgReceive( plMessage *msg )
 {
+    // Handle screenshot saving...
+    plCaptureRenderMsg* capMsg = plCaptureRenderMsg::ConvertNoRef(msg);
+    if (capMsg) {
+        plFileName screenshots = plFileName::Join(plFileSystem::GetUserDataPath(), "Screenshots");
+        plFileSystem::CreateDir(screenshots, false); // just in case...
+        plString prefix = plProduct::ShortName();
+
+        // List all of the PNG indices we have taken up already...
+        plString pattern = plString::Format("%s*.png", prefix.c_str());
+        std::vector<plFileName> images = plFileSystem::ListDir(screenshots, pattern.c_str());
+        std::set<uint32_t> indices;
+        std::for_each(images.begin(), images.end(),
+            [&] (const plFileName& fn) {
+                plString idx = fn.GetFileNameNoExt().Substr(prefix.GetSize());
+                indices.insert(idx.ToUInt(10));
+            }
+        );
+
+        // Now that we have an ordered set of indices, save this screenshot to the first one we don't have.
+        uint32_t num = 0;
+        for (auto it = indices.begin(); it != indices.end(); ++it, ++num) {
+            if (*it != num)
+                break;
+        }
+
+        // Got our num, save the screenshot.
+        plFileName fn = plString::Format("%s%04d.png", prefix.c_str(), num);
+        plPNG::Instance().WriteToFile(plFileName::Join(screenshots, fn), capMsg->GetMipmap());
+
+        AddLineF("Saved screenshot as '%s'", fn.AsString().c_str());
+        return true;
+    }
+
     plControlEventMsg *ctrlMsg = plControlEventMsg::ConvertNoRef( msg );
     if( ctrlMsg != nil )
     {
