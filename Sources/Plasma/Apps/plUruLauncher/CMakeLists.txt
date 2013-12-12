@@ -9,14 +9,12 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 
 set(plUruLauncher_HEADERS
-    Intern.h
-    Pch.h
-    plLauncherInfo.h
+    plClientLauncher.h
 )
 
 set(plUruLauncher_SOURCES
-    Main.cpp
-    SelfPatcher.cpp
+    plClientLauncher.cpp
+    winmain.cpp
 )
 
 set(plUruLauncher_RESOURCES
@@ -34,12 +32,10 @@ if(PLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 target_link_libraries(plUruLauncher CoreLib)
 target_link_libraries(plUruLauncher pfConsoleCore)
+target_link_libraries(plUruLauncher pfPatcher)
 target_link_libraries(plUruLauncher plAudioCore)
-target_link_libraries(plUruLauncher plClientPatcher)
 target_link_libraries(plUruLauncher plCompression)
 target_link_libraries(plUruLauncher plFile)
-target_link_libraries(plUruLauncher plNetClient)
-target_link_libraries(plUruLauncher plNetClientComm)
 target_link_libraries(plUruLauncher plNetGameLib)
 target_link_libraries(plUruLauncher plNetMessage)
 target_link_libraries(plUruLauncher plNetTransport)

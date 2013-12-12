@@ -89,6 +89,13 @@ struct pfPatcherWorker : public hsThread
 
         // Any file
         kFlagZipped                 = 1<<3,
+
+        // Executable flags
+        kRedistUpdate               = 1<<4,
+
+        // Begin internal flags
+        kLastManifestFlag           = 1<<5,
+        kSelfPatch                  = 1<<6,
     };
 
     std::deque<Request> fRequests;
@@ -100,9 +107,12 @@ struct pfPatcherWorker : public hsThread
 
     pfPatcher::CompletionFunc fOnComplete;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
+    pfPatcher::FileDesiredFunc fFileDownloadDesired;
     pfPatcher::FileDownloadFunc fFileDownloaded;
     pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
     pfPatcher::ProgressTickFunc fProgressTick;
+    pfPatcher::FileDownloadFunc fRedistUpdateDownloaded;
+    pfPatcher::FileDownloadFunc fSelfPatch;
 
     pfPatcher* fParent;
     volatile bool fStarted;
@@ -199,6 +209,8 @@ public:
 
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
     plFileName GetFileName() const { return fFilename; }
+    bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }
+    bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
     void Unlink() const { plFileSystem::Unlink(fFilename); }
 };
 
@@ -306,6 +318,10 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
         patcher->WhitelistFile(stream->GetFileName(), true);
+        if (patcher->fSelfPatch && stream->IsSelfPatch())
+            patcher->fSelfPatch(stream->GetFileName());
+        if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
+            patcher->fRedistUpdateDownloaded(stream->GetFileName());
         patcher->IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
@@ -454,7 +470,7 @@ hsError pfPatcherWorker::Run()
 void pfPatcherWorker::ProcessFile()
 {
     do {
-        const NetCliFileManifestEntry& entry = fQueuedFiles.front();
+        NetCliFileManifestEntry& entry = fQueuedFiles.front();
 
         // eap sucks
         plFileName clName = plString::FromWchar(entry.clientName);
@@ -474,9 +490,27 @@ void pfPatcherWorker::ProcessFile()
             }
         }
 
-        // If you got here, they're different.
+        // It's different... but do we want it?
+        if (fFileDownloadDesired) {
+            if (!fFileDownloadDesired(clName)) {
+                PatcherLogRed("\tDeclined '%S'", entry.clientName);
+                fQueuedFiles.pop_front();
+                continue;
+            }
+        }
+
+        // If you got here, they're different and we want it.
         PatcherLogYellow("\tEnqueuing '%S'", entry.clientName);
         plFileSystem::CreateDir(plFileName(clName).StripFileName());
+
+        // If someone registered for SelfPatch notifications, then we should probably
+        // let them handle the gruntwork... Otherwise, go nuts!
+        if (fSelfPatch) {
+            if (clName == plFileSystem::GetCurrentAppPath().GetFileName()) {
+                clName += ".tmp"; // don't overwrite myself!
+                entry.flags |= kSelfPatch;
+            }
+        }
 
         pfPatcherStream* s = new pfPatcherStream(this, dlName, entry);
         s->Open(clName, "wb");
@@ -547,6 +581,11 @@ void pfPatcher::OnFileDownloadBegin(FileDownloadFunc cb)
     fWorker->fFileBeginDownload = cb;
 }
 
+void pfPatcher::OnFileDownloadDesired(FileDesiredFunc cb)
+{
+    fWorker->fFileDownloadDesired = cb;
+}
+
 void pfPatcher::OnFileDownloaded(FileDownloadFunc cb)
 {
     fWorker->fFileDownloaded = cb;
@@ -560,6 +599,16 @@ void pfPatcher::OnGameCodeDiscovery(GameCodeDiscoverFunc cb)
 void pfPatcher::OnProgressTick(ProgressTickFunc cb)
 {
     fWorker->fProgressTick = cb;
+}
+
+void pfPatcher::OnRedistUpdate(FileDownloadFunc cb)
+{
+    fWorker->fRedistUpdateDownloaded = cb;
+}
+
+void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
+{
+    fWorker->fSelfPatch = cb;
 }
 
 // ===================================================
