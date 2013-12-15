@@ -428,7 +428,10 @@ class xKIChat(object):
             # Is it an inter-Age message?
             elif cFlags.interAge:
                 if cFlags.private:
-                    headerColor = kColors.ChatHeaderPrivate
+                    if cFlags.admin:
+                        headerColor = kColors.ChatHeaderError
+                    else:
+                        headerColor = kColors.ChatHeaderPrivate
                     forceKI = True
                 else:
                     if cFlags.neighbors:
@@ -485,6 +488,11 @@ class xKIChat(object):
                     headerColor = kColors.ChatHeaderError
                     pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
+
+                    # PM Processing: Save playerID and flash client window
+                    self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 0)
+                    self.AddPlayerToRecents(player.getPlayerID())
+                    PtFlashWindow()
                 else:
                     headerColor = kColors.ChatHeaderAdmin
                     forceKI = True
