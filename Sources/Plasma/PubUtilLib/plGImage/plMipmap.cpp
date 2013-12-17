@@ -2177,10 +2177,13 @@ void    plMipmap::IReportLeaks()
     for( record = fRecords; record != nil;  )
     {
         size = record->fHeight * record->fRowBytes;
-        if( size >= 1024 )
-            sprintf( msg, "%s, %4.1f kB: \t%dx%d, %d levels, %d bpr", record->fKeyName, size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes );
-        else
-            sprintf( msg, "%s, %u bytes: \t%dx%d, %d levels, %d bpr", record->fKeyName, size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes );
+        if (size >= 1024) {
+            sprintf(msg, "%s, %4.1f kB: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
+                    size / 1024.f, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+        } else {
+            sprintf(msg, "%s, %u bytes: \t%dx%d, %d levels, %d bpr", record->fKeyName.c_str(),
+                    size, record->fWidth, record->fHeight, record->fNumLevels, record->fRowBytes);
+        }
 
         if( record->fCompressionType != kDirectXCompression )
             sprintf( m2, " UType: %d", record->fUncompressedInfo.fType );

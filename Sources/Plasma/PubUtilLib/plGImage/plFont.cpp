@@ -493,7 +493,7 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
                     break;
                 }
 
-                // Are we a uint16_t breaker?
+                // Are we a word breaker?
                 if( IIsWordBreaker( (char)(string[ i ]) ) )
                 {
                     if (string[i] == '.') // we might have an ellipsis here
