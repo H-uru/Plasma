@@ -156,7 +156,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         PrintFn("  Subgroups:");
         for( subGrp = group->GetFirstSubGroup(); subGrp != nil; subGrp = subGrp->GetNext() )
         {
-            PrintFn(plString::Format("    %s", subGrp).c_str());
+            PrintFn(plString::Format("    %s", subGrp->GetName()).c_str());
         }
         PrintFn("  Commands:");
         for( cmd = group->GetFirstCommand(); cmd != nil; cmd = cmd->GetNext() )
