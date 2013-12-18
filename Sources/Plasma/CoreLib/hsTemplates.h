@@ -160,65 +160,6 @@ public:
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//// Like hsTempArray, but more useful when working with char * type arrays.
-//enum KStringFormatConstructor {kFmtCtor};
-//enum KStringFormatVConstructor    {kFmtVCtor};
-//class hsTempString
-//{
-//public:
-//  char * fStr;
-//  hsTempString(): fStr(nil){}
-//  hsTempString(char * p) : fStr(p) {}
-//  hsTempString(const char * p) { fStr=hsStrcpy(p); }
-//  hsTempString(KStringFormatConstructor, char * fmt, ...);
-//  hsTempString(KStringFormatVConstructor, char * fmt, va_list args);
-//  hsTempString(const hsTempString & other):fStr(hsStrcpy(other.fStr)){}
-//  virtual ~hsTempString() { delete [] fStr; }
-//  hsTempString & operator=(char * ptr)
-//  {
-//      if (fStr!=ptr)
-//      {
-//          delete [] fStr;
-//          fStr=ptr;
-//      }
-//      return *this;
-//  }
-//  hsTempString & operator=(const hsTempString & other)
-//  {
-//      delete [] fStr;
-//      fStr=hsStrcpy(other.fStr);
-//      return *this;
-//  }
-//  operator char *() const { return fStr; }
-//  operator char *&() { return fStr; }
-//  operator const char *() const { return fStr; }
-//  operator bool() const { return fStr!=nil;}
-//  char * operator *() const { return fStr; }
-//  const char* c_str() const { return fStr; }
-//  char* c_str() { return fStr; }
-//};
-//
-//// shorthand
-//typedef hsTempString tmpstr_t;
-//
-//class hsTempStringF : public hsTempString
-//{
-//public:
-//  hsTempStringF(char * fmt, ...);
-//  void Format(char * fmt, ...);
-//
-//  hsTempString & operator=(char * ptr) { return hsTempString::operator=(ptr); }
-//  hsTempString & operator=(const hsTempString & other) { return hsTempString::operator=(other);   }
-//  hsTempString & operator=(const hsTempStringF & other) { return hsTempString::operator=(other);  }
-//  operator char *() const { return fStr; }
-//  operator char *&() { return fStr; }
-//  operator const char *() const { return fStr; }
-//  operator bool() const { return fStr!=nil;}
-//  char * operator *() const { return fStr; }  
-//};
-
 //////////////////////////////////////////////////////////////////////////////
 
 template <class T> class hsDynamicArray {

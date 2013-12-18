@@ -43,39 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 
-////////////////////////////////////////////////////////////////////////////////
-//
-//hsTempString::hsTempString(KStringFormatConstructor, char * fmt, ...)
-//{
-//  va_list args;
-//  va_start(args,fmt);
-//  fStr = hsFormatStrV(fmt,args);
-//  va_end(args);
-//}
-//
-//hsTempString::hsTempString(KStringFormatVConstructor, char * fmt, va_list args)
-//{
-//  fStr = hsFormatStrV(fmt,args);
-//}
-//
-////////////////////////////////////////////////////////////////////////////////
-//void hsTempStringF::Format(char * fmt, ...)
-//{
-//  delete [] fStr;
-//  va_list args;
-//  va_start(args,fmt);
-//  fStr = hsFormatStrV(fmt,args);
-//  va_end(args);
-//}
-//
-//hsTempStringF::hsTempStringF(char * fmt, ...)
-//{
-//  va_list args;
-//  va_start(args,fmt);
-//  fStr = hsFormatStrV(fmt,args);
-//  va_end(args);
-//}
-
 //////////////////////////////////////////////////////////////////////////////
 
 #ifdef HS_DEBUGTARRAY

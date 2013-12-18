@@ -216,22 +216,6 @@ void hsStatusMessageF(const char * fmt, ...)
 
 #endif
 
-// TODO: Deprecate these in favor of plString
-char * hsFormatStr(const char * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    char * result = hsFormatStrV(fmt,args);
-    va_end(args);
-    return result;
-}
-
-char * hsFormatStrV(const char * fmt, va_list args)
-{
-    plString buf = plString::IFormat(fmt, args);
-    return hsStrcpy(buf.c_str());
-}
-
 class hsMinimizeClientGuard
 {
 #ifdef CLIENT

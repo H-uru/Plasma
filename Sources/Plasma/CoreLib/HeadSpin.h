@@ -338,8 +338,6 @@ void SWAP (T & a, T & b) {
 
 char*   hsStrcpy(char dstOrNil[], const char src[]);
 void    hsStrLower(char *s);
-char *  hsFormatStr(const char * fmt, ...); // You are responsible for returned memory.
-char *  hsFormatStrV(const char * fmt, va_list args);   // You are responsible for returned memory.
 
 inline char* hsStrcpy(const char src[])
 {
