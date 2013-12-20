@@ -157,7 +157,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
         if ((currentMs - fLastDraw) > 30)
         {
             fCurrentImage++;
-            if (fCurrentImage >= 18)
+            if (fCurrentImage >= plProgressMgr::NumLoadingFrames())
                 fCurrentImage = 0;
 
             fLastDraw = currentMs;
