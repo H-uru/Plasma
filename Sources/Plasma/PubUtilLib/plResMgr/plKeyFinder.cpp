@@ -162,7 +162,7 @@ public:
             if (pageNode->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
             {
                 // Try loading and searching thru this page
-                hsTArray<plKey> keyRefs;
+                std::set<plKey> keyRefs;
 
                 IGetResMgr()->LoadPageKeys( pageNode );
                 plKeyCollector coll( keyRefs );

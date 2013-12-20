@@ -990,12 +990,11 @@ void plResManager::SetProgressBarProc(plProgressProc proc)
 class plResAgeHolder : public hsRefCnt
 {
     public:
-        hsTArray<plKey> fKeys;
+        std::set<plKey> fKeys;
         plString        fAge;
 
         plResAgeHolder() {}
         plResAgeHolder( const plString& age ) : fAge( age ) {}
-        ~plResAgeHolder() { fKeys.Reset(); }
 };
 
 //// plResHolderIterator /////////////////////////////////////////////////////
@@ -1003,12 +1002,12 @@ class plResAgeHolder : public hsRefCnt
 class plResHolderIterator : public plRegistryPageIterator
 {
 protected:
-    hsTArray<plKey>& fKeys;
+    std::set<plKey>& fKeys;
     plString fAgeName;
     plResManager* fResMgr;
 
 public:
-    plResHolderIterator(const plString& age, hsTArray<plKey>& keys, plResManager* resMgr)
+    plResHolderIterator(const plString& age, std::set<plKey>& keys, plResManager* resMgr)
             : fAgeName(age), fKeys(keys), fResMgr(resMgr) {}
 
     virtual bool EatPage(plRegistryPageNode* page)

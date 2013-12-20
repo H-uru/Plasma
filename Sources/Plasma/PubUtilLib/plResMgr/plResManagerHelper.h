@@ -135,12 +135,11 @@ class plResPageKeyRefList : public plKeyCollector
 {
     protected:
 
-        hsTArray<plKey>     fKeyList;
+        std::set<plKey>     fKeyList;
 
     public:
 
         plResPageKeyRefList() : plKeyCollector( fKeyList ) {}
-        virtual ~plResPageKeyRefList() { fKeyList.Reset(); }
 };
 
 #endif // _plResManagerHelper_h
