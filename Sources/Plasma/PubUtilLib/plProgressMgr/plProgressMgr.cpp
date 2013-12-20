@@ -246,6 +246,11 @@ char*   plProgressMgr::GetLoadingFrameID(int index)
         return fImageRotation[0];
 }
 
+uint32_t plProgressMgr::NumLoadingFrames() const
+{
+    return LOADING_RES_COUNT;
+}
+
 const char*   plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
     return fStaticTextIDs[staticTextType];
