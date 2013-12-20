@@ -169,9 +169,11 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     // Fixed Keys use ID == 0
     if (id == 0)
         hsAssert(key->GetUoid().GetLocation() == plLocation::kGlobalFixedLoc, "key id == 0 but not fixed?");
-    else if (id < fKeys.size()) {
-        if (fKeys[id]->GetUoid().GetObjectID() == id)
-            foundKey = fKeys[id];
+
+    // Recall that vectors are index zero but normal object IDs are index one...
+    else if (id <= fKeys.size()) {
+        if (fKeys[id-1]->GetUoid().GetObjectID() == id)
+            foundKey = fKeys[id-1];
     }
 
     // Last chance: do a slow name search for that key.
