@@ -1279,19 +1279,28 @@ void plClient::IProgressMgrCallbackProc(plOperationProgress * progress)
 
     // Increments the taskbar progress [Windows 7+]
 #ifdef HS_BUILD_FOR_WIN32
-    if (gTaskbarList)
+    if (gTaskbarList && fInstance->GetWindowHandle())
     {
-        HWND hwnd = fInstance->GetWindowHandle(); // lazy
+        static TBPFLAG lastState = TBPF_NOPROGRESS;
+        TBPFLAG myState;
+
+        // So, calling making these kernel calls is kind of SLOW. So, let's
+        // hide that behind a userland check--this helps linking go faster!
         if (progress->IsAborting())
-            // We'll assume this is fatal
-            gTaskbarList->SetProgressState(hwnd, TBPF_ERROR);
+            myState = TBPF_ERROR;
         else if (progress->IsLastUpdate())
-            gTaskbarList->SetProgressState(hwnd, TBPF_NOPROGRESS);
+            myState = TBPF_NOPROGRESS;
         else if (progress->GetMax() == 0.f)
-            gTaskbarList->SetProgressState(hwnd, TBPF_INDETERMINATE);
+            myState = TBPF_INDETERMINATE;
         else
-            // This will set TBPF_NORMAL for us
-            gTaskbarList->SetProgressValue(hwnd, (ULONGLONG)progress->GetProgress(), (ULONGLONG)progress->GetMax());
+            myState = TBPF_NORMAL;
+
+        if (myState == TBPF_NORMAL)
+            // This sets us to TBPF_NORMAL
+            gTaskbarList->SetProgressValue(fInstance->GetWindowHandle(), (ULONGLONG)progress->GetProgress(), (ULONGLONG)progress->GetMax());
+        else if (myState != lastState)
+            gTaskbarList->SetProgressState(fInstance->GetWindowHandle(), myState);
+        lastState = myState;
     }
 #endif
 
