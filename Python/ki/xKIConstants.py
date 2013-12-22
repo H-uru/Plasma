@@ -196,6 +196,7 @@ class kColors:
     AgenGreenDk = ptColor(0.65, 0.745, 0.6353, 1.0)
                 
     DniYellow   = ptColor(0.851, 0.812, 0.576, 1.0)
+    DniYellowLt = ptColor(1.0, 1.0, 0.6, 1.0)
     DniCyan     = ptColor(0.576, 0.867, 0.851, 1.0)
     DniBlue     = ptColor(0.780, 0.706, 0.870, 1.0)
     DniRed      = ptColor(1.0, 0.216, 0.380, 1.0)
@@ -212,6 +213,7 @@ class kColors:
     
     # Chat colors (messages and headers).
     ChatMessage             = DniWhite
+    ChatMessageMention      = DniYellowLt
     ChatHeaderBroadcast     = DniBlue
     ChatHeaderPrivate       = DniYellow
     ChatHeaderAdmin         = DniCyan

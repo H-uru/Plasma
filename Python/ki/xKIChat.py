@@ -469,7 +469,10 @@ class xKIChat(object):
                     # PM Processing: Save playerID and flash client window
                     if cFlags.private:
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
-                        self.AddPlayerToRecents(player.getPlayerID())
+                        PtFlashWindow()
+                    # Are we mentioned in the message?
+                    elif message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                        bodyColor = kColors.ChatMessageMention
                         PtFlashWindow()
 
             # Is it a ccr broadcast?
@@ -506,6 +509,12 @@ class xKIChat(object):
                     headerColor = kColors.ChatHeaderBroadcast
                     pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
                     self.AddPlayerToRecents(player.getPlayerID())
+
+                    # Are we mentioned in the message?
+                    if message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                        bodyColor = kColors.ChatMessageMention
+                        forceKI = True
+                        PtFlashWindow()
 
             # Is it a private message?
             elif cFlags.private:
