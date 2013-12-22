@@ -67,8 +67,8 @@ public:
     ~plKey();
     plKey& operator=(const plKey& rhs);
 
-    bool operator==(const plKey& rhs) const;
-    bool operator==(const plKeyData* rhs) const;
+    bool operator==(const plKey& rhs) const { return fKeyData == rhs.fKeyData; }
+    bool operator==(const plKeyData* rhs) const { return fKeyData == rhs; }
     bool operator!=(const plKey& rhs) const { return !(*this == rhs); }
     bool operator!=(const plKeyData* rhs) const { return !(*this == rhs); }
 
