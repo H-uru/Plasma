@@ -190,6 +190,8 @@ void plNCAgeJoiner::IResMgrProgressBarCallback (plKey key) {
     if (s_instance)
         s_instance->progressBar->SetStatusText(key->GetName());
 #endif
+    if (s_instance)
+        s_instance->progressBar->Increment(1);
 }
 
 //============================================================================
