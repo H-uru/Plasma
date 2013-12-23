@@ -83,7 +83,10 @@ static bool IsPatcherRunning()
 static void WaitForOldPatcher()
 {
     HANDLE mut = CreatePatcherMutex();
-    WaitForSingleObject(mut, INFINITE);
+    DWORD wait = WaitForSingleObject(mut, 0);
+    while (wait != WAIT_OBJECT_0) // :( :( :(
+        wait = WaitForSingleObject(mut, 100);
+    Sleep(1000); // :(
 }
 
 // ===================================================
