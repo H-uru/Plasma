@@ -232,6 +232,8 @@ plString plClientLauncher::GetAppArgs() const
     // optional args
     if (hsCheckBits(fFlags, kClientImage))
         ss << " -Image";
+    if (hsCheckBits(fFlags, kPatchOnly))
+        ss << " -PatchOnly";
 
     return ss.GetString();
 }
@@ -427,12 +429,13 @@ void plClientLauncher::ParseArguments()
     if (cmdParser.GetBool(arg)) \
         fFlags |= flag;
 
-    enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame };
+    enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly };
     const CmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, L"ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, L"NoSelfPatch", kArgNoSelfPatch },
         { kCmdArgFlagged | kCmdTypeBool, L"Image", kArgImage },
         { kCmdArgFlagged | kCmdTypeBool, L"Repair", kArgRepairGame },
+        { kCmdArgFlagged | kCmdTypeBool, L"PatchOnly", kArgPatchOnly }
     };
 
     CCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
@@ -444,9 +447,12 @@ void plClientLauncher::ParseArguments()
     APPLY_FLAG(kArgNoSelfPatch, kHaveSelfPatched);
     APPLY_FLAG(kArgImage, kClientImage);
     APPLY_FLAG(kArgRepairGame, kRepairGame);
+    APPLY_FLAG(kArgPatchOnly, kPatchOnly);
 
     // last chance setup
-    if (hsCheckBits(fFlags, kRepairGame))
+    if (hsCheckBits(fFlags, kPatchOnly))
+        fClientExecutable = "";
+    else if (hsCheckBits(fFlags, kRepairGame))
         fClientExecutable = plManifest::PatcherExecutable();
 
 #undef APPLY_FLAG

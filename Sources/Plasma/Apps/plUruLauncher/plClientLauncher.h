@@ -64,6 +64,7 @@ private:
         kHaveSelfPatched = 1<<0,
         kClientImage = 1<<1,
         kGameDataOnly = (1<<2),
+        kPatchOnly = 1<<3,
 
         kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };
