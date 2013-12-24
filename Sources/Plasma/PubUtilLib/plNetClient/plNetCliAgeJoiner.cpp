@@ -259,11 +259,11 @@ void plNCAgeJoiner::ExecNextOp () {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadAge");
 
             // Start progress bar
-            char str[128];
+            plString str;
 #ifndef PLASMA_EXTERNAL_RELEASE
-            snprintf(str, arrsize(str), "Loading age... %s", age.ageDatasetName);
+            str = plString::Format("Loading age... %s", age.ageDatasetName);
 #endif
-            progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str, plProgressMgr::kNone, false, true);
+            progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str.c_str(), plProgressMgr::kNone, false, true);
             plDispatch::SetMsgRecieveCallback(IDispatchMsgReceiveCallback);
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IResMgrProgressBarCallback);
 
