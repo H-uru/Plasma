@@ -165,6 +165,10 @@ public:
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
+    /**
+     * Checks whether waiting on the semaphore will block or not.
+     * \return false if waiting will block; true otherwise.
+     */
     bool        TryWait();
     bool        Wait(hsMilliseconds timeToWait = kPosInfinity32);
     void        Signal();
