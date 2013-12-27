@@ -4,6 +4,8 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+include_directories(${CARES_INCLUDE_DIR})
+
 set(plNetCore_SOURCES
     plNetCore.cpp
     plNetCoreDns.cpp
@@ -17,7 +19,7 @@ set(plNetCore_HEADERS
 add_library(plNetCore STATIC ${plNetCore_SOURCES} ${plNetCore_HEADERS})
 
 target_link_libraries(plNetCore pnNetCommon)
-target_link_libraries(plNetCore cares)
+target_link_libraries(plNetCore ${CARES_LIBRARIES})
 
 if(WIN32)
     target_link_libraries(plNetCore Ws2_32)
