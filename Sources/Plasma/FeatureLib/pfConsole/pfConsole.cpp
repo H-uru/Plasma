@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include "plgDispatch.h"
 #include "plPipeline.h"
+#include "plProduct.h"
 #include "hsTimer.h"
 
 #include "plGImage/plPNG.h"
