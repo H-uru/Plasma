@@ -315,7 +315,7 @@ TSTR plClothingMtl::GetSubTexmapTVName(int i)
     return GetSubTexmapSlotName(i);
 }
 
-DllExport Texmap *plClothingMtl::GetTexmap(int index, int layer) 
+Texmap *plClothingMtl::GetTexmap(int index, int layer)
 { 
     return fBasicPB->GetTexmap(ParamID(LayerToPBIdx[layer]), 0, index); 
 }

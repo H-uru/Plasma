@@ -167,11 +167,11 @@ public:
 
 //  void SetNumSubTexmaps(int num);
 
-    DllExport Control *GetAmbColorController();
-    DllExport Control *GetColorController();
-    DllExport Control *GetOpacityController();
-    DllExport Control *GetWidthController();
-    DllExport Control *GetHeightController();
+    Control *GetAmbColorController();
+    Control *GetColorController();
+    Control *GetOpacityController();
+    Control *GetWidthController();
+    Control *GetHeightController();
 
     // From MtlBase and Mtl
     void SetAmbient(Color c, TimeValue t);      
