@@ -65,9 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     static jvUniqueId gAssetID;
 #endif
 
-// Avoids including all the component stuff
-#define PB2Export __declspec( dllexport )
-
 plTextureSearch::plTextureSearch() : fDlg(NULL)
 {
 #ifdef MAXASS_AVAILABLE
