@@ -52,18 +52,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "GlobalUtility.h"
 
-#include "MaxSceneViewer/SceneSync.h"
-
 #include "MaxComponent/ComponentDummies.h"
 #include "plActionTableMgr.h"
 #include "plMaxMenu.h"
-#include "MaxSceneViewer/plMaxFileData.h"
 #include "pfPython/cyPythonInterface.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 
 #include "plMaxCFGFile.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "plGImage/plFontCache.h"
+
+#include "plPythonMgr.h"
+#include "plPluginResManager.h"
+#include "plSDL/plSDL.h"
 
 extern plActionTableMgr theActionTableMgr;
 extern HINSTANCE hInstance;
@@ -172,7 +173,6 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncClickDrag();        //Click-Draggable comp
     DummyCodeIncludeFuncInventStuff();      //Inventory Object comp
     DummyCodeIncludeFuncVolumeGadget();     // inside/enter/exit phys volume activator
-//  DummyCodeIncludeFuncActivatorGadget();  // activator activator
     DummyCodeIncludeFuncSoftVolume();       // Soft Volumes
     DummyCodeIncludeFuncPhysConst();        // Phys Constraints
     DummyCodeIncludeFuncCameras();          // new camera code
@@ -203,15 +203,6 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncClimbTrigger();
     DummyCodeIncludeFuncObjectFlocker();
     DummyCodeIncludeFuncGrassShader();
-    
-    // Register the SceneViewer with Max
-#ifdef MAXSCENEVIEWER_ENABLED
-    SceneSync::Instance();
-#endif
-
-#ifdef MAXSCENEVIEWER_ENABLED
-    InitMaxFileData();
-#endif
 
     // Setup the localization mgr
     // Dirty hacks are because Cyan sucks...
@@ -222,6 +213,16 @@ DWORD PlasmaMax::Start()
                      "PlasmaMAX2 Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
         return GUPRESULT_NOKEEP;
     }
+
+    // Load S-D-teh-Ls
+    plFileName oldCwd = plFileSystem::GetCWD();
+    plFileSystem::SetCWD(pathTemp);
+    plSDLMgr::GetInstance()->Init();
+    plFileSystem::SetCWD(oldCwd);
+
+    // Initialize the ResManager and Python
+    plPythonMgr::Instance().LoadPythonFiles();
+    hsgResMgr::Init(new plPluginResManager);
 
     // Setup the doggone plugin
     plComponentShow::Init();

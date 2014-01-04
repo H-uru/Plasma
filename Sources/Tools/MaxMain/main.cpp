@@ -57,13 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "MaxExport/SimpleExport.h"
-
 #include "MaxPlasmaMtls/plMtlImport.h"
-
-#include "plPythonMgr.h"
-#include "plPluginResManager.h"
-#include "plSDL/plSDL.h"
-#include "plMaxCFGFile.h"
 
 extern ClassDesc* GetGUPDesc();
 extern ClassDesc* GetComponentUtilDesc();
@@ -72,7 +66,6 @@ extern ClassDesc* GetMaxFileDataDesc();
 extern ClassDesc* GetMaxUtilsDesc();
 
 static HSClassDesc2 HSDesc;
-static int controlsInit = FALSE;
 HINSTANCE hInstance = NULL;
 
 /*inline*/ TCHAR *GetString(int id)
@@ -113,7 +106,7 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
     switch(i) 
     { 
         case 0: 
-            return &HSDesc; 
+            return &HSDesc;
         case 1:
             return GetGUPDesc();
         case 2:
@@ -123,11 +116,7 @@ __declspec(dllexport) ClassDesc *LibClassDesc(int i)
         case 4:
             return GetComponentMgrDesc();
         case 5:
-#ifdef MAXSCENEVIEWER_ENABLED
             return GetMaxFileDataDesc();
-#else
-            return 0;
-#endif
         case 6:
             return GetMaxUtilsDesc();
         default: 
@@ -155,35 +144,10 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
 {
     hInstance = hinstDLL;
 
-    if (!controlsInit) 
-    {
-        controlsInit = TRUE;
-        
-        // jaguar controls
-        INIT_CUSTOM_CONTROLS(hInstance);
-
-        // initialize Chicago controls
-        InitCommonControls();
-
-        plPythonMgr::Instance().LoadPythonFiles();
-
-        plFileName clientPath = plMaxConfig::GetClientPath(false, true);
-        if (clientPath.IsValid())
-        {
-            plFileName oldCwd = plFileSystem::GetCWD();
-            plFileSystem::SetCWD(clientPath);
-            plSDLMgr::GetInstance()->Init();
-            plFileSystem::SetCWD(oldCwd);
-        }
-
-        // Initialize the ResManager
-        plResManager* pRmgr = new plPluginResManager;
-        hsgResMgr::Init(pRmgr);
-    }
-
-    switch (fdwReason) 
+    switch (fdwReason)
     {
         case DLL_PROCESS_ATTACH:
+            INIT_CUSTOM_CONTROLS(hInstance);
             break;
         case DLL_THREAD_ATTACH:
             break;
@@ -192,7 +156,8 @@ BOOL WINAPI DllMain(HINSTANCE hinstDLL,ULONG fdwReason,LPVOID lpvReserved)
         case DLL_PROCESS_DETACH:
             break;
     }
-    return(TRUE);
+
+    return TRUE;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

@@ -62,6 +62,7 @@ set(MaxMain_SOURCES
     plGetLocationDlg.cpp
     plMaxAccelerators.cpp
     plMaxCFGFile.cpp
+    plMaxFileData.cpp
     plMaxMenu.cpp
     plMaxMeshExtractor.cpp
     plMaxNode.cpp
