@@ -133,7 +133,7 @@ public:
     plClothingElement *FindElementByName(char *name);
 
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
-    DllExport Texmap *GetTexmap(int index, int layer);
+    Texmap *GetTexmap(int index, int layer);
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
     const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
     const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }

@@ -161,7 +161,6 @@ set(MaxComponent_SOURCES
     plPickMaterialMap.cpp
     plPickNode.cpp
     plPickNodeBase.cpp
-    plPickNodeComp.cpp
     plPythonFileComponent.cpp
     plRepComponent.cpp
     plResponderAnim.cpp
