@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include <algorithm>
 
 #include "hsStream.h"
 #include "hsResMgr.h"
@@ -61,9 +62,7 @@ plClientResMgr& plClientResMgr::Instance(void)
 
 plClientResMgr::~plClientResMgr()
 {
-    std::map<plString, plMipmap*>::iterator it;
-
-    for (it = ClientResources.begin(); it != ClientResources.end(); ++it) {
+    for (auto it = ClientResources.begin(); it != ClientResources.end(); ++it) {
         if (it->second)
             it->second->UnRef();
     }
@@ -71,9 +70,8 @@ plClientResMgr::~plClientResMgr()
 
 void plClientResMgr::ILoadResources(const plFileName& resfile)
 {
-    if (!resfile.IsValid()) {
+    if (!resfile.IsValid())
         return;
-    }
 
     hsUNIXStream in;
 
@@ -87,19 +85,19 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
                 num_resources = in.ReadLE32();
 
                 for (int i = 0; i < num_resources; i++) {
-                    plMipmap* res_data = NULL;
+                    plMipmap* res_data = nullptr;
                     uint32_t res_size = 0;
                     plString res_name = in.ReadSafeStringLong();
-                    plString res_type = res_name.Substr(res_name.GetSize() - 4, 4);
+                    plString extension = plFileName(res_name).GetFileExt();
 
                     // Version 1 doesn't encode format, so we'll try some simple
                     // extension sniffing
-                    if (res_type == ".png") {
+                    if (extension == "png") {
                         // Read resource stream size, but the PNG has that info in the header
                         // so it's not needed
                         res_size = in.ReadLE32();
                         res_data = plPNG::Instance().ReadFromStream(&in);
-                    } else if (res_type == ".jpg") {
+                    } else if (extension == "jpg") {
                         // Don't read resource stream size, as plJPEG's reader will need it
                         res_data = plJPEG::Instance().ReadFromStream(&in);
                     } else {
@@ -126,7 +124,7 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
 plMipmap* plClientResMgr::getResource(const plString& resname)
 {
     plMipmap* resmipmap = nullptr;
-    std::map<plString, plMipmap*>::iterator it = ClientResources.find(resname);
+    auto it = ClientResources.find(resname);
 
     if (it != ClientResources.end()) {
         resmipmap = it->second;

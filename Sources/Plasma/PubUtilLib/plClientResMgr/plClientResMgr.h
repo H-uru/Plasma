@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plClientResMgr_h
 #define _plClientResMgr_h
 
-#include <map>
+#include <unordered_map>
 
 class plMipmap;
 class plString;
@@ -51,7 +51,7 @@ class plFileName;
 
 class plClientResMgr {
 protected:
-    std::map<plString, plMipmap*> ClientResources;
+    std::unordered_map<plString, plMipmap*, plString::hash> ClientResources;
 
 public:
     plClientResMgr() { }
