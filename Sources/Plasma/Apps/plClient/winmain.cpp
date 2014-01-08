@@ -896,7 +896,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
             if (temp)
             {
                 StrCopy(pLoginParam->username, temp, kMaxAccountNameLength);
-                delete temp;
+                delete[] temp;
             }
 
             pLoginParam->remember = stream->ReadBool();

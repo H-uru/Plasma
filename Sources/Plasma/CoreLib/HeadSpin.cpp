@@ -366,8 +366,8 @@ char* hsStrcpy(char dst[], const char src[])
     {
         if (dst == nil)
         {
-            int count = strlen(src);
-            dst = (char *)malloc(count + 1);
+            size_t count = strlen(src);
+            dst = new char[count + 1];
             memcpy(dst, src, count);
             dst[count] = 0;
             return dst;

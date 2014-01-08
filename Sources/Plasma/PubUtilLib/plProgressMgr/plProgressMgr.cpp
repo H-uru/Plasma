@@ -94,7 +94,7 @@ plProgressMgr::~plProgressMgr()
 {
     for (int i=0; i < LOADING_RES_COUNT; i++)
     {
-        delete fImageRotation[i];
+        delete[] fImageRotation[i];
     }
 
     while( fOperations != nil )
