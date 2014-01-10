@@ -229,7 +229,7 @@ bool plAvBrainGeneric::MatchAnimNames(const char *names[], int count)
     int i;
     for (i = 0; i < count; i++)
     {
-        if (strcmp(names[i], GetStage(i)->GetAnimName()))
+        if (GetStage(i)->GetAnimName() != names[i])
             return false; // different names.
     }
 
