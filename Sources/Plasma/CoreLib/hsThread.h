@@ -223,13 +223,11 @@ public:
         virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
         virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
     };
-    hsReaderWriterLock( const char * name="<unnamed>", Callback * cb=nil );
-    ~hsReaderWriterLock();
+    hsReaderWriterLock(Callback * cb=nullptr);
     void LockForReading();
     void UnlockForReading();
     void LockForWriting();
     void UnlockForWriting();
-    const char * GetName() const { return fName; }
 
 private:
     int     fReaderCount;
@@ -237,7 +235,6 @@ private:
     hsMutex fReaderLock;
     hsSemaphore fWriterSema;
     Callback *  fCallback;
-    char *  fName;
 };
 
 class hsLockForReading
