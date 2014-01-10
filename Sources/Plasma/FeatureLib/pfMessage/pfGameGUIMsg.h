@@ -52,13 +52,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnMessage/plMessage.h"
 
+#define GAME_GUI_MSG_STRING_SIZE (128)
+
 class pfGameGUIMsg : public plMessage
 {
     protected:
 
-        uint8_t   fCommand;
-        char    fString[ 128 ];     
-        char    *fAge;
+        uint8_t     fCommand;
+        plString    fString;
+        plString    fAge;
 
     public:
         enum 
@@ -68,9 +70,8 @@ class pfGameGUIMsg : public plMessage
             kLoadDialog
         };
 
-        pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); fAge = nil; }
-        pfGameGUIMsg( plKey &receiver, uint8_t command ) : plMessage( nil, nil, nil ) { AddReceiver( receiver ); fCommand = command; fAge = nil; }
-        ~pfGameGUIMsg() { delete [] fAge; }
+        pfGameGUIMsg() : plMessage( nil, nil, nil ) { SetBCastFlag( kBCastByExactType ); }
+        pfGameGUIMsg(plKey &receiver, uint8_t command) : plMessage(nil, nil, nil) { AddReceiver(receiver); fCommand = command; }
 
         CLASSNAME_REGISTER( pfGameGUIMsg );
         GETINTERFACE_ANY( pfGameGUIMsg, plMessage );
@@ -79,25 +80,30 @@ class pfGameGUIMsg : public plMessage
         { 
             plMessage::IMsgRead( s, mgr ); 
             s->ReadLE( &fCommand );
-            s->Read( sizeof( fString ), fString );
-            fAge = s->ReadSafeString();
+            char buffer[GAME_GUI_MSG_STRING_SIZE];
+            s->Read(sizeof(buffer), buffer);
+            buffer[GAME_GUI_MSG_STRING_SIZE - 1] = 0;
+            fString = buffer;
+            fAge = s->ReadSafeString_TEMP();
         }
         
         virtual void Write(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgWrite( s, mgr ); 
             s->WriteLE( fCommand );
-            s->Write( sizeof( fString ), fString );
+            char buffer[GAME_GUI_MSG_STRING_SIZE];
+            strncpy(buffer, fString.c_str(), GAME_GUI_MSG_STRING_SIZE);
+            s->Write(sizeof(buffer), buffer);
             s->WriteSafeString( fAge );
         }
 
-        uint8_t       GetCommand( void ) { return fCommand; }
+        uint8_t     GetCommand() const { return fCommand; }
 
-        void        SetString( const char *str ) { hsStrncpy( fString, str, sizeof( fString ) - 1 ); }
-        const char  *GetString( void ) { return fString; }
+        void        SetString(const plString &str) { fString = str; }
+        plString    GetString() const { return fString; }
 
-        void        SetAge( const char *str ) { delete [] fAge; if( str == nil ) fAge = nil; else fAge = hsStrcpy( str ); }
-        const char  *GetAge( void ) { return fAge; }
+        void        SetAge(const plString &age) { fAge = age; }
+        plString    GetAge() const { return fAge; }
 };
 
 #endif // _pfGameGUIMsg_h
