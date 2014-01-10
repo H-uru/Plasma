@@ -61,51 +61,41 @@ plOneShotMod::plOneShotMod()
   fReversable(false),
   fSeekDuration(1.0f),
   fSmartSeek(false),
-  fAnimName(nil),
   fNoSeek(false)
 {
     // this constructor is called from the loader. 
 }
 
 // CTOR(char *)
-plOneShotMod::plOneShotMod(const char *animName,
+plOneShotMod::plOneShotMod(const plString &animName,
                            bool drivable,
                            bool reversable,
                            float seekDuration,
                            bool smartSeek,
                            bool noSeek)
-: fDrivable(drivable),
+: fAnimName(animName),
+  fDrivable(drivable),
   fReversable(reversable),
   fSeekDuration(seekDuration),
   fSmartSeek((float)smartSeek),
   fNoSeek(noSeek)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
 // INIT
-void plOneShotMod::Init(const char *animName,
+void plOneShotMod::Init(const plString &animName,
                         bool drivable,
                         bool reversable,
                         float seekDuration,
                         bool smartSeek,
                         bool noSeek)
 {
-    fAnimName = hsStrcpy(animName);
+    fAnimName = animName;
     fDrivable = drivable;
     fReversable = reversable;
     fSeekDuration = seekDuration;
     fSmartSeek = (float)smartSeek;
     fNoSeek = noSeek;
-}
-
-// DTOR()
-plOneShotMod::~plOneShotMod()
-{
-    if(fAnimName) {
-        delete[] fAnimName;
-        fAnimName = nil;
-    }
 }
 
 
@@ -164,7 +154,7 @@ void plOneShotMod::Read(hsStream *stream, hsResMgr *mgr)
     plMultiModifier::Read(stream, mgr);
 
     // read in the name of the animation itself
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fSeekDuration = stream->ReadLEScalar();
     fDrivable = stream->ReadBool();
     fReversable = stream->ReadBool();
