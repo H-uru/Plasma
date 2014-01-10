@@ -1383,7 +1383,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                             // create event list
                             PyObject* event = PyList_New(4);
                             PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kVariable));
-                            PyList_SetItem(event, 1, PyString_FromString(eventData->fName));
+                            PyList_SetItem(event, 1, PyString_FromPlString(eventData->fName));
                             PyList_SetItem(event, 2, PyLong_FromLong(eventData->fDataType));
                             
                             // depending on the data type create the data
