@@ -6846,7 +6846,7 @@ PF_CONSOLE_CMD( Python,
     const char* extraParms = "";
     if (numParams > 1)
         extraParms = params[1];
-    pfBackdoorMsg *msg = new pfBackdoorMsg( params[0],extraParms );
+    pfBackdoorMsg *msg = new pfBackdoorMsg((const char *)params[0], extraParms);
     // send it off
     plgDispatch::MsgSend( msg );
 }

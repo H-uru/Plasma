@@ -2410,7 +2410,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnBackdoorMsg],
                     (char*)fFunctionNames[kfunc_OnBackdoorMsg],
-                    "ss", dt->GetTarget(), dt->GetString());
+                    "ss", dt->GetTarget().c_str(), dt->GetString().c_str());
             if ( retVal == nil )
             {
                 // if there was an error make sure that the stderr gets flushed so it can be seen
