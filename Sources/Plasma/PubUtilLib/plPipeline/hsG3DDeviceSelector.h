@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "hsBitVector.h"
+#include "plString.h"
 
 #ifdef HS_BUILD_FOR_WIN32
 #define HS_SELECT_DIRECT3D // not supported on the Mac.
@@ -143,20 +144,20 @@ public:
 
 protected:
 
-    uint32_t          fFlags;
+    uint32_t        fFlags;
 
-    uint32_t          fG3DDeviceType;
-    uint32_t          fG3DHALorHEL;
+    uint32_t        fG3DDeviceType;
+    uint32_t        fG3DHALorHEL;
 
 
-    char*           fG3DDriverDesc;
-    char*           fG3DDriverName;
-    char*           fG3DDriverVersion;
-    char*           fG3DDeviceDesc;
+    plString        fG3DDriverDesc;
+    plString        fG3DDriverName;
+    plString        fG3DDriverVersion;
+    plString        fG3DDeviceDesc;
 
-    hsBitVector         fCaps;
-    uint32_t              fLayersAtOnce;
-    uint32_t              fMemoryBytes;
+    hsBitVector     fCaps;
+    uint32_t        fLayersAtOnce;
+    uint32_t        fMemoryBytes;
 
     hsTArray<hsG3DDeviceMode> fModes;
 
@@ -188,19 +189,19 @@ public:
 
     uint32_t GetMemoryBytes() const { return fMemoryBytes; }
 
-    const char* GetDriverDesc() const { return fG3DDriverDesc; }
-    const char* GetDriverName() const { return fG3DDriverName; }
-    const char* GetDriverVersion() const { return fG3DDriverVersion; }
-    const char* GetDeviceDesc() const { return fG3DDeviceDesc; }
+    plString GetDriverDesc() const { return fG3DDriverDesc; }
+    plString GetDriverName() const { return fG3DDriverName; }
+    plString GetDriverVersion() const { return fG3DDriverVersion; }
+    plString GetDeviceDesc() const { return fG3DDeviceDesc; }
 
     void SetG3DDeviceType(uint32_t t) { fG3DDeviceType = t; }
     void SetG3DHALorHEL(uint32_t h) { fG3DHALorHEL = h; }
     void SetMemoryBytes(uint32_t b) { fMemoryBytes = b; }
 
-    void SetDriverDesc(const char* s);
-    void SetDriverName(const char* s);
-    void SetDriverVersion(const char* s);
-    void SetDeviceDesc(const char* s);
+    void SetDriverDesc(const plString& s) { fG3DDriverDesc = s; }
+    void SetDriverName(const plString& s) { fG3DDriverName = s; }
+    void SetDriverVersion(const plString& s) { fG3DDriverVersion = s; }
+    void SetDeviceDesc(const plString& s) { fG3DDeviceDesc = s; }
 
     bool    GetCap(uint32_t cap) const { return fCaps.IsBitSet(cap); }
     void    SetCap(uint32_t cap, bool on=true) { fCaps.SetBit(cap, on); }
@@ -252,9 +253,8 @@ protected:
     hsG3DDeviceRecord       fDevice;
     hsG3DDeviceMode         fMode;
 public:
-    hsG3DDeviceModeRecord();
+    hsG3DDeviceModeRecord() { }
     hsG3DDeviceModeRecord(const hsG3DDeviceRecord& devRec, const hsG3DDeviceMode& devMode);
-    ~hsG3DDeviceModeRecord();
 
     hsG3DDeviceModeRecord(const hsG3DDeviceModeRecord& src);
     hsG3DDeviceModeRecord& operator=(const hsG3DDeviceModeRecord& src);
@@ -343,7 +343,7 @@ protected:
     void    ISetFudgeFactors( uint8_t chipsetID, hsG3DDeviceRecord &record );
 
 public:
-    hsG3DDeviceSelector();
+    hsG3DDeviceSelector() { }
     virtual ~hsG3DDeviceSelector();
 
     void RemoveUnusableDevModes(bool bTough); // Removes modes and devices not allowed supported in release

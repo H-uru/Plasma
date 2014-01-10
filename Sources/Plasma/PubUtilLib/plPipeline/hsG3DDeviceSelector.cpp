@@ -97,7 +97,6 @@ void hsG3DDeviceMode::Clear()
 hsG3DDeviceRecord::hsG3DDeviceRecord()
 :   fFlags(kNone),
     fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
-    fG3DDriverDesc(nil), fG3DDriverName(nil), fG3DDriverVersion(nil), fG3DDeviceDesc(nil),
     fLayersAtOnce(0), fMemoryBytes(0),
     fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
     fZBiasRating( 0 ), fLODBiasRating( 0 ),
@@ -115,7 +114,6 @@ hsG3DDeviceRecord::~hsG3DDeviceRecord()
 hsG3DDeviceRecord::hsG3DDeviceRecord(const hsG3DDeviceRecord& src)
 :   fFlags(kNone),
     fG3DDeviceType(hsG3DDeviceSelector::kDevTypeUnknown),
-    fG3DDriverDesc(nil), fG3DDriverName(nil), fG3DDriverVersion(nil), fG3DDeviceDesc(nil),
     fG3DHALorHEL(hsG3DDeviceSelector::kHHTypeUnknown),
     fZBiasRating( src.fZBiasRating ), fLODBiasRating( 0 ),
     fFogExpApproxStart( src.fFogExpApproxStart ), fFogExp2ApproxStart( src.fFogExp2ApproxStart ), 
@@ -162,30 +160,6 @@ hsG3DDeviceRecord& hsG3DDeviceRecord::operator=(const hsG3DDeviceRecord& src)
     return *this;
 }
 
-void hsG3DDeviceRecord::SetDriverDesc( const char *s )
-{
-    delete [] fG3DDriverDesc; 
-    fG3DDriverDesc = s ? hsStrcpy(s) : nil; 
-}
-
-void hsG3DDeviceRecord::SetDriverName( const char *s )
-{
-    delete [] fG3DDriverName; 
-    fG3DDriverName = s ? hsStrcpy(s) : nil; 
-}
-
-void hsG3DDeviceRecord::SetDriverVersion( const char *s )
-{
-    delete [] fG3DDriverVersion; 
-    fG3DDriverVersion = s ? hsStrcpy(s) : nil; 
-}
-
-void hsG3DDeviceRecord::SetDeviceDesc( const char *s )
-{ 
-    delete [] fG3DDeviceDesc; 
-    fG3DDeviceDesc = s ? hsStrcpy(s) : nil; 
-}
-
 const char* hsG3DDeviceRecord::GetG3DDeviceTypeName() const
 {
     static const char* deviceNames[hsG3DDeviceSelector::kNumDevTypes] = {
@@ -230,17 +204,10 @@ void hsG3DDeviceRecord::Clear()
 {
     fFlags = kNone;
 
-    delete [] fG3DDriverDesc;
-    fG3DDriverDesc = nil;
-
-    delete [] fG3DDriverName;
-    fG3DDriverName = nil;
-
-    delete [] fG3DDriverVersion;
-    fG3DDriverVersion = nil;
-
-    delete [] fG3DDeviceDesc;
-    fG3DDeviceDesc = nil;
+    fG3DDriverDesc = plString::Null;
+    fG3DDriverName = plString::Null;
+    fG3DDriverVersion = plString::Null;
+    fG3DDeviceDesc = plString::Null;
 
     fCaps.Clear();
     fLayersAtOnce = 0;
@@ -268,14 +235,6 @@ hsG3DDeviceModeRecord::hsG3DDeviceModeRecord(const hsG3DDeviceRecord& devRec, co
 {
 }
 
-hsG3DDeviceModeRecord::hsG3DDeviceModeRecord()
-{
-}
-
-hsG3DDeviceModeRecord::~hsG3DDeviceModeRecord()
-{
-}
-
 hsG3DDeviceModeRecord::hsG3DDeviceModeRecord(const hsG3DDeviceModeRecord& src)
 {
     *this = src;
@@ -290,10 +249,6 @@ hsG3DDeviceModeRecord& hsG3DDeviceModeRecord::operator=(const hsG3DDeviceModeRec
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
 ///////////////////////////////////////////////////
-
-hsG3DDeviceSelector::hsG3DDeviceSelector()
-{
-}
 
 hsG3DDeviceSelector::~hsG3DDeviceSelector()
 {
@@ -629,7 +584,6 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                                     D3DEnum_DriverInfo *driverInfo,
                                                     D3DEnum_DeviceInfo *deviceInfo )
 {
-    char        desc[ 512 ];    // Can't rely on D3D constant, since that's in another file now
     uint32_t    vendorID, deviceID;
     char        *szDriver, *szDesc;
 
@@ -649,21 +603,18 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     }
 
     /// So capitalization won't matter in our tests
-    hsAssert( strlen( szDesc ) < sizeof( desc ), "D3D device description longer than expected!" );
-    hsStrcpy( desc, szDesc );
-    hsStrLower( desc ); 
+    plString desc = plString::FromIso8859_1(szDesc).ToLower();
 
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    if (stricmp(szDriver, "ati2dvag.dll") == 0 || strstr(desc, "radeon") != nullptr)
+    ssize_t radeon = desc.Find("radeon");
+    if (stricmp(szDriver, "ati2dvag.dll") == 0 || radeon >= 0)
     {
         int series = 0;
-        const char* str = strstr(desc, "radeon");
-        if( str )
-            str += strlen("radeon");
-        if( str )
+        if (radeon >= 0)
         {
+            const char* str = desc.c_str() + radeon + strlen("radeon");
             if( 1 == sscanf(str, "%d", &series) )
             {
                 if( (series >= 8000) && (series < 9000) )
@@ -693,13 +644,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
                 ( stricmp( szDriver, "i81xdd.dll" ) == 0 
-                  || ( strstr( desc, "intel" ) != nil && strstr( desc, "810" ) != nil ) ) )
+                  || ( desc.Find("intel") >= 0 && desc.Find("810") >= 0 ) ) )
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
-    else if( strstr( desc, "nvidia" ) != nil && strstr( desc, "geforce fx 5200" ) != nil )
+    else if( desc.Find("nvidia") >= 0 && desc.Find("geforce fx 5200") >= 0 )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );
