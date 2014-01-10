@@ -133,7 +133,7 @@ public:
     void AddReceiver(const plKey key);
     void RemoveReceiver(const plKey key);
 
-    virtual void DumpToDebugDisplay(int& x, int& y, int lineHeight, char* strBuf, plDebugText& debugTxt);
+    virtual void DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt);
 
     // For the console
     static bool fDrawDebug;

@@ -252,7 +252,7 @@ public:
     MoveMode GetMoveMode() { return fMoveMode; }
 
     /** Output the brain's status to the avatar debug screen. */
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // plasma protocol
     bool MsgReceive(plMessage *msg);

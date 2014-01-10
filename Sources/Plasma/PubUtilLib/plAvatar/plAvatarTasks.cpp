@@ -107,7 +107,7 @@ void plAvTask::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time
 
 
 // DUMPDEBUG
-void plAvTask::DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAvTask::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
     debugTxt.DrawString(x, y, "<anonymous task>");
     y += lineHeight;

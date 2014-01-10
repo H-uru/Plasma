@@ -435,23 +435,21 @@ void plAvBrainCritter::RemoveReceiver(const plKey key)
     return; // not found, do nothing
 }
 
-void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, char* strBuf, plDebugText& debugTxt)
+void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebugText& debugTxt)
 {
-    sprintf(strBuf, "Brain type: Critter");
-    debugTxt.DrawString(x, y, strBuf, 0, 255, 255);
+    debugTxt.DrawString(x, y, "Brain type: Critter", 0, 255, 255);
     y += lineHeight;
 
     // extract the name from the behavior running
+    plString mode = "Mode: Unknown";
     if (fBehaviors[fCurMode])
-        sprintf(strBuf, "Mode: %s", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name().c_str());
-    else
-        sprintf(strBuf, "Mode: Unknown");
+        mode = plString::Format("Mode: %s", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name().c_str());
     
     // draw it
-    debugTxt.DrawString(x, y, strBuf);
+    debugTxt.DrawString(x, y, mode);
     y += lineHeight;
     for (int i = 0; i < fBehaviors.GetCount(); ++i)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, strBuf, debugTxt);
+        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

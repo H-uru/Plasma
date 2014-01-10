@@ -278,7 +278,7 @@ public:
     void SetTurnLeftKeyDown(bool status = true);
     void SetTurnRightKeyDown(bool status = true);
     void SetJumpKeyDown();
-    void DebugDumpMoveKeys(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt);
     void GetMoveKeyString(char *buff);
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
@@ -310,7 +310,7 @@ public:
     void SetRootName(const plString &name);
     
     int  RefreshDebugDisplay();
-    void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
     void SetDebugState(bool state) { fDebugOn = (state != 0); }
     bool GetDebugState() { return fDebugOn; }
 

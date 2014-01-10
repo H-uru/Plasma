@@ -231,7 +231,7 @@ public:
     plAGAnimInstance *GetAnimInstance() const { return fAnimInstance; };
     bool GetReverseOnIdle() { return fReverseOnIdle; }
     void SetReverseOnIdle(bool onOff) { fReverseOnIdle = onOff; }   
-    void DumpDebug(bool active, int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // STANDARD PLASMA PROTOCOL
     virtual void Read(hsStream *stream, hsResMgr *mgr);

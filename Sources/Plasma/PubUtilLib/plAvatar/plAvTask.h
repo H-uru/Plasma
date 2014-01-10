@@ -94,7 +94,7 @@ public:
     virtual void LeaveAge(plArmatureMod *avatar) {}
     
     /** dump descriptive stuff to the given debug text */
-    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt);
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvTask );

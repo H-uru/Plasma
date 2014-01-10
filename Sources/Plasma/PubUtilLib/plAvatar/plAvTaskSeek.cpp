@@ -556,22 +556,20 @@ bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
 
 // DumpDebug -----------------------------------------------------------------------------------------------------
 // ----------
-void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    sprintf(strBuf, "duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
+    debugTxt.DrawString(x, y, plString::Format("duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
             hsTimer::GetSysSeconds() - fStartTime,
-            fPosition.fX, fPosition.fY, fPosition.fZ, fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ);
-    debugTxt.DrawString(x, y, strBuf);
+            fPosition.fX, fPosition.fY, fPosition.fZ, fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ));
     y += lineHeight;
 
-    sprintf(strBuf, "positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
-            fStillPositioning, fStillRotating, fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ, fDistance, fAngForward, fAngRight);
-    debugTxt.DrawString(x, y, strBuf);
+    debugTxt.DrawString(x, y, plString::Format("positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
+            fStillPositioning, fStillRotating, fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
+            fDistance, fAngForward, fAngRight));
     y += lineHeight;
-    
-    sprintf(strBuf, " distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
-            fDistForward, fDistRight, fShuffleRange, fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle);
-    debugTxt.DrawString(x, y, strBuf);
+
+    debugTxt.DrawString(x, y, plString::Format(" distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
+            fDistForward, fDistRight, fShuffleRange, fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle));
     y += lineHeight;
 }
 

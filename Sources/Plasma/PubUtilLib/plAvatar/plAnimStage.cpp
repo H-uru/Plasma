@@ -716,7 +716,7 @@ int plAnimStage::GetPrevStage(int curStage)
 }
 
 // DUMPDEBUG
-void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
     plStringStream str;
 

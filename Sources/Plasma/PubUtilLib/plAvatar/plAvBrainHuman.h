@@ -97,7 +97,7 @@ public:
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);
     virtual bool MsgReceive(plMessage *msg);
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // Hardwired Identifiers for all the canonical bones.
     enum HumanBoneID {

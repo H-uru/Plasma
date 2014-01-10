@@ -103,7 +103,7 @@ public:
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
 
-    void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
     const char * WorldDirStr(plClimbMsg::Direction dir);
     const char *ModeStr(Mode mode);
 
@@ -173,9 +173,9 @@ private:
     */
     bool IProcessExitStage(double time, float elapsed);
 
-    void IDumpClimbDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void IDumpDismountDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void IDumpBlockedDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void IDumpClimbDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void IDumpDismountDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void IDumpBlockedDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     ////////////////////////////
     //
