@@ -124,7 +124,9 @@ HRESULT plDXVertexShader::ICreate(plDXPipeline* pipe)
 
             if( FAILED(hr) )
             {
-                return IOnError(hr, compilationErrors ? (char*)compilationErrors->GetBufferPointer() : "File not found");
+                return IOnError(hr, compilationErrors
+                        ? reinterpret_cast<const char *>(compilationErrors->GetBufferPointer())
+                        : "File not found");
             }
 
             shaderCodes = (DWORD*)(compiledShader->GetBufferPointer());

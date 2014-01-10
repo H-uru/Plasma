@@ -67,11 +67,11 @@ class plDXDeviceRef : public hsGDeviceRef
 
     public:
 
-        void            Unlink( void );
-        void            Link( plDXDeviceRef **back );
-        plDXDeviceRef   *GetNext( void ) { return fNext; }
-        bool            IsLinked( void ) { return fBack != nil; }
-        virtual void            Release( void ) { }
+        void            Unlink();
+        void            Link(plDXDeviceRef **back);
+        plDXDeviceRef   *GetNext() const { return fNext; }
+        bool            IsLinked() const { return fBack != nullptr; }
+        virtual void    Release() { }
 
         plDXDeviceRef();
 
