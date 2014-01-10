@@ -137,7 +137,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptPlayer, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerName)
 {
-    return PyString_FromString(self->fThis->GetPlayerName());
+    return PyString_FromPlString(self->fThis->GetPlayerName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerID)
@@ -180,21 +180,21 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_CUSTOM_TYPE(ptPlayer, "Params: avkey,name,playerID,distanceSq\nAnd optionally __init__(name,playerID)");
 
 // required functions for PyObject interoperability
-PyObject *pyPlayer::New(pyKey& avKey, const char* pname, uint32_t pid, float distsq)
+PyObject *pyPlayer::New(pyKey& avKey, const plString& pname, uint32_t pid, float distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(avKey.getKey(), pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(plKey avKey, const char* pname, uint32_t pid, float distsq)
+PyObject *pyPlayer::New(plKey avKey, const plString& pname, uint32_t pid, float distsq)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(avKey, pname, pid, distsq);
     return (PyObject*)newObj;
 }
 
-PyObject *pyPlayer::New(const char* pname, uint32_t pid)
+PyObject *pyPlayer::New(const plString& pname, uint32_t pid)
 {
     ptPlayer *newObj = (ptPlayer*)ptPlayer_type.tp_new(&ptPlayer_type, NULL, NULL);
     newObj->fThis->Init(nil, pname, pid, -1);
