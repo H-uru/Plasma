@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNode.h"
 
 #include <guplib.h>
+#include <notify.h>
 #pragma hdrstop
 
 #include "GlobalUtility.h"
