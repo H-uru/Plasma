@@ -96,16 +96,15 @@ public:
 class plElementRefMsg : public plGenRefMsg
 {
 public:
-    char        *fElementName;
-    uint32_t      fLayer;
+    plString    fElementName;
+    uint32_t    fLayer;
 
-    plElementRefMsg() : plGenRefMsg(), fElementName(nil), fLayer(1) {}
-    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, char *name, uint8_t layer) : plGenRefMsg(r, c, which, type)
+    plElementRefMsg() : plGenRefMsg(), fLayer(1) {}
+    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, const plString &name, uint8_t layer) : plGenRefMsg(r, c, which, type)
     {
         fLayer = layer;
-        fElementName = hsStrcpy(name);
+        fElementName = name;
     }
-    ~plElementRefMsg() { delete [] fElementName; }
 
     CLASSNAME_REGISTER( plElementRefMsg );
     GETINTERFACE_ANY( plElementRefMsg, plGenRefMsg );

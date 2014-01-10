@@ -4527,12 +4527,12 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
 {
     plString clothKeyName;
     plClothingItem *cloth = new plClothingItem();
-    cloth->SetName(mtl->GetName());
+    cloth->SetName((const char *)mtl->GetName());
     cloth->fSortOrder = (mtl->GetDefault() ? 0 : 1);
 
     const char *accName = mtl->GetForcedAccessoryName();
     if (accName && strcmp(accName, ""))
-        cloth->fAccessoryName = hsStrcpy(accName);
+        cloth->fAccessoryName = accName;
     
     Color tint1 = mtl->GetDefaultTint1();
     Color tint2 = mtl->GetDefaultTint2();
@@ -4543,7 +4543,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
     cloth->fDefaultTint2[1] = (uint8_t)(tint2.g * 255.f);
     cloth->fDefaultTint2[2] = (uint8_t)(tint2.b * 255.f);
     
-    clothKeyName = plString::Format("CItm_%s", cloth->fName);
+    clothKeyName = plString::Format("CItm_%s", cloth->fName.c_str());
     hsgResMgr::ResMgr()->NewKey(clothKeyName, cloth, loc);
     
     plNodeRefMsg* nodeRefMsg = new plNodeRefMsg(plKeyFinder::Instance().FindSceneNodeKey(loc), 
@@ -4560,7 +4560,7 @@ plClothingItem *hsMaterialConverter::GenerateClothingItem(plClothingMtl *mtl, co
         {
             uint32_t clipLevels;
             uint32_t startWidth;
-            char *elementName = tileset->fElements.Get(i)->fName;
+            plString elementName = tileset->fElements.Get(i)->fName;
             plPlasmaMAXLayer *layer = (plPlasmaMAXLayer *)mtl->GetTexmap(i, j);
             if (layer == nil || layer->GetPBBitmap() == nil)
                 continue;
