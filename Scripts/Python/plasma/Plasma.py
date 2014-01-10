@@ -5391,6 +5391,12 @@ Returns key code for controlCode"""
         """Forces write of the keymap file"""
         pass
 
+class ptLayer:
+    """Plasma Layer class"""
+    def __init__(self,layerKey):
+        """None"""
+        pass
+    
 class ptMarkerMgr:
     """Marker manager accessor class"""
     def __init__(self):
