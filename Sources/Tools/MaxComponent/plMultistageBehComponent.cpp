@@ -306,7 +306,7 @@ void plMultistageBehComponent::IInitDlg()
     for (int i = 0; i < fStages.size(); i++)
     {
         plBaseStage* stage = fStages[i];
-        ListView_AddString(hList, stage->GetName());
+        ListView_AddString(hList, stage->GetName().c_str());
     }
 
     // Make sure the column is wide enough
@@ -323,19 +323,17 @@ void plMultistageBehComponent::IInitDlg()
 // rename them all to start with zero instead.
 void plMultistageBehComponent::FixStageNames()
 {
-    if(fStages.size() > 0)
+    if (fStages.size() > 0)
     {
         plBaseStage* stage = fStages[0];
-        const char * stageName = stage->GetName();
+        plString stageName = stage->GetName();
 
-        if(strcmp(stageName, "Stage 1") == 0)
+        if (stageName == "Stage 1")
         {
             for (int i = 0; i < fStages.size(); i++)
             {
                 plBaseStage* stage = fStages[i];
-                char buf[64];
-                sprintf(buf, "Stage %d", i);
-                stage->SetName(buf);
+                stage->SetName(plString::Format("Stage %d", i));
             }
         }
     }
@@ -362,7 +360,7 @@ BOOL plMultistageBehComponent::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPAR
 
                 // Add the new stage to the list and make sure the list is wide enough
                 HWND hList = GetDlgItem(fDlg, IDC_STAGE_LIST);
-                int idx = ListView_AddString(hList, stage->GetName());
+                int idx = ListView_AddString(hList, stage->GetName().c_str());
                 ListView_SetColumnWidth(hList, 0, LVSCW_AUTOSIZE);
                 ListView_SetItemState(hList, idx, LVIS_SELECTED, LVIS_SELECTED);
 
