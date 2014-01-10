@@ -47,7 +47,7 @@ class plNPCSpawnMod : public plSingleModifier
 {
 public:
     plNPCSpawnMod();
-    plNPCSpawnMod(const char * modelName, const char *accountName, bool autoSpawn);
+    plNPCSpawnMod(const plString &modelName, const plString &accountName, bool autoSpawn);
     ~plNPCSpawnMod();
 
     bool Trigger();
@@ -68,8 +68,8 @@ protected:
     void ISendNotify(plKey &avatarKey);     // send our notification message
 
 private:
-    char *fModelName;
-    char *fAccountName;
+    plString fModelName;
+    plString fAccountName;
     bool fAutoSpawn;            // spawn immediately on loading
     plKey fSpawnedKey;          // if we want to be able to spawn many things, we should make this a vector
     plNotifyMsg *fNotify;       // notify message that we send when we spawn.
