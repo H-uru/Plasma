@@ -117,7 +117,7 @@ void    plFont::IClear( bool onConstruct )
     if( !onConstruct )
         delete [] fBMapData;
 
-    memset( fFace, 0, sizeof( fFace ) );
+    fFace = plString::Null;
     fSize = 0;
     fFlags = 0;
 
@@ -139,16 +139,6 @@ void    plFont::IClear( bool onConstruct )
     fRenderInfo.fVolatileStringPtr = nil;
     fRenderInfo.fFirstLineIndent = 0;
     fRenderInfo.fLineSpacing = 0;
-}
-
-void    plFont::SetFace( const char *face )
-{
-    strncpy( fFace, face, sizeof( fFace ) );
-}
-
-void    plFont::SetSize( uint8_t size )
-{
-    fSize = size;
 }
 
 void    plFont::Read( hsStream *s, hsResMgr *mgr )
@@ -232,12 +222,10 @@ static inline bool  IIsDrawableWordBreak( const char c )
 //  The base render function. Additional options are specified externally,
 //  so that their effects can be cached for optimization
 
-void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const char *string, uint16_t *lastX, uint16_t *lastY )
+void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const plString &string, uint16_t *lastX, uint16_t *lastY )
 {
-    // convert the char string to a wchar_t string
-    wchar_t *wideString = hsStringToWString(string);
-    RenderString(mip,x,y,wideString,lastX,lastY);
-    delete [] wideString;
+    // TEMP
+    RenderString(mip, x, y, string.ToWchar().GetData(), lastX, lastY);
 }
 
 
@@ -990,7 +978,7 @@ void    plFont::IRenderCharNull( const plCharacter &c )
 
 //// CalcString Variations ////////////////////////////////////////////////////
 
-uint16_t  plFont::CalcStringWidth( const char *string )
+uint16_t  plFont::CalcStringWidth( const plString &string )
 {
     uint16_t w, h, a, lX, lY;
     uint32_t s;
@@ -1006,12 +994,10 @@ uint16_t  plFont::CalcStringWidth( const wchar_t *string )
     return w;
 }
 
-void    plFont::CalcStringExtents( const char *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
+void    plFont::CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
 {
     // convert the char string to a wchar_t string
-    wchar_t *wideString = hsStringToWString(string);
-    CalcStringExtents(wideString,width,height,ascent,firstClippedChar,lastX,lastY);
-    delete [] wideString;
+    CalcStringExtents(string.ToWchar().GetData(), width, height, ascent, firstClippedChar, lastX, lastY);
 }
 
 void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
@@ -1197,7 +1183,7 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
                 charEntries[ i ].offset = stream->ReadLE32();
         }
 
-        char faceName[ 256 ], deviceName[ 256 ];
+        char faceName[ 257 ], deviceName[ 256 ];
         if( fntInfo.face != 0 )
         {
             stream->SetPosition( fntInfo.face );
@@ -1207,7 +1193,8 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
                 if( faceName[ i ] == 0 )
                     break;
             }
-            strncpy( fFace, faceName, sizeof( fFace ) );
+            faceName[256] = 0;
+            fFace = faceName;
         }
         if( fntInfo.device != 0 )
         {
@@ -1926,7 +1913,11 @@ bool    plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
 
 bool    plFont::ReadRaw( hsStream *s )
 {
-    s->Read( sizeof( fFace ), fFace );
+    char face_buf[257];
+    s->Read(256, face_buf);
+    face_buf[256] = 0;
+    fFace = face_buf;
+
     fSize = s->ReadByte();
     s->ReadLE( &fFlags );
 
@@ -1959,7 +1950,10 @@ bool    plFont::ReadRaw( hsStream *s )
 
 bool    plFont::WriteRaw( hsStream *s )
 {
-    s->Write( sizeof( fFace ), fFace );
+    char face_buf[256] = { 0 };
+    memcpy(face_buf, fFace.c_str(), fFace.GetSize() * sizeof(char));
+    s->Write(sizeof(face_buf), face_buf);
+
     s->WriteByte( fSize );
     s->WriteLE( fFlags );
 

@@ -535,7 +535,7 @@ class pfJournalBook : public hsKeyedObject
 
         // Starting at the given chunk, works backwards to determine the full set of current
         // font properties at that point, or assigns defaults if none were specified
-        void    IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
+        void    IFindFontProps( uint32_t chunkIdx, plString &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
 
         // Find the last paragraph chunk and thus the last par alignment settings
         uint8_t   IFindLastAlignment( void ) const;

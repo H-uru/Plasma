@@ -135,7 +135,7 @@ void    IUpdateInfo( HWND hDlg )
         return;
     }
 
-    SetDlgItemText( hDlg, IDC_FACE, gFont->GetFace() );
+    SetDlgItemText( hDlg, IDC_FACE, gFont->GetFace().c_str() );
     SetDlgItemInt( hDlg, IDC_FSIZE, gFont->GetSize(), false );
     SetDlgItemInt( hDlg, IDC_STARTG, gFont->GetFirstChar(), false );
     SetDlgItemInt( hDlg, IDC_GCOUNT, gFont->GetNumChars(), false );
@@ -598,7 +598,7 @@ void    IBatchFreeType( HWND hWnd, const char *path )
 
         gFont->SetFace(sFontName);
         char fileName[ MAX_PATH ];
-        sprintf( fileName, "%s\\%s-%d.p2f", destPath, gFont->GetFace(), gFont->GetSize() );
+        sprintf( fileName, "%s\\%s-%d.p2f", destPath, gFont->GetFace().c_str(), gFont->GetSize() );
         hsUNIXStream stream;
         if( !stream.Open( fileName, "wb" ) )
             MessageBox( hWnd, "Can't open file for writing", "Error", MB_OK | MB_ICONEXCLAMATION );
@@ -688,7 +688,7 @@ BOOL CALLBACK WndProc( HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam )
                 gFont->SetFlag( plFont::kFlagItalic, IsDlgButtonChecked( hWnd, IDC_ITALIC ) == BST_CHECKED );
 
                 // Write out
-                sprintf( fileName, "%s-%d.p2f", gFont->GetFace(), gFont->GetSize() );
+                sprintf( fileName, "%s-%d.p2f", gFont->GetFace().c_str(), gFont->GetSize() );
                 if( PromptForFile( hWnd, "Specify a file to export to", "Plasma 2 font files\0*.p2f\0", fileName, sizeof( fileName ), true ) )
                 {
                     hsUNIXStream stream;
