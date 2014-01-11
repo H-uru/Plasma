@@ -210,7 +210,7 @@ protected:
     /////////////////////////////////////////////////////////////
 
     /** Remember that we need to do a synch soon. */
-    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
+    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags);
 
     double GetLastSyncTime() { return fLastSyncTime; }
 

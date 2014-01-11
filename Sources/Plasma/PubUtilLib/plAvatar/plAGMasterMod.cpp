@@ -799,7 +799,7 @@ bool plAGMasterMod::HasRunningAnims()
 //
 // Send SDL sendState msg to object's plAGMasterSDLModifier
 //
-bool plAGMasterMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plAGMasterMod::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
 {
     if(GetNumTargets() > 0 && (!fIsGrouped || fIsGroupMaster))
     {

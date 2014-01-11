@@ -1010,7 +1010,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 // TESTING SDL
 // Send phys sendState msg to object's plPhysicalSDLModifier
 //
-bool plPXPhysical::DirtySynchState(const char* SDLStateName, uint32_t synchFlags )
+bool plPXPhysical::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags )
 {
     if (GetObjectKey())
     {

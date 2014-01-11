@@ -283,7 +283,7 @@ public:
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
-    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags );
+    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags );
     bool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
     plClothingSDLModifier *GetClothingSDLMod() const { return fClothingSDLMod; }

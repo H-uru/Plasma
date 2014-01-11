@@ -206,7 +206,7 @@ plKey pyKey::GetNotifyListItem(int32_t i)
 
 
 // Set the dirty state on the PythonModifier
-void pyKey::DirtySynchState(const char* SDLStateName, uint32_t sendFlags)
+void pyKey::DirtySynchState(const plString& SDLStateName, uint32_t sendFlags)
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )

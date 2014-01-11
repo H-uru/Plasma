@@ -195,7 +195,7 @@ public:
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags);
 
     void StripAccessories();
     void WearDefaultClothing();

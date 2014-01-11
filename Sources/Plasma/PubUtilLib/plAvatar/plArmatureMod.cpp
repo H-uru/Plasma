@@ -1836,10 +1836,10 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-bool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plArmatureMod::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
-    if (SDLStateName && stricmp(SDLStateName, kSDLAvatar))
+    if (SDLStateName.CompareI(kSDLAvatar) != 0)
     {
         return false;
     }

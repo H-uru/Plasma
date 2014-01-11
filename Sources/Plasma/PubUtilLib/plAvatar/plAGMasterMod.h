@@ -206,7 +206,7 @@ public:
     virtual void Read(hsStream * stream, hsResMgr *mgr);
 
     bool HasRunningAnims();
-    bool DirtySynchState(const char* SDLStateName, uint32_t synchFlags);    
+    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags);
     
     CLASSNAME_REGISTER( plAGMasterMod );
     GETINTERFACE_ANY( plAGMasterMod, plModifier );

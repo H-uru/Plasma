@@ -173,7 +173,7 @@ public:
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual bool DirtySynchState(const char* sdlName, uint32_t sendFlags) { return false; } // don't send link state
+    virtual bool DirtySynchState(const plString& sdlName, uint32_t sendFlags) { return false; } // don't send link state
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);

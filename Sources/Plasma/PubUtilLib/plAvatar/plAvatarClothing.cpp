@@ -1405,7 +1405,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
 // TESTING SDL
 // Send clothing sendState msg to object's plClothingSDLModifier
 //
-bool plClothingOutfit::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plClothingOutfit::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
 {
     plSynchEnabler ps(true);    // make sure synching is enabled, since this happens during load
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
