@@ -2089,10 +2089,11 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     
                     case plVaultNotifyMsg::kPublicAgeCreated:
                     case plVaultNotifyMsg::kPublicAgeRemoved: {
-                        if (const char * ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename)) {
+                        plString ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
+                        if (!ageName.IsEmpty()) {
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
-                            PyTuple_SetItem(ptuple, 0, PyString_FromString(ageName));
+                            PyTuple_SetItem(ptuple, 0, PyString_FromPlString(ageName));
                         }
                     }
                     break;

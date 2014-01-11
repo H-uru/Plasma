@@ -125,7 +125,7 @@ public:
     // helpers for typed arguments
     void    AddString( uint16_t id, const char * value );
     void    AddString( uint16_t id, std::string & value );
-    const char * GetString( uint16_t id );
+    plString  GetString( uint16_t id );
     void    AddInt( uint16_t id, int32_t value );
     int32_t   GetInt( uint16_t id );
     void    AddDouble( uint16_t id, double value );
