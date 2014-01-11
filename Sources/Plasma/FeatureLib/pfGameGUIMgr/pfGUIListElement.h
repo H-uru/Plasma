@@ -118,15 +118,13 @@ class pfGUIListText : public pfGUIListElement
 
     protected:
         
-        wchar_t         *fText;
-        uint8_t           fJustify;   // This is not our JustifyTypes, but from plDynamicTextMap
+        plString    fText;
+        uint8_t     fJustify;   // This is not our JustifyTypes, but from plDynamicTextMap
 
     public:
 
         pfGUIListText();
-        pfGUIListText( const char *text );
-        pfGUIListText( const wchar_t *text );
-        virtual ~pfGUIListText(); 
+        pfGUIListText( const plString &text );
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -139,9 +137,8 @@ class pfGUIListText : public pfGUIListElement
         virtual void    SetJustify( JustifyTypes justify );
 
         // These two are virtual so we can derive and override them
-        virtual const wchar_t   *GetText( void ) { return fText; }
-        virtual void        SetText( const char *text );
-        virtual void        SetText( const wchar_t *text );
+        virtual plString    GetText() const { return fText; }
+        virtual void        SetText(const plString &text) { fText = text; }
 };
 
 class pfGUIListPicture : public pfGUIListElement
@@ -176,7 +173,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
 {
     protected:
         
-        wchar_t         *fText;
+        plString        fText;
         bool            fShowChildren;
 
         hsTArray<pfGUIListElement *>    fChildren;
@@ -184,9 +181,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
     public:
 
         pfGUIListTreeRoot();
-        pfGUIListTreeRoot( const char *text );
-        pfGUIListTreeRoot( const wchar_t *text );
-        virtual ~pfGUIListTreeRoot(); 
+        pfGUIListTreeRoot( const plString &text );
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -197,11 +192,10 @@ class pfGUIListTreeRoot : public pfGUIListElement
 
         virtual bool    MouseClicked( uint16_t localX, uint16_t localY );
 
-        const wchar_t   *GetTitle( void ) { return fText; }
-        void        SetTitle( const char *text );
-        void        SetTitle( const wchar_t *text );
+        const plString   GetTitle() const { return fText; }
+        void        SetTitle(const plString &text) { fText = text; }
 
-        uint32_t              GetNumChildren( void ) const { return fChildren.GetCount(); }
+        uint32_t            GetNumChildren() const { return fChildren.GetCount(); }
         pfGUIListElement    *GetChild( uint32_t i ) const { return fChildren[ i ]; }
         
         void        AddChild( pfGUIListElement *el );

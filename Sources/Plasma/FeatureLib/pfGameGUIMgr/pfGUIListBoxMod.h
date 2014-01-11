@@ -186,10 +186,8 @@ class pfGUIListBoxMod : public pfGUIControlMod
         uint16_t              GetNumElements( void );
         pfGUIListElement    *GetElement( uint16_t idx );
 
-        uint16_t  AddString( const char *string );
-        uint16_t  AddString( const wchar_t *string );
-        int16_t   FindString( const char *toCompareTo );
-        int16_t   FindString( const wchar_t *toCompareTo );
+        uint16_t  AddString( const plString &string );
+        int16_t   FindString( const plString &toCompareTo );
 
         // Export only
         void    SetScrollCtrl( pfGUIValueCtrl *ctrl ) { fScrollControl = ctrl; }
