@@ -576,22 +576,21 @@ void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, pl
 void plAvTaskSeek::DumpToAvatarLog(plArmatureMod *avatar)
 {
     plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
-    char strBuf[256];
-    avatar->GetMoveKeyString(strBuf);
-    log->AddLine(strBuf);
+    log->AddLine(avatar->GetMoveKeyString().c_str());
 
-    sprintf(strBuf, "    duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
+    log->AddLine(plString::Format("    duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
             hsTimer::GetSysSeconds() - fStartTime,
-            fPosition.fX, fPosition.fY, fPosition.fZ, fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ);
-    log->AddLine(strBuf);
-    
-    sprintf(strBuf, "    positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
-            fStillPositioning, fStillRotating, fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ, fDistance, fAngForward, fAngRight);
-    log->AddLine(strBuf);
+            fPosition.fX, fPosition.fY, fPosition.fZ,
+            fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ).c_str());
 
-    sprintf(strBuf, "    distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
-            fDistForward, fDistRight, fShuffleRange, fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle);
-    log->AddLine(strBuf);
+    log->AddLine(plString::Format("    positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
+            fStillPositioning, fStillRotating,
+            fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
+            fDistance, fAngForward, fAngRight).c_str());
+
+    log->AddLine(plString::Format("    distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
+            fDistForward, fDistRight, fShuffleRange,
+            fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle).c_str());
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////

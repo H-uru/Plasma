@@ -922,23 +922,23 @@ void plAvBrainClimb::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
 // --------------------
 void plAvBrainClimb::IDumpClimbDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    const char * prolog = "Allowed directions: ";
-    std::string str;
+    static const char prolog[] = "Allowed directions: ";
+    plStringStream str;
 
-    str = prolog;
+    str << prolog;
     if(fAllowedDirections & plClimbMsg::kUp)
-        str = str + "UP ";
+        str << "UP ";
     if(fAllowedDirections & plClimbMsg::kDown)
-        str = str + "DOWN ";
+        str << "DOWN ";
     if(fAllowedDirections & plClimbMsg::kLeft)
-        str = str + "LEFT ";
+        str << "LEFT ";
     if(fAllowedDirections & plClimbMsg::kRight)
-        str = str + "RIGHT ";
+        str << "RIGHT ";
     
-    if(str.size() == strlen(prolog))
-        str = str + "- NONE -";
+    if(str.GetLength() == strlen(prolog))
+        str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.c_str());
+    debugTxt.DrawString(x, y, str.GetString());
     y += lineHeight;
 }
 
@@ -946,49 +946,49 @@ void plAvBrainClimb::IDumpClimbDirections(int &x, int &y, int lineHeight, plDebu
 // -----------------------
 void plAvBrainClimb::IDumpDismountDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    const char * prolog = "Enabled dismounts: ";
-    std::string str;
+    static const char prolog[] = "Enabled dismounts: ";
+    plStringStream str;
 
-    str = prolog;
+    str << prolog;
     if(fAllowedDismounts & plClimbMsg::kUp)
-        str = str + "UP ";
+        str << "UP ";
     if(fAllowedDismounts & plClimbMsg::kDown)
-        str = str + "DOWN ";
+        str << "DOWN ";
     if(fAllowedDismounts & plClimbMsg::kLeft)
-        str = str + "LEFT ";
+        str << "LEFT ";
     if(fAllowedDismounts & plClimbMsg::kRight)
-        str = str + "RIGHT ";
+        str << "RIGHT ";
     
-    if(str.size() == strlen(prolog))
-        str = str + "- NONE -";
+    if(str.GetLength() == strlen(prolog))
+        str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.c_str());
+    debugTxt.DrawString(x, y, str.GetString());
     y += lineHeight;
 }
 
 void plAvBrainClimb::IDumpBlockedDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    const char * prolog = "Physically blocked: ";
-    std::string str;
+    static const char prolog[] = "Physically blocked: ";
+    plStringStream str;
 
-    str = prolog;
+    str << prolog;
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kUp)
-        str = str + "UP ";
+        str << "UP ";
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kDown)
-        str = str + "DOWN ";
+        str << "DOWN ";
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kLeft)
-        str = str + "LEFT ";
+        str << "LEFT ";
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kRight)
-        str = str + "RIGHT ";
+        str << "RIGHT ";
     
-    if(str.size() == strlen(prolog))
-        str = str + "- NONE -";
+    if(str.GetLength() == strlen(prolog))
+        str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.c_str());
+    debugTxt.DrawString(x, y, str.GetString());
     y += lineHeight;
 }
 
-const char * plAvBrainClimb::WorldDirStr(plClimbMsg::Direction dir)
+const char *plAvBrainClimb::WorldDirStr(plClimbMsg::Direction dir)
 {
     switch(dir)
     {

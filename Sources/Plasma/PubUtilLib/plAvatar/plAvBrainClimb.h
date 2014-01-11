@@ -104,8 +104,8 @@ public:
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
 
     void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
-    const char * WorldDirStr(plClimbMsg::Direction dir);
-    const char *ModeStr(Mode mode);
+    static const char *WorldDirStr(plClimbMsg::Direction dir);
+    static const char *ModeStr(Mode mode);
 
     // plasma protocol
     virtual bool MsgReceive(plMessage *msg);

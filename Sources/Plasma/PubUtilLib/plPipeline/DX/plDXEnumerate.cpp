@@ -84,9 +84,7 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
             }
         }
     }
-    char errStr[256];
-
-    sprintf(errStr, "Can't find requested device - %s:%s:%s:%s:%s",
+    plString errStr = plString::Format("Can't find requested device - %s:%s:%s:%s:%s",
         devRec->GetG3DDeviceTypeName(),
         devRec->GetDriverDesc().c_str(),
         devRec->GetDriverName().c_str(),

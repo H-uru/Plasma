@@ -2800,41 +2800,41 @@ void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 
 void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    char buff[256];
-    snprintf(buff, sizeof(buff), "Mouse Input Map: %s", plAvatarInputInterface::GetInstance()->GetInputMapName());
-    debugTxt.DrawString(x, y, buff);
+    debugTxt.DrawString(x, y, plString::Format("Mouse Input Map: %s",
+            plAvatarInputInterface::GetInstance()->GetInputMapName()));
     y += lineHeight;
 
-    snprintf(buff, sizeof(buff), "Turn strength: %.2f (key: %.2f, analog: %.2f)",
-                    GetTurnStrength(), GetKeyTurnStrength(), GetAnalogTurnStrength());
-    debugTxt.DrawString(x, y, buff);
+    debugTxt.DrawString(x, y, plString::Format("Turn strength: %.2f (key: %.2f, analog: %.2f)",
+            GetTurnStrength(), GetKeyTurnStrength(), GetAnalogTurnStrength()));
     y += lineHeight;
 
-    GetMoveKeyString(buff);
-    debugTxt.DrawString(x, y, buff);
+    debugTxt.DrawString(x, y, GetMoveKeyString());
     y += lineHeight;
 }
 
-void plArmatureMod::GetMoveKeyString(char *buff)
+plString plArmatureMod::GetMoveKeyString() const
 {
-    sprintf(buff, "Move keys: ");
+    plStringStream keys;
+    keys << "Move keys: ";
 
     if(FastKeyDown())
-        strcat(buff, "FAST ");
+        keys << "FAST ";
     if(StrafeKeyDown())
-        strcat(buff, "STRAFE ");
+        keys << "STRAFE ";
     if(ForwardKeyDown())
-        strcat(buff, "FORWARD ");
+        keys << "FORWARD ";
     if(BackwardKeyDown())
-        strcat(buff, "BACKWARD ");
+        keys << "BACKWARD ";
     if(TurnLeftKeyDown())
-        strcat(buff, "TURNLEFT ");
+        keys << "TURNLEFT ";
     if(TurnRightKeyDown())
-        strcat(buff, "TURNRIGHT ");
+        keys << "TURNRIGHT ";
     if(StrafeLeftKeyDown())
-        strcat(buff, "STRAFELEFT ");
+        keys << "STRAFELEFT ";
     if(StrafeRightKeyDown())
-        strcat(buff, "STRAFERIGHT ");
+        keys << "STRAFERIGHT ";
     if(JumpKeyDown())
-        strcat(buff, "JUMP ");
+        keys << "JUMP ";
+
+    return keys.GetString();
 }

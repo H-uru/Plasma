@@ -279,7 +279,7 @@ public:
     void SetTurnRightKeyDown(bool status = true);
     void SetJumpKeyDown();
     void DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt);
-    void GetMoveKeyString(char *buff);
+    plString GetMoveKeyString() const;
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
