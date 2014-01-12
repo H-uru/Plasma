@@ -300,7 +300,7 @@ public:
     //
     static const char* GetAgeName();
     static PyObject* GetAgeInfo(); // returns pyAgeInfoStruct
-    static const char* GetPrevAgeName();
+    static plString GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
     // current time in current age
     static uint32_t GetAgeTime( void );

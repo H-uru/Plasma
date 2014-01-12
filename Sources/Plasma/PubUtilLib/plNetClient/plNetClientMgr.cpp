@@ -1144,7 +1144,7 @@ bool plNetClientMgr::ObjectInLocalAge(const plSynchedObject* obj) const
 //
 // the next age we are going to
 //
-const char* plNetClientMgr::GetNextAgeFilename() 
+plString plNetClientMgr::GetNextAgeFilename() const
 { 
     // set when we start linking to an age.
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();

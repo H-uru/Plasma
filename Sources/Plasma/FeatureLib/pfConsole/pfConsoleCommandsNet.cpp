@@ -336,7 +336,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to an age." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age...");
@@ -350,7 +350,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "Link to a specific age by guid." )  // helpString
 {   
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     //link.GetAgeInfo()->SetAgeInstanceName( params[0] );
     //link.GetAgeInfo()->SetAgeUserDefinedName( params[0] );
     plUUID guid( (const char *)params[1] );
@@ -375,7 +375,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Original Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     link.SpawnPoint() = plSpawnPointInfo( (const char *)params[1], (const char *)params[1] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
@@ -388,7 +388,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kOwnedBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I own...");
@@ -400,7 +400,7 @@ PF_CONSOLE_CMD( Net,
                "Link to specified age using Personal Age Linking Book rules" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kVisitBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to age I can visit...");
@@ -412,7 +412,7 @@ PF_CONSOLE_CMD( Net,
                "Link to a sub-age of the current age" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
     link.SetLinkingRules( plNetCommon::LinkingRules::kSubAgeBook );
     plNetLinkingMgr::GetInstance()->LinkToAge( &link );
     PrintString("Linking to a sub-age...");
@@ -481,7 +481,7 @@ PF_CONSOLE_CMD( Net,
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
 
     plAgeInfoStruct info;
-    info.SetAgeFilename( params[0] );
+    info.SetAgeFilename( (const char *)params[0] );
     
     plAgeLinkStruct link;
     if (!VaultGetOwnedAgeLink(&info, &link)) {
@@ -806,8 +806,8 @@ PF_CONSOLE_CMD( Net_Vault,
                "Add an instance of the specified age to your bookshelf" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
-    link.GetAgeInfo()->SetAgeInstanceName( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeInstanceName( (const char *)params[0] );
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -822,7 +822,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove the specified age from your bookshelf" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename( params[0] );
+    info.SetAgeFilename( (const char *)params[0] );
     bool success = VaultUnregisterOwnedAgeAndWait(&info);
     PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
 }
@@ -834,8 +834,8 @@ PF_CONSOLE_CMD( Net_Vault,
                "Add an instance of the specified age to your private links" )
 {
     plAgeLinkStruct link;
-    link.GetAgeInfo()->SetAgeFilename( params[0] );
-    link.GetAgeInfo()->SetAgeInstanceName( params[0] );
+    link.GetAgeInfo()->SetAgeFilename( (const char *)params[0] );
+    link.GetAgeInfo()->SetAgeInstanceName( (const char *)params[0] );
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
@@ -850,7 +850,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "Remove all instances of the specified age from your private links" )
 {
     plAgeInfoStruct info;
-    info.SetAgeFilename( params[0] );
+    info.SetAgeFilename( (const char *)params[0] );
 
     unsigned count = 0;
     while (VaultUnregisterVisitAgeAndWait(&info))

@@ -72,7 +72,7 @@ void plNetClientMsgScreener::ICreateStatusLog() const
 //
 // return cur age name
 //
-const char* plNetClientMsgScreener::IGetAgeName() const
+plString plNetClientMsgScreener::IGetAgeName() const
 {
     plNetLinkingMgr *lm = plNetLinkingMgr::GetInstance();
     return lm && lm->GetAgeLink()->GetAgeInfo() ? lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename() : "?";

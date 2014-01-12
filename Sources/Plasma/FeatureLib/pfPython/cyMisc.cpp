@@ -632,7 +632,7 @@ PyObject* cyMisc::GetAgeInfo()
 }
 
 
-const char* cyMisc::GetPrevAgeName()
+plString cyMisc::GetPrevAgeName()
 {
     plNetLinkingMgr* nmgr = plNetLinkingMgr::GetInstance();
     if (nmgr)
@@ -641,7 +641,7 @@ const char* cyMisc::GetPrevAgeName()
         if (als)
             return als->GetAgeInfo()->GetAgeFilename();
     }
-    return nil;
+    return plString::Null;
 }
 
 PyObject* cyMisc::GetPrevAgeInfo()
