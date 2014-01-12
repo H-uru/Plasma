@@ -89,7 +89,6 @@ set(MaxComponent_HEADERS
     plVolumeGadgetComponent.h
     plWaterComponent.h
     plXImposter.h
-    WavFileStructs.h
 )
 
 set(MaxComponent_RESOURCES

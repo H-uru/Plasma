@@ -55,34 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 
-//////////////
-// PLAVATARMSG
-//////////////
-
-// CTOR()
-plAvatarMsg::plAvatarMsg()
-: plMessage()
-{
-}
-
-// CTOR(sender, receiver, time)
-plAvatarMsg::plAvatarMsg(const plKey &sender, const plKey &receiver)
-: plMessage(sender, receiver, nil)
-{
-}
-
-// READ
-void plAvatarMsg::Read(hsStream *stream, hsResMgr *mgr)
-{
-    plMessage::IMsgRead(stream, mgr);
-}
-
-// WRITE
-void plAvatarMsg::Write(hsStream *stream, hsResMgr *mgr)
-{
-    plMessage::IMsgWrite(stream, mgr);
-}
-
 //////////////////////
 // PLARMATUREUPDATEMSG
 //////////////////////
@@ -119,23 +91,6 @@ void plArmatureUpdateMsg::Write(hsStream *stream, hsResMgr *mgr)
     hsAssert(false, "This message is not supposed to travel over the network or persist in a file.");
 }
 
-// ISLOCAL
-bool plArmatureUpdateMsg::IsLocal() const
-{
-    return fIsLocal;
-}
-
-// ISPLAYERCONTROLLED
-bool plArmatureUpdateMsg::IsPlayerControlled() const
-{
-    return fIsPlayerControlled;
-}
-
-bool plArmatureUpdateMsg::IsInvis() const
-{
-    return fIsInvis;
-}
-
 /////////////////////
 // PLAVATARSETTYPEMSG
 /////////////////////
@@ -164,18 +119,6 @@ void plAvatarSetTypeMsg::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteBool(fIsPlayer);
 }
 
-// SETISPLAYER
-void plAvatarSetTypeMsg::SetIsPlayer(bool is)
-{
-    fIsPlayer = is;
-}
-
-// ISPLAYER
-bool plAvatarSetTypeMsg::IsPlayer()
-{
-    return fIsPlayer;
-}
-
 
 
 //////////////
@@ -196,11 +139,6 @@ plAvTaskMsg::plAvTaskMsg(const plKey &sender, const plKey &receiver, plAvTask *t
 : plAvatarMsg(sender, receiver),
   fTask(task)
 {
-}
-
-plAvTask *plAvTaskMsg::GetTask()
-{
-    return fTask;
 }
 
 // READ
@@ -562,11 +500,6 @@ plAvPushBrainMsg::plAvPushBrainMsg(const plKey& sender, const plKey &receiver, p
     fBrain = brain;
 }
 
-// dtor
-plAvPushBrainMsg::~plAvPushBrainMsg()
-{
-}
-
 // READ
 void plAvPushBrainMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
@@ -583,60 +516,7 @@ void plAvPushBrainMsg::Write(hsStream *stream, hsResMgr *mgr)
     mgr->WriteCreatable(stream, fBrain);
 }
 
-
-
-//////////////////
-//
-// PLAVPOPBRAINMSG
-//
-//////////////////
-
-// default ctor
-plAvPopBrainMsg::plAvPopBrainMsg()
-{
-}
-
-// canonical ctor
-plAvPopBrainMsg::plAvPopBrainMsg(const plKey &sender, const plKey &receiver)
-: plAvTaskMsg(sender, receiver)
-{
-}
-
 #endif // SERVER
-
-
-/////////////////
-////
-//// PLAVEMOTEMSG
-////
-/////////////////
-//
-//// default ctor
-//plAvEmoteMsg::plAvEmoteMsg()
-//: fAnimName(nil)
-//{
-//}
-//
-//// canonical ctor
-//plAvEmoteMsg::plAvEmoteMsg(plKey sender, plKey receiver, char *name)
-//: plAvTaskMsg(sender, receiver)
-//{
-//  fAnimName = hsStrcpy(name);
-//}
-//
-//// READ
-//void plAvEmoteMsg::Read(hsStream *stream, hsResMgr *mgr)
-//{
-//  plAvTaskMsg::Read(stream, mgr);
-//  fAnimName = stream->ReadSafeString();
-//}
-//
-//// WRITE
-//void plAvEmoteMsg::Write(hsStream *stream, hsResMgr *mgr)
-//{
-//  plAvTaskMsg::Write(stream, mgr);
-//  stream->WriteSafeString(fAnimName);
-
 
 
 
@@ -650,8 +530,6 @@ plAvatarStealthModeMsg::plAvatarStealthModeMsg() : plAvatarMsg(), fMode(kStealth
 { 
     SetBCastFlag(plMessage::kBCastByExactType); 
 }
-
-plAvatarStealthModeMsg::~plAvatarStealthModeMsg() {}
 
 // READ stream mgr
 void plAvatarStealthModeMsg::Read(hsStream *stream, hsResMgr *mgr)

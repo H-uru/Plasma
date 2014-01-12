@@ -77,8 +77,7 @@ class plAGAnim;
 
 // PLANIMSTAGE default ctor
 plAnimStage::plAnimStage()
-: fAnimName(nil),
-  fNotify(0),
+: fNotify(0),
   fArmature(nil),
   fBrain(nil),
   fForwardType(kForwardNone),
@@ -102,8 +101,9 @@ plAnimStage::plAnimStage()
 {
 }
 
-plAnimStage::plAnimStage(const char *animName, uint8_t notify)
-: fNotify(notify),
+plAnimStage::plAnimStage(const plString &animName, uint8_t notify)
+: fAnimName(animName),
+  fNotify(notify),
   fArmature(nil),
   fBrain(nil),
   fForwardType(kForwardAuto),       // different from default
@@ -125,19 +125,19 @@ plAnimStage::plAnimStage(const char *animName, uint8_t notify)
   fReverseOnIdle(false),
   fDone(false)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
 
 // PLANIMSTAGE canonical ctor
-plAnimStage::plAnimStage(const char *animName,
+plAnimStage::plAnimStage(const plString &animName,
                          uint8_t notify,
                          ForwardType forward,
                          BackType back,
                          AdvanceType advance,
                          RegressType regress,
                          int loops)
-: fArmature(nil),
+: fAnimName(animName),
+  fArmature(nil),
   fBrain(nil),
   fNotify(notify),
   fForwardType(forward),
@@ -159,10 +159,9 @@ plAnimStage::plAnimStage(const char *animName,
   fReverseOnIdle(false),
   fDone(false)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
-plAnimStage::plAnimStage(const char *animName,
+plAnimStage::plAnimStage(const plString &animName,
                          uint8_t notify,
                          ForwardType forward,
                          BackType back,
@@ -173,7 +172,8 @@ plAnimStage::plAnimStage(const char *animName,
                          int advanceTo,
                          bool doRegressTo,
                          int regressTo)
-: fArmature(nil),
+: fAnimName(animName),
+  fArmature(nil),
   fBrain(nil),
   fNotify(notify),
   fForwardType(forward),
@@ -195,15 +195,11 @@ plAnimStage::plAnimStage(const char *animName,
   fReverseOnIdle(false),
   fDone(false)
 {
-    fAnimName = hsStrcpy(animName);
 }
 
 // PLANIMSTAGE dtor
 plAnimStage::~plAnimStage()
 {
-    if(fAnimName)
-        delete[] fAnimName;
-
     hsAssert(fAnimInstance == nil, "plAnimStage still has anim instance during destruction. (that's bad.)");
     // we could delete the animation instance here, but it should have been deleted already...
     // *** check back in a while....
@@ -213,7 +209,7 @@ plAnimStage::~plAnimStage()
 // ----------
 const plAnimStage& plAnimStage::operator=(const plAnimStage& src)
 {
-    fAnimName = hsStrcpy(src.fAnimName);
+    fAnimName = src.fAnimName;
     fNotify = src.fNotify;
     fForwardType = src.fForwardType;
     fBackType = src.fBackType;
@@ -260,12 +256,12 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
             fAnimInstance->SetCurrentTime(fLocalTime);
 #ifdef DEBUG_MULTISTAGE
             char sbuf[256];
-            sprintf(sbuf,"AnimStage::Attach - attaching stage %s",fAnimName);
+            snprintf(sbuf, arrsize(sbuf), "AnimStage::Attach - attaching stage %s", fAnimName.c_str());
             plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
         } else {
             char buf[256];
-            sprintf(buf, "Can't find animation <%s> for animation stage. Anything could happen.", fAnimName);
+            snprintf(buf, arrsize(buf), "Can't find animation <%s> for animation stage. Anything could happen.", fAnimName.c_str());
             hsAssert(false, buf);
 #ifdef DEBUG_MULTISTAGE
             plAvatarMgr::GetInstance()->GetLog()->AddLine(buf);
@@ -332,10 +328,10 @@ bool plAnimStage::Detach(plArmatureMod *armature)
 
 #ifdef DEBUG_MULTISTAGE
     char sbuf[256];
-    sprintf(sbuf,"AnimStage::Detach - detaching stage %s",fAnimName);
+    snprintf(sbuf, arrsize(sbuf), "AnimStage::Detach - detaching stage %s", fAnimName.c_str());
     plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
-//  hsStatusMessageF("Detaching plAnimStage <%s>", fAnimName);
+//  hsStatusMessageF("Detaching plAnimStage <%s>", fAnimName.c_str());
     if(fArmature) {
         fArmature = nil;
 
@@ -346,9 +342,7 @@ bool plAnimStage::Detach(plArmatureMod *armature)
         }
 #ifdef DEBUG_MULTISTAGE
     } else {
-        char sbuf[256];
-        sprintf(sbuf,"AnimStage::Detach: stage already detached");
-        plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
+        plAvatarMgr::GetInstance()->GetLog()->AddLine("AnimStage::Detach: stage already detached");
 #endif
 //      hsStatusMessageF("Detach: stage already detached.");
     }
@@ -535,7 +529,7 @@ bool plAnimStage::ITryAdvance(plArmatureMod *avMod)
     bool stageDone = false;
 
 
-    // hsStatusMessageF("Sending advance message for stage <%s>\n", fAnimName);
+    // hsStatusMessageF("Sending advance message for stage <%s>\n", fAnimName.c_str());
     if(fAdvanceType == kAdvanceAuto || fAdvanceType == kAdvanceOnMove) {
         stageDone = true;
     }
@@ -562,19 +556,13 @@ bool plAnimStage::ITryRegress(plArmatureMod *avMod)
     // we may want to rename this to "ReachedStageEnd"
     ISendNotify(kNotifyRegress, proEventData::kRegressPrevStage, avMod, fBrain);
 
-    // hsStatusMessageF("Sending regress message for stage <%s>\n", fAnimName);
+    // hsStatusMessageF("Sending regress message for stage <%s>\n", fAnimName.c_str());
     if(fRegressType == kRegressAuto) {
         stageDone = true;
     }
     return stageDone;
 }
 
-
-// GETANIMNAME
-const char * plAnimStage::GetAnimName()
-{
-    return fAnimName;
-}
 
 // GETFORWARDTYPE
 plAnimStage::ForwardType plAnimStage::GetForwardType()
@@ -728,27 +716,24 @@ int plAnimStage::GetPrevStage(int curStage)
 }
 
 // DUMPDEBUG
-void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    std::string str;
+    plStringStream str;
 
-    str += fAnimName;
-    str += " ";
+    str << fAnimName;
+    str << " ";
 
-    if(fLoops) {
-        sprintf(strBuf, "loop(%d/%d)", fCurLoop, fLoops);
-        str += strBuf;
-    }
+    if(fLoops)
+        str << plString::Format("loop(%d/%d)", fCurLoop, fLoops);
 
-    sprintf(strBuf, "time: (%f/%f)", fLocalTime, fLength);
-    str += strBuf;
+    str << plString::Format("time: (%f/%f)", fLocalTime, fLength);
 
     if(active)
-        debugTxt.DrawString(x, y, str.c_str(), 0, 255, 0);
+        debugTxt.DrawString(x, y, str.GetString().c_str(), 0, 255, 0);
     else if(fAnimInstance)
-        debugTxt.DrawString(x, y, str.c_str());
+        debugTxt.DrawString(x, y, str.GetString().c_str());
     else
-        debugTxt.DrawString(x, y, str.c_str(), 255, 255, 0);
+        debugTxt.DrawString(x, y, str.GetString().c_str(), 255, 255, 0);
 
     y += lineHeight;
 }
@@ -756,8 +741,7 @@ void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, char *s
 // READ
 void plAnimStage::Read(hsStream *stream, hsResMgr *mgr)
 {
-    delete [] fAnimName;
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fNotify = stream->ReadByte();
     fForwardType = (ForwardType)stream->ReadLE32();
     fBackType = (BackType)stream->ReadLE32();

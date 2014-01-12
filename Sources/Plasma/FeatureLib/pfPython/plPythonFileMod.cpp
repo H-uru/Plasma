@@ -647,7 +647,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                 // if it wasn't a named string then must be normal string type
                                 if ( isNamedAttr == 0 )
                                     if ( !parameter.fString.IsNull() )
-                                        value = PyString_FromString(parameter.fString.c_str());
+                                        value = PyString_FromPlString(parameter.fString);
                                 break;
                             case plPythonParameter::kSceneObject:
                             case plPythonParameter::kSceneObjectList:
@@ -1383,7 +1383,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                             // create event list
                             PyObject* event = PyList_New(4);
                             PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kVariable));
-                            PyList_SetItem(event, 1, PyString_FromString(eventData->fName));
+                            PyList_SetItem(event, 1, PyString_FromPlString(eventData->fName));
                             PyList_SetItem(event, 2, PyLong_FromLong(eventData->fDataType));
                             
                             // depending on the data type create the data
@@ -1882,7 +1882,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kRateIt:
                     value = PyTuple_New(3);
                     str = pkimsg->GetString().ToWchar();
-                    PyTuple_SetItem(value,0,PyString_FromString(pkimsg->GetUser()));
+                    PyTuple_SetItem(value,0,PyString_FromPlString(pkimsg->GetUser()));
                     PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str, str.GetSize()));
                     PyTuple_SetItem(value,2,PyLong_FromLong(pkimsg->GetIntValue()));
                     break;
@@ -1999,7 +1999,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 if ( mbrIndex != -1 )
                 {
                     plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
-                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName().c_str(), mbr->GetPlayerID(), mbr->GetDistSq());
+                    player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
                 }
                 else
                 {
@@ -2155,8 +2155,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 else
                 {
                     // else if we could not find the player in our list, then just return a string of the user's name
-                    const char * fromName = pkimsg->GetUser();
-                    if (!fromName)
+                    plString fromName = pkimsg->GetUser();
+                    if (fromName.IsEmpty())
                         fromName = "Anonymous Coward";
                     player = pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fromName, pkimsg->GetPlayerID(), 0.0);
                 }
@@ -2410,7 +2410,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnBackdoorMsg],
                     (char*)fFunctionNames[kfunc_OnBackdoorMsg],
-                    "ss", dt->GetTarget(), dt->GetString());
+                    "ss", dt->GetTarget().c_str(), dt->GetString().c_str());
             if ( retVal == nil )
             {
                 // if there was an error make sure that the stderr gets flushed so it can be seen

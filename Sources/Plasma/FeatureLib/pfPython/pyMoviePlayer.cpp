@@ -54,12 +54,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plMovieMsg.h"
 #include "pfMessage/pfMovieEventMsg.h"
 
-pyMoviePlayer::pyMoviePlayer(const char* movieName,pyKey& selfKey)
+pyMoviePlayer::pyMoviePlayer(const plString& movieName, pyKey& selfKey)
 {
-    fMovieName = hsStrcpy(movieName);
+    fMovieName = movieName;
     fSelfKey = selfKey.getKey();
     // make the movie
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
@@ -75,17 +75,14 @@ pyMoviePlayer::pyMoviePlayer(const char* movieName,pyKey& selfKey)
 pyMoviePlayer::~pyMoviePlayer()
 {
     Stop();
-    delete [] fMovieName;
 }
 
-void pyMoviePlayer::MakeMovie(const char* movieName, pyKey& selfKey)
+void pyMoviePlayer::MakeMovie(const plString& movieName, pyKey& selfKey)
 {
     Stop();
-    if (fMovieName)
-        delete [] fMovieName;
-    fMovieName = hsStrcpy(movieName);
+    fMovieName = movieName;
     fSelfKey = selfKey.getKey();
-    if (fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMake | plMovieMsg::kAddCallbacks);
         mov->SetSender(fSelfKey);
@@ -99,7 +96,7 @@ void pyMoviePlayer::MakeMovie(const char* movieName, pyKey& selfKey)
 
 void pyMoviePlayer::SetCenter(float x, float y)
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kMove);
         mov->SetSender(fSelfKey);
@@ -111,7 +108,7 @@ void pyMoviePlayer::SetCenter(float x, float y)
 
 void pyMoviePlayer::SetScale(float width, float height)
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kScale);
         mov->SetSender(fSelfKey);
@@ -123,7 +120,7 @@ void pyMoviePlayer::SetScale(float width, float height)
 
 void pyMoviePlayer::SetColor(pyColor color)
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kColor);
         mov->SetSender(fSelfKey);
@@ -134,7 +131,7 @@ void pyMoviePlayer::SetColor(pyColor color)
 
 void pyMoviePlayer::SetVolume(float volume)
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kVolume);
         mov->SetSender(fSelfKey);
@@ -145,7 +142,7 @@ void pyMoviePlayer::SetVolume(float volume)
 
 void pyMoviePlayer::SetOpacity(float opacity)
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kOpacity);
         mov->SetSender(fSelfKey);
@@ -157,7 +154,7 @@ void pyMoviePlayer::SetOpacity(float opacity)
 
 void pyMoviePlayer::Play()
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart);
         mov->SetSender(fSelfKey);
@@ -167,7 +164,7 @@ void pyMoviePlayer::Play()
 
 void pyMoviePlayer::PlayPaused()
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStart | plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
@@ -177,7 +174,7 @@ void pyMoviePlayer::PlayPaused()
 
 void pyMoviePlayer::Pause()
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kPause);
         mov->SetSender(fSelfKey);
@@ -187,7 +184,7 @@ void pyMoviePlayer::Pause()
 
 void pyMoviePlayer::Resume()
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kResume);
         mov->SetSender(fSelfKey);
@@ -197,7 +194,7 @@ void pyMoviePlayer::Resume()
 
 void pyMoviePlayer::Stop()
 {
-    if ( fMovieName)
+    if (!fMovieName.IsEmpty())
     {
         plMovieMsg* mov = new plMovieMsg(fMovieName, plMovieMsg::kStop);
         mov->SetSender(fSelfKey);

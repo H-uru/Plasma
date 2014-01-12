@@ -78,35 +78,35 @@ protected:
     hsColorRGBA fColor;
 
     hsColorRGBA fFadeInColor;
-    float    fFadeInSecs;
+    float       fFadeInSecs;
 
     hsColorRGBA fFadeOutColor;
-    float    fFadeOutSecs;
+    float       fFadeOutSecs;
 
-    float    fVolume;
+    float       fVolume;
 
-    char*       fFileName;
+    plString    fFileName;
 
-    uint16_t      fCmd;
+    uint16_t    fCmd;
 
     hsTArray<plMessage*>    fCallbacks;
 
 public:
-    plMovieMsg(const char* n, uint16_t cmd) 
+    plMovieMsg(const plString& name, uint16_t cmd)
         : plMessage(nil, nil, nil) 
     { 
-        fFileName = hsStrcpy(n);
+        fFileName = name;
         SetCmd(cmd).MakeDefault();
     }
-    plMovieMsg() : fFileName(nil), fCmd(kIgnore)
+
+    plMovieMsg() : fCmd(kIgnore)
     { 
         MakeDefault();
     }
+
     virtual ~plMovieMsg() 
     { 
-        delete [] fFileName; 
-        int i;
-        for( i = 0; i < fCallbacks.GetCount(); i++ )
+        for (int i = 0; i < fCallbacks.GetCount(); i++)
         {
             hsRefCnt_SafeUnRef(fCallbacks[i]);
         }
@@ -157,8 +157,8 @@ public:
 
     // Include the movie folder, e.g. "avi/porno.bik"
     // String is copied, not pointer copy.
-    const char* GetFileName() const { return fFileName; }
-    plMovieMsg& SetFileName(const char* n) { delete [] fFileName; fFileName = hsStrcpy(n); return *this; }
+    plString GetFileName() const { return fFileName; }
+    plMovieMsg& SetFileName(const plString& name) { fFileName = name; return *this; }
 
     // Color is mostly useful for alpha fade up and down.
     const hsColorRGBA& GetColor() const { return fColor; }

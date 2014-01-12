@@ -145,7 +145,7 @@ bool plMultistageBehMod::MsgReceive(plMessage* msg)
                         plAnimStage* stage = new plAnimStage;
                         *stage = *((*fStages)[i]);
                         stages->push_back(stage);
-                        if (strstr(stage->GetAnimName(),"adder") != nil)
+                        if (stage->GetAnimName().Find("adder") >= 0)
                             ladder = true;
                     }
 

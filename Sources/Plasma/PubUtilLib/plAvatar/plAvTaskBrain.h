@@ -75,7 +75,7 @@ public:
     virtual void Finish(plArmatureMod *avatar, plArmatureBrain *brain, double time, float elapsed);
         
     /** dump descriptive stuff to the given debug text */
-    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt);
 
     plArmatureBrain *GetBrain();
 

@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plDXShader::plDXShader(plShader* owner)
 :   fOwner(owner),
-    fErrorString(nil),
     fPipe(nil)
 {
     owner->SetDeviceRef(this);
@@ -75,17 +74,6 @@ void plDXShader::SetOwner(plShader* owner)
         fOwner = owner;
         owner->SetDeviceRef(this);
     }
-}
-
-const char* plDXShader::ISetError(const char* errStr)
-{
-    delete [] fErrorString;
-    if( errStr )
-        fErrorString = hsStrcpy(errStr);
-    else
-        fErrorString = nil;
-
-    return fErrorString;
 }
 
 HRESULT plDXShader::IOnError(HRESULT hr, const char* errStr)

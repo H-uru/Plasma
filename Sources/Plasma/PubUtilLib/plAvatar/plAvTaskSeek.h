@@ -96,7 +96,7 @@ public:
     virtual void LeaveAge(plArmatureMod *avatar);
 
     /** Spew "useful" information to the game screen. Used when Avatar.Debug is active. */
-    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt);
 
     void DumpToAvatarLog(plArmatureMod *avatar);
         

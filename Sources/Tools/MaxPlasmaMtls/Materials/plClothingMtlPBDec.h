@@ -195,8 +195,8 @@ public:
         {
             plClothingElement *element = tileset->fElements.Get(i);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i]), 
-                        WM_SETTEXT, NULL, (LPARAM)element->fName);
-            sprintf(buff, "(%d, %d)", element->fWidth, element->fHeight);
+                        WM_SETTEXT, NULL, (LPARAM)element->fName.c_str());
+            snprintf(buff, arrsize(buff), "(%d, %d)", element->fWidth, element->fHeight);
             SendMessage(GetDlgItem(hWnd, plClothingMtl::TextConstants[2 * i + 1]), 
                         WM_SETTEXT, NULL, (LPARAM)buff);
             

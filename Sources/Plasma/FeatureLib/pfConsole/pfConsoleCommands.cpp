@@ -4427,7 +4427,7 @@ PF_CONSOLE_CMD( Access,
         return;
     }
 
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     if( !item )
         return;
 
@@ -6557,7 +6557,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
 {
     hsTArray<plClosetItem> items;
     items.SetCount(1);
-    items[0].fItem = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    items[0].fItem = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     items[0].fOptions.fTint1.Set(params[1], params[2], params[3], 1.f);
     items[0].fOptions.fTint2.Set(params[4], params[5], params[6], 1.f);
 
@@ -6570,7 +6570,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Has your avatar wear the item of clothing specified" )     // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
 
     if (avMod && item)
     {
@@ -6584,7 +6584,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Has your avatar remove the item of clothing specified" )       // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     
     if (avMod && item)
     {
@@ -6598,7 +6598,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Change the color of an item of clothing you're wearing" )      // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     uint8_t layer;
     if ((int)params[4] == 2)
         layer = plClothingElement::kLayerTint2;
@@ -6652,7 +6652,7 @@ PF_CONSOLE_CMD( Clothing,
                "string name",
                "Switch your avatar to a different gender ('Male' / 'Female')" )
 {
-    plClothingMgr::ChangeAvatar(params[0]);
+    plClothingMgr::ChangeAvatar((const char *)params[0]);
 }
 
 PF_CONSOLE_CMD( Clothing,                           // Group name
@@ -6846,7 +6846,7 @@ PF_CONSOLE_CMD( Python,
     const char* extraParms = "";
     if (numParams > 1)
         extraParms = params[1];
-    pfBackdoorMsg *msg = new pfBackdoorMsg( params[0],extraParms );
+    pfBackdoorMsg *msg = new pfBackdoorMsg((const char *)params[0], extraParms);
     // send it off
     plgDispatch::MsgSend( msg );
 }

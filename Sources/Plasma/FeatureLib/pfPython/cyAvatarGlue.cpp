@@ -223,10 +223,10 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getEntireClothingList, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::vector<std::string> clothingList = self->fThis->GetEntireClothingList(clothingType);
+    std::vector<plString> clothingList = self->fThis->GetEntireClothingList(clothingType);
     PyObject* retVal = PyList_New(clothingList.size());
     for (int i = 0; i < clothingList.size(); i++)
-        PyList_SetItem(retVal, i, PyString_FromString(clothingList[i].c_str()));
+        PyList_SetItem(retVal, i, PyString_FromPlString(clothingList[i]));
     return retVal;
 }
 

@@ -64,15 +64,17 @@ class plAvatarMsg : public plMessage
 {
 public:
     // tors
-    plAvatarMsg();
-    plAvatarMsg(const plKey &sender, const plKey &receiver);
-    
+    plAvatarMsg() : plMessage() { }
+    plAvatarMsg(const plKey &sender, const plKey &receiver)
+        : plMessage(sender, receiver, nil) { }
+
+
     // plasma protocol
     CLASSNAME_REGISTER( plAvatarMsg );
     GETINTERFACE_ANY( plAvatarMsg, plMessage );
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    virtual void Read(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgRead(stream, mgr); }
+    virtual void Write(hsStream *stream, hsResMgr *mgr) { plMessage::IMsgWrite(stream, mgr); }
 };
 
 
@@ -90,13 +92,13 @@ public:
                         plArmatureMod *armature);
 
     /** The avatar that sent this message is the local avatar for this client. */
-    bool IsLocal() const;
+    bool IsLocal() const { return fIsLocal; }
     void SetIsLocal(bool on) { fIsLocal = on; }
     /** The avatar that sent this message is controlled by a human being -- although
         not necessarily a local human being. */
-    bool IsPlayerControlled() const;
+    bool IsPlayerControlled() const { return fIsPlayerControlled; }
     void SetIsPlayerControlled(bool on) { fIsPlayerControlled = on; }
-    bool IsInvis() const;
+    bool IsInvis() const { return fIsInvis; }
     void SetInvis(bool val) { fIsInvis = val; }
 
     // plasma protocol
@@ -108,7 +110,7 @@ public:
 
     plArmatureMod * fArmature;  // the armature that sent this message
                                 // valid during the message's lifetime
-    
+
 protected:
     // these will probably change to enums + bitmasks .. don't count on the representation
     bool fIsLocal;
@@ -124,8 +126,8 @@ public:
     plAvatarSetTypeMsg(const plKey &sender, const plKey &receiver);
 
     // theoretically we will someday achieve a broader taxonomy
-    void SetIsPlayer(bool is);
-    bool IsPlayer();
+    void SetIsPlayer(bool is) { fIsPlayer = is; }
+    bool IsPlayer() const { return fIsPlayer; }
 
     CLASSNAME_REGISTER(plAvatarSetTypeMsg);
     GETINTERFACE_ANY(plAvatarSetTypeMsg, plAvatarMsg);
@@ -151,7 +153,7 @@ public:
     plAvTaskMsg(const plKey &sender, const plKey &receiver);
     plAvTaskMsg(const plKey &sender, const plKey &receiver, plAvTask *task);
 
-    plAvTask *GetTask();
+    plAvTask *GetTask() const { return fTask; }
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvTaskMsg );
@@ -344,7 +346,6 @@ public:
     // tors
     plAvPushBrainMsg();
     plAvPushBrainMsg(const plKey& sender, const plKey &receiver, plArmatureBrain *brain);
-    ~plAvPushBrainMsg();
 
     CLASSNAME_REGISTER( plAvPushBrainMsg );
     GETINTERFACE_ANY( plAvPushBrainMsg, plAvTaskMsg);
@@ -364,8 +365,9 @@ class plAvPopBrainMsg : public plAvTaskMsg
 {
 public:
     // tors
-    plAvPopBrainMsg();
-    plAvPopBrainMsg(const plKey &sender, const plKey &receiver);
+    plAvPopBrainMsg() { }
+    plAvPopBrainMsg(const plKey &sender, const plKey &receiver)
+        : plAvTaskMsg(sender, receiver) { }
 
     CLASSNAME_REGISTER( plAvPopBrainMsg );
     GETINTERFACE_ANY( plAvPopBrainMsg, plAvTaskMsg);
@@ -379,7 +381,6 @@ class plAvatarStealthModeMsg : public plAvatarMsg
 {
 public:
     plAvatarStealthModeMsg();
-    ~plAvatarStealthModeMsg();
 
     // modes
     enum

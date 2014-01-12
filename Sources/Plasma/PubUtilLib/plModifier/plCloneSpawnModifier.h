@@ -47,14 +47,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCloneSpawnModifier : public plSingleModifier
 {
 protected:
-    char* fTemplateName;
+    plString fTemplateName;
     bool fExportTime;
 
     virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
 
 public:
     plCloneSpawnModifier();
-    ~plCloneSpawnModifier();
 
     CLASSNAME_REGISTER(plCloneSpawnModifier);
     GETINTERFACE_ANY(plCloneSpawnModifier, plSingleModifier);
@@ -64,7 +63,7 @@ public:
 
     virtual void SetTarget(plSceneObject* so);
 
-    void SetTemplateName(const char *templateName);
+    void SetTemplateName(const plString &templateName) { fTemplateName = templateName; }
 
     // Set this to true at export time so the clone mod won't try to make a
     // clone when it's attached

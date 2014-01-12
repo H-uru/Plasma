@@ -53,16 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMultistageStage.h"
 #include "plAvatar/plAnimStage.h"
 
-plBaseStage::plBaseStage()
-{
-    fName = nil;
-}
-
-plBaseStage::~plBaseStage()
-{
-    delete [] fName;
-}
-
 BOOL plBaseStage::IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg == WM_INITDIALOG)
@@ -96,24 +86,17 @@ void plBaseStage::IDestroyDlg(HWND hDlg)
         GetCOREInterface()->DeleteRollupPage(hDlg);
 }
 
-const char* plBaseStage::GetName()
+plString plBaseStage::GetName()
 {
-    if (!fName)
-        fName = hsStrcpy("DefaultName");
+    if (fName.IsEmpty())
+        fName = "DefaultName";
     return fName;
-}
-
-void plBaseStage::SetName(const char* name)
-{
-    delete [] fName;
-    fName = hsStrcpy(name);
 }
 
 void plBaseStage::Read(hsStream *stream)
 {
     stream->ReadLE16();
-    delete [] fName;
-    fName = stream->ReadSafeString();
+    fName = stream->ReadSafeString_TEMP();
 }
 
 void plBaseStage::Write(hsStream *stream)
@@ -124,7 +107,7 @@ void plBaseStage::Write(hsStream *stream)
 
 void plBaseStage::IBaseClone(plBaseStage* clone)
 {
-    clone->fName = hsStrcpy(fName);
+    clone->fName = fName;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +117,6 @@ HWND plStandardStage::fDlg = NULL;
 
 plStandardStage::plStandardStage()
 {
-    fAnimName = nil;
     fNumLoops = 0;
     fLoopForever = false;
     fForward = 0;
@@ -149,19 +131,13 @@ plStandardStage::plStandardStage()
     fRegressTo = 0;
 }
 
-plStandardStage::~plStandardStage()
-{
-    delete [] fAnimName;
-}
-
 void plStandardStage::Read(hsStream *stream)
 {
     plBaseStage::Read(stream);
 
     uint16_t version = stream->ReadLE16();
 
-    delete [] fAnimName;
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fNumLoops = stream->ReadLE32();
     fLoopForever = stream->ReadBool();
     fForward = stream->ReadByte();
@@ -329,10 +305,9 @@ void plStandardStage::IGetAnimName()
     char buf[256];
     edit->GetText(buf, sizeof(buf));
 
-    if (strcmp(buf, fAnimName) != 0)
+    if (fAnimName != buf)
     {
-        delete [] fAnimName;
-        fAnimName = hsStrcpy(buf);
+        fAnimName = buf;
 
         SetSaveRequiredFlag();
     }
@@ -387,7 +362,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(fAnimName);
+    edit->SetText(fAnimName.c_str());
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);
@@ -446,7 +421,7 @@ plAnimStage* plStandardStage::CreateStage()
 plBaseStage* plStandardStage::Clone()
 {
     plStandardStage* clone = new plStandardStage;
-    clone->fAnimName = hsStrcpy(fAnimName);
+    clone->fAnimName = fAnimName;
     clone->fNumLoops = fNumLoops;
     clone->fLoopForever = fLoopForever;
     clone->fForward = fForward;

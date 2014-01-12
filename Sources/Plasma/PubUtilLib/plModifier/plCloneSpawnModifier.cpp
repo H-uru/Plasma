@@ -53,19 +53,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plNodeRefMsg.h"
 #include "plMessage/plLoadCloneMsg.h"
 
-plCloneSpawnModifier::plCloneSpawnModifier() : fTemplateName(nil), fExportTime(false)
+plCloneSpawnModifier::plCloneSpawnModifier() : fExportTime(false)
 {
-}
-
-plCloneSpawnModifier::~plCloneSpawnModifier()
-{
-    delete [] fTemplateName;
 }
 
 void plCloneSpawnModifier::Read(hsStream *s, hsResMgr *mgr)
 {
-    delete [] fTemplateName;
-    fTemplateName = s->ReadSafeString();
+    fTemplateName = s->ReadSafeString_TEMP();
     plSingleModifier::Read(s, mgr);
 }
 
@@ -73,12 +67,6 @@ void plCloneSpawnModifier::Write(hsStream *s, hsResMgr *mgr)
 {
     s->WriteSafeString(fTemplateName);
     plSingleModifier::Write(s, mgr);
-}
-
-void plCloneSpawnModifier::SetTemplateName(const char *templateName)
-{
-    delete [] fTemplateName;
-    fTemplateName = hsStrcpy(templateName);
 }
 
 void plCloneSpawnModifier::SetTarget(plSceneObject* so)

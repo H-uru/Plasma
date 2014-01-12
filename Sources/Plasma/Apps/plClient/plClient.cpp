@@ -860,7 +860,7 @@ bool plClient::MsgReceive(plMessage* msg)
 //============================================================================
 bool plClient::IHandleMovieMsg(plMovieMsg* mov)
 {
-    if( !(mov->GetFileName() && *mov->GetFileName()) )
+    if (mov->GetFileName().IsEmpty())
         return true;
 
     int i;
@@ -869,7 +869,7 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     {
         for( i = 0; i < fMovies.GetCount(); i++ )
         {
-            if( !stricmp(mov->GetFileName(), fMovies[i]->GetFileName()) )
+            if (mov->GetFileName().CompareI(fMovies[i]->GetFileName()) == 0)
                 break;
         }
     }
@@ -929,7 +929,7 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     // If a movie has lost its filename, it means something went horribly wrong
     // with playing it and it has shutdown. Or we just stopped it. Either way, 
     // we need to clear it out of our list.
-    if( !(fMovies[i]->GetFileName() && *fMovies[i]->GetFileName()) )
+    if (fMovies[i]->GetFileName().IsEmpty())
     {
         delete fMovies[i];
         fMovies.Remove(i);
@@ -1948,7 +1948,7 @@ void plClient::IServiceMovies()
     int i;
     for( i = 0; i < fMovies.GetCount(); i++ )
     {
-        hsAssert(fMovies[i]->GetFileName() && *fMovies[i]->GetFileName(), "Lost our movie");
+        hsAssert(!fMovies[i]->GetFileName().IsEmpty(), "Lost our movie");
         if( !fMovies[i]->NextFrame() )
         {
             delete fMovies[i];

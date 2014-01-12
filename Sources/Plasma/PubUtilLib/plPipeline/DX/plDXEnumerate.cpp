@@ -66,12 +66,12 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
     int i;
     for( i = 0; i < GetNumDrivers(); i++ )
     {
-        if( !stricmp(GetDriver(i)->fAdapterInfo.Description, devRec->GetDriverDesc()) )
+        if (devRec->GetDriverDesc().CompareI(GetDriver(i)->fAdapterInfo.Description) == 0)
         {
             int j;
             for( j = 0; j < GetDriver(i)->fDevices.GetCount(); j++ )
             {
-                if( !stricmp(GetDriver(i)->fDevices[j].fStrName, devRec->GetDeviceDesc()) )
+                if (devRec->GetDeviceDesc().CompareI(GetDriver(i)->fDevices[j].fStrName) == 0)
                 {
                     SetCurrentDriver(GetDriver(i));
                     SetCurrentDevice(&GetDriver(i)->fDevices[j]);
@@ -84,14 +84,12 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
             }
         }
     }
-    char errStr[256];
-
-    sprintf(errStr, "Can't find requested device - %s:%s:%s:%s:%s",
-        devRec->GetG3DDeviceTypeName(), 
-        devRec->GetDriverDesc(), 
-        devRec->GetDriverName(),
-        devRec->GetDriverVersion(),
-        devRec->GetDeviceDesc());
+    plString errStr = plString::Format("Can't find requested device - %s:%s:%s:%s:%s",
+        devRec->GetG3DDeviceTypeName(),
+        devRec->GetDriverDesc().c_str(),
+        devRec->GetDriverName().c_str(),
+        devRec->GetDriverVersion().c_str(),
+        devRec->GetDeviceDesc().c_str());
 
     DWORD enumFlags = 0;
     int width = devMode->GetWidth();

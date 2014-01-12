@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsTemplates.h"
+#include "plString.h"
 
 
 // This file is intended to be an independent section so that plClothingMtl and plAvatarClothing
@@ -71,21 +72,14 @@ public:
         kLayerSkinLast = kLayerSkinBlend6,
     };
     
-    char *fName;
+    plString fName;
     uint32_t fXPos;
     uint32_t fYPos;
     uint32_t fWidth;
     uint32_t fHeight;
 
-    plClothingElement(const char *name, uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height)
-    {
-        fName = hsStrcpy(name);
-        fXPos = xPos;
-        fYPos = yPos;
-        fWidth = width;
-        fHeight = height;
-    }
-    ~plClothingElement() { delete [] fName; }
+    plClothingElement(const plString &name, uint32_t xPos, uint32_t yPos, uint32_t width, uint32_t height)
+        : fName(name), fXPos(xPos), fYPos(yPos), fWidth(width), fHeight(height) { }
 
     static void GetElements(hsTArray<plClothingElement *> &out)
     {
@@ -127,10 +121,10 @@ public:
 class plClothingLayout
 {
 public:
-    plClothingLayout(const char *name, uint32_t origWidth) { fName = hsStrcpy(name); fOrigWidth = origWidth; }
-    ~plClothingLayout() { delete [] fName; }
+    plClothingLayout(const plString &name, uint32_t origWidth)
+        : fName(name), fOrigWidth(origWidth) { }
 
-    char *fName;
+    plString fName;
     uint32_t fOrigWidth;
     hsTArray<plClothingElement*> fElements;
 /*
