@@ -1743,8 +1743,8 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fPhysWidth);
 
     stream->WriteSafeString(fAnimationPrefix);
-    stream->WriteSafeString(fBodyAgeName.c_str());
-    stream->WriteSafeString(fBodyFootstepSoundPage.c_str());
+    stream->WriteSafeString(fBodyAgeName);
+    stream->WriteSafeString(fBodyFootstepSoundPage);
 }
 
 void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
@@ -1780,9 +1780,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
 
         // Attach the Footstep emitter scene object
         hsResMgr *mgr = hsgResMgr::ResMgr();
-        const char *age = fBodyAgeName.c_str();
-        const char *page = fBodyFootstepSoundPage.c_str();
-        const plLocation &gLoc = plKeyFinder::Instance().FindLocation(age, page);
+        const plLocation &gLoc = plKeyFinder::Instance().FindLocation(fBodyAgeName, fBodyFootstepSoundPage);
         
         if (gLoc.IsValid())
         {
@@ -1824,15 +1822,9 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fPhysWidth = stream->ReadLEFloat();
 
     fAnimationPrefix = stream->ReadSafeString_TEMP();
+    fBodyAgeName = stream->ReadSafeString_TEMP();
+    fBodyFootstepSoundPage = stream->ReadSafeString_TEMP();
 
-    char *temp = stream->ReadSafeString();
-    fBodyAgeName = temp;
-    delete [] temp;
-
-    temp = stream->ReadSafeString();
-    fBodyFootstepSoundPage = temp;
-    delete [] temp;
-    
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
@@ -2561,9 +2553,9 @@ int  plArmatureMod::GetKILevel()
     return VaultGetKILevel();
 }
 
-void plArmatureMod::SetLinkInAnim(const char *animName)
+void plArmatureMod::SetLinkInAnim(const plString &animName)
 {
-    if (animName)
+    if (!animName.IsNull())
     {
         plAGAnim *anim = FindCustomAnim(animName);
         fLinkInAnimKey = (anim ? anim->GetKey() : nil);

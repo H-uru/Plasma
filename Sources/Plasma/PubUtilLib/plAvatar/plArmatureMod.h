@@ -340,7 +340,7 @@ public:
 
     bool    IsKILowestLevel();
     int     GetKILevel();
-    void    SetLinkInAnim(const char *animName);
+    void    SetLinkInAnim(const plString &animName);
     plKey   GetLinkInAnimKey() const;
 
     enum
@@ -369,11 +369,11 @@ public:
     
     void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
 
-    void SetBodyAgeName(const char* ageName) {if (ageName) fBodyAgeName = ageName; else fBodyAgeName = "";}
-    void SetBodyFootstepSoundPage(const char* pageName) {if (pageName) fBodyFootstepSoundPage = pageName; else fBodyFootstepSoundPage = "";}
+    void SetBodyAgeName(const plString& ageName) { fBodyAgeName = ageName; }
+    void SetBodyFootstepSoundPage(const plString& pageName) { fBodyFootstepSoundPage = pageName; }
     void SetAnimationPrefix(const plString& prefix) { fAnimationPrefix = prefix; }
 
-    const char* GetUserStr() {return fUserStr.c_str();}
+    plString GetUserStr() const { return fUserStr; }
 
 protected:
     void IInitDefaults();
@@ -443,12 +443,12 @@ protected:
     bool fDontPanicLink;
 
     // strings for animations, age names, footstep sounds, etc
-    std::string fBodyAgeName;
-    std::string fBodyFootstepSoundPage;
+    plString fBodyAgeName;
+    plString fBodyFootstepSoundPage;
     plString fAnimationPrefix;
 
     // user-defined string assigned to this avatar
-    std::string fUserStr;
+    plString fUserStr;
 };
 
 // PLARMATURELOD
