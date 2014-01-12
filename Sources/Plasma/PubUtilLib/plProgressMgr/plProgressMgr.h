@@ -201,9 +201,9 @@ class plProgressMgr
 
     private:
 
-        static plProgressMgr    *fManager;
-        static char*            fImageRotation[];
-        static const char*      fStaticTextIDs[];
+        static plProgressMgr*    fManager;
+        static plString          fImageRotation[];
+        static const plString    fStaticTextIDs[];
 
     protected:
 
@@ -235,9 +235,9 @@ class plProgressMgr
         virtual ~plProgressMgr();
 
         static plProgressMgr* GetInstance() { return fManager; }
-        static char* GetLoadingFrameID(int index);
+        static const plString GetLoadingFrameID(int index);
         uint32_t plProgressMgr::NumLoadingFrames() const;
-        static const char* GetStaticTextID(StaticText staticTextType);
+        static const plString GetStaticTextID(StaticText staticTextType);
 
         virtual void    Draw( plPipeline *p ) { }
 

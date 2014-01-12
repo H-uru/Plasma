@@ -60,14 +60,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //// plProgressMgr Functions /////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-plProgressMgr   *plProgressMgr::fManager = nil;
+plProgressMgr* plProgressMgr::fManager = nullptr;
 
 #define LOADING_RES         "xLoading_Linking.%02d.png"
 #define LOADING_RES_COUNT   18
 
-char* plProgressMgr::fImageRotation[LOADING_RES_COUNT];
+plString plProgressMgr::fImageRotation[LOADING_RES_COUNT];
 
-const char* plProgressMgr::fStaticTextIDs[] = {
+const plString plProgressMgr::fStaticTextIDs[] = {
     "xLoading_Linking_Text.png",
     "xLoading_Updating_Text.png"
 };
@@ -76,30 +76,21 @@ const char* plProgressMgr::fStaticTextIDs[] = {
 
 plProgressMgr::plProgressMgr()
 {
-    fOperations = nil;
+    fOperations = nullptr;
     fManager = this;
-    fCallbackProc = nil;
+    fCallbackProc = nullptr;
     fCurrentStaticText = kNone;
 
     // Fill array with pre-computed loading frame IDs
     for (int i=0; i < LOADING_RES_COUNT; i++)
-    {
-        char* frameID = new char[128];
-        sprintf(frameID, LOADING_RES, i);
-        fImageRotation[i] = frameID;
-    }
+        fImageRotation[i] = plString::Format(LOADING_RES, i);
 }
 
 plProgressMgr::~plProgressMgr()
 {
-    for (int i=0; i < LOADING_RES_COUNT; i++)
-    {
-        delete[] fImageRotation[i];
-    }
-
-    while( fOperations != nil )
+    while (fOperations)
         delete fOperations;
-    fManager = nil;
+    fManager = nullptr;
 }
 
 //// RegisterOperation ///////////////////////////////////////////////////////
@@ -238,7 +229,7 @@ void    plProgressMgr::CancelAllOps( void )
     fCurrentStaticText = kNone;
 }
 
-char*   plProgressMgr::GetLoadingFrameID(int index)
+const plString plProgressMgr::GetLoadingFrameID(int index)
 {
     if (index < LOADING_RES_COUNT)
         return fImageRotation[index];
@@ -251,7 +242,7 @@ uint32_t plProgressMgr::NumLoadingFrames() const
     return LOADING_RES_COUNT;
 }
 
-const char*   plProgressMgr::GetStaticTextID(StaticText staticTextType)
+const plString plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
     return fStaticTextIDs[staticTextType];
 }
