@@ -53,18 +53,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // plLinkToAgeMsg
 
-plLinkToAgeMsg::plLinkToAgeMsg() : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg() : fFlags(0)
 {
 }
 
-plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fFlags(0)
 {
     fAgeLink.CopyFrom( link );
-}
-
-plLinkToAgeMsg::~plLinkToAgeMsg()
-{
-    delete [] fLinkInAnimName;
 }
 
 void plLinkToAgeMsg::PlayLinkSfx(bool linkIn, bool linkOut)
@@ -84,7 +79,7 @@ void plLinkToAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead( stream, mgr );
     fFlags = stream->ReadByte();
     fAgeLink.Read( stream, mgr );
-    fLinkInAnimName = stream->ReadSafeString();
+    fLinkInAnimName = stream->ReadSafeString_TEMP();
 }
 
 void plLinkToAgeMsg::Write(hsStream* stream, hsResMgr* mgr) 
@@ -111,7 +106,7 @@ void plLinkToAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if ( contentFlags.IsBitSet( kLinkToAgeAgeLinkStruct ) )
         fAgeLink.Read( s, mgr );
     if ( contentFlags.IsBitSet( kLinkToAgeLinkAnimName ) )
-        fLinkInAnimName = s->ReadSafeString();
+        fLinkInAnimName = s->ReadSafeString_TEMP();
 }
 
 void plLinkToAgeMsg::WriteVersion(hsStream* s, hsResMgr* mgr)   

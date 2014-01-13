@@ -236,7 +236,7 @@ void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
 
     fDuration = stream->ReadLEScalar();
     fSmartSeek = stream->ReadBool();
-    fAnimName = stream->ReadSafeString();
+    fAnimName = stream->ReadSafeString_TEMP();
     fAlignType = static_cast<plAvAlignment>(stream->ReadLE16());
     fNoSeek = stream->ReadBool();
     fFlags = stream->ReadByte();
