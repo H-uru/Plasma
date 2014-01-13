@@ -74,8 +74,8 @@ class pfBackdoorMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgRead( s, mgr ); 
-            fTarget = s->ReadSafeString_TEMP();
-            fString = s->ReadSafeString_TEMP();
+            fTarget = s->ReadSafeString();
+            fString = s->ReadSafeString();
         }
         
         virtual void Write(hsStream* s, hsResMgr* mgr) 

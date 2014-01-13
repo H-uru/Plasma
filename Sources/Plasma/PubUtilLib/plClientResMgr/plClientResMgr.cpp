@@ -89,7 +89,7 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = NULL;
                     uint32_t res_size = 0;
-                    plString res_name = in.ReadSafeStringLong_TEMP();
+                    plString res_name = in.ReadSafeStringLong();
                     plString res_type = res_name.Substr(res_name.GetSize() - 4, 4);
 
                     // Version 1 doesn't encode format, so we'll try some simple

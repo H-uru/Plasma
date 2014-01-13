@@ -93,7 +93,7 @@ void    pfGUIListText::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Read( s, mgr );
 
-    fText = s->ReadSafeString_TEMP();
+    fText = s->ReadSafeString();
 }
 
 void    pfGUIListText::Write( hsStream *s, hsResMgr *mgr )
@@ -274,7 +274,7 @@ void    pfGUIListTreeRoot::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Read( s, mgr );
 
-    fText = s->ReadSafeString_TEMP();
+    fText = s->ReadSafeString();
 }
 
 void    pfGUIListTreeRoot::Write( hsStream *s, hsResMgr *mgr )

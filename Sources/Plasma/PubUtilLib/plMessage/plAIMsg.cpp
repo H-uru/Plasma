@@ -68,7 +68,7 @@ void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    fBrainUserStr = stream->ReadSafeString_TEMP();
+    fBrainUserStr = stream->ReadSafeString();
 }
 
 void plAIMsg::Write(hsStream* stream, hsResMgr* mgr)

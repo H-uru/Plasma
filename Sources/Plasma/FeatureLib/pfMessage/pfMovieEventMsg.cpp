@@ -49,7 +49,7 @@ void pfMovieEventMsg::Read(hsStream* stream, hsResMgr* mgr)
 
     fReason = (Reason)stream->ReadByte();
 
-    fMovieName = stream->ReadSafeString_TEMP();
+    fMovieName = stream->ReadSafeString();
 }
 
 void pfMovieEventMsg::Write(hsStream* stream, hsResMgr* mgr)

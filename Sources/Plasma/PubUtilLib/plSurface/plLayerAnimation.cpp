@@ -736,7 +736,7 @@ void plLayerSDLAnimation::Read(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimationBase::Read(s, mgr);
 
-    fVarName = s->ReadSafeString_TEMP();
+    fVarName = s->ReadSafeString();
 }
 
 void plLayerSDLAnimation::Write(hsStream* s, hsResMgr* mgr)

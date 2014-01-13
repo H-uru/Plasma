@@ -2989,7 +2989,7 @@ void plPythonFileMod::Read(hsStream* stream, hsResMgr* mgr)
     plMultiModifier::Read(stream, mgr);
 
     // read in the compile python code (pyc)
-    fPythonFile = stream->ReadSafeString_TEMP();
+    fPythonFile = stream->ReadSafeString();
 
     // then read in the list of receivers that want to be notified
     int nRcvs = stream->ReadLE32();

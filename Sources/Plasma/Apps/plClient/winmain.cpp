@@ -891,7 +891,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
 
         if (memcmp(cryptKey, savedKey, sizeof(savedKey)) == 0)
         {
-            temp = stream->ReadSafeString_TEMP();
+            temp = stream->ReadSafeString();
 
             if (!temp.IsEmpty())
             {

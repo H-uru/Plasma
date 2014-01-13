@@ -107,7 +107,7 @@ public:
 void plStateVarNotificationInfo::Read(hsStream* s, uint32_t readOptions)
 {
     uint8_t saveFlags=s->ReadByte();  // unused
-    plString hint=s->ReadSafeString_TEMP();
+    plString hint=s->ReadSafeString();
     if (!hint.IsNull() && !(readOptions & plSDL::kSkipNotificationInfo))
         fHintString = hint;
 }

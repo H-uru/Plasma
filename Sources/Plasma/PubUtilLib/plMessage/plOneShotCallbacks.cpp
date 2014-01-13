@@ -74,7 +74,7 @@ void plOneShotCallbacks::Read(hsStream* stream, hsResMgr* mgr)
     fCallbacks.reserve(size);
     for (int i = 0; i < size; i++)
     {
-        plString marker = stream->ReadSafeString_TEMP();
+        plString marker = stream->ReadSafeString();
         plKey receiver = mgr->ReadKey(stream);
         int16_t user = stream->ReadLE16();
 

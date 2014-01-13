@@ -148,7 +148,7 @@ bool plPythonPack::Open()
             for (int i = 0; i < numFiles; i++)
             {
                 // and pack the index into our own data structure
-                plString pythonName = fPackStream->ReadSafeString_TEMP();
+                plString pythonName = fPackStream->ReadSafeString();
                 uint32_t offset = fPackStream->ReadLE32();
 
                 plPackOffsetInfo offsetInfo;

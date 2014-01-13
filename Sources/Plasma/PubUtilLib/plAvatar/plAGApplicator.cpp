@@ -138,7 +138,7 @@ void plAGApplicator::Read(hsStream *stream, hsResMgr *mgr)
 
     fEnabled = stream->ReadBool();
     fChannel = nil; // Whatever is reading this applicator in should know what channel to assign it
-    fChannelName = stream->ReadSafeString_TEMP();
+    fChannelName = stream->ReadSafeString();
 }
 
 // IGETxI

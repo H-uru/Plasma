@@ -741,7 +741,7 @@ void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebug
 // READ
 void plAnimStage::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fNotify = stream->ReadByte();
     fForwardType = (ForwardType)stream->ReadLE32();
     fBackType = (BackType)stream->ReadLE32();

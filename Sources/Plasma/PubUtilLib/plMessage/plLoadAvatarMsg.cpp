@@ -93,7 +93,7 @@ void plLoadAvatarMsg::Read(hsStream* stream, hsResMgr* mgr)
     {
         fInitialTask = plAvTask::ConvertNoRef(mgr->ReadCreatable(stream));
     }
-    fUserStr = stream->ReadSafeString_TEMP();
+    fUserStr = stream->ReadSafeString();
 }
 
 void plLoadAvatarMsg::Write(hsStream *stream, hsResMgr *mgr)
@@ -132,7 +132,7 @@ void plLoadAvatarMsg::ReadVersion(hsStream* stream, hsResMgr* mgr)
         fSpawnPoint = mgr->ReadKey(stream);
 
     if (contentFlags.IsBitSet(kLoadAvatarMsgUserStr))
-        fUserStr = stream->ReadSafeString_TEMP();
+        fUserStr = stream->ReadSafeString();
 }
 
 void plLoadAvatarMsg::WriteVersion(hsStream* stream, hsResMgr* mgr)

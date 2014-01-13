@@ -219,7 +219,7 @@ void    plSoundBuffer::Read( hsStream *s, hsResMgr *mgr )
 
     s->ReadLE( &fFlags );
     s->ReadLE( &fDataLength );
-    fFileName = s->ReadSafeString_TEMP();
+    fFileName = s->ReadSafeString();
 
     s->ReadLE( &fHeader.fFormatTag );
     s->ReadLE( &fHeader.fNumChannels );

@@ -128,8 +128,8 @@ void plNPCSpawnMod::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    fModelName = stream->ReadSafeString_TEMP();
-    fAccountName = stream->ReadSafeString_TEMP();
+    fModelName = stream->ReadSafeString();
+    fAccountName = stream->ReadSafeString();
     fAutoSpawn = stream->ReadBool();
     if(stream->ReadBool())
         fNotify = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));

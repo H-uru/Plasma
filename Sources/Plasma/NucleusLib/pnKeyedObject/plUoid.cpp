@@ -169,7 +169,7 @@ void plUoid::Read(hsStream* s)
     s->LogReadLE(&fClassType, "ClassType");
     s->LogReadLE(&fObjectID, "ObjectID");
     s->LogSubStreamPushDesc("ObjectName");
-    fObjectName = s->LogReadSafeString_TEMP();
+    fObjectName = s->LogReadSafeString();
 
     // conditional cloneIDs read
     if (contents & kHasCloneIDs)

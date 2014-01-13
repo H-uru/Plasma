@@ -154,7 +154,7 @@ void    plGenericType::Read(hsStream* s)
     {
     case kString:
     case kAny:
-        fS=s->ReadSafeString_TEMP();
+        fS=s->ReadSafeString();
         break;
     case kBool:
         {int8_t b;
@@ -219,7 +219,7 @@ void    plGenericType::Write(hsStream* s)
 ///////////////////////////////////////////////////
 void    plGenericVar::Read(hsStream* s)
 {
-    fName = s->ReadSafeString_TEMP();
+    fName = s->ReadSafeString();
     fValue.Read(s);
 }
 

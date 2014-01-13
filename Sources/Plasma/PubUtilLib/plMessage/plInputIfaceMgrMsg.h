@@ -102,9 +102,9 @@ class plInputIfaceMgrMsg : public plMessage
             plMessage::IMsgRead( s, mgr ); 
             s->ReadLE( &fCommand );
             s->ReadLE( &fPageID );
-            ageName = s->ReadSafeString_TEMP();
-            ageFileName = s->ReadSafeString_TEMP();
-            spawnPoint = s->ReadSafeString_TEMP();
+            ageName = s->ReadSafeString();
+            ageFileName = s->ReadSafeString();
+            spawnPoint = s->ReadSafeString();
             fAvKey = mgr->ReadKey(s);
         }
         

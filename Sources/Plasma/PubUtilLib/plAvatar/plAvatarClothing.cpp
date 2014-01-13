@@ -160,14 +160,14 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fName = s->ReadSafeString_TEMP();
+    fName = s->ReadSafeString();
     fGroup = s->ReadByte();
     fType = s->ReadByte();
     fTileset = s->ReadByte();
     fSortOrder = s->ReadByte();
 
-    fCustomText = s->ReadSafeString_TEMP();
-    fDescription = s->ReadSafeString_TEMP();
+    fCustomText = s->ReadSafeString();
+    fDescription = s->ReadSafeString();
     if (s->ReadBool())
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef); // thumbnail
 
@@ -175,7 +175,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
     int i, j;
     for (i = 0; i < tileCount; i++)
     {
-        fElementNames.Append(s->ReadSafeString_TEMP());
+        fElementNames.Append(s->ReadSafeString());
 
         int layerCount = s->ReadByte();
         for (j = 0; j < layerCount; j++)
@@ -375,10 +375,10 @@ void plClothingBase::Read(hsStream* s, hsResMgr* mgr)
 {
     hsKeyedObject::Read(s, mgr);
 
-    fName = s->ReadSafeString_TEMP();
+    fName = s->ReadSafeString();
     if (s->ReadBool())
         mgr->ReadKeyNotifyMe(s, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
-    fLayoutName = s->ReadSafeString_TEMP();
+    fLayoutName = s->ReadSafeString();
 }
 
 void plClothingBase::Write(hsStream* s, hsResMgr* mgr)

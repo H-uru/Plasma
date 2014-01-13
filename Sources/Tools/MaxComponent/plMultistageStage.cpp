@@ -96,7 +96,7 @@ plString plBaseStage::GetName()
 void plBaseStage::Read(hsStream *stream)
 {
     stream->ReadLE16();
-    fName = stream->ReadSafeString_TEMP();
+    fName = stream->ReadSafeString();
 }
 
 void plBaseStage::Write(hsStream *stream)
@@ -137,7 +137,7 @@ void plStandardStage::Read(hsStream *stream)
 
     uint16_t version = stream->ReadLE16();
 
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fNumLoops = stream->ReadLE32();
     fLoopForever = stream->ReadBool();
     fForward = stream->ReadByte();

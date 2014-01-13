@@ -144,7 +144,7 @@ int plGeneric::Read(hsStream* stream)
         break;
 
     case kString:
-        fStringVal = stream->ReadSafeWString_TEMP();
+        fStringVal = stream->ReadSafeWString();
         break;
     }
     return stream->GetPosition();

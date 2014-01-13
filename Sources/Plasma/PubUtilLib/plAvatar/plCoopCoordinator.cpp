@@ -398,7 +398,7 @@ void plCoopCoordinator::Read(hsStream *stream, hsResMgr *mgr)
     else
         fGuestAcceptMsg = nil;
 
-    fSynchBone = stream->ReadSafeString_TEMP();
+    fSynchBone = stream->ReadSafeString();
     fAutoStartGuest = stream->ReadBool();
     
     fInitiatorID = fHostBrain->GetInitiatorID();

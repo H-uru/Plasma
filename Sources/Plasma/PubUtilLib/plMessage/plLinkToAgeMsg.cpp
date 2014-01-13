@@ -79,7 +79,7 @@ void plLinkToAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgRead( stream, mgr );
     fFlags = stream->ReadByte();
     fAgeLink.Read( stream, mgr );
-    fLinkInAnimName = stream->ReadSafeString_TEMP();
+    fLinkInAnimName = stream->ReadSafeString();
 }
 
 void plLinkToAgeMsg::Write(hsStream* stream, hsResMgr* mgr) 
@@ -106,7 +106,7 @@ void plLinkToAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if ( contentFlags.IsBitSet( kLinkToAgeAgeLinkStruct ) )
         fAgeLink.Read( s, mgr );
     if ( contentFlags.IsBitSet( kLinkToAgeLinkAnimName ) )
-        fLinkInAnimName = s->ReadSafeString_TEMP();
+        fLinkInAnimName = s->ReadSafeString();
 }
 
 void plLinkToAgeMsg::WriteVersion(hsStream* s, hsResMgr* mgr)   

@@ -236,7 +236,7 @@ void plAvSeekMsg::Read(hsStream *stream, hsResMgr *mgr)
 
     fDuration = stream->ReadLEScalar();
     fSmartSeek = stream->ReadBool();
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fAlignType = static_cast<plAvAlignment>(stream->ReadLE16());
     fNoSeek = stream->ReadBool();
     fFlags = stream->ReadByte();
@@ -313,7 +313,7 @@ void plAvOneShotMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvSeekMsg::Read(stream, mgr);
 
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fDrivable = stream->ReadBool();
     fReversible = stream->ReadBool();
 }

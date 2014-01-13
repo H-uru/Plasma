@@ -1756,7 +1756,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fMeshKeys.push_back(mgr->ReadKey(stream));
 
     // read the root name string
-    fRootName = stream->ReadSafeString_TEMP();
+    fRootName = stream->ReadSafeString();
 
     // read in the brains
     int nBrains = stream->ReadLE32();
@@ -1821,9 +1821,9 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fPhysHeight = stream->ReadLEFloat();
     fPhysWidth = stream->ReadLEFloat();
 
-    fAnimationPrefix = stream->ReadSafeString_TEMP();
-    fBodyAgeName = stream->ReadSafeString_TEMP();
-    fBodyFootstepSoundPage = stream->ReadSafeString_TEMP();
+    fAnimationPrefix = stream->ReadSafeString();
+    fBodyAgeName = stream->ReadSafeString();
+    fBodyFootstepSoundPage = stream->ReadSafeString();
 
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }

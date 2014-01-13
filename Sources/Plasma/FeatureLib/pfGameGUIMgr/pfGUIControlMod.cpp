@@ -118,7 +118,7 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fSelBackColor.Read( s );
     fTransparent = s->ReadBOOL();
 
-    fFontFace = s->ReadSafeString_TEMP();
+    fFontFace = s->ReadSafeString();
     s->ReadLE( &fFontSize );
     s->ReadLE( &fFontFlags );
 }

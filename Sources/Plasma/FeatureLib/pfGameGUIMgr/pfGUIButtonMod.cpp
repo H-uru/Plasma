@@ -196,13 +196,13 @@ void    pfGUIButtonMod::Read( hsStream *s, hsResMgr *mgr )
     uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
-    fAnimName = s->ReadSafeString_TEMP();
+    fAnimName = s->ReadSafeString();
 
     fMouseOverAnimKeys.Reset();
     count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fMouseOverAnimKeys.Append( mgr->ReadKey( s ) );
-    fMouseOverAnimName = s->ReadSafeString_TEMP();
+    fMouseOverAnimName = s->ReadSafeString();
 
     fNotifyType = s->ReadLE32();
     mgr->ReadKeyNotifyMe( s, new plGenRefMsg( GetKey(), plRefMsg::kOnCreate, -1, kRefDraggable ), plRefFlags::kActiveRef );
