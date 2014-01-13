@@ -59,28 +59,19 @@ plClientResMgr& plClientResMgr::Instance(void)
     return theInstance;
 }
 
-plClientResMgr::plClientResMgr()
-{
-    this->ClientResources = new std::map<std::string, plMipmap*>;
-}
-
 plClientResMgr::~plClientResMgr()
 {
-    if (this->ClientResources) {
-        std::map<std::string, plMipmap*>::iterator it;
+    std::map<plString, plMipmap*>::iterator it;
 
-        for (it = this->ClientResources->begin(); it != this->ClientResources->end(); ++it) {
-            if (it->second)
-                it->second->UnRef();
-        }
-
-        delete this->ClientResources;
+    for (it = ClientResources.begin(); it != ClientResources.end(); ++it) {
+        if (it->second)
+            it->second->UnRef();
     }
 }
 
-void plClientResMgr::ILoadResources(const char* resfile)
+void plClientResMgr::ILoadResources(const plFileName& resfile)
 {
-    if (!resfile) {
+    if (!resfile.IsValid()) {
         return;
     }
 
@@ -98,10 +89,8 @@ void plClientResMgr::ILoadResources(const char* resfile)
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = NULL;
                     uint32_t res_size = 0;
-                    char* tmp_name = in.ReadSafeStringLong();
-                    std::string res_name = std::string(tmp_name);
-                    std::string res_type = res_name.substr(res_name.length() - 4, 4);
-                    delete[] tmp_name;
+                    plString res_name = in.ReadSafeStringLong_TEMP();
+                    plString res_type = res_name.Substr(res_name.GetSize() - 4, 4);
 
                     // Version 1 doesn't encode format, so we'll try some simple
                     // extension sniffing
@@ -122,7 +111,7 @@ void plClientResMgr::ILoadResources(const char* resfile)
                         in.Skip(res_size);
                     }
 
-                    (*this->ClientResources)[res_name] = res_data;
+                    ClientResources[res_name] = res_data;
                 }
 
                 break;
@@ -134,12 +123,12 @@ void plClientResMgr::ILoadResources(const char* resfile)
     }
 }
 
-plMipmap* plClientResMgr::getResource(const char* resname)
+plMipmap* plClientResMgr::getResource(const plString& resname)
 {
-    plMipmap* resmipmap = NULL;
-    std::map<std::string, plMipmap*>::iterator it = this->ClientResources->find(resname);
+    plMipmap* resmipmap = nullptr;
+    std::map<plString, plMipmap*>::iterator it = ClientResources.find(resname);
 
-    if (it != this->ClientResources->end()) {
+    if (it != ClientResources.end()) {
         resmipmap = it->second;
     } else {
         hsAssert(resmipmap, "Unknown client resource requested.");
