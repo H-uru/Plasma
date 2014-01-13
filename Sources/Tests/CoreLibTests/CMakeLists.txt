@@ -1,6 +1,5 @@
 project(CoreLibTests)
  
-enable_testing()
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(../../Plasma/CoreLib)

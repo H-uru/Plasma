@@ -134,5 +134,6 @@ add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)
 
 if(PLASMA_BUILD_TESTS)
-    add_subdirectory(Sources/Tests)
+    enable_testing()
+    add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)
