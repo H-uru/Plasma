@@ -417,11 +417,9 @@ public:
     /** Construct with name, start time, and end time (within the max note track)
       */
     plAgeGlobalAnim(const plString &name, double begin, double end);
-    /** Destruct, freeing the underlying animation data. */
-    virtual ~plAgeGlobalAnim();
-    
-    const char * GetGlobalVarName() const { return fGlobalVarName; }
-    void SetGlobalVarName(char *name);
+
+    plString GetGlobalVarName() const { return fGlobalVarName; }
+    void SetGlobalVarName(const plString &name) { fGlobalVarName = name; }
 
     // PLASMA PROTOCOL
     // rtti
@@ -433,7 +431,7 @@ public:
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
 protected:
-    char *fGlobalVarName;   // Name of the SDL variable we animate on.
+    plString fGlobalVarName;   // Name of the SDL variable we animate on.
 };
 
 // USEFUL HELPER FUNCTIONS

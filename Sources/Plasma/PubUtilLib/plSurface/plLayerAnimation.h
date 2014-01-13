@@ -189,11 +189,10 @@ class plLayerSDLAnimation : public plLayerAnimationBase
 {
 protected:
     plSimpleStateVariable *fVar;
-    char *fVarName;
+    plString fVarName;
 
 public:
     plLayerSDLAnimation();
-    virtual ~plLayerSDLAnimation();
 
     CLASSNAME_REGISTER( plLayerSDLAnimation );
     GETINTERFACE_ANY( plLayerSDLAnimation, plLayerAnimationBase );
@@ -205,8 +204,8 @@ public:
     virtual void                        Read(hsStream* s, hsResMgr* mgr);
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
 
-    char *GetVarName() { return fVarName; }
-    void SetVarName(char *name);
+    plString GetVarName() const { return fVarName; }
+    void SetVarName(const plString &name) { fVarName = name; }
 };
 
 #endif // plLayerAnimation_inc

@@ -665,28 +665,13 @@ float plEmoteAnim::GetFadeOut() const
 plAgeGlobalAnim::plAgeGlobalAnim()
 : plAGAnim()
 {
-    fGlobalVarName = nil;
 }
 
 // ctor --------------------------------------------------------------------
 // -----
 plAgeGlobalAnim::plAgeGlobalAnim(const plString &name, double start, double end)
-: plAGAnim(name, start, end),
-  fGlobalVarName(nil)
+: plAGAnim(name, start, end)
 {
-}
-
-// dtor ---------------------------
-// -----
-plAgeGlobalAnim::~plAgeGlobalAnim()
-{
-    delete [] fGlobalVarName;
-}
-
-void plAgeGlobalAnim::SetGlobalVarName(char *name) 
-{ 
-    delete [] fGlobalVarName; 
-    fGlobalVarName = hsStrcpy(name); 
 }
 
 
@@ -696,7 +681,7 @@ void plAgeGlobalAnim::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAGAnim::Read(stream, mgr);
 
-    fGlobalVarName = stream->ReadSafeString();
+    fGlobalVarName = stream->ReadSafeString_TEMP();
 }
 
 // Write ---------------------------------------------------

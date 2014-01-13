@@ -674,12 +674,7 @@ bool plLayerLinkAnimation::MsgReceive( plMessage* pMsg )
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar(nil), fVarName(nil) {}
-
-plLayerSDLAnimation::~plLayerSDLAnimation()
-{
-    delete [] fVarName;
-}
+plLayerSDLAnimation::plLayerSDLAnimation() : plLayerAnimationBase(), fVar(nil) {}
 
 uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore)
 {
@@ -691,7 +686,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
 
         if (fEvalTime < 0)
         {
-            if (fVarName != nil)
+            if (!fVarName.IsEmpty())
             {
                 extern const plSDLModifier *ExternFindAgeSDL();
                 const plSDLModifier *sdlMod = ExternFindAgeSDL();
@@ -741,7 +736,7 @@ void plLayerSDLAnimation::Read(hsStream* s, hsResMgr* mgr)
 {
     plLayerAnimationBase::Read(s, mgr);
 
-    fVarName = s->ReadSafeString();
+    fVarName = s->ReadSafeString_TEMP();
 }
 
 void plLayerSDLAnimation::Write(hsStream* s, hsResMgr* mgr)
@@ -749,10 +744,4 @@ void plLayerSDLAnimation::Write(hsStream* s, hsResMgr* mgr)
     plLayerAnimationBase::Write(s, mgr);
 
     s->WriteSafeString(fVarName);
-}
-
-void plLayerSDLAnimation::SetVarName(char *name) 
-{ 
-    delete [] fVarName; 
-    fVarName = hsStrcpy(name); 
 }
