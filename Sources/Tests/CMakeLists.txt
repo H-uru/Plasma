@@ -5,6 +5,6 @@ endif()
 add_subdirectory(gtest-1.6.0)
 
 add_subdirectory(CoreLibTests)
-#add_subdirectory(FeatureTests)
+add_subdirectory(FeatureTests)
 add_subdirectory(NucleusTests)
-#add_subdirectory(PubUtilTests)
+add_subdirectory(PubUtilTests)

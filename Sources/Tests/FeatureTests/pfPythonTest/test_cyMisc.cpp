@@ -41,8 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <iomanip>
-
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "pfPython/cyMisc.h"
 

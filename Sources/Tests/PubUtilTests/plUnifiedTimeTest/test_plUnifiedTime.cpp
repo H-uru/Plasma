@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "gtest/gtest.h"
+#include <gtest/gtest.h>
 
 #include "plUnifiedTime/plUnifiedTime.h"
 
