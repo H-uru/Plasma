@@ -5,15 +5,20 @@ include_directories(../../../Plasma/NucleusLib)
 include_directories(../../../Plasma/PubUtilLib)
 include_directories(../../../Plasma/FeatureLib)
 
-add_executable(test_cyMisc test_cyMisc.cpp)
-target_link_libraries(test_cyMisc gtest gtest_main)
-target_link_libraries(test_cyMisc pfPython)
+set(pfPythonTest_SOURCES
+    test_cyMisc.cpp
+    )
+
+add_executable(test_pfPython ${pfPythonTest_SOURCES})
+target_link_libraries(test_pfPython gtest gtest_main)
+target_link_libraries(test_pfPython pfPython)
 
 if(PYTHON_DEBUG_LIBRARY)
-    target_link_libraries(test_cyMisc debug ${PYTHON_DEBUG_LIBRARY})
-    target_link_libraries(test_cyMisc optimized ${PYTHON_LIBRARY})
+    target_link_libraries(test_pfPython debug ${PYTHON_DEBUG_LIBRARY})
+    target_link_libraries(test_pfPython optimized ${PYTHON_LIBRARY})
 else()
-    target_link_libraries(test_cyMisc ${PYTHON_LIBRARY})
+    target_link_libraries(test_pfPython ${PYTHON_LIBRARY})
 endif()
 
-add_test(NAME test_cyMisc COMMAND test_cyMisc)
+add_test(NAME test_pfPython COMMAND test_pfPython)
+add_dependencies(check test_pfPython)

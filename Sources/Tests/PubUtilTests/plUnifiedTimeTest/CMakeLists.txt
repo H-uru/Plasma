@@ -4,7 +4,13 @@ include_directories(../../../Plasma/CoreLib)
 include_directories(../../../Plasma/NucleusLib)
 include_directories(../../../Plasma/PubUtilLib)
 
-add_executable(test_plUnifiedTime test_plUnifiedTime.cpp)
+set(plUnifiedTimeTest_SOURCES
+    test_plUnifiedTime.cpp
+    )
+
+add_executable(test_plUnifiedTime ${plUnifiedTimeTest_SOURCES})
 target_link_libraries(test_plUnifiedTime gtest gtest_main)
 target_link_libraries(test_plUnifiedTime plUnifiedTime)
+
 add_test(NAME test_plUnifiedTime COMMAND test_plUnifiedTime)
+add_dependencies(check test_plUnifiedTime)

@@ -135,5 +135,6 @@ add_subdirectory(Sources/Tools)
 
 if(PLASMA_BUILD_TESTS)
     enable_testing()
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
     add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
 endif(PLASMA_BUILD_TESTS)

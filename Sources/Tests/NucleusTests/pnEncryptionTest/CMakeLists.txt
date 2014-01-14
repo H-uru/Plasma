@@ -2,16 +2,15 @@ include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 include_directories(../../../Plasma/CoreLib)
 include_directories(../../../Plasma/NucleusLib)
-include_directories(${OPENSSL_INCLUDE_DIR})
 
-add_executable(test_plMD5Checksum test_plMD5Checksum.cpp)
-target_link_libraries(test_plMD5Checksum gtest gtest_main)
-target_link_libraries(test_plMD5Checksum ${OPENSSL_LIBRARIES})
-target_link_libraries(test_plMD5Checksum CoreLib pnEncryption)
-add_test(NAME test_plMD5Checksum COMMAND test_plMD5Checksum)
+set(pnEncryptionTest_SOURCES
+    test_plMD5Checksum.cpp
+    test_plSHA1Checksum.cpp
+    )
 
-add_executable(test_plSHA1Checksum test_plSHA1Checksum.cpp)
-target_link_libraries(test_plSHA1Checksum gtest gtest_main)
-target_link_libraries(test_plSHA1Checksum ${OPENSSL_LIBRARIES})
-target_link_libraries(test_plSHA1Checksum CoreLib pnEncryption)
-add_test(NAME test_plSHA1Checksum COMMAND test_plSHA1Checksum)
+add_executable(test_pnEncryption ${pnEncryptionTest_SOURCES})
+target_link_libraries(test_pnEncryption gtest gtest_main)
+target_link_libraries(test_pnEncryption pnEncryption)
+
+add_test(NAME test_pnEncryption COMMAND test_pnEncryption)
+add_dependencies(check test_pnEncryption)
