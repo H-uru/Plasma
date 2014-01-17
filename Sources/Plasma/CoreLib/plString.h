@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstring>
 #include <cstdarg>
 #include <cstdint>
+#include <cctype>
 #include <vector>
 
 /** Single Unicode character code unit */
@@ -603,11 +604,13 @@ public:
      */
     struct hash
     {
+        // TODO:  This doesn't really use enough bits to be useful when
+        //   size_t is 64-bits.
         size_t operator()(const plString& str) const
         {
-            uint32_t hash = 0;
+            size_t hash = 0;
             for (size_t i = 0; i < str.GetSize(); ++i) {
-                hash += str.CharAt(i);
+                hash += fetch_char(str, i);
                 hash += (hash << 10);
                 hash ^= (hash >> 6);
             }
@@ -616,15 +619,20 @@ public:
             hash += (hash << 15);
             return hash;
         }
+
+    protected:
+        virtual char fetch_char(const plString& str, size_t index) const
+        { return str.CharAt(index); }
     };
 
     /** Functor that hashes a string for unordered containers.
      * \remarks This returns the hash of the lower-case variant of the string.
      */
-    struct hash_i : hash
+    struct hash_i : public hash
     {
-        size_t operator()(const plString& str) const
-        { return hash::operator()(str.ToLower()); }
+    protected:
+        virtual char fetch_char(const plString& str, size_t index) const
+        { return tolower(str.CharAt(index)); }
     };
 
     /** Functor which compares two strings case-insensitively for sorting. */
