@@ -259,8 +259,8 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
 
         info = plString::Format("Type: %s Str: %s User: %s(%d) Delay: %f Int: %d",
             typeName,
-            kiMsg->GetString() != "" ? kiMsg->GetString().c_str() : "(nil)",
-            kiMsg->GetUser() ? kiMsg->GetUser() : "(nil)",
+            kiMsg->GetString().c_str("(nil)"),
+            kiMsg->GetUser().c_str("(nil)"),
             kiMsg->GetPlayerID(),
             kiMsg->GetDelay(),
             kiMsg->GetIntValue());

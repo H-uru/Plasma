@@ -277,7 +277,7 @@ void    plAnimStealthNode::SetNodeName( const char *parentName )
     if( node != nil )
     {
         char name[ 512 ], newName[ 512 ];
-        sprintf( name, "%s : %s", parentName, GetSegmentName() );
+        sprintf(name, "%s : %s", parentName, GetSegmentName().c_str());
 
         if( GetCOREInterface()->GetINodeByName( name ) != nil )
         {

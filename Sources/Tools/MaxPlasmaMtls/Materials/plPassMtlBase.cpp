@@ -410,10 +410,7 @@ RefTargetHandle plPassMtlBase::GetReference( int i )
 {
     if( i >= kRefNotetracks && i < kRefNotetracks + fNotetracks.GetCount() )
         return fNotetracks[ i - kRefNotetracks ];
-    else
-        hsAssert(false, "shit");
-
-    return nil;
+    return nullptr;
 }
 
 //// SetReference ////////////////////////////////////////////////////////////

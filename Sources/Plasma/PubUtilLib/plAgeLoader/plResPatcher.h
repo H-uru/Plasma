@@ -39,57 +39,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #ifndef plResPatcher_h_inc
 #define plResPatcher_h_inc
 
-#include "HeadSpin.h"
 #include "plFileSystem.h"
-#include <queue>
-#include <string>
+#include "pnNetBase/pnNbError.h"
+#include <vector>
 
 class plOperationProgress;
+class plString;
 
+/**
+ * Plasma Resource Patcher
+ * This is a thin wrapper around \sa pfPatcher that ensures updates are propagated to the rest of the engine.
+ */
 class plResPatcher
 {
-    enum { kManifest, kFile };
-    struct Request
-    {
-        plFileName  fFile;
-        plFileName  fFriendlyName;
-        uint8_t     fType;
+    plOperationProgress* fProgress;
+    static plResPatcher* fInstance;
+    bool                 fRequestedGameCode;
 
-        Request(const plFileName& file, uint8_t type, const plFileName& friendly = "")
-            : fFile(file), fFriendlyName(friendly), fType(type) { }
-    };
+    friend class plAgeLoader;
 
-    static plResPatcher*       fInstance;
-    std::queue<Request>        fRequests;
-    plOperationProgress*       fProgress;
-    bool                       fPatching;
+    void OnCompletion(ENetError, const plString& msg);
+    void OnFileDownloadBegin(const plFileName& file);
+    void OnFileDownloaded(const plFileName& file);
+    bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
+    void OnProgressTick(uint64_t dl, uint64_t total, const plString& msg);
 
-    plResPatcher();
-    ~plResPatcher();
+    class pfPatcher* CreatePatcher();
+    void InitProgress();
 
 public:
     static plResPatcher* GetInstance();
     static void Shutdown();
 
-    plOperationProgress* GetProgress() { return fProgress; }
+public:
+    plResPatcher();
+    ~plResPatcher();
 
-    void Finish(bool success = true);
-    void IssueRequest();
-    void RequestFile(const plFileName& file, const plFileName& friendlyName);
-    void RequestManifest(const plString& age);
-    void Start();
+    void Update(const std::vector<plString>& manifests);
+    void Update(const plString& manifest);
 };
 
-enum PatcherLogType
-{
-    kHeader,
-    kInfo,
-    kMajorStatus,
-    kStatus,
-    kError,
-};
-void PatcherLog(PatcherLogType type, const char* format, ...);
+
 #endif // _plResPatcher_h

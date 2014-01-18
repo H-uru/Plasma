@@ -53,8 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plRegistryHelpers_h
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
 #include "pnKeyedObject/plKey.h"
+#include <set>
 
 class plKey;
 class plRegistryPageNode;
@@ -76,16 +76,19 @@ public:
 };
 
 
-//// plKeyCollector //////////////////////////////////////////////////////////
-//  Helper key iterator that collects the given keys into the given hsTArray
+/** Helper key iterator that collects keys into an std::set. */
 class plKeyCollector : public plRegistryKeyIterator
 {
 protected:
-    hsTArray<plKey> &fKeys;
+    std::set<plKey>& fKeys;
 
 public:
-    plKeyCollector(hsTArray<plKey>& keys);
-    virtual bool EatKey(const plKey& key);
+    plKeyCollector(std::set<plKey>& keys) : fKeys(keys) { }
+    virtual bool EatKey(const plKey& key)
+    {
+        fKeys.insert(key);
+        return true;
+    }
 };
 
 // If you loaded keys with another iterator, this will ensure that they're unloaded

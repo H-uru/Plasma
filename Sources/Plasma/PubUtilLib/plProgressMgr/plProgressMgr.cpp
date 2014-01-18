@@ -94,7 +94,7 @@ plProgressMgr::~plProgressMgr()
 {
     for (int i=0; i < LOADING_RES_COUNT; i++)
     {
-        delete fImageRotation[i];
+        delete[] fImageRotation[i];
     }
 
     while( fOperations != nil )
@@ -246,6 +246,11 @@ char*   plProgressMgr::GetLoadingFrameID(int index)
         return fImageRotation[0];
 }
 
+uint32_t plProgressMgr::NumLoadingFrames() const
+{
+    return LOADING_RES_COUNT;
+}
+
 const char*   plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
     return fStaticTextIDs[staticTextType];
@@ -268,8 +273,6 @@ plOperationProgress::plOperationProgress( float length ) :
     fRemainingSecs(0),
     fAmtPerSec(0.f)
 {
-    memset( fStatusText, 0, sizeof( fStatusText ) );
-    memset( fTitle, 0, sizeof( fTitle ) );
 }
 
 plOperationProgress::~plOperationProgress()
@@ -345,28 +348,6 @@ void    plOperationProgress::SetHowMuch( float howMuch )
     IUpdateStats();
 
     plProgressMgr::GetInstance()->IUpdateCallbackProc( this );
-}
-
-//// SetStatusText ///////////////////////////////////////////////////////////
-
-void    plOperationProgress::SetStatusText( const char *text )
-{
-    if( text != nil )
-        strncpy( fStatusText, text, sizeof( fStatusText ) );
-    else
-        fStatusText[ 0 ] = 0;
-}
-
-//// SetTitle ////////////////////////////////////////////////////////////////
-
-void    plOperationProgress::SetTitle( const char *text )
-{
-    if (text != nil)
-    {
-        strncpy(fTitle, text, sizeof(fTitle));
-    }
-    else
-        fTitle[0] = 0;
 }
 
 //// SetLength ///////////////////////////////////////////////////////////////

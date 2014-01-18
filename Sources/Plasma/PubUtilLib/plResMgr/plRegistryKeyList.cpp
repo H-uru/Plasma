@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plRegistryKeyList::~plRegistryKeyList()
 {
     std::for_each(fKeys.begin(), fKeys.end(),
-        [] (plKeyImp* key) { if (!key->ObjectIsLoaded()) delete key; }
+        [] (plKeyImp* key) { if (key && !key->ObjectIsLoaded()) delete key; }
     );
 }
 
@@ -85,7 +85,7 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
         // because of local data. Verify that we have the right key by
         // name, and if it's wrong, do the slower find-by-name.
         plKeyImp *keyImp = fKeys[objectID-1];
-        if (keyImp->GetName().CompareI(uoid.GetObjectName()) != 0)
+        if (!keyImp || keyImp->GetName().CompareI(uoid.GetObjectName()) != 0)
             return FindKey(uoid.GetObjectName());
         else
             return keyImp;
@@ -164,26 +164,30 @@ bool plRegistryKeyList::SetKeyUnused(plKeyImp* key, LoadStatus& loadStatusChange
     }
 
     uint32_t id = key->GetUoid().GetObjectID();
-    hsAssert(id <= fKeys.size(), "Bad static key id");
+    plKeyImp* foundKey = nullptr;
 
-    // Fixed Keys will have id == 0. Let's just make sure we have it before we toss it.
+    // Fixed Keys use ID == 0
     if (id == 0)
-    {
         hsAssert(key->GetUoid().GetLocation() == plLocation::kGlobalFixedLoc, "key id == 0 but not fixed?");
-        if (!FindKey(key->GetName()))
-        {
-            hsAssert(false, "Couldn't find fixed key!");
-            return false;
-        }
+
+    // Recall that vectors are index zero but normal object IDs are index one...
+    else if (id <= fKeys.size()) {
+        plKeyImp* tempKey = fKeys[id-1];
+        if (tempKey && tempKey->GetUoid().GetObjectID() == id)
+            foundKey = tempKey;
     }
-    else if (id > fKeys.size())
-        return false;
+
+    // Last chance: do a slow name search for that key.
+    if (!foundKey)
+        foundKey = FindKey(key->GetUoid().GetObjectName());
 
     // Got that key, decrement the key counter
-    --fReffedKeys;
-    if (fReffedKeys == 0)
-        loadStatusChange = kTypeUnloaded;
-    return true;
+    if (foundKey) {
+        --fReffedKeys;
+        if (fReffedKeys == 0)
+            loadStatusChange = kTypeUnloaded;
+    }
+    return foundKey != nullptr;
 }
 
 void plRegistryKeyList::Read(hsStream* s)
@@ -200,14 +204,19 @@ void plRegistryKeyList::Read(hsStream* s)
     s->ReadByte();
 
     uint32_t numKeys = s->ReadLE32();
-    fKeys.reserve(numKeys);
+    fKeys.reserve((numKeys * 3) / 2);
 
     for (uint32_t i = 0; i < numKeys; ++i)
     {
         plKeyImp* newKey = new plKeyImp;
         newKey->Read(s);
-        fKeys.push_back(newKey);
+
+        uint32_t id = newKey->GetUoid().GetObjectID();
+        if (fKeys.size() < id)
+            fKeys.resize(id);
+        fKeys[id - 1] = newKey;
     }
+    fKeys.shrink_to_fit();
 }
 
 void plRegistryKeyList::Write(hsStream* s)
@@ -226,7 +235,7 @@ void plRegistryKeyList::Write(hsStream* s)
     for (auto it = fKeys.begin(); it != fKeys.end(); ++it)
     {
         plKeyImp* key = *it;
-        if (key->ObjectIsLoaded())
+        if (key && key->ObjectIsLoaded())
         {
             ++keyCount;
             key->Write(s);

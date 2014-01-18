@@ -33,77 +33,59 @@ the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
 work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
- or by snail mail at:
-      Cyan Worlds, Inc.
-      14617 N Newport Hwy
-      Mead, WA   99021
+or by snail mail at:
+Cyan Worlds, Inc.
+14617 N Newport Hwy
+Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef SCENE_WATCHER_H
-#define SCENE_WATCHER_H
 
-#include "Max.h"
-#include "notify.h"
+#include "plManifests.h"
+#include "plFileSystem.h"
 
-#include <vector>
-#include <set>
+// Helper that returns the appropriate string per build
+#ifdef PLASMA_EXTERNAL_RELEASE
+#   define MANIFEST(in, ex) ex
+#else
+#   define MANIFEST(in, ex) in
+#endif // PLASMA_EXTERNAL_RELEASE
 
-#include "pnKeyedObject/plKey.h"
-
-class plMaxNode;
-
-class SceneWatcher : public ReferenceMaker
+plFileName plManifest::ClientExecutable()
 {
-public:
-    typedef std::vector<plMaxNode*> NodeList;
-    typedef std::set<plMaxNode*>    NodeSet;
-    typedef std::vector<plKey>      KeyList;
+    return MANIFEST("plClient.exe", "UruExplorer.exe");
+}
 
-protected:
-    NodeList fNodes;
-    KeyList fDeleted;
+plFileName plManifest::PatcherExecutable()
+{
+    return MANIFEST("plUruLauncher.exe", "UruLauncher.exe");
+}
 
-    bool fDirty;
+plString plManifest::ClientManifest()
+{
+    return MANIFEST("ThinInternal", "ThinExternal");
+}
 
-public:
-    SceneWatcher();
-    ~SceneWatcher();
+plString plManifest::ClientImageManifest()
+{
+    return MANIFEST("Internal", "External");
+}
 
-    ////////////////////////////////////////////////////////////////////////////
-    // ReferenceMaker functions
-    //
-    RefResult NotifyRefChanged(Interval changeInt, RefTargetHandle hTarget, 
-        PartID& partID, RefMessage message);
+plString plManifest::PatcherManifest()
+{
+    return MANIFEST("InternalPatcher", "ExternalPatcher");
+}
 
-    int NumRefs();
-    RefTargetHandle GetReference(int i);
-    void SetReference(int i, RefTargetHandle rtarg);
+std::vector<plString> plManifest::EssentialGameManifests()
+{
+    std::vector<plString> mfs;
+    mfs.push_back("CustomAvatars");
+    mfs.push_back("GlobalAnimations");
+    mfs.push_back("GlobalAvatars");
+    mfs.push_back("GlobalClothing");
+    mfs.push_back("GlobalMarkers");
+    mfs.push_back("GUI");
+    mfs.push_back("StartUp");
 
-    BOOL IsRealDependency(ReferenceTarget *rtarg) { return FALSE; }
+    return mfs;
+}
 
-    // Get all the nodes we're watching
-    const NodeList& GetWatchNodes();
-
-    // Get all the nodes that need to be reconverted
-    bool AnyDirty();
-    void GetDirty(NodeSet& dirtyNodes);
-
-    bool AnyDeleted();
-    KeyList& GetDeleted();
-
-protected:
-    void IAddRef(plMaxNode *node);
-    void IRemoveRef(plMaxNode *node);
-
-    void IAddNodeRecur(plMaxNode *node);
-
-    // Helpers for GetDirtyNodes
-    void IGetDependents(plMaxNode *node, NodeSet& nodes);
-    void IGetLogicDependents(plMaxNode *node, NodeSet& nodes);
-
-    void ISetDirty();
-
-    static void INotify(void *param, NotifyInfo *info);
-};
-
-#endif //SCENE_WATCHER_H

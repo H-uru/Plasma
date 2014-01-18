@@ -103,9 +103,9 @@ public:
     virtual void SaveToSDL(plStateDataRecord *sdl);
     virtual void LoadFromSDL(const plStateDataRecord *sdl);
 
-    void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    const char * WorldDirStr(plClimbMsg::Direction dir);
-    const char *ModeStr(Mode mode);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    static const char *WorldDirStr(plClimbMsg::Direction dir);
+    static const char *ModeStr(Mode mode);
 
     // plasma protocol
     virtual bool MsgReceive(plMessage *msg);
@@ -173,9 +173,9 @@ private:
     */
     bool IProcessExitStage(double time, float elapsed);
 
-    void IDumpClimbDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void IDumpDismountDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void IDumpBlockedDirections(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void IDumpClimbDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void IDumpDismountDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    void IDumpBlockedDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     ////////////////////////////
     //

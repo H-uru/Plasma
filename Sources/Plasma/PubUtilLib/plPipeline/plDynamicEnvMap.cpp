@@ -753,13 +753,13 @@ void plDynamicCamMap::IPrepTextureLayers()
             {
                 fMatLayers[i]->SetUVWSrc(plLayerInterface::kUVWPosition);
                 fMatLayers[i]->SetMiscFlags(hsGMatState::kMiscCam2Screen | hsGMatState::kMiscPerspProjection);
-                hsgResMgr::ResMgr()->SendRef(GetKey(), new plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->SendRef(GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
             else
             {
                 fMatLayers[i]->SetUVWSrc(0);
                 fMatLayers[i]->SetMiscFlags(0);
-                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plGenRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
+                hsgResMgr::ResMgr()->SendRef(fDisableTexture->GetKey(), new plLayRefMsg(fMatLayers[i]->GetKey(), plRefMsg::kOnRequest, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
             }
         }
     }

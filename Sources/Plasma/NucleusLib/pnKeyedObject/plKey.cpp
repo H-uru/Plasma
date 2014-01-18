@@ -204,16 +204,6 @@ plKey &plKey::operator=( const plKey &rhs )
     return *this;
 }
 
-bool plKey::operator==( const plKey &rhs ) const
-{
-    return fKeyData == rhs.fKeyData;
-}
-
-bool plKey::operator==( const plKeyData *rhs ) const
-{
-    return fKeyData == rhs;
-}
-
 plKeyData   *plKey::operator->() const
 {
     return fKeyData;

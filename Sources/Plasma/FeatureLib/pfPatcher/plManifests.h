@@ -39,37 +39,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plClientPatcher/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_APPS_PLCLIENTPATCHER_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/Apps/plClientPatcher/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_APPS_PLCLIENTPATCHER_PCH_H
+#ifndef _plManifests_inc_
+#define _plManifests_inc_
 
-#include "hsWindows.h"
-#include <process.h>
-#include <ctime>
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "plProduct.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "pnEncryption/plChecksum.h"
-#include "plAgeDescription/plAgeManifest.h"
-#include "plAudioCore/plAudioFileReader.h"
+#include <vector>
 
-#define USES_PROTOCOL_CLI2AUTH
-#include "pnNetProtocol/pnNetProtocol.h"
+class plFileName;
+class plString;
 
-#include "UruPlayer.h"
+namespace plManifest
+{
+    /** Get the name of the client executable for this build type.*/
+    plFileName ClientExecutable();
 
-#include "plCompression/plZlibStream.h"
-#include "Intern.h"
-#include "../plUruLauncher/plLauncherInfo.h"
+    /** Get the name of the patcher executable for this build type.*/
+    plFileName PatcherExecutable();
 
+    /** Get the name of the baseline client manifest for this build type. */
+    plString ClientManifest();
 
+    /** Get the name of the full game manifest for this build type. */
+    plString ClientImageManifest();
+
+    /** Get the name of the patcher manifest for this build type. */
+    plString PatcherManifest();
+
+    /** Get a vector containing all manifests the game requires to initialize. */
+    std::vector<plString> EssentialGameManifests();
+}
+
+#endif // _plManifests_inc_

@@ -519,7 +519,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
 {
     if(stage)
     {
-        dstState->FindVar(StandardStageVarNames::kStrName)->Set(stage->GetAnimName());
+        dstState->FindVar(StandardStageVarNames::kStrName)->Set(stage->GetAnimName().c_str());
         dstState->FindVar(StandardStageVarNames::kStrNumLoops)->Set(stage->GetNumLoops());
         dstState->FindVar(StandardStageVarNames::kStrForward)->Set((int)stage->GetForwardType());
         dstState->FindVar(StandardStageVarNames::kStrBackward)->Set((int)stage->GetBackType());

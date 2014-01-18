@@ -101,7 +101,7 @@ void plArmatureBehavior::Rewind()
         fAnim->SetCurrentTime(0.0f, true);
 }
 
-void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
     float strength = GetStrength();
     const char *onOff = strength > 0 ? "on" : "off";
@@ -109,16 +109,17 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, char *strBuf,
     int bars = (int)min(10 * strength, 10);
     blendBar[bars] = '\0';
 
+    plString details;
     if (fAnim)
     {
         plString animName = fAnim->GetName();
-        float time = fAnim->GetTimeConvert()->CurrentAnimTime();    
-        sprintf(strBuf, "%20s %3s time: %5.2f %s", animName.c_str(), onOff, time, blendBar);
+        float time = fAnim->GetTimeConvert()->CurrentAnimTime();
+        details = plString::Format("%20s %3s time: %5.2f %s", animName.c_str(), onOff, time, blendBar);
     }
     else
-        sprintf(strBuf, "         Behavior %2d %3s %s", fIndex, onOff, blendBar);
+        details = plString::Format("         Behavior %2d %3s %s", fIndex, onOff, blendBar);
 
-    debugTxt.DrawString(x, y, strBuf);
+    debugTxt.DrawString(x, y, details);
     y += lineHeight; 
 }
 

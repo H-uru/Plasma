@@ -94,7 +94,7 @@ void plAvTaskBrain::Finish(plArmatureMod *avatar, plArmatureBrain *brain, double
 
 // DumpDebug ------------------------------------------------------------------------------------------------------
 // ----------
-void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAvTaskBrain::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
     if(fBrain)
     {

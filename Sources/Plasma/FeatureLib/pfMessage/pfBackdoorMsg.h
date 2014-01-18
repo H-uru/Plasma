@@ -55,24 +55,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfBackdoorMsg : public plMessage
 {
     protected:
-        char    *fTarget;
-        char    *fString;
+        plString    fTarget;
+        plString    fString;
 
     public:
-        pfBackdoorMsg() : plMessage( nil, nil, nil ),fTarget(nil),fString(nil) {}
-        pfBackdoorMsg( const char* target, const char* string) : plMessage( nil, nil, nil )
+        pfBackdoorMsg() : plMessage(nil, nil, nil) {}
+        pfBackdoorMsg(const plString& target, const plString& string)
+            : plMessage(nil, nil, nil), fTarget(target), fString(string)
         {
             // across the net and just to those listening
             SetBCastFlag( plMessage::kNetPropagate );
             SetBCastFlag( plMessage::kBCastByExactType );
-            fTarget = hsStrcpy( target );
-            fString = hsStrcpy( string );
-        }
-
-        ~pfBackdoorMsg()
-        {
-            delete [] fTarget;
-            delete [] fString;
         }
 
         CLASSNAME_REGISTER( pfBackdoorMsg );
@@ -81,19 +74,19 @@ class pfBackdoorMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgRead( s, mgr ); 
-            fTarget = s->ReadSafeString();
-            fString = s->ReadSafeString();
+            fTarget = s->ReadSafeString_TEMP();
+            fString = s->ReadSafeString_TEMP();
         }
         
         virtual void Write(hsStream* s, hsResMgr* mgr) 
         { 
             plMessage::IMsgWrite( s, mgr ); 
-            s->WriteSafeString( fTarget );
-            s->WriteSafeString( fString );
+            s->WriteSafeString(fTarget);
+            s->WriteSafeString(fString);
         }
 
-        const char  *GetTarget( void ) { return fTarget; }
-        const char  *GetString( void ) { return fString; }
+        plString    GetTarget() const { return fTarget; }
+        plString    GetString() const { return fString; }
 
 };
 

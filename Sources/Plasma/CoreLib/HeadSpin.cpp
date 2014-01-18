@@ -216,22 +216,6 @@ void hsStatusMessageF(const char * fmt, ...)
 
 #endif
 
-// TODO: Deprecate these in favor of plString
-char * hsFormatStr(const char * fmt, ...)
-{
-    va_list args;
-    va_start(args,fmt);
-    char * result = hsFormatStrV(fmt,args);
-    va_end(args);
-    return result;
-}
-
-char * hsFormatStrV(const char * fmt, va_list args)
-{
-    plString buf = plString::IFormat(fmt, args);
-    return hsStrcpy(buf.c_str());
-}
-
 class hsMinimizeClientGuard
 {
 #ifdef CLIENT
@@ -382,8 +366,8 @@ char* hsStrcpy(char dst[], const char src[])
     {
         if (dst == nil)
         {
-            int count = strlen(src);
-            dst = (char *)malloc(count + 1);
+            size_t count = strlen(src);
+            dst = new char[count + 1];
             memcpy(dst, src, count);
             dst[count] = 0;
             return dst;
@@ -452,15 +436,13 @@ char    *hsWStringToString( const wchar_t *str )
 // Microsoft SAMPLE CODE
 // returns array of allocated version info strings or nil
 //
-char** DisplaySystemVersion()
+std::vector<plString> DisplaySystemVersion()
 {
-    // TODO:  I so want to std::vector<plString> this, but that requires
-    //        including more headers in HeadSpin.h :(
 #if HS_BUILD_FOR_WIN32
 #ifndef VER_SUITE_PERSONAL
 #define VER_SUITE_PERSONAL 0x200
 #endif
-    hsTArray<char*> versionStrs;
+    std::vector<plString> versionStrs;
     OSVERSIONINFOEX osvi;
     BOOL bOsVersionInfoEx;
 
@@ -477,7 +459,7 @@ char** DisplaySystemVersion()
 
         osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
         if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) )
-            return FALSE;
+            return std::vector<plString>();
     }
 
     switch (osvi.dwPlatformId)
@@ -487,22 +469,25 @@ char** DisplaySystemVersion()
         // Test for the product.
 
         if ( osvi.dwMajorVersion <= 4 )
-            versionStrs.Append(hsStrcpy("Microsoft Windows NT "));
+            versionStrs.push_back("Microsoft Windows NT ");
 
         if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 )
-            versionStrs.Append(hsStrcpy ("Microsoft Windows 2000 "));
+            versionStrs.push_back("Microsoft Windows 2000 ");
 
         if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
-            versionStrs.Append(hsStrcpy ("Microsoft Windows XP "));
+            versionStrs.push_back("Microsoft Windows XP ");
 
         if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0 )
-            versionStrs.Append(hsStrcpy ("Microsoft Windows Vista "));
+            versionStrs.push_back("Microsoft Windows Vista ");
 
         if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1 )
-            versionStrs.Append(hsStrcpy ("Microsoft Windows 7 "));
+            versionStrs.push_back("Microsoft Windows 7 ");
 
         if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2 )
-            versionStrs.Append(hsStrcpy ("Microsoft Windows 8 "));
+            versionStrs.push_back("Microsoft Windows 8 ");
+
+        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3 )
+            versionStrs.push_back("Microsoft Windows 8.1 ");
 
         // Test for product type.
 
@@ -511,19 +496,19 @@ char** DisplaySystemVersion()
             if ( osvi.wProductType == VER_NT_WORKSTATION )
             {
                 if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
-                    versionStrs.Append(hsStrcpy ( "Personal " ));
+                    versionStrs.push_back("Personal ");
                 else
-                    versionStrs.Append(hsStrcpy ( "Professional " ));
+                    versionStrs.push_back("Professional ");
             }
 
             else if ( osvi.wProductType == VER_NT_SERVER )
             {
                 if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                    versionStrs.Append(hsStrcpy ( "DataCenter Server " ));
+                    versionStrs.push_back("DataCenter Server ");
                 else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                    versionStrs.Append(hsStrcpy ( "Advanced Server " ));
+                    versionStrs.push_back("Advanced Server ");
                 else
-                    versionStrs.Append(hsStrcpy ( "Server " ));
+                    versionStrs.push_back("Server ");
             }
         }
         else
@@ -539,28 +524,28 @@ char** DisplaySystemVersion()
                 (LPBYTE) szProductType, &dwBufLen);
             RegCloseKey( hKey );
             if ( lstrcmpi( "WINNT", szProductType) == 0 )
-                versionStrs.Append(hsStrcpy( "Professional " ));
+                versionStrs.push_back("Professional ");
             if ( lstrcmpi( "LANMANNT", szProductType) == 0 )
-                versionStrs.Append(hsStrcpy( "Server " ));
+                versionStrs.push_back("Server ");
             if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
-                versionStrs.Append(hsStrcpy( "Advanced Server " ));
+                versionStrs.push_back("Advanced Server ");
         }
 
         // Display version, service pack (if any), and build number.
 
         if ( osvi.dwMajorVersion <= 4 )
         {
-            versionStrs.Append(hsStrcpy (plString::Format("version %d.%d %s (Build %d)\n",
+            versionStrs.push_back(plString::Format("version %d.%d %s (Build %d)\n",
                 osvi.dwMajorVersion,
                 osvi.dwMinorVersion,
                 osvi.szCSDVersion,
-                osvi.dwBuildNumber & 0xFFFF).c_str()));
+                osvi.dwBuildNumber & 0xFFFF));
         }
         else
         {
-            versionStrs.Append(hsStrcpy (plString::Format("%s (Build %d)\n",
+            versionStrs.push_back(plString::Format("%s (Build %d)\n",
                 osvi.szCSDVersion,
-                osvi.dwBuildNumber & 0xFFFF).c_str()));
+                osvi.dwBuildNumber & 0xFFFF));
         }
         break;
 
@@ -568,34 +553,32 @@ char** DisplaySystemVersion()
 
         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
         {
-            versionStrs.Append(hsStrcpy ("Microsoft Windows 95 "));
+            versionStrs.push_back("Microsoft Windows 95 ");
             if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
-                versionStrs.Append(hsStrcpy("OSR2 " ));
+                versionStrs.push_back("OSR2 ");
         }
 
         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
         {
-            versionStrs.Append(hsStrcpy ("Microsoft Windows 98 "));
+            versionStrs.push_back("Microsoft Windows 98 ");
             if ( osvi.szCSDVersion[1] == 'A' )
-                versionStrs.Append(hsStrcpy("SE " ));
+                versionStrs.push_back("SE ");
         }
 
         if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
         {
-            versionStrs.Append(hsStrcpy ("Microsoft Windows Me "));
+            versionStrs.push_back("Microsoft Windows Me ");
         }
         break;
 
     case VER_PLATFORM_WIN32s:
 
-        versionStrs.Append(hsStrcpy ("Microsoft Win32s "));
+        versionStrs.push_back("Microsoft Win32s ");
         break;
     }
 
-    versionStrs.Append(nil);    // terminator
-
-    return versionStrs.DetachArray();
+    return versionStrs;
 #else
-    return nil;
+    return std::vector<plString>();
 #endif
 }

@@ -39,34 +39,44 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/Apps/plUruLauncher/Pch.h
-*   
-***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_APPS_PLURULAUNCHER_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/Apps/plUruLauncher/Pch.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_APPS_PLURULAUNCHER_PCH_H
+#include "hsGDirect3D.h"
+#include "plDXEnumerate.h"
 
-#include "hsWindows.h"
-#include <process.h>
-#include <ctime>
+#include <d3d9.h>
+#include <functional>
+#include <memory>
 
-#include <curl/curl.h>
+static std::unique_ptr<hsGDirect3DTnLEnumerate> s_tnlEnum;
+hsGDirect3DTnLEnumerate& hsGDirect3D::EnumerateTnL(bool reenum)
+{
+    if (reenum || !s_tnlEnum.get())
+        s_tnlEnum.reset(new hsGDirect3DTnLEnumerate());
 
-#include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "plProduct.h"
-#include "pnNetCli/pnNetCli.h"
-#include "plNetGameLib/plNetGameLib.h"
-#include "pnEncryption/plChecksum.h"
+    // Be nice to legacy code and return a reference...
+    hsGDirect3DTnLEnumerate* ptr = s_tnlEnum.get();
+    return *ptr;
+}
 
-#include "plCompression/plZlibStream.h"
-#include "plClientPatcher/UruPlayer.h"
+void hsGDirect3D::ReleaseTnLEnum()
+{
+    s_tnlEnum.release();
+}
 
-#include "plLauncherInfo.h"
-#include "Intern.h"
+static void IDeleteDirect3D(IDirect3D9* d3d)
+{
+    while (d3d->Release()) { }
+}
+
+static std::unique_ptr<IDirect3D9, std::function<void(IDirect3D9*)>> s_direct3d(nullptr, IDeleteDirect3D);
+IDirect3D9* hsGDirect3D::GetDirect3D(bool recreate)
+{
+    if (recreate || !s_direct3d.get()) {
+        IDirect3D9* ptr = Direct3DCreate9(D3D_SDK_VERSION);
+        hsAssert(ptr, "failed to create Direct3D");
+
+        s_direct3d.reset(ptr);
+    }
+    return s_direct3d.get();
+}
 

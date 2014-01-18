@@ -194,8 +194,10 @@ void plAvBrainHuman::Activate(plArmatureModBase *avMod)
     
     if (fAvMod->GetClothingOutfit() && fAvMod->GetClothingOutfit()->fGroup != plClothingMgr::kClothingBaseNoOptions)
     {
-        if (fAvMod->IsLocalAvatar()) 
-            fAvMod->GetClothingOutfit()->ReadFromVault();
+        if (fAvMod->IsLocalAvatar())
+        {
+            fAvMod->GetClothingOutfit()->ReadClothing();
+        }
         else 
         {
             fAvMod->GetClothingOutfit()->WearDefaultClothing();
@@ -905,28 +907,19 @@ bool plAvBrainHuman::LeaveAge()
     return false;
 }
 
-void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt)
+void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    sprintf(strBuf, "Brain type: Human");
-    debugTxt.DrawString(x, y, strBuf);
+    debugTxt.DrawString(x, y, "Brain type: Human");
     y += lineHeight;
     
     const char *grounded = fWalkingStrategy->IsOnGround() ? "yes" : "no";
     const char *pushing = (fWalkingStrategy->GetPushingPhysical() ? (fWalkingStrategy->GetFacingPushingPhysical() ? "facing" : "behind") : "none");
-    sprintf(strBuf, "Ground: %3s, AirTime: %5.2f (Peak: %5.2f), PushingPhys: %6s",
-            grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing);
-    debugTxt.DrawString(x, y, strBuf);
+    debugTxt.DrawString(x, y, plString::Format("Ground: %3s, AirTime: %5.2f (Peak: %5.2f), PushingPhys: %6s",
+                grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing));
     y += lineHeight;
 
-    int i;
-    //strBuf[0] = '\0';
-    //for (i = 0; i < 32; i++)
-    //  strcat(strBuf, fPreconditions & (0x1 << i) ? "1" : "0");
-    //debugTxt.DrawString(x, y, strBuf);
-    //y += lineHeight;  
-
-    for (i = 0; i < fBehaviors.GetCount(); i++)
-        fBehaviors[i]->DumpDebug(x, y, lineHeight, strBuf, debugTxt);
+    for (int i = 0; i < fBehaviors.GetCount(); i++)
+        fBehaviors[i]->DumpDebug(x, y, lineHeight, debugTxt);
 
     debugTxt.DrawString(x, y, "Tasks:");
     y += lineHeight;
@@ -937,7 +930,7 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *st
         y += lineHeight;
 
         int indentedX = x + 4;
-        fCurTask->DumpDebug("-", indentedX, y, lineHeight, strBuf, debugTxt);
+        fCurTask->DumpDebug("-", indentedX, y, lineHeight, debugTxt);
     }
     int tasks = fTaskQueue.size();
     if(tasks > 0)
@@ -950,7 +943,7 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, char *st
         for (int i = 0; i < tasks; i++)
         {
             plAvTask *each = fTaskQueue[i];
-            each->DumpDebug("-", indentedX, y, lineHeight, strBuf, debugTxt);
+            each->DumpDebug("-", indentedX, y, lineHeight, debugTxt);
         }
     }
 }

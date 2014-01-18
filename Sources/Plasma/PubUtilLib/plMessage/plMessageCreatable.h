@@ -319,9 +319,6 @@ REGISTER_CREATABLE(plNetCommPublicAgeListMsg);
 REGISTER_CREATABLE(plNetCommPublicAgeMsg);
 REGISTER_CREATABLE(plNetCommRegisterAgeMsg);
 
-#include "plPreloaderMsg.h"
-REGISTER_CREATABLE(plPreloaderMsg);
-
 #include "plNetClientMgrMsg.h"
 REGISTER_CREATABLE(plNetClientMgrMsg);
 
@@ -357,6 +354,9 @@ REGISTER_CREATABLE(plLoadCloneMsg);
 
 # include "plLoadAvatarMsg.h"
 REGISTER_CREATABLE(plLoadAvatarMsg);
+
+#include "plLoadClothingMsg.h"
+REGISTER_CREATABLE(plLoadClothingMsg);
 
 # include "plAvCoopMsg.h"
 REGISTER_CREATABLE(plAvCoopMsg);

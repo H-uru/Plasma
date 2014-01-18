@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include "hsMatrix44.h"
 #include "pnFactory/plCreatable.h"
+#include "plString.h"
 
 class plMessage;
 class plAGAnimInstance;
@@ -158,7 +159,7 @@ public:
                         animation attempts to reposition the avatar by having a
                         channel attached to the avatar's handle.
     */
-    plAnimStage(const char *animName,
+    plAnimStage(const plString &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType backward,
@@ -172,7 +173,7 @@ public:
         will be played after this one, depending on which direction the stage is
         moving.
     */
-    plAnimStage(const char *animName,
+    plAnimStage(const plString &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType back,
@@ -189,7 +190,7 @@ public:
         \param animName The name of the animation controlled by this stage.
         \param notify Flags for when to send notify messages
         */
-    plAnimStage(const char *animName, uint8_t notify);
+    plAnimStage(const plString &animName, uint8_t notify);
     virtual ~plAnimStage();
     const plAnimStage& operator=(const plAnimStage& src);
 
@@ -200,7 +201,7 @@ public:
     bool MoveRelative(double worldTime, float delta, float &overage, plArmatureMod *avMod);
 
     /** The name of the animation associated with this stage. */
-    const char * GetAnimName();
+    plString GetAnimName() const { return fAnimName; }
 
     ForwardType GetForwardType();
     void SetForwardType(ForwardType t);
@@ -230,7 +231,7 @@ public:
     plAGAnimInstance *GetAnimInstance() const { return fAnimInstance; };
     bool GetReverseOnIdle() { return fReverseOnIdle; }
     void SetReverseOnIdle(bool onOff) { fReverseOnIdle = onOff; }   
-    void DumpDebug(bool active, int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     // STANDARD PLASMA PROTOCOL
     virtual void Read(hsStream *stream, hsResMgr *mgr);
@@ -254,14 +255,14 @@ protected:
 
     bool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
 
-    char *fAnimName;            // the name of our animation
-    uint8_t fNotify;              // flags for which events will cause notification events
+    plString fAnimName;         // the name of our animation
+    uint8_t fNotify;            // flags for which events will cause notification events
     int fLoops;                 // how many times will this animation loop (after initial playthrough?)
 
     bool fDoAdvanceTo;          // advance to a specific stage instead of n + 1
-    uint32_t fAdvanceTo;          // the stage to advance to, provided fDoAdvanceTo is true
+    uint32_t fAdvanceTo;        // the stage to advance to, provided fDoAdvanceTo is true
     bool fDoRegressTo;          // regress to a specific stage instaed of n - 1
-    uint32_t fRegressTo;          // the stage to regress true, provided fDoRegressTo is true
+    uint32_t fRegressTo;        // the stage to regress true, provided fDoRegressTo is true
 
     // --- these are derived & kept for bookkeeping
     plAGAnimInstance *fAnimInstance;

@@ -29,7 +29,6 @@ Plasma currently requires the following third-party libraries:
 - libPNG - http://www.libpng.org/
 - speex - http://www.speex.org/downloads/
 - zlib - http://zlib.net/
-- PCRE - http://www.pcre.org/
 - libcurl - http://curl.haxx.se/
 
 The following libraries are optional:

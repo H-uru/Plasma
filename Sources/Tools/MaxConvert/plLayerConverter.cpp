@@ -1003,7 +1003,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const plString &layerN
     
     // Need a unique key name for every layer that uses one. We could also key
     // off of width and height, but layerName should be more than plenty
-    plString texName = plString::Format( "%s_dynText", layerName );
+    plString texName = plString::Format( "%s_dynText", layerName.c_str() );
 
     // Does it already exist?
     key = node->FindPageKey( plDynamicTextMap::Index(), texName );

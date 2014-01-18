@@ -315,7 +315,7 @@ TSTR plClothingMtl::GetSubTexmapTVName(int i)
     return GetSubTexmapSlotName(i);
 }
 
-DllExport Texmap *plClothingMtl::GetTexmap(int index, int layer) 
+Texmap *plClothingMtl::GetTexmap(int index, int layer)
 { 
     return fBasicPB->GetTexmap(ParamID(LayerToPBIdx[layer]), 0, index); 
 }
@@ -565,12 +565,12 @@ Interval plClothingMtl::DisplacementValidity(TimeValue t)
     return iv;  
 }
 
-plClothingElement *plClothingMtl::FindElementByName(char *name)
+plClothingElement *plClothingMtl::FindElementByName(const plString &name) const
 {
     int i;
     for (i = 0; i < fElements.GetCount(); i++)
     {
-        if (!strcmp(fElements.Get(i)->fName, name))
+        if (fElements.Get(i)->fName == name)
             return fElements.Get(i);
     }
     return nil; 

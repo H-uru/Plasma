@@ -331,7 +331,7 @@ void plSceneNode::IRemovePhysical(plPhysical* p)
         {
             char buf[256];
             sprintf(buf, "Trying to remove physical %s from scenenode %s,\nbut it's actually in %s",
-                p->GetKeyName(), GetKeyName(), oldNodeKey->GetName());
+                p->GetKeyName().c_str(), GetKeyName().c_str(), oldNodeKey->GetName().c_str());
             hsAssert(0, buf);
         }
     }

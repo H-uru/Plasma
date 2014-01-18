@@ -80,6 +80,7 @@ set(plMessage_HEADERS
     plLoadAgeMsg.h
     plLoadAvatarMsg.h
     plLoadCloneMsg.h
+    plLoadClothingMsg.h
     plLOSHitMsg.h
     plLOSRequestMsg.h
     plMatRefMsg.h
@@ -98,7 +99,6 @@ set(plMessage_HEADERS
     plOneShotMsg.h
     plParticleUpdateMsg.h
     plPickedMsg.h
-    plPreloaderMsg.h
     plRenderMsg.h
     plRenderRequestMsg.h
     plReplaceGeometryMsg.h

@@ -66,7 +66,7 @@ public:
     virtual void Deactivate();
     virtual void Suspend();
     virtual void Resume();
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
     bool MsgReceive(plMessage *msg);
     bool IsWalking();
     bool IsWading();

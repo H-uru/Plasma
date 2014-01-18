@@ -48,6 +48,7 @@ class Bitmap;
 class plClothingItem;
 class plMaxNode;
 class plClothingElement;
+class plString;
 class Texmap;
 
 #define CLOTHING_MTL_CLASS_ID Class_ID(0x792c6de4, 0x1f952b65)
@@ -130,10 +131,10 @@ public:
     hsTArray<plClothingElement *> fElements;
     virtual void InitTilesets();
     virtual void ReleaseTilesets();
-    plClothingElement *FindElementByName(char *name);
+    plClothingElement *FindElementByName(const plString &name) const;
 
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
-    DllExport Texmap *GetTexmap(int index, int layer);
+    Texmap *GetTexmap(int index, int layer);
     Texmap *GetThumbnail() { return fBasicPB->GetTexmap(ParamID(kThumbnail)); }
     const char *GetDescription() { return fBasicPB->GetStr(ParamID(kDescription)); }
     const char *GetCustomText() { return fBasicPB->GetStr(ParamID(kCustomTextSpecs)); }

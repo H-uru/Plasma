@@ -47,18 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 //////////////////////////////////////////////////////////////////////////////
-hsReaderWriterLock::hsReaderWriterLock( const char * name, Callback * cb )
+hsReaderWriterLock::hsReaderWriterLock(Callback * cb)
 : fReaderCount( 0 )
 , fWriterSema( 1 )
 , fCallback( cb )
-, fName( nil )
 {
-    fName = hsStrcpy( name );
-}
-
-hsReaderWriterLock::~hsReaderWriterLock()
-{
-    delete [] fName;
 }
 
 void hsReaderWriterLock::LockForReading()

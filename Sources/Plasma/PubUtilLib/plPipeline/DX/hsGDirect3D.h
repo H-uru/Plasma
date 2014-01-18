@@ -39,3 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+#ifndef _hsGDirect3D_inc_
+#define _hsGDirect3D_inc_
+
+class hsGDirect3DTnLEnumerate;
+struct IDirect3D9;
+
+namespace hsGDirect3D
+{
+    hsGDirect3DTnLEnumerate& EnumerateTnL(bool reenum=false);
+    void ReleaseTnLEnum();
+
+    /** Get a root Direct3D object.
+     *  \remarks You should not hold this pointer.
+     */
+    IDirect3D9* GetDirect3D(bool recreate=false);
+}
+
+#endif // _hsGDirect3D_inc_

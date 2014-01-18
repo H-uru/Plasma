@@ -96,6 +96,7 @@ public:
     virtual hsError Run() = 0;      // override this to do your work
     virtual void    Start();        // initializes stuff and calls your Run() method
     virtual void    Stop();     // sets fQuit = true and the waits for the thread to stop
+    virtual void    OnQuit() { }
                 
     //  Static functions
     static void*    Alloc(size_t size); // does not call operator::new(), may return nil
@@ -222,13 +223,11 @@ public:
         virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
         virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
     };
-    hsReaderWriterLock( const char * name="<unnamed>", Callback * cb=nil );
-    ~hsReaderWriterLock();
+    hsReaderWriterLock(Callback * cb=nullptr);
     void LockForReading();
     void UnlockForReading();
     void LockForWriting();
     void UnlockForWriting();
-    const char * GetName() const { return fName; }
 
 private:
     int     fReaderCount;
@@ -236,7 +235,6 @@ private:
     hsMutex fReaderLock;
     hsSemaphore fWriterSema;
     Callback *  fCallback;
-    char *  fName;
 };
 
 class hsLockForReading

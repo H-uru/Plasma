@@ -589,11 +589,11 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name, float number )
+void plNotifyMsg::AddVariableEvent(const plString& name, float number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
-    pED->fName = hsStrcpy(nil,name);
+    pED->fName = name;
     pED->fDataType = proEventData::kFloat;
     pED->fNumber.f = number;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -607,11 +607,11 @@ void plNotifyMsg::AddVariableEvent( const char* name, float number )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name, int32_t number )
+void plNotifyMsg::AddVariableEvent(const plString& name, int32_t number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
-    pED->fName = hsStrcpy(nil,name);
+    pED->fName = name;
     pED->fDataType = proEventData::kInt;
     pED->fNumber.i = number;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -624,11 +624,11 @@ void plNotifyMsg::AddVariableEvent( const char* name, int32_t number )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name)
+void plNotifyMsg::AddVariableEvent(const plString& name)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
-    pED->fName = hsStrcpy(nil,name);
+    pED->fName = name;
     pED->fDataType = proEventData::kNull;
     fEvents.Append(pED);    // then add it to the list of event records
 }
@@ -641,12 +641,11 @@ void plNotifyMsg::AddVariableEvent( const char* name)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent( const char* name, const plKey &key )
+void plNotifyMsg::AddVariableEvent(const plString& name, const plKey &key)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
-    pED->fName = hsStrcpy(nil,name);
-//  pED->fName = (char*)name;
+    pED->fName = name;
     pED->fDataType = proEventData::kKey;
     pED->fKey = key;
     fEvents.Append(pED);    // then add it to the list of event records
@@ -1312,13 +1311,12 @@ void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proVariableEventData::IInit()
 {
-    fName = nil;
+    fName = plString::Null;
 }
+
 void proVariableEventData::IDestruct()
 {
-    if ( fName != nil )
-        delete [] fName;
-    fName = nil;
+    fName = plString::Null;
 }
 
 void proVariableEventData::IReadNumber(hsStream * stream) {
@@ -1353,7 +1351,7 @@ void proVariableEventData::IWriteNumber(hsStream * stream) {
 
 void proVariableEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fName = stream->ReadSafeString();
+    fName = stream->ReadSafeString_TEMP();
     fDataType = stream->ReadLE32();
     IReadNumber(stream);
     fKey = mgr->ReadKey(stream);
@@ -1381,7 +1379,7 @@ void proVariableEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProVariableName))
-        fName = s->ReadSafeString();
+        fName = s->ReadSafeString_TEMP();
     if (contentFlags.IsBitSet(kProVariableDataType))
         fDataType = s->ReadLE32();
     if (contentFlags.IsBitSet(kProVariableNumber))

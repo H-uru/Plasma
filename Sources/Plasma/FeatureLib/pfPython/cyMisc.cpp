@@ -2599,6 +2599,33 @@ void cyMisc::DebugAssert( bool cond, const char * msg )
     hsAssert( cond, msg );
 }
 
+void cyMisc::DebugPrint(const plString& msg, uint32_t level)
+{
+    if (level < fPythonLoggingLevel)
+        return;
+    plStatusLog* log = plStatusLogMgr::GetInstance().FindLog("python.log", false);
+    if (!log)
+        return;
+
+    switch (level) {
+    case kDebugDump:
+        log->AddLine(msg.c_str(), plStatusLog::kGreen);
+        break;
+    case kWarningLevel:
+        log->AddLine(msg.c_str(), plStatusLog::kYellow);
+        break;
+    case kAssertLevel:
+        hsAssert(false, msg.c_str());
+        // ... fall thru to the actual log-print
+    case kErrorLevel:
+        log->AddLine(msg.c_str(), plStatusLog::kRed);
+        break;
+    default:
+        log->AddLine(msg.c_str(), plStatusLog::kWhite);
+        break;
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 //
 // Function   : Set a python object to be called back after a certain amount of time.

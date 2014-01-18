@@ -4,7 +4,16 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#define IDC_STATIC              (-1)     // all static controls
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
 // English (U.S.) resources
@@ -32,6 +41,12 @@ BEGIN
     "\0"
 END
 
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
 #endif    // APSTUDIO_INVOKED
 
 
@@ -40,7 +55,7 @@ END
 // Dialog
 //
 
-IDD_DIALOG DIALOGEX 0, 0, 301, 180
+IDD_DIALOG DIALOGEX 0, 0, 301, 135
 STYLE DS_SETFONT | DS_MODALFRAME | DS_SETFOREGROUND | DS_FIXEDSYS | 
     DS_CENTER | WS_POPUP | WS_VISIBLE | WS_SYSMENU
 EXSTYLE WS_EX_APPWINDOW
@@ -48,17 +63,16 @@ FONT 8, "MS Shell Dlg", 400, 0, 0x1
 BEGIN
     CONTROL         109,IDB_BITMAP,"Static",SS_BITMAP | SS_SUNKEN,7,7,288,36
     CONTROL         "",IDC_PROGRESS,"msctls_progress32",WS_BORDER | 0x1,7,
-                    162,234,11
-    LTEXT           "Static",IDC_TEXT,10,152,266,8
-    PUSHBUTTON      "Cancel",IDCANCEL,243,162,51,11
+                    111,234,11
+    CONTROL         "", IDC_MARQUEE, "msctls_progress32", WS_BORDER | 0x8, 7,
+                    111, 234, 11
+    LTEXT           "Static",IDC_TEXT,10,101,266,8
+    PUSHBUTTON      "Cancel",IDCANCEL,243,111,51,11
     LTEXT           "Welcome to URU",IDC_STATUS_TEXT,19,57,266,17
     GROUPBOX        "",IDC_STATIC,7,46,287,49
-    GROUPBOX        "Status",IDC_STATIC,7,103,287,44
-    LTEXT           "Approx. Time Remaining:",IDC_STATIC,19,117,88,11
-    LTEXT           "Update Remaining:",IDC_STATIC,20,130,73,9
-    LTEXT           "...",IDC_TIMEREMAINING,111,117,165,12
-    LTEXT           "...",IDC_BYTESREMAINING,111,130,42,12
     RTEXT           "Product String",IDC_PRODUCTSTRING,19,85,272,8
+    LTEXT           "6 MiB / 666 MiB",IDC_DLSIZE,11,124,110,8
+    LTEXT           "128 KiB/s",IDC_DLSPEED,186,124,53,8,0,WS_EX_RIGHT
 END
 
 
@@ -75,7 +89,7 @@ BEGIN
         LEFTMARGIN, 7
         RIGHTMARGIN, 294
         TOPMARGIN, 7
-        BOTTOMMARGIN, 173
+        BOTTOMMARGIN, 135
     END
 END
 #endif    // APSTUDIO_INVOKED

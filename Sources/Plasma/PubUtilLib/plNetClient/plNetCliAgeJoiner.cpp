@@ -188,8 +188,10 @@ void plNCAgeJoiner::IDispatchMsgReceiveCallback () {
 void plNCAgeJoiner::IResMgrProgressBarCallback (plKey key) {
 #ifndef PLASMA_EXTERNAL_RELEASE
     if (s_instance)
-        s_instance->progressBar->SetStatusText(key->GetName().c_str());
+        s_instance->progressBar->SetStatusText(key->GetName());
 #endif
+    if (s_instance)
+        s_instance->progressBar->Increment(1);
 }
 
 //============================================================================
@@ -224,13 +226,18 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0)
+    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
-    else
+
+        // no need to update if we're not using a GameSrv
+        plgDispatch::MsgSend(new plResPatcherMsg());
+    } else {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge, false);
 
-    plAgeLoader* al = plAgeLoader::GetInstance();
-    al->UpdateAge(age.ageDatasetName);
+        // we only need to update the age if we're using a GameSrv
+        plAgeLoader* al = plAgeLoader::GetInstance();
+        al->UpdateAge(age.ageDatasetName);
+    }
 }
 
 //============================================================================
@@ -252,13 +259,11 @@ void plNCAgeJoiner::ExecNextOp () {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadAge");
 
             // Start progress bar
-            char str[256];
-        #ifdef PLASMA_EXTERNAL_RELEASE
-            StrCopy(str, "Loading age...", arrsize(str));
-        #else
-            StrPrintf(str, arrsize(str), "Loading age %s...", age.ageDatasetName);
-        #endif
-            progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str, plProgressMgr::kNone, false, true);
+            plString str;
+#ifndef PLASMA_EXTERNAL_RELEASE
+            str = plString::Format("Loading age... %s", age.ageDatasetName);
+#endif
+            progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str.c_str(), plProgressMgr::kNone, false, true);
             plDispatch::SetMsgRecieveCallback(IDispatchMsgReceiveCallback);
             ((plResManager*)hsgResMgr::ResMgr())->SetProgressBarProc(IResMgrProgressBarCallback);
 
@@ -278,7 +283,7 @@ void plNCAgeJoiner::ExecNextOp () {
                 else
                     avatarName = NetCommGetPlayer()->avatarDatasetName;
                 plString linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
-                am->LoadPlayer( avatarName, nil, linkInName.c_str() );
+                am->LoadPlayer(avatarName, "", linkInName);
             }
             else {
                 LogMsg(kLogPerf, L"AgeJoiner: Next:kPropagatePlayer");
@@ -389,7 +394,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
             );
             LogMsg(kLogPerf, L"AgeJoiner: Next:kNoOp (age updated)");
         } else
-            Complete(false, resMsg->GetError());
+            Complete(false, resMsg->GetError().c_str());
         return true;
     }
 

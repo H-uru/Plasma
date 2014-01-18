@@ -89,7 +89,6 @@ set(MaxComponent_HEADERS
     plVolumeGadgetComponent.h
     plWaterComponent.h
     plXImposter.h
-    WavFileStructs.h
 )
 
 set(MaxComponent_RESOURCES
@@ -161,7 +160,6 @@ set(MaxComponent_SOURCES
     plPickMaterialMap.cpp
     plPickNode.cpp
     plPickNodeBase.cpp
-    plPickNodeComp.cpp
     plPythonFileComponent.cpp
     plRepComponent.cpp
     plResponderAnim.cpp

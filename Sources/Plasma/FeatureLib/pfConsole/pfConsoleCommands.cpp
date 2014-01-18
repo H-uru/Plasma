@@ -144,7 +144,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDynaBulletMgr.h"
 
 #include "plGImage/plMipmap.h"
-#include "plGImage/plTGAWriter.h"
 
 #include "plGLight/plShadowCaster.h"
 #include "plGLight/plShadowMaster.h"
@@ -1533,44 +1532,6 @@ static bool MakeUniqueFileName(const char* prefix, const char* ext, char* fileNa
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
-
-PF_CONSOLE_CMD( Graphics_Renderer, TakeScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
-{
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
-
-    plMipmap        myMipmap;
-    char            fileName[ 512 ];
-
-
-    if( numParams > 1 )
-    {
-        PrintString( "Too many parameters to TakeScreenshot" );
-        return;
-    }
-    else if( numParams == 1 )
-        strcpy( fileName, (char *)params[ 0 ] );
-    else
-    {
-        // Think up a filename
-        if (!MakeUniqueFileName("screen", "tga", fileName))
-        {
-            PrintString( "Out of filenames for TakeScreenshot" );
-            return;
-        }
-    }
-
-    if( !pfConsole::GetPipeline()->CaptureScreen( &myMipmap ) )
-        PrintString( "Error capturing screenshot" );
-    else
-    {
-        char    str[ 512 ];
-
-        plTGAWriter::Instance().WriteMipmap( fileName, &myMipmap );
-        sprintf( str, "Screenshot written to '%s'.", fileName );
-        PrintString( str );
-    }
-}
-
 #include "pfSurface/plGrabCubeMap.h"
 
 PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap, 
@@ -1603,56 +1564,6 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
     const char* pref = params[1];
     plGrabCubeMap grabCube;
     grabCube.GrabCube(pfConsole::GetPipeline(), pos, pref, clearColor);
-}
-
-#include "plGImage/plJPEG.h"
-
-PF_CONSOLE_CMD( Graphics_Renderer, TakeJPEGScreenshot, "...", "Takes a shot of the current frame and saves it to the given file" )
-{
-    hsAssert( pfConsole::GetPipeline() != nil, "Cannot use this command before pipeline initialization" );
-
-    plMipmap        myMipmap;
-    char            fileName[ 512 ];
-
-
-    if( numParams > 2 )
-    {
-        PrintString( "Too many parameters to TakeScreenshot" );
-        return;
-    }
-    else if( numParams > 0 )
-        strcpy( fileName, (char *)params[ 0 ] );
-    else
-    {
-        // Think up a filename
-        if (!MakeUniqueFileName("screen", "jpg", fileName))
-        {
-            PrintString( "Out of filenames for TakeScreenshot" );
-            return;
-        }
-    }
-
-    if( !pfConsole::GetPipeline()->CaptureScreen( &myMipmap ) )
-        PrintString( "Error capturing screenshot" );
-    else
-    {
-        char    str[ 512 ];
-        uint8_t   quality = 75;
-
-
-        if( numParams == 2 )
-            quality = (int)params[ 1 ];
-
-        plJPEG::Instance().SetWriteQuality( quality );
-
-        if( !plJPEG::Instance().WriteToFile( fileName, &myMipmap ) )
-        {
-            sprintf( str, "JPEG write failed (%s).", plJPEG::Instance().GetLastError() );
-        }
-        else
-            sprintf( str, "Screenshot written to '%s', quality of %d%%.", fileName, quality );
-        PrintString( str );
-    }
 }
 
 #include "plGImage/plAVIWriter.h"
@@ -4515,7 +4426,7 @@ PF_CONSOLE_CMD( Access,
         return;
     }
 
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     if( !item )
         return;
 
@@ -6645,7 +6556,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
 {
     hsTArray<plClosetItem> items;
     items.SetCount(1);
-    items[0].fItem = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    items[0].fItem = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     items[0].fOptions.fTint1.Set(params[1], params[2], params[3], 1.f);
     items[0].fOptions.fTint2.Set(params[4], params[5], params[6], 1.f);
 
@@ -6658,7 +6569,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Has your avatar wear the item of clothing specified" )     // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
 
     if (avMod && item)
     {
@@ -6672,7 +6583,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Has your avatar remove the item of clothing specified" )       // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     
     if (avMod && item)
     {
@@ -6686,7 +6597,7 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
                 "Change the color of an item of clothing you're wearing" )      // Help string
 {
     plArmatureMod *avMod = plAvatarMgr::GetInstance()->GetLocalAvatar();    
-    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(params[0]);
+    plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName((const char *)params[0]);
     uint8_t layer;
     if ((int)params[4] == 2)
         layer = plClothingElement::kLayerTint2;
@@ -6740,7 +6651,7 @@ PF_CONSOLE_CMD( Clothing,
                "string name",
                "Switch your avatar to a different gender ('Male' / 'Female')" )
 {
-    plClothingMgr::ChangeAvatar(params[0]);
+    plClothingMgr::ChangeAvatar((const char *)params[0]);
 }
 
 PF_CONSOLE_CMD( Clothing,                           // Group name
@@ -6934,7 +6845,7 @@ PF_CONSOLE_CMD( Python,
     const char* extraParms = "";
     if (numParams > 1)
         extraParms = params[1];
-    pfBackdoorMsg *msg = new pfBackdoorMsg( params[0],extraParms );
+    pfBackdoorMsg *msg = new pfBackdoorMsg((const char *)params[0], extraParms);
     // send it off
     plgDispatch::MsgSend( msg );
 }

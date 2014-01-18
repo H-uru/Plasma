@@ -135,8 +135,6 @@ protected:
 
     pfGameGUIMgr            *fGameGUIMgr;
 
-    virtual hsG3DDeviceModeRecord ILoadDevMode(const char* devModeFile);
-
     bool                    IUpdate();
     bool                    IDraw();
     bool                    IDrawProgress();
@@ -181,7 +179,6 @@ protected:
     void                    ICompleteInit ();
     void                    IOnAsyncInitComplete ();
     void                    IHandlePatcherMsg (plResPatcherMsg * msg);
-    void                    IHandlePreloaderMsg (plPreloaderMsg * msg);
     void                    IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
     bool                    IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
 

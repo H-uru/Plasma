@@ -198,9 +198,6 @@ void plNetClientMgr::Shutdown()
 
     IRemoveCloneRoom();
 
-    // RATHER BAD DEBUG HACK: Clear the spawn override in armatureMod so there's no memory leak
-    plArmatureMod::SetSpawnPointOverride( nil );
-
     VaultDestroy();
 }
 
@@ -303,18 +300,14 @@ bool plNetClientMgr::Log(const char* str) const
 //
 // Display OS version info for log
 //
+extern std::vector<plString> DisplaySystemVersion();
+
 void plNetClientMgr::IDumpOSVersionInfo() const
 {
     DebugMsg("*** OS Info");
-    char** versionStrs = DisplaySystemVersion();
-    int i=0;
-    while(versionStrs && versionStrs[i])
-    {
-        DebugMsg(versionStrs[i]);
-        delete [] versionStrs[i];
-        i++;
-    }
-    delete [] versionStrs;
+    std::vector<plString> versionStrs = DisplaySystemVersion();
+    for (auto version = versionStrs.begin(); version != versionStrs.end(); ++version)
+        DebugMsg(version->c_str());
 }
 
 //
@@ -784,7 +777,9 @@ plSynchedObject* plNetClientMgr::GetLocalPlayer(bool forceLoad) const
 
 plSynchedObject* plNetClientMgr::GetNPC(uint32_t i) const
 {
-    return fNPCKeys[i] ? plSynchedObject::ConvertNoRef(fNPCKeys[i]->ObjectIsLoaded()) : nil; 
+    if (i >= fNPCKeys.size())
+        return nullptr;
+    return plSynchedObject::ConvertNoRef(fNPCKeys[i]->ObjectIsLoaded()); 
 }
 
 void plNetClientMgr::AddNPCKey(const plKey& npc)

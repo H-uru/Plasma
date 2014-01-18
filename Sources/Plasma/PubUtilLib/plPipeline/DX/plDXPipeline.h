@@ -187,21 +187,17 @@ protected:
         kCapsExpFog             = 0x00000040,
         kCapsExp2Fog            = 0x00000080,
         kCapsRangeFog           = 0x00000100,
-        kCapsWBuffer            = 0x00000200,
-        kCapsTexBoundToStage    = 0x00000400,
-        kCapsDither             = 0x00000800,
-        kCapsLODWatch           = 0x00001000,
-        kCapsFSAntiAlias        = 0x00002000,
-        kCapsLuminanceTextures  = 0x00004000,
-        kCapsDoesSmallTextures  = 0x00008000,
-        kCapsDoesWFog           = 0x00010000,
-        kCapsPixelFog           = 0x00020000,
-        kCapsHasBadYonStuff     = 0x00040000,
-        kCapsNoKindaSmallTexs   = 0x00080000,
-        kCapsNpotTextures       = 0x00100000,
-
-        kCapsCubicTextures      = 0x00200000,
-        kCapsCubicMipmap        = 0x00400000
+        kCapsTexBoundToStage    = 0x00000200,
+        kCapsLODWatch           = 0x00000400,
+        kCapsFSAntiAlias        = 0x00000800,
+        kCapsLuminanceTextures  = 0x00001000,
+        kCapsDoesSmallTextures  = 0x00002000,
+        kCapsDoesWFog           = 0x00004000,
+        kCapsPixelFog           = 0x00008000,
+        kCapsHasBadYonStuff     = 0x00010000,
+        kCapsNpotTextures       = 0x00020000,
+        kCapsCubicTextures      = 0x00040000,
+        kCapsCubicMipmap        = 0x00080000
     };
     enum {
         kKNone                  = 0x0,
@@ -212,7 +208,6 @@ protected:
     plDXPlateManager*           fPlateMgr;
 
     // The main D3D interfaces
-    LPDIRECT3D9             fD3DObject;     // The main D3D object
     LPDIRECT3DDEVICE9       fD3DDevice;     // The D3D rendering device
     IDirect3DSurface9*      fD3DMainSurface;
     IDirect3DSurface9*      fD3DDepthSurface;
@@ -506,7 +501,6 @@ protected:
     void    ISetCurrentDevice( D3DEnum_DeviceInfo *dev );
     void    ISetCurrentMode( D3DEnum_ModeInfo *mode );
 
-    bool        ICreateMaster();
     bool        ICreateDevice(bool windowed);
     bool        ICreateNormalSurfaces();
 

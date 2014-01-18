@@ -65,7 +65,7 @@ public:
     virtual void SetStrength(float val, float rate = 0.f); // default instant change
     virtual float GetStrength();
     virtual void Rewind();
-    void DumpDebug(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpDebug(int &x, int &y, int lineHeight, plDebugText &debugTxt);
 
     enum
     {

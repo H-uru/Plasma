@@ -59,34 +59,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // plNPCSpawnMod ctor
 plNPCSpawnMod::plNPCSpawnMod()
-: fModelName(nil),
-  fAccountName(nil),
-  fAutoSpawn(false),
+: fAutoSpawn(false),
   fNotify(nil)
 {
 }
 
 // plNPCSpawnMod ctor modelName accountName
-plNPCSpawnMod::plNPCSpawnMod(const char * modelName, const char * accountName, bool autoSpawn)
+plNPCSpawnMod::plNPCSpawnMod(const plString &modelName, const plString &accountName, bool autoSpawn)
 : fAutoSpawn(autoSpawn), fNotify(nil)
 {
-    fModelName = hsStrcpy(modelName);
-    fAccountName = hsStrcpy(accountName);
+    fModelName = modelName;
+    fAccountName = accountName;
 }
 
 // plNPCSpawnMod dtor
 plNPCSpawnMod::~plNPCSpawnMod()
 {
-    if(fModelName)
-    {
-        delete[] fModelName;
-        fModelName = nil;
-    }
-    if(fAccountName)
-    {
-        delete[] fAccountName;
-        fAccountName = nil;
-    }
     if (fNotify)
         fNotify->UnRef();
 }
@@ -108,7 +96,7 @@ bool plNPCSpawnMod::Trigger()
     // will netpropagate
     if(this->IsLocallyOwned())
     {
-        if(fModelName)
+        if (!fModelName.IsEmpty())
         {
             // spawn the NPC
             plKey spawnPoint = GetTarget(0)->GetKey();
@@ -140,8 +128,8 @@ void plNPCSpawnMod::Read(hsStream *stream, hsResMgr *mgr)
 {
     plSingleModifier::Read(stream, mgr);
 
-    fModelName = stream->ReadSafeString();
-    fAccountName = stream->ReadSafeString();
+    fModelName = stream->ReadSafeString_TEMP();
+    fAccountName = stream->ReadSafeString_TEMP();
     fAutoSpawn = stream->ReadBool();
     if(stream->ReadBool())
         fNotify = plNotifyMsg::ConvertNoRef(mgr->ReadCreatable(stream));

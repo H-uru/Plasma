@@ -48,21 +48,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMaxNode.h"
 
 #include <guplib.h>
+#include <notify.h>
 #pragma hdrstop
 
 #include "GlobalUtility.h"
 
-#include "MaxSceneViewer/SceneSync.h"
-
 #include "MaxComponent/ComponentDummies.h"
 #include "plActionTableMgr.h"
 #include "plMaxMenu.h"
-#include "MaxSceneViewer/plMaxFileData.h"
 #include "pfPython/cyPythonInterface.h"
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 
 #include "plMaxCFGFile.h"
 #include "pfLocalizationMgr/pfLocalizationMgr.h"
+#include "plGImage/plFontCache.h"
+
+#include "plPythonMgr.h"
+#include "plPluginResManager.h"
+#include "plSDL/plSDL.h"
 
 extern plActionTableMgr theActionTableMgr;
 extern HINSTANCE hInstance;
@@ -171,7 +174,6 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncClickDrag();        //Click-Draggable comp
     DummyCodeIncludeFuncInventStuff();      //Inventory Object comp
     DummyCodeIncludeFuncVolumeGadget();     // inside/enter/exit phys volume activator
-//  DummyCodeIncludeFuncActivatorGadget();  // activator activator
     DummyCodeIncludeFuncSoftVolume();       // Soft Volumes
     DummyCodeIncludeFuncPhysConst();        // Phys Constraints
     DummyCodeIncludeFuncCameras();          // new camera code
@@ -202,36 +204,41 @@ DWORD PlasmaMax::Start()
     DummyCodeIncludeFuncClimbTrigger();
     DummyCodeIncludeFuncObjectFlocker();
     DummyCodeIncludeFuncGrassShader();
-    
-    // Register the SceneViewer with Max
-#ifdef MAXSCENEVIEWER_ENABLED
-    SceneSync::Instance();
-#endif
-
-    plComponentShow::Init();
-
-    plCreateMenu();
-
-    RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
-
-    RegisterNotification(NotifyProc, 0, NOTIFY_SYSTEM_STARTUP);
-
-#ifdef MAXSCENEVIEWER_ENABLED
-    InitMaxFileData();
-#endif
 
     // Setup the localization mgr
     // Dirty hacks are because Cyan sucks...
     plFileName pathTemp = plMaxConfig::GetClientPath(false, true);
     if (!pathTemp.IsValid())
     {
-        hsMessageBox("PlasmaMAX2.ini is missing or invalid", "Plasma/2.0 Error", hsMessageBoxNormal);
+        hsMessageBox("PlasmaMAX2.ini is missing or invalid.\nPlasmaMAX will be unavailable until this file is added.",
+                     "PlasmaMAX2 Error", hsMessageBoxNormal, hsMessageBoxIconExclamation);
+        return GUPRESULT_NOKEEP;
     }
-    else
-    {
-        plFileName clientPath = plFileName::Join(pathTemp, "dat");
-        pfLocalizationMgr::Initialize(clientPath);
-    }
+
+    // Load S-D-teh-Ls
+    plFileName oldCwd = plFileSystem::GetCWD();
+    plFileSystem::SetCWD(pathTemp);
+    plSDLMgr::GetInstance()->Init();
+    plFileSystem::SetCWD(oldCwd);
+
+    // Initialize the ResManager and Python
+    plPythonMgr::Instance().LoadPythonFiles();
+    hsgResMgr::Init(new plPluginResManager);
+
+    // Setup the doggone plugin
+    plComponentShow::Init();
+    plCreateMenu();
+
+    RegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
+    RegisterNotification(NotifyProc, 0, NOTIFY_SYSTEM_STARTUP);
+
+    // Now we have to init like we're a real doggone client...
+    plFileName clientPath = plFileName::Join(pathTemp, "dat");
+    pfLocalizationMgr::Initialize(clientPath);
+
+    // init font cache singleton
+    plFontCache* fonts = new plFontCache();
+    fonts->LoadCustomFonts(clientPath);
 
     return GUPRESULT_KEEP;
 }
@@ -241,6 +248,7 @@ void PlasmaMax::Stop()
     UnRegisterNotification(NotifyProc, 0, NOTIFY_FILE_POST_OPEN);
 
     pfLocalizationMgr::Shutdown();
+    plFontCache::GetInstance().UnRegisterAs(kFontCache_KEY);
 
     PythonInterface::WeAreInShutdown();
     PythonInterface::finiPython();  

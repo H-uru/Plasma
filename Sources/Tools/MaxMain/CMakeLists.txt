@@ -62,6 +62,7 @@ set(MaxMain_SOURCES
     plGetLocationDlg.cpp
     plMaxAccelerators.cpp
     plMaxCFGFile.cpp
+    plMaxFileData.cpp
     plMaxMenu.cpp
     plMaxMeshExtractor.cpp
     plMaxNode.cpp
@@ -124,7 +125,6 @@ target_link_libraries(MaxMain pfJournalBook)
 target_link_libraries(MaxMain pfLocalizationMgr)
 target_link_libraries(MaxMain pfMessage)
 target_link_libraries(MaxMain pfPython)
-target_link_libraries(MaxMain pfSecurePreloader)
 target_link_libraries(MaxMain pfSurface)
 target_link_libraries(MaxMain plAgeDescription)
 target_link_libraries(MaxMain plAgeLoader)

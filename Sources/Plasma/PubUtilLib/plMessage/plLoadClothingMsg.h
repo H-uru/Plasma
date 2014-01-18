@@ -39,29 +39,29 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plMessage/plPreloaderMsg.h
-*   
-***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
-#define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
+#ifndef plLoadClothingMsg_INC
+#define plLoadClothingMsg_INC
 
+#include "plFileSystem.h"
 #include "pnMessage/plMessage.h"
 
-class plPreloaderMsg : public plMessage {
+/** This message is sent when we want to load our clothing from a file. */
+class plLoadClothingMsg : public plMessage {
+private:
+    plFileName fClothingFile;
+
 public:
-    bool    fSuccess;
+    plLoadClothingMsg() { }
+    plLoadClothingMsg(const plFileName& file) : fClothingFile(file) { }
 
-    plPreloaderMsg () { SetBCastFlag(kBCastByExactType); }
-    
-    CLASSNAME_REGISTER(plPreloaderMsg);
-    GETINTERFACE_ANY(plPreloaderMsg, plMessage);
+    CLASSNAME_REGISTER(plLoadClothingMsg);
+    GETINTERFACE_ANY(plLoadClothingMsg, plMessage);
 
-    void Read (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Read"); }
-    void Write (hsStream* stream, hsResMgr* ) { FATAL("plPreloaderMsg::Write"); }
+    void Read(hsStream*, hsResMgr*) { }
+    void Write(hsStream*, hsResMgr*) { }
+
+    plFileName GetClothingFile() const { return fClothingFile; }
 };
 
-
-#endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLMESSAGE_PLPRELOADERMSG_H
+#endif // plLoadClothingMsg_INC

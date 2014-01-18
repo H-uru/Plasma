@@ -101,7 +101,7 @@ void plClientResMgr::ILoadResources(const char* resfile)
                     char* tmp_name = in.ReadSafeStringLong();
                     std::string res_name = std::string(tmp_name);
                     std::string res_type = res_name.substr(res_name.length() - 4, 4);
-                    delete tmp_name;
+                    delete[] tmp_name;
 
                     // Version 1 doesn't encode format, so we'll try some simple
                     // extension sniffing

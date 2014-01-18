@@ -18,5 +18,7 @@ set(plAgeLoader_HEADERS
 
 add_library(plAgeLoader STATIC ${plAgeLoader_SOURCES} ${plAgeLoader_HEADERS})
 
+target_link_libraries(plAgeLoader pfPatcher)
+
 source_group("Source Files" FILES ${plAgeLoader_SOURCES})
 source_group("Header Files" FILES ${plAgeLoader_HEADERS})

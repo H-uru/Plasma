@@ -246,10 +246,10 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getEntireClothingList, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::vector<std::string> clothingList = self->fThis->GetEntireClothingList(clothingType);
+    std::vector<plString> clothingList = self->fThis->GetEntireClothingList(clothingType);
     PyObject* retVal = PyList_New(clothingList.size());
     for (int i = 0; i < clothingList.size(); i++)
-        PyList_SetItem(retVal, i, PyString_FromString(clothingList[i].c_str()));
+        PyList_SetItem(retVal, i, PyString_FromPlString(clothingList[i]));
     return retVal;
 }
 
@@ -629,8 +629,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, saveClothingToFile, args)
         PYTHON_RETURN_ERROR;
     }
 
-    self->fThis->SaveClothingToFile(PyString_AsStringEx(filename));
-    PYTHON_RETURN_NONE;
+    PYTHON_RETURN_BOOL(self->fThis->SaveClothingToFile(PyString_AsStringEx(filename)));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
@@ -642,8 +641,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
         PYTHON_RETURN_ERROR;
     }
 
-    self->fThis->LoadClothingFromFile(PyString_AsStringEx(filename));
-    PYTHON_RETURN_NONE;
+    PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(PyString_AsStringEx(filename)));
 }
 
 PYTHON_START_METHODS_TABLE(ptAvatar)

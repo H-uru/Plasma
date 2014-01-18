@@ -181,11 +181,11 @@ bool    pfGameGUIMgr::MsgReceive( plMessage* pMsg )
     if( guiMsg != nil )
     {
         if( guiMsg->GetCommand() == pfGameGUIMsg::kLoadDialog )
-            LoadDialog( guiMsg->GetString(), nil, guiMsg->GetAge() );
+            LoadDialog(guiMsg->GetString().c_str(), nil, guiMsg->GetAge().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kShowDialog )
-            IShowDialog( guiMsg->GetString() );
+            IShowDialog(guiMsg->GetString().c_str());
         else if( guiMsg->GetCommand() == pfGameGUIMsg::kHideDialog )
-            IHideDialog( guiMsg->GetString() );
+            IHideDialog(guiMsg->GetString().c_str());
 
         return true;
     }

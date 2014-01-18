@@ -42,16 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryHelpers.h"
 #include "plRegistryNode.h"
 
-plKeyCollector::plKeyCollector( hsTArray<plKey> &keys ) : fKeys( keys )
-{
-}
-
-bool plKeyCollector::EatKey(const plKey& key)
-{
-    fKeys.Append(key);
-    return true;
-}
-
 bool plIndirectUnloadIterator::EatPage(plRegistryPageNode* page)
 {
     page->IterateKeys(this);

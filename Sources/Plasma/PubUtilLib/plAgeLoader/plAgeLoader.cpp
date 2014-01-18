@@ -69,14 +69,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plRegistryNode.h"
 #include "plResMgr/plResManager.h"
 #include "plFile/plEncryptedStream.h"
+#include "plProgressMgr/plProgressMgr.h"
 
 /// TEMP HACK TO LOAD CONSOLE INIT FILES ON AGE LOAD
 #include "plMessage/plConsoleMsg.h"
 #include "plMessage/plLoadAvatarMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
-
-
-extern  bool    gDataServerLocal;
 
 // static 
 plAgeLoader* plAgeLoader::fInstance=nil;
@@ -119,6 +117,7 @@ void plAgeLoader::Init()
     RegisterAs( kAgeLoader_KEY );
     plgDispatch::Dispatch()->RegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plClientMsg::Index(), GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
 }
 
 //
@@ -156,7 +155,12 @@ bool plAgeLoader::MsgReceive(plMessage* msg)
         return true;
     }
 
-    
+    // sadface thread protection
+    if (plResPatcherMsg::ConvertNoRef(msg)) {
+        delete plResPatcher::GetInstance()->fProgress;
+        plResPatcher::GetInstance()->fProgress = nullptr;
+    }
+
     return plReceiver::MsgReceive(msg);
 }
 
@@ -173,14 +177,7 @@ bool plAgeLoader::LoadAge(const char ageName[])
 //============================================================================
 void plAgeLoader::UpdateAge(const char ageName[])
 {
-    if (gDataServerLocal)
-        // We have to send this msg ourselves since we're not actually updating
-        plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg);
-    else
-    {
-        plResPatcher::GetInstance()->RequestManifest(ageName);
-        plResPatcher::GetInstance()->Start();
-    }
+    plResPatcher::GetInstance()->Update(ageName);
 }
 
 //============================================================================

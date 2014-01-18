@@ -121,8 +121,6 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-    HMODULE     fDDrawDLL;
-
     char    fEnumeErrorStr[128];            // ドライバ、デバイス列挙エラーメッセージ格納バッファ
 
     hsTArray<D3DEnum_DriverInfo>            fDrivers;

@@ -81,7 +81,7 @@ public:
     virtual bool LeaveAge();
     virtual bool IsRunningTask() const;
     virtual void QueueTask(plAvTask *task);
-    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt) {}
+    virtual void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt) {}
     
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *stream, hsResMgr *mgr);

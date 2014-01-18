@@ -278,8 +278,8 @@ public:
     void SetTurnLeftKeyDown(bool status = true);
     void SetTurnRightKeyDown(bool status = true);
     void SetJumpKeyDown();
-    void DebugDumpMoveKeys(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
-    void GetMoveKeyString(char *buff);
+    void DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt);
+    plString GetMoveKeyString() const;
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
@@ -310,7 +310,7 @@ public:
     void SetRootName(const plString &name);
     
     int  RefreshDebugDisplay();
-    void DumpToDebugDisplay(int &x, int &y, int lineHeight, char *strBuf, plDebugText &debugTxt);
+    void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
     void SetDebugState(bool state) { fDebugOn = (state != 0); }
     bool GetDebugState() { return fDebugOn; }
 
@@ -329,7 +329,7 @@ public:
     static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
     static float GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
     
-    static void SetSpawnPointOverride( const char *overrideObjName );
+    static void SetSpawnPointOverride(const plString &overrideObjName);
     static void WindowActivate(bool active);
     void SetFollowerParticleSystemSO(plSceneObject *follower);
     plSceneObject *GetFollowerParticleSystemSO();
@@ -426,7 +426,7 @@ protected:
     hsTArray<const plSceneObject*> fClothToSOMap;
     plArmatureEffectsMgr *fEffects;
     plSceneObject *fFollowerParticleSystemSO;
-    static char *fSpawnPointOverride;
+    static plString fSpawnPointOverride;
 
     // These vectors are used with relevance regions for culling out other objects
     hsBitVector fRegionsImIn;

@@ -990,12 +990,11 @@ void plResManager::SetProgressBarProc(plProgressProc proc)
 class plResAgeHolder : public hsRefCnt
 {
     public:
-        hsTArray<plKey> fKeys;
+        std::set<plKey> fKeys;
         plString        fAge;
 
         plResAgeHolder() {}
         plResAgeHolder( const plString& age ) : fAge( age ) {}
-        ~plResAgeHolder() { fKeys.Reset(); }
 };
 
 //// plResHolderIterator /////////////////////////////////////////////////////
@@ -1003,12 +1002,12 @@ class plResAgeHolder : public hsRefCnt
 class plResHolderIterator : public plRegistryPageIterator
 {
 protected:
-    hsTArray<plKey>& fKeys;
+    std::set<plKey>& fKeys;
     plString fAgeName;
     plResManager* fResMgr;
 
 public:
-    plResHolderIterator(const plString& age, hsTArray<plKey>& keys, plResManager* resMgr)
+    plResHolderIterator(const plString& age, std::set<plKey>& keys, plResManager* resMgr)
             : fAgeName(age), fKeys(keys), fResMgr(resMgr) {}
 
     virtual bool EatPage(plRegistryPageNode* page)
@@ -1665,16 +1664,13 @@ void plResManager::IKeyReffed(plKeyImp* key)
 void plResManager::IKeyUnreffed(plKeyImp* key)
 {
     plRegistryPageNode* page = FindPage(key->GetUoid().GetLocation());
-    if (page == nil)
+    if (!page)
     {
         hsAssert(0, "Couldn't find page that key belongs to");
         return;
     }
 
-    bool removed = page->SetKeyUnused(key);
-    hsAssert(removed, "Key wasn't removed from page");
-
-    if (removed)
+    if (page->SetKeyUnused(key))
     {
         if (!page->IsLoaded())
         {

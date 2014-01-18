@@ -309,6 +309,7 @@ void plVirtualCam1::Refresh()
 {
     plPipeline* pipe = plVirtualCam1::Instance()->fPipe;
     SetAspectRatio((float)pipe->Width() / (float)pipe->Height());
+    plVirtualCam1::Instance()->SetOutputFOV();
 }
 
 void plVirtualCam1::SetAspectRatio(float ratio)
@@ -845,24 +846,26 @@ void plVirtualCam1::Output()
     targetMatrix.GetInverse(&inverse);
     fPipe->SetWorldToCamera( targetMatrix, inverse );
     if (HasFlags(kSetFOV)) // are we changing the field of view?
-    {
-        ClearFlags(kSetFOV);
-        fPipe->SetFOV(fFOVw,fFOVh);
-        fPipe->RefreshMatrices();
-        if (foutLog)
-        {
-            fprintf(foutLog, "****************************************************************\n");
-            fprintf(foutLog, "FOV changed to %f %f\n",fFOVh, fFOVw);
-            fprintf(foutLog, "****************************************************************\n");
-        }   
-
-    }
+        SetOutputFOV();
 /*  if (foutLog)
     {
         fprintf(foutLog, "output pos %f %f %f\n", fOutputPos.fX,fOutputPos.fY,fOutputPos.fZ);
         fprintf(foutLog, "output poa %f %f %f\n", fOutputPOA.fX,fOutputPOA.fY,fOutputPOA.fZ);
         fprintf(foutLog, "\n");
     }   */
+}
+
+void plVirtualCam1::SetOutputFOV()
+{
+    ClearFlags(kSetFOV);
+    fPipe->SetFOV(fFOVw, fFOVh);
+    fPipe->RefreshMatrices();
+    if (foutLog)
+    {
+        fprintf(foutLog, "****************************************************************\n");
+        fprintf(foutLog, "FOV changed to %f %f\n", fFOVh, fFOVw);
+        fprintf(foutLog, "****************************************************************\n");
+    }
 }
 
 void plVirtualCam1::Init()

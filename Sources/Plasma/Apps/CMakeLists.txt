@@ -6,7 +6,6 @@ if(PLASMA_BUILD_LAUNCHER)
 endif()
 
 if(PLASMA_BUILD_TOOLS)
-    add_subdirectory(plClientPatcher)
     add_subdirectory(plPythonPack)
     add_subdirectory(plFileSecure)
     add_subdirectory(plFileEncrypt)

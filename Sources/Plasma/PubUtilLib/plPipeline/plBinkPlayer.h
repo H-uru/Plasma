@@ -57,8 +57,7 @@ class plBinkPlayer
 {
     public:
 
-        plBinkPlayer() : fFileName(nil) { }
-        ~plBinkPlayer() { delete [] fFileName; }
+        plBinkPlayer() { }
 
         static bool Init( hsWindowHndl hWnd) { return true; }
         static bool DeInit() { return true; }
@@ -83,14 +82,12 @@ class plBinkPlayer
             for (int i = 0; i < fCallbacks.GetCount(); i++)
                 fCallbacks[i]->Send();
             fCallbacks.Reset();
-            delete [] fFileName;
-            fFileName = nil;
+            fFileName = plString::Null;
             return false;
         }
 
-        void SetFileName(const char* filename) {
-            delete [] fFileName;
-            fFileName = hsStrcpy(filename);
+        void SetFileName(const plString& filename) {
+            fFileName = filename;
         }
         void SetColor(const hsColorRGBA& c) { }
         void SetPosition(float x, float y) { }
@@ -102,7 +99,7 @@ class plBinkPlayer
         void SetPosition(const hsPoint2& p) { }
         void SetScale(const hsPoint2& s) { }
 
-        const char* GetFileName() const { return fFileName; }
+        plString GetFileName() const { return fFileName; }
         const hsColorRGBA GetColor() const { return hsColorRGBA(); }
         const hsPoint2 GetPosition() const { return hsPoint2(); }
         const hsPoint2 GetScale() const { return hsPoint2(); }
@@ -125,7 +122,7 @@ class plBinkPlayer
         hsColorRGBA GetFadeToColor() const { return hsColorRGBA(); }
 
     private:
-        char* fFileName;
+        plString fFileName;
         hsTArray<plMessage*> fCallbacks;
 };
 
