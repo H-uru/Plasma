@@ -270,7 +270,7 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
         info.lpFile = file.GetData();
         info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
         info.lpParameters = args.ToWchar();
-        hsAssert(ShellExecuteExW(&info), "ShellExecuteExW phailed");
+        ShellExecuteExW(&info);
 
         return info.hProcess;
     } else {
@@ -312,7 +312,7 @@ static bool IInstallRedist(const plFileName& exe)
 
         // Get the exit code so we can indicate success/failure to the redist thread
         DWORD code = PLASMA_OK;
-        hsAssert(GetExitCodeProcess(process, &code), "failed to get redist exit code");
+        GetExitCodeProcess(process, &code);
         CloseHandle(process);
 
         return code != PLASMA_PHAILURE;
