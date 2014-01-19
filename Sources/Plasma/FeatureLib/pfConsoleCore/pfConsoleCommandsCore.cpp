@@ -178,6 +178,16 @@ PF_CONSOLE_CMD(
                  kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
 }
 
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Auth,
+    G,
+    "int GValue",
+    "Set the Auth Server G value"
+    ) {
+    kAuthDhGValue = (int)params[0];
+}
+
 
 //============================================================================
 // Server.Game group
@@ -217,6 +227,16 @@ PF_CONSOLE_CMD(
 
     Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGameDhXData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Game,
+    G,
+    "int GValue",
+    "Set the Game Server G value"
+    ) {
+    kGameDhGValue = (int)params[0];
 }
 
 
@@ -268,4 +288,14 @@ PF_CONSOLE_CMD(
 
     Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
                  kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
+}
+
+//============================================================================
+PF_CONSOLE_CMD(
+    Server_Gate,
+    G,
+    "int GValue",
+    "Set the GateKeeper Server G value"
+    ) {
+    kGateKeeperDhGValue = (int)params[0];
 }
