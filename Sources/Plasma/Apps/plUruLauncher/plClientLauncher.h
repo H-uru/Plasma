@@ -63,8 +63,9 @@ private:
     {
         kHaveSelfPatched = 1<<0,
         kClientImage = 1<<1,
-        kGameDataOnly = (1<<2),
+        kGameDataOnly = 1<<2,
         kPatchOnly = 1<<3,
+        kSkipLoginDialog = 1<<4,
 
         kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };
