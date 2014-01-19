@@ -47,17 +47,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNbConst.h"
 
 // Auth Server
-static const unsigned kAuthDhGValue = 41;
+extern uint32_t kAuthDhGValue;
 extern uint8_t kAuthDhNData[kNetDiffieHellmanKeyBits / 8];
 extern uint8_t kAuthDhXData[kNetDiffieHellmanKeyBits / 8];
 
 // Game Server
-static const unsigned kGameDhGValue = 73;
+extern uint32_t kGameDhGValue;
 extern uint8_t kGameDhNData[kNetDiffieHellmanKeyBits / 8];
 extern uint8_t kGameDhXData[kNetDiffieHellmanKeyBits / 8];
 
 // GateKeeper Server
-static const unsigned kGateKeeperDhGValue = 4;
+extern uint32_t kGateKeeperDhGValue;
 extern uint8_t kGateKeeperDhNData[kNetDiffieHellmanKeyBits / 8];
 extern uint8_t kGateKeeperDhXData[kNetDiffieHellmanKeyBits / 8];
 
