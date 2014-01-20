@@ -520,17 +520,8 @@ public:
     //
     //  PURPOSE    : Makes the avatar enter a custom anim loop.
     //
-    static void EnterAnimMode(plString animName);
+    static bool EnterAnimMode(const plString& animName);
 
-    /////////////////////////////////////////////////////////////////////////////
-    //
-    //  Function   : ExitAnimMode
-    //  PARAMETERS : animName - string
-    //
-    //  PURPOSE    : Makes the avatar stop the custom anim loop.
-    //
-    static void ExitAnimMode(plString animName);
-    
     /////////////////////////////////////////////////////////////////////////////
     //
     //  Function   : GetCurrentMode()
