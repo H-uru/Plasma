@@ -859,7 +859,10 @@ class CommandsProcessor:
             words = message.split()
             try:
                 emote = xKIExtChatCommands.xChatEmoteXlate[unicode(words[0][1:].lower())]
-                PtEmoteAvatar(emote[0])
+                if emote[0] in xKIExtChatCommands.xChatEmoteLoop:
+                    PtAvatarEnterAnimMode(emote[0])
+                else:
+                    PtEmoteAvatar(emote[0])
                 if PtGetLanguage() == PtLanguage.kEnglish:
                     avatar = PtGetLocalAvatar()
                     gender = avatar.avatar.getAvatarClothingGroup()
