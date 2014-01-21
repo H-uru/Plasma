@@ -352,7 +352,7 @@ void plMouseDevice::SetCursorY(float y)
 
 void plMouseDevice::HideCursor(bool override)
 {
-    if( fInstance->fCursor != nil )
+    if ( fInstance && fInstance->fCursor )
         fInstance->fCursor->SetVisible( false );
 
     plMouseDevice::bCursorOverride = (override != 0);
@@ -369,10 +369,12 @@ void plMouseDevice::ShowCursor(bool override)
 
     plMouseDevice::bCursorHidden = false;
     plMouseDevice::bCursorOverride = false;
-    
-    if( fInstance->fCursor == nil )
-        fInstance->CreateCursor( fInstance->fCursorID );
-    fInstance->fCursor->SetVisible( true );
+
+    if (fInstance) {
+        if (!fInstance->fCursor)
+            fInstance->CreateCursor(fInstance->fCursorID);
+        fInstance->fCursor->SetVisible(true);
+    }
 }
 
 void plMouseDevice::NewCursor(char* cursor)
