@@ -269,7 +269,7 @@ void plAGModifier::Read(hsStream *stream, hsResMgr *mgr)
     plSingleModifier::Read(stream, mgr);
 
     // read in the name of the modifier
-    fChannelName = stream->ReadSafeString_TEMP();
+    fChannelName = stream->ReadSafeString();
 }
 
 // WRITE

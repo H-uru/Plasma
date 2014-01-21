@@ -173,7 +173,7 @@ public:
     // NEVER!
     // If you think it should... talk to Bob. He will explain why it can't be, and beat you up.
     // If he can't remember, beat him up until he does (or ask Moose).
-    virtual bool DirtySynchState(const char* sdlName, uint32_t sendFlags) { return false; } // don't send link state
+    virtual bool DirtySynchState(const plString& sdlName, uint32_t sendFlags) { return false; } // don't send link state
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -189,11 +189,10 @@ class plLayerSDLAnimation : public plLayerAnimationBase
 {
 protected:
     plSimpleStateVariable *fVar;
-    char *fVarName;
+    plString fVarName;
 
 public:
     plLayerSDLAnimation();
-    virtual ~plLayerSDLAnimation();
 
     CLASSNAME_REGISTER( plLayerSDLAnimation );
     GETINTERFACE_ANY( plLayerSDLAnimation, plLayerAnimationBase );
@@ -205,8 +204,8 @@ public:
     virtual void                        Read(hsStream* s, hsResMgr* mgr);
     virtual void                        Write(hsStream* s, hsResMgr* mgr);
 
-    char *GetVarName() { return fVarName; }
-    void SetVarName(char *name);
+    plString GetVarName() const { return fVarName; }
+    void SetVarName(const plString &name) { fVarName = name; }
 };
 
 #endif // plLayerAnimation_inc

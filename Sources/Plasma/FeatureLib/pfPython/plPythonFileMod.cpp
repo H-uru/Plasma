@@ -336,7 +336,6 @@ bool plPythonFileMod::fAtConvertTime = false;
 //
 plPythonFileMod::plPythonFileMod()
 {
-    fPythonFile = nil;
     fModule = nil;
     fLocalNotify= true;
     fIsFirstTimeEval = true;
@@ -401,12 +400,6 @@ plPythonFileMod::~plPythonFileMod()
         fSelfKey = nil;
     }
 
-    // get rid of the python code
-    if ( fPythonFile )
-    {
-        delete [] fPythonFile;
-        fPythonFile = nil;
-    }
     // then get rid of this module
     //  NOTE: fModule shouldn't be made in the plugin, only at runtime
     if ( !fModuleName.IsNull() && fModule )
@@ -438,14 +431,14 @@ bool plPythonFileMod::ILoadPythonCode()
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
-    plFileName pyfile = plFileName::Join(".", "python", plString::Format("%s.py", fPythonFile));
+    plFileName pyfile = plFileName::Join(".", "python", plString::Format("%s.py", fPythonFile.c_str()));
     if (plFileInfo(pyfile).Exists())
     {
         char fromLoad[256];
-        //sprintf(fromLoad,"from %s import *", fPythonFile);
+        //sprintf(fromLoad,"from %s import *", fPythonFile.c_str());
         // ok... we can't really use import because Python remembers too much where global variables came from
         // ...and using execfile make it sure that globals are defined in this module and not in the imported module
-        sprintf(fromLoad,"execfile('.\\\\python\\\\%s.py')", fPythonFile);
+        sprintf(fromLoad,"execfile('.\\\\python\\\\%s.py')", fPythonFile.c_str());
         if ( PythonInterface::RunString( fromLoad, fModule) )
         {
             // we've loaded the code into our module
@@ -461,7 +454,7 @@ bool plPythonFileMod::ILoadPythonCode()
         }
         DisplayPythonOutput();
         char errMsg[256];
-        sprintf(errMsg,"Python file %s.py had errors!!! Could not load.",fPythonFile);
+        snprintf(errMsg, arrsize(errMsg), "Python file %s.py had errors!!! Could not load.", fPythonFile.c_str());
         PythonInterface::WriteToLog(errMsg);
         hsAssert(0,errMsg);
         return false;
@@ -476,7 +469,7 @@ bool plPythonFileMod::ILoadPythonCode()
 
     DisplayPythonOutput();
     char errMsg[256];
-    sprintf(errMsg,"Python file %s.py was not found.",fPythonFile);
+    snprintf(errMsg, arrsize(errMsg), "Python file %s.py was not found.", fPythonFile.c_str());
     PythonInterface::WriteToLog(errMsg);
     hsAssert(0,errMsg);
     return false;
@@ -503,7 +496,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
     if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
     {
         // was there a python file module with this?
-        if ( fPythonFile )
+        if ( !fPythonFile.IsEmpty() )
         {
             // has the module not been initialized yet
             if ( !fModule )
@@ -523,7 +516,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
 
             // set the name of the file (in the global dictionary of the module)
                 PyObject* dict = PyModule_GetDict(fModule);
-                PyObject* pfilename = PyString_FromString(fPythonFile);
+                PyObject* pfilename = PyString_FromPlString(fPythonFile);
                 PyDict_SetItemString(dict, "glue_name", pfilename);
             // next we need to:
             //  - create instance of class
@@ -542,7 +535,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 {
                     // display any output (NOTE: this would be disabled in production)
                     char errMsg[256];
-                    sprintf(errMsg,"Python file %s.py, instance not found.",fPythonFile);
+                    snprintf(errMsg, arrsize(errMsg), "Python file %s.py, instance not found.", fPythonFile.c_str());
                     PythonInterface::WriteToLog(errMsg);
                     hsAssert(0, errMsg);
                     return;         // if we can't create the instance then there is nothing to do here
@@ -2096,10 +2089,11 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     
                     case plVaultNotifyMsg::kPublicAgeCreated:
                     case plVaultNotifyMsg::kPublicAgeRemoved: {
-                        if (const char * ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename)) {
+                        plString ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
+                        if (!ageName.IsEmpty()) {
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
-                            PyTuple_SetItem(ptuple, 0, PyString_FromString(ageName));
+                            PyTuple_SetItem(ptuple, 0, PyString_FromPlString(ageName));
                         }
                     }
                     break;
@@ -2933,10 +2927,9 @@ void plPythonFileMod::DisplayPythonOutput()
 //             : Compile it into a Python code object
 //             : (This is usually called by the component)
 //
-void plPythonFileMod::SetSourceFile(const char* filename)
+void plPythonFileMod::SetSourceFile(const plString& filename)
 {
-    delete [] fPythonFile;
-    fPythonFile = hsStrcpy(filename);
+    fPythonFile = filename;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2996,12 +2989,6 @@ void plPythonFileMod::Read(hsStream* stream, hsResMgr* mgr)
     plMultiModifier::Read(stream, mgr);
 
     // read in the compile python code (pyc)
-    if ( fPythonFile )
-    {
-        // if we already have some code, get rid of it!
-        delete [] fPythonFile;
-        fPythonFile = nil;
-    }
     fPythonFile = stream->ReadSafeString();
 
     // then read in the list of receivers that want to be notified

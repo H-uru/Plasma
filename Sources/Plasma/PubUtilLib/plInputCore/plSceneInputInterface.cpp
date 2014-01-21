@@ -108,7 +108,6 @@ bool plSceneInputInterface::fShowLOS = false;
 plSceneInputInterface::plSceneInputInterface()
 {
     fPipe = nil;
-    fSpawnPoint = nil;
     fAgeInstanceGuid.Clear();
     fInstance = this;
     SetEnabled( true );         // Always enabled
@@ -840,11 +839,11 @@ void plSceneInputInterface::ILinkOffereeToAge()
         unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
         if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's' || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
             title = plString::Format( "%s'", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            desc = plString::Format( "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+            desc = plString::Format( "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
         }
         else {
             title = plString::Format( "%s's", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            desc = plString::Format( "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+            desc = plString::Format( "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
         }
 
         info.SetAgeUserDefinedName( title.c_str() );
@@ -869,7 +868,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         linkNode->DecRef();
     }
 
-    if (fSpawnPoint) {
+    if (!fSpawnPoint.IsEmpty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
         link.SetSpawnPoint(spawnPoint);
@@ -878,12 +877,12 @@ void plSceneInputInterface::ILinkOffereeToAge()
             
     // We now own the age, offer it
 
-    if (0 == stricmp(fOfferedAgeFile, kPersonalAgeFilename))
+    if (fOfferedAgeFile.CompareI(kPersonalAgeFilename) == 0)
         plNetLinkingMgr::GetInstance()->OfferLinkToPlayer(&link, fOffereeID, fManager->GetKey());
     else
         plNetLinkingMgr::GetInstance()->LinkPlayerToAge(&link, fOffereeID);
         
-    if (!fPendingLink && stricmp(fOfferedAgeFile, kPersonalAgeFilename))
+    if (!fPendingLink && fOfferedAgeFile.CompareI(kPersonalAgeFilename) != 0)
     {   
         // tell our local dialog to pop up again...
         plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();

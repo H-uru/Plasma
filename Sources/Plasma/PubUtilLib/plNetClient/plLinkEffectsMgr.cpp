@@ -374,16 +374,16 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         if (linkKey == nc->GetLocalPlayerKey())
         {
             if(lm) {
-                const char *ageName = lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename();
-                const char *prevAgeName = lm->GetPrevAgeLink()->GetAgeInfo()->GetAgeFilename();
+                plString ageName = lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename();
+                plString prevAgeName = lm->GetPrevAgeLink()->GetAgeInfo()->GetAgeFilename();
 
-                bool linkToStartup = ageName && !stricmp(ageName, kStartUpAgeFilename   );      // To Startup
-                bool linkFromStartup = prevAgeName && !stricmp(prevAgeName, kStartUpAgeFilename);   // Leaving Startup
+                bool linkToStartup = ageName.CompareI(kStartUpAgeFilename) == 0;      // To Startup
+                bool linkFromStartup = prevAgeName.CompareI(kStartUpAgeFilename) == 0;   // Leaving Startup
 
                 bool cleftSolved = VaultHasChronicleEntry( kCleftSolved );
 
-                bool linkToACA = ageName && !stricmp(ageName, kAvCustomizationFilename);
-                bool linkFromACA = prevAgeName && !stricmp(prevAgeName, kAvCustomizationFilename);
+                bool linkToACA = ageName.CompareI(kAvCustomizationFilename) == 0;
+                bool linkFromACA = prevAgeName.CompareI(kAvCustomizationFilename) == 0;
 
                 bool linkToFissureDrop = lm && 
                                         lm->GetAgeLink()->HasSpawnPt() &&

@@ -5001,9 +5001,8 @@ uint8_t VaultAgeFindOrCreateChildAgeLink(
     // Still here? Try to find the Child Ages folder
     uint8_t retval = hsFail;
     if (RelVaultNode* rvnChildAges = rvnParentInfo->GetChildAgeInfoListNodeIncRef(plVault::kChildAgesFolder, 1)) {
-        const char* ageName = info->GetAgeFilename();
         wchar_t hack[MAX_PATH];
-        StrToUnicode(hack, ageName, arrsize(hack));
+        StrToUnicode(hack, info->GetAgeFilename(), arrsize(hack));
 
         // Search for our age
         NetVaultNode* temp = new NetVaultNode;

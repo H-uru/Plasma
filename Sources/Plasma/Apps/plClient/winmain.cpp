@@ -872,7 +872,7 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
     ZeroMemory(cryptKey, sizeof(cryptKey));
     GetCryptKey(cryptKey, arrsize(cryptKey));
 
-    char* temp;
+    plString temp;
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
 
@@ -893,10 +893,9 @@ static void LoadUserPass (LoginDialogParam *pLoginParam)
         {
             temp = stream->ReadSafeString();
 
-            if (temp)
+            if (!temp.IsEmpty())
             {
-                StrCopy(pLoginParam->username, temp, kMaxAccountNameLength);
-                delete[] temp;
+                StrCopy(pLoginParam->username, temp.c_str(), kMaxAccountNameLength);
             }
 
             pLoginParam->remember = stream->ReadBool();

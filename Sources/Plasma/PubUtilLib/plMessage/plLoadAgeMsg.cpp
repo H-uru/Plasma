@@ -99,7 +99,7 @@ void plLoadAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kLoadAgeAgeName))
     {
         // read agename
-        fAgeFilename = s->ReadSafeString_TEMP();
+        fAgeFilename = s->ReadSafeString();
     }
 
     if (contentFlags.IsBitSet(kLoadAgeUnload))

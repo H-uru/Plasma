@@ -133,10 +133,10 @@ void plPageInfo::Read( hsStream *s )
     if (version >= 5)
     {
         fLocation.Read( s );
-        fAge = s->ReadSafeString_TEMP();
+        fAge = s->ReadSafeString();
         if (version < 6)
-            s->ReadSafeString_TEMP(); // fChapter was never used, and always "District".
-        fPage = s->ReadSafeString_TEMP();
+            s->ReadSafeString(); // fChapter was never used, and always "District".
+        fPage = s->ReadSafeString();
 
         s->ReadLE( &fMajorVersion );
 

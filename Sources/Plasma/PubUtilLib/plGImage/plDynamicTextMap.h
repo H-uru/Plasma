@@ -152,23 +152,22 @@ class plDynamicTextMap : public plMipmap
             kFontShadowed   = 0x04
         };
 
-        void    SetFont( const char *face, uint16_t size, uint8_t fontFlags = 0, bool antiAliasRGB = true );
-        void    SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags = 0, bool antiAliasRGB = true );
+        void    SetFont( const plString &face, uint16_t size, uint8_t fontFlags = 0, bool antiAliasRGB = true );
         void    SetLineSpacing( int16_t spacing );
         void    SetTextColor( hsColorRGBA &color, bool blockRGB = false );
         void    SetJustify( Justify j );
 
         void    DrawString( uint16_t x, uint16_t y, const char *text );
         void    DrawString( uint16_t x, uint16_t y, const wchar_t *text );
-        void    DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height );
+        void    DrawClippedString( int16_t x, int16_t y, const plString &text, uint16_t width, uint16_t height );
         void    DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t width, uint16_t height );
-        void    DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
+        void    DrawClippedString( int16_t x, int16_t y, const plString &text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
         void    DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height );
-        void    DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    DrawWrappedString( uint16_t x, uint16_t y, const plString &text, uint16_t width, uint16_t height, uint16_t *lastX = nil, uint16_t *lastY = nil );
         void    DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height, uint16_t *lastX = nil, uint16_t *lastY = nil );
-        uint16_t  CalcStringWidth( const char *text, uint16_t *height = nil );
+        uint16_t  CalcStringWidth( const plString &text, uint16_t *height = nil );
         uint16_t  CalcStringWidth( const wchar_t *text, uint16_t *height = nil );
-        void    CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nil, uint16_t *maxAscent = nil, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    CalcWrappedStringSize( const plString &text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nil, uint16_t *maxAscent = nil, uint16_t *lastX = nil, uint16_t *lastY = nil );
         void    CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar = nil, uint16_t *maxAscent = nil, uint16_t *lastX = nil, uint16_t *lastY = nil );
         void    FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
         void    FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
@@ -201,8 +200,8 @@ class plDynamicTextMap : public plMipmap
 
         // Gets for font values
         Justify     GetFontJustify( void ) const { return fJustify; }
-        const char  *GetFontFace( void ) const { return fFontFace; }
-        uint16_t      GetFontSize( void ) const { return fFontSize; }
+        plString    GetFontFace( void ) const { return fFontFace; }
+        uint16_t    GetFontSize( void ) const { return fFontSize; }
         bool        GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
         hsColorRGBA GetFontColor( void ) const { return fFontColor; }
         bool        GetFontBlockRGB( void ) const { return fFontBlockRGB; }
@@ -225,9 +224,9 @@ class plDynamicTextMap : public plMipmap
         bool        fHasAlpha, fShadowed;
 
         Justify     fJustify;
-        char        *fFontFace;
-        uint16_t      fFontSize;
-        uint8_t       fFontFlags;
+        plString    fFontFace;
+        uint16_t    fFontSize;
+        uint8_t     fFontFlags;
         bool        fFontAntiAliasRGB;
         hsColorRGBA fFontColor;
         bool        fFontBlockRGB;

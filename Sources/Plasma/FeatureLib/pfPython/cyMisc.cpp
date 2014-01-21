@@ -443,7 +443,7 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netFo
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncState(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags);
 }
@@ -455,7 +455,7 @@ void cyMisc::SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, uint32_
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags|plSynchedObject::kBCastToClients);
 }
@@ -632,7 +632,7 @@ PyObject* cyMisc::GetAgeInfo()
 }
 
 
-const char* cyMisc::GetPrevAgeName()
+plString cyMisc::GetPrevAgeName()
 {
     plNetLinkingMgr* nmgr = plNetLinkingMgr::GetInstance();
     if (nmgr)
@@ -641,7 +641,7 @@ const char* cyMisc::GetPrevAgeName()
         if (als)
             return als->GetAgeInfo()->GetAgeFilename();
     }
-    return nil;
+    return plString::Null;
 }
 
 PyObject* cyMisc::GetPrevAgeInfo()
@@ -2919,7 +2919,7 @@ PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
         {
             PyObject* tuple = PyTuple_New(2);
             PyTuple_SetItem(tuple, 0, pyCritterBrain::New(critterBrain));
-            PyTuple_SetItem(tuple, 1, PyString_FromString(armMod->GetUserStr()));
+            PyTuple_SetItem(tuple, 1, PyString_FromPlString(armMod->GetUserStr()));
 
             PyList_Append(avList, tuple);
             Py_DECREF(tuple);

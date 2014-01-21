@@ -85,7 +85,7 @@ void    pfGUIColorScheme::IReset( void )
     fSelForeColor.Set( 1, 1, 1, 1 );
     fSelBackColor.Set( 0, 0, 1, 1 );
     fTransparent = false;
-    fFontFace = hsStrcpy( "Times New Roman" );
+    fFontFace = "Times New Roman";
     fFontSize = 10;
     fFontFlags = 0;
 }
@@ -95,11 +95,6 @@ pfGUIColorScheme::pfGUIColorScheme()
     IReset();
 }
 
-pfGUIColorScheme::~pfGUIColorScheme()
-{
-    delete [] fFontFace;
-}
-
 pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backColor )
 {
     IReset();
@@ -107,18 +102,12 @@ pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backCol
     fBackColor = backColor;
 }
 
-pfGUIColorScheme::pfGUIColorScheme( const char *face, uint8_t size, uint8_t fontFlags )
+pfGUIColorScheme::pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags )
 {
     IReset();
-    fFontFace = hsStrcpy( face );
+    fFontFace = face;
     fFontSize = size;
     fFontFlags = fontFlags;
-}
-
-void    pfGUIColorScheme::SetFontFace( const char *face )
-{
-    delete [] fFontFace;
-    fFontFace = hsStrcpy( face );
 }
 
 void    pfGUIColorScheme::Read( hsStream *s )
@@ -129,7 +118,6 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fSelBackColor.Read( s );
     fTransparent = s->ReadBOOL();
 
-    delete [] fFontFace;
     fFontFace = s->ReadSafeString();
     s->ReadLE( &fFontSize );
     s->ReadLE( &fFontFlags );

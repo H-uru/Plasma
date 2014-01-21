@@ -313,7 +313,7 @@ void plAvOneShotMsg::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvSeekMsg::Read(stream, mgr);
 
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fDrivable = stream->ReadBool();
     fReversible = stream->ReadBool();
 }

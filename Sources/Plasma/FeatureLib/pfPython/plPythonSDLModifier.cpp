@@ -265,7 +265,9 @@ void plPythonSDLModifier::SetItemIdx(const plString& key, int idx, PyObject* val
 
 const char* plPythonSDLModifier::GetSDLName() const
 {
-    return fOwner->fPythonFile;
+    // NOTE:  Not changing GetSDLName since most implementations of this
+    //   virtual function just return a stored string literal.
+    return fOwner->fPythonFile.c_str();
 }
 
 void plPythonSDLModifier::SetFlags(const plString& name, bool sendImmediate, bool skipOwnershipCheck)
@@ -566,7 +568,7 @@ PyObject* plPythonSDLModifier::ISDLVarToPython(plSimpleStateVariable* var)
     return pyTuple;
 }
 
-bool plPythonSDLModifier::HasSDL(const char* pythonFile)
+bool plPythonSDLModifier::HasSDL(const plString& pythonFile)
 {
     return (plSDLMgr::GetInstance()->FindDescriptor(pythonFile, plSDL::kLatestVersion) != nil);
 }

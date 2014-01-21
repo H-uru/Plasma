@@ -403,7 +403,7 @@ bool plStateDataRecord::ReadStreamHeader(hsStream* s, plString* name, int* versi
         return false;       // bad version
     }
 
-    *name = s->ReadSafeString_TEMP();
+    *name = s->ReadSafeString();
     *version = s->ReadLE16();
     
     if (objUoid)

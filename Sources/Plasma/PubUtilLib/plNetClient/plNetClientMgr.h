@@ -358,7 +358,7 @@ public:
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
     plUoid GetAgeSDLObjectUoid(const char* ageName) const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
-    const char* GetNextAgeFilename();
+    plString GetNextAgeFilename() const;
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }
 
     void AddPendingPagingRoomMsg( plNetMsgPagingRoom * msg );

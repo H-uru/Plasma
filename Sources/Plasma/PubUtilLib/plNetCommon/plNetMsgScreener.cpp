@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const plNetGameMember* gm) const
 {
     DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s", 
-        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName(), IGetSenderName(gm));
+        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName().c_str(), IGetSenderName(gm));
 }
 
 //
@@ -80,7 +80,7 @@ void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, con
     const char* rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName().c_str() : "?";
 
     DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s, msgSndr:%s, msgRcvr:%s", 
-        msg->ClassName(), desc, IGetAgeName(), IGetSenderName(gm),
+        msg->ClassName(), desc, IGetAgeName().c_str(), IGetSenderName(gm),
         senderName, rcvrName);
 }
 

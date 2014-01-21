@@ -92,7 +92,7 @@ plWinFontCache  &plWinFontCache::GetInstance( void )
     return cache;
 }
 
-HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, bool italic, uint32_t quality )
+HFONT   plWinFontCache::IFindFont( const plString &face, int height, int weight, bool italic, uint32_t quality )
 {
     int     i;
 
@@ -105,7 +105,7 @@ HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, boo
             fFontCache[ i ].fItalic == italic &&
             fFontCache[ i ].fQuality == quality )
         {
-            if( strcmp( fFontCache[ i ].fFace, face ) == 0 )
+            if (fFontCache[i].fFace == face)
                 return fFontCache[ i ].fFont;
         }
     }
@@ -113,7 +113,7 @@ HFONT   plWinFontCache::IFindFont( const char *face, int height, int weight, boo
     return nil;
 }
 
-HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, bool italic, uint32_t quality )
+HFONT   plWinFontCache::IMakeFont( const plString &face, int height, int weight, bool italic, uint32_t quality )
 {
     plFontRecord    myRec;
     int             i;
@@ -122,12 +122,12 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, boo
     // Find a cached name for us
     for( i = 0; i < fFontNameCache.GetCount(); i++ )
     {
-        if( strcmp( face, fFontNameCache[ i ] ) == 0 )
+        if (face == fFontNameCache[i])
             break;
     }
 
     if( i == fFontNameCache.GetCount() )
-        fFontNameCache.Append( hsStrcpy( face ) );
+        fFontNameCache.Append(face);
 
     myRec.fFace = fFontNameCache[ i ];
     myRec.fHeight = height;
@@ -135,8 +135,8 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, boo
     myRec.fItalic = italic;
     myRec.fQuality = quality;
 
-    myRec.fFont = CreateFont( height, 0, 0, 0, weight, italic ? TRUE : FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
-                            CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, face );
+    myRec.fFont = CreateFontW( height, 0, 0, 0, weight, italic ? TRUE : FALSE, FALSE, FALSE, ANSI_CHARSET, OUT_DEFAULT_PRECIS,
+                               CLIP_DEFAULT_PRECIS, DEFAULT_QUALITY, VARIABLE_PITCH, face.ToWchar().GetData() );
 
     if( myRec.fFont != nil )
     {
@@ -156,7 +156,7 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, boo
                 err = "Weight of created font does not match";
             if( static_cast<bool>(fontInfo.lfItalic) != italic )
                 err = "Italic-ness of created font does not match";
-            if( stricmp( fontInfo.lfFaceName, face ) != 0 )
+            if( face.CompareI(fontInfo.lfFaceName) != 0 )
                 err = "Face of created font does not match";
 
             if( err != nil )
@@ -199,13 +199,14 @@ HFONT   plWinFontCache::IMakeFont( const char *face, int height, int weight, boo
     }
     else
     {
-        plStatusLog::AddLineS( "pipeline.log", "ERROR: CreateFont() call FAILED (face: %s, size: %d %s %s)", face, -height, weight == FW_BOLD ? "bold" : "", italic ? "italic" : "" );
+        plStatusLog::AddLineS( "pipeline.log", "ERROR: CreateFont() call FAILED (face: %s, size: %d %s %s)",
+                               face.c_str(), -height, weight == FW_BOLD ? "bold" : "", italic ? "italic" : "" );
     }
 
     return myRec.fFont;
 }
 
-HFONT   plWinFontCache::GetMeAFont( const char *face, int height, int weight, bool italic, uint32_t quality )
+HFONT   plWinFontCache::GetMeAFont( const plString &face, int height, int weight, bool italic, uint32_t quality )
 {
     HFONT   font = IFindFont( face, height, weight, italic, quality );
     if( font == nil )
@@ -226,8 +227,6 @@ void    plWinFontCache::Clear( void )
         DeleteObject( fFontCache[ i ].fFont );
     fFontCache.Reset();
 
-    for( i = 0; i < fFontNameCache.GetCount(); i++ )
-        delete [] fFontNameCache[ i ];
     fFontNameCache.Reset();
 
     for( i = 0; i < fCustFonts.GetCount(); i++ )

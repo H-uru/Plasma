@@ -82,10 +82,10 @@ class plSceneInputInterface : public plInputInterface
         int     fBookMode; // are we in offer book mode?
         plKey   fBookKey;  // key for the python file modifier for the book we are offering
         plKey   fOffereeKey;
-        uint32_t  fOffereeID; // ID for the guy who's accepted our link offer
-        const char* fOfferedAgeFile;
-        const char* fOfferedAgeInstance;
-        const char* fSpawnPoint;
+        uint32_t fOffereeID; // ID for the guy who's accepted our link offer
+        plString fOfferedAgeFile;
+        plString fOfferedAgeInstance;
+        plString fSpawnPoint;
         plUUID fAgeInstanceGuid;
         struct clickableTest
         {

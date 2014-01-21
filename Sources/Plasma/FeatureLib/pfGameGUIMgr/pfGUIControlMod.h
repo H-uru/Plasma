@@ -74,9 +74,9 @@ class pfGUIColorScheme : public hsRefCnt
         hsColorRGBA fSelForeColor, fSelBackColor;
         bool        fTransparent;
 
-        char        *fFontFace;
-        uint8_t       fFontSize;
-        uint8_t       fFontFlags;
+        plString    fFontFace;
+        uint8_t     fFontSize;
+        uint8_t     fFontFlags;
 
         enum FontFlags
         {
@@ -86,18 +86,17 @@ class pfGUIColorScheme : public hsRefCnt
         };
 
         pfGUIColorScheme();
-        ~pfGUIColorScheme();
         pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backColor );
-        pfGUIColorScheme( const char *face, uint8_t size, uint8_t fontFlags );
+        pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags );
 
-        void    SetFontFace( const char *face );
+        void    SetFontFace(const plString &face) { fFontFace = face; }
 
         void    Read( hsStream *s );
         void    Write( hsStream *s );
 
-        bool    IsBold( void ) { return ( fFontFlags & kFontBold ) ? true : false; }
-        bool    IsItalic( void ) { return ( fFontFlags & kFontItalic ) ? true : false; }
-        bool    IsShadowed( void ) { return ( fFontFlags & kFontShadowed ) ? true : false; }
+        bool    IsBold() const { return ( fFontFlags & kFontBold ) ? true : false; }
+        bool    IsItalic() const { return ( fFontFlags & kFontItalic ) ? true : false; }
+        bool    IsShadowed() const { return ( fFontFlags & kFontShadowed ) ? true : false; }
 
     protected:
 

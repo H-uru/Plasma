@@ -136,7 +136,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setElementW, args)
         PyErr_SetString(PyExc_TypeError, "setElementW expects an unsigned short and a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetElementW(index, text);
+    self->fThis->SetElement(index, plString::FromWchar(text));
     PYTHON_RETURN_NONE;
 }
 
@@ -148,7 +148,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElement, args)
         PyErr_SetString(PyExc_TypeError, "getElement expects an unsigned short");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromString(self->fThis->GetElement(index).c_str());
+    return PyString_FromPlString(self->fThis->GetElement(index));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElementW, args)
@@ -159,8 +159,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElementW, args)
         PyErr_SetString(PyExc_TypeError, "getElementW expects an unsigned short");
         PYTHON_RETURN_ERROR;
     }
-    std::wstring retVal = self->fThis->GetElementW(index);
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyUnicode_FromStringEx(self->fThis->GetElement(index));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setStringJustify, args)
@@ -195,7 +194,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addStringW, args)
         PyErr_SetString(PyExc_TypeError, "addStringW expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->AddStringW(text));
+    return PyInt_FromLong(self->fThis->AddString(plString::FromWchar(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findString, args)
@@ -217,7 +216,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, findStringW, args)
         PyErr_SetString(PyExc_TypeError, "findStringW expects a unicode string");
         PYTHON_RETURN_ERROR;
     }
-    return PyInt_FromLong(self->fThis->FindStringW(text));
+    return PyInt_FromLong(self->fThis->FindString(plString::FromWchar(text)));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addImage, args)
@@ -387,7 +386,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, addBranchW, args)
         wchar_t* name = new wchar_t[strLen + 1];
         PyUnicode_AsWideChar((PyUnicodeObject*)textObj, name, strLen);
         name[strLen] = L'\0';
-        self->fThis->AddBranchW(name, initiallyOpen != 0);
+        self->fThis->AddBranch(plString::FromWchar(name), initiallyOpen != 0);
         delete [] name;
         PYTHON_RETURN_NONE;
     }

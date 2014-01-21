@@ -217,7 +217,7 @@ void plAGAnim::Read(hsStream *stream, hsResMgr *mgr)
     plSynchedObject::Read(stream, mgr);
 
     // read in the name of the animation itself
-    fName = stream->ReadSafeString_TEMP();
+    fName = stream->ReadSafeString();
 
     fStart = stream->ReadLEScalar();
     fEnd = stream->ReadLEScalar();
@@ -412,7 +412,7 @@ void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
     int numMarkers = stream->ReadLE32();
     for (i = 0; i < numMarkers; i++)
     {
-        plString name = stream->ReadSafeString_TEMP();
+        plString name = stream->ReadSafeString();
         float time = stream->ReadLEFloat();
         fMarkers[name] = time;
     }
@@ -420,7 +420,7 @@ void plATCAnim::Read(hsStream *stream, hsResMgr *mgr)
     int numLoops = stream->ReadLE32();
     for (i = 0; i < numLoops; i++)
     {
-        plString name = stream->ReadSafeString_TEMP();
+        plString name = stream->ReadSafeString();
         float begin = stream->ReadLEScalar();
         float end = stream->ReadLEScalar();
         fLoops[name] = std::pair<float,float>(begin,end);
@@ -665,28 +665,13 @@ float plEmoteAnim::GetFadeOut() const
 plAgeGlobalAnim::plAgeGlobalAnim()
 : plAGAnim()
 {
-    fGlobalVarName = nil;
 }
 
 // ctor --------------------------------------------------------------------
 // -----
 plAgeGlobalAnim::plAgeGlobalAnim(const plString &name, double start, double end)
-: plAGAnim(name, start, end),
-  fGlobalVarName(nil)
+: plAGAnim(name, start, end)
 {
-}
-
-// dtor ---------------------------
-// -----
-plAgeGlobalAnim::~plAgeGlobalAnim()
-{
-    delete [] fGlobalVarName;
-}
-
-void plAgeGlobalAnim::SetGlobalVarName(char *name) 
-{ 
-    delete [] fGlobalVarName; 
-    fGlobalVarName = hsStrcpy(name); 
 }
 
 

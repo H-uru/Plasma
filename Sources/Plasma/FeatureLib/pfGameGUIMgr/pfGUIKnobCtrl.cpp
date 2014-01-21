@@ -106,7 +106,7 @@ void    pfGUIKnobCtrl::Read( hsStream *s, hsResMgr *mgr )
     uint32_t i, count = s->ReadLE32();
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
-    fAnimName = s->ReadSafeString_TEMP();
+    fAnimName = s->ReadSafeString();
 
     fAnimTimesCalced = false;
 

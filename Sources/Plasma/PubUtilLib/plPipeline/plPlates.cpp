@@ -238,9 +238,9 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, bool with
 //// CreateFromResource //////////////////////////////////////////////////////
 //  Creates a plate's material from a resource of the given name.
 
-void plPlate::CreateFromResource(const char *resName)
+void plPlate::CreateFromResource(const plString& resName)
 {
-    if (resName)
+    if (!resName.IsEmpty())
     {
         plMipmap* resTexture = new plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
@@ -256,9 +256,9 @@ void plPlate::CreateFromResource(const char *resName)
     }
 }
 
-void plPlate::ReloadFromResource(const char *resName)
+void plPlate::ReloadFromResource(const plString& resName)
 {
-    if (resName)
+    if (!resName.IsEmpty())
     {
         fMipmap->CopyFrom(plClientResMgr::Instance().getResource(resName));
     }

@@ -169,7 +169,7 @@ void    pfGUITextBoxMod::Read( hsStream *s, hsResMgr *mgr )
     fUseLocalizationPath = s->ReadBool();
     if (fUseLocalizationPath)
     {
-        fLocalizationPath = s->ReadSafeWString_TEMP();
+        fLocalizationPath = s->ReadSafeWString();
     }
 }
 

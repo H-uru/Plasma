@@ -115,7 +115,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, copyFrom, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeFilename)
 {
-    return PyString_FromString(self->fThis->GetAgeFilename());
+    return PyString_FromPlString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
@@ -132,7 +132,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeInstanceName)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceName());
+    return PyString_FromPlString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
@@ -149,7 +149,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeUserDefinedName)
 {
-    return PyString_FromString(self->fThis->GetAgeUserDefinedName());
+    return PyString_FromPlString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
@@ -166,7 +166,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeDescription)
 {
-    return PyString_FromString(self->fThis->GetAgeDescription());
+    return PyString_FromPlString(self->fThis->GetAgeDescription());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
@@ -325,7 +325,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, copyFrom, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeFilename)
 {
-    return PyString_FromString(self->fThis->GetAgeFilename());
+    return PyString_FromPlString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
@@ -342,7 +342,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeInstanceName)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceName());
+    return PyString_FromPlString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
@@ -359,7 +359,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeUserDefinedName)
 {
-    return PyString_FromString(self->fThis->GetAgeUserDefinedName());
+    return PyString_FromPlString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)

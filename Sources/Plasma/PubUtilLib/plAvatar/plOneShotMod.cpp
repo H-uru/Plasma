@@ -154,7 +154,7 @@ void plOneShotMod::Read(hsStream *stream, hsResMgr *mgr)
     plMultiModifier::Read(stream, mgr);
 
     // read in the name of the animation itself
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fSeekDuration = stream->ReadLEScalar();
     fDrivable = stream->ReadBool();
     fReversable = stream->ReadBool();

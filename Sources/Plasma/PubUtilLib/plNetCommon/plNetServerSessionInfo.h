@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetServerSessionInfo_h_inc
 
 #include "HeadSpin.h"
-#include <string>
 
 #include "pnFactory/plCreatable.h"
 #include "pnNetCommon/plNetServers.h"
@@ -64,19 +63,19 @@ class plAgeInfoStruct : public plCreatable
     mutable uint8_t           fFlags;
 
     // Age dataset name "Neighborhood"
-    std::string     fAgeFilename;
+    plString        fAgeFilename;
 
     // Age string ID "Bevin"
-    std::string     fAgeInstanceName;
+    plString        fAgeInstanceName;
 
     // Age guid. Same as game server guid.
     plUUID  fAgeInstanceGuid;
 
     // User-defined age name: "My Teledahn"
-    std::string     fAgeUserDefinedName;
+    plString        fAgeUserDefinedName;
 
     // User-defined age description "This is Joe's Neighborhood"
-    std::string     fAgeDescription;
+    plString        fAgeDescription;
 
     // A modifier to user-defined name to make it unique in gui lists.
     // Assigned by vault server.
@@ -117,19 +116,19 @@ public:
     void    CopyFrom(const struct NetAgeInfo & info);
     bool    IsEqualTo( const plAgeInfoStruct * other ) const;
 
-    const char * GetAgeFilename() const { return fAgeFilename.c_str(); }
-    const char * GetAgeInstanceName() const { return fAgeInstanceName.c_str(); }
+    plString  GetAgeFilename() const { return fAgeFilename; }
+    plString  GetAgeInstanceName() const { return fAgeInstanceName; }
     const plUUID * GetAgeInstanceGuid() const { return &fAgeInstanceGuid; }
-    const char * GetAgeUserDefinedName() const { return fAgeUserDefinedName.c_str(); }
-    const char * GetAgeDescription() const { return fAgeDescription.c_str(); }
+    plString  GetAgeUserDefinedName() const { return fAgeUserDefinedName; }
+    plString  GetAgeDescription() const { return fAgeDescription; }
     uint32_t  GetAgeSequenceNumber() const { return fAgeSequenceNumber; }
     uint32_t  GetAgeLanguage() const { return fAgeLanguage; }
 
-    void    SetAgeFilename( const char * v );
-    void    SetAgeInstanceName( const char * v );
+    void    SetAgeFilename( const plString & v );
+    void    SetAgeInstanceName( const plString & v );
     void    SetAgeInstanceGuid( const plUUID * v );
-    void    SetAgeUserDefinedName( const char * v );
-    void    SetAgeDescription( const char * v );
+    void    SetAgeUserDefinedName( const plString & v );
+    void    SetAgeDescription( const plString & v );
     void    SetAgeSequenceNumber( uint32_t v );
     void    SetAgeLanguage( uint32_t v );
 
@@ -227,12 +226,12 @@ public:
 
 class plNetServerSessionInfo : public plCreatable
 {
-    uint8_t           fFlags;
-    std::string     fServerName;
-    uint8_t           fServerType;
-    std::string     fServerAddr;
-    uint16_t          fServerPort;
-    plUUID  fServerGuid;
+    uint8_t     fFlags;
+    plString    fServerName;
+    uint8_t     fServerType;
+    plString    fServerAddr;
+    uint16_t    fServerPort;
+    plUUID      fServerGuid;
 
     enum
     {
@@ -256,17 +255,17 @@ public:
     CLASSNAME_REGISTER( plNetServerSessionInfo );
     GETINTERFACE_ANY( plNetServerSessionInfo, plCreatable );
 
-    void SetServerName(const char * val);
+    void SetServerName(const plString & val);
     void SetServerType(uint8_t val);
-    void SetServerAddr(const char * val);
+    void SetServerAddr(const plString & val);
     void SetServerPort(uint16_t val);
     void SetServerGuid(const plUUID * val);
     void CopyServerGuid(const plUUID & val);
 
-    const char *    GetServerName() const { return fServerName.c_str();}
-    uint8_t           GetServerType() const { return fServerType;}
-    const char *    GetServerAddr() const { return fServerAddr.c_str(); }
-    uint16_t          GetServerPort() const { return fServerPort; }
+    plString    GetServerName() const { return fServerName; }
+    uint8_t     GetServerType() const { return fServerType; }
+    plString    GetServerAddr() const { return fServerAddr; }
+    uint16_t    GetServerPort() const { return fServerPort; }
     const plUUID *GetServerGuid() const { return &fServerGuid; }
     plUUID *    GetServerGuid() { return &fServerGuid; }
 

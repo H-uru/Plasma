@@ -455,7 +455,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
             if (gUserPropMgr.GetUserPropStringList(this, "DontPersist", num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLExcludeList(sdataList[i]);  // disable a type of persistence
+                    so->AddToSDLExcludeList((const char *)sdataList[i]);  // disable a type of persistence
             }
         }
 
@@ -469,7 +469,7 @@ void plMaxNode::CheckSynchOptions(plSynchedObject* so)
             if (gUserPropMgr.GetUserPropStringList(this, "Volatile", num, sdataList))
             {
                 for(i=0;i<num;i++)
-                    so->AddToSDLVolatileList(sdataList[i]); // make volatile a type of persistence
+                    so->AddToSDLVolatileList((const char *)sdataList[i]); // make volatile a type of persistence
             }
         }
 

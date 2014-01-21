@@ -2608,10 +2608,10 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         uint32_t idx;
         uint16_t width, height, y, x, ascent, lastX, lastY;
         
-        uint8_t       fontFlags, fontSize;
-        const wchar_t *fontFace;
+        uint8_t     fontFlags, fontSize;
+        plString    fontFace;
         hsColorRGBA fontColor;
-        int16_t       fontSpacing;
+        int16_t     fontSpacing;
         bool        needSFX = false;
 
         // Find and set initial font properties
@@ -3339,7 +3339,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterf
 // Starting at the given chunk, works backwards to determine the full set of current
 // font properties at that point, or assigns defaults if none were specified
 
-void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
+void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, plString &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
 {
     enum Which
     {
@@ -3369,7 +3369,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, 
             // What do we (still) need?
             if( !( found & kFace ) && chunk->fText != L"" )
             {
-                face = chunk->fText.c_str();
+                face = plString::FromWchar(chunk->fText.c_str());
                 found |= kFace;
             }
             if( !( found & kSize ) && chunk->fFontSize > 0 )
@@ -3403,7 +3403,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, 
 
     // Set any un-found defaults
     if( !( found & kFace ) )
-        face = L"Arial";
+        face = "Arial";
     if( !( found & kSize ) )
         size = 24;
     if( !( found & kFlags ) )

@@ -77,28 +77,14 @@ void    pfGUIListElement::Write( hsStream *s, hsResMgr *mgr )
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIListText::pfGUIListText() : pfGUIListElement( kText )
+pfGUIListText::pfGUIListText()
+    : pfGUIListElement(kText), fJustify(kLeftJustify)
 {
-    fText = nil;
-    fJustify = kLeftJustify;
 }
 
-pfGUIListText::pfGUIListText( const char *text ) : pfGUIListElement( kText )
+pfGUIListText::pfGUIListText( const plString &text )
+    : pfGUIListElement(kText), fText(text), fJustify(kLeftJustify)
 {
-    fText = hsStringToWString(text);
-    fJustify = kLeftJustify;
-}
-
-pfGUIListText::pfGUIListText( const wchar_t *text ) : pfGUIListElement( kText )
-{
-    fText = new wchar_t[ wcslen( text ) + 1 ];
-    wcscpy( fText, text );
-    fJustify = kLeftJustify;
-}
-
-pfGUIListText::~pfGUIListText()
-{
-    delete [] fText;
 }
 
 //// Virtuals ////////////////////////////////////////////////////////////////
@@ -107,18 +93,14 @@ void    pfGUIListText::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Read( s, mgr );
 
-    char *text = s->ReadSafeString();
-    fText = hsStringToWString(text);
-    delete [] text;
+    fText = s->ReadSafeString();
 }
 
 void    pfGUIListText::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Write( s, mgr );
 
-    char *text = hsWStringToString(fText);
-    s->WriteSafeString(text);
-    delete [] text;
+    s->WriteSafeString(fText);
 }
 
 bool    pfGUIListText::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
@@ -158,26 +140,7 @@ int     pfGUIListText::CompareTo( pfGUIListElement *rightSide )
     if( text->fType != kText )
         return -2;
 
-    return wcscmp( GetText(), text->GetText() );
-}
-
-void    pfGUIListText::SetText( const char *text )
-{
-    wchar_t *wText = hsStringToWString(text);
-    SetText(wText);
-    delete [] wText;
-}
-
-void    pfGUIListText::SetText( const wchar_t *text )
-{
-    delete [] fText;
-    if( text != nil )
-    {
-        fText = new wchar_t[ wcslen( text ) + 1 ];
-        wcscpy( fText, text );
-    }
-    else
-        fText = nil;
+    return GetText().Compare(text->GetText());
 }
 
 void    pfGUIListText::SetJustify( JustifyTypes justify )
@@ -295,26 +258,14 @@ int     pfGUIListPicture::CompareTo( pfGUIListElement *rightSide )
 
 //// Constructor/Destructor //////////////////////////////////////////////////
 
-pfGUIListTreeRoot::pfGUIListTreeRoot() : pfGUIListElement( kTreeRoot )
+pfGUIListTreeRoot::pfGUIListTreeRoot()
+    : pfGUIListElement(kTreeRoot), fShowChildren(true)
 {
-    fText = nil;
-    fShowChildren = true;
 }
 
-pfGUIListTreeRoot::pfGUIListTreeRoot( const char *text ) : pfGUIListElement( kTreeRoot )
+pfGUIListTreeRoot::pfGUIListTreeRoot( const plString &text )
+    : pfGUIListElement(kTreeRoot), fText(text)
 {
-    fText = hsStringToWString(text);
-}
-
-pfGUIListTreeRoot::pfGUIListTreeRoot( const wchar_t *text ) : pfGUIListElement( kTreeRoot )
-{
-    fText = new wchar_t[ wcslen( text ) + 1 ];
-    wcscpy( fText, text );
-}
-
-pfGUIListTreeRoot::~pfGUIListTreeRoot()
-{
-    delete [] fText;
 }
 
 //// Virtuals ////////////////////////////////////////////////////////////////
@@ -323,18 +274,14 @@ void    pfGUIListTreeRoot::Read( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Read( s, mgr );
 
-    char *temp = s->ReadSafeString();
-    fText = hsStringToWString(temp);
-    delete [] temp;
+    fText = s->ReadSafeString();
 }
 
 void    pfGUIListTreeRoot::Write( hsStream *s, hsResMgr *mgr )
 {
     pfGUIListElement::Write( s, mgr );
 
-    char *temp = hsWStringToString(fText);
-    s->WriteSafeString( temp );
-    delete [] temp;
+    s->WriteSafeString(fText);
 }
 
 bool    pfGUIListTreeRoot::Draw( plDynamicTextMap *textGen, uint16_t x, uint16_t y, uint16_t maxWidth, uint16_t maxHeight )
@@ -416,26 +363,7 @@ int     pfGUIListTreeRoot::CompareTo( pfGUIListElement *rightSide )
     if( text->fType != kTreeRoot )
         return -2;
 
-    return wcscmp( GetTitle(), text->GetTitle() );
-}
-
-void    pfGUIListTreeRoot::SetTitle( const char *text )
-{
-    wchar_t *wText = hsStringToWString(text);
-    SetTitle(wText);
-    delete [] wText;
-}
-
-void    pfGUIListTreeRoot::SetTitle( const wchar_t *text )
-{
-    delete [] fText;
-    if( text != nil )
-    {
-        fText = new wchar_t[ wcslen( text ) + 1 ];
-        wcscpy( fText, text );
-    }
-    else
-        fText = nil;
+    return GetTitle().Compare(text->GetTitle());
 }
 
 void    pfGUIListTreeRoot::AddChild( pfGUIListElement *el )

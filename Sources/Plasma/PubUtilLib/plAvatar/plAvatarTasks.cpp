@@ -465,7 +465,7 @@ void plAvAnimTask::LeaveAge(plArmatureMod *avatar)
 // READ
 void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fInitialBlend = stream->ReadLEScalar();
     fTargetBlend = stream->ReadLEScalar();
     fFadeSpeed = stream->ReadLEScalar();
@@ -802,8 +802,8 @@ void plAvOneShotLinkTask::Write(hsStream *stream, hsResMgr *mgr)
 void plAvOneShotLinkTask::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvOneShotTask::Read(stream, mgr);
-    fAnimName = stream->ReadSafeString_TEMP();
-    fMarkerName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
+    fMarkerName = stream->ReadSafeString();
 }
 
 void plAvOneShotLinkTask::SetMarkerName(const plString &name)

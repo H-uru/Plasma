@@ -118,6 +118,12 @@ unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars, uns
 unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars);
 unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars, unsigned codePage);
 
+// FIXME: Get rid of these
+inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars)
+    { return StrToUnicode(dest, source.c_str(), destChars); }
+inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars, unsigned codePage)
+    { return StrToUnicode(dest, source.c_str(), destChars, codePage); }
+
 float StrToFloat (const char source[], const char ** endptr);
 float StrToFloat (const wchar_t source[], const wchar_t ** endptr);
 

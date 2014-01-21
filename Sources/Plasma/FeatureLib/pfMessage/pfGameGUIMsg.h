@@ -84,7 +84,7 @@ class pfGameGUIMsg : public plMessage
             s->Read(sizeof(buffer), buffer);
             buffer[GAME_GUI_MSG_STRING_SIZE - 1] = 0;
             fString = buffer;
-            fAge = s->ReadSafeString_TEMP();
+            fAge = s->ReadSafeString();
         }
         
         virtual void Write(hsStream* s, hsResMgr* mgr) 

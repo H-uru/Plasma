@@ -53,18 +53,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // plLinkToAgeMsg
 
-plLinkToAgeMsg::plLinkToAgeMsg() : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg() : fFlags(0)
 {
 }
 
-plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fFlags(0)
 {
     fAgeLink.CopyFrom( link );
-}
-
-plLinkToAgeMsg::~plLinkToAgeMsg()
-{
-    delete [] fLinkInAnimName;
 }
 
 void plLinkToAgeMsg::PlayLinkSfx(bool linkIn, bool linkOut)

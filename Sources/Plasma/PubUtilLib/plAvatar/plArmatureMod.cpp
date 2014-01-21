@@ -1743,8 +1743,8 @@ void plArmatureMod::Write(hsStream *stream, hsResMgr *mgr)
     stream->WriteLEFloat(fPhysWidth);
 
     stream->WriteSafeString(fAnimationPrefix);
-    stream->WriteSafeString(fBodyAgeName.c_str());
-    stream->WriteSafeString(fBodyFootstepSoundPage.c_str());
+    stream->WriteSafeString(fBodyAgeName);
+    stream->WriteSafeString(fBodyFootstepSoundPage);
 }
 
 void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
@@ -1756,7 +1756,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fMeshKeys.push_back(mgr->ReadKey(stream));
 
     // read the root name string
-    fRootName = stream->ReadSafeString_TEMP();
+    fRootName = stream->ReadSafeString();
 
     // read in the brains
     int nBrains = stream->ReadLE32();
@@ -1780,9 +1780,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
 
         // Attach the Footstep emitter scene object
         hsResMgr *mgr = hsgResMgr::ResMgr();
-        const char *age = fBodyAgeName.c_str();
-        const char *page = fBodyFootstepSoundPage.c_str();
-        const plLocation &gLoc = plKeyFinder::Instance().FindLocation(age, page);
+        const plLocation &gLoc = plKeyFinder::Instance().FindLocation(fBodyAgeName, fBodyFootstepSoundPage);
         
         if (gLoc.IsValid())
         {
@@ -1823,23 +1821,17 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     fPhysHeight = stream->ReadLEFloat();
     fPhysWidth = stream->ReadLEFloat();
 
-    fAnimationPrefix = stream->ReadSafeString_TEMP();
+    fAnimationPrefix = stream->ReadSafeString();
+    fBodyAgeName = stream->ReadSafeString();
+    fBodyFootstepSoundPage = stream->ReadSafeString();
 
-    char *temp = stream->ReadSafeString();
-    fBodyAgeName = temp;
-    delete [] temp;
-
-    temp = stream->ReadSafeString();
-    fBodyFootstepSoundPage = temp;
-    delete [] temp;
-    
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-bool plArmatureMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plArmatureMod::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
-    if (SDLStateName && stricmp(SDLStateName, kSDLAvatar))
+    if (SDLStateName.CompareI(kSDLAvatar) != 0)
     {
         return false;
     }
@@ -2561,9 +2553,9 @@ int  plArmatureMod::GetKILevel()
     return VaultGetKILevel();
 }
 
-void plArmatureMod::SetLinkInAnim(const char *animName)
+void plArmatureMod::SetLinkInAnim(const plString &animName)
 {
-    if (animName)
+    if (!animName.IsNull())
     {
         plAGAnim *anim = FindCustomAnim(animName);
         fLinkInAnimKey = (anim ? anim->GetKey() : nil);

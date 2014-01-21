@@ -349,7 +349,7 @@ void    pfGUIMultiLineEditCtrl::IPostSetUpDynTextMap( void )
         fFontFlagsSet |= kFontStyleSet;
     }
 
-    fDynTextMap->SetFont( fFontFace.c_str(), fFontSize, fFontStyle, 
+    fDynTextMap->SetFont( fFontFace, fFontSize, fFontStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
 
     // Calculate a height for each line
@@ -572,7 +572,7 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
     IFindLastStyleCode( start, currStyle );
 
     fDynTextMap->SetTextColor( currColor, HasFlag( kXparentBgnd ) ? true : false );
-    fDynTextMap->SetFont( fFontFace.c_str(), fFontSize, GetColorScheme()->fFontFlags | currStyle, 
+    fDynTextMap->SetFont( fFontFace, fFontSize, GetColorScheme()->fFontFlags | currStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     
     // Now, start from our start and go to the end and keep eating up as many chunks
@@ -609,7 +609,7 @@ uint32_t  pfGUIMultiLineEditCtrl::IRenderLine( uint16_t x, uint16_t y, int32_t s
                 // Read style and switch to that one
                 IReadStyleCode( pos, currStyle );
                 if( !dontRender )
-                    fDynTextMap->SetFont( fFontFace.c_str(), fFontSize  , GetColorScheme()->fFontFlags | currStyle, 
+                    fDynTextMap->SetFont( fFontFace, fFontSize  , GetColorScheme()->fFontFlags | currStyle,
                                             HasFlag( kXparentBgnd ) ? false : true );
             }
             else if( buffer[ pos ] == L'\n' )
@@ -1836,11 +1836,11 @@ void pfGUIMultiLineEditCtrl::IHitBeginningOfControlList(int32_t cursorPos)
     }
 }
 
-void pfGUIMultiLineEditCtrl::SetFontFace(std::string fontFace)
+void pfGUIMultiLineEditCtrl::SetFontFace(const plString &fontFace)
 {
     fFontFace = fontFace;
     fFontFlagsSet |= kFontFaceSet;
-    fDynTextMap->SetFont( fFontFace.c_str(), fFontSize, fFontStyle, 
+    fDynTextMap->SetFont( fFontFace, fFontSize, fFontStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     fDynTextMap->CalcStringWidth( "The quick brown fox jumped over the lazy dog.", &fLineHeight );
 }
@@ -1850,7 +1850,7 @@ void pfGUIMultiLineEditCtrl::SetFontSize(uint8_t fontSize)
     fFontSize = fontSize;
     fFontFlagsSet |= kFontSizeSet;
     fCalcedFontSize = fontSize;
-    fDynTextMap->SetFont( fFontFace.c_str(), fFontSize, fFontStyle, 
+    fDynTextMap->SetFont( fFontFace, fFontSize, fFontStyle,
                             HasFlag( kXparentBgnd ) ? false : true );
     fDynTextMap->CalcStringWidth( "The quick brown fox jumped over the lazy dog.", &fLineHeight );
 }

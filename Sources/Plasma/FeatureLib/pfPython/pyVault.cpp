@@ -671,18 +671,18 @@ void pyVault::CreateNeighborhood()
     if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
     {
         title = plString::Format( "%s'", nc->GetPlayerName().c_str() );
-        desc = plString::Format( "%s' %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+        desc = plString::Format( "%s' %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
     }
     else
     {
         title = plString::Format( "%s's", nc->GetPlayerName().c_str() );
-        desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName() );
+        desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
     }
 
     plUUID guid = plUUID::Generate();
     link.GetAgeInfo()->SetAgeInstanceGuid(&guid);
-    link.GetAgeInfo()->SetAgeUserDefinedName( title.c_str() );
-    link.GetAgeInfo()->SetAgeDescription( desc.c_str() );
+    link.GetAgeInfo()->SetAgeUserDefinedName(title);
+    link.GetAgeInfo()->SetAgeDescription(desc);
 
     VaultRegisterOwnedAge(&link);
 }
