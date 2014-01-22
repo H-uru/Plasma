@@ -43,6 +43,8 @@ Mead, WA   99021
 #include "plClipboard.h"
 #include "hsWindows.h"
 
+#include <memory>
+
 plClipboard& plClipboard::GetInstance()
 {
     static plClipboard theInstance;
@@ -93,8 +95,8 @@ void plClipboard::SetClipboardText(const plString& text)
     if (len == 0) 
         return;
 
-    HGLOBAL copy = ::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t));
-    if (copy == NULL) 
+    std::unique_ptr<void, HGLOBAL(WINAPI*)(HGLOBAL)> copy(::GlobalAlloc(GMEM_MOVEABLE, (len + 1) * sizeof(wchar_t)), ::GlobalFree);
+    if (!copy)
         return;
 
     if (!::OpenClipboard(NULL))
@@ -102,12 +104,12 @@ void plClipboard::SetClipboardText(const plString& text)
 
     ::EmptyClipboard();
 
-    wchar_t* target = (wchar_t*)::GlobalLock(copy);
+    wchar_t* target = (wchar_t*)::GlobalLock(copy.get());
     memcpy(target, buf.GetData(), (len + 1) * sizeof(wchar_t));
     target[len] = '\0';
-    ::GlobalUnlock(copy); 
+    ::GlobalUnlock(copy.get());
 
-    ::SetClipboardData(CF_UNICODETEXT, copy);
+    ::SetClipboardData(CF_UNICODETEXT, copy.get());
     ::CloseClipboard();
 #endif
 }
