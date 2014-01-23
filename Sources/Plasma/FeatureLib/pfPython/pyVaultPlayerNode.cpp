@@ -183,14 +183,12 @@ PyObject *pyVaultPlayerNode::GetPlayerInfo()
 
 PyObject *pyVaultPlayerNode::GetLinkToMyNeighborhood()
 {
-    plAgeLinkStruct * link = new plAgeLinkStruct();
-    
-    if (VaultGetLinkToMyNeighborhood(link)) {
-        PyObject * result = pyAgeLinkStruct::New(link);
+    plAgeLinkStruct link;
+    if (VaultGetLinkToMyNeighborhood(&link)) {
+        PyObject * result = pyAgeLinkStruct::New(&link);
         return result;
     }
 
-    delete link;
     PYTHON_RETURN_NONE;
 }
 
