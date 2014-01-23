@@ -740,19 +740,18 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 // my special version - cjp
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID, plKey replyKey )
 {
-
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
-    linkM->AddReceiver(mgr->GetKey());
-
-    plKey host = mgr->GetLocalPlayerKey();
 
     plNetTransport &transport = mgr->TransportMgr();
     int guestIdx = transport.FindMember(playerID);
     plNetTransportMember *guestMem = transport.GetMember(guestIdx);         // -1 ?
-    if(guestMem)
+    if (guestMem)
     {
+        plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
+        linkM->AddReceiver(mgr->GetKey());
+
         plKey guest = guestMem->GetAvatarKey();
+        plKey host = mgr->GetLocalPlayerKey();
         plAvatarMgr::OfferLinkingBook(host, guest, linkM, replyKey);
     }
 }
