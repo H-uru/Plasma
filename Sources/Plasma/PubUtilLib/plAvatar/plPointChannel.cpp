@@ -214,8 +214,9 @@ plAGChannel * plPointTimeScale::Detach(plAGChannel * channel)
 // ctor --------------------
 // -----
 plPointBlend::plPointBlend()
-: fPointA(nil),
-  fPointB(nil)
+: fPointA(nullptr),
+  fPointB(nullptr),
+  fChannelBias(nullptr)
 {
 }
 
@@ -274,14 +275,10 @@ const hsPoint3 &plPointBlend::Value(double time)
             }
         }
     } else {
-        if (fPointA)
-        {
+        if (fPointA) {
             fResult = fPointA->Value(time);
-        } else {
-            if (fPointB)
-            {
-                fResult = fPointA->Value(time);
-            }
+        } else if (fPointB) {
+            fResult = fPointB->Value(time);
         }
     }
     return fResult;

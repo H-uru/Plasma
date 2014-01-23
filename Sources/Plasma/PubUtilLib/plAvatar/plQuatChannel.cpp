@@ -82,24 +82,20 @@ void plQuatChannel::Value(hsQuat &quat, double time)
 // CANCOMBINE
 bool plQuatChannel::CanCombine(plAGChannel *channelA)
 {
-    return false;
     if(plPointChannel::ConvertNoRef(channelA))
-    {
         return true;
-    } else {
+    else
         return false;
-    }
 }
 
 // MAKECOMBINE
 plAGChannel * plQuatChannel::MakeCombine(plAGChannel *channelA)
 {
-    if(plPointChannel::ConvertNoRef(channelA))
-    {
-        return new plQuatPointCombine(this, (plPointChannel *)channelA);
-    } else {
-        return nil;
-    }
+    plPointChannel* channel = plPointChannel::ConvertNoRef(channelA);
+    if(channel)
+        return new plQuatPointCombine(this, channel);
+    else
+        return nullptr;
 }
 
 // MAKEBLEND

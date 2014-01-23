@@ -302,20 +302,19 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
 {
     plArmatureMod *avatar = plArmatureMod::ConvertNoRef(avModKey->ObjectIsLoaded());
     plSceneObject *seekObj = plSceneObject::ConvertNoRef(seekKey->ObjectIsLoaded());
-    hsMatrix44 animEndToStart;
-    hsMatrix44 sitGoal = seekObj->GetLocalToWorld();
-    hsMatrix44 candidateGoal;
     float closestDist = 0.0f;
     uint8_t closestApproach = 0;
-    hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
-    const char* sitAnimName = nil;
+    const char* sitAnimName = nullptr;
     const char* standAnimName = "StandUpFront";      // always prefer to stand facing front
 
     bool frontClear = fMiscFlags & kApproachFront;
-    plAvBrainGeneric *brain = nil;
+    plAvBrainGeneric *brain = nullptr;
 
-    if(avatar)
+    if(avatar && seekObj)
     {
+        hsMatrix44 sitGoal = seekObj->GetLocalToWorld();
+        hsPoint3 curPosition = avatar->GetTarget(0)->GetLocalToWorld().GetTranslate();
+
         if(fMiscFlags & kApproachLeft && IIsClosestAnim("SitLeft", sitGoal, closestDist, curPosition, avatar))
         {
             closestApproach = kApproachLeft;
@@ -323,6 +322,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
             if(!frontClear)
                 standAnimName = "StandUpLeft";
         }
+
         if(fMiscFlags & kApproachRight && IIsClosestAnim("SitRight", sitGoal, closestDist, curPosition, avatar))
         {
             closestApproach = kApproachRight;
@@ -330,6 +330,7 @@ plAvBrainGeneric *plSittingModifier::IBuildSitBrain(plKey avModKey, plKey seekKe
             if(!frontClear)
                 standAnimName = "StandUpRight";
         }
+
         if(frontClear && IIsClosestAnim("SitFront", sitGoal, closestDist, curPosition, avatar))
         {
             sitAnimName = "SitFront";

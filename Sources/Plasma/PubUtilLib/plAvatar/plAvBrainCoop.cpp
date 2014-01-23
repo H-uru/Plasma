@@ -251,7 +251,7 @@ plKey plAvBrainCoop::GetRecipient()
     return fRecipients[0];
 }
 
-void plAvBrainCoop::SetRecipient(plKey &recipient)
+void plAvBrainCoop::SetRecipient(const plKey &recipient)
 {
     fRecipients.push_back(recipient);
 }

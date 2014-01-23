@@ -171,7 +171,7 @@ void plAGModifier::SetApplicator(plAGApplicator *newApp)
 
             plAGChannel *newChannel = newApp->GetChannel();
 
-            hsAssert(newChannel = nil, "Trying to merge in new applicator which already has channel. Incomplete.");
+            hsAssert(!newChannel, "Trying to merge in new applicator which already has channel. Incomplete.");
 
             // *** right now I just want to support the case of putting in a new applicator - not merging animations
 

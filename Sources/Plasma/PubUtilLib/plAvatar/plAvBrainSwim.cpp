@@ -232,9 +232,10 @@ public:
 const float plAvBrainSwim::kMinSwimDepth = 4.0f;
 
 plAvBrainSwim::plAvBrainSwim() : 
-    fSwimStrategy(nil),
+    fSwimStrategy(nullptr),
     fMode(kWalking),
-    fSurfaceDistance(0.f)
+    fSurfaceDistance(0.f),
+    fCurrentRegion(nullptr)
 {
     fSurfaceProbeMsg = new plLOSRequestMsg();
     fSurfaceProbeMsg->SetReportType(plLOSRequestMsg::kReportHitOrMiss);
