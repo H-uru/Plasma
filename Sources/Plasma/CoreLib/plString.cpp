@@ -269,7 +269,7 @@ void plString::IConvertFromIso8859_1(const char *astr, size_t size)
         return;
 
     if (size == STRLEN_AUTO)
-        size = strnlen(astr, -(int32_t)size);
+        size = strnlen(astr, size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;

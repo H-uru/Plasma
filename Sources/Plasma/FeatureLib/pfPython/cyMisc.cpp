@@ -994,9 +994,9 @@ PyObject* cyMisc::GetLocalAvatar()
 PyObject* cyMisc::GetLocalPlayer()
 {
     return pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(),
-                        plNetClientMgr::GetInstance()->GetPlayerName().c_str(),
-                        plNetClientMgr::GetInstance()->GetPlayerID(),
-                        0.0 );
+                         plNetClientMgr::GetInstance()->GetPlayerName(),
+                         plNetClientMgr::GetInstance()->GetPlayerID(),
+                         0.0 );
 }
 
 /////////////////////////////////////////////////////////////////////////////
