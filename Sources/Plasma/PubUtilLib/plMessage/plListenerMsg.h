@@ -104,8 +104,7 @@ public:
 
     plSetListenerMsg() : plMessage( nil, nil, nil ) { fType = 0; fBinding = false; }
     plSetListenerMsg( uint8_t type, const plKey &srcKey, bool binding );
-    ~plSetListenerMsg();
-    
+
     CLASSNAME_REGISTER( plSetListenerMsg );
     GETINTERFACE_ANY( plSetListenerMsg, plMessage );
 

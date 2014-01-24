@@ -47,9 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "plDynamicTextMsg.h"
-#include "hsResMgr.h"
 #include "hsBitVector.h"
+#include "hsResMgr.h"
+#pragma hdrstop
+
+#include "plDynamicTextMsg.h"
 
 void    plDynamicTextMsg::SetTextColor( hsColorRGBA &c, bool blockRGB )
 {

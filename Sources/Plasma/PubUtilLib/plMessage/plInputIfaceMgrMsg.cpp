@@ -39,16 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plInputIfaceMgrMsg                                                      //
-//  Message wrapper for commands to plDynamicTextMap.                       //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
+
+#include "hsResMgr.h"
+#pragma hdrstop
 
 #include "plInputIfaceMgrMsg.h"
 #include "plInputCore/plInputInterface.h"
-#include "hsResMgr.h"
 
 plInputIfaceMgrMsg::~plInputIfaceMgrMsg()
 {

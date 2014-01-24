@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SERVER
 #ifndef NO_AV_MSGS
 
-// singular
-#include "plAvCoopMsg.h"
-
-// global
 #include "hsStream.h"
 #include "hsResMgr.h"
+#pragma hdrstop
+
+// singular
+#include "plAvCoopMsg.h"
 
 // other
 #include "plAvatar/plAvatarMgr.h"
