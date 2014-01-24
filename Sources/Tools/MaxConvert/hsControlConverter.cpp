@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include "hsMaxLayerBase.h"
+#include "plInterp/plAnimEaseTypes.h"
 #include "plInterp/plController.h"
 #include "plInterp/hsInterp.h"
 #include "MaxExport/plErrorMsg.h"
