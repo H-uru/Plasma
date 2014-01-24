@@ -100,7 +100,7 @@ void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
     plMessage::IMsgRead(stream, mgr);
 
     if(stream->ReadBool())
-        fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
+        fCoordinator = plCoopCoordinator::ConvertNoRef(mgr->ReadCreatable(stream));
 
     fInitiatorID = stream->ReadLE32();
     fInitiatorSerial = stream->ReadLE16();
