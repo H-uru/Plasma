@@ -169,7 +169,7 @@ public:
     /** We're leaving the age. Clean up. */
     virtual bool LeaveAge();
 
-    virtual bool IsRunningTask();
+    virtual bool IsRunningTask() const;
     
     /** Compare the names of the anims in our stages.
         Return true on a match (order matters). */

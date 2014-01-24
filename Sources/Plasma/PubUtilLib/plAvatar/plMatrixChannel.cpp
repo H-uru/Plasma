@@ -317,9 +317,12 @@ void plMatrixTimeScale::Dump(int indent, bool optimized, double time)
 // ctor ----------------------
 // -----
 plMatrixBlend::plMatrixBlend()
-: fChannelA(nil),
-  fChannelB(nil),
-  fChannelBias(nil)
+: fChannelA(nullptr),
+  fOptimizedA(nullptr),
+  fChannelB(nullptr),
+  fOptimizedB(nullptr),
+  fChannelBias(nullptr),
+  fPriority(0)
 {
 }
 
@@ -793,11 +796,8 @@ void plMatrixDelayedCorrectionApplicator::SetCorrection(hsMatrix44 &cor)
 bool plMatrixDelayedCorrectionApplicator::CanBlend(plAGApplicator *app)
 {
     plMatrixChannelApplicator *matChannelApp = plMatrixChannelApplicator::ConvertNoRef(app);
-
-    if( plMatrixChannelApplicator::ConvertNoRef(app) )
-    {
+    if (matChannelApp)
         return true;
-    }
     return false;
 }
 
@@ -875,11 +875,8 @@ void plMatrixDifferenceApp::Reset(double time)
 bool plMatrixDifferenceApp::CanBlend(plAGApplicator *app)
 {
     plMatrixChannelApplicator *matChannelApp = plMatrixChannelApplicator::ConvertNoRef(app);
-
-    if( plMatrixChannelApplicator::ConvertNoRef(app) )
-    {
+    if (matChannelApp)
         return true;
-    }
     return false;
 }
 

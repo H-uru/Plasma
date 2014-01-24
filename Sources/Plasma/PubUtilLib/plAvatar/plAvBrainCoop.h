@@ -79,7 +79,7 @@ public:
     uint16_t GetInitiatorSerial();
 
     virtual plKey GetRecipient();
-    virtual void SetRecipient(plKey &recipient);
+    virtual void SetRecipient(const plKey &recipient);
     
 private:
     uint32_t fInitiatorID;

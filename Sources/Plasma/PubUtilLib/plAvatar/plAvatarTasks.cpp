@@ -660,9 +660,6 @@ bool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, dou
 
             if(--fWaitFrames == 0)
             {
-
-                plSceneObject *handle = avatar->GetTarget(0);
-
                 avatar->DetachAnimation(fAnimInstance);
                 avatar->GetRootAnimator()->Enable(false);
                 plAvBrainHuman *humanBrain = plAvBrainHuman::ConvertNoRef(brain);

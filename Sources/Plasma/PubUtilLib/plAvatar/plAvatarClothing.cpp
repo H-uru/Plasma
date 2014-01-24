@@ -701,10 +701,9 @@ hsColorRGBA plClothingOutfit::GetItemTint(plClothingItem *item, uint8_t layer /*
 bool plClothingOutfit::IMorphItem(plClothingItem *item, uint8_t layer, uint8_t delta, float weight)
 {
     uint32_t index = fItems.Find(item);
-    if (index != fItems.kMissingIndex)
+    if (fAvatar && index != fItems.kMissingIndex)
     {
-        int i;
-        for (i = 0; i < fAvatar->GetNumLOD(); i++)
+        for (uint8_t i = 0; i < fAvatar->GetNumLOD(); i++)
         {
             if (item->fMeshes[i]->fMorphSet == nil)
                 continue;
@@ -1420,14 +1419,16 @@ bool plClothingOutfit::DirtySynchState(const plString& SDLStateName, uint32_t sy
 // we'll be good about this, but I wanted to get it working first.
 void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 {
-    if (fAvatar)
-        fAvatar->ValidateMesh();
+    if (!fAvatar)
+        return;
+
+    fAvatar->ValidateMesh();
 
     bool partialSort = (item->fCustomText.Find("NeedsSort") >= 0);
     for (int i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
         const plSceneObject *so = fAvatar->GetClothingSO(i);
-        if (so != nil && item->fMeshes[i] != nil)
+        if (so && item->fMeshes[i])
         {
             plInstanceDrawInterface *idi = const_cast<plInstanceDrawInterface*>(plInstanceDrawInterface::ConvertNoRef(so->GetDrawInterface()));
             if (idi)
