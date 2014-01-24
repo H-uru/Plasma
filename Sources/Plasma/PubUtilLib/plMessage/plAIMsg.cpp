@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAIMsg.h"
 
-#include "hsResMgr.h"
 #include "hsStream.h"
 
 #include "plAvatar/plArmatureMod.h"
@@ -60,8 +59,6 @@ plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, 
     plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
     if (armMod)
         fBrainUserStr = armMod->GetUserStr();
-    else
-        fBrainUserStr = "";
 }
 
 void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)

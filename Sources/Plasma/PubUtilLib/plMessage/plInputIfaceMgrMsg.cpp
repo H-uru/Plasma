@@ -46,21 +46,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //                                                                          //
 //////////////////////////////////////////////////////////////////////////////
 
-#include "HeadSpin.h"
 #include "plInputIfaceMgrMsg.h"
 #include "plInputCore/plInputInterface.h"
 #include "hsResMgr.h"
-#include "hsRefCnt.h"
 
-
-plInputIfaceMgrMsg::~plInputIfaceMgrMsg() 
+plInputIfaceMgrMsg::~plInputIfaceMgrMsg()
 {
-    if( fInterface != nil )
-        hsRefCnt_SafeUnRef( fInterface );
+    hsRefCnt_SafeUnRef(fInterface);
 }
 
-void    plInputIfaceMgrMsg::SetIFace( plInputInterface *iface )
+void    plInputIfaceMgrMsg::SetIFace(plInputInterface* iface)
 {
-    fInterface = iface; 
-    hsRefCnt_SafeRef( fInterface );
+    fInterface = iface;
+    hsRefCnt_SafeRef(fInterface);
+}
+
+void plInputIfaceMgrMsg::Read(hsStream* s, hsResMgr* mgr)
+{
+    plMessage::IMsgRead(s, mgr);
+
+    s->ReadLE(&fCommand);
+    s->ReadLE(&fPageID);
+    ageName = s->ReadSafeString();
+    ageFileName = s->ReadSafeString();
+    spawnPoint = s->ReadSafeString();
+    fAvKey = mgr->ReadKey(s);
+}
+
+void plInputIfaceMgrMsg::Write(hsStream* s, hsResMgr* mgr)
+{
+    plMessage::IMsgWrite(s, mgr);
+
+    s->WriteLE(fCommand);
+    s->WriteLE(fPageID);
+    s->WriteSafeString(ageName);
+    s->WriteSafeString(ageFileName);
+    s->WriteSafeString(spawnPoint);
+    mgr->WriteKey(s, fAvKey);
 }

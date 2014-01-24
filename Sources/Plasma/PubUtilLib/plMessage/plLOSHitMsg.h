@@ -44,54 +44,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLOSHitMsg_inc
 
 #include "pnMessage/plMessage.h"
-#include "hsStream.h"
-#include "hsResMgr.h"
 #include "hsGeometry3.h"
-
 
 class plLOSHitMsg : public plMessage
 {
-protected:
-
 public:
-    
     plKey               fObj;
     hsPoint3            fHitPoint;
     bool                fNoHit;
-    uint32_t              fRequestID;
-    uint32_t              fHitFlags;
+    uint32_t            fRequestID;
+    uint32_t            fHitFlags;
     hsVector3           fNormal;
     float               fDistance;
 
-    plLOSHitMsg();
-    plLOSHitMsg(const plKey &s, 
-                    const plKey &r, 
-                    const double* t);
-    ~plLOSHitMsg(){;}
+    plLOSHitMsg() : fHitFlags(0) { SetBCastFlag(plMessage::kPropagateToModifiers); }
+
+    plLOSHitMsg(const plKey& s, const plKey& r, const double* t) :
+        fHitFlags(0),
+        plMessage(s, r, t)
+    {
+        SetBCastFlag(plMessage::kPropagateToModifiers);
+    }
 
     CLASSNAME_REGISTER( plLOSHitMsg );
     GETINTERFACE_ANY( plLOSHitMsg, plMessage );
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgRead(stream, mgr);
-        fObj = mgr->ReadKey(stream);
-        fHitPoint.Read(stream);
-        fNoHit = stream->ReadBool();
-        stream->ReadLE(&fRequestID);
-        stream->ReadLE(&fHitFlags);
-    }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
-        plMessage::IMsgWrite(stream, mgr);
-        mgr->WriteKey(stream, fObj);
-        fHitPoint.Write(stream);
-        stream->WriteBool(fNoHit);
-        stream->WriteLE(fRequestID);
-        stream->WriteLE(fHitFlags);
-    }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr);
+    void Write(hsStream* stream, hsResMgr* mgr);
 };
 
 

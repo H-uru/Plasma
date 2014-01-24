@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsStream.h"
-#include "hsResMgr.h"
 #include "pnMessage/plMessage.h"
 #include "pnUUID/pnUUID.h"
 
@@ -97,43 +96,23 @@ class plInputIfaceMgrMsg : public plMessage
         CLASSNAME_REGISTER( plInputIfaceMgrMsg );
         GETINTERFACE_ANY( plInputIfaceMgrMsg, plMessage );
 
-        virtual void Read(hsStream* s, hsResMgr* mgr) 
-        { 
-            plMessage::IMsgRead( s, mgr ); 
-            s->ReadLE( &fCommand );
-            s->ReadLE( &fPageID );
-            ageName = s->ReadSafeString();
-            ageFileName = s->ReadSafeString();
-            spawnPoint = s->ReadSafeString();
-            fAvKey = mgr->ReadKey(s);
-        }
-        
-        virtual void Write(hsStream* s, hsResMgr* mgr) 
-        { 
-            plMessage::IMsgWrite( s, mgr ); 
-            s->WriteLE( fCommand );
-            s->WriteLE( fPageID );
-            s->WriteSafeString(ageName);
-            s->WriteSafeString(ageFileName);
-            s->WriteSafeString(spawnPoint);
-            mgr->WriteKey(s,fAvKey);
-        }
+        virtual void Read(hsStream* s, hsResMgr* mgr);
+        virtual void Write(hsStream* s, hsResMgr* mgr);
 
-        void        SetAgeName(const plString& s) { ageName = s; }
-        plString    GetAgeName() const { return ageName; }
-        void        SetAgeFileName(const plString& s) { ageFileName = s; }
-        plString    GetAgeFileName() const { return ageFileName; }
-        void        SetSpawnPoint(const plString& s) { spawnPoint = s; }
-        plString    GetSpawnPoint() const { return spawnPoint; }
-        void        SetAgeInstanceGuid(const plUUID& guid) { ageInstanceGuid = guid; }
-        const plUUID& GetAgeInstanceGuid() const { return ageInstanceGuid; }
-        uint8_t       GetCommand() const { return fCommand; }
-        uint32_t      GetPageID() const { return fPageID; }
-        void                SetIFace( plInputInterface *iface );
-        plInputInterface    *GetIFace() const { return fInterface; }
-        plKey&      GetAvKey( void ) { return fAvKey; }
-        const plKey&    GetAvKey( void ) const { return fAvKey; }
-        void        SetAvKey( plKey& k ) { fAvKey = k; }
+        void              SetAgeName(const plString& s) { ageName = s; }
+        plString          GetAgeName() const { return ageName; }
+        void              SetAgeFileName(const plString& s) { ageFileName = s; }
+        plString          GetAgeFileName() const { return ageFileName; }
+        void              SetSpawnPoint(const plString& s) { spawnPoint = s; }
+        plString          GetSpawnPoint() const { return spawnPoint; }
+        void              SetAgeInstanceGuid(const plUUID& guid) { ageInstanceGuid = guid; }
+        const plUUID&     GetAgeInstanceGuid() const { return ageInstanceGuid; }
+        uint8_t           GetCommand() const { return fCommand; }
+        uint32_t          GetPageID() const { return fPageID; }
+        void              SetIFace(plInputInterface *iface);
+        plInputInterface* GetIFace() const { return fInterface; }
+        plKey             GetAvKey() const { return fAvKey; }
+        void              SetAvKey(const plKey& k ) { fAvKey = k; }
 };
 
 #endif // _plInputIfaceMgrMsg_h

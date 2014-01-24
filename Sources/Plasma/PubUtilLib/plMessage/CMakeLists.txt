@@ -67,7 +67,6 @@ set(plMessage_HEADERS
     plDynaDecalEnableMsg.h
     plDynamicEnvMapMsg.h
     plDynamicTextMsg.h
-    plElementRefMsg.h
     plExcludeRegionMsg.h
     plInputEventMsg.h
     plInputIfaceMgrMsg.h
@@ -117,7 +116,6 @@ set(plMessage_HEADERS
     plTimerCallbackMsg.h
     plTransitionMsg.h
     plTriggerMsg.h
-    plUniqueIdsMsg.h
     plVaultNotifyMsg.h
 )
 

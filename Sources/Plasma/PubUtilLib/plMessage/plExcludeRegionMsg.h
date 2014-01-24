@@ -69,7 +69,7 @@ public:
     GETINTERFACE_ANY(plExcludeRegionMsg, plMessage);
     
     void SetCmd(CmdType cmd) { fCmd = cmd; }
-    uint8_t GetCmd() { return fCmd; }
+    uint8_t GetCmd() const { return fCmd; }
 
     uint32_t fSynchFlags;
     // IO 

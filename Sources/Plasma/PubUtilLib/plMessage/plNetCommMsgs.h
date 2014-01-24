@@ -51,8 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pnMessage/plMessage.h"
 #include "pnNetProtocol/pnNetProtocol.h"
+#include "pnMessage/plMessage.h"
 
 class plNetCommReplyMsg : public plMessage {
 public:
