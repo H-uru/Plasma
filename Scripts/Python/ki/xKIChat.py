@@ -212,7 +212,7 @@ class xKIChat(object):
         selPlyrList = []
 
         # Is it a reply to a private message?
-        if msg.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
+        if msg.startswith(PtGetLocalizedString("KI.Commands.ChatReply")) or msg.startswith("/r "):
             if self.toReplyToLastPrivatePlayerID is None:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.NoOneToReply"), kChat.SystemMessage)
                 return
@@ -243,7 +243,10 @@ class xKIChat(object):
                                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.LeftTheGame", [str(self.toReplyToLastPrivatePlayerID[0])]), kChat.SystemMessage)
                                 return
                             break
-            message = message[len(PtGetLocalizedString("KI.Commands.ChatReply")) + 1:]
+            if (msg.startswith("/r ")):
+                message = message[len("/r "):]
+            else:
+                message = message[len(PtGetLocalizedString("KI.Commands.ChatReply")) + 1:]
             # What they selected doesn't matter if they're replying.
             selPlyrList = [ptPlayer(self.toReplyToLastPrivatePlayerID[0], self.toReplyToLastPrivatePlayerID[1])]
             cFlags.private = True
