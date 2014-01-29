@@ -737,7 +737,7 @@ class nb01RPSGame(ptResponder):
                     chron = childref.getChild().upcastToChronicleNode()
                     print "nb01RPSGame::UpdateImager(): chron:", chron
                     if chron:
-                        ownerNode = chron.getOwnerNode()
+                        ownerNode = chron.getCreatorNode()
                         if ownerNode: # apparently a chronicle node doesn't have a parent sometimes?
                             ownerNode = ownerNode.upcastToPlayerInfoNode()
                         if ownerNode:
