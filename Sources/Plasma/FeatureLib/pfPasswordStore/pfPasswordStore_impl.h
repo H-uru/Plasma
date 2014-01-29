@@ -76,8 +76,12 @@ public:
 #endif //HS_BUILD_FOR_WIN32
 
 
-// TODO: A Linux libsecret-based storage mechanism
+/**
+* @todo A Linux libsecret-based storage mechanism.
+*/
 
-// TODO: An OSX KeyChain-based storage mechanism
+/**
+* @todo An OSX KeyChain-based storage mechanism.
+*/
 
 #endif //pfPasswordStore_impl_inc

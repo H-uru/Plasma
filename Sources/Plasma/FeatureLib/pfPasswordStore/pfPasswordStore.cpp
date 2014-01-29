@@ -142,6 +142,7 @@ bool pfFilePasswordStore::SetPassword(const plString& username, const plString& 
 
 
 #ifdef HS_BUILD_FOR_WIN32
+#include "hsWindows.h"
 #include <wincred.h>
 
 /*****************************************************************************
@@ -153,11 +154,11 @@ const plString pfWin32PasswordStore::GetPassword(const plString& username)
     plString target = plString::Format("%s__%s", plProduct::UUID(), username.c_str());
     plString password = plString::Null;
 
-    if (!CredReadW(target.ToUtf16(), CRED_TYPE_GENERIC, 0, &credential)) {
+    if (!CredReadW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0, &credential)) {
         return password;
     }
 
-    password = plString::FromUtf16((uint16_t*)credential->CredentialBlob, credential->CredentialBlobSize);
+    password = plString::FromUtf8(reinterpret_cast<const char *>(credential->CredentialBlob), credential->CredentialBlobSize);
 
     memset(credential->CredentialBlob, 0, credential->CredentialBlobSize);
     CredFree(credential);
@@ -172,20 +173,23 @@ bool pfWin32PasswordStore::SetPassword(const plString& username, const plString&
     plString target = plString::Format("%s__%s", plProduct::UUID(), username.c_str());
 
     if (password.IsNull()) {
-        if (CredDeleteW(target.ToUtf16(), CRED_TYPE_GENERIC, 0)) {
+        if (CredDeleteW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0)) {
             return true;
         }
-
         return false;
     }
 
+    plStringBuffer<wchar_t> tbuff = target.ToWchar();
+    plStringBuffer<char> pbuff = password.ToUtf8();
+    plStringBuffer<wchar_t> ubuff = username.ToWchar();
+
     memset(&credential, 0, sizeof(CREDENTIALW));
     credential.Type = CRED_TYPE_GENERIC;
-    credential.TargetName = target.ToUtf16();
-    credential.CredentialBlobSize = password.GetSize();
-    credential.CredentialBlob = (LPBYTE)password.ToUtf16();
+    credential.TargetName = (LPWSTR)tbuff.GetData();
+    credential.CredentialBlobSize = pbuff.GetSize();
+    credential.CredentialBlob = (LPBYTE)pbuff.GetData();
     credential.Persist = CRED_PERSIST_LOCAL_MACHINE;
-    credential.UserName = username.ToUtf16();
+    credential.UserName = (LPWSTR)ubuff.GetData();
 
     if (!CredWriteW(&credential, 0)) {
         return false;
