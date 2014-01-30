@@ -497,22 +497,18 @@ bool InitPhysX()
                 return false;
 
             // launch the PhysX installer
-            STARTUPINFOW startupInfo;
-            PROCESS_INFORMATION processInfo; 
-            memset(&startupInfo, 0, sizeof(startupInfo));
-            memset(&processInfo, 0, sizeof(processInfo));
-            startupInfo.cb = sizeof(startupInfo);
-            if(!CreateProcessW(NULL, s_physXSetupExeName, NULL, NULL, FALSE, 0, NULL, NULL, &startupInfo, &processInfo))
-            {
-                hsMessageBox("Failed to launch PhysX installer.\nPlease re-run URU to ensure you have the latest version.", "Error", hsMessageBoxNormal);
-                return false;
-            }
+            SHELLEXECUTEINFOW info;
+            memset(&info, 0, sizeof(info));
+            info.cbSize = sizeof(info);
+            info.lpFile = s_physXSetupExeName;
+            info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
+            ShellExecuteExW(&info);
 
             // let the user know what's going on
             HWND waitingDialog = ::CreateDialog(gHInst, MAKEINTRESOURCE(IDD_LOADING), NULL, WaitingForPhysXDialogProc);
 
             // run a loop to wait for it to quit, pumping the windows message queue intermittently
-            DWORD waitRet = WaitForSingleObject(processInfo.hProcess, 100);
+            DWORD waitRet = WaitForSingleObject(info.hProcess, 100);
             MSG msg;
             while (waitRet == WAIT_TIMEOUT)
             {
@@ -521,12 +517,11 @@ bool InitPhysX()
                     TranslateMessage(&msg);
                     DispatchMessage(&msg);
                 }
-                waitRet = WaitForSingleObject(processInfo.hProcess, 100);
+                waitRet = WaitForSingleObject(info.hProcess, 100);
             }
 
             // cleanup
-            CloseHandle(processInfo.hThread);
-            CloseHandle(processInfo.hProcess);
+            CloseHandle(info.hProcess);
             ::DestroyWindow(waitingDialog);
         }
         else
