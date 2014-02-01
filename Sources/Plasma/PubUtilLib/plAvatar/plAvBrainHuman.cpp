@@ -1358,13 +1358,11 @@ bool PushWalk::PreCondition(double time, float elapsed)
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim, const char *exitAnim,
-                          bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage, plAvBrainGeneric::BrainType type /* = kGeneric */)
+static bool CanPushGenericBrain(plArmatureMod* avatar, const char** anims, size_t numAnims, plAvBrainGeneric::BrainType type)
 {
     plAvBrainHuman *huBrain = plAvBrainHuman::ConvertNoRef(avatar->FindBrainByClass(plAvBrainHuman::Index()));
-    const char *names[3] = {enterAnim, idleAnim, exitAnim};
     if (!huBrain || !huBrain->fWalkingStrategy->IsOnGround() || !huBrain->fWalkingStrategy->HitGroundInThisAge() || huBrain->IsRunningTask() ||
-        !avatar->IsPhysicsEnabled() || avatar->FindMatchingGenericBrain(names, 3))
+        !avatar->IsPhysicsEnabled() || avatar->FindMatchingGenericBrain(anims, numAnims))
         return false;
 
     // XXX
@@ -1374,6 +1372,17 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
         if (swimBrain && !swimBrain->IsWalking())
             return false;
     }
+
+    // still here??? W00T!
+    return true;
+}
+
+bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim, const char *exitAnim,
+                          bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage, plAvBrainGeneric::BrainType type /* = kGeneric */)
+{
+    const char* names[3] = {enterAnim, idleAnim, exitAnim};
+    if (!CanPushGenericBrain(avatar, names, arrsize(names), type))
+        return false;
 
     // if autoExit is true, then we will immediately exit the idle loop when the user hits a move
     // key. otherwise, we'll loop until someone sends a message telling us explicitly to advance
@@ -1407,6 +1416,33 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
     plAvTaskMsg *btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avatar->GetKey(), bt);
     if(netPropagate)
         btm->SetBCastFlag(plMessage::kNetPropagate);
+    btm->Send();
+
+    return true;
+}
+
+bool PushRepeatEmote(plArmatureMod* avatar, const plString& anim)
+{
+    const char* names[1] = { anim.c_str() };
+    if (!CanPushGenericBrain(avatar, names, arrsize(names), plAvBrainGeneric::kGeneric))
+        return false;
+
+     plAnimStageVec* v = new plAnimStageVec;
+     plAnimStage* theStage = new plAnimStage(anim, 0,
+                                             plAnimStage::kForwardAuto, plAnimStage::kBackNone,
+                                             plAnimStage::kAdvanceOnMove, plAnimStage::kRegressNone,
+                                             -1);
+     v->push_back(theStage);
+
+    plAvBrainGeneric* b = new plAvBrainGeneric(v, nullptr, nullptr, nullptr, plAvBrainGeneric::kExitAnyTask | plAvBrainGeneric::kExitNewBrain,
+                                               2.0f, 2.0f, plAvBrainGeneric::kMoveStandstill);
+
+    b->SetBodyUsage(plAGAnim::kBodyFull);
+    b->SetType(plAvBrainGeneric::kGeneric);
+
+    plAvTaskBrain* bt = new plAvTaskBrain(b);
+    plAvTaskMsg* btm = new plAvTaskMsg(plAvatarMgr::GetInstance()->GetKey(), avatar->GetKey(), bt);
+    btm->SetBCastFlag(plMessage::kNetPropagate, true);
     btm->Send();
 
     return true;

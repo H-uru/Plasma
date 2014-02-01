@@ -358,6 +358,69 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
 
 /////////////////////////////////////////////////////////////////////////////
 //
+//  Function   : RunCoopAnim
+//  PARAMETERS : targetKey - target avatar pyKey
+//               activeAvatarAnim - animation name
+//               targetAvatarAnim - animation name
+//               range - how far away are we allowed to be? (default in glue: 6)
+//               dist - how close shall the avatar move? (default in glue: 3)
+//               move - shall he move at all? (default in glue: true)
+//
+//  PURPOSE    : Seek near another avatar and run animations on both
+//
+bool cyAvatar::RunCoopAnim(pyKey& targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float range, float dist, bool move)
+{
+    if (fRecvr.Count() > 0 && fRecvr[0]) {
+        // get the participating avatars
+        plArmatureMod* activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
+        plArmatureMod* targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
+        activeAvatarAnim = activeAv->MakeAnimationName(activeAvatarAnim);
+        targetAvatarAnim = targetAv->MakeAnimationName(targetAvatarAnim);
+
+        if (activeAv && targetAv) {
+            // set seek position and rotation of the avatars
+            hsPoint3 avPos, targetPos;
+            activeAv->GetPositionAndRotationSim(&avPos, nullptr);
+            targetAv->GetPositionAndRotationSim(&targetPos, nullptr);
+            hsVector3 av2target(&targetPos, &avPos); //targetPos - avPos
+            if (av2target.Magnitude() > range)
+                return false;
+            av2target.Normalize();
+            if (move)
+                avPos = targetPos - dist * av2target;
+
+            // create the messages and let one task queue the next
+            const int bcastToNetMods = plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers;
+            plAvOneShotMsg *avAnim = new plAvOneShotMsg(nullptr, fRecvr[0], fRecvr[0], 0.f, true, activeAvatarAnim, false, false);
+            avAnim->SetBCastFlag(bcastToNetMods);
+
+            plAvOneShotMsg *targetAnim = new plAvOneShotMsg(nullptr, targetKey.getKey(), targetKey.getKey(), 0.f, true, targetAvatarAnim, false, false);
+            targetAnim->SetBCastFlag(bcastToNetMods);
+            targetAnim->fFinishMsg = avAnim;
+
+            plAvSeekMsg *targetSeek = new plAvSeekMsg(nullptr, targetKey.getKey(), nullptr, 0.f, true);
+            targetSeek->SetBCastFlag(bcastToNetMods);
+            targetSeek->fTargetPos = targetPos;
+            targetSeek->fTargetLookAt = avPos;
+            targetSeek->fFinishMsg = targetAnim;
+
+            plAvSeekMsg *avSeek = new plAvSeekMsg(nullptr, fRecvr[0], nullptr, 0.f, true);
+            avSeek->SetBCastFlag(bcastToNetMods);
+            avSeek->fTargetPos = avPos;
+            avSeek->fTargetLookAt = targetPos;
+            avSeek->fFinishMsg = targetSeek;
+
+            // start the circus, messages are processed "backwards"
+            avSeek->Send();
+            return true;
+        }
+    }
+    return false;
+}
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
 //  Function   : NextStage
 //  PARAMETERS : behKey  - behavior pyKey
 //             : transTime  - the transition time to the next stage
@@ -1759,6 +1822,19 @@ bool cyAvatar::EnterPBMode()
 bool cyAvatar::ExitPBMode()
 {
     return IExitTopmostGenericMode();
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : EnterAnimMode
+//  PARAMETERS : animName - string
+//
+//  PURPOSE    : Makes the avatar enter a custom anim loop.
+//
+bool cyAvatar::EnterAnimMode(const plString& animName)
+{
+    plArmatureMod* fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    return PushRepeatEmote(fAvMod, animName);
 }
 
 
