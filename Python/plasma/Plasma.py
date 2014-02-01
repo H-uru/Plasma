@@ -66,6 +66,10 @@ def PtAvatarEnterAFK():
     """Tells the local avatar to enter AwayFromKeyboard idle loop (netpropagated)"""
     pass
 
+def PtAvatarEnterAnimMode(animName):
+    """Enter a custom anim loop (netpropagated)"""
+    pass
+
 def PtAvatarEnterLookingAtKI():
     """Tells the local avatar to enter looking at KI idle loop (netpropagated)"""
     pass
@@ -76,6 +80,10 @@ def PtAvatarEnterUsePersBook():
 
 def PtAvatarExitAFK():
     """Tells the local avatar to exit AwayFromKeyboard idle loop (netpropagated)"""
+    pass
+
+def PtAvatarExitAnimMode(animName):
+    """Exit custom anim loop (netpropagated)"""
     pass
 
 def PtAvatarExitLookingAtKI():
@@ -1593,6 +1601,10 @@ Such as a game master, only running on the client that owns a particular object"
 
     def runBehaviorSetNotify(self,behaviorKey,replyKey,netForceFlag):
         """Same as runBehavior, except send notifications to specified keyed object"""
+        pass
+
+    def runCoopAnim(self,targetKey,activeAvatarAnim,targetAvatarAnim,range=6,dist=3,move=1):
+        """Seek near another avatar and run animations on both."""
         pass
 
     def saveClothing(self):

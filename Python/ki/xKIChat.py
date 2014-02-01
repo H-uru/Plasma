@@ -859,7 +859,10 @@ class CommandsProcessor:
             words = message.split()
             try:
                 emote = xKIExtChatCommands.xChatEmoteXlate[unicode(words[0][1:].lower())]
-                PtEmoteAvatar(emote[0])
+                if emote[0] in xKIExtChatCommands.xChatEmoteLoop:
+                    PtAvatarEnterAnimMode(emote[0])
+                else:
+                    PtEmoteAvatar(emote[0])
                 if PtGetLanguage() == PtLanguage.kEnglish:
                     avatar = PtGetLocalAvatar()
                     gender = avatar.avatar.getAvatarClothingGroup()
@@ -1296,6 +1299,10 @@ class CommandsProcessor:
         else:
             self.chatMgr.AddChatLine(None, "There is nothing there but lint.", 0)
 
+    ##################
+    # Other Commands #
+    ##################
+
     ## Export the local avatar's clothing to a file
     def SaveClothing(self, file):
         if not file:
@@ -1320,3 +1327,22 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, "Outfit imported from " + file, 0)
         else:
             self.chatMgr.AddChatLine(None, file + " not found", kChat.SystemMessage)
+
+    ## Example function for a coop animation
+    def CoopExample(self, name):
+        if not name:
+            self.chatMgr.AddChatLine(None, "Usage: /threaten <playername>", kChat.SystemMessage)
+            return
+        targetKey = None;
+        for player in PtGetPlayerList():
+            if player.getPlayerName().lower() == name.lower():
+                name = player.getPlayerName()
+                targetKey = PtGetAvatarKeyFromClientID(player.getPlayerID())
+                break
+        if targetKey is None:
+            self.chatMgr.AddChatLine(None, name + " not found", kChat.SystemMessage)
+            return
+        if PtGetLocalAvatar().avatar.runCoopAnim(targetKey, "ShakeFist", "Cower"):
+            self.chatMgr.DisplayStatusMessage(PtGetClientName() + " threatens " + name, 1)
+        else:
+            self.chatMgr.AddChatLine(None, "You are too far away", kChat.SystemMessage)
