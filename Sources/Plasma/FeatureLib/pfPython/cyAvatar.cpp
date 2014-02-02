@@ -374,10 +374,12 @@ bool cyAvatar::RunCoopAnim(pyKey& targetKey, plString activeAvatarAnim, plString
         // get the participating avatars
         plArmatureMod* activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
         plArmatureMod* targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
-        activeAvatarAnim = activeAv->MakeAnimationName(activeAvatarAnim);
-        targetAvatarAnim = targetAv->MakeAnimationName(targetAvatarAnim);
 
         if (activeAv && targetAv) {
+            // build the gender-specific animation name
+            activeAvatarAnim = activeAv->MakeAnimationName(activeAvatarAnim);
+            targetAvatarAnim = targetAv->MakeAnimationName(targetAvatarAnim);
+
             // set seek position and rotation of the avatars
             hsPoint3 avPos, targetPos;
             activeAv->GetPositionAndRotationSim(&avPos, nullptr);
