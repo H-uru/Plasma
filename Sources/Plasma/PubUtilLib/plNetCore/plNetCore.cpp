@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "HeadSpin.h"
 #include "plNetCore.h"
 #include "plNetCoreDns.h"
 
@@ -47,10 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "hsWindows.h"
 #endif
 
-bool plNetCore::fInitialized;
+bool plNetCore::fInitialized = false;
 
 void plNetCore::Initialize()
 {
+    hsAssert(!fInitialized, "NetCore already initialized!");
+
 #ifdef HS_BUILD_FOR_WIN32
     // Windows network init
     WSADATA wsaData;
@@ -66,6 +69,8 @@ void plNetCore::Initialize()
 
 void plNetCore::Shutdown()
 {
+    hsAssert(fInitialized, "NetCore was never initialized!");
+
     fInitialized = false;
 
     // Shutdown the subsystems

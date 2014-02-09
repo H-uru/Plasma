@@ -72,7 +72,7 @@ private:
     {
         plResolver* self = reinterpret_cast<plResolver*>(arg);
 
-        if (host == nullptr || status != ARES_SUCCESS)
+        if (!host || status != ARES_SUCCESS)
         {
             // TODO: Figure out error handling?
             self->fCallback(0, nullptr, self->fCBData);
@@ -133,10 +133,12 @@ public:
 };
 
 
-bool plNetCoreDns::fInitialized;
+bool plNetCoreDns::fInitialized = false;
 
 void plNetCoreDns::Initialize()
 {
+    hsAssert(!fInitialized, "NetCoreDns already initialized!");
+
     int status = ares_library_init(ARES_LIB_INIT_ALL);
 
     hsAssert(status == ARES_SUCCESS, "Failed to initialize C-Ares library!");
@@ -146,6 +148,8 @@ void plNetCoreDns::Initialize()
 
 void plNetCoreDns::Shutdown()
 {
+    hsAssert(fInitialized, "NetCoreDns was never initialized!");
+
     fInitialized = false;
 
     ares_library_cleanup();
