@@ -43,6 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iomanip>
 #include <gtest/gtest.h>
 
+#include "pnAllCreatables.h"
+#include "plAllCreatables.h"
+#include "pfAllCreatables.h"
+
 #include "pfPython/cyMisc.h"
 
 // from zoneinfo/America/Denver version 2011g
