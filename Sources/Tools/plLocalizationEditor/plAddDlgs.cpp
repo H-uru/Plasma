@@ -121,7 +121,7 @@ LRESULT CALLBACK AlphaNumericEditCtrl::WndProc(HWND hWnd, UINT message, WPARAM w
 }
 
 // plAddElementDlg - dialog for adding a single element
-BOOL CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plAddElementDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plAddElementDlg* pthis = NULL;
 
@@ -279,7 +279,7 @@ bool plAddElementDlg::DoPick(HWND parent)
 }
 
 // plAddLocalizationDlg - dialog for adding a single localization
-BOOL CALLBACK plAddLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK plAddLocalizationDlg::IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     static plAddLocalizationDlg* pthis = NULL;
 

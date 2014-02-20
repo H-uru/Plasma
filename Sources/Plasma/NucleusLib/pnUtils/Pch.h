@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(push, 3)
 #include <ws2tcpip.h>
 #define NTDDI_XP NTDDI_WINXP //Because Microsoft sucks.
-#include <Iphlpapi.h>
+#include <iphlpapi.h>
 #include <shlobj.h> // for SHGetSpecialFolderPath
 #pragma warning(pop)
 #endif

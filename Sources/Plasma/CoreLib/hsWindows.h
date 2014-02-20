@@ -61,7 +61,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #       define _WIN32_IE    0x400
 #   endif
 
-#   define NOMINMAX
+#   ifndef NOMINMAX
+#       define NOMINMAX
+#   endif
+
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   include <ws2tcpip.h> // Pulls in WinSock 2 for us

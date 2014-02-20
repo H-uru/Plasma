@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
-#include <DbgHelp.h>
-#include <ShlObj.h>
+#include <dbghelp.h>
+#include <shlobj.h>
 
 plCrashSrv::plCrashSrv(const char* file)
     : fLink(nil), fLinkH(nil)

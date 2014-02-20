@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plAddElementDlg
 {
 protected:
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     bool IInitDlg(HWND hDlg);
     void IUpdateDlg(HWND hDlg, bool setFocus = true);
@@ -67,7 +67,7 @@ public:
 class plAddLocalizationDlg
 {
 protected:
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    static INT_PTR CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
 
     bool IInitDlg(HWND hDlg);
     void IUpdateDlg(HWND hDlg);

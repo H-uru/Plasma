@@ -1,8 +1,8 @@
 // AssShader.cpp : Defines the entry point for the console application.
 //
 
-#include <D3d9.h>
-#include <D3dx9core.h>
+#include <d3d9.h>
+#include <d3dx9core.h>
 
 #include "plFileSystem.h"
 

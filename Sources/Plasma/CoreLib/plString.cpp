@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <functional>
 #include <memory>
-#include <wchar.h>
+#include <cwchar>
 #pragma hdrstop
 
 #include "plString.h"

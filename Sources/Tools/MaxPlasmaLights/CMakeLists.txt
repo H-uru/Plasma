@@ -119,9 +119,9 @@ target_link_libraries(MaxPlasmaLights pnUtils)
 target_link_libraries(MaxPlasmaLights pnUUID)
 
 if (WIN32)
-    target_link_libraries(MaxPlasmaLights Comctl32)
-    target_link_libraries(MaxPlasmaLights Rpcrt4)
-    target_link_libraries(MaxPlasmaLights Ws2_32)
+    target_link_libraries(MaxPlasmaLights comctl32)
+    target_link_libraries(MaxPlasmaLights rpcrt4)
+    target_link_libraries(MaxPlasmaLights ws2_32)
 endif(WIN32)
 
 if(USE_VLD)

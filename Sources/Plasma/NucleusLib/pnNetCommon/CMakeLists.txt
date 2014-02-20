@@ -41,7 +41,7 @@ target_link_libraries(pnNetCommon pnKeyedObject)
 target_link_libraries(pnNetCommon pnUUID)
 target_link_libraries(pnNetCommon plStatusLog)
 if(WIN32)
-    target_link_libraries(pnNetCommon Ws2_32)
+    target_link_libraries(pnNetCommon ws2_32)
 endif(WIN32)
 
 source_group("Header Files" FILES ${pnNetCommon_HEADERS})
