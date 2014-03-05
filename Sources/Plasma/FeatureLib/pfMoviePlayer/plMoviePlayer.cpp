@@ -131,7 +131,7 @@ class TrackMgr
 
         while (true)
         {
-            if (cluster->EOS())
+            if (cluster->EOS() && cluster != NULL)
             {
                 cluster = segment->GetNext(cluster);
                 blk_entry = nullptr;
@@ -142,9 +142,14 @@ class TrackMgr
             {
                 SAFE_OP(cluster->GetNext(blk_entry, blk_entry), "get next block");
             }
-            else
+            else if (cluster->m_pSegment != NULL)
             {
                 SAFE_OP(cluster->GetFirst(blk_entry), "get first block");
+            }
+            else
+            {
+                blk_entry = nullptr;
+                return false; //reached end of movie. I hope.
             }
 
             if (blk_entry)
@@ -153,6 +158,13 @@ class TrackMgr
                     continue;
                 if (blk_entry->GetBlock()->GetTrackNumber() == number)
                     return true;
+            }
+            else
+            {
+                cluster = segment->GetNext(cluster);
+                blk_entry = nullptr;
+                if (!cluster)
+                    return false;
             }
         }
         return false; // if this happens, boom.
@@ -169,7 +181,7 @@ public:
             return false;
 
         const mkvparser::BlockEntry* prev = blk_entry;
-        while ((valid = PeekNextBlockEntry(p->fSegment)))
+        while (valid = PeekNextBlockEntry(p->fSegment))
         {
             const mkvparser::Block* blk = blk_entry->GetBlock();
             if (blk->GetTime(blk_entry->GetCluster()) <= movieTime)
@@ -254,7 +266,7 @@ plMoviePlayer::~plMoviePlayer()
 
 int64_t plMoviePlayer::GetMovieTime() const
 {
-    return ((int64_t) hsTimer::GetSeconds() * fTimeScale) - fStartTime;
+    return (int64_t)hsTimer::GetMilliSeconds() - fStartTime;
 }
 
 bool plMoviePlayer::IOpenMovie()
@@ -383,7 +395,7 @@ bool plMoviePlayer::NextFrame()
     // Get our current timecode
     int64_t movieTime = 0;
     if (fStartTime == 0)
-        fStartTime = static_cast<int64_t>((hsTimer::GetSeconds() * fTimeScale));
+        fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
     else
         movieTime = GetMovieTime();
 

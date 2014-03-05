@@ -3287,7 +3287,12 @@ unsigned long Segment::GetCount() const
 const Cluster* Segment::GetNext(const Cluster* pCurr)
 {
     assert(pCurr);
-    assert(pCurr != &m_eos);
+
+    if (pCurr == &m_eos)
+    {
+        return &m_eos;
+    }
+
     assert(m_clusters);
 
     long idx =  pCurr->m_index;
@@ -6780,7 +6785,10 @@ long long Cluster::Unparsed() const
 
 long Cluster::Load(long long& pos, long& len) const
 {
-    assert(m_pSegment);
+    if (m_pSegment == NULL)
+    {
+        return -1;
+    }
     assert(m_pos >= m_element_start);
 
     if (m_timecode >= 0)  //at least partially loaded
@@ -9291,17 +9299,7 @@ long long Block::GetTime(const Cluster* pCluster) const
     assert(pCluster);
 
     const long long tc = GetTimeCode(pCluster);
-
-    const Segment* const pSegment = pCluster->m_pSegment;
-    const SegmentInfo* const pInfo = pSegment->GetInfo();
-    assert(pInfo);
-
-    const long long scale = pInfo->GetTimeCodeScale();
-    assert(scale >= 1);
-
-    const long long ns = tc * scale;
-
-    return ns;
+    return tc; //tc is in milliseconds
 }
 
 
