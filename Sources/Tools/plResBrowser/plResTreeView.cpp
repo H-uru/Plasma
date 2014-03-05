@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <commctrl.h>
 #include <shlwapi.h>
-#include "res\resource.h"
+#include "res/resource.h"
 
 
 extern HINSTANCE        gInstance;
@@ -68,7 +68,7 @@ static HTREEITEM    fFoundItem = nil;
 extern void ViewPatchDetails( plKey &patchKey );
 
 
-BOOL CALLBACK   FindDialogProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK   FindDialogProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     switch( msg )
     {
@@ -305,7 +305,7 @@ void    plResTreeView::FilterLoadables( bool filter, HWND treeCtrl )
     FillTreeViewFromRegistry( treeCtrl );
 }
 
-BOOL CALLBACK   plResTreeView::InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK   plResTreeView::InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     switch( msg )
     {

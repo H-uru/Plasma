@@ -803,7 +803,7 @@ static void StartListenThread () {
 
 //===========================================================================
 #ifdef HS_DEBUGGING
-#include <StdIo.h>
+#include <cstdio>
 static void __cdecl DumpInvalidData (
     const plFileName & filename,
     unsigned    bytes,

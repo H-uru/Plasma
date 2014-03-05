@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <commctrl.h>
 #include <shlwapi.h>
-#include "res\resource.h"
+#include "res/resource.h"
 
 #include <vector>
 #include <list>

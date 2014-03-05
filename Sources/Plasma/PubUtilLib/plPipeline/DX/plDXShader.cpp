@@ -41,8 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 
-#include <D3d9.h>
-#include <D3dx9core.h>
+#include <d3d9.h>
+#include <d3dx9core.h>
 
 #include "HeadSpin.h"
 

@@ -65,7 +65,7 @@ REGISTER_CREATABLE(plInitialAgeStateLoadedMsg);
 #include "plEditDlg.h"
 
 #include "HeadSpin.h"
-#include <Commdlg.h>
+#include <commdlg.h>
 #include <commctrl.h>
 #include <shlwapi.h>
 #include <shlobj.h>
@@ -149,7 +149,7 @@ void SetWindowTitle(HWND hWnd, std::wstring path)
     SetWindowText(hWnd, title.c_str());
 }
 
-BOOL CALLBACK AboutDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK AboutDialogProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if(msg == WM_COMMAND)
         EndDialog(hWnd, 0);

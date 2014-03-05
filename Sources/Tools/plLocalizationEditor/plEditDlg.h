@@ -67,6 +67,6 @@ public:
 void SplitLocalizationPath(plString path, plString &ageName, plString &setName, plString &locName, plString &locLanguage);
 void SaveLocalizationText();
 void UpdateEditDlg(plString subtitlePath);
-BOOL CALLBACK EditDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+INT_PTR CALLBACK EditDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 #endif

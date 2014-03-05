@@ -59,7 +59,7 @@ class plResTreeView
         static void FillTreeViewFromRegistry( HWND hWnd );
         static void ClearTreeView( HWND hWnd );
 
-        static BOOL CALLBACK    InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam );
+        static INT_PTR CALLBACK    InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam );
 
         static void UpdateInfoDlg( HWND treeCtrl );
 

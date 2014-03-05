@@ -86,7 +86,7 @@ void    SetWindowTitle( HWND hWnd, char *path )
     SetWindowText( hWnd, fun );
 }
 
-BOOL CALLBACK AboutDialogProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK AboutDialogProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam )
 {
     if( msg == WM_COMMAND )
         EndDialog( hWnd, 0 );

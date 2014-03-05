@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryptLogLine.h"
 
 #if HS_BUILD_FOR_WIN32
-    #include <Shlobj.h>
+    #include <shlobj.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
