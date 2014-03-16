@@ -259,10 +259,10 @@ public:
     uint64_t ModifyTime() const { return fModifyTime; }
 
     /** Returns \p true if this file is a directory. */
-    bool IsDirectory() const { return (fFlags & kIsDirectory); }
+    bool IsDirectory() const { return (fFlags & kIsDirectory) != 0; }
 
     /** Returns \p true if this file is a regular file. */
-    bool IsFile() const { return (fFlags & kIsNormalFile); }
+    bool IsFile() const { return (fFlags & kIsNormalFile) != 0; }
 
 private:
     plFileName fName;

@@ -313,8 +313,6 @@ void hsG3DDeviceSelector::RemoveUnusableDevModes(bool bTough)
         }
         else if (fRecords[i].GetG3DDeviceType() == hsG3DDeviceSelector::kDevTypeDirect3D)
         {
-            uint32_t      totalMem;  
-
             // Remove software Direct3D devices
             if ((fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DHALDev) &&
                 (fRecords[i].GetG3DHALorHEL() != hsG3DDeviceSelector::kHHD3DTnLHalDev))

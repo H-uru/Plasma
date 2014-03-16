@@ -66,6 +66,8 @@ typedef unsigned int UniChar;
 #    define wcsicmp     _wcsicmp
 #    define wcsnicmp    _wcsnicmp
 #    define strlwr      _strlwr
+#    define strdup      _strdup
+#    define wcsdup      _wcsdup
 #else
 #    define stricmp     strcasecmp
 #    define strnicmp    strncasecmp
