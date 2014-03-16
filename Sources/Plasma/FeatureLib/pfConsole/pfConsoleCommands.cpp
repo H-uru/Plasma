@@ -2144,7 +2144,16 @@ PF_CONSOLE_CMD( App,
     if( !stricmp(eventStr, "Time") )
     {
         event = kTime;
+        if (numParams < 2)
+        {
+            PrintString("'Time' expects a timestamp (in seconds)");
+            return;
+        }
         secs = params[2];
+    }
+    else {
+        PrintString("Unknown event type. Options are 'Start', 'Stop', and 'Time'");
+        return;
     }
     if( numParams > 3 )
     {
