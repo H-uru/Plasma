@@ -3631,7 +3631,7 @@ PF_CONSOLE_CMD( Listener, XMode, "bool b", "Sets velocity and position to avatar
     
     plSetListenerMsg *set = nil;
     plKey pKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();
-    plListener* pListener;
+    plListener* pListener = nullptr;
 
     if( (bool)params[ 0 ] )
     {
