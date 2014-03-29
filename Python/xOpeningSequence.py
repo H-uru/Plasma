@@ -71,7 +71,7 @@ OrientationDlg = ptAttribGUIDialog(3, "The Orientation dialog")
 #--------
 
 gIntroMovie = None
-kAtrusIntroMovie = "avi/URULiveIntro.bik"
+kAtrusIntroMovie = "avi/URULiveIntro.webm"
 
 gIntroStarted = 0
 

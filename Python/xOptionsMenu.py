@@ -84,8 +84,8 @@ respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableR
 #--------
 
 gLiveMovie = None
-kLiveMovieName = "avi/URULiveIntro.bik"
-kDemoMovieName = "avi/UruPreview.bik"
+kLiveMovieName = "avi/URULiveIntro.webm"
+kDemoMovieName = "avi/UruPreview.webm"
 gPreviewStarted = 0
 prevAudioDeviceName = None
 

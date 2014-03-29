@@ -70,7 +70,7 @@ respLinkOutNew = ptAttribResponder(7, "resp:  new linkout")
 LocalAvatar = None
 YeeshaBook = None
 gDemoMovie = None
-kDemoMovieName = "avi/UruPreview.bik"
+kDemoMovieName = "avi/UruPreview.webm"
 gWasMuted = 0
 gAreWeLinkingOut = 0
 
