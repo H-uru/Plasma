@@ -212,3 +212,33 @@ uint8_t pyGUIControlTextBox::GetJustify()
     }
     return pfGUIListText::kLeftJustify;
 }
+
+void pyGUIControlTextBox::SetFontFlags(uint8_t fontFlags)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (ptbmod)
+        {
+            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            colorscheme->fFontFlags = fontFlags;
+            ptbmod->UpdateColorScheme();
+        }
+    }
+}
+
+uint8_t pyGUIControlTextBox::GetFontFlags()
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUITextBoxMod* ptbmod = pfGUITextBoxMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (ptbmod)
+        {
+            pfGUIColorScheme* colorscheme = ptbmod->GetColorScheme();
+            return colorscheme->fFontFlags;
+        }
+    }
+    return 0;
+}

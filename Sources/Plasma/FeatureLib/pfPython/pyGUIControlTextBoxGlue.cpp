@@ -188,6 +188,23 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringJustify, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setFontFlags, args)
+{
+    unsigned char fontflags;
+    if (!PyArg_ParseTuple(args, "b", &fontflags))
+    {
+        PyErr_SetString(PyExc_TypeError, "setFontFlags expects an unsigned 8-bit int");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetFontFlags(fontflags);
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getFontFlags)
+{
+    return PyInt_FromLong(self->fThis->GetFontFlags());
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringJustify)
 {
     return PyInt_FromLong(self->fThis->GetJustify());
@@ -207,8 +224,10 @@ PYTHON_START_METHODS_TABLE(ptGUIControlTextBox)
     PYTHON_METHOD(ptGUIControlTextBox, setForeColor, "Params: color\nSets the text forecolor to 'color', which is a ptColor object."),
     PYTHON_METHOD(ptGUIControlTextBox, setBackColor, "Params: color\nSets the text backcolor to 'color', which is a ptColor object."),
     PYTHON_METHOD(ptGUIControlTextBox, setStringJustify, "Params: justify\nSets current justify"),
+    PYTHON_METHOD(ptGUIControlTextBox, setFontFlags, "Params: fontflags\nSets current fontflags"),
     PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getStringJustify, "Returns current justify"),
     PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getForeColor, "Returns the current forecolor"),
+    PYTHON_METHOD_NOARGS(ptGUIControlTextBox, getFontFlags, "Returns the current fontflags"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
