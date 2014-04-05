@@ -3,9 +3,10 @@ include_directories(../../PubUtilLib)
 
 include_directories(${EXPAT_INCLUDE_DIR})
 
-add_definitions(-DXML_UNICODE_WCHAR_T)
-add_definitions(-DXML_STATIC)
 add_definitions(-DWIN32)
+if(EXPAT_IS_STATIC)
+    add_definitions(-DXML_STATIC)
+endif()
 
 set(pfLocalizationMgr_SOURCES
     pfLocalizationDataMgr.cpp

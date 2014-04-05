@@ -171,12 +171,12 @@ XML_Memory_Handling_Suite gHeapAllocator = {
 
 void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *element, const XML_Char **attributes)
 {
-    plString wElement = plString::FromWchar(element);
+    plString wElement = element;
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
     std::map<plString, plString> wAttributes;
 
     for (int i = 0; attributes[i]; i += 2)
-        wAttributes[plString::FromWchar(attributes[i])] = plString::FromWchar(attributes[i+1]);
+        wAttributes[attributes[i]] = attributes[i+1];
 
     LocalizationXMLFile::tagInfo parentTag;
     if (!file->fTagStack.empty())
@@ -208,7 +208,7 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
 
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
 {
-    plString wElement = plString::FromWchar(element);
+    plString wElement = element;
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
 
     if (file->fSkipDepth != -1) // we're currently skipping
@@ -243,7 +243,7 @@ void XMLCALL LocalizationXMLFile::HandleData(void *userData, const XML_Char *dat
 
     // This gets all data between tags, including indentation and newlines
     // so we'll have to ignore data when we aren't expecting it (not in a translation tag)
-    plString contents = plString::FromWchar(data, stringLength);
+    plString contents = plString::FromUtf8(data, stringLength);
 
     // we must be in a translation tag since that's the only tag that doesn't ignore the contents
     file->fData[file->fCurrentAge][file->fCurrentSet][file->fCurrentElement][file->fCurrentTranslation] += contents;
