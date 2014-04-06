@@ -169,7 +169,3 @@ void hsGlobalSemaphore::Signal()
 
 ///////////////////////////////////////////////////////////////
 
-void hsSleep::Sleep(uint32_t millis)
-{
-    ::Sleep(millis);
-}

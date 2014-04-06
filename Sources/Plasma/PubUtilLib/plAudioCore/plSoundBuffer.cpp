@@ -40,6 +40,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <thread>
+#include <chrono>
+
 #include "HeadSpin.h"
 #include "plSoundBuffer.h"
 
@@ -179,7 +182,7 @@ plSoundBuffer::~plSoundBuffer()
     {
         while(!fLoaded)
         {
-            hsSleep::Sleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
