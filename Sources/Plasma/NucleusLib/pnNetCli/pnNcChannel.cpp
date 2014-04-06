@@ -46,8 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "Pch.h"
-#include "hsThread.h"
 #include <list>
+#include <mutex>
 #pragma hdrstop
 
 
@@ -60,16 +60,24 @@ namespace pnNetCli {
 ***/
 
 struct ChannelCrit {
-    ~ChannelCrit ();
-    ChannelCrit ();
-    inline void Enter ()        { m_critsect.Lock();               }
-    inline void Leave ()        { m_critsect.Unlock();             }
-    inline void EnterSafe ()    { if (m_init) m_critsect.Lock();   }
-    inline void LeaveSafe ()    { if (m_init) m_critsect.Unlock(); }
+    ~ChannelCrit();
+    ChannelCrit() : m_init(true) { }
+
+    inline void lock()
+    {
+        hsAssert(m_init, "Bad things have happened.");
+        m_critsect.lock();
+    }
+
+    inline void unlock()
+    {
+        hsAssert(m_init, "Bad things have happened.");
+        m_critsect.unlock();
+    }
 
 private:
     bool        m_init;
-    hsMutex     m_critsect;
+    std::mutex  m_critsect;
 };
 
 struct NetMsgChannel : AtomicRef {
@@ -98,13 +106,9 @@ static std::list<NetMsgChannel*>*   s_channels;
 ***/
 
 //===========================================================================
-ChannelCrit::ChannelCrit () {
-    m_init = true;
-}
-
-//===========================================================================
 ChannelCrit::~ChannelCrit () {
-    EnterSafe();
+    std::lock_guard<ChannelCrit> lock(*this);
+
     if (s_channels) {
         while (s_channels->size()) {
             NetMsgChannel* const channel = s_channels->front();
@@ -115,7 +119,6 @@ ChannelCrit::~ChannelCrit () {
         delete s_channels;
         s_channels = nil;
     }
-    LeaveSafe();
 }
 
 
@@ -295,15 +298,14 @@ NetMsgChannel * NetMsgChannelLock (
     uint32_t *      largestRecv
 ) {
     NetMsgChannel * channel;
-    s_channelCrit.Enter();
-    if (nil != (channel = FindChannel_CS(protocol, server))) {
+    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+    if (nullptr != (channel = FindChannel_CS(protocol, server))) {
         *largestRecv = channel->m_largestRecv;
         channel->IncRef("ChannelLock");
     }
     else {
         *largestRecv = 0;
     }
-    s_channelCrit.Leave();
     return channel;
 }
 
@@ -311,11 +313,9 @@ NetMsgChannel * NetMsgChannelLock (
 void NetMsgChannelUnlock (
     NetMsgChannel * channel
 ) {
-    s_channelCrit.Enter();
-    {
-        channel->DecRef("ChannelLock");
-    }
-    s_channelCrit.Leave();
+    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+
+    channel->DecRef("ChannelLock");
 }
 
 //============================================================================
@@ -385,33 +385,31 @@ void NetMsgProtocolRegister (
     const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
     const plBigNum&         dh_n
 ) {
-    s_channelCrit.EnterSafe();
-    {
-        NetMsgChannel * channel = FindOrCreateChannel_CS(protocol, server);
+    std::lock_guard<ChannelCrit> lock(s_channelCrit);
 
-        // make sure no connections have been established on this protocol, otherwise
-        // we'll be modifying a live data structure; NetCli's don't lock their protocol
-        // to operate on it once they have linked to it!
-        ASSERT(channel->GetRefCount() == 1);
+    NetMsgChannel * channel = FindOrCreateChannel_CS(protocol, server);
 
-        channel->m_dh_g     = dh_g;
-        channel->m_dh_xa    = dh_xa;
-        channel->m_dh_n     = dh_n;
+    // make sure no connections have been established on this protocol, otherwise
+    // we'll be modifying a live data structure; NetCli's don't lock their protocol
+    // to operate on it once they have linked to it!
+    ASSERT(channel->GetRefCount() == 1);
 
-        if (sendMsgCount)
-            AddSendMsgs_CS(channel, sendMsgs, sendMsgCount);
-        if (recvMsgCount)
-            AddRecvMsgs_CS(channel, recvMsgs, recvMsgCount);
-    }
-    s_channelCrit.LeaveSafe();
+    channel->m_dh_g     = dh_g;
+    channel->m_dh_xa    = dh_xa;
+    channel->m_dh_n     = dh_n;
+
+    if (sendMsgCount)
+        AddSendMsgs_CS(channel, sendMsgs, sendMsgCount);
+    if (recvMsgCount)
+        AddRecvMsgs_CS(channel, recvMsgs, recvMsgCount);
 }
 
 //===========================================================================
 void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
-    s_channelCrit.EnterSafe();
+    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+
     if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
         s_channels->remove(channel);
         channel->DecRef("ChannelLink");
     }
-    s_channelCrit.LeaveSafe();
 }

@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <deque>
+#include <mutex>
 
 #include "pfPatcher.h"
 
@@ -101,8 +102,8 @@ struct pfPatcherWorker : public hsThread
     std::deque<Request> fRequests;
     std::deque<NetCliFileManifestEntry> fQueuedFiles;
 
-    hsMutex fRequestMut;
-    hsMutex fFileMut;
+    std::mutex fRequestMut;
+    std::mutex fFileMut;
     hsSemaphore fFileSignal;
 
     pfPatcher::CompletionFunc fOnComplete;
@@ -243,7 +244,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
         // so everything goes directly into the Requests deque because AuthSrv lists
         // don't have any hashes attached. WHY did eap think this was a good idea?!?!
         {
-            hsTempMutexLock lock(patcher->fRequestMut);
+            std::lock_guard<std::mutex> lock(patcher->fRequestMut);
             for (unsigned i = 0; i < infoCount; ++i) {
                 PatcherLogYellow("\tEnqueuing Legacy File '%S'", infoArr[i].filename);
 
@@ -268,7 +269,7 @@ static void IHandleManifestDownload(pfPatcherWorker* patcher, const wchar_t grou
 {
     PatcherLogGreen("\tDownloaded Manifest '%S'", group);
     {
-        hsTempMutexLock lock(patcher->fFileMut);
+        std::lock_guard<std::mutex> lock(patcher->fFileMut);
         for (unsigned i = 0; i < entryCount; ++i)
             patcher->fQueuedFiles.push_back(manifest[i]);
         patcher->fFileSignal.Signal();
@@ -287,7 +288,7 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
 
         // so, we need to ask the AuthSrv about our game code
         {
-            hsTempMutexLock lock(patcher->fRequestMut);
+            std::lock_guard<std::mutex> lock(patcher->fRequestMut);
             patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kPythonList));
             patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kSdlList));
         }
@@ -341,7 +342,7 @@ pfPatcherWorker::pfPatcherWorker() :
 pfPatcherWorker::~pfPatcherWorker()
 {
     {
-        hsTempMutexLock lock(fRequestMut);
+        std::lock_guard<std::mutex> lock(fRequestMut);
         std::for_each(fRequests.begin(), fRequests.end(),
             [] (const Request& req) {
                 if (req.fStream) req.fStream->Close();
@@ -352,7 +353,7 @@ pfPatcherWorker::~pfPatcherWorker()
     }
 
     {
-        hsTempMutexLock lock(fFileMut);
+        std::lock_guard<std::mutex> lock(fFileMut);
         fQueuedFiles.clear();
     }
 }
@@ -386,7 +387,7 @@ void pfPatcherWorker::EndPatch(ENetError result, const plString& msg)
 
 bool pfPatcherWorker::IssueRequest()
 {
-    hsTempMutexLock lock(fRequestMut);
+    std::lock_guard<std::mutex> lock(fRequestMut);
     if (fRequests.empty()) {
         fRequestActive = false;
         fFileSignal.Signal(); // make sure the patch thread doesn't deadlock!
@@ -451,7 +452,7 @@ hsError pfPatcherWorker::Run()
     do {
         fFileSignal.Wait();
 
-        hsTempMutexLock fileLock(fFileMut);
+        std::lock_guard<std::mutex> fileLock(fFileMut);
         if (!fQueuedFiles.empty()) {
             ProcessFile();
             continue;
@@ -515,8 +516,10 @@ void pfPatcherWorker::ProcessFile()
         pfPatcherStream* s = new pfPatcherStream(this, dlName, entry);
         s->Open(clName, "wb");
 
-        hsTempMutexLock lock(fRequestMut);
-        fRequests.push_back(Request(dlName, Request::kFile, s));
+        {
+            std::lock_guard<std::mutex> lock(fRequestMut);
+            fRequests.push_back(Request(dlName, Request::kFile, s));
+        }
         fQueuedFiles.pop_front();
 
         if (!fRequestActive)
@@ -615,19 +618,19 @@ void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
 
 void pfPatcher::RequestGameCode()
 {
-    hsTempMutexLock lock(fWorker->fRequestMut);
+    std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     fWorker->fRequests.push_back(pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
 }
 
 void pfPatcher::RequestManifest(const plString& mfs)
 {
-    hsTempMutexLock lock(fWorker->fRequestMut);
+    std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     fWorker->fRequests.push_back(pfPatcherWorker::Request(mfs, pfPatcherWorker::Request::kManifest));
 }
 
 void pfPatcher::RequestManifest(const std::vector<plString>& mfs)
 {
-    hsTempMutexLock lock(fWorker->fRequestMut);
+    std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     std::for_each(mfs.begin(), mfs.end(),
         [&] (const plString& name) {
             fWorker->fRequests.push_back(pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));

@@ -115,32 +115,6 @@ void hsThread::ThreadYield()
 
 //////////////////////////////////////////////////////////////////////////////
 
-hsMutex::hsMutex()
-{
-    OSStatus status = ::MPCreateCriticalRegion(&fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-hsMutex::~hsMutex()
-{
-    OSStatus    status = ::MPDeleteCriticalRegion(fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-void hsMutex::Lock()
-{
-    OSStatus    status = ::MPEnterCriticalRegion(fCriticalRegion, kDurationForever);
-    hsThrowIfOSErr(status);
-}
-
-void hsMutex::Unlock()
-{
-    OSStatus    status = ::MPExitCriticalRegion(fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
 hsSemaphore::hsSemaphore(int initialValue)
 {
     OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);

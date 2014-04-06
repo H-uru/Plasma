@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsThread_Defined
 
 #include "HeadSpin.h"
+#include <mutex>
 
 typedef uint32_t hsMilliseconds;
 
@@ -106,44 +107,6 @@ public:
 
 //////////////////////////////////////////////////////////////////////////////
 
-class hsMutex {
-#if HS_BUILD_FOR_WIN32
-    HANDLE  fMutexH;
-#elif HS_BUILD_FOR_UNIX
-    pthread_mutex_t fPMutex;
-#endif
-public:
-    hsMutex();
-    virtual ~hsMutex();
-
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fMutexH; }
-#endif
-
-    void        Lock();
-    bool        TryLock();
-    void        Unlock();
-};
-
-class hsTempMutexLock {
-    hsMutex*    fMutex;
-public:
-    hsTempMutexLock(hsMutex* mutex) : fMutex(mutex)
-    {
-        fMutex->Lock();
-    }
-    hsTempMutexLock(hsMutex& mutex) : fMutex(&mutex)
-    {
-        fMutex->Lock();
-    }
-    ~hsTempMutexLock()
-    {
-        fMutex->Unlock();
-    }
-};
-
-//////////////////////////////////////////////////////////////////////////////
-
 class hsSemaphore {
 #if HS_BUILD_FOR_WIN32
     HANDLE  fSemaH;
@@ -181,8 +144,8 @@ class hsEvent
 #else
     enum { kRead, kWrite };
     int     fFds[2];
-    hsMutex fWaitLock;
-    hsMutex fSignalLock;
+    std::mutex fWaitLock;
+    std::mutex fSignalLock;
 #endif // PSEUDO_EVENT
 #elif HS_BUILD_FOR_WIN32
     HANDLE fEvent;
@@ -231,8 +194,8 @@ public:
 
 private:
     int     fReaderCount;
-    hsMutex fReaderCountLock;
-    hsMutex fReaderLock;
+    std::mutex  fReaderCountLock;
+    std::mutex  fReaderLock;
     hsSemaphore fWriterSema;
     Callback *  fCallback;
 };
