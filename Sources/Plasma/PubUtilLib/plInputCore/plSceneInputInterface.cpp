@@ -865,7 +865,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
                 VaultRegisterOwnedAgeAndWait(&link);
             }
         }
-        linkNode->DecRef();
+        linkNode->UnRef();
     }
 
     if (!fSpawnPoint.IsEmpty()) {

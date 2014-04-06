@@ -1695,7 +1695,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetAvatarShapeName(wStr);
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
 #endif
 }
@@ -1716,7 +1716,7 @@ void cyAvatar::ChangePlayerName(const char* playerName)
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetPlayerName(wStr);
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     } 
 }
 

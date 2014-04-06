@@ -172,10 +172,10 @@ PyObject *pyVaultPlayerInfoNode::New(RelVaultNode* nfsNode)
 {
     ptVaultPlayerInfoNode *newObj = (ptVaultPlayerInfoNode*)ptVaultPlayerInfoNode_type.tp_new(&ptVaultPlayerInfoNode_type, NULL, NULL);
     if (newObj->fThis->fNode)
-        newObj->fThis->fNode->DecRef();
+        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
     if (newObj->fThis->fNode)
-        newObj->fThis->fNode->IncRef();
+        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

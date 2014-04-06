@@ -278,7 +278,7 @@ static void PlayerInitCallback (
         if (RelVaultNode * rvn = VaultGetOwnedAgeLinkIncRef(&info)) {
             VaultAgeLinkNode acc(rvn);
             acc.AddSpawnPoint(plSpawnPointInfo(kCityFerryTerminalLinkTitle, kCityFerryTerminalLinkSpawnPtName));
-            rvn->DecRef();
+            rvn->UnRef();
         }
         
         VaultProcessPlayerInbox();
@@ -1126,7 +1126,7 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);
 
-            rvn->DecRef();
+            rvn->UnRef();
         }
 
         VaultCull(s_player->playerInt);
@@ -1324,7 +1324,7 @@ void NetCommSetCCRLevel (
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode pInfo(rvnInfo);
         pInfo.SetCCRLevel(ccrLevel);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 
     NetCliAuthSetCCRLevel(ccrLevel);

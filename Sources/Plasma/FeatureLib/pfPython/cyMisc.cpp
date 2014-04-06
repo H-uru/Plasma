@@ -2474,7 +2474,7 @@ int cyMisc::GetKILevel()
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         VaultChronicleNode chron(rvn);
         result = wcstol(chron.GetEntryValue(), nil, 0);
-        rvn->DecRef();
+        rvn->UnRef();
     }
 
     return result;
@@ -2893,7 +2893,7 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
         }
 
         NetCommSendFriendInvite(email, toName, inviteUuid);
-        pNode->DecRef();
+        pNode->UnRef();
     }
 }
 

@@ -84,9 +84,9 @@ static PyObject * GetFolder (unsigned folderType) {
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
         if (RelVaultNode * rvnFldr = rvnPlr->GetChildFolderNodeIncRef(folderType, 1)) {
             result = pyVaultFolderNode::New(rvnFldr);
-            rvnFldr->DecRef();
+            rvnFldr->UnRef();
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
     
     return result;
@@ -98,9 +98,9 @@ static PyObject * GetPlayerInfoList (unsigned folderType) {
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
         if (RelVaultNode * rvnFldr = rvnPlr->GetChildPlayerInfoListNodeIncRef(folderType, 1)) {
             result = pyVaultPlayerInfoListNode::New(rvnFldr);
-            rvnFldr->DecRef();
+            rvnFldr->UnRef();
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
     
     return result;
@@ -112,9 +112,9 @@ static PyObject * GetAgeInfoList (unsigned folderType) {
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
         if (RelVaultNode * rvnFldr = rvnPlr->GetChildAgeInfoListNodeIncRef(folderType, 1)) {
             result = pyVaultAgeInfoListNode::New(rvnFldr);
-            rvnFldr->DecRef();
+            rvnFldr->UnRef();
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
     
     return result;
@@ -127,9 +127,9 @@ PyObject* pyVault::GetPlayerInfo()
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
         if (RelVaultNode * rvnPlrInfo = rvnPlr->GetChildNodeIncRef(plVault::kNodeType_PlayerInfo, 1)) {
             result = pyVaultPlayerInfoNode::New(rvnPlrInfo);
-            rvnPlrInfo->DecRef();
+            rvnPlrInfo->UnRef();
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
     
     // just return an empty node
@@ -231,13 +231,13 @@ PyObject* pyVault::GetKIUsage(void)
                     ++notes;
                 else if (rvn->GetNodeType() == plVault::kNodeType_MarkerGame)
                     ++markerGames;
-                rvn->DecRef();
+                rvn->UnRef();
             }
             
-            rvnAgeJrnlz->DecRef();
+            rvnAgeJrnlz->UnRef();
             break;
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
         break;
     }       
 
@@ -305,7 +305,7 @@ PyObject* pyVault::GetLinkToMyNeighborhood() const
 
     if (RelVaultNode * rvn = VaultGetOwnedAgeLinkIncRef(&info)) {
         PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -319,7 +319,7 @@ PyObject* pyVault::GetLinkToCity() const
 
     if (RelVaultNode * rvn = VaultGetOwnedAgeLinkIncRef(&info)) {
         PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -332,7 +332,7 @@ PyObject* pyVault::GetOwnedAgeLink( const pyAgeInfoStruct & info )
 {
     if (RelVaultNode * rvnLink = VaultGetOwnedAgeLinkIncRef(info.GetAgeInfo())) {
         PyObject * result = pyVaultAgeLinkNode::New(rvnLink);
-        rvnLink->DecRef();
+        rvnLink->UnRef();
         return result;
     }
 
@@ -345,7 +345,7 @@ PyObject* pyVault::GetVisitAgeLink( const pyAgeInfoStruct & info)
 {
     if (RelVaultNode * rvnLink = VaultGetVisitAgeLinkIncRef(info.GetAgeInfo())) {
         PyObject * result = pyVaultAgeLinkNode::New(rvnLink);
-        rvnLink->DecRef();
+        rvnLink->UnRef();
         return result;
     }
 
@@ -363,7 +363,7 @@ PyObject* pyVault::FindChronicleEntry( const char * entryName )
     
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wEntryName)) {
         PyObject * result = pyVaultChronicleNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
     
@@ -442,7 +442,7 @@ PyObject* pyVault::GetPsnlAgeSDL() const
 {
     PyObject * result = nil;
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
 
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
 
@@ -465,14 +465,14 @@ PyObject* pyVault::GetPsnlAgeSDL() const
                     result = pySDLStateDataRecord::New(rec);
                 else
                     delete rec;
-                rvnSdl->DecRef();
+                rvnSdl->UnRef();
             }
-            rvnInfo->DecRef();
+            rvnInfo->UnRef();
         }
-        rvnFldr->DecRef();
+        rvnFldr->UnRef();
     }
 
-    templateNode->DecRef();
+    templateNode->UnRef();
 
     if (!result)
         PYTHON_RETURN_NONE;
@@ -487,7 +487,7 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
         return;
 
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
 
     if (RelVaultNode * rvnFldr = VaultGetAgesIOwnFolderIncRef()) {
 
@@ -506,14 +506,14 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
             if (RelVaultNode * rvnSdl = rvnInfo->GetChildNodeIncRef(templateNode, 1)) {
                 VaultSDLNode sdl(rvnSdl);
                 sdl.SetStateDataRecord(rec, plSDL::kDirtyOnly | plSDL::kTimeStampOnRead);
-                rvnSdl->DecRef();
+                rvnSdl->UnRef();
             }
-            rvnInfo->DecRef();
+            rvnInfo->UnRef();
         }
-        rvnFldr->DecRef();
+        rvnFldr->UnRef();
     }
 
-    templateNode->DecRef();
+    templateNode->UnRef();
 }
 
 bool pyVault::InMyPersonalAge() const
@@ -600,13 +600,13 @@ void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
     VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, (void*)playerID);
-    templateNode->DecRef();
+    templateNode->UnRef();
 }
 
 //============================================================================
@@ -626,20 +626,20 @@ void pyVault::UnInvitePlayerToAge( const char * str, uint32_t playerID )
         if (RelVaultNode * rvnInfo = rvnLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
             VaultAgeInfoNode ageInfo(rvnInfo);
             ageInfo.CopyTo(&info);
-            rvnInfo->DecRef();
+            rvnInfo->UnRef();
         }
 
-        rvnLink->DecRef();
+        rvnLink->UnRef();
     }
 
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
     VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, (void*)playerID);
-    templateNode->DecRef();
+    templateNode->UnRef();
 }
 
 //============================================================================
@@ -699,7 +699,7 @@ PyObject* pyVault::GetGlobalInbox()
     PyObject * result = nil;
     if (RelVaultNode * rvnGlobalInbox = VaultGetGlobalInboxIncRef()) {
         result = pyVaultFolderNode::New(rvnGlobalInbox);
-        rvnGlobalInbox->DecRef();
+        rvnGlobalInbox->UnRef();
         return result;
     }
 
@@ -714,7 +714,7 @@ PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
     // See if we already have a matching node locally
     if (RelVaultNode * rvn = VaultGetNodeIncRef(templateNode->GetNode())) {
         PyObject * result = pyVaultNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
     
@@ -728,7 +728,7 @@ PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
         // If we fetched it successfully then it'll be in our local node cache now
         if (RelVaultNode * rvn = VaultGetNodeIncRef(nodeIds[0])) {
             PyObject * result = pyVaultNode::New(rvn);
-            rvn->DecRef();
+            rvn->UnRef();
             return result;
         }
     }

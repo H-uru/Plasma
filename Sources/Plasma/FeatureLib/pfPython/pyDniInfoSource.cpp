@@ -81,7 +81,7 @@ uint32_t pyDniInfoSource::GetAgeTime( void ) const
         result = (uint32_t)utime->GetSecs();
     else
         result = 0;
-    node->DecRef();
+    node->UnRef();
 
     return result;
 }
@@ -95,7 +95,7 @@ const char * pyDniInfoSource::GetAgeName( void ) const
     VaultAgeInfoNode ageInfo(node);
 
     fAgeName = StrDupToAnsi(ageInfo.GetAgeInstanceName());
-    node->DecRef();
+    node->UnRef();
 
     return fAgeName;
 }
@@ -106,7 +106,7 @@ plUUID pyDniInfoSource::GetAgeGuid( void ) const
     {
         VaultAgeInfoNode ageInfo(node);
         plUUID uuid = ageInfo.GetAgeInstanceGuid();
-        node->DecRef();
+        node->UnRef();
 
         return uuid;
     }

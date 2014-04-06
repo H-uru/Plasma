@@ -84,7 +84,7 @@ PyObject* pyAgeVault::GetAgeInfo()
     RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef();
     if (rvn) {
         PyObject * result = pyVaultAgeInfoNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -97,7 +97,7 @@ PyObject* pyAgeVault::GetAgeDevicesFolder( void )
     RelVaultNode * rvn = VaultGetAgeDevicesFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -110,7 +110,7 @@ PyObject* pyAgeVault::GetSubAgesFolder( void )
     RelVaultNode * rvn = VaultGetAgeSubAgesFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -123,7 +123,7 @@ PyObject* pyAgeVault::GetChronicleFolder( void )
     RelVaultNode * rvn = VaultGetAgeChronicleFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -136,7 +136,7 @@ PyObject* pyAgeVault::GetBookshelfFolder ( void )
     RelVaultNode * rvn = VaultAgeGetBookshelfFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -149,7 +149,7 @@ PyObject* pyAgeVault::GetPeopleIKnowAboutFolder( void )
     RelVaultNode * rvn = VaultGetAgePeopleIKnowAboutFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -163,7 +163,7 @@ PyObject* pyAgeVault::GetPublicAgesFolder(void)
     RelVaultNode * rvn = VaultGetAgePublicAgesFolderIncRef();
     if (rvn) {
         PyObject * result = pyVaultFolderNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -176,7 +176,7 @@ PyObject* pyAgeVault::GetSubAgeLink( const pyAgeInfoStruct & info )
     RelVaultNode * rvn = VaultFindAgeSubAgeLinkIncRef(info.GetAgeInfo());
     if (rvn) {
         PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -190,7 +190,7 @@ plUUID pyAgeVault::GetAgeGuid( void )
     if (rvn) {
         VaultAgeInfoNode ageInfo(rvn);
         plUUID uuid = ageInfo.GetAgeInstanceGuid();
-        rvn->DecRef();
+        rvn->UnRef();
         return uuid;
     }
     return kNilUuid;
@@ -206,7 +206,7 @@ PyObject* pyAgeVault::FindChronicleEntry( const char * entryName )
     
     if (RelVaultNode * rvn = VaultFindAgeChronicleEntryIncRef(wEntryName)) {
         PyObject * result = pyVaultChronicleNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
     
@@ -237,7 +237,7 @@ void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, uint32
 
     if (RelVaultNode * rvn = VaultAgeAddDeviceAndWaitIncRef(wStr)) {
         cb->SetNode(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
     }
 
     cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail);  // cbHolder deletes itself here.
@@ -268,7 +268,7 @@ PyObject * pyAgeVault::GetDevice( const char * deviceName )
 
     if (RelVaultNode * rvn = VaultAgeGetDeviceIncRef(wStr)) {
         PyObject * result = pyVaultTextNoteNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -288,7 +288,7 @@ void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName
     
     if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, wInb)) {
         cb->SetNode(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
     }
 
     cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
@@ -301,7 +301,7 @@ PyObject * pyAgeVault::GetDeviceInbox( const char * deviceName )
 
     if (RelVaultNode * rvn = VaultAgeGetDeviceInboxIncRef(wStr)) {
         PyObject * result = pyVaultTextNoteNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -333,10 +333,10 @@ PyObject* pyAgeVault::FindNode( pyVaultNode* templateNode ) const
 {
     if (RelVaultNode * rvn = VaultGetAgeNodeIncRef()) {
         RelVaultNode * find = rvn->GetChildNodeIncRef(templateNode->fNode, 1);
-        rvn->DecRef();
+        rvn->UnRef();
         if (find) {
             PyObject * result = pyVaultNode::New(find);
-            find->DecRef();
+            find->UnRef();
             return result;
         }
     }

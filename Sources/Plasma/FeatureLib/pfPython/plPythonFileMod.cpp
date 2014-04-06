@@ -2082,7 +2082,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
                             PyTuple_SetItem(ptuple, 0, pyVaultAgeLinkNode::New(rvn));
-                            rvn->DecRef();
+                            rvn->UnRef();
                         }
                     }
                     break;
