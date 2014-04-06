@@ -39,42 +39,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef CoreLib_Thread
+#define CoreLib_Thread
+
 #include "hsThread.h"
-#include "hsExceptions.h"
 
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue)
+#ifdef USE_VLD
+#include <vld.h>
+#endif
+
+void hsThread::Start()
 {
-    OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
-    hsThrowIfOSErr(status);
-}
+    if (!fThread.joinable())
+    {
+        // There's no API for retrieving this return value in the old
+        // hsThread, so for now this is just a placeholder until I figure
+        // out what to do with it :(
+        hsError result;
 
-hsGlobalSemaphore::~hsGlobalSemaphore()
-{
-    OSStatus    status = MPDeleteSemaphore(fSemaId);
-    hsThrowIfOSErr(status);
-}
-
-bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
-{
-    Duration    duration;
-
-    if (timeToWait == kPosInfinity32)
-        duration = kDurationForever;
+        fThread = std::thread([this, &result]()
+        {
+#ifdef USE_VLD
+            // Needs to be enabled for each thread except the WinMain
+            VLDEnable();
+#endif
+            result = Run();
+            OnQuit();
+        });
+    }
     else
-        duration = 0;   // THEY DON'T IMPLEMENT delay times yet !!!
-
-    OSStatus    status = MPWaitOnSemaphore(fSemaId, duration);
-/*
-    if (status == kMPTimeoutErr)
-        return false;
-*/
-    hsThrowIfOSErr(status);
-    return true;
+        hsDebugMessage("Calling hsThread::Start() more than once", 0);
 }
 
-void hsGlobalSemaphore::Signal()
+void hsThread::Stop()
 {
-    OSStatus    status = MPSignalSemaphore(fSemaId);
-    hsThrowIfOSErr(status);
+    if (fThread.joinable())
+    {
+        fQuit = true;
+        fThread.join();
+    }
 }
 
+#endif // CoreLib_Thread
