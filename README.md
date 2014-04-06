@@ -5,6 +5,8 @@ A CMake-based fork of the GPLv3-licensed **CyanWorlds.com Engine** (Headspin/Pla
 
 For more information on Myst Online, see http://mystonline.com/developers/
 
+For a project roadmap, see https://github.com/H-uru/Plasma/wiki/Roadmap
+
 
 Related Projects
 ----------------
