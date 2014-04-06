@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #include <list>
 #include <mutex>
+#include "hsRefCnt.h"
 #pragma hdrstop
 
 
@@ -80,7 +81,7 @@ private:
     std::mutex  m_critsect;
 };
 
-struct NetMsgChannel : AtomicRef {
+struct NetMsgChannel : hsAtomicRefCnt {
     uint32_t                m_protocol;
     bool                    m_server;
 
@@ -113,7 +114,7 @@ ChannelCrit::~ChannelCrit () {
         while (s_channels->size()) {
             NetMsgChannel* const channel = s_channels->front();
             s_channels->remove(channel);
-            channel->DecRef("ChannelLink");
+            channel->UnRef("ChannelLink");
         }
 
         delete s_channels;
@@ -278,7 +279,7 @@ static NetMsgChannel* FindOrCreateChannel_CS (uint32_t protocol, bool server) {
         channel->m_largestRecv  = 0;
 
         s_channels->push_back(channel);
-        channel->IncRef("ChannelLink");
+        channel->Ref("ChannelLink");
     }
 
     return channel;
@@ -301,7 +302,7 @@ NetMsgChannel * NetMsgChannelLock (
     std::lock_guard<ChannelCrit> lock(s_channelCrit);
     if (nullptr != (channel = FindChannel_CS(protocol, server))) {
         *largestRecv = channel->m_largestRecv;
-        channel->IncRef("ChannelLock");
+        channel->Ref("ChannelLock");
     }
     else {
         *largestRecv = 0;
@@ -315,7 +316,7 @@ void NetMsgChannelUnlock (
 ) {
     std::lock_guard<ChannelCrit> lock(s_channelCrit);
 
-    channel->DecRef("ChannelLock");
+    channel->UnRef("ChannelLock");
 }
 
 //============================================================================
@@ -392,7 +393,7 @@ void NetMsgProtocolRegister (
     // make sure no connections have been established on this protocol, otherwise
     // we'll be modifying a live data structure; NetCli's don't lock their protocol
     // to operate on it once they have linked to it!
-    ASSERT(channel->GetRefCount() == 1);
+    ASSERT(channel->RefCnt() == 1);
 
     channel->m_dh_g     = dh_g;
     channel->m_dh_xa    = dh_xa;
@@ -410,6 +411,6 @@ void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
 
     if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
         s_channels->remove(channel);
-        channel->DecRef("ChannelLink");
+        channel->UnRef("ChannelLink");
     }
 }

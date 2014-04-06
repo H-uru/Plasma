@@ -80,16 +80,16 @@ bool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
         return false;
 
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
     
     RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1);
     if (rvn)
-        rvn->DecRef();
+        rvn->UnRef();
     
-    templateNode->DecRef();
+    templateNode->UnRef();
     return (rvn != nil);
 }
 
@@ -100,7 +100,7 @@ static void IAddPlayer_NodesFound(ENetError result, void* param, unsigned nodeId
     NetVaultNode* parent = static_cast<NetVaultNode*>(param);
     if (nodeIdCount)
         VaultAddChildNode(parent->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
-    parent->DecRef();
+    parent->UnRef();
 }
 
 void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
@@ -109,7 +109,7 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
         return;
 
     NetVaultNode* templateNode = new NetVaultNode();
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
@@ -121,7 +121,7 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     if (nodeIds.Count())
         VaultAddChildNode(fNode->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
     else {
-        fNode->IncRef();
+        fNode->Ref();
         VaultFindNodes(templateNode, IAddPlayer_NodesFound, fNode);
     }
 }
@@ -132,17 +132,17 @@ void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
         return;
 
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
 
     if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
         VaultRemoveChildNode(fNode->GetNodeId(), rvn->GetNodeId(), nil, nil);
-        rvn->DecRef();
+        rvn->UnRef();
     }
     
-    templateNode->DecRef();
+    templateNode->UnRef();
 }
 
 PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
@@ -151,7 +151,7 @@ PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
         PYTHON_RETURN_NONE;
 
     NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->IncRef();
+    templateNode->Ref();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
@@ -159,10 +159,10 @@ PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
     PyObject * result = nil;
     if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
         result = pyVaultPlayerInfoNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
     }
     
-    templateNode->DecRef();
+    templateNode->UnRef();
     
     if (!result)
         PYTHON_RETURN_NONE;

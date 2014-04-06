@@ -81,7 +81,7 @@ static NetTrans * FindTransIncRef_CS (unsigned transId, const char tag[]) {
     // There shouldn't be more than a few transactions; just do a linear scan
     for (NetTrans * trans = s_transactions.Head(); trans; trans = s_transactions.Next(trans))
         if (trans->m_transId == transId) {
-            trans->IncRef(tag);
+            trans->Ref(tag);
             return trans;
         }
 
@@ -188,7 +188,7 @@ unsigned NetTransGetTimeoutMs () {
 
 //============================================================================
 void NetTransSend (NetTrans * trans) {
-    trans->IncRef("Lifetime");
+    trans->Ref("Lifetime");
 
     std::lock_guard<std::mutex> lock(s_critsect);
 
@@ -215,7 +215,7 @@ bool NetTransRecv (unsigned transId, const uint8_t msg[], unsigned bytes) {
     if (!result)
         NetTransCancel(transId, kNetErrInternalError);
 
-    trans->DecRef("Recv");
+    trans->UnRef("Recv");
     return result;
 }
 
@@ -329,13 +329,13 @@ void NetTransUpdate () {
     while (NetTrans * trans = completed.Head()) {
         completed.Unlink(trans);
         trans->Post();
-        trans->DecRef("Lifetime");
+        trans->UnRef("Lifetime");
     }
     // Post completed parent transactions
     while (NetTrans * trans = parentCompleted.Head()) {
         parentCompleted.Unlink(trans);
         trans->Post();
-        trans->DecRef("Lifetime");
+        trans->UnRef("Lifetime");
     }
 }
 

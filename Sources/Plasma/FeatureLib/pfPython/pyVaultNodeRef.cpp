@@ -65,8 +65,8 @@ pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
 : fParent(parent)
 , fChild(child)
 {
-    fParent->IncRef();
-    fChild->IncRef();
+    fParent->Ref();
+    fChild->Ref();
 }
 
 pyVaultNodeRef::pyVaultNodeRef(int)
@@ -78,9 +78,9 @@ pyVaultNodeRef::pyVaultNodeRef(int)
 pyVaultNodeRef::~pyVaultNodeRef()
 {
     if (fParent)
-        fParent->DecRef();
+        fParent->UnRef();
     if (fChild)
-        fChild->DecRef();
+        fChild->UnRef();
 }
 
 
@@ -115,7 +115,7 @@ unsigned pyVaultNodeRef::GetSaverID () {
     unsigned saverId = 0;
     if (RelVaultNode * child = VaultGetNodeIncRef(fChild->GetNodeId())) {
         saverId = child->GetRefOwnerId(fParent->GetNodeId());
-        child->DecRef();
+        child->UnRef();
     }
     return saverId;
 }
@@ -129,7 +129,7 @@ PyObject * pyVaultNodeRef::GetSaver () {
         if (unsigned saverId = child->GetRefOwnerId(fParent->GetNodeId())) {
             // Find the player info node representing the saver
             NetVaultNode * templateNode = new NetVaultNode;
-            templateNode->IncRef();
+            templateNode->Ref();
             templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
             VaultPlayerInfoNode access(templateNode);
             access.SetPlayerId(saverId);
@@ -144,15 +144,15 @@ PyObject * pyVaultNodeRef::GetSaver () {
                 }
             }
 
-            templateNode->DecRef();
+            templateNode->UnRef();
         }
-        child->DecRef();
+        child->UnRef();
     }
     if (!saver)
         PYTHON_RETURN_NONE;
         
     PyObject * result = pyVaultPlayerInfoNode::New(saver);
-    saver->DecRef();
+    saver->UnRef();
     return result;
 }
 

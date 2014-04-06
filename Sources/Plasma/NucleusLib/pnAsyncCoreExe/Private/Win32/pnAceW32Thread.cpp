@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../../Pch.h"
+#include "hsRefCnt.h"
 #pragma hdrstop
 
 
@@ -55,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct AsyncThreadTaskList : AtomicRef {
+struct AsyncThreadTaskList : hsAtomicRefCnt {
     ENetError error;
     AsyncThreadTaskList ();
     ~AsyncThreadTaskList ();
@@ -65,7 +66,7 @@ struct ThreadTask {
     AsyncThreadTaskList *   taskList;
     FAsyncThreadTask        callback;
     void *                  param;
-    wchar_t                   debugStr[256];
+    wchar_t                 debugStr[256];
 };
 
 static HANDLE   s_taskPort;
@@ -139,7 +140,7 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
         if (task) {
             task->callback(task->param, task->taskList->error);
 
-            task->taskList->DecRef("task");
+            task->taskList->UnRef("task");
             delete task;
         }
     }
@@ -227,7 +228,7 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 AsyncThreadTaskList * AsyncThreadTaskListCreate () {
     ASSERT(s_taskPort);
     AsyncThreadTaskList * taskList = new AsyncThreadTaskList;
-    taskList->IncRef("TaskList");
+    taskList->Ref("TaskList");
     return taskList;
 }
 
@@ -241,7 +242,7 @@ void AsyncThreadTaskListDestroy (
     ASSERT(!taskList->error);
 
     taskList->error = error;
-    taskList->DecRef(); // REF:TaskList
+    taskList->UnRef(); // REF:TaskList
 }
 
 //===========================================================================
@@ -249,7 +250,7 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-    const wchar_t             debugStr[],
+    const wchar_t           debugStr[],
     EThreadTaskPriority     priority /* = kThreadTaskPriorityNormal */
 ) {
     ASSERT(s_taskPort);
@@ -263,7 +264,7 @@ void AsyncThreadTaskAdd (
     task->callback      = callback;
     task->param         = param;
     StrCopy(task->debugStr, debugStr, arrsize(task->debugStr));     // this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
-    taskList->IncRef("Task");
+    taskList->Ref("Task");
 
     PostQueuedCompletionStatus(s_taskPort, 0, (DWORD) task, NULL);
 }

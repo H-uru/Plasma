@@ -56,7 +56,7 @@ namespace Ngl { namespace GateKeeper {
 *
 ***/
     
-struct CliGkConn : AtomicRef {
+struct CliGkConn : hsAtomicRefCnt {
     CliGkConn ();
     ~CliGkConn ();
 
@@ -208,7 +208,7 @@ static unsigned GetNonZeroTimeMs () {
 //============================================================================
 static CliGkConn * GetConnIncRef_CS (const char tag[]) {
     if (CliGkConn * conn = s_active) {
-        conn->IncRef(tag);
+        conn->Ref(tag);
         return conn;
     }
     return nil;
@@ -235,7 +235,7 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
         AsyncSocketDisconnect(conn->sock, true);
     }
     else {
-        conn->DecRef("Lifetime");
+        conn->UnRef("Lifetime");
     }
 }
 
@@ -297,7 +297,7 @@ static void CheckedReconnect (CliGkConn * conn, ENetError error) {
         // Cancel all transactions in progress on this connection.
         NetTransCancelByConnId(conn->seq, kNetErrTimeout);
         // conn is dead.
-        conn->DecRef("Lifetime");
+        conn->UnRef("Lifetime");
         ReportNetError(kNetProtocolCli2GateKeeper, error);
     }
     else {
@@ -333,7 +333,7 @@ static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
     
     CheckedReconnect(conn, kNetErrConnectFailed);
     
-    conn->DecRef("Connecting");
+    conn->UnRef("Connecting");
 }
 
 //============================================================================
@@ -353,8 +353,8 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
 
     // Cancel all transactions in process on this connection.
     NetTransCancelByConnId(conn->seq, kNetErrTimeout);
-    conn->DecRef("Connected");
-    conn->DecRef("Lifetime");
+    conn->UnRef("Connected");
+    conn->UnRef("Lifetime");
 }
 
 //============================================================================
@@ -467,7 +467,7 @@ static void Connect (
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
     strncpy(conn->name, name, arrsize(conn->name));
 
-    conn->IncRef("Lifetime");
+    conn->Ref("Lifetime");
     conn->AutoReconnect();
 }
 
@@ -500,7 +500,7 @@ static void AsyncLookupCallback (
 //===========================================================================
 static unsigned CliGkConnTimerDestroyed (void * param) {
     CliGkConn * conn = (CliGkConn *) param;
-    conn->DecRef("TimerDestroyed");
+    conn->UnRef("TimerDestroyed");
     return kAsyncTimeInfinite;
 }
 
@@ -545,7 +545,7 @@ void CliGkConn::TimerReconnect () {
         UnlinkAndAbandonConn_CS(this);
     }
     else {
-        IncRef("Connecting");
+        Ref("Connecting");
 
         // Remember the time we started the reconnect attempt, guarding against
         // TimeGetMs() returning zero (unlikely), as a value of zero indicates
@@ -584,7 +584,7 @@ void CliGkConn::StartAutoReconnect () {
 void CliGkConn::AutoReconnect () {
         
     ASSERT(!reconnectTimer);
-    IncRef("ReconnectTimer");
+    Ref("ReconnectTimer");
 
     std::lock_guard<std::mutex> lock(critsect);
 
@@ -615,7 +615,7 @@ bool CliGkConn::AutoReconnectEnabled () {
 //============================================================================
 void CliGkConn::AutoPing () {
     ASSERT(!pingTimer);
-    IncRef("PingTimer");
+    Ref("PingTimer");
 
     std::lock_guard<std::mutex> lock(critsect);
 
@@ -954,7 +954,7 @@ bool NetGateKeeperTrans::AcquireConn () {
 //============================================================================
 void NetGateKeeperTrans::ReleaseConn () {
     if (m_conn) {
-        m_conn->DecRef("AcquireConn");
+        m_conn->UnRef("AcquireConn");
         m_conn = nil;
     }
 }

@@ -69,18 +69,21 @@ public:
 
 // Thread-safe version.  TODO:  Evaluate whether this is fast enough to
 // merge with hsRefCnt above.
-class hsSafeRefCnt
+class hsAtomicRefCnt
 {
 private:
     std::atomic<int> fRefCnt;
 
 public:
-                hsSafeRefCnt() : fRefCnt(1) { }
-    virtual     ~hsSafeRefCnt();
+                 hsAtomicRefCnt() : fRefCnt(1) { }
+    virtual     ~hsAtomicRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
-    void        UnRef();
-    inline void Ref() { ++fRefCnt; }
+    void        UnRef(const char* tag = nullptr);
+    void        Ref(const char* tag = nullptr);
+
+    // Useless, but left here for debugging compatibility with AtomicRef
+    void        TransferRef(const char* oldTag, const char* newTag);
 };
 
 #endif

@@ -61,17 +61,44 @@ void hsRefCnt::UnRef()
         --fRefCnt;
 }
 
-hsSafeRefCnt::~hsSafeRefCnt()
+hsAtomicRefCnt::~hsAtomicRefCnt()
 {
     hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
 }
 
-void hsSafeRefCnt::UnRef()
+void hsAtomicRefCnt::UnRef(const char* tag)
 {
     hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
+
+#ifdef REFCOUNT_DEBUGGING
+    if (tag != nullptr)
+        DEBUG_MSG("Dec %p %s: %u", this, tag, prev - 1);
+    else
+        DEBUG_MSG("Dec %p: %u", this, prev - 1);
+#endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
         delete this;
     else
         --fRefCnt;
+}
+
+void hsAtomicRefCnt::Ref(const char* tag)
+{
+#ifdef REFCOUNT_DEBUGGING
+    if (tag != nullptr)
+        DEBUG_MSG("Inc %p %s: %u", this, tag, prev + 1);
+    else
+        DEBUG_MSG("Inc %p: %u", this, prev + 1);
+#endif
+
+    ++fRefCnt;
+}
+
+void hsAtomicRefCnt::TransferRef(const char* oldTag, const char* newTag)
+{
+#ifdef REFCOUNT_DEBUGGING
+    DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
+    DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
+#endif
 }
