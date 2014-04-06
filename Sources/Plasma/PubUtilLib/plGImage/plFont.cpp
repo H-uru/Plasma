@@ -668,16 +668,14 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             fRenderInfo.fRenderFunc = oldFunc;
         }
 
-        // Adjust for left kern
-        if( ( fRenderInfo.fFlags & kRenderJustXMask ) == kRenderJustXForceLeft )
-        {
-            // See note at top of file
-            plCharacter &ch = fCharacters[ (uint16_t)string[ 0 ] - fFirstChar ];
-            fRenderInfo.fX -= (int16_t)ch.fLeftKern;
-            fRenderInfo.fMaxWidth += (int16_t)ch.fLeftKern;
-            fRenderInfo.fDestPtr -= (int16_t)ch.fLeftKern * fRenderInfo.fDestBPP;
-            fRenderInfo.fFarthestX = fRenderInfo.fX;
-        }
+        // There used to be an adjustment of the X coordinate by -ch.fLeftKern for the case
+        // of kRenderJustXForceLeft here, but it was buggy in that it neglected to adjust
+        // fRenderInfo.fDestPtr and therefore had no visible effect (or almost none - only
+        // at the end of the line). Fixing the bug however (making kRenderJustXForceLeft
+        // work as intended) causes the text shadow to be cut off in some places. To ensure
+        // enough space for the shadow, and considering that all content was developed and
+        // visually optimized with the bug in place, it seems better to preserve the buggy
+        // behavior and make kRenderJustXForceLeft work exactly like kRenderJustXLeft.
 
         fRenderInfo.fVolatileStringPtr = string;    // Just so we can keep track of when we clip
         IRenderLoop( string, -1 );
