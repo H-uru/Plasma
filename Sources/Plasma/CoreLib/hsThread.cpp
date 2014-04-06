@@ -44,7 +44,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsThread.h"
 
+#ifdef USE_VLD
+#include <vld.h>
+#endif
 
+void hsThread::Start()
+{
+    if (!fThread.joinable())
+    {
+        // There's no API for retrieving this return value in the old
+        // hsThread, so for now this is just a placeholder until I figure
+        // out what to do with it :(
+        hsError result;
+
+        fThread = std::thread([this, &result]()
+        {
+#ifdef USE_VLD
+            // Needs to be enabled for each thread except the WinMain
+            VLDEnable();
+#endif
+            result = Run();
+            OnQuit();
+        });
+    }
+    else
+        hsDebugMessage("Calling hsThread::Start() more than once", 0);
+}
+
+void hsThread::Stop()
+{
+    if (fThread.joinable())
+    {
+        fQuit = true;
+        fThread.join();
+    }
+}
 
 //////////////////////////////////////////////////////////////////////////////
 hsReaderWriterLock::hsReaderWriterLock(Callback * cb)
