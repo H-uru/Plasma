@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <mutex>
+#include <condition_variable>
 
 typedef uint32_t hsMilliseconds;
 
@@ -117,49 +118,41 @@ class hsSemaphore {
 #else
     pthread_mutex_t fPMutex;
     pthread_cond_t  fPCond;
-    int32_t       fCounter;
+    int32_t         fCounter;
 #endif
 #endif
 public:
-    hsSemaphore(int initialValue=0, const char* name=nil);
+    hsSemaphore(int initialValue=0, const char* name=nullptr);
     ~hsSemaphore();
 
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
-    bool        TryWait();
-    bool        Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void        Signal();
+    bool Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void Signal();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class hsEvent
 {
-#if HS_BUILD_FOR_UNIX
-#ifndef PSEUDO_EVENT
-    pthread_mutex_t fMutex;
-    pthread_cond_t  fCond;
-    bool  fTriggered;
-#else
-    enum { kRead, kWrite };
-    int     fFds[2];
-    std::mutex fWaitLock;
-    std::mutex fSignalLock;
-#endif // PSEUDO_EVENT
-#elif HS_BUILD_FOR_WIN32
-    HANDLE fEvent;
-#endif
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+
 public:
-    hsEvent();
-    ~hsEvent();
+    hsEvent() { }
 
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fEvent; }
-#endif
+    inline void Wait()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock);
+    }
 
-    bool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void  Signal();
+    inline void Signal()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.notify_one();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////

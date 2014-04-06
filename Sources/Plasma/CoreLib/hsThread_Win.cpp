@@ -147,13 +147,6 @@ hsSemaphore::~hsSemaphore()
     ::CloseHandle(fSemaH);
 }
 
-bool hsSemaphore::TryWait()
-{
-    DWORD result = ::WaitForSingleObject(fSemaH, 0);
-    hsAssert(result != WAIT_ABANDONED, "hsSemaphore -> Abandoned Semaphore");
-    return result == WAIT_OBJECT_0;
-}
-
 bool hsSemaphore::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
@@ -172,41 +165,4 @@ bool hsSemaphore::Wait(hsMilliseconds timeToWait)
 void hsSemaphore::Signal()
 {
     ::ReleaseSemaphore(fSemaH, 1, nil);
-}
-
-///////////////////////////////////////////////////////////////
-
-hsEvent::hsEvent()
-{
-    fEvent = ::CreateEvent(nil,true,false,nil);
-    if (fEvent == nil)
-        throw hsOSException(-1);
-}
-
-hsEvent::~hsEvent()
-{
-    ::CloseHandle(fEvent);
-}
-
-bool hsEvent::Wait(hsMilliseconds timeToWait)
-{
-    if (timeToWait == kPosInfinity32)
-        timeToWait = INFINITE;
-    
-    DWORD result =::WaitForSingleObject(fEvent, timeToWait);
-
-    if (result == WAIT_OBJECT_0)
-    {
-        ::ResetEvent(fEvent);
-        return true;
-    }
-    else
-    {   hsThrowIfFalse(result == WAIT_TIMEOUT);
-        return false;
-    }
-}
-
-void hsEvent::Signal()
-{
-    ::SetEvent(fEvent);
 }
