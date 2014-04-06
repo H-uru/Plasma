@@ -333,12 +333,6 @@ namespace plFileSystem
     /** Get the full path and filename of the current process. */
     plFileName GetCurrentAppPath();
 
-    /** Create a temporary filename.  If path is specified, the returned
-     *  filename will be relative to the supplied path -- otherwise, the
-     *  system temp path is used.
-     */
-    plFileName GetTempFilename(const char *prefix = "tmp", const plFileName &path = "");
-
     /** Convert a file size from bytes to a human readable size. */
     plString ConvertFileSize(uint64_t size);
 }

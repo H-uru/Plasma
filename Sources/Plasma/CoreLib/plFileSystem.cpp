@@ -540,37 +540,6 @@ plFileName plFileSystem::GetCurrentAppPath()
 #endif
 }
 
-plFileName plFileSystem::GetTempFilename(const char *prefix, const plFileName &path)
-{
-#if HS_BUILD_FOR_WIN32
-    // GetTempFileName() never uses more than 3 chars for the prefix
-    wchar_t wprefix[4];
-    for (size_t i=0; i<4; ++i)
-        wprefix[i] = prefix[i];
-    wprefix[3] = 0;
-
-    wchar_t temp[MAX_PATH];
-    if (GetTempFileNameW(path.AsString().ToWchar(), wprefix, 0, temp))
-        return plString::FromWchar(temp);
-
-    return "";
-#else
-    plFileName tmpdir = path;
-    if (!tmpdir.IsValid())
-        tmpdir = "/tmp";
-
-    // "/tmp/prefixXXXXXX"
-    size_t temp_len = tmpdir.GetSize() + strlen(prefix) + 7;
-    char *temp = new char[temp_len + 1];
-    snprintf(temp, temp_len + 1, "%s/%sXXXXXX", tmpdir.AsString().c_str(), prefix);
-    mktemp(temp);
-    plFileName result = temp;
-    delete [] temp;
-
-    return result;
-#endif
-}
-
 plString plFileSystem::ConvertFileSize(uint64_t size)
 {
     const char* labels[] = { "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
