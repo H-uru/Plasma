@@ -43,7 +43,6 @@ set(CoreLib_SOURCES
     hsMemory.cpp
     hsQuat.cpp
     hsRefCnt.cpp
-    hsSafeRefCnt.cpp
     hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
@@ -88,7 +87,6 @@ set(CoreLib_HEADERS
     hsPoint2.h
     hsQuat.h
     hsRefCnt.h
-    hsSafeRefCnt.h
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
