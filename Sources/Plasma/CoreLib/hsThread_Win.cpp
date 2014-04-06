@@ -210,10 +210,3 @@ void hsEvent::Signal()
 {
     ::SetEvent(fEvent);
 }
-
-///////////////////////////////////////////////////////////////
-
-void hsSleep::Sleep(uint32_t millis)
-{
-    ::Sleep(millis);
-}

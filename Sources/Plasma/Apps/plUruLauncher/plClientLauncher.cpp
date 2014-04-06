@@ -61,13 +61,15 @@ PF_CONSOLE_LINK_FILE(Core)
 #include <algorithm>
 #include <curl/curl.h>
 #include <deque>
+#include <thread>
+#include <chrono>
 
 plClientLauncher::ErrorFunc s_errorProc = nullptr; // don't even ask, cause I'm not happy about this.
 
 const int kNetTransTimeout = 5 * 60 * 1000;        // 5m
 const int kShardStatusUpdateTime = 5;              // 5s
 const int kAsyncCoreShutdownTime = 2 * 1000;       // 2s
-const int kNetCoreUpdateSleepTime = 10;            // 10ms
+const std::chrono::milliseconds kNetCoreUpdateSleepTime(10);    // 10ms
 
 // ===================================================
 
@@ -394,7 +396,7 @@ void plClientLauncher::PumpNetCore() const
     fStatusThread->Update();
 
     // don't nom all the CPU... kthx
-    hsSleep::Sleep(kNetCoreUpdateSleepTime);
+    std::this_thread::sleep_for(kNetCoreUpdateSleepTime);
 }
 
 void plClientLauncher::ShutdownNetCore() const
