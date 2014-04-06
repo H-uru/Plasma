@@ -190,83 +190,6 @@ static void InitEventLoggingFile()
 
 #endif
 
-hsMutex::hsMutex()
-{
-
-#ifdef MUTEX_TIMING
-    InitMutexTimerFile();
-#endif
-
-    // create mutex attributes
-    pthread_mutexattr_t attr;
-    int status = ::pthread_mutexattr_init(&attr);
-    hsThrowIfOSErr(status);
-
-    // make the mutex attributes recursive
-    status = ::pthread_mutexattr_settype(&attr,PTHREAD_MUTEX_RECURSIVE);
-    hsThrowIfOSErr(status);
-
-    //init the mutex
-    status = ::pthread_mutex_init(&fPMutex, &attr);
-    hsThrowIfOSErr(status);
-
-    // destroy the attributes
-    status = ::pthread_mutexattr_destroy(&attr);
-    hsThrowIfOSErr(status);
-}
-
-hsMutex::~hsMutex()
-{
-    int status = ::pthread_mutex_destroy(&fPMutex);
-    hsThrowIfOSErr(status);
-}
-
-void hsMutex::Lock()
-{
-#ifdef MUTEX_TIMING
-# ifndef HS_DEBUGGING
-    timeval tv;
-    hsWide start;
-    gettimeofday( &tv, nil );
-    start.Mul( tv.tv_sec, 1000000 )->Add( tv.tv_usec );
-# endif
-#endif
-
-    int status = ::pthread_mutex_lock(&fPMutex);
-    hsThrowIfOSErr(status);
-
-#ifdef MUTEX_TIMING
-# ifndef HS_DEBUGGING
-    hsWide diff;
-    gettimeofday( &tv, nil );
-    diff.Mul( tv.tv_sec, 1000000 )->Add( tv.tv_usec )->Sub( &start )->Div( 1000000 );
-    double duration = diff.AsDouble();
-    if ( gMutexTimerFile && duration>0.005 )
-    {
-        time_t t;
-        time( &t );
-        struct tm *now = localtime( &t );
-        char tmp[30];
-        strftime( tmp, 30, "%c", now );
-        fprintf( gMutexTimerFile, "[%s] [%lu:%lu] %f\n", tmp, getpid(), hsThread::GetMyThreadId(), duration );
-    }
-# endif
-#endif
-}
-
-bool hsMutex::TryLock()
-{
-    int status = ::pthread_mutex_trylock(&fPMutex);
-    hsThrowIfOSErr(status);
-    return status==EBUSY?false:true;
-}
-
-void hsMutex::Unlock()
-{
-    int status = ::pthread_mutex_unlock(&fPMutex);
-    hsThrowIfOSErr(status);
-}
-
 /////////////////////////////////////////////////////////////////////////////
 
 hsSemaphore::hsSemaphore(int initialValue, const char* name)
@@ -538,7 +461,7 @@ hsEvent::~hsEvent()
 
 bool hsEvent::Wait( hsMilliseconds timeToWait )
 {
-    hsTempMutexLock lock( fWaitLock );
+    std::lock_guard<std::mutex> lock(fWaitLock);
 
     fd_set  fdset;
     FD_ZERO( &fdset );
@@ -572,7 +495,7 @@ bool hsEvent::Wait( hsMilliseconds timeToWait )
 
 void hsEvent::Signal()
 {
-    hsTempMutexLock lock( fSignalLock );
+    std::lock_guard<std::mutex> lock(fSignalLock);
     write( fFds[kWrite], "*", 1 );
 }
 

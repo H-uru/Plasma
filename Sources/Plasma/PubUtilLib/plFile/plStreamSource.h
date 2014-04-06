@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plStreamSource_h_inc
 
 #include <map>
+#include <mutex>
 #include "hsStream.h"
-#include "hsThread.h"
 
 // A class for holding and accessing file streams. The preloader will insert
 // files in here once they are loaded. In internal builds, if a requested file
@@ -60,7 +60,7 @@ private:
         hsStream*       fStream; // we own this pointer, so clean it up
     };
     std::map<plFileName, fileData, plFileName::less_i> fFileData; // key is filename
-    hsMutex fMutex;
+    std::mutex fMutex;
     uint32_t fServerKey[4];
 
     void ICleanup(); // closes all file pointers and cleans up after itself
