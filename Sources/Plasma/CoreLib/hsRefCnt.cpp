@@ -48,17 +48,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 hsRefCnt::~hsRefCnt()
 {
-    hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
-}
-
-void hsRefCnt::Ref()
-{
-    fRefCnt++;
+#ifdef HS_DEBUGGING
+    hsThrowIfFalse(fRefCnt == 1);
+#endif
 }
 
 void hsRefCnt::UnRef()
 {
-    hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
+#ifdef HS_DEBUGGING
+    hsThrowIfFalse(fRefCnt >= 1);
+#endif
+
+    if (fRefCnt == 1)   // don't decrement if we call delete
+        delete this;
+    else
+        --fRefCnt;
+}
+
+hsSafeRefCnt::~hsSafeRefCnt()
+{
+#ifdef HS_DEBUGGING
+    hsThrowIfFalse(fRefCnt == 1);
+#endif
+}
+
+void hsSafeRefCnt::UnRef()
+{
+#ifdef HS_DEBUGGING
+    hsThrowIfFalse(fRefCnt >= 1);
+#endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
         delete this;
