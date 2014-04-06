@@ -75,7 +75,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 {
     hsUNIXStream pyStream, glueStream;
     plFileName filePath;
-    size_t filestart = fileName.AsString().FindLast('.');
+    ssize_t filestart = fileName.AsString().FindLast('.');
     if (filestart >= 0)
         filePath = fileName.AsString().Substr(filestart+1);
     else
