@@ -78,7 +78,7 @@ protected:
     plMsgWrap*                      fFutureMsgQueue;
     static int32_t                  fNumBufferReq;
     static plMsgWrap*               fMsgCurrent;
-    static std::recursive_mutex     fMsgCurrentMutex; // mutex for above
+    static std::mutex               fMsgCurrentMutex; // mutex for above
     static std::mutex               fMsgDispatchLock;   // mutex for IMsgDispatch
     static plMsgWrap*               fMsgHead;
     static plMsgWrap*               fMsgTail;
