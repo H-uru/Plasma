@@ -92,7 +92,7 @@ plMsgWrap*              plDispatch::fMsgTail = nil;
 hsTArray<plMessage*>    plDispatch::fMsgWatch;
 MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nil;
 
-std::recursive_mutex    plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
+std::mutex              plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
 std::mutex              plDispatch::fMsgDispatchLock; // mutex for IMsgDispatch
 
 
@@ -228,7 +228,7 @@ bool plDispatch::IListeningForExactType(uint16_t hClass)
 void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 {
     {
-        std::lock_guard<std::recursive_mutex> lock(fMsgCurrentMutex);
+        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
 
 #ifdef HS_DEBUGGING
         if (msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch))
@@ -249,22 +249,21 @@ void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 // On starts deferring msg delivery until buffering is set to off again.
 bool plDispatch::SetMsgBuffering(bool on)
 {
+    std::unique_lock<std::mutex> lock(fMsgCurrentMutex);
+    if (on)
     {
-        std::lock_guard<std::recursive_mutex> lock(fMsgCurrentMutex);
-        if (on)
-        {
-            hsAssert(fNumBufferReq || !fMsgActive, "Can't start deferring message delivery while delivering messages. See mf");
-            if (!fNumBufferReq && fMsgActive)
-                return false;
+        hsAssert(fNumBufferReq || !fMsgActive, "Can't start deferring message delivery while delivering messages. See mf");
+        if (!fNumBufferReq && fMsgActive)
+            return false;
 
-            fNumBufferReq++;
-            fMsgActive = true;
-        }
-        else if (!--fNumBufferReq)
-        {
-            fMsgActive = false;
-            IMsgDispatch();
-        }
+        fNumBufferReq++;
+        fMsgActive = true;
+    }
+    else if (!--fNumBufferReq)
+    {
+        fMsgActive = false;
+        lock.unlock();
+        IMsgDispatch();
     }
     hsAssert(fNumBufferReq >= 0, "Mismatched number of on/off dispatch buffering requests");
 
@@ -273,25 +272,23 @@ bool plDispatch::SetMsgBuffering(bool on)
 
 void plDispatch::IMsgDispatch()
 {
-    if (!fMsgDispatchLock.try_lock())
+    std::unique_lock<std::mutex> dispatchLock(fMsgDispatchLock, std::try_to_lock);
+    if (!dispatchLock.owns_lock())
         return;
 
-    if( fMsgActive )
-    {
-        fMsgDispatchLock.unlock();
+    if (fMsgActive)
         return;
-    }
 
     fMsgActive = true;
     int responseLevel=0;
 
-    fMsgCurrentMutex.lock();
+    std::unique_lock<std::mutex> msgCurrentLock(fMsgCurrentMutex);
 
     plMsgWrap* origTail = fMsgTail;
     while((fMsgCurrent = fMsgHead))
     {
         IDequeue(&fMsgHead, &fMsgTail);
-        fMsgCurrentMutex.unlock();
+        msgCurrentLock.unlock();
 
         plMessage* msg = fMsgCurrent->fMsg;
         bool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
@@ -399,16 +396,14 @@ void plDispatch::IMsgDispatch()
 //          }
 //      }
 
-        fMsgCurrentMutex.lock();
+        msgCurrentLock.lock();
 
         delete fMsgCurrent;
         // TEMP
         fMsgCurrent = (class plMsgWrap *)0xdeadc0de;
     }
-    fMsgCurrentMutex.unlock();
 
     fMsgActive = false;
-    fMsgDispatchLock.unlock();
 }
 
 //
@@ -417,7 +412,7 @@ void plDispatch::IMsgDispatch()
 bool plDispatch::IMsgNetPropagate(plMessage* msg)
 {
     {
-        std::lock_guard<std::recursive_mutex> lock(fMsgCurrentMutex);
+        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
 
         // Make sure cascaded messages all have the same net flags
         plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
