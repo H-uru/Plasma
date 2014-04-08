@@ -114,8 +114,8 @@ else()
 endif()
 
 if(MSVC)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
-    add_definitions(-D_SCL_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+    add_definitions(-D_SCL_SECURE_NO_DEPRECATE)
 endif(MSVC)
 
 #TODO: Make the OpenSSL includes less promiscuous so this isn't needed

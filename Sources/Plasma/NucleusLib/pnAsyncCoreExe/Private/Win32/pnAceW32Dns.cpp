@@ -273,11 +273,12 @@ void AsyncAddressLookupName (
 
     // Get name/port
     char* ansiName = strdup(name);
-    if (char* portStr = StrChr(ansiName, ':')) {
-        if (unsigned newPort = StrToUnsigned(portStr + 1, nil, 10))
+    if (char* portStr = strchr(ansiName, ':')) {
+        if (unsigned long newPort = strtoul(portStr + 1, nullptr, 10))
             port = newPort;
         *portStr = 0;
     }
+    free(ansiName);
 
     // Initialize lookup
     Lookup * lookup         = new Lookup;
