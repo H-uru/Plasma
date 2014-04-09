@@ -433,7 +433,6 @@ void NtGetApi (AsyncApi * api) {
     api->destroy                = NtDestroy;
     api->signalShutdown         = NtSignalShutdown;
     api->waitForShutdown        = NtWaitForShutdown;
-    api->sleep                  = NtSleep;
     
     api->socketConnect          = NtSocketConnect;
     api->socketConnectCancel    = NtSocketConnectCancel;

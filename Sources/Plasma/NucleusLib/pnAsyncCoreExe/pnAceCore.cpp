@@ -197,12 +197,6 @@ void AsyncWaitForShutdown () {
 }
 
 //============================================================================
-void AsyncSleep (unsigned sleepMs) {
-    ASSERT(g_api.sleep);
-    g_api.sleep(sleepMs);
-}
-
-//============================================================================
 long AsyncPerfGetCounter (unsigned id) {
     static_assert(arrsize(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);

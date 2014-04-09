@@ -103,7 +103,6 @@ typedef void (* FInitialize) ();
 typedef void (* FDestroy) (unsigned exitThreadWaitMs);
 typedef void (* FSignalShutdown) ();
 typedef void (* FWaitForShutdown) ();
-typedef void (* FSleep) (unsigned sleepMs);
 
 // Sockets
 typedef void (* FAsyncSocketConnect) (
@@ -182,8 +181,7 @@ struct AsyncApi {
     FDestroy                        destroy;
     FSignalShutdown                 signalShutdown;
     FWaitForShutdown                waitForShutdown;
-    FSleep                          sleep;
-    
+
     // Sockets
     FAsyncSocketConnect             socketConnect;
     FAsyncSocketConnectCancel       socketConnectCancel;

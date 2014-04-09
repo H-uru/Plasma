@@ -309,7 +309,7 @@ void AsyncTimerDelete (
     if (timerProc) {
 
         while (s_timerCurr == timerProc)
-            Sleep(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
