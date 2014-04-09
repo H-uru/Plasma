@@ -221,7 +221,7 @@ static void SocketStartAsyncRead (NtSock * sock) {
     bool readResult;
     sock->critsect.Enter();
     if (sock->handle != INVALID_HANDLE_VALUE) {
-        InterlockedIncrement(&sock->ioCount);
+        ++sock->ioCount;
         readResult = ReadFile(
             sock->handle,
             sock->buffer + sock->bytesLeft,
@@ -237,7 +237,7 @@ static void SocketStartAsyncRead (NtSock * sock) {
 
     DWORD err = GetLastError();
     if (!readResult && (err != ERROR_IO_PENDING))
-        InterlockedDecrement(&sock->ioCount);
+        --sock->ioCount;
 }
 
 //===========================================================================
@@ -377,7 +377,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
     op->write.bytesProcessed    = bytes;
     memcpy(op->write.buffer, data, bytes);
 
-    InterlockedIncrement(&sock->ioCount);
+    ++sock->ioCount;
     PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
 
     return op;
@@ -1021,8 +1021,8 @@ void INtSocketOpCompleteSocketRead (
             ||  ((sock->opRead.read.bytesProcessed + sock->bytesLeft) > sizeof(sock->buffer))
             ) {
                 #ifdef HS_DEBUGGING
-                static long s_once;
-                if (!AtomicAdd(&s_once, 1)) {
+                static std::once_flag s_once;
+                std::call_once(s_once, [sock]() {
                     DumpInvalidData(
                         "NtSockErr.log",
                         sizeof(sock->buffer),
@@ -1033,7 +1033,7 @@ void INtSocketOpCompleteSocketRead (
                         sock->opRead.read.bytes,
                         sock->opRead.read.bytesProcessed
                     );
-                }
+                });
                 #endif  // ifdef HS_DEBUGGING
 
                 LogMsg(
@@ -1419,7 +1419,7 @@ bool NtSocketWrite (
         op->write.bytesProcessed    = bytes;
         PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
 
-        InterlockedIncrement(&sock->ioCount);
+        ++sock->ioCount;
 
         if (op == sock->opList.Head())
             result = INtSocketOpCompleteQueuedSocketWrite((NtSock *) sock, op);

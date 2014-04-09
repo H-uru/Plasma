@@ -816,10 +816,10 @@ void NetCommActivatePostInitErrorHandler () {
 //============================================================================
 void NetCommUpdate () {
     // plClient likes to recursively call us on occasion; debounce that crap.
-    static long s_updating;
-    if (0 == AtomicSet(&s_updating, 1)) {
+    static std::atomic_flag s_updating = ATOMIC_FLAG_INIT;
+    if (!s_updating.test_and_set()) {
         NetClientUpdate();
-        AtomicSet(&s_updating, 0);
+        s_updating.clear();
     }
 }
 
