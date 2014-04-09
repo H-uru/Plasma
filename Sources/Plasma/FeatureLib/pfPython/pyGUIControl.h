@@ -118,13 +118,15 @@ public:
     virtual PyObject*   GetSelColor(); // returns pyColor
     virtual PyObject*   GetBackColor(); // returns pyColor
     virtual PyObject*   GetBackSelColor(); // returns pyColor
-    virtual uint32_t      GetFontSize();
+    virtual uint32_t    GetFontSize();
+    virtual uint8_t     GetFontFlags();
     // set color scheme
     virtual void        SetForeColor( float r, float g, float b, float a );
     virtual void        SetSelColor( float r, float g, float b, float a );
     virtual void        SetBackColor( float r, float g, float b, float a );
     virtual void        SetBackSelColor( float r, float g, float b, float a );
     virtual void        SetFontSize(uint32_t fontsize);
+    virtual void        SetFontFlags(uint8_t fontflags);
 
 };
 

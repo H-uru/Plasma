@@ -445,3 +445,33 @@ void pyGUIControl::SetFontSize(uint32_t fontsize)
         }
     }
 }
+
+void pyGUIControl::SetFontFlags(uint8_t fontFlags)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod)
+        {
+            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            colorscheme->fFontFlags = fontFlags;
+        }
+    }
+}
+
+uint8_t pyGUIControl::GetFontFlags()
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod)
+        {
+            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            return colorscheme->fFontFlags;
+        }
+    }
+    return 0;
+}
+
