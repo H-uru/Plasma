@@ -87,4 +87,60 @@ public:
     void        TransferRef(const char* oldTag, const char* newTag);
 };
 
+template <class _Ref>
+class hsRef
+{
+public:
+    hsRef() : fObj(nullptr) { }
+    hsRef(nullptr_t) : fObj(nullptr) { }
+    hsRef(_Ref *obj) : fObj(obj) { if (fObj) fObj->Ref(); }
+    hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
+    hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
+
+    ~hsRef() { if (fObj) fObj->UnRef(); }
+
+    hsRef<_Ref> &operator=(_Ref *obj)
+    {
+        if (obj)
+            obj->Ref();
+        if (fObj)
+            fObj->UnRef();
+        fObj = obj;
+        return *this;
+    }
+    hsRef<_Ref> &operator=(const hsRef<_Ref> &copy) { return operator=(copy.fObj); }
+
+    hsRef<_Ref> &operator=(hsRef<_Ref> &&move)
+    {
+        if (fObj)
+            fObj->UnRef();
+        fObj = move.fObj;
+        move.fObj = nullptr;
+        return *this;
+    }
+
+    hsRef<_Ref> &operator=(nullptr_t)
+    {
+        if (fObj)
+            fObj->UnRef();
+        fObj = nullptr;
+    }
+
+    bool operator==(const hsRef<_Ref> &other) const { return fObj == other.fObj; }
+    bool operator!=(const hsRef<_Ref> &other) const { return fObj != other.fObj; }
+    bool operator> (const hsRef<_Ref> &other) const { return fObj >  other.fObj; }
+    bool operator< (const hsRef<_Ref> &other) const { return fObj <  other.fObj; }
+    bool operator>=(const hsRef<_Ref> &other) const { return fObj >= other.fObj; }
+    bool operator<=(const hsRef<_Ref> &other) const { return fObj <= other.fObj; }
+    bool operator==(_Ref *other) const { return fObj == other; }
+    bool operator!=(_Ref *other) const { return fObj != other; }
+
+    _Ref &operator*() const { return *fObj; }
+    _Ref *const operator->() const { return fObj; }
+    operator _Ref *const() const { return fObj; }
+
+private:
+    _Ref *fObj;
+};
+
 #endif
