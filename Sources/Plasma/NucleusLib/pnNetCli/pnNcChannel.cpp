@@ -82,6 +82,8 @@ private:
 };
 
 struct NetMsgChannel : hsAtomicRefCnt {
+    NetMsgChannel() : hsAtomicRefCnt(0) { }
+
     uint32_t                m_protocol;
     bool                    m_server;
 

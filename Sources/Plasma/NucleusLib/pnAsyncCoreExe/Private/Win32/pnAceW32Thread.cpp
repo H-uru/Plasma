@@ -80,7 +80,7 @@ static HANDLE   s_taskPort;
 
 //===========================================================================
 AsyncThreadTaskList::AsyncThreadTaskList ()
-:   error(kNetSuccess)
+:   hsAtomicRefCnt(0), error(kNetSuccess)
 {
     PerfAddCounter(kAsyncPerfThreadTaskListCount, 1);
 }
