@@ -47,8 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class hsRefCnt {
 private:
     int         fRefCnt;
+
 public:
-                hsRefCnt() : fRefCnt(1) {}
+                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) {}
     virtual     ~hsRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
@@ -75,7 +76,7 @@ private:
     std::atomic<int> fRefCnt;
 
 public:
-                 hsAtomicRefCnt() : fRefCnt(1) { }
+                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
     virtual     ~hsAtomicRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }

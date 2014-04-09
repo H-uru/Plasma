@@ -415,7 +415,8 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGmConn::CliGmConn ()
-    : sock(nil), cancelId(nil), cli(nil), seq(0), abandoned(false)
+    : hsAtomicRefCnt(0), sock(nil), cancelId(nil), cli(nil)
+    , seq(0), abandoned(false)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
 {
     AtomicAdd(&s_perf[kPerfConnCount], 1);
