@@ -80,7 +80,6 @@ static unsigned                 s_pageSizeMask;
 
 //===========================================================================
 CNtWaitHandle::CNtWaitHandle () {
-    m_refCount = 1;
     m_event = CreateEvent(
         (LPSECURITY_ATTRIBUTES) nil,
         true,   // manual reset
@@ -92,17 +91,6 @@ CNtWaitHandle::CNtWaitHandle () {
 //===========================================================================
 CNtWaitHandle::~CNtWaitHandle () {
     CloseHandle(m_event);
-}
-
-//===========================================================================
-void CNtWaitHandle::IncRef () {
-    InterlockedIncrement(&m_refCount);
-}
-
-//===========================================================================
-void CNtWaitHandle::DecRef () {
-    if (!InterlockedDecrement(&m_refCount))
-        delete this;
 }
 
 //===========================================================================
@@ -189,7 +177,7 @@ static void INtOpDispatch (
             // set event *after* operation is complete
             if (signalComplete) {
                 signalComplete->SignalObject();
-                signalComplete->DecRef();
+                signalComplete->UnRef();
             }
 
             // if we just deleted the last operation then stop dispatching
@@ -203,7 +191,7 @@ static void INtOpDispatch (
             if (op->pending)
                 break;
 
-            InterlockedDecrement(&ntObj->ioCount);
+            --ntObj->ioCount;
         }
         ntObj->critsect.Leave();
 
@@ -300,7 +288,7 @@ bool INtConnInitialize (NtObject * ntObj) {
 //===========================================================================
 void INtConnCompleteOperation (NtObject * ntObj) {
     // are we completing the last operation for this object?
-    if (InterlockedDecrement(&ntObj->ioCount))
+    if (--ntObj->ioCount)
         return;
 
     DWORD err = GetLastError();

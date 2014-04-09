@@ -1208,7 +1208,7 @@ static ShaDigest                    s_accountNamePassHash;
 static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
 static wchar_t                      s_os[kMaxGTOSIdLength];
 
-static long                         s_perf[kNumPerf];
+static std::atomic<long>            s_perf[kNumPerf];
 
 static uint32_t                     s_encryptionKey[4];
 
@@ -1596,14 +1596,14 @@ CliAuConn::CliAuConn ()
 {
     memset(name, 0, sizeof(name));
 
-    AtomicAdd(&s_perf[kPerfConnCount], 1);
+    ++s_perf[kPerfConnCount];
 }
 
 //============================================================================
 CliAuConn::~CliAuConn () {
     if (cli)
         NetCliDelete(cli, true);
-    AtomicAdd(&s_perf[kPerfConnCount], -1);
+    --s_perf[kPerfConnCount];
 }
 
 //===========================================================================

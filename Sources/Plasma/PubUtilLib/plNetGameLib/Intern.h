@@ -273,7 +273,7 @@ static const char * s_transTypes[] = {
 };
 static_assert(arrsize(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
 
-static long s_perfTransCount[kNumTransTypes];
+static std::atomic<long> s_perfTransCount[kNumTransTypes];
 
 
 namespace Auth { struct CliAuConn; }

@@ -156,7 +156,7 @@ static LISTDECL(CliGmConn, link)        s_conns;
 static CliGmConn *                      s_active;
 static FNetCliGameRecvBufferHandler     s_bufHandler;
 static FNetCliGameRecvGameMgrMsgHandler s_gameMgrMsgHandler;
-static long                             s_perf[kNumPerf];
+static std::atomic<long>                s_perf[kNumPerf];
 
 
 /*****************************************************************************
@@ -419,14 +419,14 @@ CliGmConn::CliGmConn ()
     , seq(0), abandoned(false)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
 {
-    AtomicAdd(&s_perf[kPerfConnCount], 1);
+    ++s_perf[kPerfConnCount];
 }
 
 //============================================================================
 CliGmConn::~CliGmConn () {
     if (cli)
         NetCliDelete(cli, true);
-    AtomicAdd(&s_perf[kPerfConnCount], -1);
+    --s_perf[kPerfConnCount];
 }
 
 //============================================================================

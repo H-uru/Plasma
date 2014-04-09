@@ -66,7 +66,7 @@ static const unsigned kDefaultTimeoutMs = 5 * 60 * 1000;
 static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(NetTrans, m_link)   s_transactions;
-static long                         s_perf[kNumPerf];
+static std::atomic<long>            s_perf[kNumPerf];
 static unsigned                     s_timeoutMs = kDefaultTimeoutMs;
 
 
@@ -127,16 +127,16 @@ NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
 ,   m_timeoutAtMs(0)
 ,   m_transType(transType)
 {
-    AtomicAdd(&s_perf[kPerfCurrTransactions], 1);
-    AtomicAdd(&s_perfTransCount[m_transType], 1);
+    ++s_perf[kPerfCurrTransactions];
+    ++s_perfTransCount[m_transType];
 //  DebugMsg("%s@%p created", s_transTypes[m_transType], this);
 }
 
 //============================================================================
 NetTrans::~NetTrans () {
     ASSERT(!m_link.IsLinked());
-    AtomicAdd(&s_perfTransCount[m_transType], -1);
-    AtomicAdd(&s_perf[kPerfCurrTransactions], -1);
+    --s_perfTransCount[m_transType];
+    --s_perf[kPerfCurrTransactions];
 //  DebugMsg("%s@%p destroyed", s_transTypes[m_transType], this);
 }
 
