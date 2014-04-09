@@ -82,11 +82,6 @@ enum EOpType {
     kNumOpTypes
 };
 
-class CNtCritSect : public CCritSect {
-public:
-    BOOL TryEnter () { return TryEnterCriticalSection(&m_handle); }
-};
-
 class CNtWaitHandle {
     long    m_refCount;
     HANDLE  m_event;
@@ -124,7 +119,7 @@ struct Operation {
 };
 
 struct NtObject {
-    CNtCritSect                 critsect;
+    CCritSect                   critsect;
     EIoType                     ioType;
     HANDLE                      handle;
     void *                      userState;

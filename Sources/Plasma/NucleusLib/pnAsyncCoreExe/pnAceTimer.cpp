@@ -64,7 +64,7 @@ struct AsyncTimer {
     LINK(AsyncTimer)            deleteLink;
 };
 
-static CCritSect            s_timerCrit;
+static std::mutex           s_timerCrit;
 static FAsyncTimerProc      s_timerCurr;
 static HANDLE               s_timerThread;
 static HANDLE               s_timerEvent;
@@ -114,12 +114,12 @@ static unsigned CallTimerProc (AsyncTimer * t, FAsyncTimerProc timerProc) {
     s_timerCurr = timerProc;
 
     // Leave critical section to make timer callback
-    s_timerCrit.Leave();
+    s_timerCrit.unlock();
 
     unsigned sleepMs = s_timerCurr(t->param);
     s_timerCurr = nil;
 
-    s_timerCrit.Enter();
+    s_timerCrit.lock();
 
     return sleepMs;
 }
@@ -165,9 +165,9 @@ static inline unsigned RunTimers () {
 //===========================================================================
 static unsigned THREADCALL TimerThreadProc (AsyncThread *) {
     do {
-        s_timerCrit.Enter();
+        s_timerCrit.lock();
         const unsigned sleepMs = RunTimers();
-        s_timerCrit.Leave();
+        s_timerCrit.unlock();
 
         WaitForSingleObject(s_timerEvent, sleepMs);
     } while (s_running);
@@ -221,13 +221,14 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     }
 
     // Cleanup any timers that have been stopped but not deleted
-    s_timerCrit.Enter();
-    while (AsyncTimer * t = s_timerDelete.Head()) {
-        if (t->destroyProc)
-            CallTimerProc(t, t->destroyProc);
-        delete t;
+    {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+        while (AsyncTimer * t = s_timerDelete.Head()) {
+            if (t->destroyProc)
+                CallTimerProc(t, t->destroyProc);
+            delete t;
+        }
     }
-    s_timerCrit.Leave();
 
     if (AsyncTimer * timer = s_timerProcs.Root())
         ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
@@ -264,8 +265,8 @@ void AsyncTimerCreate (
     *timer = t;
 
     bool setEvent;
-    s_timerCrit.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
         InitializeTimer();
 
         // Does this timer need to be queued?
@@ -275,7 +276,6 @@ void AsyncTimerCreate (
         // Does the timer thread need to be awakened?
         setEvent = t == s_timerProcs.Root();
     }
-    s_timerCrit.Leave();
 
     if (setEvent)
         SetEvent(s_timerEvent);
@@ -323,12 +323,12 @@ void AsyncTimerDeleteCallback (
     ASSERT(!timer->deleteLink.IsLinked());
 
     // Link the timer to the deletion list
-    s_timerCrit.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+
         timer->destroyProc = destroyProc;
         s_timerDelete.Link(timer);
     }
-    s_timerCrit.Leave();
 
     // Force the timer thread to wake up and perform the deletion
     if (destroyProc)
@@ -346,8 +346,9 @@ void AsyncTimerUpdate (
     ASSERT(timer);
 
     bool setEvent;
-    s_timerCrit.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+
         if (callbackMs != kAsyncTimeInfinite) {
             UpdateTimer(timer, callbackMs + TimeGetMs(), flags);
             setEvent = timer == s_timerProcs.Root();
@@ -358,7 +359,6 @@ void AsyncTimerUpdate (
             setEvent = false;
         }
     }
-    s_timerCrit.Leave();
 
     if (setEvent)
         SetEvent(s_timerEvent);

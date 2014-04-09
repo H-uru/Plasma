@@ -130,7 +130,7 @@ struct NtSock : NtObject {
 };
 
 
-static CNtCritSect                      s_listenCrit;
+static std::mutex                       s_listenCrit;
 static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
@@ -140,7 +140,7 @@ static HANDLE                           s_listenEvent;
 
 
 const unsigned kCloseTimeoutMs = 8*1000;
-static CNtCritSect                      s_socketCrit;
+static std::mutex                       s_socketCrit;
 static AsyncTimer *                     s_socketTimer;
 static LISTDECL(NtSock, link)           s_socketList;
 
@@ -164,9 +164,8 @@ NtSock::~NtSock () {
     // To avoid a race condition, the socket must be unlinked from
     // the soft disconnect list prior to closing the handle
     if (link.IsLinked()) {
-        s_socketCrit.Enter();
+        std::lock_guard<std::mutex> lock(s_socketCrit);
         link.Unlink();
-        s_socketCrit.Leave();
     }
 
     if (handle != INVALID_HANDLE_VALUE)
@@ -710,10 +709,11 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
     fd_set readfds;
     fd_set writefds;
     for (;;) {
-        s_listenCrit.Enter();
-        ListenPrepareListeners(&readfds);
-        ListenPrepareConnectors(&writefds);
-        s_listenCrit.Leave();
+        {
+            std::lock_guard<std::mutex> lock(s_listenCrit);
+            ListenPrepareListeners(&readfds);
+            ListenPrepareConnectors(&writefds);
+        }
         if (!s_runListenThread)
             break;
 
@@ -733,7 +733,7 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         if (!result)
             continue;
 
-        s_listenCrit.Enter();
+        std::lock_guard<std::mutex> lock(s_listenCrit);
 
         // complete listen() operations
         unsigned count = 0;
@@ -762,11 +762,10 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
             }
         }
 
-        s_listenCrit.Leave();
     }
 
     // cleanup all connectors
-    s_listenCrit.Enter();
+    std::lock_guard<std::mutex> lock(s_listenCrit);
     for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
         if (op->hSocket != INVALID_SOCKET) {
             closesocket(op->hSocket);
@@ -774,7 +773,6 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         }
         INtConnPostOperation(nil, op, 0);
     }
-    s_listenCrit.Leave();
 
     return 0;
 }
@@ -843,37 +841,39 @@ static unsigned SocketCloseTimerCallback (void *) {
 
     unsigned sleepMs;
     unsigned currTimeMs = TimeGetMs();
-    s_socketCrit.Enter();
-    for (;;) {
-        // If there are no more sockets pending destruction then
-        // wait forever; the timer will be restarted when the
-        // next socket is queued onto the list.
-        NtSock * sock = s_socketList.Head();
-        if (!sock) {
-            sleepMs = kAsyncTimeInfinite;
-            break;
-        }
 
-        // Wait until the socket close timer expires
-        if (0 < (signed) (sleepMs = sock->closeTimeMs - currTimeMs))
-            break;
+    {
+        std::lock_guard<std::mutex> lock(s_socketCrit);
+        for (;;) {
+            // If there are no more sockets pending destruction then
+            // wait forever; the timer will be restarted when the
+            // next socket is queued onto the list.
+            NtSock * sock = s_socketList.Head();
+            if (!sock) {
+                sleepMs = kAsyncTimeInfinite;
+                break;
+            }
+
+            // Wait until the socket close timer expires
+            if (0 < (signed) (sleepMs = sock->closeTimeMs - currTimeMs))
+                break;
         
-        // Get the socket (safely)
-        HANDLE handle;
-        sock->critsect.Enter();
-        {
-            handle = sock->handle;
-            sock->handle = INVALID_HANDLE_VALUE;
-        }
-        sock->critsect.Leave();
-        if (handle != INVALID_HANDLE_VALUE)
-            sockets.Push((SOCKET) handle);
+            // Get the socket (safely)
+            HANDLE handle;
+            sock->critsect.Enter();
+            {
+                handle = sock->handle;
+                sock->handle = INVALID_HANDLE_VALUE;
+            }
+            sock->critsect.Leave();
+            if (handle != INVALID_HANDLE_VALUE)
+                sockets.Push((SOCKET) handle);
 
-        // To avoid a race condition, this unlink must occur
-        // after the socket handle has been cleared
-        s_socketList.Unlink(sock);
+            // To avoid a race condition, this unlink must occur
+            // after the socket handle has been cleared
+            s_socketList.Unlink(sock);
+        }
     }
-    s_socketCrit.Leave();
 
     // Abortive close all open sockets; any unsent data is lost
     SOCKET * cur = sockets.Ptr();
@@ -915,10 +915,9 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
         s_listenEvent = nil;
     }
 
-    s_listenCrit.Enter();
+    std::lock_guard<std::mutex> lock(s_listenCrit);
     ASSERT(!s_connectList.Head());
     ASSERT(!s_listenList.Head());
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1133,27 +1132,29 @@ unsigned NtSocketStartListening (
     const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    s_listenCrit.Enter();
-    StartListenThread();
     plNetAddress addr = listenAddr;
-    for (;;) {
-        // if the port is already open then just increment the reference count
-        if (ListenPortIncrement(addr, notifyProc, 1))
-            break;
+    {
+        std::lock_guard<std::mutex> lock(s_listenCrit);
 
-        SOCKET s;
-        if (INVALID_SOCKET == (s = ListenSocket(&addr)))
-            break;
+        StartListenThread();
+        for (;;) {
+            // if the port is already open then just increment the reference count
+            if (ListenPortIncrement(addr, notifyProc, 1))
+                break;
 
-        // create a new listener record
-        NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
-        listener->hSocket       = s;
-        listener->addr          = addr;
-        listener->notifyProc    = notifyProc;
-        listener->listenCount   = 1;
-        break;
+            SOCKET s;
+            if (INVALID_SOCKET == (s = ListenSocket(&addr)))
+                break;
+
+            // create a new listener record
+            NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
+            listener->hSocket       = s;
+            listener->addr          = addr;
+            listener->notifyProc    = notifyProc;
+            listener->listenCount   = 1;
+            break;
+        }
     }
-    s_listenCrit.Leave();
 
     unsigned port = addr.GetPort();
     if (port)
@@ -1167,9 +1168,8 @@ void NtSocketStopListening (
     const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    s_listenCrit.Enter();
+    std::lock_guard<std::mutex> lock(s_listenCrit);
     ListenPortIncrement(listenAddr, notifyProc, -1);
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1215,16 +1215,17 @@ void NtSocketConnect (
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutTotal, 1);
 
-    s_listenCrit.Enter();
-    StartListenThread();
+    {
+        std::lock_guard<std::mutex> lock(s_listenCrit);
+        StartListenThread();
 
-    // get cancel id; we can avoid checking for zero by always using an odd number
-    ASSERT(s_nextConnectCancelId & 1);
-    s_nextConnectCancelId += 2;
+        // get cancel id; we can avoid checking for zero by always using an odd number
+        ASSERT(s_nextConnectCancelId & 1);
+        s_nextConnectCancelId += 2;
 
-    *cancelId = op->cancelId = (AsyncCancelId) s_nextConnectCancelId;
-    s_connectList.Link(op, kListTail);
-    s_listenCrit.Leave();
+        *cancelId = op->cancelId = (AsyncCancelId) s_nextConnectCancelId;
+        s_connectList.Link(op, kListTail);
+    }
     SetEvent(s_listenEvent);
 }
 
@@ -1235,7 +1236,8 @@ void NtSocketConnectCancel (
     FAsyncNotifySocketProc notifyProc,
     AsyncCancelId          cancelId        // nil = cancel all with specified notifyProc
 ) {
-    s_listenCrit.Enter();
+    std::lock_guard<std::mutex> lock(s_listenCrit);
+
     for (NtOpConnAttempt * op = s_connectList.Head(); op; op = s_connectList.Next(op)) {
         if (cancelId && (op->cancelId != cancelId))
             continue;
@@ -1243,7 +1245,6 @@ void NtSocketConnectCancel (
             continue;
         op->canceled = true;
     }
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1300,12 +1301,11 @@ void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
         // Add the socket to the close list in sorted order by close time;
         // if this socket is the first on the list then start the timer
         bool startTimer;
-        s_socketCrit.Enter();
         {
+            std::lock_guard<std::mutex> lock(s_socketCrit);
             s_socketList.Link(sock, kListTail);
             startTimer = s_socketList.Head() == sock;
         }
-        s_socketCrit.Leave();
 
         // If this is the first item queued in the socket list then start timer.
         // This operation should be safe to perform outside the critical section

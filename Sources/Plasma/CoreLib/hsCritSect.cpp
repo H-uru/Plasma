@@ -44,7 +44,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "hsCritSect.h"
+#include "hsWindows.h"
+#include <mutex>
 
+// Sure, go ahead and uncomment...  YOU try and figure this insanity out...
+//#define CRITSECT_WTF
 
 /****************************************************************************
 *
@@ -52,43 +56,45 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-#ifdef HS_BUILD_FOR_WIN32
 //===========================================================================
 CCritSect::CCritSect () {
-    InitializeCriticalSection(&m_handle);
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-    DeleteCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    EnterCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    LeaveCriticalSection(&m_handle);
-}
-#elif HS_BUILD_FOR_UNIX
-//===========================================================================
-CCritSect::CCritSect () {
-    m_handle = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    pthread_mutex_lock(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    pthread_mutex_unlock(&m_handle);
-}
+#ifdef CRITSECT_WTF
+    m_handle = new std::recursive_mutex;
+#else
+    m_handle = new CRITICAL_SECTION;
+    InitializeCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(m_handle));
 #endif
+}
+
+//===========================================================================
+CCritSect::~CCritSect () {
+#ifdef CRITSECT_WTF
+    if (!reinterpret_cast<std::recursive_mutex*>(m_handle)->try_lock())
+        hsAssert(0, "CCritSect destroyed while still locked!");
+    else
+        reinterpret_cast<std::recursive_mutex*>(m_handle)->unlock();
+
+    delete reinterpret_cast<std::recursive_mutex*>(m_handle);
+#else
+    DeleteCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(m_handle));
+    delete reinterpret_cast<CRITICAL_SECTION*>(m_handle);
+#endif
+}
+
+//===========================================================================
+void CCritSect::Enter () {
+#ifdef CRITSECT_WTF
+    reinterpret_cast<std::recursive_mutex*>(m_handle)->lock();
+#else
+    EnterCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(m_handle));
+#endif
+}
+
+//===========================================================================
+void CCritSect::Leave () {
+#ifdef CRITSECT_WTF
+    reinterpret_cast<std::recursive_mutex*>(m_handle)->unlock();
+#else
+    LeaveCriticalSection(reinterpret_cast<CRITICAL_SECTION*>(m_handle));
+#endif
+}
