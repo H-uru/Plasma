@@ -219,7 +219,9 @@ static void SocketGetAddresses (
 static void SocketStartAsyncRead (NtSock * sock) {
     // enter critical section in case someone attempts to close socket from another thread
     bool readResult;
-    sock->critsect.Enter();
+    DWORD err = 0;
+    std::lock_guard<std::mutex> lock(sock->critsect);
+
     if (sock->handle != INVALID_HANDLE_VALUE) {
         ++sock->ioCount;
         readResult = ReadFile(
@@ -229,13 +231,12 @@ static void SocketStartAsyncRead (NtSock * sock) {
             0,
             &sock->opRead.overlapped
         );
+        err = GetLastError();
     }
     else {
         readResult = true;
     }
-    sock->critsect.Leave();
 
-    DWORD err = GetLastError();
     if (!readResult && (err != ERROR_IO_PENDING))
         --sock->ioCount;
 }
@@ -860,12 +861,11 @@ static unsigned SocketCloseTimerCallback (void *) {
         
             // Get the socket (safely)
             HANDLE handle;
-            sock->critsect.Enter();
             {
+                std::lock_guard<std::mutex> sockLock(sock->critsect);
                 handle = sock->handle;
                 sock->handle = INVALID_HANDLE_VALUE;
             }
-            sock->critsect.Leave();
             if (handle != INVALID_HANDLE_VALUE)
                 sockets.Push((SOCKET) handle);
 
@@ -1089,21 +1089,26 @@ bool INtSocketOpCompleteQueuedSocketWrite (
     PerfAddCounter(kAsyncPerfSocketBytesWriteQueued, op->write.bytes);
 
     // must enter critical section in case someone attempts to close socket from another thread
-    sock->critsect.Enter();
-    op->opType = kOpSocketWrite;
-    ASSERT(!op->overlapped.hEvent);
-    const bool writeResult = WriteFile(
-        sock->handle, 
-        op->write.buffer, 
-        op->write.bytes, 
-        0, 
-        &op->overlapped
-    );
-    sock->critsect.Leave();
+    bool writeResult;
+    DWORD err;
+    {
+        std::lock_guard<std::mutex> lock(sock->critsect);
+
+        op->opType = kOpSocketWrite;
+        ASSERT(!op->overlapped.hEvent);
+        writeResult = WriteFile(
+            sock->handle,
+            op->write.buffer,
+            op->write.bytes,
+            0,
+            &op->overlapped
+        );
+        err = GetLastError();
+    }
 
 //    LogMsg(kLogPerf, L"Nt sock %p wrote %u bytes", sock, op->write.bytes);
     
-    if (!writeResult && (GetLastError() != ERROR_IO_PENDING)) {
+    if (!writeResult && (err != ERROR_IO_PENDING)) {
         op->write.bytesProcessed = 0;
 
         // No further operations must be allowed to complete. The disconnect
@@ -1269,30 +1274,32 @@ void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
 
     // must enter critical section in case someone attempts to close socket from another thread
     HANDLE handle;
-    sock->critsect.Enter();
-    if (hardClose) {
-        // Prepare to close the socket immediately once we leave the critsect
-        handle          = sock->handle;
-        sock->handle    = INVALID_HANDLE_VALUE;
+    {
+        std::lock_guard<std::mutex> lock(sock->critsect);
 
-        // Mark the socket closed in such a way that, if it has already been
-        // soft closed, the mark won't invalidate the ordering of s_socketList
-        sock->closeTimeMs |= 1;
+        if (hardClose) {
+            // Prepare to close the socket immediately once we leave the critsect
+            handle          = sock->handle;
+            sock->handle    = INVALID_HANDLE_VALUE;
+
+            // Mark the socket closed in such a way that, if it has already been
+            // soft closed, the mark won't invalidate the ordering of s_socketList
+            sock->closeTimeMs |= 1;
+        }
+        else if (!sock->closeTimeMs) {
+            // The socket hasn't been closed previously; perform shutdown,
+            // and mark the socket closed with a time value that indicates
+            // its ordering in s_socketList;
+            handle              = INVALID_HANDLE_VALUE;
+            sock->closeTimeMs   = (TimeGetMs() + kCloseTimeoutMs) | 1;
+            shutdown((SOCKET) sock->handle, SD_SEND);
+        }
+        else {
+            // The socket has already been closed previously
+            handle      = INVALID_HANDLE_VALUE;
+            hardClose   = true;
+        }
     }
-    else if (!sock->closeTimeMs) {
-        // The socket hasn't been closed previously; perform shutdown,
-        // and mark the socket closed with a time value that indicates
-        // its ordering in s_socketList;
-        handle              = INVALID_HANDLE_VALUE;
-        sock->closeTimeMs   = (TimeGetMs() + kCloseTimeoutMs) | 1;
-        shutdown((SOCKET) sock->handle, SD_SEND);
-    }
-    else {
-        // The socket has already been closed previously
-        handle      = INVALID_HANDLE_VALUE;
-        hardClose   = true;
-    }
-    sock->critsect.Leave();
 
     if (handle != INVALID_HANDLE_VALUE) {
         HardCloseSocket((SOCKET) handle);
@@ -1329,49 +1336,38 @@ bool NtSocketSend (
 
 //    LogMsg(kLogPerf, L"Nt sock %p sending %u bytes", sock, bytes);
 
-    bool result;
-    sock->critsect.Enter();
-    for (;;) {
-        // Is the socket closing?
-        if (sock->closeTimeMs) {
-            result = false;
-            break;
+    std::lock_guard<std::mutex> lock(sock->critsect);
+
+    // Is the socket closing?
+    if (sock->closeTimeMs)
+        return false;
+
+    // if there isn't any data queued, send this batch immediately
+    bool dataQueued = sock->opList.Head() != nil;
+    if (!dataQueued) {
+        int bytesSent = send((SOCKET) sock->handle, (const char *) data, bytes, 0);
+        if (bytesSent != SOCKET_ERROR) {
+            // if we sent all the data then exit
+            if ((unsigned) bytesSent >= bytes)
+                return true;
+
+            // subtract the data we already sent
+            data = (const uint8_t *) data + bytesSent;
+            bytes -= bytesSent;
+            // and queue it below
         }
-
-        // if there isn't any data queued, send this batch immediately
-        bool dataQueued = sock->opList.Head() != nil;
-        if (!dataQueued) {
-            int bytesSent = send((SOCKET) sock->handle, (const char *) data, bytes, 0);
-            if (bytesSent != SOCKET_ERROR) {
-                result = true;
-
-                // if we sent all the data then exit
-                if ((unsigned) bytesSent >= bytes)
-                    break;
-
-                // subtract the data we already sent
-                data = (const uint8_t *) data + bytesSent;
-                bytes -= bytesSent;
-                // and queue it below
-            }
-            else if (WSAEWOULDBLOCK != WSAGetLastError()) {
-                // an error occurred -- destroy connection
-                NtSocketDisconnect((AsyncSocket) sock, true);
-                result = false;
-                break;
-            }
+        else if (WSAEWOULDBLOCK != WSAGetLastError()) {
+            // an error occurred -- destroy connection
+            NtSocketDisconnect((AsyncSocket) sock, true);
+            return false;
         }
-
-        NtOpSocketWrite * op = SocketQueueAsyncWrite(sock, (const uint8_t *) data, bytes);
-        if (op && !dataQueued)
-            result = INtSocketOpCompleteQueuedSocketWrite(sock, op);
-        else
-            result = true;
-        break;
     }
-    sock->critsect.Leave();
 
-    return result;
+    NtOpSocketWrite * op = SocketQueueAsyncWrite(sock, (const uint8_t *) data, bytes);
+    if (op && !dataQueued)
+        return INtSocketOpCompleteQueuedSocketWrite(sock, op);
+    else
+        return true;
 }
 
 //===========================================================================
@@ -1388,47 +1384,40 @@ bool NtSocketWrite (
 
 //    LogMsg(kLogPerf, L"Nt sock %p writing %u bytes", sock, bytes);
 
-    bool result;
-    sock->critsect.Enter();
-    for (;;) {
-        // Is the socket closing?
-        if (sock->closeTimeMs) {
-            result = false;
-            break;
-        }
+    std::lock_guard<std::mutex> lock(sock->critsect);
 
-        // init Operation
-        NtOpSocketWrite * op        = new NtOpSocketWrite;
-        op->overlapped.Offset       = 0;
-        op->overlapped.OffsetHigh   = 0;
-        op->overlapped.hEvent       = nil;
-        op->opType                  = kOpQueuedSocketWrite;
-        op->asyncId                 = INtConnSequenceStart(sock);
-        op->notify                  = true;
-        op->pending                 = 1;
-        op->signalComplete          = nil;
-        sock->opList.Link(op, kListTail);
+    // Is the socket closing?
+    if (sock->closeTimeMs)
+        return false;
 
-        // init OpWrite
-        op->queueTimeMs             = TimeGetMs();
-        op->bytesAlloc              = bytes;
-        op->write.param             = param;
-        op->write.asyncId           = op->asyncId;
-        op->write.buffer            = (uint8_t *) buffer;
-        op->write.bytes             = bytes;
-        op->write.bytesProcessed    = bytes;
-        PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
+    // init Operation
+    NtOpSocketWrite * op        = new NtOpSocketWrite;
+    op->overlapped.Offset       = 0;
+    op->overlapped.OffsetHigh   = 0;
+    op->overlapped.hEvent       = nil;
+    op->opType                  = kOpQueuedSocketWrite;
+    op->asyncId                 = INtConnSequenceStart(sock);
+    op->notify                  = true;
+    op->pending                 = 1;
+    op->signalComplete          = nil;
+    sock->opList.Link(op, kListTail);
 
-        ++sock->ioCount;
+    // init OpWrite
+    op->queueTimeMs             = TimeGetMs();
+    op->bytesAlloc              = bytes;
+    op->write.param             = param;
+    op->write.asyncId           = op->asyncId;
+    op->write.buffer            = (uint8_t *) buffer;
+    op->write.bytes             = bytes;
+    op->write.bytesProcessed    = bytes;
+    PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytes);
 
-        if (op == sock->opList.Head())
-            result = INtSocketOpCompleteQueuedSocketWrite((NtSock *) sock, op);
-        else
-            result = true;
-        break;
-    }
-    sock->critsect.Leave();
-    return result;
+    ++sock->ioCount;
+
+    if (op == sock->opList.Head())
+        return INtSocketOpCompleteQueuedSocketWrite((NtSock *) sock, op);
+    else
+        return true;
 }
 
 //===========================================================================
@@ -1439,7 +1428,8 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
     ASSERT(sock->ioType == kNtSocket);
     
     // must enter critical section in case someone attempts to close socket from another thread
-    sock->critsect.Enter();
+    std::lock_guard<std::mutex> lock(sock->critsect);
+
     if (sock->handle != INVALID_HANDLE_VALUE) {
         BOOL noDelay = !enable;
         const int result = setsockopt(
@@ -1452,7 +1442,6 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
         if (result)
             LogMsg(kLogError, "setsockopt failed (nagling)");
     }
-    sock->critsect.Leave();
 }
 
 //===========================================================================

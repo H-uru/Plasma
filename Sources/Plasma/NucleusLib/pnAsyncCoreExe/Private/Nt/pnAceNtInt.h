@@ -117,7 +117,7 @@ struct Operation {
 };
 
 struct NtObject {
-    CCritSect                   critsect;
+    std::mutex                  critsect;
     EIoType                     ioType;
     HANDLE                      handle;
     void *                      userState;
