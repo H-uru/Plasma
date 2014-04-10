@@ -86,7 +86,7 @@ class plStatusLog
         plFileName   fFilename;
         char**       fLines;
         uint32_t*    fColors;
-        hsSemaphore* fSema;
+        hsGlobalSemaphore* fSema;
         FILE*        fFileHandle;
         uint32_t     fSize;
         bool         fForceLog;

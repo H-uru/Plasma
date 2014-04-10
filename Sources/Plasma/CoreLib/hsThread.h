@@ -107,8 +107,44 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+class hsSemaphore
+{
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+    unsigned fValue;
 
-class hsSemaphore {
+public:
+    hsSemaphore(unsigned initial = 0) : fValue(initial) { }
+
+    inline void Wait()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock, [this]() { return fValue > 0; });
+        --fValue;
+    }
+
+    template <class _Rep, class _Period>
+    inline bool Wait(const std::chrono::duration<_Rep, _Period> &duration)
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+
+        bool result = fCondition.wait_for(lock, duration, [this]() { return fValue > 0; });
+        if (result)
+            --fValue;
+
+        return result;
+    }
+
+    inline void Signal()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        ++fValue;
+        fCondition.notify_one();
+    }
+};
+
+//////////////////////////////////////////////////////////////////////////////
+class hsGlobalSemaphore {
 #if HS_BUILD_FOR_WIN32
     HANDLE  fSemaH;
 #elif HS_BUILD_FOR_UNIX
@@ -122,8 +158,8 @@ class hsSemaphore {
 #endif
 #endif
 public:
-    hsSemaphore(int initialValue=0, const char* name=nullptr);
-    ~hsSemaphore();
+    hsGlobalSemaphore(int initialValue = 0, const char* name = nullptr);
+    ~hsGlobalSemaphore();
 
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE GetHandle() const { return fSemaH; }
