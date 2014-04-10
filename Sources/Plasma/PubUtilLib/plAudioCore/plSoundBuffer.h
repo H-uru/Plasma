@@ -169,7 +169,7 @@ protected:
     std::mutex fCritSect;
 
 public:
-    virtual hsError Run();
+    virtual void Run();
 
     virtual void Start() {
         fRunning = true;

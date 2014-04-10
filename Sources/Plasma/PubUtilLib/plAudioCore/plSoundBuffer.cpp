@@ -87,7 +87,7 @@ static plAudioFileReader *CreateReader( bool fullpath, const plFileName &filenam
     return reader;
 }
 
-hsError plSoundPreloader::Run()
+void plSoundPreloader::Run()
 {
     hsTArray<plSoundBuffer*> templist;
 
@@ -143,8 +143,6 @@ hsError plSoundPreloader::Run()
             buf->SetLoaded(true);
         }
     }
-
-    return hsOK;
 }
 
 static plSoundPreloader gLoaderThread;

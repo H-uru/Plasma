@@ -76,18 +76,15 @@ const std::chrono::milliseconds kNetCoreUpdateSleepTime(10);    // 10ms
 class plShardStatus : public hsThread
 {
     double        fLastUpdate;
-    volatile bool fRunning;
     hsEvent       fUpdateEvent;
     char          fCurlError[CURL_ERROR_SIZE];
 
 public:
     plClientLauncher::StatusFunc fShardFunc;
 
-    plShardStatus() :
-        fRunning(true), fLastUpdate(0)
-    { }
+    plShardStatus() : fLastUpdate(0) { }
 
-    virtual hsError Run();
+    virtual void Run();
     void Shutdown();
     void Update();
 };
@@ -102,41 +99,37 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
     return size * nmemb;
 }
 
-hsError plShardStatus::Run()
+void plShardStatus::Run()
 {
+    const char* url = GetServerStatusUrl();
+
+    // initialize CURL
+    std::unique_ptr<CURL, std::function<void(CURL*)>> curl(curl_easy_init(), curl_easy_cleanup);
+    curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
+    curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
+    curl_easy_setopt(curl.get(), CURLOPT_URL, url);
+    curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
+    curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
+
+    // we want to go ahead and run once
+    fUpdateEvent.Signal();
+
+    // loop until we die!
+    do
     {
-        const char* url = GetServerStatusUrl();
+        fUpdateEvent.Wait();
+        if (GetQuit())
+            break;
 
-        // initialize CURL
-        std::unique_ptr<CURL, std::function<void(CURL*)>> curl(curl_easy_init(), curl_easy_cleanup);
-        curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
-        curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
-        curl_easy_setopt(curl.get(), CURLOPT_URL, url);
-        curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
-        curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
-
-        // we want to go ahead and run once
-        fUpdateEvent.Signal();
-
-        // loop until we die!
-        do
-        {
-            fUpdateEvent.Wait();
-            if (!fRunning)
-                break;
-
-            if (url[0] && curl_easy_perform(curl.get()))
-                fShardFunc(fCurlError);
-            fLastUpdate = hsTimer::GetSysSeconds();
-        } while (fRunning);
-    }
-
-    return hsOK;
+        if (url[0] && curl_easy_perform(curl.get()))
+            fShardFunc(fCurlError);
+        fLastUpdate = hsTimer::GetSysSeconds();
+    } while (!GetQuit());
 }
 
 void plShardStatus::Shutdown()
 {
-    fRunning = false;
+    SetQuit(true);;
     fUpdateEvent.Signal();
 }
 
@@ -180,7 +173,7 @@ public:
             fParent->LaunchClient();
     }
 
-    virtual hsError Run()
+    virtual void Run()
     {
         while (!fRedistQueue.empty()) {
             if (fInstallProc(fRedistQueue.back()))
@@ -188,10 +181,9 @@ public:
             else {
                 s_errorProc(kNetErrInternalError, fRedistQueue.back().AsString());
                 fSuccess = false;
-                return hsFail;
+                return;
             }
         }
-        return hsOK;
     }
 
     virtual void Start()

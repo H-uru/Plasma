@@ -68,7 +68,7 @@ protected:
     };
 
 public:
-    hsError Run()
+    virtual void Run()
     {
         while (1)
         {
@@ -80,7 +80,7 @@ public:
                 EnableWindow(GetDlgItem(hMtlDlg, kMtlEditor), FALSE);
                 EnableWindow(GetDlgItem(hMtlDlg, kActiveSlot), FALSE);
                 EnableWindow(GetDlgItem(hMtlDlg, kNew), FALSE);
-                return 1;
+                return;
             }
         }
     }

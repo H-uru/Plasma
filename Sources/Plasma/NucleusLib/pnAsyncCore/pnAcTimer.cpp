@@ -81,7 +81,7 @@ struct AsyncTimer::P::Thread : hsThread {
     PRIQDECL(P, PRIORITY_TIME(P), priority) procsList;
     LISTDECL(P, deleteLink)                 deleteList;
     
-    hsError Run();
+    void Run();
     using hsThread::SetQuit;
 };
 AsyncTimer::P::Thread *     AsyncTimer::P::s_thread = nullptr;
@@ -180,13 +180,12 @@ inline void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
 }
 
 //===========================================================================
-hsError AsyncTimer::P::Thread::Run () {
+void AsyncTimer::P::Thread::Run() {
     do {
         const unsigned sleepMs = P::Run();
 
         s_thread->event.Wait(std::chrono::milliseconds(sleepMs));
     } while (!s_thread->GetQuit());
-    return 0;
 }
 
 

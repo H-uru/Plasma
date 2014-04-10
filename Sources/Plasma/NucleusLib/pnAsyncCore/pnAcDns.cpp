@@ -125,12 +125,12 @@ struct AsyncDns::P::Name : AsyncDns::P {
     unsigned        port;
     addrinfo *      result;
     
-    hsError Run ();
+    void Run();
     void Callback ();
 };
 
 //===========================================================================
-hsError AsyncDns::P::Name::Run () {
+void AsyncDns::P::Name::Run () {
     std::stringstream sstr;
     sstr << port;
     addrinfo hints = { 0 };
@@ -144,8 +144,6 @@ hsError AsyncDns::P::Name::Run () {
     hints.ai_next = nullptr;
     error = getaddrinfo(name, sstr.str().c_str(), &hints, &result);
     IWorkerThreads::Add(this);
-    
-    return 0;
 }
 
 //===========================================================================
@@ -210,13 +208,13 @@ struct AsyncDns::P::Addr : AsyncDns::P {
     
     plNetAddress    addr;
     char            result[kMaxLookupName];
-    
-    hsError Run ();
+
+    void Run();
     void Callback ();
 };
 
 //===========================================================================
-hsError AsyncDns::P::Addr::Run () {
+void AsyncDns::P::Addr::Run () {
     error = getnameinfo(
         (const sockaddr*)&addr.GetAddressInfo(),
         sizeof(AddressType),
@@ -225,8 +223,6 @@ hsError AsyncDns::P::Addr::Run () {
         0
     );
     IWorkerThreads::Add(this);
-    
-    return 0;
 }
 
 //===========================================================================

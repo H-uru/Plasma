@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 struct IWorkerThreads::P {
-    class Thread;
+    struct Thread;
     static P *  This;
     
     Thread *        threads;
@@ -77,11 +77,11 @@ struct IWorkerThreads::P {
 IWorkerThreads::P * IWorkerThreads::P::This = nullptr;
 
 struct IWorkerThreads::P::Thread : hsThread {
-    hsError Run ();
+    void Run();
 };
 
 //===========================================================================
-hsError IWorkerThreads::P::Thread::Run () {
+void IWorkerThreads::P::Thread::Run() {
     while (1) {
         This->listSem.Wait();
         
@@ -104,8 +104,6 @@ hsError IWorkerThreads::P::Thread::Run () {
         
         op->Callback();
     }
-    
-    return 0;
 }
 
 //===========================================================================

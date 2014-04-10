@@ -138,13 +138,13 @@ struct AsyncSocket::P::Thread : hsThread {
     
     Thread () : opList(nullptr), coList(nullptr) {}
     
-    hsError Run ();
+    void Run();
     void Stop ();
     void ListFds (fd_set (&fds)[2]);
 };
 
 //===========================================================================
-hsError AsyncSocket::P::Thread::Run() {
+void AsyncSocket::P::Thread::Run() {
     while (!GetQuit()) {
         fd_set fds[2];
         ListFds(fds);
@@ -175,8 +175,6 @@ hsError AsyncSocket::P::Thread::Run() {
         IWorkerThreads::Add(op);
     }
     opList = nullptr;
-    
-    return 0;
 }
 
 
