@@ -80,6 +80,11 @@ public:
     virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
 
+    inline size_t ThreadHash() const
+    {
+        return std::hash<std::thread::id>()(fThread.get_id());
+    }
+
     static inline size_t ThisThreadHash()
     {
         return std::hash<std::thread::id>()(std::this_thread::get_id());
@@ -166,6 +171,13 @@ public:
     {
         std::unique_lock<std::mutex> lock(fMutex);
         fCondition.wait(lock);
+    }
+
+    template <class _Rep, class _Period>
+    inline bool Wait(const std::chrono::duration<_Rep, _Period> &duration)
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        return fCondition.wait_for(lock, duration) != std::cv_status::timeout;
     }
 
     inline void Signal()

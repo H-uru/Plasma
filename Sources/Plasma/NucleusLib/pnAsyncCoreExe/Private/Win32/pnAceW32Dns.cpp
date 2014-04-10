@@ -73,9 +73,27 @@ struct Lookup {
     char                buffer[MAXGETHOSTSTRUCT];
 };
 
+class W32DnsThread : public hsThread
+{
+    hsSemaphore lookupStartEvent;
+    hsSemaphore finished;
+
+public:
+    virtual void Run();
+    virtual void OnQuit() { finished.Signal(); }
+
+    void WaitForLookupStart() { lookupStartEvent.Wait(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
+
 static std::mutex               s_critsect;
 static LISTDECL(Lookup, link)   s_lookupList;
-static HANDLE                   s_lookupThread;
+static W32DnsThread *           s_lookupThread = nullptr;
 static HWND                     s_lookupWindow;
 static unsigned                 s_nextLookupCancelId = 1;
 
@@ -146,7 +164,8 @@ static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
 }
 
 //===========================================================================
-static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
+void W32DnsThread::Run()
+{
     static const char WINDOW_CLASS[] = "AsyncLookupWnd";
     WNDCLASS wc;
     memset(&wc, 0, sizeof(wc));
@@ -159,7 +178,7 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
         WINDOW_CLASS,
         WINDOW_CLASS,
         WS_OVERLAPPED,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         (HWND)0,
         (HMENU) 0,
         wc.hInstance,
@@ -168,8 +187,7 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     if (!s_lookupWindow)
         ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
 
-    HANDLE lookupStartEvent = (HANDLE) thread->argument;
-    SetEvent(lookupStartEvent);
+    lookupStartEvent.Signal();
 
     MSG msg;
     while (GetMessage(&msg, s_lookupWindow, 0, 0)) {
@@ -204,8 +222,6 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     // cleanup
     DestroyWindow(s_lookupWindow);
     s_lookupWindow = nil;
-
-    return 0;
 }
 
 //===========================================================================
@@ -213,25 +229,10 @@ static void StartLookupThread () {
     if (s_lookupThread)
         return;
 
-    // create a shutdown event
-    HANDLE lookupStartEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) 0,
-        true,           // manual reset
-        false,          // initial state off
-        (LPCTSTR) 0     // name
-    );
-    if (!lookupStartEvent)
-        ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
-
     // create a thread to perform lookups
-    s_lookupThread = (HANDLE) AsyncThreadCreate(
-        LookupThreadProc,
-        lookupStartEvent,
-        L"AsyncLookupThread"
-    );
+    s_lookupThread = new W32DnsThread;
 
-    WaitForSingleObject(lookupStartEvent, INFINITE);
-    CloseHandle(lookupStartEvent);
+    s_lookupThread->WaitForLookupStart();
     ASSERT(s_lookupWindow);
 }
 
@@ -246,9 +247,9 @@ static void StartLookupThread () {
 void DnsDestroy (unsigned exitThreadWaitMs) {
     if (s_lookupThread) {
         PostMessage(s_lookupWindow, WM_LOOKUP_EXIT, 0, 0);
-        WaitForSingleObject(s_lookupThread, exitThreadWaitMs);
-        CloseHandle(s_lookupThread);
-        s_lookupThread = nil;
+        s_lookupThread->Shutdown(exitThreadWaitMs);
+        delete s_lookupThread;
+        s_lookupThread = nullptr;
         ASSERT(!s_lookupWindow);
     }
 }

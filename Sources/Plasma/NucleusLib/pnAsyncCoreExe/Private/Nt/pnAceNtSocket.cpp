@@ -129,14 +129,32 @@ struct NtSock : NtObject {
     ~NtSock ();
 };
 
+class NtListenThread : public hsThread
+{
+    hsEvent listenEvent;
+    hsSemaphore finished;
+
+public:
+    virtual void Run();
+    virtual void OnQuit() { finished.Signal(); }
+
+    void Signal() { listenEvent.Signal(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        SetQuit(true);
+        listenEvent.Signal();
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
+
 
 static std::mutex                       s_listenCrit;
 static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
-static bool                             s_runListenThread;
 static unsigned                         s_nextConnectCancelId = 1;
-static HANDLE                           s_listenThread;
-static HANDLE                           s_listenEvent;
+static NtListenThread *                 s_listenThread = nullptr;
 
 
 const unsigned kCloseTimeoutMs = 8*1000;
@@ -706,7 +724,7 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 }
 
 //===========================================================================
-static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
+void NtListenThread::Run() {
     fd_set readfds;
     fd_set writefds;
     for (;;) {
@@ -715,12 +733,12 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
             ListenPrepareListeners(&readfds);
             ListenPrepareConnectors(&writefds);
         }
-        if (!s_runListenThread)
+        if (GetQuit())
             break;
 
         // wait until there is something on listen or connect list
         if (!readfds.fd_count && !writefds.fd_count) {
-            WaitForSingleObject(s_listenEvent, INFINITE);
+            listenEvent.Wait();
             continue;
         }
 
@@ -774,8 +792,6 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         }
         INtConnPostOperation(nil, op, 0);
     }
-
-    return 0;
 }
 
 //===========================================================================
@@ -783,21 +799,9 @@ static void StartListenThread () {
     if (s_listenThread)
         return;
 
-    s_listenEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) nil,
-        false,  // auto-reset event
-        false,  // initial state unsignaled
-        (LPCTSTR) nil
-    );
-    ASSERT(s_listenEvent);
-
     // create a low-priority thread to listen on ports
-    s_runListenThread = true;
-    s_listenThread = (HANDLE) AsyncThreadCreate(
-        ListenThreadProc,
-        nil,
-        L"NtListenThread"
-    );
+    s_listenThread = new NtListenThread();
+    s_listenThread->Start();
 }
 
 //===========================================================================
@@ -903,16 +907,10 @@ void INtSocketInitialize () {
 
 //===========================================================================
 void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
-    s_runListenThread = false;
     if (s_listenThread) {
-        SetEvent(s_listenEvent);
-        WaitForSingleObject(s_listenThread, exitThreadWaitMs);
-        CloseHandle(s_listenThread);
-        s_listenThread = nil;
-    }
-    if (s_listenEvent) {
-        CloseHandle(s_listenEvent);
-        s_listenEvent = nil;
+        s_listenThread->Shutdown(exitThreadWaitMs);
+        delete s_listenThread;
+        s_listenThread = nullptr;
     }
 
     std::lock_guard<std::mutex> lock(s_listenCrit);
@@ -1162,8 +1160,10 @@ unsigned NtSocketStartListening (
     }
 
     unsigned port = addr.GetPort();
-    if (port)
-        SetEvent(s_listenEvent);
+    if (port) {
+        ASSERT(s_listenThread);
+        s_listenThread->Signal();
+    }
 
     return port;
 }
@@ -1220,18 +1220,17 @@ void NtSocketConnect (
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutTotal, 1);
 
-    {
-        std::lock_guard<std::mutex> lock(s_listenCrit);
-        StartListenThread();
+    std::lock_guard<std::mutex> lock(s_listenCrit);
+    StartListenThread();
 
-        // get cancel id; we can avoid checking for zero by always using an odd number
-        ASSERT(s_nextConnectCancelId & 1);
-        s_nextConnectCancelId += 2;
+    // get cancel id; we can avoid checking for zero by always using an odd number
+    ASSERT(s_nextConnectCancelId & 1);
+    s_nextConnectCancelId += 2;
 
-        *cancelId = op->cancelId = (AsyncCancelId) s_nextConnectCancelId;
-        s_connectList.Link(op, kListTail);
-    }
-    SetEvent(s_listenEvent);
+    *cancelId = op->cancelId = (AsyncCancelId) s_nextConnectCancelId;
+    s_connectList.Link(op, kListTail);
+
+    s_listenThread->Signal();
 }
 
 //===========================================================================

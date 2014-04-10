@@ -53,6 +53,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace Nt {
 
+class NtIoThread : public hsThread
+{
+    hsSemaphore finished;
+
+public:
+    virtual void Run();
+    virtual void OnQuit() { finished.Signal(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
+
 /****************************************************************************
 *
 *   Private data
@@ -62,11 +77,11 @@ namespace Nt {
 // Use non-allocated arrays for worker threads since they're used so frequently.
 const unsigned kMaxWorkerThreads = 32;  // handles 8-processor computer w/hyperthreading
 
-static bool                     s_running;
+static volatile bool            s_running;
 static HANDLE                   s_waitEvent;
 
 static long                     s_ioThreadCount;
-static HANDLE                   s_ioThreadHandles[kMaxWorkerThreads];
+static NtIoThread *             s_ioThreadHandles[kMaxWorkerThreads] = { 0 };
 
 static HANDLE                   s_ioPort;
 static unsigned                 s_pageSizeMask;
@@ -210,7 +225,8 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
+void NtIoThread::Run()
+{
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
@@ -243,8 +259,6 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
         sleepMs = INFINITE;
         continue;
     }
-
-    return 0;
 }
 
 
@@ -347,11 +361,8 @@ void NtInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = (HANDLE) AsyncThreadCreate(
-            NtWorkerThreadProc,
-            (void *) thread,
-            L"NtWorkerThread"
-        );
+        s_ioThreadHandles[thread] = new NtIoThread;
+        s_ioThreadHandles[thread]->Start();
     }
 
     INtSocketInitialize();
@@ -377,9 +388,9 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
             if (s_ioThreadHandles[thread]) {
-                WaitForSingleObject(s_ioThreadHandles[thread], exitThreadWaitMs);
-                CloseHandle(s_ioThreadHandles[thread]);
-                s_ioThreadHandles[thread] = nil;
+                s_ioThreadHandles[thread]->Shutdown(exitThreadWaitMs);
+                delete s_ioThreadHandles[thread];
+                s_ioThreadHandles[thread] = nullptr;
             }
         }
 

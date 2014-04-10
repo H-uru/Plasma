@@ -49,6 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 #pragma hdrstop
 
+#ifdef USE_VLD
+#include <vld.h>
+#endif
 
 /*****************************************************************************
 *
@@ -104,7 +107,13 @@ AsyncThreadTaskList::~AsyncThreadTaskList () {
 ***/
 
 //===========================================================================
-static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
+static void ThreadTaskProc()
+{
+#ifdef USE_VLD
+    // Needs to be enabled for each thread except the WinMain
+    VLDEnable();
+#endif
+
     PerfAddCounter(kAsyncPerfThreadTaskThreadsActive, 1);
 
     for (;;) {
@@ -145,18 +154,6 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
         }
     }
     PerfSubCounter(kAsyncPerfThreadTaskThreadsActive, 1);
-
-    return 0;
-}
-
-//===========================================================================
-static unsigned THREADCALL FirstThreadTaskProc (AsyncThread * param) {
-    while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
-        PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
-        AsyncThreadCreate(ThreadTaskProc, nil, L"AsyncThreadTaskList");
-    }
-
-    return ThreadTaskProc(param);
 }
 
 /*****************************************************************************
@@ -217,7 +214,22 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 
     if (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
         PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
-        AsyncThreadCreate(FirstThreadTaskProc, nil, L"ThreadTaskList");
+        std::thread firstWorker([]()
+        {
+        #ifdef USE_VLD
+            // Needs to be enabled for each thread except the WinMain
+            VLDEnable();
+        #endif
+
+            while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
+                PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
+                std::thread worker(&ThreadTaskProc);
+                worker.detach();
+            }
+
+            ThreadTaskProc();
+        });
+        firstWorker.detach();
     }
     else {
         PostQueuedCompletionStatus(s_taskPort, 0, 0, 0);
