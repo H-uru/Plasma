@@ -129,7 +129,7 @@ struct pfPatcherWorker : public hsThread
 
     void EndPatch(ENetError result, const plString& msg=plString::Null);
     bool IssueRequest();
-    virtual hsError Run();
+    virtual void Run();
     void ProcessFile();
     void WhitelistFile(const plFileName& file, bool justDownloaded, hsStream* s=nullptr);
 };
@@ -433,7 +433,7 @@ bool pfPatcherWorker::IssueRequest()
     return true;
 }
 
-hsError pfPatcherWorker::Run()
+void pfPatcherWorker::Run()
 {
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
@@ -465,7 +465,6 @@ hsError pfPatcherWorker::Run()
     } while (fStarted);
 
     EndPatch(kNetSuccess);
-    return hsOK;
 }
 
 void pfPatcherWorker::ProcessFile()
