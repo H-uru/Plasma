@@ -72,7 +72,7 @@ int clock_gettime(int clocktype, struct timespec* ts)
 
 /////////////////////////////////////////////////////////////////////////////
 
-hsSemaphore::hsSemaphore(int initialValue, const char* name)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char* name)
 {
 #ifdef USE_SEMA
     fPSema = nil;
@@ -102,7 +102,7 @@ hsSemaphore::hsSemaphore(int initialValue, const char* name)
 #endif
 }
 
-hsSemaphore::~hsSemaphore()
+hsGlobalSemaphore::~hsGlobalSemaphore()
 {
 #ifdef USE_SEMA
     int status = 0;
@@ -122,7 +122,7 @@ hsSemaphore::~hsSemaphore()
 #endif
 }
 
-bool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
 #ifdef USE_SEMA  // SHOULDN'T THIS USE timeToWait??!?!? -rje
     // shouldn't this use sem_timedwait? -dpogue (2012-03-04)
@@ -174,7 +174,7 @@ EXIT:
 #endif
 }
 
-void hsSemaphore::Signal()
+void hsGlobalSemaphore::Signal()
 {
 #ifdef USE_SEMA
     int status = sem_post(fPSema);

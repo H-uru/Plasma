@@ -277,14 +277,14 @@ plStatusLog::plStatusLog( uint8_t numDisplayLines, const plFileName &filename, u
     if (filename.IsValid())
     {
         fFilename = filename;
-        fSema = new hsSemaphore(1, fFilename.AsString().c_str());
+        fSema = new hsGlobalSemaphore(1, fFilename.AsString().c_str());
     }
     else
     {
         fFilename = "";
         flags |= kDontWriteFile;
 
-        fSema = new hsSemaphore(1);
+        fSema = new hsGlobalSemaphore(1);
     }
 
     fOrigFlags = fFlags = flags;

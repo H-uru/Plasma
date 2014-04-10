@@ -47,19 +47,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsExceptions.h"
 
-hsSemaphore::hsSemaphore(int initialValue, const char *name)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char *name)
 {
     fSemaH = ::CreateSemaphore(nil, initialValue, kPosInfinity32, name);
     if (fSemaH == nil)
         throw hsOSException(-1);
 }
 
-hsSemaphore::~hsSemaphore()
+hsGlobalSemaphore::~hsGlobalSemaphore()
 {
     ::CloseHandle(fSemaH);
 }
 
-bool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
         timeToWait = INFINITE;
@@ -74,7 +74,7 @@ bool hsSemaphore::Wait(hsMilliseconds timeToWait)
     }
 }
 
-void hsSemaphore::Signal()
+void hsGlobalSemaphore::Signal()
 {
     ::ReleaseSemaphore(fSemaH, 1, nil);
 }
