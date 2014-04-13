@@ -42,22 +42,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plLocTreeView_h
 #define _plLocTreeView_h
 
-#include "HeadSpin.h"
+#include <QTreeWidget>
 #include "plString.h"
 
-class plLocTreeView
+class plLocTreeView : public QTreeWidget
 {
-protected:
-    static plString fPath;
-
 public:
-    static void    FillTreeViewFromData(HWND treeCtrl, plString selectionPath);
-    static void    ClearTreeView(HWND treeCtrl);
+    enum Roles
+    {
+        kLocPathRole = Qt::UserRole
+    };
 
-    static void SelectionChanged(HWND treeCtrl);
-    static void    SelectionDblClicked(HWND treeCtrl);
+    plLocTreeView(QWidget *parent = nullptr) : QTreeWidget(parent) { }
 
-    static plString GetPath() {return fPath;}
+    void LoadData(const plString &path);
+    plString CurrentPath() const;
 };
 
 #endif //_plLocTreeView_h
