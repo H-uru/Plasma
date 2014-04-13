@@ -39,6 +39,7 @@ set(plLocalizationEditor_UIC_SOURCES
 qt5_wrap_ui(plLocalizationEditor_UIC ${plLocalizationEditor_UIC_SOURCES})
 
 # For generated ui_*.h files
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(plLocalizationEditor WIN32 ${plLocalizationEditor_HEADERS}

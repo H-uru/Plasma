@@ -394,7 +394,7 @@ std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char
             continue;
         }
 
-        if (pattern && pattern[0] && fnmatch(pattern, de->d_name, 0))
+        if (pattern && pattern[0] && fnmatch(pattern, de->d_name, 0) == 0)
             contents.push_back(dir_name);
         else if (!pattern || !pattern[0])
             contents.push_back(dir_name);

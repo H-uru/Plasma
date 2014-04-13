@@ -307,8 +307,8 @@ hsSemaphore::~hsSemaphore()
         status = sem_close(fPSema);
     } else {
         status = sem_destroy(fPSema);
+        delete fPSema;
     }
-    delete fPSema;
     hsThrowIfOSErr(status);
 #else
     int status = ::pthread_cond_destroy(&fPCond);

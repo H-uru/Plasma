@@ -54,16 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <functional>
 
-#define ABOUT_TEXT R"(plLocalizationEditor
-A basic editor for Plasma 21 localization resource files
-Copyright (C) 2004 Cyan Worlds, Inc.)"
-
 static void IAboutDialog(QWidget *parent)
 {
     QDialog dlg(parent);
     QLabel *image = new QLabel(&dlg);
     image->setPixmap(QPixmap(":/icon1.ico"));
-    QLabel *text = new QLabel(QObject::tr(ABOUT_TEXT), &dlg);
+    QLabel *text = new QLabel(QObject::tr(R"(plLocalizationEditor
+A basic editor for Plasma 21 localization resource files
+Copyright (C) 2004 Cyan Worlds, Inc.)"), &dlg);
     QPushButton *ok = new QPushButton(QObject::tr("OK"), &dlg);
     ok->setDefault(true);
 
