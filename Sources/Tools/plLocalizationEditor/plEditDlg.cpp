@@ -116,6 +116,9 @@ void EditDialog::SaveLocalizationText()
     plString ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
 
+    if (ageName.IsEmpty() || setName.IsEmpty() || elementName.IsEmpty() || elementLanguage.IsEmpty())
+        return;
+
     plString name = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
     pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, text);
 }
@@ -351,7 +354,7 @@ void EditDialog::DeleteClicked()
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't delete localization!"));
             else
             {
-                plString path = fCurrentLocPath;
+                plString path = key + ".English";
                 fCurrentLocPath = "";
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
