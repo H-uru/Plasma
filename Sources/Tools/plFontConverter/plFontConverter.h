@@ -39,30 +39,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-///////////////////////////////////////////////////////////////////////////////
-//                                                                           //
-//  plFontFreeType Functions                                                 //
-//  Basically our cheat to allow importing fonts via FreeType2 into our      //
-//  plFont system without having to make plFont.cpp reliant on FreeType2.    //
-//                                                                           //
-///////////////////////////////////////////////////////////////////////////////
+#ifndef _plFontConverter_h
+#define _plFontConverter_h
 
-#include "plGImage/plFont.h"
+#include <QMainWindow>
 
-class plFontFreeType : public plFont
+class plFont;
+class plFileName;
+
+class plFontConverter : public QMainWindow
 {
-    public:
+    Q_OBJECT
 
-        struct Options
-        {
-            uint8_t   fSize;
-            bool      fUseKerning;
-            uint8_t   fBitDepth;
-            uint32_t  fScreenRes;
-            uint32_t  fMaxCharLimit;
+public:
+    plFontConverter();
+    virtual ~plFontConverter();
 
-            Options() : fSize(12), fUseKerning(false), fBitDepth(1), fScreenRes(96), fMaxCharLimit(255) { }
-        };
+private slots:
+    void OpenFNT();
+    void OpenBDF();
+    void OpenFON();
+    void OpenTTF();
+    void OpenP2F();
+    void ExportP2F();
 
-        bool    ImportFreeType( const plFileName &fontPath, Options *options, plBDFConvertCallback *callback );
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
+private:
+    class Ui_MainDialog *fUI;
+    plFont *fFont;
+
+    void IMakeFontGoAway();
+    void IMakeNewFont();
+    void IUpdateInfo();
+
+    void IImportFNT(const plFileName &path);
+    void IImportBDF(const plFileName &path);
+    void IImportFON(const plFileName &path);
+    void IBatchFreeType(const plFileName &path, void *init = nullptr);
+    void IImportFreeType(const plFileName &path);
+    void IOpenP2F(const plFileName &path);
 };
+
+#endif

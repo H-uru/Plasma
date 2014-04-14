@@ -20,11 +20,11 @@ set(plLocalizationEditor_SOURCES
     plLocTreeView.cpp
 )
 
-set(plLocalizationEditor_RESOURCES
-    res/plLocalizationEditor.rc
-    res/resource.h
-    res/icon1.ico
-)
+if(WIN32)
+    set(plLocalizationEditor_SOURCES ${plLocalizationEditor_SOURCES}
+        res/plLocalizationEditor.rc
+    )
+endif()
 
 set(plLocalizationEditor_RCC_SOURCES
     res/plLocalizationEditor.qrc

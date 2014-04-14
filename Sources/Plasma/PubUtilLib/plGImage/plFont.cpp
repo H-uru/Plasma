@@ -1253,7 +1253,7 @@ bool    plFont::LoadFromP2FFile( const plFileName &path )
 //  Load this font from the data found in the given Windows FNT file,
 //  using the format specified in the Windows 3 Developers Notes.
 
-bool    plFont::LoadFromFNT( const char *path )
+bool    plFont::LoadFromFNT( const plFileName &path )
 {
     hsUNIXStream    stream;     // Ahh, irony
     if( !stream.Open( path, "rb" ) )
@@ -2023,9 +2023,9 @@ bool    plFont::LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callb
     return false;
 }
 
-bool    plFont::LoadFromBDF( const char *path, plBDFConvertCallback *callback )
+bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callback )
 {
-    FILE *fp = fopen( path, "rt" );
+    FILE *fp = fopen( path.AsString().c_str(), "rt" );
     if( fp == nil )
         return false;
     try

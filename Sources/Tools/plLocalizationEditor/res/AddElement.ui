@@ -27,7 +27,10 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Parent Age:</string>
+      <string>Parent &amp;Age:</string>
+     </property>
+     <property name="buddy">
+      <cstring>fParentAge</cstring>
      </property>
     </widget>
    </item>
@@ -47,7 +50,10 @@
    <item row="2" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Parent Set:</string>
+      <string>Parent &amp;Set:</string>
+     </property>
+     <property name="buddy">
+      <cstring>fParentSet</cstring>
      </property>
     </widget>
    </item>
@@ -67,7 +73,10 @@
    <item row="3" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Element Name:</string>
+      <string>&amp;Element Name:</string>
+     </property>
+     <property name="buddy">
+      <cstring>fElementName</cstring>
      </property>
     </widget>
    </item>

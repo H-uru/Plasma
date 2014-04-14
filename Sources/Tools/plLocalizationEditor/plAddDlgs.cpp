@@ -54,10 +54,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 // very simple validator for edit controls (and combo boxes) so that they only accept alphanumeric values
-class AlphaNumbericValidator : public QValidator
+class AlphaNumericValidator : public QValidator
 {
 public:
-    AlphaNumbericValidator(QObject *parent = nullptr) : QValidator(parent) { }
+    AlphaNumericValidator(QObject *parent = nullptr) : QValidator(parent) { }
 
     virtual State validate(QString &input, int &pos) const override
     {
@@ -79,7 +79,7 @@ plAddElementDlg::plAddElementDlg(const plString &parentPath, QWidget *parent)
     fUI->setupUi(this);
     layout()->setSizeConstraint(QLayout::SetFixedSize);
 
-    AlphaNumbericValidator *validator = new AlphaNumbericValidator(this);
+    AlphaNumericValidator *validator = new AlphaNumericValidator(this);
     fUI->fParentAge->setValidator(validator);
     fUI->fParentSet->setValidator(validator);
     fUI->fElementName->setValidator(validator);

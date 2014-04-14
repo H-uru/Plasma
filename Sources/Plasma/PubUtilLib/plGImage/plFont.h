@@ -293,10 +293,10 @@ class plFont : public hsKeyedObject
         void    CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
         void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
-        bool    LoadFromFNT( const char *path );
+        bool    LoadFromFNT( const plFileName &path );
         bool    LoadFromFNTStream( hsStream *stream );
 
-        bool    LoadFromBDF( const char *path, plBDFConvertCallback *callback );
+        bool    LoadFromBDF( const plFileName &path, plBDFConvertCallback *callback );
         bool    LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback );
 
         bool    LoadFromP2FFile( const plFileName &path );
