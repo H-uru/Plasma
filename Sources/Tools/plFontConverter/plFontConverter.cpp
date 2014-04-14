@@ -79,10 +79,6 @@ REGISTER_CREATABLE(plMipmap);
 
 #include <functional>
 
-HINSTANCE   gInstance;
-char        *gCommandLine = nil;
-HWND        gMainWindow = nil;
-
 static void IAboutDialog(QWidget *parent)
 {
     QDialog dlg(parent);
@@ -379,6 +375,7 @@ void plFontConverter::IImportBDF(const plFileName &path)
     IUpdateInfo();
 }
 
+#ifdef Q_OS_WIN
 struct ResRecord
 {
     HRSRC   fHandle;
@@ -414,6 +411,7 @@ static ResRecord DoSelectResource(const QList<ResRecord> &resources)
 
     return ResRecord();
 }
+#endif
 
 void plFontConverter::IImportFON(const plFileName &path)
 {
