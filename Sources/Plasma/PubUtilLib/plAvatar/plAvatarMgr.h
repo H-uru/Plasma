@@ -141,7 +141,7 @@ public:
 
     plArmatureMod *GetLocalAvatar();
     plKey GetLocalAvatarKey();
-    static plArmatureMod *FindAvatar(plKey& avatarKey); // Key of the sceneObject
+    static plArmatureMod *FindAvatar(const plKey& avatarKey); // Key of the sceneObject
     plArmatureMod *FindAvatarByPlayerID(uint32_t pid);
     plArmatureMod *FindAvatarByModelName(const plString& name); // Probably only useful for custom NPCs. All players are
                                                       // either "Male" or "Female".

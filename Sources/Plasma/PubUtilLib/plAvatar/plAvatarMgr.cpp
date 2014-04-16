@@ -717,7 +717,7 @@ plArmatureMod *plAvatarMgr::GetFirstRemoteAvatar()
     return nil;
 }
 
-plArmatureMod* plAvatarMgr::FindAvatar(plKey& avatarKey)
+plArmatureMod* plAvatarMgr::FindAvatar(const plKey& avatarKey)
 {
     plSceneObject *so = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
     if (so)

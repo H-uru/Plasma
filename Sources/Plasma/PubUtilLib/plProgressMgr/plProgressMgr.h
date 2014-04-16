@@ -236,7 +236,7 @@ class plProgressMgr
 
         static plProgressMgr* GetInstance() { return fManager; }
         static const plString GetLoadingFrameID(int index);
-        uint32_t plProgressMgr::NumLoadingFrames() const;
+        uint32_t NumLoadingFrames() const;
         static const plString GetStaticTextID(StaticText staticTextType);
 
         virtual void    Draw( plPipeline *p ) { }
