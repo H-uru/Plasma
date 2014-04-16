@@ -41,16 +41,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNtInt.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Nt/pnAcNtInt.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENTINT_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNtInt.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENTINT_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_NT_PNACNTINT_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_NT_PNACNTINT_H
 
 #include "hsRefCnt.h"
+#include "pnUtils/pnUtils.h"
+#include "../pnAcSocket.h"
 
 namespace Nt {
 
@@ -251,3 +251,5 @@ void NtSocketEnableNagling (
 );
 
 }   // namespace Nt
+
+#endif

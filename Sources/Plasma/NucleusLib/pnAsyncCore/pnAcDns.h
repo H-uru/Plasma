@@ -41,17 +41,55 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcDns.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Pch.h included more than once"
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACDNS_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACDNS_H
+#include "pnNetCommon/plNetAddress.h"
+
+/****************************************************************************
+*
+*   Global types and constants
+*
+***/
+
+typedef struct AsyncCancelIdStruct *   AsyncCancelId;
+
+
+/****************************************************************************
+*
+*   Dns functions
+*
+***/
+
+typedef void (* FAsyncLookupProc) (
+    void *              param,
+    const char          name[],
+    unsigned            addrCount,
+    const plNetAddress  addrs[]
+);
+
+void AsyncAddressLookupName (
+    AsyncCancelId *     cancelId,
+    FAsyncLookupProc    lookupProc,
+    const char          name[],
+    unsigned            port,
+    void *              param
+);
+
+void AsyncAddressLookupAddr (
+    AsyncCancelId *     cancelId,
+    FAsyncLookupProc    lookupProc,
+    const plNetAddress& address,
+    void *              param
+);
+
+void AsyncAddressLookupCancel (
+    FAsyncLookupProc    lookupProc,
+    AsyncCancelId       cancelId
+);
+
 #endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PCH_H
 
-
-#include "pnUtils/pnUtils.h"
-#include "plProduct.h"
-#include "pnNetBase/pnNetBase.h"
-#include "Private/pnAcAllIncludes.h"

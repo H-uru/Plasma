@@ -41,11 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Win32/pnAceW32Dns.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Win32/pnAcW32Dns.cpp
 *   
 ***/
 
-#include "../../Pch.h"
+#include "../pnAcDns.h"
+#include "../pnAcInt.h"
+#include "../pnAcThread.h"
+#include "pnUtils/pnUtils.h"
+#include <windows.h>
 #pragma hdrstop
 
 

@@ -41,14 +41,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNt.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Nt/pnAcNt.cpp
 *   
 ***/
 
-#include "../../Pch.h"
+#include "../pnAcInt.h"
 #pragma hdrstop
 
-#include "pnAceNtInt.h"
+#include "pnAcNtInt.h"
+#include "../pnAcThread.h"
+#include "../pnAcLog.h"
 
 
 namespace Nt {
@@ -416,7 +418,7 @@ void NtWaitForShutdown () {
 ***/
 
 //===========================================================================
-void NtGetApi (AsyncApi * api) {
+void GetApi (AsyncApi * api) {
     api->initialize             = NtInitialize;
     api->destroy                = NtDestroy;
     api->signalShutdown         = NtSignalShutdown;

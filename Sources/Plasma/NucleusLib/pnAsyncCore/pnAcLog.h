@@ -41,24 +41,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNt.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcLog.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENT_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNt.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENT_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACLOG_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACLOG_H
 
-
-#ifdef HS_BUILD_FOR_WIN32
+#include "HeadSpin.h"
+#include <cstdarg>
 
 /****************************************************************************
 *
-*   Nt API functions
+*   Log API
 *
 ***/
 
-void NtGetApi (AsyncApi * api);
+enum ELogSeverity {
+    // For indicating design problems
+    kLogDebug,
+    
+    // For indicating performance warnings
+    // (e.g. transaction failed, retrying...)
+    kLogPerf,
+    
+    // For indicating error conditions that change program behavior
+    // (e.g. socket connect failed)
+    kLogError,
+    
+    // For indicating failures that may lead to program termination
+    // (e.g. out of memory)
+    kLogFatal,
+    
+    kNumLogSeverity
+};
 
-#endif // HS_BUILD_FOR_WIN32
+void LogMsg  (ELogSeverity severity, const char  format[], ...);
+void LogMsg  (ELogSeverity severity, const wchar_t format[], ...);
+void LogMsgV (ELogSeverity severity, const char  format[], va_list args);
+void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args);
+
+/****************************************************************************
+*
+*   Debugging API
+*
+***/
+
+#ifdef HS_DEBUGGING
+
+    void LogMsgDebug (const char  format[], ...);
+    void LogMsgDebug (const wchar_t format[], ...);
+
+#else
+
+    inline void LogMsgDebug (const char  *, ...) { }
+    inline void LogMsgDebug (const wchar_t *, ...) { }
+
+#endif
+
+#endif
+

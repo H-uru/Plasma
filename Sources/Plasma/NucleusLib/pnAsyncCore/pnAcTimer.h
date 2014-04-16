@@ -41,15 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcTimer.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcTimer.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTIMER_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcTimer.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTIMER_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTIMER_H
 
+#include "pnUtils/pnUtils.h"
 
 /*****************************************************************************
 *
@@ -103,3 +102,6 @@ void AsyncTimerUpdate (
     unsigned        callbackMs,
     unsigned        flags = 0
 );
+
+#endif
+
