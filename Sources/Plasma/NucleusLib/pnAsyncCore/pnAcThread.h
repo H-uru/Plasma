@@ -41,15 +41,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcThread.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcThread.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Private/pnAcThread.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PRIVATE_PNACTHREAD_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACTHREAD_H
 
+#include "pnUtils/pnUtils.h"
+#include "pnNetBase/pnNetBase.h"
 
 /****************************************************************************
 *
@@ -144,3 +144,6 @@ void AsyncThreadTaskAdd (
     const wchar_t             debugStr[],
     EThreadTaskPriority     priority = kThreadTaskPriorityNormal
 );
+
+#endif
+

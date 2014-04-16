@@ -41,11 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/pnAceCore.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcCore.cpp
 *   
 ***/
 
-#include "Pch.h"
+#include "pnAcInt.h"
+#include "HeadSpin.h"
+#include <windows.h>
+
 #pragma hdrstop
 
 
@@ -69,72 +72,24 @@ AsyncApi    g_api;
 
 /*****************************************************************************
 *
-*   Local functions
-*
-***/
-
-//===========================================================================
-static void IAsyncInitUseNt () {
-#ifdef HS_BUILD_FOR_WIN32
-    NtGetApi(&g_api);
-#else
-    ErrorAssert("Nt I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
-static void IAsyncInitUseUnix () {
-#ifdef HS_BUILD_FOR_UNIX
-    #error Unix I/O not implemented yet
-    UxGetApi(&g_api);
-#else
-    ErrorAssert(__LINE__, __FILE__, "Unix I/O Not supported on this platform");
-#endif
-}
-
-//===========================================================================
-static void IAsyncInitForClient () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
-#else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
-}
-
-//===========================================================================
-static void IAsyncInitForServer () {
-#ifdef HS_BUILD_FOR_WIN32
-    IAsyncInitUseNt();
-#elif HS_BUILD_FOR_UNIX
-    IAsyncInitUseUnix();
-#else
-    ErrorAssert("AsyncCore: No default implementation for this platform");
-#endif    
-}
-
-
-/*****************************************************************************
-*
 *   Module exports
 *
 ***/
 
 //============================================================================
-long PerfAddCounter (unsigned id, unsigned n) {
+long PerfAddCounter (EAsyncPerfCounter id, unsigned n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return AtomicAdd(&s_perf[id], n);
 }
 
 //============================================================================
-long PerfSubCounter (unsigned id, unsigned n) {
+long PerfSubCounter (EAsyncPerfCounter id, unsigned n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return AtomicAdd(&s_perf[id], -(signed)n);
 }
 
 //============================================================================
-long PerfSetCounter (unsigned id, unsigned n) {
+long PerfSetCounter (EAsyncPerfCounter id, unsigned n) {
     ASSERT(id < kNumAsyncPerfCounters);
     return AtomicSet(&s_perf[id], n);
 }
@@ -160,9 +115,9 @@ void AsyncCoreInitialize () {
 #endif
 
 #ifdef CLIENT
-    IAsyncInitForClient();
+    GetApi(&g_api);
 #elif SERVER
-    IAsyncInitForServer();
+    GetApi(&g_api);
 #else
 # error "Neither CLIENT nor SERVER defined. Cannot configure AsyncCore for target"
 #endif
@@ -203,7 +158,7 @@ void AsyncSleep (unsigned sleepMs) {
 }
 
 //============================================================================
-long AsyncPerfGetCounter (unsigned id) {
+long AsyncPerfGetCounter (EAsyncPerfCounter id) {
     static_assert(arrsize(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id];

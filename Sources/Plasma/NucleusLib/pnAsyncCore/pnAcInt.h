@@ -41,17 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/pnAceInt.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcInt.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/pnAceInt.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_PNACEINT_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACINT_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACINT_H
 
-#include "pnNetCommon/plNetAddress.h"
-
+#include "pnAcCore.h"
 
 /*****************************************************************************
 *
@@ -60,10 +57,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 // Performance counter functions
-long PerfAddCounter (unsigned id, unsigned n);
-long PerfSubCounter (unsigned id, unsigned n);
-long PerfSetCounter (unsigned id, unsigned n);
-
+long PerfAddCounter (EAsyncPerfCounter id, unsigned n);
+long PerfSubCounter (EAsyncPerfCounter id, unsigned n);
+long PerfSetCounter (EAsyncPerfCounter id, unsigned n);
 
 /*****************************************************************************
 *
@@ -199,3 +195,7 @@ struct AsyncApi {
 };
 
 extern AsyncApi g_api;
+void GetApi(AsyncApi* api);
+
+#endif
+

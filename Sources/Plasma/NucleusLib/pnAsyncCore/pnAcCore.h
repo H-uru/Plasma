@@ -41,24 +41,74 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Pch.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcCore.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Pch.h included more than once"
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
+
+
+/****************************************************************************
+*
+*   Library initialization
+*
+***/
+
+void AsyncCoreInitialize ();
+void AsyncCoreDestroy (unsigned waitMs);
+
+/*****************************************************************************
+*
+*   Performance counters
+*
+***/
+
+enum EAsyncPerfCounter : unsigned {
+    // Sockets
+    kAsyncPerfSocketsCurr,
+    kAsyncPerfSocketsTotal,
+    kAsyncPerfSocketBytesWriteQueued,
+    kAsyncPerfSocketBytesWaitQueued,
+    kAsyncPerfSocketConnAttemptsOutCurr,
+    kAsyncPerfSocketConnAttemptsOutTotal,
+    kAsyncPerfSocketConnAttemptsInCurr,
+    kAsyncPerfSocketConnAttemptsInTotal,
+    kAsyncPerfSocketDisconnectBacklog,
+    kAsyncPerfSocketDisconnectInvalidConnType,
+    kAsyncPerfNameLookupAttemptsCurr,
+    kAsyncPerfNameLookupAttemptsTotal,
+
+    // Files
+    kAsyncPerfFilesCurr,
+    kAsyncPerfFilesTotal,
+    kAsyncPerfFileBytesReadQueued,
+    kAsyncPerfFileBytesWriteQueued,
+
+    // Threads
+    kAsyncPerfThreadsCurr,
+    kAsyncPerfThreadsTotal,
+
+    // Thread tasks
+    kAsyncPerfThreadTaskListCount,
+    kAsyncPerfThreadTaskThreadsDesired,
+    kAsyncPerfThreadTaskThreadsRunning,
+    kAsyncPerfThreadTaskThreadsActive,
+    
+    kNumAsyncPerfCounters
+};
+
+long AsyncPerfGetCounter (EAsyncPerfCounter id);
+
+
+/*****************************************************************************
+*
+*   Misc functions
+*
+***/
+
+void AsyncSignalShutdown ();
+void AsyncWaitForShutdown ();
+
 #endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PCH_H
 
-#include "pnUtils/pnUtils.h"
-#include "plProduct.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
-#include "hsThread.h"
-
-#include "Private/pnAceInt.h"
-#include "Private/Nt/pnAceNt.h"
-#include "Private/Unix/pnAceUx.h"
-
-#include <process.h>
-#include <malloc.h>

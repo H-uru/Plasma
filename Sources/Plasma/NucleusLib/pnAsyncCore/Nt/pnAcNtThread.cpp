@@ -41,12 +41,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/pnAceThread.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Nt/pnAcNtThread.cpp
 *   
 ***/
 
-#include "Pch.h"
+#include "../pnAcThread.h"
+#include "../pnAcLog.h"
+#include "../pnAcInt.h"
+#include <windows.h>
+#include <process.h>
 #pragma hdrstop
+
+#include "pnAcNtInt.h"
+
+
+namespace Nt {
+
+/*****************************************************************************
+*
+*   Module exports
+*
+***/
+
+//===========================================================================
+void NtSleep (unsigned sleepMs) {
+    Sleep(sleepMs);
+}
+
+} using namespace Nt;
 
 
 /*****************************************************************************
