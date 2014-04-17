@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/Nt/pnAcNtTimer.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcTimer.cpp
 *   
 ***/
 
-#include "../pnAcTimer.h"
+#include "pnAcTimer.h"
 #include "hsThread.h"
 #pragma hdrstop
 
@@ -68,7 +68,7 @@ struct AsyncTimer {
 static CCritSect            s_timerCrit;
 static FAsyncTimerProc      s_timerCurr;
 static hsThread *           s_timerThread = nullptr;
-static HANDLE               s_timerEvent;
+static hsEvent              s_timerEvent;
 static bool                 s_running;
 
 static PRIQDECL(
@@ -140,7 +140,7 @@ static inline unsigned RunTimers () {
         // Get first timer to run
         AsyncTimer * t = s_timerProcs.Root();
         if (!t)
-            return INFINITE;
+            return kPosInfinity32;
 
         // If it isn't time to run this timer then exit
         unsigned sleepMs;
@@ -171,7 +171,7 @@ struct TimerThread : hsThread {
             const unsigned sleepMs = RunTimers();
             s_timerCrit.Leave();
 
-            WaitForSingleObject(s_timerEvent, sleepMs);
+            s_timerEvent.Wait(sleepMs);
         } while (s_running);
         return 0;
     }
@@ -182,15 +182,6 @@ struct TimerThread : hsThread {
 static inline void InitializeTimer () {
     if (!s_timerThread) {
         s_running = true;
-
-        s_timerEvent = CreateEvent(
-            (LPSECURITY_ATTRIBUTES) nil,
-            false,                  // auto-reset event
-            false,                  // initial state = off
-            (LPCTSTR) nil
-        );
-        if (!s_timerEvent)
-            ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
         s_timerThread = new TimerThread();
         s_timerThread->Start();
@@ -209,15 +200,10 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     s_running = false;
 
     if (s_timerThread) {
-        SetEvent(s_timerEvent);
+        s_timerEvent.Signal();
         //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
         s_timerThread->Stop();
         s_timerThread = nil;
-    }
-
-    if (s_timerEvent) {
-        CloseHandle(s_timerEvent);
-        s_timerEvent = nil;
     }
 
     // Cleanup any timers that have been stopped but not deleted
@@ -278,7 +264,7 @@ void AsyncTimerCreate (
     s_timerCrit.Leave();
 
     if (setEvent)
-        SetEvent(s_timerEvent);
+        s_timerEvent.Signal();
 }
 
 //===========================================================================
@@ -309,7 +295,7 @@ void AsyncTimerDelete (
     if (timerProc) {
 
         while (s_timerCurr == timerProc)
-            Sleep(1);
+            hsSleep::Sleep(1);
     }
 }
 
@@ -332,7 +318,7 @@ void AsyncTimerDeleteCallback (
 
     // Force the timer thread to wake up and perform the deletion
     if (destroyProc)
-        SetEvent(s_timerEvent);
+        s_timerEvent.Signal();
 }
 
 //===========================================================================
@@ -361,5 +347,5 @@ void AsyncTimerUpdate (
     s_timerCrit.Leave();
 
     if (setEvent)
-        SetEvent(s_timerEvent);
+        s_timerEvent.Signal();
 }

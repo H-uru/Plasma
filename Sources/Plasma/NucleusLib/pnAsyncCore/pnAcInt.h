@@ -61,5 +61,14 @@ long PerfAddCounter (EAsyncPerfCounter id, unsigned n);
 long PerfSubCounter (EAsyncPerfCounter id, unsigned n);
 long PerfSetCounter (EAsyncPerfCounter id, unsigned n);
 
+
+/*****************************************************************************
+*
+*   Timer.cpp
+*
+***/
+
+void TimerDestroy (unsigned exitThreadWaitMs);
+
 #endif
 

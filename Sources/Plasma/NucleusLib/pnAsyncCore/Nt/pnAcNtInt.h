@@ -199,13 +199,4 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 void DnsDestroy (unsigned exitThreadWaitMs);
 
-/*****************************************************************************
-*
-*   Timer.cpp
-*
-***/
-
-void TimerDestroy (unsigned exitThreadWaitMs);
-
-
 #endif
