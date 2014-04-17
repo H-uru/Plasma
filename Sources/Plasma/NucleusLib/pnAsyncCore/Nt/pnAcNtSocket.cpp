@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../pnAcTimer.h"
 #include "../pnAcInt.h"
 #include "../pnAcLog.h"
-#include "../pnAcThread.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 #include "pnAcNtInt.h"
@@ -140,7 +140,7 @@ static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
 static unsigned                         s_nextConnectCancelId = 1;
-static HANDLE                           s_listenThread;
+static hsThread *                       s_listenThread = nullptr;
 static HANDLE                           s_listenEvent;
 
 
@@ -711,78 +711,80 @@ static void ListenPrepareConnectors (fd_set * writefds) {
 }
 
 //===========================================================================
-static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
-    fd_set readfds;
-    fd_set writefds;
-    for (;;) {
-        s_listenCrit.Enter();
-        ListenPrepareListeners(&readfds);
-        ListenPrepareConnectors(&writefds);
-        s_listenCrit.Leave();
-        if (!s_runListenThread)
-            break;
+struct ListenThread : hsThread {
+    hsError Run () {
+        fd_set readfds;
+        fd_set writefds;
+        for (;;) {
+            s_listenCrit.Enter();
+            ListenPrepareListeners(&readfds);
+            ListenPrepareConnectors(&writefds);
+            s_listenCrit.Leave();
+            if (!s_runListenThread)
+                break;
 
-        // wait until there is something on listen or connect list
-        if (!readfds.fd_count && !writefds.fd_count) {
-            WaitForSingleObject(s_listenEvent, INFINITE);
-            continue;
-        }
+            // wait until there is something on listen or connect list
+            if (!readfds.fd_count && !writefds.fd_count) {
+                WaitForSingleObject(s_listenEvent, INFINITE);
+                continue;
+            }
 
-        // wait for connection or timeout
-        const struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
-        int result = select(0, &readfds, &writefds, 0, &timeout);
-        if (result == SOCKET_ERROR) {
-            LogMsg(kLogError, "socket select failed");
-            continue;
-        }
-        if (!result)
-            continue;
+            // wait for connection or timeout
+            const struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
+            int result = select(0, &readfds, &writefds, 0, &timeout);
+            if (result == SOCKET_ERROR) {
+                LogMsg(kLogError, "socket select failed");
+                continue;
+            }
+            if (!result)
+                continue;
 
-        s_listenCrit.Enter();
+            s_listenCrit.Enter();
 
-        // complete listen() operations
-        unsigned count = 0;
-        for (NtListener * listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
-            if (FD_ISSET(listener->hSocket, &readfds)) {
-                SOCKET s;
-                while (INVALID_SOCKET != (s = accept(listener->hSocket, 0, 0))) {
-                    SocketInitListen(
-                        SocketInitCommon(s),
-                        listener->addr,
-                        listener->notifyProc
-                    );
-                    ++count;
+            // complete listen() operations
+            unsigned count = 0;
+            for (NtListener * listener = s_listenList.Head(); listener; listener = s_listenList.Next(listener)) {
+                if (FD_ISSET(listener->hSocket, &readfds)) {
+                    SOCKET s;
+                    while (INVALID_SOCKET != (s = accept(listener->hSocket, 0, 0))) {
+                        SocketInitListen(
+                            SocketInitCommon(s),
+                            listener->addr,
+                            listener->notifyProc
+                        );
+                        ++count;
+                    }
                 }
             }
-        }
-        PerfAddCounter(kAsyncPerfSocketConnAttemptsInTotal, count);
+            PerfAddCounter(kAsyncPerfSocketConnAttemptsInTotal, count);
 
-        // complete connect() operations
-        for (NtOpConnAttempt *next, *op = s_connectList.Head(); op; op = next) {
-            next = s_connectList.Next(op);
+            // complete connect() operations
+            for (NtOpConnAttempt *next, *op = s_connectList.Head(); op; op = next) {
+                next = s_connectList.Next(op);
 
-            if (FD_ISSET(op->hSocket, &writefds)) {
-                s_connectList.Unlink(op);
-                INtConnPostOperation(nil, op, 0);
+                if (FD_ISSET(op->hSocket, &writefds)) {
+                    s_connectList.Unlink(op);
+                    INtConnPostOperation(nil, op, 0);
+                }
             }
+
+            s_listenCrit.Leave();
         }
 
+        // cleanup all connectors
+        s_listenCrit.Enter();
+        for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
+            if (op->hSocket != INVALID_SOCKET) {
+                closesocket(op->hSocket);
+                op->hSocket = 0;
+            }
+            INtConnPostOperation(nil, op, 0);
+        }
         s_listenCrit.Leave();
-    }
 
-    // cleanup all connectors
-    s_listenCrit.Enter();
-    for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
-        if (op->hSocket != INVALID_SOCKET) {
-            closesocket(op->hSocket);
-            op->hSocket = 0;
-        }
-        INtConnPostOperation(nil, op, 0);
+        return 0;
     }
-    s_listenCrit.Leave();
-
-    return 0;
-}
+};
 
 //===========================================================================
 static void StartListenThread () {
@@ -799,11 +801,8 @@ static void StartListenThread () {
 
     // create a low-priority thread to listen on ports
     s_runListenThread = true;
-    s_listenThread = (HANDLE) AsyncThreadCreate(
-        ListenThreadProc,
-        nil,
-        L"NtListenThread"
-    );
+    s_listenThread = new ListenThread();
+    s_listenThread->Start();
 }
 
 //===========================================================================
@@ -855,7 +854,7 @@ static unsigned SocketCloseTimerCallback (void *) {
         // next socket is queued onto the list.
         NtSock * sock = s_socketList.Head();
         if (!sock) {
-            sleepMs = kAsyncTimeInfinite;
+            sleepMs = kPosInfinity32;
             break;
         }
 
@@ -902,7 +901,7 @@ void INtSocketInitialize () {
     AsyncTimerCreate(
         &s_socketTimer,
         SocketCloseTimerCallback,
-        kAsyncTimeInfinite
+        kPosInfinity32
     );
 }
 
@@ -911,8 +910,8 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
     s_runListenThread = false;
     if (s_listenThread) {
         SetEvent(s_listenEvent);
-        WaitForSingleObject(s_listenThread, exitThreadWaitMs);
-        CloseHandle(s_listenThread);
+        //WaitForSingleObject(s_listenThread, exitThreadWaitMs);
+        s_listenThread->Stop();
         s_listenThread = nil;
     }
     if (s_listenEvent) {

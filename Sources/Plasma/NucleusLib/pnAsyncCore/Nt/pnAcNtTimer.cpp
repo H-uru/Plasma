@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../pnAcTimer.h"
-#include "../pnAcThread.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 
@@ -67,7 +67,7 @@ struct AsyncTimer {
 
 static CCritSect            s_timerCrit;
 static FAsyncTimerProc      s_timerCurr;
-static HANDLE               s_timerThread;
+static hsThread *           s_timerThread = nullptr;
 static HANDLE               s_timerEvent;
 static bool                 s_running;
 
@@ -151,29 +151,31 @@ static inline unsigned RunTimers () {
         s_timerProcs.Dequeue();
         sleepMs = CallTimerProc(t, t->timerProc);
 
-        // Note if return is kAsyncTimeInfinite, we do not remove the timer
+        // Note if return is kPosInfinity32, we do not remove the timer
         // from the queue.  Some users depend on the fact that they can
         // call AsyncTimerUpdate and not get overridden by a return from the
         // handler at the same time.
 
         // Requeue timer
         currTimeMs = TimeGetMs();
-        if (sleepMs != kAsyncTimeInfinite)
+        if (sleepMs != kPosInfinity32)
             UpdateTimer(t, sleepMs + currTimeMs, kAsyncTimerUpdateSetPriorityHigher);
     }
 }
 
 //===========================================================================
-static unsigned THREADCALL TimerThreadProc (AsyncThread *) {
-    do {
-        s_timerCrit.Enter();
-        const unsigned sleepMs = RunTimers();
-        s_timerCrit.Leave();
+struct TimerThread : hsThread {
+    hsError Run() {
+        do {
+            s_timerCrit.Enter();
+            const unsigned sleepMs = RunTimers();
+            s_timerCrit.Leave();
 
-        WaitForSingleObject(s_timerEvent, sleepMs);
-    } while (s_running);
-    return 0;
-}
+            WaitForSingleObject(s_timerEvent, sleepMs);
+        } while (s_running);
+        return 0;
+    }
+};
 
 //===========================================================================
 // inline because it is called only once
@@ -190,11 +192,8 @@ static inline void InitializeTimer () {
         if (!s_timerEvent)
             ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
 
-        s_timerThread = (HANDLE) AsyncThreadCreate(
-            TimerThreadProc,
-            nil,
-            L"AsyncTimerThread"
-        );
+        s_timerThread = new TimerThread();
+        s_timerThread->Start();
     }
 }
 
@@ -211,8 +210,8 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
 
     if (s_timerThread) {
         SetEvent(s_timerEvent);
-        WaitForSingleObject(s_timerThread, exitThreadWaitMs);
-        CloseHandle(s_timerThread);
+        //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
+        s_timerThread->Stop();
         s_timerThread = nil;
     }
 
@@ -270,7 +269,7 @@ void AsyncTimerCreate (
         InitializeTimer();
 
         // Does this timer need to be queued?
-        if (callbackMs != kAsyncTimeInfinite)
+        if (callbackMs != kPosInfinity32)
             s_timerProcs.Enqueue(t);
 
         // Does the timer thread need to be awakened?
@@ -349,7 +348,7 @@ void AsyncTimerUpdate (
     bool setEvent;
     s_timerCrit.Enter();
     {
-        if (callbackMs != kAsyncTimeInfinite) {
+        if (callbackMs != kPosInfinity32) {
             UpdateTimer(timer, callbackMs + TimeGetMs(), flags);
             setEvent = timer == s_timerProcs.Root();
         }

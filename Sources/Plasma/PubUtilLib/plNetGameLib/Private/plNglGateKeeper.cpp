@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "pnAsyncCore/pnAcTimer.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnAsyncCore/pnAcLog.h"
 #include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 namespace Ngl { namespace GateKeeper {
@@ -512,13 +512,13 @@ static void AsyncLookupCallback (
 static unsigned CliGkConnTimerDestroyed (void * param) {
     CliGkConn * conn = (CliGkConn *) param;
     conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
 static unsigned CliGkConnReconnectTimerProc (void * param) {
     ((CliGkConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -636,7 +636,7 @@ void CliGkConn::AutoPing () {
         AsyncTimerCreate(
             &pingTimer,
             CliGkConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -1026,7 +1026,7 @@ void GateKeeperDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 

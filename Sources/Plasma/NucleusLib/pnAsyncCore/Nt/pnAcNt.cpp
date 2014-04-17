@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pnAcNtInt.h"
-#include "../pnAcThread.h"
 #include "../pnAcLog.h"
+#include "hsThread.h"
 
 
 namespace Nt {
@@ -68,7 +68,7 @@ static bool                     s_running;
 static HANDLE                   s_waitEvent;
 
 static long                     s_ioThreadCount;
-static HANDLE                   s_ioThreadHandles[kMaxWorkerThreads];
+static hsThread *               s_ioThreadHandles[kMaxWorkerThreads];
 
 static HANDLE                   s_ioPort;
 static unsigned                 s_pageSizeMask;
@@ -211,42 +211,44 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
-    unsigned sleepMs    = INFINITE;
-    while (s_running) {
+struct NtWorkerThread : hsThread {
+    hsError Run () {
+        unsigned sleepMs    = INFINITE;
+        while (s_running) {
 
-        // process I/O operations
-        {
-            DWORD bytes;
-            NtObject *  ntObj;
-            Operation * op;
-            (void) GetQueuedCompletionStatus(
-                s_ioPort,
-                &bytes,
-            #ifdef _WIN64
-                (PULONG_PTR) &ntObj,
-            #else
-                (LPDWORD) &ntObj,
-            #endif
-                (LPOVERLAPPED *) &op,
-                sleepMs
-            );
+            // process I/O operations
+            {
+                DWORD bytes;
+                NtObject *  ntObj;
+                Operation * op;
+                (void) GetQueuedCompletionStatus(
+                    s_ioPort,
+                    &bytes,
+                #ifdef _WIN64
+                    (PULONG_PTR) &ntObj,
+                #else
+                    (LPDWORD) &ntObj,
+                #endif
+                    (LPOVERLAPPED *) &op,
+                    sleepMs
+                );
 
-            if (op) {
-                // Dispatch event to app
-                INtOpDispatch(ntObj, op, bytes);
+                if (op) {
+                    // Dispatch event to app
+                    INtOpDispatch(ntObj, op, bytes);
 
-                sleepMs = 0;
-                continue;
+                    sleepMs = 0;
+                    continue;
+                }
             }
+
+            sleepMs = INFINITE;
+            continue;
         }
 
-        sleepMs = INFINITE;
-        continue;
+        return 0;
     }
-
-    return 0;
-}
+};
 
 
 /****************************************************************************
@@ -358,11 +360,8 @@ void AsyncCoreInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = (HANDLE) AsyncThreadCreate(
-            NtWorkerThreadProc,
-            (void *) thread,
-            L"NtWorkerThread"
-        );
+        s_ioThreadHandles[thread] = new NtWorkerThread;
+        s_ioThreadHandles[thread]->Start();
     }
 
     INtSocketInitialize();
@@ -388,8 +387,8 @@ void AsyncCoreDestroy (unsigned waitMs) {
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
             if (s_ioThreadHandles[thread]) {
-                WaitForSingleObject(s_ioThreadHandles[thread], waitMs);
-                CloseHandle(s_ioThreadHandles[thread]);
+                //WaitForSingleObject(s_ioThreadHandles[thread], waitMs);
+                s_ioThreadHandles[thread]->Stop();
                 s_ioThreadHandles[thread] = nil;
             }
         }
@@ -407,7 +406,6 @@ void AsyncCoreDestroy (unsigned waitMs) {
     INtSocketDestroy();
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
-    ThreadDestroy(waitMs);
 }
 
 //===========================================================================

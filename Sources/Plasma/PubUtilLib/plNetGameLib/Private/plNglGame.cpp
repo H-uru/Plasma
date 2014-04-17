@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "pnAsyncCore/pnAcTimer.h"
-#include "pnAsyncCore/pnAcThread.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 namespace Ngl { namespace Game {
@@ -406,7 +406,7 @@ static void Connect (
 static unsigned CliGmConnTimerDestroyed (void * param) {
     CliGmConn * conn = (CliGmConn *) param;
     conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -440,7 +440,7 @@ void CliGmConn::AutoPing () {
         AsyncTimerCreate(
             &pingTimer,
             CliGmConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -750,7 +750,7 @@ void GameDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 

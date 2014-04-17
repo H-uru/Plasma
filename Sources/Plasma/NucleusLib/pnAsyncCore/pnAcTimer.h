@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct AsyncTimer;
 
 // Return callbackMs to wait that long until next callback.
-// Return kAsyncTimeInfinite to stop callbacks (note: does not destroy Timer structure)
+// Return kPosInfinity32 to stop callbacks (note: does not destroy Timer structure)
 typedef unsigned (* FAsyncTimerProc)(void * param);
 
 // 1) Timer procs do not get starved by I/O, they are called periodically.

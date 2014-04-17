@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../pnAcDns.h"
 #include "../pnAcInt.h"
-#include "../pnAcThread.h"
+#include "hsThread.h"
 #include "pnUtils/pnUtils.h"
 #include <windows.h>
 #pragma hdrstop
@@ -79,7 +79,7 @@ struct Lookup {
 
 static CCritSect                s_critsect;
 static LISTDECL(Lookup, link)   s_lookupList;
-static HANDLE                   s_lookupThread;
+static hsThread *               s_lookupThread;
 static HWND                     s_lookupWindow;
 static unsigned                 s_nextLookupCancelId = 1;
 
@@ -149,65 +149,70 @@ static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
 }
 
 //===========================================================================
-static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
-    static const char WINDOW_CLASS[] = "AsyncLookupWnd";
-    WNDCLASS wc;
-    memset(&wc, 0, sizeof(wc));
-    wc.lpfnWndProc      = DefWindowProc;
-    wc.hInstance        = GetModuleHandle(0);
-    wc.lpszClassName    = WINDOW_CLASS;
-    RegisterClass(&wc);
+struct LookupThread : hsThread {
+    HANDLE lookupStartEvent;
 
-    s_lookupWindow = CreateWindow(
-        WINDOW_CLASS,
-        WINDOW_CLASS,
-        WS_OVERLAPPED,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
-        (HWND)0,
-        (HMENU) 0,
-        wc.hInstance,
-        0
-    );
-    if (!s_lookupWindow)
-        ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
+    LookupThread(HANDLE h) : lookupStartEvent(h) {}
+    
+    hsError Run () {
+        static const char WINDOW_CLASS[] = "AsyncLookupWnd";
+        WNDCLASS wc;
+        memset(&wc, 0, sizeof(wc));
+        wc.lpfnWndProc      = DefWindowProc;
+        wc.hInstance        = GetModuleHandle(0);
+        wc.lpszClassName    = WINDOW_CLASS;
+        RegisterClass(&wc);
 
-    HANDLE lookupStartEvent = (HANDLE) thread->argument;
-    SetEvent(lookupStartEvent);
+        s_lookupWindow = CreateWindow(
+            WINDOW_CLASS,
+            WINDOW_CLASS,
+            WS_OVERLAPPED,
+            CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+            (HWND)0,
+            (HMENU) 0,
+            wc.hInstance,
+            0
+        );
+        if (!s_lookupWindow)
+            ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
 
-    MSG msg;
-    while (GetMessage(&msg, s_lookupWindow, 0, 0)) {
-        if (msg.message == WM_LOOKUP_FOUND_HOST)
-            LookupFindAndProcess((HANDLE) msg.wParam, HIWORD(msg.lParam));
-        else if (msg.message == WM_LOOKUP_EXIT)
-            break;
-        else {
-            TranslateMessage(&msg);
-            DispatchMessage(&msg);
+        SetEvent(lookupStartEvent);
+
+        MSG msg;
+        while (GetMessage(&msg, s_lookupWindow, 0, 0)) {
+            if (msg.message == WM_LOOKUP_FOUND_HOST)
+                LookupFindAndProcess((HANDLE) msg.wParam, HIWORD(msg.lParam));
+            else if (msg.message == WM_LOOKUP_EXIT)
+                break;
+            else {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
         }
-    }
 
-    // fail all pending name lookups
-    for (;;) {
-        s_critsect.Enter();
-        Lookup * lookup = s_lookupList.Head();
-        if (lookup) {
-            WSACancelAsyncRequest(lookup->cancelHandle);
-            lookup->cancelHandle = nil;
-            s_lookupList.Unlink(lookup);
+        // fail all pending name lookups
+        for (;;) {
+            s_critsect.Enter();
+            Lookup * lookup = s_lookupList.Head();
+            if (lookup) {
+                WSACancelAsyncRequest(lookup->cancelHandle);
+                lookup->cancelHandle = nil;
+                s_lookupList.Unlink(lookup);
+            }
+            s_critsect.Leave();
+            if (!lookup)
+                break;
+
+            LookupProcess(lookup, (unsigned) -1);
         }
-        s_critsect.Leave();
-        if (!lookup)
-            break;
 
-        LookupProcess(lookup, (unsigned) -1);
+        // cleanup
+        DestroyWindow(s_lookupWindow);
+        s_lookupWindow = nil;
+
+        return 0;
     }
-
-    // cleanup
-    DestroyWindow(s_lookupWindow);
-    s_lookupWindow = nil;
-
-    return 0;
-}
+};
 
 //===========================================================================
 static void StartLookupThread () {
@@ -225,11 +230,8 @@ static void StartLookupThread () {
         ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
 
     // create a thread to perform lookups
-    s_lookupThread = (HANDLE) AsyncThreadCreate(
-        LookupThreadProc,
-        lookupStartEvent,
-        L"AsyncLookupThread"
-    );
+    s_lookupThread = new LookupThread(lookupStartEvent);
+    s_lookupThread->Start();
 
     WaitForSingleObject(lookupStartEvent, INFINITE);
     CloseHandle(lookupStartEvent);
@@ -247,8 +249,8 @@ static void StartLookupThread () {
 void DnsDestroy (unsigned exitThreadWaitMs) {
     if (s_lookupThread) {
         PostMessage(s_lookupWindow, WM_LOOKUP_EXIT, 0, 0);
-        WaitForSingleObject(s_lookupThread, exitThreadWaitMs);
-        CloseHandle(s_lookupThread);
+        //WaitForSingleObject(s_lookupThread, exitThreadWaitMs);
+        s_lookupThread->Stop();
         s_lookupThread = nil;
         ASSERT(!s_lookupWindow);
     }

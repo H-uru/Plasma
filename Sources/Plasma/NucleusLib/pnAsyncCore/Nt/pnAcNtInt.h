@@ -197,16 +197,6 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 void DnsDestroy (unsigned exitThreadWaitMs);
 
-
-/*****************************************************************************
-*
-*   Thread.cpp
-*
-***/
-
-void ThreadDestroy (unsigned exitThreadWaitMs);
-
-
 /*****************************************************************************
 *
 *   Timer.cpp
