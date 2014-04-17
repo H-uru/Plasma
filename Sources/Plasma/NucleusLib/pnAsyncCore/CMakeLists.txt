@@ -6,6 +6,7 @@ set(pnAsyncCore_SOURCES
     pnAcCore.cpp
     pnAcIo.cpp
     pnAcLog.cpp
+    pnAcTimer.cpp
 )
 
 set(pnAsyncCore_HEADERS
@@ -24,7 +25,6 @@ set(pnAysncCore_NT
     Nt/pnAcNt.cpp
     Nt/pnAcNtInt.h
     Nt/pnAcNtSocket.cpp
-    Nt/pnAcNtTimer.cpp
 )
 
 set(pnAsyncCore_WIN32
