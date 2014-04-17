@@ -187,69 +187,33 @@ bool INtSocketOpCompleteQueuedSocketWrite (
     NtOpSocketWrite *   op
 );
 
+}   // namespace Nt
 
 /*****************************************************************************
 *
-*   NT Async API functions
+*   Dns.cpp
 *
 ***/
 
-void NtInitialize ();
-void NtDestroy (unsigned exitThreadWaitMs);
-void NtSignalShutdown ();
-void NtWaitForShutdown ();
-void NtSleep (unsigned sleepMs);
-void NtSocketConnect (
-    AsyncCancelId *         cancelId,
-    const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param,
-    const void *            sendData,
-    unsigned                sendBytes,
-    unsigned                connectMs,
-    unsigned                localPort
-);
-void NtSocketConnectCancel (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-);
-void NtSocketDisconnect (
-    AsyncSocket     sock,
-    bool            hardClose
-);
-void NtSocketDelete (AsyncSocket sock);
-bool NtSocketSend (
-    AsyncSocket     sock,
-    const void *    data,
-    unsigned        bytes
-);
-bool NtSocketWrite (
-    AsyncSocket     sock,
-    const void *    buffer,
-    unsigned        bytes,
-    void *          param
-);
-void NtSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
-void NtSocketSetBacklogAlloc (
-    AsyncSocket     sock,
-    unsigned        bufferSize
-);
-unsigned NtSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-void NtSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-);
-void NtSocketEnableNagling (
-    AsyncSocket             conn,
-    bool                    enable
-);
+void DnsDestroy (unsigned exitThreadWaitMs);
 
-}   // namespace Nt
+
+/*****************************************************************************
+*
+*   Thread.cpp
+*
+***/
+
+void ThreadDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Timer.cpp
+*
+***/
+
+void TimerDestroy (unsigned exitThreadWaitMs);
+
 
 #endif

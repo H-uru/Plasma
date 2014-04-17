@@ -327,7 +327,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
                     currTimeMs - sock->initTimeMs
                 );
             }
-            NtSocketDisconnect((AsyncSocket) sock, true);
+            AsyncSocketDisconnect((AsyncSocket) sock, true);
             return nil;
         }
 
@@ -440,7 +440,7 @@ static bool SocketInitConnect (
             break;
 
         // send initial data
-        if (op.sendBytes && !NtSocketSend((AsyncSocket) sock, op.sendData, op.sendBytes))
+        if (op.sendBytes && !AsyncSocketSend((AsyncSocket) sock, op.sendData, op.sendBytes))
             break;
 
         // Determine connType
@@ -945,7 +945,7 @@ void INtSockDelete (
         // We have to be extremely careful from this point because
         // sockets can be deleted during the notification callback.
         // After this call, the application becomes responsible for
-        // calling NtSocketDelete at some later point in time.
+        // calling AsyncSocketDelete at some later point in time.
         FAsyncNotifySocketProc notifyProc  = sock->notifyProc;
         sock->notifyProc                = nil;
         notifyProc((AsyncSocket) sock, kNotifySocketDisconnect, nil, &sock->userState);
@@ -954,7 +954,7 @@ void INtSockDelete (
     else {
         // Since the no application notification procedure was
         // ever set, the socket can now be deleted safely.
-        NtSocketDelete((AsyncSocket) sock);
+        AsyncSocketDelete((AsyncSocket) sock);
     }
 }
 
@@ -1082,7 +1082,7 @@ void INtSocketOpCompleteSocketWrite (
     // callback notification procedure if requested
     if (op->notify) {
         if (!sock->notifyProc((AsyncSocket) sock, kNotifySocketWrite, &op->write, &sock->userState))
-            NtSocketDisconnect((AsyncSocket) sock, false);
+            AsyncSocketDisconnect((AsyncSocket) sock, false);
     }
 }
 
@@ -1116,7 +1116,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
         // must occur before posting a completion notification for this
         // operation, because otherwise another thread might delete the socket
         // before this disconnect could complete (race condition).
-        NtSocketDisconnect((AsyncSocket) sock, true);
+        AsyncSocketDisconnect((AsyncSocket) sock, true);
 
         // complete operation by posting it
         INtConnPostOperation(sock, op, 0);
@@ -1126,6 +1126,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
     return true;
 }
 
+} using namespace Nt;
 
 /****************************************************************************
 *
@@ -1134,51 +1135,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 ***/
 
 //===========================================================================
-unsigned NtSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    s_listenCrit.Enter();
-    StartListenThread();
-    plNetAddress addr = listenAddr;
-    for (;;) {
-        // if the port is already open then just increment the reference count
-        if (ListenPortIncrement(addr, notifyProc, 1))
-            break;
-
-        SOCKET s;
-        if (INVALID_SOCKET == (s = ListenSocket(&addr)))
-            break;
-
-        // create a new listener record
-        NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
-        listener->hSocket       = s;
-        listener->addr          = addr;
-        listener->notifyProc    = notifyProc;
-        listener->listenCount   = 1;
-        break;
-    }
-    s_listenCrit.Leave();
-
-    unsigned port = addr.GetPort();
-    if (port)
-        SetEvent(s_listenEvent);
-
-    return port;
-}
-
-//===========================================================================
-void NtSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    s_listenCrit.Enter();
-    ListenPortIncrement(listenAddr, notifyProc, -1);
-    s_listenCrit.Leave();
-}
-
-//===========================================================================
-void NtSocketConnect (
+void AsyncSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,
     FAsyncNotifySocketProc  notifyProc,
@@ -1236,7 +1193,7 @@ void NtSocketConnect (
 //===========================================================================
 // due to the asynchronous nature sockets, the connect may occur
 // before the cancel can complete... you have been warned
-void NtSocketConnectCancel (
+void AsyncSocketConnectCancel (
     FAsyncNotifySocketProc notifyProc,
     AsyncCancelId          cancelId        // nil = cancel all with specified notifyProc
 ) {
@@ -1252,22 +1209,7 @@ void NtSocketConnectCancel (
 }
 
 //===========================================================================
-// This function must ONLY be called after receiving a NOTIFY_DISCONNECT message
-// for a socket. After a NOTIFY_DISCONNECT, the socket will fail all I/O initiated
-// against it, but will otherwise continue to exist. The memory for the socket will
-// only be freed when NtSocketDelete is called.
-void NtSocketDelete (AsyncSocket conn) {
-    NtSock * sock = (NtSock *) conn;
-    if (sock->ioType != kNtSocket) {
-        LogMsg(kLogError, "NtSocketDelete %u %p", sock->ioType, sock->notifyProc);
-        return;
-    }
-
-    delete sock;
-}
-
-//===========================================================================
-void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
+void AsyncSocketDisconnect (AsyncSocket conn, bool hardClose) {
     NtSock * sock = (NtSock *) conn;
     ASSERT(sock->ioType == kNtSocket);
 
@@ -1321,7 +1263,22 @@ void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
 }
 
 //===========================================================================
-bool NtSocketSend (
+// This function must ONLY be called after receiving a NOTIFY_DISCONNECT message
+// for a socket. After a NOTIFY_DISCONNECT, the socket will fail all I/O initiated
+// against it, but will otherwise continue to exist. The memory for the socket will
+// only be freed when AsyncSocketDelete is called.
+void AsyncSocketDelete (AsyncSocket conn) {
+    NtSock * sock = (NtSock *) conn;
+    if (sock->ioType != kNtSocket) {
+        LogMsg(kLogError, "AsyncSocketDelete %u %p", sock->ioType, sock->notifyProc);
+        return;
+    }
+
+    delete sock;
+}
+
+//===========================================================================
+bool AsyncSocketSend (
     AsyncSocket     conn,
     const void *    data,
     unsigned        bytes
@@ -1361,7 +1318,7 @@ bool NtSocketSend (
             }
             else if (WSAEWOULDBLOCK != WSAGetLastError()) {
                 // an error occurred -- destroy connection
-                NtSocketDisconnect((AsyncSocket) sock, true);
+                AsyncSocketDisconnect((AsyncSocket) sock, true);
                 result = false;
                 break;
             }
@@ -1380,7 +1337,7 @@ bool NtSocketSend (
 }
 
 //===========================================================================
-bool NtSocketWrite (
+bool AsyncSocketWrite (
     AsyncSocket     conn,
     const void *    buffer,
     unsigned        bytes,
@@ -1437,9 +1394,70 @@ bool NtSocketWrite (
 }
 
 //===========================================================================
+void AsyncSocketSetNotifyProc (
+    AsyncSocket            conn,
+    FAsyncNotifySocketProc notifyProc
+) {
+    NtSock * sock = (NtSock *) conn;
+    ASSERT(sock->ioType == kNtSocket);
+    ((NtSock *) sock)->notifyProc = notifyProc;
+}
+
+//===========================================================================
+void AsyncSocketSetBacklogAlloc (AsyncSocket conn, unsigned bufferSize) {
+    NtSock * sock = (NtSock *) conn;
+    ASSERT(sock->ioType == kNtSocket);
+    ((NtSock *) sock)->backlogAlloc = bufferSize;
+}
+
+//===========================================================================
+unsigned AsyncSocketStartListening (
+    const plNetAddress&     listenAddr,
+    FAsyncNotifySocketProc  notifyProc
+) {
+    s_listenCrit.Enter();
+    StartListenThread();
+    plNetAddress addr = listenAddr;
+    for (;;) {
+        // if the port is already open then just increment the reference count
+        if (ListenPortIncrement(addr, notifyProc, 1))
+            break;
+
+        SOCKET s;
+        if (INVALID_SOCKET == (s = ListenSocket(&addr)))
+            break;
+
+        // create a new listener record
+        NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
+        listener->hSocket       = s;
+        listener->addr          = addr;
+        listener->notifyProc    = notifyProc;
+        listener->listenCount   = 1;
+        break;
+    }
+    s_listenCrit.Leave();
+
+    unsigned port = addr.GetPort();
+    if (port)
+        SetEvent(s_listenEvent);
+
+    return port;
+}
+
+//===========================================================================
+void AsyncSocketStopListening (
+    const plNetAddress&     listenAddr,
+    FAsyncNotifySocketProc  notifyProc
+) {
+    s_listenCrit.Enter();
+    ListenPortIncrement(listenAddr, notifyProc, -1);
+    s_listenCrit.Leave();
+}
+
+//===========================================================================
 // -- use only for server<->client connections, not server<->server!
 // -- Note that Nagling is enabled by default
-void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
+void AsyncSocketEnableNagling (AsyncSocket conn, bool enable) {
     NtSock * sock = (NtSock *) conn;
     ASSERT(sock->ioType == kNtSocket);
     
@@ -1460,21 +1478,3 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
     sock->critsect.Leave();
 }
 
-//===========================================================================
-void NtSocketSetNotifyProc (
-    AsyncSocket            conn,
-    FAsyncNotifySocketProc notifyProc
-) {
-    NtSock * sock = (NtSock *) conn;
-    ASSERT(sock->ioType == kNtSocket);
-    ((NtSock *) sock)->notifyProc = notifyProc;
-}
-
-//===========================================================================
-void NtSocketSetBacklogAlloc (AsyncSocket conn, unsigned bufferSize) {
-    NtSock * sock = (NtSock *) conn;
-    ASSERT(sock->ioType == kNtSocket);
-    ((NtSock *) sock)->backlogAlloc = bufferSize;
-}
-
-} using namespace Nt;

@@ -47,7 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAcInt.h"
 #include "HeadSpin.h"
-#include <windows.h>
+#if HS_BUILD_FOR_WIN32
+#   include <windows.h>
+#endif
 
 #pragma hdrstop
 
@@ -60,15 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 static std::atomic<long> s_perf[kNumAsyncPerfCounters];
-
-
-/****************************************************************************
-*
-*   Module data exports
-*
-***/
-
-AsyncApi    g_api;
 
 
 /*****************************************************************************
@@ -101,62 +94,6 @@ long PerfSetCounter (EAsyncPerfCounter id, unsigned n) {
 *   Public exports
 *
 ***/
-
-//===========================================================================
-void AsyncCoreInitialize () {
-    ASSERTMSG(!g_api.initialize, "AsyncCore already initialized");
-    
-#ifdef HS_BUILD_FOR_WIN32
-    // Initialize WinSock
-    WSADATA wsaData;
-    if (WSAStartup(0x101, &wsaData))
-        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
-    if (wsaData.wVersion != 0x101)
-        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
-#endif
-
-#ifdef CLIENT
-    GetApi(&g_api);
-#elif SERVER
-    GetApi(&g_api);
-#else
-# error "Neither CLIENT nor SERVER defined. Cannot configure AsyncCore for target"
-#endif
-    
-    ASSERT(g_api.initialize);
-    g_api.initialize();
-}
-
-//============================================================================
-void AsyncCoreDestroy (unsigned waitMs) {
-    if (g_api.destroy) {
-        g_api.destroy(waitMs);
-    }
-    
-    DnsDestroy(waitMs);
-    TimerDestroy(waitMs);
-    ThreadDestroy(waitMs);
-    
-    memset(&g_api, 0, sizeof(g_api));
-}
-
-//============================================================================
-void AsyncSignalShutdown () {
-    ASSERT(g_api.signalShutdown);
-    g_api.signalShutdown();
-}
-
-//============================================================================
-void AsyncWaitForShutdown () {
-    ASSERT(g_api.waitForShutdown);
-    g_api.waitForShutdown();
-}
-
-//============================================================================
-void AsyncSleep (unsigned sleepMs) {
-    ASSERT(g_api.sleep);
-    g_api.sleep(sleepMs);
-}
 
 //============================================================================
 long AsyncPerfGetCounter (EAsyncPerfCounter id) {

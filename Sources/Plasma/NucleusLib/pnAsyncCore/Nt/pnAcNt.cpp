@@ -305,14 +305,24 @@ void INtConnCompleteOperation (NtObject * ntObj) {
     }
 }
 
-/*****************************************************************************
+} using namespace Nt;
+
+
+/****************************************************************************
 *
-*   Module exports
+*   Public exports
 *
 ***/
 
 //===========================================================================
-void NtInitialize () {
+void AsyncCoreInitialize () {
+    // Initialize WinSock
+    WSADATA wsaData;
+    if (WSAStartup(0x101, &wsaData))
+        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
+    if (wsaData.wVersion != 0x101)
+        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
+
     // ensure initialization only occurs once
     if (s_running)
         return;
@@ -362,9 +372,9 @@ void NtInitialize () {
 // DANGER: calling this function will slam closed any files which are still open.
 // MOST PROGRAMS DO NOT NEED TO CALL THIS FUNCTION. In general, the best way to
 // shut down the program is to simply let the atexit() handler take care of it.
-void NtDestroy (unsigned exitThreadWaitMs) {
+void AsyncCoreDestroy (unsigned waitMs) {
     // cleanup modules that post completion notifications as part of their shutdown
-    INtSocketStartCleanup(exitThreadWaitMs);
+    INtSocketStartCleanup(waitMs);
 
     // cleanup worker threads
     s_running = false;
@@ -378,7 +388,7 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
             if (s_ioThreadHandles[thread]) {
-                WaitForSingleObject(s_ioThreadHandles[thread], exitThreadWaitMs);
+                WaitForSingleObject(s_ioThreadHandles[thread], waitMs);
                 CloseHandle(s_ioThreadHandles[thread]);
                 s_ioThreadHandles[thread] = nil;
             }
@@ -395,45 +405,18 @@ void NtDestroy (unsigned exitThreadWaitMs) {
     }
 
     INtSocketDestroy();
+    DnsDestroy(waitMs);
+    TimerDestroy(waitMs);
+    ThreadDestroy(waitMs);
 }
 
 //===========================================================================
-void NtSignalShutdown () {
+void AsyncSignalShutdown () {
     SetEvent(s_waitEvent);
 }
 
 //===========================================================================
-void NtWaitForShutdown () {
+void AsyncWaitForShutdown () {
     if (s_waitEvent)
         WaitForSingleObject(s_waitEvent, INFINITE);
-}
-
-} using namespace Nt;
-
-
-/****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-void GetApi (AsyncApi * api) {
-    api->initialize             = NtInitialize;
-    api->destroy                = NtDestroy;
-    api->signalShutdown         = NtSignalShutdown;
-    api->waitForShutdown        = NtWaitForShutdown;
-    api->sleep                  = NtSleep;
-    
-    api->socketConnect          = NtSocketConnect;
-    api->socketConnectCancel    = NtSocketConnectCancel;
-    api->socketDisconnect       = NtSocketDisconnect;
-    api->socketDelete           = NtSocketDelete;
-    api->socketSend             = NtSocketSend;
-    api->socketWrite            = NtSocketWrite;
-    api->socketSetNotifyProc    = NtSocketSetNotifyProc;
-    api->socketSetBacklogAlloc  = NtSocketSetBacklogAlloc;
-    api->socketStartListening   = NtSocketStartListening;
-    api->socketStopListening    = NtSocketStopListening;
-    api->socketEnableNagling    = NtSocketEnableNagling;
 }
