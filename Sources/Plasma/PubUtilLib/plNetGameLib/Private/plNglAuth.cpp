@@ -47,9 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "pnAsyncCore/pnAcTimer.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnAsyncCore/pnAcLog.h"
 #include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 #include "pnEncryption/plChallengeHash.h"
@@ -1576,13 +1576,13 @@ static void AsyncLookupCallback (
 static unsigned CliAuConnTimerDestroyed (void * param) {
     CliAuConn * conn = (CliAuConn *) param;
     conn->DecRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
 static unsigned CliAuConnReconnectTimerProc (void * param) {
     ((CliAuConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -1700,7 +1700,7 @@ void CliAuConn::AutoPing () {
         AsyncTimerCreate(
             &pingTimer,
             CliAuConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -5089,7 +5089,7 @@ void AuthDestroy (bool wait) {
         
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 

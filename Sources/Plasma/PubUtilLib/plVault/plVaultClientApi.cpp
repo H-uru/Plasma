@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "Pch.h"
 #include "pnAsyncCore/pnAcLog.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 #ifdef CLIENT
@@ -1892,7 +1893,7 @@ void VaultAddChildNodeAndWait (
     while (!param.complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
     
     if (IS_NET_ERROR(param.result))
@@ -2071,7 +2072,7 @@ RelVaultNode * VaultCreateNodeAndWaitIncRef (
     while (!param.complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
     
     *result = param.result;
@@ -2131,7 +2132,7 @@ void VaultForceSaveNodeAndWait (
     while (!param.complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
@@ -2191,7 +2192,7 @@ void VaultFindNodesAndWait (
     while (!param.complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 
     if (IS_NET_SUCCESS(param.result))
@@ -2250,7 +2251,7 @@ void VaultFetchNodesAndWait (
 
     while (nodeCount) {
         NetClientUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }   
 }
 
@@ -2787,7 +2788,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -2812,7 +2813,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -2839,7 +2840,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -2901,7 +2902,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             while (!param1.complete && !param2.complete && !param3.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param1.result)) {
@@ -3161,7 +3162,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -3186,7 +3187,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -3213,7 +3214,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             while (!param.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param.result)) {
@@ -3274,7 +3275,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             while (!param1.complete && !param2.complete && !param3.complete) {
                 NetClientUpdate();
                 plgDispatch::Dispatch()->MsgQueueProcess();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             if (IS_NET_ERROR(param1.result)) {
@@ -4433,7 +4434,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4458,7 +4459,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4485,7 +4486,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4521,7 +4522,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         while (!param1.complete && !param2.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param1.result)) {
@@ -4791,7 +4792,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4816,7 +4817,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4843,7 +4844,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         while (!param.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param.result)) {
@@ -4879,7 +4880,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         while (!param1.complete && !param2.complete) {
             NetClientUpdate();
             plgDispatch::Dispatch()->MsgQueueProcess();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
         
         if (IS_NET_ERROR(param1.result)) {
@@ -5118,7 +5119,7 @@ void VaultDownloadAndWait (
     while (!param.complete) {
         NetClientUpdate();
         plgDispatch::Dispatch()->MsgQueueProcess();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 

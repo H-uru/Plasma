@@ -66,6 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfKIMsg.h"
 
 #include "hsResMgr.h"
+#include "hsThread.h"
 
 #include <malloc.h>
 
@@ -846,7 +847,7 @@ void NetCommConnect () {
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
             
         const char* authSrv[] = {
@@ -875,7 +876,7 @@ void NetCommConnect () {
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             const char* fileSrv[] = {

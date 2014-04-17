@@ -13,7 +13,6 @@ set(pnAsyncCore_HEADERS
     pnAcSocket.h
     pnAcLog.h
     pnAcSocket.h
-    pnAcThread.h
     pnAcTimer.h
 )
 
@@ -25,13 +24,11 @@ set(pnAysncCore_NT
     Nt/pnAcNt.cpp
     Nt/pnAcNtInt.h
     Nt/pnAcNtSocket.cpp
-    Nt/pnAcNtThread.cpp
     Nt/pnAcNtTimer.cpp
 )
 
 set(pnAsyncCore_WIN32
     Win32/pnAcW32Dns.cpp
-    Win32/pnAcW32Thread.cpp
 )
 
 if (WIN32)

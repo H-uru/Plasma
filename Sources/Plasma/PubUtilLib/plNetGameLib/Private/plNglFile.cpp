@@ -47,8 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "../Pch.h"
 #include "pnAsyncCore/pnAcTimer.h"
-#include "pnAsyncCore/pnAcThread.h"
 #include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 // Define this if the file servers are running behind load-balancing hardware.
@@ -626,7 +626,7 @@ void CliFileConn::TimerReconnect () {
 //===========================================================================
 static unsigned CliFileConnTimerReconnectProc (void * param) {
     ((CliFileConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -672,7 +672,7 @@ void CliFileConn::AutoReconnect () {
 static unsigned CliFileConnTimerDestroyed (void * param) {
     CliFileConn * sock = (CliFileConn *) param;
     sock->DecRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //============================================================================
@@ -700,7 +700,7 @@ void CliFileConn::AutoPing () {
     timerCritsect.Enter();
     {
         sockLock.LockForReading();
-        unsigned timerPeriod = sock ? 0 : kAsyncTimeInfinite;
+        unsigned timerPeriod = sock ? 0 : kPosInfinity32;
         sockLock.UnlockForReading();
 
         AsyncTimerCreate(
@@ -1316,7 +1316,7 @@ void FileDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
