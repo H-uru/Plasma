@@ -55,22 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcNtInt.h"
 
 
-namespace Nt {
-
-/*****************************************************************************
-*
-*   Module exports
-*
-***/
-
-//===========================================================================
-void NtSleep (unsigned sleepMs) {
-    Sleep(sleepMs);
-}
-
-} using namespace Nt;
-
-
 /*****************************************************************************
 *
 *   Private data
@@ -161,3 +145,9 @@ void * AsyncThreadCreate (
     thread->handle = handle;
     return handle;
 }
+
+//===========================================================================
+void AsyncSleep (unsigned sleepMs) {
+    Sleep(sleepMs);
+}
+
