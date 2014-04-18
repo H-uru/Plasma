@@ -407,14 +407,3 @@ void AsyncCoreDestroy (unsigned waitMs) {
     DnsDestroy(waitMs);
     TimerDestroy(waitMs);
 }
-
-//===========================================================================
-void AsyncSignalShutdown () {
-    SetEvent(s_waitEvent);
-}
-
-//===========================================================================
-void AsyncWaitForShutdown () {
-    if (s_waitEvent)
-        WaitForSingleObject(s_waitEvent, INFINITE);
-}
