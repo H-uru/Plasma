@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnAcTimer.h"
 #include "hsThread.h"
+#include "pnUtils/pnUtils.h"
 #pragma hdrstop
 
 
@@ -56,32 +57,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-// timer callbacks
-struct AsyncTimer {
-    PRIORITY_TIME(AsyncTimer)   priority;
-    FAsyncTimerProc             timerProc;
-    FAsyncTimerProc             destroyProc;
-    void *                      param;
-    LINK(AsyncTimer)            deleteLink;
+struct AsyncTimer::P {
+    struct Thread;
+    static Thread *     s_thread;
+    static CCritSect    crit;
+
+    PRIORITY_TIME(P)    priority;
+    FProc               timerProc;
+    FProc               destroyProc;
+    void *              param;
+    LINK(P)             deleteLink;
+
+    static void Initialize();
+    static unsigned Run ();
+    
+    void Update (unsigned timeMs);
+    void UpdateIfHigher (unsigned timeMs);
+    unsigned CallProc (FProc timerProc);
 };
 
-static CCritSect            s_timerCrit;
-static FAsyncTimerProc      s_timerCurr;
-static hsThread *           s_timerThread = nullptr;
-static hsEvent              s_timerEvent;
-static bool                 s_running;
-
-static PRIQDECL(
-    AsyncTimer,
-    PRIORITY_TIME(AsyncTimer),
-    priority
-) s_timerProcs;
-
-static LISTDECL(
-    AsyncTimer,
-    deleteLink
-) s_timerDelete;
-
+//===========================================================================
+struct AsyncTimer::P::Thread : hsThread {
+    FProc                                   curr;
+    hsEvent                                 event;
+    PRIQDECL(P, PRIORITY_TIME(P), priority) procs;
+    LISTDECL(P, deleteLink)                 deleteList;
+    
+    hsError Run();
+    using hsThread::SetQuit;
+};
+AsyncTimer::P::Thread *     AsyncTimer::P::s_thread = nullptr;
+CCritSect                   AsyncTimer::P::crit;
 
 /****************************************************************************
 *
@@ -90,55 +96,31 @@ static LISTDECL(
 ***/
 
 //===========================================================================
-static void UpdateTimer (
-    AsyncTimer *    timer,
-    unsigned        timeMs,
-    unsigned        flags
-) {
-    // If the timer isn't already linked then it doesn't
-    // matter whether kAsyncTimerUpdateSetPriorityHigher is
-    // set; just add the timer to the queue
-    if (!timer->priority.IsLinked()) {
-        timer->priority.Set(timeMs);
-        s_timerProcs.Enqueue(timer);
-    }
-    else if (((flags & kAsyncTimerUpdateSetPriorityHigher) == 0)
-    || !timer->priority.IsPriorityHigher(timeMs)
-    ) {
-        timer->priority.Set(timeMs);
-    }
-}
+AsyncTimer::~AsyncTimer() { delete p; }
 
 //===========================================================================
-static unsigned CallTimerProc (AsyncTimer * t, FAsyncTimerProc timerProc) {
-    // Cache parameters to make timer callback outside critical section
-    s_timerCurr = timerProc;
-
-    // Leave critical section to make timer callback
-    s_timerCrit.Leave();
-
-    unsigned sleepMs = s_timerCurr(t->param);
-    s_timerCurr = nil;
-
-    s_timerCrit.Enter();
-
-    return sleepMs;
+// inline because it is called only once
+inline void AsyncTimer::P::Initialize () {
+    if (!s_thread) {
+        s_thread = new Thread();
+        s_thread->Start();
+    }
 }
 
 //===========================================================================
 // inline because it is called only once
-static inline unsigned RunTimers () {
+inline unsigned AsyncTimer::P::Run () {
     unsigned currTimeMs = TimeGetMs();
     for (;;) {
         // Delete old timers
-        while (AsyncTimer * t = s_timerDelete.Head()) {
+        while (AsyncTimer::P * t = s_thread->deleteList.Head()) {
             if (t->destroyProc)
-                CallTimerProc(t, t->destroyProc);
+                t->CallProc(t->destroyProc);
             delete t;
         }
 
         // Get first timer to run
-        AsyncTimer * t = s_timerProcs.Root();
+        AsyncTimer::P * t = s_thread->procs.Root();
         if (!t)
             return kPosInfinity32;
 
@@ -148,8 +130,8 @@ static inline unsigned RunTimers () {
             return sleepMs;
 
         // Remove from timer queue and call timer
-        s_timerProcs.Dequeue();
-        sleepMs = CallTimerProc(t, t->timerProc);
+        s_thread->procs.Dequeue();
+        sleepMs = t->CallProc(t->timerProc);
 
         // Note if return is kPosInfinity32, we do not remove the timer
         // from the queue.  Some users depend on the fact that they can
@@ -159,33 +141,62 @@ static inline unsigned RunTimers () {
         // Requeue timer
         currTimeMs = TimeGetMs();
         if (sleepMs != kPosInfinity32)
-            UpdateTimer(t, sleepMs + currTimeMs, kAsyncTimerUpdateSetPriorityHigher);
+            t->UpdateIfHigher(sleepMs + currTimeMs);
     }
 }
 
 //===========================================================================
-struct TimerThread : hsThread {
-    hsError Run() {
-        do {
-            s_timerCrit.Enter();
-            const unsigned sleepMs = RunTimers();
-            s_timerCrit.Leave();
-
-            s_timerEvent.Wait(sleepMs);
-        } while (s_running);
-        return 0;
+void AsyncTimer::P::Update (unsigned timeMs) {
+    // If the timer isn't already linked then it doesn't
+    // matter whether kAsyncTimerUpdateSetPriorityHigher is
+    // set; just add the timer to the queue
+    if (!priority.IsLinked()) {
+        priority.Set(timeMs);
+        s_thread->procs.Enqueue(this);
     }
-};
+    else
+        priority.Set(timeMs);
+}
 
 //===========================================================================
-// inline because it is called only once
-static inline void InitializeTimer () {
-    if (!s_timerThread) {
-        s_running = true;
-
-        s_timerThread = new TimerThread();
-        s_timerThread->Start();
+void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
+    // If the timer isn't already linked then it doesn't
+    // matter whether kAsyncTimerUpdateSetPriorityHigher is
+    // set; just add the timer to the queue
+    if (!priority.IsLinked()) {
+        priority.Set(timeMs);
+        s_thread->procs.Enqueue(this);
     }
+    else if (!priority.IsPriorityHigher(timeMs))
+        priority.Set(timeMs);
+}
+
+//===========================================================================
+unsigned AsyncTimer::P::CallProc (FProc timerProc) {
+    // Cache parameters to make timer callback outside critical section
+    s_thread->curr = timerProc;
+
+    // Leave critical section to make timer callback
+    crit.Leave();
+
+    unsigned sleepMs = s_thread->curr(param);
+    s_thread->curr = nullptr;
+
+    crit.Enter();
+
+    return sleepMs;
+}
+
+//===========================================================================
+hsError AsyncTimer::P::Thread::Run () {
+    do {
+        crit.Enter();
+        const unsigned sleepMs = P::Run();
+        crit.Leave();
+
+        s_thread->event.Wait(sleepMs);
+    } while (!s_thread->GetQuit());
+    return 0;
 }
 
 
@@ -197,26 +208,27 @@ static inline void InitializeTimer () {
 
 //===========================================================================
 void TimerDestroy (unsigned exitThreadWaitMs) {
-    s_running = false;
+    ASSERT(AsyncTimer::P::s_thread);
 
-    if (s_timerThread) {
-        s_timerEvent.Signal();
-        //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
-        s_timerThread->Stop();
-        s_timerThread = nil;
-    }
+    AsyncTimer::P::s_thread->SetQuit(true);
+    AsyncTimer::P::s_thread->event.Signal();
+    //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
+    AsyncTimer::P::s_thread->Stop();
 
     // Cleanup any timers that have been stopped but not deleted
-    s_timerCrit.Enter();
-    while (AsyncTimer * t = s_timerDelete.Head()) {
+    AsyncTimer::P::crit.Enter();
+    while (AsyncTimer::P * t = AsyncTimer::P::s_thread->deleteList.Head()) {
         if (t->destroyProc)
-            CallTimerProc(t, t->destroyProc);
+            t->CallProc(t->destroyProc);
         delete t;
     }
-    s_timerCrit.Leave();
+    AsyncTimer::P::crit.Leave();
 
-    if (AsyncTimer * timer = s_timerProcs.Root())
+    if (AsyncTimer::P * timer = AsyncTimer::P::s_thread->procs.Root())
         ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
+
+    delete AsyncTimer::P::s_thread;
+    AsyncTimer::P::s_thread = nullptr;
 }
 
 
@@ -229,42 +241,37 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
 //===========================================================================
 // 1. Timer procs do not get starved by I/O, they are called periodically.
 // 2. Timer procs will never be called by multiple threads simultaneously.
-void AsyncTimerCreate (
-    AsyncTimer **   timer,
-    FAsyncTimerProc timerProc, 
+void AsyncTimer::Create (
+    FProc           timerProc, 
     unsigned        callbackMs,
     void *          param
 ) {
-    ASSERT(timer);
+    ASSERT(!p);
     ASSERT(timerProc);
 
     // Allocate timer outside critical section
-    AsyncTimer * t  = new AsyncTimer;
-    t->timerProc    = timerProc;
-    t->destroyProc  = nil;
-    t->param        = param;
-    t->priority.Set(TimeGetMs() + callbackMs);
-
-    // Set result pointer before queueing timer
-    // so that the value is set before a callback
-    *timer = t;
+    p               = new P;
+    p->timerProc    = timerProc;
+    p->destroyProc  = nullptr;
+    p->param        = param;
+    p->priority.Set(TimeGetMs() + callbackMs);
 
     bool setEvent;
-    s_timerCrit.Enter();
+    P::crit.Enter();
     {
-        InitializeTimer();
+        P::Initialize();
 
         // Does this timer need to be queued?
         if (callbackMs != kPosInfinity32)
-            s_timerProcs.Enqueue(t);
+            P::s_thread->procs.Enqueue(p);
 
         // Does the timer thread need to be awakened?
-        setEvent = t == s_timerProcs.Root();
+        setEvent = p == P::s_thread->procs.Root();
     }
-    s_timerCrit.Leave();
+    P::crit.Leave();
 
     if (setEvent)
-        s_timerEvent.Signal();
+        P::s_thread->event.Signal();
 }
 
 //===========================================================================
@@ -275,77 +282,82 @@ void AsyncTimerCreate (
 //    be set by init/destruct threads, not I/O worker threads. In addition, extreme
 //    care should be used to avoid a deadlock when this flag is set; in general, it
 //    is a good idea not to hold any locks or critical sections when setting the flag.
-void AsyncTimerDelete (
-    AsyncTimer *    timer,
-    unsigned        flags
-) {
+void AsyncTimer::Delete (FProc destroyProc) {
     // If the timer has already been destroyed then exit
-    ASSERT(timer);
+    ASSERT(p);
+    ASSERT(!p->deleteLink.IsLinked());
+
+    // Link the timer to the deletion list
+    P::crit.Enter();
+    {
+        p->destroyProc = destroyProc;
+        P::s_thread->deleteList.Link(p);
+    }
+    P::crit.Leave();
+
+    // Force the timer thread to wake up and perform the deletion
+    if (destroyProc)
+        P::s_thread->event.Signal();
+    p = nullptr;
+}
+
+//===========================================================================
+void AsyncTimer::DeleteAndWait () {
+    // If the timer has already been destroyed then exit
+    ASSERT(p);
 
     // Wait for timer before exiting function?
-    FAsyncTimerProc timerProc;
-    if (flags & kAsyncTimerDestroyWaitComplete)
-        timerProc = timer->timerProc;
-    else
-        timerProc = nil;
+    FProc timerProc = p->timerProc;
 
-    AsyncTimerDeleteCallback(timer, nil);
+    Delete();
 
     // Wait until the timer procedure completes
     if (timerProc) {
-
-        while (s_timerCurr == timerProc)
+        while (P::s_thread->curr == timerProc)
             hsSleep::Sleep(1);
     }
 }
 
 //===========================================================================
-void AsyncTimerDeleteCallback (
-    AsyncTimer *    timer,
-    FAsyncTimerProc destroyProc
-) {
-    // If the timer has already been destroyed then exit
-    ASSERT(timer);
-    ASSERT(!timer->deleteLink.IsLinked());
+// To set the time value for a timer, use this function with flags = 0.
+// To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SETPRIORITYHIGHER
+void AsyncTimer::Set (unsigned callbackMs) {
+    ASSERT(p);
 
-    // Link the timer to the deletion list
-    s_timerCrit.Enter();
+    bool setEvent;
+    P::crit.Enter();
     {
-        timer->destroyProc = destroyProc;
-        s_timerDelete.Link(timer);
+        if (callbackMs != kPosInfinity32) {
+            p->Update(callbackMs + TimeGetMs());
+            setEvent = p == P::s_thread->procs.Root();
+        }
+        else
+            setEvent = false;
     }
-    s_timerCrit.Leave();
+    P::crit.Leave();
 
-    // Force the timer thread to wake up and perform the deletion
-    if (destroyProc)
-        s_timerEvent.Signal();
+    if (setEvent)
+        P::s_thread->event.Signal();
 }
 
 //===========================================================================
-// To set the time value for a timer, use this function with flags = 0.
-// To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SETPRIORITYHIGHER
-void AsyncTimerUpdate (
-    AsyncTimer *    timer,
-    unsigned        callbackMs,
-    unsigned        flags
-) {
-    ASSERT(timer);
+void AsyncTimer::SetIfHigher (unsigned callbackMs) {
+    ASSERT(p);
 
     bool setEvent;
-    s_timerCrit.Enter();
+    P::crit.Enter();
     {
         if (callbackMs != kPosInfinity32) {
-            UpdateTimer(timer, callbackMs + TimeGetMs(), flags);
-            setEvent = timer == s_timerProcs.Root();
+            p->UpdateIfHigher(callbackMs + TimeGetMs());
+            setEvent = p == P::s_thread->procs.Root();
         }
         else {
-            if ((flags & kAsyncTimerUpdateSetPriorityHigher) == 0)
-                timer->priority.Unlink();
+            p->priority.Unlink();
             setEvent = false;
         }
     }
-    s_timerCrit.Leave();
+    P::crit.Leave();
 
     if (setEvent)
-        s_timerEvent.Signal();
+        P::s_thread->event.Signal();
 }

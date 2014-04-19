@@ -66,11 +66,11 @@ struct CliAuConn : hsRefCnt {
     ~CliAuConn ();
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
     
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -1592,8 +1592,8 @@ static unsigned CliAuConnPingTimerProc (void * param) {
 
 //============================================================================
 CliAuConn::CliAuConn ()
-    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : hsRefCnt(0), reconnectStartMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
@@ -1647,7 +1647,7 @@ void CliAuConn::StartAutoReconnect () {
                 remainingMs = 0;
             LogMsg(kLogPerf, L"Auth auto-reconnecting in %u ms", remainingMs);
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     critsect.Leave();
 }
@@ -1662,8 +1662,7 @@ void CliAuConn::AutoReconnect () {
     Ref("ReconnectTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliAuConnReconnectTimerProc,
             0,  // immediate callback
             this
@@ -1676,10 +1675,9 @@ void CliAuConn::AutoReconnect () {
 void CliAuConn::StopAutoReconnect () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliAuConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -1687,7 +1685,7 @@ void CliAuConn::StopAutoReconnect () {
 //============================================================================
 bool CliAuConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return reconnectTimer && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -1696,8 +1694,7 @@ void CliAuConn::AutoPing () {
     Ref("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliAuConnPingTimerProc,
             sock ? 0 : kPosInfinity32,
             this
@@ -1711,8 +1708,7 @@ void CliAuConn::StopAutoPing () {
     critsect.Enter();
     {
         if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
-            pingTimer = nil;
+            pingTimer.Delete(CliAuConnTimerDestroyed);
         }
     }
     critsect.Leave();

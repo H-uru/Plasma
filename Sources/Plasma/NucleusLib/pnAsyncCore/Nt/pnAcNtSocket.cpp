@@ -146,7 +146,7 @@ static HANDLE                           s_listenEvent;
 
 const unsigned kCloseTimeoutMs = 8*1000;
 static CNtCritSect                      s_socketCrit;
-static AsyncTimer *                     s_socketTimer;
+static AsyncTimer                       s_socketTimer;
 static LISTDECL(NtSock, link)           s_socketList;
 
 
@@ -898,8 +898,7 @@ static unsigned SocketCloseTimerCallback (void *) {
 
 //===========================================================================
 void INtSocketInitialize () {
-    AsyncTimerCreate(
-        &s_socketTimer,
+    s_socketTimer.Create(
         SocketCloseTimerCallback,
         kPosInfinity32
     );
@@ -927,10 +926,8 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
 
 //===========================================================================
 void INtSocketDestroy () {
-    if (s_socketTimer) {
-        AsyncTimerDelete(s_socketTimer, kAsyncTimerDestroyWaitComplete);
-        s_socketTimer = nil;
-    }
+    if (s_socketTimer)
+        s_socketTimer.DeleteAndWait();
 }
 
 //===========================================================================
@@ -1257,7 +1254,7 @@ void AsyncSocketDisconnect (AsyncSocket conn, bool hardClose) {
         // This operation should be safe to perform outside the critical section
         // because s_socketTimer should not be deleted before application shutdown
         if (startTimer)
-            AsyncTimerUpdate(s_socketTimer, kCloseTimeoutMs);
+            s_socketTimer.Set(kCloseTimeoutMs);
     }
 }
 
