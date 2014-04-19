@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcDns.h"
 #pragma hdrstop
 
 // Define this if the file servers are running behind load-balancing hardware.

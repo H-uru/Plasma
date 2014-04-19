@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnEncryption/plChallengeHash.h"
 #include "pnUUID/pnUUID.h"
+#include "pnAsyncCore/pnAcLog.h"
 
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING

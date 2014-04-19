@@ -77,6 +77,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUUID/pnUUID.h"
 #include "plGImage/plMipmap.h"
 #include "plVault/plVault.h"
+#include "pnAsyncCore/pnAcLog.h"
 
 
 ///////////////////////////////////////////////////////////////////////////

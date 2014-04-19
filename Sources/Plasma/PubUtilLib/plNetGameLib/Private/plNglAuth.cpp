@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcThread.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcDns.h"
 #pragma hdrstop
 
 #include "pnEncryption/plChallengeHash.h"

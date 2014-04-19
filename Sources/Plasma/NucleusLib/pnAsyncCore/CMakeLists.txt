@@ -9,7 +9,6 @@ set(pnAsyncCore_SOURCES
 )
 
 set(pnAsyncCore_HEADERS
-    pnAsyncCore.h
     pnAcCore.h
     pnAcSocket.h
     pnAcLog.h
