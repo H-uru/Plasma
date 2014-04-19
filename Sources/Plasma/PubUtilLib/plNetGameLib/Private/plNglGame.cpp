@@ -69,7 +69,7 @@ struct CliGmConn : AtomicRef {
     bool            abandoned;
 
     // ping
-    AsyncTimer *    pingTimer;
+    AsyncTimer      pingTimer;
     unsigned        pingSendTimeMs;
     unsigned        lastHeardTimeMs;
 
@@ -418,7 +418,7 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 //============================================================================
 CliGmConn::CliGmConn ()
     : sock(nil), cancelId(nil), cli(nil), seq(0), abandoned(false)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
 {
     AtomicAdd(&s_perf[kPerfConnCount], 1);
 }
@@ -436,8 +436,7 @@ void CliGmConn::AutoPing () {
     IncRef("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliGmConnPingTimerProc,
             sock ? 0 : kPosInfinity32,
             this
@@ -450,10 +449,8 @@ void CliGmConn::AutoPing () {
 void CliGmConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
-            pingTimer = nil;
-        }
+        if (pingTimer)
+            pingTimer.Delete(CliGmConnTimerDestroyed);
     }
     critsect.Leave();
 }

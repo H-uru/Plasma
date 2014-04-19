@@ -79,14 +79,14 @@ struct CliFileConn : AtomicRef {
     CCritSect           timerCritsect; // critsect for both timers
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
     unsigned            connectStartMs;
     unsigned            numImmediateDisconnects;
     unsigned            numFailedConnects;
 
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -97,7 +97,7 @@ struct CliFileConn : AtomicRef {
     // to initiate connection attempts to the remote host whenever
     // the socket is disconnected.
     void AutoReconnect ();
-    bool AutoReconnectEnabled () {return (reconnectTimer != nil);}
+    bool AutoReconnectEnabled () { return reconnectTimer; }
     void StopAutoReconnect (); // call before destruction
     void StartAutoReconnect ();
     void TimerReconnect ();
@@ -585,9 +585,9 @@ static void AsyncLookupCallback (
 //============================================================================
 CliFileConn::CliFileConn ()
     : sock(nil), seq(0), cancelId(nil), abandoned(false), buildId(0), serverType(0)
-    , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
+    , reconnectStartMs(0), connectStartMs(0)
     , numImmediateDisconnects(0), numFailedConnects(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
 {
     memset(name, 0, sizeof(name));
     AtomicAdd(&s_perf[kPerfConnCount], 1);
@@ -644,7 +644,7 @@ void CliFileConn::StartAutoReconnect () {
             if ((signed)remainingMs < 0)
                 remainingMs = 0;
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     timerCritsect.Leave();
 }
@@ -658,8 +658,7 @@ void CliFileConn::AutoReconnect () {
     {
         ASSERT(!reconnectTimer);
         IncRef("ReconnectTimer");
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliFileConnTimerReconnectProc,
             0,  // immediate callback
             this
@@ -679,10 +678,9 @@ static unsigned CliFileConnTimerDestroyed (void * param) {
 void CliFileConn::StopAutoReconnect () {
     timerCritsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliFileConnTimerDestroyed);
     }
     timerCritsect.Leave();
 }
@@ -703,8 +701,7 @@ void CliFileConn::AutoPing () {
         unsigned timerPeriod = sock ? 0 : kPosInfinity32;
         sockLock.UnlockForReading();
 
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliFileConnPingTimerProc,
             timerPeriod,
             this
@@ -717,10 +714,9 @@ void CliFileConn::AutoPing () {
 void CliFileConn::StopAutoPing () {
     timerCritsect.Enter();
     {
-        if (AsyncTimer * timer = pingTimer) {
-            pingTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+        AsyncTimer timer(pingTimer);
+        if (timer)
+            timer.Delete(CliFileConnTimerDestroyed);
     }
     timerCritsect.Leave();
 }

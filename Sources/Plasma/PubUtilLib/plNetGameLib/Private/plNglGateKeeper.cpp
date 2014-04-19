@@ -65,11 +65,11 @@ struct CliGkConn : AtomicRef {
     ~CliGkConn ();
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
 
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -529,8 +529,8 @@ static unsigned CliGkConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGkConn::CliGkConn ()
-    : reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : reconnectStartMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
@@ -584,7 +584,7 @@ void CliGkConn::StartAutoReconnect () {
                 remainingMs = 0;
             LogMsg(kLogPerf, L"GateKeeper auto-reconnecting in %u ms", remainingMs);
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     critsect.Leave();
 }
@@ -599,8 +599,7 @@ void CliGkConn::AutoReconnect () {
     IncRef("ReconnectTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliGkConnReconnectTimerProc,
             0,  // immediate callback
             this
@@ -613,10 +612,9 @@ void CliGkConn::AutoReconnect () {
 void CliGkConn::StopAutoReconnect () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliGkConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliGkConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -624,7 +622,7 @@ void CliGkConn::StopAutoReconnect () {
 //============================================================================
 bool CliGkConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return reconnectTimer && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -633,8 +631,7 @@ void CliGkConn::AutoPing () {
     IncRef("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliGkConnPingTimerProc,
             sock ? 0 : kPosInfinity32,
             this
@@ -647,10 +644,8 @@ void CliGkConn::AutoPing () {
 void CliGkConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliGkConnTimerDestroyed);
-            pingTimer = nil;
-        }
+        if (pingTimer)
+            pingTimer.Delete(CliGkConnTimerDestroyed);
     }
     critsect.Leave();
 }
