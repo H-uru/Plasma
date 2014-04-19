@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 
 #include "pnEncryption/plBigNum.h"
+#include "pnAsyncCore/pnAcSocket.h"
 
 /*****************************************************************************
 *

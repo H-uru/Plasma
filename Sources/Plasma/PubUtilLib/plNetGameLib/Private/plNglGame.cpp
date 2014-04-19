@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcThread.h"
 #pragma hdrstop
 
 namespace Ngl { namespace Game {
