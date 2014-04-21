@@ -60,34 +60,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct AsyncTimer::P {
     struct Thread;
     static Thread *     s_thread;
-    static CCritSect    crit;
+    static hsMutex      lock;
 
     PRIORITY_TIME(P)    priority;
-    FProc               timerProc;
-    FProc               destroyProc;
+    FProc               proc;
     void *              param;
     LINK(P)             deleteLink;
+    bool                doDelete;
+    hsSemaphore         deleteEvent;
 
-    static void Initialize();
     static unsigned Run ();
     
     void Update (unsigned timeMs);
     void UpdateIfHigher (unsigned timeMs);
-    unsigned CallProc (FProc timerProc);
 };
 
 //===========================================================================
 struct AsyncTimer::P::Thread : hsThread {
-    FProc                                   curr;
-    hsEvent                                 event;
-    PRIQDECL(P, PRIORITY_TIME(P), priority) procs;
+    hsSemaphore                             event;
+    PRIQDECL(P, PRIORITY_TIME(P), priority) procsList;
     LISTDECL(P, deleteLink)                 deleteList;
     
     hsError Run();
     using hsThread::SetQuit;
 };
 AsyncTimer::P::Thread *     AsyncTimer::P::s_thread = nullptr;
-CCritSect                   AsyncTimer::P::crit;
+hsMutex                     AsyncTimer::P::lock;
+
 
 /****************************************************************************
 *
@@ -100,101 +99,92 @@ AsyncTimer::~AsyncTimer() { delete p; }
 
 //===========================================================================
 // inline because it is called only once
-inline void AsyncTimer::P::Initialize () {
-    if (!s_thread) {
-        s_thread = new Thread();
-        s_thread->Start();
-    }
-}
-
-//===========================================================================
-// inline because it is called only once
 inline unsigned AsyncTimer::P::Run () {
     unsigned currTimeMs = TimeGetMs();
     for (;;) {
-        // Delete old timers
-        while (AsyncTimer::P * t = s_thread->deleteList.Head()) {
-            if (t->destroyProc)
-                t->CallProc(t->destroyProc);
-            delete t;
+        FProc proc;
+        AsyncTimer::P * t;
+        { hsTempMutexLock lock_(lock);
+            
+            // Delete old timers
+            while (t = s_thread->deleteList.Head()) {
+                if (!t->doDelete)
+                    t->deleteEvent.Signal();
+                else {
+                    if (t->proc) {
+                        lock.Unlock();
+                        t->proc(t->param);
+                        lock.Lock();
+                    }
+                    delete t;
+                }
+            }
+
+            // Get first timer to run
+            t = s_thread->procsList.Root();
+            if (!t)
+                return kPosInfinity32;
+
+            // If it isn't time to run this timer then exit
+            if (t->priority.Get() > currTimeMs)
+                return t->priority.Get() - currTimeMs;
+            
+            proc = t->proc;
         }
 
-        // Get first timer to run
-        AsyncTimer::P * t = s_thread->procs.Root();
-        if (!t)
-            return kPosInfinity32;
-
-        // If it isn't time to run this timer then exit
-        unsigned sleepMs;
-        if (0 < (signed) (sleepMs = (unsigned) t->priority.Get() - currTimeMs))
-            return sleepMs;
-
-        // Remove from timer queue and call timer
-        s_thread->procs.Dequeue();
-        sleepMs = t->CallProc(t->timerProc);
+        unsigned sleepMs = proc(t->param);
 
         // Note if return is kPosInfinity32, we do not remove the timer
         // from the queue.  Some users depend on the fact that they can
         // call AsyncTimerUpdate and not get overridden by a return from the
         // handler at the same time.
 
-        // Requeue timer
+        // timer update
         currTimeMs = TimeGetMs();
         if (sleepMs != kPosInfinity32)
-            t->UpdateIfHigher(sleepMs + currTimeMs);
+            t->priority.Set(sleepMs + currTimeMs);
+        else {
+            hsTempMutexLock lock(lock);
+            s_thread->procsList.Dequeue();
+        }
     }
 }
 
 //===========================================================================
-void AsyncTimer::P::Update (unsigned timeMs) {
+// inline because it is called only once
+inline void AsyncTimer::P::Update (unsigned timeMs) {
     // If the timer isn't already linked then it doesn't
     // matter whether kAsyncTimerUpdateSetPriorityHigher is
     // set; just add the timer to the queue
     if (!priority.IsLinked()) {
         priority.Set(timeMs);
-        s_thread->procs.Enqueue(this);
+        s_thread->procsList.Enqueue(this);
     }
     else
         priority.Set(timeMs);
 }
 
 //===========================================================================
-void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
+// inline because it is called only once
+inline void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
     // If the timer isn't already linked then it doesn't
     // matter whether kAsyncTimerUpdateSetPriorityHigher is
     // set; just add the timer to the queue
     if (!priority.IsLinked()) {
         priority.Set(timeMs);
-        s_thread->procs.Enqueue(this);
+        s_thread->procsList.Enqueue(this);
     }
     else if (!priority.IsPriorityHigher(timeMs))
         priority.Set(timeMs);
 }
 
 //===========================================================================
-unsigned AsyncTimer::P::CallProc (FProc timerProc) {
-    // Cache parameters to make timer callback outside critical section
-    s_thread->curr = timerProc;
-
-    // Leave critical section to make timer callback
-    crit.Leave();
-
-    unsigned sleepMs = s_thread->curr(param);
-    s_thread->curr = nullptr;
-
-    crit.Enter();
-
-    return sleepMs;
-}
-
-//===========================================================================
 hsError AsyncTimer::P::Thread::Run () {
     do {
-        crit.Enter();
         const unsigned sleepMs = P::Run();
-        crit.Leave();
 
-        s_thread->event.Wait(sleepMs);
+        if (s_thread->event.Wait(sleepMs))
+            while (s_thread->event.TryWait()); // binary semaphore emultation
     } while (!s_thread->GetQuit());
     return 0;
 }
@@ -216,16 +206,23 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     AsyncTimer::P::s_thread->Stop();
 
     // Cleanup any timers that have been stopped but not deleted
-    AsyncTimer::P::crit.Enter();
-    while (AsyncTimer::P * t = AsyncTimer::P::s_thread->deleteList.Head()) {
-        if (t->destroyProc)
-            t->CallProc(t->destroyProc);
-        delete t;
+    { hsTempMutexLock lock(AsyncTimer::P::lock);
+        while (AsyncTimer::P * t = AsyncTimer::P::s_thread->deleteList.Head()) {
+            if (!t->doDelete)
+                t->deleteEvent.Signal();
+            else {
+                if (t->proc) {
+                    AsyncTimer::P::lock.Unlock();
+                    t->proc(t->param);
+                    AsyncTimer::P::lock.Lock();
+                }
+                delete t;
+            }
+        }
     }
-    AsyncTimer::P::crit.Leave();
 
-    if (AsyncTimer::P * timer = AsyncTimer::P::s_thread->procs.Root())
-        ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
+    if (AsyncTimer::P * timer = AsyncTimer::P::s_thread->procsList.Root())
+        ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->proc);
 
     delete AsyncTimer::P::s_thread;
     AsyncTimer::P::s_thread = nullptr;
@@ -251,24 +248,24 @@ void AsyncTimer::Create (
 
     // Allocate timer outside critical section
     p               = new P;
-    p->timerProc    = timerProc;
-    p->destroyProc  = nullptr;
+    p->proc         = timerProc;
     p->param        = param;
     p->priority.Set(TimeGetMs() + callbackMs);
 
     bool setEvent;
-    P::crit.Enter();
-    {
-        P::Initialize();
-
+    if (!P::s_thread) {
+        P::s_thread = new P::Thread();
+        P::s_thread->Start();
+    }
+    
+    { hsTempMutexLock lock(P::lock);
         // Does this timer need to be queued?
         if (callbackMs != kPosInfinity32)
-            P::s_thread->procs.Enqueue(p);
+            P::s_thread->procsList.Enqueue(p);
 
         // Does the timer thread need to be awakened?
-        setEvent = p == P::s_thread->procs.Root();
+        setEvent = p == P::s_thread->procsList.Root();
     }
-    P::crit.Leave();
 
     if (setEvent)
         P::s_thread->event.Signal();
@@ -287,13 +284,12 @@ void AsyncTimer::Delete (FProc destroyProc) {
     ASSERT(p);
     ASSERT(!p->deleteLink.IsLinked());
 
+    p->doDelete = true;
     // Link the timer to the deletion list
-    P::crit.Enter();
-    {
-        p->destroyProc = destroyProc;
+    { hsTempMutexLock lock(P::lock);
+        p->proc = destroyProc;
         P::s_thread->deleteList.Link(p);
     }
-    P::crit.Leave();
 
     // Force the timer thread to wake up and perform the deletion
     if (destroyProc)
@@ -306,16 +302,21 @@ void AsyncTimer::DeleteAndWait () {
     // If the timer has already been destroyed then exit
     ASSERT(p);
 
-    // Wait for timer before exiting function?
-    FProc timerProc = p->timerProc;
-
-    Delete();
-
-    // Wait until the timer procedure completes
-    if (timerProc) {
-        while (P::s_thread->curr == timerProc)
-            hsSleep::Sleep(1);
+    p->doDelete = false;
+    // Link the timer to the deletion list
+    { hsTempMutexLock lock(P::lock);
+        p->proc = nullptr;
+        P::s_thread->deleteList.Link(p);
     }
+
+    
+    // Force the timer thread to wake up and perform the deletion
+    P::s_thread->event.Signal();
+    // Wait until the timer procedure completes
+    p->deleteEvent.Wait();
+
+    delete p;
+    p = nullptr;
 }
 
 //===========================================================================
@@ -325,16 +326,14 @@ void AsyncTimer::Set (unsigned callbackMs) {
     ASSERT(p);
 
     bool setEvent;
-    P::crit.Enter();
-    {
+    { hsTempMutexLock lock(P::lock);
         if (callbackMs != kPosInfinity32) {
             p->Update(callbackMs + TimeGetMs());
-            setEvent = p == P::s_thread->procs.Root();
+            setEvent = p == P::s_thread->procsList.Root();
         }
         else
             setEvent = false;
     }
-    P::crit.Leave();
 
     if (setEvent)
         P::s_thread->event.Signal();
@@ -345,19 +344,17 @@ void AsyncTimer::SetIfHigher (unsigned callbackMs) {
     ASSERT(p);
 
     bool setEvent;
-    P::crit.Enter();
-    {
+    { hsTempMutexLock lock(P::lock);
         if (callbackMs != kPosInfinity32) {
             p->UpdateIfHigher(callbackMs + TimeGetMs());
-            setEvent = p == P::s_thread->procs.Root();
+            setEvent = p == P::s_thread->procsList.Root();
         }
         else {
             p->priority.Unlink();
             setEvent = false;
         }
     }
-    P::crit.Leave();
-
+    
     if (setEvent)
         P::s_thread->event.Signal();
 }
