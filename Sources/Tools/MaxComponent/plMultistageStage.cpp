@@ -362,7 +362,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(fAnimName.c_str());
+    edit->SetText(const_cast<SETTEXT_VALUE_TYPE>(fAnimName.c_str()));
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);
