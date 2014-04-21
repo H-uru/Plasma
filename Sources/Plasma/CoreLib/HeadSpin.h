@@ -332,14 +332,14 @@ void SWAP (T & a, T & b) {
 #   define hsStatusMessage(x)                  NULL_STMT
 #   define hsStatusMessageF(x, ...)            NULL_STMT
 #else
-    void    hsStatusMessage(const char message[]);
+    void    hsStatusMessage(const char* message);
     void    hsStatusMessageF(const char * fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
-char*   hsStrcpy(char dstOrNil[], const char src[]);
+char*   hsStrcpy(char* dstOrNil, const char* src);
 void    hsStrLower(char *s);
 
-inline char* hsStrcpy(const char src[])
+inline char* hsStrcpy(const char* src)
 {
     return hsStrcpy(nil, src);
 }
@@ -381,10 +381,10 @@ enum {          // RETURN VALUES FROM hsMessageBox
 };
 
 extern bool hsMessageBox_SuppressPrompts;
-int hsMessageBox(const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBox(const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
 
 // flag testing / clearing
 #define hsCheckBits(f,c) ((f & c)==c)
@@ -449,15 +449,15 @@ extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
-void ErrorAssert (int line, const char file[], const char fmt[], ...);
+void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
 bool DebugIsDebuggerPresent ();
 void DebugBreakIfDebuggerPresent ();
-void DebugMsg(const char fmt[], ...);
+void DebugMsg(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
-    void    hsDebugMessage(const char message[], long refcon);
+    void    hsDebugMessage(const char* message, long refcon);
     #define hsDebugCode(code)                   code
     #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
     #define hsAssert(expr, msg)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
