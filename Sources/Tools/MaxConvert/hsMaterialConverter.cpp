@@ -109,7 +109,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaMtls/Layers/plLayerTexBitmapPB.h"
 
 #include "pfSurface/plLayerAVI.h"
-#include "pfSurface/plLayerBink.h"
 
 #include "MaxComponent/plLightMapComponent.h"
 #include "plDrawable/plGeometrySpan.h"
@@ -692,14 +691,6 @@ bool hsMaterialConverter::IsQTLayer(Texmap*  texMap)
     return false;
     hsGuardEnd; 
 }
-
-bool hsMaterialConverter::IsBinkLayer(Texmap*  texMap)
-{
-    hsGuardBegin("hsMaterialConverter::IsBinkLayer");
-    return false;
-    hsGuardEnd; 
-}
-
 
 
 // MAXR3 broke GetCoordMapping, here's a work around which
@@ -1984,22 +1975,16 @@ static plLayerInterface* IProcessLayerMovie(plPassMtlBase* mtl, plLayerTex* layT
     plAnimStealthNode* stealth = IGetEntireAnimation(mtl);
 
     plString ext = fileName.GetFileExt();
-    bool isBink = (ext.CompareI("bik") == 0);
     bool isAvi  = (ext.CompareI("avi") == 0);
 
-    if (isBink || isAvi)
+    if (isAvi)
     {
         plFileName movieName = plFileName::Join("avi", fileName.GetFileName());
 
         plLayerMovie* movieLayer = nil;
         plString moviePostfix;
 
-        if (isBink)
-        {
-            movieLayer = new plLayerBink;
-            moviePostfix = "_bink";
-        }
-        else if (isAvi)
+        if (isAvi)
         {
             movieLayer = new plLayerAVI;
             moviePostfix = "_avi";
@@ -4139,7 +4124,7 @@ bool hsMaterialConverter::IIsAnimatedTexmap(Texmap* texmap)
     if (hsControlConverter::Instance().GetControllerByName(texmap, TSTR("Opacity"), ctl)) 
         return true;
 
-    if (HasAnimatedTextures(texmap) || IsAVILayer(texmap) || IsBinkLayer(texmap)|| IsQTLayer(texmap) || ITextureTransformIsAnimated(texmap))
+    if (HasAnimatedTextures(texmap) || IsAVILayer(texmap) || IsQTLayer(texmap) || ITextureTransformIsAnimated(texmap))
         return true;
 
     return false;

@@ -100,7 +100,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDynamicEnvMap.h"
 
 #include "pfSurface/plLayerAVI.h"
-#include "pfSurface/plLayerBink.h"
 
 #include "MaxPlasmaMtls/Layers/plPlasmaMAXLayer.h"
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
