@@ -1,0 +1,161 @@
+/**
+ * Plasma engine landing page styles
+ *
+ * @author dpogue
+ */
+
+@import url(http://fonts.googleapis.com/css?family=Nova+Square&text=Plasma);
+@import url(http://fonts.googleapis.com/css?family=Cinzel);
+@import url(http://fonts.googleapis.com/css?family=Roboto:300,400,500,700);
+
+@ms-viewport { width: device-width; }
+@viewport { width: device-width; }
+
+body {
+    background: #37372f; /*#5c5c5c;*/
+    padding: 0;
+    margin: 0 auto;
+    font-family: 'Roboto', sans-serif;
+}
+
+@media (min-width: 960px) {
+    body {
+        width: 960px;
+    }
+}
+
+a {
+    color: inherit;
+    text-shadow: 0 1px 2px white;
+}
+
+h1 {
+    font-family: 'Nova Square', sans-serif;
+    font-size: 3em;
+    font-weight: normal;
+    color: #fff3ed;
+    text-shadow: 0 1px 2px #2f2f2e;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 0.25rem;
+    padding-top: 1.25rem;
+}
+
+h2 {
+    font-family: 'Cinzel', monospace;
+    font-size: 1.25em;
+    font-weight: normal;
+    color: #eeeeee;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.25);
+    text-align: center;
+    margin-top: 0.25rem;
+}
+
+header, footer {
+    margin: 0 auto;
+    background: transparent url('mast.png') no-repeat;
+    background-position: center -90px;
+    height: 120px;
+}
+
+footer {
+    background-position: center bottom;
+    height: auto;
+}
+
+@media (min-width: 960px) {
+    header, footer {
+        width: 960px;
+        background-position: 0 -120px;
+        height: 180px;
+    }
+
+    footer {
+        background-position: left bottom;
+        height: 300px;
+    }
+}
+
+.page {
+    background: #c6c3c6 url('pahtsBrdgTrim.png') top left repeat-y;
+    background-size: 25px;
+    margin: 0;
+    padding: 5px 10px;
+    padding-left: 40px;
+    box-sizing: border-box;
+    color: #31454a;
+    border: 1px solid #37372f;
+    border-width: 1px 0;
+    line-height: 1.5em;
+    font-weight: 300;
+}
+
+@media (min-width: 600px) {
+    .page {
+        background-size: 47px;
+        padding: 10px 70px;
+    }
+}
+
+h3 {
+    font-family: 'Cinzel', monospace;
+    font-size: 1.25em;
+    color: #31454a;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    margin-top: 2rem;
+    margin-bottom: 0;
+}
+
+.cta-box {
+    margin: 1.75rem auto 3rem;
+    text-align: center;
+    font-size: 1.25em;
+}
+
+@media (min-width: 960px) {
+    .cta-box {
+        width: 800px;
+    }
+}
+
+.btn {
+    display: inline-block;
+    color: #31454a;
+    background: #bbc3c7;
+    text-shadow: 0 1px 0 rgba(225, 230, 236, 0.5);
+    text-decoration: none;
+    font-family: 'Roboto', sans-serif;
+    padding: 5px 15px;
+    border: 1px solid #31454a;
+    border-radius: 3px;
+    font-weight: 700;
+}
+
+.btn .fa {
+    display: none;
+}
+
+.cta-box .btn {
+    padding: 10px;
+    background: #adc4c8;
+    background-image: linear-gradient(to bottom, #adc4c8, #99b6c0);
+    margin: 5px 0;
+}
+
+@media (min-width: 600px) {
+    .btn .fa {
+        display: inline;
+        text-align: left;
+        width: 1.25em;
+    }
+
+    .cta-box .btn {
+        padding: 10px 20px;
+    }
+}
+
+@media (min-width: 960px) {
+    .cta-box .btn {
+        margin: auto 5px;
+    }
+}

@@ -1,0 +1,98 @@
+<!DOCTYPE>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Plasma</title>
+
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+    <header>
+      <h1>Plasma</h1>
+      <h2>The Cyan Worlds Engine</h2>
+    </header>
+
+    <section class="page">
+      <div class="cta-box">
+        <a class="btn" href="https://github.com/H-uru/Plasma/archive/master.zip">
+          <i class="fa fa-download"></i>
+          Download the code (.zip)
+        </a>
+
+        <a class="btn" href="https://github.com/H-uru/Plasma">
+          <i class="fa fa-github"></i>
+          See the code on GitHub
+        </a>
+      </div>
+
+      <h3>What is Plasma?</h3>
+      <p>
+        Plasma is a 3D game engine developed by <a href="http://www.cyan.com/"> Cyan Worlds, Inc.</a> and now released under an open-source GPLv3 licence. It was used by Cyan for projects including <i>Uru: Ages Beyond Myst</i>, <i>Myst V: End of Ages</i>, <i>Myst Online: Uru Live</i>, and <i>Cosmic Osmo's Hex Isle</i>. The open-source code is the same version as used in <i>Myst Online: Uru Live</i>.
+      </p>
+      <p>
+        The Plasma engine GitHub project includes the source code for the core game engine, the Windows game client, a 3D Studio Max plugin for content creation, and several small utilities. The server code has not been released under the GPL, and is not included.
+      </p>
+      <p>
+        Additional game files from <i>Myst Online: Uru Live</i> were also released by Cyan, and can be downloaded from the moul-scripts GitHub project:
+        <br>
+        <a href="https://github.com/H-uru/moul-scripts" class="btn">
+          <i class="fa fa-github"></i>
+          See the game files on GitHub
+        </a>
+      </p>
+
+
+
+      <h3>Project dependencies</h3>
+      <p>
+        To build the Plasma client you will need Visual Studio 2012 or newer. We recommend <a href="http://www.microsoft.com/en-ca/download/details.aspx?id=40787">Visual Studio 2013 Express for Windows Desktop</a>, which can be downloaded for free from Microsoft.
+      </p>
+      <p>
+        You will also need to download and install the <a href="http://www.cmake.org/files/v2.8/cmake-2.8.12.2-win32-x86.exe">CMake GUI</a> tool, and the following SDK packages:
+        <br>
+        <i class="fa fa-caret-right"></i>
+        the <a href="http://www.microsoft.com/downloads/en/details.aspx?familyid=3021d52b-514e-41d3-ad02-438a3ba730ba">DirectX SDK</a> from Microsoft, and
+        <br>
+        <i class="fa fa-caret-right"></i>
+        the <a href="http://www.nvidia.com/object/physx_archives.html#SDK">PhysX 2.6.4 SDK</a> from nVidia.
+      </p>
+      <p>
+      Other development libraries can be downloaded automatically by a build script. If required, you can also <a href="http://guildofwriters.org/tools/devlibs.zip">download them manually</a> as a zip file provided by the Guild of Writers community.
+      </p>
+      <p>
+        For a full list of library dependencies, please see the <a href="https://github.com/H-uru/Plasma#library-dependencies">Library Dependencies</a> section of the README file.
+      </p>
+
+
+      <h3>Building Plasma</h3>
+      <p>
+        Install the CMake GUI tool, and make sure that the installer adds it to the PATH environment variable.
+        <br>
+        Install the DirectX and PhysX SDKs, if you have not already.
+      </p>
+      <p>
+        Download the Plasma engine code using the zip link above, and unzip the archive. You can also use git to clone the project from GitHub.
+      </p>
+      <p>
+        Run the <tt>prepare_env.bat</tt> file included in the project. This will download additional development libraries and use CMake to create a Visual Studio project for you.
+        <br>
+        If you want to configure the project using CMake yourself, please follow <a href="http://guildofwriters.org/wiki/CWE:Getting_Started">these instructions</a>.
+      </p>
+      <p>
+        Open <tt>Plasma.sln</tt> located in the build folder. This Visual Studio project includes all the Plasma modules, tools, and game client by default. You can now use Visual Studio to build Plasma.
+      </p>
+
+
+      <h3>Related resources</h3>
+      <ul>
+        <li><a href="https://github.com/H-uru/Plasma/wiki/Roadmap">Project Roadmap</a></li>
+        <li><a href="http://guildofwriters.org/wiki/Development:CyanWorlds.com_Engine">Guild of Writers Wiki for Plasma development</a></li>
+      </ul>
+    </section>
+
+    <footer>
+    </footer>
+  </body>
+</html>
