@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <istdplug.h>
 #include <pbbitmap.h>
 #include <stdmat.h>
-#include <texutil.h>
 #pragma hdrstop
 
 #include "hsMaterialConverter.h"

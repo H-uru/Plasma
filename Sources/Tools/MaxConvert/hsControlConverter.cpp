@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdmat.h>
 #include <bmmlib.h>
 #include <istdplug.h>
-#include <texutil.h>
 #include <iparamb2.h>
 #include <modstack.h>
 #include <keyreduc.h>
