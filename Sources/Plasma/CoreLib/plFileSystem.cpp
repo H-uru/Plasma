@@ -209,11 +209,11 @@ plFileInfo::plFileInfo(const plFileName &filename)
 
 #if HS_BUILD_FOR_WIN32
     struct __stat64 info;
-    if (!_wstat64(filename.AsString().ToWchar(), &info) == 0)
+    if (_wstat64(filename.AsString().ToWchar(), &info) != 0)
         return;
 #else
     struct stat info;
-    if (!stat(filename.AsString().c_str(), &info) == 0)
+    if (stat(filename.AsString().c_str(), &info) != 0)
         return;
 #endif
 

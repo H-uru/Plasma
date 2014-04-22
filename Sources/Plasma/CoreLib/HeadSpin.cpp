@@ -80,7 +80,7 @@ hsDebugMessageProc hsSetDebugMessageProc(hsDebugMessageProc newProc)
 }
 
 #ifdef HS_DEBUGGING
-void hsDebugMessage (const char message[], long val)
+void hsDebugMessage (const char* message, long val)
 {
     char    s[1024];
 
@@ -112,7 +112,7 @@ void ErrorEnableGui(bool enabled)
     s_GuiAsserts = enabled;
 }
 
-void ErrorAssert(int line, const char file[], const char fmt[], ...)
+void ErrorAssert(int line, const char* file, const char* fmt, ...)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     char msg[1024];
@@ -158,7 +158,7 @@ void DebugBreakIfDebuggerPresent()
 #endif // _MSC_VER
 }
 
-void DebugMsg(const char fmt[], ...)
+void DebugMsg(const char* fmt, ...)
 {
     char msg[1024];
     va_list args;
@@ -180,7 +180,7 @@ void DebugMsg(const char fmt[], ...)
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 
-void hsStatusMessage(const char message[])
+void hsStatusMessage(const char* message)
 {
   if (gHSStatusProc) {
     gHSStatusProc(message);
@@ -243,7 +243,7 @@ public:
 
 bool hsMessageBox_SuppressPrompts = false;
 
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon)
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
@@ -296,7 +296,7 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char c
     return hsMBoxCancel;
 }
 
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon)
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
     if (hsMessageBox_SuppressPrompts)
         return hsMBoxOk;
@@ -349,18 +349,18 @@ int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wch
     return hsMBoxCancel;
 }
 
-int hsMessageBox(const char message[], const char caption[], int kind, int icon)
+int hsMessageBox(const char* message, const char* caption, int kind, int icon)
 {
     return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
-int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon)
+int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon)
 {
     return hsMessageBoxWithOwner((hsWindowHndl)nil,message,caption,kind,icon);
 }
 
 /**************************************/
-char* hsStrcpy(char dst[], const char src[])
+char* hsStrcpy(char* dst, const char* src)
 {
     if (src)
     {
