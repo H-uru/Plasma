@@ -5,6 +5,7 @@ include_directories(../../PubUtilLib)
 set(pnAsyncCore_SOURCES
     pnAcCore.cpp
     pnAcIo.cpp
+    pnAcInt.cpp
     pnAcLog.cpp
     pnAcTimer.cpp
 )

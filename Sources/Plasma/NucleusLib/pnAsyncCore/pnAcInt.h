@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
 *
 *   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcInt.h
-*   
+*
 ***/
 
 #ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACINT_H
@@ -61,6 +61,33 @@ long PerfAddCounter (EAsyncPerfCounter id, unsigned n);
 long PerfSubCounter (EAsyncPerfCounter id, unsigned n);
 long PerfSetCounter (EAsyncPerfCounter id, unsigned n);
 
+
+/*****************************************************************************
+*
+*   Int.cpp
+*
+***/
+
+class IWorkerThreads {
+public:
+    class Operation;
+    
+    static void Create (); ///< start worker threads
+    static void Delete (unsigned timeout); ///< stop worker threads
+    static void Add (Operation * op); ///< add an operation to run in a worker thread.
+    
+private:
+    class P;
+};
+
+class IWorkerThreads::Operation {
+    Operation * next;
+    
+protected:
+    virtual void Callback() = 0;
+    
+    friend class IWorkerThreads;
+};
 
 /*****************************************************************************
 *
