@@ -82,7 +82,7 @@ struct ISocketConnHash {
 
 struct ISocketConnType : ISocketConnHash {
     HASHLINK(ISocketConnType)   hashlink;
-    FAsyncNotifySocketProc      notifyProc;
+    AsyncSocket::FNotifyProc    notifyProc;
 };
 
 
@@ -181,10 +181,10 @@ static unsigned GetConnHash (
         return 1;
     }
     else {
-        if (bytes < sizeof(AsyncSocketConnectPacket))
+        if (bytes < sizeof(AsyncSocket::ConnectPacket))
             return 0;
 
-        const AsyncSocketConnectPacket & connect = * (const AsyncSocketConnectPacket *) buffer;
+        const AsyncSocket::ConnectPacket & connect = * (const AsyncSocket::ConnectPacket *) buffer;
         if (connect.hdrBytes < sizeof(connect))
             return 0;
         
@@ -207,13 +207,13 @@ static unsigned GetConnHash (
 ***/
 
 //===========================================================================
-void AsyncSocketRegisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
+void AsyncSocket::Register (
+    EConnType       connType, 
+    FNotifyProc     notifyProc,
+    unsigned        buildId,
+    unsigned        buildType,
+    unsigned        branchId,
+    const plUUID&   productId
 ) {
     ASSERT(connType != kConnTypeNil);
     ASSERT(notifyProc);
@@ -236,13 +236,13 @@ void AsyncSocketRegisterNotifyProc (
 }
 
 //===========================================================================
-void AsyncSocketUnregisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
+void AsyncSocket::Unregister (
+    EConnType       connType, 
+    FNotifyProc     notifyProc,
+    unsigned        buildId,
+    unsigned        buildType,
+    unsigned        branchId,
+    const plUUID&   productId
 ) {
     ISocketConnHash hash;
     hash.connType   = connType;
@@ -272,15 +272,15 @@ void AsyncSocketUnregisterNotifyProc (
 }
 
 //===========================================================================
-FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const uint8_t  buffer[],
-    unsigned    bytes,
-    unsigned *  bytesProcessed,
-    unsigned *  connType,
-    unsigned *  buildId,
-    unsigned *  buildType,
-    unsigned *  branchId,
-    plUUID*     productId
+AsyncSocket::FNotifyProc AsyncSocket::FindNotifyProc (
+    const uint8_t   buffer[],
+    unsigned        bytes,
+    unsigned *      bytesProcessed,
+    unsigned *      connType,
+    unsigned *      buildId,
+    unsigned *      buildType,
+    unsigned *      branchId,
+    plUUID*         productId
 ) {
     for (;;) {
         // Get the connType
@@ -290,7 +290,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
             break;
 
         // Lookup notifyProc based on connType
-        FAsyncNotifySocketProc proc;
+        FNotifyProc proc;
         s_notifyProcLock.LockForReading();
         if (const ISocketConnType * scan = s_notifyProcs.Find(hash))
             proc = scan->notifyProc;

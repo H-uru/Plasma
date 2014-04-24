@@ -148,3 +148,62 @@ void IWorkerThreads::Delete (unsigned timeoutMs) {
     for (int i = 0; i < P::This->threadCount; i++)
         P::This->threads[i].Stop(); // TODO: timeout
 }
+
+
+/*****************************************************************************
+*
+*   Public exports
+*
+***/
+
+//===========================================================================
+void AsyncCoreInitialize () {
+#if HS_BUILD_FOR_WIN32
+    // Initialize WinSock
+    WSADATA wsaData;
+    if (WSAStartup(0x101, &wsaData))
+        ErrorAssert(__LINE__, __FILE__, "WSA startup failed");
+    if (wsaData.wVersion != 0x101)
+        ErrorAssert(__LINE__, __FILE__, "WSA version failed");
+#endif
+    
+    // ensure initialization only occurs once
+    //if (s_running)
+    //    return;
+    //s_running = true;
+
+    // calculate number of IO worker threads to create
+    //if (!s_pageSizeMask) {
+        //SYSTEM_INFO si;
+        //GetSystemInfo(&si);
+        //s_pageSizeMask = si.dwPageSize - 1;
+
+        // Set worker thread count
+        //s_ioThreadCount = si.dwNumberOfProcessors * 2;
+        //if (s_ioThreadCount > kMaxWorkerThreads) {
+            //s_ioThreadCount = kMaxWorkerThreads;
+            //LogMsg(kLogError, "kMaxWorkerThreads too small!");
+        //}
+    //}
+
+    IWorkerThreads::Create();
+}
+
+//===========================================================================
+// DANGER: calling this function will slam closed any files which are still open.
+// MOST PROGRAMS DO NOT NEED TO CALL THIS FUNCTION. In general, the best way to
+// shut down the program is to simply let the atexit() handler take care of it.
+void AsyncCoreDestroy (unsigned waitMs) {
+    // cleanup modules that post completion notifications as part of their shutdown
+    //INtSocketStartCleanup(waitMs);
+
+    // cleanup worker threads
+    //s_running = false;
+
+    SocketDestroy();
+    DnsDestroy(waitMs);
+    TimerDestroy(waitMs);
+    IWorkerThreads::Delete(waitMs);
+}
+
+

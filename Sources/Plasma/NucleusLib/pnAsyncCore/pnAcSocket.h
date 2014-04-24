@@ -54,107 +54,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /****************************************************************************
 *
-*   Global types and constants
-*
-***/
-
-typedef struct AsyncIdStruct *         AsyncId;
-typedef struct AsyncFileStruct *       AsyncFile;
-typedef struct AsyncSocketStruct *     AsyncSocket;
-typedef struct AsyncCancelIdStruct *   AsyncCancelId;
-
-const unsigned kAsyncSocketBufferSize   = 1460;
-
-/****************************************************************************
-*
-*   Socket connect packet
-*
-***/
-
-#pragma pack(push,1)
-struct AsyncSocketConnectPacket {
-    uint8_t     connType;
-    uint16_t    hdrBytes;
-    uint32_t    buildId;
-    uint32_t    buildType;
-    uint32_t    branchId;
-    plUUID      productId;
-};
-#pragma pack(pop)
-
-
-/****************************************************************************
-*
-*   Socket event notifications
-*
-***/
-
-enum EAsyncNotifySocket {
-    kNotifySocketConnectFailed,
-    kNotifySocketConnectSuccess,
-    kNotifySocketDisconnect,
-    kNotifySocketListenSuccess,
-    kNotifySocketRead,
-    kNotifySocketWrite
-};
-
-struct AsyncNotifySocket {
-    void *          param;
-    AsyncId         asyncId;
-
-    AsyncNotifySocket() : param(nil), asyncId(nil) { }
-};
-
-struct AsyncNotifySocketConnect : AsyncNotifySocket {
-    plNetAddress    localAddr;
-    plNetAddress    remoteAddr;
-    unsigned        connType;
-
-    AsyncNotifySocketConnect() : connType(0) { }
-};
-
-struct AsyncNotifySocketListen : AsyncNotifySocketConnect {
-    unsigned        buildId;
-    unsigned        buildType;
-    unsigned        branchId;
-    plUUID          productId;
-    plNetAddress    addr;
-    uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
-
-    AsyncNotifySocketListen()
-        : buildId(0), buildType(0), branchId(0), buffer(nil), bytes(0),
-          bytesProcessed(0) { }
-};
-
-struct AsyncNotifySocketRead : AsyncNotifySocket {
-    uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
-
-    AsyncNotifySocketRead() : buffer(nil), bytes(0), bytesProcessed(0) { }
-};
-
-typedef AsyncNotifySocketRead AsyncNotifySocketWrite;
-
-typedef bool (* FAsyncNotifySocketProc) (    // return false to disconnect
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
-);
-
-
-/****************************************************************************
-*
-*   Connection type functions
+*   Connection type types
 *
 ***/
 
 // These codes may not be changed unless ALL servers and clients are
 // simultaneously replaced; so basically forget it =)
-enum EConnType {
+enum EConnType : uint8_t {
     kConnTypeNil                    = 0,
     
     // For test applications
@@ -182,122 +88,254 @@ enum EConnType {
 };
 static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
 
-#define IS_TEXT_CONNTYPE(c)     \
-    (((int)(c)) == kConnTypeAdminInterface)
-
-
-void AsyncSocketRegisterNotifyProc (
-    uint8_t                 connType,
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId = 0,
-    unsigned                buildType = 0,
-    unsigned                branchId = 0,
-    const plUUID&           productId = kNilUuid
-);
-
-void AsyncSocketUnregisterNotifyProc (
-    uint8_t                 connType,
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId = 0,
-    unsigned                buildType = 0,
-    unsigned                branchId = 0,
-    const plUUID&           productId = kNilUuid
-);
-
-FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const uint8_t           buffer[],
-    unsigned                bytes,
-    unsigned *              bytesProcessed,
-    unsigned *              connType,
-    unsigned *              buildId,
-    unsigned *              buildType,
-    unsigned *              branchId,
-    plUUID*                 productId
-);
+#define IS_TEXT_CONNTYPE(c) ((EConnType)c == kConnTypeAdminInterface)
 
 
 /****************************************************************************
 *
-*   Socket functions
+*   AsyncSocket module
 *
 ***/
 
-void AsyncSocketConnect (
-    AsyncCancelId *         cancelId,
-    const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param = nil,
-    const void *            sendData = nil,
-    unsigned                sendBytes = 0,
-    unsigned                connectMs = 0,      // 0 => use default value
-    unsigned                localPort = 0       // 0 => don't bind local port
-);
+class AsyncSocket {
+    AsyncSocket() {};
+    
+public:
 
-// Due to the asynchronous nature of sockets, the connect may complete
-// before the cancel does... you have been warned.
-void AsyncSocketConnectCancel (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-);
 
-void AsyncSocketDisconnect (
-    AsyncSocket             sock,
-    bool                    hardClose
-);
+    /****************************************************************************
+    *
+    *   Socket connect packet
+    *
+    ***/
 
-// This function must only be called after receiving a kNotifySocketDisconnect
-void AsyncSocketDelete (AsyncSocket sock);
+    #pragma pack(push,1)
+    struct ConnectPacket {
+        EConnType   connType;
+        uint16_t    hdrBytes;
+        uint32_t    buildId;
+        uint32_t    buildType;
+        uint32_t    branchId;
+        plUUID      productId;
+    };
+    #pragma pack(pop)
 
-// Returns false of socket has been closed
-bool AsyncSocketSend (
-    AsyncSocket             sock,
-    const void *            data,
-    unsigned                bytes
-);
 
-// Buffer must stay valid until I/O has completed
-// Returns false if socket has been closed
-bool AsyncSocketWrite (
-    AsyncSocket             sock,
-    const void *            buffer,
-    unsigned                bytes,
-    void *                  param
-);
+    /****************************************************************************
+    *
+    *   Socket event notifications
+    *
+    ***/
 
-// This function must only be called from with a socket notification callback.
-// Calling at any other time is a crash bug waiting to happen!
-void AsyncSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-);
+    enum ENotify {
+        kNotifyConnectFailed,
+        kNotifyConnectSuccess,
+        kNotifyDisconnect,
+        kNotifyListenSuccess,
+        kNotifyRead,
+        kNotifyWrite
+    };
+    
+    struct Notify;
+    struct NotifyConnect;
+    struct NotifyListen;
+    struct NotifyRead;
+    struct NotifyWrite;
+    
+    class Cancel {
+        void *  ptr;
+        Cancel (void * p) : ptr(p) {}
+    public:
+        inline Cancel() : ptr(nullptr) {}
+        
+        bool ConnectCancel ();
+        inline void Clear () { ptr = nullptr; }
+        
+        inline operator bool ()   { return  ptr; }
+        inline bool operator ! () { return !ptr; }
+        
+        friend class AsyncSocket;
+    };
+    
+    /// @return false to disconnect
+    typedef bool (* FNotifyProc) (
+        AsyncSocket *       sock,
+        ENotify             code,
+        Notify *            notify
+    );
+    
+    /****************************************************************************
+    *
+    *   Socket data
+    *
+    ***/
+    
+    static const unsigned   kBufferSize = 1460;
+    void *  user; ///< user defined data
+    
+    
+    /****************************************************************************
+    *
+    *   Socket functions
+    *
+    ***/
+    
+    static Cancel Connect (
+        const plNetAddress&     netAddr,
+        FNotifyProc             notifyProc,
+        void *                  param = nullptr,
+        const void *            sendData = nullptr,
+        unsigned                sendBytes = 0,
+        unsigned                connectMs = 0,      // 0 => use default value
+        unsigned                localPort = 0       // 0 => don't bind local port
+    );
 
-// A backlog of zero (the default) means that no buffering is performed when
-// the TCP send buffer is full, and the send() function will close the socket
-// on send fail
-void AsyncSocketSetBacklogAlloc (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-);
+    // Due to the asynchronous nature of sockets, the connect may complete
+    // before the cancel does... you have been warned.
+    void ConnectCancel (FNotifyProc  notifyProc);
 
-// On failure, returns 0
-// On success, returns bound port (if port number was zero, returns assigned port)
-// For connections that will use kConnType* connections, set notifyProc = nil;
-// the handler will be found when connection packet is received.
-// for connections with hard-coded behavior, set the notifyProc here (e.g. for use
-// protocols like SNMP on port 25)
-unsigned AsyncSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc = nil
-);
-void AsyncSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc = nil
-);
+    void Disconnect (bool hardClose = false);
 
-void AsyncSocketEnableNagling (
-    AsyncSocket             sock,
-    bool                    enable
-);
+    // This function must only be called after receiving a kNotifySocketDisconnect
+    void Delete ();
+
+    // Returns false of socket has been closed
+    bool Send (const void * data, unsigned bytes);
+
+    // Buffer must stay valid until I/O has completed
+    // Returns false if socket has been closed
+    bool Write (
+        const void *            buffer,
+        unsigned                bytes,
+        void *                  param
+    );
+
+    // This function must only be called from with a socket notification callback.
+    // Calling at any other time is a crash bug waiting to happen!
+    void SetNotifyProc (FNotifyProc  notifyProc);
+
+    // A backlog of zero (the default) means that no buffering is performed when
+    // the TCP send buffer is full, and the send() function will close the socket
+    // on send fail
+    void SetBacklogAlloc (unsigned bufferSize);
+
+    // On failure, returns 0
+    // On success, returns bound port (if port number was zero, returns assigned port)
+    // For connections that will use kConnType* connections, set notifyProc = nil;
+    // the handler will be found when connection packet is received.
+    // for connections with hard-coded behavior, set the notifyProc here (e.g. for use
+    // protocols like SNMP on port 25)
+    static unsigned StartListening (
+        const plNetAddress&     listenAddr,
+        FNotifyProc             notifyProc = nullptr
+    );
+    static void StopListening (
+        const plNetAddress&     listenAddr,
+        FNotifyProc             notifyProc = nullptr
+    );
+
+    void EnableNagling (bool enable);
+    
+    
+    /****************************************************************************
+    *
+    *   Connection type functions
+    *
+    ***/
+    
+    static void Register (
+        EConnType       connType,
+        FNotifyProc     notifyProc,
+        unsigned        buildId = 0,
+        unsigned        buildType = 0,
+        unsigned        branchId = 0,
+        const plUUID&   productId = kNilUuid
+    );
+    
+    static void Unregister (
+        EConnType       connType,
+        FNotifyProc     notifyProc,
+        unsigned        buildId = 0,
+        unsigned        buildType = 0,
+        unsigned        branchId = 0,
+        const plUUID&   productId = kNilUuid
+    );
+
+    static FNotifyProc FindNotifyProc (
+        const uint8_t           buffer[],
+        unsigned                bytes,
+        unsigned *              bytesProcessed,
+        unsigned *              connType,
+        unsigned *              buildId,
+        unsigned *              buildType,
+        unsigned *              branchId,
+        plUUID*                 productId
+    );
+    
+    
+    /****************************************************************************
+    *
+    *   socket status
+    *
+    ***/
+    
+    /// @return false after Disconnect call.
+    bool Active ();
+    
+    inline operator bool ()   { return  Active(); }
+    inline bool operator ! () { return !Active(); }
+    
+    
+    
+    class P; // private data
+    friend class P;
+};
+
+/****************************************************************************
+*
+*   Socket event notifications
+*
+***/
+
+struct AsyncSocket::Notify {
+    void *          param;
+    //AsyncId         asyncId;
+
+    Notify() : param(nullptr) { }
+};
+
+struct AsyncSocket::NotifyConnect : AsyncSocket::Notify {
+    plNetAddress    localAddr;
+    plNetAddress    remoteAddr;
+    unsigned        connType;
+
+    NotifyConnect() : connType(0) { }
+};
+
+struct AsyncSocket::NotifyListen : AsyncSocket::NotifyConnect {
+    unsigned        buildId;
+    unsigned        buildType;
+    unsigned        branchId;
+    plUUID          productId;
+    plNetAddress    addr;
+    uint8_t *       buffer;
+    unsigned        bytes;
+    unsigned        bytesProcessed;
+
+    NotifyListen()
+        : buildId(0), buildType(0), branchId(0), buffer(nullptr), bytes(0),
+          bytesProcessed(0) { }
+};
+
+struct AsyncSocket::NotifyRead : AsyncSocket::Notify {
+    uint8_t *       buffer;
+    unsigned        bytes;
+    unsigned        bytesProcessed;
+
+    NotifyRead() : buffer(nullptr), bytes(0), bytesProcessed(0) { }
+};
+
+struct AsyncSocket::NotifyWrite : AsyncSocket::NotifyRead {};
 
 #endif
 

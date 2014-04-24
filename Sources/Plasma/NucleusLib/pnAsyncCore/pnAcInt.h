@@ -87,6 +87,7 @@ protected:
     virtual void Callback() = 0;
     
     friend class IWorkerThreads;
+    friend class AsyncSocket;
 };
 
 
@@ -106,6 +107,15 @@ void TimerDestroy (unsigned exitThreadWaitMs);
 ***/
 
 void DnsDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Socket.cpp
+*
+***/
+
+void SocketDestroy ();
 
 #endif
 

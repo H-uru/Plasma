@@ -87,7 +87,7 @@ struct Srv2Score_ConnData {
     uint32_t   srvType;
 };
 struct Srv2Score_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Srv2Score_ConnData          data;
 };
 
