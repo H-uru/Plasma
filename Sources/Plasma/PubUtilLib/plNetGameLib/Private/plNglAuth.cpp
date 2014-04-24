@@ -5150,13 +5150,10 @@ void NetCliAuthStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     authAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }
