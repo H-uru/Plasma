@@ -89,17 +89,17 @@ struct CliGkConn : AtomicRef {
 
     void Send (const uintptr_t fields[], unsigned count);
 
-    CCritSect       critsect;
-    LINK(CliGkConn) link;
-    AsyncSocket     sock;
-    NetCli *        cli;
-    char            name[MAX_PATH];
-    plNetAddress    addr;
-    plUUID          token;
-    unsigned        seq;
-    unsigned        serverChallenge;
-    AsyncCancelId   cancelId;
-    bool            abandoned;
+    CCritSect           critsect;
+    LINK(CliGkConn)     link;
+    AsyncSocket *       sock;
+    NetCli *            cli;
+    char                name[MAX_PATH];
+    plNetAddress        addr;
+    plUUID              token;
+    unsigned            seq;
+    unsigned            serverChallenge;
+    AsyncSocket::Cancel cancelId;
+    bool                abandoned;
 };
 
 
@@ -236,16 +236,12 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
 
     conn->StopAutoReconnect();
 
-    if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    if (conn->cancelId)
+        conn->cancelId.ConnectCancel();
+    else if (conn->sock)
+        conn->sock->Disconnect(true);
+    else
         conn->DecRef("Lifetime");
-    }
 }
 
 //============================================================================
@@ -333,7 +329,7 @@ static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -353,7 +349,7 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
             
         if (conn == s_active)
@@ -368,7 +364,7 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read) {
+static bool NotifyConnSocketRead (CliGkConn * conn, AsyncSocket::NotifyRead * read) {
     // TODO: Only dispatch messages from the active auth server
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
     bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, conn);
@@ -378,45 +374,44 @@ static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
+    AsyncSocket *           sock,
+    AsyncSocket::ENotify    code,
+    AsyncSocket::Notify *   notify
 ) {
     bool result = true;
     CliGkConn * conn;
 
     switch (code) {
-        case kNotifySocketConnectSuccess:
+        case AsyncSocket::kNotifyConnectSuccess:
             conn = (CliGkConn *) notify->param;
-            *userState = conn;
+            sock->user = conn;
             bool abandoned;
             s_critsect.Enter();
             {
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId.Clear();
                 abandoned       = conn->abandoned;
             }
             s_critsect.Leave();
             if (abandoned)
-                AsyncSocketDisconnect(sock, true);
+                sock->Disconnect(true);
             else
                 NotifyConnSocketConnect(conn);
         break;
 
-        case kNotifySocketConnectFailed:
+        case AsyncSocket::kNotifyConnectFailed:
             conn = (CliGkConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
-        case kNotifySocketDisconnect:
-            conn = (CliGkConn *) *userState;
+        case AsyncSocket::kNotifyDisconnect:
+            conn = (CliGkConn *) sock->user;
             NotifyConnSocketDisconnect(conn);
         break;
 
-        case kNotifySocketRead:
-            conn = (CliGkConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        case AsyncSocket::kNotifyRead:
+            conn = (CliGkConn *) sock->user;
+            result = NotifyConnSocketRead(conn, (AsyncSocket::NotifyRead *) notify);
         break;
     }
     
@@ -453,8 +448,7 @@ static void Connect (
     connect.data.token          = conn->token;
     connect.data.dataBytes      = sizeof(connect.data);
 
-    AsyncSocketConnect(
-        &conn->cancelId,
+    conn->cancelId = AsyncSocket::Connect(
         conn->addr,
         SocketNotifyCallback,
         conn,
@@ -532,7 +526,7 @@ CliGkConn::CliGkConn ()
     : reconnectStartMs(0)
     , pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
-    , cancelId(nil), abandoned(false)
+    , abandoned(false)
 {
     memset(name, 0, sizeof(name));
 

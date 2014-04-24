@@ -101,7 +101,7 @@ struct Cli2Game_ConnData {
     plUUID  ageUuid;
 };
 struct Cli2Game_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Cli2Game_ConnData           data;
 };
 

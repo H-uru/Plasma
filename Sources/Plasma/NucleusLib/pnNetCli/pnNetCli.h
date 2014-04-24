@@ -373,7 +373,7 @@ typedef bool (* FNetCliEncrypt) (
 );
 
 NetCli * NetCliConnectAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -384,7 +384,7 @@ NetCli * NetCliConnectAccept (
 
 #ifdef SERVER
 NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -396,7 +396,7 @@ NetCli * NetCliListenAccept (
 
 #ifdef SERVER
 void NetCliListenReject (
-    AsyncSocket     sock,
+    AsyncSocket *   sock,
     ENetError       error
 );
 #endif

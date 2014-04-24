@@ -112,7 +112,7 @@ struct Srv2Mcp_ConnData {
     uint32_t   publicAddr;
 };
 struct Srv2Mcp_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Srv2Mcp_ConnData            data;
 };
 

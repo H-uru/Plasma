@@ -8,6 +8,7 @@ set(pnAsyncCore_SOURCES
     pnAcIo.cpp
     pnAcInt.cpp
     pnAcLog.cpp
+    pnAcSocket.cpp
     pnAcTimer.cpp
 )
 
@@ -23,22 +24,11 @@ set(pnAsyncCore_PRIVATE
     pnAcInt.h
 )
 
-set(pnAysncCore_NT
-    Nt/pnAcNt.cpp
-    Nt/pnAcNtInt.h
-    Nt/pnAcNtSocket.cpp
+add_library(pnAsyncCore STATIC
+        ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS}
+        ${pnAsyncCore_SOURCES}
 )
-
-if (WIN32)
-    add_library(pnAsyncCore STATIC
-            ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS}
-            ${pnAsyncCore_SOURCES} ${pnAysncCore_NT})
-else ()
-    message("NucleusLib/pnAsyncCore not implemented for this platform!")
-endif ()
 
 source_group("Source Files" FILES ${pnAsyncCore_SOURCES})
 source_group("Header Files" FILES ${pnAsyncCore_HEADERS})
 source_group("Private" FILES ${pnAsyncCore_PRIVATE})
-source_group("Nt" FILES ${pnAysncCore_NT})
-source_group("Win32" FILES ${pnAsyncCore_WIN32})
