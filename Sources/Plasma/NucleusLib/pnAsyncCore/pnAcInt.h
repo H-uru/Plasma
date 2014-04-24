@@ -89,6 +89,7 @@ protected:
     friend class IWorkerThreads;
 };
 
+
 /*****************************************************************************
 *
 *   Timer.cpp
@@ -96,6 +97,15 @@ protected:
 ***/
 
 void TimerDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Dns.cpp
+*
+***/
+
+void DnsDestroy (unsigned exitThreadWaitMs);
 
 #endif
 

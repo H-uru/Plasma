@@ -189,12 +189,4 @@ bool INtSocketOpCompleteQueuedSocketWrite (
 
 }   // namespace Nt
 
-/*****************************************************************************
-*
-*   Dns.cpp
-*
-***/
-
-void DnsDestroy (unsigned exitThreadWaitMs);
-
 #endif

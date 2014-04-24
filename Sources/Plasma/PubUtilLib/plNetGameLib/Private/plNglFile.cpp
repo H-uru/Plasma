@@ -1361,13 +1361,10 @@ void NetCliFileStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     fileAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }
@@ -1398,13 +1395,10 @@ void NetCliFileStartConnectAsServer (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     fileAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }

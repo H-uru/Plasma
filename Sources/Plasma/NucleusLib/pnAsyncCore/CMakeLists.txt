@@ -4,6 +4,7 @@ include_directories(../../PubUtilLib)
 
 set(pnAsyncCore_SOURCES
     pnAcCore.cpp
+    pnAcDns.cpp
     pnAcIo.cpp
     pnAcInt.cpp
     pnAcLog.cpp
@@ -28,15 +29,10 @@ set(pnAysncCore_NT
     Nt/pnAcNtSocket.cpp
 )
 
-set(pnAsyncCore_WIN32
-    Win32/pnAcW32Dns.cpp
-)
-
 if (WIN32)
     add_library(pnAsyncCore STATIC
             ${pnAsyncCore_PRIVATE} ${pnAsyncCore_HEADERS}
-            ${pnAsyncCore_SOURCES} ${pnAysncCore_NT}
-            ${pnAsyncCore_WIN32})
+            ${pnAsyncCore_SOURCES} ${pnAysncCore_NT})
 else ()
     message("NucleusLib/pnAsyncCore not implemented for this platform!")
 endif ()

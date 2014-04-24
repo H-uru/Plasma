@@ -51,45 +51,83 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /****************************************************************************
 *
-*   Global types and constants
-*
-***/
-
-typedef struct AsyncCancelIdStruct *   AsyncCancelId;
-
-
-/****************************************************************************
-*
 *   Dns functions
 *
 ***/
 
-typedef void (* FAsyncLookupProc) (
-    void *              param,
-    const char          name[],
-    unsigned            addrCount,
-    const plNetAddress  addrs[]
-);
-
-void AsyncAddressLookupName (
-    AsyncCancelId *     cancelId,
-    FAsyncLookupProc    lookupProc,
-    const char          name[],
-    unsigned            port,
-    void *              param
-);
-
-void AsyncAddressLookupAddr (
-    AsyncCancelId *     cancelId,
-    FAsyncLookupProc    lookupProc,
-    const plNetAddress& address,
-    void *              param
-);
-
-void AsyncAddressLookupCancel (
-    FAsyncLookupProc    lookupProc,
-    AsyncCancelId       cancelId
-);
+/// Asynchrone Dynamic Name Service.
+///
+/// This class provide functions to resolve an domain name or to get it from an IP without blocking the caller thread.
+/// @note on error or cancelation, no callback is send!
+class AsyncDns {
+public:
+    /// DNS Callback function type.
+    ///
+    /// @param param User defined param.
+    /// @param name Peer domain name.
+    /// @param addrCount Number of IP address in @e addrs.
+    /// @param addrs Array of @e addrCount IP address.
+    typedef void (* FProc) (
+        void *              param,
+        const char          name[],
+        unsigned            addrCount,
+        const plNetAddress  addrs[]
+    );
+    
+    /// DNS Cancel handler.
+    class Cancel {
+        void * ptr;
+        inline Cancel (void * p) : ptr(p) {}
+        
+    public:
+        /// Create a new handler without linked Async DNS operation
+        inline Cancel () : ptr(nullptr) {}
+        
+        /// Cancel the linked async DNS operation.
+        /// @return @b true if the operation is not terminate.
+        bool LookupCancel ();
+        /// Unlink the DNS operation
+        inline void Clear () { ptr = nullptr; }
+        
+        /// test if an operation is linked
+        inline operator bool ()   { return  ptr; }
+        /// test if no operation is linked
+        inline bool operator ! () { return !ptr; }
+        
+        friend class AsyncDns;
+    };
+    
+    /// Asynchronly search IPs associate with a domain name.
+    /// @param name Peer domain name.
+    /// @param port port to use.
+    /// @param lookupProc Callback function called on operation success with the result.
+    /// @param param user defined param send to the callback.
+    /// @return Cancelation handler for this operation.
+    static Cancel LookupName (
+        const char      name[],
+        unsigned        port,
+        FProc           lookupProc,
+        void *          param = nullptr
+    );
+    
+    /// Asynchronly search the domain name associate with an IP.
+    /// @param address IP address to search.
+    /// @param lookupProc Callback function called on operation success with the result.
+    /// @param param user defined param send to the callback.
+    /// @return Cancelation handler for this operation.
+    static Cancel LookupAddr (
+        const plNetAddress& address,
+        FProc               lookupProc,
+        void *              param = nullptr
+    );
+    
+    /// Cancel all pending operations that use a specific callback function.
+    /// @param lookupProc function used by all operations to cancel.
+    /// @warning Due to asynchrone, some operations can call this callback after LookupCancel return;
+    static void LookupCancel (FProc lookupProc);
+    
+    struct P; // private
+};
 
 #endif
 
