@@ -182,7 +182,7 @@ void    pfGUIListBoxMod::IPostSetUpDynTextMap( void )
 {
     pfGUIColorScheme *scheme = GetColorScheme();
     fDynTextMap->SetFont( scheme->fFontFace, scheme->fFontSize, scheme->fFontFlags, 
-                            HasFlag( kXparentBgnd ) ? false : true );
+                            !HasFlag( kXparentBgnd ));
 
     ICalcWrapStarts();
     ICalcScrollRange();
