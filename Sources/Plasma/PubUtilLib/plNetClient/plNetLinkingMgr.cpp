@@ -759,11 +759,11 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 // for backwards compatibility
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, uint32_t playerID )
 {
-    plAgeLinkStruct *ageLink = new plAgeLinkStruct;
+    plAgeLinkStruct ageLink;
 
-    ageLink->GetAgeInfo()->CopyFrom(inInfo);
-    ageLink->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
-    OfferLinkToPlayer(ageLink, playerID);
+    ageLink.GetAgeInfo()->CopyFrom(inInfo);
+    ageLink.SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
+    OfferLinkToPlayer(&ageLink, playerID);
 }
 
 ////////////////////////////////////////////////////////////////////
