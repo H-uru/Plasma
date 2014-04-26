@@ -168,6 +168,12 @@ class PtJustify:
     kCenter = 1
     kRightJustify = 2
 
+class PtFontFlags:
+    """(none)"""
+    kFontBold = 1
+    kFontItalic = 2
+    kFontShadowed = 4
+
 class PtLOSObjectType:
     """(none)"""
     kClickables = 0
