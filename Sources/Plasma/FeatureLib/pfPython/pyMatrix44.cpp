@@ -132,9 +132,9 @@ PyObject* pyMatrix44::GetRightAxis() const
     return pyVector3::New(fMatrix.GetAxis(hsMatrix44::kRight));
 }
 
-float* pyMatrix44::GetData() const
+mat44_t pyMatrix44::GetData() const
 {
-    float *res = new float[4*4];
+    mat44_t res;
     res[0] = fMatrix.fMap[0][0];  res[1] = fMatrix.fMap[0][1];  res[2] = fMatrix.fMap[0][2];  res[3] = fMatrix.fMap[0][3];
     res[4] = fMatrix.fMap[1][0];  res[5] = fMatrix.fMap[1][1];  res[6] = fMatrix.fMap[1][2];  res[7] = fMatrix.fMap[1][3];
     res[8] = fMatrix.fMap[2][0];  res[9] = fMatrix.fMap[2][1];  res[10] = fMatrix.fMap[2][2]; res[11] = fMatrix.fMap[2][3];

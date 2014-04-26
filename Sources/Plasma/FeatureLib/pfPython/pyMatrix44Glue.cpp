@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+
 #include "pyGeometry3.h"
 #include "pyMatrix44.h"
 #pragma hdrstop
@@ -302,21 +303,19 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, right)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptMatrix44, getData)
 {
-    float *mat = self->fThis->GetData();
+    mat44_t mat = self->fThis->GetData();
 
-    PyObject *retVal = Py_BuildValue("(ffff)(ffff)(ffff)(ffff)",
+    PyObject* retVal = Py_BuildValue("(ffff)(ffff)(ffff)(ffff)",
         mat[0],  mat[1],  mat[2], mat[3],
         mat[4],  mat[5],  mat[6], mat[7],
         mat[8],  mat[9],  mat[10], mat[11],
         mat[12], mat[13], mat[14], mat[15]);
 
-    if (retVal == NULL) 
-    {
+    if (!retVal) {
         PyErr_SetString(PyExc_TypeError, "setData expects a 4x4 tuple of floats");
         PYTHON_RETURN_ERROR;
     }
 
-    delete mat;
     return retVal;
 }
 
