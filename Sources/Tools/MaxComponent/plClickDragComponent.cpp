@@ -74,6 +74,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plCursorChangeMsg.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
+#include "plInterp/plAnimEaseTypes.h"
 
 #include "MaxConvert/plConvert.h"
 

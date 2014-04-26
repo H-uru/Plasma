@@ -41,8 +41,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plLayRefMsg.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plLayRefMsg.h"
 
 void plLayRefMsg::Read(hsStream* stream, hsResMgr* mgr)
 {

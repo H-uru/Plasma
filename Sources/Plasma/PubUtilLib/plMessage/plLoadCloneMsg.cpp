@@ -42,17 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef NO_AV_MSGS
 #ifndef SERVER
 
-// singular
-#include "plLoadAvatarMsg.h"
-
-// global
-#include "hsResMgr.h"
-
-// other
-#include "pnNetCommon/plNetApp.h"
 #include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "pnNetCommon/plNetApp.h"
+#pragma hdrstop
 
-
+#include "plLoadAvatarMsg.h"
 
 // CTOR / default
 plLoadCloneMsg::plLoadCloneMsg()

@@ -39,18 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plAccountUpdateMsg.h"
+
 #include "hsStream.h"
+#pragma hdrstop
 
-plAccountUpdateMsg::plAccountUpdateMsg()
-{
-    fUpdateType = 0;
-}
+#include "plAccountUpdateMsg.h"
 
-plAccountUpdateMsg::plAccountUpdateMsg(unsigned updateType)
-{
-    fUpdateType = updateType;
-}
 
 void plAccountUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
@@ -67,34 +61,3 @@ void plAccountUpdateMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLE32(fResult);
     stream->WriteLE32(fPlayerInt);
 }
-
-unsigned plAccountUpdateMsg::GetUpdateType()
-{
-    return fUpdateType;
-}
-
-void plAccountUpdateMsg::SetUpdateType(unsigned type)
-{
-    fUpdateType = type;
-}
-
-unsigned plAccountUpdateMsg::GetResult()
-{
-    return fResult;
-}
-
-void plAccountUpdateMsg::SetResult(unsigned result)
-{
-    fResult = result;
-}
-
-unsigned plAccountUpdateMsg::GetPlayerInt()
-{
-    return fPlayerInt;
-}
-
-void plAccountUpdateMsg::SetPlayerInt(unsigned playerInt)
-{
-    fPlayerInt = playerInt;
-}
-

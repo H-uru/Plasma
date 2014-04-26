@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plAnimCmdMsg.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plAnimCmdMsg.h"
 
 plAnimCmdMsg::~plAnimCmdMsg()
 {
@@ -114,16 +115,6 @@ plAGCmdMsg::~plAGCmdMsg()
     ClearCmd();
 }
 
-void plAGCmdMsg::SetAnimName(const plString &name)
-{
-    fAnimName = name;
-}
-
-plString plAGCmdMsg::GetAnimName()
-{
-    return fAnimName;
-}
-
 void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
@@ -150,14 +141,3 @@ void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteSafeString(fAnimName);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-void plAGDetachCallbackMsg::SetAnimName(const plString &name)
-{
-    fAnimName = name;
-}
-
-plString plAGDetachCallbackMsg::GetAnimName()
-{
-    return fAnimName;
-}

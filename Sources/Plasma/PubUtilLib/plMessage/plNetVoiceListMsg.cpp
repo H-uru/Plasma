@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plNetVoiceListMsg.h"
-#include "hsStream.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
+
+#include "plNetVoiceListMsg.h"
 
 void plNetVoiceListMsg::Read(hsStream* stream, hsResMgr* mgr)
 {

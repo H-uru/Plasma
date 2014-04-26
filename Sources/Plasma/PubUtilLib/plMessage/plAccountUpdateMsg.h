@@ -61,28 +61,28 @@ public:
         kChangePassword,
     };
 
-    plAccountUpdateMsg();
-    plAccountUpdateMsg(unsigned updateType);
+    plAccountUpdateMsg() : fUpdateType(0), fResult(0), fPlayerInt(0) { }
+    plAccountUpdateMsg(uint32_t updateType) : fUpdateType(updateType), fResult(0), fPlayerInt(0) { }
 
-    CLASSNAME_REGISTER( plAccountUpdateMsg );
-    GETINTERFACE_ANY( plAccountUpdateMsg, plMessage );
-    
+    CLASSNAME_REGISTER(plAccountUpdateMsg);
+    GETINTERFACE_ANY(plAccountUpdateMsg, plMessage);
+
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
 
-    unsigned    GetUpdateType();
-    void        SetUpdateType(unsigned type);
+    uint32_t    GetUpdateType() const { return fUpdateType; }
+    void        SetUpdateType(uint32_t type) { fUpdateType = type; }
 
-    unsigned    GetResult();
-    void        SetResult(unsigned result);
+    uint32_t    GetResult() const { return fResult; }
+    void        SetResult(uint32_t result) { fResult = result; }
 
-    unsigned    GetPlayerInt();
-    void        SetPlayerInt(unsigned playerInt);
+    uint32_t    GetPlayerInt() const { return fPlayerInt; }
+    void        SetPlayerInt(uint32_t playerInt) { fPlayerInt = playerInt; }
 
 private:
-    unsigned fUpdateType;
-    unsigned fResult;
-    unsigned fPlayerInt;
+    uint32_t fUpdateType;
+    uint32_t fResult;
+    uint32_t fPlayerInt;
 };
 
 #endif // plAccountUpdateMsg_inc

@@ -39,8 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plMultistageMsg.h"
+
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plMultistageMsg.h"
 
 void plMultistageModMsg::Read(hsStream *stream, hsResMgr *mgr)
 {

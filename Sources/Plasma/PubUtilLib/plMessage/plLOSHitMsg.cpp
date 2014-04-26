@@ -40,19 +40,30 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
+
 #include "plLOSHitMsg.h"
 
-plLOSHitMsg::plLOSHitMsg()
+void plLOSHitMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
-    SetBCastFlag(plMessage::kPropagateToModifiers);
-    fHitFlags = 0;
+    plMessage::IMsgRead(stream, mgr);
+
+    fObj = mgr->ReadKey(stream);
+    fHitPoint.Read(stream);
+    fNoHit = stream->ReadBool();
+    stream->ReadLE(&fRequestID);
+    stream->ReadLE(&fHitFlags);
 }
-plLOSHitMsg::plLOSHitMsg(const plKey &s, 
-                const plKey &r, 
-                const double* t)
-: plMessage(s, r, t)
+
+void plLOSHitMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
-    SetBCastFlag(plMessage::kPropagateToModifiers);
-    fHitFlags = 0;
+    plMessage::IMsgWrite(stream, mgr);
+
+    mgr->WriteKey(stream, fObj);
+    fHitPoint.Write(stream);
+    stream->WriteBool(fNoHit);
+    stream->WriteLE(fRequestID);
+    stream->WriteLE(fHitFlags);
 }

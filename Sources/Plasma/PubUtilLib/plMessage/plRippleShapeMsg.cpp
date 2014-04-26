@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plRippleShapeMsg.h"
-
 #include "hsResMgr.h"
 #include "hsStream.h"
+#pragma hdrstop
 
+#include "plRippleShapeMsg.h"
 
 plRippleShapeMsg::plRippleShapeMsg()
 :   fShape(nil)

@@ -39,3 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
+// Plasma CoreLib
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
+#include "hsStream.h"
+#include "plString.h"
+#include "hsTemplates.h"
+
+// Plasma Nucleus
+#include "plgDispatch.h"
+#include "hsResMgr.h"
+
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetCommon/plNetApp.h"
