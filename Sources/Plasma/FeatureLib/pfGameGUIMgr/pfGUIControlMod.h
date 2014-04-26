@@ -246,6 +246,8 @@ class pfGUIControlMod : public plSingleModifier
         virtual void        SetColorScheme( pfGUIColorScheme *newScheme );
         pfGUIColorScheme    *GetColorScheme( void ) const;
 
+        virtual void    UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }
+
         // should be override by specific GUIcontrol
         virtual void        PurgeDynaTextMapImage() {;}
 

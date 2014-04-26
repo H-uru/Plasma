@@ -212,3 +212,4 @@ uint8_t pyGUIControlTextBox::GetJustify()
     }
     return pfGUIListText::kLeftJustify;
 }
+

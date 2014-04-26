@@ -246,6 +246,23 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontSize)
     return PyLong_FromUnsignedLong(self->fThis->GetFontSize());
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontFlags)
+{
+    return PyInt_FromLong(self->fThis->GetFontFlags());
+}
+
+PYTHON_METHOD_DEFINITION(ptGUIControl, setFontFlags, args)
+{
+    unsigned char fontflags;
+    if (!PyArg_ParseTuple(args, "b", &fontflags))
+    {
+        PyErr_SetString(PyExc_TypeError, "setFontFlags expects an unsigned 8-bit int");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetFontFlags(fontflags);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_METHOD_DEFINITION(ptGUIControl, setForeColor, args)
 {
     float r, g, b, a;
@@ -331,11 +348,13 @@ PYTHON_START_METHODS_TABLE(ptGUIControl)
     PYTHON_METHOD_NOARGS(ptGUIControl, getBackColor, "Returns the background color"),
     PYTHON_METHOD_NOARGS(ptGUIControl, getBackSelectColor, "Returns the background selection color"),
     PYTHON_METHOD_NOARGS(ptGUIControl, getFontSize, "Returns the font size"),
+    PYTHON_METHOD_NOARGS(ptGUIControl, getFontFlags, "Returns the current fontflags"),
     PYTHON_METHOD(ptGUIControl, setForeColor, "Params: r,g,b,a\nSets the foreground color"),
     PYTHON_METHOD(ptGUIControl, setSelectColor, "Params: r,g,b,a\nSets the selection color"),
     PYTHON_METHOD(ptGUIControl, setBackColor, "Params: r,g,b,a\nSets the background color"),
     PYTHON_METHOD(ptGUIControl, setBackSelectColor, "Params: r,g,b,a\nSets the selection background color"),
     PYTHON_METHOD(ptGUIControl, setFontSize, "Params: fontSize\nSets the font size"),
+    PYTHON_METHOD(ptGUIControl, setFontFlags, "Params: fontflags\nSets current fontflags"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
