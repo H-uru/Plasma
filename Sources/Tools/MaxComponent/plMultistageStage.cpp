@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsWindows.h"
+#include "MaxMain/MaxCompat.h"
 
 #include <iparamb2.h>
 #include <max.h>
