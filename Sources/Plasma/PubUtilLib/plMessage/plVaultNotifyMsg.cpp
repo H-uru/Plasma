@@ -39,9 +39,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
-#include "plVaultNotifyMsg.h"
 
+#include "hsStream.h"
+#pragma hdrstop
+
+#include "plVaultNotifyMsg.h"
 
 plVaultNotifyMsg::plVaultNotifyMsg()
 : fType( kNothing )

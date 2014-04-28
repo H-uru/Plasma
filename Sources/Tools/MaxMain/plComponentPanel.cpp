@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxComponent/plComponent.h"
 #include "MaxComponent/plComponentMgr.h"
 #include "resource.h"
+
+#include <notify.h>
 #pragma hdrstop
 
 #include "plComponentPanel.h"

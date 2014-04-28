@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLinkToAgeMsg_INC
 #define plLinkToAgeMsg_INC
 
-#include "pnMessage/plMessageWithCallbacks.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"

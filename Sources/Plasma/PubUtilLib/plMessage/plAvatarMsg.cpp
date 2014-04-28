@@ -41,17 +41,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #ifndef NO_AV_MSGS
 
+#include "hsResMgr.h"
+#pragma hdrstop
+
 #include "plAvatarMsg.h"
 
-#include "hsResMgr.h"
-
-#include "pnKeyedObject/plKey.h"
+#include "plMessage/plOneShotCallbacks.h"
 #include "pnSceneObject/plSceneObject.h"
 
-#include "plMessage/plOneShotCallbacks.h"
-
 #ifndef SERVER
-#include "plAvatar/plAvBrain.h"
+#   include "plAvatar/plAvBrain.h"
 #endif
 
 

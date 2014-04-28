@@ -114,17 +114,19 @@ public:
     virtual PyObject* GetOwnerDlg( void ); // returns pyGUIDialog
 
     // get color schemes
-    virtual PyObject*   GetForeColor(); // returns pyColor
-    virtual PyObject*   GetSelColor(); // returns pyColor
-    virtual PyObject*   GetBackColor(); // returns pyColor
-    virtual PyObject*   GetBackSelColor(); // returns pyColor
-    virtual uint32_t      GetFontSize();
+    virtual PyObject*   GetForeColor() const; // returns pyColor
+    virtual PyObject*   GetSelColor() const; // returns pyColor
+    virtual PyObject*   GetBackColor() const; // returns pyColor
+    virtual PyObject*   GetBackSelColor() const; // returns pyColor
+    virtual uint32_t    GetFontSize() const;
+    virtual uint8_t     GetFontFlags() const;
     // set color scheme
     virtual void        SetForeColor( float r, float g, float b, float a );
     virtual void        SetSelColor( float r, float g, float b, float a );
     virtual void        SetBackColor( float r, float g, float b, float a );
     virtual void        SetBackSelColor( float r, float g, float b, float a );
     virtual void        SetFontSize(uint32_t fontsize);
+    virtual void        SetFontFlags(uint8_t fontflags);
 
 };
 

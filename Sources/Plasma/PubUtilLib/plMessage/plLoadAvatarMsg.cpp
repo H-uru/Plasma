@@ -42,12 +42,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef NO_AV_MSGS
 #ifndef SERVER
 
-#include "hsStream.h"
-#include "plLoadAvatarMsg.h"
 #include "hsResMgr.h"
-#include "pnNetCommon/plNetApp.h"
-#include "pnNetCommon/plSynchedObject.h"
+#include "hsStream.h"
 
+#include "pnNetCommon/plNetApp.h"
+#pragma hdrstop
+
+#include "plLoadAvatarMsg.h"
 #include "plAvatar/plAvatarTasks.h"
 
 

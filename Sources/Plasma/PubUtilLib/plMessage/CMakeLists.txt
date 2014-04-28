@@ -13,7 +13,6 @@ set(plMessage_SOURCES
     plCaptureRenderMsg.cpp
     plCCRMsg.cpp
     plClimbMsg.cpp
-    plCollideMsg.cpp
     plDynaDecalEnableMsg.cpp
     plDynamicEnvMapMsg.cpp
     plDynamicTextMsg.cpp
@@ -29,7 +28,6 @@ set(plMessage_SOURCES
     plLOSRequestMsg.cpp
     plMatrixUpdateMsg.cpp
     plMultistageMsg.cpp
-    plNetCommMsgs.cpp
     plNetVoiceListMsg.cpp
     plOneShotCallbacks.cpp
     plOneShotMsg.cpp
@@ -67,7 +65,6 @@ set(plMessage_HEADERS
     plDynaDecalEnableMsg.h
     plDynamicEnvMapMsg.h
     plDynamicTextMsg.h
-    plElementRefMsg.h
     plExcludeRegionMsg.h
     plInputEventMsg.h
     plInputIfaceMgrMsg.h
@@ -117,10 +114,10 @@ set(plMessage_HEADERS
     plTimerCallbackMsg.h
     plTransitionMsg.h
     plTriggerMsg.h
-    plUniqueIdsMsg.h
     plVaultNotifyMsg.h
 )
 
+use_precompiled_header(Pch.h Pch.cpp plMessage_HEADERS plMessage_SOURCES)
 add_library(plMessage STATIC ${plMessage_SOURCES} ${plMessage_HEADERS})
 
 source_group("Source Files" FILES ${plMessage_SOURCES})

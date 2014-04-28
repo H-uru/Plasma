@@ -211,6 +211,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         virtual void    PurgeDynaTextMapImage();
 
+        virtual void    UpdateColorScheme() { fFontFlagsSet = 0; pfGUIControlMod::UpdateColorScheme(); }
+
         // Extended event types
         enum ExtendedEvents
         {

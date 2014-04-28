@@ -50,9 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "pnUtils/pnUtils.h"
-#include "pnNetBase/pnNetBase.h"
-#include "pnMessage/plMessage.h"
+#include "pnNetBase/pnNbError.h"
 #include "pnNetProtocol/pnNetProtocol.h"
+#include "pnMessage/plMessage.h"
 
 class plNetCommReplyMsg : public plMessage {
 public:
@@ -161,15 +161,5 @@ public:
     CLASSNAME_REGISTER(plNetCommUnregisterAgeMsg);
     GETINTERFACE_ANY(plNetCommUnregisterAgeMsg, plMessage);
 };
-
-class plNetCommDisconnectedMsg : public plMessage {
-public:
-    ENetProtocol    protocol;
-
-    void Read (hsStream * s, hsResMgr * mgr) { plMessage::IMsgRead(s, mgr); }
-    void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
-};
-
-
 
 #endif // plNetCommMsgs_inc

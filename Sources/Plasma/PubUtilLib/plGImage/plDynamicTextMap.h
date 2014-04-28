@@ -113,14 +113,14 @@ class plDynamicTextMap : public plMipmap
 
 
         plDynamicTextMap();
-        plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha = false, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
+        plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha = false, uint32_t extraWidth = 0, uint32_t extraHeight = 0, bool premultipliedAlpha = false );
         virtual ~plDynamicTextMap();
 
         CLASSNAME_REGISTER( plDynamicTextMap );
         GETINTERFACE_ANY( plDynamicTextMap, plMipmap );
 
 
-        void            Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0 );
+        void            Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0, bool premultipliedAlpha = false );
         void            SetNoCreate( uint32_t width, uint32_t height, bool hasAlpha );
 
         virtual void    Reset( void );
@@ -221,7 +221,9 @@ class plDynamicTextMap : public plMipmap
         uint32_t      *IAllocateOSSurface( uint16_t width, uint16_t height );
         void        IDestroyOSSurface( void );
 
-        bool        fHasAlpha, fShadowed;
+        void        IPropagateFlags();
+
+        bool        fHasAlpha, fPremultipliedAlpha, fShadowed;
 
         Justify     fJustify;
         plString    fFontFace;

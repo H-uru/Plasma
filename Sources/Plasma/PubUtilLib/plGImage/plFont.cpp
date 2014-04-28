@@ -334,7 +334,14 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
         {
             if( fRenderInfo.fFlags & kRenderIntoAlpha )
             {
-                if( ( fRenderInfo.fColor & 0xff000000 ) != 0xff000000 )
+                if( fRenderInfo.fFlags & kRenderAlphaPremultiplied )
+                {
+                    if (fRenderInfo.fFlags & kRenderShadow)
+                        fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremShadow;
+                    else
+                        fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32AlphaPremultiplied;
+                }
+                else if( ( fRenderInfo.fColor & 0xff000000 ) != 0xff000000 )
                     fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32Alpha;
                 else
                     fRenderInfo.fRenderFunc = &plFont::IRenderChar8To32FullAlpha;
@@ -648,24 +655,27 @@ void    plFont::IRenderString( plMipmap *mip, uint16_t x, uint16_t y, const wcha
             // Advance left past any clipping area
             CharRenderFunc oldFunc = fRenderInfo.fRenderFunc;
             fRenderInfo.fRenderFunc = &plFont::IRenderCharNull;
-            while( fRenderInfo.fX < fRenderInfo.fClipRect.fX && *string != 0 )
+            int16_t prevX;
+            do
             {
+                prevX = fRenderInfo.fX;
                 IRenderLoop( string, 1 );
-                string++;
             }
+            while( fRenderInfo.fX <= fRenderInfo.fClipRect.fX && *++string != 0 );
+            fRenderInfo.fMaxWidth += fRenderInfo.fX - prevX;
+            fRenderInfo.fDestPtr -= (fRenderInfo.fX - prevX) * fRenderInfo.fDestBPP;
+            fRenderInfo.fX = prevX;
             fRenderInfo.fRenderFunc = oldFunc;
         }
 
-        // Adjust for left kern
-        if( ( fRenderInfo.fFlags & kRenderJustXMask ) == kRenderJustXForceLeft )
-        {
-            // See note at top of file
-            plCharacter &ch = fCharacters[ (uint16_t)string[ 0 ] - fFirstChar ];
-            int32_t newX = x - (int16_t)ch.fLeftKern;
-            if( newX < 0 )
-                newX = 0;
-            fRenderInfo.fX = fRenderInfo.fFarthestX = (int16_t)newX;
-        }
+        // There used to be an adjustment of the X coordinate by -ch.fLeftKern for the case
+        // of kRenderJustXForceLeft here, but it was buggy in that it neglected to adjust
+        // fRenderInfo.fDestPtr and therefore had no visible effect (or almost none - only
+        // at the end of the line). Fixing the bug however (making kRenderJustXForceLeft
+        // work as intended) causes the text shadow to be cut off in some places. To ensure
+        // enough space for the shadow, and considering that all content was developed and
+        // visually optimized with the bug in place, it seems better to preserve the buggy
+        // behavior and make kRenderJustXForceLeft work exactly like kRenderJustXLeft.
 
         fRenderInfo.fVolatileStringPtr = string;    // Just so we can keep track of when we clip
         IRenderLoop( string, -1 );
@@ -703,9 +713,6 @@ void    plFont::IRenderLoop( const wchar_t *string, int32_t maxCount )
                 uint16_t thisWidth = (uint16_t)(fWidth + fCharacters[ c ].fRightKern);
                 if( fRenderInfo.fFlags & kRenderScaleAA )
                     thisWidth >>= 1;
-
-                if( thisWidth >= fRenderInfo.fMaxWidth )
-                    break;
 
                 (this->*(fRenderInfo.fRenderFunc))( fCharacters[ c ] );
 
@@ -837,8 +844,8 @@ void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
     uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
-    uint16_t  x, y;
-    uint32_t  srcAlpha, oneMinusAlpha, r, g, b, dR, dG, dB, destAlpha, thisWidth;
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint32_t  srcAlpha, oneMinusAlpha, r, g, b, dR, dG, dB, destAlpha;
     uint8_t   srcR, srcG, srcB;
 
 
@@ -850,18 +857,34 @@ void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
     // should already be in the cache. If it does, time to upgrade the font
     // format (again)
     thisWidth = fWidth;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
 
-    if( (int32_t)c.fHeight - (int32_t)c.fBaseline >= fRenderInfo.fMaxHeight || thisWidth >= fRenderInfo.fMaxWidth || c.fBaseline > fRenderInfo.fY )
-        return;
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < 0 )
+        xstart = 0;
 
     srcR = (uint8_t)(( fRenderInfo.fColor >> 16 ) & 0x000000ff);
     srcG = (uint8_t)(( fRenderInfo.fColor >> 8  ) & 0x000000ff);
     srcB = (uint8_t)(( fRenderInfo.fColor       ) & 0x000000ff);
 
-    for( y = 0; y < c.fHeight; y++ )
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < 0 )
+        y = 0;
+    else
+    {
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+        src += y*fRenderInfo.fNumCols;
+    }
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight )
+        thisHeight = (int16_t)c.fHeight;
+
+    for( ; y < thisHeight; y++ )
     {
         destPtr = destBasePtr;
-        for( x = 0; x < thisWidth; x++ )
+        for( x = xstart; x < thisWidth; x++ )
         {
             if( src[ x ] == 255 )
                 destPtr[ x ] = fRenderInfo.fColor;
@@ -896,8 +919,8 @@ void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
     uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
-    uint16_t  x, y;
-    uint32_t  destColorOnly, thisWidth;
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint32_t  destColorOnly;
 
 
     // Unfortunately for some fonts, their right kern value actually is
@@ -908,16 +931,32 @@ void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
     // should already be in the cache. If it does, time to upgrade the font
     // format (again)
     thisWidth = fWidth;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
 
-    if( (int32_t)c.fHeight - (int32_t)c.fBaseline  >= fRenderInfo.fMaxHeight || thisWidth >= fRenderInfo.fMaxWidth || c.fBaseline > fRenderInfo.fY )
-        return;
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < 0 )
+        xstart = 0;
 
     destColorOnly = fRenderInfo.fColor & 0x00ffffff;
 
-    for( y = 0; y < c.fHeight; y++ )
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < 0 )
+        y = 0;
+    else
+    {
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+        src += y*fRenderInfo.fNumCols;
+    }
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight )
+        thisHeight = (int16_t)c.fHeight;
+
+    for( ; y < thisHeight; y++ )
     {
         destPtr = destBasePtr;
-        for( x = 0; x < thisWidth; x++ )
+        for( x = xstart; x < thisWidth; x++ )
         {
             if( src[ x ] != 0 )
                 destPtr[ x ] = ( src[ x ] << 24 ) | destColorOnly;
@@ -931,8 +970,8 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
 {
     uint8_t   val, *src = fBMapData + c.fBitmapOff;
     uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
-    uint16_t  x, y;
-    uint32_t  destColorOnly, alphaMult, fullAlpha, thisWidth;
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint32_t  destColorOnly, alphaMult, fullAlpha;
 
 
     // Unfortunately for some fonts, their right kern value actually is
@@ -943,9 +982,12 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
     // should already be in the cache. If it does, time to upgrade the font
     // format (again)
     thisWidth = fWidth;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
 
-    if( (int32_t)c.fHeight - (int32_t)c.fBaseline  >= fRenderInfo.fMaxHeight || thisWidth >= fRenderInfo.fMaxWidth || c.fBaseline > fRenderInfo.fY )
-        return;
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < 0 )
+        xstart = 0;
 
     destColorOnly = fRenderInfo.fColor & 0x00ffffff;
     // alphaMult should come out to be a value to satisfy (fontAlpha * alphaMult >> 8) as the right alpha,
@@ -953,10 +995,23 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
     fullAlpha = fRenderInfo.fColor & 0xff000000;
     alphaMult = fullAlpha / 255;
 
-    for( y = 0; y < c.fHeight; y++ )
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < 0 )
+        y = 0;
+    else
+    {
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+        src += y*fRenderInfo.fNumCols;
+    }
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight )
+        thisHeight = (int16_t)c.fHeight;
+
+    for( ; y < thisHeight; y++ )
     {
         destPtr = destBasePtr;
-        for( x = 0; x < thisWidth; x++ )
+        for( x = xstart; x < thisWidth; x++ )
         {
             val = src[ x ];
             if( val == 0xff )
@@ -968,6 +1023,140 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
         }
         destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + fRenderInfo.fDestStride );
         src += fWidth;
+    }
+}
+
+void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c )
+{
+    uint8_t   *src = fBMapData + c.fBitmapOff;
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint8_t   srcA, srcR, srcG, srcB;
+
+
+    // Unfortunately for some fonts, their right kern value actually is
+    // farther left than the right edge of the bitmap (think of overlapping
+    // script fonts). Ideally, we should store the actual width of each char's
+    // bitmap and use that here. However, it really shouldn't make too big of a
+    // difference, especially since the dest pixels that we end up overlapping
+    // should already be in the cache. If it does, time to upgrade the font
+    // format (again)
+    thisWidth = fWidth;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
+
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < 0 )
+        xstart = 0;
+
+    srcA = (uint8_t)(( fRenderInfo.fColor >> 24 ) & 0x000000ff);
+    srcR = (uint8_t)(( fRenderInfo.fColor >> 16 ) & 0x000000ff);
+    srcG = (uint8_t)(( fRenderInfo.fColor >> 8  ) & 0x000000ff);
+    srcB = (uint8_t)(( fRenderInfo.fColor       ) & 0x000000ff);
+
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < 0 )
+        y = 0;
+    else
+    {
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+        src += y*fRenderInfo.fNumCols;
+    }
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight )
+        thisHeight = (int16_t)c.fHeight;
+
+    for( ; y < thisHeight; y++ )
+    {
+        destPtr = destBasePtr;
+        for( x = xstart; x < thisWidth; x++ )
+        {
+            uint32_t a = src[ x ];
+            if (a != 0)
+            {
+                if (srcA != 0xff)
+                    a = (srcA*a + 127)/255;
+                destPtr[ x ] = ( a << 24 ) | (((srcR*a + 127)/255) << 16) | (((srcG*a + 127)/255) << 8) | ((srcB*a + 127)/255);
+            }
+        }
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + fRenderInfo.fDestStride );
+        src += fWidth;
+    }
+}
+
+void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
+{
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    int16_t   x, y, thisHeight, xstart, thisWidth;
+    uint8_t   srcA, srcR, srcG, srcB;
+
+
+    // Unfortunately for some fonts, their right kern value actually is
+    // farther left than the right edge of the bitmap (think of overlapping
+    // script fonts). Ideally, we should store the actual width of each char's
+    // bitmap and use that here. However, it really shouldn't make too big of a
+    // difference, especially since the dest pixels that we end up overlapping
+    // should already be in the cache. If it does, time to upgrade the font
+    // format (again)
+    thisWidth = fWidth + 2;// + (int32_t)c.fRightKern;
+    if( thisWidth >= fRenderInfo.fMaxWidth )
+        thisWidth = fRenderInfo.fMaxWidth;
+
+    xstart = fRenderInfo.fClipRect.fX - fRenderInfo.fX;
+    if( xstart < -2 )
+        xstart = -2;
+
+    srcA = (uint8_t)(( fRenderInfo.fColor >> 24 ) & 0x000000ff);
+    srcR = (uint8_t)(( fRenderInfo.fColor >> 16 ) & 0x000000ff);
+    srcG = (uint8_t)(( fRenderInfo.fColor >> 8  ) & 0x000000ff);
+    srcB = (uint8_t)(( fRenderInfo.fColor       ) & 0x000000ff);
+
+    static const uint32_t kernel[5][5] = {
+        {1,  2,  2,  2, 1},
+        {1, 13, 13, 13, 1},
+        {1, 10, 10, 10, 1},
+        {1,  7,  7,  7, 1},
+        {1,  1,  1,  1, 1}
+    };
+
+    uint32_t clamp = 220 - ((2 * srcR + 4 * srcG + srcB) >> 4);
+
+    y = fRenderInfo.fClipRect.fY - fRenderInfo.fY + (int16_t)c.fBaseline;
+    if( y < -2 )
+        y = -2;
+    destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + y*fRenderInfo.fDestStride );
+
+    thisHeight = fRenderInfo.fMaxHeight + (int16_t)c.fBaseline;
+    if( thisHeight > (int16_t)c.fHeight + 2 )
+        thisHeight = (int16_t)c.fHeight + 2;
+
+    for( ; y < thisHeight; y++ )
+    {
+        destPtr = destBasePtr;
+        for( x = xstart; x < thisWidth; x++ )
+        {
+            uint32_t sa = 0;
+            for (int32_t i = -2; i <= 2; i++) {
+                for (int32_t j = -2; j <= 2; j++) {
+                    uint32_t m = kernel[j+2][i+2];
+                    if (m != 0)
+                        sa += m * IGetCharPixel(c, x+i, y+j);
+                }
+            }
+            sa = (sa * clamp) >> 13;
+            if (sa > clamp)
+                sa = clamp;
+            uint32_t a = IGetCharPixel(c, x, y);
+            if (srcA != 0xff)
+                a = (srcA * a + 127) / 255;
+            uint32_t ta = a + sa - ((a*sa + 127) / 255);
+            if (ta > (destPtr[ x ] >> 24))
+                destPtr[ x ] = ( ta << 24 ) | (((srcR * a + 127) / 255) << 16) |
+                                              (((srcG * a + 127) / 255) <<  8) |
+                                              (((srcB * a + 127) / 255) <<  0);
+        }
+        destBasePtr = (uint32_t *)( (uint8_t *)destBasePtr + fRenderInfo.fDestStride );
     }
 }
 

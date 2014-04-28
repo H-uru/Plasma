@@ -69,6 +69,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plAudioInterface.h"
 #include "pnMessage/plSoundMsg.h"
 
+#include "plInterp/plAnimEaseTypes.h"
 #include "MaxMain/plPlasmaRefMsgs.h"
 
 enum

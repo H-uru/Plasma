@@ -41,10 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plDynaDecalEnableMsg.h"
-
 #include "hsResMgr.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plDynaDecalEnableMsg.h"
+
 
 plDynaDecalEnableMsg::plDynaDecalEnableMsg()
 :   plMessage(nil, nil, nil),

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsWindows.h"
+#include "MaxMain/MaxCompat.h"
 
 #include <iparamb2.h>
 #include <max.h>
@@ -362,7 +363,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(fAnimName.c_str());
+    edit->SetText(const_cast<SETTEXT_VALUE_TYPE>(fAnimName.c_str()));
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);

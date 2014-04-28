@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <stdmat.h>
 #include <bmmlib.h>
 #include <istdplug.h>
-#include <texutil.h>
 #include <iparamb2.h>
 #include <modstack.h>
 #include <keyreduc.h>
@@ -62,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/plMaxNode.h"
 
 #include "hsMaxLayerBase.h"
+#include "plInterp/plAnimEaseTypes.h"
 #include "plInterp/plController.h"
 #include "plInterp/hsInterp.h"
 #include "MaxExport/plErrorMsg.h"

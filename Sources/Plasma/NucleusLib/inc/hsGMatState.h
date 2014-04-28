@@ -85,7 +85,8 @@ enum hsGMatBlendFlags {
     kBlendEnvBumpNext               = 0x800000,
     kBlendSubtract                  = 0x1000000,
     kBlendRevSubtract               = 0x2000000,
-    kBlendAlphaTestHigh             = 0x4000000
+    kBlendAlphaTestHigh             = 0x4000000,
+    kBlendAlphaPremultiplied        = 0x8000000
 };
 enum hsGMatClampFlags {
 

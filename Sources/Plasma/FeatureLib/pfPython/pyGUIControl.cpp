@@ -279,7 +279,7 @@ PyObject* pyGUIControl::GetOwnerDlg( void )
 }
 
     // get color schemes
-PyObject* pyGUIControl::GetForeColor()
+PyObject* pyGUIControl::GetForeColor() const
 {
     if ( fGCkey )
     {
@@ -293,7 +293,7 @@ PyObject* pyGUIControl::GetForeColor()
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyGUIControl::GetSelColor()
+PyObject* pyGUIControl::GetSelColor() const
 {
     if ( fGCkey )
     {
@@ -307,7 +307,7 @@ PyObject* pyGUIControl::GetSelColor()
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyGUIControl::GetBackColor()
+PyObject* pyGUIControl::GetBackColor() const
 {
     if ( fGCkey )
     {
@@ -321,7 +321,7 @@ PyObject* pyGUIControl::GetBackColor()
     PYTHON_RETURN_NONE;
 }
 
-PyObject* pyGUIControl::GetBackSelColor()
+PyObject* pyGUIControl::GetBackSelColor() const
 {
     if ( fGCkey )
     {
@@ -335,7 +335,7 @@ PyObject* pyGUIControl::GetBackSelColor()
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyGUIControl::GetFontSize()
+uint32_t pyGUIControl::GetFontSize() const
 {
     if ( fGCkey )
     {
@@ -445,3 +445,34 @@ void pyGUIControl::SetFontSize(uint32_t fontsize)
         }
     }
 }
+
+void pyGUIControl::SetFontFlags(uint8_t fontFlags)
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod)
+        {
+            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            colorscheme->fFontFlags = fontFlags;
+            pdmod->UpdateColorScheme();
+        }
+    }
+}
+
+uint8_t pyGUIControl::GetFontFlags() const
+{
+    if (fGCkey)
+    {
+        // get the pointer to the modifier
+        pfGUIControlMod* pdmod = pfGUIControlMod::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pdmod)
+        {
+            pfGUIColorScheme* colorscheme = pdmod->GetColorScheme();
+            return colorscheme->fFontFlags;
+        }
+    }
+    return 0;
+}
+

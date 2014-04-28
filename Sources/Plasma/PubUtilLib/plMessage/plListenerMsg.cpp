@@ -41,11 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "hsStream.h"
-#include "plListenerMsg.h"
 #include "hsResMgr.h"
+#include "hsStream.h"
+
 #include "pnKeyedObject/plUoid.h"
 #include "pnKeyedObject/plFixedKey.h"
+#pragma hdrstop
+
+#include "plListenerMsg.h"
 
 
 void plListenerMsg::Read(hsStream* s, hsResMgr* mgr) 
@@ -72,10 +75,6 @@ plSetListenerMsg::plSetListenerMsg( uint8_t type, const plKey &srcKey, bool bind
     plKey pLKey = hsgResMgr::ResMgr()->FindKey( uoid );
     AddReceiver( pLKey );
     Set( srcKey, type, binding );
-}
-
-plSetListenerMsg::~plSetListenerMsg()
-{
 }
 
 void plSetListenerMsg::Read( hsStream *s, hsResMgr *mgr )

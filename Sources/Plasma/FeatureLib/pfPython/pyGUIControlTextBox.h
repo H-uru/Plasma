@@ -86,6 +86,7 @@ public:
     virtual void    SetForeColor( pyColor& color );
     virtual void    SetBackColor( pyColor& color );
     virtual void    SetJustify( uint8_t justify );
+    
     virtual uint8_t   GetJustify();
     virtual PyObject* GetForeColor(); // returns pyColor
 };
