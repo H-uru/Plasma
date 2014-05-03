@@ -132,7 +132,7 @@ void IWorkerThreads::Create () {
     ASSERT(!P::This);
     
     P::This = new P();
-    P::This->threadCount = 8; // TODO
+    P::This->threadCount = 8; // TODO: hsThread::hardware_concurrency() * 2 (or use directly std::thread ?)
     P::This->threads = new P::Thread[P::This->threadCount];
     for (int i = 0; i < P::This->threadCount; i++)
         P::This->threads[i].Start();
@@ -167,25 +167,6 @@ void AsyncCoreInitialize () {
         ErrorAssert(__LINE__, __FILE__, "WSA version failed");
 #endif
     
-    // ensure initialization only occurs once
-    //if (s_running)
-    //    return;
-    //s_running = true;
-
-    // calculate number of IO worker threads to create
-    //if (!s_pageSizeMask) {
-        //SYSTEM_INFO si;
-        //GetSystemInfo(&si);
-        //s_pageSizeMask = si.dwPageSize - 1;
-
-        // Set worker thread count
-        //s_ioThreadCount = si.dwNumberOfProcessors * 2;
-        //if (s_ioThreadCount > kMaxWorkerThreads) {
-            //s_ioThreadCount = kMaxWorkerThreads;
-            //LogMsg(kLogError, "kMaxWorkerThreads too small!");
-        //}
-    //}
-
     IWorkerThreads::Create();
 }
 
