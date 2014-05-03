@@ -232,7 +232,7 @@ struct Cli2Auth_ConnData {
     plUUID      token;
 };
 struct Cli2Auth_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Cli2Auth_ConnData           data;
 };
 

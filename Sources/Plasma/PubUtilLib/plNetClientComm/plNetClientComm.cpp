@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetClientComm.h"
 
-#include "pnAsyncCore/pnAsyncCore.h"
 #include "plProduct.h"
 #include "pnNetCli/pnNetCli.h"
 #include "plNetGameLib/plNetGameLib.h"
@@ -61,10 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAccountUpdateMsg.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plFile/plStreamSource.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcCore.h"
 
 #include "pfMessage/pfKIMsg.h"
 
 #include "hsResMgr.h"
+#include "hsThread.h"
 
 #include <malloc.h>
 
@@ -845,7 +847,7 @@ void NetCommConnect () {
 
         while(!s_hasAuthSrvIpAddress && !s_netError) {
             NetClientUpdate();
-            AsyncSleep(10);
+            hsSleep::Sleep(10);
         }
             
         const char* authSrv[] = {
@@ -874,7 +876,7 @@ void NetCommConnect () {
 
             while(!s_hasFileSrvIpAddress && !s_netError) {
                 NetClientUpdate();
-                AsyncSleep(10);
+                hsSleep::Sleep(10);
             }
             
             const char* fileSrv[] = {

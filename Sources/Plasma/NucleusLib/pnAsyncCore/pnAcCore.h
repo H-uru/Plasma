@@ -41,24 +41,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNt.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcCore.h
 *   
 ***/
 
-#ifdef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENT_H
-#error "Header $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNt.h included more than once"
-#endif
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENT_H
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACCORE_H
 
-
-#ifdef HS_BUILD_FOR_WIN32
 
 /****************************************************************************
 *
-*   Nt API functions
+*   Library initialization
 *
 ***/
 
-void NtGetApi (AsyncApi * api);
+void AsyncCoreInitialize ();
+void AsyncCoreDestroy (unsigned waitMs);
 
-#endif // HS_BUILD_FOR_WIN32
+/*****************************************************************************
+*
+*   Performance counters
+*
+***/
+
+enum EAsyncPerfCounter : unsigned {
+    // Sockets
+    kAsyncPerfSocketsCurr,
+    kAsyncPerfSocketsTotal,
+    kAsyncPerfSocketBytesWriteQueued,
+    kAsyncPerfSocketBytesWaitQueued,
+    kAsyncPerfSocketConnAttemptsOutCurr,
+    kAsyncPerfSocketConnAttemptsOutTotal,
+    kAsyncPerfSocketConnAttemptsInCurr,
+    kAsyncPerfSocketConnAttemptsInTotal,
+    kAsyncPerfSocketDisconnectBacklog,
+    kAsyncPerfSocketDisconnectInvalidConnType,
+    kAsyncPerfNameLookupAttemptsCurr,
+    kAsyncPerfNameLookupAttemptsTotal,
+
+    // Files
+    kAsyncPerfFilesCurr,
+    kAsyncPerfFilesTotal,
+    kAsyncPerfFileBytesReadQueued,
+    kAsyncPerfFileBytesWriteQueued,
+
+    // Threads
+    kAsyncPerfThreadsCurr,
+    kAsyncPerfThreadsTotal,
+
+    // Thread tasks
+    kAsyncPerfThreadTaskListCount,
+    kAsyncPerfThreadTaskThreadsDesired,
+    kAsyncPerfThreadTaskThreadsRunning,
+    kAsyncPerfThreadTaskThreadsActive,
+    
+    kNumAsyncPerfCounters
+};
+
+long AsyncPerfGetCounter (EAsyncPerfCounter id);
+
+#endif
+

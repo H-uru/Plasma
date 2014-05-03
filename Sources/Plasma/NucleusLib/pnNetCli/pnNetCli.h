@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETCLI_PNNETCLI_H
 
 #include "pnEncryption/plBigNum.h"
+#include "pnAsyncCore/pnAcSocket.h"
 
 /*****************************************************************************
 *
@@ -372,7 +373,7 @@ typedef bool (* FNetCliEncrypt) (
 );
 
 NetCli * NetCliConnectAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -383,7 +384,7 @@ NetCli * NetCliConnectAccept (
 
 #ifdef SERVER
 NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -395,7 +396,7 @@ NetCli * NetCliListenAccept (
 
 #ifdef SERVER
 void NetCliListenReject (
-    AsyncSocket     sock,
+    AsyncSocket *   sock,
     ENetError       error
 );
 #endif

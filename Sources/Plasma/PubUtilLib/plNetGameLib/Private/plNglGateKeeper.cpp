@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 namespace Ngl { namespace GateKeeper {
@@ -61,11 +65,11 @@ struct CliGkConn : AtomicRef {
     ~CliGkConn ();
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
 
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -85,17 +89,17 @@ struct CliGkConn : AtomicRef {
 
     void Send (const uintptr_t fields[], unsigned count);
 
-    CCritSect       critsect;
-    LINK(CliGkConn) link;
-    AsyncSocket     sock;
-    NetCli *        cli;
-    char            name[MAX_PATH];
-    plNetAddress    addr;
-    plUUID          token;
-    unsigned        seq;
-    unsigned        serverChallenge;
-    AsyncCancelId   cancelId;
-    bool            abandoned;
+    CCritSect           critsect;
+    LINK(CliGkConn)     link;
+    AsyncSocket *       sock;
+    NetCli *            cli;
+    char                name[MAX_PATH];
+    plNetAddress        addr;
+    plUUID              token;
+    unsigned            seq;
+    unsigned            serverChallenge;
+    AsyncSocket::Cancel cancelId;
+    bool                abandoned;
 };
 
 
@@ -232,16 +236,12 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
 
     conn->StopAutoReconnect();
 
-    if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    if (conn->cancelId)
+        conn->cancelId.ConnectCancel();
+    else if (conn->sock)
+        conn->sock->Disconnect(true);
+    else
         conn->DecRef("Lifetime");
-    }
 }
 
 //============================================================================
@@ -329,7 +329,7 @@ static void NotifyConnSocketConnectFailed (CliGkConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -349,7 +349,7 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
             
         if (conn == s_active)
@@ -364,7 +364,7 @@ static void NotifyConnSocketDisconnect (CliGkConn * conn) {
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read) {
+static bool NotifyConnSocketRead (CliGkConn * conn, AsyncSocket::NotifyRead * read) {
     // TODO: Only dispatch messages from the active auth server
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
     bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, conn);
@@ -374,45 +374,44 @@ static bool NotifyConnSocketRead (CliGkConn * conn, AsyncNotifySocketRead * read
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
+    AsyncSocket *           sock,
+    AsyncSocket::ENotify    code,
+    AsyncSocket::Notify *   notify
 ) {
     bool result = true;
     CliGkConn * conn;
 
     switch (code) {
-        case kNotifySocketConnectSuccess:
+        case AsyncSocket::kNotifyConnectSuccess:
             conn = (CliGkConn *) notify->param;
-            *userState = conn;
+            sock->user = conn;
             bool abandoned;
             s_critsect.Enter();
             {
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId.Clear();
                 abandoned       = conn->abandoned;
             }
             s_critsect.Leave();
             if (abandoned)
-                AsyncSocketDisconnect(sock, true);
+                sock->Disconnect(true);
             else
                 NotifyConnSocketConnect(conn);
         break;
 
-        case kNotifySocketConnectFailed:
+        case AsyncSocket::kNotifyConnectFailed:
             conn = (CliGkConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
-        case kNotifySocketDisconnect:
-            conn = (CliGkConn *) *userState;
+        case AsyncSocket::kNotifyDisconnect:
+            conn = (CliGkConn *) sock->user;
             NotifyConnSocketDisconnect(conn);
         break;
 
-        case kNotifySocketRead:
-            conn = (CliGkConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        case AsyncSocket::kNotifyRead:
+            conn = (CliGkConn *) sock->user;
+            result = NotifyConnSocketRead(conn, (AsyncSocket::NotifyRead *) notify);
         break;
     }
     
@@ -449,8 +448,7 @@ static void Connect (
     connect.data.token          = conn->token;
     connect.data.dataBytes      = sizeof(connect.data);
 
-    AsyncSocketConnect(
-        &conn->cancelId,
+    conn->cancelId = AsyncSocket::Connect(
         conn->addr,
         SocketNotifyCallback,
         conn,
@@ -508,13 +506,13 @@ static void AsyncLookupCallback (
 static unsigned CliGkConnTimerDestroyed (void * param) {
     CliGkConn * conn = (CliGkConn *) param;
     conn->DecRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
 static unsigned CliGkConnReconnectTimerProc (void * param) {
     ((CliGkConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -525,10 +523,10 @@ static unsigned CliGkConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGkConn::CliGkConn ()
-    : reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : reconnectStartMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
-    , cancelId(nil), abandoned(false)
+    , abandoned(false)
 {
     memset(name, 0, sizeof(name));
 
@@ -580,7 +578,7 @@ void CliGkConn::StartAutoReconnect () {
                 remainingMs = 0;
             LogMsg(kLogPerf, L"GateKeeper auto-reconnecting in %u ms", remainingMs);
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     critsect.Leave();
 }
@@ -595,8 +593,7 @@ void CliGkConn::AutoReconnect () {
     IncRef("ReconnectTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliGkConnReconnectTimerProc,
             0,  // immediate callback
             this
@@ -609,10 +606,9 @@ void CliGkConn::AutoReconnect () {
 void CliGkConn::StopAutoReconnect () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliGkConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliGkConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -620,7 +616,7 @@ void CliGkConn::StopAutoReconnect () {
 //============================================================================
 bool CliGkConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return reconnectTimer && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -629,10 +625,9 @@ void CliGkConn::AutoPing () {
     IncRef("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliGkConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -643,10 +638,8 @@ void CliGkConn::AutoPing () {
 void CliGkConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliGkConnTimerDestroyed);
-            pingTimer = nil;
-        }
+        if (pingTimer)
+            pingTimer.Delete(CliGkConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -1022,7 +1015,7 @@ void GateKeeperDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
@@ -1070,13 +1063,10 @@ void NetCliGateKeeperStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     gateKeeperAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }

@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 // Define this if the file servers are running behind load-balancing hardware.
@@ -63,12 +66,12 @@ namespace Ngl { namespace File {
 struct CliFileConn : AtomicRef {
     LINK(CliFileConn)   link;
     hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
-    AsyncSocket         sock;
+    AsyncSocket *       sock;
     char                name[MAX_PATH];
     plNetAddress        addr;
     unsigned            seq;
     ARRAY(uint8_t)      recvBuffer;
-    AsyncCancelId       cancelId;
+    AsyncSocket::Cancel cancelId;
     bool                abandoned;
     unsigned            buildId;
     unsigned            serverType;
@@ -76,14 +79,14 @@ struct CliFileConn : AtomicRef {
     CCritSect           timerCritsect; // critsect for both timers
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
     unsigned            connectStartMs;
     unsigned            numImmediateDisconnects;
     unsigned            numFailedConnects;
 
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -94,7 +97,7 @@ struct CliFileConn : AtomicRef {
     // to initiate connection attempts to the remote host whenever
     // the socket is disconnected.
     void AutoReconnect ();
-    bool AutoReconnectEnabled () {return (reconnectTimer != nil);}
+    bool AutoReconnectEnabled () { return reconnectTimer; }
     void StopAutoReconnect (); // call before destruction
     void StartAutoReconnect ();
     void TimerReconnect ();
@@ -278,14 +281,13 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 
     bool needsDecref = true;
     if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
+        conn->cancelId.ConnectCancel();
         needsDecref = false;
     }
     else {
         conn->sockLock.LockForReading();
         if (conn->sock) {
-            AsyncSocketDisconnect(conn->sock, true);
+            conn->sock->Disconnect(true);
             needsDecref = false;
         }
         conn->sockLock.UnlockForReading();
@@ -312,7 +314,7 @@ static void NotifyConnSocketConnect (CliFileConn * conn) {
         else
         {
             conn->sockLock.LockForReading();
-            AsyncSocketDisconnect(conn->sock, true);
+            conn->sock->Disconnect(true);
             conn->sockLock.UnlockForReading();
         }
     }
@@ -323,7 +325,7 @@ static void NotifyConnSocketConnect (CliFileConn * conn) {
 static void NotifyConnSocketConnectFailed (CliFileConn * conn) {
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -356,7 +358,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
     conn->StopAutoPing();
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
             
         if (conn == s_active)
@@ -431,7 +433,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * read) {
+static bool NotifyConnSocketRead (CliFileConn * conn, AsyncSocket::NotifyRead * read) {
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
     conn->recvBuffer.Add(read->buffer, read->bytes);
     read->bytesProcessed += read->bytes;
@@ -454,42 +456,41 @@ static bool NotifyConnSocketRead (CliFileConn * conn, AsyncNotifySocketRead * re
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-        void **             userState
+    AsyncSocket *           sock,
+    AsyncSocket::ENotify    code,
+    AsyncSocket::Notify *   notify
 ) {
     bool result = true;
     CliFileConn * conn;
 
     switch (code) {
-        case kNotifySocketConnectSuccess:
+        case AsyncSocket::kNotifyConnectSuccess:
             conn = (CliFileConn *) notify->param;
-            *userState = conn;
+            sock->user = conn;
             s_critsect.Enter();
             {
                 conn->sockLock.LockForWriting();
                 conn->sock      = sock;
                 conn->sockLock.UnlockForWriting();
-                conn->cancelId  = 0;
+                conn->cancelId.Clear();
             }
             s_critsect.Leave();
             NotifyConnSocketConnect(conn);
         break;
 
-        case kNotifySocketConnectFailed:
+        case AsyncSocket::kNotifyConnectFailed:
             conn = (CliFileConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
-        case kNotifySocketDisconnect:
-            conn = (CliFileConn *) *userState;
+        case AsyncSocket::kNotifyDisconnect:
+            conn = (CliFileConn *) sock->user;
             NotifyConnSocketDisconnect(conn);
         break;
 
-        case kNotifySocketRead:
-            conn = (CliFileConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        case AsyncSocket::kNotifyRead:
+            conn = (CliFileConn *) sock->user;
+            result = NotifyConnSocketRead(conn, (AsyncSocket::NotifyRead *) notify);
         break;
     }
 
@@ -525,8 +526,7 @@ static void Connect (CliFileConn * conn) {
     connect.data.serverType = conn->serverType;
     connect.data.dataBytes  = sizeof(connect.data);
 
-    AsyncSocketConnect(
-        &conn->cancelId,
+    conn->cancelId = AsyncSocket::Connect(
         conn->addr,
         SocketNotifyCallback,
         conn,
@@ -581,10 +581,10 @@ static void AsyncLookupCallback (
 
 //============================================================================
 CliFileConn::CliFileConn ()
-    : sock(nil), seq(0), cancelId(nil), abandoned(false), buildId(0), serverType(0)
-    , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
+    : sock(nil), seq(0), abandoned(false), buildId(0), serverType(0)
+    , reconnectStartMs(0), connectStartMs(0)
     , numImmediateDisconnects(0), numFailedConnects(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
 {
     memset(name, 0, sizeof(name));
     AtomicAdd(&s_perf[kPerfConnCount], 1);
@@ -623,7 +623,7 @@ void CliFileConn::TimerReconnect () {
 //===========================================================================
 static unsigned CliFileConnTimerReconnectProc (void * param) {
     ((CliFileConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -641,7 +641,7 @@ void CliFileConn::StartAutoReconnect () {
             if ((signed)remainingMs < 0)
                 remainingMs = 0;
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     timerCritsect.Leave();
 }
@@ -655,8 +655,7 @@ void CliFileConn::AutoReconnect () {
     {
         ASSERT(!reconnectTimer);
         IncRef("ReconnectTimer");
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliFileConnTimerReconnectProc,
             0,  // immediate callback
             this
@@ -669,17 +668,16 @@ void CliFileConn::AutoReconnect () {
 static unsigned CliFileConnTimerDestroyed (void * param) {
     CliFileConn * sock = (CliFileConn *) param;
     sock->DecRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //============================================================================
 void CliFileConn::StopAutoReconnect () {
     timerCritsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliFileConnTimerDestroyed);
     }
     timerCritsect.Leave();
 }
@@ -697,11 +695,10 @@ void CliFileConn::AutoPing () {
     timerCritsect.Enter();
     {
         sockLock.LockForReading();
-        unsigned timerPeriod = sock ? 0 : kAsyncTimeInfinite;
+        unsigned timerPeriod = sock ? 0 : kPosInfinity32;
         sockLock.UnlockForReading();
 
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliFileConnPingTimerProc,
             timerPeriod,
             this
@@ -714,10 +711,9 @@ void CliFileConn::AutoPing () {
 void CliFileConn::StopAutoPing () {
     timerCritsect.Enter();
     {
-        if (AsyncTimer * timer = pingTimer) {
-            pingTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliFileConnTimerDestroyed);
-        }
+        AsyncTimer timer(pingTimer);
+        if (timer)
+            timer.Delete(CliFileConnTimerDestroyed);
     }
     timerCritsect.Leave();
 }
@@ -756,7 +752,7 @@ void CliFileConn::TimerPing () {
 
 //============================================================================
 void CliFileConn::Destroy () {
-    AsyncSocket oldSock = nil;
+    AsyncSocket * oldSock = nil;
 
     sockLock.LockForWriting();
     {
@@ -765,7 +761,7 @@ void CliFileConn::Destroy () {
     sockLock.UnlockForWriting();
 
     if (oldSock)
-        AsyncSocketDelete(oldSock);
+        oldSock->Delete();
     recvBuffer.Clear();
 }
 
@@ -773,7 +769,7 @@ void CliFileConn::Destroy () {
 void CliFileConn::Send (const void * data, unsigned bytes) {
     sockLock.LockForReading();
     if (sock) {
-        AsyncSocketSend(sock, data, bytes);
+        sock->Send(data, bytes);
     }
     sockLock.UnlockForReading();
 }
@@ -1313,7 +1309,7 @@ void FileDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
@@ -1361,13 +1357,10 @@ void NetCliFileStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     fileAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }
@@ -1398,13 +1391,10 @@ void NetCliFileStartConnectAsServer (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     fileAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }

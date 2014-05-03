@@ -41,11 +41,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/pnAceIo.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcIo.cpp
 *   
 ***/
 
-#include "Pch.h"
+#include "pnAcSocket.h"
+#include "pnAcInt.h"
+#include "pnUtils/pnUtils.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 
@@ -79,7 +82,7 @@ struct ISocketConnHash {
 
 struct ISocketConnType : ISocketConnHash {
     HASHLINK(ISocketConnType)   hashlink;
-    FAsyncNotifySocketProc      notifyProc;
+    AsyncSocket::FNotifyProc    notifyProc;
 };
 
 
@@ -178,10 +181,10 @@ static unsigned GetConnHash (
         return 1;
     }
     else {
-        if (bytes < sizeof(AsyncSocketConnectPacket))
+        if (bytes < sizeof(AsyncSocket::ConnectPacket))
             return 0;
 
-        const AsyncSocketConnectPacket & connect = * (const AsyncSocketConnectPacket *) buffer;
+        const AsyncSocket::ConnectPacket & connect = * (const AsyncSocket::ConnectPacket *) buffer;
         if (connect.hdrBytes < sizeof(connect))
             return 0;
         
@@ -204,128 +207,13 @@ static unsigned GetConnHash (
 ***/
 
 //===========================================================================
-void AsyncSocketConnect (
-    AsyncCancelId *         cancelId,
-    const plNetAddress&     netAddr,
-    FAsyncNotifySocketProc  notifyProc,
-    void *                  param,
-    const void *            sendData,
-    unsigned                sendBytes,
-    unsigned                connectMs,
-    unsigned                localPort
-) {
-    ASSERT(g_api.socketConnect);
-    g_api.socketConnect(
-        cancelId,
-        netAddr,
-        notifyProc,
-        param,
-        sendData,
-        sendBytes,
-        connectMs,
-        localPort
-    );
-}
-
-//===========================================================================
-void AsyncSocketConnectCancel (
-    FAsyncNotifySocketProc  notifyProc,
-    AsyncCancelId           cancelId
-) {
-    ASSERT(g_api.socketConnectCancel);
-    g_api.socketConnectCancel(notifyProc, cancelId);
-}
-
-//===========================================================================
-void AsyncSocketDisconnect (
-    AsyncSocket             sock,
-    bool                    hardClose
-) {
-    ASSERT(g_api.socketDisconnect);
-    g_api.socketDisconnect(sock, hardClose);
-}
-
-//===========================================================================
-void AsyncSocketDelete (AsyncSocket sock) {
-
-    ASSERT(g_api.socketDelete);
-    g_api.socketDelete(sock);
-}
-
-//===========================================================================
-bool AsyncSocketSend (
-    AsyncSocket             sock,
-    const void *            data,
-    unsigned                bytes
-) {
-    ASSERT(g_api.socketSend);
-    return g_api.socketSend(sock, data, bytes);
-}
-
-//===========================================================================
-bool AsyncSocketWrite (
-    AsyncSocket             sock,
-    const void *            buffer,
-    unsigned                bytes,
-    void *                  param
-) {
-    ASSERT(g_api.socketWrite);
-    return g_api.socketWrite(sock, buffer, bytes, param);
-}
-
-//===========================================================================
-void AsyncSocketSetNotifyProc (
-    AsyncSocket             sock,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketSetNotifyProc);
-    g_api.socketSetNotifyProc(sock, notifyProc);
-}
-
-//===========================================================================
-void AsyncSocketSetBacklogAlloc (
-    AsyncSocket             sock,
-    unsigned                bufferSize
-) {
-    ASSERT(g_api.socketSetBacklogAlloc);
-    g_api.socketSetBacklogAlloc(sock, bufferSize);
-}
-
-//===========================================================================
-unsigned AsyncSocketStartListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketStartListening);
-    return g_api.socketStartListening(listenAddr, notifyProc);
-}
-
-//===========================================================================
-void AsyncSocketStopListening (
-    const plNetAddress&     listenAddr,
-    FAsyncNotifySocketProc  notifyProc
-) {
-    ASSERT(g_api.socketStopListening);
-    g_api.socketStopListening(listenAddr, notifyProc);
-}
-
-//============================================================================
-void AsyncSocketEnableNagling (
-    AsyncSocket             sock,
-    bool                    enable
-) {
-    ASSERT(g_api.socketEnableNagling);
-    g_api.socketEnableNagling(sock, enable);
-}
-
-//===========================================================================
-void AsyncSocketRegisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
+void AsyncSocket::Register (
+    EConnType       connType, 
+    FNotifyProc     notifyProc,
+    unsigned        buildId,
+    unsigned        buildType,
+    unsigned        branchId,
+    const plUUID&   productId
 ) {
     ASSERT(connType != kConnTypeNil);
     ASSERT(notifyProc);
@@ -348,13 +236,13 @@ void AsyncSocketRegisterNotifyProc (
 }
 
 //===========================================================================
-void AsyncSocketUnregisterNotifyProc (
-    uint8_t                    connType, 
-    FAsyncNotifySocketProc  notifyProc,
-    unsigned                buildId,
-    unsigned                buildType,
-    unsigned                branchId,
-    const plUUID&           productId
+void AsyncSocket::Unregister (
+    EConnType       connType, 
+    FNotifyProc     notifyProc,
+    unsigned        buildId,
+    unsigned        buildType,
+    unsigned        branchId,
+    const plUUID&   productId
 ) {
     ISocketConnHash hash;
     hash.connType   = connType;
@@ -384,15 +272,15 @@ void AsyncSocketUnregisterNotifyProc (
 }
 
 //===========================================================================
-FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
-    const uint8_t  buffer[],
-    unsigned    bytes,
-    unsigned *  bytesProcessed,
-    unsigned *  connType,
-    unsigned *  buildId,
-    unsigned *  buildType,
-    unsigned *  branchId,
-    plUUID*     productId
+AsyncSocket::FNotifyProc AsyncSocket::FindNotifyProc (
+    const uint8_t   buffer[],
+    unsigned        bytes,
+    unsigned *      bytesProcessed,
+    unsigned *      connType,
+    unsigned *      buildId,
+    unsigned *      buildType,
+    unsigned *      branchId,
+    plUUID*         productId
 ) {
     for (;;) {
         // Get the connType
@@ -402,7 +290,7 @@ FAsyncNotifySocketProc AsyncSocketFindNotifyProc (
             break;
 
         // Lookup notifyProc based on connType
-        FAsyncNotifySocketProc proc;
+        FNotifyProc proc;
         s_notifyProcLock.LockForReading();
         if (const ISocketConnType * scan = s_notifyProcs.Find(hash))
             proc = scan->notifyProc;

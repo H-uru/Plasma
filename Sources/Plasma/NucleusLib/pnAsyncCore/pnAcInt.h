@@ -41,27 +41,81 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/Private/Nt/pnAceNtThread.cpp
-*   
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcInt.h
+*
 ***/
 
-#include "../../Pch.h"
-#pragma hdrstop
+#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACINT_H
+#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNACINT_H
 
-#include "pnAceNtInt.h"
-
-
-namespace Nt {
+#include "pnAcCore.h"
 
 /*****************************************************************************
 *
-*   Module exports
+*   Core.cpp
 *
 ***/
 
-//===========================================================================
-void NtSleep (unsigned sleepMs) {
-    Sleep(sleepMs);
-}
+// Performance counter functions
+long PerfAddCounter (EAsyncPerfCounter id, unsigned n);
+long PerfSubCounter (EAsyncPerfCounter id, unsigned n);
+long PerfSetCounter (EAsyncPerfCounter id, unsigned n);
 
-} using namespace Nt;
+
+/*****************************************************************************
+*
+*   Int.cpp
+*
+***/
+
+class IWorkerThreads {
+public:
+    class Operation;
+    
+    static void Create (); ///< start worker threads
+    static void Delete (unsigned timeout); ///< stop worker threads
+    static void Add (Operation * op); ///< add an operation to run in a worker thread.
+    
+private:
+    class P;
+};
+
+class IWorkerThreads::Operation {
+    Operation * next;
+    
+protected:
+    virtual void Callback() = 0;
+    
+    friend class IWorkerThreads;
+    friend class AsyncSocket;
+};
+
+
+/*****************************************************************************
+*
+*   Timer.cpp
+*
+***/
+
+void TimerDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Dns.cpp
+*
+***/
+
+void DnsDestroy (unsigned exitThreadWaitMs);
+
+
+/*****************************************************************************
+*
+*   Socket.cpp
+*
+***/
+
+void SocketDestroy ();
+
+#endif
+

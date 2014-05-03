@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pnNetProtocol/pnNetProtocol.h"
-#include "pnAsyncCore/pnAsyncCore.h"
 
 #include "plVaultConstants.h"
 #include "plVaultNodeAccess.h"

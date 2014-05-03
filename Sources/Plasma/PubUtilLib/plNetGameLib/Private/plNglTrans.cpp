@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 
@@ -181,7 +182,7 @@ void NetTransDestroy (bool wait) {
         
     while (s_perf[kPerfCurrTransactions]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 

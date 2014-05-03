@@ -112,7 +112,7 @@ struct Cli2File_ConnData {
     unsigned    serverType;
 };
 struct Cli2File_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Cli2File_ConnData           data;
 };
 

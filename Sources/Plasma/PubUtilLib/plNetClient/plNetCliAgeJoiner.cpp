@@ -76,6 +76,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnDispatch/plDispatch.h"
 #include "plResMgr/plResManager.h"
 
+#include "pnAsyncCore/pnAcLog.h"
+
 
 /*****************************************************************************
 *

@@ -174,7 +174,7 @@ struct Srv2Db_ConnData {
     uint32_t   srvType;
 };
 struct Srv2Db_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket    hdr;
     Srv2Db_ConnData             data;
 };
 

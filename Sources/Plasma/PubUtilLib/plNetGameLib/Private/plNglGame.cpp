@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 namespace Ngl { namespace Game {
@@ -58,16 +60,16 @@ namespace Ngl { namespace Game {
 struct CliGmConn : AtomicRef {
     LINK(CliGmConn) link;
 
-    CCritSect       critsect;
-    AsyncSocket     sock;
-    AsyncCancelId   cancelId;
-    NetCli *        cli;
-    plNetAddress    addr;
-    unsigned        seq;
-    bool            abandoned;
+    CCritSect           critsect;
+    AsyncSocket *       sock;
+    AsyncSocket::Cancel cancelId;
+    NetCli *            cli;
+    plNetAddress        addr;
+    unsigned            seq;
+    bool                abandoned;
 
     // ping
-    AsyncTimer *    pingTimer;
+    AsyncTimer      pingTimer;
     unsigned        pingSendTimeMs;
     unsigned        lastHeardTimeMs;
 
@@ -197,16 +199,12 @@ static CliGmConn * GetConnIncRef (const char tag[]) {
 static void UnlinkAndAbandonConn_CS (CliGmConn * conn) {
     s_conns.Unlink(conn);
     conn->abandoned = true;
-    if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
-    }
-    else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
-    }
-    else {
+    if (conn->cancelId)
+        conn->cancelId.ConnectCancel();
+    else if (conn->sock)
+        conn->sock->Disconnect(true);
+    else
         conn->DecRef("Lifetime");
-    }
 }
 
 //============================================================================
@@ -246,7 +244,7 @@ static void NotifyConnSocketConnectFailed (CliGmConn * conn) {
     bool notify;
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
         
         notify
@@ -296,7 +294,7 @@ static void NotifyConnSocketDisconnect (CliGmConn * conn) {
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read) {
+static bool NotifyConnSocketRead (CliGmConn * conn, AsyncSocket::NotifyRead * read) {
     // TODO: Only dispatch messages from the active game server
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
     bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, nil);
@@ -306,46 +304,45 @@ static bool NotifyConnSocketRead (CliGmConn * conn, AsyncNotifySocketRead * read
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
+    AsyncSocket *           sock,
+    AsyncSocket::ENotify    code,
+    AsyncSocket::Notify *   notify
 ) {
     bool result = true;
     CliGmConn * conn;
 
     switch (code) {
-        case kNotifySocketConnectSuccess:
+        case AsyncSocket::kNotifyConnectSuccess:
             conn = (CliGmConn *) notify->param;
-            *userState = conn;
+            sock->user = conn;
             conn->TransferRef("Connecting", "Connected");
             bool abandoned;
             s_critsect.Enter();
             {
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId.Clear();
                 abandoned       = conn->abandoned;
             }
             s_critsect.Leave();
             if (abandoned)
-                AsyncSocketDisconnect(sock, true);
+                sock->Disconnect(true);
             else
                 NotifyConnSocketConnect(conn);
         break;
 
-        case kNotifySocketConnectFailed:
+        case AsyncSocket::kNotifyConnectFailed:
             conn = (CliGmConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
-        case kNotifySocketDisconnect:
-            conn = (CliGmConn *) *userState;
+        case AsyncSocket::kNotifyDisconnect:
+            conn = (CliGmConn *) sock->user;
             NotifyConnSocketDisconnect(conn);
         break;
 
-        case kNotifySocketRead:
-            conn = (CliGmConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        case AsyncSocket::kNotifyRead:
+            conn = (CliGmConn *) sock->user;
+            result = NotifyConnSocketRead(conn, (AsyncSocket::NotifyRead *) notify);
         break;
     }
     
@@ -381,8 +378,7 @@ static void Connect (
     connect.hdr.productId   = plProduct::UUID();
     connect.data.dataBytes  = sizeof(connect.data);
 
-    AsyncSocketConnect(
-        &conn->cancelId,
+    conn->cancelId = AsyncSocket::Connect(
         addr,
         SocketNotifyCallback,
         conn,
@@ -404,7 +400,7 @@ static void Connect (
 static unsigned CliGmConnTimerDestroyed (void * param) {
     CliGmConn * conn = (CliGmConn *) param;
     conn->DecRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -415,8 +411,8 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGmConn::CliGmConn ()
-    : sock(nil), cancelId(nil), cli(nil), seq(0), abandoned(false)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : sock(nil), cli(nil), seq(0), abandoned(false)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
 {
     AtomicAdd(&s_perf[kPerfConnCount], 1);
 }
@@ -434,10 +430,9 @@ void CliGmConn::AutoPing () {
     IncRef("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliGmConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -448,10 +443,8 @@ void CliGmConn::AutoPing () {
 void CliGmConn::StopAutoPing () {
     critsect.Enter();
     {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliGmConnTimerDestroyed);
-            pingTimer = nil;
-        }
+        if (pingTimer)
+            pingTimer.Delete(CliGmConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -747,7 +740,7 @@ void GameDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
