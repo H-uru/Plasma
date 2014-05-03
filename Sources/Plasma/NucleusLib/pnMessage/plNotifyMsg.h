@@ -370,7 +370,10 @@ public:
     void SetType(notificationType type) { fType = type; }
     void SetState(float state) { fState = state; }
 
-    // event records for the notify message
+    /**
+     * Adds an arbitrary event to this notify message.
+     * \note This copies \a ed.
+     */
     void AddEvent( proEventData* ed);
     void AddCollisionEvent( bool enter, const plKey &other, const plKey &self, bool onlyOneCollision=true );
     void AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint );

@@ -56,10 +56,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plLogicModBase::ConsoleTrigger(plKey playerKey)
 {
     // Setup the event data in case this is a OneShot responder that needs it
-    proPickedEventData *ed = new proPickedEventData;
-    ed->fPicker = playerKey;
-    ed->fPicked = nil;
-    fNotify->AddEvent(ed);
+    proPickedEventData ed;
+    ed.fPicker = playerKey;
+    ed.fPicked = nullptr;
+    fNotify->AddEvent(&ed);
 
     Trigger(false);
 
