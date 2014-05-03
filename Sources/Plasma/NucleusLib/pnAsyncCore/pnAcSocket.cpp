@@ -79,10 +79,10 @@ struct AsyncSocket::P : AsyncSocket {
     FNotifyProc     notifyProc;
     bool            close;
     bool            hardClose;
-    hsMutex         sockLock;
+    std::mutex      sockLock;
     // SendOp fields
     SendBaseOp *    lastSend; // chained send operation list (to keep send order)
-    hsMutex         lastSendLock;
+    std::mutex      lastSendLock;
     // ReadOp fields
     bool            reading;
 
@@ -129,12 +129,12 @@ AsyncSocket::P::~P () {
 // thread that wait for I/O operation to be non-blocking.
 struct AsyncSocket::P::Thread : hsThread {
     Operation *         opList; // chained operation list on IWorkerThreads::Operation::next
-    hsMutex             listLock;
+    std::mutex          listLock;
     hsBinarySemaphore   listSem;
 
     // ConnectOp fields
     ConnectOp *     coList; // chained operation list on ConnectOp::next (for cancelation)
-    hsMutex         coLock;
+    std::mutex      coLock;
     
     Thread () : opList(nullptr), coList(nullptr) {}
     
@@ -157,7 +157,7 @@ hsError AsyncSocket::P::Thread::Run() {
         case  0: continue;
         };
 
-        hsTempMutexLock lock(listLock);
+        std::lock_guard<std::mutex> lock(listLock);
         for (Operation * op = opList, ** old = &opList; op; op = *old) {
             if (FD_ISSET(op->hSocket, fds + op->sockMode)) {
                 *old = (Operation *) op->next;
@@ -168,7 +168,7 @@ hsError AsyncSocket::P::Thread::Run() {
     }
 
     // cleanup all ConnectOp
-    hsTempMutexLock lock(listLock);
+    std::lock_guard<std::mutex> lock(listLock);
     for (Operation * op = opList, * next; op; op = next) {
         next = (Operation *) op->next;
         op->sockMode = Operation::kCancel;
@@ -189,7 +189,8 @@ void AsyncSocket::P::Thread::ListFds (fd_set (& fds)[2]) {
     while (true) {
         uint32_t currTime = hsTimer::GetPrecTickCount();
         
-        { hsTempMutexLock lock(listLock);
+        {
+            std::lock_guard<std::mutex> lock(listLock);
             for (Operation * op = opList, ** old = &opList; op; op = *old) {
                 if (op->timeout != kPosInfinity32 && currTime > op->timeout) {
                     *old = (Operation *) op->next; // unlink
@@ -221,7 +222,8 @@ void AsyncSocket::P::Add (Operation * op) {
     if (op->timeout != kPosInfinity32)
         op->timeout += hsTimer::GetPrecTickCount();
     
-    { hsTempMutexLock lock(fThread->listLock);
+    {
+        std::lock_guard<std::mutex> lock(fThread->listLock);
         op->next = fThread->opList;
         fThread->opList = op;
     }
@@ -256,7 +258,8 @@ struct AsyncSocket::P::ReadOp : AsyncSocket::P::Operation {
 void AsyncSocket::P::ReadOp::Callback() {
     ssize_t size;
     bool active;
-    { hsTempMutexLock lock(sock->sockLock);
+    {
+        std::lock_guard<std::mutex> lock(sock->sockLock);
         if (active = sock->Active()) {
             size = sock->socket.RecvData((char *) buffer + bytesUsed, sizeof(buffer) - bytesUsed);
             if (size == -1 && plNet::GetError() == kBlockingError)
@@ -291,7 +294,8 @@ void AsyncSocket::P::ReadOp::Callback() {
     if (!sock->notifyProc(sock, kNotifyRead, &notify))
         sock->Disconnect();
 
-    { hsTempMutexLock lock(sock->sockLock);
+    {
+        std::lock_guard<std::mutex> lock(sock->sockLock);
         if (sock->Active()) {
             if (notify.bytesProcessed < notify.bytes)
                 memmove(buffer, buffer + notify.bytesProcessed, bytesUsed = notify.bytes - notify.bytesProcessed);
@@ -407,7 +411,8 @@ AsyncSocket::Cancel AsyncSocket::Connect (
     }
     
     // coList update
-    { hsTempMutexLock lock(P::fThread->coLock);
+    {
+        std::lock_guard<std::mutex> lock(P::fThread->coLock);
         op->next = P::fThread->coList;
         if (op->next)
             op->next->prev = op;
@@ -425,22 +430,23 @@ AsyncSocket::Cancel AsyncSocket::Connect (
 
 //===========================================================================
 bool AsyncSocket::Cancel::ConnectCancel () {
-    hsTempMutexLock lock(P::fThread->coLock);
+    std::lock_guard<std::mutex> lock(P::fThread->coLock);
     
-    for (P::ConnectOp * op = P::fThread->coList; op; op = op->next)
+    for (P::ConnectOp * op = P::fThread->coList; op; op = op->next) {
         if (ptr == op) {
             ptr = nullptr;
             op->timeout = 0;
             P::fThread->listSem.Signal();
             return true; // cancelId can be found only once!
         }
+    }
     ptr = nullptr;
     return false;
 }
 
 //===========================================================================
 void AsyncSocket::ConnectCancel(FNotifyProc notifyProc) {
-    hsTempMutexLock lock(P::fThread->coLock);
+    std::lock_guard<std::mutex> lock(P::fThread->coLock);
     
     for (P::ConnectOp * op = P::fThread->coList; op; op = op->next)
         if (op->notifyProc == notifyProc)
@@ -455,7 +461,8 @@ bool AsyncSocket::Active() {
 
 //===========================================================================
 void AsyncSocket::P::ConnectOp::Callback () {
-    { hsTempMutexLock lock(fThread->coLock);
+    {
+        std::lock_guard<std::mutex> lock(fThread->coLock);
         // revmove this from coList
         prev ? prev->next : fThread->coList = next;
         if (next)
@@ -504,7 +511,7 @@ void AsyncSocket::P::ConnectOp::Callback () {
             read->sockMode = kRead;
             read->timeout = kPosInfinity32;
             
-            hsTempMutexLock lock(sock->sockLock);
+            std::lock_guard<std::mutex> lock(sock->sockLock);
             if (*sock)
                 P::Add(read);
             else {
@@ -581,7 +588,8 @@ bool AsyncSocket::Send (
     memcpy(op->data, data, bytes);
 
     bool pending;
-    { hsTempMutexLock lock(((P*)this)->lastSendLock);
+    {
+        std::lock_guard<std::mutex> lock(((P*)this)->lastSendLock);
         pending = ((P*)this)->lastSend;
         if (pending)
             ((P*)this)->lastSend->next = op;
@@ -622,7 +630,8 @@ bool AsyncSocket::Write (
     op->buffer      = (uint8_t *) buffer;
 
     bool pending;
-    { hsTempMutexLock lock(((P*)this)->lastSendLock);
+    {
+        std::lock_guard<std::mutex> lock(((P*)this)->lastSendLock);
         pending = ((P*)this)->lastSend;
 
         if (pending)
@@ -643,7 +652,8 @@ bool AsyncSocket::Write (
 //===========================================================================
 void AsyncSocket::P::SendBaseOp::Callback() {
     size_t size;
-    { hsTempMutexLock lock(sock->sockLock);
+    {
+        std::lock_guard<std::mutex> lock(sock->sockLock);
         if (sock->hardClose)
             sockMode = kCancel;
         else if (sendData) {
@@ -655,7 +665,8 @@ void AsyncSocket::P::SendBaseOp::Callback() {
 
     if (sockMode == kCancel) { // cancelled
         if (*sock) {
-            { hsTempMutexLock lock(sock->lastSendLock);
+            {
+                std::lock_guard<std::mutex> lock(sock->lastSendLock);
                 if (!next)
                     sock->lastSend = nullptr;
             }
@@ -681,7 +692,8 @@ void AsyncSocket::P::SendBaseOp::Callback() {
     if (size == -1) { // error
         if (*sock)
             sock->Disconnect();
-        { hsTempMutexLock lock(sock->lastSendLock);
+        {
+            std::lock_guard<std::mutex> lock(sock->lastSendLock);
             if (!next)
                 sock->lastSend = nullptr;
         }
@@ -697,7 +709,8 @@ void AsyncSocket::P::SendBaseOp::Callback() {
     if (size >= sendBytes) {
         // operation end
         ASSERT(sendBytes == size);
-        { hsTempMutexLock lock(sock->lastSendLock);
+        {
+            std::lock_guard<std::mutex> lock(sock->lastSendLock);
             if (!next)
                 sock->lastSend = nullptr;
         }
@@ -750,7 +763,8 @@ void AsyncSocket::SetNotifyProc (FNotifyProc  notifyProc) {
 //===========================================================================
 void AsyncSocket::EnableNagling(bool nagling) {
     int result;
-    { hsTempMutexLock lock(((P*)this)->sockLock);
+    {
+        std::lock_guard<std::mutex> lock(((P*)this)->sockLock);
         if (!Active())
             return;
         int noDelay = !nagling;
@@ -770,7 +784,8 @@ void AsyncSocket::EnableNagling(bool nagling) {
 
 //===========================================================================
 void AsyncSocket::Disconnect (bool hardClose) {
-    { hsTempMutexLock lock(((P*)this)->sockLock);
+    {
+        std::lock_guard<std::mutex> lock(((P*)this)->sockLock);
         if (!Active() && (!hardClose || ((P*)this)->hardClose))
             return; // already closed...
         ((P*)this)->close = true;
@@ -782,10 +797,11 @@ void AsyncSocket::Disconnect (bool hardClose) {
         ((P*)this)->socket.Close();
 
     // cancel pending operations
-    hsTempMutexLock lock(P::fThread->listLock);
-    for (P::Operation * op = P::fThread->opList; op; op = (P::Operation *) op->next)
+    std::lock_guard<std::mutex> lock(P::fThread->listLock);
+    for (P::Operation * op = P::fThread->opList; op; op = (P::Operation *) op->next) {
         if (op->hSocket == handle)
             op->timeout = 0;
+    }
     
     P::fThread->listSem.Signal();
 }
@@ -801,7 +817,8 @@ void AsyncSocket::P::SendEnd() {
         lastSend = nullptr;
         return;
     }
-    { hsTempMutexLock lock(sockLock);
+    {
+        std::lock_guard<std::mutex> lock(sockLock);
         if (!hardClose) {
             hardClose = true;
             Disconnect();
@@ -816,7 +833,8 @@ void AsyncSocket::P::ReadEnd() {
         reading = false;
         return;
     }
-    { hsTempMutexLock lock(sockLock);
+    {
+        std::lock_guard<std::mutex> lock(sockLock);
         if (!hardClose) {
             hardClose = true;
             Disconnect();

@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #include "pnAsyncCore/pnAcTimer.h"
 #include "pnAsyncCore/pnAcDns.h"
-#include "hsThread.h"
 #pragma hdrstop
 
 // Define this if the file servers are running behind load-balancing hardware.
@@ -1308,7 +1307,7 @@ void FileDestroy (bool wait) {
 
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        hsSleep::Sleep(10);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 

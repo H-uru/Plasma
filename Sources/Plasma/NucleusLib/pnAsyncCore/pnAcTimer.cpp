@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct AsyncTimer::P {
     struct Thread;
     static Thread *     s_thread;
-    static hsMutex      lock;
+    static std::mutex   mutex;
 
     PRIORITY_TIME(P)    priority;
     FProc               proc;
@@ -85,7 +85,7 @@ struct AsyncTimer::P::Thread : hsThread {
     using hsThread::SetQuit;
 };
 AsyncTimer::P::Thread *     AsyncTimer::P::s_thread = nullptr;
-hsMutex                     AsyncTimer::P::lock;
+std::mutex                  AsyncTimer::P::mutex;
 
 
 /****************************************************************************
@@ -104,7 +104,8 @@ inline unsigned AsyncTimer::P::Run () {
     for (;;) {
         FProc proc;
         AsyncTimer::P * t;
-        { hsTempMutexLock lock_(lock);
+        {
+            std::unique_lock<std::mutex> lock(mutex);
             
             // Delete old timers
             while (t = s_thread->deleteList.Head()) {
@@ -112,9 +113,9 @@ inline unsigned AsyncTimer::P::Run () {
                     t->deleteEvent.Signal();
                 else {
                     if (t->proc) {
-                        lock.Unlock();
+                        lock.unlock();
                         t->proc(t->param);
-                        lock.Lock();
+                        lock.lock();
                     }
                     delete t;
                 }
@@ -144,7 +145,7 @@ inline unsigned AsyncTimer::P::Run () {
         if (sleepMs != kPosInfinity32)
             t->priority.Set(sleepMs + currTimeMs);
         else {
-            hsTempMutexLock lock(lock);
+            std::lock_guard<std::mutex> lock(mutex);
             s_thread->procsList.Dequeue();
         }
     }
@@ -205,15 +206,16 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
     AsyncTimer::P::s_thread->Stop();
 
     // Cleanup any timers that have been stopped but not deleted
-    { hsTempMutexLock lock(AsyncTimer::P::lock);
+    {
+        std::unique_lock<std::mutex> lock(AsyncTimer::P::mutex);
         while (AsyncTimer::P * t = AsyncTimer::P::s_thread->deleteList.Head()) {
             if (!t->doDelete)
                 t->deleteEvent.Signal();
             else {
                 if (t->proc) {
-                    AsyncTimer::P::lock.Unlock();
+                    lock.unlock();
                     t->proc(t->param);
-                    AsyncTimer::P::lock.Lock();
+                    lock.lock();
                 }
                 delete t;
             }
@@ -257,7 +259,8 @@ void AsyncTimer::Create (
         P::s_thread->Start();
     }
     
-    { hsTempMutexLock lock(P::lock);
+    {
+        std::lock_guard<std::mutex> lock(P::mutex);
         // Does this timer need to be queued?
         if (callbackMs != kPosInfinity32)
             P::s_thread->procsList.Enqueue(p);
@@ -285,7 +288,8 @@ void AsyncTimer::Delete (FProc destroyProc) {
 
     p->doDelete = true;
     // Link the timer to the deletion list
-    { hsTempMutexLock lock(P::lock);
+    {
+        std::lock_guard<std::mutex> lock(P::mutex);
         p->proc = destroyProc;
         P::s_thread->deleteList.Link(p);
     }
@@ -303,7 +307,8 @@ void AsyncTimer::DeleteAndWait () {
 
     p->doDelete = false;
     // Link the timer to the deletion list
-    { hsTempMutexLock lock(P::lock);
+    {
+        std::lock_guard<std::mutex> lock(P::mutex);
         p->proc = nullptr;
         P::s_thread->deleteList.Link(p);
     }
@@ -325,7 +330,8 @@ void AsyncTimer::Set (unsigned callbackMs) {
     ASSERT(p);
 
     bool setEvent;
-    { hsTempMutexLock lock(P::lock);
+    {
+        std::lock_guard<std::mutex> lock(P::mutex);
         if (callbackMs != kPosInfinity32) {
             p->Update(callbackMs + TimeGetMs());
             setEvent = p == P::s_thread->procsList.Root();
@@ -343,7 +349,8 @@ void AsyncTimer::SetIfHigher (unsigned callbackMs) {
     ASSERT(p);
 
     bool setEvent;
-    { hsTempMutexLock lock(P::lock);
+    {
+        std::lock_guard<std::mutex> lock(P::mutex);
         if (callbackMs != kPosInfinity32) {
             p->UpdateIfHigher(callbackMs + TimeGetMs());
             setEvent = p == P::s_thread->procsList.Root();

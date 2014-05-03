@@ -60,8 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct AsyncDns::P : hsThread, IWorkerThreads::Operation {
     struct Name;
     struct Addr;
-    static P *      last;
-    static hsMutex  listLock;
+    static P *  last;
+    static std::mutex   listLock;
     
     bool        cancel;
     FProc       lookupProc;
@@ -75,41 +75,42 @@ struct AsyncDns::P : hsThread, IWorkerThreads::Operation {
     void Callback ();
 };
 AsyncDns::P *   AsyncDns::P::last = nullptr;
-hsMutex         AsyncDns::P::listLock;
+std::mutex      AsyncDns::P::listLock;
 
 //===========================================================================
 void AsyncDns::P::Callback () {
     Stop();
     
-    { hsTempMutexLock lock(P::listLock);
-        if (prev)
-            prev->next = next;
-        else
-            last = next;
-        if (next)
-            next->prev = prev;
-    }
+    std::lock_guard<std::mutex> lock(P::listLock);
+    if (prev)
+        prev->next = next;
+    else
+        last = next;
+    if (next)
+        next->prev = prev;
 }
 
 //===========================================================================
 bool AsyncDns::Cancel::LookupCancel () {
-    hsTempMutexLock lock(P::listLock);
-    for (P * op = P::last; op; op = op->next)
+    std::lock_guard<std::mutex> lock(P::listLock);
+    for (P * op = P::last; op; op = op->next) {
         if (op == ptr) {
             op->cancel = true;
             ptr = nullptr;
             return true;
         }
+    }
     ptr = nullptr;
     return false;
 }
 
 //===========================================================================
 void AsyncDns::LookupCancel (FProc lookupProc) {
-    hsTempMutexLock lock(P::listLock);
-    for (P * op = P::last; op; op = op->next)
+    std::lock_guard<std::mutex> lock(P::listLock);
+    for (P * op = P::last; op; op = op->next) {
         if (op->lookupProc == lookupProc)
             op->cancel = true;
+    }
 }
 
 
@@ -183,7 +184,8 @@ AsyncDns::Cancel AsyncDns::LookupName (
     void *          param
 ) {
     P::Name * op = new P::Name;
-    { hsTempMutexLock lock(P::listLock);
+    {
+        std::lock_guard<std::mutex> lock(P::listLock);
         op->next = P::last;
         P::last = P::last->prev = op;
     }
@@ -247,7 +249,8 @@ AsyncDns::Cancel AsyncDns::LookupAddr (
     void *              param
 ) {
     P::Addr * op = new P::Addr;
-    { hsTempMutexLock lock(P::listLock);
+    {
+        std::lock_guard<std::mutex> lock(P::listLock);
         op->next = P::last;
         P::last = P::last->prev = op;
     }
@@ -261,7 +264,7 @@ AsyncDns::Cancel AsyncDns::LookupAddr (
 
 //===========================================================================
 void DnsDestroy (unsigned exitThreadWaitMs) {
-    hsTempMutexLock lock(AsyncDns::P::listLock);
+    std::lock_guard<std::mutex> lock(AsyncDns::P::listLock);
     
     for (AsyncDns::P * op = AsyncDns::P::last; op; op = op->next)
         op->cancel = true;

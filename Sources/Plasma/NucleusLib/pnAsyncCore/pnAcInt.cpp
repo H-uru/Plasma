@@ -68,8 +68,8 @@ struct IWorkerThreads::P {
     
     Operation *     listHead;
     Operation *     listQueu;
-    hsMutex         headLock;
-    hsMutex         queuLock;
+    std::mutex      headLock;
+    std::mutex      queuLock;
     hsSemaphore     listSem;
     
     P() : listHead(nullptr), listQueu(nullptr) {}
@@ -87,14 +87,15 @@ hsError IWorkerThreads::P::Thread::Run () {
         
         // op = pop()
         Operation * op;
-        { hsTempMutexLock lock(This->headLock);
+        {
+            std::lock_guard<std::mutex> hlock(This->headLock);
             op = This->listHead;
             if (!op)
                 break; // end of running
             if (op->next)
                 This->listHead = op->next; // have a next: no need to lock list queu
             else {
-                hsTempMutexLock lock(This->queuLock);
+                std::lock_guard<std::mutex> qlock(This->queuLock);
                 This->listHead = op->next; // 'next' can change before list queu is locked
                 if (!op->next) // last operation
                     This->listQueu = nullptr;
@@ -114,7 +115,7 @@ void IWorkerThreads::Add (Operation * op) {
     
     // push(op)
     op->next = nullptr;
-    hsTempMutexLock lock(P::This->queuLock);
+    std::lock_guard<std::mutex> lock(P::This->queuLock);
     if (P::This->listQueu)
         P::This->listQueu->next = op;
     else
