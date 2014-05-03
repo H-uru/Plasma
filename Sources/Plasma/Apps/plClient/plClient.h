@@ -123,8 +123,6 @@ protected:
     pfConsoleEngine*        fConsoleEngine;
     pfConsole*              fConsole;
 
-    pfKI                    *fKIGUIGlue;
-
     bool                    fDone;
     bool                    fWindowActive;
 

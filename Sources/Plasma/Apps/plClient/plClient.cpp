@@ -187,7 +187,6 @@ plClient::plClient()
     fLinkEffectsMgr(nil),
     fProgressBar(nil),
     fGameGUIMgr(nil),
-    fKIGUIGlue(nil),
     fWindowActive(false),
     fAnimDebugList(nil),
     fClampCap(-1),
@@ -345,12 +344,6 @@ bool plClient::Shutdown()
     
     if (fPageMgr)
         fPageMgr->Reset();
-
-    if( fKIGUIGlue != nil )
-    {
-        fKIGUIGlue->UnRegisterAs( kKIGUIGlue_KEY );
-        fKIGUIGlue = nil;
-    }
 
     if( fTransitionMgr != nil )
     {
@@ -1781,7 +1774,7 @@ bool plClient::IDraw()
     // tends to cause a device reload each frame.   
     if (fDone)
         return true;
-    
+
     if (plProgressMgr::GetInstance()->IsActive())
         return IDrawProgress();
         
