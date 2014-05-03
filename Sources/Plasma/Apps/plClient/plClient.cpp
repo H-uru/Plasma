@@ -1749,11 +1749,6 @@ bool plClient::IUpdate()
 }
 
 bool plClient::IDrawProgress() {
-    // HACK: Don't draw while we're caching some room loads, otherwise the
-    // progress bar will jump around while we're calculating the size
-    if (fHoldLoadRequests)
-        return false;
-
     // Reset our stats
     plProfileManager::Instance().BeginFrame();
 
