@@ -2790,7 +2790,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed to init age %S", link->GetAgeInfo()->GetAgeFilename());
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
                 break;
             }
                 
@@ -3164,7 +3164,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed to init age %S", link->GetAgeInfo()->GetAgeFilename());
+                LogMsg(kLogError, "RegisterVisitAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
                 break;
             }
                 
@@ -4436,7 +4436,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateSubAge: Failed to init age %S", link->GetAgeInfo()->GetAgeFilename());
+            LogMsg(kLogError, "CreateSubAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
             return false;
         }
             
@@ -4794,7 +4794,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateChildAge: Failed to init age %S", link->GetAgeInfo()->GetAgeFilename());
+            LogMsg(kLogError, "CreateChildAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
             return false;
         }
             

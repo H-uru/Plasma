@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plNetServerSessionInfo_h_inc
 #define plNetServerSessionInfo_h_inc
 
+#include <string>
 #include "HeadSpin.h"
 
 #include "pnFactory/plCreatable.h"

@@ -149,7 +149,7 @@ public:
     void    SetLeavingAge(bool leaving) { fLeavingAge = leaving; }
     bool    IsLeavingAge() { return fLeavingAge; }
 
-    void    SetLinkKey(plKey &key);
+    void    SetLinkKey(const plKey &key);
     const plKey GetLinkKey() const { return fLinkKey; }
 
     void    SetLinkInAnimKey(plKey &key);

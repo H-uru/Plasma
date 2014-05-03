@@ -273,7 +273,7 @@ void plLinkEffectsTriggerMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fLinkInAnimKey);
 }
 
-void plLinkEffectsTriggerMsg::SetLinkKey(plKey &key)
+void plLinkEffectsTriggerMsg::SetLinkKey(const plKey &key)
 {
     fLinkKey = key; 
 }
