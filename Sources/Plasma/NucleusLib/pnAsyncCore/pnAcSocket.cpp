@@ -128,9 +128,9 @@ AsyncSocket::P::~P () {
 
 // thread that wait for I/O operation to be non-blocking.
 struct AsyncSocket::P::Thread : hsThread {
-    Operation *     opList; // chained operation list on IWorkerThreads::Operation::next
-    hsMutex         listLock;
-    hsSemaphore     listSem; // TODO: binary semaphore
+    Operation *         opList; // chained operation list on IWorkerThreads::Operation::next
+    hsMutex             listLock;
+    hsBinarySemaphore   listSem;
 
     // ConnectOp fields
     ConnectOp *     coList; // chained operation list on ConnectOp::next (for cancelation)
@@ -187,8 +187,6 @@ void AsyncSocket::P::Thread::ListFds (fd_set (& fds)[2]) {
 
     bool haveOp = false;
     while (true) {
-        while (listSem.TryWait()); // binary semaphore emulation
-        
         uint32_t currTime = hsTimer::GetPrecTickCount();
         
         { hsTempMutexLock lock(listLock);

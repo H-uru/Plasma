@@ -77,7 +77,7 @@ struct AsyncTimer::P {
 
 //===========================================================================
 struct AsyncTimer::P::Thread : hsThread {
-    hsSemaphore                             event;
+    hsBinarySemaphore                       event;
     PRIQDECL(P, PRIORITY_TIME(P), priority) procsList;
     LISTDECL(P, deleteLink)                 deleteList;
     
@@ -183,8 +183,7 @@ hsError AsyncTimer::P::Thread::Run () {
     do {
         const unsigned sleepMs = P::Run();
 
-        if (s_thread->event.Wait(sleepMs))
-            while (s_thread->event.TryWait()); // binary semaphore emultation
+        s_thread->event.Wait(std::chrono::milliseconds(sleepMs));
     } while (!s_thread->GetQuit());
     return 0;
 }

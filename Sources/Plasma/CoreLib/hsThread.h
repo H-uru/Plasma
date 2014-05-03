@@ -131,6 +131,42 @@ public:
     }
 };
 
+class hsBinarySemaphore
+{
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+    bool fValue;
+
+public:
+    hsBinarySemaphore(bool initial = false) : fValue(initial) { }
+
+    inline void Wait()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock, [this]() { return fValue; });
+        fValue = false;
+    }
+
+    template <class _Rep, class _Period>
+    inline bool Wait(const std::chrono::duration<_Rep, _Period> &duration)
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+
+        bool result = fCondition.wait_for(lock, duration, [this]() { return fValue; });
+        if (result)
+            fValue = false;
+
+        return result;
+    }
+
+    inline void Signal()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fValue = true;
+        fCondition.notify_one();
+    }
+};
+
 //////////////////////////////////////////////////////////////////////////////
 class hsGlobalSemaphore {
 #if HS_BUILD_FOR_WIN32
