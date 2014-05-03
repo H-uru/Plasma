@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPCOMMON_H
 
+#include <mutex>
 #include "pnUUID/pnUUID.h"
 #include "hsRefCnt.h"
 
@@ -209,7 +210,7 @@ struct NetVaultNode : hsRefCnt {
 
     static const uint64_t kAllValidFields  = 0x00000000FFFFFFFFULL;
 
-    CCritSect   critsect;
+    std::mutex  critsect;
 
     plUUID      revisionId;
 
