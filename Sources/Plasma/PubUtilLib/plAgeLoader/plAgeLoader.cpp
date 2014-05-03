@@ -110,6 +110,8 @@ plAgeLoader::~plAgeLoader()
 void plAgeLoader::Shutdown()
 {
     plResPatcher::GetInstance()->Shutdown();
+    UnRegisterAs(kAgeLoader_KEY);
+    SetInstance(nullptr);
 }
 
 void plAgeLoader::Init()

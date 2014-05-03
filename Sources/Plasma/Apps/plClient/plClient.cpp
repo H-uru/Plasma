@@ -251,6 +251,15 @@ plClient::~plClient()
 #include "plGImage/plAVIWriter.h"
 #include "pfCharacter/pfMarkerMgr.h"
 
+template<typename T>
+static void IUnRegisterAs(T*& ko, plFixedKeyId id)
+{
+    if (ko) {
+        ko->UnRegisterAs(id);
+        ko = nullptr;
+    }
+}
+
 bool plClient::Shutdown()
 {
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
@@ -296,31 +305,13 @@ bool plClient::Shutdown()
     // Take down our GUI control generator
     pfGUICtrlGenerator::Instance().Shutdown();
 
-    if (plNetClientMgr::GetInstance())
-    {   
-        plNetClientMgr::GetInstance()->Shutdown();
-        plNetClientMgr::GetInstance()->UnRegisterAs(kNetClientMgr_KEY);     // deletes NetClientMgr instance
-        plNetClientMgr::SetInstance(nil);
-    }
-    
-    if (plAgeLoader::GetInstance())
-    {   
-        plAgeLoader::GetInstance()->Shutdown();
-        plAgeLoader::GetInstance()->UnRegisterAs(kAgeLoader_KEY);           // deletes instance
-        plAgeLoader::SetInstance(nil);
-    }
+    if (plNetClientMgr* nc = plNetClientMgr::GetInstance())
+        nc->Shutdown();
+    if (plAgeLoader* al = plAgeLoader::GetInstance())
+        al->Shutdown();
 
-    if (fInputManager)
-    {
-        fInputManager->UnRegisterAs(kInput_KEY);
-        fInputManager = nil;
-    }
-
-    if( fGameGUIMgr != nil )
-    {
-        fGameGUIMgr->UnRegisterAs( kGameGUIMgr_KEY );
-        fGameGUIMgr = nil;
-    }
+    IUnRegisterAs(fInputManager, kInput_KEY);
+    IUnRegisterAs(fGameGUIMgr, kGameGUIMgr_KEY);
 
     for (int i = 0; i < fRooms.Count(); i++)
     {
@@ -341,50 +332,30 @@ bool plClient::Shutdown()
         plSimulationMgr::Shutdown();
     plAvatarMgr::ShutDown();
     plRelevanceMgr::DeInit();
-    
+
     if (fPageMgr)
         fPageMgr->Reset();
 
-    if( fTransitionMgr != nil )
-    {
-        fTransitionMgr->UnRegisterAs( kTransitionMgr_KEY );
-        fTransitionMgr = nil;
-    }
-    
+    IUnRegisterAs(fTransitionMgr, kTransitionMgr_KEY);
+
     delete fConsoleEngine;
     fConsoleEngine = nil;
 
-    if (fLinkEffectsMgr)
-    {
-        fLinkEffectsMgr->UnRegisterAs( kLinkEffectsMgr_KEY);
-        fLinkEffectsMgr=nil;
-    }
+    IUnRegisterAs(fLinkEffectsMgr, kLinkEffectsMgr_KEY);
 
     plClothingMgr::DeInit();
 
-    if( fFontCache != nil )
-    {
-        fFontCache->UnRegisterAs( kFontCache_KEY );
-        fFontCache = nil;
-    }
+    IUnRegisterAs(fFontCache, kFontCache_KEY);
 
     pfMarkerMgr::Shutdown();
 
     delete fAnimDebugList;
 
-//#ifndef PLASMA_EXTERNAL_RELEASE
-    if( fConsole != nil )
-    {
-        // UnRegisterAs destroys the object for us
-        fConsole->UnRegisterAs( kConsoleObject_KEY );
-        fConsole = nil;
-    }
-//#endif
+    IUnRegisterAs(fConsole, kConsoleObject_KEY);
 
     PythonInterface::finiPython();
-    
-    if (fNewCamera)
-        fNewCamera->UnRegisterAs( kVirtualCamera1_KEY );
+
+    IUnRegisterAs(fNewCamera, kVirtualCamera1_KEY);
 
     // mark the listener for death.
     // there's no need to keep this around...
@@ -401,7 +372,7 @@ bool plClient::Shutdown()
 
     if (pfLocalizationMgr::InstanceValid())
         pfLocalizationMgr::Shutdown();
-    
+
     ShutdownDLLs();
 
     plVisLOSMgr::DeInit();
@@ -416,7 +387,6 @@ bool plClient::Shutdown()
 
     // This will destruct the client. Do it last.
     UnRegisterAs(kClient_KEY);
-    
 
     return false;
 }
