@@ -321,12 +321,19 @@ void plResBrowser::UpdateInfoPage()
             else
                 fUI->fStartPos->setText(QString::number(imp->GetStartPos()));
 
-            if (imp->GetDataLen() < 1024)
-                fUI->fObjectSize->setText(QString("%1 bytes").arg(imp->GetDataLen()));
-            else if (imp->GetDataLen() < 1024 * 1024)
-                fUI->fObjectSize->setText(QString("%1 kB").arg(imp->GetDataLen() / 1024.f, 0, 'f', 2));
+            if (showAsHex)
+            {
+                fUI->fObjectSize->setText(QString("0x%1").arg(imp->GetDataLen(), 0, 16));
+            }
             else
-                fUI->fObjectSize->setText(QString("%1 MB").arg(imp->GetDataLen() / 1024.f / 1024.f, 0, 'f', 2));
+            {
+                if (imp->GetDataLen() < 1024)
+                    fUI->fObjectSize->setText(QString("%1 bytes").arg(imp->GetDataLen()));
+                else if (imp->GetDataLen() < 1024 * 1024)
+                    fUI->fObjectSize->setText(QString("%1 kB").arg(imp->GetDataLen() / 1024.f, 0, 'f', 2));
+                else
+                    fUI->fObjectSize->setText(QString("%1 MB").arg(imp->GetDataLen() / 1024.f / 1024.f, 0, 'f', 2));
+            }
 
             fUI->fSaveSelectedAction->setEnabled(true);
             fUI->fSaveButton->setEnabled(true);
