@@ -39,37 +39,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//
-//  plWinRegistryTools
-//  Utility class for doing various usefull things in Win32
-//  Written by Mathew Burrack
-//  4.23.2002
-//
-//////////////////////////////////////////////////////////////////////////////
+#ifndef _plResBrowser_h
+#define _plResBrowser_h
 
-#ifndef _plWinRegistryTools_h
-#define _plWinRegistryTools_h
+#include <QMainWindow>
 
-class QString;
-
-class plWinRegistryTools
+class plResBrowser : public QMainWindow
 {
-    public:
+    Q_OBJECT
 
-        /* Associates a given file type in the Win32 registry with the given
-           application. Also assigns a default icon if iconIndex != -1 */
-        static bool AssociateFileType(const QString &fileTypeID, const QString &fileTypeName,
-                                      const QString &appPath, int iconIndex = -1);
+public:
+    plResBrowser();
+    virtual ~plResBrowser();
 
-        /* Assigns a given file extension to a previously registered Win32
-           file type (using the above function) */
-        static bool AssociateFileExtension(const QString &fileExtension,
-                                           const QString &fileTypeID);
+    void SetWindowTitle(const QString &title);
 
-        /* Obtains the current fileTypeID associated with the given file
-           extension, or a null string if it isn't yet associated */
-        static QString GetCurrentFileExtensionAssociation(const QString &extension);
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event) override;
+    virtual void dropEvent(QDropEvent *event) override;
+
+private slots:
+    void OpenFile();
+    void OpenDirectory();
+    void SaveSelectedObject();
+    void RefreshTree();
+    void UpdateInfoPage();
+
+private:
+    class Ui_ResBrowser *fUI;
+
+    void RegisterFileTypes();
+    void LoadPrpFile(const QString &fileName);
+    void LoadResourcePath(const QString &path);
 };
 
-#endif //_plWinRegistryTools_h
+#endif
