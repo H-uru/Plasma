@@ -843,8 +843,8 @@ void AsyncSocket::P::ReadEnd() {
 
 //===========================================================================
 void SocketDestroy() {
-    ASSERT(AsyncSocket::P::fThread);
-    AsyncSocket::P::fThread->Stop();
+    if (AsyncSocket::P::fThread)
+        AsyncSocket::P::fThread->Stop();
 }
 
 // TODO: listen operations!

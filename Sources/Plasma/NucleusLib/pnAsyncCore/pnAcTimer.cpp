@@ -197,7 +197,8 @@ void AsyncTimer::P::Thread::Run() {
 
 //===========================================================================
 void TimerDestroy (unsigned exitThreadWaitMs) {
-    ASSERT(AsyncTimer::P::s_thread);
+    if (!AsyncTimer::P::s_thread)
+        return;
 
     AsyncTimer::P::s_thread->SetQuit(true);
     AsyncTimer::P::s_thread->event.Signal();

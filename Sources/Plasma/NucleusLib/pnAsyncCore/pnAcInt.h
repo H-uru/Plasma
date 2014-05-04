@@ -77,7 +77,7 @@ public:
     static void Add (Operation * op); ///< add an operation to run in a worker thread.
     
 private:
-    class P;
+    struct P;
 };
 
 class IWorkerThreads::Operation {

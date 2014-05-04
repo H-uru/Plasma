@@ -329,8 +329,8 @@ public:
     
     
     
-    class P; // private data
-    friend class P;
+    struct P; // private data
+    friend struct P;
 };
 
 /****************************************************************************

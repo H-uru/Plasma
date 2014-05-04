@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class AsyncTimer {
 public:
-    class P; P * p; // private data
+    struct P; P * p; // private data
     
     AsyncTimer () : p(nullptr) {}
     AsyncTimer (AsyncTimer &  o) : p(o.p) { o.p = nullptr; }
