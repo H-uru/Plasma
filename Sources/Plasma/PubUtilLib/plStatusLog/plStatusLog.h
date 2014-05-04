@@ -69,7 +69,6 @@ class plPipeline;
 //  really be visible at any given time.
 
 class plStatusLogMgr;
-class hsMutex;
 class plStatusLogDrawerStub;
 class plStatusLog
 {
@@ -205,8 +204,6 @@ class plStatusLogMgr
         double fLastLogChangeTime;
 
         static plFileName IGetBasePath();
-
-        hsMutex     fMutex;     // To make multithreaded-safe
 
     public:
 

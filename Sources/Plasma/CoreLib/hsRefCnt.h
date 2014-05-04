@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsRefCnt_Defiend
 #define hsRefCnt_Defiend
 
+#include <atomic>
+
 class hsRefCnt {
 private:
     int         fRefCnt;
@@ -49,9 +51,9 @@ public:
                 hsRefCnt() : fRefCnt(1) {}
     virtual     ~hsRefCnt();
 
-    virtual int     RefCnt() const { return fRefCnt; }
-    virtual void    UnRef();
-    virtual void    Ref();
+    inline int  RefCnt() const { return fRefCnt; }
+    void        UnRef();
+    inline void Ref() { ++fRefCnt; }
 };
 
 #define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
@@ -63,5 +65,22 @@ public:
             hsRefCnt_SafeUnRef(dst);        \
             dst = src;                  \
         } while (0)
+
+
+// Thread-safe version.  TODO:  Evaluate whether this is fast enough to
+// merge with hsRefCnt above.
+class hsSafeRefCnt
+{
+private:
+    std::atomic<int> fRefCnt;
+
+public:
+                hsSafeRefCnt() : fRefCnt(1) { }
+    virtual     ~hsSafeRefCnt();
+
+    inline int  RefCnt() const { return fRefCnt; }
+    void        UnRef();
+    inline void Ref() { ++fRefCnt; }
+};
 
 #endif

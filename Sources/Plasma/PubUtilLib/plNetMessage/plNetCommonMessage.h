@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plNetCommonMessage_inc
 
 #include "HeadSpin.h"
-#include "hsSafeRefCnt.h"
+#include "hsRefCnt.h"
 
 //
 // refcntable data

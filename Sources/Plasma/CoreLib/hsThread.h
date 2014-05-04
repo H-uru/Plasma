@@ -43,6 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsThread_Defined
 
 #include "HeadSpin.h"
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
+#include <thread>
 
 typedef uint32_t hsMilliseconds;
 
@@ -58,88 +62,36 @@ typedef uint32_t hsMilliseconds;
 //  #define PSEUDO_EVENT
 #endif
 
-class hsThread 
+class hsThread
 {
-public:
-#if HS_BUILD_FOR_WIN32
-    typedef uint32_t ThreadId;
-#elif HS_BUILD_FOR_UNIX
-    typedef pthread_t ThreadId;
-#endif
-private:
-    bool        fQuit;
-    uint32_t    fStackSize;
-#if HS_BUILD_FOR_WIN32
-    ThreadId    fThreadId;
-    HANDLE      fThreadH;
-    HANDLE      fQuitSemaH;
-#elif HS_BUILD_FOR_UNIX
-    ThreadId    fPThread;
-    bool        fIsValid;
-    pthread_mutex_t fMutex;
-#endif
+    std::atomic<bool>   fQuit;
+    std::thread         fThread;
+
 protected:
     bool        GetQuit() const { return fQuit; }
     void        SetQuit(bool value) { fQuit = value; }
+
 public:
-    hsThread(uint32_t stackSize = 0);
-    virtual     ~hsThread();    // calls Stop()
-#if HS_BUILD_FOR_WIN32
-    ThreadId        GetThreadId() { return fThreadId; }
-    static ThreadId GetMyThreadId();
-#elif HS_BUILD_FOR_UNIX
-    ThreadId            GetThreadId() { return fPThread; }
-    static ThreadId     GetMyThreadId() { return pthread_self(); }
-    pthread_mutex_t* GetStartupMutex() { return &fMutex;  }
-#endif
-                
+    hsThread() : fQuit(false) { }
+
+    virtual ~hsThread()
+    {
+        this->Stop();
+    }
+
     virtual hsError Run() = 0;      // override this to do your work
     virtual void    Start();        // initializes stuff and calls your Run() method
-    virtual void    Stop();     // sets fQuit = true and the waits for the thread to stop
+    virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
-                
-    //  Static functions
-    static void*    Alloc(size_t size); // does not call operator::new(), may return nil
-    static void Free(void* p);      // does not call operator::delete()
-    static void ThreadYield();
-};
 
-//////////////////////////////////////////////////////////////////////////////
-
-class hsMutex {
-#if HS_BUILD_FOR_WIN32
-    HANDLE  fMutexH;
-#elif HS_BUILD_FOR_UNIX
-    pthread_mutex_t fPMutex;
-#endif
-public:
-    hsMutex();
-    virtual ~hsMutex();
-
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fMutexH; }
-#endif
-
-    void        Lock();
-    bool        TryLock();
-    void        Unlock();
-};
-
-class hsTempMutexLock {
-    hsMutex*    fMutex;
-public:
-    hsTempMutexLock(hsMutex* mutex) : fMutex(mutex)
+    static inline size_t ThisThreadHash()
     {
-        fMutex->Lock();
+        return std::hash<std::thread::id>()(std::this_thread::get_id());
     }
-    hsTempMutexLock(hsMutex& mutex) : fMutex(&mutex)
-    {
-        fMutex->Lock();
-    }
-    ~hsTempMutexLock()
-    {
-        fMutex->Unlock();
-    }
+
+private:
+    hsThread(const hsThread &) = delete;
+    void operator=(const hsThread &) = delete;
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -154,56 +106,41 @@ class hsSemaphore {
 #else
     pthread_mutex_t fPMutex;
     pthread_cond_t  fPCond;
-    int32_t       fCounter;
+    int32_t         fCounter;
 #endif
 #endif
 public:
-    hsSemaphore(int initialValue=0, const char* name=nil);
+    hsSemaphore(int initialValue=0, const char* name=nullptr);
     ~hsSemaphore();
 
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
-    bool        TryWait();
-    bool        Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void        Signal();
+    bool Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void Signal();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class hsEvent
 {
-#if HS_BUILD_FOR_UNIX
-#ifndef PSEUDO_EVENT
-    pthread_mutex_t fMutex;
-    pthread_cond_t  fCond;
-    bool  fTriggered;
-#else
-    enum { kRead, kWrite };
-    int     fFds[2];
-    hsMutex fWaitLock;
-    hsMutex fSignalLock;
-#endif // PSEUDO_EVENT
-#elif HS_BUILD_FOR_WIN32
-    HANDLE fEvent;
-#endif
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+
 public:
-    hsEvent();
-    ~hsEvent();
+    hsEvent() { }
 
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fEvent; }
-#endif
+    inline void Wait()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock);
+    }
 
-    bool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void  Signal();
-};
-
-//////////////////////////////////////////////////////////////////////////////
-class hsSleep
-{
-public:
-    static void Sleep(uint32_t millis);
+    inline void Signal()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.notify_one();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -231,8 +168,8 @@ public:
 
 private:
     int     fReaderCount;
-    hsMutex fReaderCountLock;
-    hsMutex fReaderLock;
+    std::mutex  fReaderCountLock;
+    std::mutex  fReaderLock;
     hsSemaphore fWriterSema;
     Callback *  fCallback;
 };

@@ -51,12 +51,22 @@ hsRefCnt::~hsRefCnt()
     hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
 }
 
-void hsRefCnt::Ref()
+void hsRefCnt::UnRef()
 {
-    fRefCnt++;
+    hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
+
+    if (fRefCnt == 1)   // don't decrement if we call delete
+        delete this;
+    else
+        --fRefCnt;
 }
 
-void hsRefCnt::UnRef()
+hsSafeRefCnt::~hsSafeRefCnt()
+{
+    hsDebugCode(hsThrowIfFalse(fRefCnt == 1);)
+}
+
+void hsSafeRefCnt::UnRef()
 {
     hsDebugCode(hsThrowIfFalse(fRefCnt >= 1);)
 
