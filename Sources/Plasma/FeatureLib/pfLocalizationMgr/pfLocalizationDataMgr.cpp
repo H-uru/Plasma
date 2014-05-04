@@ -691,11 +691,14 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const plString & key)
         return false;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return false;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return false;
-    if (fData[age][set].find(name) == fData[age][set].end()) // name doesn't exist
+    auto curElement = curSet->second.find(name);
+    if (curElement == curSet->second.end()) // name doesn't exist
         return false;
 
     // we passed all the tests, return true!
@@ -713,9 +716,11 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::setExists(const plString & key)
         return false;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return false;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return false;
 
     // we passed all the tests, return true!
@@ -733,19 +738,22 @@ void pfLocalizationDataMgr::pf3PartMap<mapT>::erase(const plString & key)
         return;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return;
-    if (fData[age][set].find(name) == fData[age][set].end()) // name doesn't exist
+    auto curElement = curSet->second.find(name);
+    if (curElement == curSet->second.end()) // name doesn't exist
         return;
 
     // ok, so now we want to nuke it!
-    fData[age][set].erase(name);
-    if (fData[age][set].size() == 0) // is the set now empty?
-        fData[age].erase(set); // nuke it!
-    if (fData[age].size() == 0) // is the age now empty?
-        fData.erase(age); // nuke it!
+    curSet->second.erase(name);
+    if (curSet->second.size() == 0) // is the set now empty?
+        curAge->second.erase(curSet); // nuke it!
+    if (curAge->second.size() == 0) // is the age now empty?
+        fData.erase(curAge); // nuke it!
 }
 
 //// operator[]() ////////////////////////////////////////////////////
@@ -780,10 +788,11 @@ std::vector<plString> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const 
     std::vector<plString> retVal;
     typename std::map<plString, std::map<plString, mapT> >::iterator curSet;
 
-    if (fData.find(age) == fData.end())
+    auto curAge = fData.find(age);
+    if (curAge == fData.end())
         return retVal; // return an empty list, the age doesn't exist
 
-    for (curSet = fData[age].begin(); curSet != fData[age].end(); curSet++)
+    for (curSet = curAge->second.begin(); curSet != curAge->second.end(); curSet++)
         retVal.push_back(curSet->first);
 
     return retVal;
@@ -797,13 +806,15 @@ std::vector<plString> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const
     std::vector<plString> retVal;
     typename std::map<plString, mapT>::iterator curName;
 
-    if (fData.find(age) == fData.end())
+    auto curAge = fData.find(age);
+    if (curAge == fData.end())
         return retVal; // return an empty list, the age doesn't exist
 
-    if (fData[age].find(set) == fData[age].end())
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end())
         return retVal; // return an empty list, the set doesn't exist
 
-    for (curName = fData[age][set].begin(); curName != fData[age][set].end(); curName++)
+    for (curName = curSet->second.begin(); curName != curSet->second.end(); curName++)
         retVal.push_back(curName->first);
 
     return retVal;

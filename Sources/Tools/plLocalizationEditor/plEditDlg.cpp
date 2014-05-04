@@ -127,7 +127,7 @@ void EditDialog::LoadLocalization(const plString &locPath)
         return;
 
     fCurrentLocPath = locPath;
-    fUI->fTextPathLabel->setText(QString("Text (%1):").arg(locPath.c_str()));
+    fUI->fTextPathLabel->setText(QString("&Text (%1):").arg(locPath.c_str()));
 
     plString ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
@@ -147,9 +147,9 @@ void EditDialog::LoadLocalization(const plString &locPath)
     if (!elementLanguage.IsEmpty()) // they have selected a language
     {
         fEditMode = kEditLocalization;
-        fUI->fAddButton->setText(tr("Add Localization"));
+        fUI->fAddButton->setText(tr("&Add Localization"));
         fUI->fAddButton->setEnabled(true);
-        fUI->fDeleteButton->setText(tr("Delete Localization"));
+        fUI->fDeleteButton->setText(tr("&Delete Localization"));
 
         // don't allow them to delete the default language
         fUI->fDeleteButton->setEnabled(elementLanguage != "English");
@@ -157,9 +157,9 @@ void EditDialog::LoadLocalization(const plString &locPath)
     else // they have selected something else
     {
         fEditMode = kEditElement;
-        fUI->fAddButton->setText(tr("Add Element"));
+        fUI->fAddButton->setText(tr("&Add Element"));
         fUI->fAddButton->setEnabled(true);
-        fUI->fDeleteButton->setText(tr("Delete Element"));
+        fUI->fDeleteButton->setText(tr("&Delete Element"));
         if (!elementName.IsEmpty()) // they have selected an individual element
         {
             std::vector<plString> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
