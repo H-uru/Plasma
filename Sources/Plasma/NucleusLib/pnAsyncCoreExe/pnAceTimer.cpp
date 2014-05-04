@@ -64,11 +64,9 @@ struct AsyncTimer {
     LINK(AsyncTimer)            deleteLink;
 };
 
-static CCritSect            s_timerCrit;
+static std::mutex           s_timerCrit;
 static FAsyncTimerProc      s_timerCurr;
-static HANDLE               s_timerThread;
-static HANDLE               s_timerEvent;
-static bool                 s_running;
+static class TimerThread *  s_timerThread = nullptr;
 
 static PRIQDECL(
     AsyncTimer,
@@ -114,12 +112,12 @@ static unsigned CallTimerProc (AsyncTimer * t, FAsyncTimerProc timerProc) {
     s_timerCurr = timerProc;
 
     // Leave critical section to make timer callback
-    s_timerCrit.Leave();
+    s_timerCrit.unlock();
 
     unsigned sleepMs = s_timerCurr(t->param);
     s_timerCurr = nil;
 
-    s_timerCrit.Enter();
+    s_timerCrit.lock();
 
     return sleepMs;
 }
@@ -163,37 +161,44 @@ static inline unsigned RunTimers () {
 }
 
 //===========================================================================
-static unsigned THREADCALL TimerThreadProc (AsyncThread *) {
-    do {
-        s_timerCrit.Enter();
-        const unsigned sleepMs = RunTimers();
-        s_timerCrit.Leave();
+class TimerThread : public hsThread
+{
+    hsEvent timerEvent;
+    hsSemaphore finished;
 
-        WaitForSingleObject(s_timerEvent, sleepMs);
-    } while (s_running);
-    return 0;
-}
+public:
+    virtual void Run()
+    {
+        do {
+            unsigned sleepMs;
+            {
+                std::lock_guard<std::mutex> lock(s_timerCrit);
+                sleepMs = RunTimers();
+            }
+
+            timerEvent.Wait(std::chrono::milliseconds(sleepMs));
+        } while (!GetQuit());
+    }
+
+    virtual void OnQuit() { finished.Signal(); }
+
+    void Signal() { timerEvent.Signal(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        SetQuit(true);
+        timerEvent.Signal();
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
 
 //===========================================================================
 // inline because it is called only once
 static inline void InitializeTimer () {
     if (!s_timerThread) {
-        s_running = true;
-
-        s_timerEvent = CreateEvent(
-            (LPSECURITY_ATTRIBUTES) nil,
-            false,                  // auto-reset event
-            false,                  // initial state = off
-            (LPCTSTR) nil
-        );
-        if (!s_timerEvent)
-            ErrorAssert(__LINE__, __FILE__, "CreateEvent %u", GetLastError());
-
-        s_timerThread = (HANDLE) AsyncThreadCreate(
-            TimerThreadProc,
-            nil,
-            L"AsyncTimerThread"
-        );
+        s_timerThread = new TimerThread;
+        s_timerThread->Start();
     }
 }
 
@@ -206,28 +211,21 @@ static inline void InitializeTimer () {
 
 //===========================================================================
 void TimerDestroy (unsigned exitThreadWaitMs) {
-    s_running = false;
-
     if (s_timerThread) {
-        SetEvent(s_timerEvent);
-        WaitForSingleObject(s_timerThread, exitThreadWaitMs);
-        CloseHandle(s_timerThread);
-        s_timerThread = nil;
-    }
-
-    if (s_timerEvent) {
-        CloseHandle(s_timerEvent);
-        s_timerEvent = nil;
+        s_timerThread->Shutdown(exitThreadWaitMs);
+        delete s_timerThread;
+        s_timerThread = nullptr;
     }
 
     // Cleanup any timers that have been stopped but not deleted
-    s_timerCrit.Enter();
-    while (AsyncTimer * t = s_timerDelete.Head()) {
-        if (t->destroyProc)
-            CallTimerProc(t, t->destroyProc);
-        delete t;
+    {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+        while (AsyncTimer * t = s_timerDelete.Head()) {
+            if (t->destroyProc)
+                CallTimerProc(t, t->destroyProc);
+            delete t;
+        }
     }
-    s_timerCrit.Leave();
 
     if (AsyncTimer * timer = s_timerProcs.Root())
         ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->timerProc);
@@ -263,22 +261,16 @@ void AsyncTimerCreate (
     // so that the value is set before a callback
     *timer = t;
 
-    bool setEvent;
-    s_timerCrit.Enter();
-    {
-        InitializeTimer();
+    std::lock_guard<std::mutex> lock(s_timerCrit);
+    InitializeTimer();
 
-        // Does this timer need to be queued?
-        if (callbackMs != kAsyncTimeInfinite)
-            s_timerProcs.Enqueue(t);
+    // Does this timer need to be queued?
+    if (callbackMs != kAsyncTimeInfinite)
+        s_timerProcs.Enqueue(t);
 
-        // Does the timer thread need to be awakened?
-        setEvent = t == s_timerProcs.Root();
-    }
-    s_timerCrit.Leave();
-
-    if (setEvent)
-        SetEvent(s_timerEvent);
+    // Does the timer thread need to be awakened?
+    if (t == s_timerProcs.Root())
+        s_timerThread->Signal();
 }
 
 //===========================================================================
@@ -309,7 +301,7 @@ void AsyncTimerDelete (
     if (timerProc) {
 
         while (s_timerCurr == timerProc)
-            Sleep(1);
+            std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 }
 
@@ -323,16 +315,16 @@ void AsyncTimerDeleteCallback (
     ASSERT(!timer->deleteLink.IsLinked());
 
     // Link the timer to the deletion list
-    s_timerCrit.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+
         timer->destroyProc = destroyProc;
         s_timerDelete.Link(timer);
     }
-    s_timerCrit.Leave();
 
     // Force the timer thread to wake up and perform the deletion
     if (destroyProc)
-        SetEvent(s_timerEvent);
+        s_timerThread->Signal();
 }
 
 //===========================================================================
@@ -346,8 +338,9 @@ void AsyncTimerUpdate (
     ASSERT(timer);
 
     bool setEvent;
-    s_timerCrit.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_timerCrit);
+
         if (callbackMs != kAsyncTimeInfinite) {
             UpdateTimer(timer, callbackMs + TimeGetMs(), flags);
             setEvent = timer == s_timerProcs.Root();
@@ -358,8 +351,7 @@ void AsyncTimerUpdate (
             setEvent = false;
         }
     }
-    s_timerCrit.Leave();
 
     if (setEvent)
-        SetEvent(s_timerEvent);
+        s_timerThread->Signal();
 }

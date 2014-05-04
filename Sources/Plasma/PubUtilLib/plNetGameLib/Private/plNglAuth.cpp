@@ -57,7 +57,7 @@ namespace Ngl { namespace Auth {
 *
 ***/
 
-struct CliAuConn : AtomicRef {
+struct CliAuConn : hsAtomicRefCnt {
     CliAuConn ();
     ~CliAuConn ();
 
@@ -86,7 +86,7 @@ struct CliAuConn : AtomicRef {
     
     void Send (const uintptr_t fields[], unsigned count);
 
-    CCritSect       critsect;
+    std::mutex      critsect;
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
@@ -1200,7 +1200,7 @@ enum {
 };
 
 static bool                         s_running;
-static CCritSect                    s_critsect;
+static std::mutex                   s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
 static wchar_t                      s_accountName[kMaxAccountNameLength];
@@ -1208,7 +1208,7 @@ static ShaDigest                    s_accountNamePassHash;
 static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
 static wchar_t                      s_os[kMaxGTOSIdLength];
 
-static long                         s_perf[kNumPerf];
+static std::atomic<long>            s_perf[kNumPerf];
 
 static uint32_t                     s_encryptionKey[4];
 
@@ -1280,7 +1280,7 @@ static unsigned GetNonZeroTimeMs () {
 //============================================================================
 static CliAuConn * GetConnIncRef_CS (const char tag[]) {
     if (CliAuConn * conn = s_active) {
-        conn->IncRef(tag);
+        conn->Ref(tag);
         return conn;
     }
     return nil;
@@ -1288,13 +1288,8 @@ static CliAuConn * GetConnIncRef_CS (const char tag[]) {
 
 //============================================================================
 static CliAuConn * GetConnIncRef (const char tag[]) {
-    CliAuConn * conn;
-    s_critsect.Enter();
-    {
-        conn = GetConnIncRef_CS(tag);
-    }
-    s_critsect.Leave();
-    return conn;
+    std::lock_guard<std::mutex> lock(s_critsect);
+    return GetConnIncRef_CS(tag);
 }
 
 //============================================================================
@@ -1312,7 +1307,7 @@ static void UnlinkAndAbandonConn_CS (CliAuConn * conn) {
         AsyncSocketDisconnect(conn->sock, true);
     }
     else {
-        conn->DecRef("Lifetime");
+        conn->UnRef("Lifetime");
     }
 }
 
@@ -1369,7 +1364,7 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
         // Cancel all transactions in progress on this connection.
         NetTransCancelByConnId(conn->seq, kNetErrTimeout);
         // conn is dead.
-        conn->DecRef("Lifetime");
+        conn->UnRef("Lifetime");
         ReportNetError(kNetProtocolCli2Auth, error);
     }
     else {
@@ -1393,19 +1388,18 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
 //============================================================================
 static void NotifyConnSocketConnectFailed (CliAuConn * conn) {
 
-    s_critsect.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_critsect);
         conn->cancelId = 0;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
             s_active = nil;
     }
-    s_critsect.Leave();
     
     CheckedReconnect(conn, kNetErrConnectFailed);
     
-    conn->DecRef("Connecting");
+    conn->UnRef("Connecting");
 }
 
 //============================================================================
@@ -1413,20 +1407,19 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
 
     conn->StopAutoPing();
 
-    s_critsect.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_critsect);
         conn->cancelId = 0;
         s_conns.Unlink(conn);
             
         if (conn == s_active)
             s_active = nil;
     }
-    s_critsect.Leave();
 
 
     CheckedReconnect(conn, kNetErrDisconnected);
 
-    conn->DecRef("Connected");
+    conn->UnRef("Connected");
 }
 
 //============================================================================
@@ -1453,13 +1446,12 @@ static bool SocketNotifyCallback (
             conn = (CliAuConn *) notify->param;
             *userState = conn;
             bool abandoned;
-            s_critsect.Enter();
             {
+                std::lock_guard<std::mutex> lock(s_critsect);
                 conn->sock      = sock;
                 conn->cancelId  = 0;
                 abandoned       = conn->abandoned;
             }
-            s_critsect.Leave();
             if (abandoned)
                 AsyncSocketDisconnect(sock, true);
             else
@@ -1493,8 +1485,8 @@ static void Connect (
 
     conn->pingSendTimeMs = 0;
 
-    s_critsect.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_critsect);
         while (CliAuConn * oldConn = s_conns.Head()) {
             if (oldConn != conn)
                 UnlinkAndAbandonConn_CS(oldConn);
@@ -1503,7 +1495,6 @@ static void Connect (
         }
         s_conns.Link(conn);
     }
-    s_critsect.Leave();
     
     Cli2Auth_Connect connect;
     connect.hdr.connType        = kConnTypeCliToAuth;
@@ -1540,7 +1531,7 @@ static void Connect (
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
     strncpy(conn->name, name, arrsize(conn->name));
 
-    conn->IncRef("Lifetime");
+    conn->Ref("Lifetime");
     conn->AutoReconnect();
 }
 
@@ -1571,7 +1562,7 @@ static void AsyncLookupCallback (
 //===========================================================================
 static unsigned CliAuConnTimerDestroyed (void * param) {
     CliAuConn * conn = (CliAuConn *) param;
-    conn->DecRef("TimerDestroyed");
+    conn->UnRef("TimerDestroyed");
     return kAsyncTimeInfinite;
 }
 
@@ -1589,21 +1580,21 @@ static unsigned CliAuConnPingTimerProc (void * param) {
 
 //============================================================================
 CliAuConn::CliAuConn ()
-    : reconnectTimer(nil), reconnectStartMs(0)
+    : hsAtomicRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
     memset(name, 0, sizeof(name));
 
-    AtomicAdd(&s_perf[kPerfConnCount], 1);
+    ++s_perf[kPerfConnCount];
 }
 
 //============================================================================
 CliAuConn::~CliAuConn () {
     if (cli)
         NetCliDelete(cli, true);
-    AtomicAdd(&s_perf[kPerfConnCount], -1);
+    --s_perf[kPerfConnCount];
 }
 
 //===========================================================================
@@ -1612,12 +1603,11 @@ void CliAuConn::TimerReconnect () {
     ASSERT(!cancelId);
     
     if (!s_running) {
-        s_critsect.Enter();
+        std::lock_guard<std::mutex> lock(s_critsect);
         UnlinkAndAbandonConn_CS(this);
-        s_critsect.Leave();
     }
     else {
-        IncRef("Connecting");
+        Ref("Connecting");
 
         // Remember the time we started the reconnect attempt, guarding against
         // TimeGetMs() returning zero (unlikely), as a value of zero indicates
@@ -1631,7 +1621,8 @@ void CliAuConn::TimerReconnect () {
 //===========================================================================
 // This function is called when after a disconnect to start a new connection
 void CliAuConn::StartAutoReconnect () {
-    critsect.Enter();
+    std::lock_guard<std::mutex> lock(critsect);
+
     if (reconnectTimer && !s_perf[kAutoReconnectDisabled]) {
         // Make reconnect attempts at regular intervals. If the last attempt
         // took more than the specified max interval time then reconnect
@@ -1646,7 +1637,6 @@ void CliAuConn::StartAutoReconnect () {
         }
         AsyncTimerUpdate(reconnectTimer, remainingMs);
     }
-    critsect.Leave();
 }
 
 //===========================================================================
@@ -1656,29 +1646,26 @@ void CliAuConn::StartAutoReconnect () {
 void CliAuConn::AutoReconnect () {
         
     ASSERT(!reconnectTimer);
-    IncRef("ReconnectTimer");
-    critsect.Enter();
-    {
-        AsyncTimerCreate(
-            &reconnectTimer,
-            CliAuConnReconnectTimerProc,
-            0,  // immediate callback
-            this
-        );
-    }
-    critsect.Leave();
+    Ref("ReconnectTimer");
+
+    std::lock_guard<std::mutex> lock(critsect);
+
+    AsyncTimerCreate(
+        &reconnectTimer,
+        CliAuConnReconnectTimerProc,
+        0,  // immediate callback
+        this
+    );
 }
 
 //============================================================================
 void CliAuConn::StopAutoReconnect () {
-    critsect.Enter();
-    {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
-        }
+    std::lock_guard<std::mutex> lock(critsect);
+
+    if (AsyncTimer * timer = reconnectTimer) {
+        reconnectTimer = nil;
+        AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
     }
-    critsect.Leave();
 }
 
 //============================================================================
@@ -1690,29 +1677,26 @@ bool CliAuConn::AutoReconnectEnabled () {
 //============================================================================
 void CliAuConn::AutoPing () {
     ASSERT(!pingTimer);
-    IncRef("PingTimer");
-    critsect.Enter();
-    {
-        AsyncTimerCreate(
-            &pingTimer,
-            CliAuConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
-            this
-        );
-    }
-    critsect.Leave();
+    Ref("PingTimer");
+
+    std::lock_guard<std::mutex> lock(critsect);
+
+    AsyncTimerCreate(
+        &pingTimer,
+        CliAuConnPingTimerProc,
+        sock ? 0 : kAsyncTimeInfinite,
+        this
+    );
 }
 
 //============================================================================
 void CliAuConn::StopAutoPing () {
-    critsect.Enter();
-    {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
-            pingTimer = nil;
-        }
+    std::lock_guard<std::mutex> lock(critsect);
+
+    if (pingTimer) {
+        AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
+        pingTimer = nil;
     }
-    critsect.Leave();
 }
 
 //============================================================================
@@ -1733,12 +1717,10 @@ void CliAuConn::TimerPing () {
 
 //============================================================================
 void CliAuConn::Send (const uintptr_t fields[], unsigned count) {
-    critsect.Enter();
-    {
-        NetCliSend(cli, fields, count);
-        NetCliFlush(cli);
-    }
-    critsect.Leave();
+    std::lock_guard<std::mutex> lock(critsect);
+
+    NetCliSend(cli, fields, count);
+    NetCliFlush(cli);
 }
 
 
@@ -1789,11 +1771,8 @@ static bool Recv_ClientRegisterReply (
     conn->serverChallenge = reply.serverChallenge;
 
     // Make this the active server
-    s_critsect.Enter();
-    {
-        s_active = conn;
-    }
-    s_critsect.Leave();
+    std::lock_guard<std::mutex> lock(s_critsect);
+    s_active = conn;
 
     return true;
 }
@@ -2198,17 +2177,14 @@ static bool Recv_ServerAddr (
     // so that when we attempt a reconnect, we'll reconnect with our state on
     // the auth (but only if we reconnect in a short period of time!)
     const Auth2Cli_ServerAddr & msg = *(const Auth2Cli_ServerAddr *)in;
-    
-    s_critsect.Enter();
-    {
-        if (s_active) {
-            s_active->token = msg.token;
-            s_active->addr.SetHost(msg.srvAddr);
 
-            LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
-        }
+    std::lock_guard<std::mutex> lock(s_critsect);
+    if (s_active) {
+        s_active->token = msg.token;
+        s_active->addr.SetHost(msg.srvAddr);
+
+        LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
     }
-    s_critsect.Leave();
     
     return true;
 }
@@ -3941,7 +3917,7 @@ void VaultFetchNodeTrans::Post () {
         m_node
     );
     if (m_node)
-        m_node->DecRef("Recv");
+        m_node->UnRef("Recv");
 }
 
 //============================================================================
@@ -3954,7 +3930,7 @@ bool VaultFetchNodeTrans::Recv (
     if (IS_NET_SUCCESS(reply.result)) {
         m_node = new NetVaultNode;
         m_node->Read_LCS(reply.nodeBuffer, reply.nodeBytes, 0);
-        m_node->IncRef("Recv");
+        m_node->Ref("Recv");
     }
 
     m_result = reply.result;
@@ -3980,12 +3956,12 @@ VaultFindNodeTrans::VaultFindNodeTrans (
 ,   m_param(param)
 ,   m_node(templateNode)
 {
-    m_node->IncRef();
+    m_node->Ref();
 }
 
 //============================================================================
 VaultFindNodeTrans::~VaultFindNodeTrans () {
-    m_node->DecRef();
+    m_node->UnRef();
 }
 
 //============================================================================
@@ -3994,9 +3970,10 @@ bool VaultFindNodeTrans::Send () {
         return false;
         
     ARRAY(uint8_t) buffer;
-    m_node->critsect.Enter();
-    m_node->Write_LCS(&buffer, 0);
-    m_node->critsect.Leave();
+    {
+        std::lock_guard<std::mutex> lock(m_node->critsect);
+        m_node->Write_LCS(&buffer, 0);
+    }
 
     const uintptr_t msg[] = {
         kCli2Auth_VaultNodeFind,
@@ -4056,7 +4033,7 @@ VaultCreateNodeTrans::VaultCreateNodeTrans (
 ,   m_param(param)
 ,   m_nodeId(0)
 {
-    m_templateNode->IncRef();
+    m_templateNode->Ref();
 }
 
 //============================================================================
@@ -4086,7 +4063,7 @@ void VaultCreateNodeTrans::Post () {
         m_param,
         m_nodeId
     );
-    m_templateNode->DecRef();
+    m_templateNode->UnRef();
 }
 
 //============================================================================
@@ -5024,7 +5001,7 @@ bool NetAuthTrans::AcquireConn () {
 //============================================================================
 void NetAuthTrans::ReleaseConn () {
     if (m_conn) {
-        m_conn->DecRef("AcquireConn");
+        m_conn->UnRef("AcquireConn");
         m_conn = nil;
     }
 }
@@ -5072,47 +5049,40 @@ void AuthDestroy (bool wait) {
         false
     );
 
-    s_critsect.Enter();
     {
+        std::lock_guard<std::mutex> lock(s_critsect);
         while (CliAuConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
         s_active = nil;
     }
-    s_critsect.Leave();
 
     if (!wait)
         return;
         
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
 //============================================================================
 bool AuthQueryConnected () {
-    bool result;
-    s_critsect.Enter();
-    {
-        result = (s_active && s_active->cli);
-    }
-    s_critsect.Leave();
-    return result;
+    std::lock_guard<std::mutex> lock(s_critsect);
+    return (s_active && s_active->cli);
 }
 
 //============================================================================
 unsigned AuthGetConnId () {
-    unsigned connId;
-    s_critsect.Enter();
-    connId = (s_active) ? s_active->seq : 0;
-    s_critsect.Leave();
-    return connId;
+    std::lock_guard<std::mutex> lock(s_critsect);
+    return (s_active) ? s_active->seq : 0;
 }
 
 //============================================================================
 void AuthPingEnable (bool enable) {
     s_perf[kPingDisabled] = !enable;
-    s_critsect.Enter();
+
+    std::lock_guard<std::mutex> lock(s_critsect);
+
     for (;;) {
         if (!s_active)
             break;
@@ -5122,7 +5092,6 @@ void AuthPingEnable (bool enable) {
             s_active->StopAutoPing();
         break;
     }
-    s_critsect.Leave();
 }
 
 
@@ -5182,24 +5151,19 @@ void NetCliAuthAutoReconnectEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthDisconnect () {
+    std::lock_guard<std::mutex> lock(s_critsect);
 
-    s_critsect.Enter();
-    {
-        while (CliAuConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
-    }
-    s_critsect.Leave();
+    while (CliAuConn * conn = s_conns.Head())
+        UnlinkAndAbandonConn_CS(conn);
+    s_active = nil;
 }
 
 //============================================================================
 void NetCliAuthUnexpectedDisconnect () {
-    s_critsect.Enter();
-    {
-        if (s_active && s_active->sock)
-            AsyncSocketDisconnect(s_active->sock, true);
-    }
-    s_critsect.Leave();
+    std::lock_guard<std::mutex> lock(s_critsect);
+
+    if (s_active && s_active->sock)
+        AsyncSocketDisconnect(s_active->sock, true);
 }
 
 //============================================================================
@@ -5399,7 +5363,7 @@ void NetCliAuthSetCCRLevel (
     };
     
     conn->Send(msg, arrsize(msg));
-    conn->DecRef("SetCCRLevel");
+    conn->UnRef("SetCCRLevel");
 }
 
 //============================================================================
@@ -5433,7 +5397,7 @@ void NetCliAuthSetAgePublic (
     
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("SetAgePublic");
+    conn->UnRef("SetAgePublic");
 }
 
 //============================================================================
@@ -5733,7 +5697,7 @@ void NetCliAuthVaultSetSeen (
     
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("SetSeen");
+    conn->UnRef("SetSeen");
 }
 
 //============================================================================
@@ -5753,7 +5717,7 @@ void NetCliAuthVaultSendNode (
     
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("SendNode");
+    conn->UnRef("SendNode");
 }
 
 //============================================================================
@@ -5817,7 +5781,7 @@ void NetCliAuthPropagateBuffer (
 
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("PropBuffer");
+    conn->UnRef("PropBuffer");
 
 }
 
@@ -5834,7 +5798,7 @@ void NetCliAuthLogPythonTraceback (const wchar_t traceback[]) {
 
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("LogTraceback");
+    conn->UnRef("LogTraceback");
 }
 
 
@@ -5851,7 +5815,7 @@ void NetCliAuthLogStackDump (const wchar_t stackdump[]) {
 
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef("LogStackDump");
+    conn->UnRef("LogStackDump");
 }
 
 //============================================================================
@@ -5869,7 +5833,7 @@ void NetCliAuthLogClientDebuggerConnect () {
 
     conn->Send(msg, arrsize(msg));
 
-    conn->DecRef();
+    conn->UnRef();
 }
 
 //============================================================================
@@ -5908,7 +5872,7 @@ void NetCliAuthKickPlayer (
     };
 
     conn->Send(msg, arrsize(msg));
-    conn->DecRef("KickPlayer");
+    conn->UnRef("KickPlayer");
 }
 
 //============================================================================

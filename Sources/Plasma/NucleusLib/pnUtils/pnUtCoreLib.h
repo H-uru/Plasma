@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 
-#include "hsCritSect.h"
 #include "hsStream.h"
 
 #pragma warning(pop)

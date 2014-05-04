@@ -49,43 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 
-/*****************************************************************************
-*
-*   Private data
-*
-***/
-
-
-
-/*****************************************************************************
-*
-*   Internal functions
-*
-***/
-
-//===========================================================================
-static unsigned CALLBACK CreateThreadProc (LPVOID param) {
-
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
-    // Initialize thread
-    AsyncThread * thread = (AsyncThread *) param;
-
-    // Call thread procedure
-    unsigned result = thread->proc(thread);
-
-    // Cleanup thread
-    delete thread;
-
-    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-    return result;
-}
-
 
 /*****************************************************************************
 *
@@ -98,44 +61,5 @@ void ThreadDestroy (unsigned exitThreadWaitMs) {
 
     unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
     while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
-        AsyncSleep(10);
-}
-
-
-/*****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-void * AsyncThreadCreate (
-    FAsyncThreadProc    threadProc,
-    void *              argument,
-    const wchar_t         name[]
-) {
-    AsyncThread * thread    = new AsyncThread;
-    thread->proc            = threadProc;
-    thread->handle          = nil;
-    thread->argument        = argument;
-    thread->workTimeMs      = kAsyncTimeInfinite;
-    StrCopy(thread->name, name, arrsize(thread->name));
-    
-    // Create thread suspended
-    unsigned threadId;
-    HANDLE handle = (HANDLE) _beginthreadex(
-        (LPSECURITY_ATTRIBUTES) 0,
-        0,          // stack size
-        CreateThreadProc,
-        thread,     // argument
-        0,          // initFlag
-        &threadId
-    );
-    if (!handle) {
-        LogMsg(kLogFatal, "%s (%u)", __FILE__, GetLastError());
-        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
-    }
-
-    thread->handle = handle;
-    return handle;
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 }

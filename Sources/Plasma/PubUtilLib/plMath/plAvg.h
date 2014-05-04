@@ -44,9 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <list>
-
-#include "hsThread.h"
-
+#include <mutex>
 
 // A Time based Value Averaging class
 //  implemented in a ring buffer
@@ -91,7 +89,7 @@ private:
     float fMaxAvg;
     double fTotal;
     TimeListIterator fRingStart, fRingEnd;
-    hsMutex fLock;
+    std::mutex fLock;
 public:
     TimeBasedAvgRing():fLen(0.f),fAvg(0.f),fMaxAvg(0.f),fTotal(0.0) {}
 

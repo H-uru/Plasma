@@ -133,8 +133,8 @@ static HASHTABLEDECL(TransState, THashKeyVal<unsigned>, link)   s_trans;
 static HASHTABLEDECL(IGameCli, THashKeyVal<unsigned>, link)     s_games;
 static std::map<plUUID, Factory*>       s_factories;
 
-static long             s_transId;
-static ARRAYOBJ(plKey)  s_receivers;
+static std::atomic<unsigned>    s_transId;
+static ARRAYOBJ(plKey)          s_receivers;
 
 
 /*****************************************************************************
@@ -163,11 +163,7 @@ AUTO_INIT_FUNC (SetGameMgrMsgHandler) {
 
 //============================================================================
 static inline unsigned INextTransId () {
-
-    unsigned transId = AtomicAdd(&s_transId, 1);
-    while (!transId)
-        transId = AtomicAdd(&s_transId, 1);
-    return transId;
+    return ++s_transId;
 }
 
 

@@ -130,9 +130,9 @@ bool            gPendingActivateFlag = false;
 static plCrashCli s_crash;
 #endif
 
-static bool     s_loginDlgRunning = false;
-static hsSemaphore      s_statusEvent(0);   // Start non-signalled
-static UINT     s_WmTaskbarList = RegisterWindowMessage("TaskbarButtonCreated");
+static std::atomic<bool>  s_loginDlgRunning(false);
+static std::thread      s_statusThread;
+static UINT             s_WmTaskbarList = RegisterWindowMessage("TaskbarButtonCreated");
 
 FILE *errFP = nil;
 HINSTANCE               gHInst = NULL;      // Instance of this app
@@ -923,42 +923,6 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
     return size * nmemb;
 }
 
-void StatusCallback(void *param)
-{
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    HWND hwnd = (HWND)param;
-
-    const char *statusUrl = GetServerStatusUrl();
-    CURL *hCurl = curl_easy_init();
-
-    // For reporting errors
-    char curlError[CURL_ERROR_SIZE];
-    curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, curlError);
-
-    while(s_loginDlgRunning)
-    {
-        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl);
-        curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
-        curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
-        curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
-
-        if (statusUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
-            PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
-        
-        for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
-        {
-            Sleep(1000);
-        }
-    }
-
-    curl_easy_cleanup(hCurl);
-
-    s_statusEvent.Signal(); // Signal the semaphore
-}
-
 BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     static LoginDialogParam* pLoginParam;
@@ -969,7 +933,36 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
         case WM_INITDIALOG:
         {
             s_loginDlgRunning = true;
-            _beginthread(StatusCallback, 0, hwndDlg);
+            s_statusThread = std::thread([hwndDlg]()
+            {
+#ifdef USE_VLD
+                VLDEnable();
+#endif
+                const char *statusUrl = GetServerStatusUrl();
+                CURL *hCurl = curl_easy_init();
+
+                // For reporting errors
+                char curlError[CURL_ERROR_SIZE];
+                curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, curlError);
+
+                while (s_loginDlgRunning)
+                {
+                    curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl);
+                    curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
+                    curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
+                    curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, hwndDlg);
+
+                    if (statusUrl[0] && curl_easy_perform(hCurl) != 0) {
+                        // only perform request if there's actually a URL set
+                        PostMessage(hwndDlg, WM_USER_SETSTATUSMSG, 0, (LPARAM)curlError);
+                    }
+
+                    for (unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
+                        std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
+
+                curl_easy_cleanup(hCurl);
+            });
             pLoginParam = (LoginDialogParam*)lParam;
 
             SetWindowText(hwndDlg, "Login");
@@ -1009,8 +1002,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
         case WM_DESTROY:
         {
             s_loginDlgRunning = false;
-            s_statusEvent.Wait();
             KillTimer(hwndDlg, AUTH_LOGIN_TIMER);
+            s_statusThread.join();
             return TRUE;
         }
     

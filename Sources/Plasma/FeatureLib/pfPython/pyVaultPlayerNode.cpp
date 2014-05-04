@@ -68,9 +68,9 @@ static PyObject * GetPlayerVaultFolder (unsigned folderType) {
     if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
         if (RelVaultNode * rvnFldr = rvnPlr->GetChildFolderNodeIncRef(folderType, 1)) {
             result = pyVaultFolderNode::New(rvnFldr);
-            rvnFldr->DecRef();
+            rvnFldr->UnRef();
         }
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
     
     return result;
@@ -174,7 +174,7 @@ PyObject *pyVaultPlayerNode::GetPlayerInfo()
 {
     if (RelVaultNode * rvn = VaultGetPlayerInfoNodeIncRef()) {
         PyObject * result = pyVaultPlayerInfoNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -223,7 +223,7 @@ PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
 {
     if (RelVaultNode * rvn = VaultGetVisitAgeLinkIncRef(info->GetAgeInfo())) {
         PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 
@@ -244,7 +244,7 @@ PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
     StrToUnicode(wStr, entryName, arrsize(wStr));
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         PyObject * result = pyVaultChronicleNode::New(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
         return result;
     }
 

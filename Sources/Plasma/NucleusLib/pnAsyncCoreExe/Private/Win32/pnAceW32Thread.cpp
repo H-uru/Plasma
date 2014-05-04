@@ -46,8 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../../Pch.h"
+#include "hsRefCnt.h"
 #pragma hdrstop
 
+#ifdef USE_VLD
+#include <vld.h>
+#endif
 
 /*****************************************************************************
 *
@@ -55,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct AsyncThreadTaskList : AtomicRef {
+struct AsyncThreadTaskList : hsAtomicRefCnt {
     ENetError error;
     AsyncThreadTaskList ();
     ~AsyncThreadTaskList ();
@@ -65,7 +69,7 @@ struct ThreadTask {
     AsyncThreadTaskList *   taskList;
     FAsyncThreadTask        callback;
     void *                  param;
-    wchar_t                   debugStr[256];
+    wchar_t                 debugStr[256];
 };
 
 static HANDLE   s_taskPort;
@@ -79,7 +83,7 @@ static HANDLE   s_taskPort;
 
 //===========================================================================
 AsyncThreadTaskList::AsyncThreadTaskList ()
-:   error(kNetSuccess)
+:   hsAtomicRefCnt(0), error(kNetSuccess)
 {
     PerfAddCounter(kAsyncPerfThreadTaskListCount, 1);
 }
@@ -103,7 +107,13 @@ AsyncThreadTaskList::~AsyncThreadTaskList () {
 ***/
 
 //===========================================================================
-static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
+static void ThreadTaskProc()
+{
+#ifdef USE_VLD
+    // Needs to be enabled for each thread except the WinMain
+    VLDEnable();
+#endif
+
     PerfAddCounter(kAsyncPerfThreadTaskThreadsActive, 1);
 
     for (;;) {
@@ -139,23 +149,11 @@ static unsigned THREADCALL ThreadTaskProc (AsyncThread * thread) {
         if (task) {
             task->callback(task->param, task->taskList->error);
 
-            task->taskList->DecRef("task");
+            task->taskList->UnRef("task");
             delete task;
         }
     }
     PerfSubCounter(kAsyncPerfThreadTaskThreadsActive, 1);
-
-    return 0;
-}
-
-//===========================================================================
-static unsigned THREADCALL FirstThreadTaskProc (AsyncThread * param) {
-    while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
-        PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
-        AsyncThreadCreate(ThreadTaskProc, nil, L"AsyncThreadTaskList");
-    }
-
-    return ThreadTaskProc(param);
 }
 
 /*****************************************************************************
@@ -190,9 +188,9 @@ void AsyncThreadTaskDestroy () {
 
         // Wait until all threads have exited
         while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsActive))
-            AsyncSleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning))
-            AsyncSleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
 
         // Cleanup completion port
         CloseHandle(s_taskPort);
@@ -216,7 +214,22 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 
     if (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
         PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
-        AsyncThreadCreate(FirstThreadTaskProc, nil, L"ThreadTaskList");
+        std::thread firstWorker([]()
+        {
+        #ifdef USE_VLD
+            // Needs to be enabled for each thread except the WinMain
+            VLDEnable();
+        #endif
+
+            while (AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsRunning) < AsyncPerfGetCounter(kAsyncPerfThreadTaskThreadsDesired)) {
+                PerfAddCounter(kAsyncPerfThreadTaskThreadsRunning, 1);
+                std::thread worker(&ThreadTaskProc);
+                worker.detach();
+            }
+
+            ThreadTaskProc();
+        });
+        firstWorker.detach();
     }
     else {
         PostQueuedCompletionStatus(s_taskPort, 0, 0, 0);
@@ -227,7 +240,7 @@ void AsyncThreadTaskSetThreadCount (unsigned threads) {
 AsyncThreadTaskList * AsyncThreadTaskListCreate () {
     ASSERT(s_taskPort);
     AsyncThreadTaskList * taskList = new AsyncThreadTaskList;
-    taskList->IncRef("TaskList");
+    taskList->Ref("TaskList");
     return taskList;
 }
 
@@ -241,7 +254,7 @@ void AsyncThreadTaskListDestroy (
     ASSERT(!taskList->error);
 
     taskList->error = error;
-    taskList->DecRef(); // REF:TaskList
+    taskList->UnRef(); // REF:TaskList
 }
 
 //===========================================================================
@@ -249,7 +262,7 @@ void AsyncThreadTaskAdd (
     AsyncThreadTaskList *   taskList,
     FAsyncThreadTask        callback,
     void *                  param,
-    const wchar_t             debugStr[],
+    const wchar_t           debugStr[],
     EThreadTaskPriority     priority /* = kThreadTaskPriorityNormal */
 ) {
     ASSERT(s_taskPort);
@@ -263,7 +276,7 @@ void AsyncThreadTaskAdd (
     task->callback      = callback;
     task->param         = param;
     StrCopy(task->debugStr, debugStr, arrsize(task->debugStr));     // this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
-    taskList->IncRef("Task");
+    taskList->Ref("Task");
 
     PostQueuedCompletionStatus(s_taskPort, 0, (DWORD) task, NULL);
 }

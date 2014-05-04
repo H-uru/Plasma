@@ -112,10 +112,10 @@ PyObject *pyVaultAgeInfoListNode::New(RelVaultNode* nfsNode)
 {
     ptVaultAgeInfoListNode *newObj = (ptVaultAgeInfoListNode*)ptVaultAgeInfoListNode_type.tp_new(&ptVaultAgeInfoListNode_type, NULL, NULL);
     if (newObj->fThis->fNode)
-        newObj->fThis->fNode->DecRef();
+        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
     if (newObj->fThis->fNode)
-        newObj->fThis->fNode->IncRef();
+        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

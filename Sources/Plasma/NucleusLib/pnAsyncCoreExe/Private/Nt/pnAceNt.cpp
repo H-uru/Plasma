@@ -53,6 +53,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 namespace Nt {
 
+class NtIoThread : public hsThread
+{
+    hsSemaphore finished;
+
+public:
+    virtual void Run();
+    virtual void OnQuit() { finished.Signal(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
+
 /****************************************************************************
 *
 *   Private data
@@ -62,11 +77,11 @@ namespace Nt {
 // Use non-allocated arrays for worker threads since they're used so frequently.
 const unsigned kMaxWorkerThreads = 32;  // handles 8-processor computer w/hyperthreading
 
-static bool                     s_running;
+static volatile bool            s_running;
 static HANDLE                   s_waitEvent;
 
 static long                     s_ioThreadCount;
-static HANDLE                   s_ioThreadHandles[kMaxWorkerThreads];
+static NtIoThread *             s_ioThreadHandles[kMaxWorkerThreads] = { 0 };
 
 static HANDLE                   s_ioPort;
 static unsigned                 s_pageSizeMask;
@@ -80,7 +95,6 @@ static unsigned                 s_pageSizeMask;
 
 //===========================================================================
 CNtWaitHandle::CNtWaitHandle () {
-    m_refCount = 1;
     m_event = CreateEvent(
         (LPSECURITY_ATTRIBUTES) nil,
         true,   // manual reset
@@ -92,17 +106,6 @@ CNtWaitHandle::CNtWaitHandle () {
 //===========================================================================
 CNtWaitHandle::~CNtWaitHandle () {
     CloseHandle(m_event);
-}
-
-//===========================================================================
-void CNtWaitHandle::IncRef () {
-    InterlockedIncrement(&m_refCount);
-}
-
-//===========================================================================
-void CNtWaitHandle::DecRef () {
-    if (!InterlockedDecrement(&m_refCount))
-        delete this;
 }
 
 //===========================================================================
@@ -159,53 +162,54 @@ static void INtOpDispatch (
         // because nextCompleteSequence would be prematurely incremented. Instead
         // convert the operation to OP_NULL, which will get completed when it reaches
         // the head of the list.
-        ntObj->critsect.Enter();
-        if (ntObj->opList.Prev(op)) {
-            // setting the completion flag must be done inside the critical section
-            // because it will be checked by sibling operations when they have the
-            // critical section.
-            op->pending = 0;
-            ntObj->critsect.Leave();
-            return;
-        }
-
-        // complete processing this event, and, since we're still inside the critical
-        // section, finish all completed operations since we don't have to leave the
-        // critical section to do so. This is a big win because a single operation
-        // that takes a long time to complete can backlog a long list of completed ops.
         bool continueDispatch;
-        for (;;) {
-            // wake up any other threads waiting on this event
-            CNtWaitHandle * signalComplete = op->signalComplete;
-            op->signalComplete = nil;
+        {
+            std::lock_guard<std::mutex> lock(ntObj->critsect);
 
-            // since this operation is at the head of the list we can complete it
-            if (op->asyncId && !++ntObj->nextCompleteSequence)
-                ++ntObj->nextCompleteSequence;
-            Operation * next = ntObj->opList.Next(op);
-            ntObj->opList.Delete(op);
-            op = next;
-
-            // set event *after* operation is complete
-            if (signalComplete) {
-                signalComplete->SignalObject();
-                signalComplete->DecRef();
+            if (ntObj->opList.Prev(op)) {
+                // setting the completion flag must be done inside the critical section
+                // because it will be checked by sibling operations when they have the
+                // critical section.
+                op->pending = 0;
+                return;
             }
 
-            // if we just deleted the last operation then stop dispatching
-            if (!op) {
-                continueDispatch = false;
-                break;
+            // complete processing this event, and, since we're still inside the critical
+            // section, finish all completed operations since we don't have to leave the
+            // critical section to do so. This is a big win because a single operation
+            // that takes a long time to complete can backlog a long list of completed ops.
+            for (;;) {
+                // wake up any other threads waiting on this event
+                CNtWaitHandle * signalComplete = op->signalComplete;
+                op->signalComplete = nil;
+
+                // since this operation is at the head of the list we can complete it
+                if (op->asyncId && !++ntObj->nextCompleteSequence)
+                    ++ntObj->nextCompleteSequence;
+                Operation * next = ntObj->opList.Next(op);
+                ntObj->opList.Delete(op);
+                op = next;
+
+                // set event *after* operation is complete
+                if (signalComplete) {
+                    signalComplete->SignalObject();
+                    signalComplete->UnRef();
+                }
+
+                // if we just deleted the last operation then stop dispatching
+                if (!op) {
+                    continueDispatch = false;
+                    break;
+                }
+
+                // opTypes >= kOpSequence complete when they reach the head of the list
+                continueDispatch = op->opType >= kOpSequence;
+                if (op->pending)
+                    break;
+
+                --ntObj->ioCount;
             }
-
-            // opTypes >= kOpSequence complete when they reach the head of the list
-            continueDispatch = op->opType >= kOpSequence;
-            if (op->pending)
-                break;
-
-            InterlockedDecrement(&ntObj->ioCount);
         }
-        ntObj->critsect.Leave();
 
         INtConnCompleteOperation(ntObj);
 
@@ -221,7 +225,8 @@ static void INtOpDispatch (
 }
 
 //===========================================================================
-static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
+void NtIoThread::Run()
+{
     unsigned sleepMs    = INFINITE;
     while (s_running) {
 
@@ -254,8 +259,6 @@ static unsigned THREADCALL NtWorkerThreadProc (AsyncThread * thread) {
         sleepMs = INFINITE;
         continue;
     }
-
-    return 0;
 }
 
 
@@ -300,7 +303,7 @@ bool INtConnInitialize (NtObject * ntObj) {
 //===========================================================================
 void INtConnCompleteOperation (NtObject * ntObj) {
     // are we completing the last operation for this object?
-    if (InterlockedDecrement(&ntObj->ioCount))
+    if (--ntObj->ioCount)
         return;
 
     DWORD err = GetLastError();
@@ -358,11 +361,8 @@ void NtInitialize () {
 
     // create IO worker threads
     for (long thread = 0; thread < s_ioThreadCount; thread++) {
-        s_ioThreadHandles[thread] = (HANDLE) AsyncThreadCreate(
-            NtWorkerThreadProc,
-            (void *) thread,
-            L"NtWorkerThread"
-        );
+        s_ioThreadHandles[thread] = new NtIoThread;
+        s_ioThreadHandles[thread]->Start();
     }
 
     INtSocketInitialize();
@@ -388,9 +388,9 @@ void NtDestroy (unsigned exitThreadWaitMs) {
         // Close each thread
         for (thread = 0; thread < s_ioThreadCount; thread++) {
             if (s_ioThreadHandles[thread]) {
-                WaitForSingleObject(s_ioThreadHandles[thread], exitThreadWaitMs);
-                CloseHandle(s_ioThreadHandles[thread]);
-                s_ioThreadHandles[thread] = nil;
+                s_ioThreadHandles[thread]->Shutdown(exitThreadWaitMs);
+                delete s_ioThreadHandles[thread];
+                s_ioThreadHandles[thread] = nullptr;
             }
         }
 
@@ -433,7 +433,6 @@ void NtGetApi (AsyncApi * api) {
     api->destroy                = NtDestroy;
     api->signalShutdown         = NtSignalShutdown;
     api->waitForShutdown        = NtWaitForShutdown;
-    api->sleep                  = NtSleep;
     
     api->socketConnect          = NtSocketConnect;
     api->socketConnectCancel    = NtSocketConnectCancel;

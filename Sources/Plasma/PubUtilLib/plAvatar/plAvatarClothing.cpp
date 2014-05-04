@@ -831,13 +831,13 @@ bool plClothingOutfit::IReadFromVault()
                 delete sdlDataRec;              
             }
         }
-        nodes[i]->DecRef();
+        nodes[i]->UnRef();
     }
     
     fSynchClients = true; // set true if the next synch should be bcast
     ForceUpdate(true);
     
-    rvn->DecRef();
+    rvn->UnRef();
     return true;
 }
 
@@ -874,7 +874,7 @@ void plClothingOutfit::WriteToVault()
     SDRs.Add(appearanceStateDesc->GetStateDataRecord(0));
     
     WriteToVault(SDRs);
-    rvn->DecRef();
+    rvn->UnRef();
 }
 
 void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
@@ -926,28 +926,28 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
             if (nodes.Count()) {
                 node = nodes[0];
                 nodes.DeleteUnordered(0);
-                node->IncRef(); // REF: Work
-                node->DecRef(); // REF: Find
+                node->Ref(); // REF: Work
+                node->UnRef(); // REF: Find
             }
             else {
                 RelVaultNode * templateNode = new RelVaultNode;
                 templateNode->SetNodeType(plVault::kNodeType_SDL);
                 templates.Add(templateNode);
                 node = templateNode;
-                node->IncRef(); // REF: Create
-                node->IncRef(); // REF: Work
+                node->Ref(); // REF: Create
+                node->Ref(); // REF: Work
             }
 
             VaultSDLNode sdl(node);
             sdl.SetStateDataRecord((*arr)[i], 0);
-            node->DecRef();     // REF: Work
+            node->UnRef();     // REF: Work
         }
     }
 
     // Delete any leftover nodes
     for (unsigned i = 0; i < nodes.Count(); ++i) {
         VaultDeleteNode(nodes[i]->GetNodeId());
-        nodes[i]->DecRef(); // REF: Array
+        nodes[i]->UnRef(); // REF: Array
     }
 
     // Create actual new nodes from their templates
@@ -956,13 +956,13 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
         if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
             actuals.Add(actual);
         }
-        templates[i]->DecRef(); // REF: Create
+        templates[i]->UnRef(); // REF: Create
     }
 
     // Add new nodes to outfit folder
     for (unsigned i = 0; i < actuals.Count(); ++i) {
         VaultAddChildNodeAndWait(rvn->GetNodeId(), actuals[i]->GetNodeId(), NetCommGetPlayer()->playerInt);
-        actuals[i]->DecRef();   // REF: Create
+        actuals[i]->UnRef();   // REF: Create
     }
 
     // Cleanup morph SDRs
@@ -970,7 +970,7 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
         delete morphs[i];
     }
 
-    rvn->DecRef();
+    rvn->UnRef();
 }
 
 // XXX HACK. DON'T USE (this function exists for the temp console command Clothing.SwapClothTexHACK)
@@ -1489,7 +1489,7 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
 
     hsUNIXStream S;
     if (!S.Open(filename, "wb")) {
-        rvn->DecRef();
+        rvn->UnRef();
         return false;
     }
 
@@ -1503,9 +1503,9 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
         S.WriteLE32(sdl.GetSDLDataLength());
         if (sdl.GetSDLDataLength())
             S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
-        nodes[i]->DecRef();
+        nodes[i]->UnRef();
     }
-    rvn->DecRef();
+    rvn->UnRef();
 
     S.Close();
     return true;
@@ -1652,7 +1652,7 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
         plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
         
         RelVaultNode * templateNode = new RelVaultNode;
-        templateNode->IncRef();
+        templateNode->Ref();
         templateNode->SetNodeType(plVault::kNodeType_SDL);
         
         VaultSDLNode sdl(templateNode);
@@ -1669,12 +1669,12 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
                 actual->GetNodeId(),
                 NetCommGetPlayer()->playerInt
             );
-            actual->DecRef(); // REF: Create
+            actual->UnRef(); // REF: Create
         }
-        templates[i]->DecRef(); // REF: Create
+        templates[i]->UnRef(); // REF: Create
     }
     
-    rvn->DecRef();
+    rvn->UnRef();
 }
 
 void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
@@ -1702,7 +1702,7 @@ void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
         }
     }
     
-    rvn->DecRef();
+    rvn->UnRef();
 }   
 
 void plClothingMgr::GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out)

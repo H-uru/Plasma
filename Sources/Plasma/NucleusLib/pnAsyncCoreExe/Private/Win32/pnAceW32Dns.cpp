@@ -73,9 +73,27 @@ struct Lookup {
     char                buffer[MAXGETHOSTSTRUCT];
 };
 
-static CCritSect                s_critsect;
+class W32DnsThread : public hsThread
+{
+    hsSemaphore lookupStartEvent;
+    hsSemaphore finished;
+
+public:
+    virtual void Run();
+    virtual void OnQuit() { finished.Signal(); }
+
+    void WaitForLookupStart() { lookupStartEvent.Wait(); }
+
+    void Shutdown(unsigned waitTimeMs)
+    {
+        if (!finished.Wait(std::chrono::milliseconds(waitTimeMs)))
+            DEBUG_MSG("Warning:  Thread 0x%x took too long to finish", ThreadHash());
+    }
+};
+
+static std::mutex               s_critsect;
 static LISTDECL(Lookup, link)   s_lookupList;
-static HANDLE                   s_lookupThread;
+static W32DnsThread *           s_lookupThread = nullptr;
 static HWND                     s_lookupWindow;
 static unsigned                 s_nextLookupCancelId = 1;
 
@@ -131,21 +149,23 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
 static void LookupFindAndProcess (HANDLE cancelHandle, unsigned error) {
     // find the operation for this cancel handle
     Lookup * lookup;
-    s_critsect.Enter();
-    for (lookup = s_lookupList.Head(); lookup; lookup = s_lookupList.Next(lookup)) {
-        if (lookup->cancelHandle == cancelHandle) {
-            lookup->cancelHandle = nil;
-            s_lookupList.Unlink(lookup);
-            break;
+    {
+        std::lock_guard<std::mutex> lock(s_critsect);
+        for (lookup = s_lookupList.Head(); lookup; lookup = s_lookupList.Next(lookup)) {
+            if (lookup->cancelHandle == cancelHandle) {
+                lookup->cancelHandle = nil;
+                s_lookupList.Unlink(lookup);
+                break;
+            }
         }
     }
-    s_critsect.Leave();
     if (lookup)
         LookupProcess(lookup, error);
 }
 
 //===========================================================================
-static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
+void W32DnsThread::Run()
+{
     static const char WINDOW_CLASS[] = "AsyncLookupWnd";
     WNDCLASS wc;
     memset(&wc, 0, sizeof(wc));
@@ -158,7 +178,7 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
         WINDOW_CLASS,
         WINDOW_CLASS,
         WS_OVERLAPPED,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, 
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
         (HWND)0,
         (HMENU) 0,
         wc.hInstance,
@@ -167,8 +187,7 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     if (!s_lookupWindow)
         ErrorAssert(__LINE__, __FILE__, "CreateWindow %#x", GetLastError());
 
-    HANDLE lookupStartEvent = (HANDLE) thread->argument;
-    SetEvent(lookupStartEvent);
+    lookupStartEvent.Signal();
 
     MSG msg;
     while (GetMessage(&msg, s_lookupWindow, 0, 0)) {
@@ -184,14 +203,16 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
 
     // fail all pending name lookups
     for (;;) {
-        s_critsect.Enter();
-        Lookup * lookup = s_lookupList.Head();
-        if (lookup) {
-            WSACancelAsyncRequest(lookup->cancelHandle);
-            lookup->cancelHandle = nil;
-            s_lookupList.Unlink(lookup);
+        Lookup* lookup;
+        {
+            std::lock_guard<std::mutex> lock(s_critsect);
+            lookup = s_lookupList.Head();
+            if (lookup) {
+                WSACancelAsyncRequest(lookup->cancelHandle);
+                lookup->cancelHandle = nil;
+                s_lookupList.Unlink(lookup);
+            }
         }
-        s_critsect.Leave();
         if (!lookup)
             break;
 
@@ -201,8 +222,6 @@ static unsigned THREADCALL LookupThreadProc (AsyncThread * thread) {
     // cleanup
     DestroyWindow(s_lookupWindow);
     s_lookupWindow = nil;
-
-    return 0;
 }
 
 //===========================================================================
@@ -210,25 +229,10 @@ static void StartLookupThread () {
     if (s_lookupThread)
         return;
 
-    // create a shutdown event
-    HANDLE lookupStartEvent = CreateEvent(
-        (LPSECURITY_ATTRIBUTES) 0,
-        true,           // manual reset
-        false,          // initial state off
-        (LPCTSTR) 0     // name
-    );
-    if (!lookupStartEvent)
-        ErrorAssert(__LINE__, __FILE__, "CreateEvent %#x", GetLastError());
-
     // create a thread to perform lookups
-    s_lookupThread = (HANDLE) AsyncThreadCreate(
-        LookupThreadProc,
-        lookupStartEvent,
-        L"AsyncLookupThread"
-    );
+    s_lookupThread = new W32DnsThread;
 
-    WaitForSingleObject(lookupStartEvent, INFINITE);
-    CloseHandle(lookupStartEvent);
+    s_lookupThread->WaitForLookupStart();
     ASSERT(s_lookupWindow);
 }
 
@@ -243,9 +247,9 @@ static void StartLookupThread () {
 void DnsDestroy (unsigned exitThreadWaitMs) {
     if (s_lookupThread) {
         PostMessage(s_lookupWindow, WM_LOOKUP_EXIT, 0, 0);
-        WaitForSingleObject(s_lookupThread, exitThreadWaitMs);
-        CloseHandle(s_lookupThread);
-        s_lookupThread = nil;
+        s_lookupThread->Shutdown(exitThreadWaitMs);
+        delete s_lookupThread;
+        s_lookupThread = nullptr;
         ASSERT(!s_lookupWindow);
     }
 }
@@ -287,30 +291,28 @@ void AsyncAddressLookupName (
     lookup->param           = param;
     strncpy(lookup->name, name, arrsize(lookup->name));
 
-    s_critsect.Enter();
-    {
-        // Start the lookup thread if it wasn't started already
-        StartLookupThread();
-        s_lookupList.Link(lookup);
+    std::lock_guard<std::mutex> lock(s_critsect);
 
-        // get cancel id; we can avoid checking for zero by always using an odd number
-        ASSERT(s_nextLookupCancelId & 1);
-        s_nextLookupCancelId += 2;
-        *cancelId = lookup->cancelId = (AsyncCancelId) s_nextLookupCancelId;
+    // Start the lookup thread if it wasn't started already
+    StartLookupThread();
+    s_lookupList.Link(lookup);
 
-        // Perform async lookup
-        lookup->cancelHandle = WSAAsyncGetHostByName(
-            s_lookupWindow, 
-            WM_LOOKUP_FOUND_HOST,
-            name,
-            &lookup->buffer[0],
-            sizeof(lookup->buffer)
-        );
-        if (!lookup->cancelHandle) {
-            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
-        }
+    // get cancel id; we can avoid checking for zero by always using an odd number
+    ASSERT(s_nextLookupCancelId & 1);
+    s_nextLookupCancelId += 2;
+    *cancelId = lookup->cancelId = (AsyncCancelId) s_nextLookupCancelId;
+
+    // Perform async lookup
+    lookup->cancelHandle = WSAAsyncGetHostByName(
+        s_lookupWindow,
+        WM_LOOKUP_FOUND_HOST,
+        name,
+        &lookup->buffer[0],
+        sizeof(lookup->buffer)
+    );
+    if (!lookup->cancelHandle) {
+        PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
     }
-    s_critsect.Leave();
 }
 
 //===========================================================================
@@ -334,33 +336,31 @@ void AsyncAddressLookupAddr (
     plString str = address.GetHostString();
     strncpy(lookup->name, str.c_str(), arrsize(lookup->name));
 
-    s_critsect.Enter();
-    {
-        // Start the lookup thread if it wasn't started already
-        StartLookupThread();
-        s_lookupList.Link(lookup);
+    std::lock_guard<std::mutex> lock(s_critsect);
 
-        // get cancel id; we can avoid checking for zero by always using an odd number
-        ASSERT(s_nextLookupCancelId & 1);
-        s_nextLookupCancelId += 2;
-        *cancelId = lookup->cancelId = (AsyncCancelId) s_nextLookupCancelId;
+    // Start the lookup thread if it wasn't started already
+    StartLookupThread();
+    s_lookupList.Link(lookup);
 
-        // Perform async lookup
-        u_long addr = ((const sockaddr_in *) &address)->sin_addr.S_un.S_addr;
-        lookup->cancelHandle = WSAAsyncGetHostByAddr(
-            s_lookupWindow, 
-            WM_LOOKUP_FOUND_HOST,
-            (const char *) &addr,
-            sizeof(addr),
-            AF_INET,
-            &lookup->buffer[0],
-            sizeof(lookup->buffer)
-        );
-        if (!lookup->cancelHandle) {
-            PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
-        }
+    // get cancel id; we can avoid checking for zero by always using an odd number
+    ASSERT(s_nextLookupCancelId & 1);
+    s_nextLookupCancelId += 2;
+    *cancelId = lookup->cancelId = (AsyncCancelId) s_nextLookupCancelId;
+
+    // Perform async lookup
+    u_long addr = ((const sockaddr_in *) &address)->sin_addr.S_un.S_addr;
+    lookup->cancelHandle = WSAAsyncGetHostByAddr(
+        s_lookupWindow,
+        WM_LOOKUP_FOUND_HOST,
+        (const char *) &addr,
+        sizeof(addr),
+        AF_INET,
+        &lookup->buffer[0],
+        sizeof(lookup->buffer)
+    );
+    if (!lookup->cancelHandle) {
+        PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
     }
-    s_critsect.Leave();
 }
 
 //===========================================================================
@@ -368,7 +368,8 @@ void AsyncAddressLookupCancel (
     FAsyncLookupProc    lookupProc,
     AsyncCancelId       cancelId        // nil = cancel all with specified lookupProc
 ) {
-    s_critsect.Enter();
+    std::lock_guard<std::mutex> lock(s_critsect);
+
     for (Lookup * lookup = s_lookupList.Head(); lookup; lookup = s_lookupList.Next(lookup)) {
         if (lookup->lookupProc && (lookup->lookupProc != lookupProc))
             continue;
@@ -384,5 +385,4 @@ void AsyncAddressLookupCancel (
         // initiate user callback
         PostMessage(s_lookupWindow, WM_LOOKUP_FOUND_HOST, 0, (unsigned) -1);
     }
-    s_critsect.Leave();
 }

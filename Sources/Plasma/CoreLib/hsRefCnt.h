@@ -42,16 +42,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsRefCnt_Defiend
 #define hsRefCnt_Defiend
 
+#include <atomic>
+
 class hsRefCnt {
 private:
     int         fRefCnt;
+
 public:
-                hsRefCnt() : fRefCnt(1) {}
+                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) {}
     virtual     ~hsRefCnt();
 
-    virtual int     RefCnt() const { return fRefCnt; }
-    virtual void    UnRef();
-    virtual void    Ref();
+    inline int  RefCnt() const { return fRefCnt; }
+    void        UnRef();
+    inline void Ref() { ++fRefCnt; }
 };
 
 #define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
@@ -63,5 +66,25 @@ public:
             hsRefCnt_SafeUnRef(dst);        \
             dst = src;                  \
         } while (0)
+
+
+// Thread-safe version.  TODO:  Evaluate whether this is fast enough to
+// merge with hsRefCnt above.
+class hsAtomicRefCnt
+{
+private:
+    std::atomic<int> fRefCnt;
+
+public:
+                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
+    virtual     ~hsAtomicRefCnt();
+
+    inline int  RefCnt() const { return fRefCnt; }
+    void        UnRef(const char* tag = nullptr);
+    void        Ref(const char* tag = nullptr);
+
+    // Useless, but left here for debugging compatibility with AtomicRef
+    void        TransferRef(const char* oldTag, const char* newTag);
+};
 
 #endif

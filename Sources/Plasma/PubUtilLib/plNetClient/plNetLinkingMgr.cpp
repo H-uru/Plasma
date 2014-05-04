@@ -535,14 +535,14 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
         {
             VaultAgeInfoNode accInfo(rvnInfo);
             accInfo.CopyTo(cur->GetAgeInfo());
-            rvnInfo->DecRef();
+            rvnInfo->UnRef();
         }
 
         IDoLink(fDeferredLink);
         fDeferredLink = nil;
         return true;
 
-        cVaultLink->DecRef();
+        cVaultLink->UnRef();
     }
 
     return false;
@@ -787,7 +787,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
     
     switch (link->GetLinkingRules()) {
@@ -812,9 +812,9 @@ void plNetLinkingMgr::IPostProcessLink( void )
                         );
                 
                 if (fldr)
-                    fldr->DecRef();
+                    fldr->UnRef();
                 if (info)
-                    info->DecRef();
+                    info->UnRef();
             }
         }
         break;  
@@ -839,9 +839,9 @@ void plNetLinkingMgr::IPostProcessLink( void )
                         );
                 
                 if (fldr)
-                    fldr->DecRef();
+                    fldr->UnRef();
                 if (info)
-                    info->DecRef();
+                    info->UnRef();
             }
         }
         break;
@@ -879,7 +879,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         accInfo.SetAgeInstName(nil);
         accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 #else
     // Update our online status 
@@ -891,7 +891,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 #endif
 
@@ -1036,7 +1036,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             break;
                         }
                     }
-                    linkNode->DecRef();
+                    linkNode->UnRef();
                 }
             }
 

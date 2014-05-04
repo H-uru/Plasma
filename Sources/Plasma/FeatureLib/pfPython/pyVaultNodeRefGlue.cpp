@@ -126,15 +126,15 @@ PyObject *pyVaultNodeRef::New(RelVaultNode * parent, RelVaultNode * child)
 {
     ptVaultNodeRef *newObj = (ptVaultNodeRef*)ptVaultNodeRef_type.tp_new(&ptVaultNodeRef_type, NULL, NULL);
     if (newObj->fThis->fParent)
-        newObj->fThis->fParent->DecRef();
+        newObj->fThis->fParent->UnRef();
     if (newObj->fThis->fChild)
-        newObj->fThis->fChild->DecRef();
+        newObj->fThis->fChild->UnRef();
     newObj->fThis->fParent = parent;
     newObj->fThis->fChild = child;
     if (newObj->fThis->fParent)
-        newObj->fThis->fParent->IncRef();
+        newObj->fThis->fParent->Ref();
     if (newObj->fThis->fChild)
-        newObj->fThis->fChild->IncRef();
+        newObj->fThis->fChild->Ref();
     return (PyObject*)newObj;
 }
 

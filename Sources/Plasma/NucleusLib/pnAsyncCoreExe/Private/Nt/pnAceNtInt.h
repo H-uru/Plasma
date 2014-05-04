@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENTINT_H
 
+#include "hsRefCnt.h"
 
 namespace Nt {
 
@@ -82,20 +83,12 @@ enum EOpType {
     kNumOpTypes
 };
 
-class CNtCritSect : public CCritSect {
-public:
-    BOOL TryEnter () { return TryEnterCriticalSection(&m_handle); }
-};
-
-class CNtWaitHandle {
-    long    m_refCount;
+class CNtWaitHandle : public hsAtomicRefCnt {
     HANDLE  m_event;
 
 public:
     CNtWaitHandle ();
     ~CNtWaitHandle ();
-    void IncRef ();
-    void DecRef ();
     bool WaitForObject (unsigned timeMs) const;
     void SignalObject () const;
 };
@@ -124,14 +117,14 @@ struct Operation {
 };
 
 struct NtObject {
-    CNtCritSect                 critsect;
+    std::mutex                  critsect;
     EIoType                     ioType;
     HANDLE                      handle;
     void *                      userState;
     LISTDECL(Operation, link)   opList;
     long                        nextCompleteSequence;
     long                        nextStartSequence;
-    long                        ioCount;
+    std::atomic<long>           ioCount;
     bool                        closed;
 
     NtObject()
@@ -200,7 +193,6 @@ void NtInitialize ();
 void NtDestroy (unsigned exitThreadWaitMs);
 void NtSignalShutdown ();
 void NtWaitForShutdown ();
-void NtSleep (unsigned sleepMs);
 void NtSocketConnect (
     AsyncCancelId *         cancelId,
     const plNetAddress&     netAddr,

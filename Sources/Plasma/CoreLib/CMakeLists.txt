@@ -34,7 +34,6 @@ set(CoreLib_SOURCES
     hsBitVector.cpp
     hsBounds.cpp
     hsCpuID.cpp
-    hsCritSect.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
     hsGeometry3.cpp
@@ -43,7 +42,6 @@ set(CoreLib_SOURCES
     hsMemory.cpp
     hsQuat.cpp
     hsRefCnt.cpp
-    hsSafeRefCnt.cpp
     hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
@@ -78,7 +76,6 @@ set(CoreLib_HEADERS
     hsBounds.h
     hsColorRGBA.h
     hsCpuID.h
-    hsCritSect.h
     hsExceptions.h
     hsFastMath.h
     hsGeometry3.h
@@ -88,7 +85,6 @@ set(CoreLib_HEADERS
     hsPoint2.h
     hsQuat.h
     hsRefCnt.h
-    hsSafeRefCnt.h
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
