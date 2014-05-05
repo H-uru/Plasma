@@ -70,8 +70,8 @@ struct AsyncDns::P : hsThread, IWorkerThreads::Operation {
     P *         next;
     P *         prev;
     
-    P () : cancel(false), prev(nullptr) {}
-    
+    P () : cancel(), lookupProc(), param(nullptr), error(), next(), prev() {}
+
     void Callback ();
 };
 AsyncDns::P *   AsyncDns::P::last = nullptr;

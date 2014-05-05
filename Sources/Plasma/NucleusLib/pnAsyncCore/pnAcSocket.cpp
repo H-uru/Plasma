@@ -109,7 +109,7 @@ struct AsyncSocket::P::Operation : IWorkerThreads::Operation {
 };
 
 //===========================================================================
-AsyncSocket::P::P () : close(false), hardClose(false), lastSend(nullptr), reading(false) {
+AsyncSocket::P::P () : notifyProc(nullptr), close(), hardClose(), lastSend(), reading() {
     PerfAddCounter(kAsyncPerfSocketsCurr, 1);
     PerfAddCounter(kAsyncPerfSocketsTotal, 1);
 }
@@ -248,7 +248,7 @@ struct AsyncSocket::P::ReadOp : AsyncSocket::P::Operation {
     uint8_t                     buffer[kBufferSize];
     unsigned                    bytesUsed;
 
-    ReadOp () : bytesUsed(0) {}
+    ReadOp () : sock(), bytesUsed(0) {}
     void Callback ();
 };
 
@@ -544,8 +544,8 @@ struct AsyncSocket::P::SendBaseOp : AsyncSocket::P::Operation {
     unsigned                    sendBytes;
     uint8_t *                   sendData;
 
-    SendBaseOp() : next(nullptr) {}
-    void Callback ();
+    SendBaseOp() : next(), sock(), sendBytes(0), sendData() {}
+    void Callback();
     virtual bool Notify() = 0;
 };
 struct AsyncSocket::P::SendOp : AsyncSocket::P::SendBaseOp {
@@ -649,7 +649,7 @@ bool AsyncSocket::Write (
 
 //===========================================================================
 void AsyncSocket::P::SendBaseOp::Callback() {
-    size_t size;
+    size_t size = static_cast<size_t>(-1);
     {
         std::lock_guard<std::mutex> lock(sock->sockLock);
         if (sock->hardClose)

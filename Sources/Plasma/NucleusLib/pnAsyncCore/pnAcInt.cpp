@@ -72,7 +72,7 @@ struct IWorkerThreads::P {
     std::mutex      queuLock;
     hsSemaphore     listSem;
     
-    P() : listHead(nullptr), listQueu(nullptr) {}
+    P() : threads(), threadCount(0), listHead(), listQueu() {}
 };
 IWorkerThreads::P * IWorkerThreads::P::This = nullptr;
 

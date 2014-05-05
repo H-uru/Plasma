@@ -115,7 +115,7 @@ unsigned ISocketConnHash::GetHash () const {
 bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
     ASSERT(flags & kConnHashFlagsIgnore);
 
-    for (;;) {
+    do {
         // Check connType
         if (connType != rhs.connType)
             break;
@@ -154,7 +154,7 @@ bool ISocketConnHash::operator== (const ISocketConnHash & rhs) const {
 
         // Success!
         return true;
-    }
+    } while (false);
 
     // Failed!
     return false;
@@ -279,7 +279,7 @@ AsyncSocket::FNotifyProc AsyncSocket::FindNotifyProc (
     unsigned *      branchId,
     plUUID*         productId
 ) {
-    for (;;) {
+    do {
         // Get the connType
         ISocketConnHash hash;
         *bytesProcessed = GetConnHash(&hash, buffer, bytes);
@@ -305,7 +305,7 @@ AsyncSocket::FNotifyProc AsyncSocket::FindNotifyProc (
         *branchId   = hash.branchId;
         *productId  = hash.productId;
         return proc;
-    }
+    } while (false);
 
     // Failure!
     PerfAddCounter(kAsyncPerfSocketDisconnectInvalidConnType, 1);

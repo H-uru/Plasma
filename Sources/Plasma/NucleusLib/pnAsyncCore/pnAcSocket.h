@@ -99,7 +99,7 @@ static_assert(sizeof(EConnType) == sizeof(uint8_t), "typed enum not supported!")
 ***/
 
 class AsyncSocket {
-    AsyncSocket() {};
+    AsyncSocket() : user() {}
     
 public:
 
