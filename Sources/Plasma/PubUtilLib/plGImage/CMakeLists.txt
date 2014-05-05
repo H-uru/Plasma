@@ -3,10 +3,7 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-find_package(JPEG REQUIRED)
 include_directories(${JPEG_INCLUDE_DIR})
-
-find_package(PNG REQUIRED)
 include_directories(${PNG_INCLUDE_DIR})
 
 set(plGImage_SOURCES

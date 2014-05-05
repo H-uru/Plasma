@@ -40,6 +40,7 @@ find_package(OpenAL REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(EXPAT REQUIRED)
 find_package(ZLIB REQUIRED)
+find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
