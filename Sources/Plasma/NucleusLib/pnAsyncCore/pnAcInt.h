@@ -72,9 +72,9 @@ class IWorkerThreads {
 public:
     class Operation;
     
-    static void Create (); ///< start worker threads
-    static void Delete (unsigned timeout); ///< stop worker threads
-    static void Add (Operation * op); ///< add an operation to run in a worker thread.
+    static void Create ();                 /**< start worker threads */
+    static void Delete (unsigned timeout); /**< stop worker threads */
+    static void Add (Operation * op);      /**< add an operation to run in a worker thread. */
     
 private:
     struct P;

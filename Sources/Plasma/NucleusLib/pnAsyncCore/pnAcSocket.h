@@ -58,8 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-/// @warning These codes may not be changed unless ALL servers and clients are
-/// simultaneously replaced; so basically forget it =)
+/** \warning These codes may not be changed unless ALL servers and clients are
+ *  simultaneously replaced; so basically forget it =)
+ */
 enum EConnType : uint8_t {
     kConnTypeNil                    = 0,
     
@@ -129,15 +130,16 @@ public:
     *
     ***/
 
-    /// Socket event notification type.
-    /// @see FNotifyProc
+    /** Socket event notification type.
+     *  \see FNotifyProc
+     */
     enum ENotify {
-        kNotifyConnectFailed,   ///< notified when @ref Connect() fail with @ref NotifyConnect
-        kNotifyConnectSuccess,  ///< notified when @ref Connect() success with @ref NotifyConnect
-        kNotifyDisconnect,      ///< notified when @ref Delete() can be safly called after a @ref Disconnect() with @b notify = nil
-        kNotifyListenSuccess,
-        kNotifyRead,            ///< notified when data come from outside with @ref NotifyRead
-        kNotifyWrite            ///< notified when @ref Write() terminate (on success and fail) with @ref NotifyWrite
+        kNotifyConnectFailed,   /**< notified when \ref Connect() fail with \ref NotifyConnect. */
+        kNotifyConnectSuccess,  /**< notified when \ref Connect() success with \ref NotifyConnect. */
+        kNotifyDisconnect,      /**< notified when \ref Delete() can be safly called after a \ref Disconnect() with \p notify = nil. */
+        kNotifyListenSuccess,   
+        kNotifyRead,            /**< notified when data come from outside with \ref NotifyRead. */
+        kNotifyWrite            /**< notified when \ref Write() terminate (on success and fail) with \ref NotifyWrite. */
     };
     
     struct Notify;
@@ -146,27 +148,28 @@ public:
     struct NotifyRead;
     struct NotifyWrite;
     
-    /// Pointer-like cancel handler for @ref Connect() operation
+    /** Pointer-like cancel handler for \ref Connect() operation. */
     class Cancel {
         void *  ptr;
         Cancel (void * p) : ptr(p) {}
     public:
         inline Cancel() : ptr(nullptr) {}
         
-        bool ConnectCancel ();                  ///< cancel the associate connect operation if possible. And clear itself @return true if realy canceled
-        inline void Clear () { ptr = nullptr; } ///< clear the pointer content
+        bool ConnectCancel ();                  /**< cancel the associate connect operation if possible. And clear itself \return true if realy canceled. */
+        inline void Clear () { ptr = nullptr; } /**< clear the pointer content. */
         
-        inline operator bool ()   { return  ptr; }  ///< @return true if not empty
-        inline bool operator ! () { return !ptr; }  ///< @return true if empty
+        inline operator bool ()   { return  ptr; }  /**< \return true if not empty. */
+        inline bool operator ! () { return !ptr; }  /**< \return true if empty. */
         
         friend class AsyncSocket;
     };
     
-    /// Event notification handler function
-    /// @param sock socket where event append
-    /// @param code notification type
-    /// @param notify notification data
-    /// @return false to disconnect
+    /** Event notification handler function.
+     *  \param sock socket where event append.
+     *  \param code notification type.
+     *  \param notify notification data.
+     *  \return false to disconnect.
+     */
     typedef bool (* FNotifyProc) (
         AsyncSocket *       sock,
         ENotify             code,
@@ -180,7 +183,7 @@ public:
     ***/
     
     static const unsigned   kBufferSize = 1460;
-    void *  user; ///< user defined data
+    void *  user; /**< user defined data */
     
     
     /****************************************************************************
@@ -189,18 +192,19 @@ public:
     *
     ***/
     
-    /// Create and connect an async socket to specified peer
-    /// @param netAddr Address of the peer
-    /// @param notifyProc function that will be notified when socket events occure
-    /// @param param user-defined data placed in the next @ref NotifyConnect::param
-    /// @param sendData data to send after connection success
-    /// @param sendBytes size of sendData
-    /// @param connectMs connection timeout. accept kPosInfinity32.
-    /// @param localPort local port where bind input stream. 0 to disable binding.
-    /// @return handler to cancel this connection operation
-    /// @see @ref kNotifyConnectFailed
-    /// @see @ref kNotifyConnectSuccess
-    /// @see @ref ConnectCancel()
+    /** Create and connect an async socket to specified peer.
+     *  \param netAddr Address of the peer.
+     *  \param notifyProc function that will be notified when socket events occure.
+     *  \param param user-defined data placed in the next \ref NotifyConnect::param.
+     *  \param sendData data to send after connection success.
+     *  \param sendBytes size of sendData.
+     *  \param connectMs connection timeout. accept kPosInfinity32.
+     *  \param localPort local port where bind input stream. 0 to disable binding.
+     *  \return handler to cancel this connection operation.
+     *  \see \ref kNotifyConnectFailed
+     *  \see \ref kNotifyConnectSuccess
+     *  \see \ref ConnectCancel()
+     */
     static Cancel Connect (
         const plNetAddress&     netAddr,
         FNotifyProc             notifyProc,
@@ -211,39 +215,44 @@ public:
         unsigned                localPort = 0       // 0 => don't bind local port
     );
 
-    /// Cancel all connection operation using a specific notifyProc
-    /// @param notifyProc function used by connect operations to cancel
-    /// @see @ref kNotifyConnectFailed
-    /// @see @ref Connect()
+    /** Cancel all connection operation using a specific notifyProc.
+     *  \param notifyProc function used by connect operations to cancel.
+     *  \see \ref kNotifyConnectFailed.
+     *  \see \ref Connect().
+     */
     void ConnectCancel (FNotifyProc notifyProc);
 
-    /// Cancel all operation and close this socket
-    /// @param hardClose if true, the socket is closed immediatly.
+    /** Cancel all operation and close this socket.
+     *  \param hardClose if true, the socket is closed immediatly.
+     */
     void Disconnect (bool hardClose = false);
 
-    /// Delete this socket and associates data (AsyncSocket::user must be deleted by the caller)
-    /// @warning this function must only be called after @b notifyProc receive @ref kNotifyDisconnect
+    /** Delete this socket and associates data (AsyncSocket::user must be deleted by the caller).
+     *  \warning this function must only be called after \b notifyProc receive \ref kNotifyDisconnect.
+     */
     void Delete ();
 
-    /// send data to the peer
-    /// @param data data to send
-    /// @param bytes size of data
-    /// @note data is internaly copied, it can be modified/destroyed immediatly after function return.
+    /** Send data to the peer.
+     *  \param data data to send.
+     *  \param bytes size of data.
+     *  \note data is internaly copied, it can be modified/destroyed immediatly after function return.
+     */
     bool Send (const void * data, unsigned bytes);
 
-    /// send data to the peer
-    /// @param buffer data to send
-    /// @param bytes size of @b buffer
-    /// @param param user defined data to set in @ref NotifyWrite::param
-    /// @warning Buffer must stay valid until I/O has completed 
-    /// @see @ref kNotifyWrite
+    /** send data to the peer.
+     *  \param buffer data to send.
+     *  \param bytes size of \p buffer.
+     *  \param param user defined data to set in \ref NotifyWrite::param.
+     *  \warning Buffer must stay valid until I/O has completed.
+     *  \see \ref kNotifyWrite.
+     */
     bool Write (
         const void *            buffer,
         unsigned                bytes,
         void *                  param
     );
 
-    /// Change the function that will be notified when event append on this socket
+    /** Change the function that will be notified when event append on this socket. */
     void SetNotifyProc (FNotifyProc  notifyProc);
 
     // A backlog of zero (the default) means that no buffering is performed when
@@ -257,25 +266,27 @@ public:
     // the handler will be found when connection packet is received.
     // for connections with hard-coded behavior, set the notifyProc here (e.g. for use
     // protocols like SNMP on port 25)
-    /// Create a socket and wait connection from outside
-    /// @param listenAddr Local address to listen
-    /// @param notifyProc function taht will be notified when event append on this socket.
-    /// if nil, function returned by @ref FindNotifyProc() (after necesary data are receive) is used
-    /// @see @ref kNotifyListenSuccess
-    /// @todo implement
+    /** Create a socket and wait connection from outside.
+     *  \param listenAddr Local address to listen.
+     *  \param notifyProc function that will be notified when event append on this socket.
+     *  If nil, function returned by \ref FindNotifyProc() (after necesary data are receive) is used.
+     *  \see \ref kNotifyListenSuccess
+     *  \todo implement me!
+     */
     static unsigned StartListening (
         const plNetAddress&     listenAddr,
         FNotifyProc             notifyProc = nullptr
     );
-    /// @todo implement
+    /** \todo implement me! */
     static void StopListening (
         const plNetAddress&     listenAddr,
         FNotifyProc             notifyProc = nullptr
     );
     
-    /// set usage of nagling algorithm
-    /// @param enable true to enable
-    /// @note by default, nagling algorithm is enable
+    /** set usage of nagling algorithm.
+     *  \param enable true to enable.
+     *  \note by default, nagling algorithm is enable.
+     */
     void EnableNagling (bool enable);
     
     
@@ -321,7 +332,7 @@ public:
     *
     ***/
     
-    /// @return false after @ref Disconnect().
+    /** \return false after \ref Disconnect(). */
     bool Active ();
     
     inline operator bool ()   { return  Active(); }
@@ -340,7 +351,7 @@ public:
 ***/
 
 struct AsyncSocket::Notify {
-    void *          param; ///< user defined param, nil by default.
+    void *          param; /**< user defined param, nil by default. */
     //AsyncId         asyncId;
 
     Notify() : param(nullptr) { }
@@ -370,17 +381,18 @@ struct AsyncSocket::NotifyListen : AsyncSocket::NotifyConnect {
 };
 
 struct AsyncSocket::NotifyRead : AsyncSocket::Notify {
-    uint8_t *       buffer;         ///< readed data
-    unsigned        bytes;          ///< size readed
-    unsigned        bytesProcessed; ///< must be set by notifyProc to the size of proccessed data from buffer. Remain data will be placed at the start of the next read notification.
+    uint8_t *       buffer;         /**< readed data. */
+    unsigned        bytes;          /**< size readed. */
+    unsigned        bytesProcessed; /**< must be set by notifyProc to the size of proccessed data from buffer. Remain data will be placed at the start of the next read notification. */
 
     NotifyRead() : buffer(nullptr), bytes(0), bytesProcessed(0) { }
 };
 
-/// @b buffer is the data passed to @ref Write() @n
-/// @b bytes is the total size of the buffer (sended and to send) @n
-/// @b byteProcessed is the total size of the buffer send to the peer.
-/// @note buffer can be modified/delete when @b bytes == @b byteProcessed.
+/** \b buffer is the data passed to \ref Write(). \n
+ *  \b bytes is the total size of the buffer (sended and to send). \n
+ *  \b byteProcessed is the total size of the buffer send to the peer.
+ *  \note buffer can be modified/delete when \b bytes == \b byteProcessed.
+ */
 struct AsyncSocket::NotifyWrite : AsyncSocket::NotifyRead {};
 
 #endif

@@ -69,8 +69,9 @@ public:
     AsyncTimer (AsyncTimer && o) : p(o.p) { o.p = nullptr; }
     ~AsyncTimer();
     
-    // Return callbackMs to wait that long until next callback.
-    // Return kPosInfinity32 to stop callbacks (note: does not destroy Timer structure)
+    /** \return callbackMs to wait that long until next callback.
+     * \b kPosInfinity32 to stop callbacks (note: does not destroy Timer structure).
+     */
     typedef unsigned (* FProc)(void * param);
     
     // 1) Timer procs do not get starved by I/O, they are called periodically.
@@ -92,9 +93,9 @@ public:
     void DeleteAndWait ();
     
 
-    /// Set the time value for a timer
+    /** Set the time value for a timer. */
     void Set (unsigned callbackMs);
-    /// Set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs)
+    /** Set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs) */
     void SetIfHigher (unsigned callbackMs);
 
     operator bool ()  { return p; }
