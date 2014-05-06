@@ -722,17 +722,16 @@ void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID )
 {
 
-    plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
-    linkM->AddReceiver(mgr->GetKey());
-
-    plKey host = mgr->GetLocalPlayerKey();
-
-    plNetTransport &transport = mgr->TransportMgr();
+    plNetClientMgr* mgr = plNetClientMgr::GetInstance();
+    plNetTransport& transport = mgr->TransportMgr();
     int guestIdx = transport.FindMember(playerID);
-    plNetTransportMember *guestMem = transport.GetMember(guestIdx);         // -1 ?
-    if(guestMem)
-    {
+    plNetTransportMember* guestMem = transport.GetMember(guestIdx);         // -1 ?
+
+    if (guestMem) {
+        plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
+        linkM->AddReceiver(mgr->GetKey());
+
+        plKey host = mgr->GetLocalPlayerKey();
         plKey guest = guestMem->GetAvatarKey();
         plAvatarMgr::OfferLinkingBook(host, guest, linkM, host);
     }
