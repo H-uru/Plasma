@@ -84,6 +84,8 @@ public:
         kExitMode,          // GUI Exit Mode key was pressed
         kInterestingEvent,  // GUI interesting-ness has changed
         kSpecialAction,     // meaning depends on control functionality (see below) 
+        kMessageHistoryUp,  // up key to scroll back in history
+        kMessageHistoryDown,// down key to scroll forward in history
         kEndEventList
     };
 
@@ -99,6 +101,8 @@ public:
 // kEditBox
 //    kAction           - enter key hit
 //    kSpecialAction    - tab key hit (for autocompletion on Python side)
+//    kMessageHistoryUp - up key hit
+//    kMessageHistoryDown - down key hit
 // kUpDownPair
 //    kValueChanged     - the value of the pair has been changed
 // kKnob
