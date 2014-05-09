@@ -66,6 +66,9 @@ kMaxBookAlertTime = 20.0
 kAlertKIAlert = 60
 kAlertBookAlert = 61
 
+## How many of our chat messages shall we log
+kMessageHistoryListMax = 50
+
 ## KI light responders.
 kListLightResps = ["respKILightOff","respKILightOn" ]
 

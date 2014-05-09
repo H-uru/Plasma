@@ -1778,6 +1778,26 @@ class xKI(ptModifier):
             control.end()
             control.refresh()
 
+    #~~~~~~~~~~~~~~~~~#
+    # Message History #
+    #~~~~~~~~~~~~~~~~~#
+
+    ## Set a control's text to a log entry in the message history
+    def MessageHistory(self, control, set):
+
+        if (set == "up"):
+            if (self.chatMgr.MessageHistoryIs < len(self.chatMgr.MessageHistoryList)-1):
+                self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs +1
+                control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
+                control.end()
+                control.refresh()
+        elif (set == "down"):
+            if (self.chatMgr.MessageHistoryIs > 0):
+                self.chatMgr.MessageHistoryIs = self.chatMgr.MessageHistoryIs -1
+                control.setStringW(self.chatMgr.MessageHistoryList[self.chatMgr.MessageHistoryIs])
+                control.end()
+                control.refresh()
+
     #~~~~~~~~~~#
     # GZ Games #
     #~~~~~~~~~~#
@@ -5901,6 +5921,15 @@ class xKI(ptModifier):
             ctrlID = control.getTagID()
             if ctrlID == kGUI.ChatEditboxID:
                 self.Autocomplete(control)
+        # Up or Down key to scroll in the chat history
+        elif event == kMessageHistoryUp:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "up")
+        elif event == kMessageHistoryDown:
+            ctrlID = control.getTagID()
+            if ctrlID == kGUI.ChatEditboxID:
+                self.MessageHistory(control, "down")
 
     ## Process notifications originating from the BigKI itself.
     # This does not process notifications specific to an expanded view - each
