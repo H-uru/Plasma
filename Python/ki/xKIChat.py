@@ -96,6 +96,10 @@ class xKIChat(object):
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
 
+        # Message History
+        self.MessageHistoryIs = -1 # Current position in message history (up/down key)
+        self.MessageHistoryList = [] # Contains our message history
+
     #######
     # GUI #
     #######
@@ -139,6 +143,8 @@ class xKIChat(object):
     ## Make the player enter or exit chat mode.
     # Chat mode means the player's keyboard input is being sent to the chat.
     def ToggleChatMode(self, entering, firstChar=None):
+        # Reset selection in message history
+        self.MessageHistoryIs = -1
 
         if self.KILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
@@ -192,6 +198,11 @@ class xKIChat(object):
         if not message:
             return
         msg = message.lower()
+
+        # Message History input
+        self.MessageHistoryList.insert(0,message)
+        if (len(self.MessageHistoryList) > kMessageHistoryListMax):
+            self.MessageHistoryList.pop()
 
         # Get any selected players.
         userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
