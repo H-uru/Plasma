@@ -105,6 +105,14 @@ void pfGUIDialogNotifyProc::HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t
         //send notify, somebody will do something with that (like python script)
         ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kSpecialAction );
     }
+    else if(edit && event == pfGUIEditBoxMod::kWantMessageHistoryUp)
+    {
+        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryUp );
+    }
+    else if(edit && event == pfGUIEditBoxMod::kWantMessageHistoryDown)
+    {
+        ISendNotify( ctrl->GetKey(), pfGUINotifyMsg::kMessageHistoryDown );
+    }
 }
 
 void pfGUIDialogNotifyProc::OnInit( void )
