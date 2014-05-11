@@ -41,9 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "hsTimer.h"
 #include "HeadSpin.h"
-#include "hsWindows.h"
 
 #include "plTweak.h"
+
+typedef std::chrono::duration<double> dSeconds;
+typedef std::chrono::duration<double, std::milli> dMilliseconds;
 
 //
 // plTimerShare - the actual worker. All process spaces should share a single
@@ -71,45 +73,12 @@ plTimerShare::~plTimerShare()
 
 double plTimerShare::GetSeconds() const
 {
-    hsWide  ticks;
-    return hsTimer::GetRawTicks(&ticks)->AsDouble() / hsTimer::GetRawBase().AsDouble();
+    return dSeconds(GetRawTicks()).count();
 }
 
 double plTimerShare::GetMilliSeconds() const
 {
-    return GetSeconds() * 1.e3;
-}
-
-hsWide plTimerShare::DSecondsToRawTicks(double secs)
-{
-    hsWide retVal;
-    double ticks = secs * hsTimer::GetRawBase().AsDouble();
-    double hi = ticks / double(65536) / double(65536);
-    ticks -= hi;
-    retVal.fHi = int32_t(hi);
-    retVal.fLo = int32_t(ticks);
-    return retVal;
-}
-
-double plTimerShare::RawTicksToDSeconds(const hsWide& ticks)
-{
-    return ticks.AsDouble() / hsTimer::GetRawBase().AsDouble();
-}
-
-
-inline hsWide* plTimerShare::FactorInTimeZero(hsWide* ticks) const
-{
-    if( fFirstTime )
-    {   
-        fFirstTime = false;
-        fRawTimeZero = *ticks;
-        ticks->Set(0, 0);
-    }
-    else
-    {
-        ticks->Sub(&fRawTimeZero);
-    }
-    return ticks;
+    return dMilliseconds(GetRawTicks()).count();
 }
 
 double plTimerShare::IncSysSeconds()
@@ -198,157 +167,66 @@ double plTimerShare::IncSysSeconds()
 }
 
 void plTimerShare::SetRealTime(bool realTime)
-{ 
-    fRunningFrameTime = !realTime; 
-    if( realTime )
+{
+    fRunningFrameTime = !realTime;
+    if (realTime)
     {
         fRealSeconds = GetSeconds();
     }
 }
 
-#if HS_BUILD_FOR_WIN32
 
-hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
+plTimerShare::Duration plTimerShare::GetRawTicks() const
 {
-    LARGE_INTEGER   large;
+    plTimerShare::TimePoint tp = Clock::now();
 
-    if (::QueryPerformanceCounter(&large))
-    {           
-        ticks->Set(large.HighPart, large.LowPart);
+    if (fFirstTime)
+    {
+        fFirstTime = false;
+        fRawTimeZero = tp;
+        return plTimerShare::Duration(0);
     }
     else
     {
-        ticks->Set(0, ::GetTickCount());
+        return plTimerShare::Duration(tp - fRawTimeZero);
     }
-
-    return FactorInTimeZero(ticks);
 }
 
-hsWide hsTimer::IInitRawBase()
-{
-    hsWide base;
-    LARGE_INTEGER   large;
-    if (::QueryPerformanceFrequency(&large))
-        base.Set(large.HighPart, large.LowPart);
-    else
-        base.Set(0, 1000);
 
-    return base;
-}
-
-#elif HS_BUILD_FOR_UNIX
-
-#include <sys/time.h>
-
-#define kMicroSecondsUnit   1000000
-static uint32_t   gBaseTime = 0;
-
-hsWide* plTimerShare::GetRawTicks(hsWide* ticks) const
-{
-    timeval tv;
-
-    (void)::gettimeofday(&tv, nil);
-    if (gBaseTime == 0)
-        gBaseTime = tv.tv_sec;
-
-    ticks->Mul(tv.tv_sec - gBaseTime, kMicroSecondsUnit)->Add(tv.tv_usec);
-    return ticks;
-}
-
-hsWide hsTimer::IInitRawBase()
-{
-    hsWide base;
-    base.Set(0, kMicroSecondsUnit);
-    return base;
-}
-
-#endif
-
-// 
+//
 // hsTimer - thin static interface to plTimerShare. Also keeps a couple of
 //      constants.
 //
-static plTimerShare         staticTimer;
-plTimerShare*               hsTimer::fTimer = &staticTimer; // until overridden.
-const double                hsTimer::fPrecTicksPerSec = hsTimer::GetPrecTicksPerSec();
-const hsWide                hsTimer::fRawBase = hsTimer::IInitRawBase();
+static plTimerShare staticTimer;
+plTimerShare*       hsTimer::fTimer = &staticTimer; // until overridden.
 
 void hsTimer::SetTheTimer(plTimerShare* timer)
 {
     fTimer = timer;
 }
 
-///////////////////////////
-// Precision timer routines
-// These remain as statics 
-// since they are stateless 
-// anyway.
-///////////////////////////
-
 double hsTimer::GetPrecTicksPerSec()
 {
-#if HS_BUILD_FOR_WIN32
-    LARGE_INTEGER freq;
-    if( !QueryPerformanceFrequency(&freq) )
-    {
-        return 1000.f;
-    }
-    return ((double) freq.LowPart);
-#endif
-    
-    return 1;
+    return  double(plTimerShare::Clock::period::num) /
+            double(plTimerShare::Clock::period::den);
 }
 
 uint32_t hsTimer::GetPrecTickCount()
 {
-#if HS_BUILD_FOR_WIN32
-    LARGE_INTEGER ti;
-    if( !QueryPerformanceCounter(&ti) )
-        return GetTickCount();
+    return uint32_t(plTimerShare::Clock::now().time_since_epoch().count());
+}
 
-    return ti.LowPart;
-#else
-    return 1;
-#endif
-}
-uint32_t hsTimer::PrecSecsToTicks(float secs)
-{
-    return (uint32_t)(((double)secs) * fPrecTicksPerSec);
-}
 double hsTimer::PrecTicksToSecs(uint32_t ticks)
 {
-    return ((double)ticks) / fPrecTicksPerSec;
-}
-double hsTimer::PrecTicksToHz(uint32_t ticks)
-{
-    return fPrecTicksPerSec / ((double)ticks);
+    return dSeconds(plTimerShare::Duration(ticks)).count();
 }
 
 uint64_t hsTimer::GetFullTickCount()
 {
-#if HS_BUILD_FOR_WIN32
-    LARGE_INTEGER ticks;
-    QueryPerformanceCounter(&ticks);
-    return ticks.QuadPart;
-#else
-    return 0;
-#endif
+    return uint64_t(plTimerShare::Clock::now().time_since_epoch().count());
 }
 
 float hsTimer::FullTicksToMs(uint64_t ticks)
 {
-#ifdef HS_BUILD_FOR_WIN32
-    static uint64_t ticksPerTenthMs = 0;
-
-    if (ticksPerTenthMs == 0)
-    {
-        LARGE_INTEGER perfFreq;
-        QueryPerformanceFrequency(&perfFreq);
-        ticksPerTenthMs = perfFreq.QuadPart / 10000;
-    }
-
-    return float(ticks / ticksPerTenthMs) / 10.f;
-#else
-    return 0.f;
-#endif
+    return float(dMilliseconds(plTimerShare::Duration(ticks)).count());
 }
