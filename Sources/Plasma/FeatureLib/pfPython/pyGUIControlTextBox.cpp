@@ -146,7 +146,7 @@ void pyGUIControlTextBox::SetForeColor( pyColor& color )
 
 }
 
-PyObject* pyGUIControlTextBox::GetForeColor()
+PyObject* pyGUIControlTextBox::GetForeColor() const
 {
     if ( fGCkey )
     {

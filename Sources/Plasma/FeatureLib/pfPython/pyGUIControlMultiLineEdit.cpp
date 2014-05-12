@@ -559,7 +559,7 @@ void pyGUIControlMultiLineEdit::DeleteLinesFromTop( int lines )
     }
 }
 
-uint32_t pyGUIControlMultiLineEdit::GetFontSize()
+uint32_t pyGUIControlMultiLineEdit::GetFontSize() const
 {
     if (fGCkey)
     {

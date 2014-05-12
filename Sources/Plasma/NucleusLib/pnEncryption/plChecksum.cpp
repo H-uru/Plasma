@@ -104,11 +104,11 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 
 //============================================================================
 
-plMD5Checksum::plMD5Checksum(size_t size, uint8_t *buffer )
+plMD5Checksum::plMD5Checksum(size_t size, uint8_t* buffer)
 {
     fValid = false;
     Start();
-    AddTo( size, buffer );
+    AddTo(size, buffer);
     Finish();
 }
 
@@ -117,41 +117,43 @@ plMD5Checksum::plMD5Checksum()
     Clear();
 }
 
-plMD5Checksum::plMD5Checksum( const plMD5Checksum &rhs )
+plMD5Checksum::plMD5Checksum(const plMD5Checksum& rhs)
 {
-    memcpy( fChecksum, rhs.fChecksum, sizeof( fChecksum ) );
+    memset(&fContext, 0, sizeof(fContext));
+    memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
     fValid = rhs.fValid;
 }
 
-plMD5Checksum::plMD5Checksum( const plFileName &fileName )
+plMD5Checksum::plMD5Checksum(const plFileName& fileName)
 {
-    CalcFromFile( fileName );
+    CalcFromFile(fileName);
 }
 
-plMD5Checksum::plMD5Checksum( hsStream* stream )
+plMD5Checksum::plMD5Checksum(hsStream* stream)
 {
     CalcFromStream(stream);
 }
 
 void plMD5Checksum::Clear()
 {
-    memset( fChecksum, 0, sizeof( fChecksum ) );
+    memset(&fContext, 0, sizeof(fContext));
+    memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
 }
 
-void plMD5Checksum::CalcFromFile( const plFileName &fileName )
+void plMD5Checksum::CalcFromFile(const plFileName& fileName)
 {
     hsUNIXStream s;
     fValid = false;
 
-    if( s.Open(fileName) )
+    if (s.Open(fileName))
     {
         CalcFromStream(&s);
         s.Close();
     }
 }
 
-void plMD5Checksum::CalcFromStream( hsStream* stream )
+void plMD5Checksum::CalcFromStream(hsStream* stream)
 {
     uint32_t sPos = stream->GetPosition();
     unsigned loadLen = 1024 * 1024;
@@ -159,8 +161,8 @@ void plMD5Checksum::CalcFromStream( hsStream* stream )
 
     uint8_t *buf = new uint8_t[loadLen];
 
-    while(int read = stream->Read(loadLen, buf))
-        AddTo( read, buf );
+    while (int read = stream->Read(loadLen, buf))
+        AddTo(read, buf);
     delete[] buf;
 
     Finish();
@@ -169,50 +171,51 @@ void plMD5Checksum::CalcFromStream( hsStream* stream )
 
 void plMD5Checksum::Start()
 {
-    MD5_Init( &fContext );
+    MD5_Init(&fContext);
     fValid = false;
 }
 
-void plMD5Checksum::AddTo(size_t size, const uint8_t *buffer )
+void plMD5Checksum::AddTo(size_t size, const uint8_t* buffer)
 {
-    MD5_Update( &fContext, buffer, size );
+    MD5_Update(&fContext, buffer, size);
 }
 
 void plMD5Checksum::Finish()
 {
-    MD5_Final( fChecksum, &fContext );
+    MD5_Final(fChecksum, &fContext);
     fValid = true;
+    memset(&fContext, 0, sizeof(fContext));
 }
 
-const char *plMD5Checksum::GetAsHexString() const
+const char* plMD5Checksum::GetAsHexString() const
 {
-    const int   kHexStringSize = ( 2 * MD5_DIGEST_LENGTH ) + 1;
-    static char tempString[ kHexStringSize ];
+    const int   kHexStringSize = (2 * MD5_DIGEST_LENGTH) + 1;
+    static char tempString[kHexStringSize];
 
     int     i;
     char    *ptr;
 
 
-    hsAssert( fValid, "Trying to get string version of invalid checksum" );
+    hsAssert(fValid, "Trying to get string version of invalid checksum");
 
-    for( i = 0, ptr = tempString; i < sizeof( fChecksum ); i++, ptr += 2 )
-        sprintf( ptr, "%02x", fChecksum[ i ] );
+    for (i = 0, ptr = tempString; i < sizeof(fChecksum); i++, ptr += 2)
+        sprintf(ptr, "%02x", fChecksum[i]);
 
     *ptr = 0;
 
     return tempString;
 }
 
-void plMD5Checksum::SetFromHexString( const char *string )
+void plMD5Checksum::SetFromHexString(const char* string)
 {
     const char  *ptr;
     int         i;
 
 
-    hsAssert( strlen( string ) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()" );
+    hsAssert(strlen(string) == 2 * MD5_DIGEST_LENGTH, "Invalid string in MD5Checksum Set()");
 
-    for( i = 0, ptr = string; i < sizeof( fChecksum ); i++, ptr += 2 )
-        fChecksum[ i ] = ( IHexCharToInt( ptr[ 0 ] ) << 4 ) | IHexCharToInt( ptr[ 1 ] );
+    for (i = 0, ptr = string; i < sizeof(fChecksum); i++, ptr += 2)
+        fChecksum[i] = (IHexCharToInt(ptr[0]) << 4) | IHexCharToInt(ptr[1]);
 
     fValid = true;
 }
@@ -223,14 +226,14 @@ void plMD5Checksum::SetValue(uint8_t* checksum)
     memcpy(fChecksum, checksum, sizeof(fChecksum));
 }
 
-bool plMD5Checksum::operator==( const plMD5Checksum &rhs ) const
+bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
 {
     return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
 }
 
 //============================================================================
 
-plSHAChecksum::plSHAChecksum(size_t size, uint8_t *buffer )
+plSHAChecksum::plSHAChecksum(size_t size, uint8_t* buffer)
 {
     fValid = false;
     Start();
@@ -245,6 +248,7 @@ plSHAChecksum::plSHAChecksum()
 
 plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
 {
+    memset(&fContext, 0, sizeof(fContext));
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
     fValid = rhs.fValid;
 }
@@ -261,6 +265,7 @@ plSHAChecksum::plSHAChecksum(hsStream* stream)
 
 void plSHAChecksum::Clear()
 {
+    memset(&fContext, 0, sizeof(fContext));
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
 }
@@ -310,9 +315,10 @@ void plSHAChecksum::Finish()
 {
     SHA_Final(fChecksum, &fContext);
     fValid = true;
+    memset(&fContext, 0, sizeof(fContext));
 }
 
-const char *plSHAChecksum::GetAsHexString() const
+const char* plSHAChecksum::GetAsHexString() const
 {
     const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
     static char tempString[kHexStringSize];
@@ -356,7 +362,7 @@ bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
 
 //============================================================================
 
-plSHA1Checksum::plSHA1Checksum(size_t size, uint8_t *buffer )
+plSHA1Checksum::plSHA1Checksum(size_t size, uint8_t* buffer)
 {
     fValid = false;
     Start();
@@ -371,6 +377,7 @@ plSHA1Checksum::plSHA1Checksum()
 
 plSHA1Checksum::plSHA1Checksum(const plSHA1Checksum& rhs)
 {
+    memset(&fContext, 0, sizeof(fContext));
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
     fValid = rhs.fValid;
 }
@@ -389,6 +396,7 @@ void plSHA1Checksum::Clear()
 {
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
+    memset(&fContext, 0, sizeof(fContext));
 }
 
 void plSHA1Checksum::CalcFromFile(const plFileName& fileName)
@@ -436,9 +444,10 @@ void plSHA1Checksum::Finish()
 {
     SHA1_Final(fChecksum, &fContext);
     fValid = true;
+    memset(&fContext, 0, sizeof(fContext));
 }
 
-const char *plSHA1Checksum::GetAsHexString() const
+const char* plSHA1Checksum::GetAsHexString() const
 {
     const int kHexStringSize = (2 * SHA_DIGEST_LENGTH) + 1;
     static char tempString[kHexStringSize];
