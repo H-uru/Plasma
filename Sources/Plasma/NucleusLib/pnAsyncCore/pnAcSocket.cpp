@@ -846,5 +846,3 @@ void SocketDestroy() {
     if (AsyncSocket::P::fThread)
         AsyncSocket::P::fThread->Stop();
 }
-
-// TODO: listen operations!

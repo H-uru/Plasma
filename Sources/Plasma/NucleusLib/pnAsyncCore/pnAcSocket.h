@@ -137,14 +137,12 @@ public:
         kNotifyConnectFailed,   /**< notified when \ref Connect() fail with \ref NotifyConnect. */
         kNotifyConnectSuccess,  /**< notified when \ref Connect() success with \ref NotifyConnect. */
         kNotifyDisconnect,      /**< notified when \ref Delete() can be safly called after a \ref Disconnect() with \p notify = nil. */
-        kNotifyListenSuccess,   
         kNotifyRead,            /**< notified when data come from outside with \ref NotifyRead. */
         kNotifyWrite            /**< notified when \ref Write() terminate (on success and fail) with \ref NotifyWrite. */
     };
     
     struct Notify;
     struct NotifyConnect;
-    struct NotifyListen;
     struct NotifyRead;
     struct NotifyWrite;
     
@@ -260,29 +258,6 @@ public:
     // on send fail
     //void SetBacklogAlloc (unsigned bufferSize); // TODO?
 
-    // On failure, returns 0
-    // On success, returns bound port (if port number was zero, returns assigned port)
-    // For connections that will use kConnType* connections, set notifyProc = nil;
-    // the handler will be found when connection packet is received.
-    // for connections with hard-coded behavior, set the notifyProc here (e.g. for use
-    // protocols like SNMP on port 25)
-    /** Create a socket and wait connection from outside.
-     *  \param listenAddr Local address to listen.
-     *  \param notifyProc function that will be notified when event append on this socket.
-     *  If nil, function returned by \ref FindNotifyProc() (after necesary data are receive) is used.
-     *  \see \ref kNotifyListenSuccess
-     *  \todo implement me!
-     */
-    static unsigned StartListening (
-        const plNetAddress&     listenAddr,
-        FNotifyProc             notifyProc = nullptr
-    );
-    /** \todo implement me! */
-    static void StopListening (
-        const plNetAddress&     listenAddr,
-        FNotifyProc             notifyProc = nullptr
-    );
-    
     /** set usage of nagling algorithm.
      *  \param enable true to enable.
      *  \note by default, nagling algorithm is enable.
@@ -363,21 +338,6 @@ struct AsyncSocket::NotifyConnect : AsyncSocket::Notify {
     EConnType       connType;   
 
     NotifyConnect() : connType(kConnTypeNil) { }
-};
-
-struct AsyncSocket::NotifyListen : AsyncSocket::NotifyConnect {
-    unsigned        buildId;
-    unsigned        buildType;
-    unsigned        branchId;
-    plUUID          productId;
-    plNetAddress    addr;
-    uint8_t *       buffer;
-    unsigned        bytes;
-    unsigned        bytesProcessed;
-
-    NotifyListen()
-        : buildId(0), buildType(0), branchId(0), buffer(nullptr), bytes(0),
-          bytesProcessed(0) { }
 };
 
 struct AsyncSocket::NotifyRead : AsyncSocket::Notify {
