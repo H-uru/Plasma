@@ -176,25 +176,16 @@ void cyCamera::ControlKey(int32_t controlKey, bool activated)
 //
 void cyCamera::TransitionTo(pyKey& newCamKey, double time, bool save)
 {
-    // create message
-    plCameraMsg* pMsg = new plCameraMsg;
-    if ( fSender )
-        pMsg->SetSender(fSender);
-    // must have a receiver!
-    if ( fTheCam )
-    {
-        pMsg->AddReceiver(fTheCam);
-        // set command to do the transition
+    if (fTheCam) {
+        plCameraMsg* pMsg = new plCameraMsg;
+        if (fSender)
+            pMsg->SetSender(fSender);
         pMsg->SetCmd(plCameraMsg::kTransitionTo);
-        // set the new camera
         pMsg->SetNewCam(newCamKey.getKey());
-        // set the transition time
         pMsg->SetTransTime(time);
-        // test to see if they want to save
-        if ( save )
+        if (save)
             pMsg->SetCmd(plCameraMsg::kPush);
-
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
+        pMsg->Send(fTheCam);
     }
 }
 
@@ -221,18 +212,12 @@ void cyCamera::SetEnableFirstPersonOverride(bool state) const
 
 void cyCamera::UndoFirstPerson()
 {
-    // create message
-    plCameraMsg* pMsg = new plCameraMsg;
-    if ( fSender )
-        pMsg->SetSender(fSender);
-    // must have a receiver!
-    if ( fTheCam )
-    {
-        pMsg->AddReceiver(fTheCam);
-        // set command to do the transition
+    if (fTheCam) {
+        plCameraMsg* pMsg = new plCameraMsg;
+        if (fSender)
+            pMsg->SetSender(fSender);
         pMsg->SetCmd(plCameraMsg::kPythonUndoFirstPerson);
-
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
+        pMsg->Send(fTheCam);
     }
 }
 
