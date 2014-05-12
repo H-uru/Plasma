@@ -1024,8 +1024,8 @@ void    pfConsole::Draw( plPipeline *p )
 
 
     plDebugText&    drawText = plDebugText::Instance();
-    
-    thisTime = (float)hsTimer::PrecTicksToSecs( hsTimer::GetPrecTickCount() );
+
+    thisTime = hsTimer::GetSeconds<float>();
 
     if( fMode == kModeHidden && fEffectCounter == 0 )
     {

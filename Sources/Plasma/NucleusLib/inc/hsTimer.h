@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plTimerShare
 {
+private:
     typedef std::chrono::high_resolution_clock  Clock;
     typedef std::chrono::time_point<Clock>      TimePoint;
     typedef Clock::duration                     Duration;
@@ -72,8 +73,39 @@ protected:
     bool        fClamping;
 
 
-    double      GetSeconds() const;
-    double      GetMilliSeconds() const;
+    template<typename T = double>
+    T GetSeconds() const
+    {
+        typedef std::chrono::duration<T> duration_type;
+        Duration d = GetRawTicks();
+        return std::chrono::duration_cast<duration_type>(d).count();
+    }
+
+    template<typename T = double>
+    T GetSeconds(uint64_t ticks) const
+    {
+        typedef std::chrono::duration<T> duration_type;
+        Duration d(ticks);
+        return std::chrono::duration_cast<duration_type>(d).count();
+    }
+
+    template<typename T = double>
+    T GetMilliSeconds() const
+    {
+        typedef std::chrono::duration<T, std::milli> duration_type;
+        Duration d = GetRawTicks();
+        return std::chrono::duration_cast<duration_type>(d).count();
+    }
+
+    template<typename T = double>
+    T GetMilliSeconds(uint64_t ticks) const
+    {
+        typedef std::chrono::duration<T, std::milli> duration_type;
+        Duration d(ticks);
+        return std::chrono::duration_cast<duration_type>(d).count();
+    }
+
+    uint64_t    GetTicks() const;
 
     float       GetDelSysSeconds() const { return fDelSysSeconds; }
     double      GetSysSeconds() const { return fSysSeconds; }
@@ -112,8 +144,19 @@ protected:
 
 
 public:
-    static double   GetSeconds() { return fTimer->GetSeconds(); }
-    static double   GetMilliSeconds() { return fTimer->GetMilliSeconds(); }
+    template<typename T = double>
+    static T GetSeconds() { return fTimer->GetSeconds<T>(); }
+
+    template<typename T = double>
+    static T GetSeconds(uint64_t ticks) { return fTimer->GetSeconds<T>(ticks); }
+
+    template<typename T = double>
+    static T GetMilliSeconds() { return fTimer->GetMilliSeconds<T>(); }
+
+    template<typename T = double>
+    static T GetMilliSeconds(uint64_t ticks) { return fTimer->GetMilliSeconds<T>(ticks); }
+
+    static uint64_t GetTicks() { return fTimer->GetTicks(); }
 
     static float    GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
     static double   GetSysSeconds() { return fTimer->GetSysSeconds(); }
@@ -132,18 +175,6 @@ public:
     static void     SetTimeSmoothingClamp(float secs) { fTimer->SetSmoothingCap(secs); }
     static float    GetTimeClamp() { return fTimer->GetTimeClamp(); }
     static bool     IsClamping() { return fTimer->IsClamping(); }
-
-    ///////////////////////////
-    // Precision timer routines - these are stateless and implemented as statics.
-    ///////////////////////////
-    static uint32_t     GetPrecTickCount();
-    static double       GetPrecTicksPerSec();
-    static double       PrecTicksToSecs(uint32_t ticks);
-
-    // If you need to time something longer than 20 seconds, use this instead of
-    // the precision timer.  It works the same, it just gives you full resolution.
-    static uint64_t   GetFullTickCount();
-    static float      FullTicksToMs(uint64_t ticks);
 
     //
     // Pass GetTheTimer() into other process space, and then call SetTheTimer() on it.

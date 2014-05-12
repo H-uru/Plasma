@@ -44,9 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plTweak.h"
 
-typedef std::chrono::duration<double> dSeconds;
-typedef std::chrono::duration<double, std::milli> dMilliseconds;
-
 //
 // plTimerShare - the actual worker. All process spaces should share a single
 //      plTimerShare to keep time synchronized across spaces.
@@ -71,14 +68,12 @@ plTimerShare::~plTimerShare()
 {
 }
 
-double plTimerShare::GetSeconds() const
+uint64_t plTimerShare::GetTicks() const
 {
-    return dSeconds(GetRawTicks()).count();
-}
+    plTimerShare::Duration d = plTimerShare::Clock::now().time_since_epoch();
+    typedef std::chrono::duration<uint64_t, plTimerShare::Clock::period> ticks;
 
-double plTimerShare::GetMilliSeconds() const
-{
-    return dMilliseconds(GetRawTicks()).count();
+    return std::chrono::duration_cast<ticks>(d).count();
 }
 
 double plTimerShare::IncSysSeconds()
@@ -194,8 +189,7 @@ plTimerShare::Duration plTimerShare::GetRawTicks() const
 
 
 //
-// hsTimer - thin static interface to plTimerShare. Also keeps a couple of
-//      constants.
+// hsTimer - thin static interface to plTimerShare.
 //
 static plTimerShare staticTimer;
 plTimerShare*       hsTimer::fTimer = &staticTimer; // until overridden.
@@ -203,30 +197,4 @@ plTimerShare*       hsTimer::fTimer = &staticTimer; // until overridden.
 void hsTimer::SetTheTimer(plTimerShare* timer)
 {
     fTimer = timer;
-}
-
-double hsTimer::GetPrecTicksPerSec()
-{
-    return  double(plTimerShare::Clock::period::num) /
-            double(plTimerShare::Clock::period::den);
-}
-
-uint32_t hsTimer::GetPrecTickCount()
-{
-    return uint32_t(plTimerShare::Clock::now().time_since_epoch().count());
-}
-
-double hsTimer::PrecTicksToSecs(uint32_t ticks)
-{
-    return dSeconds(plTimerShare::Duration(ticks)).count();
-}
-
-uint64_t hsTimer::GetFullTickCount()
-{
-    return uint64_t(plTimerShare::Clock::now().time_since_epoch().count());
-}
-
-float hsTimer::FullTicksToMs(uint64_t ticks)
-{
-    return float(dMilliseconds(plTimerShare::Duration(ticks)).count());
 }

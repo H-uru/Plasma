@@ -150,15 +150,15 @@ uint32_t GetProcSpeedAlt()
 }
 
 #define GetProfileTicks() GetPentiumCounter()
+#define TicksToMSec(t) (float(t) / float(gCyclesPerMS))
 
 #else
 
-#define GetProfileTicks() hsTimer::GetPrecTickCount()
+#define GetProfileTicks() hsTimer::GetTicks()
+#define TicksToMSec(t) hsTimer::GetMilliSeconds<float>(t)
 
 #endif // USE_FAST_TIMER
 
-#define TicksToMSec(t) (float(t) / float(gCyclesPerMS))
-#define MSecToTicks(t) (float(t) * float(gCyclesPerMS))
 
 plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
 {
@@ -169,8 +169,6 @@ plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
         fProcessorSpeed = GetProcSpeedAlt();
 
     gCyclesPerMS = fProcessorSpeed / 1000;
-#else
-    gCyclesPerMS = hsTimer::GetPrecTicksPerSec() / 1000;
 #endif
 }
 
@@ -251,7 +249,7 @@ void plProfileManager::EndFrame()
     }
 }
 
-uint32_t plProfileManager::GetTime()
+uint64_t plProfileManager::GetTime()
 {
     return GetProfileTicks();
 }
@@ -300,10 +298,10 @@ void plProfileBase::UpdateAvg()
     }
 }
 
-uint32_t plProfileBase::GetValue()
+uint64_t plProfileBase::GetValue()
 {
     if (hsCheckBits(fDisplayFlags, kDisplayTime))
-        return (uint32_t)TicksToMSec(fValue);
+        return (uint64_t)TicksToMSec(fValue);
     else
         return fValue;
 }
@@ -334,7 +332,7 @@ static  const char  *insertCommas(unsigned int value)
     return str;
 }
 
-void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
+void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
 {
     if (hsCheckBits(fDisplayFlags, kDisplayCount))
     {
@@ -416,7 +414,7 @@ plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
     return nil;
 }
 
-void plProfileLaps::BeginLap(uint32_t curValue, const char* name)
+void plProfileLaps::BeginLap(uint64_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
     if (!lap)
@@ -432,7 +430,7 @@ void plProfileLaps::BeginLap(uint32_t curValue, const char* name)
     lap->BeginTiming(curValue);
 }
 
-void plProfileLaps::EndLap(uint32_t curValue, const char* name)
+void plProfileLaps::EndLap(uint64_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
 
