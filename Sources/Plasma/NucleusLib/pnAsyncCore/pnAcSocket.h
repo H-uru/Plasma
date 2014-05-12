@@ -210,7 +210,7 @@ public:
         const void *            sendData = nullptr,
         unsigned                sendBytes = 0,
         unsigned                connectMs = kPosInfinity32,      // 0 => use default value
-        unsigned                localPort = 0       // 0 => don't bind local port
+        uint16_t                localPort = 0       // 0 => don't bind local port
     );
 
     /** Cancel all connection operation using a specific notifyProc.

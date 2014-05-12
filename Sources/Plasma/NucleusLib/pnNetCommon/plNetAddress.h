@@ -89,6 +89,13 @@ public:
     plNetAddress();
 
     /**
+     * Initializes a new network address with any address and given port number.
+     *
+     * @param port The port number as a 16-bit host order integer.
+     */
+    plNetAddress(uint16_t port);
+    
+    /**
      * Initializes a new network address from the given IPv4 address and port
      * number.
      *

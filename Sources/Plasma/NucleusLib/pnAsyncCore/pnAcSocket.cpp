@@ -338,7 +338,7 @@ AsyncSocket::Cancel AsyncSocket::Connect (
     const void *            sendData,
     unsigned                sendBytes,
     unsigned                connectMs,
-    unsigned                localPort
+    uint16_t                localPort
 ) {
     ASSERT(notifyProc);
 
@@ -367,18 +367,10 @@ AsyncSocket::Cancel AsyncSocket::Connect (
     // bind socket to local port
     op->socket.CloseOnDestroy(true);
     op->socket.SetSocket(op->hSocket);
-    if (localPort) {
-        // TODO: move this to plSocket
-        sockaddr_in addr;
-        addr.sin_family = AF_INET;
-        addr.sin_port   = htons((uint16_t) localPort);
-        addr.sin_addr.s_addr = INADDR_ANY;
-        memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
-        if (bind(op->hSocket, (sockaddr *) &addr, sizeof(addr))) {
-            LogMsg(kLogError, "bind(port %u) failed: %s", (unsigned)localPort, plNet::GetErrorMsg(plNet::GetError()));
-            delete op;
-            return Cancel(nullptr);
-        }
+    if (localPort && plNet::Bind(op->hSocket, &plNetAddress(localPort).GetAddressInfo())) {
+        LogMsg(kLogError, "bind(port %u) failed: %s", (unsigned)localPort, plNet::GetErrorMsg(plNet::GetError()));
+        delete op;
+        return Cancel(nullptr);
     }
 
     // connect

@@ -50,6 +50,13 @@ plNetAddress::plNetAddress()
     Clear();
 }
 
+plNetAddress::plNetAddress(uint16_t port)
+{
+    Clear();
+    SetAnyAddr();
+    SetPort(port);
+}
+
 plNetAddress::plNetAddress(uint32_t addr, uint16_t port)
 {
     Clear();
