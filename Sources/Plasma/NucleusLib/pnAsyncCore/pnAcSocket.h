@@ -88,7 +88,6 @@ enum EConnType : uint8_t {
     kNumConnTypes
 };
 static_assert(sizeof(EConnType) == sizeof(uint8_t), "typed enum not supported!");
-//static_assert(kNumConnTypes <= 0xFF, "EConnType overflows uint8");
 
 #define IS_TEXT_CONNTYPE(c) ((EConnType)c == kConnTypeAdminInterface)
 
@@ -327,7 +326,6 @@ public:
 
 struct AsyncSocket::Notify {
     void *          param; /**< user defined param, nil by default. */
-    //AsyncId         asyncId;
 
     Notify(void * p = nullptr) : param(p) {}
 };

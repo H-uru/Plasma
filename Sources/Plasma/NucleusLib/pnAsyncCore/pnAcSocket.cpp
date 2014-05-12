@@ -263,17 +263,20 @@ void AsyncSocket::Private::ReadOp::Callback() {
         }
     }
     
-    if (!active) { // closing
+    // socket closed: stop reading
+    if (!active) {
         sock->ReadEnd();
         delete this;
         return;
     }
 
-    if (size == 0) { // pending
+    // nothing have been readded: re-add the operation to the pendding list
+    if (size == 0) {
         Private::Add(this);
         return;
     }
-    if (size == -1) { // error
+    // error append: stop reading and close socket
+    if (size == -1) {
         sock->reading = false;
         sock->Disconnect();
         delete this;
@@ -290,8 +293,7 @@ void AsyncSocket::Private::ReadOp::Callback() {
         if (sock->Active()) {
             if (notify.bytesProcessed < notify.bytes)
                 memmove(buffer, buffer + notify.bytesProcessed, bytesUsed = notify.bytes - notify.bytesProcessed);
-            if (bytesUsed >= sizeof(buffer))
-                ; //TODO
+            hsAssert(bytesUsed < sizeof(buffer), "async read buffer is full!");
             Private::Add(this);
             return;
         }
@@ -442,13 +444,12 @@ bool AsyncSocket::Active() {
 void AsyncSocket::Private::ConnectOp::Callback () {
     {
         std::lock_guard<std::mutex> lock(fThread->coLock);
-        // revmove this from coList
+        // remove this operation from coList
         prev ? prev->next : fThread->coList = next;
         if (next)
             next->prev = prev;
     }
 
-    //ASSERT(!op->signalComplete);
     PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
 
     AsyncSocket::NotifyConnect notify(param, (EConnType) sendData[0]);
@@ -466,12 +467,10 @@ void AsyncSocket::Private::ConnectOp::Callback () {
                 break;
             }
 
-        // TODO: move this to plSocket
         socklen_t len = sizeof(AddressType);
-        if (getsockname(sock->socket.GetSocket(), (sockaddr *) &notify.localAddr, &len))
+        if (getsockname(sock->socket.GetSocket(), (sockaddr *) &notify.localAddr, &len) || len != sizeof(AddressType))
             LogMsg(kLogError, "getsockname failed");
-        len = sizeof(AddressType);
-        if (getpeername(sock->socket.GetSocket(), (sockaddr *) &notify.remoteAddr, &len))
+        if (getpeername(sock->socket.GetSocket(), (sockaddr *) &notify.remoteAddr, &len) || len != sizeof(AddressType))
             LogMsg(kLogError, "getsockname failed");
 
         sock->reading = true; // block socket deletion
@@ -624,11 +623,12 @@ void AsyncSocket::Private::SendBaseOp::Callback() {
         else if (sendData) {
             size = sock->socket.SendData((const char*)sendData, sendBytes);
             if (size == -1 && plNet::GetError() == kBlockingError)
-                size = 0; // not an error
+                size = 0; // blocking is not an fatal error
         }
     }
 
-    if (sockMode == kCancel) { // cancelled
+    // operation cancelled
+    if (sockMode == kCancel) {
         if (*sock) {
             {
                 std::lock_guard<std::mutex> lock(sock->lastSendLock);
@@ -648,13 +648,14 @@ void AsyncSocket::Private::SendBaseOp::Callback() {
         return;
     }
 
-    if (size == 0) { // delayed
-        //Notify();
+    // operation is delayed
+    if (size == 0) {
         Private::Add(this);
         return;
     }
 
-    if (size == -1) { // error
+    // fatal error handling
+    if (size == -1) {
         if (*sock)
             sock->Disconnect();
         {
@@ -704,7 +705,6 @@ void AsyncSocket::Private::SendBaseOp::Callback() {
 //===========================================================================
 bool AsyncSocket::Private::WriteOp::Notify() {
     AsyncSocket::NotifyWrite notify(param, buffer, bytes, bytes - sendBytes);
-    //notify.asyncId           = op->asyncId;
     
     return sock->notifyProc(sock, kNotifyWrite, &notify);
 }

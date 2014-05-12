@@ -70,26 +70,35 @@ public:
     ~AsyncTimer();
     
     /** \return callbackMs to wait that long until next callback.
-     * \b kPosInfinity32 to stop callbacks (note: does not destroy Timer structure).
+     *  \b kPosInfinity32 to stop callbacks (note: does not destroy Timer structure).
      */
     typedef unsigned (* FProc)(void * param);
     
-    // 1) Timer procs do not get starved by I/O, they are called periodically.
-    // 2) Timer procs will never be called by multiple threads simultaneously.
+    /**
+     * \note Timer procs do not get starved by I/O, they are called periodically.
+     * \note Timer procs will never be called by multiple threads simultaneously.
+     */
     void Create (
         FProc       timerProc, 
         unsigned    callbackMs,
         void *      param = nullptr
     );
 
-    // Timer procs can be in the process of getting called in
-    // another thread during the unregister function -- be careful!
-    // -- waitComplete = will wait until the timer has been unregistered and is
-    //    no longer in the process of being called before returning. The flag may only
-    //    be set by init/destruct threads, not I/O worker threads. In addition, extreme
-    //    care should be used to avoid a deadlock when this flag is set; in general, it
-    //    is a good idea not to hold any locks or critical sections when setting the flag.
+    /** \param destroyProc callback function called when the timer is realy deleted.
+     *  Same restrictions as \p timerProc used by \ref Create()
+     *  \warning Timer procs can be in the process of getting called in
+     *  another thread during the unregister function -- be careful!
+     */
     void Delete (FProc destroyProc = nullptr);
+    /** wait until the timer has been unregistered and is no longer in
+     *  the process of being called before returning.
+     *  \warning It should not be called inside timer or socket callback.
+     *  In addition, extreme care should be used to avoid a deadlock;
+     *  in general, it is a good idea not to hold any locks or critical sections
+     *  when called it.
+     *  \warning Timer procs can be in the process of getting called in
+     *  another thread during the unregister function -- be careful!
+     */
     void DeleteAndWait ();
     
 

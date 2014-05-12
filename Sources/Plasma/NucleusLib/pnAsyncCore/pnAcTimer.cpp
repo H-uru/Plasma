@@ -202,7 +202,6 @@ void TimerDestroy (unsigned exitThreadWaitMs) {
 
     AsyncTimer::Private::s_thread->SetQuit(true);
     AsyncTimer::Private::s_thread->event.Signal();
-    //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
     AsyncTimer::Private::s_thread->Stop();
 
     // Cleanup any timers that have been stopped but not deleted

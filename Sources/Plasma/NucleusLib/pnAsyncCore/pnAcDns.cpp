@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnAcDns.h"
 #include "pnAcInt.h"
 #include "hsThread.h"
-#include <sstream>
+#include <string>
 
 
 /*****************************************************************************
@@ -131,8 +131,6 @@ struct AsyncDns::P::Name : AsyncDns::P {
 
 //===========================================================================
 void AsyncDns::P::Name::Run () {
-    std::stringstream sstr;
-    sstr << port;
     addrinfo hints = { 0 };
     hints.ai_flags = AI_PASSIVE;
     hints.ai_family = AF_INET; //IPv4
@@ -142,7 +140,7 @@ void AsyncDns::P::Name::Run () {
     hints.ai_canonname = nullptr;
     hints.ai_addr = nullptr;
     hints.ai_next = nullptr;
-    error = getaddrinfo(name, sstr.str().c_str(), &hints, &result);
+    error = getaddrinfo(name, std::to_string(port).c_str(), &hints, &result);
     IWorkerThreads::Add(this);
 }
 
