@@ -315,8 +315,8 @@ public:
     
     
     
-    struct P; // private data
-    friend struct P;
+    struct Private; // private fields of AsyncSocket
+    friend struct Private;
 };
 
 /****************************************************************************
