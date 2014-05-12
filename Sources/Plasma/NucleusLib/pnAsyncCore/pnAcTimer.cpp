@@ -57,17 +57,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct AsyncTimer::P {
+struct AsyncTimer::Private {
     struct Thread;
     static Thread *     s_thread;
     static std::mutex   mutex;
 
-    PRIORITY_TIME(P)    priority;
-    FProc               proc;
-    void *              param;
-    LINK(P)             deleteLink;
-    bool                doDelete;
-    hsSemaphore         deleteEvent;
+    PRIORITY_TIME(Private)  priority;
+    FProc                   proc;
+    void *                  param;
+    LINK(Private)           deleteLink;
+    bool                    doDelete;
+    hsSemaphore             deleteEvent;
 
     static unsigned Run ();
     
@@ -76,16 +76,16 @@ struct AsyncTimer::P {
 };
 
 //===========================================================================
-struct AsyncTimer::P::Thread : hsThread {
-    hsBinarySemaphore                       event;
-    PRIQDECL(P, PRIORITY_TIME(P), priority) procsList;
-    LISTDECL(P, deleteLink)                 deleteList;
+struct AsyncTimer::Private::Thread : hsThread {
+    hsBinarySemaphore                                   event;
+    PRIQDECL(Private, PRIORITY_TIME(Private), priority) procsList;
+    LISTDECL(Private, deleteLink)                       deleteList;
     
     void Run();
     using hsThread::SetQuit;
 };
-AsyncTimer::P::Thread *     AsyncTimer::P::s_thread = nullptr;
-std::mutex                  AsyncTimer::P::mutex;
+AsyncTimer::Private::Thread *   AsyncTimer::Private::s_thread = nullptr;
+std::mutex                      AsyncTimer::Private::mutex;
 
 
 /****************************************************************************
@@ -95,45 +95,45 @@ std::mutex                  AsyncTimer::P::mutex;
 ***/
 
 //===========================================================================
-AsyncTimer::~AsyncTimer() { delete p; }
+AsyncTimer::~AsyncTimer() { delete timer; }
 
 //===========================================================================
 // inline because it is called only once
-inline unsigned AsyncTimer::P::Run () {
+inline unsigned AsyncTimer::Private::Run () {
     unsigned currTimeMs = TimeGetMs();
     for (;;) {
         FProc proc;
-        AsyncTimer::P * t;
+        AsyncTimer::Private * timer;
         {
             std::unique_lock<std::mutex> lock(mutex);
             
             // Delete old timers
-            while (t = s_thread->deleteList.Head()) {
-                if (!t->doDelete)
-                    t->deleteEvent.Signal();
+            while (timer = s_thread->deleteList.Head()) {
+                if (!timer->doDelete)
+                    timer->deleteEvent.Signal();
                 else {
-                    if (t->proc) {
+                    if (timer->proc) {
                         lock.unlock();
-                        t->proc(t->param);
+                        timer->proc(timer->param);
                         lock.lock();
                     }
-                    delete t;
+                    delete timer;
                 }
             }
 
             // Get first timer to run
-            t = s_thread->procsList.Root();
-            if (!t)
+            timer = s_thread->procsList.Root();
+            if (!timer)
                 return kPosInfinity32;
 
             // If it isn't time to run this timer then exit
-            if (t->priority.Get() > currTimeMs)
-                return t->priority.Get() - currTimeMs;
+            if (timer->priority.Get() > currTimeMs)
+                return timer->priority.Get() - currTimeMs;
             
-            proc = t->proc;
+            proc = timer->proc;
         }
 
-        unsigned sleepMs = proc(t->param);
+        unsigned sleepMs = proc(timer->param);
 
         // Note if return is kPosInfinity32, we do not remove the timer
         // from the queue.  Some users depend on the fact that they can
@@ -143,7 +143,7 @@ inline unsigned AsyncTimer::P::Run () {
         // timer update
         currTimeMs = TimeGetMs();
         if (sleepMs != kPosInfinity32)
-            t->priority.Set(sleepMs + currTimeMs);
+            timer->priority.Set(sleepMs + currTimeMs);
         else {
             std::lock_guard<std::mutex> lock(mutex);
             s_thread->procsList.Dequeue();
@@ -153,7 +153,7 @@ inline unsigned AsyncTimer::P::Run () {
 
 //===========================================================================
 // inline because it is called only once
-inline void AsyncTimer::P::Update (unsigned timeMs) {
+inline void AsyncTimer::Private::Update (unsigned timeMs) {
     // If the timer isn't already linked then it doesn't
     // matter whether kAsyncTimerUpdateSetPriorityHigher is
     // set; just add the timer to the queue
@@ -167,7 +167,7 @@ inline void AsyncTimer::P::Update (unsigned timeMs) {
 
 //===========================================================================
 // inline because it is called only once
-inline void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
+inline void AsyncTimer::Private::UpdateIfHigher (unsigned timeMs) {
     // If the timer isn't already linked then it doesn't
     // matter whether kAsyncTimerUpdateSetPriorityHigher is
     // set; just add the timer to the queue
@@ -180,9 +180,9 @@ inline void AsyncTimer::P::UpdateIfHigher (unsigned timeMs) {
 }
 
 //===========================================================================
-void AsyncTimer::P::Thread::Run() {
+void AsyncTimer::Private::Thread::Run() {
     do {
-        const unsigned sleepMs = P::Run();
+        const unsigned sleepMs = Private::Run();
 
         s_thread->event.Wait(std::chrono::milliseconds(sleepMs));
     } while (!s_thread->GetQuit());
@@ -197,36 +197,36 @@ void AsyncTimer::P::Thread::Run() {
 
 //===========================================================================
 void TimerDestroy (unsigned exitThreadWaitMs) {
-    if (!AsyncTimer::P::s_thread)
+    if (!AsyncTimer::Private::s_thread)
         return;
 
-    AsyncTimer::P::s_thread->SetQuit(true);
-    AsyncTimer::P::s_thread->event.Signal();
+    AsyncTimer::Private::s_thread->SetQuit(true);
+    AsyncTimer::Private::s_thread->event.Signal();
     //WaitForSingleObject(s_timerThread, exitThreadWaitMs);
-    AsyncTimer::P::s_thread->Stop();
+    AsyncTimer::Private::s_thread->Stop();
 
     // Cleanup any timers that have been stopped but not deleted
     {
-        std::unique_lock<std::mutex> lock(AsyncTimer::P::mutex);
-        while (AsyncTimer::P * t = AsyncTimer::P::s_thread->deleteList.Head()) {
-            if (!t->doDelete)
-                t->deleteEvent.Signal();
+        std::unique_lock<std::mutex> lock(AsyncTimer::Private::mutex);
+        while (AsyncTimer::Private * timer = AsyncTimer::Private::s_thread->deleteList.Head()) {
+            if (!timer->doDelete)
+                timer->deleteEvent.Signal();
             else {
-                if (t->proc) {
+                if (timer->proc) {
                     lock.unlock();
-                    t->proc(t->param);
+                    timer->proc(timer->param);
                     lock.lock();
                 }
-                delete t;
+                delete timer;
             }
         }
     }
 
-    if (AsyncTimer::P * timer = AsyncTimer::P::s_thread->procsList.Root())
+    if (AsyncTimer::Private * timer = AsyncTimer::Private::s_thread->procsList.Root())
         ErrorAssert(__LINE__, __FILE__, "TimerProc not destroyed: %p", timer->proc);
 
-    delete AsyncTimer::P::s_thread;
-    AsyncTimer::P::s_thread = nullptr;
+    delete AsyncTimer::Private::s_thread;
+    AsyncTimer::Private::s_thread = nullptr;
 }
 
 
@@ -244,33 +244,33 @@ void AsyncTimer::Create (
     unsigned        callbackMs,
     void *          param
 ) {
-    ASSERT(!p);
+    ASSERT(!timer);
     ASSERT(timerProc);
 
     // Allocate timer outside critical section
-    p               = new P;
-    p->proc         = timerProc;
-    p->param        = param;
-    p->priority.Set(TimeGetMs() + callbackMs);
+    timer               = new Private;
+    timer->proc         = timerProc;
+    timer->param        = param;
+    timer->priority.Set(TimeGetMs() + callbackMs);
 
     bool setEvent;
-    if (!P::s_thread) {
-        P::s_thread = new P::Thread();
-        P::s_thread->Start();
+    if (!Private::s_thread) {
+        Private::s_thread = new Private::Thread();
+        Private::s_thread->Start();
     }
     
     {
-        std::lock_guard<std::mutex> lock(P::mutex);
+        std::lock_guard<std::mutex> lock(Private::mutex);
         // Does this timer need to be queued?
         if (callbackMs != kPosInfinity32)
-            P::s_thread->procsList.Enqueue(p);
+            Private::s_thread->procsList.Enqueue(timer);
 
         // Does the timer thread need to be awakened?
-        setEvent = p == P::s_thread->procsList.Root();
+        setEvent = timer == Private::s_thread->procsList.Root();
     }
 
     if (setEvent)
-        P::s_thread->event.Signal();
+        Private::s_thread->event.Signal();
 }
 
 //===========================================================================
@@ -283,65 +283,65 @@ void AsyncTimer::Create (
 //    is a good idea not to hold any locks or critical sections when setting the flag.
 void AsyncTimer::Delete (FProc destroyProc) {
     // If the timer has already been destroyed then exit
-    ASSERT(p);
-    ASSERT(!p->deleteLink.IsLinked());
+    ASSERT(timer);
+    ASSERT(!timer->deleteLink.IsLinked());
 
-    p->doDelete = true;
+    timer->doDelete = true;
     // Link the timer to the deletion list
     {
-        std::lock_guard<std::mutex> lock(P::mutex);
-        p->proc = destroyProc;
-        P::s_thread->deleteList.Link(p);
+        std::lock_guard<std::mutex> lock(Private::mutex);
+        timer->proc = destroyProc;
+        Private::s_thread->deleteList.Link(timer);
     }
 
     // Force the timer thread to wake up and perform the deletion
     if (destroyProc)
-        P::s_thread->event.Signal();
-    p = nullptr;
+        Private::s_thread->event.Signal();
+    timer = nullptr;
 }
 
 //===========================================================================
 void AsyncTimer::DeleteAndWait () {
     // If the timer has already been destroyed then exit
-    ASSERT(p);
+    ASSERT(timer);
 
-    p->doDelete = false;
+    timer->doDelete = false;
     // Link the timer to the deletion list
     {
-        std::lock_guard<std::mutex> lock(P::mutex);
-        p->proc = nullptr;
-        P::s_thread->deleteList.Link(p);
+        std::lock_guard<std::mutex> lock(Private::mutex);
+        timer->proc = nullptr;
+        Private::s_thread->deleteList.Link(timer);
     }
 
     
     // Force the timer thread to wake up and perform the deletion
-    P::s_thread->event.Signal();
+    Private::s_thread->event.Signal();
     // Wait until the timer procedure completes
-    p->deleteEvent.Wait();
+    timer->deleteEvent.Wait();
 
-    delete p;
-    p = nullptr;
+    delete timer;
+    timer = nullptr;
 }
 
 //===========================================================================
 // To set the time value for a timer, use this function with flags = 0.
 // To set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs), use SETPRIORITYHIGHER
 void AsyncTimer::Set (unsigned callbackMs) {
-    ASSERT(p);
+    ASSERT(timer);
 
     bool setEvent;
     {
-        std::lock_guard<std::mutex> lock(P::mutex);
+        std::lock_guard<std::mutex> lock(Private::mutex);
         if (callbackMs != kPosInfinity32) {
-            p->Update(callbackMs + TimeGetMs());
-            setEvent = p == P::s_thread->procsList.Root();
+            timer->Update(callbackMs + TimeGetMs());
+            setEvent = timer == Private::s_thread->procsList.Root();
         }
         else
             setEvent = false;
     }
 
     if (setEvent)
-        P::s_thread->event.Signal();
+        Private::s_thread->event.Signal();
 }
 
 //===========================================================================
@@ -350,17 +350,17 @@ void AsyncTimer::SetIfHigher (unsigned callbackMs) {
 
     bool setEvent;
     {
-        std::lock_guard<std::mutex> lock(P::mutex);
+        std::lock_guard<std::mutex> lock(Private::mutex);
         if (callbackMs != kPosInfinity32) {
-            p->UpdateIfHigher(callbackMs + TimeGetMs());
-            setEvent = p == P::s_thread->procsList.Root();
+            timer->UpdateIfHigher(callbackMs + TimeGetMs());
+            setEvent = timer == Private::s_thread->procsList.Root();
         }
         else {
-            p->priority.Unlink();
+            timer->priority.Unlink();
             setEvent = false;
         }
     }
     
     if (setEvent)
-        P::s_thread->event.Signal();
+        Private::s_thread->event.Signal();
 }

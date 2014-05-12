@@ -62,11 +62,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class AsyncTimer {
 public:
-    struct P; P * p; // private data
+    struct Private; Private * timer; // private data
     
-    AsyncTimer () : p(nullptr) {}
-    AsyncTimer (AsyncTimer &  o) : p(o.p) { o.p = nullptr; }
-    AsyncTimer (AsyncTimer && o) : p(o.p) { o.p = nullptr; }
+    AsyncTimer () : timer(nullptr) {}
+    AsyncTimer (AsyncTimer &  o) : timer(o.timer) { o.timer = nullptr; }
+    AsyncTimer (AsyncTimer && o) : timer(o.timer) { o.timer = nullptr; }
     ~AsyncTimer();
     
     /** \return callbackMs to wait that long until next callback.
@@ -98,8 +98,8 @@ public:
     /** Set the time to MoreRecentOf(nextTimerCallbackMs, callbackMs) */
     void SetIfHigher (unsigned callbackMs);
 
-    operator bool ()  { return p; }
-    bool operator! () { return !p; }
+    operator bool ()  { return timer; }
+    bool operator! () { return !timer; }
 };
 
 #endif
