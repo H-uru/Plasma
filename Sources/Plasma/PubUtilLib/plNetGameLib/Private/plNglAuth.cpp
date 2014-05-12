@@ -1272,7 +1272,7 @@ static ENetError FixupPlayerName (wchar_t * name) {
 
 //===========================================================================
 static unsigned GetNonZeroTimeMs () {
-    if (unsigned ms = TimeGetMs())
+    if (unsigned ms = hsTimer::GetMilliSeconds<uint32_t>())
         return ms;
     return 1;
 }
@@ -2523,7 +2523,7 @@ bool PingRequestTrans::Recv (
     const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
 
     m_payload.Set(reply.payload, reply.payloadBytes);
-    m_replyAtMs     = TimeGetMs();
+    m_replyAtMs     = hsTimer::GetMilliSeconds<uint32_t>();
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
 

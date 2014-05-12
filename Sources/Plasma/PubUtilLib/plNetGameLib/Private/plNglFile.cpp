@@ -243,7 +243,7 @@ const unsigned kMinValidConnectionMs                = 25 * 1000;
 
 //===========================================================================
 static unsigned GetNonZeroTimeMs () {
-    if (unsigned ms = TimeGetMs())
+    if (unsigned ms = hsTimer::GetMilliSeconds<uint32_t>())
         return ms;
     return 1;
 }
@@ -299,7 +299,7 @@ static void UnlinkAndAbandonConn_CS (CliFileConn * conn) {
 static void NotifyConnSocketConnect (CliFileConn * conn) {
 
     conn->TransferRef("Connecting", "Connected");
-    conn->connectStartMs = TimeGetMs();
+    conn->connectStartMs = hsTimer::GetMilliSeconds<uint32_t>();
     conn->numFailedConnects = 0;
 
     // Make this the active server
@@ -372,7 +372,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
 
 #ifdef SERVER
     {
-        if (TimeGetMs() - conn->connectStartMs > kMinValidConnectionMs)
+        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs)
             conn->reconnectStartMs = 0;
         else
             conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
@@ -386,7 +386,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
         // less time elapsed then the connection was likely to a server
         // with an open port but with no notification procedure registered
         // for this type of communication channel.
-        if (TimeGetMs() - conn->connectStartMs > kMinValidConnectionMs) {
+        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs > kMinValidConnectionMs) {
             conn->reconnectStartMs = 0;
         }
         else {
@@ -400,7 +400,7 @@ static void NotifyConnSocketDisconnect (CliFileConn * conn) {
         // send us to a new server, therefore attempt a reconnection to the same
         // address even if the disconnect was immediate.  This is safe because the
         // file server is stateless with respect to clients.
-        if (TimeGetMs() - conn->connectStartMs <= kMinValidConnectionMs) {
+        if (hsTimer::GetMilliSeconds<uint32_t>() - conn->connectStartMs <= kMinValidConnectionMs) {
             if (++conn->numImmediateDisconnects < kMaxImmediateDisconnects)
                 conn->reconnectStartMs = GetNonZeroTimeMs() + kMaxReconnectIntervalMs;
             else
@@ -963,7 +963,7 @@ bool ManifestRequestTrans::Recv (
     const uint8_t  msg[],
     unsigned    bytes
 ) {
-    m_timeoutAtMs = TimeGetMs() + NetTransGetTimeoutMs(); // Reset the timeout counter
+    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
 
     const File2Cli_ManifestReply & reply = *(const File2Cli_ManifestReply *) msg;
 
@@ -1178,7 +1178,7 @@ bool DownloadRequestTrans::Recv (
     const uint8_t  msg[],
     unsigned    bytes
 ) {
-    m_timeoutAtMs = TimeGetMs() + NetTransGetTimeoutMs(); // Reset the timeout counter
+    m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + NetTransGetTimeoutMs(); // Reset the timeout counter
 
     const File2Cli_FileDownloadReply & reply = *(const File2Cli_FileDownloadReply *) msg;
 
