@@ -85,7 +85,7 @@ struct AsyncSocket::P : AsyncSocket {
 
     static void Add (Operation * op);
     
-    P ();
+    P (plTcpSocket, FNotifyProc);
     ~P ();
     
     void ReadEnd ();
@@ -103,10 +103,12 @@ struct AsyncSocket::P::Operation : IWorkerThreads::Operation {
     SOCKET                  hSocket;
     Mode                    sockMode;
     uint32_t                timeout; // set to 0 to cancel
+    
+    Operation(SOCKET s, Mode m, uint32_t t) : hSocket(s), sockMode(m), timeout(t) {}
 };
 
 //===========================================================================
-AsyncSocket::P::P () : notifyProc(nullptr), close(), hardClose(), lastSend(), reading() {
+AsyncSocket::P::P (plTcpSocket s, FNotifyProc p) : notifyProc(p), close(false), hardClose(false), lastSend(nullptr), reading() {
     PerfAddCounter(kAsyncPerfSocketsCurr, 1);
     PerfAddCounter(kAsyncPerfSocketsTotal, 1);
 }
@@ -244,7 +246,7 @@ struct AsyncSocket::P::ReadOp : AsyncSocket::P::Operation {
     uint8_t                     buffer[kBufferSize];
     unsigned                    bytesUsed;
 
-    ReadOp () : sock(), bytesUsed(0) {}
+    ReadOp (AsyncSocket::P * s) : Operation(s->socket.GetSocket(), Mode::kRead, kPosInfinity32), sock(s), bytesUsed(0) {}
     void Callback ();
 };
 
@@ -278,13 +280,8 @@ void AsyncSocket::P::ReadOp::Callback() {
         return;
     }
 
-    NotifyRead notify;
+    NotifyRead notify(buffer, size + bytesUsed);
 
-    notify.param            = nullptr;
-    //notify.asyncId          = 0;
-    notify.buffer           = buffer;
-    notify.bytes            = size + bytesUsed;
-    notify.bytesProcessed   = 0;
     if (!sock->notifyProc(sock, kNotifyRead, &notify))
         sock->Disconnect();
 
@@ -317,7 +314,6 @@ struct AsyncSocket::P::ConnectOp : AsyncSocket::P::Operation {
     ConnectOp *             prev;
     plTcpSocket             socket;
     
-    //unsigned                localPort;
     plNetAddress            remoteAddr;
     
     FNotifyProc             notifyProc;
@@ -327,6 +323,11 @@ struct AsyncSocket::P::ConnectOp : AsyncSocket::P::Operation {
 
     void Callback ();
     void operator delete (void * ptr) throw() { free(ptr); }
+    
+    ConnectOp(const plNetAddress& a, FNotifyProc n, void* p, unsigned s, unsigned t)
+     : Operation(plNet::NewTCP(), P::Operation::kWrite, t ? hsTimer::PrecSecsToTicks(t * 1.e3f) : kPosInfinity32),
+       next(), prev(nullptr), socket(), remoteAddr(a), notifyProc(n),
+       param(p), sendBytes(s) {}
 };
 
 //===========================================================================
@@ -344,26 +345,17 @@ AsyncSocket::Cancel AsyncSocket::Connect (
     // create async connection record with enough extra bytes for sendData
     P::ConnectOp * op;
     if (sendBytes) {
-        op = new(malloc(sizeof(P::ConnectOp) + sendBytes - 1)) P::ConnectOp;
+        op = new(malloc(sizeof(P::ConnectOp) + sendBytes - 1)) P::ConnectOp(
+            netAddr, notifyProc, param, sendBytes, connectMs
+        );
         memcpy(op->sendData, sendData, sendBytes);
     } else {
-        op = new(malloc(sizeof(P::ConnectOp))) P::ConnectOp; // All ConnectOp must be allocated with malloc!
+         // All ConnectOp must be allocated with malloc!
+        op = new(malloc(sizeof(P::ConnectOp))) P::ConnectOp(
+            netAddr, notifyProc, param, sendBytes, connectMs
+        );
         op->sendData[0] = kConnTypeNil;
     }
-
-    // init ConnectOp fields
-    op->prev                    = nullptr;
-    //op->localPort               = localPort;
-    op->remoteAddr              = netAddr;
-    op->notifyProc              = notifyProc;
-    op->param                   = param;
-    op->sendBytes               = sendBytes;
-    
-    // init Operation fields
-    op->hSocket                 = plNet::NewTCP();
-    op->sockMode                = P::Operation::kWrite;
-    op->timeout                 = connectMs ? hsTimer::PrecSecsToTicks(connectMs * 1.e3f) : kPosInfinity32;
-
 
     // check created socket
     if (op->hSocket == kBadSocket) {
@@ -466,18 +458,15 @@ void AsyncSocket::P::ConnectOp::Callback () {
     //ASSERT(!op->signalComplete);
     PerfSubCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
 
-    AsyncSocket::NotifyConnect notify;
-    notify.param        = param;
-    notify.connType     = (EConnType) sendData[0];
+    AsyncSocket::NotifyConnect notify(param, (EConnType) sendData[0]);
 
     do {
         if (sockMode == kCancel)
             break;
-        P * sock            = new P;
-        sock->socket        = socket;
-        sock->notifyProc    = notifyProc;
-        sock->socket.CloseOnDestroy(true);
-
+        
+        P * sock = new P(socket, notifyProc);
+        
+        socket.CloseOnDestroy(true);
         if (sendBytes)
             if (!sock->Send(sendData, sendBytes)) {
                 delete sock;
@@ -497,18 +486,15 @@ void AsyncSocket::P::ConnectOp::Callback () {
             sock->Disconnect();
             sock->ReadEnd();
         } else {
-            ReadOp * read = new ReadOp;
-            sock->reading = true;
-            read->sock = sock;
+            ReadOp * read = new ReadOp(sock);
             
-            read->hSocket = hSocket;
-            read->sockMode = kRead;
-            read->timeout = kPosInfinity32;
-            
-            std::lock_guard<std::mutex> lock(sock->sockLock);
-            if (*sock)
-                P::Add(read);
-            else {
+            bool readAdded;
+            {
+                std::lock_guard<std::mutex> lock(sock->sockLock);
+                if (readAdded = *sock)
+                    P::Add(read);
+            }
+            if (!readAdded) {
                 delete read;
                 sock->ReadEnd();
             }
@@ -519,7 +505,7 @@ void AsyncSocket::P::ConnectOp::Callback () {
     } while (0);
 
     // handle connection failure
-    notify.remoteAddr   = remoteAddr;
+    notify.remoteAddr = remoteAddr;
     notify.localAddr.Clear();
     notifyProc(nullptr, kNotifyConnectFailed, &notify);
 
@@ -538,24 +524,29 @@ struct AsyncSocket::P::SendBaseOp : AsyncSocket::P::Operation {
     SendBaseOp *                next;
     AsyncSocket::P *            sock;
     unsigned                    sendBytes;
-    uint8_t *                   sendData;
+    const uint8_t *             sendData;
 
-    SendBaseOp() : next(), sock(), sendBytes(0), sendData() {}
+    SendBaseOp(AsyncSocket::P * s, unsigned l, const uint8_t* d)
+     : Operation(s->socket.GetSocket(), kWrite, -1),
+       next(nullptr), sock(s), sendBytes(l), sendData(d) {}
+    
     void Callback();
     virtual bool Notify() = 0;
 };
 struct AsyncSocket::P::SendOp : AsyncSocket::P::SendBaseOp {
     uint8_t                     data[1]; // must be the last field
 
-    SendOp() { sendData = data; }
+    SendOp(AsyncSocket::P * s, unsigned l) : SendBaseOp(s, l, data) {}
     bool Notify() { return true; }
     void operator delete (void * ptr) throw() { free(ptr); }
 };
 struct AsyncSocket::P::WriteOp : AsyncSocket::P::SendBaseOp {
     void *                      param;
     unsigned                    bytes;
-    uint8_t *                   buffer;
+    const uint8_t *             buffer;
 
+    WriteOp(AsyncSocket::P * s, void * p, unsigned l, const uint8_t* b)
+     : SendBaseOp(s, l, b), param(p), bytes(l), buffer(b) {}
     bool Notify();
 };
 
@@ -570,14 +561,7 @@ bool AsyncSocket::Send (
         return false;
 
     P::SendOp * op;
-    op = new(malloc(sizeof(P::SendOp) + bytes - 1)) P::SendOp;
-
-    op->hSocket     = ((P*)this)->socket.GetSocket();
-    op->sockMode    = P::Operation::kWrite;
-    op->timeout     = -1;
-
-    op->sock        = (P*)this;
-    op->sendBytes   = bytes;
+    op = new(malloc(sizeof(P::SendOp) + bytes - 1)) P::SendOp((P*)this, bytes);
 
     memcpy(op->data, data, bytes);
 
@@ -610,19 +594,9 @@ bool AsyncSocket::Write (
     ASSERT(bytes);
     if (!Active())
         return false;
-    P::WriteOp * op = new P::WriteOp;
-    op->hSocket     = ((P*)this)->socket.GetSocket();
-    op->sockMode    = P::Operation::kWrite;
-    op->timeout     = -1;
-
-    op->sock        = (P*)this;
-    op->sendBytes   = bytes;
-    op->sendData    = (uint8_t *) buffer;
-
-    op->param       = param;
-    op->bytes       = bytes;
-    op->buffer      = (uint8_t *) buffer;
-
+    
+    P::WriteOp * op = new P::WriteOp((P*)this, param, bytes, static_cast<const uint8_t*>(buffer));
+    
     bool pending;
     {
         std::lock_guard<std::mutex> lock(((P*)this)->lastSendLock);
@@ -732,12 +706,9 @@ void AsyncSocket::P::SendBaseOp::Callback() {
 
 //===========================================================================
 bool AsyncSocket::P::WriteOp::Notify() {
-    AsyncSocket::NotifyWrite notify;
-    notify.param             = param;
+    AsyncSocket::NotifyWrite notify(param, buffer, bytes, bytes - sendBytes);
     //notify.asyncId           = op->asyncId;
-    notify.buffer            = buffer;
-    notify.bytes             = bytes;
-    notify.bytesProcessed    = bytes - sendBytes;
+    
     return sock->notifyProc(sock, kNotifyWrite, &notify);
 }
 
