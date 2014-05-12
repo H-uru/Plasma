@@ -59,9 +59,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct IWorkerThreads::P {
+struct IWorkerThreads::Private {
     struct Thread;
-    static P *  This;
+    static Private * This;
     
     Thread *        threads;
     unsigned        threadCount;
@@ -72,16 +72,16 @@ struct IWorkerThreads::P {
     std::mutex      queuLock;
     hsSemaphore     listSem;
     
-    P() : threads(), threadCount(0), listHead(), listQueu() {}
+    Private() : threads(), threadCount(0), listHead(), listQueu() {}
 };
-IWorkerThreads::P * IWorkerThreads::P::This = nullptr;
+IWorkerThreads::Private * IWorkerThreads::Private::This = nullptr;
 
-struct IWorkerThreads::P::Thread : hsThread {
+struct IWorkerThreads::Private::Thread : hsThread {
     void Run();
 };
 
 //===========================================================================
-void IWorkerThreads::P::Thread::Run() {
+void IWorkerThreads::Private::Thread::Run() {
     while (1) {
         This->listSem.Wait();
         
@@ -109,43 +109,43 @@ void IWorkerThreads::P::Thread::Run() {
 //===========================================================================
 void IWorkerThreads::Add (Operation * op) {
     ASSERT(op);
-    ASSERT(P::This);
+    ASSERT(Private::This);
     
     // push(op)
     op->next = nullptr;
-    std::lock_guard<std::mutex> lock(P::This->queuLock);
-    if (P::This->listQueu)
-        P::This->listQueu->next = op;
+    std::lock_guard<std::mutex> lock(Private::This->queuLock);
+    if (Private::This->listQueu)
+        Private::This->listQueu->next = op;
     else
         // list is empty: no 'pop' can append (and is not dangerous if append because op is initialised, and affectation is atomic)
         // and no other 'push' can append because queu is locked
         // => no lock needed on listHead!
-        P::This->listHead = op;
+        Private::This->listHead = op;
     
-    P::This->listQueu = op;
-    P::This->listSem.Signal();
+    Private::This->listQueu = op;
+    Private::This->listSem.Signal();
 }
 
 //===========================================================================
 void IWorkerThreads::Create () {
     ASSERT(!P::This);
     
-    P::This = new P();
-    P::This->threadCount = 8; // TODO: hsThread::hardware_concurrency() * 2 (or use directly std::thread ?)
-    P::This->threads = new P::Thread[P::This->threadCount];
-    for (int i = 0; i < P::This->threadCount; i++)
-        P::This->threads[i].Start();
+    Private::This = new Private();
+    Private::This->threadCount = 8; // TODO: hsThread::hardware_concurrency() * 2 (or use directly std::thread ?)
+    Private::This->threads = new Private::Thread[Private::This->threadCount];
+    for (int i = 0; i < Private::This->threadCount; i++)
+        Private::This->threads[i].Start();
 }
 
 //===========================================================================
 void IWorkerThreads::Delete (unsigned timeoutMs) {
-    ASSERT(P::This);
+    ASSERT(Private::This);
     
-    for (int i = 0; i < P::This->threadCount; i++)
-        P::This->listSem.Signal();
+    for (int i = 0; i < Private::This->threadCount; i++)
+        Private::This->listSem.Signal();
     
-    for (int i = 0; i < P::This->threadCount; i++)
-        P::This->threads[i].Stop(); // TODO: timeout
+    for (int i = 0; i < Private::This->threadCount; i++)
+        Private::This->threads[i].Stop(); // TODO: timeout
 }
 
 
