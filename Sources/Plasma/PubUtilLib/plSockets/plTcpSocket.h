@@ -53,7 +53,7 @@ public:
     plTcpSocket();
     plTcpSocket(SOCKET sck);
     bool operator==(const plTcpSocket & rhs);
-    int SetNoDelay();
+    int SetNoDelay(bool noDelay = true);
     int SetLinger(int intervalSecs=0);
     int SetSendBufferSize(int size);
     bool ActiveOpen(plNetAddress & addr);

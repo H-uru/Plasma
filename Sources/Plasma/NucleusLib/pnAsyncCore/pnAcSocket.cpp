@@ -54,9 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSockets/plNet.h"
 #include "plSockets/plTcpSocket.h"
 #include "inc/hsTimer.h"
-#if ! HS_BUILD_FOR_WIN32
-    #include <netinet/tcp.h> // TCP_NODELAY
-#endif
 
 /*****************************************************************************
 *
@@ -150,7 +147,6 @@ void AsyncSocket::P::Thread::Run() {
         ListFds(fds);
         
         // wait for connection or timeout
-        // TODO: move code to plSocket/plNet
         struct timeval timeout = { 0, 250*1000 }; // seconds, microseconds
         switch (select(0, &fds[0], &fds[1], 0, &timeout)) {
         case -1: LogMsg(kLogError, "socket select failed");
@@ -765,16 +761,8 @@ void AsyncSocket::EnableNagling(bool nagling) {
         std::lock_guard<std::mutex> lock(((P*)this)->sockLock);
         if (!Active())
             return;
-        int noDelay = !nagling;
         
-        // TODO: move to plSocket/plNet
-        result = setsockopt(
-            ((P*)this)->socket.GetSocket(),
-            IPPROTO_TCP,
-            TCP_NODELAY,
-            (const char*) &noDelay,
-            sizeof(noDelay)
-        );
+        ((P*)this)->socket.SetNoDelay(!nagling);
     }
     if (result)
         LogMsg(kLogError, "setsockptr failed (nagling): %s", plNet::GetErrorMsg(plNet::GetError()));
