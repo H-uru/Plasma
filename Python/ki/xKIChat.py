@@ -1332,7 +1332,7 @@ class CommandsProcessor:
         # Let's see what we need to do
         if not params:
             # No params = LINK ME!
-            if party and party.chronicleGetValue() != "":
+            if party and party.chronicleGetValue():
                 data = party.chronicleGetValue().split(";", 3)
                 ageInfo = ptAgeInfoStruct()
                 ageInfo.setAgeFilename(data[0])
@@ -1363,7 +1363,7 @@ class CommandsProcessor:
             else:
                 # Got a LIP... Need to set the chronicle
                 ageInfo = PtGetAgeInfo()
-                data = "%s;%s;%s" % (ageInfo.getAgeFilename(), ageInfo.getAgeInstanceGuid(), params[0])
+                data = "%s;%s;%s" % (ageInfo.getAgeFilename(), ageInfo.getAgeInstanceGuid(), params)
                 if not party:
                     party = ptVaultChronicleNode()
                     party.chronicleSetName(kChron.Party)
