@@ -154,13 +154,13 @@ class pfPatcherStream : public plZlibStream
     uint32_t fFlags;
 
     uint64_t fBytesWritten;
-    float fDLStartTime;
+    double fDLStartTime;
 
     plString IMakeStatusMsg() const
     {
-        float secs = hsTimer::GetSysSeconds() - fDLStartTime;
-        float bytesPerSec = fBytesWritten / secs;
-        return plFileSystem::ConvertFileSize(bytesPerSec) + "/s";
+        double secs = hsTimer::GetSysSeconds() - fDLStartTime;
+        double bytesPerSec = fBytesWritten / secs;
+        return plFileSystem::ConvertFileSize(static_cast<uint64_t>(bytesPerSec)) + "/s";
     }
 
     void IUpdateProgress(uint32_t count)
