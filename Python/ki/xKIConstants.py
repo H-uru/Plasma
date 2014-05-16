@@ -48,10 +48,6 @@ from PlasmaTypes import *
 # Uru modules.
 import xEnum
 
-## Character set constant.
-# @todo Update this when the p2fs really support unicode.
-kCharSet = "cp1252"
-
 ## Number of items to scroll through in content list.
 kContentListScrollSize = 5
 
@@ -69,6 +65,9 @@ kAlertTimeDefault = 10.0
 kMaxBookAlertTime = 20.0
 kAlertKIAlert = 60
 kAlertBookAlert = 61
+
+## How many of our chat messages shall we log
+kMessageHistoryListMax = 50
 
 ## KI light responders.
 kListLightResps = ["respKILightOff","respKILightOn" ]
@@ -112,11 +111,8 @@ class kAges:
                "Descent" : "D'ni-Tiwah",
                "EderDelin" : "Eder Delin",
                "EderTsogal" : "Eder Tsogal",
-               "Ercana" : "Er'cana",
+               "Er'canaCitySilo" : "D'ni-Ashem'en",
                "ErcanaCitySilo" : "D'ni-Ashem'en",
-               "Garden" : "Eder Kemo",
-               "Garrison" : "Gahreesen",
-               "Gira" : "Eder Gira",
                "GreatTreePub" : "The Watcher's Pub",
                "Great Zero" : "D'ni-Rezeero",
                "GreatZero" : "D'ni-Rezeero",
@@ -130,23 +126,23 @@ class kAges:
                "Kveer" : "D'ni-K'veer",
                "Neighborhood02" : "D'ni-Kirel",
                "Old Spy Room" : "D'ni-Ae'gura",
-               "Personal" : "Relto",
                "philRelto" : "Phil's Relto",
                "Shaft" : "D'ni-Tiwah",
                "Spy Room" : "D'ni-Ae'gura",
-               "spyroom" : "D'ni-Ae'gura"}
-    Hide = ["BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"]
-    NoInvite = ["Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
+               "spyroom" : "D'ni-Ae'gura",
+               "Trebivdil" : "Tre'bivdil",
+               "trebivdil" : "Tre'bivdil",
+               "vothol" : "Vothol Gallery"}
+    Hide = {"BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"}
+    NoInvite = {"Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
                 "BahroCave", "LiveBahroCave", "LiveBahroCaves", 
                 "BaronCityOffice", "ErcanaCitySilo", "GreatZero", "Shaft",
-                "Descent", "Spyroom"]
-    Replace = {"Garrison" : "Gahreesen",
-               "Personal" : "Relto",
+                "Descent", "Spyroom", "Myst"}
+    Replace = {"Ercana" : "Er'cana",
                "Garden" : "Eder Kemo",
-               "AhnonayCathedral" : "Ahnonay Cathedral",
-               "ErcanaCitySilo" : "D'ni-Ashem'en",
-               "Bevin" : "Hood",
-               "Ercana" : "Er'cana",
+               "Garrison" : "Gahreesen",
+               "Gira" : "Eder Gira",
+               "Personal" : "Relto",
               }
     
 ## Constants used for the chat.
@@ -204,6 +200,7 @@ class kColors:
     AgenGreenDk = ptColor(0.65, 0.745, 0.6353, 1.0)
                 
     DniYellow   = ptColor(0.851, 0.812, 0.576, 1.0)
+    DniYellowLt = ptColor(1.0, 1.0, 0.6, 1.0)
     DniCyan     = ptColor(0.576, 0.867, 0.851, 1.0)
     DniBlue     = ptColor(0.780, 0.706, 0.870, 1.0)
     DniRed      = ptColor(1.0, 0.216, 0.380, 1.0)
@@ -220,6 +217,7 @@ class kColors:
     
     # Chat colors (messages and headers).
     ChatMessage             = DniWhite
+    ChatMessageMention      = DniYellowLt
     ChatHeaderBroadcast     = DniBlue
     ChatHeaderPrivate       = DniYellow
     ChatHeaderAdmin         = DniCyan
@@ -255,6 +253,9 @@ class kCommands:
                   "/party" : "PartyTime"}
     Text = {"/go" : "Put one foot in front of the other and eventually you will get there.",
             "/fly" : "You close your eyes, you feel light headed and the ground slips away from your feet... Then you open your eyes and WAKE UP! (Ha, you can only dream about flying.)"}
+    Other = {"/saveclothing" : "SaveClothing",
+             "/loadclothing" : "LoadClothing",
+             "/threaten" : "CoopExample"}
 
 ## Numeric limits for the KI.
 class kLimits:

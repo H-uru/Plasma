@@ -302,8 +302,7 @@ class xSimpleImager(ptModifier):
         if id == ImagerRegion.id:
             if PtWasLocallyNotified(self.key):
                 ageMgr = ptVault()
-                #if not ImagerMembersOnly.value or ageMgr.inMyNeighborhoodAge():
-                if not ImagerMembersOnly.value or ageMgr.amOwnerOfCurrentAge():
+                if PtIsInternalRelease() or (not ImagerMembersOnly.value or ageMgr.amOwnerOfCurrentAge()):
                     if id == ImagerRegion.id:
                         for event in events:
                             if event[0] == kCollisionEvent:

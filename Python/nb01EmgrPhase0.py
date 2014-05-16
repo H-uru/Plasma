@@ -40,251 +40,256 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""
-Module: nb01EmgrPhase0.py
-Age: Neighborhood
-Date: December 2002
-Event Manager interface for Neighborhood Phase 0 content 
-"""
 
 from Plasma import *
 from PlasmaTypes import *
-import string
-import time
 import random
 
-#globals
-variable = None
-
-BooleanVARs = [
-    "nb01LinkBookGarrisonVis",
-    "nb01RatCreatureVis",
-    ]
-
-# Options for Neighborhood Randomization
-kRandomHood = {"nb01ClockVis" : (0, 1),
-               "nb01GardenFungusVis" : (0, 1),
-               "nb01DestructionCracksVis" : (0, 1),
-               "nb01LanternsVis" : (0, 1),
-               "nb01LampOption01Vis" : (0, 1),
-               "nb01OldImager01Vis" : (0, 1),
-               "nb01OldImager02Vis" : (0, 1),
-               "nb01WaterfallTorchesVis" : (0, 1),
-               "nb01ResidenceAdditionsVis" : (0, 1),
-               "nb01StainedWindowOption": (0, 1, 2)}
-
-byteEderToggle = 0
-sdlEderToggle = "nb01LinkBookEderToggle"
-sdlEderGlass = "nb01StainedGlassEders"
-byteEderGlass = 0
-sdlGZGlass = "nb01StainedGlassGZ"
-byteGZGlass = 0
-numGZGlasses = 3
-
-
-###########################################
-# These functions deal with the specific "State" (i.e. Non-boolean) cases. Each is of type INT in the neighborhood.sdl file
-#
-#Note that the following functions have to be outside of the main class 
-#in order for the dictionary StateVARs (below) to point to the proper values
-###########################################
-
-#This identifies the maximum valid value for INT Variables
-#The range is always from 00 to the value specified here
-nb01Ayhoheek5Man1StateMaxINT = 02
-nb01PuzzleWallStateMaxINT = 03
-
-def OutOfRange(VARname, NewSDLValue, myMaxINT):
-    PtDebugPrint("ERROR: nb01EmgrPhase0.OutOfRange:\tERROR: Variable %s expected range from  0 - %d. Received value of %d" % (VARname,NewSDLValue,myMaxINT))
-    pass
-
+# These are helper functions for the special state variables that need custom code.
 def Ayhoheek5Man1State(VARname, NewSDLValue):
-    #~ print "Ayhoheek5Man1State Notified."
-    #~ print "VARname = ",VARname
-    #~ print "Received value is ", NewSDLValue
+    PtDebugPrint("nb01EmgrPhase0.Ayhoheek5Man1State(): Attempting to set '{}' to a value of {}".format(VARname, NewSDLValue))
+
+    nb01Ayhoheek5Man1StateMaxINT = 2
     
     if NewSDLValue > nb01Ayhoheek5Man1StateMaxINT:
-        OutOfRange(VARname, NewSDLValue, nb01Ayhoheek5Man1StateMaxINT)
+        PtDebugPrint("ERROR: nb01EmgrPhase0.Ayhoheek5Man1State:\tERROR: Variable '{}'' expected range from  0-{}. Received value of {}.".format(VARname, nb01Ayhoheek5Man1StateMaxINT, NewSDLValue))
+        return
 
     elif NewSDLValue == 0:
-        PtDebugPrint ("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\t Paging out 5 Man Heek table completely.")
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging out 5 Man Heek table completely.")
         PtPageOutNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
 
     elif NewSDLValue == 1:
-        PtDebugPrint ("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\t Paging in broken 5 Man Heek table.")
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in broken 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1Dead")
         PtPageOutNode("nb01Ayhoheek5Man1State")
 
-
     elif NewSDLValue == 2:
-        PtDebugPrint ("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\t Paging in functional 5 Man Heek table.")
+        PtDebugPrint("DEBUG: nb01EmgrPhase0.Ayhoheek5Man1State:\tPaging in functional 5 Man Heek table.")
         PtPageInNode("nb01Ayhoheek5Man1State")
         PtPageOutNode("nb01Ayhoheek5Man1Dead")
         
     else:
-        PtDebugPrint("ERROR: nb01EmgrPhase0.Ayhoheek5Man1State: \tERROR: Unexpected value. VARname: %s NewSDLValue: %s" % (VARname, NewSDLValue))
-
-def CityLightsArchState(VARname, NewSDLValue):
-    print "CityLightsArchiState Notified."
-    print "VARname = ",VARname
-    print "Received value is ", NewSDLValue 
-
-def PuzzleWallState(VARname, NewSDLValue):
-    print "PuzzleWallState Notified."
-    print "VARname = ",VARname
-    print "Received value is ", NewSDLValue 
-
-
-StateVARs = {             # the expected range of these intergers is defined in the list above. Convention is  "variablename" + "MaxINT"
-    'nb01Ayhoheek5Man1State' : Ayhoheek5Man1State, 
-    'nb01PuzzleWallState' : PuzzleWallState
-}
+        PtDebugPrint("ERROR: nb01EmgrPhase0.Ayhoheek5Man1State:\tERROR: Invalid value ({}) for variable '{}'.".format(NewSDLValue, VARname))
+        return
 
 
 class nb01EmgrPhase0(ptResponder):
+
+    # State options for Neighborhood decoration randomization
+    HoodDecorations = {
+        "nb01ClockVis": (0, 1),
+        "nb01GardenFungusVis": (0, 1),
+        "nb01DestructionCracksVis": (0, 1),
+        "nb01LanternsVis": (0, 1),
+        "nb01LampOption01Vis": (0, 1),
+        "nb01OldImager01Vis": (0, 1),
+        "nb01OldImager02Vis": (0, 1),
+        "nb01WaterfallTorchesVis": (0, 1),
+        "nb01ResidenceAdditionsVis": (0, 1),
+        "nb01StainedWindowOption": (0, 1, 2)
+    }
+
+    # These booleans will page in/out the page sharing their name.
+    SimplePagingVars = [
+        "nb01LinkBookGarrisonVis",
+    ]
+
+    # This maps a state variable to a helper function which
+    # will be called on updates to that variable.
+    #   Calling convention is func(varName, newValue)
+    SpecialPagingVars = {
+        'nb01Ayhoheek5Man1State': Ayhoheek5Man1State,
+    }
+
+    # Link Room Pedestal randomization options
+    Pedestals = {
+        "Left": {
+            #  ----
+            #"sdlState": "nb01LinkBookGarrisonVis",
+            #"sdlGlass": "nb01StainedWindowOption",
+            #"Books" : {
+            #    1: {"Name": "Gahreesen", "Glasses": (1, 2)},
+            #}
+            # ----
+            # The Gahreesen Stained Glass doesn't observe the proper on/off rules
+            # So we won't try to regulate the Left position
+        },
+        "Center": {
+            "sdlState": "nb01LinkBookEderToggle",
+            "sdlGlass": "nb01StainedGlassEders",
+            "Books" : {
+                #1: Kemo -- deprecated
+                2: {"Name": "EderDelin", "Glasses": (1, 2, 3)},
+                3: {"Name": "EderTsogal", "Glasses": (4, 5, 6)},
+            }
+        },
+        "Right": {
+            "sdlState": "nb01LinkBookGZVis",
+            "sdlGlass": "nb01StainedGlassGZ",
+            "Books" : {
+                1: {"Name": "GreatZero", "Glasses": (1, 2, 3)},
+            }
+        }
+    }
+    PedestalSDL = []
 
     def __init__(self):
         ptResponder.__init__(self)
         random.seed()
         self.id = 5222
 
-        version = 7
-        self.version = version
-        print "__init__nb01EmgrPhase0 v.", version
+        self.version = 7
+        PtDebugPrint("__init__nb01EmgrPhase0 v.{}".format(self.version))
 
+        self._pedestalSDLValues = {}
+
+        # Store these in a list for convenience
+        for position in self.Pedestals:
+            if self.Pedestals[position]:
+                self.PedestalSDL.append(self.Pedestals[position]["sdlState"])
+                self.PedestalSDL.append(self.Pedestals[position]["sdlGlass"])
 
     def OnServerInitComplete(self):
-        global byteEderToggle
-        global byteEderGlass
-        global byteGZGlass
-
         ageSDL = PtGetAgeSDL()
-        ageSDL.setFlags(sdlEderToggle,1,1)
-        ageSDL.sendToClients(sdlEderToggle)
-        ageSDL.setNotify(self.key,sdlEderToggle,0.0)
-        byteEderToggle = ageSDL[sdlEderToggle][0]
-        print "nb01EmgrPhase0.OnServerInitComplete(): byteEderToggle = ",byteEderToggle
+        if not ageSDL:
+            PtDebugPrint("nb01EmgrPhase0.OnServerInitComplete:\tNo ageSDL. We're done here.")
+            return
 
-        ageSDL.setFlags(sdlEderGlass,1,1)
-        ageSDL.sendToClients(sdlEderGlass)
-        ageSDL.setNotify(self.key,sdlEderGlass,0.0)
-        byteEderGlass = ageSDL[sdlEderGlass][0]
-        print "nb01EmgrPhase0.OnServerInitComplete(): byteEderGlass = ",byteEderGlass
+        for sdlVar in self.PedestalSDL:
+            ageSDL.setFlags(sdlVar, 1, 1)
+            ageSDL.sendToClients(sdlVar)
+            ageSDL.setNotify(self.key, sdlVar, 0.0)
+            self._pedestalSDLValues[sdlVar] = ageSDL[sdlVar][0]
+            PtDebugPrint("nb01EmgrPhase0.OnServerInitComplete(): Pedestal SDL variable {} = {}".format(sdlVar, self._pedestalSDLValues[sdlVar]))
 
-        ageSDL.setFlags(sdlGZGlass,1,1)
-        ageSDL.sendToClients(sdlGZGlass)
-        ageSDL.setNotify(self.key,sdlGZGlass,0.0)
-        byteGZGlass = ageSDL[sdlGZGlass][0]
-        print "nb01EmgrPhase0.OnServerInitComplete(): byteGZGlass = ",byteGZGlass
+        for sdlVar in self.SimplePagingVars:
+            ageSDL.setFlags(sdlVar, 1, 1)
+            ageSDL.sendToClients(sdlVar)
+            ageSDL.setNotify(self.key, sdlVar, 0.0)
+            self.IManageSimplePagingVar(sdlVar)
 
+        for sdlVar in self.SpecialPagingVars:
+            ageSDL.setFlags(sdlVar, 1, 1)
+            ageSDL.sendToClients(sdlVar)
+            ageSDL.setNotify(self.key, sdlVar, 0.0)
+            self.SpecialPagingVars[sdlVar](sdlVar, ageSDL[sdlVar][0])
+
+        # Set up the linking room pedestals.
         if self.sceneobject.isLocallyOwned():
-            print "nb01EmgrPhase0.OnServerInitComplete(): will check the Eder Delin/Tsogal book and its stained glass..."
-            self.IManageEders()
-
-        if ((byteGZGlass > numGZGlasses) or not byteGZGlass) and self.sceneobject.isLocallyOwned():
-            newGlass = random.randint(1, numGZGlasses)
-            print "nb01EmgrPhase0.OnServerInitComplete():  GZ stained glass randomly picked to be #: ",newGlass
-            ageSDL[sdlGZGlass] = (newGlass, )
-
-        for variable in BooleanVARs:
-            ageSDL.setNotify(self.key,variable,0.0)
-            self.IManageBOOLs(variable, "")
-        for variable in StateVARs:
-            ageSDL.setNotify(self.key,variable,0.0)
-            StateVARs[variable](variable,ageSDL[variable][0])
+            PtDebugPrint("nb01EmgrPhase0.OnServerInitComplete(): Check all pedestal books and stained glasses for sanity.")
+            for position in self.Pedestals:
+                if self.Pedestals[position]:
+                    self.IManageLinkPedestal(position)
 
         # Age State Randomization
-        # This used to be in the Nexus, but that would never affect server gened hoods
-        self._RandomizeNeighborhood()
+        # This used to be in the Nexus, but that would never affect server-generated hoods
+        if self.sceneobject.isLocallyOwned():
+            self._RandomizeNeighborhood()
 
-
-    def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
+    def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         ageSDL = PtGetAgeSDL()
-        PtDebugPrint("nb01EmgrPhase0.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d" % (VARname,SDLname,tag,ageSDL[VARname][0]))
-        global byteEderToggle
-        global byteEderGlass
-        global byteGZGlass
+        PtDebugPrint("nb01EmgrPhase0.OnSDLNotify():\tVARname: {}, SDLname: {}, tag: {}, value: {}".format(VARname, SDLname, tag, ageSDL[VARname][0]))
 
-        if VARname in BooleanVARs:
-            #~ print "nb01EmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
-            self.IManageBOOLs(VARname,SDLname)
+        if VARname in self.SimplePagingVars:
+            self.IManageSimplePagingVar(VARname)
 
-        elif VARname in StateVARs.keys():
-            #~ print "nb01EmgrPhase0.OnSDLNotify : %s is a STATE Variable" % (VARname)
+        elif VARname in self.SpecialPagingVars.keys():
             NewSDLValue = ageSDL[VARname][0]
-            StateVARs[VARname](VARname, NewSDLValue)
-            print "Sending new value", NewSDLValue
+            self.SpecialPagingVars[VARname](VARname, NewSDLValue)
 
-        elif VARname == sdlEderToggle:
-            byteEderToggle = ageSDL[sdlEderToggle][0]
-            print "nb01EmgrPhase0.OnSDLNotify(): byteEderToggle = ",byteEderToggle
-#            if self.sceneobject.isLocallyOwned():
-#                self.IManageEders()
-
-        elif VARname == sdlEderGlass:
-            byteEderGlass = ageSDL[sdlEderGlass][0]
-            print "nb01EmgrPhase0.OnSDLNotify(): byteEderGlass = ",byteEderGlass
-
-        elif VARname == sdlGZGlass:
-            byteGZGlass = ageSDL[sdlGZGlass][0]
-            print "nb01EmgrPhase0.OnSDLNotify(): byteGZGlass = ",byteGZGlass
+        elif VARname in self.PedestalSDL:
+            self._pedestalSDLValues[VARname] = ageSDL[VARname][0]
+            PtDebugPrint("nb01EmgrPhase0.OnSDLNotify():\t{} = {}".format(VARname, self._pedestalSDLValues[VARname]))
 
         else:
-            PtDebugPrint("ERROR: nb01EmgrPhase0.OnSDLNotify:\tERROR: Variable %s was not recognized as a Boolean, Performance, or State Variable. " % (VARname))
-            pass
+            PtDebugPrint("ERROR: nb01EmgrPhase0.OnSDLNotify():\tVariable '{}' was not recognized.".format(VARname))
+            return
 
-
-    def IManageBOOLs(self,VARname,SDLname):
-        ageSDL = PtGetAgeSDL()
-        try:
-            if ageSDL[VARname][0] == 1: # are we paging things in?
-                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging in room ", VARname)
-                PtPageInNode(VARname)
-            elif ageSDL[VARname][0] == 0:  #are we paging things out?
-                print "variable = ", VARname
-                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageBOOLs:\tPaging out room ", VARname)
-                PtPageOutNode(VARname)
+    def IManageLinkPedestal(self, position):
+        """Manage Pedestal link books and stained glass"""
+        PtDebugPrint("nb01EmgrPhase0.IManageLinkPedestal(): PedestalPosition = {}".format(position))
+        if position in self.Pedestals:
+            pedInfo = self.Pedestals[position]
+            state = self._pedestalSDLValues[pedInfo["sdlState"]]
+            if state:
+                if state in pedInfo["Books"]:
+                    # We have this book...
+                    book = pedInfo["Books"][state]
+                    if self._pedestalSDLValues[pedInfo["sdlGlass"]] not in book["Glasses"]:
+                        # ...but the glass is wrong.
+                        self.IPickPedestalGlass(position, book)
+                else:
+                    # This is not a valid book for this pedestal.  Get a new one.
+                    self.IPickPedestalBook(position)
             else:
-                sdlvalue = ageSDL[VARname][0]
-                PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs:\tVariable %s had unexpected SDL value of %s" % (VARname,sdlvalue))
-        except:
-            PtDebugPrint("ERROR: nb01EmgrPhase0.IManageBOOLs: problem with %s" % VARname)
-            pass
-
-
-    def IManageEders(self,onInit=0):
-        print "nb01EmgrPhase0.IManageEders(): byteEderToggle = ",byteEderToggle,"; byteEderGlass = ",byteEderGlass
-        if byteEderToggle:
-            if byteEderToggle == 2 and byteEderGlass not in (0,1,2,3):
-                self.IPickEderGlass(2)
-            elif byteEderToggle == 3 and byteEderGlass not in (0,4,5,6):
-                self.IPickEderGlass(3)
-            elif byteEderToggle not in (2,3):
-                self.IPickEderBooks()
+                # No book, clear the glass if it's set.
+                self.IPickPedestalGlass(position, 0)
         else:
-            if byteEderGlass:
-                self.IPickEderGlass(0)
+            PtDebugPrint("nb01EmgrPhase0.IManageLinkPedestal(): No pedestal named '{}'.  Ignoring.".format(position))
 
+    def IPickPedestalBook(self, position):
+        if position in self.Pedestals:
+            # Select a random book from this pedestal's list.
+            newBookChoice = random.choice(list(self.Pedestals[position]["Books"].keys()))
+            self._UpdateVaultSDL(self.Pedestals[position]["sdlState"], newBookChoice)
 
-    def IPickEderBooks(self):
-        print "nb01EmgrPhase0.IPickEderBooks()"
-        newBook = random.randint(2, 3)
-        ageSDL = PtGetAgeSDL()
-        ageSDL[sdlEderToggle] = (newBook, )
-        self.IPickEderGlass(newBook)
+            newBook = self.Pedestals[position]["Books"][newBookChoice]
+            PtDebugPrint("nb01EmgrPhase0.IPickPedestalBook():\tSelecting {} as new book for pedestal.".format(newBook["Name"]))
 
+            # Update the stained glass to match.
+            self.IPickPedestalGlass(position, newBook)
+        else:
+            PtDebugPrint("nb01EmgrPhase0.IPickPedestalBook(): No pedestal named '{}'.  Ignoring.".format(position))
 
-    def IPickEderGlass(self,eder):
-        print "nb01EmgrPhase0.IPickEderGlass()"
-        newGlass = 0
-        if eder == 2:
-            newGlass = random.randint(1, 3)
-        elif eder == 3:
-            newGlass = random.randint(4, 6)
-        ageSDL = PtGetAgeSDL()
-        ageSDL[sdlEderGlass] = (newGlass, )
+    def IPickPedestalGlass(self, position, bookInfo):
+        if position in self.Pedestals:
+            newGlass = 0
+            if bookInfo:
+                # Select a random glass from this book's list.
+                newGlass = bookInfo["Glasses"][random.randint(0, len(bookInfo["Glasses"]) - 1)]
+                PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass():\tSelecting stained glass #{} to match book for {}.".format(newGlass, bookInfo["Name"]))
+            else:
+                PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass():\tNo book.  Clearing stained glass.")
+            self._UpdateVaultSDL(self.Pedestals[position]["sdlGlass"], newGlass)
+        else:
+            PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass(): No pedestal named '{}'.  Ignoring.".format(position))
 
+    def _UpdateSimpleStateVar(self, ageSDL, sdlName, value):
+        if isinstance(ageSDL, ptSDLStateDataRecord):
+            var = ageSDL.findVar(sdlName)
+            if var is None:
+                PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' not found!".format(sdlName))
+                return
+        elif isinstance(ageSDL, ptSimpleStateVariable):
+            var = ageSDL
+        else:
+            raise TypeError("ageSDL must be a ptSDLStateDataRecord or a ptSimpleStateVariable")
+
+        if var.getType() == PtSDLVarType.kBool:
+            var.setBool(value)
+        elif var.getType() in (PtSDLVarType.kInt, PtSDLVarType.kByte):
+            var.setInt(value)
+        elif var.getType() == PtSDLVarType.kString32:
+            var.setString(value)
+        else:
+            PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(sdlName))
+            return
+        PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value))
+
+    def _UpdateVaultSDL(self, sdlVar, value):
+        ageVault = ptAgeVault()
+        if not ageVault:
+            PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tNo AgeVault?!")
+            return
+        ageSDL = ageVault.getAgeSDL()
+        if not ageVault:
+            PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tVaultSDL is null?!")
+            return
+
+        self._UpdateSimpleStateVar(ageSDL, sdlVar, value)
+        ageVault.updateAgeSDL(ageSDL)
 
     def _RandomizeNeighborhood(self):
         """Does initial state scrambling for the Neighborhood.
@@ -300,26 +305,31 @@ class nb01EmgrPhase0(ptResponder):
             PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood():\tAgeVaultSDL is None. Bailing!")
             return
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
-        for name, values in kRandomHood.iteritems():
+        for name, values in self.HoodDecorations.iteritems():
             var = ageSDL.findVar(name)
             if var is None:
-                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): SDL Variable %s not found!" % var)
-                continue
-            # Duck Typing makes this unnesecary.
-            if var.getType() == PtSDLVarType.kBool:
-                func = var.setBool
-            elif var.getType() in (PtSDLVarType.kInt, PtSDLVarType.kByte):
-                func = var.setInt
-            elif var.getType() == PtSDLVarType.kString32:
-                func = var.setString
-            else:
-                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): %s has an unknown type! Not randomizing." % name)
-                continue
+                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): '{}' not found!".format(sdlName))
+                return
 
             # Only randomize if we're at the default
             if not var.isUsed():
                 theChosenValue = random.choice(values)
-                func(theChosenValue)
-                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): `%s` = %s" % (name, str(theChosenValue)))
+                self._UpdateSimpleStateVar(var, name, theChosenValue)
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
         vault.updateAgeSDL(ageSDL)
+
+    def IManageSimplePagingVar(self, VARname):
+        """Load or unload a page based on the value of the specified SDL"""
+        ageSDL = PtGetAgeSDL()
+        try:
+            if ageSDL[VARname][0] == 1: # Are we paging things in?
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging in {}".format(VARname))
+                PtPageInNode(VARname)
+            elif ageSDL[VARname][0] == 0:  # Are we paging things out?
+                PtDebugPrint("DEBUG: nb01EmgrPhase0.IManageSimplePagingVar:\tPaging out {}".format(VARname))
+                PtPageOutNode(VARname)
+            else:
+                PtDebugPrint("ERROR: nb01EmgrPhase0.IManageSimplePagingVar:\tVariable '{}' had unexpected value of {} (should be a boolean).".format(VARname, ageSDL[VARname][0]))
+        except:
+            PtDebugPrint("ERROR: nb01EmgrPhase0.IManageSimplePagingVar:\tError managing variable '{}'".format(VARname))
+            return

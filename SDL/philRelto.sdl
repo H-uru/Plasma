@@ -45,18 +45,22 @@
 #	below the current one and make your changes there.
 #==============================================================
 
-
-#
-# State Description Language for the ErcanaCitySilo
-
-STATEDESC ErcanaCitySilo
+STATEDESC philRelto
 {
-	VERSION 1
+    VERSION 1
 
-## Age Mechanics ##
-    VAR INT    ercaGotPellet[1]    DEFAULT=0 DISPLAYOPTION=red
+    VAR BOOL	philLibraryDoorClosed[1]    	DEFAULT=1
+    VAR BOOL    philBlindsClosed[1] 		DEFAULT=1
+    VAR BOOL    philDRCVest[1]      		DEFAULT=1
+}
 
-# Boolean variables
-    VAR BOOL    ercaGZMarkerVis[1]    DEFAULT=0 DEFAULTOPTION=VAULT
+STATEDESC philRelto
+{
+    VERSION 2
 
+    VAR BOOL	philLibraryDoorClosed[1]    	DEFAULT=1
+    VAR BOOL    philBlindsClosed[1] 		DEFAULT=1
+    VAR BOOL    philDRCVest[1]      		DEFAULT=0
+
+    VAR BOOL    philCalendarSpark10[1]      	DEFAULT=0
 }

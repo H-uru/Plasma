@@ -229,18 +229,23 @@ def CMPNodeDate(nodeA, nodeB):
 ## Replace the Age's name as is appropriate.
 # It accepts as a parameter a name, unlike GetAgeName.
 def FilterAgeName(ageName):
+    # Many age instance names without a possessive component have a spurious
+    # apostrophe at the end of the name. Let's correct that before we do anything
+    if ageName.endswith("'"):
+        ageName = ageName[:-1]
 
     # Replace file names with display names - only once, from the right.
     # This fixes a bug in which avatars' names containing words like Garden
     # incorrectly get replaced.
     for Age, replacement in kAges.Replace.iteritems():
-        ageNameList = ageName.rsplit(Age, 1)
-        ageName = replacement.join(ageNameList)
+        # Only replace if the replacement is not already in there...
+        # Otherwise we wend up with junk like "Eder Eder Gira"
+        if ageName.find(replacement) == -1:
+            ageNameList = ageName.rsplit(Age, 1)
+            ageName = replacement.join(ageNameList)
 
     # Find the appropriate display name.
-    if ageName == "GreatZero'":
-        ageName = "D'ni-Rezeero'"
-    elif ageName == "???" or ageName == "BahroCave":
+    if ageName == "???" or ageName == "BahroCave":
         sdl = xPsnlVaultSDL()
         if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
             ageName = "D'ni-Rudenna"
@@ -257,39 +262,31 @@ def FilterAgeName(ageName):
     ageName = ageName.replace("(null)", "").strip()
     return ageName
 
+def FilterPlayerInfoList(playerInfoList):
+    """Removes yourself from a list of player info nodes"""
+    myID = PtGetLocalPlayer().getPlayerID()
+    for i, playerInfo in enumerate(playerInfoList):
+        playerInfo = playerInfo.getChild().upcastToPlayerInfoNode()
+        if not playerInfo:
+            continue
+        if playerInfo.playerGetID() == myID:
+            del playerInfoList[i]
+
 ## Returns an Age's name the way a player should see it.
 # This display is used in the top-right corner of the BigKI.
 def GetAgeName(ageInfo=None):
-
-    isSubAge = False
-    ageVault = ptAgeVault()
-    if ageInfo is None:
-        ageInfo = ageVault.getAgeInfo()
-
-    if ageInfo is None:
-        return "?UNKNOWN?"
-
-    isChildAge = False
-    parent = ageInfo.getParentAgeLink()
-    if parent:
-        parentInfo = parent.getAgeInfo()
-        if parentInfo:
-            isChildAge = True
-
-    if ageInfo.getAgeFilename() != "Neighborhood":
-        subAges = ageVault.getSubAgesFolder()
-        if subAges and subAges.getChildNodeCount() > 0:
-            isSubAge = True
+    if not ageInfo:
+        ageLink = ptNetLinkingMgr().getCurrAgeLink()
+        if not ageLink:
+            return "?UNKNOWN?"
+        ageInfo = ageLink.getAgeInfo()
+        if not ageInfo:
+            return "?UNKNOWN?"
 
     if ageInfo.getAgeFilename() == "BahroCave":
         sdl = xPsnlVaultSDL()
         if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
             return "D'ni-Rudenna"
-
-    if ageInfo.getAgeInstanceName() == "Ae'gura" or ageInfo.getAgeFilename() == "city":
-        if isChildAge:
-            return "D'ni-Ae'gura'"
-        return "D'ni-Ae'gura"
 
     if ageInfo.getAgeFilename() in kAges.Hide:
         return "Unknown"
@@ -297,19 +294,7 @@ def GetAgeName(ageInfo=None):
     if ageInfo.getAgeFilename() in kAges.Display:
         return kAges.Display[ageInfo.getAgeFilename()]
 
-    # Don't include the owner's name on D'ni locations.
-    if ageInfo.getAgeInstanceName().startswith("D'ni"):
-        return ageInfo.getAgeInstanceName()
-
-    # For some reason it thinks Er'cana and Ahnonay are sub-Ages. Get their
-    # display name instead.
-    if (isChildAge or isSubAge) and not (ageInfo.getAgeFilename() == "Ercana" or ageInfo.getAgeFilename()[:7] == "Ahnonay"):
-        localizeName = ageInfo.getAgeInstanceName()
-        if isChildAge:
-            localizeName += "'"
-    else:
-        localizeName = ageInfo.getDisplayName()
-
+    localizeName = ageInfo.getDisplayName()
     return FilterAgeName(xLocTools.LocalizeAgeName(localizeName))
 
 ## Find the player's neighborhood.
@@ -331,13 +316,13 @@ def GetNeighbors():
         return None
 
 ## Sends a notification message to a script.
-def SendNote(key, script, extraInfo):
+def SendNote(key, script, name, varValue=1.0, net=False):
 
     note = ptNotify(key)
     note.clearReceivers()
     note.addReceiver(script)
-    note.netPropagate(0)
-    note.netForce(0)
+    note.netPropagate(net)
+    note.netForce(net)
     note.setActivate(1.0)
-    note.addVarNumber(str(extraInfo), 1.0)
+    note.addVarNumber(str(name), varValue)
     note.send()

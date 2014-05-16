@@ -124,6 +124,11 @@ xChatEmoteXlate = {
     Plasma.PtGetLocalizedString("KI.Commands.Winded"): ("Winded", "KI.EmoteStrings.Winded")
 }
 
+# Insert an emote animation from xChatEmoteXlate here to make it become a loop
+xChatEmoteLoop = [
+    "Dance"
+]
+
 ## A list of the specially handled extended chat commands.
 xChatSpecialHandledCommands = [
     Plasma.PtGetLocalizedString("KI.Commands.ChatAllAge"),

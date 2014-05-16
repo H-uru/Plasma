@@ -50,6 +50,7 @@ from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaNetConstants import *
 from PlasmaTypes import *
+from PlasmaVaultConstants import *
 
 import xLocTools
 
@@ -96,6 +97,10 @@ class xKIChat(object):
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
 
+        # Message History
+        self.MessageHistoryIs = -1 # Current position in message history (up/down key)
+        self.MessageHistoryList = [] # Contains our message history
+
     #######
     # GUI #
     #######
@@ -139,6 +144,8 @@ class xKIChat(object):
     ## Make the player enter or exit chat mode.
     # Chat mode means the player's keyboard input is being sent to the chat.
     def ToggleChatMode(self, entering, firstChar=None):
+        # Reset selection in message history
+        self.MessageHistoryIs = -1
 
         if self.KILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
@@ -187,17 +194,16 @@ class xKIChat(object):
         if PtGetLocalAvatar().avatar.getCurrentMode() == PtBrainModes.kAFK:
             PtAvatarExitAFK()
 
-        try:
-            message = unicode(message, kCharSet)
-        except UnicodeError:
-            message = None
-            self.AddChatLine(None, PtGetLocalizedString("KI.Errors.TextOnly"), kChat.SystemMessage)
-
         # Check for special commands.
         message = self.commandsProcessor(message)
         if not message:
             return
         msg = message.lower()
+
+        # Message History input
+        self.MessageHistoryList.insert(0,message)
+        if (len(self.MessageHistoryList) > kMessageHistoryListMax):
+            self.MessageHistoryList.pop()
 
         # Get any selected players.
         userListBox = ptGUIControlListBox(KIMini.dialog.getControlFromTag(kGUI.PlayerList))
@@ -352,11 +358,21 @@ class xKIChat(object):
                     if fldrType == PtVaultStandardNodes.kAgeOwnersFolder:
                         fldrType = PtVaultStandardNodes.kHoodMembersFolder
                         cFlags.neighbors = True
-                    selPlyrList = self.GetOnlinePlayers(toPlyr.getChildNodeRefList())
-                    if len(selPlyrList) == 0:
-                        self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in list"]), kChat.SystemMessage)
-                        return
-                    cFlags.interAge = 1
+
+                    # Special rules for AllPlayers: ccr message and NOT directed!
+                    if fldrType == PtVaultStandardNodes.kAllPlayersFolder:
+                        selPlyrList = []
+                        listenerOnly = False
+                        cFlags.admin = 1
+                        cFlags.ccrBcast = 1
+                        pre = ""
+                    else:
+                        selPlyrList = self.GetOnlinePlayers(toPlyr.getChildNodeRefList())
+                        if len(selPlyrList) == 0:
+                            self.AddChatLine(None, PtGetLocalizedString("KI.Chat.WentOffline", ["Everyone in list"]), kChat.SystemMessage)
+                            return
+                        cFlags.interAge = 1
+
                     message = pre + message
                     goesToFolder = xLocTools.FolderIDToFolderName(fldrType)
 
@@ -424,7 +440,10 @@ class xKIChat(object):
             # Is it an inter-Age message?
             elif cFlags.interAge:
                 if cFlags.private:
-                    headerColor = kColors.ChatHeaderPrivate
+                    if cFlags.admin:
+                        headerColor = kColors.ChatHeaderError
+                    else:
+                        headerColor = kColors.ChatHeaderPrivate
                     forceKI = True
                 else:
                     if cFlags.neighbors:
@@ -458,10 +477,25 @@ class xKIChat(object):
                                         self.AddPlayerToRecents(buddyID)
                         except ValueError:
                             pass
-                    # Save the player's ID for replying.
+
+                    # PM Processing: Save playerID and flash client window
                     if cFlags.private:
                         self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 1)
-                        self.AddPlayerToRecents(player.getPlayerID())
+                        PtFlashWindow()
+                    # Are we mentioned in the message?
+                    elif message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                        bodyColor = kColors.ChatMessageMention
+                        PtFlashWindow()
+
+            # Is it a ccr broadcast?
+            elif cFlags.ccrBcast:
+                headerColor = kColors.ChatHeaderAdmin
+                if cFlags.toSelf:
+                    pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
+                else:
+                    pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
+                forceKI = True
+                self.AddPlayerToRecents(player.getPlayerID())
 
             # Is it an admin message?
             elif cFlags.admin:
@@ -469,6 +503,11 @@ class xKIChat(object):
                     headerColor = kColors.ChatHeaderError
                     pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
+
+                    # PM Processing: Save playerID and flash client window
+                    self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 0)
+                    self.AddPlayerToRecents(player.getPlayerID())
+                    PtFlashWindow()
                 else:
                     headerColor = kColors.ChatHeaderAdmin
                     forceKI = True
@@ -483,6 +522,12 @@ class xKIChat(object):
                     pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
                     self.AddPlayerToRecents(player.getPlayerID())
 
+                    # Are we mentioned in the message?
+                    if message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                        bodyColor = kColors.ChatMessageMention
+                        forceKI = True
+                        PtFlashWindow()
+
             # Is it a private message?
             elif cFlags.private:
                 if cFlags.toSelf:
@@ -494,9 +539,11 @@ class xKIChat(object):
                     headerColor = kColors.ChatHeaderPrivate
                     pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
-                    # Save the player's ID for replying.
+
+                    # PM Processing: Save playerID and flash client window
                     self.lastPrivatePlayerID = (player.getPlayerName(), player.getPlayerID(), 0)
                     self.AddPlayerToRecents(player.getPlayerID())
+                    PtFlashWindow()
 
         # Otherwise, cFlags is just a number.
         else:
@@ -507,9 +554,7 @@ class xKIChat(object):
                 headerColor = kColors.ChatHeaderBroadcast
                 pretext = PtGetLocalizedString("KI.Chat.BroadcastMsgRecvd")
 
-        # If the KI is being forced open, flash the window for the player.
         if forceKI:
-            PtFlashWindow()
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
         if player is not None:
@@ -669,6 +714,11 @@ class ChatFlags:
         else:
             self.__dict__["admin"] = False
 
+        if flags & kRTChatGlobal:
+            self.__dict__["ccrBcast"] = True
+        else:
+            self.__dict__["ccrBcast"] = False
+
         if flags & kRTChatInterAge:
             self.__dict__["interAge"] = True
         else:
@@ -690,6 +740,13 @@ class ChatFlags:
 
         if name == "broadcast" and value:
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
+
+        elif name == "ccrBcast":
+            self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatGlobal
+            if value:
+                self.__dict__["flags"] |= kRTChatGlobal
+            else:
+                self.__dict__["flags"] &= ~kRTChatGlobal
 
         elif name == "private":
             self.__dict__["flags"] &= kRTChatFlagMask ^ kRTChatPrivate
@@ -742,6 +799,8 @@ class ChatFlags:
             string += "status "
         if self.neighbors:
             string += "neighbors "
+        if self.ccrBcast:
+            string += "ccrBcast "
         string += "channel = {} ".format(self.channel)
         string += "flags = {}".format(self.flags)
         return string
@@ -770,6 +829,7 @@ class CommandsProcessor:
         if PtIsInternalRelease():
             commands.update(kCommands.Internal)
         commands.update(kCommands.EasterEggs)
+        commands.update(kCommands.Other)
 
         # Does the message contain a standard command?
         for command, function in commands.iteritems():
@@ -795,13 +855,26 @@ class CommandsProcessor:
                 v = "are"
             self.chatMgr.AddChatLine(None, "The %s %s too heavy to lift. Maybe you should stick to feathers." % (message[len("/get "):], v), 0)
             return None
+        elif PtIsInternalRelease() and msg.startswith("/system "):
+            send = message[len("/system "):]
+            cFlags = ChatFlags(0)
+            cFlags.admin = 1
+            cFlags.ccrBcast = 1
+            cFlags.toSelf = 1
+            PtSendRTChat(PtGetLocalPlayer(), [], send, cFlags.flags)
+            fldr = xLocTools.FolderIDToFolderName(PtVaultStandardNodes.kAllPlayersFolder)
+            self.chatMgr.AddChatLine(ptPlayer(fldr, 0), send, cFlags)
+            return None
 
         # Is it an emote, a "/me" or invalid command?
         if message.startswith("/"):
             words = message.split()
             try:
                 emote = xKIExtChatCommands.xChatEmoteXlate[unicode(words[0][1:].lower())]
-                PtEmoteAvatar(emote[0])
+                if emote[0] in xKIExtChatCommands.xChatEmoteLoop:
+                    PtAvatarEnterAnimMode(emote[0])
+                else:
+                    PtEmoteAvatar(emote[0])
                 if PtGetLanguage() == PtLanguage.kEnglish:
                     avatar = PtGetLocalAvatar()
                     gender = avatar.avatar.getAvatarClothingGroup()
@@ -1048,7 +1121,7 @@ class CommandsProcessor:
         for script in pythonScripts:
             if script.getName() == kJalakPythonComponent:
                 PtDebugPrint(u"xKIChat.SaveColumns(): Found Jalak's python component.", level=kDebugDumpLevel)
-                SendNote(self.chatMgr.key, "SaveColumns;" + fName)
+                SendNote(self.chatMgr.key, script, "SaveColumns;" + fName)
                 return
         PtDebugPrint(u"xKIChat.SaveColumns(): Did not find Jalak's python component.", level=kErrorLevel)
 
@@ -1136,7 +1209,7 @@ class CommandsProcessor:
                 people = kEasterEggs[currentAge]["people"]
 
         ## Display the info.
-        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(self.chatMgr.GetAgeName(), see, people, exits), 0)
+        self.chatMgr.AddChatLine(None, "{}: {} Standing near you is {}. There are exits to the{}".format(GetAgeName(), see, people, exits), 0)
 
     ## Get a feather in the current Age.
     def GetFeather(self, params):
@@ -1300,3 +1373,51 @@ class CommandsProcessor:
                 else:
                     party.chronicleSetValue(data)
                     party.save()
+
+    ##################
+    # Other Commands #
+    ##################
+
+    ## Export the local avatar's clothing to a file
+    def SaveClothing(self, file):
+        if not file:
+            self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
+            return
+        file = file + ".clo"
+        if PtGetLocalAvatar().avatar.saveClothingToFile(file):
+            self.chatMgr.AddChatLine(None, "Outfit exported to " + file, 0)
+        else:
+            self.chatMgr.AddChatLine(None, "Could not export to " + file, kChat.SystemMessage)
+
+    ## Import the local avatar's clothing from a file
+    def LoadClothing(self, file):
+        if not file:
+            self.chatMgr.AddChatLine(None, "Usage: /loadclothing <name>", kChat.SystemMessage)
+            return
+        if PtGetPlayerList() and not PtIsInternalRelease():
+            self.chatMgr.AddChatLine(None, "You have to be alone to change your clothes!", kChat.SystemMessage)
+            return
+        file = file + ".clo"
+        if PtGetLocalAvatar().avatar.loadClothingFromFile(file):
+            self.chatMgr.AddChatLine(None, "Outfit imported from " + file, 0)
+        else:
+            self.chatMgr.AddChatLine(None, file + " not found", kChat.SystemMessage)
+
+    ## Example function for a coop animation
+    def CoopExample(self, name):
+        if not name:
+            self.chatMgr.AddChatLine(None, "Usage: /threaten <playername>", kChat.SystemMessage)
+            return
+        targetKey = None;
+        for player in PtGetPlayerList():
+            if player.getPlayerName().lower() == name.lower():
+                name = player.getPlayerName()
+                targetKey = PtGetAvatarKeyFromClientID(player.getPlayerID())
+                break
+        if targetKey is None:
+            self.chatMgr.AddChatLine(None, name + " not found", kChat.SystemMessage)
+            return
+        if PtGetLocalAvatar().avatar.runCoopAnim(targetKey, "ShakeFist", "Cower"):
+            self.chatMgr.DisplayStatusMessage(PtGetClientName() + " threatens " + name, 1)
+        else:
+            self.chatMgr.AddChatLine(None, "You are too far away", kChat.SystemMessage)
