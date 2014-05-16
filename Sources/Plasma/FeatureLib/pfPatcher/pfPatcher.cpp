@@ -364,7 +364,13 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
     } else {
         PatcherLogRed("\tDownloaded Failed: '%s' (%d retries)", stream->GetFileName().AsString().c_str(), patcher->fCurrRequest->fAttempt);
         patcher->fCurrRequest->CloseStream(true, true);
-        patcher->EndPatch(result, filename.AsString());
+
+        // FIXME: Localize this error message.
+        plString hack = plString::Format("%S: %s\nThere appears to be a problem with your %s install.\n\
+                                         Please run the repair utility found in the Start Menu or Start Screen.",
+                                         NetErrorAsString(result), filename.AsString().c_str(),
+                                         plProduct::LongName().c_str());
+        patcher->EndPatch(result, hack);
     }
 }
 
