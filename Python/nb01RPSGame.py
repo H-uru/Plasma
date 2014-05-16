@@ -737,15 +737,15 @@ class nb01RPSGame(ptResponder):
                     chron = childref.getChild().upcastToChronicleNode()
                     print "nb01RPSGame::UpdateImager(): chron:", chron
                     if chron:
-                        ownerNode = chron.getOwnerNode()
-                        if ownerNode: # apparently a chronicle node doesn't have a parent sometimes?
-                            ownerNode = ownerNode.upcastToPlayerInfoNode()
-                        if ownerNode:
-                            if ageOwnerList.playerlistHasPlayer(ownerNode.playerGetID()):
-                                ownerNode = ownerNode.upcastToPlayerInfoNode()
-                                print "nb01RPSGame::UpdateImager(): owner node:", ownerNode
-                                if ownerNode:
-                                    scorelist.append( (int(chron.chronicleGetValue()), ownerNode.playerGetName()) )
+                        creatorNode = chron.getCreatorNode()
+                        if creatorNode: # apparently a chronicle node doesn't have a parent sometimes?
+                            creatorNode = creatorNode.upcastToPlayerInfoNode()
+                        if creatorNode:
+                            if ageOwnerList.playerlistHasPlayer(creatorNode.playerGetID()):
+                                creatorNode = creatorNode.upcastToPlayerInfoNode()
+                                print "nb01RPSGame::UpdateImager(): creator node:", creatorNode
+                                if creatorNode:
+                                    scorelist.append( (int(chron.chronicleGetValue()), creatorNode.playerGetName()) )
                                     print scorelist
                             else:
                                 print "nb01RPSGame::UpdateImager(): removing chronicle node"
