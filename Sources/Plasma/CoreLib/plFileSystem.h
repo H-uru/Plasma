@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdio>
 #include <cstddef>
 
+#include "plFormat.h"
+
 #if HS_BUILD_FOR_WIN32
 #   define PATH_SEPARATOR       '\\'
 #   define PATH_SEPARATOR_STR   "\\"
@@ -223,6 +225,10 @@ inline plFileName operator+(const plFileName &left, const char *right)
  */
 inline plFileName operator+(const char *left, const plFileName &right)
 { return left + right.AsString(); }
+
+
+// Shortcut for use in plFormat
+PL_FORMAT_TYPE(const plFileName &)
 
 
 /** Structure to get information about a file by name.

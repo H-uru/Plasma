@@ -199,6 +199,11 @@ plFileName plFileName::Join(const plFileName &base, const plFileName &path)
     return base.fName + path.fName.Substr(1);
 }
 
+PL_FORMAT_IMPL(const plFileName &)
+{
+    return PL_FORMAT_FORWARD(format, value.AsString());
+}
+
 
 /* plFileInfo */
 plFileInfo::plFileInfo(const plFileName &filename)

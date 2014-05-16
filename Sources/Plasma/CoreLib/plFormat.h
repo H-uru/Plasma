@@ -144,6 +144,9 @@ namespace plFormat_Private
     plStringBuffer<char> _impl_plFormat_DataHandler( \
                     const plFormat_Private::FormatSpec &format, _type value)
 
+#define PL_FORMAT_FORWARD(format, fwd_value) \
+    _impl_plFormat_DataHandler((format), (fwd_value))
+
 PL_FORMAT_TYPE(char)
 PL_FORMAT_TYPE(wchar_t)
 PL_FORMAT_TYPE(signed char)

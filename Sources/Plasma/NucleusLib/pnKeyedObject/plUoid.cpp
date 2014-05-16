@@ -114,7 +114,12 @@ bool plLocation::IsVirtual() const
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 plString plLocation::StringIze()  const // Format to displayable string
 {
-    return plString::Format("S0x%xF0x%x", fSequenceNumber, int(fFlags));
+    return plFormat("S0x{x}F0x{x}", fSequenceNumber, fFlags);
+}
+
+PL_FORMAT_IMPL(const plLocation &)
+{
+    return PL_FORMAT_FORWARD(format, value.StringIze());
 }
 
 plLocation plLocation::MakeReserved(uint32_t number)
@@ -261,10 +266,15 @@ plUoid& plUoid::operator=(const plUoid& rhs)
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
 plString plUoid::StringIze() const // Format to displayable string
 {
-    return plString::Format("(0x%x:0x%x:%s:C:[%u,%u])",
-        fLocation.GetSequenceNumber(), 
-        int(fLocation.GetFlags()), 
-        fObjectName.c_str(),
-        GetClonePlayerID(), 
+    return plFormat("(0x{x}:0x{x}:{}:C:[{},{}])",
+        fLocation.GetSequenceNumber(),
+        fLocation.GetFlags(),
+        fObjectName,
+        GetClonePlayerID(),
         GetCloneID());
+}
+
+PL_FORMAT_IMPL(const plUoid &)
+{
+    return PL_FORMAT_FORWARD(format, value.StringIze());
 }
