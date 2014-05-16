@@ -59,6 +59,7 @@ Mead, WA   99021
  * <            - Align left
  * >            - Align right
  * NNN          - Pad to NNN characters (minimum - can be more)
+ * +            - Show a '+' char for positive signed values (decimal only)
  * _C           - Use C as the pad character (only '\001'..'\177' supported for now)
  * x            - Hex (lower-case)
  * X            - Hex (upper-case)
@@ -83,8 +84,8 @@ namespace plFormat_Private
 
     enum DigitClass : unsigned char
     {
-        kDigitDefault, kDigitDec, kDigitHex, kDigitHexUpper,
-        kDigitOct, kDigitBin, kDigitChar
+        kDigitDefault, kDigitDec, kDigitDecAlwaysSigned,
+        kDigitHex, kDigitHexUpper, kDigitOct, kDigitBin, kDigitChar
     };
 
     enum FloatClass : unsigned char
@@ -94,9 +95,7 @@ namespace plFormat_Private
 
     struct FormatSpec
     {
-        const char *fEnd;
-
-        int fPrecisionLeft = 0;
+        int fPrecisionLeft = 0;     // Also used for padding
         int fPrecisionRight = 0;
 
         char fPadChar = 0;
@@ -120,7 +119,7 @@ namespace plFormat_Private
 
 #define PL_FORMAT_TYPE(_type) \
     extern plStringBuffer<char> _impl_plFormat_DataHandler( \
-                    plFormat_Private::FormatSpec &format, _type value); \
+                    const plFormat_Private::FormatSpec &format, _type value); \
     namespace plFormat_Private \
     { \
         template <typename... _Args> \
@@ -143,7 +142,7 @@ namespace plFormat_Private
 
 #define PL_FORMAT_IMPL(_type) \
     plStringBuffer<char> _impl_plFormat_DataHandler( \
-                    plFormat_Private::FormatSpec &format, _type value)
+                    const plFormat_Private::FormatSpec &format, _type value)
 
 PL_FORMAT_TYPE(char)
 PL_FORMAT_TYPE(wchar_t)
@@ -157,8 +156,6 @@ PL_FORMAT_TYPE(long)
 PL_FORMAT_TYPE(unsigned long)
 PL_FORMAT_TYPE(int64_t)
 PL_FORMAT_TYPE(uint64_t)
-PL_FORMAT_TYPE(float)
-PL_FORMAT_TYPE(double)
 PL_FORMAT_TYPE(const char *)
 PL_FORMAT_TYPE(const wchar_t *)
 PL_FORMAT_TYPE(const plString &)
@@ -166,6 +163,9 @@ PL_FORMAT_TYPE(const plString &)
 // TODO:  Remove these when they're no longer needed
 PL_FORMAT_TYPE(const std::string &)
 PL_FORMAT_TYPE(const std::wstring &)
+
+// TODO:  Implement floating point types (float, double).  They're harder
+// than the others, so I'll get around to them later >.>
 
 // End of the chain -- emits the last piece (if any) and builds the final string
 namespace plFormat_Private
