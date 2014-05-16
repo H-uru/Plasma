@@ -51,6 +51,7 @@ set(CoreLib_SOURCES
     hsWide.cpp
     pcSmallRect.cpp
     plFileSystem.cpp
+    plFormat.cpp
     plGeneric.cpp
     plLoadMask.cpp
     plProduct.cpp
@@ -96,6 +97,7 @@ set(CoreLib_HEADERS
     hsWindows.h
     pcSmallRect.h
     plFileSystem.h
+    plFormat.h
     plGeneric.h
     plLoadMask.h
     plProduct.h
