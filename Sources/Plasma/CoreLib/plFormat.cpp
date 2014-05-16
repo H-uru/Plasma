@@ -190,6 +190,11 @@ namespace plFormat_Private
 template <typename _IType, size_t bits>
 void _IFormatNumeric_Impl(char *output_end, _IType value, int radix, bool upperCase = false)
 {
+    if (value == 0) {
+        *(output_end - 1) = '0';
+        return;
+    }
+
     while (value)
     {
         int digit = (value % radix);
@@ -217,6 +222,9 @@ static plStringBuffer<char> _formatNumeric(const plFormat_Private::FormatSpec &f
         ++max;
         temp /= radix;
     }
+
+    if (max == 0)
+        max = 1;
 
     plStringBuffer<char> buffer;
     if (format.fPrecisionLeft > max) {
@@ -251,6 +259,9 @@ static plStringBuffer<char> _formatDecimal(const plFormat_Private::FormatSpec &f
         ++max;
         temp /= 10;
     }
+
+    if (max == 0)
+        max = 1;
 
     if (value < 0 || format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
         ++max;
