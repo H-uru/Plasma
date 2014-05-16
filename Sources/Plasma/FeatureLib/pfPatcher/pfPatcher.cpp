@@ -78,9 +78,17 @@ struct pfPatcherWorker : public hsThread
         uint8_t fAttempt;
         class pfPatcherStream* fStream;
 
-        Request(const plString& name, uint8_t type, class pfPatcherStream* s=nullptr) :
+        Request(const plString& name, uint8_t type, class pfPatcherStream* s = nullptr) :
             fName(name), fType(type), fAttempt(0), fStream(s)
         { }
+
+        ~Request() { CloseStream(); }
+
+        /**
+         * Frees resources used by the patcher stream.
+         * \note If the stream hasn't been written to, it will be unlinked.
+         */
+        void CloseStream(bool del=true, bool unlink=false);
     };
 
     /** Human readable file flags */
@@ -212,10 +220,16 @@ public:
     virtual void Skip(uint32_t deltaByteCount) { fOutput->Skip(deltaByteCount); }
 
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
+    uint64_t BytesWritten() const { return fBytesWritten; }
     plFileName GetFileName() const { return fFilename; }
     bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }
     bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
-    void Unlink() const { plFileSystem::Unlink(fFilename); }
+
+    void Unlink() const
+    {
+        if (fFilename.IsValid())
+            plFileSystem::Unlink(fFilename);
+    }
 };
 
 // ===================================================
@@ -233,6 +247,7 @@ static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName
         // happen in any other app...
         writer->Rewind();
         patcher->WhitelistFile(filename, true, writer);
+        patcher->fCurrRequest->fStream = nullptr; // stream has been stolen by the game code...
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", filename.AsString().c_str());
         patcher->EndPatch(result, filename.AsString());
@@ -317,21 +332,22 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
     pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-    stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
+        patcher->fCurrRequest->CloseStream(false); // don't delete the stream yet, we still need some details...
         patcher->WhitelistFile(stream->GetFileName(), true);
         if (patcher->fSelfPatch && stream->IsSelfPatch())
             patcher->fSelfPatch(stream->GetFileName());
         if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
             patcher->fRedistUpdateDownloaded(stream->GetFileName());
         patcher->IssueRequest();
+        delete stream;
     } else if (result == kNetErrRemoteShutdown || result == kNetErrTimeout) {
         // This could either be the remote server going down, we hit "Cancel" in the launcher...
         // ... Or better yet, the server is really just dead in the water...
         // Regardless, we just need to go away in any of these cases.
-        stream->Unlink();
+        patcher->fCurrRequest->CloseStream(true, true);
         patcher->EndPatch(result);
     } else if (patcher->fCurrRequest->fAttempt < kNumDownloadRetries) {
         // Some crappy servers (indeed I am talking about Cyan's MOULa) will randomly tell us that
@@ -347,11 +363,9 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
         patcher->IssueRequest();
     } else {
         PatcherLogRed("\tDownloaded Failed: '%s' (%d retries)", stream->GetFileName().AsString().c_str(), patcher->fCurrRequest->fAttempt);
-        stream->Unlink();
+        patcher->fCurrRequest->CloseStream(true, true);
         patcher->EndPatch(result, filename.AsString());
     }
-
-    delete stream;
 }
 
 // ===================================================
@@ -364,12 +378,6 @@ pfPatcherWorker::~pfPatcherWorker()
 {
     {
         hsTempMutexLock lock(fRequestMut);
-        std::for_each(fRequests.begin(), fRequests.end(),
-            [] (const std::shared_ptr<Request>& req) {
-                if (req->fStream) req->fStream->Close();
-                delete req->fStream;
-            }
-        );
         fRequests.clear();
     }
 
@@ -576,6 +584,21 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
 
 // ===================================================
 
+void pfPatcherWorker::Request::CloseStream(bool del, bool unlink)
+{
+    if (fStream) {
+        unlink = (fStream->BytesWritten() == 0) || unlink;
+        fStream->Close();
+        if (unlink)
+            fStream->Unlink();
+        if (del)
+            delete fStream;
+        fStream = nullptr;
+    }
+}
+
+// ===================================================
+
 plStatusLog* pfPatcher::GetLog()
 {
     static plStatusLog* log = nullptr;
@@ -651,11 +674,9 @@ void pfPatcher::RequestManifest(const plString& mfs)
 void pfPatcher::RequestManifest(const std::vector<plString>& mfs)
 {
     hsTempMutexLock lock(fWorker->fRequestMut);
-    std::for_each(mfs.begin(), mfs.end(),
-        [&] (const plString& name) {
-            fWorker->fRequests.emplace_back(new pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
-        }
-    );
+    for (const plString& name : mfs) {
+        fWorker->fRequests.emplace_back(new pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
+    }
 }
 
 bool pfPatcher::Start()
