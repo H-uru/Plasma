@@ -485,3 +485,8 @@ PL_FORMAT_IMPL(const std::wstring &)
 {
     return _formatString(format, plString::FromWchar(value.c_str(), value.size()).ToUtf8());
 }
+
+PL_FORMAT_IMPL(bool)
+{
+    return PL_FORMAT_FORWARD(format, value ? "true" : "false");
+}

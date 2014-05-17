@@ -170,6 +170,10 @@ PL_FORMAT_TYPE(const std::wstring &)
 // TODO:  Implement floating point types (float, double).  They're harder
 // than the others, so I'll get around to them later >.>
 
+// Formats as "true" or "false", following normal string formatting rules.
+// To use other formats, don't pass us a bool directly...
+PL_FORMAT_TYPE(bool)
+
 // End of the chain -- emits the last piece (if any) and builds the final string
 namespace plFormat_Private
 {
