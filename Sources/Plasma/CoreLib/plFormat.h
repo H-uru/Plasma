@@ -47,85 +47,105 @@ Mead, WA   99021
 #include <list>
 #include <string>
 
-/* (TODO: Make this table doxygen-friendly)
+#ifdef BUILDING_DOXYGEN // Doxygen doesn't appear to support variadic templates yet
+/** Format a string using type-safe arguments
+ * \param format The format string -- see below for details
  *
- * FORMAT SPECIFICATION
+ * Character Sequence | Description
+ * ------------------ | -----------
+ * `{}`               | Format a value (using defaults)
+ * `{{`               | Escape for a single '{' char
+ * `{options}`        | Format a value, with the specified options (see below)
  *
- * {}           - format a value (defaults)
- * {{           - Escape for a single '{' char
- * {options}    - Format a value, with the specified options (see below)
+ * Formatting Options
+ * ------------------
  *
- * Options:
- * <            - Align left
- * >            - Align right
- * NNN          - Pad to NNN characters (minimum - can be more)
- * +            - Show a '+' char for positive signed values (decimal only)
- * _C           - Use C as the pad character (only '\001'..'\177' supported for now)
- * x            - Hex (lower-case)
- * X            - Hex (upper-case)
- * o            - Octal
- * b            - Binary
- * d            - Decimal (default) -- when used with char types, outputs a
- *                  number instead of the UTF representation of the char
- * c            - UTF character (default for character types)
- * FFF.EEE      - Use FFF.EEE floating point precision
- * f            - Use 'f' format for floating point numbers
- * g            - Use 'g' format for floating point numbers
- * e            - Use 'e' format for floating point numbers
+ * Format Option | Description
+ * ------------- | -----------
+ * `<`           | Align left
+ * `>`           | Align right
+ * `NNN`         | Pad to NNN characters (minimum - can be more)
+ * `+`           | Show a '+' char for positive signed values (decimal only)
+ * `_C`          | Use C as the pad character (only '\001'..'\177' supported for now)
+ * `x`           | Hex (lower-case)
+ * `X`           | Hex (upper-case)
+ * `o`           | Octal
+ * `b`           | Binary
+ * `d`           | Decimal (default) -- when used with char types, outputs a number instead of the UTF representation of the char
+ * `c`           | UTF character (default for character types)
+ * `FFF.EEE`     | Use FFF.EEE floating point precision
+ * `f`           | Fixed floating point format (ddd.ddd)
+ * `e`           | Exponent notation for floating point (d.ddde[+/-]dd)
+ * `E`           | Same as 'e' format, but with upper case E (d.dddE[+/-]dd)
  */
+plString plFormat(const char *format, ...);
+#endif
 
-// For internal use by plFormat and its helper function
+
 namespace plFormat_Private
 {
     enum Alignment : unsigned char
     {
-        kAlignDefault, kAlignLeft, kAlignRight
+        kAlignDefault,  /**< Left for strings, right for numbers */
+        kAlignLeft,     /**< Left alignment */
+        kAlignRight     /**< Right alignment */
     };
 
     enum DigitClass : unsigned char
     {
-        kDigitDefault, kDigitDec, kDigitDecAlwaysSigned,
-        kDigitHex, kDigitHexUpper, kDigitOct, kDigitBin, kDigitChar
+        kDigitDefault,          /**< Default digit formatting */
+        kDigitDec,              /**< Format as decimal integer */
+        kDigitDecAlwaysSigned,  /**< Same as `kDigitDec`, but include a '+' for positive numbers too */
+        kDigitHex,              /**< Hex integer (assume unsigned) */
+        kDigitHexUpper,         /**< Hex integer with upper-case digits */
+        kDigitOct,              /**< Octal integer (assume unsigned) */
+        kDigitBin,              /**< Binary integer (assume unsigned) */
+        kDigitChar              /**< Single unicode character (as UTF-8) */
     };
 
     enum FloatClass : unsigned char
     {
-        kFloatDefault, kFloatE, kFloatF, kFloatG
+        kFloatDefault,      /**< Use Fixed or Exp format depending on value */
+        kFloatFixed,        /**< Use Fixed notation (ddd.ddd) */
+        kFloatExp,          /**< Use Exp notation (d.ddde[+/-]dd) */
+        kFloatExpUpper      /**< Same as `kFloatExp`, but with an upper-case E */
     };
 
+    /** Represents a parsed format tag, for use in formatter implementations. */
     struct FormatSpec
     {
-        int fPrecisionLeft = 0;     // Also used for padding
-        int fPrecisionRight = 0;
+        int fPrecisionLeft = 0;     /**< Requested padding and/or precision */
+        int fPrecisionRight = 0;    /**< Requested precision after the . for floating-point */
 
-        char fPadChar = 0;
-        Alignment fAlignment = kAlignDefault;
-        DigitClass fDigitClass = kDigitDefault;
-        FloatClass fFloatClass = kFloatDefault;
+        char fPadChar = 0;          /**< Explicit padding char (default is space) */
+        Alignment fAlignment = kAlignDefault;   /**< Requested pad alignment */
+        DigitClass fDigitClass = kDigitDefault; /**< Requested int formatting */
+        FloatClass fFloatClass = kFloatDefault; /**< Requested float formatting */
     };
 
-    struct IFormatDataObject
+    // These need to be publically visible for the macros below, but shouldn't
+    // be used directly outside of plFormat and its macros
+    struct _IFormatDataObject
     {
         const char *fFormatStr;
         std::list<plStringBuffer<char>> fOutput;
     };
 
-    extern FormatSpec FetchNextFormat(IFormatDataObject &data);
+    extern FormatSpec _FetchNextFormat(_IFormatDataObject &data);
 }
 
-// Fun fact:  You can add your own formatters by declaring
-//   PL_FORMAT_TYPE(mytype) in a header, and
-//   PL_FORMAT_IMPL(mytype) { ... } in a source file
-
+/** Declare a formattable type for `plFormat`.
+ *  \sa PL_FORMAT_IMPL()
+ */
 #define PL_FORMAT_TYPE(_type) \
     extern plStringBuffer<char> _impl_plFormat_DataHandler( \
                     const plFormat_Private::FormatSpec &format, _type value); \
     namespace plFormat_Private \
     { \
         template <typename... _Args> \
-        plString _IFormat(IFormatDataObject &data, _type value, _Args... args) \
+        plString _IFormat(_IFormatDataObject &data, _type value, _Args... args) \
         { \
-            plFormat_Private::FormatSpec format = plFormat_Private::FetchNextFormat(data); \
+            plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
             data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
             return _IFormat(data, args...); \
         } \
@@ -133,17 +153,41 @@ namespace plFormat_Private
     template <typename... _Args> \
     plString plFormat(const char *fmt_str, _type value, _Args... args) \
     { \
-        plFormat_Private::IFormatDataObject data; \
+        plFormat_Private::_IFormatDataObject data; \
         data.fFormatStr = fmt_str; \
-        plFormat_Private::FormatSpec format = plFormat_Private::FetchNextFormat(data); \
+        plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
         data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
         return plFormat_Private::_IFormat(data, args...); \
     }
 
+/** Provide the implementation for a formattable type for `plFormat`.
+ *  \sa PL_FORMAT_TYPE(), PL_FORMAT_FORWARD()
+ *
+ *  Example:
+ *
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  PL_FORMAT_IMPL(const MyType &)
+ *  {
+ *      return plFormat("MyType[data={},count={}]", value.data, value.count);
+ *  }
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
 #define PL_FORMAT_IMPL(_type) \
     plStringBuffer<char> _impl_plFormat_DataHandler( \
                     const plFormat_Private::FormatSpec &format, _type value)
 
+/** Shortcut to call another `PL_FORMAT_IMPL` formatter.
+ *  \sa PL_FORMAT_IMPL()
+ *
+ *  Example:
+ *
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *  PL_FORMAT_IMPL(const MyType &)
+ *  {
+ *      return PL_FORMAT_FORWARD(format, value.ToString());
+ *  }
+ *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ */
 #define PL_FORMAT_FORWARD(format, fwd_value) \
     _impl_plFormat_DataHandler((format), (fwd_value))
 
@@ -174,10 +218,10 @@ PL_FORMAT_TYPE(const std::wstring &)
 // To use other formats, don't pass us a bool directly...
 PL_FORMAT_TYPE(bool)
 
-// End of the chain -- emits the last piece (if any) and builds the final string
 namespace plFormat_Private
 {
-    plString _IFormat(IFormatDataObject &data);
+    // End of the chain -- emits the last piece (if any) and builds the final string
+    plString _IFormat(_IFormatDataObject &data);
 }
 
 #endif // plFormat_Defined

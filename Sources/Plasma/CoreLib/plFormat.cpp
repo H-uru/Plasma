@@ -50,7 +50,7 @@ Mead, WA   99021
 
 namespace plFormat_Private
 {
-    static const char *_scanNextFormat(IFormatDataObject &data)
+    static const char *_scanNextFormat(_IFormatDataObject &data)
     {
         hsAssert(data.fFormatStr, "Passed a null format string!");
 
@@ -64,7 +64,7 @@ namespace plFormat_Private
         return ptr;
     }
 
-    static void _fetchPrefixChunk(IFormatDataObject &data)
+    static void _fetchPrefixChunk(_IFormatDataObject &data)
     {
         do {
             const char *next = _scanNextFormat(data);
@@ -81,7 +81,7 @@ namespace plFormat_Private
         } while (0);
     }
 
-    FormatSpec FetchNextFormat(IFormatDataObject &data)
+    FormatSpec _FetchNextFormat(_IFormatDataObject &data)
     {
         _fetchPrefixChunk(data);
         hsAssert(*data.fFormatStr == '{', "Too many actual parameters for format string");
@@ -135,13 +135,13 @@ namespace plFormat_Private
                 spec.fDigitClass = kDigitChar;
                 break;
             case 'f':
-                spec.fFloatClass = kFloatF;
-                break;
-            case 'g':
-                spec.fFloatClass = kFloatG;
+                spec.fFloatClass = kFloatFixed;
                 break;
             case 'e':
-                spec.fFloatClass = kFloatE;
+                spec.fFloatClass = kFloatExp;
+                break;
+            case 'E':
+                spec.fFloatClass = kFloatExpUpper;
                 break;
             case '0': case '1': case '2': case '3': case '4':
             case '5': case '6': case '7': case '8': case '9':
@@ -166,7 +166,7 @@ namespace plFormat_Private
         }
     }
 
-    plString _IFormat(plFormat_Private::IFormatDataObject &data)
+    plString _IFormat(plFormat_Private::_IFormatDataObject &data)
     {
         _fetchPrefixChunk(data);
         hsAssert(*data.fFormatStr == 0, "Not enough actual parameters for format string");
