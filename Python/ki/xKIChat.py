@@ -1311,6 +1311,10 @@ class CommandsProcessor:
         else:
             self.chatMgr.AddChatLine(None, "There is nothing there but lint.", 0)
 
+    ##################
+    # Other Commands #
+    ##################
+
     def PartyTime(self, params):
         """Implements the `/party` command"""
 
@@ -1373,10 +1377,6 @@ class CommandsProcessor:
                 else:
                     party.chronicleSetValue(data)
                     party.save()
-
-    ##################
-    # Other Commands #
-    ##################
 
     ## Export the local avatar's clothing to a file
     def SaveClothing(self, file):
