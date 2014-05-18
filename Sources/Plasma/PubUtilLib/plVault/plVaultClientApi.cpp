@@ -4243,10 +4243,10 @@ bool VaultAgeGetAgeSDL (plStateDataRecord * out) {
     if (RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef()) {
         if (RelVaultNode * rvnSdl = rvn->GetChildNodeIncRef(plVault::kNodeType_SDL, 1)) {
             VaultSDLNode sdl(rvnSdl);
-            result = sdl.GetStateDataRecord(out, plSDL::kKeepDirty);
+            result = sdl.GetStateDataRecord(out);
             if (!result) {
                 sdl.InitStateDataRecord(sdl.GetSDLName());
-                result = sdl.GetStateDataRecord(out, plSDL::kKeepDirty);
+                result = sdl.GetStateDataRecord(out);
             }
             rvnSdl->DecRef();
         }
@@ -4260,7 +4260,7 @@ void VaultAgeUpdateAgeSDL (const plStateDataRecord * rec) {
     if (RelVaultNode * rvn = VaultGetAgeInfoNodeIncRef()) {
         if (RelVaultNode * rvnSdl = rvn->GetChildNodeIncRef(plVault::kNodeType_SDL, 1)) {
             VaultSDLNode sdl(rvnSdl);
-            sdl.SetStateDataRecord(rec, plSDL::kDirtyOnly | plSDL::kTimeStampOnRead);
+            sdl.SetStateDataRecord(rec, plSDL::kTimeStampOnRead);
             rvnSdl->DecRef();
         }
         rvn->DecRef();
