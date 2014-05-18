@@ -99,11 +99,10 @@ public:
     GETINTERFACE_ANY(plPythonSDLModifier, plSDLModifier);
 
     virtual const char* GetSDLName() const;
-    virtual void SetItemFromSDLVar(plSimpleStateVariable* var);
 
     static bool HasSDL(const plString& pythonFile);
     // find the Age global SDL guy... if there is one
-    static const plPythonSDLModifier* FindAgeSDL();
+    static plPythonSDLModifier* FindAgeSDL();
     static plKey FindAgeSDLTarget();
 
     void SetDefault(const plString& key, PyObject* value);
@@ -111,7 +110,11 @@ public:
     void SetNotify(pyKey& selfkey, const plString& key, float tolerance);
 
     PyObject* GetItem(const plString& key);
+
+    template<typename T>
+    void SetItem(const plString& key, int index, T value);
     void SetItem(const plString& key, PyObject* value);
+
     void SetItemIdx(const plString& key, int idx, PyObject* value, bool sendImmediate = false);
     void SetFlags(const plString& name, bool sendImmediate, bool skipOwnershipCheck);
     void SetTagString(const plString& name, const plString& tag);

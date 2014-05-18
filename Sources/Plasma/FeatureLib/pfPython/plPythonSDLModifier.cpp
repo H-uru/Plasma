@@ -166,18 +166,23 @@ void plPythonSDLModifier::SetItem(const plString& key, PyObject* value)
     IDirtySynchState(key);
 }
 
-void plPythonSDLModifier::SetItemFromSDLVar(plSimpleStateVariable* var)
+template<>
+void plPythonSDLModifier::SetItem(const plString& key, int index, bool value)
 {
-    plString name = var->GetName();
-
-    // Get the SDL value in Python format
-    PyObject* pyVar = ISDLVarToPython(var);
-
-    ISetItem(name, pyVar);
-    Py_XDECREF(pyVar);
-    // let the sender do the dirty sync state stuff
+    SetItemIdx(key, index, PyBool_FromLong(value), true);
 }
 
+template<>
+void plPythonSDLModifier::SetItem(const plString& key, int index, float value)
+{
+    SetItemIdx(key, index, PyFloat_FromDouble(value), true);
+}
+
+template<>
+void plPythonSDLModifier::SetItem(const plString& key, int index, int value)
+{
+    SetItemIdx(key, index, PyLong_FromLong(value), true);
+}
 
 void plPythonSDLModifier::SetDefault(const plString& key, PyObject* value)
 {
@@ -578,12 +583,12 @@ const plSDLModifier *ExternFindAgeSDL()
     return plPythonSDLModifier::FindAgeSDL();
 }
 
-const plPythonSDLModifier *ExternFindAgePySDL()
+plPythonSDLModifier* ExternFindAgePySDL()
 {
     return plPythonSDLModifier::FindAgeSDL();
 }
 
-const plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
+plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
     const char* ageName = cyMisc::GetAgeName();
 
