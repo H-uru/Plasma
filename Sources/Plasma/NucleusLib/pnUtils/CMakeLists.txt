@@ -14,7 +14,6 @@ set(pnUtils_HEADERS
     pnUtMisc.h
     pnUtPragma.h
     pnUtPriQ.h
-    pnUtRef.h
     pnUtSort.h
     pnUtStr.h
     pnUtTime.h

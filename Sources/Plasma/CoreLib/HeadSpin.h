@@ -489,19 +489,4 @@ void DebugMsg(const char* fmt, ...);
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
 #endif
 
-/*****************************************************************************
-*
-*  Atomic Operations
-*  FIXME: Replace with std::atomic when VS2012 supports WinXP
-*
-***/
-
-#ifdef _MSC_VER
-#   define AtomicAdd(value, increment) InterlockedExchangeAdd(value, increment)
-#   define AtomicSet(value, set) InterlockedExchange(value, set)
-#elif __GNUC__
-#   define AtomicAdd(value, increment) __sync_fetch_and_add(value, increment)
-#   define AtomicSet(value, set) __sync_lock_test_and_set(value, set)
-#endif
-
 #endif

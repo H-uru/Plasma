@@ -230,7 +230,7 @@ void pyVaultTextNoteNode::SetDeviceInbox( const char * devName, PyObject * cbObj
     
     if (RelVaultNode * rvn = VaultAgeSetDeviceInboxAndWaitIncRef(wDev, DEFAULT_DEVICE_INBOX)) {
         cb->SetNode(rvn);
-        rvn->DecRef();
+        rvn->UnRef();
     }
 
     cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.

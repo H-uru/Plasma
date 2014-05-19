@@ -278,7 +278,7 @@ static void PlayerInitCallback (
         if (RelVaultNode * rvn = VaultGetOwnedAgeLinkIncRef(&info)) {
             VaultAgeLinkNode acc(rvn);
             acc.AddSpawnPoint(plSpawnPointInfo(kCityFerryTerminalLinkTitle, kCityFerryTerminalLinkSpawnPtName));
-            rvn->DecRef();
+            rvn->UnRef();
         }
         
         VaultProcessPlayerInbox();
@@ -815,10 +815,10 @@ void NetCommActivatePostInitErrorHandler () {
 //============================================================================
 void NetCommUpdate () {
     // plClient likes to recursively call us on occasion; debounce that crap.
-    static long s_updating;
-    if (0 == AtomicSet(&s_updating, 1)) {
+    static std::atomic_flag s_updating = ATOMIC_FLAG_INIT;
+    if (!s_updating.test_and_set()) {
         NetClientUpdate();
-        AtomicSet(&s_updating, 0);
+        s_updating.clear();
     }
 }
 
@@ -1126,7 +1126,7 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);
 
-            rvn->DecRef();
+            rvn->UnRef();
         }
 
         VaultCull(s_player->playerInt);
@@ -1324,7 +1324,7 @@ void NetCommSetCCRLevel (
     if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
         VaultPlayerInfoNode pInfo(rvnInfo);
         pInfo.SetCCRLevel(ccrLevel);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 
     NetCliAuthSetCCRLevel(ccrLevel);

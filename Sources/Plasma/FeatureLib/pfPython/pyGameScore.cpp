@@ -129,7 +129,7 @@ void pyGameScore::CreateAgeScore(const plString& name, uint32_t type, int32_t po
     {
         uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
-        ageInfo->DecRef();
+        ageInfo->UnRef();
     } else
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
@@ -145,7 +145,7 @@ void pyGameScore::CreatePlayerScore(const plString& name, uint32_t type, int32_t
     {
         uint32_t ownerId = node->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
-        node->DecRef();
+        node->UnRef();
     } else
         hsAssert(false, "No PlayerInfo node... Need to rewrite python script?");
 }
@@ -161,7 +161,7 @@ void pyGameScore::FindAgeScores(const plString& name, pyKey& rcvr)
     {
         uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
-        ageInfo->DecRef();
+        ageInfo->UnRef();
     } else
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
@@ -177,7 +177,7 @@ void pyGameScore::FindPlayerScores(const plString& name, pyKey& rcvr)
     {
         uint32_t ownerId = node->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
-        node->DecRef();
+        node->UnRef();
     }
     else
         hsAssert(false, "No PlayerInfo node.. Need to rewrite python script?");

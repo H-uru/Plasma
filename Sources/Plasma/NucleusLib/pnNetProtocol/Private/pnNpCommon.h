@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNNETPROTOCOL_PRIVATE_PNNPCOMMON_H
 
 #include "pnUUID/pnUUID.h"
+#include "hsRefCnt.h"
 
 
 /*****************************************************************************
@@ -156,7 +157,7 @@ struct NetGameRank {
 // NetVaultNode
 //============================================================================
 // Threaded apps: App is responsible for locking node->critsect before accessing *any* field in this struct
-struct NetVaultNode : AtomicRef {
+struct NetVaultNode : hsAtomicRefCnt {
     enum RwOptions {
         kRwDirtyOnly    = 1<<0, // READ : No meaning
                                 // WRITE: Only write fields marked dirty

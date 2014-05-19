@@ -77,7 +77,7 @@ struct ReportNetErrorTrans : NetNotifyTrans {
 ***/
 
 static FNetClientErrorProc  s_errorProc;
-static long                 s_initCount;
+static std::atomic<long>    s_initCount;
 
 
 /*****************************************************************************
@@ -143,7 +143,7 @@ void ReportNetError (ENetProtocol protocol, ENetError error) {
 //============================================================================
 void NetClientInitialize () {
     
-    if (0 == AtomicAdd(&s_initCount, 1)) {
+    if (0 == s_initCount.fetch_add(1)) {
         NetTransInitialize();
         AuthInitialize();
         GameInitialize();
@@ -160,7 +160,7 @@ void NetClientCancelAllTrans () {
 //============================================================================
 void NetClientDestroy (bool wait) {
 
-    if (1 == AtomicAdd(&s_initCount, -1)) {
+    if (1 == s_initCount.fetch_sub(1)) {
         s_errorProc = nil;
 
         GateKeeperDestroy(false);
