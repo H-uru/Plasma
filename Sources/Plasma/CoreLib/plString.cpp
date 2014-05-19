@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "plString.h"
+#include "plFormat.h"
 #include <regex>
 
 const plString plString::Null;
@@ -609,7 +610,7 @@ bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
         if (std::regex_match(c_str(), re))
             return true;
     } catch (const std::regex_error& e) {
-        hsAssert(0, plString::Format("Regex match error: %s", e.what()).c_str());
+        hsAssert(0, plFormat("Regex match error: {}", e.what()).c_str());
     }
 
     return false;
@@ -633,7 +634,7 @@ std::vector<plString> plString::RESearch(const char *pattern,
         for (size_t i = 0; i < matches.size(); ++i)
             substrings[i] = matches[i].str().c_str();
     } catch (const std::regex_error& e) {
-        hsAssert(0, plString::Format("Regex search error: %s", e.what()).c_str());
+        hsAssert(0, plFormat("Regex search error: {}", e.what()).c_str());
     }
 
     return substrings;

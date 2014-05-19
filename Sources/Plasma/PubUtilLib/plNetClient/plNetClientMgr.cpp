@@ -251,7 +251,7 @@ void plNetClientMgr::SetNullSend(bool on)
 const char* plNetClientMgr::GetServerLogTimeAsString(plString& timestamp) const
 {
     const plUnifiedTime st=GetServerTime();
-    timestamp = plString::Format("{%02d/%02d %02d:%02d:%02d}",
+    timestamp = plFormat("{{{_02}/{_02} {_02}:{_02}:{_02}}",
         st.GetMonth(), st.GetDay(), st.GetHour(), st.GetMinute(), st.GetSecond());
     return timestamp.c_str();
 }
@@ -264,7 +264,7 @@ const char* ProcessTab(const char* fmt)
     static plString s;
     if (fmt && *fmt=='\t')
     {
-        s = plString::Format("  %s", fmt);
+        s = plFormat("  {}", fmt);
         return s.c_str();
     }
     return fmt;
@@ -1230,7 +1230,7 @@ void plNetClientMgr::IDisableNet () {
             if (!GetFlagsBit(plNetClientApp::kPlayingGame))
             {
                 // KI may not be loaded
-                plString title = plString::Format("%s Error", plProduct::CoreName().c_str());
+                plString title = plFormat("{} Error", plProduct::CoreName());
                 hsMessageBox(fDisableMsg->str, title.c_str(), hsMessageBoxNormal, hsMessageBoxIconError );
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
@@ -1356,8 +1356,8 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
                 cnt++;
     }
 
-    hsAssert(cnt<2, plString::Format("Object %s has multiple SDL modifiers of the same kind (%s)?", 
-        obj->GetKeyName().c_str(), plFactory::GetNameOfClass(classIdx)).c_str());
+    hsAssert(cnt<2, plFormat("Object {} has multiple SDL modifiers of the same kind ({})?",
+             obj->GetKeyName(), plFactory::GetNameOfClass(classIdx)).c_str());
     return cnt==0 ? false : true;
 }
 

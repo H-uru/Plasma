@@ -204,8 +204,8 @@ plString hsStream::ReadSafeWStringLong()
 uint32_t hsStream::WriteSafeString(const plString &string)
 {
     int len = string.GetSize();
-    hsAssert(len<0xf000, plString::Format("string len of %d is too long for WriteSafeString %s, use WriteSafeStringLong",
-        len, string.c_str()).c_str() );
+    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
+        len, string).c_str() );
 
     WriteLE16(len | 0xf000);
     if (len > 0)
@@ -226,7 +226,7 @@ uint32_t hsStream::WriteSafeWString(const plString &string)
 {
     plStringBuffer<uint16_t> wbuff = string.ToUtf16();
     uint32_t len = wbuff.GetSize();
-    hsAssert(len<0xf000, plString::Format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
+    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
     WriteLE16(len | 0xf000);

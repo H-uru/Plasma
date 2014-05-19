@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "hsTemplates.h"
-#include "plString.h"
+#include "plFormat.h"
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -535,7 +535,7 @@ std::vector<plString> DisplaySystemVersion()
 
         if ( osvi.dwMajorVersion <= 4 )
         {
-            versionStrs.push_back(plString::Format("version %d.%d %s (Build %d)\n",
+            versionStrs.push_back(plFormat("version {}.{} {} (Build {})\n",
                 osvi.dwMajorVersion,
                 osvi.dwMinorVersion,
                 osvi.szCSDVersion,
@@ -543,7 +543,7 @@ std::vector<plString> DisplaySystemVersion()
         }
         else
         {
-            versionStrs.push_back(plString::Format("%s (Build %d)\n",
+            versionStrs.push_back(plFormat("{} (Build {})\n",
                 osvi.szCSDVersion,
                 osvi.dwBuildNumber & 0xFFFF));
         }

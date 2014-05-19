@@ -1053,7 +1053,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     // When general.ini gets expanded, this will need to find a proper home somewhere.
                     {
                         plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
-                        plString ini_str = plString::Format("App.SetLanguage %s\n", plLocalization::GetLanguageName(new_language));
+                        plString ini_str = plFormat("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
                         hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
                         gini->WriteString(ini_str);
                         gini->Close();

@@ -330,7 +330,7 @@ public:
     // debug
     plString AsString() const
     {
-        return plString::Format("object=%s, %s",fObjectHelper.GetUoid().StringIze().c_str(), plNetMessage::AsString().c_str());
+        return plFormat("object={}, {}",fObjectHelper.GetUoid(), plNetMessage::AsString());
     }
 
 };
@@ -506,7 +506,7 @@ public:
     plString AsString() const
     {
         const char* noc=plFactory::GetTheFactory()->GetNameOfClass(StreamInfo()->GetStreamType());
-        return plString::Format("%s %s",plNetMsgStream::AsString().c_str(), noc ? noc : "?");
+        return plFormat("{} {}", plNetMsgStream::AsString(), noc ? noc : "?");
     }
 };
 
@@ -556,8 +556,8 @@ public:
     // debug
     plString AsString() const
     {
-        return plString::Format("object=%s initial=%d, %s",fObjectHelper.GetUoid().StringIze().c_str(), fIsInitialState,
-            plNetMsgGameMessage::AsString().c_str());
+        return plFormat("object={} initial={}, {}",fObjectHelper.GetUoid(), fIsInitialState,
+            plNetMsgGameMessage::AsString());
     }
 };
 
@@ -647,7 +647,7 @@ public:
     // debug
     plString AsString() const
     {
-        return plString::Format("pageFlags:%02X, paging %s, requestingState:%s, resetting=%d",
+        return plFormat("pageFlags:{_02X}, paging {}, requestingState:{}, resetting={}",
             fPageFlags, (fPageFlags&kPagingOut)?"out":"in",
             (fPageFlags&kRequestState)?"yes":"no", (fPageFlags & kResetList)!=0);
     }
@@ -754,7 +754,7 @@ public:
     // debug
     plString AsString() const
     {
-        return plString::Format("len=%d",fVoiceData.size());
+        return plFormat("len={}",fVoiceData.size());
     }
 };
 
@@ -792,7 +792,7 @@ public:
     // debug
     plString AsString() const
     {
-        return plString::Format("lockReq=%d, %s",fLockRequest, plNetMsgStreamedObject::AsString().c_str());
+        return plFormat("lockReq={}, {}",fLockRequest, plNetMsgStreamedObject::AsString());
     }
 };
 
@@ -979,11 +979,11 @@ public:
         plString b1, b2;
         int i;
         for(i=0;i<fRegionsImIn.GetNumBitVectors(); i++)
-            b1 += plString::Format("0x%x ", fRegionsImIn.GetBitVector(i));
+            b1 += plFormat("0x{x} ", fRegionsImIn.GetBitVector(i));
         for(i=0;i<fRegionsICareAbout.GetNumBitVectors(); i++)
-            b2 += plString::Format("0x%x ", fRegionsICareAbout.GetBitVector(i));
-        return plString::Format("rgnsImIn:%s, rgnsICareAbout:%s, %s",
-            b1.c_str(), b2.c_str(), plNetMessage::AsString().c_str() );
+            b2 += plFormat("0x{x} ", fRegionsICareAbout.GetBitVector(i));
+        return plFormat("rgnsImIn:{}, rgnsICareAbout:{}, {}",
+            b1, b2, plNetMessage::AsString());
     }
 };
 
