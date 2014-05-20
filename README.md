@@ -38,6 +38,7 @@ The following libraries are optional:
 - (for building resource.dat) PyGTK - http://www.pygtk.org/downloads.html
 - (for building resource.dat) PIL - http://www.pythonware.com/products/pil/
 - (for plFontConverter) Freetype - http://freetype.org/
+- (for the GUI tools) Qt5 - http://qt-project.org/
 
 Reducing the use of proprietary libraries is a focus of development and should be expected to change.
 
