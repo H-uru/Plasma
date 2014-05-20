@@ -1,7 +1,7 @@
 /*==LICENSE==*
 
 CyanWorlds.com Engine - MMOG client, server and tools
-Copyright (C) 2011 Cyan Worlds, Inc.
+Copyright (C) 2011  Cyan Worlds, Inc.
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -10,11 +10,11 @@ the Free Software Foundation, either version 3 of the License, or
 
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Additional permissions under GNU GPL version 3 section 7
 
@@ -39,52 +39,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// basic classes for encapsulating the add dialogs
-#ifndef __plAddDlgs_h__
-#define __plAddDlgs_h__
+#ifndef _plFontConverter_h
+#define _plFontConverter_h
 
-#include <QDialog>
-#include "plString.h"
+#include <QMainWindow>
 
-class plAddElementDlg : public QDialog
+class plFont;
+class plFileName;
+
+class plFontConverter : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    plAddElementDlg(const plString &parentPath, QWidget *parent = nullptr);
-    virtual ~plAddElementDlg();
-
-    bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-    plString GetValue() const
-    {
-        return plString::Format("%s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());
-    }
+    plFontConverter();
+    virtual ~plFontConverter();
 
 private slots:
-    void Update(const QString &text);
+    void OpenFNT();
+    void OpenBDF();
+    void OpenFON();
+    void OpenTTF();
+    void OpenP2F();
+    void ExportP2F();
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
 
 private:
-    class Ui_AddElement *fUI;
-    plString fAgeName, fSetName, fElementName;
-    bool fBlockUpdates;
-};
+    class Ui_MainDialog *fUI;
+    plFont *fFont;
 
-class plAddLocalizationDlg : public QDialog
-{
-    Q_OBJECT
+    void IMakeFontGoAway();
+    void IMakeNewFont();
+    void IUpdateInfo();
 
-public:
-    plAddLocalizationDlg(const plString &parentPath, QWidget *parent = nullptr);
-
-    bool DoPick(); // returns true if [Ok] clicked, false otherwise.
-    const plString &GetValue() const { return fLanguageName; }
-
-private slots:
-    void SelectLanguage(int which);
-
-private:
-    class Ui_AddLocalization *fUI;
-    plString fAgeName, fSetName, fElementName, fLanguageName;
+    void IImportFNT(const plFileName &path);
+    void IImportBDF(const plFileName &path);
+    void IImportFON(const plFileName &path);
+    void IBatchFreeType(const plFileName &path, void *init = nullptr);
+    void IImportFreeType(const plFileName &path);
+    void IOpenP2F(const plFileName &path);
 };
 
 #endif

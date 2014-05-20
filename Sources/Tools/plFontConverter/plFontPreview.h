@@ -39,45 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsCodecManager.h"
-#include "plMipmap.h"
+#ifndef _plFontPreview_h
+#define _plFontPreview_h
 
+#include <QFrame>
 
-hsCodecManager& hsCodecManager::Instance()
+class plFont;
+
+class plFontPreview : public QFrame
 {
-    static hsCodecManager the_instance;
-    static bool initialized = false;
+public:
+    plFontPreview(QWidget *parent = nullptr) : QFrame(parent), fFont(nullptr) { }
 
-    if (!initialized)
+    void Update(plFont *font, const QString &text);
+
+protected:
+    virtual void paintEvent(QPaintEvent *event);
+
+    virtual void resizeEvent(QResizeEvent *event)
     {
-        initialized = true;
+        QFrame::resizeEvent(event);
+        Update(fFont, fText);
     }
 
-    return the_instance;
-}
+private:
+    plFont *fFont;
+    QString fText;
+    QImage fPreview;
+};
 
-hsCodecManager::hsCodecManager()
-{
-}
-
-plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plMipmap *uncompressed)
-{
-    return nil;
-}
-
-plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
-{
-    return nil;
-
-}
-
-bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
-{
-    return false;
-}
-
-bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
-{
-    return true;
-}
-
+#endif

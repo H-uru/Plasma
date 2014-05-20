@@ -46,11 +46,11 @@ find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the clie
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
 find_package(CURL REQUIRED)
+find_package(Freetype)
 
 if(WIN32)
     find_package(PhysX REQUIRED)  #TODO: Not required if we aren't building the client
     find_package(DirectX REQUIRED)
-    find_package(Freetype)
 endif(WIN32)
 
 find_package(Bink)            #TODO: Find Bink, but don't require it if plPipeline isn't built...

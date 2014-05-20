@@ -157,7 +157,8 @@ void pfLocalizedString::IParameterize(const plString & inString)
 
 void pfLocalizedString::IConvertFromPlainText(const plString & plainText)
 {
-    IParameterize(plainText);
+    fPlainTextRep = plainText;
+    IParameterize(fPlainTextRep);
 
     IUpdateXML();
 }

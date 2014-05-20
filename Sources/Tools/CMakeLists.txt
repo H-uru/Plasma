@@ -1,4 +1,7 @@
 if(PLASMA_BUILD_TOOLS)
+    find_package(Qt5Core REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+
     add_subdirectory(plLocalizationEditor)
     add_subdirectory(plResBrowser)
     add_subdirectory(plShaderAssembler)

@@ -51,18 +51,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plWinRegistryTools_h
 #define _plWinRegistryTools_h
 
+class QString;
+
 class plWinRegistryTools
 {
     public:
 
-        // Associates a given file type in the Win32 registry with the given application. Also assigns a default icon if iconIndex != -1
-        static bool     AssociateFileType( const char *fileTypeID, const char *fileTypeName, const char *appPath, int iconIndex = -1 );
+        /* Associates a given file type in the Win32 registry with the given
+           application. Also assigns a default icon if iconIndex != -1 */
+        static bool AssociateFileType(const QString &fileTypeID, const QString &fileTypeName,
+                                      const QString &appPath, int iconIndex = -1);
 
-        // Assigns a given file extension to a previously registered Win32 file type (using the above function)
-        static bool     AssociateFileExtension( const char *fileExtension, const char *fileTypeID );
+        /* Assigns a given file extension to a previously registered Win32
+           file type (using the above function) */
+        static bool AssociateFileExtension(const QString &fileExtension,
+                                           const QString &fileTypeID);
 
-        // Obtains the current fileTypeID associated with the given file extension, or a null string if it isn't yet associated
-        static bool     GetCurrentFileExtensionAssociation( const char *extension, char *buffer, int bufferLen );
+        /* Obtains the current fileTypeID associated with the given file
+           extension, or a null string if it isn't yet associated */
+        static QString GetCurrentFileExtensionAssociation(const QString &extension);
 };
 
 #endif //_plWinRegistryTools_h
