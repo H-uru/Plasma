@@ -504,7 +504,7 @@ class xSimpleImager(ptModifier):
                                 PtDebugPrint("simpleImager: now showing textnote %s" % (textsubject),level=kDebugDumpLevel)
                                 message = PtGetLocalizedString("Neighborhood.Messages.Imager", [textfrom, textsubject, textbody])
                                 message = xCensor.xCensor(message,theCensorLevel)
-                                ImagerMap.textmap.drawTextW(kTextXStart,kTextYStart,message)
+                                ImagerMap.textmap.drawText(kTextXStart,kTextYStart,message)
                                 ImagerMap.textmap.flush()
                         else:
                             PtDebugPrint("xSimpleImager[%s]: Can't display element type %d" % (ImagerName.value,elemType),level=kWarningLevel)
