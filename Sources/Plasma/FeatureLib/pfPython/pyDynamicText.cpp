@@ -298,11 +298,11 @@ void pyDynamicText::DrawTextW( int16_t x, int16_t y, std::wstring text )
         //  2) clip
         //  3) just draw
         if ( fWrap )
-            pMsg->DrawWrappedString(x,y,fWrapWidth,fWrapHeight,text.c_str());
+            pMsg->DrawWrappedString(x,y,fWrapWidth,fWrapHeight,plString::FromWchar(text.c_str()));
         else if ( fClip )
-            pMsg->DrawClippedString(x,y,fClipLeft,fClipTop,fClipRight,fClipBottom,text.c_str());
+            pMsg->DrawClippedString(x,y,fClipLeft,fClipTop,fClipRight,fClipBottom,plString::FromWchar(text.c_str()));
         else
-            pMsg->DrawString(x,y,text.c_str());
+            pMsg->DrawString(x,y,plString::FromWchar(text.c_str()));
 
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
