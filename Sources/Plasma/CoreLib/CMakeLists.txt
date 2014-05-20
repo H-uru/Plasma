@@ -32,11 +32,23 @@ try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp
             OUTPUT_VARIABLE OUTPUT)
 if(HAVE_CPUID)
-    add_definitions(-DHAVE_CPUID)
     message("CPUID header found -- using hardware math acceleration when available")
 else()
     message("CPUID header not found -- using software math")
 endif()
+
+try_compile(HAVE_CXX14_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
+            COMPILE_DEFINITIONS -DTRY_ATTRIBUTE
+            OUTPUT_VARIABLE OUTPUT)
+try_compile(HAVE_GCC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
+            COMPILE_DEFINITIONS -DTRY_GCC_ATTR
+            OUTPUT_VARIABLE OUTPUT)
+try_compile(HAVE_MSVC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
+            COMPILE_DEFINITIONS -DTRY_MSVC_ATTR
+            OUTPUT_VARIABLE OUTPUT)
 
 set(CoreLib_SOURCES
     HeadSpin.cpp

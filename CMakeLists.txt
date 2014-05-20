@@ -30,6 +30,12 @@ if(UNIX)
 endif(UNIX)
 # End HeadSpin Configuration
 
+# Header file for globally-set confingure-time defines
+configure_file(${PROJECT_SOURCE_DIR}/cmake/hsCompilerSpecific.h.cmake
+               ${PROJECT_BINARY_DIR}/hsCompilerSpecific.h)
+include_directories(${PROJECT_BINARY_DIR})
+# End hsCompilerSpecific.h
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 

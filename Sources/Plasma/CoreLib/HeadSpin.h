@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HeadSpinHDefined
 #define HeadSpinHDefined
 
+// Ensure these get set consistently regardless of what module includes it
+#include "hsCompilerSpecific.h"
+
 #if (defined(_DEBUG) || defined(UNIX_DEBUG))
 #   define HS_DEBUGGING
 #endif // defined(_DEBUG) || defined(UNIX_DENUG)
@@ -138,6 +141,15 @@ typedef uint32_t  hsGSeedValue;
 
 #define hsFourByteTag(a, b, c, d)       (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (d))
 
+#if defined(HAVE_CXX14_DEPRECATED_ATTR)
+#   define hsDeprecated(message) [[deprecated(message)]]
+#elif defined(HAVE_GCC_DEPRECATED_ATTR)
+#   define hsDeprecated(message) __attribute__((deprecated(message)))
+#elif defined(HAVE_MSVC_DEPRECATED_ATTR)
+#   define hsDeprecated(message) __declspec(deprecated(message))
+#else
+#   define hsDeprecated(message)
+#endif
 
 //======================================
 // Endian swap funcitions
