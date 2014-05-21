@@ -132,6 +132,12 @@ namespace plFormat_Private
     };
 
     extern FormatSpec _FetchNextFormat(_IFormatDataObject &data);
+
+    template <typename _type, typename... _Args>
+    plString _IFormat(_IFormatDataObject &data, _type, _Args...);
+
+    // End of the chain -- emits the last piece (if any) and builds the final string
+    plString _IFormat(_IFormatDataObject &data);
 }
 
 /** Declare a formattable type for `plFormat`.
@@ -201,8 +207,10 @@ PL_FORMAT_TYPE(int)
 PL_FORMAT_TYPE(unsigned)
 PL_FORMAT_TYPE(long)
 PL_FORMAT_TYPE(unsigned long)
+#if (SIZEOF_LONG == 4)
 PL_FORMAT_TYPE(int64_t)
 PL_FORMAT_TYPE(uint64_t)
+#endif
 PL_FORMAT_TYPE(const char *)
 PL_FORMAT_TYPE(const wchar_t *)
 PL_FORMAT_TYPE(const plString &)
@@ -217,11 +225,5 @@ PL_FORMAT_TYPE(const std::wstring &)
 // Formats as "true" or "false", following normal string formatting rules.
 // To use other formats, don't pass us a bool directly...
 PL_FORMAT_TYPE(bool)
-
-namespace plFormat_Private
-{
-    // End of the chain -- emits the last piece (if any) and builds the final string
-    plString _IFormat(_IFormatDataObject &data);
-}
 
 #endif // plFormat_Defined
