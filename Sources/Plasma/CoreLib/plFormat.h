@@ -133,11 +133,26 @@ namespace plFormat_Private
 
     extern FormatSpec _FetchNextFormat(_IFormatDataObject &data);
 
-    template <typename _type, typename... _Args>
-    plString _IFormat(_IFormatDataObject &data, _type, _Args...);
+    template <typename _Type, typename... _Args>
+    plString _IFormat(_IFormatDataObject &data, _Type value, _Args... args)
+    {
+        plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data);
+        data.fOutput.push_back(_impl_plFormat_DataHandler(format, value));
+        return _IFormat(data, args...);
+    }
 
     // End of the chain -- emits the last piece (if any) and builds the final string
     plString _IFormat(_IFormatDataObject &data);
+}
+
+template <typename _Type, typename... _Args>
+plString plFormat(const char *fmt_str, _Type value, _Args... args)
+{
+    plFormat_Private::_IFormatDataObject data;
+    data.fFormatStr = fmt_str;
+    plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data);
+    data.fOutput.push_back(_impl_plFormat_DataHandler(format, value));
+    return plFormat_Private::_IFormat(data, args...);
 }
 
 /** Declare a formattable type for `plFormat`.
@@ -145,26 +160,7 @@ namespace plFormat_Private
  */
 #define PL_FORMAT_TYPE(_type) \
     extern plStringBuffer<char> _impl_plFormat_DataHandler( \
-                    const plFormat_Private::FormatSpec &format, _type value); \
-    namespace plFormat_Private \
-    { \
-        template <typename... _Args> \
-        plString _IFormat(_IFormatDataObject &data, _type value, _Args... args) \
-        { \
-            plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
-            data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
-            return _IFormat(data, args...); \
-        } \
-    } \
-    template <typename... _Args> \
-    plString plFormat(const char *fmt_str, _type value, _Args... args) \
-    { \
-        plFormat_Private::_IFormatDataObject data; \
-        data.fFormatStr = fmt_str; \
-        plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
-        data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
-        return plFormat_Private::_IFormat(data, args...); \
-    }
+                    const plFormat_Private::FormatSpec &format, _type value);
 
 /** Provide the implementation for a formattable type for `plFormat`.
  *  \sa PL_FORMAT_TYPE(), PL_FORMAT_FORWARD()
