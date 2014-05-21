@@ -45,7 +45,6 @@
 
 TEST(PlStringTest,Format)
 {
-	
     //string <256 characters
     plString expected1 = plString("abcd3");
     plString output1 = plString::Format("a%c%s%d",'b',"cd",3);
@@ -74,7 +73,6 @@ TEST(PlStringTest,FindChar)
     result = input.Find('B',plString::kCaseInsensitive);
     EXPECT_EQ(1,result);
 
-    
     //unavailable char, case sensitive
     result = input.Find('f',plString::kCaseSensitive);
     EXPECT_EQ(-1,result);
@@ -106,7 +104,6 @@ TEST(PlStringTest,FindLast)
     result = input.FindLast('B',plString::kCaseInsensitive);
     EXPECT_EQ(9,result);
 
-    
     //unavailable char, case sensitive
     result = input.FindLast('f',plString::kCaseSensitive);
     EXPECT_EQ(-1,result);
@@ -138,7 +135,6 @@ TEST(PlStringTest,FindString)
     result = input.Find("ab",plString::kCaseInsensitive);
     EXPECT_EQ(0,result);
 
-    
     //unavailable string, case sensitive
     result = input.Find("cd",plString::kCaseSensitive);
     EXPECT_EQ(-1,result);
@@ -196,6 +192,7 @@ TEST(PlStringTest,Trim)
     plString output1 = input1.Trim("f");
     EXPECT_EQ(input1,output1);
 }
+
 TEST(PlStringTest,Substr)
 {
     plString input = plString("abcdefgh");
@@ -204,7 +201,7 @@ TEST(PlStringTest,Substr)
     plString output = input.Substr(15,1);
     EXPECT_EQ(plString::Null,output);
 
-    //start<0 
+    //start<0
     plString output1 =input.Substr(-3,3);
     plString expected1 = plString("fgh");
     EXPECT_EQ(expected1,output1);
@@ -239,7 +236,7 @@ TEST(PlStringTest,Replace)
 }
 
 TEST(PlStringTest,ToUpper)
-{    
+{
     plString input = plString("abCDe");
     plString output = input.ToUpper();
     plString expected = plString("ABCDE");
