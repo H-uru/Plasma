@@ -957,9 +957,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         plString title;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
                         if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                            title = plString::Format("%s'", nc->GetPlayerName().c_str());
+                            title = plFormat("{}'", nc->GetPlayerName());
                         else
-                            title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                            title = plFormat("{}'s", nc->GetPlayerName());
                         info->SetAgeUserDefinedName(title.c_str());
                     }
                     if (!info->HasAgeDescription())
@@ -968,9 +968,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         plString desc;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
                         if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                            desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName().c_str());
+                            desc = plFormat("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         else
-                            desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName().c_str());
+                            desc = plFormat("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
@@ -996,9 +996,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 plString title;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
                                 if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                                    title = plString::Format("%s'", nc->GetPlayerName().c_str());
+                                    title = plFormat("{}'", nc->GetPlayerName());
                                 else
-                                    title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                                    title = plFormat("{}'s", nc->GetPlayerName());
                                 info->SetAgeUserDefinedName(title.c_str());
                             }
 
@@ -1008,9 +1008,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 plString desc;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
                                 if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                                    desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName().c_str());
+                                    desc = plFormat("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 else
-                                    desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName().c_str());
+                                    desc = plFormat("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 info->SetAgeDescription( desc.c_str() );
                             }
 

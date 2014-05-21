@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "plProduct.h"
-#include "plString.h"
+#include "plFormat.h"
 
 static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
 static_assert(PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
@@ -89,8 +89,8 @@ const char *plProduct::UUID() { return PRODUCT_UUID; }
 
 plString plProduct::ProductString()
 {
-    static plString _cache = plString::Format(
-            "%s.%u.%u - " RELEASE_ACCESS "." RELEASE_TYPE,
-            CoreName().c_str(), BranchId(), BuildId());
+    static plString _cache = plFormat(
+            "{}.{}.{} - " RELEASE_ACCESS "." RELEASE_TYPE,
+            CoreName(), BranchId(), BuildId());
     return _cache;
 }

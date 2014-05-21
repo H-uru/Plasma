@@ -187,16 +187,19 @@ plFileName plFileName::Join(const plFileName &base, const plFileName &path)
     char last = base.fName.CharAt(base.GetSize() - 1);
     char first = path.fName.CharAt(0);
     if (last != '/' && last != '\\') {
-        if (first != '/' && first != '\\') {
-            return plString::Format("%s" PATH_SEPARATOR_STR "%s",
-                                    base.fName.c_str(), path.fName.c_str());
-        }
+        if (first != '/' && first != '\\')
+            return plFormat("{}" PATH_SEPARATOR_STR "{}", base, path);
         return base.fName + path.fName;
     } else if (first != '/' && first != '\\') {
         return base.fName + path.fName;
     }
     // Both have a slash, but we only need one
     return base.fName + path.fName.Substr(1);
+}
+
+PL_FORMAT_IMPL(const plFileName &)
+{
+    return PL_FORMAT_FORWARD(format, value.AsString());
 }
 
 
@@ -544,7 +547,7 @@ plString plFileSystem::ConvertFileSize(uint64_t size)
 {
     const char* labels[] = { "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
     if (size < 1024)
-        return plString::Format("%i B");
+        return plFormat("{} B", size);
 
     uint64_t last_div = size;
     for (size_t i = 0; i < arrsize(labels); ++i) {
@@ -561,5 +564,5 @@ plString plFileSystem::ConvertFileSize(uint64_t size)
     }
 
     // this should never happen
-    return plString::Format("%i %s", last_div, labels[arrsize(labels) - 1]);
+    return plFormat("{} {}", last_div, labels[arrsize(labels) - 1]);
 }

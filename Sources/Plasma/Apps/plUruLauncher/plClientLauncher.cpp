@@ -354,7 +354,7 @@ static void IGotFileServIPs(ENetError result, void* param, const wchar_t* addr)
 static void IEapSucksErrorProc(ENetProtocol protocol, ENetError error)
 {
     if (s_errorProc) {
-        plString msg = plString::Format("Protocol: %S", NetProtocolToString(protocol));
+        plString msg = plFormat("Protocol: {}", NetProtocolToString(protocol));
         s_errorProc(error, msg);
     }
 }

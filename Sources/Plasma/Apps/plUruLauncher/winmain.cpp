@@ -185,7 +185,7 @@ static void PumpMessages()
 
 static void IOnDownloadBegin(const plFileName& file)
 {
-    plString msg = plString::Format("Downloading... %s", file.AsString().c_str());
+    plString msg = plFormat("Downloading... {}", file);
     SetDlgItemTextW(s_dialog, IDC_TEXT, msg.ToWchar());
 }
 
@@ -195,8 +195,8 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const plStri
     IShowMarquee(false);
 
     // DL size
-    plString size = plString::Format("%s / %s", plFileSystem::ConvertFileSize(curBytes).c_str(),
-        plFileSystem::ConvertFileSize(totalBytes).c_str());
+    plString size = plFormat("{} / {}", plFileSystem::ConvertFileSize(curBytes),
+                             plFileSystem::ConvertFileSize(totalBytes));
     SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.ToWchar());
 
     // DL speed
@@ -243,7 +243,7 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
     si.cb = sizeof(si);
 
     // Create wchar things and stuff :/
-    plString cmd = plString::Format("%s %s", exe.AsString().c_str(), args.c_str());
+    plString cmd = plFormat("{} {}", exe, args);
     plStringBuffer<wchar_t> file = exe.AsString().ToWchar();
     plStringBuffer<wchar_t> params = cmd.ToWchar();
 
@@ -296,7 +296,7 @@ static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
 
 static bool IInstallRedist(const plFileName& exe)
 {
-    ISetDownloadStatus(plString::Format("Installing... %s", exe.AsString().c_str()));
+    ISetDownloadStatus(plFormat("Installing... {}", exe));
     Sleep(2500); // let's Sleep for a bit so the user can see that we're doing something before the UAC dialog pops up!
 
     // Try to guess some arguments... Unfortunately, the file manifest format is fairly immutable.
@@ -350,7 +350,7 @@ static void IOnNetError(ENetError result, const plString& msg)
     if (s_taskbar)
         s_taskbar->SetProgressState(s_dialog, TBPF_ERROR);
 
-    s_error = plString::Format("Error: %S\r\n%s", NetErrorAsString(result), msg.c_str());
+    s_error = plFormat("Error: {}\r\n{}", NetErrorAsString(result), msg);
     IQuit(PLASMA_PHAILURE);
 }
 
@@ -394,7 +394,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
-        plString text = plString::Format("%s is already running", plProduct::LongName().c_str());
+        plString text = plFormat("{} is already running", plProduct::LongName());
         IShowErrorDialog(text.ToWchar());
         return PLASMA_OK;
     }

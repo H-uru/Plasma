@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
-#include "plString.h"
+#include "plFormat.h"
 
 class hsStream;
 
@@ -144,6 +144,8 @@ public:
     static const plLocation kInvalidLoc;
 };
 
+PL_FORMAT_TYPE(const plLocation &)
+
 //// plUoid //////////////////////////////////////////////////////////////////
 
 class plUoid
@@ -197,5 +199,7 @@ protected:
     plLocation  fLocation;
     plLoadMask  fLoadMask;
 };
+
+PL_FORMAT_TYPE(const plUoid &)
 
 #endif // plUoid_h_inc
