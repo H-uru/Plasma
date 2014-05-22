@@ -227,10 +227,6 @@ inline plFileName operator+(const char *left, const plFileName &right)
 { return left + right.AsString(); }
 
 
-// Shortcut for use in plFormat
-PL_FORMAT_TYPE(const plFileName &)
-
-
 /** Structure to get information about a file by name.
  *  \sa plFileName
  */

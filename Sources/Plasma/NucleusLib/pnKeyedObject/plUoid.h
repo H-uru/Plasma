@@ -144,8 +144,6 @@ public:
     static const plLocation kInvalidLoc;
 };
 
-PL_FORMAT_TYPE(const plLocation &)
-
 //// plUoid //////////////////////////////////////////////////////////////////
 
 class plUoid
@@ -199,7 +197,5 @@ protected:
     plLocation  fLocation;
     plLoadMask  fLoadMask;
 };
-
-PL_FORMAT_TYPE(const plUoid &)
 
 #endif // plUoid_h_inc
