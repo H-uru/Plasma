@@ -142,16 +142,16 @@ public:
     // global function to get the GrandMaster Age SDL object
     static PyObject* GetAgeSDL();
 
-    static void SetDefault(pySDLModifier& self, std::string key, PyObject* value);
-    static void SendToClients(pySDLModifier& self, std::string key);
-    static void SetNotify(pySDLModifier& self, pyKey& selfkey, std::string key, float tolerance);
+    static void SetDefault(pySDLModifier& self, const plString& key, PyObject* value);
+    static void SendToClients(pySDLModifier& self, const plString& key);
+    static void SetNotify(pySDLModifier& self, pyKey& selfkey, const plString& key, float tolerance);
     
-    static PyObject* GetItem(pySDLModifier& self, std::string key);
-    static void SetItem(pySDLModifier& self, std::string key, PyObject* value);
-    static void SetItemIdx(pySDLModifier& self, std::string key, int idx, PyObject* value);
-    static void SetItemIdxImmediate(pySDLModifier& self, std::string key, int idx, PyObject* value);
-    static void SetFlags(pySDLModifier& self, const char* name, bool sendImmediate, bool skipOwnershipCheck);
-    static void SetTagString(pySDLModifier& self, const char* name, const char* tag);
+    static PyObject* GetItem(pySDLModifier& self, const plString& key);
+    static void SetItem(pySDLModifier& self, const plString& key, PyObject* value);
+    static void SetItemIdx(pySDLModifier& self, const plString& key, int idx, PyObject* value);
+    static void SetItemIdxImmediate(pySDLModifier& self, const plString& key, int idx, PyObject* value);
+    static void SetFlags(pySDLModifier& self, const plString& name, bool sendImmediate, bool skipOwnershipCheck);
+    static void SetTagString(pySDLModifier& self, const plString& name, const plString& tag);
     
 };
 

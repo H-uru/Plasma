@@ -699,48 +699,48 @@ PyObject* pySDLModifier::GetAgeSDL()
 }
 
 
-void pySDLModifier::SetDefault(pySDLModifier& self, std::string key, PyObject* value)
+void pySDLModifier::SetDefault(pySDLModifier& self, const plString& key, PyObject* value)
 {
-    self.fRecord->SetDefault(key.c_str(), value);
+    self.fRecord->SetDefault(key, value);
 }
 
-void pySDLModifier::SendToClients(pySDLModifier& self, std::string key)
+void pySDLModifier::SendToClients(pySDLModifier& self, const plString& key)
 {
-    self.fRecord->SendToClients(key.c_str());
+    self.fRecord->SendToClients(key);
 }
 
-void pySDLModifier::SetNotify(pySDLModifier& self, pyKey& selfkey, std::string key, float tolerance)
+void pySDLModifier::SetNotify(pySDLModifier& self, pyKey& selfkey, const plString& key, float tolerance)
 {
-    self.fRecord->SetNotify(selfkey, key.c_str(), tolerance);
+    self.fRecord->SetNotify(selfkey, key, tolerance);
 }
 
-PyObject* pySDLModifier::GetItem(pySDLModifier& self, std::string key)
+PyObject* pySDLModifier::GetItem(pySDLModifier& self, const plString& key)
 {
-    return self.fRecord->GetItem(key.c_str());
+    return self.fRecord->GetItem(key);
 }
 
-void pySDLModifier::SetItem(pySDLModifier& self, std::string key, PyObject* value)
+void pySDLModifier::SetItem(pySDLModifier& self, const plString& key, PyObject* value)
 {
-    self.fRecord->SetItem(key.c_str(), value);
+    self.fRecord->SetItem(key, value);
 }
 
 
-void pySDLModifier::SetItemIdx(pySDLModifier& self, std::string key, int idx, PyObject* value)
+void pySDLModifier::SetItemIdx(pySDLModifier& self, const plString& key, int idx, PyObject* value)
 {
-    self.fRecord->SetItemIdx(key.c_str(), idx, value);
+    self.fRecord->SetItemIdx(key, idx, value);
 }
 
-void pySDLModifier::SetItemIdxImmediate(pySDLModifier& self, std::string key, int idx, PyObject* value)
+void pySDLModifier::SetItemIdxImmediate(pySDLModifier& self, const plString& key, int idx, PyObject* value)
 {
-    self.fRecord->SetItemIdx(key.c_str(), idx, value, true);
+    self.fRecord->SetItemIdx(key, idx, value, true);
 }
 
-void pySDLModifier::SetFlags(pySDLModifier& self, const char* name, bool sendImmediate, bool skipOwnershipCheck)
+void pySDLModifier::SetFlags(pySDLModifier& self, const plString& name, bool sendImmediate, bool skipOwnershipCheck)
 {
     self.fRecord->SetFlags(name,sendImmediate,skipOwnershipCheck);
 }
 
-void pySDLModifier::SetTagString(pySDLModifier& self, const char* name, const char* tag)
+void pySDLModifier::SetTagString(pySDLModifier& self, const plString& name, const plString& tag)
 {
     self.fRecord->SetTagString(name,tag);
 }
