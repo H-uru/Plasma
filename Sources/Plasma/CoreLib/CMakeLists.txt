@@ -8,16 +8,25 @@ add_definitions(-DPRODUCT_SHORT_NAME="${PRODUCT_SHORT_NAME}")
 add_definitions(-DPRODUCT_LONG_NAME="${PRODUCT_LONG_NAME}")
 add_definitions(-DPRODUCT_UUID="${PRODUCT_UUID}")
 
-if(NOT WCHAR_BYTES)
-    include(CheckTypeSize)
+include(CheckTypeSize)
 
+if(NOT WCHAR_BYTES)
     check_type_size("wchar_t" WCHAR_BYTES)
     if(NOT WCHAR_BYTES)
         message(FATAL_ERROR "Could not determine sizeof(wchar_t)")
         set(WCHAR_BYTES 0)
-    endif(NOT WCHAR_BYTES)
-endif(NOT WCHAR_BYTES)
+    endif()
+endif()
 add_definitions(-DWCHAR_BYTES=${WCHAR_BYTES})
+
+if(NOT SIZEOF_LONG)
+    check_type_size("long" SIZEOF_LONG)
+    if(NOT SIZEOF_LONG)
+        message(FATAL_ERROR "Could not determine sizeof(long)")
+        set(SIZEOF_LONG 0)
+    endif()
+endif()
+add_definitions(-DSIZEOF_LONG=${SIZEOF_LONG})
 
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp

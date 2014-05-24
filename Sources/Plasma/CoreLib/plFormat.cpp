@@ -338,7 +338,7 @@ static plStringBuffer<char> _formatChar(const plFormat_Private::FormatSpec &form
 #define _PL_FORMAT_IMPL_INT_TYPE(_stype, _utype) \
     PL_FORMAT_IMPL(_stype) \
     { \
-        /* Note:  The use of unsigned here is not a typo -- we only format decimal
+        /* Note:  The use of unsigned here is not a typo -- we only format decimal \
            values with a sign, so we can convert everything else to unsigned. */ \
         switch (format.fDigitClass) { \
         case plFormat_Private::kDigitBin: \
@@ -388,7 +388,9 @@ _PL_FORMAT_IMPL_INT_TYPE(signed char, unsigned char)
 _PL_FORMAT_IMPL_INT_TYPE(short, unsigned short)
 _PL_FORMAT_IMPL_INT_TYPE(int, unsigned)
 _PL_FORMAT_IMPL_INT_TYPE(long, unsigned long)
+#if (SIZEOF_LONG == 4)
 _PL_FORMAT_IMPL_INT_TYPE(int64_t, uint64_t)
+#endif
 
 PL_FORMAT_IMPL(char)
 {

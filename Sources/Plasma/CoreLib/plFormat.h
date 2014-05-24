@@ -135,30 +135,13 @@ namespace plFormat_Private
 }
 
 /** Declare a formattable type for `plFormat`.
+ *  \note PL_FORMAT_IMPL must only be used in plFormat.h, due to constraints
+ *    on compile-time declaration order imposed by some compilers.
  *  \sa PL_FORMAT_IMPL()
  */
 #define PL_FORMAT_TYPE(_type) \
     extern plStringBuffer<char> _impl_plFormat_DataHandler( \
-                    const plFormat_Private::FormatSpec &format, _type value); \
-    namespace plFormat_Private \
-    { \
-        template <typename... _Args> \
-        plString _IFormat(_IFormatDataObject &data, _type value, _Args... args) \
-        { \
-            plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
-            data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
-            return _IFormat(data, args...); \
-        } \
-    } \
-    template <typename... _Args> \
-    plString plFormat(const char *fmt_str, _type value, _Args... args) \
-    { \
-        plFormat_Private::_IFormatDataObject data; \
-        data.fFormatStr = fmt_str; \
-        plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data); \
-        data.fOutput.push_back(_impl_plFormat_DataHandler(format, value)); \
-        return plFormat_Private::_IFormat(data, args...); \
-    }
+                    const plFormat_Private::FormatSpec &format, _type value);
 
 /** Provide the implementation for a formattable type for `plFormat`.
  *  \sa PL_FORMAT_TYPE(), PL_FORMAT_FORWARD()
@@ -191,37 +174,80 @@ namespace plFormat_Private
 #define PL_FORMAT_FORWARD(format, fwd_value) \
     _impl_plFormat_DataHandler((format), (fwd_value))
 
-PL_FORMAT_TYPE(char)
-PL_FORMAT_TYPE(wchar_t)
-PL_FORMAT_TYPE(signed char)
-PL_FORMAT_TYPE(unsigned char)
-PL_FORMAT_TYPE(short)
-PL_FORMAT_TYPE(unsigned short)
-PL_FORMAT_TYPE(int)
-PL_FORMAT_TYPE(unsigned)
-PL_FORMAT_TYPE(long)
-PL_FORMAT_TYPE(unsigned long)
-PL_FORMAT_TYPE(int64_t)
-PL_FORMAT_TYPE(uint64_t)
-PL_FORMAT_TYPE(const char *)
-PL_FORMAT_TYPE(const wchar_t *)
-PL_FORMAT_TYPE(const plString &)
+// ====================================
+// BEGIN: Formattable type declarations
+// ====================================
 
-// TODO:  Remove these when they're no longer needed
-PL_FORMAT_TYPE(const std::string &)
-PL_FORMAT_TYPE(const std::wstring &)
+    PL_FORMAT_TYPE(char)
+    PL_FORMAT_TYPE(wchar_t)
+    PL_FORMAT_TYPE(signed char)
+    PL_FORMAT_TYPE(unsigned char)
+    PL_FORMAT_TYPE(short)
+    PL_FORMAT_TYPE(unsigned short)
+    PL_FORMAT_TYPE(int)
+    PL_FORMAT_TYPE(unsigned)
+    PL_FORMAT_TYPE(long)
+    PL_FORMAT_TYPE(unsigned long)
+#if (SIZEOF_LONG == 4)
+    PL_FORMAT_TYPE(int64_t)
+    PL_FORMAT_TYPE(uint64_t)
+#endif
+    PL_FORMAT_TYPE(const char *)
+    PL_FORMAT_TYPE(const wchar_t *)
+    PL_FORMAT_TYPE(const plString &)
 
-// TODO:  Implement floating point types (float, double).  They're harder
-// than the others, so I'll get around to them later >.>
+    // Shortcut for plFileName
+    PL_FORMAT_TYPE(const class plFileName &)
 
-// Formats as "true" or "false", following normal string formatting rules.
-// To use other formats, don't pass us a bool directly...
-PL_FORMAT_TYPE(bool)
+    // TODO:  Remove these when they're no longer needed
+    PL_FORMAT_TYPE(const std::string &)
+    PL_FORMAT_TYPE(const std::wstring &)
+
+    // TODO:  Implement floating point types (float, double).  They're harder
+    // than the others, so I'll get around to them later >.>
+
+    // Formats as "true" or "false", following normal string formatting rules.
+    // To use other formats, don't pass us a bool directly...
+    PL_FORMAT_TYPE(bool)
+
+    // Formats for plUoid
+    PL_FORMAT_TYPE(const class plLocation &)
+    PL_FORMAT_TYPE(const class plUoid &)
+
+    // Format for plUUID
+    PL_FORMAT_TYPE(const class plUUID &)
+
+// ==================================
+// END: Formattable type declarations
+// ==================================
+
+// NOTE:  Added in order to work properly in GCC/Clang; all PL_FORMAT_TYPE
+// declarations MUST be above this line.
+#undef PL_FORMAT_TYPE
 
 namespace plFormat_Private
 {
     // End of the chain -- emits the last piece (if any) and builds the final string
     plString _IFormat(_IFormatDataObject &data);
+
+    // Internal plFormat implementation which carries over the pieces formatted so far
+    template <typename _Type, typename... _Args>
+    plString _IFormat(_IFormatDataObject &data, _Type value, _Args... args)
+    {
+        plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data);
+        data.fOutput.push_back(_impl_plFormat_DataHandler(format, value));
+        return _IFormat(data, args...);
+    }
+}
+
+template <typename _Type, typename... _Args>
+plString plFormat(const char *fmt_str, _Type value, _Args... args)
+{
+    plFormat_Private::_IFormatDataObject data;
+    data.fFormatStr = fmt_str;
+    plFormat_Private::FormatSpec format = plFormat_Private::_FetchNextFormat(data);
+    data.fOutput.push_back(_impl_plFormat_DataHandler(format, value));
+    return plFormat_Private::_IFormat(data, args...);
 }
 
 #endif // plFormat_Defined

@@ -96,6 +96,4 @@ public:
     static plUUID Generate();
 };
 
-PL_FORMAT_TYPE(const plUUID &)
-
 #endif // pnUUID_h_inc
