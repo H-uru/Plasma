@@ -11,15 +11,8 @@ set(PRODUCT_LONG_NAME   "Uru Live"  CACHE STRING "Product Long Name")
 set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
                                     CACHE STRING "Product UUID")
 
-# Detect Clang compiler
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    set(CMAKE_COMPILER_IS_CLANGXX 1)
-endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-
-# Require C++11
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-endif()
+# Configure compile-time compiler-specific flags
+include(cmake/CompilerChecks.cmake)
 
 # HeadSpin Configuration
 if(WIN32 AND NOT CYGWIN)

@@ -1,10 +1,10 @@
 // AssShader.cpp : Defines the entry point for the console application.
 //
 
+#include "plFileSystem.h"
+
 #include <d3d9.h>
 #include <d3dx9core.h>
-
-#include "plFileSystem.h"
 
 void ICreateHeader(const char* const varName, const char* const fileName, FILE* fp, LPD3DXBUFFER shader)
 {
