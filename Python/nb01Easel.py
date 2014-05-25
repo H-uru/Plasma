@@ -116,6 +116,6 @@ class nb01Easel(ptModifier):
         dyna_map.textmap.setFont(dyna_fontname.value, dyna_fontsize.value)
         dyna_map.textmap.setJustify(PtJustify.kCenter)
         dyna_map.textmap.setLineSpacing(dyna_fontspacing.value)
-        dyna_map.textmap.drawTextW(0,0,text)
+        dyna_map.textmap.drawText(0,0,text)
         dyna_map.textmap.flush()
 

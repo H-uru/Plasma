@@ -100,5 +100,5 @@ class xDynTextObj(ptModifier):
         theMap.setFont(fontName, fontSize)
         theMap.setJustify(justify)
         theMap.setLineSpacing(spacing)
-        theMap.drawTextW(textX,textY,PtGetLocalizedString(locPath))
+        theMap.drawText(textX,textY,PtGetLocalizedString(locPath))
         theMap.flush()

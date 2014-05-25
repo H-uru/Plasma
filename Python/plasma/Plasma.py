@@ -2283,10 +2283,6 @@ class ptDynamicMap:
 - 'text' is a string of the text to be drawn"""
         pass
 
-    def drawTextW(self,x,y,text):
-        """Unicode version of drawText"""
-        pass
-
     def fillRect(self,left,top,right,bottom,color):
         """Fill in the specified rectangle with a color
 - left,top,right,bottom define the rectangle
