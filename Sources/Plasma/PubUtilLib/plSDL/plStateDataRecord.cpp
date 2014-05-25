@@ -736,10 +736,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     if (!dbg)
         return;
 
-    plString pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
@@ -752,7 +749,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
         pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
 
     // dump simple vars
-    for(i=0;i<fVarsList.size(); i++)
+    for (size_t i=0; i<fVarsList.size(); i++)
     {
         if ( (dirtyOnly && fVarsList[i]->IsDirty()) ||  (!dirtyOnly && fVarsList[i]->IsUsed()) )
         {
@@ -761,7 +758,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     }
  
     // dump nested vars 
-    for(i=0;i<fSDVarsList.size(); i++)
+    for (size_t i=0; i<fSDVarsList.size(); i++)
     {
         if ( (dirtyOnly && fSDVarsList[i]->IsDirty()) || (!dirtyOnly && fSDVarsList[i]->IsUsed()) )
         {
@@ -772,10 +769,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
 
 void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dirtyOnly, int level) const
 {
-    std::string pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
@@ -794,7 +788,7 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
     stream->Write(logStr.GetSize(), logStr.c_str());
 
     // dump simple vars
-    for(i=0;i<fVarsList.size(); i++)
+    for (size_t i=0; i<fVarsList.size(); i++)
     {
         if ( (dirtyOnly && fVarsList[i]->IsDirty()) ||  (!dirtyOnly && fVarsList[i]->IsUsed()) )
         {
@@ -802,8 +796,8 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         }
     }
  
-    // dump nested vars 
-    for(i=0;i<fSDVarsList.size(); i++)
+    // dump nested vars
+    for (size_t i=0; i<fSDVarsList.size(); i++)
     {
         if ( (dirtyOnly && fSDVarsList[i]->IsDirty()) || (!dirtyOnly && fSDVarsList[i]->IsUsed()) )
         {

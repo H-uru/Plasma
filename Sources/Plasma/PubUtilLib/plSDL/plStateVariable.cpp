@@ -2279,10 +2279,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
     if (!dbg)
         return;
 
-    plString pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
     if (GetCount()>1)
@@ -2292,7 +2289,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
     }
     
     pad += "\t";
-    for(i=0;i<GetCount(); i++)
+    for (size_t i=0; i<GetCount(); i++)
     {
         plString s=GetAsString(i);
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
@@ -2317,10 +2314,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
 
 void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int level) const
 {
-    plString pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
     if (GetCount()>1)
@@ -2330,7 +2324,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
     }
     
     pad += "\t";
-    for(i=0;i<GetCount(); i++)
+    for (size_t i=0; i<GetCount(); i++)
     {
         plString s=GetAsString(i);
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
@@ -2676,16 +2670,13 @@ void plSDStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) const
     if (!dbg)
         return;
 
-    std::string pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
     dbg->LogMsg(plString::Format( "%sSDVar, name:%s dirtyOnly:%d count:%d",
         pad.c_str(), GetName().c_str(), dirtyOnly, cnt).c_str());
 
-    for(i=0;i<GetCount();i++)
+    for (size_t i=0; i<GetCount(); i++)
     {
         if ( (dirtyOnly && fDataRecList[i]->IsDirty()) || 
             (!dirtyOnly && fDataRecList[i]->IsUsed()) )
