@@ -112,38 +112,24 @@ void    plDynamicTextMsg::FrameRect( uint16_t left, uint16_t top, uint16_t right
     fColor = c;
 }
 
-void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const char *text )
-{
-    wchar_t *wString = hsStringToWString(text);
-    DrawString(x,y,wString);
-    delete [] wString;
-}
-
-void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const wchar_t *text )
+void    plDynamicTextMsg::DrawString( int16_t x, int16_t y, const plString& text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds );
     fCmd |= kDrawString; 
 
-    fString = plString::FromWchar(text);
+    fString = text;
     fX = x;
     fY = y;
 }
 
-void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const char *text )
-{
-    wchar_t *wString = hsStringToWString(text);
-    DrawClippedString(x,y,clipLeft,clipTop,clipRight,clipBottom,wString);
-    delete [] wString;
-}
-
-void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const wchar_t *text )
+void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom, const plString& text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawClippedString; 
 
-    fString = plString::FromWchar(text);
+    fString = text;
     fX = x;
     fY = y;
 
@@ -153,20 +139,13 @@ void    plDynamicTextMsg::DrawClippedString( int16_t x, int16_t y, uint16_t clip
     fBottom = clipBottom;
 }
 
-void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const char *text )
-{
-    wchar_t *wString = hsStringToWString(text);
-    DrawWrappedString(x,y,wrapWidth,wrapHeight,wString);
-    delete [] wString;
-}
-
-void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const wchar_t *text )
+void    plDynamicTextMsg::DrawWrappedString( int16_t x, int16_t y, uint16_t wrapWidth, uint16_t wrapHeight, const plString& text )
 {
     hsAssert( ( fCmd & ( kStringCmds | kPosCmds | kRectCmds ) ) == 0, "Attempting to issue conflicting drawText commands" );
     fCmd &= ~( kStringCmds | kPosCmds | kRectCmds );
     fCmd |= kDrawWrappedString; 
 
-    fString = plString::FromWchar(text);
+    fString = text;
     fX = x;
     fY = y;
 

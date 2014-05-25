@@ -54,7 +54,6 @@ class pyImage;
 
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
-#include <string>
 #include "hsTemplates.h"
 
 class pyDynamicText
@@ -68,7 +67,7 @@ private:
     bool            fNetForce;
 
     // clipping
-    bool            fClip;
+    bool              fClip;
     uint16_t          fClipLeft;
     uint16_t          fClipTop;
     uint16_t          fClipRight;
@@ -79,8 +78,8 @@ private:
     uint16_t          fWrapWidth;
     uint16_t          fWrapHeight;
 
-    virtual plDynamicTextMsg* ICreateDTMsg();
-    virtual void IInit();
+    plDynamicTextMsg* ICreateDTMsg();
+    void IInit();
 
 protected:
     pyDynamicText();
@@ -91,8 +90,8 @@ public:
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDynamicMap);
     PYTHON_CLASS_NEW_DEFINITION;
-    static PyObject *New(pyKey& key);
-    static PyObject *New(plKey key);
+    static PyObject* New(pyKey& key);
+    static PyObject* New(plKey key);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyDynamicText object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyDynamicText); // converts a PyObject to a pyDynamicText (throws error if not correct type)
 
@@ -101,40 +100,39 @@ public:
 
 // methods that will be exposed to Python
     // message stuff
-    virtual void SetSender(pyKey& selfKey);
-    virtual void ClearReceivers();
-    virtual void AddReceiver(pyKey& key);
-    virtual void SetNetPropagate(bool propagate);
-    virtual void SetNetForce(bool force);
+    void SetSender(pyKey& selfKey);
+    void ClearReceivers();
+    void AddReceiver(pyKey& key);
+    void SetNetPropagate(bool propagate);
+    void SetNetForce(bool force);
 
     // dynamicText commands
-    virtual void ClearToColor( pyColor& color );
-    virtual void Flush( void );
-    virtual void SetTextColor( pyColor& color );
-    virtual void SetTextColor2( pyColor& color, bool blockRGB );
-    virtual void SetFont( const char *facename, int16_t size );
-    virtual void FillRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
-    virtual void FrameRect( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
-    virtual void SetClipping( uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom);
-    virtual void UnsetClipping();
-    virtual void SetWrapping( uint16_t wrapWidth, uint16_t wrapHeight );
-    virtual void UnsetWrapping();
-    virtual void DrawText( int16_t x, int16_t y, const char *text );
-    virtual void DrawTextW( int16_t x, int16_t y, std::wstring text );
-    virtual void DrawImage( uint16_t x, uint16_t y, pyImage& image, bool respectAlpha );
-    virtual void DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy, uint16_t cw, uint16_t ch,
-                                        bool respectAlpha );
-    virtual void PurgeImage( void );
+    void ClearToColor(pyColor& color );
+    void Flush();
+    void SetTextColor(pyColor& color );
+    void SetTextColor2(pyColor& color, bool blockRGB );
+    void SetFont(const char *facename, int16_t size );
+    void FillRect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
+    void FrameRect(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, pyColor& color );
+    void SetClipping(uint16_t clipLeft, uint16_t clipTop, uint16_t clipRight, uint16_t clipBottom);
+    void UnsetClipping();
+    void SetWrapping(uint16_t wrapWidth, uint16_t wrapHeight);
+    void UnsetWrapping();
+    void DrawText(int16_t x, int16_t y, const plString& text);
+    void DrawImage(uint16_t x, uint16_t y, pyImage& image, bool respectAlpha);
+    void DrawImageClipped(uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy,
+                          uint16_t cw, uint16_t ch, bool respectAlpha);
+    void PurgeImage();
 
     // Actually return the visible width and height, since that's what you want to be drawing to
-    virtual uint16_t  GetWidth( void );
-    virtual uint16_t  GetHeight( void );
-    virtual void CalcTextExtents( std::wstring text, unsigned &width, unsigned &height );
-    
-    virtual void SetJustify(uint8_t justify);
-    virtual void SetLineSpacing(int16_t spacing);
+    uint16_t  GetWidth();
+    uint16_t  GetHeight();
+    void      CalcTextExtents(const plString& text, uint16_t& width, uint16_t& height);
 
-    virtual plKey GetImage();
+    void      SetJustify(uint8_t justify);
+    void      SetLineSpacing(int16_t spacing);
+
+    plKey     GetImage();
 };
 
 #endif // _pyDynamicText_h_
