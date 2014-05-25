@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
     }
 
     plFileName filename = argv[1];
-    printf("Optimizing %s...", filename.GetFileName().c_str());
+    plPrintf("Optimizing {}...", filename);
 
 #ifndef _DEBUG
     try {

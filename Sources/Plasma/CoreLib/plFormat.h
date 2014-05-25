@@ -251,4 +251,17 @@ plString plFormat(const char *fmt_str, _Type value, _Args... args)
     return plFormat_Private::_IFormat(data, args...);
 }
 
+template <typename _Type, typename... _Args>
+void plPrintf(FILE *fd, const char *fmt_str, _Type value, _Args... args)
+{
+    plString output = plFormat(fmt_str, value, args...);
+    fwrite(output.c_str(), sizeof(char), output.GetSize(), fd);
+}
+
+template <typename _Type, typename... _Args>
+void plPrintf(const char *fmt_str, _Type value, _Args... args)
+{
+    plPrintf(stdout, fmt_str, value, args...);
+}
+
 #endif // plFormat_Defined

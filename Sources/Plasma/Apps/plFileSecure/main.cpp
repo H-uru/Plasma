@@ -110,7 +110,7 @@ void SecureFiles(const plFileName& dir, const plString& ext, uint32_t* key)
     std::vector<plFileName> files = plFileSystem::ListDir(dir, ext.c_str());
     for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        printf("securing: %s\n", iter->GetFileName().c_str());
+        plPrintf("securing: {}\n", iter->GetFileName());
         plSecureStream::FileEncrypt(*iter, key);
     }
 }

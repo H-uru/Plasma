@@ -108,12 +108,12 @@ void EncryptFiles(const plFileName& dir, const char* ext, bool encrypt)
     {
         if (encrypt)
         {
-            printf("encrypting: %s\n", iter->GetFileName().c_str());
+            plPrintf("encrypting: {}\n", iter->GetFileName());
             plEncryptedStream::FileEncrypt(*iter);
         }
         else
-        { 
-            printf("decrypting: %s\n", iter->GetFileName().c_str());
+        {
+            plPrintf("decrypting: {}\n", iter->GetFileName());
             plEncryptedStream::FileDecrypt(*iter);
         }
     }
