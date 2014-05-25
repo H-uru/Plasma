@@ -73,7 +73,7 @@ Mead, WA   99021
  * `b`           | Binary
  * `d`           | Decimal (default) -- when used with char types, outputs a number instead of the UTF representation of the char
  * `c`           | UTF character (default for character types)
- * `FFF.EEE`     | Use FFF.EEE floating point precision
+ * `.EEE`        | Use EEE digits of floating point precision
  * `f`           | Fixed floating point format (ddd.ddd)
  * `e`           | Exponent notation for floating point (d.ddde[+/-]dd)
  * `E`           | Same as 'e' format, but with upper case E (d.dddE[+/-]dd)
@@ -114,8 +114,8 @@ namespace plFormat_Private
     /** Represents a parsed format tag, for use in formatter implementations. */
     struct FormatSpec
     {
-        int fPrecisionLeft = 0;     /**< Requested padding and/or precision */
-        int fPrecisionRight = 0;    /**< Requested precision after the . for floating-point */
+        int fMinimumLength = 0;     /**< Requested minimum padding length */
+        int fPrecision = 0;         /**< Requested precision for floating-point */
 
         char fPadChar = 0;          /**< Explicit padding char (default is space) */
         Alignment fAlignment = kAlignDefault;   /**< Requested pad alignment */
@@ -192,6 +192,10 @@ namespace plFormat_Private
     PL_FORMAT_TYPE(int64_t)
     PL_FORMAT_TYPE(uint64_t)
 #endif
+
+    PL_FORMAT_TYPE(float)
+    PL_FORMAT_TYPE(double)
+
     PL_FORMAT_TYPE(const char *)
     PL_FORMAT_TYPE(const wchar_t *)
     PL_FORMAT_TYPE(const plString &)
@@ -202,9 +206,6 @@ namespace plFormat_Private
     // TODO:  Remove these when they're no longer needed
     PL_FORMAT_TYPE(const std::string &)
     PL_FORMAT_TYPE(const std::wstring &)
-
-    // TODO:  Implement floating point types (float, double).  They're harder
-    // than the others, so I'll get around to them later >.>
 
     // Formats as "true" or "false", following normal string formatting rules.
     // To use other formats, don't pass us a bool directly...

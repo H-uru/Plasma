@@ -147,7 +147,7 @@ namespace plFormat_Private
             case '5': case '6': case '7': case '8': case '9':
                 {
                     char *end = nullptr;
-                    spec.fPrecisionLeft = strtol(ptr, &end, 10);
+                    spec.fMinimumLength = strtol(ptr, &end, 10);
                     ptr = end - 1;
                 }
                 break;
@@ -155,7 +155,7 @@ namespace plFormat_Private
                 {
                     hsAssert(*(ptr + 1), "Unterminated format specifier");
                     char *end = nullptr;
-                    spec.fPrecisionRight = strtol(ptr + 1, &end, 10);
+                    spec.fPrecision = strtol(ptr + 1, &end, 10);
                     ptr = end - 1;
                 }
                 break;
@@ -227,16 +227,16 @@ static plStringBuffer<char> _formatNumeric(const plFormat_Private::FormatSpec &f
         max = 1;
 
     plStringBuffer<char> buffer;
-    if (format.fPrecisionLeft > max) {
-        char *output = buffer.CreateWritableBuffer(format.fPrecisionLeft);
-        memset(output, pad, format.fPrecisionLeft);
+    if (format.fMinimumLength > max) {
+        char *output = buffer.CreateWritableBuffer(format.fMinimumLength);
+        memset(output, pad, format.fMinimumLength);
         if (format.fAlignment == plFormat_Private::kAlignLeft) {
             _IFormatNumeric_Impl<_IType>(output + max, value, radix, upperCase);
         } else {
-            _IFormatNumeric_Impl<_IType>(output + format.fPrecisionLeft,
+            _IFormatNumeric_Impl<_IType>(output + format.fMinimumLength,
                                          value, radix, upperCase);
         }
-        output[format.fPrecisionLeft] = 0;
+        output[format.fMinimumLength] = 0;
     } else {
         char *output = buffer.CreateWritableBuffer(max);
         _IFormatNumeric_Impl<_IType>(output + max, value, radix, upperCase);
@@ -268,21 +268,21 @@ static plStringBuffer<char> _formatDecimal(const plFormat_Private::FormatSpec &f
 
     plStringBuffer<char> buffer;
     char *output;
-    if (format.fPrecisionLeft > max) {
-        output = buffer.CreateWritableBuffer(format.fPrecisionLeft);
-        memset(output, pad, format.fPrecisionLeft);
+    if (format.fMinimumLength > max) {
+        output = buffer.CreateWritableBuffer(format.fMinimumLength);
+        memset(output, pad, format.fMinimumLength);
         if (format.fAlignment == plFormat_Private::kAlignLeft)
             _IFormatNumeric_Impl<_IType>(output + max, abs, 10);
         else
-            _IFormatNumeric_Impl<_IType>(output + format.fPrecisionLeft, abs, 10);
-        output[format.fPrecisionLeft] = 0;
+            _IFormatNumeric_Impl<_IType>(output + format.fMinimumLength, abs, 10);
+        output[format.fMinimumLength] = 0;
     } else {
         output = buffer.CreateWritableBuffer(max);
         _IFormatNumeric_Impl<_IType>(output + max, abs, 10);
         output[max] = 0;
     }
 
-    int signPos = format.fPrecisionLeft - static_cast<int>(max);
+    int signPos = format.fPrecision - static_cast<int>(max);
     if (signPos < 0)
         signPos = 0;
 
@@ -296,7 +296,7 @@ static plStringBuffer<char> _formatDecimal(const plFormat_Private::FormatSpec &f
 
 static plStringBuffer<char> _formatChar(const plFormat_Private::FormatSpec &format, int ch)
 {
-    hsAssert(format.fPrecisionLeft == 0 && format.fPadChar == 0,
+    hsAssert(format.fMinimumLength == 0 && format.fPadChar == 0,
              "Char formatting does not currently support padding");
 
     // Don't need to nul-terminate this, since plStringBuffer's constructor fixes it
@@ -392,6 +392,60 @@ _PL_FORMAT_IMPL_INT_TYPE(long, unsigned long)
 _PL_FORMAT_IMPL_INT_TYPE(int64_t, uint64_t)
 #endif
 
+PL_FORMAT_IMPL(float)
+{
+    return PL_FORMAT_FORWARD(format, double(value));
+}
+
+PL_FORMAT_IMPL(double)
+{
+    char pad = format.fPadChar ? format.fPadChar : ' ';
+
+    // Cheating a bit here -- just pass it along to cstdio
+    char format_buffer[32];
+    size_t end = 0;
+
+    format_buffer[end++] = '%';
+    if (format.fPrecision) {
+        int count = snprintf(format_buffer + end, arrsize(format_buffer) - end,
+                             ".%d", format.fPrecision);
+
+        // Ensure one more space (excluding \0) is available for the format specifier
+        hsAssert(count > 0 && count + end + 2 < arrsize(format_buffer),
+                 "Not enough space for format string");
+        end += count;
+    }
+
+    format_buffer[end++] =
+        (format.fFloatClass == plFormat_Private::kFloatExp) ? 'e' :
+        (format.fFloatClass == plFormat_Private::kFloatExpUpper) ? 'E' :
+        (format.fFloatClass == plFormat_Private::kFloatFixed) ? 'f' : 'g';
+    format_buffer[end] = 0;
+
+    int format_size = snprintf(nullptr, 0, format_buffer, value);
+    hsAssert(format_size > 0, "Your libc doesn't support reporting format size");
+    plStringBuffer<char> out_buffer;
+    char *output;
+
+    if (format.fMinimumLength > format_size) {
+        output = out_buffer.CreateWritableBuffer(format.fMinimumLength);
+        memset(output, pad, format.fMinimumLength);
+        if (format.fAlignment == plFormat_Private::kAlignLeft) {
+            snprintf(output, format_size + 1, format_buffer, value);
+            output[format_size] = pad;  // snprintf overwrites this
+            output[format.fMinimumLength] = 0;
+        } else {
+            snprintf(output + (format.fMinimumLength - format_size), format_size + 1,
+                     format_buffer, value);
+        }
+    } else {
+        output = out_buffer.CreateWritableBuffer(format_size);
+        snprintf(output, format_size + 1, format_buffer, value);
+    }
+
+    return out_buffer;
+}
+
 PL_FORMAT_IMPL(char)
 {
     /* Note:  The use of unsigned here is not a typo -- we only format decimal
@@ -445,18 +499,18 @@ static plStringBuffer<char> _formatString(const plFormat_Private::FormatSpec &fo
 {
     char pad = format.fPadChar ? format.fPadChar : ' ';
 
-    if (format.fPrecisionLeft > value.GetSize()) {
+    if (format.fMinimumLength > value.GetSize()) {
         plStringBuffer<char> buf;
-        char *output = buf.CreateWritableBuffer(format.fPrecisionLeft);
-        memset(output, pad, format.fPrecisionLeft);
+        char *output = buf.CreateWritableBuffer(format.fMinimumLength);
+        memset(output, pad, format.fMinimumLength);
         if (format.fAlignment == plFormat_Private::kAlignRight) {
-            memcpy(output + (format.fPrecisionLeft - value.GetSize()),
+            memcpy(output + (format.fMinimumLength - value.GetSize()),
                    value.GetData(), value.GetSize());
         } else {
             memcpy(output, value.GetData(), value.GetSize());
         }
 
-        output[format.fPrecisionLeft] = 0;
+        output[format.fMinimumLength] = 0;
         return buf;
     }
 
