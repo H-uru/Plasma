@@ -8,48 +8,6 @@ add_definitions(-DPRODUCT_SHORT_NAME="${PRODUCT_SHORT_NAME}")
 add_definitions(-DPRODUCT_LONG_NAME="${PRODUCT_LONG_NAME}")
 add_definitions(-DPRODUCT_UUID="${PRODUCT_UUID}")
 
-include(CheckTypeSize)
-
-if(NOT WCHAR_BYTES)
-    check_type_size("wchar_t" WCHAR_BYTES)
-    if(NOT WCHAR_BYTES)
-        message(FATAL_ERROR "Could not determine sizeof(wchar_t)")
-        set(WCHAR_BYTES 0)
-    endif()
-endif()
-add_definitions(-DWCHAR_BYTES=${WCHAR_BYTES})
-
-if(NOT SIZEOF_LONG)
-    check_type_size("long" SIZEOF_LONG)
-    if(NOT SIZEOF_LONG)
-        message(FATAL_ERROR "Could not determine sizeof(long)")
-        set(SIZEOF_LONG 0)
-    endif()
-endif()
-add_definitions(-DSIZEOF_LONG=${SIZEOF_LONG})
-
-try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp
-            OUTPUT_VARIABLE OUTPUT)
-if(HAVE_CPUID)
-    message("CPUID header found -- using hardware math acceleration when available")
-else()
-    message("CPUID header not found -- using software math")
-endif()
-
-try_compile(HAVE_CXX14_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
-            COMPILE_DEFINITIONS -DTRY_ATTRIBUTE
-            OUTPUT_VARIABLE OUTPUT)
-try_compile(HAVE_GCC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
-            COMPILE_DEFINITIONS -DTRY_GCC_ATTR
-            OUTPUT_VARIABLE OUTPUT)
-try_compile(HAVE_MSVC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
-            COMPILE_DEFINITIONS -DTRY_MSVC_ATTR
-            OUTPUT_VARIABLE OUTPUT)
-
 set(CoreLib_SOURCES
     HeadSpin.cpp
     hsBitVector.cpp
