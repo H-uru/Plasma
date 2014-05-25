@@ -563,17 +563,17 @@ bool plAvTaskSeek::IUpdateObjective(plArmatureMod *avatar)
 // ----------
 void plAvTaskSeek::DumpDebug(const char *name, int &x, int&y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plString::Format("duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
+    debugTxt.DrawString(x, y, plFormat("duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
             hsTimer::GetSysSeconds() - fStartTime,
             fPosition.fX, fPosition.fY, fPosition.fZ, fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plString::Format("positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
+    debugTxt.DrawString(x, y, plFormat("positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
             fStillPositioning, fStillRotating, fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
             fDistance, fAngForward, fAngRight));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plString::Format(" distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
+    debugTxt.DrawString(x, y, plFormat(" distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
             fDistForward, fDistRight, fShuffleRange, fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle));
     y += lineHeight;
 }
@@ -583,17 +583,17 @@ void plAvTaskSeek::DumpToAvatarLog(plArmatureMod *avatar)
     plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
     log->AddLine(avatar->GetMoveKeyString().c_str());
 
-    log->AddLine(plString::Format("    duration: %.2f pos: (%.3f, %.3f, %.3f) goalPos: (%.3f, %.3f, %.3f) ",
+    log->AddLine(plFormat("    duration: {.2f} pos: ({.3f}, {.3f}, {.3f}) goalPos: ({.3f}, {.3f}, {.3f}) ",
             hsTimer::GetSysSeconds() - fStartTime,
             fPosition.fX, fPosition.fY, fPosition.fZ,
             fSeekPos.fX, fSeekPos.fY, fSeekPos.fZ).c_str());
 
-    log->AddLine(plString::Format("    positioning: %d rotating %d goalVec: (%.3f, %.3f, %.3f) dist: %.3f angFwd: %.3f angRt: %.3f",
+    log->AddLine(plFormat("    positioning: {} rotating {} goalVec: ({.3f}, {.3f}, {.3f}) dist: {.3f} angFwd: {.3f} angRt: {.3f}",
             fStillPositioning, fStillRotating,
             fGoalVec.fX, fGoalVec.fY, fGoalVec.fZ,
             fDistance, fAngForward, fAngRight).c_str());
 
-    log->AddLine(plString::Format("    distFwd: %.3f distRt: %.3f shufRange: %.3f sidAngle: %.3f sidRange: %.3f, fMinWalk: %.3f",
+    log->AddLine(plFormat("    distFwd: {.3f} distRt: {.3f} shufRange: {.3f} sidAngle: {.3f} sidRange: {.3f}, fMinWalk: {.3f}",
             fDistForward, fDistRight, fShuffleRange,
             fMaxSidleAngle, fMaxSidleRange, fMinFwdAngle).c_str());
 }

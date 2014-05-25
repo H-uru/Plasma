@@ -1566,7 +1566,7 @@ void cyMisc::FogSetDefExp2(float end, float density)
 void cyMisc::SetClearColor(float red, float green, float blue)
 {
     // do this command via the console to keep the maxplugins from barfing
-    plString command = plString::Format("Graphics.Renderer.SetClearColor %f %f %f", red, green, blue);
+    plString command = plFormat("Graphics.Renderer.SetClearColor {f} {f} {f}", red, green, blue);
 
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
