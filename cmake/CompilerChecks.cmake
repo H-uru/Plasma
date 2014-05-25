@@ -47,10 +47,6 @@ try_compile(HAVE_GCC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
             COMPILE_DEFINITIONS -DTRY_GCC_ATTR
             OUTPUT_VARIABLE OUTPUT)
-try_compile(HAVE_MSVC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_deprecated_attribute.cpp
-            COMPILE_DEFINITIONS -DTRY_MSVC_ATTR
-            OUTPUT_VARIABLE OUTPUT)
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/hsCompilerSpecific.h.cmake
                ${PROJECT_BINARY_DIR}/hsCompilerSpecific.h)

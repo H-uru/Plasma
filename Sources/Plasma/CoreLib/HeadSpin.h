@@ -145,7 +145,7 @@ typedef uint32_t  hsGSeedValue;
 #   define hsDeprecated(message) [[deprecated(message)]]
 #elif defined(HAVE_GCC_DEPRECATED_ATTR)
 #   define hsDeprecated(message) __attribute__((deprecated(message)))
-#elif defined(HAVE_MSVC_DEPRECATED_ATTR)
+#elif defined(_MSC_VER)
 #   define hsDeprecated(message) __declspec(deprecated(message))
 #else
 #   define hsDeprecated(message)

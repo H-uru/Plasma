@@ -4,8 +4,6 @@
 [[deprecated("derp_func is deprecated -- use func instead")]]
 #elif defined(TRY_GCC_ATTR)
 __attribute__((deprecated("derp_func is deprecated -- use func instead")))
-#elif defined(TRY_MSVC_ATTR)
-__declspec(deprecated("derp_func is deprecated -- use func instead"))
 #else
 #   error "DERP"
 #endif
