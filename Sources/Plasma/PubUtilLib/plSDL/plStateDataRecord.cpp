@@ -277,8 +277,8 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            plString::Format("Something bad happened while reading simple var data, desc:%s",
-                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
+            plFormat("Something bad happened while reading simple var data, desc:{}",
+                     fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
     }
 
@@ -311,8 +311,8 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            plString::Format("Something bad happened while reading nested var data, desc:%s",
-                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
+            plFormat("Something bad happened while reading nested var data, desc:{}",
+                     fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
     }
 
@@ -745,8 +745,8 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     if (msg)
         dbg->LogMsg(plFormat("{}{}", pad, msg).c_str());
 
-    dbg->LogMsg(plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
-        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
+    dbg->LogMsg(plFormat("{}SDR(0x{x}), desc={}, showDirty={}, numVars={}, vol={}",
+        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
 
     // dump simple vars
     for (size_t i=0; i<fVarsList.size(); i++)
@@ -783,8 +783,8 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         stream->Write(logStr.GetSize(), logStr.c_str());
     }
 
-    logStr = plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
-        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
+    logStr = plFormat("{}SDR(0x{x}), desc={}, showDirty={}, numVars={}, vol={}",
+        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
     stream->Write(logStr.GetSize(), logStr.c_str());
 
     // dump simple vars

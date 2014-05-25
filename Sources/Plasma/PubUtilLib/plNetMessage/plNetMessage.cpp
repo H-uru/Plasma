@@ -704,8 +704,8 @@ plString plNetMsgSDLState::AsString() const
 {
     ISetDescName();     // set desc name for debug if necessary
 
-    return plString::Format("object:%s, initial:%d, %s",
-        ObjectInfo()->GetObjectName().c_str(), fIsInitialState, plNetMsgStreamedObject::AsString().c_str() );
+    return plFormat("object:{}, initial:{}, {}",
+        ObjectInfo()->GetObjectName(), fIsInitialState, plNetMsgStreamedObject::AsString());
 }
 
 //

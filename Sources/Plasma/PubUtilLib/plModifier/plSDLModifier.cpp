@@ -178,8 +178,8 @@ void plSDLModifier::SendState(uint32_t sendFlags)
         {
             gMooseDump=true;
             plNetObjectDebugger::GetInstance()->SetDebugging(true);
-            curState->DumpToObjectDebugger(plString::Format("Object %s SENDS SDL state",
-                GetStateOwnerKey()->GetName().c_str(), dirtyOnly).c_str());
+            curState->DumpToObjectDebugger(plFormat("Object {} SENDS SDL state",
+                GetStateOwnerKey()->GetName()).c_str(), dirtyOnly);
             gMooseDump=false;
         }
 

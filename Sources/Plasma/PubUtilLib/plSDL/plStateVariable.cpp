@@ -209,8 +209,8 @@ void plSimpleStateVariable::IDeAlloc()
         }
         break;
     default:
-        hsAssert(false, plString::Format("undefined atomic type:%d var:%s cnt:%d",
-            type, GetName().c_str("?"), GetCount()).c_str());
+        hsAssert(false, plFormat("undefined atomic type:{} var:{} cnt:{}",
+                                 type, GetName(), GetCount()).c_str());
         break;
     };
 
@@ -2305,7 +2305,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
         }
 
         if ( !dirtyOnly )
-            logMsg += plString::Format( " dirty:%d", IsDirty() );
+            logMsg += plFormat(" dirty:{}", IsDirty());
 
         dbg->LogMsg(logMsg.c_str());
         logMsg = "";
@@ -2340,7 +2340,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
         }
 
         if ( !dirtyOnly )
-            logMsg += plString::Format( " dirty:%d", IsDirty() );
+            logMsg += plFormat(" dirty:{}", IsDirty());
 
         stream->WriteString(logMsg);
         logMsg = "";
@@ -2479,8 +2479,8 @@ void plSDStateVariable::CopyFrom(plSDStateVariable* other, uint32_t writeOptions
 void plSDStateVariable::UpdateFrom(plSDStateVariable* other, uint32_t writeOptions/*=0*/)
 {
     hsAssert(!other->GetSDVarDescriptor()->GetName().CompareI(fVarDescriptor->GetName()),
-        plString::Format("var descriptor mismatch in UpdateFrom, name %s,%s ver %d,%d",
-        GetName().c_str(), other->GetName().c_str()).c_str());
+        plFormat("var descriptor mismatch in UpdateFrom, name {},{}",
+                 GetName(), other->GetName()).c_str());
     Resize(other->GetCount());  // make sure sizes match
 
     bool dirtyOnly = (writeOptions & plSDL::kDirtyOnly);
@@ -2673,8 +2673,8 @@ void plSDStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) const
     plString pad = plString::Fill(level * 3, ' ');
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
-    dbg->LogMsg(plString::Format( "%sSDVar, name:%s dirtyOnly:%d count:%d",
-        pad.c_str(), GetName().c_str(), dirtyOnly, cnt).c_str());
+    dbg->LogMsg(plFormat("{}SDVar, name:{} dirtyOnly:{} count:{}",
+                         pad, GetName(), dirtyOnly, cnt).c_str());
 
     for (size_t i=0; i<GetCount(); i++)
     {
@@ -2694,8 +2694,8 @@ void plSDStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int level
         pad += "   ";
 
     int cnt = dirtyOnly ? GetDirtyCount() : GetUsedCount();
-    stream->WriteString(plString::Format( "%sSDVar, name:%s dirtyOnly:%d count:%d",
-        pad.c_str(), GetName().c_str(), dirtyOnly, cnt));
+    stream->WriteString(plFormat("{}SDVar, name:{} dirtyOnly:{} count:{}",
+                                 pad, GetName(), dirtyOnly, cnt));
 
     for(i=0;i<GetCount();i++)
     {
