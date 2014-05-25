@@ -118,7 +118,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     char msg[1024];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(msg, sizeof(msg), fmt, args);
+    vsnprintf(msg, arrsize(msg), fmt, args);
 #ifdef HS_DEBUGGING
     if (s_GuiAsserts)
     {
@@ -163,7 +163,7 @@ void DebugMsg(const char* fmt, ...)
     char msg[1024];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(msg, sizeof(msg), fmt, args);
+    vsnprintf(msg, arrsize(msg), fmt, args);
 
     if (DebugIsDebuggerPresent())
     {
