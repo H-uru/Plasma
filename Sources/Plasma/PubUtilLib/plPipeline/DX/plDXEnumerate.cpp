@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "hsGDirect3D.h"
+#include "plFormat.h"
 
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
@@ -84,12 +85,12 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
             }
         }
     }
-    plString errStr = plString::Format("Can't find requested device - %s:%s:%s:%s:%s",
+    plString errStr = plFormat("Can't find requested device - {}:{}:{}:{}:{}",
         devRec->GetG3DDeviceTypeName(),
-        devRec->GetDriverDesc().c_str(),
-        devRec->GetDriverName().c_str(),
-        devRec->GetDriverVersion().c_str(),
-        devRec->GetDeviceDesc().c_str());
+        devRec->GetDriverDesc(),
+        devRec->GetDriverName(),
+        devRec->GetDriverVersion(),
+        devRec->GetDeviceDesc());
 
     DWORD enumFlags = 0;
     int width = devMode->GetWidth();

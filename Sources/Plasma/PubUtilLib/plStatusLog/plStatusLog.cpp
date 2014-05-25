@@ -330,15 +330,15 @@ bool plStatusLog::IReOpen( void )
         plFileName fileNoExt;
         plString ext;
         IParseFileName(fileNoExt, ext);
-        plFileName fileToOpen = plString::Format("%s.0.%s", fileNoExt.AsString().c_str(), ext.c_str());
+        plFileName fileToOpen = plFormat("{}.0.{}", fileNoExt, ext);
         if (!(fFlags & kDontRotateLogs))
         {
             plFileName work, work2;
-            work = plString::Format("%s.3.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work = plFormat("{}.3.{}", fileNoExt, ext);
             plFileSystem::Unlink(work);
-            work2 = plString::Format("%s.2.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work2 = plFormat("{}.2.{}", fileNoExt, ext);
             plFileSystem::Move(work2, work);
-            work = plString::Format("%s.1.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work = plFormat("{}.1.{}", fileNoExt, ext);
             plFileSystem::Move(work, work2);
             plFileSystem::Move(fileToOpen, work);
         }

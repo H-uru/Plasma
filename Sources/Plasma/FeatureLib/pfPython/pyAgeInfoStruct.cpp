@@ -190,9 +190,9 @@ plString pyAgeInfoStruct::GetDisplayName() const
     {
         int32_t seq = GetAgeSequenceNumber();
         if (seq > 0)
-            return plString::Format("%s (%d) %s", user.c_str(), seq, instance.c_str());
+            return plFormat("{} ({}) {}", user, seq, instance);
         else
-            return plString::Format("%s %s", user.c_str(), instance.c_str());
+            return plFormat("{} {}", user, instance);
     }
 }
 
@@ -275,8 +275,8 @@ plString pyAgeInfoStructRef::GetDisplayName() const
     {
         int32_t seq = GetAgeSequenceNumber();
         if (seq > 0)
-            return plString::Format("%s (%d) %s", user.c_str(), seq, instance.c_str());
+            return plFormat("{} ({}) {}", user, seq, instance);
         else
-            return plString::Format("%s %s", user.c_str(), instance.c_str());
+            return plFormat("{} {}", user, instance);
     }
 }

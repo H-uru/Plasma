@@ -890,7 +890,7 @@ bool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plErr
     plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(fMods[node]);
     hsAssert(mod != nil, "No MasterMod to make animation persistent!");
 
-    plString buffer = plString::Format("%s_%s_anim_%d", node->GetName(), anim->GetName().c_str(), mod->GetNumPrivateAnimations());
+    plString buffer = plFormat("{}_{}_anim_{}", node->GetName(), anim->GetName(), mod->GetNumPrivateAnimations());
     plLocation nodeLoc = node->GetLocation();
     plKey animKey = hsgResMgr::ResMgr()->NewKey(buffer, anim, nodeLoc);
 

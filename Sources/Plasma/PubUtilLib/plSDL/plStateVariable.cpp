@@ -411,9 +411,9 @@ void plSimpleStateVariable::IVarSet(bool timeStampNow/*=true*/)
 plString plSimpleStateVariable::GetAsString(int idx) const
 {
     int j;
-    plString str;
+    plStringStream str;
     if (fVar.GetAtomicCount()>1)
-        str += "(";
+        str << '(';
 
     plVarDescriptor::Type type=fVar.GetAtomicType();
     switch(type)
@@ -431,29 +431,29 @@ plString plSimpleStateVariable::GetAsString(int idx) const
             for(j=0;j<fVar.GetAtomicCount();j++)
             {
                 if (type==plVarDescriptor::kInt)
-                    str += plString::Format( "%d", fI[i++]);
+                    str << fI[i++];
                 else if (type==plVarDescriptor::kShort)
-                    str += plString::Format( "%d", fS[i++]);
+                    str << fS[i++];
                 else if (type==plVarDescriptor::kByte)
-                    str += plString::Format( "%d", fBy[i++]);
+                    str << fBy[i++];
                 else if (type==plVarDescriptor::kFloat  || type==plVarDescriptor::kAgeTimeOfDay)
-                    str += plString::Format( "%.3f", fF[i++]);
+                    str << plString::Format( "%.3f", fF[i++]);
                 else if (type==plVarDescriptor::kDouble)
-                    str += plString::Format( "%.3f", fD[i++]);
+                    str << plString::Format( "%.3f", fD[i++]);
                 else if (type==plVarDescriptor::kTime)
                 {
                     double tmp;
                     Get(&tmp, i++);
-                    str += plString::Format( "%.3f", tmp);
+                    str << plString::Format( "%.3f", tmp);
                 }
 
                 if (j==fVar.GetAtomicCount()-1)
                 {
                     if (j)
-                        str += ")";
+                        str << ')';
                 }
                 else
-                    str += ",";
+                    str << ',';
             }
         }
         break;
@@ -463,15 +463,15 @@ plString plSimpleStateVariable::GetAsString(int idx) const
             int i=idx*fVar.GetAtomicCount();
             for(j=0;j<fVar.GetAtomicCount();j++)
             {
-                str += plString::Format( "%s", fB[i++] ? "true" : "false");
+                str << (fB[i++] ? "true" : "false");
 
                 if (j==fVar.GetAtomicCount()-1)
                 {
                     if (j)
-                        str += ")";
+                        str << ')';
                 }
                 else
-                    str += ",";
+                    str << ',';
             }
         }
         break;
@@ -481,15 +481,15 @@ plString plSimpleStateVariable::GetAsString(int idx) const
             int i=idx*fVar.GetAtomicCount();
             for(j=0;j<fVar.GetAtomicCount();j++)
             {
-                str += plString::Format( "%s", fS32[i++]);
+                str << fS32[i++];
 
                 if (j==fVar.GetAtomicCount()-1)
                 {
                     if (j)
-                        str += ")";
+                        str << ')';
                 }
                 else
-                    str += ",";
+                    str << ',';
             }
         }
         break;
@@ -499,21 +499,21 @@ plString plSimpleStateVariable::GetAsString(int idx) const
             int i=idx*fVar.GetAtomicCount();
             for(j=0;j<fVar.GetAtomicCount();j++)
             {
-                str += "other";
+                str << "other";
 
                 if (j==fVar.GetAtomicCount()-1)
                 {
                     if (j)
-                        str += ")";
+                        str << ')';
                 }
                 else
-                    str += ",";
+                    str << ',';
             }
         }
         break;
-    }   
+    }
 
-    return str;
+    return str.GetString();
 }
 
 //
@@ -2163,8 +2163,8 @@ void plSimpleStateVariable::NotifyStateChange(const plSimpleStateVariable* other
     if (plNetObjectDebuggerBase::GetInstance() && plNetObjectDebuggerBase::GetInstance()->GetDebugging())
     {
         plNetObjectDebuggerBase::GetInstance()->LogMsg(
-            plString::Format("Var %s did %s send notification difference. Has %d notifiers with %d recipients.",
-                GetName().c_str(), !notify ? "NOT" : "", fChangeNotifiers.size(), numNotifiers).c_str());
+            plFormat("Var {} did {} send notification difference. Has {} notifiers with {} recipients.",
+                     GetName(), !notify ? "NOT" : "", fChangeNotifiers.size(), numNotifiers).c_str());
     }
 
 }
@@ -2284,7 +2284,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
     for(i=0;i<level; i++)
         pad += "   ";
 
-    plString logMsg = plString::Format( "%sSimpleVar, name:%s[%d]", pad.c_str(), GetName().c_str(), GetCount());
+    plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
     if (GetCount()>1)
     {
         dbg->LogMsg(logMsg.c_str());    // it's going to be a long msg, so print it on its own line
@@ -2298,13 +2298,13 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
         {
             const char* p=fT[i].PrintWMillis();
-            logMsg += plString::Format( "%sVar:%d gameTime:%s pst:%s ts:%s",
-                pad.c_str(), i, s.c_str("?"), p, fTimeStamp.Format("%c").c_str() );
+            logMsg += plFormat("{}Var:{} gameTime:{} pst:{} ts:{}",
+                               pad, i, s, p, fTimeStamp.Format("%c"));
         }
         else
         {
-            logMsg += plString::Format( "%sVar:%d value:%s ts:%s",
-                pad.c_str(), i, s.c_str("?"), fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str() );
+            logMsg += plFormat("{}Var:{} value:{} ts:{}",
+                               pad, i, s, fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c"));
         }
 
         if ( !dirtyOnly )
@@ -2322,7 +2322,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
     for(i=0;i<level; i++)
         pad += "   ";
 
-    plString logMsg = plString::Format( "%sSimpleVar, name:%s[%d]", pad.c_str(), GetName().c_str(), GetCount());
+    plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
     if (GetCount()>1)
     {
         stream->WriteString(logMsg);    // it's going to be a long msg, so print it on its own line
@@ -2336,13 +2336,13 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
         {
             const char* p=fT[i].PrintWMillis();
-            logMsg += plString::Format( "%sVar:%d gameTime:%s pst:%s ts:%s",
-                pad.c_str(), i, s.c_str("?"), p, fTimeStamp.Format("%c").c_str() );
+            logMsg += plFormat("{}Var:{} gameTime:{} pst:{} ts:{}",
+                               pad, i, s, p, fTimeStamp.Format("%c"));
         }
         else
         {
-            logMsg += plString::Format( "%sVar:%d value:%s ts:%s",
-                pad.c_str(), i, s.c_str("?"), fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str() );
+            logMsg += plFormat("{}Var:{} value:{} ts:{}",
+                               pad, i, s, fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c"));
         }
 
         if ( !dirtyOnly )

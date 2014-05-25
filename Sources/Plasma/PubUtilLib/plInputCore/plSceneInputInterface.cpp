@@ -837,13 +837,16 @@ void plSceneInputInterface::ILinkOffereeToAge()
         plString title, desc;
 
         unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
-        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's' || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
-            title = plString::Format( "%s'", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            desc = plString::Format( "%s' %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
+        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's'
+                || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
+            title = plFormat("{}'", plNetClientMgr::GetInstance()->GetPlayerName());
+            desc = plFormat("{}' {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+                            link.GetAgeInfo()->GetAgeInstanceName());
         }
         else {
-            title = plString::Format( "%s's", plNetClientMgr::GetInstance()->GetPlayerName().c_str() );
-            desc = plString::Format( "%s's %s", plNetClientMgr::GetInstance()->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
+            title = plFormat("{}'s", plNetClientMgr::GetInstance()->GetPlayerName());
+            desc = plFormat("{}'s {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+                            link.GetAgeInfo()->GetAgeInstanceName());
         }
 
         info.SetAgeUserDefinedName( title.c_str() );

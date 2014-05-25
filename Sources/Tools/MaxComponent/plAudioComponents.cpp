@@ -2317,7 +2317,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     if( fIndices.find( baseNode ) != fIndices.end() )
         index = fIndices[ baseNode ];
 
-    keyName = plString::Format( "%s_MergedSound", GetINode()->GetName() );
+    keyName = plFormat("{}_MergedSound", GetINode()->GetName());
 
     plKey buffKey = baseNode->FindPageKey( plSoundBuffer::Index(), keyName );   
     if( buffKey != nil )
@@ -2485,7 +2485,7 @@ bool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if( srcBuffer == nil )
         return false;
 
-    plString keyName = plString::Format( "%s_Win32BgndSnd", GetINode()->GetName() );
+    plString keyName = plFormat("{}_Win32BgndSnd", GetINode()->GetName());
     plWin32Sound *sound = nil;
 
     if( srcBuffer->GetDataLengthInSecs() > 4.f )
@@ -2643,7 +2643,7 @@ bool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;
     }
 
-    plString keyName = plString::Format( "%s_Win32GUISound", GetINode()->GetName() );
+    plString keyName = plFormat("{}_Win32GUISound", GetINode()->GetName());
 
     plWin32StaticSound *sound = new plWin32StaticSound;
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());

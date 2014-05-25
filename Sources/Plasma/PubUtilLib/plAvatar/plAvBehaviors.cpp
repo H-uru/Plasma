@@ -117,7 +117,7 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, plDebugText &
         details = plString::Format("%20s %3s time: %5.2f %s", animName.c_str(), onOff, time, blendBar);
     }
     else
-        details = plString::Format("         Behavior %2d %3s %s", fIndex, onOff, blendBar);
+        details = plFormat("         Behavior {2} {>3} {}", fIndex, onOff, blendBar);
 
     debugTxt.DrawString(x, y, details);
     y += lineHeight; 

@@ -62,7 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plProgressMgr* plProgressMgr::fManager = nullptr;
 
-#define LOADING_RES         "xLoading_Linking.%02d.png"
 #define LOADING_RES_COUNT   18
 
 plString plProgressMgr::fImageRotation[LOADING_RES_COUNT];
@@ -83,7 +82,7 @@ plProgressMgr::plProgressMgr()
 
     // Fill array with pre-computed loading frame IDs
     for (int i=0; i < LOADING_RES_COUNT; i++)
-        fImageRotation[i] = plString::Format(LOADING_RES, i);
+        fImageRotation[i] = plFormat("xLoading_Linking.{_02}.png", i);
 }
 
 plProgressMgr::~plProgressMgr()

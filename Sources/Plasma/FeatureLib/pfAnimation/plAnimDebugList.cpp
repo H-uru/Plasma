@@ -147,7 +147,7 @@ void plAnimDebugList::ShowReport()
         if (!mod)
             continue;
 
-        str = plString::Format("  %s", so->GetKeyName().c_str());
+        str = plFormat("  {}", so->GetKeyName());
         txt.DrawString(x, y, str.c_str());
         y += yOff;
 

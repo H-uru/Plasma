@@ -102,7 +102,7 @@ bool plConfigInfoLogging::GetValue(double& retval, const plString & section, con
 
 bool plConfigInfoLogging::GetAllValues(std::vector<plString>& values, const plString & section, const plString & key, const plString & desc)
 {
-    plString descwdef = plString::Format("%s  # %s","\"Multiple Entries\"",desc.c_str());
+    plString descwdef = plFormat("\"Multiple Entries\"  # {}", desc);
     fLog.AddValue(section,key,descwdef,kReplaceIfExists);
 
     values = fConfigInfo.GetAllValues(section,key);

@@ -449,7 +449,7 @@ PL_FORMAT_IMPL(double)
 PL_FORMAT_IMPL(char)
 {
     /* Note:  The use of unsigned here is not a typo -- we only format decimal
-    values with a sign, so we can convert everything else to unsigned. */
+       values with a sign, so we can convert everything else to unsigned. */
     switch (format.fDigitClass) {
     case plFormat_Private::kDigitBin:
         return _formatNumeric<unsigned char>(format, value, 2);

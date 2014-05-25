@@ -215,7 +215,7 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
 
     plPhysical* phys = IGetPhysical();
 
-    plString log = plString::Format("%s: %s", phys->GetKeyName().c_str(), prefix);
+    plString log = plFormat("{}: {}", phys->GetKeyName(), prefix);
 
     if (isPosSet)
         log += plString::Format(" Pos=%.1f %.1f %.1f", pos.fX, pos.fY, pos.fZ);

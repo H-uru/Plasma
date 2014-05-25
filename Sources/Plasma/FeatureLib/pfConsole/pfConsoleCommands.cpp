@@ -2872,7 +2872,7 @@ PF_CONSOLE_CMD( Camera,     // groupName
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
     char str[256];
-    plString foo = plString::Format("%s_", (char*)params[0]);
+    plString foo = plFormat("{}_", (char*)params[0]);
     plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", "", str, true);
     PrintString(str);
 
@@ -4204,7 +4204,7 @@ PF_CONSOLE_CMD( Access,
 {
     char str[256];
     char* preFix = params[0];
-    plString name = plString::Format("%s_plMorphSequence_0", preFix);
+    plString name = plFormat("{}_plMorphSequence_0", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
     PrintString(str);
     if (!key)
@@ -4229,7 +4229,7 @@ PF_CONSOLE_CMD( Access,
 {
     char str[256];
     char* preFix = params[0];
-    plString name = plString::Format("%s_plMorphSequence_2", preFix);
+    plString name = plFormat("{}_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
     PrintString(str);
     if (!key)
@@ -4250,7 +4250,7 @@ PF_CONSOLE_CMD( Access,
 {
     char str[256];
     char* preFix = params[0];
-    plString name = plString::Format("%s_plMorphSequence_2", preFix);
+    plString name = plFormat("{}_plMorphSequence_2", preFix);
     plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
     PrintString(str);
     if (!key)
@@ -4405,7 +4405,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    PrintString(plString::Format("%s Active\n", seq->GetKey()->GetName().c_str()).c_str());
+    PrintString(plFormat("{} Active\n", seq->GetKey()->GetName()).c_str());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4422,7 +4422,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    PrintString(plString::Format("%s Unactive\n", seq->GetKey()->GetName().c_str()).c_str());
+    PrintString(plFormat("{} Unactive\n", seq->GetKey()->GetName()).c_str());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4444,8 +4444,7 @@ PF_CONSOLE_CMD( Access,
     seq->SetUseSharedMesh(true);
     seq->AddSharedMesh(item->fMeshes[plClothingItem::kLODHigh]);
 
-    PrintString(plString::Format("%s on item %s\n", seq->GetKey()->GetName().c_str(),
-                                 (char *)params[0]).c_str());
+    PrintString(plFormat("{} on item {}\n", seq->GetKey()->GetName(), (char *)params[0]).c_str());
 }
 
 #include "pfSurface/plFadeOpacityMod.h"
@@ -6869,8 +6868,7 @@ PF_CONSOLE_CMD( Python,
     plString args;
     if (numParams > 1) 
     {
-        const char* tmp = params[1];
-        args = plString::Format("(%s,)", tmp);
+        args = plFormat("({},)", (char*)params[1]);
     }
     else
         args = "()";

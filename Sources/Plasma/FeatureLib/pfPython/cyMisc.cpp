@@ -215,7 +215,7 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
 
     if ( key == nil )
     {
-        plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+        plString errmsg = plFormat("Sceneobject {} not found", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
         return nil; // return nil cause we errored
     }
@@ -935,7 +935,7 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plString::Format("GUIDialog TagID %d not found", tag);
+    plString errmsg = plFormat("GUIDialog TagID {} not found", tag);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -951,7 +951,7 @@ PyObject* cyMisc::GetDialogFromString(const char* name)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plString::Format("GUIDialog %s not found", name);
+    plString errmsg = plFormat("GUIDialog {} not found", name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -2497,7 +2497,7 @@ plString cyMisc::GetCameraNumber(int number)
     if (pCam && pCam->GetTarget())
     {
         plString ret = pCam->GetTarget()->GetKeyName();
-        plString log = plString::Format("saving camera named %s to chronicle\n", ret.c_str());
+        plString log = plFormat("saving camera named {} to chronicle\n", ret);
         plVirtualCam1::Instance()->AddMsgToLog(log.c_str());
         return ret;
     }
@@ -2508,7 +2508,7 @@ plString cyMisc::GetCameraNumber(int number)
 void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
 {
     plKey key=nil;
-    plString str = plString::Format("attempting to restore camera named %s from chronicle\n",name.c_str());
+    plString str = plFormat("attempting to restore camera named {} from chronicle\n", name);
     plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
 
     if (name.Compare("empty") == 0)
@@ -2525,7 +2525,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
         {
             // give up and force built in 3rd person
             plVirtualCam1::Instance()->PushThirdPerson();
-            plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+            plString errmsg = plFormat("Sceneobject {} not found", name);
             PyErr_SetString(PyExc_NameError, errmsg.c_str());
         }
     }
@@ -2549,7 +2549,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
             }
         }
         plVirtualCam1::Instance()->PushThirdPerson();
-        plString errmsg = plString::Format("Sceneobject %s has no camera modifier",name.c_str());
+        plString errmsg = plFormat("Sceneobject {} has no camera modifier", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
     }
     

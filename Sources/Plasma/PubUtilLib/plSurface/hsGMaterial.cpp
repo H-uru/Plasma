@@ -134,7 +134,7 @@ plLayer* hsGMaterial::MakeBaseLayer()
 
     plString buff;
     if( !GetKeyName().IsNull() )
-        buff = plString::Format("%s_Layer", GetKeyName().c_str());
+        buff = plFormat("{}_Layer", GetKeyName());
     else
         buff = "Layer";
     hsgResMgr::ResMgr()->NewKey( buff, newLay, GetKey() != nil ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );

@@ -203,8 +203,8 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
     {
         gMooseDump=true;
         plNetObjectDebugger::GetInstance()->SetDebugging(true);
-        srcState->DumpToObjectDebugger(plString::Format("Object %s RECVS SDL state",
-            GetStateOwnerKey()->GetName().c_str()).c_str());
+        srcState->DumpToObjectDebugger(plFormat("Object {} RECVS SDL state",
+                                       GetStateOwnerKey()->GetName()).c_str());
         gMooseDump=false;
     }
 

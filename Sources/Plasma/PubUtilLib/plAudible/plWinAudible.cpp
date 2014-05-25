@@ -474,7 +474,7 @@ void plWinAudible::Read(hsStream* s, hsResMgr* mgr)
 
 void plWinAudible::IAssignSoundKey( plSound *sound, const char *name, uint32_t i )
 {
-    plString keyName = plString::Format( "%s_%d", name, i );
+    plString keyName = plFormat("{}_{}", name, i);
     hsgResMgr::ResMgr()->NewKey( keyName, sound, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
 }
 

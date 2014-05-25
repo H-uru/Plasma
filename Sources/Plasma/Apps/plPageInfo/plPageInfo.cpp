@@ -240,7 +240,7 @@ public:
         const plPageInfo& info = page->GetPageInfo();
 
         plFileName fileName = plFileName::Join(fOutputDir,
-                plString::Format("%s_%s.csv", info.GetAge().c_str(), info.GetPage().c_str()));
+                plFormat("{}_{}.csv", info.GetAge(), info.GetPage()));
         fStream.Open(fileName, "wt");
 
         page->LoadKeys();

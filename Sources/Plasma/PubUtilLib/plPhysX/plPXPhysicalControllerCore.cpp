@@ -857,7 +857,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     if (controllerIdx == 0)
     {
         y = 10;
-        debugString = plString::Format("Controller Count: %d", gControllers.size());
+        debugString = plFormat("Controller Count: {}", gControllers.size());
         debugTxt.DrawString(x, y, debugString.c_str());
         y += lineHeight;
     }
@@ -866,8 +866,8 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     int collisionCount = fDbgCollisionInfo.GetCount();
     if (collisionCount > 0)
     {
-        debugString = plString::Format("Controller #%d (%s) Collisions:",
-            controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName().c_str());
+        debugString = plFormat("Controller #{} ({}) Collisions:",
+            controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName());
         debugTxt.DrawString(x, y, debugString.c_str());
         y += lineHeight;
 

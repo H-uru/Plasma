@@ -261,7 +261,7 @@ void plNCAgeJoiner::ExecNextOp () {
             // Start progress bar
             plString str;
 #ifndef PLASMA_EXTERNAL_RELEASE
-            str = plString::Format("Loading age... %s", age.ageDatasetName);
+            str = plFormat("Loading age... {}", age.ageDatasetName);
 #endif
             progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str.c_str(), plProgressMgr::kNone, false, true);
             plDispatch::SetMsgRecieveCallback(IDispatchMsgReceiveCallback);

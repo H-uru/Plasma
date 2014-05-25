@@ -184,7 +184,7 @@ pfGUIListPicture::pfGUIListPicture( plKey mipKey, bool respectAlpha ) : pfGUILis
     {
         // Gotta make and grab an uncompressed one
         plMipmap *uncompBuffer = hsCodecManager::Instance().CreateUncompressedMipmap( mip, hsCodecManager::k32BitDepth );
-        plString str = plString::Format( "%s_uncomp", mip->GetKeyName().c_str() );
+        plString str = plFormat("{}_uncomp", mip->GetKeyName());
         fMipmapKey = hsgResMgr::ResMgr()->NewKey( str, uncompBuffer, fMipmapKey->GetUoid().GetLocation() );
         fMipmapKey->RefObject();
     }

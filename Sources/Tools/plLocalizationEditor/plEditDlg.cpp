@@ -117,7 +117,7 @@ void EditDialog::SaveLocalizationText()
     if (ageName.IsEmpty() || setName.IsEmpty() || elementName.IsEmpty() || elementLanguage.IsEmpty())
         return;
 
-    plString name = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+    plString name = plFormat("{}.{}.{}", ageName, setName, elementName);
     pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, text);
 }
 
@@ -138,7 +138,7 @@ void EditDialog::LoadLocalization(const plString &locPath)
     else
     {
         EnableEdit(true);
-        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+        plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
         plString elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
         fUI->fLocalizationText->setPlainText(elementText.c_str());
     }
@@ -306,12 +306,12 @@ void EditDialog::AddClicked()
             plString newLanguage = dlg.GetValue();
             plString ageName, setName, elementName, elementLanguage;
             SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
-            plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
             if (!pfLocalizationDataMgr::Instance().AddLocalization(key, newLanguage))
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't add additional localization!"));
             else
             {
-                plString path = plString::Format("%s.%s", key.c_str(), newLanguage.c_str());
+                plString path = plFormat("{}.{}", key, newLanguage);
                 fCurrentLocPath = "";
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
@@ -347,7 +347,7 @@ void EditDialog::DeleteClicked()
         {
             plString ageName, setName, elementName, elementLanguage;
             SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
-            plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
             if (!pfLocalizationDataMgr::Instance().DeleteLocalization(key, elementLanguage))
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't delete localization!"));
             else

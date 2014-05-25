@@ -105,7 +105,7 @@ plClusterGroup* plClusterUtil::CreateGroup(plMaxNode* templNode, const char* nam
 {
     plClusterGroup* retVal = new plClusterGroup;
     
-    plString buff = plString::Format("%s_%s_%d", name, templNode->GetName(), fIdx++);
+    plString buff = plFormat("{}_{}_{}", name, templNode->GetName(), fIdx++);
     hsgResMgr::ResMgr()->NewKey(buff, retVal, templNode->GetLocation(), templNode->GetLoadMask());
 
     plKey sceneNode = templNode->GetRoomKey();

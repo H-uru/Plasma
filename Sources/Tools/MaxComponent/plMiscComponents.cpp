@@ -648,7 +648,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
         return;
     }
-    plFileName path = plFileName::Join(ageFolder, plString::Format("%s.age", curAge));
+    plFileName path = plFileName::Join(ageFolder, plFormat("{}.age", curAge));
 
     IVerifyLatestAgeAsset( curAge, path, errMsg );
     std::unique_ptr<plAgeDescription> aged(plPageInfoUtils::GetAgeDesc(curAge));

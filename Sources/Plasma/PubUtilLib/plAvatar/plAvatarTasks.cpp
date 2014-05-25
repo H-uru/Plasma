@@ -636,7 +636,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
     }
     else
     {
-        plString buf = plString::Format("Oneshot: Can't find animation <%s>; all bets are off.", fAnimName.c_str());
+        plString buf = plFormat("Oneshot: Can't find animation <{}>; all bets are off.", fAnimName);
         hsAssert(false, buf.c_str());
         result = true;
     }

@@ -87,7 +87,7 @@ bool plKeysAndValues::KeyHasValue(const plString & key, const plString & value)
 
 bool plKeysAndValues::KeyHasValue(const plString & key, int value)
 {
-    return KeyHasValue(key, plString::Format("%d", value));
+    return KeyHasValue(key, plFormat("{}", value));
 }
 
 bool plKeysAndValues::KeyHasValue(const plString & key, double value)
@@ -116,7 +116,7 @@ bool plKeysAndValues::AddValue(const plString & key, const plString & value, KAd
 
 bool plKeysAndValues::AddValue(const plString & key, int value, KAddValueMode mode)
 {
-    return AddValue(key, plString::Format("%d", value), mode);
+    return AddValue(key, plFormat("{}", value), mode);
 }
 
 bool plKeysAndValues::AddValue(const plString & key, double value, KAddValueMode mode)
@@ -139,7 +139,7 @@ bool plKeysAndValues::SetValue(const plString & key, const plString & value)
 
 bool plKeysAndValues::SetValue(const plString & key, int value)
 {
-    return SetValue(key, plString::Format("%d", value));    
+    return SetValue(key, plFormat("{}", value));
 }
 
 bool plKeysAndValues::SetValue(const plString & key, double value)
@@ -160,17 +160,17 @@ plString plKeysAndValues::GetValue(const plString & key, const plString & defval
 
 uint32_t plKeysAndValues::GetValue(const plString & key, uint32_t defval, bool * outFound) const
 {
-    return strtoul(GetValue(key, plString::Format("%ul", defval), outFound).c_str(), nil, 0);
+    return GetValue(key, plFormat("{}", defval), outFound).ToUInt();
 }
 
 int plKeysAndValues::GetValue(const plString & key, int defval, bool * outFound) const
 {
-    return atol(GetValue(key, plString::Format("%d", defval), outFound).c_str());
+    return GetValue(key, plFormat("{}", defval), outFound).ToInt();
 }
 
 double plKeysAndValues::GetValue(const plString & key, double defval, bool * outFound) const
 {
-    return atof(GetValue(key, plString::Format("%f", defval), outFound).c_str());
+    return GetValue(key, plString::Format("%f", defval), outFound).ToDouble();
 }
 
 std::vector<plString> plKeysAndValues::GetAllValues(const plString & key)

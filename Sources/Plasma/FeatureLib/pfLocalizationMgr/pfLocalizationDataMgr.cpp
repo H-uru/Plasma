@@ -203,7 +203,7 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
     else if (wElement == "translation")
         file->IHandleTranslationTag(parentTag, newTag);
     else
-        file->AddError(plString::Format("Unknown tag %s found", wElement.c_str()));
+        file->AddError(plFormat("Unknown tag {} found", wElement));
 }
 
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
@@ -496,7 +496,7 @@ LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile
             firstSet[curElement->first] = curElement->second;
         else // merge the element in
             firstSet[curElement->first] = IMergeElementData(firstSet[curElement->first], curElement->second, fileName, 
-                plString::Format("%s.%s", path.c_str(), curElement->first.c_str()));
+                plFormat("{}.{}", path, curElement->first));
     }
 
     return firstSet;
@@ -515,7 +515,7 @@ LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile
             firstAge[curSet->first] = curSet->second;
         else // merge the data in
             firstAge[curSet->first] = IMergeSetData(firstAge[curSet->first], curSet->second, fileName, 
-                plString::Format("%s.%s", path.c_str(), curSet->first.c_str()));
+                plFormat("{}.{}", path, curSet->first));
     }
 
     return firstAge;
@@ -919,7 +919,7 @@ void pfLocalizationDataMgr::IConvertSet(LocSetInfo *setInfo, const plString & cu
         LocElementInfo elementInfo;
         elementInfo.fElement = curElement->second;
 
-        IConvertElement(&elementInfo, plString::Format("%s.%s", curPath.c_str(), curElement->first.c_str()));
+        IConvertElement(&elementInfo, plFormat("{}.{}", curPath, curElement->first));
     }
 }
 
@@ -933,7 +933,7 @@ void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const plString & cu
         LocSetInfo setInfo;
         setInfo.fSet = curSet->second;
 
-        IConvertSet(&setInfo, plString::Format("%s.%s", curPath.c_str(), curSet->first.c_str()));
+        IConvertSet(&setInfo, plFormat("{}.{}", curPath, curSet->first));
     }
 }
 
@@ -948,26 +948,26 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plStri
     plStringStream fileData;
     fileData << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     fileData << "<localizations>\n";
-    fileData << plString::Format("\t<age name=\"%s\">\n", ageName.c_str());
+    fileData << plFormat("\t<age name=\"{}\">\n", ageName);
 
     std::vector<plString> setNames = GetSetList(ageName);
     for (int curSet = 0; curSet < setNames.size(); curSet++)
     {
         setEmpty = true; // so far, this set is empty
         plStringStream setCode;
-        setCode << plString::Format("\t\t<set name=\"%s\">\n", setNames[curSet].c_str());
+        setCode << plFormat("\t\t<set name=\"{}\">\n", setNames[curSet]);
 
         std::vector<plString> elementNames = GetElementList(ageName, setNames[curSet]);
         for (int curElement = 0; curElement < elementNames.size(); curElement++)
         {
-            setCode << plString::Format("\t\t\t<element name=\"%s\">\n", elementNames[curElement].c_str());
-            plString key = plString::Format("%s.%s.%s", ageName.c_str(), setNames[curSet].c_str(), elementNames[curElement].c_str());
+            setCode << plFormat("\t\t\t<element name=\"{}\">\n", elementNames[curElement]);
+            plString key = plFormat("{}.{}.{}", ageName, setNames[curSet], elementNames[curElement]);
 
             if (fLocalizedElements[key].find(languageName) != fLocalizedElements[key].end())
             {
                 weWroteData = true;
                 setEmpty = false;
-                setCode << plString::Format("\t\t\t\t<translation language=\"%s\">", languageName.c_str());
+                setCode << plFormat("\t\t\t\t<translation language=\"{}\">", languageName);
                 setCode << fLocalizedElements[key][languageName].ToXML();
                 setCode << "</translation>\n";
             }
@@ -1093,7 +1093,7 @@ pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const plString & nam
 std::vector<plString> pfLocalizationDataMgr::GetLanguages(const plString & ageName, const plString & setName, const plString & elementName)
 {
     std::vector<plString> retVal;
-    plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+    plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
     if (fLocalizedElements.exists(key))
     {
         // age, set, and element exists
@@ -1209,8 +1209,8 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
     {
         for (int curLanguage = 0; curLanguage < languageNames.size(); curLanguage++)
         {
-            plFileName locPath = plFileName::Join(path, plString::Format("%s%s.loc",
-                                    ageNames[curAge].c_str(), languageNames[curLanguage].c_str()));
+            plFileName locPath = plFileName::Join(path, plFormat("{}{}.loc",
+                                    ageNames[curAge], languageNames[curLanguage]));
             IWriteText(locPath, ageNames[curAge], languageNames[curLanguage]);
         }
     }

@@ -163,7 +163,7 @@ void plFontCache::ILoadCustomFonts( void )
             plString keyName;
             if (font->GetKey() == nil)
             {
-                keyName = plString::Format( "%s-%d", font->GetFace().c_str(), font->GetSize() );
+                keyName = plFormat("{}-{}", font->GetFace(), font->GetSize());
                 hsgResMgr::ResMgr()->NewKey( keyName, font, plLocation::kGlobalFixedLoc );
             }
 

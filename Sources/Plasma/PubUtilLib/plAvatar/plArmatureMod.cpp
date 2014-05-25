@@ -2654,7 +2654,7 @@ int plArmatureMod::RefreshDebugDisplay()
 
 void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plString::Format("Armature <%s>:", fRootName.c_str()), 255, 128, 128);
+    debugTxt.DrawString(x, y, plFormat("Armature <{}>:", fRootName), 255, 128, 128);
     y += lineHeight;
 
     plSceneObject * SO = GetTarget(0);
@@ -2677,8 +2677,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         plKey world = nil;
         if (fController)
             world = fController->GetSubworld();
-        debugTxt.DrawString(x, y, plString::Format("In world: %s  Frozen: %s",
-                                    world ? world->GetName().c_str() : "nil", frozen));
+        debugTxt.DrawString(x, y, plFormat("In world: {}  Frozen: {}",
+                                    world ? world->GetName() : "nil", frozen));
         y+= lineHeight;
 
         plString details;
@@ -2747,11 +2747,11 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
         debugTxt.DrawString(x, y, "Relevance Regions:");
         y += lineHeight;
-        debugTxt.DrawString(x, y, plString::Format("          In: %s",
-                plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn).c_str()));
+        debugTxt.DrawString(x, y, plFormat("          In: {}",
+                plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn)));
         y += lineHeight;
-        debugTxt.DrawString(x, y, plString::Format("  Care about: %s",
-                plRelevanceMgr::Instance()->GetRegionNames(fRegionsICareAbout).c_str()));
+        debugTxt.DrawString(x, y, plFormat("  Care about: %s",
+                plRelevanceMgr::Instance()->GetRegionNames(fRegionsICareAbout)));
         y += lineHeight;
     }
 }
@@ -2792,7 +2792,7 @@ void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 
 void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plString::Format("Mouse Input Map: %s",
+    debugTxt.DrawString(x, y, plFormat("Mouse Input Map: {}",
             plAvatarInputInterface::GetInstance()->GetInputMapName()));
     y += lineHeight;
 

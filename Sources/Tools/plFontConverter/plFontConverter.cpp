@@ -570,7 +570,7 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
 
         fFont->SetFace(fontName);
         plFileName fileName = plFileName::Join(destPath,
-                        plString::Format("%s-%d.p2f", fFont->GetFace().c_str(), fFont->GetSize()));
+                        plFormat("{}-{}.p2f", fFont->GetFace(), fFont->GetSize()));
         hsUNIXStream stream;
         if (!stream.Open(fileName, "wb"))
             QMessageBox::critical(this, tr("ERROR"), tr("Can't open file for writing"));

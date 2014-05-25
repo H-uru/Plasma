@@ -293,8 +293,8 @@ PyObject* pySceneObject::GetLocalToWorld()
                 return pyMatrix44::New((hsMatrix44)ci->GetLocalToWorld());
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -322,8 +322,8 @@ PyObject* pySceneObject::GetWorldToLocal()
                 return pyMatrix44::New((hsMatrix44)ci->GetWorldToLocal());
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -351,8 +351,8 @@ PyObject* pySceneObject::GetLocalToParent()
                 return pyMatrix44::New((hsMatrix44)ci->GetLocalToParent());
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -380,8 +380,8 @@ PyObject* pySceneObject::GetParentToLocal()
                 return pyMatrix44::New((hsMatrix44)ci->GetParentToLocal());
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -425,8 +425,8 @@ PyObject* pySceneObject::GetWorldPosition()
                 return pyPoint3::New((hsPoint3)ci->GetWorldPos());
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -454,8 +454,8 @@ PyObject* pySceneObject::GetViewVector()
                 return pyVector3::New(ci->GetLocalToWorld().GetAxis(hsMatrix44::kView));
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -483,8 +483,8 @@ PyObject* pySceneObject::GetUpVector()
                 return pyVector3::New(ci->GetLocalToWorld().GetAxis(hsMatrix44::kUp));
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }
@@ -512,8 +512,8 @@ PyObject* pySceneObject::GetRightVector()
                 return pyVector3::New(ci->GetLocalToWorld().GetAxis(hsMatrix44::kRight));
             else
             {
-                plString errmsg = plString::Format("Sceneobject %s does not have a coordinate interface.",
-                                                   obj->GetKeyName().c_str());
+                plString errmsg = plFormat("Sceneobject {} does not have a coordinate interface.",
+                                           obj->GetKeyName());
                 PyErr_SetString(PyExc_RuntimeError, errmsg.c_str());
                 return nil; // return nil to tell python we errored
             }

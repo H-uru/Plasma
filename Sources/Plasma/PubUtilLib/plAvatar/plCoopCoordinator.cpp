@@ -116,7 +116,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
     serial = serial % 999;
 
-    plString newName = plString::Format("%s%s%3i\x000", host->GetName().c_str(), guest->GetName().c_str(), serial++);
+    plString newName = plFormat("{}{}{3}\x000", host->GetName(), guest->GetName(), serial++);
     
     plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
 

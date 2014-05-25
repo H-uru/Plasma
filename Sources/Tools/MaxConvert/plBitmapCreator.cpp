@@ -547,9 +547,9 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
     }
     else if( clipID != -1 )
-        name = plString::Format( "%s*%x#%d", temp.c_str(), bd->texFlags, clipID );
+        name = plFormat("{}*{x}#{}", temp, bd->texFlags, clipID);
     else
-        name = plString::Format( "%s*%x", temp.c_str(), bd->texFlags );
+        name = plFormat("{}*{x}", temp, bd->texFlags);
     if( bd->invertAlpha )
         name += "_inva";
     name += ".hsm";

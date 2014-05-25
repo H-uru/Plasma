@@ -368,7 +368,7 @@ class plPageFinder : public plRegistryPageIterator
             }
 
             // Try for full location
-            if (plString::Format("%s_%s", info.GetAge().c_str(), info.GetPage().c_str()).CompareI(fFindString) == 0)
+            if (plFormat("{}_{}", info.GetAge(), info.GetPage()).CompareI(fFindString) == 0)
             {
                 *fPagePtr = node;
                 return false;

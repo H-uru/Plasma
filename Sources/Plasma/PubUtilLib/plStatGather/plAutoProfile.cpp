@@ -216,9 +216,9 @@ void plAutoProfileImp::INextProfile()
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))
             {
-                plString fileName = plString::Format("%s\\%s_%s.jpg",
-                    plProfileManagerFull::Instance().GetProfilePath().AsString().c_str(),
-                    ageName, fLastSpawnPointName.c_str());
+                plString fileName = plFormat("{}\\{}_{}.jpg",
+                    plProfileManagerFull::Instance().GetProfilePath(),
+                    ageName, fLastSpawnPointName);
 
                 plJPEG::Instance().SetWriteQuality(100);
                 plJPEG::Instance().WriteToFile(fileName.c_str(), &mipmap);

@@ -252,10 +252,10 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     {
         plString err;
         if (!sdRec)
-            err = plString::Format( "SDL descriptor %s missing, v=%d", descName.c_str(), ver);
+            err = plFormat("SDL descriptor {} missing, v={}", descName, ver);
         else
-            err = plString::Format( "SDL descriptor %s, version mismatch, server v=%d, client v=%d",
-                descName.c_str(), ver, sdRec->GetDescriptor()->GetVersion());
+            err = plFormat("SDL descriptor {}, version mismatch, server v={}, client v={}",
+                descName, ver, sdRec->GetDescriptor()->GetVersion());
 
         hsAssert(false, err.c_str());
         nc->ErrorMsg(err.c_str());

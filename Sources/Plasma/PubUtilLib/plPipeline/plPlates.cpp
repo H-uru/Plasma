@@ -160,7 +160,7 @@ void plPlate::SetTexture(plBitmap *texture)
     plString        keyName;
 
     material = new hsGMaterial();
-    keyName = plString::Format( "PlateBlank#%d", fMagicUniqueKeyInt++ );
+    keyName = plFormat("PlateBlank#{}", fMagicUniqueKeyInt++);
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
     layer->SetShadeFlags( layer->GetShadeFlags() | hsGMatState::kShadeNoShade | hsGMatState::kShadeWhite | hsGMatState::kShadeReallyNoFog );
@@ -207,14 +207,14 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, bool with
         /// Create a new bitmap
         fMipmap = new plMipmap( width, height, withAlpha ? plMipmap::kARGB32Config : plMipmap::kRGB32Config, 1 );
         memset( fMipmap->GetImage(), 0xff, height * fMipmap->GetRowBytes() );
-        keyName = plString::Format( "PlateBitmap#%d", fMagicUniqueKeyInt++ );
+        keyName = plFormat("PlateBitmap#{}", fMagicUniqueKeyInt++);
         hsgResMgr::ResMgr()->NewKey( keyName, fMipmap, plLocation::kGlobalFixedLoc );
         fMipmap->SetFlags( fMipmap->GetFlags() | plMipmap::kDontThrowAwayImage );
     }
 
     /// NOW create a layer wrapper and a material for that layer
     material = new hsGMaterial();
-    keyName = plString::Format( "PlateBlank#%d", fMagicUniqueKeyInt++ );
+    keyName = plFormat("PlateBlank#{}", fMagicUniqueKeyInt++);
     hsgResMgr::ResMgr()->NewKey( keyName, material, plLocation::kGlobalFixedLoc );
     layer = material->MakeBaseLayer();
     layer->SetShadeFlags( layer->GetShadeFlags() | hsGMatState::kShadeNoShade | hsGMatState::kShadeWhite | hsGMatState::kShadeReallyNoFog );
@@ -245,7 +245,7 @@ void plPlate::CreateFromResource(const plString& resName)
         plMipmap* resTexture = new plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
 
-        plString keyName = plString::Format( "PlateResource#%d", fMagicUniqueKeyInt++ );
+        plString keyName = plFormat("PlateResource#{}", fMagicUniqueKeyInt++);
         hsgResMgr::ResMgr()->NewKey(keyName, resTexture, plLocation::kGlobalFixedLoc);
         CreateMaterial(resTexture->GetWidth(), resTexture->GetHeight(), true, resTexture);
     }

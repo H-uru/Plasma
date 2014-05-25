@@ -431,7 +431,7 @@ bool plPythonFileMod::ILoadPythonCode()
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
-    plFileName pyfile = plFileName::Join(".", "python", plString::Format("%s.py", fPythonFile.c_str()));
+    plFileName pyfile = plFileName::Join(".", "python", plFormat("{}.py", fPythonFile));
     if (plFileInfo(pyfile).Exists())
     {
         char fromLoad[256];
@@ -1002,7 +1002,8 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     }
 
     modulename[k] = '\0';
-    plString name = plString::FromUtf8(modulename);
+    plStringStream name;
+    name << modulename;
 
     // check to see if we are attaching to a clone?
     plKeyImp* pKeyImp = (plKeyImp*)(sKey);
@@ -1012,7 +1013,7 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
         // add the cloneID to the end of the module name
         // and set the fIAmAClone flag
         uint32_t cloneID = pKeyImp->GetUoid().GetCloneID();
-        name += plString::Format("%d", cloneID);
+        name << cloneID;
         fAmIAttachedToClone = true;
     }
 
@@ -1021,10 +1022,10 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     {
         // if not unique then add the sequence number to the end of the modulename
         uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
-        name += plString::Format("%d", seqID);
+        name << seqID;
     }
 
-    return name;
+    return name.GetString();
 }
 
 /////////////////////////////////////////////////////////////////////////////

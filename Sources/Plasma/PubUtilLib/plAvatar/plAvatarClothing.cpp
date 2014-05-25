@@ -267,11 +267,11 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
     plKey accessoryKey = nil;
     if (!fAccessoryName.IsEmpty())
     {
-        plString strBuf = plString::Format("CItm_%s", fAccessoryName.c_str());
+        plString strBuf = plFormat("CItm_{}", fAccessoryName);
         accessoryKey = plKeyFinder::Instance().StupidSearch("GlobalClothing", "", plClothingItem::Index(), strBuf);
         if (accessoryKey == nil)
         {
-            strBuf = plString::Format("Couldn't find accessory \"%s\". It won't show at runtime.", fAccessoryName.c_str());
+            strBuf = plFormat("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
             hsMessageBox(strBuf.c_str(), GetKeyName().c_str(), hsMessageBoxNormal);
         }
     }

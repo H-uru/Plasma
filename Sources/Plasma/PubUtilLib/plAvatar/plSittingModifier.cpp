@@ -290,7 +290,7 @@ bool IIsClosestAnim(const char *animName, hsMatrix44 &sitGoal, float &closestDis
             return true;
         }
     } else {
-        hsAssert(false, plString::Format("Missing sit animation: %s", animName).c_str());
+        hsAssert(false, plFormat("Missing sit animation: {}", animName).c_str());
     }
     return false;
 }

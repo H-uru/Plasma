@@ -65,7 +65,7 @@ plKey plPluginResManager::NameToLoc(const plString& age, const plString& page, i
     hsAssert(pageNode != nil, "No page returned from INameToPage(), shouldn't be possible");
 
     // Go find the sceneNode now, since we know the page exists (go through our normal channels, though)
-    plString keyName = plString::Format("%s_%s", age.c_str(), page.c_str());
+    plString keyName = plFormat("{}_{}", age, page);
 
     plUoid nodeUoid(pageNode->GetPageInfo().GetLocation(), plSceneNode::Index(), keyName);
 
