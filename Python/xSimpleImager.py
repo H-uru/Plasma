@@ -181,9 +181,9 @@ class xSimpleImager(ptModifier):
     
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
-            ageSDL = PtGetAgeSDL()
-            ageSDL.setNotify(self.key,ImagerInboxVariable.value,0.0)
-            if type(ImagerInboxVariable.value) == type("") and ImagerInboxVariable.value != "":
+            if type(ImagerInboxVariable.value) == type("") and ImagerInboxVariable.value:
+                ageSDL = PtGetAgeSDL()
+                ageSDL.setNotify(self.key,ImagerInboxVariable.value,0.0)
                 ageVault = ptAgeVault()
                 
                 inbox = ""
