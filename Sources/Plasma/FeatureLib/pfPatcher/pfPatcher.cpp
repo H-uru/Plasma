@@ -182,8 +182,8 @@ public:
 
     virtual bool Open(const plFileName& filename, const char* mode)
     {
-        fFilename = filename;
-        return plZlibStream::Open(filename, mode);
+        fFilename = filename.Normalize();
+        return plZlibStream::Open(fFilename, mode);
     }
 
     virtual uint32_t Write(uint32_t count, const void* buf)
