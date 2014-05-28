@@ -556,9 +556,9 @@ plString plFileSystem::ConvertFileSize(uint64_t size)
             float decimal = static_cast<float>(last_div) / 1024.f;
             // Kilobytes are so small that we only care about whole numbers
             if (i < 1)
-                return plString::Format("%.0f %s", decimal, labels[i]);
+                return plFormat("{.0f} {}", decimal, labels[i]);
             else
-                return plString::Format("%.2f %s", decimal, labels[i]);
+                return plFormat("{.2f} {}", decimal, labels[i]);
         }
         last_div = my_div;
     }

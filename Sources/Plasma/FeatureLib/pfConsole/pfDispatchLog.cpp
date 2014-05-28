@@ -257,10 +257,10 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
         PrintKIType(kGZFlashUpdate);                // flash an update without saving (for animation of GZFill in)
         PrintKIType(kNoCommand);
 
-        info = plString::Format("Type: %s Str: %s User: %s(%d) Delay: %f Int: %d",
+        info = plFormat("Type: {} Str: {} User: {}({}) Delay: {} Int: {}",
             typeName,
-            kiMsg->GetString().c_str("(nil)"),
-            kiMsg->GetUser().c_str("(nil)"),
+            kiMsg->GetString(),
+            kiMsg->GetUser(),
             kiMsg->GetPlayerID(),
             kiMsg->GetDelay(),
             kiMsg->GetIntValue());
