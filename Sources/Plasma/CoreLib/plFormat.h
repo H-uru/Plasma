@@ -115,7 +115,7 @@ namespace plFormat_Private
     struct FormatSpec
     {
         int fMinimumLength = 0;     /**< Requested minimum padding length */
-        int fPrecision = 0;         /**< Requested precision for floating-point */
+        int fPrecision = -1;        /**< Requested precision for floating-point */
 
         char fPadChar = 0;          /**< Explicit padding char (default is space) */
         Alignment fAlignment = kAlignDefault;   /**< Requested pad alignment */
