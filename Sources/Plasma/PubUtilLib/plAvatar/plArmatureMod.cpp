@@ -2664,9 +2664,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 worldPos = l2w.GetTranslate();
 
-        const char *opaque = IsOpaque() ? "yes" : "no"; 
-        debugTxt.DrawString(x, y, plString::Format("position(world): %.2f, %.2f, %.2f Opaque: %3s",
-                                    worldPos.fX, worldPos.fY, worldPos.fZ, opaque));
+        debugTxt.DrawString(x, y, plFormat("position(world): {.2f}, {.2f}, {.2f} Opaque: {>3}",
+                            worldPos.fX, worldPos.fY, worldPos.fZ, IsOpaque() ? "yes" : "no"));
         y += lineHeight;
 
         const char* frozen = "n.a.";
@@ -2687,8 +2686,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
             hsPoint3 physPos;
             GetPositionAndRotationSim(&physPos, nil);
             const hsVector3& vel = fController->GetLinearVelocity();
-            details = plString::Format("position(physical): <%.2f, %.2f, %.2f> velocity: <%5.2f, %5.2f, %5.2f>",
-                                       physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
+            details = plFormat("position(physical): <{.2f}, {.2f}, {.2f}> velocity: <{5.2f}, {5.2f}, {5.2f}>",
+                               physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
         }
         else
         {
@@ -2796,7 +2795,7 @@ void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugTex
             plAvatarInputInterface::GetInstance()->GetInputMapName()));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plString::Format("Turn strength: %.2f (key: %.2f, analog: %.2f)",
+    debugTxt.DrawString(x, y, plFormat("Turn strength: {.2f} (key: {.2f}, analog: {.2f})",
             GetTurnStrength(), GetKeyTurnStrength(), GetAnalogTurnStrength()));
     y += lineHeight;
 

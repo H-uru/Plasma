@@ -715,21 +715,22 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     }
 
-    if ( fFlags & kDebugOutput )
+    plString out_str = plString::FromUtf8(line, count) + "\n";
+    if (fFlags & kDebugOutput)
     {
+
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        plString str = plString::Format( "%.*s\n", count, line );
-        OutputDebugString( str.c_str() );
+        OutputDebugString(out_str.c_str());
 #endif
 #else
-        fprintf( stderr, "%.*s\n", count, line );
+        fputs(str.c_str(), str);
 #endif
     }
 
-    if ( fFlags & kStdout )
+    if (fFlags & kStdout)
     {
-        fprintf( stdout, "%.*s\n", count, line );
+        fputs(out_str.c_str(), stdout);
     }
 
     return ret;

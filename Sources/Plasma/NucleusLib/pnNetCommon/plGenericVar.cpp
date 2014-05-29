@@ -244,7 +244,7 @@ plString plGenericType::GetAsString() const
         return plFormat("{}", fU);
     case kFloat :
     case kDouble :
-        return plString::Format("%f", fType==kDouble?fD:fF);
+        return plFormat("{f}", fType==kDouble ? fD : fF);
     case kChar :
         return plFormat("{}", fC);
     case kAny :

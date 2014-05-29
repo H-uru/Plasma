@@ -538,11 +538,11 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     {   
         // Mangle of the form: name@dropStart&dropStop&max&min
         if( clipID != -1 )
-            name = plString::Format( "%s*%x#%d@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp.c_str(), bd->texFlags, clipID,
+            name = plFormat("{}*{x}#{}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags, clipID,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags & plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
         else
-            name = plString::Format( "%s*%x@%s&%3.2f&%3.2f&%3.2f&%3.2f", temp.c_str(), bd->texFlags,
+            name = plFormat("{}*{x}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags == plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
     }

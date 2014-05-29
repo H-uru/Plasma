@@ -92,7 +92,7 @@ bool plKeysAndValues::KeyHasValue(const plString & key, int value)
 
 bool plKeysAndValues::KeyHasValue(const plString & key, double value)
 {
-    return KeyHasValue(key, plString::Format("%f", value));
+    return KeyHasValue(key, plFormat("{f}", value));
 }
 
 bool plKeysAndValues::AddValue(const plString & key, const plString & value, KAddValueMode mode)
@@ -121,7 +121,7 @@ bool plKeysAndValues::AddValue(const plString & key, int value, KAddValueMode mo
 
 bool plKeysAndValues::AddValue(const plString & key, double value, KAddValueMode mode)
 {
-    return AddValue(key, plString::Format("%f", value), mode);    
+    return AddValue(key, plFormat("{f}", value), mode);
 }
 
 bool plKeysAndValues::AddValues(const plString & key, const std::vector<plString> & values, KAddValueMode mode)
@@ -144,7 +144,7 @@ bool plKeysAndValues::SetValue(const plString & key, int value)
 
 bool plKeysAndValues::SetValue(const plString & key, double value)
 {
-    return SetValue(key, plString::Format("%f", value));    
+    return SetValue(key, plFormat("{f}", value));
 }
 
 plString plKeysAndValues::GetValue(const plString & key, const plString & defval, bool * outFound) const
@@ -170,7 +170,7 @@ int plKeysAndValues::GetValue(const plString & key, int defval, bool * outFound)
 
 double plKeysAndValues::GetValue(const plString & key, double defval, bool * outFound) const
 {
-    return GetValue(key, plString::Format("%f", defval), outFound).ToDouble();
+    return GetValue(key, plFormat("{f}", defval), outFound).ToDouble();
 }
 
 std::vector<plString> plKeysAndValues::GetAllValues(const plString & key)

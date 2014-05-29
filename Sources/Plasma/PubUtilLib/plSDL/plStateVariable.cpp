@@ -437,14 +437,14 @@ plString plSimpleStateVariable::GetAsString(int idx) const
                 else if (type==plVarDescriptor::kByte)
                     str << fBy[i++];
                 else if (type==plVarDescriptor::kFloat  || type==plVarDescriptor::kAgeTimeOfDay)
-                    str << plString::Format( "%.3f", fF[i++]);
+                    str << plFormat("{.3f}", fF[i++]);
                 else if (type==plVarDescriptor::kDouble)
-                    str << plString::Format( "%.3f", fD[i++]);
+                    str << plFormat("{.3f}", fD[i++]);
                 else if (type==plVarDescriptor::kTime)
                 {
                     double tmp;
                     Get(&tmp, i++);
-                    str << plString::Format( "%.3f", tmp);
+                    str << plFormat("{.3f}", tmp);
                 }
 
                 if (j==fVar.GetAtomicCount()-1)
