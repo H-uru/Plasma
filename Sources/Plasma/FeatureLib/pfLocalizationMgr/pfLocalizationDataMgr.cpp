@@ -948,26 +948,26 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plStri
     plStringStream fileData;
     fileData << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     fileData << "<localizations>\n";
-    fileData << plFormat("\t<age name=\"{}\">\n", ageName);
+    fileData << "\t<age name=\"" << ageName << "\">\n";
 
     std::vector<plString> setNames = GetSetList(ageName);
     for (int curSet = 0; curSet < setNames.size(); curSet++)
     {
         setEmpty = true; // so far, this set is empty
         plStringStream setCode;
-        setCode << plFormat("\t\t<set name=\"{}\">\n", setNames[curSet]);
+        setCode << "\t\t<set name=\"" << setNames[curSet] << "\">\n";
 
         std::vector<plString> elementNames = GetElementList(ageName, setNames[curSet]);
         for (int curElement = 0; curElement < elementNames.size(); curElement++)
         {
-            setCode << plFormat("\t\t\t<element name=\"{}\">\n", elementNames[curElement]);
+            setCode << "\t\t\t<element name=\"" << elementNames[curElement] << "\">\n";
             plString key = plFormat("{}.{}.{}", ageName, setNames[curSet], elementNames[curElement]);
 
             if (fLocalizedElements[key].find(languageName) != fLocalizedElements[key].end())
             {
                 weWroteData = true;
                 setEmpty = false;
-                setCode << plFormat("\t\t\t\t<translation language=\"{}\">", languageName);
+                setCode << "\t\t\t\t<translation language=\"" << languageName << "\">";
                 setCode << fLocalizedElements[key][languageName].ToXML();
                 setCode << "</translation>\n";
             }

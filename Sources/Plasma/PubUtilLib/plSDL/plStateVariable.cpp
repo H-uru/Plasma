@@ -2281,34 +2281,42 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
 
     plString pad = plString::Fill(level * 3, ' ');
 
-    plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
+    plStringStream logMsg;
+    logMsg << pad << "SimpleVar, name:" << GetName() << '[' << GetCount() << ']';
+
     if (GetCount()>1)
     {
-        dbg->LogMsg(logMsg.c_str());    // it's going to be a long msg, so print it on its own line
-        logMsg = "";
+        dbg->LogMsg(logMsg.GetString().c_str());    // it's going to be a long msg, so print it on its own line
+        logMsg.Truncate();
     }
-    
+
     pad += "\t";
     for (size_t i=0; i<GetCount(); i++)
     {
+        logMsg << pad;
+        logMsg << "Var:" << i;
+
         plString s=GetAsString(i);
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
         {
-            const char* p=fT[i].PrintWMillis();
-            logMsg += plFormat("{}Var:{} gameTime:{} pst:{} ts:{}",
-                               pad, i, s, p, fTimeStamp.Format("%c"));
+            logMsg << " gameTime:" << s;
+            logMsg << " pst:" << fT[i].PrintWMillis();
+            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
         }
         else
         {
-            logMsg += plFormat("{}Var:{} value:{} ts:{}",
-                               pad, i, s, fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c"));
+            logMsg << " value:" << s;
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
         }
 
-        if ( !dirtyOnly )
-            logMsg += plFormat(" dirty:{}", IsDirty());
+        if (!dirtyOnly)
+        {
+            logMsg << " dirty:";
+            logMsg << (IsDirty() ? 0 : 1);
+        }
 
-        dbg->LogMsg(logMsg.c_str());
-        logMsg = "";
+        dbg->LogMsg(logMsg.GetString().c_str());
+        logMsg.Truncate();
     }
 }
 
@@ -2316,34 +2324,42 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
 {
     plString pad = plString::Fill(level * 3, ' ');
 
-    plString logMsg = plFormat("{}SimpleVar, name:{}[{}]", pad, GetName(), GetCount());
+    plStringStream logMsg;
+    logMsg << pad << "SimpleVar, name:" << GetName() << '[' << GetCount() << ']';
+
     if (GetCount()>1)
     {
-        stream->WriteString(logMsg);    // it's going to be a long msg, so print it on its own line
-        logMsg = "";
+        stream->WriteString(logMsg.GetString());    // it's going to be a long msg, so print it on its own line
+        logMsg.Truncate();
     }
-    
+
     pad += "\t";
     for (size_t i=0; i<GetCount(); i++)
     {
-        plString s=GetAsString(i);
+        logMsg << pad;
+        logMsg << "Var:" << i;
+
+        plString s = GetAsString(i);
         if (fVar.GetAtomicType() == plVarDescriptor::kTime)
         {
-            const char* p=fT[i].PrintWMillis();
-            logMsg += plFormat("{}Var:{} gameTime:{} pst:{} ts:{}",
-                               pad, i, s, p, fTimeStamp.Format("%c"));
+            logMsg << " gameTime:" << s;
+            logMsg << " pst:" << fT[i].PrintWMillis();
+            logMsg << " ts:" << fTimeStamp.Format("%c").c_str();
         }
         else
         {
-            logMsg += plFormat("{}Var:{} value:{} ts:{}",
-                               pad, i, s, fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c"));
+            logMsg << " value:" << s;
+            logMsg << " ts:" << (fTimeStamp.AtEpoch() ? "0" : fTimeStamp.Format("%c").c_str());
         }
 
-        if ( !dirtyOnly )
-            logMsg += plFormat(" dirty:{}", IsDirty());
+        if (!dirtyOnly)
+        {
+            logMsg << " dirty:";
+            logMsg << (IsDirty() ? 0 : 1);
+        }
 
-        stream->WriteString(logMsg);
-        logMsg = "";
+        stream->WriteString(logMsg.GetString());
+        logMsg.Truncate();
     }
 }
 
