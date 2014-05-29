@@ -124,7 +124,7 @@ void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const plString& m
         fProgress->SetHowMuch(dl);
     }
 
-    plString status = plFormat("%s / %s",
+    plString status = plFormat("{} / {}",
         plFileSystem::ConvertFileSize(dl),
         plFileSystem::ConvertFileSize(total)
     );
