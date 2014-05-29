@@ -5004,6 +5004,7 @@ uint8_t VaultAgeFindOrCreateChildAgeLink(
 
         // Search for our age
         NetVaultNode* temp = new NetVaultNode;
+        temp->Ref();
         temp->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode theAge(temp);
         theAge.SetAgeFilename(hack);
