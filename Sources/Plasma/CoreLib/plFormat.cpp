@@ -406,7 +406,7 @@ PL_FORMAT_IMPL(double)
     size_t end = 0;
 
     format_buffer[end++] = '%';
-    if (format.fPrecision) {
+    if (format.fPrecision >= 0) {
         int count = snprintf(format_buffer + end, arrsize(format_buffer) - end,
                              ".%d", format.fPrecision);
 
