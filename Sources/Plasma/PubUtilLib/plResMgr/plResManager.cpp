@@ -1162,8 +1162,8 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 
         kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! (%s)", condStr.c_str()));
 
-        plString msg = plString::Format("Data Problem: Age:%s  Page:%s  Error:%s",
-            pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str(), condStr.c_str());
+        plString msg = plFormat("Data Problem: Age:{}  Page:{}  Error:{}",
+            pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr);
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
 
         hsRefCnt_SafeUnRef(refMsg);

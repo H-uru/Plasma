@@ -1443,7 +1443,7 @@ bool plMaxNode::MakeMesh(plErrorMsg *pErrMsg, plConvertSettings *settings)
         for (i = 0; i < spanArray.GetCount(); i++)
             swapSpans->Append(spanArray.Get(i));
 
-        plString tmpName = plString::Format("%s_SMsh", GetName());
+        plString tmpName = plFormat("{}_SMsh", GetName());
         hsgResMgr::ResMgr()->NewKey(tmpName, GetSwappableGeom(), GetLocation(), GetLoadMask());
                 
         return true;
@@ -2255,12 +2255,12 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
         plString tmpName;
         if( GetKey() && !GetKey()->GetName().IsEmpty() )
         {
-            tmpName = plString::Format("%s_Occluder", GetKey()->GetName().c_str());
+            tmpName = plFormat("{}_Occluder", GetKey()->GetName());
         }
         else
         {
             static int numOcc = 0;
-            tmpName = plString::Format("Occluder_%4.4d", numOcc);
+            tmpName = plFormat("Occluder_{_04d}", numOcc);
         }
         plKey key = hsgResMgr::ResMgr()->NewKey( tmpName, occ, nodeLoc, GetLoadMask() );
 
@@ -3341,13 +3341,13 @@ plDrawableSpans *plMaxNode::IGetSceneNodeSpans( plSceneNode *node, bool needBlen
     {
         /// Blending (deferred) spans
         spans->SetCriteria( crit );
-        tmpName = plString::Format( "%s_%8.8x_%xBlendSpans", node->GetKeyName().c_str(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = plFormat("{}_{_08x}_{x}BlendSpans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
     }
     else
     {
         /// Normal spans
         spans->SetCriteria( crit );
-        tmpName = plString::Format( "%s_%8.8x_%xSpans", node->GetKeyName().c_str(), crit.fLevel.fLevel, crit.fCriteria);
+        tmpName = plFormat("{}_{_08x}_{x}Spans", node->GetKeyName(), crit.fLevel.fLevel, crit.fCriteria);
     }
 
     if (GetSwappableGeomTarget() != (uint32_t)-1 || GetSwappableGeom()) // We intend to swap geometry with this node... flag the drawable as volatile

@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include "plFormat.h"
 
 #include "plComponentBase.h"
 #include "plComponentReg.h"
@@ -309,7 +310,7 @@ plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
     hsAssert(thisTargIdx != -1, "Bad target for IGetUniqueName");
 
     if (numUsedTargs > 1)
-        return plString::Format("%s_%d", GetINode()->GetName(), thisTargIdx);
+        return plFormat("{}_{}", GetINode()->GetName(), thisTargIdx);
     else
         return plString::FromUtf8(GetINode()->GetName());
 }

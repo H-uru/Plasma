@@ -774,8 +774,8 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        plString str = plString::Format("Callback event from %s\n", callback->GetSender()
-                        ? callback->GetSender()->GetName().c_str()
+        plString str = plFormat("Callback event from {}\n", callback->GetSender()
+                        ? callback->GetSender()->GetName()
                         : "Unknown");
         hsStatusMessage(str.c_str());
         static int gotten = 0;

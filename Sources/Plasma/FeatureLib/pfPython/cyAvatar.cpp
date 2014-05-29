@@ -1272,7 +1272,7 @@ PyObject* cyAvatar::GetTintClothingItemL(const plString& clothing_name, uint8_t 
         }
     }
 
-    plString errmsg = plString::Format("Cannot find clothing item %s to find out what tint it is", clothing_name.c_str());
+    plString errmsg = plFormat("Cannot find clothing item {} to find out what tint it is", clothing_name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     // returning nil means an error occurred
     return nil;

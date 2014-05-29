@@ -49,60 +49,9 @@ plConfigInfoLogging::~plConfigInfoLogging()
 {
 }
 
-bool plConfigInfoLogging::GetValue(plString& retval, const plString & section, const plString & key, const plString & desc, const plString& defval)
-{
-    plString descwdef = plString::Format("%s  # %s",defval.c_str(),desc.c_str());
-    fLog.AddValue(section,key,descwdef,kReplaceIfExists);
-
-    bool found;
-    retval = fConfigInfo.GetValue(section,key,defval,&found);
-    return found;
-}
-
-bool plConfigInfoLogging::GetValue(int& retval, const plString & section, const plString & key, const plString & desc, int defval)
-{
-    plString descwdef = plString::Format("%d  # %s",defval,desc.c_str());
-    fLog.AddValue(section,key,descwdef,kReplaceIfExists);
-
-    bool found;
-    retval = fConfigInfo.GetValue(section,key,defval,&found);
-    return found;
-}
-
-bool plConfigInfoLogging::GetValue(bool& retval, const plString & section, const plString & key, const plString & desc, bool defval)
-{
-    plString descwdef = plString::Format("%d  # %s",defval,desc.c_str());
-    fLog.AddValue(section,key,descwdef,kReplaceIfExists);
-
-    bool found;
-    retval = ( fConfigInfo.GetValue(section,key,(int)defval,&found)!=0 );
-    return found;
-}
-
-bool plConfigInfoLogging::GetValue(float& retval, const plString & section, const plString & key, const plString & desc, float defval)
-{
-    plString descwdef = plString::Format("%f  # %s",defval,desc.c_str());
-    fLog.AddValue(section,key,descwdef,kReplaceIfExists);
-
-    bool found;
-    double retvald = fConfigInfo.GetValue(section,key,defval,&found);
-    retval = (float)retvald;
-    return found;
-}
-
-bool plConfigInfoLogging::GetValue(double& retval, const plString & section, const plString & key, const plString & desc, double defval)
-{
-    plString descwdef = plString::Format("%f  # %s",defval,desc.c_str());
-    fLog.AddValue(section,key,descwdef,kReplaceIfExists);
-
-    bool found;
-    retval = fConfigInfo.GetValue(section,key,defval,&found);
-    return found;
-}
-
 bool plConfigInfoLogging::GetAllValues(std::vector<plString>& values, const plString & section, const plString & key, const plString & desc)
 {
-    plString descwdef = plString::Format("%s  # %s","\"Multiple Entries\"",desc.c_str());
+    plString descwdef = plFormat("\"Multiple Entries\"  # {}", desc);
     fLog.AddValue(section,key,descwdef,kReplaceIfExists);
 
     values = fConfigInfo.GetAllValues(section,key);

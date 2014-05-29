@@ -63,7 +63,7 @@ plString GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
     memcpy(&in, &binAddr, sizeof(binAddr));
-    return plString::Format("%s", inet_ntoa(in));
+    return plString::FromUtf8(inet_ntoa(in));
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.

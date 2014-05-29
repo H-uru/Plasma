@@ -105,7 +105,7 @@ PyObject* plPythonSDLModifier::GetItem(const plString& key)
 
     if (it == fMap.end())
     {
-        plString errmsg = plString::Format("SDL key %s not found", key.c_str());
+        plString errmsg = plFormat("SDL key {} not found", key);
         PyErr_SetString(PyExc_KeyError, errmsg.c_str());
         PYTHON_RETURN_ERROR;
     }

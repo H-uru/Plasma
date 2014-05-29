@@ -280,7 +280,7 @@ int plMsgStdStringHelper::Peek(std::string  & stringref, hsStream* stream, const
         stringref.resize(strlen);
         if (strlen){
             stream->LogRead(strlen,(void*)stringref.data(),"StdString");
-            stream->LogStringString(plString::Format("Value: %s", stringref.data()).c_str());
+            stream->LogStringString(plFormat("Value: {}", stringref).c_str());
         }
     }
     else
@@ -302,7 +302,7 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
         stringref.resize(bufsz);
         if (bufsz){
             stream->LogRead(bufsz,(void*)stringref.data(),"StdString");
-            stream->LogStringString(plString::Format("Value: %s", stringref.data()).c_str());
+            stream->LogStringString(plFormat("Value: {}", stringref).c_str());
         }
     }
     else
@@ -357,7 +357,7 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
             str[strlen] = '\0';
             if (strlen) {
                 stream->LogRead(strlen,str,"CString");
-                stream->LogStringString(plString::Format("Value: %s",str).c_str());
+                stream->LogStringString(plFormat("Value: {}", str).c_str());
             }
         }
     }

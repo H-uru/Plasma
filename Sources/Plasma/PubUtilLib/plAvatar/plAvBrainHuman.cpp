@@ -903,7 +903,7 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
     
     const char *grounded = fWalkingStrategy->IsOnGround() ? "yes" : "no";
     const char *pushing = (fWalkingStrategy->GetPushingPhysical() ? (fWalkingStrategy->GetFacingPushingPhysical() ? "facing" : "behind") : "none");
-    debugTxt.DrawString(x, y, plString::Format("Ground: %3s, AirTime: %5.2f (Peak: %5.2f), PushingPhys: %6s",
+    debugTxt.DrawString(x, y, plFormat("Ground: {>3}, AirTime: {5.2f} (Peak: {5.2f}), PushingPhys: {>6}",
                 grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing));
     y += lineHeight;
 

@@ -280,7 +280,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         plString prefix = plProduct::ShortName();
 
         // List all of the PNG indices we have taken up already...
-        plString pattern = plString::Format("%s*.png", prefix.c_str());
+        plString pattern = plFormat("{}*.png", prefix);
         std::vector<plFileName> images = plFileSystem::ListDir(screenshots, pattern.c_str());
         std::set<uint32_t> indices;
         std::for_each(images.begin(), images.end(),
@@ -298,7 +298,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         }
 
         // Got our num, save the screenshot.
-        plFileName fn = plString::Format("%s%04d.png", prefix.c_str(), num);
+        plFileName fn = plFormat("{}{_04}.png", prefix, num);
         plPNG::Instance().WriteToFile(plFileName::Join(screenshots, fn), capMsg->GetMipmap());
 
         AddLineF("Saved screenshot as '%s'", fn.AsString().c_str());
@@ -325,8 +325,8 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                plString str = plString::Format("Error parsing %s", cmd->GetString());
-                plString msg = plString::Format("%s:\n\nCommand: '%s'\n%s", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
+                plString str = plFormat("Error parsing {}", cmd->GetString());
+                plString msg = plFormat("{}:\n\nCommand: '{}'\n{}", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
 #ifdef HS_DEBUGGING
                         "" );
 

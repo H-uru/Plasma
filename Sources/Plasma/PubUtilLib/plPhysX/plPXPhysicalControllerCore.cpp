@@ -857,8 +857,8 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     if (controllerIdx == 0)
     {
         y = 10;
-        debugString = plString::Format("Controller Count: %d", gControllers.size());
-        debugTxt.DrawString(x, y, debugString.c_str());
+        debugString = plFormat("Controller Count: {}", gControllers.size());
+        debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
     }
 
@@ -866,9 +866,9 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     int collisionCount = fDbgCollisionInfo.GetCount();
     if (collisionCount > 0)
     {
-        debugString = plString::Format("Controller #%d (%s) Collisions:",
-            controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName().c_str());
-        debugTxt.DrawString(x, y, debugString.c_str());
+        debugString = plFormat("Controller #{} ({}) Collisions:",
+            controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName());
+        debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
 
         for (int i = 0; i < collisionCount; i++)
@@ -876,11 +876,11 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
             hsVector3 normal = fDbgCollisionInfo[i].fNormal;
             const char* overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
             float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
-            debugString = plString::Format("\tObj: %s, Normal: (%.2f, %.2f, %.2f), Angle(%.1f), Overlap(%s)",
-                    fDbgCollisionInfo[i].fSO->GetKeyName().c_str(),
+            debugString = plFormat("\tObj: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f}), Overlap({})",
+                    fDbgCollisionInfo[i].fSO->GetKeyName(),
                     normal.fX, normal.fY, normal.fZ, angle,
                     overlapStr);
-            debugTxt.DrawString(x, y, debugString.c_str());
+            debugTxt.DrawString(x, y, debugString);
             y += lineHeight;
         }
     }

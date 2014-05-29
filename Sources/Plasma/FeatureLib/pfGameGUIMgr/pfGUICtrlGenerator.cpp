@@ -126,7 +126,7 @@ plString pfGUICtrlGenerator::IGetNextKeyName( const char *prefix )
 {
     static uint32_t keyCount = 0;
 
-    return plString::Format( "%s%d", prefix, keyCount++ );
+    return plFormat("{}{}", prefix, keyCount++);
 }
 
 //// IAddKey /////////////////////////////////////////////////////////////////

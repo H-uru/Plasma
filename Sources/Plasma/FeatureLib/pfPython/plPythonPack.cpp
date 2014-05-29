@@ -209,8 +209,8 @@ PyObject* plPythonPack::OpenPacked(const plString& fileName)
         {
             char *buf = new char[size];
             uint32_t readSize = fPackStream->Read(size, buf);
-            hsAssert(readSize <= size, plString::Format("Python PackFile %s: Incorrect amount of data, read %d instead of %d",
-                fileName.c_str(), readSize, size).c_str());
+            hsAssert(readSize <= size, plFormat("Python PackFile {}: Incorrect amount of data, read {} instead of {}",
+                     fileName, readSize, size).c_str());
 
             // let the python marshal make it back into a code object
             PyObject *pythonCode = PyMarshal_ReadObjectFromString(buf, size);

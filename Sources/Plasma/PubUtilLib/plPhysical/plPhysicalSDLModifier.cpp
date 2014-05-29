@@ -215,29 +215,30 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
 
     plPhysical* phys = IGetPhysical();
 
-    plString log = plString::Format("%s: %s", phys->GetKeyName().c_str(), prefix);
+    plStringStream log;
+    log << phys->GetKeyName() << ": " << prefix;
 
     if (isPosSet)
-        log += plString::Format(" Pos=%.1f %.1f %.1f", pos.fX, pos.fY, pos.fZ);
+        log << plFormat(" Pos={.1f} {.1f} {.1f}", pos.fX, pos.fY, pos.fZ);
     else
-        log += " Pos=None";
+        log << " Pos=None";
 
     if (isLinVSet)
-        log += plString::Format(" LinV=%.1f %.1f %.1f", linV.fX, linV.fY, linV.fZ);
+        log << plFormat(" LinV={.1f} {.1f} {.1f}", linV.fX, linV.fY, linV.fZ);
     else
-        log += " LinV=None";
+        log << " LinV=None";
 
     if (isAngVSet)
-        log += plString::Format(" AngV=%.1f %.1f %.1f", angV.fX, angV.fY, angV.fZ);
+        log << plFormat(" AngV={.1f} {.1f} {.1f}", angV.fX, angV.fY, angV.fZ);
     else
-        log += " AngV=None";
+        log << " AngV=None";
 
     if (isRotSet)
-        log += plString::Format(" Rot=%.1f %.1f %.1f %.1f", rot.fX, rot.fY, rot.fZ, rot.fW);
+        log << plFormat(" Rot={.1f} {.1f} {.1f} {.1f}", rot.fX, rot.fY, rot.fZ, rot.fW);
     else
-        log += " Rot=None";
+        log << " Rot=None";
 
-    IGetLog()->AddLine(log.c_str(), color);
+    IGetLog()->AddLine(log.GetString().c_str(), color);
 }
 
 plStatusLog* plPhysicalSDLModifier::IGetLog()

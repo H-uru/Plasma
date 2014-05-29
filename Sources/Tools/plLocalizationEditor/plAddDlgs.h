@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __plAddDlgs_h__
 
 #include <QDialog>
-#include "plString.h"
+#include "plFormat.h"
 
 class plAddElementDlg : public QDialog
 {
@@ -57,7 +57,7 @@ public:
     bool DoPick(); // returns true if [Ok] clicked, false otherwise.
     plString GetValue() const
     {
-        return plString::Format("%s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());
+        return plFormat("{}.{}.{}", fAgeName, fSetName, fElementName);
     }
 
 private slots:

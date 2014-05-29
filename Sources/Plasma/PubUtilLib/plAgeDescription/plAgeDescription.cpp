@@ -118,9 +118,9 @@ bool plAgePage::SetFromString( const plString &stringIn )
 plString plAgePage::GetAsString( void ) const
 {
     if (fFlags)
-        return plString::Format("%s,%d,%d", fName.c_str(), fSeqSuffix, fFlags);
+        return plFormat("{},{},{}", fName, fSeqSuffix, fFlags);
 
-    return plString::Format("%s,%d", fName.c_str(), fSeqSuffix);
+    return plFormat("{},{}", fName, fSeqSuffix);
 }
 
 

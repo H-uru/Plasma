@@ -375,7 +375,7 @@ bool plSDVarDescriptor::Read(hsStream* s)
     plString sdName=s->ReadSafeString();
     uint16_t version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
-    hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName.c_str(), version ).c_str() );
+    hsAssert(sd, plFormat("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", sdName, version).c_str());
     SetStateDesc(sd);
     return true;
 }

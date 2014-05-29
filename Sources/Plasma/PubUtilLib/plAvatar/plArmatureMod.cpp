@@ -2654,7 +2654,7 @@ int plArmatureMod::RefreshDebugDisplay()
 
 void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plString::Format("Armature <%s>:", fRootName.c_str()), 255, 128, 128);
+    debugTxt.DrawString(x, y, plFormat("Armature <{}>:", fRootName), 255, 128, 128);
     y += lineHeight;
 
     plSceneObject * SO = GetTarget(0);
@@ -2664,9 +2664,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 worldPos = l2w.GetTranslate();
 
-        const char *opaque = IsOpaque() ? "yes" : "no"; 
-        debugTxt.DrawString(x, y, plString::Format("position(world): %.2f, %.2f, %.2f Opaque: %3s",
-                                    worldPos.fX, worldPos.fY, worldPos.fZ, opaque));
+        debugTxt.DrawString(x, y, plFormat("position(world): {.2f}, {.2f}, {.2f} Opaque: {>3}",
+                            worldPos.fX, worldPos.fY, worldPos.fZ, IsOpaque() ? "yes" : "no"));
         y += lineHeight;
 
         const char* frozen = "n.a.";
@@ -2677,8 +2676,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         plKey world = nil;
         if (fController)
             world = fController->GetSubworld();
-        debugTxt.DrawString(x, y, plString::Format("In world: %s  Frozen: %s",
-                                    world ? world->GetName().c_str() : "nil", frozen));
+        debugTxt.DrawString(x, y, plFormat("In world: {}  Frozen: {}",
+                                    world ? world->GetName() : "nil", frozen));
         y+= lineHeight;
 
         plString details;
@@ -2687,8 +2686,8 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
             hsPoint3 physPos;
             GetPositionAndRotationSim(&physPos, nil);
             const hsVector3& vel = fController->GetLinearVelocity();
-            details = plString::Format("position(physical): <%.2f, %.2f, %.2f> velocity: <%5.2f, %5.2f, %5.2f>",
-                                       physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
+            details = plFormat("position(physical): <{.2f}, {.2f}, {.2f}> velocity: <{5.2f}, {5.2f}, {5.2f}>",
+                               physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
         }
         else
         {
@@ -2747,11 +2746,11 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
         debugTxt.DrawString(x, y, "Relevance Regions:");
         y += lineHeight;
-        debugTxt.DrawString(x, y, plString::Format("          In: %s",
-                plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn).c_str()));
+        debugTxt.DrawString(x, y, plFormat("          In: {}",
+                plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn)));
         y += lineHeight;
-        debugTxt.DrawString(x, y, plString::Format("  Care about: %s",
-                plRelevanceMgr::Instance()->GetRegionNames(fRegionsICareAbout).c_str()));
+        debugTxt.DrawString(x, y, plFormat("  Care about: %s",
+                plRelevanceMgr::Instance()->GetRegionNames(fRegionsICareAbout)));
         y += lineHeight;
     }
 }
@@ -2792,11 +2791,11 @@ void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 
 void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plString::Format("Mouse Input Map: %s",
+    debugTxt.DrawString(x, y, plFormat("Mouse Input Map: {}",
             plAvatarInputInterface::GetInstance()->GetInputMapName()));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plString::Format("Turn strength: %.2f (key: %.2f, analog: %.2f)",
+    debugTxt.DrawString(x, y, plFormat("Turn strength: {.2f} (key: {.2f}, analog: {.2f})",
             GetTurnStrength(), GetKeyTurnStrength(), GetAnalogTurnStrength()));
     y += lineHeight;
 

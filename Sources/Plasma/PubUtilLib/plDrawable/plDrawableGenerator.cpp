@@ -259,7 +259,7 @@ plDrawableSpans *plDrawableGenerator::GenerateDrawable( uint32_t vertCount, hsPo
         }
 
         static int nameIdx = 0;
-        plString buff = plString::Format( "GenDrawable_%d", nameIdx++ );
+        plString buff = plFormat("GenDrawable_{}", nameIdx++);
         hsgResMgr::ResMgr()->NewKey( buff, newDraw, plLocation::kGlobalFixedLoc );
     }
 

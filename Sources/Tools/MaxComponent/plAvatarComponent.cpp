@@ -509,11 +509,11 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     }
     else 
         base->SetLayoutName("BasicHuman");
-    keyName = plString::Format("%s_ClothingBase", node->GetName());
+    keyName = plFormat("{}_ClothingBase", node->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, base, node->GetLocation());
     plClothingOutfit *outfit = new plClothingOutfit();
     outfit->fGroup = group;
-    keyName = plString::Format("%s_outfit", mod->GetKey()->GetName().c_str());
+    keyName = plFormat("{}_outfit", mod->GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, outfit, node->GetLocation());
     
     msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);

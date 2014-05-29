@@ -68,7 +68,7 @@ static unsigned s_keyseq;
 
 //============================================================================
 static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
-    plString keyName = plString::Format("VaultImg_%u_%u", nodeId, s_keyseq++);
+    plString keyName = plFormat("VaultImg_{}_{}", nodeId, s_keyseq++);
 
     plKey key = hsgResMgr::ResMgr()->NewKey(keyName, mipmap, plLocation::kGlobalFixedLoc);
 

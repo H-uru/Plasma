@@ -84,12 +84,14 @@ void plProxyGen::Init(const hsKeyedObject* owner)
         plLocation loc;
         if( owner->GetKey() )
         {
-            buff = plString::Format("%s_ProxyGen_%d_%d", owner->GetKey()->GetName().c_str(), owner->GetKey()->GetUoid().GetClonePlayerID(), fProxyKeyCounter++);
+            buff = plFormat("{}_ProxyGen_{}_{}", owner->GetKey()->GetName(),
+                            owner->GetKey()->GetUoid().GetClonePlayerID(),
+                            fProxyKeyCounter++);
             loc = owner->GetKey()->GetUoid().GetLocation();
         }
         else
         {
-            buff = plString::Format( "ProxyGen%d", fProxyKeyCounter++ );
+            buff = plFormat("ProxyGen{}", fProxyKeyCounter++);
             loc = plLocation::kGlobalFixedLoc;
         }
 
@@ -159,7 +161,7 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
 
     plString buff;
     if( !GetKeyName().IsNull() )
-        buff = plString::Format("%s_Material", GetKeyName().c_str());
+        buff = plFormat("{}_Material", GetKeyName());
     else
         buff = "ProxyMaterial";
     hsgResMgr::ResMgr()->NewKey( buff, retVal, GetKey() ? GetKey()->GetUoid().GetLocation() : plLocation::kGlobalFixedLoc );
@@ -234,7 +236,7 @@ void plProxyGen::IGenerateProxy()
     {
         plString buff;
         if( !GetKeyName().IsNull() )
-            buff = plString::Format("%s_ProxyDrawable", GetKeyName().c_str());
+            buff = plFormat("{}_ProxyDrawable", GetKeyName());
         else
             buff = "ProxyDrawable";
 

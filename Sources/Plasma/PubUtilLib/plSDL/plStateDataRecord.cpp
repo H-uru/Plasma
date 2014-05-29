@@ -277,8 +277,8 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            plString::Format("Something bad happened while reading simple var data, desc:%s",
-                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
+            plFormat("Something bad happened while reading simple var data, desc:{}",
+                     fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
     }
 
@@ -311,15 +311,15 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
     catch(...)
     {
         hsAssert( false, 
-            plString::Format("Something bad happened while reading nested var data, desc:%s",
-                fDescriptor ? fDescriptor->GetName().c_str("?") : "?").c_str());
+            plFormat("Something bad happened while reading nested var data, desc:{}",
+                     fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
     }
 
     // convert to latest descriptor
     // Only really need to do this the first time this descriptor is read...
     plStateDescriptor* latestDesc=plSDLMgr::GetInstance()->FindDescriptor(fDescriptor->GetName(), plSDL::kLatestVersion);
-    hsAssert( latestDesc, plString::Format("Failed to find latest sdl descriptor for: %s", fDescriptor->GetName().c_str() ).c_str() );
+    hsAssert(latestDesc, plFormat("Failed to find latest sdl descriptor for: {}", fDescriptor->GetName()).c_str());
     bool forceConvert = (readOptions&plSDL::kForceConvert)!=0;
     if ( latestDesc && ( forceConvert || ( fDescriptor->GetVersion()!=latestDesc->GetVersion() ) ) )
     {
@@ -493,14 +493,14 @@ void plStateDataRecord::UpdateFrom(const plStateDataRecord& other, uint32_t writ
     if ( GetDescriptor()->GetVersion()!=other.GetDescriptor()->GetVersion() )
     {
         plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor( other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion() );
-        hsAssert( sd, plString::Format( "Failed to find sdl descriptor %s,%d. Missing legacy descriptor?",
-            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion() ).c_str() );
+        hsAssert(sd, plFormat("Failed to find sdl descriptor {},{}. Missing legacy descriptor?",
+                              other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion()).c_str());
         ConvertTo( sd );
     }
 
     hsAssert(other.GetDescriptor()==fDescriptor, 
-        plString::Format("descriptor mismatch in UpdateFromDirty, SDL=%s,%s version %d %d",
-            GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetName().c_str(),
+        plFormat("descriptor mismatch in UpdateFromDirty, SDL={},{} version {} {}",
+            GetDescriptor()->GetName(), other.GetDescriptor()->GetName(),
             GetDescriptor()->GetVersion(), other.GetDescriptor()->GetVersion()).c_str());
 
     bool dirtyOnly = (writeOptions & plSDL::kDirtyOnly);
@@ -545,9 +545,9 @@ void plStateDataRecord::FlagDifferentState(const plStateDataRecord& other)
     }
     else
     {
-        hsAssert(false, plString::Format("descriptor mismatch in FlagDifferentState, mine %s %d, other %s %d",
-            fDescriptor->GetName().c_str(), fDescriptor->GetVersion(),
-            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion()).c_str());
+        hsAssert(false, plFormat("descriptor mismatch in FlagDifferentState, mine {} {}, other {} {}",
+            fDescriptor->GetName(), fDescriptor->GetVersion(),
+            other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion()).c_str());
     }
 }
 
@@ -599,9 +599,9 @@ void plStateDataRecord::FlagNewerState(const plStateDataRecord& other, bool resp
     }
     else
     {
-        hsAssert(false, plString::Format("descriptor mismatch in FlagNewerState, mine %s %d, other %s %d",
-            fDescriptor->GetName().c_str(), fDescriptor->GetVersion(),
-            other.GetDescriptor()->GetName().c_str(), other.GetDescriptor()->GetVersion()).c_str());
+        hsAssert(false, plFormat("descriptor mismatch in FlagNewerState, mine {} {}, other {} {}",
+            fDescriptor->GetName(), fDescriptor->GetVersion(),
+            other.GetDescriptor()->GetName(), other.GetDescriptor()->GetVersion()).c_str());
     }
 }
 
@@ -736,23 +736,20 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     if (!dbg)
         return;
 
-    plString pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
 
-    dbg->LogMsg(plString::Format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ").c_str());
+    dbg->LogMsg(fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ");
     if (msg)
-        dbg->LogMsg(plString::Format("%s%s", pad.c_str(),msg).c_str());
+        dbg->LogMsg(plFormat("{}{}", pad, msg).c_str());
 
-    dbg->LogMsg(plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
-        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
+    dbg->LogMsg(plFormat("{}SDR(0x{x}), desc={}, showDirty={}, numVars={}, vol={}",
+        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile).c_str());
 
     // dump simple vars
-    for(i=0;i<fVarsList.size(); i++)
+    for (size_t i=0; i<fVarsList.size(); i++)
     {
         if ( (dirtyOnly && fVarsList[i]->IsDirty()) ||  (!dirtyOnly && fVarsList[i]->IsUsed()) )
         {
@@ -761,7 +758,7 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
     }
  
     // dump nested vars 
-    for(i=0;i<fSDVarsList.size(); i++)
+    for (size_t i=0; i<fSDVarsList.size(); i++)
     {
         if ( (dirtyOnly && fSDVarsList[i]->IsDirty()) || (!dirtyOnly && fSDVarsList[i]->IsUsed()) )
         {
@@ -772,29 +769,26 @@ void plStateDataRecord::DumpToObjectDebugger(const char* msg, bool dirtyOnly, in
 
 void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dirtyOnly, int level) const
 {
-    std::string pad;
-    int i;
-    for(i=0;i<level; i++)
-        pad += "   ";
+    plString pad = plString::Fill(level * 3, ' ');
 
     int numVars = dirtyOnly ? GetNumDirtyVars() : GetNumUsedVars();
     int numSDVars = dirtyOnly ? GetNumDirtySDVars() : GetNumUsedSDVars();
 
-    plString logStr = plString::Format("%s", fAssocObject.IsValid() ? fAssocObject.GetObjectName().c_str() : " ");
+    plString logStr = fAssocObject.IsValid() ? fAssocObject.GetObjectName() : " ";
 
     stream->Write(logStr.GetSize(), logStr.c_str());
     if (msg)
     {
-        logStr = plString::Format("%s%s", pad.c_str(),msg);
+        logStr = plFormat("{}{}", pad, msg);
         stream->Write(logStr.GetSize(), logStr.c_str());
     }
 
-    logStr = plString::Format("%sSDR(%p), desc=%s, showDirty=%d, numVars=%d, vol=%d",
-        pad.c_str(), this, fDescriptor->GetName().c_str(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
+    logStr = plFormat("{}SDR(0x{x}), desc={}, showDirty={}, numVars={}, vol={}",
+        pad, (uintptr_t)this, fDescriptor->GetName(), dirtyOnly, numVars+numSDVars, fFlags&kVolatile);
     stream->Write(logStr.GetSize(), logStr.c_str());
 
     // dump simple vars
-    for(i=0;i<fVarsList.size(); i++)
+    for (size_t i=0; i<fVarsList.size(); i++)
     {
         if ( (dirtyOnly && fVarsList[i]->IsDirty()) ||  (!dirtyOnly && fVarsList[i]->IsUsed()) )
         {
@@ -802,8 +796,8 @@ void plStateDataRecord::DumpToStream(hsStream* stream, const char* msg, bool dir
         }
     }
  
-    // dump nested vars 
-    for(i=0;i<fSDVarsList.size(); i++)
+    // dump nested vars
+    for (size_t i=0; i<fSDVarsList.size(); i++)
     {
         if ( (dirtyOnly && fSDVarsList[i]->IsDirty()) || (!dirtyOnly && fSDVarsList[i]->IsUsed()) )
         {

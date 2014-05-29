@@ -3036,11 +3036,11 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, ui
         static int uniqueSuffix = 0;
         plString buff;
 
-        buff = plString::Format("%s_%d_ml", GetKey()->GetName().c_str(), uniqueSuffix);
+        buff = plFormat("{}_{}_ml", GetKey()->GetName(), uniqueSuffix);
         layer = new plLayer;
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
-        buff = plString::Format("%s_%d_m", GetKey()->GetName().c_str(), uniqueSuffix++);
+        buff = plFormat("{}_{}_m", GetKey()->GetName(), uniqueSuffix++);
         movieLayer = new plLayerBink;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
@@ -3183,7 +3183,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plString::Format("%s_%d", GetKey()->GetName().c_str(), uniqueSuffix++);
+    plString buff = plFormat("{}_{}", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3237,7 +3237,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plString::Format("%s_%d_d", GetKey()->GetName().c_str(), uniqueSuffix++);
+    plString buff = plFormat("{}_{}_d", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());

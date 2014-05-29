@@ -160,7 +160,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     // We need it to be resident to read in
     if( retVal == plSoundBuffer::kError) 
     {
-        plString str = plString::Format("Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName().c_str() : "nil");
+        plString str = plFormat("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
         IPrintDbgMessage( str.c_str(), true );
         fFailed = true;
         return false;
@@ -211,9 +211,10 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), true );
     if( !fDSoundBuffer->IsValid() )
     {
-        char str[256];
-        sprintf(str, "Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file. Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.", GetFileName().AsString().c_str());
-        IPrintDbgMessage( str, true );
+        plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                GetFileName());
+        IPrintDbgMessage(str.c_str(), true);
         fFailed = true;
 
         delete fDSoundBuffer;
@@ -228,14 +229,14 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     IFillCurrentSound( 0 );
 
     // Logging
-    plString str = plString::Format("   Grouped %s %s allocated (%d msec).", buffer->GetFileName().IsValid() ? "file" : "buffer",
-                                    buffer->GetFileName().IsValid() ? buffer->GetFileName().AsString().c_str() : buffer->GetKey()->GetUoid().GetObjectName().c_str(),
-                                    //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
-                                    //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
+    plString str = plFormat("   Grouped {} {} allocated ({} msec).", buffer->GetFileName().IsValid() ? "file" : "buffer",
+                            buffer->GetFileName().IsValid() ? buffer->GetFileName() : buffer->GetKeyName(),
+                            //fDSoundBuffer->IsHardwareAccelerated() ? "hardware" : "software",
+                            //fDSoundBuffer->IsStaticVoice() ? "static" : "dynamic",
 #ifdef PL_PROFILE_ENABLED
-                                    gProfileVarStaticSndShoveTime.GetValue() );
+                            gProfileVarStaticSndShoveTime.GetValue());
 #else
-                                    0 );
+                            0);
 #endif
     IPrintDbgMessage( str.c_str() );
     if( GetKey() != nil && GetKeyName().Find( "Footstep" ) >= 0 )

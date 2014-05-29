@@ -279,7 +279,7 @@ bool plNetClientMgr::Log(const char* str) const
         return true;
 
     // prepend raw time
-    plString buf2 = plString::Format("%.2f %s", hsTimer::GetSeconds(), ProcessTab(str));
+    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str));
 
     if ( GetConsoleOutput() )
         hsStatusMessage(buf2.c_str());

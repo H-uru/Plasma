@@ -237,15 +237,16 @@ plString plGenericType::GetAsString() const
     switch (fType)
     {
     case kInt :
-        return plString::Format("%d", fI);
+        return plFormat("{}", fI);
     case kBool :
-    case kUInt :
-        return plString::Format("%u", fType==kBool?fB:fU);
+        return plFormat("{}", fB ? 1 : 0);
+    case kUInt:
+        return plFormat("{}", fU);
     case kFloat :
     case kDouble :
-        return plString::Format("%f", fType==kDouble?fD:fF);
+        return plFormat("{f}", fType==kDouble ? fD : fF);
     case kChar :
-        return plString::Format("%c", fC);
+        return plFormat("{}", fC);
     case kAny :
     case kString :
         return fS;

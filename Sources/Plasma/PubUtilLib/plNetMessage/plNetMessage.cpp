@@ -226,7 +226,7 @@ int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions
     readStream.LogSetList(el);
     readStream.Init(bufLen, bufIn);
     readStream.LogSubStreamStart("plNetMessage");
-    readStream.LogStringString(plString::Format("ClassName: %s", this->ClassName()).c_str());
+    readStream.LogStringString(plFormat("ClassName: {}", this->ClassName()).c_str());
     int ret;
     if (peekOptions & kBaseClassOnly)
     {
@@ -704,8 +704,8 @@ plString plNetMsgSDLState::AsString() const
 {
     ISetDescName();     // set desc name for debug if necessary
 
-    return plString::Format("object:%s, initial:%d, %s",
-        ObjectInfo()->GetObjectName().c_str(), fIsInitialState, plNetMsgStreamedObject::AsString().c_str() );
+    return plFormat("object:{}, initial:{}, {}",
+        ObjectInfo()->GetObjectName(), fIsInitialState, plNetMsgStreamedObject::AsString());
 }
 
 //

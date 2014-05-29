@@ -142,11 +142,17 @@ public:
     plConfigInfo* GetConfigInfo() { return &fConfigInfo; }
     plConfigInfo* GetConfigInfoLog() { return &fLog; }
 
-    bool GetValue(plString& retval, const plString & section, const plString & key, const plString & desc, const plString& defval = "");
-    bool GetValue(int& retval, const plString & section, const plString & key, const plString & desc, int defval);
-    bool GetValue(bool& retval, const plString & section, const plString & key, const plString & desc, bool defval);
-    bool GetValue(float& retval, const plString & section, const plString & key, const plString & desc, float defval);
-    bool GetValue(double& retval, const plString & section, const plString & key, const plString & desc, double defval);
+    template <typename _Type>
+    bool GetValue(_Type& retval, const plString & section, const plString & key, const plString & desc, const _Type& defval = _Type())
+    {
+        plString descwdef = plFormat("{}  # {}", defval, desc);
+        fLog.AddValue(section, key, descwdef, kReplaceIfExists);
+
+        bool found;
+        retval = fConfigInfo.GetValue(section, key, defval, &found);
+        return found;
+    }
+
     bool GetAllValues(std::vector<plString>& values, const plString & section, const plString & key, const plString & desc);
 
 #if USE_MULT_SECTIONS

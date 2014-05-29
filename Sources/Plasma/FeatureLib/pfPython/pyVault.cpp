@@ -670,13 +670,13 @@ void pyVault::CreateNeighborhood()
     unsigned nameLen = nc->GetPlayerName().GetSize();
     if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
     {
-        title = plString::Format( "%s'", nc->GetPlayerName().c_str() );
-        desc = plString::Format( "%s' %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
+        title = plFormat("{}'", nc->GetPlayerName());
+        desc = plFormat("{}' {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
     }
     else
     {
-        title = plString::Format( "%s's", nc->GetPlayerName().c_str() );
-        desc = plString::Format( "%s's %s", nc->GetPlayerName().c_str(), link.GetAgeInfo()->GetAgeInstanceName().c_str() );
+        title = plFormat("{}'s", nc->GetPlayerName());
+        desc = plFormat("{}'s {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
     }
 
     plUUID guid = plUUID::Generate();

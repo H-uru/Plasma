@@ -78,8 +78,8 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
 
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    fPath = plFileName::Join(dataPath, plString::Format("%s_District_%s.prp",
-                fPageInfo.GetAge().c_str(), fPageInfo.GetPage().c_str()));
+    fPath = plFileName::Join(dataPath, plFormat("{}_District_{}.prp",
+                fPageInfo.GetAge(), fPageInfo.GetPage()));
 }
 
 plRegistryPageNode::~plRegistryPageNode()
@@ -152,8 +152,8 @@ void plRegistryPageNode::LoadKeys()
     hsStream* stream = OpenStream();
     if (!stream)
     {
-        hsAssert(0, plString::Format("plRegistryPageNode::LoadKeysFromSource - bad stream %s,%s",
-            GetPageInfo().GetAge().c_str(), GetPageInfo().GetPage().c_str()).c_str());
+        hsAssert(0, plFormat("plRegistryPageNode::LoadKeysFromSource - bad stream {},{}",
+                             GetPageInfo().GetAge(), GetPageInfo().GetPage()).c_str());
         return;
     }
 
@@ -331,7 +331,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
         // Attempt recovery
         for (int i = 0; i < 500; i++)
         {
-            plString tempName = plString::Format("%s%d", key->GetUoid().GetObjectName().c_str(), i);
+            plString tempName = plFormat("{}{}", key->GetUoid().GetObjectName(), i);
             if (keys->FindKey(tempName) == nil)
             {
                 plUoid uoid(key->GetUoid().GetLocation(), key->GetUoid().GetClassType(), tempName, key->GetUoid().GetLoadMask());

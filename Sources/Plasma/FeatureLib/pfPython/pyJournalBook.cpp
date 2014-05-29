@@ -62,7 +62,7 @@ uint32_t  pyJournalBook::fNextKeyID = 0;
 
 void    pyJournalBook::IMakeNewKey( void )
 {
-    plString name = plString::Format( "pyJournalBook-%d", fNextKeyID++ );
+    plString name = plFormat("pyJournalBook-{}", fNextKeyID++);
     hsgResMgr::ResMgr()->NewKey( name, fBook, plLocation::kGlobalFixedLoc );
     
     fBook->GetKey()->RefObject();

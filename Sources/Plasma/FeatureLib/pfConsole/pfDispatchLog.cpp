@@ -298,14 +298,14 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
                     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(loc);
 
                     if (pageInfo)
-                        info += plString::Format("%s-%s ", pageInfo->GetAge().c_str(), pageInfo->GetPage().c_str());
+                        info += plFormat("{}-{} ", pageInfo->GetAge(), pageInfo->GetPage());
                 }
             }
             break;
 
         case plClientMsg::kLoadAgeKeys:
         case plClientMsg::kReleaseAgeKeys:
-            info += plString::Format(" - Age: %s", clientMsg->GetAgeName().c_str());
+            info += plFormat(" - Age: {}", clientMsg->GetAgeName());
             break;
         }
         return true;
@@ -321,7 +321,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
         GetType(kOnRequest);
         GetType(kOnRemove);
         GetType(kOnReplace);
-        info = plString::Format("Obj: %s RefType: %s", refMsg->GetRef()->GetKeyName().c_str(), typeName);
+        info = plFormat("Obj: {} RefType: {}", refMsg->GetRef()->GetKeyName(), typeName);
 
         return true;
     }

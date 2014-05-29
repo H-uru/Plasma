@@ -112,7 +112,7 @@ bool plLayerMovie::ISetupBitmap()
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
-        plString name = plString::Format( "%s_BMap", fMovieName.AsString().c_str() );
+        plString name = plFormat("{}_BMap", fMovieName);
         hsgResMgr::ResMgr()->NewKey( name, b, plLocation::kGlobalFixedLoc );
 
         *fTexture = (plBitmap *)b;
