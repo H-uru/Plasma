@@ -70,11 +70,7 @@ PYTHON_CLASS_NEW_IMPL(ptVaultSystemNode, pyVaultSystemNode)
 PyObject *pyVaultSystemNode::New(RelVaultNode* nfsNode)
 {
     ptVaultSystemNode *newObj = (ptVaultSystemNode*)ptVaultSystemNode_type.tp_new(&ptVaultSystemNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

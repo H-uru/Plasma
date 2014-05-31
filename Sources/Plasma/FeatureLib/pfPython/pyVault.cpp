@@ -554,14 +554,12 @@ void _InvitePlayerToAge(ENetError result, void* state, void* param, RelVaultNode
 
 void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID )
 {
-    NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->Ref();
+    hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(plVault::kNodeType_TextNote);
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
     VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, (void*)playerID);
-    templateNode->UnRef();
 }
 
 //============================================================================

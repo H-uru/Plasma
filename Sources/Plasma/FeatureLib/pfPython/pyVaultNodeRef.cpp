@@ -65,22 +65,20 @@ pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
 : fParent(parent)
 , fChild(child)
 {
-    fParent->Ref();
-    fChild->Ref();
 }
 
 pyVaultNodeRef::pyVaultNodeRef(int)
-: fParent(nil)
-, fChild(nil)
 {
 }
 
-pyVaultNodeRef::~pyVaultNodeRef()
+hsRef<RelVaultNode> pyVaultNodeRef::GetParentNode() const
 {
-    if (fParent)
-        fParent->UnRef();
-    if (fChild)
-        fChild->UnRef();
+    return fParent;
+}
+
+hsRef<RelVaultNode> pyVaultNodeRef::GetChildNode() const
+{
+    return fChild;
 }
 
 

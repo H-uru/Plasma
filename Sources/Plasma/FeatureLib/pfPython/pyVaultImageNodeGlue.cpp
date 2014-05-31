@@ -219,11 +219,7 @@ PLASMA_DEFAULT_TYPE_WBASE(ptVaultImageNode, pyVaultNode, "Params: n=0\nPlasma va
 PyObject *pyVaultImageNode::New(RelVaultNode* nfsNode)
 {
     ptVaultImageNode *newObj = (ptVaultImageNode*)ptVaultImageNode_type.tp_new(&ptVaultImageNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

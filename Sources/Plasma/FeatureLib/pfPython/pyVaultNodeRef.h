@@ -50,13 +50,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
+#include "hsRefCnt.h"
 
 struct RelVaultNode;
 
 class pyVaultNodeRef
 {
-    RelVaultNode *  fParent;
-    RelVaultNode *  fChild;
+    hsRef<RelVaultNode> fParent;
+    hsRef<RelVaultNode> fChild;
 
 protected:
     // should only be created from C++ side
@@ -64,10 +65,8 @@ protected:
     pyVaultNodeRef(int =0 );
 
 public:
-    ~pyVaultNodeRef();
-    
-    RelVaultNode *  GetParentNode () const { return fParent; }
-    RelVaultNode *  GetChildNode () const { return fChild; }
+    hsRef<RelVaultNode> GetParentNode() const;
+    hsRef<RelVaultNode> GetChildNode() const;
 
     // required functions for PyObject interoperability
     PYTHON_EXPOSE_TYPE; // so we can subclass

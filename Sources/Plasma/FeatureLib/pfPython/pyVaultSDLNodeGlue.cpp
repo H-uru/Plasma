@@ -129,11 +129,7 @@ PYTHON_CLASS_NEW_IMPL(ptVaultSDLNode, pyVaultSDLNode)
 PyObject *pyVaultSDLNode::New(RelVaultNode* nfsNode)
 {
     ptVaultSDLNode *newObj = (ptVaultSDLNode*)ptVaultSDLNode_type.tp_new(&ptVaultSDLNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

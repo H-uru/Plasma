@@ -190,11 +190,7 @@ PLASMA_DEFAULT_TYPE_WBASE(ptVaultChronicleNode, pyVaultNode, "Params: n=0\nPlasm
 PyObject *pyVaultChronicleNode::New(RelVaultNode* nfsNode)
 {
     ptVaultChronicleNode *newObj = (ptVaultChronicleNode*)ptVaultChronicleNode_type.tp_new(&ptVaultChronicleNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

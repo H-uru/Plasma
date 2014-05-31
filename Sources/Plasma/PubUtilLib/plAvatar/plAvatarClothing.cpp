@@ -1471,10 +1471,8 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
         return false;
 
     hsUNIXStream S;
-    if (!S.Open(filename, "wb")) {
-        rvn->UnRef();
+    if (!S.Open(filename, "wb"))
         return false;
-    }
 
     S.WriteByte(fGroup);
 
@@ -1614,7 +1612,7 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
     hsTArray<plClosetItem> closet;
     GetClosetItems(closet);
     
-    ARRAY(RelVaultNode*)    templates;
+    RelVaultNode::RefList templates;
     
     for (unsigned i = 0; i < items.GetCount(); ++i) {
         bool match = false;
@@ -1632,26 +1630,24 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
         plStateDataRecord rec(plClothingSDLModifier::GetClothingItemSDRName());
         plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
         
-        RelVaultNode * templateNode = new RelVaultNode;
-        templateNode->Ref();
+        hsRef<RelVaultNode> templateNode = new RelVaultNode;
         templateNode->SetNodeType(plVault::kNodeType_SDL);
         
         VaultSDLNode sdl(templateNode);
         sdl.SetStateDataRecord(&rec);
 
-        templates.Add(templateNode);
+        templates.push_back(templateNode);
     }
     
-    for (unsigned i = 0; i < templates.Count(); ++i) {
+    for (const hsRef<RelVaultNode> &temp : templates) {
         ENetError result;
-        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(templates[i], &result)) {
+        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(temp, &result)) {
             VaultAddChildNodeAndWait(
                 rvn->GetNodeId(),
                 actual->GetNodeId(),
                 NetCommGetPlayer()->playerInt
             );
         }
-        templates[i]->UnRef(); // REF: Create
     }
 }
 

@@ -104,7 +104,7 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
 
 
 struct IRelVaultNode {
-    RelVaultNode *  node;
+    hsRef<RelVaultNode> node;
     
     HASHTABLEDECL(
         RelVaultNodeLink,
@@ -135,7 +135,7 @@ struct VaultCreateNodeTrans {
     void *                      param;
 
     unsigned                    nodeId;
-    RelVaultNode *              node;
+    hsRef<RelVaultNode>         node;
 
     VaultCreateNodeTrans ()
         : callback(nil), state(nil), param(nil), nodeId(0), node(nil) { }
@@ -397,8 +397,8 @@ static void BuildNodeTree (
                 childLink->ownerId = ownerId;
         }
 
-        RelVaultNode * parentNode = parentLink->node;
-        RelVaultNode * childNode = childLink->node;
+        hsRef<RelVaultNode> parentNode = parentLink->node;
+        hsRef<RelVaultNode> childNode = childLink->node;
         
         bool isImmediateParent = parentNode->IsParentOf(refs[i].childId, 1);
         bool isImmediateChild = childNode->IsChildOf(refs[i].parentId, 1);
@@ -1316,10 +1316,9 @@ void RelVaultNode::GetChildNodes (
     RelVaultNodeLink * link;
     link = state->children.Head();
     for (; link; link = state->children.Next(link)) {
-        if (link->node->Matches(templateNode)) {
+        if (link->node->Matches(templateNode))
             nodes->push_back(link->node);
-            link->node->Ref();
-        }
+
         link->node->GetChildNodes(
             templateNode,
             maxDepth - 1,

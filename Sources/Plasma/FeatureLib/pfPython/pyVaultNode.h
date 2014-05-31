@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
+#include "hsRefCnt.h"
 
 struct RelVaultNode;
 class plMipmap;
@@ -82,7 +83,7 @@ public:
     struct pyVaultNodeOperationCallback
     {
         PyObject *          fCbObject;
-        RelVaultNode *      fNode;
+        hsRef<RelVaultNode> fNode;
         PyObject *          fPyNodeRef;
         uint32_t            fContext;
 
@@ -94,10 +95,10 @@ public:
         void VaultOperationComplete(int resultCode) { VaultOperationComplete(fContext, resultCode); }
         
         void SetNode (RelVaultNode * rvn);
-        RelVaultNode * GetNode ();
+        hsRef<RelVaultNode> GetNode() const;
     };
 
-    RelVaultNode *      fNode;
+    hsRef<RelVaultNode> fNode;
     mutable char *      fCreateAgeName;
 
 protected:
@@ -118,7 +119,7 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    RelVaultNode * GetNode() const;
+    hsRef<RelVaultNode> GetNode() const;
 
     // override the equals to operator
     bool operator==(const pyVaultNode &vaultNode) const;
