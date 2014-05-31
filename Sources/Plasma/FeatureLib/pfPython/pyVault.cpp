@@ -206,20 +206,16 @@ PyObject* pyVault::GetKIUsage(void)
                 break;
 
             // Get child nodes up to two levels deep
-            ARRAY(RelVaultNode*) nodeArr;
-            rvnAgeJrnlz->GetChildNodesIncRef(2, &nodeArr);
+            RelVaultNode::RefList nodeArr;
+            rvnAgeJrnlz->GetChildNodes(2, &nodeArr);
             
-            RelVaultNode ** cur = nodeArr.Ptr();
-            RelVaultNode ** end = nodeArr.Term();
-            for (; cur != end; ++cur) {
-                RelVaultNode * rvn = *cur;
+            for (const hsRef<RelVaultNode> &rvn : nodeArr) {
                 if (rvn->GetNodeType() == plVault::kNodeType_Image)
                     ++pictures;
                 else if (rvn->GetNodeType() == plVault::kNodeType_TextNote)
                     ++notes;
                 else if (rvn->GetNodeType() == plVault::kNodeType_MarkerGame)
                     ++markerGames;
-                rvn->UnRef();
             }
             
             break;

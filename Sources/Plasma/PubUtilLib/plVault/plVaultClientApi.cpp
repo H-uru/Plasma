@@ -1289,9 +1289,9 @@ hsRef<RelVaultNode> RelVaultNode::GetChildAgeInfoListNode (
 }
 
 //============================================================================
-void RelVaultNode::GetChildNodesIncRef (
+void RelVaultNode::GetChildNodes (
     unsigned                maxDepth,
-    ARRAY(RelVaultNode*) *  nodes
+    RelVaultNode::RefList * nodes
 ) {
     if (maxDepth == 0)
         return;
@@ -1299,9 +1299,8 @@ void RelVaultNode::GetChildNodesIncRef (
     RelVaultNodeLink * link;
     link = state->children.Head();
     for (; link; link = state->children.Next(link)) {
-        nodes->Add(link->node);
-        link->node->Ref();
-        link->node->GetChildNodesIncRef(
+        nodes->push_back(link->node);
+        link->node->GetChildNodes(
             maxDepth - 1,
             nodes
         );
@@ -1309,19 +1308,19 @@ void RelVaultNode::GetChildNodesIncRef (
 }
 
 //============================================================================
-void RelVaultNode::GetChildNodesIncRef (
+void RelVaultNode::GetChildNodes (
     NetVaultNode *          templateNode,
     unsigned                maxDepth,
-    ARRAY(RelVaultNode*) *  nodes
+    RelVaultNode::RefList * nodes
 ) {
     RelVaultNodeLink * link;
     link = state->children.Head();
     for (; link; link = state->children.Next(link)) {
         if (link->node->Matches(templateNode)) {
-            nodes->Add(link->node);
+            nodes->push_back(link->node);
             link->node->Ref();
         }
-        link->node->GetChildNodesIncRef(
+        link->node->GetChildNodes(
             templateNode,
             maxDepth - 1,
             nodes
@@ -1330,14 +1329,14 @@ void RelVaultNode::GetChildNodesIncRef (
 }
 
 //============================================================================
-void RelVaultNode::GetChildNodesIncRef (
+void RelVaultNode::GetChildNodes (
     unsigned                nodeType,
     unsigned                maxDepth,
-    ARRAY(RelVaultNode*) *  nodes
+    RelVaultNode::RefList * nodes
 ) {
     hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(nodeType);
-    GetChildNodesIncRef(
+    GetChildNodes(
         templateNode,
         maxDepth,
         nodes
@@ -1345,16 +1344,16 @@ void RelVaultNode::GetChildNodesIncRef (
 }
 
 //============================================================================
-void RelVaultNode::GetChildFolderNodesIncRef (
+void RelVaultNode::GetChildFolderNodes (
     unsigned                folderType,
     unsigned                maxDepth,
-    ARRAY(RelVaultNode*) *  nodes
+    RelVaultNode::RefList * nodes
 ) {
     hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(plVault::kNodeType_Folder);
     VaultFolderNode fldr(templateNode);
     fldr.SetFolderType(folderType);
-    GetChildNodesIncRef(
+    GetChildNodes(
         templateNode,
         maxDepth,
         nodes
@@ -3606,15 +3605,14 @@ void VaultProcessUnvisitNote(RelVaultNode * rvnUnVisit) {
 void VaultProcessPlayerInbox () {
     if (hsRef<RelVaultNode> rvnInbox = VaultGetPlayerInboxFolder()) {
         {   // Process new visit requests
-            ARRAY(RelVaultNode*) visits;
+            RelVaultNode::RefList visits;
             hsRef<RelVaultNode> templateNode = new RelVaultNode;
             templateNode->SetNodeType(plVault::kNodeType_TextNote);
             VaultTextNoteNode tmpAcc(templateNode);
             tmpAcc.SetNoteType(plVault::kNoteType_Visit);
-            rvnInbox->GetChildNodesIncRef(templateNode, 1, &visits);
+            rvnInbox->GetChildNodes(templateNode, 1, &visits);
 
-            for (unsigned i = 0; i < visits.Count(); ++i) {
-                hsRef<RelVaultNode> rvnVisit = visits[i];
+            for (const hsRef<RelVaultNode> &rvnVisit : visits) {
                 VaultTextNoteNode visitAcc(rvnVisit);
                 plAgeLinkStruct link;
                 if (visitAcc.GetVisitInfo(link.GetAgeInfo())) {
@@ -3626,15 +3624,14 @@ void VaultProcessPlayerInbox () {
             }
         }
         {   // Process new unvisit requests
-            ARRAY(RelVaultNode*) unvisits;
+            RelVaultNode::RefList unvisits;
             hsRef<RelVaultNode> templateNode = new RelVaultNode;
             templateNode->SetNodeType(plVault::kNodeType_TextNote);
             VaultTextNoteNode tmpAcc(templateNode);
             tmpAcc.SetNoteType(plVault::kNoteType_UnVisit);
-            rvnInbox->GetChildNodesIncRef(templateNode, 1, &unvisits);
+            rvnInbox->GetChildNodes(templateNode, 1, &unvisits);
 
-            for (unsigned i = 0; i < unvisits.Count(); ++i) {
-                hsRef<RelVaultNode> rvnUnVisit = unvisits[i];
+            for (const hsRef<RelVaultNode> &rvnUnVisit : unvisits) {
                 VaultTextNoteNode unvisitAcc(rvnUnVisit);
                 plAgeInfoStruct info;
                 if (unvisitAcc.GetVisitInfo(&info)) {

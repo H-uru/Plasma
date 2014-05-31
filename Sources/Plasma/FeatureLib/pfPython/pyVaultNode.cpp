@@ -606,17 +606,13 @@ PyObject* pyVaultNode::GetChildNodeRefList()
     // fill in the elements list of this folder
     if (fNode)
     {
-        ARRAY(RelVaultNode*)    nodes;
-        fNode->GetChildNodesIncRef(
-            1,
-            &nodes
-        );
+        RelVaultNode::RefList nodes;
+        fNode->GetChildNodes(1, &nodes);
         
-        for (unsigned i = 0; i < nodes.Count(); ++i) {
-            PyObject* elementObj = pyVaultNodeRef::New(fNode, nodes[i]);
+        for (const hsRef<RelVaultNode> &node : nodes) {
+            PyObject* elementObj = pyVaultNodeRef::New(fNode, node);
             PyList_Append(pyEL, elementObj);
             Py_DECREF(elementObj);
-            nodes[i]->UnRef();
         }
     }
 

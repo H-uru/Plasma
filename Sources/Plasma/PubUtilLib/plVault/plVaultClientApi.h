@@ -94,6 +94,8 @@ void VaultUnregisterCallback (VaultCallback * cb);
 *
 ***/
 struct RelVaultNode : NetVaultNode {
+    typedef std::list<hsRef<RelVaultNode>> RefList;
+
     struct IRelVaultNode *  state;
 
     RelVaultNode ();
@@ -153,24 +155,24 @@ struct RelVaultNode : NetVaultNode {
     );
 
     // returns all matching nodes found 
-    void GetChildNodesIncRef (
+    void GetChildNodes (
         unsigned                maxDepth,
-        ARRAY(RelVaultNode*) *  nodes
+        RefList *               nodes
     );
-    void GetChildNodesIncRef (
+    void GetChildNodes (
         NetVaultNode *          templateNode,
         unsigned                maxDepth,
-        ARRAY(RelVaultNode*) *  nodes
+        RefList *               nodes
     );
-    void GetChildNodesIncRef (
+    void GetChildNodes (
         unsigned                nodeType,
         unsigned                maxDepth,
-        ARRAY(RelVaultNode*) *  nodes
+        RefList *               nodes
     );
-    void GetChildFolderNodesIncRef (
+    void GetChildFolderNodes (
         unsigned                folderType,
         unsigned                maxDepth,
-        ARRAY(RelVaultNode*) *  nodes
+        RefList *               nodes
     );
     
     unsigned GetRefOwnerId (unsigned parentId);
