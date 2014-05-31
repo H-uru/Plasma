@@ -71,7 +71,7 @@ PyObject* pyDniInfoSource::GetAgeCoords( void )
 
 uint32_t pyDniInfoSource::GetAgeTime( void ) const
 {
-    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
+    hsRef<RelVaultNode> node = VaultGetAgeInfoNode();
     if (!node)
         return 0;
     
@@ -81,34 +81,29 @@ uint32_t pyDniInfoSource::GetAgeTime( void ) const
         result = (uint32_t)utime->GetSecs();
     else
         result = 0;
-    node->UnRef();
 
     return result;
 }
 
 const char * pyDniInfoSource::GetAgeName( void ) const
 {
-    RelVaultNode * node = VaultGetAgeInfoNodeIncRef();
+    hsRef<RelVaultNode> node = VaultGetAgeInfoNode();
     if (!node)
         return "";
 
     VaultAgeInfoNode ageInfo(node);
 
     fAgeName = StrDupToAnsi(ageInfo.GetAgeInstanceName());
-    node->UnRef();
 
     return fAgeName;
 }
 
 plUUID pyDniInfoSource::GetAgeGuid( void ) const
 {
-    if (RelVaultNode * node = VaultGetAgeInfoNodeIncRef())
+    if (hsRef<RelVaultNode> node = VaultGetAgeInfoNode())
     {
         VaultAgeInfoNode ageInfo(node);
-        plUUID uuid = ageInfo.GetAgeInstanceGuid();
-        node->UnRef();
-
-        return uuid;
+        return ageInfo.GetAgeInstanceGuid();
     }
 
     return kNilUuid;

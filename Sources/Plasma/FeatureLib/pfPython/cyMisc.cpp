@@ -2471,10 +2471,9 @@ int cyMisc::GetKILevel()
 
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, pfKIMsg::kChronicleKILevel, arrsize(wStr));
-    if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
+    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(wStr)) {
         VaultChronicleNode chron(rvn);
         result = wcstol(chron.GetEntryValue(), nil, 0);
-        rvn->UnRef();
     }
 
     return result;
@@ -2880,7 +2879,7 @@ void cyMisc::SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp)
 
 void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
 {
-    if (RelVaultNode* pNode = VaultGetPlayerNodeIncRef())
+    if (hsRef<RelVaultNode> pNode = VaultGetPlayerNode())
     {
         VaultPlayerNode player(pNode);
         plUUID inviteUuid = player.GetInviteUuid();
@@ -2893,7 +2892,6 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
         }
 
         NetCommSendFriendInvite(email, toName, inviteUuid);
-        pNode->UnRef();
     }
 }
 

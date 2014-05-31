@@ -126,28 +126,28 @@ struct RelVaultNode : NetVaultNode {
         unsigned            maxDepth
     );
 
-    // returns first matching node found    
-    RelVaultNode * GetParentNodeIncRef (
+    // returns first matching node found
+    hsRef<RelVaultNode> GetParentNode (
         NetVaultNode *      templateNode,
         unsigned            maxDepth
     );
-    RelVaultNode * GetChildNodeIncRef (
+    hsRef<RelVaultNode> GetChildNode (
         NetVaultNode *      templateNode,
         unsigned            maxDepth
     );
-    RelVaultNode * GetChildNodeIncRef (
+    hsRef<RelVaultNode> GetChildNode (
         unsigned            nodeType,
         unsigned            maxDepth
     );
-    RelVaultNode * GetChildFolderNodeIncRef (
+    hsRef<RelVaultNode> GetChildFolderNode (
         unsigned            folderType,
         unsigned            maxDepth
     );
-    RelVaultNode * GetChildPlayerInfoListNodeIncRef (
+    hsRef<RelVaultNode> GetChildPlayerInfoListNode (
         unsigned            folderType,
         unsigned            maxDepth
     );
-    RelVaultNode * GetChildAgeInfoListNodeIncRef (
+    hsRef<RelVaultNode> GetChildAgeInfoListNode (
         unsigned            folderType,
         unsigned            maxDepth
     );
@@ -183,7 +183,7 @@ struct RelVaultNode : NetVaultNode {
     void PrintTree (FStateDump dumpProc, unsigned level);
     
     // AgeInfoNode-specific (and it checks!)
-    RelVaultNode * GetParentAgeLinkIncRef ();
+    hsRef<RelVaultNode> GetParentAgeLink ();
 };
 
 
@@ -204,12 +204,9 @@ void VaultUpdate ();
 *
 ***/
 
-RelVaultNode * VaultGetNodeIncRef (
-    unsigned    nodeId
-);
-RelVaultNode * VaultGetNodeIncRef (
-    NetVaultNode *  templateNode
-);
+hsRef<RelVaultNode> VaultGetNode(unsigned nodeId);
+hsRef<RelVaultNode> VaultGetNode(NetVaultNode * templateNode);
+
 // VaultAddChildNode will download the child node if necessary
 // the parent exists locally before making the callback.
 typedef void (*FVaultAddChildNodeCallback)(
@@ -272,11 +269,11 @@ void VaultCreateNode (          // non-blocking
     void *                      state,
     void *                      param
 );
-RelVaultNode * VaultCreateNodeAndWaitIncRef (   // block until completion. returns node. nil --> failure
+hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nil --> failure
     plVault::NodeTypes          nodeType,
     ENetError *                 result
 );
-RelVaultNode * VaultCreateNodeAndWaitIncRef (   // block until completion. returns node. nil --> failure
+hsRef<RelVaultNode> VaultCreateNodeAndWait (   // block until completion. returns node. nil --> failure
     NetVaultNode *              templateNode,
     ENetError *                 result
 );
@@ -303,7 +300,7 @@ void VaultLocalFindNodes (
     NetVaultNode *          templateNode,
     ARRAY(unsigned) *       nodeIds
 );
-void VaultFetchNodesAndWait (   // Use VaultGetNodeIncRef to access the fetched nodes
+void VaultFetchNodesAndWait (   // Use VaultGetNode to access the fetched nodes
     const unsigned          nodeIds[],
     unsigned                count,
     bool                    force = false
@@ -330,32 +327,32 @@ void VaultInitAge (
 *
 ***/
 
-unsigned        VaultGetPlayerId ();
-RelVaultNode *  VaultGetPlayerNodeIncRef ();
-RelVaultNode *  VaultGetPlayerInfoNodeIncRef ();
-RelVaultNode *  VaultGetAvatarOutfitFolderIncRef ();
-RelVaultNode *  VaultGetAvatarClosetFolderIncRef ();
-bool            VaultGetLinkToMyNeighborhood (plAgeLinkStruct * link);
-bool            VaultGetLinkToMyPersonalAge (plAgeLinkStruct * link);
-bool            VaultGetLinkToCity (plAgeLinkStruct * link);
-RelVaultNode *  VaultGetAgesIOwnFolderIncRef ();
-RelVaultNode *  VaultGetAgesICanVisitFolderIncRef ();
-RelVaultNode *  VaultGetPlayerInboxFolderIncRef ();
-RelVaultNode *  VaultGetOwnedAgeLinkIncRef (const plAgeInfoStruct * info);
-RelVaultNode *  VaultGetOwnedAgeInfoIncRef (const plAgeInfoStruct * info);
-bool            VaultGetOwnedAgeLink (const plAgeInfoStruct * info, plAgeLinkStruct * link);
-bool            VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo & spawnPt);
-bool            VaultSetOwnedAgePublicAndWait (const plAgeInfoStruct * info, bool publicOrNot);
-RelVaultNode *  VaultGetVisitAgeLinkIncRef (const plAgeInfoStruct * info);
-bool            VaultGetVisitAgeLink (const plAgeInfoStruct * info, class plAgeLinkStruct * link);
-bool            VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link);
-void            VaultRegisterOwnedAge(const plAgeLinkStruct* link);
-bool            VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link);
-void            VaultRegisterVisitAge (const plAgeLinkStruct* link);
-bool            VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info);
-bool            VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info);
-RelVaultNode *  VaultFindChronicleEntryIncRef (const wchar_t entryName[], int entryType = -1);
-bool            VaultHasChronicleEntry (const wchar_t entryName[], int entryType = -1);
+unsigned            VaultGetPlayerId();
+hsRef<RelVaultNode> VaultGetPlayerNode();
+hsRef<RelVaultNode> VaultGetPlayerInfoNode();
+hsRef<RelVaultNode> VaultGetAvatarOutfitFolder();
+hsRef<RelVaultNode> VaultGetAvatarClosetFolder();
+bool                VaultGetLinkToMyNeighborhood(plAgeLinkStruct * link);
+bool                VaultGetLinkToMyPersonalAge(plAgeLinkStruct * link);
+bool                VaultGetLinkToCity(plAgeLinkStruct * link);
+hsRef<RelVaultNode> VaultGetAgesIOwnFolder();
+hsRef<RelVaultNode> VaultGetAgesICanVisitFolder();
+hsRef<RelVaultNode> VaultGetPlayerInboxFolder();
+hsRef<RelVaultNode> VaultGetOwnedAgeLink(const plAgeInfoStruct * info);
+hsRef<RelVaultNode> VaultGetOwnedAgeInfo(const plAgeInfoStruct * info);
+bool                VaultGetOwnedAgeLink(const plAgeInfoStruct * info, plAgeLinkStruct * link);
+bool                VaultAddOwnedAgeSpawnPoint(const plUUID& ageInstId, const plSpawnPointInfo & spawnPt);
+bool                VaultSetOwnedAgePublicAndWait(const plAgeInfoStruct * info, bool publicOrNot);
+hsRef<RelVaultNode> VaultGetVisitAgeLink(const plAgeInfoStruct * info);
+bool                VaultGetVisitAgeLink(const plAgeInfoStruct * info, class plAgeLinkStruct * link);
+bool                VaultRegisterOwnedAgeAndWait(const plAgeLinkStruct * link);
+void                VaultRegisterOwnedAge(const plAgeLinkStruct* link);
+bool                VaultRegisterVisitAgeAndWait(const plAgeLinkStruct * link);
+void                VaultRegisterVisitAge(const plAgeLinkStruct* link);
+bool                VaultUnregisterOwnedAgeAndWait(const plAgeInfoStruct * info);
+bool                VaultUnregisterVisitAgeAndWait(const plAgeInfoStruct * info);
+hsRef<RelVaultNode> VaultFindChronicleEntry(const wchar_t entryName[], int entryType = -1);
+bool                VaultHasChronicleEntry(const wchar_t entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void            VaultAddChronicleEntryAndWait (
     const wchar_t entryName[],
@@ -390,32 +387,32 @@ void VaultProcessPlayerInbox ();
 
 #define DEFAULT_DEVICE_INBOX L"DevInbox"
 
-RelVaultNode * VaultGetAgeNodeIncRef ();
-RelVaultNode * VaultGetAgeInfoNodeIncRef ();
-RelVaultNode * VaultGetAgeChronicleFolderIncRef ();
-RelVaultNode * VaultGetAgeDevicesFolderIncRef ();
-RelVaultNode * VaultGetAgeSubAgesFolderIncRef ();
-RelVaultNode * VaultGetAgeChildAgesFolderIncRef ();
-RelVaultNode * VaultGetAgeAgeOwnersFolderIncRef ();
-RelVaultNode * VaultGetAgeCanVisitFolderIncRef ();
-RelVaultNode * VaultGetAgePeopleIKnowAboutFolderIncRef ();
-RelVaultNode * VaultGetAgePublicAgesFolderIncRef ();
-RelVaultNode * VaultAgeGetBookshelfFolderIncRef ();
-RelVaultNode * VaultFindAgeSubAgeLinkIncRef (const plAgeInfoStruct * info);
-RelVaultNode * VaultFindAgeChildAgeLinkIncRef (const plAgeInfoStruct * info);
-RelVaultNode * VaultFindAgeChronicleEntryIncRef (const wchar_t entryName[], int entryType = -1);
+hsRef<RelVaultNode> VaultGetAgeNode();
+hsRef<RelVaultNode> VaultGetAgeInfoNode();
+hsRef<RelVaultNode> VaultGetAgeChronicleFolder();
+hsRef<RelVaultNode> VaultGetAgeDevicesFolder();
+hsRef<RelVaultNode> VaultGetAgeSubAgesFolder();
+hsRef<RelVaultNode> VaultGetAgeChildAgesFolder();
+hsRef<RelVaultNode> VaultGetAgeAgeOwnersFolder();
+hsRef<RelVaultNode> VaultGetAgeCanVisitFolder();
+hsRef<RelVaultNode> VaultGetAgePeopleIKnowAboutFolder();
+hsRef<RelVaultNode> VaultGetAgePublicAgesFolder();
+hsRef<RelVaultNode> VaultAgeGetBookshelfFolder();
+hsRef<RelVaultNode> VaultFindAgeSubAgeLink(const plAgeInfoStruct * info);
+hsRef<RelVaultNode> VaultFindAgeChildAgeLink(const plAgeInfoStruct * info);
+hsRef<RelVaultNode> VaultFindAgeChronicleEntry(const wchar_t entryName[], int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void           VaultAddAgeChronicleEntry (
     const wchar_t entryName[],
     int         entryType,
     const wchar_t entryValue[]
 );
-RelVaultNode * VaultAgeAddDeviceAndWaitIncRef (const wchar_t deviceName[]);   // blocks until completion
+hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const wchar_t deviceName[]);   // blocks until completion
 void VaultAgeRemoveDevice (const wchar_t deviceName[]);
 bool VaultAgeHasDevice (const wchar_t deviceName[]);
-RelVaultNode * VaultAgeGetDeviceIncRef (const wchar_t deviceName[]);
-RelVaultNode * VaultAgeSetDeviceInboxAndWaitIncRef (const wchar_t deviceName[], const wchar_t inboxName[]); // blocks until completion
-RelVaultNode * VaultAgeGetDeviceInboxIncRef (const wchar_t deviceName[]);
+hsRef<RelVaultNode> VaultAgeGetDevice(const wchar_t deviceName[]);
+hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const wchar_t deviceName[], const wchar_t inboxName[]); // blocks until completion
+hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const wchar_t deviceName[]);
 void VaultClearDeviceInboxMap ();
 
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);
@@ -423,7 +420,7 @@ void VaultAgeUpdateAgeSDL (const class plStateDataRecord * rec);
 
 unsigned VaultAgeGetAgeTime ();
 
-RelVaultNode * VaultGetSubAgeLinkIncRef (const plAgeInfoStruct * info);
+hsRef<RelVaultNode> VaultGetSubAgeLink(const plAgeInfoStruct * info);
 bool VaultAgeGetSubAgeLink (
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
@@ -435,7 +432,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
 );
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& arentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const wchar_t             parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
+    const wchar_t           parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
@@ -494,7 +491,7 @@ void VaultCull (
 *
 ***/
 
-RelVaultNode * VaultGetSystemNodeIncRef ();
-RelVaultNode * VaultGetGlobalInboxIncRef ();
+hsRef<RelVaultNode> VaultGetSystemNode();
+hsRef<RelVaultNode> VaultGetGlobalInbox();
 
 #endif // def CLIENT

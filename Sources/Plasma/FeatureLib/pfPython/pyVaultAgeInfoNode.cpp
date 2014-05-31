@@ -89,20 +89,16 @@ static PyObject * GetChildFolder (RelVaultNode * node, unsigned type) {
 //============================================================================
 static PyObject * GetChildPlayerInfoList (RelVaultNode * node, unsigned type) {
     PyObject * result = nil;
-    if (RelVaultNode * rvn = node->GetChildPlayerInfoListNodeIncRef(type, 1)) {
+    if (hsRef<RelVaultNode> rvn = node->GetChildPlayerInfoListNode(type, 1))
         result = pyVaultPlayerInfoListNode::New(rvn);
-        rvn->UnRef();
-    }
     return result;
 }
 
 //============================================================================
 static PyObject * GetChildAgeInfoList (RelVaultNode * node, unsigned type) {
     PyObject * result = nil;
-    if (RelVaultNode * rvn = node->GetChildAgeInfoListNodeIncRef(type, 1)) {
+    if (hsRef<RelVaultNode> rvn = node->GetChildAgeInfoListNode(type, 1))
         result = pyVaultAgeInfoListNode::New(rvn);
-        rvn->UnRef();
-    }
     return result;
 }
 
@@ -173,11 +169,8 @@ PyObject * pyVaultAgeInfoNode::GetParentAgeLink () const
     if (!fNode)
         PYTHON_RETURN_NONE;
 
-    if (RelVaultNode * rvn = fNode->GetParentAgeLinkIncRef()) {
-        PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->UnRef();
-        return result;
-    }
+    if (hsRef<RelVaultNode> rvn = fNode->GetParentAgeLink())
+        return pyVaultAgeLinkNode::New(rvn);
 
     // just return a None object.
     PYTHON_RETURN_NONE

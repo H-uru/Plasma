@@ -802,7 +802,7 @@ bool plClothingOutfit::IReadFromVault()
 
     WearDefaultClothing();
 
-    RelVaultNode * rvn = VaultGetAvatarOutfitFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
     if (!rvn)
         return false;
 
@@ -837,7 +837,6 @@ bool plClothingOutfit::IReadFromVault()
     fSynchClients = true; // set true if the next synch should be bcast
     ForceUpdate(true);
     
-    rvn->UnRef();
     return true;
 }
 
@@ -857,8 +856,8 @@ void plClothingOutfit::WriteToVault()
     if (!fVaultSaveEnabled)
         return;
 
-    RelVaultNode * rvn;
-    if (nil == (rvn = VaultGetAvatarOutfitFolderIncRef()))
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
+    if (!rvn)
         return;
 
     ARRAY(plStateDataRecord*) SDRs;
@@ -874,7 +873,6 @@ void plClothingOutfit::WriteToVault()
     SDRs.Add(appearanceStateDesc->GetStateDataRecord(0));
     
     WriteToVault(SDRs);
-    rvn->UnRef();
 }
 
 void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
@@ -883,8 +881,8 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     if (fAvatar->GetTarget(0) != plNetClientApp::GetInstance()->GetLocalPlayer())
         return;
 
-    RelVaultNode * rvn;
-    if (nil == (rvn = VaultGetAvatarOutfitFolderIncRef()))
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
+    if (!rvn)
         return;
         
     ARRAY(plStateDataRecord*)   morphs;
@@ -922,25 +920,19 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
         
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary
         for (unsigned i = 0; i < arr->Count(); ++i) {
-            RelVaultNode * node;
+            hsRef<RelVaultNode> node;
             if (nodes.Count()) {
                 node = nodes[0];
                 nodes.DeleteUnordered(0);
-                node->Ref(); // REF: Work
-                node->UnRef(); // REF: Find
             }
             else {
-                RelVaultNode * templateNode = new RelVaultNode;
-                templateNode->SetNodeType(plVault::kNodeType_SDL);
-                templates.Add(templateNode);
-                node = templateNode;
-                node->Ref(); // REF: Create
-                node->Ref(); // REF: Work
+                node = new RelVaultNode;
+                node->SetNodeType(plVault::kNodeType_SDL);
+                templates.Add(node);
             }
 
             VaultSDLNode sdl(node);
             sdl.SetStateDataRecord((*arr)[i], 0);
-            node->UnRef();     // REF: Work
         }
     }
 
@@ -953,7 +945,8 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     // Create actual new nodes from their templates
     for (unsigned i = 0; i < templates.Count(); ++i) {
         ENetError result;
-        if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
+        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(templates[i], &result)) {
+            actual->Ref();
             actuals.Add(actual);
         }
         templates[i]->UnRef(); // REF: Create
@@ -1483,7 +1476,7 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
     if (!filename.IsValid())
         return false;
 
-    RelVaultNode* rvn = VaultGetAvatarOutfitFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
     if (!rvn)
         return false;
 
@@ -1505,7 +1498,6 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
             S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
         nodes[i]->UnRef();
     }
-    rvn->UnRef();
 
     S.Close();
     return true;
@@ -1626,7 +1618,7 @@ plClothingElement *plClothingMgr::FindElementByName(const plString &name) const
 
 void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
 {
-    RelVaultNode * rvn = VaultGetAvatarClosetFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
         return;
         
@@ -1663,23 +1655,20 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
     
     for (unsigned i = 0; i < templates.Count(); ++i) {
         ENetError result;
-        if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
+        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(templates[i], &result)) {
             VaultAddChildNodeAndWait(
                 rvn->GetNodeId(),
                 actual->GetNodeId(),
                 NetCommGetPlayer()->playerInt
             );
-            actual->UnRef(); // REF: Create
         }
         templates[i]->UnRef(); // REF: Create
     }
-    
-    rvn->UnRef();
 }
 
 void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
 {
-    RelVaultNode * rvn = VaultGetAvatarClosetFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
         return;
 
@@ -1701,9 +1690,7 @@ void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
                 out.Remove(i);
         }
     }
-    
-    rvn->UnRef();
-}   
+}
 
 void plClothingMgr::GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out)
 {

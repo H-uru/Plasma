@@ -275,10 +275,9 @@ static void PlayerInitCallback (
         // Ensure the city link has the required spawn points
         plAgeInfoStruct info;
         info.SetAgeFilename(kCityAgeFilename);
-        if (RelVaultNode * rvn = VaultGetOwnedAgeLinkIncRef(&info)) {
+        if (hsRef<RelVaultNode> rvn = VaultGetOwnedAgeLink(&info)) {
             VaultAgeLinkNode acc(rvn);
             acc.AddSpawnPoint(plSpawnPointInfo(kCityFerryTerminalLinkTitle, kCityFerryTerminalLinkSpawnPtName));
-            rvn->UnRef();
         }
         
         VaultProcessPlayerInbox();
@@ -1119,14 +1118,12 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     unsigned playerInt = 0;
 
     if (s_player) {
-        if (RelVaultNode* rvn = VaultGetPlayerInfoNodeIncRef()) {
+        if (hsRef<RelVaultNode> rvn = VaultGetPlayerInfoNode()) {
             VaultPlayerInfoNode pInfo(rvn);
             pInfo.SetAgeInstName(nil);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);
-
-            rvn->UnRef();
         }
 
         VaultCull(s_player->playerInt);
@@ -1321,10 +1318,9 @@ void NetCommUpgradeVisitorToExplorer (
 void NetCommSetCCRLevel (
     unsigned                ccrLevel
 ) {
-    if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
+    if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode pInfo(rvnInfo);
         pInfo.SetCCRLevel(ccrLevel);
-        rvnInfo->UnRef();
     }
 
     NetCliAuthSetCCRLevel(ccrLevel);

@@ -124,6 +124,7 @@ public:
         if (fObj)
             fObj->UnRef();
         fObj = nullptr;
+        return *this;
     }
 
     bool operator==(const hsRef<_Ref> &other) const { return fObj == other.fObj; }

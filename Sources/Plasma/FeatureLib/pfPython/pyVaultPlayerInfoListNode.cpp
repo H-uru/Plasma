@@ -79,17 +79,13 @@ bool pyVaultPlayerInfoListNode::HasPlayer( uint32_t playerID )
     if (!fNode)
         return false;
 
-    NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->Ref();
+    hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
     
-    RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1);
-    if (rvn)
-        rvn->UnRef();
+    hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1);
     
-    templateNode->UnRef();
     return (rvn != nil);
 }
 
@@ -131,18 +127,13 @@ void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
     if (!fNode)
         return;
 
-    NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->Ref();
+    hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
 
-    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
+    if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1))
         VaultRemoveChildNode(fNode->GetNodeId(), rvn->GetNodeId(), nil, nil);
-        rvn->UnRef();
-    }
-    
-    templateNode->UnRef();
 }
 
 PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
@@ -150,19 +141,14 @@ PyObject * pyVaultPlayerInfoListNode::GetPlayer( uint32_t playerID )
     if (!fNode)
         PYTHON_RETURN_NONE;
 
-    NetVaultNode * templateNode = new NetVaultNode;
-    templateNode->Ref();
+    hsRef<NetVaultNode> templateNode = new NetVaultNode;
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
 
     PyObject * result = nil;
-    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(templateNode, 1)) {
+    if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1))
         result = pyVaultPlayerInfoNode::New(rvn);
-        rvn->UnRef();
-    }
-    
-    templateNode->UnRef();
     
     if (!result)
         PYTHON_RETURN_NONE;
