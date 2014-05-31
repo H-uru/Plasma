@@ -49,7 +49,7 @@ private:
     int         fRefCnt;
 
 public:
-                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) {}
+                hsRefCnt(int initRefs = 1);
     virtual     ~hsRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
@@ -76,7 +76,7 @@ private:
     std::atomic<int> fRefCnt;
 
 public:
-                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
+                 hsAtomicRefCnt(int initRefs = 1);
     virtual     ~hsAtomicRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }

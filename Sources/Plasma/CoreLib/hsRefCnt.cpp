@@ -46,10 +46,75 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsRefCnt.h"
 
+#define REFCOUNT_DBG_NONE   0
+#define REFCOUNT_DBG_REFS   1
+#define REFCOUNT_DBG_LEAKS  2
+#define REFCOUNT_DBG_ALL    3
+#define REFCOUNT_DEBUGGING  REFCOUNT_DBG_NONE
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+#include <unordered_set>
+#include "plFormat.h"
+#include "hsWindows.h"
+
+template <class _RefType>
+struct _RefCountLeakCheck
+{
+    std::unordered_set<_RefType *> m_refs;
+    unsigned s_added, s_removed;
+
+    ~_RefCountLeakCheck()
+    {
+        OutputDebugString(plFormat("Refs tracked:  {} created, {} destroyed\n",
+                                   s_added, s_removed).c_str());
+        if (m_refs.empty())
+            return;
+
+        OutputDebugString(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
+        for (_RefType *ref : m_refs) {
+            OutputDebugString(plFormat("    0x{_08x} {}: {} refs remain\n",
+                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+        }
+    }
+
+    static _RefCountLeakCheck<_RefType> *_instance()
+    {
+        static _RefCountLeakCheck<_RefType> s_instance;
+        return &s_instance;
+    }
+
+    static void add(_RefType *node)
+    {
+        _RefCountLeakCheck<_RefType> *p = _instance();
+        ++p->s_added;
+        p->m_refs.insert(node);
+    }
+
+    static void del(_RefType *node)
+    {
+        _RefCountLeakCheck<_RefType> *p = _instance();
+        ++p->s_removed;
+        p->m_refs.erase(node);
+    }
+};
+#endif
+
+hsRefCnt::hsRefCnt(int initRefs)
+    : fRefCnt(initRefs)
+{
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck<hsRefCnt>::add(this);
+#endif
+}
+
 hsRefCnt::~hsRefCnt()
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
+#endif
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck<hsRefCnt>::del(this);
 #endif
 }
 
@@ -65,10 +130,22 @@ void hsRefCnt::UnRef()
         --fRefCnt;
 }
 
+hsAtomicRefCnt::hsAtomicRefCnt(int initRefs)
+    : fRefCnt(initRefs)
+{
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck<hsAtomicRefCnt>::add(this);
+#endif
+}
+
 hsAtomicRefCnt::~hsAtomicRefCnt()
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
+#endif
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck<hsAtomicRefCnt>::del(this);
 #endif
 }
 
@@ -78,11 +155,11 @@ void hsAtomicRefCnt::UnRef(const char* tag)
     hsThrowIfFalse(fRefCnt >= 1);
 #endif
 
-#ifdef REFCOUNT_DEBUGGING
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Dec %p %s: %u", this, tag, prev - 1);
+        DEBUG_MSG("Dec %p %s: %u", this, tag, fRefCnt - 1);
     else
-        DEBUG_MSG("Dec %p: %u", this, prev - 1);
+        DEBUG_MSG("Dec %p: %u", this, fRefCnt - 1);
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -93,11 +170,11 @@ void hsAtomicRefCnt::UnRef(const char* tag)
 
 void hsAtomicRefCnt::Ref(const char* tag)
 {
-#ifdef REFCOUNT_DEBUGGING
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Inc %p %s: %u", this, tag, prev + 1);
+        DEBUG_MSG("Inc %p %s: %u", this, tag, fRefCnt + 1);
     else
-        DEBUG_MSG("Inc %p: %u", this, prev + 1);
+        DEBUG_MSG("Inc %p: %u", this, fRefCnt + 1);
 #endif
 
     ++fRefCnt;
@@ -105,7 +182,7 @@ void hsAtomicRefCnt::Ref(const char* tag)
 
 void hsAtomicRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
-#ifdef REFCOUNT_DEBUGGING
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
     DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
 #endif
