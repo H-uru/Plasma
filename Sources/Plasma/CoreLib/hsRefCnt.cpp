@@ -54,6 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
 #include <unordered_set>
+#include <mutex>
 #include "plFormat.h"
 #include "hsWindows.h"
 
@@ -61,12 +62,15 @@ template <class _RefType>
 struct _RefCountLeakCheck
 {
     std::unordered_set<_RefType *> m_refs;
-    unsigned s_added, s_removed;
+    unsigned m_added, m_removed;
+    std::mutex m_mutex;
 
     ~_RefCountLeakCheck()
     {
+        std::lock_guard<std::mutex> lock(m_mutex);
+
         OutputDebugString(plFormat("Refs tracked:  {} created, {} destroyed\n",
-                                   s_added, s_removed).c_str());
+                                   m_added, m_removed).c_str());
         if (m_refs.empty())
             return;
 
@@ -86,14 +90,16 @@ struct _RefCountLeakCheck
     static void add(_RefType *node)
     {
         _RefCountLeakCheck<_RefType> *p = _instance();
-        ++p->s_added;
+        std::lock_guard<std::mutex> lock(p->m_mutex);
+        ++p->m_added;
         p->m_refs.insert(node);
     }
 
     static void del(_RefType *node)
     {
         _RefCountLeakCheck<_RefType> *p = _instance();
-        ++p->s_removed;
+        std::lock_guard<std::mutex> lock(p->m_mutex);
+        ++p->m_removed;
         p->m_refs.erase(node);
     }
 };

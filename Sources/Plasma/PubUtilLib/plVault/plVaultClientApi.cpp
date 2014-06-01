@@ -104,7 +104,7 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
 
 
 struct IRelVaultNode {
-    hsRef<RelVaultNode> node;
+    RelVaultNode * node;        // MUST be a weak ref!
     
     HASHTABLEDECL(
         RelVaultNodeLink,
