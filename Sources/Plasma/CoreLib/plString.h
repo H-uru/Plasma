@@ -137,7 +137,7 @@ public:
     {
         memset(fShort, 0, sizeof(fShort));
         _Ch *copyData = IHaveACow() ? new _Ch[size + 1] : fShort;
-        memcpy(copyData, data, size);
+        memcpy(copyData, data, size * sizeof(_Ch));
         copyData[size] = 0;
 
         if (IHaveACow())
