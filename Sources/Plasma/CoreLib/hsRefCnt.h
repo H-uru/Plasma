@@ -44,12 +44,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <atomic>
 
-class hsRefCnt {
+// For easier debugging
+class _hsRefCnt_Base
+{
+public:
+    _hsRefCnt_Base(int initRefs = 1);
+    virtual ~_hsRefCnt_Base();
+
+    virtual int RefCnt() const = 0;
+};
+
+class hsRefCnt : public _hsRefCnt_Base {
 private:
     int         fRefCnt;
 
 public:
-                hsRefCnt(int initRefs = 1);
+                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
     virtual     ~hsRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
@@ -70,13 +80,13 @@ public:
 
 // Thread-safe version.  TODO:  Evaluate whether this is fast enough to
 // merge with hsRefCnt above.
-class hsAtomicRefCnt
+class hsAtomicRefCnt : public _hsRefCnt_Base
 {
 private:
     std::atomic<int> fRefCnt;
 
 public:
-                 hsAtomicRefCnt(int initRefs = 1);
+                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
     virtual     ~hsAtomicRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }

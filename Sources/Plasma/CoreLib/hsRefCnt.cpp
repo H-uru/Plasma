@@ -56,12 +56,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 #include <mutex>
 #include "plFormat.h"
-#include "hsWindows.h"
 
-template <class _RefType>
+// hsDebugMessage can get overridden to dump to a file :(
+#ifdef _MSC_VER
+#   include "hsWindows.h"
+#   define _LeakDebug(message) OutputDebugString(message)
+#else
+#   define _LeakDebug(message) fputs(message, stderr)
+#endif
+
 struct _RefCountLeakCheck
 {
-    std::unordered_set<_RefType *> m_refs;
+    std::unordered_set<_hsRefCnt_Base *> m_refs;
     unsigned m_added, m_removed;
     std::mutex m_mutex;
 
@@ -69,47 +75,53 @@ struct _RefCountLeakCheck
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
-        OutputDebugString(plFormat("Refs tracked:  {} created, {} destroyed\n",
-                                   m_added, m_removed).c_str());
+        _LeakDebug(plFormat("Refs tracked:  {} created, {} destroyed\n",
+                            m_added, m_removed).c_str());
         if (m_refs.empty())
             return;
 
-        OutputDebugString(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
-        for (_RefType *ref : m_refs) {
-            OutputDebugString(plFormat("    0x{_08x} {}: {} refs remain\n",
-                              (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+        _LeakDebug(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
+        for (_hsRefCnt_Base *ref : m_refs) {
+            _LeakDebug(plFormat("    0x{_08x} {}: {} refs remain\n",
+                       (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
         }
     }
 
-    static _RefCountLeakCheck<_RefType> *_instance()
+    static _RefCountLeakCheck *_instance()
     {
-        static _RefCountLeakCheck<_RefType> s_instance;
+        static _RefCountLeakCheck s_instance;
         return &s_instance;
     }
 
-    static void add(_RefType *node)
+    static void add(_hsRefCnt_Base *ref)
     {
-        _RefCountLeakCheck<_RefType> *p = _instance();
-        std::lock_guard<std::mutex> lock(p->m_mutex);
-        ++p->m_added;
-        p->m_refs.insert(node);
+        _RefCountLeakCheck *this_p = _instance();
+        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        ++this_p->m_added;
+        this_p->m_refs.insert(ref);
     }
 
-    static void del(_RefType *node)
+    static void del(_hsRefCnt_Base *ref)
     {
-        _RefCountLeakCheck<_RefType> *p = _instance();
-        std::lock_guard<std::mutex> lock(p->m_mutex);
-        ++p->m_removed;
-        p->m_refs.erase(node);
+        _RefCountLeakCheck *this_p = _instance();
+        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        ++this_p->m_removed;
+        this_p->m_refs.erase(ref);
     }
 };
 #endif
 
-hsRefCnt::hsRefCnt(int initRefs)
-    : fRefCnt(initRefs)
+_hsRefCnt_Base::_hsRefCnt_Base(int)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    _RefCountLeakCheck<hsRefCnt>::add(this);
+    _RefCountLeakCheck::add(this);
+#endif
+}
+
+_hsRefCnt_Base::~_hsRefCnt_Base()
+{
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck::del(this);
 #endif
 }
 
@@ -117,10 +129,6 @@ hsRefCnt::~hsRefCnt()
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
-#endif
-
-#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    _RefCountLeakCheck<hsRefCnt>::del(this);
 #endif
 }
 
@@ -136,22 +144,10 @@ void hsRefCnt::UnRef()
         --fRefCnt;
 }
 
-hsAtomicRefCnt::hsAtomicRefCnt(int initRefs)
-    : fRefCnt(initRefs)
-{
-#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    _RefCountLeakCheck<hsAtomicRefCnt>::add(this);
-#endif
-}
-
 hsAtomicRefCnt::~hsAtomicRefCnt()
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
-#endif
-
-#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    _RefCountLeakCheck<hsAtomicRefCnt>::del(this);
 #endif
 }
 
