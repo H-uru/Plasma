@@ -62,7 +62,7 @@ private:
 
 protected:
     pyNetServerSessionInfo() {}
-    pyNetServerSessionInfo( const plNetServerSessionInfo & info ): fInfo( info ) {}
+    pyNetServerSessionInfo(const plNetServerSessionInfo & info) { fInfo.CopyFrom(&info); }
 
 public:
     // required functions for PyObject interoperability

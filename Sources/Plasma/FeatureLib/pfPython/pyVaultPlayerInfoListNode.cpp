@@ -115,7 +115,7 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     if (nodeIds.Count())
         VaultAddChildNode(fNode->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
     else
-        VaultFindNodes(templateNode, IAddPlayer_NodesFound, fNode);
+        VaultFindNodes(templateNode, IAddPlayer_NodesFound, (NetVaultNode *)fNode);
 }
 
 void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )

@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-struct AsyncThreadTaskList : hsAtomicRefCnt {
+struct AsyncThreadTaskList : hsRefCnt {
     ENetError error;
     AsyncThreadTaskList ();
     ~AsyncThreadTaskList ();
@@ -81,7 +81,7 @@ static HANDLE   s_taskPort;
 
 //===========================================================================
 AsyncThreadTaskList::AsyncThreadTaskList ()
-:   hsAtomicRefCnt(0), error(kNetSuccess)
+:   hsRefCnt(0), error(kNetSuccess)
 {
     PerfAddCounter(kAsyncPerfThreadTaskListCount, 1);
 }

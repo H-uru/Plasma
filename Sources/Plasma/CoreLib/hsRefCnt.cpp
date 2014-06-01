@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct _RefCountLeakCheck
 {
-    std::unordered_set<_hsRefCnt_Base *> m_refs;
+    std::unordered_set<hsRefCnt *> m_refs;
     unsigned m_added, m_removed;
     std::mutex m_mutex;
 
@@ -81,7 +81,7 @@ struct _RefCountLeakCheck
             return;
 
         _LeakDebug(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
-        for (_hsRefCnt_Base *ref : m_refs) {
+        for (hsRefCnt *ref : m_refs) {
             _LeakDebug(plFormat("    0x{_08x} {}: {} refs remain\n",
                        (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
         }
@@ -93,7 +93,7 @@ struct _RefCountLeakCheck
         return &s_instance;
     }
 
-    static void add(_hsRefCnt_Base *ref)
+    static void add(hsRefCnt *ref)
     {
         _RefCountLeakCheck *this_p = _instance();
         std::lock_guard<std::mutex> lock(this_p->m_mutex);
@@ -101,7 +101,7 @@ struct _RefCountLeakCheck
         this_p->m_refs.insert(ref);
     }
 
-    static void del(_hsRefCnt_Base *ref)
+    static void del(hsRefCnt *ref)
     {
         _RefCountLeakCheck *this_p = _instance();
         std::lock_guard<std::mutex> lock(this_p->m_mutex);
@@ -111,17 +111,11 @@ struct _RefCountLeakCheck
 };
 #endif
 
-_hsRefCnt_Base::_hsRefCnt_Base(int)
+hsRefCnt::hsRefCnt(int initRefs)
+    : fRefCnt(initRefs)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     _RefCountLeakCheck::add(this);
-#endif
-}
-
-_hsRefCnt_Base::~_hsRefCnt_Base()
-{
-#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
-    _RefCountLeakCheck::del(this);
 #endif
 }
 
@@ -130,28 +124,13 @@ hsRefCnt::~hsRefCnt()
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
 #endif
-}
 
-void hsRefCnt::UnRef()
-{
-#ifdef HS_DEBUGGING
-    hsThrowIfFalse(fRefCnt >= 1);
-#endif
-
-    if (fRefCnt == 1)   // don't decrement if we call delete
-        delete this;
-    else
-        --fRefCnt;
-}
-
-hsAtomicRefCnt::~hsAtomicRefCnt()
-{
-#ifdef HS_DEBUGGING
-    hsThrowIfFalse(fRefCnt == 1);
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck::del(this);
 #endif
 }
 
-void hsAtomicRefCnt::UnRef(const char* tag)
+void hsRefCnt::UnRef(const char* tag)
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt >= 1);
@@ -170,7 +149,7 @@ void hsAtomicRefCnt::UnRef(const char* tag)
         --fRefCnt;
 }
 
-void hsAtomicRefCnt::Ref(const char* tag)
+void hsRefCnt::Ref(const char* tag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
@@ -182,7 +161,7 @@ void hsAtomicRefCnt::Ref(const char* tag)
     ++fRefCnt;
 }
 
-void hsAtomicRefCnt::TransferRef(const char* oldTag, const char* newTag)
+void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);

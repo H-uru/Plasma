@@ -60,7 +60,7 @@ namespace Ngl { namespace File {
 *
 ***/
 
-struct CliFileConn : hsAtomicRefCnt {
+struct CliFileConn : hsRefCnt {
     LINK(CliFileConn)   link;
     hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
@@ -581,7 +581,7 @@ static void AsyncLookupCallback (
 
 //============================================================================
 CliFileConn::CliFileConn ()
-    : hsAtomicRefCnt(0), sock(nil), seq(0), cancelId(nil), abandoned(false)
+    : hsRefCnt(0), sock(nil), seq(0), cancelId(nil), abandoned(false)
     , buildId(0), serverType(0)
     , reconnectTimer(nil), reconnectStartMs(0), connectStartMs(0)
     , numImmediateDisconnects(0), numFailedConnects(0)

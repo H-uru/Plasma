@@ -132,6 +132,20 @@ bool plAgeInfoStruct::IsEqualTo( const plAgeInfoStruct * other ) const
     return match;
 }
 
+void plAgeInfoStruct::CopyFrom(const plAgeInfoStruct * other)
+{
+    hsAssert(other, "CopyFrom called with null struct");
+
+    fFlags = other->fFlags;
+    fAgeFilename = other->fAgeFilename;
+    fAgeInstanceName = other->fAgeInstanceName;
+    fAgeInstanceGuid = other->fAgeInstanceGuid;
+    fAgeUserDefinedName = other->fAgeUserDefinedName;
+    fAgeDescription = other->fAgeDescription;
+    fAgeSequenceNumber = other->fAgeSequenceNumber;
+    fAgeLanguage = other->fAgeLanguage;
+}
+
 void plAgeInfoStruct::CopyFrom( const plVaultAgeInfoNode * node )
 {
     hsAssert(false, "eric, port me");
@@ -441,7 +455,12 @@ void plAgeLinkStruct::CopyFrom( const plAgeLinkStruct * other )
 {
     if ( other )
     {
-        *this=*other;
+        fFlags = other->fFlags;
+        fAgeInfo.CopyFrom(&other->fAgeInfo);
+        fLinkingRules = other->fLinkingRules;
+        fSpawnPoint = other->fSpawnPoint;
+        fAmCCR = other->fAmCCR;
+        fParentAgeFilename = other->fParentAgeFilename;
     }
     else
     {

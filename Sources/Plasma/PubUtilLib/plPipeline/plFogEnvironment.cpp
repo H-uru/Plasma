@@ -71,6 +71,16 @@ plFogEnvironment::~plFogEnvironment()
 {
 }
 
+plFogEnvironment &plFogEnvironment::operator=(const plFogEnvironment &copy)
+{
+    fType = copy.fType;
+    fStart = copy.fStart;
+    fEnd = copy.fEnd;
+    fDensity = copy.fDensity;
+    fColor = copy.fColor;
+    return *this;
+}
+
 //// Set /////////////////////////////////////////////////////////////////////
 
 void    plFogEnvironment::Set( float start, float end, float density, const hsColorRGBA *color )

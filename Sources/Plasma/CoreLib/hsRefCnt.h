@@ -44,50 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <atomic>
 
-// For easier debugging
-class _hsRefCnt_Base
-{
-public:
-    _hsRefCnt_Base(int initRefs = 1);
-    virtual ~_hsRefCnt_Base();
-
-    virtual int RefCnt() const = 0;
-};
-
-class hsRefCnt : public _hsRefCnt_Base {
-private:
-    int         fRefCnt;
-
-public:
-                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
-    virtual     ~hsRefCnt();
-
-    inline int  RefCnt() const { return fRefCnt; }
-    void        UnRef();
-    inline void Ref() { ++fRefCnt; }
-};
-
-#define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
-#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
-
-#define hsRefCnt_SafeAssign(dst, src)       \
-        do {                            \
-            hsRefCnt_SafeRef(src);      \
-            hsRefCnt_SafeUnRef(dst);        \
-            dst = src;                  \
-        } while (0)
-
-
-// Thread-safe version.  TODO:  Evaluate whether this is fast enough to
-// merge with hsRefCnt above.
-class hsAtomicRefCnt : public _hsRefCnt_Base
-{
+class hsRefCnt {
 private:
     std::atomic<int> fRefCnt;
 
 public:
-                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
-    virtual     ~hsAtomicRefCnt();
+                hsRefCnt(int initRefs = 1);
+    virtual     ~hsRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
     void        UnRef(const char* tag = nullptr);
@@ -95,7 +58,25 @@ public:
 
     // Useless, but left here for debugging compatibility with AtomicRef
     void        TransferRef(const char* oldTag, const char* newTag);
+
+
+    // The stored reference count of an hsRefCnt-derived object should never
+    // be copied! Therefore, if you want a copyable hsRefCnt-based class, you
+    // should implement your own copy constructor / assignment operator.
+    hsRefCnt(const hsRefCnt &) = delete;
+    hsRefCnt &operator=(const hsRefCnt &) = delete;
 };
+
+#define hsRefCnt_SafeRef(obj)   do { if (obj) (obj)->Ref(); } while (0)
+#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
+
+#define hsRefCnt_SafeAssign(dst, src)   \
+        do {                            \
+            hsRefCnt_SafeRef(src);      \
+            hsRefCnt_SafeUnRef(dst);    \
+            dst = src;                  \
+        } while (0)
+
 
 template <class _Ref>
 class hsRef

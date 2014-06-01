@@ -112,7 +112,7 @@ public:
 
     void    Clear();
     void    UpdateFlags() const;
-    void    CopyFrom( const plAgeInfoStruct * other ) { *this=*other; }
+    void    CopyFrom( const plAgeInfoStruct * other );
     void    CopyFrom( const plVaultAgeInfoNode * node );
     void    CopyFrom(const struct NetAgeInfo & info);
     bool    IsEqualTo( const plAgeInfoStruct * other ) const;
