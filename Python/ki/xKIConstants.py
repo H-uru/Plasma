@@ -172,8 +172,8 @@ class kChat:
     FadeStopping = 3
     FadeTimeMax = 120
     FullTickTime = 1.0
-    FadeTickTime = 0.2
-    TicksOnFade = 4
+    FadeTickTime = 0.05
+    TicksOnFade = 16
     
     # Chat fonts.
     FontSizeList = [ 7, 8, 10, 12, 14 ]
