@@ -276,7 +276,7 @@ class xKI(ptModifier):
         self.autocompleteState = AutocompleteState()
 
         ## The chatting manager.
-        self.chatMgr = xKIChat.xKIChat(self.StartFadeTimer, self.KillFadeTimer, self.FadeCompletely)
+        self.chatMgr = xKIChat.xKIChat(self.StartFadeTimer, self.ResetFadeState, self.FadeCompletely)
 
     ## Unloads any loaded dialogs upon exit.
     def __del__(self):
@@ -851,8 +851,7 @@ class xKI(ptModifier):
             self.MiniKICreateJournalNote()
         elif command == kKIToggleFade:
             if self.chatMgr.IsFaded():
-                self.KillFadeTimer()
-                self.StartFadeTimer()
+                self.ResetFadeState()
             else:
                 self.FadeCompletely()
         elif command == kKIToggleFadeEnable:
@@ -889,8 +888,7 @@ class xKI(ptModifier):
                     self.ToggleMiniKI(1)
                 elif not BigKI.dialog.isEnabled():
                     if self.chatMgr.fadeEnableFlag and self.chatMgr.IsFaded():
-                        self.KillFadeTimer()
-                        self.StartFadeTimer()
+                        self.ResetFadeState()
                     else:
                         self.ToggleKISize()
                 else:
@@ -1354,8 +1352,7 @@ class xKI(ptModifier):
         if avatarSet:
             if not KIMini.dialog.isEnabled():
                 KIMini.dialog.show()
-            self.KillFadeTimer()
-            self.StartFadeTimer()
+            self.ResetFadeState()
 
     ## Called by Plasma on receipt of a high-level player vault event.
     def OnVaultNotify(self, event, tupData):
@@ -2747,6 +2744,17 @@ class xKI(ptModifier):
         chatArea.enableScrollControl()
         mKIdialog.refreshAllControls()
 
+    def ResetFadeState(self, force=False):
+        """This turns the chat fade OFF and resets it if the user is not chatting.
+           Use this instead of calling `KillFadeTimer()` and `StartFadeTimer()` to toggle the state.
+           Use `force` to disable checking of the chatting status (why would you do that?)
+        """
+
+        # I'm cheating.
+        self.KillFadeTimer()
+        if not self.chatMgr.isChatting or force:
+            self.StartFadeTimer()
+
     ## Make the miniKI lists completely faded out.
     def FadeCompletely(self):
 
@@ -3024,8 +3032,7 @@ class xKI(ptModifier):
                 PtDebugPrint(u"xKI.ScrollPlayerList(): Not scrolling player list down from {}.".format(currPos), level=kDebugDumpLevel)
         self.CheckScrollButtons()
         mKIdialog.refreshAllControls()
-        self.KillFadeTimer()
-        self.StartFadeTimer()
+        self.ResetFadeState()
 
     ## Checks to see if the player list scroll buttons should be visible.
     def CheckScrollButtons(self):
@@ -5725,8 +5732,7 @@ class xKI(ptModifier):
                     self.chatMgr.SendMessage(control.getStringW())
                 self.chatMgr.ToggleChatMode(0)
             elif ctrlID == kGUI.ChatDisplayArea:
-                self.KillFadeTimer()
-                self.StartFadeTimer()
+                self.ResetFadeState()
         elif event == kFocusChange:
             # If they are chatting, get the focus back.
             if self.chatMgr.isChatting:
@@ -5866,9 +5872,8 @@ class xKI(ptModifier):
                 if self.chatMgr.isChatting:
                     chatedit = ptGUIControlEditBox(KIMini.dialog.getControlFromTag(kGUI.ChatEditboxID))
                     KIMini.dialog.setFocus(chatedit.getKey())
-                # They're playing with the player list, so kill the fade timer.
-                self.KillFadeTimer()
-                self.StartFadeTimer()
+                # They're playing with the player list, so reset the fade.
+                self.ResetFadeState()
             elif ctrlID == kGUI.miniPutAwayID:
                 self.ToggleMiniKI()
             elif ctrlID == kGUI.miniToggleBtnID:
@@ -5894,8 +5899,7 @@ class xKI(ptModifier):
                 self.CaptureGZMarker()
                 self.RefreshMiniKIMarkerDisplay()
             elif ctrlID == kGUI.ChatDisplayArea:
-                self.KillFadeTimer()
-                self.StartFadeTimer()
+                self.ResetFadeState()
             elif ctrlID == kGUI.miniMGNewMarker:
                 self.CreateAMarker()
             elif ctrlID == kGUI.miniMGNewGame:

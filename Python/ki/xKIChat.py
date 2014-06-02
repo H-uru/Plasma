@@ -63,7 +63,7 @@ from xKIHelpers import *
 class xKIChat(object):
 
     ## Set up the chat manager's default state.
-    def __init__(self, StartFadeTimer, KillFadeTimer, FadeCompletely):
+    def __init__(self, StartFadeTimer, ResetFadeState, FadeCompletely):
 
         # Set the default properties.
         self.autoShout = False
@@ -90,7 +90,7 @@ class xKIChat(object):
         self.KIDisabled = False
         self.KILevel = kMicroKI
         self.StartFadeTimer = StartFadeTimer
-        self.KillFadeTimer = KillFadeTimer
+        self.ResetFadeState = ResetFadeState
         self.FadeCompletely = FadeCompletely
 
         # Add the commands processor.
@@ -131,8 +131,7 @@ class xKIChat(object):
             mKIdialog = KIMicro.dialog
         else:
             mKIdialog = KIMini.dialog
-        self.KillFadeTimer()
-        self.StartFadeTimer()
+        self.ResetFadeState()
         chatarea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
         chatarea.moveCursor(direction)
 
@@ -166,7 +165,7 @@ class xKIChat(object):
             caret.show()
             mKIdialog.setFocus(chatEdit.getKey())
             self.toReplyToLastPrivatePlayerID = self.lastPrivatePlayerID
-            self.KillFadeTimer()
+            self.ResetFadeState()
         else:
             caret.hide()
             chatEdit.hide()
@@ -613,9 +612,7 @@ class xKIChat(object):
 
         # Update the fading controls.
         mKIdialog.refreshAllControls()
-        if not self.isChatting:
-            self.KillFadeTimer()
-            self.StartFadeTimer()
+        self.ResetFadeState()
 
     ## Display a status message to the player (or players if net-propagated).
     def DisplayStatusMessage(self, statusMessage, netPropagate=0):
