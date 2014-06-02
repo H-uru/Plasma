@@ -1059,10 +1059,13 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     if (angV)
         SetAngularVelocitySim(*angV);
 
-    // If we're loading the age, then we should ensure the objects
-    // stay asleep if they're supposed to be asleep.
-    if (isLoading && GetProperty(plSimulationInterface::kStartInactive) && !fActor->readBodyFlag(NX_BF_KINEMATIC))
-        fActor->putToSleep();
+    // If we're loading the age, then we should ensure the objects stay asleep if they're supposed to be asleep.
+    // NOTE: We should only do this if the objects are not at their initial locations. Otherwise, they might
+    //       sleep inside each other and explode or float randomly in midair
+    if (isLoading && GetProperty(plSimulationInterface::kStartInactive) && !fActor->readBodyFlag(NX_BF_KINEMATIC)) {
+        if (!pos && !rot)
+            fActor->putToSleep();
+    }
 
     SendNewLocation(false, true);
 }
