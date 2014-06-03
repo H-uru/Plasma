@@ -1,44 +1,44 @@
 #include <plString.h>
+#include <HeadSpin.h>
+
 #include <gtest/gtest.h>
 #include <wchar.h>
 
 
 TEST(PlStringTest,ToUtf16)
 {
-    uint16_t text[] = {0x0061,0x0062,0x0063,0x0064};
-    plStringBuffer<uint16_t> expected = plStringBuffer<uint16_t>(text,4);
+    uint16_t text[] = {0x0061,0x0062,0x0063,0x0064}; //abcd as in utf16
+    plStringBuffer<uint16_t> expected = plStringBuffer<uint16_t>(text,arrsize(text));
     plStringBuffer<uint16_t> output = plString("abcd").ToUtf16();
 
     const uint16_t* c = output.GetData();
     const uint16_t* d = expected.GetData();
-    printf("expected size %d output size %d\n",expected.GetSize(),output.GetSize());
-    for(int i=0;i<expected.GetSize();i++)
+    printf("expected size %d output size %d\n", expected.GetSize(), output.GetSize());
+    for (int i = 0; i<expected.GetSize(); i++)
     {
-        printf("%u %s \n",c,c);
-        printf("%u %s \n",d,d);
+        printf("%u %s \n", c, c);
+        printf("%u %s \n", d, d);
+        EXPECT_EQ(d, c);
         c++;
         d++;
     }
+
 }
 
 TEST(PlStringTest,ToWchar)
 {
-    wchar_t text[] =L"abcdé";
-    plStringBuffer<wchar_t> expected = plStringBuffer<wchar_t>(text,sizeof(text));
-    plStringBuffer<wchar_t> output = plString("abcdé").ToWchar();
-    const wchar_t* outputStr = output.GetData();
-    const wchar_t* expectedStr = expected.GetData();
-    EXPECT_STREQ(expectedStr,outputStr);
+    wchar_t text[] =L"abcd\u00E9";
+    plStringBuffer<wchar_t> expected = plStringBuffer<wchar_t>(text,arrsize(text));
+    plStringBuffer<wchar_t> output = plString("abcd\xC3\xA9").ToWchar();
+    EXPECT_STREQ(expected.GetData(),output.GetData());
 }
 
 TEST(PlStringTest,ToIso8859_1)
 {
     char text[] ="abcde";
-    plStringBuffer<char> expected = plStringBuffer<char>(text,sizeof(text));
+    plStringBuffer<char> expected = plStringBuffer<char>(text,arrsize(text));
     plStringBuffer<char> output = plString("abcde").ToIso8859_1();
-    const char* outputStr = output.GetData();
-    const char* expectedStr = expected.GetData();
-    EXPECT_STREQ(expectedStr,outputStr);
+    EXPECT_STREQ(expected.GetData(),output.GetData());
 }
 
 TEST(PlStringTest,Format)
