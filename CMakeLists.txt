@@ -96,17 +96,14 @@ endif(PLASMA_TARGETS STREQUAL "Ethereal")
 option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
-<<<<<<< HEAD
-
+option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
+
 if(3dsm_BUILD_PLUGIN)
     find_package(MaxSDK REQUIRED)
     add_definitions(-DBUILDING_MAXPLUGIN)
 endif(3dsm_BUILD_PLUGIN)
 
-=======
-option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
->>>>>>> Make building the tests optional.
 option(USE_VLD "Build and link with Visual Leak Detector (MSVC only)" OFF)
 if(USE_VLD)
     add_definitions(-DUSE_VLD)

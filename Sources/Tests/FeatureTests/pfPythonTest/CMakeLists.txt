@@ -94,12 +94,7 @@ target_link_libraries(test_pfPython pnTimer)
 target_link_libraries(test_pfPython pnUtils)
 target_link_libraries(test_pfPython pnUUID)
 
-if(PYTHON_DEBUG_LIBRARY)
-    target_link_libraries(test_pfPython debug ${PYTHON_DEBUG_LIBRARY})
-    target_link_libraries(test_pfPython optimized ${PYTHON_LIBRARY})
-else()
-    target_link_libraries(test_pfPython ${PYTHON_LIBRARY})
-endif()
+target_link_libraries(test_pfPython ${PYTHON_LIBRARIES})
 
 target_link_libraries(test_pfPython ${OPENAL_LIBRARY})
 target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
