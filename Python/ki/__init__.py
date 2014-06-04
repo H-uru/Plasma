@@ -2414,6 +2414,7 @@ class xKI(ptModifier):
                     avatar.avatar.wearClothingItem("FAccPlayerBook")
                 else:
                     avatar.avatar.wearClothingItem("MAccPlayerBook")
+                avatar.avatar.saveClothing()
             except NameError:
                 pass
         elif self.KILevel == kNormalKI:
@@ -2429,6 +2430,7 @@ class xKI(ptModifier):
                 else:
                     avatar.avatar.wearClothingItem("MAccPlayerBook")
                     avatar.avatar.wearClothingItem("MAccKI")
+                avatar.avatar.saveClothing()
             except NameError:
                 pass
 

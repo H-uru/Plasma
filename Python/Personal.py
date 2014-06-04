@@ -108,6 +108,10 @@ class Personal(ptResponder):
         import xSndLogTracks
         xSndLogTracks.UnsetLogMode()
 
+        # make sure we have at least the micro-ki (and therefore a Relto book)
+        # this does not downgrade us if we have a normal KI :)
+        PtSendKIMessageInt(kUpgradeKILevel, kMicroKI)
+
         vault = ptVault()
         l = ptAgeInfoStruct()
         l.setAgeFilename('city')
