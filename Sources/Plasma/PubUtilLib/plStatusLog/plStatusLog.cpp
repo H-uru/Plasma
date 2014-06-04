@@ -724,7 +724,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
         OutputDebugString(out_str.c_str());
 #endif
 #else
-        fputs(str.c_str(), str);
+        fputs(out_str.c_str(), stderr);
 #endif
     }
 
