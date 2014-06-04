@@ -443,6 +443,8 @@ class xSimpleImager(ptModifier):
                             if textbody == "cleardaImager":
                                 PtDebugPrint("xSimpleImager[%s]: clearing the imager of images" % (ImagerName.value),level=kWarningLevel)
                                 folder.removeAllNodes()
+                                ImagerMap.textmap.clearToColor(ptColor(0,0,0,0))
+                                ImagerMap.textmap.flush()
                             else:
                                 self.IDetermineCensorLevel()
                                 ImagerMap.textmap.clearToColor(ptColor().black())
