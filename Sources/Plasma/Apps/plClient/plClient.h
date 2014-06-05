@@ -123,8 +123,6 @@ protected:
     pfConsoleEngine*        fConsoleEngine;
     pfConsole*              fConsole;
 
-    pfKI                    *fKIGUIGlue;
-
     bool                    fDone;
     bool                    fWindowActive;
 
@@ -296,15 +294,6 @@ public:
     void IWriteDefaultGraphicsSettings(const plFileName& destFile);
 
     plAnimDebugList *fAnimDebugList;
-
-#if 0
-    std::string fUsername;
-    std::string fPasswordDigest;
-    std::string fServer;
-    int         fPlayerID;
-    bool        fRecreatePlayer;
-    bool        fAuthPassed;
-#endif
 };
 
 #endif // plClient_inc

@@ -199,6 +199,10 @@ void plNetClientMgr::Shutdown()
     IRemoveCloneRoom();
 
     VaultDestroy();
+
+    // commit hara-kiri
+    UnRegisterAs(kNetClientMgr_KEY);
+    SetInstance(nullptr);
 }
 
 //
