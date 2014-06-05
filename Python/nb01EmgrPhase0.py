@@ -144,6 +144,8 @@ class nb01EmgrPhase0(ptResponder):
         PtDebugPrint("__init__nb01EmgrPhase0 v.{}".format(self.version))
 
         self._pedestalSDLValues = {}
+        self._ageVault = None
+        self._updateAgeSDL = False
 
         # Store these in a list for convenience
         for position in self.Pedestals:
@@ -187,6 +189,9 @@ class nb01EmgrPhase0(ptResponder):
         # This used to be in the Nexus, but that would never affect server-generated hoods
         if self.sceneobject.isLocallyOwned():
             self._RandomizeNeighborhood()
+
+        # Save the AgeVaultSDL if we need to...
+        self._SaveSDL()
 
     def OnSDLNotify(self, VARname, SDLname, PlayerID, tag):
         ageSDL = PtGetAgeSDL()
@@ -256,6 +261,12 @@ class nb01EmgrPhase0(ptResponder):
         else:
             PtDebugPrint("nb01EmgrPhase0.IPickPedestalGlass(): No pedestal named '{}'.  Ignoring.".format(position))
 
+    def _SaveSDL(self):
+        if self._updateAgeSDL:
+            self._ageVault.updateAgeSDL(self._ageSDL)
+            del self._ageSDL
+            self._updateAgeSDL = False
+
     def _UpdateSimpleStateVar(self, ageSDL, sdlName, value):
         if isinstance(ageSDL, ptSDLStateDataRecord):
             var = ageSDL.findVar(sdlName)
@@ -277,36 +288,28 @@ class nb01EmgrPhase0(ptResponder):
             PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' has an unknown type!".format(sdlName))
             return
         PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value))
+        self._updateAgeSDL = True
 
     def _UpdateVaultSDL(self, sdlVar, value):
-        ageVault = ptAgeVault()
-        if not ageVault:
-            PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tNo AgeVault?!")
-            return
-        ageSDL = ageVault.getAgeSDL()
-        if not ageVault:
-            PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tVaultSDL is null?!")
-            return
+        if not self._ageVault:
+            self._ageVault = ptAgeVault()
+            if not self._ageVault:
+                PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tNo AgeVault?!")
+                return
+            self._ageSDL = self._ageVault.getAgeSDL()
+            if not self._ageSDL:
+                PtDebugPrint("nb01EmgrPhase0._UpdateVaultSDL():\tVaultSDL is null?!")
+                return
 
-        self._UpdateSimpleStateVar(ageSDL, sdlVar, value)
-        ageVault.updateAgeSDL(ageSDL)
+        if sdlVar and value:
+            self._UpdateSimpleStateVar(self._ageSDL, sdlVar, value)
 
     def _RandomizeNeighborhood(self):
         """Does initial state scrambling for the Neighborhood.
            This makes all hoods have a slightly different appearance (hopefully)"""
-        vault = ptAgeVault()
-        if vault is None:
-            PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood():\tAgeVault is None. Bailing!")
-            return
-        # We want to operate on the *vault* SDL so these options can be easily inspected
-        # by vault managers on servers that don't merge SDL blobs (this is how the old plServers worked).
-        ageSDL = vault.getAgeSDL()
-        if not ageSDL:
-            PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood():\tAgeVaultSDL is None. Bailing!")
-            return
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
         for name, values in self.HoodDecorations.iteritems():
-            var = ageSDL.findVar(name)
+            var = self._ageSDL.findVar(name)
             if var is None:
                 PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): '{}' not found!".format(sdlName))
                 return
@@ -316,7 +319,6 @@ class nb01EmgrPhase0(ptResponder):
                 theChosenValue = random.choice(values)
                 self._UpdateSimpleStateVar(var, name, theChosenValue)
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
-        vault.updateAgeSDL(ageSDL)
 
     def IManageSimplePagingVar(self, VARname):
         """Load or unload a page based on the value of the specified SDL"""
