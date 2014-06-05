@@ -253,19 +253,7 @@ class xSimpleImager(ptModifier):
             return None
         
         # make sure that the bigKI dialog is loaded before trying to update it
-        if event == PtVaultCallbackTypes.kVaultConnected:
-            # tupdata is ()
-            pass
-        if event == PtVaultCallbackTypes.kVaultDisconnected:
-            #~ print "xSimpleImager: kVaultDisconnected event"
-            # tupdata is ()
-            pass
-        elif event == PtVaultCallbackTypes.kVaultNodeAdded:
-            PtDebugPrint("xSimpleImager: kVaultNodeAdded event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()),level=kDebugDumpLevel)
-            # tupdata is ( ptVaultNode )
-            self.IRefreshImagerFolder()
-            self.IRefreshImagerElement(tupdata[0])
-        elif event == PtVaultCallbackTypes.kVaultNodeSaved:
+        if event == PtVaultCallbackTypes.kVaultNodeSaved:
             PtDebugPrint("xSimpleImager: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()), level=kDebugDumpLevel)
             # tupdata is ( ptVaultNode )
             self.IRefreshImagerFolder()
@@ -278,19 +266,7 @@ class xSimpleImager(ptModifier):
         elif event == PtVaultCallbackTypes.kVaultRemovingNodeRef:
             #~ print "xSimpleImager: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID())
             # tupdata is ( ptVaultNodeRef )
-            pass
-        elif event == PtVaultCallbackTypes.kVaultNodeRefRemoved:
-            PtDebugPrint("xSimpleImager: kVaultNodeRefRemoved event (childID,parentID) ",tupdata,level=kDebugDumpLevel)
-            # tupdata is ( childID, parentID )
             self.IRefreshImagerFolder()
-            pass
-        elif event == PtVaultCallbackTypes.kVaultOperationFailed:
-            #~ print "xSimpleImager: kVaultOperationFailed event  (operation,resultCode) ",tupdata
-            #tupdata is ( operation, resultCode )
-            pass
-        else:
-            #~ PtDebugPrint("xSimpleImager[%s]: OnKIEvent - unknown event! %d" % (ImagerName.value,event))
-            pass
 
     def OnNotify(self,state,id,events):
         "They've entered into the imager's region... inform them thru the KI"
@@ -346,35 +322,15 @@ class xSimpleImager(ptModifier):
                             self.IShowCurrentContent()
                         if newID == CurrentDisplayedElementID:
                             self.IShowCurrentContent()
-                    elif event[1][:9] == "Uploaded=":
-                        newID = string.atoi(event[1][9:])
-                        if not ImagerObject.sceneobject.isLocallyOwned():
-                            ageVault = ptAgeVault()
-                            folder = ageVault.getDeviceInbox(ImagerName.value)
-                            if folder:
-                                PtVaultDownload(folder.getID())
-                        if newID == CurrentDisplayedElementID:
-                            self.IShowCurrentContent()
                     elif event[1][:7] == "Upload=":
                         deviceName = event[1][7:]
                         nodeId = int(event[3])
-                        if deviceName == ImagerName.value and ImagerObject.sceneobject.isLocallyOwned():
+                        if deviceName == ImagerName.value:
                             ageVault = ptAgeVault()
                             folder = ageVault.getDeviceInbox(ImagerName.value)
                             if folder:
                                 folder.linkToNode(nodeId)
 
-                                PtForceVaultNodeUpdate(nodeId)
-                                
-                                selfnotify = ptNotify(self.key)
-                                selfnotify.clearReceivers()
-                                selfnotify.addReceiver(self.key)
-                                selfnotify.netPropagate(1)
-                                selfnotify.netForce(1)
-                                selfnotify.setActivate(1.0)
-                                sname = "Uploaded=%d" % (nodeId)
-                                selfnotify.addVarNumber(sname, 1.0)
-                                selfnotify.send()
 
     def IRefreshImagerFolder(self):
         "Refresh the folder contents"
@@ -487,6 +443,8 @@ class xSimpleImager(ptModifier):
                             if textbody == "cleardaImager":
                                 PtDebugPrint("xSimpleImager[%s]: clearing the imager of images" % (ImagerName.value),level=kWarningLevel)
                                 folder.removeAllNodes()
+                                ImagerMap.textmap.clearToColor(ptColor(0,0,0,0))
+                                ImagerMap.textmap.flush()
                             else:
                                 self.IDetermineCensorLevel()
                                 ImagerMap.textmap.clearToColor(ptColor().black())
