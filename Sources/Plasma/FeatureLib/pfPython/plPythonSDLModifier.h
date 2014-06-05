@@ -99,11 +99,10 @@ public:
     GETINTERFACE_ANY(plPythonSDLModifier, plSDLModifier);
 
     virtual const char* GetSDLName() const;
-    virtual void SetItemFromSDLVar(plSimpleStateVariable* var);
 
     static bool HasSDL(const plString& pythonFile);
     // find the Age global SDL guy... if there is one
-    static const plPythonSDLModifier* FindAgeSDL();
+    static plPythonSDLModifier* FindAgeSDL();
     static plKey FindAgeSDLTarget();
 
     void SetDefault(const plString& key, PyObject* value);
@@ -111,7 +110,11 @@ public:
     void SetNotify(pyKey& selfkey, const plString& key, float tolerance);
 
     PyObject* GetItem(const plString& key);
+
+    template<typename T>
+    void SetItem(const plString& key, int index, T value);
     void SetItem(const plString& key, PyObject* value);
+
     void SetItemIdx(const plString& key, int idx, PyObject* value, bool sendImmediate = false);
     void SetFlags(const plString& name, bool sendImmediate, bool skipOwnershipCheck);
     void SetTagString(const plString& name, const plString& tag);
@@ -139,16 +142,16 @@ public:
     // global function to get the GrandMaster Age SDL object
     static PyObject* GetAgeSDL();
 
-    static void SetDefault(pySDLModifier& self, std::string key, PyObject* value);
-    static void SendToClients(pySDLModifier& self, std::string key);
-    static void SetNotify(pySDLModifier& self, pyKey& selfkey, std::string key, float tolerance);
+    static void SetDefault(pySDLModifier& self, const plString& key, PyObject* value);
+    static void SendToClients(pySDLModifier& self, const plString& key);
+    static void SetNotify(pySDLModifier& self, pyKey& selfkey, const plString& key, float tolerance);
     
-    static PyObject* GetItem(pySDLModifier& self, std::string key);
-    static void SetItem(pySDLModifier& self, std::string key, PyObject* value);
-    static void SetItemIdx(pySDLModifier& self, std::string key, int idx, PyObject* value);
-    static void SetItemIdxImmediate(pySDLModifier& self, std::string key, int idx, PyObject* value);
-    static void SetFlags(pySDLModifier& self, const char* name, bool sendImmediate, bool skipOwnershipCheck);
-    static void SetTagString(pySDLModifier& self, const char* name, const char* tag);
+    static PyObject* GetItem(pySDLModifier& self, const plString& key);
+    static void SetItem(pySDLModifier& self, const plString& key, PyObject* value);
+    static void SetItemIdx(pySDLModifier& self, const plString& key, int idx, PyObject* value);
+    static void SetItemIdxImmediate(pySDLModifier& self, const plString& key, int idx, PyObject* value);
+    static void SetFlags(pySDLModifier& self, const plString& name, bool sendImmediate, bool skipOwnershipCheck);
+    static void SetTagString(pySDLModifier& self, const plString& name, const plString& tag);
     
 };
 

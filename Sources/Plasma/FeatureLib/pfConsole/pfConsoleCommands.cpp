@@ -5931,6 +5931,8 @@ PF_CONSOLE_CMD( Mouse, ForceHide, "bool force", "Forces the mouse to be hidden (
 
 PF_CONSOLE_GROUP( Age )
 
+plPythonSDLModifier* ExternFindAgePySDL();
+
 PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
 {
     plStateDataRecord * rec = new plStateDataRecord;
@@ -6002,72 +6004,23 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
 
 PF_CONSOLE_CMD( Age, SetSDLFloat, "string varName, float value, int index", "Set the value of an age global variable" )
 {
-    int index = (int)params[2];
-
-    extern const plPythonSDLModifier *ExternFindAgePySDL();
-    const plPythonSDLModifier *sdlMod = ExternFindAgePySDL();
-    if (!sdlMod)
-        return;
-
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char *)params[0]);
-    if (!var)
-        return;
-
-    float v;
-    var->Get(&v, index);
-    var->Set((float)params[1], index);
-    // set the variable in the pythonSDL also
-    ((plPythonSDLModifier*)sdlMod)->SetItemFromSDLVar(var);
-    // set it back to original so that its different
-    plSynchedObject* p = plSynchedObject::ConvertNoRef(((plSDLModifier*)sdlMod)->GetStateOwnerKey()->GetObjectPtr());
-    if (p)
-        p->DirtySynchState(sdlMod->GetSDLName(),plSynchedObject::kSendImmediately|plSynchedObject::kSkipLocalOwnershipCheck|plSynchedObject::kForceFullSend);
+    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    if (sdlMod)
+        sdlMod->SetItem((const char*)params[0], (int)params[2], (float)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLInt, "string varName, int value, int index", "Set the value of an age global variable" )
 {
-    int index = (int)params[2];
-
-    extern const plPythonSDLModifier *ExternFindAgePySDL();
-    const plPythonSDLModifier *sdlMod = ExternFindAgePySDL();
-    if (!sdlMod)
-        return;
-
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char *)params[0]);
-    if (!var)
-        return;
-
-    int v;
-    var->Get(&v, index);
-    var->Set((int)params[1], index);
-    // set the variable in the pythonSDL also
-    ((plPythonSDLModifier*)sdlMod)->SetItemFromSDLVar(var);
-    plSynchedObject* p = plSynchedObject::ConvertNoRef(((plSDLModifier*)sdlMod)->GetStateOwnerKey()->GetObjectPtr());
-    if (p)
-        p->DirtySynchState(sdlMod->GetSDLName(),plSynchedObject::kSendImmediately|plSynchedObject::kSkipLocalOwnershipCheck|plSynchedObject::kForceFullSend);
+    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    if (sdlMod)
+        sdlMod->SetItem((const char*)params[0], (int)params[2], (int)params[1]);
 }
 
 PF_CONSOLE_CMD( Age, SetSDLBool, "string varName, bool value, int index", "Set the value of an age global variable" )
 {
-    int index = (int)params[2];
-    
-    extern const plPythonSDLModifier *ExternFindAgePySDL();
-    const plPythonSDLModifier *sdlMod = ExternFindAgePySDL();
-    if (!sdlMod)
-        return;
-
-    plSimpleStateVariable *var = sdlMod->GetStateCache()->FindVar((const char*)params[0]);
-    if (!var)
-        return;
-
-    bool v;
-    var->Get(&v, index);
-    var->Set((bool)params[1], index);
-    // set the variable in the pythonSDL also
-    ((plPythonSDLModifier*)sdlMod)->SetItemFromSDLVar(var);
-    plSynchedObject* p = plSynchedObject::ConvertNoRef(((plSDLModifier*)sdlMod)->GetStateOwnerKey()->GetObjectPtr());
-    if (p)
-        p->DirtySynchState(sdlMod->GetSDLName(),plSynchedObject::kSendImmediately|plSynchedObject::kSkipLocalOwnershipCheck|plSynchedObject::kForceFullSend);
+    plPythonSDLModifier* sdlMod = ExternFindAgePySDL();
+    if (sdlMod)
+        sdlMod->SetItem((const char*)params[0], (int)params[2], (bool)params[1]);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
