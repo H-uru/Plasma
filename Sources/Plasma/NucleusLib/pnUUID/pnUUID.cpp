@@ -86,5 +86,5 @@ plString plUUID::AsString() const
 
 PL_FORMAT_IMPL(const plUUID &)
 {
-    return PL_FORMAT_FORWARD(format, value.AsString());
+    PL_FORMAT_FORWARD(value.AsString());
 }

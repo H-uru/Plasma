@@ -867,28 +867,41 @@ plString operator+(const char *left, const plString &right)
     return cat;
 }
 
+#define EXPAND_BUFFER(addedLength)                      \
+    char *bufp = ICanHasHeap() ? fBuffer : fShort;      \
+                                                        \
+    if (fLength + addedLength > fBufSize) {             \
+        size_t bigSize = fBufSize;                      \
+        do {                                            \
+            bigSize *= 2;                               \
+        } while (fLength + addedLength > bigSize);      \
+                                                        \
+        char *bigger = new char[bigSize];               \
+        memcpy(bigger, GetRawBuffer(), fBufSize);       \
+        if (ICanHasHeap())                              \
+            delete [] fBuffer;                          \
+        fBuffer = bufp = bigger;                        \
+        fBufSize = bigSize;                             \
+    }
+
 plStringStream &plStringStream::append(const char *data, size_t length)
 {
-    char *bufp = ICanHasHeap() ? fBuffer : fShort;
-
-    if (fLength + length > fBufSize) {
-        size_t bigSize = fBufSize;
-        do {
-            bigSize *= 2;
-        } while (fLength + length > bigSize);
-
-        char *bigger = new char[bigSize];
-        memcpy(bigger, GetRawBuffer(), fBufSize);
-        if (ICanHasHeap())
-            delete [] fBuffer;
-        fBuffer = bufp = bigger;
-        fBufSize = bigSize;
-    }
+    EXPAND_BUFFER(length)
 
     memcpy(bufp + fLength, data, length);
     fLength += length;
     return *this;
 }
+
+plStringStream &plStringStream::appendChar(char ch, size_t count)
+{
+    EXPAND_BUFFER(count)
+
+    memset(bufp + fLength, ch, count);
+    fLength += count;
+    return *this;
+}
+
 
 plStringStream &plStringStream::operator<<(const char *text)
 {

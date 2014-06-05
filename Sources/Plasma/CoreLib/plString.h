@@ -677,6 +677,9 @@ public:
     /** Append string data to the end of the stream. */
     plStringStream &append(const char *data, size_t length);
 
+    /** Append a sequence of characters to the stream. */
+    plStringStream &appendChar(char ch, size_t count = 1);
+
     /** Append UTF-8 C-style string data to the stream. */
     plStringStream &operator<<(const char *text);
 
@@ -693,7 +696,7 @@ public:
     plStringStream &operator<<(double num);
 
     /** Append a single Latin-1 character to the stream. */
-    plStringStream &operator<<(char ch) { return append(&ch, 1); }
+    plStringStream &operator<<(char ch) { return appendChar(ch); }
 
     /** Append the contents of \a text to the stream. */
     plStringStream &operator<<(const plString &text)
