@@ -246,27 +246,18 @@ struct VaultAgeInitTrans {
     );
 };
 
-class AddChildNodeTrans {
+struct AddChildNodeFetchTrans {
     FVaultAddChildNodeCallback  callback;
     void *                      cbParam;
     ENetError                   result;
     std::atomic<long>           opCount;
 
-    void CompleteOp();
+    AddChildNodeFetchTrans()
+        : callback(nil), cbParam(nil), result(kNetSuccess), opCount(0) { }
 
-public:
-    AddChildNodeTrans()
-        : callback(nullptr), cbParam(nullptr), result(kNetSuccess), opCount(0) { }
-
-    AddChildNodeTrans(FVaultAddChildNodeCallback _callback, void * _param)
+    AddChildNodeFetchTrans(FVaultAddChildNodeCallback _callback, void * _param)
         : callback(_callback), cbParam(_param), result(kNetSuccess), opCount(0) { }
 
-    void AddOp() { ++opCount; }
-
-    static void VaultNodeAdded (
-        ENetError           result,
-        void *              param
-    );
     static void VaultNodeFetched (
         ENetError           result,
         void *              param,
@@ -1003,38 +994,18 @@ void VaultAgeInitTrans::AgeInitCallback (
 
 /*****************************************************************************
 *
-*   AddChildNodeTrans
+*   AddChildNodeFetchTrans
 *
 ***/
 
 //============================================================================
-void AddChildNodeTrans::CompleteOp() {
-    if ((--opCount) == 0) {
-        if (callback)
-            callback(result, cbParam);
-        delete this; // commit hara-kiri
-    }
-}
-
-//============================================================================
-void AddChildNodeTrans::VaultNodeAdded(
-    ENetError result,
-    void* param
-) {
-    AddChildNodeTrans* trans = static_cast<AddChildNodeTrans*>(param);
-    if (IS_NET_ERROR(result))
-        trans->result = result;
-    trans->CompleteOp();
-}
-
-//============================================================================
-void AddChildNodeTrans::VaultNodeRefsFetched (
+void AddChildNodeFetchTrans::VaultNodeRefsFetched (
     ENetError           result,
     void *              param,
     NetVaultNodeRef *   refs,
     unsigned            refCount
 ) {
-    AddChildNodeTrans * trans = (AddChildNodeTrans *)param;
+    AddChildNodeFetchTrans * trans = (AddChildNodeFetchTrans *)param;
 
     if (IS_NET_ERROR(result)) {
         trans->result       = result;
@@ -1044,27 +1015,45 @@ void AddChildNodeTrans::VaultNodeRefsFetched (
         FetchNodesFromRefs(
             refs,
             refCount,
-            AddChildNodeTrans::VaultNodeFetched,
+            AddChildNodeFetchTrans::VaultNodeFetched,
             param,
             &incFetchCount
         );
         trans->opCount += incFetchCount;
     }
-    trans->CompleteOp();
+
+    // Make the callback now if there are no nodes to fetch, or if error
+    if (!(--trans->opCount)) {
+        if (trans->callback)
+            trans->callback(
+                trans->result,
+                trans->cbParam
+            );
+        delete trans;
+    }
 }
 
 //============================================================================
-void AddChildNodeTrans::VaultNodeFetched (
+void AddChildNodeFetchTrans::VaultNodeFetched (
     ENetError           result,
     void *              param,
     NetVaultNode *      node
 ) {
     ::VaultNodeFetched(result, param, node);
-
-    AddChildNodeTrans * trans = (AddChildNodeTrans *)param;
+    
+    AddChildNodeFetchTrans * trans = (AddChildNodeFetchTrans *)param;
+    
     if (IS_NET_ERROR(result))
         trans->result = result;
-    trans->CompleteOp();
+
+    if (!(--trans->opCount)) {
+        if (trans->callback)
+            trans->callback(
+                trans->result,
+                trans->cbParam
+            );
+        delete trans;
+    }
 }
 
 
@@ -1748,6 +1737,9 @@ void VaultAddChildNode (
     FVaultAddChildNodeCallback  callback,
     void *                      param
 ) {
+    // Make sure we only do the callback once
+    bool madeCallback = false;
+
     // Too much of the client relies on the assumption that the node will be immediately
     // associated with its parent.  THIS SUCKS, because there's no way to guarantee the
     // association won't be circular (the db checks this in a comprehensive way).
@@ -1756,14 +1748,14 @@ void VaultAddChildNode (
     // This directly affects: New clothing items added to the avatar outfit folder,
     // new chronicle entries in some ages, and I'm sure several other situations.
 
-    AddChildNodeTrans * trans = nullptr;
     if (RelVaultNodeLink * parentLink = s_nodes.Find(parentId)) {
         RelVaultNodeLink * childLink = s_nodes.Find(childId);
         if (!childLink) {
             childLink = new RelVaultNodeLink(false, ownerId, childId, new RelVaultNode);
             childLink->node->SetNodeId_NoDirty(childId);
             s_nodes.Add(childLink);
-        } else if (ownerId) {
+        }
+        else if (ownerId) {
             childLink->ownerId = ownerId;
         }
 
@@ -1778,17 +1770,14 @@ void VaultAddChildNode (
             // callback now with error code
             if (callback)
                 callback(kNetErrCircularReference, param);
-            // I don't really care what Eric thinks, if we believe it's a circular reference, it's evil
-            // to report a failure, then send it to the server anyway! That's just a bug WAITING
-            // to be uncovered, and I don't want to  deal with it!
-            return;
-        } else if (childLink->node->IsParentOf(parentId, 255)) {
+        }
+        else if (childLink->node->IsParentOf(parentId, 255)) {
             LogMsg(kLogDebug, L"Node relationship would be circular: p:%u, c:%u", parentId, childId);
             // callback now with error code
             if (callback)
                 callback(kNetErrCircularReference, param);
-            return;
-        } else {
+        }
+        else {
             NetVaultNodeRef refs[] = {
                 { parentId, childId, ownerId }
             };
@@ -1797,52 +1786,66 @@ void VaultAddChildNode (
             ARRAY(unsigned) existingNodeIds;
 
             BuildNodeTree(refs, arrsize(refs), &newNodeIds, &existingNodeIds);
-
-            trans = new AddChildNodeTrans(callback, param);
+        
             if (!childLink->node->GetNodeType() || !parentLink->node->GetNodeType()) {
                 // One or more nodes need to be fetched before the callback is made
+                AddChildNodeFetchTrans * trans = new AddChildNodeFetchTrans(callback, param);
                 if (!childLink->node->GetNodeType()) {
-                    trans->AddOp();
+                    ++trans->opCount;
                     NetCliAuthVaultNodeFetch(
                         childId,
-                        AddChildNodeTrans::VaultNodeFetched,
+                        AddChildNodeFetchTrans::VaultNodeFetched,
                         trans
                     );
-                    trans->AddOp();
+                    ++trans->opCount;
                     NetCliAuthVaultFetchNodeRefs(
                         childId,
-                        AddChildNodeTrans::VaultNodeRefsFetched,
+                        AddChildNodeFetchTrans::VaultNodeRefsFetched,
                         trans
                     );
                 }
                 if (!parentLink->node->GetNodeType()) {
-                    trans->AddOp();
+                    ++trans->opCount;
                     NetCliAuthVaultNodeFetch(
                         parentId,
-                        AddChildNodeTrans::VaultNodeFetched,
+                        AddChildNodeFetchTrans::VaultNodeFetched,
                         trans
                     );
-                    trans->AddOp();
+                    ++trans->opCount;
                     NetCliAuthVaultFetchNodeRefs(
                         parentId,
-                        AddChildNodeTrans::VaultNodeRefsFetched,
+                        AddChildNodeFetchTrans::VaultNodeRefsFetched,
                         trans
                     );
                 }
             }
+            else {
+                // We have both nodes already, so make the callback now.
+                if (callback) {
+                    callback(kNetSuccess, param);
+                    madeCallback = true;
+                }
+            }
+        }
+    }
+    else {
+        // Parent doesn't exist locally (and we may not want it to), just make the callback now.
+        if (callback) {
+            callback(kNetSuccess, param);
+            madeCallback = true;
         }
     }
 
-    // Send it off to the vault. Note that we're reusing the old fetch trans's opCount junk
-    // to ensure that we only ever callback once. May Jesus be with us all.
-    if (trans)
-        trans->AddOp();
+    // Send it on up to the vault. The db server filters out duplicate and
+    // circular node relationships. We send the request up even if we think
+    // the relationship would be circular since the db does a universal
+    // check and is the only real authority in this matter.
     NetCliAuthVaultNodeAdd(
         parentId,
         childId,
         ownerId,
-        trans ? AddChildNodeTrans::VaultNodeAdded : callback,
-        trans ? trans : param
+        madeCallback ? nil : callback,
+        madeCallback ? nil : param
     );
 }
 
