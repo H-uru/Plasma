@@ -779,14 +779,13 @@ struct VaultCreateNodeTrans : NetAuthTrans {
     void *                          m_param;
     
     unsigned                        m_nodeId;
-
+    
     VaultCreateNodeTrans (
         NetVaultNode *                  templateNode,
         FNetCliAuthVaultNodeCreated     callback,
         void *                          param
     );
-    ~VaultCreateNodeTrans();
-
+    
     bool Send ();
     void Post ();
     bool Recv (
@@ -4057,13 +4056,7 @@ VaultCreateNodeTrans::VaultCreateNodeTrans (
 ,   m_param(param)
 ,   m_nodeId(0)
 {
-    m_templateNode->Ref("VaultCreateNodeTrans");
-}
-
-//============================================================================
-VaultCreateNodeTrans::~VaultCreateNodeTrans()
-{
-    m_templateNode->UnRef("VaultCreateNodeTrans");
+    m_templateNode->Ref();
 }
 
 //============================================================================
@@ -4093,6 +4086,7 @@ void VaultCreateNodeTrans::Post () {
         m_param,
         m_nodeId
     );
+    m_templateNode->UnRef();
 }
 
 //============================================================================
