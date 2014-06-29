@@ -92,7 +92,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <modstack.h>
 #include <notify.h>
 #include <stdmat.h>
-#include <texutil.h>
 
 // MaxComponent
 #include "MaxComponent/plComponent.h"

@@ -215,7 +215,7 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
 
     if ( key == nil )
     {
-        plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+        plString errmsg = plFormat("Sceneobject {} not found", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
         return nil; // return nil cause we errored
     }
@@ -443,7 +443,7 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netFo
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncState(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags);
 }
@@ -455,7 +455,7 @@ void cyMisc::SetDirtySyncState(pyKey &selfkey, const char* SDLStateName, uint32_
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const char* SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags|plSynchedObject::kBCastToClients);
 }
@@ -632,7 +632,7 @@ PyObject* cyMisc::GetAgeInfo()
 }
 
 
-const char* cyMisc::GetPrevAgeName()
+plString cyMisc::GetPrevAgeName()
 {
     plNetLinkingMgr* nmgr = plNetLinkingMgr::GetInstance();
     if (nmgr)
@@ -641,7 +641,7 @@ const char* cyMisc::GetPrevAgeName()
         if (als)
             return als->GetAgeInfo()->GetAgeFilename();
     }
-    return nil;
+    return plString::Null;
 }
 
 PyObject* cyMisc::GetPrevAgeInfo()
@@ -935,7 +935,7 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plString::Format("GUIDialog TagID %d not found", tag);
+    plString errmsg = plFormat("GUIDialog TagID {} not found", tag);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -951,7 +951,7 @@ PyObject* cyMisc::GetDialogFromString(const char* name)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plString::Format("GUIDialog %s not found", name);
+    plString errmsg = plFormat("GUIDialog {} not found", name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -994,9 +994,9 @@ PyObject* cyMisc::GetLocalAvatar()
 PyObject* cyMisc::GetLocalPlayer()
 {
     return pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(),
-                        plNetClientMgr::GetInstance()->GetPlayerName().c_str(),
-                        plNetClientMgr::GetInstance()->GetPlayerID(),
-                        0.0 );
+                         plNetClientMgr::GetInstance()->GetPlayerName(),
+                         plNetClientMgr::GetInstance()->GetPlayerID(),
+                         0.0 );
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1566,7 +1566,7 @@ void cyMisc::FogSetDefExp2(float end, float density)
 void cyMisc::SetClearColor(float red, float green, float blue)
 {
     // do this command via the console to keep the maxplugins from barfing
-    plString command = plString::Format("Graphics.Renderer.SetClearColor %f %f %f", red, green, blue);
+    plString command = plFormat("Graphics.Renderer.SetClearColor {f} {f} {f}", red, green, blue);
 
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
@@ -2474,7 +2474,7 @@ int cyMisc::GetKILevel()
     if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
         VaultChronicleNode chron(rvn);
         result = wcstol(chron.GetEntryValue(), nil, 0);
-        rvn->DecRef();
+        rvn->UnRef();
     }
 
     return result;
@@ -2497,7 +2497,7 @@ plString cyMisc::GetCameraNumber(int number)
     if (pCam && pCam->GetTarget())
     {
         plString ret = pCam->GetTarget()->GetKeyName();
-        plString log = plString::Format("saving camera named %s to chronicle\n", ret.c_str());
+        plString log = plFormat("saving camera named {} to chronicle\n", ret);
         plVirtualCam1::Instance()->AddMsgToLog(log.c_str());
         return ret;
     }
@@ -2508,7 +2508,7 @@ plString cyMisc::GetCameraNumber(int number)
 void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
 {
     plKey key=nil;
-    plString str = plString::Format("attempting to restore camera named %s from chronicle\n",name.c_str());
+    plString str = plFormat("attempting to restore camera named {} from chronicle\n", name);
     plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
 
     if (name.Compare("empty") == 0)
@@ -2525,7 +2525,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
         {
             // give up and force built in 3rd person
             plVirtualCam1::Instance()->PushThirdPerson();
-            plString errmsg = plString::Format("Sceneobject %s not found",name.c_str());
+            plString errmsg = plFormat("Sceneobject {} not found", name);
             PyErr_SetString(PyExc_NameError, errmsg.c_str());
         }
     }
@@ -2549,7 +2549,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
             }
         }
         plVirtualCam1::Instance()->PushThirdPerson();
-        plString errmsg = plString::Format("Sceneobject %s has no camera modifier",name.c_str());
+        plString errmsg = plFormat("Sceneobject {} has no camera modifier", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
     }
     
@@ -2893,7 +2893,7 @@ void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
         }
 
         NetCommSendFriendInvite(email, toName, inviteUuid);
-        pNode->DecRef();
+        pNode->UnRef();
     }
 }
 
@@ -2919,7 +2919,7 @@ PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
         {
             PyObject* tuple = PyTuple_New(2);
             PyTuple_SetItem(tuple, 0, pyCritterBrain::New(critterBrain));
-            PyTuple_SetItem(tuple, 1, PyString_FromString(armMod->GetUserStr()));
+            PyTuple_SetItem(tuple, 1, PyString_FromPlString(armMod->GetUserStr()));
 
             PyList_Append(avList, tuple);
             Py_DECREF(tuple);

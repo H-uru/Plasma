@@ -260,26 +260,13 @@ PYTHON_BASIC_METHOD_DEFINITION(ptDynamicMap, unsetWrapping, UnsetWrapping)
 PYTHON_METHOD_DEFINITION(ptDynamicMap, drawText, args)
 {
     short x, y;
-    char* text;
-    if (!PyArg_ParseTuple(args, "hhs", &x, &y, &text))
+    char* text = nullptr;
+    if (!PyArg_ParseTuple(args, "hhet", &x, &y, "utf8", &text))
     {
         PyErr_SetString(PyExc_TypeError, "drawText expects two short ints and a string");
         PYTHON_RETURN_ERROR;
     }
     self->fThis->DrawText(x, y, text);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptDynamicMap, drawTextW, args)
-{
-    short x, y;
-    wchar_t* text;
-    if (!PyArg_ParseTuple(args, "hhu", &x, &y, &text))
-    {
-        PyErr_SetString(PyExc_TypeError, "drawTextW expects two short ints and a unicode string");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->DrawTextW(x, y, text);
     PYTHON_RETURN_NONE;
 }
 
@@ -336,39 +323,15 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getHeight)
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
 {
-    PyObject* textObj = NULL;
-    if (!PyArg_ParseTuple(args, "O", &textObj))
+    char* text = nullptr;
+    if (!PyArg_ParseTuple(args, "et", "utf8", &text))
     {
         PyErr_SetString(PyExc_TypeError, "calcTextExtents expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    std::wstring wText;
-    if (PyUnicode_Check(textObj))
-    {
-        int strLen = PyUnicode_GetSize(textObj);
-        wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
-        text[strLen] = L'\0';
-        wText = text;
-        delete [] text;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(textObj);
-        wchar_t* temp = hsStringToWString(text);
-        wText = temp;
-        delete [] temp;
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "calcTextExtents expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-
-    unsigned height, width;
-    self->fThis->CalcTextExtents(wText, width, height);
+    uint16_t height, width;
+    self->fThis->CalcTextExtents(text, width, height);
     PyObject* retVal = PyTuple_New(2);
     PyTuple_SetItem(retVal, 0, PyInt_FromLong(width));
     PyTuple_SetItem(retVal, 1, PyInt_FromLong(height));
@@ -441,7 +404,6 @@ PYTHON_START_METHODS_TABLE(ptDynamicMap)
     PYTHON_METHOD(ptDynamicMap, drawText, "Params: x,y,text\nDraw text at a specified location\n"
                 "- x,y is the point to start drawing the text\n"
                 "- 'text' is a string of the text to be drawn"),
-    PYTHON_METHOD(ptDynamicMap, drawTextW, "Params: x,y,text\nUnicode version of drawText"),
     PYTHON_METHOD(ptDynamicMap, drawImage, "Params: x,y,image,respectAlphaFlag\nDraws a ptImage object on the dynamicTextmap starting at the location x,y"),
     PYTHON_METHOD(ptDynamicMap, drawImageClipped, "Params: x,y,image,cx,cy,cw,ch,respectAlphaFlag\nDraws a ptImage object clipped to cx,cy with cw(width),ch(height)"),
     PYTHON_METHOD_NOARGS(ptDynamicMap, getWidth, "Returns the width of the dynamicTextmap"),
@@ -493,4 +455,10 @@ void pyDynamicText::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_ELEMENT(PtJustify, kLeftJustify, plDynamicTextMap::kLeftJustify);
     PYTHON_ENUM_ELEMENT(PtJustify, kRightJustify, plDynamicTextMap::kRightJustify);
     PYTHON_ENUM_END(m, PtJustify);
+
+    PYTHON_ENUM_START(PtFontFlags);
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontBold, plDynamicTextMap::kFontBold);
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontItalic, plDynamicTextMap::kFontItalic);
+    PYTHON_ENUM_ELEMENT(PtFontFlags, kFontShadowed, plDynamicTextMap::kFontShadowed);
+    PYTHON_ENUM_END(m, PtFontFlags);
 }

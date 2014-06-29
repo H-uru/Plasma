@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plLinkToAgeMsg_INC
 #define plLinkToAgeMsg_INC
 
-#include "pnMessage/plMessageWithCallbacks.h"
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"
@@ -66,12 +65,11 @@ class plLinkToAgeMsg : public plMessage
 
     uint8_t fFlags;
     plAgeLinkStruct     fAgeLink;
-    char* fLinkInAnimName;
+    plString fLinkInAnimName;
 
 public:
     plLinkToAgeMsg();
     plLinkToAgeMsg( const plAgeLinkStruct * link );
-    virtual ~plLinkToAgeMsg();
 
     CLASSNAME_REGISTER( plLinkToAgeMsg );
     GETINTERFACE_ANY( plLinkToAgeMsg, plMessage );
@@ -83,8 +81,8 @@ public:
     bool PlayLinkInSfx() const { return (fFlags & kMuteLinkInSfx) == 0; }
     bool PlayLinkOutSfx() const { return (fFlags & kMuteLinkOutSfx) == 0; }
 
-    const char * GetLinkInAnimName() { return fLinkInAnimName; }
-    void SetLinkInAnimName(const char* name) { delete [] fLinkInAnimName; fLinkInAnimName = hsStrcpy(name); }
+    plString GetLinkInAnimName() { return fLinkInAnimName; }
+    void SetLinkInAnimName(const plString& name) { fLinkInAnimName = name; }
 
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);
@@ -151,7 +149,7 @@ public:
     void    SetLeavingAge(bool leaving) { fLeavingAge = leaving; }
     bool    IsLeavingAge() { return fLeavingAge; }
 
-    void    SetLinkKey(plKey &key);
+    void    SetLinkKey(const plKey &key);
     const plKey GetLinkKey() const { return fLinkKey; }
 
     void    SetLinkInAnimKey(plKey &key);

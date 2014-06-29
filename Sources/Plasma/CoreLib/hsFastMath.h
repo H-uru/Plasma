@@ -106,13 +106,13 @@ public:
 
 inline float hsFastMath::InvSqrtAppr(float x)
 {
-    register unsigned long a = *(long*)&x;
-    register float arg = x;
+    unsigned long a = *(long*)&x;
+    float arg = x;
     union {
         long    i;
         float   f;
     } seed;
-    register float r;
+    float r;
 
     extern unsigned char statSeedTable[];
 
@@ -133,13 +133,13 @@ inline float hsFastMath::InvSqrtAppr(float x)
 
 inline float hsFastMath::InvSqrt(float x)
 {
-    register unsigned long a = *(long*)&x;
-    register float arg = x;
+    unsigned long a = *(long*)&x;
+    float arg = x;
     union {
         long    i;
         float   f;
     } seed;
-    register float r;
+    float r;
 
     extern unsigned char statSeedTable[];
 

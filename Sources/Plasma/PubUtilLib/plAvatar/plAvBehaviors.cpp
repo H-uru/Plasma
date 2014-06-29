@@ -105,19 +105,18 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, plDebugText &
 {
     float strength = GetStrength();
     const char *onOff = strength > 0 ? "on" : "off";
-    char blendBar[11] = "||||||||||";
+    char blendBar[] = "||||||||||";
     int bars = (int)min(10 * strength, 10);
     blendBar[bars] = '\0';
 
     plString details;
     if (fAnim)
     {
-        plString animName = fAnim->GetName();
         float time = fAnim->GetTimeConvert()->CurrentAnimTime();
-        details = plString::Format("%20s %3s time: %5.2f %s", animName.c_str(), onOff, time, blendBar);
+        details = plFormat("{>20} {>3} time: {5.2f} {}", fAnim->GetName(), onOff, time, blendBar);
     }
     else
-        details = plString::Format("         Behavior %2d %3s %s", fIndex, onOff, blendBar);
+        details = plFormat("         Behavior {2} {>3} {}", fIndex, onOff, blendBar);
 
     debugTxt.DrawString(x, y, details);
     y += lineHeight; 

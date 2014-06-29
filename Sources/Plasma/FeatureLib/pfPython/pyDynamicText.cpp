@@ -266,7 +266,7 @@ void pyDynamicText::UnsetWrapping()
 //
 // Draw text paying attention to Clipping and Wrapping if user wanted it
 //
-void pyDynamicText::DrawText( int16_t x, int16_t y, const char *text )
+void pyDynamicText::DrawText( int16_t x, int16_t y, const plString& text )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -282,27 +282,6 @@ void pyDynamicText::DrawText( int16_t x, int16_t y, const char *text )
             pMsg->DrawClippedString(x,y,fClipLeft,fClipTop,fClipRight,fClipBottom,text);
         else
             pMsg->DrawString(x,y,text);
-
-        plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
-    }
-}
-
-void pyDynamicText::DrawTextW( int16_t x, int16_t y, std::wstring text )
-{
-    // create message
-    plDynamicTextMsg* pMsg = ICreateDTMsg();
-    if ( pMsg )
-    {
-        // The priority is:
-        //  1) wrap (if you wrap you probably don't need to clip)
-        //  2) clip
-        //  3) just draw
-        if ( fWrap )
-            pMsg->DrawWrappedString(x,y,fWrapWidth,fWrapHeight,text.c_str());
-        else if ( fClip )
-            pMsg->DrawClippedString(x,y,fClipLeft,fClipTop,fClipRight,fClipBottom,text.c_str());
-        else
-            pMsg->DrawString(x,y,text.c_str());
 
         plgDispatch::MsgSend( pMsg );   // whoosh... off it goes
     }
@@ -370,7 +349,7 @@ uint16_t  pyDynamicText::GetHeight( void )
     return (uint16_t)dtMap->GetHeight();
 }
 
-void pyDynamicText::CalcTextExtents( std::wstring text, unsigned &width, unsigned &height )
+void pyDynamicText::CalcTextExtents(const plString& text, uint16_t& width, uint16_t& height)
 {
     width = 0;
     height = 0;
@@ -379,10 +358,8 @@ void pyDynamicText::CalcTextExtents( std::wstring text, unsigned &width, unsigne
         return;
 
     plDynamicTextMap* dtMap = plDynamicTextMap::ConvertNoRef(fReceivers[0]->ObjectIsLoaded());
-    if (!dtMap)
-        return;
-
-    width = dtMap->CalcStringWidth(text.c_str(), (uint16_t*)&height);
+    if (dtMap)
+        width = dtMap->CalcStringWidth(text, &height);
 }
 
 void pyDynamicText::SetJustify(uint8_t justify)

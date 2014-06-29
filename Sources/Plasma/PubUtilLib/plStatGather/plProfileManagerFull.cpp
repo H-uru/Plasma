@@ -433,10 +433,10 @@ plFileName plProfileManagerFull::GetProfilePath()
         plUnifiedTime curTime = plUnifiedTime::GetCurrent(plUnifiedTime::kLocal);
 
         profilePath = plFileName::Join(plFileSystem::GetUserDataPath(), "Profile",
-            plString::Format("%02d-%02d-%04d_%02d-%02d",
-                             curTime.GetMonth(), curTime.GetDay(),
-                             curTime.GetYear(), curTime.GetHour(),
-                             curTime.GetMinute()));
+            plFormat("{_02}-{_02}-{_04}_{_02}-{_02}",
+                     curTime.GetMonth(), curTime.GetDay(),
+                     curTime.GetYear(), curTime.GetHour(),
+                     curTime.GetMinute()));
 
         plFileSystem::CreateDir(profilePath, true);
     }

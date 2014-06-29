@@ -78,13 +78,13 @@ void plResPatcher::OnCompletion(ENetError result, const plString& status)
 {
     plString error = plString::Null;
     if (IS_NET_ERROR(result))
-        error = plString::Format("Update Failed: %S\n%s", NetErrorAsString(result), status.c_str());
+        error = plFormat("Update Failed: {}\n{}", NetErrorAsString(result), status);
     plgDispatch::Dispatch()->MsgQueue(new plResPatcherMsg(IS_NET_SUCCESS(result), error));
 }
 
 void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 {
-    fProgress->SetTitle(plString::Format("Downloading %s...", file.GetFileName().c_str()));
+    fProgress->SetTitle(plFormat("Downloading {}...", file.GetFileName()));
 
     if (file.GetFileExt().CompareI("prp") == 0) {
         plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
@@ -124,9 +124,9 @@ void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const plString& m
         fProgress->SetHowMuch(dl);
     }
 
-    plString status = plString::Format("%s / %s",
-        plFileSystem::ConvertFileSize(dl).c_str(),
-        plFileSystem::ConvertFileSize(total).c_str()
+    plString status = plFormat("{} / {}",
+        plFileSystem::ConvertFileSize(dl),
+        plFileSystem::ConvertFileSize(total)
     );
 
     fProgress->SetStatusText(status);

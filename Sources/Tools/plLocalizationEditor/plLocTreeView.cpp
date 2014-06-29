@@ -42,45 +42,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLocTreeView.h"
 #include "plEditDlg.h"
 
-#include "HeadSpin.h"
-#include <commctrl.h>
-#include <shlwapi.h>
-#include "res\resource.h"
-
 #include <vector>
-#include <list>
 
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
-extern HINSTANCE gInstance;
-
-plString plLocTreeView::fPath = "";
-
-HTREEITEM AddLeaf(HWND hTree, HTREEITEM hParent, plString text, bool sort = true)
-{
-    // Semi-hack to keep these around as Win32 expects
-    static std::list<plStringBuffer<wchar_t>> bufs;
-    plStringBuffer<wchar_t> buf = text.ToWchar();
-    bufs.push_back(buf);
-
-    TVITEM tvi = {0};
-    tvi.mask = TVIF_TEXT | TVIF_PARAM;
-    tvi.pszText = const_cast<LPWSTR>(buf.GetData());
-    tvi.cchTextMax = static_cast<int>(buf.GetSize());
-    tvi.lParam = NULL;
-
-    TVINSERTSTRUCT tvins = {0};
-    tvins.item         = tvi;
-    tvins.hParent      = hParent;
-    if (sort)
-        tvins.hInsertAfter = TVI_SORT;
-    else
-        tvins.hInsertAfter = TVI_LAST;
-
-    return TreeView_InsertItem(hTree, &tvins);
-}
-
-void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
+void plLocTreeView::LoadData(const plString &selectionPath)
 {
     plString targetAge, targetSet, targetElement, targetLang;
     SplitLocalizationPath(selectionPath, targetAge, targetSet, targetElement, targetLang);
@@ -92,12 +58,13 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
         // add the age to the tree
-        HTREEITEM ageItem = AddLeaf(treeCtrl, NULL, ages[curAge]);
+        QTreeWidgetItem *ageItem = new QTreeWidgetItem(this, QStringList { ages[curAge].c_str() });
+        ageItem->setData(0, kLocPathRole, QString(ages[curAge].c_str()));
 
         if (ages[curAge] == targetAge)
         {
-            TreeView_SelectItem(treeCtrl, ageItem);
-            TreeView_EnsureVisible(treeCtrl, ageItem);
+            setCurrentItem(ageItem);
+            scrollToItem(ageItem);
             ageMatched = true;
         }
         else
@@ -108,12 +75,13 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
         {
             std::vector<plString> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
-            HTREEITEM setItem = AddLeaf(treeCtrl, ageItem, sets[curSet]);
+            QTreeWidgetItem *setItem = new QTreeWidgetItem(ageItem, QStringList { sets[curSet].c_str() });
+            setItem->setData(0, kLocPathRole, QString("%1.%2").arg(ages[curAge].c_str()).arg(sets[curSet].c_str()));
 
             if ((sets[curSet] == targetSet) && ageMatched)
             {
-                TreeView_SelectItem(treeCtrl, setItem);
-                TreeView_EnsureVisible(treeCtrl, setItem);
+                setCurrentItem(setItem);
+                scrollToItem(setItem);
                 setMatched = true;
             }
             else
@@ -121,12 +89,14 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
 
             for (int curElement = 0; curElement < elements.size(); curElement++)
             {
-                HTREEITEM subItem = AddLeaf(treeCtrl, setItem, elements[curElement]);
+                QTreeWidgetItem *subItem = new QTreeWidgetItem(setItem, QStringList { elements[curElement].c_str() });
+                subItem->setData(0, kLocPathRole, QString("%1.%2.%3").arg(ages[curAge].c_str())
+                                    .arg(sets[curSet].c_str()).arg(elements[curElement].c_str()));
 
                 if (elements[curElement] == targetElement && setMatched)
                 {
-                    TreeView_SelectItem(treeCtrl, subItem);
-                    TreeView_EnsureVisible(treeCtrl, subItem);
+                    setCurrentItem(subItem);
+                    scrollToItem(subItem);
                     elementMatched = true;
 
                     if (targetLang.IsEmpty())
@@ -138,78 +108,27 @@ void plLocTreeView::FillTreeViewFromData(HWND treeCtrl, plString selectionPath)
                 std::vector<plString> languages = pfLocalizationDataMgr::Instance().GetLanguages(ages[curAge], sets[curSet], elements[curElement]);
                 for (int curLang = 0; curLang < languages.size(); curLang++)
                 {
-                    HTREEITEM langItem = AddLeaf(treeCtrl, subItem, languages[curLang]);
+                    QTreeWidgetItem *langItem = new QTreeWidgetItem(subItem, QStringList { languages[curLang].c_str() });
+                    langItem->setData(0, kLocPathRole, QString("%1.%2.%3.%4").arg(ages[curAge].c_str())
+                                        .arg(sets[curSet].c_str()).arg(elements[curElement].c_str())
+                                        .arg(languages[curLang].c_str()));
 
                     if (languages[curLang] == targetLang && elementMatched)
                     {
-                        TreeView_SelectItem(treeCtrl, langItem);
-                        TreeView_EnsureVisible(treeCtrl, langItem);
+                        setCurrentItem(langItem);
+                        scrollToItem(langItem);
                     }
                 }
             }
         }
     }
+
+    sortByColumn(0, Qt::AscendingOrder);
 }
 
-void plLocTreeView::ClearTreeView(HWND treeCtrl)
+plString plLocTreeView::CurrentPath() const
 {
-    TreeView_DeleteAllItems(treeCtrl);
-}
-
-void plLocTreeView::SelectionChanged(HWND treeCtrl)
-{
-    HTREEITEM hItem = TreeView_GetSelection(treeCtrl);
-    std::vector<plString> path;
-    fPath = "";
-
-    while (hItem)
-    {
-        wchar_t s[200];
-        TVITEM tvi = {0};
-        tvi.hItem = hItem;
-        tvi.mask = TVIF_TEXT;
-        tvi.pszText = s;
-        tvi.cchTextMax = 200;
-        TreeView_GetItem(treeCtrl, &tvi);
-        path.push_back(plString::FromWchar(tvi.pszText));
-        hItem = TreeView_GetParent(treeCtrl, hItem);
-    }
-
-    while (!path.empty())
-    {
-        fPath += path.back();
-
-        path.pop_back();
-        if (!path.empty())
-            fPath += ".";
-    }
-}
-
-void plLocTreeView::SelectionDblClicked(HWND treeCtrl)
-{
-    HTREEITEM hItem = TreeView_GetSelection(treeCtrl);
-    std::vector<plString> path;
-    fPath = "";
-
-    while (hItem)
-    {
-        wchar_t s[200];
-        TVITEM tvi = {0};
-        tvi.hItem = hItem;
-        tvi.mask = TVIF_TEXT;
-        tvi.pszText = s;
-        tvi.cchTextMax = 200;
-        TreeView_GetItem(treeCtrl, &tvi);
-        path.push_back(plString::FromWchar(tvi.pszText));
-        hItem = TreeView_GetParent(treeCtrl, hItem);
-    }
-
-    while (!path.empty())
-    {
-        fPath += path.back();
-
-        path.pop_back();
-        if (!path.empty())
-            fPath += ".";
-    }
+    return (currentItem() != nullptr)
+        ? plString(currentItem()->data(0, kLocPathRole).toString().toUtf8().constData())
+        : plString();
 }

@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <bmmlib.h>
 #include <max.h>
-#include <texutil.h>
 #include <iparamb2.h>
 #pragma hdrstop
 
@@ -105,9 +104,9 @@ AColor plBMSampler::Sample(ShadeContext& sc, float u,float v)
 
     BMM_Color_64 c;
     int x,y;
-    float fu,fv;
-    fu = frac(u);
-    fv = 1.0f-frac(v);
+    float fu,fv, intpart;
+    fu = modf(u, &intpart);
+    fv = 1.0f - modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)
@@ -119,8 +118,8 @@ AColor plBMSampler::Sample(ShadeContext& sc, float u,float v)
         }
         else
         {
-            x = mod(clipx + (int)(fu*fclipw+0.5f),bmw);
-            y = mod(clipy + (int)(fv*fcliph+0.5f),bmh);
+            x = clipx + static_cast<int>(fu * fclipw + 0.5f) % bmw;
+            y = clipy + static_cast<int>(fv * fcliph + 0.5f) % bmh;
         }
     }
     else
@@ -156,9 +155,9 @@ AColor plBMSampler::SampleFilter(ShadeContext& sc, float u,float v, float du, fl
     fBM->SetFilter(BMM_FILTER_PYRAMID);
 
     BMM_Color_64 c;
-    float fu,fv;
-    fu = frac(u);
-    fv = 1.0f-frac(v);
+    float fu, fv, intpart;
+    fu = modf(u, &intpart);
+    fv = 1.0f - modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)

@@ -158,7 +158,7 @@ uint32_t hsStream::WriteSafeWStringLong(const plString &string)
     return 0;
 }
 
-plString hsStream::ReadSafeStringLong_TEMP()
+plString hsStream::ReadSafeStringLong()
 {
     plStringBuffer<char> name;
     uint32_t numChars = ReadLE32();
@@ -179,15 +179,7 @@ plString hsStream::ReadSafeStringLong_TEMP()
     return name;
 }
 
-char *hsStream::ReadSafeStringLong()
-{
-    plString name = ReadSafeStringLong_TEMP();
-    char *buff = new char[name.GetSize() + 1];
-    memcpy(buff, name.c_str(), name.GetSize() + 1);
-    return buff;
-}
-
-plString hsStream::ReadSafeWStringLong_TEMP()
+plString hsStream::ReadSafeWStringLong()
 {
     plStringBuffer<uint16_t> retVal;
     uint32_t numChars = ReadLE32();
@@ -209,22 +201,11 @@ plString hsStream::ReadSafeWStringLong_TEMP()
     return plString::FromUtf16(retVal);
 }
 
-wchar_t *hsStream::ReadSafeWStringLong()
-{
-    // Horribly inefficient (convert to UTF-8 and then back to UTF-16), which
-    // is why this should go away completely after plString has taken over
-    // the world^H^H^H^H^HPlasma
-    plStringBuffer<wchar_t> retVal = ReadSafeWStringLong_TEMP().ToWchar();
-    wchar_t *buff = new wchar_t[retVal.GetSize() + 1];
-    memcpy(buff, retVal.GetData(), retVal.GetSize() + 1);
-    return buff;
-}
-
 uint32_t hsStream::WriteSafeString(const plString &string)
 {
     int len = string.GetSize();
-    hsAssert(len<0xf000, plString::Format("string len of %d is too long for WriteSafeString %s, use WriteSafeStringLong",
-        len, string.c_str()).c_str() );
+    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
+        len, string).c_str() );
 
     WriteLE16(len | 0xf000);
     if (len > 0)
@@ -245,7 +226,7 @@ uint32_t hsStream::WriteSafeWString(const plString &string)
 {
     plStringBuffer<uint16_t> wbuff = string.ToUtf16();
     uint32_t len = wbuff.GetSize();
-    hsAssert(len<0xf000, plString::Format("string len of %d is too long for WriteSafeWString, use WriteSafeWStringLong",
+    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
     WriteLE16(len | 0xf000);
@@ -261,7 +242,7 @@ uint32_t hsStream::WriteSafeWString(const plString &string)
     return 0;
 }
 
-plString hsStream::ReadSafeString_TEMP()
+plString hsStream::ReadSafeString()
 {
     plStringBuffer<char> name;
     uint16_t numChars = ReadLE16();
@@ -293,15 +274,7 @@ plString hsStream::ReadSafeString_TEMP()
     return name;
 }
 
-char *hsStream::ReadSafeString()
-{
-    plString name = ReadSafeString_TEMP();
-    char *buff = new char[name.GetSize() + 1];
-    memcpy(buff, name.c_str(), name.GetSize() + 1);
-    return buff;
-}
-
-plString hsStream::ReadSafeWString_TEMP()
+plString hsStream::ReadSafeWString()
 {
     plStringBuffer<uint16_t> retVal;
     uint32_t numChars = ReadLE16();
@@ -324,17 +297,6 @@ plString hsStream::ReadSafeWString_TEMP()
     }
 
     return plString::FromUtf16(retVal);
-}
-
-wchar_t *hsStream::ReadSafeWString()
-{
-    // Horribly inefficient (convert to UTF-8 and then back to UTF-16), which
-    // is why this should go away completely after plString has taken over
-    // the world^H^H^H^H^HPlasma
-    plStringBuffer<wchar_t> retVal = ReadSafeWString_TEMP().ToWchar();
-    wchar_t *buff = new wchar_t[retVal.GetSize() + 1];
-    memcpy(buff, retVal.GetData(), retVal.GetSize() + 1);
-    return buff;
 }
 
 bool  hsStream::Read4Bytes(void *pv)  // Virtual, faster version in sub classes

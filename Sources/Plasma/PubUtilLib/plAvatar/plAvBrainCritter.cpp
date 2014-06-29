@@ -443,7 +443,7 @@ void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebu
     // extract the name from the behavior running
     plString mode = "Mode: Unknown";
     if (fBehaviors[fCurMode])
-        mode = plString::Format("Mode: %s", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name().c_str());
+        mode = plFormat("Mode: {}", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name());
     
     // draw it
     debugTxt.DrawString(x, y, mode);

@@ -123,10 +123,10 @@ void plAnimDebugList::ShowReport()
                 plLayerAnimation *layerAnim = plLayerAnimation::ConvertNoRef(layer);
                 if (layerAnim)
                 {
-                    str = plString::Format("%s: %s %.3f (%.3f)", mat->GetKeyName().c_str(), layerAnim->GetKeyName().c_str(),
+                    str = plFormat("{}: {} {.3f} ({.3f})", mat->GetKeyName(), layerAnim->GetKeyName(),
                             layerAnim->GetTimeConvert().CurrentAnimTime(),
                             layerAnim->GetTimeConvert().WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-                    txt.DrawString(x, y, str.c_str());
+                    txt.DrawString(x, y, str);
                     y += yOff;
                 }
                 layer = layer->GetOverLay();
@@ -147,17 +147,17 @@ void plAnimDebugList::ShowReport()
         if (!mod)
             continue;
 
-        str = plString::Format("  %s", so->GetKeyName().c_str());
-        txt.DrawString(x, y, str.c_str());
+        str = plFormat("  {}", so->GetKeyName());
+        txt.DrawString(x, y, str);
         y += yOff;
 
         for (j = 0; j < mod->GetNumATCAnimations(); j++)
         {
             plAGAnimInstance *anim = mod->GetATCAnimInstance(j);
-            str = plString::Format("    %s: %.3f (%.3f)", anim->GetAnimation()->GetName().c_str(),
+            str = plFormat("    {}: {.3f} ({.3f})", anim->GetAnimation()->GetName(),
                     anim->GetTimeConvert()->CurrentAnimTime(),
                     anim->GetTimeConvert()->WorldToAnimTimeNoUpdate(hsTimer::GetSysSeconds()));
-            txt.DrawString(x, y, str.c_str());
+            txt.DrawString(x, y, str);
             y += yOff;
         }
     }

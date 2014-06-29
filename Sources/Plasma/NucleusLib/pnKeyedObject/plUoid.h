@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plFixedKey.h"
 #include "plLoadMask.h"
-#include "plString.h"
+#include "plFormat.h"
 
 class hsStream;
 

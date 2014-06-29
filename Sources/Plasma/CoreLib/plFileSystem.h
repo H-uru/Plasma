@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cstdio>
 #include <cstddef>
 
+#include "plFormat.h"
+
 #if HS_BUILD_FOR_WIN32
 #   define PATH_SEPARATOR       '\\'
 #   define PATH_SEPARATOR_STR   "\\"
@@ -259,10 +261,10 @@ public:
     uint64_t ModifyTime() const { return fModifyTime; }
 
     /** Returns \p true if this file is a directory. */
-    bool IsDirectory() const { return (fFlags & kIsDirectory); }
+    bool IsDirectory() const { return (fFlags & kIsDirectory) != 0; }
 
     /** Returns \p true if this file is a regular file. */
-    bool IsFile() const { return (fFlags & kIsNormalFile); }
+    bool IsFile() const { return (fFlags & kIsNormalFile) != 0; }
 
 private:
     plFileName fName;
@@ -332,12 +334,6 @@ namespace plFileSystem
 
     /** Get the full path and filename of the current process. */
     plFileName GetCurrentAppPath();
-
-    /** Create a temporary filename.  If path is specified, the returned
-     *  filename will be relative to the supplied path -- otherwise, the
-     *  system temp path is used.
-     */
-    plFileName GetTempFilename(const char *prefix = "tmp", const plFileName &path = "");
 
     /** Convert a file size from bytes to a human readable size. */
     plString ConvertFileSize(uint64_t size);

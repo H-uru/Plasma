@@ -39,3 +39,33 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef _plFontPreview_h
+#define _plFontPreview_h
+
+#include <QFrame>
+
+class plFont;
+
+class plFontPreview : public QFrame
+{
+public:
+    plFontPreview(QWidget *parent = nullptr) : QFrame(parent), fFont(nullptr) { }
+
+    void Update(plFont *font, const QString &text);
+
+protected:
+    virtual void paintEvent(QPaintEvent *event);
+
+    virtual void resizeEvent(QResizeEvent *event)
+    {
+        QFrame::resizeEvent(event);
+        Update(fFont, fText);
+    }
+
+private:
+    plFont *fFont;
+    QString fText;
+    QImage fPreview;
+};
+
+#endif

@@ -115,7 +115,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
 
         if( retVal == plSoundBuffer::kError )
         {
-            plString str = plString::Format( "Unable to open .wav file %s", fDataBufferKey ? fDataBufferKey->GetName().c_str() : "nil");
+            plString str = plFormat("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
             IPrintDbgMessage( str.c_str(), true );
             fFailed = true;
             return false;
@@ -134,15 +134,6 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         }
         uint32_t bufferSize = buffer->GetDataLength();
 
-        if( header.fNumChannels > 1 && is3D )
-        {
-            // We can only do a single channel of 3D sound. So copy over one (later)
-            bufferSize              /= header.fNumChannels;
-            header.fBlockAlign      /= header.fNumChannels;
-            header.fAvgBytesPerSec  /= header.fNumChannels;
-            header.fNumChannels = 1;
-        }
-
         bool tryStatic = true;
         // If we want FX, we can't use a static voice, but EAX doesn't fit under that limitation :)
         if( 0 )
@@ -152,9 +143,10 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
-            char str[256];
-            sprintf(str, "Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file. Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.", GetFileName().AsString().c_str());
-            IPrintDbgMessage( str, true );
+            plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                    GetFileName());
+            IPrintDbgMessage(str.c_str(), true);
             fFailed = true;
 
             delete fDSoundBuffer;

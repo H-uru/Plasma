@@ -41,11 +41,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-
+#include "hsFastMath.h"
 #include "hsStream.h"
+#pragma hdrstop
 
 #include "plBulletMsg.h"
-#include "hsFastMath.h"
 
 void plBulletMsg::Read(hsStream* stream, hsResMgr* mgr) 
 { 

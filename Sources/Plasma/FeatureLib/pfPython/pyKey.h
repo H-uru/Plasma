@@ -123,7 +123,7 @@ public:
     // get a notify list item
     virtual plKey GetNotifyListItem(int32_t i);
     // Set the dirty state on the PythonModifier
-    virtual void DirtySynchState(const char* SDLStateName, uint32_t sendFlags);
+    virtual void DirtySynchState(const plString& SDLStateName, uint32_t sendFlags);
 
     // register and unregister for control key envents
     virtual void EnableControlKeyEvents();

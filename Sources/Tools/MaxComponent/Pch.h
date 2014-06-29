@@ -72,6 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsThread.h"
 #include "plTweak.h"
+#include "plFormat.h"
 
 // Windows
 #include "hsWindows.h"

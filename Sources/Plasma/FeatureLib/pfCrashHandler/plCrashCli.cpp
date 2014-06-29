@@ -45,6 +45,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
+#ifdef _MSC_VER
+#include <crtdbg.h>
+
+static void IInvalidParameter(const wchar_t* expression, const wchar_t* function, const wchar_t* file, unsigned int line, uintptr_t)
+{
+    __debugbreak();
+}
+
+static void IPureVirtualCall()
+{
+    __debugbreak();
+}
+
+#endif // _MSC_VER
+
 plCrashCli::plCrashCli()
     : fLink(nil), fLinkH(nil)
 {
@@ -96,6 +111,14 @@ plCrashCli::plCrashCli()
                     FALSE,
                     DUPLICATE_CLOSE_SOURCE | DUPLICATE_SAME_ACCESS
     );
+
+#ifdef _MSC_VER
+    // Sigh... The Visual C++ Runtime likes to throw up dialogs sometimes.
+    // The user cares not about dialogs. We just want to get a minidump...
+    // See: http://www.altdevblogaday.com/2012/07/20/more-adventures-in-failing-to-crash-properly/
+    _set_invalid_parameter_handler(IInvalidParameter);
+    _set_purecall_handler(IPureVirtualCall);
+#endif // _MSC_VER
 }
 
 plCrashCli::~plCrashCli()

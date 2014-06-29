@@ -234,6 +234,8 @@ plString plClientLauncher::GetAppArgs() const
         ss << " -Image";
     if (hsCheckBits(fFlags, kPatchOnly))
         ss << " -PatchOnly";
+    if (hsCheckBits(fFlags, kSkipLoginDialog))
+        ss << " -SkipLoginDialog";
 
     return ss.GetString();
 }
@@ -352,7 +354,7 @@ static void IGotFileServIPs(ENetError result, void* param, const wchar_t* addr)
 static void IEapSucksErrorProc(ENetProtocol protocol, ENetError error)
 {
     if (s_errorProc) {
-        plString msg = plString::Format("Protocol: %S", NetProtocolToString(protocol));
+        plString msg = plFormat("Protocol: {}", NetProtocolToString(protocol));
         s_errorProc(error, msg);
     }
 }
@@ -429,13 +431,15 @@ void plClientLauncher::ParseArguments()
     if (cmdParser.GetBool(arg)) \
         fFlags |= flag;
 
-    enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly };
+    enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly,
+           kArgSkipLoginDialog };
     const CmdArgDef cmdLineArgs[] = {
         { kCmdArgFlagged | kCmdTypeString, L"ServerIni", kArgServerIni },
         { kCmdArgFlagged | kCmdTypeBool, L"NoSelfPatch", kArgNoSelfPatch },
         { kCmdArgFlagged | kCmdTypeBool, L"Image", kArgImage },
         { kCmdArgFlagged | kCmdTypeBool, L"Repair", kArgRepairGame },
-        { kCmdArgFlagged | kCmdTypeBool, L"PatchOnly", kArgPatchOnly }
+        { kCmdArgFlagged | kCmdTypeBool, L"PatchOnly", kArgPatchOnly },
+        { kCmdArgFlagged | kCmdTypeBool, L"SkipLoginDialog", kArgSkipLoginDialog }
     };
 
     CCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
@@ -448,6 +452,7 @@ void plClientLauncher::ParseArguments()
     APPLY_FLAG(kArgImage, kClientImage);
     APPLY_FLAG(kArgRepairGame, kRepairGame);
     APPLY_FLAG(kArgPatchOnly, kPatchOnly);
+    APPLY_FLAG(kArgSkipLoginDialog, kSkipLoginDialog);
 
     // last chance setup
     if (hsCheckBits(fFlags, kPatchOnly))

@@ -73,7 +73,7 @@ protected:
 
     plString IMakeModuleName(plSceneObject* sobj);
 
-    char*       fPythonFile;
+    plString    fPythonFile;
     plString    fModuleName;
 
     // the list of receivers that want to be notified
@@ -131,7 +131,7 @@ public:
     plPythonSDLModifier* GetSDLMod() { return fSDLMod; }
     bool WasLocalNotify() { return fLocalNotify; }
     plPipeline* GetPipeline() { return fPipe; }
-    virtual void SetSourceFile(const char* filename);
+    virtual void SetSourceFile(const plString& filename);
     virtual int getPythonOutput(std::string* line);
     virtual void ReportError();
     virtual void DisplayPythonOutput();

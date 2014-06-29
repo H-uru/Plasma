@@ -41,23 +41,330 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 // Basic edit dialog stuff
 #include "plEditDlg.h"
-#include "res/resource.h"
 #include "plLocTreeView.h"
 #include "plAddDlgs.h"
 
+#include "pfLocalizationMgr/pfLocalizationMgr.h"
 #include "pfLocalizationMgr/pfLocalizationDataMgr.h"
 
-#include <map>
+#include <QDialog>
+#include <QMessageBox>
+#include <QFileDialog>
+#include "ui_EditDialog.h"
 
-HWND gEditDlg = NULL;
-extern HINSTANCE gInstance;
-extern HWND gTreeView;
+#include <functional>
 
-// global data for this dialog
-plString gCurrentPath;
+static void IAboutDialog(QWidget *parent)
+{
+    QDialog dlg(parent);
+    QLabel *image = new QLabel(&dlg);
+    image->setPixmap(QPixmap(":/icon1.ico"));
+    QLabel *text = new QLabel(QObject::tr(R"(plLocalizationEditor
+A basic editor for Plasma 21 localization resource files
+Copyright (C) 2004 Cyan Worlds, Inc.)"), &dlg);
+    QPushButton *ok = new QPushButton(QObject::tr("OK"), &dlg);
+    ok->setDefault(true);
+
+    QHBoxLayout *layout = new QHBoxLayout(&dlg);
+    layout->setMargin(8);
+    layout->setSpacing(10);
+    layout->addWidget(image);
+    layout->addWidget(text);
+    layout->addWidget(ok);
+
+    dlg.connect(ok, &QPushButton::clicked, &dlg, &QDialog::accept);
+    dlg.exec();
+}
+
+EditDialog::EditDialog()
+    : fEditMode(kEditNothing)
+{
+    fUI = new Ui_EditDialog;
+    fUI->setupUi(this);
+
+    connect(fUI->fOpenAction, SIGNAL(triggered()), SLOT(OpenDataDirectory()));
+    connect(fUI->fSaveCurrentAction, SIGNAL(triggered()), SLOT(SaveToCurrent()));
+    connect(fUI->fSaveOtherAction, SIGNAL(triggered()), SLOT(SaveToDirectory()));
+    connect(fUI->fExitAction, SIGNAL(triggered()), SLOT(close()));
+    connect(fUI->fAboutAction, &QAction::triggered, std::bind(&IAboutDialog, this));
+
+    connect(fUI->fLocalizationTree, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
+            SLOT(LocPathChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+
+    connect(fUI->fAddButton, SIGNAL(clicked()), SLOT(AddClicked()));
+    connect(fUI->fDeleteButton, SIGNAL(clicked()), SLOT(DeleteClicked()));
+
+    EnableEdit(false);
+}
+
+EditDialog::~EditDialog()
+{
+    pfLocalizationMgr::Shutdown();
+    delete fUI;
+}
+
+// saves the current localization text to the data manager
+void EditDialog::SaveLocalizationText()
+{
+    if (fCurrentLocPath.IsEmpty())
+        return; // no path to save
+
+    plString text = fUI->fLocalizationText->toPlainText().toUtf8().constData();
+
+    plString ageName, setName, elementName, elementLanguage;
+    SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
+
+    if (ageName.IsEmpty() || setName.IsEmpty() || elementName.IsEmpty() || elementLanguage.IsEmpty())
+        return;
+
+    plString name = plFormat("{}.{}.{}", ageName, setName, elementName);
+    pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, text);
+}
+
+void EditDialog::LoadLocalization(const plString &locPath)
+{
+    if (locPath == fCurrentLocPath)
+        return;
+
+    fCurrentLocPath = locPath;
+    fUI->fTextPathLabel->setText(QString("&Text (%1):").arg(locPath.c_str()));
+
+    plString ageName, setName, elementName, elementLanguage;
+    SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
+
+    // now make sure they've drilled down deep enough to enable the dialog
+    if (elementLanguage.IsEmpty()) // not deep enough
+        EnableEdit(false);
+    else
+    {
+        EnableEdit(true);
+        plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
+        plString elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
+        fUI->fLocalizationText->setPlainText(elementText.c_str());
+    }
+
+    // now to setup the add/delete buttons
+    if (!elementLanguage.IsEmpty()) // they have selected a language
+    {
+        fEditMode = kEditLocalization;
+        fUI->fAddButton->setText(tr("&Add Localization"));
+        fUI->fAddButton->setEnabled(true);
+        fUI->fDeleteButton->setText(tr("&Delete Localization"));
+
+        // don't allow them to delete the default language
+        fUI->fDeleteButton->setEnabled(elementLanguage != "English");
+    }
+    else // they have selected something else
+    {
+        fEditMode = kEditElement;
+        fUI->fAddButton->setText(tr("&Add Element"));
+        fUI->fAddButton->setEnabled(true);
+        fUI->fDeleteButton->setText(tr("&Delete Element"));
+        if (!elementName.IsEmpty()) // they have selected an individual element
+        {
+            std::vector<plString> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
+
+            // they can't delete the only subtitle in a set
+            fUI->fDeleteButton->setEnabled(elementNames.size() > 1);
+        }
+        else
+            fUI->fDeleteButton->setEnabled(false);
+    }
+}
+
+void EditDialog::EnableEdit(bool enable)
+{
+    if (!enable)
+        fUI->fLocalizationText->setPlainText("");
+
+    fUI->fLocalizationText->setEnabled(enable);
+}
+
+void EditDialog::closeEvent(QCloseEvent *event)
+{
+    if (fCurrentSavePath.isEmpty()) // no data open
+    {
+        event->accept();
+        return;
+    }
+
+    SaveLocalizationText(); // make sure any changed text is saved to the manager
+
+    QMessageBox::StandardButton result = QMessageBox::question(this, tr("Save Changes"),
+                tr("Do you wish to save your changes?"),
+                QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+    if (result == QMessageBox::Yes)
+        SaveToDirectory();
+
+    if (result == QMessageBox::Cancel)
+        event->ignore();
+    else
+        event->accept();
+}
+
+void EditDialog::OpenDataDirectory()
+{
+    QString path = QFileDialog::getExistingDirectory(this,
+                tr("Select a localization data directory:"),
+                QDir::current().absolutePath(),
+                QFileDialog::ShowDirsOnly | QFileDialog::ReadOnly);
+
+    if (!path.isEmpty())
+    {
+        plWaitCursor waitCursor(this);
+
+        pfLocalizationMgr::Shutdown();
+
+        fCurrentSavePath = path;
+        pfLocalizationMgr::Initialize(fCurrentSavePath.toUtf8().constData());
+
+        fUI->fLocalizationTree->clear();
+        fUI->fLocalizationTree->LoadData("");
+
+        SetTitle(path);
+
+        fUI->fSaveCurrentAction->setEnabled(true);
+        fUI->fSaveOtherAction->setEnabled(true);
+    }
+}
+
+void EditDialog::SaveToCurrent()
+{
+    SaveLocalizationText(); // make sure any changed text is saved to the manager
+
+    // save it to our current directory
+    QMessageBox::StandardButton result = QMessageBox::question(this, tr("Save to Current Directory"),
+                tr("Are you sure you want to save to the current directory? Current data will be overwritten!"),
+                QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+
+    if (result == QMessageBox::Yes)
+    {
+        plWaitCursor waitCursor(this);
+        pfLocalizationDataMgr::Instance().WriteDatabaseToDisk(fCurrentSavePath.toUtf8().constData());
+    }
+    else if (result == QMessageBox::No)
+        SaveToDirectory();
+    // and if it's cancel we don't do anything
+}
+
+void EditDialog::SaveToDirectory()
+{
+    SaveLocalizationText(); // make sure any changed text is saved to the manager
+
+    QString path = QFileDialog::getExistingDirectory(this,
+                tr("Select a directory to save the localization data to:"),
+                fCurrentSavePath, QFileDialog::ShowDirsOnly);
+
+    // save it to a new directory
+    if (!path.isEmpty())
+    {
+        plWaitCursor waitCursor(this);
+
+        fCurrentSavePath = path;
+
+        SetTitle(path);
+        pfLocalizationDataMgr::Instance().WriteDatabaseToDisk(fCurrentSavePath.toUtf8().constData());
+    }
+}
+
+void EditDialog::LocPathChanged(QTreeWidgetItem *current, QTreeWidgetItem *)
+{
+    SaveLocalizationText(); // save any current changes to the database
+    LoadLocalization(fUI->fLocalizationTree->CurrentPath());
+}
+
+void EditDialog::AddClicked()
+{
+    SaveLocalizationText(); // save any current changes to the database
+
+    if (fEditMode == kEditElement)
+    {
+        plAddElementDlg dlg(fCurrentLocPath, this);
+        if (dlg.DoPick())
+        {
+            plString path = dlg.GetValue(); // path is age.set.name
+            if (!pfLocalizationDataMgr::Instance().AddElement(path))
+            {
+                QMessageBox::critical(this, tr("Error"),
+                    tr("Couldn't add new element because one already exists with that name!"));
+            }
+            else
+            {
+                fCurrentLocPath = "";
+                fUI->fLocalizationTree->clear();
+                fUI->fLocalizationTree->LoadData(path);
+                LoadLocalization(path);
+            }
+        }
+    }
+    else if (fEditMode == kEditLocalization)
+    {
+        plAddLocalizationDlg dlg(fCurrentLocPath, this);
+        if (dlg.DoPick())
+        {
+            plString newLanguage = dlg.GetValue();
+            plString ageName, setName, elementName, elementLanguage;
+            SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
+            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
+            if (!pfLocalizationDataMgr::Instance().AddLocalization(key, newLanguage))
+                QMessageBox::critical(this, tr("Error"), tr("Couldn't add additional localization!"));
+            else
+            {
+                plString path = plFormat("{}.{}", key, newLanguage);
+                fCurrentLocPath = "";
+                fUI->fLocalizationTree->clear();
+                fUI->fLocalizationTree->LoadData(path);
+                LoadLocalization(path);
+            }
+        }
+    }
+}
+
+void EditDialog::DeleteClicked()
+{
+    SaveLocalizationText(); // save any current changes to the database
+
+    QMessageBox::StandardButton reply =  QMessageBox::question(this, tr("Delete"),
+            tr("Are you sure that you want to delete %1?").arg(fCurrentLocPath.c_str()));
+
+    if (reply == QMessageBox::Yes)
+    {
+        if (fEditMode == kEditElement)
+        {
+            if (!pfLocalizationDataMgr::Instance().DeleteElement(fCurrentLocPath))
+                QMessageBox::critical(this, tr("Error"), tr("Couldn't delete element!"));
+            else
+            {
+                plString path = fCurrentLocPath;
+                fCurrentLocPath = "";
+                fUI->fLocalizationTree->clear();
+                fUI->fLocalizationTree->LoadData(path);
+                LoadLocalization(path);
+            }
+        }
+        else if (fEditMode == kEditLocalization)
+        {
+            plString ageName, setName, elementName, elementLanguage;
+            SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
+            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
+            if (!pfLocalizationDataMgr::Instance().DeleteLocalization(key, elementLanguage))
+                QMessageBox::critical(this, tr("Error"), tr("Couldn't delete localization!"));
+            else
+            {
+                plString path = key + ".English";
+                fCurrentLocPath = "";
+                fUI->fLocalizationTree->clear();
+                fUI->fLocalizationTree->LoadData(path);
+                LoadLocalization(path);
+            }
+        }
+    }
+}
 
 // split a subtitle path up into its component parts
-void SplitLocalizationPath(plString path, plString &ageName, plString &setName, plString &locName, plString &locLanguage)
+void SplitLocalizationPath(const plString &path, plString &ageName,
+        plString &setName, plString &locName, plString &locLanguage)
 {
     ageName = setName = locName = locLanguage = "";
 
@@ -70,221 +377,4 @@ void SplitLocalizationPath(plString path, plString &ageName, plString &setName, 
         locName = tokens[2];
     if (tokens.size() >= 4)
         locLanguage = tokens[3];
-}
-
-// saves the current localization text to the data manager
-void SaveLocalizationText()
-{
-    if (gCurrentPath.IsEmpty())
-        return; // no path to save
-
-    uint32_t textLen = (uint32_t)SendMessage(GetDlgItem(gEditDlg, IDC_LOCALIZATIONTEXT), WM_GETTEXTLENGTH, (WPARAM)0, (LPARAM)0);
-    wchar_t *buffer = new wchar_t[textLen + 2];
-    GetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, buffer, textLen + 1);
-    buffer[textLen + 1] = 0;
-    plString plainTextData = plString::FromWchar(buffer);
-    delete [] buffer;
-    plString ageName, setName, elementName, elementLanguage;
-    SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
-
-    plString name = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
-    pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, plainTextData);
-}
-
-// Reset all controls to their default values (except for static controls)
-void ResetDlgDefaults()
-{
-    SetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, L"");
-}
-
-// Enable/disable all edit controls (some won't enable/disable unless an audio file is loaded and the subtitle is timed)
-void EnableDlg(BOOL enable)
-{
-    if (!enable)
-        ResetDlgDefaults(); // reset controls to defaults
-
-    EnableWindow(GetDlgItem(gEditDlg, IDC_LOCALIZATIONTEXT), enable);
-}
-
-// updates the edit dialog based on the path specified
-void UpdateEditDlg(plString locPath)
-{
-    if (locPath == gCurrentPath)
-        return;
-
-    gCurrentPath = locPath;
-
-    plString itemText = plString::Format("Text (%s):", locPath.c_str());
-    SetDlgItemTextW(gEditDlg, IDC_LOCPATH, itemText.ToWchar());
-
-    plString ageName, setName, elementName, elementLanguage;
-    SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
-
-    // now make sure they've drilled down deep enough to enable the dialog
-    if (elementLanguage.IsEmpty()) // not deep enough
-        EnableDlg(FALSE);
-    else
-    {
-        EnableDlg(TRUE);
-        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
-        plString elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
-        SetDlgItemTextW(gEditDlg, IDC_LOCALIZATIONTEXT, elementText.ToWchar());
-    }
-
-    // now to setup the add/delete buttons
-    if (!elementLanguage.IsEmpty()) // they have selected a language
-    {
-        SetDlgItemText(gEditDlg, IDC_ADD, L"Add Localization");
-        EnableWindow(GetDlgItem(gEditDlg, IDC_ADD), TRUE);
-        SetDlgItemText(gEditDlg, IDC_DELETE, L"Delete Localization");
-        if (elementLanguage != "English") // don't allow them to delete the default language
-            EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), TRUE);
-        else
-            EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), FALSE);
-    }
-    else // they have selected something else
-    {
-        SetDlgItemText(gEditDlg, IDC_ADD, L"Add Element");
-        EnableWindow(GetDlgItem(gEditDlg, IDC_ADD), TRUE);
-        SetDlgItemText(gEditDlg, IDC_DELETE, L"Delete Element");
-        if (!elementName.IsEmpty()) // they have selected an individual element
-        {
-            std::vector<plString> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
-            if (elementNames.size() > 1) // they can't delete the only subtitle in a set
-                EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), TRUE);
-            else
-                EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), FALSE);
-        }
-        else
-            EnableWindow(GetDlgItem(gEditDlg, IDC_DELETE), FALSE);
-    }
-}
-
-BOOL HandleCommandMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    int wmID, wmEvent;
-    wmID = LOWORD(wParam);
-    wmEvent = HIWORD(wParam);
-
-    switch (wmEvent)
-    {
-    case BN_CLICKED:
-        switch (wmID)
-        {
-        case IDC_ADD:
-            {
-                SaveLocalizationText(); // save any current changes to the database
-
-                plString buttonText;
-                wchar_t buff[256];
-                GetDlgItemText(gEditDlg, IDC_ADD, buff, 256);
-                buttonText = plString::FromWchar(buff);
-
-                if (buttonText == "Add Element")
-                {
-                    plAddElementDlg dlg(gCurrentPath);
-                    if (dlg.DoPick(gEditDlg))
-                    {
-                        plString path = dlg.GetValue(); // path is age.set.name
-                        if (!pfLocalizationDataMgr::Instance().AddElement(path))
-                            MessageBox(gEditDlg, L"Couldn't add new element because one already exists with that name!", L"Error", MB_ICONERROR | MB_OK);
-                        else
-                        {
-                            gCurrentPath = "";
-                            plLocTreeView::ClearTreeView(gTreeView);
-                            plLocTreeView::FillTreeViewFromData(gTreeView, path);
-                            UpdateEditDlg(path);
-                        }
-                    }
-                }
-                else if (buttonText == "Add Localization")
-                {
-                    plAddLocalizationDlg dlg(gCurrentPath);
-                    if (dlg.DoPick(gEditDlg))
-                    {
-                        plString newLanguage = dlg.GetValue();
-                        plString ageName, setName, elementName, elementLanguage;
-                        SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
-                        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
-                        if (!pfLocalizationDataMgr::Instance().AddLocalization(key, newLanguage))
-                            MessageBox(gEditDlg, L"Couldn't add additional localization!", L"Error", MB_ICONERROR | MB_OK);
-                        else
-                        {
-                            plString path = plString::Format("%s.%s", key.c_str(), newLanguage.c_str());
-                            gCurrentPath = "";
-                            plLocTreeView::ClearTreeView(gTreeView);
-                            plLocTreeView::FillTreeViewFromData(gTreeView, path);
-                            UpdateEditDlg(path);
-                        }
-                    }
-                }
-                return FALSE;
-            }
-        case IDC_DELETE:
-            {
-                SaveLocalizationText(); // save any current changes to the database
-
-                plString messageText = plString::Format("Are you sure that you want to delete %s?", gCurrentPath.c_str());
-                int res = MessageBoxW(gEditDlg, messageText.ToWchar(), L"Delete", MB_ICONQUESTION | MB_YESNO);
-                if (res == IDYES)
-                {
-                    plString buttonText;
-                    wchar_t buff[256];
-                    GetDlgItemText(gEditDlg, IDC_DELETE, buff, 256);
-                    buttonText = plString::FromWchar(buff);
-
-                    if (buttonText == "Delete Element")
-                    {
-                        if (!pfLocalizationDataMgr::Instance().DeleteElement(gCurrentPath))
-                            MessageBox(gEditDlg, L"Couldn't delete element!", L"Error", MB_ICONERROR | MB_OK);
-                        else
-                        {
-                            plString path = gCurrentPath;
-                            gCurrentPath = "";
-                            plLocTreeView::ClearTreeView(gTreeView);
-                            plLocTreeView::FillTreeViewFromData(gTreeView, path);
-                            UpdateEditDlg(path);
-                        }
-                    }
-                    else if (buttonText == "Delete Localization")
-                    {
-                        plString ageName, setName, elementName, elementLanguage;
-                        SplitLocalizationPath(gCurrentPath, ageName, setName, elementName, elementLanguage);
-                        plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
-                        if (!pfLocalizationDataMgr::Instance().DeleteLocalization(key, elementLanguage))
-                            MessageBox(gEditDlg, L"Couldn't delete localization!", L"Error", MB_ICONERROR | MB_OK);
-                        else
-                        {
-                            plString path = gCurrentPath;
-                            gCurrentPath = "";
-                            plLocTreeView::ClearTreeView(gTreeView);
-                            plLocTreeView::FillTreeViewFromData(gTreeView, path);
-                            UpdateEditDlg(path);
-                        }
-                    }
-                }
-            }
-            return FALSE;
-        }
-    }
-    return (BOOL)DefWindowProc(hWnd, msg, wParam, lParam);
-}
-
-// our dialog's window procedure
-BOOL CALLBACK EditDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    switch(msg)
-    {
-    case WM_INITDIALOG:
-        {
-            gEditDlg = hWnd;
-            EnableDlg(FALSE);
-        }
-        break;
-
-    case WM_COMMAND:
-        return HandleCommandMessage(hWnd, msg, wParam, lParam);
-    }
-
-    return FALSE;
 }

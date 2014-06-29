@@ -138,9 +138,9 @@ void    pfGUIEditBoxMod::IUpdate( void )
             oldCursorPos = cursorPos;
             cursorPos -= (int16_t)fScrollPos;
 
-            if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 18 )
+            if( 4 + cursorPos > fDynTextMap->GetVisibleWidth() - 4 - 2 )
             {
-                fScrollPos += ( 4 + cursorPos ) - ( fDynTextMap->GetVisibleWidth() - 18 );
+                fScrollPos += ( 4 + cursorPos ) - ( fDynTextMap->GetVisibleWidth() - 4 - 2 );
             }
             else if( 4 + cursorPos < 4 )
             {
@@ -335,11 +335,11 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
         {
             fFirstHalfExitKeyPushed = false;
             // Use arrow keys to do our dirty work
-            if( key == KEY_UP || key == KEY_HOME )
+            if( key == KEY_HOME )
             {
                 SetCursorToHome();
             }
-            else if( key == KEY_DOWN || key == KEY_END )
+            else if( key == KEY_END )
             {
                 SetCursorToEnd();
             }
@@ -381,8 +381,18 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             }
             else if (key == KEY_TAB) 
             {
-                //Send notify for python scripts
+                // Send notify for python scripts
                 HandleExtendedEvent(kWantAutocomplete);
+            }
+            else if (key == KEY_UP)
+            {
+                // Send notify for python scripts
+                HandleExtendedEvent(kWantMessageHistoryUp);
+            }
+            else if (key == KEY_DOWN)
+            {
+                // Send notify for python scripts
+                HandleExtendedEvent(kWantMessageHistoryDown);
             }
             else if (modifiers & pfGameGUIMgr::kCtrlDown) 
             {

@@ -216,47 +216,26 @@ void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
 void cyAvatar::RunBehavior(pyKey &behKey, bool netForce, bool netProp)
 {
     // first there is someone to send to and make sure that we an avatar to send this to
-    if ( behKey.getKey() != nil && fRecvr.Count() > 0)
+    if ( behKey.getKey() && fRecvr.Count() > 0)
     {
         // must determine if the behKey is pointing to Single or Multi Shot behavior
-        if ( plOneShotMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
+        if (plOneShotMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()))
         {
             // create a message OneShotMessage
             plOneShotMsg* pMsg = new plOneShotMsg;
-            // check if this needs to be network forced to all clients
-            if (netProp)
-            {
-                pMsg->SetBCastFlag(plMessage::kNetPropagate);
-            }
-            else
-            {
-                pMsg->SetBCastFlag(plMessage::kNetPropagate, false);
-            }
-
-            if (netForce)
-            {
-                // set the network propagate flag to make sure it gets to the other clients
-                pMsg->SetBCastFlag(plMessage::kNetPropagate);
-                pMsg->SetBCastFlag(plMessage::kNetForce);
-            }
-            else
-            {
-                pMsg->SetBCastFlag(plMessage::kNetForce, false);
-            }
-
+            pMsg->SetBCastFlag(plMessage::kNetPropagate, netProp || netForce);
+            pMsg->SetBCastFlag(plMessage::kNetForce, netForce);
             pMsg->SetSender(fSender);
             pMsg->AddReceiver(behKey.getKey());
-            int i;
-            for ( i=0; i<fRecvr.Count(); i++ )
-            {
+            for (int i = 0; i < fRecvr.Count(); i++) {
                 // make sure there is an avatar to set
-                if ( fRecvr[i] != nil )
-                {
-                    pMsg->fPlayerKey = (plKey)fRecvr[i];
-                    plgDispatch::MsgSend( pMsg );   // send off command for each valid avatar we find
-                                                    // ... really, should only be one... though
+                if (fRecvr[i]) {
+                    pMsg->fPlayerKey = fRecvr[i];
+                    pMsg->SendAndKeep(); // gotta keep the message so we can keep sending it
+                                         // there should really only be one avatar, though...
                 }
             }
+            pMsg->UnRef(); // done with our reference
         }
         // else if it is a Multistage guy
         else if ( plMultistageBehMod::ConvertNoRef(behKey.getKey()->GetObjectPtr()) != nil )
@@ -363,46 +342,62 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
 //  PARAMETERS : targetKey - target avatar pyKey
 //               activeAvatarAnim - animation name
 //               targetAvatarAnim - animation name
+//               range - how far away are we allowed to be? (default in glue: 6)
 //               dist - how close shall the avatar move? (default in glue: 3)
 //               move - shall he move at all? (default in glue: true)
 //
 //  PURPOSE    : Seek near another avatar and run animations on both
 //
-void cyAvatar::RunCoopAnim(pyKey &targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float dist, bool move)
+bool cyAvatar::RunCoopAnim(pyKey& targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float range, float dist, bool move)
 {
-    if (fRecvr.Count() > 0 && fRecvr[0] != nil) {
+    if (fRecvr.Count() > 0 && fRecvr[0]) {
         // get the participating avatars
-        plArmatureMod *activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
-        plArmatureMod *targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
+        plArmatureMod* activeAv = plAvatarMgr::FindAvatar(fRecvr[0]);
+        plArmatureMod* targetAv = plAvatarMgr::FindAvatar(targetKey.getKey());
+
         if (activeAv && targetAv) {
+            // build the gender-specific animation name
+            activeAvatarAnim = activeAv->MakeAnimationName(activeAvatarAnim);
+            targetAvatarAnim = targetAv->MakeAnimationName(targetAvatarAnim);
+
             // set seek position and rotation of the avatars
             hsPoint3 avPos, targetPos;
-            activeAv->GetPositionAndRotationSim(&avPos, nil);
-            targetAv->GetPositionAndRotationSim(&targetPos, nil);
+            activeAv->GetPositionAndRotationSim(&avPos, nullptr);
+            targetAv->GetPositionAndRotationSim(&targetPos, nullptr);
             hsVector3 av2target(&targetPos, &avPos); //targetPos - avPos
+            if (av2target.Magnitude() > range)
+                return false;
             av2target.Normalize();
             if (move)
                 avPos = targetPos - dist * av2target;
+
             // create the messages and let one task queue the next
-            plAvOneShotMsg *avAnim = new plAvOneShotMsg(nil, fRecvr[0], fRecvr[0], 0, true, activeAvatarAnim, false, false);
-            avAnim->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
-            plAvOneShotMsg *targetAnim = new plAvOneShotMsg(nil, targetKey.getKey(), targetKey.getKey(), 0, true, targetAvatarAnim, false, false);
-            targetAnim->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+            const int bcastToNetMods = plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers;
+            plAvOneShotMsg *avAnim = new plAvOneShotMsg(nullptr, fRecvr[0], fRecvr[0], 0.f, true, activeAvatarAnim, false, false);
+            avAnim->SetBCastFlag(bcastToNetMods);
+
+            plAvOneShotMsg *targetAnim = new plAvOneShotMsg(nullptr, targetKey.getKey(), targetKey.getKey(), 0.f, true, targetAvatarAnim, false, false);
+            targetAnim->SetBCastFlag(bcastToNetMods);
             targetAnim->fFinishMsg = avAnim;
-            plAvSeekMsg *targetSeek = new plAvSeekMsg(nil, targetKey.getKey(), nil, 0, true);
-            targetSeek->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+
+            plAvSeekMsg *targetSeek = new plAvSeekMsg(nullptr, targetKey.getKey(), nullptr, 0.f, true);
+            targetSeek->SetBCastFlag(bcastToNetMods);
             targetSeek->fTargetPos = targetPos;
             targetSeek->fTargetLookAt = avPos;
             targetSeek->fFinishMsg = targetAnim;
-            plAvSeekMsg *avSeek = new plAvSeekMsg(nil, fRecvr[0], nil, 0, true);
-            avSeek->SetBCastFlag(plMessage::kNetPropagate | plMessage::kNetForce | plMessage::kPropagateToModifiers);
+
+            plAvSeekMsg *avSeek = new plAvSeekMsg(nullptr, fRecvr[0], nullptr, 0.f, true);
+            avSeek->SetBCastFlag(bcastToNetMods);
             avSeek->fTargetPos = avPos;
             avSeek->fTargetLookAt = targetPos;
             avSeek->fFinishMsg = targetSeek;
-            // start the circus
+
+            // start the circus, messages are processed "backwards"
             avSeek->Send();
+            return true;
         }
     }
+    return false;
 }
 
 
@@ -1278,7 +1273,7 @@ PyObject* cyAvatar::GetTintClothingItemL(const plString& clothing_name, uint8_t 
         }
     }
 
-    plString errmsg = plString::Format("Cannot find clothing item %s to find out what tint it is", clothing_name.c_str());
+    plString errmsg = plFormat("Cannot find clothing item {} to find out what tint it is", clothing_name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     // returning nil means an error occurred
     return nil;
@@ -1679,7 +1674,7 @@ void cyAvatar::ChangeAvatar(const char* genderName)
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetAvatarShapeName(wStr);
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     }
 }
 
@@ -1699,7 +1694,7 @@ void cyAvatar::ChangePlayerName(const char* playerName)
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetPlayerName(wStr);
-        rvnPlr->DecRef();
+        rvnPlr->UnRef();
     } 
 }
 
@@ -1816,35 +1811,10 @@ bool cyAvatar::ExitPBMode()
 //
 //  PURPOSE    : Makes the avatar enter a custom anim loop.
 //
-void cyAvatar::EnterAnimMode(plString animName)
+bool cyAvatar::EnterAnimMode(const plString& animName)
 {
-    plArmatureMod *fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
-    if (!fAvMod->FindAnimInstance(animName)) {
-        plKey avKey = fAvMod->GetKey();
-        plAvAnimTask *animTask = new plAvAnimTask(animName, 0.0, 1.0, 1.0, 0.0, true, true, true);
-        plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
-        taskMsg->SetBCastFlag(plMessage::kNetPropagate);
-        taskMsg->Send();
-    }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : ExitAnimMode
-//  PARAMETERS : animName - string
-//
-//  PURPOSE    : Makes the avatar stop the custom anim loop.
-//
-void cyAvatar::ExitAnimMode(plString animName)
-{
-    plArmatureMod *fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
-    if (fAvMod->FindAnimInstance(animName)) {
-        plKey avKey = fAvMod->GetKey();
-        plAvAnimTask *animTask = new plAvAnimTask(animName, -1.0);
-        plAvTaskMsg *taskMsg = new plAvTaskMsg(avKey, avKey, animTask);
-        taskMsg->SetBCastFlag(plMessage::kNetPropagate);
-        taskMsg->Send();
-    }
+    plArmatureMod* fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
+    return PushRepeatEmote(fAvMod, animName);
 }
 
 

@@ -40,10 +40,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plMatrixUpdateMsg.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plMatrixUpdateMsg.h"
 
 void plMatrixUpdateMsg::Read(hsStream* stream, hsResMgr* mgr)
 {

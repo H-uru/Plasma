@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 
-#define SAFE(s) ((s)?(s):"(nil)")
+#define SAFE(s) ((s).IsEmpty() ? "(nil)" : (s))
 #define kComma  ","
 #define kEmpty  ""
 #define kSemicolon  ";"
@@ -119,11 +119,11 @@ bool plAgeInfoStruct::IsEqualTo( const plAgeInfoStruct * other ) const
     // otherwise compare everything.
     bool match = true;
     if (match && HasAgeFilename() && other->HasAgeFilename())
-        match = match && ( stricmp( GetAgeFilename(), other->GetAgeFilename() )==0 );
+        match = match && ( GetAgeFilename().CompareI( other->GetAgeFilename() )==0 );
     if (match && HasAgeInstanceName() && other->HasAgeInstanceName())
-        match = match && ( stricmp( GetAgeInstanceName(), other->GetAgeInstanceName() )==0 );
+        match = match && ( GetAgeInstanceName().CompareI( other->GetAgeInstanceName() )==0 );
     if (match && HasAgeUserDefinedName() && other->HasAgeUserDefinedName())
-        match = match && ( stricmp( GetAgeUserDefinedName(), other->GetAgeUserDefinedName() )==0 );
+        match = match && ( GetAgeUserDefinedName().CompareI( other->GetAgeUserDefinedName() )==0 );
     if (match && HasAgeSequenceNumber() && other->HasAgeSequenceNumber())
         match = match && fAgeSequenceNumber==other->GetAgeSequenceNumber();
     if (match && HasAgeLanguage() && other->HasAgeLanguage())
@@ -238,9 +238,9 @@ plString plAgeInfoStruct::AsString() const
 }
 
 
-void plAgeInfoStruct::SetAgeFilename( const char * v )
+void plAgeInfoStruct::SetAgeFilename( const plString & v )
 {
-    if ( v && v[0])
+    if (!v.IsEmpty())
     {
         SetFlag( kHasAgeFilename );
         fAgeFilename=v;
@@ -251,9 +251,9 @@ void plAgeInfoStruct::SetAgeFilename( const char * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeInstanceName( const char * v )
+void plAgeInfoStruct::SetAgeInstanceName( const plString & v )
 {
-    if ( v && v[0])
+    if (!v.IsEmpty())
     {
         SetFlag( kHasAgeInstanceName );
         fAgeInstanceName=v;
@@ -278,9 +278,9 @@ void plAgeInfoStruct::SetAgeInstanceGuid( const plUUID * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeUserDefinedName( const char * v )
+void plAgeInfoStruct::SetAgeUserDefinedName( const plString & v )
 {
-    if ( v && v[0])
+    if (!v.IsEmpty())
     {
         SetFlag( kHasAgeUserDefinedName );
         fAgeUserDefinedName=v;
@@ -304,9 +304,9 @@ void plAgeInfoStruct::SetAgeSequenceNumber( uint32_t v )
     }
 }
 
-void plAgeInfoStruct::SetAgeDescription( const char * v )
+void plAgeInfoStruct::SetAgeDescription( const plString & v )
 {
-    if ( v && v[0])
+    if (!v.IsEmpty())
     {
         SetFlag( kHasAgeDescription );
         fAgeDescription=v;
@@ -332,12 +332,12 @@ void plAgeInfoStruct::SetAgeLanguage( uint32_t v )
 
 void plAgeInfoStruct::UpdateFlags() const
 {
-    SetFlag( kHasAgeFilename, fAgeFilename.size()!=0 );
-    SetFlag( kHasAgeInstanceName, fAgeInstanceName.size()!=0 );
-    SetFlag( kHasAgeUserDefinedName, fAgeUserDefinedName.size()!=0 );
+    SetFlag( kHasAgeFilename, !fAgeFilename.IsEmpty() );
+    SetFlag( kHasAgeInstanceName, !fAgeInstanceName.IsEmpty() );
+    SetFlag( kHasAgeUserDefinedName, !fAgeUserDefinedName.IsEmpty() );
     SetFlag( kHasAgeInstanceGuid, fAgeInstanceGuid.IsSet() );
     SetFlag( kHasAgeSequenceNumber, fAgeSequenceNumber!=0 );
-    SetFlag( kHasAgeDescription, fAgeDescription.size()!=0 );
+    SetFlag( kHasAgeDescription, !fAgeDescription.IsEmpty() );
     SetFlag( kHasAgeLanguage, fAgeLanguage>=0 );
 }
 
@@ -622,7 +622,7 @@ plString plNetServerSessionInfo::AsString() const
     {
         ss  << spacer
             << "N:"
-            << SAFE(fServerName.c_str());
+            << SAFE(fServerName);
         spacer = kComma;
     }
     if (HasServerGuid())
@@ -636,7 +636,7 @@ plString plNetServerSessionInfo::AsString() const
     {
         ss  << spacer
             << "A:["
-            << SAFE(fServerAddr.c_str())
+            << SAFE(fServerAddr)
             << ":"
             << fServerPort
             << "]";
@@ -662,14 +662,14 @@ plString plNetServerSessionInfo::AsLogString() const
     if (HasServerName())
     {
         ss << typeName << "Name" << "=";
-        ss << fServerName.c_str();
+        ss << fServerName;
         ss << spacer;
     }
 
     if (HasServerAddr())
     {
         ss << typeName << "Addr" << "=";
-        ss << fServerAddr.c_str();
+        ss << fServerAddr;
         ss << spacer;
     }
 
@@ -696,27 +696,26 @@ bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) con
     if (match && IsFlagSet(kHasServerGuid) && other->IsFlagSet(kHasServerGuid))
         match = match && fServerGuid.IsEqualTo(other->GetServerGuid());
     if (match && IsFlagSet(kHasServerName) && other->IsFlagSet(kHasServerName))
-        match = match && (stricmp(fServerName.c_str(),other->fServerName.c_str())==0);
+        match = match && (fServerName.CompareI(other->fServerName)==0);
     if (match && IsFlagSet(kHasServerType) && other->IsFlagSet(kHasServerType))
         match = match && fServerType==other->fServerType;
     if (match && IsFlagSet(kHasServerAddr) && other->IsFlagSet(kHasServerAddr))
-        match = match && (stricmp(fServerAddr.c_str(),other->fServerAddr.c_str())==0);
+        match = match && (fServerAddr.CompareI(other->fServerAddr)==0);
     if (match && IsFlagSet(kHasServerPort) && other->IsFlagSet(kHasServerPort))
         match = match && fServerPort==other->fServerPort;
     return match;
 }
 
 
-void plNetServerSessionInfo::SetServerName(const char * val)
+void plNetServerSessionInfo::SetServerName(const plString & val)
 {
-    if (val)
+    fServerName = val;
+    if (!val.IsEmpty())
     {
-        fServerName=val;
         SetFlag(kHasServerName);
     }
     else
     {
-        fServerName="";
         ClearFlag(kHasServerName);
     }
 }
@@ -735,16 +734,15 @@ void plNetServerSessionInfo::SetServerType(uint8_t val)
     }
 }
 
-void plNetServerSessionInfo::SetServerAddr(const char * val)
+void plNetServerSessionInfo::SetServerAddr(const plString & val)
 {
-    if (val)
+    fServerAddr = val;
+    if (!val.IsEmpty())
     {
-        fServerAddr = val;
         SetFlag(kHasServerAddr);
     }
     else
     {
-        fServerAddr = "";
         ClearFlag(kHasServerAddr);
     }
 }

@@ -2608,10 +2608,10 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         uint32_t idx;
         uint16_t width, height, y, x, ascent, lastX, lastY;
         
-        uint8_t       fontFlags, fontSize;
-        const wchar_t *fontFace;
+        uint8_t     fontFlags, fontSize;
+        plString    fontFace;
         hsColorRGBA fontColor;
-        int16_t       fontSpacing;
+        int16_t     fontSpacing;
         bool        needSFX = false;
 
         // Find and set initial font properties
@@ -3036,11 +3036,11 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, ui
         static int uniqueSuffix = 0;
         plString buff;
 
-        buff = plString::Format("%s_%d_ml", GetKey()->GetName().c_str(), uniqueSuffix);
+        buff = plFormat("{}_{}_ml", GetKey()->GetName(), uniqueSuffix);
         layer = new plLayer;
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
-        buff = plString::Format("%s_%d_m", GetKey()->GetName().c_str(), uniqueSuffix++);
+        buff = plFormat("{}_{}_m", GetKey()->GetName(), uniqueSuffix++);
         movieLayer = new plLayerBink;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
@@ -3183,7 +3183,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plString::Format("%s_%d", GetKey()->GetName().c_str(), uniqueSuffix++);
+    plString buff = plFormat("{}_{}", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3237,7 +3237,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plString::Format("%s_%d_d", GetKey()->GetName().c_str(), uniqueSuffix++);
+    plString buff = plFormat("{}_{}_d", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3339,7 +3339,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterf
 // Starting at the given chunk, works backwards to determine the full set of current
 // font properties at that point, or assigns defaults if none were specified
 
-void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
+void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, plString &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
 {
     enum Which
     {
@@ -3369,7 +3369,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, 
             // What do we (still) need?
             if( !( found & kFace ) && chunk->fText != L"" )
             {
-                face = chunk->fText.c_str();
+                face = plString::FromWchar(chunk->fText.c_str());
                 found |= kFace;
             }
             if( !( found & kSize ) && chunk->fFontSize > 0 )
@@ -3403,7 +3403,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, const wchar_t *&face, 
 
     // Set any un-found defaults
     if( !( found & kFace ) )
-        face = L"Arial";
+        face = "Arial";
     if( !( found & kSize ) )
         size = 24;
     if( !( found & kFlags ) )

@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pfMessage/pfGameGUIMsg.h"
+#include "plMessage/plDeviceRecreateMsg.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "pnSceneObject/plAudioInterface.h"
@@ -85,7 +86,7 @@ void    pfGUIColorScheme::IReset( void )
     fSelForeColor.Set( 1, 1, 1, 1 );
     fSelBackColor.Set( 0, 0, 1, 1 );
     fTransparent = false;
-    fFontFace = hsStrcpy( "Times New Roman" );
+    fFontFace = "Times New Roman";
     fFontSize = 10;
     fFontFlags = 0;
 }
@@ -95,11 +96,6 @@ pfGUIColorScheme::pfGUIColorScheme()
     IReset();
 }
 
-pfGUIColorScheme::~pfGUIColorScheme()
-{
-    delete [] fFontFace;
-}
-
 pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backColor )
 {
     IReset();
@@ -107,18 +103,12 @@ pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backCol
     fBackColor = backColor;
 }
 
-pfGUIColorScheme::pfGUIColorScheme( const char *face, uint8_t size, uint8_t fontFlags )
+pfGUIColorScheme::pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags )
 {
     IReset();
-    fFontFace = hsStrcpy( face );
+    fFontFace = face;
     fFontSize = size;
     fFontFlags = fontFlags;
-}
-
-void    pfGUIColorScheme::SetFontFace( const char *face )
-{
-    delete [] fFontFace;
-    fFontFace = hsStrcpy( face );
 }
 
 void    pfGUIColorScheme::Read( hsStream *s )
@@ -129,7 +119,6 @@ void    pfGUIColorScheme::Read( hsStream *s )
     fSelBackColor.Read( s );
     fTransparent = s->ReadBOOL();
 
-    delete [] fFontFace;
     fFontFace = s->ReadSafeString();
     s->ReadLE( &fFontSize );
     s->ReadLE( &fFontFlags );
@@ -584,14 +573,16 @@ plProfile_CreateTimer("Gui", "RenderSetup", GUITime);
 bool    pfGUIControlMod::MsgReceive( plMessage *msg )
 {
     plRenderMsg* rend = plRenderMsg::ConvertNoRef( msg );
+    plDeviceRecreateMsg* device = plDeviceRecreateMsg::ConvertNoRef(msg);
+    if (rend || device) {
+        plPipeline* pipe = rend ? rend->Pipeline() : device->Pipeline();
 
-    if( rend )
-    {
         plProfile_BeginLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
-        // Only need it once
-        if( ISetUpDynTextMap( rend->Pipeline() ) )
-            plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), GetKey() );
+        ISetUpDynTextMap(pipe);
         plProfile_EndLap(GUITime, this->GetKey()->GetUoid().GetObjectName().c_str());
+
+        if (rend)
+            plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
         return true;
     }
 
@@ -603,12 +594,16 @@ bool    pfGUIControlMod::MsgReceive( plMessage *msg )
             if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
             {
                 fDynTextMap = plDynamicTextMap::ConvertNoRef( refMsg->GetRef() );
-                // Register for a render msg so we can leech the material when we finally
-                // have a pipeline to work with
+
+                // These tell us when we need to (re-)initialize the DTM
                 plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), GetKey() );
+                plgDispatch::Dispatch()->RegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
             }
             else
-                fDynTextMap = nil;
+            {
+                fDynTextMap = nullptr;
+                plgDispatch::Dispatch()->UnRegisterForExactType( plDeviceRecreateMsg::Index(), GetKey() );
+            }
             return true;
         }
         else if( refMsg->fType == kRefDynTextLayer )
@@ -688,7 +683,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     extraH -= height;
 
     fDynTextMap->Reset();
-    fDynTextMap->Create( width, height, HasFlag( kXparentBgnd ), extraW, extraH );
+    fDynTextMap->Create( width, height, HasFlag( kXparentBgnd ), extraW, extraH, true );
 
     fDynTextMap->SetFont( GetColorScheme()->fFontFace, GetColorScheme()->fFontSize, GetColorScheme()->fFontFlags,
                             HasFlag( kXparentBgnd ) ? false : true );
@@ -699,6 +694,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
     // out with 1:1 mapping from textel to pixel
     plLayer *layer = (plLayer *)fDynTextLayer;
     layer->SetTransform( fDynTextMap->GetLayerTransform() );
+    layer->SetBlendFlags( layer->GetBlendFlags() | hsGMatState::kBlendAlphaPremultiplied );
 
     // Let the derived classes do their things
     IPostSetUpDynTextMap();

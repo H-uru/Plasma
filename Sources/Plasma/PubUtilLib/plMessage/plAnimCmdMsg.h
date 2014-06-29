@@ -45,11 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessageWithCallbacks.h"
 #include "hsBitVector.h"
-#include "hsTemplates.h"
-#include "hsGeometry3.h"
 #include "plString.h"
-#include "plInterp/plAnimEaseTypes.h"
-#include "plInterp/plAnimTimeConvert.h"
 
 class plAGAnimInstance;
 
@@ -112,7 +108,7 @@ public:
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
     void SetAnimName(const plString &name) { fAnimName = name; }
-    plString GetAnimName() { return fAnimName; }
+    plString GetAnimName() const { return fAnimName; }
     bool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
 
     void SetLoopName(const plString &name) { fLoopName = name; }
@@ -166,8 +162,8 @@ public:
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
-    void SetAnimName(const plString &name);
-    plString GetAnimName();
+    void SetAnimName(const plString& name) { fAnimName = name; }
+    plString GetAnimName() const { return fAnimName; }
 
     float fBlend;
     float fBlendRate;
@@ -209,13 +205,13 @@ public:
 
     CLASSNAME_REGISTER( plAGDetachCallbackMsg );
     GETINTERFACE_ANY( plAGDetachCallbackMsg, plEventCallbackMsg );
-    
+
     // These aren't meant to go across the net, so no IO necessary.
     void Read(hsStream* stream, hsResMgr* mgr) {}
     void Write(hsStream* stream, hsResMgr* mgr) {}
-    
-    void SetAnimName(const plString &name);
-    plString GetAnimName();
+
+    void SetAnimName(const plString& name) { fAnimName = name; }
+    plString GetAnimName() const { return fAnimName; }
 };
 
 

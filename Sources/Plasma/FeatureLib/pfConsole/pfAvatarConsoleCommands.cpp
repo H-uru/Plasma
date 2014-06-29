@@ -368,11 +368,11 @@ PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the na
         
         // Setup the event data in case this is a OneShot responder that needs it
         plKey playerKey = plAvatarMgr::GetInstance()->GetLocalAvatar()->GetKey();
-        proPickedEventData *ed = new proPickedEventData;
-        ed->fPicker = playerKey;
-        ed->fPicked = key; // ???
-        msg->AddEvent(ed);
-        
+        proPickedEventData ed;
+        ed.fPicker = playerKey;
+        ed.fPicked = key; // ???
+        msg->AddEvent(&ed);
+
         // Send it to the responder modifier
         msg->AddReceiver(key);
         plgDispatch::MsgSend(msg);

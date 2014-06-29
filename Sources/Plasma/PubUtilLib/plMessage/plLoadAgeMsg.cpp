@@ -39,14 +39,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
-#include "plLoadAgeMsg.h"
-#include "hsResMgr.h"
 
 #include "hsBitVector.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
 
-void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)    
-{   
+#include "plLoadAgeMsg.h"
+
+void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
     plMessage::IMsgRead(stream, mgr);   
 
     // read agename
@@ -99,7 +101,7 @@ void plLoadAgeMsg::ReadVersion(hsStream* s, hsResMgr* mgr)
     if (contentFlags.IsBitSet(kLoadAgeAgeName))
     {
         // read agename
-        fAgeFilename = s->ReadSafeString_TEMP();
+        fAgeFilename = s->ReadSafeString();
     }
 
     if (contentFlags.IsBitSet(kLoadAgeUnload))

@@ -68,7 +68,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTime, "DEPRECIATED - use ptDniInf
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeName, "Returns filename of previous age visited")
 {
-    return PyString_FromString(cyMisc::GetPrevAgeName());
+    return PyString_FromPlString(cyMisc::GetPrevAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeInfo, "Returns ptAgeInfoStruct of previous age visited")

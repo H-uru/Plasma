@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 // other
+#include "plInterp/plAnimEaseTypes.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "pnMessage/plSDLNotificationMsg.h"
@@ -799,7 +800,7 @@ bool plAGMasterMod::HasRunningAnims()
 //
 // Send SDL sendState msg to object's plAGMasterSDLModifier
 //
-bool plAGMasterMod::DirtySynchState(const char* SDLStateName, uint32_t synchFlags)
+bool plAGMasterMod::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
 {
     if(GetNumTargets() > 0 && (!fIsGrouped || fIsGroupMaster))
     {

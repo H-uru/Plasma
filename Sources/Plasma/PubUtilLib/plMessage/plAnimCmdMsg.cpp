@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "HeadSpin.h"
-#include "plAnimCmdMsg.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plAnimCmdMsg.h"
 
 plAnimCmdMsg::~plAnimCmdMsg()
 {
@@ -86,8 +87,8 @@ void plAnimCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fSpeedChangeRate);
     stream->ReadLE(&fTime);
 
-    fAnimName = stream->ReadSafeString_TEMP();
-    fLoopName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
+    fLoopName = stream->ReadSafeString();
 }
 
 void plAnimCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -114,16 +115,6 @@ plAGCmdMsg::~plAGCmdMsg()
     ClearCmd();
 }
 
-void plAGCmdMsg::SetAnimName(const plString &name)
-{
-    fAnimName = name;
-}
-
-plString plAGCmdMsg::GetAnimName()
-{
-    return fAnimName;
-}
-
 void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
@@ -134,7 +125,7 @@ void plAGCmdMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&fAmp);
     stream->ReadLE(&fAmpRate);
 
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
 }
 
 void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
@@ -150,14 +141,3 @@ void plAGCmdMsg::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteSafeString(fAnimName);
 }
 
-/////////////////////////////////////////////////////////////////////////////////////
-
-void plAGDetachCallbackMsg::SetAnimName(const plString &name)
-{
-    fAnimName = name;
-}
-
-plString plAGDetachCallbackMsg::GetAnimName()
-{
-    return fAnimName;
-}

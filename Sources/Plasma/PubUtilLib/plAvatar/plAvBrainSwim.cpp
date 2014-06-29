@@ -232,9 +232,10 @@ public:
 const float plAvBrainSwim::kMinSwimDepth = 4.0f;
 
 plAvBrainSwim::plAvBrainSwim() : 
-    fSwimStrategy(nil),
+    fSwimStrategy(nullptr),
     fMode(kWalking),
-    fSurfaceDistance(0.f)
+    fSurfaceDistance(0.f),
+    fCurrentRegion(nullptr)
 {
     fSurfaceProbeMsg = new plLOSRequestMsg();
     fSurfaceProbeMsg->SetReportType(plLOSRequestMsg::kReportHitOrMiss);
@@ -618,11 +619,11 @@ void plAvBrainSwim::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
     y += lineHeight;
 
     float buoy = fSwimStrategy ? fSwimStrategy->GetBuoyancy() : 0.0f;
-    debugTxt.DrawString(x, y, plString::Format("Distance to surface: %f Buoyancy: %f", fSurfaceDistance, buoy));
+    debugTxt.DrawString(x, y, plFormat("Distance to surface: {f} Buoyancy: {f}", fSurfaceDistance, buoy));
     y += lineHeight;
 
     hsVector3 linV = fAvMod->GetController()->GetAchievedLinearVelocity();
-    debugTxt.DrawString(x, y, plString::Format("Linear Velocity: (%5.2f, %5.2f, %5.2f)", linV.fX, linV.fY, linV.fZ));
+    debugTxt.DrawString(x, y, plFormat("Linear Velocity: ({5.2f}, {5.2f}, {5.2f})", linV.fX, linV.fY, linV.fZ));
     y += lineHeight;
     
     int i;

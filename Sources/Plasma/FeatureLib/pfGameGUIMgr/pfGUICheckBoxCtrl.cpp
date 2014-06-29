@@ -96,7 +96,7 @@ void    pfGUICheckBoxCtrl::Read( hsStream *s, hsResMgr *mgr )
     for( i = 0; i < count; i++ )
         fAnimationKeys.Append( mgr->ReadKey( s ) );
 
-    fAnimName = s->ReadSafeString_TEMP();
+    fAnimName = s->ReadSafeString();
     fChecked = s->ReadBool();
 }
 

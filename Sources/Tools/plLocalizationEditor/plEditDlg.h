@@ -43,30 +43,69 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pfEditDlg_h
 #define _pfEditDlg_h
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
+#include <QMainWindow>
+#include "plString.h"
 
-class plString;
+class QTreeWidgetItem;
+
+class EditDialog : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    EditDialog();
+    virtual ~EditDialog();
+
+    void SetTitle(const QString &path)
+    {
+        QString title = "plLocalizationEditor";
+        if (!path.isEmpty())
+            title += " - " + path;
+        setWindowTitle(title);
+    }
+
+    void SaveLocalizationText();
+    void LoadLocalization(const plString &path);
+    void EnableEdit(bool enable);
+
+protected:
+    virtual void closeEvent(QCloseEvent *event);
+
+private slots:
+    void OpenDataDirectory();
+    void SaveToCurrent();
+    void SaveToDirectory();
+
+    void LocPathChanged(QTreeWidgetItem *current, QTreeWidgetItem *);
+    void AddClicked();
+    void DeleteClicked();
+
+private:
+    class Ui_EditDialog *fUI;
+    QString fCurrentSavePath;
+    plString fCurrentLocPath;
+
+    enum { kEditNothing, kEditElement, kEditLocalization } fEditMode;
+};
 
 // Little trick to show a wait cursor while something is working
 class plWaitCursor
 {
-    HCURSOR    fOrig;
+    QWidget *fParent;
+
 public:
-    plWaitCursor()
+    plWaitCursor(QWidget *parent) : fParent(parent)
     {
-        fOrig = SetCursor(LoadCursor(NULL, IDC_WAIT));
+        fParent->setCursor(Qt::WaitCursor);
     }
 
     ~plWaitCursor()
     {
-        SetCursor(fOrig);
+        fParent->unsetCursor();
     }
 };
 
-void SplitLocalizationPath(plString path, plString &ageName, plString &setName, plString &locName, plString &locLanguage);
-void SaveLocalizationText();
-void UpdateEditDlg(plString subtitlePath);
-BOOL CALLBACK EditDlgProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+void SplitLocalizationPath(const plString &path, plString &ageName,
+        plString &setName, plString &locName, plString &locLanguage);
 
 #endif

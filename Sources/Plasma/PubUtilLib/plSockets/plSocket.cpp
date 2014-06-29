@@ -151,7 +151,7 @@ bool plSocket::IsBlocking()
 #ifdef BSDBLOCK
 #error "BSDBLOCK: TODO: IsBlocking() for bsd."
 #else
-    int ans = plNet::Ioctl(fSocket,FIONBIO,NULL);
+    int ans = plNet::Ioctl(fSocket,FIONBIO,nullptr);
     return (ans!=0);
 #endif
 }

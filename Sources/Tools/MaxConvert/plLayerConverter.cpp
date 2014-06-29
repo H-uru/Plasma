@@ -570,10 +570,10 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     if( anchor == maxNode )
     {
         // Self-anchoring material, make sure the name is unique via the nodeName
-        texName = plString::Format( "%s_cubicRT@%s", plasmaLayer->GetKeyName().c_str(), maxNode->GetName() );
+        texName = plFormat("{}_cubicRT@{}", plasmaLayer->GetKeyName(), maxNode->GetName());
     }
     else
-        texName = plString::Format( "%s_cubicRT", plasmaLayer->GetKeyName().c_str() );
+        texName = plFormat("{}_cubicRT", plasmaLayer->GetKeyName());
 
     plBitmap *texture = (plBitmap *)IMakeCubicRenderTarget( texName, maxNode, anchor );
     if( texture )
@@ -776,10 +776,8 @@ static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 
 plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loClamp, int hiClamp)
 {
-    plString funkName = plString::Format("%s_%d_%d",
-        isAdd ? "AttenRampAdd" : "AttenRampMult",
-        loClamp,
-        hiClamp);
+    plString funkName = plFormat("{}_{}_{}", isAdd ? "AttenRampAdd" : "AttenRampMult",
+                                 loClamp, hiClamp);
 
     float range = float(hiClamp - loClamp) * 1.e-2f;
     float lowest = float(loClamp) * 1.e-2f;
@@ -1003,7 +1001,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const plString &layerN
     
     // Need a unique key name for every layer that uses one. We could also key
     // off of width and height, but layerName should be more than plenty
-    plString texName = plString::Format( "%s_dynText", layerName.c_str() );
+    plString texName = plFormat("{}_dynText", layerName);
 
     // Does it already exist?
     key = node->FindPageKey( plDynamicTextMap::Index(), texName );
@@ -1124,7 +1122,7 @@ plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const plString &n
 
     /// Now make a modifier
     plCubicRenderTargetModifier *mod = new plCubicRenderTargetModifier();
-    plString modName = plString::Format( "%s_mod", name.c_str() );
+    plString modName = plFormat("{}_mod", name);
 
     hsgResMgr::ResMgr()->NewKey( modName, mod, node->GetLocation() );
     hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), new plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );

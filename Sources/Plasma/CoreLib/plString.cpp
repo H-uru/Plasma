@@ -43,10 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <functional>
 #include <memory>
-#include <wchar.h>
+#include <cwchar>
 #pragma hdrstop
 
 #include "plString.h"
+#include "plFormat.h"
 #include <regex>
 
 const plString plString::Null;
@@ -56,45 +57,33 @@ const plString plString::Null;
 #endif
 
 #if WCHAR_BYTES == 2
-#define u16slen(str, max) wcsnlen((const wchar_t *)(str), (max))
+#define u16slen(str) wcslen(reinterpret_cast<const wchar_t *>(str))
 #else
-static inline size_t u16slen(const uint16_t *ustr, size_t max)
+static inline size_t u16slen(const uint16_t *ustr)
 {
     size_t length = 0;
-    for ( ; *ustr++ && max--; ++length)
+    for ( ; *ustr++; ++length)
         ;
     return length;
 }
 #endif
 
-/* Provide strnlen and wcsnlen for MinGW which doesn't have them */
-#ifdef __MINGW32__
-size_t strnlen(const char *s, size_t maxlen)
-{
-    size_t len;
-    for (len = 0; len < maxlen && *s; len++, s++) { }
-    return len;
-}
-
-size_t wcsnlen(const wchar_t *s, size_t maxlen)
-{
-    size_t len;
-    for (len = 0; len < maxlen && *s; len++, s++) { }
-    return len;
-}
-#endif
-
 #define BADCHAR_REPLACEMENT (0xFFFDul)
+
+// This is 1GB worth of UTF-8 string data
+#define FREAKING_BIG (0x40000000)
 
 void plString::IConvertFromUtf8(const char *utf8, size_t size)
 {
+    hsAssert(size == STRLEN_AUTO || size < FREAKING_BIG, "Your string is WAAAAAY too big");
+
     if (!utf8) {
         fUtf8Buffer = plStringBuffer<char>();
         return;
     }
 
-    if ((int32_t)size < 0)
-        size = strnlen(utf8, -(int32_t)size);
+    if (size == STRLEN_AUTO)
+        size = strlen(utf8);
 
     operator=(plStringBuffer<char>(utf8, size));
 }
@@ -133,12 +122,14 @@ plString &plString::operator=(const plStringBuffer<char> &init)
 
 void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
 {
+    hsAssert(size == STRLEN_AUTO || size < FREAKING_BIG, "Your string is WAAAAAY too big");
+
     fUtf8Buffer = plStringBuffer<char>();
     if (!utf16)
         return;
 
-    if ((int32_t)size < 0)
-        size = u16slen(utf16, -(int32_t)size);
+    if (size == STRLEN_AUTO)
+        size = u16slen(utf16);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
@@ -212,12 +203,14 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
 
 void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
 {
+    hsAssert(size == STRLEN_AUTO || size < FREAKING_BIG, "Your string is WAAAAAY too big");
+
     fUtf8Buffer = plStringBuffer<char>();
     if (!ustr)
         return;
 
-    if ((int32_t)size < 0)
-        size = ustrlen(ustr, -(int32_t)size);
+    if (size == STRLEN_AUTO)
+        size = ustrlen(ustr);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
@@ -270,12 +263,14 @@ void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
 
 void plString::IConvertFromIso8859_1(const char *astr, size_t size)
 {
+    hsAssert(size == STRLEN_AUTO || size < FREAKING_BIG, "Your string is WAAAAAY too big");
+
     fUtf8Buffer = plStringBuffer<char>();
     if (!astr)
         return;
 
-    if ((int32_t)size < 0)
-        size = strnlen(astr, -(int32_t)size);
+    if (size == STRLEN_AUTO)
+        size = strnlen(astr, size);
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
@@ -615,7 +610,7 @@ bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
         if (std::regex_match(c_str(), re))
             return true;
     } catch (const std::regex_error& e) {
-        hsAssert(0, plString::Format("Regex match error: %s", e.what()).c_str());
+        hsAssert(0, plFormat("Regex match error: {}", e.what()).c_str());
     }
 
     return false;
@@ -639,7 +634,7 @@ std::vector<plString> plString::RESearch(const char *pattern,
         for (size_t i = 0; i < matches.size(); ++i)
             substrings[i] = matches[i].str().c_str();
     } catch (const std::regex_error& e) {
-        hsAssert(0, plString::Format("Regex search error: %s", e.what()).c_str());
+        hsAssert(0, plFormat("Regex search error: {}", e.what()).c_str());
     }
 
     return substrings;
@@ -699,6 +694,9 @@ plString plString::Trim(const char *charset) const
 plString plString::Substr(ssize_t start, size_t size) const
 {
     size_t maxSize = GetSize();
+
+    if (size == STRLEN_AUTO)
+        size = maxSize;
 
     if (start < 0) {
         // Handle negative indexes from the right of the string
@@ -919,10 +917,10 @@ plStringStream &plStringStream::operator<<(double num)
     return operator<<(buffer);
 }
 
-size_t ustrlen(const UniChar *ustr, size_t max)
+size_t ustrlen(const UniChar *ustr)
 {
     size_t length = 0;
-    for ( ; *ustr++ && max--; ++length)
+    for ( ; *ustr++; ++length)
         ;
     return length;
 }

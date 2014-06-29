@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 
-bool    plFontFreeType::ImportFreeType( const char *fontPath, Options *options, plBDFConvertCallback *callback )
+bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *options, plBDFConvertCallback *callback )
 {
     FT_Library  ftLibrary;
 
@@ -77,7 +77,7 @@ bool    plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
 
         // Load our font that we're converting
         FT_Face ftFace;
-        error = FT_New_Face( ftLibrary, fontPath, 0, &ftFace );
+        error = FT_New_Face( ftLibrary, fontPath.AsString().c_str(), 0, &ftFace );
         if( error == FT_Err_Unknown_File_Format )
         {
             // Unsupported inport format
@@ -100,9 +100,9 @@ bool    plFontFreeType::ImportFreeType( const char *fontPath, Options *options, 
         FT_GlyphSlot    ftSlot = ftFace->glyph;
         FT_ULong        ftChar;
         FT_UInt         ftIndex;
-        uint32_t          numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
+        uint32_t        numGlyphs = 0, totalHeight = 0, maxChar = 0, i;
         FT_Glyph        ftGlyphs[ kMaxGlyphs ];
-        uint16_t          glyphChars[ kMaxGlyphs ];
+        uint16_t        glyphChars[ kMaxGlyphs ];
         FT_Vector       ftAdvances[ kMaxGlyphs ];
         FT_BBox         ftGlyphBox, ftFontBox;
         FT_UInt         previous = 0;

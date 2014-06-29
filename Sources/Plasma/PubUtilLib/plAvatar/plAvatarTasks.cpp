@@ -465,7 +465,7 @@ void plAvAnimTask::LeaveAge(plArmatureMod *avatar)
 // READ
 void plAvAnimTask::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fInitialBlend = stream->ReadLEScalar();
     fTargetBlend = stream->ReadLEScalar();
     fFadeSpeed = stream->ReadLEScalar();
@@ -636,7 +636,7 @@ bool plAvOneShotTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, doubl
     }
     else
     {
-        plString buf = plString::Format("Oneshot: Can't find animation <%s>; all bets are off.", fAnimName.c_str());
+        plString buf = plFormat("Oneshot: Can't find animation <{}>; all bets are off.", fAnimName);
         hsAssert(false, buf.c_str());
         result = true;
     }
@@ -660,9 +660,6 @@ bool plAvOneShotTask::Process(plArmatureMod *avatar, plArmatureBrain *brain, dou
 
             if(--fWaitFrames == 0)
             {
-
-                plSceneObject *handle = avatar->GetTarget(0);
-
                 avatar->DetachAnimation(fAnimInstance);
                 avatar->GetRootAnimator()->Enable(false);
                 plAvBrainHuman *humanBrain = plAvBrainHuman::ConvertNoRef(brain);
@@ -802,8 +799,8 @@ void plAvOneShotLinkTask::Write(hsStream *stream, hsResMgr *mgr)
 void plAvOneShotLinkTask::Read(hsStream *stream, hsResMgr *mgr)
 {
     plAvOneShotTask::Read(stream, mgr);
-    fAnimName = stream->ReadSafeString_TEMP();
-    fMarkerName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
+    fMarkerName = stream->ReadSafeString();
 }
 
 void plAvOneShotLinkTask::SetMarkerName(const plString &name)

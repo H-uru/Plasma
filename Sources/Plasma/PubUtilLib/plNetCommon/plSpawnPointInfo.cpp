@@ -122,8 +122,5 @@ void plSpawnPointInfo::Reset()
 
 plString plSpawnPointInfo::AsString() const
 {
-    return plString::Format( "t:%s,n:%s,c:%s",
-        fTitle.c_str("(nil)"),
-        fSpawnPt.c_str("(nil)"),
-        fCameraStack.c_str("(nil)") );
+    return plFormat("t:{},n:{},c:{}", fTitle, fSpawnPt, fCameraStack);
 }

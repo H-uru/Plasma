@@ -42,10 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SERVER // we use stuff the server doesn't link with
 #ifndef NO_AV_MSGS
 
-#include "plAIMsg.h"
-
-#include "hsResMgr.h"
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plAIMsg.h"
 
 #include "plAvatar/plArmatureMod.h"
 
@@ -60,25 +60,20 @@ plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, 
     plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
     if (armMod)
         fBrainUserStr = armMod->GetUserStr();
-    else
-        fBrainUserStr = "";
 }
 
 void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    char* temp = stream->ReadSafeString();
-    if (temp)
-        fBrainUserStr = temp;
-    delete [] temp;
+    fBrainUserStr = stream->ReadSafeString();
 }
 
 void plAIMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteSafeString(fBrainUserStr.c_str());
+    stream->WriteSafeString(fBrainUserStr);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

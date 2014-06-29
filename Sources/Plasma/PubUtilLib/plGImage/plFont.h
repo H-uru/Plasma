@@ -116,6 +116,8 @@ class plFont : public hsKeyedObject
                                                 // value between the renderColor and the destColor and
                                                 // leave the alpha as-is
                                                 // This flag has no effect on monochrome fonts
+            kRenderAlphaPremultiplied = 0x00001000, // Destination has color values premultiplied by alpha
+            kRenderShadow             = 0x00002000, // Render text shadows
         };
 
         enum Flags
@@ -131,7 +133,7 @@ class plFont : public hsKeyedObject
         friend class plBDFCharsParser;
 
         // Font face and size. This is just used for IDing purposes, not for rendering
-        char    fFace[ 256 ];
+        plString  fFace;
         uint8_t   fSize;
         uint32_t  fFlags;
 
@@ -231,7 +233,15 @@ class plFont : public hsKeyedObject
         void    IRenderChar8To32( const plCharacter &c );
         void    IRenderChar8To32Alpha( const plCharacter &c );
         void    IRenderChar8To32FullAlpha( const plCharacter &c );
+        void    IRenderChar8To32AlphaPremultiplied( const plCharacter &c );
+        void    IRenderChar8To32AlphaPremShadow( const plCharacter &c );
         void    IRenderCharNull( const plCharacter &c );
+
+        uint32_t IGetCharPixel( const plCharacter &c, int32_t x, int32_t y )
+        {
+            // only for 8-bit characters
+            return (x < 0 || y < 0 || (uint32_t)x >= fWidth || (uint32_t)y >= c.fHeight) ? 0 : *(fBMapData + c.fBitmapOff + y*fWidth + x);
+        }
 
     public:
 
@@ -244,20 +254,20 @@ class plFont : public hsKeyedObject
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        const char  *GetFace( void ) const { return fFace; }
-        uint8_t       GetSize( void ) const { return fSize; }
-        uint16_t      GetFirstChar( void ) const { return fFirstChar; }
-        uint16_t      GetNumChars( void ) const { return fCharacters.GetCount(); }
-        uint32_t      GetFlags( void ) const { return fFlags; }
-        float    GetDescent( void ) const { return (float)fFontDescent; }
-        float    GetAscent( void ) const { return (float)fFontAscent; }
+        plString    GetFace( void ) const { return fFace; }
+        uint8_t     GetSize( void ) const { return fSize; }
+        uint16_t    GetFirstChar( void ) const { return fFirstChar; }
+        uint16_t    GetNumChars( void ) const { return fCharacters.GetCount(); }
+        uint32_t    GetFlags( void ) const { return fFlags; }
+        float       GetDescent( void ) const { return (float)fFontDescent; }
+        float       GetAscent( void ) const { return (float)fFontAscent; }
 
         uint32_t      GetBitmapWidth( void ) const { return fWidth; }
         uint32_t      GetBitmapHeight( void ) const { return fHeight; }
         uint8_t       GetBitmapBPP( void ) const { return fBPP; }
 
-        void    SetFace( const char *face );
-        void    SetSize( uint8_t size );
+        void    SetFace( const plString &face ) { fFace = face; }
+        void    SetSize( uint8_t size ) { fSize = size; }
         void    SetFlags( uint32_t flags ) { fFlags = flags; }
         void    SetFlag( uint32_t flag, bool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
         bool    IsFlagSet( uint32_t flag ) { if( fFlags & flag ) return true; return false; }
@@ -275,18 +285,18 @@ class plFont : public hsKeyedObject
         void    SetRenderClipping( int16_t x, int16_t y, int16_t width, int16_t height );
         void    SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t height );
 
-        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const char *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const plString &string, uint16_t *lastX = nil, uint16_t *lastY = nil );
         void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
 
-        uint16_t  CalcStringWidth( const char *string );
+        uint16_t  CalcStringWidth( const plString &string );
         uint16_t  CalcStringWidth( const wchar_t *string );
-        void    CalcStringExtents( const char *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
+        void    CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
         void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
-        bool    LoadFromFNT( const char *path );
+        bool    LoadFromFNT( const plFileName &path );
         bool    LoadFromFNTStream( hsStream *stream );
 
-        bool    LoadFromBDF( const char *path, plBDFConvertCallback *callback );
+        bool    LoadFromBDF( const plFileName &path, plBDFConvertCallback *callback );
         bool    LoadFromBDFStream( hsStream *stream, plBDFConvertCallback *callback );
 
         bool    LoadFromP2FFile( const plFileName &path );

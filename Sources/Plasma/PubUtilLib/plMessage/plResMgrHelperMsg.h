@@ -44,18 +44,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plResMgrHelperMsg_h
 
 #include "HeadSpin.h"
-#include "hsStream.h"
 #include "pnMessage/plMessage.h"
-#include "plResMgr/plResManagerHelper.h"
 
 class plResManagerHelper;
+class plResPageKeyRefList;
+
 class plResMgrHelperMsg : public plMessage
 {
 protected:
 
     friend class plResManagerHelper;
 
-    plResPageKeyRefList *fKeyList;
+    plResPageKeyRefList* fKeyList;
 
     uint8_t       fCommand;
 

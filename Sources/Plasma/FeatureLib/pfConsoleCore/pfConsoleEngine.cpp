@@ -152,11 +152,11 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
         if( group == pfConsoleCmdGroup::GetBaseGroup() )
             PrintFn("Base commands and groups:");
         else
-            PrintFn(plString::Format("Group %s:", group->GetName()).c_str());
+            PrintFn(plFormat("Group {}:", group->GetName()).c_str());
         PrintFn("  Subgroups:");
         for( subGrp = group->GetFirstSubGroup(); subGrp != nil; subGrp = subGrp->GetNext() )
         {
-            PrintFn(plString::Format("    %s", subGrp->GetName()).c_str());
+            PrintFn(plFormat("    {}", subGrp->GetName()).c_str());
         }
         PrintFn("  Commands:");
         for( cmd = group->GetFirstCommand(); cmd != nil; cmd = cmd->GetNext() )
@@ -167,7 +167,7 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
             }
             tempString[ i ] = 0;
 
-            PrintFn(plString::Format("    %s: %s", cmd->GetName(), tempString).c_str());
+            PrintFn(plFormat("    {}: {}", cmd->GetName(), tempString).c_str());
         }
 
         return true;
@@ -182,9 +182,9 @@ bool    pfConsoleEngine::PrintCmdHelp( char *name, void (*PrintFn)( const char *
     }
 
     /// That's it!
-    PrintFn(plString::Format("\nHelp for the command %s:", cmd->GetName()).c_str());
-    PrintFn(plString::Format("\\i%s", cmd->GetHelp()).c_str());
-    PrintFn(plString::Format("\\iUsage: %s", cmd->GetSignature()).c_str());
+    PrintFn(plFormat("\nHelp for the command {}:", cmd->GetName()).c_str());
+    PrintFn(plFormat("\\i{}", cmd->GetHelp()).c_str());
+    PrintFn(plFormat("\\iUsage: {}", cmd->GetSignature()).c_str());
 
     return true;
 }
@@ -368,12 +368,9 @@ bool    pfConsoleEngine::RunCommand( char *line, void (*PrintFn)( const char * )
                     cmd->GetSigEntry( (uint8_t)numParams ) != pfConsoleCmd::kNone ) )
     {
         // Print help string and return
-        static char     string[ 512 ];
-
         ISetErrorMsg( "" ); // Printed on next line
-        PrintFn( "Invalid parameters to command" );
-        sprintf( string, "Usage: %s", cmd->GetSignature() );
-        PrintFn( string );
+        PrintFn("Invalid parameters to command");
+        PrintFn(plFormat("Usage: {}", cmd->GetSignature()).c_str());
         return false;
     }
 

@@ -2003,7 +2003,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
     if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
     {
         // clear it
-        hsAssert(false, plString::Format("ERROR! Creating a python module of the same name - %s", module).c_str());
+        hsAssert(false, plFormat("ERROR! Creating a python module of the same name - {}", module).c_str());
         _PyModule_Clear(m);
     }
 

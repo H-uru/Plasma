@@ -39,10 +39,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plOneShotCallbacks.h"
-#include "hsStream.h"
 
 #include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
+
+#include "plOneShotCallbacks.h"
 
 plOneShotCallbacks::plOneShotCallbacks()
 {
@@ -74,7 +76,7 @@ void plOneShotCallbacks::Read(hsStream* stream, hsResMgr* mgr)
     fCallbacks.reserve(size);
     for (int i = 0; i < size; i++)
     {
-        plString marker = stream->ReadSafeString_TEMP();
+        plString marker = stream->ReadSafeString();
         plKey receiver = mgr->ReadKey(stream);
         int16_t user = stream->ReadLE16();
 

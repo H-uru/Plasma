@@ -157,7 +157,7 @@ bool plVarDescriptor::Read(hsStream* s)
         return false;
     }
 
-    fName=s->ReadSafeString_TEMP();
+    fName=s->ReadSafeString();
 
     plMsgStdStringHelper::Peek(fDisplayOptions, s);
 
@@ -165,7 +165,7 @@ bool plVarDescriptor::Read(hsStream* s)
 
     fType=(Type)s->ReadByte();
 
-    fDefault = s->ReadSafeString_TEMP();
+    fDefault = s->ReadSafeString();
 
     fFlags = s->ReadLE32();
     return true;
@@ -372,10 +372,10 @@ bool plSDVarDescriptor::Read(hsStream* s)
     if (!plVarDescriptor::Read(s))
         return false;
 
-    plString sdName=s->ReadSafeString_TEMP();
+    plString sdName=s->ReadSafeString();
     uint16_t version = s->ReadLE16();
     plStateDescriptor* sd=plSDLMgr::GetInstance()->FindDescriptor(sdName, version);
-    hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", sdName.c_str(), version ).c_str() );
+    hsAssert(sd, plFormat("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", sdName, version).c_str());
     SetStateDesc(sd);
     return true;
 }

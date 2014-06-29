@@ -8,64 +8,55 @@ include_directories("../../Plasma/PubUtilLib/inc")
 include_directories("../../Plasma/PubUtilLib")
 
 set(plResBrowser_HEADERS
-	plResTreeView.h
-	plWinRegistryTools.h
+    plResBrowser.h
+    plResTreeView.h
 )
+qt5_wrap_cpp(plResBrowser_MOC ${plResBrowser_HEADERS})
 
 set(plResBrowser_SOURCES
-	plResBrowser.cpp
-	plResBrowserWndProc.cpp
-	plResTreeView.cpp
-	plWinRegistryTools.cpp
-	)
-	
-set(plResBrowser_RESOURCES
-	res/plResBrowser.rc
-	res/resource.h
+    plResBrowser.cpp
+    plResTreeView.cpp
+)
 
-	res/dataicon.ico
-	res/icon1.ico
-	res/icon2.ico
-	res/indexico.ico
-	res/mergedda.ico
-	res/mergedin.ico
-	)
-	
-add_executable(plResBrowser WIN32 ${plResBrowser_SOURCES} ${plResBrowser_HEADERS} ${plResBrowser_RESOURCES})
+if(WIN32)
+    set(plResBrowser_HEADERS ${plResBrowser_HEADERS}
+        plWinRegistryTools.h
+    )
+
+    set(plResBrowser_SOURCES ${plResBrowser_SOURCES}
+        res/plResBrowser.rc
+        plWinRegistryTools.cpp
+    )
+endif()
+
+set(plResBrowser_RCC_SOURCES
+    res/plResBrowser.qrc
+)
+qt5_add_resources(plResBrowser_RCC ${plResBrowser_RCC_SOURCES})
+
+set(plResBrowser_UIC_SOURCES
+    res/FindDialog.ui
+    res/ResBrowser.ui
+)
+qt5_wrap_ui(plResBrowser_UIC ${plResBrowser_UIC_SOURCES})
+
+# For generated ui_*.h files
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(plResBrowser WIN32 ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
+               ${plResBrowser_RCC} ${plResBrowser_UIC} ${plResBrowser_MOC})
 
 target_link_libraries(plResBrowser CoreLib)
-target_link_libraries(plResBrowser plFile)
-target_link_libraries(plResBrowser plMessage)
 target_link_libraries(plResBrowser plResMgr)
-target_link_libraries(plResBrowser plScene)
-target_link_libraries(plResBrowser plStatusLog)
-target_link_libraries(plResBrowser plUnifiedTime)
-target_link_libraries(plResBrowser pnDispatch)
-target_link_libraries(plResBrowser pnFactory)
-target_link_libraries(plResBrowser pnKeyedObject)
-target_link_libraries(plResBrowser pnMessage)
-target_link_libraries(plResBrowser pnNetCommon)
-target_link_libraries(plResBrowser pnNucleusInc)
 target_link_libraries(plResBrowser pnSceneObject)
-target_link_libraries(plResBrowser pnTimer)
-target_link_libraries(plResBrowser pnUtils)
-target_link_libraries(plResBrowser pnUUID)
-
-if (WIN32)
-    target_link_libraries(plResBrowser Rpcrt4)
-    target_link_libraries(plResBrowser Version)
-    target_link_libraries(plResBrowser Vfw32)
-    target_link_libraries(plResBrowser Ws2_32)
-    target_link_libraries(plResBrowser winmm)
-    target_link_libraries(plResBrowser strmiids)
-    target_link_libraries(plResBrowser comctl32)
-    target_link_libraries(plResBrowser shlwapi)
-endif(WIN32)
+target_link_libraries(plResBrowser Qt5::Widgets)
 
 if(USE_VLD)
     target_link_libraries(plResBrowser ${VLD_LIBRARY})
 endif()
 
-source_group("Source Files" FILES ${plResBrowser_SOURCES})
+source_group("Source Files" FILES ${plResBrowser_SOURCES} ${plResBrowser_MOC})
 source_group("Header Files" FILES ${plResBrowser_HEADERS})
-source_group("Resource Files" FILES ${plResBrowser_RESOURCES})
+source_group("Resource Files" FILES ${plResBrowser_RCC_SOURCES} ${plResBrowser_RCC}
+                                    ${plResBrowser_UIC_SOURCES} ${plResBrowser_UIC})

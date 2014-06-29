@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsReadOnlyLoggingStream hsReadOnlyStream
 #define LogRead(byteCount, buffer, desc) Read(byteCount, buffer)
 #define LogReadSafeString() ReadSafeString()
-#define LogReadSafeString_TEMP() ReadSafeString_TEMP()
 #define LogReadSafeStringLong() ReadSafeStringLong();
 #define LogSkip(deltaByteCount, desc) Skip(deltaByteCount)
 #define LogReadLE(value, desc) ReadLE(value)
@@ -126,18 +125,13 @@ public:
 
     uint32_t        WriteSafeStringLong(const plString &string);    // uses 4 bytes for length
     uint32_t        WriteSafeWStringLong(const plString &string);
-    char *          ReadSafeStringLong();
-    wchar_t *       ReadSafeWStringLong();
+    plString        ReadSafeStringLong();
+    plString        ReadSafeWStringLong();
 
     uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
     uint32_t        WriteSafeWString(const plString &string);
-    char *          ReadSafeString();
-    wchar_t *       ReadSafeWString();
-
-    plString        ReadSafeStringLong_TEMP();
-    plString        ReadSafeWStringLong_TEMP();
-    plString        ReadSafeString_TEMP();
-    plString        ReadSafeWString_TEMP();
+    plString        ReadSafeString();
+    plString        ReadSafeWString();
 
     bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);

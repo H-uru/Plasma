@@ -43,11 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plString_Defined
 #define plString_Defined
 
-#include <cstddef>
-#include <cstdlib>
-#include <cstring>
-#include <cstdarg>
-#include <cstdint>
+#include "HeadSpin.h"
 #include <vector>
 
 /** Single Unicode character code unit */
@@ -56,6 +52,7 @@ typedef unsigned int UniChar;
 #define SSO_CHARS (16)
 #define STRING_STACK_SIZE (256)
 #define WHITESPACE_CHARS " \t\n\r"
+#define STRLEN_AUTO (static_cast<size_t>(-1))
 
 // Use "correct" stricmp based on the selected compiler / library
 #if _MSC_VER
@@ -64,6 +61,8 @@ typedef unsigned int UniChar;
 #    define wcsicmp     _wcsicmp
 #    define wcsnicmp    _wcsnicmp
 #    define strlwr      _strlwr
+#    define strdup      _strdup
+#    define wcsdup      _wcsdup
 #else
 #    define stricmp     strcasecmp
 #    define strnicmp    strncasecmp
@@ -138,7 +137,7 @@ public:
     {
         memset(fShort, 0, sizeof(fShort));
         _Ch *copyData = IHaveACow() ? new _Ch[size + 1] : fShort;
-        memcpy(copyData, data, size);
+        memcpy(copyData, data, size * sizeof(_Ch));
         copyData[size] = 0;
 
         if (IHaveACow())
@@ -224,13 +223,6 @@ typedef plStringBuffer<UniChar> plUnicodeBuffer;
 class plString
 {
 public:
-    enum {
-        /** Automatically determine the size of input (Requires input to be
-         *  correctly null-terminated).
-         */
-        kSizeAuto = (size_t)(0x80000000)
-    };
-
     /** Represents a "null" plString object. */
     static const plString Null;
 
@@ -260,7 +252,7 @@ public:
      *  \note This constructor expects the input to be UTF-8 encoded.  For
      *        conversion from ISO-8859-1 8-bit data, use FromIso8859_1().
      */
-    plString(const char *cstr, size_t size = kSizeAuto) { IConvertFromUtf8(cstr, size); }
+    plString(const char *cstr, size_t size = STRLEN_AUTO) { IConvertFromUtf8(cstr, size); }
 
     /** Copy constructor. */
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
@@ -275,7 +267,7 @@ public:
     plString(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
 
     /** Assignment operator.  Same as plString(const char *). */
-    plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, kSizeAuto); return *this; }
+    plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, STRLEN_AUTO); return *this; }
 
     /** Assignment operator.  Same as plString(const plString &). */
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
@@ -298,7 +290,7 @@ public:
     plString &operator+=(const plString &str) { return operator=(*this + str); }
 
     /** Create a new plString object from the UTF-8 formatted data in \a utf8. */
-    static inline plString FromUtf8(const char *utf8, size_t size = kSizeAuto)
+    static inline plString FromUtf8(const char *utf8, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromUtf8(utf8, size);
@@ -306,7 +298,7 @@ public:
     }
 
     /** Create a new plString object from the UTF-16 formatted data in \a utf16. */
-    static inline plString FromUtf16(const uint16_t *utf16, size_t size = kSizeAuto)
+    static inline plString FromUtf16(const uint16_t *utf16, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromUtf16(utf16, size);
@@ -314,7 +306,7 @@ public:
     }
 
     /** Create a new plString object from the \p wchar_t data in \a wstr. */
-    static inline plString FromWchar(const wchar_t *wstr, size_t size = kSizeAuto)
+    static inline plString FromWchar(const wchar_t *wstr, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromWchar(wstr, size);
@@ -322,7 +314,7 @@ public:
     }
 
     /** Create a new plString object from the UTF-32 formatted data in \a utf32. */
-    static inline plString FromUtf32(const UniChar *utf32, size_t size = kSizeAuto)
+    static inline plString FromUtf32(const UniChar *utf32, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromUtf32(utf32, size);
@@ -330,7 +322,7 @@ public:
     }
 
     /** Create a new plString object from the ISO-8859-1 formatted data in \a astr. */
-    static inline plString FromIso8859_1(const char *astr, size_t size = kSizeAuto)
+    static inline plString FromIso8859_1(const char *astr, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromIso8859_1(astr, size);
@@ -412,12 +404,14 @@ public:
     double ToDouble() const;
 
     /** Construct a plString using a printf-like format string. */
+    hsDeprecated("plString::Format is deprecated -- use plFormat instead")
     static plString Format(const char *fmt, ...);
 
     /** Construct a plString using a printf-like format string.
      *  This function should be called inside of vararg functions, such as
      *  plString::Format().
      */
+    hsDeprecated("plString::IFormat is deprecated -- use plFormat instead")
     static plString IFormat(const char *fmt, va_list vptr);
 
     enum CaseSensitivity {
@@ -551,7 +545,7 @@ public:
      *  number of characters left in the string after \a start, Substr will
      *  return the remainder of the string.
      */
-    plString Substr(ssize_t start, size_t size = kSizeAuto) const;
+    plString Substr(ssize_t start, size_t size = STRLEN_AUTO) const;
 
     /** Return a substring containing at most \a size characters from the left
      *  of the string.  Equivalent to Substr(0, size).
@@ -585,7 +579,7 @@ public:
      *  string in the returned vector.
      *  \sa Tokenize()
      */
-    std::vector<plString> Split(const char *split, size_t maxSplits = kSizeAuto) const;
+    std::vector<plString> Split(const char *split, size_t maxSplits = (size_t)-1) const;
 
     /** Split this string into tokens, delimited by \a delims.
      *  Note that, unlike Split(), Tokenize will return only non-blank strings
@@ -598,6 +592,42 @@ public:
     static plString Fill(size_t count, char c);
 
 public:
+    /** Functor that hashes a string for unordered containers.
+     *  \note The hash is case sensitive.
+     */
+    struct hash
+    {
+        // TODO:  This doesn't really use enough bits to be useful when
+        //   size_t is 64-bits.
+        size_t operator()(const plString& str) const
+        {
+            size_t hash = 0;
+            for (size_t i = 0; i < str.GetSize(); ++i) {
+                hash += fetch_char(str, i);
+                hash += (hash << 10);
+                hash ^= (hash >> 6);
+            }
+            hash += (hash << 3);
+            hash ^= (hash >> 11);
+            hash += (hash << 15);
+            return hash;
+        }
+
+    protected:
+        virtual char fetch_char(const plString& str, size_t index) const
+        { return str.CharAt(index); }
+    };
+
+    /** Functor that hashes a string for unordered containers.
+     * \remarks This returns the hash of the lower-case variant of the string.
+     */
+    struct hash_i : public hash
+    {
+    protected:
+        virtual char fetch_char(const plString& str, size_t index) const
+        { return tolower(str.CharAt(index)); }
+    };
+
     /** Functor which compares two strings case-insensitively for sorting. */
     struct less_i
     {
@@ -703,6 +733,6 @@ private:
 };
 
 /** \p strlen implementation for UniChar based C-style string buffers. */
-size_t ustrlen(const UniChar *ustr, size_t max = plString::kSizeAuto);
+size_t ustrlen(const UniChar *ustr);
 
 #endif //plString_Defined

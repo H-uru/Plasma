@@ -41,10 +41,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plInputEventMsg.h"
+#include "hsBitVector.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsResMgr.h"
-#include "hsBitVector.h"
+#pragma hdrstop
+
+#include "plInputEventMsg.h"
 
 plInputEventMsg::plInputEventMsg() :
 fEvent(-1)

@@ -39,45 +39,23 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsCodecManager.h"
-#include "plMipmap.h"
 
+// Plasma CoreLib
+#include "HeadSpin.h"
+#include "hsBitVector.h"
+#include "hsColorRGBA.h"
+#include "hsFastMath.h"
+#include "hsGeometry3.h"
+#include "hsStream.h"
+#include "plString.h"
+#include "hsTemplates.h"
 
-hsCodecManager& hsCodecManager::Instance()
-{
-    static hsCodecManager the_instance;
-    static bool initialized = false;
+// Plasma Nucleus
+#include "plgDispatch.h"
+#include "hsResMgr.h"
 
-    if (!initialized)
-    {
-        initialized = true;
-    }
-
-    return the_instance;
-}
-
-hsCodecManager::hsCodecManager()
-{
-}
-
-plMipmap *hsCodecManager::CreateCompressedMipmap(uint32_t compressionFormat, plMipmap *uncompressed)
-{
-    return nil;
-}
-
-plMipmap *hsCodecManager::CreateUncompressedMipmap(plMipmap *compressed, uint8_t bitDepth)
-{
-    return nil;
-
-}
-
-bool hsCodecManager::ColorizeCompMipmap( plMipmap *bMap, const uint8_t *colorMask )
-{
-    return false;
-}
-
-bool hsCodecManager::Register(hsCodec *codec, uint32_t compressionFormat, hsScalar priority)
-{
-    return true;
-}
-
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plKey.h"
+#include "pnKeyedObject/plUoid.h"
+#include "pnMessage/plMessage.h"
+#include "pnNetCommon/plNetApp.h"

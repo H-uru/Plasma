@@ -8,27 +8,6 @@ add_definitions(-DPRODUCT_SHORT_NAME="${PRODUCT_SHORT_NAME}")
 add_definitions(-DPRODUCT_LONG_NAME="${PRODUCT_LONG_NAME}")
 add_definitions(-DPRODUCT_UUID="${PRODUCT_UUID}")
 
-if(NOT WCHAR_BYTES)
-    include(CheckTypeSize)
-
-    check_type_size("wchar_t" WCHAR_BYTES)
-    if(NOT WCHAR_BYTES)
-        message(FATAL_ERROR "Could not determine sizeof(wchar_t)")
-        set(WCHAR_BYTES 0)
-    endif(NOT WCHAR_BYTES)
-endif(NOT WCHAR_BYTES)
-add_definitions(-DWCHAR_BYTES=${WCHAR_BYTES})
-
-try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp
-            OUTPUT_VARIABLE OUTPUT)
-if(HAVE_CPUID)
-    add_definitions(-DHAVE_CPUID)
-    message("CPUID header found -- using hardware math acceleration when available")
-else()
-    message("CPUID header not found -- using software math")
-endif()
-
 set(CoreLib_SOURCES
     HeadSpin.cpp
     hsBitVector.cpp
@@ -43,7 +22,6 @@ set(CoreLib_SOURCES
     hsMemory.cpp
     hsQuat.cpp
     hsRefCnt.cpp
-    hsSafeRefCnt.cpp
     hsSTLStream.cpp
     hsStream.cpp
     hsStringTokenizer.cpp
@@ -52,6 +30,7 @@ set(CoreLib_SOURCES
     hsWide.cpp
     pcSmallRect.cpp
     plFileSystem.cpp
+    plFormat.cpp
     plGeneric.cpp
     plLoadMask.cpp
     plProduct.cpp
@@ -88,7 +67,6 @@ set(CoreLib_HEADERS
     hsPoint2.h
     hsQuat.h
     hsRefCnt.h
-    hsSafeRefCnt.h
     hsSTLStream.h
     hsStream.h
     hsStringTokenizer.h
@@ -98,6 +76,7 @@ set(CoreLib_HEADERS
     hsWindows.h
     pcSmallRect.h
     plFileSystem.h
+    plFormat.h
     plGeneric.h
     plLoadMask.h
     plProduct.h

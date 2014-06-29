@@ -119,7 +119,7 @@ void plAGChannel::Read(hsStream *stream, hsResMgr *mgr)
 {
     plCreatable::Read(stream, mgr);
 
-    fName = stream->ReadSafeString_TEMP();
+    fName = stream->ReadSafeString();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////

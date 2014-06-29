@@ -39,10 +39,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-/*****************************************************************************
-*
-*   $/Plasma20/Sources/Plasma/PubUtilLib/plMessage/plNetCommMsgs.cpp
-*   
-***/
+#ifndef _plFontConverter_h
+#define _plFontConverter_h
 
-#include "plNetCommMsgs.h"
+#include <QMainWindow>
+
+class plFont;
+class plFileName;
+
+class plFontConverter : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    plFontConverter();
+    virtual ~plFontConverter();
+
+private slots:
+    void OpenFNT();
+    void OpenBDF();
+    void OpenFON();
+    void OpenTTF();
+    void OpenP2F();
+    void ExportP2F();
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+
+private:
+    class Ui_MainDialog *fUI;
+    plFont *fFont;
+
+    void IMakeFontGoAway();
+    void IMakeNewFont();
+    void IUpdateInfo();
+
+    void IImportFNT(const plFileName &path);
+    void IImportBDF(const plFileName &path);
+    void IImportFON(const plFileName &path);
+    void IBatchFreeType(const plFileName &path, void *init = nullptr);
+    void IImportFreeType(const plFileName &path);
+    void IOpenP2F(const plFileName &path);
+};
+
+#endif

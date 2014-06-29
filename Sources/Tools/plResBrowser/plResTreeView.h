@@ -42,34 +42,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plResTreeView_h
 #define _plResTreeView_h
 
-class plResTreeView
+#include "plString.h"
+
+#include <QTreeWidget>
+
+struct plKeyInfo;
+class plKey;
+class plRegistryPageNode;
+
+class plResTreeViewItem : public QTreeWidgetItem
 {
-    protected:
+public:
+    enum { Type = UserType };
 
-        static HWND fInfoDlg;
-        static bool fFilter;
+    plResTreeViewItem(QTreeWidget *parent, const QString &text, plKeyInfo *key)
+        : QTreeWidgetItem(parent, QStringList { text }, Type), fData(key) { }
+    plResTreeViewItem(QTreeWidgetItem *parent, const QString &text, plKeyInfo *key)
+        : QTreeWidgetItem(parent, QStringList { text }, Type), fData(key) { }
 
-        static void IFindNextObject( HWND tree );
+    virtual ~plResTreeViewItem();
 
-    public:
+    plKey GetKey() const;
+    plRegistryPageNode *GetPage() const;
 
-        static void FindObject( HWND tree );
-        static void FindNextObject( HWND tree );
+private:
+    plKeyInfo *fData;
+};
 
-        static void FillTreeViewFromRegistry( HWND hWnd );
-        static void ClearTreeView( HWND hWnd );
 
-        static BOOL CALLBACK    InfoDlgProc( HWND dlg, UINT msg, WPARAM wParam, LPARAM lParam );
+class plResTreeView : public QTreeWidget
+{
+    Q_OBJECT
 
-        static void UpdateInfoDlg( HWND treeCtrl );
+public:
+    plResTreeView(QWidget *parent = nullptr)
+        : QTreeWidget(parent), fFoundItem(nullptr) { }
 
-        static void VerifyCurrentPage( HWND treeCtrl );
+    void LoadFromRegistry(bool filter);
 
-        static void SelectionDblClicked( HWND treeCtrl );
+public slots:
+    void FindObject();
+    void FindNextObject();
 
-        static void FilterLoadables( bool filter, HWND treeCtrl );
+private:
+    QTreeWidgetItem *fFoundItem;
+    plString fSearchString;
 
-        static void SaveSelectedObject(HWND treeCtrl);
+    void IFindNextObject();
 };
 
 #endif //_plResTreeView_h

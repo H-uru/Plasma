@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plEncryptLogLine.h"
 
 #if HS_BUILD_FOR_WIN32
-    #include <Shlobj.h>
+    #include <shlobj.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////////
@@ -330,15 +330,15 @@ bool plStatusLog::IReOpen( void )
         plFileName fileNoExt;
         plString ext;
         IParseFileName(fileNoExt, ext);
-        plFileName fileToOpen = plString::Format("%s.0.%s", fileNoExt.AsString().c_str(), ext.c_str());
+        plFileName fileToOpen = plFormat("{}.0.{}", fileNoExt, ext);
         if (!(fFlags & kDontRotateLogs))
         {
             plFileName work, work2;
-            work = plString::Format("%s.3.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work = plFormat("{}.3.{}", fileNoExt, ext);
             plFileSystem::Unlink(work);
-            work2 = plString::Format("%s.2.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work2 = plFormat("{}.2.{}", fileNoExt, ext);
             plFileSystem::Move(work2, work);
-            work = plString::Format("%s.1.%s", fileNoExt.AsString().c_str(), ext.c_str());
+            work = plFormat("{}.1.{}", fileNoExt, ext);
             plFileSystem::Move(work, work2);
             plFileSystem::Move(fileToOpen, work);
         }
@@ -715,21 +715,22 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     }
 
-    if ( fFlags & kDebugOutput )
+    plString out_str = plString::FromUtf8(line, count) + "\n";
+    if (fFlags & kDebugOutput)
     {
+
 #if HS_BUILD_FOR_WIN32
 #ifndef PLASMA_EXTERNAL_RELEASE
-        plString str = plString::Format( "%.*s\n", count, line );
-        OutputDebugString( str.c_str() );
+        OutputDebugString(out_str.c_str());
 #endif
 #else
-        fprintf( stderr, "%.*s\n", count, line );
+        fputs(out_str.c_str(), stderr);
 #endif
     }
 
-    if ( fFlags & kStdout )
+    if (fFlags & kStdout)
     {
-        fprintf( stdout, "%.*s\n", count, line );
+        fputs(out_str.c_str(), stdout);
     }
 
     return ret;

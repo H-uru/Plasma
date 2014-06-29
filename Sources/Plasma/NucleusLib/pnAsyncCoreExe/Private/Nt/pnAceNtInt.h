@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCOREEXE_PRIVATE_NT_PNACENTINT_H
 
+#include "hsRefCnt.h"
 
 namespace Nt {
 
@@ -87,15 +88,12 @@ public:
     BOOL TryEnter () { return TryEnterCriticalSection(&m_handle); }
 };
 
-class CNtWaitHandle {
-    long    m_refCount;
+class CNtWaitHandle : public hsAtomicRefCnt {
     HANDLE  m_event;
 
 public:
     CNtWaitHandle ();
     ~CNtWaitHandle ();
-    void IncRef ();
-    void DecRef ();
     bool WaitForObject (unsigned timeMs) const;
     void SignalObject () const;
 };
@@ -131,7 +129,7 @@ struct NtObject {
     LISTDECL(Operation, link)   opList;
     long                        nextCompleteSequence;
     long                        nextStartSequence;
-    long                        ioCount;
+    std::atomic<long>           ioCount;
     bool                        closed;
 
     NtObject()

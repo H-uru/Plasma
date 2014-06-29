@@ -43,11 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPythonPack_h_inc
 
 typedef struct _object PyObject;
+class plString;
 
 namespace PythonPack
 {
-    PyObject* OpenPythonPacked(const char* fileName);
-    bool IsItPythonPacked(const char* fileName);
+    PyObject* OpenPythonPacked(const plString& fileName);
+    bool IsItPythonPacked(const plString& fileName);
 }
 
 #endif // plPythonPack_h_inc

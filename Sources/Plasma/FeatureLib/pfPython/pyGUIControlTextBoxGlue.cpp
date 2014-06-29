@@ -188,6 +188,8 @@ PYTHON_METHOD_DEFINITION(ptGUIControlTextBox, setStringJustify, args)
     PYTHON_RETURN_NONE;
 }
 
+
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlTextBox, getStringJustify)
 {
     return PyInt_FromLong(self->fThis->GetJustify());

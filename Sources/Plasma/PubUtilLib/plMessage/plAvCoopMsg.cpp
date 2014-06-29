@@ -42,12 +42,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef SERVER
 #ifndef NO_AV_MSGS
 
-// singular
-#include "plAvCoopMsg.h"
-
-// global
 #include "hsStream.h"
 #include "hsResMgr.h"
+#pragma hdrstop
+
+// singular
+#include "plAvCoopMsg.h"
 
 // other
 #include "plAvatar/plAvatarMgr.h"
@@ -100,7 +100,7 @@ void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
     plMessage::IMsgRead(stream, mgr);
 
     if(stream->ReadBool())
-        fCoordinator = reinterpret_cast<plCoopCoordinator *>(mgr->ReadCreatable(stream));
+        fCoordinator = plCoopCoordinator::ConvertNoRef(mgr->ReadCreatable(stream));
 
     fInitiatorID = stream->ReadLE32();
     fInitiatorSerial = stream->ReadLE16();

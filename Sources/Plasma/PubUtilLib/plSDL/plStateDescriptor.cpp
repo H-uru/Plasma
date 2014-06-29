@@ -94,7 +94,7 @@ bool plStateDescriptor::Read(hsStream* s)
 
     IDeInit();
 
-    fName = s->ReadSafeString_TEMP();
+    fName = s->ReadSafeString();
 
     uint16_t version=s->ReadLE16();
     fVersion=version;

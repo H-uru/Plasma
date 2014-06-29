@@ -39,27 +39,38 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef HS_SAFE_REF_CNT_H
-#define HS_SAFE_REF_CNT_H
+#ifndef _plResBrowser_h
+#define _plResBrowser_h
 
-#include "hsRefCnt.h"
-#include "hsThread.h"
+#include <QMainWindow>
 
-//
-// Thread Safe RefCounter
-//
-
-class hsSafeRefCnt : public hsRefCnt
+class plResBrowser : public QMainWindow
 {
-private:
-    static hsMutex fMutex;
-protected:
-    virtual void IRef() { } 
-    virtual void IUnRef() { }; 
+    Q_OBJECT
+
 public:
-    virtual int RefCnt() const { hsTempMutexLock temp(fMutex); return hsRefCnt::RefCnt(); }
-    void UnRef() { hsTempMutexLock temp(fMutex); IUnRef(); hsRefCnt::UnRef(); }
-    void Ref() { hsTempMutexLock temp(fMutex); IRef(); hsRefCnt::Ref(); }
+    plResBrowser();
+    virtual ~plResBrowser();
+
+    void SetWindowTitle(const QString &title);
+
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event) override;
+    virtual void dropEvent(QDropEvent *event) override;
+
+private slots:
+    void OpenFile();
+    void OpenDirectory();
+    void SaveSelectedObject();
+    void RefreshTree();
+    void UpdateInfoPage();
+
+private:
+    class Ui_ResBrowser *fUI;
+
+    void RegisterFileTypes();
+    void LoadPrpFile(const QString &fileName);
+    void LoadResourcePath(const QString &path);
 };
 
-#endif //HS_SAFE_REF_CNT_H
+#endif

@@ -39,32 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsStream.h"
-#include "plLinkToAgeMsg.h"
-#include "hsResMgr.h"
 
 #include "plgDispatch.h"
+#include "hsResMgr.h"
+#include "hsStream.h"
+#pragma hdrstop
+
+#include "plLinkToAgeMsg.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommon.h"
-#include "hsBitVector.h"
 #include "pnNetCommon/plNetApp.h"
 
 /////////////////////////////////////////////////////////////////////////
 //
 // plLinkToAgeMsg
 
-plLinkToAgeMsg::plLinkToAgeMsg() : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg() : fFlags(0)
 {
 }
 
-plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fLinkInAnimName(nil), fFlags(0)
+plLinkToAgeMsg::plLinkToAgeMsg( const plAgeLinkStruct * link ) : fFlags(0)
 {
     fAgeLink.CopyFrom( link );
-}
-
-plLinkToAgeMsg::~plLinkToAgeMsg()
-{
-    delete [] fLinkInAnimName;
 }
 
 void plLinkToAgeMsg::PlayLinkSfx(bool linkIn, bool linkOut)
@@ -277,7 +273,7 @@ void plLinkEffectsTriggerMsg::WriteVersion(hsStream* s, hsResMgr* mgr)
     mgr->WriteKey(s, fLinkInAnimKey);
 }
 
-void plLinkEffectsTriggerMsg::SetLinkKey(plKey &key)
+void plLinkEffectsTriggerMsg::SetLinkKey(const plKey &key)
 {
     fLinkKey = key; 
 }

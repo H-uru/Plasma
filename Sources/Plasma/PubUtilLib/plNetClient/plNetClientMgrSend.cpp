@@ -393,10 +393,10 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
     {
     #if 0
         hsLogEntry(plNetObjectDebugger::GetInstance()->LogMsg(
-            plString::Format("<SND> object:%s, rcvr %s %s",
-            msg->GetSender().GetKeyName().c_str(),
-            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName().c_str() : "?",
-            netMsgWrap->AsStdString().c_str()).c_str()));
+            plFormat("<SND> object:{}, rcvr {} {}",
+            msg->GetSender().GetKeyName(),
+            msg->GetNumReceivers() ? msg->GetReceiver(0)->GetName() : "?",
+            netMsgWrap->AsStdString()).c_str()));
     #endif
     }
 
@@ -434,7 +434,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
     if (plNetMsgGameMessage::ConvertNoRef(msg))
         SetFlagsBit(kSendingActions);
     
-    plCheckNetMgrResult_ValReturn(ret, plString::Format("Failed to send %s, NC ret=%d",
+    plCheckNetMgrResult_ValReturn(ret, plFormat("Failed to send {}, NC ret={}",
         msg->ClassName(), ret).c_str());
 
     return ret;

@@ -42,12 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef pyMatrix44_h_inc
 #define pyMatrix44_h_inc
 
+#include <array>
 #include "hsMatrix44.h"
 #include "pyGlueHelpers.h"
 
 class pyPoint3;
 class pyVector3;
 
+typedef std::array<float, 4*4> mat44_t;
 
 class pyMatrix44
 {
@@ -93,7 +95,8 @@ public:
     PyObject* GetUpAxis() const; // returns pyVector3
     PyObject* GetRightAxis() const; // returns pyVector3
 
-    float* GetData() const;
+    /** Returns a copy of the 4x4 matrix data */
+    mat44_t GetData() const;
     void SetData(const float mat[]);
 };
 

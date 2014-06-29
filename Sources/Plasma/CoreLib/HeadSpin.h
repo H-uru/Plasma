@@ -42,6 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef HeadSpinHDefined
 #define HeadSpinHDefined
 
+// Ensure these get set consistently regardless of what module includes it
+#include "hsCompilerSpecific.h"
+
 #if (defined(_DEBUG) || defined(UNIX_DEBUG))
 #   define HS_DEBUGGING
 #endif // defined(_DEBUG) || defined(UNIX_DENUG)
@@ -138,6 +141,15 @@ typedef uint32_t  hsGSeedValue;
 
 #define hsFourByteTag(a, b, c, d)       (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (d))
 
+#if defined(HAVE_CXX14_DEPRECATED_ATTR)
+#   define hsDeprecated(message) [[deprecated(message)]]
+#elif defined(HAVE_GCC_DEPRECATED_ATTR)
+#   define hsDeprecated(message) __attribute__((deprecated(message)))
+#elif defined(_MSC_VER)
+#   define hsDeprecated(message) __declspec(deprecated(message))
+#else
+#   define hsDeprecated(message)
+#endif
 
 //======================================
 // Endian swap funcitions
@@ -332,14 +344,14 @@ void SWAP (T & a, T & b) {
 #   define hsStatusMessage(x)                  NULL_STMT
 #   define hsStatusMessageF(x, ...)            NULL_STMT
 #else
-    void    hsStatusMessage(const char message[]);
+    void    hsStatusMessage(const char* message);
     void    hsStatusMessageF(const char * fmt, ...);
 #endif // PLASMA_EXTERNAL_RELEASE
 
-char*   hsStrcpy(char dstOrNil[], const char src[]);
+char*   hsStrcpy(char* dstOrNil, const char* src);
 void    hsStrLower(char *s);
 
-inline char* hsStrcpy(const char src[])
+inline char* hsStrcpy(const char* src)
 {
     return hsStrcpy(nil, src);
 }
@@ -381,10 +393,10 @@ enum {          // RETURN VALUES FROM hsMessageBox
 };
 
 extern bool hsMessageBox_SuppressPrompts;
-int hsMessageBox(const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBox(const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const char message[], const char caption[], int kind, int icon=hsMessageBoxIconAsterisk);
-int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t message[], const wchar_t caption[], int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBox(const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBox(const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const char* message, const char* caption, int kind, int icon=hsMessageBoxIconAsterisk);
+int hsMessageBoxWithOwner(hsWindowHndl owner, const wchar_t* message, const wchar_t* caption, int kind, int icon=hsMessageBoxIconAsterisk);
 
 // flag testing / clearing
 #define hsCheckBits(f,c) ((f & c)==c)
@@ -449,15 +461,15 @@ extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
-void ErrorAssert (int line, const char file[], const char fmt[], ...);
+void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
 bool DebugIsDebuggerPresent ();
 void DebugBreakIfDebuggerPresent ();
-void DebugMsg(const char fmt[], ...);
+void DebugMsg(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
     
-    void    hsDebugMessage(const char message[], long refcon);
+    void    hsDebugMessage(const char* message, long refcon);
     #define hsDebugCode(code)                   code
     #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
     #define hsAssert(expr, msg)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
@@ -487,21 +499,6 @@ void DebugMsg(const char fmt[], ...);
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); __assume(0); break;
 #else
 #define  DEFAULT_FATAL(var)  default: FATAL("No valid case for switch variable '" #var "'"); break;
-#endif
-
-/*****************************************************************************
-*
-*  Atomic Operations
-*  FIXME: Replace with std::atomic when VS2012 supports WinXP
-*
-***/
-
-#ifdef _MSC_VER
-#   define AtomicAdd(value, increment) InterlockedExchangeAdd(value, increment)
-#   define AtomicSet(value, set) InterlockedExchange(value, set)
-#elif __GNUC__
-#   define AtomicAdd(value, increment) __sync_fetch_and_add(value, increment)
-#   define AtomicSet(value, set) __sync_lock_test_and_set(value, set)
 #endif
 
 #endif

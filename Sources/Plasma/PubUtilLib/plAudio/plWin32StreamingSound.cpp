@@ -195,7 +195,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             return plSoundBuffer::kError;
         }
 
-        IPrintDbgMessage(plString::Format("   Readied file %s for streaming", fSrcFilename.AsString().c_str()).c_str());
+        IPrintDbgMessage(plFormat("   Readied file {} for streaming", fSrcFilename).c_str());
 
         // dont free sound data until we have a chance to use it in load sound
 
@@ -251,8 +251,8 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
 
     if( retVal == plSoundBuffer::kError )
     {
-        plString str = plString::Format( "Unable to open streaming source %s",
-                                         fDataBufferKey->GetName().c_str() );
+        plString str = plFormat("Unable to open streaming source {}",
+                                fDataBufferKey->GetName());
         IPrintDbgMessage( str.c_str(), true );
         fFailed = true;
         return false;
@@ -271,15 +271,6 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         return false;
     }
 
-    if( header.fNumChannels > 1 && is3D )
-    {
-        // We can only do a single channel of 3D sound. So copy over one (later)
-        bufferSize              /= header.fNumChannels;
-        header.fBlockAlign      /= header.fNumChannels;
-        header.fAvgBytesPerSec  /= header.fNumChannels;
-        header.fNumChannels = 1;
-    }
-
     // Actually create the buffer now (always looping)
     fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
     if( !fDSoundBuffer->IsValid() )
@@ -291,9 +282,9 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         delete fDSoundBuffer;
         fDSoundBuffer = nil;
 
-        plString str = plString::Format("Can't create sound buffer for %s.wav. This could happen if the wav file is a stereo file."
-                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                        GetFileName().AsString().c_str());
+        plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                GetFileName());
         IPrintDbgMessage(str.c_str(), true);
         fFailed = true;
         return false;
@@ -346,7 +337,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     IRefreshEAXSettings( true );
 
     // Debug info
-    plString dbg = plString::Format("   Streaming %s.", fSrcFilename.AsString().c_str());
+    plString dbg = plFormat("   Streaming {}.", fSrcFilename);
     IPrintDbgMessage(dbg.c_str());
 
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",

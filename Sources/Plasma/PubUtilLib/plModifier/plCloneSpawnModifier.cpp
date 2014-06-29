@@ -59,7 +59,7 @@ plCloneSpawnModifier::plCloneSpawnModifier() : fExportTime(false)
 
 void plCloneSpawnModifier::Read(hsStream *s, hsResMgr *mgr)
 {
-    fTemplateName = s->ReadSafeString_TEMP();
+    fTemplateName = s->ReadSafeString();
     plSingleModifier::Read(s, mgr);
 }
 

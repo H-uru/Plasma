@@ -86,8 +86,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if MAX_VERSION_MAJOR <= 10 // Max 2008
 #   define GETNAME_RETURN_TYPE TCHAR*
+#   define SETTEXT_VALUE_TYPE MCHAR*
 #else
 #   define GETNAME_RETURN_TYPE const TCHAR*
+#   define SETTEXT_VALUE_TYPE const MCHAR*
 #endif
 
 // Old versions of Max define this as an integer, not a Class_ID

@@ -68,7 +68,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <notetrck.h>
 #include <notify.h>
 #include <stdmat.h>
-#include <texutil.h>
 #include <triobj.h>
 
 // MaxMain

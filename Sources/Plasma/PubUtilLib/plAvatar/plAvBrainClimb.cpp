@@ -177,20 +177,21 @@ plAvBrainClimb::~plAvBrainClimb()
         if(fExitStage)
             fExitStage->Detach(fAvMod);
     }
-    if(fUp) delete fUp;
-    if(fDown) delete fDown;
-    if(fLeft) delete fLeft;
-    if(fRight) delete fRight;
-    if(fMountUp) delete fMountUp;
-    if(fMountDown) delete fMountDown;
-    if(fMountLeft) delete fMountLeft;
-    if(fMountRight) delete fMountRight;
-    if(fDismountUp) delete fDismountUp;
-    if(fDismountLeft) delete fDismountLeft;
-    if(fDismountRight) delete fDismountRight;
-    if(fIdle) delete fIdle;
-//  if(fRelease) delete fRelease;
-//  if(fFallOff) delete fFallOff;
+    delete fUp;
+    delete fDown;
+    delete fLeft;
+    delete fRight;
+    delete fMountUp;
+    delete fMountDown;
+    delete fMountLeft;
+    delete fMountRight;
+    delete fDismountUp;
+    delete fDismountDown;
+    delete fDismountLeft;
+    delete fDismountRight;
+    delete fIdle;
+    delete fRelease;
+    delete fFallOff;
 }
 
 // ACTIVATE

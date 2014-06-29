@@ -9,7 +9,7 @@ endif()
 find_path(PHYSX_SDK_PATH Cooking/Include/NxCooking.h
           /usr/local/include
           /usr/include
-          PATH_SUFFIXES "PhysX/v2.7.3/SDKs"
+          "C:/Program Files/AGEIA Technologies/AGEIA PhysX SDK/v2.6.4/SDKs"
 )
 
 if(PHYSX_SDK_PATH)

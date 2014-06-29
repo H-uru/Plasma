@@ -187,7 +187,9 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
             plStateDescriptor* sd=new plStateDescriptor;
             if (sd->Read(s))
                 dl->push_back(sd);
-        }       
+            else
+                delete sd; // well that sucked
+        }
     }
     catch(...)
     {

@@ -142,24 +142,22 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runBehaviorSetNotify, args)
 PYTHON_METHOD_DEFINITION(ptAvatar, runCoopAnim, args)
 {
     PyObject* keyObj;
-    char* animAv1;
-    char* animAv2;
+    PyObject* animAv1;
+    PyObject* animAv2;
+    float range = 6;
     float dist = 3;
     bool move = true;
-    if (!PyArg_ParseTuple(args, "Oss|fb", &keyObj, &animAv1, &animAv2, &dist, &move))
-    {
-        PyErr_SetString(PyExc_TypeError, "runCoopAnim expects a ptkey and two strings and an optional float and boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyKey::Check(keyObj))
+    if (!PyArg_ParseTuple(args, "OOO|ffb", &keyObj, &animAv1, &animAv2, &range, &dist, &move) || !pyKey::Check(keyObj) ||
+        !PyString_CheckEx(animAv1) || !PyString_CheckEx(animAv2))
     {
         PyErr_SetString(PyExc_TypeError, "runCoopAnim expects a ptkey and two strings and an optional float and boolean");
         PYTHON_RETURN_ERROR;
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    self->fThis->RunCoopAnim(*key, animAv1, animAv2, dist, move);
-    PYTHON_RETURN_NONE;
+    const plString& animName1 = PyString_AsStringEx(animAv1);
+    const plString& animName2 = PyString_AsStringEx(animAv2);
+    PYTHON_RETURN_BOOL(self->fThis->RunCoopAnim(*key, animName1, animName2, range, dist, move));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, nextStage, args)
@@ -803,28 +801,15 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtAvatarExitAFK, "Tells the local avatar 
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarEnterAnimMode, args, "Params: animName\nEnter a custom anim loop (netpropagated)")
 {
-    char* animName;
-    if (!PyArg_ParseTuple(args, "s", &animName))
+    PyObject* animNameObj;
+    if (!PyArg_ParseTuple(args, "O", &animNameObj) || !PyString_CheckEx(animNameObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtAvatarEnterAnimMode expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    cyAvatar::EnterAnimMode(animName);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarExitAnimMode, args, "Params: animName\nExit a custom anim loop (netpropagated)")
-{
-    char* animName;
-    if (!PyArg_ParseTuple(args, "s", &animName))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtAvatarExitAnimMode expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-
-    cyAvatar::ExitAnimMode(animName);
-    PYTHON_RETURN_NONE;
+    plString animName = PyString_AsStringEx(animNameObj);
+    PYTHON_RETURN_BOOL(cyAvatar::EnterAnimMode(animName));
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtDisableMovementKeys, cyAvatar::DisableMovementControls, "Disable avatar movement input")
@@ -921,7 +906,6 @@ void cyAvatar::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarEnterAFK);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtAvatarExitAFK);
     PYTHON_GLOBAL_METHOD(methods, PtAvatarEnterAnimMode);
-    PYTHON_GLOBAL_METHOD(methods, PtAvatarExitAnimMode);
 
     // Suspend avatar input
     PYTHON_BASIC_GLOBAL_METHOD(methods, PtDisableMovementKeys);

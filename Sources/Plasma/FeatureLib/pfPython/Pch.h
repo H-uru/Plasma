@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // Standard Library Includes
 #include <algorithm>
+#include <array>
 #include <exception>
 #include <locale>
 #include <string>

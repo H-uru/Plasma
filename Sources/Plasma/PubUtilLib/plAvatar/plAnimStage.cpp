@@ -309,7 +309,7 @@ bool plAnimStage::ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatu
         int stageNum = genBrain ? genBrain->GetStageNum(this) : -1;
         msg->AddMultiStageEvent(stageNum, notifyType, armature->GetTarget(0)->GetKey());
 
-        if (stageNum < 0 || !genBrain->RelayNotifyMsg(msg))
+        if (!genBrain || !genBrain->RelayNotifyMsg(msg))
         {
             msg->UnRef();   // couldn't send; destroy...
         }
@@ -724,16 +724,16 @@ void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebug
     str << " ";
 
     if(fLoops)
-        str << plString::Format("loop(%d/%d)", fCurLoop, fLoops);
+        str << "loop(" << fCurLoop << '/' << fLoops << ')';
 
-    str << plString::Format("time: (%f/%f)", fLocalTime, fLength);
+    str << "time: (" << fLocalTime << '/' << fLength << ')';
 
     if(active)
-        debugTxt.DrawString(x, y, str.GetString().c_str(), 0, 255, 0);
+        debugTxt.DrawString(x, y, str.GetString(), 0, 255, 0);
     else if(fAnimInstance)
-        debugTxt.DrawString(x, y, str.GetString().c_str());
+        debugTxt.DrawString(x, y, str.GetString());
     else
-        debugTxt.DrawString(x, y, str.GetString().c_str(), 255, 255, 0);
+        debugTxt.DrawString(x, y, str.GetString(), 255, 255, 0);
 
     y += lineHeight;
 }
@@ -741,7 +741,7 @@ void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebug
 // READ
 void plAnimStage::Read(hsStream *stream, hsResMgr *mgr)
 {
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fNotify = stream->ReadByte();
     fForwardType = (ForwardType)stream->ReadLE32();
     fBackType = (BackType)stream->ReadLE32();

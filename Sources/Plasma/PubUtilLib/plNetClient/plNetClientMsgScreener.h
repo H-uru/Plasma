@@ -52,7 +52,7 @@ class plNetClientMsgScreener : public plNetMsgScreener
 protected:
     void ICreateStatusLog() const;
     const char* IGetSenderName(const plNetGameMember* gm) const { return "local";   }
-    const char* IGetAgeName() const;
+    plString IGetAgeName() const;
     bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const;
     bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const;
     bool IIsSenderCCR(const plNetGameMember* gm=nil) const;

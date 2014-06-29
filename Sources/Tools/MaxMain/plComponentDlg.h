@@ -44,14 +44,6 @@ class Class_ID;
 class Interface;
 class plMaxNode;
 
-#include <maxversion.h>
-#if MAX_VERSION_MAJOR >= 9
-    struct NotifyInfo;
-#else
-    // Max headers are more minimalistic in pre-9 maxes
-#   include <notify.h>
-#endif
-
 class plComponentDlg
 {
 protected:

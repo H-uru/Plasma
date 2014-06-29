@@ -214,7 +214,7 @@ void plAvBrainGeneric::Activate(plArmatureModBase *avMod)
         fAvMod->SetReverseFBOnIdle(true);
 }
 
-bool plAvBrainGeneric::IsRunningTask()
+bool plAvBrainGeneric::IsRunningTask() const
 {
     if ( fStages->size() > 0 )
         return true;

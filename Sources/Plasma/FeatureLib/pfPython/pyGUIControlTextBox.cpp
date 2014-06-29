@@ -146,7 +146,7 @@ void pyGUIControlTextBox::SetForeColor( pyColor& color )
 
 }
 
-PyObject* pyGUIControlTextBox::GetForeColor()
+PyObject* pyGUIControlTextBox::GetForeColor() const
 {
     if ( fGCkey )
     {
@@ -212,3 +212,4 @@ uint8_t pyGUIControlTextBox::GetJustify()
     }
     return pfGUIListText::kLeftJustify;
 }
+

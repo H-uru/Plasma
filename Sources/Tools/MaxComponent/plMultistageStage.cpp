@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsStream.h"
 #include "hsWindows.h"
+#include "MaxMain/MaxCompat.h"
 
 #include <iparamb2.h>
 #include <max.h>
@@ -96,7 +97,7 @@ plString plBaseStage::GetName()
 void plBaseStage::Read(hsStream *stream)
 {
     stream->ReadLE16();
-    fName = stream->ReadSafeString_TEMP();
+    fName = stream->ReadSafeString();
 }
 
 void plBaseStage::Write(hsStream *stream)
@@ -137,7 +138,7 @@ void plStandardStage::Read(hsStream *stream)
 
     uint16_t version = stream->ReadLE16();
 
-    fAnimName = stream->ReadSafeString_TEMP();
+    fAnimName = stream->ReadSafeString();
     fNumLoops = stream->ReadLE32();
     fLoopForever = stream->ReadBool();
     fForward = stream->ReadByte();
@@ -362,7 +363,7 @@ static void LoadCombo(HWND hCombo, NameType* nameInt, int size, int curVal)
 void plStandardStage::IInitDlg()
 {
     ICustEdit* edit = GetICustEdit(GetDlgItem(fDlg, IDC_ANIM_NAME));
-    edit->SetText(fAnimName.c_str());
+    edit->SetText(const_cast<SETTEXT_VALUE_TYPE>(fAnimName.c_str()));
 
     HWND hForward = GetDlgItem(fDlg, IDC_FORWARD_COMBO);
     LoadCombo(hForward, gForward, sizeof(gForward), fForward);

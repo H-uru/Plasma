@@ -40,9 +40,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plDynamicEnvMapMsg.h"
-
 #include "hsStream.h"
+#pragma hdrstop
+
+#include "plDynamicEnvMapMsg.h"
 
 void plDynamicEnvMapMsg::Read(hsStream* s, hsResMgr* mgr)
 {

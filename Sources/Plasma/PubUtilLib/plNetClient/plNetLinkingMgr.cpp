@@ -436,7 +436,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
     joinAgeOp->muteSfx = !msg->PlayLinkInSfx();
     StrCopy(
         joinAgeOp->age.ageDatasetName,
-        GetAgeLink()->GetAgeInfo()->GetAgeFilename(),
+        GetAgeLink()->GetAgeInfo()->GetAgeFilename().c_str(),
         arrsize(joinAgeOp->age.ageDatasetName)
         );
     StrCopy(
@@ -535,14 +535,14 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
         {
             VaultAgeInfoNode accInfo(rvnInfo);
             accInfo.CopyTo(cur->GetAgeInfo());
-            rvnInfo->DecRef();
+            rvnInfo->UnRef();
         }
 
         IDoLink(fDeferredLink);
         fDeferredLink = nil;
         return true;
 
-        cVaultLink->DecRef();
+        cVaultLink->UnRef();
     }
 
     return false;
@@ -722,17 +722,16 @@ void plNetLinkingMgr::LinkToPlayersAge( uint32_t playerID )
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID )
 {
 
-    plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
-    linkM->AddReceiver(mgr->GetKey());
-
-    plKey host = mgr->GetLocalPlayerKey();
-
-    plNetTransport &transport = mgr->TransportMgr();
+    plNetClientMgr* mgr = plNetClientMgr::GetInstance();
+    plNetTransport& transport = mgr->TransportMgr();
     int guestIdx = transport.FindMember(playerID);
-    plNetTransportMember *guestMem = transport.GetMember(guestIdx);         // -1 ?
-    if(guestMem)
-    {
+    plNetTransportMember* guestMem = transport.GetMember(guestIdx);         // -1 ?
+
+    if (guestMem) {
+        plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
+        linkM->AddReceiver(mgr->GetKey());
+
+        plKey host = mgr->GetLocalPlayerKey();
         plKey guest = guestMem->GetAvatarKey();
         plAvatarMgr::OfferLinkingBook(host, guest, linkM, host);
     }
@@ -740,19 +739,18 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 // my special version - cjp
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_t playerID, plKey replyKey )
 {
-
     plNetClientMgr *mgr = plNetClientMgr::GetInstance();
-    plLinkToAgeMsg * linkM = new plLinkToAgeMsg(inInfo);
-    linkM->AddReceiver(mgr->GetKey());
-
-    plKey host = mgr->GetLocalPlayerKey();
 
     plNetTransport &transport = mgr->TransportMgr();
     int guestIdx = transport.FindMember(playerID);
     plNetTransportMember *guestMem = transport.GetMember(guestIdx);         // -1 ?
-    if(guestMem)
+    if (guestMem)
     {
+        plLinkToAgeMsg* linkM = new plLinkToAgeMsg(inInfo);
+        linkM->AddReceiver(mgr->GetKey());
+
         plKey guest = guestMem->GetAvatarKey();
+        plKey host = mgr->GetLocalPlayerKey();
         plAvatarMgr::OfferLinkingBook(host, guest, linkM, replyKey);
     }
 }
@@ -760,11 +758,11 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeLinkStruct * inInfo, uint32_
 // for backwards compatibility
 void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, uint32_t playerID )
 {
-    plAgeLinkStruct *ageLink = new plAgeLinkStruct;
+    plAgeLinkStruct ageLink;
 
-    ageLink->GetAgeInfo()->CopyFrom(inInfo);
-    ageLink->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
-    OfferLinkToPlayer(ageLink, playerID);
+    ageLink.GetAgeInfo()->CopyFrom(inInfo);
+    ageLink.SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
+    OfferLinkToPlayer(&ageLink, playerID);
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -775,9 +773,9 @@ void plNetLinkingMgr::IPostProcessLink( void )
     plAgeLinkStruct* link = GetAgeLink();
     plAgeInfoStruct* info = link->GetAgeInfo();
 
-    bool city = (stricmp(info->GetAgeFilename(), kCityAgeFilename) == 0);
-    bool hood = (stricmp(info->GetAgeFilename(), kNeighborhoodAgeFilename) == 0);
-    bool psnl = (stricmp(info->GetAgeFilename(), kPersonalAgeFilename) == 0);
+    bool city = (info->GetAgeFilename().CompareI(kCityAgeFilename) == 0);
+    bool hood = (info->GetAgeFilename().CompareI(kNeighborhoodAgeFilename) == 0);
+    bool psnl = (info->GetAgeFilename().CompareI(kPersonalAgeFilename) == 0);
 
     // Update our online status 
     if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
@@ -788,7 +786,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
     
     switch (link->GetLinkingRules()) {
@@ -813,9 +811,9 @@ void plNetLinkingMgr::IPostProcessLink( void )
                         );
                 
                 if (fldr)
-                    fldr->DecRef();
+                    fldr->UnRef();
                 if (info)
-                    info->DecRef();
+                    info->UnRef();
             }
         }
         break;  
@@ -840,9 +838,9 @@ void plNetLinkingMgr::IPostProcessLink( void )
                         );
                 
                 if (fldr)
-                    fldr->DecRef();
+                    fldr->UnRef();
                 if (info)
-                    info->DecRef();
+                    info->UnRef();
             }
         }
         break;
@@ -880,7 +878,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         accInfo.SetAgeInstName(nil);
         accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 #else
     // Update our online status 
@@ -892,7 +890,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->DecRef();
+        rvnInfo->UnRef();
     }
 #endif
 
@@ -913,17 +911,17 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: StartUp: force basic link
-    if (stricmp(info->GetAgeFilename(), kStartUpAgeFilename) == 0)
+    if (info->GetAgeFilename().CompareI(kStartUpAgeFilename) == 0)
         link->SetLinkingRules( plNetCommon::LinkingRules::kBasicLink );
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: Nexus: force original link
-    if (stricmp(info->GetAgeFilename(), kNexusAgeFilename) == 0)
+    if (info->GetAgeFilename().CompareI(kNexusAgeFilename) == 0)
         link->SetLinkingRules(plNetCommon::LinkingRules::kOriginalBook);
 
     //------------------------------------------------------------------------
     // SPECIAL CASE: ACA: force original link
-    if (stricmp(info->GetAgeFilename(), kAvCustomizationFilename ) == 0)
+    if (info->GetAgeFilename().CompareI(kAvCustomizationFilename) == 0)
         link->SetLinkingRules(plNetCommon::LinkingRules::kOriginalBook);
 
     hsLogEntry(nc->DebugMsg("plNetLinkingMgr: Process: Linking with %s rules...",
@@ -959,9 +957,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         plString title;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
                         if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                            title = plString::Format("%s'", nc->GetPlayerName().c_str());
+                            title = plFormat("{}'", nc->GetPlayerName());
                         else
-                            title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                            title = plFormat("{}'s", nc->GetPlayerName());
                         info->SetAgeUserDefinedName(title.c_str());
                     }
                     if (!info->HasAgeDescription())
@@ -970,9 +968,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         plString desc;
                         unsigned nameLen = nc->GetPlayerName().GetSize();
                         if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                            desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
+                            desc = plFormat("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         else
-                            desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
+                            desc = plFormat("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         info->SetAgeDescription(desc.c_str());
                     }
                     if (!info->HasAgeInstanceGuid()) {
@@ -998,9 +996,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 plString title;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
                                 if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                                    title = plString::Format("%s'", nc->GetPlayerName().c_str());
+                                    title = plFormat("{}'", nc->GetPlayerName());
                                 else
-                                    title = plString::Format("%s's", nc->GetPlayerName().c_str());
+                                    title = plFormat("{}'s", nc->GetPlayerName());
                                 info->SetAgeUserDefinedName(title.c_str());
                             }
 
@@ -1010,9 +1008,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                                 plString desc;
                                 unsigned nameLen = nc->GetPlayerName().GetSize();
                                 if (nc->GetPlayerName().ToLower().CharAt(nameLen - 1) == 's')
-                                    desc = plString::Format("%s' %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
+                                    desc = plFormat("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 else
-                                    desc = plString::Format("%s's %s", nc->GetPlayerName().c_str(), info->GetAgeInstanceName());
+                                    desc = plFormat("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 info->SetAgeDescription( desc.c_str() );
                             }
 
@@ -1029,7 +1027,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                         }
                     }
                     else {
-                        if (stricmp(info->GetAgeFilename(), kNeighborhoodAgeFilename) == 0) {
+                        if (info->GetAgeFilename().CompareI(kNeighborhoodAgeFilename) == 0) {
                             // if we get here then it's because we're linking to a neighborhood that we don't belong to
                             // and our own neighborhood book is not volatile, so really we want to basic link
                             link->SetLinkingRules(plNetCommon::LinkingRules::kBasicLink);
@@ -1037,7 +1035,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             break;
                         }
                     }
-                    linkNode->DecRef();
+                    linkNode->UnRef();
                 }
             }
 

@@ -163,7 +163,7 @@ class pfPatcherStream : public plZlibStream
 
 public:
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, uint64_t size)
-        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0)
+        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0), fDLStartTime(0.f)
     {
         fParent->fTotalBytes += size;
         fOutput = new hsRAMStream;
@@ -182,8 +182,8 @@ public:
 
     virtual bool Open(const plFileName& filename, const char* mode)
     {
-        fFilename = filename;
-        return plZlibStream::Open(filename, mode);
+        fFilename = filename.Normalize();
+        return plZlibStream::Open(fFilename, mode);
     }
 
     virtual uint32_t Write(uint32_t count, const void* buf)
@@ -335,7 +335,7 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true)
+    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr)
 { }
 
 pfPatcherWorker::~pfPatcherWorker()

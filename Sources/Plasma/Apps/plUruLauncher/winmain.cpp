@@ -66,26 +66,29 @@ static plClientLauncher s_launcher;
 static UINT             s_taskbarCreated = RegisterWindowMessageW(L"TaskbarButtonCreated");
 static ITaskbarList3*   s_taskbar = nullptr;
 
+typedef std::unique_ptr<void, std::function<BOOL(HANDLE)>> handleptr_t;
+
 // ===================================================
 
 /** Create a global patcher mutex that is backwards compatible with eap's */
-static HANDLE CreatePatcherMutex()
+static handleptr_t CreatePatcherMutex()
 {
-    return CreateMutexW(nullptr, FALSE, plManifest::PatcherExecutable().AsString().ToWchar());
+    return handleptr_t(CreateMutexW(nullptr, TRUE, plManifest::PatcherExecutable().AsString().ToWchar()),
+                       CloseHandle);
 }
 
 static bool IsPatcherRunning()
 {
-    HANDLE mut = CreatePatcherMutex();
-    return WaitForSingleObject(mut, 0) != WAIT_OBJECT_0;
+    handleptr_t mut = CreatePatcherMutex();
+    return WaitForSingleObject(mut.get(), 0) != WAIT_OBJECT_0;
 }
 
 static void WaitForOldPatcher()
 {
-    HANDLE mut = CreatePatcherMutex();
-    DWORD wait = WaitForSingleObject(mut, 0);
+    handleptr_t mut = CreatePatcherMutex();
+    DWORD wait = WaitForSingleObject(mut.get(), 0);
     while (wait != WAIT_OBJECT_0) // :( :( :(
-        wait = WaitForSingleObject(mut, 100);
+        wait = WaitForSingleObject(mut.get(), 100);
     Sleep(1000); // :(
 }
 
@@ -182,7 +185,7 @@ static void PumpMessages()
 
 static void IOnDownloadBegin(const plFileName& file)
 {
-    plString msg = plString::Format("Downloading... %s", file.AsString().c_str());
+    plString msg = plFormat("Downloading... {}", file);
     SetDlgItemTextW(s_dialog, IDC_TEXT, msg.ToWchar());
 }
 
@@ -192,8 +195,8 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const plStri
     IShowMarquee(false);
 
     // DL size
-    plString size = plString::Format("%s / %s", plFileSystem::ConvertFileSize(curBytes).c_str(),
-        plFileSystem::ConvertFileSize(totalBytes).c_str());
+    plString size = plFormat("{} / {}", plFileSystem::ConvertFileSize(curBytes),
+                             plFileSystem::ConvertFileSize(totalBytes));
     SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.ToWchar());
 
     // DL speed
@@ -231,7 +234,7 @@ static void ISetDownloadStatus(const plString& status)
 }
 
 
-static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
+static handleptr_t ICreateProcess(const plFileName& exe, const plString& args)
 {
     STARTUPINFOW        si;
     PROCESS_INFORMATION pi;
@@ -240,7 +243,7 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
     si.cb = sizeof(si);
 
     // Create wchar things and stuff :/
-    plString cmd = plString::Format("%s %s", exe.AsString().c_str(), args.c_str());
+    plString cmd = plFormat("{} {}", exe, args);
     plStringBuffer<wchar_t> file = exe.AsString().ToWchar();
     plStringBuffer<wchar_t> params = cmd.ToWchar();
 
@@ -262,7 +265,7 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
     // So maybe it needs elevation... Or maybe everything arseploded.
     if (result != FALSE) {
         CloseHandle(pi.hThread);
-        return pi.hProcess;
+        return handleptr_t(pi.hProcess, CloseHandle);
     } else if (GetLastError() == ERROR_ELEVATION_REQUIRED) {
         SHELLEXECUTEINFOW info;
         memset(&info, 0, sizeof(info));
@@ -270,9 +273,9 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
         info.lpFile = file.GetData();
         info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
         info.lpParameters = args.ToWchar();
-        hsAssert(ShellExecuteExW(&info), "ShellExecuteExW phailed");
+        ShellExecuteExW(&info);
 
-        return info.hProcess;
+        return handleptr_t(info.hProcess, CloseHandle);
     } else {
         wchar_t* msg = nullptr;
         FormatMessageW(
@@ -293,7 +296,7 @@ static HANDLE ICreateProcess(const plFileName& exe, const plString& args)
 
 static bool IInstallRedist(const plFileName& exe)
 {
-    ISetDownloadStatus(plString::Format("Installing... %s", exe.AsString().c_str()));
+    ISetDownloadStatus(plFormat("Installing... {}", exe));
     Sleep(2500); // let's Sleep for a bit so the user can see that we're doing something before the UAC dialog pops up!
 
     // Try to guess some arguments... Unfortunately, the file manifest format is fairly immutable.
@@ -306,14 +309,13 @@ static bool IInstallRedist(const plFileName& exe)
         ss << " /norestart"; // I don't want to image the accusations of viruses and hacking if this happened...
 
     // Now fire up the process...
-    HANDLE process = ICreateProcess(exe, ss.GetString());
+    handleptr_t process = ICreateProcess(exe, ss.GetString());
     if (process) {
-        WaitForSingleObject(process, INFINITE);
+        WaitForSingleObject(process.get(), INFINITE);
 
         // Get the exit code so we can indicate success/failure to the redist thread
         DWORD code = PLASMA_OK;
-        hsAssert(GetExitCodeProcess(process, &code), "failed to get redist exit code");
-        CloseHandle(process);
+        GetExitCodeProcess(process.get(), &code);
 
         return code != PLASMA_PHAILURE;
     }
@@ -329,17 +331,14 @@ static void ILaunchClientExecutable(const plFileName& exe, const plString& args)
     // Only launch a client executable if we're given one. If not, that's probably a cue that we're
     // done with some service operation and need to go away.
     if (!exe.AsString().IsEmpty()) {
-        HANDLE hEvent = CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent");
-        HANDLE process = ICreateProcess(exe, args);
+        handleptr_t hEvent = handleptr_t(CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent"), CloseHandle);
+        handleptr_t process = ICreateProcess(exe, args);
 
         // if this is the real game client, then we need to make sure it gets this event...
         if (plManifest::ClientExecutable().AsString().CompareI(exe.AsString()) == 0) {
-            WaitForInputIdle(process, 1000);
-            WaitForSingleObject(hEvent, INFINITE);
+            WaitForInputIdle(process.get(), 1000);
+            WaitForSingleObject(hEvent.get(), INFINITE);
         }
-
-        CloseHandle(process);
-        CloseHandle(hEvent);
     }
 
     // time to hara-kiri...
@@ -351,7 +350,7 @@ static void IOnNetError(ENetError result, const plString& msg)
     if (s_taskbar)
         s_taskbar->SetProgressState(s_dialog, TBPF_ERROR);
 
-    s_error = plString::Format("Error: %S\r\n%s", NetErrorAsString(result), msg.c_str());
+    s_error = plFormat("Error: {}\r\n{}", NetErrorAsString(result), msg);
     IQuit(PLASMA_PHAILURE);
 }
 
@@ -395,11 +394,11 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
-        plString text = plString::Format("%s is already running", plProduct::LongName().c_str());
+        plString text = plFormat("{} is already running", plProduct::LongName());
         IShowErrorDialog(text.ToWchar());
         return PLASMA_OK;
     }
-    HANDLE _onePatcherMut = CreatePatcherMutex();
+    HANDLE _onePatcherMut = CreatePatcherMutex().release();
 
     // Initialize the network core
     s_launcher.InitializeNetCore();

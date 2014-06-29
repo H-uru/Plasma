@@ -41,10 +41,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plRenderRequestMsg.h"
-#include "pnKeyedObject/plUoid.h"
-#include "pnKeyedObject/plFixedKey.h"
 #include "hsResMgr.h"
+
+#include "pnKeyedObject/plFixedKey.h"
+#include "pnKeyedObject/plUoid.h"
+#pragma hdrstop
+
+#include "plRenderRequestMsg.h"
 
 
 plRenderRequestMsg::plRenderRequestMsg(plKey sender, plRenderRequestBase* req)

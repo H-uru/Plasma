@@ -5,49 +5,60 @@ include_directories("../../Plasma/PubUtilLib")
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
 set(plFontConverter_HEADERS
+    plFontConverter.h
     plFontFreeType.h
+    plFontPreview.h
 )
+qt5_wrap_cpp(plFontConverter_MOC ${plFontConverter_HEADERS})
 
 set(plFontConverter_SOURCES
     plFontConverter.cpp
-    plFontConverterProc.cpp
     plFontFreeType.cpp
+    plFontPreview.cpp
 )
-    
-set(plFontConverter_RESOURCES
-    res/plFontConverter.rc
-    res/resource.h
-    res/icon1.ico
+
+if(WIN32)
+    set(plFontConverter_SOURCES ${plFontConverter_SOURCES}
+        res/plFontConverter.rc
+    )
+endif()
+
+set(plFontConverter_RCC_SOURCES
+    res/plFontConverter.qrc
 )
-    
-add_executable(plFontConverter WIN32 ${plFontConverter_SOURCES} ${plFontConverter_HEADERS} ${plFontConverter_RESOURCES})
+qt5_add_resources(plFontConverter_RCC ${plFontConverter_RCC_SOURCES})
+
+set(plFontConverter_UIC_SOURCES
+    res/MainDialog.ui
+    res/FonChooser.ui
+    res/FreeType.ui
+    res/FreeTypeBatch.ui
+)
+qt5_wrap_ui(plFontConverter_UIC ${plFontConverter_UIC_SOURCES})
+
+# For generated ui_*.h files
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+
+add_executable(plFontConverter WIN32 ${plFontConverter_HEADERS}
+               ${plFontConverter_SOURCES} ${plFontConverter_RCC}
+               ${plFontConverter_UIC} ${plFontConverter_MOC})
 
 target_link_libraries(plFontConverter CoreLib)
 target_link_libraries(plFontConverter pnKeyedObject)
 target_link_libraries(plFontConverter pnSceneObject)
-target_link_libraries(plFontConverter pnUUID)
 target_link_libraries(plFontConverter plGImage)
-target_link_libraries(plFontConverter plMessage)
 target_link_libraries(plFontConverter plPipeline)
 target_link_libraries(plFontConverter plResMgr)
 target_link_libraries(plFontConverter ${JPEG_LIBRARY})
-target_link_libraries(plFontConverter ${DirectX_LIBRARIES})
 target_link_libraries(plFontConverter ${FREETYPE_LIBRARIES})
-
-if (WIN32)
-    target_link_libraries(plFontConverter Rpcrt4)
-    target_link_libraries(plFontConverter Vfw32)
-    target_link_libraries(plFontConverter Ws2_32)
-    target_link_libraries(plFontConverter winmm)
-    target_link_libraries(plFontConverter strmiids)
-    target_link_libraries(plFontConverter comctl32)
-    target_link_libraries(plFontConverter shlwapi)
-endif(WIN32)
+target_link_libraries(plFontConverter Qt5::Widgets)
 
 if(USE_VLD)
     target_link_libraries(plFontConverter ${VLD_LIBRARY})
 endif()
 
-source_group("Source Files" FILES ${plFontConverter_SOURCES})
+source_group("Source Files" FILES ${plFontConverter_SOURCES} ${plFontConverter_MOC})
 source_group("Header Files" FILES ${plFontConverter_HEADERS})
-source_group("Resource Files" FILES ${plFontConverter_RESOURCES})
+source_group("Resource Files" FILES ${plFontConverter_RCC_SOURCES} ${plFontConverter_RCC}
+                                    ${plFontConverter_UIC_SOURCES} ${plFontConverter_UIC})

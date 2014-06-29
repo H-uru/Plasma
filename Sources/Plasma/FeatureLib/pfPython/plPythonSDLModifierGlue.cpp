@@ -76,7 +76,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setIndexNow, args)
     char* key;
     int idx;
     PyObject* value = NULL;
-    if (!PyArg_ParseTuple(args, "siO", &key, &idx, &value))
+    if (!PyArg_ParseTuple(args, "etiO", "utf8", &key, &idx, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setIndexNow expects a string, int, and an object");
         PYTHON_RETURN_ERROR;
@@ -89,7 +89,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setDefault, args)
 {
     char* key;
     PyObject* value = NULL;
-    if (!PyArg_ParseTuple(args, "sO", &key, &value))
+    if (!PyArg_ParseTuple(args, "etO", "utf8", &key, &value))
     {
         PyErr_SetString(PyExc_TypeError, "setDefault expects a string and a tuple");
         PYTHON_RETURN_ERROR;
@@ -106,7 +106,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setDefault, args)
 PYTHON_METHOD_DEFINITION(ptSDL, sendToClients, args)
 {
     char* key;
-    if (!PyArg_ParseTuple(args, "s", &key))
+    if (!PyArg_ParseTuple(args, "et", "utf8", &key))
     {
         PyErr_SetString(PyExc_TypeError, "sendToClients expects a string");
         PYTHON_RETURN_ERROR;
@@ -120,7 +120,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setNotify, args)
     PyObject* selfKeyObj;
     char* key;
     float tolerance;
-    if (!PyArg_ParseTuple(args, "Osf", &selfKeyObj, &key, &tolerance))
+    if (!PyArg_ParseTuple(args, "Oetf", &selfKeyObj, "utf8", &key, &tolerance))
     {
         PyErr_SetString(PyExc_TypeError, "setNotify expects a ptKey, string, and float");
         PYTHON_RETURN_ERROR;
@@ -139,7 +139,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setFlags, args)
 {
     char* key;
     char sendImmediate, skipOwnershipCheck;
-    if (!PyArg_ParseTuple(args, "sbb", &key, &sendImmediate, &skipOwnershipCheck))
+    if (!PyArg_ParseTuple(args, "etbb", "utf8", &key, &sendImmediate, &skipOwnershipCheck))
     {
         PyErr_SetString(PyExc_TypeError, "setFlags expects a string and two booleans");
         PYTHON_RETURN_ERROR;
@@ -152,7 +152,7 @@ PYTHON_METHOD_DEFINITION(ptSDL, setTagString, args)
 {
     char* key;
     char* tag;
-    if (!PyArg_ParseTuple(args, "ss", &key, &tag))
+    if (!PyArg_ParseTuple(args, "etet", "utf8", &key, "utf8", &tag))
     {
         PyErr_SetString(PyExc_TypeError, "setTagString expects two strings");
         PYTHON_RETURN_ERROR;
@@ -179,12 +179,12 @@ PYTHON_END_METHODS_TABLE;
 
 PyObject* ptSDL_subscript(ptSDL* self, PyObject* key)
 {
-    if (!PyString_Check(key))
+    if (!PyString_CheckEx(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         PYTHON_RETURN_ERROR;
     }
-    char *keyStr = PyString_AsString(key);
+    plString keyStr = PyString_AsStringEx(key);
     return pySDLModifier::GetItem(*(self->fThis), keyStr);
 }
 
@@ -195,7 +195,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_RuntimeError, "Cannot remove sdl records");
         return -1; // error return
     }
-    if (!PyString_Check(key))
+    if (!PyString_CheckEx(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         return -1; // error return
@@ -205,7 +205,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_TypeError, "SDL values must be tuples");
         return -1; // error return
     }
-    char* keyStr = PyString_AsString(key);
+    plString keyStr = PyString_AsStringEx(key);
     pySDLModifier::SetItem(*(self->fThis), keyStr, value);
     return 0; // success return
 }

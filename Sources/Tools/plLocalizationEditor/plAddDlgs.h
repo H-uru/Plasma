@@ -43,41 +43,48 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef __plAddDlgs_h__
 #define __plAddDlgs_h__
 
-#include "HeadSpin.h"
-#include "hsWindows.h"
-#include "plString.h"
+#include <QDialog>
+#include "plFormat.h"
 
-class plAddElementDlg
+class plAddElementDlg : public QDialog
 {
-protected:
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    Q_OBJECT
 
-    bool IInitDlg(HWND hDlg);
-    void IUpdateDlg(HWND hDlg, bool setFocus = true);
-
-    plString fAgeName, fSetName, fElementName;
-    bool fAgeChanged;
 public:
-    plAddElementDlg(plString parentPath);
+    plAddElementDlg(const plString &parentPath, QWidget *parent = nullptr);
+    virtual ~plAddElementDlg();
 
-    bool DoPick(HWND parent); // returns true if [Ok] clicked, false otherwise.
-    plString GetValue() {return plString::Format("%s.%s.%s", fAgeName.c_str(), fSetName.c_str(), fElementName.c_str());}
+    bool DoPick(); // returns true if [Ok] clicked, false otherwise.
+    plString GetValue() const
+    {
+        return plFormat("{}.{}.{}", fAgeName, fSetName, fElementName);
+    }
+
+private slots:
+    void Update(const QString &text);
+
+private:
+    class Ui_AddElement *fUI;
+    plString fAgeName, fSetName, fElementName;
+    bool fBlockUpdates;
 };
 
-class plAddLocalizationDlg
+class plAddLocalizationDlg : public QDialog
 {
-protected:
-    static BOOL CALLBACK IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
+    Q_OBJECT
 
-    bool IInitDlg(HWND hDlg);
-    void IUpdateDlg(HWND hDlg);
-
-    plString fAgeName, fSetName, fElementName, fLanguageName;
 public:
-    plAddLocalizationDlg(plString parentPath);
+    plAddLocalizationDlg(const plString &parentPath, QWidget *parent = nullptr);
 
-    bool DoPick(HWND parent); // returns true if [Ok] clicked, false otherwise.
-    plString GetValue() {return fLanguageName;}
+    bool DoPick(); // returns true if [Ok] clicked, false otherwise.
+    const plString &GetValue() const { return fLanguageName; }
+
+private slots:
+    void SelectLanguage(int which);
+
+private:
+    class Ui_AddLocalization *fUI;
+    plString fAgeName, fSetName, fElementName, fLanguageName;
 };
 
 #endif

@@ -1351,7 +1351,7 @@ void proVariableEventData::IWriteNumber(hsStream * stream) {
 
 void proVariableEventData::IRead(hsStream* stream, hsResMgr* mgr)
 {
-    fName = stream->ReadSafeString_TEMP();
+    fName = stream->ReadSafeString();
     fDataType = stream->ReadLE32();
     IReadNumber(stream);
     fKey = mgr->ReadKey(stream);
@@ -1379,7 +1379,7 @@ void proVariableEventData::IReadVersion(hsStream* s, hsResMgr* mgr)
     contentFlags.Read(s);
 
     if (contentFlags.IsBitSet(kProVariableName))
-        fName = s->ReadSafeString_TEMP();
+        fName = s->ReadSafeString();
     if (contentFlags.IsBitSet(kProVariableDataType))
         fDataType = s->ReadLE32();
     if (contentFlags.IsBitSet(kProVariableNumber))

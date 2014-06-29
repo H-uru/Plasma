@@ -76,8 +76,8 @@ plProfile_Extern(MemMipmaps);
 //// Constructor & Destructor /////////////////////////////////////////////////
 
 plDynamicTextMap::plDynamicTextMap()
-    : fVisWidth(0), fVisHeight(0), fHasAlpha(false), fJustify(kLeftJustify),
-      fInitBuffer(nullptr), fFontFace(nullptr), fFontSize(0), fFontFlags(0),
+    : fVisWidth(0), fVisHeight(0), fHasAlpha(false), fPremultipliedAlpha(false), fJustify(kLeftJustify),
+      fInitBuffer(nullptr), fFontSize(0), fFontFlags(0),
       fFontAntiAliasRGB(false), fFontBlockRGB(false), fHasCreateBeenCalled(false)
 {
     fFontColor.Set(0, 0, 0, 1);
@@ -88,10 +88,10 @@ plDynamicTextMap::~plDynamicTextMap()
     Reset();
 }
 
-plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight )
-    : fInitBuffer(nullptr), fFontFace(nullptr)
+plDynamicTextMap::plDynamicTextMap( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight, bool premultipliedAlpha )
+    : fInitBuffer(nullptr)
 {
-    Create( width, height, hasAlpha, extraWidth, extraHeight );
+    Create( width, height, hasAlpha, extraWidth, extraHeight, premultipliedAlpha );
 }
 
 //// SetNoCreate //////////////////////////////////////////////////////////////
@@ -113,7 +113,7 @@ void    plDynamicTextMap::SetNoCreate( uint32_t width, uint32_t height, bool has
 
 //// Create ///////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight )
+void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth, uint32_t extraHeight, bool premultipliedAlpha )
 {
     SetConfig( hasAlpha ? kARGB32Config : kRGB32Config );
 
@@ -121,6 +121,7 @@ void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha
     fVisWidth = (uint16_t)width;
     fVisHeight = (uint16_t)height;
     fHasAlpha = hasAlpha;
+    fPremultipliedAlpha = premultipliedAlpha;
 
     for( fWidth = 1; fWidth < width + extraWidth; fWidth <<= 1 );
     for( fHeight = 1; fHeight < height + extraHeight; fHeight <<= 1 );
@@ -163,8 +164,7 @@ void    plDynamicTextMap::Reset( void )
     delete [] fInitBuffer;
     fInitBuffer = nil;
 
-    delete [] fFontFace;
-    fFontFace = nil;
+    fFontFace = plString::Null;
 
     // Destroy the old texture ref, since we're no longer using it
     SetDeviceRef( nil );
@@ -379,6 +379,17 @@ void    plDynamicTextMap::IClearFromBuffer( uint32_t *clearBuffer )
     }
 }
 
+//// IPropagateFlags //////////////////////////////////////////////////////////
+
+void    plDynamicTextMap::IPropagateFlags()
+{
+    SetJustify(fJustify);
+    fCurrFont->SetRenderFlag(plFont::kRenderShadow, fFontFlags & kFontShadowed);
+    fCurrFont->SetRenderFlag(plFont::kRenderIntoAlpha, fFontBlockRGB);
+    fCurrFont->SetRenderFlag(plFont::kRenderAlphaPremultiplied, fPremultipliedAlpha);
+    fCurrFont->SetRenderColor(fFontColor.ToARGB32());
+}
+
 //// ClearToColor /////////////////////////////////////////////////////////////
 
 void    plDynamicTextMap::ClearToColor( hsColorRGBA &color )
@@ -386,7 +397,7 @@ void    plDynamicTextMap::ClearToColor( hsColorRGBA &color )
     if( !IIsValid() )
         return;
 
-    uint32_t      i, hex = color.ToARGB32();
+    uint32_t      i, hex = fPremultipliedAlpha ? color.ToARGB32Premultiplied() : color.ToARGB32();
     uint32_t      *data = (uint32_t *)fImage;
 
     // Buffer is of size fVisWidth x fVisHeight, so we need a bit of work to do this right
@@ -413,22 +424,21 @@ void    plDynamicTextMap::SetJustify( Justify j )
 
 //// SetFont //////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t fontFlags, bool antiAliasRGB )
+void    plDynamicTextMap::SetFont( const plString &face, uint16_t size, uint8_t fontFlags, bool antiAliasRGB )
 {
 // ===> Don't need to validate creation
 //  if( !IIsValid() )
 //      return;
 
-    delete [] fFontFace;
     if (plLocalization::UsingUnicode())
     {
         // unicode has a bunch of chars that most fonts don't have, so we override the font choice with one
         // that will work with the desired language
-        hsStatusMessageF("We are using a unicode language, overriding font choice of %s", face ? face : "nil");
-        fFontFace = hsStrcpy( "Unicode" );
+        hsStatusMessageF("We are using a unicode language, overriding font choice of %s", face.c_str("nil"));
+        fFontFace = "Unicode";
     }
     else
-        fFontFace = ( face != nil ) ? hsStrcpy( face ) : nil;
+        fFontFace = face;
     fFontSize = size;
     fFontFlags = fontFlags;
     fFontAntiAliasRGB = antiAliasRGB;
@@ -439,11 +449,9 @@ void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t font
     if ( fCurrFont == nil )
     {
         if (!fCurrFont)
-            hsStatusMessageF("Font missing - %s. Using Arial", fFontFace ? fFontFace : "nil");
+            hsStatusMessageF("Font missing - %s. Using Arial", fFontFace.c_str("nil"));
 
-        if ( fFontFace )
-            delete [] fFontFace;
-        fFontFace = hsStrcpy( "Arial" );
+        fFontFace = "Arial";
         // lets try again with Arial
         fCurrFont = plFontCache::GetInstance().GetFont( fFontFace, (uint8_t)fFontSize,
                             ( ( fFontFlags & kFontBold ) ? plFont::kFlagBold : 0 ) | 
@@ -453,16 +461,11 @@ void    plDynamicTextMap::SetFont( const char *face, uint16_t size, uint8_t font
     // This will be nil if we're just running the page optimizer.
     if (fCurrFont)
     {
+        if (fFontFlags & kFontShadowed)
+            fCurrFont->SetRenderFlag(plFont::kRenderShadow, true);
         fCurrFont->SetRenderYJustify( plFont::kRenderJustYTop );
         SetJustify( fJustify );
     }
-}
-
-void    plDynamicTextMap::SetFont( const wchar_t *face, uint16_t size, uint8_t fontFlags , bool antiAliasRGB )
-{
-    char *sFace = hsWStringToString(face);
-    SetFont(sFace,size,fontFlags,antiAliasRGB);
-    delete [] sFace;
 }
 
 //// SetLineSpacing ///////////////////////////////////////////////////////////
@@ -506,20 +509,18 @@ void    plDynamicTextMap::DrawString( uint16_t x, uint16_t y, const wchar_t *tex
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderFlag( plFont::kRenderWrap | plFont::kRenderClip, false );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
+	fCurrFont->SetRenderClipRect( 0, 0, fVisWidth, fVisHeight );
     fCurrFont->RenderString( this, x, y, text );
 }
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t width, uint16_t height )
+void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const plString &text, uint16_t width, uint16_t height )
 {
-    wchar_t *wText = hsStringToWString(text);
-    DrawClippedString(x,y,wText,width,height);
-    delete [] wText;
+    // TEMP
+    DrawClippedString(x, y, text.ToWchar().GetData(), width, height);
 }
 
 void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t width, uint16_t height )
@@ -527,20 +528,17 @@ void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderClipping( x, y, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
     fCurrFont->RenderString( this, x, y, text );
 }
 
 //// DrawClippedString ////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const char *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
+void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const plString &text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
 {
-    wchar_t *wText = hsStringToWString(text);
-    DrawClippedString(x,y,wText,clipX,clipY,width,height);
-    delete [] wText;
+    // TEMP
+    DrawClippedString(x, y, text.ToWchar().GetData(), width, height);
 }
 
 void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t *text, uint16_t clipX, uint16_t clipY, uint16_t width, uint16_t height )
@@ -548,19 +546,17 @@ void    plDynamicTextMap::DrawClippedString( int16_t x, int16_t y, const wchar_t
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderClipping( clipX, clipY, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
     fCurrFont->RenderString( this, x, y, text );
 }
 
 //// DrawWrappedString ////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::DrawWrappedString( uint16_t x, uint16_t y, const char *text, uint16_t width, uint16_t height, uint16_t *lastX, uint16_t *lastY )
+void    plDynamicTextMap::DrawWrappedString( uint16_t x, uint16_t y, const plString &text, uint16_t width, uint16_t height, uint16_t *lastX, uint16_t *lastY )
 {
-    wchar_t *wText = hsStringToWString(text);
-    DrawWrappedString(x,y,wText,width,height,lastX,lastY);
-    delete [] wText;
+    // TEMP
+    DrawWrappedString(x, y, text.ToWchar().GetData(), width, height, lastX, lastY);
 }
 
 void    plDynamicTextMap::DrawWrappedString( uint16_t x, uint16_t y, const wchar_t *text, uint16_t width, uint16_t height, uint16_t *lastX, uint16_t *lastY )
@@ -568,21 +564,17 @@ void    plDynamicTextMap::DrawWrappedString( uint16_t x, uint16_t y, const wchar
     if( !IIsValid() )
         return;
 
-    SetJustify( fJustify );
+    IPropagateFlags();
     fCurrFont->SetRenderWrapping( x, y, width, height );
-    fCurrFont->SetRenderColor( fFontColor.ToARGB32() );
-    fCurrFont->SetRenderFlag( plFont::kRenderIntoAlpha, fFontBlockRGB );
     fCurrFont->RenderString( this, x, y, text, lastX, lastY );
 }
 
 //// CalcStringWidth //////////////////////////////////////////////////////////
 
-uint16_t      plDynamicTextMap::CalcStringWidth( const char *text, uint16_t *height )
+uint16_t      plDynamicTextMap::CalcStringWidth( const plString &text, uint16_t *height )
 {
-    wchar_t *wText = hsStringToWString(text);
-    uint16_t w = CalcStringWidth(wText,height);
-    delete [] wText;
-    return w;
+    // TEMP
+    return CalcStringWidth(text.ToWchar().GetData(), height);
 }
 
 uint16_t      plDynamicTextMap::CalcStringWidth( const wchar_t *text, uint16_t *height )
@@ -614,11 +606,10 @@ void    plDynamicTextMap::SetFirstLineIndent( int16_t indent )
 
 //// CalcWrappedStringSize ////////////////////////////////////////////////////
 
-void    plDynamicTextMap::CalcWrappedStringSize( const char *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar, uint16_t *maxAscent, uint16_t *lastX, uint16_t *lastY )
+void    plDynamicTextMap::CalcWrappedStringSize( const plString &text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar, uint16_t *maxAscent, uint16_t *lastX, uint16_t *lastY )
 {
-    wchar_t *wText = hsStringToWString(text);
-    CalcWrappedStringSize(wText,width,height,firstClippedChar,maxAscent,lastX,lastY);
-    delete [] wText;
+    // TEMP
+    CalcWrappedStringSize(text.ToWchar().GetData(), width, height, firstClippedChar, maxAscent, lastX, lastY);
 }
 
 void    plDynamicTextMap::CalcWrappedStringSize( const wchar_t *text, uint16_t *width, uint16_t *height, uint32_t *firstClippedChar, uint16_t *maxAscent, uint16_t *lastX, uint16_t *lastY )
@@ -655,7 +646,7 @@ void    plDynamicTextMap::FillRect( uint16_t x, uint16_t y, uint16_t width, uint
         width = (uint16_t)(fWidth - x);
 
     // Gee, how hard can it REALLY be?
-    uint32_t i, hex = color.ToARGB32();
+    uint32_t i, hex = fPremultipliedAlpha ? color.ToARGB32Premultiplied() : color.ToARGB32();
     height += y;
     if( height > fHeight )
         height = (uint16_t)fHeight;
@@ -680,7 +671,7 @@ void    plDynamicTextMap::FrameRect( uint16_t x, uint16_t y, uint16_t width, uin
         height = (uint16_t)(fHeight - y);
 
     // Shouldn't be much harder
-    uint32_t i, hex = color.ToARGB32();
+    uint32_t i, hex = fPremultipliedAlpha ? color.ToARGB32Premultiplied() : color.ToARGB32();
     uint32_t *dest1, *dest2;
 
     dest1 = GetAddr32( x, y );
@@ -714,6 +705,9 @@ void    plDynamicTextMap::DrawImage( uint16_t x, uint16_t y, plMipmap *image, Dr
         opts.fFlags = 0;        // Default opts
     else if( method == kImgSprite )
         opts.fFlags = plMipmap::kCopySrcAlpha;
+
+    if( fPremultipliedAlpha )
+        opts.fFlags |= plMipmap::kDestPremultiplied;
 
     Composite( image, x, y, &opts );
 
@@ -752,6 +746,9 @@ void    plDynamicTextMap::DrawClippedImage( uint16_t x, uint16_t y, plMipmap *im
         opts.fFlags = 0;        // Default opts
     else if( method == kImgSprite )
         opts.fFlags = plMipmap::kCopySrcAlpha;
+
+    if( fPremultipliedAlpha )
+        opts.fFlags |= plMipmap::kDestPremultiplied;
 
     opts.fSrcClipX = srcClipX;
     opts.fSrcClipY = srcClipY;
@@ -816,7 +813,7 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
             SetTextColor( textMsg->fColor, textMsg->fBlockRGB );
 
         if( (textMsg->fCmd & plDynamicTextMsg::kSetFont ) && !textMsg->fString.IsNull())
-            SetFont( textMsg->fString.ToWchar(), textMsg->fX, (uint8_t)(textMsg->fFlags) );
+            SetFont( textMsg->fString, textMsg->fX, (uint8_t)(textMsg->fFlags) );
         
         if( textMsg->fCmd & plDynamicTextMsg::kSetLineSpacing )
             SetLineSpacing( textMsg->fLineSpacing );
@@ -899,10 +896,11 @@ void    plDynamicTextMap::Swap( plDynamicTextMap *other )
 
     // Swap DTMap info
     SWAP_ME( bool, fHasAlpha, other->fHasAlpha );
+    SWAP_ME( bool, fPremultipliedAlpha, other->fPremultipliedAlpha );
     SWAP_ME( bool, fShadowed, other->fShadowed );
 
     SWAP_ME( Justify, fJustify, other->fJustify );
-    SWAP_ME( char *, fFontFace, other->fFontFace );
+    SWAP_ME( plString, fFontFace, other->fFontFace );
     SWAP_ME( uint16_t, fFontSize, other->fFontSize );
     SWAP_ME( uint8_t, fFontFlags, other->fFontFlags );
     SWAP_ME( bool, fFontAntiAliasRGB, other->fFontAntiAliasRGB );

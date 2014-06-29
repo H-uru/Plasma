@@ -333,7 +333,7 @@ void plMultistageBehComponent::FixStageNames()
             for (int i = 0; i < fStages.size(); i++)
             {
                 plBaseStage* stage = fStages[i];
-                stage->SetName(plString::Format("Stage %d", i));
+                stage->SetName(plFormat("Stage {}", i));
             }
         }
     }

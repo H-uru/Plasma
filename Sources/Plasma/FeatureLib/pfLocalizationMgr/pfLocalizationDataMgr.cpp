@@ -171,12 +171,12 @@ XML_Memory_Handling_Suite gHeapAllocator = {
 
 void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *element, const XML_Char **attributes)
 {
-    plString wElement = plString::FromWchar(element);
+    plString wElement = element;
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
     std::map<plString, plString> wAttributes;
 
     for (int i = 0; attributes[i]; i += 2)
-        wAttributes[plString::FromWchar(attributes[i])] = plString::FromWchar(attributes[i+1]);
+        wAttributes[attributes[i]] = attributes[i+1];
 
     LocalizationXMLFile::tagInfo parentTag;
     if (!file->fTagStack.empty())
@@ -203,12 +203,12 @@ void XMLCALL LocalizationXMLFile::StartTag(void *userData, const XML_Char *eleme
     else if (wElement == "translation")
         file->IHandleTranslationTag(parentTag, newTag);
     else
-        file->AddError(plString::Format("Unknown tag %s found", wElement.c_str()));
+        file->AddError(plFormat("Unknown tag {} found", wElement));
 }
 
 void XMLCALL LocalizationXMLFile::EndTag(void *userData, const XML_Char *element)
 {
-    plString wElement = plString::FromWchar(element);
+    plString wElement = element;
     LocalizationXMLFile *file = (LocalizationXMLFile*)userData;
 
     if (file->fSkipDepth != -1) // we're currently skipping
@@ -243,7 +243,7 @@ void XMLCALL LocalizationXMLFile::HandleData(void *userData, const XML_Char *dat
 
     // This gets all data between tags, including indentation and newlines
     // so we'll have to ignore data when we aren't expecting it (not in a translation tag)
-    plString contents = plString::FromWchar(data, stringLength);
+    plString contents = plString::FromUtf8(data, stringLength);
 
     // we must be in a translation tag since that's the only tag that doesn't ignore the contents
     file->fData[file->fCurrentAge][file->fCurrentSet][file->fCurrentElement][file->fCurrentTranslation] += contents;
@@ -496,7 +496,7 @@ LocalizationXMLFile::set LocalizationDatabase::IMergeSetData(LocalizationXMLFile
             firstSet[curElement->first] = curElement->second;
         else // merge the element in
             firstSet[curElement->first] = IMergeElementData(firstSet[curElement->first], curElement->second, fileName, 
-                plString::Format("%s.%s", path.c_str(), curElement->first.c_str()));
+                plFormat("{}.{}", path, curElement->first));
     }
 
     return firstSet;
@@ -515,7 +515,7 @@ LocalizationXMLFile::age LocalizationDatabase::IMergeAgeData(LocalizationXMLFile
             firstAge[curSet->first] = curSet->second;
         else // merge the data in
             firstAge[curSet->first] = IMergeSetData(firstAge[curSet->first], curSet->second, fileName, 
-                plString::Format("%s.%s", path.c_str(), curSet->first.c_str()));
+                plFormat("{}.{}", path, curSet->first));
     }
 
     return firstAge;
@@ -691,11 +691,14 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const plString & key)
         return false;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return false;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return false;
-    if (fData[age][set].find(name) == fData[age][set].end()) // name doesn't exist
+    auto curElement = curSet->second.find(name);
+    if (curElement == curSet->second.end()) // name doesn't exist
         return false;
 
     // we passed all the tests, return true!
@@ -713,9 +716,11 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::setExists(const plString & key)
         return false;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return false;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return false;
 
     // we passed all the tests, return true!
@@ -733,19 +738,22 @@ void pfLocalizationDataMgr::pf3PartMap<mapT>::erase(const plString & key)
         return;
 
     // now check individually
-    if (fData.find(age) == fData.end()) // age doesn't exist
+    auto curAge = fData.find(age);
+    if (curAge == fData.end()) // age doesn't exist
         return;
-    if (fData[age].find(set) == fData[age].end()) // set doesn't exist
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end()) // set doesn't exist
         return;
-    if (fData[age][set].find(name) == fData[age][set].end()) // name doesn't exist
+    auto curElement = curSet->second.find(name);
+    if (curElement == curSet->second.end()) // name doesn't exist
         return;
 
     // ok, so now we want to nuke it!
-    fData[age][set].erase(name);
-    if (fData[age][set].size() == 0) // is the set now empty?
-        fData[age].erase(set); // nuke it!
-    if (fData[age].size() == 0) // is the age now empty?
-        fData.erase(age); // nuke it!
+    curSet->second.erase(name);
+    if (curSet->second.size() == 0) // is the set now empty?
+        curAge->second.erase(curSet); // nuke it!
+    if (curAge->second.size() == 0) // is the age now empty?
+        fData.erase(curAge); // nuke it!
 }
 
 //// operator[]() ////////////////////////////////////////////////////
@@ -780,10 +788,11 @@ std::vector<plString> pfLocalizationDataMgr::pf3PartMap<mapT>::getSetList(const 
     std::vector<plString> retVal;
     typename std::map<plString, std::map<plString, mapT> >::iterator curSet;
 
-    if (fData.find(age) == fData.end())
+    auto curAge = fData.find(age);
+    if (curAge == fData.end())
         return retVal; // return an empty list, the age doesn't exist
 
-    for (curSet = fData[age].begin(); curSet != fData[age].end(); curSet++)
+    for (curSet = curAge->second.begin(); curSet != curAge->second.end(); curSet++)
         retVal.push_back(curSet->first);
 
     return retVal;
@@ -797,13 +806,15 @@ std::vector<plString> pfLocalizationDataMgr::pf3PartMap<mapT>::getNameList(const
     std::vector<plString> retVal;
     typename std::map<plString, mapT>::iterator curName;
 
-    if (fData.find(age) == fData.end())
+    auto curAge = fData.find(age);
+    if (curAge == fData.end())
         return retVal; // return an empty list, the age doesn't exist
 
-    if (fData[age].find(set) == fData[age].end())
+    auto curSet = curAge->second.find(set);
+    if (curSet == curAge->second.end())
         return retVal; // return an empty list, the set doesn't exist
 
-    for (curName = fData[age][set].begin(); curName != fData[age][set].end(); curName++)
+    for (curName = curSet->second.begin(); curName != curSet->second.end(); curName++)
         retVal.push_back(curName->first);
 
     return retVal;
@@ -908,7 +919,7 @@ void pfLocalizationDataMgr::IConvertSet(LocSetInfo *setInfo, const plString & cu
         LocElementInfo elementInfo;
         elementInfo.fElement = curElement->second;
 
-        IConvertElement(&elementInfo, plString::Format("%s.%s", curPath.c_str(), curElement->first.c_str()));
+        IConvertElement(&elementInfo, plFormat("{}.{}", curPath, curElement->first));
     }
 }
 
@@ -922,7 +933,7 @@ void pfLocalizationDataMgr::IConvertAge(LocAgeInfo *ageInfo, const plString & cu
         LocSetInfo setInfo;
         setInfo.fSet = curSet->second;
 
-        IConvertSet(&setInfo, plString::Format("%s.%s", curPath.c_str(), curSet->first.c_str()));
+        IConvertSet(&setInfo, plFormat("{}.{}", curPath, curSet->first));
     }
 }
 
@@ -937,26 +948,26 @@ void pfLocalizationDataMgr::IWriteText(const plFileName & filename, const plStri
     plStringStream fileData;
     fileData << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
     fileData << "<localizations>\n";
-    fileData << plString::Format("\t<age name=\"%s\">\n", ageName.c_str());
+    fileData << "\t<age name=\"" << ageName << "\">\n";
 
     std::vector<plString> setNames = GetSetList(ageName);
     for (int curSet = 0; curSet < setNames.size(); curSet++)
     {
         setEmpty = true; // so far, this set is empty
         plStringStream setCode;
-        setCode << plString::Format("\t\t<set name=\"%s\">\n", setNames[curSet].c_str());
+        setCode << "\t\t<set name=\"" << setNames[curSet] << "\">\n";
 
         std::vector<plString> elementNames = GetElementList(ageName, setNames[curSet]);
         for (int curElement = 0; curElement < elementNames.size(); curElement++)
         {
-            setCode << plString::Format("\t\t\t<element name=\"%s\">\n", elementNames[curElement].c_str());
-            plString key = plString::Format("%s.%s.%s", ageName.c_str(), setNames[curSet].c_str(), elementNames[curElement].c_str());
+            setCode << "\t\t\t<element name=\"" << elementNames[curElement] << "\">\n";
+            plString key = plFormat("{}.{}.{}", ageName, setNames[curSet], elementNames[curElement]);
 
             if (fLocalizedElements[key].find(languageName) != fLocalizedElements[key].end())
             {
                 weWroteData = true;
                 setEmpty = false;
-                setCode << plString::Format("\t\t\t\t<translation language=\"%s\">", languageName.c_str());
+                setCode << "\t\t\t\t<translation language=\"" << languageName << "\">";
                 setCode << fLocalizedElements[key][languageName].ToXML();
                 setCode << "</translation>\n";
             }
@@ -1082,7 +1093,7 @@ pfLocalizedString pfLocalizationDataMgr::GetSpecificElement(const plString & nam
 std::vector<plString> pfLocalizationDataMgr::GetLanguages(const plString & ageName, const plString & setName, const plString & elementName)
 {
     std::vector<plString> retVal;
-    plString key = plString::Format("%s.%s.%s", ageName.c_str(), setName.c_str(), elementName.c_str());
+    plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
     if (fLocalizedElements.exists(key))
     {
         // age, set, and element exists
@@ -1198,8 +1209,8 @@ void pfLocalizationDataMgr::WriteDatabaseToDisk(const plFileName & path)
     {
         for (int curLanguage = 0; curLanguage < languageNames.size(); curLanguage++)
         {
-            plFileName locPath = plFileName::Join(path, plString::Format("%s%s.loc",
-                                    ageNames[curAge].c_str(), languageNames[curLanguage].c_str()));
+            plFileName locPath = plFileName::Join(path, plFormat("{}{}.loc",
+                                    ageNames[curAge], languageNames[curLanguage]));
             IWriteText(locPath, ageNames[curAge], languageNames[curLanguage]);
         }
     }

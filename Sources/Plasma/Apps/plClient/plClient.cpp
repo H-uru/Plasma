@@ -187,7 +187,6 @@ plClient::plClient()
     fLinkEffectsMgr(nil),
     fProgressBar(nil),
     fGameGUIMgr(nil),
-    fKIGUIGlue(nil),
     fWindowActive(false),
     fAnimDebugList(nil),
     fClampCap(-1),
@@ -252,6 +251,15 @@ plClient::~plClient()
 #include "plGImage/plAVIWriter.h"
 #include "pfCharacter/pfMarkerMgr.h"
 
+template<typename T>
+static void IUnRegisterAs(T*& ko, plFixedKeyId id)
+{
+    if (ko) {
+        ko->UnRegisterAs(id);
+        ko = nullptr;
+    }
+}
+
 bool plClient::Shutdown()
 {
     plSynchEnabler ps(false);   // disable dirty state tracking during shutdown 
@@ -297,31 +305,13 @@ bool plClient::Shutdown()
     // Take down our GUI control generator
     pfGUICtrlGenerator::Instance().Shutdown();
 
-    if (plNetClientMgr::GetInstance())
-    {   
-        plNetClientMgr::GetInstance()->Shutdown();
-        plNetClientMgr::GetInstance()->UnRegisterAs(kNetClientMgr_KEY);     // deletes NetClientMgr instance
-        plNetClientMgr::SetInstance(nil);
-    }
-    
-    if (plAgeLoader::GetInstance())
-    {   
-        plAgeLoader::GetInstance()->Shutdown();
-        plAgeLoader::GetInstance()->UnRegisterAs(kAgeLoader_KEY);           // deletes instance
-        plAgeLoader::SetInstance(nil);
-    }
+    if (plNetClientMgr* nc = plNetClientMgr::GetInstance())
+        nc->Shutdown();
+    if (plAgeLoader* al = plAgeLoader::GetInstance())
+        al->Shutdown();
 
-    if (fInputManager)
-    {
-        fInputManager->UnRegisterAs(kInput_KEY);
-        fInputManager = nil;
-    }
-
-    if( fGameGUIMgr != nil )
-    {
-        fGameGUIMgr->UnRegisterAs( kGameGUIMgr_KEY );
-        fGameGUIMgr = nil;
-    }
+    IUnRegisterAs(fInputManager, kInput_KEY);
+    IUnRegisterAs(fGameGUIMgr, kGameGUIMgr_KEY);
 
     for (int i = 0; i < fRooms.Count(); i++)
     {
@@ -342,56 +332,30 @@ bool plClient::Shutdown()
         plSimulationMgr::Shutdown();
     plAvatarMgr::ShutDown();
     plRelevanceMgr::DeInit();
-    
+
     if (fPageMgr)
         fPageMgr->Reset();
 
-    if( fKIGUIGlue != nil )
-    {
-        fKIGUIGlue->UnRegisterAs( kKIGUIGlue_KEY );
-        fKIGUIGlue = nil;
-    }
+    IUnRegisterAs(fTransitionMgr, kTransitionMgr_KEY);
 
-    if( fTransitionMgr != nil )
-    {
-        fTransitionMgr->UnRegisterAs( kTransitionMgr_KEY );
-        fTransitionMgr = nil;
-    }
-    
     delete fConsoleEngine;
     fConsoleEngine = nil;
 
-    if (fLinkEffectsMgr)
-    {
-        fLinkEffectsMgr->UnRegisterAs( kLinkEffectsMgr_KEY);
-        fLinkEffectsMgr=nil;
-    }
+    IUnRegisterAs(fLinkEffectsMgr, kLinkEffectsMgr_KEY);
 
     plClothingMgr::DeInit();
 
-    if( fFontCache != nil )
-    {
-        fFontCache->UnRegisterAs( kFontCache_KEY );
-        fFontCache = nil;
-    }
+    IUnRegisterAs(fFontCache, kFontCache_KEY);
 
     pfMarkerMgr::Shutdown();
 
     delete fAnimDebugList;
 
-//#ifndef PLASMA_EXTERNAL_RELEASE
-    if( fConsole != nil )
-    {
-        // UnRegisterAs destroys the object for us
-        fConsole->UnRegisterAs( kConsoleObject_KEY );
-        fConsole = nil;
-    }
-//#endif
+    IUnRegisterAs(fConsole, kConsoleObject_KEY);
 
     PythonInterface::finiPython();
-    
-    if (fNewCamera)
-        fNewCamera->UnRegisterAs( kVirtualCamera1_KEY );
+
+    IUnRegisterAs(fNewCamera, kVirtualCamera1_KEY);
 
     // mark the listener for death.
     // there's no need to keep this around...
@@ -408,7 +372,7 @@ bool plClient::Shutdown()
 
     if (pfLocalizationMgr::InstanceValid())
         pfLocalizationMgr::Shutdown();
-    
+
     ShutdownDLLs();
 
     plVisLOSMgr::DeInit();
@@ -423,7 +387,6 @@ bool plClient::Shutdown()
 
     // This will destruct the client. Do it last.
     UnRegisterAs(kClient_KEY);
-    
 
     return false;
 }
@@ -774,8 +737,8 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        plString str = plString::Format("Callback event from %s\n", callback->GetSender()
-                        ? callback->GetSender()->GetName().c_str()
+        plString str = plFormat("Callback event from {}\n", callback->GetSender()
+                        ? callback->GetSender()->GetName()
                         : "Unknown");
         hsStatusMessage(str.c_str());
         static int gotten = 0;
@@ -1393,73 +1356,6 @@ extern  bool    gDataServerLocal;
 #include "plQuality.h"
 #include "plLoadMask.h"
 
-#if 0
-class LoginNetClientCommCallback : public plNetClientComm::Callback
-{
-public:
-    enum Op {kAuth, kCreatePlayer, kGetPlayerList, kLeave, kDeletePlayer};
-
-    LoginNetClientCommCallback() : plNetClientComm::Callback(), fNumCurrentOps(0)
-    {}
-
-    virtual void OperationStarted( uint32_t context )
-    {
-        fNumCurrentOps++;
-    }
-    virtual void OperationComplete( uint32_t context, int resultCode )
-    {
-        if (context == kAuth)
-        {
-            if (hsSucceeded(resultCode))
-            {
-                plClient::GetInstance()->fAuthPassed = true;
-            }
-        }
-        else if (context == kGetPlayerList)
-        {
-            if ( hsSucceeded( resultCode ) )
-            {
-                uint32_t numPlayers = fCbArgs.GetInt(0);
-                uint32_t pId = -1;
-                std::string pName;
-
-                for (uint32_t i = 0; i < numPlayers; i++)
-                {
-                    pId = fCbArgs.GetInt((uint16_t)(i*3+1));
-                    pName = fCbArgs.GetString((uint16_t)(i*3+2));
-
-                    if (pName == plClient::GetInstance()->fUsername)
-                    {
-                        plClient::GetInstance()->fPlayerID = pId;
-                        break;
-                    }
-                }
-            }
-        }
-        else if (context == kCreatePlayer)
-        {
-            if (hsSucceeded(resultCode))
-                plClient::GetInstance()->fPlayerID = fCbArgs.GetInt(0);
-        }
-        else if (context == kDeletePlayer)
-        {
-            if (hsSucceeded(resultCode))
-                plClient::GetInstance()->fPlayerID = -1;
-        }
-
-        fNumCurrentOps--;
-    }
-
-    bool IsActive()
-    {
-        return fNumCurrentOps > 0;
-    }
-
-private:
-    int fNumCurrentOps;
-};
-#endif
-
 //============================================================================
 bool plClient::StartInit()
 {
@@ -1818,11 +1714,6 @@ bool plClient::IUpdate()
 }
 
 bool plClient::IDrawProgress() {
-    // HACK: Don't draw while we're caching some room loads, otherwise the
-    // progress bar will jump around while we're calculating the size
-    if (fHoldLoadRequests)
-        return false;
-
     // Reset our stats
     plProfileManager::Instance().BeginFrame();
 
@@ -1855,7 +1746,7 @@ bool plClient::IDraw()
     // tends to cause a device reload each frame.   
     if (fDone)
         return true;
-    
+
     if (plProgressMgr::GetInstance()->IsActive())
         return IDrawProgress();
         
