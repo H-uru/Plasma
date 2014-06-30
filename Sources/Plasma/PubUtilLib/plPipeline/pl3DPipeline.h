@@ -130,8 +130,6 @@ protected:
     bool                                fVSync;
 
 
-    friend class DeviceType;
-
 public:
     pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec);
     virtual ~pl3DPipeline();
@@ -621,7 +619,12 @@ public:
     //virtual bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) = 0;
     //virtual bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) = 0;
     //virtual plMipmap* ExtractMipMap(plRenderTarget* targ) = 0;
-    //virtual const char* GetErrorString() = 0;
+
+    /** Return the current error string. */
+    virtual const char* GetErrorString() {
+        return fDevice.GetErrorString();
+    }
+
     //virtual void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) = 0;
     //virtual int GetMaxAnisotropicSamples() = 0;
     //virtual int GetMaxAntiAlias(int Width, int Height, int ColorDepth) = 0;

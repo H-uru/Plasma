@@ -466,7 +466,6 @@ protected:
     bool        IResetDevice();
 
     // View and clipping
-    void        ISetViewport();
     void        IUpdateViewVectors() const;
     void        ISetAnisotropy(bool on);
 
@@ -479,6 +478,7 @@ protected:
 
     // Plate management
     friend class plDXPlateManager;
+    friend class plDXDevice;
 
     void        IDrawPlate( plPlate *plate );
 
@@ -575,7 +575,6 @@ public:
     virtual void                        RenderScreenElements();
 
     virtual bool                        IsFullScreen() const { return fSettings.fFullscreen; }
-    virtual uint32_t                      ColorDepth() const { return fSettings.fColorDepth; }
     virtual void                        Resize( uint32_t width, uint32_t height );
 
     virtual bool                        CheckResources();

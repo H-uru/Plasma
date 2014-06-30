@@ -368,11 +368,9 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     tempClass.lpszClassName = fTempWinClass;
     uint16_t ret = RegisterClass(&tempClass);
     hsAssert(ret, "Cannot create temporary window class to test for device modes" );
-#endif
 
     ITryDirect3DTnL(winRef);
 
-#ifdef HS_BUILD_FOR_WIN32
     /// Get rid of the class
     UnregisterClass( fTempWinClass, GetModuleHandle( nil ) );
 #endif

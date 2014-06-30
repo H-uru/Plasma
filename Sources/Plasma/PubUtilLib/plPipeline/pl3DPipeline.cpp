@@ -65,6 +65,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
 
+plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
+plProfile_CreateTimer("VisEval",                "PipeT", VisEval);
+plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
+
 plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
 plProfile_CreateTimer("  Find Lights",          "PipeT", FindLights);
 plProfile_CreateTimer("    Find Perms",         "PipeT", FindPerm);

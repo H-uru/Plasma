@@ -41,6 +41,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plDXDevice.h"
+#include "plDXPipeline.h"
+
+#include <d3d9.h>
+#include <d3dx9math.h>
+
+#include "plPipeline/plRenderTarget.h"
+
+#include "plDXBufferRefs.h"
+#include "plDXTextureRef.h"
+#include "plDXLightRef.h"
+#include "plDXRenderTargetRef.h"
+#include "plDXVertexShader.h"
+#include "plDXPixelShader.h"
+
+//// Macros for D3D error handling
+#define INIT_ERROR_CHECK( cond, errMsg ) if( FAILED( fPipeline->fSettings.fDXError = cond ) ) { return fPipeline->ICreateFail( errMsg ); }    
+
+#if 1       // DEBUG
+#define STRONG_ERROR_CHECK( cond ) if( FAILED( fPipeline->fSettings.fDXError = cond ) ) { fPipeline->IGetD3DError(); fPipeline->IShowErrorMessage(); }   
+#define WEAK_ERROR_CHECK( cond )    STRONG_ERROR_CHECK( cond )
+#else
+#define STRONG_ERROR_CHECK( cond ) if( FAILED( fPipeline->fSettings.fDXError = cond ) ) { fPipeline->IGetD3DError(); }    
+#define WEAK_ERROR_CHECK( cond )    cond
+#endif
+
+static D3DXMATRIX d3dIdentityMatrix(1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f);
 
 
 D3DXMATRIX& IMatrix44ToD3DMatrix(D3DXMATRIX& dst, const hsMatrix44& src)
@@ -96,7 +125,7 @@ void plDXDevice::SetRenderTarget(plRenderTarget* target)
     {
         ref = (plDXRenderTargetRef*)target->GetDeviceRef();
         if (ref == nullptr || ref->IsDirty())
-            ref = (plDXRenderTargetRef*)MakeRenderTargetRef(target);
+            ref = (plDXRenderTargetRef*)fPipeline->MakeRenderTargetRef(target);
     }
 
     if (ref == nullptr || ref->GetColorSurface() == nullptr)
@@ -120,7 +149,7 @@ void plDXDevice::SetRenderTarget(plRenderTarget* target)
         fD3DDevice->SetDepthStencilSurface(depth);
     }
 
-    IInvalidateState();
+    fPipeline->IInvalidateState();
 
     SetViewport();
 }

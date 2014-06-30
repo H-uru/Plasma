@@ -45,8 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsMatrix44.h"
 
+#include <d3d9.h>
+
 class plDXPipeline;
 class plRenderTarget;
+struct IDirect3DDevice9;
 struct IDirect3DSurface9;
 
 class plDXDevice
@@ -68,6 +71,8 @@ public:
 
 public:
     plDXDevice();
+
+    bool InitDevice();
 
     /**
      * Set rendering to the specified render target.
