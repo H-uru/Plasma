@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline.h"
 #include "plPipelineViewSettings.h"
+#include "hsGDeviceRef.h"
+#include "hsG3DDeviceSelector.h"
 
 #include "plSurface/plLayerInterface.h"
 
@@ -55,12 +57,23 @@ class plLightInfo;
 class plShadowSlave;
 class plSpan;
 
+#ifdef HS_BUILD_FOR_WIN32
+#    include "DX/plDXDevice.h"
+#    define DeviceType plDXDevice
+#else
+#    include "GL/plGLDevice.h"
+#    define DeviceType plGLDevice
+#endif
 
 class pl3DPipeline : public plPipeline
 {
 protected:
+    DeviceType                          fDevice;
+
     plPipelineViewSettings              fView;
     std::stack<plPipelineViewSettings>  fViewStack;
+
+    plPipelineTweakSettings             fTweaks;
 
     hsBitVector                         fDebugFlags;
     uint32_t                            fProperties;
@@ -85,15 +98,42 @@ protected:
 
     hsGMaterial*                        fCurrMaterial;
 
+    plLayerInterface*                   fCurrLay;
+    uint32_t                            fCurrLayerIdx;
+    uint32_t                            fCurrNumLayers;
+    uint32_t                            fCurrRenderLayer;
+    uint32_t                            fCurrLightingMethod;    // Based on plSpan flags
+
+    hsMatrix44                          fBumpDuMatrix;
+    hsMatrix44                          fBumpDvMatrix;
+    hsMatrix44                          fBumpDwMatrix;
+
     plLightInfo*                        fActiveLights;
     hsTArray<plLightInfo*>              fCharLights;
     hsTArray<plLightInfo*>              fVisLights;
 
     hsTArray<plShadowSlave*>            fShadows;
 
+    hsTArray<plRenderTarget*>           fRenderTargets;
+    plRenderTarget*                     fCurrRenderTarget;
+    plRenderTarget*                     fCurrBaseRenderTarget;
+    hsGDeviceRef*                       fCurrRenderTargetRef;
+
+    uint32_t                            fOrigWidth;
+    uint32_t                            fOrigHeight;
+    uint32_t                            fColorDepth;
+
+    double                              fTime;      // World time.
+    uint32_t                            fFrame;     // inc'd every time the camera moves.
+    uint32_t                            fRenderCnt; // inc'd every begin scene.
+
+    bool                                fVSync;
+
+
+    friend class DeviceType;
 
 public:
-    pl3DPipeline();
+    pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec);
     virtual ~pl3DPipeline();
 
     CLASSNAME_REGISTER(pl3DPipeline);
@@ -105,7 +145,31 @@ public:
     /*** VIRTUAL METHODS ***/
     //virtual bool PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
     //virtual bool PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nullptr) = 0;
-    //virtual void Render(plDrawable* d, const hsTArray<int16_t>& visList) = 0;
+
+
+    /**
+     * The normal way to render a subset of a drawable.
+     *
+     * This assumes that PreRender and PrepForRender have already been called.
+     *
+     * Note that PreRender and PrepForRender are called once per drawable per
+     * render with a visList containing all of the spans which will be
+     * rendered, but Render itself may be called with multiple visList subsets
+     * which union to the visList passed into PreRender/PrepForRender. This
+     * happens when drawing sorted spans, because some spans from drawable B
+     * may be in the middle of the spans of drawable A, so the sequence would
+     * be:
+     *    PreRender(A, ATotalVisList);
+     *    PreRender(B, BTotalVisList);
+     *    PrepForRender(A, ATotalVisList);
+     *    PrepForRender(B, BTotalVisList);
+     *    Render(A, AFarHalfVisList);
+     *    Render(B, BTotalVisList);
+     *    Render(A, ANearHalfVisList);
+     *
+     * See plPageTreeMgr, which handles all this.
+     */
+    virtual void Render(plDrawable* d, const hsTArray<int16_t>& visList);
 
 
     /**
@@ -151,7 +215,7 @@ public:
     virtual void UnRegisterLight(plLightInfo* light);
 
 
-    //virtual void PushRenderRequest(plRenderRequest* req) = 0;
+    //virtual void PushRenderRequest(plRenderRequest* req);
     //virtual void PopRenderRequest(plRenderRequest* req) = 0;
     //virtual void ClearRenderTarget(plDrawable* d) = 0;
     //virtual void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) = 0;
@@ -169,8 +233,21 @@ public:
     }
 
     //virtual hsGDeviceRef* MakeRenderTargetRef(plRenderTarget* owner) = 0;
-    //virtual void PushRenderTarget(plRenderTarget* target) = 0;
-    //virtual plRenderTarget* PopRenderTarget() = 0;
+
+    /**
+     * Begin rendering to the specified target.
+     *
+     * If target is null, that's the primary surface.
+     */
+    virtual void PushRenderTarget(plRenderTarget* target);
+
+    /**
+     * Resume rendering to the render target before the last PushRenderTarget,
+     * making sure we aren't holding on to anything from the render target
+     * getting popped.
+     */
+    virtual plRenderTarget* PopRenderTarget();
+
     //virtual bool BeginRender() = 0;
     //virtual bool EndRender() = 0;
     //virtual void RenderScreenElements() = 0;
@@ -197,7 +274,10 @@ public:
         return GetViewTransform().GetViewPortHeight();
     }
 
-    //virtual uint32_t ColorDepth() const = 0;
+    virtual uint32_t ColorDepth() const {
+        return fColorDepth;
+    }
+
     //virtual void Resize(uint32_t width, uint32_t height) = 0;
 
     /**
@@ -368,8 +448,16 @@ public:
         fView.SetDepth(hither, yon);
     }
 
-    //virtual void SetZBiasScale(float scale) = 0;
-    //virtual float GetZBiasScale() const = 0;
+
+    /**
+     * If the board really doesn't support Z-biasing, we adjust the perspective
+     * matrix in IGetCameraToNDC. The layer scale and translation are tailored
+     * to the current hardware.
+     */
+    virtual void SetZBiasScale(float scale);
+
+    virtual float GetZBiasScale() const;
+
 
     /** Return current World to Camera transform. */
     virtual const hsMatrix44& GetWorldToCamera() const {
@@ -382,7 +470,8 @@ public:
         return fView.GetCameraToWorld();
     }
 
-    //virtual void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) = 0;
+    /** Immediate set of camera transform. */
+    virtual void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w);
 
     /**
      * Return current World to Local transform.
@@ -424,7 +513,10 @@ public:
         RefreshScreenMatrices();
     }
 
-    //virtual void RefreshScreenMatrices() = 0;
+    /**
+     * Force a refresh of cached state when the projection matrix changes.
+     */
+    virtual void RefreshScreenMatrices();
 
 
     /**
@@ -543,8 +635,28 @@ public:
     virtual plLayerInterface* PopPiggyBackLayer(plLayerInterface* li);
 
 
+    /**
+     * Sets the current view transform.
+     *
+     * ViewTransform encapsulates everything about the current camera, viewport
+     * and window necessary to render or convert from world space to pixel
+     * space. Doesn't include the object dependent local to world transform.
+     *
+     * Set plViewTransform.h
+     */
+    virtual void SetViewTransform(const plViewTransform& trans);
+
+    virtual void RenderSpans(plDrawableSpans* ice, const hsTArray<int16_t>& visList) = 0;
+
 
 protected:
+    /**
+     * Gets (non-const) the current view transform.
+     *
+     * GetViewTransform is a virtual method that returns a const transform, so
+     * we have this to get a non-const version.
+     */
+    plViewTransform& IGetViewTransform() { return fView.GetViewTransform(); }
 
     /**
      * Find all the visible spans in this drawable affected by this shadow map,
@@ -611,6 +723,37 @@ protected:
      *  precomputed.
      */
     void ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr);
+
+
+    /**
+     * Get the camera to NDC transform.
+     *
+     * This may be adjusted to create a Z bias towards the camera for cases
+     * where the D3D Z bias fails us.
+     */
+    hsMatrix44 IGetCameraToNDC();
+
+
+    /**
+     * Record and pass on to the device the current local to world transform
+     * for the object about to be rendered.
+     */
+    void ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l);
+
+
+    /**
+     * Refreshes all transforms. Useful after popping renderTargets :)
+     */
+    void ITransformsToDevice();
+
+    /** Send the current camera to NDC transform to the device. */
+    void IProjectionMatrixToDevice();
+
+    /** Pass the current camera transform through to the device. */
+    void IWorldToCameraToDevice();
+
+    /** pass the current local to world tranform on to the device. */
+    void ILocalToWorldToDevice();
 };
 
 #endif //_pl3DPipeline_inc_

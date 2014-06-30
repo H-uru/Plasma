@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPipeline/pl3DPipeline.h"
 #include "plDXSettings.h"
+#include "plDXDevice.h"
 
 #include "plSurface/plLayerInterface.h"
 #include "hsMatrix44.h"
@@ -208,9 +209,6 @@ protected:
 
     // The main D3D interfaces
     LPDIRECT3DDEVICE9       fD3DDevice;     // The D3D rendering device
-    IDirect3DSurface9*      fD3DMainSurface;
-    IDirect3DSurface9*      fD3DDepthSurface;
-    IDirect3DSurface9*      fD3DBackBuff;
 
     IDirect3DSurface9*      fSharedDepthSurface[2];
     D3DFORMAT               fSharedDepthFormat[2];
@@ -226,7 +224,6 @@ protected:
 
     // States
     plDXGeneralSettings     fSettings;
-    plDXTweakSettings       fTweaks;
     plDXStencilSettings     fStencil;
     bool                    fDeviceLost;
     bool                    fDevWasLost;
@@ -239,16 +236,7 @@ protected:
     plDXVertexShader*       fVShaderRefList;
     plDXPixelShader*        fPShaderRefList;
 
-    plLayerInterface*       fCurrLay;
-    uint32_t                  fCurrLayerIdx, fCurrNumLayers, fCurrRenderLayer;
-    uint32_t                  fCurrLightingMethod;    // Based on plSpan flags
-
-    D3DCULL                 fCurrCullMode;
     bool                        fCurrD3DLiteState;
-
-    hsMatrix44                  fBumpDuMatrix;
-    hsMatrix44                  fBumpDvMatrix;
-    hsMatrix44                  fBumpDwMatrix;
 
     UINT                    fCurrentAdapter;
     D3DEnum_DriverInfo*     fCurrentDriver;
@@ -274,10 +262,6 @@ protected:
     uint32_t          fEvictTime;
     uint32_t          fManagedSeen;
     uint32_t          fManagedCutoff;
-
-    double            fTime;              // World time.
-    uint32_t          fFrame;             // inc'd every time the camera moves.
-    uint32_t          fRenderCnt;         // inc'd every begin scene.
 
     uint32_t          fDebugSpanGraphY;
 
@@ -311,7 +295,6 @@ protected:
 
     plStatusLogDrawer   *fLogDrawer;
 
-    bool            fVSync;
     bool            fForceDeviceReset;
 
     void            IBeginAllocUnManaged();
@@ -339,7 +322,6 @@ protected:
     long        IGetBufferD3DFormat(uint8_t format) const;
     uint32_t    IGetBufferFormatSize(uint8_t format) const;
     void        IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr );
-    void        IRenderSpans( plDrawableSpans *ice, const hsTArray<int16_t>& visList );
     bool        ILoopOverLayers(const plRenderPrimFunc& render, hsGMaterial* material, const plSpan& span);
     void        IRenderBufferSpan( const plIcicle& span, 
                                     hsGDeviceRef *vb, hsGDeviceRef *ib, 
@@ -486,22 +468,13 @@ protected:
     // View and clipping
     void        ISetViewport();
     void        IUpdateViewVectors() const;
-    void        IRefreshCullTree();
     void        ISetAnisotropy(bool on);
 
     // Transforms
     D3DXMATRIX&     IMatrix44ToD3DMatrix( D3DXMATRIX& dst, const hsMatrix44& src );
-    void            ITransformsToD3D();
-    hsMatrix44      IGetCameraToNDC();
-    void            IProjectionMatrixToD3D();
-    void            IWorldToCameraToD3D();
-    void            ILocalToWorldToD3D();
-    void            ISetLocalToWorld( const hsMatrix44& l2w, const hsMatrix44& w2l );
     void            ISetCullMode(bool flip=false);
     bool inline   IIsViewLeftHanded();
     bool            IGetClearViewPort(D3DRECT& r);
-    plViewTransform& IGetViewTransform() { return fView.GetViewTransform(); }
-    void            IUpdateViewFlags();
     void            ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
 
     // Plate management
@@ -586,7 +559,6 @@ public:
     // Typical 3D device
     virtual bool                        PreRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil);
     virtual bool                        PrepForRender(plDrawable* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr=nil);
-    virtual void                        Render(plDrawable* d, const hsTArray<int16_t>& visList);
 
     virtual void                        PushRenderRequest(plRenderRequest* req);
     virtual void                        PopRenderRequest(plRenderRequest* req);
@@ -597,8 +569,6 @@ public:
     virtual void                        ClearRenderTarget( const hsColorRGBA* col = nil, const float* depth = nil );
     virtual hsGDeviceRef*               MakeRenderTargetRef( plRenderTarget *owner );
     virtual hsGDeviceRef*               SharedRenderTargetRef(plRenderTarget* sharer, plRenderTarget *owner);
-    virtual void                        PushRenderTarget( plRenderTarget *target );
-    virtual plRenderTarget*             PopRenderTarget();
 
     virtual bool                        BeginRender();
     virtual bool                        EndRender();
@@ -637,14 +607,7 @@ public:
     // Default fog settings
     virtual void                        SetDefaultFogEnviron( plFogEnvironment *fog ) { fView.SetDefaultFog(*fog); fCurrFog.fEnvPtr = nil; }
 
-    virtual float                       GetZBiasScale() const;
-    virtual void                        SetZBiasScale(float scale);
 
-    virtual void                        SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w);
-
-    virtual void                        SetViewTransform(const plViewTransform& trans);
-
-    virtual void                        RefreshScreenMatrices();
 
     // Overriden (Un)Register Light methods
     virtual void                        RegisterLight(plLightInfo* light);
@@ -668,6 +631,7 @@ public:
     virtual int                         GetMaxAnisotropicSamples();
     virtual int                         GetMaxAntiAlias(int Width, int Height, int ColorDepth);
 
+    virtual void RenderSpans( plDrawableSpans *ice, const hsTArray<int16_t>& visList );
 
     //  CPU-optimized functions
 protected:

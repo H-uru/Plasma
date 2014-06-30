@@ -79,8 +79,6 @@ class plDXGeneralSettings
     public:
 
         bool                    fFullscreen;
-        hsWinRef                fHWnd;
-        uint32_t                  fColorDepth;
         uint8_t                   fNumAASamples;
         uint32_t                  fD3DCaps, fBoardKluge, fStageEnd;
         int32_t                   fBoundsDrawLevel;
@@ -97,16 +95,8 @@ class plDXGeneralSettings
         bool                    fCurrAnisotropy;
         bool                    fIsIntel;
 
-        IDirect3DSurface9       *fCurrD3DMainSurface;
-        IDirect3DSurface9       *fCurrD3DDepthSurface;
-
-        hsTArray<plRenderTarget *>      fRenderTargets;
-        plRenderTarget                  *fCurrRenderTarget;
-        plRenderTarget                  *fCurrBaseRenderTarget;
-        plDXDeviceRef                   *fCurrRenderTargetRef;
         plDXVertexBufferRef         *fCurrVertexBuffRef;
         plDXIndexBufferRef              *fCurrIndexBuffRef;
-        uint32_t                          fOrigWidth, fOrigHeight;
 
         IDirect3DVertexShader9          *fCurrVertexShader;
         IDirect3DPixelShader9           *fCurrPixelShader;
@@ -116,39 +106,6 @@ class plDXGeneralSettings
         char                    fErrorStr[ 256 ];
 
         void    Reset( void );
-};
-
-//// Tweak Settings ///////////////////////////////////////////////////////////
-
-class plDXTweakSettings
-{
-    public:
-        float   fDefaultPerspLayerScale;
-        float   fPerspLayerScale;
-        float   fPerspLayerTrans;
-        float   fDefaultLODBias;
-        float   fFogExpApproxStart;
-        float   fFogExp2ApproxStart;
-        float   fFogEndBias;
-
-        float   fExp2FogKnee;
-        float   fExp2FogKneeVal;
-        float   fExpFogKnee;
-        float   fExpFogKneeVal;
-        
-        void    Reset( void )
-        {
-            fDefaultPerspLayerScale = 0.00001f;
-            fPerspLayerScale = 0.00001f;
-            fPerspLayerTrans = 0.00002f;
-            fDefaultLODBias = -0.25f;
-            fFogExpApproxStart = 0.0f;
-            fFogExp2ApproxStart = 0.0f;
-            fFogEndBias = 0.0f;
-
-            fExpFogKnee = fExp2FogKnee = 0.5f;
-            fExpFogKneeVal = fExp2FogKneeVal = 0.15f;
-        }
 };
 
 //// Fog Settings /////////////////////////////////////////////////////////////

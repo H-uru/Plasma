@@ -170,8 +170,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define MF_TOSSER
 
 int mfCurrentTest = 100;
-PipelineParams plPipeline::fDefaultPipeParams;
-PipelineParams plPipeline::fInitialPipeParams;
 //#define MF_ENABLE_HACKOFF
 #ifdef MF_ENABLE_HACKOFF
 //WHITE
@@ -285,9 +283,6 @@ static const enum _D3DTRANSFORMSTATETYPE    sTextureStages[ 8 ] =
     D3DTS_TEXTURE4, D3DTS_TEXTURE5, D3DTS_TEXTURE6, D3DTS_TEXTURE7
 };
 
-static const float kPerspLayerScale  = 0.00001f;
-static const float kPerspLayerScaleW = 0.001f;
-static const float kPerspLayerTrans  = 0.00002f;
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
 // This caps the number of D3D lights we use. We'll use up to the max allowed
@@ -567,7 +562,8 @@ uint32_t plDXPipeline::fVtxUsed(0);
 uint32_t plDXPipeline::fVtxManaged(0);
 
 plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeRec )
-:   fManagedAlloced(false),
+:   pl3DPipeline(devModeRec),
+    fManagedAlloced(false),
     fAllocUnManaged(false)
 {
     hsAssert(D3DTSS_TCI_PASSTHRU == plLayerInterface::kUVWPassThru, "D3D Enum has changed. Notify graphics department.");
@@ -583,22 +579,8 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     const hsG3DDeviceMode *devMode = devModeRec->GetMode();
 
     /// Init our screen mode
-    fSettings.fHWnd = hWnd;
-    if(!fInitialPipeParams.Windowed)
-    {
-        fSettings.fOrigWidth = devMode->GetWidth();
-        fSettings.fOrigHeight = devMode->GetHeight();
-    }
-    else
-    {
-        // windowed can run in any mode
-        fSettings.fOrigHeight = fInitialPipeParams.Height;
-        fSettings.fOrigWidth = fInitialPipeParams.Width;
-    }
-    IGetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-    fSettings.fColorDepth = devMode->GetColorDepth();
-    fVSync = fInitialPipeParams.VSync;
-    
+    fDevice.fHWnd = hWnd;
+
     if( devRec->GetAASetting() == 0 )
         fSettings.fNumAASamples = 0;
     else
@@ -638,31 +620,17 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     if(fSettings.fMaxAnisotropicSamples > fCurrentDevice->fDDCaps.MaxAnisotropy)
         fSettings.fMaxAnisotropicSamples = (uint8_t)fCurrentDevice->fDDCaps.MaxAnisotropy;
 
-
     plConst(uint32_t) kDefaultDynVtxSize(32000 * 44);
     plConst(uint32_t) kDefaultDynIdxSize(0 * plGBufferGroup::kMaxNumIndicesPerBuffer * 2);
     fDynVtxSize = kDefaultDynVtxSize;
     fVtxRefTime = 0;
-    
+
     // Go create surfaces and DX-dependent objects
     if( ICreateDeviceObjects() )
     {
         IShowErrorMessage( "Cannot create Direct3D device" );
         return;
     }
-    /*plStatusLog::AddLineS("pipeline.log", "Supported Resolutions:");
-    std::vector<plDisplayMode> temp;
-    GetSupportedDisplayModes( &temp, 16 );
-    for(int i = 0; i < temp.size(); i++)
-    {
-        plStatusLog::AddLineS("pipeline.log", "%d, %d, %d", temp[i].Width, temp[i].Height, 16);
-    }
-    temp.clear();
-    GetSupportedDisplayModes( &temp, 32 );
-    for(int i = 0; i < temp.size(); i++)
-    {
-        plStatusLog::AddLineS("pipeline.log", "%d, %d, %d", temp[i].Width, temp[i].Height, 32);
-    }*/
 
     // We don't need the TnL enumeration for the lifetime of the game, so say goodbye!
     hsGDirect3D::ReleaseTnLEnum();
@@ -706,9 +674,6 @@ void    plDXPipeline::IClearMembers()
     fRenderTargetRefList = nil;
     fVShaderRefList = nil;
     fPShaderRefList = nil;
-    fCurrMaterial = nil;
-    fCurrLay = nil;
-    fCurrRenderLayer = 0;
 #if MCN_BOUNDS_SPANS
     fBoundsMat = nil;
     fBoundsSpans = nil;
@@ -716,16 +681,12 @@ void    plDXPipeline::IClearMembers()
     fPlateMgr = nil;
     fLogDrawer = nil;
     fDebugTextMgr = nil;
-    fCurrLightingMethod = plSpan::kLiteMaterial;
 
-    fCurrCullMode = D3DCULL_CW;
     fTexturing = false;
-    fCurrNumLayers = 0;
     fLastEndingStage = -1;
 
     fSettings.Reset();
     fStencil.Reset();
-    fTweaks.Reset();
     fLights.Reset(this);
     fCurrFog.Reset();
     fDeviceLost = false;
@@ -745,11 +706,6 @@ void    plDXPipeline::IClearMembers()
         fBlurVBuffers[i] = nil;
     fBlurVSHandle = 0;
 
-    fD3DDevice = nil;
-    fD3DBackBuff = nil;
-    fD3DDepthSurface = nil;
-    fD3DMainSurface = nil;
-
     fSharedDepthSurface[0] = nil;
     fSharedDepthFormat[0] = D3DFMT_UNKNOWN;
     fSharedDepthSurface[1] = nil;
@@ -759,31 +715,14 @@ void    plDXPipeline::IClearMembers()
     fCurrentDriver = nil;
     fCurrentDevice = nil;
 
-    fOverLayerStack.Reset();
-    fOverBaseLayer = nil;
-    fOverAllLayer = nil;
-    fPiggyBackStack.Reset();
-    fMatPiggyBacks = 0;
-    fActivePiggyBacks = 0;
-
     for( i = 0; i < 8; i++ )
     {
         fLayerState[i].Reset();
         fOldLayerState[i].Reset();
     }
-    fMatOverOn.Reset();
-    fMatOverOff.Reset();
-//  SetMaterialOverride( hsGMatState::kShade, hsGMatState::kShadeSpecularHighlight, false );
-
-    fView.Reset(this);
 
     fMaxNumLights = kD3DMaxTotalLights;
     fMaxNumProjectors = kMaxProjectors;
-    fMaxLayersAtOnce = 1;
-    fMaxPiggyBacks = 0;
-
-    fTime = 0;
-    fFrame = 0;
 
     fInSceneDepth = 0;
     fTextUseTime = 0;
@@ -791,8 +730,6 @@ void    plDXPipeline::IClearMembers()
     fManagedSeen = 0;
     fManagedCutoff = 0;
     fRenderCnt = 0;
-
-    fDebugFlags.Clear();
 
     fForceMatHandle = true;
     fAvRTShrinkValidSince = 0;
@@ -808,8 +745,6 @@ void    plDXGeneralSettings::Reset()
     fCurrVertexBuffRef = nil;
     fCurrIndexBuffRef = nil;
     fFullscreen = false;
-    fHWnd = nil;
-    fColorDepth = 32;
     fD3DCaps = 0;
     fBoardKluge = 0;
     fStageEnd = 0;
@@ -828,12 +763,6 @@ void    plDXGeneralSettings::Reset()
     fDXError = D3D_OK;
     memset( fErrorStr, 0, sizeof( fErrorStr ) );
 
-    fCurrRenderTarget = nil;
-    fCurrBaseRenderTarget = nil;
-    fCurrD3DMainSurface = nil;
-    fCurrD3DDepthSurface = nil;
-    fCurrRenderTargetRef = nil;
-
     fCurrFVFFormat = 0;
     fCurrVertexShader = nil;
     fCurrPixelShader = nil;
@@ -850,7 +779,7 @@ void    plDXGeneralSettings::Reset()
 void    plDXPipeline::IInitDeviceState()
 {
     fLayerState[0].Reset();
-    fCurrCullMode = D3DCULL_CW;
+    fDevice.fCurrCullMode = D3DCULL_CW;
 
     /// Set D3D states
     fCurrFog.Reset();
@@ -860,7 +789,7 @@ void    plDXPipeline::IInitDeviceState()
     fD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
     fD3DDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
     fD3DDevice->SetRenderState( D3DRS_CLIPPING,     TRUE ); 
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE,     fCurrCullMode );
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE,     fDevice.fCurrCullMode );
     ISetCullMode();
 
     fD3DDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  TRUE );
@@ -1199,21 +1128,6 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
         fSettings.fMaxAnisotropicSamples = 0;
 }
 
-//// Get/SetZBiasScale ////////////////////////////////////////////////////////
-// If the board really doesn't support Z-biasing, we adjust the perspective matrix in IGetCameraToNDC
-// The layer scale and translation are tailored to the current hardware.
-float    plDXPipeline::GetZBiasScale() const
-{
-    return ( fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale ) - 1.0f;
-}
-
-void    plDXPipeline::SetZBiasScale( float scale )
-{
-    scale += 1.0f;
-    fTweaks.fPerspLayerScale = fTweaks.fDefaultPerspLayerScale * scale;
-    fTweaks.fPerspLayerTrans = kPerspLayerTrans * scale;
-}
-
 // Create all our video memory consuming D3D objects.
 bool plDXPipeline::ICreateDynDeviceObjects()
 {
@@ -1483,11 +1397,11 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     if( windowed )
     {
         // Reset fColor, since we're getting the desktop bitdepth
-        fSettings.fColorDepth = GetDXBitDepth( dispMode.Format );
-        if(fSettings.fOrigWidth > fDesktopParams.Width || fSettings.fOrigHeight > fDesktopParams.Height)
+        fColorDepth = GetDXBitDepth( dispMode.Format );
+        if(fOrigWidth > fDesktopParams.Width || fOrigHeight > fDesktopParams.Height)
         {
-            fSettings.fOrigWidth = fDesktopParams.Width;
-            fSettings.fOrigHeight = fDesktopParams.Height;
+            fOrigWidth = fDesktopParams.Width;
+            fOrigHeight = fDesktopParams.Height;
             IGetViewTransform().SetScreenSize(fDesktopParams.Width, fDesktopParams.Height);
         }
     }
@@ -1553,7 +1467,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     hsDebugMessage( msg, 0 );
 #endif
 
-    params.hDeviceWindow = fSettings.fHWnd;
+    params.hDeviceWindow = fDevice.fHWnd;
 
     // Enable this to switch to a pure device. 
 //  fCurrentMode->fDDBehavior |= D3DCREATE_PUREDEVICE;
@@ -1583,10 +1497,11 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #endif // PLASMA_EXTERNAL_RELEASE
 
     INIT_ERROR_CHECK( d3d->CreateDevice( fCurrentAdapter, fCurrentDevice->fDDType,
-                                         fSettings.fHWnd, fCurrentMode->fDDBehavior,
+                                         fDevice.fHWnd, fCurrentMode->fDDBehavior,
                                          &params, &fD3DDevice ),
                         "Cannot create primary display surface via CreateDevice()" );
 
+    fDevice.fD3DDevice = fD3DDevice;
     fSettings.fPresentParams = params;
 
     // This bit matches up with the fManagedCutoff workaround for a problem
@@ -1674,24 +1589,24 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
 bool plDXPipeline::ICreateNormalSurfaces()
 {
     /// Now get the backbuffer surface pointer
-    INIT_ERROR_CHECK( fD3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &fD3DBackBuff ), 
+    INIT_ERROR_CHECK( fD3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &fDevice.fD3DBackBuff ), 
                         "Cannot get primary surface's back buffer" );
 
     /// And finally, get the main D3D surfaces (for restoring after rendertargets )
-    INIT_ERROR_CHECK( fD3DDevice->GetRenderTarget( 0, &fD3DMainSurface ), "Cannot capture primary surface" );
-    INIT_ERROR_CHECK( fD3DDevice->GetDepthStencilSurface( &fD3DDepthSurface ), "Cannot capture primary depth surface" );
+    INIT_ERROR_CHECK( fD3DDevice->GetRenderTarget( 0, &fDevice.fD3DMainSurface ), "Cannot capture primary surface" );
+    INIT_ERROR_CHECK( fD3DDevice->GetDepthStencilSurface( &fDevice.fD3DDepthSurface ), "Cannot capture primary depth surface" );
 
-    fSettings.fCurrD3DMainSurface = fD3DMainSurface;
-    fSettings.fCurrD3DDepthSurface = fD3DDepthSurface;
+    fDevice.fCurrD3DMainSurface = fDevice.fD3DMainSurface;
+    fDevice.fCurrD3DDepthSurface = fDevice.fD3DDepthSurface;
 
-    D3DSURF_MEMNEW( fD3DMainSurface );
-    D3DSURF_MEMNEW( fD3DDepthSurface );
-    D3DSURF_MEMNEW( fD3DBackBuff );
+    D3DSURF_MEMNEW( fDevice.fD3DMainSurface );
+    D3DSURF_MEMNEW( fDevice.fD3DDepthSurface );
+    D3DSURF_MEMNEW( fDevice.fD3DBackBuff );
 
     D3DSURFACE_DESC info; 
-    fD3DMainSurface->GetDesc( &info );
-    fD3DDepthSurface->GetDesc( &info );
-    fD3DBackBuff->GetDesc( &info );
+    fDevice.fD3DMainSurface->GetDesc( &info );
+    fDevice.fD3DDepthSurface->GetDesc( &info );
+    fDevice.fD3DBackBuff->GetDesc( &info );
 
     return false;
 }
@@ -1802,13 +1717,13 @@ void plDXPipeline::IReleaseDynDeviceObjects()
         fSharedDepthFormat[1] = D3DFMT_UNKNOWN;
     }
 
-    D3DSURF_MEMDEL( fD3DMainSurface );
-    D3DSURF_MEMDEL( fD3DDepthSurface );
-    D3DSURF_MEMDEL( fD3DBackBuff );
+    D3DSURF_MEMDEL( fDevice.fD3DMainSurface );
+    D3DSURF_MEMDEL( fDevice.fD3DDepthSurface );
+    D3DSURF_MEMDEL( fDevice.fD3DBackBuff );
 
-    ReleaseObject( fD3DBackBuff );
-    ReleaseObject( fD3DDepthSurface );
-    ReleaseObject( fD3DMainSurface );
+    ReleaseObject( fDevice.fD3DBackBuff );
+    ReleaseObject( fDevice.fD3DDepthSurface );
+    ReleaseObject( fDevice.fD3DMainSurface );
 
 }
 
@@ -2044,11 +1959,11 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     // this will reset device parameters to default and make sure all other necessary parameters are updated
     params->BackBufferWidth = fDefaultPipeParams.Width;
     params->BackBufferHeight = fDefaultPipeParams.Height;
-    fSettings.fOrigWidth = fDefaultPipeParams.Width;
-    fSettings.fOrigHeight = fDefaultPipeParams.Height;
+    fOrigWidth = fDefaultPipeParams.Width;
+    fOrigHeight = fDefaultPipeParams.Height;
     IGetViewTransform().SetScreenSize(fDefaultPipeParams.Width, fDefaultPipeParams.Height);
     params->BackBufferFormat = D3DFMT_X8R8G8B8;
-    fSettings.fColorDepth = fDefaultPipeParams.ColorDepth;
+    fColorDepth = fDefaultPipeParams.ColorDepth;
 
     int i;
     hsTArray<D3DEnum_ModeInfo> *modes = &fCurrentDevice->fModes;
@@ -2176,7 +2091,7 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 {
     if( fSettings.fPresentParams.BackBufferWidth == Width &&
         fSettings.fPresentParams.BackBufferHeight == Height &&
-        (fSettings.fPresentParams.Windowed ? 1 : fSettings.fColorDepth == ColorDepth) && // if we're windowed dont check color depth we just use the desktop colordepth
+        (fSettings.fPresentParams.Windowed ? 1 : fColorDepth == ColorDepth) && // if we're windowed dont check color depth we just use the desktop colordepth
         ((fSettings.fPresentParams.Windowed && Windowed)  || (!fSettings.fPresentParams.Windowed && !Windowed)) &&
         fSettings.fNumAASamples == NumAASamples &&
         fSettings.fMaxAnisotropicSamples == MaxAnisotropicSamples &&
@@ -2207,12 +2122,12 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     if(i != modes->Count())
     {
         // Set Resolution
-        fSettings.fOrigWidth = Width;
-        fSettings.fOrigHeight = Height;
+        fOrigWidth = Width;
+        fOrigHeight = Height;
         IGetViewTransform().SetScreenSize(Width, Height);
         fSettings.fPresentParams.BackBufferWidth = Width;
         fSettings.fPresentParams.BackBufferHeight = Height;
-        fSettings.fColorDepth = ColorDepth;
+        fColorDepth = ColorDepth;
         fSettings.fPresentParams.BackBufferFormat = D3DFMT_X8R8G8B8;
     }
 
@@ -2396,10 +2311,10 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     if( width != 0 && height != 0 )
     {
         // Width and height of zero mean just recreate
-        fSettings.fOrigWidth = width;
-        fSettings.fOrigHeight = height;
-        IGetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-        resetTransform.SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
+        fOrigWidth = width;
+        fOrigHeight = height;
+        IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
+        resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
     }
     else
     {
@@ -2423,7 +2338,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
     // Restore states
     SetViewTransform(resetTransform);
-    IProjectionMatrixToD3D();
+    IProjectionMatrixToDevice();
 
     /// Broadcast a message letting everyone know that we were recreated and that
     /// all device-specific stuff needs to be recreated
@@ -2724,40 +2639,6 @@ bool plDXPipeline::PrepForRender(plDrawable* d, hsTArray<int16_t>& visList, plVi
     return true;
 }
 
-// Render ////////////////////////////////////////////////////////////////////////////////
-// The normal way to render a subset of a drawable.
-// This assumes that PreRender and PrepForRender have already been called.
-// Note that PreRender and PrepForRender are called once per drawable per render
-// with a visList containing all of the spans which will be rendered, but
-// Render itself may be called with multiple visList subsets which union to
-// the visList passed into PreRender/PrepForRender. This happens when drawing
-// sorted spans, because some spans from drawable B may be in the middle of 
-// the spans of drawable A, so the sequence would be:
-// 
-// PreRender(A, ATotalVisList);
-// PreRender(B, BTotalVisList);
-// PrepForRender(A, ATotalVisList);
-// PrepForRender(B, BTotalVisList);
-// Render(A, AFarHalfVisList);
-// Render(B, BTotalVisList);
-// Render(A, ANearHalfVisList);
-// See plPageTreeMgr, which handles all this.
-void    plDXPipeline::Render( plDrawable *d, const hsTArray<int16_t>& visList )
-{
-    // Reset here, since we can push/pop renderTargets after BeginRender() but before
-    // this function, which necessitates this being called
-    if( fView.fXformResetFlags != 0 )
-        ITransformsToD3D();
-
-    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef( d );
-
-    if( ds )
-    {
-        IRenderSpans( ds, visList );
-    }
-}
-
-
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
 // Set the D3D world transform according to the input span.
 // Engine currently supports HW vertex blending with 2 matrices,
@@ -2793,7 +2674,7 @@ void plDXPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
 
     if( span.fNumMatrices == 2 )
     {
-        D3DXMATRIX  mat;    
+        D3DXMATRIX  mat;
         IMatrix44ToD3DMatrix(mat, drawable->GetPaletteMatrix(span.fBaseMatrix+1));
         fD3DDevice->SetTransform(D3DTS_WORLDMATRIX(1), &mat);
         fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
@@ -2961,11 +2842,11 @@ bool plDXPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* g
     return false; // No error
 }
 
-//// IRenderSpans /////////////////////////////////////////////////////////////
+//// RenderSpans /////////////////////////////////////////////////////////////
 // Renders an array of spans obtained from a plDrawableSpans object
 // The incoming visList gives the indices of the spans which are visible and should
 // be drawn now, and gives them in sorted order.
-void    plDXPipeline::IRenderSpans( plDrawableSpans *drawable, const hsTArray<int16_t>& visList )
+void    plDXPipeline::RenderSpans( plDrawableSpans *drawable, const hsTArray<int16_t>& visList )
 {
     plProfile_BeginTiming(RenderSpan);
 
@@ -3264,7 +3145,7 @@ bool plDXPipeline::BeginRender()
 
 //// ISetViewport /////////////////////////////////////////////////////////////
 // Translate our viewport into a D3D viewport
-void    plDXPipeline::ISetViewport()
+/*void    plDXPipeline::ISetViewport()
 {
     D3DVIEWPORT9 vp = { GetViewTransform().GetViewPortLeft(),
                         GetViewTransform().GetViewPortTop(),
@@ -3274,7 +3155,7 @@ void    plDXPipeline::ISetViewport()
 
     
     WEAK_ERROR_CHECK( fD3DDevice->SetViewport( &vp ) );
-}
+}*/
 
 //// RenderScreenElements /////////////////////////////////////////////////////
 //  Renders all the screen elements, such as debug text and plates. Also puts
@@ -3487,9 +3368,9 @@ bool  plDXPipeline::IFlipSurface()
 {
     /// Works now for both fullscreen and windowed modes
     HRESULT hr = D3D_OK;
-    if( fSettings.fCurrRenderTarget == nil )
+    if( fCurrRenderTarget == nil )
     {
-        hr = fD3DDevice->Present( nil, nil, fSettings.fHWnd, nil );
+        hr = fD3DDevice->Present( nil, nil, fDevice.fHWnd, nil );
     }
 
     if( FAILED(hr) )
@@ -3600,8 +3481,8 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
         if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(bigWidth, bigHeight, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, NULL)))
             return false;
 
-        GetClientRect( fSettings.fHWnd, &rToLock );
-        MapWindowPoints( fSettings.fHWnd, nil, (POINT *)&rToLock, 2 );
+        GetClientRect( fDevice.fHWnd, &rToLock );
+        MapWindowPoints( fDevice.fHWnd, nil, (POINT *)&rToLock, 2 );
 
         if( rToLock.right > bigWidth )
         {
@@ -4382,65 +4263,6 @@ void plDXPipeline::PopRenderRequest(plRenderRequest* req)
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
 }
 
-//// PushRenderTarget /////////////////////////////////////////////////////////
-// Begin rendering to the specified target. If target is nil, that's the primary surface.
-void    plDXPipeline::PushRenderTarget( plRenderTarget *target )
-{
-    //WHITE
-#ifdef MF_ENABLE_HACKOFF
-    if( target && (hackOffscreens.kMissingIndex == hackOffscreens.Find(target)) )
-        hackOffscreens.Append(target);
-#endif // MF_ENABLE_HACKOFF
-
-
-    fSettings.fCurrRenderTarget = target;
-    hsRefCnt_SafeAssign( fSettings.fCurrRenderTargetRef, ( target != nil ) ? (plDXDeviceRef *)target->GetDeviceRef() : nil );
-
-    while( target != nil )
-    {
-        fSettings.fCurrBaseRenderTarget = target;
-        target = target->GetParent();
-    }
-
-    fSettings.fRenderTargets.Push( fSettings.fCurrRenderTarget );
-    ISetRenderTarget( fSettings.fCurrRenderTarget );
-}
-
-//// PopRenderTarget //////////////////////////////////////////////////////////
-// Resume rendering to the render target before the last PushRenderTarget, 
-// making sure we aren't holding on to anything from the render target getting
-// popped.
-plRenderTarget      *plDXPipeline::PopRenderTarget()
-{
-    plRenderTarget  *old = fSettings.fRenderTargets.Pop(), *temp;
-    int             i = fSettings.fRenderTargets.GetCount();
-
-    if( i == 0 )
-    {
-        fSettings.fCurrRenderTarget = nil;
-        fSettings.fCurrBaseRenderTarget = nil;
-        hsRefCnt_SafeUnRef( fSettings.fCurrRenderTargetRef );
-        fSettings.fCurrRenderTargetRef = nil;
-    }
-    else
-    {
-        fSettings.fCurrRenderTarget = fSettings.fRenderTargets[ i - 1 ];
-        temp = fSettings.fCurrRenderTarget;
-        while( temp != nil )
-        {
-            fSettings.fCurrBaseRenderTarget = temp;
-            temp = temp->GetParent();
-        }
-        hsRefCnt_SafeAssign( fSettings.fCurrRenderTargetRef, 
-                             ( fSettings.fCurrRenderTarget != nil ) ? 
-                                    (plDXDeviceRef *)fSettings.fCurrRenderTarget->GetDeviceRef() 
-                                    : nil );
-    }
-    
-    ISetRenderTarget( fSettings.fCurrRenderTarget );
-
-    return old;
-}
 
 // ISetAnisotropy ///////////////////////////////////////////////////////////
 // Set the current anisotropic filtering settings to D3D
@@ -4476,48 +4298,6 @@ void plDXPipeline::ISetAnisotropy(bool on)
         }
         fSettings.fCurrAnisotropy = false;
     }
-}
-
-//// ISetRenderTarget /////////////////////////////////////////////////////////
-// Set rendering to the specified render target. Nil rendertarget is the primary.
-// Invalidates the state as required by experience, not documentation.
-void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
-{
-    IDirect3DSurface9       *main, *depth;
-    plDXRenderTargetRef *ref = nil;
-
-
-    if( target != nil )
-    {
-        ref = (plDXRenderTargetRef *)target->GetDeviceRef();
-        if( ref == nil || ref->IsDirty() )
-            ref = (plDXRenderTargetRef *)MakeRenderTargetRef( target );
-    }
-
-    if( ref == nil || ref->GetColorSurface() == nil )
-    {
-        /// Set to main screen
-        main = fD3DMainSurface;
-        depth = fD3DDepthSurface;
-    }
-    else
-    {
-        /// Set to this target
-        main = ref->GetColorSurface();
-        depth = ref->fD3DDepthSurface;
-    }
-
-    if( main != fSettings.fCurrD3DMainSurface || depth != fSettings.fCurrD3DDepthSurface )
-    {
-        fSettings.fCurrD3DMainSurface = main;
-        fSettings.fCurrD3DDepthSurface = depth;
-        fD3DDevice->SetRenderTarget(0, main);
-        fD3DDevice->SetDepthStencilSurface(depth);
-    }
-
-    IInvalidateState();
-
-    ISetViewport();
 }
 
 //// ClearRenderTarget ////////////////////////////////////////////////////////
@@ -4578,14 +4358,14 @@ bool plDXPipeline::IGetClearViewPort(D3DRECT& r)
     r.y2 = GetViewTransform().GetViewPortBottom();
 
     bool useRect = false;
-    if( fSettings.fCurrRenderTarget != nil )
+    if( fCurrRenderTarget != nil )
     {
-        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fSettings.fCurrRenderTarget->GetWidth()) || (r.y2 != fSettings.fCurrRenderTarget->GetHeight()) );
+        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fCurrRenderTarget->GetWidth()) || (r.y2 != fCurrRenderTarget->GetHeight()) );
 
     }
     else
     {
-        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fSettings.fOrigWidth) || (r.y2 != fSettings.fOrigHeight) );
+        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fOrigWidth) || (r.y2 != fOrigHeight) );
     }
 
     return useRect;
@@ -5034,7 +4814,6 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
 {
     plDXLightRef    *lRef = new plDXLightRef();
 
-        
     /// Assign stuff and update
     lRef->fD3DIndex = fLights.ReserveD3DIndex();
     lRef->fOwner = owner;
@@ -5649,7 +5428,7 @@ void    plDXPipeline::ISetLayer( uint32_t lay )
 
             plCONST(int) kBiasMult = 8;
             if( !( fSettings.fD3DCaps & kCapsZBias ) )
-                IProjectionMatrixToD3D();
+                IProjectionMatrixToDevice();
             else
                 fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, kBiasMult * fCurrRenderLayer );
         }
@@ -5666,7 +5445,7 @@ void    plDXPipeline::IBottomLayer()
     {
         fCurrRenderLayer = 0;
         if( !( fSettings.fD3DCaps & kCapsZBias ) )
-            IProjectionMatrixToD3D();
+            IProjectionMatrixToDevice();
         else
             fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, 0 );
     }
@@ -5903,8 +5682,8 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
 
     /// Workaround for a D3D limitation--you're not allowed to render with a texture that you're
     /// rendering INTO. Hence we can't have self-reflecting cubicRenderTargets (damn)
-    if( fSettings.fCurrBaseRenderTarget != nil && 
-        newMat->GetLayer( layer )->GetTexture() == plBitmap::ConvertNoRef( fSettings.fCurrBaseRenderTarget ) )
+    if( fCurrBaseRenderTarget != nil && 
+        newMat->GetLayer( layer )->GetTexture() == plBitmap::ConvertNoRef( fCurrBaseRenderTarget ) )
     {
         return -1;
     }
@@ -6028,9 +5807,9 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
                 return -1;
 
             // Can't render into a render target using same rendertarget as a texture.
-            if( fSettings.fCurrBaseRenderTarget 
+            if( fCurrBaseRenderTarget 
                 && 
-                layPtr->GetTexture() == (plBitmap*)(fSettings.fCurrBaseRenderTarget) )
+                layPtr->GetTexture() == (plBitmap*)(fCurrBaseRenderTarget) )
             {
                 // Oops, just bail
                 return -1;
@@ -8164,7 +7943,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
                 formatType = D3DFMT_A8L8;
                 texSize = 16;
             }
-            else if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
+            else if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
             {
                 formatType = D3DFMT_A4R4G4B4;
                 texSize = 16;
@@ -8187,7 +7966,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
                 formatType = D3DFMT_L8;
                 texSize = 8;
             }
-            else if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
+            else if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
             {
                 formatType = D3DFMT_A1R5G5B5;
                 texSize = 16;
@@ -8208,7 +7987,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
     {
         if( b->GetFlags() & plMipmap::kAlphaChannelFlag )
         {
-            if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
+            if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
             {
                 formatType = D3DFMT_A4R4G4B4;
                 texSize = 16;
@@ -8226,7 +8005,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
         }
         else
         {
-            if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
+            if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
             {
                 formatType = D3DFMT_A1R5G5B5;
                 texSize = 16;
@@ -8370,91 +8149,6 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 //// View Stuff ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-// IUpdateViewFlags /////////////////////////////////////////////////////////
-// Dirty anything cached dependent on the current camera matrix.
-void plDXPipeline::IUpdateViewFlags()
-{
-    fView.fCullTreeDirty = true;
-
-    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
-}
-//// SetWorldToCamera /////////////////////////////////////////////////////////
-// Immediate set of camera transform.
-void plDXPipeline::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
-{
-    IGetViewTransform().SetCameraTransform(w2c, c2w);
-
-    IUpdateViewFlags();
-
-    IWorldToCameraToD3D();
-}
-
-// IWorldToCameraToD3D ///////////////////////////////////////////////////////
-// Pass the current camera transform through to D3D.
-void plDXPipeline::IWorldToCameraToD3D()
-{
-    D3DXMATRIX  mat;
-
-    IMatrix44ToD3DMatrix( mat, fView.GetWorldToCamera() );
-    fD3DDevice->SetTransform( D3DTS_VIEW, &mat );
-
-    fView.fXformResetFlags &= ~fView.kResetCamera;
-
-    fFrame++;
-}
-
-// SetViewTransform ///////////////////////////////////////////////////////////
-// ViewTransform encapsulates everything about the current camera, viewport and
-// window necessary to render or convert from world space to pixel space. Doesn't
-// include the object dependent local to world transform.
-// Set plViewTransform.h
-void plDXPipeline::SetViewTransform(const plViewTransform& v)
-{
-    fView.SetViewTransform(v);
-
-    if( !v.GetScreenWidth() || !v.GetScreenHeight() )
-    {
-        fView.GetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-    }
-
-    IUpdateViewFlags();
-    IWorldToCameraToD3D();
-}
-
-//// ISetLocalToWorld /////////////////////////////////////////////////////////
-// Record and pass on to D3D the current local to world transform for the object
-// about to be rendered.
-void    plDXPipeline::ISetLocalToWorld( const hsMatrix44& l2w, const hsMatrix44& w2l )
-{
-    
-    fView.SetLocalToWorld(l2w);
-    fView.SetWorldToLocal(w2l);
-
-    fView.fViewVectorsDirty = true;
-
-    // We keep track of parity for winding order culling.
-    fView.fLocalToWorldLeftHanded = fView.GetLocalToWorld().GetParity();
-
-    ILocalToWorldToD3D();
-}
-
-// ILocalToWorldToD3D ///////////////////////////////////////////////////////////
-// pass the current local to world tranform on to D3D.
-void plDXPipeline::ILocalToWorldToD3D()
-{
-    D3DXMATRIX  mat;
-
-    if( fView.GetLocalToWorld().fFlags & hsMatrix44::kIsIdent )
-        fD3DDevice->SetTransform( D3DTS_WORLD, &d3dIdentityMatrix );
-    else
-    {
-        IMatrix44ToD3DMatrix( mat, fView.GetLocalToWorld() );
-        fD3DDevice->SetTransform( D3DTS_WORLD, &mat );
-    }
-
-    fView.fXformResetFlags &= ~fView.kResetL2W;
-}
-
 //// IIsViewLeftHanded ////////////////////////////////////////////////////////
 //  Returns true if the combination of the local2world and world2camera
 //  matrices is left-handed.
@@ -8464,13 +8158,6 @@ bool  plDXPipeline::IIsViewLeftHanded()
     return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
 }
 
-//// RefreshScreenMatrices ////////////////////////////////////////////////////
-// Force a refresh of cached state when the projection matrix changes.
-void    plDXPipeline::RefreshScreenMatrices()
-{
-    fView.fCullTreeDirty = true;
-    IProjectionMatrixToD3D();
-}   
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
@@ -8510,61 +8197,6 @@ D3DXMATRIX&     plDXPipeline::IMatrix44ToD3DMatrix( D3DXMATRIX& dst, const hsMat
     return dst;
 }
 
-/////////////////////////////////////////////////////////
-// IGetCameraToNDC /////////////////////////////////////////////
-// Get the camera to NDC transform. This may be adjusted to create
-// a Z bias towards the camera for cases where the D3D Z bias fails us.
-hsMatrix44 plDXPipeline::IGetCameraToNDC()
-{
-    hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
-    
-    if( fView.IsPerspective() )
-    {
-        // Want to scale down W and offset in Z without
-        // changing values of x/w, y/w. This is just
-        // minimal math for
-        // Mproj' * p = Mscaletrans * Mproj * p
-        // where Mscaletrans = 
-        // [ s 0 0 0 ]
-        // [ 0 s 0 0 ]
-        // [ 0 0 s 0 ]
-        // [ 0 0 t s ]
-        // Resulting matrix Mproj' is not exactly "Fog Friendly",
-        // but is close enough.
-        // Resulting point is [sx, sy, sz + tw, sw] and after divide
-        // is [x/w, y/w, z/w + t/s, 1/sw]
-
-
-        float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
-        float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
-
-        cam2ndc.fMap[0][0] *= scale;
-        cam2ndc.fMap[1][1] *= scale;
-
-        cam2ndc.fMap[2][2] *= scale;
-        cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
-        cam2ndc.fMap[3][2] *= scale;
-    }
-    else
-    {
-        plConst(float) kZTrans = -1.e-4f;
-        cam2ndc.fMap[2][3] += kZTrans * fCurrRenderLayer;
-    }
-
-    return cam2ndc;
-}
-
-// IProjectionMatrixToD3D //////////////////////////////////////////////////////////
-// Send the current camera to NDC transform to D3D.
-void plDXPipeline::IProjectionMatrixToD3D()
-{
-    D3DXMATRIX matProjection;
-
-    IMatrix44ToD3DMatrix( matProjection, IGetCameraToNDC() );
-
-    fD3DDevice->SetTransform( D3DTS_PROJECTION, &matProjection );
-    fView.fXformResetFlags &= ~fView.kResetProjection;
-}
 
 //// ISetCullMode /////////////////////////////////////////////////////////////
 //  Tests and sets the current winding order cull mode (CW, CCW, or none).
@@ -8577,28 +8209,11 @@ void    plDXPipeline::ISetCullMode(bool flip)
     if( !(fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided) )
         newCull = !IIsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
 
-    if( newCull != fCurrCullMode )
+    if( newCull != fDevice.fCurrCullMode )
     {
-        fCurrCullMode = newCull;
-        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode );
+        fDevice.fCurrCullMode = newCull;
+        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode );
     }
-}
-
-//// ITransformsToD3D //////////////////////////////////////////////////////////
-//  Refreshes all transforms. Useful after popping renderTargets :)
-
-void plDXPipeline::ITransformsToD3D()
-{
-    bool resetCullMode = fView.fXformResetFlags & (fView.kResetCamera | fView.kResetL2W);
-
-    if( fView.fXformResetFlags & fView.kResetCamera )
-        IWorldToCameraToD3D();
-
-    if( fView.fXformResetFlags & fView.kResetL2W )
-        ILocalToWorldToD3D();
-
-    if( fView.fXformResetFlags & fView.kResetProjection )
-        IProjectionMatrixToD3D();
 }
 
 // ISetupVertexBufferRef /////////////////////////////////////////////////////////
@@ -10402,7 +10017,7 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
     // or http://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx).
     D3DXMatrixTranslation(&mat, -0.5f/scrnWidthDiv2, -0.5f/scrnHeightDiv2, 0.0f);
     fD3DDevice->SetTransform( D3DTS_VIEW, &mat );
-    oldCullMode = dxPipe->fCurrCullMode;
+    oldCullMode = dxPipe->fDevice.fCurrCullMode;
 
     for( plate = fPlates; plate != nil; plate = plate->GetNext() )
     {
@@ -10460,8 +10075,8 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
         }
     }
 
-    dxPipe->fCurrCullMode = ( dxPipe->fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided ) ? D3DCULL_NONE : oldCullMode;
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE, dxPipe->fCurrCullMode );
+    dxPipe->fDevice.fCurrCullMode = ( dxPipe->fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided ) ? D3DCULL_NONE : oldCullMode;
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE, dxPipe->fDevice.fCurrCullMode );
 }
 
 // IDrawPlate ///////////////////////////////////////////////////////////////////////
@@ -10500,7 +10115,7 @@ void    plDXPipeline::IDrawPlate( plPlate *plate )
         // To override the transform done by the z-bias
         fD3DDevice->SetTransform( D3DTS_PROJECTION, &mat );
         // And this to override cullmode set based on material 2-sidedness.
-        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode = D3DCULL_CW );
+        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode = D3DCULL_CW );
 
         WEAK_ERROR_CHECK( fD3DDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 ) );
     }
@@ -10881,8 +10496,8 @@ void plDXPipeline::IBlurSetRenderTarget(plRenderTarget* rt)
     IDirect3DSurface9* main = ref->GetColorSurface();
     IDirect3DSurface9* depth = ref->fD3DDepthSurface;
 
-    fSettings.fCurrD3DMainSurface = main;
-    fSettings.fCurrD3DDepthSurface = depth;
+    fDevice.fCurrD3DMainSurface = main;
+    fDevice.fCurrD3DDepthSurface = depth;
     fD3DDevice->SetRenderTarget(0, main);
     fD3DDevice->SetDepthStencilSurface(depth);
 
@@ -10941,8 +10556,8 @@ void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderT
     fLayerState[0].fZFlags |= hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead;
     //
     //  Cullmode is NONE
-    fCurrCullMode = D3DCULL_NONE; 
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode );
+    fDevice.fCurrCullMode = D3DCULL_NONE; 
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode );
 
     plDXTextureRef* ref = (plDXTextureRef*)smap->GetDeviceRef();
     hsAssert(ref, "Shadow map ref should have been made when it was rendered");
@@ -11566,7 +11181,7 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     fViewStack.push(fView);
     fView.SetMaxCullNodes(0);
     SetViewTransform(slave->fView);
-    IProjectionMatrixToD3D();
+    IProjectionMatrixToDevice();
 
     // Push the shadow map as the current render target
     PushRenderTarget(renderTarg);
@@ -12669,7 +12284,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
     fD3DDevice->SetTransform(D3DTS_VIEW, &d3dIdentityMatrix);
     fD3DDevice->SetTransform(D3DTS_WORLD, &d3dIdentityMatrix);
     fD3DDevice->SetTransform(D3DTS_PROJECTION, &d3dIdentityMatrix);
-    fD3DDevice->SetRenderState(D3DRS_CULLMODE, fCurrCullMode = D3DCULL_NONE);
+    fD3DDevice->SetRenderState(D3DRS_CULLMODE, fDevice.fCurrCullMode = D3DCULL_NONE);
     fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
     fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
     fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);

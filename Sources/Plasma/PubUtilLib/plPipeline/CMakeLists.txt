@@ -29,6 +29,7 @@ set(plPipeline_SOURCES
 
 set(plDXPipeline_SOURCES
     DX/hsGDirect3D.cpp
+    DX/plDXDevice.cpp
     DX/plDXDeviceRefs.cpp
     DX/plDXEnumerate.cpp
     DX/plDXPipeline.cpp
@@ -39,6 +40,7 @@ set(plDXPipeline_SOURCES
 )
 
 set(plGLPipeline_SOURCES
+    GL/plGLDevice.cpp
     GL/plGLDeviceRefs.cpp
     GL/plGLPipeline.cpp
 )
@@ -73,6 +75,7 @@ set(plPipeline_HEADERS
 set(plDXPipeline_HEADERS
     DX/hsGDirect3D.h
     DX/plDXBufferRefs.h
+    DX/plDXDevice.h
     DX/plDXDeviceRef.h
     DX/plDXEnumerate.h
     DX/plDXLightRef.h
@@ -87,6 +90,7 @@ set(plDXPipeline_HEADERS
 )
 
 set(plGLPipeline_HEADERS
+    GL/plGLDevice.h
     GL/plGLDeviceRef.h
     GL/plGLPipeline.h
 )

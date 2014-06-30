@@ -47,6 +47,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsGMatState.inl"
 
+#include "hsGDeviceRef.h"
+#include "plRenderTarget.h"
+#include "plCubicRenderTarget.h"
+
+#include "plTweak.h"
+
 #include "plSurface/hsGMaterial.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plDrawable/plSpaceTree.h"
@@ -56,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLight/plShadowCaster.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnSceneObject/plSceneObject.h"
+#include "plScene/plRenderRequest.h"
 #include "plScene/plVisMgr.h"
 
 plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
@@ -76,14 +83,73 @@ plProfile_CreateCounter("Lights Found",         "PipeC", FindLightsFound);
 plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 
 
-pl3DPipeline::pl3DPipeline()
-    : fActiveLights(nullptr)
+PipelineParams plPipeline::fDefaultPipeParams;
+PipelineParams plPipeline::fInitialPipeParams;
+
+static const float kPerspLayerScale  = 0.00001f;
+static const float kPerspLayerScaleW = 0.001f;
+static const float kPerspLayerTrans  = 0.00002f;
+
+pl3DPipeline::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
+:   fMaxLayersAtOnce(-1),
+    fMaxPiggyBacks(0),
+    //fMaxNumLights(kD3DMaxTotalLights),
+    //fMaxNumProjectors(kMaxProjectors),
+    fOverBaseLayer(nullptr),
+    fOverAllLayer(nullptr),
+    fMatPiggyBacks(0),
+    fActivePiggyBacks(0),
+    fCurrMaterial(nullptr),
+    fCurrLay(nullptr),
+    fCurrNumLayers(0),
+    fCurrRenderLayer(0),
+    fCurrLightingMethod(plSpan::kLiteMaterial),
+    fActiveLights(nullptr),
+    fCurrRenderTarget(nullptr),
+    fCurrBaseRenderTarget(nullptr),
+    fCurrRenderTargetRef(nullptr),
+    fColorDepth(32),
+    fTime(0),
+    fFrame(0)
 {
+
+    fOverLayerStack.Reset();
+    fPiggyBackStack.Reset();
+
+    fMatOverOn.Reset();
+    fMatOverOff.Reset();
+
+    fTweaks.Reset();
+    fView.Reset(this);
+    fDebugFlags.Clear();
+
+
+    // Get the requested mode and setup
+    const hsG3DDeviceRecord *devRec = devModeRec->GetDevice();
+    const hsG3DDeviceMode *devMode = devModeRec->GetMode();
+
+    if(!fInitialPipeParams.Windowed)
+    {
+        fOrigWidth = devMode->GetWidth();
+        fOrigHeight = devMode->GetHeight();
+    }
+    else
+    {
+        // windowed can run in any mode
+        fOrigHeight = fInitialPipeParams.Height;
+        fOrigWidth = fInitialPipeParams.Width;
+    }
+
+    IGetViewTransform().SetScreenSize(uint16_t(fOrigWidth), uint16_t(fOrigHeight));
+    fColorDepth = devMode->GetColorDepth();
+
+    fVSync = fInitialPipeParams.VSync;
 }
 
 pl3DPipeline::~pl3DPipeline()
 {
-    //hsAssert(fCurrMaterial == nullptr, "Current material not unrefed properly");
+    fCurrLay = nullptr;
+    hsAssert(fCurrMaterial == nullptr, "Current material not unrefed properly");
 
     // CullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
     // plScene/plOccluder.cpp and plScene/plOccluderProxy.cpp for more info
@@ -93,6 +159,22 @@ pl3DPipeline::~pl3DPipeline()
     // Tell the light infos to unlink themselves
     while (fActiveLights)
         UnRegisterLight(fActiveLights);
+}
+
+
+void pl3DPipeline::Render(plDrawable* d, const hsTArray<int16_t>& visList)
+{
+    // Reset here, since we can push/pop renderTargets after BeginRender() but
+    // before this function, which necessitates this being called
+    if (fView.fXformResetFlags != 0)
+        ITransformsToDevice();
+
+    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(d);
+
+    if (ds)
+    {
+        RenderSpans(ds, visList);
+    }
 }
 
 
@@ -111,6 +193,73 @@ void pl3DPipeline::Draw(plDrawable* d)
         PrepForRender(ds, visList);
         Render(ds, visList);
     }
+}
+
+
+void pl3DPipeline::RegisterLight(plLightInfo* liInfo)
+{
+    if (liInfo->IsLinked())
+        return;
+
+    liInfo->Link(&fActiveLights);
+
+    // Override this method to set the light's native device ref!
+}
+
+
+void pl3DPipeline::UnRegisterLight(plLightInfo* liInfo)
+{
+    liInfo->SetDeviceRef(nullptr);
+    liInfo->Unlink();
+}
+
+
+void pl3DPipeline::PushRenderTarget(plRenderTarget* target)
+{
+    fCurrRenderTarget = target;
+    hsRefCnt_SafeAssign(fCurrRenderTargetRef, (target != nullptr) ? target->GetDeviceRef() : nullptr);
+
+    while (target != nullptr)
+    {
+        fCurrBaseRenderTarget = target;
+        target = target->GetParent();
+    }
+
+    fRenderTargets.Push(fCurrRenderTarget);
+    fDevice.SetRenderTarget(fCurrRenderTarget);
+}
+
+
+plRenderTarget* pl3DPipeline::PopRenderTarget()
+{
+    plRenderTarget* old = fRenderTargets.Pop();
+    plRenderTarget* temp;
+    size_t i = fRenderTargets.GetCount();
+
+    if (i == 0)
+    {
+        fCurrRenderTarget = nullptr;
+        fCurrBaseRenderTarget = nullptr;
+        hsRefCnt_SafeUnRef(fCurrRenderTargetRef);
+        fCurrRenderTargetRef = nullptr;
+    }
+    else
+    {
+        fCurrRenderTarget = fRenderTargets[i - 1];
+        temp = fCurrRenderTarget;
+
+        while (temp != nullptr)
+        {
+            fCurrBaseRenderTarget = temp;
+            temp = temp->GetParent();
+        }
+
+        hsRefCnt_SafeAssign(fCurrRenderTargetRef, (fCurrRenderTarget != nullptr) ? fCurrRenderTarget->GetDeviceRef() : nullptr);
+    }
+
+    fDevice.SetRenderTarget(fCurrRenderTarget);
+
+    return old;
 }
 
 
@@ -190,28 +339,37 @@ void pl3DPipeline::BeginVisMgr(plVisMgr* visMgr)
 }
 
 
-void pl3DPipeline::RegisterLight(plLightInfo* liInfo)
-{
-    if (liInfo->IsLinked())
-        return;
-
-    liInfo->Link(&fActiveLights);
-
-    // Override this method to set the light's native device ref!
-}
-
-
-void pl3DPipeline::UnRegisterLight(plLightInfo* liInfo)
-{
-    liInfo->SetDeviceRef(nullptr);
-    liInfo->Unlink();
-}
-
-
 void pl3DPipeline::EndVisMgr(plVisMgr* visMgr)
 {
     fCharLights.SetCount(0);
     fVisLights.SetCount(0);
+}
+
+
+void pl3DPipeline::SetZBiasScale(float scale)
+{
+    scale += 1.0f;
+    fTweaks.fPerspLayerScale = fTweaks.fDefaultPerspLayerScale * scale;
+    fTweaks.fPerspLayerTrans = kPerspLayerTrans * scale;
+}
+
+
+float pl3DPipeline::GetZBiasScale() const
+{
+    return (fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale) - 1.0f;
+}
+
+
+void pl3DPipeline::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
+{
+    plViewTransform& view_xform = fView.GetViewTransform();
+
+    view_xform.SetCameraTransform(w2c, c2w);
+
+    fView.fCullTreeDirty = true;
+    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
+
+    IWorldToCameraToDevice();
 }
 
 
@@ -223,6 +381,13 @@ void pl3DPipeline::ScreenToWorldPoint(int n, uint32_t stride, int32_t* scrX, int
         scrP.Set(float(*scrX++), float(*scrY++), float(dist));
         *worldOut++ = GetViewTransform().ScreenToWorld(scrP);
     }
+}
+
+
+void pl3DPipeline::RefreshScreenMatrices()
+{
+    fView.fCullTreeDirty = true;
+    IProjectionMatrixToDevice();
 }
 
 
@@ -380,6 +545,22 @@ plLayerInterface* pl3DPipeline::PopPiggyBackLayer(plLayerInterface* li)
     fForceMatHandle = true;
 
     return li;
+}
+
+
+void pl3DPipeline::SetViewTransform(const plViewTransform& v)
+{
+    fView.SetViewTransform(v);
+
+    if (!v.GetScreenWidth() || !v.GetScreenHeight())
+    {
+        fView.GetViewTransform().SetScreenSize(uint16_t(fOrigWidth), uint16_t(fOrigHeight));
+    }
+
+    fView.fCullTreeDirty = true;
+    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
+
+    IWorldToCameraToDevice();
 }
 
 
@@ -759,4 +940,95 @@ void pl3DPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& 
     IAttachShadowsToReceivers(drawable, visList);
 
     plProfile_EndTiming(FindLights);
+}
+
+
+hsMatrix44 pl3DPipeline::IGetCameraToNDC()
+{
+    hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
+
+    if (fView.IsPerspective())
+    {
+        // Want to scale down W and offset in Z without
+        // changing values of x/w, y/w. This is just
+        // minimal math for
+        // Mproj' * p = Mscaletrans * Mproj * p
+        // where Mscaletrans =
+        // [ s 0 0 0 ]
+        // [ 0 s 0 0 ]
+        // [ 0 0 s 0 ]
+        // [ 0 0 t s ]
+        // Resulting matrix Mproj' is not exactly "Fog Friendly",
+        // but is close enough.
+        // Resulting point is [sx, sy, sz + tw, sw] and after divide
+        // is [x/w, y/w, z/w + t/s, 1/sw]
+
+        float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
+        float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
+
+        cam2ndc.fMap[0][0] *= scale;
+        cam2ndc.fMap[1][1] *= scale;
+
+        cam2ndc.fMap[2][2] *= scale;
+        cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
+        cam2ndc.fMap[3][2] *= scale;
+    }
+    else
+    {
+        plConst(float) kZTrans = -1.e-4f;
+        cam2ndc.fMap[2][3] += kZTrans * fCurrRenderLayer;
+    }
+
+    return cam2ndc;
+}
+
+
+void pl3DPipeline::ISetLocalToWorld(const hsMatrix44& l2w, const hsMatrix44& w2l)
+{
+    fView.SetLocalToWorld(l2w);
+    fView.SetWorldToLocal(w2l);
+
+    fView.fViewVectorsDirty = true;
+
+    // We keep track of parity for winding order culling.
+    fView.fLocalToWorldLeftHanded = fView.GetLocalToWorld().GetParity();
+
+    ILocalToWorldToDevice();
+}
+
+
+
+void pl3DPipeline::ITransformsToDevice()
+{
+    bool resetCullMode = fView.fXformResetFlags & (fView.kResetCamera | fView.kResetL2W);
+
+    if (fView.fXformResetFlags & fView.kResetCamera)
+        IWorldToCameraToDevice();
+
+    if (fView.fXformResetFlags & fView.kResetL2W)
+        ILocalToWorldToDevice();
+
+    if (fView.fXformResetFlags & fView.kResetProjection)
+        IProjectionMatrixToDevice();
+}
+
+
+void pl3DPipeline::IProjectionMatrixToDevice()
+{
+    fDevice.SetProjectionMatrix(IGetCameraToNDC());
+    fView.fXformResetFlags &= ~fView.kResetProjection;
+}
+
+void pl3DPipeline::IWorldToCameraToDevice()
+{
+    fDevice.SetWorldToCameraMatrix(fView.GetWorldToCamera());
+    fView.fXformResetFlags &= ~fView.kResetCamera;
+
+    fFrame++;
+}
+
+void pl3DPipeline::ILocalToWorldToDevice()
+{
+    fDevice.SetLocalToWorldMatrix(fView.GetLocalToWorld());
+    fView.fXformResetFlags &= ~fView.kResetL2W;
 }
