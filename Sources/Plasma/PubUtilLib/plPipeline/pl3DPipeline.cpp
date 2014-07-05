@@ -103,6 +103,8 @@ pl3DPipeline::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fOverAllLayer(nullptr),
     fMatPiggyBacks(0),
     fActivePiggyBacks(0),
+    fVtxBuffRefList(nullptr),
+    fIdxBuffRefList(nullptr),
     fCurrMaterial(nullptr),
     fCurrLay(nullptr),
     fCurrNumLayers(0),
@@ -113,6 +115,7 @@ pl3DPipeline::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fCurrBaseRenderTarget(nullptr),
     fCurrRenderTargetRef(nullptr),
     fColorDepth(32),
+    fInSceneDepth(0),
     fTime(0),
     fFrame(0)
 {
@@ -122,6 +125,11 @@ pl3DPipeline::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
 
     fMatOverOn.Reset();
     fMatOverOff.Reset();
+
+    for (int i = 0; i < 8; i++)
+    {
+        fLayerRef[i] = nullptr;
+    }
 
     fTweaks.Reset();
     fView.Reset(this);

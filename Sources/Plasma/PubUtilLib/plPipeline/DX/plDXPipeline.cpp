@@ -343,13 +343,10 @@ plProfile_CreateMemCounter("DefMem", "PipeC", DefaultMem);
 plProfile_CreateMemCounter("ManMem", "PipeC", ManagedMem);
 plProfile_CreateMemCounterReset("CurrTex", "PipeC", CurrTex);
 plProfile_CreateMemCounterReset("CurrVB", "PipeC", CurrVB);
-plProfile_CreateMemCounter("TexTot", "PipeC", TexTot);
 plProfile_CreateMemCounterReset("fTexUsed", "PipeC", fTexUsed);
 plProfile_CreateMemCounterReset("fTexManaged", "PipeC", fTexManaged);
 plProfile_CreateMemCounterReset("fVtxUsed", "PipeC", fVtxUsed);
 plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
-plProfile_CreateMemCounter("ManSeen", "PipeC", ManSeen);
-plProfile_CreateCounterNoReset("ManEvict", "PipeC", ManEvict);
 plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
@@ -669,8 +666,6 @@ plDXPipeline::~plDXPipeline()
 void    plDXPipeline::IClearMembers()
 {
     /// Clear some stuff
-    fVtxBuffRefList = nil;
-    fIdxBuffRefList = nil;
     fTextureRefList = nil;
     fTextFontRefList = nil;
     fRenderTargetRefList = nil;
@@ -699,8 +694,6 @@ void    plDXPipeline::IClearMembers()
     fNextDynVtx = 0;
 
     int i;
-    for( i = 0; i < 8; i++ )
-        fLayerRef[i] = nil;
 
     IResetRenderTargetPools();
     fULutTextureRef = nil;
@@ -726,11 +719,6 @@ void    plDXPipeline::IClearMembers()
     fMaxNumLights = kD3DMaxTotalLights;
     fMaxNumProjectors = kMaxProjectors;
 
-    fInSceneDepth = 0;
-    fTextUseTime = 0;
-    fEvictTime = 0;
-    fManagedSeen = 0;
-    fManagedCutoff = 0;
     fRenderCnt = 0;
 
     fForceMatHandle = true;
@@ -1078,35 +1066,6 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
         fSettings.fMaxAnisotropicSamples = 0;
 
         plQuality::SetCapability(plQuality::kMinimum);
-    }
-
-    // There's a bug in NVidia drivers on Windows 2000 for GeForce1-4 (all flavors, including MX).
-    // When the amount allocated into managed memory approaches the on board memory size, the performance
-    // severely degrades, no matter how little is actually in use in the current rendering. So say all
-    // our d3d textures are created into managed memory at age load. Also say you are
-    // consistently viewing only 5Mb of managed materials (texture + vertex buffer). So as
-    // you walk through the age, the new textures you see get loaded on demand into video memory.
-    // Once you've seen enough to fill the on board memory, your frame rate starts falling and 
-    // continues to fall as more textures get loaded. So either the memory manager is not letting
-    // go of LRU textures, or fragmentation is so horrible as to make the manager useless.
-    // So on these boards and with this OS, we keep track of how much managed memory we've seen,
-    // and when it reaches a threshhold, we flush managed memory with an EvictManagedResources() call.
-    // There's an unfortunate glitch, and then the frame rate is fine again.
-    // So if we need this workaround, we set fManagedCutoff to 1 here, and then once we have our
-    // D3D device, we query for the amount of memory and set the threshhold for flushing memory
-    // based on that.
-    OSVERSIONINFO osinfo;
-    memset(&osinfo, 0, sizeof(osinfo));
-    osinfo.dwOSVersionInfoSize = sizeof(osinfo);
-    GetVersionEx(&osinfo);
-    if( (osinfo.dwMajorVersion == 5)
-        &&(osinfo.dwMinorVersion == 0) )
-    {
-        // It's the dreaded win2k
-        if( devRec.GetCap(hsG3DDeviceSelector::kCapsDoubleFlush) )
-            fManagedCutoff = 1;
-        else if( devRec.GetCap(hsG3DDeviceSelector::kCapsSingleFlush) )
-            fManagedCutoff = 1;
     }
 
     /// Set up the z-bias scale values
@@ -1505,22 +1464,6 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 
     fDevice.fD3DDevice = fD3DDevice;
     fSettings.fPresentParams = params;
-
-    // This bit matches up with the fManagedCutoff workaround for a problem
-    // with the NVidia drivers on win2k. Search for "GetVersionEx" in IRestrictCaps
-    // for more info.
-    uint32_t mem = fD3DDevice->GetAvailableTextureMem();
-    plProfile_IncCount(TexTot, mem);
-
-    const uint32_t kSingleFlush(40000000);
-    const uint32_t kDoubleFlush(24000000);
-    if( fManagedCutoff )
-    {
-        if( mem < 64000000 )
-            fManagedCutoff = kDoubleFlush;
-        else
-            fManagedCutoff = kSingleFlush;
-    }
 
     return false;
 }
@@ -3087,8 +3030,6 @@ bool plDXPipeline::BeginRender()
     {
         IReleaseShaders();
         fD3DDevice->EvictManagedResources();
-        fEvictTime = fTextUseTime;
-        fManagedSeen = 0;
         SetDebugFlag(plPipeDbg::kFlagReload, false);
     }
 
@@ -3098,21 +3039,6 @@ bool plDXPipeline::BeginRender()
     // If this is the primary BeginRender, make sure we're really ready.
     if( !fInSceneDepth++ )
     {
-        // Workaround for NVidia memory manager bug. Search for "OSVERSIONINFO" to
-        // find notes on the bug. This is where we purge managed memory periodically.
-        plProfile_Set(ManSeen, fManagedSeen);
-        if( fManagedCutoff )
-        {
-            plConst(uint32_t) kMinEvictTime(1800); // ~2 minutes @ 15FPS
-            if( (fManagedSeen > fManagedCutoff) && (fTexUsed + fVtxUsed < fManagedCutoff) && (fTextUseTime - fEvictTime > kMinEvictTime) )
-            {
-                fD3DDevice->EvictManagedResources();
-                fManagedSeen = 0;
-                fEvictTime = fTextUseTime;
-                plProfile_IncCount(ManEvict, 1);
-            }
-        }
-
         // Superfluous setting of Z state.
         fD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
 
@@ -3131,7 +3057,6 @@ bool plDXPipeline::BeginRender()
 
         fTexUsed = 0;
         fVtxUsed = 0;
-        fTextUseTime++;
 
         // Render any shadow maps that have been submitted for this frame.
         IPreprocessShadows();
@@ -7057,21 +6982,6 @@ void    plDXPipeline::IUseTextureRef( int stage, hsGDeviceRef *dRef, plLayerInte
 
     uint32_t uvwSrc = layer->GetUVWSrc();
 
-    // Keep track of how much managed memory has been "seen" since the last
-    // evict, for that NVidia bug. Look for OSVERSIONINFO for more notes.
-    if( ref->fUseTime <= fEvictTime )
-        fManagedSeen += ref->fDataSize;
-
-    // Also used for the same thing.
-    if( ref->fUseTime ^ fTextUseTime )
-    {
-        plProfile_NewMem(CurrTex, ref->fDataSize);
-        plProfile_Inc(NumTex);
-        ref->fUseTime = fTextUseTime;
-
-        fTexUsed += ref->fDataSize;
-    }
-
     // DX pixel shaders require the TEXCOORDINDEX to be equal to the stage,
     // even though its ignored.
     if( layer->GetPixelShader() && (stage != uvwSrc) )
@@ -8772,8 +8682,6 @@ void plDXPipeline::IBeginAllocUnManaged()
 {
     // Flush out all managed resources to make room for unmanaged resources.
     fD3DDevice->EvictManagedResources();
-    fEvictTime = fTextUseTime;
-    fManagedSeen = 0;
 
     fManagedAlloced = false;
     fAllocUnManaged = true; // we're currently only allocating POOL_DEFAULT
@@ -8788,8 +8696,6 @@ void plDXPipeline::IEndAllocUnManaged()
 
     // Flush the (should be empty) resource manager to reset its internal allocation pool.
     fD3DDevice->EvictManagedResources();
-    fEvictTime = fTextUseTime;
-    fManagedSeen = 0;
 }
 
 bool plDXPipeline::CheckResources()
@@ -9483,25 +9389,6 @@ void plDXPipeline::IRenderAuxSpans(const plSpan& span)
 
 }
 
-// ICheckVBUsage //////////////////////////////////////////////////////////////
-// Keep track of how much managed vertex buffer memory is being used and
-// has been used since the last evict.
-inline void plDXPipeline::ICheckVBUsage(plDXVertexBufferRef* vRef)
-{
-    if( !vRef->fOwner->AreVertsVolatile() )
-    {
-        if( vRef->fUseTime <= fEvictTime )
-            fManagedSeen += vRef->fVertexSize * vRef->fCount;
-
-        if( vRef->fUseTime != fTextUseTime )
-        {
-            plProfile_NewMem(CurrVB, vRef->fVertexSize * vRef->fCount);
-            fVtxUsed += vRef->fVertexSize * vRef->fCount;
-            vRef->fUseTime = fTextUseTime;
-        }
-    }
-}
-
 //// IRenderBufferSpan ////////////////////////////////////////////////////////
 // Sets up the vertex and index buffers for a span, and then
 // renders it in as many passes as it takes in ILoopOverLayers.
@@ -9543,8 +9430,6 @@ void    plDXPipeline::IRenderBufferSpan( const plIcicle& span,
             fD3DDevice->SetFVF(fSettings.fCurrFVFFormat = fvf);
 
         vRef->SetRebuiltSinceUsed(false);
-
-        ICheckVBUsage(vRef);
     }
 
     // Note: both these stats are the same, since we don't do any culling or clipping on the tris

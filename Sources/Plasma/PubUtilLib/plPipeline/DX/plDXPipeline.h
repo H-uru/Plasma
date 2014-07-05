@@ -228,8 +228,6 @@ protected:
     bool                    fDeviceLost;
     bool                    fDevWasLost;
 
-    plDXVertexBufferRef*    fVtxBuffRefList;
-    plDXIndexBufferRef*     fIdxBuffRefList;
     plDXTextureRef*         fTextureRefList;
     plTextFont*             fTextFontRefList;
     plDXRenderTargetRef*    fRenderTargetRefList;
@@ -243,7 +241,6 @@ protected:
     D3DEnum_DeviceInfo*     fCurrentDevice;
     D3DEnum_ModeInfo*       fCurrentMode;
 
-    hsGDeviceRef*   fLayerRef[ 8 ];
     hsGMatState     fLayerState[ 8 ]; // base stage (0) state is held in base class
     hsGMatState     fOldLayerState[ 8 ];
     bool            fLayerTransform[ 8 ];
@@ -253,15 +250,10 @@ protected:
     uint32_t        fLastEndingStage;
     bool            fTexturing;
 
-    uint32_t          fInSceneDepth;
-    uint32_t          fTextUseTime;       // inc'd every frame - stat gather only
     static uint32_t   fTexManaged;
     static uint32_t   fTexUsed;
     static uint32_t   fVtxManaged;
     static uint32_t   fVtxUsed;
-    uint32_t          fEvictTime;
-    uint32_t          fManagedSeen;
-    uint32_t          fManagedCutoff;
 
     uint32_t          fDebugSpanGraphY;
 
@@ -299,7 +291,6 @@ protected:
 
     void            IBeginAllocUnManaged();
     void            IEndAllocUnManaged();
-    inline void     ICheckVBUsage(plDXVertexBufferRef* vRef);
 
     bool            IRefreshDynVertices(plGBufferGroup* group, plDXVertexBufferRef* vRef);
     bool            ICheckAuxBuffers(const plAuxSpan* span);

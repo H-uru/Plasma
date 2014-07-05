@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsMatrix44.h"
+#include "plDXBufferRefs.h"
 
 #include <d3d9.h>
 
@@ -54,6 +55,10 @@ struct IDirect3DSurface9;
 
 class plDXDevice
 {
+public:
+    typedef plDXVertexBufferRef VertexBufferRef;
+    typedef plDXIndexBufferRef  IndexBufferRef;
+
 public:
     plDXPipeline*       fPipeline;
     hsWindowHndl        fHWnd;
