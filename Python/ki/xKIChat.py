@@ -500,7 +500,10 @@ class xKIChat(object):
             elif cFlags.admin:
                 if cFlags.private:
                     headerColor = kColors.ChatHeaderError
-                    pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
+                    if cFlags.toSelf:
+                        pretext = PtGetLocalizedString("KI.Chat.PrivateSendTo")
+                    else:
+                        pretext = PtGetLocalizedString("KI.Chat.PrivateMsgRecvd")
                     forceKI = True
 
                     # PM Processing: Save playerID and flash client window
