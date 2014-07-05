@@ -311,7 +311,7 @@ void plDispatch::IMsgDispatch()
 
         static uint64_t startTicks = 0;
         if (plDispatchLogBase::IsLogging())
-            startTicks = hsTimer::GetFullTickCount();
+            startTicks = hsTimer::GetTicks();
 
         int i, numReceivers=0;
         for( i = 0; fMsgCurrent && i < fMsgCurrent->GetNumReceivers(); i++ )
@@ -343,7 +343,7 @@ void plDispatch::IMsgDispatch()
                 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-                uint32_t rcvTicks = hsTimer::GetPrecTickCount();
+                uint64_t rcvTicks = hsTimer::GetTicks();
 
                 // Object could be deleted by this message, so we need to log this stuff now
                 plString keyname = "(unknown)";
@@ -373,9 +373,9 @@ void plDispatch::IMsgDispatch()
 #ifndef PLASMA_EXTERNAL_RELEASE
                 if (plDispatchLogBase::IsLoggingLong())
                 {
-                    rcvTicks = hsTimer::GetPrecTickCount() - rcvTicks;
+                    rcvTicks = hsTimer::GetTicks() - rcvTicks;
 
-                    float rcvTime = (float)(hsTimer::PrecTicksToSecs(rcvTicks) * 1000.f);
+                    float rcvTime = hsTimer::GetMilliSeconds<float>(rcvTicks);
                     // If the receiver takes more than 5 ms to process its message, log it
                     if (rcvTime > 5.f)
                         plDispatchLogBase::GetInstance()->LogLongReceive(keyname.c_str(), className, clonePlayerID, msg, rcvTime);
@@ -392,7 +392,7 @@ void plDispatch::IMsgDispatch()
         // for message logging
 //      if (plDispatchLogBase::IsLogging())
 //      {
-//          float sendTime = hsTimer::FullTicksToMs(hsTimer::GetFullTickCount() - startTicks);
+//          float sendTime = hsTimer::GetMilliSeconds<float>(hsTimer::GetTicks() - startTicks);
 //
 //          plDispatchLogBase::GetInstance()->DumpMsg(msg, numReceivers, (int)sendTime, responseLevel*2 /* indent */);
 //          if (origTail==fMsgCurrent)

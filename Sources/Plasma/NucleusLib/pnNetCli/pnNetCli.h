@@ -193,7 +193,7 @@ How to create a message sender/receiver:
     static void SendPing (NetCli player) {
         const uintptr_t msgPing[] = {
             kMsgPing,
-            TimeGetMs(),
+            hsTimer::GetMilliSeconds<uint32_t>(),
         };
         NetCliSend(player, msgPing, arrsize(msgPing));
     }

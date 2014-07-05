@@ -153,7 +153,7 @@ void    plDTProgressMgr::Draw( plPipeline *p )
 
     if (fActivePlate)
     {
-        float currentMs = hsTimer::FullTicksToMs(hsTimer::GetFullTickCount());
+        float currentMs = hsTimer::GetMilliSeconds<float>();
         if ((currentMs - fLastDraw) > 30)
         {
             fCurrentImage++;

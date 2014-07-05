@@ -355,7 +355,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     uint64_t startTotalTime = totalTime;
     uint64_t startTime = 0;
     if (fLogReadTimes)
-        startTime = hsTimer::GetFullTickCount();
+        startTime = hsTimer::GetTicks();
 
     hsKeyedObject* ko = nil;
 
@@ -449,7 +449,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
 
     if (fLogReadTimes)
     {
-        uint64_t ourTime = hsTimer::GetFullTickCount() - startTime;
+        uint64_t ourTime = hsTimer::GetTicks() - startTime;
         uint64_t childTime = totalTime - startTotalTime;
         ourTime -= childTime;
 
@@ -457,9 +457,9 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
             pKey->GetUoid().GetObjectName().c_str(),
             plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()),
             pKey->GetDataLen(),
-            hsTimer::FullTicksToMs(ourTime));
+            hsTimer::GetMilliSeconds<float>(ourTime));
 
-        totalTime += (hsTimer::GetFullTickCount() - startTime) - childTime;
+        totalTime += (hsTimer::GetTicks() - startTime) - childTime;
     }
 
     return (ko != nil);
@@ -1132,7 +1132,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 {
     uint64_t readRoomTime = 0;
     if (fLogReadTimes)
-        readRoomTime = hsTimer::GetFullTickCount();
+        readRoomTime = hsTimer::GetTicks();
 
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
 
@@ -1218,11 +1218,11 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 
     if (fLogReadTimes)
     {
-        readRoomTime = hsTimer::GetFullTickCount() - readRoomTime;
+        readRoomTime = hsTimer::GetTicks() - readRoomTime;
 
         plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "----- Reading page %s>%s took %.1f ms",
             pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str(),
-            hsTimer::FullTicksToMs(readRoomTime));
+            hsTimer::GetMilliSeconds<float>(readRoomTime));
     }
 }
 

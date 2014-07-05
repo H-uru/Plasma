@@ -729,7 +729,7 @@ static void SaveDirtyNodes () {
     static const unsigned kSaveUpdateIntervalMs     = 250;
     static const unsigned kMaxBytesPerSaveUpdate    = 5 * 1024;
     static unsigned s_nextSaveMs;
-    unsigned currTimeMs = TimeGetMs() | 1;
+    unsigned currTimeMs = hsTimer::GetMilliSeconds<uint32_t>() | 1;
     if (!s_nextSaveMs || signed(s_nextSaveMs - currTimeMs) <= 0) {
         s_nextSaveMs = (currTimeMs + kSaveUpdateIntervalMs) | 1;
         unsigned bytesWritten = 0;

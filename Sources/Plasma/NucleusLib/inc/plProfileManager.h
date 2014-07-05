@@ -76,7 +76,7 @@ public:
     uint32_t GetProcessorSpeed() { return fProcessorSpeed; }
 
     // Backdoor for hack timers in calculated profiles
-    static uint32_t GetTime();
+    static uint64_t GetTime();
 };
 
 class plProfileLaps
@@ -91,16 +91,16 @@ protected:
         LapInfo(const char* name) { fName = name; fDisplayFlags = kDisplayTime; }
         bool operator<(const LapInfo& rhs) const { return fLastAvg < rhs.fLastAvg; }
 
-        void BeginTiming(uint32_t value) { fValue -= value; }
-        void EndTiming(uint32_t value) { fValue += value; fTimerSamples++; }
+        void BeginTiming(uint64_t value) { fValue -= value; }
+        void EndTiming(uint64_t value) { fValue += value; fTimerSamples++; }
     };
     std::vector<LapInfo> fLapTimes;
 
     LapInfo* IFindLap(const char* lapName);
 
 public:
-    void BeginLap(uint32_t curValue, const char* name);
-    void EndLap(uint32_t curValue, const char* name);
+    void BeginLap(uint64_t curValue, const char* name);
+    void EndLap(uint64_t curValue, const char* name);
 
     void BeginFrame();
     void EndFrame();
