@@ -359,7 +359,7 @@ bool plGLDevice::InitDevice()
                      "\n" "         pos = matrix_proj * pos;"
                      "\n"
                      "\n" "    gl_Position = pos;"
-                     "\n" "    v_color = color;"
+                     "\n" "    v_color = color.zyxw;"
                      "\n" "}";
 
     const char* fs_src = "#version 130"
