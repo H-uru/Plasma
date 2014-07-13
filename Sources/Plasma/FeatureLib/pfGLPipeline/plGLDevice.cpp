@@ -270,29 +270,19 @@ static void GLAPIENTRY plGLDebugLog(GLenum source, GLenum type, GLuint id, GLenu
 }
 #endif
 
+static float kIdentityMatrix[16] = {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+};
+
 GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst)
 {
-    dst[0] = src.fMap[0][0];
-    dst[1] = src.fMap[0][1];
-    dst[2] = src.fMap[0][2];
-    dst[3] = src.fMap[0][3];
-
-    dst[4] = src.fMap[1][0];
-    dst[5] = src.fMap[1][1];
-    dst[6] = src.fMap[1][2];
-    dst[7] = src.fMap[1][3];
-
-    dst[8] = src.fMap[2][0];
-    dst[9] = src.fMap[2][1];
-    dst[10] = src.fMap[2][2];
-    dst[11] = src.fMap[2][3];
-
-    dst[12] = src.fMap[3][0];
-    dst[13] = src.fMap[3][1];
-    dst[14] = src.fMap[3][2];
-    dst[15] = src.fMap[3][3];
-
-    return dst;
+    if (src.fFlags & hsMatrix44::kIsIdent)
+        return (GLfloat*)(memcpy(dst, kIdentityMatrix, sizeof(GLfloat) * 16));
+    else
+        return (GLfloat*)(src.fMap);
 }
 
 plGLDevice::plGLDevice()
@@ -346,6 +336,7 @@ bool plGLDevice::InitDevice()
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_MULTISAMPLE);
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
@@ -363,7 +354,11 @@ bool plGLDevice::InitDevice()
                      "\n" "varying vec4 v_color;"
                      "\n"
                      "\n" "void main() {"
-                     "\n" "    gl_Position = /* matrix_proj * */ matrix_w2c * matrix_l2w * vec4(position, 1.0);"
+                     "\n" "    vec4 pos = matrix_l2w * vec4(position, 1.0);"
+                     "\n" "         pos = matrix_w2c * pos;"
+                     "\n" "         pos = matrix_proj * pos;"
+                     "\n"
+                     "\n" "    gl_Position = pos;"
                      "\n" "    v_color = color;"
                      "\n" "}";
 
@@ -628,19 +623,19 @@ void plGLDevice::SetProjectionMatrix(const hsMatrix44& src)
 {
     GLfloat mat[16];
     GLint uniform = glGetUniformLocation(fProgram, "matrix_proj");
-    glUniformMatrix4fv(uniform, 1, GL_FALSE, hsMatrix2GL(src, mat));
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, hsMatrix2GL(src, mat));
 }
 
 void plGLDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 {
     GLfloat mat[16];
     GLint uniform = glGetUniformLocation(fProgram, "matrix_w2c");
-    glUniformMatrix4fv(uniform, 1, GL_FALSE, hsMatrix2GL(src, mat));
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, hsMatrix2GL(src, mat));
 }
 
 void plGLDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 {
     GLfloat mat[16];
     GLint uniform = glGetUniformLocation(fProgram, "matrix_l2w");
-    glUniformMatrix4fv(uniform, 1, GL_FALSE, hsMatrix2GL(src, mat));
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, hsMatrix2GL(src, mat));
 }
