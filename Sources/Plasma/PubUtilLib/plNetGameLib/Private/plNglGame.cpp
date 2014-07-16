@@ -55,7 +55,7 @@ namespace Ngl { namespace Game {
 *
 ***/
 
-struct CliGmConn : hsAtomicRefCnt {
+struct CliGmConn : hsRefCnt {
     LINK(CliGmConn) link;
 
     CCritSect       critsect;
@@ -415,7 +415,7 @@ static unsigned CliGmConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGmConn::CliGmConn ()
-    : hsAtomicRefCnt(0), sock(nil), cancelId(nil), cli(nil)
+    : hsRefCnt(0), sock(nil), cancelId(nil), cli(nil)
     , seq(0), abandoned(false)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
 {

@@ -802,15 +802,15 @@ bool plClothingOutfit::IReadFromVault()
 
     WearDefaultClothing();
 
-    RelVaultNode * rvn = VaultGetAvatarOutfitFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
     if (!rvn)
         return false;
 
-    ARRAY(RelVaultNode*) nodes;
-    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);    
+    RelVaultNode::RefList nodes;
+    rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
 
-    for (unsigned i = 0; i < nodes.Count(); ++i) {
-        VaultSDLNode sdl(nodes[i]);
+    for (const hsRef<RelVaultNode> &node : nodes) {
+        VaultSDLNode sdl(node);
         if (sdl.GetSDLDataLength()) {
             hsRAMStream ram;
             ram.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
@@ -831,13 +831,11 @@ bool plClothingOutfit::IReadFromVault()
                 delete sdlDataRec;              
             }
         }
-        nodes[i]->UnRef();
     }
     
     fSynchClients = true; // set true if the next synch should be bcast
     ForceUpdate(true);
     
-    rvn->UnRef();
     return true;
 }
 
@@ -857,8 +855,8 @@ void plClothingOutfit::WriteToVault()
     if (!fVaultSaveEnabled)
         return;
 
-    RelVaultNode * rvn;
-    if (nil == (rvn = VaultGetAvatarOutfitFolderIncRef()))
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
+    if (!rvn)
         return;
 
     ARRAY(plStateDataRecord*) SDRs;
@@ -874,7 +872,6 @@ void plClothingOutfit::WriteToVault()
     SDRs.Add(appearanceStateDesc->GetStateDataRecord(0));
     
     WriteToVault(SDRs);
-    rvn->UnRef();
 }
 
 void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
@@ -883,8 +880,8 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     if (fAvatar->GetTarget(0) != plNetClientApp::GetInstance()->GetLocalPlayer())
         return;
 
-    RelVaultNode * rvn;
-    if (nil == (rvn = VaultGetAvatarOutfitFolderIncRef()))
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
+    if (!rvn)
         return;
         
     ARRAY(plStateDataRecord*)   morphs;
@@ -906,12 +903,12 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
         }
     }
     
-    ARRAY(RelVaultNode*) templates;
-    ARRAY(RelVaultNode*) actuals;
-    ARRAY(RelVaultNode*) nodes;
+    RelVaultNode::RefList templates;
+    RelVaultNode::RefList actuals;
+    RelVaultNode::RefList nodes;
 
     // Get all existing clothing SDRs
-    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);    // REF: Find
+    rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);    // REF: Find
 
     const ARRAY(plStateDataRecord*) * arrs[] = {
         &SDRs,
@@ -922,55 +919,41 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
         
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary
         for (unsigned i = 0; i < arr->Count(); ++i) {
-            RelVaultNode * node;
-            if (nodes.Count()) {
-                node = nodes[0];
-                nodes.DeleteUnordered(0);
-                node->Ref(); // REF: Work
-                node->UnRef(); // REF: Find
+            hsRef<RelVaultNode> node;
+            if (!nodes.empty()) {
+                node = nodes.front();
+                nodes.pop_front();
             }
             else {
-                RelVaultNode * templateNode = new RelVaultNode;
-                templateNode->SetNodeType(plVault::kNodeType_SDL);
-                templates.Add(templateNode);
-                node = templateNode;
-                node->Ref(); // REF: Create
-                node->Ref(); // REF: Work
+                node = new RelVaultNode;
+                node->SetNodeType(plVault::kNodeType_SDL);
+                templates.push_back(node);
             }
 
             VaultSDLNode sdl(node);
             sdl.SetStateDataRecord((*arr)[i], 0);
-            node->UnRef();     // REF: Work
         }
     }
 
     // Delete any leftover nodes
-    for (unsigned i = 0; i < nodes.Count(); ++i) {
-        VaultDeleteNode(nodes[i]->GetNodeId());
-        nodes[i]->UnRef(); // REF: Array
-    }
+    for (const hsRef<RelVaultNode> &node : nodes)
+        VaultDeleteNode(node->GetNodeId());
 
     // Create actual new nodes from their templates
-    for (unsigned i = 0; i < templates.Count(); ++i) {
+    for (const hsRef<RelVaultNode> &temp : templates) {
         ENetError result;
-        if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
-            actuals.Add(actual);
-        }
-        templates[i]->UnRef(); // REF: Create
+        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(temp, &result))
+            actuals.push_back(actual);
     }
 
     // Add new nodes to outfit folder
-    for (unsigned i = 0; i < actuals.Count(); ++i) {
-        VaultAddChildNodeAndWait(rvn->GetNodeId(), actuals[i]->GetNodeId(), NetCommGetPlayer()->playerInt);
-        actuals[i]->UnRef();   // REF: Create
-    }
+    for (const hsRef<RelVaultNode> &act : actuals)
+        VaultAddChildNodeAndWait(rvn->GetNodeId(), act->GetNodeId(), NetCommGetPlayer()->playerInt);
 
     // Cleanup morph SDRs
     for (unsigned i = 0; i < morphs.Count(); ++i) {
         delete morphs[i];
     }
-
-    rvn->UnRef();
 }
 
 // XXX HACK. DON'T USE (this function exists for the temp console command Clothing.SwapClothTexHACK)
@@ -1483,29 +1466,25 @@ bool plClothingOutfit::WriteToFile(const plFileName &filename)
     if (!filename.IsValid())
         return false;
 
-    RelVaultNode* rvn = VaultGetAvatarOutfitFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarOutfitFolder();
     if (!rvn)
         return false;
 
     hsUNIXStream S;
-    if (!S.Open(filename, "wb")) {
-        rvn->UnRef();
+    if (!S.Open(filename, "wb"))
         return false;
-    }
 
     S.WriteByte(fGroup);
 
-    ARRAY(RelVaultNode*) nodes;
-    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);
-    S.WriteLE32(nodes.Count());
-    for (size_t i = 0; i < nodes.Count(); i++) {
-        VaultSDLNode sdl(nodes[i]);
+    RelVaultNode::RefList nodes;
+    rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
+    S.WriteLE32(nodes.size());
+    for (const hsRef<RelVaultNode> &node : nodes) {
+        VaultSDLNode sdl(node);
         S.WriteLE32(sdl.GetSDLDataLength());
         if (sdl.GetSDLDataLength())
             S.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
-        nodes[i]->UnRef();
     }
-    rvn->UnRef();
 
     S.Close();
     return true;
@@ -1626,14 +1605,14 @@ plClothingElement *plClothingMgr::FindElementByName(const plString &name) const
 
 void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
 {
-    RelVaultNode * rvn = VaultGetAvatarClosetFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
         return;
         
     hsTArray<plClosetItem> closet;
     GetClosetItems(closet);
     
-    ARRAY(RelVaultNode*)    templates;
+    RelVaultNode::RefList templates;
     
     for (unsigned i = 0; i < items.GetCount(); ++i) {
         bool match = false;
@@ -1651,44 +1630,40 @@ void plClothingMgr::AddItemsToCloset(hsTArray<plClosetItem> &items)
         plStateDataRecord rec(plClothingSDLModifier::GetClothingItemSDRName());
         plClothingSDLModifier::PutSingleItemIntoSDR(&items[i], &rec);
         
-        RelVaultNode * templateNode = new RelVaultNode;
-        templateNode->Ref();
+        hsRef<RelVaultNode> templateNode = new RelVaultNode;
         templateNode->SetNodeType(plVault::kNodeType_SDL);
         
         VaultSDLNode sdl(templateNode);
         sdl.SetStateDataRecord(&rec);
 
-        templates.Add(templateNode);
+        templates.push_back(templateNode);
     }
     
-    for (unsigned i = 0; i < templates.Count(); ++i) {
+    for (const hsRef<RelVaultNode> &temp : templates) {
         ENetError result;
-        if (RelVaultNode * actual = VaultCreateNodeAndWaitIncRef(templates[i], &result)) {
+        if (hsRef<RelVaultNode> actual = VaultCreateNodeAndWait(temp, &result)) {
             VaultAddChildNodeAndWait(
                 rvn->GetNodeId(),
                 actual->GetNodeId(),
                 NetCommGetPlayer()->playerInt
             );
-            actual->UnRef(); // REF: Create
         }
-        templates[i]->UnRef(); // REF: Create
     }
-    
-    rvn->UnRef();
 }
 
 void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
 {
-    RelVaultNode * rvn = VaultGetAvatarClosetFolderIncRef();
+    hsRef<RelVaultNode> rvn = VaultGetAvatarClosetFolder();
     if (!rvn)
         return;
 
-    ARRAY(RelVaultNode*)    nodes;
-    rvn->GetChildNodesIncRef(plVault::kNodeType_SDL, 1, &nodes);
-    out.SetCount(nodes.Count());
+    RelVaultNode::RefList nodes;
+    rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);
+    out.SetCount(nodes.size());
     
-    for (unsigned i = 0; i < nodes.Count(); ++i) {
-        VaultSDLNode sdl(nodes[i]);
+    auto iter = nodes.begin();
+    for (unsigned i = 0; i < nodes.size(); ++i, ++iter) {
+        VaultSDLNode sdl(*iter);
         plStateDataRecord * rec = new plStateDataRecord;
         if (sdl.GetStateDataRecord(rec, 0))
             plClothingSDLModifier::HandleSingleSDR(rec, nil, &out[i]);
@@ -1701,9 +1676,7 @@ void plClothingMgr::GetClosetItems(hsTArray<plClosetItem> &out)
                 out.Remove(i);
         }
     }
-    
-    rvn->UnRef();
-}   
+}
 
 void plClothingMgr::GetAllWithSameMesh(plClothingItem *item, hsTArray<plClothingItem*> &out)
 {

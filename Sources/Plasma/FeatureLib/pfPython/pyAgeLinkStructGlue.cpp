@@ -366,7 +366,7 @@ PLASMA_DEFAULT_TYPE(ptAgeLinkStructRef, "Class to hold the data of the AgeLink s
 PyObject *pyAgeLinkStructRef::New(plAgeLinkStruct &link)
 {
     ptAgeLinkStructRef *newObj = (ptAgeLinkStructRef*)ptAgeLinkStructRef_type.tp_new(&ptAgeLinkStructRef_type, NULL, NULL);
-    newObj->fThis->fAgeLink = link;
+    newObj->fThis->fAgeLink.CopyFrom(&link);
     return (PyObject*)newObj;
 }
 

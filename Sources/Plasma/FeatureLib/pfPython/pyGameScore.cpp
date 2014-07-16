@@ -125,11 +125,10 @@ void pyGameScore::SetPoints(int32_t numPoints, pyKey& rcvr)
 
 void pyGameScore::CreateAgeScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
-    if (RelVaultNode* ageInfo = VaultGetAgeInfoNodeIncRef())
+    if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode())
     {
         uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
-        ageInfo->UnRef();
     } else
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
@@ -141,11 +140,10 @@ void pyGameScore::CreateGlobalScore(const plString& name, uint32_t type, int32_t
 
 void pyGameScore::CreatePlayerScore(const plString& name, uint32_t type, int32_t points, pyKey& rcvr)
 {
-    if (RelVaultNode* node = VaultGetPlayerInfoNodeIncRef())
+    if (hsRef<RelVaultNode> node = VaultGetPlayerInfoNode())
     {
         uint32_t ownerId = node->GetNodeId();
         pfGameScore::Create(ownerId, name, type, points, rcvr.getKey());
-        node->UnRef();
     } else
         hsAssert(false, "No PlayerInfo node... Need to rewrite python script?");
 }
@@ -157,11 +155,10 @@ void pyGameScore::CreateScore(uint32_t ownerId, const plString& name, uint32_t t
 
 void pyGameScore::FindAgeScores(const plString& name, pyKey& rcvr)
 {
-    if (RelVaultNode* ageInfo = VaultGetAgeInfoNodeIncRef())
+    if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode())
     {
         uint32_t ownerId = ageInfo->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
-        ageInfo->UnRef();
     } else
         hsAssert(false, "Age has no vault... Need to rewrite score python script?");
 }
@@ -173,11 +170,10 @@ void pyGameScore::FindGlobalScores(const plString& name, pyKey& rcvr)
 
 void pyGameScore::FindPlayerScores(const plString& name, pyKey& rcvr)
 {
-    if (RelVaultNode* node = VaultGetPlayerInfoNodeIncRef())
+    if (hsRef<RelVaultNode> node = VaultGetPlayerInfoNode())
     {
         uint32_t ownerId = node->GetNodeId();
         pfGameScore::Find(ownerId, name, rcvr.getKey());
-        node->UnRef();
     }
     else
         hsAssert(false, "No PlayerInfo node.. Need to rewrite python script?");

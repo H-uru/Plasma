@@ -85,6 +85,9 @@ class plFogEnvironment : public hsKeyedObject
         plFogEnvironment( FogType type, float end, float density, hsColorRGBA &color );
         ~plFogEnvironment();
 
+        plFogEnvironment(const plFogEnvironment &copy) { operator=(copy); }
+        plFogEnvironment &operator=(const plFogEnvironment &copy);
+
         // Sets the parameters for linear fog
         void    Set( float start, float end, float density, const hsColorRGBA *color = nil );
 

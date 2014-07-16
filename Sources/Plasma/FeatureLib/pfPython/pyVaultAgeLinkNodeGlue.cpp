@@ -200,11 +200,7 @@ PLASMA_DEFAULT_TYPE_WBASE(ptVaultAgeLinkNode, pyVaultNode, "Params: n=0\nPlasma 
 PyObject *pyVaultAgeLinkNode::New(RelVaultNode* nfsNode)
 {
     ptVaultAgeLinkNode *newObj = (ptVaultAgeLinkNode*)ptVaultAgeLinkNode_type.tp_new(&ptVaultAgeLinkNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

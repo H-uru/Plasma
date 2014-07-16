@@ -321,11 +321,7 @@ PYTHON_CLASS_NEW_IMPL(ptVaultPlayerNode, pyVaultPlayerNode)
 PyObject *pyVaultPlayerNode::New(RelVaultNode* nfsNode)
 {
     ptVaultPlayerNode *newObj = (ptVaultPlayerNode*)ptVaultPlayerNode_type.tp_new(&ptVaultPlayerNode_type, NULL, NULL);
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->UnRef();
     newObj->fThis->fNode = nfsNode;
-    if (newObj->fThis->fNode)
-        newObj->fThis->fNode->Ref();
     return (PyObject*)newObj;
 }
 

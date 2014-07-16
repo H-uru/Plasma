@@ -2079,11 +2079,10 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     case plVaultNotifyMsg::kRegisteredVisitAge:
                     case plVaultNotifyMsg::kUnRegisteredOwnedAge:
                     case plVaultNotifyMsg::kUnRegisteredVisitAge: {
-                        if (RelVaultNode * rvn = VaultGetNodeIncRef(vaultNotifyMsg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode))) {
+                        if (hsRef<RelVaultNode> rvn = VaultGetNode(vaultNotifyMsg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode))) {
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
                             PyTuple_SetItem(ptuple, 0, pyVaultAgeLinkNode::New(rvn));
-                            rvn->UnRef();
                         }
                     }
                     break;

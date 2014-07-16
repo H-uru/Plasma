@@ -193,7 +193,7 @@ PYTHON_CLASS_NEW_IMPL(ptNetServerSessionInfo, pyNetServerSessionInfo)
 PyObject *pyNetServerSessionInfo::New(const plNetServerSessionInfo &info)
 {
     ptNetServerSessionInfo *newObj = (ptNetServerSessionInfo*)ptNetServerSessionInfo_type.tp_new(&ptNetServerSessionInfo_type, NULL, NULL);
-    newObj->fThis->fInfo = info;
+    newObj->fThis->fInfo.CopyFrom(&info);
     return (PyObject*)newObj;
 }
 
@@ -354,7 +354,7 @@ PLASMA_DEFAULT_TYPE(ptNetServerSessionInfoRef, "Basic server session info class"
 PyObject *pyNetServerSessionInfoRef::New(plNetServerSessionInfo &info)
 {
     ptNetServerSessionInfoRef *newObj = (ptNetServerSessionInfoRef*)ptNetServerSessionInfoRef_type.tp_new(&ptNetServerSessionInfoRef_type, NULL, NULL);
-    newObj->fThis->fInfo = info;
+    newObj->fThis->fInfo.CopyFrom(&info);
     return (PyObject*)newObj;
 }
 

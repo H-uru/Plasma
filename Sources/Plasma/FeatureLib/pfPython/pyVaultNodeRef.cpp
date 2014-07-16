@@ -65,22 +65,20 @@ pyVaultNodeRef::pyVaultNodeRef(RelVaultNode * parent, RelVaultNode * child)
 : fParent(parent)
 , fChild(child)
 {
-    fParent->Ref();
-    fChild->Ref();
 }
 
 pyVaultNodeRef::pyVaultNodeRef(int)
-: fParent(nil)
-, fChild(nil)
 {
 }
 
-pyVaultNodeRef::~pyVaultNodeRef()
+hsRef<RelVaultNode> pyVaultNodeRef::GetParentNode() const
 {
-    if (fParent)
-        fParent->UnRef();
-    if (fChild)
-        fChild->UnRef();
+    return fParent;
+}
+
+hsRef<RelVaultNode> pyVaultNodeRef::GetChildNode() const
+{
+    return fChild;
 }
 
 
@@ -113,10 +111,8 @@ unsigned pyVaultNodeRef::GetSaverID () {
         return 0;
 
     unsigned saverId = 0;
-    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->GetNodeId())) {
+    if (hsRef<RelVaultNode> child = VaultGetNode(fChild->GetNodeId()))
         saverId = child->GetRefOwnerId(fParent->GetNodeId());
-        child->UnRef();
-    }
     return saverId;
 }
 
@@ -124,36 +120,30 @@ PyObject * pyVaultNodeRef::GetSaver () {
     if (!fParent || !fChild)
         return 0;
 
-    RelVaultNode * saver = nil;
-    if (RelVaultNode * child = VaultGetNodeIncRef(fChild->GetNodeId())) {
+    hsRef<RelVaultNode> saver;
+    if (hsRef<RelVaultNode> child = VaultGetNode(fChild->GetNodeId())) {
         if (unsigned saverId = child->GetRefOwnerId(fParent->GetNodeId())) {
             // Find the player info node representing the saver
-            NetVaultNode * templateNode = new NetVaultNode;
-            templateNode->Ref();
+            hsRef<NetVaultNode> templateNode = new NetVaultNode;
             templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
             VaultPlayerInfoNode access(templateNode);
             access.SetPlayerId(saverId);
-            saver = VaultGetNodeIncRef(templateNode);
+            saver = VaultGetNode(templateNode);
 
             if (!saver) {
                 ARRAY(unsigned) nodeIds;
                 VaultFindNodesAndWait(templateNode, &nodeIds);
                 if (nodeIds.Count() > 0) {
                     VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());
-                    saver = VaultGetNodeIncRef(nodeIds[0]);
+                    saver = VaultGetNode(nodeIds[0]);
                 }
             }
-
-            templateNode->UnRef();
         }
-        child->UnRef();
     }
     if (!saver)
         PYTHON_RETURN_NONE;
         
-    PyObject * result = pyVaultPlayerInfoNode::New(saver);
-    saver->UnRef();
-    return result;
+    return pyVaultPlayerInfoNode::New(saver);
 }
 
 bool pyVaultNodeRef::BeenSeen () {

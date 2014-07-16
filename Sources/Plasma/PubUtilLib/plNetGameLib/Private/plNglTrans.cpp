@@ -117,7 +117,7 @@ static void CancelTrans_CS (NetTrans * trans, ENetError error) {
 
 //============================================================================
 NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
-:   hsAtomicRefCnt(0)
+:   hsRefCnt(0)
 ,   m_state(kTransStateWaitServerConnect)
 ,   m_result(kNetPending)
 ,   m_transId(0)

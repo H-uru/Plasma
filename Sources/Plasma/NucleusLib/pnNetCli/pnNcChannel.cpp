@@ -73,8 +73,8 @@ private:
     hsMutex     m_critsect;
 };
 
-struct NetMsgChannel : hsAtomicRefCnt {
-    NetMsgChannel() : hsAtomicRefCnt(0) { }
+struct NetMsgChannel : hsRefCnt {
+    NetMsgChannel() : hsRefCnt(0) { }
 
     uint32_t                m_protocol;
     bool                    m_server;

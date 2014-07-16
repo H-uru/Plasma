@@ -435,7 +435,7 @@ PLASMA_DEFAULT_TYPE(ptAgeInfoStructRef, "Class to hold AgeInfo struct data");
 PyObject *pyAgeInfoStructRef::New(plAgeInfoStruct &info)
 {
     ptAgeInfoStructRef *newObj = (ptAgeInfoStructRef*)ptAgeInfoStructRef_type.tp_new(&ptAgeInfoStructRef_type, NULL, NULL);
-    newObj->fThis->fAgeInfo = info;
+    newObj->fThis->fAgeInfo.CopyFrom(&info);
     return (PyObject*)newObj;
 }
 

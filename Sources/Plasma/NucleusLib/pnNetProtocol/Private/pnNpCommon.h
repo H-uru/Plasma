@@ -157,7 +157,7 @@ struct NetGameRank {
 // NetVaultNode
 //============================================================================
 // Threaded apps: App is responsible for locking node->critsect before accessing *any* field in this struct
-struct NetVaultNode : hsAtomicRefCnt {
+struct NetVaultNode : hsRefCnt {
     enum RwOptions {
         kRwDirtyOnly    = 1<<0, // READ : No meaning
                                 // WRITE: Only write fields marked dirty

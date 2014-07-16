@@ -287,7 +287,7 @@ enum ENetTransState {
     kTransStateComplete,
 };
 
-struct NetTrans : hsAtomicRefCnt {
+struct NetTrans : hsRefCnt {
     LINK(NetTrans)  m_link;
     ENetTransState  m_state;
     ENetError       m_result;
