@@ -366,8 +366,6 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #   define ALIGN(n) __atribute__(aligned(n))
 #endif
 
-#define hsFopen(name, mode) fopen(name, mode)
-
 /************************ Debug/Error Macros **************************/
 
 typedef void (*hsDebugMessageProc)(const char message[]);
