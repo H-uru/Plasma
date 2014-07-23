@@ -177,15 +177,25 @@ inline uint64_t hsSwapEndian64(uint64_t value)
 }
 inline float hsSwapEndianFloat(float fvalue)
 {
-    uint32_t value = *(uint32_t*)&fvalue;
-    value = hsSwapEndian32(value);
-    return *(float*)&value;
+    union {
+        uint32_t i;
+        float    f;
+    } value;
+
+    value.f = fvalue;
+    value.i = hsSwapEndian32(value.i);
+    return value.f;
 }
 inline double hsSwapEndianDouble(double dvalue)
 {
-    uint64_t value = *(uint64_t*)&dvalue;
-    value = hsSwapEndian64(value);
-    return *(double*)&value;
+    union {
+        uint64_t i;
+        double   f;
+    } value;
+
+    value.f = dvalue;
+    value.i = hsSwapEndian64(value.i);
+    return value.f;
 }
 
 #if LITTLE_ENDIAN
