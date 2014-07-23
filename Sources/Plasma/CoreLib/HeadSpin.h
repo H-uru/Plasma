@@ -133,7 +133,6 @@ typedef uint32_t  hsGSeedValue;
 
 #define hsLongAlign(n)      (((n) + 3) & ~3L)
 
-#define hsABS(x)            ((x) < 0 ? -(x) : (x))
 #define hsSGN(x)            (((x) < 0) ? -1 : ( ((x) > 0) ? 1 : 0 ))
 
 #define hsBitTst2Bool(value, mask)      (((value) & (mask)) != 0)

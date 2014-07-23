@@ -81,7 +81,7 @@ hsPoint3 hsQuat::Rotate(const hsScalarTriple* v) const
     hsQuat qVec(v->fX, v->fY, v->fZ, 0);
     hsQuat t = qInv * qVec;
     hsQuat res = (t * (*this));
-    //hsAssert(hsABS(res.fW)<1e-5, "Error rotating vector");
+    //hsAssert(fabs(res.fW)<1e-5, "Error rotating vector");
     return hsPoint3(res.fX, res.fY, res.fZ);
 }
 

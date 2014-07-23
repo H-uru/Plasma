@@ -413,7 +413,7 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                                         return true;
                                     }
                                     
-                                    if (hsABS(avPt.fZ - objPt.fZ) > 1.0f) // you need to also be in the same plane (some books are on top of rocks you need to jump onto)
+                                    if (fabs(avPt.fZ - objPt.fZ) > 1.0f) // you need to also be in the same plane (some books are on top of rocks you need to jump onto)
                                     {
                                         ResetClickableState();
                                         return true;
