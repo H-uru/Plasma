@@ -97,7 +97,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             T * mid = lo + (hi - lo) / 2;                                   \
                                                                             \
             /* Swap it to the beginning of the array */                     \
-            SWAP(*mid, *lo);                                                \
+            std::swap(*mid, *lo);                                           \
                                                                             \
             /* Partition the array into three pieces, one consisting of */  \
             /* elements <= the partitioning element, one of elements    */  \
@@ -134,7 +134,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
                 /* val(loPart) > val(lo) */                                 \
                 /* val(hiPart) < val(lo) */                                 \
                                                                             \
-                SWAP(*loPart, *hiPart);                                     \
+                std::swap(*loPart, *hiPart);                                \
                                                                             \
                 /* val(loPart) < val(lo) */                                 \
                 /* val(hiPart) > val(lo) */                                 \
@@ -145,7 +145,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
             /* val(i) >= val(lo) for loPart <= i <= hi   */                 \
                                                                             \
             /* Put the partitioning element in place */                     \
-            SWAP(*lo, *hiPart);                                             \
+            std::swap(*lo, *hiPart);                                        \
                                                                             \
             /* val(i) <= val(hiPart) for lo <= i < hiPart     */            \
             /* val(i) == val(lo)     for hiPart <= i < loPart */            \

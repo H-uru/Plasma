@@ -760,7 +760,7 @@ void CliFileConn::Destroy () {
 
     {
         hsLockForWriting lock(sockLock);
-        SWAP(oldSock, sock);
+        std::swap(oldSock, sock);
     }
 
     if (oldSock)

@@ -218,7 +218,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
     if (IS_NET_SUCCESS(error)) {
         s_critsect.Enter();
         {
-            SWAP(s_active, conn);
+            std::swap(s_active, conn);
         }
         s_critsect.Leave();
     }

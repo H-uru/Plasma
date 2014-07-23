@@ -267,7 +267,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
 
         s_critsect.Enter();
         {
-            SWAP(s_active, conn);
+            std::swap(s_active, conn);
         }
         s_critsect.Leave();
             

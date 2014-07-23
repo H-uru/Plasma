@@ -212,27 +212,6 @@ inline double hsSwapEndianDouble(double dvalue)
     #define hsToLEDouble(n)     hsSwapEndianDouble(n)
 #endif
 
-inline void hsSwap(int32_t& a, int32_t& b)
-{
-    int32_t   c = a;
-    a = b;
-    b = c;
-}
-
-inline void hsSwap(uint32_t& a, uint32_t& b)
-{
-    uint32_t  c = a;
-    a = b;
-    b = c;
-}
-
-inline void hsSwap(float& a, float& b)
-{
-    float   c = a;
-    a = b;
-    b = c;
-}
-
 //===========================================================================
 // Define a NOOP (null) statement
 //===========================================================================
@@ -241,21 +220,6 @@ inline void hsSwap(float& a, float& b)
 #else
 # define  NULL_STMT  ((void)0)
 #endif
-
-/****************************************************************************
-*
-*   SWAP
-*   Swaps the values of two variables
-*
-***/
-
-//===========================================================================
-template<class T>
-void SWAP (T & a, T & b) {
-    T temp = a;
-    a = b;
-    b = temp;
-}
 
 
 /****************************************************************************
