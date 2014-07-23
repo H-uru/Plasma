@@ -91,7 +91,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plModifier/plResponderModifier.h"
 #include "plModifier/plInterfaceInfoModifier.h"
 #include "pfAnimation/plLightModifier.h"
-#include "pfCharacter/plPlayerModifier.h"
 #include "plAvatar/plAGModifier.h"
 #include "plAvatar/plAGAnim.h"
 #include "plAvatar/plPointChannel.h"

@@ -64,7 +64,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "pnModifier/plLogicModBase.h"
-#include "pfCharacter/plPlayerModifier.h"
 #include "hsTimer.h"
 #include "pnMessage/plClientMsg.h"
 #include "pnMessage/plEnableMsg.h"

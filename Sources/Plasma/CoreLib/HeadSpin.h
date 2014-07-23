@@ -95,12 +95,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //======================================
 // Basic macros
 //======================================
-#ifdef __cplusplus
-    #define hsCTypeDefStruct(foo)
-#else
-    #define hsCTypeDefStruct(foo)       typedef struct foo foo;
-#endif
-
 #ifdef HS_BUILD_FOR_WIN32
 #    ifndef CDECL
 #        define CDECL __cdecl
@@ -108,9 +102,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #else
 #   define CDECL
 #endif
-
-#define kPosInfinity16      (32767)
-#define kNegInfinity16      (-32768)
 
 #define kPosInfinity32      (0x7fffffff)
 #define kNegInfinity32      (0x80000000)
@@ -124,20 +115,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 typedef int32_t   hsError;
-typedef uint32_t  hsGSeedValue;
 
 #define hsOK                0
 #define hsFail              -1
 #define hsFailed(r)         ((hsError)(r)<hsOK)
 #define hsSucceeded(r)      ((hsError)(r)>=hsOK)
-
-#define hsLongAlign(n)      (((n) + 3) & ~3L)
-
-#define hsSGN(x)            (((x) < 0) ? -1 : ( ((x) > 0) ? 1 : 0 ))
-
-#define hsBitTst2Bool(value, mask)      (((value) & (mask)) != 0)
-
-#define hsFourByteTag(a, b, c, d)       (((uint32_t)(a) << 24) | ((uint32_t)(b) << 16) | ((uint32_t)(c) << 8) | (d))
 
 #if defined(HAVE_CXX14_DEPRECATED_ATTR)
 #   define hsDeprecated(message) [[deprecated(message)]]
