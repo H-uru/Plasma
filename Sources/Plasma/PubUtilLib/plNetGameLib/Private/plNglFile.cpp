@@ -1350,7 +1350,7 @@ void NetCliFileStartConnect (
 ) {
     // TEMP: Only connect to one file server until we fill out this module
     // to choose the "best" file connection.
-    fileAddrCount = min(fileAddrCount, 1);
+    fileAddrCount = std::min(fileAddrCount, 1u);
     s_connectBuildId = isPatcher ? kFileSrvBuildId : plProduct::BuildId();
     s_serverType = kSrvTypeNone;
 
@@ -1387,7 +1387,7 @@ void NetCliFileStartConnectAsServer (
 ) {
     // TEMP: Only connect to one file server until we fill out this module
     // to choose the "best" file connection.
-    fileAddrCount = min(fileAddrCount, 1);
+    fileAddrCount = std::min(fileAddrCount, 1u);
     s_connectBuildId = serverBuildId;
     s_serverType = serverType;
 

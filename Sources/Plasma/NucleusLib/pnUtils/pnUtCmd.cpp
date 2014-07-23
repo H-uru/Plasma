@@ -158,7 +158,7 @@ CICmdParser::CICmdParser (const CmdArgDef def[], unsigned defCount) {
         arg.nameChars   = def[loop].name ? StrLen(def[loop].name) : 0;
         arg.isSpecified = false;
         SetDefaultValue(arg);
-        maxId = max(maxId, def[loop].id);
+        maxId = std::max(maxId, def[loop].id);
 
         // Track the number of unflagged arguments
         if (!flagged)
@@ -167,7 +167,7 @@ CICmdParser::CICmdParser (const CmdArgDef def[], unsigned defCount) {
     }
 
     // Build the id lookup table
-    unsigned idTableSize = min(maxId + 1, defCount * 2);
+    unsigned idTableSize = std::min(maxId + 1, defCount * 2);
     m_idLookupArray.SetCount(idTableSize);
     m_idLookupArray.Zero();
     for (loop = 0; loop < defCount; ++loop)

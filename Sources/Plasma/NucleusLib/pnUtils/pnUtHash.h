@@ -432,7 +432,7 @@ void TBaseHashTable<T>::SetLinkOffset (int linkOffset, unsigned maxSize) {
         v |= v >> 1; v |= v >> 2; v |= v >> 4; v |= v >> 8; v |= v >> 16;
         v++;
 
-        SetSlotCount(max(kSlotMinCount, v));
+        SetSlotCount(std::max(static_cast<unsigned>(kSlotMinCount), v));
     }
 }
 
@@ -459,7 +459,7 @@ void TBaseHashTable<T>::SetSlotCount (unsigned count) {
 template<class T>
 void TBaseHashTable<T>::SetSlotMaxCount (unsigned count) {
     if (count)
-        m_slotMaxCount = max(kSlotMinCount, count);
+        m_slotMaxCount = std::max(static_cast<unsigned>(kSlotMinCount), count);
 }
 
 //===========================================================================

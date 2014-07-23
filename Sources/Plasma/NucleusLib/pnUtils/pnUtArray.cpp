@@ -60,7 +60,7 @@ unsigned CBaseArray::CalcAllocGrowth (unsigned newAlloc, unsigned oldAlloc, unsi
     // If this is the initial allocation, or if the new allocation is more
     // than twice as big as the old allocation and larger than the chunk
     // size, then allocate exactly the amount of memory requested
-    if (!oldAlloc || (newAlloc >= max(2 * oldAlloc, *chunkSize)))
+    if (!oldAlloc || (newAlloc >= std::max(2 * oldAlloc, *chunkSize)))
         return newAlloc;
 
     // Otherwise, allocate memory beyond what was requested in preparation
@@ -69,7 +69,7 @@ unsigned CBaseArray::CalcAllocGrowth (unsigned newAlloc, unsigned oldAlloc, unsi
 
     // For small allocations, double the size of the buffer each time
     if (newAlloc < *chunkSize)
-        return max(newAlloc, 2 * oldAlloc);
+        return std::max(newAlloc, 2 * oldAlloc);
 
     // For larger allocations, grow by the chunk size each time
     if (oldAlloc + *chunkSize > newAlloc) {

@@ -577,7 +577,7 @@ bool plWalkingStrategy::EnableControlledFlight(bool status)
         ++fControlledFlight;
     }
     else
-        fControlledFlight = max(--fControlledFlight, 0);
+        fControlledFlight = std::max(--fControlledFlight, 0);
 
     return status;
 }

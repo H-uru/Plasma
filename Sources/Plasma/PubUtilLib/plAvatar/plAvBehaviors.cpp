@@ -106,7 +106,7 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, plDebugText &
     float strength = GetStrength();
     const char *onOff = strength > 0 ? "on" : "off";
     char blendBar[] = "||||||||||";
-    int bars = (int)min(10 * strength, 10);
+    int bars = std::min(static_cast<int>(10 * strength), 10);
     blendBar[bars] = '\0';
 
     plString details;

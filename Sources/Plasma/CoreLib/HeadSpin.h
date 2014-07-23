@@ -242,51 +242,6 @@ inline void hsSwap(float& a, float& b)
 # define  NULL_STMT  ((void)0)
 #endif
 
-//===========================================================================
-template<class T>
-inline T max (const T & a, const T & b) {
-    return (a > b) ? a : b;
-}
-
-//===========================================================================
-inline unsigned max (int a, unsigned b) {
-    return ((unsigned)a > b) ? a : b;
-}
-
-//===========================================================================
-inline unsigned max (unsigned a, int b) {
-    return (a > (unsigned)b) ? a : b;
-}
-
-//===========================================================================
-template<class T>
-inline T min (const T & a, const T & b) {
-    return (a < b) ? a : b;
-}
-
-//===========================================================================
-inline unsigned min (int a, unsigned b) {
-    return ((unsigned)a < b) ? a : b;
-}
-
-//===========================================================================
-inline unsigned min (unsigned a, int b) {
-    return (a < (unsigned)b) ? a : b;
-}
-
-
-/****************************************************************************
-*
-*   MAX/MIN macros
-*   These are less safe than the inline function versions, since they
-*   evaluate parameters twice. However, they can be used to produce
-*   compile-time constants.
-*
-***/
-#define  MAX(a, b)  (((a) > (b)) ? (a) : (b))
-#define  MIN(a, b)  (((a) < (b)) ? (a) : (b))
-
-
 /****************************************************************************
 *
 *   SWAP

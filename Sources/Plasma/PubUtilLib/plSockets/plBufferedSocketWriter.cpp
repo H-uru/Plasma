@@ -79,7 +79,7 @@ int plBufferedSocketWriter::Flush(plTcpSocket & sck)    // this is where things 
 {
     int ans = kSuccessNoDataSent;
 
-    int writeSize = MIN(FastAmountBuffered(),fBytesPerFlush);
+    int writeSize = std::min(FastAmountBuffered(), fBytesPerFlush);
     
     if(writeSize > 0)
     {

@@ -48,8 +48,8 @@ void CryptCreateRandomSeed(size_t length, uint8_t* data)
 {
     uint32_t seedIdx = 0;
     uint32_t dataIdx = 0;
-    uint32_t cur = 0;
-    uint32_t end = max(length, sizeof(ShaDigest));
+    size_t cur = 0;
+    size_t end = std::max(length, sizeof(ShaDigest));
 
     // Combine seed with input data
     for (; cur < end; cur++) {
