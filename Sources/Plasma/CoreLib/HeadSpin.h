@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <cctype>
 #include <cstdarg>
 #include <cstdint>
+#include <algorithm>
 
 //======================================
 // Winblows Hacks
@@ -132,8 +133,6 @@ typedef uint32_t  hsGSeedValue;
 
 #define hsLongAlign(n)      (((n) + 3) & ~3L)
 
-#define hsMaximum(a, b)     ((a) > (b) ? (a) : (b))
-#define hsMinimum(a, b)     ((a) < (b) ? (a) : (b))
 #define hsABS(x)            ((x) < 0 ? -(x) : (x))
 #define hsSGN(x)            (((x) < 0) ? -1 : ( ((x) > 0) ? 1 : 0 ))
 

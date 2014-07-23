@@ -153,7 +153,7 @@ void TimeBasedAvgRing<T>::AddItem(T value, double time)
     }
 
     // update the max avg
-    fMaxAvg = hsMaximum( fMaxAvg, fAvg );
+    fMaxAvg = std::max(fMaxAvg, fAvg);
 
 }
 

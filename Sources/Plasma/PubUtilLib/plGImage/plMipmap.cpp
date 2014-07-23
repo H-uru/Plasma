@@ -994,9 +994,9 @@ float plMipmap::IGetDetailLevelAlpha( uint8_t level, float dropStart, float drop
     detailAlpha = ( level - dropStart ) * ( min - max ) / ( dropStop - dropStart ) + max;
 
     if( min < max )
-        detailAlpha = hsMinimum( max, hsMaximum( min, detailAlpha ) );
+        detailAlpha = std::min(max, std::max(min, detailAlpha));
     else
-        detailAlpha = hsMinimum( min, hsMaximum( max, detailAlpha ) );
+        detailAlpha = std::min(min, std::max(max, detailAlpha));
 
     return detailAlpha;
 }

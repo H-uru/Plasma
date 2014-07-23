@@ -271,7 +271,7 @@ float plAnimPath::GetExtremePoint(hsPoint3 &worldPt) const
             {
                 float fore = keyTimes[i + 1] - t;
                 float back = t - keyTimes[i - 1];
-                delTime = hsMaximum(fore, back);
+                delTime = std::max(fore, back);
             }
         }
     }

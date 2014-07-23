@@ -234,7 +234,7 @@ void plNetClientMgr::IShowRelevanceRegions()
     uint32_t maxPlayerName = 0;
 
     txt.DrawString(x, y, GetPlayerName().c_str());
-    maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(GetPlayerName().c_str()));
+    maxPlayerName = std::max(maxPlayerName, txt.CalcStringWidth(GetPlayerName().c_str()));
     y += yOff;
 
     int i;
@@ -247,7 +247,7 @@ void plNetClientMgr::IShowRelevanceRegions()
 
         const plString& name = mbr->GetPlayerName();
         txt.DrawString(x, y, name.c_str());
-        maxPlayerName = hsMaximum(maxPlayerName, txt.CalcStringWidth(name.c_str()));
+        maxPlayerName = std::max(maxPlayerName, txt.CalcStringWidth(name.c_str()));
         y += yOff;
     }
 

@@ -501,16 +501,16 @@ bool plDistributor::IFailsProbBitmap(int iFace, const Point3& bary) const
         break;
     case kMax:
     case kMaxColor:
-        frac = hsMaximum(evCol.r, hsMaximum(evCol.g, evCol.b));
+        frac = std::max({ evCol.r, evCol.g, evCol.b });
         break;
     case kMaxColorTimesAlpha:
-        frac = hsMaximum(evCol.r, hsMaximum(evCol.g, evCol.b)) * evCol.a;
+        frac = std::max({ evCol.r, evCol.g, evCol.b }) * evCol.a;
         break;
     case kMaxRedGreen:
-        frac = hsMaximum(evCol.r, evCol.g);
+        frac = std::max(evCol.r, evCol.g);
         break;
     case kMaxRedGreenTimesAlpha:
-        frac = hsMaximum(evCol.r, evCol.g) * evCol.a;
+        frac = std::max(evCol.r, evCol.g) * evCol.a;
         break;
     }
 

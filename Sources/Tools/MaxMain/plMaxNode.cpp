@@ -699,12 +699,12 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
             hsPoint3 minV(FLT_MAX, FLT_MAX, FLT_MAX), maxV(-FLT_MAX, -FLT_MAX, -FLT_MAX);
             for (int i = 0; i < mesh.fNumVerts; i++)
             {
-                minV.fX = hsMinimum(mesh.fVerts[i].fX, minV.fX);
-                minV.fY = hsMinimum(mesh.fVerts[i].fY, minV.fY);
-                minV.fZ = hsMinimum(mesh.fVerts[i].fZ, minV.fZ);
-                maxV.fX = hsMaximum(mesh.fVerts[i].fX, maxV.fX);
-                maxV.fY = hsMaximum(mesh.fVerts[i].fY, maxV.fY);
-                maxV.fZ = hsMaximum(mesh.fVerts[i].fZ, maxV.fZ);
+                minV.fX = std::min(mesh.fVerts[i].fX, minV.fX);
+                minV.fY = std::min(mesh.fVerts[i].fY, minV.fY);
+                minV.fZ = std::min(mesh.fVerts[i].fZ, minV.fZ);
+                maxV.fX = std::max(mesh.fVerts[i].fX, maxV.fX);
+                maxV.fY = std::max(mesh.fVerts[i].fY, maxV.fY);
+                maxV.fZ = std::max(mesh.fVerts[i].fZ, maxV.fZ);
             }
             hsPoint3 width = maxV - minV;
             recipe.bDimensions = width / 2;
@@ -770,15 +770,15 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
             hsPoint3 minV(FLT_MAX, FLT_MAX, FLT_MAX), maxV(-FLT_MAX, -FLT_MAX, -FLT_MAX);
             for (int i = 0; i < mesh.fNumVerts; i++)
             {
-                minV.fX = hsMinimum(mesh.fVerts[i].fX, minV.fX);
-                minV.fY = hsMinimum(mesh.fVerts[i].fY, minV.fY);
-                minV.fZ = hsMinimum(mesh.fVerts[i].fZ, minV.fZ);
-                maxV.fX = hsMaximum(mesh.fVerts[i].fX, maxV.fX);
-                maxV.fY = hsMaximum(mesh.fVerts[i].fY, maxV.fY);
-                maxV.fZ = hsMaximum(mesh.fVerts[i].fZ, maxV.fZ);
+                minV.fX = std::min(mesh.fVerts[i].fX, minV.fX);
+                minV.fY = std::min(mesh.fVerts[i].fY, minV.fY);
+                minV.fZ = std::min(mesh.fVerts[i].fZ, minV.fZ);
+                maxV.fX = std::max(mesh.fVerts[i].fX, maxV.fX);
+                maxV.fY = std::max(mesh.fVerts[i].fY, maxV.fY);
+                maxV.fZ = std::max(mesh.fVerts[i].fZ, maxV.fZ);
             }
             hsPoint3 width = maxV - minV;
-            recipe.radius = hsMaximum(width.fX, hsMaximum(width.fY, width.fZ));
+            recipe.radius = std::max({ width.fX, width.fY, width.fZ });
             recipe.radius /= 2.f;
             recipe.offset = minV + (width / 2.f);
         }

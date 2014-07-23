@@ -161,7 +161,7 @@ void plProfileBase::EndFrame()
 {
     fAvgCount++;
     fAvgTotal += fValue;
-    fMax = hsMaximum(fMax, fValue);
+    fMax = std::max(fMax, fValue);
 }
 
 void plProfileBase::UpdateAvg()

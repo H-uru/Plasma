@@ -212,7 +212,7 @@ bool plDynaRippleVSMgr::IRippleFromShape(const plPrintShape* shape, bool force)
             hsVector3 dir(fWaveSetBase->GetWindDir());
             hsVector3 up(0.f, 0.f, 1.f);
 
-            float wid = hsMaximum(shape->GetWidth(), shape->GetLength());
+            float wid = std::max(shape->GetWidth(), shape->GetLength());
             
             plConst(float) kMaxWaterDepth(1000.f);
 

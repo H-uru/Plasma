@@ -701,7 +701,7 @@ void plSimulationMgr::ConsiderSynch(plPXPhysical* physical, plPXPhysical* other)
         // If both objects are capable of syncing, we want to do it at the same
         // time, so no interpenetration issues pop up on other clients
         if (syncOther)
-            timeElapsed = hsMaximum(timeElapsed, timeNow - other->GetLastSyncTime());
+            timeElapsed = std::max(timeElapsed, timeNow - other->GetLastSyncTime());
 
         // Set the sync time to 1 second from the last sync
         double syncTime = 0.0;

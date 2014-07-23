@@ -402,7 +402,7 @@ void plWalkingStrategy::Apply(float delSecs)
         // the largest, so we won't launch into the air if we're running uphill.
         float prevZVel = achievedVelocity.fZ;
         if (IsOnGround())
-            prevZVel = hsMinimum(prevZVel, 0.0f);
+            prevZVel = std::min(prevZVel, 0.0f);
 
         velocity.fZ = prevZVel + (kGravity * delSecs);
     }
@@ -716,7 +716,7 @@ void plDynamicWalkingStrategy::Apply(float delSecs)
         // the largest, so we won't launch into the air if we're running uphill.
         float prevZVel = achievedVelocity.fZ;
         if (IsOnGround())
-            prevZVel = hsMinimum(prevZVel, 0.f);
+            prevZVel = std::min(prevZVel, 0.f);
 
         velocity.fZ = prevZVel + (kGravity * delSecs);
     }

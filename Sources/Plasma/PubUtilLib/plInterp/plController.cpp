@@ -816,7 +816,7 @@ float plCompoundController::GetLength() const
     for(i=0; i<3; i++)
     {
         if (GetController(i))
-            len = hsMaximum(len, GetController(i)->GetLength());
+            len = std::max(len, GetController(i)->GetLength());
     }
     return len;
 }

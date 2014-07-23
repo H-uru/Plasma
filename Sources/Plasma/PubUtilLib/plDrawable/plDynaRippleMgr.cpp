@@ -219,7 +219,7 @@ bool plDynaRippleMgr::IRippleFromShape(const plPrintShape* shape, bool force)
         plConst(float) kHeightScale = 1.f;
         pos.fZ += (shape->GetHeight() * fScale.fZ * kHeightScale) * 0.25f;
 
-        float wid = hsMaximum(shape->GetWidth(), shape->GetLength());
+        float wid = std::max(shape->GetWidth(), shape->GetLength());
         hsVector3 size(wid * fScale.fX, wid * fScale.fY, shape->GetHeight() * fScale.fZ * kHeightScale);
         fCutter->SetLength(size);
         fCutter->Set(pos, dir, up);
