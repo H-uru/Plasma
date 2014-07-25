@@ -161,6 +161,7 @@ target_link_libraries(plClient ${Ogg_LIBRARIES})
 target_link_libraries(plClient ${Vorbis_LIBRARIES})
 target_link_libraries(plClient ${DirectX_LIBRARIES})
 target_link_libraries(plClient ${CURL_LIBRARY})
+target_link_libraries(plClient ${Opus_LIBRARIES})
 
 if(USE_VLD)
     target_link_libraries(plClient ${VLD_LIBRARY})

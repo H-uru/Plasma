@@ -42,13 +42,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMoviePlayer.h"
 #include <tuple>
+#include <memory>
 
 #ifdef VPX_AVAILABLE
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
 #   include <vpx/vp8dx.h>
-#   define iface (vpx_codec_vp8_dx())
+#   define iface (vpx_codec_vp9_dx())
 #endif
+
+#include <opus.h>
 
 #include "plGImage/plMipmap.h"
 #include "pnKeyedObject/plUoid.h"
@@ -57,6 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPlanarImage.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+#include "plAudio/plWin32VideoSound.h"
+#include "../Apps/plClient/plClient.h"
+#include "plScene/plSceneNode.h"
+#include "pnSceneObject/plSceneObject.h"
+#include "pnSceneObject/plAudioInterface.h"
+#include "pnMessage/plSoundMsg.h"
+#include "plgDispatch.h"
 
 #include "webm/mkvreader.hpp"
 #include "webm/mkvparser.hpp"
@@ -248,13 +258,37 @@ plMoviePlayer::plMoviePlayer() :
     fTexture(nullptr),
     fReader(nullptr),
     fTimeScale(0), 
-    fStartTime(0)
+    fStartTime(0),
+    fAudioPlayer(),
+    fPosition(hsPoint2()),
+    fAudioInterface(),
+    fPlaying(true),
+    fOpusDecoder(nil)
 {
     fScale.Set(1.0f, 1.0f);
+
+    
+    fAudioSound = std::shared_ptr<plWin32VideoSound>(new plWin32VideoSound());
+    fAudioPlayer.SetSound(fAudioSound);
+    plSceneNode* sceneNode = plClient::GetInstance()->GetCurrentScene();
+    if (sceneNode != nullptr)
+    {
+        hsTArray<plSceneObject*>& sceneObjects = sceneNode->GetSceneObjects();
+        for (int i = 0; i < sceneObjects.GetCount(); ++i)
+        {
+            if (sceneObjects[i]->GetAudioInterface() == nullptr)
+            {
+                fAudioInterface.ISetAudible(&fAudioPlayer);
+                sceneObjects[i]->SetAudioInterface(&fAudioInterface);
+                break;
+            }
+        }
+    }
 }
 
 plMoviePlayer::~plMoviePlayer()
 {
+    opus_decoder_destroy(fOpusDecoder);
     if (fPlate)
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
@@ -363,6 +397,10 @@ bool plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 
 bool plMoviePlayer::Start()
 {
+    plSceneNode* sceneNode = plClient::GetInstance()->GetCurrentScene();
+    if (sceneNode != nullptr)
+        sceneNode->GetKey();
+
 #ifdef VPX_AVAILABLE
     if (!IOpenMovie())
         return false;
@@ -374,6 +412,12 @@ bool plMoviePlayer::Start()
     else
         return false;
 
+    //initialize opus
+    int error;
+    fOpusDecoder = opus_decoder_create(48000, 1, &error);
+    if (error != OPUS_OK)
+        hsAssert(false, "Error occured initalizing opus");
+
     // Need to figure out scaling based on pipe size.
     plPlateManager& plateMgr = plPlateManager::Instance();
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fSegment->GetTracks()->GetTrackByNumber(fVideoTrack->number));
@@ -383,6 +427,9 @@ bool plMoviePlayer::Start()
     plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, width, height);
     fPlate->SetVisible(true);
     fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), nullptr);
+
+    fPlaying = true;
+
     return true;
 #else
     return false;
@@ -391,45 +438,82 @@ bool plMoviePlayer::Start()
 
 bool plMoviePlayer::NextFrame()
 {
-#ifdef VPX_AVAILABLE
-    // Get our current timecode
-    int64_t movieTime = 0;
-    if (fStartTime == 0)
-        fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
-    else
-        movieTime = GetMovieTime();
-
-    std::vector<blkbuf_t> audio;
-    std::vector<blkbuf_t> video;
+    if (fPlaying)
     {
-        uint8_t tracksWithData = 0;
-        if (fAudioTrack)
-        {
-            if (fAudioTrack->GetFrames(this, movieTime, audio))
-                tracksWithData++;
-        }
-        if (fVideoTrack)
-        {
-            if (fVideoTrack->GetFrames(this, movieTime, video))
-                tracksWithData++;
-        }
-        if (tracksWithData == 0)
-            return false;
-    }
+#ifdef VPX_AVAILABLE
+        // Get our current timecode
+        int64_t movieTime = 0;
+        if (fStartTime == 0)
+            fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
+        else
+            movieTime = GetMovieTime();
 
-    // Show our mess
-    IProcessVideoFrame(video);
+        std::vector<blkbuf_t> audio;
+        std::vector<blkbuf_t> video;
+        {
+            uint8_t tracksWithData = 0;
+            if (fAudioTrack)
+            {
+                if (fAudioTrack->GetFrames(this, movieTime, audio))
+                    tracksWithData++;
+            }
+            if (fVideoTrack)
+            {
+                if (fVideoTrack->GetFrames(this, movieTime, video))
+                    tracksWithData++;
+            }
+            if (tracksWithData == 0)
+            {
+                Stop();
+                return false;
+            }
+        }
 
-    return true;
+        // Show our mess
+        IProcessVideoFrame(video);
+        IProcessAudioFrame(audio);
+
+        return true;
 #else
-    return false;
+        return false;
 #endif // VPX_AVAILABLE
+    }
+    return false;
 }
 
 bool plMoviePlayer::Stop()
 {
-    for (int i = 0; i < fCallbacks.GetCount(); i++)
+    fPlaying = false;
+    for (int i = 0; i < fCallbacks.size(); i++)
         fCallbacks[i]->Send();
-    fCallbacks.Reset();
+    fCallbacks.clear();
     return false;
+}
+
+bool plMoviePlayer::IProcessAudioFrame(const std::vector<blkbuf_t>& frames)
+{
+    const unsigned char* data = NULL;
+    int32_t size = 0;
+    for (auto it = frames.begin(); it != frames.end(); ++it)
+    {
+        const std::unique_ptr<uint8_t>& buf = std::get<0>(*it);
+        data = buf.get();
+        size = std::get<1>(*it);
+
+        int error;
+        const int frameSize = 5760; //max packet duration at 48kHz
+        opus_int16* pcm = new opus_int16[frameSize * 1 * sizeof(opus_int16)];
+        error = opus_decode(fOpusDecoder, data, size, pcm, frameSize, 0);
+        if (error < 0)
+            hsAssert(false, "opus error");
+        fAudioSound->UpdateSoundBuffer(reinterpret_cast<unsigned char*>(pcm), error);
+        if (plClient::GetInstance()->GetCurrentScene() != nullptr)
+        {
+            plSoundMsg* soundMsg = new plSoundMsg();
+            soundMsg->SetCmd(plSoundMsg::kPlay);
+            soundMsg->SetBCastFlag(plMessage::kBCastByType);
+            fAudioInterface.MsgReceive(soundMsg);
+        }
+    }
+    return true;
 }

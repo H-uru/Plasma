@@ -5,6 +5,7 @@ include_directories(../../PubUtilLib)
 
 if (VPX_AVAILABLE)
     include_directories(${VPX_INCLUDE_DIR})
+    include_directories(${Opus_INCLUDE_DIR})
 endif (VPX_AVAILABLE)
 
 set(pfMoviePlayer_SOURCES

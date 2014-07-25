@@ -48,16 +48,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsPoint2.h"
 #include "hsColorRGBA.h"
 #include "plMessage/plMovieMsg.h"
+#include "plAudio/plWin32VideoSound.h"
+#include "plAudible/plVideoAudible.h"
+#include "pnSceneObject/plAudioInterface.h"
 
 #include <memory>
 #include <vector>
 #include <tuple>
+
+#include <opus.h>
 
 namespace mkvparser
 {
     class BlockEntry;
     class MkvReader;
     class Segment;
+    class Track;
 }
 
 typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
@@ -79,9 +85,17 @@ protected:
     hsPoint2 fPosition, fScale;
     plFileName fMoviePath;
 
+    OpusDecoder* fOpusDecoder;
+    std::shared_ptr<plWin32VideoSound> fAudioSound;
+    plVideoAudible fAudioPlayer;
+    plAudioInterface fAudioInterface;
+
+    bool fPlaying;
+
     int64_t GetMovieTime() const;
     bool IOpenMovie();
     bool IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
+    bool IProcessAudioFrame(const std::vector<blkbuf_t>& frames);
 
 public:
     plMoviePlayer();
@@ -92,7 +106,7 @@ public:
     bool Stop();
     bool NextFrame();
 
-    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); }
+    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.push_back(msg); }
     uint32_t GetNumCallbacks() const { return 0; }
     plMessage* GetCallback(int i) const { return nullptr; }
 
@@ -118,7 +132,7 @@ public:
     void SetFadeToColor(hsColorRGBA c) { }
 
 private:
-    hsTArray<plMessage*> fCallbacks;
+    std::vector<plMessage*> fCallbacks;
 };
 
 #endif // _plMoviePlayer_inc

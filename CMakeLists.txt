@@ -42,6 +42,7 @@ find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the clie
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
 find_package(VPX)
+find_package(Opus)
 find_package(CURL REQUIRED)
 find_package(Freetype)
 
