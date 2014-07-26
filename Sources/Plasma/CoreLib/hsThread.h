@@ -207,6 +207,7 @@ class hsReaderWriterLock
 public:
     hsReaderWriterLock() : fReaderCount(0), fWriterSem(1) { }
 
+private:
     void LockForReading()
     {
         // Don't allow us to start reading if there's still an active writer
@@ -241,10 +242,44 @@ public:
         fReaderLock.unlock();
     }
 
-private:
     std::atomic<int>    fReaderCount;
     std::mutex          fReaderLock;
     hsSemaphore         fWriterSem;
+
+    friend class hsLockForReading;
+    friend class hsLockForWriting;
+};
+
+class hsLockForReading
+{
+    hsReaderWriterLock& fLock;
+
+public:
+    hsLockForReading(hsReaderWriterLock& lock) : fLock(lock)
+    {
+        fLock.LockForReading();
+    }
+
+    ~hsLockForReading()
+    {
+        fLock.UnlockForReading();
+    }
+};
+
+class hsLockForWriting
+{
+    hsReaderWriterLock& fLock;
+
+public:
+    hsLockForWriting(hsReaderWriterLock& lock) : fLock(lock)
+    {
+        fLock.LockForWriting();
+    }
+
+    ~hsLockForWriting()
+    {
+        fLock.UnlockForWriting();
+    }
 };
 
 #endif
