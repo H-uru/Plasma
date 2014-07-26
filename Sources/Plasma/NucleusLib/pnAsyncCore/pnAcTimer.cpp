@@ -345,7 +345,7 @@ void AsyncTimer::Set (unsigned callbackMs) {
 
 //===========================================================================
 void AsyncTimer::SetIfHigher (unsigned callbackMs) {
-    ASSERT(p);
+    ASSERT(timer);
 
     bool setEvent;
     {

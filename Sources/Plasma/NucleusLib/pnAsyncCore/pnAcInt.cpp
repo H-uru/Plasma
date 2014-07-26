@@ -128,7 +128,7 @@ void IWorkerThreads::Add (Operation * op) {
 
 //===========================================================================
 void IWorkerThreads::Create () {
-    ASSERT(!P::This);
+    ASSERT(!Private::This);
     
     Private::This = new Private();
     Private::This->threadCount = 8; // TODO: hsThread::hardware_concurrency() * 2 (or use directly std::thread ?)

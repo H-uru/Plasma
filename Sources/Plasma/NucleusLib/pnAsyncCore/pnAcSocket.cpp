@@ -61,6 +61,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *   
 ***/
 
+static const uint64_t MAX_TIMEOUT = std::numeric_limits<int64_t>::max();
+
 struct AsyncSocket::Private : AsyncSocket {
     struct Thread;
     struct Operation;
@@ -102,9 +104,9 @@ struct AsyncSocket::Private::Operation : IWorkerThreads::Operation {
     
     SOCKET                  hSocket;
     Mode                    sockMode;
-    uint32_t                timeout; // set to 0 to cancel
+    uint64_t                timeout; // set to 0 to cancel
     
-    Operation(SOCKET s, Mode m, uint32_t t) : hSocket(s), sockMode(m), timeout(t) {}
+    Operation(SOCKET s, Mode m, uint64_t t) : hSocket(s), sockMode(m), timeout(t) {}
 };
 
 //===========================================================================
@@ -183,12 +185,12 @@ void AsyncSocket::Private::Thread::ListFds (fd_set (& fds)[2]) {
 
     bool haveOp = false;
     while (true) {
-        uint32_t currTime = hsTimer::GetPrecTickCount();
+        uint64_t currTime = hsTimer::GetTicks();
         
         {
             std::lock_guard<std::mutex> lock(listLock);
             for (Operation * op = opList, ** old = &opList; op; op = *old) {
-                if (op->timeout != kPosInfinity32 && currTime > op->timeout) {
+                if (op->timeout != MAX_TIMEOUT && currTime > op->timeout) {
                     *old = (Operation *) op->next; // unlink
                     op->sockMode = Operation::kCancel;
                     IWorkerThreads::Add(op);
@@ -215,8 +217,8 @@ void AsyncSocket::Private::Thread::ListFds (fd_set (& fds)[2]) {
 void AsyncSocket::Private::Add (Operation * op) {
     ASSERT(fThread);
     
-    if (op->timeout != kPosInfinity32)
-        op->timeout += hsTimer::GetPrecTickCount();
+    if (op->timeout != MAX_TIMEOUT)
+        op->timeout += hsTimer::GetTicks();
     
     {
         std::lock_guard<std::mutex> lock(fThread->listLock);
@@ -246,7 +248,7 @@ struct AsyncSocket::Private::ReadOp : AsyncSocket::Private::Operation {
     uint8_t     buffer[kBufferSize];
     unsigned    bytesUsed;
 
-    ReadOp (Private * s) : Operation(s->socket.GetSocket(), Mode::kRead, kPosInfinity32), sock(s), bytesUsed(0) {}
+    ReadOp (Private * s) : Operation(s->socket.GetSocket(), Mode::kRead, MAX_TIMEOUT), sock(s), bytesUsed(0) {}
     void Callback ();
 };
 
@@ -327,7 +329,7 @@ struct AsyncSocket::Private::ConnectOp : AsyncSocket::Private::Operation {
     void operator delete (void * ptr) throw() { free(ptr); }
     
     ConnectOp(const plNetAddress& a, FNotifyProc n, void* p, unsigned s, unsigned t)
-     : Operation(plNet::NewTCP(), Private::Operation::kWrite, t ? hsTimer::PrecSecsToTicks(t * 1.e3f) : kPosInfinity32),
+     : Operation(plNet::NewTCP(), Private::Operation::kWrite, t ? hsTimer::GetTicks(t * 1.e3f) : MAX_TIMEOUT),
        next(), prev(nullptr), socket(), remoteAddr(a), notifyProc(n),
        param(p), sendBytes(s) {}
 };

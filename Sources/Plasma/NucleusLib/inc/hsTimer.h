@@ -107,6 +107,14 @@ protected:
 
     uint64_t    GetTicks() const;
 
+    template<typename T = double>
+    uint64_t    GetTicks(T seconds) const
+    {
+        typedef std::chrono::duration<T> duration_type;
+        duration_type d(seconds);
+        return std::chrono::duration_cast<Duration>(d).count();
+    }
+
     float       GetDelSysSeconds() const { return fDelSysSeconds; }
     double      GetSysSeconds() const { return fSysSeconds; }
     double      IncSysSeconds();
@@ -157,6 +165,9 @@ public:
     static T GetMilliSeconds(uint64_t ticks) { return fTimer->GetMilliSeconds<T>(ticks); }
 
     static uint64_t GetTicks() { return fTimer->GetTicks(); }
+
+    template<typename T = double>
+    static uint64_t GetTicks(T seconds) { return fTimer->GetTicks(seconds); }
 
     static float    GetDelSysSeconds() { return fTimer->GetDelSysSeconds(); }
     static double   GetSysSeconds() { return fTimer->GetSysSeconds(); }

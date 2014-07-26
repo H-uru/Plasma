@@ -459,9 +459,9 @@ static bool SocketNotifyCallback (
             conn = (CliFileConn *) notify->param;
             sock->user = conn;
             {
-                std::lock_guard<std::mutex> lock(s_critsect);
-                hsLockForWriting lock(conn->sockLock);
-                conn->sock      = sock;
+                std::lock_guard<std::mutex> crit_lock(s_critsect);
+                hsLockForWriting sock_lock(conn->sockLock);
+                conn->sock = sock;
                 conn->cancelId.Clear();
             }
             NotifyConnSocketConnect(conn);
