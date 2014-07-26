@@ -62,6 +62,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PatcherLogWhite(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kWhite, __VA_ARGS__)
 #define PatcherLogYellow(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kYellow, __VA_ARGS__)
 
+/** Maximum number of file download retries. */
+static const uint8_t kNumDownloadRetries = 3;
+
 /** Patcher grunt work thread */
 struct pfPatcherWorker : public hsThread
 {
@@ -72,11 +75,20 @@ struct pfPatcherWorker : public hsThread
 
         plString fName;
         uint8_t fType;
+        uint8_t fAttempt;
         class pfPatcherStream* fStream;
 
-        Request(const plString& name, uint8_t type, class pfPatcherStream* s=nullptr) :
-            fName(name), fType(type), fStream(s)
+        Request(const plString& name, uint8_t type, class pfPatcherStream* s = nullptr) :
+            fName(name), fType(type), fAttempt(0), fStream(s)
         { }
+
+        ~Request() { CloseStream(); }
+
+        /**
+         * Frees resources used by the patcher stream.
+         * \note If the stream hasn't been written to, it will be unlinked.
+         */
+        void CloseStream(bool del=true, bool unlink=false);
     };
 
     /** Human readable file flags */
@@ -98,8 +110,9 @@ struct pfPatcherWorker : public hsThread
         kSelfPatch                  = 1<<6,
     };
 
-    std::deque<Request> fRequests;
+    std::deque<std::shared_ptr<Request>> fRequests;
     std::deque<NetCliFileManifestEntry> fQueuedFiles;
+    std::shared_ptr<Request> fCurrRequest;
 
     hsMutex fRequestMut;
     hsMutex fFileMut;
@@ -116,7 +129,6 @@ struct pfPatcherWorker : public hsThread
 
     pfPatcher* fParent;
     volatile bool fStarted;
-    volatile bool fRequestActive;
 
     uint64_t fCurrBytes;
     uint64_t fTotalBytes;
@@ -142,13 +154,13 @@ class pfPatcherStream : public plZlibStream
     uint32_t fFlags;
 
     uint64_t fBytesWritten;
-    float fDLStartTime;
+    double fDLStartTime;
 
     plString IMakeStatusMsg() const
     {
-        float secs = hsTimer::GetSysSeconds() - fDLStartTime;
-        float bytesPerSec = fBytesWritten / secs;
-        return plFileSystem::ConvertFileSize(bytesPerSec) + "/s";
+        double secs = hsTimer::GetSysSeconds() - fDLStartTime;
+        double bytesPerSec = fBytesWritten / secs;
+        return plFileSystem::ConvertFileSize(static_cast<uint64_t>(bytesPerSec)) + "/s";
     }
 
     void IUpdateProgress(uint32_t count)
@@ -208,10 +220,16 @@ public:
     virtual void Skip(uint32_t deltaByteCount) { fOutput->Skip(deltaByteCount); }
 
     void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
+    uint64_t BytesWritten() const { return fBytesWritten; }
     plFileName GetFileName() const { return fFilename; }
     bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }
     bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
-    void Unlink() const { plFileSystem::Unlink(fFilename); }
+
+    void Unlink() const
+    {
+        if (fFilename.IsValid())
+            plFileSystem::Unlink(fFilename);
+    }
 };
 
 // ===================================================
@@ -229,6 +247,7 @@ static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName
         // happen in any other app...
         writer->Rewind();
         patcher->WhitelistFile(filename, true, writer);
+        patcher->fCurrRequest->fStream = nullptr; // stream has been stolen by the game code...
     } else {
         PatcherLogRed("\tDownloaded Failed: File '%s'", filename.AsString().c_str());
         patcher->EndPatch(result, filename.AsString());
@@ -253,8 +272,8 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
                 // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
                 pfPatcherStream* s = new pfPatcherStream(patcher, fn, infoArr[i].filesize);
-                pfPatcherWorker::Request req = pfPatcherWorker::Request(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
-                patcher->fRequests.push_back(req);
+                pfPatcherWorker::Request* req = new pfPatcherWorker::Request(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
+                patcher->fRequests.emplace_back(req);
             }
         }
         patcher->IssueRequest();
@@ -288,8 +307,8 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
         // so, we need to ask the AuthSrv about our game code
         {
             hsTempMutexLock lock(patcher->fRequestMut);
-            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kPythonList));
-            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kSdlList));
+            patcher->fRequests.emplace_back(new pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kPythonList));
+            patcher->fRequests.emplace_back(new pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kSdlList));
         }
 
         // continue pumping requests
@@ -313,41 +332,58 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
 {
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
     pfPatcherStream* stream = static_cast<pfPatcherStream*>(writer);
-    stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
         PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
+        patcher->fCurrRequest->CloseStream(false); // don't delete the stream yet, we still need some details...
         patcher->WhitelistFile(stream->GetFileName(), true);
         if (patcher->fSelfPatch && stream->IsSelfPatch())
             patcher->fSelfPatch(stream->GetFileName());
         if (patcher->fRedistUpdateDownloaded && stream->IsRedistUpdate())
             patcher->fRedistUpdateDownloaded(stream->GetFileName());
         patcher->IssueRequest();
+        delete stream;
+    } else if (result == kNetErrRemoteShutdown || result == kNetErrTimeout) {
+        // This could either be the remote server going down, we hit "Cancel" in the launcher...
+        // ... Or better yet, the server is really just dead in the water...
+        // Regardless, we just need to go away in any of these cases.
+        patcher->fCurrRequest->CloseStream(true, true);
+        patcher->EndPatch(result);
+    } else if (patcher->fCurrRequest->fAttempt < kNumDownloadRetries) {
+        // Some crappy servers (indeed I am talking about Cyan's MOULa) will randomly tell us that
+        // they ain't got that file even though they do. This will cause erroneous patch phailures.
+        // Let's debunk that crap by rescheduling the obvious turd and continuing with our other files.
+        PatcherLogYellow("\tDownload Failed: %s. Attempt #%d (retry scheduled)",
+                         stream->GetFileName().AsString().c_str(), patcher->fCurrRequest->fAttempt);
+        {
+            hsTempMutexLock lock(patcher->fRequestMut);
+            patcher->fRequests.emplace_back(patcher->fCurrRequest);
+        }
+        writer->Rewind();
+        patcher->IssueRequest();
     } else {
-        PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
-        stream->Unlink();
-        patcher->EndPatch(result, filename.AsString());
-    }
+        PatcherLogRed("\tDownloaded Failed: '%s' (%d retries)", stream->GetFileName().AsString().c_str(), patcher->fCurrRequest->fAttempt);
+        patcher->fCurrRequest->CloseStream(true, true);
 
-    delete stream;
+        // FIXME: Localize this error message.
+        plString hack = plString::Format("%S: %s\nThere appears to be a problem with your %s install.\n\
+                                         Please run the repair utility found in the Start Menu or Start Screen.",
+                                         NetErrorAsString(result), filename.AsString().c_str(),
+                                         plProduct::LongName().c_str());
+        patcher->EndPatch(result, hack);
+    }
 }
 
 // ===================================================
 
 pfPatcherWorker::pfPatcherWorker() :
-    fStarted(false), fCurrBytes(0), fTotalBytes(0), fRequestActive(true), fParent(nullptr)
+    fStarted(false), fCurrBytes(0), fCurrRequest(nullptr), fTotalBytes(0), fParent(nullptr)
 { }
 
 pfPatcherWorker::~pfPatcherWorker()
 {
     {
         hsTempMutexLock lock(fRequestMut);
-        std::for_each(fRequests.begin(), fRequests.end(),
-            [] (const Request& req) {
-                if (req.fStream) req.fStream->Close();
-                delete req.fStream;
-            }
-        );
         fRequests.clear();
     }
 
@@ -388,36 +424,37 @@ bool pfPatcherWorker::IssueRequest()
 {
     hsTempMutexLock lock(fRequestMut);
     if (fRequests.empty()) {
-        fRequestActive = false;
+        fCurrRequest.reset();
         fFileSignal.Signal(); // make sure the patch thread doesn't deadlock!
         return false;
-    } else
-        fRequestActive = true;
+    }
 
-    const Request& req = fRequests.front();
-    switch (req.fType) {
+    fCurrRequest = fRequests.front();
+    ++fCurrRequest->fAttempt;
+
+    switch (fCurrRequest->fType) {
         case Request::kFile:
-            req.fStream->Begin();
+            fCurrRequest->fStream->Begin();
             if (fFileBeginDownload)
-                fFileBeginDownload(req.fStream->GetFileName());
+                fFileBeginDownload(fCurrRequest->fStream->GetFileName());
 
-            NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
+            NetCliFileDownloadRequest(fCurrRequest->fName, fCurrRequest->fStream, IFileThingDownloadCB, this);
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.ToWchar());
+            NetCliFileManifestRequest(IFileManifestDownloadCB, this, fCurrRequest->fName.ToWchar());
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.ToWchar());
+            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, fCurrRequest->fName.ToWchar());
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
-            req.fStream->Begin();
+            fCurrRequest->fStream->Begin();
             if (fFileBeginDownload)
-                fFileBeginDownload(req.fStream->GetFileName());
+                fFileBeginDownload(fCurrRequest->fStream->GetFileName());
 
-            NetCliAuthFileRequest(req.fName, req.fStream, IAuthThingDownloadCB, this);
+            NetCliAuthFileRequest(fCurrRequest->fName, fCurrRequest->fStream, IAuthThingDownloadCB, this);
             break;
         case Request::kPythonList:
             NetCliAuthFileListRequest(L"Python", L"pak", IGotAuthFileList, this);
@@ -458,7 +495,7 @@ hsError pfPatcherWorker::Run()
         }
 
         // This makes sure both queues are empty before exiting.
-        if (!fRequestActive)
+        if (!fCurrRequest)
             if(!IssueRequest())
                 break;
     } while (fStarted);
@@ -516,10 +553,10 @@ void pfPatcherWorker::ProcessFile()
         s->Open(clName, "wb");
 
         hsTempMutexLock lock(fRequestMut);
-        fRequests.push_back(Request(dlName, Request::kFile, s));
+        fRequests.emplace_back(new Request(dlName, Request::kFile, s));
         fQueuedFiles.pop_front();
 
-        if (!fRequestActive)
+        if (!fCurrRequest)
             IssueRequest();
     } while (!fQueuedFiles.empty());
 }
@@ -548,6 +585,21 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
         // no dad gum memory leaks, m'kay?
         stream->Close();
         delete stream;
+    }
+}
+
+// ===================================================
+
+void pfPatcherWorker::Request::CloseStream(bool del, bool unlink)
+{
+    if (fStream) {
+        unlink = (fStream->BytesWritten() == 0) || unlink;
+        fStream->Close();
+        if (unlink)
+            fStream->Unlink();
+        if (del)
+            delete fStream;
+        fStream = nullptr;
     }
 }
 
@@ -616,23 +668,21 @@ void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
 void pfPatcher::RequestGameCode()
 {
     hsTempMutexLock lock(fWorker->fRequestMut);
-    fWorker->fRequests.push_back(pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
+    fWorker->fRequests.emplace_back(new pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
 }
 
 void pfPatcher::RequestManifest(const plString& mfs)
 {
     hsTempMutexLock lock(fWorker->fRequestMut);
-    fWorker->fRequests.push_back(pfPatcherWorker::Request(mfs, pfPatcherWorker::Request::kManifest));
+    fWorker->fRequests.emplace_back(new pfPatcherWorker::Request(mfs, pfPatcherWorker::Request::kManifest));
 }
 
 void pfPatcher::RequestManifest(const std::vector<plString>& mfs)
 {
     hsTempMutexLock lock(fWorker->fRequestMut);
-    std::for_each(mfs.begin(), mfs.end(),
-        [&] (const plString& name) {
-            fWorker->fRequests.push_back(pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
-        }
-    );
+    for (const plString& name : mfs) {
+        fWorker->fRequests.emplace_back(new pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
+    }
 }
 
 bool pfPatcher::Start()
