@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsThread_Defined
 
 #include "HeadSpin.h"
+#include <atomic>
 #include <mutex>
 #include <condition_variable>
 
@@ -204,65 +205,46 @@ public:
 class hsReaderWriterLock
 {
 public:
-    struct Callback
+    hsReaderWriterLock() : fReaderCount(0), fWriterSem(1) { }
+
+    void LockForReading()
     {
-        virtual void OnLockingForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnLockedForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockingForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockedForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnLockingForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnLockedForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
-    };
-    hsReaderWriterLock(Callback * cb=nullptr);
-    void LockForReading();
-    void UnlockForReading();
-    void LockForWriting();
-    void UnlockForWriting();
+        // Don't allow us to start reading if there's still an active writer
+        std::lock_guard<std::mutex> lock(fReaderLock);
+
+        fReaderCount++;
+        if (fReaderCount == 1) {
+            // Block writers from starting (wait is a misnomer here)
+            fWriterSem.Wait();
+        }
+    }
+
+    void UnlockForReading()
+    {
+        fReaderCount--;
+        if (fReaderCount == 0)
+            fWriterSem.Signal();
+    }
+
+    void LockForWriting()
+    {
+        // Blocks new readers from starting
+        fReaderLock.lock();
+
+        // Wait until all readers are done
+        fWriterSem.Wait();
+    }
+
+    void UnlockForWriting()
+    {
+        fWriterSem.Signal();
+        fReaderLock.unlock();
+    }
 
 private:
-    int     fReaderCount;
-    std::mutex  fReaderCountLock;
-    std::mutex  fReaderLock;
-    hsSemaphore fWriterSema;
-    Callback *  fCallback;
-};
-
-class hsLockForReading
-{
-    hsReaderWriterLock * fLock;
-public:
-    hsLockForReading( hsReaderWriterLock & lock ): fLock( &lock )
-    {
-        fLock->LockForReading();
-    }
-    hsLockForReading( hsReaderWriterLock * lock ): fLock( lock )
-    {
-        fLock->LockForReading();
-    }
-    ~hsLockForReading()
-    {
-        fLock->UnlockForReading();
-    }
-};
-
-class hsLockForWriting
-{
-    hsReaderWriterLock * fLock;
-public:
-    hsLockForWriting( hsReaderWriterLock & lock ): fLock( &lock )
-    {
-        fLock->LockForWriting();
-    }
-    hsLockForWriting( hsReaderWriterLock * lock ): fLock( lock )
-    {
-        fLock->LockForWriting();
-    }
-    ~hsLockForWriting()
-    {
-        fLock->UnlockForWriting();
-    }
+    std::atomic<int>    fReaderCount;
+    std::mutex          fReaderLock;
+    hsSemaphore         fWriterSem;
 };
 
 #endif
