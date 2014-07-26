@@ -254,6 +254,13 @@ public:
      */
     plString(const char *cstr, size_t size = STRLEN_AUTO) { IConvertFromUtf8(cstr, size); }
 
+    /** Construct a plString from a string literal.
+     *  \note This constructor expects the input to be UTF-8 encoded.  For
+     *        conversion from ISO-8859-1 8-bit data, use FromIso8859_1().
+     */
+    template <size_t _Sz>
+    plString(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); }
+
     /** Copy constructor. */
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
 
@@ -268,6 +275,10 @@ public:
 
     /** Assignment operator.  Same as plString(const char *). */
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, STRLEN_AUTO); return *this; }
+
+    /** Assignment operator.  Same as plString(const char (&)[_Sz]). */
+    template <size_t _Sz>
+    plString &operator=(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); return *this; }
 
     /** Assignment operator.  Same as plString(const plString &). */
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
