@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <cmath>
+#include <algorithm>
 
 #include "plAvBehaviors.h"
 #include "plAvBrainHuman.h"

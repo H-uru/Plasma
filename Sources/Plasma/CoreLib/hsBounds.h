@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsPoint2.h"
 #include "hsMatrix44.h"
+#include <algorithm>
 
 ///////////////////////////////////////////////////////////////////////////////
 // BOUNDS

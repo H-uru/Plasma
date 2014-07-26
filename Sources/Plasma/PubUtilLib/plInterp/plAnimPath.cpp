@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "hsResMgr.h"
 #include <cmath>
+#include <algorithm>
 
 const float kSmallDelTime = 1.e-2f;  
 const float kInvSmallDelTime = 1.f / kSmallDelTime;

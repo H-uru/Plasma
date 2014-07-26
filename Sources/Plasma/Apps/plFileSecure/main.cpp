@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <ctime>
 #include <string>
+#include <algorithm>
 
 void print_version() {
     puts(plProduct::ProductString().c_str());

@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plChallengeHash.h"
 
+#include <algorithm>
+
 ShaDigest fSeed;
 
 void CryptCreateRandomSeed(size_t length, uint8_t* data)

@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #   include <io.h>
 #endif
+#include <algorithm>
 #pragma hdrstop
 
 #include "hsStream.h"

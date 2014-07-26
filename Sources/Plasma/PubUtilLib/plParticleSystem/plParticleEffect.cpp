@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem.h"
 #include "plMessage/plParticleUpdateMsg.h"
 
+#include <algorithm>
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 plParticleCollisionEffect::plParticleCollisionEffect()
 {

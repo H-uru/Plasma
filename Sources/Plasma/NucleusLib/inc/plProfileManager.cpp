@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManager.h"
 #include "plProfile.h"
 #include "hsTimer.h"
-
+#include <algorithm>
 
 plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
 {

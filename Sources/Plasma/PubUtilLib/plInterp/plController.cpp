@@ -46,6 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTransform/hsEuler.h"
 #include "plAnimTimeConvert.h"
 
+#include <algorithm>
+
 /////////////////////////////////////////////
 // Controller interp caching
 /////////////////////////////////////////////

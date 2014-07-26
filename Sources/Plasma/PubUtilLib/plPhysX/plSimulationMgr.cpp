@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <NxPhysics.h>
 
+#include <algorithm>
+
 #include "plgDispatch.h"
 #include "hsTimer.h"
 #include "plProfile.h"

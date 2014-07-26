@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <NxUtilLib.h>
 #include <NxMat33.h>
 
+#include <algorithm>
+
 #include "plMaxMeshExtractor.h"
 
 #include "plPhysXCooking.h"

@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
 
+#include <algorithm>
+
 //// Draw ////////////////////////////////////////////////////////////////////
 
 void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog)
