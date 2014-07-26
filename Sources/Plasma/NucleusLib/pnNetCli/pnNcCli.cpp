@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnEncryption/plChallengeHash.h"
 #include "pnUUID/pnUUID.h"
+#include "pnAsyncCore/pnAcLog.h"
 
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING
@@ -116,7 +117,7 @@ enum ENetCliMode {
 struct NetCli {
 
     // communication channel
-    AsyncSocket             sock;
+    AsyncSocket *           sock;
     ENetProtocol            protocol;
     NetMsgChannel *         channel;
     bool                    server;
@@ -142,7 +143,7 @@ struct NetCli {
     void *                  encryptParam;
 
     // Message buffers
-    uint8_t                    sendBuffer[kAsyncSocketBufferSize];
+    uint8_t                    sendBuffer[AsyncSocket::kBufferSize];
     ARRAY(uint8_t)             recvBuffer;
 
     NetCli()
@@ -209,7 +210,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         data = temp;
     }
     if (cli->sock)
-        AsyncSocketSend(cli->sock, data, bytes);
+        cli->sock->Send(data, bytes);
         
     // free heap buffer (if any)
     free(temp);
@@ -431,7 +432,7 @@ static bool DispatchData (NetCli * cli, void * param) {
             ASSERT(!cli->recvFieldBytes);
             cli->recvField = cli->recvMsg->msg.fields;
             cli->recvBuffer.ZeroCount();
-            cli->recvBuffer.Reserve(kAsyncSocketBufferSize);
+            cli->recvBuffer.Reserve(AsyncSocket::kBufferSize);
 
             // store the message id as uint32_t into the destination buffer
             uint32_t * recvMsgId = (uint32_t *) cli->recvBuffer.New(sizeof(uint32_t));
@@ -584,7 +585,7 @@ static bool DispatchData (NetCli * cli, void * param) {
         cli->recvFieldBytes = 0;
 
         // Release oversize message buffer
-        if (cli->recvBuffer.Count() > kAsyncSocketBufferSize)
+        if (cli->recvBuffer.Count() > AsyncSocket::kBufferSize)
             cli->recvBuffer.Clear();
     }
 
@@ -691,7 +692,7 @@ static void ClientConnect (NetCli * cli) {
         msg.message    = kNetCliCli2SrvConnect;
         msg.length     = (uint8_t) (sizeof(msg) - sizeof(msg.dh_y_data) +  bytes);
         memcpy(msg.dh_y_data, data, bytes);
-        AsyncSocketSend(cli->sock, &msg, msg.length);
+        cli->sock->Send(&msg, msg.length);
         delete [] data;
     }
 }
@@ -718,7 +719,7 @@ static bool ServerRecvConnect (
         reply.message   = kNetCliSrv2CliEncrypt;
         reply.length    = seedLength == 0 ? 0 : sizeof(reply); // reply with empty seed if we got empty seed (this means: no encryption)
         memcpy(reply.serverSeed, cli->seed, sizeof(reply.serverSeed));
-        AsyncSocketSend(cli->sock, &reply, reply.length);
+        cli->sock->Send(&reply, reply.length);
     }
 
     if (seedLength == 0) { // client wishes no encryption (that's okay, nobody else can "fake" us as nobody has the private key, so if the client actually wants encryption it will only work with the correct peer)
@@ -909,7 +910,7 @@ static void ResetSendRecv (NetCli * cli) {
 
 //===========================================================================
 static NetCli * ConnCreate (
-    AsyncSocket     sock,
+    AsyncSocket *   sock,
     unsigned        protocol,
     ENetCliMode     mode
 ) {
@@ -980,7 +981,7 @@ static void SetConnSeed (
 
 //============================================================================
 NetCli * NetCliConnectAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -991,7 +992,7 @@ NetCli * NetCliConnectAccept (
     // Create connection
     NetCli * cli = ConnCreate(sock, protocol, kNetCliModeClientStart);
     if (cli) {
-        AsyncSocketEnableNagling(sock, !unbuffered);
+        sock->EnableNagling(!unbuffered);
         cli->encryptFcn     = encryptFcn;
         cli->encryptParam   = encryptParam;
         SetConnSeed(cli, seedBytes, seedData);
@@ -1003,7 +1004,7 @@ NetCli * NetCliConnectAccept (
 //============================================================================
 #ifdef SERVER
 NetCli * NetCliListenAccept (
-    AsyncSocket         sock,
+    AsyncSocket *       sock,
     unsigned            protocol,
     bool                unbuffered,
     FNetCliEncrypt      encryptFcn,
@@ -1014,7 +1015,7 @@ NetCli * NetCliListenAccept (
     // Create connection
     NetCli * cli = ConnCreate(sock, protocol, kNetCliModeServerStart);
     if (cli) {
-        AsyncSocketEnableNagling(sock, !unbuffered);
+        sock->EnableNagling(!unbuffered);
         cli->encryptFcn     = encryptFcn;
         cli->encryptParam   = encryptParam;
         SetConnSeed(cli, seedBytes, seedData);
@@ -1026,7 +1027,7 @@ NetCli * NetCliListenAccept (
 //============================================================================
 #ifdef SERVER
 void NetCliListenReject (
-    AsyncSocket     sock,
+    AsyncSocket *   sock,
     ENetError       error
 ) {
     if (sock) {
@@ -1034,7 +1035,7 @@ void NetCliListenReject (
         response.message    = Connect::kNetCliSrv2CliError;
         response.length     = sizeof(response);
         response.error      = error;
-        AsyncSocketSend(sock, &response, sizeof(response));
+        sock->Send(&response, sizeof(response));
     }
 }
 #endif
@@ -1063,7 +1064,7 @@ void NetCliDisconnect (
         NetCliFlush(cli);
 
     if (cli->sock)
-        AsyncSocketDisconnect(cli->sock, hardClose);
+        cli->sock->Disconnect(hardClose);
 
     // don't allow any more messages to be received
     cli->recvDispatch = false;
@@ -1077,7 +1078,7 @@ void NetCliDelete (
     NetMsgChannelUnlock(cli->channel);
 
     if (cli->sock && deleteSocket)
-        AsyncSocketDelete(cli->sock);
+        cli->sock->Delete();
 
     if (cli->cryptIn)
         CryptKeyClose(cli->cryptIn);

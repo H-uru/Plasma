@@ -48,7 +48,7 @@ Mead, WA   99021
 #include "hsTimer.h"
 
 #include "pnUtils/pnUtils.h" // for CCmdParser
-#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnAsyncCore/pnAcCore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"
 

@@ -83,7 +83,7 @@ struct Srv2State_ConnData {
     uint32_t   srvType;
 };
 struct Srv2State_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Srv2State_ConnData          data;
 };
 

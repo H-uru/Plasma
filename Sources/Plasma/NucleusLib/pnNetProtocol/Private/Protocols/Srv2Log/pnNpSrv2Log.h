@@ -82,7 +82,7 @@ struct Srv2Log_ConnData {
 };
 
 struct Srv2Log_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Srv2Log_ConnData            data;
 };
 

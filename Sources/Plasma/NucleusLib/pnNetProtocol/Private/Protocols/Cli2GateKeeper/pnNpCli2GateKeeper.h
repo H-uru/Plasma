@@ -93,7 +93,7 @@ struct Cli2GateKeeper_ConnData {
 };
 
 struct Cli2GateKeeper_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Cli2GateKeeper_ConnData     data;
 };
 

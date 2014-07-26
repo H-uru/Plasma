@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plSDLModifierMsg.h"
 #include "plSDL/plSDL.h"
 #include "plNetClient/plNetClientMgr.h"
-#include "pnAsyncCore/pnAsyncCore.h"
+#include "pnAsyncCore/pnAcLog.h"
 
 // static vars
 char    plAvatarPhysicalSDLModifier::kStrPosition[] = "position";

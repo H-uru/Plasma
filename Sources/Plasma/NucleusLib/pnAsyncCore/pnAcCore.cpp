@@ -41,22 +41,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAsyncCore.h
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcCore.cpp
+*   
+***/
+
+#include "pnAcInt.h"
+#include "HeadSpin.h"
+#if HS_BUILD_FOR_WIN32
+#   include <windows.h>
+#endif
+
+#pragma hdrstop
+
+#include <atomic>
+
+/*****************************************************************************
 *
-*   Asynchronous APIs:
-*       Sockets
-*       Files
-*       Threads
-*       Logging facility
-*       Callback facility
+*   Private data
 *
 ***/
 
-#ifndef PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
-#define PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
+static std::atomic<long> s_perf[kNumAsyncPerfCounters];
 
 
-#include "Private/pnAcAllIncludes.h"
+/*****************************************************************************
+*
+*   Module exports
+*
+***/
+
+//============================================================================
+long PerfAddCounter (EAsyncPerfCounter id, unsigned n) {
+    ASSERT(id < kNumAsyncPerfCounters);
+    return s_perf[id].fetch_add(n);
+}
+
+//============================================================================
+long PerfSubCounter (EAsyncPerfCounter id, unsigned n) {
+    ASSERT(id < kNumAsyncPerfCounters);
+    return s_perf[id].fetch_sub(n);
+}
+
+//============================================================================
+long PerfSetCounter (EAsyncPerfCounter id, unsigned n) {
+    ASSERT(id < kNumAsyncPerfCounters);
+    return s_perf[id].exchange(n);
+}
 
 
-#endif // PLASMA20_SOURCES_PLASMA_NUCLEUSLIB_PNASYNCCORE_PNASYNCCORE_H
+/*****************************************************************************
+*
+*   Public exports
+*
+***/
+
+//============================================================================
+long AsyncPerfGetCounter (EAsyncPerfCounter id) {
+    static_assert(arrsize(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
+    ASSERT(id < kNumAsyncPerfCounters);
+    return s_perf[id];
+}

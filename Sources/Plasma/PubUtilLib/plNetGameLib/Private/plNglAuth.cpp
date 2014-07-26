@@ -46,6 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 #include "../Pch.h"
+#include "pnAsyncCore/pnAcTimer.h"
+#include "pnAsyncCore/pnAcLog.h"
+#include "pnAsyncCore/pnAcDns.h"
+#include "hsThread.h"
 #pragma hdrstop
 
 #include "pnEncryption/plChallengeHash.h"
@@ -62,11 +66,11 @@ struct CliAuConn : hsRefCnt {
     ~CliAuConn ();
 
     // Reconnection
-    AsyncTimer *        reconnectTimer;
+    AsyncTimer          reconnectTimer;
     unsigned            reconnectStartMs;
     
     // Ping
-    AsyncTimer *        pingTimer;
+    AsyncTimer          pingTimer;
     unsigned            pingSendTimeMs;
     unsigned            lastHeardTimeMs;
 
@@ -86,17 +90,17 @@ struct CliAuConn : hsRefCnt {
     
     void Send (const uintptr_t fields[], unsigned count);
 
-    CCritSect       critsect;
-    LINK(CliAuConn) link;
-    AsyncSocket     sock;
-    NetCli *        cli;
-    char            name[MAX_PATH];
-    plNetAddress    addr;
-    plUUID          token;
-    unsigned        seq;
-    unsigned        serverChallenge;
-    AsyncCancelId   cancelId;
-    bool            abandoned;
+    CCritSect           critsect;
+    LINK(CliAuConn)     link;
+    AsyncSocket *       sock;
+    NetCli *            cli;
+    char                name[MAX_PATH];
+    plNetAddress        addr;
+    plUUID              token;
+    unsigned            seq;
+    unsigned            serverChallenge;
+    AsyncSocket::Cancel cancelId;
+    bool                abandoned;
 };
 
 //============================================================================
@@ -1303,12 +1307,10 @@ static void UnlinkAndAbandonConn_CS (CliAuConn * conn) {
 
     conn->StopAutoReconnect();
 
-    if (conn->cancelId) {
-        AsyncSocketConnectCancel(nil, conn->cancelId);
-        conn->cancelId  = 0;
-    }
+    if (conn->cancelId)
+        conn->cancelId.ConnectCancel();
     else if (conn->sock) {
-        AsyncSocketDisconnect(conn->sock, true);
+        conn->sock->Disconnect(true);
     }
     else {
         conn->UnRef("Lifetime");
@@ -1394,7 +1396,7 @@ static void NotifyConnSocketConnectFailed (CliAuConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
 
         if (conn == s_active)
@@ -1414,7 +1416,7 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
 
     s_critsect.Enter();
     {
-        conn->cancelId = 0;
+        conn->cancelId.Clear();
         s_conns.Unlink(conn);
             
         if (conn == s_active)
@@ -1429,7 +1431,7 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
 }
 
 //============================================================================
-static bool NotifyConnSocketRead (CliAuConn * conn, AsyncNotifySocketRead * read) {
+static bool NotifyConnSocketRead (CliAuConn * conn, AsyncSocket::NotifyRead * read) {
     // TODO: Only dispatch messages from the active auth server
     conn->lastHeardTimeMs = GetNonZeroTimeMs();
     bool result = NetCliDispatch(conn->cli, read->buffer, read->bytes, conn);
@@ -1439,45 +1441,44 @@ static bool NotifyConnSocketRead (CliAuConn * conn, AsyncNotifySocketRead * read
 
 //============================================================================
 static bool SocketNotifyCallback (
-    AsyncSocket         sock,
-    EAsyncNotifySocket  code,
-    AsyncNotifySocket * notify,
-    void **             userState
+    AsyncSocket *           sock,
+    AsyncSocket::ENotify    code,
+    AsyncSocket::Notify *   notify
 ) {
     bool result = true;
     CliAuConn * conn;
 
     switch (code) {
-        case kNotifySocketConnectSuccess:
+        case AsyncSocket::kNotifyConnectSuccess:
             conn = (CliAuConn *) notify->param;
-            *userState = conn;
+            sock->user = conn;
             bool abandoned;
             s_critsect.Enter();
             {
                 conn->sock      = sock;
-                conn->cancelId  = 0;
+                conn->cancelId.Clear();
                 abandoned       = conn->abandoned;
             }
             s_critsect.Leave();
             if (abandoned)
-                AsyncSocketDisconnect(sock, true);
+                sock->Disconnect(true);
             else
                 NotifyConnSocketConnect(conn);
         break;
 
-        case kNotifySocketConnectFailed:
+        case AsyncSocket::kNotifyConnectFailed:
             conn = (CliAuConn *) notify->param;
             NotifyConnSocketConnectFailed(conn);
         break;
 
-        case kNotifySocketDisconnect:
-            conn = (CliAuConn *) *userState;
+        case AsyncSocket::kNotifyDisconnect:
+            conn = (CliAuConn *) sock->user;
             NotifyConnSocketDisconnect(conn);
         break;
 
-        case kNotifySocketRead:
-            conn = (CliAuConn *) *userState;
-            result = NotifyConnSocketRead(conn, (AsyncNotifySocketRead *) notify);
+        case AsyncSocket::kNotifyRead:
+            conn = (CliAuConn *) sock->user;
+            result = NotifyConnSocketRead(conn, (AsyncSocket::NotifyRead *) notify);
         break;
     }
     
@@ -1514,8 +1515,7 @@ static void Connect (
     connect.data.token          = conn->token;
     connect.data.dataBytes      = sizeof(connect.data);
 
-    AsyncSocketConnect(
-        &conn->cancelId,
+    conn->cancelId = AsyncSocket::Connect(
         conn->addr,
         SocketNotifyCallback,
         conn,
@@ -1571,13 +1571,13 @@ static void AsyncLookupCallback (
 static unsigned CliAuConnTimerDestroyed (void * param) {
     CliAuConn * conn = (CliAuConn *) param;
     conn->UnRef("TimerDestroyed");
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
 static unsigned CliAuConnReconnectTimerProc (void * param) {
     ((CliAuConn *) param)->TimerReconnect();
-    return kAsyncTimeInfinite;
+    return kPosInfinity32;
 }
 
 //===========================================================================
@@ -1588,10 +1588,10 @@ static unsigned CliAuConnPingTimerProc (void * param) {
 
 //============================================================================
 CliAuConn::CliAuConn ()
-    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
-    , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
+    : hsRefCnt(0), reconnectStartMs(0)
+    , pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
-    , cancelId(nil), abandoned(false)
+    , abandoned(false)
 {
     memset(name, 0, sizeof(name));
 
@@ -1643,7 +1643,7 @@ void CliAuConn::StartAutoReconnect () {
                 remainingMs = 0;
             LogMsg(kLogPerf, L"Auth auto-reconnecting in %u ms", remainingMs);
         }
-        AsyncTimerUpdate(reconnectTimer, remainingMs);
+        reconnectTimer.Set(remainingMs);
     }
     critsect.Leave();
 }
@@ -1658,8 +1658,7 @@ void CliAuConn::AutoReconnect () {
     Ref("ReconnectTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &reconnectTimer,
+        reconnectTimer.Create(
             CliAuConnReconnectTimerProc,
             0,  // immediate callback
             this
@@ -1672,10 +1671,9 @@ void CliAuConn::AutoReconnect () {
 void CliAuConn::StopAutoReconnect () {
     critsect.Enter();
     {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
-        }
+        AsyncTimer timer(reconnectTimer);
+        if (timer)
+            timer.Delete(CliAuConnTimerDestroyed);
     }
     critsect.Leave();
 }
@@ -1683,7 +1681,7 @@ void CliAuConn::StopAutoReconnect () {
 //============================================================================
 bool CliAuConn::AutoReconnectEnabled () {
     
-    return (reconnectTimer != nil) && !s_perf[kAutoReconnectDisabled];
+    return reconnectTimer && !s_perf[kAutoReconnectDisabled];
 }
 
 //============================================================================
@@ -1692,10 +1690,9 @@ void CliAuConn::AutoPing () {
     Ref("PingTimer");
     critsect.Enter();
     {
-        AsyncTimerCreate(
-            &pingTimer,
+        pingTimer.Create(
             CliAuConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
+            sock ? 0 : kPosInfinity32,
             this
         );
     }
@@ -1707,8 +1704,7 @@ void CliAuConn::StopAutoPing () {
     critsect.Enter();
     {
         if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
-            pingTimer = nil;
+            pingTimer.Delete(CliAuConnTimerDestroyed);
         }
     }
     critsect.Leave();
@@ -5073,7 +5069,7 @@ void AuthDestroy (bool wait) {
         
     while (s_perf[kPerfConnCount]) {
         NetTransUpdate();
-        AsyncSleep(10);
+        hsSleep::Sleep(10);
     }
 }
 
@@ -5138,13 +5134,10 @@ void NetCliAuthStartConnect (
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
-                AsyncCancelId cancelId;
-                AsyncAddressLookupName(
-                    &cancelId,
-                    AsyncLookupCallback,
+                AsyncDns::LookupName(
                     authAddrList[i],
                     kNetDefaultClientPort,
-                    nil
+                    AsyncLookupCallback
                 );
                 break;
             }
@@ -5185,7 +5178,7 @@ void NetCliAuthUnexpectedDisconnect () {
     s_critsect.Enter();
     {
         if (s_active && s_active->sock)
-            AsyncSocketDisconnect(s_active->sock, true);
+            s_active->sock->Disconnect(true);
     }
     s_critsect.Leave();
 }

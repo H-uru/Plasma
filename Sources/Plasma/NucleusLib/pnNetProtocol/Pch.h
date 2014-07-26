@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pnAsyncCore/pnAsyncCore.h"
 #include "pnNetCli/pnNetCli.h"
 #include "pnUUID/pnUUID.h"
 

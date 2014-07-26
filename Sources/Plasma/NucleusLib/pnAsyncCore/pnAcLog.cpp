@@ -41,101 +41,84 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 /*****************************************************************************
 *
-*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCoreExe/pnAceThread.cpp
+*   $/Plasma20/Sources/Plasma/NucleusLib/pnAsyncCore/pnAcLog.cpp
 *   
 ***/
 
-#include "Pch.h"
+#include "pnAcLog.h"
+#include "plStatusLog/plStatusLog.h"
+#include "pnUtils/pnUtils.h"
 #pragma hdrstop
 
-
 /*****************************************************************************
 *
-*   Private data
-*
-***/
-
-
-
-/*****************************************************************************
-*
-*   Internal functions
+*   Exports
 *
 ***/
 
 //===========================================================================
-static unsigned CALLBACK CreateThreadProc (LPVOID param) {
+void CDECL LogMsg (ELogSeverity severity, const char format[], ...) {
+    ASSERT(format);
 
-#ifdef USE_VLD
-    VLDEnable();
-#endif
-
-    PerfAddCounter(kAsyncPerfThreadsTotal, 1);
-    PerfAddCounter(kAsyncPerfThreadsCurr, 1);
-
-    // Initialize thread
-    AsyncThread * thread = (AsyncThread *) param;
-
-    // Call thread procedure
-    unsigned result = thread->proc(thread);
-
-    // Cleanup thread
-    delete thread;
-
-    PerfSubCounter(kAsyncPerfThreadsCurr, 1);
-    return result;
+    va_list args;
+    va_start(args, format);
+    LogMsgV(severity, format, args);
+    va_end(args);
 }
 
+//===========================================================================
+void CDECL LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
+    ASSERT(format);
 
-/*****************************************************************************
-*
-*   Module functions
-*
-***/
+    va_list args;
+    va_start(args, format);
+    LogMsgV(severity, format, args);
+    va_end(args);
+}
+
+//===========================================================================
+void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
+    ASSERT(format);
+
+    char msg[1024];
+    StrPrintfV(msg, arrsize(msg), format, args);
+
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", msg);
+}
+
+//===========================================================================
+void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
+    ASSERT(format);
+    ASSERT(args);
+
+    wchar_t msg[1024];
+    StrPrintfV(msg, arrsize(msg), format, args);
+
+    char* to_log = hsWStringToString(msg);
+    plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
+    delete[] to_log;
+}
 
 //============================================================================
-void ThreadDestroy (unsigned exitThreadWaitMs) {
+#ifdef HS_DEBUGGING
+void LogMsgDebug (const char  format[], ...) {
+    ASSERT(format);
 
-    unsigned bailAt = TimeGetMs() + exitThreadWaitMs;
-    while (AsyncPerfGetCounter(kAsyncPerfThreadsCurr) && signed(bailAt - TimeGetMs()) > 0)
-        AsyncSleep(10);
+    va_list args;
+    va_start(args, format);
+    LogMsgV(kLogDebug, format, args);
+    va_end(args);
 }
+#endif
 
+//============================================================================
+#ifdef HS_DEBUGGING
+void LogMsgDebug (const wchar_t format[], ...) {
+    ASSERT(format);
 
-/*****************************************************************************
-*
-*   Public exports
-*
-***/
-
-//===========================================================================
-void * AsyncThreadCreate (
-    FAsyncThreadProc    threadProc,
-    void *              argument,
-    const wchar_t         name[]
-) {
-    AsyncThread * thread    = new AsyncThread;
-    thread->proc            = threadProc;
-    thread->handle          = nil;
-    thread->argument        = argument;
-    thread->workTimeMs      = kAsyncTimeInfinite;
-    StrCopy(thread->name, name, arrsize(thread->name));
-    
-    // Create thread suspended
-    unsigned threadId;
-    HANDLE handle = (HANDLE) _beginthreadex(
-        (LPSECURITY_ATTRIBUTES) 0,
-        0,          // stack size
-        CreateThreadProc,
-        thread,     // argument
-        0,          // initFlag
-        &threadId
-    );
-    if (!handle) {
-        LogMsg(kLogFatal, "%s (%u)", __FILE__, GetLastError());
-        ErrorAssert(__LINE__, __FILE__, "_beginthreadex failed");
-    }
-
-    thread->handle = handle;
-    return handle;
+    va_list args;
+    va_start(args, format);
+    LogMsgV(kLogDebug, format, args);
+    va_end(args);
 }
+#endif

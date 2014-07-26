@@ -157,7 +157,7 @@ struct Srv2Vault_ConnData {
     uint32_t   srvType;
 };
 struct Srv2Vault_Connect {
-    AsyncSocketConnectPacket    hdr;
+    AsyncSocket::ConnectPacket  hdr;
     Srv2Vault_ConnData          data;
 };
 
