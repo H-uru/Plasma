@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudioFileReader.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
+#include <mutex>
 
 //// Class Definition ////////////////////////////////////////////////////////
 
@@ -165,7 +166,7 @@ protected:
     hsTArray<plSoundBuffer*> fBuffers;
     hsEvent fEvent;
     bool fRunning;
-    hsMutex fCritSect;
+    std::mutex fCritSect;
 
 public:
     virtual hsError Run();
@@ -184,9 +185,10 @@ public:
     bool IsRunning() const { return fRunning; }
 
     void AddBuffer(plSoundBuffer* buffer) {
-        fCritSect.Lock();
-        fBuffers.Push(buffer);
-        fCritSect.Unlock();
+        {
+            std::lock_guard<std::mutex> lock(fCritSect);
+            fBuffers.Push(buffer);
+        }
 
         fEvent.Signal();
     }

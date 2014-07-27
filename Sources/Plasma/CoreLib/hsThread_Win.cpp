@@ -135,62 +135,19 @@ void hsThread::ThreadYield()
 
 //////////////////////////////////////////////////////////////////////////////
 
-hsMutex::hsMutex()
-{
-    fMutexH = ::CreateMutex(nil, false, nil);
-    if (fMutexH == nil)
-        throw hsOSException(-1);
-}
-
-hsMutex::~hsMutex()
-{
-    ::CloseHandle(fMutexH);
-}
-
-void hsMutex::Lock()
-{
-    DWORD state = ::WaitForSingleObject(fMutexH, INFINITE);
-    hsAssert(state != WAIT_FAILED,"hsMutex::Lock -> Wait Failed");
-    hsAssert(state != WAIT_ABANDONED,"hsMutex::Lock -> Abandoned Mutex");
-    hsAssert(state != WAIT_TIMEOUT,"hsMutex::Lock -> Infinite Timeout expired?");
-}
-
-bool hsMutex::TryLock()
-{
-    DWORD state = ::WaitForSingleObject(fMutexH, 0);
-    hsAssert(state != WAIT_ABANDONED,"hsMutex::TryLock -> Abandoned Mutex");
-    return state == WAIT_OBJECT_0?true:false;
-}
-
-void hsMutex::Unlock()
-{
-    BOOL result = ::ReleaseMutex(fMutexH);
-    hsAssert(result != 0, "hsMutex::Unlock Failed!");
-
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-hsSemaphore::hsSemaphore(int initialValue, const char *name)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue, const char *name)
 {
     fSemaH = ::CreateSemaphore(nil, initialValue, kPosInfinity32, name);
     if (fSemaH == nil)
         throw hsOSException(-1);
 }
 
-hsSemaphore::~hsSemaphore()
+hsGlobalSemaphore::~hsGlobalSemaphore()
 {
     ::CloseHandle(fSemaH);
 }
 
-bool hsSemaphore::TryWait()
-{
-    DWORD result = ::WaitForSingleObject(fSemaH, 0);
-    hsAssert(result != WAIT_ABANDONED, "hsSemaphore -> Abandoned Semaphore");
-    return result == WAIT_OBJECT_0;
-}
-
-bool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
     if (timeToWait == kPosInfinity32)
         timeToWait = INFINITE;
@@ -205,46 +162,9 @@ bool hsSemaphore::Wait(hsMilliseconds timeToWait)
     }
 }
 
-void hsSemaphore::Signal()
+void hsGlobalSemaphore::Signal()
 {
     ::ReleaseSemaphore(fSemaH, 1, nil);
-}
-
-///////////////////////////////////////////////////////////////
-
-hsEvent::hsEvent()
-{
-    fEvent = ::CreateEvent(nil,true,false,nil);
-    if (fEvent == nil)
-        throw hsOSException(-1);
-}
-
-hsEvent::~hsEvent()
-{
-    ::CloseHandle(fEvent);
-}
-
-bool hsEvent::Wait(hsMilliseconds timeToWait)
-{
-    if (timeToWait == kPosInfinity32)
-        timeToWait = INFINITE;
-    
-    DWORD result =::WaitForSingleObject(fEvent, timeToWait);
-
-    if (result == WAIT_OBJECT_0)
-    {
-        ::ResetEvent(fEvent);
-        return true;
-    }
-    else
-    {   hsThrowIfFalse(result == WAIT_TIMEOUT);
-        return false;
-    }
-}
-
-void hsEvent::Signal()
-{
-    ::SetEvent(fEvent);
 }
 
 ///////////////////////////////////////////////////////////////

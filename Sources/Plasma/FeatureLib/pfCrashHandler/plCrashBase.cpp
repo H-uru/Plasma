@@ -53,8 +53,8 @@ void plCrashBase::IInit(const char* file)
 {
     char sema[128];
     snprintf(sema, arrsize(sema), "%s-%s", file, CRASH_NOTIFY_SUFFIX);
-    fCrashed = new hsSemaphore(0, sema);
+    fCrashed = new hsGlobalSemaphore(0, sema);
 
     snprintf(sema, arrsize(sema), "%s-%s", file, CRASH_HANDLE_SUFFIX);
-    fHandled = new hsSemaphore(0, sema);
+    fHandled = new hsGlobalSemaphore(0, sema);
 }

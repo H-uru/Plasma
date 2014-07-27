@@ -56,7 +56,7 @@ plStreamSource::plStreamSource()
 
 void plStreamSource::ICleanup()
 {
-    hsTempMutexLock lock(fMutex);
+    std::lock_guard<std::mutex> lock(fMutex);
 
     // loop through all the file data records, and delete the streams
     decltype(fFileData.begin()) curData;
@@ -72,7 +72,7 @@ void plStreamSource::ICleanup()
 
 hsStream* plStreamSource::GetFile(const plFileName& filename)
 {
-    hsTempMutexLock lock(fMutex);
+    std::lock_guard<std::mutex> lock(fMutex);
 
     plFileName sFilename = filename.Normalize('/');
     if (fFileData.find(sFilename) == fFileData.end())
@@ -112,7 +112,7 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
 {
     plFileName sDir = dir.Normalize('/');
     hsAssert(ext.CharAt(0) != '.', "Don't add a dot");
-    hsTempMutexLock lock(fMutex);
+    std::lock_guard<std::mutex> lock(fMutex);
 
     // loop through all the file data records, and create the list
     std::vector<plFileName> retVal;
@@ -142,7 +142,7 @@ bool plStreamSource::InsertFile(const plFileName& filename, hsStream* stream)
 {
     plFileName sFilename = filename.Normalize('/');
 
-    hsTempMutexLock lock(fMutex);
+    std::lock_guard<std::mutex> lock(fMutex);
     if (fFileData.find(sFilename) != fFileData.end())
         return false; // duplicate entry, return failure
 

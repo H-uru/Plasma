@@ -55,7 +55,7 @@ const float TimeBasedAvgRing<T>::kPercision = 0.001;
 template <class T>
 void TimeBasedAvgRing<T>::AddItem(T value, double time)
 {
-    hsTempMutexLock lock( fLock );
+    std::lock_guard<std::mutex> lock(fLock);
 
     if ( fList.empty() )
     {
