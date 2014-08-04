@@ -337,7 +337,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
     {
         if (!ageLoaded->fLoaded)
         {
-            fLinkTime = hsTimer::GetFullTickCount();
+            fLinkTime = hsTimer::GetTicks();
             hsStatusMessage("Age unloaded");
         }
         return true;
@@ -348,8 +348,8 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
     {
         if (fNextAge > 0)
         {
-            fLinkTime = hsTimer::GetFullTickCount() - fLinkTime;
-            float ms = hsTimer::FullTicksToMs(fLinkTime);
+            fLinkTime = hsTimer::GetTicks() - fLinkTime;
+            float ms = hsTimer::GetMilliSeconds<float>(fLinkTime);
 
             hsStatusMessageF("Age %s finished load, took %.1f ms",
                 fAges[fNextAge-1].c_str(),

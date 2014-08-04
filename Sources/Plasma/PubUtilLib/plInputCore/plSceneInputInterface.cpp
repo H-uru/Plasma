@@ -858,7 +858,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
             return;
         }
     }
-    else if (RelVaultNode * linkNode = VaultGetOwnedAgeLinkIncRef(&info)) {
+    else if (hsRef<RelVaultNode> linkNode = VaultGetOwnedAgeLink(&info)) {
         // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
         VaultAgeLinkNode linkAcc(linkNode);
         if (linkAcc.GetVolatile()) {
@@ -868,7 +868,6 @@ void plSceneInputInterface::ILinkOffereeToAge()
                 VaultRegisterOwnedAgeAndWait(&link);
             }
         }
-        linkNode->UnRef();
     }
 
     if (!fSpawnPoint.IsEmpty()) {

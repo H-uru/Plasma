@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifndef plDispatch_inc
 #define plDispatch_inc
+
 #include <list>
+#include <mutex>
 #include "hsTemplates.h"
 #include "plgDispatch.h"
 #include "hsThread.h"
@@ -74,10 +76,10 @@ protected:
     hsKeyedObject*                  fOwner;
 
     plMsgWrap*                      fFutureMsgQueue;
-    static int32_t                    fNumBufferReq;
+    static int32_t                  fNumBufferReq;
     static plMsgWrap*               fMsgCurrent;
-    static hsMutex                  fMsgCurrentMutex; // mutex for above
-    static hsMutex                  fMsgDispatchLock;   // mutex for IMsgDispatch
+    static std::mutex               fMsgCurrentMutex; // mutex for above
+    static std::mutex               fMsgDispatchLock;   // mutex for IMsgDispatch
     static plMsgWrap*               fMsgHead;
     static plMsgWrap*               fMsgTail;
     static bool                     fMsgActive;
@@ -86,7 +88,7 @@ protected:
 
     hsTArray<plTypeFilter*>         fRegisteredExactTypes;
     std::list<plMessage*>           fQueuedMsgList;
-    hsMutex                         fQueuedMsgListMutex; // mutex for above
+    std::mutex                      fQueuedMsgListMutex; // mutex for above
     bool                            fQueuedMsgOn;       // Turns on or off Queued Messages, Plugins need them off
 
     hsKeyedObject*                  IGetOwner() { return fOwner; }

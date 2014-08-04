@@ -57,6 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCli/pnNetCli.h"
 #include "plProduct.h"
 #include "hsThread.h"
+#include "hsTimer.h"
 
 #define USES_PROTOCOL_CLI2AUTH
 #define USES_PROTOCOL_CLI2GAME

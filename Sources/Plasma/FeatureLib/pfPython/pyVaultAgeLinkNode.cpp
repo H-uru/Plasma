@@ -82,10 +82,8 @@ PyObject* pyVaultAgeLinkNode::GetAgeInfo() const
         PYTHON_RETURN_NONE;
 
     PyObject * result = nil;        
-    if (RelVaultNode * rvn = fNode->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
+    if (hsRef<RelVaultNode> rvn = fNode->GetChildNode(plVault::kNodeType_AgeInfo, 1))
         result = pyVaultAgeInfoNode::New(rvn);
-        rvn->UnRef();
-    }
     
     if (result)
         return result;

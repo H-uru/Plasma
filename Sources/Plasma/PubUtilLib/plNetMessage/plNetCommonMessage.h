@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // refcntable data
 //
-class plNetCommonMessageData : public hsAtomicRefCnt
+class plNetCommonMessageData : public hsRefCnt
 {
 private:
     char *fData;            // sent

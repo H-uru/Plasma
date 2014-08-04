@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsThread_Defined
 
 #include "HeadSpin.h"
+#include <atomic>
+#include <mutex>
+#include <condition_variable>
 
 typedef uint32_t hsMilliseconds;
 
@@ -105,46 +108,44 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
+class hsSemaphore
+{
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+    unsigned fValue;
 
-class hsMutex {
-#if HS_BUILD_FOR_WIN32
-    HANDLE  fMutexH;
-#elif HS_BUILD_FOR_UNIX
-    pthread_mutex_t fPMutex;
-#endif
 public:
-    hsMutex();
-    virtual ~hsMutex();
+    hsSemaphore(unsigned initial = 0) : fValue(initial) { }
 
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fMutexH; }
-#endif
-
-    void        Lock();
-    bool        TryLock();
-    void        Unlock();
-};
-
-class hsTempMutexLock {
-    hsMutex*    fMutex;
-public:
-    hsTempMutexLock(hsMutex* mutex) : fMutex(mutex)
+    inline void Wait()
     {
-        fMutex->Lock();
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock, [this]() { return fValue > 0; });
+        --fValue;
     }
-    hsTempMutexLock(hsMutex& mutex) : fMutex(&mutex)
+
+    template <class _Rep, class _Period>
+    inline bool Wait(const std::chrono::duration<_Rep, _Period> &duration)
     {
-        fMutex->Lock();
+        std::unique_lock<std::mutex> lock(fMutex);
+
+        bool result = fCondition.wait_for(lock, duration, [this]() { return fValue > 0; });
+        if (result)
+            --fValue;
+
+        return result;
     }
-    ~hsTempMutexLock()
+
+    inline void Signal()
     {
-        fMutex->Unlock();
+        std::unique_lock<std::mutex> lock(fMutex);
+        ++fValue;
+        fCondition.notify_one();
     }
 };
 
 //////////////////////////////////////////////////////////////////////////////
-
-class hsSemaphore {
+class hsGlobalSemaphore {
 #if HS_BUILD_FOR_WIN32
     HANDLE  fSemaH;
 #elif HS_BUILD_FOR_UNIX
@@ -154,49 +155,41 @@ class hsSemaphore {
 #else
     pthread_mutex_t fPMutex;
     pthread_cond_t  fPCond;
-    int32_t       fCounter;
+    int32_t         fCounter;
 #endif
 #endif
 public:
-    hsSemaphore(int initialValue=0, const char* name=nil);
-    ~hsSemaphore();
+    hsGlobalSemaphore(int initialValue = 0, const char* name = nullptr);
+    ~hsGlobalSemaphore();
 
 #ifdef HS_BUILD_FOR_WIN32
     HANDLE GetHandle() const { return fSemaH; }
 #endif
 
-    bool        TryWait();
-    bool        Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void        Signal();
+    bool Wait(hsMilliseconds timeToWait = kPosInfinity32);
+    void Signal();
 };
 
 //////////////////////////////////////////////////////////////////////////////
 class hsEvent
 {
-#if HS_BUILD_FOR_UNIX
-#ifndef PSEUDO_EVENT
-    pthread_mutex_t fMutex;
-    pthread_cond_t  fCond;
-    bool  fTriggered;
-#else
-    enum { kRead, kWrite };
-    int     fFds[2];
-    hsMutex fWaitLock;
-    hsMutex fSignalLock;
-#endif // PSEUDO_EVENT
-#elif HS_BUILD_FOR_WIN32
-    HANDLE fEvent;
-#endif
+    std::mutex fMutex;
+    std::condition_variable fCondition;
+
 public:
-    hsEvent();
-    ~hsEvent();
+    hsEvent() { }
 
-#ifdef HS_BUILD_FOR_WIN32
-    HANDLE GetHandle() const { return fEvent; }
-#endif
+    inline void Wait()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.wait(lock);
+    }
 
-    bool  Wait(hsMilliseconds timeToWait = kPosInfinity32);
-    void  Signal();
+    inline void Signal()
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+        fCondition.notify_one();
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////
@@ -212,64 +205,80 @@ public:
 class hsReaderWriterLock
 {
 public:
-    struct Callback
-    {
-        virtual void OnLockingForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnLockedForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockingForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockedForRead( hsReaderWriterLock * lock ) {}
-        virtual void OnLockingForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnLockedForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockingForWrite( hsReaderWriterLock * lock ) {}
-        virtual void OnUnlockedForWrite( hsReaderWriterLock * lock ) {}
-    };
-    hsReaderWriterLock(Callback * cb=nullptr);
-    void LockForReading();
-    void UnlockForReading();
-    void LockForWriting();
-    void UnlockForWriting();
+    hsReaderWriterLock() : fReaderCount(0), fWriterSem(1) { }
 
 private:
-    int     fReaderCount;
-    hsMutex fReaderCountLock;
-    hsMutex fReaderLock;
-    hsSemaphore fWriterSema;
-    Callback *  fCallback;
+    void LockForReading()
+    {
+        // Don't allow us to start reading if there's still an active writer
+        std::lock_guard<std::mutex> lock(fReaderLock);
+
+        fReaderCount++;
+        if (fReaderCount == 1) {
+            // Block writers from starting (wait is a misnomer here)
+            fWriterSem.Wait();
+        }
+    }
+
+    void UnlockForReading()
+    {
+        fReaderCount--;
+        if (fReaderCount == 0)
+            fWriterSem.Signal();
+    }
+
+    void LockForWriting()
+    {
+        // Blocks new readers from starting
+        fReaderLock.lock();
+
+        // Wait until all readers are done
+        fWriterSem.Wait();
+    }
+
+    void UnlockForWriting()
+    {
+        fWriterSem.Signal();
+        fReaderLock.unlock();
+    }
+
+    std::atomic<int>    fReaderCount;
+    std::mutex          fReaderLock;
+    hsSemaphore         fWriterSem;
+
+    friend class hsLockForReading;
+    friend class hsLockForWriting;
 };
 
 class hsLockForReading
 {
-    hsReaderWriterLock * fLock;
+    hsReaderWriterLock& fLock;
+
 public:
-    hsLockForReading( hsReaderWriterLock & lock ): fLock( &lock )
+    hsLockForReading(hsReaderWriterLock& lock) : fLock(lock)
     {
-        fLock->LockForReading();
+        fLock.LockForReading();
     }
-    hsLockForReading( hsReaderWriterLock * lock ): fLock( lock )
-    {
-        fLock->LockForReading();
-    }
+
     ~hsLockForReading()
     {
-        fLock->UnlockForReading();
+        fLock.UnlockForReading();
     }
 };
 
 class hsLockForWriting
 {
-    hsReaderWriterLock * fLock;
+    hsReaderWriterLock& fLock;
+
 public:
-    hsLockForWriting( hsReaderWriterLock & lock ): fLock( &lock )
+    hsLockForWriting(hsReaderWriterLock& lock) : fLock(lock)
     {
-        fLock->LockForWriting();
+        fLock.LockForWriting();
     }
-    hsLockForWriting( hsReaderWriterLock * lock ): fLock( lock )
-    {
-        fLock->LockForWriting();
-    }
+
     ~hsLockForWriting()
     {
-        fLock->UnlockForWriting();
+        fLock.UnlockForWriting();
     }
 };
 

@@ -315,7 +315,7 @@ void NetVaultNode::DeallocNodeFields () {
 
 //============================================================================
 NetVaultNode::NetVaultNode ()
-    : hsAtomicRefCnt(0), fieldFlags(0), dirtyFlags(0)
+    : hsRefCnt(0), fieldFlags(0), dirtyFlags(0)
     , nodeId(0), createTime(0), modifyTime(0)
     , createAgeName(nil), creatorId(0)
     , nodeType(0)

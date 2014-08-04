@@ -88,14 +88,12 @@ void plString::IConvertFromUtf8(const char *utf8, size_t size)
     operator=(plStringBuffer<char>(utf8, size));
 }
 
-plString &plString::operator=(const plStringBuffer<char> &init)
-{
-    fUtf8Buffer = init;
-
 #ifdef _DEBUG
     // Check to make sure the string is actually valid UTF-8
-    const char *sp = fUtf8Buffer.GetData();
-    while (sp < fUtf8Buffer.GetData() + fUtf8Buffer.GetSize()) {
+static void _check_utf8_buffer(const plStringBuffer<char> &buffer)
+{
+    const char *sp = buffer.GetData();
+    while (sp < buffer.GetData() + buffer.GetSize()) {
         unsigned char unichar = *sp++;
         if ((unichar & 0xF8) == 0xF0) {
             // Four bytes
@@ -115,8 +113,22 @@ plString &plString::operator=(const plStringBuffer<char> &init)
             hsAssert(0, "UTF-8 character out of range");
         }
     }
+}
+#else
+#   define _check_utf8_buffer(buffer)  NULL_STMT
 #endif
 
+plString &plString::operator=(const plStringBuffer<char> &init)
+{
+    fUtf8Buffer = init;
+    _check_utf8_buffer(fUtf8Buffer);
+    return *this;
+}
+
+plString &plString::operator=(plStringBuffer<char> &&init)
+{
+    fUtf8Buffer = std::move(init);
+    _check_utf8_buffer(fUtf8Buffer);
     return *this;
 }
 
@@ -867,28 +879,41 @@ plString operator+(const char *left, const plString &right)
     return cat;
 }
 
+#define EXPAND_BUFFER(addedLength)                      \
+    char *bufp = ICanHasHeap() ? fBuffer : fShort;      \
+                                                        \
+    if (fLength + addedLength > fBufSize) {             \
+        size_t bigSize = fBufSize;                      \
+        do {                                            \
+            bigSize *= 2;                               \
+        } while (fLength + addedLength > bigSize);      \
+                                                        \
+        char *bigger = new char[bigSize];               \
+        memcpy(bigger, GetRawBuffer(), fBufSize);       \
+        if (ICanHasHeap())                              \
+            delete [] fBuffer;                          \
+        fBuffer = bufp = bigger;                        \
+        fBufSize = bigSize;                             \
+    }
+
 plStringStream &plStringStream::append(const char *data, size_t length)
 {
-    char *bufp = ICanHasHeap() ? fBuffer : fShort;
-
-    if (fLength + length > fBufSize) {
-        size_t bigSize = fBufSize;
-        do {
-            bigSize *= 2;
-        } while (fLength + length > bigSize);
-
-        char *bigger = new char[bigSize];
-        memcpy(bigger, GetRawBuffer(), fBufSize);
-        if (ICanHasHeap())
-            delete [] fBuffer;
-        fBuffer = bufp = bigger;
-        fBufSize = bigSize;
-    }
+    EXPAND_BUFFER(length)
 
     memcpy(bufp + fLength, data, length);
     fLength += length;
     return *this;
 }
+
+plStringStream &plStringStream::appendChar(char ch, size_t count)
+{
+    EXPAND_BUFFER(count)
+
+    memset(bufp + fLength, ch, count);
+    fLength += count;
+    return *this;
+}
+
 
 plStringStream &plStringStream::operator<<(const char *text)
 {

@@ -119,7 +119,7 @@ plString plLocation::StringIze()  const // Format to displayable string
 
 PL_FORMAT_IMPL(const plLocation &)
 {
-    return PL_FORMAT_FORWARD(format, value.StringIze());
+    PL_FORMAT_FORWARD(value.StringIze());
 }
 
 plLocation plLocation::MakeReserved(uint32_t number)
@@ -276,5 +276,5 @@ plString plUoid::StringIze() const // Format to displayable string
 
 PL_FORMAT_IMPL(const plUoid &)
 {
-    return PL_FORMAT_FORWARD(format, value.StringIze());
+    PL_FORMAT_FORWARD(value.StringIze());
 }

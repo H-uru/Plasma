@@ -115,45 +115,19 @@ void hsThread::ThreadYield()
 
 //////////////////////////////////////////////////////////////////////////////
 
-hsMutex::hsMutex()
-{
-    OSStatus status = ::MPCreateCriticalRegion(&fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-hsMutex::~hsMutex()
-{
-    OSStatus    status = ::MPDeleteCriticalRegion(fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-void hsMutex::Lock()
-{
-    OSStatus    status = ::MPEnterCriticalRegion(fCriticalRegion, kDurationForever);
-    hsThrowIfOSErr(status);
-}
-
-void hsMutex::Unlock()
-{
-    OSStatus    status = ::MPExitCriticalRegion(fCriticalRegion);
-    hsThrowIfOSErr(status);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-
-hsSemaphore::hsSemaphore(int initialValue)
+hsGlobalSemaphore::hsGlobalSemaphore(int initialValue)
 {
     OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
     hsThrowIfOSErr(status);
 }
 
-hsSemaphore::~hsSemaphore()
+hsGlobalSemaphore::~hsGlobalSemaphore()
 {
     OSStatus    status = MPDeleteSemaphore(fSemaId);
     hsThrowIfOSErr(status);
 }
 
-bool hsSemaphore::Wait(hsMilliseconds timeToWait)
+bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
 {
     Duration    duration;
 
@@ -171,7 +145,7 @@ bool hsSemaphore::Wait(hsMilliseconds timeToWait)
     return true;
 }
 
-void hsSemaphore::Signal()
+void hsGlobalSemaphore::Signal()
 {
     OSStatus    status = MPSignalSemaphore(fSemaId);
     hsThrowIfOSErr(status);

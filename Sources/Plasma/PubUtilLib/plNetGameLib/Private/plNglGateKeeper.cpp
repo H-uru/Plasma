@@ -56,7 +56,7 @@ namespace Ngl { namespace GateKeeper {
 *
 ***/
     
-struct CliGkConn : hsAtomicRefCnt {
+struct CliGkConn : hsRefCnt {
     CliGkConn ();
     ~CliGkConn ();
 
@@ -200,7 +200,7 @@ static std::atomic<long>            s_perf[kNumPerf];
 
 //===========================================================================
 static unsigned GetNonZeroTimeMs () {
-    if (unsigned ms = TimeGetMs())
+    if (unsigned ms = hsTimer::GetMilliSeconds<uint32_t>())
         return ms;
     return 1;
 }
@@ -525,7 +525,7 @@ static unsigned CliGkConnPingTimerProc (void * param) {
 
 //============================================================================
 CliGkConn::CliGkConn ()
-    : hsAtomicRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
+    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
@@ -812,7 +812,7 @@ bool PingRequestTrans::Recv (
     const GateKeeper2Cli_PingReply & reply = *(const GateKeeper2Cli_PingReply *)msg;
 
     m_payload.Set(reply.payload, reply.payloadBytes);
-    m_replyAtMs     = TimeGetMs();
+    m_replyAtMs     = hsTimer::GetMilliSeconds<uint32_t>();
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
 

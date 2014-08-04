@@ -1670,11 +1670,10 @@ void cyAvatar::ChangeAvatar(const char* genderName)
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, genderName, arrsize(wStr));
     
-    RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
+    hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode();
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetAvatarShapeName(wStr);
-        rvnPlr->UnRef();
     }
 }
 
@@ -1690,11 +1689,10 @@ void cyAvatar::ChangePlayerName(const char* playerName)
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, playerName, arrsize(wStr));
     
-    RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef();
+    hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode();
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
         plr.SetPlayerName(wStr);
-        rvnPlr->UnRef();
     } 
 }
 

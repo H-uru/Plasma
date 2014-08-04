@@ -46,38 +46,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class hsRefCnt {
 private:
-    int         fRefCnt;
-
-public:
-                hsRefCnt(int initRefs = 1) : fRefCnt(initRefs) {}
-    virtual     ~hsRefCnt();
-
-    inline int  RefCnt() const { return fRefCnt; }
-    void        UnRef();
-    inline void Ref() { ++fRefCnt; }
-};
-
-#define hsRefCnt_SafeRef(obj)       do { if (obj) (obj)->Ref(); } while (0)
-#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
-
-#define hsRefCnt_SafeAssign(dst, src)       \
-        do {                            \
-            hsRefCnt_SafeRef(src);      \
-            hsRefCnt_SafeUnRef(dst);        \
-            dst = src;                  \
-        } while (0)
-
-
-// Thread-safe version.  TODO:  Evaluate whether this is fast enough to
-// merge with hsRefCnt above.
-class hsAtomicRefCnt
-{
-private:
     std::atomic<int> fRefCnt;
 
 public:
-                 hsAtomicRefCnt(int initRefs = 1) : fRefCnt(initRefs) { }
-    virtual     ~hsAtomicRefCnt();
+                hsRefCnt(int initRefs = 1);
+    virtual     ~hsRefCnt();
 
     inline int  RefCnt() const { return fRefCnt; }
     void        UnRef(const char* tag = nullptr);
@@ -85,6 +58,81 @@ public:
 
     // Useless, but left here for debugging compatibility with AtomicRef
     void        TransferRef(const char* oldTag, const char* newTag);
+
+
+    // The stored reference count of an hsRefCnt-derived object should never
+    // be copied! Therefore, if you want a copyable hsRefCnt-based class, you
+    // should implement your own copy constructor / assignment operator.
+    hsRefCnt(const hsRefCnt &) = delete;
+    hsRefCnt &operator=(const hsRefCnt &) = delete;
+};
+
+#define hsRefCnt_SafeRef(obj)   do { if (obj) (obj)->Ref(); } while (0)
+#define hsRefCnt_SafeUnRef(obj) do { if (obj) (obj)->UnRef(); } while (0)
+
+#define hsRefCnt_SafeAssign(dst, src)   \
+        do {                            \
+            hsRefCnt_SafeRef(src);      \
+            hsRefCnt_SafeUnRef(dst);    \
+            dst = src;                  \
+        } while (0)
+
+
+template <class _Ref>
+class hsRef
+{
+public:
+    hsRef() : fObj(nullptr) { }
+    hsRef(nullptr_t) : fObj(nullptr) { }
+    hsRef(_Ref *obj) : fObj(obj) { if (fObj) fObj->Ref(); }
+    hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
+    hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
+
+    ~hsRef() { if (fObj) fObj->UnRef(); }
+
+    hsRef<_Ref> &operator=(_Ref *obj)
+    {
+        if (obj)
+            obj->Ref();
+        if (fObj)
+            fObj->UnRef();
+        fObj = obj;
+        return *this;
+    }
+    hsRef<_Ref> &operator=(const hsRef<_Ref> &copy) { return operator=(copy.fObj); }
+
+    hsRef<_Ref> &operator=(hsRef<_Ref> &&move)
+    {
+        if (fObj)
+            fObj->UnRef();
+        fObj = move.fObj;
+        move.fObj = nullptr;
+        return *this;
+    }
+
+    hsRef<_Ref> &operator=(nullptr_t)
+    {
+        if (fObj)
+            fObj->UnRef();
+        fObj = nullptr;
+        return *this;
+    }
+
+    bool operator==(const hsRef<_Ref> &other) const { return fObj == other.fObj; }
+    bool operator!=(const hsRef<_Ref> &other) const { return fObj != other.fObj; }
+    bool operator> (const hsRef<_Ref> &other) const { return fObj >  other.fObj; }
+    bool operator< (const hsRef<_Ref> &other) const { return fObj <  other.fObj; }
+    bool operator>=(const hsRef<_Ref> &other) const { return fObj >= other.fObj; }
+    bool operator<=(const hsRef<_Ref> &other) const { return fObj <= other.fObj; }
+    bool operator==(_Ref *other) const { return fObj == other; }
+    bool operator!=(_Ref *other) const { return fObj != other; }
+
+    _Ref &operator*() const { return *fObj; }
+    _Ref *const operator->() const { return fObj; }
+    operator _Ref *const() const { return fObj; }
+
+private:
+    _Ref *fObj;
 };
 
 #endif

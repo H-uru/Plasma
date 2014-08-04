@@ -48,8 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCrashBase
 {
 protected:
-    hsSemaphore* fCrashed;
-    hsSemaphore* fHandled;
+    hsGlobalSemaphore* fCrashed;
+    hsGlobalSemaphore* fHandled;
 
     ~plCrashBase();
     void IInit(const char* file);

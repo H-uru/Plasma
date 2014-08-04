@@ -84,7 +84,7 @@ public:
     uint32_t                          GetNumReceivers() const { return fReceivers.GetCount(); }
 };
 
-int32_t                   plDispatch::fNumBufferReq = 0;
+int32_t                 plDispatch::fNumBufferReq = 0;
 bool                    plDispatch::fMsgActive = false;
 plMsgWrap*              plDispatch::fMsgCurrent = nil;
 plMsgWrap*              plDispatch::fMsgHead = nil;
@@ -92,8 +92,8 @@ plMsgWrap*              plDispatch::fMsgTail = nil;
 hsTArray<plMessage*>    plDispatch::fMsgWatch;
 MsgRecieveCallback      plDispatch::fMsgRecieveCallback = nil;
 
-hsMutex     plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
-hsMutex     plDispatch::fMsgDispatchLock; // mutex for IMsgDispatch
+std::mutex              plDispatch::fMsgCurrentMutex; // mutex for fMsgCurrent
+std::mutex              plDispatch::fMsgDispatchLock; // mutex for IMsgDispatch
 
 
 plDispatch::plDispatch()
@@ -227,18 +227,19 @@ bool plDispatch::IListeningForExactType(uint16_t hClass)
 
 void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 {
-    fMsgCurrentMutex.Lock();
+    {
+        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
 
 #ifdef HS_DEBUGGING
-    if( msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch) )
-        fMsgWatch.Append(msgWrap->fMsg);
+        if (msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch))
+            fMsgWatch.Append(msgWrap->fMsg);
 #endif // HS_DEBUGGING
 
-    if( fMsgTail )
-        fMsgTail = IInsertToQueue(&fMsgTail->fNext, msgWrap);
-    else
-        fMsgTail = IInsertToQueue(&fMsgHead, msgWrap);
-    fMsgCurrentMutex.Unlock();
+        if (fMsgTail)
+            fMsgTail = IInsertToQueue(&fMsgTail->fNext, msgWrap);
+        else
+            fMsgTail = IInsertToQueue(&fMsgHead, msgWrap);
+    }
 
     if( !async )
         // Test for fMsgActive in IMsgDispatch(), properly wrapped inside a mutex -mcn
@@ -248,24 +249,20 @@ void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 // On starts deferring msg delivery until buffering is set to off again.
 bool plDispatch::SetMsgBuffering(bool on)
 {
-    fMsgCurrentMutex.Lock();
-    if( on )
+    std::unique_lock<std::mutex> lock(fMsgCurrentMutex);
+    if (on)
     {
         hsAssert(fNumBufferReq || !fMsgActive, "Can't start deferring message delivery while delivering messages. See mf");
-        if( !fNumBufferReq && fMsgActive )
-        {
-            fMsgCurrentMutex.Unlock();
+        if (!fNumBufferReq && fMsgActive)
             return false;
-        }
 
         fNumBufferReq++;
         fMsgActive = true;
-        fMsgCurrentMutex.Unlock();
     }
-    else if( !--fNumBufferReq )
+    else if (!--fNumBufferReq)
     {
         fMsgActive = false;
-        fMsgCurrentMutex.Unlock();
+        lock.unlock();
         IMsgDispatch();
     }
     hsAssert(fNumBufferReq >= 0, "Mismatched number of on/off dispatch buffering requests");
@@ -275,25 +272,23 @@ bool plDispatch::SetMsgBuffering(bool on)
 
 void plDispatch::IMsgDispatch()
 {
-    if( !fMsgDispatchLock.TryLock() )
+    std::unique_lock<std::mutex> dispatchLock(fMsgDispatchLock, std::try_to_lock);
+    if (!dispatchLock.owns_lock())
         return;
 
-    if( fMsgActive )
-    {
-        fMsgDispatchLock.Unlock();
+    if (fMsgActive)
         return;
-    }
 
     fMsgActive = true;
     int responseLevel=0;
 
-    fMsgCurrentMutex.Lock();
+    std::unique_lock<std::mutex> msgCurrentLock(fMsgCurrentMutex);
 
     plMsgWrap* origTail = fMsgTail;
     while((fMsgCurrent = fMsgHead))
     {
         IDequeue(&fMsgHead, &fMsgTail);
-        fMsgCurrentMutex.Unlock();
+        msgCurrentLock.unlock();
 
         plMessage* msg = fMsgCurrent->fMsg;
         bool nonLocalMsg = msg && msg->HasBCastFlag(plMessage::kNetNonLocal);
@@ -311,7 +306,7 @@ void plDispatch::IMsgDispatch()
 
         static uint64_t startTicks = 0;
         if (plDispatchLogBase::IsLogging())
-            startTicks = hsTimer::GetFullTickCount();
+            startTicks = hsTimer::GetTicks();
 
         int i, numReceivers=0;
         for( i = 0; fMsgCurrent && i < fMsgCurrent->GetNumReceivers(); i++ )
@@ -343,7 +338,7 @@ void plDispatch::IMsgDispatch()
                 }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-                uint32_t rcvTicks = hsTimer::GetPrecTickCount();
+                uint64_t rcvTicks = hsTimer::GetTicks();
 
                 // Object could be deleted by this message, so we need to log this stuff now
                 plString keyname = "(unknown)";
@@ -373,9 +368,9 @@ void plDispatch::IMsgDispatch()
 #ifndef PLASMA_EXTERNAL_RELEASE
                 if (plDispatchLogBase::IsLoggingLong())
                 {
-                    rcvTicks = hsTimer::GetPrecTickCount() - rcvTicks;
+                    rcvTicks = hsTimer::GetTicks() - rcvTicks;
 
-                    float rcvTime = (float)(hsTimer::PrecTicksToSecs(rcvTicks) * 1000.f);
+                    float rcvTime = hsTimer::GetMilliSeconds<float>(rcvTicks);
                     // If the receiver takes more than 5 ms to process its message, log it
                     if (rcvTime > 5.f)
                         plDispatchLogBase::GetInstance()->LogLongReceive(keyname.c_str(), className, clonePlayerID, msg, rcvTime);
@@ -392,7 +387,7 @@ void plDispatch::IMsgDispatch()
         // for message logging
 //      if (plDispatchLogBase::IsLogging())
 //      {
-//          float sendTime = hsTimer::FullTicksToMs(hsTimer::GetFullTickCount() - startTicks);
+//          float sendTime = hsTimer::GetMilliSeconds<float>(hsTimer::GetTicks() - startTicks);
 //
 //          plDispatchLogBase::GetInstance()->DumpMsg(msg, numReceivers, (int)sendTime, responseLevel*2 /* indent */);
 //          if (origTail==fMsgCurrent)
@@ -402,16 +397,14 @@ void plDispatch::IMsgDispatch()
 //          }
 //      }
 
-        fMsgCurrentMutex.Lock();
+        msgCurrentLock.lock();
 
         delete fMsgCurrent;
         // TEMP
         fMsgCurrent = (class plMsgWrap *)0xdeadc0de;
     }
-    fMsgCurrentMutex.Unlock();
 
     fMsgActive = false;
-    fMsgDispatchLock.Unlock();
 }
 
 //
@@ -419,12 +412,12 @@ void plDispatch::IMsgDispatch()
 //
 bool plDispatch::IMsgNetPropagate(plMessage* msg)
 {
-    fMsgCurrentMutex.Lock();
+    {
+        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
 
-    // Make sure cascaded messages all have the same net flags
-    plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
-
-    fMsgCurrentMutex.Unlock();
+        // Make sure cascaded messages all have the same net flags
+        plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
+    }
 
     // Decide if msg should go out over the network.
     // If kNetForce is used, this message should always go out over the network, even if it's already 
@@ -511,10 +504,9 @@ void plDispatch::MsgQueue(plMessage* msg)
 {
     if (fQueuedMsgOn)
     {
-        fQueuedMsgListMutex.Lock();
+        std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
         hsAssert(msg,"Message missing");
         fQueuedMsgList.push_back(msg);
-        fQueuedMsgListMutex.Unlock();
     }
     else
         MsgSend(msg, false);
@@ -522,23 +514,23 @@ void plDispatch::MsgQueue(plMessage* msg)
 
 void plDispatch::MsgQueueProcess()
 {
-        // Process all messages on Queue, unlock while sending them
-        // this would allow other threads to put new messages on the list while we send()
-    while (1)
-    {   
-        plMessage * pMsg = nil;
-        fQueuedMsgListMutex.Lock();
-        int size = fQueuedMsgList.size();
-        if (size)
-        {   pMsg = fQueuedMsgList.front();
-            fQueuedMsgList.pop_front();
+    // Process all messages on Queue, unlock while sending them
+    // this would allow other threads to put new messages on the list while we send()
+    bool empty = false;
+    while (!empty)
+    {
+        plMessage * pMsg = nullptr;
+        {
+            std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
+            empty = fQueuedMsgList.empty();
+            if (!empty)
+            {
+                pMsg = fQueuedMsgList.front();
+                fQueuedMsgList.pop_front();
+            }
         }
-        fQueuedMsgListMutex.Unlock();
         if (pMsg)
-        {   MsgSend(pMsg, false);
-        }
-        if (!size)
-            break;
+            MsgSend(pMsg, false);
     }
 }
 

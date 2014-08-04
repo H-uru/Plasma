@@ -128,6 +128,13 @@ public:
             fData->AddRef();
     }
 
+    /** Move constructor */
+    plStringBuffer(plStringBuffer<_Ch> &&move) : fSize(move.fSize)
+    {
+        memcpy(fShort, move.fShort, sizeof(fShort));
+        move.fSize = 0;
+    }
+
     /** Construct a string buffer which holds a COPY of the \a data, up to
      *  \a size characters.  The terminating '\0' is added automatically,
      *  meaning this constructor is safe to use on buffers which are not
@@ -154,7 +161,7 @@ public:
     }
 
     /** Assignment operator.  Changes the reference to point to the
-     *  copied buffer in \a copy.
+     *  buffer in \a copy.
      */
     plStringBuffer<_Ch> &operator=(const plStringBuffer<_Ch> &copy)
     {
@@ -165,6 +172,18 @@ public:
 
         memcpy(fShort, copy.fShort, sizeof(fShort));
         fSize = copy.fSize;
+        return *this;
+    }
+
+    /** Move assignment operator */
+    plStringBuffer<_Ch> &operator=(plStringBuffer<_Ch> &&move)
+    {
+        if (IHaveACow())
+            fData->DecRef();
+
+        memcpy(fShort, move.fShort, sizeof(fShort));
+        fSize = move.fSize;
+        move.fSize = 0;
         return *this;
     }
 
@@ -235,14 +254,15 @@ private:
     void IConvertFromUtf32(const UniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
+public:
     // Constructing and comparing with nil or nullptr won't break plString,
     // but it's preferred not to do so with the constants.  That is to say,
     // you can construct with a const char * which points to null, but
     // don't actually write `plString foo = nil;`
-    plString(std::nullptr_t) { }
-    void operator=(std::nullptr_t) { }
-    void operator==(std::nullptr_t) const { }
-    void operator!=(std::nullptr_t) const { }
+    plString(std::nullptr_t) = delete;
+    void operator=(std::nullptr_t) = delete;
+    void operator==(std::nullptr_t) const = delete;
+    void operator!=(std::nullptr_t) const = delete;
 
 public:
     /** Construct a valid, empty string. */
@@ -254,8 +274,18 @@ public:
      */
     plString(const char *cstr, size_t size = STRLEN_AUTO) { IConvertFromUtf8(cstr, size); }
 
+    /** Construct a plString from a string literal.
+     *  \note This constructor expects the input to be UTF-8 encoded.  For
+     *        conversion from ISO-8859-1 8-bit data, use FromIso8859_1().
+     */
+    template <size_t _Sz>
+    plString(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); }
+
     /** Copy constructor. */
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
+
+    /** Move constructor. */
+    plString(plString &&move) : fUtf8Buffer(std::move(move.fUtf8Buffer)) { }
 
     /** Copy constructor from plStringBuffer<char>.
      *  \note This constructor expects the input to be UTF-8 encoded.  For
@@ -263,17 +293,30 @@ public:
      */
     plString(const plStringBuffer<char> &init) { operator=(init); }
 
+    /** Move constructor from plStringBuffer<char>. */
+    plString(plStringBuffer<char> &&init) { operator=(std::move(init)); }
+
     /** Construct a string from expanded Unicode data. */
     plString(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
 
     /** Assignment operator.  Same as plString(const char *). */
     plString &operator=(const char *cstr) { IConvertFromUtf8(cstr, STRLEN_AUTO); return *this; }
 
+    /** Assignment operator.  Same as plString(const char (&)[_Sz]). */
+    template <size_t _Sz>
+    plString &operator=(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); return *this; }
+
     /** Assignment operator.  Same as plString(const plString &). */
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
 
+    /** Assignment operator.  Same as plString(plString &&). */
+    plString &operator=(plString &&move) { fUtf8Buffer = std::move(move.fUtf8Buffer); return *this; }
+
     /** Assignment operator.  Same as plString(const plStringBuffer<char> &). */
     plString &operator=(const plStringBuffer<char> &init);
+
+    /** Assignment operator.  Same as plString(plStringBuffer<char> &&). */
+    plString &operator=(plStringBuffer<char> &&init);
 
     /** Assignment operator.  Same as plString(const plUnicodeBuffer &). */
     plString &operator=(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); return *this; }
@@ -674,8 +717,32 @@ public:
     /** Destructor, frees any allocated heap memory owned by the stream. */
     ~plStringStream() { if (ICanHasHeap()) delete [] fBuffer; }
 
+    plStringStream(const plStringStream &) = delete;
+    plStringStream &operator=(const plStringStream &) = delete;
+
+    /** Move operator */
+    plStringStream(plStringStream &&move)
+        : fBufSize(move.fBufSize), fLength(move.fLength)
+    {
+        memcpy(fShort, move.fShort, sizeof(fShort));
+        move.fBufSize = 0;
+    }
+
+    /** Move assignment operator. */
+    plStringStream &operator=(plStringStream &&move)
+    {
+        memcpy(fShort, move.fShort, sizeof(fShort));
+        fBufSize = move.fBufSize;
+        fLength = move.fLength;
+        move.fBufSize = 0;
+        return *this;
+    }
+
     /** Append string data to the end of the stream. */
     plStringStream &append(const char *data, size_t length);
+
+    /** Append a sequence of characters to the stream. */
+    plStringStream &appendChar(char ch, size_t count = 1);
 
     /** Append UTF-8 C-style string data to the stream. */
     plStringStream &operator<<(const char *text);
@@ -693,7 +760,7 @@ public:
     plStringStream &operator<<(double num);
 
     /** Append a single Latin-1 character to the stream. */
-    plStringStream &operator<<(char ch) { return append(&ch, 1); }
+    plStringStream &operator<<(char ch) { return appendChar(ch); }
 
     /** Append the contents of \a text to the stream. */
     plStringStream &operator<<(const plString &text)

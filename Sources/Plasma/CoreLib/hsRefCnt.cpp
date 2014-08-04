@@ -46,17 +46,101 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 #include "hsRefCnt.h"
 
+#define REFCOUNT_DBG_NONE   0
+#define REFCOUNT_DBG_REFS   1
+#define REFCOUNT_DBG_LEAKS  2
+#define REFCOUNT_DBG_ALL    3
+#define REFCOUNT_DEBUGGING  REFCOUNT_DBG_NONE
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+#include <unordered_set>
+#include <mutex>
+#include "plFormat.h"
+
+// hsDebugMessage can get overridden to dump to a file :(
+#ifdef _MSC_VER
+#   include "hsWindows.h"
+#   define _LeakDebug(message) OutputDebugString(message)
+#else
+#   define _LeakDebug(message) fputs(message, stderr)
+#endif
+
+struct _RefCountLeakCheck
+{
+    std::unordered_set<hsRefCnt *> m_refs;
+    unsigned m_added, m_removed;
+    std::mutex m_mutex;
+
+    ~_RefCountLeakCheck()
+    {
+        std::lock_guard<std::mutex> lock(m_mutex);
+
+        _LeakDebug(plFormat("Refs tracked:  {} created, {} destroyed\n",
+                            m_added, m_removed).c_str());
+        if (m_refs.empty())
+            return;
+
+        _LeakDebug(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
+        for (hsRefCnt *ref : m_refs) {
+            _LeakDebug(plFormat("    0x{_08x} {}: {} refs remain\n",
+                       (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
+        }
+    }
+
+    static _RefCountLeakCheck *_instance()
+    {
+        static _RefCountLeakCheck s_instance;
+        return &s_instance;
+    }
+
+    static void add(hsRefCnt *ref)
+    {
+        _RefCountLeakCheck *this_p = _instance();
+        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        ++this_p->m_added;
+        this_p->m_refs.insert(ref);
+    }
+
+    static void del(hsRefCnt *ref)
+    {
+        _RefCountLeakCheck *this_p = _instance();
+        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        ++this_p->m_removed;
+        this_p->m_refs.erase(ref);
+    }
+};
+#endif
+
+hsRefCnt::hsRefCnt(int initRefs)
+    : fRefCnt(initRefs)
+{
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck::add(this);
+#endif
+}
+
 hsRefCnt::~hsRefCnt()
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt == 1);
 #endif
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    _RefCountLeakCheck::del(this);
+#endif
 }
 
-void hsRefCnt::UnRef()
+void hsRefCnt::UnRef(const char* tag)
 {
 #ifdef HS_DEBUGGING
     hsThrowIfFalse(fRefCnt >= 1);
+#endif
+
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
+    if (tag)
+        DEBUG_MSG("Dec %p %s: %u", this, tag, fRefCnt - 1);
+    else
+        DEBUG_MSG("Dec %p: %u", this, fRefCnt - 1);
 #endif
 
     if (fRefCnt == 1)   // don't decrement if we call delete
@@ -65,47 +149,21 @@ void hsRefCnt::UnRef()
         --fRefCnt;
 }
 
-hsAtomicRefCnt::~hsAtomicRefCnt()
+void hsRefCnt::Ref(const char* tag)
 {
-#ifdef HS_DEBUGGING
-    hsThrowIfFalse(fRefCnt == 1);
-#endif
-}
-
-void hsAtomicRefCnt::UnRef(const char* tag)
-{
-#ifdef HS_DEBUGGING
-    hsThrowIfFalse(fRefCnt >= 1);
-#endif
-
-#ifdef REFCOUNT_DEBUGGING
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     if (tag)
-        DEBUG_MSG("Dec %p %s: %u", this, tag, prev - 1);
+        DEBUG_MSG("Inc %p %s: %u", this, tag, fRefCnt + 1);
     else
-        DEBUG_MSG("Dec %p: %u", this, prev - 1);
-#endif
-
-    if (fRefCnt == 1)   // don't decrement if we call delete
-        delete this;
-    else
-        --fRefCnt;
-}
-
-void hsAtomicRefCnt::Ref(const char* tag)
-{
-#ifdef REFCOUNT_DEBUGGING
-    if (tag)
-        DEBUG_MSG("Inc %p %s: %u", this, tag, prev + 1);
-    else
-        DEBUG_MSG("Inc %p: %u", this, prev + 1);
+        DEBUG_MSG("Inc %p: %u", this, fRefCnt + 1);
 #endif
 
     ++fRefCnt;
 }
 
-void hsAtomicRefCnt::TransferRef(const char* oldTag, const char* newTag)
+void hsRefCnt::TransferRef(const char* oldTag, const char* newTag)
 {
-#ifdef REFCOUNT_DEBUGGING
+#if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_REFS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
     DEBUG_MSG("Inc %p %s: (xfer)", this, newTag);
     DEBUG_MSG("Dec %p %s: (xfer)", this, oldTag);
 #endif

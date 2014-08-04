@@ -153,7 +153,7 @@ public:
 protected:
     const char* fName;      // Name of timer
 
-    uint32_t fValue;
+    uint64_t fValue;
 
     uint32_t fAvgCount;
     uint64_t fAvgTotal;
@@ -168,7 +168,7 @@ protected:
 
     void IAddAvg();
 
-    void IPrintValue(uint32_t value, char* buf, bool printType);
+    void IPrintValue(uint64_t value, char* buf, bool printType);
 
 public:
     plProfileBase();
@@ -179,7 +179,7 @@ public:
 
     void UpdateAvg();
 
-    uint32_t GetValue();
+    uint64_t GetValue();
 
     void PrintValue(char* buf, bool printType=true);
     void PrintAvg(char* buf, bool printType=true);
@@ -230,7 +230,7 @@ public:
     void Inc(int i = 1) { fValue += i;}
     void Dec(int i = 1) { fValue -= i;}
 
-    void Set(uint32_t value) { fValue = value; }
+    void Set(uint64_t value) { fValue = value; }
 
     // 
     // For multiple timings per frame of the same thing ie. Each particle system

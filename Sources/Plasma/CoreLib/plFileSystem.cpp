@@ -199,7 +199,7 @@ plFileName plFileName::Join(const plFileName &base, const plFileName &path)
 
 PL_FORMAT_IMPL(const plFileName &)
 {
-    return PL_FORMAT_FORWARD(format, value.AsString());
+    PL_FORMAT_FORWARD(value.AsString());
 }
 
 

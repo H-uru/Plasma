@@ -42,136 +42,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManager.h"
 #include "plProfile.h"
 #include "hsTimer.h"
-#include "hsWindows.h"
 
-
-static uint32_t gCyclesPerMS = 0;
-
-#ifdef HS_BUILD_FOR_WIN32
-#define USE_FAST_TIMER
-#endif
-
-#ifdef USE_FAST_TIMER
-
-#pragma warning (push)
-#pragma warning (disable : 4035)    // disable no return value warning
-
-#ifdef _MSC_VER
-#define forceinline __forceinline
-#else
-#define forceinline inline
-#endif
-
-forceinline uint32_t GetPentiumCounter()
-{
-#ifdef _MSC_VER
-    __asm {
-        xor   eax,eax       // VC won't realize that eax is modified w/out this
-                            //   instruction to modify the val.
-                            //   Problem shows up in release mode builds
-        _emit 0x0F          // Pentium high-freq counter to edx;eax
-        _emit 0x31          // only care about low 32 bits in eax
-        
-        xor   edx,edx       // so VC gets that edx is modified
-    }
-#endif
-}
-
-#pragma warning (pop)
-
-
-
-static uint32_t GetProcSpeed()
-{
-    const char* keypath[] =
-    {
-        "HARDWARE",
-        "DESCRIPTION",
-        "System",
-        "CentralProcessor",
-        "0"
-    };
-
-    HKEY hKey = HKEY_LOCAL_MACHINE;
-
-    int numKeys = sizeof(keypath) / sizeof(char*);
-    for (int i = 0; i < numKeys; i++)
-    {
-        HKEY thisKey = NULL;    
-        bool success = (RegOpenKeyEx(hKey, keypath[i], 0, KEY_READ, &thisKey) == ERROR_SUCCESS);
-
-        RegCloseKey(hKey);
-        hKey = thisKey;
-
-        if (!success)
-            return 0;
-    }
-
-    DWORD value=0, size=sizeof(DWORD);
-    bool success = (RegQueryValueEx(hKey, "~MHz", 0, NULL, (BYTE*)&value, &size) == ERROR_SUCCESS);
-    RegCloseKey(hKey);
-
-    return value*1000000;
-}
-
-uint32_t GetProcSpeedAlt()
-{
-    const uint32_t kSamplePeriodMS = 250;
-
-    // Raise priority to avoid interference from other threads.
-    int priority = GetThreadPriority(GetCurrentThread());
-    SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
-
-    uint32_t startTicks, endTicks;
-    uint64_t pcStart, pcEnd;
-
-    // Count number of processor cycles inside the specified interval
-    QueryPerformanceCounter((LARGE_INTEGER*)&pcStart);
-    startTicks = plProfileManager::GetTime();
-    Sleep(kSamplePeriodMS);
-    endTicks = plProfileManager::GetTime();
-    QueryPerformanceCounter((LARGE_INTEGER*)&pcEnd);
-
-    // Restore thread priority.
-    SetThreadPriority(GetCurrentThread(), priority);
-
-    // Calculate Rdtsc/PerformanceCounter ratio;
-    uint32_t numTicks = endTicks - startTicks;
-    uint64_t pcDiff = pcEnd - pcStart;
-
-    double ratio = double(numTicks) / double(pcDiff);
-    uint64_t pcFreq;
-    QueryPerformanceFrequency((LARGE_INTEGER*)&pcFreq);
-
-    // Calculate CPU frequency.
-    uint64_t cpuFreq = uint64_t(pcFreq * ratio);
-
-    return (uint32_t)cpuFreq;
-}
-
-#define GetProfileTicks() GetPentiumCounter()
-
-#else
-
-#define GetProfileTicks() hsTimer::GetPrecTickCount()
-
-#endif // USE_FAST_TIMER
-
-#define TicksToMSec(t) (float(t) / float(gCyclesPerMS))
-#define MSecToTicks(t) (float(t) * float(gCyclesPerMS))
 
 plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
 {
-#ifdef USE_FAST_TIMER
-    fProcessorSpeed = GetProcSpeed();
-    // Registry stuff only works on NT OS's, have to calc it otherwise
-    if (fProcessorSpeed == 0)
-        fProcessorSpeed = GetProcSpeedAlt();
-
-    gCyclesPerMS = fProcessorSpeed / 1000;
-#else
-    gCyclesPerMS = hsTimer::GetPrecTicksPerSec() / 1000;
-#endif
 }
 
 plProfileManager::~plProfileManager()
@@ -251,9 +125,9 @@ void plProfileManager::EndFrame()
     }
 }
 
-uint32_t plProfileManager::GetTime()
+uint64_t plProfileManager::GetTime()
 {
-    return GetProfileTicks();
+    return hsTimer::GetTicks();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -300,10 +174,10 @@ void plProfileBase::UpdateAvg()
     }
 }
 
-uint32_t plProfileBase::GetValue()
+uint64_t plProfileBase::GetValue()
 {
     if (hsCheckBits(fDisplayFlags, kDisplayTime))
-        return (uint32_t)TicksToMSec(fValue);
+        return hsTimer::GetMilliSeconds<uint64_t>(fValue);
     else
         return fValue;
 }
@@ -334,7 +208,7 @@ static  const char  *insertCommas(unsigned int value)
     return str;
 }
 
-void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
+void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
 {
     if (hsCheckBits(fDisplayFlags, kDisplayCount))
     {
@@ -348,11 +222,11 @@ void plProfileBase::IPrintValue(uint32_t value, char* buf, bool printType)
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayFPS))
     {
-        sprintf(buf, "%.2f", 1000.0f / TicksToMSec(value));
+        sprintf(buf, "%.2f", 1000.0f / hsTimer::GetMilliSeconds<float>(value));
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayTime))
     {
-        sprintf(buf, "%.2f", TicksToMSec(value));
+        sprintf(buf, "%.2f", hsTimer::GetMilliSeconds<float>(value));
         if (printType)
             strcat(buf, " ms");
     }
@@ -416,7 +290,7 @@ plProfileLaps::LapInfo* plProfileLaps::IFindLap(const char* lapName)
     return nil;
 }
 
-void plProfileLaps::BeginLap(uint32_t curValue, const char* name)
+void plProfileLaps::BeginLap(uint64_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
     if (!lap)
@@ -432,7 +306,7 @@ void plProfileLaps::BeginLap(uint32_t curValue, const char* name)
     lap->BeginTiming(curValue);
 }
 
-void plProfileLaps::EndLap(uint32_t curValue, const char* name)
+void plProfileLaps::EndLap(uint64_t curValue, const char* name)
 {
     LapInfo* lap = IFindLap(name);
 
@@ -526,12 +400,12 @@ void plProfileVar::IBeginTiming()
     if( hsCheckBits( fDisplayFlags, kDisplayResetEveryBegin ) )
         fValue = 0;
 
-    fValue -= GetProfileTicks();
+    fValue -= hsTimer::GetTicks();
 }
 
 void plProfileVar::IEndTiming()
 {
-    fValue += GetProfileTicks();
+    fValue += hsTimer::GetTicks();
 
     fTimerSamples++;
 

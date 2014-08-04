@@ -65,12 +65,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 static PyObject * GetPlayerVaultFolder (unsigned folderType) {
     PyObject * result = nil;
-    if (RelVaultNode * rvnPlr = VaultGetPlayerNodeIncRef()) {
-        if (RelVaultNode * rvnFldr = rvnPlr->GetChildFolderNodeIncRef(folderType, 1)) {
+    if (hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode()) {
+        if (hsRef<RelVaultNode> rvnFldr = rvnPlr->GetChildFolderNode(folderType, 1))
             result = pyVaultFolderNode::New(rvnFldr);
-            rvnFldr->UnRef();
-        }
-        rvnPlr->UnRef();
     }
     
     return result;
@@ -172,11 +169,8 @@ PyObject *pyVaultPlayerNode::GetAgesIOwnFolder()
 
 PyObject *pyVaultPlayerNode::GetPlayerInfo()
 {
-    if (RelVaultNode * rvn = VaultGetPlayerInfoNodeIncRef()) {
-        PyObject * result = pyVaultPlayerInfoNode::New(rvn);
-        rvn->UnRef();
-        return result;
-    }
+    if (hsRef<RelVaultNode> rvn = VaultGetPlayerInfoNode())
+        return pyVaultPlayerInfoNode::New(rvn);
 
     PYTHON_RETURN_NONE;
 }
@@ -221,11 +215,8 @@ void pyVaultPlayerNode::RemoveOwnedAgeLink(const char* ageFilename)
 
 PyObject *pyVaultPlayerNode::GetVisitAgeLink(const pyAgeInfoStruct *info)
 {
-    if (RelVaultNode * rvn = VaultGetVisitAgeLinkIncRef(info->GetAgeInfo())) {
-        PyObject * result = pyVaultAgeLinkNode::New(rvn);
-        rvn->UnRef();
-        return result;
-    }
+    if (hsRef<RelVaultNode> rvn = VaultGetVisitAgeLink(info->GetAgeInfo()))
+        return pyVaultAgeLinkNode::New(rvn);
 
     PYTHON_RETURN_NONE;
 }
@@ -242,11 +233,8 @@ PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
 {
     wchar_t wStr[MAX_PATH];
     StrToUnicode(wStr, entryName, arrsize(wStr));
-    if (RelVaultNode * rvn = VaultFindChronicleEntryIncRef(wStr)) {
-        PyObject * result = pyVaultChronicleNode::New(rvn);
-        rvn->UnRef();
-        return result;
-    }
+    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(wStr))
+        return pyVaultChronicleNode::New(rvn);
 
     PYTHON_RETURN_NONE;
 }

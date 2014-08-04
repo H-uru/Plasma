@@ -435,14 +435,12 @@ struct MatchesSpawnPointName
 //============================================================================
 #ifdef CLIENT
 bool VaultAgeLinkNode::CopyTo (plAgeLinkStruct * link) {
-    if (RelVaultNode * me = VaultGetNodeIncRef(base->GetNodeId())) {
-        if (RelVaultNode * info = me->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1)) {
+    if (hsRef<RelVaultNode> me = VaultGetNode(base->GetNodeId())) {
+        if (hsRef<RelVaultNode> info = me->GetChildNode(plVault::kNodeType_AgeInfo, 1)) {
             VaultAgeInfoNode access(info);
             access.CopyTo(link->GetAgeInfo());
-            me->UnRef();
             return true;
         }
-        me->UnRef();
     }
     link->Clear();
     return false;

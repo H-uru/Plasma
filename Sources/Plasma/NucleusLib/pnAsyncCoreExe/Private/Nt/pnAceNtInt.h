@@ -88,7 +88,7 @@ public:
     BOOL TryEnter () { return TryEnterCriticalSection(&m_handle); }
 };
 
-class CNtWaitHandle : public hsAtomicRefCnt {
+class CNtWaitHandle : public hsRefCnt {
     HANDLE  m_event;
 
 public:

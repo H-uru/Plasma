@@ -513,13 +513,13 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
         return false;
 
     plAgeLinkStruct* cur = GetAgeLink();
-    RelVaultNode* cVaultLink = nil;
+    hsRef<RelVaultNode> cVaultLink;
     switch (msg->GetType())
     {
         case plVaultNotifyMsg::kRegisteredChildAgeLink:
         case plVaultNotifyMsg::kRegisteredOwnedAge:
         case plVaultNotifyMsg::kRegisteredSubAgeLink:
-            cVaultLink = VaultGetNodeIncRef(msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode));
+            cVaultLink = VaultGetNode(msg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode));
             break;
         default:
             return false;
@@ -531,18 +531,15 @@ bool plNetLinkingMgr::IProcessVaultNotifyMsg(plVaultNotifyMsg* msg)
         // It's very useful though...
         VaultAgeLinkNode accLink(cVaultLink);
         accLink.CopyTo(cur);
-        if (RelVaultNode* rvnInfo = cVaultLink->GetChildNodeIncRef(plVault::kNodeType_AgeInfo, 1))
+        if (hsRef<RelVaultNode> rvnInfo = cVaultLink->GetChildNode(plVault::kNodeType_AgeInfo, 1))
         {
             VaultAgeInfoNode accInfo(rvnInfo);
             accInfo.CopyTo(cur->GetAgeInfo());
-            rvnInfo->UnRef();
         }
 
         IDoLink(fDeferredLink);
         fDeferredLink = nil;
         return true;
-
-        cVaultLink->UnRef();
     }
 
     return false;
@@ -778,7 +775,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
     bool psnl = (info->GetAgeFilename().CompareI(kPersonalAgeFilename) == 0);
 
     // Update our online status 
-    if (RelVaultNode* rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
+    if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
         plUUID ageInstGuid = *info->GetAgeInstanceGuid();
@@ -786,7 +783,6 @@ void plNetLinkingMgr::IPostProcessLink( void )
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->UnRef();
     }
     
     switch (link->GetLinkingRules()) {
@@ -797,8 +793,8 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 break;
                 
             {   // Ensure we're in the AgeOwners folder
-                RelVaultNode* fldr = VaultGetAgeAgeOwnersFolderIncRef();
-                RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
+                hsRef<RelVaultNode> fldr = VaultGetAgeAgeOwnersFolder();
+                hsRef<RelVaultNode> info = VaultGetPlayerInfoNode();
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->GetNodeId(), 1))
@@ -809,11 +805,6 @@ void plNetLinkingMgr::IPostProcessLink( void )
                             nil,
                             nil
                         );
-                
-                if (fldr)
-                    fldr->UnRef();
-                if (info)
-                    info->UnRef();
             }
         }
         break;  
@@ -824,8 +815,8 @@ void plNetLinkingMgr::IPostProcessLink( void )
                 break;
                 
             {   // Ensure we're in the CanVisit folder
-                RelVaultNode* fldr = VaultGetAgeCanVisitFolderIncRef();
-                RelVaultNode* info = VaultGetPlayerInfoNodeIncRef();
+                hsRef<RelVaultNode> fldr = VaultGetAgeCanVisitFolder();
+                hsRef<RelVaultNode> info = VaultGetPlayerInfoNode();
                 
                 if (fldr && info)
                     if (!fldr->IsParentOf(info->GetNodeId(), 1))
@@ -836,11 +827,6 @@ void plNetLinkingMgr::IPostProcessLink( void )
                             nil,
                             nil
                         );
-                
-                if (fldr)
-                    fldr->UnRef();
-                if (info)
-                    info->UnRef();
             }
         }
         break;
@@ -873,16 +859,15 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
 
 #if 0
     // Appear offline until we're done linking
-    if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
+    if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         accInfo.SetAgeInstName(nil);
         accInfo.SetAgeInstUuid(kNilUuid);
         accInfo.SetOnline(false);
-        rvnInfo->UnRef();
     }
 #else
     // Update our online status 
-    if (RelVaultNode * rvnInfo = VaultGetPlayerInfoNodeIncRef()) {
+    if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
         wchar_t ageInstName[MAX_PATH];
         plUUID ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
@@ -890,7 +875,6 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         accInfo.SetAgeInstName(ageInstName);
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
-        rvnInfo->UnRef();
     }
 #endif
 
@@ -984,7 +968,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     success = kLinkDeferred;
                     break;
                 }
-                else if (RelVaultNode* linkNode = VaultGetOwnedAgeLinkIncRef(&ageInfo)) {
+                else if (hsRef<RelVaultNode> linkNode = VaultGetOwnedAgeLink(&ageInfo)) {
                     // We have the age in our AgesIOwnFolder. If its volatile, dump it for the new one.
                     VaultAgeLinkNode linkAcc(linkNode);
                     if (linkAcc.GetVolatile()) {
@@ -1035,7 +1019,6 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             break;
                         }
                     }
-                    linkNode->UnRef();
                 }
             }
 

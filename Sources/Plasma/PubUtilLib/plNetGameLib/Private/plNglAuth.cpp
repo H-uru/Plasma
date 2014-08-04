@@ -57,7 +57,7 @@ namespace Ngl { namespace Auth {
 *
 ***/
 
-struct CliAuConn : hsAtomicRefCnt {
+struct CliAuConn : hsRefCnt {
     CliAuConn ();
     ~CliAuConn ();
 
@@ -726,7 +726,7 @@ struct VaultFetchNodeTrans : NetAuthTrans {
     FNetCliAuthVaultNodeFetched m_callback;
     void *                      m_param;
     
-    NetVaultNode *              m_node;
+    hsRef<NetVaultNode>         m_node;
     
     VaultFetchNodeTrans (
         unsigned                    nodeId,
@@ -751,14 +751,13 @@ struct VaultFindNodeTrans : NetAuthTrans {
     FNetCliAuthVaultNodeFind    m_callback;
     void *                      m_param;
     
-    NetVaultNode *              m_node;
+    hsRef<NetVaultNode>         m_node;
     
     VaultFindNodeTrans (
         NetVaultNode *              templateNode,
         FNetCliAuthVaultNodeFind    callback,
         void *                      param
     );
-    ~VaultFindNodeTrans ();
 
     
     bool Send ();
@@ -774,7 +773,7 @@ struct VaultFindNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultCreateNodeTrans : NetAuthTrans {
 
-    NetVaultNode *                  m_templateNode;
+    hsRef<NetVaultNode>             m_templateNode;
     FNetCliAuthVaultNodeCreated     m_callback;
     void *                          m_param;
     
@@ -1272,7 +1271,7 @@ static ENetError FixupPlayerName (wchar_t * name) {
 
 //===========================================================================
 static unsigned GetNonZeroTimeMs () {
-    if (unsigned ms = TimeGetMs())
+    if (unsigned ms = hsTimer::GetMilliSeconds<uint32_t>())
         return ms;
     return 1;
 }
@@ -1589,7 +1588,7 @@ static unsigned CliAuConnPingTimerProc (void * param) {
 
 //============================================================================
 CliAuConn::CliAuConn ()
-    : hsAtomicRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
+    : hsRefCnt(0), reconnectTimer(nil), reconnectStartMs(0)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
@@ -2523,7 +2522,7 @@ bool PingRequestTrans::Recv (
     const Auth2Cli_PingReply & reply = *(const Auth2Cli_PingReply *)msg;
 
     m_payload.Set(reply.payload, reply.payloadBytes);
-    m_replyAtMs     = TimeGetMs();
+    m_replyAtMs     = hsTimer::GetMilliSeconds<uint32_t>();
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
 
@@ -3940,8 +3939,6 @@ void VaultFetchNodeTrans::Post () {
         m_param,
         m_node
     );
-    if (m_node)
-        m_node->UnRef("Recv");
 }
 
 //============================================================================
@@ -3954,7 +3951,6 @@ bool VaultFetchNodeTrans::Recv (
     if (IS_NET_SUCCESS(reply.result)) {
         m_node = new NetVaultNode;
         m_node->Read_LCS(reply.nodeBuffer, reply.nodeBytes, 0);
-        m_node->Ref("Recv");
     }
 
     m_result = reply.result;
@@ -3980,12 +3976,6 @@ VaultFindNodeTrans::VaultFindNodeTrans (
 ,   m_param(param)
 ,   m_node(templateNode)
 {
-    m_node->Ref();
-}
-
-//============================================================================
-VaultFindNodeTrans::~VaultFindNodeTrans () {
-    m_node->UnRef();
 }
 
 //============================================================================
@@ -4056,7 +4046,6 @@ VaultCreateNodeTrans::VaultCreateNodeTrans (
 ,   m_param(param)
 ,   m_nodeId(0)
 {
-    m_templateNode->Ref();
 }
 
 //============================================================================
@@ -4086,7 +4075,6 @@ void VaultCreateNodeTrans::Post () {
         m_param,
         m_nodeId
     );
-    m_templateNode->UnRef();
 }
 
 //============================================================================

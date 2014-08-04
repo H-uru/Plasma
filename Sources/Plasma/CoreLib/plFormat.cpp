@@ -70,13 +70,13 @@ namespace plFormat_Private
             const char *next = _scanNextFormat(data);
             if (*next && *(next + 1) == '{') {
                 // Escaped '{'
-                data.fOutput.push_back(plStringBuffer<char>(data.fFormatStr, 1 + next - data.fFormatStr));
+                data.fOutput.append(data.fFormatStr, 1 + next - data.fFormatStr);
                 data.fFormatStr = next + 2;
                 continue;
             }
 
             if (next != data.fFormatStr)
-                data.fOutput.push_back(plStringBuffer<char>(data.fFormatStr, next - data.fFormatStr));
+                data.fOutput.append(data.fFormatStr, next - data.fFormatStr);
             data.fFormatStr = next;
         } while (0);
     }
@@ -170,20 +170,30 @@ namespace plFormat_Private
     {
         _fetchPrefixChunk(data);
         hsAssert(*data.fFormatStr == 0, "Not enough actual parameters for format string");
+        return data.fOutput.GetString();
+    }
+}
 
-        size_t outsize = 0;
-        for (const plStringBuffer<char> &buf : data.fOutput)
-            outsize += buf.GetSize();
+static void _formatString(const plFormat_Private::FormatSpec &format,
+                          plStringStream &output, const char *text, size_t size,
+                          plFormat_Private::Alignment defaultAlignment)
+{
+    char pad = format.fPadChar ? format.fPadChar : ' ';
 
-        plStringBuffer<char> outbuf;
-        char *out_ptr = outbuf.CreateWritableBuffer(outsize);
-        for (const plStringBuffer<char> &buf : data.fOutput) {
-            memcpy(out_ptr, buf.GetData(), buf.GetSize());
-            out_ptr += buf.GetSize();
+    if (format.fMinimumLength > size) {
+        plFormat_Private::Alignment align =
+                (format.fAlignment == plFormat_Private::kAlignDefault)
+                ? defaultAlignment : format.fAlignment;
+
+        if (align == plFormat_Private::kAlignRight) {
+            output.appendChar(pad, format.fMinimumLength - size);
+            output.append(text, size);
+        } else {
+            output.append(text, size);
+            output.appendChar(pad, format.fMinimumLength - size);
         }
-        *out_ptr = 0;
-
-        return outbuf;
+    } else {
+        output.append(text, size);
     }
 }
 
@@ -211,128 +221,106 @@ void _IFormatNumeric_Impl(char *output_end, _IType value, int radix, bool upperC
 }
 
 template <typename _IType>
-static plStringBuffer<char> _formatNumeric(const plFormat_Private::FormatSpec &format,
-                                           _IType value, int radix, bool upperCase = false)
+static void _formatNumeric(const plFormat_Private::FormatSpec &format,
+                           plStringStream &output, _IType value,
+                           int radix, bool upperCase = false)
 {
     char pad = format.fPadChar ? format.fPadChar : ' ';
 
-    size_t max = 0;
+    size_t format_size = 0;
     _IType temp = value;
     while (temp) {
-        ++max;
+        ++format_size;
         temp /= radix;
     }
 
-    if (max == 0)
-        max = 1;
+    if (format_size == 0)
+        format_size = 1;
 
-    plStringBuffer<char> buffer;
-    if (format.fMinimumLength > max) {
-        char *output = buffer.CreateWritableBuffer(format.fMinimumLength);
-        memset(output, pad, format.fMinimumLength);
-        if (format.fAlignment == plFormat_Private::kAlignLeft) {
-            _IFormatNumeric_Impl<_IType>(output + max, value, radix, upperCase);
-        } else {
-            _IFormatNumeric_Impl<_IType>(output + format.fMinimumLength,
-                                         value, radix, upperCase);
-        }
-        output[format.fMinimumLength] = 0;
-    } else {
-        char *output = buffer.CreateWritableBuffer(max);
-        _IFormatNumeric_Impl<_IType>(output + max, value, radix, upperCase);
-        output[max] = 0;
-    }
+    hsAssert(format_size < 64, "Format length too long");
 
-    return buffer;
+    char buffer[64];
+    _IFormatNumeric_Impl<_IType>(buffer + format_size, value, radix, upperCase);
+    _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
 
 // Currently, only decimal formatting supports rendering negative numbers
 template <typename _IType>
-static plStringBuffer<char> _formatDecimal(const plFormat_Private::FormatSpec &format, _IType value)
+static void _formatDecimal(const plFormat_Private::FormatSpec &format,
+                           plStringStream &output, _IType value)
 {
     char pad = format.fPadChar ? format.fPadChar : ' ';
     _IType abs = (value < 0) ? -value : value;
 
-    size_t max = 0;
+    size_t format_size = 0;
     _IType temp = abs;
     while (temp) {
-        ++max;
+        ++format_size;
         temp /= 10;
     }
 
-    if (max == 0)
-        max = 1;
+    if (format_size == 0)
+        format_size = 1;
 
     if (value < 0 || format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
-        ++max;
+        ++format_size;
 
-    plStringBuffer<char> buffer;
-    char *output;
-    if (format.fMinimumLength > max) {
-        output = buffer.CreateWritableBuffer(format.fMinimumLength);
-        memset(output, pad, format.fMinimumLength);
-        if (format.fAlignment == plFormat_Private::kAlignLeft)
-            _IFormatNumeric_Impl<_IType>(output + max, abs, 10);
-        else
-            _IFormatNumeric_Impl<_IType>(output + format.fMinimumLength, abs, 10);
-        output[format.fMinimumLength] = 0;
-    } else {
-        output = buffer.CreateWritableBuffer(max);
-        _IFormatNumeric_Impl<_IType>(output + max, abs, 10);
-        output[max] = 0;
-    }
+    hsAssert(format_size < 21, "Format length too long");
 
-    int signPos = format.fPrecision - static_cast<int>(max);
-    if (signPos < 0)
-        signPos = 0;
+    char buffer[21];
+    _IFormatNumeric_Impl<_IType>(buffer + format_size, abs, 10);
+
+    int signPos = arrsize(buffer) - static_cast<int>(format_size);
+    hsAssert(signPos >= 0, "Format buffer not large enough for sign");
 
     if (value < 0)
-        output[signPos] = '-';
+        buffer[signPos] = '-';
     else if (format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
-        output[signPos] = '+';
+        buffer[signPos] = '+';
 
-    return buffer;
+    _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
 
-static plStringBuffer<char> _formatChar(const plFormat_Private::FormatSpec &format, int ch)
+static void _formatChar(const plFormat_Private::FormatSpec &format,
+                        plStringStream &output, int ch)
 {
     hsAssert(format.fMinimumLength == 0 && format.fPadChar == 0,
              "Char formatting does not currently support padding");
 
     // Don't need to nul-terminate this, since plStringBuffer's constructor fixes it
     char utf8[4];
-    size_t max;
+    size_t format_size;
 
     // Yanked from plString
     if (ch > 0x10FFFF) {
         hsAssert(0, "Unicode character out of range");
 
         // Character out of range; Use U+FFFD instead for release builds
-        max = 3;
+        format_size = 3;
         utf8[0] = 0xE0 | ((BADCHAR_REPLACEMENT >> 12) & 0x0F);
         utf8[1] = 0x80 | ((BADCHAR_REPLACEMENT >>  6) & 0x3F);
         utf8[2] = 0x80 | ((BADCHAR_REPLACEMENT      ) & 0x3F);
     } else if (ch > 0xFFFF) {
-        max = 4;
+        format_size = 4;
         utf8[0] = 0xF0 | ((ch >> 18) & 0x07);
         utf8[1] = 0x80 | ((ch >> 12) & 0x3F);
         utf8[2] = 0x80 | ((ch >>  6) & 0x3F);
         utf8[3] = 0x80 | ((ch      ) & 0x3F);
     } else if (ch > 0x7FF) {
-        max = 3;
+        format_size = 3;
         utf8[0] = 0xE0 | ((ch >> 12) & 0x0F);
         utf8[1] = 0x80 | ((ch >>  6) & 0x3F);
         utf8[2] = 0x80 | ((ch      ) & 0x3F);
     } else if (ch > 0x7F) {
-        max = 2;
+        format_size = 2;
         utf8[0] = 0xC0 | ((ch >>  6) & 0x1F);
         utf8[1] = 0x80 | ((ch      ) & 0x3F);
     } else {
-        max = 1;
+        format_size = 1;
         utf8[0] = (char)ch;
     }
 
-    return plStringBuffer<char>(utf8, max);
+    output.append(utf8, format_size);
 }
 
 #define _PL_FORMAT_IMPL_INT_TYPE(_stype, _utype) \
@@ -342,46 +330,58 @@ static plStringBuffer<char> _formatChar(const plFormat_Private::FormatSpec &form
            values with a sign, so we can convert everything else to unsigned. */ \
         switch (format.fDigitClass) { \
         case plFormat_Private::kDigitBin: \
-            return _formatNumeric<_utype>(format, value, 2); \
+            _formatNumeric<_utype>(format, output, value, 2); \
+            break; \
         case plFormat_Private::kDigitOct: \
-            return _formatNumeric<_utype>(format, value, 8); \
+            _formatNumeric<_utype>(format, output, value, 8); \
+            break; \
         case plFormat_Private::kDigitHex: \
-            return _formatNumeric<_utype>(format, value, 16, false); \
+            _formatNumeric<_utype>(format, output, value, 16, false); \
+            break; \
         case plFormat_Private::kDigitHexUpper: \
-            return _formatNumeric<_utype>(format, value, 16, true); \
+            _formatNumeric<_utype>(format, output, value, 16, true); \
+            break; \
         case plFormat_Private::kDigitDec: \
         case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
-            return _formatDecimal<_stype>(format, value); \
+            _formatDecimal<_stype>(format, output, value); \
+            break; \
         case plFormat_Private::kDigitChar: \
-            return _formatChar(format, value); \
+            _formatChar(format, output, value); \
+            break; \
+        default: \
+            hsAssert(0, "Unexpected digit class"); \
+            break; \
         } \
-        \
-        hsAssert(0, "Unexpected digit class"); \
-        return plStringBuffer<char>(); \
     } \
     \
     PL_FORMAT_IMPL(_utype) \
     { \
         switch (format.fDigitClass) { \
         case plFormat_Private::kDigitBin: \
-            return _formatNumeric<_utype>(format, value, 2); \
+            _formatNumeric<_utype>(format, output, value, 2); \
+            break; \
         case plFormat_Private::kDigitOct: \
-            return _formatNumeric<_utype>(format, value, 8); \
+            _formatNumeric<_utype>(format, output, value, 8); \
+            break; \
         case plFormat_Private::kDigitHex: \
-            return _formatNumeric<_utype>(format, value, 16, false); \
+            _formatNumeric<_utype>(format, output, value, 16, false); \
+            break; \
         case plFormat_Private::kDigitHexUpper: \
-            return _formatNumeric<_utype>(format, value, 16, true); \
+            _formatNumeric<_utype>(format, output, value, 16, true); \
+            break; \
         case plFormat_Private::kDigitDec: \
         case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
-            return _formatDecimal<_utype>(format, value); \
+            _formatDecimal<_utype>(format, output, value); \
+            break; \
         case plFormat_Private::kDigitChar: \
-            return _formatChar(format, value); \
+            _formatChar(format, output, value); \
+            break; \
+        default: \
+            hsAssert(0, "Unexpected digit class"); \
+            break; \
         } \
-        \
-        hsAssert(0, "Unexpected digit class"); \
-        return plStringBuffer<char>(); \
     }
 
 _PL_FORMAT_IMPL_INT_TYPE(signed char, unsigned char)
@@ -394,7 +394,7 @@ _PL_FORMAT_IMPL_INT_TYPE(int64_t, uint64_t)
 
 PL_FORMAT_IMPL(float)
 {
-    return PL_FORMAT_FORWARD(format, double(value));
+    PL_FORMAT_FORWARD(double(value));
 }
 
 PL_FORMAT_IMPL(double)
@@ -425,25 +425,24 @@ PL_FORMAT_IMPL(double)
     int format_size = snprintf(nullptr, 0, format_buffer, value);
     hsAssert(format_size > 0, "Your libc doesn't support reporting format size");
     plStringBuffer<char> out_buffer;
-    char *output;
+    char *fmt_out;
 
     if (format.fMinimumLength > format_size) {
-        output = out_buffer.CreateWritableBuffer(format.fMinimumLength);
-        memset(output, pad, format.fMinimumLength);
+        fmt_out = out_buffer.CreateWritableBuffer(format.fMinimumLength);
+        memset(fmt_out, pad, format.fMinimumLength);
         if (format.fAlignment == plFormat_Private::kAlignLeft) {
-            snprintf(output, format_size + 1, format_buffer, value);
-            output[format_size] = pad;  // snprintf overwrites this
-            output[format.fMinimumLength] = 0;
+            snprintf(fmt_out, format_size + 1, format_buffer, value);
+            fmt_out[format_size] = pad;  // snprintf overwrites this
         } else {
-            snprintf(output + (format.fMinimumLength - format_size), format_size + 1,
+            snprintf(fmt_out + (format.fMinimumLength - format_size), format_size + 1,
                      format_buffer, value);
         }
     } else {
-        output = out_buffer.CreateWritableBuffer(format_size);
-        snprintf(output, format_size + 1, format_buffer, value);
+        fmt_out = out_buffer.CreateWritableBuffer(format_size);
+        snprintf(fmt_out, format_size + 1, format_buffer, value);
     }
 
-    return out_buffer;
+    output.append(out_buffer.GetData(), out_buffer.GetSize());
 }
 
 PL_FORMAT_IMPL(char)
@@ -452,97 +451,93 @@ PL_FORMAT_IMPL(char)
        values with a sign, so we can convert everything else to unsigned. */
     switch (format.fDigitClass) {
     case plFormat_Private::kDigitBin:
-        return _formatNumeric<unsigned char>(format, value, 2);
+        _formatNumeric<unsigned char>(format, output, value, 2);
+        break;
     case plFormat_Private::kDigitOct:
-        return _formatNumeric<unsigned char>(format, value, 8);
+        _formatNumeric<unsigned char>(format, output, value, 8);
+        break;
     case plFormat_Private::kDigitHex:
-        return _formatNumeric<unsigned char>(format, value, 16, false);
+        _formatNumeric<unsigned char>(format, output, value, 16, false);
+        break;
     case plFormat_Private::kDigitHexUpper:
-        return _formatNumeric<unsigned char>(format, value, 16, true);
+        _formatNumeric<unsigned char>(format, output, value, 16, true);
+        break;
     case plFormat_Private::kDigitDec:
     case plFormat_Private::kDigitDecAlwaysSigned:
-        return _formatDecimal<signed char>(format, value);
+        _formatDecimal<signed char>(format, output, value);
+        break;
     case plFormat_Private::kDigitChar:
     case plFormat_Private::kDigitDefault:
-        return _formatChar(format, value);
+        _formatChar(format, output, value);
+        break;
+    default:
+        hsAssert(0, "Unexpected digit class");
+        break;
     }
-
-    hsAssert(0, "Unexpected digit class");
-    return plStringBuffer<char>();
 }
 
 PL_FORMAT_IMPL(wchar_t)
 {
     switch (format.fDigitClass) {
     case plFormat_Private::kDigitBin:
-        return _formatNumeric<wchar_t>(format, value, 2);
+        _formatNumeric<wchar_t>(format, output, value, 2);
+        break;
     case plFormat_Private::kDigitOct:
-        return _formatNumeric<wchar_t>(format, value, 8);
+        _formatNumeric<wchar_t>(format, output, value, 8);
+        break;
     case plFormat_Private::kDigitHex:
-        return _formatNumeric<wchar_t>(format, value, 16, false);
+        _formatNumeric<wchar_t>(format, output, value, 16, false);
+        break;
     case plFormat_Private::kDigitHexUpper:
-        return _formatNumeric<wchar_t>(format, value, 16, true);
+        _formatNumeric<wchar_t>(format, output,value, 16, true);
+        break;
     case plFormat_Private::kDigitDec:
     case plFormat_Private::kDigitDecAlwaysSigned:
-        return _formatDecimal<wchar_t>(format, value);
+        _formatDecimal<wchar_t>(format, output, value);
+        break;
     case plFormat_Private::kDigitChar:
     case plFormat_Private::kDigitDefault:
-        return _formatChar(format, value);
+        _formatChar(format, output, value);
+        break;
+    default:
+        hsAssert(0, "Unexpected digit class");
+        break;
     }
-
-    hsAssert(0, "Unexpected digit class");
-    return plStringBuffer<char>();
-}
-
-static plStringBuffer<char> _formatString(const plFormat_Private::FormatSpec &format,
-                                          const plStringBuffer<char> &value)
-{
-    char pad = format.fPadChar ? format.fPadChar : ' ';
-
-    if (format.fMinimumLength > value.GetSize()) {
-        plStringBuffer<char> buf;
-        char *output = buf.CreateWritableBuffer(format.fMinimumLength);
-        memset(output, pad, format.fMinimumLength);
-        if (format.fAlignment == plFormat_Private::kAlignRight) {
-            memcpy(output + (format.fMinimumLength - value.GetSize()),
-                   value.GetData(), value.GetSize());
-        } else {
-            memcpy(output, value.GetData(), value.GetSize());
-        }
-
-        output[format.fMinimumLength] = 0;
-        return buf;
-    }
-
-    return value;
 }
 
 PL_FORMAT_IMPL(const char *)
 {
-    return _formatString(format, plString(value).ToUtf8());
+    _formatString(format, output, value, strlen(value),
+                  plFormat_Private::kAlignLeft);
 }
 
 PL_FORMAT_IMPL(const wchar_t *)
 {
-    return _formatString(format, plString::FromWchar(value).ToUtf8());
+    plStringBuffer<char> utf8 = plString::FromWchar(value).ToUtf8();
+    _formatString(format, output, utf8.GetData(), utf8.GetSize(),
+                  plFormat_Private::kAlignLeft);
 }
 
 PL_FORMAT_IMPL(const plString &)
 {
-    return _formatString(format, value.ToUtf8());
+    _formatString(format, output, value.c_str(), value.GetSize(),
+                  plFormat_Private::kAlignLeft);
 }
 
 PL_FORMAT_IMPL(const std::string &)
 {
-    return _formatString(format, plStringBuffer<char>(value.c_str(), value.size()));
+    _formatString(format, output, value.c_str(), value.size(),
+                  plFormat_Private::kAlignLeft);
 }
 
 PL_FORMAT_IMPL(const std::wstring &)
 {
-    return _formatString(format, plString::FromWchar(value.c_str(), value.size()).ToUtf8());
+    plStringBuffer<char> utf8 = plString::FromWchar(value.c_str()).ToUtf8();
+    _formatString(format, output, utf8.GetData(), utf8.GetSize(),
+                  plFormat_Private::kAlignLeft);
 }
 
 PL_FORMAT_IMPL(bool)
 {
-    return PL_FORMAT_FORWARD(format, value ? "true" : "false");
+    PL_FORMAT_FORWARD(value ? "true" : "false");
 }

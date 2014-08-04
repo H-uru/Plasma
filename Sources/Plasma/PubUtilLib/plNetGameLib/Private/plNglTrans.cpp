@@ -117,7 +117,7 @@ static void CancelTrans_CS (NetTrans * trans, ENetError error) {
 
 //============================================================================
 NetTrans::NetTrans (ENetProtocol protocol, ETransType transType)
-:   hsAtomicRefCnt(0)
+:   hsRefCnt(0)
 ,   m_state(kTransStateWaitServerConnect)
 ,   m_result(kNetPending)
 ,   m_transId(0)
@@ -219,7 +219,7 @@ bool NetTransRecv (unsigned transId, const uint8_t msg[], unsigned bytes) {
         return true;    // transaction was canceled.
 
     // Update the timeout time
-    trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
+    trans->m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + s_timeoutMs;
 
     bool result = trans->Recv(msg, bytes);
 
@@ -315,7 +315,7 @@ void NetTransUpdate () {
                     // This is the default "next state", trans->Send() can override this
                     trans->m_state = kTransStateWaitServerResponse;
                     // Set timeout time before calling Send(), allowing Send() to change it if it wants to.
-                    trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs;
+                    trans->m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + s_timeoutMs;
                     if (!trans->Send()) {
                         // Revert back to current state so that we'll attempt to send again
                         trans->m_state = kTransStateWaitServerConnect;
@@ -326,12 +326,12 @@ void NetTransUpdate () {
                 
                 case kTransStateWaitServerResponse:
                     // Check for timeout
-                    if ((int)(TimeGetMs() - trans->m_timeoutAtMs) > 0) {
+                    if ((int)(hsTimer::GetMilliSeconds<uint32_t>() - trans->m_timeoutAtMs) > 0) {
                         // Check to see if the transaction wants to "abort" the timeout
                         if (trans->TimedOut())
                             CancelTrans_CS(trans, kNetErrTimeout);
                         else
-                            trans->m_timeoutAtMs = TimeGetMs() + s_timeoutMs; // Reset the timeout counter
+                            trans->m_timeoutAtMs = hsTimer::GetMilliSeconds<uint32_t>() + s_timeoutMs; // Reset the timeout counter
                     }
                     done = true;
                 break;
