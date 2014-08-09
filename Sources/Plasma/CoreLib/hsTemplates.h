@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 #include <cstdarg>
+#include <algorithm>
 
 
 #ifdef HS_DEBUGGING

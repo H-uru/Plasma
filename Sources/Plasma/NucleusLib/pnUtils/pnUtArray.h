@@ -740,25 +740,25 @@ public:
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray () : TFArray<T,C>() {
-    m_chunkSize = std::max(1u, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (const char file[], int line) : TFArray<T,C>(file, line) {
-    m_chunkSize = std::max(1u, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (unsigned count) : TFArray<T,C>(count) {
-    m_chunkSize = std::max(1u, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (const T * source, unsigned count) : TFArray<T,C>(source, count) {
-    m_chunkSize = std::max(1u, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
