@@ -154,7 +154,7 @@ void CryptKeyClose (
     if (!key)
         return;
 
-    delete key->handle;
+    delete (RC4_KEY *)key->handle;
     delete key;
 }
 
