@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsRefCnt_Defiend
 
 #include <atomic>
+#include <cstddef>
 
 class hsRefCnt {
 private:
@@ -83,7 +84,7 @@ class hsRef
 {
 public:
     hsRef() : fObj(nullptr) { }
-    hsRef(nullptr_t) : fObj(nullptr) { }
+    hsRef(std::nullptr_t) : fObj(nullptr) { }
     hsRef(_Ref *obj) : fObj(obj) { if (fObj) fObj->Ref(); }
     hsRef(const hsRef<_Ref> &copy) : fObj(copy.fObj) { if (fObj) fObj->Ref(); }
     hsRef(hsRef<_Ref> &&move) : fObj(move.fObj) { move.fObj = nullptr; }
@@ -110,7 +111,7 @@ public:
         return *this;
     }
 
-    hsRef<_Ref> &operator=(nullptr_t)
+    hsRef<_Ref> &operator=(std::nullptr_t)
     {
         if (fObj)
             fObj->UnRef();
