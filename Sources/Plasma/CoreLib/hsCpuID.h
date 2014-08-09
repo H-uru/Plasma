@@ -65,7 +65,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  typedef float(*func_ptr)();
 //  static hsFunctionDispatcher<func_ptr> my_func;
 //
-//  hsFunctionDispatcher<float::func_ptr> float::my_func(float::my_func_fpu, 0, 0, 0, 0, 0, 0, float::my_func_avx);
+//  hsFunctionDispatcher<func_ptr> my_func(my_func_fpu, 0, 0, 0, 0, 0, 0, my_func_avx);
+//  my_func();
 //
 //////////////////////////////////////////////////////////////////////
 
