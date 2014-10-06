@@ -216,6 +216,9 @@ namespace plFormat_Private
     // Format for plUUID
     PL_FORMAT_TYPE(const class plUUID &)
 
+    // Format for hsMatrix44
+    PL_FORMAT_TYPE(const struct hsMatrix44 &)
+
 // ==================================
 // END: Formattable type declarations
 // ==================================
