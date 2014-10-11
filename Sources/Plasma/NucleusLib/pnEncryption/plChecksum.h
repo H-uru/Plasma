@@ -153,7 +153,7 @@ class plSHA1Checksum
         ShaDigest fChecksum;
 
     public:
-        plSHA1Checksum(size_t size, uint8_t* buffer);
+        plSHA1Checksum(size_t size, const uint8_t* buffer);
         plSHA1Checksum();
         plSHA1Checksum(const plSHA1Checksum& rhs);
         plSHA1Checksum(const plFileName& fileName);
