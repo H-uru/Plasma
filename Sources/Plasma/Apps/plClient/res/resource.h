@@ -20,7 +20,7 @@
 #define IDC_RICHEDIT22                  1028
 #define IDC_AUTH_TEXT                   1029
 #define IDC_BUTTON1                     1030
-#define IDC_URULOGIN_GAMETAPLINK        1030
+#define IDC_URULOGIN_NEWACCTLINK        1030
 #define IDC_AUTH_MESSAGE                1031
 #define IDC_PRODUCTSTRING               1033
 #define IDC_STATUS_TEXT                 1034

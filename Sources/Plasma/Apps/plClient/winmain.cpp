@@ -1091,7 +1091,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
                 return TRUE;
             }
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_GAMETAPLINK)
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
                 const char* signupurl = GetServerSignupUrl();
                 ShellExecuteA(NULL, "open", signupurl, NULL, NULL, SW_SHOWNORMAL);
