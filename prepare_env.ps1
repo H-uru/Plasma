@@ -27,7 +27,7 @@ if (!(Test-Path -PathType Container devlibs)) {
 }
 
 Write-Host "Running CMake to configure build system... "
-cmake -DCMAKE_INSTALL_PREFIX=devlibs -G "Visual Studio 12" ..
+cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 12" ..
 
 if ($Host.Name -eq "ConsoleHost") {
     Write-Host ""
