@@ -388,9 +388,7 @@ _PL_FORMAT_IMPL_INT_TYPE(signed char, unsigned char)
 _PL_FORMAT_IMPL_INT_TYPE(short, unsigned short)
 _PL_FORMAT_IMPL_INT_TYPE(int, unsigned)
 _PL_FORMAT_IMPL_INT_TYPE(long, unsigned long)
-#if (SIZEOF_LONG == 4)
-_PL_FORMAT_IMPL_INT_TYPE(int64_t, uint64_t)
-#endif
+_PL_FORMAT_IMPL_INT_TYPE(long long, unsigned long long)
 
 PL_FORMAT_IMPL(float)
 {
