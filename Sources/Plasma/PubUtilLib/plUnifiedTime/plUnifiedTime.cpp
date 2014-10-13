@@ -448,7 +448,7 @@ plUnifiedTime::operator timeval() const
     // tv_secs should be a time_t, but on Windows it is a long
     struct timeval t = {(long)fSecs, (long)fMicros};
 #else
-    struct timeval t = {fSecs, fMicros};
+    struct timeval t = {fSecs, (suseconds_t)fMicros};
 #endif
     return t;
 }
