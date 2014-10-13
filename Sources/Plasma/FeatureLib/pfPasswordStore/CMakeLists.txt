@@ -15,6 +15,11 @@ set(pfPasswordStore_SOURCES
 add_library(pfPasswordStore STATIC ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
 target_link_libraries(pfPasswordStore CoreLib plFile)
 
+if(APPLE)
+    find_library(SECURITY_LIBRARY Security)
+    target_link_libraries(pfPasswordStore ${SECURITY_LIBRARY})
+endif(APPLE)
+
 source_group("Header Files" FILES ${pfPasswordStore_HEADERS})
 source_group("Source Files" FILES ${pfPasswordStore_SOURCES})
 

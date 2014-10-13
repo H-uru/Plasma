@@ -55,7 +55,11 @@ pfPasswordStore* pfPasswordStore::Instance()
 #ifdef HS_BUILD_FOR_WIN32
         store = new pfWin32PasswordStore();
 #else
+#ifdef HS_BUILD_FOR_OSX
+        store = new pfMacPasswordStore();
+#else
         store = new pfFilePasswordStore();
+#endif
 #endif
     }
 
@@ -196,5 +200,54 @@ bool pfWin32PasswordStore::SetPassword(const plString& username, const plString&
     }
 
     return true;
+}
+#endif
+
+
+
+#ifdef HS_BUILD_FOR_OSX
+#include <Security/Security.h>
+
+/*****************************************************************************
+ ** pfMacPasswordStore                                                      **
+ *****************************************************************************/
+const plString pfMacPasswordStore::GetPassword(const plString& username)
+{
+    plString service = plProduct::UUID();
+
+    void* passwd = nullptr;
+    uint32_t passwd_len = 0;
+
+    if (SecKeychainFindGenericPassword(nullptr,
+                                       service.GetSize(),
+                                       service.c_str(),
+                                       username.GetSize(),
+                                       username.c_str(),
+                                       &passwd_len,
+                                       &passwd,
+                                       nullptr) != errSecSuccess)
+    {
+        return plString::Null;
+    }
+
+    plString ret(reinterpret_cast<const char*>(passwd), size_t(passwd_len));
+
+    SecKeychainItemFreeContent(nullptr, passwd);
+
+    return ret;
+}
+
+bool pfMacPasswordStore::SetPassword(const plString& username, const plString& password)
+{
+    plString service = plProduct::UUID();
+
+    return SecKeychainAddGenericPassword(nullptr,
+                                         service.GetSize(),
+                                         service.c_str(),
+                                         username.GetSize(),
+                                         username.c_str(),
+                                         password.GetSize(),
+                                         password.c_str(),
+                                         nullptr) == errSecSuccess;
 }
 #endif
