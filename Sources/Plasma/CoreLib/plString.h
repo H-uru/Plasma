@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 /** Single Unicode character code unit */
-typedef unsigned int UniChar;
+typedef unsigned int plUniChar;
 
 #define SSO_CHARS (16)
 #define STRING_STACK_SIZE (256)
@@ -227,7 +227,7 @@ public:
 };
 
 /** A plStringBuffer for storing fully-expanded Unicode data */
-typedef plStringBuffer<UniChar> plUnicodeBuffer;
+typedef plStringBuffer<plUniChar> plUnicodeBuffer;
 
 /** Unicode-capable and (mostly) binary safe string class.
  *  plString stores SSO-optimized or reference counted strings (automatically
@@ -251,7 +251,7 @@ private:
     void IConvertFromUtf8(const char *utf8, size_t size);
     void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
-    void IConvertFromUtf32(const UniChar *ustr, size_t size);
+    void IConvertFromUtf32(const plUniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
 public:
@@ -357,7 +357,7 @@ public:
     }
 
     /** Create a new plString object from the UTF-32 formatted data in \a utf32. */
-    static inline plString FromUtf32(const UniChar *utf32, size_t size = STRLEN_AUTO)
+    static inline plString FromUtf32(const plUniChar *utf32, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromUtf32(utf32, size);
@@ -799,7 +799,7 @@ private:
     bool ICanHasHeap() const { return fBufSize > STRING_STACK_SIZE; }
 };
 
-/** \p strlen implementation for UniChar based C-style string buffers. */
-size_t ustrlen(const UniChar *ustr);
+/** \p strlen implementation for plUniChar based C-style string buffers. */
+size_t ustrlen(const plUniChar *ustr);
 
 #endif //plString_Defined
