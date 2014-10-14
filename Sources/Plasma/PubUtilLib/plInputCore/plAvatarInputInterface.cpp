@@ -849,17 +849,17 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
                         else
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
                     }
                     else 
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
                         else
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)
@@ -960,17 +960,17 @@ bool plAvatarInputInterface::InterpretInputEvent( plInputEventMsg *pMsg )
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangePos)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fX - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
                         else
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fZ - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
                     }
                     else 
                     if (mouseMap->fMap[i]->fControlFlags & kControlFlagRangeNeg)
                     {
                         if (mouseMap->fMap[i]->fControlFlags & kControlFlagXAxisEvent)
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fY - pMouseMsg->GetXPos()) / (mouseMap->fMap[i]->fBox.fY - mouseMap->fMap[i]->fBox.fX));
                         else
-                            pct = hsABS((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
+                            pct = fabs((mouseMap->fMap[i]->fBox.fW - pMouseMsg->GetYPos()) / (mouseMap->fMap[i]->fBox.fW - mouseMap->fMap[i]->fBox.fZ));
                     }
                     pCmd->fPct = pct;
                     if (pct == 1.0f || pct == -1.0f)

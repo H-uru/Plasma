@@ -244,7 +244,7 @@ static void AddToSendBuffer (
             // calculate the space left in the output buffer and use it
             // to determine the maximum number of bytes that will fit
             unsigned const left = &cli->sendBuffer[arrsize(cli->sendBuffer)] - cli->sendCurr;
-            unsigned const copy = min(bytes, left);
+            unsigned const copy = std::min(bytes, left);
 
             // copy the data into the buffer
             for (unsigned i = 0; i < copy; ++i)
@@ -678,7 +678,7 @@ static void ClientConnect (NetCli * cli) {
         memset(&cli->seed, 0, sizeof(cli->seed));
         unsigned bytes;
         unsigned char * data = clientSeed.GetData_LE(&bytes);
-        memcpy(cli->seed, data, min(bytes, sizeof(cli->seed)));
+        memcpy(cli->seed, data, std::min(bytes, sizeof(cli->seed)));
         delete [] data;
     }
 
@@ -740,7 +740,7 @@ static bool ServerRecvConnect (
             memset(&clientSeed, 0, sizeof(clientSeed));
             unsigned bytes;
             unsigned char * data = clientSeedValue.GetData_LE(&bytes);
-            memcpy(clientSeed, data, min(bytes, sizeof(clientSeed)));
+            memcpy(clientSeed, data, std::min(bytes, sizeof(clientSeed)));
             delete [] data;
         }
 
@@ -964,7 +964,7 @@ static void SetConnSeed (
     const uint8_t      seedData[]
 ) {
     if (seedBytes)
-        memcpy(cli->seed, seedData, min(sizeof(cli->seed), seedBytes));
+        memcpy(cli->seed, seedData, std::min(sizeof(cli->seed), seedBytes));
     else
         CryptCreateRandomSeed(sizeof(cli->seed), cli->seed);
 }

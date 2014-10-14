@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if HS_BUILD_FOR_WIN32
 #   include <io.h>
 #endif
+#include <algorithm>
 #pragma hdrstop
 
 #include "hsStream.h"
@@ -1054,7 +1055,7 @@ uint32_t hsQueueStream::Read(uint32_t byteCount, void * buffer)
     int32_t limit, length, total;
     
     limit = fWriteCursor >= fReadCursor ? fWriteCursor : fSize;
-    length = hsMinimum(limit-fReadCursor,byteCount);
+    length = std::min(limit-fReadCursor, byteCount);
     HSMemory::BlockMove(fQueue+fReadCursor,buffer,length);
     fReadCursor += length;
     fReadCursor %= fSize;
@@ -1063,7 +1064,7 @@ uint32_t hsQueueStream::Read(uint32_t byteCount, void * buffer)
     if (length < byteCount && limit != fWriteCursor)
     {
         limit = fWriteCursor;
-        length = hsMinimum(limit,byteCount-length);
+        length = std::min(limit, static_cast<int32_t>(byteCount)-length);
         HSMemory::BlockMove(fQueue,static_cast<char*>(buffer)+total,length);
         fReadCursor = length;
         total += length;
@@ -1079,7 +1080,7 @@ uint32_t hsQueueStream::Write(uint32_t byteCount, const void* buffer)
 
     int32_t length;
 
-    length = hsMinimum(fSize-fWriteCursor,byteCount);
+    length = std::min(fSize-fWriteCursor, byteCount);
     HSMemory::BlockMove(buffer,fQueue+fWriteCursor,length);
     if (fReadCursor > fWriteCursor)
     {
@@ -1087,7 +1088,7 @@ uint32_t hsQueueStream::Write(uint32_t byteCount, const void* buffer)
         if (fReadCursor < fWriteCursor+length+1)
             hsStatusMessage("ReadCursor wrapped\n");
 #endif
-        fReadCursor = hsMaximum(fReadCursor,fWriteCursor+length+1);
+        fReadCursor = std::min(fReadCursor, fWriteCursor+length+1);
         fReadCursor %= fSize;
     }
     fWriteCursor += length;
@@ -1106,19 +1107,19 @@ void hsQueueStream::Skip(uint32_t deltaByteCount)
     int32_t limit, length;
     
     limit = fWriteCursor >= fReadCursor ? fWriteCursor : fSize;
-    length = hsMinimum(limit-fReadCursor,deltaByteCount);
+    length = std::min(limit-fReadCursor, deltaByteCount);
     fReadCursor += length;
 
     if (length < deltaByteCount && limit != fWriteCursor)
     {
         limit = fWriteCursor;
-        length = hsMinimum(limit,deltaByteCount-length);
+        length = std::min(limit, static_cast<int32_t>(deltaByteCount)-length);
         fReadCursor = length;
     }
     else
     {
         fReadCursor %= fSize;
-}
+    }
 }
 
 void hsQueueStream::Rewind()

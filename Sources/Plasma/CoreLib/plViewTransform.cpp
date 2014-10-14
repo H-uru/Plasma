@@ -270,9 +270,9 @@ bool plViewTransform::Intersect(const plViewTransform& view)
     int i;
     for( i = 0; i < 3; i++ )
     {
-        mins[i] = hsMaximum(fMin[i], view.fMin[i]);
+        mins[i] = std::max(fMin[i], view.fMin[i]);
 
-        maxs[i] = hsMinimum(fMax[i], view.fMax[i]);
+        maxs[i] = std::min(fMax[i], view.fMax[i]);
 
         if( mins[i] >= maxs[i] )
         {
@@ -292,9 +292,9 @@ bool plViewTransform::Union(const plViewTransform& view)
     int i;
     for( i = 0; i < 3; i++ )
     {
-        mins[i] = hsMinimum(fMin[i], view.fMin[i]);
+        mins[i] = std::min(fMin[i], view.fMin[i]);
 
-        maxs[i] = hsMaximum(fMax[i], view.fMax[i]);
+        maxs[i] = std::max(fMax[i], view.fMax[i]);
 
     }
     SetView(mins, maxs);

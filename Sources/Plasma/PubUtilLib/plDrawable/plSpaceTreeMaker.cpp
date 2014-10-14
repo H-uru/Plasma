@@ -591,7 +591,7 @@ int plSpaceTreeMaker::ITreeDepth(plSpacePrepNode* subRoot)
     int dep0 = ITreeDepth(subRoot->fChildren[0]);
     int dep1 = ITreeDepth(subRoot->fChildren[1]);
 
-    int dep = hsMaximum(dep0, dep1);
+    int dep = std::max(dep0, dep1);
 
     return dep+1;
 }

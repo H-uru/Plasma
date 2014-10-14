@@ -54,6 +54,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <NxUtilLib.h>
 #include <NxMat33.h>
 
+#include <algorithm>
+
 #include "plMaxMeshExtractor.h"
 
 #include "plPhysXCooking.h"
@@ -304,12 +306,12 @@ void ReadBoxFromHull(hsStream* stream, NxBoxShapeDesc& box)
     for (int i = 0; i < nVertices; i++)
     {
         hsPoint3& vec = pVertices[i];
-        minX = hsMinimum(minX, vec.fX);
-        minY = hsMinimum(minY, vec.fY);
-        minZ = hsMinimum(minZ, vec.fZ);
-        maxX = hsMaximum(maxX, vec.fX);
-        maxY = hsMaximum(maxY, vec.fY);
-        maxZ = hsMaximum(maxZ, vec.fZ);
+        minX = std::min(minX, vec.fX);
+        minY = std::min(minY, vec.fY);
+        minZ = std::min(minZ, vec.fZ);
+        maxX = std::max(maxX, vec.fX);
+        maxY = std::max(maxY, vec.fY);
+        maxZ = std::max(maxZ, vec.fZ);
     }
 
     delete[] pVertices;
@@ -453,12 +455,12 @@ hsVectorStream* plPhysXCooking::IMakePolytope(const plMaxMeshExtractor::NeutralM
     }
     for(int i=0;i<inMesh.fNumVerts;i++)
     {
-        AABBMin.fX = hsMinimum(nxLocs2[i].x, AABBMin.fX);
-        AABBMin.fY = hsMinimum(nxLocs2[i].y, AABBMin.fY);
-        AABBMin.fZ = hsMinimum(nxLocs2[i].z, AABBMin.fZ);
-        AABBMax.fX = hsMaximum(nxLocs2[i].x, AABBMax.fX);
-        AABBMax.fY = hsMaximum(nxLocs2[i].y, AABBMax.fY);
-        AABBMax.fZ = hsMaximum(nxLocs2[i].z, AABBMax.fZ);
+        AABBMin.fX = std::min(nxLocs2[i].x, AABBMin.fX);
+        AABBMin.fY = std::min(nxLocs2[i].y, AABBMin.fY);
+        AABBMin.fZ = std::min(nxLocs2[i].z, AABBMin.fZ);
+        AABBMax.fX = std::max(nxLocs2[i].x, AABBMax.fX);
+        AABBMax.fY = std::max(nxLocs2[i].y, AABBMax.fY);
+        AABBMax.fZ = std::max(nxLocs2[i].z, AABBMax.fZ);
     }
     
     int resultingPoints=0;

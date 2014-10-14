@@ -87,7 +87,7 @@ protected:
         // is set to his address so we can automatically get at it during construction.
         fFlags=0;
         int32_t off = (int32_t)plSynchedObject::GetStaticSynchedObject() - (int32_t)this; 
-        if ( hsABS(off) <  (1<<(sizeof(fSynchedObjectAddrOffset)<<3)) )
+        if ( abs(off) <  (1<<(sizeof(fSynchedObjectAddrOffset)<<3)) )
             fSynchedObjectAddrOffset = (int16_t)off;
         else
             fSynchedObjectAddrOffset=-1;

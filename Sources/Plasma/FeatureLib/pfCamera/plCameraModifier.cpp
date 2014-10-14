@@ -198,7 +198,7 @@ bool plCameraModifier1::MsgReceive(plMessage* msg)
     {
         double time = (double)fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fAccel;
         double time2 = (double)pEventMsg->fEventTime;
-        time = hsABS(time - time2);
+        time = fabs(time - time2);
         float h = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVh;
         float w = fFOVInstructions[pEventMsg->fIndex]->GetConfig()->fFOVw;
         if (GetBrain())

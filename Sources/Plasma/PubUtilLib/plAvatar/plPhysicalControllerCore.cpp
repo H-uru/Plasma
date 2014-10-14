@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <cmath>
+#include <algorithm>
 
 #include "plPhysicalControllerCore.h"
 
@@ -284,7 +285,7 @@ void plAnimatedMovementStrategy::RecalcVelocity(double timeNow, float elapsed, b
 
     // Update controller rotation
     float zRot = fAnimAngularVel + fTurnStr;
-    if (hsABS(zRot) > 0.0001f)
+    if (fabs(zRot) > 0.0001f)
         fController->IncrementAngle(zRot * elapsed);
 
     // Update controller velocity
@@ -396,13 +397,13 @@ void plWalkingStrategy::Apply(float delSecs)
     hsVector3 achievedVelocity = fController->GetAchievedLinearVelocity();
 
     // Add in gravity if the avatar's z velocity isn't being set explicitly
-    if (hsABS(velocity.fZ) < 0.001f)
+    if (fabs(velocity.fZ) < 0.001f)
     {
         // Get our previous z velocity.  If we're on the ground, clamp it to zero at
         // the largest, so we won't launch into the air if we're running uphill.
         float prevZVel = achievedVelocity.fZ;
         if (IsOnGround())
-            prevZVel = hsMinimum(prevZVel, 0.0f);
+            prevZVel = std::min(prevZVel, 0.0f);
 
         velocity.fZ = prevZVel + (kGravity * delSecs);
     }
@@ -577,7 +578,7 @@ bool plWalkingStrategy::EnableControlledFlight(bool status)
         ++fControlledFlight;
     }
     else
-        fControlledFlight = max(--fControlledFlight, 0);
+        fControlledFlight = std::max(--fControlledFlight, 0);
 
     return status;
 }
@@ -625,7 +626,7 @@ void plSwimStrategy::Apply(float delSecs)
         hsVector3 linCurrent(0.0f, 0.0f, 0.0f);
         fCurrentRegion->GetCurrent(fController, linCurrent, angCurrent, delSecs);
 
-        if (hsABS(angCurrent) > 0.0001f)
+        if (fabs(angCurrent) > 0.0001f)
             fController->IncrementAngle(angCurrent * delSecs);
 
         velocity += linCurrent;
@@ -710,13 +711,13 @@ void plDynamicWalkingStrategy::Apply(float delSecs)
     hsVector3 achievedVelocity = fController->GetAchievedLinearVelocity();
 
     // Add in gravity if the avatar's z velocity isn't being set explicitly
-    if (hsABS(velocity.fZ) < 0.001f)
+    if (fabs(velocity.fZ) < 0.001f)
     {
         // Get our previous z velocity.  If we're on the ground, clamp it to zero at
         // the largest, so we won't launch into the air if we're running uphill.
         float prevZVel = achievedVelocity.fZ;
         if (IsOnGround())
-            prevZVel = hsMinimum(prevZVel, 0.f);
+            prevZVel = std::min(prevZVel, 0.f);
 
         velocity.fZ = prevZVel + (kGravity * delSecs);
     }

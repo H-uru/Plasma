@@ -74,7 +74,7 @@ plExportLogErrorMsg::~plExportLogErrorMsg()
 #ifdef ERRORLOG_ALWAYS_WRITE_SOMETHING
     else
     {
-        fErrfile = hsFopen(fErrfile_name, "wt");
+        fErrfile = fopen(fErrfile_name, "wt");
         setbuf(fErrfile, nil);
         fprintf(fErrfile, "No errors found! Good job.");
         fclose(fErrfile);
@@ -170,7 +170,7 @@ void plExportLogErrorMsg::IWriteErrorFile(const char* label, const char* msg)
         if ( !fErrfile )
         {
             // must be the first write... open the error file
-            fErrfile = hsFopen(fErrfile_name, "wt");
+            fErrfile = fopen(fErrfile_name, "wt");
             setbuf(fErrfile, nil);
             fNumberErrors = 0;
         }

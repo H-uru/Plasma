@@ -2701,7 +2701,7 @@ bool LoginRequestTrans::Recv (
             m_accountFlags  = reply.accountFlags;
             m_billingType   = reply.billingType;
 
-            unsigned memSize = min(arrsize(s_encryptionKey), arrsize(reply.encryptionKey));
+            unsigned memSize = std::min(arrsize(s_encryptionKey), arrsize(reply.encryptionKey));
             memSize *= sizeof(uint32_t);
             memcpy(s_encryptionKey, reply.encryptionKey, memSize);
         }
@@ -5130,7 +5130,7 @@ void NetCliAuthStartConnect (
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
     // to choose the "best" auth connection.
-    authAddrCount = min(authAddrCount, 1);
+    authAddrCount = std::min(authAddrCount, 1u);
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
@@ -5273,7 +5273,7 @@ void NetCliAuthGetEncryptionKey (
     uint32_t      key[],
     unsigned    size
 ) {
-    unsigned memSize = min(arrsize(s_encryptionKey), size);
+    unsigned memSize = std::min(arrsize(s_encryptionKey), size);
     memSize *= sizeof(uint32_t);
     memcpy(key, s_encryptionKey, memSize);
 }

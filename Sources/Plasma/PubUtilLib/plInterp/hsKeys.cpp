@@ -61,9 +61,9 @@ void hsPoint3Key::Write(hsStream *stream)
 
 bool hsPoint3Key::CompareValue(hsPoint3Key *key)
 {
-    return hsABS(fValue.fX - key->fValue.fX) < .01 &&
-           hsABS(fValue.fY - key->fValue.fY) < .01 &&
-           hsABS(fValue.fZ - key->fValue.fZ) < .01;
+    return fabs(fValue.fX - key->fValue.fX) < .01 &&
+           fabs(fValue.fY - key->fValue.fY) < .01 &&
+           fabs(fValue.fZ - key->fValue.fZ) < .01;
 }
 
 void hsBezPoint3Key::Read(hsStream *stream)
@@ -84,9 +84,9 @@ void hsBezPoint3Key::Write(hsStream *stream)
 
 bool hsBezPoint3Key::CompareValue(hsBezPoint3Key *key)
 {
-    return hsABS(fValue.fX - key->fValue.fX) < .01 &&
-           hsABS(fValue.fY - key->fValue.fY) < .01 &&
-           hsABS(fValue.fZ - key->fValue.fZ) < .01;
+    return fabs(fValue.fX - key->fValue.fX) < .01 &&
+           fabs(fValue.fY - key->fValue.fY) < .01 &&
+           fabs(fValue.fZ - key->fValue.fZ) < .01;
 }
 
 /////////////////////////////////////////
@@ -179,21 +179,21 @@ void hsCompressedQuatKey32::SetQuat(hsQuat &q)
 {
     q.Normalize();
     uint32_t maxElement = kCompQuatNukeX;
-    float maxVal = hsABS(q.fX);
-    if (hsABS(q.fY) > maxVal)
+    float maxVal = fabs(q.fX);
+    if (fabs(q.fY) > maxVal)
     {
         maxElement = kCompQuatNukeY;
-        maxVal = hsABS(q.fY);
+        maxVal = fabs(q.fY);
     }
-    if (hsABS(q.fZ) > maxVal)
+    if (fabs(q.fZ) > maxVal)
     {
         maxElement = kCompQuatNukeZ;
-        maxVal = hsABS(q.fZ);
+        maxVal = fabs(q.fZ);
     }
-    if (hsABS(q.fW) > maxVal)
+    if (fabs(q.fW) > maxVal)
     {
         maxElement = kCompQuatNukeW;
-        maxVal = hsABS(q.fW);
+        maxVal = fabs(q.fW);
     }
     switch (maxElement)
     {
@@ -322,21 +322,21 @@ void hsCompressedQuatKey64::SetQuat(hsQuat &q)
 {
     q.Normalize();
     uint32_t maxElement = kCompQuatNukeX;
-    float maxVal = hsABS(q.fX);
-    if (hsABS(q.fY) > maxVal)
+    float maxVal = fabs(q.fX);
+    if (fabs(q.fY) > maxVal)
     {
         maxElement = kCompQuatNukeY;
-        maxVal = hsABS(q.fY);
+        maxVal = fabs(q.fY);
     }
-    if (hsABS(q.fZ) > maxVal)
+    if (fabs(q.fZ) > maxVal)
     {
         maxElement = kCompQuatNukeZ;
-        maxVal = hsABS(q.fZ);
+        maxVal = fabs(q.fZ);
     }
-    if (hsABS(q.fW) > maxVal)
+    if (fabs(q.fW) > maxVal)
     {
         maxElement = kCompQuatNukeW;
-        maxVal = hsABS(q.fW);
+        maxVal = fabs(q.fW);
     }
     switch (maxElement)
     {

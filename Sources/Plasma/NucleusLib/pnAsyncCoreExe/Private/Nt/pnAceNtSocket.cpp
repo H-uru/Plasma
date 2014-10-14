@@ -338,7 +338,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
             NtOpSocketWrite * lastQueuedWrite = (NtOpSocketWrite *) opCurr;
 
             unsigned bytesLeft = lastQueuedWrite->bytesAlloc - lastQueuedWrite->write.bytes;
-            bytesLeft = min(bytesLeft, bytes);
+            bytesLeft = std::min(bytesLeft, bytes);
             if (bytesLeft) {
                 PerfAddCounter(kAsyncPerfSocketBytesWaitQueued, bytesLeft);
                 memcpy(lastQueuedWrite->write.buffer + lastQueuedWrite->write.bytes, data, bytesLeft);
@@ -353,8 +353,8 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
 
     // allocate a buffer large enough to hold the data, plus
     // extra space in case more data needs to be queued later
-    unsigned bytesAlloc = max(bytes, sock->backlogAlloc);
-    bytesAlloc          = max(bytesAlloc, kMinBacklogBytes);
+    unsigned bytesAlloc = std::max(bytes, sock->backlogAlloc);
+    bytesAlloc          = std::max(bytesAlloc, kMinBacklogBytes);
     NtOpSocketWrite * op = new(malloc(sizeof(NtOpSocketWrite) + bytesAlloc)) NtOpSocketWrite;
 
     // init Operation
@@ -883,7 +883,7 @@ static unsigned SocketCloseTimerCallback (void *) {
         HardCloseSocket(*cur);
 
     // Don't run too frequently
-    return max(sleepMs, 2000);
+    return std::max(sleepMs, 2000u);
 }
 
 

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <ctime>
 #include <string>
+#include <algorithm>
 
 void print_version() {
     puts(plProduct::ProductString().c_str());
@@ -75,7 +76,7 @@ void GenerateKey(bool useDefault)
     uint32_t key[4];
     if (useDefault)
     {
-        unsigned memSize = min(arrsize(key), arrsize(plSecureStream::kDefaultKey));
+        unsigned memSize = std::min(arrsize(key), arrsize(plSecureStream::kDefaultKey));
         memSize *= sizeof(uint32_t);
         memcpy(key, plSecureStream::kDefaultKey, memSize);
     }

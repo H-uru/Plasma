@@ -6421,7 +6421,7 @@ plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
 // Calculate the number of active piggy backs.
 int plDXPipeline::ISetNumActivePiggyBacks()
 {
-    return fActivePiggyBacks = hsMinimum(fSettings.fMaxPiggyBacks, fPiggyBackStack.GetCount());
+    return fActivePiggyBacks = std::min(static_cast<int>(fSettings.fMaxPiggyBacks), fPiggyBackStack.GetCount());
 }
 
 // IPushProjPiggyBack //////////////////////////////////////////////////

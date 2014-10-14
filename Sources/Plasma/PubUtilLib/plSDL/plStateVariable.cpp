@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include <cfloat>
+#include <type_traits>
 #include "hsStream.h"
 #include "hsTimer.h"
 #include "plSDL.h"
@@ -2110,10 +2111,24 @@ void plSimpleStateVariable::CopyData(const plSimpleStateVariable* other, uint32_
 // send notification msg if necessary, called internally
 //
 
+template <typename _T>
+typename std::enable_if<std::is_floating_point<_T>::value, _T>::type
+_generic_abs(_T value)
+{
+    return fabs(value);
+}
+
+template <typename _T>
+typename std::enable_if<std::is_integral<_T>::value, _T>::type
+_generic_abs(_T value)
+{
+    return abs(value);
+}
+
 #define NOTIFY_CHECK(type, var)     \
 case type:  \
     for(i=0;i<cnt;i++)  \
-        if (hsABS(var[i] - other->var[i])>d)    \
+        if (_generic_abs(var[i] - other->var[i]) > d)    \
         {   \
             notify=true;    \
             break;  \

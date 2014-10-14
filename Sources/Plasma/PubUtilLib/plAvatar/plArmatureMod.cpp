@@ -439,9 +439,9 @@ void plArmatureModBase::AdjustLOD()
         hsPoint3 delta = ourPos - camPos;
         float distanceSquared = delta.MagnitudeSquared();
         if (distanceSquared < fLODDistance * fLODDistance)
-            SetLOD(max(0, fMinLOD));
+            SetLOD(std::max(0, fMinLOD));
         else if (distanceSquared < fLODDistance * fLODDistance * 4.0) 
-            SetLOD(max(1, fMinLOD));
+            SetLOD(std::max(1, fMinLOD));
         else 
             SetLOD(2);
     }

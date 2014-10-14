@@ -75,7 +75,6 @@ struct hsColor32 {
     }
     int operator!=(const hsColor32& aa) { return !(aa == *this); }
 };
-hsCTypeDefStruct(hsColor32)
 typedef hsColor32 hsRGBAColor32;
 
 struct hsColorRGBA {

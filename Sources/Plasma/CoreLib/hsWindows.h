@@ -61,8 +61,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #       define _WIN32_IE    0x400
 #   endif
 
+    // HACK: Max headers depend on the min() and max() macros normally pulled
+    // in by windows.h... However, we usually disable those, since they break
+    // std::min and std::max.  Therefore, we bring the std:: versions down to
+    // the global namespace so we can still compile max code without breaking
+    // everything else :/
 #   ifndef NOMINMAX
 #       define NOMINMAX
+#       include <algorithm>
+        using std::min;
+        using std::max;
 #   endif
 
 #   define WIN32_LEAN_AND_MEAN

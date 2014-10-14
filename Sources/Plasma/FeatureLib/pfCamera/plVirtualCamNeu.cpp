@@ -1949,7 +1949,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
     pBrain->SetCamera(fTransitionCamera);
 
     // deal with FOV -
-    float diffH = hsABS(pCam->GetFOVh() - fPrevCam->GetFOVh());
+    float diffH = fabs(pCam->GetFOVh() - fPrevCam->GetFOVh());
     if ( diffH )
     {
         double time = 0;

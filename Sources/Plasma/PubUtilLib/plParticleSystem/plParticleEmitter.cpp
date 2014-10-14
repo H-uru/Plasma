@@ -261,7 +261,7 @@ void plParticleEmitter::UpdateGenerator(uint32_t paramID, float paramValue)
 uint16_t plParticleEmitter::StealParticlesFrom(plParticleEmitter *victim, uint16_t num)
 {
     uint16_t spaceAvail = (uint16_t)(fMaxParticles - fNumValidParticles);
-    uint16_t numToCopy = (uint16_t)(hsMinimum(num, (victim ? victim->fNumValidParticles : 0)));
+    uint16_t numToCopy = std::min(num, static_cast<uint16_t>(victim ? victim->fNumValidParticles : 0));
     if (spaceAvail < numToCopy)
         numToCopy = spaceAvail;
 

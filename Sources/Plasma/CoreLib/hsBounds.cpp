@@ -195,9 +195,9 @@ void hsBounds3::MakeSymmetric(const hsPoint3* p)
         float delUp;
 
         delUp = fMaxs[i] - (*p)[i];
-        delMax = hsMaximum(delMax, delUp);
+        delMax = std::max(delMax, delUp);
         delUp = (*p)[i] - fMins[i];
-        delMax = hsMaximum(delMax, delUp);
+        delMax = std::max(delMax, delUp);
     }
     const float sqrtTwo = 1.41421f;
     delMax *= sqrtTwo;

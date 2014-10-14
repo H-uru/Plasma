@@ -740,25 +740,25 @@ public:
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray () : TFArray<T,C>() {
-    m_chunkSize = max(1, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (const char file[], int line) : TFArray<T,C>(file, line) {
-    m_chunkSize = max(1, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (unsigned count) : TFArray<T,C>(count) {
-    m_chunkSize = max(1, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
 template<class T, class C>
 TArray<T,C>::TArray (const T * source, unsigned count) : TFArray<T,C>(source, count) {
-    m_chunkSize = max(1, 256 / sizeof(T));
+    m_chunkSize = std::max(size_t(1), 256 / sizeof(T));
 }
 
 //===========================================================================
@@ -890,8 +890,8 @@ void TArray<T,C>::Move (unsigned destIndex, unsigned sourceIndex, unsigned count
 
     // Remove it from the source
     if (destIndex >= sourceIndex) {
-        C::Destruct(this->m_data + sourceIndex, min(count, destIndex - sourceIndex));
-        C::Construct(this->m_data + sourceIndex, min(count, destIndex - sourceIndex));
+        C::Destruct(this->m_data + sourceIndex, std::min(count, destIndex - sourceIndex));
+        C::Construct(this->m_data + sourceIndex, std::min(count, destIndex - sourceIndex));
     }
     else {
         unsigned overlap = (destIndex + count > sourceIndex) ? (destIndex + count - sourceIndex) : 0;
@@ -936,7 +936,7 @@ T TArray<T,C>::Pop () {
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::Reserve (unsigned additionalCount) {
-    AdjustSizeChunked(max(this->m_alloc, this->m_count + additionalCount), this->m_count);
+    AdjustSizeChunked(std::max(this->m_alloc, this->m_count + additionalCount), this->m_count);
 }
 
 //===========================================================================
@@ -956,7 +956,7 @@ void TArray<T,C>::SetChunkSize (unsigned chunkSize) {
 //===========================================================================
 template<class T, class C>
 void TArray<T,C>::SetCount (unsigned count) {
-    AdjustSizeChunked(max(this->m_alloc, count), count);
+    AdjustSizeChunked(std::max(this->m_alloc, count), count);
 }
 
 //===========================================================================
