@@ -2078,7 +2078,7 @@ void plClient::IDetectAudioVideoSettings()
     } else {
         stream = plEncryptedStream::OpenEncryptedFileWrite(audioIniFile);
         WriteBool(stream, "Audio.Initialize",  true);
-        WriteBool(stream, "Audio.UseEAX", false);
+        WriteBool(stream, "Audio.UseEAX", true);
         WriteInt(stream, "Audio.SetPriorityCutoff", 6);
         WriteInt(stream, "Audio.MuteAll", false);
         WriteInt(stream, "Audio.SetChannelVolume SoundFX", 1);

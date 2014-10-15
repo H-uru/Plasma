@@ -77,4 +77,6 @@ typedef struct _EAXREVERBPROPERTIES
     unsigned long ulFlags;
 } EAXREVERBPROPERTIES, *LPEAXREVERBPROPERTIES;
 
+#define EAXLISTENERFLAGS_DECAYHFLIMIT  0x20
+
 #endif //plEAXStructures_h_inc
