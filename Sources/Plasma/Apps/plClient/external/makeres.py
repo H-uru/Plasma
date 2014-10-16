@@ -81,7 +81,7 @@ if __name__ == '__main__':
 		print("Optimizing PNGs with pngcrush...")
 		for png in glob.glob(os.path.join(workpath, "render", "*.png")):
 			#print("pngcrushing - {0}".format(png))
-			ret = subprocess.call(["pngcrush", "-q", "-l 9", "-brute", png, "temp.png"], stdout=sys.stdout, stderr=sys.stderr)
+			ret = subprocess.call(["pngcrush", "-q", "-l", "9", "-brute", png, "temp.png"], stdout=sys.stdout, stderr=sys.stderr)
 			if ret != 0:
 				print("An error has occurred.  Aborting.")
 				exit(1)
