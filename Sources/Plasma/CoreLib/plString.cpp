@@ -168,7 +168,7 @@ void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
     while (sp < utf16 + size) {
         if (*sp >= 0xD800 && *sp <= 0xDFFF) {
             // Surrogate pair
-            UniChar unichar = 0x10000;
+            plUniChar unichar = 0x10000;
 
             if (sp + 1 >= utf16 + size) {
                 hsAssert(0, "Incomplete surrogate pair in UTF-16 data");
@@ -209,11 +209,11 @@ void plString::IConvertFromWchar(const wchar_t *wstr, size_t size)
     // We assume that if sizeof(wchar_t) == 2, the data is UTF-16 already
     IConvertFromUtf16((const uint16_t *)wstr, size);
 #else
-    IConvertFromUtf32((const UniChar *)wstr, size);
+    IConvertFromUtf32((const plUniChar *)wstr, size);
 #endif
 }
 
-void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
+void plString::IConvertFromUtf32(const plUniChar *ustr, size_t size)
 {
     hsAssert(size == STRLEN_AUTO || size < FREAKING_BIG, "Your string is WAAAAAY too big");
 
@@ -226,7 +226,7 @@ void plString::IConvertFromUtf32(const UniChar *ustr, size_t size)
 
     // Calculate the UTF-8 size
     size_t convlen = 0;
-    const UniChar *sp = ustr;
+    const plUniChar *sp = ustr;
     while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
             hsAssert(0, "UTF-32 character out of range");
@@ -341,7 +341,7 @@ plStringBuffer<uint16_t> plString::ToUtf16() const
     uint16_t *dp = ustr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
-        UniChar unichar;
+        plUniChar unichar;
         if ((*sp & 0xF8) == 0xF0) {
             unichar  = (*sp++ & 0x07) << 18;
             unichar |= (*sp++ & 0x3F) << 12;
@@ -408,7 +408,7 @@ plStringBuffer<char> plString::ToIso8859_1() const
     char *dp = astr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
-        UniChar unichar;
+        plUniChar unichar;
         if ((*sp & 0xF8) == 0xF0) {
             unichar  = (*sp++ & 0x07) << 18;
             unichar |= (*sp++ & 0x3F) << 12;
@@ -455,11 +455,11 @@ plUnicodeBuffer plString::GetUnicodeArray() const
     }
 
     // And perform the actual conversion
-    UniChar *ustr = result.CreateWritableBuffer(convlen);
-    UniChar *dp = ustr;
+    plUniChar *ustr = result.CreateWritableBuffer(convlen);
+    plUniChar *dp = ustr;
     sp = utf8;
     while (sp < utf8 + srcSize) {
-        UniChar unichar;
+        plUniChar unichar;
         if ((*sp & 0xF8) == 0xF0) {
             unichar  = (*sp++ & 0x07) << 18;
             unichar |= (*sp++ & 0x3F) << 12;
@@ -942,7 +942,7 @@ plStringStream &plStringStream::operator<<(double num)
     return operator<<(buffer);
 }
 
-size_t ustrlen(const UniChar *ustr)
+size_t ustrlen(const plUniChar *ustr)
 {
     size_t length = 0;
     for ( ; *ustr++; ++length)

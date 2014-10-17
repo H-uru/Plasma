@@ -21,6 +21,9 @@ endif(WIN32 AND NOT CYGWIN)
 if(UNIX)
     add_definitions(-DHS_BUILD_FOR_UNIX)
 endif(UNIX)
+if(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    add_definitions(-DHS_BUILD_FOR_OSX)
+endif(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 # End HeadSpin Configuration
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")

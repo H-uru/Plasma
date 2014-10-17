@@ -22,7 +22,7 @@ target_link_libraries(pnUUID CoreLib)
 if(WIN32)
     target_link_libraries(pnUUID pnUtils)
     target_link_libraries(pnUUID rpcrt4)
-else(WIN32)
+elseif(NOT APPLE)
     target_link_libraries(pnUUID uuid)
 endif(WIN32)
 
