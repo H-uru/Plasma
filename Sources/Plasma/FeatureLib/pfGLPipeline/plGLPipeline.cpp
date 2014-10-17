@@ -198,10 +198,75 @@ void plGLPipeline::CheckTextureRef(plLayerInterface* lay)
 {}
 
 void plGLPipeline::PushRenderRequest(plRenderRequest* req)
-{}
+{
+    // Save these, since we want to copy them to our current view
+    hsMatrix44 l2w = fView.GetLocalToWorld();
+    hsMatrix44 w2l = fView.GetWorldToLocal();
+
+    plFogEnvironment defFog = fView.GetDefaultFog();
+
+    fViewStack.push(fView);
+
+    SetViewTransform(req->GetViewTransform());
+
+    PushRenderTarget(req->GetRenderTarget());
+    fView.fRenderState = req->GetRenderState();
+
+    fView.fRenderRequest = req;
+    hsRefCnt_SafeRef(fView.fRenderRequest);
+
+    SetDrawableTypeMask(req->GetDrawableMask());
+    SetSubDrawableTypeMask(req->GetSubDrawableMask());
+
+    float depth = req->GetClearDepth();
+    fView.SetClear(&req->GetClearColor(), &depth);
+
+#if 0
+    if (req->GetFogStart() < 0)
+    {
+        fView.SetDefaultFog(defFog);
+    }
+    else
+    {
+        defFog.Set(req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
+        fView.SetDefaultFog(defFog);
+        fCurrFog.fEnvPtr = nullptr;
+    }
+#endif
+
+    if (req->GetOverrideMat())
+        PushOverrideMaterial(req->GetOverrideMat());
+
+    // Set from our saved ones...
+    fView.SetWorldToLocal(w2l);
+    fView.SetLocalToWorld(l2w);
+
+    RefreshMatrices();
+
+    if (req->GetIgnoreOccluders())
+        fView.SetMaxCullNodes(0);
+
+    fView.fCullTreeDirty = true;
+}
 
 void plGLPipeline::PopRenderRequest(plRenderRequest* req)
-{}
+{
+    if (req->GetOverrideMat())
+        PopOverrideMaterial(nullptr);
+
+    hsRefCnt_SafeUnRef(fView.fRenderRequest);
+    fView = fViewStack.top();
+    fViewStack.pop();
+
+#if 0
+    // Force the next thing drawn to update the fog settings.
+    fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
+    fCurrFog.fEnvPtr = nullptr;
+#endif
+
+    PopRenderTarget();
+    fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
+}
 
 void plGLPipeline::ClearRenderTarget(plDrawable* d)
 {}
