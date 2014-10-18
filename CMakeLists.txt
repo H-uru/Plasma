@@ -96,8 +96,9 @@ endif(PLASMA_TARGETS STREQUAL "Ethereal")
 option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
-
+option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
+
 if(3dsm_BUILD_PLUGIN)
     find_package(MaxSDK REQUIRED)
     add_definitions(-DBUILDING_MAXPLUGIN)
@@ -128,3 +129,9 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)
+
+if(PLASMA_BUILD_TESTS)
+    enable_testing()
+    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
+    add_subdirectory(Sources/Tests EXCLUDE_FROM_ALL)
+endif(PLASMA_BUILD_TESTS)

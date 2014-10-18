@@ -532,22 +532,22 @@ public:
     /** Inverse of operator==(const plString &) const. */
     bool operator!=(const plString &other) const { return Compare(other) != 0; }
 
-    /** Find the index of the first instance of \a ch in this string.
+    /** Find the index (in bytes) of the first instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the last instance of \a ch in this string.
+    /** Find the index (in bytes) of the last instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
@@ -583,19 +583,19 @@ public:
      */
     plString Trim(const char *charset = WHITESPACE_CHARS) const;
 
-    /** Return a substring starting at index \a start, with up to \a size
-     *  characters from the start position.  If \a size is greater than the
+    /** Return a substring starting at index (in bytes) \a start, with up to \a size
+     *  characters (in bytes) from the start position.  If \a size is greater than the
      *  number of characters left in the string after \a start, Substr will
      *  return the remainder of the string.
      */
     plString Substr(ssize_t start, size_t size = STRLEN_AUTO) const;
 
-    /** Return a substring containing at most \a size characters from the left
+    /** Return a substring containing at most \a size characters(in bytes) from the left
      *  of the string.  Equivalent to Substr(0, size).
      */
     plString Left(size_t size) const { return Substr(0, size); }
 
-    /** Return a substring containing at most \a size characters from the right
+    /** Return a substring containing at most \a size characters(in bytes) from the right
      *  of the string.  Equivalent to Substr(GetSize() - size, size).
      */
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
