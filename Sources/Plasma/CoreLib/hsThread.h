@@ -175,19 +175,34 @@ class hsEvent
 {
     std::mutex fMutex;
     std::condition_variable fCondition;
+    bool fEvent;
 
 public:
-    hsEvent() { }
+    hsEvent() : fEvent(false) { }
 
     inline void Wait()
     {
         std::unique_lock<std::mutex> lock(fMutex);
-        fCondition.wait(lock);
+        fCondition.wait(lock, [this]() { return fEvent; });
+        fEvent = false;
+    }
+
+    template <class _Rep, class _Period>
+    inline bool Wait(const std::chrono::duration<_Rep, _Period> &duration)
+    {
+        std::unique_lock<std::mutex> lock(fMutex);
+
+        bool result = fCondition.wait_for(lock, duration, [this]() { return fEvent; });
+        if (result)
+            fEvent = false;
+
+        return result;
     }
 
     inline void Signal()
     {
         std::unique_lock<std::mutex> lock(fMutex);
+        fEvent = true;
         fCondition.notify_one();
     }
 };
