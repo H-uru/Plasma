@@ -532,22 +532,22 @@ public:
     /** Inverse of operator==(const plString &) const. */
     bool operator!=(const plString &other) const { return Compare(other) != 0; }
 
-    /** Find the index(in bytes) of the first instance of \a ch in this string.
+    /** Find the index (in bytes) of the first instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index(in bytes) of the last instance of \a ch in this string.
+    /** Find the index (in bytes) of the last instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index(in bytes) of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index(in bytes) of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
@@ -583,8 +583,8 @@ public:
      */
     plString Trim(const char *charset = WHITESPACE_CHARS) const;
 
-    /** Return a substring starting at index(in bytes) \a start, with up to \a size
-     *  characters(in bytes) from the start position.  If \a size is greater than the
+    /** Return a substring starting at index (in bytes) \a start, with up to \a size
+     *  characters (in bytes) from the start position.  If \a size is greater than the
      *  number of characters left in the string after \a start, Substr will
      *  return the remainder of the string.
      */

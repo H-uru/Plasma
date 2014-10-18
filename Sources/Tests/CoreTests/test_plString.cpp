@@ -30,24 +30,6 @@ TEST(PlStringTest,ToIso8859_1)
     EXPECT_STREQ(expected.GetData(),output.GetData());
 }
 
-TEST(PlStringTest,Format)
-{
-    //string <256 characters
-    plString expected1 = plString("abcd3");
-    plString output1 = plString::Format("a%c%s%d",'b',"cd",3);
-    EXPECT_EQ(expected1,output1);
-
-    //string == 256 characters
-    plString expected2 = plString("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elit erat, ornare vitae dictum non, accumsan nec orci. Pellentesque vel lectus magna, nec fermentum leo. Vestibulum venenatis sapien sit amet diam luctus laoreet. Integer accumsan iaculis amet.");
-    plString output2 = plString::Format("Lorem %s dolor sit amet, consectetur adipiscing elit. %s elit erat, ornare vitae dictum non, accumsan nec orci. Pellentesque vel lectus magna, nec fermentum leo. Vestibulum venenatis sapien sit amet diam luctus laoreet. Integer accumsan %s amet.","ipsum","Morbi","iaculis");
-    EXPECT_EQ(expected2,output2);
-
-    //string >256 characters
-    plString expected3 = plString("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur blandit iaculis metus eu gravida. Nulla ut lorem et tortor aliquam varius. Maecenas sed metus turpis. Mauris molestie velit aliquam felis suscipit egestas. Duis id arcu eget velit facilisis varius vitae ac neque. Quisque dapibus sed.");
-    plString output3 = plString::Format("Lorem ipsum dolor sit amet, %s adipiscing elit. Curabitur blandit iaculis metus eu gravida. Nulla ut lorem et tortor aliquam varius. Maecenas sed metus turpis. Mauris molestie velit aliquam felis suscipit %s. %s","consectetur","egestas","Duis id arcu eget velit facilisis varius vitae ac neque. Quisque dapibus sed.");
-    EXPECT_EQ(expected3,output3);
-}
-
 TEST(PlStringTest,FindChar)
 {
     plString input = plString("abCdcBAeab");
