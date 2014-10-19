@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
 
+#include "plProfile.h"
 #include "plPipeline/hsWinRef.h"
 #include "plStatusLog/plStatusLog.h"
 
@@ -63,6 +64,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 typedef plGLDevice DeviceType;
+
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
 
 plGLEnumerate plGLPipeline::enumerator;
 
@@ -401,13 +414,16 @@ void plGLPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 
 void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
 {
-    //plProfile_BeginTiming(RenderSpan);
+    plProfile_BeginTiming(RenderSpan);
+
+    if (ice->GetRenderLevel() != 0)
+        return;
 
     hsMatrix44 lastL2W;
     hsGMaterial* material;
     const std::vector<plSpan*>& spans = ice->GetSpanArray();
 
-    //plProfile_IncCount(EmptyList, !visList.GetCount());
+    //plProfile_IncCount(EmptyList, visList.empty());
 
     /// Set this (*before* we do our TestVisibleWorld stuff...)
     lastL2W.Reset();
@@ -434,17 +450,17 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             if (GetOverrideMaterial())
                 tempIce.fMaterialIdx = spans[visList[j]]->fMaterialIdx;
 
-            //plProfile_BeginTiming(MergeCheck);
+            plProfile_BeginTiming(MergeCheck);
             if (!spans[visList[j]]->CanMergeInto(&tempIce)) {
-                //plProfile_EndTiming(MergeCheck);
+                plProfile_EndTiming(MergeCheck);
                 break;
             }
-            //plProfile_EndTiming(MergeCheck);
+            plProfile_EndTiming(MergeCheck);
             //plProfile_Inc(SpanMerge);
 
-            //plProfile_BeginTiming(MergeSpan);
+            plProfile_BeginTiming(MergeSpan);
             spans[visList[j]]->MergeInto(&tempIce);
-            //plProfile_EndTiming(MergeSpan);
+            plProfile_EndTiming(MergeSpan);
         }
 
         if (material != nullptr) {
@@ -455,9 +471,9 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
 
             // What do we change?
 
-            //plProfile_BeginTiming(SpanTransforms);
+            plProfile_BeginTiming(SpanTransforms);
             ISetupTransforms(ice, tempIce, lastL2W);
-            //plProfile_EndTiming(SpanTransforms);
+            plProfile_EndTiming(SpanTransforms);
 
             // Turn on this spans lights and turn off the rest.
             //IEnableLights( &tempIce );
@@ -467,10 +483,11 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             //ICheckDynBuffers(drawable, drawable->GetBufferGroup(tempIce.fGroupIdx), &tempIce);
             //plProfile_EndTiming(CheckDyn);
 
-            //plProfile_BeginTiming(CheckStat);
-            CheckVertexBufferRef(ice->GetBufferGroup(tempIce.fGroupIdx), tempIce.fVBufferIdx);
-            CheckIndexBufferRef(ice->GetBufferGroup(tempIce.fGroupIdx), tempIce.fIBufferIdx);
-            //plProfile_EndTiming(CheckStat);
+            plProfile_BeginTiming(CheckStat);
+            plGBufferGroup* grp = ice->GetBufferGroup(tempIce.fGroupIdx);
+            CheckVertexBufferRef(grp, tempIce.fVBufferIdx);
+            CheckIndexBufferRef(grp, tempIce.fIBufferIdx);
+            plProfile_EndTiming(CheckStat);
 
             // Draw this span now
             IRenderBufferSpan( tempIce,
@@ -485,7 +502,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
         i = j;
     }
 
-    //plProfile_EndTiming(RenderSpan);
+    plProfile_EndTiming(RenderSpan);
     /// All done!
 }
 
@@ -549,5 +566,5 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Index Buffer stuff and drawing */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
 
-    glDrawElements(GL_TRIANGLES, iRef->fCount, GL_UNSIGNED_SHORT, 0);
+    glDrawElements(GL_TRIANGLES, iLength, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * iStart));
 }
