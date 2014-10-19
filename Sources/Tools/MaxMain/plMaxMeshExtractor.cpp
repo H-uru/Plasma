@@ -83,12 +83,12 @@ static void MeshMinMax(hsPoint3& min, hsPoint3& max, int numVerts, hsPoint3* pVe
     for (int i = 0; i < numVerts; i++)
     {
         hsPoint3* vert = &pVerts[i];
-        min.fX = hsMinimum(vert->fX, min.fX);
-        min.fY = hsMinimum(vert->fY, min.fY);
-        min.fZ = hsMinimum(vert->fZ, min.fZ);
-        max.fX = hsMaximum(vert->fX, max.fX);
-        max.fY = hsMaximum(vert->fY, max.fY);
-        max.fZ = hsMaximum(vert->fZ, max.fZ);
+        min.fX = std::min(vert->fX, min.fX);
+        min.fY = std::min(vert->fY, min.fY);
+        min.fZ = std::min(vert->fZ, min.fZ);
+        max.fX = std::max(vert->fX, max.fX);
+        max.fY = std::max(vert->fY, max.fY);
+        max.fZ = std::max(vert->fZ, max.fZ);
     }
 }
 

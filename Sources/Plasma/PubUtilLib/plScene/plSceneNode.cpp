@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
+#include <algorithm>
+
 #include "plSceneNode.h"
 #include "pnDispatch/plDispatch.h"
 #include "plMessage/plNodeCleanupMsg.h"
@@ -100,7 +102,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     int i;
 
     n = s->ReadLE32();
-    fSceneObjects.Reset();
+    fSceneObjects.clear();
     for( i = 0; i < n; i++ )
     {
         plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, i, plNodeRefMsg::kObject);
@@ -108,7 +110,7 @@ void plSceneNode::Read(hsStream* s, hsResMgr* mgr)
     }
 
     n = s->ReadLE32();
-    fGenericPool.Reset();
+    fGenericPool.clear();
     for( i = 0; i < n; i++ )
     {
         plNodeRefMsg* refMsg = new plNodeRefMsg(GetKey(), plRefMsg::kOnCreate, -1, plNodeRefMsg::kGeneric);
@@ -122,12 +124,12 @@ void plSceneNode::Write(hsStream* s, hsResMgr* mgr)
 
     int i;
 
-    s->WriteLE32(fSceneObjects.GetCount());
-    for( i = 0; i < fSceneObjects.GetCount(); i++ )
+    s->WriteLE32(fSceneObjects.size());
+    for( i = 0; i < fSceneObjects.size(); i++ )
         mgr->WriteKey(s,fSceneObjects[i]);
 
-    s->WriteLE32(fGenericPool.GetCount());
-    for( i = 0; i < fGenericPool.GetCount(); i++ )
+    s->WriteLE32(fGenericPool.size());
+    for( i = 0; i < fGenericPool.size(); i++ )
         mgr->WriteKey(s, fGenericPool[i]);
 }
 
@@ -189,7 +191,7 @@ plSpaceTree* plSceneNode::IBuildSpaceTree()
     bnd.Reset(&zero);
     
     int i;
-    for( i = 0; i < fDrawPool.GetCount(); i++ )
+    for( i = 0; i < fDrawPool.size(); i++ )
     {
         if( fDrawPool[i] )
             maker.AddLeaf(fDrawPool[i]->GetSpaceTree()->GetWorldBounds());
@@ -211,23 +213,21 @@ plSpaceTree* plSceneNode::ITrashSpaceTree()
 
 void plSceneNode::IDirtySpaceTree()
 {
-    int i;
-    for( i = 0; i < fDrawPool.GetCount(); i++ )
+    for (size_t i = 0; i < fDrawPool.size(); ++i)
     {
-        if( fDrawPool[i] && fDrawPool[i]->GetSpaceTree()->IsDirty() )
+        plDrawable* drawable = fDrawPool[i];
+        if (drawable && drawable->GetSpaceTree()->IsDirty() )
         {
-            fDrawPool[i]->GetSpaceTree()->Refresh();
-            fSpaceTree->MoveLeaf(i, fDrawPool[i]->GetSpaceTree()->GetWorldBounds());
+            drawable->GetSpaceTree()->Refresh();
+            fSpaceTree->MoveLeaf(i, drawable->GetSpaceTree()->GetWorldBounds());
         }
     }
 }
 
 plSpaceTree* plSceneNode::GetSpaceTree()
 {
-    if( !fSpaceTree )
-    {
+    if (!fSpaceTree)
         IBuildSpaceTree();
-    }
     IDirtySpaceTree();
     return fSpaceTree;
 }
@@ -237,12 +237,10 @@ void plSceneNode::ISetDrawable(plDrawable* d)
     if( !d )
         return;
 
-    if (fDrawPool.Find(d) == fDrawPool.kMissingIndex)
-    {
-        fDrawPool.Append(d);
+    if (std::find(fDrawPool.begin(), fDrawPool.end(), d) == fDrawPool.end()) {
+        fDrawPool.push_back(d);
+        ITrashSpaceTree();
     }
-
-    ITrashSpaceTree();
 }
 
 void plSceneNode::ISetAudible(plAudible* a)
@@ -250,10 +248,8 @@ void plSceneNode::ISetAudible(plAudible* a)
     if( !a )
         return;
 
-    if( fAudioPool.kMissingIndex == fAudioPool.Find(a) )
-    {
-        fAudioPool.Append(a);
-    }
+    if (std::find(fAudioPool.begin(), fAudioPool.end(), a) == fAudioPool.end())
+        fAudioPool.push_back(a);
 }
 
 void plSceneNode::ISetPhysical(plPhysical* p)
@@ -261,31 +257,29 @@ void plSceneNode::ISetPhysical(plPhysical* p)
     if( !p )
         return;
 
-    if( fSimulationPool.kMissingIndex == fSimulationPool.Find(p) )
-    {
-        fSimulationPool.Append(p);
-    }
+    if (std::find(fSimulationPool.begin(), fSimulationPool.end(), p) == fSimulationPool.end())
+        fSimulationPool.push_back(p);
 }
 
 void plSceneNode::ISetObject(plSceneObject* o)
 {
-    if( o && (fSceneObjects.kMissingIndex == fSceneObjects.Find(o)) )
-    {
-        fSceneObjects.Append(o);
+    if (!o)
+        return;
+
+    if (std::find(fSceneObjects.begin(), fSceneObjects.end(), o) == fSceneObjects.end())
+        fSceneObjects.push_back(o);
 
     // MF_NET_GROUPS_TEST
     // This will have no effect on members of NetGroupConstants
-        o->SetNetGroup(o->SelectNetGroup(GetKey()));
+    o->SetNetGroup(o->SelectNetGroup(GetKey()));
 
-        o->SetSceneNode(GetKey());
-    }
+    o->SetSceneNode(GetKey());
 }
 
 void plSceneNode::ISetLight(plLightInfo* l)
 {
-    if( fLightPool.kMissingIndex == fLightPool.Find(l) )
-        fLightPool.Append( l );
-
+    if (std::find(fLightPool.begin(), fLightPool.end(), l) == fLightPool.end())
+        fLightPool.push_back(l);
 }
 
 void plSceneNode::ISetOccluder(plOccluder* o)
@@ -298,25 +292,24 @@ void plSceneNode::ISetOccluder(plOccluder* o)
 
 void plSceneNode::ISetGeneric(hsKeyedObject* k)
 {
-    if( fGenericPool.kMissingIndex == fGenericPool.Find(k) )
-        fGenericPool.Append(k);
+    if (std::find(fGenericPool.begin(), fGenericPool.end(), k) == fGenericPool.end())
+        fGenericPool.push_back(k);
 }
 
 void plSceneNode::IRemoveDrawable(plDrawable* d)
 {
-    int idx = fDrawPool.Find(d);
-    if( idx != fDrawPool.kMissingIndex )
-        fDrawPool.Remove(idx);
-
-    ITrashSpaceTree();
+    auto it = std::find(fDrawPool.begin(), fDrawPool.end(), d);
+    if (it != fDrawPool.end()) {
+        fDrawPool.erase(it);
+        ITrashSpaceTree();
+    }
 }
 
 void plSceneNode::IRemoveAudible(plAudible* a)
 {
-    int idx = fAudioPool.Find(a);
-    if( idx != fAudioPool.kMissingIndex )
-        fAudioPool.Remove(idx);
-
+    auto it = std::find(fAudioPool.begin(), fAudioPool.end(), a);
+    if (it != fAudioPool.end())
+        fAudioPool.erase(it);
 }
 
 void plSceneNode::IRemovePhysical(plPhysical* p)
@@ -337,27 +330,25 @@ void plSceneNode::IRemovePhysical(plPhysical* p)
     }
 #endif
 
-    int idx = fSimulationPool.Find(p);
-    if( idx != fSimulationPool.kMissingIndex )
-        fSimulationPool.Remove(idx);
+    auto it = std::find(fSimulationPool.begin(), fSimulationPool.end(), p);
+    if (it != fSimulationPool.end())
+        fSimulationPool.erase(it);
 }
 
 void plSceneNode::IRemoveObject(plSceneObject* o)
 {
-    int idx = fSceneObjects.Find(o);
-    if( idx != fSceneObjects.kMissingIndex )
-        fSceneObjects.Remove(idx);
+    auto it = std::find(fSceneObjects.begin(), fSceneObjects.end(), o);
+    if (it != fSceneObjects.end())
+        fSceneObjects.erase(it);
 }
 
 void plSceneNode::IRemoveLight(plLightInfo* l)
 {
     hsAssert(l, "Removing nil light");
 
-    int idx = fLightPool.Find(l);
-    if( idx != fLightPool.kMissingIndex )
-    {
-        fLightPool.Remove(idx);
-    }
+    auto it = std::find(fLightPool.begin(), fLightPool.end(), l);
+    if (it != fLightPool.end())
+        fLightPool.erase(it);
 }
 
 void plSceneNode::IRemoveOccluder(plOccluder* o)
@@ -369,9 +360,9 @@ void plSceneNode::IRemoveOccluder(plOccluder* o)
 
 void plSceneNode::IRemoveGeneric(hsKeyedObject* k)
 {
-    int idx = fGenericPool.Find(k);
-    if( idx != fGenericPool.kMissingIndex )
-        fGenericPool.Remove(idx);
+    auto it = std::find(fGenericPool.begin(), fGenericPool.end(), k);
+    if (it != fGenericPool.end())
+        fGenericPool.erase(it);
 }
 
 bool plSceneNode::IOnRemove(plNodeRefMsg* refMsg)
@@ -466,26 +457,24 @@ bool plSceneNode::MsgReceive(plMessage* msg)
 
 void    plSceneNode::ICleanUp( void )
 {
-    int     i;
-
-
     /// Go find drawables to delete
-    for( i = 0; i < fDrawPool.GetCount(); i++ )
-        fDrawPool[ i ]->Optimize();
+    for (auto draw : fDrawPool)
+        draw->Optimize();
 
     if (fFilterGenerics)
     {
-        for( i = fSceneObjects.GetCount() - 1; i >= 0; i--)
+        ssize_t i;
+        for ( i = fSceneObjects.size() - 1; i >= 0; i--)
             GetKey()->Release(fSceneObjects[i]->GetKey());
-        for( i = fDrawPool.GetCount() - 1; i >= 0; i--)
+        for ( i = fDrawPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fDrawPool[i]->GetKey());
-        for( i = fSimulationPool.GetCount() - 1; i >= 0; i--)
+        for ( i = fSimulationPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fSimulationPool[i]->GetKey());
-        for( i = fAudioPool.GetCount() - 1; i >= 0; i--)
+        for ( i = fAudioPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fAudioPool[i]->GetKey());
-        for( i = fOccluders.GetCount() - 1; i >= 0; i--)
+        for ( i = fOccluders.GetCount() - 1; i >= 0; i--)
             GetKey()->Release(fOccluders[i]->GetKey());
-        for( i = fLightPool.GetCount() - 1; i >= 0; i--)
+        for ( i = fLightPool.size() - 1; i >= 0; i--)
             GetKey()->Release(fLightPool[i]->GetKey());
     }
 
@@ -497,16 +486,11 @@ void    plSceneNode::ICleanUp( void )
 
 plDrawable  *plSceneNode::GetMatchingDrawable( const plDrawableCriteria& crit )
 {
-    int     i;
-
-
-    for( i = 0; i < fDrawPool.GetCount(); i++ )
-    {
-        if( fDrawPool[ i ]->DoIMatch( crit ) )
-            return fDrawPool[ i ];
+    for (auto draw : fDrawPool) {
+        if (draw->DoIMatch(crit))
+            return draw;
     }
-
-    return nil;
+    return nullptr;
 }
 
 //// OptimizeDrawables ///////////////////////////////////////////////////////
@@ -515,10 +499,7 @@ plDrawable  *plSceneNode::GetMatchingDrawable( const plDrawableCriteria& crit )
 
 void    plSceneNode::OptimizeDrawables( void )
 {
-    int     i;
-
-
-    for( i = 0; i < fDrawPool.GetCount(); i++ )
-        fDrawPool[ i ]->Optimize();
+    for (auto draw : fDrawPool)
+        draw->Optimize();
 }
 

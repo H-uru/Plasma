@@ -373,7 +373,7 @@ plShadowSlave* plShadowMaster::ILastChanceToBail(plShadowCastMsg* castMsg, plSha
 
     float maxDist = fMaxDist > 0
         ? (fGlobalMaxDist > 0
-            ? hsMinimum(fMaxDist, fGlobalMaxDist)
+            ? std::min(fMaxDist, fGlobalMaxDist)
             : fMaxDist)
         : fGlobalMaxDist;
 

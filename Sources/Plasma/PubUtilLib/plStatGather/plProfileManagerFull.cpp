@@ -189,7 +189,7 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
     height = 0;
     width = 0;
 
-    width = hsMaximum(width, txt.CalcStringWidth(groupName) + 1);
+    width = std::max(width, static_cast<int>(txt.CalcStringWidth(groupName) + 1));
     txt.DrawString(x, y+height, groupName, 255, 255, 255, 255, plDebugText::kStyleBold);
     height += yInc;
 
@@ -209,7 +209,7 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
             // 1 sample the width of the column will jump around.  So we calculate the
             // width based on the stat name plus the width of the widest sample we should
             // get
-            width = hsMaximum(width, txt.CalcStringWidth(str) + samplesWidth + 1);
+            width = std::max(width, static_cast<int>(txt.CalcStringWidth(str) + samplesWidth + 1));
 
             // Now add on the samples text, if we have any
             if (group[i]->GetTimerSamples())
@@ -235,12 +235,12 @@ static void PrintColumn(ProfileGroup& group, const char* groupName, int column, 
 
         txt.DrawString(x, y+height, str);
         if (column != kColName)
-            width = hsMaximum(width, txt.CalcStringWidth(str) + 1);
+            width = std::max(width, static_cast<int>(txt.CalcStringWidth(str) + 1));
         height += yInc;
     }
 
     // So the columns don't jump around as much as values change, pad them out to a certain width
-    width = hsMaximum(width, txt.CalcStringWidth("000.0 ms") + 1);
+    width = std::max(width, static_cast<int>(txt.CalcStringWidth("000.0 ms") + 1));
 }
 
 static void PrintGroup(ProfileGroup& group, const char* groupName, int& x, int& y)
@@ -315,7 +315,7 @@ void plProfileManagerFull::Update()
         int x = 10;
         PrintGroup(group, groupName.c_str(), x, y);
 
-        maxX = hsMaximum(maxX, x);
+        maxX = std::max(maxX, x);
         y += 10;
     }
 

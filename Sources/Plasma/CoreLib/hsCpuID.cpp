@@ -59,16 +59,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsCpuID.h"
 
 hsCpuId::hsCpuId() {
-    const unsigned int sse1_flag = 1<<25;
-    const unsigned int sse2_flag = 1<<26;
-    const unsigned int sse3_flag = 1<<0;
-    const unsigned int ssse3_flag = 1<<9;
-    const unsigned int sse41_flag = 1<<19;
-    const unsigned int sse42_flag = 1<<20;
-    const unsigned int avx_flag = 1<<28;
+    enum : unsigned int {
+        // EAX=1; EDX=:
+        sse1_flag  = 1U<<25,
+        sse2_flag  = 1U<<26,
 
-    unsigned int ax = 0, bx = 0, cx = 0, dx = 0;
+        // EAX=1; ECX=:
+        sse3_flag  = 1U<<0,
+        ssse3_flag = 1U<<9,
+        sse41_flag = 1U<<19,
+        sse42_flag = 1U<<20,
+        avx_flag   = 1U<<28,
 
+        // EAX=7; ECX=0; EBX=:
+        avx2_flag  = 1U<<5
+    };
+
+    union RegSet {
+        struct {
+            unsigned int eax, ebx, ecx, edx;
+        };
+        int array[4];
+    };
+
+    RegSet CPUInfo_Features = { 0, 0, 0, 0 };
+    RegSet CPUInfo_Ext = { 0, 0, 0, 0 };
 
     /**
      * Portable implementation of CPUID, successfully tested with:
@@ -80,33 +95,33 @@ hsCpuId::hsCpuId() {
      *
      * Ref: http://primesieve.googlecode.com/svn-history/r388/trunk/soe/cpuid.h
      */
-    #if defined(MSC_COMPATIBLE)
-      int CPUInfo[4] = {ax, bx, cx, dx};
-      __cpuid(CPUInfo, 0);
+#if defined(MSC_COMPATIBLE)
+    __cpuid(CPUInfo_Features.array, 0);
 
-      // check if the CPU supports the cpuid instruction.
-      if (CPUInfo[0] != 0) {
-        __cpuid(CPUInfo, 1);
-        ax = CPUInfo[0];
-        bx = CPUInfo[1];
-        cx = CPUInfo[2];
-        dx = CPUInfo[3];
-      }
-    #elif defined(GCC_COMPATIBLE)
-      __get_cpuid(1, &ax, &bx, &cx, &dx);
-    #endif
+    // check if the CPU supports the cpuid instruction.
+    if (CPUInfo_Features.eax != 0) {
+        __cpuid(CPUInfo_Features.array, 1);
+        __cpuid(CPUInfo_Ext.array, 7);
+    }
+#elif defined(GCC_COMPATIBLE)
+    __get_cpuid(1, &CPUInfo_Features.eax, &CPUInfo_Features.ebx,
+                   &CPUInfo_Features.ecx, &CPUInfo_Features.edx);
+    __get_cpuid(7, &CPUInfo_Ext.eax, &CPUInfo_Ext.ebx,
+                   &CPUInfo_Ext.ecx, &CPUInfo_Ext.edx);
+#endif
 
 
-    has_sse1    = (dx & sse1_flag)  || false;
-    has_sse2    = (dx & sse2_flag)  || false;
-    has_sse3    = (cx & sse3_flag)  || false;
-    has_ssse3   = (cx & ssse3_flag) || false;
-    has_sse41   = (cx & sse41_flag) || false;
-    has_sse42   = (cx & sse42_flag) || false;
-    has_avx     = (cx & avx_flag)   || false;
+    has_sse1    = (CPUInfo_Features.edx & sse1_flag)  || false;
+    has_sse2    = (CPUInfo_Features.edx & sse2_flag)  || false;
+    has_sse3    = (CPUInfo_Features.ecx & sse3_flag)  || false;
+    has_ssse3   = (CPUInfo_Features.ecx & ssse3_flag) || false;
+    has_sse41   = (CPUInfo_Features.ecx & sse41_flag) || false;
+    has_sse42   = (CPUInfo_Features.ecx & sse42_flag) || false;
+    has_avx     = (CPUInfo_Features.ecx & avx_flag)   || false;
+    has_avx2    = (CPUInfo_Ext.ebx      & avx2_flag)  || false;
 }
 
-const hsCpuId& hsCpuId::instance()
+const hsCpuId& hsCpuId::Instance()
 {
     static hsCpuId self;
     return self;

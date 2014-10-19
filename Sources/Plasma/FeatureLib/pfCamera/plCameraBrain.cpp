@@ -301,7 +301,7 @@ void plCameraBrain1::IMoveTowardGoal(double elapsedTime)
     if (distToGoal <= 5.0f && distToGoal > 0.1f)
     {
         float mult = (distToGoal - 5.0f)*0.1f;
-        adjMaxVel = fVelocity - hsABS(fVelocity*mult);
+        adjMaxVel = fVelocity - fabs(fVelocity*mult);
     }
 
 
@@ -380,7 +380,7 @@ void plCameraBrain1::IPointTowardGoal(double elapsedTime)
     if (distToGoal <= 5.0f && distToGoal > 0.1f)
     {   
         float mult = (distToGoal - 5.0f)*0.1f;
-        adjMaxVel = fPOAVelocity - hsABS(fPOAVelocity*mult);
+        adjMaxVel = fPOAVelocity - fabs(fPOAVelocity*mult);
     }   
     
 
@@ -483,7 +483,7 @@ bool plCameraBrain1::IShouldDecelerate(float decelSpeed, float curSpeed, float d
     float avgSpeed = curSpeed * .5f;
     float stopDist = avgSpeed * stopTime;
 
-    return (hsABS(distToGoal) <= hsABS(stopDist));  // stopDist+avgSpeed?   
+    return (fabs(distToGoal) <= fabs(stopDist));  // stopDist+avgSpeed?
 }
 
 //
@@ -560,7 +560,7 @@ float plCameraBrain1::IMakeFOVwZoom(float fovH) const
 {
     float num = tan(hsDegreesToRadians(fovH / 2)) * tan(hsDegreesToRadians(fCamera->GetFOVw() / 2));
     float denom = tan(hsDegreesToRadians(fCamera->GetFOVh() / 2));
-    return 2 * hsABS(hsRadiansToDegrees(atan(num / denom)));
+    return 2 * fabs(hsRadiansToDegrees(atan(num / denom)));
 }
 
 bool plCameraBrain1::MsgReceive(plMessage* msg)
@@ -1689,7 +1689,7 @@ hsPoint3 plCameraBrain1_Circle::MoveTowardsFromGoal(const hsPoint3* fromGoal, do
 
     if (fCurRad != fGoalRad)
     {
-        float dist = hsABS(fGoalRad-fCurRad);
+        float dist = fabs(fGoalRad-fCurRad);
     
         hsAssert(dist>=0 && dist<=kTwoPI, "illegal radian diff");
         bool mustWrap = (dist > M_PI);  // go opposite direction for shortcut and wrap

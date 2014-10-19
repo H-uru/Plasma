@@ -158,7 +158,7 @@ protected:
     uint32_t fAvgCount;
     uint64_t fAvgTotal;
     uint32_t fLastAvg;
-    uint32_t fMax;
+    uint64_t fMax;
     bool     fActive;
     bool     fRunning;
     uint8_t fDisplayFlags;

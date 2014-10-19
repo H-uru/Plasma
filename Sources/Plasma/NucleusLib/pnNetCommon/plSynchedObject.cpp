@@ -134,7 +134,7 @@ void plSynchedObject::IAppendSynchedValueFriend(plSynchedValueBase* v)
 uint8_t plSynchedObject::RegisterSynchedValue(plSynchedValueBase* v) 
 { 
     int32_t addrOff = ((int32_t)v - (int32_t)this)>>2;    
-    hsAssert(hsABS(addrOff) < (uint32_t)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
+    hsAssert(abs(addrOff) < (uint32_t)(1<<(sizeof(AddrOffsetType)<<3)), "address offset overflow");
     IAppendSynchedValueAddrOffset((AddrOffsetType)addrOff); 
     int32_t idx = fNumSynchedValues-1; 
     hsAssert(idx<256, "index too big");

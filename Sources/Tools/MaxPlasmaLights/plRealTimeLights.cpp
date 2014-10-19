@@ -315,7 +315,7 @@ int SpotLight::Update(TimeValue t, const RendContext &rc, RenderGlobalContext *r
     decayRadius = gl->GetDecayRadius(t);
 
     projector =  gl->GetProjector();
-    fov = hsMaximum(fs,hs);
+    fov = std::max(fs, hs);
 
     float aspect = 1.0f;
      

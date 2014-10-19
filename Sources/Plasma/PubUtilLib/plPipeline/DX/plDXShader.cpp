@@ -41,10 +41,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 
+#define NOMINMAX
 #include <d3d9.h>
 #include <d3dx9core.h>
-
-#include "HeadSpin.h"
 
 #include "plDXShader.h"
 

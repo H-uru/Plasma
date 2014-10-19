@@ -54,7 +54,7 @@ plString PyString_AsStringEx(PyObject* obj)
 #if (Py_UNICODE_SIZE == 2)
         return plString::FromUtf16(reinterpret_cast<const uint16_t *>(PyUnicode_AsUnicode(obj)));
 #elif (Py_UNICODE_SIZE == 4)
-        return plString::FromUtf32(reinterpret_cast<const UniChar *>(PyUnicode_AsUnicode(obj)));
+        return plString::FromUtf32(reinterpret_cast<const plUniChar *>(PyUnicode_AsUnicode(obj)));
 #else
 #       error "Py_UNICODE is an unexpected size"
 #endif

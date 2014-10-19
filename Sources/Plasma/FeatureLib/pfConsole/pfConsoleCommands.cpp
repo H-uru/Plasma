@@ -72,7 +72,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnModifier/plLogicModBase.h"
 #include "plModifier/plSDLModifier.h"
 #include "plSDL/plSDL.h"
-#include "pfCharacter/plPlayerModifier.h"
 #include "plSurface/plLayerDepth.h"
 #include "plSurface/plLayerOr.h"
 #include "plSurface/plLayerOr.h"

@@ -1821,10 +1821,10 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     plProfile_BeginTiming(FaceSort);
 
-    static hsLargeArray<hsRadixSort::Elem>  sortScratch;
-    static hsLargeArray<uint16_t>         triList;
-    static hsTArray<int32_t>              counters;
-    static hsTArray<uint32_t>             startIndex;
+    static std::vector<hsRadixSort::Elem> sortScratch;
+    static std::vector<uint16_t> triList;
+    static std::vector<int32_t> counters;
+    static std::vector<uint32_t> startIndex;
     
     int i;
     
@@ -1840,7 +1840,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
             /// Build a fake list of indices....
             plGBufferTriangle*      list = span->fSortData;
-            triList.SetCount( span->fILength );
+            triList.resize(span->fILength);
             for( j = 0, idx = 0; j < span->fILength / 3; j++, idx += 3 )
             {
                 triList[ idx ] = list[ j ].fIndex1;
@@ -1850,7 +1850,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
             /// Now send them on to the buffer group
             fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                          span->fILength / 3, triList.AcquireArray() );
+                                                          span->fILength / 3, triList.data() );
         }
         fReadyToRender = false;
         return;
@@ -1860,7 +1860,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     plProfile_BeginLap(FaceSort, "0");
 
-    startIndex.SetCount(fSpans.GetCount());
+    startIndex.resize(fSpans.GetCount());
 
     // First figure out the total number of tris to deal with.
     int totTris = 0;
@@ -1884,10 +1884,10 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     plProfile_IncCount(FacesSorted, totTris);
 
-    sortScratch.SetCount(totTris);
-    triList.SetCount(3 * totTris);
+    sortScratch.resize(totTris);
+    triList.resize(3 * totTris);
 
-    hsRadixSort::Elem* elem = sortScratch.AcquireArray();
+    hsRadixSort::Elem* elem = sortScratch.data();
 
     plProfile_EndLap(FaceSort, "0");
 
@@ -1935,7 +1935,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         plProfile_EndLap(FaceSort, "2");
         plProfile_BeginLap(FaceSort, "3");
 
-        counters.SetCountAndZero(fSpans.GetCount());
+        counters.assign(fSpans.GetCount(), 0);
 
         while( sortedList )
         {
@@ -1981,7 +1981,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
         span->fIPackedIdx = span->fIStartIdx = newStarts[span->fGroupIdx][span->fIBufferIdx];
         newStarts[span->fGroupIdx][span->fIBufferIdx] += (int16_t)(span->fILength);
         fGroups[ span->fGroupIdx ]->StuffFromTriList( span->fIBufferIdx, span->fIStartIdx, 
-                                                      span->fILength / 3, triList.AcquireArray() + startIndex[visList[i]]);
+                                                      span->fILength / 3, triList.data() + startIndex[visList[i]]);
     }
 
     plProfile_EndLap(FaceSort, "4");

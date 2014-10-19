@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 /** Single Unicode character code unit */
-typedef unsigned int UniChar;
+typedef unsigned int plUniChar;
 
 #define SSO_CHARS (16)
 #define STRING_STACK_SIZE (256)
@@ -227,7 +227,7 @@ public:
 };
 
 /** A plStringBuffer for storing fully-expanded Unicode data */
-typedef plStringBuffer<UniChar> plUnicodeBuffer;
+typedef plStringBuffer<plUniChar> plUnicodeBuffer;
 
 /** Unicode-capable and (mostly) binary safe string class.
  *  plString stores SSO-optimized or reference counted strings (automatically
@@ -251,7 +251,7 @@ private:
     void IConvertFromUtf8(const char *utf8, size_t size);
     void IConvertFromUtf16(const uint16_t *utf16, size_t size);
     void IConvertFromWchar(const wchar_t *wstr, size_t size);
-    void IConvertFromUtf32(const UniChar *ustr, size_t size);
+    void IConvertFromUtf32(const plUniChar *ustr, size_t size);
     void IConvertFromIso8859_1(const char *astr, size_t size);
 
 public:
@@ -357,7 +357,7 @@ public:
     }
 
     /** Create a new plString object from the UTF-32 formatted data in \a utf32. */
-    static inline plString FromUtf32(const UniChar *utf32, size_t size = STRLEN_AUTO)
+    static inline plString FromUtf32(const plUniChar *utf32, size_t size = STRLEN_AUTO)
     {
         plString str;
         str.IConvertFromUtf32(utf32, size);
@@ -532,22 +532,22 @@ public:
     /** Inverse of operator==(const plString &) const. */
     bool operator!=(const plString &other) const { return Compare(other) != 0; }
 
-    /** Find the index of the first instance of \a ch in this string.
+    /** Find the index (in bytes) of the first instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the last instance of \a ch in this string.
+    /** Find the index (in bytes) of the last instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
     ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
 
-    /** Find the index of the first instance of \a str in this string.
+    /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
     ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
@@ -583,19 +583,19 @@ public:
      */
     plString Trim(const char *charset = WHITESPACE_CHARS) const;
 
-    /** Return a substring starting at index \a start, with up to \a size
-     *  characters from the start position.  If \a size is greater than the
+    /** Return a substring starting at index (in bytes) \a start, with up to \a size
+     *  characters (in bytes) from the start position.  If \a size is greater than the
      *  number of characters left in the string after \a start, Substr will
      *  return the remainder of the string.
      */
     plString Substr(ssize_t start, size_t size = STRLEN_AUTO) const;
 
-    /** Return a substring containing at most \a size characters from the left
+    /** Return a substring containing at most \a size characters(in bytes) from the left
      *  of the string.  Equivalent to Substr(0, size).
      */
     plString Left(size_t size) const { return Substr(0, size); }
 
-    /** Return a substring containing at most \a size characters from the right
+    /** Return a substring containing at most \a size characters(in bytes) from the right
      *  of the string.  Equivalent to Substr(GetSize() - size, size).
      */
     plString Right(size_t size) const { return Substr(GetSize() - size, size); }
@@ -799,7 +799,7 @@ private:
     bool ICanHasHeap() const { return fBufSize > STRING_STACK_SIZE; }
 };
 
-/** \p strlen implementation for UniChar based C-style string buffers. */
-size_t ustrlen(const UniChar *ustr);
+/** \p strlen implementation for plUniChar based C-style string buffers. */
+size_t ustrlen(const plUniChar *ustr);
 
 #endif //plString_Defined

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plAvg.h"
 #include <cmath>
+#include <algorithm>
 
 template class TimeBasedAvgRing<float>;
 template class TimeBasedAvgRing<double>;
@@ -153,7 +154,7 @@ void TimeBasedAvgRing<T>::AddItem(T value, double time)
     }
 
     // update the max avg
-    fMaxAvg = hsMaximum( fMaxAvg, fAvg );
+    fMaxAvg = std::max(fMaxAvg, fAvg);
 
 }
 

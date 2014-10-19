@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsRefCnt.h"
 
 #include <cstdarg>
+#include <algorithm>
 
 
 #ifdef HS_DEBUGGING
@@ -238,7 +239,7 @@ void hsDynamicArray<T>::SetCount(int32_t count)
         {   T*  newArray = new T[count];
             
             if (fArray)
-            {   int copyCount = hsMinimum(count, fCount);
+            {   int copyCount = std::min(count, fCount);
 
                 for (int i = 0; i < copyCount; i++)
                     newArray[i] = fArray[i];

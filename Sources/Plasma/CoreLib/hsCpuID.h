@@ -65,7 +65,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  typedef float(*func_ptr)();
 //  static hsFunctionDispatcher<func_ptr> my_func;
 //
-//  hsFunctionDispatcher<float::func_ptr> float::my_func(float::my_func_fpu, 0, 0, 0, 0, 0, 0, float::my_func_avx);
+//  hsFunctionDispatcher<func_ptr> my_func(my_func_fpu, 0, 0, 0, 0, 0, 0, my_func_avx);
+//  my_func();
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -74,6 +75,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsCpuID_inc
 #define hsCpuID_inc
 
+#if defined __AVX2__ || _MSC_VER >= 1600
+#define HS_AVX2
+#ifndef HS_SIMD_INCLUDE
+# define HS_SIMD_INCLUDE "immintrin.h"
+#endif
+#endif
 #if defined __AVX__ || _MSC_VER >= 1600
 #define HS_AVX
 #ifndef HS_SIMD_INCLUDE
@@ -126,16 +133,31 @@ struct hsCpuId {
     bool has_sse41;
     bool has_sse42;
     bool has_avx;
+    bool has_avx2;
 
     hsCpuId();
-    static const hsCpuId& instance();
+    static const hsCpuId& Instance();
 };
 
 template <typename func_ptr>
-struct hsFunctionDispatcher {
-    hsFunctionDispatcher(func_ptr fpu, func_ptr sse1=0, func_ptr sse2=0, func_ptr sse3=0, func_ptr ssse3=0, func_ptr sse41=0, func_ptr sse42=0, func_ptr avx=0) {
+struct hsCpuFunctionDispatcher {
+    hsCpuFunctionDispatcher(func_ptr fpu,
+                            func_ptr sse1 = nullptr,
+                            func_ptr sse2 = nullptr,
+                            func_ptr sse3 = nullptr,
+                            func_ptr ssse3 = nullptr,
+                            func_ptr sse41 = nullptr,
+                            func_ptr sse42 = nullptr,
+                            func_ptr avx = nullptr,
+                            func_ptr avx2 = nullptr)
+    {
         hsAssert(fpu, "FPU fallback function required.");
-        const hsCpuId& cpu = hsCpuId::instance();
+        const hsCpuId& cpu = hsCpuId::Instance();
+#ifdef HS_AVX2
+        if (cpu.has_avx2 && avx2) {
+            call = avx2;
+        } else
+#endif
 #ifdef HS_AVX
         if (cpu.has_avx && avx) {
             call = avx;

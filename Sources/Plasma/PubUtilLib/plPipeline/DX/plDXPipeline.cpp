@@ -6421,7 +6421,7 @@ plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
 // Calculate the number of active piggy backs.
 int plDXPipeline::ISetNumActivePiggyBacks()
 {
-    return fActivePiggyBacks = hsMinimum(fSettings.fMaxPiggyBacks, fPiggyBackStack.GetCount());
+    return fActivePiggyBacks = std::min(static_cast<int>(fSettings.fMaxPiggyBacks), fPiggyBackStack.GetCount());
 }
 
 // IPushProjPiggyBack //////////////////////////////////////////////////
@@ -10714,9 +10714,14 @@ static void IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, int numMat
 }
 
 // CPU-optimized functions requiring dispatch
-hsFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend_vert_buffer(
-    IBlendVertBuffer<ISkinVertexFPU>, 0, 0, IBlendVertBuffer<ISkinVertexSSE3>, 0,
-    IBlendVertBuffer<ISkinVertexSSE41>);
+hsCpuFunctionDispatcher<plDXPipeline::blend_vert_buffer_ptr> plDXPipeline::blend_vert_buffer {
+    &IBlendVertBuffer<ISkinVertexFPU>,
+    nullptr,                                // SSE1
+    nullptr,                                // SSE2
+    &IBlendVertBuffer<ISkinVertexSSE3>,
+    nullptr,                                // SSSE3
+    &IBlendVertBuffer<ISkinVertexSSE41>
+};
 
 // ISetPipeConsts //////////////////////////////////////////////////////////////////
 // A shader can request that the pipeline fill in certain constants that are indeterminate

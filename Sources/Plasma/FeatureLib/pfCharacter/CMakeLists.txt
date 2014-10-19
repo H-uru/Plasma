@@ -7,14 +7,12 @@ include_directories(../../PubUtilLib)
 set(pfCharacter_SOURCES
     pfMarkerInfo.cpp
     pfMarkerMgr.cpp
-    plPlayerModifier.cpp
 )
 
 set(pfCharacter_HEADERS
     pfCharacterCreatable.h
     pfMarkerInfo.h
     pfMarkerMgr.h
-    plPlayerModifier.h
 )
 
 add_library(pfCharacter STATIC ${pfCharacter_SOURCES} ${pfCharacter_HEADERS})

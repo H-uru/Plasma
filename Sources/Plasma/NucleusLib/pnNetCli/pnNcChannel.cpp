@@ -205,7 +205,7 @@ static unsigned MaxMsgId (const T msgs[], unsigned count) {
 
     for (unsigned i = 0; i < count; i++) {
         ASSERT(msgs[i].msg.count);
-        maxMsgId = max(msgs[i].msg.messageId, maxMsgId);
+        maxMsgId = std::max(msgs[i].msg.messageId, maxMsgId);
     }
     return maxMsgId;
 }
@@ -248,7 +248,7 @@ static void AddRecvMsgs_CS (
         *dst = *src;
 
         const uint32_t bytes = ValidateMsg(dst->msg);
-        channel->m_largestRecv = max(channel->m_largestRecv, bytes);
+        channel->m_largestRecv = std::max(channel->m_largestRecv, bytes);
     }
 }
 

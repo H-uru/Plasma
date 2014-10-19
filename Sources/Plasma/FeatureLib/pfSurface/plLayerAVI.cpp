@@ -162,21 +162,20 @@ static bool ICopySourceToTexture16(BITMAPINFO* bmi, plMipmap* b)
     uint32_t* pix = (uint32_t*)b->GetImage();
     pix += b->GetWidth() * b->GetHeight();
 
-    int width = bmi->bmiHeader.biWidth;
-    int height = bmi->bmiHeader.biHeight;
+    uint32_t width = bmi->bmiHeader.biWidth;
+    uint32_t height = bmi->bmiHeader.biHeight;
 
-    int useHeight = hsMinimum(height, b->GetHeight());
-    int useWidth = hsMinimum(width, b->GetWidth());
-    int i;
-    for( i = 0; i < useHeight; i++ )
+    uint32_t useHeight = std::min(height, b->GetHeight());
+    uint32_t useWidth = std::min(width, b->GetWidth());
+
+    for (uint32_t i = 0; i < useHeight; i++)
     {
         uint16_t* src = pSrc;
         pSrc += width;
 
         pix -= b->GetWidth();
         uint32_t* tPix = pix;
-        int j;
-        for( j = 0; j < useWidth; j++ )
+        for (uint32_t j = 0; j < useWidth; j++)
         {
             *tPix = ((*src & 0x001f) << 3) // up 3 
                 | ((*src & 0x03e0) << 6) // down 5 up 3 up 8
@@ -199,22 +198,20 @@ static bool ICopySourceToTexture24(BITMAPINFO* bmi, plMipmap* b)
     hsRGBAColor32* pix = (hsRGBAColor32*)b->GetImage();
     pix += b->GetWidth() * b->GetHeight();
 
-    int width = bmi->bmiHeader.biWidth;
-    int height = bmi->bmiHeader.biHeight;
+    uint32_t width = bmi->bmiHeader.biWidth;
+    uint32_t height = bmi->bmiHeader.biHeight;
 
-    int useHeight = hsMinimum(height, b->GetHeight());
-    int useWidth = hsMinimum(width, b->GetWidth());
-    int i;
+    uint32_t useHeight = std::min(height, b->GetHeight());
+    uint32_t useWidth = std::min(width, b->GetWidth());
 
-    for( i = 0; i < useHeight; i++ )
+    for (uint32_t i = 0; i < useHeight; i++)
     {
         unsigned char* src = pSrc;
         pSrc += width * 3;
 
         pix -= b->GetWidth();
         hsRGBAColor32* tPix = pix;
-        int j;
-        for( j = 0; j < useWidth; j++ )
+        for (uint32_t j = 0; j < useWidth; j++)
         {
             tPix->b = *src++;
             tPix->g = *src++;

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime.h"
 #include "hsWindows.h"
 #include "hsStream.h"
+#include "plString.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/time.h>
@@ -448,7 +449,7 @@ plUnifiedTime::operator timeval() const
     // tv_secs should be a time_t, but on Windows it is a long
     struct timeval t = {(long)fSecs, (long)fMicros};
 #else
-    struct timeval t = {fSecs, fMicros};
+    struct timeval t = {fSecs, (suseconds_t)fMicros};
 #endif
     return t;
 }

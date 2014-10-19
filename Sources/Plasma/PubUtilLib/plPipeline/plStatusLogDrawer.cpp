@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
 
+#include <algorithm>
+
 //// Draw ////////////////////////////////////////////////////////////////////
 
 void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog)
@@ -62,7 +64,7 @@ void plStatusLogDrawer::IDrawLogNames(plStatusLog* curLog, plStatusLog* firstLog
     plStatusLog* iLog = firstLog;
     while (iLog)
     {
-        width = hsMaximum(drawText.CalcStringWidth_TEMP(iLog->GetFileName().AsString()) + 4, width);
+        width = std::max(drawText.CalcStringWidth_TEMP(iLog->GetFileName().AsString()) + 4, width);
         iLog = iLog->fNext;
         numLogs++;
     }

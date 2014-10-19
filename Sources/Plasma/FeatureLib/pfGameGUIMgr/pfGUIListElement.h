@@ -226,6 +226,7 @@ class pfGUIDropTargetProc
     public:
 
         pfGUIDropTargetProc() { fRefCnt = 0; }
+        virtual ~pfGUIDropTargetProc() { }
 
         virtual bool    CanEat( pfGUIListElement *element, pfGUIControlMod *source ) = 0;
         virtual void    Eat( pfGUIListElement *element, pfGUIControlMod *source, pfGUIControlMod *parent ) = 0;

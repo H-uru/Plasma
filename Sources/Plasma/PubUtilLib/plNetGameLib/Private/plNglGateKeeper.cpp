@@ -267,7 +267,7 @@ static bool ConnEncrypt (ENetError error, void * param) {
 
         s_critsect.Enter();
         {
-            SWAP(s_active, conn);
+            std::swap(s_active, conn);
         }
         s_critsect.Leave();
             
@@ -1062,7 +1062,7 @@ void NetCliGateKeeperStartConnect (
     const char*   gateKeeperAddrList[],
     uint32_t      gateKeeperAddrCount
 ) {
-    gateKeeperAddrCount = min(gateKeeperAddrCount, 1);
+    gateKeeperAddrCount = std::min(gateKeeperAddrCount, 1u);
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?

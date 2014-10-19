@@ -434,7 +434,7 @@ uint32_t plSecureStream::Read(uint32_t bytes, void* buffer)
     // Offset into the first buffer (0 if we are aligned on a chunk, which means no extra block read)
     uint32_t startChunkPos = startPos % kEncryptChunkSize;
     // Amount of data in the partial first chunk (0 if we're aligned)
-    uint32_t startAmt = (startChunkPos != 0) ? hsMinimum(kEncryptChunkSize - startChunkPos, bytes) : 0;
+    uint32_t startAmt = (startChunkPos != 0) ? std::min(kEncryptChunkSize - startChunkPos, bytes) : 0;
 
     uint32_t totalNumRead = IRead(bytes, buffer);
 
@@ -713,7 +713,7 @@ bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t
 
         file.Close();
 
-        unsigned memSize = min(bytesToRead, bytesRead);
+        unsigned memSize = std::min(bytesToRead, bytesRead);
         memcpy(key, buffer, memSize);
         free(buffer);
 
@@ -721,7 +721,7 @@ bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t
     }
 
     // file doesn't exist, use default key
-    unsigned memSize = min(length, arrsize(plSecureStream::kDefaultKey));
+    unsigned memSize = std::min(size_t(length), arrsize(plSecureStream::kDefaultKey));
     memSize *= sizeof(uint32_t);
     memcpy(key, plSecureStream::kDefaultKey, memSize);
 

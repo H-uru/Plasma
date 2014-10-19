@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include <algorithm>
+
 #include "plPageTreeMgr.h"
 #include "plDrawable/plSpaceTreeMaker.h"
 #include "plDrawable/plSpaceTree.h"
@@ -85,21 +87,21 @@ void plPageTreeMgr::AddNode(plSceneNode* node)
 
     node->Init();
 
-    fNodes.Append(node);
+    fNodes.push_back(node);
 }
 
 void plPageTreeMgr::RemoveNode(plSceneNode* node)
 {
     ITrashSpaceTree();
 
-    int idx = fNodes.Find(node);
-    if( idx != fNodes.kMissingIndex )
-        fNodes.Remove(idx);
+    auto it = std::find(fNodes.begin(), fNodes.end(), node);
+    if (it != fNodes.end())
+        fNodes.erase(it);
 }
 
 void plPageTreeMgr::Reset()
 {
-    fNodes.Reset();
+    fNodes.clear();
 
     ITrashSpaceTree();
 }
@@ -474,16 +476,13 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
 
 bool plPageTreeMgr::IBuildSpaceTree()
 {
-    if( !fNodes.GetCount() )
+    if (fNodes.empty())
         return false;
 
     plSpaceTreeMaker maker;
     maker.Reset();
-    int i;
-    for( i = 0; i < fNodes.GetCount(); i++ )
-    {
-        maker.AddLeaf(fNodes[i]->GetSpaceTree()->GetWorldBounds(), fNodes[i]->GetSpaceTree()->IsEmpty());
-    }
+    for (plSceneNode* node : fNodes)
+        maker.AddLeaf(node->GetSpaceTree()->GetWorldBounds(), node->GetSpaceTree()->IsEmpty());
     fSpaceTree = maker.MakeTree();
 
     return true;
@@ -491,18 +490,17 @@ bool plPageTreeMgr::IBuildSpaceTree()
 
 bool plPageTreeMgr::IRefreshTree(plPipeline* pipe)
 {
-    int i;
-    for( i = 0; i < fNodes.GetCount(); i++ )
+    for (size_t i = 0; i < fNodes.size(); ++i)
     {
-        if( fNodes[i]->GetSpaceTree()->IsDirty() )
+        plSceneNode* node = fNodes[i];
+        if (node->GetSpaceTree()->IsDirty())
         {
-            fNodes[i]->GetSpaceTree()->Refresh();
-    
-            GetSpaceTree()->MoveLeaf(i, fNodes[i]->GetSpaceTree()->GetWorldBounds());
+            node->GetSpaceTree()->Refresh();
 
-            if( !fNodes[i]->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled) )
+            GetSpaceTree()->MoveLeaf(i, node->GetSpaceTree()->GetWorldBounds());
+
+            if (!node->GetSpaceTree()->IsEmpty() && fSpaceTree->HasLeafFlag(i, plSpaceTreeNode::kDisabled) )
                 fSpaceTree->SetLeafFlag(i, plSpaceTreeNode::kDisabled, false);
-        
         }
     }
 
@@ -679,11 +677,8 @@ bool plPageTreeMgr::IGetOcclusion(plPipeline* pipe, hsTArray<int16_t>& list)
 
     fCullPolys.SetCount(0);
     fOccluders.SetCount(0);
-    int i;
-    for( i = 0; i < fNodes.GetCount(); i++ )
-    {
-        fNodes[i]->SubmitOccluders(this);
-    }
+    for (plSceneNode* node : fNodes)
+        node->SubmitOccluders(this);
 
     if( !IGetCullPolys(pipe) )
     {

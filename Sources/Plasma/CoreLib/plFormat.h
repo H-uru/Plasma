@@ -188,10 +188,8 @@ namespace plFormat_Private
     PL_FORMAT_TYPE(unsigned)
     PL_FORMAT_TYPE(long)
     PL_FORMAT_TYPE(unsigned long)
-#if (SIZEOF_LONG == 4)
-    PL_FORMAT_TYPE(int64_t)
-    PL_FORMAT_TYPE(uint64_t)
-#endif
+    PL_FORMAT_TYPE(long long)
+    PL_FORMAT_TYPE(unsigned long long)
 
     PL_FORMAT_TYPE(float)
     PL_FORMAT_TYPE(double)

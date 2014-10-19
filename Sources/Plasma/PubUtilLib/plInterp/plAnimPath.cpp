@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsFastMath.h"
 #include "hsResMgr.h"
 #include <cmath>
+#include <algorithm>
 
 const float kSmallDelTime = 1.e-2f;  
 const float kInvSmallDelTime = 1.f / kSmallDelTime;
@@ -271,7 +272,7 @@ float plAnimPath::GetExtremePoint(hsPoint3 &worldPt) const
             {
                 float fore = keyTimes[i + 1] - t;
                 float back = t - keyTimes[i - 1];
-                delTime = hsMaximum(fore, back);
+                delTime = std::max(fore, back);
             }
         }
     }

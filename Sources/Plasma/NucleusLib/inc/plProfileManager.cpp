@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProfileManager.h"
 #include "plProfile.h"
 #include "hsTimer.h"
-
+#include <algorithm>
 
 plProfileManager::plProfileManager() : fLastAvgTime(0), fProcessorSpeed(0)
 {
@@ -161,7 +161,7 @@ void plProfileBase::EndFrame()
 {
     fAvgCount++;
     fAvgTotal += fValue;
-    fMax = hsMaximum(fMax, fValue);
+    fMax = std::max(fMax, fValue);
 }
 
 void plProfileBase::UpdateAvg()

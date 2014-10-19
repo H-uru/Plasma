@@ -179,7 +179,7 @@ public:
 
         float oldSpeed = fabs(fSwimBrain->fSwimStrategy->GetTurnStrength());
         float thisInc = elapsed * incPerSec;
-        float newSpeed = min(oldSpeed + thisInc, maxTurnSpeed);
+        float newSpeed = std::min(oldSpeed + thisInc, maxTurnSpeed);
         fSwimBrain->fSwimStrategy->SetTurnStrength(newSpeed * fAvMod->GetKeyTurnStrength() + fAvMod->GetAnalogTurnStrength());
         // the turn is actually applied during PhysicsUpdate
     }

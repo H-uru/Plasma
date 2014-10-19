@@ -951,7 +951,7 @@ void plSpotLightInfo::IRefresh()
         float yon = GetRadius();
         if( yon < kMinHither )
             yon = kMaxYon;
-        float hither = hsMinimum(kMinHither, yon * 0.5f);
+        float hither = std::min(kMinHither, yon * 0.5f);
 
         float sinFOV, cosFOV;
         hsFastMath::SinCos(effFOV, sinFOV, cosFOV);

@@ -53,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem.h"
 #include "plMessage/plParticleUpdateMsg.h"
 
+#include <algorithm>
+
 ///////////////////////////////////////////////////////////////////////////////////////////
 plParticleCollisionEffect::plParticleCollisionEffect()
 {
@@ -681,12 +683,11 @@ plParticleFlockEffect::~plParticleFlockEffect()
 
 void plParticleFlockEffect::IUpdateDistances(const plEffectTargetInfo& target)
 {
-    int i, j;
-    int numParticles = hsMinimum(fMaxParticles, target.fNumValidParticles);
+    uint32_t numParticles = std::min(static_cast<uint32_t>(fMaxParticles), target.fNumValidParticles);
 
-    for (i = 0; i < numParticles; i++)
+    for (uint32_t i = 0; i < numParticles; i++)
     {
-        for (j = i + 1; j < numParticles; j++)
+        for (uint32_t j = i + 1; j < numParticles; j++)
         {
             hsVector3 diff((hsPoint3*)(target.fPos + i * target.fPosStride), (hsPoint3*)(target.fPos + j * target.fPosStride));
             fDistSq[i * fMaxParticles + j] = fDistSq[j * fMaxParticles + i] = diff.MagnitudeSquared();
@@ -696,17 +697,16 @@ void plParticleFlockEffect::IUpdateDistances(const plEffectTargetInfo& target)
 
 void plParticleFlockEffect::IUpdateInfluences(const plEffectTargetInfo &target)
 {
-    int i, j;
-    int numParticles = hsMinimum(fMaxParticles, target.fNumValidParticles);
+    uint32_t numParticles = std::min(static_cast<uint32_t>(fMaxParticles), target.fNumValidParticles);
     
-    for (i = 0; i < numParticles; i++)
+    for (uint32_t i = 0; i < numParticles; i++)
     {
         int numAvg = 0;
         int numRep = 0;
         fInfluences[i].fAvgVel.Set(0.f, 0.f, 0.f);
         fInfluences[i].fRepDir.Set(0.f, 0.f, 0.f);
 
-        for (j = 0; j < numParticles; j++)
+        for (uint32_t j = 0; j < numParticles; j++)
         {
             if (i == j)
                 continue;

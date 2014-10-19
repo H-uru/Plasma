@@ -43,39 +43,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
-#include <direct.h>     // windows directory handling fxns (for chdir)
 #include <process.h>
 #include <shellapi.h>   // ShellExecuteA
 #include <algorithm>
 
-//#define DETACH_EXE  // Microsoft trick to force loading of exe to memory 
-#ifdef DETACH_EXE
-    #include <dmdfm.h>      // Windows Load EXE into memory suff
-#endif
-
 #include <curl/curl.h>
 
 #include "hsStream.h"
-
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "pfCrashHandler/plCrashCli.h"
 #include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetLinkingMgr.h"
 #include "plInputCore/plInputDevice.h"
 #include "plInputCore/plInputManager.h"
-#include "plUnifiedTime/plUnifiedTime.h"
 #include "plPipeline.h"
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plLocalization.h"
 #include "plFile/plEncryptedStream.h"
 
 #include "pnEncryption/plChallengeHash.h"
-
 #include "plStatusLog/plStatusLog.h"
 #include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
-
 #include "plPhysX/plSimulationMgr.h"
 
 #include "res/resource.h"
@@ -94,7 +83,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 // Globals
 //
-bool gHasMouse = false;
 ITaskbarList3* gTaskbarList = nil; // NT 6.1+ taskbar stuff
 
 extern bool gDataServerLocal;
@@ -121,7 +109,6 @@ int gWinBorderDX    = GetSystemMetrics( SM_CXSIZEFRAME );
 int gWinBorderDY    = GetSystemMetrics( SM_CYSIZEFRAME );
 int gWinMenuDY      = GetSystemMetrics( SM_CYCAPTION );
 
-//#include "global.h"
 plClient        *gClient;
 bool            gPendingActivate = false;
 bool            gPendingActivateFlag = false;
@@ -246,12 +233,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
                     gClient->GetInputManager()->HandleWin32ControlEvent(message, wParam, lParam, hWnd);
             }
             break;
-
-#if 0
-        case WM_KILLFOCUS:
-            SetForegroundWindow(hWnd);
-            break;
-#endif
 
         case WM_SYSKEYUP:
         case WM_SYSKEYDOWN:
@@ -555,13 +536,6 @@ bool    InitClient( HWND hWnd )
 
     gClient->SetWindowHandle( hWnd );
 
-#ifdef DETACH_EXE
-    hInstance = ((LPCREATESTRUCT) lParam)->hInstance;
-
-    // This Function loads the EXE into Virtual memory...supposedly
-    HRESULT hr = DetachFromMedium(hInstance, DMDFM_ALWAYS | DMDFM_ALLPAGES);
-#endif
-
     if( gClient->InitPipeline() )
         gClient->SetDone(true);
     else
@@ -602,9 +576,6 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
     if (!RegisterClass(&wndClass)) 
         return FALSE;
 
-    /// 8.11.2000 - Test for OpenGL fullscreen, and if so use no border, no caption;
-    /// else, use our normal styles
-
     // Create a window
     HWND hWnd = CreateWindow(
         CLASSNAME, plProduct::LongName().c_str(),
@@ -614,7 +585,6 @@ BOOL WinInit(HINSTANCE hInst, int nCmdShow)
         600 + gWinBorderDY * 2 + gWinMenuDY,
          NULL, NULL, hInst, NULL
     );
-//  gClient->SetWindowHandle((hsWindowHndl)
 
     if( !InitClient( hWnd ) )
         return FALSE;
@@ -681,12 +651,7 @@ static void AuthFailedStrings (ENetError authError,
 
     switch (plLocalization::GetLanguage())
     {
-        case plLocalization::kFrench:
-        case plLocalization::kGerman:
-        case plLocalization::kJapanese:
-            *ppStr1 = "Authentication Failed. Please try again.";
-            break;
-
+        case plLocalization::kEnglish:
         default:
             *ppStr1 = "Authentication Failed. Please try again.";
 
@@ -1091,7 +1056,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
                 return TRUE;
             }
-            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_GAMETAPLINK)
+            else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
                 const char* signupurl = GetServerSignupUrl();
                 ShellExecuteA(NULL, "open", signupurl, NULL, NULL, SW_SHOWNORMAL);
@@ -1133,13 +1098,13 @@ BOOL CALLBACK SplashDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 case plLocalization::kGerman:
                     ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Starte URU, bitte warten ...");
                     break;
-/*              case plLocalization::kSpanish:
+                case plLocalization::kSpanish:
                     ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Iniciando URU, por favor espera...");
                     break;
                 case plLocalization::kItalian:
                     ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Avvio di URU, attendere...");
                     break;
-*/              // default is English
+                // default is English
                 case plLocalization::kJapanese:
                     ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "...");
                     break;
@@ -1390,15 +1355,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         if (!WinInit(hInst, nCmdShow) || gClient->GetDone())
             break;
 
-        // We don't have multiplayer localized assets for Italian or Spanish, so force them to English in that case.
-    /*  if (!plNetClientMgr::GetInstance()->InOfflineMode() &&
-            (plLocalization::GetLanguage() == plLocalization::kItalian || 
-            plLocalization::GetLanguage() == plLocalization::kSpanish))
-        {
-            plLocalization::SetLanguage(plLocalization::kEnglish);
-        }
-    */
-
         // Done with our splash now
         ::DestroyWindow( splashDialog );
 
@@ -1407,8 +1363,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
         // Show the main window
         ShowWindow(gClient->GetWindowHandle(), SW_SHOW);
-
-        gHasMouse = GetSystemMetrics(SM_MOUSEPRESENT);
             
         // Be really REALLY forceful about being in the front
         BringWindowToTop( gClient->GetWindowHandle() );
@@ -1473,7 +1427,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 #endif
 
     // Exit WinMain and terminate the app....
-//    return msg.wParam;
     return PARABLE_NORMAL_EXIT;
 }
 

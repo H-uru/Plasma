@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "hsTemplates.h"
+#include <vector>
 
 
 class plSceneObject;
@@ -76,17 +77,17 @@ protected:
 
     int16_t                               fDepth;
 
-    hsTArray<plSceneObject*>            fSceneObjects;
-    
-    hsTArray<plDrawable*>               fDrawPool;
-    hsTArray<plPhysical*>               fSimulationPool;
-    hsTArray<plAudible*>                fAudioPool;
+    std::vector<plSceneObject*>            fSceneObjects;
 
-    hsTArray<plOccluder*>               fOccluders;
+    std::vector<plDrawable*>               fDrawPool;
+    std::vector<plPhysical*>               fSimulationPool;
+    std::vector<plAudible*>                fAudioPool;
 
-    hsTArray<plLightInfo*>              fLightPool;
+    hsTArray<plOccluder*>                  fOccluders;
 
-    hsTArray<hsKeyedObject*>            fGenericPool;
+    std::vector<plLightInfo*>              fLightPool;
+
+    std::vector<hsKeyedObject*>            fGenericPool;
 
     plSpaceTree*                        fSpaceTree;
 
@@ -149,7 +150,7 @@ public:
 
     void SetFilterGenericsOnly(bool b) { fFilterGenerics = b; }
 
-    const hsTArray<plDrawable*>& GetDrawPool() const { return fDrawPool; }
+    const std::vector<plDrawable*>& GetDrawPool() const { return fDrawPool; }
 };
 
 #endif // plSceneNode_inc
