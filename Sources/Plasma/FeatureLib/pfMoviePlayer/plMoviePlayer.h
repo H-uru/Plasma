@@ -40,26 +40,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plLayerBink_inc
-#define plLayerBink_inc
+#ifndef _plMoviePlayer_inc
+#define _plMoviePlayer_inc
 
-#include "plLayerMovie.h"
+#include "HeadSpin.h"
+#include "plFileSystem.h"
+#include "hsPoint2.h"
+#include "hsColorRGBA.h"
+#include "plMessage/plMovieMsg.h"
 
-class plLayerBink : public plLayerMovie
+class plMoviePlayer
 {
 protected:
-    virtual int32_t             ISecsToFrame(float secs) { return 0; }
-    virtual bool                IInit() { return true; }
-    virtual bool                IGetCurrentFrame() { return true; }
-    virtual bool                IRelease() { return true; }
+    int64_t fTimeScale, fStartTime;
+
+    hsPoint2 fPosition, fScale;
+    plFileName fMoviePath;
+
+    int64_t GetMovieTime() const;
+    bool IOpenMovie() { return false; };
 
 public:
-    plLayerBink() { }
-    virtual ~plLayerBink() { }
+    plMoviePlayer();
+    ~plMoviePlayer() {}
 
-    CLASSNAME_REGISTER( plLayerBink );
-    GETINTERFACE_ANY( plLayerBink, plLayerMovie );
+    bool Start() { return false; }
+    bool Pause(bool on) { return false; }
+    bool Stop();
+    bool NextFrame() { return Stop(); }
 
+    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); }
+    uint32_t GetNumCallbacks() const { return 0; }
+    plMessage* GetCallback(int i) const { return nullptr; }
+
+    plFileName GetFileName() const { return fMoviePath; }
+    void SetFileName(const plFileName& filename) { fMoviePath = filename; }
+
+    void SetColor(const hsColorRGBA& c) { }
+    const hsColorRGBA GetColor() const { return hsColorRGBA(); }
+    void SetVolume(float v) { }
+
+    hsPoint2 GetPosition() const { return fPosition; }
+    void SetPosition(const hsPoint2& pos) { fPosition = pos; }
+    void SetPosition(float x, float y) { fPosition.Set(x, y); }
+
+    hsPoint2 GetScale() const { return fScale; }
+    void SetScale(const hsPoint2& scale) { fScale = scale; }
+    void SetScale(float x, float y) { fScale.Set(x, y); }
+
+    void SetFadeFromTime(float secs) { }
+    void SetFadeFromColor(hsColorRGBA c) { }
+
+    void SetFadeToTime(float secs) { }
+    void SetFadeToColor(hsColorRGBA c) { }
+
+private:
+    hsTArray<plMessage*> fCallbacks;
 };
 
-#endif // plLayerBink_inc
+#endif // _plMoviePlayer_inc

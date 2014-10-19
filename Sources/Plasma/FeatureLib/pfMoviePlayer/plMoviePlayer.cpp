@@ -40,29 +40,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef pfSurfaceCreatable_inc
-#define pfSurfaceCreatable_inc
+#include "plMoviePlayer.h"
 
-#include "pnFactory/plCreator.h"
+#include "hsTimer.h"
 
-#include "plLayerMovie.h"
 
-REGISTER_NONCREATABLE( plLayerMovie );
+plMoviePlayer::plMoviePlayer() :
+fTimeScale(0),
+fStartTime(0)
+{
+    fScale.Set(1.0f, 1.0f);
+}
 
-#include "plLayerAVI.h"
+int64_t plMoviePlayer::GetMovieTime() const
+{
+    return ((int64_t) hsTimer::GetSeconds() * fTimeScale) - fStartTime;
+}
 
-REGISTER_CREATABLE( plLayerAVI );
-
-#include "plFadeOpacityLay.h"
-
-REGISTER_CREATABLE( plFadeOpacityLay );
-
-#include "plFadeOpacityMod.h"
-
-REGISTER_CREATABLE( plFadeOpacityMod );
-
-#include "plDistOpacityMod.h"
-
-REGISTER_CREATABLE( plDistOpacityMod );
-
-#endif //  pfSurfaceCreatable_inc
+bool plMoviePlayer::Stop()
+{
+    for (int i = 0; i < fCallbacks.GetCount(); i++)
+        fCallbacks[i]->Send();
+    fCallbacks.Reset();
+    return false;
+}

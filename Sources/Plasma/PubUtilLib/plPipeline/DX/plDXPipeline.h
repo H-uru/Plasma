@@ -171,7 +171,6 @@ class plParticleSpan;
 class plCubicEnvironmap;
 class plDXRenderTargetRef;
 class plStatusLogDrawer;
-class plBinkPlayer;
 
 class plDXPipeline : public plPipeline
 {
@@ -537,7 +536,6 @@ protected:
 
     // Plate management
     friend class plDXPlateManager;
-    friend class plBinkPlayer;
 
     void        IDrawPlate( plPlate *plate );
 

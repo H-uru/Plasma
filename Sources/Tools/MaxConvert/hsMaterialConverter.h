@@ -126,7 +126,6 @@ public:
     static bool IsFireLayer(plMaxNode* node, Texmap* texMap);
     static bool IsAVILayer(Texmap*  texMap);
     static bool IsQTLayer(Texmap*  texMap);
-    static bool IsBinkLayer(Texmap* texMap);
 //  static bool IsEnvironMapped(plMaxNode *node);
 //    static bool IsPortal(plMaxNode* node);
     static bool ForceNoUvsFlatten(plMaxNode* node);

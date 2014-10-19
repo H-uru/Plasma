@@ -121,7 +121,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plLayerAnimation),
     CLASS_INDEX(plLayerDepth),
     CLASS_INDEX(plLayerMovie),
-    CLASS_INDEX(plLayerBink),
+    CLASS_INDEX(UNUSED_plLayerBink),
     CLASS_INDEX(plLayerAVI),
     CLASS_INDEX(plSound),
     CLASS_INDEX(plWin32Sound),
