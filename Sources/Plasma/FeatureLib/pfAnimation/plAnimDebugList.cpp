@@ -46,9 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerAnimation.h"
-#include "plAvatar/plAGMasterMod.h"
-#include "plAvatar/plAGAnimInstance.h"
-#include "plAvatar/plAGAnim.h"
+#include "plAnimation/plAGMasterMod.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plAGAnim.h"
 #include "plResMgr/plKeyFinder.h"
 #include "plPipeline/plDebugText.h"
 

@@ -119,8 +119,6 @@ public:
     plAnimTimeConvert();
     virtual ~plAnimTimeConvert();
 
-    void Init(plATCAnim *anim, plAGAnimInstance *instance, plAGMasterMod *master);
-
     CLASSNAME_REGISTER( plAnimTimeConvert );
     GETINTERFACE_ANY( plAnimTimeConvert, plCreatable );
 
@@ -143,6 +141,8 @@ public:
     void SetLoopPoints(float begin, float end) { SetLoopBegin(begin); SetLoopEnd(end); }
     void SetLoopBegin(float s) { fLoopBegin = s; }
     void SetLoopEnd(float s) { fLoopEnd = s; }
+    void SetInitialBegin(float s) { fInitialBegin = s; }
+    void SetInitialEnd(float s) { fInitialEnd = s; }
     void SetEase(bool easeIn, uint8_t inType, float minLength, float maxLength, float inLength);
     void SetCurrentEaseCurve(int x);    // 0=nil, 1=easeIn, 2=easeOut, 3=speed
 
@@ -150,6 +150,8 @@ public:
     float GetEnd() const { return fEnd; }
     float GetLoopBegin() const { return fLoopBegin; }
     float GetLoopEnd() const { return fLoopEnd; }
+    float GetInitialBegin() const { return fInitialBegin; }
+    float GetInitialEnd() const { return fInitialEnd; }
     float GetSpeed() const { return fSpeed; }
     hsTArray<float> &GetStopPoints() { return fStopPoints; }
     float GetBestStopDist(float min, float max, float norm, float time) const;

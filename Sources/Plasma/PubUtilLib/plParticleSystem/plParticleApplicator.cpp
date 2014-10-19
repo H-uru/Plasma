@@ -42,8 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem.h"
 #include "plParticleGenerator.h"
 #include "plParticleApplicator.h"
-#include "plAvatar/plScalarChannel.h"
-#include "plAvatar/plAGModifier.h"
+#include "plAnimation/plScalarChannel.h"
+#include "plAnimation/plAGModifier.h"
 #include "plMessage/plParticleUpdateMsg.h"
 #include "pnSceneObject/plSceneObject.h"
 

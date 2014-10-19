@@ -111,7 +111,8 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     if (atcAnim)
     {
         fTimeConvert = new plAnimTimeConvert();
-        fTimeConvert->Init(atcAnim, this, master);
+        IInitAnimTimeConvert(fTimeConvert, atcAnim, master);
+        //fTimeConvert->Init(atcAnim, this, master);
         timeChan = new plATCChannel(fTimeConvert);
     }
     else
@@ -183,6 +184,73 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
 plAGAnimInstance::~plAGAnimInstance()
 {
     delete fTimeConvert;
+}
+
+
+void plAGAnimInstance::IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* anim, plAGMasterMod* master)
+{
+    // Set up our eval callbacks
+    plAGInstanceCallbackMsg* instMsg;
+
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart);
+    instMsg->fInstance = this;
+    atc->AddCallback(instMsg);
+    hsRefCnt_SafeUnRef(instMsg);
+
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop);
+    instMsg->fInstance = this;
+    atc->AddCallback(instMsg);
+    hsRefCnt_SafeUnRef(instMsg);
+
+    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust);
+    instMsg->fInstance = this;
+    atc->AddCallback(instMsg);
+    hsRefCnt_SafeUnRef(instMsg);
+
+    atc->SetOwner(master);
+    atc->ClearFlags();
+
+    for (size_t i = 0; i < anim->NumStopPoints(); i++)
+    {
+        atc->GetStopPoints().Append(anim->GetStopPoint(i));
+    }
+
+    atc->SetBegin(anim->GetStart());
+    atc->SetEnd(anim->GetEnd());
+    atc->SetInitialBegin(atc->GetBegin());
+    atc->SetInitialEnd(atc->GetEnd());
+
+    if (anim->GetInitial() != -1)
+    {
+        atc->SetCurrentAnimTime(anim->GetInitial());
+    }
+    else
+    {
+        atc->SetCurrentAnimTime(anim->GetStart());
+    }
+
+    atc->SetLoopPoints(anim->GetLoopStart(), anim->GetLoopEnd());
+    atc->Loop(anim->GetLoop());
+    atc->SetSpeed(1.f);
+
+    atc->SetEase(true, anim->GetEaseInType(), anim->GetEaseInMin(),
+                       anim->GetEaseInMax(), anim->GetEaseInLength());
+
+    atc->SetEase(false, anim->GetEaseOutType(), anim->GetEaseOutMin(),
+                        anim->GetEaseOutMax(), anim->GetEaseOutLength());
+
+
+    // set up our time converter based on the animation's specs...
+    // ... after we've set all of its other state values.
+    if (anim->GetAutoStart())
+    {
+        plSynchEnabler ps(true);    // enable dirty tracking so that autostart will send out a state update
+        atc->Start();
+    }
+    else
+    {
+        atc->InitStop();
+    }
 }
 
 // SearchForGlobals ---------------------
@@ -611,14 +679,3 @@ void UnRegisterAGAlloc(plAGChannel *object)
         delete al;
     }
 }
-
-
-
-
-
-
-
-
-
-
-

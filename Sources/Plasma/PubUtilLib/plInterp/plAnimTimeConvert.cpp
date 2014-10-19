@@ -44,20 +44,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAnimEaseTypes.h"
 #include "plAnimTimeConvert.h"
-#include "plAvatar/plAGAnim.h"
 
 #include "hsTimer.h"
 #include "hsStream.h"
 
 #include "pnMessage/plEventCallbackMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
-#include "plAvatar/plAGMasterSDLModifier.h"
-#include "plAvatar/plAGMasterMod.h"
-#include "plModifier/plLayerSDLModifier.h"
-#include "plSurface/plLayerAnimation.h"
+
+#include "pnNetCommon/plSDLTypes.h"
 
 #include "hsResMgr.h"
 #include "plgDispatch.h"
+#include "plCreatableIndex.h"
 
 
 plAnimTimeConvert::plAnimTimeConvert()
@@ -93,57 +91,6 @@ plAnimTimeConvert::~plAnimTimeConvert()
     //delete fDirtyNotifier;
 
     IClearAllStates();
-}
-
-void plAnimTimeConvert::Init(plATCAnim *anim, plAGAnimInstance *instance, plAGMasterMod *master)
-{
-        // Set up our eval callbacks
-    plAGInstanceCallbackMsg *instMsg;
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStart); 
-    instMsg->fInstance = instance;
-    AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);    
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kStop); 
-    instMsg->fInstance = instance;
-    AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
-    instMsg = new plAGInstanceCallbackMsg(master->GetKey(), kSingleFrameAdjust); 
-    instMsg->fInstance = instance;
-    AddCallback(instMsg);
-    hsRefCnt_SafeUnRef(instMsg);
-    
-    SetOwner(master);
-    ClearFlags();
-
-    for (int i = 0; i < anim->NumStopPoints(); i++)
-        GetStopPoints().Append(anim->GetStopPoint(i));
-    
-    SetBegin(anim->GetStart());
-    SetEnd(anim->GetEnd());
-    fInitialBegin = fBegin;
-    fInitialEnd = fEnd;
-    
-    if (anim->GetInitial() != -1)
-        SetCurrentAnimTime(anim->GetInitial());
-    else 
-        SetCurrentAnimTime(anim->GetStart());
-    SetLoopPoints(anim->GetLoopStart(), anim->GetLoopEnd());
-    Loop(anim->GetLoop());
-    SetSpeed(1.f);
-    SetEase(true, anim->GetEaseInType(), anim->GetEaseInMin(), 
-                         anim->GetEaseInMax(), anim->GetEaseInLength()); 
-    SetEase(false, anim->GetEaseOutType(), anim->GetEaseOutMin(), 
-                         anim->GetEaseOutMax(), anim->GetEaseOutLength());
-
-    // set up our time converter based on the animation's specs...
-    // ... after we've set all of its other state values.
-    if (anim->GetAutoStart())
-    {
-        plSynchEnabler ps(true);    // enable dirty tracking so that autostart will send out a state update
-        Start();
-    }
-    else
-        InitStop();
 }
 
 //
@@ -376,11 +323,13 @@ plAnimTimeConvert& plAnimTimeConvert::IProcessStateChange(double worldTime, floa
     fStates.push_front(state);
     IFlushOldStates();
 
-    const char* sdlName=nil;
-    if (plLayerAnimation::ConvertNoRef(fOwner))
+    const char* sdlName = nullptr;
+
+    // This is a huge hack, but avoids circular linking problems :(
+    if (fOwner->GetInterface(CLASS_INDEX_SCOPED(plLayerAnimation)))
         sdlName=kSDLLayer;
     else
-    if (plAGMasterMod::ConvertNoRef(fOwner))
+    if (fOwner->GetInterface(CLASS_INDEX_SCOPED(plAGMasterMod)))
         sdlName=kSDLAGMaster;
     else
     {

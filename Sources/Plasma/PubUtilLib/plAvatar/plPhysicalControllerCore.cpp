@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plArmatureMod.h"
 #include "plSwimRegion.h"
-#include "plMatrixChannel.h"
+#include "plAnimation/plMatrixChannel.h"
 #include "pnSceneObject/plCoordinateInterface.h"
 #include "plPhysical.h"
 #include "pnMessage/plCorrectionMsg.h"

@@ -225,6 +225,8 @@ protected:
 
     void IRegisterDetach(const plString &channelName, plAGChannel *channel);
 
+    void IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* anim, plAGMasterMod* master);
+
     const plAGAnim * fAnimation;
     plAGMasterMod * fMaster;
 
@@ -270,24 +272,3 @@ void DumpAGAllocs();
 #endif // TRACK_AG_ALLOCS
 
 #endif // PLAGANIMINSTANCE_INC
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

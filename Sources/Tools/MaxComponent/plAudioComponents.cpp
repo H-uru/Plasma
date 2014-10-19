@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "plInterp/plAnimEaseTypes.h"
-#include "plAvatar/plAGAnim.h"
+#include "plAnimation/plAGAnim.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"

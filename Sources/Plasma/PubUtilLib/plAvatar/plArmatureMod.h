@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plArmatureMod_inc
 #define plArmatureMod_inc
 
-#include "plAGMasterMod.h"
+#include "plAnimation/plAGMasterMod.h"
 
 // other local
 #include "plAvDefs.h"

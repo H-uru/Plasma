@@ -69,8 +69,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxConvert/hsControlConverter.h"
 
 //Avatar related
-#include "plAvatar/plAGAnim.h"
-#include "plAvatar/plMatrixChannel.h"
+#include "plAnimation/plAGAnim.h"
+#include "plAnimation/plMatrixChannel.h"
 #include "BipedKiller.h"
 
 //Anim related

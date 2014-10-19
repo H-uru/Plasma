@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plClothingLayout.h"
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvBrainHuman.h"        // needed to call the emote
-#include "plAvatar/plAGAnim.h"          // to get the BodyUsage enum
+#include "plAnimation/plAGAnim.h"          // to get the BodyUsage enum
 #include "plInputCore/plAvatarInputInterface.h"
 #include "plMessage/plSimStateMsg.h"
 

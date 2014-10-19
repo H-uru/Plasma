@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // base class
 #include "plAvBrain.h"
-#include "plAGAnim.h"
+#include "plAnimation/plAGAnim.h"
 
 class plAnimStage;
 class plAnimStageVec;

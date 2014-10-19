@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 #include "pnModifier/plModifier.h"
 #include "plAGChannel.h"
-#include "plAvDefs.h"
+#include "plAGDefs.h"
 #include "pnKeyedObject/plMsgForwarder.h"
 
 
