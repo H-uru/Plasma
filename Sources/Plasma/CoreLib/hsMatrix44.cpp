@@ -57,9 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static hsMatrix44 myIdent = hsMatrix44().Reset();
 const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
-// CPU-optimized functions requiring dispatch
-hsFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult(hsMatrix44::mat_mult_fpu, 0, 0, hsMatrix44::mat_mult_sse3);
-
 /*
     For the rotation:
          ¦        2     2                                      ¦
@@ -102,7 +99,7 @@ void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
     rotate.QuatFromMatrix44(*this);
 }
 
-hsMatrix44 hsMatrix44::mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
+static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 
@@ -153,7 +150,7 @@ hsMatrix44 hsMatrix44::mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
         _mm_storeu_ps(c.fMap[i], xmm[1]);
 #endif  // HS_SSE3
 
-hsMatrix44 hsMatrix44::mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
+static hsMatrix44 mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
 {
     hsMatrix44 c;
 #ifdef HS_SSE3
@@ -201,8 +198,28 @@ hsMatrix44 hsMatrix44::mat_mult_sse3(const hsMatrix44 &a, const hsMatrix44 &b)
     return c;
 }
 
+// CPU-optimized functions requiring dispatch
+hsCpuFunctionDispatcher<hsMatrix44::mat_mult_ptr> hsMatrix44::mat_mult {
+    &mat_mult_fpu,
+    nullptr,            // SSE1
+    nullptr,            // SSE2
+    &mat_mult_sse3
+};
+
+hsPoint3 hsMatrix44::operator*(const hsPoint3& p) const
+{
+    if (fFlags & hsMatrix44::kIsIdent)
+        return p;
+
+    hsPoint3 rVal;
+    rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3];
+    rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2]) + fMap[1][3];
+    rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2]) + fMap[2][3];
+    return rVal;
+}
+
 hsVector3 hsMatrix44::operator*(const hsVector3& p) const
-{   
+{
     if( fFlags & hsMatrix44::kIsIdent )
         return p;
 

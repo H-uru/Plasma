@@ -798,8 +798,10 @@ public:
 
     //  CPU-optimized functions
 protected:
-    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *, uint8_t , uint32_t, uint8_t *, uint32_t, uint32_t, uint16_t);
-    static hsFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
+    typedef void(*blend_vert_buffer_ptr)(plSpan*, hsMatrix44*, int, const uint8_t *,
+                                         uint8_t , uint32_t, uint8_t *, uint32_t,
+                                         uint32_t, uint16_t);
+    static hsCpuFunctionDispatcher<blend_vert_buffer_ptr> blend_vert_buffer;
 };
 
 

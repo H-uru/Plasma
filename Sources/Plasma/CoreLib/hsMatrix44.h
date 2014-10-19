@@ -133,17 +133,7 @@ struct hsMatrix44 {
     void MakeZRotation(float radians);
 
 
-    hsPoint3        operator*(const hsPoint3& p) const
-                    {   
-                        if( fFlags & hsMatrix44::kIsIdent )
-                            return p;
-
-                        hsPoint3 rVal;
-                        rVal.fX = (p.fX * fMap[0][0]) + (p.fY * fMap[0][1]) + (p.fZ * fMap[0][2]) + fMap[0][3];
-                        rVal.fY = (p.fX * fMap[1][0]) + (p.fY * fMap[1][1]) + (p.fZ * fMap[1][2])  + fMap[1][3];
-                        rVal.fZ = (p.fX * fMap[2][0]) + (p.fY * fMap[2][1]) + (p.fZ * fMap[2][2])  + fMap[2][3];
-                        return rVal;
-                    }
+    hsPoint3 operator*(const hsPoint3& p) const;
     hsVector3 operator*(const hsVector3& p) const;
     hsMatrix44 operator *(const hsMatrix44& other) const { return mat_mult.call(*this, other); }
     
@@ -160,9 +150,7 @@ struct hsMatrix44 {
 
     //  CPU-optimized functions
     typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
-    static hsMatrix44 mat_mult_fpu(const hsMatrix44&, const hsMatrix44&);
-    static hsMatrix44 mat_mult_sse3(const hsMatrix44&, const hsMatrix44&);
-    static hsFunctionDispatcher<mat_mult_ptr> mat_mult;
+    static hsCpuFunctionDispatcher<mat_mult_ptr> mat_mult;
 };
 
 ////////////////////////////////////////////////////////////////////////////
