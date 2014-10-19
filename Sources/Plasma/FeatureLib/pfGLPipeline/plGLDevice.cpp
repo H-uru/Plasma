@@ -564,6 +564,7 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
             }
         }
 
+        hsAssert((ptr - buffer) == size, "Didn't fill the buffer?");
         glBufferData(GL_ARRAY_BUFFER, size, buffer, GL_STATIC_DRAW);
 
         delete[] buffer;
