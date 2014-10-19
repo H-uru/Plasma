@@ -46,6 +46,18 @@ plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
 plProfile_CreateTimer("VisEval",                "PipeT", VisEval);
 plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
 
+plProfile_CreateTimer("RenderSpan",             "PipeT", RenderSpan);
+plProfile_CreateTimer("  MergeCheck",           "PipeT", MergeCheck);
+plProfile_CreateTimer("  MergeSpan",            "PipeT", MergeSpan);
+plProfile_CreateTimer("  SpanTransforms",       "PipeT", SpanTransforms);
+plProfile_CreateTimer("  SpanFog",              "PipeT", SpanFog);
+plProfile_CreateTimer("  SelectLights",         "PipeT", SelectLights);
+plProfile_CreateTimer("  SelectProj",           "PipeT", SelectProj);
+plProfile_CreateTimer("  CheckDyn",             "PipeT", CheckDyn);
+plProfile_CreateTimer("  CheckStat",            "PipeT", CheckStat);
+plProfile_CreateTimer("  RenderBuff",           "PipeT", RenderBuff);
+plProfile_CreateTimer("  RenderPrim",           "PipeT", RenderPrim);
+
 plProfile_CreateTimer("FindSceneLights",        "PipeT", FindSceneLights);
 plProfile_CreateTimer("  Find Lights",          "PipeT", FindLights);
 plProfile_CreateTimer("    Find Perms",         "PipeT", FindPerm);
