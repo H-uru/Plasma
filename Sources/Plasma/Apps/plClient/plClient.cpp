@@ -1385,10 +1385,9 @@ bool plClient::StartInit()
 
     // the dx8 audio system MUST be initialized
     // before the database is loaded
-    HWND hWnd = fWindowHndl;
     SetForegroundWindow(fWindowHndl);
 
-    plgAudioSys::Init(hWnd);
+    plgAudioSys::Init();
     gAudio = plgAudioSys::Sys();
 
     RegisterAs( kClient_KEY );
