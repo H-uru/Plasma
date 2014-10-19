@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plPageTreeMgr_inc
 
 #include "hsTemplates.h"
+#include <vector>
 
 class plSceneNode;
 class plSpaceTree;
@@ -79,7 +80,7 @@ public:
 class plPageTreeMgr
 {
 protected:
-    hsTArray<plSceneNode*>      fNodes;
+    std::vector<plSceneNode*>      fNodes;
 
     plSpaceTree*                fSpaceTree;
     plVisMgr*                   fVisMgr;
@@ -108,12 +109,12 @@ public:
     plPageTreeMgr();
     virtual ~plPageTreeMgr();
 
-    const hsTArray<plSceneNode*>& GetNodes() const { return fNodes; }
+    const std::vector<plSceneNode*>& GetNodes() const { return fNodes; }
 
     void            AddNode(plSceneNode* node);
     void            RemoveNode(plSceneNode* node);
     virtual void    Reset(); // remove all nodes, nuke the space tree
-    virtual bool    Empty() const { return !fNodes.GetCount(); }
+    virtual bool    Empty() const { return fNodes.empty(); }
 
     virtual int     Render(plPipeline* pipe);
 
