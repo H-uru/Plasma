@@ -41,6 +41,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
+#include <algorithm>
+
 #include "plPageTreeMgr.h"
 #include "plDrawable/plSpaceTreeMaker.h"
 #include "plDrawable/plSpaceTree.h"
