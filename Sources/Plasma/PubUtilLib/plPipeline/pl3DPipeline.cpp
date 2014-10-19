@@ -536,7 +536,7 @@ plLayerInterface* pl3DPipeline::PushPiggyBackLayer(plLayerInterface* li)
 {
     fPiggyBackStack.Push(li);
 
-    fActivePiggyBacks = hsMinimum(fMaxPiggyBacks, fPiggyBackStack.GetCount());
+    fActivePiggyBacks = std::min(static_cast<int>(fMaxPiggyBacks), fPiggyBackStack.GetCount());
 
     fForceMatHandle = true;
 
@@ -552,7 +552,7 @@ plLayerInterface* pl3DPipeline::PopPiggyBackLayer(plLayerInterface* li)
 
     fPiggyBackStack.Remove(idx);
 
-    fActivePiggyBacks = hsMinimum(fMaxPiggyBacks, fPiggyBackStack.GetCount());
+    fActivePiggyBacks = std::min(static_cast<int>(fMaxPiggyBacks), fPiggyBackStack.GetCount());
 
     fForceMatHandle = true;
 
