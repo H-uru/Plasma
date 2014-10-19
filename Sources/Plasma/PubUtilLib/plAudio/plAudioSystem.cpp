@@ -264,7 +264,7 @@ void plAudioSystem::IEnumerateDevices()
 }
 
 //// Init ////////////////////////////////////////////////////////////////////
-bool    plAudioSystem::Init( hsWindowHndl hWnd )
+bool    plAudioSystem::Init()
 {
     plgAudioSys::fRestarting = false;
     static bool firstTimeInit = true; 
@@ -996,7 +996,6 @@ bool            plgAudioSys::fUseHardware = false;
 bool            plgAudioSys::fMuted = true;
 bool            plgAudioSys::fDelayedActivate = false;
 bool            plgAudioSys::fEnableEAX = false;
-hsWindowHndl    plgAudioSys::fWnd = nil;
 float        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
 float        plgAudioSys::f2D3DBias = 0.75f;
 uint32_t          plgAudioSys::fDebugFlags = 0;
@@ -1010,13 +1009,12 @@ std::string     plgAudioSys::fDeviceName;
 bool            plgAudioSys::fRestarting = false;
 bool            plgAudioSys::fMutedStateChange = false;
 
-void plgAudioSys::Init(hsWindowHndl hWnd)
+void plgAudioSys::Init()
 {
     fSys = new plAudioSystem;
     fSys->RegisterAs( kAudioSystem_KEY );
     plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
-    fWnd = hWnd;
 
     if(fMuted)
         SetGlobalFadeVolume(0.0f);
@@ -1143,7 +1141,7 @@ void plgAudioSys::Activate(bool b)
     if( b )
     {
         plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Attempting audio system init --" );
-        if( !fSys->Init( fWnd ) )
+        if( !fSys->Init() )
         {
             // Cannot init audio system. Don't activate
             return; 

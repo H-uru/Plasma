@@ -94,7 +94,7 @@ public:
         kRefEAXRegion
     };
 
-    bool    Init(hsWindowHndl hWnd);
+    bool    Init();
     void    Shutdown();
 
     void    SetActive( bool b );
@@ -189,7 +189,7 @@ public:
         kHardware,
         kHardwarePlusEAX,
     };
-    static void Init(hsWindowHndl hWnd);
+    static void Init();
     static bool Hardware() { return fUseHardware; }
     static void SetUseHardware(bool b);
     static void SetActive(bool b);
@@ -199,7 +199,6 @@ public:
     static void Shutdown();
     static void Activate(bool b);
     static bool     IsMuted( void ) { return fMuted; }
-    static hsWindowHndl hWnd() { return fWnd; }
     static plAudioSystem* Sys() { return fSys; }
     static void Restart( void );
     static bool     UsingEAX( void ) { return fSys->fUsingEAX; }
@@ -259,7 +258,6 @@ private:
     static bool                 fInit;
     static bool                 fActive;
     static bool                 fMuted;
-    static hsWindowHndl         fWnd;
     static bool                 fUseHardware;
     static bool                 fDelayedActivate;
     static float             fChannelVolumes[ kNumChannels ];

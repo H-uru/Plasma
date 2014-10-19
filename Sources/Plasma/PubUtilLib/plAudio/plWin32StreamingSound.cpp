@@ -447,7 +447,7 @@ unsigned plWin32StreamingSound::GetByteOffset()
         unsigned offset = fDSoundBuffer->GetByteOffset();
         long byteoffset = ((fDataStream->GetDataSize() - fDataStream->NumBytesLeft()) - bytesQueued) + offset;
         
-        return byteoffset < 0 ? fDataStream->GetDataSize() - abs(byteoffset) : byteoffset;
+        return byteoffset < 0 ? fDataStream->GetDataSize() - std::abs(byteoffset) : byteoffset;
     }
     return 0;
 }
