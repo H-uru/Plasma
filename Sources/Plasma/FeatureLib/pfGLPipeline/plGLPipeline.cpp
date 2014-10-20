@@ -416,9 +416,6 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
 {
     plProfile_BeginTiming(RenderSpan);
 
-    if (ice->GetRenderLevel() != 0)
-        return;
-
     hsMatrix44 lastL2W;
     hsGMaterial* material;
     const std::vector<plSpan*>& spans = ice->GetSpanArray();
