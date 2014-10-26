@@ -7,12 +7,10 @@ find_path(VPX_INCLUDE_DIR vpx/vp8.h
           /usr/include
 )
 
-find_library(VPX_LIBRARY NAMES vpxmt vpx
+find_library(VPX_LIBRARY NAMES vpxmt vpxmd vpx
              PATHS /usr/local/lib /usr/lib
 )
 
-# If everything has been found, we have movie support!
-if (VPX_INCLUDE_DIR AND VPX_LIBRARY)
-    set(VPX_AVAILABLE TRUE)
-    add_definitions(-DVPX_AVAILABLE)
+if(VPX_INCLUDE_DIR AND VPX_LIBRARY)
+    set(VPX_FOUND TRUE)
 endif()

@@ -825,18 +825,18 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     if (mov->GetFileName().IsEmpty())
         return true;
 
-    int i = fMovies.GetCount();
+    size_t i = fMovies.size();
     if (!(mov->GetCmd() & plMovieMsg::kMake))
     {
-        for (i = 0; i < fMovies.GetCount(); i++)
+        for (i = 0; i < fMovies.size(); i++)
         {
             if (mov->GetFileName().CompareI(fMovies[i]->GetFileName().AsString()) == 0)
                 break;
         }
     }
-    if (i == fMovies.GetCount())
+    if (i == fMovies.size())
     {
-        fMovies.Append(new plMoviePlayer);
+        fMovies.push_back(new plMoviePlayer());
         fMovies[i]->SetFileName(mov->GetFileName());
     }
 
@@ -892,7 +892,8 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     if (!fMovies[i]->GetFileName().IsValid())
     {
         delete fMovies[i];
-        fMovies.Remove(i);
+        fMovies[i] = fMovies.back();
+        fMovies.pop_back();
     }
     return true;
 }
@@ -1827,13 +1828,13 @@ bool plClient::IDraw()
 
 void plClient::IServiceMovies()
 {
-    int i;
-    for (i = 0; i < fMovies.GetCount(); i++)
+    for (size_t i = 0; i < fMovies.size(); i++)
     {
         if (!fMovies[i]->NextFrame())
         {
             delete fMovies[i];
-            fMovies.Remove(i);
+            fMovies[i] = fMovies.back();
+            fMovies.pop_back();
             i--;
         }
     }
@@ -1841,9 +1842,9 @@ void plClient::IServiceMovies()
 
 void plClient::IKillMovies()
 {
-    for (int i = 0; i < fMovies.GetCount(); i++)
+    for (size_t i = 0; i < fMovies.size(); i++)
         delete fMovies[i];
-    fMovies.Reset();
+    fMovies.clear();
 }
 
 bool plClient::IPlayIntroMovie(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)

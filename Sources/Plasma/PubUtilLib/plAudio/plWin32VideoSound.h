@@ -33,12 +33,13 @@ the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
 work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
-or by snail mail at:
-Cyan Worlds, Inc.
-14617 N Newport Hwy
-Mead, WA   99021
+ or by snail mail at:
+      Cyan Worlds, Inc.
+      14617 N Newport Hwy
+      Mead, WA   99021
 
 *==LICENSE==*/
+
 #ifndef plWin32VideoSound_h
 #define plWin32VideoSound_h
 
@@ -47,10 +48,10 @@ Mead, WA   99021
 class plWin32VideoSound : public plWin32Sound
 {
 public:
-    plWin32VideoSound();
+    plWin32VideoSound(plWAVHeader& header);
     virtual ~plWin32VideoSound();
 
-    void UpdateSoundBuffer(unsigned char* buffer, size_t size);
+    void UpdateSoundBuffer(void* buffer, size_t size);
 
 protected:
     void IDerivedActuallyPlay(void);

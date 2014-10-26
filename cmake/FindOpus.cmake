@@ -1,7 +1,6 @@
 if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
-  set(Opus_FIND_QUIETLY TRUE)
+    set(Opus_FIND_QUIETLY TRUE)
 endif()
-
 
 find_path(Opus_INCLUDE_DIR opus.h
           /usr/local/include
@@ -20,11 +19,11 @@ find_library(Silk_LIBRARY NAMES silk_common
 set(Opus_LIBRARIES
     ${Opus_LIBRARY}
     ${Celt_LIBRARY}
-    ${Silk_LIBRARY})
-
+    ${Silk_LIBRARY}
+)
 
 if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
-  set(Opus_FOUND TRUE)
+    set(Opus_FOUND TRUE)
 endif()
 
 if (Opus_FOUND)

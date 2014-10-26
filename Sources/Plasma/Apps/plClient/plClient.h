@@ -147,7 +147,7 @@ protected:
     int                     fQuality;
 
     bool                    fQuitIntro;
-    hsTArray<plMoviePlayer*> fMovies;
+    std::vector<plMoviePlayer*> fMovies;
 
     plMessagePumpProc       fMessagePumpProc;
     

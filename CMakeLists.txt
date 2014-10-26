@@ -51,6 +51,11 @@ if(WIN32)
     find_package(DirectX REQUIRED)
 endif(WIN32)
 
+if (VPX_FOUND AND Opus_FOUND)
+    set(VIDEO_AVAILABLE TRUE)
+    add_definitions(-DVIDEO_AVAILABLE)
+endif()
+
 include(PrecompiledHeader)    #Precompiled Header helper macros
 
 # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves

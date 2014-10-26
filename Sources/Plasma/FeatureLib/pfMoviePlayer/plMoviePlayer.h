@@ -48,15 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsPoint2.h"
 #include "hsColorRGBA.h"
 #include "plMessage/plMovieMsg.h"
-#include "plAudio/plWin32VideoSound.h"
-#include "plAudible/plVideoAudible.h"
-#include "pnSceneObject/plAudioInterface.h"
 
 #include <memory>
 #include <vector>
 #include <tuple>
-
-#include <opus.h>
 
 namespace mkvparser
 {
@@ -79,23 +74,21 @@ protected:
     mkvparser::MkvReader* fReader;
     std::unique_ptr<mkvparser::Segment> fSegment;
     std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
-    std::unique_ptr<class VPX> fVpx;
-    int64_t fTimeScale, fStartTime;
+    std::unique_ptr<class plWin32VideoSound> fAudioSound;
 
+    std::unique_ptr<class VPX> fVpx;
+    class OpusDecoder* fOpusDecoder;
+
+    int64_t fStartTime;
     hsPoint2 fPosition, fScale;
     plFileName fMoviePath;
-
-    OpusDecoder* fOpusDecoder;
-    std::shared_ptr<plWin32VideoSound> fAudioSound;
-    plVideoAudible fAudioPlayer;
-    plAudioInterface fAudioInterface;
 
     bool fPlaying;
 
     int64_t GetMovieTime() const;
     bool IOpenMovie();
-    bool IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
-    bool IProcessAudioFrame(const std::vector<blkbuf_t>& frames);
+    void IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
+    void IProcessAudioFrame(const std::vector<blkbuf_t>& frames);
 
 public:
     plMoviePlayer();

@@ -3,10 +3,10 @@ include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
-if (VPX_AVAILABLE)
+if (VIDEO_AVAILABLE)
     include_directories(${VPX_INCLUDE_DIR})
     include_directories(${Opus_INCLUDE_DIR})
-endif (VPX_AVAILABLE)
+endif (VIDEO_AVAILABLE)
 
 set(pfMoviePlayer_SOURCES
     plMoviePlayer.cpp

@@ -1,47 +1,98 @@
-#include <iostream>
-#include <fstream>
+/*==LICENSE==*
 
-#include "hsResMgr.h"
-#include "plFormat.h"
+CyanWorlds.com Engine - MMOG client, server and tools
+Copyright (C) 2011  Cyan Worlds, Inc.
 
-#include "plDSoundBuffer.h"
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Additional permissions under GNU GPL version 3 section 7
+
+If you modify this Program, or any covered work, by linking or
+combining it with any of RAD Game Tools Bink SDK, Autodesk 3ds Max SDK,
+NVIDIA PhysX SDK, Microsoft DirectX SDK, OpenSSL library, Independent
+JPEG Group JPEG library, Microsoft Windows Media SDK, or Apple QuickTime SDK
+(or a modified version of those libraries),
+containing parts covered by the terms of the Bink SDK EULA, 3ds Max EULA,
+PhysX SDK EULA, DirectX SDK EULA, OpenSSL and SSLeay licenses, IJG
+JPEG Library README, Windows Media SDK EULA, or QuickTime SDK EULA, the
+licensors of this Program grant you additional
+permission to convey the resulting work. Corresponding Source for a
+non-source form of such a combination shall include the source code for
+the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
+work.
+
+You can contact Cyan Worlds, Inc. by email legal@cyan.com
+ or by snail mail at:
+      Cyan Worlds, Inc.
+      14617 N Newport Hwy
+      Mead, WA   99021
+
+*==LICENSE==*/
 
 #include "plWin32VideoSound.h"
 
+#include "hsResMgr.h"
+#include "plFormat.h"
+#include "plDSoundBuffer.h"
+
 static int uniqueID = 0;
-plWin32VideoSound::plWin32VideoSound() : plWin32Sound()
+plWin32VideoSound::plWin32VideoSound(plWAVHeader& header) : plWin32Sound()
 {
-    plWAVHeader header;
-    header.fFormatTag = 0x1;
-    header.fNumChannels = 1;
-    header.fBitsPerSample = 16;
+    fCurrVolume = 1.0f;
+    fDesiredVol = 1.0f;
+    fSoftVolume = 1.0f;
+    fType = kGUISound;
+
     fDSoundBuffer = new plDSoundBuffer(0, header, false, false, false, true);
     fDSoundBuffer->SetupVoiceSource();
+    fDSoundBuffer->SetScalarVolume(1.0f);
+
     uniqueID++;
     hsgResMgr::ResMgr()->NewKey(plFormat("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
-    fSoftVolume = 1.0f;
 }
 
 plWin32VideoSound::~plWin32VideoSound()
 {
-    delete fDSoundBuffer;
+    if (fDSoundBuffer)
+        delete fDSoundBuffer;
 }
 
-void plWin32VideoSound::UpdateSoundBuffer(unsigned char* buffer, size_t size)
+void plWin32VideoSound::UpdateSoundBuffer(void* buffer, size_t size)
 {
-    unsigned int bufferID = 0;
+    uint32_t bufferId;
+    uint32_t chunk;
 
-    if (fDSoundBuffer->GetAvailableBufferId(&bufferID))
+    fDSoundBuffer->UnQueueVoiceBuffers();
+    while (size > 0)
     {
-        fDSoundBuffer->VoiceFillBuffer(buffer, size, bufferID);
-        IActuallyPlay();
+        chunk = size < STREAM_BUFFER_SIZE ? size : STREAM_BUFFER_SIZE;
+        if (!fDSoundBuffer->GetAvailableBufferId(&bufferId))
+            break;
+
+        fDSoundBuffer->VoiceFillBuffer(buffer, chunk, bufferId);
+        size -= chunk;
     }
+    IActuallyPlay();
 }
 
 void plWin32VideoSound::IDerivedActuallyPlay()
 {
-    if (!fDSoundBuffer->IsPlaying())
+    if (!fReallyPlaying)
+    {
         fDSoundBuffer->Play();
+        fReallyPlaying = true;
+    }
 }
 
 bool plWin32VideoSound::LoadSound(bool is3D)
