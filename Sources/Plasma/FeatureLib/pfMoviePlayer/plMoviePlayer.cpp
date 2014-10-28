@@ -171,9 +171,11 @@ plMoviePlayer::plMoviePlayer() :
     fPlate(nullptr),
     fTexture(nullptr),
     fReader(nullptr),
-    fStartTime(0),
+    fMovieTime(0),
+    fLastFrameTime(0),
     fPosition(hsPoint2()),
     fPlaying(false),
+    fPaused(false),
     fOpusDecoder(nullptr)
 {
     fScale.Set(1.0f, 1.0f);
@@ -193,11 +195,6 @@ plMoviePlayer::~plMoviePlayer()
         delete fReader;
     }
 #endif
-}
-
-int64_t plMoviePlayer::GetMovieTime() const
-{
-    return (int64_t)hsTimer::GetMilliSeconds() - fStartTime;
 }
 
 bool plMoviePlayer::IOpenMovie()
@@ -285,6 +282,7 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
         // Flush new data to the device
         if (fTexture->GetDeviceRef())
             fTexture->GetDeviceRef()->SetDirty(true);
+        fPlate->SetVisible(true);
     }
 #endif
 }
@@ -334,8 +332,7 @@ bool plMoviePlayer::Start()
     float height = (static_cast<float>(video->GetHeight()) / static_cast<float>(plateMgr.GetPipeHeight())) * fScale.fY;
 
     plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, width, height);
-    fPlate->SetVisible(true);
-    fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), nullptr);
+    fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
 
     //initialize opus
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
@@ -352,6 +349,7 @@ bool plMoviePlayer::Start()
     if (error != OPUS_OK)
         hsAssert(false, "Error occured initalizing opus");
 
+    fLastFrameTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
     fPlaying = true;
 
     return true;
@@ -365,25 +363,28 @@ bool plMoviePlayer::NextFrame()
     if (!fPlaying)
         return false;
 
+    int64_t frameTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
+    int64_t frameTimeDelta = frameTime - fLastFrameTime;
+    fLastFrameTime = frameTime;
+
+    if (fPaused)
+        return true;
+
 #ifdef VIDEO_AVAILABLE
     // Get our current timecode
-    int64_t movieTime = 0;
-    if (fStartTime == 0)
-        fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
-    else
-        movieTime = GetMovieTime();
+    fMovieTime += frameTimeDelta;
 
     std::vector<blkbuf_t> audio;
     std::vector<blkbuf_t> video;
     uint8_t tracksWithData = 0;
     if (fAudioTrack)
     {
-        if (fAudioTrack->GetFrames(fReader, movieTime, audio))
+        if (fAudioTrack->GetFrames(fReader, fMovieTime, audio))
             tracksWithData++;
     }
     if (fVideoTrack)
     {
-        if (fVideoTrack->GetFrames(fReader, movieTime, video))
+        if (fVideoTrack->GetFrames(fReader, fMovieTime, video))
             tracksWithData++;
     }
     if (!tracksWithData)
@@ -402,11 +403,22 @@ bool plMoviePlayer::NextFrame()
 #endif // VIDEO_AVAILABLE
 }
 
+bool plMoviePlayer::Pause(bool on)
+{
+    if (!fPlaying)
+        return false;
+
+    fPaused = on;
+    return true;
+}
+
 bool plMoviePlayer::Stop()
 {
     fPlaying = false;
     if (fAudioSound)
         fAudioSound->Stop();
+    if (fPlate)
+        fPlate->SetVisible(false);
     for (int i = 0; i < fCallbacks.size(); i++)
         fCallbacks[i]->Send();
     fCallbacks.clear();

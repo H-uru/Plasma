@@ -79,13 +79,13 @@ protected:
     std::unique_ptr<class VPX> fVpx;
     class OpusDecoder* fOpusDecoder;
 
-    int64_t fStartTime;
+    int64_t fMovieTime, fLastFrameTime;
     hsPoint2 fPosition, fScale;
     plFileName fMoviePath;
 
     bool fPlaying;
+    bool fPaused;
 
-    int64_t GetMovieTime() const;
     bool IOpenMovie();
     void IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
     void IProcessAudioFrame(const std::vector<blkbuf_t>& frames);
@@ -95,7 +95,7 @@ public:
     ~plMoviePlayer();
 
     bool Start();
-    bool Pause(bool on) { return false; }
+    bool Pause(bool on);
     bool Stop();
     bool NextFrame();
 
@@ -108,6 +108,8 @@ public:
 
     void SetColor(const hsColorRGBA& c) { }
     const hsColorRGBA GetColor() const { return hsColorRGBA(); }
+
+    /** The volume is handled by the options menu slider, as of now. */
     void SetVolume(float v) { }
 
     hsPoint2 GetPosition() const { return fPosition; }
