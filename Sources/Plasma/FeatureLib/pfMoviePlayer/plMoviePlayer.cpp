@@ -120,81 +120,48 @@ public:
 
 class TrackMgr
 {
-    const mkvparser::BlockEntry* blk_entry;
-    bool valid;
-
-    bool PeekNextBlockEntry(const std::unique_ptr<mkvparser::Segment>& segment)
-    {
-        // Assume that if blk_entry == nullptr, we need to start from the beginning
-        // Load the current cluster
-        const mkvparser::Cluster* cluster;
-        if (blk_entry)
-            cluster = blk_entry->GetCluster();
-        else
-            cluster = segment->GetFirst();
-
-        // As long as we have clusters, they contain blocks that we have to process
-        while (cluster && !cluster->EOS()) {
-            // If we have no block yet, get the first one, otherwise the next one
-            if (!blk_entry)
-            {
-                SAFE_OP(cluster->GetFirst(blk_entry), "get first block");
-            }
-            else
-            {
-                SAFE_OP(cluster->GetNext(blk_entry, blk_entry), "get next block");
-            }
-
-            // Are there any blocks left?
-            while (blk_entry && !blk_entry->EOS()) {
-                // Is this the next block we want for our track? Awesome, we're done!
-                if (blk_entry->GetBlock()->GetTrackNumber() == number)
-                    return true;
-                SAFE_OP(cluster->GetNext(blk_entry, blk_entry), "get next block");
-            }
-
-            // No blocks left, go to next cluster
-            blk_entry = nullptr;
-            cluster = segment->GetNext(cluster);
-        }
-
-        // That's it, nothing left...
-        return false;
-    }
+protected:
+    const mkvparser::Track* fTrack;
+    const mkvparser::BlockEntry* fCurrentBlock;
+    int32_t fStatus;
 
 public:
-    int32_t number;
+    TrackMgr(const mkvparser::Track* track) : fTrack(track), fCurrentBlock(nullptr), fStatus(0) { }
 
-    TrackMgr(int32_t num) : blk_entry(nullptr), valid(true), number(num) { }
+    const mkvparser::Track* GetTrack() { return fTrack; }
 
-    bool GetFrames(plMoviePlayer* p, int64_t movieTime, std::vector<blkbuf_t>& frames)
+    bool GetFrames(mkvparser::MkvReader* reader, int64_t movieTime, std::vector<blkbuf_t>& frames)
     {
-        if (!valid)
-            return false;
+        // If we have no block yet, grab the first one
+        if (!fCurrentBlock)
+            fStatus = fTrack->GetFirst(fCurrentBlock);
 
-        const mkvparser::BlockEntry* prev = blk_entry;
-        while (valid = PeekNextBlockEntry(p->fSegment))
+        // Continue through the blocks until our current movie time
+        while (fCurrentBlock && fStatus == 0)
         {
-            const mkvparser::Block* blk = blk_entry->GetBlock();
-            if (blk->GetTime(blk_entry->GetCluster()) <= movieTime)
+            const mkvparser::Block* block = fCurrentBlock->GetBlock();
+            int64_t time = block->GetTime(fCurrentBlock->GetCluster()) - fTrack->GetCodecDelay();
+            if (time <= movieTime * 1000000) // Block time is nano seconds
             {
-                frames.reserve(frames.size() + blk->GetFrameCount());
-                for (int32_t i = 0; i < blk->GetFrameCount(); ++i)
+                // We want to play this block, add it to the frames buffer
+                frames.reserve(frames.size() + block->GetFrameCount());
+                for (int32_t i = 0; i < block->GetFrameCount(); i++)
                 {
-                    const mkvparser::Block::Frame data = blk->GetFrame(i);
+                    const mkvparser::Block::Frame data = block->GetFrame(i);
                     uint8_t* buf = new uint8_t[data.len];
-                    data.Read(p->fReader, buf);
+                    data.Read(reader, buf);
                     frames.push_back(std::make_tuple(std::unique_ptr<uint8_t>(buf), static_cast<int32_t>(data.len)));
                 }
+                fStatus = fTrack->GetNext(fCurrentBlock, fCurrentBlock);
             }
             else
             {
-                blk_entry = prev;
+                // We've got all frames that have to play... come back for more later!
                 return true;
             }
-            prev = blk_entry;
         }
-        return true;
+
+        return false; // No more blocks... We're done!
     }
 };
 
@@ -270,13 +237,13 @@ bool plMoviePlayer::IOpenMovie()
         case mkvparser::Track::kAudio:
             {
                 if (!fAudioTrack)
-                    fAudioTrack.reset(new TrackMgr(track->GetNumber()));
+                    fAudioTrack.reset(new TrackMgr(track));
                 break;
             }
         case mkvparser::Track::kVideo:
             {
                 if (!fVideoTrack)
-                    fVideoTrack.reset(new TrackMgr(track->GetNumber()));
+                    fVideoTrack.reset(new TrackMgr(track));
                 break;
             }
         }
@@ -325,7 +292,7 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 void plMoviePlayer::IProcessAudioFrame(const std::vector<blkbuf_t>& frames)
 {
 #ifdef VIDEO_AVAILABLE
-    const unsigned char* data = nullptr;
+    const uint8_t* data = nullptr;
     int32_t size = 0;
     for (auto it = frames.begin(); it != frames.end(); ++it)
     {
@@ -334,7 +301,7 @@ void plMoviePlayer::IProcessAudioFrame(const std::vector<blkbuf_t>& frames)
         size = std::get<1>(*it);
 
         static const int frameSize = 5760; //max packet duration at 48kHz
-        const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fSegment->GetTracks()->GetTrackByNumber(fAudioTrack->number));
+        const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
         int16_t* pcm = new int16_t[frameSize * audio->GetChannels() * sizeof(int16_t)];
         int samples = opus_decode(fOpusDecoder, data, size, pcm, frameSize, 0);
         if (samples < 0)
@@ -346,6 +313,9 @@ void plMoviePlayer::IProcessAudioFrame(const std::vector<blkbuf_t>& frames)
 
 bool plMoviePlayer::Start()
 {
+    if (fPlaying)
+        return false;
+
 #ifdef VIDEO_AVAILABLE
     if (!IOpenMovie())
         return false;
@@ -359,7 +329,7 @@ bool plMoviePlayer::Start()
 
     // Need to figure out scaling based on pipe size.
     plPlateManager& plateMgr = plPlateManager::Instance();
-    const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fSegment->GetTracks()->GetTrackByNumber(fVideoTrack->number));
+    const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
     float width = (static_cast<float>(video->GetWidth()) / static_cast<float>(plateMgr.GetPipeWidth())) * fScale.fX;
     float height = (static_cast<float>(video->GetHeight()) / static_cast<float>(plateMgr.GetPipeHeight())) * fScale.fY;
 
@@ -368,7 +338,7 @@ bool plMoviePlayer::Start()
     fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), nullptr);
 
     //initialize opus
-    const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fSegment->GetTracks()->GetTrackByNumber(fAudioTrack->number));
+    const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
     header.fFormatTag = plWAVHeader::kPCMFormatTag;
     header.fNumChannels = audio->GetChannels();
@@ -392,45 +362,44 @@ bool plMoviePlayer::Start()
 
 bool plMoviePlayer::NextFrame()
 {
-    if (fPlaying)
-    {
-#ifdef VIDEO_AVAILABLE
-        // Get our current timecode
-        int64_t movieTime = 0;
-        if (fStartTime == 0)
-            fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
-        else
-            movieTime = GetMovieTime();
-
-        std::vector<blkbuf_t> audio;
-        std::vector<blkbuf_t> video;
-        uint8_t tracksWithData = 0;
-        if (fAudioTrack)
-        {
-            if (fAudioTrack->GetFrames(this, movieTime, audio))
-                tracksWithData++;
-        }
-        if (fVideoTrack)
-        {
-            if (fVideoTrack->GetFrames(this, movieTime, video))
-                tracksWithData++;
-        }
-        if (!tracksWithData)
-        {
-            Stop();
-            return false;
-        }
-
-        // Show our mess
-        IProcessVideoFrame(video);
-        IProcessAudioFrame(audio);
-
-        return true;
-#else
+    if (!fPlaying)
         return false;
-#endif // VIDEO_AVAILABLE
+
+#ifdef VIDEO_AVAILABLE
+    // Get our current timecode
+    int64_t movieTime = 0;
+    if (fStartTime == 0)
+        fStartTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
+    else
+        movieTime = GetMovieTime();
+
+    std::vector<blkbuf_t> audio;
+    std::vector<blkbuf_t> video;
+    uint8_t tracksWithData = 0;
+    if (fAudioTrack)
+    {
+        if (fAudioTrack->GetFrames(fReader, movieTime, audio))
+            tracksWithData++;
     }
+    if (fVideoTrack)
+    {
+        if (fVideoTrack->GetFrames(fReader, movieTime, video))
+            tracksWithData++;
+    }
+    if (!tracksWithData)
+    {
+        Stop();
+        return false;
+    }
+
+    // Show our mess
+    IProcessVideoFrame(video);
+    IProcessAudioFrame(audio);
+
+    return true;
+#else
     return false;
+#endif // VIDEO_AVAILABLE
 }
 
 bool plMoviePlayer::Stop()
