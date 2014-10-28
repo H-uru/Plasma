@@ -48,6 +48,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <vpx/vp8dx.h>
 #   define iface (vpx_codec_vp9_dx())
 #   include <opus.h>
+
+#   define WEBM_CODECID_VP9 "V_VP9"
+#   define WEBM_CODECID_OPUS "A_OPUS"
 #endif
 
 #include "plGImage/plMipmap.h"
@@ -94,6 +97,7 @@ public:
         if(vpx_codec_dec_init(&instance->codec, iface, nullptr, 0))
         {
             hsAssert(false, vpx_codec_error_detail(&instance->codec));
+            delete instance;
             return nullptr;
         }
         return instance;
@@ -320,6 +324,12 @@ bool plMoviePlayer::Start()
     hsAssert(fVideoTrack, "nil video track -- expect bad things to happen!");
 
     // Initialize VPX
+    const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
+    if (strcmp(video->GetCodecId(), WEBM_CODECID_VP9) != 0)
+    {
+        hsAssert(false, "Not a VP9 video track!");
+        return false;
+    }
     if (VPX* vpx = VPX::Create())
         fVpx.reset(vpx);
     else
@@ -327,7 +337,6 @@ bool plMoviePlayer::Start()
 
     // Need to figure out scaling based on pipe size.
     plPlateManager& plateMgr = plPlateManager::Instance();
-    const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
     float plateWidth = video->GetWidth() * fScale.fX;
     float plateHeight = video->GetHeight() * fScale.fY;
     if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight())
@@ -340,7 +349,7 @@ bool plMoviePlayer::Start()
     plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
     fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
 
-    //initialize opus
+    // Fetch audio track information
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
     header.fFormatTag = plWAVHeader::kPCMFormatTag;
@@ -350,6 +359,13 @@ bool plMoviePlayer::Start()
     header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
     header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
     fAudioSound.reset(new plWin32VideoSound(header));
+
+    // Initialize Opus
+    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0)
+    {
+        hsAssert(false, "Not an Opus audio track!");
+        return false;
+    }
     int error;
     fOpusDecoder = opus_decoder_create(48000, audio->GetChannels(), &error);
     if (error != OPUS_OK)
