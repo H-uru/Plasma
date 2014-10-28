@@ -328,10 +328,16 @@ bool plMoviePlayer::Start()
     // Need to figure out scaling based on pipe size.
     plPlateManager& plateMgr = plPlateManager::Instance();
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
-    float width = (static_cast<float>(video->GetWidth()) / static_cast<float>(plateMgr.GetPipeWidth())) * fScale.fX;
-    float height = (static_cast<float>(video->GetHeight()) / static_cast<float>(plateMgr.GetPipeHeight())) * fScale.fY;
-
-    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, width, height);
+    float plateWidth = video->GetWidth() * fScale.fX;
+    float plateHeight = video->GetHeight() * fScale.fY;
+    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight())
+    {
+        float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
+        plateWidth *= scale;
+        plateHeight *= scale;
+    }
+    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
+    plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
     fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
 
     //initialize opus
