@@ -374,7 +374,7 @@ bool plMoviePlayer::Start()
     header.fNumChannels = audio->GetChannels();
     header.fBitsPerSample = audio->GetBitDepth() == 8 ? 8 : 16;
     header.fNumSamplesPerSec = 48000; // OPUS specs say we shall always decode at 48kHz
-    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 2;
+    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
     header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
     fAudioSound.reset(new plWin32VideoSound(header));
     int error;
