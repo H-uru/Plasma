@@ -56,6 +56,17 @@ const char* plLocalization::fLangTags[] =
 };
 const int kLangTagLen = 4;
 
+// ISO 639, e.g. used in video tracks
+std::set<plString> plLocalization::fLangCodes[] =
+{
+    {"eng", "en"},
+    {"fre", "fra", "fr"},
+    {"ger", "deu", "de"},
+    {"spa", "es"},
+    {"ita", "it"},
+    {"jpn", "ja"}
+};
+
 const char* plLocalization::fLangNames[] =
 {
     "English", // kEnglish

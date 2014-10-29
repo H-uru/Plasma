@@ -53,15 +53,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define WEBM_CODECID_OPUS "A_OPUS"
 #endif
 
+#include "hsResMgr.h"
+#include "hsTimer.h"
+#include "plAudio/plWin32VideoSound.h"
 #include "plGImage/plMipmap.h"
 #include "pnKeyedObject/plUoid.h"
 #include "plPipeline/hsGDeviceRef.h"
 #include "plPipeline/plPlates.h"
-#include "plPlanarImage.h"
-#include "hsResMgr.h"
-#include "hsTimer.h"
-#include "plAudio/plWin32VideoSound.h"
+#include "plResMgr/plLocalization.h"
 
+#include "plPlanarImage.h"
 #include "webm/mkvreader.hpp"
 #include "webm/mkvparser.hpp"
 
@@ -224,8 +225,7 @@ bool plMoviePlayer::IOpenMovie()
     SAFE_OP(seg->Load(), "load segment from webm");
     fSegment.reset(seg);
 
-    // TODO: Figure out video and audio based on current language
-    //       For now... just take the first one.
+    // Use first tracks unless another one matches the current game language
     const mkvparser::Tracks* tracks = fSegment->GetTracks();
     for (uint32_t i = 0; i < tracks->GetTracksCount(); ++i)
     {
@@ -237,13 +237,13 @@ bool plMoviePlayer::IOpenMovie()
         {
         case mkvparser::Track::kAudio:
             {
-                if (!fAudioTrack)
+                if (!fAudioTrack || ICheckLanguage(track))
                     fAudioTrack.reset(new TrackMgr(track));
                 break;
             }
         case mkvparser::Track::kVideo:
             {
-                if (!fVideoTrack)
+                if (!fVideoTrack || ICheckLanguage(track))
                     fVideoTrack.reset(new TrackMgr(track));
                 break;
             }
@@ -253,6 +253,14 @@ bool plMoviePlayer::IOpenMovie()
 #else
     return false;
 #endif
+}
+
+bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
+{
+    auto codes = plLocalization::GetLanguageCodes(plLocalization::GetLanguage());
+    if (codes.find(track->GetLanguage()) != codes.end())
+        return true;
+    return false;
 }
 
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)

@@ -87,6 +87,7 @@ protected:
     bool fPaused;
 
     bool IOpenMovie();
+    bool ICheckLanguage(const mkvparser::Track* track);
     void IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
     void IProcessAudioFrame(const std::vector<blkbuf_t>& frames);
 
