@@ -47,16 +47,15 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDSoundBuffer.h"
 
 static int uniqueID = 0;
-plWin32VideoSound::plWin32VideoSound(plWAVHeader& header) : plWin32Sound()
+plWin32VideoSound::plWin32VideoSound(const plWAVHeader& header) : plWin32Sound()
 {
     fCurrVolume = 1.0f;
     fDesiredVol = 1.0f;
     fSoftVolume = 1.0f;
     fType = kGUISound;
 
-    fDSoundBuffer = new plDSoundBuffer(0, header, false, false, false, true);
-    fDSoundBuffer->SetupVoiceSource();
-    fDSoundBuffer->SetScalarVolume(1.0f);
+    fWAVHeader = header;
+    fDSoundBuffer = new plDSoundBuffer(0, fWAVHeader, false, false);
 
     uniqueID++;
     hsgResMgr::ResMgr()->NewKey(plFormat("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
@@ -68,22 +67,24 @@ plWin32VideoSound::~plWin32VideoSound()
         delete fDSoundBuffer;
 }
 
-void plWin32VideoSound::UpdateSoundBuffer(void* buffer, size_t size)
+void plWin32VideoSound::Play()
 {
-    uint32_t bufferId;
-    uint32_t chunk;
-
-    fDSoundBuffer->UnQueueVoiceBuffers();
-    while (size > 0)
-    {
-        chunk = size < STREAM_BUFFER_SIZE ? size : STREAM_BUFFER_SIZE;
-        if (!fDSoundBuffer->GetAvailableBufferId(&bufferId))
-            break;
-
-        fDSoundBuffer->VoiceFillBuffer(buffer, chunk, bufferId);
-        size -= chunk;
-    }
     IActuallyPlay();
+}
+
+void plWin32VideoSound::Pause(bool on)
+{
+    if (on)
+        fDSoundBuffer->Pause();
+    else if (!fReallyPlaying)
+        fDSoundBuffer->Play();
+    fReallyPlaying = !on;
+}
+
+void plWin32VideoSound::FillSoundBuffer(void* buffer, size_t size)
+{
+    fDSoundBuffer->FillBuffer(buffer, size, &fWAVHeader);
+    fDSoundBuffer->SetScalarVolume(1.0f);
 }
 
 void plWin32VideoSound::IDerivedActuallyPlay()

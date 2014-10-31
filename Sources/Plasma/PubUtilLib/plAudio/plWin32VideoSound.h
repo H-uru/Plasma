@@ -48,10 +48,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plWin32VideoSound : public plWin32Sound
 {
 public:
-    plWin32VideoSound(plWAVHeader& header);
+    plWin32VideoSound(const plWAVHeader& header);
     virtual ~plWin32VideoSound();
 
-    void UpdateSoundBuffer(void* buffer, size_t size);
+    virtual void Play();
+    virtual void Pause(bool on);
+    void FillSoundBuffer(void* buffer, size_t size);
 
 protected:
     void IDerivedActuallyPlay(void);
@@ -60,5 +62,6 @@ protected:
     float GetActualTimeSec();
     void  ISetActualTime(double t);
 
+    plWAVHeader fWAVHeader;
 };
 #endif

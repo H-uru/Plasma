@@ -135,7 +135,7 @@ public:
 
     const mkvparser::Track* GetTrack() { return fTrack; }
 
-    bool GetFrames(mkvparser::MkvReader* reader, int64_t movieTime, std::vector<blkbuf_t>& frames)
+    bool GetFrames(mkvparser::MkvReader* reader, int64_t movieTimeNs, std::vector<blkbuf_t>& frames)
     {
         // If we have no block yet, grab the first one
         if (!fCurrentBlock)
@@ -146,7 +146,7 @@ public:
         {
             const mkvparser::Block* block = fCurrentBlock->GetBlock();
             int64_t time = block->GetTime(fCurrentBlock->GetCluster()) - fTrack->GetCodecDelay();
-            if (time <= movieTime * 1000000) // Block time is nano seconds
+            if (time <= movieTimeNs)
             {
                 // We want to play this block, add it to the frames buffer
                 frames.reserve(frames.size() + block->GetFrameCount());
@@ -180,8 +180,7 @@ plMoviePlayer::plMoviePlayer() :
     fLastFrameTime(0),
     fPosition(hsPoint2()),
     fPlaying(false),
-    fPaused(false),
-    fOpusDecoder(nullptr)
+    fPaused(false)
 {
     fScale.Set(1.0f, 1.0f);
 }
@@ -192,8 +191,6 @@ plMoviePlayer::~plMoviePlayer()
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
 #ifdef VIDEO_AVAILABLE
-    if (fOpusDecoder)
-        opus_decoder_destroy(fOpusDecoder);
     if (fReader)
     {
         fReader->Close();
@@ -255,6 +252,60 @@ bool plMoviePlayer::IOpenMovie()
 #endif
 }
 
+bool plMoviePlayer::ILoadAudio()
+{
+#ifdef VIDEO_AVAILABLE
+    // Fetch audio track information
+    const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
+    plWAVHeader header;
+    header.fFormatTag = plWAVHeader::kPCMFormatTag;
+    header.fNumChannels = audio->GetChannels();
+    header.fBitsPerSample = audio->GetBitDepth() == 8 ? 8 : 16;
+    header.fNumSamplesPerSec = 48000; // OPUS specs say we shall always decode at 48kHz
+    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
+    header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
+    fAudioSound.reset(new plWin32VideoSound(header));
+
+    // Initialize Opus
+    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0)
+    {
+        hsAssert(false, "Not an Opus audio track!");
+        return false;
+    }
+    int error;
+    OpusDecoder* opus = opus_decoder_create(48000, audio->GetChannels(), &error);
+    if (error != OPUS_OK)
+        hsAssert(false, "Error occured initalizing opus");
+
+    // Decode audio track
+    std::vector<blkbuf_t> frames;
+    fAudioTrack->GetFrames(fReader, fSegment->GetDuration(), frames);
+    static const int maxFrameSize = 5760; // for max packet duration at 48kHz
+    std::vector<int16_t> decoded;
+    decoded.reserve(frames.size() * audio->GetChannels() * maxFrameSize);
+
+    for (auto it = frames.begin(); it != frames.end(); ++it)
+    {
+        const std::unique_ptr<uint8_t>& buf = std::get<0>(*it);
+        int32_t size = std::get<1>(*it);
+
+        int16_t* pcm = new int16_t[maxFrameSize * audio->GetChannels()];
+        int samples = opus_decode(opus, buf.get(), size, pcm, maxFrameSize, 0);
+        if (samples < 0)
+            hsAssert(false, "opus error");
+        for (size_t i = 0; i < samples * audio->GetChannels(); i++)
+            decoded.push_back(pcm[i]);
+        delete[] pcm;
+    }
+
+    fAudioSound->FillSoundBuffer(reinterpret_cast<uint8_t*>(decoded.data()), decoded.size() * sizeof(int16_t));
+    opus_decoder_destroy(opus);
+    return true;
+#else
+    return false;
+#endif
+}
+
 bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 {
     auto codes = plLocalization::GetLanguageCodes(plLocalization::GetLanguage());
@@ -299,28 +350,6 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 #endif
 }
 
-void plMoviePlayer::IProcessAudioFrame(const std::vector<blkbuf_t>& frames)
-{
-#ifdef VIDEO_AVAILABLE
-    const uint8_t* data = nullptr;
-    int32_t size = 0;
-    for (auto it = frames.begin(); it != frames.end(); ++it)
-    {
-        const std::unique_ptr<uint8_t>& buf = std::get<0>(*it);
-        data = buf.get();
-        size = std::get<1>(*it);
-
-        static const int frameSize = 5760; //max packet duration at 48kHz
-        const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
-        int16_t* pcm = new int16_t[frameSize * audio->GetChannels() * sizeof(int16_t)];
-        int samples = opus_decode(fOpusDecoder, data, size, pcm, frameSize, 0);
-        if (samples < 0)
-            hsAssert(false, "opus error");
-        fAudioSound->UpdateSoundBuffer(reinterpret_cast<uint8_t*>(pcm), samples * audio->GetChannels() * sizeof(int16_t));
-    }
-#endif
-}
-
 bool plMoviePlayer::Start()
 {
     if (fPlaying)
@@ -357,29 +386,12 @@ bool plMoviePlayer::Start()
     plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
     fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
 
-    // Fetch audio track information
-    const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
-    plWAVHeader header;
-    header.fFormatTag = plWAVHeader::kPCMFormatTag;
-    header.fNumChannels = audio->GetChannels();
-    header.fBitsPerSample = audio->GetBitDepth() == 8 ? 8 : 16;
-    header.fNumSamplesPerSec = 48000; // OPUS specs say we shall always decode at 48kHz
-    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
-    header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
-    fAudioSound.reset(new plWin32VideoSound(header));
-
-    // Initialize Opus
-    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0)
-    {
-        hsAssert(false, "Not an Opus audio track!");
+    // Decode the audio track and load it into a sound buffer
+    if (!ILoadAudio())
         return false;
-    }
-    int error;
-    fOpusDecoder = opus_decoder_create(48000, audio->GetChannels(), &error);
-    if (error != OPUS_OK)
-        hsAssert(false, "Error occured initalizing opus");
 
     fLastFrameTime = static_cast<int64_t>(hsTimer::GetMilliSeconds());
+    fAudioSound->Play();
     fPlaying = true;
 
     return true;
@@ -404,20 +416,8 @@ bool plMoviePlayer::NextFrame()
     // Get our current timecode
     fMovieTime += frameTimeDelta;
 
-    std::vector<blkbuf_t> audio;
     std::vector<blkbuf_t> video;
-    uint8_t tracksWithData = 0;
-    if (fAudioTrack)
-    {
-        if (fAudioTrack->GetFrames(fReader, fMovieTime, audio))
-            tracksWithData++;
-    }
-    if (fVideoTrack)
-    {
-        if (fVideoTrack->GetFrames(fReader, fMovieTime, video))
-            tracksWithData++;
-    }
-    if (!tracksWithData)
+    if (!fVideoTrack || !fVideoTrack->GetFrames(fReader, fMovieTime * 1000000, video))
     {
         Stop();
         return false;
@@ -425,7 +425,7 @@ bool plMoviePlayer::NextFrame()
 
     // Show our mess
     IProcessVideoFrame(video);
-    IProcessAudioFrame(audio);
+    fAudioSound->RefreshVolume();
 
     return true;
 #else
@@ -438,6 +438,7 @@ bool plMoviePlayer::Pause(bool on)
     if (!fPlaying)
         return false;
 
+    fAudioSound->Pause(on);
     fPaused = on;
     return true;
 }
@@ -449,6 +450,7 @@ bool plMoviePlayer::Stop()
         fAudioSound->Stop();
     if (fPlate)
         fPlate->SetVisible(false);
+
     for (int i = 0; i < fCallbacks.size(); i++)
         fCallbacks[i]->Send();
     fCallbacks.clear();
