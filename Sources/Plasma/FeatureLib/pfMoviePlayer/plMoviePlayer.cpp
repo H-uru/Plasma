@@ -70,7 +70,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     { \
         int64_t ret = 0; \
         ret = x; \
-        if (ret == -1) \
+        if (ret < 0) \
         { \
             hsAssert(false, "failed to " err); \
             return false; \
@@ -216,7 +216,7 @@ bool plMoviePlayer::IOpenMovie()
     // it contains everything you ever want to know about the movie
     long long pos = 0;
     mkvparser::EBMLHeader ebmlHeader;
-    ebmlHeader.Parse(fReader, pos);
+    SAFE_OP(ebmlHeader.Parse(fReader, pos), "read mkv header");
     mkvparser::Segment* seg;
     SAFE_OP(mkvparser::Segment::CreateInstance(fReader, pos, seg), "get segment info");
     SAFE_OP(seg->Load(), "load segment from webm");
