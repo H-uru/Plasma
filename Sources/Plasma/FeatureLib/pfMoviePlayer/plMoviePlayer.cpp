@@ -68,15 +68,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "webm/mkvparser.hpp"
 
 #define SAFE_OP(x, err) \
-    { \
-        int64_t ret = 0; \
-        ret = x; \
-        if (ret < 0) \
-        { \
-            hsAssert(false, "failed to " err); \
-            return false; \
-        } \
-    }
+{ \
+    int64_t ret = 0; \
+    ret = x; \
+    if (ret < 0) { \
+        hsAssert(false, "failed to " err); \
+        return false; \
+    } \
+}
 
 // =====================================================
 
@@ -97,8 +96,7 @@ public:
     static VPX* Create()
     {
         VPX* instance = new VPX;
-        if(vpx_codec_dec_init(&instance->codec, iface, nullptr, 0))
-        {
+        if (vpx_codec_dec_init(&instance->codec, iface, nullptr, 0)) {
             hsAssert(false, vpx_codec_error_detail(&instance->codec));
             delete instance;
             return nullptr;
@@ -108,8 +106,7 @@ public:
 
     vpx_image_t* Decode(uint8_t* buf, uint32_t size)
     {
-        if (vpx_codec_decode(&codec, buf, size, nullptr, 0) != VPX_CODEC_OK)
-        {
+        if (vpx_codec_decode(&codec, buf, size, nullptr, 0) != VPX_CODEC_OK) {
             const char* detail = vpx_codec_error_detail(&codec);
             hsAssert(false, detail ? detail : "unspecified decode error");
             return nullptr;
@@ -144,25 +141,20 @@ public:
             fStatus = fTrack->GetFirst(fCurrentBlock);
 
         // Continue through the blocks until our current movie time
-        while (fCurrentBlock && fStatus == 0)
-        {
+        while (fCurrentBlock && fStatus == 0) {
             const mkvparser::Block* block = fCurrentBlock->GetBlock();
             int64_t time = block->GetTime(fCurrentBlock->GetCluster()) - fTrack->GetCodecDelay();
-            if (time <= movieTimeNs)
-            {
+            if (time <= movieTimeNs) {
                 // We want to play this block, add it to the frames buffer
                 frames.reserve(frames.size() + block->GetFrameCount());
-                for (int32_t i = 0; i < block->GetFrameCount(); i++)
-                {
+                for (int32_t i = 0; i < block->GetFrameCount(); i++) {
                     const mkvparser::Block::Frame data = block->GetFrame(i);
                     uint8_t* buf = new uint8_t[data.len];
                     data.Read(reader, buf);
                     frames.push_back(std::make_tuple(std::unique_ptr<uint8_t>(buf), static_cast<int32_t>(data.len)));
                 }
                 fStatus = fTrack->GetNext(fCurrentBlock, fCurrentBlock);
-            }
-            else
-            {
+            } else {
                 // We've got all frames that have to play... come back for more later!
                 return true;
             }
@@ -174,15 +166,15 @@ public:
 
 // =====================================================
 
-plMoviePlayer::plMoviePlayer() :
-    fPlate(nullptr),
-    fTexture(nullptr),
-    fReader(nullptr),
-    fMovieTime(0),
-    fLastFrameTime(0),
-    fPosition(hsPoint2()),
-    fPlaying(false),
-    fPaused(false)
+plMoviePlayer::plMoviePlayer()
+    : fPlate(nullptr),
+      fTexture(nullptr),
+      fReader(nullptr),
+      fMovieTime(0),
+      fLastFrameTime(0),
+      fPosition(hsPoint2()),
+      fPlaying(false),
+      fPaused(false)
 {
     fScale.Set(1.0f, 1.0f);
 }
@@ -193,8 +185,7 @@ plMoviePlayer::~plMoviePlayer()
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
 #ifdef MOVIE_AVAILABLE
-    if (fReader)
-    {
+    if (fReader) {
         fReader->Close();
         delete fReader;
     }
@@ -204,8 +195,7 @@ plMoviePlayer::~plMoviePlayer()
 bool plMoviePlayer::IOpenMovie()
 {
 #ifdef MOVIE_AVAILABLE
-    if (!plFileInfo(fMoviePath).Exists())
-    {
+    if (!plFileInfo(fMoviePath).Exists()) {
         hsAssert(false, "Tried to play a movie that doesn't exist");
         return false;
     }
@@ -226,26 +216,20 @@ bool plMoviePlayer::IOpenMovie()
 
     // Use first tracks unless another one matches the current game language
     const mkvparser::Tracks* tracks = fSegment->GetTracks();
-    for (uint32_t i = 0; i < tracks->GetTracksCount(); ++i)
-    {
+    for (uint32_t i = 0; i < tracks->GetTracksCount(); ++i) {
         const mkvparser::Track* track = tracks->GetTrackByIndex(i);
         if (!track)
             continue;
 
-        switch (track->GetType())
-        {
+        switch (track->GetType()) {
         case mkvparser::Track::kAudio:
-            {
-                if (!fAudioTrack || ICheckLanguage(track))
-                    fAudioTrack.reset(new TrackMgr(track));
-                break;
-            }
+            if (!fAudioTrack || ICheckLanguage(track))
+                fAudioTrack.reset(new TrackMgr(track));
+            break;
         case mkvparser::Track::kVideo:
-            {
-                if (!fVideoTrack || ICheckLanguage(track))
-                    fVideoTrack.reset(new TrackMgr(track));
-                break;
-            }
+            if (!fVideoTrack || ICheckLanguage(track))
+                fVideoTrack.reset(new TrackMgr(track));
+            break;
         }
     }
     return true;
@@ -269,8 +253,7 @@ bool plMoviePlayer::ILoadAudio()
     fAudioSound.reset(new plWin32VideoSound(header));
 
     // Initialize Opus
-    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0)
-    {
+    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0) {
         plStatusLog::AddLineS("movie.log", "%s: Not an Opus audio track!", fMoviePath.AsString().c_str());
         return false;
     }
@@ -287,8 +270,7 @@ bool plMoviePlayer::ILoadAudio()
     decoded.reserve(frames.size() * audio->GetChannels() * maxFrameSize);
 
     int16_t* frameData = new int16_t[maxFrameSize * audio->GetChannels()];
-    for (const auto& frame : frames)
-    {
+    for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         int32_t size = std::get<1>(frame);
 
@@ -322,21 +304,18 @@ void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
     vpx_image_t* img = nullptr;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
-    for (const auto& frame : frames)
-    {
+    for (const auto& frame : frames) {
         const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
         uint32_t size = static_cast<uint32_t>(std::get<1>(frame));
         img = fVpx->Decode(buf.get(), size);
     }
 
-    if (img)
-    {
+    if (img) {
         // According to VideoLAN[1], I420 is the most common image format in videos. I am inclined to believe this as our
         // attemps to convert the common Uru videos use I420 image data. So, as a shortcut, we will only implement that format.
         // If for some reason we need other formats, please, be my guest!
         // [1] = http://wiki.videolan.org/YUV#YUV_4:2:0_.28I420.2FJ420.2FYV12.29
-        switch (img->fmt)
-        {
+        switch (img->fmt) {
         case VPX_IMG_FMT_I420:
             plPlanarImage::Yuv420ToRgba(img->d_w, img->d_h, img->stride, img->planes, reinterpret_cast<uint8_t*>(fTexture->GetImage()));
             break;
@@ -364,8 +343,7 @@ bool plMoviePlayer::Start()
 
     // Initialize VPX
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
-    if (strcmp(video->GetCodecId(), WEBM_CODECID_VP9) != 0)
-    {
+    if (strcmp(video->GetCodecId(), WEBM_CODECID_VP9) != 0) {
         plStatusLog::AddLineS("movie.log", "%s: Not a VP9 video track!", fMoviePath.AsString().c_str());
         return false;
     }
@@ -378,8 +356,7 @@ bool plMoviePlayer::Start()
     plPlateManager& plateMgr = plPlateManager::Instance();
     float plateWidth = video->GetWidth() * fScale.fX;
     float plateHeight = video->GetHeight() * fScale.fY;
-    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight())
-    {
+    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight()) {
         float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
         plateWidth *= scale;
         plateHeight *= scale;
@@ -419,8 +396,7 @@ bool plMoviePlayer::NextFrame()
     fMovieTime += frameTimeDelta;
 
     std::vector<blkbuf_t> video;
-    if (!fVideoTrack || !fVideoTrack->GetFrames(fReader, fMovieTime * 1000000, video))
-    {
+    if (!fVideoTrack || !fVideoTrack->GetFrames(fReader, fMovieTime * 1000000, video)) {
         Stop();
         return false;
     }

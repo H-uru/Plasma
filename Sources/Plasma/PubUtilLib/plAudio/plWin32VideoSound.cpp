@@ -89,8 +89,7 @@ void plWin32VideoSound::FillSoundBuffer(void* buffer, size_t size)
 
 void plWin32VideoSound::IDerivedActuallyPlay()
 {
-    if (!fReallyPlaying)
-    {
+    if (!fReallyPlaying) {
         fDSoundBuffer->Play();
         fReallyPlaying = true;
     }
@@ -104,7 +103,6 @@ bool plWin32VideoSound::LoadSound(bool is3D)
 
 void plWin32VideoSound::SetStartPos(unsigned bytes)
 {
-    
     //do nothing
     hsAssert(false, "unimplemented cause unnecessary for this class");
 }
