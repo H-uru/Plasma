@@ -51,9 +51,9 @@ if(WIN32)
     find_package(DirectX REQUIRED)
 endif(WIN32)
 
-if (VPX_FOUND AND Opus_FOUND)
-    set(VIDEO_AVAILABLE TRUE)
-    add_definitions(-DVIDEO_AVAILABLE)
+if(VPX_FOUND AND Opus_FOUND)
+    set(MOVIE_AVAILABLE TRUE)
+    add_definitions(-DMOVIE_AVAILABLE)
 endif()
 
 include(PrecompiledHeader)    #Precompiled Header helper macros

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMoviePlayer.h"
 
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
 #   define VPX_CODEC_DISABLE_COMPAT 1
 #   include <vpx/vpx_decoder.h>
 #   include <vpx/vp8dx.h>
@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsGDeviceRef.h"
 #include "plPipeline/plPlates.h"
 #include "plResMgr/plLocalization.h"
+#include "plStatusLog/plStatusLog.h"
 
 #include "plPlanarImage.h"
 #include "webm/mkvreader.hpp"
@@ -83,11 +84,12 @@ class VPX
 {
     VPX() { }
 
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
 public:
     vpx_codec_ctx_t codec;
 
-    ~VPX() {
+    ~VPX()
+    {
         if (vpx_codec_destroy(&codec))
             hsAssert(false, vpx_codec_error_detail(&codec));
     }
@@ -190,7 +192,7 @@ plMoviePlayer::~plMoviePlayer()
     if (fPlate)
         // The plPlate owns the Mipmap Texture, so it destroys it for us
         plPlateManager::Instance().DestroyPlate(fPlate);
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     if (fReader)
     {
         fReader->Close();
@@ -201,7 +203,7 @@ plMoviePlayer::~plMoviePlayer()
 
 bool plMoviePlayer::IOpenMovie()
 {
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     if (!plFileInfo(fMoviePath).Exists())
     {
         hsAssert(false, "Tried to play a movie that doesn't exist");
@@ -254,7 +256,7 @@ bool plMoviePlayer::IOpenMovie()
 
 bool plMoviePlayer::ILoadAudio()
 {
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     // Fetch audio track information
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
@@ -269,7 +271,7 @@ bool plMoviePlayer::ILoadAudio()
     // Initialize Opus
     if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0)
     {
-        hsAssert(false, "Not an Opus audio track!");
+        plStatusLog::AddLineS("movie.log", "%s: Not an Opus audio track!", fMoviePath.AsString().c_str());
         return false;
     }
     int error;
@@ -284,19 +286,19 @@ bool plMoviePlayer::ILoadAudio()
     std::vector<int16_t> decoded;
     decoded.reserve(frames.size() * audio->GetChannels() * maxFrameSize);
 
-    for (auto it = frames.begin(); it != frames.end(); ++it)
+    int16_t* frameData = new int16_t[maxFrameSize * audio->GetChannels()];
+    for (const auto& frame : frames)
     {
-        const std::unique_ptr<uint8_t>& buf = std::get<0>(*it);
-        int32_t size = std::get<1>(*it);
+        const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
+        int32_t size = std::get<1>(frame);
 
-        int16_t* pcm = new int16_t[maxFrameSize * audio->GetChannels()];
-        int samples = opus_decode(opus, buf.get(), size, pcm, maxFrameSize, 0);
+        int samples = opus_decode(opus, buf.get(), size, frameData, maxFrameSize, 0);
         if (samples < 0)
             hsAssert(false, "opus error");
         for (size_t i = 0; i < samples * audio->GetChannels(); i++)
-            decoded.push_back(pcm[i]);
-        delete[] pcm;
+            decoded.push_back(frameData[i]);
     }
+    delete[] frameData;
 
     fAudioSound->FillSoundBuffer(reinterpret_cast<uint8_t*>(decoded.data()), decoded.size() * sizeof(int16_t));
     opus_decoder_destroy(opus);
@@ -316,15 +318,15 @@ bool plMoviePlayer::ICheckLanguage(const mkvparser::Track* track)
 
 void plMoviePlayer::IProcessVideoFrame(const std::vector<blkbuf_t>& frames)
 {
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     vpx_image_t* img = nullptr;
 
     // We have to decode all the frames, but we only want to display the most recent one to the user.
-    for (auto it = frames.begin(); it != frames.end(); ++it)
+    for (const auto& frame : frames)
     {
-        const std::unique_ptr<uint8_t>& buf = std::get<0>(*it);
-        int32_t size = std::get<1>(*it);
-        img = fVpx->Decode(buf.get(), static_cast<uint32_t>(size));
+        const std::unique_ptr<uint8_t>& buf = std::get<0>(frame);
+        uint32_t size = static_cast<uint32_t>(std::get<1>(frame));
+        img = fVpx->Decode(buf.get(), size);
     }
 
     if (img)
@@ -355,7 +357,7 @@ bool plMoviePlayer::Start()
     if (fPlaying)
         return false;
 
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     if (!IOpenMovie())
         return false;
     hsAssert(fVideoTrack, "nil video track -- expect bad things to happen!");
@@ -364,7 +366,7 @@ bool plMoviePlayer::Start()
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
     if (strcmp(video->GetCodecId(), WEBM_CODECID_VP9) != 0)
     {
-        hsAssert(false, "Not a VP9 video track!");
+        plStatusLog::AddLineS("movie.log", "%s: Not a VP9 video track!", fMoviePath.AsString().c_str());
         return false;
     }
     if (VPX* vpx = VPX::Create())
@@ -397,7 +399,7 @@ bool plMoviePlayer::Start()
     return true;
 #else
     return false;
-#endif // VIDEO_AVAILABLE
+#endif // MOVIE_AVAILABLE
 }
 
 bool plMoviePlayer::NextFrame()
@@ -412,7 +414,7 @@ bool plMoviePlayer::NextFrame()
     if (fPaused)
         return true;
 
-#ifdef VIDEO_AVAILABLE
+#ifdef MOVIE_AVAILABLE
     // Get our current timecode
     fMovieTime += frameTimeDelta;
 
@@ -430,7 +432,7 @@ bool plMoviePlayer::NextFrame()
     return true;
 #else
     return false;
-#endif // VIDEO_AVAILABLE
+#endif // MOVIE_AVAILABLE
 }
 
 bool plMoviePlayer::Pause(bool on)
@@ -451,8 +453,8 @@ bool plMoviePlayer::Stop()
     if (fPlate)
         fPlate->SetVisible(false);
 
-    for (int i = 0; i < fCallbacks.size(); i++)
-        fCallbacks[i]->Send();
+    for (auto cb : fCallbacks)
+        cb->Send();
     fCallbacks.clear();
     return true;
 }

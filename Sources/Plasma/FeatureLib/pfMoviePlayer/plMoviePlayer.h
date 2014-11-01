@@ -66,8 +66,6 @@ typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
 class plMoviePlayer
 {
 protected:
-    friend class TrackMgr;
-
     class plPlate* fPlate;
     class plMipmap* fTexture;
 

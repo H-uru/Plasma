@@ -12,10 +12,10 @@ include_directories(${OPENSSL_INCLUDE_DIR})
 include_directories(${PYTHON_INCLUDE_DIR})
 include_directories(${CURL_INCLUDE_DIR})
 
-if (VIDEO_AVAILABLE)
+if(MOVIE_AVAILABLE)
     include_directories(${VPX_INCLUDE_DIR})
     include_directories(${Opus_INCLUDE_DIR})
-endif (VIDEO_AVAILABLE)
+endif()
 
 # Test for Python Interpreter, which will be used for extra build scripts if available
 find_package(PythonInterp)
@@ -171,10 +171,10 @@ if(USE_VLD)
     target_link_libraries(plClient ${VLD_LIBRARY})
 endif()
 
-if (VIDEO_AVAILABLE)
+if(MOVIE_AVAILABLE)
     target_link_libraries(plClient ${VPX_LIBRARY})
     target_link_libraries(plClient ${Opus_LIBRARIES})
-endif (VIDEO_AVAILABLE)
+endif()
 
 if (WIN32)
     target_link_libraries(plClient rpcrt4)
