@@ -55,9 +55,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfGameGUIMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plTimerCallbackMsg.h"
-// #include "plAvatar/plAGModifier.h"
-#include "plAvatar/plAGMasterMod.h"
-#include "plAvatar/plAGAnimInstance.h"
+// #include "plAnimation/plAGModifier.h"
+#include "plAnimation/plAGMasterMod.h"
+#include "plAnimation/plAGAnimInstance.h"
 #include "plSurface/plLayerAnimation.h"
 
 #include "pnSceneObject/plSceneObject.h"

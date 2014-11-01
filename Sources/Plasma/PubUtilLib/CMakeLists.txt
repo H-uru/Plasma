@@ -2,6 +2,7 @@ add_definitions(-D_LIB)
 
 add_subdirectory(plAgeDescription)
 add_subdirectory(plAgeLoader)
+add_subdirectory(plAnimation)
 add_subdirectory(plAudible)
 add_subdirectory(plAudio)
 add_subdirectory(plAudioCore)

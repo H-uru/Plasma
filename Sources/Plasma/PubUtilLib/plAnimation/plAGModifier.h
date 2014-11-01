@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnModifier/plSingleModifier.h"        // inherited
 
 // local
-#include "plAvatar/plScalarChannel.h"
+#include "plScalarChannel.h"
 
 class plSceneObject;
 

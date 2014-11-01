@@ -129,7 +129,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPickMaterialMap.h"
 
 #include "plInterp/plController.h"
-#include "plAvatar/plMatrixChannel.h"
+#include "plAnimation/plMatrixChannel.h"
 
 #include "MaxPlasmaMtls/Layers/plLayerTex.h"
 
@@ -2691,7 +2691,7 @@ bool plGUIKnobCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMsg)
 }
 
 // For hackery below (see warning below)
-#include "plAvatar/plAGMasterMod.h"
+#include "plAnimation/plAGMasterMod.h"
 
 bool plGUIKnobCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
@@ -4413,7 +4413,7 @@ bool plGUIProgressCtrlComponent::PreConvert(plMaxNode *node,  plErrorMsg *pErrMs
 }
 
 // For hackery below (see warning below)
-#include "plAvatar/plAGMasterMod.h"
+#include "plAnimation/plAGMasterMod.h"
 
 bool plGUIProgressCtrlComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {

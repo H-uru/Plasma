@@ -39,37 +39,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef plAGDefs_h
+#define plAGDefs_h
 
-#ifndef plAllCreatables_inc
-#define plAllCreatables_inc
+/** \enum PinType
+    Tells us what category of animation this channel affects.
+    Primarly used to determine if two channels are competing,
+    which you can't tell strictly from the type of data the
+    channel handles. */
+enum plAGPinType
+{
+    kAGPinUnknown,      // this applicator hasn't decided its pin type
+    kAGPinTransform,    // this applicator munches the entire transform
+    kNumPinTypes
+};
 
-#include "plGImage/plGImageCreatable.h"
-#include "plGLight/plGLightCreatable.h"
-#include "plInterp/plInterpCreatable.h"
-#include "plInputCore/plInputCoreCreatable.h"
-#include "plPipeline/plPipelineCreatable.h"
-#include "plResMgr/plResMgrCreatable.h"
-#include "plSurface/plSurfaceCreatable.h"
-#include "plNetClient/plNetClientCreatable.h"
-#include "plNetClientComm/plNetClientCommCreatable.h"
-#include "plMessage/plMessageCreatable.h"
-#include "plAudible/plAudibleCreatable.h"
-#include "plDrawable/plDrawableCreatable.h"
-#include "plPhysical/plPhysicalCreatable.h"
-#include "plModifier/plModifierCreatable.h"
-#include "plScene/plSceneCreatable.h"
-#include "plPhysX/plPhysXCreatable.h"
-#include "plAudio/plAudioCreatable.h"
-#include "plAudioCore/plAudioCoreCreatable.h"
-#include "plParticleSystem/plParticleCreatable.h"
-#include "plNetCommon/plNetCommonCreatable.h"
-#include "plVault/plVaultCreatable.h"
-#include "plAnimation/plAnimationCreatable.h"
-#include "plAvatar/plAvatarCreatable.h"
-#include "plIntersect/plIntersectCreatable.h"
-#include "plNetMessage/plNetMessageCreatable.h"
-#include "plStatGather/plStatGatherCreatable.h"
-#include "plSDL/plSDLCreatable.h"
-#include "plAgeLoader/plAgeLoaderCreatable.h"
+#define kAGMaxBlendPriority 0x0fffffff
+#define kAGMinBlendPriority 0x00000000
+#define kAGMedBlendPriority 0x0000ffff
 
-#endif // plAllCreatables_inc
+
+#endif
+

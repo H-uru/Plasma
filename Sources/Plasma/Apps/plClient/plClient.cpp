@@ -140,7 +140,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfJournalBook/pfJournalBook.h"
 
-#include "plAvatar/plAGAnimInstance.h"
+#include "plAnimation/plAGAnimInstance.h"
 #include "plAgeLoader/plAgeLoader.h"
 
 #include "plQuality.h"

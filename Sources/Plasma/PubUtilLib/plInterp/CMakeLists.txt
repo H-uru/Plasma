@@ -27,5 +27,9 @@ set(plInterp_HEADERS
 
 add_library(plInterp STATIC ${plInterp_SOURCES} ${plInterp_HEADERS})
 
+target_link_libraries(plInterp pnFactory)
+target_link_libraries(plInterp pnNetCommon)
+target_link_libraries(plInterp plTransform)
+
 source_group("Source Files" FILES ${plInterp_SOURCES})
 source_group("Header Files" FILES ${plInterp_HEADERS})

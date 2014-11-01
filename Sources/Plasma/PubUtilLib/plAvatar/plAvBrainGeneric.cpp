@@ -50,8 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvTask.h"
 #include "plAvTaskBrain.h"
 #include "plAvBrainHuman.h"
-#include "plAGAnimInstance.h"
-#include "plMatrixChannel.h"
+#include "plAnimation/plAGAnimInstance.h"
+#include "plAnimation/plMatrixChannel.h"
 
 // global
 #include "hsTimer.h"

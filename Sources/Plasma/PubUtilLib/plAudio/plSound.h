@@ -58,8 +58,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "plEAXEffects.h"
 #include "pnNetCommon/plSynchedObject.h"
-#include "plAvatar/plAGChannel.h"
-#include "plAvatar/plAGApplicator.h"
+#include "plAnimation/plAGChannel.h"
+#include "plAnimation/plAGApplicator.h"
 #include "plAudioCore/plSoundBuffer.h"
 
 class hsResMgr;

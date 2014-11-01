@@ -7,13 +7,6 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plAvatar_SOURCES
-    plAGAnim.cpp
-    plAGAnimInstance.cpp
-    plAGApplicator.cpp
-    plAGChannel.cpp
-    plAGMasterMod.cpp
-    plAGMasterSDLModifier.cpp
-    plAGModifier.cpp
     plAnimStage.cpp
     plArmatureEffects.cpp
     plArmatureMod.cpp
@@ -36,27 +29,16 @@ set(plAvatar_SOURCES
     plAvTaskSeek.cpp
     plClothingSDLModifier.cpp
     plCoopCoordinator.cpp
-    plMatrixChannel.cpp
     plMultistageBehMod.cpp
     plNPCSpawnMod.cpp
     plOneShotMod.cpp
     plPhysicalControllerCore.cpp
-    plPointChannel.cpp
-    plQuatChannel.cpp
-    plScalarChannel.cpp
     plSeekPointMod.cpp
     plSittingModifier.cpp
     plSwimRegion.cpp
 )
 
 set(plAvatar_HEADERS
-    plAGAnim.h
-    plAGAnimInstance.h
-    plAGApplicator.h
-    plAGChannel.h
-    plAGMasterMod.h
-    plAGMasterSDLModifier.h
-    plAGModifier.h
     plAnimStage.h
     plArmatureEffects.h
     plArmatureMod.h
@@ -84,20 +66,18 @@ set(plAvatar_HEADERS
     plClothingSDLModifier.h
     plCoopCoordinator.h
     plCritterCommands.h
-    plMatrixChannel.h
     plMultistageBehMod.h
     plNPCSpawnMod.h
     plOneShotMod.h
     plPhysicalControllerCore.h
-    plPointChannel.h
-    plQuatChannel.h
-    plScalarChannel.h
     plSeekPointMod.h
     plSittingModifier.h
     plSwimRegion.h
 )
 
 add_library(plAvatar STATIC ${plAvatar_SOURCES} ${plAvatar_HEADERS})
+
+target_link_libraries(plAvatar plAnimation)
 
 source_group("Source Files" FILES ${plAvatar_SOURCES})
 source_group("Header Files" FILES ${plAvatar_HEADERS})
