@@ -51,17 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void hsThread::Start()
 {
     if (!fThread.joinable()) {
-        // There's no API for retrieving this return value in the old
-        // hsThread, so for now this is just a placeholder until I figure
-        // out what to do with it :(
-        hsError result;
-
-        fThread = std::thread([this, &result]() {
+        fThread = std::thread([this]() {
 #ifdef USE_VLD
             // Needs to be enabled for each thread except the WinMain
             VLDEnable();
 #endif
-            result = Run();
+            Run();
             OnQuit();
         });
     } else

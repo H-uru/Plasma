@@ -83,7 +83,7 @@ public:
     hsThread(const hsThread &) = delete;
     void operator=(const hsThread &) = delete;
 
-    virtual hsError Run() = 0;      // override this to do your work
+    virtual void    Run() = 0;      // override this to do your work
     virtual void    Start();        // initializes stuff and calls your Run() method
     virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
