@@ -641,6 +641,11 @@ bool pyVault::SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic )
     return VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), makePublic);
 }
 
+bool pyVault::SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic )
+{
+    return VaultSetAgePublicAndWait(ageInfoNode->GetNode(), makePublic);
+}
+
 
 PyObject* pyVault::GetGlobalInbox()
 {
