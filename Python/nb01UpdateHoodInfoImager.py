@@ -132,6 +132,13 @@ class nb01UpdateHoodInfoImager(ptResponder):
             self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
 
     def IUpdatePublicHoodDate(self):
+        # The MOULa server sorts the public hood list by date last set public.
+        # We want to have it sorted by date last linked to, so that hoods that
+        # are in active use don't drop off the list. Since we can't modify the
+        # server we fake this by updating the 'set public' timestamp every time
+        # someone links in.
+        # On all known servers, setting from true to true is sufficient to
+        # update the timestamp even though it's not an actual change.
         infoNode = ptAgeVault().getAgeInfo()
         if infoNode.isPublic():
             ptVault().setAgePublic(infoNode, True)
