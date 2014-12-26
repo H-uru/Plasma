@@ -70,6 +70,8 @@ static const char* s_gateKeeperAddrs[] = {
     s_gateKeeperAddrConsole
 };
 
+static unsigned s_clientPort = 14617;
+
 
 /*****************************************************************************
 *
@@ -119,6 +121,18 @@ unsigned GetGateKeeperSrvHostnames (const char*** addrs) {
 //============================================================================
 void SetGateKeeperSrvHostname (const char addr[]) {
     strncpy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
+}
+
+//============================================================================
+// Client Port
+//============================================================================
+unsigned GetClientPort() {
+    return s_clientPort;
+}
+
+//============================================================================
+void SetClientPort(unsigned port) {
+    s_clientPort = port;
 }
 
 

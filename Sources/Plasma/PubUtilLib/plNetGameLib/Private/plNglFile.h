@@ -66,12 +66,6 @@ void NetCliFileStartConnect (
     unsigned        fileAddrCount,
     bool            isPatcher = false
 );
-void NetCliFileStartConnectAsServer (
-    const char*     fileAddrList[],
-    unsigned        fileAddrCount,
-    unsigned        serverType,
-    unsigned        serverBuildId
-);
 
 //============================================================================
 // Disconnect
