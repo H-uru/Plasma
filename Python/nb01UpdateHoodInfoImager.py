@@ -131,6 +131,11 @@ class nb01UpdateHoodInfoImager(ptResponder):
             sname = "Update=%d" % (playerlist.getID())
             self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
 
+    def IUpdatePublicHoodDate(self):
+        infoNode = ptAgeVault().getAgeInfo()
+        if infoNode.isPublic():
+            ptVault().setAgePublic(infoNode, True)
+
     def IFixupScoreLine(self, scorerow):
         retVal = (None, None)
         
@@ -267,6 +272,8 @@ class nb01UpdateHoodInfoImager(ptResponder):
             AmCCR = 0
 
         if not AmCCR:
+            self.IUpdatePublicHoodDate()
+
             sname = "Join=%s" % (PtGetLocalPlayer().getPlayerName())
             self.ISendNotify(self.key, sname, 1.0)
 
