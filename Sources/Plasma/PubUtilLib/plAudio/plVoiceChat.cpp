@@ -435,7 +435,7 @@ bool plVoiceSound::LoadSound( bool is3D )
     header.fBitsPerSample  = 16;
     header.fNumChannels = 1;
     header.fNumSamplesPerSec = FREQUENCY;
-    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 2;
+    header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
     header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
 
     fDSoundBuffer = new plDSoundBuffer(0, header, true, false, false, true);

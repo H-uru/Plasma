@@ -49,27 +49,54 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "plMessage/plMovieMsg.h"
 
+#include <memory>
+#include <vector>
+#include <tuple>
+
+namespace mkvparser
+{
+    class BlockEntry;
+    class MkvReader;
+    class Segment;
+    class Track;
+}
+
+typedef std::tuple<std::unique_ptr<uint8_t>, int32_t> blkbuf_t;
+
 class plMoviePlayer
 {
 protected:
-    int64_t fTimeScale, fStartTime;
+    class plPlate* fPlate;
+    class plMipmap* fTexture;
 
+    mkvparser::MkvReader* fReader;
+    std::unique_ptr<mkvparser::Segment> fSegment;
+    std::unique_ptr<class TrackMgr> fAudioTrack, fVideoTrack; // TODO: vector of tracks?
+    std::unique_ptr<class plWin32VideoSound> fAudioSound;
+    std::unique_ptr<class VPX> fVpx;
+
+    int64_t fMovieTime, fLastFrameTime; // in ms
     hsPoint2 fPosition, fScale;
     plFileName fMoviePath;
 
-    int64_t GetMovieTime() const;
-    bool IOpenMovie() { return false; };
+    bool fPlaying;
+    bool fPaused;
+
+    bool IOpenMovie();
+    bool ILoadAudio();
+    bool ICheckLanguage(const mkvparser::Track* track);
+    void IProcessVideoFrame(const std::vector<blkbuf_t>& frames);
 
 public:
     plMoviePlayer();
-    ~plMoviePlayer() {}
+    ~plMoviePlayer();
 
-    bool Start() { return false; }
-    bool Pause(bool on) { return false; }
+    bool Start();
+    bool Pause(bool on);
     bool Stop();
-    bool NextFrame() { return Stop(); }
+    bool NextFrame();
 
-    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.Append(msg); }
+    void AddCallback(plMessage* msg) { hsRefCnt_SafeRef(msg); fCallbacks.push_back(msg); }
     uint32_t GetNumCallbacks() const { return 0; }
     plMessage* GetCallback(int i) const { return nullptr; }
 
@@ -78,6 +105,8 @@ public:
 
     void SetColor(const hsColorRGBA& c) { }
     const hsColorRGBA GetColor() const { return hsColorRGBA(); }
+
+    /** The volume is handled by the options menu slider, as of now. */
     void SetVolume(float v) { }
 
     hsPoint2 GetPosition() const { return fPosition; }
@@ -95,7 +124,7 @@ public:
     void SetFadeToColor(hsColorRGBA c) { }
 
 private:
-    hsTArray<plMessage*> fCallbacks;
+    std::vector<plMessage*> fCallbacks;
 };
 
 #endif // _plMoviePlayer_inc

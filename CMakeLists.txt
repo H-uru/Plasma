@@ -41,6 +41,8 @@ find_package(PNG REQUIRED)
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(VPX)
+find_package(Opus)
 find_package(CURL REQUIRED)
 find_package(Freetype)
 
@@ -48,6 +50,11 @@ if(WIN32)
     find_package(PhysX REQUIRED)  #TODO: Not required if we aren't building the client
     find_package(DirectX REQUIRED)
 endif(WIN32)
+
+if(VPX_FOUND AND Opus_FOUND)
+    set(MOVIE_AVAILABLE TRUE)
+    add_definitions(-DMOVIE_AVAILABLE)
+endif()
 
 include(PrecompiledHeader)    #Precompiled Header helper macros
 

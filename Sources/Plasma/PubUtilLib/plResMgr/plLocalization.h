@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 #include <string>
+#include <set>
 #include "plFileSystem.h"
 
 class plLocalization
@@ -78,6 +79,7 @@ public:
 protected:
     static Language fLanguage;
     static const char* fLangTags[kNumLanguages];
+    static std::set<plString> fLangCodes[kNumLanguages];
     static const char* fLangNames[kNumLanguages];
     static bool fUsesUnicode[kNumLanguages];
     static encodingTypes fUnicodeEncoding[kNumLanguages];
@@ -89,6 +91,7 @@ public:
     static Language GetLanguage() { return fLanguage; }
 
     static const char* GetLanguageName(Language lang) { return fLangNames[lang]; }
+    static std::set<plString> GetLanguageCodes(Language lang) { return fLangCodes[lang]; }
 
     static bool UsingUnicode() { return fUsesUnicode[fLanguage]; }
     static encodingTypes UnicodeEncoding() { return fUnicodeEncoding[fLanguage]; }

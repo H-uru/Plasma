@@ -619,6 +619,16 @@ void    plDSoundBuffer::Play( void )
 
 }
 
+//// Pause ///////////////////////////////////////////////////////////////////
+
+void plDSoundBuffer::Pause()
+{
+    if (!source)
+        return;
+    alSourcePause(source);
+    alGetError();
+}
+
 //// Stop ////////////////////////////////////////////////////////////////////
 
 void    plDSoundBuffer::Stop( void )

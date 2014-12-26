@@ -129,7 +129,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //          tint=yes/no       - Defines whether or not this decal is tinted //
 //                              with the cover. Overridden by the tintfirst //
 //                              option on the <cover> tag. Defaults to no   //
-//      <movie> - Places a movie (.avi file) inline with the text. Options: //
+//      <movie> - Places a movie (.webm file) inline with the text. Options://
 //          src=<movie name>  - Selects the movie to be used. (nead search  //
 //                              methods here eventually)                    //
 //          align=left/right/center                                         //
