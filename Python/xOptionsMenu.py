@@ -84,8 +84,8 @@ respDisableItems        = ptAttribResponder(13, "resp: Disable Items", ["enableR
 #--------
 
 gLiveMovie = None
-kLiveMovieName = "avi/URULiveIntro.bik"
-kDemoMovieName = "avi/UruPreview.bik"
+kLiveMovieName = "avi/URULiveIntro.webm"
+kDemoMovieName = "avi/UruPreview.webm"
 gPreviewStarted = 0
 prevAudioDeviceName = None
 
@@ -408,7 +408,9 @@ kTrailerFadeOutID = 3
 kTrailerFadeOutSeconds = 1.0
 kOptionFadeInSeconds = 0.5
 
-gWasMuted = 0
+gOriginalAmbientVolume = 1.0
+gOriginalSFXVolume = 1.0
+gOriginalMusicVolume = 1.0
 gFirstReltoVisit = true
 
 gMouseSensitivity = "150"
@@ -1331,7 +1333,9 @@ class xOptionsMenu(ptModifier):
 
     def OnTimer(self,id):
         global gLiveMovie
-        global gWasMuted
+        global gOriginalSFXVolume
+        global gOriginalAmbientVolume
+        global gOriginalMusicVolume
         global gPreviewStarted
         if id == kOptionFadeOutID:
             # is the movie there?
@@ -1356,13 +1360,14 @@ class xOptionsMenu(ptModifier):
             PtDisableRenderScene()
             # dim the cursor
             PtGUICursorDimmed()
-            # temp mute sound
+            # temp mute background sound
             audio = ptAudioControl()
-            if audio.isMuted():
-                gWasMuted = 1
-            else:
-                gWasMuted = 0
-                audio.muteAll()
+            gOriginalAmbientVolume = audio.getAmbienceVolume()
+            audio.setAmbienceVolume(0.0)
+            gOriginalSFXVolume = audio.getSoundFXVolume()
+            audio.setSoundFXVolume(0.0)
+            gOriginalMusicVolume = audio.getMusicVolume()
+            audio.setMusicVolume(0.0)
             PtFadeIn(kTrailerInSeconds,0)
             PtAtTimeCallback(self.key, kTrailerInSeconds, kTrailerFadeInID)
             if PtIsDemoMode():
@@ -1388,9 +1393,11 @@ class xOptionsMenu(ptModifier):
             PtEnableRenderScene()
             # cursor back on
             PtGUICursorOn()
-            if not gWasMuted:
-                audio = ptAudioControl()
-                audio.unmuteAll()
+            # enable background sounds again
+            audio = ptAudioControl()
+            audio.setAmbienceVolume(gOriginalAmbientVolume)
+            audio.setSoundFXVolume(gOriginalSFXVolume)
+            audio.setMusicVolume(gOriginalMusicVolume)
             OptionsMenuDlg.dialog.show()
             PtFadeIn(kOptionFadeInSeconds,0)
         elif id == 999:
