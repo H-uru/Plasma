@@ -253,7 +253,7 @@ bool plMoviePlayer::ILoadAudio()
     fAudioSound.reset(new plWin32VideoSound(header));
 
     // Initialize Opus
-    if (strcmp(audio->GetCodecId(), WEBM_CODECID_OPUS) != 0) {
+    if (strncmp(audio->GetCodecId(), WEBM_CODECID_OPUS, arrsize(WEBM_CODECID_OPUS)) != 0) {
         plStatusLog::AddLineS("movie.log", "%s: Not an Opus audio track!", fMoviePath.AsString().c_str());
         return false;
     }
@@ -343,7 +343,7 @@ bool plMoviePlayer::Start()
 
     // Initialize VPX
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
-    if (strcmp(video->GetCodecId(), WEBM_CODECID_VP9) != 0) {
+    if (strncmp(video->GetCodecId(), WEBM_CODECID_VP9, arrsize(WEBM_CODECID_VP9)) != 0) {
         plStatusLog::AddLineS("movie.log", "%s: Not a VP9 video track!", fMoviePath.AsString().c_str());
         return false;
     }
