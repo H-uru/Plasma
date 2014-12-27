@@ -93,6 +93,9 @@ void SetFileSrvHostname (const char addr[]);
 unsigned GetGateKeeperSrvHostnames (const char*** addrs); // returns addrCount
 void SetGateKeeperSrvHostname (const char addr[]);
 
+unsigned GetClientPort();
+void SetClientPort(unsigned port);
+
 const char *GetServerStatusUrl ();
 void SetServerStatusUrl (const char url[]);
 

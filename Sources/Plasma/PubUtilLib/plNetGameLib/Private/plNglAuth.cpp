@@ -5143,14 +5143,14 @@ void NetCliAuthStartConnect (
                     &cancelId,
                     AsyncLookupCallback,
                     authAddrList[i],
-                    kNetDefaultClientPort,
+                    GetClientPort(),
                     nil
                 );
                 break;
             }
         }
         if (!name[0]) {
-            plNetAddress addr(authAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(authAddrList[i], GetClientPort());
             Connect(authAddrList[i], addr);
         }
     }

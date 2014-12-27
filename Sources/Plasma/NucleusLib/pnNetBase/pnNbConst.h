@@ -52,10 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //============================================================================
 // Network constants
 //============================================================================
-const unsigned kNetLegacyClientPort             = 80;
-const unsigned kNetDefaultClientPort            = 14617;
-const unsigned kNetDefaultServerPort            = 14618;
-const unsigned kNetDefaultSimpleNetPort         = 14620;
 const unsigned kMaxTcpPacketSize                = 1460;
 
 //============================================================================

@@ -1075,14 +1075,14 @@ void NetCliGateKeeperStartConnect (
                     &cancelId,
                     AsyncLookupCallback,
                     gateKeeperAddrList[i],
-                    kNetDefaultClientPort,
+                    GetClientPort(),
                     nil
                 );
                 break;
             }
         }
         if (!name[0]) {
-            plNetAddress addr(gateKeeperAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(gateKeeperAddrList[i], GetClientPort());
             Connect(gateKeeperAddrList[i], addr);
         }
     }
