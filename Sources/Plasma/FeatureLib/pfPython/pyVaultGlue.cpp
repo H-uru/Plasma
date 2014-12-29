@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyEnum.h"
 #include "pyAgeInfoStruct.h"
 #include "pyVaultNode.h"
+#include "pyVaultAgeInfoNode.h"
 #include "pySDL.h"
 #include "pyAgeLinkStruct.h"
 
@@ -455,16 +456,21 @@ PYTHON_METHOD_DEFINITION(ptVault, setAgePublic, args)
     char makePublic;
     if (!PyArg_ParseTuple(args, "Ob", &ageInfoObj, &makePublic))
     {
-        PyErr_SetString(PyExc_TypeError, "setAgePublic expects a ptAgeInfoStruct and a boolean");
+        PyErr_SetString(PyExc_TypeError, "setAgePublic expects a ptAgeInfoStruct or ptVaultAgeInfoNode and a boolean");
         PYTHON_RETURN_ERROR;
     }
-    if (!pyAgeInfoStruct::Check(ageInfoObj))
+    if (pyAgeInfoStruct::Check(ageInfoObj))
     {
-        PyErr_SetString(PyExc_TypeError, "setAgePublic expects a ptAgeInfoStruct and a boolean");
-        PYTHON_RETURN_ERROR;
+        pyAgeInfoStruct* ageInfo = pyAgeInfoStruct::ConvertFrom(ageInfoObj);
+        PYTHON_RETURN_BOOL(self->fThis->SetAgePublic(ageInfo, makePublic != 0));
     }
-    pyAgeInfoStruct* ageInfo = pyAgeInfoStruct::ConvertFrom(ageInfoObj);
-    PYTHON_RETURN_BOOL(self->fThis->SetAgePublic(ageInfo, makePublic != 0));
+    else if (pyVaultAgeInfoNode::Check(ageInfoObj))
+    {
+        pyVaultAgeInfoNode* ageInfoNode = pyVaultAgeInfoNode::ConvertFrom(ageInfoObj);
+        PYTHON_RETURN_BOOL(self->fThis->SetAgePublic(ageInfoNode, makePublic != 0));
+    }
+    PyErr_SetString(PyExc_TypeError, "setAgePublic expects a ptAgeInfoStruct or ptVaultAgeInfoNode and a boolean");
+    PYTHON_RETURN_ERROR;
 }
 
 PYTHON_START_METHODS_TABLE(ptVault)

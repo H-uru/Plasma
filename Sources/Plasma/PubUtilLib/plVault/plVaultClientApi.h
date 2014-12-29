@@ -345,6 +345,7 @@ hsRef<RelVaultNode> VaultGetOwnedAgeInfo(const plAgeInfoStruct * info);
 bool                VaultGetOwnedAgeLink(const plAgeInfoStruct * info, plAgeLinkStruct * link);
 bool                VaultAddOwnedAgeSpawnPoint(const plUUID& ageInstId, const plSpawnPointInfo & spawnPt);
 bool                VaultSetOwnedAgePublicAndWait(const plAgeInfoStruct * info, bool publicOrNot);
+bool                VaultSetAgePublicAndWait(NetVaultNode * ageInfoNode, bool publicOrNot);
 hsRef<RelVaultNode> VaultGetVisitAgeLink(const plAgeInfoStruct * info);
 bool                VaultGetVisitAgeLink(const plAgeInfoStruct * info, class plAgeLinkStruct * link);
 bool                VaultRegisterOwnedAgeAndWait(const plAgeLinkStruct * link);

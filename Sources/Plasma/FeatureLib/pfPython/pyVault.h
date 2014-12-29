@@ -174,6 +174,8 @@ public:
     void CreateNeighborhood();
     // set an age's public status. will fail if you aren't czar of age.
     bool SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic );
+    // set an age's public status, also works for non-owners
+    bool SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic );
 
     PyObject* GetGlobalInbox( void ); // returns pyVaultFolderNode
 
