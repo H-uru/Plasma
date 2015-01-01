@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPasswordStore.h"
 #include "pfPasswordStore_impl.h"
 
-#include "plProduct.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include <Security/Security.h>
 
@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *****************************************************************************/
 const plString pfMacPasswordStore::GetPassword(const plString& username)
 {
-    plString service = plProduct::UUID();
+    plString service = GetServerDisplayName();
 
     void* passwd = nullptr;
     uint32_t passwd_len = 0;
@@ -78,7 +78,7 @@ const plString pfMacPasswordStore::GetPassword(const plString& username)
 
 bool pfMacPasswordStore::SetPassword(const plString& username, const plString& password)
 {
-    plString service = plProduct::UUID();
+    plString service = GetServerDisplayName();
 
     return SecKeychainAddGenericPassword(nullptr,
                                          service.GetSize(),

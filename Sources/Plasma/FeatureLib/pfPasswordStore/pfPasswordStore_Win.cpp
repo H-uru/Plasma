@@ -43,8 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfPasswordStore.h"
 #include "pfPasswordStore_impl.h"
 
-#include "plProduct.h"
 #include "plFormat.h"
+#include "pnNetBase/pnNbSrvs.h"
 
 #include "hsWindows.h"
 #include <wincred.h>
@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 const plString pfWin32PasswordStore::GetPassword(const plString& username)
 {
     PCREDENTIALW credential;
-    plString target = plFormat("%s__%s", plProduct::UUID(), username);
+    plString target = plFormat("{}__{}", GetServerDisplayName(), username);
     plString password = plString::Null;
 
     if (!CredReadW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0, &credential)) {
@@ -74,7 +74,7 @@ const plString pfWin32PasswordStore::GetPassword(const plString& username)
 bool pfWin32PasswordStore::SetPassword(const plString& username, const plString& password)
 {
     CREDENTIALW credential;
-    plString target = plFormat("%s__%s", plProduct::UUID(), username);
+    plString target = plFormat("{}__{}", GetServerDisplayName(), username);
 
     if (password.IsNull()) {
         if (CredDeleteW(target.ToWchar().GetData(), CRED_TYPE_GENERIC, 0)) {
