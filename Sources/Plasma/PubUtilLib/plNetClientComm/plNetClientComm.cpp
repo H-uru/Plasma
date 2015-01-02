@@ -1120,7 +1120,6 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     if (s_player) {
         if (hsRef<RelVaultNode> rvn = VaultGetPlayerInfoNode()) {
             VaultPlayerInfoNode pInfo(rvn);
-            pInfo.SetAgeInstName(nil);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);

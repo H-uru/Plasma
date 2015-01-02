@@ -777,10 +777,8 @@ void plNetLinkingMgr::IPostProcessLink( void )
     // Update our online status 
     if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
-        wchar_t ageInstName[MAX_PATH];
         plUUID ageInstGuid = *info->GetAgeInstanceGuid();
-        StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
-        accInfo.SetAgeInstName(ageInstName);
+        accInfo.SetAgeInstName(info->GetAgeInstanceName());
         accInfo.SetAgeInstUuid(ageInstGuid);
         accInfo.SetOnline(true);
     }
@@ -869,11 +867,9 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     // Update our online status 
     if (hsRef<RelVaultNode> rvnInfo = VaultGetPlayerInfoNode()) {
         VaultPlayerInfoNode accInfo(rvnInfo);
-        wchar_t ageInstName[MAX_PATH];
-        plUUID ageInstGuid = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
-        StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
-        accInfo.SetAgeInstName(ageInstName);
-        accInfo.SetAgeInstUuid(ageInstGuid);
+        const plUUID* ageInstGuid = info->GetAgeInstanceGuid();
+        accInfo.SetAgeInstName(info->GetAgeInstanceName());
+        accInfo.SetAgeInstUuid(*ageInstGuid);
         accInfo.SetOnline(true);
     }
 #endif
