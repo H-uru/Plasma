@@ -246,7 +246,7 @@ void VaultDeleteNode (
 );
 void VaultPublishNode (
     unsigned        nodeId,
-    const wchar_t     deviceName[]
+    const plString& deviceName
 );
 void VaultSendNode (
     RelVaultNode*   srcNode,
@@ -354,13 +354,13 @@ bool                VaultRegisterVisitAgeAndWait(const plAgeLinkStruct * link);
 void                VaultRegisterVisitAge(const plAgeLinkStruct* link);
 bool                VaultUnregisterOwnedAgeAndWait(const plAgeInfoStruct * info);
 bool                VaultUnregisterVisitAgeAndWait(const plAgeInfoStruct * info);
-hsRef<RelVaultNode> VaultFindChronicleEntry(const wchar_t entryName[], int entryType = -1);
-bool                VaultHasChronicleEntry(const wchar_t entryName[], int entryType = -1);
+hsRef<RelVaultNode> VaultFindChronicleEntry(const plString& entryName, int entryType = -1);
+bool                VaultHasChronicleEntry(const plString& entryName, int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void            VaultAddChronicleEntryAndWait (
-    const wchar_t entryName[],
-    int         entryType,
-    const wchar_t entryValue[]
+    const plString& entryName,
+    int             entryType,
+    const plString& entryValue
 );
 bool        VaultAmIgnoringPlayer (unsigned playerId);
 unsigned    VaultGetKILevel ();
@@ -388,7 +388,7 @@ void VaultProcessPlayerInbox ();
 *
 ***/
 
-#define DEFAULT_DEVICE_INBOX L"DevInbox"
+#define DEFAULT_DEVICE_INBOX "DevInbox"
 
 hsRef<RelVaultNode> VaultGetAgeNode();
 hsRef<RelVaultNode> VaultGetAgeInfoNode();
@@ -410,12 +410,12 @@ void           VaultAddAgeChronicleEntry (
     int         entryType,
     const wchar_t entryValue[]
 );
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const wchar_t deviceName[]);   // blocks until completion
-void VaultAgeRemoveDevice (const wchar_t deviceName[]);
-bool VaultAgeHasDevice (const wchar_t deviceName[]);
-hsRef<RelVaultNode> VaultAgeGetDevice(const wchar_t deviceName[]);
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const wchar_t deviceName[], const wchar_t inboxName[]); // blocks until completion
-hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const wchar_t deviceName[]);
+hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const plString& deviceName);   // blocks until completion
+void VaultAgeRemoveDevice (const plString& deviceName);
+bool VaultAgeHasDevice (const plString& deviceName);
+hsRef<RelVaultNode> VaultAgeGetDevice(const plString& deviceName);
+hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const plString& deviceName, const plString& inboxName); // blocks until completion
+hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const plString& deviceName);
 void VaultClearDeviceInboxMap ();
 
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);

@@ -63,6 +63,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma warning(push, 0)
 #include <algorithm>
 #include <sstream>
+#include <unordered_map>
+
 #include "hsStringTokenizer.h"
 #include "hsGeometry3.h"
 #include "plSDL/plSDL.h"
