@@ -88,10 +88,10 @@ class grsnPageMaster(ptResponder):
 
         # for public version, add any pages specific only for that
         if IsPublic:
-            pages += ["WellWindowFake"]        
+            pass
         # for non-public version, add all the remaining pages
         else:
-            pages += ["grsnWellOccluders","grsnWellSecondFloorRooms","grsnWellSecondFloorGearRoom","grsnElevator","grsnExterior"]
+            pages += ["grsnWellOccluders","grsnWellSecondFloorGearRoom","grsnElevator","grsnExterior"]
             pages += ["grsnVeranda","grsnVerandaExterior","grsnObsRoom01Imager","grsnObsRoom02Imager","grsnPrison","grsnPrisonTunnels"]
             pages += ["grsnTeamRoom01","grsnTeamRoom02","grsnTrainingCenterHalls","grsnTrainingCenterMudRooms","grsnTrainingCntrLinkRm"]
             pages += ["TrnCtrControlRoom01","TrnCtrControlRoom02","trainingCenterObservationRooms","NexusBlackRoom","NexusWhiteRoom"]
