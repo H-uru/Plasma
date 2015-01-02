@@ -51,12 +51,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
 #include "pnKeyedObject/plKey.h"
-#include <string>
 #include "pyVaultNode.h"
 
 
 struct RelVaultNode;
 class plMipmap;
+class plString;
 
 class pyVaultImageNode : public pyVaultNode
 {
@@ -88,8 +88,7 @@ public:
 //
     void Image_SetTitle( const char * text );
     void Image_SetTitleW( const wchar_t * text );
-    std::string Image_GetTitle( void );
-    std::wstring Image_GetTitleW( void );
+    plString Image_GetTitle() const;
 
     PyObject* Image_GetImage( void ); // returns pyImage
     void Image_SetImage(pyImage& image);

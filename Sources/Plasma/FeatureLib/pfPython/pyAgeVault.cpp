@@ -203,10 +203,7 @@ void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, uint32
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, deviceName, arrsize(wStr));
-
-    if (hsRef<RelVaultNode> rvn = VaultAgeAddDeviceAndWait(wStr))
+    if (hsRef<RelVaultNode> rvn = VaultAgeAddDeviceAndWait(deviceName))
         cb->SetNode(rvn);
 
     cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail);  // cbHolder deletes itself here.
@@ -215,27 +212,18 @@ void pyAgeVault::AddDevice( const char * deviceName, PyObject * cbObject, uint32
 // Remove a device.
 void pyAgeVault::RemoveDevice( const char * deviceName )
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, deviceName, arrsize(wStr));
-
-    VaultAgeRemoveDevice(wStr);
+    VaultAgeRemoveDevice(deviceName);
 }
 
 // True if device exists in age.
 bool pyAgeVault::HasDevice( const char * deviceName )
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, deviceName, arrsize(wStr));
-
-    return VaultAgeHasDevice(wStr);
+    return VaultAgeHasDevice(deviceName);
 }
 
 PyObject * pyAgeVault::GetDevice( const char * deviceName )
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, deviceName, arrsize(wStr));
-
-    if (hsRef<RelVaultNode> rvn = VaultAgeGetDevice(wStr))
+    if (hsRef<RelVaultNode> rvn = VaultAgeGetDevice(deviceName))
         return pyVaultTextNoteNode::New(rvn);
 
     PYTHON_RETURN_NONE;
@@ -247,12 +235,7 @@ void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName
     pyVaultNode::pyVaultNodeOperationCallback * cb = new pyVaultNode::pyVaultNodeOperationCallback( cbObject );
     cb->VaultOperationStarted( cbContext );
 
-    wchar_t wDev[MAX_PATH];
-    StrToUnicode(wDev, deviceName, arrsize(wDev));
-    wchar_t wInb[MAX_PATH];
-    StrToUnicode(wInb, inboxName, arrsize(wInb));
-    
-    if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(wDev, wInb))
+    if (hsRef<RelVaultNode> rvn = VaultAgeSetDeviceInboxAndWait(deviceName, inboxName))
         cb->SetNode(rvn);
 
     cb->VaultOperationComplete( cbContext, cb->GetNode() ? hsOK : hsFail ); // cbHolder deletes itself here.
@@ -260,10 +243,7 @@ void pyAgeVault::SetDeviceInbox( const char * deviceName, const char * inboxName
 
 PyObject * pyAgeVault::GetDeviceInbox( const char * deviceName )
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, deviceName, arrsize(wStr));
-
-    if (hsRef<RelVaultNode> rvn = VaultAgeGetDeviceInbox(wStr))
+    if (hsRef<RelVaultNode> rvn = VaultAgeGetDeviceInbox(deviceName))
         return pyVaultTextNoteNode::New(rvn);
 
     PYTHON_RETURN_NONE;

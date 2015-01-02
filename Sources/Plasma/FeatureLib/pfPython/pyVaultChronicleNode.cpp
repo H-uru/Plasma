@@ -56,23 +56,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // should only be created from C++ side
 pyVaultChronicleNode::pyVaultChronicleNode(RelVaultNode* nfsNode)
 : pyVaultNode(nfsNode)
-, ansiName(nil)
-, ansiValue(nil)
 {
 }
 
 //create from the Python side
 pyVaultChronicleNode::pyVaultChronicleNode(int n)
 : pyVaultNode(new RelVaultNode)
-, ansiName(nil)
-, ansiValue(nil)
 {
     fNode->SetNodeType(plVault::kNodeType_Chronicle);
-}
-
-pyVaultChronicleNode::~pyVaultChronicleNode () {
-    free(ansiName);
-    free(ansiValue);
 }
 
 
@@ -84,50 +75,34 @@ void pyVaultChronicleNode::Chronicle_SetName( const char * text )
     if (!fNode)
         return;
 
-    wchar_t * wStr = StrDupToUnicode(text);
     VaultChronicleNode chron(fNode);
-    chron.SetEntryName(wStr);
-    free(wStr);
+    chron.SetEntryName(text);
 }
 
-const char * pyVaultChronicleNode::Chronicle_GetName( void )
+plString pyVaultChronicleNode::Chronicle_GetName() const
 {
-    if (!fNode)
-        return "";
-
-    free(ansiName);
-    VaultChronicleNode chron(fNode);
-    ansiName = StrDupToAnsi(chron.GetEntryName());
-    
-    return ansiName;
+    if (fNode) {
+        VaultChronicleNode chron(fNode);
+        return chron.GetEntryName();
+    }
+    return "";
 }
 
 void pyVaultChronicleNode::Chronicle_SetValue( const char * text )
 {
-    if (!fNode)
-        return;
-        
-    wchar_t * wStr = StrDupToUnicode(text);
-    VaultChronicleNode chron(fNode);
-    chron.SetEntryValue(wStr);
-    free(wStr);
+    if (fNode) {
+        VaultChronicleNode chron(fNode);
+        chron.SetEntryValue(text);
+    }
 }
 
-const char * pyVaultChronicleNode::Chronicle_GetValue( void )
+plString pyVaultChronicleNode::Chronicle_GetValue() const
 {
-    if (!fNode)
-        return "";
-        
-    free(ansiValue);
-    ansiValue = nil;
-    
-    VaultChronicleNode chron(fNode);
-    
-    if (!chron.GetEntryValue())
-        return "";
-        
-    ansiValue = StrDupToAnsi(chron.GetEntryValue());
-    return ansiValue;
+    if (fNode) {
+        VaultChronicleNode chron(fNode);
+        return chron.GetEntryValue();
+    }
+    return "";
 }
 
 void pyVaultChronicleNode::Chronicle_SetType( uint32_t type )

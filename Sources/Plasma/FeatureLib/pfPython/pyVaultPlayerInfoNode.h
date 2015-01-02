@@ -55,9 +55,6 @@ class plUUID;
 
 class pyVaultPlayerInfoNode : public pyVaultNode
 {
-    mutable char *      ansiPlayerName;
-    mutable char *      ansiAgeInstName;
-
 protected:
     // should only be created from C++ side
     pyVaultPlayerInfoNode(RelVaultNode * node);
@@ -66,7 +63,7 @@ protected:
     pyVaultPlayerInfoNode();
 
 public:
-    ~pyVaultPlayerInfoNode ();
+    ~pyVaultPlayerInfoNode() { }
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultPlayerInfoNode);
@@ -82,12 +79,12 @@ public:
 //
     void    Player_SetPlayerID( uint32_t plyrid );
     uint32_t  Player_GetPlayerID( void );
-    void    Player_SetPlayerName( const char * name );
-    const char * Player_GetPlayerName( void );
+    void    Player_SetPlayerName(const plString& name);
+    plString Player_GetPlayerName() const;
 
     // age the player is currently in, if any.
-    void    Player_SetAgeInstanceName( const char * agename );
-    const char * Player_GetAgeInstanceName( void );
+    void    Player_SetAgeInstanceName(const plString& name);
+    plString Player_GetAgeInstanceName() const;
     void    Player_SetAgeGuid( const char * guidtext);
     plUUID  Player_GetAgeGuid(void) const;
     // online status

@@ -2469,11 +2469,9 @@ int cyMisc::GetKILevel()
 {
     int result = pfKIMsg::kNanoKI;
 
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, pfKIMsg::kChronicleKILevel, arrsize(wStr));
-    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(wStr)) {
+    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(pfKIMsg::kChronicleKILevel)) {
         VaultChronicleNode chron(rvn);
-        result = wcstol(chron.GetEntryValue(), nil, 0);
+        result = chron.GetEntryValue().ToInt();
     }
 
     return result;

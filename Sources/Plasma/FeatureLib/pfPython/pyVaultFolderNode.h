@@ -50,12 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
-#include <string>
 #include "pyVaultNode.h"
 
+class plString;
 struct RelVaultNode;
 
-    
 class pyVaultFolderNode : public pyVaultNode
 {
 protected:
@@ -80,10 +79,9 @@ public:
 
     virtual void    Folder_SetType( int type );
     virtual int     Folder_GetType( void );
-    void    Folder_SetName( std::string name );
-    void    Folder_SetNameW( std::wstring name );
-    std::string Folder_GetName( void );
-    std::wstring Folder_GetNameW( void );
+    void    Folder_SetName(const char* name);
+    void    Folder_SetNameW(const wchar_t* name);
+    plString Folder_GetName() const;
 
 
 

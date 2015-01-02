@@ -164,23 +164,17 @@ hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
     return fNode;
 }
 
-// only for python glue, do NOT call
 pyVaultNode::pyVaultNode()
-:   fCreateAgeName(nil)
 {
 }
 
 // should only be created from C++ side
 pyVaultNode::pyVaultNode( RelVaultNode* nfsNode )
 :   fNode(nfsNode)
-,   fCreateAgeName(nil)
 {
 }
 
-pyVaultNode::~pyVaultNode()
-{
-    free(fCreateAgeName);
-}
+pyVaultNode::~pyVaultNode() {}
 
 
 hsRef<RelVaultNode> pyVaultNode::GetNode() const
@@ -291,22 +285,11 @@ uint32_t pyVaultNode::GetCreateAgeTime( void )
     return GetCreateTime();
 }
 
-const char * pyVaultNode::GetCreateAgeName( void )
+const char * pyVaultNode::GetCreateAgeName()
 {
-    if (!fNode)
-        return "";
-        
-    if (fCreateAgeName)
-        return fCreateAgeName;
-        
-    if (fNode) {
-        if (fNode->GetCreateAgeName())
-            fCreateAgeName = StrDupToAnsi(fNode->GetCreateAgeName());
-        else
-            fCreateAgeName = StrDup("");
-    }
-    
-    return fCreateAgeName;
+    if (fNode)
+        return fNode->GetCreateAgeName().c_str();
+    return "";
 }
 
 plUUID pyVaultNode::GetCreateAgeGuid(void) const
@@ -359,13 +342,7 @@ void pyVaultNode::SetCreatorNodeID( uint32_t v )
 
 void pyVaultNode::SetCreateAgeName( const char * v )
 {
-    free(fCreateAgeName);
-    fCreateAgeName = nil;
-
-    ASSERT(fNode);
-    wchar_t str[MAX_PATH];
-    StrToUnicode(str, v, arrsize(str));
-    fNode->SetCreateAgeName(str);
+    fNode->SetCreateAgeName(v);
 }
 
 void pyVaultNode::SetCreateAgeGuid( const char * v )
