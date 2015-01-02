@@ -48,37 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Pch.h"
 #pragma hdrstop
 
-//============================================================================
-// Volatile Vault Node Fields - be very careful when adding to this
-//============================================================================
-struct NodeTypeToVolatileField {
-    unsigned    nodeType;
-    uint64_t       volatileFields;
-};
-
-NodeTypeToVolatileField volatileFieldList[] = {
-    {plVault::kNodeType_PlayerInfo, VaultPlayerInfoNode::kOnline | VaultPlayerInfoNode::kAgeInstName | VaultPlayerInfoNode::kAgeInstUuid},
-    {0, 0}
-};
-
-//============================================================================
-uint64_t GetNodeVolatileFields(NetVaultNode* node) {
-    uint64_t       volatileFields  = 0;
-    unsigned    index           = 0;
-
-    while (volatileFieldList[index].nodeType != 0) {
-        if (node->GetNodeType() == volatileFieldList[index].nodeType) {
-            volatileFields |= volatileFieldList[index].volatileFields;
-            break;
-        }
-
-        ++index;
-    }
-
-    return volatileFields;
-}
-
-
 /*****************************************************************************
 *
 *   VaultTextNoteNode
@@ -99,170 +68,66 @@ enum EAgeInfoFields {
 
 #ifdef CLIENT
 void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
-    
-    ARRAY(wchar_t) buf;
-    
+    plStringStream str;
+
     for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
         switch (i) {
-            case kAgeFilename: {
-                wchar_t src[128];
-                StrToUnicode(src, info.GetAgeFilename(), arrsize(src));
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeFilename:
+            str << info.GetAgeFilename();
             break;
-            
-            case kAgeInstName: {
-                wchar_t src[128];
-                StrToUnicode(src, info.GetAgeInstanceName(), arrsize(src));
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeInstName:
+            str << info.GetAgeInstanceName();
             break;
-            
-            case kAgeUserName: {
-                wchar_t src[128];
-                StrToUnicode(src, info.GetAgeUserDefinedName(), arrsize(src));
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeUserName:
+            str << info.GetAgeUserDefinedName();
             break;
-            
-            case kAgeDesc: {
-                wchar_t src[128];
-                StrToUnicode(src, info.GetAgeDescription(), arrsize(src));
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeDesc:
+            str << info.GetAgeDescription();
             break;
-            
-            case kAgeInstGuid: {
-                plUUID guid = *info.GetAgeInstanceGuid();
-                wchar_t src[64];
-                wcsncpy(src, guid.AsString().ToWchar(), 64);
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeInstGuid:
+            str << info.GetAgeInstanceGuid()->AsString();
             break;
-            
-            case kAgeLanguage: {
-                wchar_t src[32];
-                StrPrintf(src, arrsize(src), L"%u", info.GetAgeLanguage());
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeLanguage:
+            str << info.GetAgeLanguage();
             break;
-            
-            case kAgeSequence: {
-                wchar_t src[32];
-                StrPrintf(src, arrsize(src), L"%u", info.GetAgeSequenceNumber());
-                unsigned len = StrLen(src);
-                wchar_t * dst = buf.New(len);
-                memcpy(dst, src, len * sizeof(src[0]));
-            }
+        case kAgeSequence:
+            str << info.GetAgeSequenceNumber();
             break;
 
-            DEFAULT_FATAL(i);
+        DEFAULT_FATAL(i);
         }
-        
-        wchar_t * sep = buf.New(1);
-        *sep = L'|';            
+
+        str << "|";
     }
-    
-    wchar_t * term = buf.New(1);
-    *term = 0;
-    
-    SetNoteText(buf.Ptr());
+
+    SetNoteText(str.GetString());
 }
 #endif
 
 //============================================================================
 #ifdef CLIENT
 bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
+    std::vector<plString> toks = GetNoteText().Split("|");
+    hsAssert(toks.size() == kNumAgeInfoFields, "visit text note malformed--discarding");
+    if (toks.size() != kNumAgeInfoFields)
+        return false;
 
-    wchar_t * mem;
-    const wchar_t * str = mem = wcsdup(GetNoteText());
-    
-    for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
-        
-        wchar_t token[1024];
-        switch (i) {
-            case kAgeFilename: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    char ansi[1024];
-                    StrToAnsi(ansi, token, arrsize(ansi));
-                    info->SetAgeFilename(ansi);
-                }
-            }
-            break;
-            
-            case kAgeInstName: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    char ansi[1024];
-                    StrToAnsi(ansi, token, arrsize(ansi));
-                    info->SetAgeInstanceName(ansi);
-                }
-            }
-            break;
-            
-            case kAgeUserName: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    char ansi[1024];
-                    StrToAnsi(ansi, token, arrsize(ansi));
-                    info->SetAgeUserDefinedName(ansi);
-                }
-            }
-            break;
-            
-            case kAgeDesc: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    char ansi[1024];
-                    StrToAnsi(ansi, token, arrsize(ansi));
-                    info->SetAgeDescription(ansi);
-                }
-            }
-            break;
-            
-            case kAgeInstGuid: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    plUUID uuid(plString::FromWchar(token));
-                    info->SetAgeInstanceGuid(&uuid);
-                }
-            }
-            break;
-            
-            case kAgeLanguage: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    info->SetAgeLanguage(StrToUnsigned(token, nil, 10));
-                }
-            }
-            break;
-            
-            case kAgeSequence: {
-                StrTokenize(&str, token, arrsize(token), L"|", 1);
-                if (StrLen(token) > 0) {
-                    info->SetAgeSequenceNumber(StrToUnsigned(token, nil, 10));
-                }
-            }
-            break;
-
-            DEFAULT_FATAL(i);
-        }
+    if (!toks[kAgeFilename].IsEmpty())
+        info->SetAgeFilename(toks[kAgeFilename]);
+    if (!toks[kAgeInstName].IsEmpty())
+        info->SetAgeInstanceName(toks[kAgeInstName]);
+    if (!toks[kAgeUserName].IsEmpty())
+        info->SetAgeUserDefinedName(toks[kAgeUserName]);
+    if (!toks[kAgeDesc].IsEmpty())
+        info->SetAgeDescription(toks[kAgeDesc]);
+    if (!toks[kAgeInstGuid].IsEmpty()) {
+        std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
+        info->SetAgeInstanceGuid(guid.get());
     }
-
-    free(mem);
+    if (!toks[kAgeLanguage].IsEmpty())
+        info->SetAgeLanguage(toks[kAgeLanguage].ToUInt());
+    if (!toks[kAgeSequence].IsEmpty())
+        info->SetAgeSequenceNumber(toks[kAgeSequence].ToUInt());
     return true;
 }
 #endif
@@ -327,7 +192,7 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
 
 //============================================================================
 #ifdef CLIENT
-void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned writeOptions) {
+void VaultSDLNode::InitStateDataRecord (const plString& sdlRecName, unsigned writeOptions) {
     {
         plStateDataRecord * rec = new plStateDataRecord;
         bool exists = GetStateDataRecord(rec, 0);
@@ -336,9 +201,7 @@ void VaultSDLNode::InitStateDataRecord (const wchar_t sdlRecName[], unsigned wri
             return;
     }
 
-    char aStr[MAX_PATH];
-    StrToAnsi(aStr, sdlRecName, arrsize(aStr));
-    if (plStateDescriptor * des = plSDLMgr::GetInstance()->FindDescriptor(aStr, plSDL::kLatestVersion)) {
+    if (plStateDescriptor * des = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, plSDL::kLatestVersion)) {
         plStateDataRecord rec(des);
         rec.SetFromDefaults(false);
         SetStateDataRecord(&rec, writeOptions|plSDL::kDontWriteDirtyFlag);
@@ -555,44 +418,17 @@ const class plUnifiedTime * VaultAgeInfoNode::GetAgeTime () const {
 //============================================================================
 #ifdef CLIENT
 void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
-    wchar_t str[MAX_PATH];
-
     // age filename
-    if (info->HasAgeFilename()) {
-        StrToUnicode(str, info->GetAgeFilename(), arrsize(str));
-        SetAgeFilename(str);
-    }
-    else {
-        SetAgeFilename(nil);
-    }
+    SetAgeFilename(info->HasAgeFilename() ? info->GetAgeFilename() : "");
 
     // age instance name
-    if (info->HasAgeInstanceName()) {
-        StrToUnicode(str, info->GetAgeInstanceName(), arrsize(str));
-        SetAgeInstanceName(str);
-    }
-    else {
-        SetAgeInstanceName(nil);
-    }
-    
+    SetAgeInstanceName(info->HasAgeInstanceName() ? info->GetAgeInstanceName() : "");
+
     // age user-defined name
-    if (info->HasAgeUserDefinedName())  {
-        StrToUnicode(str, info->GetAgeUserDefinedName(), arrsize(str));
-        SetAgeUserDefinedName(str);
-    }
-    else {
-        SetAgeUserDefinedName(nil);
-    }
+    SetAgeUserDefinedName(info->HasAgeUserDefinedName() ? info->GetAgeUserDefinedName() : "");
 
     // age description
-    // TODO
-    if (info->HasAgeDescription())  {
-//      StrToUnicode(str, info->GetAgeDescription(), arrsize(str));
-//      SetAgeDescription(str);
-    }
-    else {
-//      SetAgeDescription(nil);
-    }
+    SetAgeDescription(info->HasAgeDescription() ? info->GetAgeDescription() : "");
 
     // age sequence number
     SetAgeSequenceNumber(info->GetAgeSequenceNumber());
@@ -608,22 +444,17 @@ void VaultAgeInfoNode::CopyFrom (const plAgeInfoStruct * info) {
 //============================================================================
 #ifdef CLIENT
 void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
-    char str[MAX_PATH];
-
     // age filename
-    StrToAnsi(str, GetAgeFilename(), arrsize(str));
-    info->SetAgeFilename(str);
+    info->SetAgeFilename(GetAgeFilename());
 
     // age instance name
-    StrToAnsi(str, GetAgeInstanceName(), arrsize(str));
-    info->SetAgeInstanceName(str);
+    info->SetAgeInstanceName(GetAgeInstanceName());
 
     // age user-defined name
-    StrToAnsi(str, GetAgeUserDefinedName(), arrsize(str));
-    info->SetAgeUserDefinedName(str);
+    info->SetAgeUserDefinedName(GetAgeUserDefinedName());
 
     // age description
-    // TODO
+    info->SetAgeDescription(GetAgeDescription());
 
     // age sequence number
     info->SetAgeSequenceNumber(GetAgeSequenceNumber());

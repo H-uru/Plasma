@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // 'Old' system is full of compiler warnings at /W4, so just hide them
 #pragma warning(push, 0)
 #include <algorithm>
+#include <memory>
 #include <sstream>
 #include <unordered_map>
 
