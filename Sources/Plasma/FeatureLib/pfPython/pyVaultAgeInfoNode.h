@@ -61,13 +61,6 @@ class plUUID;
 
 class pyVaultAgeInfoNode : public pyVaultNode
 {
-private:
-    mutable std::string fAgeFilename;
-    mutable std::string fAgeInstName;
-    mutable std::string fAgeUserName;
-    mutable std::string fAgeDispName;
-    mutable std::string fAgeDescription;
-
 protected:
     // should only be created from C++ side
     pyVaultAgeInfoNode(RelVaultNode* vaultNode);

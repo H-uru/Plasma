@@ -84,7 +84,7 @@ plString pyDniInfoSource::GetAgeName() const
         return "";
 
     VaultAgeInfoNode ageInfo(node);
-    return ageInfo.GetAgeFilename();
+    return ageInfo.GetAgeInstanceName();
 }
 
 plUUID pyDniInfoSource::GetAgeGuid( void ) const
