@@ -119,8 +119,8 @@ void NetCliAuthAccountExistsRequest (
 //============================================================================
 struct NetCliAuthPlayerInfo {
     unsigned    playerInt;
-    wchar_t       playerName[kMaxPlayerNameLength];
-    wchar_t       avatarShape[kMaxVaultNodeStringLength];
+    plString    playerName;
+    plString    avatarShape;
     unsigned    playerFlags;
     unsigned    explorer;
 };

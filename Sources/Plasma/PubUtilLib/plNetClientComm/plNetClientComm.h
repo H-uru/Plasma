@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
+#include "plString.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"
 #include "plMessage/plNetCommMsgs.h"
@@ -72,9 +73,8 @@ class plNetMessage;
 
 struct NetCommPlayer {
     unsigned    playerInt;
-    wchar_t       playerName[kMaxPlayerNameLength];
-    char        playerNameAnsi[kMaxPlayerNameLength];
-    char        avatarDatasetName[64];
+    plString    playerName;
+    plString    avatarDatasetName;
     unsigned    explorer;
 };
 

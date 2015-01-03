@@ -276,7 +276,7 @@ void plNCAgeJoiner::ExecNextOp () {
         case kLoadPlayer: {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadPlayer");
             // Start loading local player
-            const char * avatarName;
+            plString avatarName;
             if (NetCommNeedToLoadAvatar()) {
                 if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge))
                     avatarName = "Male";

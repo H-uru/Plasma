@@ -123,7 +123,7 @@ static wchar_t                s_iniOS[kMaxGTOSIdLength];
 static bool                 s_iniReadAccountInfo = true;
 static wchar_t                s_iniStartupAgeName[kMaxAgeNameLength];
 static plUUID               s_iniStartupAgeInstId;
-static wchar_t                s_iniStartupPlayerName[kMaxPlayerNameLength];
+static plString             s_iniStartupPlayerName;
 static bool                 s_netError = false;
 
 
@@ -405,13 +405,12 @@ static void INetCliAuthLoginRequestCallback (
         s_account.billingType   = billingType;
         s_players.GrowToCount(playerCount, true);
         for (unsigned i = 0; i < playerCount; ++i) {
-            LogMsg(kLogDebug, L"Player %u: %s explorer: %u", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
-            s_players[i].playerInt  = playerInfoArr[i].playerInt;
-            s_players[i].explorer   = playerInfoArr[i].explorer;
-            StrCopy(s_players[i].playerName, playerInfoArr[i].playerName, arrsize(s_players[i].playerName));
-            StrToAnsi(s_players[i].playerNameAnsi, playerInfoArr[i].playerName, arrsize(s_players[i].playerNameAnsi));
-            StrToAnsi(s_players[i].avatarDatasetName, playerInfoArr[i].avatarShape, arrsize(s_players[i].avatarDatasetName));
-            if (!wantsStartUpAge && 0 == StrCmpI(s_players[i].playerName, s_iniStartupPlayerName, (unsigned)-1))
+            LogMsg(kLogDebug, L"Player %u: %S explorer: %u", playerInfoArr[i].playerInt, playerInfoArr[i].playerName.c_str(), playerInfoArr[i].explorer);
+            s_players[i].playerInt         = playerInfoArr[i].playerInt;
+            s_players[i].explorer          = playerInfoArr[i].explorer;
+            s_players[i].playerName        = playerInfoArr[i].playerName;
+            s_players[i].avatarDatasetName = playerInfoArr[i].avatarShape;
+            if (!wantsStartUpAge && s_players[i].playerName.CompareI(s_iniStartupPlayerName) == 0)
                 s_player = &s_players[i];
         }
 
@@ -449,14 +448,13 @@ static void INetCliAuthCreatePlayerRequestCallback (
     else {
         LogMsg(kLogDebug, L"Created player %s: %u", playerInfo.playerName, playerInfo.playerInt);
 
-        unsigned currPlayer = s_player ? s_player->playerInt : 0;       
+        unsigned currPlayer = s_player ? s_player->playerInt : 0;
         NetCommPlayer * newPlayer = s_players.New();
 
-        newPlayer->playerInt    = playerInfo.playerInt;
-        newPlayer->explorer     = playerInfo.explorer;
-        StrCopy(newPlayer->playerName, playerInfo.playerName, arrsize(newPlayer->playerName));
-        StrToAnsi(newPlayer->playerNameAnsi, playerInfo.playerName, arrsize(newPlayer->playerNameAnsi));
-        StrToAnsi(newPlayer->avatarDatasetName, playerInfo.avatarShape, arrsize(newPlayer->avatarDatasetName));
+        newPlayer->playerInt         = playerInfo.playerInt;
+        newPlayer->explorer          = playerInfo.explorer;
+        newPlayer->playerName        = playerInfo.playerName;
+        newPlayer->avatarDatasetName = playerInfo.avatarShape;
 
         { for (unsigned i = 0; i < s_players.Count(); ++i) {
             if (s_players[i].playerInt == currPlayer) {
@@ -1137,7 +1135,7 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
                 s_player = &s_players[i];
                 break;
             }
-            else if (0 == StrCmpI(s_players[i].playerName, s_iniStartupPlayerName, arrsize(s_players[i].playerName))) {
+            else if (s_players[i].playerName.CompareI(s_iniStartupPlayerName) == 0) {
                 playerInt = s_players[i].playerInt;
                 s_player = &s_players[i];
             }

@@ -1084,9 +1084,9 @@ bool plNetClientMgr::CanSendMsg(plNetMessage * msg)
 plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 {
     // local case
-    if (!avKey || avKey==GetLocalPlayerKey())
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-    
+    if (!avKey || avKey == GetLocalPlayerKey())
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
@@ -1094,15 +1094,15 @@ plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     // local case
     if (NetCommGetPlayer()->playerInt == playerId)
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-        
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
 
 unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
     // local case
-    if (0 == name.Compare(NetCommGetPlayer()->playerNameAnsi))
+    if (name.CompareI(NetCommGetPlayer()->playerName) == 0)
         return NetCommGetPlayer()->playerInt;
 
     unsigned n = TransportMgr().GetNumMembers();

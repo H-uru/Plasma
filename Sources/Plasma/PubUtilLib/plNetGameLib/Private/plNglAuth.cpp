@@ -2613,17 +2613,17 @@ LoginRequestTrans::LoginRequestTrans (
 
 //============================================================================
 void LoginRequestTrans::AddPlayer (
-    unsigned    playerInt,
+    unsigned      playerInt,
     const wchar_t playerName[],
     const wchar_t avatarShape[],
-    unsigned    explorer
+    unsigned      explorer
 ) {
     unsigned index = m_playerCount++;
     ASSERT(index < kMaxPlayersPerAccount);
-    m_players[index].playerInt  = playerInt;
-    m_players[index].explorer   = explorer;
-    StrCopy(m_players[index].playerName, playerName, arrsize(m_players[index].playerName));
-    StrCopy(m_players[index].avatarShape, avatarShape, arrsize(m_players[index].avatarShape));
+    m_players[index].playerInt   = playerInt;
+    m_players[index].explorer    = explorer;
+    m_players[index].playerName  = plString::FromWchar(playerName);
+    m_players[index].avatarShape = plString::FromWchar(avatarShape);
 }
 
 //============================================================================
@@ -2988,10 +2988,10 @@ bool PlayerCreateRequestTrans::Recv (
 ) {
     const Auth2Cli_PlayerCreateReply & reply = *(const Auth2Cli_PlayerCreateReply *) msg;
     if (!IS_NET_ERROR(reply.result)) {
-        m_playerInfo.playerInt  = reply.playerInt;
-        m_playerInfo.explorer   = reply.explorer;
-        StrCopy(m_playerInfo.playerName, reply.playerName, arrsize(m_playerInfo.playerName));
-        StrCopy(m_playerInfo.avatarShape, reply.avatarShape, arrsize(m_playerInfo.avatarShape));
+        m_playerInfo.playerInt   = reply.playerInt;
+        m_playerInfo.explorer    = reply.explorer;
+        m_playerInfo.playerName  = plString::FromWchar(reply.playerName);
+        m_playerInfo.avatarShape = plString::FromWchar(reply.avatarShape);
     }
     m_result    = reply.result;
     m_state     = kTransStateComplete;
