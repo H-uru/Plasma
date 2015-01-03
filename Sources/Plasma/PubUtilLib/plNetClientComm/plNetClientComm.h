@@ -219,7 +219,7 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
     void *                  param
 );
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
-    const char                      ageName[],
+    const plString&                 ageName,
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype = plNetCommReplyMsg::kParamTypeOther
 );

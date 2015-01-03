@@ -427,17 +427,17 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     void *                                  m_param;
     
     // send
-    wchar_t                                   m_ageName[MAX_PATH];
-    
+    plString                                m_ageName;
+
     // recv
     ARRAY(NetAgeInfo)                       m_ages;
     
     GetPublicAgeListTrans (
-        const wchar_t                         ageName[],
+        const plString&                     ageName,
         FNetCliAuthGetPublicAgeListCallback callback,
         void *                              param
     );
-        
+
     bool Send ();
     void Post ();
     bool Recv (
@@ -3218,14 +3218,14 @@ bool AccountChangePasswordRequestTrans::Recv (
 
 //============================================================================
 GetPublicAgeListTrans::GetPublicAgeListTrans (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) : NetAuthTrans(kGetPublicAgeListTrans)
+,   m_ageName(ageName)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_ageName, ageName, arrsize(m_ageName));
 }
 
 //============================================================================
@@ -3233,10 +3233,12 @@ bool GetPublicAgeListTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> ageName = m_ageName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_GetPublicAgeList,
                         m_transId,
-        (uintptr_t)  &m_ageName,
+        (uintptr_t)     ageName.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -5414,7 +5416,7 @@ void NetCliAuthSetAgePublic (
 
 //============================================================================
 void NetCliAuthGetPublicAgeList (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) {

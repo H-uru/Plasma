@@ -258,7 +258,7 @@ typedef void (*FNetCliAuthGetPublicAgeListCallback)(
     const ARRAY(NetAgeInfo) &   ages
 );
 void NetCliAuthGetPublicAgeList (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 );

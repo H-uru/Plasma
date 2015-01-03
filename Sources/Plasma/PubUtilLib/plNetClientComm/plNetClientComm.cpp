@@ -1168,18 +1168,16 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
 
 //============================================================================
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
-    const char                      ageName[],
+    const plString&                 ageName,
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype
 ) {
     NetCommParam * cp = new NetCommParam;
     cp->param   = param;
     cp->type    = ptype;
-    
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, ageName, arrsize(wStr));
+
     NetCliAuthGetPublicAgeList(
-        wStr,
+        ageName,
         INetCliAuthGetPublicAgeListCallback,
         cp
     );
