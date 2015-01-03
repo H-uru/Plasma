@@ -3916,7 +3916,7 @@ PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page fr
     {
         char    str[ 256 ];
         sprintf( str, "Page %s excluded from load", (char *)params[ 0 ] );
-        plAgeLoader::GetInstance()->AddExcludedPage( params[ 0 ] );
+        plAgeLoader::GetInstance()->AddExcludedPage( (char*)params[ 0 ] );
         PrintString( str );
     }
 }

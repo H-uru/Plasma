@@ -299,7 +299,7 @@ public:
     //             : Return the current coordinates of the player within this age
     //             : Return the current time with the current age the player is in
     //
-    static const char* GetAgeName();
+    static plString GetAgeName();
     static PyObject* GetAgeInfo(); // returns pyAgeInfoStruct
     static plString GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();

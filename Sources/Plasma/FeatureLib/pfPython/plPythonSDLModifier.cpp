@@ -590,10 +590,10 @@ plPythonSDLModifier* ExternFindAgePySDL()
 
 plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
-    const char* ageName = cyMisc::GetAgeName();
+    plString ageName = cyMisc::GetAgeName();
 
-    if (strcmp(ageName, "") == 0)
-        return nil; // don't have an age, probably because we're running in max?
+    if (ageName.IsEmpty())
+        return nullptr; // don't have an age, probably because we're running in max?
 
     // find the Age Global object
     plLocation loc = plKeyFinder::Instance().FindLocation(ageName,plAgeDescription::GetCommonPage(plAgeDescription::kGlobal));
@@ -613,27 +613,27 @@ plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
                     return sdlMod;
                 
                 plNetClientApp::StaticErrorMsg("pfmod %s has a nil python SDL modifier for age sdl %s", 
-                    pfmod->GetKeyName().c_str("?"), ageName);
+                    pfmod->GetKeyName().c_str("?"), ageName.c_str());
             }
             else
             {
                 if (!key)
-                    plNetClientApp::StaticErrorMsg("nil key %s for age sdl %s", ageName, oid.StringIze().c_str());
+                    plNetClientApp::StaticErrorMsg("nil key %s for age sdl %s", ageName.c_str(), oid.StringIze().c_str());
                 else
                 if (!key->ObjectIsLoaded())
                     plNetClientApp::StaticErrorMsg("key %s not loaded for age sdl %s", 
-                        key->GetName().c_str("?"), ageName);
+                        key->GetName().c_str("?"), ageName.c_str());
                 else
                 if (!plPythonFileMod::ConvertNoRef(key->ObjectIsLoaded()))
                     plNetClientApp::StaticErrorMsg("key %s is not a python file mod for age sdl %s", 
-                        key->GetName().c_str("?"), ageName);
+                        key->GetName().c_str("?"), ageName.c_str());
             }
         }
         else
-            plNetClientApp::StaticErrorMsg("Invalid plUoid for age sdl %s", ageName);
+            plNetClientApp::StaticErrorMsg("Invalid plUoid for age sdl %s", ageName.c_str());
     }
     else
-        plNetClientApp::StaticErrorMsg("Invalid plLocation for age sdl %s", ageName);
+        plNetClientApp::StaticErrorMsg("Invalid plLocation for age sdl %s", ageName.c_str());
 
     // couldn't find one (maybe because we didn't look)
     return nil;
@@ -680,8 +680,8 @@ pySDLModifier::pySDLModifier(plPythonSDLModifier* sdlMod)
 
 PyObject* pySDLModifier::GetAgeSDL()
 {
-    const char* ageName = cyMisc::GetAgeName();
-    if (strcmp(ageName, "") == 0)
+    plString ageName = cyMisc::GetAgeName();
+    if (ageName.IsEmpty())
         PYTHON_RETURN_NONE; // just return none if the age is blank (running in max?)
 
     const plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();
@@ -691,10 +691,9 @@ PyObject* pySDLModifier::GetAgeSDL()
     }
 
     // didn't find one, throw an exception for the python programmer to chew on
-    char errmsg[256];
-    sprintf(errmsg,"Age Global SDL for %s does not exist!",ageName);
-    plNetClientApp::StaticErrorMsg(errmsg);
-    PyErr_SetString(PyExc_KeyError, errmsg);
+    plString err = plFormat("Age Global SDL for {} does not exist!", ageName);
+    plNetClientApp::StaticErrorMsg(err.c_str());
+    PyErr_SetString(PyExc_KeyError, err.c_str());
     PYTHON_RETURN_ERROR;
 }
 

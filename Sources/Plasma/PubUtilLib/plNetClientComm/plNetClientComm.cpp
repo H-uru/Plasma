@@ -121,7 +121,7 @@ static ShaDigest            s_namePassHash;
 static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
 static wchar_t                s_iniOS[kMaxGTOSIdLength];
 static bool                 s_iniReadAccountInfo = true;
-static wchar_t                s_iniStartupAgeName[kMaxAgeNameLength];
+static plString             s_iniStartupAgeName;
 static plUUID               s_iniStartupAgeInstId;
 static plString             s_iniStartupPlayerName;
 static bool                 s_netError = false;
@@ -392,10 +392,8 @@ static void INetCliAuthLoginRequestCallback (
     s_player = nil;
     s_players.Clear();
     
-    bool wantsStartUpAge = (
-        !StrLen(s_startupAge.ageDatasetName) ||
-        0 == StrCmpI(s_startupAge.ageDatasetName, "StartUp")
-    );
+    bool wantsStartUpAge = (s_startupAge.ageDatasetName.IsEmpty() ||
+                            s_startupAge.ageDatasetName.CompareI("StartUp") == 0);
 
     s_loginComplete = true;
 
@@ -423,7 +421,7 @@ static void INetCliAuthLoginRequestCallback (
     // If they specified an alternate age, but we couldn't find the player, force
     // the StartUp age to load so that they may select/create a player first.    
     if (!wantsStartUpAge && !s_player)
-        StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
+        s_startupAge.ageDatasetName = "StartUp";
 
     // If they specified an alternate age, and we found the player, set the active player now
     // so that the link operation will be successful once the client is finished initializing.
@@ -758,8 +756,8 @@ void NetCommStartup () {
     // Set startup age info
     memset(&s_startupAge, 0, sizeof(s_startupAge));
 
-    StrCopy(s_iniStartupAgeName, L"StartUp", arrsize(s_iniStartupAgeName));
-    StrCopy(s_startupAge.ageDatasetName, "StartUp", arrsize(s_startupAge.ageDatasetName));
+    s_iniStartupAgeName = "StartUp";
+    s_startupAge.ageDatasetName = s_iniStartupAgeName;
 
     s_startupAge.ageInstId = s_iniStartupAgeInstId;
     StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
@@ -1086,11 +1084,8 @@ void NetCommLinkToAge (     // --> plNetCommLinkToAgeMsg
         return;
     }
 
-    wchar_t wAgeName[kMaxAgeNameLength];
-    StrToUnicode(wAgeName, s_age.ageDatasetName, arrsize(wAgeName));
-    
     NetCliAuthAgeRequest(
-        wAgeName,
+        s_age.ageDatasetName,
         s_age.ageInstId,
         INetCliAuthAgeRequestCallback,
         param

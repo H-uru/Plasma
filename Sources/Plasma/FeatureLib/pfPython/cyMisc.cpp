@@ -614,7 +614,7 @@ plString cyMisc::GetLocalClientName()
 //             : Return the current guid of the instance of the age the player is in
 //
 
-const char * cyMisc::GetAgeName()
+plString cyMisc::GetAgeName()
 {
     return NetCommGetAge()->ageDatasetName;
 }

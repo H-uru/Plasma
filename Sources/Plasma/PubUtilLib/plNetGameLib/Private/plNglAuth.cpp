@@ -194,14 +194,14 @@ struct LoginRequestTrans : NetAuthTrans {
 struct AgeRequestTrans : NetAuthTrans {
     FNetCliAuthAgeRequestCallback       m_callback;
     void *                              m_param;
-    wchar_t                               m_ageName[kMaxAgeNameLength];
+    plString                            m_ageName;
     unsigned                            m_ageMcpId;
     plUUID                              m_ageInstId;
     unsigned                            m_ageVaultId;
     uint32_t                            m_gameSrvNode;
 
     AgeRequestTrans (
-        const wchar_t                         ageName[],
+        const plString&                     ageName,
         const plUUID&                       ageInstId,
         FNetCliAuthAgeRequestCallback       callback,
         void *                              param
@@ -2723,16 +2723,16 @@ bool LoginRequestTrans::Recv (
 
 //============================================================================
 AgeRequestTrans::AgeRequestTrans (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) : NetAuthTrans(kAgeRequestTrans)
+,   m_ageName(ageName)
 ,   m_ageInstId(ageInstId)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_ageName, ageName, arrsize(m_ageName));
 }
 
 //============================================================================
@@ -2744,10 +2744,12 @@ bool AgeRequestTrans::Send () {
     if (!AcquireConn())
         return true;
 
+    plStringBuffer<uint16_t> ageName = m_ageName.ToUtf16();
+
     const uintptr_t msg[] = {
-        kCli2Auth_AgeRequest,
-                        m_transId,
-        (uintptr_t)  m_ageName,
+                     kCli2Auth_AgeRequest,
+                     m_transId,
+        (uintptr_t)  ageName.GetData(),
         (uintptr_t) &m_ageInstId,
     };
 
@@ -5254,7 +5256,7 @@ void NetCliAuthLoginRequest (
 
 //============================================================================
 void NetCliAuthAgeRequest (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param

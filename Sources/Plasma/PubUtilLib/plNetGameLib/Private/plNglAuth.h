@@ -330,7 +330,7 @@ typedef void (*FNetCliAuthAgeRequestCallback)(
     plNetAddress    gameAddr
 );
 void NetCliAuthAgeRequest (
-    const wchar_t                         ageName[],      // L"Teledahn"
+    const plString&                     ageName,      // "Teledahn"
     const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param

@@ -226,7 +226,7 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0) {
+    if (age.ageDatasetName.IsEmpty() || age.ageDatasetName.CompareI("StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
 
         // no need to update if we're not using a GameSrv

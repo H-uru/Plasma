@@ -89,12 +89,11 @@ struct NetCommAccount {
 struct NetCommAge {
     plUUID      ageInstId;
     unsigned    ageVaultId;
-    char        ageDatasetName[kMaxAgeNameLength];
+    plString    ageDatasetName;
     char        spawnPtName[64];
 
     NetCommAge() : ageVaultId(0)
     {
-        memset(ageDatasetName, 0, sizeof(ageDatasetName));
         memset(spawnPtName, 0, sizeof(spawnPtName));
     }
 };

@@ -434,11 +434,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
     NlmJoinAgeOp * joinAgeOp = new NlmJoinAgeOp;
     joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
     joinAgeOp->muteSfx = !msg->PlayLinkInSfx();
-    StrCopy(
-        joinAgeOp->age.ageDatasetName,
-        GetAgeLink()->GetAgeInfo()->GetAgeFilename().c_str(),
-        arrsize(joinAgeOp->age.ageDatasetName)
-        );
+    joinAgeOp->age.ageDatasetName = GetAgeLink()->GetAgeInfo()->GetAgeFilename();
     StrCopy(
         joinAgeOp->age.spawnPtName,
         GetAgeLink()->SpawnPoint().GetName().c_str(),
