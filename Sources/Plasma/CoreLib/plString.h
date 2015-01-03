@@ -279,7 +279,7 @@ public:
      *        conversion from ISO-8859-1 8-bit data, use FromIso8859_1().
      */
     template <size_t _Sz>
-    plString(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); }
+    plString(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz - 1); }
 
     /** Copy constructor. */
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
@@ -304,7 +304,7 @@ public:
 
     /** Assignment operator.  Same as plString(const char (&)[_Sz]). */
     template <size_t _Sz>
-    plString &operator=(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz); return *this; }
+    plString &operator=(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz - 1); return *this; }
 
     /** Assignment operator.  Same as plString(const plString &). */
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
