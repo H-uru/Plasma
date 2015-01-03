@@ -629,18 +629,18 @@ typedef void (*FNetCliAuthScoreUpdateCallback)(
 
 //============================================================================
 typedef void (*FNetCliAuthCreateScoreCallback)(
-    ENetError   result,
-    void *      param,
-    unsigned    scoreId,
-    uint32_t      createdTime,
-    unsigned    ownerId,
-    const char* gameName,
-    unsigned    gameType,
-    int         value
+    ENetError       result,
+    void *          param,
+    unsigned        scoreId,
+    uint32_t        createdTime,
+    unsigned        ownerId,
+    const plString& gameName,
+    unsigned        gameType,
+    int             value
 );
 void NetCliAuthScoreCreate(
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     unsigned                        gameType,
     int                             value,
     FNetCliAuthCreateScoreCallback  callback,
@@ -664,7 +664,7 @@ typedef void (*FNetCliAuthGetScoresCallback)(
 
 void NetCliAuthScoreGetScores(
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 );
@@ -707,7 +707,7 @@ void NetCliAuthScoreGetRankList(
     unsigned                    ownerId,
     unsigned                    scoreGroup,
     unsigned                    parentFolderId,
-    const char *                gameName,
+    const plString&             gameName,
     unsigned                    timePeriod,
     unsigned                    numResults,
     unsigned                    pageNumber,

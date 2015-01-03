@@ -119,8 +119,8 @@ struct NetAgeInfo {
 struct NetGameScore {
     unsigned    scoreId;
     unsigned    ownerId;
-    uint32_t      createdTime;
-    wchar_t       gameName[kMaxGameScoreNameLength];
+    uint32_t    createdTime;
+    plString    gameName;
     unsigned    gameType;
     int         value;
 

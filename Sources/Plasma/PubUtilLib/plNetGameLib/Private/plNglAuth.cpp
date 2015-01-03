@@ -982,17 +982,17 @@ struct ScoreCreateTrans : NetAuthTrans {
 
     // send    
     unsigned                        m_ownerId;
-    char                            m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
     unsigned                        m_gameType;
     int                             m_value;
 
     // recv
     unsigned                        m_scoreId;
-    uint32_t                          m_createdTime;
+    uint32_t                        m_createdTime;
 
     ScoreCreateTrans (
         unsigned                        ownerId,
-        const char*                     gameName,
+        const plString&                 gameName,
         unsigned                        gameType,
         int                             value,
         FNetCliAuthCreateScoreCallback  callback,
@@ -1038,9 +1038,9 @@ struct ScoreGetScoresTrans : NetAuthTrans {
     FNetCliAuthGetScoresCallback    m_callback;
     void *                          m_param;
 
-    // send    
+    // send
     unsigned                        m_ownerId;
-    char                            m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
 
     // recv
     NetGameScore *                  m_scores;
@@ -1048,7 +1048,7 @@ struct ScoreGetScoresTrans : NetAuthTrans {
 
     ScoreGetScoresTrans (
         unsigned                        ownerId,
-        const char*                     gameName,
+        const plString&                 gameName,
         FNetCliAuthGetScoresCallback    callback,
         void *                          param
     );
@@ -1150,11 +1150,11 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     FNetCliAuthGetRanksCallback     m_callback;
     void *                          m_param;
 
-    // send    
+    // send
     unsigned                        m_ownerId;
     unsigned                        m_scoreGroup;
     unsigned                        m_parentFolderId;
-    wchar_t                           m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
     unsigned                        m_timePeriod;
     unsigned                        m_numResults;
     unsigned                        m_pageNumber;
@@ -1168,7 +1168,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
         unsigned                    ownerId,
         unsigned                    scoreGroup,
         unsigned                    parentFolderId,
-        const char *                cGameName,
+        const plString&             gameName,
         unsigned                    timePeriod,
         unsigned                    numResults,
         unsigned                    pageNumber,
@@ -4494,7 +4494,7 @@ void AuthConnectedNotifyTrans::Post() {
 //============================================================================
 ScoreCreateTrans::ScoreCreateTrans (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     unsigned                        gameType,
     int                             value,
     FNetCliAuthCreateScoreCallback  callback,
@@ -4503,12 +4503,12 @@ ScoreCreateTrans::ScoreCreateTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_ownerId(ownerId)
+,   m_gameName(gameName)
 ,   m_gameType(gameType)
 ,   m_value(value)
 ,   m_scoreId(0)
 ,   m_createdTime(0)
 {
-    StrCopy(m_gameName, gameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4516,16 +4516,15 @@ bool ScoreCreateTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar_t wgameName[kMaxGameScoreNameLength];
-    StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
 
     const uintptr_t msg[] = {
-            kCli2Auth_ScoreCreate,
+                        kCli2Auth_ScoreCreate,
                         m_transId,
                         m_ownerId,
-        (uintptr_t)  wgameName,
+           (uintptr_t)  gameName.GetData(),
                         m_gameType,
-                        (uintptr_t)m_value
+           (uintptr_t)  m_value
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4629,17 +4628,17 @@ bool ScoreDeleteTrans::Recv (
 //============================================================================
 ScoreGetScoresTrans::ScoreGetScoresTrans (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) : NetAuthTrans(kScoreGetScoresTrans)
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_ownerId(ownerId)
-,   m_scores(nil)
+,   m_gameName(gameName)
+,   m_scores(nullptr)
 ,   m_scoreCount(0)
 {
-    StrCopy(m_gameName, gameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4652,14 +4651,13 @@ bool ScoreGetScoresTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar_t wgameName[kMaxGameScoreNameLength];
-    StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
 
     const uintptr_t msg[] = {
-        kCli2Auth_ScoreGetScores,
-                        m_transId,
-                        m_ownerId,
-        (uintptr_t)  wgameName
+                    kCli2Auth_ScoreGetScores,
+                    m_transId,
+                    m_ownerId,
+        (uintptr_t) gameName.GetData()
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4899,7 +4897,7 @@ ScoreGetRanksTrans::ScoreGetRanksTrans (
     unsigned                    ownerId,
     unsigned                    scoreGroup,
     unsigned                    parentFolderId,
-    const char *                cGameName,
+    const plString&             gameName,
     unsigned                    timePeriod,
     unsigned                    numResults,
     unsigned                    pageNumber,
@@ -4912,12 +4910,12 @@ ScoreGetRanksTrans::ScoreGetRanksTrans (
 ,   m_ownerId(ownerId)
 ,   m_scoreGroup(scoreGroup)
 ,   m_parentFolderId(parentFolderId)
+,   m_gameName(gameName)
 ,   m_timePeriod(timePeriod)
 ,   m_numResults(numResults)
 ,   m_pageNumber(pageNumber)
 ,   m_sortDesc(sortDesc)
 {
-    StrToUnicode(m_gameName, cGameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4925,13 +4923,15 @@ bool ScoreGetRanksTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_ScoreGetRanks,
                         m_transId,
                         m_ownerId,
                         m_scoreGroup,
                         m_parentFolderId,
-        (uintptr_t)  m_gameName,
+        (uintptr_t)     gameName.GetData(),
                         m_timePeriod,
                         m_numResults,
                         m_pageNumber,
@@ -5929,7 +5929,7 @@ void NetCliAuthSendFriendInvite (
 //============================================================================
 void NetCliAuthScoreCreate (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     unsigned                        gameType,
     int                             value,
     FNetCliAuthCreateScoreCallback  callback,
@@ -5963,7 +5963,7 @@ void NetCliAuthScoreDelete(
 //============================================================================
 void NetCliAuthScoreGetScores(
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) {
@@ -6031,7 +6031,7 @@ void NetCliAuthScoreGetRankList(
     unsigned                    ownerId,
     unsigned                    scoreGroup,
     unsigned                    parentFolderId,
-    const char *                gameName,
+    const plString&             gameName,
     unsigned                    timePeriod,
     unsigned                    numResults,
     unsigned                    pageNumber,
