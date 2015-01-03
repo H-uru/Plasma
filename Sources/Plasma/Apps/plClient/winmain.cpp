@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 #include "plResMgr/plLocalization.h"
 #include "plFile/plEncryptedStream.h"
-
+#include "pfPasswordStore/pfPasswordStore.h"
 #include "pnEncryption/plChallengeHash.h"
 #include "plStatusLog/plStatusLog.h"
 #include "plProduct.h"
@@ -155,7 +155,6 @@ struct LoginDialogParam {
 };
 
 static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd);
-static void GetCryptKey(uint32_t* cryptKey, unsigned size);
 static void SaveUserPass (LoginDialogParam *pLoginParam, char *password);
 static void LoadUserPass (LoginDialogParam *pLoginParam);
 static void AuthFailedStrings (ENetError authError,
@@ -766,114 +765,90 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     return FALSE;
 }
 
-static void SaveUserPass (LoginDialogParam *pLoginParam, char *password)
+static void StoreHash(const plString& username, const plString& password, LoginDialogParam *pLoginParam)
 {
-    uint32_t cryptKey[4];
-    memset(cryptKey, 0, sizeof(cryptKey));
-    GetCryptKey(cryptKey, arrsize(cryptKey));
+    //  Hash username and password before sending over the 'net.
+    //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
+    //     to be hashed differently.
+    std::vector<plString> match = username.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    if (match.empty() || match[2].CompareI("gametap") == 0) {
+        //  Plain Usernames...
+        plSHA1Checksum shasum(password.GetSize(), reinterpret_cast<const uint8_t*>(password.c_str()));
+        uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
+        const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
 
+        dest[0] = hsToBE32(from[0]);
+        dest[1] = hsToBE32(from[1]);
+        dest[2] = hsToBE32(from[2]);
+        dest[3] = hsToBE32(from[3]);
+        dest[4] = hsToBE32(from[4]);
+    }
+    else {
+        //  Domain-based Usernames...
+        CryptHashPassword(username, password, pLoginParam->namePassHash);
+    }
+}
+
+static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
+{
     plString theUser = pLoginParam->username;
-    plString thePass = plString(password).Left(kMaxPasswordLength);
+    plString thePass = password;
 
-    // if the password field is the fake string then we've already
-    // loaded the namePassHash from the file
+    HKEY hKey;
+    RegCreateKeyEx(HKEY_CURRENT_USER, plFormat("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
+    RegSetValueEx(hKey, "LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, kMaxAccountNameLength);
+    RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
+    RegCloseKey(hKey);
+
+    // If the password field is the fake string
+    // then we've already loaded the hash.
     if (thePass.Compare(FAKE_PASS_STRING) != 0)
     {
-        // Regex search for primary email domain
-        std::vector<plString> match = theUser.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+        StoreHash(theUser, thePass, pLoginParam);
 
-        if (match.empty() || match[2].CompareI("gametap") == 0) {
-            plSHA1Checksum shasum(StrLen(password) * sizeof(password[0]), (uint8_t*)password);
-            uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
-            const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
-
-            // I blame eap for this ass shit
-            dest[0] = hsToBE32(from[0]);
-            dest[1] = hsToBE32(from[1]);
-            dest[2] = hsToBE32(from[2]);
-            dest[3] = hsToBE32(from[3]);
-            dest[4] = hsToBE32(from[4]);
-        }
+        pfPasswordStore* store = pfPasswordStore::Instance();
+        if (pLoginParam->remember)
+            store->SetPassword(pLoginParam->username, thePass);
         else
-        {
-            CryptHashPassword(theUser, thePass, pLoginParam->namePassHash);
-        }
+            store->SetPassword(pLoginParam->username, plString::Null);
     }
 
     NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
     NetCommSetAuthTokenAndOS(nil, L"win");
-
-    plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
-#ifndef PLASMA_EXTERNAL_RELEASE
-    // internal builds can use the local init directory
-    plFileName local("init\\login.dat");
-    if (plFileInfo(local).Exists())
-        loginDat = local;
-#endif
-    hsStream* stream = plEncryptedStream::OpenEncryptedFileWrite(loginDat, cryptKey);
-    if (stream)
-    {
-        stream->Write(sizeof(cryptKey), cryptKey);
-        stream->WriteSafeString(pLoginParam->username);
-        stream->WriteBool(pLoginParam->remember);
-        if (pLoginParam->remember)
-            stream->Write(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
-        stream->Close();
-        delete stream;
-    }
 }
 
-
-static void LoadUserPass (LoginDialogParam *pLoginParam)
+static void LoadUserPass(LoginDialogParam *pLoginParam)
 {
-    uint32_t cryptKey[4];
-    ZeroMemory(cryptKey, sizeof(cryptKey));
-    GetCryptKey(cryptKey, arrsize(cryptKey));
+    HKEY hKey;
+    char accountName[kMaxAccountNameLength];
+    memset(accountName, 0, kMaxAccountNameLength);
+    uint32_t rememberAccount = 0;
+    DWORD acctLen = kMaxAccountNameLength, remLen = sizeof(rememberAccount);
+    RegOpenKeyEx(HKEY_CURRENT_USER, plFormat("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
+    RegQueryValueEx(hKey, "LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
+    RegQueryValueEx(hKey, "RememberPassword", 0, NULL, (LPBYTE) &rememberAccount, &remLen);
+    RegCloseKey(hKey);
 
-    plString temp;
     pLoginParam->remember = false;
     pLoginParam->username[0] = '\0';
 
-    plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
-#ifndef PLASMA_EXTERNAL_RELEASE
-    // internal builds can use the local init directory
-    plFileName local("init\\login.dat");
-    if (plFileInfo(local).Exists())
-        loginDat = local;
-#endif
-    hsStream* stream = plEncryptedStream::OpenEncryptedFile(loginDat, cryptKey);
-    if (stream && !stream->AtEnd())
+    if (acctLen > 0)
+        strncpy(pLoginParam->username, accountName, kMaxAccountNameLength);
+    pLoginParam->remember = (rememberAccount != 0);
+    if (pLoginParam->remember && pLoginParam->username[0] != '\0')
     {
-        uint32_t savedKey[4];
-        stream->Read(sizeof(savedKey), savedKey);
-
-        if (memcmp(cryptKey, savedKey, sizeof(savedKey)) == 0)
-        {
-            temp = stream->ReadSafeString();
-
-            if (!temp.IsEmpty())
-            {
-                StrCopy(pLoginParam->username, temp.c_str(), kMaxAccountNameLength);
-            }
-
-            pLoginParam->remember = stream->ReadBool();
-
-            if (pLoginParam->remember)
-            {
-                stream->Read(sizeof(pLoginParam->namePassHash), pLoginParam->namePassHash);
-                pLoginParam->focus = IDOK;
-            }
-            else
-            {
-                pLoginParam->focus = IDC_URULOGIN_PASSWORD;
-            }
-        }
-
-        stream->Close();
-        delete stream;
+        pfPasswordStore* store = pfPasswordStore::Instance();
+        plString password = store->GetPassword(pLoginParam->username);
+        if (!password.IsNull())
+            StoreHash(pLoginParam->username, password, pLoginParam);
+        pLoginParam->focus = IDOK;
     }
+    else if (pLoginParam->username[0] == '\0')
+        pLoginParam->focus = IDC_URULOGIN_USERNAME;
+    else
+        pLoginParam->focus = IDC_URULOGIN_PASSWORD;
 }
 
 static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
@@ -1428,37 +1403,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     // Exit WinMain and terminate the app....
     return PARABLE_NORMAL_EXIT;
-}
-
-static void GetCryptKey(uint32_t* cryptKey, unsigned numElements)
-{
-    char volName[] = "C:\\";
-    int index = 0;
-    DWORD logicalDrives = GetLogicalDrives();
-
-    for (int i = 0; i < 32; ++i)
-    {
-        if (logicalDrives & (1 << i))
-        {
-            volName[0] = ('C' + i);
-
-            DWORD volSerialNum = 0;
-            BOOL result = GetVolumeInformation(
-                volName,        //LPCTSTR lpRootPathName,
-                NULL,           //LPTSTR lpVolumeNameBuffer,
-                0,              //DWORD nVolumeNameSize,
-                &volSerialNum,  //LPDWORD lpVolumeSerialNumber,
-                NULL,           //LPDWORD lpMaximumComponentLength,
-                NULL,           //LPDWORD lpFileSystemFlags,
-                NULL,           //LPTSTR lpFileSystemNameBuffer,
-                0               //DWORD nFileSystemNameSize
-            );
-
-            cryptKey[index] = (cryptKey[index] ^ volSerialNum);
-
-            index = (++index) % numElements;
-        }
-    }
 }
 
 /* Enable themes in Windows XP and later */

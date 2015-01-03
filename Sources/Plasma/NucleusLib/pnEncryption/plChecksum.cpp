@@ -362,7 +362,7 @@ bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
 
 //============================================================================
 
-plSHA1Checksum::plSHA1Checksum(size_t size, uint8_t* buffer)
+plSHA1Checksum::plSHA1Checksum(size_t size, const uint8_t* buffer)
 {
     fValid = false;
     Start();
