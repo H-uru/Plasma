@@ -285,10 +285,10 @@ uint32_t pyVaultNode::GetCreateAgeTime( void )
     return GetCreateTime();
 }
 
-const char * pyVaultNode::GetCreateAgeName()
+plString pyVaultNode::GetCreateAgeName() const
 {
     if (fNode)
-        return fNode->GetCreateAgeName().c_str();
+        return fNode->GetCreateAgeName();
     return "";
 }
 
