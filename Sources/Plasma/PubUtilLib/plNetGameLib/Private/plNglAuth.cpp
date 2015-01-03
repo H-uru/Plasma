@@ -91,7 +91,7 @@ struct CliAuConn : hsRefCnt {
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    char            name[MAX_PATH];
+    plString        name;
     plNetAddress    addr;
     plUUID          token;
     unsigned        seq;
@@ -1529,7 +1529,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const char          name[],
+    const plString&     name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -1538,7 +1538,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    strncpy(conn->name, name, arrsize(conn->name));
+    conn->name              = name;
 
     conn->Ref("Lifetime");
     conn->AutoReconnect();
@@ -1594,8 +1594,6 @@ CliAuConn::CliAuConn ()
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
-    memset(name, 0, sizeof(name));
-
     ++s_perf[kPerfConnCount];
 }
 
@@ -5124,7 +5122,7 @@ void AuthPingEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthStartConnect (
-    const char*     authAddrList[],
+    const plString  authAddrList[],
     uint32_t        authAddrCount
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
@@ -5133,7 +5131,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = authAddrList[i];
+        const char* name = authAddrList[i].c_str();
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -5141,7 +5139,7 @@ void NetCliAuthStartConnect (
                 AsyncAddressLookupName(
                     &cancelId,
                     AsyncLookupCallback,
-                    authAddrList[i],
+                    authAddrList[i].c_str(),
                     GetClientPort(),
                     nil
                 );

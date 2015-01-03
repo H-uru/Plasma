@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliAuthStartConnect (
-    const char*     authAddrList[],
+    const plString  authAddrList[],
     uint32_t        authAddrCount
 );
 bool NetCliAuthQueryConnected ();

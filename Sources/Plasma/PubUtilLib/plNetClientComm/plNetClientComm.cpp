@@ -111,8 +111,8 @@ static bool                 s_loginComplete = false;
 static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
-static char                s_authSrvAddr[256];
-static char                s_fileSrvAddr[256];
+static plString             s_authSrvAddr;
+static plString             s_fileSrvAddr;
 
 static char                s_iniServerAddr[256];
 static char                s_iniFileServerAddr[256];
@@ -667,9 +667,9 @@ static void INetCliAuthSendFriendInviteCallback (
 static void AuthSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar_t     addr[]
+    const plString& addr
 ) {
-    StrToAnsi(s_authSrvAddr, addr, arrsize(s_authSrvAddr)); 
+    s_authSrvAddr = addr;
     s_hasAuthSrvIpAddress = true;
 }
 
@@ -677,9 +677,9 @@ static void AuthSrvIpAddressCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const wchar_t     addr[]
+    const plString& addr
 ) {
-    StrToAnsi(s_fileSrvAddr, addr, arrsize(s_fileSrvAddr)); 
+    s_fileSrvAddr = addr;
     s_hasFileSrvIpAddress = true;
 }
 
@@ -822,18 +822,18 @@ void NetCommUpdate () {
 //============================================================================
 void NetCommConnect () {
 
-    const char** addrs;
+    const plString* addrs;
     unsigned count;
     bool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
-    if((count = GetAuthSrvHostnames(&addrs)) && strlen(addrs[0]))
+    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].IsEmpty())
     {
         NetCliAuthStartConnect(addrs, count);
     }
     else
     {
-        count = GetGateKeeperSrvHostnames(&addrs);
+        count = GetGateKeeperSrvHostnames(addrs);
         NetCliGateKeeperStartConnect(addrs, count);
         connectedToKeeper = true;
 
@@ -845,7 +845,7 @@ void NetCommConnect () {
             AsyncSleep(10);
         }
             
-        const char* authSrv[] = {
+        const plString authSrv[] = {
             s_authSrvAddr
         };
         NetCliAuthStartConnect(authSrv, 1);
@@ -854,14 +854,14 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if((count = GetFileSrvHostnames(&addrs)) && strlen(addrs[0]))
+        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].IsEmpty())
         {
             NetCliFileStartConnect(addrs, count);
         }
         else
         {
             if (!connectedToKeeper) {
-                count = GetGateKeeperSrvHostnames(&addrs);
+                count = GetGateKeeperSrvHostnames(addrs);
                 NetCliGateKeeperStartConnect(addrs, count);
                 connectedToKeeper = true;
             }
@@ -874,7 +874,7 @@ void NetCommConnect () {
                 AsyncSleep(10);
             }
             
-            const char* fileSrv[] = {
+            const plString fileSrv[] = {
                 s_fileSrvAddr
             };
             NetCliFileStartConnect(fileSrv, 1);

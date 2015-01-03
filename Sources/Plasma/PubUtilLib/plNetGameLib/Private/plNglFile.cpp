@@ -64,7 +64,7 @@ struct CliFileConn : hsRefCnt {
     LINK(CliFileConn)   link;
     hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
-    char                name[MAX_PATH];
+    plString            name;
     plNetAddress        addr;
     unsigned            seq;
     ARRAY(uint8_t)      recvBuffer;
@@ -536,18 +536,18 @@ static void Connect (CliFileConn * conn) {
 
 //============================================================================
 static void Connect (
-    const char          name[],
+    const plString&     name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
     
     CliFileConn * conn = new CliFileConn;
-    strncpy(conn->name, name, arrsize(conn->name));
-    conn->addr          = addr;
-    conn->buildId       = s_connectBuildId;
-    conn->serverType    = s_serverType;
-    conn->seq           = ConnNextSequence();
-    conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
+    conn->name            = name;
+    conn->addr            = addr;
+    conn->buildId         = s_connectBuildId;
+    conn->serverType      = s_serverType;
+    conn->seq             = ConnNextSequence();
+    conn->lastHeardTimeMs = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
 
     conn->Ref("Lifetime");
     conn->AutoReconnect();
@@ -584,7 +584,6 @@ CliFileConn::CliFileConn ()
     , numImmediateDisconnects(0), numFailedConnects(0)
     , pingTimer(nil), pingSendTimeMs(0), lastHeardTimeMs(0)
 {
-    memset(name, 0, sizeof(name));
     ++s_perf[kPerfConnCount];
 }
 
@@ -1344,7 +1343,7 @@ unsigned FileGetConnId () {
 
 //============================================================================
 void NetCliFileStartConnect (
-    const char*     fileAddrList[],
+    const plString  fileAddrList[],
     uint32_t        fileAddrCount,
     bool            isPatcher /* = false */
 ) {
@@ -1356,7 +1355,7 @@ void NetCliFileStartConnect (
 
     for (unsigned i = 0; i < fileAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = fileAddrList[i];
+        const char* name = fileAddrList[i].c_str();
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1364,7 +1363,7 @@ void NetCliFileStartConnect (
                 AsyncAddressLookupName(
                     &cancelId,
                     AsyncLookupCallback,
-                    fileAddrList[i],
+                    fileAddrList[i].c_str(),
                     GetClientPort(),
                     nil
                 );

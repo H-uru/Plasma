@@ -57,7 +57,7 @@ plNetAddress::plNetAddress(uint32_t addr, uint16_t port)
     SetPort(port);
 }
 
-plNetAddress::plNetAddress(const char* addr, uint16_t port)
+plNetAddress::plNetAddress(const plString& addr, uint16_t port)
 {
     Clear();
     SetHost(addr);
@@ -114,7 +114,7 @@ plString plNetAddress::GetHostWithPort() const
     return ss.GetString();
 }
 
-bool plNetAddress::SetHost(const char* hostname)
+bool plNetAddress::SetHost(const plString& hostname)
 {
     fAddr.sin_addr.s_addr = pnNetCommon::GetBinAddr(hostname);
     fAddr.sin_family = AF_INET;
