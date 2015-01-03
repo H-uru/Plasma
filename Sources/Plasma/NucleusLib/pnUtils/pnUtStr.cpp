@@ -384,22 +384,6 @@ wchar_t * StrDupLen (const wchar_t str[], unsigned chars) {
     return IStrDupLen(str, chars);
 }
 
-//============================================================================
-wchar_t * StrDupToUnicode (const char str[]) {
-    unsigned bytes = StrBytes(str) * sizeof(wchar_t);
-    wchar_t * dst = (wchar_t*)malloc(bytes);
-    StrToUnicode(dst, str, bytes / sizeof(wchar_t));
-    return dst;
-}
-
-//============================================================================
-char * StrDupToAnsi (const wchar_t str[]) {
-    unsigned bytes = StrBytes(str) / sizeof(wchar_t);
-    char * dst = (char*)malloc(bytes);
-    StrToAnsi(dst, str, bytes);
-    return dst;
-}
-
 //===========================================================================
 unsigned StrBytes (const char str[]) {  // includes space for terminator
     return (IStrLen(str) + 1) * sizeof(str[0]);

@@ -92,9 +92,6 @@ wchar_t * StrDup (const wchar_t str[]);
 char * StrDupLen (const char str[], unsigned chars);
 wchar_t * StrDupLen (const wchar_t str[], unsigned chars);
 
-wchar_t * StrDupToUnicode (const char str[]);
-char * StrDupToAnsi (const wchar_t str[]);
-
 int StrCmp (const char str1[], const char str2[], unsigned chars = (unsigned)-1);
 int StrCmp (const wchar_t str1[], const wchar_t str2[], unsigned chars = (unsigned)-1);
 
@@ -111,18 +108,6 @@ void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars);
 
 void StrPack (char * dest, const char source[], unsigned chars);
 void StrPack (wchar_t * dest, const wchar_t source[], unsigned chars);
-
-unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars);
-unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars, unsigned codePage);
-
-unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars);
-unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars, unsigned codePage);
-
-// FIXME: Get rid of these
-inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars)
-    { return StrToUnicode(dest, source.c_str(), destChars); }
-inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars, unsigned codePage)
-    { return StrToUnicode(dest, source.c_str(), destChars, codePage); }
 
 float StrToFloat (const char source[], const char ** endptr);
 float StrToFloat (const wchar_t source[], const wchar_t ** endptr);

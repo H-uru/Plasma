@@ -33,7 +33,6 @@ set(pnUtils_SOURCES
 if(WIN32)
     set(pnUtils_WIN32
         Win32/pnUtW32Misc.cpp
-        Win32/pnUtW32Str.cpp
     )
 else()
     set(pnUtils_UNIX
