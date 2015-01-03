@@ -1369,7 +1369,7 @@ void RelVaultNode::SetSeen (unsigned parentId, bool seen) {
 void RelVaultNode::Print (const plString& tag, unsigned level) {
     plStringStream ss;
     ss << tag;
-    ss << plFormat(plFormat("{{{}}", level * 2).c_str(), " "); // creates the indentation
+    ss << plString::Fill(level * 2, ' ');
     ss << " " << GetNodeId();
     ss << " " << plVault::NodeTypeStr(GetNodeType());
 
