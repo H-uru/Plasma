@@ -210,6 +210,8 @@ public:
         uint8_t* buffer;
 
         Blob() : size(0), buffer(nullptr) { }
+        Blob(const Blob &rhs);
+        Blob(Blob &&rhs);
         ~Blob() { delete[] buffer; }
 
         void operator =(const Blob& rhs);

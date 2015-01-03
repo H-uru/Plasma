@@ -294,6 +294,23 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 ***/
 
 //============================================================================
+NetVaultNode::Blob::Blob(const Blob& rhs)
+{
+    buffer = new uint8_t[rhs.size];
+    size = rhs.size;
+    memcpy(buffer, rhs.buffer, rhs.size);
+}
+
+//============================================================================
+NetVaultNode::Blob::Blob(Blob&& rhs)
+{
+    size = rhs.size;
+    buffer = rhs.buffer;
+    rhs.size = 0;
+    rhs.buffer = nullptr;
+}
+
+//============================================================================
 void NetVaultNode::Blob::operator=(const Blob& rhs)
 {
     if (size != rhs.size) {
@@ -478,13 +495,13 @@ template<>
 static void IRead<plString>(const uint8_t*& buf, plString& dest)
 {
     uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
-    uint32_t arraySize = size / 2;
+    uint32_t nChars = (size / sizeof(uint16_t)) - 1;
     buf += sizeof(uint32_t);
 
     plStringBuffer<uint16_t> str;
-    uint16_t* theStrBuffer = str.CreateWritableBuffer(arraySize - 1);
+    uint16_t* theStrBuffer = str.CreateWritableBuffer(nChars);
     memcpy(theStrBuffer, buf, size);
-    theStrBuffer[arraySize - 1] = 0;
+    theStrBuffer[nChars] = 0;
     dest = plString::FromUtf16(str);
     buf += size;
 }
@@ -546,14 +563,14 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 
 //============================================================================
 template<typename T>
-static void IWrite(ARRAY(uint8_t)* buffer, T value)
+static void IWrite(ARRAY(uint8_t)* buffer, const T& value)
 {
     uint8_t* ptr = buffer->New(sizeof(T));
     memcpy(ptr, &value, sizeof(T));
 }
 
 template<>
-static void IWrite<plString>(ARRAY(uint8_t)* buffer, plString value)
+static void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
 {
     plStringBuffer<uint16_t> utf16 = value.ToUtf16();
     uint32_t strsz = (utf16.GetSize() + 1) * 2;
@@ -564,7 +581,7 @@ static void IWrite<plString>(ARRAY(uint8_t)* buffer, plString value)
 }
 
 template<>
-static void IWrite<const NetVaultNode::Blob&>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
+static void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
 {
     IWrite(buffer, static_cast<uint32_t>(blob.size));
 
