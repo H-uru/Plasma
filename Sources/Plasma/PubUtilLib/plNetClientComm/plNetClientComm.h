@@ -284,8 +284,8 @@ void NetCommSetCCRLevel (
     unsigned                ccrLevel
 );
 void NetCommSendFriendInvite (
-    const wchar_t     emailAddress[],
-    const wchar_t     toName[],
+    const plString& emailAddress,
+    const plString& toName,
     const plUUID&   inviteUuid
 );
 

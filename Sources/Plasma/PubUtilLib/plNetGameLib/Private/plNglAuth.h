@@ -587,9 +587,9 @@ typedef void (*FNetCliAuthSendFriendInviteCallback)(
 );
 
 void NetCliAuthSendFriendInvite (
-    const wchar_t                         emailAddress[],
-    const wchar_t                         toName[],
-    const plUUID&                         inviteUuid,
+    const plString&                     emailAddress,
+    const plString&                     toName,
+    const plUUID&                       inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 );

@@ -942,14 +942,14 @@ struct SendFriendInviteTrans : NetAuthTrans {
     FNetCliAuthSendFriendInviteCallback m_callback;
     void *                              m_param;
 
-    // send    
-    wchar_t                               m_emailAddress[kMaxEmailAddressLength];
-    wchar_t                               m_toName[kMaxPlayerNameLength];
+    // send
+    plString                              m_emailAddress;
+    plString                              m_toName;
     plUUID                                m_inviteUuid;
 
     SendFriendInviteTrans(
-        const wchar_t                           emailAddr[],
-        const wchar_t                           toName[],
+        const plString&                         emailAddr,
+        const plString&                         toName,
         const plUUID&                           inviteUuid,
         FNetCliAuthSendFriendInviteCallback     callback,
         void *                                  param
@@ -4411,8 +4411,8 @@ bool ChangePlayerNameRequestTrans::Recv (
 
 //============================================================================
 SendFriendInviteTrans::SendFriendInviteTrans (
-    const wchar_t                           emailAddr[],
-    const wchar_t                           toName[],
+    const plString&                         emailAddr,
+    const plString&                         toName,
     const plUUID&                           inviteUuid,
     FNetCliAuthSendFriendInviteCallback     callback,
     void *                                  param
@@ -4420,9 +4420,9 @@ SendFriendInviteTrans::SendFriendInviteTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_inviteUuid(inviteUuid)
+,   m_toName(toName)
+,   m_emailAddress(emailAddr)
 {
-    StrCopy(m_emailAddress, emailAddr, arrsize(m_emailAddress));
-    StrCopy(m_toName, toName, arrsize(m_toName));
 }
 
 //============================================================================
@@ -4430,12 +4430,15 @@ bool SendFriendInviteTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> emailAddress = m_emailAddress.ToUtf16();
+    plStringBuffer<uint16_t> toName = m_toName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_SendFriendInviteRequest,
                         m_transId,
         (uintptr_t) &m_inviteUuid,
-        (uintptr_t)  m_emailAddress,
-        (uintptr_t)  m_toName,
+        (uintptr_t)  emailAddress.GetData(),
+        (uintptr_t)  toName.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -5902,9 +5905,9 @@ void NetCliAuthChangePlayerNameRequest (
 
 //============================================================================
 void NetCliAuthSendFriendInvite (
-    const wchar_t                         emailAddress[],
-    const wchar_t                         toName[],
-    const plUUID&                         inviteUuid,
+    const plString&                     emailAddress,
+    const plString&                     toName,
+    const plUUID&                       inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 ) {

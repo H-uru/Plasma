@@ -2875,7 +2875,7 @@ void cyMisc::SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp)
     }
 }
 
-void cyMisc::SendFriendInvite(const wchar_t email[], const wchar_t toName[])
+void cyMisc::SendFriendInvite(const plString& email, const plString& toName)
 {
     if (hsRef<RelVaultNode> pNode = VaultGetPlayerNode())
     {
