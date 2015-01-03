@@ -294,6 +294,27 @@ void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
 ***/
 
 //============================================================================
+void NetVaultNode::Blob::operator=(const Blob& rhs)
+{
+    if (size != rhs.size) {
+        delete[] buffer;
+        buffer = new uint8_t[rhs.size];
+        size = rhs.size;
+    }
+    memcpy(buffer, rhs.buffer, rhs.size);
+}
+
+//============================================================================
+void NetVaultNode::Blob::operator=(Blob&& rhs)
+{
+    delete[] buffer;
+    size = rhs.size;
+    buffer = rhs.buffer;
+    rhs.size = 0;
+    rhs.buffer = nullptr;
+}
+
+//============================================================================
 bool NetVaultNode::Blob::operator==(const Blob& rhs) const
 {
     if (size == rhs.size)
@@ -312,46 +333,78 @@ void NetVaultNode::Clear()
 }
 
 //============================================================================
+template<typename T>
+static void IZero(T& dest)
+{
+    dest = 0;
+}
+
+template<>
+static void IZero<plString>(plString& dest)
+{
+    dest = "";
+}
+
+template<>
+static void IZero<plUUID>(plUUID& dest)
+{
+    dest = kNilUuid;
+}
+
+template<>
+static void IZero<NetVaultNode::Blob>(NetVaultNode::Blob& blob)
+{
+    delete[] blob.buffer;
+    blob.buffer = nullptr;
+    blob.size = 0;
+}
+
 void NetVaultNode::CopyFrom(const NetVaultNode* node)
 {
     fUsedFields = node->fUsedFields;
     fDirtyFields = node->fDirtyFields;
     fRevision = node->fRevision;
 
-#define COPY(field) f##field = node->f##field
-    COPY(NodeId);
-    COPY(CreateTime);
-    COPY(ModifyTime);
-    COPY(CreateAgeName);
-    COPY(CreateAgeUuid);
-    COPY(CreatorAcct);
-    COPY(CreatorId);
-    COPY(NodeType);
-    COPY(Int32_1);
-    COPY(Int32_2);
-    COPY(Int32_3);
-    COPY(Int32_4);
-    COPY(UInt32_1);
-    COPY(UInt32_2);
-    COPY(UInt32_3);
-    COPY(UInt32_4);
-    COPY(Uuid_1);
-    COPY(Uuid_2);
-    COPY(Uuid_3);
-    COPY(Uuid_4);
-    COPY(String64_1);
-    COPY(String64_2);
-    COPY(String64_3);
-    COPY(String64_4);
-    COPY(String64_5);
-    COPY(String64_6);
-    COPY(IString64_1);
-    COPY(IString64_2);
-    COPY(Text_1);
-    COPY(Text_2);
-    COPY(Blob_1);
-    COPY(Blob_2);
-#undef COPY
+#define COPYORZERO(field) \
+    if (fUsedFields & k##field) \
+        f##field = node->f##field; \
+    else \
+        IZero(f##field);
+
+    COPYORZERO(NodeId);
+    COPYORZERO(CreateTime);
+    COPYORZERO(ModifyTime);
+    COPYORZERO(CreateAgeName);
+    COPYORZERO(CreateAgeUuid);
+    COPYORZERO(CreatorAcct);
+    COPYORZERO(CreatorId);
+    COPYORZERO(NodeType);
+    COPYORZERO(Int32_1);
+    COPYORZERO(Int32_2);
+    COPYORZERO(Int32_3);
+    COPYORZERO(Int32_4);
+    COPYORZERO(UInt32_1);
+    COPYORZERO(UInt32_2);
+    COPYORZERO(UInt32_3);
+    COPYORZERO(UInt32_4);
+    COPYORZERO(Uuid_1);
+    COPYORZERO(Uuid_2);
+    COPYORZERO(Uuid_3);
+    COPYORZERO(Uuid_4);
+    COPYORZERO(String64_1);
+    COPYORZERO(String64_2);
+    COPYORZERO(String64_3);
+    COPYORZERO(String64_4);
+    COPYORZERO(String64_5);
+    COPYORZERO(String64_6);
+    COPYORZERO(IString64_1);
+    COPYORZERO(IString64_2);
+    COPYORZERO(Text_1);
+    COPYORZERO(Text_2);
+    COPYORZERO(Blob_1);
+    COPYORZERO(Blob_2);
+
+#undef COPYORZERO
 }
 
 //============================================================================

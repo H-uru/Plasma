@@ -212,6 +212,9 @@ public:
         Blob() : size(0), buffer(nullptr) { }
         ~Blob() { delete[] buffer; }
 
+        void operator =(const Blob& rhs);
+        void operator =(Blob&& rhs);
+
         bool operator ==(const Blob& rhs) const;
         bool operator !=(const Blob& rhs) const { return !operator==(rhs); }
     };
