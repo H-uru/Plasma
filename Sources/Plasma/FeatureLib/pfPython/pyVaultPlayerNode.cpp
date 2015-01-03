@@ -231,9 +231,7 @@ void pyVaultPlayerNode::RemoveVisitAgeLink(const char *guidstr)
 
 PyObject *pyVaultPlayerNode::FindChronicleEntry(const char *entryName)
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, entryName, arrsize(wStr));
-    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(wStr))
+    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
 
     PYTHON_RETURN_NONE;
@@ -244,15 +242,13 @@ void pyVaultPlayerNode::SetPlayerName(const char *value)
     hsAssert(false, "python may not change a player's name this way");
 }
 
-std::string pyVaultPlayerNode::GetPlayerName()
+plString pyVaultPlayerNode::GetPlayerName() const
 {
-    if (!fNode)
-        return "";
-
-    VaultPlayerNode player(fNode);
-    char ansiStr[MAX_PATH];
-    StrToAnsi(ansiStr, player.GetPlayerName(), arrsize(ansiStr));
-    return ansiStr;
+    if (fNode) {
+        VaultPlayerNode player(fNode);
+        return player.GetPlayerName();
+    }
+    return "";
 }
 
 void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
@@ -260,15 +256,13 @@ void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
     hsAssert(false, "python may not change a player's avatar this way");
 }
 
-std::string pyVaultPlayerNode::GetAvatarShapeName()
+plString pyVaultPlayerNode::GetAvatarShapeName() const
 {
-    if (!fNode)
-        return "";
-
-    VaultPlayerNode player(fNode);
-    char ansiStr[MAX_PATH];
-    StrToAnsi(ansiStr, player.GetAvatarShapeName(), arrsize(ansiStr));
-    return ansiStr;
+    if (fNode) {
+        VaultPlayerNode player(fNode);
+        return player.GetAvatarShapeName();
+    }
+    return "";
 }
 
 void pyVaultPlayerNode::SetDisabled(bool value)

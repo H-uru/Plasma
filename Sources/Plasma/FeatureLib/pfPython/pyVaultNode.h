@@ -99,7 +99,6 @@ public:
     };
 
     hsRef<RelVaultNode> fNode;
-    mutable char *      fCreateAgeName;
 
 protected:
     // only for python glue, do NOT call

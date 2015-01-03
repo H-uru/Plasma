@@ -62,7 +62,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // 'Old' system is full of compiler warnings at /W4, so just hide them
 #pragma warning(push, 0)
 #include <algorithm>
+#include <memory>
 #include <sstream>
+#include <unordered_map>
+
 #include "hsStringTokenizer.h"
 #include "hsGeometry3.h"
 #include "plSDL/plSDL.h"
@@ -77,6 +80,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plJPEG.h"
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plNetClientComm/plNetClientComm.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define KI_CONSTANTS_ONLY
 #include "pfMessage/pfKIMsg.h"  // for KI level constants =(

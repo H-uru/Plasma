@@ -382,7 +382,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
     if (ageBeginLoadingMsg)
     {
         plgDispatch::Dispatch()->UnRegisterForExactType(plAgeBeginLoadingMsg::Index(), GetKey());
-        VaultAddChronicleEntryAndWait(L"InitialAvCursomizationsDone", 0, L"1");
+        VaultAddChronicleEntryAndWait("InitialAvCursomizationsDone", 0, "1");
         return true;
     }
 

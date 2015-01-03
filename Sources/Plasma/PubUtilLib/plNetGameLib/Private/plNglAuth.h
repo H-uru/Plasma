@@ -383,7 +383,7 @@ void NetCliAuthFileRequest (
 //============================================================================
 // Vault Operations
 //============================================================================
-struct NetVaultNode;
+class NetVaultNode;
 struct NetVaultNodeRef;
 
 // VaultNodeChanged

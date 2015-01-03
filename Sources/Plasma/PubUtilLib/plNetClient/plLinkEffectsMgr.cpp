@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 
 // chronicle var
-#define kCleftSolved                    L"CleftSolved"
+#define kCleftSolved                    "CleftSolved"
 
 #include "plAvatar/plArmatureMod.h"
 #include "plAvatar/plAvatarTasks.h"

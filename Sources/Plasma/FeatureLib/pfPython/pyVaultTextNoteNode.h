@@ -50,12 +50,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
-#include <string>
 #include "pyVaultNode.h"
 
+class plString;
 struct RelVaultNode;
 class pyVaultAgeLinkNode;
-
 
 class pyVaultTextNoteNode : public pyVaultNode
 {
@@ -82,12 +81,10 @@ public:
 //
     void Note_SetTitle( const char * text );
     void Note_SetTitleW( const wchar_t * text );
-    std::string Note_GetTitle( void );
-    std::wstring Note_GetTitleW( void );
+    plString Note_GetTitle() const;
     void Note_SetText( const char * text );
     void Note_SetTextW( const wchar_t * text );
-    std::string Note_GetText( void );
-    std::wstring Note_GetTextW( void );
+    plString Note_GetText() const;
     void Note_SetType( int32_t type );
     int32_t Note_GetType( void );
 

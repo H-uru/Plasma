@@ -87,50 +87,27 @@ int pyVaultFolderNode::Folder_GetType( void )
     return folder.GetFolderType();
 }
 
-void pyVaultFolderNode::Folder_SetName( std::string name )
+void pyVaultFolderNode::Folder_SetName(const char* name)
 {
-    if (!fNode)
-        return;
-        
-    wchar_t* wName = hsStringToWString(name.c_str());
-    VaultFolderNode folder(fNode);
-    folder.SetFolderName(wName);
-    delete [] wName;
+    if (fNode) {
+        VaultFolderNode folder(fNode);
+        folder.SetFolderName(name);
+    }
 }
 
-void pyVaultFolderNode::Folder_SetNameW( std::wstring name )
+void pyVaultFolderNode::Folder_SetNameW(const wchar_t* name)
 {
-    if (!fNode)
-        return;
-
-    VaultFolderNode folder(fNode);
-    folder.SetFolderName(name.c_str());
+    if (fNode) {
+        VaultFolderNode folder(fNode);
+        folder.SetFolderName(plString::FromWchar(name));
+    }
 }
 
-std::string pyVaultFolderNode::Folder_GetName( void )
+plString pyVaultFolderNode::Folder_GetName() const
 {
-    if (!fNode)
-        return "";
-        
-    VaultFolderNode folder(fNode);
-    if (!folder.GetFolderName())
-        return "";
-
-    std::string retVal;
-    char* sName = hsWStringToString(folder.GetFolderName());
-    retVal = sName;
-    delete [] sName;
-    return retVal;
-}
-
-std::wstring pyVaultFolderNode::Folder_GetNameW( void )
-{
-    if (!fNode)
-        return L"";
-
-    VaultFolderNode folder(fNode);
-    if (!folder.GetFolderName())
-        return L"";
-
-    return folder.GetFolderName();
+    if (fNode) {
+        VaultFolderNode folder(fNode);
+        return folder.GetFolderName();
+    }
+    return "";
 }

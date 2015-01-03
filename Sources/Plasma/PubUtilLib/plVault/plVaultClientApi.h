@@ -181,8 +181,8 @@ struct RelVaultNode : NetVaultNode {
     void SetSeen (unsigned parentId, bool seen);
     
     // logging
-    void Print (const wchar_t tag[], FStateDump dumpProc, unsigned level);
-    void PrintTree (FStateDump dumpProc, unsigned level);
+    void Print (const plString& tag, unsigned level);
+    void PrintTree (unsigned level);
     
     // AgeInfoNode-specific (and it checks!)
     hsRef<RelVaultNode> GetParentAgeLink ();
@@ -246,7 +246,7 @@ void VaultDeleteNode (
 );
 void VaultPublishNode (
     unsigned        nodeId,
-    const wchar_t     deviceName[]
+    const plString& deviceName
 );
 void VaultSendNode (
     RelVaultNode*   srcNode,
@@ -354,20 +354,19 @@ bool                VaultRegisterVisitAgeAndWait(const plAgeLinkStruct * link);
 void                VaultRegisterVisitAge(const plAgeLinkStruct* link);
 bool                VaultUnregisterOwnedAgeAndWait(const plAgeInfoStruct * info);
 bool                VaultUnregisterVisitAgeAndWait(const plAgeInfoStruct * info);
-hsRef<RelVaultNode> VaultFindChronicleEntry(const wchar_t entryName[], int entryType = -1);
-bool                VaultHasChronicleEntry(const wchar_t entryName[], int entryType = -1);
+hsRef<RelVaultNode> VaultFindChronicleEntry(const plString& entryName, int entryType = -1);
+bool                VaultHasChronicleEntry(const plString& entryName, int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void            VaultAddChronicleEntryAndWait (
-    const wchar_t entryName[],
-    int         entryType,
-    const wchar_t entryValue[]
+    const plString& entryName,
+    int             entryType,
+    const plString& entryValue
 );
 bool        VaultAmIgnoringPlayer (unsigned playerId);
 unsigned    VaultGetKILevel ();
 bool        VaultGetCCRStatus ();               // true=online, false=away
 bool        VaultSetCCRStatus (bool online);    // true=online, false=away
-void        VaultDump (const wchar_t tag[], unsigned vaultId, FStateDump dumpProc);
-void        VaultDump (const wchar_t tag[], unsigned vaultId);
+void        VaultDump (const plString& tag, unsigned vaultId);
 
 bool VaultAmInMyPersonalAge ();
 bool VaultAmInMyNeighborhoodAge ();
@@ -388,7 +387,7 @@ void VaultProcessPlayerInbox ();
 *
 ***/
 
-#define DEFAULT_DEVICE_INBOX L"DevInbox"
+#define DEFAULT_DEVICE_INBOX "DevInbox"
 
 hsRef<RelVaultNode> VaultGetAgeNode();
 hsRef<RelVaultNode> VaultGetAgeInfoNode();
@@ -410,12 +409,12 @@ void           VaultAddAgeChronicleEntry (
     int         entryType,
     const wchar_t entryValue[]
 );
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const wchar_t deviceName[]);   // blocks until completion
-void VaultAgeRemoveDevice (const wchar_t deviceName[]);
-bool VaultAgeHasDevice (const wchar_t deviceName[]);
-hsRef<RelVaultNode> VaultAgeGetDevice(const wchar_t deviceName[]);
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const wchar_t deviceName[], const wchar_t inboxName[]); // blocks until completion
-hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const wchar_t deviceName[]);
+hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const plString& deviceName);   // blocks until completion
+void VaultAgeRemoveDevice (const plString& deviceName);
+bool VaultAgeHasDevice (const plString& deviceName);
+hsRef<RelVaultNode> VaultAgeGetDevice(const plString& deviceName);
+hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait(const plString& deviceName, const plString& inboxName); // blocks until completion
+hsRef<RelVaultNode> VaultAgeGetDeviceInbox(const plString& deviceName);
 void VaultClearDeviceInboxMap ();
 
 bool VaultAgeGetAgeSDL (class plStateDataRecord * out);
@@ -470,7 +469,7 @@ typedef void (*FVaultProgressCallback)(
 );
 
 void VaultDownload (
-    const wchar_t                 tag[],
+    const plString&             tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
     void *                      cbParam,
@@ -478,7 +477,7 @@ void VaultDownload (
     void *                      cbProgressParam
 );
 void VaultDownloadAndWait (
-    const wchar_t                 tag[],
+    const plString&             tag,
     unsigned                    vaultId,
     FVaultProgressCallback      progressCallback,
     void *                      cbProgressParam
