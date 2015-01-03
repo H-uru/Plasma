@@ -838,7 +838,7 @@ std::vector<plString> plString::Split(const char *split, size_t maxSplits) const
 plString plString::Fill(size_t count, char c)
 {
     plStringBuffer<char> buf;
-    char *data = buf.CreateWritableBuffer(count + 1);
+    char *data = buf.CreateWritableBuffer(count);
     memset(data, c, count);
     data[count] = 0;
     return buf;
