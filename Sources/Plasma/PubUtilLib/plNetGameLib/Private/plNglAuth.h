@@ -200,9 +200,9 @@ typedef void (*FNetCliAuthPlayerCreateRequestCallback)(
     const NetCliAuthPlayerInfo &    playerInfo
 );
 void NetCliAuthPlayerCreateRequest (
-    const wchar_t                             playerName[],
-    const wchar_t                             avatarShape[],
-    const wchar_t                             friendInvite[],
+    const plString&                         playerName,
+    const plString&                         avatarShape,
+    const plString&                         friendInvite,
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 );

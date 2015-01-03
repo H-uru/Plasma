@@ -290,19 +290,19 @@ struct PlayerCreateRequestTrans : NetAuthTrans {
     FNetCliAuthPlayerCreateRequestCallback  m_callback;
     void *                                  m_param;
 
-    // send    
-    wchar_t                                   m_playerName[kMaxPlayerNameLength];
-    wchar_t                                   m_avatarShape[MAX_PATH];
-    wchar_t                                   m_friendInvite[MAX_PATH];
+    // send
+    plString                                m_playerName;
+    plString                                m_avatarShape;
+    plString                                m_friendInvite;
 
     // recv
     NetCliAuthPlayerInfo                    m_playerInfo;
 
 
     PlayerCreateRequestTrans (
-        const wchar_t                             playerName[],
-        const wchar_t                             avatarShape[],
-        const wchar_t                             friendInvite[],
+        const plString&                         playerName,
+        const plString&                         avatarShape,
+        const plString&                         friendInvite,
         FNetCliAuthPlayerCreateRequestCallback  callback,
         void *                                  param
     );
@@ -1231,42 +1231,28 @@ static FNotifyNewBuildHandler       s_notifyNewBuildHandler;
 ***/
 
 //===========================================================================
-static inline bool ICharIsSpace (unsigned ch) {
-    return ch == ' ';
-}
+static ENetError FixupPlayerName (plString& name) {
+    ASSERT(!name.IsEmpty());
 
-//===========================================================================
-static ENetError FixupPlayerName (wchar_t * name) {
-    ASSERT(name);
+    // Trim leading and trailing whitespace
+    name = name.Trim(" \t\n\r");
 
-    // Trim leading and trailing whitespace and convert
-    // multiple internal spaces into only one space
-    unsigned nonSpaceChars = 0;
-    wchar_t *dst = name;
-    for (wchar_t *src = name; *src; ) {
-        // Skip whitespace
-        while (*src && ICharIsSpace(*src))
-            src++;
+    // Convert remaining internal whitespace to a single space.
+    // Kind of hacky, but meh.
+    std::vector<plString> things = name.Tokenize(" \t\n\r");
 
-        // If the block skipped was not at the beginning
-        // of the string then add one space character
-        if (*src && (dst != name))
-            *dst++ = ' ';
-
-        // Copy characters until end-of-string or next whitespace
-        while (*src && !ICharIsSpace(*src)) {
-            ++nonSpaceChars;
-            *dst++ = *src++;
-        }
+    plStringStream ss;
+    for (auto it = things.begin(); it != things.end(); ++it) {
+        ss << *it;
+        if ((it + 1) != things.end())
+            ss << " ";
     }
+    name = ss.GetString();
 
-    // Ensure destination string is terminated
-    *dst = 0;
-
-    // Check for minimum name length
-    if (nonSpaceChars < 3)
+    // Now, check to see if we have the appropriate length
+    // We could count the characters, but lazy...
+    if (name.Replace(" ", "").GetSize() < 3)
         return kNetErrPlayerNameInvalid;
-
     return kNetSuccess;
 }
 
@@ -2938,21 +2924,18 @@ bool AccountCreateFromKeyRequestTrans::Recv (
 
 //============================================================================
 PlayerCreateRequestTrans::PlayerCreateRequestTrans (
-    const wchar_t                             playerName[],
-    const wchar_t                             avatarShape[],
-    const wchar_t                             friendInvite[],
+    const plString&                         playerName,
+    const plString&                         avatarShape,
+    const plString&                         friendInvite,
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) : NetAuthTrans(kPlayerCreateRequestTrans)
+,   m_playerName(playerName)
+,   m_avatarShape(avatarShape)
+,   m_friendInvite(friendInvite)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_playerName, playerName, arrsize(m_playerName));
-    StrCopy(m_avatarShape, avatarShape, arrsize(m_avatarShape));
-    if (friendInvite)
-        StrCopy(m_friendInvite, friendInvite, arrsize(m_friendInvite));
-    else
-        m_friendInvite[0] = 0;
     memset(&m_playerInfo, 0, sizeof(m_playerInfo));
 }
 
@@ -2961,16 +2944,20 @@ bool PlayerCreateRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> playerName = m_playerName.ToUtf16();
+    plStringBuffer<uint16_t> avatarShape = m_avatarShape.ToUtf16();
+    plStringBuffer<uint16_t> friendInvite = m_friendInvite.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_PlayerCreateRequest,
                         m_transId,
-        (uintptr_t)  m_playerName,
-        (uintptr_t)  m_avatarShape,
-        (uintptr_t)  m_friendInvite,
+        (uintptr_t)     playerName.GetData(),
+        (uintptr_t)     avatarShape.GetData(),
+        (uintptr_t)     friendInvite.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
-    
+
     return true;
 }
 
@@ -5322,14 +5309,13 @@ void NetCliAuthAccountCreateFromKeyRequest (
 
 //============================================================================
 void NetCliAuthPlayerCreateRequest (
-    const wchar_t                             playerName[],
-    const wchar_t                             avatarShape[],
-    const wchar_t                             friendInvite[],
+    const plString&                         playerName,
+    const plString&                         avatarShape,
+    const plString&                         friendInvite,
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) {
-    wchar_t name[kMaxPlayerNameLength];
-    StrCopy(name, playerName, arrsize(name));
+    plString name = playerName;
     ENetError error = FixupPlayerName(name);
     if (IS_NET_ERROR(error)) {
         NetCliAuthPlayerInfo playerInfo;

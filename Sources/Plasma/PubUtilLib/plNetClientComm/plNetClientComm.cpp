@@ -444,7 +444,7 @@ static void INetCliAuthCreatePlayerRequestCallback (
         LogMsg(kLogDebug, L"Create player failed: %s", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Created player %s: %u", playerInfo.playerName, playerInfo.playerInt);
+        LogMsg(kLogDebug, L"Created player %S: %u", playerInfo.playerName.c_str(), playerInfo.playerInt);
 
         unsigned currPlayer = s_player ? s_player->playerInt : 0;
         NetCommPlayer * newPlayer = s_players.New();
@@ -1136,41 +1136,16 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
 
 //============================================================================
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const char              playerName[],
-    const char              avatarShape[],
-    const char              friendInvite[],
-    unsigned                createFlags,
-    void *                  param
-) {
-    wchar_t wplayerName[kMaxPlayerNameLength];
-    wchar_t wavatarShape[MAX_PATH];
-    wchar_t wfriendInvite[MAX_PATH];
-
-    StrToUnicode(wplayerName, playerName, arrsize(wplayerName));
-    StrToUnicode(wavatarShape, avatarShape, arrsize(wavatarShape));
-    StrToUnicode(wfriendInvite, friendInvite, arrsize(wfriendInvite));
-
-    NetCliAuthPlayerCreateRequest(
-            wplayerName,
-            wavatarShape,
-            (friendInvite != NULL) ? wfriendInvite : NULL,
-            INetCliAuthCreatePlayerRequestCallback,
-            param
-        );
-}
-
-//============================================================================
-void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const wchar_t             playerName[],
-    const wchar_t             avatarShape[],
-    const wchar_t             friendInvite[],
+    const plString&         playerName,
+    const plString&         avatarShape,
+    const plString&         friendInvite,
     unsigned                createFlags,
     void *                  param
 ) {
     NetCliAuthPlayerCreateRequest(
         playerName,
         avatarShape,
-        (friendInvite != NULL) ? friendInvite : NULL,
+        friendInvite,
         INetCliAuthCreatePlayerRequestCallback,
         param
     );

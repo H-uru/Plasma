@@ -112,7 +112,11 @@ void cyAccountManagement::CreatePlayer(const char* playerName, const char* avata
 
 void cyAccountManagement::CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode)
 {
-    NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
+    NetCommCreatePlayer(plString::FromWchar(playerName),
+        plString::FromWchar(avatar),
+        plString::FromWchar(invitationCode),
+        0,
+        nullptr);
 }
 
 void cyAccountManagement::DeletePlayer(unsigned playerId)

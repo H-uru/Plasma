@@ -208,16 +208,9 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     void *                  param
 );
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const char              playerName[],
-    const char              avatarShape[],
-    const char              friendInvite[],
-    unsigned                createFlags,
-    void *                  param
-);
-void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const wchar_t             playerName[],
-    const wchar_t             avatarShape[],
-    const wchar_t             friendInvite[],
+    const plString&         playerName,
+    const plString&         avatarShape,
+    const plString&         friendInvite,
     unsigned                createFlags,
     void *                  param
 );
