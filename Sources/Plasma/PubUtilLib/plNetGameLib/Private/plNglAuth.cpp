@@ -5762,7 +5762,7 @@ void NetCliAuthSetRecvBufferHandler (
 
 //============================================================================
 void NetCliAuthSendCCRPetition (
-    const wchar_t *       petitionText
+    const plString&       petitionText
 ) {
     hsAssert(false, "eric, implement me.");
 }

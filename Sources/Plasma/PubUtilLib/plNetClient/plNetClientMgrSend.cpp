@@ -170,10 +170,8 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     std::string buf;
     buf.resize( size );
     ram.CopyToMem( (void*)buf.data() );
-    
-    wchar_t * wStr = StrDupToUnicode(buf.c_str());
-    NetCliAuthSendCCRPetition(wStr);
-    free(wStr);
+
+    NetCliAuthSendCCRPetition(buf.c_str());
 }
 
 //
