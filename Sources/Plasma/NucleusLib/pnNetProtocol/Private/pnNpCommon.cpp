@@ -425,11 +425,13 @@ template<>
 static void IRead<plString>(const uint8_t*& buf, plString& dest)
 {
     uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
+    uint32_t arraySize = size / 2;
     buf += sizeof(uint32_t);
 
     plStringBuffer<uint16_t> str;
-    uint16_t* theStrBuffer = str.CreateWritableBuffer(size / sizeof(uint16_t));
+    uint16_t* theStrBuffer = str.CreateWritableBuffer(arraySize - 1);
     memcpy(theStrBuffer, buf, size);
+    theStrBuffer[arraySize - 1] = 0;
     dest = plString::FromUtf16(str);
     buf += size;
 }
