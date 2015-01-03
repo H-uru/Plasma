@@ -57,7 +57,8 @@ private:
    
    plLocation fId;
    uint8_t fFlags;
-   std::string  fDesc;      // description of room
+   plString  fDesc;      // description of room
+
 public:
 
    plNetGroupId() : fFlags(0) {}
