@@ -489,15 +489,10 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     return VaultAmCzarOfAge(ageInstId);
 }
 
-void pyVault::RegisterMTStation( const char * stationName, const char * backLinkSpawnPtObjName )
+void pyVault::RegisterMTStation( const plString& stationName, const plString& backLinkSpawnPtObjName )
 {
-    wchar_t wStationName[256];
-    wchar_t wSpawnPt[256];
-    StrToUnicode(wStationName, stationName, arrsize(wStationName));
-    StrToUnicode(wSpawnPt, backLinkSpawnPtObjName, arrsize(wSpawnPt));
-
     // Note: This doesn't actually block (~Hoikas)
-    VaultRegisterMTStationAndWait( wStationName, wSpawnPt);
+    VaultRegisterMTStationAndWait(stationName, backLinkSpawnPtObjName);
 }
 
 void pyVault::RegisterOwnedAge( const pyAgeLinkStruct & link )

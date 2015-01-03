@@ -1069,14 +1069,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         case plNetCommon::LinkingRules::kChildAgeBook:
             {
                 plAgeLinkStruct childLink;
-                wchar_t parentAgeName[MAX_PATH];
-                if (link->HasParentAgeFilename())
-                    StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-
                 switch(VaultAgeFindOrCreateChildAgeLink(
-                      (link->HasParentAgeFilename() ? parentAgeName : nil),
-                      info,
-                      &childLink))
+                          link->GetParentAgeFilename(),
+                          info,
+                          &childLink))
                 {
                     case static_cast<uint8_t>(hsFail):
                         success = kLinkFailed;

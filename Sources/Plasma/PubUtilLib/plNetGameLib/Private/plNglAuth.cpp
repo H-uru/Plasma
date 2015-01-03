@@ -686,10 +686,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
 
     plUUID                      m_ageInstId;
     plUUID                      m_parentAgeInstId;
-    wchar_t *                   m_ageFilename;
-    wchar_t *                   m_ageInstName;
-    wchar_t *                   m_ageUserName;
-    wchar_t *                   m_ageDesc;
+    plString                    m_ageFilename;
+    plString                    m_ageInstName;
+    plString                    m_ageUserName;
+    plString                    m_ageDesc;
     unsigned                    m_ageSequenceNumber;
     unsigned                    m_ageLanguage;
 
@@ -701,10 +701,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
         void *                      param,              // optional
         const plUUID&               ageInstId,          // optional. is used in match
         const plUUID&               parentAgeInstId,    // optional. is used in match
-        const wchar_t               ageFilename[],      // optional. is used in match
-        const wchar_t               ageInstName[],      // optional. not used in match
-        const wchar_t               ageUserName[],      // optional. not used in match
-        const wchar_t               ageDesc[],          // optional. not used in match
+        const plString              ageFilename,        // optional. is used in match
+        const plString              ageInstName,        // optional. not used in match
+        const plString              ageUserName,        // optional. not used in match
+        const plString              ageDesc,            // optional. not used in match
         unsigned                    ageSequenceNumber,  // optional. not used in match
         unsigned                    ageLanguage         // optional. not used in match
     );
@@ -3815,10 +3815,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
     void *                      param,              // optional
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
-    const wchar_t               ageFilename[],      // optional. is used in match
-    const wchar_t               ageInstName[],      // optional. not used in match
-    const wchar_t               ageUserName[],      // optional. not used in match
-    const wchar_t               ageDesc[],          // optional. not used in match
+    const plString              ageFilename,      // optional. is used in match
+    const plString              ageInstName,      // optional. not used in match
+    const plString              ageUserName,      // optional. not used in match
+    const plString              ageDesc,          // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage         // optional. not used in match
 ) : NetAuthTrans(kVaultInitAgeTrans)
@@ -3826,10 +3826,6 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 ,   m_param(param)
 ,   m_ageInstId(ageInstId)
 ,   m_parentAgeInstId(parentAgeInstId)
-,   m_ageFilename(StrDup(ageFilename ? ageFilename : L""))
-,   m_ageInstName(StrDup(ageInstName ? ageInstName : L""))
-,   m_ageUserName(StrDup(ageUserName ? ageUserName : L""))
-,   m_ageDesc(StrDup(ageDesc ? ageDesc : L""))
 ,   m_ageSequenceNumber(ageSequenceNumber)
 ,   m_ageLanguage(ageLanguage)
 ,   m_ageId(0)
@@ -3839,10 +3835,6 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 
 //============================================================================
 VaultInitAgeTrans::~VaultInitAgeTrans () {
-    free(m_ageFilename);
-    free(m_ageInstName);
-    free(m_ageUserName);
-    free(m_ageDesc);
 }
 
 //============================================================================
@@ -3850,19 +3842,24 @@ bool VaultInitAgeTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> ageFilename = m_ageFilename.ToUtf16();
+    plStringBuffer<uint16_t> ageInstName = m_ageInstName.ToUtf16();
+    plStringBuffer<uint16_t> ageUserName = m_ageUserName.ToUtf16();
+    plStringBuffer<uint16_t> ageDesc = m_ageDesc.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_VaultInitAgeRequest,
                         m_transId,
         (uintptr_t) &m_ageInstId,
         (uintptr_t) &m_parentAgeInstId,
-        (uintptr_t)  m_ageFilename,
-        (uintptr_t)  m_ageInstName,
-        (uintptr_t)  m_ageUserName,
-        (uintptr_t)  m_ageDesc,
-                        m_ageSequenceNumber,
-                        m_ageLanguage,
+        (uintptr_t)  ageFilename.GetData(),
+        (uintptr_t)  ageInstName.GetData(),
+        (uintptr_t)  ageUserName.GetData(),
+        (uintptr_t)  ageDesc.GetData(),
+                     m_ageSequenceNumber,
+                     m_ageLanguage,
     };
-    
+
     m_conn->Send(msg, arrsize(msg));
 
     return true;
@@ -5736,10 +5733,10 @@ void NetCliAuthVaultSendNode (
 void NetCliAuthVaultInitAge (
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
-    const wchar_t               ageFilename[],      // optional. is used in match
-    const wchar_t               ageInstName[],      // optional. not used in match
-    const wchar_t               ageUserName[],      // optional. not used in match
-    const wchar_t               ageDesc[],          // optional. not used in match
+    const plString&             ageFilename,        // optional. is used in match
+    const plString&             ageInstName,        // optional. not used in match
+    const plString&             ageUserName,        // optional. not used in match
+    const plString&             ageDesc,            // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
     FNetCliAuthAgeInitCallback  callback,           // optional

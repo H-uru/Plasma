@@ -521,10 +521,10 @@ typedef void (*FNetCliAuthAgeInitCallback) (
 void NetCliAuthVaultInitAge (
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
-    const wchar_t                 ageFilename[],      // optional. is used in match
-    const wchar_t                 ageInstName[],      // optional. not used in match
-    const wchar_t                 ageUserName[],      // optional. not used in match
-    const wchar_t                 ageDesc[],          // optional. not used in match
+    const plString&             ageFilename,        // optional. is used in match
+    const plString&             ageInstName,        // optional. not used in match
+    const plString&             ageUserName,        // optional. not used in match
+    const plString&             ageDesc,            // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
     FNetCliAuthAgeInitCallback  callback,           // optional

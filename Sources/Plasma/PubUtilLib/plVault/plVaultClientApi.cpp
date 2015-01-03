@@ -2074,23 +2074,13 @@ void VaultInitAge (
 ) {
     VaultAgeInitTrans * trans = new VaultAgeInitTrans(callback, state, param);
 
-    wchar_t ageFilename[MAX_PATH];
-    wchar_t ageInstName[MAX_PATH];
-    wchar_t ageUserName[MAX_PATH];
-    wchar_t ageDesc[1024];
-
-    StrToUnicode(ageFilename, info->GetAgeFilename(), arrsize(ageFilename));
-    StrToUnicode(ageInstName, info->GetAgeInstanceName(), arrsize(ageInstName));
-    StrToUnicode(ageUserName, info->GetAgeUserDefinedName(), arrsize(ageUserName));
-    StrToUnicode(ageDesc, info->GetAgeDescription(), arrsize(ageDesc));
-    
     NetCliAuthVaultInitAge(
         *info->GetAgeInstanceGuid(),
         parentAgeInstId,
-        ageFilename,
-        ageInstName,
-        ageUserName,
-        ageDesc,
+        info->GetAgeFilename(),
+        info->GetAgeInstanceName(),
+        info->GetAgeUserDefinedName(),
+        info->GetAgeDescription(),
         info->GetAgeSequenceNumber(),
         info->GetAgeLanguage(),
         VaultAgeInitTrans::AgeInitCallback,
@@ -3440,17 +3430,14 @@ bool VaultAmCzarOfAge (const plUUID& ageInstId) {
 
 //============================================================================
 bool VaultRegisterMTStationAndWait (
-    const wchar_t stationName[],
-    const wchar_t linkBackSpawnPtObjName[]
+    const plString& stationName,
+    const plString& linkBackSpawnPtObjName
 ) {
     plAgeInfoStruct info;
     info.SetAgeFilename(kCityAgeFilename);
     if (hsRef<RelVaultNode> rvn = VaultGetOwnedAgeLink(&info)) {
-        char title[MAX_PATH], spawnPt[MAX_PATH];
-        StrToAnsi(title, stationName, arrsize(title));
-        StrToAnsi(spawnPt, linkBackSpawnPtObjName, arrsize(spawnPt));
         VaultAgeLinkNode link(rvn);
-        link.AddSpawnPoint(plSpawnPointInfo(title, spawnPt));
+        link.AddSpawnPoint({ stationName, linkBackSpawnPtObjName });
         return true;
     }
     return false;
@@ -3669,16 +3656,16 @@ hsRef<RelVaultNode> VaultFindAgeSubAgeLink (const plAgeInfoStruct * info) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultFindAgeChronicleEntry (const wchar_t entryName[], int entryType) {
+hsRef<RelVaultNode> VaultFindAgeChronicleEntry (const plString& entryName, int entryType) {
     hsAssert(false, "eric, implement me");
     return nil;
 }
 
 //============================================================================
 void VaultAddAgeChronicleEntry (
-    const wchar_t entryName[],
-    int         entryType,
-    const wchar_t entryValue[]
+    const plString& entryName,
+    int             entryType,
+    const plString& entryValue
 ) {
     hsAssert(false, "eric, implement me");
 }
@@ -4258,7 +4245,7 @@ static void _AddChildNodeCallback (
 
 //============================================================================
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const wchar_t             parentAgeName[],
+    const plString&         parentAgeName,
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 ) {
@@ -4270,15 +4257,12 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 
     {   // Get id of child ages folder
         hsRef<RelVaultNode> rvnAgeInfo;
-        if (parentAgeName) {
-            char ansi[MAX_PATH];
-            StrToAnsi(ansi, parentAgeName, arrsize(ansi));
+        if (!parentAgeName.IsEmpty()) {
             plAgeInfoStruct pinfo;
-            pinfo.SetAgeFilename(ansi);
+            pinfo.SetAgeFilename(parentAgeName);
             if (hsRef<RelVaultNode> rvnAgeLink = VaultGetOwnedAgeLink(&pinfo))
                 rvnAgeInfo = rvnAgeLink->GetChildNode(plVault::kNodeType_AgeInfo, 1);
-        }
-        else {
+        } else {
             rvnAgeInfo = VaultGetAgeInfoNode();
         }
         
@@ -4519,17 +4503,15 @@ namespace _VaultCreateChildAge {
 }; // namespace _VaultCreateAge
 
 uint8_t VaultAgeFindOrCreateChildAgeLink(
-    const wchar_t            parentAgeName[], 
+    const plString&        parentAgeName,
     const plAgeInfoStruct* info,
     plAgeLinkStruct*       link) 
 {
     using namespace _VaultCreateChildAge;
 
     // First, try to find an already existing ChildAge
-    char name[MAX_PATH];
-    StrToAnsi(name, parentAgeName, arrsize(name));
     plAgeInfoStruct search;
-    search.SetAgeFilename(name);
+    search.SetAgeFilename(parentAgeName);
 
     hsRef<RelVaultNode> rvnParentInfo;
     if (hsRef<RelVaultNode> rvnParentLink = VaultGetOwnedAgeLink(&search))
