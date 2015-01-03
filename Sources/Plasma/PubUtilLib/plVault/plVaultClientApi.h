@@ -181,8 +181,8 @@ struct RelVaultNode : NetVaultNode {
     void SetSeen (unsigned parentId, bool seen);
     
     // logging
-    void Print (const wchar_t tag[], FStateDump dumpProc, unsigned level);
-    void PrintTree (FStateDump dumpProc, unsigned level);
+    void Print (const plString& tag, unsigned level);
+    void PrintTree (unsigned level);
     
     // AgeInfoNode-specific (and it checks!)
     hsRef<RelVaultNode> GetParentAgeLink ();
@@ -366,8 +366,7 @@ bool        VaultAmIgnoringPlayer (unsigned playerId);
 unsigned    VaultGetKILevel ();
 bool        VaultGetCCRStatus ();               // true=online, false=away
 bool        VaultSetCCRStatus (bool online);    // true=online, false=away
-void        VaultDump (const wchar_t tag[], unsigned vaultId, FStateDump dumpProc);
-void        VaultDump (const wchar_t tag[], unsigned vaultId);
+void        VaultDump (const plString& tag, unsigned vaultId);
 
 bool VaultAmInMyPersonalAge ();
 bool VaultAmInMyNeighborhoodAge ();
@@ -470,7 +469,7 @@ typedef void (*FVaultProgressCallback)(
 );
 
 void VaultDownload (
-    const wchar_t                 tag[],
+    const plString&             tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
     void *                      cbParam,
@@ -478,7 +477,7 @@ void VaultDownload (
     void *                      cbProgressParam
 );
 void VaultDownloadAndWait (
-    const wchar_t                 tag[],
+    const plString&             tag,
     unsigned                    vaultId,
     FVaultProgressCallback      progressCallback,
     void *                      cbProgressParam

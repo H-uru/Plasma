@@ -311,7 +311,7 @@ static void INetCliAuthSetPlayerRequestCallback (
         s_needAvatarLoad = true;
 
         VaultDownload(
-            L"SetActivePlayer",
+            "SetActivePlayer",
             s_player->playerInt,
             PlayerInitCallback,
             param,
@@ -367,7 +367,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
     }
     else {
         VaultDownload(
-            L"SetActivePlayer",
+            "SetActivePlayer",
             s_player->playerInt,
             LoginPlayerInitCallback,
             param,

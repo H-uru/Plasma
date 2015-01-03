@@ -6913,8 +6913,8 @@ PF_CONSOLE_GROUP(Vault)
 
 PF_CONSOLE_CMD(Vault, Dump, "", "Prints the vault structure of current player and age to the nearest log file")
 {
-    VaultDump(L"Player", NetCommGetPlayer()->playerInt);
-    VaultDump(L"Age", NetCommGetAge()->ageVaultId);
+    VaultDump("Player", NetCommGetPlayer()->playerInt);
+    VaultDump("Age", NetCommGetAge()->ageVaultId);
 }
 
 #endif

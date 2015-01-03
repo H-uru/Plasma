@@ -408,7 +408,7 @@ bool plNCAgeJoiner::MsgReceive (plMessage * msg) {
         else if (unsigned ageVaultId = NetCommGetAge()->ageVaultId) {
             // Download the age vault
             VaultDownload(
-                L"AgeJoin",
+                "AgeJoin",
                 ageVaultId,
                 AgeVaultDownloadCallback,
                 this,

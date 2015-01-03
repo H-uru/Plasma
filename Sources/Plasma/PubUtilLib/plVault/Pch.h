@@ -80,6 +80,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGImage/plJPEG.h"
 #include "plMessage/plVaultNotifyMsg.h"
 #include "plNetClientComm/plNetClientComm.h"
+#include "plStatusLog/plStatusLog.h"
 
 #define KI_CONSTANTS_ONLY
 #include "pfMessage/pfKIMsg.h"  // for KI level constants =(

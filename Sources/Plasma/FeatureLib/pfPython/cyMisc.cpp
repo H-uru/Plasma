@@ -2932,7 +2932,7 @@ void cyMisc::ForceVaultNodeUpdate(unsigned nodeId)
 void cyMisc::VaultDownload(unsigned nodeId)
 {
     VaultDownloadAndWait(
-        L"PyVaultDownload",
+        "PyVaultDownload",
         nodeId,
         nil,
         nil
