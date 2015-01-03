@@ -135,7 +135,7 @@ typedef void (*FNetCliAuthLoginRequestCallback)(
     unsigned                    playerCount
 );
 void NetCliAuthLoginRequest (
-    const wchar_t                   accountName[],  // nil --> reuse previous acct name
+    const plString&                 accountName,  // nil --> reuse previous acct name
     const ShaDigest *               accountNamePassHash,  // nil --> reuse previous acct pass
     const wchar_t                   authToken[],  // nil --> reuse previous auth token
     const wchar_t                   os[],  // nil --> reuse previous os
@@ -271,8 +271,8 @@ typedef void (*FNetCliAuthAccountChangePasswordRequestCallback)(
     void *                          param
 );
 void NetCliAuthAccountChangePasswordRequest (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     accountPass[],
+    const plString&                                 accountName,
+    const plString&                                 accountPass,
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 );

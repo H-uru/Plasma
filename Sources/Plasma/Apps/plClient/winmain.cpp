@@ -813,7 +813,7 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
             store->SetPassword(pLoginParam->username, plString::Null);
     }
 
-    NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
+    NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
     NetCommSetAuthTokenAndOS(nil, L"win");
@@ -1270,9 +1270,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if (!doIntroDialogs && loginParam.remember) {
         ENetError auth;
 
-        wchar_t wusername[kMaxAccountNameLength];
-        StrToUnicode(wusername, loginParam.username, arrsize(wusername));
-        NetCommSetAccountUsernamePassword(wusername, loginParam.namePassHash);
+        NetCommSetAccountUsernamePassword(loginParam.username, loginParam.namePassHash);
         bool cancelled = AuthenticateNetClientComm(&auth, NULL);
 
         if (IS_NET_ERROR(auth) || cancelled) {

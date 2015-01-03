@@ -80,9 +80,8 @@ struct NetCommPlayer {
 
 struct NetCommAccount {
     plUUID      accountUuid;
-    wchar_t     accountName[kMaxAccountNameLength];
+    plString    accountName;
     ShaDigest   accountNamePassHash;
-    char        accountNameAnsi[kMaxAccountNameLength];
     unsigned    accountFlags;
     unsigned    billingType;
 };
@@ -108,13 +107,13 @@ const ARRAY(NetCommPlayer) &        NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();
 void                                NetCommSetReadIniAccountInfo (bool readFromIni);
-void                                NetCommSetAccountUsernamePassword (const wchar_t username[], const ShaDigest &  namePassHash);
+void                                NetCommSetAccountUsernamePassword (const plString& username, const ShaDigest &  namePassHash);
 void                                NetCommSetAuthTokenAndOS (wchar_t authToken[], wchar_t os[]);
 ENetError                           NetCommGetAuthResult ();
 
 bool                                NetCommNeedToLoadAvatar ();
 void                                NetCommSetAvatarLoaded (bool loaded = true);
-void                                NetCommChangeMyPassword (const wchar_t password[]);
+void                                NetCommChangeMyPassword (const plString& password);
 
 void NetCommStartup ();
 void NetCommShutdown ();

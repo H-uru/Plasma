@@ -116,7 +116,7 @@ static plString             s_fileSrvAddr;
 
 static char                s_iniServerAddr[256];
 static char                s_iniFileServerAddr[256];
-static wchar_t                s_iniAccountUsername[kMaxAccountNameLength];
+static plString            s_iniAccountUsername;
 static ShaDigest            s_namePassHash;
 static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
 static wchar_t                s_iniOS[kMaxGTOSIdLength];
@@ -737,9 +737,7 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 }
 
 //============================================================================
-void NetCommChangeMyPassword (
-    const wchar_t password[]
-) {
+void NetCommChangeMyPassword (const plString& password) {
     NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nil);
 }
 
@@ -1023,10 +1021,10 @@ void NetCommSetMsgPreHandler (
 
 //============================================================================
 void NetCommSetAccountUsernamePassword (
-    const wchar_t       username[],
+    const plString&       username,
     const ShaDigest &   namePassHash
 ) {
-    StrCopy(s_iniAccountUsername, username, arrsize(s_iniAccountUsername));
+    s_iniAccountUsername = username;
     memcpy(s_namePassHash, namePassHash, sizeof(ShaDigest));
 
     s_iniReadAccountInfo = false;
@@ -1059,16 +1057,7 @@ void NetCommAuthenticate (
 ) {
     s_loginComplete = false;
 
-    StrCopy(
-        s_account.accountName,
-        s_iniAccountUsername,
-        arrsize(s_account.accountName)
-    );
-    StrToAnsi(
-        s_account.accountNameAnsi,
-        s_iniAccountUsername,
-        arrsize(s_account.accountNameAnsi)
-    );
+    s_account.accountName = s_iniAccountUsername;
     memcpy(s_account.accountNamePassHash, s_namePassHash, sizeof(ShaDigest));
 
     NetCliAuthLoginRequest(

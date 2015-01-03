@@ -400,13 +400,13 @@ struct AccountChangePasswordRequestTrans : NetAuthTrans {
     FNetCliAuthAccountChangePasswordRequestCallback m_callback;
     void *                                          m_param;
 
-    // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    // send
+    plString                                m_accountName;
     ShaDigest                               m_namePassHash;
 
     AccountChangePasswordRequestTrans (
-        const wchar_t                                     accountName[],
-        const wchar_t                                     password[],
+        const plString&                                 accountName,
+        const plString&                                 password,
         FNetCliAuthAccountChangePasswordRequestCallback callback,
         void *                                          param
     );
@@ -1203,7 +1203,7 @@ static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
-static wchar_t                      s_accountName[kMaxAccountNameLength];
+static plString                     s_accountName;
 static ShaDigest                    s_accountNamePassHash;
 static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
 static wchar_t                      s_os[kMaxGTOSIdLength];
@@ -2634,7 +2634,7 @@ bool LoginRequestTrans::Send () {
     uint32_t clientChallenge = 0;
 
     // Regex search for primary email domain
-    std::vector<plString> match = plString::FromWchar(s_accountName).RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    std::vector<plString> match = s_accountName.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
     if (match.empty() || match[2].CompareI("gametap") == 0) {
         memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
     } else {
@@ -2651,11 +2651,13 @@ bool LoginRequestTrans::Send () {
         );
     }
 
+    plStringBuffer<uint16_t> accountName = s_accountName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_AcctLoginRequest,
         m_transId,
         clientChallenge,
-        (uintptr_t) s_accountName,
+        (uintptr_t) accountName.GetData(),
         (uintptr_t) &challengeHash,
         (uintptr_t) s_authToken,
         (uintptr_t) s_os,
@@ -3164,19 +3166,18 @@ bool SetPlayerRequestTrans::Recv (
 
 //============================================================================
 AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
-    const wchar_t                                   accountName[],
-    const wchar_t                                   password[],
+    const plString&                                 accountName,
+    const plString&                                 password,
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) : NetAuthTrans(kAccountChangePasswordRequestTrans)
+,   m_accountName(accountName)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
-    
     CryptHashPassword(
-        plString::FromWchar(m_accountName),
-        plString::FromWchar(password),
+        m_accountName,
+        password,
         m_namePassHash
     );
 }
@@ -3186,10 +3187,12 @@ bool AccountChangePasswordRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> accountName = m_accountName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_AcctChangePasswordRequest,
                         m_transId,
-        (uintptr_t)  m_accountName,
+        (uintptr_t)  accountName.GetData(),
         (uintptr_t)  &m_namePassHash,
     };
 
@@ -5228,7 +5231,7 @@ void NetCliAuthAccountExistsRequest (
 
 //============================================================================
 void NetCliAuthLoginRequest (
-    const wchar_t                   accountName[],
+    const plString&                 accountName,
     const ShaDigest *               accountNamePassHash,
     const wchar_t                   authToken[],
     const wchar_t                   os[],
@@ -5236,8 +5239,8 @@ void NetCliAuthLoginRequest (
     void *                          param
 ) {
     // Cache updated login info if provided.
-    if (accountName)
-        StrCopy(s_accountName, accountName, arrsize(s_accountName));
+    if (!accountName.IsEmpty())
+        s_accountName = accountName;
     if (accountNamePassHash)
         memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));
     if (authToken)
@@ -5437,8 +5440,8 @@ void NetCliAuthGetPublicAgeList (
 
 //============================================================================
 void NetCliAuthAccountChangePasswordRequest (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     password[],
+    const plString&                                 accountName,
+    const plString&                                 password,
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) {

@@ -155,7 +155,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     info.AddValue( "Petition", "Content", note );
     info.AddValue( "Petition", "Title", title );
     info.AddValue( "Petition", "Language", plLocalization::GetLanguageName( plLocalization::GetLanguage() ) );
-    info.AddValue( "Petition", "AcctName", NetCommGetAccount()->accountNameAnsi );
+    info.AddValue( "Petition", "AcctName", NetCommGetAccount()->accountName.c_str() );
     char buffy[20];
     sprintf(buffy, "%u", GetPlayerID());
     info.AddValue( "Petition", "PlayerID", buffy );

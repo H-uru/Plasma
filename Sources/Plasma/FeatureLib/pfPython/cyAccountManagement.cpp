@@ -96,13 +96,13 @@ PyObject* cyAccountManagement::GetPlayerList()
     return pList;
 }
 
-std::wstring cyAccountManagement::GetAccountName()
+plString cyAccountManagement::GetAccountName()
 {
     const NetCommAccount* acct = NetCommGetAccount();
     if (acct)
         return acct->accountName;
     else
-        return L"";
+        return "";
 }
 
 void cyAccountManagement::CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode)
@@ -135,9 +135,7 @@ void cyAccountManagement::UpgradeVisitorToExplorer(unsigned playerId)
     NetCommUpgradeVisitorToExplorer(playerId, nil);
 }
 
-void cyAccountManagement::ChangePassword(const char* password)
+void cyAccountManagement::ChangePassword(const plString& password)
 {
-    wchar_t* wpassword = StrDupToUnicode(password);
-    NetCommChangeMyPassword(wpassword);
-    free(wpassword);
+    NetCommChangeMyPassword(password);
 }
