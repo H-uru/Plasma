@@ -102,7 +102,9 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     in_addr const * const * const inAddr = (in_addr **) host.h_addr_list;
 
     // allocate a buffer large enough to hold all the addresses
-    size_t count = arrsize(inAddr);
+    size_t count = 0;
+    while (inAddr[count])
+        ++count;
     plNetAddress* addrs = new plNetAddress[count];
 
     // fill in address data
