@@ -78,7 +78,10 @@ protected:
     void*               fSurface;
     void*               fContext;
     size_t              fActiveThread;
-    GLuint              fProgram;
+    GLuint              fCurrentProgram;
+    GLfloat             fMatrixL2W[16];
+    GLfloat             fMatrixW2C[16];
+    GLfloat             fMatrixProj[16];
 
 public:
     plGLDevice();
