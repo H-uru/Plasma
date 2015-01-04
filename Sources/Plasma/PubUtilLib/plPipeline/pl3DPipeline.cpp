@@ -77,7 +77,11 @@ plProfile_CreateCounter("Perms Found",          "PipeC", FindLightsPerm);
 
 plProfile_CreateCounter("Polys",                "General",  DrawTriangles);
 plProfile_CreateCounter("Material Change",      "Draw",     MatChange);
+plProfile_CreateCounter("Feed Triangles",       "Draw",     DrawFeedTriangles);
+plProfile_CreateCounter("Draw Prim Static",     "Draw",     DrawPrimStatic);
+plProfile_CreateCounter("Layer Change",         "Draw",     LayChange);
 
+plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
 plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
 plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
 plProfile_CreateMemCounter("Textures", "Memory", MemTexture);

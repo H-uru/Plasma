@@ -75,17 +75,6 @@ private:
     static void Enumerate(std::vector<hsG3DDeviceRecord>& records);
 };
 
-//// Helper Classes ///////////////////////////////////////////////////////////
-
-//// The RenderPrimFunc lets you have one function which does a lot of stuff
-// around the actual call to render whatever type of primitives you have, instead
-// of duplicating everything because the one line to render is different.
-class plRenderPrimFunc
-{
-public:
-    virtual bool RenderPrims() const = 0; // return true on error
-};
-
 class plMetalPipeline : public pl3DPipeline<plMetalDevice>
 {
 public:
@@ -96,7 +85,7 @@ protected:
     friend class plMetalDevice;
     friend class plMetalPlateManager;
     friend class plMetalMaterialShaderRef;
-    friend class plRenderTriListFunc;
+    friend class plMetalRenderTriListFunc;
     friend class plMetalTextFont;
 
     plMetalMaterialShaderRef* fMatRefList;

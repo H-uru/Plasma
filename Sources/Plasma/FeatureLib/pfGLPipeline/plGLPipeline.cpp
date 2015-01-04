@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
 
+#include "plPipeDebugFlags.h"
 #include "plProfile.h"
 #include "plPipeline/hsWinRef.h"
 #include "plStatusLog/plStatusLog.h"
@@ -65,6 +66,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 typedef plGLDevice DeviceType;
 
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
+plProfile_Extern(DrawTriangles);
+plProfile_Extern(MatChange);
 plProfile_Extern(RenderSpan);
 plProfile_Extern(MergeCheck);
 plProfile_Extern(MergeSpan);
@@ -76,6 +83,27 @@ plProfile_Extern(CheckDyn);
 plProfile_Extern(CheckStat);
 plProfile_Extern(RenderBuff);
 plProfile_Extern(RenderPrim);
+
+// Adding a nil RenderPrim for turning off drawing
+static plRenderNilFunc sRenderNil;
+
+class plGLRenderTriListFunc : public plRenderTriListFunc<plGLDevice>
+{
+public:
+    plGLRenderTriListFunc(plGLDevice* device, int baseVertexIndex, int vStart, int vLength, int iStart, int iNumTris)
+        : plRenderTriListFunc(device, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
+
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        glDrawElements(GL_TRIANGLES, fNumTris, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * fIStart));
+        return true; // TODO: Check for GL Error
+    }
+};
+
 
 plGLEnumerate plGLPipeline::enumerator;
 
@@ -540,10 +568,14 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
                                      uint32_t vStart, uint32_t vLength,
                                      uint32_t iStart, uint32_t iLength)
 {
+    plProfile_BeginTiming(RenderBuff);
+
     typename DeviceType::VertexBufferRef* vRef = (typename DeviceType::VertexBufferRef*)vb;
     typename DeviceType::IndexBufferRef* iRef = (typename DeviceType::IndexBufferRef*)ib;
 
     if (!vRef->fRef || !iRef->fRef) {
+        plProfile_EndTiming(RenderBuff);
+
         hsAssert(false, "Trying to render a nil buffer pair!");
         return;
     }
@@ -551,8 +583,17 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Vertex Buffer stuff */
     glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
 
-    GLint posAttrib = glGetAttribLocation(fDevice.fProgram, "position");
-    GLint colAttrib = glGetAttribLocation(fDevice.fProgram, "color");
+    GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_proj");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixProj);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_l2w");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_w2c");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
+
+    GLint posAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "position");
+    GLint colAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "color");
     glEnableVertexAttribArray(posAttrib);
     glEnableVertexAttribArray(colAttrib);
 
@@ -563,5 +604,10 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Index Buffer stuff and drawing */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
 
-    glDrawElements(GL_TRIANGLES, iLength, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * iStart));
+    plGLRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength);
+
+    plProfile_EndTiming(RenderBuff);
+
+    // TEMP
+    render.RenderPrims();
 }

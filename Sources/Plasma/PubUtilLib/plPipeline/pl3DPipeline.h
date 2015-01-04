@@ -107,6 +107,8 @@ static const float kPerspLayerTrans  = 0.00002f;
 
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
+//// Helper Classes ///////////////////////////////////////////////////////////
+
 class plDisplayHelper
 {
 public:
@@ -119,6 +121,59 @@ public:
 private:
     static plDisplayHelper* fCurrentDisplayHelper;
 };
+
+/**
+ * The RenderPrimFunc lets you have one function which does a lot of stuff
+ * around the actual call to render whatever type of primitives you have,
+ * instead of duplicating everything because the one line to render is
+ * different.
+ *
+ * These allow the same setup code path to be followed, no matter what the
+ * primitive type (i.e. data-type/draw-call is going to happen once the render
+ * state is set.
+ * Originally useful to make one code path for trilists, tri-patches, and
+ * rect-patches, but we've since dropped support for patches. We still use the
+ * RenderNil function to allow the code to go through all the state setup
+ * without knowing whether a render call is going to come out the other end.
+ *
+ * Would allow easy extension for supporting tristrips or pointsprites, but
+ * we've never had a strong reason to use either.
+ */
+class plRenderPrimFunc
+{
+public:
+    virtual bool RenderPrims() const = 0; // return true on error
+};
+
+
+class plRenderNilFunc : public plRenderPrimFunc
+{
+public:
+    plRenderNilFunc() {}
+
+    virtual bool RenderPrims() const { return false; }
+};
+
+
+template<class DeviceType>
+class plRenderTriListFunc : public plRenderPrimFunc
+{
+protected:
+    DeviceType* fDevice;
+    int         fBaseVertexIndex;
+    int         fVStart;
+    int         fVLength;
+    int         fIStart;
+    int         fNumTris;
+
+public:
+    plRenderTriListFunc(DeviceType* device, int baseVertexIndex, int vStart, int vLength, int iStart, int iNumTris)
+        : fDevice(device), fBaseVertexIndex(baseVertexIndex), fVStart(vStart),
+          fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+};
+
+
+//// Class Definition /////////////////////////////////////////////////////////
 
 template<class DeviceType>
 class pl3DPipeline : public plPipeline
