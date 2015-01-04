@@ -2539,7 +2539,7 @@ bool pfImageLibComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     flags |= plBitmap::kForceNonCompressed;
                     bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags );
                 }
-                else // compress using JPEG compression scheme
+                else // compress using PNG compression scheme
                     bMap = plLayerConverter::Instance().CreateSimpleTexture( texture->bi.Name(), lib->GetKey()->GetUoid().GetLocation(), 0, flags, true );
                 if( bMap != nil )
                 {

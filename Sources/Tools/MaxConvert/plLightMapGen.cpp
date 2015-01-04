@@ -362,33 +362,8 @@ bool plLightMapGen::ICompressLightMaps()
                 DumpMipmap(orig, orig->GetKeyName());
 #endif // MIPMAP_LOG
 
-                plMipmap *compressed = 
-                    hsCodecManager::Instance().CreateCompressedMipmap(plMipmap::kDirectXCompression, orig);
-
-                if( compressed )
-                {
-                    const plLocation &textureLoc = plPluginResManager::ResMgr()->GetCommonPage(orig->GetKey()->GetUoid().GetLocation(),
-                                                                                    plAgeDescription::kTextures );
-                    plString name = plFormat("{}_DX", orig->GetKey()->GetName());
-
-                    plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), name));
-                    if( compKey )
-                        plBitmapCreator::Instance().DeleteExportedBitmap(compKey);
-
-                    hsgResMgr::ResMgr()->NewKey( name, compressed, textureLoc );
-
-                    int j;
-                    for( j = 0; j < fCreatedLayers.GetCount(); j++ )
-                    {
-                        if( orig == fCreatedLayers[j]->GetTexture() )
-                        {
-                            fCreatedLayers[j]->GetKey()->Release(orig->GetKey());
-                            hsgResMgr::ResMgr()->AddViaNotify(compressed->GetKey(), new plLayRefMsg(fCreatedLayers[j]->GetKey(), plRefMsg::kOnReplace, 0, plLayRefMsg::kTexture), plRefFlags::kActiveRef);
-                        }
-                    }
-
-                    plBitmapCreator::Instance().DeleteExportedBitmap(orig->GetKey());
-                }
+                // Use lossless compression on LightMaps.  We don't want ugly, muddy edges.
+                orig->fCompressionType = plMipmap::kPNGCompression;
             }
         }
     }
