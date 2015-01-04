@@ -130,44 +130,30 @@ constexpr size_t kMetalMaxLightCount = INT16_MAX;
 
 plMetalEnumerate plMetalPipeline::enumerator;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plMetalRenderTriListFunc : public plRenderTriListFunc<plMetalDevice>
 {
-protected:
-    plMetalDevice* fDevice;
-    int            fBaseVertexIndex;
-    int            fVStart;
-    int            fVLength;
-    int            fIStart;
-    int            fNumTris;
-
 public:
-    plRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
+    plMetalRenderTriListFunc(plMetalDevice* device, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fDevice(device),
-          fBaseVertexIndex(baseVertexIndex),
-          fVStart(vStart),
-          fVLength(vLength),
-          fIStart(iStart),
-          fNumTris(iNumTris) {}
+        : plRenderTriListFunc(device, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
+        if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
+        {
+            fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
+            fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
+        }
+
+        fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
+    }
 };
 
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    size_t uniformsSize = offsetof(VertexUniforms, uvTransforms) + sizeof(UVOutDescriptor) * fDevice->fPipeline->fCurrNumLayers;
-    if ( !(fDevice->fPipeline->fState.fCurrentVertexUniforms.has_value() && fDevice->fPipeline->fState.fCurrentVertexUniforms == *fDevice->fPipeline->fCurrentRenderPassUniforms) )
-    {
-        fDevice->fPipeline->fState.fCurrentVertexUniforms = *fDevice->fPipeline->fCurrentRenderPassUniforms;
-        fDevice->CurrentRenderCommandEncoder()->setVertexBytes(fDevice->fPipeline->fCurrentRenderPassUniforms, sizeof(VertexUniforms), VertexShaderArgumentFixedFunctionUniforms);
-    }
-    
-    fDevice->CurrentRenderCommandEncoder()->drawIndexedPrimitives(MTL::PrimitiveTypeTriangle, fNumTris * 3, MTL::IndexTypeUInt16, fDevice->fCurrentIndexBuffer, (sizeof(uint16_t) * fIStart));
-}
 
 plMetalPipeline::plMetalPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord* devMode) : pl3DPipeline(devMode),
                                                                                                                     fRenderTargetRefList(),
@@ -1205,7 +1191,7 @@ void plMetalPipeline::IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb,
 
     /* Index Buffer stuff and drawing */
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     plProfile_EndTiming(RenderBuff);
 
@@ -1501,7 +1487,7 @@ void plMetalPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     fState.fCurrentVertexBuffer = vRef->GetBuffer();
     fDevice.fCurrentIndexBuffer = iRef->GetBuffer();
 
-    plRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength / 3);
 
     for (int32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         IHandleMaterialPass(material, pass, &span, vRef);
@@ -3760,7 +3746,7 @@ void plMetalPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSp
     uint32_t iStart = span.fIPackedIdx;
     uint32_t iLength = span.fILength;
 
-    plRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
+    plMetalRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength / 3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44        m = emptyMatrix;

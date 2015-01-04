@@ -477,43 +477,24 @@ void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, con
 // First, Declarations.
 
 // Adding a nil RenderPrim for turning off drawing
-class plRenderNilFunc : public plRenderPrimFunc
-{
-public:
-    plRenderNilFunc() {}
-
-    bool RenderPrims() const override { return false; }
-};
 static plRenderNilFunc sRenderNil;
 
-class plRenderTriListFunc : public plRenderPrimFunc
+class plDXRenderTriListFunc : public plRenderTriListFunc<IDirect3DDevice9>
 {
-protected:
-    LPDIRECT3DDEVICE9   fD3DDevice;
-    int                 fBaseVertexIndex;
-    int                 fVStart;
-    int                 fVLength;
-    int                 fIStart;
-    int                 fNumTris;
 public:
-    plRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
+    plDXRenderTriListFunc(LPDIRECT3DDEVICE9 d3dDevice, int baseVertexIndex,
                         int vStart, int vLength, int iStart, int iNumTris)
-        : fD3DDevice(d3dDevice), fBaseVertexIndex(baseVertexIndex), fVStart(vStart), fVLength(vLength), fIStart(iStart), fNumTris(iNumTris) {}
+        : plRenderTriListFunc(d3dDevice, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
 
-    bool RenderPrims() const override;
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        return FAILED(fDevice->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris));
+    }
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Implementations
-
-bool plRenderTriListFunc::RenderPrims() const
-{
-    plProfile_IncCount(DrawFeedTriangles, fNumTris);
-    plProfile_IncCount(DrawTriangles, fNumTris);
-    plProfile_Inc(DrawPrimStatic);
-
-    return FAILED( fD3DDevice->DrawIndexedPrimitive( D3DPT_TRIANGLELIST, fBaseVertexIndex, fVStart, fVLength, fIStart, fNumTris ) );
-}   
 
 //// Constructor & Destructor /////////////////////////////////////////////////
 
@@ -9228,7 +9209,7 @@ void plDXPipeline::IRenderAuxSpan(const plSpan& span, const plAuxSpan* aux)
     r = fD3DDevice->SetIndices( iRef->fD3DBuffer );
     hsAssert( r == D3D_OK, "Error trying to set the indices!" );
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, aux->fVStartIdx, aux->fVLength, aux->fIStartIdx, aux->fILength/3);
 
     // Now just loop through the aux material, rendering in as many passes as it takes.
     hsGMaterial* material = aux->fMaterial;
@@ -9350,7 +9331,7 @@ void    plDXPipeline::IRenderBufferSpan( const plIcicle& span,
         iRef->SetRebuiltSinceUsed(false);
     }
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     plProfile_EndTiming(RenderBuff);
     ILoopOverLayers(render, material, span);
@@ -10805,7 +10786,7 @@ void plDXPipeline::IRenderShadowCasterSpan(plShadowSlave* slave, plDrawableSpans
     uint32_t                  iStart = span.fIPackedIdx;
     uint32_t                  iLength= span.fILength;
 
-    plRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
+    plDXRenderTriListFunc render(fD3DDevice, iRef->fOffset, vStart, vLength, iStart, iLength/3);
 
     static hsMatrix44 emptyMatrix;
     hsMatrix44 m = emptyMatrix;
