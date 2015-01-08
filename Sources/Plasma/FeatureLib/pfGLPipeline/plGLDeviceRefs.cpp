@@ -87,3 +87,42 @@ void plGLDeviceRef::Link(plGLDeviceRef** back)
     fBack = back;
     *back = this;
 }
+
+
+/*****************************************************************************
+ ** Vertex buffer cleanup Functions                                         **
+ *****************************************************************************/
+
+plGLVertexBufferRef::~plGLVertexBufferRef()
+{
+    Release();
+}
+
+
+void plGLVertexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+    SetDirty(true);
+}
+
+
+/*****************************************************************************
+ ** Index buffer cleanup Functions                                          **
+ *****************************************************************************/
+
+plGLIndexBufferRef::~plGLIndexBufferRef()
+{
+    Release();
+}
+
+void plGLIndexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+    SetDirty(true);
+}

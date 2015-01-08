@@ -67,7 +67,7 @@ public:
     bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
     void SetFlag(uint32_t f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
 
-    virtual void    Release() = 0;
+    virtual void Release() = 0;
 
     plGLDeviceRef();
     virtual ~plGLDeviceRef();
@@ -114,10 +114,10 @@ public:
     plGLVertexBufferRef()
         : plGLDeviceRef(), fCount(), fIndex(), fVertexSize(), fOffset(),
         fFormat(), fOwner(), fData(), fRefTime()
-    { }
+    {}
 
-    virtual ~plGLVertexBufferRef() {}
-    void Release() {}
+    virtual ~plGLVertexBufferRef();
+    void Release();
 };
 
 
@@ -152,10 +152,10 @@ public:
 
     plGLIndexBufferRef()
         : plGLDeviceRef(), fCount(), fIndex(), fOffset(), fOwner(), fRefTime()
-    { }
+    {}
 
-    virtual ~plGLIndexBufferRef() {}
-    void Release() {}
+    virtual ~plGLIndexBufferRef();
+    void Release();
 };
 
 

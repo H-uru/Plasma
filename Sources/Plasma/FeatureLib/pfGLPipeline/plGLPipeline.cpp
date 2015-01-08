@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsWindows.h"
 
+#include "plGLMaterialShaderRef.h"
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
 
@@ -108,7 +109,7 @@ public:
 plGLEnumerate plGLPipeline::enumerator;
 
 plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
-    : pl3DPipeline(devMode)
+    : pl3DPipeline(devMode), fMatRefList()
 {
     plStatusLog::AddLineS("pipeline.log", "Constructing plGLPipeline");
     plStatusLog::AddLineSF("pipeline.log", "Driver vendor: {}", devMode->GetDevice()->GetDriverDesc());
@@ -489,6 +490,23 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
         }
 
         if (material != nullptr) {
+            // First, do we have a device ref at this index?
+            plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(material->GetDeviceRef());
+
+            if (mRef == nullptr) {
+                mRef = new plGLMaterialShaderRef(material);
+                material->SetDeviceRef(mRef);
+
+                glUseProgram(mRef->fRef);
+                fDevice.fCurrentProgram = mRef->fRef;
+            }
+
+            if (!mRef->IsLinked())
+                mRef->Link(&fMatRefList);
+
+            glUseProgram(mRef->fRef);
+            fDevice.fCurrentProgram = mRef->fRef;
+
             // TODO: Figure out how to use VAOs properly :(
             GLuint vao;
             glGenVertexArrays(1, &vao);
@@ -560,6 +578,18 @@ void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
         fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
     }
 #endif
+
+    if (fDevice.fCurrentProgram) {
+        /* Push the matrices into the GLSL shader now */
+        GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixProj");
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixProj);
+
+        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2C");
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
+
+        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixL2W");
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
+    }
 }
 
 void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
@@ -583,17 +613,8 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Vertex Buffer stuff */
     glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
 
-    GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_proj");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixProj);
-
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_l2w");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
-
-    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "matrix_w2c");
-    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
-
-    GLint posAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "position");
-    GLint colAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "color");
+    GLint posAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxPosition");
+    GLint colAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxColor");
     glEnableVertexAttribArray(posAttrib);
     glEnableVertexAttribArray(colAttrib);
 

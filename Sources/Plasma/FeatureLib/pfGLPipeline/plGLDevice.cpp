@@ -346,50 +346,6 @@ bool plGLDevice::InitDevice()
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
 
-    /* TEMP: Shader init stuff */
-    const char* vs_src = "#version 130"
-                     "\n"
-                     "\n" "attribute vec3 position;"
-                     "\n" "attribute vec4 color;"
-                     "\n"
-                     "\n" "uniform mat4 matrix_l2w;"
-                     "\n" "uniform mat4 matrix_w2c;"
-                     "\n" "uniform mat4 matrix_proj;"
-                     "\n"
-                     "\n" "varying vec4 v_color;"
-                     "\n"
-                     "\n" "void main() {"
-                     "\n" "    vec4 pos = matrix_l2w * vec4(position, 1.0);"
-                     "\n" "         pos = matrix_w2c * pos;"
-                     "\n" "         pos = matrix_proj * pos;"
-                     "\n"
-                     "\n" "    gl_Position = pos;"
-                     "\n" "    v_color = color.zyxw;"
-                     "\n" "}";
-
-    const char* fs_src = "#version 130"
-                     "\n"
-                     "\n" "varying mediump vec4 v_color;"
-                     "\n"
-                     "\n" "void main() {"
-                     "\n" "    gl_FragColor = v_color;"
-                     "\n" "}";
-
-    GLuint vshader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vshader, 1, &vs_src, nullptr);
-    glCompileShader(vshader);
-
-    GLuint fshader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fshader, 1, &fs_src, nullptr);
-    glCompileShader(fshader);
-
-    fCurrentProgram = glCreateProgram();
-    glAttachShader(fCurrentProgram, vshader);
-    glAttachShader(fCurrentProgram, fshader);
-
-    glLinkProgram(fCurrentProgram);
-    glUseProgram(fCurrentProgram);
-
     return true;
 }
 

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsG3DDeviceSelector.h"
 
 class plIcicle;
+class plGLMaterialShaderRef;
 
 class plGLEnumerate
 {
@@ -63,6 +64,9 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
 {
     friend class plGLPlateManager;
     friend class plGLDevice;
+
+protected:
+    plGLMaterialShaderRef* fMatRefList;
 
 public:
     plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
