@@ -2,6 +2,7 @@ set(pfGLPipeline_SOURCES
     plGLDevice.cpp
     plGLEnumerate.cpp
     plGLDeviceRefs.cpp
+    plGLMaterialShaderRef.cpp
     plGLPipeline.cpp
     plGLPlateManager.cpp
 )
@@ -9,6 +10,7 @@ set(pfGLPipeline_SOURCES
 set(pfGLPipeline_HEADERS
     plGLDevice.h
     plGLDeviceRef.h
+    plGLMaterialShaderRef.h
     plGLPipeline.h
     pfGLPipelineCreatable.h
     plGLPlateManager.h
