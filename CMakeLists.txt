@@ -1,5 +1,6 @@
 project(Plasma)
 cmake_minimum_required(VERSION 2.8.11.2)
+cmake_policy(SET CMP0054 NEW)
 
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
