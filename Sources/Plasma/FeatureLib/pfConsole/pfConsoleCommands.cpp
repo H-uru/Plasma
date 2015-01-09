@@ -6515,7 +6515,10 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
     items[0].fOptions.fTint1.Set(params[1], params[2], params[3], 1.f);
     items[0].fOptions.fTint2.Set(params[4], params[5], params[6], 1.f);
 
-    plClothingMgr::GetClothingMgr()->AddItemsToCloset(items);
+    if (items[0].fItem)
+        plClothingMgr::GetClothingMgr()->AddItemsToCloset(items);
+    else
+        PrintString("The specified clothing item could not be found.");
 }
 
 PF_CONSOLE_CMD( Clothing,                           // Group name
