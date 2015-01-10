@@ -1383,6 +1383,10 @@ void RelVaultNode::Print (const plString& tag, unsigned level) {
     case k##flag: \
         ss << ", " #flag "=\"" << Get##flag() << "\""; \
         break;
+#define STPRINT_UUID(flag) \
+    case k##flag: \
+        ss << ", " #flag "=\"" << Get##flag().AsString() << "\""; \
+        break;
 #define STPRINT_ESCAPE(flag) \
     case k##flag: \
         ss << ", " #flag "=\"" << Get##flag().Replace("\"", "\\\"") << "\""; \
@@ -1397,8 +1401,8 @@ void RelVaultNode::Print (const plString& tag, unsigned level) {
             STPRINT(CreateTime);
             STPRINT(ModifyTime);
             STPRINT(CreateAgeName);
-            STPRINT(CreateAgeUuid);
-            STPRINT(CreatorAcct);
+            STPRINT_UUID(CreateAgeUuid);
+            STPRINT_UUID(CreatorAcct);
             STPRINT(CreatorId);
             STPRINT(NodeType);
             STPRINT(Int32_1);
@@ -1409,10 +1413,10 @@ void RelVaultNode::Print (const plString& tag, unsigned level) {
             STPRINT(UInt32_2);
             STPRINT(UInt32_3);
             STPRINT(UInt32_4);
-            STPRINT(Uuid_1);
-            STPRINT(Uuid_2);
-            STPRINT(Uuid_3);
-            STPRINT(Uuid_4);
+            STPRINT_UUID(Uuid_1);
+            STPRINT_UUID(Uuid_2);
+            STPRINT_UUID(Uuid_3);
+            STPRINT_UUID(Uuid_4);
             STPRINT_ESCAPE(String64_1);
             STPRINT_ESCAPE(String64_2);
             STPRINT_ESCAPE(String64_3);
