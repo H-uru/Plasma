@@ -120,10 +120,10 @@ typedef int32_t   hsError;
 #define hsFailed(r)         ((hsError)(r)<hsOK)
 #define hsSucceeded(r)      ((hsError)(r)>=hsOK)
 
-#if defined(HAVE_CXX14_DEPRECATED_ATTR)
-#   define hsDeprecated(message) [[deprecated(message)]]
-#elif defined(HAVE_GCC_DEPRECATED_ATTR)
+#if defined(HAVE_GCC_DEPRECATED_ATTR)
 #   define hsDeprecated(message) __attribute__((deprecated(message)))
+#elif defined(HAVE_CXX14_DEPRECATED_ATTR)
+#   define hsDeprecated(message) [[deprecated(message)]]
 #elif defined(_MSC_VER)
 #   define hsDeprecated(message) __declspec(deprecated(message))
 #else
