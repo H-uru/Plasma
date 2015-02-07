@@ -15,6 +15,8 @@ set(pnUtils_HEADERS
     pnUtSort.h
     pnUtStr.h
     pnUtTime.h
+
+    plCmdParser.h
 )
 
 set(pnUtils_SOURCES
@@ -24,9 +26,13 @@ set(pnUtils_SOURCES
     pnUtList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
+
+    plCmdParser.cpp
 )
 
 add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})
+
+target_link_libraries(pnUtils CoreLib)
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})
 source_group("Source Files" FILES ${pnUtils_SOURCES})

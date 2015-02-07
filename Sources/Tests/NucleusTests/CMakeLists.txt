@@ -1,1 +1,2 @@
 add_subdirectory(pnEncryptionTest)
+add_subdirectory(pnUtilsTest)
