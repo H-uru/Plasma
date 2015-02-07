@@ -7,7 +7,6 @@ set(pnUtils_HEADERS
     pnUtCoreLib.h
     pnUtAllIncludes.h
     pnUtArray.h
-    pnUtCmd.h
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
@@ -21,7 +20,6 @@ set(pnUtils_HEADERS
 
 set(pnUtils_SOURCES
     pnUtArray.cpp
-    pnUtCmd.cpp
     pnUtCrypt.cpp
     pnUtHash.cpp
     pnUtList.cpp
