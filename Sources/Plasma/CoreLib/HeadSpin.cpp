@@ -119,7 +119,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
-#ifdef HS_DEBUGGING
+#if defined(HS_DEBUGGING) && defined(_MSC_VER)
     if (s_GuiAsserts)
     {
         if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
