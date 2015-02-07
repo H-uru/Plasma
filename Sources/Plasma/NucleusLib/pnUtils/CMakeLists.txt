@@ -10,7 +10,6 @@ set(pnUtils_HEADERS
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtMisc.h
     pnUtPragma.h
     pnUtPriQ.h
     pnUtSort.h
@@ -23,21 +22,11 @@ set(pnUtils_SOURCES
     pnUtCrypt.cpp
     pnUtHash.cpp
     pnUtList.cpp
-    pnUtMisc.cpp
     pnUtStr.cpp
     pnUtTime.cpp
 )
 
-if(WIN32)
-    set(pnUtils_WIN32
-        Win32/pnUtW32Misc.cpp
-    )
-endif(WIN32)
-
-add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES} ${pnUtils_WIN32})
+add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})
 source_group("Source Files" FILES ${pnUtils_SOURCES})
-if(WIN32)
-    source_group("Win32" FILES ${pnUtils_WIN32})
-endif(WIN32)
