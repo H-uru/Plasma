@@ -829,8 +829,8 @@ template<class T, class C>
 void TArray<T,C>::Copy (unsigned destIndex, unsigned sourceIndex, unsigned count) {
 
     // Copy the data to the destination
-    ASSERT(destIndex +   count <= m_count);
-    ASSERT(sourceIndex + count <= m_count);
+    ASSERT(destIndex +   count <= this->m_count);
+    ASSERT(sourceIndex + count <= this->m_count);
     C::Assign(this->m_data + destIndex, this->m_data + sourceIndex, count);
 
 }
