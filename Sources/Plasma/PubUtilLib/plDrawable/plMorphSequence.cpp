@@ -131,7 +131,7 @@ bool plMorphSequence::MsgReceive(plMessage* msg)
         // Can always add it in later if desired.
         if( fTgtWgts.GetCount() )
         {
-            float delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? kMorphTime : 1.e-3f);
+            float delWgt = hsTimer::GetDelSysSeconds() / (kMorphTime > 0 ? float(kMorphTime) : 1.e-3f);
             int i;
             for( i = 0; i < fTgtWgts.GetCount(); i++ )
             {

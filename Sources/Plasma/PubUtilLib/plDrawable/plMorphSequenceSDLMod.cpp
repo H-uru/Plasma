@@ -154,7 +154,7 @@ void plMorphSequenceSDLMod::ISetCurrentStateFrom(const plStateDataRecord* srcSta
     {
         plKey meshKey;
         morphSD->GetStateDataRecord(i)->FindVar(kStrMesh)->Get(&meshKey);
-        if (meshKey && !meshKey->GetUoid().GetClassType() == plSharedMesh::Index())
+        if (meshKey && meshKey->GetUoid().GetClassType() != plSharedMesh::Index())
             continue;
         
         // meshKey will be nil when dealing with non-sharedMesh data
