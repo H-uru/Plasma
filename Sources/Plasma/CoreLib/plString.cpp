@@ -299,9 +299,9 @@ void plString::IConvertFromIso8859_1(const char *astr, size_t size)
     char *dp = utf8;
     sp = astr;
     while (sp < astr + size) {
-        if (*astr & 0x80) {
-            *dp++ = 0xC0 | ((*sp >> 6) & 0x1F);
-            *dp++ = 0x80 | ((*sp     ) & 0x3F);
+        if (*sp & 0x80) {
+            *dp++ = 0xC0 | ((uint8_t(*sp) >> 6) & 0x1F);
+            *dp++ = 0x80 | ((uint8_t(*sp)     ) & 0x3F);
         } else {
             *dp++ = *sp;
         }
@@ -347,6 +347,7 @@ plStringBuffer<uint16_t> plString::ToUtf16() const
             unichar |= (*sp++ & 0x3F) << 12;
             unichar |= (*sp++ & 0x3F) << 6;
             unichar |= (*sp++ & 0x3F);
+            unichar -= 0x10000;
 
             *dp++ = 0xD800 | ((unichar >> 10) & 0x3FF);
             *dp++ = 0xDC00 | ((unichar      ) & 0x3FF);
@@ -424,7 +425,7 @@ plStringBuffer<char> plString::ToIso8859_1() const
         } else {
             unichar = *sp++;
         }
-        *dp++ = (unichar < 0xFF) ? unichar : '?';
+        *dp++ = (unichar < 0x100) ? unichar : '?';
     }
     astr[convlen] = 0;
 

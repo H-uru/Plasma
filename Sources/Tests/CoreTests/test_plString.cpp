@@ -4,30 +4,119 @@
 #include <gtest/gtest.h>
 #include <wchar.h>
 
+static const plUniChar test_data[] = {
+    0x20,       0x7f,       /* Normal ASCII chars */
+    0xff,       0x100,      /* 8-bit boundary chars */
+    0x7fff,                 /* UTF-8 2-byte boundary */
+    0xffff,     0x10000,    /* 16-bit boundary chars */
+    0x10020,    0x40000,    /* Non-edge UTF-16 surrogate pairs */
+    0x10ffff,               /* Highest Unicode character */
+    0                       /* Null terminator */
+};
 
-TEST(PlStringTest,ToUtf16)
+/* UTF-8 version of above test data */
+static const char utf8_test_data[] =
+    "\x20"              "\x7f"
+    "\xc3\xbf"          "\xc4\x80"
+    "\xe7\xbf\xbf"
+    "\xef\xbf\xbf"      "\xf0\x90\x80\x80"
+    "\xf0\x90\x80\xa0"  "\xf1\x80\x80\x80"
+    "\xf4\x8f\xbf\xbf";
+
+/* UTF-16 version of test data */
+static const uint16_t utf16_test_data[] = {
+    0x20, 0x7f,
+    0xff, 0x100,
+    0x7fff,
+    0xffff,
+    /* surrogate pairs for chars >0xffff */
+    0xd800, 0xdc00,
+    0xd800, 0xdc20,
+    0xd8c0, 0xdc00,
+    0xdbff, 0xdfff,
+    0
+};
+
+/* Utility for comparing plUniChar buffers */
+template <typename _Ch>
+static int T_strcmp(const _Ch *left, const _Ch *right)
 {
-    uint16_t text[] = {0x0061,0x0062,0x0063,0x0064}; //abcd as in utf16
-    plStringBuffer<uint16_t> expected = plStringBuffer<uint16_t>(text,arrsize(text));
-    plStringBuffer<uint16_t> output = plString("abcd").ToUtf16();
-    
-    EXPECT_EQ(expected.GetSize(), output.GetSize()); //not really a good test
+    for ( ;; ) {
+        if (*left != *right)
+            return *left - *right;
+        if (*left == 0)
+            return (*right == 0) ? 0 : -1;
+        if (*right == 0)
+            return 1;
+
+        ++left;
+        ++right;
+    }
 }
 
-TEST(PlStringTest,ToWchar)
+TEST(PlStringTest, TestHelpers)
 {
-    wchar_t text[] =L"abcd\u00E9";
-    plStringBuffer<wchar_t> expected = plStringBuffer<wchar_t>(text,arrsize(text));
-    plStringBuffer<wchar_t> output = plString("abcd\xC3\xA9").ToWchar();
-    EXPECT_STREQ(expected.GetData(),output.GetData());
+    /* Ensure the utilities for testing the module function properly */
+    EXPECT_EQ(0, T_strcmp("abc", "abc"));
+    EXPECT_LT(0, T_strcmp("abc", "aba"));
+    EXPECT_GT(0, T_strcmp("abc", "abe"));
+    EXPECT_LT(0, T_strcmp("abc", "ab"));
+    EXPECT_GT(0, T_strcmp("abc", "abcd"));
 }
 
-TEST(PlStringTest,ToIso8859_1)
+TEST(PlStringTest, ConvertUtf8)
 {
-    char text[] ="abcde";
-    plStringBuffer<char> expected = plStringBuffer<char>(text,arrsize(text));
-    plStringBuffer<char> output = plString("abcde").ToIso8859_1();
-    EXPECT_STREQ(expected.GetData(),output.GetData());
+    // From UTF-8 to plString
+    plString from_utf8 = plString::FromUtf8(utf8_test_data);
+    EXPECT_STREQ(utf8_test_data, from_utf8.c_str());
+    plUnicodeBuffer unicode = from_utf8.GetUnicodeArray();
+    EXPECT_EQ(0, T_strcmp(test_data, unicode.GetData()));
+
+    // From plString to UTF-8
+    plString to_utf8 = plString::FromUtf32(test_data);
+    EXPECT_STREQ(utf8_test_data, to_utf8.c_str());
+}
+
+TEST(PlStringTest, ConvertUtf16)
+{
+    // From UTF-16 to plString
+    plString from_utf16 = plString::FromUtf16(utf16_test_data);
+    plUnicodeBuffer unicode = from_utf16.GetUnicodeArray();
+    EXPECT_EQ(0, T_strcmp(test_data, unicode.GetData()));
+
+    // From plString to UTF-16
+    plStringBuffer<uint16_t> to_utf16 = plString::FromUtf32(test_data).ToUtf16();
+    EXPECT_EQ(0, T_strcmp(utf16_test_data, to_utf16.GetData()));
+}
+
+TEST(PlStringTest, ConvertIso8859_1)
+{
+    // From ISO-8859-1 to plString
+    const char latin1[] = "\x20\x7e\xa0\xff";
+    const plUniChar unicode_cp0[] = { 0x20, 0x7e, 0xa0, 0xff, 0 };
+    plString from_latin1 = plString::FromIso8859_1(latin1);
+    plUnicodeBuffer unicode = from_latin1.GetUnicodeArray();
+    EXPECT_EQ(0, T_strcmp(unicode_cp0, unicode.GetData()));
+
+    // From plString to ISO-8859-1
+    plStringBuffer<char> to_latin1 = plString::FromUtf32(unicode_cp0).ToIso8859_1();
+    EXPECT_STREQ(latin1, to_latin1.GetData());
+}
+
+TEST(PlStringTest, ConvertWchar)
+{
+    // UTF-8 and UTF-16 are already tested, so just make sure we test
+    // wchar_t and L"" conversions
+
+    const wchar_t wtext[] = L"\x20\x7f\xff\u0100\uffff";
+    const plUniChar unicode_text[] = { 0x20, 0x7f, 0xff, 0x100, 0xffff, 0 };
+    plString from_wchar = plString::FromWchar(wtext);
+    plUnicodeBuffer unicode = from_wchar.GetUnicodeArray();
+    EXPECT_EQ(0, T_strcmp(unicode_text, unicode.GetData()));
+
+    // From plString to wchar_t
+    plStringBuffer<wchar_t> to_wchar = plString::FromUtf32(unicode_text).ToWchar();
+    EXPECT_STREQ(wtext, to_wchar.GetData());
 }
 
 TEST(PlStringTest,FindChar)
