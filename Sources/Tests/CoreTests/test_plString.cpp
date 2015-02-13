@@ -119,6 +119,25 @@ TEST(PlStringTest, ConvertWchar)
     EXPECT_STREQ(wtext, to_wchar.GetData());
 }
 
+TEST(PlStringTest, ConvertInvalid)
+{
+    // The following should encode replacement characters for invalid chars
+    const plUniChar unicode_replacement[] = { 0xfffd, 0 };
+
+    const plUniChar char_too_big[] = { 0xffffff, 0 };
+    plUnicodeBuffer too_big = plString::FromUtf32(char_too_big).GetUnicodeArray();
+    EXPECT_EQ(0, T_strcmp(unicode_replacement, too_big.GetData()));
+
+    // TODO: Invalid surrogate pairs can encode to 0xfffd, but it's handled
+    //       by an assert right now.
+
+    // ISO-8859-1 doesn't have \ufffd, so it uses '?' instead
+    const plUniChar high_char[] = { 0x1ff, 0 };
+    const char latin1_replacement[] = "?";
+    plStringBuffer<char> non_latin1 = plString::FromUtf32(high_char).ToIso8859_1();
+    EXPECT_STREQ(latin1_replacement, non_latin1.GetData());
+}
+
 TEST(PlStringTest,FindChar)
 {
     plString input = plString("abCdcBAeab");
