@@ -43,6 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plBufferedSocketWriter.h"
 #include "plTcpSocket.h"
 
+#include <algorithm>
+
 plBufferedSocketWriter::plBufferedSocketWriter(int size, int bytesPerFlush, bool blockOnSend, int flushPoint)
 :   plRingBuffer(size)
 ,   fFlushPoint(flushPoint)

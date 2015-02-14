@@ -5269,8 +5269,8 @@ void NetCliAuthAgeRequest (
 
 //============================================================================
 void NetCliAuthGetEncryptionKey (
-    uint32_t      key[],
-    unsigned    size
+    uint32_t    key[],
+    size_t      size
 ) {
     unsigned memSize = std::min(arrsize(s_encryptionKey), size);
     memSize *= sizeof(uint32_t);

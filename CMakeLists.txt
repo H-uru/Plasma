@@ -106,7 +106,11 @@ option(PLASMA_BUILD_RESOURCE_DAT "Do we want to build resource.dat?" ON)
 option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
-option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
+if(WIN32)
+    option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
+else()
+    set(3dsm_BUILD_PLUGIN OFF)
+endif()
 
 if(PLASMA_BUILD_TOOLS)
     # Custom dummy target for compiling all tools

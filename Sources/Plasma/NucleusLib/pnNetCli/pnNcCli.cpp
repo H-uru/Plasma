@@ -678,7 +678,7 @@ static void ClientConnect (NetCli * cli) {
         memset(&cli->seed, 0, sizeof(cli->seed));
         unsigned bytes;
         unsigned char * data = clientSeed.GetData_LE(&bytes);
-        memcpy(cli->seed, data, std::min(bytes, sizeof(cli->seed)));
+        memcpy(cli->seed, data, std::min(size_t(bytes), sizeof(cli->seed)));
         delete [] data;
     }
 
@@ -740,7 +740,7 @@ static bool ServerRecvConnect (
             memset(&clientSeed, 0, sizeof(clientSeed));
             unsigned bytes;
             unsigned char * data = clientSeedValue.GetData_LE(&bytes);
-            memcpy(clientSeed, data, std::min(bytes, sizeof(clientSeed)));
+            memcpy(clientSeed, data, std::min(size_t(bytes), sizeof(clientSeed)));
             delete [] data;
         }
 
@@ -960,8 +960,8 @@ static NetCli * ConnCreate (
 //===========================================================================
 static void SetConnSeed (
     NetCli *        cli,
-    unsigned        seedBytes,
-    const uint8_t      seedData[]
+    size_t          seedBytes,
+    const uint8_t   seedData[]
 ) {
     if (seedBytes)
         memcpy(cli->seed, seedData, std::min(sizeof(cli->seed), seedBytes));
