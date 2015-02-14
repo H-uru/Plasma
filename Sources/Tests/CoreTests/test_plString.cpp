@@ -123,18 +123,30 @@ TEST(PlStringTest, ConvertInvalid)
 {
     // The following should encode replacement characters for invalid chars
     const plUniChar unicode_replacement[] = { 0xfffd, 0 };
+    const char latin1_replacement[] = "?";
 
-    const plUniChar char_too_big[] = { 0xffffff, 0 };
-    plUnicodeBuffer too_big = plString::FromUtf32(char_too_big).GetUnicodeArray();
+    // Character outside of Unicode specification range
+    const plUniChar too_big_c[] = { 0xffffff, 0 };
+    plUnicodeBuffer too_big = plString::FromUtf32(too_big_c).GetUnicodeArray();
     EXPECT_EQ(0, T_strcmp(unicode_replacement, too_big.GetData()));
 
-    // TODO: Invalid surrogate pairs can encode to 0xfffd, but it's handled
-    //       by an assert right now.
+    // Invalid surrogate pairs
+    const uint16_t incomplete_surr_c[] = { 0xd800, 0 };
+    plString incomplete_surr = plString::FromUtf16(incomplete_surr_c);
+    EXPECT_EQ(0, T_strcmp(unicode_replacement,
+                          incomplete_surr.GetUnicodeArray().GetData()));
+
+    const uint16_t double_low_c[] = { 0xd800, 0xd801, 0 };
+    plString double_low = plString::FromUtf16(double_low_c);
+    EXPECT_EQ(0, T_strcmp(unicode_replacement, double_low.GetUnicodeArray().GetData()));
+
+    const uint16_t bad_combo_c[] = { 0xdc00, 0x20, 0 };
+    plString bad_combo = plString::FromUtf16(double_low_c);
+    EXPECT_EQ(0, T_strcmp(unicode_replacement, bad_combo.GetUnicodeArray().GetData()));
 
     // ISO-8859-1 doesn't have \ufffd, so it uses '?' instead
-    const plUniChar high_char[] = { 0x1ff, 0 };
-    const char latin1_replacement[] = "?";
-    plStringBuffer<char> non_latin1 = plString::FromUtf32(high_char).ToIso8859_1();
+    const plUniChar non_latin1_c[] = { 0x1ff, 0 };
+    plStringBuffer<char> non_latin1 = plString::FromUtf32(non_latin1_c).ToIso8859_1();
     EXPECT_STREQ(latin1_replacement, non_latin1.GetData());
 }
 

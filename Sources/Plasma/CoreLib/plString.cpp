@@ -171,18 +171,24 @@ void plString::IConvertFromUtf16(const uint16_t *utf16, size_t size)
             plUniChar unichar = 0x10000;
 
             if (sp + 1 >= utf16 + size) {
-                hsAssert(0, "Incomplete surrogate pair in UTF-16 data");
+                // Incomplete surrogate pair
                 unichar = BADCHAR_REPLACEMENT;
             } else if (*sp < 0xDC00) {
                 unichar += (*sp++ & 0x3FF) << 10;
-                hsAssert(*sp >= 0xDC00 && *sp <= 0xDFFF,
-                         "Invalid surrogate pair in UTF-16 data");
-                unichar += (*sp   & 0x3FF);
+                if (*sp < 0xDC00 || *sp > 0xDFFF) {
+                    // Invalid surrogate pair
+                    unichar = BADCHAR_REPLACEMENT;
+                } else {
+                    unichar += (*sp & 0x3FF);
+                }
             } else {
                 unichar += (*sp++ & 0x3FF);
-                hsAssert(*sp >= 0xD800 && *sp <  0xDC00,
-                         "Invalid surrogate pair in UTF-16 data");
-                unichar += (*sp   & 0x3FF) << 10;
+                if (*sp < 0xD800 || *sp >= 0xDC00) {
+                    // Invalid surrogate pair
+                    unichar = BADCHAR_REPLACEMENT;
+                } else {
+                    unichar += (*sp & 0x3FF) << 10;
+                }
             }
             *dp++ = 0xF0 | ((unichar >> 18) & 0x07);
             *dp++ = 0x80 | ((unichar >> 12) & 0x3F);
@@ -229,8 +235,8 @@ void plString::IConvertFromUtf32(const plUniChar *ustr, size_t size)
     const plUniChar *sp = ustr;
     while (sp < ustr + size) {
         if (*sp > 0x10FFFF) {
-            hsAssert(0, "UTF-32 character out of range");
-            convlen += 3;   // Use U+FFFD for release builds
+            // Invalid character gets replaced with U+FFFD
+            convlen += 3;
         }
         else if (*sp > 0xFFFF)
             convlen += 4;
