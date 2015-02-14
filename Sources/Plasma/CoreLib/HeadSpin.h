@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Ensure these get set consistently regardless of what module includes it
 #include "hsCompilerSpecific.h"
 
-#if (defined(_DEBUG) || defined(UNIX_DEBUG))
+#if defined(_DEBUG)
 #   define HS_DEBUGGING
-#endif // defined(_DEBUG) || defined(UNIX_DENUG)
+#endif
 
 //======================================
 // Some standard includes
