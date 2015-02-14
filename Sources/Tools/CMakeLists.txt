@@ -4,9 +4,20 @@ if(PLASMA_BUILD_TOOLS)
 
     add_subdirectory(plLocalizationEditor)
     add_subdirectory(plResBrowser)
-    add_subdirectory(plShaderAssembler)
+
+    add_dependencies(tools
+        plLocalizationEditor
+        plResBrowser
+    )
+
+    if(WIN32)
+        add_subdirectory(plShaderAssembler)
+        add_dependencies(tools plShaderAssembler)
+    endif()
+
     if(FREETYPE_FOUND)
         add_subdirectory(plFontConverter)
+        add_dependencies(tools plFontConverter)
     endif()
 endif()
 

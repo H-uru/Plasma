@@ -108,6 +108,11 @@ option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 option(3dsm_BUILD_PLUGIN "Do we want to build the 3ds Max plugin?" OFF)
 
+if(PLASMA_BUILD_TOOLS)
+    # Custom dummy target for compiling all tools
+    add_custom_target(tools)
+endif()
+
 if(3dsm_BUILD_PLUGIN)
     find_package(MaxSDK REQUIRED)
     add_definitions(-DBUILDING_MAXPLUGIN)
