@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsSTLStream.h"
 
 #if !HS_BUILD_FOR_WIN32
+#include <errno.h>
 #define INVALID_HANDLE_VALUE 0
 #endif
 
@@ -325,9 +326,10 @@ uint32_t plSecureStream::IRead(uint32_t bytes, void* buffer)
         }
         else
         {
-            // TODO: errno equivalent for *nix
 #if HS_BUILD_FOR_WIN32
             hsDebugMessage("Error on Windows read", GetLastError());
+#else
+            hsDebugMessage("Error on POSIX read", errno);
 #endif
         }
     }
