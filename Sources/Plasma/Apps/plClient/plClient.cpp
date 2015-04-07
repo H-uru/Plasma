@@ -1461,7 +1461,7 @@ bool plClient::StartInit()
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
 
-    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    IPlayIntroMovie("avi/TOCIntro.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
     if(GetDone()) return false;
     plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
