@@ -45,9 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Ensure these get set consistently regardless of what module includes it
 #include "hsCompilerSpecific.h"
 
-#if (defined(_DEBUG) || defined(UNIX_DEBUG))
+#if defined(_DEBUG)
 #   define HS_DEBUGGING
-#endif // defined(_DEBUG) || defined(UNIX_DENUG)
+#endif
 
 //======================================
 // Some standard includes
@@ -120,10 +120,10 @@ typedef int32_t   hsError;
 #define hsFailed(r)         ((hsError)(r)<hsOK)
 #define hsSucceeded(r)      ((hsError)(r)>=hsOK)
 
-#if defined(HAVE_CXX14_DEPRECATED_ATTR)
-#   define hsDeprecated(message) [[deprecated(message)]]
-#elif defined(HAVE_GCC_DEPRECATED_ATTR)
+#if defined(HAVE_GCC_DEPRECATED_ATTR)
 #   define hsDeprecated(message) __attribute__((deprecated(message)))
+#elif defined(HAVE_CXX14_DEPRECATED_ATTR)
+#   define hsDeprecated(message) [[deprecated(message)]]
 #elif defined(_MSC_VER)
 #   define hsDeprecated(message) __declspec(deprecated(message))
 #else

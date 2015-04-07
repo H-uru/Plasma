@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "pnEncryption/plChallengeHash.h"
+#include "plVault/plVaultConstants.h"
 
 namespace Ngl { namespace Auth {
 /*****************************************************************************
@@ -3950,7 +3951,7 @@ bool VaultFetchNodeTrans::Recv (
     
     if (IS_NET_SUCCESS(reply.result)) {
         m_node = new NetVaultNode;
-        m_node->Read_LCS(reply.nodeBuffer, reply.nodeBytes, 0);
+        m_node->Read(reply.nodeBuffer, reply.nodeBytes);
     }
 
     m_result = reply.result;
@@ -3984,9 +3985,7 @@ bool VaultFindNodeTrans::Send () {
         return false;
         
     ARRAY(uint8_t) buffer;
-    m_node->critsect.Enter();
-    m_node->Write_LCS(&buffer, 0);
-    m_node->critsect.Leave();
+    m_node->Write(&buffer);
 
     const uintptr_t msg[] = {
         kCli2Auth_VaultNodeFind,
@@ -4054,7 +4053,7 @@ bool VaultCreateNodeTrans::Send () {
         return false;
         
     ARRAY(uint8_t) buffer;
-    m_templateNode->Write_LCS(&buffer, 0);
+    m_templateNode->Write(&buffer, 0);
 
     const uintptr_t msg[] = {
         kCli2Auth_VaultNodeCreate,
@@ -5143,14 +5142,14 @@ void NetCliAuthStartConnect (
                     &cancelId,
                     AsyncLookupCallback,
                     authAddrList[i],
-                    kNetDefaultClientPort,
+                    GetClientPort(),
                     nil
                 );
                 break;
             }
         }
         if (!name[0]) {
-            plNetAddress addr(authAddrList[i], kNetDefaultClientPort);
+            plNetAddress addr(authAddrList[i], GetClientPort());
             Connect(authAddrList[i], addr);
         }
     }
@@ -5608,43 +5607,34 @@ unsigned NetCliAuthVaultNodeSave (
     FNetCliAuthVaultNodeSaveCallback    callback,
     void *                              param
 ) {
-    ASSERTMSG(!(node->GetDirtyFlags() & NetVaultNode::kNodeType), "Node type may not be changed");
-    
-    // Clear dirty bits of read-only fields before we write the node to the msg buffer
-    node->ClearDirtyFlags(
-        NetVaultNode::kNodeId |
-        NetVaultNode::kNodeType |
-        NetVaultNode::kCreatorAcct |
-        NetVaultNode::kCreatorId |
-        NetVaultNode::kCreateTime
-    );
-    
-    if (!node->GetDirtyFlags())
+    if (!node->IsDirty())
         return 0;
-        
+
     if (!node->GetNodeId())
         return 0;
-        
-    // force sending of the nodeType value, since the auth needs it.
-    // auth will clear the field before sending it on to the vault.
-    node->SetDirtyFlags(NetVaultNode::kNodeType);
 
     // We're definitely saving this node, so assign a revisionId
-    node->revisionId = plUUID::Generate();
+    node->GenerateRevision();
+
+    // Lots of hacks for MOULa :(
+    uint32_t ioFlags = NetVaultNode::kDirtyOnly | NetVaultNode::kClearDirty;
+    if (node->GetNodeType() == plVault::kNodeType_SDL)
+        ioFlags |= NetVaultNode::kDirtyString64_1;
+    ioFlags |= NetVaultNode::kDirtyNodeType;
 
     ARRAY(uint8_t) buffer;
-    unsigned bytes = node->Write_LCS(&buffer, NetVaultNode::kRwDirtyOnly | NetVaultNode::kRwUpdateDirty);
-    
+    node->Write(&buffer, ioFlags);
+
     VaultSaveNodeTrans * trans = new VaultSaveNodeTrans(
         node->GetNodeId(),
-        node->revisionId,
+        node->GetRevision(),
         buffer.Count(),
         buffer.Ptr(),
         callback,
         param
     );
     NetTransSend(trans);
-    return bytes;
+    return buffer.Count();
 }
 
 //============================================================================

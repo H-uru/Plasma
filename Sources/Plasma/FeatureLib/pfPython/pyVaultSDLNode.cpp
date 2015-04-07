@@ -105,13 +105,10 @@ PyObject * pyVaultSDLNode::GetStateDataRecord() const
 
 void pyVaultSDLNode::InitStateDataRecord( const char* agename, int flags)
 {
-    if (!fNode)
-        return;
-
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, agename, arrsize(wStr)); 
-    VaultSDLNode sdl(fNode);
-    sdl.InitStateDataRecord(wStr, flags);
+    if (fNode) {
+        VaultSDLNode sdl(fNode);
+        sdl.InitStateDataRecord(agename, flags);
+    }
 }
 
 void pyVaultSDLNode::SetStateDataRecord( const pySDLStateDataRecord & rec, int writeOptions/*=0 */)

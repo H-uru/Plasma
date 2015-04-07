@@ -39,48 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plAGMasterSDLModifier_inc
-#define plAGMasterSDLModifier_inc
 
-#include "plModifier/plAnimTimeConvertSDLModifier.h"
+#include "pfPasswordStore.h"
+#include "pfPasswordStore_impl.h"
 
-//
-// This modifier is responsible for sending and recving 
-// an object's animation state
-//
-class plAGMasterMod;
-class plSceneObject;
-class plStateDataRecord;
+#include "plProduct.h"
 
-class plAGMasterSDLModifier : public plAnimTimeConvertSDLModifier
+
+/*****************************************************************************
+ ** pfUnixPasswordStore                                                     **
+ *****************************************************************************/
+const plString pfUnixPasswordStore::GetPassword(const plString& username)
 {
-protected:
-    // var labels 
-    struct AGMasterVarNames
-    {
-        static char kStrAtcs[];     // animTimeConverts
-        static char kStrBlends[];
-    };
+}
 
-    plAGMasterMod* IGetObjectsAGMasterMod(plSceneObject* obj);
-    
-    void IPutBlends(plStateDataRecord* state, plAGMasterMod* objAGMaster);
-    void ISetCurrentBlends(const plStateDataRecord* state, plAGMasterMod* objAGMaster);
-
-    void IPutCurrentStateIn(plStateDataRecord* dstState);
-    void ISetCurrentStateFrom(const plStateDataRecord* srcState);
-
-    uint32_t IApplyModFlags(uint32_t sendFlags);
-
-public:
-    CLASSNAME_REGISTER( plAGMasterSDLModifier);
-    GETINTERFACE_ANY( plAGMasterSDLModifier, plAnimTimeConvertSDLModifier);
-
-    plAGMasterSDLModifier() {}
-    ~plAGMasterSDLModifier() {}
-        
-    const char* GetSDLName() const { return kSDLAGMaster; }
-};
-
-#endif  // plAGMasterSDLModifier_inc
-
+bool pfUnixPasswordStore::SetPassword(const plString& username, const plString& password)
+{
+}

@@ -1,6 +1,10 @@
 project(Plasma)
 cmake_minimum_required(VERSION 2.8.11.2)
 
+if(POLICY CMP0054)
+    cmake_policy(SET CMP0054 NEW)
+endif()
+
 # Set up Product Identification parameters
 set(PRODUCT_BRANCH_ID   "1"         CACHE STRING "Branch ID")
 set(PRODUCT_BUILD_ID    "918"       CACHE STRING "Build ID")
@@ -41,6 +45,8 @@ find_package(PNG REQUIRED)
 find_package(Ogg REQUIRED)    #TODO: Not required if we aren't building the client
 find_package(Vorbis REQUIRED) #TODO: Not required if we aren't building the client
 find_package(Speex REQUIRED)  #TODO: Not required if we aren't building the client
+find_package(VPX)
+find_package(Opus)
 find_package(CURL REQUIRED)
 find_package(Freetype)
 
@@ -49,8 +55,11 @@ if(WIN32)
     find_package(DirectX REQUIRED)
 endif(WIN32)
 
-find_package(Bink)            #TODO: Find Bink, but don't require it if plPipeline isn't built...
-                              #      Or better yet, just eliminate bink altogether
+if(VPX_FOUND AND Opus_FOUND)
+    set(MOVIE_AVAILABLE TRUE)
+    add_definitions(-DMOVIE_AVAILABLE)
+endif()
+
 include(PrecompiledHeader)    #Precompiled Header helper macros
 
 # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves

@@ -164,8 +164,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderName)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderNameW)
 {
-    std::wstring name = self->fThis->Folder_GetNameW();
-    return PyUnicode_FromWideChar(name.c_str(), name.length());
+    return PyUnicode_FromStringEx(self->fThis->Folder_GetName());
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultFolderNode)

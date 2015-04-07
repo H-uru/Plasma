@@ -68,24 +68,20 @@ pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
 // class RelVaultNode : public plVaultNode
 //
 
-const char * pyVaultMarkerGameNode::GetGameName () const
+plString pyVaultMarkerGameNode::GetGameName () const
 {
-    fGameName[0] = 0;
-    
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        StrToAnsi(fGameName, access.GetGameName(), arrsize(fGameName));
+        return access.GetGameName();
     }
-    return fGameName;
+    return "";
 }
 
-void pyVaultMarkerGameNode::SetGameName (const char v[])
+void pyVaultMarkerGameNode::SetGameName (const plString& name)
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
-        wchar_t unicode[kMaxVaultNodeStringLength];
-        StrToUnicode(unicode, v, arrsize(unicode));
-        access.SetGameName(unicode);
+        access.SetGameName(name);
     }
 }
 

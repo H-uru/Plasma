@@ -64,6 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem/plParticleCreatable.h"
 #include "plNetCommon/plNetCommonCreatable.h"
 #include "plVault/plVaultCreatable.h"
+#include "plAnimation/plAnimationCreatable.h"
 #include "plAvatar/plAvatarCreatable.h"
 #include "plIntersect/plIntersectCreatable.h"
 #include "plNetMessage/plNetMessageCreatable.h"
@@ -72,4 +73,3 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeLoader/plAgeLoaderCreatable.h"
 
 #endif // plAllCreatables_inc
- 

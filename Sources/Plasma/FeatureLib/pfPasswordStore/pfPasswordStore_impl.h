@@ -40,26 +40,58 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#ifndef plLayerBink_inc
-#define plLayerBink_inc
+#ifndef pfPasswordStore_impl_inc
+#define pfPasswordStore_impl_inc
 
-#include "plLayerMovie.h"
+#include "pfPasswordStore.h"
 
-class plLayerBink : public plLayerMovie
+/**
+ * An encrypted file-based password storage mechanism.
+ */
+class pfFilePasswordStore : public pfPasswordStore
 {
-protected:
-    virtual int32_t             ISecsToFrame(float secs) { return 0; }
-    virtual bool                IInit() { return true; }
-    virtual bool                IGetCurrentFrame() { return true; }
-    virtual bool                IRelease() { return true; }
+private:
+    uint32_t fCryptKey[4];
 
 public:
-    plLayerBink() { }
-    virtual ~plLayerBink() { }
+    pfFilePasswordStore();
 
-    CLASSNAME_REGISTER( plLayerBink );
-    GETINTERFACE_ANY( plLayerBink, plLayerMovie );
-
+    virtual const plString GetPassword(const plString& username);
+    virtual bool SetPassword(const plString& username, const plString& password);
 };
 
-#endif // plLayerBink_inc
+
+#ifdef HS_BUILD_FOR_WIN32
+/**
+ * A Windows Credential Vault password storage mechanism.
+ */
+class pfWin32PasswordStore : public pfPasswordStore
+{
+public:
+    pfWin32PasswordStore() { }
+
+    virtual const plString GetPassword(const plString& username);
+    virtual bool SetPassword(const plString& username, const plString& password);
+};
+#endif //HS_BUILD_FOR_WIN32
+
+
+/**
+* @todo A Linux libsecret-based storage mechanism.
+*/
+
+#ifdef HS_BUILD_FOR_OSX
+/**
+ * An OSX Keychain password storage mechanism.
+ */
+class pfMacPasswordStore : public pfPasswordStore
+{
+public:
+    pfMacPasswordStore() { }
+
+    virtual const plString GetPassword(const plString& username);
+    virtual bool SetPassword(const plString& username, const plString& password);
+};
+#endif //HS_BUILD_FOR_OSX
+
+#endif //pfPasswordStore_impl_inc

@@ -57,24 +57,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // should only be created from C++ side
 pyVaultPlayerInfoNode::pyVaultPlayerInfoNode(RelVaultNode* nfsNode)
 : pyVaultNode(nfsNode)
-, ansiPlayerName(nil)
-, ansiAgeInstName(nil)
 {
 }
 
 //create from the Python side
 pyVaultPlayerInfoNode::pyVaultPlayerInfoNode()
 : pyVaultNode(new RelVaultNode)
-, ansiPlayerName(nil)
-, ansiAgeInstName(nil)
 {
     fNode->SetNodeType(plVault::kNodeType_PlayerInfo);
 }
 
-pyVaultPlayerInfoNode::~pyVaultPlayerInfoNode () {
-    free(ansiPlayerName);
-    free(ansiAgeInstName);
-}
 
 //==================================================================
 // class RelVaultNode : public plVaultNode
@@ -97,55 +89,39 @@ uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
     return playerInfo.GetPlayerId();
 }
 
-void pyVaultPlayerInfoNode::Player_SetPlayerName( const char * name )
+void pyVaultPlayerInfoNode::Player_SetPlayerName(const plString& name)
 {
-    if (!fNode)
-        return;
-
-    wchar_t * wStr = StrDupToUnicode(name);
-    VaultPlayerInfoNode playerInfo(fNode);      
-    playerInfo.SetPlayerName(wStr);
-    free(wStr);
+    if (fNode) {
+        VaultPlayerInfoNode playerInfo(fNode);
+        playerInfo.SetPlayerName(name);
+    }
 }
 
-const char * pyVaultPlayerInfoNode::Player_GetPlayerName( void )
+plString pyVaultPlayerInfoNode::Player_GetPlayerName() const
 {
-    if (!fNode)
-        return "";
-        
-    VaultPlayerInfoNode playerInfo(fNode);      
-    if (!playerInfo.GetPlayerName())
-        return "";
-
-    free(ansiPlayerName);
-    ansiPlayerName = StrDupToAnsi(playerInfo.GetPlayerName());
-    return ansiPlayerName;
+    if (fNode) {
+        VaultPlayerInfoNode playerInfo(fNode);
+        return playerInfo.GetPlayerName();
+    }
+    return "";
 }
 
 // age the player is currently in, if any.
-void pyVaultPlayerInfoNode::Player_SetAgeInstanceName( const char * agename )
+void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const plString& name)
 {
-    if (!fNode)
-        return;
-
-    wchar_t * wStr = StrDupToUnicode(agename);
-    VaultPlayerInfoNode playerInfo(fNode);
-    playerInfo.SetAgeInstName(wStr);
-    free(wStr);
+    if (fNode) {
+        VaultPlayerInfoNode playerInfo(fNode);
+        playerInfo.SetAgeInstName(name);
+    }
 }
 
-const char * pyVaultPlayerInfoNode::Player_GetAgeInstanceName( void )
+plString pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
 {
-    if (!fNode)
-        return "";
-        
-    VaultPlayerInfoNode playerInfo(fNode);
-    if (!playerInfo.GetAgeInstName())
-        return "";
-        
-    free(ansiAgeInstName);
-    ansiAgeInstName = StrDupToAnsi(playerInfo.GetAgeInstName());
-    return ansiAgeInstName;
+    if (fNode) {
+        VaultPlayerInfoNode playerInfo(fNode);
+        return playerInfo.GetAgeInstName();
+    }
+    return "";
 }
 
 void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)

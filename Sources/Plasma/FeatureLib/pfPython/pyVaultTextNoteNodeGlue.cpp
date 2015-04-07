@@ -173,8 +173,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitle)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitleW)
 {
-    std::wstring retVal = self->fThis->Note_GetTitleW();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyUnicode_FromStringEx(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setText, args)
@@ -225,8 +224,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getText)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTextW)
 {
-    std::wstring retVal = self->fThis->Note_GetTextW();
-    return PyUnicode_FromWideChar(retVal.c_str(), retVal.length());
+    return PyUnicode_FromStringEx(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setType, args)

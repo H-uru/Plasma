@@ -3933,17 +3933,10 @@ PF_CONSOLE_GROUP( Movie ) // Defines a main command group
 PF_CONSOLE_CMD( Movie,
                     Start,
                    "string filename",
-                   "Start of movie with this filename" )
+                   "Start movie with this filename" )
 {
     char* filename = params[0];
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStart);
-
-//#define MF_TEST_MOVIECALLBACKS
-#ifdef MF_TEST_MOVIECALLBACKS
-    plMovieMsg* cb = new plMovieMsg("avi/intro0.bik", plMovieMsg::kStart);
-    mov->AddCallback(cb);
-    mov->SetCmd(mov->GetCmd() | plMovieMsg::kAddCallbacks);
-#endif // MF_TEST_MOVIECALLBACKS
 
     mov->Send();
 
@@ -6521,7 +6514,10 @@ PF_CONSOLE_CMD( Clothing,                           // Group name
     items[0].fOptions.fTint1.Set(params[1], params[2], params[3], 1.f);
     items[0].fOptions.fTint2.Set(params[4], params[5], params[6], 1.f);
 
-    plClothingMgr::GetClothingMgr()->AddItemsToCloset(items);
+    if (items[0].fItem)
+        plClothingMgr::GetClothingMgr()->AddItemsToCloset(items);
+    else
+        PrintString("The specified clothing item could not be found.");
 }
 
 PF_CONSOLE_CMD( Clothing,                           // Group name
@@ -6919,8 +6915,8 @@ PF_CONSOLE_GROUP(Vault)
 
 PF_CONSOLE_CMD(Vault, Dump, "", "Prints the vault structure of current player and age to the nearest log file")
 {
-    VaultDump(L"Player", NetCommGetPlayer()->playerInt);
-    VaultDump(L"Age", NetCommGetAge()->ageVaultId);
+    VaultDump("Player", NetCommGetPlayer()->playerInt);
+    VaultDump("Age", NetCommGetAge()->ageVaultId);
 }
 
 #endif

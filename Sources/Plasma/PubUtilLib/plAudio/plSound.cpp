@@ -64,8 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plPlates.h"
 #include "pnKeyedObject/plKey.h"
 #include "pnNetCommon/plSDLTypes.h"
-#include "plAvatar/plScalarChannel.h"
-#include "plAvatar/plAGModifier.h"
+#include "plAnimation/plScalarChannel.h"
+#include "plAnimation/plAGModifier.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plAudioInterface.h"
 

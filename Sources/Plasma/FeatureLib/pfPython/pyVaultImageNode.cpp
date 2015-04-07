@@ -116,12 +116,9 @@ void pyVaultImageNode::Image_SetTitle( const char * text )
 {
     if (!fNode)
         return;
-        
-    wchar_t * wStr = hsStringToWString(text);
 
     VaultImageNode image(fNode);
-    image.SetImageTitle(wStr);
-    delete [] wStr;
+    image.SetImageTitle(text);
 }
 
 void pyVaultImageNode::Image_SetTitleW( const wchar_t* text )
@@ -130,34 +127,16 @@ void pyVaultImageNode::Image_SetTitleW( const wchar_t* text )
         return;
 
     VaultImageNode image(fNode);
-    image.SetImageTitle(text);
+    image.SetImageTitle(plString::FromWchar(text));
 }
 
-std::string pyVaultImageNode::Image_GetTitle( void )
+plString pyVaultImageNode::Image_GetTitle() const
 {
-    if (!fNode)
-        return "";
-
-    VaultImageNode image(fNode);
-
-    std::string retVal = "";
-    if (image.GetImageTitle())
-    {
-        char* temp = hsWStringToString(image.GetImageTitle());
-        retVal = temp;
-        delete [] temp;
+    if (fNode) {
+        VaultImageNode image(fNode);
+        return image.GetImageTitle();
     }
-    
-    return retVal;
-}
-
-std::wstring pyVaultImageNode::Image_GetTitleW( void )
-{
-    if (!fNode)
-        return L"";
-
-    VaultImageNode image(fNode);
-    return image.GetImageTitle() ? image.GetImageTitle() : L"";
+    return "";
 }
 
 PyObject* pyVaultImageNode::Image_GetImage( void )

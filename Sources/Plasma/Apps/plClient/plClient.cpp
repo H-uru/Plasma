@@ -111,7 +111,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plProgressMgr/plProgressMgr.h"
 #include "plPipeline/plDTProgressMgr.h"
-#include "plPipeline/plBinkPlayer.h"
+#include "pfMoviePlayer/plMoviePlayer.h"
 #include "plMessage/plMovieMsg.h"
 
 #include "plSDL/plSDL.h"
@@ -140,7 +140,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfJournalBook/pfJournalBook.h"
 
-#include "plAvatar/plAGAnimInstance.h"
+#include "plAnimation/plAGAnimInstance.h"
 #include "plAgeLoader/plAgeLoader.h"
 
 #include "plQuality.h"
@@ -275,8 +275,7 @@ bool plClient::Shutdown()
     IKillMovies();
 
     plgAudioSys::Activate(false);
-    plBinkPlayer::DeInit();
-    //
+
     // Get any proxies to commit suicide.
     plProxyDrawMsg* nuke = new plProxyDrawMsg(plProxyDrawMsg::kAllTypes
                                             | plProxyDrawMsg::kDestroy);
@@ -826,78 +825,76 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     if (mov->GetFileName().IsEmpty())
         return true;
 
-    int i;
-    i = fMovies.GetCount();
-    if( !(mov->GetCmd() & plMovieMsg::kMake) )
+    size_t i = fMovies.size();
+    if (!(mov->GetCmd() & plMovieMsg::kMake))
     {
-        for( i = 0; i < fMovies.GetCount(); i++ )
+        for (i = 0; i < fMovies.size(); i++)
         {
-            if (mov->GetFileName().CompareI(fMovies[i]->GetFileName()) == 0)
+            if (mov->GetFileName().CompareI(fMovies[i]->GetFileName().AsString()) == 0)
                 break;
         }
     }
-    if( i == fMovies.GetCount() )
+    if (i == fMovies.size())
     {
-
-        fMovies.Append(new plBinkPlayer);
+        fMovies.push_back(new plMoviePlayer());
         fMovies[i]->SetFileName(mov->GetFileName());
     }
 
-    if( mov->GetCmd() & plMovieMsg::kAddCallbacks )
+    if (mov->GetCmd() & plMovieMsg::kAddCallbacks)
     {
         int j;
-        for( j = 0; j < mov->GetNumCallbacks(); j++ )
+        for (j = 0; j < mov->GetNumCallbacks(); j++)
             fMovies[i]->AddCallback(mov->GetCallback(j));
     }
-    if( mov->GetCmd() & plMovieMsg::kMove )
+    if (mov->GetCmd() & plMovieMsg::kMove)
         fMovies[i]->SetPosition(mov->GetCenter());
-    if( mov->GetCmd() & plMovieMsg::kScale )
+    if (mov->GetCmd() & plMovieMsg::kScale)
         fMovies[i]->SetScale(mov->GetScale());
-    if( mov->GetCmd() & plMovieMsg::kColorAndOpacity )
+    if (mov->GetCmd() & plMovieMsg::kColorAndOpacity)
         fMovies[i]->SetColor(mov->GetColor());
-    if( mov->GetCmd() & plMovieMsg::kColor )
+    if (mov->GetCmd() & plMovieMsg::kColor)
     {
         hsColorRGBA c = fMovies[i]->GetColor();
         c.Set(mov->GetColor().r, mov->GetColor().g, mov->GetColor().b, c.a);
         fMovies[i]->SetColor(c);
     }
-    if( mov->GetCmd() & plMovieMsg::kOpacity )
+    if (mov->GetCmd() & plMovieMsg::kOpacity)
     {
         hsColorRGBA c = fMovies[i]->GetColor();
         c.a = mov->GetColor().a;
         fMovies[i]->SetColor(c);
     }
-    if( mov->GetCmd() & plMovieMsg::kFadeIn )
+    if (mov->GetCmd() & plMovieMsg::kFadeIn)
     {
         fMovies[i]->SetFadeFromColor(mov->GetFadeInColor());
         fMovies[i]->SetFadeFromTime(mov->GetFadeInSecs());
     }
-    if( mov->GetCmd() & plMovieMsg::kFadeOut )
+    if (mov->GetCmd() & plMovieMsg::kFadeOut)
     {
         fMovies[i]->SetFadeToColor(mov->GetFadeOutColor());
         fMovies[i]->SetFadeToTime(mov->GetFadeOutSecs());
     }
-    if( mov->GetCmd() & plMovieMsg::kVolume )
+    if (mov->GetCmd() & plMovieMsg::kVolume)
         fMovies[i]->SetVolume(mov->GetVolume());
 
-    if( mov->GetCmd() & plMovieMsg::kStart )
-        fMovies[i]->Start(fPipeline, fWindowHndl);
-    if( mov->GetCmd() & plMovieMsg::kPause )
+    if (mov->GetCmd() & plMovieMsg::kStart)
+        fMovies[i]->Start();
+    if (mov->GetCmd() & plMovieMsg::kPause)
         fMovies[i]->Pause(true);
-    if( mov->GetCmd() & plMovieMsg::kResume )
+    if (mov->GetCmd() & plMovieMsg::kResume)
         fMovies[i]->Pause(false);
-    if( mov->GetCmd() & plMovieMsg::kStop )
+    if (mov->GetCmd() & plMovieMsg::kStop)
         fMovies[i]->Stop();
 
     // If a movie has lost its filename, it means something went horribly wrong
-    // with playing it and it has shutdown. Or we just stopped it. Either way, 
+    // with playing it and it has shutdown. Or we just stopped it. Either way,
     // we need to clear it out of our list.
-    if (fMovies[i]->GetFileName().IsEmpty())
+    if (!fMovies[i]->GetFileName().IsValid())
     {
         delete fMovies[i];
-        fMovies.Remove(i);
+        fMovies[i] = fMovies.back();
+        fMovies.pop_back();
     }
-
     return true;
 }
 
@@ -1385,10 +1382,9 @@ bool plClient::StartInit()
 
     // the dx8 audio system MUST be initialized
     // before the database is loaded
-    HWND hWnd = fWindowHndl;
     SetForegroundWindow(fWindowHndl);
 
-    plgAudioSys::Init(hWnd);
+    plgAudioSys::Init();
     gAudio = plgAudioSys::Sys();
 
     RegisterAs( kClient_KEY );
@@ -1441,16 +1437,6 @@ bool plClient::StartInit()
 
     plgAudioSys::Activate(true);
 
-    plConst(float) delay(2.f);
-    //commenting out publisher splash for MORE
-    //IPlayIntroBink("avi/intro0.bik", delay, 0.f, 0.f, 1.f, 1.f, 0.75);
-    //if( GetDone() ) return false;
-    IPlayIntroBink("avi/intro1.bik", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
-    if( GetDone() ) return false;
-    IPlayIntroBink("avi/intro2.bik", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
-    if( GetDone() ) return false;
-    plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
-
     //
     // Init Net before loading things
     //
@@ -1464,7 +1450,7 @@ bool plClient::StartInit()
     pModMsg2->SetCmd(plCmdIfaceModMsg::kAdd);
     plgDispatch::MsgSend(pModMsg2);
 
-    // create new the virtual camera
+    // create new virtual camera
     fNewCamera = new plVirtualCam1;
     fNewCamera->RegisterAs( kVirtualCamera1_KEY ); 
     fNewCamera->Init();
@@ -1474,6 +1460,10 @@ bool plClient::StartInit()
     pfGameGUIMgr::GetInstance()->SetAspectRatio( (float)fPipeline->Width() / (float)fPipeline->Height() );
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
+
+    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    if(GetDone()) return false;
+    plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
     // create the listener for the audio system:
     plListener* pLMod = new plListener;
@@ -1838,14 +1828,13 @@ bool plClient::IDraw()
 
 void plClient::IServiceMovies()
 {
-    int i;
-    for( i = 0; i < fMovies.GetCount(); i++ )
+    for (size_t i = 0; i < fMovies.size(); i++)
     {
-        hsAssert(!fMovies[i]->GetFileName().IsEmpty(), "Lost our movie");
-        if( !fMovies[i]->NextFrame() )
+        if (!fMovies[i]->NextFrame())
         {
             delete fMovies[i];
-            fMovies.Remove(i);
+            fMovies[i] = fMovies.back();
+            fMovies.pop_back();
             i--;
         }
     }
@@ -1853,16 +1842,15 @@ void plClient::IServiceMovies()
 
 void plClient::IKillMovies()
 {
-    int i;
-    for( i = 0; i < fMovies.GetCount(); i++ )
+    for (size_t i = 0; i < fMovies.size(); i++)
         delete fMovies[i];
-    fMovies.Reset();
+    fMovies.clear();
 }
 
-bool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
+bool plClient::IPlayIntroMovie(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume /* = 1.0 */)
 {
     SetQuitIntro(false);
-    plBinkPlayer player;
+    plMoviePlayer player;
     player.SetPosition(posX, posY);
     player.SetScale(scaleX, scaleY);
     player.SetFileName(movieName);
@@ -1871,14 +1859,14 @@ bool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX,
     player.SetVolume(volume);
     bool firstTry = true;  // flag to make sure that we don't quit before we even start
 
-    if( player.Start(fPipeline, fWindowHndl) )
+    if (player.Start())
     {
-        while( true )
+        while (true)
         {
-            if( fInstance )
+            if (fInstance)
                 fInstance->fMessagePumpProc();
 
-            if( GetDone() )
+            if (GetDone())
                 return true;
             if (firstTry)
             {
@@ -1887,20 +1875,21 @@ bool plClient::IPlayIntroBink(const char* movieName, float endDelay, float posX,
             }
             else
             {
-                if( GetQuitIntro() )
+                if (GetQuitIntro())
                     return true;
             }
 
             bool done = false;
-            if( !fPipeline->BeginRender() )
+            if (!fPipeline->BeginRender())
             {
                 fPipeline->ClearRenderTarget();
                 done = !player.NextFrame();
 
+                fPipeline->RenderScreenElements();
                 fPipeline->EndRender();
             }
 
-            if( done )
+            if (done)
                 return true;
         }
         return true;

@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvBehaviors.h"
 #include "plAvBrainHuman.h"
 #include "plArmatureMod.h"
-#include "plAGAnimInstance.h"
+#include "plAnimation/plAGAnimInstance.h"
 #include "plMessage/plAvatarMsg.h"
 
 #include "plPipeline/plDebugText.h"

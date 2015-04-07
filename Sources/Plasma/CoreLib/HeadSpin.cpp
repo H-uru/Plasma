@@ -93,15 +93,14 @@ void hsDebugMessage (const char* message, long val)
         gHSDebugProc(&s[1]);
     else
 #if HS_BUILD_FOR_WIN32
-    {   OutputDebugString(&s[1]);
+    {
+        OutputDebugString(&s[1]);
         OutputDebugString("\n");
     }
-#elif HS_BUILD_FOR_UNIX
-    {   fprintf(stderr, "%s\n", &s[1]);
-//      hsThrow(&s[1]);
-    }
 #else
-    hsThrow(&s[1]);
+    {
+        fprintf(stderr, "%s\n", &s[1]);
+    }
 #endif
 }
 #endif
@@ -119,7 +118,7 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
-#ifdef HS_DEBUGGING
+#if defined(HS_DEBUGGING) && defined(_MSC_VER)
     if (s_GuiAsserts)
     {
         if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))

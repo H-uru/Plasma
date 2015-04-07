@@ -75,21 +75,4 @@ const hsVector3 kAvatarUp(0,0,1);
 const hsVector3 kAvatarForward(0,-1,0);
 const hsVector3 kAvatarRight(-1,0,0);
 
-/** \enum PinType
-    Tells us what category of animation this channel affects.
-    Primarly used to determine if two channels are competing,
-    which you can't tell strictly from the type of data the
-    channel handles. */
-enum plAGPinType
-{
-    kAGPinUnknown,      // this applicator hasn't decided its pin type
-    kAGPinTransform,        // this applicator munches the entire transform
-    kNumPinTypes
-};
-
-#define kAGMaxBlendPriority 0x0fffffff
-#define kAGMinBlendPriority 0x00000000
-#define kAGMedBlendPriority 0x0000ffff
-
-
 #endif

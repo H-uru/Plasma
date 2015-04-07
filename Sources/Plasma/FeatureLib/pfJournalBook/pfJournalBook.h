@@ -129,7 +129,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //          tint=yes/no       - Defines whether or not this decal is tinted //
 //                              with the cover. Overridden by the tintfirst //
 //                              option on the <cover> tag. Defaults to no   //
-//      <movie> - Places a movie (.bik file) inline with the text. Options: //
+//      <movie> - Places a movie (.webm file) inline with the text. Options://
 //          src=<movie name>  - Selects the movie to be used. (nead search  //
 //                              methods here eventually)                    //
 //          align=left/right/center                                         //
@@ -188,7 +188,7 @@ class plLayerInterface;
 class plMipmap;
 class pfGUIProgressCtrl;
 class hsGMaterial;
-class plLayerBink;
+class plLayerAVI;
 class pfGUIMultiLineEditCtrl;
 
 class pfJournalBook;
@@ -453,7 +453,7 @@ class pfJournalBook : public hsKeyedObject
         struct loadedMovie
         {
             pfEsHTMLChunk *movieChunk;
-            plLayerBink *movieLayer;
+            plLayerAVI *movieLayer;
         };
 
         friend class pfJournalDlgProc;
@@ -574,7 +574,7 @@ class pfJournalBook : public hsKeyedObject
         // Movie functions
         loadedMovie         *IMovieAlreadyLoaded(pfEsHTMLChunk *chunk);
         loadedMovie         *IGetMovieByIndex(uint8_t index);
-        plLayerBink         *IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender);
+        plLayerAVI          *IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender);
 
         // Cover functions
         plLayerInterface    *IMakeBaseLayer(plMipmap *image);

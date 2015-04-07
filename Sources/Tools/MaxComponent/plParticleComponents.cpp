@@ -90,8 +90,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plParticleSystem/plConvexVolume.h"
 #include "plParticleSystem/plBoundInterface.h"
 
-#include "plAvatar/plScalarChannel.h"
-#include "plAvatar/plAGAnim.h"
+#include "plAnimation/plScalarChannel.h"
+#include "plAnimation/plAGAnim.h"
 
 #include "pnSceneObject/plDrawInterface.h"
 

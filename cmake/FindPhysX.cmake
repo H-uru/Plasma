@@ -10,6 +10,7 @@ find_path(PHYSX_SDK_PATH Cooking/Include/NxCooking.h
           /usr/local/include
           /usr/include
           "C:/Program Files/AGEIA Technologies/AGEIA PhysX SDK/v2.6.4/SDKs"
+          "C:/Program Files (x86)/AGEIA Technologies/AGEIA PhysX SDK/v2.6.4/SDKs"
 )
 
 if(PHYSX_SDK_PATH)

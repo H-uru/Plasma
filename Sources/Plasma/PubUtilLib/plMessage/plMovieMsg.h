@@ -155,7 +155,7 @@ public:
     plMovieMsg& SetScaleX(float x) { fScale.fX = x; return *this; }
     plMovieMsg& SetScaleY(float y) { fScale.fY = y; return *this; }
 
-    // Include the movie folder, e.g. "avi/porno.bik"
+    // Include the movie folder, e.g. "avi/movie.webm"
     // String is copied, not pointer copy.
     plString GetFileName() const { return fFileName; }
     plMovieMsg& SetFileName(const plString& name) { fFileName = name; return *this; }

@@ -112,6 +112,16 @@ PF_CONSOLE_CMD(
     SetServerDisplayName(params[0]);
 }
 
+//============================================================================
+PF_CONSOLE_CMD(
+    Server,
+    Port,
+    "int port",
+    "Set server's port"
+) {
+    SetClientPort((int)params[0]);
+}
+
 
 //============================================================================
 // Server.File group

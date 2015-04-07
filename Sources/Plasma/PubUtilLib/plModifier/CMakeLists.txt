@@ -7,6 +7,7 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plModifier_SOURCES
+    plAGMasterSDLModifier.cpp
     plAnimEventModifier.cpp
     plAnimTimeConvertSDLModifier.cpp
     plAxisAnimModifier.cpp
@@ -29,6 +30,7 @@ set(plModifier_SOURCES
 )
 
 set(plModifier_HEADERS
+    plAGMasterSDLModifier.h
     plAnimEventModifier.h
     plAnimTimeConvertSDLModifier.h
     plAxisAnimModifier.h

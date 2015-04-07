@@ -1665,15 +1665,12 @@ bool cyAvatar::LoadClothingFromFile(plFileName filename)
 //
 void cyAvatar::ChangeAvatar(const char* genderName)
 {
-    plClothingMgr::ChangeAvatar((char*)genderName);
-    
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, genderName, arrsize(wStr));
-    
+    plClothingMgr::ChangeAvatar(genderName);
+
     hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode();
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
-        plr.SetAvatarShapeName(wStr);
+        plr.SetAvatarShapeName(genderName);
     }
 }
 
@@ -1686,13 +1683,10 @@ void cyAvatar::ChangeAvatar(const char* genderName)
 //
 void cyAvatar::ChangePlayerName(const char* playerName)
 {
-    wchar_t wStr[MAX_PATH];
-    StrToUnicode(wStr, playerName, arrsize(wStr));
-    
     hsRef<RelVaultNode> rvnPlr = VaultGetPlayerNode();
     if (rvnPlr) {
         VaultPlayerNode plr(rvnPlr);
-        plr.SetPlayerName(wStr);
+        plr.SetPlayerName(playerName);
     } 
 }
 

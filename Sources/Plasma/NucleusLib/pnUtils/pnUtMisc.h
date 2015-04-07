@@ -69,18 +69,4 @@ void * ModuleGetInstance ();
 
 const wchar_t * AppGetCommandLine ();
 
-
-/*****************************************************************************
-*
-*   Misc types
-*
-***/
-
-// used to dump the internal state of a module
-typedef void (CDECL * FStateDump)(
-    void *      param,
-    const wchar_t fmt[],
-    ...
-);
-
 #endif

@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayer.h"
 #include "plSurface/hsGMaterial.h"
 #include "plAgeLoader/plAgeLoader.h"
-#include "pfSurface/plLayerBink.h"
+#include "pfSurface/plLayerAVI.h"
 
 // So we can do image searches in our local age
 #include "plNetClient/plNetClientMgr.h"
@@ -1327,7 +1327,7 @@ void    pfJournalBook::Show( bool startOpened /*= false */)
                 else
                 {
                     // it's a cover movie, not a decal, so we make a layer, thinking it's at 0,0 and a left map (which gives us the results we want)
-                    plLayerBink *movieLayer = IMakeMovieLayer(fCoverDecals[i],0,0,mip,pfJournalDlgProc::kTagLeftDTMap,false);
+                    plLayerAVI *movieLayer = IMakeMovieLayer(fCoverDecals[i],0,0,mip,pfJournalDlgProc::kTagLeftDTMap,false);
                     loadedMovie *movie = new loadedMovie;
                     movie->movieLayer = movieLayer;
                     movie->movieChunk = fCoverDecals[i];
@@ -1397,7 +1397,7 @@ void    pfJournalBook::Hide( void )
             int i;
             for( i = 0; i < fLoadedMovies.GetCount(); i++ )
             {
-                plLayerBink *movie = fLoadedMovies[ i ]->movieLayer;
+                plLayerAVI *movie = fLoadedMovies[ i ]->movieLayer;
                 movie->GetKey()->UnRefObject();
                 delete fLoadedMovies[ i ];
             }
@@ -2477,7 +2477,7 @@ void    pfJournalBook::IFreeSource( void )
 
     for( i = 0; i < fLoadedMovies.GetCount(); i++ )
     {
-        plLayerBink *movie = fLoadedMovies[ i ]->movieLayer;
+        plLayerAVI *movie = fLoadedMovies[ i ]->movieLayer;
         movie->GetKey()->UnRefObject();
         delete fLoadedMovies[ i ];
     }
@@ -2589,11 +2589,11 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
     {
         // clear any exiting layers (movies) from the material
         int i;
-        for( i = 0; i < material->GetNumLayers(); i++ ) // remove all plLayerBink layers
+        for( i = 0; i < material->GetNumLayers(); i++ ) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = material->GetLayer(i);
-            plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
-            if (bink) // if it was a bink layer
+            plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
+            if (movie) // if it was a movie layer
             {
                 plMatRefMsg* refMsg = new plMatRefMsg(material->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(material->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
@@ -2788,7 +2788,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
 
                 case pfEsHTMLChunk::kMovie:
                     movieAlreadyLoaded = (IMovieAlreadyLoaded(chunk) != nil); // have we already cached it?
-                    plLayerBink *movieLayer = IMakeMovieLayer(chunk, x, y, (plMipmap*)dtMap, whichDTMap, suppressRendering);
+                    plLayerAVI *movieLayer = IMakeMovieLayer(chunk, x, y, (plMipmap*)dtMap, whichDTMap, suppressRendering);
                     if (movieLayer)
                     {
                         // adjust the starting height of the movie if we are keeping it inline with the text
@@ -2853,28 +2853,28 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
 
 void    pfJournalBook::IMoveMovies( hsGMaterial *source, hsGMaterial *dest )
 {
-    hsTArray<plLayerBink*> moviesOnPage;
+    hsTArray<plLayerAVI*> moviesOnPage;
     if (source && dest)
     {
         // clear any exiting layers (movies) from the material and save them to our local array
         int i;
-        for( i = 0; i < source->GetNumLayers(); i++ ) // remove all plLayerBink layers
+        for( i = 0; i < source->GetNumLayers(); i++ ) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = source->GetLayer(i);
-            plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
-            if (bink) // if it was a bink layer
+            plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
+            if (movie) // if it was a movie layer
             {
                 plMatRefMsg* refMsg = new plMatRefMsg(source->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(source->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
-                moviesOnPage.Append(bink);
+                moviesOnPage.Append(movie);
             }
         }
         // clear the destination's movies (if it has any)
-        for( i = 0; i < dest->GetNumLayers(); i++ ) // remove all plLayerBink layers
+        for( i = 0; i < dest->GetNumLayers(); i++ ) // remove all plLayerMovie layers
         {
             plLayerInterface *matLayer = dest->GetLayer(i);
-            plLayerBink *bink = plLayerBink::ConvertNoRef(matLayer);
-            if (bink) // if it was a bink layer
+            plLayerAVI *movie = plLayerAVI::ConvertNoRef(matLayer);
+            if (movie) // if it was a movie layer
             {
                 plMatRefMsg* refMsg = new plMatRefMsg(dest->GetKey(), plRefMsg::kOnRemove, i, plMatRefMsg::kLayer); // remove it
                 hsgResMgr::ResMgr()->SendRef(dest->GetLayer(i)->GetKey(), refMsg, plRefFlags::kActiveRef);
@@ -3014,12 +3014,12 @@ pfJournalBook::loadedMovie *pfJournalBook::IGetMovieByIndex(uint8_t index)
     return nil;
 }
 
-plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender)
+plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uint16_t y, plMipmap *baseMipmap, uint32_t whichDTMap, bool dontRender)
 {
     // see if it's already loaded
     loadedMovie *movie = IMovieAlreadyLoaded(chunk);
     plLayer* layer = nil;
-    plLayerBink* movieLayer = nil;
+    plLayerAVI* movieLayer = nil;
     uint16_t movieWidth=0,movieHeight=0;
     if (movie)
     {
@@ -3041,7 +3041,7 @@ plLayerBink *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, ui
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
         buff = plFormat("{}_{}_m", GetKey()->GetName(), uniqueSuffix++);
-        movieLayer = new plLayerBink;
+        movieLayer = new plLayerAVI;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
 

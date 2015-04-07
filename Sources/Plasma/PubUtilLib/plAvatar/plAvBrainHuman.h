@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAvBrainGeneric.h"
 #include "plAvBehaviors.h"
-#include "plAGAnim.h"
+#include "plAnimation/plAGAnim.h"
 
 #pragma warning(disable: 4284)
 #include <deque>

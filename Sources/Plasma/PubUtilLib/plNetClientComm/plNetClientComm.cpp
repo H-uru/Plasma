@@ -311,7 +311,7 @@ static void INetCliAuthSetPlayerRequestCallback (
         s_needAvatarLoad = true;
 
         VaultDownload(
-            L"SetActivePlayer",
+            "SetActivePlayer",
             s_player->playerInt,
             PlayerInitCallback,
             param,
@@ -367,7 +367,7 @@ static void INetCliAuthLoginSetPlayerRequestCallback (
     }
     else {
         VaultDownload(
-            L"SetActivePlayer",
+            "SetActivePlayer",
             s_player->playerInt,
             LoginPlayerInitCallback,
             param,
@@ -1120,7 +1120,6 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     if (s_player) {
         if (hsRef<RelVaultNode> rvn = VaultGetPlayerInfoNode()) {
             VaultPlayerInfoNode pInfo(rvn);
-            pInfo.SetAgeInstName(nil);
             pInfo.SetAgeInstUuid(kNilUuid);
             pInfo.SetOnline(false);
             NetCliAuthVaultNodeSave(rvn, nil, nil);

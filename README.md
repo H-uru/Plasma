@@ -25,7 +25,7 @@ Plasma currently requires the following third-party libraries:
 - Python 2.7 - http://www.python.org/download/releases/2.7/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
-- OpenAL Soft - http://kcat.strangesoft.net/openal.html
+- OpenAL - http://www.openal.org/
 - eXpat - http://expat.sourceforge.net/
 - libJPEG - http://libjpeg-turbo.virtualgl.org/
 - libPNG - http://www.libpng.org/
@@ -39,6 +39,8 @@ The following libraries are optional:
 - (for building resource.dat) PIL - http://www.pythonware.com/products/pil/
 - (for plFontConverter) Freetype - http://freetype.org/
 - (for the GUI tools) Qt5 - http://qt-project.org/
+- (for video) VPX - http://www.webmproject.org/
+- (for video) Opus - http://www.opus-codec.org/
 
 Reducing the use of proprietary libraries is a focus of development and should be expected to change.
 

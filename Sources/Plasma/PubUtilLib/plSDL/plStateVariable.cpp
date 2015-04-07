@@ -1791,7 +1791,7 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
     {
         // hsAssert(false, "plSimpleStateVariable::WriteData doesn't contain data?");
         plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var %s doesn't contain data?",
-            GetName());
+            GetName().c_str());
     }
 #endif
 
@@ -1961,7 +1961,7 @@ bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t w
     {
         // hsAssert(false, "plSimpleStateVariable::WriteData Var doesn't contain data?");
         plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var %s doesn't contain data?",
-            GetName());
+            GetName().c_str());
     }
 #endif
 

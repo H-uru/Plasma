@@ -97,7 +97,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getParentAgeLink)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeFilename)
 {
-    return PyString_FromString(self->fThis->GetAgeFilename());
+    return PyString_FromPlString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeFilename, args)
@@ -114,7 +114,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceName)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceName());
+    return PyString_FromPlString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceName, args)
@@ -131,7 +131,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeUserDefinedName)
 {
-    return PyString_FromString(self->fThis->GetAgeUserDefinedName());
+    return PyString_FromPlString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeUserDefinedName, args)
@@ -165,7 +165,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeDescription)
 {
-    return PyString_FromString(self->fThis->GetAgeDescription());
+    return PyString_FromPlString(self->fThis->GetAgeDescription());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeDescription, args)
@@ -243,7 +243,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, isPublic)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getDisplayName)
 {
-    return PyString_FromString(self->fThis->GetDisplayName());
+    return PyString_FromPlString(self->fThis->GetDisplayName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, asAgeInfoStruct)

@@ -801,7 +801,7 @@ void GamePingEnable (bool enable) {
 void NetCliGameStartConnect (
     const uint32_t node
 ) {
-    plNetAddress addr(node, kNetDefaultClientPort);
+    plNetAddress addr(node, GetClientPort());
     Connect(addr);
 }
 

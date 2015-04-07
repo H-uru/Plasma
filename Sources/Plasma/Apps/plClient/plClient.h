@@ -79,7 +79,7 @@ class plFontCache;
 class plClientMsg;
 class plLocation;
 class plMovieMsg;
-class plBinkPlayer;
+class plMoviePlayer;
 class plPreloaderMsg;
 class plNetCommAuthMsg;
 class plAgeLoaded2Msg;
@@ -147,7 +147,7 @@ protected:
     int                     fQuality;
 
     bool                    fQuitIntro;
-    hsTArray<plBinkPlayer*> fMovies;
+    std::vector<plMoviePlayer*> fMovies;
 
     plMessagePumpProc       fMessagePumpProc;
     
@@ -186,7 +186,7 @@ protected:
     void                    IProcessRenderRequests(hsTArray<plRenderRequest*>& reqs);
     void                    IAddRenderRequest(plRenderRequest* req);
 
-    bool                    IPlayIntroBink(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
+    bool                    IPlayIntroMovie(const char* movieName, float endDelay, float posX, float posY, float scaleX, float scaleY, float volume = 1.0);
     bool                    IHandleMovieMsg(plMovieMsg* mov);
     void                    IKillMovies();
     void                    IServiceMovies();

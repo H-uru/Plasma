@@ -23,6 +23,7 @@ set(plAudio_SOURCES
     plWin32StaticSound.cpp
     plWin32StreamingSound.cpp
     plWinMicLevel.cpp
+    plWin32VideoSound.cpp
 )
 
 set(plAudio_HEADERS
@@ -40,6 +41,7 @@ set(plAudio_HEADERS
     plWin32StaticSound.h
     plWin32StreamingSound.h
     plWinMicLevel.h
+    plWin32VideoSound.h
 )
 
 add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})

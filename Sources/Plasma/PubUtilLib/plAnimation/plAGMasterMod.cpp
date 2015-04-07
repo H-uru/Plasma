@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAGAnimInstance.h"
 #include "plAGModifier.h"
 // #include "plAvatarAnim.h"
-#include "plAGMasterSDLModifier.h"
+#include "plModifier/plAGMasterSDLModifier.h"
 #include "plMatrixChannel.h"
 
 // global

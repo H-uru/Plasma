@@ -26,8 +26,13 @@ if (!(Test-Path -PathType Container devlibs)) {
     Write-Host "OK" -foregroundColor Green
 }
 
-Write-Host "Running CMake to configure build system... "
-cmake -DCMAKE_INSTALL_PREFIX=devlibs -G "Visual Studio 12" ..
+if(Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {	
+	Write-Host "Running CMake to configure build system... "
+	cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 12" ..
+} else {
+	Write-Host "CMake not found in PATH."
+	Write-Host "Please run the CMake installer and select the option to add CMake to your system PATH."
+}
 
 if ($Host.Name -eq "ConsoleHost") {
     Write-Host ""

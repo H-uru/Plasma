@@ -76,11 +76,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAvatar/plAvatarMgr.h"
 #include "plAvatar/plSeekPointMod.h"
 #include "plAvatar/plOneShotMod.h"
-#include "plAvatar/plAGAnim.h"
+#include "plAnimation/plAGAnim.h"
 #include "plAvatar/plAvBrainUser.h"
 #include "plAvatar/plAvBrainHuman.h"
 #include "plAvatar/plNPCSpawnMod.h"
-#include "plAvatar/plAGAnimInstance.h"
+#include "plAnimation/plAGAnimInstance.h"
 #include "plAvatar/plArmatureEffects.h"
 #include "plAvatar/plAvTaskSeek.h"
 

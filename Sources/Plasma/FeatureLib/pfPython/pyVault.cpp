@@ -328,10 +328,7 @@ PyObject* pyVault::GetVisitAgeLink( const pyAgeInfoStruct & info)
 // Chronicle
 PyObject* pyVault::FindChronicleEntry( const char * entryName )
 {
-    wchar_t wEntryName[kMaxVaultNodeStringLength];
-    StrToUnicode(wEntryName, entryName, arrsize(wEntryName));
-    
-    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(wEntryName))
+    if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
     
     // just return a None object
@@ -340,16 +337,10 @@ PyObject* pyVault::FindChronicleEntry( const char * entryName )
 
 void pyVault::AddChronicleEntry( const char * name, uint32_t type, const char * value )
 {
-    wchar_t * wEntryName = StrDupToUnicode(name);
-    wchar_t * wEntryValue = StrDupToUnicode(value);
-    
-    // FIXME: We should ideally not block, but for now, the Python assumes that when 
-    //        we return, the chronicle exists and can be found with findChronicleEntry. 
+    // FIXME: We should ideally not block, but for now, the Python assumes that when
+    //        we return, the chronicle exists and can be found with findChronicleEntry.
     //        Maybe we should insert a dummy into the tree? (currently hard)
-    VaultAddChronicleEntryAndWait(wEntryName, type, wEntryValue);
-    
-    free(wEntryName);
-    free(wEntryValue);
+    VaultAddChronicleEntryAndWait(name, type, value);
 }
 
 
@@ -358,11 +349,8 @@ void pyVault::SendToDevice( pyVaultNode& node, const char * deviceName )
     if (!node.GetNode())
         return;
 
-    wchar_t wDevName[256];
-    StrToUnicode(wDevName, deviceName, arrsize(wDevName));
-
     // Note: This actually blocks (~Hoikas)
-    VaultPublishNode(node.GetNode()->GetNodeId(), wDevName);
+    VaultPublishNode(node.GetNode()->GetNodeId(), deviceName);
 }
 
 
@@ -412,16 +400,12 @@ PyObject* pyVault::GetPsnlAgeSDL() const
 
     if (hsRef<RelVaultNode> rvnFldr = VaultGetAgesIOwnFolder()) {
 
-        templateNode->ClearFieldFlags();
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
-        wchar_t str[MAX_PATH];
-        StrToUnicode(str, kPersonalAgeFilename, arrsize(str));
-        ageInfo.SetAgeFilename(str);
+        ageInfo.SetAgeFilename(kPersonalAgeFilename);
 
         if (hsRef<RelVaultNode> rvnInfo = rvnFldr->GetChildNode(templateNode, 2)) {
-
-            templateNode->ClearFieldFlags();
+            templateNode->Clear();
             templateNode->SetNodeType(plVault::kNodeType_SDL);
 
             if (hsRef<RelVaultNode> rvnSdl = rvnInfo->GetChildNode(templateNode, 1)) {
@@ -451,16 +435,12 @@ void pyVault::UpdatePsnlAgeSDL( pySDLStateDataRecord & pyrec )
 
     if (hsRef<RelVaultNode> rvnFldr = VaultGetAgesIOwnFolder()) {
 
-        templateNode->ClearFieldFlags();
         templateNode->SetNodeType(plVault::kNodeType_AgeInfo);
         VaultAgeInfoNode ageInfo(templateNode);
-        wchar_t str[MAX_PATH];
-        StrToUnicode(str, kPersonalAgeFilename, arrsize(str));
-        ageInfo.SetAgeFilename(str);
+        ageInfo.SetAgeFilename(kPersonalAgeFilename);
 
         if (hsRef<RelVaultNode> rvnInfo = rvnFldr->GetChildNode(templateNode, 2)) {
-
-            templateNode->ClearFieldFlags();
+            templateNode->Clear();
             templateNode->SetNodeType(plVault::kNodeType_SDL);
 
             if (hsRef<RelVaultNode> rvnSdl = rvnInfo->GetChildNode(templateNode, 1)) {
@@ -639,6 +619,11 @@ bool pyVault::SetAgePublic( const pyAgeInfoStruct * ageInfo, bool makePublic )
 {
     // Note: This doesn't actually block (~Hoikas)
     return VaultSetOwnedAgePublicAndWait(ageInfo->GetAgeInfo(), makePublic);
+}
+
+bool pyVault::SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic )
+{
+    return VaultSetAgePublicAndWait(ageInfoNode->GetNode(), makePublic);
 }
 
 

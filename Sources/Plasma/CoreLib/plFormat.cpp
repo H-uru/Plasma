@@ -530,9 +530,7 @@ PL_FORMAT_IMPL(const std::string &)
 
 PL_FORMAT_IMPL(const std::wstring &)
 {
-    plStringBuffer<char> utf8 = plString::FromWchar(value.c_str()).ToUtf8();
-    _formatString(format, output, utf8.GetData(), utf8.GetSize(),
-                  plFormat_Private::kAlignLeft);
+    PL_FORMAT_FORWARD(value.c_str());
 }
 
 PL_FORMAT_IMPL(bool)

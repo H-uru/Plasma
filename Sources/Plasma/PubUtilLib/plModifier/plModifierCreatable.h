@@ -87,6 +87,9 @@ REGISTER_CREATABLE(plLayerSDLModifier);
 #include "plAnimTimeConvertSDLModifier.h"
 REGISTER_NONCREATABLE(plAnimTimeConvertSDLModifier);
 
+#include "plAGMasterSDLModifier.h"
+REGISTER_CREATABLE( plAGMasterSDLModifier );
+
 #include "plResponderSDLModifier.h"
 REGISTER_CREATABLE(plResponderSDLModifier);
 
