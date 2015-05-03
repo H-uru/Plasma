@@ -74,7 +74,6 @@ enum ELinkType {
 #define  LINK(class)            TLink< class >
 #define  LIST(class)            TList< class >
 #define  LISTDECL(class,field)  TListDecl< class, offsetof(class,field) >
-#define  LISTDYN(class)         TListDyn< class >
 
 
 /****************************************************************************
@@ -616,27 +615,6 @@ public:
 //===========================================================================
 template<class T, int linkOffset>
 TListDecl<T,linkOffset>::TListDecl () {
-    this->SetLinkOffset(linkOffset);
-}
-
-
-/****************************************************************************
-*
-*   TListDyn
-*
-***/
-
-template<class T>
-class TListDyn : public TList<T> {
-
-public:
-    void Initialize (int linkOffset);
-
-};
-
-//===========================================================================
-template<class T>
-void TListDyn<T>::Initialize (int linkOffset) {
     this->SetLinkOffset(linkOffset);
 }
 #endif
