@@ -87,9 +87,6 @@ REGISTER_CREATABLE(plPointTimeScale);
 REGISTER_CREATABLE(plPointControllerChannel);
 REGISTER_CREATABLE(plPointControllerCacheChannel);
 REGISTER_CREATABLE(plPointChannelApplicator);
-REGISTER_CREATABLE(plLightDiffuseApplicator);
-REGISTER_CREATABLE(plLightAmbientApplicator);
-REGISTER_CREATABLE(plLightSpecularApplicator);
 
 
 #include "plQuatChannel.h"
@@ -110,13 +107,8 @@ REGISTER_CREATABLE(plScalarBlend);
 REGISTER_CREATABLE(plScalarControllerChannel);
 REGISTER_CREATABLE(plScalarControllerCacheChannel);
 REGISTER_CREATABLE(plScalarChannelApplicator);
-REGISTER_CREATABLE(plSpotInnerApplicator);
-REGISTER_CREATABLE(plSpotOuterApplicator);
 REGISTER_CREATABLE(plATCChannel);
 REGISTER_CREATABLE(plScalarSDLChannel);
-REGISTER_CREATABLE(plOmniApplicator);
-REGISTER_CREATABLE(plOmniSqApplicator);
-REGISTER_CREATABLE(plOmniCutoffApplicator);
 
 
 #include "plAGModifier.h"

@@ -53,6 +53,15 @@ REGISTER_CREATABLE( plLimitedDirLightInfo );
 REGISTER_CREATABLE( plOmniLightInfo );
 REGISTER_CREATABLE( plSpotLightInfo );
 
+REGISTER_CREATABLE(plSpotInnerApplicator);
+REGISTER_CREATABLE(plSpotOuterApplicator);
+REGISTER_CREATABLE(plOmniApplicator);
+REGISTER_CREATABLE(plOmniSqApplicator);
+REGISTER_CREATABLE(plOmniCutoffApplicator);
+REGISTER_CREATABLE(plLightDiffuseApplicator);
+REGISTER_CREATABLE(plLightAmbientApplicator);
+REGISTER_CREATABLE(plLightSpecularApplicator);
+
 #include "plLightSpace.h"
 
 REGISTER_CREATABLE( plLightSpace );

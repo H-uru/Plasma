@@ -79,6 +79,10 @@ static float kMinHither = 1.f;
 
 #include "plLightProxy.h"
 
+#include "plAnimation/plPointChannel.h"
+#include "plAnimation/plScalarChannel.h"
+#include "plAnimation/plAGModifier.h"
+
 #include "plDrawable/plDrawableGenerator.h"
 
 plLightInfo::plLightInfo()
@@ -1021,3 +1025,106 @@ plDrawableSpans* plSpotLightInfo::CreateProxy(hsGMaterial* mat, hsTArray<uint32_
     return draw;
 }
 
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// APPLICATORS
+//
+///////////////////////////////////////////////////////////////////////////////
+
+
+// IApply --------------------------------------------------------------
+// -------
+void plSpotInnerApplicator::IApply(const plAGModifier *mod, double time)
+{
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
+
+    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
+
+    const float &scalar = scalarChan->Value(time);
+    sli->SetSpotInner(hsDegreesToRadians(scalar)*0.5f);
+}
+
+// IApply --------------------------------------------------------------
+// -------
+void plSpotOuterApplicator::IApply(const plAGModifier *mod, double time)
+{
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
+
+    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
+
+    const float &scalar = scalarChan->Value(time);
+    sli->SetSpotOuter(hsDegreesToRadians(scalar)*0.5f);
+}
+
+
+void plOmniApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
+
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+
+    oli->SetLinearAttenuation(scalarChan->Value(time));
+}
+
+void plOmniSqApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
+
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+
+    oli->SetQuadraticAttenuation(scalarChan->Value(time));
+}
+
+void plOmniCutoffApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
+    hsAssert(scalarChan, "Invalid channel given to plOmniCutoffApplicator");
+
+    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
+
+    oli->SetCutoffAttenuation( scalarChan->Value( time ) );
+}
+
+void plLightDiffuseApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
+    hsAssert(pointChan, "Invalid channel given to plLightDiffuseApplicator");
+
+    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
+
+    const hsPoint3 &point = pointChan->Value(time);
+    hsColorRGBA color;
+    color.Set(point.fX, point.fY, point.fZ, 1.0f);
+    li->SetDiffuse(color);
+}
+
+void plLightAmbientApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
+    hsAssert(pointChan, "Invalid channel given to plLightAmbientApplicator");
+
+    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
+
+    const hsPoint3 &point = pointChan->Value(time);
+    hsColorRGBA color;
+    color.Set(point.fX, point.fY, point.fZ, 1.0f);
+    li->SetAmbient(color);
+}
+
+void plLightSpecularApplicator::IApply(const plAGModifier *modifier, double time)
+{
+    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
+    hsAssert(pointChan, "Invalid channel given to plLightSpecularApplicator");
+
+    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
+
+    const hsPoint3 &point = pointChan->Value(time);
+    hsColorRGBA color;
+    color.Set(point.fX, point.fY, point.fZ, 1.0f);
+    li->SetSpecular(color);
+}

@@ -53,7 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 
 // other
-#include "plGLight/plLightInfo.h"
 #include "plInterp/plController.h"
 #include "plInterp/plAnimTimeConvert.h"
 #include "plSDL/plSDL.h"
@@ -548,59 +547,3 @@ void plScalarChannelApplicator::IApply(const plAGModifier *mod, double time)
 {
 }
 
-// IApply --------------------------------------------------------------
-// -------
-void plSpotInnerApplicator::IApply(const plAGModifier *mod, double time)
-{
-    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
-
-    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
-
-    const float &scalar = scalarChan->Value(time);
-    sli->SetSpotInner(hsDegreesToRadians(scalar)*0.5f);
-}
-
-// IApply --------------------------------------------------------------
-// -------
-void plSpotOuterApplicator::IApply(const plAGModifier *mod, double time)
-{
-    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-    hsAssert(scalarChan, "Invalid channel given to plSpotInnerApplicator");
-
-    plSpotLightInfo *sli = plSpotLightInfo::ConvertNoRef(IGetGI(mod, plSpotLightInfo::Index()));
-
-    const float &scalar = scalarChan->Value(time);
-    sli->SetSpotOuter(hsDegreesToRadians(scalar)*0.5f);
-}
-
-
-void plOmniApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
-
-    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
-
-    oli->SetLinearAttenuation(scalarChan->Value(time));
-}
-
-void plOmniSqApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-    hsAssert(scalarChan, "Invalid channel given to plLightOmniApplicator");
-
-    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
-
-    oli->SetQuadraticAttenuation(scalarChan->Value(time));
-}
-
-void plOmniCutoffApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plScalarChannel *scalarChan = plScalarChannel::ConvertNoRef(fChannel);
-    hsAssert(scalarChan, "Invalid channel given to plOmniCutoffApplicator");
-
-    plOmniLightInfo *oli = plOmniLightInfo::ConvertNoRef(IGetGI(modifier, plOmniLightInfo::Index()));
-
-    oli->SetCutoffAttenuation( scalarChan->Value( time ) );
-}

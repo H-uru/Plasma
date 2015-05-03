@@ -43,13 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScalarChannel.h"
 #include "hsResMgr.h"
 
-#include "pnSceneObject/plDrawInterface.h"
-#include "pnSceneObject/plSimulationInterface.h"
 #include "pnSceneObject/plCoordinateInterface.h"
-#include "pnSceneObject/plAudioInterface.h"
 #include "plInterp/plController.h"
 #include "plInterp/plAnimTimeConvert.h"
-#include "plGLight/plLightInfo.h"
 
 //////////////
 // PLPOINTSRCE
@@ -192,17 +188,17 @@ const hsPoint3 & plPointTimeScale::Value(double time)
 plAGChannel * plPointTimeScale::Detach(plAGChannel * channel)
 {
     plAGChannel *result = this;
-    
+
     fChannelIn = plPointChannel::ConvertNoRef(fChannelIn->Detach(channel));
-    
+
     if(!fChannelIn || channel == this)
         result = nil;
-    
+
     if(result != this)
         delete this;
-    
+
     return result;
-    
+
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -270,7 +266,7 @@ const hsPoint3 &plPointBlend::Value(double time)
                 hsPoint3 difference = pointB - pointA;
 
                 difference *= curBlend;
-    
+
                 fResult = pointA + difference;
             }
         }
@@ -381,7 +377,7 @@ void plPointControllerChannel::Write(hsStream *stream, hsResMgr *mgr)
 void plPointControllerChannel::Read(hsStream *stream, hsResMgr *mgr)
 {
     plPointChannel::Read(stream, mgr);
-    
+
     fController = plController::ConvertNoRef(mgr->ReadCreatable(stream));
 }
 
@@ -424,7 +420,7 @@ plAGChannel * plPointControllerCacheChannel::Detach(plAGChannel * channel)
         return nil;
     } else {
         plAGChannel *result = fControllerChannel->Detach(channel);
-        
+
         if(result == fControllerChannel)
         {
             return this;
@@ -450,49 +446,9 @@ void plPointChannelApplicator::IApply(const plAGModifier *modifier, double time)
     const hsPoint3 &point = pointChan->Value(time);
 
     l2p.SetTranslate(&point);
-    
+
     hsMatrix44 p2l;
     l2p.GetInverse(&p2l);
     CI->SetLocalToParent(l2p, p2l);
 }
-
-void plLightDiffuseApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
-    hsAssert(pointChan, "Invalid channel given to plLightDiffuseApplicator");
-
-    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
-
-    const hsPoint3 &point = pointChan->Value(time);
-    hsColorRGBA color;
-    color.Set(point.fX, point.fY, point.fZ, 1.0f);
-    li->SetDiffuse(color);
-}
-
-void plLightAmbientApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
-    hsAssert(pointChan, "Invalid channel given to plLightAmbientApplicator");
-
-    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
-
-    const hsPoint3 &point = pointChan->Value(time);
-    hsColorRGBA color;
-    color.Set(point.fX, point.fY, point.fZ, 1.0f);
-    li->SetAmbient(color);
-}
-
-void plLightSpecularApplicator::IApply(const plAGModifier *modifier, double time)
-{
-    plPointChannel *pointChan = plPointChannel::ConvertNoRef(fChannel);
-    hsAssert(pointChan, "Invalid channel given to plLightSpecularApplicator");
-
-    plLightInfo *li = plLightInfo::ConvertNoRef(IGetGI(modifier, plLightInfo::Index()));
-
-    const hsPoint3 &point = pointChan->Value(time);
-    hsColorRGBA color;
-    color.Set(point.fX, point.fY, point.fZ, 1.0f);
-    li->SetSpecular(color);
-}
-
 

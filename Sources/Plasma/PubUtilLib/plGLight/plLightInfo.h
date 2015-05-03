@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsColorRGBA.h"
 #include "plIntersect/plVolumeIsect.h"
 #include "hsBitVector.h"
+#include "plAnimation/plAGChannel.h"
+#include "plAnimation/plAGApplicator.h"
 
 class hsStream;
 class hsResMgr;
@@ -62,6 +64,7 @@ class plDrawable;
 class plSoftVolume;
 class hsBounds3Ext;
 class plVisRegion;
+class plAGModifier;
 
 class plRenderRequest;
 class plRenderTarget;
@@ -415,5 +418,87 @@ inline bool plLightInfo::IsIdle() const
 
     return false;
 }
+
+
+
+class plSpotInnerApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plSpotInnerApplicator );
+    GETINTERFACE_ANY( plSpotInnerApplicator, plAGApplicator );
+};
+
+class plSpotOuterApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plSpotOuterApplicator );
+    GETINTERFACE_ANY( plSpotOuterApplicator, plAGApplicator );
+};
+
+class plOmniApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plOmniApplicator );
+    GETINTERFACE_ANY( plOmniApplicator, plAGApplicator );
+};
+
+class plOmniSqApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plOmniSqApplicator );
+    GETINTERFACE_ANY( plOmniSqApplicator, plAGApplicator );
+};
+
+class plOmniCutoffApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plOmniCutoffApplicator );
+    GETINTERFACE_ANY( plOmniCutoffApplicator, plAGApplicator );
+};
+
+class plLightDiffuseApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plLightDiffuseApplicator );
+    GETINTERFACE_ANY( plLightDiffuseApplicator, plAGApplicator );
+};
+
+class plLightAmbientApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plLightAmbientApplicator );
+    GETINTERFACE_ANY( plLightAmbientApplicator, plAGApplicator );
+};
+
+class plLightSpecularApplicator : public plAGApplicator
+{
+protected:
+    virtual void IApply(const plAGModifier *mod, double time);
+
+public:
+    CLASSNAME_REGISTER( plLightSpecularApplicator );
+    GETINTERFACE_ANY( plLightSpecularApplicator, plAGApplicator );
+};
 
 #endif // plLightInfo_inc
