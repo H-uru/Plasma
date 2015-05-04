@@ -439,6 +439,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
 }
 
 
+// Now unused -- 20150503 (dpogue)
 void plNetClientMgr::StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, 
                                     uint32_t sendFlags, uint32_t writeOptions)
 {
