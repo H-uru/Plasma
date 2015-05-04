@@ -46,10 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plSDLModifierMsg.h"
 
+#include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plSDL/plSDL.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetObjectDebugger.h"
 
 plSDLModifier::plSDLModifier() : fStateCache(nil), fSentOrRecvdState(false)
 {
