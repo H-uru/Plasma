@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plNetClientMgr.h"
 #include "plCreatableIndex.h"   
-#include "plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plSDLTypes.h"

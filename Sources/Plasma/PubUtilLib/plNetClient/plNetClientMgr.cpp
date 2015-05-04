@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysical.h"
 #include "plNetClientMsgHandler.h"
 #include "plNetLinkingMgr.h"
-#include "plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 
 #include "pnUtils/pnUtils.h"
 #include "plProduct.h"
