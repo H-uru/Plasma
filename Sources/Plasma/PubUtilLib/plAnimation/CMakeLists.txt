@@ -36,6 +36,8 @@ add_library(plAnimation STATIC ${plAnimation_SOURCES} ${plAnimation_HEADERS})
 
 target_link_libraries(plAnimation pnModifier)
 target_link_libraries(plAnimation plInterp)
+target_link_libraries(plAnimation plMessage)
+target_link_libraries(plAnimation plModifier)
 target_link_libraries(plAnimation plSDL)
 target_link_libraries(plAnimation plTransform)
 

@@ -18,5 +18,9 @@ set(plNetMessage_HEADERS
 
 add_library(plNetMessage STATIC ${plNetMessage_SOURCES} ${plNetMessage_HEADERS})
 
+target_link_libraries(plNetMessage CoreLib)
+target_link_libraries(plNetMessage plCompression)
+target_link_libraries(plNetMessage plNetCommon)
+
 source_group("Source Files" FILES ${plNetMessage_SOURCES})
 source_group("Header Files" FILES ${plNetMessage_HEADERS})

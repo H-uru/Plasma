@@ -34,6 +34,12 @@ set(plSDL_SDLFILES
 
 add_library(plSDL STATIC ${plSDL_SOURCES} ${plSDL_HEADERS} ${plSDL_SDLFILES})
 
+target_link_libraries(plSDL CoreLib)
+target_link_libraries(plSDL pnMessage)
+target_link_libraries(plSDL plFile)
+target_link_libraries(plSDL plNetMessage)
+target_link_libraries(plSDL plResMgr)
+
 source_group("Source Files" FILES ${plSDL_SOURCES})
 source_group("Header Files" FILES ${plSDL_HEADERS})
 source_group("SDL" FILES ${plSDL_SDLFILES})

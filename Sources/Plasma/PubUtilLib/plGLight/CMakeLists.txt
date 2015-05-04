@@ -31,5 +31,11 @@ set(plGLight_HEADERS
 
 add_library(plGLight STATIC ${plGLight_SOURCES} ${plGLight_HEADERS})
 
+target_link_libraries(plGLight pnSceneObject)
+target_link_libraries(plGLight plAnimation)
+target_link_libraries(plGLight plDrawable)
+target_link_libraries(plGLight plIntersect)
+target_link_libraries(plGLight plMessage)
+
 source_group("Source Files" FILES ${plGLight_SOURCES})
 source_group("Header Files" FILES ${plGLight_HEADERS})

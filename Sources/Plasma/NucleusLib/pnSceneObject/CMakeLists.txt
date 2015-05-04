@@ -23,7 +23,9 @@ set(pnSceneObject_SOURCES
 )
 
 add_library(pnSceneObject STATIC ${pnSceneObject_HEADERS} ${pnSceneObject_SOURCES})
+
 target_link_libraries(pnSceneObject CoreLib pnKeyedObject pnNetCommon)
+target_link_libraries(pnSceneObject pnNucleusInc)
 
 source_group("Header Files" FILES ${pnSceneObject_HEADERS})
 source_group("Source Files" FILES ${pnSceneObject_SOURCES})
