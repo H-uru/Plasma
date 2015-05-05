@@ -331,14 +331,6 @@ REGISTER_CREATABLE(plAccountUpdateMsg);
 #include "plRideAnimatedPhysMsg.h"
 REGISTER_CREATABLE(plRideAnimatedPhysMsg);
 
-#ifndef SERVER
-#ifndef NO_AV_MSGS
-#include "plAIMsg.h"
-REGISTER_CREATABLE(plAIMsg);
-REGISTER_CREATABLE(plAIBrainCreatedMsg);
-REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
-#endif // NO_AV_MSGS
-#endif // SERVER
 
 /*****************************************************************************
 *

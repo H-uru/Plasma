@@ -143,5 +143,10 @@ REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical)
 # include "plAvCoopMsg.h"
 REGISTER_CREATABLE(plAvCoopMsg);
 
+#include "plAIMsg.h"
+REGISTER_CREATABLE(plAIMsg);
+REGISTER_CREATABLE(plAIBrainCreatedMsg);
+REGISTER_CREATABLE(plAIArrivedAtGoalMsg);
+
 #endif // plAvatarCreatable_inc
 

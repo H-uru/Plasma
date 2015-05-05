@@ -5,7 +5,6 @@ include_directories("../../PubUtilLib")
 
 set(plMessage_SOURCES
     plAccountUpdateMsg.cpp
-    plAIMsg.cpp
     plAnimCmdMsg.cpp
     plAvatarMsg.cpp
     plBulletMsg.cpp
@@ -44,7 +43,6 @@ set(plMessage_HEADERS
     plAccountUpdateMsg.h
     plActivatorMsg.h
     plAgeLoadedMsg.h
-    plAIMsg.h
     plAngularVelocityMsg.h
     plAnimCmdMsg.h
     plAvatarFootMsg.h
