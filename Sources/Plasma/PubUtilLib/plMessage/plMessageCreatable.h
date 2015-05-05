@@ -358,9 +358,6 @@ REGISTER_CREATABLE(plLoadAvatarMsg);
 #include "plLoadClothingMsg.h"
 REGISTER_CREATABLE(plLoadClothingMsg);
 
-# include "plAvCoopMsg.h"
-REGISTER_CREATABLE(plAvCoopMsg);
-
 #endif // ndef SERVER
 #endif // ndef NO_AV_MSGS
 

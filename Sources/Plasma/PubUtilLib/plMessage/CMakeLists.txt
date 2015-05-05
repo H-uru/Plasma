@@ -8,7 +8,6 @@ set(plMessage_SOURCES
     plAIMsg.cpp
     plAnimCmdMsg.cpp
     plAvatarMsg.cpp
-    plAvCoopMsg.cpp
     plBulletMsg.cpp
     plCaptureRenderMsg.cpp
     plCCRMsg.cpp
@@ -50,7 +49,6 @@ set(plMessage_HEADERS
     plAnimCmdMsg.h
     plAvatarFootMsg.h
     plAvatarMsg.h
-    plAvCoopMsg.h
     plBulletMsg.h
     plCaptureRenderMsg.h
     plCCRMessageCreatable.h

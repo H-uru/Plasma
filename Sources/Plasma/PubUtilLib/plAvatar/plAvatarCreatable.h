@@ -139,5 +139,9 @@ REGISTER_CREATABLE( plAvBrainCritter );
 
 #include "plAvBrainRideAnimatedPhysical.h"
 REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical)
+
+# include "plAvCoopMsg.h"
+REGISTER_CREATABLE(plAvCoopMsg);
+
 #endif // plAvatarCreatable_inc
 

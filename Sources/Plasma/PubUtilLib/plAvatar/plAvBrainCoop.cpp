@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimStage.h"
 #include "plAvTaskSeek.h"
 #include "plAvatarMgr.h"
+#include "plAvCoopMsg.h"
 
 // other
 #include "plScene/plSceneNode.h"
@@ -60,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // messages
 #include "plMessage/plAvatarMsg.h"
-#include "plMessage/plAvCoopMsg.h"
 #include "plMessage/plPickedMsg.h"
 #include "pnMessage/plNotifyMsg.h"
 

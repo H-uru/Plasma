@@ -24,6 +24,7 @@ set(plAvatar_SOURCES
     plAvBrainHuman.cpp
     plAvBrainRideAnimatedPhysical.cpp
     plAvBrainSwim.cpp
+    plAvCoopMsg.cpp
     plAvLadderModifier.cpp
     plAvTaskBrain.cpp
     plAvTaskSeek.cpp
@@ -57,6 +58,7 @@ set(plAvatar_HEADERS
     plAvBrainHuman.h
     plAvBrainRideAnimatedPhysical.h
     plAvBrainSwim.h
+    plAvCoopMsg.h
     plAvDefs.h
     plAvLadderModifier.h
     plAvTask.h
