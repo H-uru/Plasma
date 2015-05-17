@@ -293,7 +293,7 @@ bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const plString& ageN
     {
         if( pageName.CompareI( sExcludeList[ i ].fPageName ) == 0 )
         {
-            if( ageName.IsEmpty() || !sExcludeList[ i ].fAgeName.IsEmpty() ||
+            if( ageName.IsEmpty() || sExcludeList[ i ].fAgeName.IsEmpty() ||
                 ageName.CompareI(sExcludeList[ i ].fAgeName) == 0 )
             {
                 return true;
