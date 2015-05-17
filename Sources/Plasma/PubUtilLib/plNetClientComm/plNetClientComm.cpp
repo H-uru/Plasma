@@ -562,20 +562,6 @@ static void INetAuthFileListRequestCallback (
 }
 
 //============================================================================
-static void INetCliAuthFileRequestCallback (
-    ENetError       result,
-    void *          param,
-    const wchar_t     filename[],
-    hsStream *      writer
-) {
-    plNetCommFileDownloadMsg * msg = new plNetCommFileDownloadMsg;
-    msg->result = result;
-    msg->writer = writer;
-    StrCopy(msg->filename, filename, arrsize(filename));
-    msg->Send();
-}
-
-//============================================================================
 static void INetCliGameJoinAgeRequestCallback (
     ENetError       result,
     void *          param

@@ -238,7 +238,12 @@ inline double hsSwapEndianDouble(double dvalue)
 *   StrPrintf(buffer, arrsize(buffer), "%u", value);
 *
 ***/
-#define  arrsize(a)     (sizeof(a) / sizeof((a)[0]))
+#ifdef HAVE_CONSTEXPR
+    template <typename _T, size_t _Sz>
+    constexpr size_t arrsize(_T(&)[_Sz]) { return _Sz; }
+#else
+#   define  arrsize(a)  (sizeof(a) / sizeof((a)[0]))
+#endif
 
 
 /****************************************************************************

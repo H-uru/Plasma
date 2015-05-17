@@ -58,6 +58,11 @@ try_compile(HAVE_GCC_DEPRECATED_ATTR ${PROJECT_BINARY_DIR}
             COMPILE_DEFINITIONS -DTRY_GCC_ATTR
             OUTPUT_VARIABLE OUTPUT)
 
+# Look for C++11 constexpr support
+try_compile(HAVE_CONSTEXPR ${PROJECT_BINARY_DIR}
+            ${PROJECT_SOURCE_DIR}/cmake/check_constexpr.cpp
+            OUTPUT_VARIABLE OUTPUT)
+
 configure_file(${PROJECT_SOURCE_DIR}/cmake/hsCompilerSpecific.h.cmake
                ${PROJECT_BINARY_DIR}/hsCompilerSpecific.h)
 include_directories(${PROJECT_BINARY_DIR})
