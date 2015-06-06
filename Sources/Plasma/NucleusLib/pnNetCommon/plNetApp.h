@@ -189,7 +189,7 @@ public:
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
     virtual int Update(double secs) { return hsOK;}
     virtual const char* GetServerLogTimeAsString(plString& ts) const { hsAssert(false, "stub"); return nil; }
-    virtual plUoid GetAgeSDLObjectUoid(const char* ageName) const { hsAssert(false, "stub"); return plUoid(); }
+    virtual plUoid GetAgeSDLObjectUoid(const plString& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}
     virtual void QueueDisableNet( bool showDlg, const char msg[] ) {}
 

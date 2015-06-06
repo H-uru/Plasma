@@ -207,8 +207,8 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     IReadValue(&value, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    StrCopy(gameName, tempstr, arrsize(gameName));
-    delete tempstr;
+    gameName = plString::FromWchar(tempstr);
+    free(tempstr);
 
     if (end)
         *end = buffer;
@@ -226,7 +226,7 @@ unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
     IWriteValue(createdTime, buffer);
     IWriteValue(gameType, buffer);
     IWriteValue(value, buffer);
-    IWriteString(gameName, buffer);
+    IWriteString(gameName.ToWchar().GetData(), buffer);
 
     return buffer->Count() - pos;
 }
@@ -238,7 +238,7 @@ void NetGameScore::CopyFrom(const NetGameScore & score) {
     createdTime = score.createdTime;
     gameType    = score.gameType;
     value       = score.value;
-    StrCopy(gameName, score.gameName, arrsize(gameName));
+    gameName    = score.gameName;
 }
 
 /*****************************************************************************

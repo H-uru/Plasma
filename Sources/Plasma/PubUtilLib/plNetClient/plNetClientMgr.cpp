@@ -1007,12 +1007,11 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         }
 
         // if we're linking to startup we don't need (or want) a player set
-        char ageName[kMaxAgeNameLength];
-        StrCopy(ageName, NetCommGetStartupAge()->ageDatasetName, arrsize(ageName));
-        if (!StrLen(ageName))
-            StrCopy(ageName, "StartUp", arrsize(ageName));
-        if (0 == StrCmpI(ageName, "StartUp"))
-            NetCommSetActivePlayer(0, nil);
+        plString ageName = NetCommGetStartupAge()->ageDatasetName;
+        if (ageName.IsEmpty())
+            ageName = "StartUp";
+        if (ageName.CompareI("StartUp") == 0)
+            NetCommSetActivePlayer(0, nullptr);
 
         plAgeLinkStruct link;
         link.GetAgeInfo()->SetAgeFilename(NetCommGetStartupAge()->ageDatasetName);
@@ -1084,9 +1083,9 @@ bool plNetClientMgr::CanSendMsg(plNetMessage * msg)
 plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 {
     // local case
-    if (!avKey || avKey==GetLocalPlayerKey())
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-    
+    if (!avKey || avKey == GetLocalPlayerKey())
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
@@ -1094,15 +1093,15 @@ plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     // local case
     if (NetCommGetPlayer()->playerInt == playerId)
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-        
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
 
 unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
     // local case
-    if (0 == name.Compare(NetCommGetPlayer()->playerNameAnsi))
+    if (name.CompareI(NetCommGetPlayer()->playerName) == 0)
         return NetCommGetPlayer()->playerInt;
 
     unsigned n = TransportMgr().GetNumMembers();
@@ -1365,9 +1364,9 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
     return cnt==0 ? false : true;
 }
 
-plUoid plNetClientMgr::GetAgeSDLObjectUoid(const char* ageName) const
+plUoid plNetClientMgr::GetAgeSDLObjectUoid(const plString& ageName) const
 {
-    hsAssert(ageName, "nil ageName");
+    hsAssert(!ageName.IsEmpty(), "nil ageName");
 
     // if age sdl hook is loaded
     if (fAgeSDLObjectKey)

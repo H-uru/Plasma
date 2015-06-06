@@ -50,10 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <vector>
-#include <string>
 
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;
+class plString;
 
 class cyAccountManagement
 {
@@ -63,14 +63,14 @@ public:
 
     static bool         IsSubscriptionActive();
     static PyObject*    GetPlayerList();
-    static std::wstring GetAccountName();
+    static plString     GetAccountName();
     static void         CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode);
     static void         CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode);
     static void         DeletePlayer(unsigned playerId);
     static void         SetActivePlayer(unsigned playerId);
     static bool         IsActivePlayerSet();
     static void         UpgradeVisitorToExplorer(unsigned playerId);
-    static void         ChangePassword(const char* password);
+    static void         ChangePassword(const plString& password);
 };
 
 

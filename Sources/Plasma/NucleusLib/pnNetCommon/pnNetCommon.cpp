@@ -67,13 +67,13 @@ plString GetTextAddr(uint32_t binAddr)
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
-uint32_t GetBinAddr(const char * textAddr)
+uint32_t GetBinAddr(const plString& textAddr)
 {
     uint32_t addr = 0;
-    if (!textAddr)
+    if (textAddr.IsEmpty())
         return addr;
 
-    addr = inet_addr(textAddr);
+    addr = inet_addr(textAddr.c_str());
     if(addr == INADDR_NONE)
     {
         struct addrinfo* ai = nil;
@@ -81,7 +81,7 @@ uint32_t GetBinAddr(const char * textAddr)
         memset(&hints, 0, sizeof(struct addrinfo));
         hints.ai_family = PF_INET;
         hints.ai_flags  = AI_CANONNAME;
-        if (getaddrinfo(textAddr, nil, &hints, &ai) != 0)
+        if (getaddrinfo(textAddr.c_str(), nil, &hints, &ai) != 0)
         {
             hsAssert(false, "getaddrinfo failed");
             return addr;

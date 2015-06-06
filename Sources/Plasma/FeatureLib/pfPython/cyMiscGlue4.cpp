@@ -695,66 +695,26 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorNetFlags, args, "Params: behKey, ne
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress, toName = \"Friend\"\nSends an email with invite code")
 {
-    PyObject* emailObj;
-    PyObject* toNameObj = nil;
-    if (!PyArg_ParseTuple(args, "O|O", &emailObj, &toNameObj))
+    char* emailIn = nullptr;
+    char* nameIn = nullptr;
+    if (!PyArg_ParseTuple(args, "es|es", "utf8", &emailIn, "utf8", &nameIn))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendFriendInvite expects a string and optionally another string");
         PYTHON_RETURN_ERROR;
     }
 
-    wchar_t emailAddr[kMaxEmailAddressLength];
-    memset(emailAddr, 0, sizeof(emailAddr));
+    plString email = emailIn;
+    plString name = nameIn ? nameIn : "Friend";
+    PyMem_Free(emailIn);
+    PyMem_Free(nameIn);
 
-    wchar_t toName[kMaxPlayerNameLength];
-    memset(toName, 0, sizeof(toName));
-
-    // Check and see if the email address is ok
-    int origStrLen = 0;
-    if (PyUnicode_Check(emailObj))
-    {
-        origStrLen = PyUnicode_GET_SIZE(emailObj);
-        PyUnicode_AsWideChar((PyUnicodeObject*)emailObj, emailAddr, arrsize(emailAddr) - 1);
-    }
-    else if (PyString_Check(emailObj))
-    {
-        char* cAddr = PyString_AsString(emailObj);
-        origStrLen = StrLen(cAddr);
-        StrToUnicode(emailAddr, cAddr, arrsize(emailAddr));
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtSendFriendInvite expects a string and optionally another string");
-        PYTHON_RETURN_ERROR;
-    }
-
-    if (origStrLen >= kMaxEmailAddressLength)
+    if (email.GetSize() >= kMaxEmailAddressLength)
     {
         PyErr_SetString(PyExc_TypeError, "PtSendFriendInvite: Email address too long");
         PYTHON_RETURN_ERROR;
     }
 
-    // Check if the "to name" field is ok
-    if (toNameObj)
-    {
-        if (PyUnicode_Check(toNameObj))
-        {
-            origStrLen = PyUnicode_GET_SIZE(toNameObj);
-            PyUnicode_AsWideChar((PyUnicodeObject*)toNameObj, toName, arrsize(toName) - 1);
-        }
-        else if (PyString_Check(toNameObj))
-        {
-            char* cName = PyString_AsString(toNameObj);
-            origStrLen = StrLen(cName);
-            StrToUnicode(toName, cName, arrsize(toName));
-        }
-        else
-            StrCopy(toName, L"Friend", arrsize(toName));
-    }
-    else
-        StrCopy(toName, L"Friend", arrsize(toName));
-
-    cyMisc::SendFriendInvite(emailAddr, toName);
+    cyMisc::SendFriendInvite(email, name);
     PYTHON_RETURN_NONE;
 }
 

@@ -133,14 +133,14 @@ void pfGameScore::TransferPoints(pfGameScore* to, int32_t points, plKey recvr)
 
 //======================================
 static void OnScoreCreate(
-    ENetError   result,
-    void *      param,
-    uint32_t    scoreId,
-    uint32_t    createdTime, // ignored
-    uint32_t    ownerId,
-    const char* gameName,
-    uint32_t    gameType,
-    int32_t     value
+    ENetError       result,
+    void *          param,
+    uint32_t        scoreId,
+    uint32_t        createdTime, // ignored
+    uint32_t        ownerId,
+    const plString& gameName,
+    uint32_t        gameType,
+    int32_t         value
 ) {
     ScoreUpdateParam* p = (ScoreUpdateParam*)param;
     pfGameScore* score = new pfGameScore(scoreId, ownerId, gameName, gameType, value);
@@ -151,7 +151,7 @@ static void OnScoreCreate(
 
 void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, plKey rcvr)
 {
-    NetCliAuthScoreCreate(ownerId, name.c_str(), type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
+    NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
 }
 
 //======================================
@@ -165,7 +165,7 @@ static void OnScoreFound(
     for (uint32_t i = 0; i < scoreCount; ++i)
     {
         const NetGameScore ngs = scores[i];
-        vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, plString::FromWchar(ngs.gameName), ngs.gameType, ngs.value);
+        vec[i] = new pfGameScore(ngs.scoreId, ngs.ownerId, ngs.gameName, ngs.gameType, ngs.value);
     }
 
     ScoreFindParam* p = (ScoreFindParam*)param;

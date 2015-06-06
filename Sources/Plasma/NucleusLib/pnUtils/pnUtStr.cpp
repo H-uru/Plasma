@@ -99,17 +99,6 @@ static chartype * IStrDup (const chartype str[]) {
 }
 
 //===========================================================================
-template<class chartype>
-static chartype * IStrDupLen (const chartype str[], unsigned chars) {
-    unsigned len = IStrLen(str) + 1;
-    if (len > chars)
-        len = chars;
-    chartype * buffer = (chartype *)malloc(len * sizeof(chartype));
-    IStrCopy(buffer, str, len);
-    return buffer;
-}
-
-//===========================================================================
 template<class chartype, class findchartype>
 static chartype * IStrChr (chartype * str, findchartype ch, unsigned chars) {
     for (; chars--; ++str)
@@ -118,60 +107,6 @@ static chartype * IStrChr (chartype * str, findchartype ch, unsigned chars) {
         else if (!*str)
             break;
     return nil;
-}
-
-//===========================================================================
-static inline bool ICharUnicodeToUtf8 (char ** dest, const wchar_t * source[], unsigned destChars) {
-    unsigned ch     = *(*source)++;
-    bool     result = false;
-    if (ch < 0x80) {
-        if (destChars >= 1) {
-            *(*dest)++ = (char)ch;
-            result = true;
-        }
-    }
-    else if (ch < 0x800) {
-        if (destChars >= 2) {
-            *(*dest)++ = (char)(0xc0 | (ch >> 6));
-            *(*dest)++ = (char)(0x80 | (ch & 0x3f));
-            result = true;
-        }
-    }
-    else {
-        if (destChars >= 3) {
-            *(*dest)++ = (char)(0xe0 | (ch >> 12));
-            *(*dest)++ = (char)(0x80 | ((ch >> 6) & 0x3f));
-            *(*dest)++ = (char)(0x80 | (ch & 0x3f));
-            result = true;
-        }
-    }
-    return result;
-}
-
-//===========================================================================
-static inline void ICharUtf8ToUnicode (wchar_t ** dest, const char * source[]) {
-    unsigned result, remaining;
-    if ((**source & 0xf0) == 0xe0) {
-        result    = *(*source)++ & 0x0f;
-        remaining = 2;
-    }
-    else if ((**source & 0xe0) == 0xc0) {
-        result    = *(*source)++ & 0x1f;
-        remaining = 1;
-    }
-    else if ((**source & 0x80) == 0x00) {
-        result    = *(*source)++;
-        remaining = 0;
-    }
-    else {
-        // unsupported code sequence (>0xffff)
-        ++(*source);
-        return;
-    }
-    for (; remaining-- && *source; ++*source)
-        if ((**source & 0xc0) == 0x80)
-            result = (result << 6) | (**source & 0x3f);
-    *(*dest)++ = (wchar_t)result;
 }
 
 //===========================================================================
@@ -212,39 +147,6 @@ static int IStrCmpI (const chartype str1[], const chartype str2[], unsigned char
             return 0;
     }
     return 0;
-}
-
-//===========================================================================
-template<class chartype>
-static void IStrPack (chartype * dest, const chartype source[], unsigned chars) {
-    while ((chars > 1) && *dest) {
-        --chars;
-        ++dest;
-    }
-    while ((chars > 1) && ((*dest = *source++) != 0)) {
-        --chars;
-        ++dest;
-    }
-    if (chars)
-        *dest = 0;
-}
-
-//===========================================================================
-template<class chartype>
-static chartype * IStrStr (chartype source[], const chartype match[]) {
-    if (!*match)
-        return source;
-
-    for (chartype * curr = source; *curr; ++curr) {
-        chartype * s1       = curr;
-        const chartype * s2 = match;
-        while (*s1 && *s2 && *s1 == *s2)
-            s1++, s2++;
-        if (!*s2)
-            return curr;
-    }
-
-    return nil;
 }
 
 //===========================================================================
@@ -375,42 +277,6 @@ wchar_t * StrDup (const wchar_t str[]) {
 }
 
 //===========================================================================
-char * StrDupLen (const char str[], unsigned chars) {
-    return IStrDupLen(str, chars);
-}
-
-//===========================================================================
-wchar_t * StrDupLen (const wchar_t str[], unsigned chars) {
-    return IStrDupLen(str, chars);
-}
-
-//============================================================================
-wchar_t * StrDupToUnicode (const char str[]) {
-    unsigned bytes = StrBytes(str) * sizeof(wchar_t);
-    wchar_t * dst = (wchar_t*)malloc(bytes);
-    StrToUnicode(dst, str, bytes / sizeof(wchar_t));
-    return dst;
-}
-
-//============================================================================
-char * StrDupToAnsi (const wchar_t str[]) {
-    unsigned bytes = StrBytes(str) / sizeof(wchar_t);
-    char * dst = (char*)malloc(bytes);
-    StrToAnsi(dst, str, bytes);
-    return dst;
-}
-
-//===========================================================================
-unsigned StrBytes (const char str[]) {  // includes space for terminator
-    return (IStrLen(str) + 1) * sizeof(str[0]);
-}
-
-//===========================================================================
-unsigned StrBytes (const wchar_t str[]) { // includes space for terminator
-    return (IStrLen(str) + 1) * sizeof(str[0]);
-}
-
-//===========================================================================
 char * StrChr (char * str, char ch, unsigned chars) {
     return IStrChr(str, ch, chars);
 }
@@ -488,36 +354,6 @@ void StrCopy (char * dest, const char source[], unsigned chars) {
 //===========================================================================
 void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars) {
     IStrCopy(dest, source, chars);
-}
-
-//===========================================================================
-void StrPack (char * dest, const char source[], unsigned chars) {
-    IStrPack(dest, source, chars);
-}
-
-//===========================================================================
-void StrPack (wchar_t * dest, const wchar_t source[], unsigned chars) {
-    IStrPack(dest, source, chars);
-}
-
-//===========================================================================
-char * StrStr (char * source, const char match[]) {
-    return IStrStr(source, match);
-}
-
-//===========================================================================
-const char * StrStr (const char source[], const char match[]) {
-    return IStrStr<const char>(source, match);
-}
-
-//===========================================================================
-wchar_t * StrStr (wchar_t * source, const wchar_t match[]) {
-    return IStrStr(source, match);
-}
-
-//===========================================================================
-const wchar_t * StrStr (const wchar_t source[], const wchar_t match[]) {
-    return IStrStr<const wchar_t>(source, match);
 }
 
 //===========================================================================

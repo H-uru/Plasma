@@ -33,21 +33,13 @@ set(pnUtils_SOURCES
 if(WIN32)
     set(pnUtils_WIN32
         Win32/pnUtW32Misc.cpp
-        Win32/pnUtW32Str.cpp
     )
-else()
-    set(pnUtils_UNIX
-        Unix/pnUtUxStr.cpp
-    )
-endif()
+endif(WIN32)
 
-add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES}
-                           ${pnUtils_UNIX} ${pnUtils_WIN32})
+add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES} ${pnUtils_WIN32})
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})
 source_group("Source Files" FILES ${pnUtils_SOURCES})
 if(WIN32)
     source_group("Win32" FILES ${pnUtils_WIN32})
-else()
-    source_group("Unix" FILES ${pnUtils_UNIX})
-endif()
+endif(WIN32)

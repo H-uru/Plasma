@@ -53,7 +53,7 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flash
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
 {
-    return PyString_FromString(cyMisc::GetAgeName());
+    return PyString_FromPlString(cyMisc::GetAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeInfo, "Returns ptAgeInfoStruct of the current Age")

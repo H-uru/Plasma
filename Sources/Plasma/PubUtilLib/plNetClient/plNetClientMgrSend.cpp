@@ -155,7 +155,7 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     info.AddValue( "Petition", "Content", note );
     info.AddValue( "Petition", "Title", title );
     info.AddValue( "Petition", "Language", plLocalization::GetLanguageName( plLocalization::GetLanguage() ) );
-    info.AddValue( "Petition", "AcctName", NetCommGetAccount()->accountNameAnsi );
+    info.AddValue( "Petition", "AcctName", NetCommGetAccount()->accountName.c_str() );
     char buffy[20];
     sprintf(buffy, "%u", GetPlayerID());
     info.AddValue( "Petition", "PlayerID", buffy );
@@ -170,10 +170,8 @@ void plNetClientMgr::ISendCCRPetition(plCCRPetitionMsg* petMsg)
     std::string buf;
     buf.resize( size );
     ram.CopyToMem( (void*)buf.data() );
-    
-    wchar_t * wStr = StrDupToUnicode(buf.c_str());
-    NetCliAuthSendCCRPetition(wStr);
-    free(wStr);
+
+    NetCliAuthSendCCRPetition(buf.c_str());
 }
 
 //

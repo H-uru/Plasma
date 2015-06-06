@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pfUtilBase64.h"
+#include "plString.h"
 
 #include <algorithm>
 
@@ -89,7 +90,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's status URL"
 ) {
-    SetServerStatusUrl(params[0]);
+    SetServerStatusUrl((char*)params[0]);
 }
 
 //============================================================================
@@ -99,7 +100,7 @@ PF_CONSOLE_CMD(
     "string url",
     "Set the server's new user sign-up URL"
 ) {
-    SetServerSignupUrl(params[0]);
+    SetServerSignupUrl((char*)params[0]);
 }
 
 //============================================================================
@@ -109,7 +110,7 @@ PF_CONSOLE_CMD(
     "string name",
     "Set the displayable server name"
 ) {
-    SetServerDisplayName(params[0]);
+    SetServerDisplayName((char*)params[0]);
 }
 
 //============================================================================
@@ -134,7 +135,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the File Server address"
 ) {
-    SetFileSrvHostname(params[0]);
+    SetFileSrvHostname((char*)params[0]);
 }
 
 
@@ -149,7 +150,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the Auth Server address"
 ) {
-    SetAuthSrvHostname(params[0]);
+    SetAuthSrvHostname((char*)params[0]);
 }
 
 //============================================================================
@@ -261,7 +262,7 @@ PF_CONSOLE_CMD(
     "string address",
     "Set the GateKeeper Server address"
 ) {
-    SetGateKeeperSrvHostname(params[0]);
+    SetGateKeeperSrvHostname((char*)params[0]);
 }
 
 //============================================================================

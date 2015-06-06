@@ -61,8 +61,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountPlayerList, "Returns list of 
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountName, "Returns the account name for the current account")
 {
-    std::wstring name = cyAccountManagement::GetAccountName();
-    return PyUnicode_FromWideChar(name.c_str(), name.length());
+    return PyUnicode_FromStringEx(cyAccountManagement::GetAccountName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCreatePlayer, args, "Params: playerName, avatarShape, invitation\nCreates a new player")

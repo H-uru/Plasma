@@ -375,8 +375,8 @@ bool VaultAmCzarOfCurrentAge ();
 bool VaultAmOwnerOfAge (const plUUID& ageInstId);
 bool VaultAmCzarOfAge (const plUUID& ageInstId);
 bool VaultRegisterMTStationAndWait (
-    const wchar_t stationName[],
-    const wchar_t linkBackSpawnPtObjName[]
+    const plString& stationName,
+    const plString& linkBackSpawnPtObjName
 );
 void VaultProcessPlayerInbox ();
 
@@ -402,12 +402,12 @@ hsRef<RelVaultNode> VaultGetAgePublicAgesFolder();
 hsRef<RelVaultNode> VaultAgeGetBookshelfFolder();
 hsRef<RelVaultNode> VaultFindAgeSubAgeLink(const plAgeInfoStruct * info);
 hsRef<RelVaultNode> VaultFindAgeChildAgeLink(const plAgeInfoStruct * info);
-hsRef<RelVaultNode> VaultFindAgeChronicleEntry(const wchar_t entryName[], int entryType = -1);
+hsRef<RelVaultNode> VaultFindAgeChronicleEntry(const plString& entryName, int entryType = -1);
 // if entry of same name and type already exists, value is updated
 void           VaultAddAgeChronicleEntry (
-    const wchar_t entryName[],
+    const plString& entryName,
     int         entryType,
-    const wchar_t entryValue[]
+    const plString& entryValue
 );
 hsRef<RelVaultNode> VaultAgeAddDeviceAndWait(const plString& deviceName);   // blocks until completion
 void VaultAgeRemoveDevice (const plString& deviceName);
@@ -434,11 +434,11 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
 );
 bool VaultAgeFindOrCreateSubAgeLink(const plAgeInfoStruct* info, plAgeLinkStruct* link, const plUUID& arentUuid);
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const wchar_t           parentAgeName[],    // nil --> current age, non-nil --> owned age by given name
+    const plString&         parentAgeName,    // nil --> current age, non-nil --> owned age by given name
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 );
-uint8_t VaultAgeFindOrCreateChildAgeLink(const wchar_t parentAgeName[], const plAgeInfoStruct* info, plAgeLinkStruct* link);
+uint8_t VaultAgeFindOrCreateChildAgeLink(const plString& parentAgeName, const plAgeInfoStruct* info, plAgeLinkStruct* link);
 
 
 

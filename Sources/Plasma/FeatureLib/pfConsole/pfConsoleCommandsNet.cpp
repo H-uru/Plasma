@@ -789,11 +789,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    wchar_t wName[MAX_PATH];
-    wchar_t wObj[MAX_PATH];
-    StrToUnicode(wName, params[0], arrsize(wName));
-    StrToUnicode(wObj, params[1], arrsize(wObj));
-    VaultRegisterMTStationAndWait ( wName, wObj );
+    VaultRegisterMTStationAndWait((char*)params[0], (char*)params[1]);
     PrintString("Registered MT Station.");
 }
 

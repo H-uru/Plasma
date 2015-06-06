@@ -813,7 +813,7 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
             store->SetPassword(pLoginParam->username, plString::Null);
     }
 
-    NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
+    NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
     NetCommSetAuthTokenAndOS(nil, L"win");
@@ -871,7 +871,7 @@ void StatusCallback(void *param)
 
     HWND hwnd = (HWND)param;
 
-    const char *statusUrl = GetServerStatusUrl();
+    plString statusUrl = GetServerStatusUrl();
     CURL *hCurl = curl_easy_init();
 
     // For reporting errors
@@ -880,14 +880,14 @@ void StatusCallback(void *param)
 
     while(s_loginDlgRunning)
     {
-        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl);
+        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl.c_str());
         curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
         curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
         curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
 
-        if (statusUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
+        if (!statusUrl.IsEmpty() && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
             PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
-        
+
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
         {
             Sleep(1000);
@@ -1033,8 +1033,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
-                const char* signupurl = GetServerSignupUrl();
-                ShellExecuteA(NULL, "open", signupurl, NULL, NULL, SW_SHOWNORMAL);
+                plString signupurl = GetServerSignupUrl();
+                ShellExecuteW(NULL, L"open", signupurl.ToWchar(), NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }
@@ -1270,9 +1270,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if (!doIntroDialogs && loginParam.remember) {
         ENetError auth;
 
-        wchar_t wusername[kMaxAccountNameLength];
-        StrToUnicode(wusername, loginParam.username, arrsize(wusername));
-        NetCommSetAccountUsernamePassword(wusername, loginParam.namePassHash);
+        NetCommSetAccountUsernamePassword(loginParam.username, loginParam.namePassHash);
         bool cancelled = AuthenticateNetClientComm(&auth, NULL);
 
         if (IS_NET_ERROR(auth) || cancelled) {

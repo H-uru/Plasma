@@ -41,11 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pnNbSrvs.h"
-
-#if !HS_BUILD_FOR_WIN32
-#    include <wchar.h>
-#endif
-
+#include "plString.h"
 
 /*****************************************************************************
 *
@@ -53,22 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-static char s_authAddrConsole[64] = {0};
-static const char* s_authAddrs[] = {
-    s_authAddrConsole
-};
-
-
-static char s_fileAddrConsole[64] = {0};
-static const char* s_fileAddrs[] = {
-    s_fileAddrConsole
-};
-
-
-static char s_gateKeeperAddrConsole[64] = {0};
-static const char* s_gateKeeperAddrs[] = {
-    s_gateKeeperAddrConsole
-};
+static plString s_authAddrs[] = { "" };
+static plString s_fileAddrs[] = { "" };
+static plString s_gateKeeperAddrs[] = { "" };
 
 static unsigned s_clientPort = 14617;
 
@@ -82,45 +65,40 @@ static unsigned s_clientPort = 14617;
 //============================================================================
 // Auth
 //============================================================================
-unsigned GetAuthSrvHostnames (const char*** addrs) {
-
-    *addrs = s_authAddrs; 
+unsigned GetAuthSrvHostnames (const plString*& addrs) {
+    addrs = s_authAddrs;
     return arrsize(s_authAddrs);
 }
 
 //============================================================================
-void SetAuthSrvHostname (const char addr[]) {
-
-    strncpy(s_authAddrConsole, addr, arrsize(s_authAddrConsole));
+void SetAuthSrvHostname (const plString& addr) {
+    s_authAddrs[0] = addr;
 }
 
 //============================================================================
 // File
 //============================================================================
-unsigned GetFileSrvHostnames (const char*** addrs) {
-
-    *addrs = s_fileAddrs; 
+unsigned GetFileSrvHostnames (const plString*& addrs) {
+    addrs = s_fileAddrs;
     return arrsize(s_fileAddrs);
 }
 
 //============================================================================
-void SetFileSrvHostname (const char addr[]) {
-
-    strncpy(s_fileAddrConsole, addr, arrsize(s_fileAddrConsole));
+void SetFileSrvHostname (const plString& addr) {
+    s_fileAddrs[0] = addr;
 }
 
 //============================================================================
 // GateKeeper
 //============================================================================
-unsigned GetGateKeeperSrvHostnames (const char*** addrs) {
-
-    *addrs = s_gateKeeperAddrs; 
+unsigned GetGateKeeperSrvHostnames (const plString*& addrs) {
+    addrs = s_gateKeeperAddrs;
     return arrsize(s_gateKeeperAddrs);
 }
 
 //============================================================================
-void SetGateKeeperSrvHostname (const char addr[]) {
-    strncpy(s_gateKeeperAddrConsole, addr, arrsize(s_gateKeeperAddrConsole));
+void SetGateKeeperSrvHostname (const plString& addr) {
+    s_gateKeeperAddrs[0] = addr;
 }
 
 //============================================================================
@@ -139,36 +117,36 @@ void SetClientPort(unsigned port) {
 //============================================================================
 // User-visible Server
 //============================================================================
-static char s_serverStatusUrl[256] = {0};
-static char s_serverSignupUrl[256] = {0};
-static char s_serverName[256] = {0};
+static plString s_serverStatusUrl;
+static plString s_serverSignupUrl;
+static plString s_serverName;
 
 //============================================================================
-const char* GetServerStatusUrl () {
+plString GetServerStatusUrl () {
     return s_serverStatusUrl;
 }
 
 //============================================================================
-void SetServerStatusUrl (const char url[]) {
-    strncpy(s_serverStatusUrl, url, arrsize(s_serverStatusUrl));
+void SetServerStatusUrl (const plString& url) {
+    s_serverStatusUrl = url;
 }
 
 //============================================================================
-const char* GetServerSignupUrl () {
+plString GetServerSignupUrl () {
     return s_serverSignupUrl;
 }
 
 //============================================================================
-void SetServerSignupUrl (const char url[]) {
-    strncpy(s_serverSignupUrl, url, arrsize(s_serverSignupUrl));
+void SetServerSignupUrl (const plString& url) {
+    s_serverSignupUrl = url;
 }
 
 //============================================================================
-const char* GetServerDisplayName () {
+plString GetServerDisplayName () {
     return s_serverName;
 }
 
 //============================================================================
-void SetServerDisplayName (const char name[]) {
-    strncpy(s_serverName, name, arrsize(s_serverName));
+void SetServerDisplayName (const plString& name) {
+    s_serverName = name;
 }

@@ -1474,7 +1474,7 @@ bool plClient::StartInit()
 
     plSynchedObject::PushSynchDisabled(false);      // enable dirty tracking
 
-    if (StrCmp(NetCommGetStartupAge()->ageDatasetName, "StartUp") == 0)
+    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0)
     {
         plNetCommAuthMsg * msg  = new plNetCommAuthMsg();
         msg->result             = kNetSuccess;

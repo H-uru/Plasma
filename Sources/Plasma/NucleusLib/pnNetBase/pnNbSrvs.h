@@ -84,25 +84,27 @@ enum ESrvType {
 *
 ***/
 
-unsigned GetAuthSrvHostnames (const char*** addrs);   // returns addrCount
-void SetAuthSrvHostname (const char addr[]);
+class plString;
 
-unsigned GetFileSrvHostnames (const char*** addrs);   // returns addrCount
-void SetFileSrvHostname (const char addr[]);
+unsigned GetAuthSrvHostnames (const plString*& addrs);   // returns addrCount
+void SetAuthSrvHostname (const plString& addr);
 
-unsigned GetGateKeeperSrvHostnames (const char*** addrs); // returns addrCount
-void SetGateKeeperSrvHostname (const char addr[]);
+unsigned GetFileSrvHostnames (const plString*& addrs);   // returns addrCount
+void SetFileSrvHostname (const plString& addr);
+
+unsigned GetGateKeeperSrvHostnames (const plString*& addrs); // returns addrCount
+void SetGateKeeperSrvHostname (const plString& addr);
 
 unsigned GetClientPort();
 void SetClientPort(unsigned port);
 
-const char *GetServerStatusUrl ();
-void SetServerStatusUrl (const char url[]);
+plString GetServerStatusUrl ();
+void SetServerStatusUrl (const plString& url);
 
-const char *GetServerSignupUrl ();
-void SetServerSignupUrl (const char url[]);
+plString GetServerSignupUrl ();
+void SetServerSignupUrl (const plString& url);
 
-const char *GetServerDisplayName ();
-void SetServerDisplayName (const char name[]);
+plString GetServerDisplayName ();
+void SetServerDisplayName (const plString& name);
 
 #endif // pnNbSrvs_inc
