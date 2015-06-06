@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCmdParser.h"
 
 #include <vector>
+#include <algorithm>
 
 #define  WHITESPACE     " \"\t\r\n\x1A"
 #define  FLAGS          "-/"
