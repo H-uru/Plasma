@@ -2306,7 +2306,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
     }
 
     pad += "\t";
-    for (size_t i=0; i<GetCount(); i++)
+    for (int i=0; i<GetCount(); i++)
     {
         logMsg << pad;
         logMsg << "Var:" << i;
@@ -2349,7 +2349,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
     }
 
     pad += "\t";
-    for (size_t i=0; i<GetCount(); i++)
+    for (int i=0; i<GetCount(); i++)
     {
         logMsg << pad;
         logMsg << "Var:" << i;
