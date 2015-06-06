@@ -15,8 +15,6 @@ set(pnUtils_HEADERS
     pnUtSort.h
     pnUtStr.h
     pnUtTime.h
-
-    plCmdParser.h
 )
 
 set(pnUtils_SOURCES
@@ -26,8 +24,6 @@ set(pnUtils_SOURCES
     pnUtList.cpp
     pnUtStr.cpp
     pnUtTime.cpp
-
-    plCmdParser.cpp
 )
 
 add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})

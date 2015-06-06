@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 #include <gtest/gtest.h>
-#include "pnUtils/plCmdParser.h"
+#include "plCmdParser.h"
 
 TEST(plCmdParser, basic_parsing)
 {

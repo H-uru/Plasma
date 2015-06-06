@@ -28,6 +28,7 @@ set(CoreLib_SOURCES
     hsTemplates.cpp
     hsWide.cpp
     pcSmallRect.cpp
+    plCmdParser.cpp
     plFileSystem.cpp
     plFormat.cpp
     plGeneric.cpp
@@ -74,6 +75,7 @@ set(CoreLib_HEADERS
     hsWide.h
     hsWindows.h
     pcSmallRect.h
+    plCmdParser.h
     plFileSystem.h
     plFormat.h
     plGeneric.h

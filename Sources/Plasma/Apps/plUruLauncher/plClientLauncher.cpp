@@ -46,9 +46,9 @@ Mead, WA   99021
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+#include "plCmdParser.h"
 
 #include "pnUtils/pnUtils.h"
-#include "pnUtils/plCmdParser.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"

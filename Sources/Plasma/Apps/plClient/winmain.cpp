@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <curl/curl.h>
 
 #include "hsStream.h"
+#include "plCmdParser.h"
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "pfCrashHandler/plCrashCli.h"
@@ -66,7 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plPhysX/plSimulationMgr.h"
-#include "pnUtils/plCmdParser.h"
 
 #include "res/resource.h"
 
