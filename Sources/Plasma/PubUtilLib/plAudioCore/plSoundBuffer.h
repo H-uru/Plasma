@@ -169,14 +169,16 @@ protected:
     std::mutex fCritSect;
 
 public:
-    virtual hsError Run();
+    void Run() override;
 
-    virtual void Start() {
+    void Start() override
+    {
         fRunning = true;
         hsThread::Start();
     }
 
-    virtual void Stop() {
+    void Stop() override
+    {
         fRunning = false;
         fEvent.Signal();
         hsThread::Stop();

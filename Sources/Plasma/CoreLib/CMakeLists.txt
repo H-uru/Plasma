@@ -26,6 +26,7 @@ set(CoreLib_SOURCES
     hsStream.cpp
     hsStringTokenizer.cpp
     hsTemplates.cpp
+    hsThread.cpp
     hsWide.cpp
     pcSmallRect.cpp
     plFileSystem.cpp
