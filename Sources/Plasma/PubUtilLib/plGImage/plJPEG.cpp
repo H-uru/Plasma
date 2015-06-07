@@ -298,8 +298,10 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
 
         jpeg_set_defaults( &cinfo );
 
+#if JPEG_LIB_VERSION >= 70
         cinfo.jpeg_width = source->GetWidth(); // default
         cinfo.jpeg_height = source->GetHeight(); // default
+#endif
         cinfo.jpeg_color_space = JCS_YCbCr; // default
         // not sure how to set 4:1:1 but supposedly it's the default
         jpeg_set_quality( &cinfo, fWriteQuality, TRUE );

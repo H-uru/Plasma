@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #pragma hdrstop
 
+#include "pyGlueHelpers.h"
 #include "cyAccountManagement.h"
 #include "plNetClientComm/plNetClientComm.h"
 
