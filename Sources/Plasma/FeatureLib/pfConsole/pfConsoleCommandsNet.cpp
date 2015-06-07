@@ -544,7 +544,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "returns the age of the age" )   // helpString
 {
     PrintStringF(PrintString, "Current age is %s, elapsed time since birth = %f secs", 
-        NetCommGetAge()->ageDatasetName, plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
+        NetCommGetAge()->ageDatasetName.c_str(), plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
 }
 
 PF_CONSOLE_CMD( Net, DownloadViaManifest,
