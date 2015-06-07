@@ -41,11 +41,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "plGLMaterialShaderRef.h"
+#include "plGLDevice.h"
 
 #include <epoxy/gl.h>
+#include <string_theory/format>
+#include <string_theory/string_stream>
 
 #include "HeadSpin.h"
+#include "hsBitVector.h"
+
+#include "plDrawable/plGBufferGroup.h"
+#include "plGImage/plMipmap.h"
 #include "plSurface/hsGMaterial.h"
+#include "plSurface/plLayerInterface.h"
 
 plGLMaterialShaderRef::~plGLMaterialShaderRef()
 {
@@ -72,44 +80,213 @@ void plGLMaterialShaderRef::Release()
     SetDirty(true);
 }
 
+void plGLMaterialShaderRef::SetupTextureRefs()
+{
+    int32_t numTextures = 0;
+
+    for (size_t i = 0; i < fMaterial->GetNumLayers(); i++) {
+        plLayerInterface* layer = fMaterial->GetLayer(i);
+        if (!layer)
+            continue;
+
+        if (layer->GetUVWSrc() & (plLayerInterface::kUVWNormal | plLayerInterface::kUVWPosition | plLayerInterface::kUVWReflect)) {
+            // Now we have a different problem...
+            continue;
+        }
+
+        // Load the image
+        plMipmap* img = plMipmap::ConvertNoRef(layer->GetTexture());
+        if (!img)
+            continue;
+
+        GLenum e;
+        plGLTextureRef* texRef = static_cast<plGLTextureRef*>(img->GetDeviceRef());
+
+        if (!texRef->fRef)
+            continue;
+
+        LOG_GL_ERROR_CHECK("PRE-Active Texture failed")
+
+        glActiveTexture(GL_TEXTURE0 + numTextures);
+        LOG_GL_ERROR_CHECK("Active Texture failed")
+
+        glBindTexture(GL_TEXTURE_2D, texRef->fRef);
+        LOG_GL_ERROR_CHECK("Bind Texture failed")
+
+        ST::string name = ST::format("uTexture{}", numTextures);
+
+        GLint texture = glGetUniformLocation(fRef, name.c_str());
+        glUniform1i(texture, numTextures);
+        LOG_GL_ERROR_CHECK("Uniform Texture failed")
+
+        numTextures++;
+    }
+}
+
 
 void plGLMaterialShaderRef::ICompile()
 {
-    const char* vs_src = "#version 100"
-                     "\n"
-                     "\n" "uniform mat4 uMatrixL2W;"
-                     "\n" "uniform mat4 uMatrixW2C;"
-                     "\n" "uniform mat4 uMatrixProj;"
-                     "\n"
-                     "\n" "attribute vec3 aVtxPosition;"
-                     "\n" "attribute vec3 aVtxNormal;"
-                     "\n" "attribute vec4 aVtxColor;"
-                     "\n"
-                     "\n" "varying vec3 vVtxNormal;"
-                     "\n" "varying vec4 vVtxColor;"
-                     "\n"
-                     "\n" "void main() {"
-                     "\n" "    vVtxNormal = aVtxNormal;"
-                     "\n" "    vVtxColor = aVtxColor.zyxw;"
-                     "\n"
-                     "\n" "    vec4 pos = uMatrixL2W * vec4(aVtxPosition, 1.0);"
-                     "\n" "         pos = uMatrixW2C * pos;"
-                     "\n" "         pos = uMatrixProj * pos;"
-                     "\n"
-                     "\n" "    gl_Position = pos;"
-                     "\n" "}";
+    hsBitVector uvLayers;
+    fNumUVs = 0;
+    int32_t numTextures = 0;
 
-    const char* fs_src = "#version 100"
-                     "\n"
-                     "\n" "varying lowp vec3 vVtxNormal;"
-                     "\n" "varying mediump vec4 vVtxColor;"
-                     "\n"
-                     "\n" "void main() {"
-                     "\n" "    gl_FragColor = vVtxColor;"
-                     "\n" "}";
+    for (size_t i = 0; i < fMaterial->GetNumLayers(); i++) {
+        plLayerInterface* layer = fMaterial->GetLayer(i);
+        if (!layer)
+            continue;
+
+        if (layer->GetUVWSrc() & (plLayerInterface::kUVWNormal | plLayerInterface::kUVWPosition | plLayerInterface::kUVWReflect)) {
+            // Now we have a different problem...
+            continue;
+        }
+
+        uint32_t uv = layer->GetUVWSrc() & plGBufferGroup::kUVCountMask;
+
+        if (!uvLayers.IsBitSet(uv)) {
+            fNumUVs++;
+            uvLayers.SetBit(uv);
+        }
+
+
+        // Load the image
+        plMipmap* img = plMipmap::ConvertNoRef(layer->GetTexture());
+        if (!img)
+            continue;
+
+        numTextures++;
+
+        plGLTextureRef* texRef = new plGLTextureRef();
+        texRef->fOwner = img;
+        img->SetDeviceRef(texRef);
+
+        GLenum e;
+
+        glGenTextures(1, &texRef->fRef);
+        LOG_GL_ERROR_CHECK("Gen Texture failed")
+
+        glBindTexture(GL_TEXTURE_2D, texRef->fRef);
+        LOG_GL_ERROR_CHECK("Bind Texture failed")
+
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+        if (img->IsCompressed()) {
+            GLuint dxCompression = 0;
+            uint8_t compType = img->fDirectXInfo.fCompressionType;
+
+            if (compType == plBitmap::DirectXInfo::kDXT1)
+                dxCompression = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+            else if (compType == plBitmap::DirectXInfo::kDXT5)
+                dxCompression = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+
+            for (uint8_t i = 0; i < img->GetNumLevels(); i++) {
+                img->SetCurrLevel(i);
+
+                if (img->GetCurrWidth() < 4 || img->GetCurrHeight() < 4)
+                    continue;
+
+                glCompressedTexImage2D(GL_TEXTURE_2D, i, dxCompression,
+                                        img->GetCurrWidth(), img->GetCurrHeight(),
+                                        0, img->GetCurrLevelSize(), img->GetCurrLevelPtr());
+
+#ifdef HS_DEBUGGING
+                if ((e = glGetError()) != GL_NO_ERROR) {
+                    plStatusLog::AddLineSF("pipeline.log", "Texture Image failed: {}, at level {}", uint32_t(e), i);
+                }
+#endif
+            }
+        }
+    }
+
+    ST::string_stream vs_src;
+
+    vs_src << "#version 100" << "\n";
+    vs_src << "\n";
+    vs_src << "uniform mat4 uMatrixL2W;" << "\n";
+    vs_src << "uniform mat4 uMatrixW2C;" << "\n";
+    vs_src << "uniform mat4 uMatrixProj;" << "\n";
+    vs_src << "\n";
+    vs_src << "attribute vec3 aVtxPosition;" << "\n";
+    vs_src << "attribute vec3 aVtxNormal;" << "\n";
+    vs_src << "attribute vec4 aVtxColor;" << "\n";
+    for (int32_t i = 0; i < fNumUVs; i++) {
+        vs_src << "attribute vec3 aVtxUVWSrc" << i << ";" << "\n";
+    }
+    vs_src << "\n";
+    vs_src << "varying vec3 vVtxNormal;" << "\n";
+    vs_src << "varying vec4 vVtxColor;" << "\n";
+    for (int32_t i = 0; i < fNumUVs; i++) {
+        vs_src << "varying vec3 vVtxUVWSrc" << i << ";" << "\n";
+    }
+    vs_src << "\n";
+    vs_src << "void main() {" << "\n";
+    vs_src << "    vVtxNormal = aVtxNormal;" << "\n";
+    vs_src << "    vVtxColor = aVtxColor.zyxw;" << "\n";
+    for (int32_t i = 0; i < fNumUVs; i++) {
+        vs_src << "    vVtxUVWSrc" << i << " = aVtxUVWSrc" << i << ";" << "\n";
+    }
+    vs_src << "\n";
+    vs_src << "    vec4 pos = uMatrixL2W * vec4(aVtxPosition, 1.0);" << "\n";
+    vs_src << "         pos = uMatrixW2C * pos;" << "\n";
+    vs_src << "         pos = uMatrixProj * pos;" << "\n";
+    vs_src << "\n";
+    vs_src << "    gl_Position = pos;" << "\n";
+    vs_src << "}";
+
+
+
+    ST::string_stream fs_src;
+    fs_src << "#version 100" << "\n";
+    fs_src << "\n";
+    for (int32_t i = 0; i < numTextures; i++) {
+        fs_src << "uniform sampler2D uTexture" << i << ";" << "\n";
+    }
+    fs_src << "\n";
+    fs_src << "varying lowp vec3 vVtxNormal;" << "\n";
+    fs_src << "varying mediump vec4 vVtxColor;" << "\n";
+    for (int32_t i = 0; i < fNumUVs; i++) {
+        fs_src << "varying mediump vec3 vVtxUVWSrc" << i << ";" << "\n";
+    }
+    fs_src << "\n";
+    fs_src << "void main() {" << "\n";
+    fs_src << "    mediump vec4 color = vVtxColor;" << "\n";
+    /*if (numTextures > 0) {
+        fs_src << "    color *= texture2D(uTexture0, vec2(vVtxUVWSrc0.x, vVtxUVWSrc0.y));" << "\n";
+    }*/
+
+    for (int32_t i = 0, tex = 0; i < fMaterial->GetNumLayers(); i++) {
+        plLayerInterface* layer = fMaterial->GetLayer(i);
+        if (!layer)
+            continue;
+
+        if (layer->GetUVWSrc() & (plLayerInterface::kUVWNormal | plLayerInterface::kUVWPosition | plLayerInterface::kUVWReflect)) {
+            // Now we have a different problem...
+            continue;
+        }
+
+        plMipmap* img = plMipmap::ConvertNoRef(layer->GetTexture());
+        if (!img)
+            continue;
+
+        uint32_t uv = layer->GetUVWSrc() & plGBufferGroup::kUVCountMask;
+
+        fs_src << "    color *= texture2D(uTexture" << tex << ", vec2(vVtxUVWSrc" << uv << ".x, vVtxUVWSrc" << uv << ".y));" << "\n";
+        tex++;
+    }
+
+    fs_src << "    gl_FragColor = color;" << "\n";
+    fs_src << "}";
+
+    ST::string vtx = vs_src.to_string();
+    ST::string frg = fs_src.to_string();
+
+    const char* vs_code = vtx.c_str();
+    const char* fs_code = frg.c_str();
 
     fVertShaderRef = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(fVertShaderRef, 1, &vs_src, nullptr);
+    glShaderSource(fVertShaderRef, 1, &vs_code, nullptr);
     glCompileShader(fVertShaderRef);
 
 #ifdef HS_DEBUGGING
@@ -129,7 +306,7 @@ void plGLMaterialShaderRef::ICompile()
 #endif
 
     fFragShaderRef = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fFragShaderRef, 1, &fs_src, nullptr);
+    glShaderSource(fFragShaderRef, 1, &fs_code, nullptr);
     glCompileShader(fFragShaderRef);
 
 #ifdef HS_DEBUGGING
@@ -149,15 +326,14 @@ void plGLMaterialShaderRef::ICompile()
 #endif
 
     fRef = glCreateProgram();
+    LOG_GL_ERROR_CHECK("Create Program failed")
+
     glAttachShader(fRef, fVertShaderRef);
+    LOG_GL_ERROR_CHECK("Attach Vertex Shader failed")
+
     glAttachShader(fRef, fFragShaderRef);
+    LOG_GL_ERROR_CHECK("Attach Fragment Shader failed")
 
     glLinkProgram(fRef);
-
-#ifdef HS_DEBUGGING
-    GLenum e;
-    if ((e = glGetError()) != GL_NO_ERROR) {
-        hsStatusMessage(ST::format("Prg Link failed {}", uint32_t(e)).c_str());
-    }
-#endif
+    LOG_GL_ERROR_CHECK("Link Program failed")
 }

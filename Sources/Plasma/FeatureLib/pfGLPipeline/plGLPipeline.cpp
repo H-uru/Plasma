@@ -497,8 +497,8 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
                 mRef = new plGLMaterialShaderRef(material);
                 material->SetDeviceRef(mRef);
 
-                glUseProgram(mRef->fRef);
-                fDevice.fCurrentProgram = mRef->fRef;
+                //glUseProgram(mRef->fRef);
+                //fDevice.fCurrentProgram = mRef->fRef;
             }
 
             if (!mRef->IsLinked())
@@ -506,6 +506,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
 
             glUseProgram(mRef->fRef);
             fDevice.fCurrentProgram = mRef->fRef;
+            LOG_GL_ERROR_CHECK("Use Program failed")
 
             // TODO: Figure out how to use VAOs properly :(
             GLuint vao;
@@ -602,6 +603,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     typename DeviceType::VertexBufferRef* vRef = (typename DeviceType::VertexBufferRef*)vb;
     typename DeviceType::IndexBufferRef* iRef = (typename DeviceType::IndexBufferRef*)ib;
+    plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(material->GetDeviceRef());
 
     if (!vRef->fRef || !iRef->fRef) {
         plProfile_EndTiming(RenderBuff);
@@ -610,13 +612,44 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         return;
     }
 
+    LOG_GL_ERROR_CHECK("PRE Render failed");
+
+    mRef->SetupTextureRefs();
+
     /* Vertex Buffer stuff */
     glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
 
     GLint posAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxPosition");
+    if (posAttrib != -1) {
+        glEnableVertexAttribArray(posAttrib);
+        glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
+    }
+
+    GLint norAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxNormal");
+    if (norAttrib != -1) {
+        glEnableVertexAttribArray(norAttrib);
+        glVertexAttribPointer(norAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
+    }
+
     GLint colAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxColor");
-    glEnableVertexAttribArray(posAttrib);
-    glEnableVertexAttribArray(colAttrib);
+    if (colAttrib != -1) {
+        glEnableVertexAttribArray(colAttrib);
+        glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
+    }
+
+    LOG_GL_ERROR_CHECK("Vertex Attributes failed")
+
+    for (int i = 0; i < mRef->GetNumUVs(); i++) {
+        ST::string name = ST::format("aVtxUVWSrc{}", i);
+
+        GLint uvwAttrib = glGetAttribLocation(fDevice.fCurrentProgram, name.c_str());
+        if (uvwAttrib != -1) {
+            glEnableVertexAttribArray(uvwAttrib);
+            glVertexAttribPointer(uvwAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
+        }
+
+        LOG_GL_ERROR_CHECK("UVW Attributes failed")
+    }
 
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
     glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
@@ -631,4 +664,6 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     // TEMP
     render.RenderPrims();
+
+    LOG_GL_ERROR_CHECK("Render failed")
 }
