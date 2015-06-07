@@ -126,3 +126,22 @@ void plGLIndexBufferRef::Release()
     }
     SetDirty(true);
 }
+
+
+/*****************************************************************************
+ ** Texture Reference cleanup Functions                                     **
+ *****************************************************************************/
+
+plGLTextureRef::~plGLTextureRef()
+{
+    Release();
+}
+
+
+void plGLTextureRef::Release()
+{
+    if (fRef) {
+        glDeleteTextures(1, &fRef);
+        fRef = 0;
+    }
+}
