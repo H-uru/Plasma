@@ -47,7 +47,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <epoxy/gl.h>
 
+// Helper macro for logging GL Errors
+#ifdef HS_DEBUGGING
+#   include "plStatusLog/plStatusLog.h"
+#   define LOG_GL_ERROR_CHECK(message) \
+        do { \
+            GLenum e; \
+            if ((e = glGetError()) != GL_NO_ERROR) { \
+                plStatusLog::AddLineSF("pipeline.log", message ": {}", uint32_t(e)); \
+            } \
+        } while(0);
+#else
+#   define LOG_GL_ERROR_CHECK(message)
+#endif
+
 class plGBufferGroup;
+class plMipmap;
 
 class plGLDeviceRef : public hsGDeviceRef
 {
@@ -117,7 +132,7 @@ public:
     {}
 
     virtual ~plGLVertexBufferRef();
-    void Release();
+    void Release() override;
 };
 
 
@@ -155,7 +170,24 @@ public:
     {}
 
     virtual ~plGLIndexBufferRef();
-    void Release();
+    void Release() override;
+};
+
+
+class plGLTextureRef : public plGLDeviceRef
+{
+public:
+    plMipmap*       fOwner;
+
+    void             Link(plGLTextureRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
+    plGLTextureRef*  GetNext() { return (plGLTextureRef*)fNext; }
+
+    plGLTextureRef()
+        : plGLDeviceRef(), fOwner()
+    {}
+
+    virtual ~plGLTextureRef();
+    void Release() override;
 };
 
 
