@@ -10,6 +10,11 @@ if(WIN32)
 endif(WIN32)
 
 if(UNIX)
+    if(NOT APPLE)
+        find_package(Uuid REQUIRED)
+        include_directories(${Uuid_INCLUDE_DIR})
+    endif()
+
     set(pnUUID_SOURCES ${pnUUID_SOURCES} pnUUID_Unix.cpp)
 endif(UNIX)
 
@@ -23,7 +28,7 @@ if(WIN32)
     target_link_libraries(pnUUID pnUtils)
     target_link_libraries(pnUUID rpcrt4)
 elseif(NOT APPLE)
-    target_link_libraries(pnUUID uuid)
+    target_link_libraries(pnUUID ${Uuid_LIBRARIES})
 endif(WIN32)
 
 source_group("Source Files" FILES ${pnUUID_SOURCES})
