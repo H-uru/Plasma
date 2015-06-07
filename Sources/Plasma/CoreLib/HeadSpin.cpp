@@ -46,6 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef _MSC_VER
 #   include <crtdbg.h>
 #endif
+
+#if defined(HS_DEBUGGING) && defined(HS_BUILD_FOR_LINUX)
+#   include <cstring>
+#   include <sys/stat.h>
+#   include <fcntl.h>
+#   include <unistd.h>
+#endif
 #pragma hdrstop
 
 #include "hsTemplates.h"
@@ -139,8 +146,27 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
 
 bool DebugIsDebuggerPresent()
 {
-#ifdef _MSC_VER
+#if defined(HS_BUILD_FOR_WIN32)
     return IsDebuggerPresent();
+#elif defined(HS_BUILD_FOR_LINUX)
+    // From http://google-perftools.googlecode.com/svn/trunk/src/heap-checker.cc
+    char buf[256];   // TracerPid comes relatively earlier in status output
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;  // Can't tell for sure.
+    }
+    const int len = read(fd, buf, sizeof(buf));
+    bool rc = false;
+    if (len > 0) {
+        const char* const kTracerPid = "TracerPid:\t";
+        buf[len - 1] = '\0';
+        const char* p = strstr(buf, kTracerPid);
+        if (p) {
+            rc = (strncmp(p + strlen(kTracerPid), "0\n", 2) != 0);
+        }
+    }
+    close(fd);
+    return rc;
 #else
     // FIXME
     return false;
