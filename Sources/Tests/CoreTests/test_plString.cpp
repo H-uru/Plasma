@@ -214,6 +214,64 @@ TEST(PlStringTest, Concatenation)
     EXPECT_EQ(input1, "" + input1);
 }
 
+TEST(PlStringTest, Compare)
+{
+    // Same length, case sensitive
+    EXPECT_EQ(0, plString("abc").Compare("abc", plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abc").Compare("abd", plString::kCaseSensitive));
+    EXPECT_LT(0, plString("abc").Compare("abb", plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abC").Compare("abc", plString::kCaseSensitive));
+    EXPECT_GT(0, plString("Abc").Compare("abc", plString::kCaseSensitive));
+    EXPECT_EQ(0, plString().Compare("", plString::kCaseSensitive));
+
+    // Same length, case insensitive
+    EXPECT_EQ(0, plString("abc").Compare("abc", plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abc").Compare("ABC", plString::kCaseInsensitive));
+    EXPECT_GT(0, plString("abc").Compare("abD", plString::kCaseInsensitive));
+    EXPECT_LT(0, plString("abc").Compare("abB", plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString().Compare("", plString::kCaseInsensitive));
+
+    // Mismatched length, case sensitive
+    EXPECT_LT(0, plString("abc").Compare("ab", plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abc").Compare("abcd", plString::kCaseSensitive));
+    EXPECT_LT(0, plString("abc").Compare("", plString::kCaseSensitive));
+    EXPECT_GT(0, plString("").Compare("abc", plString::kCaseSensitive));
+
+    // Mismatched length, case insensitive
+    EXPECT_LT(0, plString("abc").Compare("Ab", plString::kCaseInsensitive));
+    EXPECT_GT(0, plString("abc").Compare("Abcd", plString::kCaseInsensitive));
+    EXPECT_LT(0, plString("abc").Compare("", plString::kCaseInsensitive));
+    EXPECT_GT(0, plString().Compare("abc", plString::kCaseInsensitive));
+}
+
+TEST(PlStringTest, CompareN)
+{
+    // Same length, case sensitive
+    EXPECT_EQ(0, plString("abcXX").CompareN("abcYY", 3, plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abcXX").CompareN("abdYY", 3, plString::kCaseSensitive));
+    EXPECT_LT(0, plString("abcXX").CompareN("abbYY", 3, plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abCXX").CompareN("abcYY", 3, plString::kCaseSensitive));
+    EXPECT_GT(0, plString("AbcXX").CompareN("abcYY", 3, plString::kCaseSensitive));
+
+    // Same length, case insensitive
+    EXPECT_EQ(0, plString("abcXX").CompareN("abcYY", 3, plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abcXX").CompareN("ABCYY", 3, plString::kCaseInsensitive));
+    EXPECT_GT(0, plString("abcXX").CompareN("abDYY", 3, plString::kCaseInsensitive));
+    EXPECT_LT(0, plString("abcXX").CompareN("abBYY", 3, plString::kCaseInsensitive));
+
+    // Mismatched length, case sensitive
+    EXPECT_LT(0, plString("abc").CompareN("ab", 3, plString::kCaseSensitive));
+    EXPECT_GT(0, plString("abc").CompareN("abcd", 4, plString::kCaseSensitive));
+    EXPECT_LT(0, plString("abc").CompareN("", 3, plString::kCaseSensitive));
+    EXPECT_GT(0, plString("").CompareN("abc", 3, plString::kCaseSensitive));
+
+    // Mismatched length, case insensitive
+    EXPECT_LT(0, plString("abc").CompareN("Ab", 3, plString::kCaseInsensitive));
+    EXPECT_GT(0, plString("abc").CompareN("Abcd", 4, plString::kCaseInsensitive));
+    EXPECT_LT(0, plString("abc").CompareN("", 3, plString::kCaseInsensitive));
+    EXPECT_GT(0, plString().CompareN("abc", 3, plString::kCaseInsensitive));
+}
+
 TEST(PlStringTest, FindChar)
 {
     // Available char, case sensitive
