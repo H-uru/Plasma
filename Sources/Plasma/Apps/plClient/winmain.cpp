@@ -1136,7 +1136,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     std::vector<plString> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(plString::FromWchar(__wargv[i]));
+        args.push_back(plString::FromUtf8(__argv[i]));
     }
 
     plCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
