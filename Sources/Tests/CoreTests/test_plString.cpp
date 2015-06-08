@@ -186,182 +186,141 @@ TEST(PlStringTest, ConvertInvalid)
     EXPECT_STREQ(latin1_replacement, non_latin1.GetData());
 }
 
+TEST(PlStringTest, Concatenation)
+{
+    // If this changes, this test may need to be updated to match
+    ASSERT_EQ(16, SSO_CHARS);
+
+    plString expected_short = "xxxxyyy";
+    plString input1 = "xxxx";
+    plString input2 = "yyy";
+
+    plString expected_long = "xxxxxxxxxxyyyyyyyyy";
+    plString input3 = "xxxxxxxxxx";
+    plString input4 = "yyyyyyyyy";
+
+    // plString + plString
+    EXPECT_EQ(expected_short, input1 + input2);
+    EXPECT_EQ(expected_long, input3 + input4);
+    EXPECT_EQ(input1, input1 + plString());
+    EXPECT_EQ(input1, plString() + input1);
+
+    // plstring + const char*
+    EXPECT_EQ(expected_short, input1 + input2.c_str());
+    EXPECT_EQ(expected_short, input1.c_str() + input2);
+    EXPECT_EQ(expected_long, input3 + input4.c_str());
+    EXPECT_EQ(expected_long, input3.c_str() + input4);
+    EXPECT_EQ(input1, input1 + "");
+    EXPECT_EQ(input1, "" + input1);
+}
+
 TEST(PlStringTest, FindChar)
 {
-    int result;
-
     // Available char, case sensitive
-    result = plString("Aaaaaaaa").Find('A', plString::kCaseSensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("AaaaAaaa").Find('A', plString::kCaseSensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("aaaaAaaa").Find('A', plString::kCaseSensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("aaaaaaaA").Find('A', plString::kCaseSensitive);
-    EXPECT_EQ(7, result);
+    EXPECT_EQ(0, plString("Aaaaaaaa").Find('A', plString::kCaseSensitive));
+    EXPECT_EQ(0, plString("AaaaAaaa").Find('A', plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("aaaaAaaa").Find('A', plString::kCaseSensitive));
+    EXPECT_EQ(7, plString("aaaaaaaA").Find('A', plString::kCaseSensitive));
 
     // Available char, case insensitive
-    result = plString("Abbbbbbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
+    EXPECT_EQ(0, plString("Abbbbbbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("AbbbAbbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbAbbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbbA").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abbbbbbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abbbabbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbabbb").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbba").Find('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("Abbbbbbb").Find('a', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("AbbbAbbb").Find('a', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbAbbb").Find('a', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbbA").Find('a', plString::kCaseInsensitive));
 
-    result = plString("AbbbAbbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("bbbbAbbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbbA").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    result = plString("abbbbbbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("abbbabbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("bbbbabbb").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbba").Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    result = plString("Abbbbbbb").Find('a', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("AbbbAbbb").Find('a', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("bbbbAbbb").Find('a', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbbA").Find('a', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    // Unavailable char, case sensitive
-    result = plString("AaaaAaaa").Find('C', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    result = plString("caaacaaa").Find('C', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    // Unavailable char, case insensitive
-    result = plString("AaaaAaaa").Find('C', plString::kCaseInsensitive);
-    EXPECT_EQ(-1, result);
+    // Unavailable char
+    EXPECT_EQ(-1, plString("AaaaAaaa").Find('C', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString("caaacaaa").Find('C', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString("AaaaAaaa").Find('C', plString::kCaseInsensitive));
 
     // Empty string
-    result = plString().Find('A', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    result = plString().Find('A', plString::kCaseInsensitive);
-    EXPECT_EQ(-1, result);
+    EXPECT_EQ(-1, plString().Find('A', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString().Find('A', plString::kCaseInsensitive));
 }
 
 TEST(PlStringTest, FindLast)
 {
-    int result;
-
     // Available char, case sensitive
-    result = plString("Aaaaaaaa").FindLast('A', plString::kCaseSensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("AaaaAaaa").FindLast('A', plString::kCaseSensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("aaaaAaaa").FindLast('A', plString::kCaseSensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("aaaaaaaA").FindLast('A', plString::kCaseSensitive);
-    EXPECT_EQ(7, result);
+    EXPECT_EQ(0, plString("Aaaaaaaa").FindLast('A', plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("AaaaAaaa").FindLast('A', plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("aaaaAaaa").FindLast('A', plString::kCaseSensitive));
+    EXPECT_EQ(7, plString("aaaaaaaA").FindLast('A', plString::kCaseSensitive));
 
     // Available char, case insensitive
-    result = plString("Abbbbbbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
+    EXPECT_EQ(0, plString("Abbbbbbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("AbbbAbbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbAbbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbbA").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abbbbbbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("abbbabbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbabbb").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbba").FindLast('A', plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("Abbbbbbb").FindLast('a', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("AbbbAbbb").FindLast('a', plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("bbbbAbbb").FindLast('a', plString::kCaseInsensitive));
+    EXPECT_EQ(7, plString("bbbbbbbA").FindLast('a', plString::kCaseInsensitive));
 
-    result = plString("AbbbAbbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbAbbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbbA").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    result = plString("abbbbbbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("abbbabbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbabbb").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbba").FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    result = plString("Abbbbbbb").FindLast('a', plString::kCaseInsensitive);
-    EXPECT_EQ(0, result);
-
-    result = plString("AbbbAbbb").FindLast('a', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbAbbb").FindLast('a', plString::kCaseInsensitive);
-    EXPECT_EQ(4, result);
-
-    result = plString("bbbbbbbA").FindLast('a', plString::kCaseInsensitive);
-    EXPECT_EQ(7, result);
-
-    // Unavailable char, case sensitive
-    result = plString("AaaaAaaa").FindLast('C', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    result = plString("caaacaaa").FindLast('C', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    // Unavailable char, case insensitive
-    result = plString("AaaaAaaa").FindLast('C', plString::kCaseInsensitive);
-    EXPECT_EQ(-1, result);
+    // Unavailable char
+    EXPECT_EQ(-1, plString("AaaaAaaa").FindLast('C', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString("caaacaaa").FindLast('C', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString("AaaaAaaa").FindLast('C', plString::kCaseInsensitive));
 
     // Empty string
-    result = plString().FindLast('A', plString::kCaseSensitive);
-    EXPECT_EQ(-1, result);
-
-    result = plString().FindLast('A', plString::kCaseInsensitive);
-    EXPECT_EQ(-1, result);
+    EXPECT_EQ(-1, plString().FindLast('A', plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString().FindLast('A', plString::kCaseInsensitive));
 }
 
-TEST(PlStringTest,FindString)
+TEST(PlStringTest, FindString)
 {
-    plString input = plString("abABÁè");
-    int result=0;
-    //available string, case sensitive
-    result = input.Find("AB",plString::kCaseSensitive);
-    EXPECT_EQ(2,result);
+    // Available string, case sensitive
+    EXPECT_EQ(0, plString("ABCDabcd").Find("ABCD", plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("abcdABCDABCDabcd").Find("ABCD", plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("abcdABCDabcd").Find("ABCD", plString::kCaseSensitive));
+    EXPECT_EQ(4, plString("abcdABCD").Find("ABCD", plString::kCaseSensitive));
 
-    //available string, case insensitive
-    result = input.Find("ab",plString::kCaseInsensitive);
-    EXPECT_EQ(0,result);
+    // Available string, case insensitive
+    EXPECT_EQ(0, plString("ABCDxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCDABCDxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCDxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCD").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("abcdxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxabcdABCDxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxabcdxxxx").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxabcd").Find("ABCD", plString::kCaseInsensitive));
+    EXPECT_EQ(0, plString("ABCDxxxx").Find("abcd", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCDabcdxxxx").Find("abcd", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCDxxxx").Find("abcd", plString::kCaseInsensitive));
+    EXPECT_EQ(4, plString("xxxxABCD").Find("abcd", plString::kCaseInsensitive));
 
-    //unavailable string, case sensitive
-    result = input.Find("cd",plString::kCaseSensitive);
-    EXPECT_EQ(-1,result);
+    // Unavailable string
+    EXPECT_EQ(-1, plString("xxxx").Find("ABCD", plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString("xxxx").Find("ABCD", plString::kCaseInsensitive));
 
-    //unavailable string, case insensitive
-    result=0;
-    result = input.Find("cd",plString::kCaseInsensitive);
-    EXPECT_EQ(-1,result);
+    // Empty string
+    EXPECT_EQ(-1, plString().Find("AAAA", plString::kCaseSensitive));
+    EXPECT_EQ(-1, plString().Find("AAAA", plString::kCaseInsensitive));
 
-    plString input1 = plString("àbéCdcBÀéab");
-    //available accented string, case sensitive
-    result = input1.Find("À",plString::kCaseSensitive);
-    EXPECT_EQ(9,result);
+    // Unicode substring
+    plString haystack;
+    haystack = plString("xxxx") + plString::FromUtf32(test_data);
+    EXPECT_EQ(4, haystack.Find(utf8_test_data, plString::kCaseSensitive));
+    EXPECT_EQ(4, haystack.Find(utf8_test_data, plString::kCaseInsensitive));
 
-    //the strnicmp method used does not support unicode
-    //available accented string, case insensitive
-   // result = input1.Find("À",plString::kCaseInsensitive);
-   // EXPECT_EQ(1,result);
+    haystack = plString::FromUtf32(test_data) + plString("xxxx");
+    EXPECT_EQ(0, haystack.Find(utf8_test_data, plString::kCaseSensitive));
+    EXPECT_EQ(0, haystack.Find(utf8_test_data, plString::kCaseInsensitive));
+
+    haystack = plString("xxxx") + plString::FromUtf32(test_data) + plString("xxxx");
+    EXPECT_EQ(4, haystack.Find(utf8_test_data, plString::kCaseSensitive));
+    EXPECT_EQ(4, haystack.Find(utf8_test_data, plString::kCaseInsensitive));
 }
 
 //TODO: test regex functions
@@ -497,22 +456,3 @@ TEST(PlStringTest,Fill)
     EXPECT_EQ(expected,output);
 }
 
-//overload operator+
-TEST(PlStringTest,Addition)
-{
-    plString expected = "abcde";
-    plString input1 = "ab";
-    plString input2 = "cde";
-
-    //plstring+plstring
-    plString output = input1+input2;
-    EXPECT_EQ(expected,output);
-
-    //plstring+char*
-    plString output1 = input1 + input2.c_str();
-    EXPECT_EQ(expected,output1);
-
-    //char*+plstring
-    plString output2 = input1.c_str() + input2;
-    EXPECT_EQ(expected,output2);
-}
