@@ -22,6 +22,7 @@ static const char utf8_test_data[] =
     "\xef\xbf\xbf"      "\xf0\x90\x80\x80"
     "\xf0\x90\x80\xa0"  "\xf1\x80\x80\x80"
     "\xf4\x8f\xbf\xbf";
+static const size_t utf8_test_data_length = arrsize(utf8_test_data) - 1;
 
 /* UTF-16 version of test data */
 static const uint16_t utf16_test_data[] = {
@@ -62,6 +63,9 @@ TEST(PlStringTest, TestHelpers)
     EXPECT_GT(0, T_strcmp("abc", "abe"));
     EXPECT_LT(0, T_strcmp("abc", "ab"));
     EXPECT_GT(0, T_strcmp("abc", "abcd"));
+    EXPECT_EQ(0, T_strcmp("", ""));
+    EXPECT_GT(0, T_strcmp("", "a"));
+    EXPECT_LT(0, T_strcmp("a", ""));
 }
 
 TEST(PlStringTest, ConvertUtf8)
@@ -69,24 +73,42 @@ TEST(PlStringTest, ConvertUtf8)
     // From UTF-8 to plString
     plString from_utf8 = plString::FromUtf8(utf8_test_data);
     EXPECT_STREQ(utf8_test_data, from_utf8.c_str());
+    EXPECT_EQ(utf8_test_data_length, from_utf8.GetSize());
     plUnicodeBuffer unicode = from_utf8.GetUnicodeArray();
     EXPECT_EQ(0, T_strcmp(test_data, unicode.GetData()));
 
     // From plString to UTF-8
     plString to_utf8 = plString::FromUtf32(test_data);
     EXPECT_STREQ(utf8_test_data, to_utf8.c_str());
+
+    // Empty strings
+    plString empty = plString::FromUtf8("");
+    EXPECT_EQ(0, empty.GetSize());
+    EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
+
+    const plUniChar empty_data[] = { 0 };
+    empty = plString::FromUtf32(empty_data);
+    EXPECT_EQ(0, empty.GetSize());
+    EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
 TEST(PlStringTest, ConvertUtf16)
 {
     // From UTF-16 to plString
     plString from_utf16 = plString::FromUtf16(utf16_test_data);
+    EXPECT_EQ(utf8_test_data_length, from_utf16.GetSize());
     plUnicodeBuffer unicode = from_utf16.GetUnicodeArray();
     EXPECT_EQ(0, T_strcmp(test_data, unicode.GetData()));
 
     // From plString to UTF-16
     plStringBuffer<uint16_t> to_utf16 = plString::FromUtf32(test_data).ToUtf16();
     EXPECT_EQ(0, T_strcmp(utf16_test_data, to_utf16.GetData()));
+
+    // Empty string
+    const uint16_t empty_data[] = { 0 };
+    plString empty = plString::FromUtf16(empty_data);
+    EXPECT_EQ(0, empty.GetSize());
+    EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
 TEST(PlStringTest, ConvertIso8859_1)
@@ -94,13 +116,20 @@ TEST(PlStringTest, ConvertIso8859_1)
     // From ISO-8859-1 to plString
     const char latin1[] = "\x20\x7e\xa0\xff";
     const plUniChar unicode_cp0[] = { 0x20, 0x7e, 0xa0, 0xff, 0 };
+    static const size_t latin1_utf8_length = 6;
     plString from_latin1 = plString::FromIso8859_1(latin1);
+    EXPECT_EQ(latin1_utf8_length, from_latin1.GetSize());
     plUnicodeBuffer unicode = from_latin1.GetUnicodeArray();
     EXPECT_EQ(0, T_strcmp(unicode_cp0, unicode.GetData()));
 
     // From plString to ISO-8859-1
     plStringBuffer<char> to_latin1 = plString::FromUtf32(unicode_cp0).ToIso8859_1();
     EXPECT_STREQ(latin1, to_latin1.GetData());
+
+    // Empty string
+    plString empty = plString::FromIso8859_1("");
+    EXPECT_EQ(0, empty.GetSize());
+    EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
 TEST(PlStringTest, ConvertWchar)
@@ -110,13 +139,20 @@ TEST(PlStringTest, ConvertWchar)
 
     const wchar_t wtext[] = L"\x20\x7f\xff\u0100\uffff";
     const plUniChar unicode_text[] = { 0x20, 0x7f, 0xff, 0x100, 0xffff, 0 };
+    static const size_t wtext_utf8_length = 9;
     plString from_wchar = plString::FromWchar(wtext);
+    EXPECT_EQ(wtext_utf8_length, from_wchar.GetSize());
     plUnicodeBuffer unicode = from_wchar.GetUnicodeArray();
     EXPECT_EQ(0, T_strcmp(unicode_text, unicode.GetData()));
 
     // From plString to wchar_t
     plStringBuffer<wchar_t> to_wchar = plString::FromUtf32(unicode_text).ToWchar();
     EXPECT_STREQ(wtext, to_wchar.GetData());
+
+    // Empty string
+    plString empty = plString::FromWchar(L"");
+    EXPECT_EQ(0, empty.GetSize());
+    EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
 TEST(PlStringTest, ConvertInvalid)
