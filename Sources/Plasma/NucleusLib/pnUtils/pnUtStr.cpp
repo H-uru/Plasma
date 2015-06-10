@@ -98,16 +98,6 @@ static chartype * IStrDup (const chartype str[]) {
     return buffer;
 }
 
-//===========================================================================
-template<class chartype, class findchartype>
-static chartype * IStrChr (chartype * str, findchartype ch, unsigned chars) {
-    for (; chars--; ++str)
-        if (*str == ch)
-            return str;
-        else if (!*str)
-            break;
-    return nil;
-}
 
 //===========================================================================
 template<typename chartype>
@@ -179,85 +169,6 @@ static uint32_t IStrHashI (const chartype str[], unsigned chars) {
     return result;
 }
 
-//===========================================================================
-template<class chartype>
-static bool IStrTokenize (const chartype * source[], chartype * dest, unsigned chars, const chartype whitespace[], unsigned maxWhitespaceSkipCount) {
-
-    // Skip past leading whitespace
-    bool inQuotes = false;
-    unsigned whitespaceSkipped = 0;
-    while (**source && IStrChr(whitespace, **source, (unsigned)-1) && whitespaceSkipped < maxWhitespaceSkipCount) {
-        inQuotes = (**source == '\"');
-        ++*source;
-        ++whitespaceSkipped;
-        if (inQuotes)
-            break;
-    }
-
-    // Copy the token
-    unsigned offset = 0;
-    while (**source &&
-           ((inQuotes && (**source != '\"')) || !IStrChr(whitespace, **source, (unsigned)-1))) {
-        if (offset + 1 < chars)
-            dest[offset++] = **source;
-        ++*source;
-    }
-
-    // Skip past the terminating quote
-    if (inQuotes && (**source == '\"'))
-        ++*source;
-
-    // Null terminate the destination buffer
-    if (chars) {
-        ASSERT(offset < chars);
-        dest[offset] = 0;
-    }
-
-    // Upon return, 'source' is guaranteed to point to the first character
-    // following the returned token (and following any closing quotes)
-
-    return (offset || inQuotes);
-}
-
-//===========================================================================
-template<class chartype>
-static bool IStrTokenize (const chartype * source[], ARRAY(chartype) * destArray, const chartype whitespace[], unsigned maxWhitespaceSkipCount) {
-
-    // Verify that the destination array is empty
-    ASSERT(!destArray->Count());
-
-    // Skip past leading whitespace
-    bool inQuotes = false;
-    unsigned whitespaceSkipped = 0;
-    while (**source && IStrChr(whitespace, **source, (unsigned)-1) && whitespaceSkipped < maxWhitespaceSkipCount) {
-        inQuotes = (**source == '\"');
-        ++*source;
-        ++whitespaceSkipped;
-        if (inQuotes)
-            break;
-    }
-
-    // Copy the token
-    bool added = false;
-    while (**source &&
-           ((inQuotes && (**source != '\"')) || !IStrChr(whitespace, **source, (unsigned)-1))) {
-        destArray->Add(**source);
-        added = true;
-        ++*source;
-    }
-
-    // Skip past the terminating quote
-    if (inQuotes && (**source == '\"'))
-        ++*source;
-
-    // Null terminate the destination array
-    destArray->Add(0);
-
-    // Upon return, 'source' is guaranteed to point to the first character
-    // following the returned token (and following any closing quotes)
-
-    return (added || inQuotes);
-}
 
 
 /****************************************************************************
@@ -274,26 +185,6 @@ char * StrDup (const char str[]) {
 //===========================================================================
 wchar_t * StrDup (const wchar_t str[]) {
     return IStrDup(str);
-}
-
-//===========================================================================
-char * StrChr (char * str, char ch, unsigned chars) {
-    return IStrChr(str, ch, chars);
-}
-
-//===========================================================================
-wchar_t * StrChr (wchar_t * str, wchar_t ch, unsigned chars) {
-    return IStrChr(str, ch, chars);
-}
-
-//===========================================================================
-const char * StrChr (const char str[], char ch, unsigned chars) {
-    return IStrChr(str, ch, chars);
-}
-
-//===========================================================================
-const wchar_t * StrChr (const wchar_t str[], wchar_t ch, unsigned chars) {
-    return IStrChr(str, ch, chars);
 }
 
 //===========================================================================
@@ -367,46 +258,6 @@ unsigned StrLen (const wchar_t str[]) {
 }
 
 //===========================================================================
-float StrToFloat (const char source[], const char ** endptr) {
-    return (float) strtod(source, const_cast<char **>(endptr));
-}
-
-//===========================================================================
-float StrToFloat (const wchar_t source[], const wchar_t ** endptr) {
-    return (float) wcstod(source, const_cast<wchar_t **>(endptr));
-}
-
-//===========================================================================
-int StrToInt (const char source[], const char ** endptr) {
-    return strtol(source, const_cast<char **>(endptr), 0);
-}
-
-//===========================================================================
-int StrToInt (const wchar_t source[], const wchar_t ** endptr) {
-    return wcstol(source, const_cast<wchar_t **>(endptr), 0);
-}
-
-//===========================================================================
-unsigned StrToUnsigned (char source[], char ** endptr, int radix) {
-    return strtoul(source, const_cast<char **>(endptr), radix);
-}
-
-//===========================================================================
-unsigned StrToUnsigned (wchar_t source[], wchar_t ** endptr, int radix) {
-    return wcstoul(source, const_cast<wchar_t **>(endptr), radix);
-}
-
-//===========================================================================
-unsigned StrToUnsigned (const char source[], const char ** endptr, int radix) {
-    return strtoul(source, const_cast<char **>(endptr), radix);
-}
-
-//===========================================================================
-unsigned StrToUnsigned (const wchar_t source[], const wchar_t ** endptr, int radix) {
-    return wcstoul(source, const_cast<wchar_t **>(endptr), radix);
-}
-
-//===========================================================================
 uint32_t StrHash (const char str[], unsigned chars) {
     return IStrHash(str, chars);
 }
@@ -424,24 +275,4 @@ uint32_t StrHashI (const char str[], unsigned chars) {
 //===========================================================================
 uint32_t StrHashI (const wchar_t str[], unsigned chars) {
     return IStrHashI(str, chars);
-}
-
-//===========================================================================
-bool StrTokenize (const char * source[], char * dest, unsigned chars, const char whitespace[], unsigned maxWhitespaceSkipCount) {
-    return IStrTokenize(source, dest, chars, whitespace, maxWhitespaceSkipCount);
-}
-
-//===========================================================================
-bool StrTokenize (const wchar_t * source[], wchar_t * dest, unsigned chars, const wchar_t whitespace[], unsigned maxWhitespaceSkipCount) {
-    return IStrTokenize(source, dest, chars, whitespace, maxWhitespaceSkipCount);
-}
-
-//===========================================================================
-bool StrTokenize (const char * source[], ARRAY(char) * destArray, const char whitespace[], unsigned maxWhitespaceSkipCount) {
-    return IStrTokenize(source, destArray, whitespace, maxWhitespaceSkipCount);
-}
-
-//===========================================================================
-bool StrTokenize (const wchar_t * source[], ARRAY(wchar_t) * destArray, const wchar_t whitespace[], unsigned maxWhitespaceSkipCount) {
-    return IStrTokenize(source, destArray, whitespace, maxWhitespaceSkipCount);
 }

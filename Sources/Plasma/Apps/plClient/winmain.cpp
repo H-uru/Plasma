@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <curl/curl.h>
 
 #include "hsStream.h"
+#include "plCmdParser.h"
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "pfCrashHandler/plCrashCli.h"
@@ -96,11 +97,11 @@ enum
     kArgSkipPreload
 };
 
-static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
-    { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
-    { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
-    { kCmdArgFlagged  | kCmdTypeBool,       L"SkipPreload",     kArgSkipPreload },
+static const plCmdArgDef s_cmdLineArgs[] = {
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipLoginDialog", kArgSkipLoginDialog },
+    { kCmdArgFlagged  | kCmdTypeString,     "ServerIni",       kArgServerIni },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalData",       kArgLocalData   },
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipPreload",     kArgSkipPreload },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1132,8 +1133,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // Set global handle
     gHInst = hInst;
 
-    CCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
-    cmdParser.Parse();
+    std::vector<plString> args;
+    args.reserve(__argc);
+    for (size_t i = 0; i < __argc; i++) {
+        args.push_back(plString::FromUtf8(__argv[i]));
+    }
+
+    plCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
+    cmdParser.Parse(args);
 
     bool doIntroDialogs = true;
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1150,7 +1157,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     plFileName serverIni = "server.ini";
     if (cmdParser.IsSpecified(kArgServerIni))
-        serverIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
+        serverIni = cmdParser.GetString(kArgServerIni);
 
     // check to see if we were launched from the patcher
     bool eventExists = false;
