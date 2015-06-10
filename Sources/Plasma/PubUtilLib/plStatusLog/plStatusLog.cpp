@@ -495,6 +495,23 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
+bool plStatusLog::AddLine(const plString& line)
+{
+    if (fLoggingOff && !fForceLog) {
+        return true;
+    }
+
+    bool ret = true;
+    std::vector<plString> lines = line.Split("\n");
+
+    for (plString& str : lines)
+    {
+        ret &= IAddLine(str.c_str(), -1, kWhite);
+    }
+
+    return ret;
+}
+
 bool plStatusLog::AddLine( const char *line, uint32_t color )
 {
     char    *c, *str;
