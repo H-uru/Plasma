@@ -874,7 +874,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     // Fixup empty fields
     if (info->HasAgeFilename())
     {
-        info->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()).c_str());
+        info->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()));
 
         if (!info->HasAgeInstanceName())
         {
