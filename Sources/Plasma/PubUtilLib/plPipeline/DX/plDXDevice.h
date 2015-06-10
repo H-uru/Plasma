@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plDXBufferRefs.h"
 
+#include "hsWindows.h"
 #include <d3d9.h>
 
 class plDXPipeline;
