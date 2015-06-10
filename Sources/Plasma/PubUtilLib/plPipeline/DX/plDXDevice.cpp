@@ -192,3 +192,8 @@ void plDXDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 
     fD3DDevice->SetTransform(D3DTS_WORLD, &mat);
 }
+
+const char* plDXDevice::GetErrorString() const
+{
+    return fPipeline->fSettings.fErrorStr;
+}
