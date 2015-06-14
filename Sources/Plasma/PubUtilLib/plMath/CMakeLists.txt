@@ -3,17 +3,12 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plMath_SOURCES
-    hsNoiseFunc.cpp
     hsRadixSort.cpp
-    plAvg.cpp
     plTriUtils.cpp
 )
 
 set(plMath_HEADERS
-    hsNoiseFunc.h
     hsRadixSort.h
-    hsSearchVersion.h
-    plAvg.h
     plTriUtils.h
 )
 
