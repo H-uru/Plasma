@@ -341,8 +341,6 @@ bool plGLDevice::InitDevice()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glEnable(GL_MULTISAMPLE);
-    glDepthFunc(GL_LEQUAL);
-    glDepthMask(GL_TRUE);
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
 

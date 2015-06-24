@@ -494,7 +494,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(material->GetDeviceRef());
 
             if (mRef == nullptr) {
-                mRef = new plGLMaterialShaderRef(material);
+                mRef = new plGLMaterialShaderRef(material, this);
                 material->SetDeviceRef(mRef);
 
                 //glUseProgram(mRef->fRef);
@@ -662,8 +662,136 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     plProfile_EndTiming(RenderBuff);
 
-    // TEMP
-    render.RenderPrims();
+    for (uint32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
+        // Set uniform to pass
+
+        hsGMatState s = mRef->GetPassState(pass);
+        IHandleZMode(s);
+        IHandleBlendMode(s);
+
+        // TEMP
+        render.RenderPrims();
+    }
 
     LOG_GL_ERROR_CHECK("Render failed")
+}
+
+void plGLPipeline::IHandleZMode(hsGMatState flags)
+{
+    switch (flags.fZFlags & hsGMatState::kZMask)
+    {
+        case hsGMatState::kZClearZ:
+            glDepthFunc(GL_ALWAYS);
+            glDepthMask(GL_TRUE);
+            break;
+        case hsGMatState::kZNoZRead:
+            glDepthFunc(GL_ALWAYS);
+            glDepthMask(GL_TRUE);
+            break;
+        case hsGMatState::kZNoZWrite:
+            glDepthFunc(GL_LEQUAL);
+            glDepthMask(GL_FALSE);
+            break;
+        case hsGMatState::kZNoZRead | hsGMatState::kZClearZ:
+            glDepthFunc(GL_ALWAYS);
+            glDepthMask(GL_TRUE);
+            break;
+        case hsGMatState::kZNoZRead | hsGMatState::kZNoZWrite:
+            glDepthFunc(GL_ALWAYS);
+            glDepthMask(GL_FALSE);
+            break;
+        case 0:
+            glDepthFunc(GL_LEQUAL);
+            glDepthMask(GL_TRUE);
+            break;
+        case hsGMatState::kZClearZ | hsGMatState::kZNoZWrite:
+        case hsGMatState::kZClearZ | hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead:
+            hsAssert(false, "Illegal combination of Z Buffer modes (Clear but don't write)");
+            break;
+    }
+}
+
+void plGLPipeline::IHandleBlendMode(hsGMatState flags)
+{
+    // No color, just writing out Z values.
+    if (flags.fBlendFlags & hsGMatState::kBlendNoColor) {
+        glBlendFunc(GL_ZERO, GL_ONE);
+        flags.fBlendFlags |= 0x80000000;
+    } else {
+        switch (flags.fBlendFlags & hsGMatState::kBlendMask)
+        {
+            // Detail is just a special case of alpha, handled in construction of the texture
+            // mip chain by making higher levels of the chain more transparent.
+            case hsGMatState::kBlendDetail:
+            case hsGMatState::kBlendAlpha:
+                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
+                    if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
+                        glBlendFunc(GL_ONE, GL_SRC_ALPHA);
+                    } else {
+                        glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_SRC_ALPHA);
+                    }
+                } else {
+                    if (flags.fBlendFlags & hsGMatState::kBlendAlphaPremultiplied) {
+                        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+                    } else {
+                        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                    }
+                }
+                break;
+
+            // Multiply the final color onto the frame buffer.
+            case hsGMatState::kBlendMult:
+                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalColor) {
+                    glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+                } else {
+                    glBlendFunc(GL_ZERO, GL_SRC_COLOR);
+                }
+                break;
+
+            // Add final color to FB.
+            case hsGMatState::kBlendAdd:
+                glBlendFunc(GL_ONE, GL_ONE);
+                break;
+
+            // Multiply final color by FB color and add it into the FB.
+            case hsGMatState::kBlendMADD:
+                glBlendFunc(GL_DST_COLOR, GL_ONE);
+                break;
+
+            // Final color times final alpha, added into the FB.
+            case hsGMatState::kBlendAddColorTimesAlpha:
+                if (flags.fBlendFlags & hsGMatState::kBlendInvertFinalAlpha) {
+                    glBlendFunc(GL_ONE_MINUS_SRC_ALPHA, GL_ONE);
+                } else {
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+                }
+                break;
+
+            // Overwrite final color onto FB
+            case 0:
+                glBlendFunc(GL_ONE, GL_ZERO);
+                break;
+
+            default:
+                {
+                    hsAssert(false, "Too many blend modes specified in material");
+
+#if 0
+                    plLayer* lay = plLayer::ConvertNoRef(fCurrMaterial->GetLayer(fCurrLayerIdx)->BottomOfStack());
+                    if( lay )
+                    {
+                        if( lay->GetBlendFlags() & hsGMatState::kBlendAlpha )
+                        {
+                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAlpha);
+                        }
+                        else
+                        {
+                            lay->SetBlendFlags((lay->GetBlendFlags() & ~hsGMatState::kBlendMask) | hsGMatState::kBlendAdd);
+                        }
+                    }
+#endif
+                }
+                break;
+        }
+    }
 }
