@@ -50,6 +50,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 
+#include "plPipeline.h"
+#include "plPipeDebugFlags.h"
+
 #include "plDrawable/plGBufferGroup.h"
 #include "plGImage/plMipmap.h"
 #include "plSurface/hsGMaterial.h"
@@ -336,4 +339,168 @@ void plGLMaterialShaderRef::ICompile()
 
     glLinkProgram(fRef);
     LOG_GL_ERROR_CHECK("Link Program failed")
+}
+
+
+bool plGLMaterialShaderRef::ILoopOverLayers()
+{
+    size_t j = 0;
+    for (j = 0; j < fMaterial->GetNumLayers(); )
+    {
+        size_t iCurrMat = j;
+        hsGMatState currState;
+
+        j = IHandleMaterial(iCurrMat, currState);
+
+        if (j == -1)
+            break;
+
+        fPasses++;
+        fPassStates.push_back(currState);
+
+#if 0
+        ISetFogParameters(fMaterial->GetLayer(iCurrMat));
+#endif
+    }
+
+    return false;
+}
+
+
+uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, hsGMatState& state)
+{
+    if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer))
+        return -1;
+
+    if (false /*ISkipBumpMap(fMaterial, layer)*/)
+        return -1;
+
+    // Ignoring the bit about ATI Radeon and UVW limits
+
+    if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagNoDecals) && (fMaterial->GetCompositeFlags() & hsGMaterial::kCompDecal))
+        return -1;
+
+    // Ignoring the bit about self-rendering cube maps
+
+    plLayerInterface* currLay = /*IPushOverBaseLayer*/ fMaterial->GetLayer(layer);
+
+    if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW) && (currLay->GetMiscFlags() & hsGMatState::kMiscBumpDu))
+        currLay = fMaterial->GetLayer(++layer);
+
+    //currLay = IPushOverAllLayer(currLay);
+
+    state = currLay->GetState();
+
+    if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagDisableSpecular))
+        state.fShadeFlags &= ~hsGMatState::kShadeSpecular;
+
+    if (state.fZFlags & hsGMatState::kZIncLayer) {
+        // Set the Z-bias
+        //ISetLayer(1);
+    } else {
+        // Clear any Z-bias
+        //IBottomLayer();
+    }
+
+    if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagNoAlphaBlending))
+        state.fBlendFlags &= ~hsGMatState::kBlendMask;
+
+    if ((fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpUV) || fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW)) && (state.fMiscFlags & hsGMatState::kMiscBumpChans) ) {
+        switch (state.fMiscFlags & hsGMatState::kMiscBumpChans)
+        {
+            case hsGMatState::kMiscBumpDu:
+                break;
+            case hsGMatState::kMiscBumpDv:
+                if (!(fMaterial->GetLayer(layer-2)->GetBlendFlags() & hsGMatState::kBlendAdd))
+                {
+                    state.fBlendFlags &= ~hsGMatState::kBlendMask;
+                    state.fBlendFlags |= hsGMatState::kBlendMADD;
+                }
+                break;
+            case hsGMatState::kMiscBumpDw:
+                if (!(fMaterial->GetLayer(layer-1)->GetBlendFlags() & hsGMatState::kBlendAdd))
+                {
+                    state.fBlendFlags &= ~hsGMatState::kBlendMask;
+                    state.fBlendFlags |= hsGMatState::kBlendMADD;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    uint32_t currNumLayers = ILayersAtOnce(layer);
+
+#if 0
+    ICalcLighting(currLay);
+#endif
+
+    if (state.fMiscFlags & (hsGMatState::kMiscBumpDu | hsGMatState::kMiscBumpDw)) {
+        //ISetBumpMatrices(currLay);
+    }
+
+    return layer + currNumLayers;
+}
+
+
+uint32_t plGLMaterialShaderRef::ILayersAtOnce(uint32_t which)
+{
+    uint32_t currNumLayers = 1;
+
+    plLayerInterface* lay = fMaterial->GetLayer(which);
+
+    if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagNoMultitexture))
+        return currNumLayers;
+
+    if ((fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpUV) || fPipeline->IsDebugFlagSet(plPipeDbg::kFlagBumpW)) && (lay->GetMiscFlags() & hsGMatState::kMiscBumpChans)) {
+        currNumLayers = 2;
+        return currNumLayers;
+    }
+
+    if ((lay->GetBlendFlags() & hsGMatState::kBlendNoColor) || (lay->GetMiscFlags() & hsGMatState::kMiscTroubledLoner))
+        return currNumLayers;
+
+    int i;
+    int maxLayers = 8;
+    if (which + maxLayers > fMaterial->GetNumLayers())
+        maxLayers = fMaterial->GetNumLayers() - which;
+
+    for (i = currNumLayers; i < maxLayers; i++) {
+        plLayerInterface* lay = fMaterial->GetLayer(which + i);
+
+        // Ignoring max UVW limit
+
+        if ((lay->GetMiscFlags() & hsGMatState::kMiscBindNext) && (i+1 >= maxLayers))
+            break;
+
+        if (lay->GetMiscFlags() & hsGMatState::kMiscRestartPassHere)
+            break;
+
+        if (!(fMaterial->GetLayer(which + i - 1)->GetMiscFlags() & hsGMatState::kMiscBindNext) && !ICanEatLayer(lay))
+            break;
+
+        currNumLayers++;
+    }
+
+    return currNumLayers;
+}
+
+
+bool plGLMaterialShaderRef::ICanEatLayer(plLayerInterface* lay)
+{
+    if (!lay->GetTexture())
+        return false;
+
+    if ((lay->GetBlendFlags() & hsGMatState::kBlendNoColor) ||
+        (lay->GetBlendFlags() & hsGMatState::kBlendAddColorTimesAlpha) ||
+        (lay->GetMiscFlags() & hsGMatState::kMiscTroubledLoner))
+        return false;
+
+    if ((lay->GetBlendFlags() & hsGMatState::kBlendAlpha) && (lay->GetAmbientColor().a < 1.f))
+        return false;
+
+    if (!(lay->GetZFlags() & hsGMatState::kZNoZWrite))
+        return false;
+
+    return true;
 }

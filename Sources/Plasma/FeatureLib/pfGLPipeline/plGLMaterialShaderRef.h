@@ -45,24 +45,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plGLDeviceRef.h"
 
+#include <vector>
+
+#include "hsGMatState.h"
+
 class hsGMaterial;
-class plGLDevice;
+class plPipeline;
+class plLayerInterface;
 
 class plGLMaterialShaderRef : public plGLDeviceRef
 {
 protected:
-    hsGMaterial*    fMaterial;
-    GLuint          fVertShaderRef;
-    GLuint          fFragShaderRef;
-    int32_t         fNumUVs;
+    hsGMaterial*                fMaterial;
+    plPipeline*                 fPipeline;
+    GLuint                      fVertShaderRef;
+    GLuint                      fFragShaderRef;
+
+    uint32_t                    fPasses;
+    std::vector<hsGMatState>    fPassStates;
+
+    int32_t                     fNumUVs;
 
 public:
     void                    Link(plGLMaterialShaderRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
     plGLMaterialShaderRef*  GetNext() { return (plGLMaterialShaderRef*)fNext; }
 
-    plGLMaterialShaderRef(hsGMaterial* mat)
-        : plGLDeviceRef(), fMaterial(mat), fVertShaderRef(), fFragShaderRef()
+    plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe)
+        : plGLDeviceRef(), fMaterial(mat), fPipeline(pipe), fVertShaderRef(), fFragShaderRef(), fPasses()
     {
+        ILoopOverLayers();
+
+        // TODO: Remove
         ICompile();
     }
 
@@ -72,9 +85,18 @@ public:
     void SetupTextureRefs();
 
     int32_t GetNumUVs() const { return fNumUVs; }
+    uint32_t GetNumPasses() const { return fPasses; }
+    hsGMatState GetPassState(uint32_t which) const { return fPassStates[which]; }
 
 protected:
     void ICompile();
+
+    bool ILoopOverLayers();
+    uint32_t IHandleMaterial(uint32_t layer, hsGMatState& state);
+    uint32_t ILayersAtOnce(uint32_t which);
+    bool ICanEatLayer(plLayerInterface* lay);
+    //void IHandleFirstTextureStage(plLayerInterface* layer);
+    //void IHandleFirstStageBlend(const hsGMatState& layerState);
 };
 
 #endif // _plGLMaterialShaderRef_inc_
