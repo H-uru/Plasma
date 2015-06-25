@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //------------------------------------
 class plKeyImp : public plKeyData 
 {
+private:
+    static hsKeyedObject* SafeGetObject(const plKeyImp* key);
+
 public:
     plKeyImp();
     plKeyImp(plUoid, uint32_t pos,uint32_t len);
