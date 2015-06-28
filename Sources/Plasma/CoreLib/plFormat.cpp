@@ -66,7 +66,7 @@ namespace plFormat_Private
 
     static void _fetchPrefixChunk(_IFormatDataObject &data)
     {
-        do {
+        for ( ;; ) {
             const char *next = _scanNextFormat(data);
             if (*next && *(next + 1) == '{') {
                 // Escaped '{'
@@ -78,7 +78,8 @@ namespace plFormat_Private
             if (next != data.fFormatStr)
                 data.fOutput.append(data.fFormatStr, next - data.fFormatStr);
             data.fFormatStr = next;
-        } while (0);
+            break;
+        };
     }
 
     FormatSpec _FetchNextFormat(_IFormatDataObject &data)
