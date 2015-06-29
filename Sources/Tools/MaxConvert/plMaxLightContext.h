@@ -131,7 +131,7 @@ class plMaxRendContext : public RendContext
 public:
     Matrix3 WorldToCam() const { return Matrix3(1); }
     Color   GlobalLightLevel() const { return Color(1.f, 1.f, 1.f); }
-    int Progress(int done, int total) {
+    int Progress(int done, int total) const {
         return 1;
     }
 };

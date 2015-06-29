@@ -373,11 +373,11 @@ hsMatrix44Key *plLeafController::GetMatrix44Key(uint32_t i) const
 
 void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
 {
-    int cIdx;
-    int kIdx;
+    int cIdx = 0;
+    int kIdx = 0;
     uint32_t stride = GetStride();
     uint8_t *keyPtr = (uint8_t *)fKeys;
-    for (cIdx = 0, kIdx = 0; cIdx < fNumKeys, kIdx < keyTimes.GetCount();)
+    while (cIdx < fNumKeys && kIdx < keyTimes.GetCount())
     {
         float kTime = keyTimes[kIdx];
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;

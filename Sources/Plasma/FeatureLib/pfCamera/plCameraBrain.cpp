@@ -1567,7 +1567,7 @@ void plCameraBrain1_Fixed::Update(bool forced)
                 fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
                 hsVector3 view;
                 hsVector3 up;
-                fTargetMatrix.GetAxis(0, &view, &up);
+                fTargetMatrix.GetAxis(0, &up, &view);
                 fGoal = fTargetMatrix.GetTranslate();
                 if (fTargetPoint)
                     fPOAGoal = fTargetPoint->GetBrain()->GetGoal();
