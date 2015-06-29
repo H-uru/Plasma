@@ -619,41 +619,30 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Vertex Buffer stuff */
     glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
 
-    GLint posAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxPosition");
-    if (posAttrib != -1) {
-        glEnableVertexAttribArray(posAttrib);
-        glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
+    if (mRef->aVtxPosition != -1) {
+        glEnableVertexAttribArray(mRef->aVtxPosition);
+        glVertexAttribPointer(mRef->aVtxPosition, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
     }
 
-    GLint norAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxNormal");
-    if (norAttrib != -1) {
-        glEnableVertexAttribArray(norAttrib);
-        glVertexAttribPointer(norAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
+    if (mRef->aVtxNormal != -1) {
+        glEnableVertexAttribArray(mRef->aVtxNormal);
+        glVertexAttribPointer(mRef->aVtxNormal, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
     }
 
-    GLint colAttrib = glGetAttribLocation(fDevice.fCurrentProgram, "aVtxColor");
-    if (colAttrib != -1) {
-        glEnableVertexAttribArray(colAttrib);
-        glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
+    if (mRef->aVtxColor != -1) {
+        glEnableVertexAttribArray(mRef->aVtxColor);
+        glVertexAttribPointer(mRef->aVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
+    }
+
+    int numUVs = vRef->fOwner->GetNumUVs();
+    for (int i = 0; i < numUVs; i++) {
+        if (mRef->aVtxUVWSrc[i] != -1) {
+            glEnableVertexAttribArray(mRef->aVtxUVWSrc[i]);
+            glVertexAttribPointer(mRef->aVtxUVWSrc[i], 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
+        }
     }
 
     LOG_GL_ERROR_CHECK("Vertex Attributes failed")
-
-    for (int i = 0; i < mRef->GetNumUVs(); i++) {
-        ST::string name = ST::format("aVtxUVWSrc{}", i);
-
-        GLint uvwAttrib = glGetAttribLocation(fDevice.fCurrentProgram, name.c_str());
-        if (uvwAttrib != -1) {
-            glEnableVertexAttribArray(uvwAttrib);
-            glVertexAttribPointer(uvwAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
-        }
-
-        LOG_GL_ERROR_CHECK("UVW Attributes failed")
-    }
-
-    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
-    glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
-
 
     /* Index Buffer stuff and drawing */
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
@@ -668,6 +657,12 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         hsGMatState s = mRef->GetPassState(pass);
         IHandleZMode(s);
         IHandleBlendMode(s);
+
+        if (s.fMiscFlags & hsGMatState::kMiscTwoSided) {
+            glDisable(GL_CULL_FACE);
+        } else {
+            glEnable(GL_CULL_FACE);
+        }
 
         // TEMP
         render.RenderPrims();
