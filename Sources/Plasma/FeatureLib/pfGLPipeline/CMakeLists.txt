@@ -5,6 +5,7 @@ set(pfGLPipeline_SOURCES
     plGLMaterialShaderRef.cpp
     plGLPipeline.cpp
     plGLPlateManager.cpp
+    plShaderNode.cpp
 )
 
 set(pfGLPipeline_HEADERS
@@ -14,6 +15,7 @@ set(pfGLPipeline_HEADERS
     plGLPipeline.h
     pfGLPipelineCreatable.h
     plGLPlateManager.h
+    plShaderNode.h
 )
 
 plasma_library(pfGLPipeline
