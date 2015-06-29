@@ -44,7 +44,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLMaterialShaderRef_inc_
 
 #include "plGLDeviceRef.h"
+#include "plShaderNode.h"
 
+#include <map>
 #include <vector>
 
 #include "hsGMatState.h"
@@ -55,46 +57,87 @@ class plLayerInterface;
 
 class plGLMaterialShaderRef : public plGLDeviceRef
 {
+    typedef std::map<ST::string, std::shared_ptr<plGlobalVariableNode>> plShaderVarLookup;
+
+    enum {
+        kShaderVersion = 100
+    };
+
+    struct ShaderBuilder {
+        std::shared_ptr<plShaderFunction>   fFunction;
+        uint32_t                            fIteration;
+
+        std::shared_ptr<plVariableNode>     fPrevColor;
+        std::shared_ptr<plVariableNode>     fPrevAlpha;
+
+        std::shared_ptr<plVariableNode>     fCurrColor;
+        std::shared_ptr<plVariableNode>     fCurrAlpha;
+        std::shared_ptr<plShaderNode>       fCurrCoord;
+        std::shared_ptr<plVariableNode>     fCurrImage;
+    };
+
 protected:
-    hsGMaterial*                fMaterial;
-    plPipeline*                 fPipeline;
-    GLuint                      fVertShaderRef;
-    GLuint                      fFragShaderRef;
+    hsGMaterial*                        fMaterial;
+    plPipeline*                         fPipeline;
+    GLuint                              fVertShaderRef;
+    GLuint                              fFragShaderRef;
 
-    uint32_t                    fPasses;
-    std::vector<hsGMatState>    fPassStates;
+    std::vector<hsGMatState>            fPassStates;
 
-    int32_t                     fNumUVs;
+    std::shared_ptr<plShaderContext>    fVertexShader;
+    std::shared_ptr<plShaderContext>    fFragmentShader;
+    plShaderVarLookup                   fVariables;
 
 public:
+    // These are named to match the GLSL variable names and are public vars
+    GLuint                      aVtxPosition;
+    GLuint                      aVtxNormal;
+    GLuint                      aVtxColor;
+    std::vector<GLuint>         aVtxUVWSrc; // These are indexed by UV chan
+    std::vector<GLuint>         uLayerMat;  // These are indexed by layer
+    std::vector<GLuint>         uTexture;   // These are indexed by layer
+    GLuint                      uPassNumber;
+
     void                    Link(plGLMaterialShaderRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
     plGLMaterialShaderRef*  GetNext() { return (plGLMaterialShaderRef*)fNext; }
 
-    plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe)
-        : plGLDeviceRef(), fMaterial(mat), fPipeline(pipe), fVertShaderRef(), fFragShaderRef(), fPasses()
-    {
-        ILoopOverLayers();
-
-        // TODO: Remove
-        ICompile();
-    }
-
+    plGLMaterialShaderRef(hsGMaterial* mat, plPipeline* pipe);
     virtual ~plGLMaterialShaderRef();
 
     void Release();
     void SetupTextureRefs();
 
-    int32_t GetNumUVs() const { return fNumUVs; }
-    uint32_t GetNumPasses() const { return fPasses; }
+    uint32_t GetNumPasses() const { return fPassStates.size(); }
     hsGMatState GetPassState(uint32_t which) const { return fPassStates[which]; }
 
 protected:
     void ICompile();
 
-    bool ILoopOverLayers();
-    uint32_t IHandleMaterial(uint32_t layer, hsGMatState& state);
+    void ISetupShaderContexts();
+    void ISetShaderVariableLocs();
+    void ICleanupShaderContexts();
+
+    template <typename T>
+    std::shared_ptr<T> IFindVariable(const ST::string& name, const ST::string& type)
+    {
+        auto it = fVariables.find(name);
+        if (it == fVariables.end()) {
+            std::shared_ptr<T> var = std::make_shared<T>(name, type);
+            fVariables[name] = var;
+            return var;
+        } else {
+            return std::static_pointer_cast<T>(it->second);
+        }
+    }
+
+    void ILoopOverLayers();
+    uint32_t IHandleMaterial(uint32_t layer, hsGMatState& state, std::shared_ptr<plShaderFunction> fn);
     uint32_t ILayersAtOnce(uint32_t which);
     bool ICanEatLayer(plLayerInterface* lay);
+    void IBuildBaseAlpha(plLayerInterface* layer, ShaderBuilder* sb);
+    void IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
+    void IBuildLayerTexture(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
+    void IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb);
     //void IHandleFirstTextureStage(plLayerInterface* layer);
     //void IHandleFirstStageBlend(const hsGMatState& layerState);
 };
