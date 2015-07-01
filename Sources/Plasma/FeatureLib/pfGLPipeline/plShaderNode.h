@@ -62,7 +62,8 @@ enum NodeType {
     kUniform,
     kTempVar,
     kArgument,
-    kFnCall
+    kFnCall,
+    kConditional
 };
 
 
@@ -205,15 +206,24 @@ public:
 };
 
 
+class plConditionNode : public plShaderNode {
+public:
+    std::shared_ptr<plShaderNode> condition;
+    std::shared_ptr<plShaderNode> body;
+
+    plConditionNode(std::shared_ptr<plShaderNode> condition, std::shared_ptr<plShaderNode> body)
+      : plShaderNode(kConditional),
+        condition(condition),
+        body(body) { }
+};
+
+
 bool plArgumentNodeSorterFunc(std::shared_ptr<plArgumentNode> a, std::shared_ptr<plArgumentNode> b);
 
 class plShaderFunction : public std::enable_shared_from_this<plShaderFunction>
 {
 
     friend class plShaderContext;
-
-    ST::string type;
-    ST::string name;
 
     std::vector<std::shared_ptr<plShaderNode>> nodes;
     std::set<std::shared_ptr<plTempVariableNode>> temps;
@@ -222,6 +232,9 @@ class plShaderFunction : public std::enable_shared_from_this<plShaderFunction>
     std::vector<ST::string> output;
 
 public:
+    ST::string type;
+    ST::string name;
+
     plShaderFunction(ST::string name, ST::string type)
       : name(name),
         type(type),
@@ -273,7 +286,9 @@ private:
 #define MUL(...)        std::make_shared<plOperatorNode>("*", __VA_ARGS__)
 #define DIV(...)        std::make_shared<plOperatorNode>("/", __VA_ARGS__)
 #define PROP(n, p)      std::make_shared<plOperatorNode>(".", n, CONSTANT(p))
+#define IS_EQ(...)      std::make_shared<plOperatorNode>("==", __VA_ARGS__)
 #define RETURN(n)       std::make_shared<plReturnNode>(n)
+#define COND(...)       std::make_shared<plConditionNode>(__VA_ARGS__)
 
 // This one is a bit special because of the initializer_list
 #define CALL(fn, ...)   std::shared_ptr<plCallNode>(new plCallNode(fn, { __VA_ARGS__ }))
