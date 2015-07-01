@@ -294,6 +294,8 @@ void plGLMaterialShaderRef::ISetShaderVariableLocs()
     aVtxNormal    = glGetAttribLocation(fRef, "aVtxNormal");
     aVtxColor     = glGetAttribLocation(fRef, "aVtxColor");
 
+    uPassNumber   = glGetUniformLocation(fRef, "uPassNumber");
+
     aVtxUVWSrc.assign(16, -1);
     for (size_t i = 0; i < 16; i++) {
         ST::string name = ST::format("aVtxUVWSrc{}", i);
@@ -328,7 +330,12 @@ void plGLMaterialShaderRef::ICleanupShaderContexts()
 void plGLMaterialShaderRef::ILoopOverLayers()
 {
     size_t j = 0;
-    size_t pass = 1;
+    size_t pass = 0;
+
+    // Build the fragment shader main function with the right passes
+    std::shared_ptr<plShaderFunction> fragMain = std::make_shared<plShaderFunction>("main", "void");
+    std::shared_ptr<plUniformNode> uPass = IFindVariable<plUniformNode>("uPassNumber", "int");
+
     for (j = 0; j < fMaterial->GetNumLayers(); )
     {
         size_t iCurrMat = j;
@@ -341,23 +348,19 @@ void plGLMaterialShaderRef::ILoopOverLayers()
         if (j == -1)
             break;
 
+        fFragmentShader->PushFunction(fragPass);
+
+        // if (uPassNumber == curpass) { curpass(); }
+        fragMain->PushOp(COND(IS_EQ(uPass, CONSTANT(ST::format("{}", pass))), CALL(fragPass->name)));
+
         pass++;
         fPassStates.push_back(currState);
-
-        fFragmentShader->PushFunction(fragPass);
 
 #if 0
         ISetFogParameters(fMaterial->GetLayer(iCurrMat));
 #endif
     }
 
-    // Build the fragment shader main function with the right passes
-    std::shared_ptr<plShaderFunction> fragMain = std::make_shared<plShaderFunction>("main", "void");
-    if (pass == 2) {
-        fragMain->PushOp(CALL("pass1")); // Cheat for now
-    } else {
-        fragMain->PushOp(CALL("pass2")); // Cheat for now
-    }
     fFragmentShader->PushFunction(fragMain);
 
 
