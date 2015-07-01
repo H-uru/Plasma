@@ -171,8 +171,10 @@ void plGLMaterialShaderRef::ICompile()
         glBindTexture(GL_TEXTURE_2D, texRef->fRef);
         LOG_GL_ERROR_CHECK("Bind Texture failed")
 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        if (!(layer->GetClampFlags() & hsGMatState::kClampTexture)) {
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        }
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, std::max(0, img->GetNumLevels() - 3));
@@ -709,7 +711,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
         }
 
 
-        if (layer->GetBlendFlags() & hsGMatState::kBlendNoVtxAlpha) {
+        if (layer->GetBlendFlags() & hsGMatState::kBlendNoVtxAlpha || !sb->fPrevAlpha) {
             // Only use texture alpha
             sb->fFunction->PushOp(ASSIGN(alpha, alphaVal));
 
