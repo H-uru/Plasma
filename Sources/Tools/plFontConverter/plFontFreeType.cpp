@@ -221,7 +221,7 @@ bool    plFontFreeType::ImportFreeType( const plFileName &fontPath, Options *opt
             if( ch->fBitmapOff > ( ( fWidth * ( fHeight - ftBitmap->bitmap.rows ) * fBPP ) >> 3 ) )
             {
                 hsAssert( false, "Invalid position found in IGetFreeCharData()" );
-                return nil;
+                return false;
             }
 
             // Set these now, since setting them before would've changed the IGetFreeCharData results
