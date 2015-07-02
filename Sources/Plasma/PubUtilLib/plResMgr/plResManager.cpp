@@ -361,7 +361,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
 
     hsAssert(pKey, "Null Key");
     if (pKey->GetUoid().GetLoadMask().DontLoad())
-        return nil;
+        return false;
 
     hsAssert(pKey->GetStartPos() != uint32_t(-1), "Missing StartPos");
     hsAssert(pKey->GetDataLen() != uint32_t(-1), "Missing Data Length");
