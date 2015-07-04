@@ -651,16 +651,20 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
     plProfile_EndTiming(RenderBuff);
 
-    for (uint32_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
+    for (size_t pass = 0; pass < mRef->GetNumPasses(); pass++) {
         // Set uniform to pass
         if (mRef->uPassNumber != -1)
             glUniform1i(mRef->uPassNumber, pass);
 
-        hsGMatState s = mRef->GetPassState(pass);
+        plLayerInterface* lay = material->GetLayer(mRef->GetPassIndex(pass));
+
+        ICalcLighting(mRef, lay, &span);
+
+        hsGMatState s = lay->GetState();
         IHandleZMode(s);
         IHandleBlendMode(s);
 
-        if (s.fMiscFlags & hsGMatState::kMiscTwoSided) {
+        if (lay->GetMiscFlags() & hsGMatState::kMiscTwoSided) {
             glDisable(GL_CULL_FACE);
         } else {
             glEnable(GL_CULL_FACE);
@@ -789,6 +793,133 @@ void plGLPipeline::IHandleBlendMode(hsGMatState flags)
 #endif
                 }
                 break;
+        }
+    }
+}
+
+
+void plGLPipeline::ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan)
+{
+    //plProfile_Inc(MatLightState);
+
+    GLint e;
+
+    if (IsDebugFlagSet(plPipeDbg::kFlagAllBright)) {
+        glUniform4f(mRef->uGlobalAmbient,  1.0, 1.0, 1.0, 1.0);
+
+        glUniform4f(mRef->uMatAmbientCol,  1.0, 1.0, 1.0, 1.0);
+        glUniform4f(mRef->uMatDiffuseCol,  1.0, 1.0, 1.0, 1.0);
+        glUniform4f(mRef->uMatEmissiveCol, 1.0, 1.0, 1.0, 1.0);
+        glUniform4f(mRef->uMatSpecularCol, 1.0, 1.0, 1.0, 1.0);
+
+        glUniform1f(mRef->uMatAmbientSrc,  1.0);
+        glUniform1f(mRef->uMatDiffuseSrc,  1.0);
+        glUniform1f(mRef->uMatEmissiveSrc, 1.0);
+        glUniform1f(mRef->uMatSpecularSrc, 1.0);
+
+        return;
+    }
+
+    hsGMatState state = currLayer->GetState();
+    uint32_t mode = (currSpan != nullptr) ? (currSpan->fProps & plSpan::kLiteMask) : plSpan::kLiteMaterial;
+
+    if (state.fMiscFlags & hsGMatState::kMiscBumpChans) {
+        mode = plSpan::kLiteMaterial;
+        state.fShadeFlags |= hsGMatState::kShadeNoShade | hsGMatState::kShadeWhite;
+    }
+
+    /// Select one of our three lighting methods
+    switch (mode) {
+        case plSpan::kLiteMaterial:     // Material shading
+        {
+            if (state.fShadeFlags & hsGMatState::kShadeWhite) {
+                glUniform4f(mRef->uGlobalAmbient, 1.0, 1.0, 1.0, 1.0);
+                glUniform4f(mRef->uMatAmbientCol, 1.0, 1.0, 1.0, 1.0);
+            } else if (IsDebugFlagSet(plPipeDbg::kFlagNoPreShade)) {
+                glUniform4f(mRef->uGlobalAmbient, 0.0, 0.0, 0.0, 1.0);
+                glUniform4f(mRef->uMatAmbientCol, 0.0, 0.0, 0.0, 1.0);
+            } else {
+                hsColorRGBA amb = currLayer->GetPreshadeColor();
+                glUniform4f(mRef->uGlobalAmbient, amb.r, amb.g, amb.b, 1.0);
+                glUniform4f(mRef->uMatAmbientCol, amb.r, amb.g, amb.b, 1.0);
+            }
+
+            hsColorRGBA dif = currLayer->GetRuntimeColor();
+            glUniform4f(mRef->uMatDiffuseCol, dif.r, dif.g, dif.b, currLayer->GetOpacity());
+
+            hsColorRGBA em = currLayer->GetAmbientColor();
+            glUniform4f(mRef->uMatEmissiveCol, em.r, em.g, em.b, 1.0);
+
+            // Set specular properties
+            if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
+                hsColorRGBA spec = currLayer->GetSpecularColor();
+                glUniform4f(mRef->uMatSpecularCol, spec.r, spec.g, spec.b, 1.0);
+#if 0
+                mat.Power = currLayer->GetSpecularPower();
+#endif
+            } else {
+                glUniform4f(mRef->uMatSpecularCol, 0.0, 0.0, 0.0, 0.0);
+            }
+
+            glUniform1f(mRef->uMatDiffuseSrc,  1.0);
+            glUniform1f(mRef->uMatEmissiveSrc, 1.0);
+            glUniform1f(mRef->uMatSpecularSrc, 1.0);
+
+            if (state.fShadeFlags & hsGMatState::kShadeNoShade) {
+                glUniform1f(mRef->uMatAmbientSrc, 1.0);
+            } else {
+                glUniform1f(mRef->uMatAmbientSrc, 0.0);
+            }
+
+            break;
+        }
+
+        case plSpan::kLiteVtxPreshaded:  // Vtx preshaded
+        {
+            glUniform4f(mRef->uGlobalAmbient, 0.0, 0.0, 0.0, 0.0);
+            glUniform4f(mRef->uMatAmbientCol, 0.0, 0.0, 0.0, 0.0);
+            glUniform4f(mRef->uMatDiffuseCol, 0.0, 0.0, 0.0, 0.0);
+            glUniform4f(mRef->uMatEmissiveCol, 0.0, 0.0, 0.0, 0.0);
+            glUniform4f(mRef->uMatSpecularCol, 0.0, 0.0, 0.0, 0.0);
+
+            glUniform1f(mRef->uMatDiffuseSrc,  0.0);
+            glUniform1f(mRef->uMatAmbientSrc,  1.0);
+            glUniform1f(mRef->uMatSpecularSrc, 1.0);
+
+            if (state.fShadeFlags & hsGMatState::kShadeEmissive)
+                glUniform1f(mRef->uMatEmissiveSrc, 0.0);
+            else
+                glUniform1f(mRef->uMatEmissiveSrc, 1.0);
+            break;
+        }
+
+        case plSpan::kLiteVtxNonPreshaded:      // Vtx non-preshaded
+        {
+            glUniform4f(mRef->uMatAmbientCol, 0.0, 0.0, 0.0, 0.0);
+            glUniform4f(mRef->uMatDiffuseCol, 0.0, 0.0, 0.0, 0.0);
+
+            hsColorRGBA em = currLayer->GetAmbientColor();
+            glUniform4f(mRef->uMatEmissiveCol, em.r, em.g, em.b, 1.0);
+
+            // Set specular properties
+            if (state.fShadeFlags & hsGMatState::kShadeSpecular) {
+                hsColorRGBA spec = currLayer->GetSpecularColor();
+                glUniform4f(mRef->uMatSpecularCol, spec.r, spec.g, spec.b, 1.0);
+#if 0
+                mat.Power = currLayer->GetSpecularPower();
+#endif
+            } else {
+                glUniform4f(mRef->uMatSpecularCol, 0.0, 0.0, 0.0, 0.0);
+            }
+
+            hsColorRGBA amb = currLayer->GetPreshadeColor();
+            glUniform4f(mRef->uGlobalAmbient, amb.r, amb.g, amb.b, amb.a);
+
+            glUniform1f(mRef->uMatAmbientSrc,  0.0);
+            glUniform1f(mRef->uMatDiffuseSrc,  0.0);
+            glUniform1f(mRef->uMatEmissiveSrc, 1.0);
+            glUniform1f(mRef->uMatSpecularSrc, 1.0);
+            break;
         }
     }
 }
