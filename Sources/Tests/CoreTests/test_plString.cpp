@@ -383,40 +383,25 @@ TEST(PlStringTest, FindString)
 
 //TODO: test regex functions
 
-TEST(PlStringTest,TrimLeft)
+TEST(PlStringTest, Trim)
 {
-    plString input = plString("abcdefgh");
-    plString output = input.TrimLeft("abc");
-    plString expected = plString("defgh");
-    EXPECT_EQ(expected,output);
+    EXPECT_EQ(plString("xxx   "), plString("   xxx   ").TrimLeft(" \t\r\n"));
+    EXPECT_EQ(plString("xxx\t"), plString("\txxx\t").TrimLeft(" \t\r\n"));
+    EXPECT_EQ(plString("xxx\r\n"), plString("\r\nxxx\r\n").TrimLeft(" \t\r\n"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").TrimLeft("abc"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").TrimLeft("x"));
 
-    plString input1 = plString("abcdefgh");
-    plString output1 = input1.TrimLeft("bc");
-    EXPECT_EQ(input1,output1);
-}
+    EXPECT_EQ(plString("   xxx"), plString("   xxx   ").TrimRight(" \t\r\n"));
+    EXPECT_EQ(plString("\txxx"), plString("\txxx\t").TrimRight(" \t\r\n"));
+    EXPECT_EQ(plString("\r\nxxx"), plString("\r\nxxx\r\n").TrimRight(" \t\r\n"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").TrimRight("abc"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").TrimRight("x"));
 
-TEST(PlStringTest,TrimRight)
-{
-    plString input = plString("abcdefgh");
-    plString output = input.TrimRight("fgh");
-    plString expected = plString("abcde");
-    EXPECT_EQ(expected,output);
-
-    plString input1 = plString("abcdefgh");
-    plString output1 = input1.TrimRight("fg");
-    EXPECT_EQ(input1,output1);
-}
-
-TEST(PlStringTest,Trim)
-{
-    plString input = plString("abcdefba");
-    plString output = input.Trim("ab");
-    plString expected = plString("cdef");
-    EXPECT_EQ(expected,output);
-
-    plString input1 = plString("abcdefba");
-    plString output1 = input1.Trim("f");
-    EXPECT_EQ(input1,output1);
+    EXPECT_EQ(plString("xxx"), plString("   xxx   ").Trim(" \t\r\n"));
+    EXPECT_EQ(plString("xxx"), plString("\txxx\t").Trim(" \t\r\n"));
+    EXPECT_EQ(plString("xxx"), plString("\r\nxxx\r\n").Trim(" \t\r\n"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").Trim("abc"));
+    EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").Trim("x"));
 }
 
 TEST(PlStringTest,Substr)
