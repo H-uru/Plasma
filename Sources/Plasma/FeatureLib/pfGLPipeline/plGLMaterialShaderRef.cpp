@@ -204,6 +204,16 @@ void plGLMaterialShaderRef::ICompile()
                 }
 #endif
             }
+        } else {
+            GLenum data_type = GL_UNSIGNED_BYTE;
+            GLenum data_format = GL_BGRA;
+            GLenum internal_format = GL_RGBA;
+
+            for (uint8_t i = 0; i < img->GetNumLevels(); i++) {
+                img->SetCurrLevel(i);
+
+                glTexImage2D(GL_TEXTURE_2D, i, internal_format, img->GetCurrWidth(), img->GetCurrHeight(), 0, data_format, data_type, img->GetCurrLevelPtr());
+            }
         }
     }
 
