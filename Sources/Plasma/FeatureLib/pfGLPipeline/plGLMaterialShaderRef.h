@@ -67,12 +67,14 @@ class plGLMaterialShaderRef : public plGLDeviceRef
         std::shared_ptr<plShaderFunction>   fFunction;
         uint32_t                            fIteration;
 
+        std::shared_ptr<plVariableNode>     fMatValues;
+
         std::shared_ptr<plVariableNode>     fPrevColor;
         std::shared_ptr<plVariableNode>     fPrevAlpha;
 
         std::shared_ptr<plVariableNode>     fCurrColor;
         std::shared_ptr<plVariableNode>     fCurrAlpha;
-        std::shared_ptr<plShaderNode>       fCurrCoord;
+        std::shared_ptr<plVariableNode>     fCurrCoord;
         std::shared_ptr<plVariableNode>     fCurrImage;
     };
 
@@ -82,7 +84,7 @@ protected:
     GLuint                              fVertShaderRef;
     GLuint                              fFragShaderRef;
 
-    std::vector<hsGMatState>            fPassStates;
+    std::vector<size_t>                 fPassIndices;
 
     std::shared_ptr<plShaderContext>    fVertexShader;
     std::shared_ptr<plShaderContext>    fFragmentShader;
@@ -96,6 +98,15 @@ public:
     std::vector<GLuint>         aVtxUVWSrc; // These are indexed by UV chan
     std::vector<GLuint>         uLayerMat;  // These are indexed by layer
     std::vector<GLuint>         uTexture;   // These are indexed by layer
+    GLuint                      uGlobalAmbient;
+    GLuint                      uMatAmbientCol;
+    GLuint                      uMatAmbientSrc;
+    GLuint                      uMatDiffuseCol;
+    GLuint                      uMatDiffuseSrc;
+    GLuint                      uMatEmissiveCol;
+    GLuint                      uMatEmissiveSrc;
+    GLuint                      uMatSpecularCol;
+    GLuint                      uMatSpecularSrc;
     GLuint                      uPassNumber;
 
     void                    Link(plGLMaterialShaderRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
@@ -107,8 +118,9 @@ public:
     void Release();
     void SetupTextureRefs();
 
-    uint32_t GetNumPasses() const { return fPassStates.size(); }
-    hsGMatState GetPassState(uint32_t which) const { return fPassStates[which]; }
+    size_t GetNumPasses() const { return fPassIndices.size(); }
+    size_t GetPassIndex(size_t which) const { return fPassIndices[which]; }
+    hsGMaterial* GetMaterial() const { return fMaterial; }
 
 protected:
     void ICompile();
@@ -131,7 +143,7 @@ protected:
     }
 
     void ILoopOverLayers();
-    uint32_t IHandleMaterial(uint32_t layer, hsGMatState& state, std::shared_ptr<plShaderFunction> fn);
+    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> fn);
     uint32_t ILayersAtOnce(uint32_t which);
     bool ICanEatLayer(plLayerInterface* lay);
     void IBuildBaseAlpha(plLayerInterface* layer, ShaderBuilder* sb);
