@@ -145,7 +145,7 @@ gemQuat Qt_FromMatrix(HMatrix mat)
      * Otherwise, the largest diagonal entry corresponds to the largest of |x|,
      * |y|, or |z|, one of which must be larger than |w|, and at least 1/2. */
     gemQuat qu;
-    register double tr, s;
+    double tr, s;
 
     tr = mat[X][X] + mat[Y][Y]+ mat[Z][Z];
     if (tr >= 0.0) {
