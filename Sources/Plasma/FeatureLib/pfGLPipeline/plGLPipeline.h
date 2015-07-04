@@ -115,6 +115,7 @@ protected:
     void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb, hsGDeviceRef* ib, hsGMaterial* material, uint32_t vStart, uint32_t vLength, uint32_t iStart, uint32_t iLength);
     void IHandleZMode(hsGMatState flags);
     void IHandleBlendMode(hsGMatState flags);
+    void ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInterface* currLayer, const plSpan* currSpan);
 
 private:
     static plGLEnumerate enumerator;
