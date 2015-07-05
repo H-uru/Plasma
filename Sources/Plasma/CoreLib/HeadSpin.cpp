@@ -53,6 +53,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include <fcntl.h>
 #   include <unistd.h>
 #endif
+
+#if defined(HS_BUILD_FOR_UNIX)
+#   include <signal.h>
+#endif
+
 #pragma hdrstop
 
 #include "hsTemplates.h"
@@ -136,6 +141,9 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     {
         char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
         DebugMsg(str, file, line, msg);
+        DebugBreakIfDebuggerPresent();
+
+        // In case the debug trap is ignored
         abort();
     }
 #endif // HS_DEBUGGING
@@ -175,7 +183,7 @@ bool DebugIsDebuggerPresent()
 
 void DebugBreakIfDebuggerPresent()
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     __try
     {
         __debugbreak();
@@ -183,6 +191,8 @@ void DebugBreakIfDebuggerPresent()
         // Debugger not present or some such shwiz.
         // Whatever. Don't crash here.
     }
+#elif defined(HS_BUILD_FOR_UNIX)
+    raise(SIGTRAP);
 #endif // _MSC_VER
 }
 
