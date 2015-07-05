@@ -45,6 +45,7 @@ Mead, WA   99021
 #include "HeadSpin.h"
 #include <cstdlib>
 #include <cstring>
+#include <type_traits>
 
 #define BADCHAR_REPLACEMENT (0xFFFDul)
 
@@ -226,7 +227,8 @@ static void _formatNumeric(const plFormat_Private::FormatSpec &format,
                            plStringStream &output, _IType value,
                            int radix, bool upperCase = false)
 {
-    char pad = format.fPadChar ? format.fPadChar : ' ';
+    static_assert(std::is_unsigned<_IType>::value,
+            "Signed numerics are currently only supported in Decimal formatting");
 
     size_t format_size = 0;
     _IType temp = value;
@@ -250,8 +252,8 @@ template <typename _IType>
 static void _formatDecimal(const plFormat_Private::FormatSpec &format,
                            plStringStream &output, _IType value)
 {
-    char pad = format.fPadChar ? format.fPadChar : ' ';
-    _IType abs = (value < 0) ? -value : value;
+    typedef typename std::make_unsigned<_IType>::type _UType;
+    _UType abs = (value < 0) ? -(_UType)value : value;
 
     size_t format_size = 0;
     _IType temp = abs;
@@ -266,18 +268,15 @@ static void _formatDecimal(const plFormat_Private::FormatSpec &format,
     if (value < 0 || format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
         ++format_size;
 
-    hsAssert(format_size < 21, "Format length too long");
+    hsAssert(format_size < 24, "Format length too long");
 
-    char buffer[21];
-    _IFormatNumeric_Impl<_IType>(buffer + format_size, abs, 10);
-
-    int signPos = arrsize(buffer) - static_cast<int>(format_size);
-    hsAssert(signPos >= 0, "Format buffer not large enough for sign");
+    char buffer[24];
+    _IFormatNumeric_Impl<_UType>(buffer + format_size, abs, 10);
 
     if (value < 0)
-        buffer[signPos] = '-';
+        buffer[0] = '-';
     else if (format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
-        buffer[signPos] = '+';
+        buffer[0] = '+';
 
     _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
@@ -477,20 +476,20 @@ PL_FORMAT_IMPL(wchar_t)
 {
     switch (format.fDigitClass) {
     case plFormat_Private::kDigitBin:
-        _formatNumeric<wchar_t>(format, output, value, 2);
+        _formatNumeric<uint32_t>(format, output, value, 2);
         break;
     case plFormat_Private::kDigitOct:
-        _formatNumeric<wchar_t>(format, output, value, 8);
+        _formatNumeric<uint32_t>(format, output, value, 8);
         break;
     case plFormat_Private::kDigitHex:
-        _formatNumeric<wchar_t>(format, output, value, 16, false);
+        _formatNumeric<uint32_t>(format, output, value, 16, false);
         break;
     case plFormat_Private::kDigitHexUpper:
-        _formatNumeric<wchar_t>(format, output,value, 16, true);
+        _formatNumeric<uint32_t>(format, output, value, 16, true);
         break;
     case plFormat_Private::kDigitDec:
     case plFormat_Private::kDigitDecAlwaysSigned:
-        _formatDecimal<wchar_t>(format, output, value);
+        _formatDecimal<uint32_t>(format, output, value);
         break;
     case plFormat_Private::kDigitChar:
     case plFormat_Private::kDigitDefault:
