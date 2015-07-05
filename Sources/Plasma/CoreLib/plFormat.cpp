@@ -294,9 +294,7 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
 
     // Yanked from plString
     if (ch > 0x10FFFF) {
-        hsAssert(0, "Unicode character out of range");
-
-        // Character out of range; Use U+FFFD instead for release builds
+        // Character out of range; Use U+FFFD instead
         format_size = 3;
         utf8[0] = 0xE0 | ((BADCHAR_REPLACEMENT >> 12) & 0x0F);
         utf8[1] = 0x80 | ((BADCHAR_REPLACEMENT >>  6) & 0x3F);
