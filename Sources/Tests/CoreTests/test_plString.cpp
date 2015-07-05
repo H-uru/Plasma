@@ -68,6 +68,24 @@ TEST(plString, TestHelpers)
     EXPECT_LT(0, T_strcmp("a", ""));
 }
 
+TEST(plString, Utility)
+{
+    // Special plString::Null constant
+    EXPECT_EQ(plString::Null, plString(""));
+    EXPECT_EQ(plString::Null, plString{});
+
+    EXPECT_EQ(0, plString::Null.GetSize());
+    EXPECT_EQ(true, plString::Null.IsEmpty());
+    EXPECT_EQ(true, plString::Null.IsNull());
+
+    // Short and Long string length
+    EXPECT_EQ(4, plString("1234").GetSize());
+    EXPECT_EQ(32, plString("12345678901234567890123456789012").GetSize());
+
+    // plStrings store data as UTF-8 internally
+    EXPECT_EQ(utf8_test_data_length, plString(utf8_test_data).GetSize());
+}
+
 TEST(plString, ConvertUtf8)
 {
     // From UTF-8 to plString
@@ -434,34 +452,51 @@ TEST(plString, Substrings)
     EXPECT_EQ(plString("AAA"), plString("AAA").Substr(-10, 10));
 }
 
-TEST(PlStringTest,Replace)
+TEST(plString, Replace)
 {
-    plString input = plString("abcdabcd");
+    EXPECT_EQ(plString("xxYYxx"), plString("xxAAxx").Replace("A", "Y"));
+    EXPECT_EQ(plString("xxAAxx"), plString("xxAAxx").Replace("XX", "Y"));
+    EXPECT_EQ(plString("xxxx"), plString("xxAAxx").Replace("A", ""));
+    EXPECT_EQ(plString("xxREPLACExx"), plString("xxFINDxx").Replace("FIND", "REPLACE"));
+    EXPECT_EQ(plString("xxREPLACExxREPLACExx"), plString("xxFINDxxFINDxx").Replace("FIND", "REPLACE"));
 
-    plString output = input.Replace("ab","cd");
-    plString expected = plString("cdcdcdcd");
-    EXPECT_EQ(expected,output);
+    EXPECT_EQ(plString("YYxx"), plString("AAxx").Replace("A", "Y"));
+    EXPECT_EQ(plString("AAxx"), plString("AAxx").Replace("XX", "Y"));
+    EXPECT_EQ(plString("xx"), plString("AAxx").Replace("A", ""));
+    EXPECT_EQ(plString("REPLACExx"), plString("FINDxx").Replace("FIND", "REPLACE"));
+    EXPECT_EQ(plString("REPLACExxREPLACExx"), plString("FINDxxFINDxx").Replace("FIND", "REPLACE"));
 
-    plString output1 = input.Replace("a","cd");
-    plString expected1 = plString("cdbcdcdbcd");
-    EXPECT_EQ(expected1,output1);
+    EXPECT_EQ(plString("xxYY"), plString("xxAA").Replace("A", "Y"));
+    EXPECT_EQ(plString("xxAA"), plString("xxAA").Replace("XX", "Y"));
+    EXPECT_EQ(plString("xx"), plString("xxAA").Replace("A", ""));
+    EXPECT_EQ(plString("xxREPLACE"), plString("xxFIND").Replace("FIND", "REPLACE"));
+    EXPECT_EQ(plString("xxREPLACExxREPLACE"), plString("xxFINDxxFIND").Replace("FIND", "REPLACE"));
 
+    EXPECT_EQ(plString("YY"), plString("AA").Replace("A", "Y"));
+    EXPECT_EQ(plString("AA"), plString("AA").Replace("XX", "Y"));
+    EXPECT_EQ(plString(""), plString("AA").Replace("A", ""));
+    EXPECT_EQ(plString("REPLACE"), plString("FIND").Replace("FIND", "REPLACE"));
+    EXPECT_EQ(plString("REPLACExxREPLACE"), plString("FINDxxFIND").Replace("FIND", "REPLACE"));
 }
 
-TEST(PlStringTest,ToUpper)
+TEST(plString, CaseConvert)
 {
-    plString input = plString("abCDe");
-    plString output = input.ToUpper();
-    plString expected = plString("ABCDE");
-    EXPECT_EQ(expected,output);
-}
+    /* Edge cases:
+     * '@' = 'A' - 1
+     * '[' = 'Z' + 1
+     * '`' = 'a' - 1
+     * '{' = 'z' + 1
+     */
 
-TEST(PlStringTest,ToLower)
-{
-    plString input = plString("aBcDe");
-    plString output = input.ToLower();
-    plString expected = plString("abcde");
-    EXPECT_EQ(expected,output);
+    EXPECT_EQ(plString("AAZZ"), plString("aazz").ToUpper());
+    EXPECT_EQ(plString("AAZZ"), plString("AAZZ").ToUpper());
+    EXPECT_EQ(plString("@AZ[`AZ{"), plString("@AZ[`az{").ToUpper());
+    EXPECT_EQ(plString(""), plString("").ToUpper());
+
+    EXPECT_EQ(plString("aazz"), plString("aazz").ToLower());
+    EXPECT_EQ(plString("aazz"), plString("AAZZ").ToLower());
+    EXPECT_EQ(plString("@az[`az{"), plString("@AZ[`az{").ToLower());
+    EXPECT_EQ(plString(""), plString("").ToLower());
 }
 
 TEST(PlStringTest,Tokenize)
