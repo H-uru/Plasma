@@ -135,16 +135,13 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     if (s_GuiAsserts)
     {
         if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
-            DebugBreak();
+            DebugBreakAlways();
     } else
 #endif // _MSC_VER
     {
         char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
         DebugMsg(str, file, line, msg);
-        DebugBreakIfDebuggerPresent();
-
-        // In case the debug trap is ignored
-        abort();
+        DebugBreakAlways();
     }
 #endif // HS_DEBUGGING
 #else
@@ -192,7 +189,22 @@ void DebugBreakIfDebuggerPresent()
         // Whatever. Don't crash here.
     }
 #elif defined(HS_BUILD_FOR_UNIX)
+    if (DebugIsDebuggerPresent())
+        raise(SIGTRAP);
+#else
+    // FIXME
+#endif // _MSC_VER
+}
+
+void DebugBreakAlways()
+{
+#if defined(_MSC_VER)
+    DebugBreak();
+#elif defined(HS_BUILD_FOR_UNIX)
     raise(SIGTRAP);
+#else
+    // FIXME
+    abort();
 #endif // _MSC_VER
 }
 
