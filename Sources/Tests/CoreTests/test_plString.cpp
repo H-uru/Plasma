@@ -55,7 +55,7 @@ static int T_strcmp(const _Ch *left, const _Ch *right)
     }
 }
 
-TEST(PlStringTest, TestHelpers)
+TEST(plString, TestHelpers)
 {
     /* Ensure the utilities for testing the module function properly */
     EXPECT_EQ(0, T_strcmp("abc", "abc"));
@@ -68,7 +68,7 @@ TEST(PlStringTest, TestHelpers)
     EXPECT_LT(0, T_strcmp("a", ""));
 }
 
-TEST(PlStringTest, ConvertUtf8)
+TEST(plString, ConvertUtf8)
 {
     // From UTF-8 to plString
     plString from_utf8 = plString::FromUtf8(utf8_test_data);
@@ -92,7 +92,7 @@ TEST(PlStringTest, ConvertUtf8)
     EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
-TEST(PlStringTest, ConvertUtf16)
+TEST(plString, ConvertUtf16)
 {
     // From UTF-16 to plString
     plString from_utf16 = plString::FromUtf16(utf16_test_data);
@@ -111,7 +111,7 @@ TEST(PlStringTest, ConvertUtf16)
     EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
-TEST(PlStringTest, ConvertIso8859_1)
+TEST(plString, ConvertIso8859_1)
 {
     // From ISO-8859-1 to plString
     const char latin1[] = "\x20\x7e\xa0\xff";
@@ -132,7 +132,7 @@ TEST(PlStringTest, ConvertIso8859_1)
     EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
-TEST(PlStringTest, ConvertWchar)
+TEST(plString, ConvertWchar)
 {
     // UTF-8 and UTF-16 are already tested, so just make sure we test
     // wchar_t and L"" conversions
@@ -155,7 +155,7 @@ TEST(PlStringTest, ConvertWchar)
     EXPECT_EQ(0, T_strcmp(empty.c_str(), ""));
 }
 
-TEST(PlStringTest, ConvertInvalid)
+TEST(plString, ConvertInvalid)
 {
     // The following should encode replacement characters for invalid chars
     const plUniChar unicode_replacement[] = { 0xfffd, 0 };
@@ -186,7 +186,7 @@ TEST(PlStringTest, ConvertInvalid)
     EXPECT_STREQ(latin1_replacement, non_latin1.GetData());
 }
 
-TEST(PlStringTest, Concatenation)
+TEST(plString, Concatenation)
 {
     // If this changes, this test may need to be updated to match
     ASSERT_EQ(16, SSO_CHARS);
@@ -214,7 +214,7 @@ TEST(PlStringTest, Concatenation)
     EXPECT_EQ(input1, "" + input1);
 }
 
-TEST(PlStringTest, Compare)
+TEST(plString, Compare)
 {
     // Same length, case sensitive
     EXPECT_EQ(0, plString("abc").Compare("abc", plString::kCaseSensitive));
@@ -244,7 +244,7 @@ TEST(PlStringTest, Compare)
     EXPECT_GT(0, plString().Compare("abc", plString::kCaseInsensitive));
 }
 
-TEST(PlStringTest, CompareN)
+TEST(plString, CompareN)
 {
     // Same length, case sensitive
     EXPECT_EQ(0, plString("abcXX").CompareN("abcYY", 3, plString::kCaseSensitive));
@@ -272,7 +272,7 @@ TEST(PlStringTest, CompareN)
     EXPECT_GT(0, plString().CompareN("abc", 3, plString::kCaseInsensitive));
 }
 
-TEST(PlStringTest, FindChar)
+TEST(plString, FindChar)
 {
     // Available char, case sensitive
     EXPECT_EQ(0, plString("Aaaaaaaa").Find('A', plString::kCaseSensitive));
@@ -304,7 +304,7 @@ TEST(PlStringTest, FindChar)
     EXPECT_EQ(-1, plString().Find('A', plString::kCaseInsensitive));
 }
 
-TEST(PlStringTest, FindLast)
+TEST(plString, FindLast)
 {
     // Available char, case sensitive
     EXPECT_EQ(0, plString("Aaaaaaaa").FindLast('A', plString::kCaseSensitive));
@@ -336,7 +336,7 @@ TEST(PlStringTest, FindLast)
     EXPECT_EQ(-1, plString().FindLast('A', plString::kCaseInsensitive));
 }
 
-TEST(PlStringTest, FindString)
+TEST(plString, FindString)
 {
     // Available string, case sensitive
     EXPECT_EQ(0, plString("ABCDabcd").Find("ABCD", plString::kCaseSensitive));
@@ -383,7 +383,7 @@ TEST(PlStringTest, FindString)
 
 //TODO: test regex functions
 
-TEST(PlStringTest, Trim)
+TEST(plString, Trim)
 {
     EXPECT_EQ(plString("xxx   "), plString("   xxx   ").TrimLeft(" \t\r\n"));
     EXPECT_EQ(plString("xxx\t"), plString("\txxx\t").TrimLeft(" \t\r\n"));
@@ -404,32 +404,34 @@ TEST(PlStringTest, Trim)
     EXPECT_EQ(plString("   xxx   "), plString("   xxx   ").Trim("x"));
 }
 
-TEST(PlStringTest,Substr)
+TEST(plString, Substrings)
 {
-    plString input = plString("abcdefgh");
+    EXPECT_EQ(plString("AAA"), plString("AAA").Left(3));
+    EXPECT_EQ(plString("AAA"), plString("AAAxxxx").Left(3));
+    EXPECT_EQ(plString("A"), plString("A").Left(3));
+    EXPECT_EQ(plString(""), plString("").Left(3));
 
-    //start > size returns null
-    plString output = input.Substr(15,1);
-    EXPECT_EQ(plString::Null,output);
+    EXPECT_EQ(plString("AAA"), plString("AAA").Right(3));
+    EXPECT_EQ(plString("AAA"), plString("xxxxAAA").Right(3));
+    EXPECT_EQ(plString("A"), plString("A").Right(3));
+    EXPECT_EQ(plString(""), plString("").Right(3));
 
-    //start<0
-    plString output1 =input.Substr(-3,3);
-    plString expected1 = plString("fgh");
-    EXPECT_EQ(expected1,output1);
+    EXPECT_EQ(plString("AAA"), plString("AAAxxxx").Substr(0, 3));
+    EXPECT_EQ(plString("AAA"), plString("xxxxAAA").Substr(4, 3));
+    EXPECT_EQ(plString("AAA"), plString("xxAAAxx").Substr(2, 3));
 
-    //start+size>size string
-    plString output2 =input.Substr(4,6);
-    plString expected2 = plString("efgh");
-    EXPECT_EQ(expected2,output2);
+    EXPECT_EQ(plString(""), plString("AAAA").Substr(2, 0));
+    EXPECT_EQ(plString("AA"), plString("AAAA").Substr(2, 4));
+    EXPECT_EQ(plString(""), plString("AAAA").Substr(6, 4));
+    EXPECT_EQ(plString("AAAA"), plString("AAAA").Substr(0, 4));
+    EXPECT_EQ(plString(""), plString("").Substr(0, 4));
 
-    //start =0 size = length string
-    plString output3 =input.Substr(0,input.GetSize());
-    EXPECT_EQ(input,output3);
-
-    //normal case
-    plString output4 =input.Substr(1,3);
-    plString expected4 = plString("bcd");
-    EXPECT_EQ(expected4,output4);
+    // Negative indexes start from the right
+    EXPECT_EQ(plString("AAA"), plString("xxxxAAA").Substr(-3, 3));
+    EXPECT_EQ(plString("AAA"), plString("xxAAAxx").Substr(-5, 3));
+    EXPECT_EQ(plString("AAA"), plString("xxxxAAA").Substr(-3, 6));
+    EXPECT_EQ(plString("AAA"), plString("AAAxxxx").Substr(-10, 3));
+    EXPECT_EQ(plString("AAA"), plString("AAA").Substr(-10, 10));
 }
 
 TEST(PlStringTest,Replace)
