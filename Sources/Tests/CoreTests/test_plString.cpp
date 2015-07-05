@@ -1,5 +1,4 @@
-#include <plString.h>
-#include <HeadSpin.h>
+#include "plString.h"
 
 #include <gtest/gtest.h>
 #include <wchar.h>
@@ -499,40 +498,116 @@ TEST(plString, CaseConvert)
     EXPECT_EQ(plString(""), plString("").ToLower());
 }
 
-TEST(PlStringTest,Tokenize)
+TEST(plString, Tokenize)
 {
-    std::vector<plString> expected;
-    expected.push_back(plString("a"));
-    expected.push_back(plString("b"));
-    expected.push_back(plString("c"));
-    expected.push_back(plString("d"));
-    expected.push_back(plString("è"));
+    std::vector<plString> expected1;
+    expected1.push_back("aaa");
+    expected1.push_back("b");
+    expected1.push_back("ccc");
+    expected1.push_back("d");
+    expected1.push_back("èèè");
+    const plString input1("aaa\t\tb\n;ccc-d;èèè");
+    EXPECT_EQ(expected1, input1.Tokenize("\t\n-;"));
 
-    plString input = plString("a\t\tb\n;c-d;è");
-    std::vector<plString> output = input.Tokenize("\t\n-;");
-    EXPECT_EQ(expected,output);
+    std::vector<plString> expected2;
+    expected2.push_back("aaa\t\tb\n");
+    expected2.push_back("ccc-d");
+    expected2.push_back("èèè");
+    EXPECT_EQ(expected2, input1.Tokenize(";"));
 
+    std::vector<plString> expected3;
+    expected3.push_back(input1);
+    EXPECT_EQ(expected3, input1.Tokenize("x"));
+
+    const plString input2("\t;aaa\t\tb\n;ccc-d;èèè--");
+    EXPECT_EQ(expected1, input2.Tokenize("\t\n-;"));
+
+    // Tokenize will return an empty vector if there are no tokens in the input
+    EXPECT_EQ(std::vector<plString>{}, plString("\t;\n;").Tokenize("\t\n-;"));
+    EXPECT_EQ(std::vector<plString>{}, plString("").Tokenize("\t\n-;"));
 }
 
-TEST(PlStringTest,Split)
+TEST(plString, Split)
 {
-    std::vector<plString> expected;
-    expected.push_back(plString("a"));
-    expected.push_back(plString("b"));
-    expected.push_back(plString("c"));
-    expected.push_back(plString("d"));
-    expected.push_back(plString("è"));
+    std::vector<plString> expected1;
+    expected1.push_back("aaa");
+    expected1.push_back("b");
+    expected1.push_back("ccc");
+    expected1.push_back("d");
+    expected1.push_back("èèè");
+    const plString input1("aaa-b-ccc-d-èèè");
+    EXPECT_EQ(expected1, input1.Split("-"));
+    EXPECT_EQ(expected1, input1.Split("-", 4));
+    EXPECT_EQ(expected1, input1.Split("-", 10));
 
-    plString input = plString("a-b-c-d-è");
-    std::vector<plString> output = input.Split("-",4);
-    EXPECT_EQ(expected,output);
+    const plString input2("aaa#SEP#b#SEP#ccc#SEP#d#SEP#èèè");
+    EXPECT_EQ(expected1, input2.Split("#SEP#"));
+    EXPECT_EQ(expected1, input2.Split("#SEP#", 4));
+    EXPECT_EQ(expected1, input2.Split("#SEP#", 10));
 
+    std::vector<plString> expected2;
+    expected2.push_back("aaa");
+    expected2.push_back("b");
+    expected2.push_back("ccc-d-èèè");
+    EXPECT_EQ(expected2, input1.Split("-", 2));
+
+    std::vector<plString> expected3;
+    expected3.push_back(input1);
+    EXPECT_EQ(expected3, input1.Split("-", 0));
+    EXPECT_EQ(expected3, input1.Split("x"));
+    EXPECT_EQ(expected3, input1.Split("x", 4));
+
+    std::vector<plString> expected4;
+    expected4.push_back("");
+    expected4.push_back("aaa");
+    expected4.push_back("b");
+    expected4.push_back("ccc");
+    expected4.push_back("d");
+    expected4.push_back("èèè");
+    expected4.push_back("");
+    const plString input3("-aaa-b-ccc-d-èèè-");
+    EXPECT_EQ(expected4, input3.Split("-"));
+    EXPECT_EQ(expected4, input3.Split("-", 6));
+    EXPECT_EQ(expected4, input3.Split("-", 10));
+
+    std::vector<plString> expected5;
+    expected5.push_back("");
+    expected5.push_back("");
+    expected5.push_back("");
+    expected5.push_back("");
+    expected5.push_back("");
+    const plString input4("----");
+    EXPECT_EQ(expected5, input4.Split("-"));
+    EXPECT_EQ(expected5, input4.Split("-", 4));
+    EXPECT_EQ(expected5, input4.Split("-", 10));
+
+    std::vector<plString> expected6;
+    expected6.push_back("");
+    expected6.push_back("");
+    expected6.push_back("--");
+    EXPECT_EQ(expected6, input4.Split("-", 2));
+
+    std::vector<plString> expected7;
+    expected7.push_back("");
+    expected7.push_back("");
+    expected7.push_back("");
+    EXPECT_EQ(expected7, input4.Split("--"));
+
+    std::vector<plString> expected8;
+    expected8.push_back("");
+    expected8.push_back("--");
+    EXPECT_EQ(expected8, input4.Split("--", 1));
+
+    // Split never provides an empty vector, even for empty input
+    std::vector<plString> expected9;
+    expected9.push_back(plString::Null);
+    EXPECT_EQ(expected9, plString("").Split("-"));
+    EXPECT_EQ(expected9, plString("").Split("-", 4));
 }
 
-TEST(PlStringTest,Fill)
+TEST(plString, Fill)
 {
-    plString expected = plString("aaaaa");
-    plString output = plString::Fill(5,'a');
-    EXPECT_EQ(expected,output);
+    EXPECT_EQ(plString(""), plString::Fill(0, 'a'));
+    EXPECT_EQ(plString("aaaaa"), plString::Fill(5, 'a'));
+    EXPECT_EQ(plString("aaaaaaaaaaaaaaaaaaaa"), plString::Fill(20, 'a'));
 }
-
