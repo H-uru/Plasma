@@ -118,17 +118,20 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
-#if defined(HS_DEBUGGING) && defined(_MSC_VER)
+#if defined(HS_DEBUGGING)
+#if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
             DebugBreak();
     } else
-#endif // HS_DEBUGGING
-      if (DebugIsDebuggerPresent()) {
+#endif // _MSC_VER
+    {
         char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
         DebugMsg(str, file, line, msg);
+        abort();
     }
+#endif // HS_DEBUGGING
 #else
     DebugBreakIfDebuggerPresent();
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
@@ -164,13 +167,14 @@ void DebugMsg(const char* fmt, ...)
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
 
+#ifdef _MSC_VER
     if (DebugIsDebuggerPresent())
     {
-#ifdef _MSC_VER
         OutputDebugStringA(msg);
         OutputDebugStringA("\n");
+    } else
 #endif
-    } else {
+    {
         fprintf(stderr, "%s\n", msg);
     }
 }
