@@ -240,9 +240,9 @@ static void _formatNumeric(const plFormat_Private::FormatSpec &format,
     if (format_size == 0)
         format_size = 1;
 
-    hsAssert(format_size < 64, "Format length too long");
+    hsAssert(format_size < 65, "Format length too long");
 
-    char buffer[64];
+    char buffer[65];
     _IFormatNumeric_Impl<_IType>(buffer + format_size, value, radix, upperCase);
     _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
@@ -256,7 +256,7 @@ static void _formatDecimal(const plFormat_Private::FormatSpec &format,
     _UType abs = (value < 0) ? -(_UType)value : value;
 
     size_t format_size = 0;
-    _IType temp = abs;
+    _UType temp = abs;
     while (temp) {
         ++format_size;
         temp /= 10;

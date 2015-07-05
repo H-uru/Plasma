@@ -143,3 +143,197 @@ TEST(plFormat, Decimal)
     EXPECT_EQ(plString("xx18446744073709551615xx"), plFormat("xx{}xx", std::numeric_limits<uint64_t>::max()));
     EXPECT_EQ(plString("xx+18446744073709551615xx"), plFormat("xx{+}xx", std::numeric_limits<uint64_t>::max()));
 }
+
+TEST(plFormat, Hex)
+{
+    EXPECT_EQ(plString("xx4d2xx"), plFormat("xx{x}xx", 1234));
+    EXPECT_EQ(plString("xx4d2xx"), plFormat("xx{x}xx", 1234));
+    EXPECT_EQ(plString("xx4d2xx"), plFormat("xx{2x}xx", 1234));
+    EXPECT_EQ(plString("xx4d2xx"), plFormat("xx{>2x}xx", 1234));
+    EXPECT_EQ(plString("xx4d2xx"), plFormat("xx{<2x}xx", 1234));
+    EXPECT_EQ(plString("xx   4d2xx"), plFormat("xx{6x}xx", 1234));
+    EXPECT_EQ(plString("xx   4d2xx"), plFormat("xx{>6x}xx", 1234));
+    EXPECT_EQ(plString("xx4d2   xx"), plFormat("xx{<6x}xx", 1234));
+
+    // Character types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", '\0'));
+    EXPECT_EQ(plString("xx41xx"), plFormat("xx{x}xx", 'A'));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", L'\0'));
+    EXPECT_EQ(plString("xx41xx"), plFormat("xx{x}xx", L'A'));
+    EXPECT_EQ(plString("xx7fffxx"), plFormat("xx{x}xx", L'\u7fff'));
+
+    // Numeric char types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (signed char)0));
+    EXPECT_EQ(plString("xx7fxx"), plFormat("xx{x}xx", std::numeric_limits<signed char>::max()));
+    EXPECT_EQ(plString("xx80xx"), plFormat("xx{x}xx", std::numeric_limits<signed char>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (unsigned char)0));
+    EXPECT_EQ(plString("xxffxx"), plFormat("xx{x}xx", std::numeric_limits<unsigned char>::max()));
+
+    // 16-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (short)0));
+    EXPECT_EQ(plString("xx7fffxx"), plFormat("xx{x}xx", std::numeric_limits<short>::max()));
+    EXPECT_EQ(plString("xx8000xx"), plFormat("xx{x}xx", std::numeric_limits<short>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (unsigned short)0));
+    EXPECT_EQ(plString("xxffffxx"), plFormat("xx{x}xx", std::numeric_limits<unsigned short>::max()));
+
+    // 32-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (int)0));
+    EXPECT_EQ(plString("xx7fffffffxx"), plFormat("xx{x}xx", std::numeric_limits<int>::max()));
+    EXPECT_EQ(plString("xx80000000xx"), plFormat("xx{x}xx", std::numeric_limits<int>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (unsigned int)0));
+    EXPECT_EQ(plString("xxffffffffxx"), plFormat("xx{x}xx", std::numeric_limits<unsigned int>::max()));
+
+    // 64-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (int64_t)0));
+    EXPECT_EQ(plString("xx7fffffffffffffffxx"), plFormat("xx{x}xx", std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(plString("xx8000000000000000xx"), plFormat("xx{x}xx", std::numeric_limits<int64_t>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{x}xx", (uint64_t)0));
+    EXPECT_EQ(plString("xxffffffffffffffffxx"), plFormat("xx{x}xx", std::numeric_limits<uint64_t>::max()));
+}
+
+TEST(plFormat, HexUpper)
+{
+    EXPECT_EQ(plString("xx4D2xx"), plFormat("xx{X}xx", 1234));
+    EXPECT_EQ(plString("xx4D2xx"), plFormat("xx{X}xx", 1234));
+    EXPECT_EQ(plString("xx4D2xx"), plFormat("xx{2X}xx", 1234));
+    EXPECT_EQ(plString("xx4D2xx"), plFormat("xx{>2X}xx", 1234));
+    EXPECT_EQ(plString("xx4D2xx"), plFormat("xx{<2X}xx", 1234));
+    EXPECT_EQ(plString("xx   4D2xx"), plFormat("xx{6X}xx", 1234));
+    EXPECT_EQ(plString("xx   4D2xx"), plFormat("xx{>6X}xx", 1234));
+    EXPECT_EQ(plString("xx4D2   xx"), plFormat("xx{<6X}xx", 1234));
+
+    // Character types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", '\0'));
+    EXPECT_EQ(plString("xx41xx"), plFormat("xx{X}xx", 'A'));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", L'\0'));
+    EXPECT_EQ(plString("xx41xx"), plFormat("xx{X}xx", L'A'));
+    EXPECT_EQ(plString("xx7FFFxx"), plFormat("xx{X}xx", L'\u7fff'));
+
+    // Numeric char types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (signed char)0));
+    EXPECT_EQ(plString("xx7Fxx"), plFormat("xx{X}xx", std::numeric_limits<signed char>::max()));
+    EXPECT_EQ(plString("xx80xx"), plFormat("xx{X}xx", std::numeric_limits<signed char>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (unsigned char)0));
+    EXPECT_EQ(plString("xxFFxx"), plFormat("xx{X}xx", std::numeric_limits<unsigned char>::max()));
+
+    // 16-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (short)0));
+    EXPECT_EQ(plString("xx7FFFxx"), plFormat("xx{X}xx", std::numeric_limits<short>::max()));
+    EXPECT_EQ(plString("xx8000xx"), plFormat("xx{X}xx", std::numeric_limits<short>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (unsigned short)0));
+    EXPECT_EQ(plString("xxFFFFxx"), plFormat("xx{X}xx", std::numeric_limits<unsigned short>::max()));
+
+    // 32-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (int)0));
+    EXPECT_EQ(plString("xx7FFFFFFFxx"), plFormat("xx{X}xx", std::numeric_limits<int>::max()));
+    EXPECT_EQ(plString("xx80000000xx"), plFormat("xx{X}xx", std::numeric_limits<int>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (unsigned int)0));
+    EXPECT_EQ(plString("xxFFFFFFFFxx"), plFormat("xx{X}xx", std::numeric_limits<unsigned int>::max()));
+
+    // 64-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (int64_t)0));
+    EXPECT_EQ(plString("xx7FFFFFFFFFFFFFFFxx"), plFormat("xx{X}xx", std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(plString("xx8000000000000000xx"), plFormat("xx{X}xx", std::numeric_limits<int64_t>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{X}xx", (uint64_t)0));
+    EXPECT_EQ(plString("xxFFFFFFFFFFFFFFFFxx"), plFormat("xx{X}xx", std::numeric_limits<uint64_t>::max()));
+}
+
+TEST(plFormat, Octal)
+{
+    EXPECT_EQ(plString("xx2322xx"), plFormat("xx{o}xx", 1234));
+    EXPECT_EQ(plString("xx2322xx"), plFormat("xx{o}xx", 1234));
+    EXPECT_EQ(plString("xx2322xx"), plFormat("xx{2o}xx", 1234));
+    EXPECT_EQ(plString("xx2322xx"), plFormat("xx{>2o}xx", 1234));
+    EXPECT_EQ(plString("xx2322xx"), plFormat("xx{<2o}xx", 1234));
+    EXPECT_EQ(plString("xx  2322xx"), plFormat("xx{6o}xx", 1234));
+    EXPECT_EQ(plString("xx  2322xx"), plFormat("xx{>6o}xx", 1234));
+    EXPECT_EQ(plString("xx2322  xx"), plFormat("xx{<6o}xx", 1234));
+
+    // Character types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", '\0'));
+    EXPECT_EQ(plString("xx101xx"), plFormat("xx{o}xx", 'A'));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", L'\0'));
+    EXPECT_EQ(plString("xx101xx"), plFormat("xx{o}xx", L'A'));
+    EXPECT_EQ(plString("xx77777xx"), plFormat("xx{o}xx", L'\u7fff'));
+
+    // Numeric char types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (signed char)0));
+    EXPECT_EQ(plString("xx177xx"), plFormat("xx{o}xx", std::numeric_limits<signed char>::max()));
+    EXPECT_EQ(plString("xx200xx"), plFormat("xx{o}xx", std::numeric_limits<signed char>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (unsigned char)0));
+    EXPECT_EQ(plString("xx377xx"), plFormat("xx{o}xx", std::numeric_limits<unsigned char>::max()));
+
+    // 16-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (short)0));
+    EXPECT_EQ(plString("xx77777xx"), plFormat("xx{o}xx", std::numeric_limits<short>::max()));
+    EXPECT_EQ(plString("xx100000xx"), plFormat("xx{o}xx", std::numeric_limits<short>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (unsigned short)0));
+    EXPECT_EQ(plString("xx177777xx"), plFormat("xx{o}xx", std::numeric_limits<unsigned short>::max()));
+
+    // 32-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (int)0));
+    EXPECT_EQ(plString("xx17777777777xx"), plFormat("xx{o}xx", std::numeric_limits<int>::max()));
+    EXPECT_EQ(plString("xx20000000000xx"), plFormat("xx{o}xx", std::numeric_limits<int>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (unsigned int)0));
+    EXPECT_EQ(plString("xx37777777777xx"), plFormat("xx{o}xx", std::numeric_limits<unsigned int>::max()));
+
+    // 64-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (int64_t)0));
+    EXPECT_EQ(plString("xx777777777777777777777xx"), plFormat("xx{o}xx", std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(plString("xx1000000000000000000000xx"), plFormat("xx{o}xx", std::numeric_limits<int64_t>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{o}xx", (uint64_t)0));
+    EXPECT_EQ(plString("xx1777777777777777777777xx"), plFormat("xx{o}xx", std::numeric_limits<uint64_t>::max()));
+}
+
+TEST(plFormat, Binary)
+{
+    EXPECT_EQ(plString("xx10011010010xx"), plFormat("xx{b}xx", 1234));
+    EXPECT_EQ(plString("xx10011010010xx"), plFormat("xx{b}xx", 1234));
+    EXPECT_EQ(plString("xx10011010010xx"), plFormat("xx{2b}xx", 1234));
+    EXPECT_EQ(plString("xx10011010010xx"), plFormat("xx{>2b}xx", 1234));
+    EXPECT_EQ(plString("xx10011010010xx"), plFormat("xx{<2b}xx", 1234));
+    EXPECT_EQ(plString("xx     10011010010xx"), plFormat("xx{16b}xx", 1234));
+    EXPECT_EQ(plString("xx     10011010010xx"), plFormat("xx{>16b}xx", 1234));
+    EXPECT_EQ(plString("xx10011010010     xx"), plFormat("xx{<16b}xx", 1234));
+
+    // Character types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", '\0'));
+    EXPECT_EQ(plString("xx1000001xx"), plFormat("xx{b}xx", 'A'));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", L'\0'));
+    EXPECT_EQ(plString("xx1000001xx"), plFormat("xx{b}xx", L'A'));
+    EXPECT_EQ(plString("xx111111111111111xx"), plFormat("xx{b}xx", L'\u7fff'));
+
+    // Numeric char types
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (signed char)0));
+    EXPECT_EQ(plString("xx1111111xx"), plFormat("xx{b}xx", std::numeric_limits<signed char>::max()));
+    EXPECT_EQ(plString("xx10000000xx"), plFormat("xx{b}xx", std::numeric_limits<signed char>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (unsigned char)0));
+    EXPECT_EQ(plString("xx11111111xx"), plFormat("xx{b}xx", std::numeric_limits<unsigned char>::max()));
+
+    // 16-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (short)0));
+    EXPECT_EQ(plString("xx111111111111111xx"), plFormat("xx{b}xx", std::numeric_limits<short>::max()));
+    EXPECT_EQ(plString("xx1000000000000000xx"), plFormat("xx{b}xx", std::numeric_limits<short>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (unsigned short)0));
+    EXPECT_EQ(plString("xx1111111111111111xx"), plFormat("xx{b}xx", std::numeric_limits<unsigned short>::max()));
+
+    // 32-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (int)0));
+    EXPECT_EQ(plString("xx1111111111111111111111111111111xx"),
+              plFormat("xx{b}xx", std::numeric_limits<int>::max()));
+    EXPECT_EQ(plString("xx10000000000000000000000000000000xx"),
+              plFormat("xx{b}xx", std::numeric_limits<int>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (unsigned int)0));
+    EXPECT_EQ(plString("xx11111111111111111111111111111111xx"),
+              plFormat("xx{b}xx", std::numeric_limits<unsigned int>::max()));
+
+    // 64-bit ints
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (int64_t)0));
+    EXPECT_EQ(plString("xx111111111111111111111111111111111111111111111111111111111111111xx"),
+              plFormat("xx{b}xx", std::numeric_limits<int64_t>::max()));
+    EXPECT_EQ(plString("xx1000000000000000000000000000000000000000000000000000000000000000xx"),
+              plFormat("xx{b}xx", std::numeric_limits<int64_t>::min()));
+    EXPECT_EQ(plString("xx0xx"), plFormat("xx{b}xx", (uint64_t)0));
+    EXPECT_EQ(plString("xx1111111111111111111111111111111111111111111111111111111111111111xx"),
+              plFormat("xx{b}xx", std::numeric_limits<uint64_t>::max()));
+}
