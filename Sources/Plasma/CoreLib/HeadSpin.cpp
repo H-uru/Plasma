@@ -46,7 +46,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef _MSC_VER
 #   include <crtdbg.h>
 #endif
+
 #pragma hdrstop
+
+#if defined(HS_DEBUGGING) && defined(HS_BUILD_FOR_UNIX)
+#   include <cstring>
+#   include <sys/stat.h>
+#   include <fcntl.h>
+#   include <unistd.h>
+#endif
+
+#if defined(HS_BUILD_FOR_UNIX)
+#   include <signal.h>
+#endif
 
 #include "hsTemplates.h"
 #include "plFormat.h"
@@ -118,17 +130,20 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
-#if defined(HS_DEBUGGING) && defined(_MSC_VER)
+#if defined(HS_DEBUGGING)
+#if defined(_MSC_VER)
     if (s_GuiAsserts)
     {
-        if(_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
-            DebugBreak();
+        if (_CrtDbgReport(_CRT_ASSERT, file, line, NULL, msg))
+            DebugBreakAlways();
     } else
-#endif // HS_DEBUGGING
-      if (DebugIsDebuggerPresent()) {
+#endif // _MSC_VER
+    {
         char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
         DebugMsg(str, file, line, msg);
+        DebugBreakAlways();
     }
+#endif // HS_DEBUGGING
 #else
     DebugBreakIfDebuggerPresent();
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
@@ -136,8 +151,27 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
 
 bool DebugIsDebuggerPresent()
 {
-#ifdef _MSC_VER
+#if defined(HS_BUILD_FOR_WIN32)
     return IsDebuggerPresent();
+#elif defined(HS_BUILD_FOR_LINUX)
+    // From http://google-perftools.googlecode.com/svn/trunk/src/heap-checker.cc
+    char buf[256];   // TracerPid comes relatively earlier in status output
+    int fd = open("/proc/self/status", O_RDONLY);
+    if (fd == -1) {
+        return false;  // Can't tell for sure.
+    }
+    const int len = read(fd, buf, sizeof(buf));
+    bool rc = false;
+    if (len > 0) {
+        const char* const kTracerPid = "TracerPid:\t";
+        buf[len - 1] = '\0';
+        const char* p = strstr(buf, kTracerPid);
+        if (p) {
+            rc = (strncmp(p + strlen(kTracerPid), "0\n", 2) != 0);
+        }
+    }
+    close(fd);
+    return rc;
 #else
     // FIXME
     return false;
@@ -146,7 +180,7 @@ bool DebugIsDebuggerPresent()
 
 void DebugBreakIfDebuggerPresent()
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER)
     __try
     {
         __debugbreak();
@@ -154,6 +188,23 @@ void DebugBreakIfDebuggerPresent()
         // Debugger not present or some such shwiz.
         // Whatever. Don't crash here.
     }
+#elif defined(HS_BUILD_FOR_UNIX)
+    if (DebugIsDebuggerPresent())
+        raise(SIGTRAP);
+#else
+    // FIXME
+#endif // _MSC_VER
+}
+
+void DebugBreakAlways()
+{
+#if defined(_MSC_VER)
+    DebugBreak();
+#elif defined(HS_BUILD_FOR_UNIX)
+    raise(SIGTRAP);
+#else
+    // FIXME
+    abort();
 #endif // _MSC_VER
 }
 
@@ -164,13 +215,14 @@ void DebugMsg(const char* fmt, ...)
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
 
+#ifdef _MSC_VER
     if (DebugIsDebuggerPresent())
     {
-#ifdef _MSC_VER
         OutputDebugStringA(msg);
         OutputDebugStringA("\n");
+    } else
 #endif
-    } else {
+    {
         fprintf(stderr, "%s\n", msg);
     }
 }

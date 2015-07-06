@@ -22,12 +22,19 @@ include(cmake/CompilerChecks.cmake)
 if(WIN32 AND NOT CYGWIN)
     add_definitions(-DHS_BUILD_FOR_WIN32)
 endif(WIN32 AND NOT CYGWIN)
+
 if(UNIX)
+    # This is set for both Linux and Mac builds
     add_definitions(-DHS_BUILD_FOR_UNIX)
 endif(UNIX)
+
 if(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     add_definitions(-DHS_BUILD_FOR_OSX)
 endif(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    add_definitions(-DHS_BUILD_FOR_LINUX)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 # End HeadSpin Configuration
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
