@@ -74,8 +74,12 @@ bool IsTrackedKey(const plKeyImp* key)
 }
 #endif
 
+hsKeyedObject* plKeyImp::SafeGetObject(const plKeyImp* key) {
+    return key ? key->fObjectPtr : nullptr;
+}
+
 plKeyImp::plKeyImp() :
-    fObjectPtr(nil), 
+    fObjectPtr(nil),
     fStartPos(-1),
     fDataLen(-1),
     fNumActiveRefs(0),
@@ -89,7 +93,7 @@ plKeyImp::plKeyImp() :
 
 plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
     fUoid(u),
-    fObjectPtr(nil), 
+    fObjectPtr(nil),
     fStartPos(pos),
     fDataLen(len),
     fNumActiveRefs(0),
@@ -104,7 +108,7 @@ plKeyImp::plKeyImp(plUoid u, uint32_t pos,uint32_t len):
 #endif
 }
 
-plKeyImp::~plKeyImp() 
+plKeyImp::~plKeyImp()
 {
     plProfile_DelMem(KeyMem, CalcKeySize(this));
 
@@ -137,7 +141,7 @@ plKeyImp::~plKeyImp()
 
 void plKeyImp::SetUoid(const plUoid& uoid)
 {
-    fUoid = uoid; 
+    fUoid = uoid;
 #ifdef HS_DEBUGGING
     fIDName = fUoid.GetObjectName();
     fClassType = plFactory::GetNameOfClass(fUoid.GetClassType());
@@ -145,18 +149,18 @@ void plKeyImp::SetUoid(const plUoid& uoid)
 }
 
 const plString& plKeyImp::GetName() const
-{ 
-    return fUoid.GetObjectName(); 
+{
+    return fUoid.GetObjectName();
 }
 
 hsKeyedObject* plKeyImp::GetObjectPtr()
-{   
+{
     return ObjectIsLoaded();
 }
 
 hsKeyedObject* plKeyImp::ObjectIsLoaded() const
 {
-    return this ? fObjectPtr : nil;
+    return plKeyImp::SafeGetObject(this);
 }
 
 // Copy the contents of p for cloning process
@@ -170,8 +174,8 @@ void plKeyImp::CopyForClone(const plKeyImp *p, uint32_t playerID, uint32_t clone
     fClassType = plFactory::GetNameOfClass( fUoid.GetClassType() );
 #endif
 
-    fStartPos = p->GetStartPos();   
-    fDataLen = p->GetDataLen();     
+    fStartPos = p->GetStartPos();
+    fDataLen = p->GetDataLen();
     fUoid.SetClone(playerID, cloneID);
 }
 
@@ -269,9 +273,9 @@ hsKeyedObject* plKeyImp::RefObject(plRefFlags::Type flags)
     return VerifyLoaded();  // load object on demand
 }
 
-void plKeyImp::UnRefObject(plRefFlags::Type flags)      
+void plKeyImp::UnRefObject(plRefFlags::Type flags)
 {
-    // Rather than using hsRefCnt's, make Ref and 
+    // Rather than using hsRefCnt's, make Ref and
     // UnRef work with ActiveRef system
     if ( (flags == plRefFlags::kPassiveRef) && !ObjectIsLoaded())
         return;
@@ -288,7 +292,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
 
         IClearRefs();
         ClearNotifyCreated();
-        
+
         plKey key=plKey::Make( this );  // for linux build
         plSelfDestructMsg* nuke = new plSelfDestructMsg( key );
         plgDispatch::Dispatch()->MsgSend(nuke);
@@ -296,7 +300,7 @@ void plKeyImp::UnRefObject(plRefFlags::Type flags)
 }
 
 hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p) 
-{ 
+{
     hsKeyedObject* retVal = nil;
 
     // If our object is the only one with a ref to us, this function will crash, so we 
@@ -317,7 +321,7 @@ hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p)
 #endif
 
         hsAssert(!fObjectPtr, "Setting an ObjectPtr thats already Set!");
-        
+
         retVal = fObjectPtr = p;
     }
     else
@@ -329,20 +333,20 @@ hsKeyedObject* plKeyImp::SetObjectPtr(hsKeyedObject* p)
         retVal = nil;
     }
 
-    return retVal; 
+    return retVal;
 }
 
-void plKeyImp::ClearNotifyCreated() 
-{ 
+void plKeyImp::ClearNotifyCreated()
+{
     for (int i = 0; i < fNotifyCreated.GetCount(); i++)
         hsRefCnt_SafeUnRef(fNotifyCreated[i]);
-    fNotifyCreated.Reset(); 
+    fNotifyCreated.Reset();
     fNotified.Reset();
     fActiveRefs.Reset();
 }
 
-void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags) 
-{ 
+void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
+{
     if (!(flags == plRefFlags::kPassiveRef))
     {
 #ifdef LOG_ACTIVE_REFS
@@ -358,13 +362,13 @@ void plKeyImp::AddNotifyCreated(plRefMsg* msg, plRefFlags::Type flags)
     }
 
     hsRefCnt_SafeRef(msg);
-    fNotifyCreated.Append(msg); 
+    fNotifyCreated.Append(msg);
 }
 
-void plKeyImp::RemoveNotifyCreated(int i) 
-{ 
+void plKeyImp::RemoveNotifyCreated(int i)
+{
     hsRefCnt_SafeUnRef(fNotifyCreated[i]);
-    fNotifyCreated.Remove(i); 
+    fNotifyCreated.Remove(i);
 
     fNotified.RemoveBit(i);
     fActiveRefs.RemoveBit(i);
@@ -536,9 +540,9 @@ void plKeyImp::NotifyCreated()
     hsKeyedObject* ko = GetObjectPtr();
     hsRefCnt_SafeRef(ko);
     hsAssert(ko, "Notifying of created before on nil object");
-    
+
     INotifySelf(ko);
-    
+
     for (int i = 0; i < GetNumNotifyCreated(); i++)
     {
         if (!IsNotified(i) && GetNotifyCreated(i)->GetReceiver(0)->GetObjectPtr())
@@ -552,7 +556,7 @@ void plKeyImp::NotifyCreated()
             SetNotified(i);
             SatisfyPending(msg);
 
-            plgDispatch::MsgSend(msg);      
+            plgDispatch::MsgSend(msg);
         }
     }
     hsRefCnt_SafeUnRef(ko);
@@ -645,7 +649,7 @@ void plKeyImp::IRelease(plKeyImp* iTargetKey)
 
         iTargetKey->IClearRefs();
         iTargetKey->ClearNotifyCreated();
-        
+
         plKey key = plKey::Make(iTargetKey);
         plSelfDestructMsg* nuke = new plSelfDestructMsg(key);
         plgDispatch::Dispatch()->MsgSend(nuke);

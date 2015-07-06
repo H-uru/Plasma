@@ -60,15 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
+#include "hsWindows.h"
 #include "plStatusLog.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plProduct.h"
 
 #include "plEncryptLogLine.h"
 
-#if HS_BUILD_FOR_WIN32
-    #include <shlobj.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 //// plStatusLogMgr Stuff ////////////////////////////////////////////////////

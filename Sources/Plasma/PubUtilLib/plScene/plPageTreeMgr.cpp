@@ -356,7 +356,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
         plDrawable* drawable = drawList[pairs[i].fDrawable]->fDrawable;
 
         listTrav = &scratchList[iSort++];
-        listTrav->fBody = (void*)*(uint32_t*)&pairs[i];
+        listTrav->fBody = (void*)&pairs[i];
         listTrav->fNext = listTrav + 1;
 
         if( drawable->GetNativeProperty(plDrawable::kPropSortAsOne) )
@@ -404,7 +404,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     listTrav = sortedList;
     while( listTrav )
     {
-        plDrawSpanPair& curPair = *(plDrawSpanPair*)&listTrav->fBody;
+        plDrawSpanPair& curPair = *(plDrawSpanPair*)listTrav->fBody;
         drawList[curPair.fDrawable]->fVisList.Append(curPair.fSpan);
         listTrav = listTrav->fNext;
     }
@@ -423,14 +423,14 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
 
 #if 0
     listTrav = sortedList;
-    plDrawSpanPair& curPair = *(plDrawSpanPair*)&listTrav->fBody;
+    plDrawSpanPair& curPair = *(plDrawSpanPair*)listTrav->fBody;
     int curDraw = curPair.fDrawable;
     visList.Append(curPair.fSpan);
     listTrav = listTrav->fNext;
 
     while( listTrav )
     {
-        curPair = *(plDrawSpanPair*)&listTrav->fBody;
+        curPair = *(plDrawSpanPair*)listTrav->fBody;
         if( curPair.fDrawable != curDraw )
         {
             pipe->Render(drawList[curDraw]->fDrawable, visList);
@@ -447,7 +447,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
     pipe->Render(drawList[curDraw]->fDrawable, visList);
 #else
     listTrav = sortedList;
-    plDrawSpanPair& curPair = *(plDrawSpanPair*)&listTrav->fBody;
+    plDrawSpanPair& curPair = *(plDrawSpanPair*)listTrav->fBody;
     int curDraw = curPair.fDrawable;
     listTrav = listTrav->fNext;
 
@@ -458,7 +458,7 @@ bool plPageTreeMgr::IRenderSortingSpans(plPipeline* pipe, hsTArray<plDrawVisList
 
     while( listTrav )
     {
-        curPair = *(plDrawSpanPair*)&listTrav->fBody;
+        curPair = *(plDrawSpanPair*)listTrav->fBody;
         if( curPair.fDrawable != curDraw )
         {
             pipe->Render(drawList[curDraw]->fDrawable, visList);

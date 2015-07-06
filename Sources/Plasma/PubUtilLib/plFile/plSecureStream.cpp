@@ -111,8 +111,8 @@ plSecureStream::~plSecureStream()
 
 void plSecureStream::IEncipher(uint32_t* const v, uint32_t n)
 {
-    register unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
-    register unsigned long q = 6 + 52/n, p, sum = 0;
+    unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
+    unsigned long q = 6 + 52/n, p, sum = 0;
 
     while (q-- > 0)
     {
@@ -132,8 +132,8 @@ void plSecureStream::IEncipher(uint32_t* const v, uint32_t n)
 
 void plSecureStream::IDecipher(uint32_t* const v, uint32_t n)
 {
-    register unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
-    register unsigned long q = 6 + 52/n, p, sum = q * delta;
+    unsigned long y=v[0], z=v[n-1], e, delta=0x9E3779B9;
+    unsigned long q = 6 + 52/n, p, sum = q * delta;
 
     while (sum > 0)
     {

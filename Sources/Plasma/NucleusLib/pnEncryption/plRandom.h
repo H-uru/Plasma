@@ -83,7 +83,7 @@ inline float plRandom::RandNorm() const
 inline int plRandom::Rand() const
 {
 #ifndef FAST_Q
-    register int temp;
+    int temp;
     fSeed = fSeed * 1103515245 + 12345;
     temp = (int)((fSeed/65536)&32767);
     return (temp);

@@ -924,14 +924,28 @@ plStringStream &plStringStream::operator<<(const char *text)
 plStringStream &plStringStream::operator<<(int num)
 {
     char buffer[12];
-    snprintf(buffer, 12, "%d", num);
+    snprintf(buffer, arrsize(buffer), "%d", num);
     return operator<<(buffer);
 }
 
 plStringStream &plStringStream::operator<<(unsigned int num)
 {
     char buffer[12];
-    snprintf(buffer, 12, "%u", num);
+    snprintf(buffer, arrsize(buffer), "%u", num);
+    return operator<<(buffer);
+}
+
+plStringStream &plStringStream::operator<<(int64_t num)
+{
+    char buffer[24];
+    snprintf(buffer, arrsize(buffer), "%lld", num);
+    return operator<<(buffer);
+}
+
+plStringStream &plStringStream::operator<<(uint64_t num)
+{
+    char buffer[24];
+    snprintf(buffer, arrsize(buffer), "%llu", num);
     return operator<<(buffer);
 }
 

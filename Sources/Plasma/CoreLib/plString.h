@@ -753,6 +753,12 @@ public:
     /** Append a base-10 formatted unsigned integer to the stream. */
     plStringStream &operator<<(unsigned int num);
 
+    /** Append a base-10 formatted signed 64-bit integer to the stream. */
+    plStringStream &operator<<(int64_t num);
+
+    /** Append a base-10 formatted unsigned 64-bit integer to the stream. */
+    plStringStream &operator<<(uint64_t num);
+
     /** Append a base-10 formatted float to the stream. */
     plStringStream &operator<<(float num) { return operator<<(static_cast<double>(num)); }
 
