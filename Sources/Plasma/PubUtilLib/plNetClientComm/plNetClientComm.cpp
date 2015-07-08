@@ -114,17 +114,14 @@ static ENetError            s_authResult = kNetErrAuthenticationFailed;
 static plString             s_authSrvAddr;
 static plString             s_fileSrvAddr;
 
-static char                s_iniServerAddr[256];
-static char                s_iniFileServerAddr[256];
 static plString            s_iniAccountUsername;
-static ShaDigest            s_namePassHash;
-static wchar_t                s_iniAuthToken[kMaxPublisherAuthKeyLength];
-static wchar_t                s_iniOS[kMaxGTOSIdLength];
-static bool                 s_iniReadAccountInfo = true;
-static plString             s_iniStartupAgeName;
-static plUUID               s_iniStartupAgeInstId;
-static plString             s_iniStartupPlayerName;
-static bool                 s_netError = false;
+static ShaDigest           s_namePassHash;
+static wchar_t             s_iniAuthToken[kMaxPublisherAuthKeyLength];
+static wchar_t             s_iniOS[kMaxGTOSIdLength];
+static plString            s_iniStartupAgeName = "StartUp";
+static plUUID              s_iniStartupAgeInstId;
+static unsigned            s_iniStartupPlayerId = 0;
+static bool                s_netError = false;
 
 
 struct NetCommMsgHandler : THashKeyVal<unsigned> {
@@ -408,7 +405,7 @@ static void INetCliAuthLoginRequestCallback (
             s_players[i].explorer          = playerInfoArr[i].explorer;
             s_players[i].playerName        = playerInfoArr[i].playerName;
             s_players[i].avatarDatasetName = playerInfoArr[i].avatarShape;
-            if (!wantsStartUpAge && s_players[i].playerName.CompareI(s_iniStartupPlayerName) == 0)
+            if (!wantsStartUpAge && s_players[i].playerInt == s_iniStartupPlayerId)
                 s_player = &s_players[i];
         }
 
@@ -701,6 +698,16 @@ bool NetCommIsLoginComplete() {
 }
 
 //============================================================================
+void NetCommSetIniPlayerId(unsigned playerId) {
+    s_iniStartupPlayerId = playerId;
+}
+
+//============================================================================
+void NetCommSetIniStartUpAge(const plString& ageName) {
+    s_iniStartupAgeName = ageName;
+}
+
+//============================================================================
 const NetCommAge * NetCommGetAge () {
     return &s_age;
 }
@@ -741,8 +748,6 @@ void NetCommStartup () {
 
     // Set startup age info
     memset(&s_startupAge, 0, sizeof(s_startupAge));
-
-    s_iniStartupAgeName = "StartUp";
     s_startupAge.ageDatasetName = s_iniStartupAgeName;
 
     s_startupAge.ageInstId = s_iniStartupAgeInstId;
@@ -1010,8 +1015,6 @@ void NetCommSetAccountUsernamePassword (
 ) {
     s_iniAccountUsername = username;
     memcpy(s_namePassHash, namePassHash, sizeof(ShaDigest));
-
-    s_iniReadAccountInfo = false;
 }
 
 //============================================================================
@@ -1028,11 +1031,6 @@ void NetCommSetAuthTokenAndOS (
 //============================================================================
 ENetError NetCommGetAuthResult () {
     return s_authResult;
-}
-
-//============================================================================
-void NetCommSetReadIniAccountInfo(bool readFromIni) {
-    s_iniReadAccountInfo = readFromIni;
 }
 
 //============================================================================
@@ -1104,10 +1102,6 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
                 playerInt = desiredPlayerInt;
                 s_player = &s_players[i];
                 break;
-            }
-            else if (s_players[i].playerName.CompareI(s_iniStartupPlayerName) == 0) {
-                playerInt = s_players[i].playerInt;
-                s_player = &s_players[i];
             }
         }
         ASSERT(s_player);

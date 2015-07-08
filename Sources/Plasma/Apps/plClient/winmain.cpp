@@ -94,7 +94,9 @@ enum
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
-    kArgSkipPreload
+    kArgSkipPreload,
+    kArgPlayerId,
+    kArgStartUpAgeName,
 };
 
 static const plCmdArgDef s_cmdLineArgs[] = {
@@ -102,6 +104,8 @@ static const plCmdArgDef s_cmdLineArgs[] = {
     { kCmdArgFlagged  | kCmdTypeString,     "ServerIni",       kArgServerIni },
     { kCmdArgFlagged  | kCmdTypeBool,       "LocalData",       kArgLocalData   },
     { kCmdArgFlagged  | kCmdTypeBool,       "SkipPreload",     kArgSkipPreload },
+    { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
+    { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -1153,6 +1157,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
     if (cmdParser.IsSpecified(kArgSkipPreload))
         gSkipPreload = true;
+    if (cmdParser.IsSpecified(kArgPlayerId))
+        NetCommSetIniPlayerId(cmdParser.GetInt(kArgPlayerId));
+    if (cmdParser.IsSpecified(kArgStartUpAgeName))
+        NetCommSetIniStartUpAge(cmdParser.GetString(kArgStartUpAgeName));
 #endif
 
     plFileName serverIni = "server.ini";
@@ -1263,8 +1271,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 
     NetCliAuthAutoReconnectEnable(false);
-
-    NetCommSetReadIniAccountInfo(!doIntroDialogs);
     InitNetClientComm();
 
     curl_global_init(CURL_GLOBAL_ALL);
