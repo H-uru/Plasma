@@ -126,15 +126,15 @@ class plGBufferGroup
         hsTArray<hsGDeviceRef *>        fIndexBufferRefs;
 
         std::vector<uint32_t>  fVertBuffSizes;
-        hsTArray<uint32_t>     fIdxBuffCounts;
+        std::vector<uint32_t>  fIdxBuffCounts;
         std::vector<uint32_t>  fColorBuffCounts;
         std::vector<uint8_t *> fVertBuffStorage;
-        hsTArray<uint16_t *>   fIdxBuffStorage;
+        std::vector<uint16_t*> fIdxBuffStorage;
 
         std::vector<uint32_t> fVertBuffStarts;
         std::vector<int32_t>  fVertBuffEnds;
-        hsTArray<uint32_t>    fIdxBuffStarts;
-        hsTArray<int32_t>     fIdxBuffEnds;
+        std::vector<uint32_t> fIdxBuffStarts;
+        std::vector<int32_t>  fIdxBuffEnds;
 
         std::vector<plGBufferColor*>  fColorBuffStorage;
 
@@ -232,7 +232,7 @@ class plGBufferGroup
         ///////////////////////////////////////////////////////////////////////////////
 
         uint32_t  GetNumVertexBuffers( void ) const { return fVertBuffStorage.size(); }
-        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.GetCount(); }
+        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.size(); }
 
         uint8_t           *GetVertBufferData( uint32_t idx ) { return fVertBuffStorage[ idx ]; }
         uint16_t          *GetIndexBufferData( uint32_t idx ) { return fIdxBuffStorage[ idx ]; }
