@@ -121,9 +121,9 @@ class plGBufferGroup
         bool    fVertsVolatile;
         bool    fIdxVolatile;
         int     fLOD;
-        
-        hsTArray<hsGDeviceRef *>        fVertexBufferRefs;
-        hsTArray<hsGDeviceRef *>        fIndexBufferRefs;
+
+        std::vector<hsGDeviceRef*> fVertexBufferRefs;
+        std::vector<hsGDeviceRef*> fIndexBufferRefs;
 
         std::vector<uint32_t>  fVertBuffSizes;
         std::vector<uint32_t>  fIdxBuffCounts;
@@ -188,10 +188,10 @@ class plGBufferGroup
         static uint8_t    CalcNumUVs( uint8_t format ) { return ( format & kUVCountMask ); }
         static uint8_t    UVCountToFormat( uint8_t numUVs ) { return numUVs & kUVCountMask; }
 
-        void    DirtyVertexBuffer(int i);
-        void    DirtyIndexBuffer(int i);
-        bool    VertexReady(int i) const { return (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i]; }
-        bool    IndexReady(int i) const { return  (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i]; }
+        void    DirtyVertexBuffer(size_t i);
+        void    DirtyIndexBuffer(size_t i);
+        bool    VertexReady(size_t i) const { return (i < fVertexBufferRefs.size()) && fVertexBufferRefs[i]; }
+        bool    IndexReady(size_t i) const { return  (i < fIndexBufferRefs.size()) && fIndexBufferRefs[i]; }
         uint8_t   GetVertexSize( void ) const { return fStride; }
         uint8_t   GetVertexLiteStride( void ) const { return fLiteStride; }
         uint8_t   GetVertexFormat( void ) const { return fFormat; }

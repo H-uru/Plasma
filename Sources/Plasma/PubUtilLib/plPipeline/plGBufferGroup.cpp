@@ -115,8 +115,8 @@ plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVola
     fVertBuffStorage.clear();
     fIdxBuffStorage.clear();
     fColorBuffStorage.clear();
-    fVertexBufferRefs.Reset();
-    fIndexBufferRefs.Reset();
+    fVertexBufferRefs.clear();
+    fIndexBufferRefs.clear();
     fCells.clear();
     fNumVerts = fNumIndices = 0;
 
@@ -131,29 +131,25 @@ plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVola
 
 plGBufferGroup::~plGBufferGroup()
 {
-    uint32_t   i;
-
     CleanUp();
 
-    for( i = 0; i < fVertexBufferRefs.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fVertexBufferRefs[ i ] );
-
-    for( i = 0; i < fIndexBufferRefs.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fIndexBufferRefs[ i ] );
-
-    fVertexBufferRefs.Reset();
-    fIndexBufferRefs.Reset();
+    for (auto i : fVertexBufferRefs) {
+        hsRefCnt_SafeUnRef(i);
+    }
+    for (auto i : fIndexBufferRefs) {
+        hsRefCnt_SafeUnRef(i);
+    }
 }
 
-void plGBufferGroup::DirtyVertexBuffer(int i)
+void plGBufferGroup::DirtyVertexBuffer(size_t i)
 {
-    if( (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i] )
+    if( (i < fVertexBufferRefs.size()) && fVertexBufferRefs[i] )
         fVertexBufferRefs[i]->SetDirty(true);
 }
 
-void plGBufferGroup::DirtyIndexBuffer(int i)
+void plGBufferGroup::DirtyIndexBuffer(size_t i)
 {
-    if( (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i] )
+    if( (i < fIndexBufferRefs.size()) && fIndexBufferRefs[i] )
         fIndexBufferRefs[i]->SetDirty(true);
 }
 
@@ -240,11 +236,11 @@ void    plGBufferGroup::CleanUp( void )
 
 void    plGBufferGroup::SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb )
 {
-    hsAssert( index < fVertexBufferRefs.GetCount() + 1, "Vertex buffers must be assigned linearly!" );
+    hsAssert( index < fVertexBufferRefs.size() + 1, "Vertex buffers must be assigned linearly!" );
 
-    if( (int)index > (int)fVertexBufferRefs.GetCount() - 1 )
+    if (index > fVertexBufferRefs.size() - 1)
     {
-        fVertexBufferRefs.Append( vb );
+        fVertexBufferRefs.push_back( vb );
         hsRefCnt_SafeRef( vb );
     }
     else
@@ -258,11 +254,11 @@ void    plGBufferGroup::SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb )
 
 void    plGBufferGroup::SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib ) 
 {
-    hsAssert( index < fIndexBufferRefs.GetCount() + 1, "Index buffers must be assigned linearly!" );
+    hsAssert( index < fIndexBufferRefs.size() + 1, "Index buffers must be assigned linearly!" );
 
-    if( (int)index > (int)fIndexBufferRefs.GetCount() - 1 )
+    if(index > fIndexBufferRefs.size() - 1)
     {
-        fIndexBufferRefs.Append( ib );
+        fIndexBufferRefs.push_back( ib );
         hsRefCnt_SafeRef( ib );
     }
     else
@@ -285,16 +281,16 @@ void    plGBufferGroup::PrepForRendering( plPipeline *pipe, bool adjustForNvidia
 
 hsGDeviceRef* plGBufferGroup::GetVertexBufferRef(uint32_t i) 
 { 
-    if( i >= fVertexBufferRefs.GetCount() )
-        fVertexBufferRefs.ExpandAndZero(i+1);
+    if( i >= fVertexBufferRefs.size() )
+        fVertexBufferRefs.resize(i+1);
 
     return fVertexBufferRefs[i]; 
 }
 
 hsGDeviceRef* plGBufferGroup::GetIndexBufferRef(uint32_t i) 
 { 
-    if( i >= fIndexBufferRefs.GetCount() )
-        fIndexBufferRefs.ExpandAndZero(i+1);
+    if( i >= fIndexBufferRefs.size() )
+        fIndexBufferRefs.resize(i+1);
 
     return fIndexBufferRefs[i]; 
 }
@@ -580,10 +576,10 @@ void    plGBufferGroup::DeleteVertsFromStorage( uint32_t which, uint32_t start, 
     fVertBuffSizes[ which ] -= length;
     plProfile_DelMem(MemBufGrpVertex, length);
 
-    if( fVertexBufferRefs.GetCount() > which && fVertexBufferRefs[ which ] != nil )
+    if (fVertexBufferRefs.size() > which && fVertexBufferRefs[which])
     {
         hsRefCnt_SafeUnRef(fVertexBufferRefs[which]);
-        fVertexBufferRefs[which] = nil;
+        fVertexBufferRefs[which] = nullptr;
     }
 
 }
@@ -603,8 +599,8 @@ void    plGBufferGroup::AdjustIndicesInStorage( uint32_t which, uint16_t threshh
             fIdxBuffStorage[ which ][ i ] += delta;
     }
 
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
-        fIndexBufferRefs[ which ]->SetDirty( true );
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
+        fIndexBufferRefs[which]->SetDirty( true );
 
 }
 
@@ -633,10 +629,10 @@ void    plGBufferGroup::DeleteIndicesFromStorage( uint32_t which, uint32_t start
     fIdxBuffCounts[ which ] -= length;
     plProfile_DelMem(MemBufGrpIndex, length * sizeof(uint16_t));
 
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
     {
         hsRefCnt_SafeUnRef(fIndexBufferRefs[which]);
-        fIndexBufferRefs[which] = nil;
+        fIndexBufferRefs[which] = nullptr;
     }
 
 }
@@ -802,10 +798,10 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
         plProfile_NewMem(MemBufGrpVertex, numVerts * sizeof(plGBufferColor));
     }
 
-    if( fVertexBufferRefs.GetCount() > i && fVertexBufferRefs[ i ] != nil )
+    if (fVertexBufferRefs.size() > i && fVertexBufferRefs[i])
     {
         hsRefCnt_SafeUnRef(fVertexBufferRefs[i]);
-        fVertexBufferRefs[i] = nil;
+        fVertexBufferRefs[i] = nullptr;
     }
 
     /// Append a cell entry
@@ -1015,7 +1011,7 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
         cPtr++;
     }
 
-    if( ( vbIndex < fVertexBufferRefs.GetCount() ) && fVertexBufferRefs[ vbIndex ] )
+    if( ( vbIndex < fVertexBufferRefs.size() ) && fVertexBufferRefs[ vbIndex ] )
         fVertexBufferRefs[ vbIndex ]->SetDirty( true );
 }
 
@@ -1071,10 +1067,10 @@ bool    plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIn
     plProfile_NewMem(MemBufGrpIndex, numIndices * sizeof(uint16_t));
 
     /// All done!
-    if( fIndexBufferRefs.GetCount() > i && fIndexBufferRefs[ i ] != nil )
+    if ( fIndexBufferRefs.size() > i && fIndexBufferRefs[i])
     {
         hsRefCnt_SafeUnRef(fIndexBufferRefs[i]);
-        fIndexBufferRefs[i] = nil;
+        fIndexBufferRefs[i] = nullptr;
     }
 
     return true;
@@ -1200,8 +1196,8 @@ void    plGBufferGroup::StuffFromTriList( uint32_t which, uint32_t start, uint32
 #endif // MF_SPEED_THIS_UP
 
     /// All done! Just make sure we refresh before we render...
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
-        fIndexBufferRefs[ which ]->SetDirty( true );
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
+        fIndexBufferRefs[which]->SetDirty(true);
 
 }
 
