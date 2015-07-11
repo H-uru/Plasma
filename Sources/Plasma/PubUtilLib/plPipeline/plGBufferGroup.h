@@ -138,7 +138,7 @@ class plGBufferGroup
 
         hsTArray<plGBufferColor *>  fColorBuffStorage;
 
-        hsTArray<hsTArray<plGBufferCell> *> fCells;
+        std::vector<std::vector<plGBufferCell>*> fCells;
 
         virtual void    ISendStorageToBuffers( plPipeline *pipe, bool adjustForNvidiaLighting );
 
@@ -241,8 +241,8 @@ class plGBufferGroup
         hsGDeviceRef    *GetVertexBufferRef( uint32_t i );
         hsGDeviceRef    *GetIndexBufferRef( uint32_t i );
 
-        uint32_t          GetNumCells( uint32_t idx ) const { return fCells[ idx ]->GetCount(); }
-        plGBufferCell   *GetCell( uint32_t idx, uint32_t cell ) { return &( (*fCells[ idx ])[ cell ] ); }
+        size_t          GetNumCells( size_t idx ) const { return fCells[ idx ]->size(); }
+        plGBufferCell   *GetCell( size_t idx, size_t cell ) { return &( (*fCells[ idx ])[ cell ] ); }
 
         void    SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb );
         void    SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib );

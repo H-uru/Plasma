@@ -117,7 +117,7 @@ plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVola
     fColorBuffStorage.Reset();
     fVertexBufferRefs.Reset();
     fIndexBufferRefs.Reset();
-    fCells.Reset();
+    fCells.clear();
     fNumVerts = fNumIndices = 0;
 
     fFormat = format;
@@ -222,8 +222,8 @@ void    plGBufferGroup::CleanUp( void )
         delete [] fColorBuffStorage[ i ];
     }
 
-    for( i = 0; i < fCells.GetCount(); i++ )
-        delete fCells[ i ];
+    for (auto i : fCells)
+        delete i;
 
     fVertBuffStorage.Reset();
     fVertBuffSizes.Reset();
@@ -236,7 +236,7 @@ void    plGBufferGroup::CleanUp( void )
     fColorBuffStorage.Reset();
     fColorBuffCounts.Reset();
 
-    fCells.Reset();
+    fCells.clear();
 }
 
 //// SetVertexBufferRef ///////////////////////////////////////////////////////
@@ -455,8 +455,8 @@ void    plGBufferGroup::Read( hsStream *s )
     {
         temp = s->ReadLE32();
 
-        fCells.Append( new hsTArray<plGBufferCell> );
-        fCells[ i ]->SetCount( temp );
+        fCells.push_back( new std::vector<plGBufferCell> );
+        fCells[ i ]->resize( temp );
 
         for( j = 0; j < temp; j++ )
             (*fCells[ i ])[ j ].Read( s );
@@ -498,7 +498,7 @@ void    plGBufferGroup::Write( hsStream *s )
     {
 #ifdef MF_VERTCODE_ENABLED
 
-        hsAssert(fCells[i]->GetCount() == 1, "Data must be interleaved for compression");
+        hsAssert(fCells[i]->size() == 1, "Data must be interleaved for compression");
         uint32_t numVerts = fVertBuffSizes[i] / fStride;
         s->WriteLE16((uint16_t)numVerts);
         coder.Write(s, fVertBuffStorage[i], fFormat, fStride, (uint16_t)numVerts);
@@ -538,8 +538,8 @@ void    plGBufferGroup::Write( hsStream *s )
     /// Write out cell arrays
     for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
     {
-        s->WriteLE32( fCells[ i ]->GetCount() );
-        for( j = 0; j < fCells[ i ]->GetCount(); j++ )
+        s->WriteLE32( fCells[ i ]->size() );
+        for( j = 0; j < fCells[ i ]->size(); j++ )
             (*fCells[ i ])[ j ].Write( s );
     }
 
@@ -567,7 +567,7 @@ void    plGBufferGroup::DeleteVertsFromStorage( uint32_t which, uint32_t start, 
     uint32_t      amount;
 
 
-    hsAssert( fCells[ which ]->GetCount() == 1, "Cannot delete verts on a mixed buffer group" );
+    hsAssert( fCells[ which ]->size() == 1, "Cannot delete verts on a mixed buffer group" );
 
     // Adjust cell 0
     (*fCells[ which ])[ 0 ].fLength -= length;
@@ -662,14 +662,12 @@ uint32_t  plGBufferGroup::GetNumPrimaryVertsLeft( void ) const
 
 uint32_t  plGBufferGroup::GetNumVertsLeft( uint32_t idx ) const
 {
-    if( idx >= fCells.GetCount() )
+    if( idx >= fCells.size() )
         return kMaxNumVertsPerBuffer;
 
-    uint32_t      i, total = kMaxNumVertsPerBuffer;
-
-
-    for( i = 0; i < fCells[ idx ]->GetCount(); i++ )
-        total -= (*fCells[ idx ])[ i ].fLength;
+    uint32_t total = kMaxNumVertsPerBuffer;
+    for( const auto& i : *fCells[ idx ] )
+        total -= i.fLength;
 
     return total;
 }
@@ -679,7 +677,7 @@ uint32_t  plGBufferGroup::GetNumVertsLeft( uint32_t idx ) const
 
 uint32_t  plGBufferGroup::IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t vStart, uint32_t cStart, uint32_t len, uint32_t *offset )
 {
-    hsTArray<plGBufferCell> *cells = fCells[ vbIndex ];
+    std::vector<plGBufferCell>* cells = fCells[ vbIndex ];
 
 
     if( !(flags & kReserveInterleaved) )
@@ -690,27 +688,27 @@ uint32_t  plGBufferGroup::IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t v
         /// we never merge any separated cells
 
         if( flags & kReserveSeparated )
-            cells->Append( plGBufferCell( vStart, cStart, len ) );
+            cells->emplace_back(vStart, cStart, len);
         else
-            cells->Append( plGBufferCell( (uint32_t)-1, cStart, len ) );
+            cells->emplace_back((uint32_t)-1, cStart, len);
         *offset = 0;
     }
     else
     {
         /// Merge if the last cell was an interleaved cell
-        if( cells->GetCount() > 0 && (*cells)[ cells->GetCount() - 1 ].fColorStart == (uint32_t)-1 )
+        if( !cells->empty() && cells->back().fColorStart == (uint32_t)-1 )
         {
-            *offset = (*cells)[ cells->GetCount() - 1 ].fLength;
-            (*cells)[ cells->GetCount() - 1 ].fLength += len;
+            *offset = cells->back().fLength;
+            cells->back().fLength += len;
         }
         else
         {
-            cells->Append( plGBufferCell( vStart, (uint32_t)-1, len ) );
+            cells->emplace_back(vStart, (uint32_t)-1, len);
             *offset = 0;
         }
     }
 
-    return cells->GetCount() - 1;
+    return cells->size() - 1;
 }
 
 //// ReserveVertStorage ///////////////////////////////////////////////////////
@@ -758,7 +756,7 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
         fColorBuffStorage.Append( nil );
         fColorBuffCounts.Append( 0 );
 
-        fCells.Append( new hsTArray<plGBufferCell> );
+        fCells.push_back( new std::vector<plGBufferCell> );
     }
 
     *vbIndex = i;
@@ -875,7 +873,7 @@ void    plGBufferGroup::AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t 
 void    plGBufferGroup::IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t *&tempPtr, plGBufferColor *&cPtr )
 {
     hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell < fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( cell < fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     tempPtr = fVertBuffStorage[ vbIndex ];
     cPtr = fColorBuffStorage[ vbIndex ];
@@ -894,7 +892,7 @@ void    plGBufferGroup::IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, ui
 
 uint32_t  plGBufferGroup::GetVertBufferCount( uint32_t idx ) const
 {
-    return GetVertStartFromCell( idx, fCells[ idx ]->GetCount(), 0 );
+    return GetVertStartFromCell( idx, fCells[ idx ]->size(), 0 );
 }
 
 //// GetVertStartFromCell /////////////////////////////////////////////////////
@@ -905,7 +903,7 @@ uint32_t  plGBufferGroup::GetVertStartFromCell( uint32_t vbIndex, uint32_t cell,
 
 
     hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell <= fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( cell <= fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     numVerts = 0;
     for( i = 0; i < cell; i++ )
@@ -929,7 +927,7 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
 
 
     hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell < fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( cell < fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     IGetStartVtxPointer( vbIndex, cell, offset, tempPtr, cPtr );
     cellPtr = &(*fCells[ vbIndex ])[ cell ];
@@ -1131,7 +1129,7 @@ plGBufferTriangle   *plGBufferGroup::ConvertToTriList( int16_t spanIndex, uint32
     hsAssert( whichVtx < fVertBuffStorage.GetCount(), "Invalid vertex buffer ID to ConvertToTriList()" );
     hsAssert( start < fIdxBuffCounts[ whichIdx ], "Invalid start index to ConvertToTriList()" );
     hsAssert( start + numTriangles * 3 <= fIdxBuffCounts[ whichIdx ], "Invalid count to ConvertToTriList()" );
-    hsAssert( whichCell < fCells[ whichVtx ]->GetCount(), "Invalid cell to ConvertToTriList()" );
+    hsAssert( whichCell < fCells[ whichVtx ]->size(), "Invalid cell to ConvertToTriList()" );
 
     /// Create the array and fill it
     array = new plGBufferTriangle[ numTriangles ];
