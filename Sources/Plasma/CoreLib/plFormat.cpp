@@ -121,11 +121,10 @@ namespace plFormat_Private
                 spec.fDigitClass = kDigitHexUpper;
                 break;
             case '+':
-                spec.fDigitClass = kDigitDecAlwaysSigned;
+                spec.fAlwaysSigned = true;
                 break;
             case 'd':
-                if (spec.fDigitClass != kDigitDecAlwaysSigned)
-                    spec.fDigitClass = kDigitDec;
+                spec.fDigitClass = kDigitDec;
                 break;
             case 'o':
                 spec.fDigitClass = kDigitOct;
@@ -265,7 +264,7 @@ static void _formatDecimal(const plFormat_Private::FormatSpec &format,
     if (format_size == 0)
         format_size = 1;
 
-    if (value < 0 || format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
+    if (value < 0 || format.fAlwaysSigned)
         ++format_size;
 
     hsAssert(format_size < 24, "Format length too long");
@@ -275,7 +274,7 @@ static void _formatDecimal(const plFormat_Private::FormatSpec &format,
 
     if (value < 0)
         buffer[0] = '-';
-    else if (format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
+    else if (format.fAlwaysSigned)
         buffer[0] = '+';
 
     _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
@@ -340,7 +339,6 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
             _formatNumeric<_utype>(format, output, value, 16, true); \
             break; \
         case plFormat_Private::kDigitDec: \
-        case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
             _formatDecimal<_stype>(format, output, value); \
             break; \
@@ -369,7 +367,6 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
             _formatNumeric<_utype>(format, output, value, 16, true); \
             break; \
         case plFormat_Private::kDigitDec: \
-        case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
             _formatDecimal<_utype>(format, output, value); \
             break; \
@@ -402,6 +399,10 @@ PL_FORMAT_IMPL(double)
     size_t end = 0;
 
     format_buffer[end++] = '%';
+
+    if (format.fAlwaysSigned)
+        format_buffer[end++] = '+';
+
     if (format.fPrecision >= 0) {
         int count = snprintf(format_buffer + end, arrsize(format_buffer) - end,
                              ".%d", format.fPrecision);
@@ -459,7 +460,6 @@ PL_FORMAT_IMPL(char)
         _formatNumeric<unsigned char>(format, output, value, 16, true);
         break;
     case plFormat_Private::kDigitDec:
-    case plFormat_Private::kDigitDecAlwaysSigned:
         _formatDecimal<signed char>(format, output, value);
         break;
     case plFormat_Private::kDigitChar:
@@ -488,7 +488,6 @@ PL_FORMAT_IMPL(wchar_t)
         _formatNumeric<uint32_t>(format, output, value, 16, true);
         break;
     case plFormat_Private::kDigitDec:
-    case plFormat_Private::kDigitDecAlwaysSigned:
         _formatDecimal<uint32_t>(format, output, value);
         break;
     case plFormat_Private::kDigitChar:
