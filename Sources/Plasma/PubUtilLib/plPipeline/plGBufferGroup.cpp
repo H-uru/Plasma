@@ -110,21 +110,11 @@ void    plGBufferCell::Write( hsStream *s )
 
 //// Constructor //////////////////////////////////////////////////////////////
 
-plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD ) 
+plGBufferGroup::plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD)
+    : fNumVerts(0), fNumIndices(0), fFormat(format), fVertsVolatile(vertsVolatile),
+      fIdxVolatile(idxVolatile), fLOD(LOD)
 {
-    fVertBuffStorage.clear();
-    fIdxBuffStorage.clear();
-    fColorBuffStorage.clear();
-    fVertexBufferRefs.clear();
-    fIndexBufferRefs.clear();
-    fCells.clear();
-    fNumVerts = fNumIndices = 0;
-
-    fFormat = format;
-    fStride = ICalcVertexSize( fLiteStride );
-    fVertsVolatile = vertsVolatile;
-    fIdxVolatile = idxVolatile;
-    fLOD = LOD;
+    fStride = ICalcVertexSize(fLiteStride);
 }
 
 //// Destructor ///////////////////////////////////////////////////////////////
