@@ -112,7 +112,7 @@ void    plGBufferCell::Write( hsStream *s )
 
 plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD ) 
 {
-    fVertBuffStorage.Reset();
+    fVertBuffStorage.clear();
     fIdxBuffStorage.Reset();
     fColorBuffStorage.clear();
     fVertexBufferRefs.Reset();
@@ -202,16 +202,13 @@ void plGBufferGroup::PurgeIndexBuffer(uint32_t idx)
 
 void    plGBufferGroup::CleanUp( void )
 {
-    int     i;
-
-    
     // Clean up the storage
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fVertBuffSizes.size(); ++i)
     {
         plProfile_DelMem(MemBufGrpVertex, fVertBuffSizes[i]);
         delete [] fVertBuffStorage[ i ];
     }
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fIdxBuffStorage.GetCount(); i++)
     {
         plProfile_DelMem(MemBufGrpIndex, fIdxBuffCounts[i] * sizeof(uint16_t));
         delete [] fIdxBuffStorage[ i ];
@@ -225,10 +222,10 @@ void    plGBufferGroup::CleanUp( void )
     for (auto i : fCells)
         delete i;
 
-    fVertBuffStorage.Reset();
-    fVertBuffSizes.Reset();
-    fVertBuffStarts.Reset();
-    fVertBuffEnds.Reset();
+    fVertBuffStorage.clear();
+    fVertBuffSizes.clear();
+    fVertBuffStarts.clear();
+    fVertBuffEnds.clear();
     fIdxBuffStorage.Reset();
     fIdxBuffCounts.Reset();
     fIdxBuffStarts.Reset();
@@ -309,19 +306,14 @@ void    plGBufferGroup::ISendStorageToBuffers( plPipeline *pipe, bool adjustForN
     plProfile_BeginTiming(DrawRefillVertex);
 
     /// Creating or refreshing?
-    int i;
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
-    {
+    for (size_t i = 0; i < fVertBuffStorage.size(); i++)
         pipe->CheckVertexBufferRef(this, i);
-    }
     plProfile_EndTiming(DrawRefillVertex);
 
     plProfile_BeginTiming(DrawRefillIndex);
 
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
-    {
+    for (size_t i = 0; i < fIdxBuffStorage.GetCount(); i++)
         pipe->CheckIndexBufferRef(this, i);
-    }
 
     plProfile_EndTiming(DrawRefillIndex);
 }
@@ -371,14 +363,14 @@ void    plGBufferGroup::Read( hsStream *s )
     totalDynSize = s->ReadLE32();
     fStride = ICalcVertexSize( fLiteStride );
 
-    fVertBuffSizes.Reset();
-    fVertBuffStarts.Reset();
-    fVertBuffEnds.Reset();
+    fVertBuffSizes.clear();
+    fVertBuffStarts.clear();
+    fVertBuffEnds.clear();
     fColorBuffCounts.clear();
     fIdxBuffCounts.Reset();
     fIdxBuffStarts.Reset();
     fIdxBuffEnds.Reset();
-    fVertBuffStorage.Reset();
+    fVertBuffStorage.clear();
     fIdxBuffStorage.Reset();
 
     plVertCoder coder;
@@ -391,12 +383,12 @@ void    plGBufferGroup::Read( hsStream *s )
             const uint16_t numVerts = s->ReadLE16();
             const uint32_t size = numVerts * fStride;
 
-            fVertBuffSizes.Append(size);
-            fVertBuffStarts.Append(0);
-            fVertBuffEnds.Append(-1);
+            fVertBuffSizes.push_back(size);
+            fVertBuffStarts.push_back(0);
+            fVertBuffEnds.push_back(-1);
 
             vData = new uint8_t[size];
-            fVertBuffStorage.Append( vData );
+            fVertBuffStorage.push_back( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
 
             coder.Read(s, vData, fFormat, fStride, numVerts);
@@ -409,14 +401,14 @@ void    plGBufferGroup::Read( hsStream *s )
         {
             temp = s->ReadLE32();
     
-            fVertBuffSizes.Append( temp );
-            fVertBuffStarts.Append(0);
-            fVertBuffEnds.Append(-1);
+            fVertBuffSizes.push_back( temp );
+            fVertBuffStarts.push_back(0);
+            fVertBuffEnds.push_back(-1);
             
             vData = new uint8_t[ temp ];
-            hsAssert( vData != nil, "Not enough memory to read in vertices" );
+            hsAssert(vData, "Not enough memory to read in vertices");
             s->Read( temp, (void *)vData );
-            fVertBuffStorage.Append( vData );
+            fVertBuffStorage.push_back( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
             
             temp = s->ReadLE32();
@@ -451,7 +443,7 @@ void    plGBufferGroup::Read( hsStream *s )
     }
 
     /// Read in cell arrays, one per vBuffer
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    for( i = 0; i < fVertBuffStorage.size(); i++ )
     {
         temp = s->ReadLE32();
 
@@ -482,9 +474,9 @@ void    plGBufferGroup::Write( hsStream *s )
 
     /// Calc total dynamic data size, for fun
     totalDynSize = 0;
-    for( i = 0; i < fVertBuffSizes.GetCount(); i++ )
-        totalDynSize += fVertBuffSizes[ i ];
-    for( i = 0; i < fIdxBuffCounts.GetCount(); i++ )
+    for (auto it : fVertBuffSizes)
+        totalDynSize += it;
+    for ( i = 0; i < fIdxBuffCounts.GetCount(); i++ )
         totalDynSize += sizeof( uint16_t ) * fIdxBuffCounts[ i ];
 
     s->WriteLE( fFormat );
@@ -493,8 +485,8 @@ void    plGBufferGroup::Write( hsStream *s )
     plVertCoder coder;
 
     /// Write out dyanmic data
-    s->WriteLE32( (uint32_t)fVertBuffStorage.GetCount() );
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    s->WriteLE32( (uint32_t)fVertBuffStorage.size() );
+    for (i = 0; i < fVertBuffStorage.size(); ++i)
     {
 #ifdef MF_VERTCODE_ENABLED
 
@@ -536,7 +528,7 @@ void    plGBufferGroup::Write( hsStream *s )
     }
 
     /// Write out cell arrays
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    for (i = 0; i < fVertBuffStorage.size(); i++)
     {
         s->WriteLE32( fCells[ i ]->size() );
         for( j = 0; j < fCells[ i ]->size(); j++ )
@@ -733,7 +725,7 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     /// Find a spot
     if( !(flags & kReserveIsolate) )
     {
-        for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+        for( i = 0; i < fVertBuffStorage.size(); i++ )
         {
             if( GetNumVertsLeft( i ) >= numVerts )
                 break;
@@ -741,17 +733,17 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     }
     else
     {
-        i = fVertBuffStorage.GetCount();
+        i = fVertBuffStorage.size();
     }
-    if( i == fVertBuffStorage.GetCount() )
+    if( i == fVertBuffStorage.size() )
     {
         if( (flags & kReserveInterleaved) || (flags & kReserveSeparated) )
         {
-            fVertBuffStorage.Append( nil );
-            fVertBuffSizes.Append( 0 );
+            fVertBuffStorage.push_back(nullptr);
+            fVertBuffSizes.push_back(0);
         }
-        fVertBuffStarts.Append(0);
-        fVertBuffEnds.Append(-1);
+        fVertBuffStarts.push_back(0);
+        fVertBuffEnds.push_back(-1);
 
         fColorBuffStorage.push_back(nullptr);
         fColorBuffCounts.push_back(0);
@@ -1126,7 +1118,7 @@ plGBufferTriangle   *plGBufferGroup::ConvertToTriList( int16_t spanIndex, uint32
 
     /// Sanity checks
     hsAssert( whichIdx < fIdxBuffStorage.GetCount(), "Invalid index buffer ID to ConvertToTriList()" );
-    hsAssert( whichVtx < fVertBuffStorage.GetCount(), "Invalid vertex buffer ID to ConvertToTriList()" );
+    hsAssert( whichVtx < fVertBuffStorage.size(), "Invalid vertex buffer ID to ConvertToTriList()" );
     hsAssert( start < fIdxBuffCounts[ whichIdx ], "Invalid start index to ConvertToTriList()" );
     hsAssert( start + numTriangles * 3 <= fIdxBuffCounts[ whichIdx ], "Invalid count to ConvertToTriList()" );
     hsAssert( whichCell < fCells[ whichVtx ]->size(), "Invalid cell to ConvertToTriList()" );
