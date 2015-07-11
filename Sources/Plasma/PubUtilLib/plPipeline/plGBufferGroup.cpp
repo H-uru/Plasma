@@ -114,7 +114,7 @@ plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVola
 {
     fVertBuffStorage.Reset();
     fIdxBuffStorage.Reset();
-    fColorBuffStorage.Reset();
+    fColorBuffStorage.clear();
     fVertexBufferRefs.Reset();
     fIndexBufferRefs.Reset();
     fCells.clear();
@@ -216,7 +216,7 @@ void    plGBufferGroup::CleanUp( void )
         plProfile_DelMem(MemBufGrpIndex, fIdxBuffCounts[i] * sizeof(uint16_t));
         delete [] fIdxBuffStorage[ i ];
     }
-    for( i = 0; i < fColorBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fColorBuffStorage.size(); ++i)
     {
         plProfile_DelMem(MemBufGrpVertex, fColorBuffCounts[i] * sizeof(plGBufferColor));
         delete [] fColorBuffStorage[ i ];
@@ -233,8 +233,8 @@ void    plGBufferGroup::CleanUp( void )
     fIdxBuffCounts.Reset();
     fIdxBuffStarts.Reset();
     fIdxBuffEnds.Reset();
-    fColorBuffStorage.Reset();
-    fColorBuffCounts.Reset();
+    fColorBuffStorage.clear();
+    fColorBuffCounts.clear();
 
     fCells.clear();
 }
@@ -374,7 +374,7 @@ void    plGBufferGroup::Read( hsStream *s )
     fVertBuffSizes.Reset();
     fVertBuffStarts.Reset();
     fVertBuffEnds.Reset();
-    fColorBuffCounts.Reset();
+    fColorBuffCounts.clear();
     fIdxBuffCounts.Reset();
     fIdxBuffStarts.Reset();
     fIdxBuffEnds.Reset();
@@ -401,8 +401,8 @@ void    plGBufferGroup::Read( hsStream *s )
 
             coder.Read(s, vData, fFormat, fStride, numVerts);
 
-            fColorBuffCounts.Append(0);                     
-            fColorBuffStorage.Append(nil);
+            fColorBuffCounts.push_back(0);
+            fColorBuffStorage.push_back(nullptr);
 
         }
         else
@@ -420,7 +420,7 @@ void    plGBufferGroup::Read( hsStream *s )
             plProfile_NewMem(MemBufGrpVertex, temp);
             
             temp = s->ReadLE32();
-            fColorBuffCounts.Append( temp );
+            fColorBuffCounts.push_back( temp );
             
             if( temp > 0 )
             {
@@ -431,7 +431,7 @@ void    plGBufferGroup::Read( hsStream *s )
             else
                 cData = nil;
             
-            fColorBuffStorage.Append( cData );
+            fColorBuffStorage.push_back( cData );
         }
     }
 
@@ -753,8 +753,8 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
         fVertBuffStarts.Append(0);
         fVertBuffEnds.Append(-1);
 
-        fColorBuffStorage.Append( nil );
-        fColorBuffCounts.Append( 0 );
+        fColorBuffStorage.push_back(nullptr);
+        fColorBuffCounts.push_back(0);
 
         fCells.push_back( new std::vector<plGBufferCell> );
     }
@@ -795,15 +795,15 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     }
 
     /// Switch over
-    if( storagePtr != nil )
+    if (storagePtr)
     {
         if( fVertBuffStorage[ i ] != nil )
             delete [] fVertBuffStorage[ i ];
         fVertBuffStorage[ i ] = storagePtr;
     }
-    if( cStoragePtr != nil )
+    if (cStoragePtr)
     {
-        if( fColorBuffStorage[ i ] != nil )
+        if (fColorBuffStorage[ i ])
             delete [] fColorBuffStorage[ i ];
         fColorBuffStorage[ i ] = cStoragePtr;
         fColorBuffCounts[ i ] += numVerts;
