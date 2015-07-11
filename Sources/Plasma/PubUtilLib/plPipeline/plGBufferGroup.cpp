@@ -850,7 +850,7 @@ void    plGBufferGroup::AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t 
 
 void    plGBufferGroup::IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t *&tempPtr, plGBufferColor *&cPtr )
 {
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
     hsAssert( cell < fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     tempPtr = fVertBuffStorage[ vbIndex ];
@@ -880,7 +880,7 @@ uint32_t  plGBufferGroup::GetVertStartFromCell( uint32_t vbIndex, uint32_t cell,
     uint32_t  i, numVerts;
 
 
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
     hsAssert( cell <= fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     numVerts = 0;
@@ -904,7 +904,7 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
     plGBufferCell   *cellPtr;
 
 
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
     hsAssert( cell < fCells[ vbIndex ]->size(), "Invalid cell in StuffToVertStorage()" );
 
     IGetStartVtxPointer( vbIndex, cell, offset, tempPtr, cPtr );
@@ -1196,7 +1196,7 @@ void    plGBufferGroup::StuffFromTriList( uint32_t which, uint32_t start, uint32
 void    plGBufferGroup::StuffTri( uint32_t iBuff, uint32_t iTri, uint16_t idx0, uint16_t idx1, uint16_t idx2 )
 {
     /// Sanity checks
-    hsAssert( iBuff < fIdxBuffStorage.GetCount(), "Invalid index buffer ID to StuffFromTriList()" );
+    hsAssert( iBuff < fIdxBuffStorage.size(), "Invalid index buffer ID to StuffFromTriList()" );
     hsAssert( iTri < fIdxBuffCounts[ iBuff ], "Invalid start index to StuffFromTriList()" );
 
     fIdxBuffStorage[ iBuff ][ iTri + 0 ] = idx0;
