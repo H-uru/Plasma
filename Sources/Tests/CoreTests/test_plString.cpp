@@ -85,6 +85,22 @@ TEST(plString, Utility)
     EXPECT_EQ(utf8_test_data_length, plString(utf8_test_data).GetSize());
 }
 
+TEST(plString, StackStrings)
+{
+    char stack_buf[256];
+    strcpy(stack_buf, "Test");
+    plString test(stack_buf);
+
+    EXPECT_EQ(plString("Test"), test);
+    EXPECT_EQ(strlen("Test"), test.GetSize());
+
+    strcpy(stack_buf, "operator=");
+    test = stack_buf;
+
+    EXPECT_EQ(plString("operator="), test);
+    EXPECT_EQ(strlen("operator="), test.GetSize());
+}
+
 TEST(plString, ConvertUtf8)
 {
     // From UTF-8 to plString
