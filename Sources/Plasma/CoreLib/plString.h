@@ -281,6 +281,10 @@ public:
     template <size_t _Sz>
     plString(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz - 1); }
 
+    // Don't call the string literal constructor for stack arrays
+    template <size_t _Sz>
+    plString(char (&literal)[_Sz]) { IConvertFromUtf8(literal, STRLEN_AUTO); }
+
     /** Copy constructor. */
     plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
 
@@ -305,6 +309,10 @@ public:
     /** Assignment operator.  Same as plString(const char (&)[_Sz]). */
     template <size_t _Sz>
     plString &operator=(const char (&literal)[_Sz]) { IConvertFromUtf8(literal, _Sz - 1); return *this; }
+
+    // Don't call the string literal operator= for stack arrays
+    template <size_t _Sz>
+    plString &operator=(char (&literal)[_Sz]) { IConvertFromUtf8(literal, STRLEN_AUTO); return *this; }
 
     /** Assignment operator.  Same as plString(const plString &). */
     plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
