@@ -360,8 +360,15 @@ void    plGBufferGroup::Read( hsStream *s )
     fIdxBuffStorage.clear();
 
     plVertCoder coder;
+
     /// Create buffers and read in as we go
     count = s->ReadLE32();
+    fVertBuffSizes.reserve(count);
+    fVertBuffStarts.reserve(count);
+    fVertBuffEnds.reserve(count);
+    fVertBuffStorage.reserve(count);
+    fColorBuffCounts.reserve(count);
+    fColorBuffStorage.reserve(count);
     for( i = 0; i < count; i++ )
     {
         if( fFormat & kEncoded )
@@ -414,6 +421,10 @@ void    plGBufferGroup::Read( hsStream *s )
     }
 
     count = s->ReadLE32();
+    fIdxBuffCounts.reserve(count);
+    fIdxBuffStarts.reserve(count);
+    fIdxBuffEnds.reserve(count);
+    fIdxBuffStorage.reserve(count);
     for( i = 0; i < count; i++ )
     {
         temp = s->ReadLE32();
@@ -429,6 +440,7 @@ void    plGBufferGroup::Read( hsStream *s )
     }
 
     /// Read in cell arrays, one per vBuffer
+    fCells.reserve(fVertBuffStorage.size());
     for( i = 0; i < fVertBuffStorage.size(); i++ )
     {
         temp = s->ReadLE32();
