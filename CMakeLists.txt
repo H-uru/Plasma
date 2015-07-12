@@ -69,14 +69,16 @@ endif()
 
 include(PrecompiledHeader)    #Precompiled Header helper macros
 
-# libCurl isn't smart enough to detect this for us, so we have to configure it ourselves
-option(CURL_IS_STATIC "Using the static version of libcurl?" ON)
-if(CURL_IS_STATIC)
-    add_definitions(-DCURL_STATICLIB)
-endif(CURL_IS_STATIC)
+if(WIN32)
+    # libCurl isn't smart enough to detect this for us, so we have to configure it ourselves
+    option(CURL_IS_STATIC "Using the static version of libcurl?" ON)
+    if(CURL_IS_STATIC)
+        add_definitions(-DCURL_STATICLIB)
+    endif(CURL_IS_STATIC)
 
-# Same story for expat
-option(EXPAT_IS_STATIC "Using the static version of libexpat" ON)
+    # Same story for expat
+    option(EXPAT_IS_STATIC "Using the static version of libexpat" ON)
+endif(WIN32)
 
 option(PLASMA_EXTERNAL_RELEASE "Is this release intended for the general public?" OFF)
 if(PLASMA_EXTERNAL_RELEASE)
