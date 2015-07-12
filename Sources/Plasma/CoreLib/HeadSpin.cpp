@@ -139,8 +139,10 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
     } else
 #endif // _MSC_VER
     {
-        char str[] = "-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------";
-        DebugMsg(str, file, line, msg);
+        DebugMsg("-------\nASSERTION FAILED:\nFile: %s   Line: %i\nMessage: %s\n-------",
+                 file, line, msg);
+        fflush(stderr);
+
         DebugBreakAlways();
     }
 #endif // HS_DEBUGGING
@@ -214,17 +216,16 @@ void DebugMsg(const char* fmt, ...)
     va_list args;
     va_start(args, fmt);
     vsnprintf(msg, arrsize(msg), fmt, args);
+    fprintf(stderr, "%s\n", msg);
 
 #ifdef _MSC_VER
     if (DebugIsDebuggerPresent())
     {
+        // Also print to the MSVC Output window
         OutputDebugStringA(msg);
         OutputDebugStringA("\n");
-    } else
-#endif
-    {
-        fprintf(stderr, "%s\n", msg);
     }
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////////

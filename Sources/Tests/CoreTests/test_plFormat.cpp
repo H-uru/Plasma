@@ -15,6 +15,9 @@ TEST(plFormat, Escapes)
 
 TEST(plFormat, Errors)
 {
+    // Ensure these get printed to the console
+    ErrorEnableGui(false);
+
     EXPECT_DEATH(plFormat("{}", 1, 2),
         "Message: Too many actual parameters for format string");
     EXPECT_DEATH(plFormat("{} {}", 1),
@@ -56,10 +59,10 @@ TEST(plFormat, StringClasses)
 {
     // These should be handled just like normal const char* string params
     // (see above), so just need to test that the wrappers are working
-    EXPECT_EQ(plString("xxтəßtxx"), plFormat("xx{}xx", L"тəßt"));
-    EXPECT_EQ(plString("xxтəßtxx"), plFormat("xx{}xx", plString("тəßt")));
+    EXPECT_EQ(plString("xxTESTxx"), plFormat("xx{}xx", L"TEST"));
+    EXPECT_EQ(plString("xxTESTxx"), plFormat("xx{}xx", plString("TEST")));
     EXPECT_EQ(plString("xxTESTxx"), plFormat("xx{}xx", std::string("TEST")));
-    EXPECT_EQ(plString("xxтəßtxx"), plFormat("xx{}xx", std::wstring(L"тəßt")));
+    EXPECT_EQ(plString("xxTESTxx"), plFormat("xx{}xx", std::wstring(L"TEST")));
     EXPECT_EQ(plString("xx/dev/nullxx"), plFormat("xx{}xx", plFileName("/dev/null")));
     EXPECT_EQ(plString(R"(xxC:\Users\Nobodyxx)"),
               plFormat("xx{}xx", plFileName(R"(C:\Users\Nobody)")));
@@ -360,22 +363,29 @@ TEST(plFormat, FloatingPoint)
     EXPECT_EQ(plString("xx16384.00xx"), plFormat("xx{.2f}xx", 16384.0));
     EXPECT_EQ(plString("xx0.01xx"), plFormat("xx{.2f}xx", 1.0 / 128));
 
-    // Scientific notation
-    EXPECT_EQ(plString("xx3.14e+00xx"), plFormat("xx{.2e}xx", 3.14159));
-    EXPECT_EQ(plString("xx3.141590e+00xx"), plFormat("xx{.6e}xx", 3.14159));
-    EXPECT_EQ(plString("xx1.64e+04xx"), plFormat("xx{.2e}xx", 16384.0));
-    EXPECT_EQ(plString("xx7.81e-03xx"), plFormat("xx{.2e}xx", 1.0 / 128));
+    // MSVC uses 3 digits for the exponent, whereas GCC uses two :/
+#ifdef _MSC_VER
+#   define EXTRA_DIGIT "0"
+#else
+#   define EXTRA_DIGIT ""
+#endif
+
+    // Scientific notation (MSVC uses 3 digits for the exponent)
+    EXPECT_EQ(plString("xx3.14e+" EXTRA_DIGIT "00xx"), plFormat("xx{.2e}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.141590e+" EXTRA_DIGIT "00xx"), plFormat("xx{.6e}xx", 3.14159));
+    EXPECT_EQ(plString("xx1.64e+" EXTRA_DIGIT "04xx"), plFormat("xx{.2e}xx", 16384.0));
+    EXPECT_EQ(plString("xx7.81e-" EXTRA_DIGIT "03xx"), plFormat("xx{.2e}xx", 1.0 / 128));
 
     // Scientific notation (upper-case E)
-    EXPECT_EQ(plString("xx3.14E+00xx"), plFormat("xx{.2E}xx", 3.14159));
-    EXPECT_EQ(plString("xx3.141590E+00xx"), plFormat("xx{.6E}xx", 3.14159));
-    EXPECT_EQ(plString("xx1.64E+04xx"), plFormat("xx{.2E}xx", 16384.0));
-    EXPECT_EQ(plString("xx7.81E-03xx"), plFormat("xx{.2E}xx", 1.0 / 128));
+    EXPECT_EQ(plString("xx3.14E+" EXTRA_DIGIT "00xx"), plFormat("xx{.2E}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.141590E+" EXTRA_DIGIT "00xx"), plFormat("xx{.6E}xx", 3.14159));
+    EXPECT_EQ(plString("xx1.64E+" EXTRA_DIGIT "04xx"), plFormat("xx{.2E}xx", 16384.0));
+    EXPECT_EQ(plString("xx7.81E-" EXTRA_DIGIT "03xx"), plFormat("xx{.2E}xx", 1.0 / 128));
 
     // Automatic (based on input)
     EXPECT_EQ(plString("xx3.1xx"), plFormat("xx{.2}xx", 3.14159));
     EXPECT_EQ(plString("xx3.14159xx"), plFormat("xx{.6}xx", 3.14159));
-    EXPECT_EQ(plString("xx1.6e+04xx"), plFormat("xx{.2}xx", 16384.0));
+    EXPECT_EQ(plString("xx1.6e+" EXTRA_DIGIT "04xx"), plFormat("xx{.2}xx", 16384.0));
     EXPECT_EQ(plString("xx0.0078xx"), plFormat("xx{.2}xx", 1.0 / 128));
 }
 
