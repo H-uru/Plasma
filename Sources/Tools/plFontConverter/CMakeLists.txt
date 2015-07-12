@@ -40,9 +40,10 @@ qt5_wrap_ui(plFontConverter_UIC ${plFontConverter_UIC_SOURCES})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(plFontConverter WIN32 ${plFontConverter_HEADERS}
-               ${plFontConverter_SOURCES} ${plFontConverter_RCC}
-               ${plFontConverter_UIC} ${plFontConverter_MOC})
+add_executable(plFontConverter WIN32 MACOSX_BUNDLE
+               ${plFontConverter_HEADERS} ${plFontConverter_SOURCES}
+               ${plFontConverter_RCC} ${plFontConverter_UIC}
+               ${plFontConverter_MOC})
 
 target_link_libraries(plFontConverter CoreLib)
 target_link_libraries(plFontConverter pnKeyedObject)
