@@ -337,3 +337,51 @@ TEST(plFormat, Binary)
     EXPECT_EQ(plString("xx1111111111111111111111111111111111111111111111111111111111111111xx"),
               plFormat("xx{b}xx", std::numeric_limits<uint64_t>::max()));
 }
+
+TEST(plFormat, FloatingPoint)
+{
+    // The actual formatting is handled by libc, so we just need to test
+    // that the flags get passed along properly.
+
+    EXPECT_EQ(plString("xx1.5xx"), plFormat("xx{}xx", 1.5));
+    EXPECT_EQ(plString("xx+1.5xx"), plFormat("xx{+}xx", 1.5));
+    EXPECT_EQ(plString("xx-1.5xx"), plFormat("xx{}xx", -1.5));
+    EXPECT_EQ(plString("xx-1.5xx"), plFormat("xx{+}xx", -1.5));
+
+    // Padding
+    EXPECT_EQ(plString("xx  1.50xx"), plFormat("xx{6.2f}xx", 1.5));
+    EXPECT_EQ(plString("xx -1.50xx"), plFormat("xx{6.2f}xx", -1.5));
+    EXPECT_EQ(plString("xx1.50  xx"), plFormat("xx{<6.2f}xx", 1.5));
+    EXPECT_EQ(plString("xx-1.50 xx"), plFormat("xx{<6.2f}xx", -1.5));
+
+    // Fixed notation
+    EXPECT_EQ(plString("xx3.14xx"), plFormat("xx{.2f}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.141590xx"), plFormat("xx{.6f}xx", 3.14159));
+    EXPECT_EQ(plString("xx16384.00xx"), plFormat("xx{.2f}xx", 16384.0));
+    EXPECT_EQ(plString("xx0.01xx"), plFormat("xx{.2f}xx", 1.0 / 128));
+
+    // Scientific notation
+    EXPECT_EQ(plString("xx3.14e+00xx"), plFormat("xx{.2e}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.141590e+00xx"), plFormat("xx{.6e}xx", 3.14159));
+    EXPECT_EQ(plString("xx1.64e+04xx"), plFormat("xx{.2e}xx", 16384.0));
+    EXPECT_EQ(plString("xx7.81e-03xx"), plFormat("xx{.2e}xx", 1.0 / 128));
+
+    // Scientific notation (upper-case E)
+    EXPECT_EQ(plString("xx3.14E+00xx"), plFormat("xx{.2E}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.141590E+00xx"), plFormat("xx{.6E}xx", 3.14159));
+    EXPECT_EQ(plString("xx1.64E+04xx"), plFormat("xx{.2E}xx", 16384.0));
+    EXPECT_EQ(plString("xx7.81E-03xx"), plFormat("xx{.2E}xx", 1.0 / 128));
+
+    // Automatic (based on input)
+    EXPECT_EQ(plString("xx3.1xx"), plFormat("xx{.2}xx", 3.14159));
+    EXPECT_EQ(plString("xx3.14159xx"), plFormat("xx{.6}xx", 3.14159));
+    EXPECT_EQ(plString("xx1.6e+04xx"), plFormat("xx{.2}xx", 16384.0));
+    EXPECT_EQ(plString("xx0.0078xx"), plFormat("xx{.2}xx", 1.0 / 128));
+}
+
+TEST(plFormat, Booleans)
+{
+    // This basically just uses the string formatter with constant strings
+    EXPECT_EQ(plString("xxtrue xx"), plFormat("xx{5}xx", true));
+    EXPECT_EQ(plString("xxfalsexx"), plFormat("xx{5}xx", false));
+}
