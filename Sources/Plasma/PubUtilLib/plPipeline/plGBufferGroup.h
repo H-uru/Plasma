@@ -121,24 +121,24 @@ class plGBufferGroup
         bool    fVertsVolatile;
         bool    fIdxVolatile;
         int     fLOD;
-        
-        hsTArray<hsGDeviceRef *>        fVertexBufferRefs;
-        hsTArray<hsGDeviceRef *>        fIndexBufferRefs;
 
-        hsTArray<uint32_t>    fVertBuffSizes;
-        hsTArray<uint32_t>    fIdxBuffCounts;
-        hsTArray<uint32_t>    fColorBuffCounts;
-        hsTArray<uint8_t *>   fVertBuffStorage;
-        hsTArray<uint16_t *>  fIdxBuffStorage;
+        std::vector<hsGDeviceRef*> fVertexBufferRefs;
+        std::vector<hsGDeviceRef*> fIndexBufferRefs;
 
-        hsTArray<uint32_t>    fVertBuffStarts;
-        hsTArray<int32_t>     fVertBuffEnds;
-        hsTArray<uint32_t>    fIdxBuffStarts;
-        hsTArray<int32_t>     fIdxBuffEnds;
+        std::vector<uint32_t>  fVertBuffSizes;
+        std::vector<uint32_t>  fIdxBuffCounts;
+        std::vector<uint32_t>  fColorBuffCounts;
+        std::vector<uint8_t *> fVertBuffStorage;
+        std::vector<uint16_t*> fIdxBuffStorage;
 
-        hsTArray<plGBufferColor *>  fColorBuffStorage;
+        std::vector<uint32_t> fVertBuffStarts;
+        std::vector<int32_t>  fVertBuffEnds;
+        std::vector<uint32_t> fIdxBuffStarts;
+        std::vector<int32_t>  fIdxBuffEnds;
 
-        hsTArray<hsTArray<plGBufferCell> *> fCells;
+        std::vector<plGBufferColor*>  fColorBuffStorage;
+
+        std::vector<std::vector<plGBufferCell>> fCells;
 
         virtual void    ISendStorageToBuffers( plPipeline *pipe, bool adjustForNvidiaLighting );
 
@@ -188,10 +188,10 @@ class plGBufferGroup
         static uint8_t    CalcNumUVs( uint8_t format ) { return ( format & kUVCountMask ); }
         static uint8_t    UVCountToFormat( uint8_t numUVs ) { return numUVs & kUVCountMask; }
 
-        void    DirtyVertexBuffer(int i);
-        void    DirtyIndexBuffer(int i);
-        bool    VertexReady(int i) const { return (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i]; }
-        bool    IndexReady(int i) const { return  (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i]; }
+        void    DirtyVertexBuffer(size_t i);
+        void    DirtyIndexBuffer(size_t i);
+        bool    VertexReady(size_t i) const { return (i < fVertexBufferRefs.size()) && fVertexBufferRefs[i]; }
+        bool    IndexReady(size_t i) const { return  (i < fIndexBufferRefs.size()) && fIndexBufferRefs[i]; }
         uint8_t   GetVertexSize( void ) const { return fStride; }
         uint8_t   GetVertexLiteStride( void ) const { return fLiteStride; }
         uint8_t   GetVertexFormat( void ) const { return fFormat; }
@@ -231,18 +231,18 @@ class plGBufferGroup
         void    SetIndexBufferEnd(uint32_t idx, uint32_t e) { fIdxBuffEnds[idx] = e; }
         ///////////////////////////////////////////////////////////////////////////////
 
-        uint32_t  GetNumVertexBuffers( void ) const { return fVertBuffStorage.GetCount(); }
-        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.GetCount(); }
+        uint32_t  GetNumVertexBuffers( void ) const { return fVertBuffStorage.size(); }
+        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.size(); }
 
         uint8_t           *GetVertBufferData( uint32_t idx ) { return fVertBuffStorage[ idx ]; }
         uint16_t          *GetIndexBufferData( uint32_t idx ) { return fIdxBuffStorage[ idx ]; }
-        plGBufferColor  *GetColorBufferData( uint32_t idx ) { return fColorBuffStorage[ idx ]; }
+        plGBufferColor  *GetColorBufferData( size_t idx ) { return fColorBuffStorage[ idx ]; }
 
         hsGDeviceRef    *GetVertexBufferRef( uint32_t i );
         hsGDeviceRef    *GetIndexBufferRef( uint32_t i );
 
-        uint32_t          GetNumCells( uint32_t idx ) const { return fCells[ idx ]->GetCount(); }
-        plGBufferCell   *GetCell( uint32_t idx, uint32_t cell ) { return &( (*fCells[ idx ])[ cell ] ); }
+        size_t          GetNumCells( size_t idx ) const { return fCells[ idx ].size(); }
+        plGBufferCell   *GetCell( size_t idx, size_t cell ) { return &(fCells[ idx ][ cell ]); }
 
         void    SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb );
         void    SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib );

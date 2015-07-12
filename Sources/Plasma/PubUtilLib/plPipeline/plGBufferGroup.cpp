@@ -110,50 +110,36 @@ void    plGBufferCell::Write( hsStream *s )
 
 //// Constructor //////////////////////////////////////////////////////////////
 
-plGBufferGroup::plGBufferGroup( uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD ) 
+plGBufferGroup::plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD)
+    : fNumVerts(0), fNumIndices(0), fFormat(format), fVertsVolatile(vertsVolatile),
+      fIdxVolatile(idxVolatile), fLOD(LOD)
 {
-    fVertBuffStorage.Reset();
-    fIdxBuffStorage.Reset();
-    fColorBuffStorage.Reset();
-    fVertexBufferRefs.Reset();
-    fIndexBufferRefs.Reset();
-    fCells.Reset();
-    fNumVerts = fNumIndices = 0;
-
-    fFormat = format;
-    fStride = ICalcVertexSize( fLiteStride );
-    fVertsVolatile = vertsVolatile;
-    fIdxVolatile = idxVolatile;
-    fLOD = LOD;
+    fStride = ICalcVertexSize(fLiteStride);
 }
 
 //// Destructor ///////////////////////////////////////////////////////////////
 
 plGBufferGroup::~plGBufferGroup()
 {
-    uint32_t   i;
-
     CleanUp();
 
-    for( i = 0; i < fVertexBufferRefs.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fVertexBufferRefs[ i ] );
-
-    for( i = 0; i < fIndexBufferRefs.GetCount(); i++ )
-        hsRefCnt_SafeUnRef( fIndexBufferRefs[ i ] );
-
-    fVertexBufferRefs.Reset();
-    fIndexBufferRefs.Reset();
+    for (auto i : fVertexBufferRefs) {
+        hsRefCnt_SafeUnRef(i);
+    }
+    for (auto i : fIndexBufferRefs) {
+        hsRefCnt_SafeUnRef(i);
+    }
 }
 
-void plGBufferGroup::DirtyVertexBuffer(int i)
+void plGBufferGroup::DirtyVertexBuffer(size_t i)
 {
-    if( (i < fVertexBufferRefs.GetCount()) && fVertexBufferRefs[i] )
+    if( (i < fVertexBufferRefs.size()) && fVertexBufferRefs[i] )
         fVertexBufferRefs[i]->SetDirty(true);
 }
 
-void plGBufferGroup::DirtyIndexBuffer(int i)
+void plGBufferGroup::DirtyIndexBuffer(size_t i)
 {
-    if( (i < fIndexBufferRefs.GetCount()) && fIndexBufferRefs[i] )
+    if( (i < fIndexBufferRefs.size()) && fIndexBufferRefs[i] )
         fIndexBufferRefs[i]->SetDirty(true);
 }
 
@@ -202,52 +188,46 @@ void plGBufferGroup::PurgeIndexBuffer(uint32_t idx)
 
 void    plGBufferGroup::CleanUp( void )
 {
-    int     i;
-
-    
     // Clean up the storage
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fVertBuffSizes.size(); ++i)
     {
         plProfile_DelMem(MemBufGrpVertex, fVertBuffSizes[i]);
         delete [] fVertBuffStorage[ i ];
     }
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fIdxBuffStorage.size(); i++)
     {
         plProfile_DelMem(MemBufGrpIndex, fIdxBuffCounts[i] * sizeof(uint16_t));
         delete [] fIdxBuffStorage[ i ];
     }
-    for( i = 0; i < fColorBuffStorage.GetCount(); i++ )
+    for (size_t i = 0; i < fColorBuffStorage.size(); ++i)
     {
         plProfile_DelMem(MemBufGrpVertex, fColorBuffCounts[i] * sizeof(plGBufferColor));
         delete [] fColorBuffStorage[ i ];
     }
 
-    for( i = 0; i < fCells.GetCount(); i++ )
-        delete fCells[ i ];
+    fVertBuffStorage.clear();
+    fVertBuffSizes.clear();
+    fVertBuffStarts.clear();
+    fVertBuffEnds.clear();
+    fIdxBuffStorage.clear();
+    fIdxBuffCounts.clear();
+    fIdxBuffStarts.clear();
+    fIdxBuffEnds.clear();
+    fColorBuffStorage.clear();
+    fColorBuffCounts.clear();
 
-    fVertBuffStorage.Reset();
-    fVertBuffSizes.Reset();
-    fVertBuffStarts.Reset();
-    fVertBuffEnds.Reset();
-    fIdxBuffStorage.Reset();
-    fIdxBuffCounts.Reset();
-    fIdxBuffStarts.Reset();
-    fIdxBuffEnds.Reset();
-    fColorBuffStorage.Reset();
-    fColorBuffCounts.Reset();
-
-    fCells.Reset();
+    fCells.clear();
 }
 
 //// SetVertexBufferRef ///////////////////////////////////////////////////////
 
 void    plGBufferGroup::SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb )
 {
-    hsAssert( index < fVertexBufferRefs.GetCount() + 1, "Vertex buffers must be assigned linearly!" );
+    hsAssert( index < fVertexBufferRefs.size() + 1, "Vertex buffers must be assigned linearly!" );
 
-    if( (int)index > (int)fVertexBufferRefs.GetCount() - 1 )
+    if (index > fVertexBufferRefs.size() - 1)
     {
-        fVertexBufferRefs.Append( vb );
+        fVertexBufferRefs.push_back( vb );
         hsRefCnt_SafeRef( vb );
     }
     else
@@ -261,11 +241,11 @@ void    plGBufferGroup::SetVertexBufferRef( uint32_t index, hsGDeviceRef *vb )
 
 void    plGBufferGroup::SetIndexBufferRef( uint32_t index, hsGDeviceRef *ib ) 
 {
-    hsAssert( index < fIndexBufferRefs.GetCount() + 1, "Index buffers must be assigned linearly!" );
+    hsAssert( index < fIndexBufferRefs.size() + 1, "Index buffers must be assigned linearly!" );
 
-    if( (int)index > (int)fIndexBufferRefs.GetCount() - 1 )
+    if(index > fIndexBufferRefs.size() - 1)
     {
-        fIndexBufferRefs.Append( ib );
+        fIndexBufferRefs.push_back( ib );
         hsRefCnt_SafeRef( ib );
     }
     else
@@ -288,16 +268,16 @@ void    plGBufferGroup::PrepForRendering( plPipeline *pipe, bool adjustForNvidia
 
 hsGDeviceRef* plGBufferGroup::GetVertexBufferRef(uint32_t i) 
 { 
-    if( i >= fVertexBufferRefs.GetCount() )
-        fVertexBufferRefs.ExpandAndZero(i+1);
+    if( i >= fVertexBufferRefs.size() )
+        fVertexBufferRefs.resize(i+1);
 
     return fVertexBufferRefs[i]; 
 }
 
 hsGDeviceRef* plGBufferGroup::GetIndexBufferRef(uint32_t i) 
 { 
-    if( i >= fIndexBufferRefs.GetCount() )
-        fIndexBufferRefs.ExpandAndZero(i+1);
+    if( i >= fIndexBufferRefs.size() )
+        fIndexBufferRefs.resize(i+1);
 
     return fIndexBufferRefs[i]; 
 }
@@ -309,19 +289,14 @@ void    plGBufferGroup::ISendStorageToBuffers( plPipeline *pipe, bool adjustForN
     plProfile_BeginTiming(DrawRefillVertex);
 
     /// Creating or refreshing?
-    int i;
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
-    {
+    for (size_t i = 0; i < fVertBuffStorage.size(); i++)
         pipe->CheckVertexBufferRef(this, i);
-    }
     plProfile_EndTiming(DrawRefillVertex);
 
     plProfile_BeginTiming(DrawRefillIndex);
 
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
-    {
+    for (size_t i = 0; i < fIdxBuffStorage.size(); i++)
         pipe->CheckIndexBufferRef(this, i);
-    }
 
     plProfile_EndTiming(DrawRefillIndex);
 }
@@ -371,19 +346,26 @@ void    plGBufferGroup::Read( hsStream *s )
     totalDynSize = s->ReadLE32();
     fStride = ICalcVertexSize( fLiteStride );
 
-    fVertBuffSizes.Reset();
-    fVertBuffStarts.Reset();
-    fVertBuffEnds.Reset();
-    fColorBuffCounts.Reset();
-    fIdxBuffCounts.Reset();
-    fIdxBuffStarts.Reset();
-    fIdxBuffEnds.Reset();
-    fVertBuffStorage.Reset();
-    fIdxBuffStorage.Reset();
+    fVertBuffSizes.clear();
+    fVertBuffStarts.clear();
+    fVertBuffEnds.clear();
+    fColorBuffCounts.clear();
+    fIdxBuffCounts.clear();
+    fIdxBuffStarts.clear();
+    fIdxBuffEnds.clear();
+    fVertBuffStorage.clear();
+    fIdxBuffStorage.clear();
 
     plVertCoder coder;
+
     /// Create buffers and read in as we go
     count = s->ReadLE32();
+    fVertBuffSizes.reserve(count);
+    fVertBuffStarts.reserve(count);
+    fVertBuffEnds.reserve(count);
+    fVertBuffStorage.reserve(count);
+    fColorBuffCounts.reserve(count);
+    fColorBuffStorage.reserve(count);
     for( i = 0; i < count; i++ )
     {
         if( fFormat & kEncoded )
@@ -391,36 +373,36 @@ void    plGBufferGroup::Read( hsStream *s )
             const uint16_t numVerts = s->ReadLE16();
             const uint32_t size = numVerts * fStride;
 
-            fVertBuffSizes.Append(size);
-            fVertBuffStarts.Append(0);
-            fVertBuffEnds.Append(-1);
+            fVertBuffSizes.push_back(size);
+            fVertBuffStarts.push_back(0);
+            fVertBuffEnds.push_back(-1);
 
             vData = new uint8_t[size];
-            fVertBuffStorage.Append( vData );
+            fVertBuffStorage.push_back( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
 
             coder.Read(s, vData, fFormat, fStride, numVerts);
 
-            fColorBuffCounts.Append(0);                     
-            fColorBuffStorage.Append(nil);
+            fColorBuffCounts.push_back(0);
+            fColorBuffStorage.push_back(nullptr);
 
         }
         else
         {
             temp = s->ReadLE32();
     
-            fVertBuffSizes.Append( temp );
-            fVertBuffStarts.Append(0);
-            fVertBuffEnds.Append(-1);
+            fVertBuffSizes.push_back( temp );
+            fVertBuffStarts.push_back(0);
+            fVertBuffEnds.push_back(-1);
             
             vData = new uint8_t[ temp ];
-            hsAssert( vData != nil, "Not enough memory to read in vertices" );
+            hsAssert(vData, "Not enough memory to read in vertices");
             s->Read( temp, (void *)vData );
-            fVertBuffStorage.Append( vData );
+            fVertBuffStorage.push_back( vData );
             plProfile_NewMem(MemBufGrpVertex, temp);
             
             temp = s->ReadLE32();
-            fColorBuffCounts.Append( temp );
+            fColorBuffCounts.push_back( temp );
             
             if( temp > 0 )
             {
@@ -431,35 +413,39 @@ void    plGBufferGroup::Read( hsStream *s )
             else
                 cData = nil;
             
-            fColorBuffStorage.Append( cData );
+            fColorBuffStorage.push_back( cData );
         }
     }
 
     count = s->ReadLE32();
+    fIdxBuffCounts.reserve(count);
+    fIdxBuffStarts.reserve(count);
+    fIdxBuffEnds.reserve(count);
+    fIdxBuffStorage.reserve(count);
     for( i = 0; i < count; i++ )
     {
         temp = s->ReadLE32();
-        fIdxBuffCounts.Append( temp );
-        fIdxBuffStarts.Append(0);
-        fIdxBuffEnds.Append(-1);
+        fIdxBuffCounts.push_back(temp);
+        fIdxBuffStarts.push_back(0);
+        fIdxBuffEnds.push_back(-1);
 
         iData = new uint16_t[ temp ];
         hsAssert( iData != nil, "Not enough memory to read in indices" );
         s->ReadLE16( temp, (uint16_t *)iData );
-        fIdxBuffStorage.Append( iData );
+        fIdxBuffStorage.push_back( iData );
         plProfile_NewMem(MemBufGrpIndex, temp * sizeof(uint16_t));
     }
 
     /// Read in cell arrays, one per vBuffer
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    fCells.resize(fVertBuffStorage.size());
+    for( i = 0; i < fVertBuffStorage.size(); i++ )
     {
         temp = s->ReadLE32();
 
-        fCells.Append( new hsTArray<plGBufferCell> );
-        fCells[ i ]->SetCount( temp );
+        fCells[ i ].resize( temp );
 
         for( j = 0; j < temp; j++ )
-            (*fCells[ i ])[ j ].Read( s );
+            fCells[ i ][ j ].Read( s );
     }
 
 }
@@ -482,10 +468,10 @@ void    plGBufferGroup::Write( hsStream *s )
 
     /// Calc total dynamic data size, for fun
     totalDynSize = 0;
-    for( i = 0; i < fVertBuffSizes.GetCount(); i++ )
-        totalDynSize += fVertBuffSizes[ i ];
-    for( i = 0; i < fIdxBuffCounts.GetCount(); i++ )
-        totalDynSize += sizeof( uint16_t ) * fIdxBuffCounts[ i ];
+    for (auto it : fVertBuffSizes)
+        totalDynSize += it;
+    for (auto it : fIdxBuffCounts)
+        totalDynSize += sizeof( uint16_t ) * it;
 
     s->WriteLE( fFormat );
     s->WriteLE32( totalDynSize );
@@ -493,12 +479,12 @@ void    plGBufferGroup::Write( hsStream *s )
     plVertCoder coder;
 
     /// Write out dyanmic data
-    s->WriteLE32( (uint32_t)fVertBuffStorage.GetCount() );
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    s->WriteLE32( (uint32_t)fVertBuffStorage.size() );
+    for (i = 0; i < fVertBuffStorage.size(); ++i)
     {
 #ifdef MF_VERTCODE_ENABLED
 
-        hsAssert(fCells[i]->GetCount() == 1, "Data must be interleaved for compression");
+        hsAssert(fCells[i].size() == 1, "Data must be interleaved for compression");
         uint32_t numVerts = fVertBuffSizes[i] / fStride;
         s->WriteLE16((uint16_t)numVerts);
         coder.Write(s, fVertBuffStorage[i], fFormat, fStride, (uint16_t)numVerts);
@@ -528,19 +514,19 @@ void    plGBufferGroup::Write( hsStream *s )
 #endif // MF_VERTCODE_ENABLED
     }
 
-    s->WriteLE32( (uint32_t)fIdxBuffCounts.GetCount() );
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
+    s->WriteLE32( (uint32_t)fIdxBuffCounts.size() );
+    for( i = 0; i < fIdxBuffStorage.size(); i++ )
     {
         s->WriteLE32( fIdxBuffCounts[ i ] );
         s->WriteLE16( fIdxBuffCounts[ i ], fIdxBuffStorage[ i ] );
     }
 
     /// Write out cell arrays
-    for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+    for (i = 0; i < fVertBuffStorage.size(); i++)
     {
-        s->WriteLE32( fCells[ i ]->GetCount() );
-        for( j = 0; j < fCells[ i ]->GetCount(); j++ )
-            (*fCells[ i ])[ j ].Write( s );
+        s->WriteLE32( fCells[ i ].size() );
+        for( j = 0; j < fCells[ i ].size(); j++ )
+            fCells[ i ][ j ].Write( s );
     }
 
 #ifdef VERT_LOG
@@ -567,10 +553,10 @@ void    plGBufferGroup::DeleteVertsFromStorage( uint32_t which, uint32_t start, 
     uint32_t      amount;
 
 
-    hsAssert( fCells[ which ]->GetCount() == 1, "Cannot delete verts on a mixed buffer group" );
+    hsAssert( fCells[ which ].size() == 1, "Cannot delete verts on a mixed buffer group" );
 
     // Adjust cell 0
-    (*fCells[ which ])[ 0 ].fLength -= length;
+    fCells[ which ][ 0 ].fLength -= length;
 
     start *= fStride;
     length *= fStride;
@@ -588,10 +574,10 @@ void    plGBufferGroup::DeleteVertsFromStorage( uint32_t which, uint32_t start, 
     fVertBuffSizes[ which ] -= length;
     plProfile_DelMem(MemBufGrpVertex, length);
 
-    if( fVertexBufferRefs.GetCount() > which && fVertexBufferRefs[ which ] != nil )
+    if (fVertexBufferRefs.size() > which && fVertexBufferRefs[which])
     {
         hsRefCnt_SafeUnRef(fVertexBufferRefs[which]);
-        fVertexBufferRefs[which] = nil;
+        fVertexBufferRefs[which] = nullptr;
     }
 
 }
@@ -611,8 +597,8 @@ void    plGBufferGroup::AdjustIndicesInStorage( uint32_t which, uint16_t threshh
             fIdxBuffStorage[ which ][ i ] += delta;
     }
 
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
-        fIndexBufferRefs[ which ]->SetDirty( true );
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
+        fIndexBufferRefs[which]->SetDirty( true );
 
 }
 
@@ -641,10 +627,10 @@ void    plGBufferGroup::DeleteIndicesFromStorage( uint32_t which, uint32_t start
     fIdxBuffCounts[ which ] -= length;
     plProfile_DelMem(MemBufGrpIndex, length * sizeof(uint16_t));
 
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
     {
         hsRefCnt_SafeUnRef(fIndexBufferRefs[which]);
-        fIndexBufferRefs[which] = nil;
+        fIndexBufferRefs[which] = nullptr;
     }
 
 }
@@ -662,14 +648,12 @@ uint32_t  plGBufferGroup::GetNumPrimaryVertsLeft( void ) const
 
 uint32_t  plGBufferGroup::GetNumVertsLeft( uint32_t idx ) const
 {
-    if( idx >= fCells.GetCount() )
+    if( idx >= fCells.size() )
         return kMaxNumVertsPerBuffer;
 
-    uint32_t      i, total = kMaxNumVertsPerBuffer;
-
-
-    for( i = 0; i < fCells[ idx ]->GetCount(); i++ )
-        total -= (*fCells[ idx ])[ i ].fLength;
+    uint32_t total = kMaxNumVertsPerBuffer;
+    for( const auto& i : fCells[ idx ] )
+        total -= i.fLength;
 
     return total;
 }
@@ -679,7 +663,7 @@ uint32_t  plGBufferGroup::GetNumVertsLeft( uint32_t idx ) const
 
 uint32_t  plGBufferGroup::IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t vStart, uint32_t cStart, uint32_t len, uint32_t *offset )
 {
-    hsTArray<plGBufferCell> *cells = fCells[ vbIndex ];
+    std::vector<plGBufferCell>& cells = fCells[ vbIndex ];
 
 
     if( !(flags & kReserveInterleaved) )
@@ -690,27 +674,27 @@ uint32_t  plGBufferGroup::IMakeCell( uint32_t vbIndex, uint8_t flags, uint32_t v
         /// we never merge any separated cells
 
         if( flags & kReserveSeparated )
-            cells->Append( plGBufferCell( vStart, cStart, len ) );
+            cells.emplace_back(vStart, cStart, len);
         else
-            cells->Append( plGBufferCell( (uint32_t)-1, cStart, len ) );
+            cells.emplace_back((uint32_t)-1, cStart, len);
         *offset = 0;
     }
     else
     {
         /// Merge if the last cell was an interleaved cell
-        if( cells->GetCount() > 0 && (*cells)[ cells->GetCount() - 1 ].fColorStart == (uint32_t)-1 )
+        if( !cells.empty() && cells.back().fColorStart == (uint32_t)-1 )
         {
-            *offset = (*cells)[ cells->GetCount() - 1 ].fLength;
-            (*cells)[ cells->GetCount() - 1 ].fLength += len;
+            *offset = cells.back().fLength;
+            cells.back().fLength += len;
         }
         else
         {
-            cells->Append( plGBufferCell( vStart, (uint32_t)-1, len ) );
+            cells.emplace_back(vStart, (uint32_t)-1, len);
             *offset = 0;
         }
     }
 
-    return cells->GetCount() - 1;
+    return cells.size() - 1;
 }
 
 //// ReserveVertStorage ///////////////////////////////////////////////////////
@@ -735,7 +719,7 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     /// Find a spot
     if( !(flags & kReserveIsolate) )
     {
-        for( i = 0; i < fVertBuffStorage.GetCount(); i++ )
+        for( i = 0; i < fVertBuffStorage.size(); i++ )
         {
             if( GetNumVertsLeft( i ) >= numVerts )
                 break;
@@ -743,22 +727,22 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     }
     else
     {
-        i = fVertBuffStorage.GetCount();
+        i = fVertBuffStorage.size();
     }
-    if( i == fVertBuffStorage.GetCount() )
+    if( i == fVertBuffStorage.size() )
     {
         if( (flags & kReserveInterleaved) || (flags & kReserveSeparated) )
         {
-            fVertBuffStorage.Append( nil );
-            fVertBuffSizes.Append( 0 );
+            fVertBuffStorage.push_back(nullptr);
+            fVertBuffSizes.push_back(0);
         }
-        fVertBuffStarts.Append(0);
-        fVertBuffEnds.Append(-1);
+        fVertBuffStarts.push_back(0);
+        fVertBuffEnds.push_back(-1);
 
-        fColorBuffStorage.Append( nil );
-        fColorBuffCounts.Append( 0 );
+        fColorBuffStorage.push_back(nullptr);
+        fColorBuffCounts.push_back(0);
 
-        fCells.Append( new hsTArray<plGBufferCell> );
+        fCells.emplace_back();
     }
 
     *vbIndex = i;
@@ -797,25 +781,25 @@ bool    plGBufferGroup::ReserveVertStorage( uint32_t numVerts, uint32_t *vbIndex
     }
 
     /// Switch over
-    if( storagePtr != nil )
+    if (storagePtr)
     {
         if( fVertBuffStorage[ i ] != nil )
             delete [] fVertBuffStorage[ i ];
         fVertBuffStorage[ i ] = storagePtr;
     }
-    if( cStoragePtr != nil )
+    if (cStoragePtr)
     {
-        if( fColorBuffStorage[ i ] != nil )
+        if (fColorBuffStorage[ i ])
             delete [] fColorBuffStorage[ i ];
         fColorBuffStorage[ i ] = cStoragePtr;
         fColorBuffCounts[ i ] += numVerts;
         plProfile_NewMem(MemBufGrpVertex, numVerts * sizeof(plGBufferColor));
     }
 
-    if( fVertexBufferRefs.GetCount() > i && fVertexBufferRefs[ i ] != nil )
+    if (fVertexBufferRefs.size() > i && fVertexBufferRefs[i])
     {
         hsRefCnt_SafeUnRef(fVertexBufferRefs[i]);
-        fVertexBufferRefs[i] = nil;
+        fVertexBufferRefs[i] = nullptr;
     }
 
     /// Append a cell entry
@@ -864,7 +848,7 @@ void    plGBufferGroup::AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t 
     if( !ReserveVertStorage( srcSpan->fNumVerts, vbIndex, cell, offset, kReserveColors ) )
         return;
 
-    (*fCells[ *vbIndex ])[ *cell ].fVtxStart = (*fCells[ *vbIndex ])[ origCell ].fVtxStart;
+    fCells[ *vbIndex ][ *cell ].fVtxStart = fCells[ *vbIndex ][ origCell ].fVtxStart;
 
     StuffToVertStorage( srcSpan, *vbIndex, *cell, *offset, kReserveColors );
 }
@@ -874,18 +858,18 @@ void    plGBufferGroup::AppendToColorStorage( plGeometrySpan *srcSpan, uint32_t 
 
 void    plGBufferGroup::IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, uint32_t offset, uint8_t *&tempPtr, plGBufferColor *&cPtr )
 {
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell < fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( cell < fCells[ vbIndex ].size(), "Invalid cell in StuffToVertStorage()" );
 
     tempPtr = fVertBuffStorage[ vbIndex ];
     cPtr = fColorBuffStorage[ vbIndex ];
 
-    tempPtr += (*fCells[ vbIndex ])[ cell ].fVtxStart;
-    cPtr += (*fCells[ vbIndex ])[ cell ].fColorStart;
+    tempPtr += fCells[ vbIndex ][ cell ].fVtxStart;
+    cPtr += fCells[ vbIndex ][ cell ].fColorStart;
 
     if( offset > 0 )
     {
-        tempPtr += offset * ( ( (*fCells[ vbIndex ])[ cell ].fColorStart == (uint32_t)-1 ) ? fStride : fLiteStride );
+        tempPtr += offset * ( ( fCells[ vbIndex ][ cell ].fColorStart == (uint32_t)-1 ) ? fStride : fLiteStride );
         cPtr += offset;
     }
 }
@@ -894,7 +878,7 @@ void    plGBufferGroup::IGetStartVtxPointer( uint32_t vbIndex, uint32_t cell, ui
 
 uint32_t  plGBufferGroup::GetVertBufferCount( uint32_t idx ) const
 {
-    return GetVertStartFromCell( idx, fCells[ idx ]->GetCount(), 0 );
+    return GetVertStartFromCell( idx, fCells[ idx ].size(), 0 );
 }
 
 //// GetVertStartFromCell /////////////////////////////////////////////////////
@@ -904,12 +888,12 @@ uint32_t  plGBufferGroup::GetVertStartFromCell( uint32_t vbIndex, uint32_t cell,
     uint32_t  i, numVerts;
 
 
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell <= fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( cell <= fCells[ vbIndex ].size(), "Invalid cell in StuffToVertStorage()" );
 
     numVerts = 0;
     for( i = 0; i < cell; i++ )
-        numVerts += (*fCells[ vbIndex ])[ i ].fLength;
+        numVerts += fCells[ vbIndex ][ i ].fLength;
 
     numVerts += offset;
 
@@ -928,11 +912,11 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
     plGBufferCell   *cellPtr;
 
 
-    hsAssert( vbIndex < fVertBuffStorage.GetCount(), "Invalid vbIndex in StuffToVertStorage()" );
-    hsAssert( cell < fCells[ vbIndex ]->GetCount(), "Invalid cell in StuffToVertStorage()" );
+    hsAssert( vbIndex < fVertBuffStorage.size(), "Invalid vbIndex in StuffToVertStorage()" );
+    hsAssert( cell < fCells[ vbIndex ].size(), "Invalid cell in StuffToVertStorage()" );
 
     IGetStartVtxPointer( vbIndex, cell, offset, tempPtr, cPtr );
-    cellPtr = &(*fCells[ vbIndex ])[ cell ];
+    cellPtr = &fCells[ vbIndex ][ cell ];
     stride = ( cellPtr->fColorStart != (uint32_t)-1 ) ? fLiteStride : fStride;
 
     numVerts = srcSpan->fNumVerts;
@@ -1025,7 +1009,7 @@ void    plGBufferGroup::StuffToVertStorage( plGeometrySpan *srcSpan, uint32_t vb
         cPtr++;
     }
 
-    if( ( vbIndex < fVertexBufferRefs.GetCount() ) && fVertexBufferRefs[ vbIndex ] )
+    if( ( vbIndex < fVertexBufferRefs.size() ) && fVertexBufferRefs[ vbIndex ] )
         fVertexBufferRefs[ vbIndex ]->SetDirty( true );
 }
 
@@ -1046,19 +1030,19 @@ bool    plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIn
     }
 
     /// Find a spot
-    for( i = 0; i < fIdxBuffStorage.GetCount(); i++ )
+    for( i = 0; i < fIdxBuffStorage.size(); i++ )
     {
 
         if( fIdxBuffCounts[ i ] + numIndices < kMaxNumIndicesPerBuffer )
             break;
     }
-    if( i == fIdxBuffStorage.GetCount() )
+    if( i == fIdxBuffStorage.size() )
     {
-        fIdxBuffStorage.Append( nil );
-        fIdxBuffCounts.Append( 0 );
+        fIdxBuffStorage.push_back(nullptr);
+        fIdxBuffCounts.push_back(0);
 
-        fIdxBuffStarts.Append(0);
-        fIdxBuffEnds.Append(-1);
+        fIdxBuffStarts.push_back(0);
+        fIdxBuffEnds.push_back(-1);
     }
 
     *ibIndex = i;
@@ -1081,10 +1065,10 @@ bool    plGBufferGroup::ReserveIndexStorage( uint32_t numIndices, uint32_t *ibIn
     plProfile_NewMem(MemBufGrpIndex, numIndices * sizeof(uint16_t));
 
     /// All done!
-    if( fIndexBufferRefs.GetCount() > i && fIndexBufferRefs[ i ] != nil )
+    if ( fIndexBufferRefs.size() > i && fIndexBufferRefs[i])
     {
         hsRefCnt_SafeUnRef(fIndexBufferRefs[i]);
-        fIndexBufferRefs[i] = nil;
+        fIndexBufferRefs[i] = nullptr;
     }
 
     return true;
@@ -1127,11 +1111,11 @@ plGBufferTriangle   *plGBufferGroup::ConvertToTriList( int16_t spanIndex, uint32
 
 
     /// Sanity checks
-    hsAssert( whichIdx < fIdxBuffStorage.GetCount(), "Invalid index buffer ID to ConvertToTriList()" );
-    hsAssert( whichVtx < fVertBuffStorage.GetCount(), "Invalid vertex buffer ID to ConvertToTriList()" );
+    hsAssert( whichIdx < fIdxBuffStorage.size(), "Invalid index buffer ID to ConvertToTriList()" );
+    hsAssert( whichVtx < fVertBuffStorage.size(), "Invalid vertex buffer ID to ConvertToTriList()" );
     hsAssert( start < fIdxBuffCounts[ whichIdx ], "Invalid start index to ConvertToTriList()" );
     hsAssert( start + numTriangles * 3 <= fIdxBuffCounts[ whichIdx ], "Invalid count to ConvertToTriList()" );
-    hsAssert( whichCell < fCells[ whichVtx ]->GetCount(), "Invalid cell to ConvertToTriList()" );
+    hsAssert( whichCell < fCells[ whichVtx ].size(), "Invalid cell to ConvertToTriList()" );
 
     /// Create the array and fill it
     array = new plGBufferTriangle[ numTriangles ];
@@ -1140,7 +1124,7 @@ plGBufferTriangle   *plGBufferGroup::ConvertToTriList( int16_t spanIndex, uint32
     storagePtr = fIdxBuffStorage[ whichIdx ];
     IGetStartVtxPointer( whichVtx, whichCell, 0, vertStgPtr, wastePtr );
     offsetBy = GetVertStartFromCell( whichVtx, whichCell, 0 );
-    stride = ( (*fCells[ whichVtx ])[ whichCell ].fColorStart == (uint32_t)-1 ) ? fStride : fLiteStride;
+    stride = ( fCells[ whichVtx ][ whichCell ].fColorStart == (uint32_t)-1 ) ? fStride : fLiteStride;
     
     for( i = 0, j = 0; i < numTriangles; i++, j += 3 )
     {
@@ -1189,7 +1173,7 @@ void    plGBufferGroup::StuffFromTriList( uint32_t which, uint32_t start, uint32
 
 
     /// Sanity checks
-    hsAssert( which < fIdxBuffStorage.GetCount(), "Invalid index buffer ID to StuffFromTriList()" );
+    hsAssert( which < fIdxBuffStorage.size(), "Invalid index buffer ID to StuffFromTriList()" );
     hsAssert( start < fIdxBuffCounts[ which ], "Invalid start index to StuffFromTriList()" );
     hsAssert( start + numTriangles * 3 <= fIdxBuffCounts[ which ], "Invalid count to StuffFromTriList()" );
 
@@ -1210,8 +1194,8 @@ void    plGBufferGroup::StuffFromTriList( uint32_t which, uint32_t start, uint32
 #endif // MF_SPEED_THIS_UP
 
     /// All done! Just make sure we refresh before we render...
-    if( fIndexBufferRefs.GetCount() > which && fIndexBufferRefs[ which ] != nil )
-        fIndexBufferRefs[ which ]->SetDirty( true );
+    if (fIndexBufferRefs.size() > which && fIndexBufferRefs[which])
+        fIndexBufferRefs[which]->SetDirty(true);
 
 }
 
@@ -1220,7 +1204,7 @@ void    plGBufferGroup::StuffFromTriList( uint32_t which, uint32_t start, uint32
 void    plGBufferGroup::StuffTri( uint32_t iBuff, uint32_t iTri, uint16_t idx0, uint16_t idx1, uint16_t idx2 )
 {
     /// Sanity checks
-    hsAssert( iBuff < fIdxBuffStorage.GetCount(), "Invalid index buffer ID to StuffFromTriList()" );
+    hsAssert( iBuff < fIdxBuffStorage.size(), "Invalid index buffer ID to StuffFromTriList()" );
     hsAssert( iTri < fIdxBuffCounts[ iBuff ], "Invalid start index to StuffFromTriList()" );
 
     fIdxBuffStorage[ iBuff ][ iTri + 0 ] = idx0;
@@ -1258,7 +1242,7 @@ uint32_t  &plGBufferGroup::Color( int iBuff, uint32_t cell, int iVtx )
 
     IGetStartVtxPointer( iBuff, cell, iVtx, vertStgPtr, cPtr );
 
-    if( (*fCells[ iBuff ])[ cell ].fColorStart != (uint32_t)-1 )
+    if( fCells[ iBuff ][ cell ].fColorStart != (uint32_t)-1 )
         return *(uint32_t *)( &cPtr->fDiffuse );
     else
         return *(uint32_t *)( vertStgPtr + 2 * sizeof( hsPoint3 ) );
@@ -1271,7 +1255,7 @@ uint32_t  &plGBufferGroup::Specular( int iBuff, uint32_t cell, int iVtx )
 
     IGetStartVtxPointer( iBuff, cell, iVtx, vertStgPtr, cPtr );
 
-    if( (*fCells[ iBuff ])[ cell ].fColorStart != (uint32_t)-1 )
+    if( fCells[ iBuff ][ cell ].fColorStart != (uint32_t)-1 )
         return *(uint32_t *)( &cPtr->fSpecular );
     else
         return *(uint32_t *)( vertStgPtr + 2 * sizeof( hsPoint3 ) );
@@ -1286,7 +1270,7 @@ hsPoint3    &plGBufferGroup::UV( int iBuff, uint32_t cell, int iVtx, int channel
 
     vertStgPtr += 2 * sizeof( hsPoint3 ) + channel * sizeof( hsPoint3 );
 
-    if( (*fCells[ iBuff ])[ cell ].fColorStart != (uint32_t)-1 )
+    if( fCells[ iBuff ][ cell ].fColorStart != (uint32_t)-1 )
         return *(hsPoint3 *)( vertStgPtr  );
     else
         return *(hsPoint3 *)( vertStgPtr + 2 * sizeof( uint32_t ) );
