@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cfloat>
-#include <type_traits>
 #include "hsStream.h"
 #include "hsTimer.h"
 #include "plSDL.h"
@@ -61,6 +59,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 
+#include <type_traits>
+#include <cfloat>
+#include <cmath>
 
 /*****************************************************************************
 *

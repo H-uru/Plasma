@@ -44,7 +44,8 @@ qt5_wrap_ui(plResBrowser_UIC ${plResBrowser_UIC_SOURCES})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(plResBrowser WIN32 ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
+add_executable(plResBrowser WIN32 MACOSX_BUNDLE
+               ${plResBrowser_SOURCES} ${plResBrowser_HEADERS}
                ${plResBrowser_RCC} ${plResBrowser_UIC} ${plResBrowser_MOC})
 
 target_link_libraries(plResBrowser CoreLib)

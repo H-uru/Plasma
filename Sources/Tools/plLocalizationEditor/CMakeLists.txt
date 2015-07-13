@@ -42,9 +42,10 @@ qt5_wrap_ui(plLocalizationEditor_UIC ${plLocalizationEditor_UIC_SOURCES})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-add_executable(plLocalizationEditor WIN32 ${plLocalizationEditor_HEADERS}
-               ${plLocalizationEditor_SOURCES} ${plLocalizationEditor_RCC}
-               ${plLocalizationEditor_UIC} ${plLocalizationEditor_MOC})
+add_executable(plLocalizationEditor WIN32 MACOSX_BUNDLE
+               ${plLocalizationEditor_HEADERS} ${plLocalizationEditor_SOURCES}
+               ${plLocalizationEditor_RCC} ${plLocalizationEditor_UIC}
+               ${plLocalizationEditor_MOC})
 
 target_link_libraries(plLocalizationEditor CoreLib)
 target_link_libraries(plLocalizationEditor pnSceneObject)

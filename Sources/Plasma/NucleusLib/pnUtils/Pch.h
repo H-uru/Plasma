@@ -51,7 +51,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnUtCoreLib.h"    // must be first in list
 #include "pnUtPragma.h"
 
+#ifdef HS_BUILD_FOR_OSX
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 
 #ifdef HS_BUILD_FOR_WIN32
 #pragma warning(push, 3)
