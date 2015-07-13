@@ -97,7 +97,6 @@ void pfMarkerInfo::Spawn(MarkerType type)
 {
     if (!fMarkerUoid.IsValid())
     {
-        plResManager* resMgr = (plResManager*)hsgResMgr::ResMgr();
         plLocation markerLoc = plKeyFinder::Instance().FindLocation("GlobalMarkers", "Markers");
 
         if (markerLoc.IsValid())
