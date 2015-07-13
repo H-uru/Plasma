@@ -839,6 +839,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
             delete [] fS;
             fI = newI;
         }
+        break;
     case plVarDescriptor::kByte:
         {
             uint8_t* newBy = new uint8_t[fVar.GetCount()];
@@ -897,6 +898,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
             delete [] fBy;
             fI = newI;
         }
+        break;
     case plVarDescriptor::kShort:
         {
             short* newS = new short[fVar.GetCount()];

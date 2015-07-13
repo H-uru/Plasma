@@ -838,7 +838,7 @@ void plStateDataRecord::TimeStampDirtyVars()
     // set nested vars  
     for(i=0;i<fSDVarsList.size(); i++)
     {
-        if ( fVarsList[i]->IsDirty() )
+        if ( fSDVarsList[i]->IsDirty() )
             fSDVarsList[i]->TimeStamp();
     }
 }

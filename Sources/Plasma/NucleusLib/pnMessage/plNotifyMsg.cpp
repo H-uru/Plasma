@@ -147,6 +147,7 @@ void plNotifyMsg::AddEvent( proEventData* ed )
                 proCoopEventData *evt = (proCoopEventData *)ed;
                 AddCoopEvent( evt->fID, evt->fSerial);
             }
+            break;
 
         case proEventData::kControlKey:
             {
@@ -200,16 +201,19 @@ void plNotifyMsg::AddEvent( proEventData* ed )
                 proOfferLinkingBookEventData* evt = (proOfferLinkingBookEventData*)ed;
                 AddOfferBookEvent(evt->offerer, evt->targetAge, evt->offeree);
             }
+            break;
         case proEventData::kBook:
             {
                 proBookEventData* evt = (proBookEventData*)ed;
                 AddBookEvent( evt->fEvent, evt->fLinkID );
             }
+            break;
         case proEventData::kClimbingBlockerHit:
             {
                 proClimbingBlockerHitEventData* evt = (proClimbingBlockerHitEventData*)ed;
                 AddHitClimbingBlockerEvent(evt->fBlockerKey);
             }
+            break;
     }
 }
 

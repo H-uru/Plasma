@@ -237,12 +237,12 @@ void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
             if (value > (1024*1000))
                 sprintf(buf, "%.2f MB", float(value) / (1024.f * 1024.f));
             else if (value > 1024)
-                sprintf(buf, "%d KB", value / 1024);
+                sprintf(buf, "%llu KB", value / 1024);
             else
-                sprintf(buf, "%d b", value);
+                sprintf(buf, "%llu b", value);
         }
         else
-            sprintf(buf, "%u", value);
+            sprintf(buf, "%llu", value);
     }
 }
 
