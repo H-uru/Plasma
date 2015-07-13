@@ -233,7 +233,7 @@ const char *plResponderCmdMtl::GetInstanceName(IParamBlock2 *pb)
     const char *shortName = GetShortName(pb->GetInt(kMtlType));
 
     Mtl *mtl = (Mtl*)pb->GetReferenceTarget(kMtlRef);
-    sprintf(name, "%s (%s)", shortName, mtl ? mtl->GetName() : "none");
+    sprintf(name, "%s (%s)", shortName, mtl ? (const char *)mtl->GetName() : "none");
 
     return name;
 }

@@ -348,6 +348,8 @@ hsMatrix44&     hsMatrix44::SetRotate(int axis, float radians)
         c1 = 0;
         c2 = 1;
         break;
+    default:
+        hsAssert(false, "Invalid rotation axis specified");
     }
     fMap[c1][c1] = c;
     fMap[c2][c2] = c;

@@ -2869,7 +2869,7 @@ bool plMaxNode::IGetProjection(plLightInfo* li, plErrorMsg* pErrMsg)
         {
             char buff[256];
             if( projMap && projMap->GetName() && *projMap->GetName() )
-                sprintf(buff, "Can't find projected bitmap - %s", projMap->GetName());
+                sprintf(buff, "Can't find projected bitmap - %s", (const char *)projMap->GetName());
             else
                 sprintf(buff, "Can't find projected bitmap - <unknown>");
             if( pErrMsg->Set(!(convert.fWarned & plConvert::kWarnedMissingProj), GetName(),

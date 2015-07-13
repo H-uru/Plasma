@@ -76,10 +76,10 @@ enum ELogSeverity {
     kNumLogSeverity
 };
 
-void LogMsg  (ELogSeverity severity, const char  format[], ...);
-void LogMsg  (ELogSeverity severity, const wchar_t format[], ...);
-void LogMsgV (ELogSeverity severity, const char  format[], va_list args);
-void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args);
+void LogMsg  (ELogSeverity severity, const char *format, ...);
+void LogMsg  (ELogSeverity severity, const wchar_t *format, ...);
+void LogMsgV (ELogSeverity severity, const char *format, va_list args);
+void LogMsgV (ELogSeverity severity, const wchar_t *format, va_list args);
 
 /****************************************************************************
 *
@@ -89,12 +89,12 @@ void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args);
 
 #ifdef HS_DEBUGGING
 
-    void LogMsgDebug (const char  format[], ...);
-    void LogMsgDebug (const wchar_t format[], ...);
+    void LogMsgDebug (const char *format, ...);
+    void LogMsgDebug (const wchar_t *format, ...);
 
 #else
 
-    inline void LogMsgDebug (const char  *, ...) { }
+    inline void LogMsgDebug (const char *, ...) { }
     inline void LogMsgDebug (const wchar_t *, ...) { }
 
 #endif

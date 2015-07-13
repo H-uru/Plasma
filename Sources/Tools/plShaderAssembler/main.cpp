@@ -54,7 +54,7 @@ int main(int argc, char* argv[])
         // vs_ => "vs_
         // ps_ => "ps_
         // , => ",
-        const char* kEnumNames[] = {
+        static const char* kEnumNames[] = {
             "vs_WaveFixedFin6",
             "ps_WaveFixed",
             "vs_CompCosines",

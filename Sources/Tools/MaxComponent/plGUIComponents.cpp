@@ -3629,10 +3629,6 @@ public:
 
     bool PreConvert(plMaxNode *pNode, plErrorMsg *pErrMsg);
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
-
-    enum
-    {
-    };
 };
 
 //Max desc stuff necessary below.
