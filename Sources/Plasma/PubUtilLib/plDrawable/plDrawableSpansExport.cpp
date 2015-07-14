@@ -55,6 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plPipeline.h"
 #include "plGeometrySpan.h"
+#include "plGBufferGroup.h"
 
 #include "plSpaceTree.h"
 #include "plSpaceTreeMaker.h"       // This is fun and amusing and wonderful to have here.
@@ -64,7 +65,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h" // for NodeRefMsg
 #include "plMessage/plDeviceRecreateMsg.h"
-#include "plPipeline/plGBufferGroup.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 #include "plGImage/plBitmap.h"

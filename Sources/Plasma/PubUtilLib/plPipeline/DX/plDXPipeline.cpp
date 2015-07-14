@@ -112,7 +112,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDebugText.h"
 #include "plPipeline/plFogEnvironment.h"
 #include "plDXTextFont.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plDrawable/plGBufferGroup.h"
 #include "hsTimer.h"
 #include "plgDispatch.h"
 #include "plScene/plRenderRequest.h"

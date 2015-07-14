@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSpanTypes.h"
 #include "hsStream.h"
 #include "pnKeyedObject/plKey.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plGBufferGroup.h"
 #include "plPipeline/hsGDeviceRef.h"
 #include "plGLight/plLightInfo.h"
 #include "plDrawable.h"

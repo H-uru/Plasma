@@ -71,7 +71,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClusterGroup.h"
 #include "plCluster.h"
 #include "plSpanTemplate.h"
-                                    
+#include "plGBufferGroup.h"
+
 #include "plMath/hsRadixSort.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
@@ -83,7 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plDISpansMsg.h"
 #include "plMessage/plDeviceRecreateMsg.h"
 #include "plMessage/plRenderMsg.h"
-#include "plPipeline/plGBufferGroup.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnKeyedObject/plKey.h"
 #include "plParticleSystem/plParticleEmitter.h"

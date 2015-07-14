@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxPlasmaMtls/Materials/plPassMtl.h"
 #include "MaxPlasmaMtls/Materials/plCompositeMtlPB.h"
 #include "MaxPlasmaMtls/Materials/plPassMtlBasicPB.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plDrawable/plGBufferGroup.h"
 #include "plParticleSystem/plConvexVolume.h"
 #include "plDrawable/plGeoSpanDice.h"
 
