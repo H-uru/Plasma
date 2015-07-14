@@ -135,7 +135,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/plAnimDebugList.h"
 #include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 
-#include "plGImage/plWinFontCache.h"
 #include "plGImage/plFontCache.h"
 
 #include "pfJournalBook/pfJournalBook.h"
@@ -2202,7 +2201,6 @@ void plClient::IOnAsyncInitComplete () {
 
     // Load our custom fonts from our current dat directory
     fFontCache->LoadCustomFonts("dat");
-    plWinFontCache::GetInstance().LoadCustomFonts("dat");
 
     // We'd like to do a SetHoldLoadRequests here, but the GUI stuff doesn't draw right
     // if you try to delay the loading for it.  To work around that, we allocate a
