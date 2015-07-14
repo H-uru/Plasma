@@ -770,10 +770,6 @@ public:
     virtual void                        PopMaterialOverride(const hsGMatState& restore, bool on);
     virtual const hsGMatState&          GetMaterialOverride(bool on) const;
 
-    virtual hsColorOverride             PushColorOverride(const hsColorOverride& over);
-    virtual void                        PopColorOverride(const hsColorOverride& restore);
-    virtual const hsColorOverride&      GetColorOverride() const;
-
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);
 

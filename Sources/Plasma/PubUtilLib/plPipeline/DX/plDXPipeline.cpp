@@ -9557,49 +9557,6 @@ const hsGMatState& plDXPipeline::GetMaterialOverride(bool on) const
     return on ? fMatOverOn : fMatOverOff;
 }
 
-//// PushColorOverride //////////////////////////////////////////////////
-// Obsolete and unused.
-hsColorOverride plDXPipeline::PushColorOverride(const hsColorOverride& over)
-{
-    hsColorOverride ret = GetColorOverride();
-    PopColorOverride( over );
-    return ret;
-}
-
-// PopColorOverride ////////////////////////////////////////////////////////
-// Obsolete and unused.
-void plDXPipeline::PopColorOverride(const hsColorOverride& restore)
-{
-    return;
-/*
-    hsColorOverride cpy = restore;
-    if( !(cpy.fFlags & hsColorOverride::kModAlpha) )
-        cpy.fColor.a = 1.f;
-    if( !(cpy.fFlags & (hsColorOverride::kModAlpha | hsColorOverride::kModColor)) )
-        fDev->SetColorNormal(); 
-    else
-        fDev->SetColorOverride(cpy.fColor, !(cpy.fFlags & hsColorOverride::kModColor));
-*/      
-}
-
-//// GetColorOverride /////////////////////////////////////////////////////////
-// Obsolete and unused.
-const hsColorOverride& plDXPipeline::GetColorOverride() const
-{
-    static hsColorOverride ret;
-    return ret;
-
-/*  ret.fFlags = hsColorOverride::kNone;
-    if( fDev->GetDebugFlags() & hsG3DDevice::kDeviceColor )
-        ret.fFlags |= hsColorOverride::kModColor;
-    if( fDev->GetDebugFlags() & hsG3DDevice::kDeviceAlpha )
-        ret.fFlags |= hsColorOverride::kModAlpha;
-
-    ret.fColor = fDev->GetColorOverride();
-*/
-    return ret;
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
