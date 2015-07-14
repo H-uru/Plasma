@@ -9115,25 +9115,6 @@ void plDXPipeline::SetDepth(float hither, float yon)
     IGetViewTransform().SetDepth(hither, yon);
 }
 
-//// ISavageYonHack ///////////////////////////////////////////////////////////
-//  Corrects the yon for the *#(&$*#&$(*& Savage4 chipset (ex. Diamond Stealth
-//  III S540). Let's just say this card SUCKS.
-// Obsolete since we don't support the Savage4 chipset any more.
-void    plDXPipeline::ISavageYonHack()
-{
-    float yon = GetViewTransform().GetYon();
-    
-
-    if( ( yon > 128.f - 5.0f ) && ( yon < 128.f + 1.01f ) )
-        yon = 128.f + 1.01f;
-    else if( ( yon > 256.f - 10.0f ) && ( yon < 256.f + 1.02f ) )
-        yon = 256.f + 1.02f;
-    else if( ( yon > 512.f - 35.0f ) && ( yon < 512.f + 1.02f ) )
-        yon = 512.f + 1.02f;
-    else if( ( yon > 1024.f - 120.0f ) && ( yon < 1024.f + 1.f ) )
-        yon = 1024.f + 1.f;
-}
-
 //// GetWorldToCamera /////////////////////////////////////////////////////////
 // Return current world to camera transform.
 const hsMatrix44& plDXPipeline::GetWorldToCamera() const
@@ -10254,123 +10235,6 @@ void plDXPipeline::IEndAllocUnManaged()
     fD3DDevice->EvictManagedResources();
     fEvictTime = fTextUseTime;
     fManagedSeen = 0;
-}
-
-// ICheckTextureUsage ////////////////////////////////////////////////////////////////////
-// Obsolete, unused.
-// Deletes textures LRU to try to get around NVidia memory manager bug. Found a 
-// more robust/efficent way. Besides, it didn't help. See OSVERSION.
-void plDXPipeline::ICheckTextureUsage()
-{
-    plProfile_IncCount(fTexUsed, fTexUsed);
-    plProfile_IncCount(fTexManaged, fTexManaged);
-
-    plConst(uint32_t) kMinTexManaged(5000000);
-    if( fTexManaged < kMinTexManaged )
-        return;
-
-    plConst(uint32_t) kScale(2);
-    if( fTexUsed * kScale < fTexManaged )
-    {
-        // Find the stalest
-        uint32_t stalest = fTextUseTime;
-        plDXTextureRef* ref = fTextureRefList;
-        while( ref )
-        {
-            // I don't know if render targets even get put in this list.
-            if( !(ref->GetFlags() & plDXTextureRef::kRenderTarget) && (ref->fUseTime < stalest) )
-                stalest = ref->fUseTime;
-            ref = ref->GetNext();
-        }
-        stalest = fTextUseTime - stalest;
-
-        // If the stalest is fresh, live with thrashing
-        plConst(uint32_t) kMinAge(60);
-        if( stalest < kMinAge )
-            return;
-
-        // Kill the stalest, and everything more than half as stale
-        stalest /= 2;
-        if( stalest < kMinAge )
-            stalest = kMinAge;
-
-        stalest = fTextUseTime - stalest;
-
-        // Go through again slaughtering left and right
-        ref = fTextureRefList;
-        while( ref )
-        {
-            if( !(ref->GetFlags() & plDXTextureRef::kRenderTarget) && (ref->fUseTime < stalest) )
-            {
-                plDXTextureRef* nuke = ref;
-                ref = ref->GetNext();
-                nuke->Release();
-                nuke->Unlink();
-            }
-            else
-            {
-                ref = ref->GetNext();
-            }
-        }
-    }
-}
-
-// ICheckVtxUsage ////////////////////////////////////////////////////////////////////
-// Obsolete, unused.
-// Deletes textures LRU to try to get around NVidia memory manager bug. Found a 
-// more robust/efficent way. Besides, it didn't help. See OSVERSION.
-void plDXPipeline::ICheckVtxUsage()
-{
-    plProfile_IncCount(fVtxUsed, fVtxUsed);
-    plProfile_IncCount(fVtxManaged, fVtxManaged);
-
-    plConst(uint32_t) kMinVtxManaged(5000000);
-    if( fVtxManaged < kMinVtxManaged )
-        return;
-
-    plConst(uint32_t) kScale(2);
-    if( fVtxUsed * kScale < fVtxManaged )
-    {
-        // Find the stalest
-        uint32_t stalest = fTextUseTime;
-        plDXVertexBufferRef* ref = fVtxBuffRefList;
-        while( ref )
-        {
-            if( !ref->Volatile() && (ref->fUseTime < stalest) )
-                stalest = ref->fUseTime;
-            ref = ref->GetNext();
-        }
-        stalest = fTextUseTime - stalest;
-
-        // If the stalest is fresh, live with thrashing
-        plConst(uint32_t) kMinAge(60);
-        if( stalest < kMinAge )
-            return;
-
-        // Kill the stalest, and everything more than half as stale
-        stalest /= 2;
-        if( stalest < kMinAge )
-            stalest = kMinAge;
-
-        stalest = fTextUseTime - stalest;
-
-        // Go through again slaughtering left and right
-        ref = fVtxBuffRefList;
-        while( ref )
-        {
-            if( !ref->Volatile() && (ref->fUseTime < stalest) )
-            {
-                plDXVertexBufferRef* nuke = ref;
-                ref = ref->GetNext();
-                nuke->Release();
-                nuke->Unlink();
-            }
-            else
-            {
-                ref = ref->GetNext();
-            }
-        }
-    }
 }
 
 bool plDXPipeline::CheckResources()
@@ -11911,32 +11775,6 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
         case D3DFMT_INDEX32: return "D3DFMT_INDEX32";
         default: return "Bad format";   
     }
-}
-
-//// IFPUCheck ////////////////////////////////////////////////////////////////
-//  Checks the FPU to make sure it's in the right mode
-// This should return wSave to allow it to be restored after rendering.
-// This is obsolete as of DX8
-void    plDXPipeline::IFPUCheck()
-{
-#ifdef _MSC_VER
-    WORD    wSave, wTemp;
-    __asm fstcw wSave
-    if (wSave & 0x300 ||            // Not single mode
-        0x3f != (wSave & 0x3f) ||   // Exceptions enabled
-        wSave & 0xC00)              // Not round to nearest mode
-    {
-        __asm
-        {
-            mov ax, wSave
-            and ax, not 0x300    ;; single mode
-            or  ax, 0x3f         ;; disable all exceptions
-            and ax, not 0xC00   ;; round to nearest mode
-            mov wTemp, ax
-            fldcw   wTemp
-        }
-    }
-#endif
 }
 
 // PushPiggyBackLayer /////////////////////////////////////////////////////
