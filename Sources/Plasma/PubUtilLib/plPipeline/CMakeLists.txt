@@ -41,7 +41,6 @@ set(plPipeline_HEADERS
     hsFogControl.h
     hsG3DDeviceSelector.h
     hsGColorizer.h
-    hsGDeviceRef.h
     hsWinRef.h
     plCaptureRender.h
     plCubicRenderTarget.h

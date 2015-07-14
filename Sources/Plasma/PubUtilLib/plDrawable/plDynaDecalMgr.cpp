@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerInterface.h"
 #include "plScene/plPageTreeMgr.h"
 
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plDynaDecalEnableMsg.h"

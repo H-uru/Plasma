@@ -57,7 +57,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 #include "hsColorRGBA.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plProfile.h"
 #include "plJPEG.h"
 #include <cmath>

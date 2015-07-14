@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plWin32VideoSound.h"
 #include "plGImage/plMipmap.h"
 #include "pnKeyedObject/plUoid.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plPipeline/plPlates.h"
 #include "plResMgr/plLocalization.h"
 #include "plStatusLog/plStatusLog.h"

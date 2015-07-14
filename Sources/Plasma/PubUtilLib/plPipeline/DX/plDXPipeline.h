@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "hsPoint2.h"
 
 class plAccessSpan;

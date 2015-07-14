@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 #include "plPipeline/plFogEnvironment.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h" 
 #include "pnMessage/plDISpansMsg.h"
