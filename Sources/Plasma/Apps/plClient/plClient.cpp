@@ -91,8 +91,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatGather/plProfileManagerFull.h"
 
 #include "plPipeline.h"
+#include "plPipeDebugFlags.h"
 #include "plPipeline/plPipelineCreate.h"
-#include "plPipeline/plPipeDebugFlags.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPipeline/plCaptureRender.h"
 #include "plPipeline/plDynamicEnvMap.h"

@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAgeLoader/plAgeLoader.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plPipeline/plDebugText.h"
-#include "plPipeline/plPipeDebugFlags.h"
+#include "plPipeDebugFlags.h"
 #include "plMessage/plMovieMsg.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plPipeline.h"

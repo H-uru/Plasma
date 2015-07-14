@@ -53,7 +53,6 @@ set(plPipeline_HEADERS
     plDTProgressMgr.h
     plDynamicEnvMap.h
     plFogEnvironment.h
-    plPipeDebugFlags.h
     plPipelineCreatable.h
     plPipelineCreate.h
     plPlates.h

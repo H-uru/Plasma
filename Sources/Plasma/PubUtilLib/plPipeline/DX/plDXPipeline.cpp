@@ -82,7 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plStatusLogDrawer.h"
 #include "plQuality.h"
 
-#include "plPipeline/plPipeDebugFlags.h"
+#include "plPipeDebugFlags.h"
 
 #include "hsTemplates.h"
 //#include "hsGEnviron.h"
