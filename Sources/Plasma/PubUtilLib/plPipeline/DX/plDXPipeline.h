@@ -645,9 +645,6 @@ public:
     virtual bool                        EndRender();
     virtual void                        RenderScreenElements();
 
-    virtual bool                        BeginDrawable(plDrawable* d);
-    virtual bool                        EndDrawable(plDrawable* d);
-
     virtual void                        BeginVisMgr(plVisMgr* visMgr);
     virtual void                        EndVisMgr(plVisMgr* visMgr);
 
