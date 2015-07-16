@@ -39,90 +39,49 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef SERVER
-#ifndef NO_AV_MSGS
 
 #include "hsStream.h"
-#include "hsResMgr.h"
-#pragma hdrstop
 
-// singular
-#include "plAvCoopMsg.h"
+#include "plAIMsg.h"
+#include "plArmatureMod.h"
 
-// other
-#include "plAvatar/plAvatarMgr.h"
-#include "plAvatar/plCoopCoordinator.h"
+///////////////////////////////////////////////////////////////////////////////
 
-// plAvCoopMsg -----------
-// ------------
-plAvCoopMsg::plAvCoopMsg()
-: plMessage(nil, nil, nil),
-  fInitiatorID(0),
-  fInitiatorSerial(0),
-  fCommand(kNone),
-  fCoordinator(nil)
+plAIMsg::plAIMsg(): plMessage(nil, nil, nil), fBrainUserStr("")
+{}
+
+plAIMsg::plAIMsg(const plKey& sender, const plKey& receiver): plMessage(sender, receiver, nil)
 {
+    // set up our user string from the sender, if it is the right type
+    plArmatureMod* armMod = plArmatureMod::ConvertNoRef(sender->ObjectIsLoaded());
+    if (armMod)
+        fBrainUserStr = armMod->GetUserStr();
 }
 
-// plAvCoopMsg ------------
-// ------------
-plAvCoopMsg::~plAvCoopMsg()
-{
-}
-
-// plAvCoopMsg -----------------------------------
-// ------------
-plAvCoopMsg::plAvCoopMsg(Command cmd, uint32_t id, uint16_t serial)
-: plMessage(nil, plAvatarMgr::GetInstance()->GetKey(), nil),
-  fInitiatorID(id),
-  fInitiatorSerial(serial),
-  fCommand(cmd),
-  fCoordinator(nil)
-{
-
-}
-
-// plAvCoopMsg ----------------------------------
-// ------------
-plAvCoopMsg::plAvCoopMsg(plKey sender, plCoopCoordinator *coordinator)
-: plMessage(sender, plAvatarMgr::GetInstance()->GetKey(), nil),
-  fInitiatorID(coordinator->GetInitiatorID()),
-  fInitiatorSerial(coordinator->GetInitiatorSerial()),
-  fCommand(kStartNew),
-  fCoordinator(coordinator)
-{
-}
-
-// Read -----------------------------------------------
-// -----
-void plAvCoopMsg::Read(hsStream *stream, hsResMgr *mgr)
+void plAIMsg::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgRead(stream, mgr);
 
-    if(stream->ReadBool())
-        fCoordinator = plCoopCoordinator::ConvertNoRef(mgr->ReadCreatable(stream));
-
-    fInitiatorID = stream->ReadLE32();
-    fInitiatorSerial = stream->ReadLE16();
-
-    fCommand = static_cast<Command>(stream->ReadLE16());
+    fBrainUserStr = stream->ReadSafeString();
 }
 
-// Write -----------------------------------------------
-// ------
-void plAvCoopMsg::Write(hsStream *stream, hsResMgr *mgr)
+void plAIMsg::Write(hsStream* stream, hsResMgr* mgr)
 {
     plMessage::IMsgWrite(stream, mgr);
 
-    stream->WriteBool(fCoordinator != nil);
-    if(fCoordinator)
-        mgr->WriteCreatable(stream, fCoordinator);
-
-    stream->WriteLE32(fInitiatorID);
-    stream->WriteLE16(fInitiatorSerial);
-
-    stream->WriteLE16(fCommand);
+    stream->WriteSafeString(fBrainUserStr);
 }
 
-#endif // ndef NO_AV_MSGS
-#endif // ndef SERVER
+///////////////////////////////////////////////////////////////////////////////
+
+void plAIArrivedAtGoalMsg::Read(hsStream* stream, hsResMgr* mgr)
+{
+    plAIMsg::Read(stream, mgr);
+    fGoal.Read(stream);
+}
+
+void plAIArrivedAtGoalMsg::Write(hsStream* stream, hsResMgr* mgr)
+{
+    plAIMsg::Write(stream, mgr);
+    fGoal.Write(stream);
+}

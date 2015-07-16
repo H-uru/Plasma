@@ -46,5 +46,12 @@ set(plAudio_HEADERS
 
 add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
 
+target_link_libraries(plAudio CoreLib)
+target_link_libraries(plAudio pnModifier)
+target_link_libraries(plAudio pnSceneObject)
+target_link_libraries(plAudio plAnimation)
+target_link_libraries(plAudio plAudioCore)
+target_link_libraries(plAudio ${OPENAL_LIBRARY})
+
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

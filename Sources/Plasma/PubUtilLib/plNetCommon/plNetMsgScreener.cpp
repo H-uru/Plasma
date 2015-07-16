@@ -56,8 +56,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plInputEventMsg.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "plMessage/plBulletMsg.h"
-#include "plMessage/plAvCoopMsg.h"
 #include "plMessage/plParticleUpdateMsg.h"
+#include "plAvatar/plAvCoopMsg.h"
 
 #include "pfMessage/pfKIMsg.h"      
 #include "pfMessage/plClothingMsg.h"    

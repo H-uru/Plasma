@@ -51,10 +51,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetClient/plNetClientMgr.h"
 #include "plAgeLoader/plAgeLoader.h"
 
-plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, uint32_t flags) : 
-fLoc(loc), 
+plNetObjectDebugger::DebugObject::DebugObject(const char* objName, plLocation& loc, uint32_t flags) :
+fLoc(loc),
 fFlags(flags)
-{ 
+{
     std::string tmp = objName;
     hsStrLower((char*)tmp.c_str());
     fObjName = tmp;
@@ -102,7 +102,7 @@ bool plNetObjectDebugger::DebugObject::StringMatches(const char* str) const
 // if both objName and pageName are provided, and this object has page info,
 //      return true if object matches both string and location.
 // else just return true if object matches string
-// 
+//
 bool plNetObjectDebugger::DebugObject::ObjectMatches(const char* objName, const char* pageName)
 {
     if (!objName)
@@ -143,9 +143,9 @@ plNetObjectDebugger::plNetObjectDebugger() : fStatusLog(nil), fDebugging(false)
 {
 }
 
-plNetObjectDebugger::~plNetObjectDebugger() 
-{ 
-    ClearAllDebugObjects(); 
+plNetObjectDebugger::~plNetObjectDebugger()
+{
+    ClearAllDebugObjects();
     delete fStatusLog;
 }
 
@@ -155,8 +155,8 @@ plNetObjectDebugger::~plNetObjectDebugger()
 plNetObjectDebugger* plNetObjectDebugger::GetInstance()
 {
     static plNetObjectDebugger gNetObjectDebugger;
-    
-    if (plNetObjectDebuggerBase::GetInstance()==nil)
+
+    if (plNetObjectDebuggerBase::GetInstance() == nullptr)
         plNetObjectDebuggerBase::SetInstance(&gNetObjectDebugger);
 
     return &gNetObjectDebugger;
@@ -169,7 +169,7 @@ void plNetObjectDebugger::ICreateStatusLog() const
 {
     if (!fStatusLog)
     {
-        fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "NetObject.log", 
+        fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "NetObject.log",
             plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp );
     }
 }

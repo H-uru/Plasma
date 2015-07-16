@@ -10,6 +10,7 @@ set(plNetCommon_SOURCES
     plNetCommonHelpers.cpp
     plNetMember.cpp
     plNetMsgScreener.cpp
+    plNetObjectDebugger.cpp
     plNetServerSessionInfo.cpp
     plSpawnPointInfo.cpp
 )
@@ -23,11 +24,15 @@ set(plNetCommon_HEADERS
     plNetMember.h
     plNetMsgHandler.h
     plNetMsgScreener.h
+    plNetObjectDebugger.h
     plNetServerSessionInfo.h
     plSpawnPointInfo.h
 )
 
 add_library(plNetCommon STATIC ${plNetCommon_SOURCES} ${plNetCommon_HEADERS})
+
+target_link_libraries(plNetCommon CoreLib)
+target_link_libraries(plNetCommon pnUUID)
 
 source_group("Source Files" FILES ${plNetCommon_SOURCES})
 source_group("Header Files" FILES ${plNetCommon_HEADERS})

@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #include "plAgeLoader/plAgeLoader.h"
-#include "plNetClient/plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plAgeLoader/plResPatcher.h"

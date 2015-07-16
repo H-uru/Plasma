@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyCritterBrain.h"
 #include "pyEnum.h"
 
-#include "plMessage/plAIMsg.h"
+#include "plAvatar/plAIMsg.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

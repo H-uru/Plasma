@@ -100,7 +100,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plAccountUpdateMsg.h"
 #include "plAgeLoader/plAgeLoader.h"
 #include "pfGameMgr/pfGameMgr.h"
-#include "plMessage/plAIMsg.h"
+#include "plAvatar/plAIMsg.h"
 #include "plAvatar/plAvBrainCritter.h"
 #include "pfMessage/pfGameScoreMsg.h"
 

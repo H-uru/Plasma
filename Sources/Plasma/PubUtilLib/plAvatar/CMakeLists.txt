@@ -7,6 +7,7 @@ include_directories("../../PubUtilLib")
 include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plAvatar_SOURCES
+    plAIMsg.cpp
     plAnimStage.cpp
     plArmatureEffects.cpp
     plArmatureMod.cpp
@@ -24,6 +25,7 @@ set(plAvatar_SOURCES
     plAvBrainHuman.cpp
     plAvBrainRideAnimatedPhysical.cpp
     plAvBrainSwim.cpp
+    plAvCoopMsg.cpp
     plAvLadderModifier.cpp
     plAvTaskBrain.cpp
     plAvTaskSeek.cpp
@@ -39,6 +41,7 @@ set(plAvatar_SOURCES
 )
 
 set(plAvatar_HEADERS
+    plAIMsg.h
     plAnimStage.h
     plArmatureEffects.h
     plArmatureMod.h
@@ -57,6 +60,7 @@ set(plAvatar_HEADERS
     plAvBrainHuman.h
     plAvBrainRideAnimatedPhysical.h
     plAvBrainSwim.h
+    plAvCoopMsg.h
     plAvDefs.h
     plAvLadderModifier.h
     plAvTask.h

@@ -203,24 +203,24 @@ class plPointControllerChannel : public plPointChannel
 {
 protected:
     plController *fController;
-    
+
 public:
     // xTORs
     plPointControllerChannel();
     plPointControllerChannel(plController *controller);
     virtual ~plPointControllerChannel();
-    
+
     // AG PROTOCOL
     virtual const hsPoint3 & Value(double time);
     virtual const hsPoint3 & Value(double time, plControllerCacheInfo *cache);
-    
+
     virtual plAGChannel * MakeCacheChannel(plAnimTimeConvert *atc);     
-    
+
     // PLASMA PROTOCOL
     // rtti
     CLASSNAME_REGISTER( plPointControllerChannel );
     GETINTERFACE_ANY( plPointControllerChannel, plPointChannel );
-    
+
     // persistence
     virtual void Write(hsStream *stream, hsResMgr *mgr);
     virtual void Read(hsStream *s, hsResMgr *mgr);
@@ -235,25 +235,25 @@ class plPointControllerCacheChannel : public plPointChannel
 protected:
     plControllerCacheInfo *fCache;
     plPointControllerChannel *fControllerChannel;
-    
+
 public:
     plPointControllerCacheChannel();
     plPointControllerCacheChannel(plPointControllerChannel *channel, plControllerCacheInfo *cache);
     virtual ~plPointControllerCacheChannel();
-    
+
     virtual const hsPoint3 & Value(double time, bool peek = false);
 
     virtual plAGChannel * Detach(plAGChannel * channel);
-    
+
     // PLASMA PROTOCOL
     CLASSNAME_REGISTER( plPointControllerCacheChannel );
     GETINTERFACE_ANY( plPointControllerCacheChannel, plPointChannel );
-    
+
     // Created at runtime only, so no Read/Write
 };
 
 ////////////////////////////
-// 
+//
 // Channel Applicator classes
 
 class plPointChannelApplicator : public plAGApplicator
@@ -265,38 +265,5 @@ public:
     CLASSNAME_REGISTER( plPointChannelApplicator );
     GETINTERFACE_ANY( plPointChannelApplicator, plAGApplicator );
 };
-
-class plLightDiffuseApplicator : public plAGApplicator
-{
-protected:
-    virtual void IApply(const plAGModifier *mod, double time);
-
-public:
-    CLASSNAME_REGISTER( plLightDiffuseApplicator );
-    GETINTERFACE_ANY( plLightDiffuseApplicator, plAGApplicator );
-};
-
-class plLightAmbientApplicator : public plAGApplicator
-{
-protected:
-    virtual void IApply(const plAGModifier *mod, double time);
-
-public:
-    CLASSNAME_REGISTER( plLightAmbientApplicator );
-    GETINTERFACE_ANY( plLightAmbientApplicator, plAGApplicator );
-};
-
-class plLightSpecularApplicator : public plAGApplicator
-{
-protected:
-    virtual void IApply(const plAGModifier *mod, double time);
-
-public:
-    CLASSNAME_REGISTER( plLightSpecularApplicator );
-    GETINTERFACE_ANY( plLightSpecularApplicator, plAGApplicator );
-};
-
-
-
 
 #endif // PLPOINTCHANNEL_H

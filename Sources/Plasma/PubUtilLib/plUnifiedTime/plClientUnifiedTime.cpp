@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClientUnifiedTime.h"
 
 #if 0
-#include "plNetClient/plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetClient/plNetClientMgr.h"
 #endif
 
