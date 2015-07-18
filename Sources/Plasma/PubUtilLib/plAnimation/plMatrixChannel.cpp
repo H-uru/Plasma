@@ -903,7 +903,7 @@ bool CompareMatrices2(const hsMatrix44 &matA, const hsMatrix44 &matB, float tole
     bool c32 = fabs(matA.fMap[3][2] - matB.fMap[3][2]) < tolerance;
     bool c33 = fabs(matA.fMap[3][3] - matB.fMap[3][3]) < tolerance;
 
-    return c00 && c01 && c02 && c03 && c11 && c12 && c13 && c20 && c21 && c22 && c23 && c30 && c31 && c32 && c33;
+    return c00 && c01 && c02 && c03 && c10 && c11 && c12 && c13 && c20 && c21 && c22 && c23 && c30 && c31 && c32 && c33;
 }
 
 // IAPPLY

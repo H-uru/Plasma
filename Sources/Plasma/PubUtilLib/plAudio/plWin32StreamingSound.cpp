@@ -177,8 +177,6 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         {
             plAudioCore::ChannelSelect select = buffer->GetReaderSelect();
 
-            bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
-
             /// Open da file
             plFileName strPath = plFileSystem::GetCWD();
 

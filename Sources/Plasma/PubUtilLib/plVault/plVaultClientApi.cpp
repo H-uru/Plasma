@@ -1902,7 +1902,6 @@ hsRef<RelVaultNode> VaultCreateNodeAndWait (
     plVault::NodeTypes          nodeType,
     ENetError *                 result
 ) {
-    hsRef<RelVaultNode> node;
     hsRef<RelVaultNode> templateNode = new RelVaultNode;
     templateNode->SetNodeType(nodeType);
 

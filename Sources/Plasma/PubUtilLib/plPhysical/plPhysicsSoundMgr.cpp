@@ -149,7 +149,6 @@ void plPhysicsSoundMgr::IStopCollision(const CollidePair& cp)
 
 void plPhysicsSoundMgr::IUpdateCollision(const CollidePair& cp)
 {
-    const float slideThreshhold = 0.f;   
     hsVector3 v1, v2;
     plPhysical* physicalA = cp.FirstPhysical();
     plPhysical* physicalB = cp.SecondPhysical();

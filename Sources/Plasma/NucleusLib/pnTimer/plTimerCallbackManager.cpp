@@ -120,7 +120,6 @@ bool plTimerCallbackManager::CancelCallback(plTimerCallback* pTimer)
 
 bool plTimerCallbackManager::CancelCallbacksToKey(const plKey& key)
 {
-    const plKey rKey;
     bool removed = false;
 
     for (int i = fCallbacks.Count() - 1; i >= 0 ; i--)
