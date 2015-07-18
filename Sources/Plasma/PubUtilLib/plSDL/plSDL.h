@@ -520,7 +520,6 @@ private:
 
     hsDeprecated("plSDLParser::DebugMsg with format is deprecated -- use plFormat instead")
     void DebugMsg(const char* fmt, ...) const;
-    hsDeprecated("plSDLParser::DebugMsgV is deprecated -- use plFormat instead")
     void DebugMsgV(const char* fmt, va_list args) const;
 
 public:

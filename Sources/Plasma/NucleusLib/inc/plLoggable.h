@@ -164,12 +164,6 @@ public:
     // DEPRECATED Log methods
     /////////////////////////////////////////////////////////////////////////
 
-    hsDeprecated("plLoggable::Log is deprecated -- use plFormat instead")
-    virtual bool Log( const char * str ) const
-    {
-        return Log(plString::FromUtf8(str));
-    }
-
     hsDeprecated("plLoggable::LogF is deprecated -- use plFormat instead")
     virtual bool LogF( const char * fmt, ... ) const
     {
@@ -181,31 +175,26 @@ public:
         return ret;
     }
 
-    hsDeprecated("plLoggable::LogV is deprecated -- use plFormat instead")
     virtual bool LogV( const char * fmt, va_list args ) const
     {
         return Log(plString::IFormat(fmt, args));
     }
 
-    hsDeprecated("plLoggable::ErrorMsgV is deprecated -- use plFormat instead")
     virtual bool ErrorMsgV(const char* fmt, va_list args) const
     {
         return ErrorMsg(plString::IFormat(fmt, args));
     }
 
-    hsDeprecated("plLoggable::DebugMsgV is deprecated -- use plFormat instead")
     virtual bool DebugMsgV(const char* fmt, va_list args) const
     {
         return DebugMsg(plString::IFormat(fmt, args));
     }
 
-    hsDeprecated("plLoggable::WarningMsgV is deprecated -- use plFormat instead")
     virtual bool WarningMsgV(const char* fmt, va_list args) const
     {
         return WarningMsg(plString::IFormat(fmt, args));
     }
 
-    hsDeprecated("plLoggable::AppMsgV is deprecated -- use plFormat instead")
     virtual bool AppMsgV(const char* fmt, va_list args) const
     {
         return AppMsg(plString::IFormat(fmt, args));
