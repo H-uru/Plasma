@@ -133,7 +133,7 @@ PYTHON_METHOD_DEFINITION(ptGameScore, setPoints, args)
 {
     int32_t numPoints = 0;
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTuple(args, "i|O", &numPoints))
+    if (!PyArg_ParseTuple(args, "i|O", &numPoints, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "setPoints expects an int and an optional ptKey");
         PYTHON_RETURN_ERROR;

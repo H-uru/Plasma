@@ -130,9 +130,9 @@ class plDynamicTextMap : public plMipmap
 
         virtual uint8_t   GetNumLevels( void ) const { return 1; }
 
-        virtual void        Colorize( void ) { ; }
-        virtual plMipmap    *Clone( void );
-        virtual void        CopyFrom( plMipmap *source );
+        void        Colorize() override { }
+        plMipmap    *Clone() const override;
+        void        CopyFrom(const plMipmap *source) override;
 
 
         /// Operations to perform on the text block

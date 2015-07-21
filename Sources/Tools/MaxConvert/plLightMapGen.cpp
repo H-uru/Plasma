@@ -1587,7 +1587,7 @@ bool plLightMapGen::ISelectBitmapDimension(plMaxNode* node, const hsMatrix44& l2
     
     if( dvDr > 0 )
     {
-        fHeight = (int)(kTexPerFoot / duDr);
+        fHeight = (int)(kTexPerFoot / dvDr);
 
         if( fHeight > kMaxSize )
             fHeight = kMaxSize;

@@ -83,7 +83,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static void CDECL LogDumpProc (
     void *              ,
-    const wchar_t         fmt[],
+    const wchar_t       *fmt,
     ...
 ) {
     va_list args;

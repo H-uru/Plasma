@@ -260,7 +260,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(name, tempstr, arrsize(name));
-    delete tempstr;
+    free(tempstr);
 
     if (end)
         *end = buffer;

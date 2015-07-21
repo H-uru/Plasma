@@ -471,6 +471,7 @@ bool    plAvatarInputInterface::IHandleCtrlCmd( plCtrlCmd *cmd )
                 fCurrentCursor = kCursorHidden; 
             else
                 fCurrentCursor = kCursorUp;
+            return true;
         case S_SET_LADDER_CONTROL:      
             if( cmd->fControlActivated )
                 ISetLadderMap();            

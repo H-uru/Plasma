@@ -369,8 +369,8 @@ bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const
     while( true )
     {
         while( !AtEnd() && IsTokenSeparator(c = ReadByte()) )
-            c = c;
-            ;
+            /* empty */;
+
         if( AtEnd() )
             return false;
 
@@ -379,8 +379,7 @@ bool hsStream::GetToken(char *s, uint32_t maxLen, const char beginComment, const
 
         // skip to end of comment
         while( !AtEnd() && (endCom != (c = ReadByte())) )
-            c= c;
-            ;
+            /* empty */;
     }
 
     s[0] = c;
@@ -419,8 +418,8 @@ bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const c
     while( true )
     {
         while( !AtEnd() && strchr("\r\n",c = ReadByte()) )
-            c = c;
-            ;
+            /* empty */;
+
         if( AtEnd() )
             return false;
 
@@ -429,8 +428,7 @@ bool hsStream::ReadLn(char *s, uint32_t maxLen, const char beginComment, const c
 
         // skip to end of comment
         while( !AtEnd() && (endCom != (c = ReadByte())) )
-            c= c;
-            ;
+            /* empty */;
     }
 
     s[0] = c;

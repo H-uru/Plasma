@@ -1967,7 +1967,6 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     memset(newStarts, 0, kMaxBufferGroups * kMaxIndexBuffers * sizeof(int16_t));
 
-    uint32_t start = 0;
     for( i = 0; i < visList.GetCount(); i++ )
     {
         plIcicle* span = (plIcicle*)fSpans[visList[i]];

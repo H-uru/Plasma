@@ -489,7 +489,7 @@ void plExportDlgImp::StartAutoExport()
     char outputDir[MAX_PATH];
     GetPrivateProfileString("Settings", "MaxOutputDir", "", outputDir, sizeof(outputDir), configFile);
 
-    if (inputDir[0] == '\0' || outputDir == '\0')
+    if (inputDir[0] == '\0' || outputDir[0] == '\0')
         return;
 
     fAutoExporting = true;

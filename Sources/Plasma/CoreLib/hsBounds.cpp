@@ -1493,7 +1493,6 @@ bool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hs
     if( !(other.fExtFlags & (kDistsSet|kAxisAligned)) )
         other.IMakeDists();
 
-    const float kRealBig = 1.e30f;
     float tstDepths[9];
     hsVector3 tstAxes[9];
     float totDepth = 0;
@@ -1644,9 +1643,6 @@ bool hsBounds3Ext::ISectBB(const hsBounds3Ext &other, const hsVector3 &myVel, hs
 
 bool hsBounds3Ext::ISectABB(const hsBounds3Ext &other, const hsVector3 &myVel) const
 {
-    hsPoint3 effMaxs = fMaxs;
-    hsPoint3 effMins = fMins;
-
     int i;
     for( i = 0; i < 3; i++ )
     {

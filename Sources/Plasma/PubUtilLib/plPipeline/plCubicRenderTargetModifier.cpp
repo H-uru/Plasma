@@ -127,8 +127,6 @@ void    plCubicRenderTargetModifier::ICreateRenderRequest( int face )
 bool    plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dirty )
 {
     hsPoint3    center;
-    hsMatrix44  mtx, invMtx;
-    int         i;
 
     plRenderRequestMsg  *msg;
 
@@ -150,7 +148,7 @@ bool    plCubicRenderTargetModifier::IEval( double secs, float del, uint32_t dir
     fCubic->SetCameraMatrix(center);
 
     /// Submit render requests!
-    for( i = 0; i < 6; i++ )
+    for (int i = 0; i < 6; i++)
     {
         if( fRequests[ i ] != nil )
         {
