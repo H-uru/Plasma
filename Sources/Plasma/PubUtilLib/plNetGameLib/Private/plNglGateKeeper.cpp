@@ -732,7 +732,7 @@ static bool Recv_AuthSrvIpAddressReply (
 *
 ***/
 
-#define MSG(s)  kNetMsg_Cli2GateKeeper_##s
+#define MSG(s)  &kNetMsg_Cli2GateKeeper_##s
 static NetMsgInitSend s_send[] = {
     { MSG(PingRequest)              },
     { MSG(FileSrvIpAddressRequest)  },
@@ -740,7 +740,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  kNetMsg_GateKeeper2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, Recv_##s
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(FileSrvIpAddressReply)    },

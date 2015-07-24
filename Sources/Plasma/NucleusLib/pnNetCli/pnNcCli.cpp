@@ -283,8 +283,8 @@ static void BufferedSendData (
     uintptr_t const * const msgEnd = msg + fieldCount;
 
     const NetMsgInitSend * sendMsg = NetMsgChannelFindSendMessage(cli->channel, msg[0]);
-    ASSERT(msg[0] == sendMsg->msg.messageId);
-    ASSERT(fieldCount-1 == sendMsg->msg.count);
+    ASSERT(msg[0] == sendMsg->msg->messageId);
+    ASSERT(fieldCount-1 == sendMsg->msg->count);
 
     // insert messageId into command stream
     const uint16_t msgId = hsToLE16((uint16_t)msg[0]);
@@ -295,8 +295,8 @@ static void BufferedSendData (
     // insert fields into command stream
     uint32_t varCount  = 0;
     uint32_t varSize   = 0;
-    const NetMsgField * cmd     = sendMsg->msg.fields;
-    const NetMsgField * cmdEnd  = cmd + sendMsg->msg.count;
+    const NetMsgField * cmd     = sendMsg->msg->fields;
+    const NetMsgField * cmdEnd  = cmd + sendMsg->msg->count;
     for (; cmd < cmdEnd; ++msg, ++cmd) {
         switch (cmd->type) {
             case kNetMsgFieldInteger: {
@@ -429,7 +429,7 @@ static bool DispatchData (NetCli * cli, void * param) {
             // prepare to start decompressing new fields
             ASSERT(!cli->recvField);
             ASSERT(!cli->recvFieldBytes);
-            cli->recvField = cli->recvMsg->msg.fields;
+            cli->recvField = cli->recvMsg->msg->fields;
             cli->recvBuffer.ZeroCount();
             cli->recvBuffer.Reserve(kAsyncSocketBufferSize);
 
@@ -439,7 +439,7 @@ static bool DispatchData (NetCli * cli, void * param) {
         }
 
         for (
-            const NetMsgField * end = cli->recvMsg->msg.fields + cli->recvMsg->msg.count;
+            const NetMsgField * end = cli->recvMsg->msg->fields + cli->recvMsg->msg->count;
             cli->recvField < end;
             ++cli->recvField
         ) {
@@ -574,7 +574,7 @@ static bool DispatchData (NetCli * cli, void * param) {
         }
 
         // dispatch message to handler function
-        NCCLI_LOG(kLogPerf, L"pnNetCli: Dispatching. msg: %S. cli: %p", cli->recvMsg ? cli->recvMsg->msg.name : "(unknown)", cli);
+        NCCLI_LOG(kLogPerf, L"pnNetCli: Dispatching. msg: %S. cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", cli);
         if (!cli->recvMsg->recv(cli->recvBuffer.Ptr(), cli->recvBuffer.Count(), param))
             goto ERR_DISPATCH_FAILED;
         
@@ -592,19 +592,19 @@ static bool DispatchData (NetCli * cli, void * param) {
 
 // these are used for convenience in setting breakpoints
 NEED_MORE_DATA:
-    NCCLI_LOG(kLogPerf, L"pnNetCli: NEED_MORE_DATA. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg.name : "(unknown)", msgId, cli);
+    NCCLI_LOG(kLogPerf, L"pnNetCli: NEED_MORE_DATA. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
     return true;
 
 ERR_BAD_COUNT:
-    LogMsg(kLogError, L"pnNetCli: ERR_BAD_COUNT. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg.name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, L"pnNetCli: ERR_BAD_COUNT. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
     return false;
 
 ERR_NO_HANDLER:
-    LogMsg(kLogError, L"pnNetCli: ERR_NO_HANDLER. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg.name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, L"pnNetCli: ERR_NO_HANDLER. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
     return false;
 
 ERR_DISPATCH_FAILED:
-    LogMsg(kLogError, L"pnNetCli: ERR_DISPATCH_FAILED. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg.name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, L"pnNetCli: ERR_DISPATCH_FAILED. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
     return false;
 }
 
