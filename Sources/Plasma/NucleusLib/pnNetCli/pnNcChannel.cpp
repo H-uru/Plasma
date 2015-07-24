@@ -204,8 +204,8 @@ static unsigned MaxMsgId (const T msgs[], unsigned count) {
     unsigned maxMsgId = 0;
 
     for (unsigned i = 0; i < count; i++) {
-        ASSERT(msgs[i].msg.count);
-        maxMsgId = std::max(msgs[i].msg.messageId, maxMsgId);
+        ASSERT(msgs[i].msg->count);
+        maxMsgId = std::max(msgs[i].msg->messageId, maxMsgId);
     }
     return maxMsgId;
 }
@@ -219,13 +219,13 @@ static void AddSendMsgs_CS (
     channel->m_sendMsgs.GrowToFit(MaxMsgId(src, count), true);
 
     for (const NetMsgInitSend * term = src + count; src < term; ++src) {
-        NetMsgInitSend * const dst = &channel->m_sendMsgs[src[0].msg.messageId];
+        NetMsgInitSend * const dst = &channel->m_sendMsgs[src[0].msg->messageId];
 
         // check to ensure that the message id isn't already used
-        ASSERT(!dst->msg.count);
+        ASSERT(!dst->msg);
 
         *dst = *src;
-        ValidateMsg(dst->msg);
+        ValidateMsg(*dst->msg);
     }
 }
 
@@ -239,15 +239,15 @@ static void AddRecvMsgs_CS (
 
     for (const NetMsgInitRecv * term = src + count; src < term; ++src) {
         ASSERT(src->recv);
-        NetMsgInitRecv * const dst = &channel->m_recvMsgs[src[0].msg.messageId];
+        NetMsgInitRecv * const dst = &channel->m_recvMsgs[src[0].msg->messageId];
 
         // check to ensure that the message id isn't already used
-        ASSERT(!dst->msg.count);
+        ASSERT(!dst->msg);
 
         // copy the message handler
         *dst = *src;
 
-        const uint32_t bytes = ValidateMsg(dst->msg);
+        const uint32_t bytes = ValidateMsg(*dst->msg);
         channel->m_largestRecv = std::max(channel->m_largestRecv, bytes);
     }
 }
@@ -332,7 +332,7 @@ const NetMsgInitRecv * NetMsgChannelFindRecvMessage (
 
     // Is message defined?
     const NetMsgInitRecv * recvMsg = &channel->m_recvMsgs[messageId];
-    if (!recvMsg->msg.count)
+    if (!recvMsg->msg->count)
         return nil;
 
     // Success!
@@ -349,7 +349,7 @@ const NetMsgInitSend * NetMsgChannelFindSendMessage (
 
     // Is message defined?
     const NetMsgInitSend * sendMsg = &channel->m_sendMsgs[messageId];
-    ASSERTMSG(sendMsg->msg.count, "NetMsg not found for send");
+    ASSERTMSG(sendMsg->msg->count, "NetMsg not found for send");
 
     return sendMsg;
 }

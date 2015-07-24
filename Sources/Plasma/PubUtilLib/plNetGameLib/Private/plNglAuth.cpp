@@ -2345,7 +2345,7 @@ static bool Recv_ScoreGetRanksReply (
 *
 ***/
 
-#define MSG(s)  kNetMsg_Cli2Auth_##s
+#define MSG(s)  &kNetMsg_Cli2Auth_##s
 static NetMsgInitSend s_send[] = {
     { MSG(PingRequest)              },
     { MSG(ClientRegisterRequest)    },
@@ -2396,7 +2396,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  kNetMsg_Auth2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_Auth2Cli_##s, Recv_##s
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(ClientRegisterReply)      },

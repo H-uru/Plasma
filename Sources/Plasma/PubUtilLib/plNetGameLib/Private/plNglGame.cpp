@@ -550,7 +550,7 @@ static bool Recv_GameMgrMsg (
 //============================================================================
 // Send/Recv protocol handler init
 //============================================================================
-#define MSG(s)  kNetMsg_Cli2Game_##s
+#define MSG(s)  &kNetMsg_Cli2Game_##s
 static NetMsgInitSend s_send[] = {
     { MSG(PingRequest),         },
     { MSG(JoinAgeRequest),      },
@@ -559,7 +559,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  kNetMsg_Game2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_Game2Cli_##s, Recv_##s
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)            },
     { MSG(JoinAgeReply),        },

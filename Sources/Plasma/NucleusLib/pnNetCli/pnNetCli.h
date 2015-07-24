@@ -311,10 +311,10 @@ struct NetCliQueue;
 ***/
 
 struct NetMsgInitSend {
-    NetMsg  msg;
+    const NetMsg  *msg;
 };
 struct NetMsgInitRecv {
-    NetMsg  msg;
+    const NetMsg  *msg;
     bool (* recv)(const uint8_t msg[], unsigned bytes, void * param);
 };
 
