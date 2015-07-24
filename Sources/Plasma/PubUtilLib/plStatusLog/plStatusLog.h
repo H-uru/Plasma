@@ -59,6 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsThread.h"
 #include "plFileSystem.h"
+#include "plLoggable.h"
 
 #include <string>
 
@@ -70,7 +71,8 @@ class plPipeline;
 
 class plStatusLogMgr;
 class plStatusLogDrawerStub;
-class plStatusLog
+
+class plStatusLog : public plLog
 {
     friend class plStatusLogMgr;
     friend class plStatusLogDrawerStub;
@@ -156,6 +158,8 @@ class plStatusLog
         };
 
         ~plStatusLog();
+
+        bool AddLine(const plString& line) override;
 
         bool    AddLine( const char *line, uint32_t color = kWhite );
 

@@ -550,15 +550,6 @@ plString plString::IFormat(const char *fmt, va_list vptr)
     return plString::FromUtf8(buffer, chars);
 }
 
-plString plString::Format(const char *fmt, ...)
-{
-    va_list vptr;
-    va_start(vptr, fmt);
-    plString str = IFormat(fmt, vptr);
-    va_end(vptr);
-    return str;
-}
-
 ssize_t plString::Find(char ch, CaseSensitivity sense) const
 {
     if (sense == kCaseSensitive) {

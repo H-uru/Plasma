@@ -275,30 +275,42 @@ const char* ProcessTab(const char* fmt)
 }
 
 //
-// override for plLoggable
+// create StatusLog if necessary
 //
-bool plNetClientMgr::Log(const char* str) const
+void plNetClientMgr::ICreateStatusLog() const
 {
-    if (strlen(str) == 0)
-        return true;
-
-    // prepend raw time
-    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str));
-
-    if ( GetConsoleOutput() )
-        hsStatusMessage(buf2.c_str());
-
-    // create status log if necessary
-    if(fStatusLog==nil)
+    if (!fStatusLog)
     {
         fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "network.log",
             plStatusLog::kTimestamp | plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | 
             plStatusLog::kServerTimestamp);
-        fWeCreatedLog = true;
+    }
+}
+
+//
+// override for plLoggable
+//
+bool plNetClientMgr::Log(const plString& str) const
+{
+    if (str.IsNull() || str.IsEmpty()) {
+        return true;
     }
 
+    // prepend raw time
+    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
+
+    if ( GetConsoleOutput() )
+        hsStatusMessage(buf2.c_str());
+
+    GetLog();
+
     plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2.c_str());
-    return fStatusLog->AddLine(buf2.c_str());
+
+    if (fStatusLog) {
+        return fStatusLog->AddLine(buf2);
+    }
+
+    return true;
 }
 
 //

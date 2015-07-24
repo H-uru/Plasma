@@ -14,6 +14,7 @@ set(pnNucleusInc_HEADERS
     plCreatableStrings.h
     plDrawable.h
     plgDispatch.h
+    plLoggable.h
     plPhysical.h
     plPipeline.h
     plPipeResReq.h

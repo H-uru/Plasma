@@ -129,7 +129,7 @@ void plStateDataRecord::IDeleteVarsList(VarsList& vars)
 void plStateDataRecord::IInitDescriptor(const plString& name, int version)
 {
     plStateDescriptor* sd = plSDLMgr::GetInstance()->FindDescriptor(name, version);
-    //hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", name.c_str(), version ).c_str() );
+    //hsAssert( sd, plFormat("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", name, version ).c_str() );
     if (sd)
         IInitDescriptor(sd);
 }

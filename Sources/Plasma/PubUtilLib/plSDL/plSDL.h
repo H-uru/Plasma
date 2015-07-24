@@ -516,6 +516,9 @@ private:
     bool IParseStateDesc(const plFileName& fileName, hsStream* stream, char token[],
                          plStateDescriptor*& curDesc) const;
 
+    void DebugMsg(const plString& msg) const;
+
+    hsDeprecated("plSDLParser::DebugMsg with format is deprecated -- use plFormat instead")
     void DebugMsg(const char* fmt, ...) const;
     void DebugMsgV(const char* fmt, va_list args) const;
 

@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnFactory/plCreatable.h"
 #include "pnNetCommon/plNetApp.h"
-#include "hsStream.h" 
+#include "hsStream.h"
 
 plNetResManager::plNetResManager()
 {
@@ -83,12 +83,12 @@ plCreatable* plNetResManager::IReadCreatable(hsStream* s) const
     {
         plCreatable *pCre = plFactory::Create(hClass);
         if (!pCre)
-            hsAssert( hClass == 0x8000, "Invalid creatable index" );
+            hsAssert(hClass == 0x8000, "Invalid creatable index");
 
         return pCre;
     }
 
-    plNetApp::StaticWarningMsg("NetResMgr::Can't create class %s", plFactory::GetNameOfClass(hClass));
+    plNetApp::StaticWarningMsg(plFormat("NetResMgr::Can't create class {}", plFactory::GetNameOfClass(hClass)));
     return nil;
 }
 
