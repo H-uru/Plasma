@@ -67,7 +67,6 @@ class xKIChat(object):
     def __init__(self, StartFadeTimer, ResetFadeState, FadeCompletely):
 
         # Set the default properties.
-        self.autoShout = False
         self.chatLogFile = None
         self.gFeather = 0
         self.isAdmin = False
@@ -209,13 +208,8 @@ class xKIChat(object):
         iSelect = userListBox.getSelection()
         selPlyrList = []
 
-        # Is it a message to all players in the current Age?
-        if msg.startswith(PtGetLocalizedString("KI.Commands.ChatAllAge")):
-            listenerOnly = False
-            message = message[len(PtGetLocalizedString("KI.Commands.ChatAllAge")) + 1:]
-
         # Is it a reply to a private message?
-        elif msg.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
+        if msg.startswith(PtGetLocalizedString("KI.Commands.ChatReply")):
             if self.toReplyToLastPrivatePlayerID is None:
                 self.AddChatLine(None, PtGetLocalizedString("KI.Chat.NoOneToReply"), kChat.SystemMessage)
                 return
@@ -377,14 +371,7 @@ class xKIChat(object):
 
                 # Is it a folder of players within listening distance?
                 elif isinstance(toPlyr, KIFolder):
-                    if self.autoShout:
-                        listenerOnly = False
-                    else:
-                        listenerOnly = True
-                        selPlyrList = self.GetPlayersInChatDistance()
-                        agePlayers = PtGetPlayerListDistanceSorted()
-                        if len(agePlayers) > 0 and len(selPlyrList) == 0:
-                            nobodyListening = True
+                    listenerOnly = False
 
         # Add message to player's private chat channel.
         cFlags.channel = self.privateChatChannel
@@ -1069,15 +1056,6 @@ class CommandsProcessor:
                             self.chatMgr.DisplayStatusMessage(PtGetLocalizedString("KI.Player.Removed"))
                             return
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Player.NumberOnly"), kChat.SystemMessage)
-
-    ## Enable or disable AutoShout mode in the chat.
-    def AutoShout(self, params):
-
-        self.chatMgr.autoShout = abs(self.chatMgr.autoShout - 1)
-        if self.chatMgr.autoShout:
-            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Messages.AutoShoutEnabled"), kChat.BroadcastMsg)
-        else:
-            self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.Messages.AutoShoutDisabled"), kChat.BroadcastMsg)
 
     ## Dumps logs to the specified destination.
     def DumpLogs(self, destination):

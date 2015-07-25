@@ -131,7 +131,6 @@ xChatEmoteLoop = [
 
 ## A list of the specially handled extended chat commands.
 xChatSpecialHandledCommands = [
-    Plasma.PtGetLocalizedString("KI.Commands.ChatAllAge"),
     Plasma.PtGetLocalizedString("KI.Commands.ChatReply"),
     Plasma.PtGetLocalizedString("KI.Commands.ChatPrivate"),
     Plasma.PtGetLocalizedString("KI.Commands.ChatNeighbors"),
