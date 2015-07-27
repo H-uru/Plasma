@@ -183,3 +183,17 @@ void pyGameScore::FindScores(uint32_t ownerId, const plString& name, pyKey& rcvr
 {
     pfGameScore::Find(ownerId, name, rcvr.getKey());
 }
+
+void pyGameScore::FindAgeHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr)
+{
+    if (hsRef<RelVaultNode> ageInfo = VaultGetAgeInfoNode()) {
+        pfGameScore::FindHighScores(ageInfo->GetNodeId(), maxScores, name, rcvr.getKey());
+    }
+    else
+        hsAssert(false, "Age has no vault... Need to rewrite score python script?");
+}
+
+void pyGameScore::FindGlobalHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr)
+{
+    pfGameScore::FindHighScores(0, maxScores, name, rcvr.getKey());
+}

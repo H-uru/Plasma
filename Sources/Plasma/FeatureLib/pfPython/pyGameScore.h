@@ -93,6 +93,9 @@ public:
     static void     FindGlobalScores(const plString& name, pyKey& rcvr);
     static void     FindPlayerScores(const plString& name, pyKey& rcvr);
     static void     FindScores(uint32_t ownerId, const plString& name, pyKey& rcvr);
+
+    static void     FindAgeHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr);
+    static void     FindGlobalHighScores(const plString& name, uint32_t maxScores, pyKey& rcvr);
 };
 
 #endif

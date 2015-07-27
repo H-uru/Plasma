@@ -84,8 +84,9 @@ public:
     void TransferPoints(pfGameScore* to, plKey rcvr = nil) { TransferPoints(to, fValue, rcvr); }
     void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = nil);
 
-    static void Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, plKey rcvr);
-    static void Find(uint32_t ownerId, const plString& name, plKey rcvr);
+    static void Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, const plKey& rcvr);
+    static void Find(uint32_t ownerId, const plString& name, const plKey& rcvr);
+    static void FindHighScores(uint32_t ageId, uint32_t maxScores, const plString& name, const plKey& rcvr);
 };
 
 #endif // _pfGameScoreMgr_h_

@@ -715,3 +715,12 @@ void NetCliAuthScoreGetRankList(
     FNetCliAuthGetRanksCallback callback,
     void *                      param
 );
+
+//============================================================================
+void NetCliAuthScoreGetHighScores(
+    unsigned                        ageId,
+    unsigned                        maxScores,
+    const plString&                 gameName,
+    FNetCliAuthGetScoresCallback    callback,
+    void *                          param
+);

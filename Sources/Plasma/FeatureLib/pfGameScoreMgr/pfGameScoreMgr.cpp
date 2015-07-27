@@ -149,7 +149,7 @@ static void OnScoreCreate(
     delete p;
 }
 
-void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, plKey rcvr)
+void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, const plKey& rcvr)
 {
     NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
 }
@@ -174,7 +174,12 @@ static void OnScoreFound(
     delete p;
 }
 
-void pfGameScore::Find(uint32_t ownerId, const plString& name, plKey rcvr)
+void pfGameScore::Find(uint32_t ownerId, const plString& name, const plKey& rcvr)
 {
-    NetCliAuthScoreGetScores(ownerId, name.c_str(), OnScoreFound, new ScoreFindParam(ownerId, name, rcvr));
+    NetCliAuthScoreGetScores(ownerId, name, OnScoreFound, new ScoreFindParam(ownerId, name, rcvr));
+}
+
+void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const plString& name, const plKey& rcvr)
+{
+    NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
 }

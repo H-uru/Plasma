@@ -331,6 +331,40 @@ PYTHON_METHOD_DEFINITION_STATIC(ptGameScore, findScores, args)
     PYTHON_RETURN_NONE; // get result in callback
 }
 
+PYTHON_METHOD_DEFINITION_STATIC(ptGameScore, findAgeHighScores, args)
+{
+    PyObject* nameObj;
+    uint32_t maxScores;
+    PyObject* keyObj;
+    if (!PyArg_ParseTuple(args, "OIO", &nameObj, &maxScores, &keyObj) ||
+        !PyString_CheckEx(nameObj) || !pyKey::Check(keyObj)) {
+        PyErr_SetString(PyExc_TypeError, "findAgeHighScores expects a string, an int, and a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+
+    plString name = PyString_AsStringEx(nameObj);
+    pyKey*   rcvr = pyKey::ConvertFrom(keyObj);
+    pyGameScore::FindAgeHighScores(name, maxScores, *rcvr);
+    PYTHON_RETURN_NONE; // get result in callback
+}
+
+PYTHON_METHOD_DEFINITION_STATIC(ptGameScore, findGlobalHighScores, args)
+{
+    PyObject* nameObj;
+    uint32_t maxScores;
+    PyObject* keyObj;
+    if (!PyArg_ParseTuple(args, "OIO", &nameObj, &maxScores, &keyObj) ||
+        !PyString_CheckEx(nameObj) || !pyKey::Check(keyObj)) {
+        PyErr_SetString(PyExc_TypeError, "findGlobalHighScores expects a string, an int, and a ptKey");
+        PYTHON_RETURN_ERROR;
+    }
+
+    plString name = PyString_AsStringEx(nameObj);
+    pyKey*   rcvr = pyKey::ConvertFrom(keyObj);
+    pyGameScore::FindGlobalHighScores(name, maxScores, *rcvr);
+    PYTHON_RETURN_NONE; // get result in callback
+}
+
 PYTHON_START_METHODS_TABLE(ptGameScore)
     PYTHON_METHOD_NOARGS(ptGameScore, getGameType, "Returns the score game type."),
     PYTHON_METHOD_NOARGS(ptGameScore, getName, "Returns the score game name."),
@@ -348,6 +382,8 @@ PYTHON_START_METHODS_TABLE(ptGameScore)
     PYTHON_METHOD_STATIC(ptGameScore, findGlobalScores, "Params: scoreName, key\nFinds matching global scores"),
     PYTHON_METHOD_STATIC(ptGameScore, findPlayerScores, "Params: scoreName, key\nFinds matching player scores"),
     PYTHON_METHOD_STATIC(ptGameScore, findScores, "Params: ownerID, scoreName, key\nFinds matching scores for an arbitrary owner"),
+    PYTHON_METHOD_STATIC(ptGameScore, findAgeHighScores, "Params: name, maxScores, key\nFinds the highest matching scores for the current age's owners"),
+    PYTHON_METHOD_STATIC(ptGameScore, findGlobalHighScores, "Params: name, maxScores, key\nFinds the highest matching scores"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
