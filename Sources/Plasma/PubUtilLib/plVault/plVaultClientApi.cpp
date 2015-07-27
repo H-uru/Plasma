@@ -3753,7 +3753,7 @@ hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait (const plString& deviceName, c
     // if we found the inbox or its a global inbox then return here, otherwise if its the default inbox and
     // it wasn't found then continue on and create the inbox
     hsRef<RelVaultNode> existing = VaultAgeGetDeviceInbox(deviceName);
-    if (existing || inboxName == DEFAULT_DEVICE_INBOX)
+    if (existing || inboxName != DEFAULT_DEVICE_INBOX)
         return existing;
 
     hsRef<RelVaultNode> device, inbox;
