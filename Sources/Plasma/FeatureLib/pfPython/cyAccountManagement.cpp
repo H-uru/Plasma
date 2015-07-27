@@ -61,22 +61,21 @@ bool cyAccountManagement::IsSubscriptionActive()
 
 PyObject* cyAccountManagement::GetPlayerList()
 {
-    const ARRAY(NetCommPlayer)& playerList = NetCommGetPlayerList();
-    int numPlayers = NetCommGetPlayerCount();
+    const std::vector<NetCommPlayer>& playerList = NetCommGetPlayerList();
     PyObject* pList = PyList_New(0);
 
     PyObject* visitor = nil;
 
-    for (int i = 0; i < numPlayers; ++i)
+    for (Py_ssize_t i = 0; i < playerList.size(); ++i)
     {
         PyObject* playerTuple   = PyTuple_New(3);
         PyObject* playerName    = PyUnicode_FromStringEx(playerList[i].playerName);
         PyObject* playerId      = PyInt_FromLong(playerList[i].playerInt);
         PyObject* avatarShape   = PyString_FromPlString(playerList[i].avatarDatasetName);
 
-        PyTuple_SetItem(playerTuple, 0, playerName);
-        PyTuple_SetItem(playerTuple, 1, playerId);
-        PyTuple_SetItem(playerTuple, 2, avatarShape);
+        PyTuple_SET_ITEM(playerTuple, 0, playerName);
+        PyTuple_SET_ITEM(playerTuple, 1, playerId);
+        PyTuple_SET_ITEM(playerTuple, 2, avatarShape);
 
         if (visitor || playerList[i].explorer)
             PyList_Append(pList, playerTuple);

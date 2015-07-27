@@ -76,6 +76,11 @@ struct NetCommPlayer {
     plString    playerName;
     plString    avatarDatasetName;
     unsigned    explorer;
+
+    NetCommPlayer() { }
+    NetCommPlayer(unsigned id, const plString& name, const plString& shape, unsigned ex)
+        : playerInt(id), playerName(name), avatarDatasetName(shape), explorer(ex)
+    { }
 };
 
 struct NetCommAccount {
@@ -102,7 +107,7 @@ const NetCommAge *                  NetCommGetAge ();
 const NetCommAge *                  NetCommGetStartupAge ();
 const NetCommAccount *              NetCommGetAccount ();
 const NetCommPlayer *               NetCommGetPlayer ();
-const ARRAY(NetCommPlayer) &        NetCommGetPlayerList ();
+const std::vector<NetCommPlayer> &  NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();
 void                                NetCommSetIniPlayerId(unsigned playerId);
