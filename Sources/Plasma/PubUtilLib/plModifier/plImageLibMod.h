@@ -75,6 +75,8 @@ public:
     };
 
     size_t  GetNumImages() const { return fImages.size(); }
+    plBitmap* GetImage(const ST::string&) const;
+    const std::vector<ST::string> GetImageNames() const;
 };
 
 #endif // plImageLibMod_inc
