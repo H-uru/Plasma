@@ -106,7 +106,7 @@ struct NetCommParam {
 static bool                 s_shutdown;
 
 static NetCommAccount       s_account;
-static ARRAY(NetCommPlayer) s_players;
+static std::vector<NetCommPlayer> s_players;
 static NetCommPlayer *      s_player;
 static NetCommAge           s_age;
 static NetCommAge           s_startupAge;
@@ -391,7 +391,7 @@ static void INetCliAuthLoginRequestCallback (
     s_authResult = result;
 
     s_player = nil;
-    s_players.Clear();
+    s_players.clear();
     
     bool wantsStartUpAge = (s_startupAge.ageDatasetName.IsEmpty() ||
                             s_startupAge.ageDatasetName.CompareI("StartUp") == 0);
@@ -402,7 +402,7 @@ static void INetCliAuthLoginRequestCallback (
         s_account.accountUuid   = accountUuid;
         s_account.accountFlags  = accountFlags;
         s_account.billingType   = billingType;
-        s_players.GrowToCount(playerCount, true);
+        s_players.resize(playerCount);
         for (unsigned i = 0; i < playerCount; ++i) {
             LogMsg(kLogDebug, L"Player %u: %S explorer: %u", playerInfoArr[i].playerInt, playerInfoArr[i].playerName.c_str(), playerInfoArr[i].explorer);
             s_players[i].playerInt         = playerInfoArr[i].playerInt;
@@ -448,19 +448,15 @@ static void INetCliAuthCreatePlayerRequestCallback (
         LogMsg(kLogDebug, L"Created player %S: %u", playerInfo.playerName.c_str(), playerInfo.playerInt);
 
         unsigned currPlayer = s_player ? s_player->playerInt : 0;
-        NetCommPlayer * newPlayer = s_players.New();
+        s_players.emplace_back(playerInfo.playerInt, playerInfo.playerName,
+                               playerInfo.avatarShape, playerInfo.explorer);
 
-        newPlayer->playerInt         = playerInfo.playerInt;
-        newPlayer->explorer          = playerInfo.explorer;
-        newPlayer->playerName        = playerInfo.playerName;
-        newPlayer->avatarDatasetName = playerInfo.avatarShape;
-
-        { for (unsigned i = 0; i < s_players.Count(); ++i) {
-            if (s_players[i].playerInt == currPlayer) {
-                s_player = &s_players[i];
+        for (NetCommPlayer& player : s_players) {
+            if (player.playerInt == currPlayer) {
+                s_player = &player;
                 break;
             }
-        }}
+        }
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kCreatePlayer);
@@ -483,21 +479,21 @@ static void INetCliAuthDeletePlayerCallback (
     else {
         LogMsg(kLogDebug, L"Player deleted: %d", playerInt);
 
-        uint32_t currPlayer = s_player ? s_player->playerInt : 0;       
+        uint32_t currPlayer = s_player ? s_player->playerInt : 0;
 
-        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
-            if (s_players[i].playerInt == playerInt) {
-                s_players.DeleteUnordered(i);
+        for (auto it = s_players.begin(); it != s_players.end(); ++it) {
+            if (it->playerInt == playerInt) {
+                s_players.erase(it);
                 break;
             }
-        }}
+        }
 
-        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
-            if (s_players[i].playerInt == currPlayer) {
-                s_player = &s_players[i];
+        for (NetCommPlayer& player : s_players) {
+            if (player.playerInt == currPlayer) {
+                s_player = &player;
                 break;
             }
-        }}
+        }
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kDeletePlayer);
@@ -623,12 +619,12 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     else {
         LogMsg(kLogDebug, L"Upgrade visitor succeeded: %d", playerInt);
 
-        {for (uint32_t i = 0; i < s_players.Count(); ++i) {
-            if (s_players[i].playerInt == playerInt) {
-                s_players[i].explorer = true;
+        for (NetCommPlayer& player : s_players) {
+            if (player.playerInt == playerInt) {
+                player.explorer = true;
                 break;
             }
-        }}
+        }
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kUpgradePlayer);
@@ -682,13 +678,13 @@ const NetCommPlayer * NetCommGetPlayer () {
 }
 
 //============================================================================
-const ARRAY(NetCommPlayer)& NetCommGetPlayerList () {
+const std::vector<NetCommPlayer>& NetCommGetPlayerList () {
     return s_players;
 }
 
 //============================================================================
 unsigned NetCommGetPlayerCount () {
-    return s_players.Count();
+    return s_players.size();
 }
 
 //============================================================================
@@ -1101,10 +1097,10 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     if (desiredPlayerInt == 0)
         s_player = nil;
     else {
-        for (unsigned i = 0; i < s_players.Count(); ++i) {
-            if (s_players[i].playerInt == desiredPlayerInt) {
+        for (NetCommPlayer& player : s_players) {
+            if (player.playerInt == desiredPlayerInt) {
                 playerInt = desiredPlayerInt;
-                s_player = &s_players[i];
+                s_player = &player;
                 break;
             }
         }
