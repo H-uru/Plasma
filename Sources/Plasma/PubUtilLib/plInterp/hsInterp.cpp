@@ -404,7 +404,7 @@ void hsInterp::GetBoundaryKeyFrames(float time, uint32_t numKeys, void *keys, ui
 {
     hsAssert(numKeys>1, "Must have more than 1 keyframe");
     int k1, k2;
-    uint16_t frame = (uint16_t)(time * MAX_FRAMES_PER_SEC);
+    float frame = time * MAX_FRAMES_PER_SEC;
 
     // boundary case, past end
     if (frame > GetKey(numKeys-1, keys, size)->fFrame)
