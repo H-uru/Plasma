@@ -221,11 +221,6 @@ option(PLASMA_BUILD_LAUNCHER "Do we want to build plUruLauncher?" ON)
 option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 
-if(PLASMA_BUILD_TOOLS)
-    # Custom dummy target for compiling all tools
-    add_custom_target(tools)
-endif()
-
 if(WIN32)
     find_package(MaxSDK)
     set_package_properties(MaxSDK PROPERTIES
@@ -257,6 +252,11 @@ if(WIN32)
         add_definitions(-DUSE_VLD)
         include_directories(${VLD_INCLUDE_DIR})
     endif(USE_VLD)
+endif()
+
+if(PLASMA_BUILD_TOOLS)
+    # Custom dummy target for compiling all tools
+    add_custom_target(tools)
 endif()
 
 include(TestBigEndian)
