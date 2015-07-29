@@ -222,8 +222,8 @@ option(PLASMA_BUILD_TOOLS "Do we want to build the Plasma tools?" ON)
 option(PLASMA_BUILD_TESTS "Do we want to build the unit tests?" OFF)
 
 if(WIN32)
-    find_package(MaxSDK)
-    set_package_properties(MaxSDK PROPERTIES
+    find_package(3dsm)
+    set_package_properties(3dsm PROPERTIES
         URL "http://www.autodesk.com/"
         DESCRIPTION "SDK for integrating with the 3DS Max modelling software"
         TYPE OPTIONAL
