@@ -12,6 +12,11 @@ endif(WIN32)
 if(UNIX)
     if(NOT APPLE)
         find_package(Uuid REQUIRED)
+        set_package_properties(Uuid PROPERTIES
+            DESCRIPTION "UUID library for Linux (provided by util-linux)"
+            TYPE REQUIRED
+        )
+
         include_directories(${Uuid_INCLUDE_DIR})
     endif()
 
