@@ -508,8 +508,13 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
             {
                 if (secs > fLoopEnd)
                 {
-                    secs = fmodf(secs - fLoopBegin, fLoopEnd - fLoopBegin) + fLoopBegin;
-                    wrapped = true;
+                    float result = fmodf(secs - fLoopBegin, fLoopEnd - fLoopBegin) + fLoopBegin;
+                    // are they a dumb ass?
+                    if (!isnan(result))
+                    {
+                        secs = result;
+                        wrapped = true;
+                    }
                 }
             }   
         }
@@ -527,11 +532,16 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
             {
                 if (secs < fLoopBegin)
                 {
-                    secs = fLoopEnd - fmodf(fLoopEnd - secs, fLoopEnd - fLoopBegin);
-                    wrapped = true;
+                    float result  = fLoopEnd - fmodf(fLoopEnd - secs, fLoopEnd - fLoopBegin);
+                    // are they a dumb ass?
+                    if (!isnan(result))
+                    {
+                        secs = result;
+                        wrapped = true;
+                    }
                 }
-            }               
-        }       
+            }
+        }
 
         if (fFlags & kWrap)
         {
