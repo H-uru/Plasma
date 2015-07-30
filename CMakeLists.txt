@@ -251,7 +251,7 @@ if(WIN32)
     if(USE_VLD AND VLD_FOUND)
         add_definitions(-DUSE_VLD)
         include_directories(${VLD_INCLUDE_DIR})
-    endif(USE_VLD)
+    endif()
 endif()
 
 if(PLASMA_BUILD_TOOLS)

@@ -24,12 +24,12 @@ if(PLASMA_BUILD_TOOLS)
     if(Qt5_LIBS_FOUND)
         add_subdirectory(plLocalizationEditor)
         add_subdirectory(plResBrowser)
-    endif()
 
-    add_dependencies(tools
-        plLocalizationEditor
-        plResBrowser
-    )
+        add_dependencies(tools
+            plLocalizationEditor
+            plResBrowser
+        )
+    endif()
 
     if(WIN32)
         add_subdirectory(plShaderAssembler)
