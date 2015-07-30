@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsResMgr.h"
 #include "plNetClientMgr.h"
 #include "plCreatableIndex.h"   
-#include "plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plSDLTypes.h"
@@ -436,35 +436,4 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
         msg->ClassName(), ret).c_str());
 
     return ret;
-}
-
-
-void plNetClientMgr::StoreSDLState(const plStateDataRecord* sdRec, const plUoid& uoid, 
-                                    uint32_t sendFlags, uint32_t writeOptions)
-{
-    // send to server
-    plNetMsgSDLState* msg = sdRec->PrepNetMsg(0, writeOptions);
-    msg->SetNetProtocol(kNetProtocolCli2Game);
-    msg->ObjectInfo()->SetUoid(uoid);
-
-    if (sendFlags & plSynchedObject::kNewState)
-        msg->SetBit(plNetMessage::kNewSDLState);
-
-    if (sendFlags & plSynchedObject::kUseRelevanceRegions)
-        msg->SetBit(plNetMessage::kUseRelevanceRegions);
-
-    if (sendFlags & plSynchedObject::kDontPersistOnServer)
-        msg->SetPersistOnServer(false);
-
-    if (sendFlags & plSynchedObject::kIsAvatarState)
-        msg->SetIsAvatarState(true);
-
-    bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
-    if (broadcast && plNetClientApp::GetInstance())
-    {
-        msg->SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
-    }
-
-    SendMsg(msg);
-    delete msg;
 }

@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 
 #include "plSurface/hsGMaterial.h"
-#include "plDrawable/plGeometrySpan.h"
+#include "plGeometrySpan.h"
 #include "plPipeline.h"
 #include "hsGDeviceRef.h"
 #include "plProfile.h"

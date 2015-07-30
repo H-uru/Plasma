@@ -97,27 +97,3 @@ void LogMsgV (ELogSeverity severity, const wchar_t *format, va_list args) {
     plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
     delete[] to_log;
 }
-
-//============================================================================
-#ifdef HS_DEBUGGING
-void LogMsgDebug (const char *format, ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(kLogDebug, format, args);
-    va_end(args);
-}
-#endif
-
-//============================================================================
-#ifdef HS_DEBUGGING
-void LogMsgDebug (const wchar_t *format, ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(kLogDebug, format, args);
-    va_end(args);
-}
-#endif

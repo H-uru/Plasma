@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plSpaceTree.h"
 #include "plDrawable/plDrawableGenerator.h"
 #include "plDrawable/plDrawableSpans.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plPipeline/plRenderTarget.h"
 #include "hsFastMath.h"
 #include "pnSceneObject/plDrawInterface.h"
@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plRenderRequest.h"
 #include "plPipeline.h"
 #include "plIntersect/plSoftVolume.h"
-#include "plPipeline/plPipeDebugFlags.h"
+#include "plPipeDebugFlags.h"
 #include "pnMessage/plPipeResMakeMsg.h"
 
 #include "plScene/plVisRegion.h"

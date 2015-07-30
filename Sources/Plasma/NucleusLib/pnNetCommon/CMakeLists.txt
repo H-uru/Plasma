@@ -9,7 +9,6 @@ set(pnNetCommon_HEADERS
     plNetAddress.h
     plNetApp.h
     plNetGroup.h
-    plNetResManager.h
     plNetServers.h
     plNetSharedState.h
     plSDLTypes.h
@@ -24,7 +23,6 @@ set(pnNetCommon_SOURCES
     plNetAddress.cpp
     plNetApp.cpp
     plNetGroup.cpp
-    plNetResManager.cpp
     plNetServers.cpp
     plNetSharedState.cpp
     plSDLTypes.cpp

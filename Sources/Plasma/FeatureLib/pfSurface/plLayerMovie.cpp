@@ -44,11 +44,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plLayerMovie.h"
 #include "hsStream.h"
 #include "hsResMgr.h"
-
+#include "hsGDeviceRef.h"
 
 #include "plMessage/plAnimCmdMsg.h"
 #include "plGImage/plMipmap.h"
-#include "plPipeline/hsGDeviceRef.h"
 
 plLayerMovie::plLayerMovie()
 :   fCurrentFrame(-1),

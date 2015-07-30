@@ -10,6 +10,7 @@ set(plNetCommon_SOURCES
     plNetCommonHelpers.cpp
     plNetMember.cpp
     plNetMsgScreener.cpp
+    plNetObjectDebugger.cpp
     plNetServerSessionInfo.cpp
     plSpawnPointInfo.cpp
 )
@@ -23,6 +24,7 @@ set(plNetCommon_HEADERS
     plNetMember.h
     plNetMsgHandler.h
     plNetMsgScreener.h
+    plNetObjectDebugger.h
     plNetServerSessionInfo.h
     plSpawnPointInfo.h
 )

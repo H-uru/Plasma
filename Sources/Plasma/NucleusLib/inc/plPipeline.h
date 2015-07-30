@@ -228,9 +228,6 @@ public:
     virtual bool                        EndRender() = 0;
     virtual void                        RenderScreenElements( void ) = 0;
 
-    virtual bool                        BeginDrawable(plDrawable* d) = 0;
-    virtual bool                        EndDrawable(plDrawable* d) = 0;
-
     virtual void                        BeginVisMgr(plVisMgr* visMgr) = 0;
     virtual void                        EndVisMgr(plVisMgr* visMgr) = 0;
 
@@ -320,10 +317,6 @@ public:
     virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on) = 0;
     virtual void                        PopMaterialOverride(const hsGMatState& restore, bool on) = 0;
     virtual const hsGMatState&          GetMaterialOverride(bool on) const = 0;
-
-    virtual hsColorOverride             PushColorOverride(const hsColorOverride& over) = 0;
-    virtual void                        PopColorOverride(const hsColorOverride& restore) = 0;
-    virtual const hsColorOverride&      GetColorOverride() const = 0;
 
     virtual void                        SubmitShadowSlave(plShadowSlave* slave) = 0;
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co) = 0;

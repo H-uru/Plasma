@@ -26,6 +26,7 @@ set(plDrawable_SOURCES
     plDynaTorpedoVSMgr.cpp
     plDynaWakeMgr.cpp
     plFixedWaterState7.cpp
+    plGBufferGroup.cpp
     plGeometrySpan.cpp
     plGeoSpanDice.cpp
     plInstanceDrawInterface.cpp
@@ -43,6 +44,7 @@ set(plDrawable_SOURCES
     plSpanInstance.cpp
     plSpanTemplate.cpp
     plSpanTypes.cpp
+    plVertCoder.cpp
     plVisLOSMgr.cpp
     plWaveSet7.cpp
     plWaveSetBase.cpp
@@ -76,6 +78,7 @@ set(plDrawable_HEADERS
     plDynaTorpedoVSMgr.h
     plDynaWakeMgr.h
     plFixedWaterState7.h
+    plGBufferGroup.h
     plGeometrySpan.h
     plGeoSpanDice.h
     plInstanceDrawInterface.h
@@ -95,6 +98,7 @@ set(plDrawable_HEADERS
     plSpanTemplate.h
     plSpanTypes.h
     plTimedInterp.h
+    plVertCoder.h
     plVisLOSMgr.h
     plWaveSet7.h
     plWaveSetBase.h

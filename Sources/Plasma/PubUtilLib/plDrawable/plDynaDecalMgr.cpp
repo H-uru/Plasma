@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
+#include "plGBufferGroup.h"
 
 #include "plDrawableSpans.h"
 #include "plAuxSpan.h"
@@ -66,8 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerInterface.h"
 #include "plScene/plPageTreeMgr.h"
 
-#include "plPipeline/plGBufferGroup.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plDynaDecalEnableMsg.h"

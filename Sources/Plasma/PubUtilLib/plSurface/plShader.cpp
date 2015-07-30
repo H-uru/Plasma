@@ -48,8 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsMatrix44.h"
 #include "hsColorRGBA.h"
-
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 
 
 // Little shader const helper
