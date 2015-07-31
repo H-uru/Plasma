@@ -3609,7 +3609,7 @@ class xKI(ptModifier):
         curBrainMode = PtGetLocalAvatar().avatar.getCurrentMode()
         toggleCB = ptGUIControlCheckBox(KIMini.dialog.getControlFromTag(kGUI.miniToggleBtnID))
         toggleCB.disable()
-        if curBrainMode == PtBrainModes.kNonGeneric or curBrainMode == PtBrainModes.kAFK or curBrainMode == PtBrainModes.kSit:
+        if curBrainMode == PtBrainModes.kNonGeneric:
             PtDebugPrint(u"xKI.ShowBigKI(): Entering LookingAtKI mode.", level=kDebugDumpLevel)
             PtAvatarEnterLookingAtKI()
             self.isPlayingLookingAtKIMode = True
