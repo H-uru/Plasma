@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define TIMER_UNITS_PER_SEC (float)1e3
 #define UPDATE_STATUSMSG_SECONDS 30
-#define WM_USER_SETSTATUSMSG WM_USER+1
+#define WM_APP_SETSTATUSMSG WM_APP+1
 
 //
 // Globals
@@ -704,7 +704,7 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
 
     strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, 256));
     status[255] = 0;
-    PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) status);
+    PostMessage(hwnd, WM_APP_SETSTATUSMSG, 0, (LPARAM) status);
     return size * nmemb;
 }
 
@@ -731,7 +731,7 @@ void StatusCallback(void *param)
         curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
 
         if (!statusUrl.IsEmpty() && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
-            PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
+            PostMessage(hwnd, WM_APP_SETSTATUSMSG, 0, (LPARAM) curlError);
 
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
         {
@@ -787,7 +787,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             return FALSE;
         }
 
-        case WM_USER_SETSTATUSMSG:
+        case WM_APP_SETSTATUSMSG:
              SendMessage(GetDlgItem(hwndDlg, IDC_STATUS_TEXT), WM_SETTEXT, 0, lParam);
              return TRUE;
 
