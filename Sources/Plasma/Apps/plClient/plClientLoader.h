@@ -39,47 +39,72 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "hsTimer.h"
-#include "plNetClientMgr.h"
-#include "plNetLinkingMgr.h"
 
-#include "plNetClientRecorder/plNetClientRecorder.h"
-#include "plNetMessage/plNetMessage.h"
+#include "HeadSpin.h"
+#include "hsThread.h"
+#include "hsWindows.h"
 
-#include "plgDispatch.h"
-
-//
-// Code for interfacing with plNetClientComm library, which in turn
-// handles most client-server communication
-//
-
-
-int plNetClientCommMsgHandler::HandleMessage( plNetMessage* msg ) 
+class plClientLoader : private hsThread
 {
-    plNetClientMgr* nc=plNetClientMgr::GetInstance();
-    int ret = nc->fMsgHandler.ReceiveMsg(msg);
+    class plClient* fClient;
+    HWND fWindow;
 
-    return ret;
-}
+    virtual void OnQuit() HS_OVERRIDE
+    {
+        SetQuit(true);
+    }
 
-int plNetClientMgr::IInitNetClientComm()
-{
-    NetCommActivatePostInitErrorHandler();
-    NetCommActivateMsgDispatchers();
+    /** Does the heavy lifting of client init */
+    virtual void Run() HS_OVERRIDE;
 
-    ASSERT(!GetFlagsBit(kNetClientCommInited));
-    fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
+public:
+    plClientLoader() : fClient(nullptr) { }
 
-    SetFlagsBit(kNetClientCommInited);
-    
-    return hsOK;
-}
+    /**
+     * Initializes the client asyncrhonouslynn including: loading the localization, 
+     * registry, dispatcher, etc.
+     */
+    void Init()
+    {
+        hsAssert(fClient == nullptr, "trying to init the client more than once?");
+        hsThread::Start();
+    }
 
-//
-// Cleanup netClientComm related stuff
-//
-int plNetClientMgr::IDeInitNetClientComm()
-{
-    SetFlagsBit(kNetClientCommInited, false);
-    return hsOK;
-}
+    /**
+     * Returns whether or not the client init is done
+     */
+    bool IsInited() const { return hsThread::GetQuit(); }
+
+    /**
+     * Sets the client HWND
+     */
+    void SetClientWindow(HWND hWnd) { fWindow = hWnd; }
+
+    /**
+     * Initial shutdown request received from Windows (or something)... start tear down
+     */
+    void ShutdownStart();
+
+    /**
+     * Window mess cleaned up, time to commit hara-kiri
+     */
+    void ShutdownEnd();
+
+    /**
+     * Launches the client window and starts the game.
+     * This will block if the client is not initialized.
+     */
+    void Start();
+
+    /**
+     * Waits for the client to finish initing
+     */
+    void Wait() { hsThread::Stop(); }
+
+    /** Returns the current plClient instance */
+    plClient* operator ->() const { return fClient; }
+
+    /** Returns whether or not the client is non-null */
+    operator bool() const { return fClient != nullptr; }
+};
+

@@ -39,17 +39,15 @@ endif(PYTHONINTERP_FOUND)
 set(plClient_HEADERS
     plClient.h
     plClientCreatable.h
-    #plClientKey.h
+    plClientLoader.h
     plClientUpdateFormat.h
-    #plPluginClient.h
 )
 
 set(plClient_SOURCES
     pfAllCreatables.cpp
     plAllCreatables.cpp
     plClient.cpp
-    #plClientKey.cpp
-    #plPluginClient.cpp
+    plClientLoader.cpp
     pnAllCreatables.cpp
     winmain.cpp
 )
