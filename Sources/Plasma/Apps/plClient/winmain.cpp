@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "plCmdParser.h"
 #include "plClient.h"
-#include "plClientResMgr/plClientResMgr.h"
+#include "plClientLoader.h"
 #include "pfCrashHandler/plCrashCli.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plInputCore/plInputDevice.h"
@@ -66,7 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plProduct.h"
 #include "plNetGameLib/plNetGameLib.h"
-#include "plPhysX/plSimulationMgr.h"
 
 #include "res/resource.h"
 
@@ -114,7 +113,7 @@ int gWinBorderDX    = GetSystemMetrics( SM_CXSIZEFRAME );
 int gWinBorderDY    = GetSystemMetrics( SM_CYSIZEFRAME );
 int gWinMenuDY      = GetSystemMetrics( SM_CYCAPTION );
 
-plClient        *gClient;
+plClientLoader  gClient;
 bool            gPendingActivate = false;
 bool            gPendingActivateFlag = false;
 
@@ -142,11 +141,6 @@ static const unsigned   AUTH_FAILED_TIMER   = 2;
 static wchar_t s_patcherExeName[] = L"UruLauncher.exe";
 
 #endif // PLASMA_EXTERNAL_RELEASE
-
-//============================================================================
-// PhysX installer
-//============================================================================
-static wchar_t s_physXSetupExeName[] = L"PhysX_Setup.exe";
 
 //============================================================================
 // LoginDialogParam
@@ -355,15 +349,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
             break;
         
         case WM_CLOSE:
-            gClient->SetDone(TRUE);
-            if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
-                mgr->QueueDisableNet(false, nil);
+            gClient.ShutdownStart();
             DestroyWindow(gClient->GetWindowHandle());
             break;
         case WM_DESTROY:
-            gClient->SetDone(TRUE);
-            if (plNetClientMgr * mgr = plNetClientMgr::GetInstance())
-                mgr->QueueDisableNet(false, nil);
+            gClient.ShutdownStart();
             PostQuitMessage(0);
             break;
     }
@@ -454,156 +444,6 @@ static bool AuthenticateNetClientComm(ENetError* result, HWND parentWnd)
 void DeInitNetClientComm()
 {
     NetCommShutdown();
-}
-
-BOOL CALLBACK WaitingForPhysXDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
-{
-    switch( uMsg )
-    {
-    case WM_INITDIALOG:
-        ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Waiting for PhysX install...");
-        return true; 
-
-    }
-    return 0;
-}
-
-bool InitPhysX()
-{
-    bool physXInstalled = false;
-    while (!physXInstalled)
-    {
-        plSimulationMgr::Init();
-        if (!plSimulationMgr::GetInstance())
-        {
-            int ret = hsMessageBox("PhysX is not installed, or an older version is installed.\nInstall new version? (Game will exit if you click \"No\")",
-                "Missing PhysX", hsMessageBoxYesNo);
-            if (ret == hsMBoxNo) // exit if no
-                return false;
-
-            // launch the PhysX installer
-            SHELLEXECUTEINFOW info;
-            memset(&info, 0, sizeof(info));
-            info.cbSize = sizeof(info);
-            info.lpFile = s_physXSetupExeName;
-            info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
-            ShellExecuteExW(&info);
-
-            // let the user know what's going on
-            HWND waitingDialog = ::CreateDialog(gHInst, MAKEINTRESOURCE(IDD_LOADING), NULL, WaitingForPhysXDialogProc);
-
-            // run a loop to wait for it to quit, pumping the windows message queue intermittently
-            DWORD waitRet = WaitForSingleObject(info.hProcess, 100);
-            MSG msg;
-            while (waitRet == WAIT_TIMEOUT)
-            {
-                if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-                {
-                    TranslateMessage(&msg);
-                    DispatchMessage(&msg);
-                }
-                waitRet = WaitForSingleObject(info.hProcess, 100);
-            }
-
-            // cleanup
-            CloseHandle(info.hProcess);
-            ::DestroyWindow(waitingDialog);
-        }
-        else
-        {
-            plSimulationMgr::GetInstance()->Suspend();
-            physXInstalled = true;
-        }
-    }
-    return true;
-}
-
-bool    InitClient( HWND hWnd )
-{
-    plResManager *resMgr = new plResManager;
-    resMgr->SetDataPath("dat");
-    hsgResMgr::Init(resMgr);
-
-    if (!plFileInfo("resource.dat").Exists())
-    {
-        hsMessageBox("Required file 'resource.dat' not found.", "Error", hsMessageBoxNormal);
-        return false;
-    }
-    plClientResMgr::Instance().ILoadResources("resource.dat");
-
-    gClient = new plClient;
-    if( gClient == nil )
-        return false;
-
-    if (!InitPhysX())
-        return false;
-
-    gClient->SetWindowHandle( hWnd );
-
-    if( gClient->InitPipeline() )
-        gClient->SetDone(true);
-    else
-    {
-        gClient->ResizeDisplayDevice(gClient->GetPipeline()->Width(), gClient->GetPipeline()->Height(), !gClient->GetPipeline()->IsFullScreen());
-    }
-    
-    if( gPendingActivate )
-    {
-        // We need this because the window gets a WM_ACTIVATE before we get to this function, so 
-        // the above flag lets us know that we need to fake a late activate msg to the client
-        gClient->WindowActivate( gPendingActivateFlag );
-    }
-
-    gClient->SetMessagePumpProc( PumpMessageQueueProc );
-
-    return true;
-}
-
-// Initializes all that windows junk, creates class then shows main window
-BOOL WinInit(HINSTANCE hInst, int nCmdShow)
-{
-    // Fill out WNDCLASS info
-    WNDCLASS wndClass;
-    wndClass.style              = CS_DBLCLKS;   // CS_HREDRAW | CS_VREDRAW;
-    wndClass.lpfnWndProc        = WndProc;
-    wndClass.cbClsExtra         = 0;
-    wndClass.cbWndExtra         = 0;
-    wndClass.hInstance          = hInst;
-    wndClass.hIcon              = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON_DIRT));
-
-    wndClass.hCursor            = LoadCursor(NULL, IDC_ARROW);
-    wndClass.hbrBackground      = (struct HBRUSH__*) (GetStockObject(BLACK_BRUSH));
-    wndClass.lpszMenuName       = CLASSNAME;
-    wndClass.lpszClassName      = CLASSNAME;
-    
-    // can only run one at a time anyway, so just quit if another is running
-    if (!RegisterClass(&wndClass)) 
-        return FALSE;
-
-    // Create a window
-    HWND hWnd = CreateWindow(
-        CLASSNAME, plProduct::LongName().c_str(),
-        WS_OVERLAPPEDWINDOW,
-        0, 0,
-        800 + gWinBorderDX * 2,
-        600 + gWinBorderDY * 2 + gWinMenuDY,
-         NULL, NULL, hInst, NULL
-    );
-
-    if( !InitClient( hWnd ) )
-        return FALSE;
-
-    // Return false if window creation failed
-    if (!gClient->GetWindowHandle())
-    {
-        OutputDebugString("Create window failed\n");
-        return FALSE;
-    }
-    else
-    {
-        OutputDebugString("Create window OK\n");
-    }
-    return TRUE;
 }
 
 //
@@ -1065,34 +905,34 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     return FALSE;
 }
 
-BOOL CALLBACK SplashDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+BOOL CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    switch( uMsg )
+    switch (uMsg)
     {
-        case WM_INITDIALOG:
-            switch (plLocalization::GetLanguage())
-            {
-                case plLocalization::kFrench:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Démarrage d'URU. Veuillez patienter...");
-                    break;
-                case plLocalization::kGerman:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Starte URU, bitte warten ...");
-                    break;
-                case plLocalization::kSpanish:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Iniciando URU, por favor espera...");
-                    break;
-                case plLocalization::kItalian:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Avvio di URU, attendere...");
-                    break;
-                // default is English
-                case plLocalization::kJapanese:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "...");
-                    break;
-                default:
-                    ::SetDlgItemText( hwndDlg, IDC_STARTING_TEXT, "Starting URU. Please wait...");
-                    break;
-            }
-            return true; 
+    case WM_INITDIALOG:
+        switch (plLocalization::GetLanguage())
+        {
+        case plLocalization::kFrench:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Démarrage d'URU. Veuillez patienter...");
+            break;
+        case plLocalization::kGerman:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Starte URU, bitte warten ...");
+            break;
+        case plLocalization::kSpanish:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Iniciando URU, por favor espera...");
+            break;
+        case plLocalization::kItalian:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Avvio di URU, attendere...");
+            break;
+            // default is English
+        case plLocalization::kJapanese:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "...");
+            break;
+        default:
+            ::SetDlgItemText(hwndDlg, IDC_STARTING_TEXT, "Starting URU. Please wait...");
+            break;
+        }
+        return true;
 
     }
     return 0;
@@ -1118,7 +958,7 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 
     // Now, try to create a nice exception dialog after plCrashHandler is done.
     s_crash.WaitForHandle();
-    HWND parentHwnd = (gClient == nil) ? GetActiveWindow() : gClient->GetWindowHandle();
+    HWND parentHwnd = gClient ? gClient->GetWindowHandle() : GetActiveWindow();
     DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, NULL);
 
     // Trickle up the handlers
@@ -1128,6 +968,40 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
+
+bool WinInit(HINSTANCE hInst)
+{
+    // Fill out WNDCLASS info
+    WNDCLASS wndClass;
+    wndClass.style = CS_DBLCLKS;   // CS_HREDRAW | CS_VREDRAW;
+    wndClass.lpfnWndProc = WndProc;
+    wndClass.cbClsExtra = 0;
+    wndClass.cbWndExtra = 0;
+    wndClass.hInstance = hInst;
+    wndClass.hIcon = LoadIcon(hInst, MAKEINTRESOURCE(IDI_ICON_DIRT));
+
+    wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+    wndClass.hbrBackground = (struct HBRUSH__*) (GetStockObject(BLACK_BRUSH));
+    wndClass.lpszMenuName = CLASSNAME;
+    wndClass.lpszClassName = CLASSNAME;
+
+    // can only run one at a time anyway, so just quit if another is running
+    if (!RegisterClass(&wndClass))
+        return false;
+
+    // Create a window
+    HWND hWnd = CreateWindow(
+        CLASSNAME, plProduct::LongName().c_str(),
+        WS_OVERLAPPEDWINDOW,
+        0, 0,
+        800 + gWinBorderDX * 2,
+        600 + gWinBorderDY * 2 + gWinMenuDY,
+        NULL, NULL, hInst, NULL
+        );
+    gClient.SetClientWindow(hWnd);
+    gClient.Init();
+    return true;
+}
 
 #include "plResMgr/plVersion.h"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
@@ -1241,6 +1115,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 #endif
 
+    // Set up to log errors by using hsDebugMessage
+    DebugInit();
+    DebugMsgF("Plasma 2.0.%i.%i - %s", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString().c_str());
+
     FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile)
     {
@@ -1251,6 +1129,12 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     else
     {
         hsMessageBox("No server.ini file found.  Please check your URU installation.", "Error", hsMessageBoxNormal);
+        return PARABLE_NORMAL_EXIT;
+    }
+
+    // Begin initializing the client in the background
+    if (!WinInit(hInst)) {
+        hsMessageBox("Failed to initialize plClient", "Error", hsMessageBoxNormal);
         return PARABLE_NORMAL_EXIT;
     }
 
@@ -1299,14 +1183,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     curl_global_cleanup();
 
     if (needExit) {
+        gClient.ShutdownStart();
+        gClient.ShutdownEnd();
         DeInitNetClientComm();
         return PARABLE_NORMAL_EXIT;
     }
 
     NetCliAuthAutoReconnectEnable(true);
-
-    // VERY VERY FIRST--throw up our splash screen
-    HWND splashDialog = ::CreateDialog( hInst, MAKEINTRESOURCE( IDD_LOADING ), NULL, SplashDialogProc );
 
     // Install our unhandled exception filter for trapping all those nasty crashes in release build
 #ifndef HS_DEBUGGING
@@ -1314,81 +1197,35 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     oldFilter = SetUnhandledExceptionFilter( plCustomUnhandledExceptionFilter );
 #endif
 
-    //
-    // Set up to log errors by using hsDebugMessage
-    //
-    DebugInit();
-    DebugMsgF("Plasma 2.0.%i.%i - %s", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString().c_str());
+    // We should quite frankly be done initing the client by now. But, if not, spawn the good old
+    // "Starting URU, please wait..." dialog (not so yay)
+    if (!gClient.IsInited()) {
+        HWND splashDialog = ::CreateDialog(hInst, MAKEINTRESOURCE(IDD_LOADING), NULL, SplashDialogProc);
+        gClient.Wait();
+        ::DestroyWindow(splashDialog);
+    }
 
-    for (;;) {
-        // Create Window
-        if (!WinInit(hInst, nCmdShow) || gClient->GetDone())
-            break;
+    // Main loop
+    if (gClient && !gClient->GetDone()) {
+        gClient->SetMessagePumpProc(PumpMessageQueueProc);
+        gClient.Start();
 
-        // Done with our splash now
-        ::DestroyWindow( splashDialog );
-
-        if (!gClient)
-            break;
-
-        // Show the main window
-        ShowWindow(gClient->GetWindowHandle(), SW_SHOW);
-            
-        // Be really REALLY forceful about being in the front
-        BringWindowToTop( gClient->GetWindowHandle() );
-
-        // Update the window
-        UpdateWindow(gClient->GetWindowHandle());
-
-        // 
-        // Init Application here
-        //
-        if( !gClient->StartInit() )
-            break;
-        
-        // I want it on top! I mean it!
-        BringWindowToTop( gClient->GetWindowHandle() );
-
-        // initialize dinput here:
-        if (gClient && gClient->GetInputManager())
-            gClient->GetInputManager()->InitDInput(hInst, (HWND)gClient->GetWindowHandle());
-        
-        // Seriously!
-        BringWindowToTop( gClient->GetWindowHandle() );
-        
-        //
-        // Main loop
-        //
         MSG msg;
-        do
-        {   
+        do {
             gClient->MainLoop();
-
-            if( gClient->GetDone() )
+            if (gClient->GetDone())
                 break;
 
             // Look for a message
-            while (PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ))
-            {
+            while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
                 // Handle the message
-                TranslateMessage( &msg );
-                DispatchMessage( &msg );
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
             }
         } while (WM_QUIT != msg.message);
-
-        break;
     }
 
-    //
-    // Cleanup
-    //
-    if (gClient)
-    {
-        gClient->Shutdown(); // shuts down PhysX for us
-        gClient = nil;
-    }
-    hsAssert(hsgResMgr::ResMgr()->RefCnt()==1, "resMgr has too many refs, expect mem leaks");
-    hsgResMgr::Shutdown();  // deletes fResMgr
+    gClient.ShutdownEnd();
     DeInitNetClientComm();
 
     // Uninstall our unhandled exception filter, if we installed one
