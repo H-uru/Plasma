@@ -1427,7 +1427,7 @@ bool plClient::StartInit()
     //
     // Init Net before loading things
     //
-    plNetClientMgr::GetInstance()->Init();
+    plNetClientMgr::GetInstance()->RegisterAs(kNetClientMgr_KEY);
     plAgeLoader::GetInstance()->Init();
 
     plCmdIfaceModMsg* pModMsg2 = new plCmdIfaceModMsg;
@@ -1463,6 +1463,7 @@ bool plClient::StartInit()
 //============================================================================
 bool plClient::BeginGame()
 {
+    plNetClientMgr::GetInstance()->Init();
     IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
     if (GetDone()) return false;
     IPatchGlobalAgeFiles();
