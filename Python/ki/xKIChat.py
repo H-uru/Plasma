@@ -547,12 +547,13 @@ class xKIChat(object):
             if not self.KIDisabled and not mKIdialog.isEnabled():
                 mKIdialog.show()
         if player is not None:
-            chatHeaderFormatted = pretext + unicode(player.getPlayerName()) + U":"
-            chatMessageFormatted = U" " + message
+            separator = "" if pretext.endswith(" ") else " "
+            chatHeaderFormatted = U"{}{}{}:".format(pretext, separator, unicode(player.getPlayerName()))
+            chatMessageFormatted = U" {}".format(message)
         else:
             # It must be a status or error message.
             chatHeaderFormatted = pretext
-            if pretext == U"":
+            if not pretext:
                 chatMessageFormatted = message
             else:
                 chatMessageFormatted = " " + message
