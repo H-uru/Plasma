@@ -65,6 +65,7 @@ int plNetClientCommMsgHandler::HandleMessage( plNetMessage* msg )
 int plNetClientMgr::IInitNetClientComm()
 {
     NetCommActivatePostInitErrorHandler();
+    NetCommActivateMsgDispatchers();
 
     ASSERT(!GetFlagsBit(kNetClientCommInited));
     fNetClientComm.SetDefaultHandler(&fNetClientCommMsgHandler);
