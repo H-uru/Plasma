@@ -1185,6 +1185,40 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     );
 };
 
+//============================================================================
+// ScoreGetHighScoresTrans
+//============================================================================
+struct ScoreGetHighScoresTrans : NetAuthTrans {
+    FNetCliAuthGetScoresCallback    m_callback;
+    void *                          m_param;
+
+    // send
+    unsigned                        m_ageId;
+    unsigned                        m_maxScores;
+    plString                        m_gameName;
+
+    // recv
+    NetGameScore *                  m_scores;
+    unsigned                        m_scoreCount;
+
+    ScoreGetHighScoresTrans(
+        unsigned                        ageId,
+        unsigned                        maxScores,
+        const plString&                 gameName,
+        FNetCliAuthGetScoresCallback    callback,
+        void *                          param
+        );
+
+    ~ScoreGetHighScoresTrans();
+
+    bool Send();
+    void Post();
+    bool Recv(
+        const uint8_t  msg[],
+        unsigned    bytes
+        );
+};
+
 
 /*****************************************************************************
 *
@@ -2339,6 +2373,19 @@ static bool Recv_ScoreGetRanksReply (
     return true;
 }
 
+//============================================================================
+static bool Recv_ScoreGetHighScoresReply(
+    const uint8_t   msg[],
+    unsigned        bytes,
+    void *
+    ) {
+    const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
+
+    NetTransRecv(reply.transId, msg, bytes);
+
+    return true;
+}
+
 /*****************************************************************************
 *
 *   Cli2Auth protocol
@@ -2393,6 +2440,7 @@ static NetMsgInitSend s_send[] = {
     { MSG(ScoreSetPoints)           },
     { MSG(ScoreGetRanks)            },
     { MSG(AccountExistsRequest)     },
+    { MSG(ScoreGetHighScores)       },
 };
 #undef MSG
 
@@ -2442,6 +2490,7 @@ static NetMsgInitRecv s_recv[] = {
     { MSG(ScoreSetPointsReply)      },
     { MSG(ScoreGetRanksReply)       },
     { MSG(AccountExistsReply)       },
+    { MSG(ScoreGetHighScoresReply)  },
 };
 #undef MSG
 
@@ -4976,6 +5025,95 @@ bool ScoreGetRanksTrans::Recv (
     return true;
 }
 
+/*****************************************************************************
+*
+*   ScoreGetHighScoresTrans
+*
+***/
+
+//============================================================================
+ScoreGetHighScoresTrans::ScoreGetHighScoresTrans(
+    unsigned                        ageId,
+    unsigned                        maxScores,
+    const plString&                 gameName,
+    FNetCliAuthGetScoresCallback    callback,
+    void *                          param
+    ) : NetAuthTrans(kScoreGetHighScoresTrans)
+    , m_callback(callback)
+    , m_param(param)
+    , m_ageId(ageId)
+    , m_maxScores(maxScores)
+    , m_gameName(gameName)
+    , m_scores(nullptr)
+    , m_scoreCount(0)
+{
+}
+
+//============================================================================
+ScoreGetHighScoresTrans::~ScoreGetHighScoresTrans() {
+    delete[] m_scores;
+}
+
+//============================================================================
+bool ScoreGetHighScoresTrans::Send() {
+    if (!AcquireConn())
+        return false;
+
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
+
+    const uintptr_t msg[] = {
+        kCli2Auth_ScoreGetHighScores,
+        m_transId,
+        m_ageId,
+        m_maxScores,
+        (uintptr_t)gameName.GetData()
+    };
+
+    m_conn->Send(msg, arrsize(msg));
+
+    return true;
+}
+
+//============================================================================
+void ScoreGetHighScoresTrans::Post() {
+    if (m_callback) {
+        m_callback(
+            m_result,
+            m_param,
+            m_scores,
+            m_scoreCount
+            );
+    }
+}
+
+//============================================================================
+bool ScoreGetHighScoresTrans::Recv(
+    const uint8_t msg[],
+    unsigned      bytes
+    ) {
+    const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
+
+    if (reply.scoreCount > 0) {
+        m_scoreCount = reply.scoreCount;
+        m_scores = new NetGameScore[m_scoreCount];
+
+        uint8_t*    bufferPos = const_cast<uint8_t*>(reply.buffer);
+        unsigned    bufferLength = reply.byteCount;
+
+        for (unsigned i = 0; i < m_scoreCount; ++i) {
+            bufferLength -= m_scores[i].Read(bufferPos, bufferLength, &bufferPos);
+        }
+    }
+    else {
+        m_scoreCount = 0;
+        m_scores = nullptr;
+    }
+
+    m_result = reply.result;
+    m_state = kTransStateComplete;
+    return true;
+}
+
 } using namespace Auth;
 
 
@@ -6040,6 +6178,24 @@ void NetCliAuthScoreGetRankList(
         numResults,
         pageNumber,
         sortDesc,
+        callback,
+        param
+    );
+    NetTransSend(trans);
+}
+
+//============================================================================
+void NetCliAuthScoreGetHighScores(
+    unsigned                        ageId,
+    unsigned                        maxScores,
+    const plString&                 gameName,
+    FNetCliAuthGetScoresCallback    callback,
+    void *                          param
+    ) {
+    ScoreGetHighScoresTrans * trans = new ScoreGetHighScoresTrans(
+        ageId,
+        maxScores,
+        gameName,
         callback,
         param
     );
