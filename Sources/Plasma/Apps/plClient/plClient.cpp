@@ -807,6 +807,17 @@ bool plClient::MsgReceive(plMessage* msg)
         return true;
     }
 
+    //============================================================================
+    // plNetCommAuthMsg
+    //============================================================================
+    if (plNetCommAuthMsg* authMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
+        if (IS_NET_SUCCESS(authMsg->result)) {
+            SetFlag(kFlagInitialAuthComplete);
+            IPatchGlobalAgeFiles();
+        }
+    }
+
     return hsKeyedObject::MsgReceive(msg);
 }
 
@@ -1427,6 +1438,7 @@ bool plClient::StartInit()
     //
     // Init Net before loading things
     //
+    plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
     plNetClientMgr::GetInstance()->RegisterAs(kNetClientMgr_KEY);
     plAgeLoader::GetInstance()->Init();
 
@@ -1465,6 +1477,7 @@ bool plClient::BeginGame()
 {
     plNetClientMgr::GetInstance()->Init();
     IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    SetFlag(kFlagIntroComplete);
     if (GetDone()) return false;
     IPatchGlobalAgeFiles();
     return true;
@@ -1473,10 +1486,12 @@ bool plClient::BeginGame()
 //============================================================================
 void    plClient::IPatchGlobalAgeFiles( void )
 {
-    plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
+    if (HasFlag(kFlagIntroComplete) && HasFlag(kFlagInitialAuthComplete)) {
+        plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
 
-    plResPatcher* patcher = plResPatcher::GetInstance();
-    patcher->Update(plManifest::EssentialGameManifests());
+        plResPatcher* patcher = plResPatcher::GetInstance();
+        patcher->Update(plManifest::EssentialGameManifests());
+    }
 }
 
 void plClient::InitDLLs()

@@ -248,6 +248,8 @@ public:
         kFlagDBGDisableRRequests,
         kFlagAsyncInitComplete,
         kFlagGlobalDataLoaded,
+        kFlagInitialAuthComplete,
+        kFlagIntroComplete,
     };
 
     bool HasFlag(int f) const { return fFlags.IsBitSet(f); }
