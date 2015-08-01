@@ -1207,6 +1207,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     // Main loop
     if (gClient && !gClient->GetDone()) {
+        if (gPendingActivate)
+            gClient->WindowActivate(gPendingActivateFlag);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
         gClient.Start();
 
