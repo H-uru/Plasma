@@ -156,30 +156,32 @@ bool plSittingModifier::MsgReceive(plMessage *msg)
                 // own notify messages -- 
                 plKey avatarKey = notifyMsg->GetAvatarKey();
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
-                const plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
-                plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nil);
-                if (brain && !brain->IsRunningTask())
-                {
-                    plNotifyMsg *notifyEnter = new plNotifyMsg();   // a message to send back when the brain starts
-                    notifyEnter->fState = 1.0f;                     // it's an "on" event
-                    ISetupNotify(notifyEnter, notifyMsg);           // copy events and address to sender
-            
-                    plNotifyMsg *notifyExit = nil;
-                    if (avatarKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
+                if (obj) {
+                    const plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
+                    plAvBrainHuman *brain = (avMod ? plAvBrainHuman::ConvertNoRef(avMod->GetCurrentBrain()) : nil);
+                    if (brain && !brain->IsRunningTask())
                     {
-                        notifyExit = new plNotifyMsg();         // a new message to send back when the brain's done
-                        notifyExit->fState = 0.0f;              // it's an "off" event
-                        ISetupNotify(notifyExit, notifyMsg);    // copy events and address to sender
-                        notifyExit->AddReceiver(GetKey());      // have this message come back to us as well
+                        plNotifyMsg *notifyEnter = new plNotifyMsg();   // a message to send back when the brain starts
+                        notifyEnter->fState = 1.0f;                     // it's an "on" event
+                        ISetupNotify(notifyEnter, notifyMsg);           // copy events and address to sender
 
-                        // A player may have joined while we're sitting. We can't update them with the exit notify at
-                        // that point (security hole), so instead the local avatar sends the message out to everybody
-                        // when done.
-                        notifyExit->SetBCastFlag(plMessage::kNetStartCascade, false);
-                        notifyExit->SetBCastFlag(plMessage::kNetPropagate, true);
-                        notifyExit->SetBCastFlag(plMessage::kNetForce, true);
+                        plNotifyMsg *notifyExit = nil;
+                        if (avatarKey == plNetClientApp::GetInstance()->GetLocalPlayerKey())
+                        {
+                            notifyExit = new plNotifyMsg();         // a new message to send back when the brain's done
+                            notifyExit->fState = 0.0f;              // it's an "off" event
+                            ISetupNotify(notifyExit, notifyMsg);    // copy events and address to sender
+                            notifyExit->AddReceiver(GetKey());      // have this message come back to us as well
+
+                            // A player may have joined while we're sitting. We can't update them with the exit notify at
+                            // that point (security hole), so instead the local avatar sends the message out to everybody
+                            // when done.
+                            notifyExit->SetBCastFlag(plMessage::kNetStartCascade, false);
+                            notifyExit->SetBCastFlag(plMessage::kNetPropagate, true);
+                            notifyExit->SetBCastFlag(plMessage::kNetForce, true);
+                        }
+                        Trigger(avMod, notifyEnter, notifyExit);
                     }
-                    Trigger(avMod, notifyEnter, notifyExit);
                 }
             }
             // eat the message either way
@@ -196,10 +198,12 @@ bool plSittingModifier::MsgReceive(plMessage *msg)
             {
                 plKey avatarKey = notifyMsg->GetAvatarKey();
                 plSceneObject * obj = plSceneObject::ConvertNoRef(avatarKey->ObjectIsLoaded());
-                plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
+                if (obj) {
+                    plArmatureMod * avMod = (plArmatureMod*)obj->GetModifierByType(plArmatureMod::Index());
 
-                uint32_t flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
-                avMod->DirtyPhysicalSynchState(flags);
+                    uint32_t flags = kBCastToClients | kUseRelevanceRegions | kForceFullSend;
+                    avMod->DirtyPhysicalSynchState(flags);
+                }
             }
         }
     }
