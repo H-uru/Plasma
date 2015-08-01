@@ -741,10 +741,6 @@ void NetCommStartup () {
 
     NetClientInitialize();
     NetClientSetErrorHandler(IPreInitNetErrorCallback);
-    NetCliGameSetRecvBufferHandler(INetBufferCallback);
-//    NetCliAuthSetRecvBufferHandler(INetBufferCallback);
-    NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
-    NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
 
     // Set startup age info
     memset(&s_startupAge, 0, sizeof(s_startupAge));
@@ -780,20 +776,24 @@ void NetCommEnableNet (
     bool            enabled,
     bool            wait
 ) {
-    if (enabled) {
+    if (enabled)
         NetClientInitialize();
-        NetClientSetErrorHandler(INetErrorCallback);
-        NetCliGameSetRecvBufferHandler(INetBufferCallback);
-//      NetCliAuthSetRecvBufferHandler(INetBufferCallback);
-    }
-    else {
+    else
         NetClientDestroy(wait);
-    }
 }
 
 //============================================================================
 void NetCommActivatePostInitErrorHandler () {
     NetClientSetErrorHandler(INetErrorCallback);
+}
+
+//============================================================================
+void NetCommActivateMsgDispatchers() {
+    NetClientSetErrorHandler(INetErrorCallback);
+    NetCliGameSetRecvBufferHandler(INetBufferCallback);
+//  NetCliAuthSetRecvBufferHandler(INetBufferCallback);
+    NetCliAuthSetNotifyNewBuildHandler(INotifyNewBuildCallback);
+    NetCliAuthSetConnectCallback(INotifyAuthConnectedCallback);
 }
 
 //============================================================================

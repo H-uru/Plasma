@@ -2239,25 +2239,23 @@ bool plDXPipeline::IResetDevice()
                 IFindDepthFormat(fSettings.fPresentParams);
             }
             HRESULT hr = fD3DDevice->Reset(&fSettings.fPresentParams);
-            int count = 0;
-            while( FAILED(hr) )
-            {
-                if(count++ == 25)
-                {
-                    IPrintDeviceInitError();
-                    IResetToDefaults(&fSettings.fPresentParams);
+            // The device is inited the first time on the client loader thread, but this is the main thread
+            // we expect to get one failure... So let's try recreating the device on the main thread.
+            if (FAILED(hr)) {
+                IReleaseDeviceObjects();
+                for (int i = 0; true; ++i) {
+                    if (!ICreateDeviceObjects())
+                        break;
+                    ::Sleep(250);
+                    // Old magic number from reset land
+                    if (i == 25) {
+                        IPrintDeviceInitError();
+                        IResetToDefaults(&fSettings.fPresentParams);
+                    }
                 }
-                // Still not ready? This is bad.
-                // Until we called Reset(), we could make any D3D call we wanted,
-                // and it would turn into a no-op. But once we call Reset(), until
-                // the device really is reset, anything but TestCoop/Reset/Release
-                // has just become illegal. We've already released everything, Reset
-                // just failed, not much to do but wait and try again.
-                ::Sleep(250);
-                hr = fD3DDevice->Reset(&fSettings.fPresentParams);
             }
             fSettings.fCurrFVFFormat = 0;
-            fSettings.fCurrVertexShader = NULL;
+            fSettings.fCurrVertexShader = nullptr;
             fManagedAlloced = false;
             ICreateDynDeviceObjects();
             IInitDeviceState();

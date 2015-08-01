@@ -67,8 +67,8 @@ static unsigned int __stdcall gEntryPointBT(void* param)
 
     WinThreadParam* wtp = (WinThreadParam*)param;
     unsigned int result = wtp->fThread->Run();
-    ::ReleaseSemaphore(wtp->fQuitSemaH, 1, nil); // signal that we've quit
     wtp->fThread->OnQuit();
+    ::ReleaseSemaphore(wtp->fQuitSemaH, 1, nil); // signal that we've quit
     delete wtp;
     return result;
 }

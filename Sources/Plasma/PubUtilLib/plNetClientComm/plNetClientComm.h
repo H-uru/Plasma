@@ -136,6 +136,7 @@ void NetCommEnableNet (
     bool            wait
 );
 void NetCommActivatePostInitErrorHandler();
+void NetCommActivateMsgDispatchers();
 
 
 /*****************************************************************************
