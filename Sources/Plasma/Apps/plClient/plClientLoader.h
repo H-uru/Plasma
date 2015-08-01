@@ -33,10 +33,10 @@ the parts of OpenSSL and IJG JPEG Library used as well as that of the covered
 work.
 
 You can contact Cyan Worlds, Inc. by email legal@cyan.com
-or by snail mail at:
-Cyan Worlds, Inc.
-14617 N Newport Hwy
-Mead, WA   99021
+ or by snail mail at:
+      Cyan Worlds, Inc.
+      14617 N Newport Hwy
+      Mead, WA   99021
 
 *==LICENSE==*/
 
