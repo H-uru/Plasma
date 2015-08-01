@@ -2407,8 +2407,18 @@ class ptGameScore:
         pass
 
     @staticmethod
+    def findAgeHighScores(name, maxScores, key):
+        """Finds the highest matching scores for the current age's owners"""
+        pass
+
+    @staticmethod
     def findGlobalScores(scoreName, key):
         """Finds matching global scores"""
+        pass
+
+    @staticmethod
+    def findGlobalHighScores(name, maxScores, key):
+        """Finds the highest matching scores"""
         pass
 
     @staticmethod
