@@ -800,20 +800,18 @@ bool plClient::MsgReceive(plMessage* msg)
     }
 
     //============================================================================
-    // plResPatcherMsg
+    // plNetCommAuthMsg
     //============================================================================
-    if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
-        IHandlePatcherMsg(resMsg);
+    if (plNetCommAuthMsg * authCommMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
+        IHandleNetCommAuthMsg(authCommMsg);
         return true;
     }
 
     //============================================================================
-    // plNetCommAuthMsg
+    // plResPatcherMsg
     //============================================================================
-    if (plNetCommAuthMsg* authMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
-        plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
-        if (IS_NET_SUCCESS(authMsg->result))
-            IPatchGlobalAgeFiles();
+    if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
+        IHandlePatcherMsg(resMsg);
         return true;
     }
 
@@ -1381,6 +1379,10 @@ bool plClient::StartInit()
     // local data of course).
     ((plResManager *)hsgResMgr::ResMgr())->VerifyPages();
 
+    // the dx8 audio system MUST be initialized
+    // before the database is loaded
+    SetForegroundWindow(fWindowHndl);
+
     plgAudioSys::Init();
     gAudio = plgAudioSys::Sys();
 
@@ -1438,7 +1440,7 @@ bool plClient::StartInit()
     // Init Net before loading things
     //
     plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
-    plNetClientMgr::GetInstance()->RegisterAs(kNetClientMgr_KEY);
+    plNetClientMgr::GetInstance()->Init();
     plAgeLoader::GetInstance()->Init();
 
     plCmdIfaceModMsg* pModMsg2 = new plCmdIfaceModMsg;
@@ -1458,6 +1460,8 @@ bool plClient::StartInit()
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
 
+    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    if(GetDone()) return false;
     plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
     // create the listener for the audio system:
@@ -1468,22 +1472,22 @@ bool plClient::StartInit()
     plgDispatch::Dispatch()->RegisterForExactType(plAudioSysMsg::Index(), pLMod->GetKey());
 
     plSynchedObject::PushSynchDisabled(false);      // enable dirty tracking
-    return true;
-}
 
-//============================================================================
-bool plClient::BeginGame()
-{
-    plNetClientMgr::GetInstance()->Init();
-    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
-    if (GetDone()) return false;
-    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0) {
-        // This is needed because there is no auth step in this case
-        plNetCommAuthMsg* msg = new plNetCommAuthMsg();
-        msg->result = kNetSuccess;
-        msg->param = nullptr;
+    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0)
+    {
+        plNetCommAuthMsg * msg  = new plNetCommAuthMsg();
+        msg->result             = kNetSuccess;
+        msg->param              = nil;
         msg->Send();
     }
+
+    // 2nd half of plClient initialization occurs after
+    // all network events have completed.  Async events:
+    //
+    // 1) Download secure files
+    //
+    // Continue plClient init via IOnAsyncInitComplete().
+
     return true;
 }
 
@@ -2285,4 +2289,28 @@ void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
     }
 
     IOnAsyncInitComplete();
+}
+
+//============================================================================
+void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
+
+    plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
+
+    if (IS_NET_ERROR(msg->result)) {
+        char str[1024];
+        StrPrintf(
+            str,
+            arrsize(str),
+            // fmt
+            "Authentication failed: NetError %u, %S.\n"
+            ,// values
+            msg->result,
+            NetErrorToString(msg->result)
+        );
+        plNetClientApp::GetInstance()->QueueDisableNet(true, str);
+        return;
+    }
+
+    // Patch them global files!
+    IPatchGlobalAgeFiles();
 }

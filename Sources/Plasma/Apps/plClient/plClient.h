@@ -177,6 +177,7 @@ protected:
     void                    ICompleteInit ();
     void                    IOnAsyncInitComplete ();
     void                    IHandlePatcherMsg (plResPatcherMsg * msg);
+    void                    IHandleNetCommAuthMsg (plNetCommAuthMsg * msg);
     bool                    IHandleAgeLoaded2Msg (plAgeLoaded2Msg * msg);
 
     bool                    IFlushRenderRequests();
@@ -284,8 +285,6 @@ public:
     // The client window has focus (true) or lost it (false)
     virtual void WindowActivate(bool active);
     virtual bool WindowActive() const { return fWindowActive; }
-
-    bool BeginGame();
 
     void FlashWindow();
     void    SetMessagePumpProc( plMessagePumpProc proc ) { fMessagePumpProc = proc; }

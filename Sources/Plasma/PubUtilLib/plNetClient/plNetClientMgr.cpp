@@ -341,6 +341,7 @@ int plNetClientMgr::Init()
 
     VaultInitialize();
 
+    RegisterAs( kNetClientMgr_KEY );
     IAddCloneRoom();
 
     fNetGroups.Reset();
