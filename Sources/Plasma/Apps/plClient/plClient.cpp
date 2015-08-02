@@ -812,9 +812,10 @@ bool plClient::MsgReceive(plMessage* msg)
     //============================================================================
     if (plNetCommAuthMsg* authMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
         plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
-        if (IS_NET_SUCCESS(authMsg->result))
+        if (IS_NET_SUCCESS(authMsg->result)) {
+            SetFlag(kFlagInitialAuthComplete);
             IPatchGlobalAgeFiles();
-        return true;
+        }
     }
 
     return hsKeyedObject::MsgReceive(msg);
@@ -1476,24 +1477,21 @@ bool plClient::BeginGame()
 {
     plNetClientMgr::GetInstance()->Init();
     IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    SetFlag(kFlagIntroComplete);
     if (GetDone()) return false;
-    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0) {
-        // This is needed because there is no auth step in this case
-        plNetCommAuthMsg* msg = new plNetCommAuthMsg();
-        msg->result = kNetSuccess;
-        msg->param = nullptr;
-        msg->Send();
-    }
+    IPatchGlobalAgeFiles();
     return true;
 }
 
 //============================================================================
 void    plClient::IPatchGlobalAgeFiles( void )
 {
-    plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
+    if (HasFlag(kFlagIntroComplete) && HasFlag(kFlagInitialAuthComplete)) {
+        plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
 
-    plResPatcher* patcher = plResPatcher::GetInstance();
-    patcher->Update(plManifest::EssentialGameManifests());
+        plResPatcher* patcher = plResPatcher::GetInstance();
+        patcher->Update(plManifest::EssentialGameManifests());
+    }
 }
 
 void plClient::InitDLLs()
