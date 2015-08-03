@@ -56,8 +56,6 @@ public:
     static void* New(uint32_t size);
     static void  Delete(void* block);
     static void* Copy(uint32_t length, const void* source);
-    
-    static void* SoftNew(uint32_t size);   // returns nil if can't allocate
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////

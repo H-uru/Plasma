@@ -110,44 +110,6 @@ void HSMemory::Clear(void* m, uint32_t byteLen)
 
 //////////////////////////////////////////////////////////////////////////////////////
 
-#if 0
-template <class T> T* hsSoftNew(T*& obj)
-{
-    try {
-        obj = new T;
-    }
-    catch (...) {
-        obj = nil;
-    }
-    return obj;
-}
-
-inline template <class T> T* hsSoftNew(T*& obj, unsigned count)
-{
-    try {
-        obj = new T[count];
-    }
-    catch (...) {
-        obj = nil;
-    }
-    return obj;
-}
-#endif
-
-void* HSMemory::SoftNew(uint32_t size)
-{
-    uint32_t* p;
-
-    hsTry {
-        p = new uint32_t[(size + 3) >> 2];
-    } hsCatch(...) {
-        p = nil;
-    }
-    return p;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-
 struct hsPrivateChunk {
     hsPrivateChunk* fNext;
     char*           fAvailableAddr;
