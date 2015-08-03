@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 enum hsErrorEnum {
     kNo_hsError,
-    kBadAlloc_hsError,
     kNilParam_hsError,
     kBadParam_hsError,
     kInternal_hsError,
@@ -66,11 +65,6 @@ public:
     long            fParam;
     
     hsException(hsErrorEnum error, long param = 0) : fError(error), fParam(param) {}
-};
-
-class hsBadAllocException : public hsException {
-public:
-    hsBadAllocException() : hsException(kBadAlloc_hsError) {}
 };
 
 class hsNilParamException : public hsException {
