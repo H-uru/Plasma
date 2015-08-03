@@ -3426,6 +3426,30 @@ PF_CONSOLE_CMD( Audio, NextDebugPlate, "", "Cycles through the volume displays f
     plgAudioSys::NextDebugSound();
 }
 
+PF_CONSOLE_CMD(Audio, ShowDebugPlate, "string object, int soundIdx", "Shows the volume display for a registered sound")
+{
+    plKey key = FindSceneObjectByName(plString::FromUtf8(params[0]), "", nullptr);
+    if (!key) {
+        plSound::SetCurrDebugPlate(nullptr);
+        return;
+    }
+
+    plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
+    if (!so) {
+        PrintString("Invalid SceneObject");
+        return;
+    }
+
+    const plAudioInterface* ai = so->GetAudioInterface();
+    if (ai) {
+        plSound* sound = ai->GetSound(params[1]);
+        // sue me
+        plSound::SetCurrDebugPlate(sound->GetKey());
+    } else {
+        PrintString("SceneObject has no AudioInterface");
+    }
+}
+
 #endif // LIMIT_CONSOLE_COMMANDS
 
 PF_CONSOLE_CMD( Audio, SetLoadOnDemand, "bool on", "Enable or disable load-on-demand for sounds")
