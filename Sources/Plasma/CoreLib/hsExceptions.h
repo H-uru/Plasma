@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsExceptionDefined
 
 #include "HeadSpin.h"
+#include <exception>
 
 // #define HS_NO_EXCEPTIONS -- this will turn off execptions you might want 
 // to do it with -D or equivalent instead of here since who knows who includes this.
@@ -54,37 +55,41 @@ enum hsErrorEnum {
     kNilParam_hsError,
     kBadParam_hsError,
     kInternal_hsError,
-    kOS_hsError
+    kOS_hsError,
+    hsErrorEnum_MAX
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-class hsException {
+class hsException : public std::exception {
 public:
     hsErrorEnum fError;
-    long            fParam;
-    
-    hsException(hsErrorEnum error, long param = 0) : fError(error), fParam(param) {}
+    long        fParam;
+
+    hsException(hsErrorEnum error, long param = 0) HS_NOEXCEPT
+        : fError(error), fParam(param) {}
+
+    const char *what() const HS_NOEXCEPT HS_OVERRIDE;
 };
 
 class hsNilParamException : public hsException {
 public:
-    hsNilParamException() : hsException(kNilParam_hsError) {}
+    hsNilParamException() HS_NOEXCEPT : hsException(kNilParam_hsError) {}
 };
 
 class hsBadParamException : public hsException {
 public:
-    hsBadParamException() : hsException(kBadParam_hsError) {}
+    hsBadParamException() HS_NOEXCEPT : hsException(kBadParam_hsError) {}
 };
 
 class hsInternalException : public hsException {
 public:
-    hsInternalException() : hsException(kInternal_hsError) {}
+    hsInternalException() HS_NOEXCEPT : hsException(kInternal_hsError) {}
 };
 
 class hsOSException : public hsException {
 public:
-    hsOSException(long error) : hsException(kOS_hsError, error) {}
+    hsOSException(long error) HS_NOEXCEPT : hsException(kOS_hsError, error) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////
