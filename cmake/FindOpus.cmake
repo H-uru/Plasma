@@ -3,7 +3,9 @@ if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
 endif()
 
 find_path(Opus_INCLUDE_DIR opus.h
+          /usr/local/include/opus
           /usr/local/include
+          /usr/include/opus
           /usr/include
 )
 
