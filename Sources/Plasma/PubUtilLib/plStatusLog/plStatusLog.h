@@ -159,7 +159,7 @@ class plStatusLog : public plLog
 
         ~plStatusLog();
 
-        bool AddLine(const plString& line) override;
+        bool AddLine(const plString& line) HS_OVERRIDE;
 
         bool    AddLine( const char *line, uint32_t color = kWhite );
 
