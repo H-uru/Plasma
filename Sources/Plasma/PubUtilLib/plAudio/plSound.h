@@ -260,7 +260,7 @@ public:
     virtual void        ForceUnload( void );
 
     // Note: ONLY THE AUDIOSYS SHOULD CALL THIS. If you're not the audioSys, get lost.
-    static void         SetCurrDebugPlate( const plKey soundKey );
+    static void         SetCurrDebugPlate( const plKey& soundKey );
 
     void                RegisterOnAudioSys( void );
     void                UnregisterOnAudioSys( void );
@@ -343,7 +343,7 @@ protected:
     void            IUpdateDebugPlate( void );
     void            IPrintDbgMessage( const char *msg, bool isErr = false );
 
-    virtual void    ISetActualVolume(const float v) = 0;
+    virtual void    ISetActualVolume(float v) = 0;
     virtual void    IActuallyStop( void );
     virtual bool    IActuallyPlaying( void ) = 0;
     virtual void    IActuallyPlay( void ) = 0;

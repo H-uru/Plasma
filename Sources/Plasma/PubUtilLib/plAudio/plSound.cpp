@@ -163,10 +163,10 @@ void plSound::IUpdateDebugPlate( void )
             fDebugPlate->SetPosition( -0.5, 0 );
             fDebugPlate->SetDataRange( 0, 100, 100 );
             fDebugPlate->SetColors( 0x80202000 );
-            fDebugPlate->SetTitle( GetKeyName().c_str() );      // Bleah
             fDebugPlate->SetLabelText( "Desired", "Curr", "Soft", "Dist" );
         }
 
+        fDebugPlate->SetTitle(GetKeyName().c_str());      // Bleah
         fDebugPlate->SetVisible( true );
         fDebugPlate->AddData( (int32_t)( fDesiredVol * 100.f ), 
                               (int32_t)( fCurrVolume * 100.f ),
@@ -175,7 +175,7 @@ void plSound::IUpdateDebugPlate( void )
     }
 }
 
-void plSound::SetCurrDebugPlate( const plKey soundKey )
+void plSound::SetCurrDebugPlate( const plKey& soundKey )
 {
     if( soundKey == nil )
     {
@@ -186,12 +186,7 @@ void plSound::SetCurrDebugPlate( const plKey soundKey )
     else
     {
         fCurrDebugPlateSound = plSound::ConvertNoRef( soundKey->GetObjectPtr() );
-        if( fDebugPlate != nil )
-        {
-            fDebugPlate->ClearData();
-            fDebugPlate->SetVisible( true );
-            fDebugPlate->SetTitle( fCurrDebugPlateSound->GetKeyName().c_str() );        // Bleah
-        }
+        fCurrDebugPlateSound->IUpdateDebugPlate();
     }
 }
 
