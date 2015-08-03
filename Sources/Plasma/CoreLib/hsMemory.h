@@ -108,8 +108,7 @@ public:
 
     void        Reset();
     void        SetChunkSize(uint32_t size);
-    void*   Allocate(uint32_t size, const void* data = nil);      // throws if fails
-    void*   SoftAllocate(uint32_t size, const void* data = nil);  // returns nil if fails
+    void*   Allocate(uint32_t size, const void* data = nil);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////

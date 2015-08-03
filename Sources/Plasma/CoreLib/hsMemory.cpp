@@ -184,19 +184,6 @@ void* hsChunkAllocator::Allocate(uint32_t size, const void* data)
     return addr;
 }
 
-void* hsChunkAllocator::SoftAllocate(uint32_t size, const void* data)
-{
-    void*   addr;
-
-    hsTry {
-        addr = this->Allocate(size, data);
-    }
-    hsCatch(...) {
-        addr = nil;
-    }
-    return addr;
-}
-
 //////////////////////////////////////////////////////////////////////////////////////
 
 struct hsAppenderHead {

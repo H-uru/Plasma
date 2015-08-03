@@ -45,11 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <exception>
 
-// #define HS_NO_EXCEPTIONS -- this will turn off execptions you might want 
-// to do it with -D or equivalent instead of here since who knows who includes this.
-
-
-
 enum hsErrorEnum {
     kNo_hsError,
     kNilParam_hsError,
@@ -94,12 +89,7 @@ public:
 
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HS_NO_EXCEPTIONS
-#define hsThrow(a) {hsAssert(0,#a);throw a;}
-#define hsCatch(a) catch (a)
-#define hsCatch2(a,b) catch (a b)
-
-#define hsTry try
+#define hsThrow(a) { hsAssert(0,#a); throw a; }
 
 inline void hsThrowIfNilParam(const void* p)
 {
@@ -163,49 +153,5 @@ inline void hsThrowIfFalse(bool condition, const char message[])
         throw message;
     }
 }
-
-#else
-#define hsThrow(a) {hsAssert(0,#a);}
-#define hsCatch(a) if(0)
-#define hsCatch2(a,b) if(0)
-#define hsTry 
-
-inline void hsThrowIfNilParam(const void* p)
-{
-    hsAssert(p!=nil,"hsThrowIfNilParam");
-}
-
-inline void hsThrowIfBadParam(bool trueIfBadParam)
-{
-    hsAssert(!trueIfBadParam,"hsThrowIfBadParam");
-}
-
-inline void hsThrowIfOSErr(long osErr)
-{
-    hsAssert(osErr==0,"hsThrowIfOSErr");
-}
-
-inline void hsThrowIfTrue(bool condition)
-{
-    hsAssert(!condition,"hsThrowIfTrue");
-}
-
-inline void hsThrowIfFalse(bool condition)
-{
-    hsAssert(condition,"hsThrowIfFalse");
-}
-
-inline void hsThrowIfTrue(bool condition, const char message[])
-{
-    hsAssert(!condition,message);
-}
-
-inline void hsThrowIfFalse(bool condition, const char message[])
-{
-    hsAssert(condition,message);
-}
-
-
-#endif
 
 #endif
