@@ -158,14 +158,16 @@ bool plAvBrainHuman::Apply(double timeNow, float elapsed)
         fWalkingStrategy->SetTurnStrength(IGetTurnStrength(timeNow));
         RunStandardBehaviors(timeNow, elapsed);
         fWalkingStrategy->RecalcVelocity(timeNow, elapsed, (fPreconditions & plHBehavior::kBehaviorTypeNeedsRecalcMask));
-        
+
         plArmatureBrain::Apply(timeNow, elapsed);
 #ifndef _DEBUG
-    } catch (...)
-    {
+    } catch (std::exception &e) {
+        plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
+        log->AddLineF("plAvBrainHuman::Apply - exception caught: %s", e.what());
+    } catch (...) {
         // just catch all the crashes on exit...
         plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
-        log->AddLine("plAvBrainHuman::Apply - crash caught");
+        log->AddLine("plAvBrainHuman::Apply - exception caught");
     }
 #endif
     

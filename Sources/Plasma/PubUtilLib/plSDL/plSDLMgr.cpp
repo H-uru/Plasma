@@ -191,7 +191,19 @@ int plSDLMgr::Read(hsStream* s, plSDL::DescriptorList* dl)
                 delete sd; // well that sucked
         }
     }
-    catch(...)
+    catch (std::exception &e)
+    {
+        if (fNetApp)
+        {
+            hsLogEntry(fNetApp->DebugMsg("Something bad happened while reading SDLMgr data: %s", e.what()));
+        }
+        else
+        {
+            DebugMsg("Something bad happened while reading SDLMgr data: %s", e.what());
+        }
+        return 0;
+    }
+    catch (...)
     {
         if (fNetApp)
         {

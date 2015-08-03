@@ -73,7 +73,7 @@ static char jpegmsg[JMSG_LENGTH_MAX];
 static void plJPEG_error_exit( j_common_ptr cinfo )
 {
     (*cinfo->err->format_message) ( cinfo, jpegmsg );
-    throw ( false );
+    throw false;
 }
 static void plJPEG_emit_message( j_common_ptr cinfo, int msg_level )
 {
@@ -134,7 +134,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
 
         /// Read in the JPEG header
         if ( inStream->GetEOF() == 0 )
-            throw( false );
+            throw false;
 
         /// Wonderful limitation of mixing our streams with IJL--it wants either a filename
         /// or a memory buffer. Since we can't give it the former, we have to read the entire
@@ -142,11 +142,6 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         /// have to write/read a length of said buffer. Such is life, I guess...
         jpegSourceSize = inStream->ReadLE32();
         jpegSourceBuffer = new uint8_t[ jpegSourceSize ];
-        if( jpegSourceBuffer == nil )
-        {
-            // waah.
-            ERREXIT1( &cinfo, JERR_OUT_OF_MEMORY, 0 );
-        }
 
         inStream->Read( jpegSourceSize, jpegSourceBuffer );
         jpeg_mem_src( &cinfo, jpegSourceBuffer, jpegSourceSize );
@@ -183,11 +178,6 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         /// Construct a new mipmap to hold everything
         newMipmap = new plMipmap( cinfo.output_width, cinfo.output_height, plMipmap::kRGB32Config, 1, plMipmap::kJPEGCompression );
 
-        if( newMipmap == nil || newMipmap->GetImage() == nil )
-        {
-            ERREXIT1( &cinfo, JERR_OUT_OF_MEMORY, 0 );
-        }
-
         /// Set up to read in to that buffer we now have
         JSAMPROW jbuffer;
         int row_stride = cinfo.output_width * cinfo.output_components;
@@ -216,7 +206,7 @@ plMipmap    *plJPEG::IRead( hsStream *inStream )
         // Sometimes life just sucks
         ISwapRGBAComponents( (uint32_t *)newMipmap->GetImage(), newMipmap->GetWidth() * newMipmap->GetHeight() );
     }
-    catch( ... )
+    catch (...)
     {
         delete newMipmap;
         newMipmap = nil;
@@ -282,10 +272,6 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         // Create a buffer to hold the data
         jpgBufferSize = source->GetWidth() * source->GetHeight() * 3;
         jpgBuffer = new uint8_t[ jpgBufferSize ];
-        if( jpgBuffer == nil )
-        {
-            ERREXIT1( &cinfo, JERR_OUT_OF_MEMORY, 0 );
-        }
 
         uint8_t *bufferAddr = jpgBuffer;
         unsigned long bufferSize = jpgBufferSize;
@@ -338,7 +324,7 @@ bool    plJPEG::IWrite( plMipmap *source, hsStream *outStream )
         outStream->WriteLE32( bufferSize );
         outStream->Write( bufferSize, bufferAddr );
     }
-    catch( ... )
+    catch (...)
     {
         result = false;
     }

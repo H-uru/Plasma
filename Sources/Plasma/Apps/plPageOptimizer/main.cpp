@@ -61,6 +61,9 @@ int main(int argc, char* argv[])
         plResManager* resMgr = new plResManager;
         hsgResMgr::Init(resMgr);
 #ifndef _DEBUG
+    } catch (std::exception &e) {
+        printf(" ***crashed on init: %s\n", e.what());
+        return 2;
     } catch (...) {
         puts(" ***crashed on init");
         return 2;
@@ -75,6 +78,10 @@ int main(int argc, char* argv[])
         optimizer.Optimize();
     }
 #ifndef _DEBUG
+    catch (std::exception &e) {
+        printf(" ***crashed on optimizing: %s\n", e.what());
+        return 2;
+    }
     catch (...) {
         puts(" ***crashed on optimizing");
         return 2;
@@ -92,6 +99,9 @@ int main(int argc, char* argv[])
 
         hsgResMgr::Shutdown();
 #ifndef _DEBUG
+    } catch (std::exception &e) {
+        printf(" ***crashed on shutdown: %s\n", e.what());
+        return 2;
     } catch (...) {
         puts(" ***crashed on shutdown");
         return 2;
