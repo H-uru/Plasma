@@ -95,11 +95,11 @@ private:
         unsigned int fRefs;
         const _Ch *fStringData;
 
-        StringRef(const _Ch *data)
+        StringRef(const _Ch *data) HS_NOEXCEPT
             : fRefs(1), fStringData(data) { }
 
-        inline void AddRef() { ++fRefs; }
-        inline void DecRef()
+        inline void AddRef() HS_NOEXCEPT { ++fRefs; }
+        inline void DecRef() HS_NOEXCEPT
         {
             if (--fRefs == 0) {
                 delete [] fStringData;
@@ -114,14 +114,14 @@ private:
     };
     size_t fSize;
 
-    bool IHaveACow() const { return fSize >= SSO_CHARS; }
+    bool IHaveACow() const HS_NOEXCEPT { return fSize >= SSO_CHARS; }
 
 public:
     /** Construct an empty string buffer. */
-    plStringBuffer() : fSize(0) { memset(fShort, 0, sizeof(fShort)); }
+    plStringBuffer() HS_NOEXCEPT : fSize(0) { memset(fShort, 0, sizeof(fShort)); }
 
     /** Copy constructor - adds a reference to the copied buffer */
-    plStringBuffer(const plStringBuffer<_Ch> &copy) : fSize(copy.fSize)
+    plStringBuffer(const plStringBuffer<_Ch> &copy) HS_NOEXCEPT : fSize(copy.fSize)
     {
         memcpy(fShort, copy.fShort, sizeof(fShort));
         if (IHaveACow())
@@ -129,7 +129,7 @@ public:
     }
 
     /** Move constructor */
-    plStringBuffer(plStringBuffer<_Ch> &&move) : fSize(move.fSize)
+    plStringBuffer(plStringBuffer<_Ch> &&move) HS_NOEXCEPT : fSize(move.fSize)
     {
         memcpy(fShort, move.fShort, sizeof(fShort));
         move.fSize = 0;
@@ -154,7 +154,7 @@ public:
     /** Destructor.  The ref-counted data will only be freed if no other
      *  string buffers still reference it.
      */
-    ~plStringBuffer<_Ch>()
+    ~plStringBuffer<_Ch>() HS_NOEXCEPT
     {
         if (IHaveACow())
             fData->DecRef();
@@ -163,7 +163,7 @@ public:
     /** Assignment operator.  Changes the reference to point to the
      *  buffer in \a copy.
      */
-    plStringBuffer<_Ch> &operator=(const plStringBuffer<_Ch> &copy)
+    plStringBuffer<_Ch> &operator=(const plStringBuffer<_Ch> &copy) HS_NOEXCEPT
     {
         if (copy.IHaveACow())
             copy.fData->AddRef();
@@ -176,7 +176,7 @@ public:
     }
 
     /** Move assignment operator */
-    plStringBuffer<_Ch> &operator=(plStringBuffer<_Ch> &&move)
+    plStringBuffer<_Ch> &operator=(plStringBuffer<_Ch> &&move) HS_NOEXCEPT
     {
         if (IHaveACow())
             fData->DecRef();
@@ -188,17 +188,17 @@ public:
     }
 
     /** Returns a pointer to the referenced string buffer. */
-    const _Ch *GetData() const { return IHaveACow() ? fData->fStringData : fShort; }
+    const _Ch *GetData() const HS_NOEXCEPT { return IHaveACow() ? fData->fStringData : fShort; }
 
     /** Returns the number of characters (not including the '\0') in the
      *  referenced string buffer.
      */
-    size_t GetSize() const { return fSize; }
+    size_t GetSize() const HS_NOEXCEPT { return fSize; }
 
     /** Cast operator.  This is a shortcut for not needing to call GetData on
      *  buffer objects passed to methods or objects expecting a C-style string.
      */
-    operator const _Ch *() const { return GetData(); }
+    operator const _Ch *() const HS_NOEXCEPT { return GetData(); }
 
     /** Create a writable buffer for \a size characters.
      *  From Haxxia with love!  This will release the current string buffer
@@ -266,7 +266,7 @@ public:
 
 public:
     /** Construct a valid, empty string. */
-    plString() { }
+    plString() HS_NOEXCEPT { }
 
     /** Construct a string from a C-style string.
      *  \note This constructor expects the input to be UTF-8 encoded.  For
@@ -286,19 +286,19 @@ public:
     plString(char (&literal)[_Sz]) { IConvertFromUtf8(literal, STRLEN_AUTO); }
 
     /** Copy constructor. */
-    plString(const plString &copy) : fUtf8Buffer(copy.fUtf8Buffer) { }
+    plString(const plString &copy) HS_NOEXCEPT : fUtf8Buffer(copy.fUtf8Buffer) { }
 
     /** Move constructor. */
-    plString(plString &&move) : fUtf8Buffer(std::move(move.fUtf8Buffer)) { }
+    plString(plString &&move) HS_NOEXCEPT : fUtf8Buffer(std::move(move.fUtf8Buffer)) { }
 
     /** Copy constructor from plStringBuffer<char>.
      *  \note This constructor expects the input to be UTF-8 encoded.  For
      *        conversion from ISO-8859-1 8-bit data, use FromIso8859_1().
      */
-    plString(const plStringBuffer<char> &init) { operator=(init); }
+    plString(const plStringBuffer<char> &init) HS_NOEXCEPT { operator=(init); }
 
     /** Move constructor from plStringBuffer<char>. */
-    plString(plStringBuffer<char> &&init) { operator=(std::move(init)); }
+    plString(plStringBuffer<char> &&init) HS_NOEXCEPT { operator=(std::move(init)); }
 
     /** Construct a string from expanded Unicode data. */
     plString(const plUnicodeBuffer &init) { IConvertFromUtf32(init.GetData(), init.GetSize()); }
@@ -315,10 +315,10 @@ public:
     plString &operator=(char (&literal)[_Sz]) { IConvertFromUtf8(literal, STRLEN_AUTO); return *this; }
 
     /** Assignment operator.  Same as plString(const plString &). */
-    plString &operator=(const plString &copy) { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
+    plString &operator=(const plString &copy) HS_NOEXCEPT { fUtf8Buffer = copy.fUtf8Buffer; return *this; }
 
     /** Assignment operator.  Same as plString(plString &&). */
-    plString &operator=(plString &&move) { fUtf8Buffer = std::move(move.fUtf8Buffer); return *this; }
+    plString &operator=(plString &&move) HS_NOEXCEPT { fUtf8Buffer = std::move(move.fUtf8Buffer); return *this; }
 
     /** Assignment operator.  Same as plString(const plStringBuffer<char> &). */
     plString &operator=(const plStringBuffer<char> &init);
@@ -384,17 +384,17 @@ public:
      *  expecting C-style string pointers.  If this string is empty, returns
      *  \a substitute instead.
      */
-    const char *c_str(const char *substitute = "") const
+    const char *c_str(const char *substitute = "") const HS_NOEXCEPT
     { return IsEmpty() ? substitute : fUtf8Buffer.GetData(); }
 
     /** Return the byte at position \a position.  Note that this may be in
      *  the middle of a UTF-8 sequence -- if you want an actual Unicode
      *  character, use the buffer returned from GetUnicodeArray() instead.
      */
-    char CharAt(size_t position) const { return c_str()[position]; }
+    char CharAt(size_t position) const HS_NOEXCEPT { return c_str()[position]; }
 
     /** Returns the internal UTF-8 data buffer object. */
-    plStringBuffer<char> ToUtf8() const { return fUtf8Buffer; }
+    plStringBuffer<char> ToUtf8() const HS_NOEXCEPT { return fUtf8Buffer; }
 
     /** Convert this string's data to a UTF-16 string buffer. */
     plStringBuffer<uint16_t> ToUtf16() const;
@@ -421,10 +421,10 @@ public:
     /** Returns the size in number of bytes (excluding the null-terminator) of
      *  this string.
      */
-    size_t GetSize() const { return fUtf8Buffer.GetSize(); }
+    size_t GetSize() const HS_NOEXCEPT { return fUtf8Buffer.GetSize(); }
 
     /** Returns \c true if this string is empty (""). */
-    bool IsEmpty() const { return fUtf8Buffer.GetSize() == 0; }
+    bool IsEmpty() const HS_NOEXCEPT { return fUtf8Buffer.GetSize() == 0; }
 
     /** Returns \c true if this string is "null".  Currently, this is just
      *  a synonym for IsEmpty(), as plString makes no distinction between
@@ -432,27 +432,27 @@ public:
      *  \todo Evaluate whether Plasma actually needs to distinguish between
      *        empty and NULL strings.  Ideally, only IsEmpty should be required.
      */
-    bool IsNull() const { return IsEmpty(); }
+    bool IsNull() const HS_NOEXCEPT { return IsEmpty(); }
 
     /** Convert the string data to an integer in base \a base.
      *  If base is set to 0, this function behaves like strtol, which checks
      *  for hex or octal prefixes (e.g. 0777 or 0x1234), and assumes base 10
      *  if none are found.
      */
-    int ToInt(int base = 0) const;
+    int ToInt(int base = 0) const HS_NOEXCEPT;
 
     /** Convert the string to an unsigned integer in base \a base.
      *  If base is set to 0, this function behaves like strtoul, which checks
      *  for hex or octal prefixes (e.g. 0777 or 0x1234), and assumes base 10
      *  if none are found.
      */
-    unsigned int ToUInt(int base = 0) const;
+    unsigned int ToUInt(int base = 0) const HS_NOEXCEPT;
 
     /** Convert the string to a floating point value. */
-    float ToFloat() const;
+    float ToFloat() const HS_NOEXCEPT;
 
     /** Convert the string to a double precision floating point value. */
-    double ToDouble() const;
+    double ToDouble() const HS_NOEXCEPT;
 
     /** Construct a plString using a printf-like format string.
      *  This function should be called inside of other vararg functions,
@@ -470,7 +470,7 @@ public:
      *    \li \p \<0 - this string is lexicographically less than \a str
      *    \li \p \>0 - this string is lexicographically greater than \a str
      */
-    int Compare(const plString &str, CaseSensitivity sense = kCaseSensitive) const
+    int Compare(const plString &str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     {
         return (sense == kCaseSensitive) ? strcmp(c_str(), str.c_str())
                                          : stricmp(c_str(), str.c_str());
@@ -482,7 +482,7 @@ public:
      *    \li \p \<0 - this string is lexicographically less than \a str
      *    \li \p \>0 - this string is lexicographically greater than \a str
      */
-    int Compare(const char *str, CaseSensitivity sense = kCaseSensitive) const
+    int Compare(const char *str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     {
         return (sense == kCaseSensitive) ? strcmp(c_str(), str ? str : "")
                                          : stricmp(c_str(), str ? str : "");
@@ -492,7 +492,7 @@ public:
      *  string with \a str.
      *  \sa Compare(const plString &, CaseSensitivity) const
      */
-    int CompareN(const plString &str, size_t count, CaseSensitivity sense = kCaseSensitive) const
+    int CompareN(const plString &str, size_t count, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     {
         return (sense == kCaseSensitive) ? strncmp(c_str(), str.c_str(), count)
                                          : strnicmp(c_str(), str.c_str(), count);
@@ -502,58 +502,58 @@ public:
      *  string with \a str.
      *  \sa Compare(const char *, CaseSensitivity) const
      */
-    int CompareN(const char *str, size_t count, CaseSensitivity sense = kCaseSensitive) const
+    int CompareN(const char *str, size_t count, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     {
         return (sense == kCaseSensitive) ? strncmp(c_str(), str ? str : "", count)
                                          : strnicmp(c_str(), str ? str : "", count);
     }
 
     /** Shortcut for Compare(str, kCaseInsensitive). */
-    int CompareI(const plString &str) const { return Compare(str, kCaseInsensitive); }
+    int CompareI(const plString &str) const HS_NOEXCEPT { return Compare(str, kCaseInsensitive); }
 
     /** Shortcut for Compare(str, kCaseInsensitive). */
-    int CompareI(const char *str) const { return Compare(str, kCaseInsensitive); }
+    int CompareI(const char *str) const HS_NOEXCEPT { return Compare(str, kCaseInsensitive); }
 
     /** Shortcut for CompareN(str, kCaseInsensitive). */
-    int CompareNI(const plString &str, size_t count) const { return CompareN(str, count, kCaseInsensitive); }
+    int CompareNI(const plString &str, size_t count) const HS_NOEXCEPT { return CompareN(str, count, kCaseInsensitive); }
 
     /** Shortcut for CompareN(str, kCaseInsensitive). */
-    int CompareNI(const char *str, size_t count) const { return CompareN(str, count, kCaseInsensitive); }
+    int CompareNI(const char *str, size_t count) const HS_NOEXCEPT { return CompareN(str, count, kCaseInsensitive); }
 
     /** Operator overload for use in containers which depend on \c std::less. */
-    bool operator<(const plString &other) const { return Compare(other) < 0; }
+    bool operator<(const plString &other) const HS_NOEXCEPT { return Compare(other) < 0; }
 
     /** Test if this string contains the same string data as \a other. */
-    bool operator==(const char *other) const { return Compare(other) == 0; }
+    bool operator==(const char *other) const HS_NOEXCEPT { return Compare(other) == 0; }
 
     /** Test if this string contains the same string data as \a other. */
-    bool operator==(const plString &other) const { return Compare(other) == 0; }
+    bool operator==(const plString &other) const HS_NOEXCEPT { return Compare(other) == 0; }
 
     /** Inverse of operator==(const char *) const. */
-    bool operator!=(const char *other) const { return Compare(other) != 0; }
+    bool operator!=(const char *other) const HS_NOEXCEPT { return Compare(other) != 0; }
 
     /** Inverse of operator==(const plString &) const. */
-    bool operator!=(const plString &other) const { return Compare(other) != 0; }
+    bool operator!=(const plString &other) const HS_NOEXCEPT { return Compare(other) != 0; }
 
     /** Find the index (in bytes) of the first instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
-    ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t Find(char ch, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT;
 
     /** Find the index (in bytes) of the last instance of \a ch in this string.
      *  \return -1 if the character was not found.
      */
-    ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t FindLast(char ch, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT;
 
     /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
-    ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const;
+    ssize_t Find(const char *str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT;
 
     /** Find the index (in bytes) of the first instance of \a str in this string.
      *  \return -1 if the substring was not found.
      */
-    ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const
+    ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     { return Find(str.c_str(), sense); }
 
     /** Check that this string matches the specified regular expression.
@@ -645,7 +645,7 @@ public:
     {
         // TODO:  This doesn't really use enough bits to be useful when
         //   size_t is 64-bits.
-        size_t operator()(const plString& str) const
+        size_t operator()(const plString& str) const HS_NOEXCEPT
         {
             size_t hash = 0;
             for (size_t i = 0; i < str.GetSize(); ++i) {
@@ -660,7 +660,7 @@ public:
         }
 
     protected:
-        virtual char fetch_char(const plString& str, size_t index) const
+        virtual char fetch_char(const plString& str, size_t index) const HS_NOEXCEPT
         { return str.CharAt(index); }
     };
 
@@ -670,21 +670,21 @@ public:
     struct hash_i : public hash
     {
     protected:
-        virtual char fetch_char(const plString& str, size_t index) const
+        char fetch_char(const plString& str, size_t index) const HS_NOEXCEPT HS_FINAL HS_OVERRIDE
         { return tolower(str.CharAt(index)); }
     };
 
     /** Functor which compares two strings case-insensitively for sorting. */
     struct less_i
     {
-        bool operator()(const plString &_L, const plString &_R) const
+        bool operator()(const plString &_L, const plString &_R) const HS_NOEXCEPT
         { return _L.Compare(_R, kCaseInsensitive) < 0; }
     };
 
     /** Functor which compares two strings case-insensitively for equality. */
     struct equal_i
     {
-        bool operator()(const plString &_L, const plString &_R) const
+        bool operator()(const plString &_L, const plString &_R) const HS_NOEXCEPT
         { return _L.Compare(_R, kCaseInsensitive) == 0; }
     };
 
@@ -715,16 +715,16 @@ public:
     /** Construct a new empty string stream.  The first STRING_STACK_SIZE
      *  bytes are allocated on the stack for further efficiency.
      */
-    plStringStream() : fBufSize(STRING_STACK_SIZE), fLength(0) { }
+    plStringStream() HS_NOEXCEPT : fBufSize(STRING_STACK_SIZE), fLength(0) { }
 
     /** Destructor, frees any allocated heap memory owned by the stream. */
-    ~plStringStream() { if (ICanHasHeap()) delete [] fBuffer; }
+    ~plStringStream() HS_NOEXCEPT { if (ICanHasHeap()) delete [] fBuffer; }
 
     plStringStream(const plStringStream &) = delete;
     plStringStream &operator=(const plStringStream &) = delete;
 
     /** Move operator */
-    plStringStream(plStringStream &&move)
+    plStringStream(plStringStream &&move) HS_NOEXCEPT
         : fBufSize(move.fBufSize), fLength(move.fLength)
     {
         memcpy(fShort, move.fShort, sizeof(fShort));
@@ -732,7 +732,7 @@ public:
     }
 
     /** Move assignment operator. */
-    plStringStream &operator=(plStringStream &&move)
+    plStringStream &operator=(plStringStream &&move) HS_NOEXCEPT
     {
         memcpy(fShort, move.fShort, sizeof(fShort));
         fBufSize = move.fBufSize;
@@ -780,13 +780,13 @@ public:
     /** Returns a pointer to the beginning of the stream buffer.
      *  \warning This pointer is not null-terminated.
      */
-    const char *GetRawBuffer() const
+    const char *GetRawBuffer() const HS_NOEXCEPT
     {
         return ICanHasHeap() ? fBuffer : fShort;
     }
 
     /** Return the size (in bytes) of the stream's data. */
-    size_t GetLength() const { return fLength; }
+    size_t GetLength() const HS_NOEXCEPT { return fLength; }
 
     /** Convert the stream's data to a UTF-8 string. */
     plString GetString() const { return plString::FromUtf8(GetRawBuffer(), fLength); }
@@ -796,7 +796,7 @@ public:
      *  with as much space as it had before, making this method more
      *  useful for re-using string streams in loops.
      */
-    void Truncate() { fLength = 0; }
+    void Truncate() HS_NOEXCEPT { fLength = 0; }
 
 private:
     union {
@@ -805,7 +805,7 @@ private:
     };
     size_t fBufSize, fLength;
 
-    bool ICanHasHeap() const { return fBufSize > STRING_STACK_SIZE; }
+    bool ICanHasHeap() const HS_NOEXCEPT { return fBufSize > STRING_STACK_SIZE; }
 };
 
 /** \p strlen implementation for plUniChar based C-style string buffers. */
