@@ -60,11 +60,10 @@ class hsException : public std::exception {
 public:
     hsErrorEnum fError;
     long        fParam;
+    char        fWhat[64];
 
-    hsException(hsErrorEnum error, long param = 0) HS_NOEXCEPT
-        : fError(error), fParam(param) {}
-
-    const char *what() const HS_NOEXCEPT HS_OVERRIDE;
+    hsException(hsErrorEnum error, long param = 0) HS_NOEXCEPT;
+    const char *what() const HS_NOEXCEPT HS_OVERRIDE { return fWhat; }
 };
 
 class hsNilParamException : public hsException {

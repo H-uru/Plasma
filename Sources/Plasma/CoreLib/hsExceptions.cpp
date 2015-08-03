@@ -2,10 +2,9 @@
 
 #include <cstring>
 
-const char *hsException::what() const HS_NOEXCEPT
+hsException::hsException(hsErrorEnum error, long param) HS_NOEXCEPT
+    : fError(error), fParam(param)
 {
-    char buffer[64];
-
     static const char *kErrorNames[] = {
         "kNo_hsError",
         "kNilParam_hsError",
@@ -17,9 +16,7 @@ const char *hsException::what() const HS_NOEXCEPT
         "kErrorNames not in sync with hsErrorEnum");
 
     if (fError >= 0 && fError < hsErrorEnum_MAX)
-        snprintf(buffer, arrsize(buffer), "%s (%ld)", kErrorNames[fError], fParam);
+        snprintf(fWhat, arrsize(fWhat), "%s (%ld)", kErrorNames[fError], fParam);
     else
-        snprintf(buffer, arrsize(buffer), "Unknown hsException error %d (%ld)", fError, fParam);
-
-    return buffer;
+        snprintf(fWhat, arrsize(fWhat), "Unknown hsException error %d (%ld)", fError, fParam);
 }
