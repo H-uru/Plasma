@@ -66,7 +66,7 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void AddMarker(double x, double y, double z, uint32_t id, bool justCreated);
+    void AddMarker(pyPoint3* pos, uint32_t id, bool justCreated);
     void RemoveMarker(uint32_t id);
     void RemoveAllMarkers();
 

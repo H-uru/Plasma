@@ -60,15 +60,15 @@ PYTHON_INIT_DEFINITION(ptMarkerMgr, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptMarkerMgr, addMarker, args)
 {
-    double x, y, z;
+    PyObject* point;
     unsigned long id;
     uint8_t justCreated;
-    if (!PyArg_ParseTuple(args, "dddlb", &x, &y, &z, &id, &justCreated))
+    if (!PyArg_ParseTuple(args, "Olb", &point, &id, &justCreated) || !pyPoint3::Check(point))
     {
-        PyErr_SetString(PyExc_TypeError, "addMarker expects three doubles, an unsigned long, and a bool");
+        PyErr_SetString(PyExc_TypeError, "addMarker expects a ptPoint3, an unsigned long, and a bool");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->AddMarker(x, y, z, id, justCreated != 0);
+    self->fThis->AddMarker(pyPoint3::ConvertFrom(point), id, justCreated != 0);
     PYTHON_RETURN_NONE;
 }
 

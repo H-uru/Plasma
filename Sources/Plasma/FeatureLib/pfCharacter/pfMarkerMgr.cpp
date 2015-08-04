@@ -159,7 +159,7 @@ void pfMarkerMgr::IMarkerHit(plKey markerKey, plKey playerKey)
     msg->Send();
 }
 
-void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool justCreated)
+void pfMarkerMgr::AddMarker(const hsPoint3& pos, uint32_t id, bool justCreated)
 {
     if (fMarkers.find(id) != fMarkers.end())
     {
@@ -168,7 +168,6 @@ void pfMarkerMgr::AddMarker(double x, double y, double z, uint32_t id, bool just
         delete fMarkers[id];
     }
 
-    hsPoint3 pos((float)x, (float)y, (float)z);
     fMarkers[id] = new pfMarkerInfo(pos, justCreated);
     fMarkers[id]->Spawn(pfMarkerInfo::kMarkerOpen);
 }

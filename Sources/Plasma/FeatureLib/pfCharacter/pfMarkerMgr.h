@@ -91,7 +91,7 @@ public:
 
     bool MsgReceive(plMessage* msg);
 
-    void AddMarker(double x, double y, double z, uint32_t id, bool justCreated);
+    void AddMarker(const struct hsPoint3& pos, uint32_t id, bool justCreated);
     void RemoveMarker(uint32_t id);
     void RemoveAllMarkers();
 
