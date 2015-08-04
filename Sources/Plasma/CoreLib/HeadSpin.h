@@ -130,6 +130,22 @@ typedef int32_t   hsError;
 #   define hsDeprecated(message)
 #endif
 
+#ifdef HAVE_OVERRIDE
+#   define HS_OVERRIDE  override
+#   define HS_FINAL     final
+#else
+#   define HS_OVERRIDE
+#   define HS_FINAL
+#endif
+
+#ifdef HAVE_NOEXCEPT
+#   define HS_NOEXCEPT          noexcept
+#   define HS_NOEXCEPT_IF(cond) noexcept(cond)
+#else
+#   define HS_NOEXCEPT          throw()
+#   define HS_NOEXCEPT_IF(cond)
+#endif
+
 //======================================
 // Endian swap funcitions
 //======================================

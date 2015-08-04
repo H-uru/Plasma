@@ -95,21 +95,21 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
             if (!png_ptr) {
-                throw(false);
+                throw false;
             }
 
             info_ptr = png_create_info_struct(png_ptr);
 
             if (!info_ptr) {
                 png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
-                throw(false);
+                throw false;
             }
 
             end_info = png_create_info_struct(png_ptr);
 
             if (!end_info) {
                 png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
-                throw(false);
+                throw false;
             }
 
             //  Assign delegate function for reading from hsStream
@@ -169,10 +169,8 @@ plMipmap* plPNG::IRead(hsStream* inStream)
             delete [] row_ptrs;
         }
     } catch (...) {
-        if (newMipmap != NULL) {
-            delete newMipmap;
-            newMipmap = NULL;
-        }
+        delete newMipmap;
+        newMipmap = nullptr;
     }
 
     return newMipmap;
@@ -200,14 +198,14 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream)
         png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
         if (!png_ptr) {
-            throw(false);
+            throw false;
         }
 
         png_infop info_ptr = png_create_info_struct(png_ptr);
 
         if (!info_ptr) {
             png_destroy_write_struct(&png_ptr, (png_infopp)NULL);
-            throw(false);
+            throw false;
         }
 
         //  Assign delegate function for writing to hsStream

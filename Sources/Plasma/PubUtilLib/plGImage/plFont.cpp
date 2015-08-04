@@ -1475,7 +1475,13 @@ bool    plFont::LoadFromFNTStream( hsStream *stream )
         ICalcFontAscent();
         return true;
     }
-    catch( ... )
+    catch (std::exception &e)
+    {
+        printf("Exception caught in plFont::LoadFromFNTStream: %s\n", e.what());
+        IClear();
+        return false;
+    }
+    catch (...)
     {
         // Somehow we crashed converting!
         IClear();
@@ -2092,7 +2098,14 @@ bool    plFont::LoadFromBDF( const plFileName &path, plBDFConvertCallback *callb
             }
         }
     }
-    catch( ... )
+    catch (std::exception &e)
+    {
+        printf("Exception caught in plFont::LoadFromBDF: %s\n", e.what());
+        IClear();
+        fclose(fp);
+        return false;
+    }
+    catch (...)
     {
         IClear();
         fclose( fp );

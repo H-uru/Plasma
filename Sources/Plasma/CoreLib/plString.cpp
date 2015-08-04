@@ -489,23 +489,23 @@ plUnicodeBuffer plString::GetUnicodeArray() const
     return result;
 }
 
-int plString::ToInt(int base) const
+int plString::ToInt(int base) const HS_NOEXCEPT
 {
     return static_cast<int>(strtol(c_str(), nullptr, base));
 }
 
-unsigned int plString::ToUInt(int base) const
+unsigned int plString::ToUInt(int base) const HS_NOEXCEPT
 {
     return static_cast<unsigned int>(strtoul(c_str(), nullptr, base));
 }
 
-float plString::ToFloat() const
+float plString::ToFloat() const HS_NOEXCEPT
 {
     // strtof is C99, which MS doesn't support...
     return (float)strtod(c_str(), nullptr);
 }
 
-double plString::ToDouble() const
+double plString::ToDouble() const HS_NOEXCEPT
 {
     return strtod(c_str(), nullptr);
 }
@@ -550,7 +550,7 @@ plString plString::IFormat(const char *fmt, va_list vptr)
     return plString::FromUtf8(buffer, chars);
 }
 
-ssize_t plString::Find(char ch, CaseSensitivity sense) const
+ssize_t plString::Find(char ch, CaseSensitivity sense) const HS_NOEXCEPT
 {
     if (sense == kCaseSensitive) {
         const char *cp = strchr(c_str(), ch);
@@ -566,7 +566,7 @@ ssize_t plString::Find(char ch, CaseSensitivity sense) const
     }
 }
 
-ssize_t plString::FindLast(char ch, CaseSensitivity sense) const
+ssize_t plString::FindLast(char ch, CaseSensitivity sense) const HS_NOEXCEPT
 {
     if (IsEmpty())
         return -1;
@@ -586,7 +586,7 @@ ssize_t plString::FindLast(char ch, CaseSensitivity sense) const
     }
 }
 
-ssize_t plString::Find(const char *str, CaseSensitivity sense) const
+ssize_t plString::Find(const char *str, CaseSensitivity sense) const HS_NOEXCEPT
 {
     if (!str || !str[0])
         return -1;

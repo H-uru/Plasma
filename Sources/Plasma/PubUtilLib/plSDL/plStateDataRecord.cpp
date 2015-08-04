@@ -274,9 +274,16 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch(...)
+    catch (std::exception &e)
     {
-        hsAssert( false, 
+        hsAssert(false,
+            plFormat("Something bad happened ({}) while reading simple var data, desc:{}",
+                     e.what(), fDescriptor ? fDescriptor->GetName() : "?").c_str());
+        return false;
+    }
+    catch (...)
+    {
+        hsAssert(false,
             plFormat("Something bad happened while reading simple var data, desc:{}",
                      fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
@@ -308,9 +315,16 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch(...)
+    catch (std::exception &e)
     {
-        hsAssert( false, 
+        hsAssert(false,
+            plFormat("Something bad happened ({}) while reading nested var data, desc:{}",
+                     e.what(), fDescriptor ? fDescriptor->GetName() : "?").c_str());
+        return false;
+    }
+    catch (...)
+    {
+        hsAssert(false,
             plFormat("Something bad happened while reading nested var data, desc:{}",
                      fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;

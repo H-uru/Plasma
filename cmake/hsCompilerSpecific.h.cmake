@@ -52,5 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #cmakedefine HAVE_GCC_DEPRECATED_ATTR
 
 #cmakedefine HAVE_CONSTEXPR
+#cmakedefine HAVE_OVERRIDE
+#cmakedefine HAVE_NOEXCEPT
 
 #endif

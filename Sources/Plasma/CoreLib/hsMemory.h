@@ -56,8 +56,6 @@ public:
     static void* New(uint32_t size);
     static void  Delete(void* block);
     static void* Copy(uint32_t length, const void* source);
-    
-    static void* SoftNew(uint32_t size);   // returns nil if can't allocate
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
@@ -110,8 +108,7 @@ public:
 
     void        Reset();
     void        SetChunkSize(uint32_t size);
-    void*   Allocate(uint32_t size, const void* data = nil);      // throws if fails
-    void*   SoftAllocate(uint32_t size, const void* data = nil);  // returns nil if fails
+    void*   Allocate(uint32_t size, const void* data = nil);
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////
