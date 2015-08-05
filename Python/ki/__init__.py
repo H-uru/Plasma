@@ -65,9 +65,6 @@ import math
 
 import xLocTools
 import xEnum
-from xMarkerGameManager import *    # Logic for Marker Games.
-from xMarkerGameKIDisplay import *  # Support to display user-created marker
-                                    # game details within the KI.
 
 # Personal age SDL helper.
 from xPsnlVaultSDL import *
@@ -80,6 +77,9 @@ import xKIExtChatCommands
 import xKIChat
 from xKIConstants import *
 from xKIHelpers import *
+
+# Marker Game thingies
+import xMarkerMgr
 
 # Define the attributes that will be entered in Max.
 KIBlackbar = ptAttribGUIDialog(1, "The Blackbar dialog")
@@ -360,7 +360,7 @@ class xKI(ptModifier):
         PtLoadDialog("YeeshaPageGUI")
         PtLoadDialog("KIMiniMarkers", self.key)
 
-        self.markerGameManager = None
+        self.markerGameManager = xMarkerMgr.MarkerGameManager(self)
         self.markerGameDisplay = None
 
         # Pass the newly-initialized key to the modules.
@@ -402,22 +402,6 @@ class xKI(ptModifier):
     # This function re-initializes Marker Games, puts away the KI and performs
     # various other preparations.
     def OnServerInitComplete(self):
-
-        if self.markerGameDisplay is not None:
-            self.markerGameDisplay = None
-
-        # Update the marker game manager.
-        if self.markerGameManager is None:
-            # Game is initialized on account update (so ignore if player is not selected).
-            PtDebugPrint(u"xKI.OnServerInitComplete(): Could not find marker manger, re-creating a new one.", level=kErrorLevel)
-            self.markerGameManager = MarkerGameManager(self)
-        else:
-            # Loading new age, re-load marker game manager.
-            ageName = PtGetAgeInfo().getAgeFilename()
-            if ageName.lower() != "startup":
-                PtDebugPrint(u"xKI.OnServerInitComplete(): Reloading Marker Game Manager.", level=kDebugDumpLevel)
-                self.markerGameManager = MarkerGameManager(self)
-
         # Force any open KIs to close.
         self.ToggleMiniKI()
 
@@ -425,6 +409,9 @@ class xKI(ptModifier):
 
         ageName = PtGetAgeName()
         PtDebugPrint(u"xKI.OnServerInitComplete(): Age = ", ageName, level=kDebugDumpLevel)
+
+        if ageName.lower() != "startup":
+            self.markerGameManager.OnServerInitComplete()
 
         # Set up Jalak GUI.
         if ageName == "Jalak":
@@ -683,6 +670,9 @@ class xKI(ptModifier):
     def OnKIMsg(self, command, value):
 
         PtDebugPrint(u"xKI.OnKIMsg(): command = {} value = {}.".format(command, value), level=kDebugDumpLevel)
+        if self.markerGameManager.OnKIMsg(command, value):
+            return
+
         if command == kEnterChatMode and not self.KIDisabled:
             self.chatMgr.ToggleChatMode(1)
         elif command == kSetChatFadeDelay:
@@ -1011,23 +1001,6 @@ class xKI(ptModifier):
             NewItemAlert.dialog.hide()
             KIAlert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
             KIAlert.hide()
-        elif command == kMGStartCGZGame:
-            PtDebugPrint(u"xKI.OnKIMsg(): Creating a CGZ Marker Game with (game number = {}).".format(value))
-            if value is not None:
-                self.markerGameManager.createCGZMarkerGame(value)
-            else:
-                PtDebugPrint(u"xKI.OnKIMsg(): Invalid game parameter, aborting game creation.", level=kErrorLevel)
-        elif command == kMGStopCGZGame:
-            if self.markerGameManager is not None:
-                self.markerGameManager.stopCGZGame()
-
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        # User-created Marker Games messages #
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-        elif command == kKICreateMarker:
-            self.CreateAMarker()
-        elif command == kKICreateMarkerFolder:
-            self.CreateMarkerGame()
 
     ## Called by Plasma on receipt of a message from the game client.
     # The game client handles Marker Games.
@@ -1400,11 +1373,7 @@ class xKI(ptModifier):
     ## Called by Plasma when a marker has been captured by the player.
     def OnMarkerMsg(self, msgType, tupData):
 
-        if msgType == PtMarkerMsgType.kMarkerCaptured:
-            PtDebugPrint(u"xKI.OnMarkerMsg(): Marker captured; ID = \"{}\".".format(tupData[0]), level=kDebugDumpLevel)
-            if self.markerGameDisplay is not None:
-                return
-            self.markerGameManager.captureMarker(tupData[0])
+        self.markerGameManager.OnMarkerMsg(msgType, tupData)
 
     ## Called by Plasma on receipt of a game score message.
     # This is used for handling pellet scoring.
@@ -1536,8 +1505,8 @@ class xKI(ptModifier):
 
         self.ChangeBigKIMode(kGUI.BKListMode)
 
-        # Clear out any existing marker game.
-        self.markerGameManager = MarkerGameManager(self)
+        # Load the ding dang marker game
+        self.markerGameManager.LoadFromVault()
 
     #~~~~~~~~~~#
     # KI Flags #
@@ -3420,11 +3389,7 @@ class xKI(ptModifier):
                 btnmtInRange.hide()
 
             # Should the Marker Game GUI be displayed?
-            if self.markerGameManager is not None and self.markerGameManager.gameData.data["svrGameTypeID"] == PtMarkerGameTypes.kMarkerGameCGZ:
-                playingCGZ = True
-            else:
-                playingCGZ = False
-            if self.gKIMarkerLevel >= kKIMarkerNormalLevel and not playingCGZ:
+            if self.gKIMarkerLevel >= kKIMarkerNormalLevel and not self.markerGameManager.IsCGZ:
                 btnmtDrip.hide()
                 btnmtActive.hide()
                 btnmtPlaying.hide()
@@ -3437,11 +3402,7 @@ class xKI(ptModifier):
                     selectedMarker = self.markerGameDisplay.selectedMarker
                 except :
                     selectedMarker = -1
-                try:
-                    gameLoaded = self.markerGameManager.gameLoaded()
-                except:
-                    gameLoaded = 0
-                if gameLoaded:
+                if self.markerGameManager.IsGameLoaded:
                     btnmgNewMarker.hide()
                     btnmgNewGame.hide()
                     btnmgInactive.show()
