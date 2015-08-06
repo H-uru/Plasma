@@ -100,7 +100,13 @@ PYTHON_METHOD_DEFINITION(ptMarkerMgr, setSelectedMarker, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptMarkerMgr, getSelectedMarker)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetSelectedMarker());
+    // -1 means "no selected marker" -- don't return the unsigned version of that
+    // Python will give us 4 billion in that case :)
+    uint32_t marker = self->fThis->GetSelectedMarker();
+    if (marker == static_cast<uint32_t>(-1))
+        return PyLong_FromLong(-1);
+    else
+        return PyLong_FromUnsignedLong(marker);
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptMarkerMgr, clearSelectedMarker, ClearSelectedMarker)
