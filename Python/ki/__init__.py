@@ -155,10 +155,6 @@ class xKI(ptModifier):
         self.takingAPicture = False
         self.waitingForAnimation = False
 
-        # Messages for user created Marker Game waiting screen.
-        self.pendingMGaction = None
-        self.pendingMGmessage = None
-
         # Transparency settings.
         self.originalForeAlpha = 1.0
         self.originalSelectAlpha = 1.0
@@ -4747,15 +4743,14 @@ class xKI(ptModifier):
     ## Prepares the display of a marker game, as it may be loading.
     def BigKIDisplayMarkerGame(self):
 
+        # Make sure that the player can view this game.
+        if self.gKIMarkerLevel < kKIMarkerNormalLevel:
+            self.BigKIDisplayMarkerGameMessage(PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI"))
+            return
+
         # Save some typing.
         mgr = self.markerGameManager
         getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
-
-        # Make sure that the player can view this game.
-        if self.gKIMarkerLevel < kKIMarkerNormalLevel:
-            # Let the player know the KI isn't configured to view this game.
-            self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI")
-            return
 
         # Initialize the markerGameDisplay to the currently selected game.
         # But first, ensure that the player meets all the necessary criteria.
@@ -5032,6 +5027,54 @@ class xKI(ptModifier):
         # TODO: time limit
         mtbGameTime.hide()
         mtbGameTimeTitle.hide()
+
+    def BigKIDisplayMarkerGameMessage(self, msg):
+        """Displays some message in the Marker Folder subdialog"""
+
+        # Save some typing.
+        getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
+
+        # Disable all controls until we need them.
+        mrkfldTitle = ptGUIControlTextBox(getControl(kGUI.MarkerFolderTitleText))
+        mrkfldTitle.hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderStatus)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderOwner)).hide()
+        # Hide the scroll buttons for the Marker list; the scroll control will turn them back on.
+        ptGUIControlButton(getControl(kGUI.MarkerFolderMarkerListUpBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderMarkerListDownBtn)).hide()
+
+        ptGUIControlButton(getControl(kGUI.MarkerFolderInvitePlayer)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderEditStartGame)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderPlayEndGame)).hide()
+
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderInvitePlayerTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderEditStartGameTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderPlayEndGameTB)).hide()
+
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTitleBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTimePullDownBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).disable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTimeArrow)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderTypeArrow)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTimeTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTimeTitleTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTypeTB)).hide()
+        ptGUIControlListBox(getControl(kGUI.MarkerFolderMarkListbox)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextBtn)).hide()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderToranIcon)).disable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderHSpanIcon)).disable()
+        ptGUIControlButton(getControl(kGUI.MarkerFolderVSpanIcon)).disable()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderToranTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderHSpanTB)).hide()
+        ptGUIControlTextBox(getControl(kGUI.MarkerFolderVSpanTB)).hide()
+
+        # Show the status.
+        mrkfldTitle.setStringW(msg)
+        mrkfldTitle.show()
+        mrkfldTitle.refresh()
 
     ## Show the selected configuration screen.
     def ShowSelectedConfig(self):
