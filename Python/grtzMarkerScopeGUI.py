@@ -245,7 +245,7 @@ class grtzMarkerScopeGUI(ptModifier):
             self._supressNextNotify = True
             gameSelector.setValue(mission)
             if mission != -1:
-                if PtIsQuestComplete():
+                if PtIsCGZMComplete():
                     self._StopCGZM(win=True)
                 else:
                     PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)

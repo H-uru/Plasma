@@ -360,8 +360,7 @@ class xKI(ptModifier):
         PtLoadDialog("YeeshaPageGUI")
         PtLoadDialog("KIMiniMarkers", self.key)
 
-        self.markerGameManager = xMarkerMgr.MarkerGameManager(self)
-        self.markerGameDisplay = None
+        self.markerGameManager = xMarkerMgr.MarkerGameManager()
 
         # Pass the newly-initialized key to the modules.
         self.chatMgr.key = self.key
@@ -1001,114 +1000,6 @@ class xKI(ptModifier):
             NewItemAlert.dialog.hide()
             KIAlert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
             KIAlert.hide()
-
-    ## Called by Plasma on receipt of a message from the game client.
-    # The game client handles Marker Games.
-    def OnGameCliMsg(self, msg):
-
-        msgType = msg.getType()
-
-        if msgType == PtGameCliMsgTypes.kGameCliPlayerJoinedMsg:
-            joinMsg = msg.upcastToFinalGameCliMsg()
-            if joinMsg.playerID() != PtGetLocalClientID():
-                return
-            if self.markerGameDisplay is not None:
-                self.markerGameDisplay.registerPlayerJoin(joinMsg)
-            else:
-                self.markerGameManager.registerPlayerJoin(joinMsg)
-            return
-
-        if msgType != PtGameCliMsgTypes.kGameCliMarkerMsg:
-            return
-
-        msg = msg.upcastToGameMsg()
-        msgType = msg.getMarkerMsgType()
-        finalMsg = msg.upcastToFinalMarkerMsg()
-
-        # Is a template being created?
-        if msgType == PtMarkerMsgTypes.kMarkerTemplateCreated:
-            if self.markerGameDisplay is not None:
-                self.markerGameDisplay.registerTemplateCreated(finalMsg)
-            else:
-                self.markerGameManager.registerTemplateCreated(finalMsg)
-
-        # Is a game being started?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameStarted:
-            if self.markerGameDisplay is not None and self.markerGameDisplay.isMyMsg(finalMsg):
-                self.BigKICheckContentRefresh(self.BKCurrentContent)
-
-        # Is a game being paused?
-        elif msgType == PtMarkerMsgTypes.kMarkerGamePaused:
-            if self.markerGameManager.isMyMsg(finalMsg):
-                self.markerGameManager.registerPauseGame(finalMsg)
-            self.BigKICheckContentRefresh(self.BKCurrentContent)
-
-        # Is a game being reset?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameReset:
-            self.markerGameManager.registerResetGame(finalMsg)
-            self.markerGameDisplay.registerResetGame(finalMsg)
-            self.BigKICheckContentRefresh(self.BKCurrentContent)
-
-        # Is a game over?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameOver:
-            self.markerGameManager.registerMarkerGameOver(finalMsg)
-
-        # Is a game's name being changed?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameNameChanged:
-            if self.markerGameDisplay is not None:
-                if self.markerGameDisplay.isMyMsg(finalMsg):
-                    self.markerGameDisplay.registerGameName(finalMsg)
-                return
-            self.markerGameManager.registerGameName(finalMsg)
-
-        # Is a game being deleted?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameDeleted:
-            if self.markerGameDisplay is not None:
-                if self.markerGameDisplay.isMyMsg(finalMsg):
-                    self.markerGameDisplay = None
-            self.markerGameManager.registerDeleteGame(finalMsg)
-
-        # Is a marker being added?
-        elif msgType == PtMarkerMsgTypes.kMarkerMarkerAdded:
-            if self.markerGameDisplay is not None:
-                if self.markerGameDisplay.isMyMsg(finalMsg):
-                    self.markerGameDisplay.registerMarker(finalMsg)
-                    if self.pendingMGmessage is not None and self.pendingMGmessage == kMessageWait.createMarker and BigKI.dialog.isEnabled():
-                        self.pendingMGmessage = None
-                        self.SetWorkingToCurrentMarkerGame()
-                    return
-            self.pendingMGmessage = None
-            self.markerGameManager.registerMarker(finalMsg)
-
-        # Is a marker being deleted?
-        elif msgType == PtMarkerMsgTypes.kMarkerMarkerDeleted:
-            if self.markerGameDisplay is not None and self.markerGameDisplay.isMyMsg(finalMsg):
-                self.markerGameDisplay.registerDeleteMarker(finalMsg)
-                self.BigKICheckContentRefresh(self.BKCurrentContent)
-
-        # Is a marker's name being changed?
-        elif msgType == PtMarkerMsgTypes.kMarkerMarkerNameChanged:
-            if self.markerGameDisplay is not None and self.markerGameDisplay.isMyMsg(finalMsg):
-                self.markerGameDisplay.registerMarkerNameChanged(finalMsg)
-                if self.pendingMGmessage is not None and self.pendingMGmessage == kMessageWait.changeMarkerName:
-                    if self.MFdialogMode == kGames.MFEditingMarker:
-                        self.BigKICheckContentRefresh(self.BKCurrentContent)
-            self.pendingMGmessage = None
-
-        # Is a marker being captured?
-        elif msgType == PtMarkerMsgTypes.kMarkerMarkerCaptured:
-            if self.markerGameDisplay is not None and self.markerGameDisplay.isMyMsg(finalMsg):
-                if self.markerGameManager.gameData.data["svrGameTemplateID"] != self.markerGameDisplay.gameData.data["svrGameTemplateID"]:
-                    self.markerGameDisplay.registerMarkerCaptured(finalMsg)
-            if self.markerGameManager.gameLoaded() and self.markerGameManager.isMyMsg(finalMsg):
-                self.markerGameManager.registerMarkerCaptured(finalMsg)
-        # Is a marker game's type being set?
-        elif msgType == PtMarkerMsgTypes.kMarkerGameType:
-            if self.markerGameDisplay is not None:
-                if self.markerGameDisplay.isMyMsg(finalMsg):
-                    self.markerGameDisplay.registerGameType(finalMsg)
-                return
-            self.markerGameManager.registerGameType(finalMsg)
 
     ## Called by Plasma on receipt of a backdoor message.
     # These backdoor messages can trigger various actions.
@@ -2065,7 +1956,7 @@ class xKI(ptModifier):
             return
 
         # The player cannot create a game if one is already in progress.
-        if self.markerGameManager.gameLoaded():
+        if self.markerGameManager.playing:
             PtDebugPrint(u"xKI.CreateMarkerGame(): Aborting Marker Game creation request, a game is already in progress.", level=kDebugDumpLevel)
             self.chatMgr.AddChatLine(None, PtGetLocalizedString("KI.MarkerGame.createErrorExistingGame"), kChat.SystemMessage)
             return
@@ -2083,7 +1974,7 @@ class xKI(ptModifier):
 
     ## Finishes creating the Marker Game after the asynchronous mini-game
     # server registers the parameters.
-    def FinishCreateMarkerGame(self, gameName, gameGUID):
+    def FinishCreateMarkerGame(self, gameName):
 
         # Get the current Age's Journal folder.
         load = 0
@@ -2117,10 +2008,10 @@ class xKI(ptModifier):
         self.BigKIRefreshFolderDisplay()
 
         # Create the Marker Game node.
-        PtDebugPrint(u"xKI.FinishCreateMarkerGame(): Creating Vault node with name = \"{}\" and GUID = \"{}\".".format(gameName, gameGUID), level=kDebugDumpLevel)
+        PtDebugPrint(u"xKI.FinishCreateMarkerGame(): Creating Vault node with name = \"{}\".".format(gameName), level=kDebugDumpLevel)
         markerGameNode = ptVaultMarkerGameNode()
+        markerGameNode.setCreatorNodeID(PtGetLocalClientID())
         markerGameNode.setGameName(gameName)
-        markerGameNode.setGameGuid(gameGUID)
         self.BKCurrentContent = journal.addNode(markerGameNode)
 
         # Change to display current content.
@@ -2141,60 +2032,32 @@ class xKI(ptModifier):
     ## Add a new marker to the existing Marker Game.
     def CreateAMarker(self):
 
-        # Set this in case the player is looking at the BigKI.
-        self.pendingMGmessage = kMessageWait.createMarker
-
         if not self.takingAPicture and not self.waitingForAnimation:
             if self.KILevel > kMicroKI and not self.KIDisabled:
-                if self.markerGameDisplay is not None and self.markerGameDisplay.gameData is not None:
-                    self.UpdateKIUsage()
-                    if self.CanMakeMarker() and self.markerGameDisplay.showMarkers:
-                        mgData = self.markerGameDisplay.gameData.data
-                        markerName = mgData["svrGameName"] + " marker"
-                        try:
-                            ava = PtGetLocalAvatar()
-                            avaCoord = ava.position()
-                            x = avaCoord.getX()
-                            y = avaCoord.getY()
-                            z = avaCoord.getZ()
-
-                            self.markerGameDisplay.addMarker(x, y, z, markerName)
-                            PtDebugPrint(u"xKI.CreateAMarker(): Creating marker at: ({}, {}, {}).".format(x, y, z))
-                        except:
-                            PtDebugPrint(u"xKI.CreateAMarker(): Marker creation failed.", level=kErrorLevel)
-                            return
-                    else:
-                        self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullMarkers"))
+                self.UpdateKIUsage()
+                if self.CanMakeMarker():
+                    markerName = u"{} marker".format(self.markerGameManager.game_name)
+                    avaCoord = PtGetLocalAvatar().position()
+                    self.markerGameManager.AddMarker(PtGetAgeName(), avaCoord, markerName)
+                    PtDebugPrint(u"xKI.CreateAMarker(): Creating marker at: ({}, {}, {}).".format(avaCoord.getX(), avaCoord.getY(), avaCoord.getZ()))
+                else:
+                    self.ShowKIFullErrorMsg(PtGetLocalizedString("KI.Messages.FullMarkers"))
 
     ## Perform the necessary operations to switch to a Marker Game.
     def SetWorkingToCurrentMarkerGame(self):
 
-        if self.markerGameDisplay is None:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as the game isn't loaded.", level=kErrorLevel)
-            return
-
-        game = self.markerGameDisplay.gameData
-        if game is None:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as there is no game data.", level=kErrorLevel)
-            return
-
         if self.BKCurrentContent is None:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as there is no Vault folder.", level=kErrorLevel)
+            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as there is no Vault folder.")
             return
 
         element = self.BKCurrentContent.getChild()
         if element is None:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as there is no Vault node.", level=kErrorLevel)
-            return
-
-        datatype = element.getType()
-        if datatype != PtVaultNodeTypes.kMarkerGameNode:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as the Vault node is of the wrong type.", level=kErrorLevel)
+            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as there is no Vault node.")
             return
 
         element = element.upcastToMarkerGameNode()
         if element is None:
-            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as the Vault node is empty.", level=kErrorLevel)
+            PtDebugPrint(u"xKI.SetWorkingToCurrentMarkerGame(): Cannot set working game, as the Vault node is of the wrong type.")
             return
 
         # Refresh the content.
@@ -2207,10 +2070,8 @@ class xKI(ptModifier):
         MGmgr = ptMarkerMgr()
 
         # Don't delete any markers necessary for an existing game.
-        if not self.markerGameManager.gameLoaded():
+        if not self.markerGameManager.is_game_loaded:
             MGmgr.hideMarkersLocal()
-
-        self.markerGameDisplay = None
 
         # Refresh the content.
         self.RefreshPlayerList()
@@ -2836,7 +2697,7 @@ class xKI(ptModifier):
         self.numberOfNotes = usage[1]
         self.numberOfMarkerFolders = usage[2]
         try:
-            self.numberOfMarkers = self.markerGameDisplay.gameData.data["numMarkers"]
+            self.numberOfMarkers = self.markerGameManager.marker_total
         except:
             self.numberOfMarkers = -1
 
@@ -3389,20 +3250,20 @@ class xKI(ptModifier):
                 btnmtInRange.hide()
 
             # Should the Marker Game GUI be displayed?
-            if self.gKIMarkerLevel >= kKIMarkerNormalLevel and not self.markerGameManager.IsCGZ:
+            if self.gKIMarkerLevel >= kKIMarkerNormalLevel and not self.markerGameManager.is_cgz:
                 btnmtDrip.hide()
                 btnmtActive.hide()
                 btnmtPlaying.hide()
                 btnmtInRange.hide()
                 try:
-                    showMarkers = self.markerGameDisplay.showMarkers
+                    showMarkers = self.markerGameManager.markers_visible
                 except:
-                    showMarkers = 0
+                    showMarkers = False
                 try:
-                    selectedMarker = self.markerGameDisplay.selectedMarker
+                    selectedMarker = self.markerGameManager.selected_marker_id
                 except :
                     selectedMarker = -1
-                if self.markerGameManager.IsGameLoaded:
+                if self.markerGameManager.playing:
                     btnmgNewMarker.hide()
                     btnmgNewGame.hide()
                     btnmgInactive.show()
@@ -4925,11 +4786,14 @@ class xKI(ptModifier):
     ## Prepares the display of a marker game, as it may be loading.
     def BigKIDisplayMarkerGame(self):
 
+        # Save some typing.
+        mgr = self.markerGameManager
+        getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
+
         # Make sure that the player can view this game.
         if self.gKIMarkerLevel < kKIMarkerNormalLevel:
             # Let the player know the KI isn't configured to view this game.
             self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionUpgradeKI")
-            self.BigKIDisplayMarkerGameLoading()
             return
 
         # Initialize the markerGameDisplay to the currently selected game.
@@ -4946,126 +4810,26 @@ class xKI(ptModifier):
             PtDebugPrint(u"xKI.BigKIDisplayMarkerGame(): Cannot process this node, wrong data type: {}.".format(element.getType()), level=kErrorLevel)
             return
         element = element.upcastToMarkerGameNode()
-        PtDebugPrint(u"xKI.BigKIDisplayMarkerGame(): Starting Marker Game KI Display Manager, loading game: {} guid: {}.".format(element.getGameName(), element.getGameGuid()), level=kDebugDumpLevel)
+        PtDebugPrint(u"xKI.BigKIDisplayMarkerGame(): Starting Marker Game KI Display Manager, loading game: {}.".format(element.getGameName()), level=kDebugDumpLevel)
 
-        # There are now two possibilities:
-        # 1) The player has just created a game and is displaying it.
-        # 2) The player has clicked on an existing game.
-        if self.markerGameDisplay is not None:
-            if element.getGameGuid() == self.markerGameDisplay.gameData.data["svrGameTemplateID"]:
-                # Display the details.
-                self.BigKIFinishDisplayMarkerGame()
-                return
-
-        # If the currently played game is the game being edited, load its data.
-        if self.markerGameManager is not None and self.markerGameManager.gameLoaded():
-            if self.markerGameManager.gameData.data["svrGameTemplateID"] == element.getGameGuid():
-                self.markerGameDisplay = xMarkerGameKIDisplay(self, cachedData = self.markerGameManager.gameData.data)
-                self.BigKIFinishDisplayMarkerGame()
-                return
-
-        # Display a loading screen.
-        self.BigKIDisplayMarkerGameLoading()
-
-        # Otherwise, load the existing game.
-        # All other info should be loaded later, after the display is done.
-        self.markerGameDisplay = xMarkerGameKIDisplay(self, element.getGameGuid())
-
-    ## Display the Marker Game loading screen.
-    def BigKIDisplayMarkerGameLoading(self):
-
-        # Save some typing.
-        getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
-
-        # Disable all controls until we need them.
-        mrkfldTitle = ptGUIControlTextBox(getControl(kGUI.MarkerFolderTitleText))
-        mrkfldTitle.hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderStatus)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderOwner)).hide()
-        # Hide the scroll buttons for the Marker list; the scroll control will turn them back on.
-        ptGUIControlButton(getControl(kGUI.MarkerFolderMarkerListUpBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderMarkerListDownBtn)).hide()
-
-        ptGUIControlButton(getControl(kGUI.MarkerFolderInvitePlayer)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderEditStartGame)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderPlayEndGame)).hide()
-
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderInvitePlayerTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderEditStartGameTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderPlayEndGameTB)).hide()
-
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTitleBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTimePullDownBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn)).disable()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTimeArrow)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderTypeArrow)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTimeTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTimeTitleTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTypeTB)).hide()
-        ptGUIControlListBox(getControl(kGUI.MarkerFolderMarkListbox)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderMarkerTextBtn)).hide()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderToranIcon)).disable()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderHSpanIcon)).disable()
-        ptGUIControlButton(getControl(kGUI.MarkerFolderVSpanIcon)).disable()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderToranTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderHSpanTB)).hide()
-        ptGUIControlTextBox(getControl(kGUI.MarkerFolderVSpanTB)).hide()
-
-        # Show the status.
-        if self.pendingMGaction is not None:
-            msg = "----" + self.pendingMGaction + "----"
-        else:
-            msg = "Please Wait"
-
-        mrkfldTitle.setStringW(msg)
-        mrkfldTitle.show()
-        mrkfldTitle.refresh()
-
-    ## Display the loaded Marker Game in the BigKI.
-    def BigKIFinishDisplayMarkerGame(self):
-
-        # The game should be loaded; check just to be safe.
-        if self.markerGameDisplay is None:
-            PtDebugPrint(u"xKI.BigKIFinishDisplayMarkerGame(): Game was not loaded, aborting displaying the game's details.", level=kErrorLevel)
-            return
-
-        # Get the Marker Game Vault node.
-        element = self.BKCurrentContent.getChild()
-        if element is None:
-            PtDebugPrint(u"xKI.BigKIFinishDisplayMarkerGame(): Could not finish displaying the Marker Game, as the Vault node is empty.", level=kErrorLevel)
-            return
-        dataType = element.getType()
-        if dataType != PtVaultNodeTypes.kMarkerGameNode:
-            PtDebugPrint(u"xKI.BigKIFinishDisplayMarkerGame(): Could not finish displaying the Marker Game, as we have an incorrect Vault node type.", level=kErrorLevel)
-            return
-        element = element.upcastToMarkerGameNode()
-
+        ## This was previously BigKIFinishDisplayMarkerGame()
         questGameFinished = False
 
-        # Save some typing.
-        mGame = self.markerGameDisplay
-        mgData = mGame.gameData.data
-        getControl = KIMarkerFolderExpanded.dialog.getControlFromTag
+        # A game is in progress, restrict access.
+        if mgr.AmIPlaying(element):
+            self.MFdialogMode = kGames.MFPlaying
 
-        # Determine which mode we're in.
-        if self.markerGameManager.gameLoaded():
-            # A game is in progress, restrict access.
-            if self.markerGameManager.gameData.data["svrGameTemplateID"] == element.getGameGuid():
-                self.MFdialogMode = kGames.MFPlaying
+        # Are we editing this game? If so, how?
+        elif mgr.IsActive(element) and mgr.edit_mode:
+            if mgr.selected_marker_id != -1:
+                self.MFdialogMode = kGames.MFEditingMarker
             else:
-                self.MFdialogMode = kGames.MFOverview
+                self.MFdialogMode = kGames.MFEditing
+
+        # Whatever.
         else:
-            # No game in progress, checking status of Marker Game display.
-            if mGame.showMarkers:
-                if mGame.selectedMarker > -1:
-                    self.MFdialogMode = kGames.MFEditingMarker
-                else:
-                    self.MFdialogMode = kGames.MFEditing
-            else:
-                self.MFdialogMode = kGames.MFOverview
+            self.MFdialogMode = kGames.MFOverview
+
         # Refresh miniKI.
         self.RefreshMiniKIMarkerDisplay()
 
@@ -5087,6 +4851,7 @@ class xKI(ptModifier):
         mrkfldTitleBtn = ptGUIControlButton(getControl(kGUI.MarkerFolderTitleBtn))
         mbtnDelete = ptGUIControlButton(getControl(kGUI.MarkerFolderDeleteBtn))
         mbtnGameTimePullD = ptGUIControlButton(getControl(kGUI.MarkerFolderTimePullDownBtn))
+        mtbGameType = ptGUIControlTextBox(getControl(kGUI.MarkerFolderGameTypeTB))
         mbtnGameTypePullD = ptGUIControlButton(getControl(kGUI.MarkerFolderTypePullDownBtn))
         mbtnGameTypePullD.hide()
         mbtnGameTimeArrow = ptGUIControlButton(getControl(kGUI.MarkerFolderTimeArrow))
@@ -5109,6 +4874,9 @@ class xKI(ptModifier):
         mtbHSPan = ptGUIControlTextBox(getControl(kGUI.MarkerFolderHSpanTB))
         mtbVSpan = ptGUIControlTextBox(getControl(kGUI.MarkerFolderVSpanTB))
 
+        ## FIXME: non quest game types
+        mtbGameType.setStringW(PtGetLocalizedString("KI.MarkerGame.NameQuest").title())
+
         mbtnEditStart.show()
         mbtnPlayEnd.show()
 
@@ -5118,7 +4886,7 @@ class xKI(ptModifier):
             mbtnDelete.show()
             mbtnGameTimePullD.hide()
             mbtnGameTimeArrow.hide()
-            if element.getCreatorNodeID() == PtGetLocalPlayer().getPlayerID() and not self.markerGameManager.gameLoaded():
+            if element.getCreatorNodeID() == PtGetLocalClientID():
                 mbtnEditStart.show()
                 mtbEditStart.setForeColor(kColors.DniShowBtn)
             else:
@@ -5159,16 +4927,13 @@ class xKI(ptModifier):
                 mlbMarkerList.show()
 
                 # Add the Markers to the list.
-                markerList = mgData["markers"]
-                for marker in markerList:
-                    marker = marker.data
+                for idx, age, pos, desc in mgr.markers:
                     coord = ptDniCoordinates()
-                    markerPoint = ptPoint3(marker["x"], marker["y"], marker["z"])
-                    coord.fromPoint(markerPoint)
+                    coord.fromPoint(pos)
                     torans = coord.getTorans()
                     hSpans = coord.getHSpans()
                     vSpans = coord.getVSpans()
-                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(marker["age"]), torans, hSpans, vSpans, marker["name"]))
+                    mlbMarkerList.addStringW(u"[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
 
                 mlbMarkerTextTB.hide()
                 mbtnToran.hide()
@@ -5180,8 +4945,10 @@ class xKI(ptModifier):
                 mbtnMarkerText.disable()
             # Or just editing one of the Markers?
             else:
-                selectedMarker = self.markerGameDisplay.getSelectedMarker()
+                selectedMarker = mgr.selected_marker
                 if selectedMarker is not None:
+                    idx, age, pos, desc = selectedMarker
+
                     # Must be editing a Marker.
                     mtbEditStart.setStringW(PtGetLocalizedString("KI.MarkerGame.MarkerListButton"))
                     mtbEditStart.show()
@@ -5189,7 +4956,8 @@ class xKI(ptModifier):
                     mtbPlayEnd.show()
                     mlbMarkerList.hide()
                     mlbMarkerTextTB.show()
-                    mlbMarkerTextTB.setString(selectedMarker.data["name"])
+                    # don't censor here... we don't want censored stuff saved to the vault
+                    mlbMarkerTextTB.setStringW(desc)
                     mbtnToran.show()
                     mbtnHSpan.show()
                     mbtnVSpan.show()
@@ -5199,8 +4967,7 @@ class xKI(ptModifier):
 
                     # Get the selected Marker's coordinates.
                     coord = ptDniCoordinates()
-                    markerPoint = ptPoint3(selectedMarker.data["x"], selectedMarker.data["y"], selectedMarker.data["z"])
-                    coord.fromPoint(markerPoint)
+                    coord.fromPoint(pos)
 
                     mtbToran.setString(str(coord.getTorans()))
                     mtbHSPan.setString(str(coord.getHSpans()))
@@ -5246,31 +5013,34 @@ class xKI(ptModifier):
             mtbPlayEnd.show()
             mlbMarkerList.clearAllElements()
             mlbMarkerList.show()
+
             # Assume that the game is finished, unless an unseen Marker is still left.
             questGameFinished = True
+
             # Add the Markers into the list.
-            for marker in self.markerGameManager.gameData.data["markers"]:
-                marker = marker.data
-                if marker["captured"]:
-                    # Get the marker's coordinates.
+            for idx, age, pos, desc in mgr.markers:
+                if mgr.IsMarkerCaptured(idx):
                     coord = ptDniCoordinates()
-                    markerPoint = ptPoint3(marker["x"], marker["y"], marker["z"])
-                    coord.fromPoint(markerPoint)
-                    mlbMarkerList.addString("[{}:{},{},{}] {}".format(FilterAgeName(marker["age"]), coord.getTorans(), coord.getHSpans(), coord.getVSpans(), marker["name"]))
+                    coord.fromPoint(pos)
+                    torans = coord.getTorans()
+                    hSpans = coord.getHSpans()
+                    vSpans = coord.getVSpans()
+                    mlbMarkerList.addStringW(u"[{}:{},{},{}] {}".format(FilterAgeName(age), torans, hSpans, vSpans, xCensor.xCensor(desc, self.censorLevel)))
                 else:
                     questGameFinished = False
             mlbMarkerTextTB.hide()
+
         # Refresh the text of the buttons (color changed).
         mtbEditStart.refresh()
         mtbPlayEnd.refresh()
         # Display the content on the screen.
-        mrkfldTitle.setString(xCensor.xCensor(mgData["svrGameName"], self.censorLevel))
+        mrkfldTitle.setStringW(xCensor.xCensor(element.getGameName(), self.censorLevel))
         mrkfldTitle.show()
         # Enable the editable Title.
         mrkfldTitleBtn.show()
         mrkfldTitleBtn.enable()
 
-        count = self.markerGameDisplay.getNumMarkers()
+        count = mgr.marker_total
         if self.MFdialogMode == kGames.MFEditing or self.MFdialogMode == kGames.MFEditingMarker:
             if count == 0:
                 statusLine = PtGetLocalizedString("KI.MarkerGame.StatusNoMarkers")
@@ -5298,8 +5068,7 @@ class xKI(ptModifier):
 
         mrkfldOwner.setStringW(PtGetLocalizedString("KI.MarkerGame.OwnerTitle") + U" {} [ID:{:08d}]".format(creatorName, creatorID))
         mrkfldOwner.show()
-        minutes = int(mgData["timeLimit"] / 60)
-        mtbGameTime.setString("{} min".format(minutes))
+        # TODO: time limit
         mtbGameTime.hide()
         mtbGameTimeTitle.hide()
 
@@ -5511,15 +5280,14 @@ class xKI(ptModifier):
                     if element is not None:
                         if not control.wasEscaped() and control.getString() != "":
                             # Set the new title.
-                            newText = xCensor.xCensor(control.getString(), self.censorLevel)
-                            element.setGameName(control.getString())
-                            title.setString(control.getString())
+                            newText = xCensor.xCensor(control.getStringW(), self.censorLevel)
+                            element.setGameName(control.getStringW())
+                            title.setString(control.getStringW())
                             element.save()
-                            PtDebugPrint(u"xKI.SaveMarkerGameNameFromEdit(): Updating title to \"{}\".".format(newText), level=kDebugDumpLevel )
+                            PtDebugPrint(u"xKI.SaveMarkerGameNameFromEdit(): Updating title to \"{}\".".format(newText), level=kDebugDumpLevel)
                             self.RefreshPlayerList()
-                            self.markerGameDisplay.setGameName(newText)
                         else:
-                            PtDebugPrint(u"xKI.SaveMarkerGameNameFromEdit(): Escape hit.", level=kDebugDumpLevel )
+                            PtDebugPrint(u"xKI.SaveMarkerGameNameFromEdit(): Escape hit.", level=kDebugDumpLevel)
         control.hide()
         # Re-enable the button and text.
         titlebtn = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderTitleBtn))
@@ -5537,10 +5305,9 @@ class xKI(ptModifier):
                 if dataType == PtVaultNodeTypes.kMarkerGameNode:
                     element = element.upcastToMarkerGameNode()
                     if element is not None:
-                        if not control.wasEscaped() and control.getString() != "":
-                            newText = xCensor.xCensor(control.getString(), self.censorLevel)
-                            # Find the selected marker.
-                            self.markerGameDisplay.setNameOfSelectedMarker(newText)
+                        name = control.getStringW()
+                        if not control.wasEscaped() and name:
+                            self.markerGameManager.selected_marker_name = name
                         else:
                             PtDebugPrint(u"xKI.SaveMarkerTextFromEdit(): escape hit!", level=kDebugDumpLevel )
         control.hide()
@@ -6525,18 +6292,8 @@ class xKI(ptModifier):
                             else:
                                 # See if this is a Marker Game folder that is being deleted.
                                 if delElem.getType() == PtVaultNodeTypes.kMarkerGameNode:
-                                    # Delete all markers from the Marker Manager display.
-                                    mrkrDisplay = ptMarkerMgr()
-                                    if not self.markerGameManager.gameLoaded():
-                                        mrkrDisplay.removeAllMarkers()
-                                    # Delete the game.
-                                    if self.markerGameDisplay is None:
-                                        PtDebugPrint(u"xKI.ProcessNotifyYesNo(): Cannot delete Marker Game as it is not loaded.", level=kErrorLevel)
-                                        return
-                                    self.markerGameDisplay.deleteGame()
-                                    # Reset the game in case it was being played.
-                                    if self.markerGameDisplay.gameData.data["svrGameTemplateID"] == self.markerGameManager.gameData.data["svrGameTemplateID"]:
-                                        self.markerGameManager.deleteGame()
+                                    if self.markerGameManager.IsActive(delElem):
+                                        self.markerGameManager.StopGame()
 
                                 self.BKCurrentContent = None
                                 delFolder.removeNode(delElem)
@@ -6631,17 +6388,13 @@ class xKI(ptModifier):
             elif tagID == kGUI.CreateMarkerGameCancelBT:
                 KIMarkerGameGUIClose.run(self.key, netPropagate=0)
             elif kGUI.CreateMarkerGameSubmitBT:
-                markerGameNameText = ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).getString()
-                markerGameName = xCensor.xCensor(markerGameNameText, xCensor.xRatedPG)
+                markerGameNameText = ptGUIControlEditBox(KICreateMarkerGameGUI.dialog.getControlFromTag(kGUI.CreateMarkerGameNameEB)).getStringW()
                 try:
                     markerGameType = kGUI.MarkerGameStates[self.selectedMGType]
                 except:
                     markerGameType = 0
                     PtDebugPrint(u"xKI.ProcessNotifyCreateMarkerGameGUI(): Couldn't find marker game type, so setting it to Quest Mode.", level=kWarningLevel)
-                # Create the marker game display and wait for a return KI
-                # message; upon receipt, FinishCreateMarkerGame() will be
-                # called.
-                self.markerGameDisplay = xMarkerGameKIDisplay(self, "", markerGameType, markerGameName)
+                self.FinishCreateMarkerGame(markerGameNameText)
                 KIMarkerGameGUIClose.run(self.key, netPropagate=0)
 
     ## Processes notifications originating from an expanded Marker Game mode in the BigKI.
@@ -6649,8 +6402,7 @@ class xKI(ptModifier):
     # etc..
     def ProcessNotifyMarkerFolderExpanded(self, control, event):
 
-        # Display a loading message just in case.
-        self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionLoading")
+        mgr = self.markerGameManager
 
         if event == kDialogLoaded:
             typeField = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderGameTimeTB))
@@ -6663,92 +6415,76 @@ class xKI(ptModifier):
                 markerEdit = ptGUIControlEditBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderMarkerTextEB))
                 markerEdit.hide()
                 self.BigKIDisplayMarkerGame()
-            else:
-                if self.markerGameDisplay is not None and self.markerGameDisplay.gameData is not None:
-                    # Possibly still adding markers, check if in edit mode before destroying the game.
-                    if not self.markerGameDisplay.showMarkers:
-                        self.markerGameDisplay = None
         elif event == kAction or event == kValueChanged:
             mFldrID = control.getTagID()
             if mFldrID == kGUI.MarkerFolderEditStartGame:
+                mgr.LoadGame(self.BKCurrentContent)
+
                 # Is it the "Edit" button?
                 if self.MFdialogMode == kGames.MFOverview:
-                    if self.markerGameDisplay is None:
-                        PtDebugPrint(u"xKI.ProcessNotifyMarkerFolderExpanded(): Cannot locate the game, aborting edit game request.", level=kErrorLevel)
-                        return
-                    self.BigKIDisplayMarkerGameLoading()
-                    self.markerGameDisplay.editMarkers()
+                    mgr.BeginEditingMarkers()
                     self.SetWorkingToCurrentMarkerGame()
                 # Is it the "Done Editing" button?
                 elif self.MFdialogMode == kGames.MFEditing:
-                    self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionSaving")
-                    self.BigKIDisplayMarkerGameLoading()
-                    self.markerGameDisplay.exitEditMarkers()
+                    mgr.FinishEditingMarkers()
                     self.ResetWorkingMarkerGame()
                 # Is it the "Stop Game" button?
                 elif self.MFdialogMode == kGames.MFPlaying:
-                    if self.markerGameManager.gameLoaded():
-                        self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionEndingGame")
-                        self.BigKIDisplayMarkerGameLoading()
-                        self.markerGameManager.stopGame()
+                    mgr.StopGame(reset=False)
                 # Is it the "Save Marker" button?
                 elif self.MFdialogMode == kGames.MFEditingMarker:
                     # Should already be saved, just clear selection for now.
-                    self.markerGameDisplay.setSelectedMarker(-1)
-                    self.BigKICheckContentRefresh(self.BKCurrentContent)
+                    mgr.selected_marker_id = -1
+                self.BigKICheckContentRefresh(self.BKCurrentContent)
             elif mFldrID == kGUI.MarkerFolderPlayEndGame:
+                mgr.LoadGame(self.BKCurrentContent)
+
                 # Is it the "Play Game" button?
                 if self.MFdialogMode == kGames.MFOverview:
-                    self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionPrepareGame")
-                    self.BigKIDisplayMarkerGameLoading()
-                    self.markerGameManager = MarkerGameManager(self, self.markerGameDisplay)
+                    mgr.Play()
                 # Is it the "Add Marker" button?
                 elif self.MFdialogMode == kGames.MFEditing:
                     self.CreateAMarker()
-                # Is it the "End Game" button?
+                # Is it the "Reset Game" button?
                 elif self.MFdialogMode == kGames.MFPlaying:
-                    self.pendingMGaction = PtGetLocalizedString("KI.MarkerGame.pendingActionResetGame")
-                    self.BigKIDisplayMarkerGameLoading()
-                    self.markerGameManager.resetGame()
+                    mgr.StopGame(reset=True)
                 # Is it the "Remove Marker" button?
                 elif self.MFdialogMode == kGames.MFEditingMarker:
-                    self.markerGameDisplay.deleteSelectedMarker()
+                    mgr.DeleteMarker(mgr.selected_marker_id)
+                self.BigKICheckContentRefresh(self.BKCurrentContent)
 
             elif mFldrID == kGUI.MarkerFolderMarkListbox:
-                if self.markerGameDisplay is not None:
-                    markerlistSelectable = True
-                    if self.markerGameDisplay.gameData.data["svrGameTypeID"] == PtMarkerGameTypes.kMarkerGameQuest:
-                        # If playing, then the marker list is not selectable.
-                        if self.markerGameManager.gameData.data["svrGameTemplateID"] == self.markerGameDisplay.gameData.data["svrGameTemplateID"]:
-                            markerlistSelectable = False
-                    if markerlistSelectable:
-                        markerSel = control.getSelection()
-                        self.markerGameDisplay.setSelectedMarker(markerSel)
-                        self.BigKICheckContentRefresh(self.BKCurrentContent)
+                mgr.LoadGame(self.BKCurrentContent)
+                if not mgr.playing:
+                    # NOTE: We must use selected_marker_index because marker IDs don't nesecarily
+                    #       match up with the indices used in the GUI
+                    mgr.selected_marker_index = control.getSelection()
+                    self.BigKICheckContentRefresh(self.BKCurrentContent)
 
             elif mFldrID == kGUI.MarkerFolderTitleBtn:
                 control.disable()
                 title = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderTitleText))
                 titleEdit = ptGUIControlEditBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderTitleEB))
-                titleEdit.setString(title.getString())
+                titleEdit.setStringW(title.getStringW())
                 title.hide()
                 titleEdit.show()
                 titleEdit.end()
                 KIMarkerFolderExpanded.dialog.setFocus(titleEdit.getKey())
             elif mFldrID == kGUI.MarkerFolderTitleEB:
                 self.SaveMarkerGameNameFromEdit(control)
+                self.BigKICheckContentRefresh(self.BKCurrentContent)
             elif mFldrID == kGUI.MarkerFolderMarkerTextBtn:
                 control.disable()
                 title = ptGUIControlTextBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderMarkerTextTB))
                 titleEdit = ptGUIControlEditBox(KIMarkerFolderExpanded.dialog.getControlFromTag(kGUI.MarkerFolderMarkerTextEB))
-                titleEdit.setString(title.getString())
+                titleEdit.setStringW(title.getStringW())
                 title.hide()
                 titleEdit.show()
                 titleEdit.end()
                 KIMarkerFolderExpanded.dialog.setFocus(titleEdit.getKey())
             elif mFldrID == kGUI.MarkerFolderMarkerTextEB:
-                self.pendingMGmessage = kMessageWait.changeMarkerName
                 self.SaveMarkerTextFromEdit(control)
+                self.BigKICheckContentRefresh(self.BKCurrentContent)
             elif mFldrID == kGUI.MarkerFolderTimePullDownBtn or mFldrID == kGUI.MarkerFolderTimeArrow:
                 KIMarkerFolderPopupMenu.menu.show()
             elif mFldrID == kGUI.MarkerFolderDeleteBtn:
@@ -6775,6 +6511,7 @@ class xKI(ptModifier):
                 if titleEdit.isVisible():
                     if control is None or (control.getTagID() != kGUI.MarkerFolderMarkerTextEB and control.getTagID() != kGUI.MarkerFolderMarkerTextBtn):
                         self.SaveMarkerTextFromEdit(titleEdit)
+                        self.BigKICheckContentRefresh(self.BKCurrentContent)
 
     ## Processes notifications originating from the Marker Game popup menu.
     # (What is this? Is it used?)

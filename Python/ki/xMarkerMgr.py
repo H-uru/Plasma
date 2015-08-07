@@ -41,22 +41,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
  *==LICENSE==* """
 
-import weakref
-
 from Plasma import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
-from xMarkerBrainCGZ import CGZMarkerGame
+from PlasmaTypes import *
+
+from xMarkerBrainQuest import *
 from xMarkerGameBrain import *
 
 class MarkerGameManager(object):
-    def __init__(self, ki):
-        self._ki = weakref.ref(ki)
+    def __init__(self):
         self._brain = None
 
     def __getattr__(self, name):
         if self._brain is not None:
             return getattr(self._brain, name)
+
+    def __setattr__(self, name, value):
+        if name != "_brain" and self._brain is not None:
+            if hasattr(self._brain, name):
+                setattr(self._brain, name, value)
+                return
+        self.__dict__[name] = value
+
+    def AmIPlaying(self, node):
+        """Determines if we are playing a given marker game"""
+        if self.IsActive(node):
+            return self._brain.playing
+        return False
 
     def _BeginMarkerGame(self, braincls, *args):
         """Sets up a new marker game brain"""
@@ -64,20 +76,42 @@ class MarkerGameManager(object):
         self.RefreshMarkers()
         self._UpdateKIMarkerLightsFromBrain()
 
+    def IsActive(self, node):
+        if self._brain is None:
+            return False
+        elif isinstance(self._brain, CGZMarkerGame):
+            return False
+        else:
+            return self._brain._node == node
+
     @property
-    def IsCGZ(self):
+    def is_cgz(self):
         """Is the current game a Calibration GZ Mission?"""
         return isinstance(self._brain, CGZMarkerGame)
 
     @property
-    def IsGameLoaded(self):
+    def is_game_loaded(self):
         """Is there an active Marker Game?"""
         return self._brain is not None
 
+    @property
+    def is_quest(self):
+        """Is the current game a user created Quest?"""
+        return isinstance(self._brain, UCQuestMarkerGame)
+
     def LoadFromVault(self):
         """Loads the game state from the vault"""
-        if PtAmPlayingCGZM():
-            self._brain = CGZMarkerGame.LoadFromVault()
+        chron = PtGetMarkerGameChronicle()
+        if chron is not None:
+            game = chron.getValue().lower()
+            if game == "cgz":
+                self._brain = CGZMarkerGame.LoadFromVault()
+            elif game == "quest":
+                self._brain = UCQuestMarkerGame.LoadFromVault()
+            else:
+                self._TeardownMarkerGame()
+        else:
+            self._TeardownMarkerGame()
 
         if self._brain is not None:
             self.RefreshMarkers()
@@ -85,6 +119,19 @@ class MarkerGameManager(object):
         else:
             ptMarkerMgr().removeAllMarkers()
             self._UpdateKIMarkerLights("off", "off", 0, 0)
+
+    def LoadGame(self, node):
+        """Ensures that the given game is loaded (note: if so, this is a no-op)"""
+        if isinstance(node, ptVaultNodeRef):
+            node = node.getChild().upcastToMarkerGameNode()
+        if node is None:
+            return
+
+        if not self.IsActive(node):
+            PtDebugPrint(u"xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName()))
+            self._TeardownMarkerGame()
+            ## FIXME: other game types
+            self._BeginMarkerGame(UCQuestMarkerGame, node)
 
     def OnBackdoorMsg(self, target, param):
         if target.lower() == "cgz":
@@ -107,7 +154,6 @@ class MarkerGameManager(object):
             if self._brain is None:
                 return
             marker = tupData[0]
-            ptMarkerMgr().removeMarker(marker)
             self._brain.CaptureMarker(marker)
             self._UpdateKIMarkerLightsFromBrain()
 
@@ -115,6 +161,22 @@ class MarkerGameManager(object):
         # We've entered a new age, it's time to show the relevant markers
         if self._brain is not None:
             self.RefreshMarkers()
+
+    def Play(self):
+        self._brain.Play()
+        self._UpdateKIMarkerLightsFromBrain()
+
+    def StopGame(self, reset=False):
+        """This is designed to halt UCMarkerGames"""
+        if not isinstance(self._brain, UCMarkerGame):
+            PtDebugPrint("xMarkerMgr.StopGame():\tStopping a non-UC game. Seems fishy.")
+            return
+        if self._brain is not None:
+            self._brain.Stop()
+            if reset:
+                self._brain.Cleanup()
+            ptMarkerMgr().removeAllMarkers()
+        self._UpdateKIMarkerLights("off", "off", 0, 0)
 
     def _TeardownMarkerGame(self, suspend=False):
         if self._brain is not None:
@@ -132,5 +194,8 @@ class MarkerGameManager(object):
         PtSendKIMessage(kGZFlashUpdate, value)
 
     def _UpdateKIMarkerLightsFromBrain(self):
-        getColor, toGetColor = self._brain.marker_colors
-        self._UpdateKIMarkerLights(getColor, toGetColor, self._brain.num_markers_captured, self._brain.marker_total)
+        if self._brain.playing:
+            getColor, toGetColor = self._brain.marker_colors
+            self._UpdateKIMarkerLights(getColor, toGetColor, self._brain.num_markers_captured, self._brain.marker_total)
+        else:
+            self._UpdateKIMarkerLights("off", "off", 0, 0)

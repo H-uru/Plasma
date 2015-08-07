@@ -58,6 +58,15 @@ class MarkerGameBrain(object):
         pass
 
     @abc.abstractproperty
+    def game_id(self):
+        pass
+
+    @abc.abstractmethod
+    def IsMarkerCaptured(self, idx):
+        """Returns if the marker has been captured"""
+        return False
+
+    @abc.abstractproperty
     def marker_colors(self):
         """Returns a tuple of colors to use in the KI (captured, need_capture)"""
         pass
@@ -81,6 +90,10 @@ class MarkerGameBrain(object):
     def num_markers_captured(self):
         """Returns the total number of markers captured"""
         return 0
+
+    @abc.abstractproperty
+    def playing(self):
+        return False
 
     @abc.abstractmethod
     def RefreshMarkers(self):

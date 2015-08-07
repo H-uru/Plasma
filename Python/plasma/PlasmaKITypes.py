@@ -205,22 +205,27 @@ def PtAmPlayingCGZM():
         return False
     return chron.getValue() == "cgz"
 
-def PtFindCreateMarkerChronicle(name, default=None):
+def PtFindCreateMarkerChronicle(name, subchron=None, default=None):
     import Plasma
-    parent = PtGetMarkerGameChronicle()
-    for i in parent.getChildNodeRefList():
-        child = i.getChild().upcastToChronicleNode()
-        if child is None:
-            continue
-        if child.getName() == name:
-            return child
-    else:
-        chron = Plasma.ptVaultChronicleNode()
-        chron.setName(name)
-        if default is not None:
-            chron.setValue(str(default))
-        parent.addNode(chron)
+    def _GetChron(needle, haystack):
+        for i in haystack.getChildNodeRefList():
+            child = i.getChild().upcastToChronicleNode()
+            if child is None:
+                continue
+            if child.getName() == needle:
+                return child
+        else:
+            chron = Plasma.ptVaultChronicleNode()
+            chron.setName(needle)
+            if default is not None:
+                chron.setValue(str(default))
+            haystack.addNode(chron)
+            return chron
+
+    chron = _GetChron(name, PtGetMarkerGameChronicle())
+    if subchron is None:
         return chron
+    return _GetChron(subchron, chron)
 
 def PtGetCGZM():
     chron = PtFindCreateMarkerChronicle("CGZ-Mission")
@@ -236,13 +241,13 @@ def PtGetCGZStartTime():
         return int(time)
     return 0
 
-def PtGetMarkerQuestCaptures():
-    chron = PtFindCreateMarkerChronicle("Quest")
+def PtGetMarkerQuestCaptures(name):
+    chron = PtFindCreateMarkerChronicle("Quest", name)
     caps = chron.getValue().split(',')
-    try:
-        return [1 if i == '1' else 0 for i in caps]
-    except:
-        return [0]
+    if caps:
+        return { int(i): True for i in caps if i.isdigit() }
+    else:
+        return {}
 
 def PtGetMarkerGameChronicle():
     import Plasma
@@ -257,11 +262,14 @@ def PtGetTimePlayingCGZ():
     import Plasma
     return Plasma.PtGetServerTime() - PtGetCGZStartTime()
 
-def PtIsQuestComplete():
-    for i in PtGetMarkerQuestCaptures():
-        if not i:
-            return False
-    return True
+def PtIsCGZMComplete():
+    if PtAmPlayingCGZM():
+        for i in PtGetMarkerQuestCaptures("cgz").itervalues():
+            if not i:
+                return False
+        return True
+    else:
+        return False
 
 def PtSetCGZM(mission):
     chron = PtGetMarkerGameChronicle()
@@ -272,9 +280,12 @@ def PtSetCGZM(mission):
     chron.setValue(str(mission))
     chron.save()
 
-def PtSetMarkerQuestCaptures(captures):
-    chron = PtFindCreateMarkerChronicle("Quest")
-    chron.setValue(','.join(map(str, captures)))
+def PtSetMarkerQuestCaptures(name, captures):
+    chron = PtFindCreateMarkerChronicle("Quest", name)
+    if captures:
+        chron.setValue(','.join(( str(key) for key, value in captures.iteritems() if value )))
+    else:
+        chron.setValue("")
     chron.save()
 
 def PtUpdateCGZStartTime():
