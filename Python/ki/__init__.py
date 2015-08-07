@@ -276,7 +276,7 @@ class xKI(ptModifier):
         self.autocompleteState = AutocompleteState()
 
         ## The chatting manager.
-        self.chatMgr = xKIChat.xKIChat(self.StartFadeTimer, self.ResetFadeState, self.FadeCompletely)
+        self.chatMgr = xKIChat.xKIChat(self.StartFadeTimer, self.ResetFadeState, self.FadeCompletely, self.GetCensorLevel)
 
     ## Unloads any loaded dialogs upon exit.
     def __del__(self):
@@ -1167,9 +1167,6 @@ class xKI(ptModifier):
             # Is it a private channel message that can't be listened to?
             if cFlags.broadcast and cFlags.channel != self.chatMgr.privateChatChannel:
                 return
-
-            # Censor the message to the player's taste.
-            message = xCensor.xCensor(message, self.censorLevel)
 
             # Is the message from an ignored plaer?
             vault = ptVault()
@@ -2598,6 +2595,9 @@ class xKI(ptModifier):
         else:
             self.censorLevel = int(entry.chronicleGetValue())
         PtDebugPrint(u"xKI.DetermineCensorLevel(): The censor level is {}.".format(self.censorLevel), level=kWarningLevel)
+
+    def GetCensorLevel(self):
+        return self.censorLevel
 
     #~~~~~~~#
     # Fonts #

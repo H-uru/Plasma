@@ -52,6 +52,7 @@ from PlasmaNetConstants import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
 
+import xCensor
 import xLocTools
 
 # xKI sub-modules.
@@ -64,7 +65,7 @@ from xKIHelpers import *
 class xKIChat(object):
 
     ## Set up the chat manager's default state.
-    def __init__(self, StartFadeTimer, ResetFadeState, FadeCompletely):
+    def __init__(self, StartFadeTimer, ResetFadeState, FadeCompletely, GetCensorLevel):
 
         # Set the default properties.
         self.chatLogFile = None
@@ -92,6 +93,7 @@ class xKIChat(object):
         self.StartFadeTimer = StartFadeTimer
         self.ResetFadeState = ResetFadeState
         self.FadeCompletely = FadeCompletely
+        self.GetCensorLevel = GetCensorLevel
 
         # Add the commands processor.
         self.commandsProcessor = CommandsProcessor(self)
@@ -406,6 +408,9 @@ class xKIChat(object):
 
         # Fix for Character of Doom (CoD).
         (message, RogueCount) = re.subn("[\x00-\x08\x0a-\x1f]", "", message)
+
+        # Censor the chat message to their taste
+        message = xCensor.xCensor(message, self.GetCensorLevel())
 
         if self.KILevel == kMicroKI:
             mKIdialog = KIMicro.dialog
