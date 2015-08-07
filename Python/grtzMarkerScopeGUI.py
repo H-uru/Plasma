@@ -107,6 +107,24 @@ class grtzMarkerScopeGUI(ptModifier):
             else:
                 PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!")
 
+        elif target == "gps":
+            value = True if param in {"enable", "1", "true", "on"} else False
+            self._GrantGPS(value)
+
+    def _CheckForGPSCalibration(self):
+        for i, score in enumerate(self._scores):
+            if not isinstance(score, ptGameScore):
+                if score == -1:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} is still loading. No GPS.".format(i), level=kDebugDumpLevel)
+                    return
+                else:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has no score. No GPS.".format(i), level=kWarningLevel)
+                    return
+            if score.getPoints() == 0:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has a score of zero. No GPS.".format(i), level=kWarningLevel)
+                    return
+        self._GrantGPS()
+
     def OnControlKeyEvent(self, controlKey, activeFlag):
         if controlKey in (PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeyMoveBackward,
                           PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight):
@@ -156,6 +174,22 @@ class grtzMarkerScopeGUI(ptModifier):
                 return
             self._UpdateGUI(mission=mission, score=score.getPoints(), star=True)
             self._wantToUpdateGUI = False
+
+        # We did something with a score... Maybe we have GPS nao?
+        self._CheckForGPSCalibration()
+
+    def _GrantGPS(self, enable=True):
+        PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\tYou have GPS...", level=kWarningLevel)
+
+        vault = ptVault()
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            GPSVar = psnlSDL.findVar("GPSEnabled")
+            if GPSVar.getBool() != enable:
+                GPSVar.setBool(enable)
+                vault.updatePsnlAgeSDL(psnlSDL)
+                act = "Enabled" if enable else "Disabled"
+                PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\t{} GPS!".format(act), level=kWarningLevel)
 
     def OnGUINotify(self, id, control, event):
         if id != MarkerGameDlg.id:

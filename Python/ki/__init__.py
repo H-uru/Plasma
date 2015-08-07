@@ -1838,37 +1838,6 @@ class xKI(ptModifier):
             self.gGZMarkerInRangeRepy = None
             self.gGZMarkerInRange = 0
 
-    ## Check the GZ Missions calibration progress.
-    def CheckGZCalibrationProgress(self):
-
-        for mg in grtzMarkerGames.mgs:
-            gameName = mg[1]
-            bestTime = 0.0
-            entry = ptVault().findChronicleEntry(gameName)
-            if entry is not None:
-                progressString = entry.chronicleGetValue()
-                progList = progressString.split(",")
-                if len(progList) == 2:
-                    try:
-                        bestTime = float(progList[1])
-                    except ValueError:
-                        pass
-            else:
-                PtDebugPrint(u"xKI.CheckGZCalibrationProgress(): Game missing: no GPS.", level=kDebugDumpLevel)
-                return
-            if bestTime == 0:
-                PtDebugPrint(u"xKI.CheckGZCalibrationProgress(): Incomplete game found: no GPS.", level=kDebugDumpLevel)
-                return
-
-        PtDebugPrint(u"xKI.CheckGZCalibrationProgress(): All checks passed: enable GPS.", level=kDebugDumpLevel)
-        vault = ptVault()
-        psnlSDL = vault.getPsnlAgeSDL()
-        if psnlSDL:
-            GPSVar = psnlSDL.findVar("GPSEnabled")
-            if not GPSVar.getBool():
-                GPSVar.setBool(True)
-                vault.updatePsnlAgeSDL(psnlSDL)
-
     #~~~~~~~~~~~~~~#
     # Marker Games #
     #~~~~~~~~~~~~~~#
@@ -3437,14 +3406,6 @@ class xKI(ptModifier):
             self.isPlayingLookingAtKIMode = True
         PtDisableMovementKeys()
         KIOnResp.run(self.key, netPropagate=0)
-        if self.gKIMarkerLevel == kKIMarkerNormalLevel:
-            sdl = xPsnlVaultSDL()
-            if not sdl["GPSEnabled"][0]:
-                PtDebugPrint(u"xKI.ShowBigKI(): Checking calibration.", level=kDebugDumpLevel)
-                try:
-                    self.CheckGZCalibrationProgress()
-                except:
-                    PtDebugPrint(u"xKI.ShowBigKI(): Couldn't execute self.CheckGZCalibrationProgress().", level=kErrorLevel)
 
     ## Close and hide the BigKI.
     def HideBigKI(self):
