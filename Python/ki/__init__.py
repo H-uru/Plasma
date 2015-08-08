@@ -1000,10 +1000,10 @@ class xKI(ptModifier):
                 self.gGZMarkerInRange = value[0]
                 self.gGZMarkerInRangeRepy = value[1]
                 self.RefreshMiniKIMarkerDisplay()
-                if not KIMini.dialog.isEnabled():
-                    NewItemAlert.dialog.show()
-                    KIAlert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
-                    KIAlert.show()
+                # Show alert
+                NewItemAlert.dialog.show()
+                KIAlert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
+                KIAlert.show()
         elif command == kGZOutRange:
             self.gGZMarkerInRange = 0
             self.gGZMarkerInRangeRepy = None
