@@ -124,20 +124,6 @@ struct RcvdPropagatedBufferTrans : NetNotifyTrans {
     void Post ();
 };
 
-//============================================================================
-// RcvdGameMgrMsgTrans
-//============================================================================
-struct RcvdGameMgrMsgTrans : NetNotifyTrans {
-
-    unsigned        bufferBytes;
-    uint8_t *          bufferData;
-
-    RcvdGameMgrMsgTrans () : NetNotifyTrans(kGmRcvdGameMgrMsgTrans) {}
-    ~RcvdGameMgrMsgTrans ();
-    void Post ();
-};
-
-
 /*****************************************************************************
 *
 *   Private data
@@ -155,7 +141,6 @@ static CCritSect                        s_critsect;
 static LISTDECL(CliGmConn, link)        s_conns;
 static CliGmConn *                      s_active;
 static FNetCliGameRecvBufferHandler     s_bufHandler;
-static FNetCliGameRecvGameMgrMsgHandler s_gameMgrMsgHandler;
 static std::atomic<long>                s_perf[kNumPerf];
 
 
@@ -535,14 +520,7 @@ static bool Recv_GameMgrMsg (
     unsigned        bytes,
     void *          param
 ) {
-    const Game2Cli_GameMgrMsg & reply = *(const Game2Cli_GameMgrMsg *)msg;
-
-    RcvdGameMgrMsgTrans * trans = new RcvdGameMgrMsgTrans;
-    trans->bufferBytes  = reply.bytes;
-    trans->bufferData   = (uint8_t *)malloc(reply.bytes);
-    memcpy(trans->bufferData, reply.buffer, reply.bytes);
-    NetTransSend(trans);
-
+    // What do you expect me to do with this crap?
     return true;
 }
 
@@ -645,24 +623,6 @@ void RcvdPropagatedBufferTrans::Post () {
         s_bufHandler(bufferType, bufferBytes, bufferData);
 }
 
-/*****************************************************************************
-*
-*   RcvdGameMgrMsgTrans
-*
-***/
-
-//============================================================================
-RcvdGameMgrMsgTrans::~RcvdGameMgrMsgTrans () {
-    free(bufferData);
-}
-
-//============================================================================
-void RcvdGameMgrMsgTrans::Post () {
-    if (s_gameMgrMsgHandler)
-        s_gameMgrMsgHandler((GameMsgHeader *)bufferData);
-}
-
-
 } using namespace Game;
 
 
@@ -724,7 +684,6 @@ void GameInitialize () {
 void GameDestroy (bool wait) {
     s_running = false;
     s_bufHandler = nil;
-    s_gameMgrMsgHandler = nil;
 
     NetTransCancelByProtocol(
         kNetProtocolCli2Game,
@@ -864,24 +823,3 @@ void NetCliGamePropagateBuffer (
     conn->UnRef("PropBuffer");
 }
 
-//============================================================================
-void NetCliGameSetRecvGameMgrMsgHandler (FNetCliGameRecvGameMgrMsgHandler handler) {
-    s_gameMgrMsgHandler = handler;
-}
-
-//============================================================================
-void NetCliGameSendGameMgrMsg (GameMsgHeader * msgHdr) {
-    CliGmConn * conn = GetConnIncRef("GameMgrMsg");
-    if (!conn)
-        return;
-
-    const uintptr_t msg[] = {
-        kCli2Game_GameMgrMsg,
-                        msgHdr->messageBytes,
-        (uintptr_t)  msgHdr,
-    };
-    
-    conn->Send(msg, arrsize(msg));
-    
-    conn->UnRef("GameMgrMsg");
-}

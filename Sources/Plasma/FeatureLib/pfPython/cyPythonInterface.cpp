@@ -160,23 +160,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyCritterBrain.h"
 
-// Game manager stuff
-#include "Games/pyGameMgrMsg.h"
-#include "Games/pyGameCliMsg.h"
-#include "Games/pyGameCli.h"
-#include "Games/TicTacToe/pyTTTMsg.h"
-#include "Games/TicTacToe/pyTTTGame.h"
-#include "Games/Heek/pyHeekMsg.h"
-#include "Games/Heek/pyHeekGame.h"
-#include "Games/Marker/pyMarkerMsg.h"
-#include "Games/Marker/pyMarkerGame.h"
-#include "Games/BlueSpiral/pyBlueSpiralMsg.h"
-#include "Games/BlueSpiral/pyBlueSpiralGame.h"
-#include "Games/ClimbingWall/pyClimbingWallMsg.h"
-#include "Games/ClimbingWall/pyClimbingWallGame.h"
-#include "Games/VarSync/pyVarSyncMsg.h"
-#include "Games/VarSync/pyVarSyncGame.h"
-
 int32_t PythonInterface::initialized = 0;                 // only need to initialize all of Python once
 bool    PythonInterface::FirstTimeInit = true;           // start with "this is the first time"
 bool    PythonInterface::IsInShutdown = false;           // whether we are _really_ in shutdown mode
@@ -186,9 +169,6 @@ PyObject* PythonInterface::plasmaMod = nil;             // pointer to the Plasma
 PyObject* PythonInterface::plasmaConstantsMod = nil;    // pointer to the PlasmaConstants module
 PyObject* PythonInterface::plasmaNetConstantsMod = nil; // pointer to the PlasmaNetConstants module
 PyObject* PythonInterface::plasmaVaultConstantsMod = nil; // pointer to the PlasmaVaultConstants module
-PyMethodDef* PythonInterface::plasmaGameMethods = nil;  // the PlasmaGame module's methods
-PyObject* PythonInterface::plasmaGameMod = nil;         // python object that holds the PlasmaGame module
-PyObject* PythonInterface::plasmaGameConstantsMod = nil; // python object that holds the PlasmaGameConstants module
 PyObject* PythonInterface::stdOut = nil;                // python object of the stdout file
 PyObject* PythonInterface::stdErr = nil;                // python object of the err file
 
@@ -1286,64 +1266,6 @@ void PythonInterface::initPython()
             std::string error;
             getOutputAndReset(&error);
         }
-
-        // setup the global methods for the PlasmaGame module
-        methods.clear();
-        AddPlasmaGameMethods(methods);
-
-        // now copy the data to our real method definition structure
-        plasmaGameMethods = new PyMethodDef[methods.size() + 1];
-        for (int curMethod = 0; curMethod < methods.size(); curMethod++)
-            plasmaGameMethods[curMethod] = methods[curMethod];
-        plasmaGameMethods[methods.size()] = terminator; // add the terminator
-
-        // initialize the PlasmaGame module
-        plasmaGameMod = Py_InitModule("PlasmaGame", plasmaGameMethods);
-        if (plasmaGameMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaGame module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaGame:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaGameMod);
-
-        AddPlasmaGameClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaGame:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-
-        // initialize the PlasmaGameConstants module
-        plasmaGameConstantsMod = Py_InitModule("PlasmaGameConstants", &noMethods); // it has no methods, just values
-        if (plasmaGameConstantsMod == NULL)
-        {
-            dbgLog->AddLine("Could not setup the PlasmaGameConstants module\n");
-            return;
-        }
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while setting up PlasmaGameConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
-        Py_INCREF(plasmaGameConstantsMod);
-
-        AddPlasmaGameConstantsClasses();
-
-        if (PyErr_Occurred())
-        {
-            dbgLog->AddLine("Python error while adding classes to PlasmaGameConstants:\n");
-            std::string error;
-            getOutputAndReset(&error);
-        }
     }
     initialized++;
 }
@@ -1573,165 +1495,6 @@ void PythonInterface::AddPlasmaVaultConstantsClasses()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Function   : AddPlasmaGameMethods
-//  PARAMETERS : none
-//
-//  PURPOSE    : Add global methods to the PlasmaGame module
-//
-void PythonInterface::AddPlasmaGameMethods(std::vector<PyMethodDef> &methods)
-{
-    // General
-    pyGameCli::AddPlasmaMethods(methods);
-
-    // TicTacToe game
-    pyTTTGame::AddPlasmaMethods(methods);
-
-    // Heek game
-    pyHeekGame::AddPlasmaMethods(methods);
-
-    // Marker game
-    pyMarkerGame::AddPlasmaMethods(methods);
-
-    // Blue Spiral game
-    pyBlueSpiralGame::AddPlasmaMethods(methods);
-
-    // Climbing Wall game
-    pyClimbingWallGame::AddPlasmaMethods(methods);
-
-    // Variable Sync game
-    pyVarSyncGame::AddPlasmaMethods(methods);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddPlasmaGameClasses
-//  PARAMETERS : none
-//
-//  PURPOSE    : Initialize the PlasmaGame module
-//
-void PythonInterface::AddPlasmaGameClasses()
-{
-    // General
-    pyGameMgrMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameMgrInviteReceivedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameMgrInviteRevokedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliPlayerJoinedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliPlayerLeftMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliInviteFailedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCliOwnerChangeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyGameCli::AddPlasmaClasses(plasmaGameMod);
-
-    // TicTacToe game
-    pyTTTMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTMoveMadeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyTTTGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Heek game
-    pyHeekMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekPlayGameMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGoodbyeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekWelcomeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekDropMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekSetupMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekLightStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekInterfaceStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekCountdownStateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekWinLoseMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGameWinMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekPointUpdateMsg::AddPlasmaClasses(plasmaGameMod);
-    pyHeekGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Marker game
-    pyMarkerMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTemplateCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTeamAssignedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameTypeMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGamePausedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameResetMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameNameChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerTimeLimitChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGameDeletedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerAddedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerDeletedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerNameChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerMarkerCapturedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyMarkerGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Blue Spiral game
-    pyBlueSpiralMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralClothOrderMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralSuccessfulHitMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameWonMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGameStartedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyBlueSpiralGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Climbing Wall game
-    pyClimbingWallMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallNumBlockersChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallReadyMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallBlockersChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallPlayerEnteredMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallSuitMachineLockedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallGameOverMsg::AddPlasmaClasses(plasmaGameMod);
-    pyClimbingWallGame::AddPlasmaClasses(plasmaGameMod);
-
-    // Variable Sync game
-    pyVarSyncMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncStringVarChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncNumericVarChangedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncAllVarsSentMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncStringVarCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncNumericVarCreatedMsg::AddPlasmaClasses(plasmaGameMod);
-    pyVarSyncGame::AddPlasmaClasses(plasmaGameMod);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : AddPlasmaGameConstantsClasses
-//  PARAMETERS : none
-//
-//  PURPOSE    : Initialize the PlasmaGameConstants module
-//
-void PythonInterface::AddPlasmaGameConstantsClasses()
-{
-    // General
-    pyGameMgrMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyGameCliMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyGameCliInviteFailedMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // TicTacToe game
-    pyTTTMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyTTTGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Heek game
-    pyHeekMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekLightStateMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekCountdownStateMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyHeekGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Marker game
-    pyMarkerMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyMarkerGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Blue Spiral game
-    pyBlueSpiralMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Climbing Wall game
-    pyClimbingWallMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-    pyClimbingWallGame::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-
-    // Variable Sync game
-    pyVarSyncMsg::AddPlasmaConstantsClasses(plasmaGameConstantsMod);
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //  Function   : finiPython
 //  PARAMETERS : none
 //
@@ -1790,18 +1553,6 @@ void PythonInterface::finiPython()
             plasmaVaultConstantsMod = nil;
         }
 
-        if ( plasmaGameMod )
-        {
-            Py_DECREF(plasmaGameMod);
-            plasmaGameMod = nil;
-        }
-
-        if ( plasmaGameConstantsMod )
-        {
-            Py_DECREF(plasmaGameConstantsMod);
-            plasmaGameConstantsMod = nil;
-        }
-
         // let Python clean up after itself
         Py_Finalize();
 
@@ -1809,12 +1560,6 @@ void PythonInterface::finiPython()
         {
             delete [] plasmaMethods;
             plasmaMethods = nil;
-        }
-
-        if (plasmaGameMethods)
-        {
-            delete [] plasmaGameMethods;
-            plasmaGameMethods = nil;
         }
 
         // close done the log file, if we created one

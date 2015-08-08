@@ -100,11 +100,3 @@ void NetCliGamePropagateBuffer (
     unsigned                        bytes,
     const uint8_t                      buffer[]
 );
-
-//============================================================================
-// GameMgrMsg
-//============================================================================
-struct GameMsgHeader;
-typedef void (*FNetCliGameRecvGameMgrMsgHandler)(GameMsgHeader * msg);
-void NetCliGameSetRecvGameMgrMsgHandler (FNetCliGameRecvGameMgrMsgHandler handler);
-void NetCliGameSendGameMgrMsg (GameMsgHeader * msg);

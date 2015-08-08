@@ -12,7 +12,6 @@ if(WIN32)
     add_subdirectory(pfCrashHandler)
 endif()
 add_subdirectory(pfGameGUIMgr)
-add_subdirectory(pfGameMgr)
 add_subdirectory(pfGameScoreMgr)
 add_subdirectory(pfJournalBook)
 # pfKI is apparently just a historical oddity at this point

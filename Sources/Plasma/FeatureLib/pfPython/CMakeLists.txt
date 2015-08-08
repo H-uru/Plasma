@@ -262,92 +262,9 @@ set(pfPython_GLUE
     pyWaveSetGlue.cpp
 )
 
-set(pfPython_GAME_GLUE
-    Games/pyGameCli.cpp
-    Games/pyGameCli.h
-    Games/pyGameCliGlue.cpp
-    Games/pyGameCliMsg.cpp
-    Games/pyGameCliMsg.h
-    Games/pyGameCliMsgGlue.cpp
-    Games/pyGameMgrMsg.cpp
-    Games/pyGameMgrMsg.h
-    Games/pyGameMgrMsg.cpp
-    Games/pyGameMgrMsgGlue.cpp
-)
-
-set(pfPython_TTT
-    Games/TicTacToe/pyTTTGame.cpp
-    Games/TicTacToe/pyTTTGame.h
-    Games/TicTacToe/pyTTTGameGlue.cpp
-    Games/TicTacToe/pyTTTMsg.cpp
-    Games/TicTacToe/pyTTTMsg.h
-    Games/TicTacToe/pyTTTMsgGlue.cpp
-)
-
-set(pfPython_HEEK
-    Games/Heek/pyHeekGame.cpp
-    Games/Heek/pyHeekGame.h
-    Games/Heek/pyHeekGameGlue.cpp
-    Games/Heek/pyHeekMsg.cpp
-    Games/Heek/pyHeekMsg.h
-    Games/Heek/pyHeekMsgGlue.cpp
-)
-
-set(pfPython_MARKER
-    Games/Marker/pyMarkerGame.cpp
-    Games/Marker/pyMarkerGame.h
-    Games/Marker/pyMarkerGameGlue.cpp
-    Games/Marker/pyMarkerMsg.cpp
-    Games/Marker/pyMarkerMsg.h
-    Games/Marker/pyMarkerMsgGlue.cpp
-)
-
-set(pfPython_BSPIRAL
-    Games/BlueSpiral/pyBlueSpiralGame.cpp
-    Games/BlueSpiral/pyBlueSpiralGame.h
-    Games/BlueSpiral/pyBlueSpiralGameGlue.cpp
-    Games/BlueSpiral/pyBlueSpiralMsg.cpp
-    Games/BlueSpiral/pyBlueSpiralMsg.h
-    Games/BlueSpiral/pyBlueSpiralMsgGlue.cpp
-)
-
-set(pfPython_WALL
-    Games/ClimbingWall/pyClimbingWallGame.cpp
-    Games/ClimbingWall/pyClimbingWallGame.h
-    Games/ClimbingWall/pyClimbingWallGameGlue.cpp
-    Games/ClimbingWall/pyClimbingWallMsg.cpp
-    Games/ClimbingWall/pyClimbingWallMsg.h
-    Games/ClimbingWall/pyClimbingWallMsgGlue.cpp
-)
-
-set(pfPython_VSYNC
-    Games/VarSync/pyVarSyncGame.cpp
-    Games/VarSync/pyVarSyncGame.h
-    Games/VarSync/pyVarSyncGameGlue.cpp
-    Games/VarSync/pyVarSyncMsg.cpp
-    Games/VarSync/pyVarSyncMsg.h
-    Games/VarSync/pyVarSyncMsgGlue.cpp
-)
-
-set(pfPython_GAMES
-    ${pfPython_TTT}
-    ${pfPython_HEEK}
-    ${pfPython_MARKER}
-    ${pfPython_BSPIRAL}
-    ${pfPython_WALL}
-    ${pfPython_VSYNC}
-)
-
 use_precompiled_header(Pch.h Pch.cpp pfPython_HEADERS pfPython_SOURCES)
-add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE} ${pfPython_GAME_GLUE} ${pfPython_GAMES})
+add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
 
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})
 source_group("Glue Files" FILES ${pfPython_GLUE})
-source_group("Game Glue" FILES ${pfPython_GAME_GLUE})
-source_group("Game Glue\\TicTacToe" FILES ${pfPython_TTT})
-source_group("Game Glue\\Heek" FILES ${pfPython_HEEK})
-source_group("Game Glue\\Marker" FILES ${pfPython_MARKER})
-source_group("Game Glue\\BlueSpiral" FILES ${pfPython_BSPIRAL})
-source_group("Game Glue\\ClimbingWall" FILES ${pfPython_WALL})
-source_group("Game Glue\\VarSync" FILES ${pfPython_VSYNC})

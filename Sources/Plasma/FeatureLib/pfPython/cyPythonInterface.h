@@ -72,9 +72,6 @@ private:
     static PyObject* plasmaConstantsMod; // python object that holds the PlasmaConstants module
     static PyObject* plasmaNetConstantsMod; // python object that holds the PlasmaNetConstants module
     static PyObject* plasmaVaultConstantsMod; // python object that holds the PlasmaVaultConstants module
-    static PyMethodDef* plasmaGameMethods;
-    static PyObject* plasmaGameMod; // python object that holds the PlasmaGame module
-    static PyObject* plasmaGameConstantsMod; // python object that holds the PlasmaGameConstants module
     static PyObject* stdOut;    // python object of the stdout file
     static PyObject* stdErr;    // python object of the err file
 
@@ -110,13 +107,6 @@ public:
 
     // Initialize the PlasmaVaultConstants module;
     static void AddPlasmaVaultConstantsClasses();
-
-    // Initialize the PlasmaGame module
-    static void AddPlasmaGameMethods(std::vector<PyMethodDef> &methods);
-    static void AddPlasmaGameClasses();
-
-    // Initialize the PlasmaGameConstants module
-    static void AddPlasmaGameConstantsClasses();
 
     // Initialize the Python to Plasma 
     static void initDebugInterface();

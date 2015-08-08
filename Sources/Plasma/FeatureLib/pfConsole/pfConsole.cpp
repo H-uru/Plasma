@@ -70,10 +70,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/plDebugText.h"
 #include "pfPython/cyPythonInterface.h"
 
-#ifndef PLASMA_EXTERNAL_RELEASE
-#include "pfGameMgr/pfGameMgr.h"
-#endif // PLASMA_EXTERNAL_RELEASE
-
 
 //// Static Class Stuff //////////////////////////////////////////////////////
 
@@ -208,10 +204,6 @@ pfConsole::~pfConsole()
 
     plgDispatch::Dispatch()->UnRegisterForExactType( plConsoleMsg::Index(), GetKey() );
     plgDispatch::Dispatch()->UnRegisterForExactType( plControlEventMsg::Index(), GetKey() );
-
-#ifndef PLASMA_EXTERNAL_RELEASE 
-    pfGameMgr::GetInstance()->RemoveReceiver(GetKey());
-#endif // PLASMA_EXTERNAL_RELEASE
 }
 
 pfConsole * pfConsole::GetInstance () {
@@ -251,10 +243,6 @@ void    pfConsole::Init( pfConsoleEngine *engine )
     // Register for keyboard event messages
     plgDispatch::Dispatch()->RegisterForExactType( plConsoleMsg::Index(), GetKey() );
     plgDispatch::Dispatch()->RegisterForExactType( plControlEventMsg::Index(), GetKey() );
-
-#ifndef PLASMA_EXTERNAL_RELEASE 
-    pfGameMgr::GetInstance()->AddReceiver(GetKey());
-#endif // PLASMA_EXTERNAL_RELEASE
 }
 
 //// ISetMode ////////////////////////////////////////////////////////////////
@@ -353,212 +341,6 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         return true;
     }
 
-
-    //========================================================================
-    // pfGameMgrMsg
-#ifndef PLASMA_EXTERNAL_RELEASE
-    if (pfGameMgrMsg * gameMgrMsg = pfGameMgrMsg::ConvertNoRef(msg)) {
-
-        switch (gameMgrMsg->netMsg->messageId) {
-
-            //================================================================
-            // InviteReceived           
-            case kSrv2Cli_GameMgr_InviteReceived: {
-                const Srv2Cli_GameMgr_InviteReceived & gmMsg = *(const Srv2Cli_GameMgr_InviteReceived *)gameMgrMsg->netMsg;
-                const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite received: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.c_str("<Unknown>"));
-            }
-            return true;
-
-            //================================================================
-            // InviteRevoked            
-            case kSrv2Cli_GameMgr_InviteRevoked: {
-                const Srv2Cli_GameMgr_InviteRevoked & gmMsg = *(const Srv2Cli_GameMgr_InviteRevoked *)gameMgrMsg->netMsg;
-                const plString & inviterName = plNetClientMgr::GetInstance()->GetPlayerNameById(gmMsg.inviterId);
-                AddLineF("[GameMgr] Invite revoked: %S, %u. Inviter: %s", pfGameMgr::GetInstance()->GetGameNameByTypeId(gmMsg.gameTypeId), gmMsg.newGameId, inviterName.c_str("<Unknown>"));
-            }
-            return true;
-            
-            DEFAULT_FATAL(gameMgrMsg->netMsg->messageId);
-        };
-    }
-#endif // PLASMA_EXTERNAL_RELEASE
-    //========================================================================
-    
-    //========================================================================
-    // pfGameCliMsg
-#ifndef PLASMA_EXTERNAL_RELEASE
-    if (pfGameCliMsg * gameCliMsg = pfGameCliMsg::ConvertNoRef(msg)) {
-    
-        pfGameCli * cli = gameCliMsg->gameCli;
-    
-        //====================================================================
-        // Handle pfGameCli msgs
-        switch (gameCliMsg->netMsg->messageId) {
-            //================================================================
-            // PlayerJoined
-            case kSrv2Cli_Game_PlayerJoined: {
-                const Srv2Cli_Game_PlayerJoined & netMsg = *(const Srv2Cli_Game_PlayerJoined *)gameCliMsg->netMsg;
-                AddLineF(
-                    "[Game %s:%u] Player joined: %s",
-                    cli->GetName(),
-                    cli->GetGameId(),
-                    netMsg.playerId
-                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
-                        : "Computer"
-                );
-            }
-            return true;
-
-            //================================================================
-            // PlayerLeft
-            case kSrv2Cli_Game_PlayerLeft: {
-                const Srv2Cli_Game_PlayerLeft & netMsg = *(const Srv2Cli_Game_PlayerLeft *)gameCliMsg->netMsg;
-                AddLineF(
-                    "[Game %s:%u] Player left: %s",
-                    cli->GetName(),
-                    cli->GetGameId(),
-                    netMsg.playerId
-                        ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
-                        : "Computer"
-                );
-            }
-            return true;
-            
-            //================================================================
-            // InviteFailed
-            case kSrv2Cli_Game_InviteFailed: {
-                const Srv2Cli_Game_InviteFailed & netMsg = *(const Srv2Cli_Game_InviteFailed *)gameCliMsg->netMsg;
-                AddLineF(
-                    "[Game %s:%u] Invite failed for playerId %u, error %u",
-                    cli->GetName(),
-                    cli->GetGameId(),
-                    netMsg.inviteeId,
-                    netMsg.error
-                );
-            }
-            return true;
-
-            //================================================================
-            // OwnerChange
-            case kSrv2Cli_Game_OwnerChange: {
-                const Srv2Cli_Game_OwnerChange & netMsg = *(const Srv2Cli_Game_OwnerChange *)gameCliMsg->netMsg;
-                AddLineF(
-                    "[Game %s:%u] Owner changed to playerId %u",
-                    cli->GetName(),
-                    cli->GetGameId(),
-                    netMsg.ownerId
-                );
-            }
-            return true;
-        }
-
-        //====================================================================
-        // Handle Tic-Tac-Toe msgs
-        if (gameCliMsg->gameCli->GetGameTypeId() == kGameTypeId_TicTacToe) {
-        
-            pfGmTicTacToe * ttt = pfGmTicTacToe::ConvertNoRef(cli);
-            ASSERT(ttt);
-            
-            switch (gameCliMsg->netMsg->messageId) {
-                //============================================================
-                // GameStarted
-                case kSrv2Cli_TTT_GameStarted: {
-                    const Srv2Cli_TTT_GameStarted & netMsg = *(const Srv2Cli_TTT_GameStarted *)gameCliMsg->netMsg;
-                    if (netMsg.yourTurn)
-                        AddLineF(
-                            "[Game %s:%u] Game started. You are X's. You go first.",
-                            cli->GetName(),
-                            cli->GetGameId()
-                        );
-                    else
-                        AddLineF(
-                            "[Game %s:%u] Game started. You are O's. Other player goes first.",
-                            cli->GetName(),
-                            cli->GetGameId()
-                        );
-                    ttt->ShowBoard();
-                }
-                return true;
-
-                //============================================================
-                // GameOver
-                case kSrv2Cli_TTT_GameOver: {
-                    const Srv2Cli_TTT_GameOver & netMsg = *(const Srv2Cli_TTT_GameOver *)gameCliMsg->netMsg;
-                    switch (netMsg.result) {
-                        case kTTTGameResultWinner:
-                            if (netMsg.winnerId == NetCommGetPlayer()->playerInt)
-                                AddLineF(
-                                    "[Game %s:%u] Game over. You won!",
-                                    cli->GetName(),
-                                    cli->GetGameId()
-                                );
-                            else
-                                AddLineF(
-                                    "[Game %s:%u] Game over. You lost.",
-                                    cli->GetName(),
-                                    cli->GetGameId()
-                                );
-                        break;
-                        
-                        case kTTTGameResultTied:
-                            AddLineF(
-                                "[Game %s:%u] Game over. You tied.",
-                                cli->GetName(),
-                                cli->GetGameId()
-                            );
-                        break;
-                        
-                        case kTTTGameResultGave:
-                            AddLineF(
-                                "[Game %s:%u] Game over. You win by default.",
-                                cli->GetName(),
-                                cli->GetGameId()
-                            );
-                        break;
-                            
-                        default:
-                            AddLineF(
-                                "[Game %s:%u] Game over. Server-side error %u.",
-                                cli->GetName(),
-                                cli->GetGameId(),
-                                netMsg.result
-                            );
-                        break;
-                    }
-                }
-                return true;
-                
-                //============================================================
-                // MoveMade
-                case kSrv2Cli_TTT_MoveMade: {
-                    const Srv2Cli_TTT_MoveMade & netMsg = *(const Srv2Cli_TTT_MoveMade *)gameCliMsg->netMsg;
-                    const char * playerName
-                        = netMsg.playerId
-                            ? plNetClientMgr::GetInstance()->GetPlayerNameById(netMsg.playerId).c_str()
-                            : "Computer";
-                    AddLineF(
-                        "[Game %s:%u] %s moved:",
-                        cli->GetName(),
-                        cli->GetGameId(),
-                        playerName
-                    );
-                    ttt->ShowBoard();
-                }
-                return true;
-                
-                DEFAULT_FATAL(gameCliMsg->netMsg->messageId);
-            }
-        }
-        else {
-            FATAL("Unknown game type");
-        }
-        
-        return true;
-    }
-#endif // PLASMA_EXTERNAL_RELEASE
-    //========================================================================
-    
     return hsKeyedObject::MsgReceive(msg);
 }
 
