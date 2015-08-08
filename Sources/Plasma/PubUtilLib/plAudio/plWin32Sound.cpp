@@ -274,7 +274,7 @@ void plWin32Sound::SetPosition( const hsPoint3 pos )
     }
 }
 
-void plWin32Sound::ISetActualVolume(const float volume)
+void plWin32Sound::ISetActualVolume(float volume)
 {
     float vol = IAttenuateActualVolume( volume ) * IGetChannelVolume();
     if( fDSoundBuffer )

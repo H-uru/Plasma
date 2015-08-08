@@ -111,7 +111,7 @@ protected:
 
     hsTArray<plSoundEvent *>    fSoundEvents;
 
-    virtual void    ISetActualVolume(const float v);
+    virtual void    ISetActualVolume(float v);
     virtual void    IActuallyStop( void );
     virtual bool    IActuallyPlaying( void ) { return fReallyPlaying; }
     virtual void    IActuallyPlay( void );
