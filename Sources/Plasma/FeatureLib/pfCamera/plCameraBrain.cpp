@@ -1565,14 +1565,13 @@ void plCameraBrain1_Fixed::Update(bool forced)
             if (fCamera->GetTarget())
             {
                 fTargetMatrix = fCamera->GetTarget()->GetCoordinateInterface()->GetLocalToWorld();
-                hsVector3 view;
                 hsVector3 up;
-                fTargetMatrix.GetAxis(0, &up, &view);
+                fTargetMatrix.GetAxis(nullptr, &up, nullptr);
                 fGoal = fTargetMatrix.GetTranslate();
                 if (fTargetPoint)
                     fPOAGoal = fTargetPoint->GetBrain()->GetGoal();
                 else
-                    fPOAGoal = fGoal - (view * 10);
+                    fPOAGoal = fGoal - (up * 10);
             }
         }
         if (fFlags.IsBitSet(kRailComponent) && fRail)
