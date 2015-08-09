@@ -403,6 +403,19 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setFontSize, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_BASIC_METHOD_DEFINITION(ptGUIControlMultiLineEdit, beginUpdate, BeginUpdate)
+
+PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, endUpdate, args)
+{
+    bool redraw = true;
+    if (!PyArg_ParseTuple(args, "|b", &redraw)) {
+        PyErr_SetString(PyExc_TypeError, "endUpdate expects an optional boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->EndUpdate(redraw);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, clickable, "Sets this listbox to be clickable by the user."),
     PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, unclickable, "Makes this listbox not clickable by the user.\n"
@@ -439,6 +452,8 @@ PYTHON_START_METHODS_TABLE(ptGUIControlMultiLineEdit)
     PYTHON_METHOD(ptGUIControlMultiLineEdit, deleteLinesFromTop, "Params: numLines\nDeletes the specified number of lines from the top of the text buffer"),
     PYTHON_METHOD_NOARGS(ptGUIControlMultiLineEdit, getFontSize, "Returns the current default font size"),
     PYTHON_METHOD(ptGUIControlMultiLineEdit, setFontSize, "Params: fontSize\nSets the default font size for the edit control"),
+    PYTHON_BASIC_METHOD(ptGUIControlMultiLineEdit, beginUpdate, "Signifies that the control will be updated heavily starting now, so suppress all redraws"),
+    PYTHON_METHOD(ptGUIControlMultiLineEdit, endUpdate, "Signifies that the massive updates are over. We can now redraw."),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

@@ -123,6 +123,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         pfMLScrollProc  *fScrollProc;
         int32_t           fScrollPos;
         int32_t           fBufferLimit;
+        bool              fCanUpdate;
 
         pfGUIMultiLineEditCtrl *fNextCtrl; // used for linking multiple controls together to share a buffer
         pfGUIMultiLineEditCtrl *fPrevCtrl;
@@ -282,6 +283,17 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         bool    ShowingEndOfBuffer();
 
         void    DeleteLinesFromTop(int numLines); // cursor and scroll position might be off after this call, not valid on connected controls
+
+        /** Signifies that the control will be updated heavily starting now, so suppress all redraws. */
+        void BeginUpdate() { fCanUpdate = false; }
+
+        /** Signifies that the massive updates are over. We can now redraw. */
+        void EndUpdate(bool redraw=true)
+        {
+            fCanUpdate = true;
+            if (redraw)
+                IUpdate();
+        }
 };
 
 #endif // _pfGUIMultiLineEditCtrl_h
