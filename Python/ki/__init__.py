@@ -2734,17 +2734,22 @@ class xKI(ptModifier):
             mKIdialog = KIMicro.dialog
         else:
             mKIdialog = KIMini.dialog
-        if self.chatMgr.fadeMode != kChat.FadeNotActive:
+
+        # Optimization: only do this if we are fading or have faded
+        if self.chatMgr.fadeMode in (kChat.FadeDoingFade, kChat.FadeDone):
+            mKIdialog.setForeColor(-1, -1, -1, self.originalForeAlpha)
+            mKIdialog.setSelectColor(-1, -1, -1, self.originalSelectAlpha)
+            if self.KILevel == kNormalKI:
+                playerlist = ptGUIControlListBox(mKIdialog.getControlFromTag(kGUI.PlayerList))
+                playerlist.show()
+            chatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
+            chatArea.enableScrollControl()
+            mKIdialog.refreshAllControls()
+
+        # Toggle state
+        if self.chatMgr.fadeMode not in (kChat.FadeNotActive, kChat.FadeDone):
             self.chatMgr.fadeMode = kChat.FadeStopping
         self.currentFadeTick = self.chatMgr.ticksOnFull
-        mKIdialog.setForeColor(-1, -1, -1, self.originalForeAlpha)
-        mKIdialog.setSelectColor(-1, -1, -1, self.originalSelectAlpha)
-        if self.KILevel == kNormalKI:
-            playerlist = ptGUIControlListBox(mKIdialog.getControlFromTag(kGUI.PlayerList))
-            playerlist.show()
-        chatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
-        chatArea.enableScrollControl()
-        mKIdialog.refreshAllControls()
 
     def ResetFadeState(self, force=False):
         """This turns the chat fade OFF and resets it if the user is not chatting.
@@ -2777,7 +2782,7 @@ class xKI(ptModifier):
             if self.KILevel == kNormalKI:
                 playerlist = ptGUIControlListBox(mKIdialog.getControlFromTag(kGUI.PlayerList))
                 playerlist.hide()
-            self.chatMgr.fadeMode = kChat.FadeNotActive
+            self.chatMgr.fadeMode = kChat.FadeDone
 
     #~~~~~~#
     # Ages #
