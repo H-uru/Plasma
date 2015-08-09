@@ -581,3 +581,21 @@ void pyGUIControlMultiLineEdit::SetFontSize( uint32_t fontsize )
             pbmod->SetFontSize((uint8_t)fontsize);
     }
 }
+
+void pyGUIControlMultiLineEdit::BeginUpdate()
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            pbmod->BeginUpdate();
+    }
+}
+
+void pyGUIControlMultiLineEdit::EndUpdate(bool redraw)
+{
+    if (fGCkey) {
+        pfGUIMultiLineEditCtrl* pbmod = pfGUIMultiLineEditCtrl::ConvertNoRef(fGCkey->ObjectIsLoaded());
+        if (pbmod)
+            pbmod->EndUpdate(redraw);
+    }
+}
