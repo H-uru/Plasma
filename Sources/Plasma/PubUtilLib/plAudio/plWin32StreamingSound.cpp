@@ -269,6 +269,15 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         return false;
     }
 
+    if( header.fNumChannels > 1 && is3D )
+    {
+        // We can only do a single channel of 3D sound. So copy over one (later)
+        bufferSize              /= header.fNumChannels;
+        header.fBlockAlign      /= header.fNumChannels;
+        header.fAvgBytesPerSec  /= header.fNumChannels;
+        header.fNumChannels = 1;
+    }
+
     // Actually create the buffer now (always looping)
     fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet(kPropLooping), false, true );
     if( !fDSoundBuffer->IsValid() )
