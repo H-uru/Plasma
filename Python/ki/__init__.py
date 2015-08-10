@@ -2722,7 +2722,7 @@ class xKI(ptModifier):
         if not self.chatMgr.fadeEnableFlag:
             return
         if not BigKI.dialog.isEnabled():
-            if self.chatMgr.fadeMode == kChat.FadeNotActive:
+            if self.chatMgr.fadeMode in (kChat.FadeNotActive, kChat.FadeDone):
                 PtAtTimeCallback(self.key, kChat.FullTickTime, kTimers.Fade)
             self.chatMgr.fadeMode = kChat.FadeFullDisp
             self.currentFadeTick = self.chatMgr.ticksOnFull
