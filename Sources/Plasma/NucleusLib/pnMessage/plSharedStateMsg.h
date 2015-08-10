@@ -59,15 +59,21 @@ public:
     plSharedStateMsg() {}
     plSharedStateMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t) {}
 
-    CLASSNAME_REGISTER( plSharedStateMsg );
-    GETINTERFACE_ANY( plSharedStateMsg, plMessage );
+    CLASSNAME_REGISTER(plSharedStateMsg);
+    GETINTERFACE_ANY(plSharedStateMsg, plMessage);
 
     void CopySharedState(plNetSharedState* ss) { fSharedState.Copy(ss); }
     plNetSharedState* GetSharedState() { return &fSharedState; }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)  { plMessage::IMsgRead(stream, mgr); fSharedState.Write(stream); }
-    void Write(hsStream* stream, hsResMgr* mgr) { plMessage::IMsgWrite(stream, mgr); fSharedState.Read(stream); }
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        plMessage::IMsgRead(stream, mgr);
+        fSharedState.Write(stream);
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        plMessage::IMsgWrite(stream, mgr);
+        fSharedState.Read(stream);
+    }
 };
 
 #endif // plSharedStateMsg_inc

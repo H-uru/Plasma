@@ -74,8 +74,8 @@ public:
     plSDLModifierMsg(const plString& sdlName="", Action a=kActionNone);
     ~plSDLModifierMsg();
 
-    CLASSNAME_REGISTER( plSDLModifierMsg );
-    GETINTERFACE_ANY( plSDLModifierMsg, plMessage );
+    CLASSNAME_REGISTER(plSDLModifierMsg);
+    GETINTERFACE_ANY(plSDLModifierMsg, plMessage);
 
     uint32_t GetFlags() const { return fFlags; }
     void SetFlags(uint32_t f) { fFlags = f; }
@@ -88,13 +88,17 @@ public:
 
     plString GetSDLName() const { return fSDLName; }
     void SetSDLName(const plString& s) { fSDLName=s; }
-        
+
     uint32_t GetPlayerID() const { return fPlayerID;  }
     void SetPlayerID(uint32_t p) { fPlayerID=p;   }
-    
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
-    void Write(hsStream* stream, hsResMgr* mgr) { hsAssert(false, "local only msg"); }
+
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        hsAssert(false, "local only msg");
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        hsAssert(false, "local only msg");
+    }
 };
 
 #endif  // plSDLModifierMsg_INC

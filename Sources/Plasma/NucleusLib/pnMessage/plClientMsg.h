@@ -121,16 +121,15 @@ public:
     const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }
     const std::vector<plLocation>& GetRoomLocs() { return fRoomLocs; }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 };
 
 class plClientRefMsg : public plRefMsg
 {
-
 public:
-    enum 
+    enum
     {
         kLoadRoom   = 0,
         kLoadRoomHold,
@@ -143,27 +142,24 @@ public:
         : plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
 
 
-    CLASSNAME_REGISTER( plClientRefMsg );
-    GETINTERFACE_ANY( plClientRefMsg, plRefMsg );
+    CLASSNAME_REGISTER(plClientRefMsg);
+    GETINTERFACE_ANY(plClientRefMsg, plRefMsg);
 
     int8_t                    fType;
     int8_t                    fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Read(stream, mgr);
         stream->ReadLE(&fType);
         stream->ReadLE(&fWhich);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Write(stream, mgr);
         stream->WriteLE(fType);
         stream->WriteLE(fWhich);
     }
 };
-
 
 #endif // plClientMsg

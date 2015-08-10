@@ -61,8 +61,8 @@ public:
                     const plKey* r, 
                     const double* t) : fInterface(nil){;}
     
-    CLASSNAME_REGISTER( plCmdIfaceModMsg );
-    GETINTERFACE_ANY( plCmdIfaceModMsg, plMessage );
+    CLASSNAME_REGISTER(plCmdIfaceModMsg);
+    GETINTERFACE_ANY(plCmdIfaceModMsg, plMessage);
 
     enum 
     {
@@ -87,17 +87,14 @@ public:
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }
-    
+
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
     }
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
     }
-    
 };
 
 #endif // plCmdIfaceModMsg_inc

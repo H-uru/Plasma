@@ -57,11 +57,11 @@ public:
     plSimulationMsg() : plMessage() {};
     plSimulationMsg(const plKey &sender, const plKey &receiver, const double *time) : plMessage(sender, receiver, time) {};
 
-CLASSNAME_REGISTER( plSimulationMsg );
-    GETINTERFACE_ANY( plSimulationMsg, plMessage );
+    CLASSNAME_REGISTER(plSimulationMsg);
+    GETINTERFACE_ANY(plSimulationMsg, plMessage);
 
-    virtual void Read(hsStream *stream, hsResMgr *mgr);
-    virtual void Write(hsStream *stream, hsResMgr *mgr);
+    void Read(hsStream *stream, hsResMgr *mgr) HS_OVERRIDE;
+    void Write(hsStream *stream, hsResMgr *mgr) HS_OVERRIDE;
 };
 
 #endif // PLSIMULATIONMSG_H

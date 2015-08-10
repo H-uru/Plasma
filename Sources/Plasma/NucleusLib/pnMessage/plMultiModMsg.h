@@ -61,27 +61,25 @@ public:
         : plMessage(s, r, t) {}
     ~plMultiModMsg() {}
 
-    CLASSNAME_REGISTER( plMultiModMsg );
-    GETINTERFACE_ANY( plMultiModMsg, plMessage );
+    CLASSNAME_REGISTER(plMultiModMsg);
+    GETINTERFACE_ANY(plMultiModMsg, plMessage);
 
     enum ModCmds
     {
     };
 
-    hsBitVector     fCmd;
+    hsBitVector fCmd;
 
     bool Cmd(int n) { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr) 
-    {   
-        plMessage::IMsgRead(stream, mgr); 
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        plMessage::IMsgRead(stream, mgr);
         fCmd.Read(stream);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) 
-    {   
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         fCmd.Write(stream);
     }

@@ -43,9 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plCursorChangeMsg_inc
 #define plCursorChangeMsg_inc
 
-//
-// this message is to fake out a gadget to see if it would potentially trigger...
-//
 #include "pnMessage/plMessage.h"
 #include "hsBitVector.h"
 
@@ -62,11 +59,11 @@ public:
     plCursorChangeMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t) : fType(0),fPriority(0){;}
-    
-    CLASSNAME_REGISTER( plCursorChangeMsg );
-    GETINTERFACE_ANY( plCursorChangeMsg, plMessage );
 
-    enum 
+    CLASSNAME_REGISTER(plCursorChangeMsg);
+    GETINTERFACE_ANY(plCursorChangeMsg, plMessage);
+
+    enum
     {
         kNoChange   = 0,
         kCursorUp,
@@ -83,25 +80,21 @@ public:
         kNullCursor
     };
 
-    int             fType;
-    int             fPriority;
+    int fType;
+    int fPriority;
 
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
         fType = stream->ReadLE32();
         fPriority = stream->ReadLE32();
     }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLE32(fType);
         stream->WriteLE32(fPriority);
     }
-
 };
 
 #endif // plCursorChangeMsg_inc

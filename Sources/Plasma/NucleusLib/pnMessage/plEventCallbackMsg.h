@@ -84,21 +84,19 @@ public:
 
     ~plEventCallbackMsg(){;}
 
-    CLASSNAME_REGISTER( plEventCallbackMsg );
-    GETINTERFACE_ANY( plEventCallbackMsg, plMessage );
+    CLASSNAME_REGISTER(plEventCallbackMsg);
+    GETINTERFACE_ANY(plEventCallbackMsg, plMessage);
 
-    // IO 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) 
-    {
-        plMessage::IMsgRead(stream, mgr);   
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        plMessage::IMsgRead(stream, mgr);
         fEventTime = stream->ReadLEFloat();
         fEvent = (CallbackEvent)stream->ReadLE16();
         fIndex = stream->ReadLE16();
         fRepeats = stream->ReadLE16();
         fUser = stream->ReadLE16();
     }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) 
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLEFloat(fEventTime);
         stream->WriteLE16((int16_t)fEvent);
@@ -133,11 +131,8 @@ public:
     plEventCallbackInterceptMsg() : plEventCallbackMsg(), fMsg(nil) {}
     ~plEventCallbackInterceptMsg() { hsRefCnt_SafeUnRef(fMsg); fMsg = nil; }
 
-    CLASSNAME_REGISTER( plEventCallbackInterceptMsg );
-    GETINTERFACE_ANY( plEventCallbackInterceptMsg, plEventCallbackMsg );
-
-    virtual void Read(hsStream *stream, hsResMgr *mgr) { plEventCallbackMsg::Read(stream, mgr); }
-    virtual void Write(hsStream *stream, hsResMgr *mgr) { plEventCallbackMsg::Write(stream, mgr); }
+    CLASSNAME_REGISTER(plEventCallbackInterceptMsg);
+    GETINTERFACE_ANY(plEventCallbackInterceptMsg, plEventCallbackMsg);
 };
 
 

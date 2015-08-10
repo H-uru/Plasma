@@ -49,13 +49,17 @@ class plSatisfiedMsg : public plMessage
 {
 public:
     plSatisfiedMsg() {}
-    plSatisfiedMsg(const plKey &s) : plMessage(s, s, nil) {}
+    plSatisfiedMsg(const plKey &s) : plMessage(s, s, nullptr) {}
 
-    CLASSNAME_REGISTER( plSatisfiedMsg );
-    GETINTERFACE_ANY( plSatisfiedMsg, plMessage );
+    CLASSNAME_REGISTER(plSatisfiedMsg);
+    GETINTERFACE_ANY(plSatisfiedMsg, plMessage);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr) { IMsgRead(stream, mgr); }
-    virtual void Write(hsStream* stream, hsResMgr* mgr) { IMsgWrite(stream, mgr); }
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        IMsgRead(stream, mgr);
+    }
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+        IMsgWrite(stream, mgr);
+    }
 
 };
 

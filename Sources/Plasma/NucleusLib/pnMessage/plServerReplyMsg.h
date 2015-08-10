@@ -72,15 +72,15 @@ public:
     plServerReplyMsg() : fType(kUnInit) { }
     plServerReplyMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t), fType(kUnInit) { }
 
-    CLASSNAME_REGISTER( plServerReplyMsg );
-    GETINTERFACE_ANY( plServerReplyMsg, plMessage );
+    CLASSNAME_REGISTER(plServerReplyMsg);
+    GETINTERFACE_ANY(plServerReplyMsg, plMessage);
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr);
-    void WriteVersion(hsStream* s, hsResMgr* mgr);
+    void ReadVersion(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
 };
 
 #endif // plServerReplyMsg_inc

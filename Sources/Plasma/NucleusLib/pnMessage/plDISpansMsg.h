@@ -65,12 +65,12 @@ public:
 
     plDISpansMsg() : plMessage(), fType(0), fFlags(0), fIndex(-1) {}
     plDISpansMsg(const plKey &r, uint8_t type, int index, int flags) : plMessage(nil, r, nil), fType(type), fIndex(index), fFlags(flags) {}   
-    
-    CLASSNAME_REGISTER( plDISpansMsg );
-    GETINTERFACE_ANY( plDISpansMsg, plMessage );
-    
-    void Read(hsStream* stream, hsResMgr* mgr) {}
-    void Write(hsStream* stream, hsResMgr* mgr) {}
+
+    CLASSNAME_REGISTER(plDISpansMsg);
+    GETINTERFACE_ANY(plDISpansMsg, plMessage);
+
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {}
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {}
 };
 
 #endif // plDISpansMsg_inc

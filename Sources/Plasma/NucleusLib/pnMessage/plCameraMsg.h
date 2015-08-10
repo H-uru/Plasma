@@ -117,11 +117,11 @@ public:
                     const plKey &r, 
                     const double* t){;}
     
-    CLASSNAME_REGISTER( plCameraTargetFadeMsg );
-    GETINTERFACE_ANY( plCameraTargetFadeMsg, plMessage );
+    CLASSNAME_REGISTER(plCameraTargetFadeMsg);
+    GETINTERFACE_ANY(plCameraTargetFadeMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
 };
 
@@ -160,8 +160,8 @@ public:
                     const plKey &r, 
                     const double* t);
     
-    CLASSNAME_REGISTER( plCameraMsg );
-    GETINTERFACE_ANY( plCameraMsg, plMessage );
+    CLASSNAME_REGISTER(plCameraMsg);
+    GETINTERFACE_ANY(plCameraMsg, plMessage);
 
     enum ModCmds
     {
@@ -217,11 +217,10 @@ public:
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
     void ClearCmd(int n) { fCmd.ClearBit(n); }
-    
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
 };
 
@@ -251,11 +250,11 @@ public:
                     const plKey &r, 
                     const double* t): fEnable(false),fDisable(false){;}
     
-    CLASSNAME_REGISTER( plIfaceFadeAvatarMsg );
-    GETINTERFACE_ANY( plIfaceFadeAvatarMsg, plMessage );
+    CLASSNAME_REGISTER(plIfaceFadeAvatarMsg);
+    GETINTERFACE_ANY(plIfaceFadeAvatarMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr);
-    void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
 };
 
