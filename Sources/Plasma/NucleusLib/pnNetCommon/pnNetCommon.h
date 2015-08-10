@@ -92,12 +92,15 @@ namespace pnNetCommon
 class plCreatableStream : public plCreatable
 {
     hsRAMStream fStream;
+
 public:
-    CLASSNAME_REGISTER( plCreatableStream );
-    GETINTERFACE_ANY( plCreatableStream, plCreatable );
-    void Read( hsStream* stream, hsResMgr* mgr=nil );
-    void Write( hsStream* stream, hsResMgr* mgr=nil );
-    hsStream * GetStream( void ) { return &fStream;}
+    CLASSNAME_REGISTER(plCreatableStream);
+    GETINTERFACE_ANY(plCreatableStream, plCreatable);
+
+    void Read(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
+
+    hsStream* GetStream(void) { return &fStream;}
 };
 
 
