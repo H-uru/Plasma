@@ -46,14 +46,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "hsKeyedObject.h"
-REGISTER_CREATABLE( hsKeyedObject );
+REGISTER_CREATABLE(hsKeyedObject);
 
 #include "plReceiver.h"
-
-REGISTER_NONCREATABLE( plReceiver );
+REGISTER_NONCREATABLE(plReceiver);
 
 #include "plMsgForwarder.h"
 REGISTER_CREATABLE(plMsgForwarder);
 
 #endif // pnKeyedObject_inc
-

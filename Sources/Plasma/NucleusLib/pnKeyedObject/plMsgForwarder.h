@@ -68,10 +68,10 @@ public:
     CLASSNAME_REGISTER(plMsgForwarder);
     GETINTERFACE_ANY(plMsgForwarder, hsKeyedObject);
 
-    void Read(hsStream* s, hsResMgr* mgr);
-    void Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
 
-    bool MsgReceive(plMessage* msg);
+    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
 
     void AddForwardKey(plKey key);
 };
