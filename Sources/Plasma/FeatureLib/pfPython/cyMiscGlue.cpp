@@ -115,10 +115,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        return PyString_FromString(cyMisc::GetClientName(*key).c_str());
+        return PyString_FromPlString(cyMisc::GetClientName(*key));
     }
     else
-        return PyString_FromString(cyMisc::GetLocalClientName().c_str());
+        return PyString_FromPlString(cyMisc::GetLocalClientName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalAvatar, "This will return a ptSceneobject of the local avatar\n"
@@ -446,7 +446,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         }
     }
 
-    return PyUnicode_FromStringEx(cyMisc::GetLocalizedString(name, argList));
+    return PyUnicode_FromPlString(cyMisc::GetLocalizedString(name, argList));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")

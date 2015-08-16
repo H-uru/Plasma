@@ -74,7 +74,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameScore, getGameType)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScore, getName)
 {
-    return PyUnicode_FromStringEx(self->fThis->GetGameName());
+    return PyUnicode_FromPlString(self->fThis->GetGameName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScore, remove)

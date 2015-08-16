@@ -678,12 +678,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
 {
-    return PyUnicode_FromStringEx(cyMisc::GetUserPath().AsString());
+    return PyUnicode_FromPlString(cyMisc::GetUserPath().AsString());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
 {
-    return PyUnicode_FromStringEx(cyMisc::GetInitPath().AsString());
+    return PyUnicode_FromPlString(cyMisc::GetInitPath().AsString());
 }
 
 ///////////////////////////////////////////////////////////////////////////
