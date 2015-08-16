@@ -57,12 +57,14 @@ class plLightInfo;
 class plShadowSlave;
 class plSpan;
 
-#ifdef HS_BUILD_FOR_WIN32
+#if defined(PLASMA_PIPELINE_DX)
 #    include "DX/plDXDevice.h"
 #    define DeviceType plDXDevice
-#else
+#elif defined(PLASMA_PIPELINE_GL)
 #    include "GL/plGLDevice.h"
 #    define DeviceType plGLDevice
+#else
+#    error "plPipeline backend not specified"
 #endif
 
 class pl3DPipeline : public plPipeline

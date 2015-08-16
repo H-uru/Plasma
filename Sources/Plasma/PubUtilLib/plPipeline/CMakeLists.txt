@@ -4,9 +4,9 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-if(WIN32)
+if(PLASMA_PIPELINE STREQUAL "DirectX")
     include_directories(${DirectX_INCLUDE_DIR})
-endif(WIN32)
+endif(PLASMA_PIPELINE STREQUAL "DirectX")
 
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
@@ -95,20 +95,28 @@ set(plGLPipeline_HEADERS
     GL/plGLPipeline.h
 )
 
-if(WIN32)
+if(PLASMA_PIPELINE STREQUAL "DirectX")
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plDXPipeline_SOURCES} ${plPipeline_HEADERS} ${plDXPipeline_HEADERS})
+
     target_link_libraries(plPipeline ${DirectX_LIBRARIES})
-else()
+endif(PLASMA_PIPELINE STREQUAL "DirectX")
+
+if(PLASMA_PIPELINE STREQUAL "OpenGL")
     add_library(plPipeline STATIC ${plPipeline_SOURCES} ${plGLPipeline_SOURCES} ${plPipeline_HEADERS} ${plGLPipeline_HEADERS})
-endif()
+
+    target_link_libraries(plPipeline EGL)
+    target_link_libraries(plPipeline GLESv2)
+endif(PLASMA_PIPELINE STREQUAL "OpenGL")
 
 source_group("Source Files" FILES ${plPipeline_SOURCES})
 source_group("Header Files" FILES ${plPipeline_HEADERS})
 
-if(WIN32)
+if(PLASMA_PIPELINE STREQUAL "DirectX")
     source_group("DX\\Source Files" FILES ${plDXPipeline_SOURCES})
     source_group("DX\\Header Files" FILES ${plDXPipeline_HEADERS})
-else()
+endif(PLASMA_PIPELINE STREQUAL "DirectX")
+
+if(PLASMA_PIPELINE STREQUAL "OpenGL")
     source_group("GL\\Source Files" FILES ${plGLPipeline_SOURCES})
     source_group("GL\\Header Files" FILES ${plGLPipeline_HEADERS})
-endif()
+endif(PLASMA_PIPELINE STREQUAL "OpenGL")
