@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLDevice_h_
 
 #include "hsMatrix44.h"
+#include "plGLDeviceRef.h"
 
 class plGLPipeline;
 class plRenderTarget;
@@ -61,6 +62,10 @@ class plGLDevice
         kEGL
     };
 
+public:
+    typedef plGLVertexBufferRef VertexBufferRef;
+    typedef plGLIndexBufferRef  IndexBufferRef;
+
 protected:
     const char*         fErrorMsg;
     plGLPipeline*       fPipeline;
@@ -71,6 +76,7 @@ protected:
     void*               fSurface;
     void*               fContext;
     size_t              fActiveThread;
+    GLuint              fProgram;
 
 public:
     plGLDevice();
@@ -99,12 +105,19 @@ public:
      */
     bool EndRender();
 
+    /* Device Ref Functions **************************************************/
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
+    void CheckIndexBuffer(IndexBufferRef* iRef);
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    struct VertexBufferRef;
-    struct IndexBufferRef;
     struct TextureRef;
 
     const char* GetErrorString() const { return fErrorMsg; }
