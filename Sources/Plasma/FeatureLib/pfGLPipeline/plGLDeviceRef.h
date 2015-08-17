@@ -47,11 +47,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <epoxy/gl.h>
 
+class plGBufferGroup;
+
 class plGLDeviceRef : public hsGDeviceRef
 {
-protected:
-    GLint fRef;
+public:
+    GLuint fRef;
 
+protected:
     plGLDeviceRef*  fNext;
     plGLDeviceRef** fBack;
 
@@ -61,11 +64,98 @@ public:
     plGLDeviceRef*  GetNext() { return fNext; }
     bool            IsLinked() { return fBack != nullptr; }
 
+    bool HasFlag(uint32_t f) const { return 0 != (fFlags & f); }
+    void SetFlag(uint32_t f, bool on) { if(on) fFlags |= f; else fFlags &= ~f; }
+
     virtual void    Release() = 0;
 
     plGLDeviceRef();
-
     virtual ~plGLDeviceRef();
+};
+
+class plGLVertexBufferRef : public plGLDeviceRef
+{
+public:
+    uint32_t        fCount;
+    uint32_t        fIndex;
+    uint32_t        fVertexSize;
+    int32_t         fOffset;
+    uint8_t         fFormat;
+
+    plGBufferGroup* fOwner;
+    uint8_t*        fData;
+
+    uint32_t        fRefTime;
+
+    enum {
+        kRebuiltSinceUsed   = 0x10, // kDirty = 0x1 is in hsGDeviceRef
+        kVolatile           = 0x20,
+        kSkinned            = 0x40
+    };
+
+
+    bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
+    void SetRebuiltSinceUsed(bool b) { SetFlag(kRebuiltSinceUsed, b); }
+
+    bool Volatile() const { return HasFlag(kVolatile); }
+    void SetVolatile(bool b) { SetFlag(kVolatile, b); }
+
+    bool Skinned() const { return HasFlag(kSkinned); }
+    void SetSkinned(bool b) { SetFlag(kSkinned, b); }
+
+    bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+    void SetRefTime(uint32_t t) { fRefTime = t; }
+
+
+    void                    Link(plGLVertexBufferRef** back ) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
+    plGLVertexBufferRef*    GetNext() { return (plGLVertexBufferRef*)fNext; }
+
+
+    plGLVertexBufferRef()
+        : plGLDeviceRef(), fCount(), fIndex(), fVertexSize(), fOffset(),
+        fFormat(), fOwner(), fData(), fRefTime()
+    { }
+
+    virtual ~plGLVertexBufferRef() {}
+    void Release() {}
+};
+
+
+class plGLIndexBufferRef : public plGLDeviceRef
+{
+public:
+    uint32_t            fCount;
+    uint32_t            fIndex;
+    int32_t             fOffset;
+    plGBufferGroup*     fOwner;
+    uint32_t            fRefTime;
+
+    enum {
+        kRebuiltSinceUsed   = 0x10, // kDirty = 0x1 is in hsGDeviceRef
+        kVolatile           = 0x20
+    };
+
+
+    bool RebuiltSinceUsed() const { return HasFlag(kRebuiltSinceUsed); }
+    void SetRebuiltSinceUsed(bool b) { SetFlag(kRebuiltSinceUsed, b); }
+
+    bool Volatile() const { return HasFlag(kVolatile); }
+    void SetVolatile(bool b) { SetFlag(kVolatile, b); }
+
+    bool Expired(uint32_t t) const { return Volatile() && (IsDirty() || (fRefTime != t)); }
+    void SetRefTime(uint32_t t) { fRefTime = t; }
+
+
+    void                Link(plGLIndexBufferRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
+    plGLIndexBufferRef* GetNext() { return (plGLIndexBufferRef*)fNext; }
+
+
+    plGLIndexBufferRef()
+        : plGLDeviceRef(), fCount(), fIndex(), fOffset(), fOwner(), fRefTime()
+    { }
+
+    virtual ~plGLIndexBufferRef() {}
+    void Release() {}
 };
 
 

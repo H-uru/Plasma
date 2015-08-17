@@ -56,10 +56,8 @@ plProfile_Extern(MemTexture);
  ** Generic plGLDeviceRef Functions                                         **
  *****************************************************************************/
 plGLDeviceRef::plGLDeviceRef()
-{
-    fNext = nullptr;
-    fBack = nullptr;
-}
+    : fRef(), fNext(), fBack()
+{ }
 
 plGLDeviceRef::~plGLDeviceRef()
 {
