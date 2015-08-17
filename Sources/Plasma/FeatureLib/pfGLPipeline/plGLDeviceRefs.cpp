@@ -39,28 +39,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include "plPipeline/hsWinRef.h"
 
 #include "plGLPipeline.h"
 #include "plGLDeviceRef.h"
 
 #include "plProfile.h"
-#include "plStatusLog/plStatusLog.h"
 
 plProfile_Extern(MemVertex);
 plProfile_Extern(MemIndex);
 plProfile_Extern(MemTexture);
 
-
 /*****************************************************************************
  ** Generic plGLDeviceRef Functions                                         **
  *****************************************************************************/
-plGLDeviceRef::plGLDeviceRef()
-{
-    fNext = nullptr;
-    fBack = nullptr;
-}
-
 plGLDeviceRef::~plGLDeviceRef()
 {
     if (fNext != nullptr || fBack != nullptr)
@@ -88,4 +79,51 @@ void plGLDeviceRef::Link(plGLDeviceRef** back)
         (*back)->fBack = &fNext;
     fBack = back;
     *back = this;
+}
+
+/*****************************************************************************
+ ** Vertex buffer cleanup Functions                                         **
+ *****************************************************************************/
+
+plGLVertexBufferRef::~plGLVertexBufferRef()
+{
+    Release();
+}
+
+void plGLVertexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+
+    if (plGLVersion() >= 30 && fVAO) {
+        glDeleteVertexArrays(1, &fVAO);
+        fVAO = 0;
+    }
+
+    if (fData) {
+        delete[] fData;
+    }
+
+    SetDirty(true);
+}
+
+
+/*****************************************************************************
+ ** Index buffer cleanup Functions                                          **
+ *****************************************************************************/
+
+plGLIndexBufferRef::~plGLIndexBufferRef()
+{
+    Release();
+}
+
+void plGLIndexBufferRef::Release()
+{
+    if (fRef) {
+        glDeleteBuffers(1, &fRef);
+        fRef = 0;
+    }
+    SetDirty(true);
 }
