@@ -58,11 +58,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/hsWinRef.h"
 #include "plStatusLog/plStatusLog.h"
 
-#ifdef HS_SIMD_INCLUDE
-#  include HS_SIMD_INCLUDE
-#endif
-
 plGLEnumerate plGLPipeline::enumerator;
+
+typedef plGLDevice DeviceType;
+
+plProfile_Extern(DrawFeedTriangles);
+plProfile_Extern(DrawPrimStatic);
+plProfile_Extern(TotalTexSize);
+plProfile_Extern(LayChange);
+plProfile_Extern(DrawTriangles);
+plProfile_Extern(MatChange);
+plProfile_Extern(PrepDrawable);
+plProfile_Extern(RenderSpan);
+plProfile_Extern(MergeCheck);
+plProfile_Extern(MergeSpan);
+plProfile_Extern(SpanTransforms);
+plProfile_Extern(SpanFog);
+plProfile_Extern(SelectLights);
+plProfile_Extern(SelectProj);
+plProfile_Extern(CheckDyn);
+plProfile_Extern(CheckStat);
+plProfile_Extern(RenderBuff);
+plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
+plProfile_Extern(SpanMerge);
+plProfile_Extern(EmptyList);
+
+// Adding a nil RenderPrim for turning off drawing
+static plRenderNilFunc sRenderNil;
+
+class plGLRenderTriListFunc : public plRenderTriListFunc<plGLDevice>
+{
+public:
+    plGLRenderTriListFunc(plGLDevice* device, int baseVertexIndex, int vStart, int vLength, int iStart, int iNumTris)
+        : plRenderTriListFunc(device, baseVertexIndex, vStart, vLength, iStart, iNumTris) {}
+
+    bool RenderPrims() const override
+    {
+        plProfile_IncCount(DrawFeedTriangles, fNumTris);
+        plProfile_IncCount(DrawTriangles, fNumTris);
+        plProfile_Inc(DrawPrimStatic);
+
+        glDrawElements(GL_TRIANGLES, fNumTris, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * fIStart));
+        return true; // TODO: Check for GL Error
+    }
+};
 
 plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode)
     : pl3DPipeline(devMode)
@@ -70,11 +112,18 @@ plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG
     plStatusLog::AddLineS("pipeline.log", "Constructing plGLPipeline");
     plStatusLog::AddLineSF("pipeline.log", "Driver vendor: {}", devMode->GetDevice()->GetDriverDesc());
 
-    fDevice.fWindow = window;
-    fDevice.fDevice = display;
-    fDevice.fPipeline = this;
+    fDevice.Setup(this, window, display);
 
     fPlateMgr = new plGLPlateManager(this);
+}
+
+
+plGLPipeline::~plGLPipeline()
+{
+    delete fPlateMgr;
+    fPlateMgr = nullptr;
+
+    fDevice.Shutdown();
 }
 
 bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
@@ -95,11 +144,28 @@ bool plGLPipeline::PreRender(plDrawable* drawable, std::vector<int16_t>& visList
 
 bool plGLPipeline::PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr)
 {
-    return false;
-}
+    plProfile_TimingGuard(PrepDrawable);
 
-void plGLPipeline::Render(plDrawable* d, const std::vector<int16_t>& visList)
-{}
+    plDrawableSpans* ice = plDrawableSpans::ConvertNoRef(drawable);
+    if (!ice)
+        return false;
+
+    // Find our lights
+    ICheckLighting(ice, visList, visMgr);
+
+    // Sort our faces
+    if (ice->GetNativeProperty(plDrawable::kPropSortFaces))
+        ice->SortVisibleSpans(visList, this);
+
+    // Prep for render. This is gives the drawable a chance to
+    // do any last minute updates for its buffers, including
+    // generating particle tri lists.
+    ice->PrepForRender(this);
+
+    // Other stuff that we're ignoring for now...
+
+    return true;
+}
 
 plTextFont* plGLPipeline::MakeTextFont(ST::string face, uint16_t size)
 {
@@ -107,10 +173,58 @@ plTextFont* plGLPipeline::MakeTextFont(ST::string face, uint16_t size)
 }
 
 void plGLPipeline::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{}
+{
+    // First, do we have a device ref at this index?
+    typename DeviceType::VertexBufferRef* vRef = reinterpret_cast<typename DeviceType::VertexBufferRef*>(owner->GetVertexBufferRef(idx));
+    if (!vRef) {
+        // If not, make the blank ref
+        vRef = new typename DeviceType::VertexBufferRef();
+        fDevice.SetupVertexBufferRef(owner, idx, vRef);
+    }
+
+    if (!vRef->IsLinked())
+        vRef->Link(&fVtxBuffRefList);
+
+    // One way or another, we now have a vbufferref[idx] in owner.
+    // Now, does it need to be (re)filled?
+    // If the owner is volatile, then we hold off. It might not
+    // be visible, and we might need to refill it again if we
+    // have an overrun of our dynamic buffer.
+    if (!vRef->Volatile()) {
+        // If it's a static buffer, allocate a vertex buffer for it.
+        fDevice.CheckStaticVertexBuffer(vRef, owner, idx);
+
+        // Might want to remove this assert, and replace it with a dirty check
+        // if we have static buffers that change very seldom rather than never.
+        hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
+    } else {
+        // Make sure we're going to be ready to fill it.
+        if (!vRef->fData && (vRef->fFormat != owner->GetVertexFormat())) {
+            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
+            fDevice.FillVolatileVertexBufferRef(vRef, owner, idx);
+        }
+    }
+}
 
 void plGLPipeline::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
-{}
+{
+    typename DeviceType::IndexBufferRef* iRef = reinterpret_cast<typename DeviceType::IndexBufferRef*>(owner->GetIndexBufferRef(idx));
+    if (!iRef) {
+        // Create one from scratch.
+        iRef = new typename DeviceType::IndexBufferRef();
+        fDevice.SetupIndexBufferRef(owner, idx, iRef);
+    }
+
+    if (!iRef->IsLinked())
+        iRef->Link(&fIdxBuffRefList);
+
+    // Make sure it has all resources created.
+    fDevice.CheckIndexBuffer(iRef);
+
+    // If it's dirty, refill it.
+    if (iRef->IsDirty())
+        fDevice.FillIndexBufferRef(iRef, owner, idx);
+}
 
 bool plGLPipeline::OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly)
 {
@@ -126,26 +240,80 @@ void plGLPipeline::CheckTextureRef(plLayerInterface* lay)
 {}
 
 void plGLPipeline::PushRenderRequest(plRenderRequest* req)
-{}
+{
+    // Save these, since we want to copy them to our current view
+    hsMatrix44 l2w = fView.GetLocalToWorld();
+    hsMatrix44 w2l = fView.GetWorldToLocal();
+
+    plFogEnvironment defFog = fView.GetDefaultFog();
+
+    fViewStack.push(fView);
+
+    SetViewTransform(req->GetViewTransform());
+
+    PushRenderTarget(req->GetRenderTarget());
+    fView.fRenderState = req->GetRenderState();
+
+    fView.fRenderRequest = req;
+    hsRefCnt_SafeRef(fView.fRenderRequest);
+
+    SetDrawableTypeMask(req->GetDrawableMask());
+    SetSubDrawableTypeMask(req->GetSubDrawableMask());
+
+    float depth = req->GetClearDepth();
+    fView.SetClear(&req->GetClearColor(), &depth);
+
+    if (req->GetOverrideMat())
+        PushOverrideMaterial(req->GetOverrideMat());
+
+    // Set from our saved ones...
+    fView.SetWorldToLocal(w2l);
+    fView.SetLocalToWorld(l2w);
+
+    RefreshMatrices();
+
+    if (req->GetIgnoreOccluders())
+        fView.SetMaxCullNodes(0);
+
+    fView.fCullTreeDirty = true;
+}
 
 void plGLPipeline::PopRenderRequest(plRenderRequest* req)
-{}
+{
+    if (req->GetOverrideMat())
+        PopOverrideMaterial(nullptr);
+
+    hsRefCnt_SafeUnRef(fView.fRenderRequest);
+    fView = fViewStack.top();
+    fViewStack.pop();
+
+    PopRenderTarget();
+    fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
+}
 
 void plGLPipeline::ClearRenderTarget(plDrawable* d)
 {}
 
 void plGLPipeline::ClearRenderTarget(const hsColorRGBA* col, const float* depth)
-{}
-
-hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
 {
-    return nullptr;
+    if (fView.fRenderState & (kRenderClearColor | kRenderClearDepth)) {
+        hsColorRGBA clearColor = col ? *col : GetClearColor();
+        //float clearDepth = depth ? *depth : fView.GetClearDepth();
+
+        GLuint masks = 0;
+        if (fView.fRenderState & kRenderClearColor)
+            masks |= GL_COLOR_BUFFER_BIT;
+        if (fView.fRenderState & kRenderClearDepth)
+            masks |= GL_DEPTH_BUFFER_BIT;
+
+        glDepthMask(GL_TRUE);
+        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+        glClearDepth(1.0);
+        glClear(masks);
+    }
 }
 
-void plGLPipeline::PushRenderTarget(plRenderTarget* target)
-{}
-
-plRenderTarget* plGLPipeline::PopRenderTarget()
+hsGDeviceRef* plGLPipeline::MakeRenderTargetRef(plRenderTarget* owner)
 {
     return nullptr;
 }
@@ -161,11 +329,12 @@ bool plGLPipeline::BeginRender()
     if (fInSceneDepth++ == 0) {
         fDevice.BeginRender();
 
+        fVtxRefTime++;
+
         hsColorRGBA clearColor = GetClearColor();
 
         glDepthMask(GL_TRUE);
-        //glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-        glClearColor(0.f, 0.f, 0.5f, 1.f);
+        glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
         glClearDepth(1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
@@ -212,37 +381,10 @@ bool plGLPipeline::IsFullScreen() const
     return false;
 }
 
-uint32_t plGLPipeline::ColorDepth() const
-{
-    return 0;
-}
-
 void plGLPipeline::Resize(uint32_t width, uint32_t height)
 {}
 
-bool plGLPipeline::CheckResources()
-{
-    return false;
-}
-
 void plGLPipeline::LoadResources()
-{}
-
-void plGLPipeline::SetZBiasScale(float scale)
-{}
-
-float plGLPipeline::GetZBiasScale() const
-{
-    return 0.0f;
-}
-
-void plGLPipeline::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
-{}
-
-void plGLPipeline::RefreshScreenMatrices()
-{}
-
-void plGLPipeline::SubmitClothingOutfit(plClothingOutfit* co)
 {}
 
 bool plGLPipeline::SetGamma(float eR, float eG, float eB)
@@ -267,7 +409,7 @@ plMipmap* plGLPipeline::ExtractMipMap(plRenderTarget* targ)
 
 void plGLPipeline::GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth)
 {
-    *res = plDisplayHelper::GetInstance()->GetSupportedDisplayModes(fDevice.fDevice);
+    *res = plDisplayHelper::GetInstance()->GetSupportedDisplayModes(fDevice.GetDisplayDevice());
 }
 
 int plGLPipeline::GetMaxAnisotropicSamples()
@@ -284,4 +426,277 @@ void plGLPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 {}
 
 void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList)
-{}
+{
+    plProfile_BeginTiming(RenderSpan);
+
+    hsMatrix44 lastL2W;
+    hsGMaterial* material;
+    const std::vector<plSpan*>& spans = ice->GetSpanArray();
+
+    plProfile_IncCount(EmptyList, visList.empty());
+
+    /// Set this (*before* we do our TestVisibleWorld stuff...)
+    lastL2W.Reset();
+    ISetLocalToWorld(lastL2W, lastL2W);   // This is necessary; otherwise, we have to test for
+                                          // the first transform set, since this'll be identity
+                                          // but the actual device transform won't be (unless
+                                          // we do this)
+
+    /// Loop through our spans, combining them when possible
+    for (size_t i = 0; i < visList.size(); )
+    {
+        if (GetOverrideMaterial() != nullptr)
+            material = GetOverrideMaterial();
+        else
+            material = ice->GetMaterial(spans[visList[i]]->fMaterialIdx);
+
+        /// It's an icicle--do our icicle merge loop
+        plIcicle tempIce(*((plIcicle*)spans[visList[i]]));
+
+        // Start at i + 1, look for as many spans as we can add to tempIce
+        size_t j;
+        for (j = i + 1; j < visList.size(); j++)
+        {
+            if (GetOverrideMaterial())
+                tempIce.fMaterialIdx = spans[visList[j]]->fMaterialIdx;
+
+            plProfile_BeginTiming(MergeCheck);
+            if (!spans[visList[j]]->CanMergeInto(&tempIce)) {
+                plProfile_EndTiming(MergeCheck);
+                break;
+            }
+            plProfile_EndTiming(MergeCheck);
+            plProfile_Inc(SpanMerge);
+
+            plProfile_BeginTiming(MergeSpan);
+            spans[visList[j]]->MergeInto(&tempIce);
+            plProfile_EndTiming(MergeSpan);
+        }
+
+        if (material != nullptr) {
+            // What do we change?
+
+            plProfile_BeginTiming(SpanTransforms);
+            ISetupTransforms(ice, tempIce, lastL2W);
+            plProfile_EndTiming(SpanTransforms);
+
+            // Turn on this spans lights and turn off the rest.
+            //IEnableLights(&tempIce);
+
+            plGBufferGroup* group = ice->GetBufferGroup(tempIce.fGroupIdx);
+
+            // Check that the underlying buffers are ready to go.
+            plProfile_BeginTiming(CheckDyn);
+            ICheckDynBuffers(ice, group, &tempIce);
+            plProfile_EndTiming(CheckDyn);
+
+            plProfile_BeginTiming(CheckStat);
+            CheckVertexBufferRef(group, tempIce.fVBufferIdx);
+            CheckIndexBufferRef(group, tempIce.fIBufferIdx);
+            plProfile_EndTiming(CheckStat);
+
+            // Draw this span now
+            IRenderBufferSpan(tempIce,
+                              ice->GetVertexRef(tempIce.fGroupIdx, tempIce.fVBufferIdx),
+                              ice->GetIndexRef(tempIce.fGroupIdx, tempIce.fIBufferIdx),
+                              material,
+                              tempIce.fVStartIdx, tempIce.fVLength,   // These are used as our accumulated range
+                              tempIce.fIPackedIdx, tempIce.fILength);
+        }
+
+        // Restart our search...
+        i = j;
+    }
+
+    plProfile_EndTiming(RenderSpan);
+    /// All done!
+}
+
+void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W)
+{
+    if (span.fNumMatrices) {
+        if (span.fNumMatrices <= 2) {
+            ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
+            lastL2W = span.fLocalToWorld;
+        } else {
+            lastL2W.Reset();
+            ISetLocalToWorld(lastL2W, lastL2W);
+            fView.fLocalToWorldLeftHanded = span.fLocalToWorld.GetParity();
+        }
+    } else if (lastL2W != span.fLocalToWorld) {
+        ISetLocalToWorld(span.fLocalToWorld, span.fWorldToLocal);
+        lastL2W = span.fLocalToWorld;
+    } else {
+        fView.fLocalToWorldLeftHanded = lastL2W.GetParity();
+    }
+
+#if 0
+    if (span.fNumMatrices == 2) {
+        D3DXMATRIX  mat;
+        IMatrix44ToD3DMatrix(mat, drawable->GetPaletteMatrix(span.fBaseMatrix+1));
+        fD3DDevice->SetTransform(D3DTS_WORLDMATRIX(1), &mat);
+        fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
+    } else {
+        fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
+    }
+#endif
+}
+
+void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
+                                     hsGDeviceRef* vb, hsGDeviceRef* ib,
+                                     hsGMaterial* material,
+                                     uint32_t vStart, uint32_t vLength,
+                                     uint32_t iStart, uint32_t iLength)
+{
+    plProfile_BeginTiming(RenderBuff);
+
+    plGLVertexBufferRef* vRef = static_cast<plGLVertexBufferRef*>(vb);
+    plGLIndexBufferRef* iRef = static_cast<plGLIndexBufferRef*>(ib);
+
+    if (!vRef->fRef || !iRef->fRef) {
+        plProfile_EndTiming(RenderBuff);
+        hsAssert(false, "Trying to render a nil buffer pair!");
+        return;
+    }
+
+    size_t weight_offset = 0;
+    switch (vRef->fFormat & plGBufferGroup::kSkinWeightMask)
+    {
+        case plGBufferGroup::kSkinNoWeights:
+            break;
+        case plGBufferGroup::kSkin1Weight:
+            weight_offset += sizeof(float);
+            break;
+        case plGBufferGroup::kSkin2Weights:
+            weight_offset += sizeof(float) * 2;
+            break;
+        case plGBufferGroup::kSkin3Weights:
+            weight_offset += sizeof(float) * 3;
+            break;
+        default:
+            hsAssert(false, "Bad skin weight value in GBufferGroup");
+    }
+
+    if (vRef->fFormat & plGBufferGroup::kSkinIndices) {
+        hsAssert(false, "Indexed skinning not supported");
+        weight_offset += sizeof(uint32_t);
+    }
+
+    GLint uniform = glGetUniformLocation(fDevice.GetCurrentProgram(), "matrix_proj");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.GetProjectionMatrix());
+
+    uniform = glGetUniformLocation(fDevice.GetCurrentProgram(), "matrix_l2w");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.GetL2WMatrix());
+
+    uniform = glGetUniformLocation(fDevice.GetCurrentProgram(), "matrix_w2c");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.GetW2CMatrix());
+
+    if (plGLVersion() >= 30) {
+        glBindVertexArray(vRef->fVAO);
+    }
+    //else
+    {
+        /* Vertex Buffer stuff */
+        glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
+
+        GLint posAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "position");
+        GLint colAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "color");
+
+        glEnableVertexAttribArray(posAttrib);
+        glEnableVertexAttribArray(colAttrib);
+
+        glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, nullptr);
+        glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (GLvoid*)((sizeof(float) * 3 * 2) + weight_offset));
+
+        /* Index Buffer stuff and drawing */
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
+    }
+
+    plGLRenderTriListFunc render(&fDevice, 0, vStart, vLength, iStart, iLength);
+
+    plProfile_EndTiming(RenderBuff);
+
+    plProfile_BeginTiming(RenderPrim);
+
+    // TEMP
+    render.RenderPrims();
+
+    plProfile_EndTiming(RenderPrim);
+
+    if (plGLVersion() >= 30) {
+        glBindVertexArray(0);
+    }
+}
+
+bool plGLPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* spanBase)
+{
+    // If we arent' an trilist, we're toast.
+    if (!(spanBase->fTypeMask & plSpan::kIcicleSpan))
+        return false;
+
+    const plIcicle* span = reinterpret_cast<const plIcicle*>(spanBase);
+
+    plGLVertexBufferRef* vRef = static_cast<plGLVertexBufferRef*>(group->GetVertexBufferRef(span->fVBufferIdx));
+    if (!vRef)
+        return true;
+
+    plGLIndexBufferRef* iRef = static_cast<plGLIndexBufferRef*>(group->GetIndexBufferRef(span->fIBufferIdx));
+    if (!iRef)
+        return true;
+
+    // If our vertex buffer ref is volatile and the timestamp is off
+    // then it needs to be refilled
+    if (vRef->Expired(fVtxRefTime))
+        IRefreshDynVertices(group, vRef);
+
+    if (iRef->IsDirty()) {
+        fDevice.FillIndexBufferRef(iRef, group, span->fIBufferIdx);
+        iRef->SetRebuiltSinceUsed(true);
+    }
+
+    return false; // No error
+}
+
+bool plGLPipeline::IRefreshDynVertices(plGBufferGroup* group, plGLVertexBufferRef* vRef)
+{
+    ptrdiff_t size = (group->GetVertBufferEnd(vRef->fIndex) - group->GetVertBufferStart(vRef->fIndex)) * vRef->fVertexSize;
+    if (!size)
+        return false; // No error, just nothing to do.
+
+    hsAssert(size > 0, "Bad start and end counts in a group");
+
+    uint8_t* vData;
+    if (vRef->fData)
+        vData = vRef->fData;
+    else
+        vData = group->GetVertBufferData(vRef->fIndex) + group->GetVertBufferStart(vRef->fIndex) * vRef->fVertexSize;
+
+    if (!vRef->fRef) {
+        if (plGLVersion() >= 45) {
+            glCreateVertexArrays(1, &vRef->fVAO);
+            glCreateBuffers(1, &vRef->fRef);
+            glNamedBufferStorage(vRef->fRef, size, vData, GL_DYNAMIC_STORAGE_BIT);
+        } else {
+            if (plGLVersion() >= 30) {
+                glGenVertexArrays(1, &vRef->fVAO);
+                glBindVertexArray(vRef->fVAO);
+            }
+
+            glGenBuffers(1, &vRef->fRef);
+            glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
+            glBufferData(GL_ARRAY_BUFFER, size, vData, GL_DYNAMIC_DRAW);
+        }
+    } else {
+        if (plGLVersion() >= 45) {
+            glNamedBufferSubData(vRef->fRef, 0, size, vData);
+        } else {
+            glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, size, vData);
+        }
+    }
+
+    vRef->fRefTime = fVtxRefTime;
+    vRef->SetDirty(false);
+
+    return false;
+}

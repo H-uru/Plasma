@@ -46,6 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPipeline/pl3DPipeline.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 
+class plGLVertexBufferRef;
+class plIcicle;
+
 class plGLEnumerate
 {
 public:
@@ -64,7 +67,7 @@ class plGLPipeline : public pl3DPipeline<plGLDevice>
 
 public:
     plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG3DDeviceModeRecord *devMode);
-    virtual ~plGLPipeline() = default;
+    virtual ~plGLPipeline();
 
     CLASSNAME_REGISTER(plGLPipeline);
     GETINTERFACE_ANY(plGLPipeline, plPipeline);
@@ -77,7 +80,6 @@ public:
     /*** VIRTUAL METHODS ***/
     bool PreRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
     bool PrepForRender(plDrawable* drawable, std::vector<int16_t>& visList, plVisMgr* visMgr=nullptr) override;
-    void Render(plDrawable* d, const std::vector<int16_t>& visList) override;
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
     void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
     void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
@@ -89,21 +91,12 @@ public:
     void ClearRenderTarget(plDrawable* d) override;
     void ClearRenderTarget(const hsColorRGBA* col = nullptr, const float* depth = nullptr) override;
     hsGDeviceRef* MakeRenderTargetRef(plRenderTarget* owner) override;
-    void PushRenderTarget(plRenderTarget* target) override;
-    plRenderTarget* PopRenderTarget() override;
     bool BeginRender() override;
     bool EndRender() override;
     void RenderScreenElements() override;
     bool IsFullScreen() const override;
-    uint32_t ColorDepth() const override;
     void Resize(uint32_t width, uint32_t height) override;
-    bool CheckResources() override;
     void LoadResources() override;
-    void SetZBiasScale(float scale) override;
-    float GetZBiasScale() const override;
-    void SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w) override;
-    void RefreshScreenMatrices() override;
-    void SubmitClothingOutfit(plClothingOutfit* co) override;
     bool SetGamma(float eR, float eG, float eB) override;
     bool SetGamma(const uint16_t* const tabR, const uint16_t* const tabG, const uint16_t* const tabB) override;
     bool CaptureScreen(plMipmap* dest, bool flipVertical = false, uint16_t desiredWidth = 0, uint16_t desiredHeight = 0) override;
@@ -113,6 +106,23 @@ public:
     int GetMaxAntiAlias(int Width, int Height, int ColorDepth) override;
     void ResetDisplayDevice(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool vSync = false  ) override;
     void RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>& visList) override;
+
+protected:
+    void ISetupTransforms(plDrawableSpans* drawable, const plSpan& span, hsMatrix44& lastL2W);
+    void IRenderBufferSpan(const plIcicle& span, hsGDeviceRef* vb, hsGDeviceRef* ib, hsGMaterial* material, uint32_t vStart, uint32_t vLength, uint32_t iStart, uint32_t iLength);
+
+    /**
+     * Only software skinned objects, dynamic decals, and particle systems
+     * currently use the dynamic vertex buffer.
+     */
+    bool IRefreshDynVertices(plGBufferGroup* group, plGLVertexBufferRef* vRef);
+
+    /**
+     * Make sure the buffers underlying this span are ready to be rendered.
+     * Meaning that the underlying GL buffers are in sync with the plasma
+     * buffers.
+     */
+    bool ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* group, const plSpan* span);
 
 private:
     static plGLEnumerate enumerator;

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLDevice.h"
 #include "plGLPipeline.h"
 
+#include "plDrawable/plGBufferGroup.h"
 #include "plStatusLog/plStatusLog.h"
 
 int plGLVersionOverride = 0;
@@ -302,9 +303,38 @@ static void GLAPIENTRY plGLDebugLog(GLenum source, GLenum type, GLuint id, GLenu
 }
 #endif
 
+static float kIdentityMatrix[16] = {
+    1.0f, 0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f, 0.0f,
+    0.0f, 0.0f, 1.0f, 0.0f,
+    0.0f, 0.0f, 0.0f, 1.0f
+};
+
+GLfloat* hsMatrix2GL(const hsMatrix44& src, GLfloat* dst)
+{
+    if (src.fFlags & hsMatrix44::kIsIdent)
+        return static_cast<GLfloat*>(memcpy(dst, kIdentityMatrix, sizeof(GLfloat) * 16));
+    else
+        return static_cast<GLfloat*>(memcpy(dst, src.fMap, sizeof(GLfloat) * 16));
+}
+
 plGLDevice::plGLDevice()
     : fErrorMsg(), fPipeline(), fContextType(kNone), fWindow(), fDevice(),
-    fDisplay(), fSurface(), fContext(), fActiveThread()
+    fDisplay(), fSurface(), fContext(), fActiveThread(), fCurrentProgram()
+{
+    memcpy(fMatrixL2W, kIdentityMatrix, sizeof(GLfloat) * 16);
+    memcpy(fMatrixW2C, kIdentityMatrix, sizeof(GLfloat) * 16);
+    memcpy(fMatrixProj, kIdentityMatrix, sizeof(GLfloat) * 16);
+}
+
+void plGLDevice::Setup(plGLPipeline* pipe, hsWindowHndl window, hsDisplayHndl device)
+{
+    fPipeline = pipe;
+    fWindow = window;
+    fDevice = device;
+}
+
+void plGLDevice::Shutdown()
 {
 }
 
@@ -348,25 +378,77 @@ bool plGLDevice::InitDevice()
         // Turn off low-severity messages
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, nullptr, GL_FALSE);
         glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_LOW, 0, nullptr, GL_FALSE);
-        glDebugMessageCallback(plGLDebugLog, 0);
+        glDebugMessageCallback(plGLDebugLog, nullptr);
     }
 #endif
 
     glEnable(GL_BLEND);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
     glEnable(GL_MULTISAMPLE);
+    glDepthFunc(GL_LEQUAL);
+    glDepthMask(GL_TRUE);
     glFrontFace(GL_CCW);
     glCullFace(GL_BACK);
+
+    /* TEMP: Shader init stuff */
+    const char* vs_src = "#version 120"
+                     "\n"
+                     "\n" "attribute vec3 position;"
+                     "\n" "attribute vec4 color;"
+                     "\n"
+                     "\n" "uniform mat4 matrix_l2w;"
+                     "\n" "uniform mat4 matrix_w2c;"
+                     "\n" "uniform mat4 matrix_proj;"
+                     "\n"
+                     "\n" "varying vec4 v_color;"
+                     "\n"
+                     "\n" "void main() {"
+                     "\n" "    vec4 pos = matrix_l2w * vec4(position, 1.0);"
+                     "\n" "         pos = matrix_w2c * pos;"
+                     "\n" "         pos = matrix_proj * pos;"
+                     "\n"
+                     "\n" "    gl_Position = pos;"
+                     "\n" "    v_color = color.zyxw;"
+                     "\n" "}";
+
+    const char* fs_src = "#version 120"
+                     "\n"
+                     "\n" "varying mediump vec4 v_color;"
+                     "\n"
+                     "\n" "void main() {"
+                     "\n" "    gl_FragColor = v_color;"
+                     "\n" "}";
+
+    GLuint vshader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vshader, 1, &vs_src, nullptr);
+    glCompileShader(vshader);
+
+    GLuint fshader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fshader, 1, &fs_src, nullptr);
+    glCompileShader(fshader);
+
+    fCurrentProgram = glCreateProgram();
+    glAttachShader(fCurrentProgram, vshader);
+    glAttachShader(fCurrentProgram, fshader);
+
+    glLinkProgram(fCurrentProgram);
+    glUseProgram(fCurrentProgram);
 
     return true;
 }
 
 void plGLDevice::SetRenderTarget(plRenderTarget* target)
 {
+    SetViewport();
 }
 
 void plGLDevice::SetViewport()
 {
+    glViewport(fPipeline->GetViewTransform().GetViewPortLeft(),
+               fPipeline->GetViewTransform().GetViewPortTop(),
+               fPipeline->GetViewTransform().GetViewPortWidth(),
+               fPipeline->GetViewTransform().GetViewPortHeight());
 }
 
 bool plGLDevice::BeginRender()
@@ -420,14 +502,289 @@ bool plGLDevice::EndRender()
     return false;
 }
 
+static uint32_t IGetBufferFormatSize(uint8_t format)
+{
+    uint32_t size = sizeof(float) * 6 + sizeof(uint32_t) * 2; // Position and normal, and two packed colors
+
+    switch (format & plGBufferGroup::kSkinWeightMask) {
+        case plGBufferGroup::kSkinNoWeights:
+            break;
+        case plGBufferGroup::kSkin1Weight:
+            size += sizeof(float);
+            break;
+        default:
+            hsAssert(false, "Invalid skin weight value in IGetBufferFormatSize()");
+    }
+
+    return size += sizeof(float) * 3 * plGBufferGroup::CalcNumUVs(format);
+}
+
+void plGLDevice::SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef)
+{
+    uint8_t format = owner->GetVertexFormat();
+
+    // All indexed skinning is currently done on CPU, so the source data
+    // will have indices, but we strip them out for the buffer.
+    if (format & plGBufferGroup::kSkinIndices) {
+        format &= ~(plGBufferGroup::kSkinWeightMask | plGBufferGroup::kSkinIndices);
+        format |= plGBufferGroup::kSkinNoWeights;       // Should do nothing, but just in case...
+        vRef->SetSkinned(true);
+        vRef->SetVolatile(true);
+    }
+
+    uint32_t vertSize = IGetBufferFormatSize(format); // vertex stride
+    uint32_t numVerts = owner->GetVertBufferCount(idx);
+
+    vRef->fOwner = owner;
+    vRef->fCount = numVerts;
+    vRef->fVertexSize = vertSize;
+    vRef->fFormat = format;
+    vRef->fRefTime = 0;
+
+    vRef->SetDirty(true);
+    vRef->SetRebuiltSinceUsed(true);
+    vRef->fData = nullptr;
+
+    vRef->SetVolatile(vRef->Volatile() || owner->AreVertsVolatile());
+
+    vRef->fIndex = idx;
+
+    owner->SetVertexBufferRef(idx, vRef);
+    hsRefCnt_SafeUnRef(vRef);
+}
+
+void plGLDevice::CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx)
+{
+    hsAssert(!vRef->Volatile(), "Creating a managed vertex buffer for a volatile buffer ref");
+
+    if (!vRef->fRef) {
+        if (plGLVersion() >= 45) {
+            glCreateVertexArrays(1, &vRef->fVAO);
+            glCreateBuffers(1, &vRef->fRef);
+        } else {
+            if (plGLVersion() >= 30) {
+                glGenVertexArrays(1, &vRef->fVAO);
+                glBindVertexArray(vRef->fVAO);
+            }
+
+            glGenBuffers(1, &vRef->fRef);
+        }
+
+        // Fill in the vertex data.
+        FillStaticVertexBufferRef(vRef, owner, idx);
+
+        // This is currently a no op, but this would let the buffer know it can
+        // unload the system memory copy, since we have a managed version now.
+        owner->PurgeVertBuffer(idx);
+
+        if (plGLVersion() >= 45) {
+#if 0
+            glVertexArrayVertexBuffer(vRef->fVAO, 0, vRef->fRef, 0, vRef->fVertexSize);
+
+            GLint posAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "position");
+            GLint colAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "color");
+
+            glEnableVertexArrayAttrib(vRef->fVAO, posAttrib);
+            glEnableVertexArrayAttrib(vRef->fVAO, colAttrib);
+
+            glVertexArrayAttribFormat(vRef->fVAO, posAttrib, 3, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribFormat(vRef->fVAO, colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, (sizeof(float) * 3 * 2) + weight_offset);
+
+            glVertexArrayAttribBinding(vRef->fVAO, posAttrib, 0);
+            glVertexArrayAttribBinding(vRef->fVAO, colAttrib, 0);
+#endif
+        } else if (plGLVersion() >= 30) {
+#if 0
+            GLint posAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "position");
+            GLint colAttrib = glGetAttribLocation(fDevice.GetCurrentProgram(), "color");
+
+            glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
+
+            glEnableVertexAttribArray(posAttrib);
+            glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, nullptr);
+
+            glEnableVertexAttribArray(colAttrib);
+            glVertexAttribPointer(colAttrib, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (GLvoid*)((sizeof(float) * 3 * 2) + weight_offset));
+#endif
+        }
+    }
+}
+
+void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
+{
+    if (!ref->fRef)
+        // We most likely already warned about this earlier, best to just quietly return now
+        return;
+
+    const uint32_t vertSize = ref->fVertexSize;
+    const uint32_t vertStart = group->GetVertBufferStart(idx) * vertSize;
+    const uint32_t size = group->GetVertBufferEnd(idx) * vertSize - vertStart;
+    if (!size)
+        return;
+
+
+    if (ref->fData) {
+        if (plGLVersion() >= 45) {
+            glNamedBufferStorage(ref->fRef, size, ref->fData + vertStart, 0);
+        } else {
+            glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
+            glBufferData(GL_ARRAY_BUFFER, size, ref->fData + vertStart, GL_STATIC_DRAW);
+        }
+    } else {
+        hsAssert(0 == vertStart, "Offsets on non-interleaved data not supported");
+        hsAssert(group->GetVertBufferCount(idx) * vertSize == size, "Trailing dead space on non-interleaved data not supported");
+
+        uint8_t* buffer = new uint8_t[size];
+        uint8_t* ptr = buffer;
+        const uint32_t vertSmallSize = group->GetVertexLiteStride() - sizeof(hsPoint3) * 2;
+        uint8_t* srcVPtr = group->GetVertBufferData(idx);
+        plGBufferColor* const srcCPtr = group->GetColorBufferData(idx);
+
+        const int numCells = group->GetNumCells(idx);
+        for (int i = 0; i < numCells; i++) {
+            plGBufferCell* cell = group->GetCell(idx, i);
+
+            if (cell->fColorStart == uint32_t(-1)) {
+                /// Interleaved, do straight copy
+                memcpy(ptr, srcVPtr + cell->fVtxStart, cell->fLength * vertSize);
+                ptr += cell->fLength * vertSize;
+            } else {
+                hsStatusMessage("Non interleaved data");
+
+                /// Separated, gotta interleave
+                uint8_t* tempVPtr = srcVPtr + cell->fVtxStart;
+                plGBufferColor* tempCPtr = srcCPtr + cell->fColorStart;
+
+                for (int j = 0; j < cell->fLength; j++)
+                {
+                    memcpy(ptr, tempVPtr, sizeof(hsPoint3) * 2);
+                    ptr += sizeof(hsPoint3) * 2;
+                    tempVPtr += sizeof(hsPoint3) * 2;
+
+                    memcpy(ptr, &tempCPtr->fDiffuse, sizeof(uint32_t));
+                    ptr += sizeof(uint32_t);
+                    memcpy(ptr, &tempCPtr->fSpecular, sizeof(uint32_t));
+                    ptr += sizeof(uint32_t);
+
+                    memcpy(ptr, tempVPtr, vertSmallSize);
+                    ptr += vertSmallSize;
+                    tempVPtr += vertSmallSize;
+                    tempCPtr++;
+                }
+            }
+        }
+
+        if (plGLVersion() >= 45) {
+            glNamedBufferStorage(ref->fRef, size, buffer, 0);
+        } else {
+            glBindBuffer(GL_ARRAY_BUFFER, ref->fRef);
+            glBufferData(GL_ARRAY_BUFFER, size, buffer, GL_STATIC_DRAW);
+        }
+
+        delete[] buffer;
+    }
+
+    /// Unlock and clean up
+    ref->SetRebuiltSinceUsed(true);
+    ref->SetDirty(false);
+}
+
+void plGLDevice::FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
+{
+    uint8_t* dst = ref->fData;
+    uint8_t* src = group->GetVertBufferData(idx);
+
+    size_t uvChanSize = plGBufferGroup::CalcNumUVs(group->GetVertexFormat()) * sizeof(float) * 3;
+    uint8_t numWeights = (group->GetVertexFormat() & plGBufferGroup::kSkinWeightMask) >> 4;
+
+    for (uint32_t i = 0; i < ref->fCount; ++i) {
+        memcpy(dst, src, sizeof(hsPoint3)); // pre-pos
+        dst += sizeof(hsPoint3);
+        src += sizeof(hsPoint3);
+
+        src += numWeights * sizeof(float); // weights
+
+        if (group->GetVertexFormat() & plGBufferGroup::kSkinIndices)
+            src += sizeof(uint32_t); // indices
+
+        memcpy(dst, src, sizeof(hsVector3)); // pre-normal
+        dst += sizeof(hsVector3);
+        src += sizeof(hsVector3);
+
+        memcpy(dst, src, sizeof(uint32_t) * 2); // diffuse & specular
+        dst += sizeof(uint32_t) * 2;
+        src += sizeof(uint32_t) * 2;
+
+        // UVWs
+        memcpy(dst, src, uvChanSize);
+        src += uvChanSize;
+        dst += uvChanSize;
+    }
+}
+
+void plGLDevice::SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef)
+{
+    uint32_t numIndices = owner->GetIndexBufferCount(idx);
+    iRef->fCount = numIndices;
+    iRef->fOwner = owner;
+    iRef->fIndex = idx;
+    iRef->fRefTime = 0;
+
+    iRef->SetDirty(true);
+    iRef->SetRebuiltSinceUsed(true);
+
+    owner->SetIndexBufferRef(idx, iRef);
+    hsRefCnt_SafeUnRef(iRef);
+
+    iRef->SetVolatile(owner->AreIdxVolatile());
+}
+
+void plGLDevice::CheckIndexBuffer(IndexBufferRef* iRef)
+{
+    if (!iRef->fRef && iRef->fCount) {
+        iRef->SetVolatile(false);
+
+        if (plGLVersion() >= 45) {
+            glCreateBuffers(1, &iRef->fRef);
+        } else {
+            glGenBuffers(1, &iRef->fRef);
+        }
+
+        iRef->SetDirty(true);
+        iRef->SetRebuiltSinceUsed(true);
+    }
+}
+
+void plGLDevice::FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx)
+{
+    uint32_t startIdx = owner->GetIndexBufferStart(idx);
+    uint32_t size = (owner->GetIndexBufferEnd(idx) - startIdx) * sizeof(uint16_t);
+
+    if (!size)
+        return;
+
+    if (plGLVersion() >= 45) {
+        glNamedBufferStorage(iRef->fRef, size, owner->GetIndexBufferData(idx) + startIdx, 0);
+    } else {
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, iRef->fRef);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, size, owner->GetIndexBufferData(idx) + startIdx, GL_STATIC_DRAW);
+    }
+
+    iRef->SetDirty(false);
+}
+
 void plGLDevice::SetProjectionMatrix(const hsMatrix44& src)
 {
+    hsMatrix2GL(src, fMatrixProj);
 }
 
 void plGLDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 {
+    hsMatrix2GL(src, fMatrixW2C);
 }
 
 void plGLDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 {
+    hsMatrix2GL(src, fMatrixL2W);
 }

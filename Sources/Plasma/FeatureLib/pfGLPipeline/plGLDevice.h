@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plGLDevice_h_
 
 #include "hsMatrix44.h"
+#include "plGLDeviceRef.h"
 
 #include <epoxy/gl.h>
 #include <string_theory/string>
@@ -65,7 +66,6 @@ inline int plGLVersion()
 
 class plGLDevice
 {
-    friend class plGLPipeline;
     friend void InitEGLDevice(plGLDevice* dev);
     friend void InitWGLDevice(plGLDevice* dev);
     friend void InitCGLDevice(plGLDevice* dev);
@@ -77,8 +77,12 @@ class plGLDevice
         kEGL
     };
 
+public:
+    typedef plGLVertexBufferRef VertexBufferRef;
+    typedef plGLIndexBufferRef  IndexBufferRef;
+
 protected:
-    ST::string fErrorMsg;
+    ST::string          fErrorMsg;
     plGLPipeline*       fPipeline;
     ContextType         fContextType;
     hsWindowHndl        fWindow;
@@ -87,9 +91,16 @@ protected:
     void*               fSurface;
     void*               fContext;
     size_t              fActiveThread;
+    GLuint              fCurrentProgram;
+    GLfloat             fMatrixL2W[16];
+    GLfloat             fMatrixW2C[16];
+    GLfloat             fMatrixProj[16];
 
 public:
     plGLDevice();
+
+    void Setup(plGLPipeline* pipe, hsWindowHndl window, hsDisplayHndl device);
+    void Shutdown();
 
     /**
      * Initializes the OpenGL rendering context.
@@ -115,15 +126,31 @@ public:
      */
     bool EndRender();
 
+    /* Device Ref Functions **************************************************/
+    void SetupVertexBufferRef(plGBufferGroup* owner, uint32_t idx, VertexBufferRef* vRef);
+    void CheckStaticVertexBuffer(VertexBufferRef* vRef, plGBufferGroup* owner, uint32_t idx);
+    void FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx);
+    void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
+    void CheckIndexBuffer(IndexBufferRef* iRef);
+    void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    struct VertexBufferRef;
-    struct IndexBufferRef;
     struct TextureRef;
 
     ST::string GetErrorString() const { return fErrorMsg; }
+    bool HasContext() const { return fContextType != kNone; }
+
+    const hsDisplayHndl GetDisplayDevice() const { return fDevice; }
+    const GLfloat* GetL2WMatrix() const { return fMatrixL2W; }
+    const GLfloat* GetW2CMatrix() const { return fMatrixW2C; }
+    const GLfloat* GetProjectionMatrix() const { return fMatrixProj; }
+
+    const GLuint GetCurrentProgram() const { return fCurrentProgram; }
+    void SetCurrentProgram(GLuint program) { fCurrentProgram = program; }
 };
 
 #endif
