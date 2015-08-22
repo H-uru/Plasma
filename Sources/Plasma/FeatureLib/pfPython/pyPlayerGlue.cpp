@@ -140,6 +140,11 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerName)
     return PyString_FromPlString(self->fThis->GetPlayerName());
 }
 
+PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerNameW)
+{
+    return PyUnicode_FromPlString(self->fThis->GetPlayerName());
+}
+
 PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerID)
 {
     return PyLong_FromUnsignedLong(self->fThis->GetPlayerID());

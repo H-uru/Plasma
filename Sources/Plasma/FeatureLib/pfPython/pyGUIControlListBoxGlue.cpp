@@ -159,7 +159,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlListBox, getElementW, args)
         PyErr_SetString(PyExc_TypeError, "getElementW expects an unsigned short");
         PYTHON_RETURN_ERROR;
     }
-    return PyUnicode_FromStringEx(self->fThis->GetElement(index));
+    return PyUnicode_FromPlString(self->fThis->GetElement(index));
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlListBox, setStringJustify, args)
