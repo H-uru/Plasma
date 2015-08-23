@@ -553,7 +553,7 @@ class xKIChat(object):
                 mKIdialog.show()
         if player is not None:
             separator = "" if pretext.endswith(" ") else " "
-            chatHeaderFormatted = U"{}{}{}:".format(pretext, separator, unicode(player.getPlayerName()))
+            chatHeaderFormatted = U"{}{}{}:".format(pretext, separator, player.getPlayerNameW())
             chatMessageFormatted = U" {}".format(message)
         else:
             # It must be a status or error message.

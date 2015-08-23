@@ -5934,6 +5934,10 @@ class ptPlayer:
         """Returns the name of the player"""
         pass
 
+    def getPlayerNameW(self):
+        """Returns the name of the player as Unicode"""
+        pass
+
     def isCCR(self):
         """Is this player a CCR?"""
         pass
