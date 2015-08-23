@@ -167,6 +167,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, isServer)
 
 PYTHON_START_METHODS_TABLE(ptPlayer)
     PYTHON_METHOD_NOARGS(ptPlayer, getPlayerName, "Returns the name of the player"),
+    PYTHON_METHOD_NOARGS(ptPlayer, getPlayerNameW, "Returns the name of the player as Unicode"),
     PYTHON_METHOD_NOARGS(ptPlayer, getPlayerID, "Returns the unique player ID"),
     PYTHON_METHOD_NOARGS(ptPlayer, getDistanceSq, "Returns the distance to remote player from local player"),
     PYTHON_METHOD_NOARGS(ptPlayer, isCCR, "Is this player a CCR?"),
