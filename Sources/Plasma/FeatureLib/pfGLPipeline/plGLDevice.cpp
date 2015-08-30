@@ -536,6 +536,11 @@ void plGLDevice::FillStaticVertexBufferRef(VertexBufferRef* ref, plGBufferGroup*
     ref->SetDirty(false);
 }
 
+void plGLDevice::FillVolatileVertexBufferRef(VertexBufferRef* ref, plGBufferGroup* group, uint32_t idx)
+{
+    hsStatusMessage("Trying to fill volatile vertex buffer ref!");
+}
+
 void plGLDevice::SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef)
 {
     uint32_t numIndices = owner->GetIndexBufferCount(idx);
