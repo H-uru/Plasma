@@ -310,8 +310,19 @@ public:
 
 
     //virtual plTextFont* MakeTextFont(ST::string face, uint16_t size) = 0;
-    //virtual void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
-    //virtual void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) = 0;
+
+    /**
+     * Make sure the buffer group has a vertex buffer ref and that its data is
+     * current.
+     */
+    void CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+
+    /**
+     * Make sure the buffer group has an index buffer ref and that its data is
+     * current.
+     */
+    void CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx) override;
+
     //virtual bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) = 0;
     //virtual bool CloseAccess(plAccessSpan& acc) = 0;
     //virtual void CheckTextureRef(plLayerInterface* lay) = 0;
@@ -1030,6 +1041,69 @@ void pl3DPipeline<DeviceType>::Draw(plDrawable* d)
         PrepForRender(ds, visList);
         Render(ds, visList);
     }
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckVertexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{
+    // First, do we have a device ref at this index?
+    typename DeviceType::VertexBufferRef* vRef = static_cast<typename DeviceType::VertexBufferRef*>(owner->GetVertexBufferRef(idx));
+
+    // If not
+    if (!vRef) {
+        // Make the blank ref
+        vRef = new typename DeviceType::VertexBufferRef();
+        fDevice.SetupVertexBufferRef(owner, idx, vRef);
+    }
+
+    if (!vRef->IsLinked())
+        vRef->Link(&fVtxBuffRefList);
+
+    // One way or another, we now have a vbufferref[idx] in owner.
+    // Now, does it need to be (re)filled?
+    // If the owner is volatile, then we hold off. It might not
+    // be visible, and we might need to refill it again if we
+    // have an overrun of our dynamic buffer.
+    if (!vRef->Volatile()) {
+        // If it's a static buffer, allocate a vertex buffer for it.
+        fDevice.CheckStaticVertexBuffer(vRef, owner, idx);
+
+        // Might want to remove this assert, and replace it with a dirty check
+        // if we have static buffers that change very seldom rather than never.
+        hsAssert(!vRef->IsDirty(), "Non-volatile vertex buffers should never get dirty");
+    }
+    else
+    {
+        // Make sure we're going to be ready to fill it.
+        if (!vRef->fData && (vRef->fFormat != owner->GetVertexFormat())) {
+            vRef->fData = new uint8_t[vRef->fCount * vRef->fVertexSize];
+            fDevice.FillVolatileVertexBufferRef(vRef, owner, idx);
+        }
+    }
+}
+
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckIndexBufferRef(plGBufferGroup* owner, uint32_t idx)
+{
+    typename DeviceType::IndexBufferRef* iRef = static_cast<typename DeviceType::IndexBufferRef*>(owner->GetIndexBufferRef(idx));
+
+    if (!iRef) {
+        // Create one from scratch.
+        iRef = new typename DeviceType::IndexBufferRef();
+        fDevice.SetupIndexBufferRef(owner, idx, iRef);
+    }
+
+    if (!iRef->IsLinked())
+        iRef->Link(&fIdxBuffRefList);
+
+    // Make sure it has all resources created.
+    fDevice.CheckIndexBuffer(iRef);
+
+    // If it's dirty, refill it.
+    if (iRef->IsDirty())
+        fDevice.FillIndexBufferRef(iRef, owner, idx);
 }
 
 
