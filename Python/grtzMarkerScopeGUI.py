@@ -87,7 +87,7 @@ class grtzMarkerScopeGUI(ptModifier):
         self._lookingAtGUI = False
         self._pendingScoreUpdate = None
         self._wantToUpdateGUI = False
-        self._supressNextNotify = False
+        self._suppressNextNotify = False
 
     def __del__(self):
         if self._pendingScoreUpdate is not None:
@@ -204,8 +204,8 @@ class grtzMarkerScopeGUI(ptModifier):
         elif event == kValueChanged:
             rgid = control.getTagID()
             if rgid == kRGMarkerGameSelect:
-                if self._supressNextNotify:
-                    self._supressNextNotify = False
+                if self._suppressNextNotify:
+                    self._suppressNextNotify = False
                 else:
                     gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
                     mission = gameSelector.getValue()
@@ -276,7 +276,7 @@ class grtzMarkerScopeGUI(ptModifier):
         else:
             self._UpdateGUI()
             mission = PtGetCGZM()
-            self._supressNextNotify = True
+            self._suppressNextNotify = True
             gameSelector.setValue(mission)
             if mission != -1:
                 if PtIsCGZMComplete():
@@ -308,12 +308,12 @@ class grtzMarkerScopeGUI(ptModifier):
         PtSendKIMessageInt(kMGStopCGZGame, -1)
 
         # Update UI
-        self._supressNextNotify = True
+        self._suppressNextNotify = True
         gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
         gameSelector.setValue(-1)
 
     def _UpdateGUI(self, mission=-1, quitting=False, score=None, star=None):
-        # If missing is -1, this is a total update
+        # If mission is -1, this is a total update
         if mission == -1:
             for i in xrange(len(grtzMarkerGames.mgs)):
                 self._UpdateGUI(i)

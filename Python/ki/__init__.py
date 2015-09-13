@@ -6460,7 +6460,7 @@ class xKI(ptModifier):
             elif mFldrID == kGUI.MarkerFolderMarkListbox:
                 mgr.LoadGame(self.BKCurrentContent)
                 if not mgr.playing:
-                    # NOTE: We must use selected_marker_index because marker IDs don't nesecarily
+                    # NOTE: We must use selected_marker_index because marker IDs don't necessarily
                     #       match up with the indices used in the GUI
                     mgr.selected_marker_index = control.getSelection()
                     self.BigKICheckContentRefresh(self.BKCurrentContent)
