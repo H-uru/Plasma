@@ -46,7 +46,6 @@ MinorVersionNumber = 52
 
 # Plasma engine.
 from Plasma import *
-from PlasmaGame import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaConstants import *
