@@ -168,7 +168,7 @@ class grtzMarkerScopeGUI(ptModifier):
             except:
                 return
             try:
-                mission = int(msg.getName()[-2:])
+                mission = int(score.getName()[-2:])
             except:
                 PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tTITS! '{}' didn't match.".format(score.getName()))
                 return
