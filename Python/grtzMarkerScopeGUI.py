@@ -86,8 +86,6 @@ class grtzMarkerScopeGUI(ptModifier):
 
         self._lookingAtGUI = False
         self._pendingScoreUpdate = None
-        self._wantToUpdateGUI = False
-        self._suppressNextNotify = False
 
     def __del__(self):
         if self._pendingScoreUpdate is not None:
@@ -156,13 +154,11 @@ class grtzMarkerScopeGUI(ptModifier):
                     if isinstance(self._scores[mission], ptGameScore):
                         if self._scores[mission].getScore() > wantScore:
                             self._scores[mission].setScore(wantScore, self.key)
-                            self._wantToUpdateGUI = True
                     else:
                         ptGameScore.createPlayerScore(msg.getName(), kScoreType, wantScore, self.key)
-                        self._wantToUpdateGUI = True
                     self._pendingScoreUpdate = None
 
-        elif isinstance(msg, ptGameScoreUpdateMsg) and self._wantToUpdateGUI:
+        elif isinstance(msg, ptGameScoreUpdateMsg):
             try:
                 score = msg.getScore()
             except:
@@ -172,11 +168,17 @@ class grtzMarkerScopeGUI(ptModifier):
             except:
                 PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tTITS! '{}' didn't match.".format(score.getName()))
                 return
-            self._UpdateGUI(mission=mission, score=score.getPoints(), star=True)
-            self._wantToUpdateGUI = False
+
+            points = score.getPoints()
+            self._scores[mission] = points
+            PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tUpdated CGZ #{} = {}".format(mission, points))
+
+            if self._lookingAtGUI:
+                self._UpdateGUI(mission=mission, score=points, star=True)
 
         # We did something with a score... Maybe we have GPS nao?
-        self._CheckForGPSCalibration()
+        if -1 not in self._scores:
+            self._CheckForGPSCalibration()
 
     def _GrantGPS(self, enable=True):
         PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\tYou have GPS...", level=kWarningLevel)
@@ -201,18 +203,15 @@ class grtzMarkerScopeGUI(ptModifier):
             self._lookingAtGUI = control.isEnabled()
             if control.isEnabled():
                 self._ShowGUI()
-        elif event == kValueChanged:
+        elif event == kValueChanged and self._lookingAtGUI:
             rgid = control.getTagID()
             if rgid == kRGMarkerGameSelect:
-                if self._suppressNextNotify:
-                    self._suppressNextNotify = False
-                else:
-                    gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                    mission = gameSelector.getValue()
-                    if mission == -1:
-                        self._StopCGZM(win=False)
-                    else:
-                        self._PlayCGZM(mission)
+                gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
+                mission = gameSelector.getValue()
+                if mission == -1:
+                    self._StopCGZM(win=False)
+                elif mission != PtGetCGZM():
+                    self._PlayCGZM(mission)
 
     def OnNotify(self, state, id, events):
         PtDebugPrint("grtzMarkerScopeGUI:OnNotify():\tstate=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel)
@@ -270,18 +269,19 @@ class grtzMarkerScopeGUI(ptModifier):
         MGMachineOnResp.run(self.key, netPropagate=False)
         gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
         if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
-            PtDebugPrint("grtzMarkerScopeGUI.OnGUINotify():\tKI Level not high enough, disabling GUI controls", level=kWarningLevel)
+            PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tKI Level not high enough, disabling GUI controls", level=kWarningLevel)
             gameSelector.setValue(-1)
             gameSelector.disable()
         else:
             self._UpdateGUI()
             mission = PtGetCGZM()
-            self._suppressNextNotify = True
             gameSelector.setValue(mission)
             if mission != -1:
                 if PtIsCGZMComplete():
+                    PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: complete!".format(mission), level=kWarningLevel)
                     self._StopCGZM(win=True)
                 else:
+                    PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: still playing...".format(mission), level=kWarningLevel)
                     PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
 
     def _StopCGZM(self, win):
@@ -298,7 +298,6 @@ class grtzMarkerScopeGUI(ptModifier):
                 self._UpdateGUI(mission, quitting=False, score=time, star=bestTime)
             elif score == 0:
                 ptGameScore.createPlayerScore(kGameScore.format(mission), kScoreType, time, self.key)
-                self._wantToUpdateGUI = True
             else:
                 self._pendingScoreUpdate = (mission, time)
         else:
@@ -308,7 +307,6 @@ class grtzMarkerScopeGUI(ptModifier):
         PtSendKIMessageInt(kMGStopCGZGame, -1)
 
         # Update UI
-        self._suppressNextNotify = True
         gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
         gameSelector.setValue(-1)
 

@@ -264,7 +264,10 @@ def PtGetTimePlayingCGZ():
 
 def PtIsCGZMComplete():
     if PtAmPlayingCGZM():
-        for i in PtGetMarkerQuestCaptures("cgz").itervalues():
+        captures = PtGetMarkerQuestCaptures("cgz")
+        if not captures:
+            return False
+        for i in captures.itervalues():
             if not i:
                 return False
         return True
