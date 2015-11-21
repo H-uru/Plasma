@@ -105,6 +105,16 @@ class grtzMarkerScopeGUI(ptModifier):
             else:
                 PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!")
 
+        elif target == "cgztime":
+            try:
+                time = int(param)
+            except:
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tcgztime wants an integer")
+            else:
+                time = PtGetServerTime() - time
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tUpdating CGZ Start Time to {}".format(time))
+                PtUpdateCGZStartTime(time)
+
         elif target == "gps":
             value = True if param in {"enable", "1", "true", "on"} else False
             self._GrantGPS(value)

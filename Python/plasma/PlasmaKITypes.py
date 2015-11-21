@@ -291,10 +291,12 @@ def PtSetMarkerQuestCaptures(name, captures):
         chron.setValue("")
     chron.save()
 
-def PtUpdateCGZStartTime():
-    import Plasma
+def PtUpdateCGZStartTime(time=None):
     chron = PtFindCreateMarkerChronicle("CGZ-StartTime")
-    chron.setValue(str(Plasma.PtGetServerTime()))
+    if time is None:
+        import Plasma
+        time = Plasma.PtGetServerTime()
+    chron.setValue(str(time))
     chron.save()
 
 # OnRTChat flags (see pfKIMsg.h)
