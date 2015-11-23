@@ -467,3 +467,39 @@ void VaultAgeInfoNode::CopyTo (plAgeInfoStruct * info) const {
     info->SetAgeLanguage(GetAgeLanguage());
 }
 #endif // def CLIENT
+
+//============================================================================
+void VaultMarkerGameNode::GetMarkerData(std::vector<VaultMarker>& data) const
+{
+    if (base->GetBlob_1Length() < sizeof(uint32_t))
+        return;
+
+    hsReadOnlyStream stream(base->GetBlob_1Length(), base->GetBlob_1());
+    uint32_t size = stream.ReadLE32();
+    data.reserve(size);
+
+    for (uint32_t i = 0; i < size; ++i) {
+        VaultMarker marker;
+        marker.id = stream.ReadLE32();
+        marker.age = stream.ReadSafeString();
+        marker.pos.Read(&stream);
+        marker.description = stream.ReadSafeString();
+        data.push_back(marker);
+    }
+}
+
+//============================================================================
+void VaultMarkerGameNode::SetMarkerData(const std::vector<VaultMarker>& data)
+{
+    hsVectorStream stream;
+    stream.WriteLE32(data.size());
+    for (auto it = data.begin(); it != data.end(); ++it) {
+        stream.WriteLE32(it->id);
+        stream.WriteSafeString(it->age);
+        it->pos.Write(&stream);
+        stream.WriteSafeString(it->description);
+    }
+
+    // copies the buffer
+    base->SetBlob_1(reinterpret_cast<const uint8_t*>(stream.GetData()), stream.GetEOF());
+}

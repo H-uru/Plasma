@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <memory>
 #include <sstream>
 #include <unordered_map>
-
+#include "hsSTLStream.h"
 #include "hsStringTokenizer.h"
 #include "hsGeometry3.h"
 #include "plSDL/plSDL.h"

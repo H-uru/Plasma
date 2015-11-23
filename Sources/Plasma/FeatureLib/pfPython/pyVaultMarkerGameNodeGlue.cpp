@@ -67,44 +67,74 @@ PYTHON_INIT_DEFINITION(ptVaultMarkerGameNode, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameName)
 {
-    return PyString_FromPlString(self->fThis->GetGameName());
+    return PyUnicode_FromPlString(self->fThis->GetGameName());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getMarkers)
+{
+    return self->fThis->GetMarkers();
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameName, args)
 {
-    char * name;
-    if (!PyArg_ParseTuple(args, "s", &name))
+    PyObject* name;
+    if (!PyArg_ParseTuple(args, "O", &name) || !PyString_CheckEx(name))
     {
         PyErr_SetString(PyExc_TypeError, "setGameName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetGameName(name);
-    
+    self->fThis->SetGameName(PyString_AsStringEx(name));
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameGuid)
+PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setMarkers, args)
 {
-    return PyString_FromPlString(self->fThis->GetGameGuid().AsString());
-}
-
-PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameGuid, args)
-{
-    char * guid;
-    if (!PyArg_ParseTuple(args, "s", &guid))
-    {
-        PyErr_SetString(PyExc_TypeError, "setGameGuid expects a string");
+    PyObject* main_seq;
+    const char* errmsg = "setMarkers expects a sequence of markers (tuple of int, string, ptPoint3, string)";
+    if (!PyArg_ParseTuple(args, "O", &main_seq)) {
+        PyErr_SetString(PyExc_TypeError, errmsg);
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetGameGuid(guid);
+    if (!PySequence_Check(main_seq)) {
+        PyErr_SetString(PyExc_TypeError, errmsg);
+        PYTHON_RETURN_ERROR;
+    }
+
+    std::vector<VaultMarker> collector;
+    collector.reserve(PySequence_Size(main_seq));
+    for (Py_ssize_t i = 0; i < PySequence_Size(main_seq); ++i) {
+        PyObject* marker_seq = PySequence_GetItem(main_seq, i);
+        if (!PySequence_Check(marker_seq) || PySequence_Size(marker_seq) != 4) {
+            PyErr_SetString(PyExc_TypeError, errmsg);
+            PYTHON_RETURN_ERROR;
+        }
+
+        PyObject* id   = PySequence_GetItem(marker_seq, 0);
+        PyObject* age  = PySequence_GetItem(marker_seq, 1);
+        PyObject* pos  = PySequence_GetItem(marker_seq, 2);
+        PyObject* desc = PySequence_GetItem(marker_seq, 3);
+        if (!(PyInt_Check(id) && PyString_CheckEx(age) && pyPoint3::Check(pos) && PyString_CheckEx(desc))) {
+            PyErr_SetString(PyExc_TypeError, errmsg);
+            PYTHON_RETURN_ERROR;
+        }
+
+        VaultMarker marker;
+        marker.id = PyLong_AsUnsignedLong(id);
+        marker.age = PyString_AsStringEx(age);
+        marker.pos = pyPoint3::ConvertFrom(pos)->fPoint;
+        marker.description = PyString_AsStringEx(desc);
+        collector.push_back(marker);
+    }
+
+    self->fThis->SetMarkers(collector);
     PYTHON_RETURN_NONE;
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultMarkerGameNode)
     PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameName, "Returns the marker game's name"),
+    PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getMarkers, "Returns a tuple of markers associated with this game"),
     PYTHON_METHOD(ptVaultMarkerGameNode, setGameName, "Params: name\nSets marker game's name"),
-    PYTHON_METHOD_NOARGS(ptVaultMarkerGameNode, getGameGuid, "Returns the marker game's guid"),
-    PYTHON_METHOD(ptVaultMarkerGameNode, setGameGuid, "Params: guid\nSets the marker game's guid"),
+    PYTHON_METHOD(ptVaultMarkerGameNode, setMarkers, "Params: markers\nSets markers associated with this game"),
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition

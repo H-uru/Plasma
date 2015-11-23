@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #define PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLVAULT_PLVAULTNODEACCESS_H
 
+#include "hsGeometry3.h"
+
 /*****************************************************************************
 *
 *   VaultNode field access strutures
@@ -295,9 +297,19 @@ struct VaultSystemNode : NetVaultNodeAccess {
 //============================================================================
 // VaultMarkerGameNode
 //============================================================================
+struct VaultMarker {
+    uint32_t id;
+    plString age;
+    hsPoint3 pos;
+    plString description;
+};
+
 struct VaultMarkerGameNode : NetVaultNodeAccess {
     VNODE_STRING  (                 GameName,           Text_1);
     VNODE_ACCESSOR(plUUID,          GameGuid,           Uuid_1);
 
     VaultMarkerGameNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
+
+    void GetMarkerData(std::vector<VaultMarker>& data) const;
+    void SetMarkerData(const std::vector<VaultMarker>& data);
 };

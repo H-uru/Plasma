@@ -60,15 +60,15 @@ PYTHON_INIT_DEFINITION(ptMarkerMgr, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptMarkerMgr, addMarker, args)
 {
-    double x, y, z;
+    PyObject* point;
     unsigned long id;
     uint8_t justCreated;
-    if (!PyArg_ParseTuple(args, "dddlb", &x, &y, &z, &id, &justCreated))
+    if (!PyArg_ParseTuple(args, "Olb", &point, &id, &justCreated) || !pyPoint3::Check(point))
     {
-        PyErr_SetString(PyExc_TypeError, "addMarker expects three doubles, an unsigned long, and a bool");
+        PyErr_SetString(PyExc_TypeError, "addMarker expects a ptPoint3, an unsigned long, and a bool");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->AddMarker(x, y, z, id, justCreated != 0);
+    self->fThis->AddMarker(pyPoint3::ConvertFrom(point), id, justCreated != 0);
     PYTHON_RETURN_NONE;
 }
 
@@ -100,7 +100,13 @@ PYTHON_METHOD_DEFINITION(ptMarkerMgr, setSelectedMarker, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptMarkerMgr, getSelectedMarker)
 {
-    return PyLong_FromUnsignedLong(self->fThis->GetSelectedMarker());
+    // -1 means "no selected marker" -- don't return the unsigned version of that
+    // Python will give us 4 billion in that case :)
+    uint32_t marker = self->fThis->GetSelectedMarker();
+    if (marker == static_cast<uint32_t>(-1))
+        return PyLong_FromLong(-1);
+    else
+        return PyLong_FromUnsignedLong(marker);
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptMarkerMgr, clearSelectedMarker, ClearSelectedMarker)

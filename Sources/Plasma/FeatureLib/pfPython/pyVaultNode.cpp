@@ -310,7 +310,9 @@ PyObject* pyVaultNode::GetCreateAgeCoords () {
 
 void pyVaultNode::SetID( uint32_t v )
 {
-    hsAssert(false, "Why are you changing the node id?");
+    ASSERT(fNode);
+    hsAssert(fNode->GetNodeId() == 0, "You may not change a node's ID");
+    fNode->SetNodeId(v);
 }
 
 void pyVaultNode::SetType( int v )
