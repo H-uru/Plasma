@@ -198,272 +198,106 @@ def PtDetermineKIMarkerLevel():
     # if couldn't be determine... just assume lowest form
     return kKIMarkerNotUpgraded
 
-def PtGetCGZGameState(whichGame):
-    "Get the CGZ Game level"
-    # assume that they have none...
+
+def PtAmPlayingCGZM():
+    chron = PtGetMarkerGameChronicle()
+    if chron is None:
+        return False
+    return chron.getValue() == "cgz"
+
+def PtFindCreateMarkerChronicle(name, subchron=None, default=None):
     import Plasma
-    import PlasmaTypes
-    if whichGame >= kCGZFirstGame and whichGame <= kCGZFinalGame:
-        vault = Plasma.ptVault()
-        entry = vault.findChronicleEntry(kChronicleCalGZMarkersAquired)
-        if type(entry) != type(None):
-            allStates = entry.chronicleGetValue()
-            PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtGetCGZGameLevel current chronicle is %s"%(allStates),level=PlasmaTypes.kDebugDumpLevel)
-            state = kCGZMarkerInactive  # assume inactive
-            try:
-                state = allStates[whichGame]
-            except LookupError:
-                PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtGetCGZGameLevel - CGZ marker game not there? chron=%s"%(allStates),level=PlasmaTypes.kErrorLevel)
-                pass
-            return state
+    def _GetChron(needle, haystack):
+        for i in haystack.getChildNodeRefList():
+            child = i.getChild().upcastToChronicleNode()
+            if child is None:
+                continue
+            if child.getName() == needle:
+                return child
         else:
-            PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtGetCGZGameLevel no chronicle yet",level=PlasmaTypes.kDebugDumpLevel)
+            chron = Plasma.ptVaultChronicleNode()
+            chron.setName(needle)
+            if default is not None:
+                chron.setValue(str(default))
+            haystack.addNode(chron)
+            return chron
+
+    chron = _GetChron(name, PtGetMarkerGameChronicle())
+    if subchron is None:
+        return chron
+    return _GetChron(subchron, chron)
+
+def PtGetCGZM():
+    chron = PtFindCreateMarkerChronicle("CGZ-Mission")
+    mission = chron.getValue()
+    if mission:
+        return int(mission)
+    return -1
+
+def PtGetCGZStartTime():
+    chron = PtFindCreateMarkerChronicle("CGZ-StartTime")
+    time = chron.getValue()
+    if time:
+        return int(time)
+    return 0
+
+def PtGetMarkerQuestCaptures(name):
+    chron = PtFindCreateMarkerChronicle("Quest", name)
+    caps = chron.getValue().split(',')
+    if caps:
+        return { int(i): True for i in caps if i.isdigit() }
     else:
-        PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtGetCGZGameLevel - invalid CGZ game of %d"%(whichGame),level=PlasmaTypes.kErrorLevel)
-        pass
-    # if couldn't be determine... just assume lowest form
-    return kCGZMarkerInactive
+        return {}
 
-def PtSetCGZGameState(whichGame,state):
-    "Get the CGZ Game level"
-    # assume that they have none...
+def PtGetMarkerGameChronicle():
     import Plasma
-    import PlasmaTypes
-    if whichGame >= kCGZFirstGame and whichGame <= kCGZFinalGame:
-        if type(state) == type("") and state in gCGZAllStates:
-            PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtSetCGZGameLevel - setting game %d to %s"%(whichGame,state),level=PlasmaTypes.kDebugDumpLevel)
-            vault = Plasma.ptVault()
-            entry = vault.findChronicleEntry(kChronicleCalGZMarkersAquired)
-            if type(entry) != type(None):
-                allStates = entry.chronicleGetValue()
-                newStates = ""
-                for idx in range(kCGZFinalGame+1):
-                    if idx == whichGame:
-                        newStates += state
-                    else:
-                        try:
-                            newStates += allStates[idx]
-                        except LookupError:
-                            newStates += kCGZMarkerInactive
-                # make sure we get whatever is beyond this
-                newStates += allStates[kCGZFinalGame+1:]
-                entry.chronicleSetValue(newStates)
-                entry.save()
-            else:
-                # create a new one
-                newStates = ""
-                for idx in range(kCGZFinalGame+1):
-                    if idx == whichGame:
-                        newStates += state
-                    else:
-                        newStates += kCGZMarkerInactive
-                vault.addChronicleEntry(kChronicleCalGZMarkersAquired,kChronicleCalGZMarkersAquiredType,newStates)
-        else:
-            PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtSetCGZGameLevel - invalid CGZ game state of:",state,level=PlasmaTypes.kErrorLevel)
-            pass
+    vault = Plasma.ptVault()
+    chron = vault.findChronicleEntry("MarkerBrain")
+    if chron is None:
+        vault.addChronicleEntry("MarkerBrain", 0, "")
+        return vault.findChronicleEntry("MarkerBrain")
+    return chron
+
+def PtGetTimePlayingCGZ():
+    import Plasma
+    return Plasma.PtGetServerTime() - PtGetCGZStartTime()
+
+def PtIsCGZMComplete():
+    if PtAmPlayingCGZM():
+        captures = PtGetMarkerQuestCaptures("cgz")
+        if not captures:
+            return False
+        for i in captures.itervalues():
+            if not i:
+                return False
+        return True
     else:
-        PlasmaTypes.PtDebugPrint("PlasmaKITypes:PtSetCGZGameLevel - invalid CGZ game of %d"%(whichGame),level=PlasmaTypes.kErrorLevel)
-        pass
+        return False
 
-def PtWhichCGZPlaying():
-    "Has the player completed the CGZ stuff"
-    import Plasma
-    whichGame = -1
-    state = kCGZMarkerInactive
-    vault = Plasma.ptVault()
-    entry = vault.findChronicleEntry(kChronicleCalGZMarkersAquired)
-    if type(entry) != type(None):
-        allStates = entry.chronicleGetValue()
-        if len(allStates) > kCGZFinalGame:
-            state = kCGZMarkerUploaded
-            for i in range(kCGZFinalGame+1):
-                if allStates[i] == kCGZMarkerAvailable or allStates[i] == kCGZMarkerCaptured:
-                    whichGame = i
-                    state = allStates[i]
-                    break
-                if allStates[i] != kCGZMarkerUploaded:
-                    state = kCGZMarkerInactive
-    return (whichGame,state)
+def PtSetCGZM(mission):
+    chron = PtGetMarkerGameChronicle()
+    chron.setValue("" if mission == -1 else "cgz")
+    chron.save()
 
-def PtIsCGZDone():
-    "Has the player completed the CGZ stuff"
-    import Plasma
-    isDone = 0
-    vault = Plasma.ptVault()
-    entry = vault.findChronicleEntry(kChronicleCalGZMarkersAquired)
-    if type(entry) != type(None):
-        allStates = entry.chronicleGetValue()
-        if len(allStates) > kCGZFinalGame:
-            # assume that we are going to find them all
-            isDone = 1
-            for i in range(kCGZFinalGame+1):
-                if allStates[i] != kCGZMarkerUploaded:
-                    isDone = 0
-                    break
-    return isDone
+    chron = PtFindCreateMarkerChronicle("CGZ-Mission")
+    chron.setValue(str(mission))
+    chron.save()
 
-def PtDetermineGZ():
-    "Get the current GZ states"
-    import Plasma
-    import PlasmaTypes
-    import string
-    GZPlaying = 0
-    MarkerToGetColor = 'off'
-    MarkerGottenColor = 'off'
-    MarkerToGetNumber = 0
-    MarkerGottenNumber = 0
-    KIMarkerLevel = PtDetermineKIMarkerLevel()
-    if KIMarkerLevel > kKIMarkerNotUpgraded:
-        # see if they are playing a CGZ game
-        (whichGame,state) = PtWhichCGZPlaying()
-        if KIMarkerLevel < kKIMarkerNormalLevel or (KIMarkerLevel == kKIMarkerNormalLevel and whichGame != -1):
-            vault = Plasma.ptVault()
-            # is there a chronicle for the GZ games?
-            entry = vault.findChronicleEntry(kChronicleGZGames)
-            if type(entry) != type(None):
-                gameString = entry.chronicleGetValue()
-                PlasmaTypes.PtDebugPrint("PtDetermineGZ: - game string is %s" % (gameString),level=PlasmaTypes.kDebugDumpLevel)
-                args = gameString.split()
-                if len(args) == 3:
-                    try:
-                        GZPlaying = string.atoi(args[0])
-                        colors = args[1].split(':')
-                        MarkerGottenColor = colors[0]
-                        MarkerToGetColor = colors[1]
-                        outof = args[2].split(':')
-                        MarkerGottenNumber = string.atoi(outof[0])
-                        MarkerToGetNumber = string.atoi(outof[1])
-                    except ValueError:
-                        PlasmaTypes.PtDebugPrint("xKI:GZ - error trying to read GZGames Chronicle",level=PlasmaTypes.kErrorLevel)
-                        # we don't know which one it errored on, so just reset them all
-                        GZPlaying = 0
-                        MarkerToGetColor = 'off'
-                        MarkerGottenColor = 'off'
-                        MarkerToGetNumber = 0
-                        MarkerGottenNumber = 0
-                else:
-                    PlasmaTypes.PtDebugPrint("xKI:GZ - error GZGames string formation error",level=PlasmaTypes.kErrorLevel)
-                    pass
-        else:
-            # can't be playing a GZGame!
-            # ...might be a MarkerTag game... let the KI determine that.
-            pass
-    PlasmaTypes.PtDebugPrint("PtDetermineGZ: - returning game=%d colors=%s:%s markers=%d:%d" % (GZPlaying, MarkerGottenColor, MarkerToGetColor ,MarkerGottenNumber, MarkerToGetNumber),level=PlasmaTypes.kDebugDumpLevel)
-    return (GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber)
-
-def PtCaptureGZMarker(GZMarkerInRange):
-    import Plasma
-    import PlasmaTypes
-    # get current GZ Game state
-    (GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber) = PtDetermineGZ()
-    # make sure there is room for the capture marker
-    if GZPlaying and MarkerToGetNumber > MarkerGottenNumber:
-        # set the marker status to 'gotten'
-        #   ...in the GZ marker chronicle
-        vault = Plasma.ptVault()
-        # is there a chronicle for the GZ games?
-        entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
-        if type(entry) != type(None):
-            markers = entry.chronicleGetValue()
-            markerIdx = GZMarkerInRange - 1
-            if markerIdx >= 0 and markerIdx < len(markers):
-                # Set the marker to "captured"
-                PlasmaTypes.PtDebugPrint("PtCaptureGZMarker: starting with '%s' changing %d to '%s'" % (markers,GZMarkerInRange,kGZMarkerCaptured),level=PlasmaTypes.kDebugDumpLevel)
-                if len(markers)-(markerIdx+1) != 0:
-                    markers = markers[:markerIdx] + kGZMarkerCaptured + markers[-(len(markers)-(markerIdx+1)):]
-                else:
-                    markers = markers[:markerIdx] + kGZMarkerCaptured
-                #PlasmaTypes.PtDebugPrint("xKI: out string is '%s'" % (markers),level=PlasmaTypes.kDebugDumpLevel)
-                entry.chronicleSetValue(markers)
-                entry.save()
-                # update the marker Gotten count
-                totalGotten = markers.count(kGZMarkerCaptured)
-                KIMarkerLevel = PtDetermineKIMarkerLevel()
-                if KIMarkerLevel > kKIMarkerFirstLevel:
-                    # if this is the second wave of markers (or beyond)
-                    totalGotten -= 5
-                    if totalGotten < 0:
-                        totalGotten = 0
-                if totalGotten > MarkerToGetNumber:
-                    totalGotten = MarkerToGetNumber
-                MarkerGottenNumber = totalGotten
-                # save update to chronicle
-                PtUpdateGZGamesChonicles(GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber)
-            else:
-                PlasmaTypes.PtDebugPrint("PtCaptureGZMarker: invalid marker serial number of %d" % (gGZMarkerInRange),level=PlasmaTypes.kErrorLevel )
-                pass
-        else:
-            PlasmaTypes.PtDebugPrint("PtCaptureGZMarker: no chronicle entry found",level=PlasmaTypes.kErrorLevel )
-            pass
+def PtSetMarkerQuestCaptures(name, captures):
+    chron = PtFindCreateMarkerChronicle("Quest", name)
+    if captures:
+        chron.setValue(','.join(( str(key) for key, value in captures.iteritems() if value )))
     else:
-        PlasmaTypes.PtDebugPrint("PtCaptureGZMarker: no game or this game is complete",level=PlasmaTypes.kErrorLevel )
-        pass
+        chron.setValue("")
+    chron.save()
 
-def PtVerifyGZMarker():
-    import Plasma
-    import PlasmaTypes
-    # get current GZ Game state
-    (GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber) = PtDetermineGZ()
-    # make sure there is room for the capture marker
-    if GZPlaying:
-        # set the marker status to 'gotten'
-        #   ...in the GZ marker chronicle
-        vault = Plasma.ptVault()
-        # is there a chronicle for the GZ games?
-        entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
-        if type(entry) != type(None):
-            markers = entry.chronicleGetValue()
-            # get what was really gotten
-            totalGotten = markers.count(kGZMarkerCaptured)
-            KIMarkerLevel = PtDetermineKIMarkerLevel()
-            if KIMarkerLevel > kKIMarkerFirstLevel:
-                # if this is the second wave of markers (or beyond)
-                totalGotten -= 5
-                if totalGotten < 0:
-                    totalGotten = 0
-            if totalGotten > MarkerToGetNumber:
-                totalGotten = MarkerToGetNumber
-            if totalGotten != MarkerGottenNumber:
-                PlasmaTypes.PtDebugPrint("PtVerifyGZMarker: Error! Gotten different than real. They say=%d We say=%d"%(MarkerGottenNumber,totalGotten),level=PlasmaTypes.kErrorLevel )
-                MarkerGottenNumber = totalGotten
-                # save update to chronicle
-                PtUpdateGZGamesChonicles(GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber)
-                Plasma.PtSendKIMessage(kGZUpdated,0)
-    return (GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber)
-
-def PtUpdateGZGamesChonicles(GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber):
-    "Update the GZ chronicle variable"
-    import Plasma
-    import PlasmaTypes
-    vault = Plasma.ptVault()
-    # is there a chronicle for the GZ games?
-    entry = vault.findChronicleEntry(kChronicleGZGames)
-    try:
-        upstring = "%d %s:%s %d:%d" % (GZPlaying,MarkerGottenColor,MarkerToGetColor,MarkerGottenNumber,MarkerToGetNumber)
-        if type(entry) != type(None):
-            entry.chronicleSetValue(upstring)
-            entry.save()
-        else:
-            # if there is none, then just add another entry
-            vault.addChronicleEntry(kChronicleGZGames,kChronicleGZGamesType,upstring)
-    except TypeError:
-        if type(GZPlaying) != type(0):
-            PlasmaTypes.PtDebugPrint("PtUpdateGZGamesChronicle: GZPlaying wrong type (should be integer)",level=PlasmaTypes.kErrorLevel )
-            pass
-        if type(MarkerToGetColor) != type(""):
-            PlasmaTypes.PtDebugPrint("PtUpdateGZGamesChronicle: GZPlaying wrong type (should be string)",level=PlasmaTypes.kErrorLevel )
-            pass
-        if type(MarkerGottenColor) != type(""):
-            PlasmaTypes.PtDebugPrint("PtUpdateGZGamesChronicle: GZPlaying wrong type (should be string)",level=PlasmaTypes.kErrorLevel )
-            pass
-        if type(MarkerToGetNumber) != type(0):
-            PlasmaTypes.PtDebugPrint("PtUpdateGZGamesChronicle: GZPlaying wrong type (should be integer)",level=PlasmaTypes.kErrorLevel )
-            pass
-        if type(MarkerGottenNumber) != type(0):
-            PlasmaTypes.PtDebugPrint("PtUpdateGZGamesChronicle: GZPlaying wrong type (should be integer)",level=PlasmaTypes.kErrorLevel )
-            pass
-        pass
-
+def PtUpdateCGZStartTime(time=None):
+    chron = PtFindCreateMarkerChronicle("CGZ-StartTime")
+    if time is None:
+        import Plasma
+        time = Plasma.PtGetServerTime()
+    chron.setValue(str(time))
+    chron.save()
 
 # OnRTChat flags (see pfKIMsg.h)
 kRTChatPrivate = 0x01

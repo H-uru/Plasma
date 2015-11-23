@@ -40,48 +40,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
  *==LICENSE==* """
-"""Module: grtzMarkerScopeGUI
-Age: Great Zero
-Author: Mark DeForest
-Date: Dec. 8, 2003
-
-Re-design: 
----->Author: Tye Hooley
----->Date: Dec 2006
-
-This is the python handler for the MarkerGame Machine (CGZs) GUI interface handler
-"""
-
-MaxVersionNumber = 2
-MinorVersionNumber = 1
 
 from Plasma import *
+from PlasmaConstants import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-from PlasmaVaultConstants import *
-
-import string
 import time
 
 import grtzMarkerGames
-from PlasmaGameConstants import *
 import PlasmaControlKeys
 
-
-
-
 # define the attributes that will be entered in max
-MarkerGameDlg = ptAttribGUIDialog(1,"The MarkerGame GUI")
-MGAnim = ptAttribAnimation(2,"Turn on/off entire animation")
-MGMachineOnResp = ptAttribResponder(3,"Turn On responder")
-MGMachineOffResp = ptAttribResponder(4,"Turn Off responder")
-aScope1Act = ptAttribNamedActivator(5,"CGZ Scope1 Python", netForce=1)
-aScope2Act = ptAttribNamedActivator(6,"CGZ Scope2 Python", netForce=1)
-aScope3Act = ptAttribNamedActivator(7,"CGZ Scope3 Python", netForce=1)
-aScope4Act = ptAttribNamedActivator(8,"CGZ Scope4 Python", netForce=1)
-
-# constants
-kBogusGameName = "bogusGame"
+MarkerGameDlg = ptAttribGUIDialog(1, "The MarkerGame GUI")
+MGAnim = ptAttribAnimation(2, "Turn on/off entire animation")
+MGMachineOnResp = ptAttribResponder(3, "Turn On responder")
+MGMachineOffResp = ptAttribResponder(4, "Turn Off responder")
+aScope1Act = ptAttribNamedActivator(5, "CGZ Scope1 Python", netForce=True)
+aScope2Act = ptAttribNamedActivator(6, "CGZ Scope2 Python", netForce=True)
+aScope3Act = ptAttribNamedActivator(7, "CGZ Scope3 Python", netForce=True)
+aScope4Act = ptAttribNamedActivator(8, "CGZ Scope4 Python", netForce=True)
 
 # TagIDs for the GUI
 kRGMarkerGameSelect = 500
@@ -90,433 +67,302 @@ kMarkerGameFieldEnd = 340
 kMarkerGameNumFieldOffset = 0
 kMarkerGameNameFieldOffset = 1
 
-#Timer Callback Types
-kDisplayTimer = 0
+# Game Score Sctuff
+kGameScore = "GreatZeroCalibration_{:02d}"
+kScoreType = PtGameScoreTypes.kFixed
 
-#Score Refresh types
-kNoRefresh          = 0
-kFullRefresh        = 1
-kPartialRefresh     = 2
-kOneTimeFullRefresh = 3
+# Timer CBs
+kTimerUpdateActiveCB = 0
+kTimerUpdateSecs = 1.0
 
+# This should be a ptAttribSceneobject
+kTelescopes = {"GZMachineScope01", "GZMachineScope02", "GZMachineScope03", "GZMachineScope04"}
 
 class grtzMarkerScopeGUI(ptModifier):
-    "The MarkerScope get a game GUI handler"
     def __init__(self):
         ptModifier.__init__(self)
         self.id = 213
-        self.version = MaxVersionNumber
-        self.selectorChanged = 0
-        self.init = 0
-        self.lastGame = -1
-        self.lastGameScore = -1
-        self.updateLevel = kNoRefresh
-        self.scopeID = -1
-        self.debug = 0
-        PtDebugPrint("__grtzMarkerScopeGUI: Max version %d - minor version %d" % (MaxVersionNumber,MinorVersionNumber))
+        self.version = 3
+
+        self._lookingAtGUI = False
+        self._pendingScoreUpdate = None
 
     def __del__(self):
-        "the destructor - unload any dialogs we loaded"
+        if self._pendingScoreUpdate is not None:
+            PtDebugPrint("grtzMarkerScopeGUI.__del__():\tShutting down with a pending score update :(")
         PtUnloadDialog("MarkerGameGUI")
 
-    def OnFirstUpdate(self):
-        "First update, load our dialogs"
-        PtLoadDialog("MarkerGameGUI",self.key)
-
-    def OnNotify(self,state,id,events):
-        "Activated... start telescope"
-        #~PtDebugPrint("grtzMarkerScopeGUI:OnNotify  state=%f id=%d events=" % (state,id),events,level=kDebugDumpLevel)
-        if id == (-1):
-            print "Tye: YEA!! IT WORKED!"
-            return
-        
-        if id == aScope1Act.id or id == aScope2Act.id or id == aScope3Act.id or id == aScope4Act.id:
-            self.scopeID = id
-            if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
-                MarkerGameDlg.dialog.hide()
+    def OnBackdoorMsg(self, target, param):
+        target = target.lower()
+        if target.startswith("cgzm"):
+            try:
+                mission = int(target[-2:])
+            except:
+                return
+            score = self._scores[mission]
+            if isinstance(score, ptGameScore):
+                score.setPoints(int(param), self.key)
             else:
-                MGMachineOffResp.run(self.key,netPropagate=0)
-        elif id == MGMachineOffResp.id:
-            MarkerGameDlg.dialog.hide()
-            actList = (aScope1Act, aScope2Act, aScope3Act, aScope4Act)
-            for act in actList:
-                if act.id == self.scopeID:
-                    self.scopeID = -1
-                    act.enable()
-                    PtDisableControlKeyEvents(self.key)
-                    return
-        elif id == MGMachineOnResp.id:
-            PtEnableControlKeyEvents(self.key)
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tDon't have the GameScore yet!")
 
-    def OnGUINotify(self,id,control,event):
-        "Events from all the dialogs in the MarkerGameGUI Age..."
+        elif target == "cgztime":
+            try:
+                time = int(param)
+            except:
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tcgztime wants an integer")
+            else:
+                time = PtGetServerTime() - time
+                PtDebugPrint("grtzMarkerScopeGUI.OnBackdoorMsg():\tUpdating CGZ Start Time to {}".format(time))
+                PtUpdateCGZStartTime(time)
+
+        elif target == "gps":
+            value = True if param in {"enable", "1", "true", "on"} else False
+            self._GrantGPS(value)
+
+    def _CheckForGPSCalibration(self):
+        for i, score in enumerate(self._scores):
+            if not isinstance(score, ptGameScore):
+                if score == -1:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} is still loading. No GPS.".format(i), level=kDebugDumpLevel)
+                    return
+                else:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has no score. No GPS.".format(i), level=kWarningLevel)
+                    return
+            if score.getPoints() == 0:
+                    PtDebugPrint("grtzMarkerScopeGUI._CheckForGPSCalibration():\tMGS #{} has a score of zero. No GPS.".format(i), level=kWarningLevel)
+                    return
+        self._GrantGPS()
+
+    def OnControlKeyEvent(self, controlKey, activeFlag):
+        if controlKey in (PlasmaControlKeys.kKeyExitMode, PlasmaControlKeys.kKeyMoveBackward,
+                          PlasmaControlKeys.kKeyRotateLeft, PlasmaControlKeys.kKeyRotateRight):
+            self._PopTelescope()
+
+    def OnFirstUpdate(self):
+        PtLoadDialog("MarkerGameGUI", self.key)
+
+    def OnGameScoreMsg(self, msg):
+        if isinstance(msg, ptGameScoreListMsg):
+            try:
+                mission = int(msg.getName()[-2:])
+            except:
+                PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tTITS! '{}' didn't match.".format(score.getName()))
+                return
+            try:
+                score = msg.getScores()[0]
+            except:
+                self._scores[mission] = 0
+            else:
+                self._scores[mission] = score
+                if self._lookingAtGUI:
+                    self._UpdateGUI(mission)
+
+            # Process pending score op
+            if self._pendingScoreUpdate is not None:
+                wantMission, wantScore = self._pendingScoreUpdate
+                if mission == wantMission:
+                    if isinstance(self._scores[mission], ptGameScore):
+                        if self._scores[mission].getScore() > wantScore:
+                            self._scores[mission].setScore(wantScore, self.key)
+                    else:
+                        ptGameScore.createPlayerScore(msg.getName(), kScoreType, wantScore, self.key)
+                    self._pendingScoreUpdate = None
+
+        elif isinstance(msg, ptGameScoreUpdateMsg):
+            try:
+                score = msg.getScore()
+            except:
+                return
+            try:
+                mission = int(score.getName()[-2:])
+            except:
+                PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tTITS! '{}' didn't match.".format(score.getName()))
+                return
+
+            points = score.getPoints()
+            self._scores[mission] = points
+            PtDebugPrint("grtzMarkerScopeGUI.OnGameScoreMsg():\tUpdated CGZ #{} = {}".format(mission, points))
+
+            if self._lookingAtGUI:
+                self._UpdateGUI(mission=mission, score=points, star=True)
+
+        # We did something with a score... Maybe we have GPS nao?
+        if -1 not in self._scores:
+            self._CheckForGPSCalibration()
+
+    def _GrantGPS(self, enable=True):
+        PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\tYou have GPS...", level=kWarningLevel)
+
+        vault = ptVault()
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            GPSVar = psnlSDL.findVar("GPSEnabled")
+            if GPSVar.getBool() != enable:
+                GPSVar.setBool(enable)
+                vault.updatePsnlAgeSDL(psnlSDL)
+                act = "Enabled" if enable else "Disabled"
+                PtDebugPrint("grtzMarkerScopeGUI._GrantGPS():\t{} GPS!".format(act), level=kWarningLevel)
+
+    def OnGUINotify(self, id, control, event):
         if id != MarkerGameDlg.id:
             return
 
-        #~PtDebugPrint("grtzMarkerScopeGUI::OnGUINotify id=%d, event=%d control=" % (id,event),control)#,level=kDebugDumpLevel )
         if event == kDialogLoaded:
-            PtDebugPrint("DEBUG: grtzMarkerScopeGUI():\tMarker Scope GUU--->Dialog Loaded!")
-            # hide stuff until needed
             MGAnim.animation.skipToTime(1.5)
-
         elif event == kShowHide:
+            self._lookingAtGUI = control.isEnabled()
             if control.isEnabled():
-                PtDebugPrint("DEBUG: grtzMarkerScopeGUI():\tMarker Scope-GUI--->Show Dialog")
-                # make sure the player has enough level to see the GUI
-                gameType = grtzMarkerGames.GetCurrentGameType()
-                if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tKI Level not high enough, disabling GUI controls")
-                    gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                    gameSelector.setValue(-1)
-                    gameSelector.disable()
-                    self.updateLevel = kNoRefresh
-                elif gameType > -1 and gameType != PtMarkerGameTypes.kMarkerGameCGZ:
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tUser Created Marker Game in Progress, disabling GUI controls")
-                    gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                    gameSelector.setValue(-1)
-                    gameSelector.disable()
-                    self.updateLevel = kNoRefresh
-                    msg = "Please quit existing User-Created Marker Game, to play a CGZ Game."
-                    PtSendKIMessage(kKILocalChatStatusMsg, msg)
-                    self.IRefreshGamesDisplay()
-                    MGMachineOnResp.run(self.key,netPropagate=0)
-                else: #We're loading the GUI
-                    # Get gameData (if Any)
-                    gameNum,numCaptured,numMarkers = grtzMarkerGames.GetGameProgress()
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tInitializing GUI, current gameNum = %s" % gameNum)
-                    
-                    #Set refresh level to not update, later we'll change it if necessary...
-                    self.updateLevel = kNoRefresh
-                    self.lastGame = -1
-                    self.lastGameScore = -1
-
-                    if gameNum > -1 and numCaptured > -1 and numMarkers > -1:
-                        if numCaptured == numMarkers:
-                            #We've got a completed game!!!
-                            #Stop the game....
-                            PtSendKIMessage(kMGStopCGZGame, 0)
-
-                            #Save the game information
-                            self.lastGame = gameNum
-                            self.lastGameScore = grtzMarkerGames.GetGameScore(gameNum)
-
-                            #Now set the selector to unselected...
-                            gameNum = -1
-
-                            #Setup the timer to refresh the display
-                            self.updateLevel = kPartialRefresh
-
-
-                    # Set selector to the game being played (if Any)
-                    gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                    gameSelector.enable()
-                    oldGame = gameSelector.getValue()
-                    if gameNum != oldGame:
-                        gameSelector.setValue(gameNum)
-                        self.init = 0
-                    else:
-                        #We've already initialized properly, no need to do it again!
-                        self.init = 1
-
-                    if gameNum > -1:
-                        # start/continue the counting                     
-                        self.updateLevel = kPartialRefresh
-
-                    #Refresh Display
-                    self.IRefreshGamesDisplay()
-                    MGMachineOnResp.run(self.key,netPropagate=0)
-
-                    if self.updateLevel > kNoRefresh:
-                        PtAtTimeCallback(self.key,1,kDisplayTimer)
-            else:
-                PtDebugPrint("DEBUG: grtzMarkerScopeGUI():\tMarker Scope-GUI--->Hide dialog")
-                #Hide scope...    
-                MGAnim.animation.skipToTime(1.5)
-                self.lastGame = -1
-                self.lastGameScore = -1
-
-                #Stop the timer callbacks...
-                self.updateLevel = kNoRefresh
-
-                #Get the game selected
-                gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                reqGameNum = gameSelector.getValue()
-                curGameNum = grtzMarkerGames.GetCurrentCGZGame()
-
-                #Start the game if necessary
-                if self.selectorChanged:
-                    #Exit if somehow we really don't have a valid game!
-                    if reqGameNum < 0 or reqGameNum > len(grtzMarkerGames.mgs):
-                        PtDebugPrint("ERROR: grtzMarkerScopeGUI.OnGUINotify:\tCannot start invalid game number: %d" %reqGameNum)
-                        return
-                    
-                    #Finally, start the new game!
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tReceived GUI notification to start game: %s" %reqGameNum)
-                    PtSendKIMessageInt(kMGStartCGZGame, reqGameNum)
-
-                    #Reset selector sensor
-                    self.selectorChanged = 0
-
-        elif event == kValueChanged:
+                self._ShowGUI()
+        elif event == kValueChanged and self._lookingAtGUI:
             rgid = control.getTagID()
             if rgid == kRGMarkerGameSelect:
-                #The first time we update the selector, we don't want to register a new game selected!!!
-                #All played games are initialized upon age load, not upon marker scope GUI load....
-                if self.init == 0:
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tFinished initialization.... (ignoring selector change)")
-                    self.init = 1  #Make sure we don't try to re-init!
-                    return
-
-                self.selectorChanged = 1  #let us know if the selector changed for (so we can start/stop a game if necessary)
-
-                gameNum = control.getValue()
-                PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tReceived CGZ Game Selector change: %s" %gameNum)
-
-
-                #If we were playing an existing game, we need to quit it!!!
-                curGame = grtzMarkerGames.GetCurrentCGZGame()
-                if curGame != None and curGame > -1:
-                    PtDebugPrint("DEBUG: grtzMarkerScopeGUI.OnGUINotify():\tSelector value changed, stopping current game!")
-                    PtSendKIMessage(kMGStopCGZGame,0)
-                    self.updateLevel = kOneTimeFullRefresh
-                
-                #Reset the score if we've seleced a game
-                prevRefresh = self.updateLevel
-                if gameNum > -1 and gameNum < len(grtzMarkerGames.mgs):
-                    grtzMarkerGames.UpdateScore(gameNum,PtGetDniTime(),0.0)
-                    self.updateLevel = kPartialRefresh
-                else:
-                    #just need to refresh the entire display to ensure we've stopped any timer displays
-                    self.updateLevel = kOneTimeFullRefresh                    
-                    pass
-
-                #Force one update...
-                self.IRefreshGamesDisplay()
-
-                #Update display... only if we didn't have plans to update...
-                if prevRefresh == kNoRefresh:
-                    PtAtTimeCallback(self.key,0 ,kDisplayTimer)
-
-        
-    def OnTimer(self,id):
-        "timer event, update things"
-        if id == kDisplayTimer:
-            if self.updateLevel == kFullRefresh:
-                self.IRefreshGamesDisplay()
-            elif self.updateLevel == kPartialRefresh:
-                self.IPartialRefreshDisplay()
-            elif self.updateLevel == kOneTimeFullRefresh:
-                self.IRefreshGamesDisplay()
-
-                #Stop the timer if we don't have a new game selected....
                 gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-                curGame = gameSelector.getValue()
-                if curGame < 0:
-                    self.updateLevel = kNoRefresh
-                else:
-                    self.updateLevel = kPartialRefresh
+                mission = gameSelector.getValue()
+                if mission == -1:
+                    self._StopCGZM(win=False)
+                elif mission != PtGetCGZM():
+                    self._PlayCGZM(mission)
 
-            #Call our next refresh (if necessary)
-            if self.updateLevel > kNoRefresh:
-                PtAtTimeCallback(self.key,1,kDisplayTimer)
+    def OnNotify(self, state, id, events):
+        PtDebugPrint("grtzMarkerScopeGUI:OnNotify():\tstate=%f id=%d events=" % (state, id), events, level=kDebugDumpLevel)
 
+        if id in self._scopes:
+            if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
+                MarkerGameDlg.dialog.hide()
+            else:
+                MGMachineOffResp.run(self.key, netPropagate=False)
+        elif id == MGMachineOnResp.id:
+            PtEnableControlKeyEvents(self.key)
+        elif id == MGMachineOffResp.id:
+            MarkerGameDlg.dialog.hide()
+            PtDisableControlKeyEvents(self.key)
 
-    def OnControlKeyEvent(self,controlKey,activeFlag):
-        if controlKey == PlasmaControlKeys.kKeyExitMode:
-            self.IQuitScope()
-        elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
-            self.IQuitScope()
- 
+    def OnServerInitComplete(self):
+        numGames = len(grtzMarkerGames.mgs)
+        self._scores = [-1] * numGames
+        for i in xrange(numGames):
+            ptGameScore.findPlayerScores(kGameScore.format(i), self.key)
+        self._scopes = (aScope1Act.id, aScope2Act.id, aScope3Act.id, aScope4Act.id)
 
-    def IQuitScope(self):
-        scopeNames = ("GZMachineScope01","GZMachineScope02","GZMachineScope03","GZMachineScope04")
+    def OnTimer(self, id):
+        if id == kTimerUpdateActiveCB:
+            if self._lookingAtGUI:
+                mission = PtGetCGZM()
+                if mission != -1:
+                    self._UpdateGUI(mission)
+                    PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
+
+    def _PlayCGZM(self, mission):
+        PtDebugPrint("grtzMarkerScopeGUI._PlayCGZM():\tStarting CGZM #{}".format(mission), level=kWarningLevel)
+        if self._lookingAtGUI:
+            self._UpdateGUI(mission, score=0, star=True)
+            PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
+        PtSendKIMessageInt(kMGStartCGZGame, mission)
+
+    def _PopTelescope(self):
+        """Tells the telescope script we're done"""
         notify = ptNotify(self.key)
         notify.clearReceivers()
-       
-        for name in scopeNames:
+        for i in kTelescopes:
             try: 
-                obj = PtFindSceneobject(name, "GreatZero")
+                obj = PtFindSceneobject(i, PtGetAgeName())
                 pythonScripts = obj.getPythonMods()
                 for script in pythonScripts:
                     notify.addReceiver(script)
             except:
-                PtDebugPrint("ERROR: IQuitTelescope():\tCould not send quit message to the scope named: %s" % name)
-
-        notify.netPropagate(0)
+                PtDebugPrint("grtzMarkerScopeGUI._PopTelescope():\tCould not send quit message to '{}'".format(i))
+        notify.netPropagate(False)
         notify.setActivate(1.0)
         notify.send()
 
-
-
-    def IRefreshGamesDisplay(self):
-        "refresh the number and best time fields for the games"
-        if self.debug:
-            print "---->FULL UPDATE!"
+    def _ShowGUI(self):
+        MGMachineOnResp.run(self.key, netPropagate=False)
         gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-        curGame = gameSelector.getValue()
-
-        curGameName = grtzMarkerGames.GetCGZGameName(curGame)
-        for fieldID in range(kMarkerGameFieldStart,kMarkerGameFieldEnd,10):
-            numTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID+kMarkerGameNumFieldOffset))
-            timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID+kMarkerGameNameFieldOffset))
-            gameidx = (fieldID-kMarkerGameFieldStart)/10
-            numTB.setString("%d" % (grtzMarkerGames.GetNumMarkers(gameidx)))
-            gameName = grtzMarkerGames.GetCGZGameName(gameidx)
-
-            startTime,bestTime = grtzMarkerGames.GetGameTime(gameName)
-            showZeros = 0
-            if curGameName == gameName:
-                # use the currentTime
-                bestTime = PtGetDniTime() - startTime
-                showZeros = 1
-
-            if showZeros == 1 and bestTime == 0:
-                timeTB.setString("00:00:00")
-            elif bestTime >= 0.1 :
-                tuptime = time.gmtime(bestTime)
-                preText = ""
-                postText = ""
-                
-                #Check for best game....
-                if self.lastGame == gameidx:
-                    if self.lastGameScore < bestTime or (self.lastGameScore > 0 and bestTime <= 0):
-                        preText = "*"
-                        postText = "*"
-                if tuptime[2] == 1:
-                    ostring = preText+"%02d:%02d:%02d"+postText
-                    timeTB.setString(ostring % (tuptime[3],tuptime[4],tuptime[5]))
+        if PtDetermineKIMarkerLevel() < kKIMarkerNormalLevel:
+            PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tKI Level not high enough, disabling GUI controls", level=kWarningLevel)
+            gameSelector.setValue(-1)
+            gameSelector.disable()
+        else:
+            self._UpdateGUI()
+            mission = PtGetCGZM()
+            gameSelector.setValue(mission)
+            if mission != -1:
+                if PtIsCGZMComplete():
+                    PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: complete!".format(mission), level=kWarningLevel)
+                    self._StopCGZM(win=True)
                 else:
-                    ostring = preText+"%02d:%02d:%02d:%02d"+postText
-                    timeTB.setString(ostring % (tuptime[2]-1,tuptime[3],tuptime[4],tuptime[5]))
+                    PtDebugPrint("grtzMarkerScopeGUI._ShowGUI():\tCGZM #{}: still playing...".format(mission), level=kWarningLevel)
+                    PtAtTimeCallback(self.key, kTimerUpdateSecs, kTimerUpdateActiveCB)
+
+    def _StopCGZM(self, win):
+        mission = PtGetCGZM()
+        if win:
+            time = PtGetTimePlayingCGZ()
+
+            # Update the score. Be aware that we may not actually have the GameScore at all...
+            score = self._scores[mission]
+            if isinstance(score, ptGameScore):
+                bestTime = score.getPoints() > time
+                if bestTime:
+                    score.setPoints(time, self.key)
+                self._UpdateGUI(mission, quitting=False, score=time, star=bestTime)
+            elif score == 0:
+                ptGameScore.createPlayerScore(kGameScore.format(mission), kScoreType, time, self.key)
             else:
-                timeTB.setString("--:--:--")  
+                self._pendingScoreUpdate = (mission, time)
+        else:
+            self._UpdateGUI(mission, quitting=True, star=False)
 
+        # Tear down game brain
+        PtSendKIMessageInt(kMGStopCGZGame, -1)
 
-
-    def IPartialRefreshDisplay(self):
-        "Refreshes only the volitile time entries (i.e. a game being played or a completed game)"
-        
+        # Update UI
         gameSelector = ptGUIControlRadioGroup(MarkerGameDlg.dialog.getControlFromTag(kRGMarkerGameSelect))
-        curGame = gameSelector.getValue()
+        gameSelector.setValue(-1)
 
+    def _UpdateGUI(self, mission=-1, quitting=False, score=None, star=None):
+        # If mission is -1, this is a total update
+        if mission == -1:
+            for i in xrange(len(grtzMarkerGames.mgs)):
+                self._UpdateGUI(i)
+            return
 
-        #check a completed game
-        if self.lastGame > -1:
-            if self.debug:
-                print "PARTIAL--LASTGAME!"
-            fieldID = self.lastGame * 10 + kMarkerGameFieldStart
-            timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID+kMarkerGameNameFieldOffset))
-            gameName = grtzMarkerGames.GetCGZGameName(self.lastGame)
-
-            startTime,bestTime = grtzMarkerGames.GetGameTime(gameName)
-
-            if bestTime >= 0.1:
-                tuptime = time.gmtime(bestTime)
-                modText = ""
-
-                if self.lastGameScore < bestTime or (self.lastGameScore > 0 and bestTime <= 0):
-                    modText = "*"
-                    #Kill the timer if we were only awaiting a best game update
-                    if curGame == -1:
-                        self.updateLevel = kNoRefresh
-                if tuptime[2] == 1:
-                    ostring = modText+"%02d:%02d:%02d"+modText
-                    timeTB.setString(ostring % (tuptime[3],tuptime[4],tuptime[5]))
-                else:
-                    ostring = modText+"%02d:%02d:%02d:%02d"+modText
-                    timeTB.setString(ostring % (tuptime[2]-1,tuptime[3],tuptime[4],tuptime[5]))
+        # Update this marker mission
+        if score is None:
+            prevScore = self._scores[mission]
+            prev = prevScore.getPoints() if isinstance(prevScore, ptGameScore) else prevScore
+            if quitting:
+                span = prev
             else:
-                timeTB.setString("--:--:--")
+                span = PtGetTimePlayingCGZ() if PtGetCGZM() == mission else prev
+                if star is None and span < prev:
+                    star = True
+        else:
+            span = score
 
-        #Check the current game
-        if curGame > -1:
-            if self.debug:
-                print "PARTIAL--CURRENT!"
-            fieldID = curGame * 10 + kMarkerGameFieldStart
-            timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID+kMarkerGameNameFieldOffset))
-            gameName = grtzMarkerGames.GetCGZGameName(curGame)
-
-            startTime,bestTime = grtzMarkerGames.GetGameTime(gameName)
-            bestTime = PtGetDniTime() - startTime
-
-            if bestTime == 0:
-                timeTB.setString("00:00:00")
-            elif bestTime >= 0.1:
-                tuptime = time.gmtime(bestTime)
-                if tuptime[2] == 1:
-                    ostring = "%02d:%02d:%02d"
-                    timeTB.setString(ostring % (tuptime[3],tuptime[4],tuptime[5]))
-                else:
-                    ostring = "%02d:%02d:%02d:%02d"
-                    timeTB.setString(ostring % (tuptime[2]-1,tuptime[3],tuptime[4],tuptime[5]))
+        # Generate the message
+        if score is None and span == 0:
+            if span == -1:
+                msg = PtGetLocalizedString("KI.MarkerGame.pendingActionLoading")
             else:
-                timeTB.setString("--:--:--")
-
-
-    def OnBackdoorMsg(self, target, param):
-        if target.lower() == "updatelevel":
-            #Setup the levels for nice and easy string output
-            levels = ("kNoRefresh","kFullRefresh","kPartialRefresh","kOneTimeFullRefresh")
-            
-            if param.lower() == "print":                
-                print "***Current Update Level = %s" %levels[self.updateLevel]
+                msg = u"--:--:--"
+        else:
+            st = time.gmtime(span)
+            if st.tm_yday > 1:
+                # days, hours, minutes, seconds -- you really suck at this
+                # if you go over a year, you really suck
+                msg = u"{:02d}:{:02d}:{:02d}:{:02d}".format(st.tm_yday, st.tm_hour, st.tm_min, st.tm_sec)
             else:
-                reqLevel = -1
-                try:
-                    reqLevel = int(param)
-                    if reqLevel < 0 or reqLevel > len(levels):
-                        raise
-                except:
-                    print "@@@ ERROR: invalid argument @@@"
-                    return
+                # hours, minutes, seconds
+                msg = u"{:02d}:{:02d}:{:02d}".format(st.tm_hour, st.tm_min, st.tm_sec)
 
-                print "***Setting Update Level = %s" % reqLevel
-                oldLevel = self.updateLevel
-                self.updateLevel = reqLevel
-                if reqLevel > kNoRefresh and oldLevel > kNoRefresh:
-                    PtAtTimeCallback(self.key,1,kDisplayTimer)
+        if star:
+            msg = u"** {}".format(msg)
 
-        elif target.lower() == "lastgame":
-            if param.lower() == "print":
-                print "***Last Game = %s, with last score = %s" % (self.lastGame, self.lastGameScore)
-            else:
-                try:
-                    reqGame = int(param)
-                    if reqGame < 0 or reqGame > 13:
-                        raise
-                except:
-                    print "@@@ ERROR: invalid argument @@@"
-                    return
-
-                print "***Setting Last Game = %s" %reqGame
-                self.lastGame = reqGame
-
-        elif target.lower() == "lastgamescore":
-            if param.lower() == "print":
-                print "***Last Game = %s, with last score = %s" % (self.lastGame, self.lastGameScore)
-            else:
-                try:
-                    reqScore = int(param)
-                    if reqScore < 0:
-                        raise
-                except:
-                    print "@@@ ERROR: invalid argument @@@"
-                    return
-                print "***Setting Last Game Score = %s" %reqScore
-                self.lastGameScore = reqScore
-
-        elif target.lower() == "debug":            
-            self.debug = abs(self.debug - 1)
-            mode = "OFF"
-            if self.debug:
-                mode = "ON"
-                
-            print "***Turning on CGZ Marker Scope GUI Debug Mode: %s" % mode
-
-
-            
-
-               
-
-
+        # Now do the deed
+        fieldID = (mission * 10) + kMarkerGameFieldStart
+        numTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNumFieldOffset))
+        numTB.setString(str(len(grtzMarkerGames.mgs[mission])))
+        timeTB = ptGUIControlTextBox(MarkerGameDlg.dialog.getControlFromTag(fieldID + kMarkerGameNameFieldOffset))
+        timeTB.setStringW(msg)
 
