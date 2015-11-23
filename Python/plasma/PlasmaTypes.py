@@ -465,12 +465,13 @@ class ptAttribActivatorList(ptAttributeKeyList):
 
 # Responder attribute (pick responder types box)
 class ptAttribResponder(ptAttributeKeyList):
-    def __init__(self,id,name=None,statelist=None,byObject=0,netForce=0):
+    def __init__(self,id,name=None,statelist=None,byObject=0,netForce=0,netPropagate=1):
         ptAttributeKeyList.__init__(self,id,name,byObject,netForce)
         self.state_list = statelist
+        self.netPropagate = netPropagate
     def getdef(self):
         return (self.id,self.name,9)
-    def run(self,key,state=None,events=None,avatar=None,objectName=None,netForce=0,netPropagate=1,fastforward=0):
+    def run(self,key,state=None,events=None,avatar=None,objectName=None,netForce=0,netPropagate=None,fastforward=0):
         # has the value been set?
         if type(self.value) != type(None):
             nt = ptNotify(key)
@@ -483,9 +484,10 @@ class ptAttribResponder(ptAttributeKeyList):
                     nt.addReceiver(resp)
             else:
                 nt.addReceiver(self.value)
-            if not netPropagate:
-                nt.netPropagate(0)
-                # ptNotify defaults to netPropagate=1
+            if netPropagate is None:
+                nt.netPropagate(self.netPropagate)
+            else:
+                nt.netPropagate(netPropagate)
             if netForce or self.netForce:
                 nt.netForce(1)
             # see if the state is specified
@@ -512,7 +514,7 @@ class ptAttribResponder(ptAttributeKeyList):
                 nt.netForce(0)
             nt.setActivate(1.0)
             nt.send()
-    def setState(self,key,state,objectName=None,netForce=0,netPropagate=1):
+    def setState(self,key,state,objectName=None,netForce=0,netPropagate=None):
         # has the value been set?
         if type(self.value) != type(None):
             nt = ptNotify(key)
@@ -525,9 +527,10 @@ class ptAttribResponder(ptAttributeKeyList):
                     nt.addReceiver(resp)
             else:
                 nt.addReceiver(self.value)
-            if not netPropagate:
-                nt.netPropagate(0)
-                # ptNotify defaults to netPropagate=1
+            if netPropagate is None:
+                nt.netPropagate(self.netPropagate)
+            else:
+                nt.netPropagate(netPropagate)
             if netForce or self.netForce:
                 nt.netForce(1)
             # see if the state is specified
