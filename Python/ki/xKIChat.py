@@ -517,7 +517,7 @@ class xKIChat(object):
                     self.AddPlayerToRecents(player.getPlayerID())
 
                     # Are we mentioned in the message?
-                    if message.lower().find(PtGetLocalPlayer().getPlayerName().lower()) >= 0:
+                    if message.lower().find(PtGetClientName().lower()) >= 0:
                         bodyColor = kColors.ChatMessageMention
                         forceKI = True
                         PtFlashWindow()
@@ -559,19 +559,19 @@ class xKIChat(object):
             # It must be a status or error message.
             chatHeaderFormatted = pretext
             if not pretext:
-                chatMessageFormatted = message
+                chatMessageFormatted = U"{}".format(message)
             else:
-                chatMessageFormatted = " " + message
+                chatMessageFormatted = U" {}".format(message)
 
         chatArea = ptGUIControlMultiLineEdit(mKIdialog.getControlFromTag(kGUI.ChatDisplayArea))
+        chatArea.beginUpdate()
         savedPosition = chatArea.getScrollPosition()
         wasAtEnd = chatArea.isAtEnd()
         chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-        chatArea.insertStringW(U"\n")
         chatArea.insertColor(headerColor)
 
         # Added unicode support here.
-        chatArea.insertStringW(chatHeaderFormatted)
+        chatArea.insertStringW(U"\n{}".format(chatHeaderFormatted))
         chatArea.insertColor(bodyColor)
         chatArea.insertStringW(chatMessageFormatted)
         chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
@@ -589,16 +589,17 @@ class xKIChat(object):
             while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
                 PtDebugPrint(u"xKIChat.AddChatLine(): Max chat buffer size reached. Removing top line.", level=kDebugDumpLevel)
                 chatArea.deleteLinesFromTop(1)
+        chatArea.endUpdate()
 
         # Copy all the data to the miniKI if the user upgrades it.
         if self.KILevel == kMicroKI:
             chatArea2 = ptGUIControlMultiLineEdit(KIMini.dialog.getControlFromTag(kGUI.ChatDisplayArea))
+            chatArea2.beginUpdate()
             chatArea2.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
-            chatArea2.insertStringW(U"\n")
             chatArea2.insertColor(headerColor)
 
             # Added unicode support here.
-            chatArea2.insertStringW(chatHeaderFormatted)
+            chatArea2.insertStringW(U"\n{}".format(chatHeaderFormatted))
             chatArea2.insertColor(bodyColor)
             chatArea2.insertStringW(chatMessageFormatted)
             chatArea2.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
@@ -606,9 +607,9 @@ class xKIChat(object):
             if chatArea2.getBufferSize() > kChat.MaxChatSize:
                 while chatArea2.getBufferSize() > kChat.MaxChatSize and chatArea2.getBufferSize() > 0:
                     chatArea2.deleteLinesFromTop(1)
+            chatArea2.endUpdate()
 
         # Update the fading controls.
-        mKIdialog.refreshAllControls()
         self.ResetFadeState()
 
     ## Display a status message to the player (or players if net-propagated).

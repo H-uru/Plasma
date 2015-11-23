@@ -170,6 +170,7 @@ class kChat:
     FadeFullDisp = 1
     FadeDoingFade = 2
     FadeStopping = 3
+    FadeDone = 4
     FadeTimeMax = 120
     FullTickTime = 1.0
     FadeTickTime = 0.05
