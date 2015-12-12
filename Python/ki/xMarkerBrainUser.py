@@ -78,6 +78,8 @@ class UCMarkerGame(object):
     def DeleteMarker(self, idx):
         for i, marker in enumerate(self._markers):
             if marker[0] == idx:
+                if self.selected_marker_id == idx:
+                    self.selected_marker_id = -1
                 self._markers.pop(i)
                 return
         raise KeyError(idx)
