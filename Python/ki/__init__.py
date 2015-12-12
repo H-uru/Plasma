@@ -996,6 +996,14 @@ class xKI(ptModifier):
             KIAlert = ptGUIControlButton(NewItemAlert.dialog.getControlFromTag(kAlertKIAlert))
             KIAlert.hide()
 
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        # User-created Marker Games messages #
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+        elif command == kKICreateMarker:
+            self.CreateAMarker()
+        elif command == kKICreateMarkerFolder:
+            self.CreateMarkerGame()
+
     ## Called by Plasma on receipt of a backdoor message.
     # These backdoor messages can trigger various actions.
     def OnBackdoorMsg(self, target, param):
