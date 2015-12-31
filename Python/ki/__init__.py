@@ -1400,7 +1400,8 @@ class xKI(ptModifier):
         self.ChangeBigKIMode(kGUI.BKListMode)
 
         # Load the ding dang marker game
-        self.markerGameManager.LoadFromVault()
+        if self.gKIMarkerLevel == kKIMarkerNormalLevel:
+            self.markerGameManager.LoadFromVault()
 
     #~~~~~~~~~~#
     # KI Flags #
