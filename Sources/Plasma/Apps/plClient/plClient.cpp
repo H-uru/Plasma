@@ -1983,6 +1983,9 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
     if (pfGameGUIMgr::GetInstance())
         pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
 
+    // Direct3D no longer uses exclusive fullscreen mode, ergo, we must resize the display
+    if (!Windowed)
+        IChangeResolution(Width, Height);
 
     uint32_t winStyle, winExStyle;
     if( Windowed )
@@ -1991,7 +1994,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
         winStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     } else {
-        winStyle = WS_POPUP;
+        winStyle = WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW;
     }
     SetWindowLong(fWindowHndl, GWL_STYLE, winStyle);
@@ -2000,20 +2003,43 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
 
     uint32_t flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
     uint32_t OutsideWidth, OutsideHeight;
-    HWND insertAfter;
     if( Windowed )
     {
         RECT winRect = { 0, 0, Width, Height };
         AdjustWindowRectEx(&winRect, winStyle, false, winExStyle);
         OutsideWidth = winRect.right - winRect.left;
         OutsideHeight = winRect.bottom - winRect.top;
-        insertAfter = HWND_NOTOPMOST;
     } else {
         OutsideWidth = Width;
         OutsideHeight = Height;
-        insertAfter = HWND_TOP;
     }
-    SetWindowPos( fWindowHndl, insertAfter, 0, 0, OutsideWidth, OutsideHeight, flags );
+    SetWindowPos( fWindowHndl, HWND_NOTOPMOST, 0, 0, OutsideWidth, OutsideHeight, flags );
+}
+
+void plClient::IChangeResolution(int width, int height)
+{
+    // First, we need to be mindful that we may not be operating on the primary display device
+    // I unfortunately cannot test this works as expected, but it will likely save us some cursing
+    HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
+    if (!monitor)
+        return;
+    MONITORINFOEXW moninfo;
+    memset(&moninfo, 0, sizeof(moninfo));
+    moninfo.cbSize = sizeof(moninfo);
+    GetMonitorInfoW(monitor, &moninfo);
+
+    // Fetch a base display settings
+    DEVMODEW devmode;
+    memset(&devmode, 0, sizeof(devmode));
+    devmode.dmSize = sizeof(devmode);
+    EnumDisplaySettingsW(moninfo.szDevice, ENUM_REGISTRY_SETTINGS, &devmode);
+
+    // Actually update the resolution
+    if (width != 0 && height != 0) {
+        devmode.dmPelsWidth = width;
+        devmode.dmPelsHeight = height;
+    }
+    ChangeDisplaySettingsExW(moninfo.szDevice, &devmode, nullptr, CDS_FULLSCREEN, nullptr);
 }
 
 void WriteBool(hsStream *stream, char *name, bool on )
@@ -2167,12 +2193,15 @@ void plClient::WindowActivate(bool active)
     if (GetDone())
         return;
         
-    if( !fWindowActive != !active )
-    {
-        if( fInputManager != nil )
-            fInputManager->Activate( active );
+    if (fWindowActive != active ) {
+        if (fInputManager)
+            fInputManager->Activate(active);
+        plArmatureMod::WindowActivate(active);
 
-        plArmatureMod::WindowActivate( active );
+        // Remember, we are no longer exclusive fullscreen, so we actually have to toggle the desktop resolution
+        // whee? wait. WHEEE!
+        if (fPipeline->IsFullScreen())
+            IChangeResolution(active ? fPipeline->Width() : 0, active ? fPipeline->Height() : 0);
     }
     fWindowActive = active;
 }
