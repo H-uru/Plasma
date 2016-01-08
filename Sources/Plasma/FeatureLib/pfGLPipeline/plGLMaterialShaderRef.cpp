@@ -107,11 +107,8 @@ void plGLMaterialShaderRef::SetupTextureRefs()
             continue;
 
         // Load the image
-        plMipmap* img = plMipmap::ConvertNoRef(layer->GetTexture());
-        if (!img)
-            continue;
+        plBitmap* img = plBitmap::ConvertNoRef(layer->GetTexture());
 
-        GLenum e;
         plGLTextureRef* texRef = static_cast<plGLTextureRef*>(img->GetDeviceRef());
 
         if (!texRef->fRef)
@@ -122,7 +119,7 @@ void plGLMaterialShaderRef::SetupTextureRefs()
         glActiveTexture(GL_TEXTURE0 + numTextures);
         LOG_GL_ERROR_CHECK("Active Texture failed")
 
-        glBindTexture(GL_TEXTURE_2D, texRef->fRef);
+        glBindTexture(texRef->fMapping, texRef->fRef);
         LOG_GL_ERROR_CHECK("Bind Texture failed")
 
         if (this->uLayerMat[i] != -1) {
@@ -141,6 +138,8 @@ void plGLMaterialShaderRef::SetupTextureRefs()
 
 void plGLMaterialShaderRef::ICompile()
 {
+    LOG_GL_ERROR_CHECK("Begin Compile failed")
+
     int32_t numTextures = 0;
     hsBitVector usedUVWs;
 
@@ -149,72 +148,8 @@ void plGLMaterialShaderRef::ICompile()
         if (!layer)
             continue;
 
-        // Load the image
-        plMipmap* img = plMipmap::ConvertNoRef(layer->GetTexture());
-        if (!img)
-            continue;
-
-        uint32_t uv = layer->GetUVWSrc() & plGBufferGroup::kUVCountMask;
-        usedUVWs.SetBit(uv);
-
-        numTextures++;
-
-        plGLTextureRef* texRef = new plGLTextureRef();
-        texRef->fOwner = img;
-        img->SetDeviceRef(texRef);
-
-        GLenum e;
-
-        glGenTextures(1, &texRef->fRef);
-        LOG_GL_ERROR_CHECK("Gen Texture failed")
-
-        glBindTexture(GL_TEXTURE_2D, texRef->fRef);
-        LOG_GL_ERROR_CHECK("Bind Texture failed")
-
-        if (!(layer->GetClampFlags() & hsGMatState::kClampTexture)) {
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        }
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, std::max(0, img->GetNumLevels() - 3));
-
-        if (img->IsCompressed()) {
-            GLuint dxCompression = 0;
-            uint8_t compType = img->fDirectXInfo.fCompressionType;
-
-            if (compType == plBitmap::DirectXInfo::kDXT1)
-                dxCompression = GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-            else if (compType == plBitmap::DirectXInfo::kDXT5)
-                dxCompression = GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-
-            for (uint8_t i = 0; i < img->GetNumLevels(); i++) {
-                img->SetCurrLevel(i);
-
-                if (img->GetCurrWidth() < 4 || img->GetCurrHeight() < 4)
-                    continue;
-
-                glCompressedTexImage2D(GL_TEXTURE_2D, i, dxCompression,
-                                        img->GetCurrWidth(), img->GetCurrHeight(),
-                                        0, img->GetCurrLevelSize(), img->GetCurrLevelPtr());
-
-#ifdef HS_DEBUGGING
-                if ((e = glGetError()) != GL_NO_ERROR) {
-                    plStatusLog::AddLineSF("pipeline.log", "Texture Image failed: {}, at level {}", uint32_t(e), i);
-                }
-#endif
-            }
-        } else {
-            GLenum data_type = GL_UNSIGNED_BYTE;
-            GLenum data_format = GL_BGRA;
-            GLenum internal_format = GL_RGBA;
-
-            for (uint8_t i = 0; i < img->GetNumLevels(); i++) {
-                img->SetCurrLevel(i);
-
-                glTexImage2D(GL_TEXTURE_2D, i, internal_format, img->GetCurrWidth(), img->GetCurrHeight(), 0, data_format, data_type, img->GetCurrLevelPtr());
-            }
-        }
+        fPipeline->CheckTextureRef(layer);
+        LOG_GL_ERROR_CHECK(ST::format("Check Texture Ref on layer \"{}\" failed", layer->GetKeyName()));
     }
 
     ST::string vtx = fVertexShader->Render();
@@ -226,6 +161,7 @@ void plGLMaterialShaderRef::ICompile()
     fVertShaderRef = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(fVertShaderRef, 1, &vs_code, nullptr);
     glCompileShader(fVertShaderRef);
+    LOG_GL_ERROR_CHECK("Vertex Shader compile failed");
 
 #ifdef HS_DEBUGGING
     {
@@ -246,6 +182,7 @@ void plGLMaterialShaderRef::ICompile()
     fFragShaderRef = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fFragShaderRef, 1, &fs_code, nullptr);
     glCompileShader(fFragShaderRef);
+    LOG_GL_ERROR_CHECK("Fragment Shader compile failed");
 
 #ifdef HS_DEBUGGING
     {
@@ -699,15 +636,13 @@ void plGLMaterialShaderRef::IBuildLayerTexture(uint32_t idx, plLayerInterface* l
             sb->fFunction->PushOp(ASSIGN(img, CALL("texture2D", sampler, PROP(sb->fCurrCoord, "xy"))));
         }
 
-#if 0
         if ((cube = plCubicEnvironmap::ConvertNoRef(texture)) != nullptr) {
             ST::string samplerName = ST::format("uTexture{}", idx);
-            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "sampler3D");
+            std::shared_ptr<plUniformNode> sampler = IFindVariable<plUniformNode>(samplerName, "samplerCube");
 
             // image = texture3D(sampler, coords.xyz)
             sb->fFunction->PushOp(ASSIGN(img, CALL("textureCube", sampler, PROP(sb->fCurrCoord, "xyz"))));
         }
-#endif
     }
 }
 
