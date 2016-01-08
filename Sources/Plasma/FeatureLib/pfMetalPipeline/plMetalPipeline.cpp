@@ -4242,17 +4242,6 @@ void plMetalPipeline::IBlendVertBuffer(plSpan* span, hsMatrix44* matrixPalette, 
 
 // Resource checking
 
-// CheckTextureRef //////////////////////////////////////////////////////
-// Make sure the given layer's texture has background D3D resources allocated.
-void plMetalPipeline::CheckTextureRef(plLayerInterface* layer)
-{
-    plBitmap* bitmap = layer->GetTexture();
-
-    if (bitmap) {
-        CheckTextureRef(bitmap);
-    }
-}
-
 void plMetalPipeline::CheckTextureRef(plBitmap* bitmap)
 {
     plMetalTextureRef* tRef = static_cast<plMetalTextureRef*>(bitmap->GetDeviceRef());
@@ -4274,7 +4263,7 @@ hsGDeviceRef* plMetalPipeline::MakeTextureRef(plBitmap* bitmap)
     if (!tRef) {
         tRef = new plMetalTextureRef();
 
-        fDevice.SetupTextureRef(bitmap, tRef);
+        fDevice.SetupTextureRef(nullptr, bitmap, tRef);
     }
 
     if (!tRef->IsLinked()) {
@@ -4295,13 +4284,13 @@ void plMetalPipeline::IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref)
 {
     plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
     if (mip) {
-        fDevice.MakeTextureRef(ref, mip);
+        fDevice.MakeTextureRef(ref, nullptr, mip);
         return;
     }
 
     plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
     if (cubic) {
-        fDevice.MakeCubicTextureRef(ref, cubic);
+        fDevice.MakeCubicTextureRef(ref, nullptr, cubic);
         return;
     }
 }

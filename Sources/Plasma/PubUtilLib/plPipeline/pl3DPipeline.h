@@ -325,7 +325,8 @@ public:
 
     //virtual bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) = 0;
     //virtual bool CloseAccess(plAccessSpan& acc) = 0;
-    //virtual void CheckTextureRef(plLayerInterface* lay) = 0;
+
+    void CheckTextureRef(plLayerInterface* lay) override;
 
     void SetDefaultFogEnviron(plFogEnvironment* fog) override {
         fView.SetDefaultFog(*fog);
@@ -935,6 +936,7 @@ pl3DPipeline<DeviceType>::pl3DPipeline(const hsG3DDeviceModeRecord* devModeRec)
     fActivePiggyBacks(),
     fVtxBuffRefList(),
     fIdxBuffRefList(),
+    fTextureRefList(),
     fCurrMaterial(),
     fCurrLay(),
     fCurrNumLayers(),
@@ -1104,6 +1106,42 @@ void pl3DPipeline<DeviceType>::CheckIndexBufferRef(plGBufferGroup* owner, uint32
     // If it's dirty, refill it.
     if (iRef->IsDirty())
         fDevice.FillIndexBufferRef(iRef, owner, idx);
+}
+
+template<class DeviceType>
+void pl3DPipeline<DeviceType>::CheckTextureRef(plLayerInterface* layer)
+{
+    plBitmap* bitmap = layer->GetTexture();
+
+    if (bitmap) {
+        typename DeviceType::TextureRef* tRef = static_cast<typename DeviceType::TextureRef*>(bitmap->GetDeviceRef());
+
+        if (!tRef) {
+            tRef = new typename DeviceType::TextureRef();
+            fDevice.SetupTextureRef(layer, bitmap, tRef);
+        }
+
+        if (!tRef->IsLinked())
+            tRef->Link(&fTextureRefList);
+
+        // Make sure it has all resources created.
+        fDevice.CheckTexture(tRef);
+
+        // If it's dirty, refill it.
+        if (tRef->IsDirty()) {
+            plMipmap* mip = plMipmap::ConvertNoRef(bitmap);
+            if (mip) {
+                fDevice.MakeTextureRef(tRef, layer, mip);
+                return;
+            }
+
+            plCubicEnvironmap* cubic = plCubicEnvironmap::ConvertNoRef(bitmap);
+            if (cubic) {
+                fDevice.MakeCubicTextureRef(tRef, layer, cubic);
+                return;
+            }
+        }
+    }
 }
 
 
