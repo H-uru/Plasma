@@ -175,9 +175,6 @@ bool plGLPipeline::CloseAccess(plAccessSpan& acc)
     return false;
 }
 
-void plGLPipeline::CheckTextureRef(plLayerInterface* lay)
-{}
-
 void plGLPipeline::PushRenderRequest(plRenderRequest* req)
 {
     // Save these, since we want to copy them to our current view
@@ -428,6 +425,8 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             plProfile_EndTiming(MergeSpan);
         }
 
+        LOG_GL_ERROR_CHECK("RenderSpans pre-material failed");
+
         if (material != nullptr) {
             // First, do we have a device ref at this index?
             plGLMaterialShaderRef* mRef = static_cast<plGLMaterialShaderRef*>(material->GetDeviceRef());
@@ -435,9 +434,6 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
             if (mRef == nullptr) {
                 mRef = new plGLMaterialShaderRef(material, this);
                 material->SetDeviceRef(mRef);
-
-                //glUseProgram(mRef->fRef);
-                //fDevice.fCurrentProgram = mRef->fRef;
             }
 
             if (!mRef->IsLinked())
@@ -445,7 +441,7 @@ void plGLPipeline::RenderSpans(plDrawableSpans* ice, const std::vector<int16_t>&
 
             glUseProgram(mRef->fRef);
             fDevice.fCurrentProgram = mRef->fRef;
-            LOG_GL_ERROR_CHECK("Use Program failed")
+            LOG_GL_ERROR_CHECK(ST::format("Use Program with material \"{}\" failed", material->GetKeyName()));
 
             // TODO: Figure out how to use VAOs properly :(
             GLuint vao;
