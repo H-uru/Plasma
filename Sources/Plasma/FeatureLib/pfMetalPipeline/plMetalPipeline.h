@@ -143,7 +143,6 @@ public:
     plMetalDevice* GetMetalDevice() const;
 
     // Create and/or Refresh geometry buffers
-    void          CheckTextureRef(plLayerInterface* lay) override;
     void          CheckTextureRef(plBitmap* bitmap);
     hsGDeviceRef* MakeTextureRef(plBitmap* bitmap);
     void          IReloadTexture(plBitmap* bitmap, plMetalTextureRef* ref);

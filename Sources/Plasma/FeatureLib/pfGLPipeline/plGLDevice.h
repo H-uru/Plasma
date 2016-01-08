@@ -47,7 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 
+class plBitmap;
+class plCubicEnvironmap;
 class plGLPipeline;
+class plLayerInterface;
+class plMipmap;
 class plRenderTarget;
 
 class plGLDevice
@@ -67,6 +71,7 @@ class plGLDevice
 public:
     typedef plGLVertexBufferRef VertexBufferRef;
     typedef plGLIndexBufferRef  IndexBufferRef;
+    typedef plGLTextureRef      TextureRef;
 
 protected:
     ST::string fErrorMsg;
@@ -118,14 +123,19 @@ public:
     void SetupIndexBufferRef(plGBufferGroup* owner, uint32_t idx, IndexBufferRef* iRef);
     void CheckIndexBuffer(IndexBufferRef* iRef);
     void FillIndexBufferRef(IndexBufferRef* iRef, plGBufferGroup* owner, uint32_t idx);
+    void SetupTextureRef(plLayerInterface* layer, plBitmap* img, TextureRef* tRef);
+    void CheckTexture(TextureRef* tRef);
+    void MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img);
+    void MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, plCubicEnvironmap* img);
 
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
 
-    struct TextureRef;
-
     ST::string GetErrorString() const { return fErrorMsg; }
+
+private:
+    void BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping);
 };
 
 #endif

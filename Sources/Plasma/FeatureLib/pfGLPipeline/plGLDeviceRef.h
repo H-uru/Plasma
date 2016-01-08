@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         do { \
             GLenum e; \
             if ((e = glGetError()) != GL_NO_ERROR) { \
-                plStatusLog::AddLineSF("pipeline.log", message ": {}", uint32_t(e)); \
+                plStatusLog::AddLineSF("pipeline.log", "{}: {}", message, uint32_t(e)); \
             } \
         } while(0);
 #else
@@ -62,7 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 class plGBufferGroup;
-class plMipmap;
+class plBitmap;
 
 class plGLDeviceRef : public hsGDeviceRef
 {
@@ -177,13 +177,18 @@ public:
 class plGLTextureRef : public plGLDeviceRef
 {
 public:
-    plMipmap*       fOwner;
+    plBitmap*       fOwner;
+    uint32_t        fLevels;
+    GLuint          fMapping;
+    GLuint          fFormat;
+    GLuint          fDataType;
+    GLuint          fDataFormat;
 
     void             Link(plGLTextureRef** back) { plGLDeviceRef::Link((plGLDeviceRef**)back); }
     plGLTextureRef*  GetNext() { return (plGLTextureRef*)fNext; }
 
     plGLTextureRef()
-        : plGLDeviceRef(), fOwner()
+        : plGLDeviceRef(), fOwner(), fLevels(1), fMapping(), fFormat(), fDataType(), fDataFormat()
     {}
 
     virtual ~plGLTextureRef();

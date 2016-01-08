@@ -86,7 +86,6 @@ public:
     plTextFont* MakeTextFont(ST::string face, uint16_t size) override;
     bool OpenAccess(plAccessSpan& dst, plDrawableSpans* d, const plVertexSpan* span, bool readOnly) override;
     bool CloseAccess(plAccessSpan& acc) override;
-    void CheckTextureRef(plLayerInterface* lay) override;
     void PushRenderRequest(plRenderRequest* req) override;
     void PopRenderRequest(plRenderRequest* req) override;
     void ClearRenderTarget(plDrawable* d) override;
