@@ -120,7 +120,28 @@ void plGLMaterialShaderRef::SetupTextureRefs()
         LOG_GL_ERROR_CHECK("Active Texture failed")
 
         glBindTexture(texRef->fMapping, texRef->fRef);
-        LOG_GL_ERROR_CHECK("Bind Texture failed")
+        LOG_GL_ERROR_CHECK("Bind Texture failed");
+
+        if (texRef->fMapping == GL_TEXTURE_2D) {
+            // Ewww, but the same texture might be used by multiple layers with different clamping flags :(
+            switch (layer->GetClampFlags()) {
+            case hsGMatState::kClampTextureU:
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_T, GL_REPEAT);
+                break;
+            case hsGMatState::kClampTextureV:
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                break;
+            case hsGMatState::kClampTexture:
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                break;
+            default:
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_S, GL_REPEAT);
+                glTexParameteri(texRef->fMapping, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            }
+        }
 
         if (this->uLayerMat[i] != -1) {
             GLfloat matrix[16];
@@ -326,6 +347,10 @@ void plGLMaterialShaderRef::ILoopOverLayers()
         if (pair.second->klass == kVarying) {
             std::shared_ptr<plVaryingNode> vary = std::static_pointer_cast<plVaryingNode>(pair.second);
 
+            if (vary->name == "vCamPosition" || vary->name == "vCamNormal") {
+                continue;
+            }
+
             ST::string name = ST::format("a{}", vary->name.substr(1));
             std::shared_ptr<plAttributeNode> attr = std::make_shared<plAttributeNode>(name, vary->type);
 
@@ -341,12 +366,20 @@ void plGLMaterialShaderRef::ILoopOverLayers()
     // Set the vertex transforms now
     std::shared_ptr<plTempVariableNode> pos = std::make_shared<plTempVariableNode>("pos", "vec4");
     std::shared_ptr<plAttributeNode> apos = IFindVariable<plAttributeNode>("aVtxPosition", "vec3");
+    std::shared_ptr<plAttributeNode> anor = IFindVariable<plAttributeNode>("aVtxNormal", "vec3");
     std::shared_ptr<plUniformNode> mL2W = IFindVariable<plUniformNode>("uMatrixL2W", "mat4");
     std::shared_ptr<plUniformNode> mW2C = IFindVariable<plUniformNode>("uMatrixW2C", "mat4");
     std::shared_ptr<plUniformNode> mProj = IFindVariable<plUniformNode>("uMatrixProj", "mat4");
 
+    std::shared_ptr<plVaryingNode> vCamPos = IFindVariable<plVaryingNode>("vCamPosition", "vec4");
+    std::shared_ptr<plVaryingNode> vCamNor = IFindVariable<plVaryingNode>("vCamNormal", "vec4");
+
     vertMain->PushOp(ASSIGN(pos, MUL(mL2W, CALL("vec4", apos, CONSTANT("1.0")))));
     vertMain->PushOp(ASSIGN(pos, MUL(mW2C, pos)));
+
+    vertMain->PushOp(ASSIGN(vCamPos, pos));
+    vertMain->PushOp(ASSIGN(vCamNor, MUL(mW2C, MUL(mL2W, CALL("vec4", anor, CONSTANT("0.0"))))));
+
     vertMain->PushOp(ASSIGN(pos, MUL(mProj, pos)));
     vertMain->PushOp(ASSIGN(OUTPUT("gl_Position"), pos));
 
@@ -585,30 +618,105 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
 {
     std::shared_ptr<plVariableNode> matrix;
 
-#if 0
     if (layer->GetMiscFlags() & (hsGMatState::kMiscUseReflectionXform | hsGMatState::kMiscUseRefractionXform)) {
+        std::shared_ptr<plUniformNode> mC2W = IFindVariable<plUniformNode>("uMatrixC2W", "mat4");
+
+        ST::string matName = ST::format("LayerMat{}", idx);
+        matrix = std::make_shared<plTempVariableNode>(matName, "mat4");
+
+        ST::string tempName = ST::format("t{}", idx);
+        std::shared_ptr<plTempVariableNode> temp = std::make_shared<plTempVariableNode>(tempName, "float");
+
+        sb->fFunction->PushOp(ASSIGN(matrix, mC2W));
+
+        // mat[0][3] = mat[1][3] = mat[2][3] = 0
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "3"),
+                              ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "3"),
+                              ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "3"),
+                              CONSTANT("0.0")))));
+
+        // This is just a rotation about X of Pi/2 (y = z, z = -y),
+        // followed by flipping Z to reflect back towards us (z = -z).
+
+        // swap mat[1][0] and mat[2][0]
+        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "0")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "0"), SUBVAL(SUBVAL(matrix, "2"), "0")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "0"), temp));
+
+        // swap mat[1][1] and mat[2][1]
+        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "1")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "1"), SUBVAL(SUBVAL(matrix, "2"), "1")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "1"), temp));
+
+        // swap mat[1][2] and mat[2][2]
+        sb->fFunction->PushOp(ASSIGN(temp, SUBVAL(SUBVAL(matrix, "1"), "2")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "2"), SUBVAL(SUBVAL(matrix, "2"), "2")));
+        sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), temp));
+
+        if (layer->GetMiscFlags() & hsGMatState::kMiscUseRefractionXform) {
+            // Same as reflection, but then matrix = matrix * scaleMatNegateZ.
+
+            // mat[0][2] = -mat[0][2];
+            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "0"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "0"), "2"))));
+
+            // mat[1][2] = -mat[1][2];
+            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "1"), "2"))));
+
+            // mat[2][2] = -mat[2][2];
+            sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), SUB(CONSTANT("0.0"), SUBVAL(SUBVAL(matrix, "2"), "2"))));
+        }
+
+#if 0
     } else if (layer->GetMiscFlags() & hsGMatState::kMiscCam2Screen) {
     } else if (layer->GetMiscFlags() & hsGMatState::kMiscProjection) {
         ST::string matName = ST::format("uLayerMat{}", idx);
         std::shared_ptr<plUniformNode> layMat = IFindVariable<plUniformNode>(matName, "mat4");
     } else if (layer->GetMiscFlags() & hsGMatState::kMiscBumpChans) {
-    } else
 #endif
-    {
+    } else {
         ST::string matName = ST::format("uLayerMat{}", idx);
         matrix = IFindVariable<plUniformNode>(matName, "mat4");
     }
 
-    uint32_t uvwSrc = layer->GetUVWSrc() & plGBufferGroup::kUVCountMask;
-
-    ST::string uvwName = ST::format("vVtxUVWSrc{}", uvwSrc);
-    std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>(uvwName, "vec3");
+    uint32_t uvwSrc = layer->GetUVWSrc();
 
     // Local variable to store the mesh uvw * layer matrix
     ST::string coordName = ST::format("coords{}", idx);
     std::shared_ptr<plTempVariableNode> coords = std::make_shared<plTempVariableNode>(coordName, "vec4");
 
-    sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", layUVW, CONSTANT("1.0")))));
+    switch (uvwSrc) {
+    case plLayerInterface::kUVWNormal:
+        {
+            std::shared_ptr<plVaryingNode> vCamNor = IFindVariable<plVaryingNode>("vCamNormal", "vec4");
+            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, vCamNor)));
+        }
+        break;
+    case plLayerInterface::kUVWPosition:
+        {
+            std::shared_ptr<plVaryingNode> vCamPos = IFindVariable<plVaryingNode>("vCamPosition", "vec4");
+            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, vCamPos)));
+        }
+        break;
+    case plLayerInterface::kUVWReflect:
+        {
+            std::shared_ptr<plVaryingNode> vCamPos = IFindVariable<plVaryingNode>("vCamPosition", "vec4");
+            std::shared_ptr<plVaryingNode> vCamNor = IFindVariable<plVaryingNode>("vCamNormal", "vec4");
+            std::shared_ptr<plUniformNode> mC2W = IFindVariable<plUniformNode>("uMatrixC2W", "mat4");
+
+            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, MUL(mC2W, CALL("reflect", CALL("normalize", vCamPos), CALL("normalize", vCamNor))))));
+        }
+        break;
+    default:
+        {
+            uvwSrc &= plGBufferGroup::kUVCountMask;
+
+            ST::string uvwName = ST::format("vVtxUVWSrc{}", uvwSrc);
+            std::shared_ptr<plVaryingNode> layUVW = IFindVariable<plVaryingNode>(uvwName, "vec3");
+
+            sb->fFunction->PushOp(ASSIGN(coords, MUL(matrix, CALL("vec4", layUVW, CONSTANT("1.0")))));
+        }
+        break;
+    }
 
     sb->fCurrCoord = coords;
 }
@@ -782,24 +890,31 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
             {
                 hsStatusMessage("Blend DOT3");
                 // color = (color.r * prev.r + color.g * prev.g + color.b * prev.b)
+
                 // alpha = prev
-                //break;
+                sb->fCurrAlpha = sb->fPrevAlpha;
+                break;
             }
 
             case hsGMatState::kBlendAddSigned:
             {
-                hsStatusMessage("Blend AddSigned");
                 // color = color + prev - 0.5
+                sb->fFunction->PushOp(ASSIGN(col, SUB(ADD(texCol, sb->fPrevColor), CONSTANT("0.5"))));
+                sb->fCurrColor = col;
+
                 // alpha = prev
-                //break;
+                sb->fCurrAlpha = sb->fPrevAlpha;
+                break;
             }
 
             case hsGMatState::kBlendAddSigned2X:
             {
                 hsStatusMessage("Blend AddSigned2X");
                 // color = (color + prev - 0.5) << 1
+
                 // alpha = prev
-                //break;
+                sb->fCurrAlpha = sb->fPrevAlpha;
+                break;
             }
 
             case 0:

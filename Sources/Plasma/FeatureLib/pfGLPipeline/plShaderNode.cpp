@@ -125,11 +125,13 @@ ST::string plShaderContext::RenderNode(std::shared_ptr<plShaderNode> node, std::
             std::shared_ptr<plOperatorNode> op = static_pointer_cast<plOperatorNode>(node);
 
             if (op->op == ".") {
-              return ST::format("{}{}{}", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
+                return ST::format("{}{}{}", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
+            } else if (op->op == "[") {
+                return ST::format("{}{}{}]", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
             } else if (op->parens) {
-              return ST::format("({} {} {})", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
+                return ST::format("({} {} {})", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
             } else {
-              return ST::format("{} {} {}", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
+                return ST::format("{} {} {}", this->RenderNode(op->lhs, fn), op->op, this->RenderNode(op->rhs, fn));
             }
         }
         break;

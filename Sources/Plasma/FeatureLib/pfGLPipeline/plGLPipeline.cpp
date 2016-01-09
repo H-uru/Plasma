@@ -523,6 +523,11 @@ void plGLPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
         uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2C");
         glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
 
+        uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixC2W");
+        if (uniform != -1) {
+            glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixC2W);
+        }
+
         uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixL2W");
         glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
     }
