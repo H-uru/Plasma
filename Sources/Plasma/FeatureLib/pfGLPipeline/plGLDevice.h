@@ -86,6 +86,7 @@ protected:
     GLuint              fCurrentProgram;
     GLfloat             fMatrixL2W[16];
     GLfloat             fMatrixW2C[16];
+    GLfloat             fMatrixC2W[16];
     GLfloat             fMatrixProj[16];
 
 public:

@@ -286,6 +286,7 @@ private:
 #define MUL(...)        std::make_shared<plOperatorNode>("*", __VA_ARGS__)
 #define DIV(...)        std::make_shared<plOperatorNode>("/", __VA_ARGS__)
 #define PROP(n, p)      std::make_shared<plOperatorNode>(".", n, CONSTANT(p))
+#define SUBVAL(n, p)    std::make_shared<plOperatorNode>("[", n, CONSTANT(p))
 #define IS_EQ(...)      std::make_shared<plOperatorNode>("==", __VA_ARGS__)
 #define RETURN(n)       std::make_shared<plReturnNode>(n)
 #define COND(...)       std::make_shared<plConditionNode>(__VA_ARGS__)
