@@ -603,7 +603,7 @@ void plGLDevice::SetupTextureRef(plLayerInterface* layer, plBitmap* img, Texture
         switch (img->fUncompressedInfo.fType) {
         case plBitmap::UncompressedInfo::kRGB8888:
             tRef->fFormat = GL_RGBA;
-            tRef->fDataType = GL_UNSIGNED_SHORT;
+            tRef->fDataType = GL_UNSIGNED_BYTE;
             tRef->fDataFormat = GL_BGRA;
             break;
         case plBitmap::UncompressedInfo::kRGB4444:
@@ -618,12 +618,12 @@ void plGLDevice::SetupTextureRef(plLayerInterface* layer, plBitmap* img, Texture
             break;
         case plBitmap::UncompressedInfo::kInten8:
             tRef->fFormat = GL_LUMINANCE;
-            tRef->fDataType = GL_UNSIGNED_SHORT;
+            tRef->fDataType = GL_UNSIGNED_BYTE;
             tRef->fDataFormat = GL_LUMINANCE;
             break;
         case plBitmap::UncompressedInfo::kAInten88:
             tRef->fFormat = GL_LUMINANCE_ALPHA;
-            tRef->fDataType = GL_UNSIGNED_SHORT;
+            tRef->fDataType = GL_UNSIGNED_BYTE;
             tRef->fDataFormat = GL_LUMINANCE_ALPHA;
             break;
         }
@@ -670,7 +670,7 @@ void plGLDevice::BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping)
             img->SetCurrLevel(lvl);
 
             glTexImage2D(mapping, lvl, tRef->fFormat, img->GetCurrWidth(), img->GetCurrHeight(), 0, tRef->fDataFormat, tRef->fDataType, img->GetCurrLevelPtr());
-            LOG_GL_ERROR_CHECK(ST::format("non-DXT Texture Image failed at level {}", lvl));
+            LOG_GL_ERROR_CHECK(ST::format("non-DXT Texture Image \"{}\" failed at level {}", (img->GetKey() ? img->GetKeyName() : ""), lvl));
         }
     }
 }
