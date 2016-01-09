@@ -646,9 +646,6 @@ void plGLDevice::CheckTexture(TextureRef* tRef)
 
 void plGLDevice::BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping)
 {
-    GLuint e = GL_NO_ERROR;
-
-    glBindTexture(tRef->fMapping, tRef->fRef);
     LOG_GL_ERROR_CHECK("Bind Texture failed");
 
     tRef->fLevels = img->GetNumLevels() - 1;
@@ -681,24 +678,17 @@ void plGLDevice::BindTexture(TextureRef* tRef, plMipmap* img, GLuint mapping)
 void plGLDevice::MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMipmap* img)
 {
     tRef->fMapping = GL_TEXTURE_2D;
+
+    if (!img->GetImage()) {
+        glBindTexture(tRef->fMapping, 0);
+        return;
+    }
+
+    glBindTexture(tRef->fMapping, tRef->fRef);
     BindTexture(tRef, img, tRef->fMapping);
 
-    switch(layer->GetClampFlags()) {
-    case hsGMatState::kClampTextureU:
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        break;
-    case hsGMatState::kClampTextureV:
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        break;
-    case hsGMatState::kClampTexture:
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        break;
-    default:
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    if (epoxy_gl_version() >= 43) {
+        glObjectLabel(GL_TEXTURE, tRef->fRef, -1, img->GetKeyName().c_str());
     }
 
     glTexParameteri(tRef->fMapping, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -725,11 +715,19 @@ void plGLDevice::MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, 
     };
 
     tRef->fMapping = GL_TEXTURE_CUBE_MAP;
+    glBindTexture(tRef->fMapping, tRef->fRef);
 
     for (size_t i = 0; i < 6; i++) {
         BindTexture(tRef, img->GetFace(i), kFaceMapping[i]);
     }
 
+    if (epoxy_gl_version() >= 43) {
+        glObjectLabel(GL_TEXTURE, tRef->fRef, -1, img->GetKeyName().c_str());
+    }
+
+    glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(tRef->fMapping, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(tRef->fMapping, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     if (tRef->fLevels) {
@@ -749,7 +747,11 @@ void plGLDevice::SetProjectionMatrix(const hsMatrix44& src)
 
 void plGLDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 {
+    hsMatrix44 inv;
+    src.GetInverse(&inv);
+
     hsMatrix2GL(src, fMatrixW2C);
+    hsMatrix2GL(inv, fMatrixC2W);
 }
 
 void plGLDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
