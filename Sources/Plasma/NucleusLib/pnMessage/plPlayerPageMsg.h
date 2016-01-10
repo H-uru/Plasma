@@ -59,8 +59,8 @@ public:
                     const plKey &r, 
                     const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
     
-    CLASSNAME_REGISTER( plPlayerPageMsg );
-    GETINTERFACE_ANY( plPlayerPageMsg, plMessage );
+    CLASSNAME_REGISTER(plPlayerPageMsg);
+    GETINTERFACE_ANY(plPlayerPageMsg, plMessage);
 
 
     plKey           fPlayer;
@@ -70,8 +70,7 @@ public:
     bool            fLastOut;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
         fPlayer = mgr->ReadKey(stream);
         fLocallyOriginated = stream->ReadBool();
@@ -79,8 +78,7 @@ public:
         fUnload = stream->ReadBool();
         fClientID = stream->ReadLE32();
     }
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fPlayer);
         stream->WriteBool(fLocallyOriginated);

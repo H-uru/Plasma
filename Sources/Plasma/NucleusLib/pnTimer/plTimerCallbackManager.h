@@ -48,13 +48,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plMessage;
 
-class plTimerCallback 
+class plTimerCallback
 {
 public:
-    
+
     plTimerCallback(double time, plMessage* pMsg);
     ~plTimerCallback();
-    
+
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
@@ -65,25 +65,23 @@ public:
 class plTimerCallbackManager : public hsKeyedObject
 {
 public:
-    
     plTimerCallbackManager();
     ~plTimerCallbackManager();
 
-    CLASSNAME_REGISTER( plTimerCallbackManager );
-    GETINTERFACE_ANY( plTimerCallbackManager, hsKeyedObject );
+    CLASSNAME_REGISTER(plTimerCallbackManager);
+    GETINTERFACE_ANY(plTimerCallbackManager, hsKeyedObject);
 
     virtual plTimerCallback* NewTimer(float time, plMessage* pMsg);
     bool CancelCallback(plTimerCallback* pTimer);
     bool CancelCallbacksToKey(const plKey& key);
 
 
-    virtual bool MsgReceive(plMessage* msg);
-        
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
+
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
 private:
-    
     hsTArray<plTimerCallback*>  fCallbacks;
 };
 
@@ -91,8 +89,8 @@ class plgTimerCallbackMgr
 {
 private:
     static plTimerCallbackManager*      fMgr;
-public:
 
+public:
     static void Init();
     static void Shutdown();
     static plTimerCallbackManager* Mgr() { return fMgr; }
@@ -105,7 +103,4 @@ public:
     static bool CancelCallbacksToKey(const plKey& key);
 };
 
-
 #endif
-
-

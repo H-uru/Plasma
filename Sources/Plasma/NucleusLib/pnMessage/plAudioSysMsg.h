@@ -80,8 +80,8 @@ public:
                     const double* t) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
     ~plAudioSysMsg(){;}
 
-    CLASSNAME_REGISTER( plAudioSysMsg );
-    GETINTERFACE_ANY( plAudioSysMsg, plMessage );
+    CLASSNAME_REGISTER(plAudioSysMsg);
+    GETINTERFACE_ANY(plAudioSysMsg, plMessage);
     
     int GetAudFlag() { return fAudFlag; }
     plKey GetSceneObject() { return pObj; }
@@ -90,16 +90,14 @@ public:
     bool    GetBoolFlag() { return fBoolFlag; }
     void    SetBoolFlag( bool b ) { fBoolFlag = b; }
 
-    // IO 
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    // IO
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
         stream->WriteLE(fAudFlag);
         mgr->WriteKey(stream, pObj);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         stream->ReadLE(&fAudFlag);
         pObj = mgr->ReadKey(stream);

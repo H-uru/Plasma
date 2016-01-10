@@ -51,7 +51,6 @@ class hsResMgr;
 
 class plObjRefMsg : public plRefMsg
 {
-
 public:
     enum {
         kModifier       = 0,
@@ -60,26 +59,23 @@ public:
 
     plObjRefMsg(): fType(-1), fWhich(-1) {};
 
-    plObjRefMsg(const plKey &r, uint8_t refMsgFlags, int8_t which , int8_t type)
+    plObjRefMsg(const plKey& r, uint8_t refMsgFlags, int8_t which, int8_t type)
         : plRefMsg(r, refMsgFlags), fType(type), fWhich(which) {}
 
+    CLASSNAME_REGISTER(plObjRefMsg);
+    GETINTERFACE_ANY(plObjRefMsg, plRefMsg);
 
-    CLASSNAME_REGISTER( plObjRefMsg );
-    GETINTERFACE_ANY( plObjRefMsg, plRefMsg );
-
-    int8_t                    fType;
-    int8_t                    fWhich;
+    int8_t fType;
+    int8_t fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Read(stream, mgr);
         stream->ReadLE(&fType);
         stream->ReadLE(&fWhich);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Write(stream, mgr);
         stream->WriteLE(fType);
         stream->WriteLE(fWhich);

@@ -56,10 +56,16 @@ public:
     // flags should be either:
     //      plRefMsg::kOnRequest - I'm adding this child to the receiver
     //      plRefMsg::kOnRemove - I'm detaching this child from the receiver
-    plAttachMsg(const plKey &rcv, hsKeyedObject* child, uint8_t context, const plKey snd=nil) : plRefMsg(rcv, context) { SetSender(snd); SetRef(child); }
+    plAttachMsg(const plKey& rcv, hsKeyedObject* child, uint8_t context,
+                const plKey snd=nullptr)
+        : plRefMsg(rcv, context)
+    {
+        SetSender(snd);
+        SetRef(child);
+    }
 
-    CLASSNAME_REGISTER( plAttachMsg );
-    GETINTERFACE_ANY( plAttachMsg, plRefMsg );
+    CLASSNAME_REGISTER(plAttachMsg);
+    GETINTERFACE_ANY(plAttachMsg, plRefMsg);
 
 };
 

@@ -55,14 +55,14 @@ public:
     plNodeChangeMsg(plKey s, plKey &r, plKey node, double* t=nil)
         :   plMessage(s, r, t), fNodeKey(node) {}
 
-    CLASSNAME_REGISTER( plNodeChangeMsg );
-    GETINTERFACE_ANY( plNodeChangeMsg, plMessage );
+    CLASSNAME_REGISTER(plNodeChangeMsg);
+    GETINTERFACE_ANY(plNodeChangeMsg, plMessage);
 
     plKey       GetNodeKey() const { return fNodeKey; }
     void        SetNodeKey(plKey &k) { fNodeKey = k; }
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr);
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 };
 
 #endif //plNodeChangeMsg_inc

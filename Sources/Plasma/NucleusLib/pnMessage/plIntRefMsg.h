@@ -67,24 +67,22 @@ public:
     plIntRefMsg() : fType(-1), fWhich(-1), fIdx(-1) {}
     plIntRefMsg(const plKey &r, uint8_t flags, int32_t which, int8_t type, int8_t idx=-1) : plRefMsg(r, flags), fWhich((int16_t)which), fType(type), fIdx(idx) {}
 
-    CLASSNAME_REGISTER( plIntRefMsg );
-    GETINTERFACE_ANY( plIntRefMsg, plRefMsg );
+    CLASSNAME_REGISTER(plIntRefMsg);
+    GETINTERFACE_ANY(plIntRefMsg, plRefMsg);
 
     int8_t        fType;
     int8_t        fIdx;
     int16_t       fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Read(stream, mgr);
         stream->ReadLE(&fType);
         stream->ReadLE(&fWhich);
         stream->ReadLE(&fIdx);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plRefMsg::Write(stream, mgr);
         stream->WriteLE(fType);
         stream->WriteLE(fWhich);

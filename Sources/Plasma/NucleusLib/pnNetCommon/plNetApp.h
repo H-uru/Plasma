@@ -173,8 +173,8 @@ public:
         kLinkingToOfflineAge,               // set if we're linking to the startup age
     };
 
-    CLASSNAME_REGISTER( plNetClientApp );
-    GETINTERFACE_ANY( plNetClientApp, plNetApp);
+    CLASSNAME_REGISTER(plNetClientApp);
+    GETINTERFACE_ANY(plNetClientApp, plNetApp);
 
     plNetClientApp();
     
@@ -244,8 +244,8 @@ public:
         kProcessedPendingMsgs,              // Used by front-end server
     };
 
-    CLASSNAME_REGISTER( plNetServerApp );
-    GETINTERFACE_ANY( plNetServerApp, plNetApp);
+    CLASSNAME_REGISTER(plNetServerApp);
+    GETINTERFACE_ANY(plNetServerApp, plNetApp);
 
     virtual int SendMsg(plNetMessage* msg) = 0;
 };

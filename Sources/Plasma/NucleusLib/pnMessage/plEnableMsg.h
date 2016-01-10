@@ -50,9 +50,8 @@ class hsStream;
 
 class plEnableMsg : public plMessage
 {
-
 public:
-    enum 
+    enum
     {
         kDisable        = 0,
         kEnable,
@@ -62,35 +61,38 @@ public:
         kAll,
         kByType
     };
-    
-    hsBitVector     fCmd;
-    hsBitVector     fTypes;
+
+    hsBitVector fCmd;
+    hsBitVector fTypes;
 
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
-    
+
     void AddType(uint16_t t) { fTypes.SetBit(t); }
     void RemoveType(uint16_t t) { fTypes.ClearBit(t); }
     bool Type(uint16_t t) const { return fTypes.IsBitSet(t); }
     const hsBitVector& Types() const { return fTypes; }
 
     plEnableMsg() { }
-    plEnableMsg(const plKey &s, int which , int type) : plMessage() 
-    { SetCmd(which); SetCmd(type); }
 
-    CLASSNAME_REGISTER( plEnableMsg );
-    GETINTERFACE_ANY( plEnableMsg, plMessage );
-
-    void Read(hsStream* stream, hsResMgr* mgr)
+    plEnableMsg(const plKey& s, int which, int type)
+        : plMessage()
     {
+        SetCmd(which);
+        SetCmd(type);
+    }
+
+    CLASSNAME_REGISTER(plEnableMsg);
+    GETINTERFACE_ANY(plEnableMsg, plMessage);
+
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
         fCmd.Read(stream);
         fTypes.Read(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         fCmd.Write(stream);
         fTypes.Write(stream);
@@ -102,8 +104,7 @@ public:
         kTypes,
     };
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr)
-    {
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgReadVersion(stream, mgr);
         hsBitVector contentFlags;
         contentFlags.Read(stream);
@@ -114,14 +115,13 @@ public:
             fTypes.Read(stream);
     }
 
-    void WriteVersion(hsStream* stream, hsResMgr* mgr)
-    {
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWriteVersion(stream, mgr);
         hsBitVector contentFlags;
         contentFlags.SetBit(kCmd);
         contentFlags.SetBit(kTypes);
         contentFlags.Write(stream);
-        
+
         fCmd.Write(stream);
         fTypes.Write(stream);
     }

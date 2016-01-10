@@ -169,13 +169,21 @@ public:
 class plCreatableGenericValue : public plCreatable
 {
 public:
-    plGenericType   fValue;
-    CLASSNAME_REGISTER( plCreatableGenericValue );
-    GETINTERFACE_ANY( plCreatableGenericValue, plCreatable );
-    void    Read(hsStream* s, hsResMgr* mgr) { fValue.Read(s);}
-    void    Write(hsStream* s, hsResMgr* mgr) { fValue.Write(s);}
+    plGenericType fValue;
+
+    CLASSNAME_REGISTER(plCreatableGenericValue);
+    GETINTERFACE_ANY(plCreatableGenericValue, plCreatable);
+
+    void Read(hsStream* s, hsResMgr*) HS_OVERRIDE {
+        fValue.Read(s);
+    }
+    void Write(hsStream* s, hsResMgr*) HS_OVERRIDE {
+        fValue.Write(s);
+    }
+
     plGenericType& Value() { return fValue; }
     const plGenericType& Value() const { return fValue; }
+
     operator int32_t() const { return (int32_t)fValue; }
     operator uint32_t() const { return (uint32_t)fValue; }
     operator float() const { return (float)fValue; }

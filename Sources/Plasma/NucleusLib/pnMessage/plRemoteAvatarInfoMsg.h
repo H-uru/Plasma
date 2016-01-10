@@ -62,22 +62,19 @@ public:
     plRemoteAvatarInfoMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t) : fAvatar(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-    
-    CLASSNAME_REGISTER( plRemoteAvatarInfoMsg );
-    GETINTERFACE_ANY( plRemoteAvatarInfoMsg, plMessage );
-    
+
+    CLASSNAME_REGISTER(plRemoteAvatarInfoMsg);
+    GETINTERFACE_ANY(plRemoteAvatarInfoMsg, plMessage);
+
     void SetAvatarKey(plKey p) { fAvatar = p; }
     plKey GetAvatarKey() { return fAvatar; }
-        
+
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr)
-    {
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgRead(stream, mgr);
         fAvatar = mgr->ReadKey(stream);
     }
-
-    void Write(hsStream* stream, hsResMgr* mgr)
-    {
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fAvatar);
     }

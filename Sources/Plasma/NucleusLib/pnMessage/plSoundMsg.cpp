@@ -50,10 +50,10 @@ plSoundMsg::~plSoundMsg()
 }
 
 
-void plSoundMsg::ClearCmd() 
-{ 
+void plSoundMsg::ClearCmd()
+{
     plMessageWithCallbacks::Clear();
-    fCmd.Clear(); 
+    fCmd.Clear();
 }
 
 

@@ -121,11 +121,11 @@ public:
     plSynchedObject();
     virtual ~plSynchedObject();
 
-    CLASSNAME_REGISTER( plSynchedObject );
-    GETINTERFACE_ANY( plSynchedObject, hsKeyedObject);
+    CLASSNAME_REGISTER(plSynchedObject);
+    GETINTERFACE_ANY(plSynchedObject, hsKeyedObject);
 
-    virtual bool MsgReceive(plMessage* msg);
-    
+    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
+
     // getters
     int GetSynchFlags() const { return fSynchFlags; }
     plNetGroupId GetNetGroup() const { return fNetGroup; };
@@ -155,11 +155,11 @@ public:
 //  void SendCreationMsg(double secs);
 //  void SendDestructionMsg(double secs) ;
 
-    virtual void    Read(hsStream* s, hsResMgr* mgr);
-    virtual void    Write(hsStream* s, hsResMgr* mgr);
+    void Read(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
 
     int IsLocallyOwned() const;     // returns yes/no/maybe
-    
+
     // disable net synching only
     bool IsNetSynched() const { return (fSynchFlags & kDontSynchGameMessages)==0; }
     void SetNetSynched(bool b) { if (!b) fSynchFlags |= kDontSynchGameMessages; else fSynchFlags &= ~kDontSynchGameMessages;    }
