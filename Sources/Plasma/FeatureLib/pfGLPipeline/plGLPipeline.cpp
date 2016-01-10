@@ -604,6 +604,17 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         IHandleZMode(s);
         IHandleBlendMode(s);
 
+        // AlphaTestHigh is used for reducing sort artifacts on textures that
+        // are mostly opaque or transparent, but have regions of translucency
+        // in transition. Like a texture for a bush billboard. It lets there be
+        // some transparency falloff, but quit drawing before it gets so
+        // transparent that draw order problems (halos) become apparent.
+        if (lay->GetBlendFlags() & hsGMatState::kBlendAlphaTestHigh) {
+            glUniform1f(mRef->uAlphaThreshold, 0.25);
+        } else {
+            glUniform1f(mRef->uAlphaThreshold, 0.0);
+        }
+
         if (lay->GetMiscFlags() & hsGMatState::kMiscTwoSided) {
             glDisable(GL_CULL_FACE);
         } else {

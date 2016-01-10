@@ -265,7 +265,8 @@ void plGLMaterialShaderRef::ISetShaderVariableLocs()
     aVtxNormal    = glGetAttribLocation(fRef, "aVtxNormal");
     aVtxColor     = glGetAttribLocation(fRef, "aVtxColor");
 
-    uPassNumber   = glGetUniformLocation(fRef, "uPassNumber");
+    uPassNumber       = glGetUniformLocation(fRef, "uPassNumber");
+    uAlphaThreshold   = glGetUniformLocation(fRef, "uAlphaThreshold");
 
     // Material inputs
     uGlobalAmbient  = glGetUniformLocation(fRef, "uGlobalAmb");
@@ -417,14 +418,6 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagDisableSpecular))
         state.fShadeFlags &= ~hsGMatState::kShadeSpecular;
 
-    if (state.fZFlags & hsGMatState::kZIncLayer) {
-        // Set the Z-bias
-        //ISetLayer(1);
-    } else {
-        // Clear any Z-bias
-        //IBottomLayer();
-    }
-
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagNoAlphaBlending))
         state.fBlendFlags &= ~hsGMatState::kBlendMask;
 
@@ -462,6 +455,14 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     sb.fFunction = fn;
     sb.fIteration = 0;
 
+    if (state.fZFlags & hsGMatState::kZIncLayer) {
+        // Set the Z-bias
+        sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), ADD(CONSTANT("gl_FragCoord.z"), CONSTANT("-0.0001"))));
+    } else {
+        // Clear any Z-bias
+        sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), CONSTANT("gl_FragCoord.z")));
+    }
+
     IBuildBaseAlpha(currLay, &sb);
 
     for (int32_t i = 0; i < currNumLayers; i++) {
@@ -488,6 +489,12 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     //IHandleZMode();
     //IHandleMiscMode()
     //IHandleTextureStage(0, layer);
+
+    // Handle High Alpha Threshold
+    std::shared_ptr<plUniformNode> alphaThreshold = IFindVariable<plUniformNode>("uAlphaThreshold", "float");
+
+    // if (final.a < alphaThreshold) { discard; }
+    sb.fFunction->PushOp(COND(IS_LESS(sb.fCurrAlpha, alphaThreshold), CONSTANT("discard")));
 
     // Multiply in the vertex color at the end (but alpha is premultiplied!)
     std::shared_ptr<plShaderNode> finalColor;
