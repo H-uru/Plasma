@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include "HeadSpin.h"
-#include "pyGlueHelpers.h"
+#include "pyGeometry3.h"
 
 class pyMarkerMgr
 {
