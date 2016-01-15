@@ -125,7 +125,7 @@ struct pfPatcherWorker : public hsThread
     pfPatcherWorker();
     ~pfPatcherWorker();
 
-    void OnQuit();
+    void OnQuit() HS_OVERRIDE;
 
     void EndPatch(ENetError result, const plString& msg=plString::Null);
     bool IssueRequest();
@@ -642,7 +642,7 @@ bool pfPatcher::Start()
     hsAssert(!fWorker->fStarted, "pfPatcher is one-use only. kthx.");
     if (!fWorker->fStarted) {
         fWorker->fParent = this; // wheeeee circular
-        fWorker->Start();
+        fWorker->StartDetached();
         return true;
     }
     return false;

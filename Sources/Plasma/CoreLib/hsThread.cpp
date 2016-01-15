@@ -65,10 +65,16 @@ void hsThread::Start()
 
 void hsThread::Stop()
 {
-    if (fThread.joinable()) {
-        fQuit = true;
+    fQuit = true;
+    if (fThread.joinable())
         fThread.join();
-    }
+}
+
+void hsThread::StartDetached()
+{
+    Start();
+    if (fThread.joinable())
+        fThread.detach();
 }
 
 #endif // CoreLib_Thread

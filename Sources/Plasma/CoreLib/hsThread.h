@@ -88,6 +88,12 @@ public:
     virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
 
+    // Start the thread in a detached state, so it will continue running
+    // in the background, and doesn't need to be joined.  NOTE: The thread
+    // must be able to manage itself -- destroying the hsThread object
+    // WILL NOT stop a detached thread!
+    void StartDetached();
+
     static inline size_t ThisThreadHash()
     {
         return std::hash<std::thread::id>()(std::this_thread::get_id());
