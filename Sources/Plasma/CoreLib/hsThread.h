@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <atomic>
 #include <mutex>
 #include <condition_variable>
+#include <thread>
 
 typedef uint32_t hsMilliseconds;
 
@@ -61,50 +62,42 @@ typedef uint32_t hsMilliseconds;
 //  #define PSEUDO_EVENT
 #endif
 
-class hsThread 
+class hsThread
 {
-public:
-#if HS_BUILD_FOR_WIN32
-    typedef uint32_t ThreadId;
-#elif HS_BUILD_FOR_UNIX
-    typedef pthread_t ThreadId;
-#endif
-private:
-    bool        fQuit;
-    uint32_t    fStackSize;
-#if HS_BUILD_FOR_WIN32
-    ThreadId    fThreadId;
-    HANDLE      fThreadH;
-    HANDLE      fQuitSemaH;
-#elif HS_BUILD_FOR_UNIX
-    ThreadId    fPThread;
-    bool        fIsValid;
-    pthread_mutex_t fMutex;
-#endif
+    std::atomic<bool>   fQuit;
+    std::thread         fThread;
+
 protected:
     bool        GetQuit() const { return fQuit; }
     void        SetQuit(bool value) { fQuit = value; }
+
 public:
-    hsThread(uint32_t stackSize = 0);
-    virtual     ~hsThread();    // calls Stop()
-#if HS_BUILD_FOR_WIN32
-    ThreadId        GetThreadId() { return fThreadId; }
-    static ThreadId GetMyThreadId();
-#elif HS_BUILD_FOR_UNIX
-    ThreadId            GetThreadId() { return fPThread; }
-    static ThreadId     GetMyThreadId() { return pthread_self(); }
-    pthread_mutex_t* GetStartupMutex() { return &fMutex;  }
-#endif
-                
-    virtual hsError Run() = 0;      // override this to do your work
+    hsThread() : fQuit(false) { }
+
+    virtual ~hsThread()
+    {
+        this->Stop();
+    }
+
+    // Disable copying
+    hsThread(const hsThread &) = delete;
+    void operator=(const hsThread &) = delete;
+
+    virtual void    Run() = 0;      // override this to do your work
     virtual void    Start();        // initializes stuff and calls your Run() method
-    virtual void    Stop();     // sets fQuit = true and the waits for the thread to stop
+    virtual void    Stop();         // sets fQuit = true and the waits for the thread to stop
     virtual void    OnQuit() { }
-                
-    //  Static functions
-    static void*    Alloc(size_t size); // does not call operator::new(), may return nil
-    static void Free(void* p);      // does not call operator::delete()
-    static void ThreadYield();
+
+    // Start the thread in a detached state, so it will continue running
+    // in the background, and doesn't need to be joined.  NOTE: The thread
+    // must be able to manage itself -- destroying the hsThread object
+    // WILL NOT stop a detached thread!
+    void StartDetached();
+
+    static inline size_t ThisThreadHash()
+    {
+        return std::hash<std::thread::id>()(std::this_thread::get_id());
+    }
 };
 
 //////////////////////////////////////////////////////////////////////////////

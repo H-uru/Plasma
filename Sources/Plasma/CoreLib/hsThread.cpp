@@ -39,42 +39,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef CoreLib_Thread
+#define CoreLib_Thread
+
 #include "hsThread.h"
-#include "hsExceptions.h"
 
-hsGlobalSemaphore::hsGlobalSemaphore(int initialValue)
+#ifdef USE_VLD
+#include <vld.h>
+#endif
+
+void hsThread::Start()
 {
-    OSStatus    status = MPCreateSemaphore(kPosInfinity32, initialValue, &fSemaId);
-    hsThrowIfOSErr(status);
+    if (!fThread.joinable()) {
+        fThread = std::thread([this]() {
+#ifdef USE_VLD
+            // Needs to be enabled for each thread except the WinMain
+            VLDEnable();
+#endif
+            Run();
+            OnQuit();
+        });
+    } else
+        hsDebugMessage("Calling hsThread::Start() more than once", 0);
 }
 
-hsGlobalSemaphore::~hsGlobalSemaphore()
+void hsThread::Stop()
 {
-    OSStatus    status = MPDeleteSemaphore(fSemaId);
-    hsThrowIfOSErr(status);
+    fQuit = true;
+    if (fThread.joinable())
+        fThread.join();
 }
 
-bool hsGlobalSemaphore::Wait(hsMilliseconds timeToWait)
+void hsThread::StartDetached()
 {
-    Duration    duration;
-
-    if (timeToWait == kPosInfinity32)
-        duration = kDurationForever;
-    else
-        duration = 0;   // THEY DON'T IMPLEMENT delay times yet !!!
-
-    OSStatus    status = MPWaitOnSemaphore(fSemaId, duration);
-/*
-    if (status == kMPTimeoutErr)
-        return false;
-*/
-    hsThrowIfOSErr(status);
-    return true;
+    Start();
+    if (fThread.joinable())
+        fThread.detach();
 }
 
-void hsGlobalSemaphore::Signal()
-{
-    OSStatus    status = MPSignalSemaphore(fSemaId);
-    hsThrowIfOSErr(status);
-}
-
+#endif // CoreLib_Thread

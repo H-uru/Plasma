@@ -125,11 +125,11 @@ struct pfPatcherWorker : public hsThread
     pfPatcherWorker();
     ~pfPatcherWorker();
 
-    void OnQuit();
+    void OnQuit() HS_OVERRIDE;
 
     void EndPatch(ENetError result, const plString& msg=plString::Null);
     bool IssueRequest();
-    virtual hsError Run();
+    void Run() HS_OVERRIDE;
     void ProcessFile();
     void WhitelistFile(const plFileName& file, bool justDownloaded, hsStream* s=nullptr);
 };
@@ -433,7 +433,7 @@ bool pfPatcherWorker::IssueRequest()
     return true;
 }
 
-hsError pfPatcherWorker::Run()
+void pfPatcherWorker::Run()
 {
     // So here's the rub:
     // We have one or many manifests in the fRequests deque. We begin issuing those requests one-by one, starting here.
@@ -465,7 +465,6 @@ hsError pfPatcherWorker::Run()
     } while (fStarted);
 
     EndPatch(kNetSuccess);
-    return hsOK;
 }
 
 void pfPatcherWorker::ProcessFile()
@@ -643,7 +642,7 @@ bool pfPatcher::Start()
     hsAssert(!fWorker->fStarted, "pfPatcher is one-use only. kthx.");
     if (!fWorker->fStarted) {
         fWorker->fParent = this; // wheeeee circular
-        fWorker->Start();
+        fWorker->StartDetached();
         return true;
     }
     return false;

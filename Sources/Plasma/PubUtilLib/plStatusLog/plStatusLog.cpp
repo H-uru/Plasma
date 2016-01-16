@@ -693,7 +693,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
             }
             if (fFlags & kThreadID)
             {
-                snprintf(work, arrsize(work), "[t=%lu] ", hsThread::GetMyThreadId());
+                snprintf(work, arrsize(work), "[t=%lu] ", hsThread::ThisThreadHash());
                 strncat(buf, work, arrsize(work));
             }
 
