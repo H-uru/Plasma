@@ -209,7 +209,9 @@ protected:
     void IRoomLoaded(plSceneNode* node, bool hold);
     void IRoomUnloaded(plSceneNode* node);
     void ISetGraphicsDefaults();
-    
+
+    void IChangeResolution(int width, int height);
+
 public:
 
     plClient();
