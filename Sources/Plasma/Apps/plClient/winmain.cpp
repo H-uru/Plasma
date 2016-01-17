@@ -942,9 +942,9 @@ BOOL CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARA
     return 0;
 }
 
-#ifndef HS_DEBUGGING
 LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *ExceptionInfo )
 {
+#ifndef HS_DEBUGGING
     // Before we do __ANYTHING__, pass the exception to plCrashHandler
     s_crash.ReportCrash(ExceptionInfo);
 
@@ -953,10 +953,13 @@ LONG WINAPI plCustomUnhandledExceptionFilter( struct _EXCEPTION_POINTERS *Except
     HWND parentHwnd = gClient ? gClient->GetWindowHandle() : GetActiveWindow();
     DialogBoxParam(gHInst, MAKEINTRESOURCE(IDD_EXCEPTION), parentHwnd, ExceptionDialogProc, NULL);
 
-    // Trickle up the handlers
+    // Means that we have handled this.
     return EXCEPTION_EXECUTE_HANDLER;
+#else
+    // This allows the CRT level __except statement to handle the crash, allowing the debugger to be attached.
+    return EXCEPTION_CONTINUE_SEARCH;
+#endif // HS_DEBUGGING
 }
-#endif
 
 #include "pfConsoleCore/pfConsoleEngine.h"
 PF_CONSOLE_LINK_ALL()
@@ -1183,11 +1186,8 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     NetCliAuthAutoReconnectEnable(true);
 
-    // Install our unhandled exception filter for trapping all those nasty crashes in release build
-#ifndef HS_DEBUGGING
-    LPTOP_LEVEL_EXCEPTION_FILTER oldFilter;
-    oldFilter = SetUnhandledExceptionFilter( plCustomUnhandledExceptionFilter );
-#endif
+    // Install our unhandled exception filter for trapping all those nasty crashes
+    SetUnhandledExceptionFilter(plCustomUnhandledExceptionFilter);
 
     // We should quite frankly be done initing the client by now. But, if not, spawn the good old
     // "Starting URU, please wait..." dialog (not so yay)
@@ -1203,6 +1203,11 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
             gClient->WindowActivate(gPendingActivateFlag);
         gClient->SetMessagePumpProc(PumpMessageQueueProc);
         gClient.Start();
+
+        // PhysX installs its own exception handler somewhere in PhysXCore.dll. Unfortunately, this code appears to suck
+        // the big one. It actually makes us unable to attach with the Visual Studio debugger! We're going to override that
+        // donkey snot. This can be removed when PhysX is replaced.
+        SetUnhandledExceptionFilter(plCustomUnhandledExceptionFilter);
 
         MSG msg;
         do {
@@ -1221,11 +1226,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     gClient.ShutdownEnd();
     DeInitNetClientComm();
-
-    // Uninstall our unhandled exception filter, if we installed one
-#ifndef HS_DEBUGGING
-    SetUnhandledExceptionFilter( oldFilter );
-#endif
 
     // Exit WinMain and terminate the app....
     return PARABLE_NORMAL_EXIT;
