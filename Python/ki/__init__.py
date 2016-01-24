@@ -2539,7 +2539,7 @@ class xKI(ptModifier):
             mKIdialog = KIMini.dialog
 
         # Optimization: only do this if we are fading or have faded
-        if self.chatMgr.fadeMode in (kChat.FadeDoingFade, kChat.FadeDone):
+        if self.chatMgr.fadeMode in (kChat.FadeDoingFade, kChat.FadeDone, kChat.FadeNotActive):
             mKIdialog.setForeColor(-1, -1, -1, self.originalForeAlpha)
             mKIdialog.setSelectColor(-1, -1, -1, self.originalSelectAlpha)
             if self.KILevel == kNormalKI:
