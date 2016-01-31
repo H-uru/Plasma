@@ -56,13 +56,13 @@ def glue_getClass():
     global glue_cl
     if glue_cl == None:
         try:
-            cl = eval(glue_name)
+            cl = globals()[glue_name]
             if issubclass(cl,ptModifier):
                 glue_cl = cl
             else:
                 if glue_verbose:
                     print "Class %s is not derived from modifier" % (cl.__name__)
-        except NameError:
+        except:
             if glue_verbose:
                 try:
                     print "Could not find class %s" % (glue_name)
