@@ -82,6 +82,8 @@ protected:
     bool fPlaying;
     bool fPaused;
 
+    void IInitPlate(uint32_t width, uint32_t height);
+
     bool IOpenMovie();
     bool ILoadAudio();
     bool ICheckLanguage(const mkvparser::Track* track);

@@ -352,19 +352,6 @@ bool plMoviePlayer::Start()
     else
         return false;
 
-    // Need to figure out scaling based on pipe size.
-    plPlateManager& plateMgr = plPlateManager::Instance();
-    float plateWidth = video->GetWidth() * fScale.fX;
-    float plateHeight = video->GetHeight() * fScale.fY;
-    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight()) {
-        float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
-        plateWidth *= scale;
-        plateHeight *= scale;
-    }
-    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
-    plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
-    fTexture = fPlate->CreateMaterial(static_cast<uint32_t>(video->GetWidth()), static_cast<uint32_t>(video->GetHeight()), false);
-
     // Decode the audio track and load it into a sound buffer
     if (!ILoadAudio())
         return false;
@@ -377,6 +364,22 @@ bool plMoviePlayer::Start()
 #else
     return false;
 #endif // MOVIE_AVAILABLE
+}
+
+void plMoviePlayer::IInitPlate(uint32_t width, uint32_t height)
+{
+    // Need to figure out scaling based on pipe size.
+    plPlateManager& plateMgr = plPlateManager::Instance();
+    float plateWidth = width * fScale.fX;
+    float plateHeight = height * fScale.fY;
+    if (plateWidth > plateMgr.GetPipeWidth() || plateHeight > plateMgr.GetPipeHeight()) {
+        float scale = std::min(plateMgr.GetPipeWidth() / plateWidth, plateMgr.GetPipeHeight() / plateHeight);
+        plateWidth *= scale;
+        plateHeight *= scale;
+    }
+    plateMgr.CreatePlate(&fPlate, fPosition.fX, fPosition.fY, 0, 0);
+    plateMgr.SetPlatePixelSize(fPlate, plateWidth, plateHeight);
+    fTexture = fPlate->CreateMaterial(width, height, false);
 }
 
 bool plMoviePlayer::NextFrame()
@@ -399,6 +402,13 @@ bool plMoviePlayer::NextFrame()
     if (!fVideoTrack || !fVideoTrack->GetFrames(fReader, fMovieTime * 1000000, video)) {
         Stop();
         return false;
+    }
+
+    // If the pipeline's device was invalidated, the plate will be invalid. Recreate now.
+    if (!fPlate) {
+        const mkvparser::VideoTrack* vt = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
+        IInitPlate(static_cast<uint32_t>(vt->GetWidth()), static_cast<uint32_t>(vt->GetHeight()));
+        hsAssert(fPlate, "failed to init plMoviePlayer plate -- bad things will happen!");
     }
 
     // Show our mess
