@@ -800,18 +800,20 @@ bool plClient::MsgReceive(plMessage* msg)
     }
 
     //============================================================================
-    // plNetCommAuthMsg
-    //============================================================================
-    if (plNetCommAuthMsg * authCommMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
-        IHandleNetCommAuthMsg(authCommMsg);
-        return true;
-    }
-
-    //============================================================================
     // plResPatcherMsg
     //============================================================================
     if (plResPatcherMsg * resMsg = plResPatcherMsg::ConvertNoRef(msg)) {
         IHandlePatcherMsg(resMsg);
+        return true;
+    }
+
+    //============================================================================
+    // plNetCommAuthMsg
+    //============================================================================
+    if (plNetCommAuthMsg* authMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
+        plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
+        if (IS_NET_SUCCESS(authMsg->result))
+            IPatchGlobalAgeFiles();
         return true;
     }
 
@@ -1379,10 +1381,6 @@ bool plClient::StartInit()
     // local data of course).
     ((plResManager *)hsgResMgr::ResMgr())->VerifyPages();
 
-    // the dx8 audio system MUST be initialized
-    // before the database is loaded
-    SetForegroundWindow(fWindowHndl);
-
     plgAudioSys::Init();
     gAudio = plgAudioSys::Sys();
 
@@ -1440,7 +1438,7 @@ bool plClient::StartInit()
     // Init Net before loading things
     //
     plgDispatch::Dispatch()->RegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
-    plNetClientMgr::GetInstance()->Init();
+    plNetClientMgr::GetInstance()->RegisterAs(kNetClientMgr_KEY);
     plAgeLoader::GetInstance()->Init();
 
     plCmdIfaceModMsg* pModMsg2 = new plCmdIfaceModMsg;
@@ -1460,8 +1458,6 @@ bool plClient::StartInit()
     plMouseDevice::Instance()->SetDisplayResolution((float)fPipeline->Width(), (float)fPipeline->Height());
     plInputManager::SetRecenterMouse(false);
 
-    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
-    if(GetDone()) return false;
     plgDispatch::Dispatch()->RegisterForExactType(plMovieMsg::Index(), GetKey());
 
     // create the listener for the audio system:
@@ -1472,22 +1468,22 @@ bool plClient::StartInit()
     plgDispatch::Dispatch()->RegisterForExactType(plAudioSysMsg::Index(), pLMod->GetKey());
 
     plSynchedObject::PushSynchDisabled(false);      // enable dirty tracking
+    return true;
+}
 
-    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0)
-    {
-        plNetCommAuthMsg * msg  = new plNetCommAuthMsg();
-        msg->result             = kNetSuccess;
-        msg->param              = nil;
+//============================================================================
+bool plClient::BeginGame()
+{
+    plNetClientMgr::GetInstance()->Init();
+    IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
+    if (GetDone()) return false;
+    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0) {
+        // This is needed because there is no auth step in this case
+        plNetCommAuthMsg* msg = new plNetCommAuthMsg();
+        msg->result = kNetSuccess;
+        msg->param = nullptr;
         msg->Send();
     }
-
-    // 2nd half of plClient initialization occurs after
-    // all network events have completed.  Async events:
-    //
-    // 1) Download secure files
-    //
-    // Continue plClient init via IOnAsyncInitComplete().
-
     return true;
 }
 
@@ -1983,6 +1979,9 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
     if (pfGameGUIMgr::GetInstance())
         pfGameGUIMgr::GetInstance()->SetAspectRatio( aspectratio );
 
+    // Direct3D no longer uses exclusive fullscreen mode, ergo, we must resize the display
+    if (!Windowed)
+        IChangeResolution(Width, Height);
 
     uint32_t winStyle, winExStyle;
     if( Windowed )
@@ -1991,7 +1990,7 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
         winStyle = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
     } else {
-        winStyle = WS_POPUP;
+        winStyle = WS_VISIBLE;
         winExStyle = WS_EX_APPWINDOW;
     }
     SetWindowLong(fWindowHndl, GWL_STYLE, winStyle);
@@ -2000,20 +1999,43 @@ void plClient::ResizeDisplayDevice(int Width, int Height, bool Windowed)
 
     uint32_t flags = SWP_NOCOPYBITS | SWP_SHOWWINDOW | SWP_FRAMECHANGED;
     uint32_t OutsideWidth, OutsideHeight;
-    HWND insertAfter;
     if( Windowed )
     {
         RECT winRect = { 0, 0, Width, Height };
         AdjustWindowRectEx(&winRect, winStyle, false, winExStyle);
         OutsideWidth = winRect.right - winRect.left;
         OutsideHeight = winRect.bottom - winRect.top;
-        insertAfter = HWND_NOTOPMOST;
     } else {
         OutsideWidth = Width;
         OutsideHeight = Height;
-        insertAfter = HWND_TOP;
     }
-    SetWindowPos( fWindowHndl, insertAfter, 0, 0, OutsideWidth, OutsideHeight, flags );
+    SetWindowPos( fWindowHndl, HWND_NOTOPMOST, 0, 0, OutsideWidth, OutsideHeight, flags );
+}
+
+void plClient::IChangeResolution(int width, int height)
+{
+    // First, we need to be mindful that we may not be operating on the primary display device
+    // I unfortunately cannot test this works as expected, but it will likely save us some cursing
+    HMONITOR monitor = MonitorFromWindow(fWindowHndl, MONITOR_DEFAULTTONULL);
+    if (!monitor)
+        return;
+    MONITORINFOEXW moninfo;
+    memset(&moninfo, 0, sizeof(moninfo));
+    moninfo.cbSize = sizeof(moninfo);
+    GetMonitorInfoW(monitor, &moninfo);
+
+    // Fetch a base display settings
+    DEVMODEW devmode;
+    memset(&devmode, 0, sizeof(devmode));
+    devmode.dmSize = sizeof(devmode);
+    EnumDisplaySettingsW(moninfo.szDevice, ENUM_REGISTRY_SETTINGS, &devmode);
+
+    // Actually update the resolution
+    if (width != 0 && height != 0) {
+        devmode.dmPelsWidth = width;
+        devmode.dmPelsHeight = height;
+    }
+    ChangeDisplaySettingsExW(moninfo.szDevice, &devmode, nullptr, CDS_FULLSCREEN, nullptr);
 }
 
 void WriteBool(hsStream *stream, char *name, bool on )
@@ -2167,12 +2189,15 @@ void plClient::WindowActivate(bool active)
     if (GetDone())
         return;
         
-    if( !fWindowActive != !active )
-    {
-        if( fInputManager != nil )
-            fInputManager->Activate( active );
+    if (fWindowActive != active ) {
+        if (fInputManager)
+            fInputManager->Activate(active);
+        plArmatureMod::WindowActivate(active);
 
-        plArmatureMod::WindowActivate( active );
+        // Remember, we are no longer exclusive fullscreen, so we actually have to toggle the desktop resolution
+        // whee? wait. WHEEE!
+        if (fPipeline->IsFullScreen())
+            IChangeResolution(active ? fPipeline->Width() : 0, active ? fPipeline->Height() : 0);
     }
     fWindowActive = active;
 }
@@ -2289,28 +2314,4 @@ void plClient::IHandlePatcherMsg (plResPatcherMsg * msg) {
     }
 
     IOnAsyncInitComplete();
-}
-
-//============================================================================
-void plClient::IHandleNetCommAuthMsg (plNetCommAuthMsg * msg) {
-
-    plgDispatch::Dispatch()->UnRegisterForExactType(plNetCommAuthMsg::Index(), GetKey());
-
-    if (IS_NET_ERROR(msg->result)) {
-        char str[1024];
-        StrPrintf(
-            str,
-            arrsize(str),
-            // fmt
-            "Authentication failed: NetError %u, %S.\n"
-            ,// values
-            msg->result,
-            NetErrorToString(msg->result)
-        );
-        plNetClientApp::GetInstance()->QueueDisableNet(true, str);
-        return;
-    }
-
-    // Patch them global files!
-    IPatchGlobalAgeFiles();
 }

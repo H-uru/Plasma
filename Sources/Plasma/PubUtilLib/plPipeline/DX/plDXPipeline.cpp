@@ -1590,7 +1590,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     }
 
     memset( &params, 0, sizeof( params ) );
-    params.Windowed = ( windowed ? TRUE : FALSE );
+    params.Windowed = TRUE; // NOTE: fullscreen is faked by changing the desktop resolution
     params.Flags = 0;//D3DPRESENTFLAG_LOCKABLE_BACKBUFFER;
     params.BackBufferCount = 1;
     params.BackBufferWidth = GetViewTransform().GetScreenWidth();
@@ -1600,15 +1600,8 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     // NOTE: This was changed 5.29.2001 mcn to avoid the nasty flashing bug on nVidia's 12.60 beta drivers
 // SWAPEFFECT must be _DISCARD when using antialiasing, so we'll just go with _DISCARD for the time being. mf
     params.SwapEffect = D3DSWAPEFFECT_DISCARD;
-    params.FullScreen_RefreshRateInHz = ( windowed ? 0 : D3DPRESENT_RATE_DEFAULT );
-    if(windowed)
-    {
-        params.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
-    }
-    else
-    {
-        params.PresentationInterval = ( fVSync ? D3DPRESENT_INTERVAL_DEFAULT : D3DPRESENT_INTERVAL_IMMEDIATE );
-    }
+    params.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
+    params.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 #ifdef DBG_WRITE_FORMATS
     for( i = 0; i < fCurrentMode->fDepthFormats.GetCount(); i++ )
@@ -1651,7 +1644,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #endif
 
 
-    params.BackBufferFormat = ( windowed ? dispMode.Format : fCurrentMode->fDDmode.Format );
+    params.BackBufferFormat = dispMode.Format;
 #ifdef DBG_WRITE_FORMATS
     sprintf( msg, "-- Requesting back buffer format: %s", IGetDXFormatName( params.BackBufferFormat ) );
     hsDebugMessage( msg, 0 );
@@ -2239,25 +2232,23 @@ bool plDXPipeline::IResetDevice()
                 IFindDepthFormat(fSettings.fPresentParams);
             }
             HRESULT hr = fD3DDevice->Reset(&fSettings.fPresentParams);
-            int count = 0;
-            while( FAILED(hr) )
-            {
-                if(count++ == 25)
-                {
-                    IPrintDeviceInitError();
-                    IResetToDefaults(&fSettings.fPresentParams);
+            // The device is inited the first time on the client loader thread, but this is the main thread
+            // we expect to get one failure... So let's try recreating the device on the main thread.
+            if (FAILED(hr)) {
+                IReleaseDeviceObjects();
+                for (int i = 0; true; ++i) {
+                    if (!ICreateDeviceObjects())
+                        break;
+                    ::Sleep(250);
+                    // Old magic number from reset land
+                    if (i == 25) {
+                        IPrintDeviceInitError();
+                        IResetToDefaults(&fSettings.fPresentParams);
+                    }
                 }
-                // Still not ready? This is bad.
-                // Until we called Reset(), we could make any D3D call we wanted,
-                // and it would turn into a no-op. But once we call Reset(), until
-                // the device really is reset, anything but TestCoop/Reset/Release
-                // has just become illegal. We've already released everything, Reset
-                // just failed, not much to do but wait and try again.
-                ::Sleep(250);
-                hr = fD3DDevice->Reset(&fSettings.fPresentParams);
             }
             fSettings.fCurrFVFFormat = 0;
-            fSettings.fCurrVertexShader = NULL;
+            fSettings.fCurrVertexShader = nullptr;
             fManagedAlloced = false;
             ICreateDynDeviceObjects();
             IInitDeviceState();
@@ -2324,7 +2315,7 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 
     // set windowed/fullscreen mode
     fCurrentMode->fWindowed = Windowed;
-    fSettings.fPresentParams.Windowed = Windowed;
+    fSettings.fPresentParams.Windowed = TRUE;
     fSettings.fFullscreen = !Windowed;
 
     // set Antialiasing
