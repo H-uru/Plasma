@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsSTLStream.h"
 
 #include "hsTimer.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "plTimerCallbackManager.h"
 
 #include "plScene/plSceneNode.h"
 #include "pnKeyedObject/hsKeyedObject.h"

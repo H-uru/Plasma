@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include "plMessage/plTimerCallbackMsg.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "plTimerCallbackManager.h"
 
 #include "plMessage/plSimStateMsg.h"
 //#include "plHavok1\plHKPhysical.h"

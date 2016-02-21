@@ -4,9 +4,7 @@ include_directories("../../NucleusLib/inc")
 
 set(pnTimer_HEADERS
     plTimedValue.h
-    plTimerCallbackManager.h
     pnBuildDates.h
-    pnTimerCreatable.h
 )
 
 set(pnTimer_SOURCES
