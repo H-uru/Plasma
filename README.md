@@ -38,7 +38,7 @@ The following libraries are optional:
 - (for building resource.dat) PyGTK - http://www.pygtk.org/downloads.html
 - (for building resource.dat) PIL - http://www.pythonware.com/products/pil/
 - (for plFontConverter) Freetype - http://freetype.org/
-- (for the GUI tools) Qt5 - http://qt-project.org/
+- (for the GUI tools) Qt5 - http://www.qt.io/download-open-source/
 - (for video) VPX - http://www.webmproject.org/
 - (for video) Opus - http://www.opus-codec.org/
 
