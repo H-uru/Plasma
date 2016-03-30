@@ -556,14 +556,6 @@ public:
     ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     { return Find(str.c_str(), sense); }
 
-    /** Search for substrings which match the specified regular expression.
-     *  If capture groups are specified in the pattern, they will be
-     *  returned as additional strings in the returned vector, starting at
-     *  index 1 (index 0 contains the whole match).  If the pattern was not
-     *  found, this returns an empty vector.
-     */
-    std::vector<plString> RESearch(const char *pattern, CaseSensitivity sense = kCaseSensitive) const;
-
     /** Trim any characters in the supplied \a charset from the left of
      *  this string.
      */

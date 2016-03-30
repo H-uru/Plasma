@@ -510,7 +510,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
                 {
                     float result = fmodf(secs - fLoopBegin, fLoopEnd - fLoopBegin) + fLoopBegin;
                     // are they a dumb ass?
-                    if (!isnan(result))
+                    if (!std::isnan(result))
                     {
                         secs = result;
                         wrapped = true;
@@ -534,7 +534,7 @@ float plAnimTimeConvert::WorldToAnimTime(double wSecs)
                 {
                     float result  = fLoopEnd - fmodf(fLoopEnd - secs, fLoopEnd - fLoopBegin);
                     // are they a dumb ass?
-                    if (!isnan(result))
+                    if (!std::isnan(result))
                     {
                         secs = result;
                         wrapped = true;
