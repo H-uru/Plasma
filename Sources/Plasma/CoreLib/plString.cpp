@@ -608,24 +608,6 @@ ssize_t plString::Find(const char *str, CaseSensitivity sense) const HS_NOEXCEPT
     }
 }
 
-bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
-{
-    auto opts = std::regex_constants::ECMAScript;
-    if (sense == kCaseInsensitive)
-        opts |= std::regex_constants::icase;
-
-    std::regex re;
-    try {
-        re = std::regex(pattern, opts);
-        if (std::regex_match(c_str(), re))
-            return true;
-    } catch (const std::regex_error& e) {
-        hsAssert(0, plFormat("Regex match error: {}", e.what()).c_str());
-    }
-
-    return false;
-}
-
 std::vector<plString> plString::RESearch(const char *pattern,
                                          CaseSensitivity sense) const
 {
