@@ -650,22 +650,13 @@ std::vector<plString> plString::RESearch(const char *pattern,
     return substrings;
 }
 
-static bool in_set(char key, const char *charset)
-{
-    for (const char *cs = charset; *cs; ++cs) {
-        if (*cs == key)
-            return true;
-    }
-    return false;
-}
-
 plString plString::TrimLeft(const char *charset) const
 {
     if (IsEmpty())
         return Null;
 
     const char *cp = c_str();
-    while (*cp && in_set(*cp, charset))
+    while (*cp && strchr(charset, *cp))
         ++cp;
 
     return Substr(cp - c_str());
@@ -679,7 +670,7 @@ plString plString::TrimRight(const char *charset) const
     const char *cp = c_str();
     cp += strlen(cp);
 
-    while (--cp >= c_str() && in_set(*cp, charset))
+    while (--cp >= c_str() && strchr(charset, *cp))
         ;
 
     return Substr(0, cp - c_str() + 1);
@@ -693,9 +684,9 @@ plString plString::Trim(const char *charset) const
     const char *lp = c_str();
     const char *rp = lp + strlen(lp);
 
-    while (*lp && in_set(*lp, charset))
+    while (*lp && strchr(charset, *lp))
         ++lp;
-    while (--rp >= lp && in_set(*rp, charset))
+    while (--rp >= lp && strchr(charset, *rp))
         ;
 
     return Substr(lp - c_str(), rp - lp + 1);
@@ -779,15 +770,6 @@ plString plString::ToLower() const
     return str;
 }
 
-static bool ch_in_set(char ch, const char *set)
-{
-    for (const char *s = set; *s; ++s) {
-        if (ch == *s)
-            return true;
-    }
-    return false;
-}
-
 std::vector<plString> plString::Tokenize(const char *delims) const
 {
     std::vector<plString> result;
@@ -796,7 +778,7 @@ std::vector<plString> plString::Tokenize(const char *delims) const
     const char *end = next + GetSize();  // So binary strings work
     while (next != end) {
         const char *cur = next;
-        while (cur != end && !ch_in_set(*cur, delims))
+        while (cur != end && !strchr(delims, *cur))
             ++cur;
 
         // Found a delimiter
@@ -804,7 +786,7 @@ std::vector<plString> plString::Tokenize(const char *delims) const
             result.push_back(plString::FromUtf8(next, cur - next));
 
         next = cur;
-        while (next != end && ch_in_set(*next, delims))
+        while (next != end && strchr(delims, *next))
             ++next;
     }
 
