@@ -111,19 +111,29 @@ public:
     static bool StaticAppMsg(const plString& msg);
     static bool StaticDebugMsg(const plString& msg);
 
+    template <typename... _Args>
+    static bool StaticErrorMsg(const char* fmt, _Args... args)
+    {
+        return StaticErrorMsg(plFormat(fmt, args...));
+    }
 
-    // Deprecated
-    hsDeprecated("StaticErrorMsg with format is deprecated -- use plFormat instead")
-    static bool StaticErrorMsg(const char* fmt, ...);
+    template <typename... _Args>
+    static bool StaticWarningMsg(const char* fmt, _Args... args)
+    {
+        return StaticWarningMsg(plFormat(fmt, args...));
+    }
 
-    hsDeprecated("StaticWarningMsg with format is deprecated -- use plFormat instead")
-    static bool StaticWarningMsg(const char* fmt, ...);
+    template <typename... _Args>
+    static bool StaticAppMsg(const char* fmt, _Args... args)
+    {
+        return StaticAppMsg(plFormat(fmt, args...));
+    }
 
-    hsDeprecated("StaticAppMsg with format is deprecated -- use plFormat instead")
-    static bool StaticAppMsg(const char* fmt, ...);
-
-    hsDeprecated("StaticDebugMsg with format is deprecated -- use plFormat instead")
-    static bool StaticDebugMsg(const char* fmt, ...);
+    template <typename... _Args>
+    static bool StaticDebugMsg(const char* fmt, _Args... args)
+    {
+        return StaticDebugMsg(plFormat(fmt, args...));
+    }
 };
 
 //

@@ -1220,7 +1220,7 @@ bool plArmatureMod::MsgReceive(plMessage* msg)
             EnableDrawing(true, kDisableReasonCCR);
 
         DirtySynchState(kSDLAvatar, 0);     // changed invisibility state
-        plNetApp::StaticDebugMsg("ArmatureMod: rcvd avatarStealth msg, cloaked=%d", stealthMsg->fMode == plAvatarStealthModeMsg::kStealthCloaked);
+        plNetApp::StaticDebugMsg("ArmatureMod: rcvd avatarStealth msg, cloaked={}", stealthMsg->fMode == plAvatarStealthModeMsg::kStealthCloaked);
         return true;
     }
 

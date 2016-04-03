@@ -122,7 +122,7 @@ bool plSDLParser::IParseStateDesc(const plFileName& fileName, hsStream* stream, 
         {
             plString err = plFormat("Found duplicate SDL descriptor for {} version {}.\nFailed to parse file: {}",
                                     curDesc->GetName(), curDesc->GetVersion(), fileName);
-            plNetApp::StaticErrorMsg( err.c_str() );
+            plNetApp::StaticErrorMsg(err);
             hsAssert( false, err.c_str() );
         }
     }

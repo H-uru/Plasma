@@ -697,8 +697,8 @@ bool plStateDataRecord::ConvertTo( plStateDescriptor* other, bool force )
 
     hsAssert(other->GetVersion()>=fDescriptor->GetVersion(), "converting to an older state descriptor version?");
 
-    hsLogEntry( plNetApp::StaticDebugMsg( "SDR(%p) converting sdl record %s from version %d to %d (force:%d)", 
-        this, fDescriptor->GetName().c_str(), fDescriptor->GetVersion(), other->GetVersion(), force ) );
+    hsLogEntry( plNetApp::StaticDebugMsg( "SDR(0x{x}) converting sdl record {} from version {} to {} (force:{})",
+        uintptr_t(this), fDescriptor->GetName(), fDescriptor->GetVersion(), other->GetVersion(), force ) );
 
     // make other StateData to represent other descriptor, 
     // this will be the destination for the convert operation

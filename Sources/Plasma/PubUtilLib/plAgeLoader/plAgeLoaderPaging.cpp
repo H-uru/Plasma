@@ -78,8 +78,8 @@ bool ReportRoomToServer(const plKey &key)
             );  
     
     if (skip)
-        hsLogEntry(plNetApp::StaticDebugMsg("Not reporting room %s to server, reserved=%d, virtual=%d", 
-            key->GetName().c_str(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
+        hsLogEntry(plNetApp::StaticDebugMsg("Not reporting room {} to server, reserved={}, virtual={}",
+            key->GetName(), keyLoc.IsReserved(), keyLoc.IsVirtual()));
     
     return !skip;
 }

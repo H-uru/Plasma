@@ -97,9 +97,9 @@ plAgeLoader::~plAgeLoader()
     fInitialAgeState=nil;
 
     if ( PendingAgeFniFiles().size() )
-        plNetClientApp::StaticErrorMsg( "~plAgeLoader(): %d pending age fni files", PendingAgeFniFiles().size() );
+        plNetClientApp::StaticErrorMsg( "~plAgeLoader(): {} pending age fni files", PendingAgeFniFiles().size() );
     if ( PendingPageOuts().size() )
-        plNetClientApp::StaticErrorMsg( "~plAgeLoader(): %d pending page outs", PendingPageOuts().size() );
+        plNetClientApp::StaticErrorMsg( "~plAgeLoader(): {} pending page outs", PendingPageOuts().size() );
 
     ClearPageExcludeList();     // Clear our debugging exclude list, just to be tidy
     
