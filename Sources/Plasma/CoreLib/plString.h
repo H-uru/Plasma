@@ -454,12 +454,6 @@ public:
     /** Convert the string to a double precision floating point value. */
     double ToDouble() const HS_NOEXCEPT;
 
-    /** Construct a plString using a printf-like format string.
-     *  This function should be called inside of other vararg functions,
-     *  but those should be eventually replaced with plFormat-based variants.
-     */
-    static plString IFormat(const char *fmt, va_list vptr);
-
     enum CaseSensitivity {
         kCaseSensitive, kCaseInsensitive
     };
