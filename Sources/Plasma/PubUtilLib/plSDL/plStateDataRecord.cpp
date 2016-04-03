@@ -268,7 +268,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             if (idx>=fVarsList.size() || !fVarsList[idx]->ReadData(s, timeConvert, readOptions))
             {
                 if (plSDLMgr::GetInstance()->GetNetApp())
-                    plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading SDL, desc %s", 
+                    plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading SDL, desc {}",
                             fDescriptor ? fDescriptor->GetName().c_str("?") : "?");
                 return false;
             }
@@ -309,7 +309,7 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             if (idx>=fSDVarsList.size() || !fSDVarsList[idx]->ReadData(s, timeConvert, readOptions))    // calls plStateDataRecord::Read recursively
             {
                 if (plSDLMgr::GetInstance()->GetNetApp())
-                    plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading nested SDL, desc %s", 
+                    plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed reading nested SDL, desc {}",
                             fDescriptor ? fDescriptor->GetName().c_str("?") : "?");
                 return false;
             }
@@ -676,7 +676,7 @@ plStateVariable* plStateDataRecord::IFindVar(const VarsList& vars, const plStrin
     }
 
     if (plSDLMgr::GetInstance()->GetNetApp())
-        plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed to find SDL var %s", name.c_str());
+        plSDLMgr::GetInstance()->GetNetApp()->ErrorMsg("Failed to find SDL var {}", name);
 
     return nil;
 }

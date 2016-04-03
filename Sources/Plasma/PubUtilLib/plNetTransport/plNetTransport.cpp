@@ -62,7 +62,7 @@ int plNetTransport::AddMember(plNetTransportMember* mbr)
     if (FindMember(mbr)==-1)
     {
         fMembers.push_back(mbr);
-        hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member %s", mbr->AsString().c_str()) );
+        hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Adding member {}", mbr->AsString()) );
         plNetClientMgr::GetInstance()->GetListenList()->AddMember(mbr);
         plNetClientMgr::GetInstance()->GetTalkList()->AddMember(mbr);
         DumpState();
@@ -87,7 +87,7 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
     if (!mbr)
         return;
 
-    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member %s", mbr->AsString().c_str()) );
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Removing member {}", mbr->AsString()) );
 
 //  plNetClientMgr::GetInstance()->GetNetCore()->RemovePeer(mbr->GetPeerID());
     plNetClientMgr::GetInstance()->GetTalkList()->RemoveMember(mbr);
@@ -101,7 +101,7 @@ void plNetTransport::IRemoveMember(plNetTransportMember* mbr)
     // remove member from master list
     fMembers.erase(it);
 
-    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member %s", mbr->AsString().c_str()) );
+    hsLogEntry( plNetClientMgr::GetInstance()->DebugMsg("Done Removing member {}", mbr->AsString()) );
     DumpState();
     
     delete mbr;
@@ -309,31 +309,31 @@ void plNetTransport::DumpState()
     plNetClientMgr* nc=plNetClientMgr::GetInstance();
     
     hsLogEntry( nc->DebugMsg("-------------------\n") );
-    hsLogEntry( nc->DebugMsg("Num Channels=%d\n", fChannelGroups.size()) );
+    hsLogEntry( nc->DebugMsg("Num Channels={}\n", fChannelGroups.size()) );
 
     int i;
     for(i=0;i<fChannelGroups.size();i++)
     {
         plMembersList* mList = &fChannelGroups[i];
-        hsLogEntry( nc->DebugMsg("\tChannel %d, num mbrs=%d\n", i, mList->size()) );
+        hsLogEntry( nc->DebugMsg("\tChannel {}, num mbrs={}\n", i, mList->size()) );
         int j;
         for(j=0; j<mList->size();j++)
         {
             plNetTransportMember * mbr = (*mList)[j];
-            hsLogEntry( nc->DebugMsg("\t\tMbr %s\n",(*mList)[j]->AsString().c_str()) );
+            hsLogEntry( nc->DebugMsg("\t\tMbr {}\n",(*mList)[j]->AsString()) );
         }
     }
 
-    nc->DebugMsg("Num Mbrs=%d\n", GetNumMembers());
+    nc->DebugMsg("Num Mbrs={}\n", GetNumMembers());
     for(i=0;i<GetNumMembers();i++)
     {
         plNetTransportMember * mbr = GetMember(i);
-        hsLogEntry (nc->DebugMsg("\tMbr %d, name=%s, plyrID=%lu, subs=%d", 
-            i,mbr->AsString().c_str(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
+        hsLogEntry (nc->DebugMsg("\tMbr {}, name={}, plyrID={}, subs={}",
+            i,mbr->AsString(),mbr->GetPlayerID(),mbr->GetNumSubscriptions()) );
         int j;
         for(j=0;j<mbr->GetNumSubscriptions();j++)
         {
-            hsLogEntry( nc->DebugMsg("\t\tSub %d, chan=%d\n", j, mbr->GetSubscription(j)) );
+            hsLogEntry( nc->DebugMsg("\t\tSub {}, chan={}\n", j, mbr->GetSubscription(j)) );
         }
     }
     hsLogEntry( nc->DebugMsg("\n") );

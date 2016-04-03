@@ -113,7 +113,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
 
         if (cloneKey->ObjectIsLoaded())
         {
-            DebugMsg("ILoadClone: object %s is already loaded, ignoring", cloneKey->GetUoid().StringIze().c_str());
+            DebugMsg("ILoadClone: object {} is already loaded, ignoring", cloneKey->GetUoid().StringIze());
             return cloneKey;
         }
 
@@ -144,7 +144,7 @@ plKey plNetClientMgr::ILoadClone(plLoadCloneMsg *pCloneMsg)
     {
         if (!cloneKey->ObjectIsLoaded())
         {
-            DebugMsg("ILoadClone: object %s is already unloaded, ignoring", cloneKey->GetName().c_str());
+            DebugMsg("ILoadClone: object {} is already unloaded, ignoring", cloneKey->GetName());
             return cloneKey;
         }
 
@@ -200,7 +200,7 @@ void plNetClientMgr::IPlayerChangeAge(bool exitAge, int32_t spawnPt)
     }
     else if (fLocalPlayerKey)
     {
-        ErrorMsg("Can't find avatarMod %s", fLocalPlayerKey->GetName().c_str());
+        ErrorMsg("Can't find avatarMod {}", fLocalPlayerKey->GetName());
     }
 }
 

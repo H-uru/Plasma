@@ -140,108 +140,46 @@ public:
 
     virtual bool ErrorMsg(const plString& msg) const
     {
-        return Log(plFormat("ERR: {}", msg));
+        return Log("ERR: " + msg);
     }
 
     virtual bool WarningMsg(const plString& msg) const
     {
-        return Log(plFormat("WRN: {}", msg));
+        return Log("WRN: " + msg);
     }
 
     virtual bool AppMsg(const plString& msg) const
     {
-        return Log(plFormat("APP: {}", msg));
+        return Log("APP: " + msg);
     }
 
     virtual bool DebugMsg(const plString& msg) const
     {
-        return Log(plFormat("DBG: {}", msg));
+        return Log("DBG: " + msg);
     }
 
-
-
-    /////////////////////////////////////////////////////////////////////////
-    // DEPRECATED Log methods
-    /////////////////////////////////////////////////////////////////////////
-
-    hsDeprecated("plLoggable::LogF is deprecated -- use plFormat instead")
-    virtual bool LogF( const char * fmt, ... ) const
+    template <typename... _Args>
+    bool ErrorMsg(const char* fmt, _Args... args) const
     {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = Log(plString::IFormat(fmt, args));
-        va_end(args);
-
-        return ret;
+        return ErrorMsg(plFormat(fmt, args...));
     }
 
-    virtual bool LogV( const char * fmt, va_list args ) const
+    template <typename... _Args>
+    bool DebugMsg(const char* fmt, _Args... args) const
     {
-        return Log(plString::IFormat(fmt, args));
+        return DebugMsg(plFormat(fmt, args...));
     }
 
-    virtual bool ErrorMsgV(const char* fmt, va_list args) const
+    template <typename... _Args>
+    bool WarningMsg(const char* fmt, _Args... args) const
     {
-        return ErrorMsg(plString::IFormat(fmt, args));
+        return WarningMsg(plFormat(fmt, args...));
     }
 
-    virtual bool DebugMsgV(const char* fmt, va_list args) const
+    template <typename... _Args>
+    bool AppMsg(const char* fmt, _Args... args) const
     {
-        return DebugMsg(plString::IFormat(fmt, args));
-    }
-
-    virtual bool WarningMsgV(const char* fmt, va_list args) const
-    {
-        return WarningMsg(plString::IFormat(fmt, args));
-    }
-
-    virtual bool AppMsgV(const char* fmt, va_list args) const
-    {
-        return AppMsg(plString::IFormat(fmt, args));
-    }
-
-    hsDeprecated("plLoggable::ErrorMsg with format is deprecated -- use plFormat instead")
-    virtual bool ErrorMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = ErrorMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
-    }
-
-    hsDeprecated("plLoggable::DebugMsg with format is deprecated -- use plFormat instead")
-    virtual bool DebugMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = DebugMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
-    }
-
-    hsDeprecated("plLoggable::WarningMsg with format is deprecated -- use plFormat instead")
-    virtual bool WarningMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = WarningMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
-    }
-
-    hsDeprecated("plLoggable::AppMsg with format is deprecated -- use plFormat instead")
-    virtual bool AppMsg(const char* fmt, ...) const
-    {
-        va_list args;
-        va_start(args, fmt);
-        bool ret = AppMsgV(fmt, args);
-        va_end(args);
-
-        return ret;
+        return AppMsg(plFormat(fmt, args...));
     }
 };
 

@@ -102,7 +102,7 @@ int plNetClientMgr::ISendDirtyState(double secs)
 #if 0
     if (num)
     {
-        DebugMsg("%d dirty sdl state msgs queued, t=%f", num, secs);
+        DebugMsg("{} dirty sdl state msgs queued, t={f}", num, secs);
     }
 #endif
     int32_t i;
@@ -119,8 +119,8 @@ int plNetClientMgr::ISendDirtyState(double secs)
             int localOwned=obj->IsLocallyOwned();
             if (localOwned==plSynchedObject::kNo)
             {
-                DebugMsg("Late rejection of queued SDL state, obj %s, sdl %s",
-                    state->fObjKey->GetName().c_str(), state->fSDLName.c_str());
+                DebugMsg("Late rejection of queued SDL state, obj {}, sdl {}",
+                    state->fObjKey->GetName(), state->fSDLName);
                 continue;
             }
         }
@@ -253,7 +253,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
 #ifdef HS_DEBUGGING
     if ( dstIDs )
     {
-        DebugMsg( "Preparing to send %s to specific players.", msg->ClassName() );
+        DebugMsg( "Preparing to send {} to specific players.", msg->ClassName() );
     }
 #endif
 
@@ -288,7 +288,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
             uint32_t playerID = (*dstIDs)[i];
             if (playerID == NetCommGetPlayer()->playerInt)
                 continue;
-            hsLogEntry( DebugMsg( "\tAdding receiver: %lu" , playerID ) );
+            hsLogEntry( DebugMsg( "\tAdding receiver: {}" , playerID ) );
             ((plNetMsgGameMessageDirected*)netMsgWrap)->Receivers()->AddReceiverPlayerID( playerID );
         }
     }
@@ -334,7 +334,7 @@ int plNetClientMgr::ISendGameMessage(plMessage* msg)
             bCast = true;
     }
     if (!directCom && !bCast && !dstIDs)
-        WarningMsg("Msg %s has no rcvrs or bcast instructions?", msg->ClassName());
+        WarningMsg("Msg {} has no rcvrs or bcast instructions?", msg->ClassName());
 
     hsAssert(!(directCom && bCast), "msg has both rcvrs and bcast instructions, rcvrs ignored");
     if (directCom && !bCast)
@@ -422,7 +422,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
     msg->SetTimeSent(plUnifiedTime::GetCurrent());
     int channel = IPrepMsg(msg);
     
-//  hsLogEntry( DebugMsg( "<SND> %s %s", msg->ClassName(), msg->AsStdString().c_str()) );
+//  hsLogEntry( DebugMsg( "<SND> {} {}", msg->ClassName(), msg->AsStdString()) );
     
     int ret=fTransport.SendMsg(channel, msg);
 

@@ -304,7 +304,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
     plLinkEffectsTriggerMsg* pTriggerMsg = plLinkEffectsTriggerMsg::ConvertNoRef(msg);
     if (pTriggerMsg)
     {
-        plNetApp::GetInstance()->DebugMsg("Received LinkEffectsTriggerMsg, local=%d, linkingIn=%d, stealth=%d", 
+        plNetApp::GetInstance()->DebugMsg("Received LinkEffectsTriggerMsg, local={}, linkingIn={}, stealth={}",
             !msg->HasBCastFlag(plMessage::kNetNonLocal),
             !pTriggerMsg->IsLeavingAge(), pTriggerMsg->GetInvisLevel());
 
@@ -328,7 +328,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         plSceneObject *avatar = plSceneObject::ConvertNoRef(linkKey->ObjectIsLoaded());
         if (avatar == nil)
         {
-            plNetApp::GetInstance()->DebugMsg("Can't find avatar, mod=%s\n", linkKey->GetName().c_str());
+            plNetApp::GetInstance()->DebugMsg("Can't find avatar, mod={}\n", linkKey->GetName());
             return true;
         }
 
@@ -450,7 +450,7 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
     plLinkCallbackMsg* pLinkCallbackMsg = plLinkCallbackMsg::ConvertNoRef(msg);
     if (pLinkCallbackMsg)
     {
-        plNetApp::GetInstance()->DebugMsg("Received pLinkCallbackMsg, localmsg=%d\n", 
+        plNetApp::GetInstance()->DebugMsg("Received pLinkCallbackMsg, localmsg={}\n",
             !msg->HasBCastFlag(plMessage::kNetNonLocal));
 
         static char str[ 128 ];
@@ -468,13 +468,13 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         }
         else if (pTriggerMsg->fEffects < 0 )
         {
-            plNetApp::GetInstance()->DebugMsg("Too many link callbacks received for avatar %s. Ignoring extras.\n",
-                    pTriggerMsg->GetLinkKey()->GetName().c_str());
+            plNetApp::GetInstance()->DebugMsg("Too many link callbacks received for avatar {}. Ignoring extras.\n",
+                    pTriggerMsg->GetLinkKey()->GetName());
         }
         else
         {
-            plNetApp::GetInstance()->DebugMsg("%d link callbacks left until avatar %s links...\n", 
-                     pTriggerMsg->fEffects, pTriggerMsg->GetLinkKey()->GetName().c_str());
+            plNetApp::GetInstance()->DebugMsg("{} link callbacks left until avatar {} links...\n",
+                     pTriggerMsg->fEffects, pTriggerMsg->GetLinkKey()->GetName());
         }
         return true;
     }

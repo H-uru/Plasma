@@ -58,30 +58,6 @@ void plSDLParser::DebugMsg(const plString& msg) const
         hsStatusMessage(msg.c_str());
 }
 
-void plSDLParser::DebugMsg(const char* fmt, ...) const
-{
-    return;
-    plNetApp* netApp = plSDLMgr::GetInstance()->GetNetApp();
-
-    va_list args;
-    va_start(args, fmt);
-    
-    if (netApp)
-    {
-        hsLogEntry(netApp->DebugMsgV(fmt, args));
-    }
-    else
-        DebugMsgV(fmt, args);
-    va_end(args);
-}
-
-void plSDLParser::DebugMsgV(const char* fmt, va_list args) const
-{
-    if (strlen(fmt) == 0)
-        return;
-    hsStatusMessage(plString::IFormat(fmt,args).c_str());
-}
-
 //
 // parsing stateDesc
 // read name, version
@@ -103,7 +79,7 @@ bool plSDLParser::IParseStateDesc(const plFileName& fileName, hsStream* stream, 
         curDesc = new plStateDescriptor;
         curDesc->SetName(token);
 
-        DebugMsg("SDL: DESC name=%s", token);
+        DebugMsg("SDL: DESC name={}", token);
     }
     
     //
@@ -124,7 +100,7 @@ bool plSDLParser::IParseStateDesc(const plFileName& fileName, hsStream* stream, 
             {
                 int v=atoi(token);
                 curDesc->SetVersion(v);
-                DebugMsg("\tVersion=%d", v);
+                DebugMsg("\tVersion={}", v);
             }               
         }
         else
@@ -321,7 +297,7 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
         }
     }
 
-    DebugMsg(dbgStr.c_str());
+    DebugMsg(dbgStr);
 
     return skipNext;
 }
@@ -332,7 +308,7 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
 //
 bool plSDLParser::ILoadSDLFile(const plFileName& fileName) const
 {
-    DebugMsg("Parsing SDL file %s", fileName.AsString().c_str());
+    DebugMsg("Parsing SDL file {}", fileName);
 
     hsStream* stream = plStreamSource::GetInstance()->GetFile(fileName);
     if (!stream)
@@ -403,7 +379,7 @@ bool plSDLParser::ILoadSDLFile(const plFileName& fileName) const
 bool plSDLParser::IReadDescriptors() const
 {
     plFileName sdlDir = plSDLMgr::GetInstance()->GetSDLDir();
-    DebugMsg("SDL: Reading latest descriptors from directory %s", sdlDir.AsString().c_str());
+    DebugMsg("SDL: Reading latest descriptors from directory {}", sdlDir);
 
     // Get the names of all the sdl files
     std::vector<plFileName> files = plStreamSource::GetInstance()->GetListOfNames(sdlDir, "sdl");
@@ -416,7 +392,7 @@ bool plSDLParser::IReadDescriptors() const
         {
             plNetApp* netApp = plSDLMgr::GetInstance()->GetNetApp();
             if (netApp)
-                netApp->ErrorMsg("Error loading SDL file %s", files[i].AsString().c_str());
+                netApp->ErrorMsg("Error loading SDL file {}", files[i]);
             else
                 hsStatusMessageF("Error loading SDL file %s", files[i].AsString().c_str());
             ret=false;

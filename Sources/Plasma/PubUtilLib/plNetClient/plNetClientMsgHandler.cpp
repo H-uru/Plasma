@@ -128,7 +128,7 @@ void plNetClientMsgHandler::IFillInTransportMember(const plNetMsgMemberInfoHelpe
 int plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
 {
 #ifdef HS_DEBUGGING
-    //plNetClientMgr::GetInstance()->DebugMsg("<RCV> %s", netMsg->ClassName());
+    //plNetClientMgr::GetInstance()->DebugMsg("<RCV> {}", netMsg->ClassName());
 #endif
 
     plNetClientMgr::GetInstance()->UpdateServerTimeOffset(netMsg);
@@ -136,7 +136,7 @@ int plNetClientMsgHandler::ReceiveMsg(plNetMessage *& netMsg)
     switch(netMsg->ClassIndex())
     {
         default:
-            plNetClientMgr::GetInstance()->ErrorMsg( "Unknown msg: %s", netMsg->ClassName() );
+            plNetClientMgr::GetInstance()->ErrorMsg( "Unknown msg: {}", netMsg->ClassName() );
             return hsFail;
 
         MSG_HANDLER_CASE(plNetMsgTerminated)
@@ -171,8 +171,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
     /*
@@ -184,7 +184,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGroupOwner)
         plNetMsgGroupOwner::GroupInfo gr=m->GetGroupInfo(i);
         netOwnMsg->AddGroupInfo(gr);
         nc->GetNetGroups()->SetGroup(gr.fGroupID, gr.fOwnIt!=0 ? true : false);
-        hsLogEntry( nc->DebugMsg("\tGroup 0x%x, ownIt=%d\n", (const char*)gr.fGroupID.Room().GetSequenceNumber(), gr.fOwnIt) );
+        hsLogEntry( nc->DebugMsg("\tGroup 0x{x}, ownIt={}\n", gr.fGroupID.Room().GetSequenceNumber(), gr.fOwnIt) );
     }
 
     if (netOwnMsg->GetNumGroups())
@@ -207,8 +207,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
     uint32_t rwFlags = 0;
@@ -258,7 +258,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
                 descName, ver, sdRec->GetDescriptor()->GetVersion());
 
         hsAssert(false, err.c_str());
-        nc->ErrorMsg(err.c_str());
+        nc->ErrorMsg(err);
 
         // Post Quit message
         nc->QueueDisableNet(true, "SDL Desc Problem");
@@ -286,8 +286,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
 
         // queue up state
         nc->fPendingLoads.push_back(pl);
-        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for %s:%s",
-                                  m->ObjectInfo()->GetObjectName().c_str(), des->GetName().c_str() ) );
+        hsLogEntry( nc->DebugMsg( "Added pending SDL delivery for {}:{}",
+                                  m->ObjectInfo()->GetObjectName(), des->GetName() ) );
     }
     else
         delete sdRec;
@@ -319,8 +319,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
         if (gameMsg)
         {
         /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES!!! -eap
-            hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sndr %s rcvr %s sz=%d",
-                m->ClassName(), m->AsStdString().c_str(), 
+            hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sndr {} rcvr {} sz={}",
+                m->ClassName(), m->AsStdString(),
                 gameMsg->GetSender() ? gameMsg->GetSender()->GetName() : "?",
                 gameMsg->GetNumReceivers() ? gameMsg->GetReceiver(0)->GetName() : "?",
                 m->GetNetCoreMsgLen()) );
@@ -346,7 +346,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                         int idx = nc->fTransport.FindMember(loadClone->GetOriginatingPlayerID());
                         if (idx == -1)
                         {
-                            hsLogEntry( nc->DebugMsg( "Ignoring load clone because player isn't in our players list: %d", loadClone->GetOriginatingPlayerID()) );
+                            hsLogEntry( nc->DebugMsg( "Ignoring load clone because player isn't in our players list: {}", loadClone->GetOriginatingPlayerID()) );
                             return hsOK;
                         }
                     }
@@ -363,7 +363,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgGameMessage)
                 m->GetDeliveryTime().ConvertToGameTime(&timeStamp, secs);
                 hsAssert(timeStamp>=secs, "invalid future timeStamp");
                 gameMsg->SetTimeStamp(timeStamp);
-                nc->DebugMsg("Converting game msg future timeStamp, curT=%f, futT=%f", secs, timeStamp);
+                nc->DebugMsg("Converting game msg future timeStamp, curT={f}, futT={f}", secs, timeStamp);
             }
 
             // Do some basic security checks on the incoming message because
@@ -395,8 +395,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
     int bufLen = m->GetVoiceDataLen();
@@ -410,7 +410,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     // Filter ignored sender
     if ( VaultAmIgnoringPlayer( m->GetPlayerID() ) )
     {
-        hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player %lu", m->GetPlayerID() ) );
+        hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player {}", m->GetPlayerID() ) );
         return hsOK;
     }
 
@@ -425,7 +425,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
         {
             if (nc->GetListenList()->FindMember( mbr ))
             {       
-                hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player %lu", m->GetPlayerID() ) );
+                hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player {}", m->GetPlayerID() ) );
                 return hsOK;
             }
         }
@@ -463,8 +463,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
     int i;
@@ -484,7 +484,7 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMembersList)
     {
         plNetTransportMember* mbr = new plNetTransportMember(nc);
         IFillInTransportMember(m->MemberListInfo()->GetMember(i), mbr);
-        hsLogEntry(nc->DebugMsg("\tAdding transport member, name=%s, p2p=%d, plrID=%d\n", mbr->AsString().c_str(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
+        hsLogEntry(nc->DebugMsg("\tAdding transport member, name={}, p2p={}, plrID={}\n", mbr->AsString(), mbr->IsPeerToPeer(), mbr->GetPlayerID()));
         int idx=nc->fTransport.AddMember(mbr);
         hsAssert(idx>=0, "Failed adding member?");
             
@@ -504,8 +504,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgMemberUpdate)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
     
     if (m->AddingMember())
@@ -552,8 +552,8 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgListenListUpdate)
     PeekMsg(m);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        m->ClassName(), m->AsStdString().c_str(), m->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        m->ClassName(), m->AsStdString(), m->GetNetCoreMsgLen()) );
 */
 
     int idx=nc->fTransport.FindMember(m->GetPlayerID());
@@ -591,11 +591,11 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgInitialAgeStateSent)
     PeekMsg(msg);
 
 /* !!! THIS LOG MSG CRASHES THE CLIENT SOMETIMES! -eap
-    hsLogEntry( nc->DebugMsg("<RCV> %s, %s, sz=%d",
-        netMsg->ClassName(), netMsg->AsStdString().c_str(), netMsg->GetNetCoreMsgLen()) );
+    hsLogEntry( nc->DebugMsg("<RCV> {}, {}, sz={}",
+        netMsg->ClassName(), netMsg->AsStdString(), netMsg->GetNetCoreMsgLen()) );
 */
 
-    nc->DebugMsg( "Initial age SDL count: %d", msg->GetNumInitialSDLStates( ) );
+    nc->DebugMsg( "Initial age SDL count: {}", msg->GetNumInitialSDLStates( ) );
 
     nc->SetRequiredNumInitialSDLStates( msg->GetNumInitialSDLStates() );
     nc->SetFlagsBit( plNetClientApp::kNeedInitialAgeStateCount, false );

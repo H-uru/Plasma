@@ -67,8 +67,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const plNetGameMember* gm) const
 {
-    DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s", 
-        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName().c_str(), IGetSenderName(gm));
+    DebugMsg("Message {} was rejected, reason:{}, age:{}, client:{}",
+        plFactory::GetNameOfClass(classIndex), desc, IGetAgeName(), IGetSenderName(gm));
 }
 
 //
@@ -79,8 +79,8 @@ void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, con
     const char* senderName = msg->GetSender() ? msg->GetSender()->GetUoid().GetObjectName().c_str() : "?";
     const char* rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName().c_str() : "?";
 
-    DebugMsg("Message %s was rejected, reason:%s, age:%s, client:%s, msgSndr:%s, msgRcvr:%s", 
-        msg->ClassName(), desc, IGetAgeName().c_str(), IGetSenderName(gm),
+    DebugMsg("Message {} was rejected, reason:{}, age:{}, client:{}, msgSndr:{}, msgRcvr:{}",
+        msg->ClassName(), desc, IGetAgeName(), IGetSenderName(gm),
         senderName, rcvrName);
 }
 

@@ -206,7 +206,7 @@ bool plAgeLoader::ILoadAge(const plString& ageName)
 
     fAgeName = ageName;
 
-    nc->DebugMsg( "Net: Loading age %s", fAgeName.c_str());
+    nc->DebugMsg( "Net: Loading age {}", fAgeName);
 
     if ((fFlags & kLoadMask) != 0)
         ErrorAssert(__LINE__, __FILE__, "Fatal Error:\nAlready loading or unloading an age.\n%s will now exit.",
@@ -235,7 +235,7 @@ bool plAgeLoader::ILoadAge(const plString& ageName)
     hsStream* stream=GetAgeDescFileStream(fAgeName);
     if (!stream)
     {
-        nc->ErrorMsg("Failed loading age.  Age desc file %s has nil stream", fAgeName.c_str());
+        nc->ErrorMsg("Failed loading age.  Age desc file {} has nil stream", fAgeName);
         fFlags &= ~kLoadingAge;
         return false;
     }
@@ -288,14 +288,14 @@ bool plAgeLoader::ILoadAge(const plString& ageName)
     {
         if( IsPageExcluded( page, fAgeName) )
         {
-            nc->DebugMsg("\tExcluding page %s\n", page->GetName().c_str());
+            nc->DebugMsg("\tExcluding page {}\n", page->GetName());
             continue;
         }
 
         nPages++;
 
         pMsg1->AddRoomLoc(ad.CalcPageLocation(page->GetName()));
-        nc->DebugMsg("\tPaging in room %s\n", page->GetName().c_str());
+        nc->DebugMsg("\tPaging in room {}\n", page->GetName());
     }
 
     pMsg1->Send(clientKey);
@@ -346,7 +346,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
 bool    plAgeLoader::IUnloadAge()
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
-    nc->DebugMsg( "Net: Unloading age %s", fAgeName.c_str());
+    nc->DebugMsg( "Net: Unloading age {}", fAgeName);
 
     hsAssert( (fFlags & kLoadMask)==0, "already loading or unloading an age?"); 
     fFlags |= kUnLoadingAge;
@@ -375,7 +375,7 @@ bool    plAgeLoader::IUnloadAge()
         plKey roomKey = plKeyFinder::Instance().FindSceneNodeKey( page->GetPageInfo().GetLocation() );
         if( roomKey != nil && roomKey->ObjectIsLoaded() )
         {
-            nc->DebugMsg( "\tPaging out room %s\n", page->GetPageInfo().GetPage().c_str() );
+            nc->DebugMsg( "\tPaging out room {}\n", page->GetPageInfo().GetPage() );
             newPageOuts.push_back(roomKey);
         }
     }

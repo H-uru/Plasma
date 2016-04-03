@@ -110,7 +110,7 @@ void plAgeLoader::FinishedPagingInRoom(plKey* rmKey, int numRms)
             continue;
 
         pagingMsg->AddRoom(key);        
-        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room=%s\n", key->GetName().c_str()));
+        hsLogEntry(nc->DebugMsg("\tSending PageIn/RequestState msg, room={}\n", key->GetName()));
     }
     if( pagingMsg->GetNumRooms() > 0 )  // all rooms were reserved
     {
@@ -148,7 +148,7 @@ void plAgeLoader::FinishedPagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Finished paging out room %s", rmKey[i]->GetName().c_str());
+            nc->DebugMsg("Finished paging out room {}", rmKey[i]->GetName());
         }
     }
 
@@ -179,7 +179,7 @@ void plAgeLoader::StartPagingOutRoom(plKey* rmKey, int numRms)
             continue;
     
         pagingMsg.AddRoom(rmKey[i]);
-        nc->DebugMsg("\tSending PageOut msg, room=%s", rmKey[i]->GetName().c_str());
+        nc->DebugMsg("\tSending PageOut msg, room={}", rmKey[i]->GetName());
     }
 
     if (!pagingMsg.GetNumRooms())   // all rooms were reserved
@@ -205,7 +205,7 @@ void plAgeLoader::IgnorePagingOutRoom(plKey* rmKey, int numRms)
         if( found != fPendingPageOuts.end() )
         {
             fPendingPageOuts.erase( found );
-            nc->DebugMsg("Ignoring paged out room %s", rmKey[i]->GetName().c_str());
+            nc->DebugMsg("Ignoring paged out room {}", rmKey[i]->GetName());
         }
     }
 

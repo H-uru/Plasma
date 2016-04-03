@@ -518,9 +518,11 @@ private:
 
     void DebugMsg(const plString& msg) const;
 
-    hsDeprecated("plSDLParser::DebugMsg with format is deprecated -- use plFormat instead")
-    void DebugMsg(const char* fmt, ...) const;
-    void DebugMsgV(const char* fmt, va_list args) const;
+    template <typename... _Args>
+    void DebugMsg(const char* fmt, _Args... args) const
+    {
+        DebugMsg(plFormat(fmt, args...));
+    }
 
 public:
 
