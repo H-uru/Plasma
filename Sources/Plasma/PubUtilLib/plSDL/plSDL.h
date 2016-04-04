@@ -518,6 +518,11 @@ private:
 
     void DebugMsg(const plString& msg) const;
 
+    void DebugMsg(const char* msg) const
+    {
+        DebugMsg(plString(msg));
+    }
+
     template <typename... _Args>
     void DebugMsg(const char* fmt, _Args... args) const
     {

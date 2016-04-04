@@ -158,6 +158,26 @@ public:
         return Log("DBG: " + msg);
     }
 
+    virtual bool ErrorMsg(const char* msg) const
+    {
+        return Log(plString("ERR: ") + msg);
+    }
+
+    virtual bool WarningMsg(const char* msg) const
+    {
+        return Log(plString("WRN: ") + msg);
+    }
+
+    virtual bool AppMsg(const char* msg) const
+    {
+        return Log(plString("APP: ") + msg);
+    }
+
+    virtual bool DebugMsg(const char* msg) const
+    {
+        return Log(plString("DBG: ") + msg);
+    }
+
     template <typename... _Args>
     bool ErrorMsg(const char* fmt, _Args... args) const
     {

@@ -111,6 +111,26 @@ public:
     static bool StaticAppMsg(const plString& msg);
     static bool StaticDebugMsg(const plString& msg);
 
+    static bool StaticErrorMsg(const char* msg)
+    {
+        return StaticErrorMsg(plString(msg));
+    }
+
+    static bool StaticWarningMsg(const char* msg)
+    {
+        return StaticWarningMsg(plString(msg));
+    }
+
+    static bool StaticAppMsg(const char* msg)
+    {
+        return StaticAppMsg(plString(msg));
+    }
+
+    static bool StaticDebugMsg(const char* msg)
+    {
+        return StaticDebugMsg(plString(msg));
+    }
+
     template <typename... _Args>
     static bool StaticErrorMsg(const char* fmt, _Args... args)
     {
