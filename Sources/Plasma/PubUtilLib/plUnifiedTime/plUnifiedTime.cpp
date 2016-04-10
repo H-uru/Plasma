@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime.h"
 #include "hsWindows.h"
 #include "hsStream.h"
-#include "plString.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/time.h>

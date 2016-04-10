@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plNetCommon/plNetMember.h"
 #include "pnKeyedObject/plKey.h"
-#include "plString.h"
 
 //
 // This represents a participant in the game, ie. another 

@@ -204,10 +204,10 @@ void hsG3DDeviceRecord::Clear()
 {
     fFlags = kNone;
 
-    fG3DDriverDesc = plString::Null;
-    fG3DDriverName = plString::Null;
-    fG3DDriverVersion = plString::Null;
-    fG3DDeviceDesc = plString::Null;
+    fG3DDriverDesc = ST::string::null;
+    fG3DDriverName = ST::string::null;
+    fG3DDriverVersion = ST::string::null;
+    fG3DDeviceDesc = ST::string::null;
 
     fCaps.Clear();
     fLayersAtOnce = 0;
@@ -601,12 +601,12 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     }
 
     /// So capitalization won't matter in our tests
-    plString desc = plString::FromIso8859_1(szDesc).ToLower();
+    ST::string desc = ST::string::from_latin_1(szDesc).to_lower();
 
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    ssize_t radeon = desc.Find("radeon");
+    ST_ssize_t radeon = desc.find("radeon");
     if (stricmp(szDriver, "ati2dvag.dll") == 0 || radeon >= 0)
     {
         int series = 0;

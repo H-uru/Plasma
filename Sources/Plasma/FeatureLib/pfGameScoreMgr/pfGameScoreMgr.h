@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnNetBase/pnNetBase.h"
 #include "hsRefCnt.h"
-#include "plString.h"
 
 // TODO: Rank List (seems to be unused in regular gameplay though...)
 //       That's some strange stuff...

@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsTemplates.h"
-#include "plString.h"
 
 
 // This file is intended to be an independent section so that plClothingMtl and plAvatarClothing

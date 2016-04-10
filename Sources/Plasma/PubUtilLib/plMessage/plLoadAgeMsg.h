@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 #include "pnUUID/pnUUID.h"
-#include "plString.h"
 
 
 //

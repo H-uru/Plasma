@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 #include <gtest/gtest.h>
+#include "HeadSpin.h"
 #include "plCmdParser.h"
 
 TEST(plCmdParser, basic_parsing)
@@ -53,8 +54,8 @@ TEST(plCmdParser, basic_parsing)
     plCmdParser parser(cmds, arrsize(cmds));
     bool success = parser.Parse("plCmdParser ~/.plasma/config.dat");
 
-    plString prog = parser.GetProgramName();
-    plString path = parser.GetString(0);
+    ST::string prog = parser.GetProgramName();
+    ST::string path = parser.GetString(0);
 
     EXPECT_EQ(success, true);
     EXPECT_STREQ(prog.c_str(), "plCmdParser");
@@ -73,12 +74,12 @@ TEST(plCmdParser, argv_parsing)
     const char* args[] = {"plCmdParser", "~/.plasma/config.dat"};
     int argc = 2;
 
-    std::vector<plString> tokens(args, args+argc);
+    std::vector<ST::string> tokens(args, args+argc);
 
     bool success = parser.Parse(tokens);
 
-    plString prog = parser.GetProgramName();
-    plString path = parser.GetString(0);
+    ST::string prog = parser.GetProgramName();
+    ST::string path = parser.GetString(0);
 
     EXPECT_EQ(success, true);
     EXPECT_STREQ(prog.c_str(), "plCmdParser");
@@ -97,12 +98,12 @@ TEST(plCmdParser, argv_preserving_spaces)
     const char* args[] = {"plCmdParser", "~/.plasma/Uru Live/config.dat"};
     int argc = 2;
 
-    std::vector<plString> tokens(args, args+argc);
+    std::vector<ST::string> tokens(args, args+argc);
 
     bool success = parser.Parse(tokens);
 
-    plString prog = parser.GetProgramName();
-    plString path = parser.GetString(0);
+    ST::string prog = parser.GetProgramName();
+    ST::string path = parser.GetString(0);
 
     EXPECT_EQ(success, true);
     EXPECT_STREQ(prog.c_str(), "plCmdParser");
@@ -121,15 +122,15 @@ TEST(plCmdParser, wchar_argv_parsing)
     const wchar_t* args[] = {L"plCmdParser", L"~/.plasma/config.dat"};
     int argc = 2;
 
-    std::vector<plString> tokens(argc);
+    std::vector<ST::string> tokens(argc);
     for (int i = 0; i < argc; i++) {
-        tokens.push_back(plString::FromWchar(args[i]));
+        tokens.push_back(ST::string::from_wchar(args[i]));
     }
 
     bool success = parser.Parse(tokens);
 
-    plString prog = parser.GetProgramName();
-    plString path = parser.GetString(0);
+    ST::string prog = parser.GetProgramName();
+    ST::string path = parser.GetString(0);
 
     EXPECT_EQ(success, true);
     EXPECT_STREQ(prog.c_str(), "plCmdParser");
@@ -276,7 +277,7 @@ TEST(plCmdParser, flagged_string)
     plCmdParser parser(cmds, arrsize(cmds));
     parser.Parse("plCmdParser --path foo");
 
-    plString path = parser.GetString(0);
+    ST::string path = parser.GetString(0);
 
     EXPECT_STREQ(path.c_str(), "foo");
 }
@@ -290,7 +291,7 @@ TEST(plCmdParser, flagged_string_bystring)
     plCmdParser parser(cmds, arrsize(cmds));
     parser.Parse("plCmdParser --path foo");
 
-    plString path = parser.GetString("path");
+    ST::string path = parser.GetString("path");
 
     EXPECT_STREQ(path.c_str(), "foo");
 }

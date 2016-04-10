@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAxisAnimMod_inc
 
 #include "pnModifier/plSingleModifier.h"
-#include "plString.h"
 
 
 class plKey;

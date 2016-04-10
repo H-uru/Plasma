@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include "hsMatrix44.h"
 #include "pnFactory/plCreatable.h"
-#include "plString.h"
 
 class plMessage;
 class plAGAnimInstance;

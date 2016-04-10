@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
-#include "plString.h"
 #pragma hdrstop
 
 #include "pyColor.h"

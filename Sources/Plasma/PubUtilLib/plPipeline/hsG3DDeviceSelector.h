@@ -59,7 +59,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "hsBitVector.h"
-#include "plString.h"
+#include <string_theory/string>
 
 #ifdef HS_BUILD_FOR_WIN32
 #define HS_SELECT_DIRECT3D // not supported on the Mac.
@@ -150,10 +150,10 @@ protected:
     uint32_t        fG3DHALorHEL;
 
 
-    plString        fG3DDriverDesc;
-    plString        fG3DDriverName;
-    plString        fG3DDriverVersion;
-    plString        fG3DDeviceDesc;
+    ST::string      fG3DDriverDesc;
+    ST::string      fG3DDriverName;
+    ST::string      fG3DDriverVersion;
+    ST::string      fG3DDeviceDesc;
 
     hsBitVector     fCaps;
     uint32_t        fLayersAtOnce;
@@ -189,19 +189,19 @@ public:
 
     uint32_t GetMemoryBytes() const { return fMemoryBytes; }
 
-    plString GetDriverDesc() const { return fG3DDriverDesc; }
-    plString GetDriverName() const { return fG3DDriverName; }
-    plString GetDriverVersion() const { return fG3DDriverVersion; }
-    plString GetDeviceDesc() const { return fG3DDeviceDesc; }
+    ST::string GetDriverDesc() const { return fG3DDriverDesc; }
+    ST::string GetDriverName() const { return fG3DDriverName; }
+    ST::string GetDriverVersion() const { return fG3DDriverVersion; }
+    ST::string GetDeviceDesc() const { return fG3DDeviceDesc; }
 
     void SetG3DDeviceType(uint32_t t) { fG3DDeviceType = t; }
     void SetG3DHALorHEL(uint32_t h) { fG3DHALorHEL = h; }
     void SetMemoryBytes(uint32_t b) { fMemoryBytes = b; }
 
-    void SetDriverDesc(const plString& s) { fG3DDriverDesc = s; }
-    void SetDriverName(const plString& s) { fG3DDriverName = s; }
-    void SetDriverVersion(const plString& s) { fG3DDriverVersion = s; }
-    void SetDeviceDesc(const plString& s) { fG3DDeviceDesc = s; }
+    void SetDriverDesc(const ST::string& s) { fG3DDriverDesc = s; }
+    void SetDriverName(const ST::string& s) { fG3DDriverName = s; }
+    void SetDriverVersion(const ST::string& s) { fG3DDriverVersion = s; }
+    void SetDeviceDesc(const ST::string& s) { fG3DDeviceDesc = s; }
 
     bool    GetCap(uint32_t cap) const { return fCaps.IsBitSet(cap); }
     void    SetCap(uint32_t cap, bool on=true) { fCaps.SetBit(cap, on); }

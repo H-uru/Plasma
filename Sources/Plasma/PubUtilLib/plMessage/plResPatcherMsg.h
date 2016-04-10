@@ -42,7 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _PLMESSAGE_PLRESPATCHERMSG_H
 #define _PLMESSAGE_PLRESPATCHERMSG_H
 
-#include "plString.h"
 #include "pnMessage/plMessage.h"
 
 // This message is sent when plResPatcher has completed its async operation

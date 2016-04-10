@@ -191,9 +191,9 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const plString& name, int type, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const plString& name, const char* typeName, const plString& ageName,
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 

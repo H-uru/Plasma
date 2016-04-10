@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessageWithCallbacks.h"
 #include "hsBitVector.h"
-#include "plString.h"
 
 class plAGAnimInstance;
 

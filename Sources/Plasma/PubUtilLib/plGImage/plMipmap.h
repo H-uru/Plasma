@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plMipmap_h
 
 #include "plBitmap.h"
-#include "plString.h"
 
 #ifdef HS_DEBUGGING
     #define ASSERT_PIXELSIZE(bitmap, pixelsize)     hsAssert((bitmap)->fPixelSize == (pixelsize), "pixelSize mismatch")

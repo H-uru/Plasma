@@ -46,9 +46,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "pnMessage/plMessage.h"
 #include "pnKeyedObject/plKey.h"
-#include "plString.h"
 
-static bool DumpSpecificMsgInfo(plMessage* msg, plString& info);
+static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info);
 
 plDispatchLog::plDispatchLog() :
     fLog(nil),
@@ -101,7 +100,7 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 
 void plDispatchLog::LogLongReceive(const char* keyname, const char* className, uint32_t clonePlayerID, plMessage* msg, float ms)
 {
-    plString info;
+    ST::string info;
     if (DumpSpecificMsgInfo(msg, info))
         fLog->AddLineF("%-30s[%7u](%-20s) took %6.1f ms to receive %s[%s]\n", keyname, clonePlayerID, className, ms, msg->ClassName(), info.c_str());
     else

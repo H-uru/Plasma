@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plRegistryHelpers.h"
 
-#include "plString.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "plStatusLog/plStatusLog.h"
 #include "pnFactory/plFactory.h"

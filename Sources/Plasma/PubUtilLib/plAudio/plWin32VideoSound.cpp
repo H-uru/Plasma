@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plWin32VideoSound.h"
 
 #include "hsResMgr.h"
-#include "plFormat.h"
 #include "plDSoundBuffer.h"
 
 static int uniqueID = 0;
