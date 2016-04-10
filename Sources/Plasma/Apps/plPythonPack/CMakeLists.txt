@@ -15,6 +15,7 @@ set(plPythonPack_HEADERS
 add_executable(plPythonPack ${plPythonPack_SOURCES} ${plPythonPack_HEADERS})
 target_link_libraries(plPythonPack CoreLib plFile)
 target_link_libraries(plPythonPack ${PYTHON_LIBRARIES})
+target_link_libraries(plPythonPack ${STRING_THEORY_LIBRARIES})
 
 if(USE_VLD)
     target_link_libraries(plPythonPack ${VLD_LIBRARY})

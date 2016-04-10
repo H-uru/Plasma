@@ -83,9 +83,9 @@ class plSceneInputInterface : public plInputInterface
         plKey   fBookKey;  // key for the python file modifier for the book we are offering
         plKey   fOffereeKey;
         uint32_t fOffereeID; // ID for the guy who's accepted our link offer
-        plString fOfferedAgeFile;
-        plString fOfferedAgeInstance;
-        plString fSpawnPoint;
+        ST::string fOfferedAgeFile;
+        ST::string fOfferedAgeInstance;
+        ST::string fSpawnPoint;
         plUUID fAgeInstanceGuid;
         struct clickableTest
         {

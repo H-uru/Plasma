@@ -64,11 +64,11 @@ plProgressMgr* plProgressMgr::fManager = nullptr;
 
 #define LOADING_RES_COUNT   18
 
-plString plProgressMgr::fImageRotation[LOADING_RES_COUNT];
+ST::string plProgressMgr::fImageRotation[LOADING_RES_COUNT];
 
-const plString plProgressMgr::fStaticTextIDs[] = {
-    "xLoading_Linking_Text.png",
-    "xLoading_Updating_Text.png"
+const ST::string plProgressMgr::fStaticTextIDs[] = {
+    ST_LITERAL("xLoading_Linking_Text.png"),
+    ST_LITERAL("xLoading_Updating_Text.png")
 };
 
 //// Constructor & Destructor ////////////////////////////////////////////////
@@ -82,7 +82,7 @@ plProgressMgr::plProgressMgr()
 
     // Fill array with pre-computed loading frame IDs
     for (int i=0; i < LOADING_RES_COUNT; i++)
-        fImageRotation[i] = plFormat("xLoading_Linking.{_02}.png", i);
+        fImageRotation[i] = ST::format("xLoading_Linking.{02}.png", i);
 }
 
 plProgressMgr::~plProgressMgr()
@@ -228,7 +228,7 @@ void    plProgressMgr::CancelAllOps( void )
     fCurrentStaticText = kNone;
 }
 
-const plString plProgressMgr::GetLoadingFrameID(int index)
+const ST::string plProgressMgr::GetLoadingFrameID(int index)
 {
     if (index < LOADING_RES_COUNT)
         return fImageRotation[index];
@@ -241,7 +241,7 @@ uint32_t plProgressMgr::NumLoadingFrames() const
     return LOADING_RES_COUNT;
 }
 
-const plString plProgressMgr::GetStaticTextID(StaticText staticTextType)
+const ST::string plProgressMgr::GetStaticTextID(StaticText staticTextType)
 {
     return fStaticTextIDs[staticTextType];
 }

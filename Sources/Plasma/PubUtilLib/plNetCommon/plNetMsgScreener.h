@@ -63,7 +63,7 @@ protected:
         kYes
     };
     virtual const char* IGetSenderName(const plNetGameMember* gm) const = 0;
-    virtual plString IGetAgeName() const = 0;
+    virtual ST::string IGetAgeName() const = 0;
     virtual bool IIsSenderCCR(const plNetGameMember* gm=nil) const = 0;
     virtual bool IIsLocalAvatarKey(plKey key, const plNetGameMember* gm) const = 0;
     virtual bool IIsLocalArmatureModKey(plKey key, const plNetGameMember* gm) const { return true; }

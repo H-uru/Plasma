@@ -315,8 +315,8 @@ const char* plUnifiedTime::Print() const
 
 const char* plUnifiedTime::PrintWMillis() const
 {
-    static plString s;
-    s = plFormat("{},s:{},ms:{}",
+    static ST::string s;
+    s = ST::format("{},s:{},ms:{}",
         Print(), (unsigned long)GetSecs(), GetMillis() );
     return s.c_str();
 }

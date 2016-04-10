@@ -54,7 +54,7 @@ plAGApplicator::plAGApplicator()
 
 // ctor -------------------------------
 // -----
-plAGApplicator::plAGApplicator(const plString &channelName)
+plAGApplicator::plAGApplicator(const ST::string &channelName)
 : fChannel(nil),
   fEnabled(true),
   fChannelName(channelName)
@@ -71,14 +71,14 @@ void plAGApplicator::Apply(const plAGModifier *mod, double time, bool force)
         IApply(mod, time);
 }
 
-void plAGApplicator::SetChannelName(const plString &name)
+void plAGApplicator::SetChannelName(const ST::string &name)
 {
-    if(!name.IsNull())
+    if(!name.is_empty())
         fChannelName = name;
 };
 
 
-plString plAGApplicator::GetChannelName()
+ST::string plAGApplicator::GetChannelName()
 {
     return fChannelName;
 };

@@ -167,7 +167,7 @@ public:
     const plNetServerSessionInfo * GetLobbyServerInfo( void ) const { return &fLobbyInfo;}
 
     // helpers
-    static plString GetProperAgeName( const plString & ageName );    // attempt to fix wrong case age name.
+    static ST::string GetProperAgeName( const ST::string & ageName );    // attempt to fix wrong case age name.
 
 private:
     bool                fLinkingEnabled;

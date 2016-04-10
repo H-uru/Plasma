@@ -755,18 +755,18 @@ short   plDrawableSpans::ICompareSpans( plGeometrySpan *span1, plGeometrySpan *s
         else if( t1 == nil && t2 == nil )
             break;  // Textures equal up to here--keep going with rest of tests
         
-        if( !t1->GetKeyName().IsNull() && !t2->GetKeyName().IsNull() )
+        if( !t1->GetKeyName().is_empty() && !t2->GetKeyName().is_empty() )
         {
-            j = t1->GetKeyName().Compare( t2->GetKeyName(), plString::kCaseInsensitive );
+            j = t1->GetKeyName().compare( t2->GetKeyName(), ST::case_insensitive );
             if( j != 0 )
                 return (short)j;
         }
     }
 
     // Finally, by material itself.
-    if( !span1->fMaterial->GetKeyName().IsNull() && !span2->fMaterial->GetKeyName().IsNull() )
+    if( !span1->fMaterial->GetKeyName().is_empty() && !span2->fMaterial->GetKeyName().is_empty() )
     {
-        j = span1->fMaterial->GetKeyName().Compare( span2->fMaterial->GetKeyName(), plString::kCaseInsensitive );
+        j = span1->fMaterial->GetKeyName().compare( span2->fMaterial->GetKeyName(), ST::case_insensitive );
         if( j != 0 )
             return (short)j;
     }

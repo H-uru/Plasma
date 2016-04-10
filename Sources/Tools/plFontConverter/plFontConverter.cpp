@@ -148,16 +148,16 @@ void plFontConverter::dropEvent(QDropEvent *event)
             continue;
 
         plFileName fileName = url.toLocalFile().toUtf8().constData();
-        plString ext = fileName.GetFileExt();
-        if (ext.CompareI("fnt") == 0)
+        ST::string ext = fileName.GetFileExt();
+        if (ext.compare_i("fnt") == 0)
             IImportFNT(fileName);
-        else if (ext.CompareI("bdf") == 0)
+        else if (ext.compare_i("bdf") == 0)
             IImportBDF(fileName);
-        else if (ext.CompareI("fon") == 0 || ext.CompareI("exe") == 0)
+        else if (ext.compare_i("fon") == 0 || ext.compare_i("exe") == 0)
             IImportFON(fileName);
-        else if (ext.CompareI("ttf") == 0 || ext.CompareI("ttc") == 0)
+        else if (ext.compare_i("ttf") == 0 || ext.compare_i("ttc") == 0)
             IImportFreeType(fileName);
-        else if (ext.CompareI("p2f") == 0)
+        else if (ext.compare_i("p2f") == 0)
             IOpenP2F(fileName);
         else
         {
@@ -217,7 +217,7 @@ void plFontConverter::OpenP2F()
 void plFontConverter::ExportP2F()
 {
     // Grab updated values for the font
-    plString fileName = fUI->fFaceName->text().toUtf8().constData();
+    ST::string fileName = fUI->fFaceName->text().toUtf8().constData();
     fFont->SetFace(fileName);
     fFont->SetSize(fUI->fFontSize->value());
     fFont->SetFlag(plFont::kFlagBold, fUI->fBold->isChecked());
@@ -550,8 +550,8 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
     if (outPath.isEmpty())
         return;
 
-    plString fontName = ui.fFontName->text().toUtf8().constData();
-    plString destPath = outPath.toUtf8().constData();
+    ST::string fontName = ui.fFontName->text().toUtf8().constData();
+    ST::string destPath = outPath.toUtf8().constData();
 
     plMyBDFCallback callback(this);
     callback.NumChars(iSizes.size());
@@ -570,7 +570,7 @@ void plFontConverter::IBatchFreeType(const plFileName &path, void *init)
 
         fFont->SetFace(fontName);
         plFileName fileName = plFileName::Join(destPath,
-                        plFormat("{}-{}.p2f", fFont->GetFace(), fFont->GetSize()));
+                        ST::format("{}-{}.p2f", fFont->GetFace(), fFont->GetSize()));
         hsUNIXStream stream;
         if (!stream.Open(fileName, "wb"))
             QMessageBox::critical(this, tr("ERROR"), tr("Can't open file for writing"));

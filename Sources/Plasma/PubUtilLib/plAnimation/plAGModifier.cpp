@@ -69,7 +69,7 @@ plAGModifier::plAGModifier()
 }
 
 // CTOR(name)
-plAGModifier::plAGModifier(const plString &name, bool autoApply)
+plAGModifier::plAGModifier(const ST::string &name, bool autoApply)
 : plSingleModifier(), fAutoApply(autoApply)
 {
     fChannelName = name;
@@ -87,7 +87,7 @@ plAGModifier::~plAGModifier()
 }
 
 // GETCHANNELNAME
-plString plAGModifier::GetChannelName() const
+ST::string plAGModifier::GetChannelName() const
 {
     return fChannelName;
 }
@@ -99,7 +99,7 @@ void plAGModifier::Enable(bool val)
 }
 
 // SETCHANNELNAME
-void plAGModifier::SetChannelName(const plString & name)
+void plAGModifier::SetChannelName(const ST::string & name)
 {
     fChannelName = name;
 }

@@ -333,8 +333,8 @@ void plNetClientStreamRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     }
     else if (plNetMsgSDLState* sdlMsg = plNetMsgSDLState::ConvertNoRef(msg))
     {
-        hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());        
-        plString descName;
+        hsReadOnlyStream stream(sdlMsg->StreamInfo()->GetStreamLen(), sdlMsg->StreamInfo()->GetStreamBuf());
+        ST::string descName;
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
         {

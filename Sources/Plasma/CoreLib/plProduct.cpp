@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #pragma hdrstop
 
 #include "plProduct.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 static_assert(PRODUCT_BUILD_ID > 0, "Build ID cannot be zero");
 static_assert(PRODUCT_BUILD_TYPE > 0, "Build Type cannot be zero");
@@ -54,21 +54,21 @@ uint32_t plProduct::BuildId() { return PRODUCT_BUILD_ID; }
 uint32_t plProduct::BuildType() { return PRODUCT_BUILD_TYPE; }
 uint32_t plProduct::BranchId() { return PRODUCT_BRANCH_ID; }
 
-plString plProduct::CoreName()
+ST::string plProduct::CoreName()
 {
-    static plString _coreName = PRODUCT_CORE_NAME;
+    static ST::string _coreName = ST_LITERAL(PRODUCT_CORE_NAME);
     return _coreName;
 }
 
-plString plProduct::ShortName()
+ST::string plProduct::ShortName()
 {
-    static plString _shortName = PRODUCT_SHORT_NAME;
+    static ST::string _shortName = ST_LITERAL(PRODUCT_SHORT_NAME);
     return _shortName;
 }
 
-plString plProduct::LongName()
+ST::string plProduct::LongName()
 {
-    static plString _longName = PRODUCT_LONG_NAME;
+    static ST::string _longName = ST_LITERAL(PRODUCT_LONG_NAME);
     return _longName;
 }
 
@@ -87,9 +87,9 @@ const char *plProduct::UUID() { return PRODUCT_UUID; }
 #   define RELEASE_TYPE "Release"
 #endif
 
-plString plProduct::ProductString()
+ST::string plProduct::ProductString()
 {
-    static plString _cache = plFormat(
+    static ST::string _cache = ST::format(
             "{}.{}.{} - " RELEASE_ACCESS "." RELEASE_TYPE,
             CoreName(), BranchId(), BuildId());
     return _cache;

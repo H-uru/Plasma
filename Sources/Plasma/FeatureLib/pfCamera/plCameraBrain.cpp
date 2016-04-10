@@ -1351,8 +1351,8 @@ bool plCameraBrain1_FirstPerson::MsgReceive(plMessage* msg)
                         plSceneObject* child = (plSceneObject*)ci->GetChild(i)->GetOwner();
                         if (child)
                         {
-                            const plString& name = child->GetKeyName();
-                            if (name.Compare("FPCameraOrigin", plString::kCaseInsensitive) == 0)
+                            const ST::string& name = child->GetKeyName();
+                            if (name.compare("FPCameraOrigin", ST::case_insensitive) == 0)
                             {
                                 fPosNode = child;
                                 SetOffset(hsVector3(0,0,0));

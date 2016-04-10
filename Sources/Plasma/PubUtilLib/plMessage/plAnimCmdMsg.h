@@ -52,11 +52,11 @@ class plAGAnimInstance;
 class plAnimCmdMsg : public plMessageWithCallbacks
 {
 protected:
-    plString fAnimName;
-    plString fLoopName;
+    ST::string fAnimName;
+    ST::string fLoopName;
 
 private:
-    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=plString::Null;}
+    void IInit() { fBegin=fEnd=fLoopBegin=fLoopEnd=fSpeed=fSpeedChangeRate=fTime=0; fAnimName=fLoopName=ST::string::null;}
 public:
     plAnimCmdMsg()
         : plMessageWithCallbacks(nil, nil, nil) { IInit(); }
@@ -107,12 +107,12 @@ public:
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd();
-    void SetAnimName(const plString &name) { fAnimName = name; }
-    plString GetAnimName() const { return fAnimName; }
+    void SetAnimName(const ST::string &name) { fAnimName = name; }
+    ST::string GetAnimName() const { return fAnimName; }
     bool CmdChangesAnimTime(); // Will this command cause an update to the current anim time?
 
-    void SetLoopName(const plString &name) { fLoopName = name; }
-    plString GetLoopName() { return fLoopName; }
+    void SetLoopName(const ST::string &name) { fLoopName = name; }
+    ST::string GetLoopName() { return fLoopName; }
 
     float fBegin;
     float fEnd;
@@ -133,11 +133,11 @@ public:
 class plAGCmdMsg : public plMessage
 {
 protected:
-    plString fAnimName;
+    ST::string fAnimName;
 
 private:
     void IInit() { fBlend = fAmp = 0;
-                   fAnimName=plString::Null;}
+                   fAnimName=ST::string::null;}
 public:
     plAGCmdMsg()
         : plMessage(nil, nil, nil) { IInit(); }
@@ -162,8 +162,8 @@ public:
     bool Cmd(int n) const { return fCmd.IsBitSet(n); }
     void SetCmd(int n) { fCmd.SetBit(n); }
     void ClearCmd() { fCmd.Clear(); }
-    void SetAnimName(const plString& name) { fAnimName = name; }
-    plString GetAnimName() const { return fAnimName; }
+    void SetAnimName(const ST::string& name) { fAnimName = name; }
+    ST::string GetAnimName() const { return fAnimName; }
 
     float fBlend;
     float fBlendRate;
@@ -196,7 +196,7 @@ public:
 class plAGDetachCallbackMsg : public plEventCallbackMsg
 {
 protected:
-    plString fAnimName;
+    ST::string fAnimName;
 
 public:
     plAGDetachCallbackMsg() : plEventCallbackMsg() {}
@@ -210,8 +210,8 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr) {}
     void Write(hsStream* stream, hsResMgr* mgr) {}
 
-    void SetAnimName(const plString& name) { fAnimName = name; }
-    plString GetAnimName() const { return fAnimName; }
+    void SetAnimName(const ST::string& name) { fAnimName = name; }
+    ST::string GetAnimName() const { return fAnimName; }
 };
 
 

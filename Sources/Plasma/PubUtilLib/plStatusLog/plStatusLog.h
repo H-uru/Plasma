@@ -102,7 +102,7 @@ class plStatusLog : public plLog
 
         bool    IAddLine( const char *line, int32_t count, uint32_t color );
         bool    IPrintLineToFile( const char *line, uint32_t count );
-        void    IParseFileName(plFileName &fileNoExt, plString &ext) const;
+        void    IParseFileName(plFileName &fileNoExt, ST::string &ext) const;
 
         void    IInit( void );
         void    IFini( void );
@@ -159,7 +159,7 @@ class plStatusLog : public plLog
 
         ~plStatusLog();
 
-        bool AddLine(const plString& line) HS_OVERRIDE;
+        bool AddLine(const ST::string& line) HS_OVERRIDE;
 
         bool    AddLine( const char *line, uint32_t color = kWhite );
 

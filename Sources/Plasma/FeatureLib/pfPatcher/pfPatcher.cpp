@@ -71,11 +71,11 @@ struct pfPatcherWorker : public hsThread
     {
         enum { kFile, kManifest, kSecurePreloader, kAuthFile, kPythonList, kSdlList };
 
-        plString fName;
+        ST::string fName;
         uint8_t fType;
         class pfPatcherStream* fStream;
 
-        Request(const plString& name, uint8_t type, class pfPatcherStream* s=nullptr) :
+        Request(const ST::string& name, uint8_t type, class pfPatcherStream* s=nullptr) :
             fName(name), fType(type), fStream(s)
         { }
     };
@@ -127,7 +127,7 @@ struct pfPatcherWorker : public hsThread
 
     void OnQuit() HS_OVERRIDE;
 
-    void EndPatch(ENetError result, const plString& msg=plString::Null);
+    void EndPatch(ENetError result, const ST::string& msg=ST::string::null);
     bool IssueRequest();
     void Run() HS_OVERRIDE;
     void ProcessFile();
@@ -145,7 +145,7 @@ class pfPatcherStream : public plZlibStream
     uint64_t fBytesWritten;
     float fDLStartTime;
 
-    plString IMakeStatusMsg() const
+    ST::string IMakeStatusMsg() const
     {
         float secs = hsTimer::GetSysSeconds() - fDLStartTime;
         float bytesPerSec = fBytesWritten / secs;
@@ -174,7 +174,7 @@ public:
         : fParent(parent), fFlags(entry.flags), fBytesWritten(0)
     {
         // ugh. eap removed the compressed flag in his fail manifests
-        if (filename.GetFileExt().CompareI("gz") == 0) {
+        if (filename.GetFileExt().compare_i("gz") == 0) {
             fFlags |= pfPatcherWorker::kFlagZipped;
             parent->fTotalBytes += entry.zipSize;
         } else
@@ -248,7 +248,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
             for (unsigned i = 0; i < infoCount; ++i) {
                 PatcherLogYellow("\tEnqueuing Legacy File '%S'", infoArr[i].filename);
 
-                plFileName fn = plString::FromWchar(infoArr[i].filename);
+                plFileName fn = ST::string::from_wchar(infoArr[i].filename);
                 plFileSystem::CreateDir(fn.StripFileName());
 
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
@@ -289,8 +289,8 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
         // so, we need to ask the AuthSrv about our game code
         {
             std::lock_guard<std::mutex> lock(patcher->fRequestMut);
-            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kPythonList));
-            patcher->fRequests.push_back(pfPatcherWorker::Request(plString::Null, pfPatcherWorker::Request::kSdlList));
+            patcher->fRequests.push_back(pfPatcherWorker::Request(ST::string::null, pfPatcherWorker::Request::kPythonList));
+            patcher->fRequests.push_back(pfPatcherWorker::Request(ST::string::null, pfPatcherWorker::Request::kSdlList));
         }
 
         // continue pumping requests
@@ -306,7 +306,7 @@ static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t
         IHandleManifestDownload(patcher, group, manifest, entryCount);
     else {
         PatcherLogRed("\tDownload Failed: Manifest '%S'", group);
-        patcher->EndPatch(result, plString::FromWchar(group));
+        patcher->EndPatch(result, ST::string::from_wchar(group));
     }
 }
 
@@ -364,7 +364,7 @@ void pfPatcherWorker::OnQuit()
     delete fParent;
 }
 
-void pfPatcherWorker::EndPatch(ENetError result, const plString& msg)
+void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
 {
     // Guard against multiple calls
     if (fStarted) {
@@ -405,12 +405,12 @@ bool pfPatcherWorker::IssueRequest()
             NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.ToWchar());
+            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_wchar());
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.ToWchar());
+            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_wchar());
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
@@ -473,15 +473,15 @@ void pfPatcherWorker::ProcessFile()
         NetCliFileManifestEntry& entry = fQueuedFiles.front();
 
         // eap sucks
-        plFileName clName = plString::FromWchar(entry.clientName);
-        plString dlName = plString::FromWchar(entry.downloadName);
+        plFileName clName = ST::string::from_wchar(entry.clientName);
+        ST::string dlName = ST::string::from_wchar(entry.downloadName);
 
         // Check to see if ours matches
         plFileInfo mine(clName);
         if (mine.FileSize() == entry.fileSize) {
             plMD5Checksum cliMD5(clName);
             plMD5Checksum srvMD5;
-            srvMD5.SetFromHexString(plString::FromWchar(entry.md5, 32).c_str());
+            srvMD5.SetFromHexString(ST::string::from_wchar(entry.md5, 32).c_str());
 
             if (cliMD5 == srvMD5) {
                 WhitelistFile(clName, false);
@@ -534,8 +534,8 @@ void pfPatcherWorker::WhitelistFile(const plFileName& file, bool justDownloaded,
 
     // we want to whitelist our game code, so here we go...
     if (fGameCodeDiscovered) {
-        plString ext = file.GetFileExt();
-        if (ext.CompareI("pak") == 0 || ext.CompareI("sdl") == 0) {
+        ST::string ext = file.GetFileExt();
+        if (ext.compare_i("pak") == 0 || ext.compare_i("sdl") == 0) {
             if (!stream) {
                 stream = new hsUNIXStream;
                 stream->Open(file, "rb");
@@ -621,17 +621,17 @@ void pfPatcher::RequestGameCode()
     fWorker->fRequests.push_back(pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
 }
 
-void pfPatcher::RequestManifest(const plString& mfs)
+void pfPatcher::RequestManifest(const ST::string& mfs)
 {
     std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     fWorker->fRequests.push_back(pfPatcherWorker::Request(mfs, pfPatcherWorker::Request::kManifest));
 }
 
-void pfPatcher::RequestManifest(const std::vector<plString>& mfs)
+void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
 {
     std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     std::for_each(mfs.begin(), mfs.end(),
-        [&] (const plString& name) {
+        [&] (const ST::string& name) {
             fWorker->fRequests.push_back(pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
         }
     );

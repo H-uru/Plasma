@@ -56,10 +56,10 @@ plRegistryKeyList::~plRegistryKeyList()
     );
 }
 
-plKeyImp* plRegistryKeyList::FindKey(const plString& keyName) const
+plKeyImp* plRegistryKeyList::FindKey(const ST::string& keyName) const
 {
     auto it = std::find_if(fKeys.begin(), fKeys.end(),
-        [&] (plKeyImp* key) { return key->GetName().CompareI(keyName) == 0; }
+        [&] (plKeyImp* key) { return key->GetName().compare_i(keyName) == 0; }
     );
     if (it != fKeys.end())
         return *it;
@@ -85,7 +85,7 @@ plKeyImp* plRegistryKeyList::FindKey(const plUoid& uoid) const
         // because of local data. Verify that we have the right key by
         // name, and if it's wrong, do the slower find-by-name.
         plKeyImp *keyImp = fKeys[objectID-1];
-        if (!keyImp || keyImp->GetName().CompareI(uoid.GetObjectName()) != 0)
+        if (!keyImp || keyImp->GetName().compare_i(uoid.GetObjectName()) != 0)
             return FindKey(uoid.GetObjectName());
         else
             return keyImp;

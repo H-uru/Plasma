@@ -65,12 +65,12 @@ bool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
     return hsgResMgr::SendRef(key, refMsg, flags);
 }
 
-plString hsKeyedObject::GetKeyName() const
+ST::string hsKeyedObject::GetKeyName() const
 {
     if (fpKey)
         return fpKey->GetName();
     else
-        return "(unknown)";
+        return ST_LITERAL("(unknown)");
 }
 
 hsKeyedObject::~hsKeyedObject()
@@ -127,7 +127,7 @@ void hsKeyedObject::UnRegisterAs(plFixedKeyId fixedKey)
     UnRegisterAsManual(uoid);
 }
 
-plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const plString& p)
+plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const ST::string& p)
 {
     hsAssert(meUoid.GetClassType() == ClassIndex(),"Registering as wrong type!");
     // Really should be a NewKey() call just for fixed keys, so change this once player rooms behave

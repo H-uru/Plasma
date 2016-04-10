@@ -135,7 +135,7 @@ void    pfGUIProgressCtrl::UpdateBounds( hsMatrix44 *invXformMatrix, bool force 
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
 {
     fAnimationKeys = keys;
     fAnimName = name;

@@ -432,7 +432,7 @@ int plNetClientMgr::SendMsg(plNetMessage* msg)
     if (plNetMsgGameMessage::ConvertNoRef(msg))
         SetFlagsBit(kSendingActions);
     
-    plCheckNetMgrResult_ValReturn(ret, plFormat("Failed to send {}, NC ret={}",
+    plCheckNetMgrResult_ValReturn(ret, ST::format("Failed to send {}, NC ret={}",
         msg->ClassName(), ret).c_str());
 
     return ret;

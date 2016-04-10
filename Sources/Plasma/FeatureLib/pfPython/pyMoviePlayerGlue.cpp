@@ -164,7 +164,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptMoviePlayer, "Params: movieName,selfKey\nAccessor class to play in the MoviePlayer");
 
 // required functions for PyObject interoperability
-PyObject *pyMoviePlayer::New(const plString& movieName, pyKey& selfKey)
+PyObject *pyMoviePlayer::New(const ST::string& movieName, pyKey& selfKey)
 {
     ptMoviePlayer *newObj = (ptMoviePlayer*)ptMoviePlayer_type.tp_new(&ptMoviePlayer_type, NULL, NULL);
     newObj->fThis->MakeMovie(movieName, selfKey);

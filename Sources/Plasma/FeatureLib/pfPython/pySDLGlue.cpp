@@ -109,7 +109,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getName)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSDLStateDataRecord, getVarList)
 {
-    std::vector<plString> vars = self->fThis->GetVarList();
+    std::vector<ST::string> vars = self->fThis->GetVarList();
     PyObject* varList = PyList_New(vars.size());
     for (int i = 0; i < vars.size(); i++)
         PyList_SetItem(varList, i, PyString_FromString(vars[i].c_str()));
@@ -224,7 +224,7 @@ STATEVAR_GET(getShort, GetShort, PyInt_FromLong)
 STATEVAR_GET(getInt, GetInt, PyInt_FromLong)
 STATEVAR_GET(getFloat, GetFloat, PyFloat_FromDouble)
 STATEVAR_GET(getDouble, GetDouble, PyFloat_FromDouble)
-STATEVAR_GET(getString, GetString, PyString_FromPlString)
+STATEVAR_GET(getString, GetString, PyString_FromSTString)
 STATEVAR_GET(getKey, GetKey, pyKey::New)
 
 // getBool is special cause of the way python represents booleans

@@ -39,6 +39,7 @@ set_target_properties(MaxPlasmaLights PROPERTIES SUFFIX ".dlo")
 target_link_libraries(MaxPlasmaLights MaxComponent)
 target_link_libraries(MaxPlasmaLights MaxPlasmaMtls)
 target_link_libraries(MaxPlasmaLights ${3dsm_LIBRARIES})
+target_link_libraries(MaxPlasmaLights ${STRING_THEORY_LIBRARIES})
 
 # Carbon copy from plClient
 # TODO: Maybe see if some of these can be removed?

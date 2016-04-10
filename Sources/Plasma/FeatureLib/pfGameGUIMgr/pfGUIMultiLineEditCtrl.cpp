@@ -1837,7 +1837,7 @@ void pfGUIMultiLineEditCtrl::IHitBeginningOfControlList(int32_t cursorPos)
     }
 }
 
-void pfGUIMultiLineEditCtrl::SetFontFace(const plString &fontFace)
+void pfGUIMultiLineEditCtrl::SetFontFace(const ST::string &fontFace)
 {
     fFontFace = fontFace;
     fFontFlagsSet |= kFontFaceSet;

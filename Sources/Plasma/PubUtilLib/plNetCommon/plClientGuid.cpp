@@ -104,10 +104,10 @@ void plClientGuid::SetTempPlayerID(uint32_t id)
     }
 }
 
-void plClientGuid::SetPlayerName( const plString & v )
+void plClientGuid::SetPlayerName( const ST::string & v )
 {
     fPlayerName = v;
-    if ( !fPlayerName.IsEmpty() )
+    if ( !fPlayerName.is_empty() )
         fFlags|=kPlayerName;
     else
         fFlags&=~kPlayerName;
@@ -154,10 +154,10 @@ void plClientGuid::SetReserved(bool b)
     fFlags |= kReserved;
 }
 
-void plClientGuid::SetClientKey(const plString& key)
+void plClientGuid::SetClientKey(const ST::string& key)
 {
     fClientKey = key;
-    if ( !fClientKey.IsEmpty() )
+    if ( !fClientKey.is_empty() )
         fFlags|=kClientKey;
     else
         fFlags&=~kClientKey;
@@ -170,13 +170,13 @@ const char * plClientGuid::GetSrcAddrStr() const
     return foo;
 }
 
-plString plClientGuid::AsString() const
+ST::string plClientGuid::AsString() const
 {
 #define kComma  ","
 #define kEmpty  ""
     const char * spacer = kEmpty;
 
-    plStringStream ss;
+    ST::string_stream ss;
 
     ss << "[";
 
@@ -236,15 +236,15 @@ plString plClientGuid::AsString() const
     }
     ss  << "]";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
-plString plClientGuid::AsLogString() const
+ST::string plClientGuid::AsLogString() const
 {
 #define kSemicolon  ";"
     const char* spacer = kSemicolon;
 
-    plStringStream ss;
+    ST::string_stream ss;
 
     if (IsFlagSet(kAccountUUID))
     {
@@ -297,7 +297,7 @@ plString plClientGuid::AsLogString() const
         ss << spacer;
     }
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
 void plClientGuid::Read(hsStream * s, hsResMgr* mgr)

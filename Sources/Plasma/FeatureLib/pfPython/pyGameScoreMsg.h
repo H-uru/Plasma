@@ -97,7 +97,7 @@ public:
 
     static void AddPlasmaClasses(PyObject* m);
 
-    plString GetName() const;
+    ST::string GetName() const;
     uint32_t GetOwnerID() const;
     size_t GetNumScores() const;
     PyObject* GetScore(size_t idx) const;

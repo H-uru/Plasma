@@ -222,11 +222,11 @@ public:
 
     bool IsLocalAvatar();
     bool IsLocalAI();
-    virtual const plSceneObject *FindBone(const plString & name) const;
+    virtual const plSceneObject *FindBone(const ST::string & name) const;
     virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
     virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);
     plAGModifier *GetRootAGMod();
-    plAGAnim *FindCustomAnim(const plString& baseName) const;
+    plAGAnim *FindCustomAnim(const ST::string& baseName) const;
 
     virtual void Spawn(double timeNow);
     virtual void SpawnAt(int which, double timeNow);
@@ -279,11 +279,11 @@ public:
     void SetTurnRightKeyDown(bool status = true);
     void SetJumpKeyDown();
     void DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt);
-    plString GetMoveKeyString() const;
+    ST::string GetMoveKeyString() const;
 
     void SynchIfLocal(double timeNow, int force); // Just physical state
     void SynchInputState(uint32_t rcvID = kInvalidPlayerID);  
-    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags );
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags );
     bool DirtyPhysicalSynchState(uint32_t synchFlags);
     plClothingOutfit *GetClothingOutfit() const { return fClothingOutfit; }
     plClothingSDLModifier *GetClothingSDLMod() const { return fClothingSDLMod; }
@@ -299,15 +299,15 @@ public:
         kSwim,
     };
 
-    plString GetAnimRootName(const plString &name);
-    int8_t AnimNameToIndex(const plString &name);
+    ST::string GetAnimRootName(const ST::string &name);
+    int8_t AnimNameToIndex(const ST::string &name);
     void SetBodyType(int type) { fBodyType = type; }
     int  GetBodyType(int type) { return fBodyType; }
     int  GetCurrentGenericType();
     bool FindMatchingGenericBrain(const char *names[], int count);
-    plString MakeAnimationName(const plString& baseName) const;
-    plString GetRootName();
-    void SetRootName(const plString &name);
+    ST::string MakeAnimationName(const ST::string& baseName) const;
+    ST::string GetRootName();
+    void SetRootName(const ST::string &name);
     
     int  RefreshDebugDisplay();
     void DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt);
@@ -329,7 +329,7 @@ public:
     static void     SetMouseTurnSensitivity(float val) { fMouseTurnSensitivity = val / 150.f; }
     static float GetMouseTurnSensitivity() { return fMouseTurnSensitivity * 150.f; } 
     
-    static void SetSpawnPointOverride(const plString &overrideObjName);
+    static void SetSpawnPointOverride(const ST::string &overrideObjName);
     static void WindowActivate(bool active);
     void SetFollowerParticleSystemSO(plSceneObject *follower);
     plSceneObject *GetFollowerParticleSystemSO();
@@ -340,7 +340,7 @@ public:
 
     bool    IsKILowestLevel();
     int     GetKILevel();
-    void    SetLinkInAnim(const plString &animName);
+    void    SetLinkInAnim(const ST::string &animName);
     plKey   GetLinkInAnimKey() const;
 
     enum
@@ -369,11 +369,11 @@ public:
     
     void SetPhysicalDims(float height, float width) { fPhysHeight = height; fPhysWidth = width; }
 
-    void SetBodyAgeName(const plString& ageName) { fBodyAgeName = ageName; }
-    void SetBodyFootstepSoundPage(const plString& pageName) { fBodyFootstepSoundPage = pageName; }
-    void SetAnimationPrefix(const plString& prefix) { fAnimationPrefix = prefix; }
+    void SetBodyAgeName(const ST::string& ageName) { fBodyAgeName = ageName; }
+    void SetBodyFootstepSoundPage(const ST::string& pageName) { fBodyFootstepSoundPage = pageName; }
+    void SetAnimationPrefix(const ST::string& prefix) { fAnimationPrefix = prefix; }
 
-    plString GetUserStr() const { return fUserStr; }
+    ST::string GetUserStr() const { return fUserStr; }
 
 protected:
     void IInitDefaults();
@@ -389,8 +389,8 @@ protected:
     int     IFindSpawnOverride(void);
     void    ISetTransparentDrawOrder(bool val);
     plLayerLinkAnimation *IFindLayerLinkAnim();
-    
-    plString            fRootName;          // the name of the player root (from the max file)
+
+    ST::string          fRootName;          // the name of the player root (from the max file)
     hsBitVector         fMoveFlags;         // which keys/buttons are currently pressed
     hsBitVector         fMoveFlagsBackup;   // a copy of fMoveFlags
     typedef std::vector<plControlEventMsg*> CtrlMessageVec;
@@ -426,7 +426,7 @@ protected:
     hsTArray<const plSceneObject*> fClothToSOMap;
     plArmatureEffectsMgr *fEffects;
     plSceneObject *fFollowerParticleSystemSO;
-    static plString fSpawnPointOverride;
+    static ST::string fSpawnPointOverride;
 
     // These vectors are used with relevance regions for culling out other objects
     hsBitVector fRegionsImIn;
@@ -443,12 +443,12 @@ protected:
     bool fDontPanicLink;
 
     // strings for animations, age names, footstep sounds, etc
-    plString fBodyAgeName;
-    plString fBodyFootstepSoundPage;
-    plString fAnimationPrefix;
+    ST::string fBodyAgeName;
+    ST::string fBodyFootstepSoundPage;
+    ST::string fAnimationPrefix;
 
     // user-defined string assigned to this avatar
-    plString fUserStr;
+    ST::string fUserStr;
 };
 
 // PLARMATURELOD
@@ -459,7 +459,7 @@ class plArmatureLODMod : public plArmatureMod
 public:
     // tors
     plArmatureLODMod();
-    plArmatureLODMod(const plString & root_name);
+    plArmatureLODMod(const ST::string & root_name);
     virtual ~plArmatureLODMod();
 
     CLASSNAME_REGISTER( plArmatureLODMod );

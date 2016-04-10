@@ -160,7 +160,7 @@ public:
     void RegisterVisitAge( const pyAgeLinkStruct & link );
     void UnRegisterVisitAge( const char * guid );
     // Register a nexus station
-    void RegisterMTStation( const plString& stationName, const plString& mtSpawnPt );
+    void RegisterMTStation( const ST::string& stationName, const ST::string& mtSpawnPt );
 
     ///////////////
     // Invite player to visit an age.

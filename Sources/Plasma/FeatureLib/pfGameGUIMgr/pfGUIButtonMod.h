@@ -60,10 +60,10 @@ class pfGUIButtonMod : public pfGUIControlMod
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        plString        fAnimName;
+        ST::string      fAnimName;
 
         hsTArray<plKey> fMouseOverAnimKeys;
-        plString        fMouseOverAnimName;
+        ST::string      fMouseOverAnimName;
 
         bool            fClicking;
         bool            fTriggering;
@@ -129,8 +129,8 @@ class pfGUIButtonMod : public pfGUIControlMod
         void    StopDragging( bool cancel );
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
-        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name );
+        void    SetMouseOverAnimKeys( hsTArray<plKey> &keys, const ST::string &name );
 };
 
 #endif // _pfGUIButtonMod_h

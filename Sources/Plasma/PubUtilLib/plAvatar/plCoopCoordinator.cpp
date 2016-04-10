@@ -94,7 +94,7 @@ plCoopCoordinator::plCoopCoordinator()
 // ------------------
 plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
                                      plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                                     const plString &synchBone,
+                                     const ST::string &synchBone,
                                      uint32_t hostOfferStage, uint32_t guestAcceptStage,
                                      plMessage *guestAcceptMsg,
                                      bool autoStartGuest)
@@ -116,7 +116,7 @@ plCoopCoordinator::plCoopCoordinator(plKey host, plKey guest,
 
     serial = serial % 999;
 
-    plString newName = plFormat("{}{}{3}\x000", host->GetName(), guest->GetName(), serial++);
+    ST::string newName = ST::format("{}{}{3}\x000", host->GetName(), guest->GetName(), serial++);
     
     plKey newKey = hsgResMgr::ResMgr()->NewKey(newName, this, host->GetUoid().GetLocation());
 

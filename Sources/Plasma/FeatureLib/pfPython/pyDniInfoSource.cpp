@@ -77,11 +77,11 @@ uint32_t pyDniInfoSource::GetAgeTime( void ) const
     return result;
 }
 
-plString pyDniInfoSource::GetAgeName() const
+ST::string pyDniInfoSource::GetAgeName() const
 {
     hsRef<RelVaultNode> node = VaultGetAgeInfoNode();
     if (!node)
-        return "";
+        return ST::string::null;
 
     VaultAgeInfoNode ageInfo(node);
     return ageInfo.GetAgeInstanceName();

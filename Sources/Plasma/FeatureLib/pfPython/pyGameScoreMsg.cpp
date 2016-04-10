@@ -72,11 +72,11 @@ bool pyGameScoreMsg::IsValid() const
     return false;
 }
 
-plString pyGameScoreListMsg::GetName() const
+ST::string pyGameScoreListMsg::GetName() const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pList->GetName();
-    return plString::Null;
+    return ST::string::null;
 }
 
 uint32_t pyGameScoreListMsg::GetOwnerID() const

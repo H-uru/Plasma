@@ -56,24 +56,24 @@ class pyColor;
 class pyMoviePlayer
 {
 protected:
-    plString  fMovieName;
+    ST::string  fMovieName;
     plKey     fSelfKey;
 
     pyMoviePlayer(): fSelfKey(nil) {} // only used by python glue, do NOT call
-    pyMoviePlayer(const plString& movieName, pyKey& selfKey);
+    pyMoviePlayer(const ST::string& movieName, pyKey& selfKey);
 public:
     ~pyMoviePlayer();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptMoviePlayer);
-    static PyObject *New(const plString& movieName, pyKey& selfKey);
+    static PyObject *New(const ST::string& movieName, pyKey& selfKey);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyMoviePlayer object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyMoviePlayer); // converts a PyObject to a pyMoviePlayer (throws error if not correct type)
 
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    void MakeMovie(const plString& movieName, pyKey& selfKey); // only used by python glue, do NOT call
+    void MakeMovie(const ST::string& movieName, pyKey& selfKey); // only used by python glue, do NOT call
 
     // getters and setters
     virtual void SetCenter(float x, float y);

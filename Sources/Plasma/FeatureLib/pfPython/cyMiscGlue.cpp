@@ -53,7 +53,7 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flash
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
 {
-    return PyString_FromPlString(cyMisc::GetAgeName());
+    return PyString_FromSTString(cyMisc::GetAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeInfo, "Returns ptAgeInfoStruct of the current Age")
@@ -68,7 +68,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTime, "DEPRECIATED - use ptDniInf
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeName, "Returns filename of previous age visited")
 {
-    return PyString_FromPlString(cyMisc::GetPrevAgeName());
+    return PyString_FromSTString(cyMisc::GetPrevAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeInfo, "Returns ptAgeInfoStruct of previous age visited")
@@ -115,10 +115,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        return PyString_FromPlString(cyMisc::GetClientName(*key));
+        return PyString_FromSTString(cyMisc::GetClientName(*key));
     }
     else
-        return PyString_FromPlString(cyMisc::GetLocalClientName());
+        return PyString_FromSTString(cyMisc::GetLocalClientName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalAvatar, "This will return a ptSceneobject of the local avatar\n"
@@ -272,7 +272,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
         PyErr_SetString(PyExc_TypeError, err);
         PYTHON_RETURN_ERROR;
     }
-    plString chatmsg = PyString_AsStringEx(message);
+    ST::string chatmsg = PyString_AsStringEx(message);
     return PyLong_FromUnsignedLong(cyMisc::SendRTChat(*sender, toPlayers, chatmsg, msgFlags));
 }
 
@@ -413,12 +413,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;
     }
-    plString name;
-    std::vector<plString> argList;
+    ST::string name;
+    std::vector<ST::string> argList;
 
     // convert name from a string
     name = PyString_AsStringEx(nameObj);
-    if (name.IsNull())
+    if (name.is_empty())
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;
@@ -437,7 +437,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         for (int curItem = 0; curItem < len; curItem++)
         {
             PyObject* item = PyList_GetItem(argObj, curItem);
-            plString arg = "INVALID ARG";
+            ST::string arg = ST_LITERAL("INVALID ARG");
             if (item == Py_None) // none is allowed, but treated as a blank string
                 arg = "";
             arg = PyString_AsStringEx(item);
@@ -446,7 +446,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
         }
     }
 
-    return PyUnicode_FromPlString(cyMisc::GetLocalizedString(name, argList));
+    return PyUnicode_FromSTString(cyMisc::GetLocalizedString(name, argList));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")

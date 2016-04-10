@@ -160,7 +160,7 @@ void plPageOptimizer::Optimize()
 
 void plPageOptimizer::KeyedObjectProc(plKey key)
 {
-    plString keyName = key->GetName();
+    ST::string keyName = key->GetName();
     const char* className = plFactory::GetNameOfClass(key->GetUoid().GetClassType());
 
     // For now, ignore any key that isn't in the location we're looking at.  That means stuff like textures.

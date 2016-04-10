@@ -169,7 +169,7 @@ plKey cyAvatar::IFindArmatureModKey(plKey avKey)
 //  PURPOSE    : oneShot Avatar (must already be there)
 //
 void cyAvatar::OneShot(pyKey &seekKey, float duration, bool usePhysics,
-               const plString &animName, bool drivable, bool reversible)
+               const ST::string &animName, bool drivable, bool reversible)
 {
     if ( fRecvr.Count() > 0 )
     {
@@ -347,7 +347,7 @@ void cyAvatar::RunBehaviorAndReply(pyKey& behKey, pyKey& replyKey, bool netForce
 //
 //  PURPOSE    : Seek near another avatar and run animations on both
 //
-bool cyAvatar::RunCoopAnim(pyKey& targetKey, plString activeAvatarAnim, plString targetAvatarAnim, float range, float dist, bool move)
+bool cyAvatar::RunCoopAnim(pyKey& targetKey, ST::string activeAvatarAnim, ST::string targetAvatarAnim, float range, float dist, bool move)
 {
     if (fRecvr.Count() > 0 && fRecvr[0]) {
         // get the participating avatars
@@ -611,14 +611,14 @@ int32_t cyAvatar::GetAvatarClothingGroup()
 //
 //  PURPOSE    : Return a list of the wearable items for this avatar of that clothing_type
 //
-std::vector<plString> cyAvatar::GetEntireClothingList(int32_t clothing_type)
+std::vector<ST::string> cyAvatar::GetEntireClothingList(int32_t clothing_type)
 {
     // Currently, just all the clothing available will be returned
     hsTArray<plClothingItem*> clothingList = plClothingMgr::GetClothingMgr()->GetItemList();
     int numItems = clothingList.GetCount();
 
     // create the string list to send to python...
-    std::vector<plString> retVal;
+    std::vector<ST::string> retVal;
     for (int i = 0; i < numItems; i++)
         retVal.push_back(clothingList[i]->GetName());
 
@@ -665,13 +665,13 @@ std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
                         PyObject* clothingItem = PyList_New(5);
 
                         // [0] = clothing name
-                        PyList_SetItem(clothingItem, 0, PyString_FromPlString(item->GetName()));
+                        PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
                         
                         // [1] = clothing type
                         PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
 
                         // [2] = description
-                        PyList_SetItem(clothingItem, 2, PyString_FromPlString(item->fDescription));
+                        PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
 
                         // [3] = ptImage of icon
                         if ( item->fThumbnail != nil )
@@ -681,7 +681,7 @@ std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
                             PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
 
                         // [4] = fCustomText
-                        PyList_SetItem(clothingItem, 4, PyString_FromPlString(item->fCustomText));
+                        PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
 
                         retVal.push_back(clothingItem);
                     }
@@ -727,13 +727,13 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
                     plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
-                    PyList_SetItem(clothingItem, 0, PyString_FromPlString(item->GetName()));
+                    PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
 
                     // [1] = clothing type
                     PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
 
                     // [2] = description
-                    PyList_SetItem(clothingItem, 2, PyString_FromPlString(item->fDescription));
+                    PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
 
                     // [3] = ptImage of icon
                     if ( item->fThumbnail != nil )
@@ -743,7 +743,7 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
                         PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
 
                     // [4] = fCustomText
-                    PyList_SetItem(clothingItem, 4, PyString_FromPlString(item->fCustomText));
+                    PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
 
                     retVal.push_back(clothingItem);
                 }
@@ -775,13 +775,13 @@ std::vector<PyObject*> cyAvatar::GetWardrobeClothingList()
         PyObject* closetItem = PyList_New(7);
 
         // [0] = clothing name
-        PyList_SetItem(closetItem, 0, PyString_FromPlString(closetList[i].fItem->GetName()));
+        PyList_SetItem(closetItem, 0, PyString_FromSTString(closetList[i].fItem->GetName()));
         
         // [1] = clothing type
         PyList_SetItem(closetItem, 1, PyInt_FromLong(closetList[i].fItem->fType));
         
         // [2] = description
-        PyList_SetItem(closetItem, 2, PyString_FromPlString(closetList[i].fItem->fDescription));
+        PyList_SetItem(closetItem, 2, PyString_FromSTString(closetList[i].fItem->fDescription));
 
         // [3] = ptImage of icon
         if ( closetList[i].fItem->fThumbnail != nil )
@@ -791,7 +791,7 @@ std::vector<PyObject*> cyAvatar::GetWardrobeClothingList()
             PyList_SetItem(closetItem, 3, PyInt_FromLong(0));
 
         // [4] = fCustomText
-        PyList_SetItem(closetItem, 4, PyString_FromPlString(closetList[i].fItem->fCustomText));
+        PyList_SetItem(closetItem, 4, PyString_FromSTString(closetList[i].fItem->fCustomText));
 
         // [5] = fTint1
         PyList_SetItem(closetItem, 5, pyColor::New(closetList[i].fOptions.fTint1));
@@ -813,7 +813,7 @@ std::vector<PyObject*> cyAvatar::GetWardrobeClothingList()
 //
 //  PURPOSE    : To add a clothing item to the avatar's wardrobe (closet)
 //
-void cyAvatar::AddWardrobeClothingItem(const plString& clothing_name,pyColor& tint1,pyColor& tint2)
+void cyAvatar::AddWardrobeClothingItem(const ST::string& clothing_name,pyColor& tint1,pyColor& tint2)
 {
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name);
     if ( item )
@@ -870,13 +870,13 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
                         PyObject* clothingItem = PyList_New(5);
 
                         // [0] = clothing name
-                        PyList_SetItem(clothingItem, 0, PyString_FromPlString(item->GetName()));
+                        PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
 
                         // [1] = clothing type
                         PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
 
                         // [2] = description
-                        PyList_SetItem(clothingItem, 2, PyString_FromPlString(item->fDescription));
+                        PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
 
                         // [3] = ptImage of icon
                         if ( item->fThumbnail != nil )
@@ -886,7 +886,7 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
                             PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
 
                         // [4] = fCustomText
-                        PyList_SetItem(clothingItem, 4, PyString_FromPlString(item->fCustomText));
+                        PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
 
                         retVal.push_back(clothingItem);
                     }
@@ -905,7 +905,7 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
 //  PURPOSE    : Return a list of clothing items that have the same mesh as
 //             : the item passed in
 //
-std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const plString& clothing_name)
+std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const ST::string& clothing_name)
 {
     std::vector<PyObject*> retVal;
 
@@ -935,13 +935,13 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const plString& clothing_nam
                     plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
-                    PyList_SetItem(clothingItem, 0, PyString_FromPlString(item->GetName()));
+                    PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
 
                     // [1] = clothing type
                     PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
 
                     // [2] = description
-                    PyList_SetItem(clothingItem, 2, PyString_FromPlString(item->fDescription));
+                    PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
 
                     // [3] = ptImage of icon
                     if ( item->fThumbnail != nil )
@@ -951,7 +951,7 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const plString& clothing_nam
                         PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
 
                     // [4] = fCustomText
-                    PyList_SetItem(clothingItem, 4, PyString_FromPlString(item->fCustomText));
+                    PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
 
                     retVal.push_back(clothingItem);
                 }
@@ -969,7 +969,7 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const plString& clothing_nam
 //  PURPOSE    : Return the clothing item that matches this one
 //             : If no match then returns the number 0
 //
-PyObject* cyAvatar::GetMatchingClothingItem(const plString& clothing_name)
+PyObject* cyAvatar::GetMatchingClothingItem(const ST::string& clothing_name)
 {
     // Get all the clothes that we can wear
     plClothingItem* match = plClothingMgr::GetClothingMgr()->GetLRMatch(plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name));
@@ -979,13 +979,13 @@ PyObject* cyAvatar::GetMatchingClothingItem(const plString& clothing_name)
         PyObject* clothingItem = PyList_New(5);
         
         // [0] = clothing name
-        PyList_SetItem(clothingItem, 0, PyString_FromPlString(match->GetName()));
+        PyList_SetItem(clothingItem, 0, PyString_FromSTString(match->GetName()));
 
         // [1] = clothing type
         PyList_SetItem(clothingItem, 1, PyInt_FromLong(match->fType));
 
         // [2] = description
-        PyList_SetItem(clothingItem, 2, PyString_FromPlString(match->fDescription));
+        PyList_SetItem(clothingItem, 2, PyString_FromSTString(match->fDescription));
 
         // [3] = ptImage of icon
         if ( match->fThumbnail != nil )
@@ -995,7 +995,7 @@ PyObject* cyAvatar::GetMatchingClothingItem(const plString& clothing_name)
             PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
 
         // [4] = fCustomText
-        PyList_SetItem(clothingItem, 4, PyString_FromPlString(match->fCustomText));
+        PyList_SetItem(clothingItem, 4, PyString_FromSTString(match->fCustomText));
 
         return clothingItem;
     }
@@ -1012,7 +1012,7 @@ PyObject* cyAvatar::GetMatchingClothingItem(const plString& clothing_name)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns 0, if clothing item was not found
 //
-bool cyAvatar::WearClothingItem(const plString& clothing_name)
+bool cyAvatar::WearClothingItem(const ST::string& clothing_name)
 {
     return WearClothingItemU(clothing_name,true);
 }
@@ -1025,7 +1025,7 @@ bool cyAvatar::WearClothingItem(const plString& clothing_name)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns false, if clothing item was not found
 //
-bool cyAvatar::RemoveClothingItem(const plString& clothing_name)
+bool cyAvatar::RemoveClothingItem(const ST::string& clothing_name)
 {
     return RemoveClothingItemU(clothing_name,true);
 }
@@ -1037,7 +1037,7 @@ bool cyAvatar::RemoveClothingItem(const plString& clothing_name)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-bool cyAvatar::TintClothingItem(const plString& clothing_name, pyColor& tint)
+bool cyAvatar::TintClothingItem(const ST::string& clothing_name, pyColor& tint)
 {
     return TintClothingItemU(clothing_name,tint,true);
 }
@@ -1051,7 +1051,7 @@ bool cyAvatar::TintClothingItem(const plString& clothing_name, pyColor& tint)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-bool cyAvatar::TintClothingItemLayer(const plString& clothing_name, pyColor& tint, uint8_t layer)
+bool cyAvatar::TintClothingItemLayer(const ST::string& clothing_name, pyColor& tint, uint8_t layer)
 {
     return TintClothingItemLayerU(clothing_name,tint,layer,true);
 }
@@ -1065,7 +1065,7 @@ bool cyAvatar::TintClothingItemLayer(const plString& clothing_name, pyColor& tin
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns 0, if clothing item was not found
 //
-bool cyAvatar::WearClothingItemU(const plString& clothing_name, bool update)
+bool cyAvatar::WearClothingItemU(const ST::string& clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1099,7 +1099,7 @@ bool cyAvatar::WearClothingItemU(const plString& clothing_name, bool update)
 //  PURPOSE    : Wear a particular piece of clothing based on name of clothing item
 //             : returns false, if clothing item was not found
 //
-bool cyAvatar::RemoveClothingItemU(const plString& clothing_name, bool update)
+bool cyAvatar::RemoveClothingItemU(const ST::string& clothing_name, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1133,7 +1133,7 @@ bool cyAvatar::RemoveClothingItemU(const plString& clothing_name, bool update)
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-bool cyAvatar::TintClothingItemU(const plString& clothing_name, pyColor& tint, bool update)
+bool cyAvatar::TintClothingItemU(const ST::string& clothing_name, pyColor& tint, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1166,7 +1166,7 @@ bool cyAvatar::TintClothingItemU(const plString& clothing_name, pyColor& tint, b
 //
 //  PURPOSE    : Tint a clothing item, i.e. change the color of it
 //
-bool cyAvatar::TintClothingItemLayerU(const plString& clothing_name, pyColor& tint, uint8_t layer, bool update)
+bool cyAvatar::TintClothingItemLayerU(const ST::string& clothing_name, pyColor& tint, uint8_t layer, bool update)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1202,7 +1202,7 @@ bool cyAvatar::TintClothingItemLayerU(const plString& clothing_name, pyColor& ti
 //
 //  PURPOSE    : Get the custom parameter string for a clothing item
 //
-plString cyAvatar::GetClothingItemParameterString(const plString& clothing_name)
+ST::string cyAvatar::GetClothingItemParameterString(const ST::string& clothing_name)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1233,7 +1233,7 @@ plString cyAvatar::GetClothingItemParameterString(const plString& clothing_name)
 //
 //  PURPOSE    : Get the tint a clothing item, i.e. change the color of it
 //
-PyObject* cyAvatar::GetTintClothingItem(const plString& clothing_name)
+PyObject* cyAvatar::GetTintClothingItem(const ST::string& clothing_name)
 {
     return GetTintClothingItemL(clothing_name, 1);
 }
@@ -1245,7 +1245,7 @@ PyObject* cyAvatar::GetTintClothingItem(const plString& clothing_name)
 //
 //  PURPOSE    : Get the tint a clothing item, i.e. change the color of it
 //
-PyObject* cyAvatar::GetTintClothingItemL(const plString& clothing_name, uint8_t layer)
+PyObject* cyAvatar::GetTintClothingItemL(const ST::string& clothing_name, uint8_t layer)
 {
     const plArmatureMod *avMod = nil;
     // we can really only talk to one avatar, so just get the first one (which is probably the only one)
@@ -1271,7 +1271,7 @@ PyObject* cyAvatar::GetTintClothingItemL(const plString& clothing_name, uint8_t 
         }
     }
 
-    plString errmsg = plFormat("Cannot find clothing item {} to find out what tint it is", clothing_name);
+    ST::string errmsg = ST::format("Cannot find clothing item {} to find out what tint it is", clothing_name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     // returning nil means an error occurred
     return nil;
@@ -1375,7 +1375,7 @@ plMorphSequence* cyAvatar::LocalMorphSequence()
 //
 //  PURPOSE    : Set the morph value of a specific layer of clothing
 //
-void cyAvatar::SetMorph(const plString& clothing_name, uint8_t layer, float value)
+void cyAvatar::SetMorph(const ST::string& clothing_name, uint8_t layer, float value)
 {
     plClothingItem *item = plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name);
     if( !item )
@@ -1426,7 +1426,7 @@ void cyAvatar::SetMorph(const plString& clothing_name, uint8_t layer, float valu
 //
 //  PURPOSE    : Returns the current morph value of the specific layer of clothing
 //
-float cyAvatar::GetMorph(const plString& clothing_name, uint8_t layer)
+float cyAvatar::GetMorph(const ST::string& clothing_name, uint8_t layer)
 {
     plMorphSequence* seq = LocalMorphSequence();
     if( !seq )
@@ -1582,7 +1582,7 @@ void cyAvatar::ExitSubWorld()
 //
 //  PURPOSE    : Place the Avatar into the subworld of the sceneobject specified
 //
-void cyAvatar::PlaySimpleAnimation(const plString& animName)
+void cyAvatar::PlaySimpleAnimation(const ST::string& animName)
 {
     // make sure that there is atleast one avatar scene object attached (should be)
     if ( fRecvr.Count() > 0)
@@ -1803,7 +1803,7 @@ bool cyAvatar::ExitPBMode()
 //
 //  PURPOSE    : Makes the avatar enter a custom anim loop.
 //
-bool cyAvatar::EnterAnimMode(const plString& animName)
+bool cyAvatar::EnterAnimMode(const ST::string& animName)
 {
     plArmatureMod* fAvMod = plAvatarMgr::GetInstance()->GetLocalAvatar();
     return PushRepeatEmote(fAvMod, animName);

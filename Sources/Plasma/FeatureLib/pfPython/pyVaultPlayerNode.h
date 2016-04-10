@@ -101,10 +101,10 @@ public:
     PyObject *FindChronicleEntry(const char *entryName); // returns pyVaultChronicleNode
 
     void SetPlayerName(const char *value);
-    plString GetPlayerName() const;
+    ST::string GetPlayerName() const;
 
     void SetAvatarShapeName(const char *value);
-    plString GetAvatarShapeName() const;
+    ST::string GetAvatarShapeName() const;
 
     void SetDisabled(bool value);
     bool IsDisabled();

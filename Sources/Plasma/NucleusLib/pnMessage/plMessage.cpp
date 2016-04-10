@@ -256,13 +256,13 @@ int plMsgStdStringHelper::PokeBig(const char * buf, uint32_t bufsz, hsStream* st
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Poke(const plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp = stringref.c_str();
     return Poke(temp, stream, peekOptions);
 }
 
-int plMsgStdStringHelper::PokeBig(const plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp = stringref.c_str();
     return PokeBig(temp, stream, peekOptions);
@@ -313,19 +313,19 @@ int plMsgStdStringHelper::PeekBig(std::string  & stringref, hsStream* stream, co
     return stream->GetPosition();
 }
 
-int plMsgStdStringHelper::Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp;
     int pos = Peek(temp, stream, peekOptions);
-    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    stringref = ST::string::from_latin_1(temp.c_str(), temp.size());
     return pos;
 }
 
-int plMsgStdStringHelper::PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions)
+int plMsgStdStringHelper::PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions)
 {
     std::string temp;
     int pos = PeekBig(temp, stream, peekOptions);
-    stringref = plString::FromIso8859_1(temp.c_str(), temp.size());
+    stringref = ST::string::from_latin_1(temp.c_str(), temp.size());
     return pos;
 }
 
@@ -365,16 +365,16 @@ int plMsgCStringHelper::Peek(char *& str, hsStream* stream, const uint32_t peekO
     return stream->GetPosition();
 }
 
-int plMsgCStringHelper::Poke(const plString & str, hsStream* stream, const uint32_t peekOptions)
+int plMsgCStringHelper::Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
     return Poke(str.c_str(), stream, peekOptions);
 }
 
-int plMsgCStringHelper::Peek(plString & str, hsStream* stream, const uint32_t peekOptions)
+int plMsgCStringHelper::Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions)
 {
     char * temp = nil;
     int pos = Peek(temp, stream, peekOptions);
-    str = plString::FromIso8859_1(temp);
+    str = ST::string::from_latin_1(temp);
     delete [] temp;
     return pos;
 }

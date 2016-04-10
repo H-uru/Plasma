@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 
-#define SAFE(s) ((s).IsEmpty() ? "(nil)" : (s))
+#define SAFE(s) ((s).is_empty() ? "(nil)" : (s))
 #define kComma  ","
 #define kEmpty  ""
 #define kSemicolon  ";"
@@ -119,11 +119,11 @@ bool plAgeInfoStruct::IsEqualTo( const plAgeInfoStruct * other ) const
     // otherwise compare everything.
     bool match = true;
     if (match && HasAgeFilename() && other->HasAgeFilename())
-        match = match && ( GetAgeFilename().CompareI( other->GetAgeFilename() )==0 );
+        match = match && ( GetAgeFilename().compare_i( other->GetAgeFilename() )==0 );
     if (match && HasAgeInstanceName() && other->HasAgeInstanceName())
-        match = match && ( GetAgeInstanceName().CompareI( other->GetAgeInstanceName() )==0 );
+        match = match && ( GetAgeInstanceName().compare_i( other->GetAgeInstanceName() )==0 );
     if (match && HasAgeUserDefinedName() && other->HasAgeUserDefinedName())
-        match = match && ( GetAgeUserDefinedName().CompareI( other->GetAgeUserDefinedName() )==0 );
+        match = match && ( GetAgeUserDefinedName().compare_i( other->GetAgeUserDefinedName() )==0 );
     if (match && HasAgeSequenceNumber() && other->HasAgeSequenceNumber())
         match = match && fAgeSequenceNumber==other->GetAgeSequenceNumber();
     if (match && HasAgeLanguage() && other->HasAgeLanguage())
@@ -168,13 +168,13 @@ void plAgeInfoStruct::CopyFrom( const plVaultAgeInfoNode * node )
 //============================================================================
 void plAgeInfoStruct::CopyFrom(const NetAgeInfo & info) {
     // Filename
-    SetAgeFilename(plString::FromWchar(info.ageFilename));
+    SetAgeFilename(ST::string::from_wchar(info.ageFilename));
     // InstanceName
-    SetAgeInstanceName(plString::FromWchar(info.ageInstName));
+    SetAgeInstanceName(ST::string::from_wchar(info.ageInstName));
     // UserDefinedName
-    SetAgeUserDefinedName(plString::FromWchar(info.ageUserName));
+    SetAgeUserDefinedName(ST::string::from_wchar(info.ageUserName));
     // Description
-    SetAgeDescription(plString::FromWchar(info.ageDesc));
+    SetAgeDescription(ST::string::from_wchar(info.ageDesc));
 
     plUUID inst(info.ageInstId);
     SetAgeInstanceGuid(&inst);
@@ -183,11 +183,11 @@ void plAgeInfoStruct::CopyFrom(const NetAgeInfo & info) {
 }
 
 //============================================================================
-plString plAgeInfoStruct::AsString() const
+ST::string plAgeInfoStruct::AsString() const
 {
     const char * spacer = kEmpty;
 
-    plStringStream ss;
+    ST::string_stream ss;
 
     ss << "[";
 
@@ -242,13 +242,13 @@ plString plAgeInfoStruct::AsString() const
     }
     ss  << "]";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
 
-void plAgeInfoStruct::SetAgeFilename( const plString & v )
+void plAgeInfoStruct::SetAgeFilename( const ST::string & v )
 {
-    if (!v.IsEmpty())
+    if (!v.is_empty())
     {
         SetFlag( kHasAgeFilename );
         fAgeFilename=v;
@@ -259,9 +259,9 @@ void plAgeInfoStruct::SetAgeFilename( const plString & v )
     }
 }
 
-void plAgeInfoStruct::SetAgeInstanceName( const plString & v )
+void plAgeInfoStruct::SetAgeInstanceName( const ST::string & v )
 {
-    if (!v.IsEmpty())
+    if (!v.is_empty())
     {
         SetFlag( kHasAgeInstanceName );
         fAgeInstanceName=v;
@@ -286,9 +286,9 @@ void plAgeInfoStruct::SetAgeInstanceGuid( const plUUID * v )
     }
 }
 
-void plAgeInfoStruct::SetAgeUserDefinedName( const plString & v )
+void plAgeInfoStruct::SetAgeUserDefinedName( const ST::string & v )
 {
-    if (!v.IsEmpty())
+    if (!v.is_empty())
     {
         SetFlag( kHasAgeUserDefinedName );
         fAgeUserDefinedName=v;
@@ -312,9 +312,9 @@ void plAgeInfoStruct::SetAgeSequenceNumber( uint32_t v )
     }
 }
 
-void plAgeInfoStruct::SetAgeDescription( const plString & v )
+void plAgeInfoStruct::SetAgeDescription( const ST::string & v )
 {
-    if (!v.IsEmpty())
+    if (!v.is_empty())
     {
         SetFlag( kHasAgeDescription );
         fAgeDescription=v;
@@ -340,12 +340,12 @@ void plAgeInfoStruct::SetAgeLanguage( uint32_t v )
 
 void plAgeInfoStruct::UpdateFlags() const
 {
-    SetFlag( kHasAgeFilename, !fAgeFilename.IsEmpty() );
-    SetFlag( kHasAgeInstanceName, !fAgeInstanceName.IsEmpty() );
-    SetFlag( kHasAgeUserDefinedName, !fAgeUserDefinedName.IsEmpty() );
+    SetFlag( kHasAgeFilename, !fAgeFilename.is_empty() );
+    SetFlag( kHasAgeInstanceName, !fAgeInstanceName.is_empty() );
+    SetFlag( kHasAgeUserDefinedName, !fAgeUserDefinedName.is_empty() );
     SetFlag( kHasAgeInstanceGuid, fAgeInstanceGuid.IsSet() );
     SetFlag( kHasAgeSequenceNumber, fAgeSequenceNumber!=0 );
-    SetFlag( kHasAgeDescription, !fAgeDescription.IsEmpty() );
+    SetFlag( kHasAgeDescription, !fAgeDescription.is_empty() );
     SetFlag( kHasAgeLanguage, fAgeLanguage>=0 );
 }
 
@@ -384,7 +384,7 @@ void plAgeLinkStruct::Read( hsStream * s, hsResMgr* m)
         s->LogReadLE( &fLinkingRules ,"LinkingRules");
     if ( IsFlagSet( kHasSpawnPt_DEAD ) )
     {
-        plString str;
+        ST::string str;
         s->LogSubStreamPushDesc("SpawnPt_DEAD");
         plMsgStdStringHelper::Peek(str,s);
         fSpawnPoint.SetName( str );
@@ -496,11 +496,11 @@ void plAgeLinkStruct::Clear()
     fAmCCR = false;
 }
 
-plString plAgeLinkStruct::AsString() const
+ST::string plAgeLinkStruct::AsString() const
 {
     const char * spacer = kEmpty;
 
-    plStringStream ss;
+    ST::string_stream ss;
 
     ss << "[";
 
@@ -534,7 +534,7 @@ plString plAgeLinkStruct::AsString() const
     }
     ss  << "]";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
 
@@ -616,11 +616,11 @@ void plNetServerSessionInfo::CopyFrom(const plNetServerSessionInfo * other)
     }
 }
 
-plString plNetServerSessionInfo::AsString() const
+ST::string plNetServerSessionInfo::AsString() const
 {
     const char * spacer = kEmpty;
 
-    plStringStream ss;
+    ST::string_stream ss;
 
     ss << "[";
 
@@ -657,15 +657,15 @@ plString plNetServerSessionInfo::AsString() const
     }
     ss  << "]";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
-plString plNetServerSessionInfo::AsLogString() const
+ST::string plNetServerSessionInfo::AsLogString() const
 {
     const char* spacer = kSemicolon;
 
-    plStringStream ss;
-    plString typeName;
+    ST::string_stream ss;
+    ST::string typeName;
 
     if (HasServerType())
     {
@@ -700,7 +700,7 @@ plString plNetServerSessionInfo::AsLogString() const
         ss << spacer;
     }
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
 bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) const
@@ -709,21 +709,21 @@ bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) con
     if (match && IsFlagSet(kHasServerGuid) && other->IsFlagSet(kHasServerGuid))
         match = match && fServerGuid.IsEqualTo(other->GetServerGuid());
     if (match && IsFlagSet(kHasServerName) && other->IsFlagSet(kHasServerName))
-        match = match && (fServerName.CompareI(other->fServerName)==0);
+        match = match && (fServerName.compare_i(other->fServerName)==0);
     if (match && IsFlagSet(kHasServerType) && other->IsFlagSet(kHasServerType))
         match = match && fServerType==other->fServerType;
     if (match && IsFlagSet(kHasServerAddr) && other->IsFlagSet(kHasServerAddr))
-        match = match && (fServerAddr.CompareI(other->fServerAddr)==0);
+        match = match && (fServerAddr.compare_i(other->fServerAddr)==0);
     if (match && IsFlagSet(kHasServerPort) && other->IsFlagSet(kHasServerPort))
         match = match && fServerPort==other->fServerPort;
     return match;
 }
 
 
-void plNetServerSessionInfo::SetServerName(const plString & val)
+void plNetServerSessionInfo::SetServerName(const ST::string & val)
 {
     fServerName = val;
-    if (!val.IsEmpty())
+    if (!val.is_empty())
     {
         SetFlag(kHasServerName);
     }
@@ -747,10 +747,10 @@ void plNetServerSessionInfo::SetServerType(uint8_t val)
     }
 }
 
-void plNetServerSessionInfo::SetServerAddr(const plString & val)
+void plNetServerSessionInfo::SetServerAddr(const ST::string & val)
 {
     fServerAddr = val;
-    if (!val.IsEmpty())
+    if (!val.is_empty())
     {
         SetFlag(kHasServerAddr);
     }

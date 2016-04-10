@@ -57,7 +57,7 @@ class hsStream;
 class plAgePage
 {
     protected:
-        plString    fName;
+        ST::string  fName;
         uint32_t    fSeqSuffix;
         uint8_t     fFlags;
 
@@ -73,20 +73,20 @@ class plAgePage
             kIsVolatile         = 0x08,
         };
 
-        plAgePage( const plString &name, uint32_t seqSuffix, uint8_t flags );
-        plAgePage( const plString &stringFrom );
+        plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags );
+        plAgePage( const ST::string &stringFrom );
         plAgePage( const plAgePage &src );
         plAgePage();
 
-        plString    GetName( void ) const { return fName; }
+        ST::string  GetName( void ) const { return fName; }
         uint32_t    GetSeqSuffix( void ) const { return fSeqSuffix; }
         uint8_t     GetFlags( void ) const { return fFlags; }
 
         void        SetSeqSuffix( uint32_t s ) { fSeqSuffix = s; }
         void        SetFlags(uint8_t f, bool on=true);
 
-        bool        SetFromString( const plString &string );
-        plString    GetAsString( void ) const;
+        bool        SetFromString( const ST::string &string );
+        ST::string  GetAsString( void ) const;
 
         plAgePage &operator=( const plAgePage &src );
 };
@@ -97,7 +97,7 @@ class plAgeDescription : public plInitSectionTokenReader
 {
 private:
 
-    plString    fName;
+    ST::string  fName;
 
     int32_t     fPageIterator;
     hsTArray<plAgePage> fPages;
@@ -138,21 +138,21 @@ public:
     // Overload for plInitSectionTokenReader
     virtual const char  *GetSectionName( void ) const;
 
-    plString    GetAgeName( void ) const { return fName; }
+    ST::string  GetAgeName( void ) const { return fName; }
     void        SetAgeNameFromPath( const plFileName &path );
-    void        SetAgeName(const plString& ageName) { fName = ageName; }
+    void        SetAgeName(const ST::string& ageName) { fName = ageName; }
 
     // Page list
     void    ClearPageList();
-    void    RemovePage( const plString &page );
-    void    AppendPage( const plString &name, int seqSuffix = -1, uint8_t flags = 0 );
+    void    RemovePage( const ST::string &page );
+    void    AppendPage( const ST::string &name, int seqSuffix = -1, uint8_t flags = 0 );
 
     void        SeekFirstPage( void );
     plAgePage   *GetNextPage( void );
     int         GetNumPages() const { return fPages.GetCount(); }
-    plAgePage   *FindPage( const plString &name ) const;
+    plAgePage   *FindPage( const ST::string &name ) const;
     bool FindLocation(const plLocation& loc) const;
-    plLocation  CalcPageLocation( const plString &page ) const;
+    plLocation  CalcPageLocation( const ST::string &page ) const;
 
     // Getters
     short GetStartMonth() const { return fStart.GetMonth(); }

@@ -101,7 +101,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /////////////////////////////////////////////////////////////////////////////////////////
 
 #include "pnFactory/plCreatable.h"
-#include "plString.h"
+#include <string_theory/string>
 
 /////////////////////////////////////////////////////////////////////////////////////////
 //
@@ -178,8 +178,8 @@ public:
     // \{
     /** The name of the channel is used to dynamically attach to sub-parts of an
         object. */
-    virtual plString GetName() { return fName; };
-    virtual void SetName(const plString & name) { fName = name; };
+    virtual ST::string GetName() { return fName; };
+    virtual void SetName(const ST::string & name) { fName = name; };
     // \}
 
     // PLASMA PROTOCOL
@@ -192,7 +192,7 @@ public:
     virtual void Read(hsStream *s, hsResMgr *mgr);
 
 protected:
-    plString fName;
+    ST::string fName;
 
 };
 

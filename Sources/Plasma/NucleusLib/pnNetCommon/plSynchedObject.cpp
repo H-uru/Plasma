@@ -190,7 +190,7 @@ void plSynchedObject::RegisterSynchedValueFriend(plSynchedValueBase* v)
 //
 // send sdl state msg immediately
 //
-void plSynchedObject::SendSDLStateMsg(const plString& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
+void plSynchedObject::SendSDLStateMsg(const ST::string& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     plSDLModifierMsg* sdlMsg = new plSDLModifierMsg(SDLStateName,
         (synchFlags & kBCastToClients) ? plSDLModifierMsg::kSendToServerAndClients : plSDLModifierMsg::kSendToServer /* action */);
@@ -203,7 +203,7 @@ void plSynchedObject::SendSDLStateMsg(const plString& SDLStateName, uint32_t syn
 // Tell an object to send an sdl state update.
 // The request will get queued (returns true)
 //
-bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
+bool plSynchedObject::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags /*SendSDLStateFlags*/)
 {
     if (!IOKToDirty(SDLStateName))
     {
@@ -256,13 +256,13 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
 // add state defn if not already there.
 // if there adjust flags if necessary
 //
-void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint32_t sendFlags)
+void plSynchedObject::IAddDirtyState(plKey objKey, const ST::string& sdlName, uint32_t sendFlags)
 {
     bool found=false;
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
     for( ; it != fDirtyStates.end(); it++)
     {
-        if (it->fObjKey == objKey && it->fSDLName.CompareI(sdlName) == 0)
+        if (it->fObjKey == objKey && it->fSDLName.compare_i(sdlName) == 0)
         {
             if (sendFlags & kForceFullSend)
                 (*it).fSendFlags |= kForceFullSend;
@@ -290,12 +290,12 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint
 //
 // STATIC
 //
-void plSynchedObject::IRemoveDirtyState(plKey objKey, const plString& sdlName)
+void plSynchedObject::IRemoveDirtyState(plKey objKey, const ST::string& sdlName)
 { 
     std::vector<StateDefn>::iterator it=fDirtyStates.begin();
     for( ; it != fDirtyStates.end(); it++)
     {
-        if (it->fObjKey == objKey && it->fSDLName.CompareI(sdlName) == 0)
+        if (it->fObjKey == objKey && it->fSDLName.compare_i(sdlName) == 0)
         {
             fDirtyStates.erase(it);
             break;
@@ -342,7 +342,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
         int i;
         for(i=0;i<num;i++)
         {
-            plString s;
+            ST::string s;
             plMsgStdStringHelper::Peek(s, stream);
             fSDLExcludeList.push_back(s);
         }
@@ -356,7 +356,7 @@ void    plSynchedObject::Read(hsStream* stream, hsResMgr* mgr)
         int i;
         for(i=0;i<num;i++)
         {
-            plString s;
+            ST::string s;
             plMsgStdStringHelper::Peek(s, stream);
             fSDLVolatileList.push_back(s);
         }
@@ -449,7 +449,7 @@ void plSynchedObject::CallDirtyNotifiers() {}
 //
 // return true if it's ok to dirty this object
 //
-bool plSynchedObject::IOKToDirty(const plString& SDLStateName) const
+bool plSynchedObject::IOKToDirty(const ST::string& SDLStateName) const
 {   
     // is synching disabled?
     bool synchDisabled = (GetSynchDisabled()!=0);
@@ -471,7 +471,7 @@ bool plSynchedObject::IOKToDirty(const plString& SDLStateName) const
 //
 // return true if this object should send his SDL msg (for persistence or synch) over the net
 //
-bool plSynchedObject::IOKToNetwork(const plString& sdlName, uint32_t* synchFlags) const
+bool plSynchedObject::IOKToNetwork(const ST::string& sdlName, uint32_t* synchFlags) const
 {
     // determine destination
     bool dstServerOnly=false, dstClientsOnly=false, dstClientsAndServer=false;  
@@ -523,14 +523,14 @@ bool plSynchedObject::IOKToNetwork(const plString& sdlName, uint32_t* synchFlags
     return false;
 }
  
-plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateList(const SDLStateList& list, const plString& sdlName) const
+plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateList(const SDLStateList& list, const ST::string& sdlName) const
 {
-    if (sdlName.IsEmpty())
+    if (sdlName.is_empty())
         return list.end();  // false
 
     SDLStateList::const_iterator it = list.begin();
     for(; it != list.end(); it++)
-        if (it->CompareI(sdlName) == 0)
+        if (it->compare_i(sdlName) == 0)
             return it;
 
     return it;  // .end(), false
@@ -540,9 +540,9 @@ plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateLi
 // EXCLUDE LIST
 ///////////////////////////
 
-void plSynchedObject::AddToSDLExcludeList(const plString& sdlName)
+void plSynchedObject::AddToSDLExcludeList(const ST::string& sdlName)
 {
-    if (!sdlName.IsEmpty())
+    if (!sdlName.is_empty())
     {
         if (IFindInSDLStateList(fSDLExcludeList, sdlName)==fSDLExcludeList.end())
         {
@@ -552,7 +552,7 @@ void plSynchedObject::AddToSDLExcludeList(const plString& sdlName)
     }
 }
 
-void plSynchedObject::RemoveFromSDLExcludeList(const plString& sdlName)
+void plSynchedObject::RemoveFromSDLExcludeList(const ST::string& sdlName)
 {
     SDLStateList::const_iterator it=IFindInSDLStateList(fSDLExcludeList, sdlName);
     if (it != fSDLExcludeList.end())
@@ -563,7 +563,7 @@ void plSynchedObject::RemoveFromSDLExcludeList(const plString& sdlName)
     }
 }
 
-bool plSynchedObject::IsInSDLExcludeList(const plString& sdlName) const
+bool plSynchedObject::IsInSDLExcludeList(const ST::string& sdlName) const
 {
     if ((fSynchFlags & kExcludeAllPersistentState) != 0)
         return true;
@@ -579,9 +579,9 @@ bool plSynchedObject::IsInSDLExcludeList(const plString& sdlName) const
 // VOLATILE LIST
 ///////////////////////////
 
-void plSynchedObject::AddToSDLVolatileList(const plString& sdlName)
+void plSynchedObject::AddToSDLVolatileList(const ST::string& sdlName)
 {
-    if (!sdlName.IsEmpty())
+    if (!sdlName.is_empty())
     {
         if (IFindInSDLStateList(fSDLVolatileList,sdlName)==fSDLVolatileList.end())
         {
@@ -591,7 +591,7 @@ void plSynchedObject::AddToSDLVolatileList(const plString& sdlName)
     }
 }
 
-void plSynchedObject::RemoveFromSDLVolatileList(const plString& sdlName)
+void plSynchedObject::RemoveFromSDLVolatileList(const ST::string& sdlName)
 {
     SDLStateList::const_iterator it=IFindInSDLStateList(fSDLVolatileList,sdlName);
     if (it != fSDLVolatileList.end())
@@ -602,7 +602,7 @@ void plSynchedObject::RemoveFromSDLVolatileList(const plString& sdlName)
     }
 }
 
-bool plSynchedObject::IsInSDLVolatileList(const plString& sdlName) const
+bool plSynchedObject::IsInSDLVolatileList(const ST::string& sdlName) const
 {
     if ((fSynchFlags & kAllStateIsVolatile) != 0)
         return true;

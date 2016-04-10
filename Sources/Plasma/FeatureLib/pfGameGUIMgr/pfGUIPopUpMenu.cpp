@@ -97,7 +97,7 @@ class pfPopUpKeyGenerator
 
         plKey   CreateKey( hsKeyedObject *ko )
         {
-            plString name = plFormat("{}-{}", fPrefix, fKeyCount++);
+            ST::string name = ST::format("{}-{}", fPrefix, fKeyCount++);
 
             return hsgResMgr::ResMgr()->NewKey( name, ko, fLoc );
         }

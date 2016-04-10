@@ -79,13 +79,13 @@ public:
     bool GetEnabled() { return fEnabled; }
     void SetEnabled(bool val) { fEnabled = val; }
 
-    uint32_t GetIndex(const plString &regionName);
+    uint32_t GetIndex(const ST::string &regionName);
     void MarkRegion(uint32_t localIdx, uint32_t remoteIdx, bool doICare);
     void SetRegionVectors(const hsPoint3 &pos, hsBitVector &regionsImIn, hsBitVector &regionsICareAbout);
     uint32_t GetNumRegions() const; // includes the secret 0 region in its count
     void ParseCsvInput(hsStream *s);
 
-    plString GetRegionNames(hsBitVector regions);
+    ST::string GetRegionNames(hsBitVector regions);
 };
 
 #endif // plRelevanceMgr_inc

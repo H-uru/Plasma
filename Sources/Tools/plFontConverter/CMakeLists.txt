@@ -53,6 +53,7 @@ target_link_libraries(plFontConverter plPipeline)
 target_link_libraries(plFontConverter plResMgr)
 target_link_libraries(plFontConverter ${JPEG_LIBRARY})
 target_link_libraries(plFontConverter ${FREETYPE_LIBRARIES})
+target_link_libraries(plFontConverter ${STRING_THEORY_LIBRARIES})
 target_link_libraries(plFontConverter Qt5::Widgets)
 
 if(USE_VLD)

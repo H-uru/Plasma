@@ -101,7 +101,7 @@ plAnimStage::plAnimStage()
 {
 }
 
-plAnimStage::plAnimStage(const plString &animName, uint8_t notify)
+plAnimStage::plAnimStage(const ST::string &animName, uint8_t notify)
 : fAnimName(animName),
   fNotify(notify),
   fArmature(nil),
@@ -129,7 +129,7 @@ plAnimStage::plAnimStage(const plString &animName, uint8_t notify)
 
 
 // PLANIMSTAGE canonical ctor
-plAnimStage::plAnimStage(const plString &animName,
+plAnimStage::plAnimStage(const ST::string &animName,
                          uint8_t notify,
                          ForwardType forward,
                          BackType back,
@@ -161,7 +161,7 @@ plAnimStage::plAnimStage(const plString &animName,
 {
 }
 
-plAnimStage::plAnimStage(const plString &animName,
+plAnimStage::plAnimStage(const ST::string &animName,
                          uint8_t notify,
                          ForwardType forward,
                          BackType back,
@@ -718,7 +718,7 @@ int plAnimStage::GetPrevStage(int curStage)
 // DUMPDEBUG
 void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    plStringStream str;
+    ST::string_stream str;
 
     str << fAnimName;
     str << " ";
@@ -729,11 +729,11 @@ void plAnimStage::DumpDebug(bool active, int &x, int &y, int lineHeight, plDebug
     str << "time: (" << fLocalTime << '/' << fLength << ')';
 
     if(active)
-        debugTxt.DrawString(x, y, str.GetString(), 0, 255, 0);
+        debugTxt.DrawString(x, y, str.to_string(), 0, 255, 0);
     else if(fAnimInstance)
-        debugTxt.DrawString(x, y, str.GetString());
+        debugTxt.DrawString(x, y, str.to_string());
     else
-        debugTxt.DrawString(x, y, str.GetString(), 255, 255, 0);
+        debugTxt.DrawString(x, y, str.to_string(), 255, 255, 0);
 
     y += lineHeight;
 }

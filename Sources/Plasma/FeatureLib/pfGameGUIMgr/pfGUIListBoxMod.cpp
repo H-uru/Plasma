@@ -1156,12 +1156,12 @@ void    pfGUIListBoxMod::ClearAllElements( void )
     HandleExtendedEvent( pfGUIListBoxMod::kListCleared );
 }
 
-uint16_t  pfGUIListBoxMod::AddString( const plString &string )
+uint16_t  pfGUIListBoxMod::AddString( const ST::string &string )
 {
     return AddElement( new pfGUIListText( string ) );
 }
 
-int16_t   pfGUIListBoxMod::FindString( const plString &toCompareTo )
+int16_t   pfGUIListBoxMod::FindString( const ST::string &toCompareTo )
 {
     pfGUIListText   text( toCompareTo );
     return FindElement( &text );

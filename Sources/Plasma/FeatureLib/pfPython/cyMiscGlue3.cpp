@@ -187,7 +187,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobject, args, "Params: name,ageName\n
         PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    return cyMisc::FindSceneObject(plString::FromUtf8(name), ageName);
+    return cyMisc::FindSceneObject(ST::string::from_utf8(name), ageName);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobjects, args, "Params: name\nThis will try to find a any sceneobject containing string in name")
@@ -198,7 +198,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindSceneobjects, args, "Params: name\nThis wi
         PyErr_SetString(PyExc_TypeError, "PtFindSceneobject expects string");
         PYTHON_RETURN_ERROR;
     }
-    return cyMisc::FindSceneObjects(plString::FromUtf8(name));
+    return cyMisc::FindSceneObjects(ST::string::from_utf8(name));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will try to find an activator based on its name\n"
@@ -212,7 +212,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtFindActivator, args, "Params: name\nThis will 
         PYTHON_RETURN_ERROR;
     }
 
-    return cyMisc::FindActivator(plString::FromUtf8(name));
+    return cyMisc::FindActivator(ST::string::from_utf8(name));
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearCameraStack, cyMisc::ClearCameraStack, "Clears the camera stack")
@@ -678,12 +678,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates t
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")
 {
-    return PyUnicode_FromPlString(cyMisc::GetUserPath().AsString());
+    return PyUnicode_FromSTString(cyMisc::GetUserPath().AsString());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetInitPath, "Returns the unicode path to the client's init directory. Do NOT convert to a standard string.")
 {
-    return PyUnicode_FromPlString(cyMisc::GetInitPath().AsString());
+    return PyUnicode_FromSTString(cyMisc::GetInitPath().AsString());
 }
 
 ///////////////////////////////////////////////////////////////////////////

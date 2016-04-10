@@ -59,8 +59,8 @@ class pfGameGUIMsg : public plMessage
     protected:
 
         uint8_t     fCommand;
-        plString    fString;
-        plString    fAge;
+        ST::string  fString;
+        ST::string  fAge;
 
     public:
         enum 
@@ -99,11 +99,11 @@ class pfGameGUIMsg : public plMessage
 
         uint8_t     GetCommand() const { return fCommand; }
 
-        void        SetString(const plString &str) { fString = str; }
-        plString    GetString() const { return fString; }
+        void        SetString(const ST::string &str) { fString = str; }
+        ST::string  GetString() const { return fString; }
 
-        void        SetAge(const plString &age) { fAge = age; }
-        plString    GetAge() const { return fAge; }
+        void        SetAge(const ST::string &age) { fAge = age; }
+        ST::string  GetAge() const { return fAge; }
 };
 
 #endif // _pfGameGUIMsg_h

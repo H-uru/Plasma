@@ -256,7 +256,7 @@ void    pfGUIKnobCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers )
 
 //// SetAnimationKeys ////////////////////////////////////////////////////////
 
-void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
 {
     fAnimationKeys = keys;
     fAnimName = name;

@@ -193,7 +193,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
             return plSoundBuffer::kError;
         }
 
-        IPrintDbgMessage(plFormat("   Readied file {} for streaming", fSrcFilename).c_str());
+        IPrintDbgMessage(ST::format("   Readied file {} for streaming", fSrcFilename).c_str());
 
         // dont free sound data until we have a chance to use it in load sound
 
@@ -249,8 +249,8 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
 
     if( retVal == plSoundBuffer::kError )
     {
-        plString str = plFormat("Unable to open streaming source {}",
-                                fDataBufferKey->GetName());
+        ST::string str = ST::format("Unable to open streaming source {}",
+                                    fDataBufferKey->GetName());
         IPrintDbgMessage( str.c_str(), true );
         fFailed = true;
         return false;
@@ -289,9 +289,9 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         delete fDSoundBuffer;
         fDSoundBuffer = nil;
 
-        plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                GetFileName());
+        ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                    GetFileName());
         IPrintDbgMessage(str.c_str(), true);
         fFailed = true;
         return false;
@@ -344,7 +344,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     IRefreshEAXSettings( true );
 
     // Debug info
-    plString dbg = plFormat("   Streaming {}.", fSrcFilename);
+    ST::string dbg = ST::format("   Streaming {}.", fSrcFilename);
     IPrintDbgMessage(dbg.c_str());
 
     plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",

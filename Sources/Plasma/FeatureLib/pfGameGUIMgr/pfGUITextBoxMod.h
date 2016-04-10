@@ -59,7 +59,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
     protected:
 
         wchar_t         *fText;
-        plString        fLocalizationPath;
+        ST::string      fLocalizationPath;
         bool            fUseLocalizationPath;
 
 
@@ -99,7 +99,7 @@ class pfGUITextBoxMod : public pfGUIControlMod
         void    SetText( const char *text );
         void    SetText( const wchar_t *text );
 
-        void    SetLocalizationPath(const plString& path);
+        void    SetLocalizationPath(const ST::string& path);
         void    SetUseLocalizationPath(bool use);
 };
 

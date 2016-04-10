@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 
 class plFileName;
+namespace ST { class string; }
 
 class pfLocalizationMgr
 {
@@ -72,8 +73,8 @@ public:
     // want the arguments in a different order (like you had to switch things around for a specific language)
     // then you use %1s, %2s, %3s and so on to specify arguments, these two cannot be mixed and you won't get
     // the results you expect if you do mix them. Path is specified by Age.Set.Name
-    plString GetString(const plString & path, const std::vector<plString> & args);
-    plString GetString(const plString & path);
+    ST::string GetString(const ST::string & path, const std::vector<ST::string> & args);
+    ST::string GetString(const ST::string & path);
 };
 
 #endif

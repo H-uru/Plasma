@@ -91,7 +91,7 @@ class plFontCache : public hsKeyedObject
         
         static plFontCache  &GetInstance( void );
 
-        plFont  *GetFont( const plString &face, uint8_t size, uint32_t fontFlags );
+        plFont  *GetFont( const ST::string &face, uint8_t size, uint32_t fontFlags );
 
 //      HFONT   GetMeAFont( const char *face, int height, int weight, bool italic, uint32_t quality );
 //      void    FreeFont( HFONT font );

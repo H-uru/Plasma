@@ -67,7 +67,7 @@ plOneShotMod::plOneShotMod()
 }
 
 // CTOR(char *)
-plOneShotMod::plOneShotMod(const plString &animName,
+plOneShotMod::plOneShotMod(const ST::string &animName,
                            bool drivable,
                            bool reversable,
                            float seekDuration,
@@ -83,7 +83,7 @@ plOneShotMod::plOneShotMod(const plString &animName,
 }
 
 // INIT
-void plOneShotMod::Init(const plString &animName,
+void plOneShotMod::Init(const ST::string &animName,
                         bool drivable,
                         bool reversable,
                         float seekDuration,
@@ -120,7 +120,7 @@ bool plOneShotMod::MsgReceive(plMessage* msg)
 
                 if(avMod)
                 {
-                    plString animName = avMod->MakeAnimationName(fAnimName);
+                    ST::string animName = avMod->MakeAnimationName(fAnimName);
 
                     plAvOneShotMsg *avOSmsg = new plAvOneShotMsg(myKey, oneShotMsg->fPlayerKey, objKey,
                                                                  fSeekDuration, (bool)fSmartSeek, animName, fDrivable,

@@ -91,7 +91,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, oneShot, args)
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    self->fThis->OneShot(*key, duration, usePhysics != 0, plString::FromUtf8(animName), drivable != 0, reversable != 0);
+    self->fThis->OneShot(*key, duration, usePhysics != 0, ST::string::from_utf8(animName), drivable != 0, reversable != 0);
     PYTHON_RETURN_NONE;
 }
 
@@ -155,8 +155,8 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runCoopAnim, args)
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    const plString& animName1 = PyString_AsStringEx(animAv1);
-    const plString& animName2 = PyString_AsStringEx(animAv2);
+    ST::string animName1 = PyString_AsStringEx(animAv1);
+    ST::string animName2 = PyString_AsStringEx(animAv2);
     PYTHON_RETURN_BOOL(self->fThis->RunCoopAnim(*key, animName1, animName2, range, dist, move));
 }
 
@@ -244,10 +244,10 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getEntireClothingList, args)
         PYTHON_RETURN_ERROR;
     }
 
-    std::vector<plString> clothingList = self->fThis->GetEntireClothingList(clothingType);
+    std::vector<ST::string> clothingList = self->fThis->GetEntireClothingList(clothingType);
     PyObject* retVal = PyList_New(clothingList.size());
     for (int i = 0; i < clothingList.size(); i++)
-        PyList_SetItem(retVal, i, PyString_FromPlString(clothingList[i]));
+        PyList_SetItem(retVal, i, PyString_FromSTString(clothingList[i]));
     return retVal;
 }
 
@@ -614,7 +614,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
         PYTHON_RETURN_ERROR;
     }
 
-    self->fThis->PlaySimpleAnimation(plString::FromUtf8(animName));
+    self->fThis->PlaySimpleAnimation(ST::string::from_utf8(animName));
     PYTHON_RETURN_NONE;
 }
 
@@ -808,7 +808,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarEnterAnimMode, args, "Params: animName\n
         PYTHON_RETURN_ERROR;
     }
 
-    plString animName = PyString_AsStringEx(animNameObj);
+    ST::string animName = PyString_AsStringEx(animNameObj);
     PYTHON_RETURN_BOOL(cyAvatar::EnterAnimMode(animName));
 }
 

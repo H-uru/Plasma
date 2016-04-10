@@ -173,7 +173,7 @@ plUUID pyAgeVault::GetAgeGuid( void )
 
 ///////////////
 // Chronicle
-PyObject* pyAgeVault::FindChronicleEntry( const plString& entryName )
+PyObject* pyAgeVault::FindChronicleEntry( const ST::string& entryName )
 {
     if (hsRef<RelVaultNode> rvn = VaultFindAgeChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
@@ -182,7 +182,7 @@ PyObject* pyAgeVault::FindChronicleEntry( const plString& entryName )
     PYTHON_RETURN_NONE;
 }
 
-void pyAgeVault::AddChronicleEntry( const plString& name, uint32_t type, const plString& value )
+void pyAgeVault::AddChronicleEntry( const ST::string& name, uint32_t type, const ST::string& value )
 {
     VaultAddAgeChronicleEntry(name, type, value);
 }

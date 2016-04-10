@@ -68,7 +68,7 @@ PYTHON_INIT_DEFINITION(ptVaultMarkerGameNode, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getGameName)
 {
-    return PyUnicode_FromPlString(self->fThis->GetGameName());
+    return PyUnicode_FromSTString(self->fThis->GetGameName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getMarkers)

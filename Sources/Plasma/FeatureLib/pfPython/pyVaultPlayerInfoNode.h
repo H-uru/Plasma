@@ -79,12 +79,12 @@ public:
 //
     void    Player_SetPlayerID( uint32_t plyrid );
     uint32_t  Player_GetPlayerID( void );
-    void    Player_SetPlayerName(const plString& name);
-    plString Player_GetPlayerName() const;
+    void    Player_SetPlayerName(const ST::string& name);
+    ST::string Player_GetPlayerName() const;
 
     // age the player is currently in, if any.
-    void    Player_SetAgeInstanceName(const plString& name);
-    plString Player_GetAgeInstanceName() const;
+    void    Player_SetAgeInstanceName(const ST::string& name);
+    ST::string Player_GetAgeInstanceName() const;
     void    Player_SetAgeGuid( const char * guidtext);
     plUUID  Player_GetAgeGuid(void) const;
     // online status

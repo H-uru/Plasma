@@ -224,12 +224,12 @@ PF_CONSOLE_CMD( Net,        // groupName
                "broadcast chat msg" )   // helpString
 {
     // send chat text
-    plString text=plNetClientMgr::GetInstance()->GetPlayerName();
+    ST::string text=plNetClientMgr::GetInstance()->GetPlayerName();
     text += ":";
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += plString::FromUtf8( (char*)params[i] );
+        text += ST::string::from_utf8( (char*)params[i] );
         text += " ";
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );

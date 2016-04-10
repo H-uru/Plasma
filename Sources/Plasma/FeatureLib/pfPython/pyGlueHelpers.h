@@ -42,18 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _pyGlueHelpers_h_
 #define _pyGlueHelpers_h_
 
-class plString;
+namespace ST { class string; }
 class pyKey;
 typedef struct _object PyObject;
 typedef struct _typeobject PyTypeObject;
 typedef struct PyMethodDef PyMethodDef;
 
 // Useful string functions
-plString PyString_AsStringEx(PyObject* obj);
+ST::string PyString_AsStringEx(PyObject* obj);
 bool PyString_CheckEx(PyObject* obj);
 
-PyObject* PyUnicode_FromPlString(const plString& str);
-#define PyString_FromPlString(x) PyString_FromString((x).c_str())
+PyObject* PyUnicode_FromSTString(const ST::string& str);
+#define PyString_FromSTString(x) PyString_FromStringAndSize((x).c_str(), (x).size())
 
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 

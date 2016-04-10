@@ -1475,10 +1475,10 @@ plDrawableSpans* plSound::CreateProxy(const hsMatrix44& l2w, hsGMaterial* mat, h
 
 
 // call when state has changed
-bool plSound::DirtySynchState(const plString& sdlName /* kSDLSound */, uint32_t sendFlags)
+bool plSound::DirtySynchState(const ST::string& sdlName /* kSDLSound */, uint32_t sendFlags)
 {
     /*
-    if( sdlName == nil )
+    if( sdlName.is_empty() )
         sdlName = kSDLSound;
 
     if( fOwningSceneObject != nil )

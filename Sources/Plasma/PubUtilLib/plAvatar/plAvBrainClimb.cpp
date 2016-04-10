@@ -924,7 +924,7 @@ void plAvBrainClimb::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
 void plAvBrainClimb::IDumpClimbDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
     static const char prolog[] = "Allowed directions: ";
-    plStringStream str;
+    ST::string_stream str;
 
     str << prolog;
     if(fAllowedDirections & plClimbMsg::kUp)
@@ -936,10 +936,10 @@ void plAvBrainClimb::IDumpClimbDirections(int &x, int &y, int lineHeight, plDebu
     if(fAllowedDirections & plClimbMsg::kRight)
         str << "RIGHT ";
     
-    if(str.GetLength() == strlen(prolog))
+    if(str.size() == strlen(prolog))
         str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.GetString());
+    debugTxt.DrawString(x, y, str.to_string());
     y += lineHeight;
 }
 
@@ -948,7 +948,7 @@ void plAvBrainClimb::IDumpClimbDirections(int &x, int &y, int lineHeight, plDebu
 void plAvBrainClimb::IDumpDismountDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
     static const char prolog[] = "Enabled dismounts: ";
-    plStringStream str;
+    ST::string_stream str;
 
     str << prolog;
     if(fAllowedDismounts & plClimbMsg::kUp)
@@ -960,17 +960,17 @@ void plAvBrainClimb::IDumpDismountDirections(int &x, int &y, int lineHeight, plD
     if(fAllowedDismounts & plClimbMsg::kRight)
         str << "RIGHT ";
     
-    if(str.GetLength() == strlen(prolog))
+    if(str.size() == strlen(prolog))
         str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.GetString());
+    debugTxt.DrawString(x, y, str.to_string());
     y += lineHeight;
 }
 
 void plAvBrainClimb::IDumpBlockedDirections(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
     static const char prolog[] = "Physically blocked: ";
-    plStringStream str;
+    ST::string_stream str;
 
     str << prolog;
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kUp)
@@ -982,10 +982,10 @@ void plAvBrainClimb::IDumpBlockedDirections(int &x, int &y, int lineHeight, plDe
     if(fOldPhysicallyBlockedDirections & plClimbMsg::kRight)
         str << "RIGHT ";
     
-    if(str.GetLength() == strlen(prolog))
+    if(str.size() == strlen(prolog))
         str << "- NONE -";
 
-    debugTxt.DrawString(x, y, str.GetString());
+    debugTxt.DrawString(x, y, str.to_string());
     y += lineHeight;
 }
 

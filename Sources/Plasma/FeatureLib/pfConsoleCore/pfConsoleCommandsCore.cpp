@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfConsoleCmd.h"
 #include "pnNetBase/pnNetBase.h"
 #include "pfUtilBase64.h"
-#include "plString.h"
+#include <string_theory/string>
 
 #include <algorithm>
 

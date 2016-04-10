@@ -133,9 +133,9 @@ class plFont : public hsKeyedObject
         friend class plBDFCharsParser;
 
         // Font face and size. This is just used for IDing purposes, not for rendering
-        plString  fFace;
-        uint8_t   fSize;
-        uint32_t  fFlags;
+        ST::string  fFace;
+        uint8_t     fSize;
+        uint32_t    fFlags;
 
         // Size of the whole font bitmap. Fonts are stored vertically, one
         // character at a time, so fWidth is really the max width of any one
@@ -254,7 +254,7 @@ class plFont : public hsKeyedObject
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        plString    GetFace( void ) const { return fFace; }
+        ST::string  GetFace( void ) const { return fFace; }
         uint8_t     GetSize( void ) const { return fSize; }
         uint16_t    GetFirstChar( void ) const { return fFirstChar; }
         uint16_t    GetNumChars( void ) const { return fCharacters.GetCount(); }
@@ -266,7 +266,7 @@ class plFont : public hsKeyedObject
         uint32_t      GetBitmapHeight( void ) const { return fHeight; }
         uint8_t       GetBitmapBPP( void ) const { return fBPP; }
 
-        void    SetFace( const plString &face ) { fFace = face; }
+        void    SetFace( const ST::string &face ) { fFace = face; }
         void    SetSize( uint8_t size ) { fSize = size; }
         void    SetFlags( uint32_t flags ) { fFlags = flags; }
         void    SetFlag( uint32_t flag, bool on ) { if( on ) fFlags |= flag; else fFlags &= ~flag; }
@@ -285,12 +285,12 @@ class plFont : public hsKeyedObject
         void    SetRenderClipping( int16_t x, int16_t y, int16_t width, int16_t height );
         void    SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t height );
 
-        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const plString &string, uint16_t *lastX = nil, uint16_t *lastY = nil );
+        void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const ST::string &string, uint16_t *lastX = nil, uint16_t *lastY = nil );
         void    RenderString( plMipmap *mip, uint16_t x, uint16_t y, const wchar_t *string, uint16_t *lastX = nil, uint16_t *lastY = nil );
 
-        uint16_t  CalcStringWidth( const plString &string );
+        uint16_t  CalcStringWidth( const ST::string &string );
         uint16_t  CalcStringWidth( const wchar_t *string );
-        void    CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
+        void    CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
         void    CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY );
 
         bool    LoadFromFNT( const plFileName &path );

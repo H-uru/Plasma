@@ -187,8 +187,8 @@ protected:
 };
 
 proEventType(Variable)
-    plString  fName;          // name of variable
-    int32_t   fDataType;      // type of data
+    ST::string  fName;          // name of variable
+    int32_t     fDataType;      // type of data
 
     // Can't be a union, sadly, but it isn't that much of a waste of space...
     plKey       fKey;       // if its a plKey (pointer to something)
@@ -386,10 +386,10 @@ public:
     void AddCollisionEvent( bool enter, const plKey &other, const plKey &self, bool onlyOneCollision=true );
     void AddPickEvent( const plKey &other, const plKey& self, bool enabled, hsPoint3 hitPoint );
     void AddControlKeyEvent( int32_t key, bool down );
-    void AddVariableEvent( const plString& name, float number );
-    void AddVariableEvent( const plString& name, int32_t number );
-    void AddVariableEvent( const plString& name );
-    void AddVariableEvent( const plString& name, const plKey &key );
+    void AddVariableEvent( const ST::string& name, float number );
+    void AddVariableEvent( const ST::string& name, int32_t number );
+    void AddVariableEvent( const ST::string& name );
+    void AddVariableEvent( const ST::string& name, const plKey &key );
     void AddFacingEvent( const plKey &other, const plKey &self, float dot, bool enabled);
     void AddContainerEvent( const plKey &container, const plKey &contained, bool entering);
     void AddActivateEvent( bool activate );

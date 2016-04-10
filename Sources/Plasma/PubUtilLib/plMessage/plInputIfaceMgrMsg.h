@@ -61,9 +61,9 @@ class plInputIfaceMgrMsg : public plMessage
         uint8_t   fCommand;
         plInputInterface    *fInterface;
         uint32_t  fPageID;
-        plString  ageName;
-        plString  ageFileName;
-        plString  spawnPoint;
+        ST::string  ageName;
+        ST::string  ageFileName;
+        ST::string  spawnPoint;
         plUUID ageInstanceGuid;
         plKey fAvKey;
     public:
@@ -99,12 +99,12 @@ class plInputIfaceMgrMsg : public plMessage
         virtual void Read(hsStream* s, hsResMgr* mgr);
         virtual void Write(hsStream* s, hsResMgr* mgr);
 
-        void              SetAgeName(const plString& s) { ageName = s; }
-        plString          GetAgeName() const { return ageName; }
-        void              SetAgeFileName(const plString& s) { ageFileName = s; }
-        plString          GetAgeFileName() const { return ageFileName; }
-        void              SetSpawnPoint(const plString& s) { spawnPoint = s; }
-        plString          GetSpawnPoint() const { return spawnPoint; }
+        void              SetAgeName(const ST::string& s) { ageName = s; }
+        ST::string        GetAgeName() const { return ageName; }
+        void              SetAgeFileName(const ST::string& s) { ageFileName = s; }
+        ST::string        GetAgeFileName() const { return ageFileName; }
+        void              SetSpawnPoint(const ST::string& s) { spawnPoint = s; }
+        ST::string        GetSpawnPoint() const { return spawnPoint; }
         void              SetAgeInstanceGuid(const plUUID& guid) { ageInstanceGuid = guid; }
         const plUUID&     GetAgeInstanceGuid() const { return ageInstanceGuid; }
         uint8_t           GetCommand() const { return fCommand; }

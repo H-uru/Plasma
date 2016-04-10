@@ -74,11 +74,11 @@ class pfGameScoreListMsg : public pfGameScoreMsg
 {
     std::vector<pfGameScore*> fScores;
     uint32_t fOwnerId;
-    plString fName;
+    ST::string fName;
 
 public:
     pfGameScoreListMsg() { }
-    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, plString name)
+    pfGameScoreListMsg(ENetError result, std::vector<pfGameScore*> vec, uint32_t ownerId, const ST::string& name)
         : fScores(vec), pfGameScoreMsg(result), fOwnerId(ownerId), fName(name)
     { }
 
@@ -91,7 +91,7 @@ public:
     CLASSNAME_REGISTER(pfGameScoreListMsg);
     GETINTERFACE_ANY(pfGameScoreListMsg, pfGameScoreMsg);
 
-    plString GetName() const { return fName; }
+    ST::string GetName() const { return fName; }
     uint32_t GetOwnerID() const { return fOwnerId; }
     size_t GetNumScores() const { return fScores.size(); }
     pfGameScore* GetScore(size_t idx) const { return fScores.at(idx); }

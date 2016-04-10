@@ -81,7 +81,7 @@ public:
     virtual int     Folder_GetType( void );
     void    Folder_SetName(const char* name);
     void    Folder_SetNameW(const wchar_t* name);
-    plString Folder_GetName() const;
+    ST::string Folder_GetName() const;
 
 
 

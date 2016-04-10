@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 class plFileName;
-class plString;
+namespace ST { class string; }
 
 namespace plManifest
 {
@@ -57,16 +57,16 @@ namespace plManifest
     plFileName PatcherExecutable();
 
     /** Get the name of the baseline client manifest for this build type. */
-    plString ClientManifest();
+    ST::string ClientManifest();
 
     /** Get the name of the full game manifest for this build type. */
-    plString ClientImageManifest();
+    ST::string ClientImageManifest();
 
     /** Get the name of the patcher manifest for this build type. */
-    plString PatcherManifest();
+    ST::string PatcherManifest();
 
     /** Get a vector containing all manifests the game requires to initialize. */
-    std::vector<plString> EssentialGameManifests();
+    std::vector<ST::string> EssentialGameManifests();
 }
 
 #endif // _plManifests_inc_

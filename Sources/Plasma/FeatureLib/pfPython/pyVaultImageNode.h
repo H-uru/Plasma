@@ -88,7 +88,7 @@ public:
 //
     void Image_SetTitle( const char * text );
     void Image_SetTitleW( const wchar_t * text );
-    plString Image_GetTitle() const;
+    ST::string Image_GetTitle() const;
 
     PyObject* Image_GetImage( void ); // returns pyImage
     void Image_SetImage(pyImage& image);

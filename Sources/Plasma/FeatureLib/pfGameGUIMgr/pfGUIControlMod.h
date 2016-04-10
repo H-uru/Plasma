@@ -74,7 +74,7 @@ class pfGUIColorScheme : public hsRefCnt
         hsColorRGBA fSelForeColor, fSelBackColor;
         bool        fTransparent;
 
-        plString    fFontFace;
+        ST::string  fFontFace;
         uint8_t     fFontSize;
         uint8_t     fFontFlags;
 
@@ -87,9 +87,9 @@ class pfGUIColorScheme : public hsRefCnt
 
         pfGUIColorScheme();
         pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backColor );
-        pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags );
+        pfGUIColorScheme( const ST::string &face, uint8_t size, uint8_t fontFlags );
 
-        void    SetFontFace(const plString &face) { fFontFace = face; }
+        void    SetFontFace(const ST::string &face) { fFontFace = face; }
 
         void    Read( hsStream *s );
         void    Write( hsStream *s );

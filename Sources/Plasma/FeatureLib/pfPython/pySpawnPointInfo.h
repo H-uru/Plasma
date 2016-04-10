@@ -74,11 +74,11 @@ public:
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
     void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-    plString GetTitle() const { return fInfo.GetTitle(); }
+    ST::string GetTitle() const { return fInfo.GetTitle(); }
     void    SetName( const char * v ) { fInfo.SetName( v ); }
-    plString GetName() const { return fInfo.GetName(); }
+    ST::string GetName() const { return fInfo.GetName(); }
     void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-    plString GetCameraStack() const { return fInfo.GetCameraStack(); }
+    ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 
     static PyObject* GetDefaultSpawnPoint();
 };
@@ -105,11 +105,11 @@ public:
 
     plSpawnPointInfo & SpawnPoint() { return fInfo; }
     void    SetTitle( const char * v ) { fInfo.SetTitle( v ); }
-    plString GetTitle() const { return fInfo.GetTitle(); }
+    ST::string GetTitle() const { return fInfo.GetTitle(); }
     void    SetName( const char * v ) { fInfo.SetName( v ); }
-    plString GetName() const { return fInfo.GetName(); }
+    ST::string GetName() const { return fInfo.GetName(); }
     void    SetCameraStack(const char * v ) { fInfo.SetCameraStack( v ); }
-    plString GetCameraStack() const { return fInfo.GetCameraStack(); }
+    ST::string GetCameraStack() const { return fInfo.GetCameraStack(); }
 };
 
 #endif // pySpawnPointInfo_h_inc

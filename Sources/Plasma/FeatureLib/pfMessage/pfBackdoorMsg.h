@@ -55,12 +55,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class pfBackdoorMsg : public plMessage
 {
     protected:
-        plString    fTarget;
-        plString    fString;
+        ST::string  fTarget;
+        ST::string  fString;
 
     public:
         pfBackdoorMsg() : plMessage(nil, nil, nil) {}
-        pfBackdoorMsg(const plString& target, const plString& string)
+        pfBackdoorMsg(const ST::string& target, const ST::string& string)
             : plMessage(nil, nil, nil), fTarget(target), fString(string)
         {
             // across the net and just to those listening
@@ -85,8 +85,8 @@ class pfBackdoorMsg : public plMessage
             s->WriteSafeString(fString);
         }
 
-        plString    GetTarget() const { return fTarget; }
-        plString    GetString() const { return fString; }
+        ST::string  GetTarget() const { return fTarget; }
+        ST::string  GetString() const { return fString; }
 
 };
 

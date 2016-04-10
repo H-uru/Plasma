@@ -195,7 +195,7 @@ void plDispatchLog::RemoveFilterExactType(uint16_t type)
 #include "plResMgr/plKeyFinder.h"
 #include "plResMgr/plPageInfo.h"
 
-static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
+static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info)
 {
 #ifndef PLASMA_EXTERNAL_RELEASE // Don't bloat up the external release with all these strings
     pfKIMsg* kiMsg = pfKIMsg::ConvertNoRef(msg);
@@ -257,7 +257,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
         PrintKIType(kGZFlashUpdate);                // flash an update without saving (for animation of GZFill in)
         PrintKIType(kNoCommand);
 
-        info = plFormat("Type: {} Str: {} User: {}({}) Delay: {} Int: {}",
+        info = ST::format("Type: {} Str: {} User: {}({}) Delay: {} Int: {}",
             typeName,
             kiMsg->GetString(),
             kiMsg->GetUser(),
@@ -298,14 +298,14 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
                     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(loc);
 
                     if (pageInfo)
-                        info += plFormat("{}-{} ", pageInfo->GetAge(), pageInfo->GetPage());
+                        info += ST::format("{}-{} ", pageInfo->GetAge(), pageInfo->GetPage());
                 }
             }
             break;
 
         case plClientMsg::kLoadAgeKeys:
         case plClientMsg::kReleaseAgeKeys:
-            info += plFormat(" - Age: {}", clientMsg->GetAgeName());
+            info += ST::format(" - Age: {}", clientMsg->GetAgeName());
             break;
         }
         return true;
@@ -321,7 +321,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, plString& info)
         GetType(kOnRequest);
         GetType(kOnRemove);
         GetType(kOnReplace);
-        info = plFormat("Obj: {} RefType: {}", refMsg->GetRef()->GetKeyName(), typeName);
+        info = ST::format("Obj: {} RefType: {}", refMsg->GetRef()->GetKeyName(), typeName);
 
         return true;
     }

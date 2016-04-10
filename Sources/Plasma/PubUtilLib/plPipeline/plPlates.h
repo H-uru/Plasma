@@ -144,8 +144,8 @@ class plPlate
         void    SetSize( float width, float height, bool adjustByAspectRatio = false );
 
         plMipmap        *CreateMaterial( uint32_t width, uint32_t height, bool withAlpha, plMipmap* texture = NULL );
-        void            CreateFromResource(const plString& resName);
-        void            ReloadFromResource(const plString& resName);
+        void            CreateFromResource(const ST::string& resName);
+        void            ReloadFromResource(const ST::string& resName);
 };
 
 //// plGraphPlate Class Definition ///////////////////////////////////////////

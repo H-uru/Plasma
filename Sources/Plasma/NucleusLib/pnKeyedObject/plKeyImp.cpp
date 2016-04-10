@@ -55,8 +55,8 @@ plProfile_CreateMemCounter("Keys", "Memory", KeyMem);
 static uint32_t CalcKeySize(plKeyImp* key)
 {
     uint32_t nameLen = 0;
-    if (!key->GetUoid().GetObjectName().IsNull())
-        nameLen = key->GetUoid().GetObjectName().GetSize() + 1;
+    if (!key->GetUoid().GetObjectName().is_empty())
+        nameLen = key->GetUoid().GetObjectName().size() + 1;
     return sizeof(plKeyImp) + nameLen;
 }
 
@@ -148,7 +148,7 @@ void plKeyImp::SetUoid(const plUoid& uoid)
 #endif
 }
 
-const plString& plKeyImp::GetName() const
+ST::string plKeyImp::GetName() const
 {
     return fUoid.GetObjectName();
 }

@@ -85,7 +85,7 @@ public:
 
     uint16_t GetClassType() const { return fClassType; }
 
-    plKeyImp* FindKey(const plString& keyName) const;
+    plKeyImp* FindKey(const ST::string& keyName) const;
     plKeyImp* FindKey(const plUoid& uoid) const;
 
     bool IterateKeys(plRegistryKeyIterator* iterator);

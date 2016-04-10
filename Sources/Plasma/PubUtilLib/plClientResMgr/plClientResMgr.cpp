@@ -87,8 +87,8 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
                 for (int i = 0; i < num_resources; i++) {
                     plMipmap* res_data = nullptr;
                     uint32_t res_size = 0;
-                    plString res_name = in.ReadSafeStringLong();
-                    plString extension = plFileName(res_name).GetFileExt();
+                    ST::string res_name = in.ReadSafeStringLong();
+                    ST::string extension = plFileName(res_name).GetFileExt();
 
                     // Version 1 doesn't encode format, so we'll try some simple
                     // extension sniffing
@@ -121,7 +121,7 @@ void plClientResMgr::ILoadResources(const plFileName& resfile)
     }
 }
 
-plMipmap* plClientResMgr::getResource(const plString& resname)
+plMipmap* plClientResMgr::getResource(const ST::string& resname)
 {
     plMipmap* resmipmap = nullptr;
     auto it = ClientResources.find(resname);

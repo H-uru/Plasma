@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 
 #include "hsTemplates.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 
 ///////////////////////////////////////////////////////////////////////////
@@ -485,7 +485,7 @@ char    *hsWStringToString( const wchar_t *str )
 // Microsoft SAMPLE CODE
 // returns array of allocated version info strings or nil
 //
-std::vector<plString> DisplaySystemVersion()
+std::vector<ST::string> DisplaySystemVersion()
 {
 #if HS_BUILD_FOR_WIN32
 #ifndef VER_SUITE_PERSONAL
@@ -628,6 +628,6 @@ std::vector<plString> DisplaySystemVersion()
 
     return versionStrs;
 #else
-    return std::vector<plString>();
+    return std::vector<ST::string>();
 #endif
 }

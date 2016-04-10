@@ -184,7 +184,7 @@ PyObject* ptSDL_subscript(ptSDL* self, PyObject* key)
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         PYTHON_RETURN_ERROR;
     }
-    plString keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyString_AsStringEx(key);
     return pySDLModifier::GetItem(*(self->fThis), keyStr);
 }
 
@@ -205,7 +205,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_TypeError, "SDL values must be tuples");
         return -1; // error return
     }
-    plString keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyString_AsStringEx(key);
     pySDLModifier::SetItem(*(self->fThis), keyStr, value);
     return 0; // success return
 }

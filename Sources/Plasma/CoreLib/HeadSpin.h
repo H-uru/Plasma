@@ -295,6 +295,24 @@ inline char *hsStrncpy(char *strDest, const char *strSource, size_t count)
 wchar_t *hsStringToWString( const char *str );
 char    *hsWStringToString( const wchar_t *str );
 
+// Use "correct" non-standard string functions based on the
+// selected compiler / library
+#if _MSC_VER
+#    define stricmp     _stricmp
+#    define strnicmp    _strnicmp
+#    define wcsicmp     _wcsicmp
+#    define wcsnicmp    _wcsnicmp
+#    define strlwr      _strlwr
+#    define strdup      _strdup
+#    define wcsdup      _wcsdup
+#else
+#    define stricmp     strcasecmp
+#    define strnicmp    strncasecmp
+#    define wcsicmp     wcscasecmp
+#    define wcsnicmp    wcsncasecmp
+#    define strlwr      hsStrLower
+#endif
+
 enum {              // Kind of MessageBox...passed to hsMessageBox
     hsMessageBoxAbortRetyIgnore,
     hsMessageBoxNormal,             // Just Ok

@@ -80,9 +80,9 @@ public:
 // class RelVaultNode : public plVaultNode
 //
     void Chronicle_SetName( const char * text );
-    plString Chronicle_GetName() const;
+    ST::string Chronicle_GetName() const;
     void Chronicle_SetValue( const char * text );
-    plString Chronicle_GetValue() const;
+    ST::string Chronicle_GetValue() const;
     void Chronicle_SetType( uint32_t type );
     uint32_t Chronicle_GetType( void );
 };

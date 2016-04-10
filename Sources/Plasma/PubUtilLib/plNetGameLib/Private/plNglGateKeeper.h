@@ -62,8 +62,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Connect
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const plString gateKeeperAddrList[],
-    uint32_t       gateKeeperAddrCount
+    const ST::string gateKeeperAddrList[],
+    uint32_t         gateKeeperAddrCount
 );
 
 bool NetCliGateKeeperQueryConnected ();
@@ -109,7 +109,7 @@ void NetCliGateKeeperPingRequest (
 typedef void (*FNetCliGateKeeperFileSrvIpAddressRequestCallback)(
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 );
 
 void NetCliGateKeeperFileSrvIpAddressRequest (
@@ -125,7 +125,7 @@ void NetCliGateKeeperFileSrvIpAddressRequest (
 typedef void (*FNetCliGateKeeperAuthSrvIpAddressRequestCallback)(
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 );
 
 void NetCliGateKeeperAuthSrvIpAddressRequest (

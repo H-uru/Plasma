@@ -58,7 +58,7 @@ plWin32VideoSound::plWin32VideoSound(const plWAVHeader& header) : plWin32Sound()
     fDSoundBuffer = new plDSoundBuffer(0, fWAVHeader, false, false);
 
     uniqueID++;
-    hsgResMgr::ResMgr()->NewKey(plFormat("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
+    hsgResMgr::ResMgr()->NewKey(ST::format("videosound#{}", uniqueID), this, plLocation::kGlobalFixedLoc);
 }
 
 plWin32VideoSound::~plWin32VideoSound()

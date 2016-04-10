@@ -215,30 +215,30 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
 
     plPhysical* phys = IGetPhysical();
 
-    plStringStream log;
+    ST::string_stream log;
     log << phys->GetKeyName() << ": " << prefix;
 
     if (isPosSet)
-        log << plFormat(" Pos={.1f} {.1f} {.1f}", pos.fX, pos.fY, pos.fZ);
+        log << ST::format(" Pos={.1f} {.1f} {.1f}", pos.fX, pos.fY, pos.fZ);
     else
         log << " Pos=None";
 
     if (isLinVSet)
-        log << plFormat(" LinV={.1f} {.1f} {.1f}", linV.fX, linV.fY, linV.fZ);
+        log << ST::format(" LinV={.1f} {.1f} {.1f}", linV.fX, linV.fY, linV.fZ);
     else
         log << " LinV=None";
 
     if (isAngVSet)
-        log << plFormat(" AngV={.1f} {.1f} {.1f}", angV.fX, angV.fY, angV.fZ);
+        log << ST::format(" AngV={.1f} {.1f} {.1f}", angV.fX, angV.fY, angV.fZ);
     else
         log << " AngV=None";
 
     if (isRotSet)
-        log << plFormat(" Rot={.1f} {.1f} {.1f} {.1f}", rot.fX, rot.fY, rot.fZ, rot.fW);
+        log << ST::format(" Rot={.1f} {.1f} {.1f} {.1f}", rot.fX, rot.fY, rot.fZ, rot.fW);
     else
         log << " Rot=None";
 
-    IGetLog()->AddLine(log.GetString().c_str(), color);
+    IGetLog()->AddLine(log.to_string().c_str(), color);
 }
 
 plStatusLog* plPhysicalSDLModifier::IGetLog()

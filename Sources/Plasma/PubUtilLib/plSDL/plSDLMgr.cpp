@@ -102,9 +102,9 @@ plSDLMgr* plSDLMgr::GetInstance()
 // search latest and legacy descriptors for one that matches.
 // if version is -1, search for latest descriptor with matching name
 //
-plStateDescriptor* plSDLMgr::FindDescriptor(const plString& name, int version, const plSDL::DescriptorList * dl) const
+plStateDescriptor* plSDLMgr::FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl) const
 {
-    if (name.IsNull())
+    if (name.is_empty())
         return nil;
 
     if ( !dl )
@@ -117,7 +117,7 @@ plStateDescriptor* plSDLMgr::FindDescriptor(const plString& name, int version, c
     int highestFound = -1;
     for(it=(*dl).begin(); it!= (*dl).end(); it++)
     {
-        if (!(*it)->GetName().CompareI(name) )
+        if (!(*it)->GetName().compare_i(name) )
         {
             if ( (*it)->GetVersion()==version )
             {

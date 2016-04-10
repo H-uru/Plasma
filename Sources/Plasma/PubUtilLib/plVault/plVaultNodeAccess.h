@@ -89,8 +89,8 @@ private:
     void Set##name (const uint8_t data[], size_t length) { base->Set##basename(data, length); }
 
 #define VNODE_STRING(name, basename) \
-    plString Get##name () const { return base->Get##basename(); } \
-    void Set##name (const plString& v) { base->Set##basename(v); }
+    ST::string Get##name () const { return base->Get##basename(); } \
+    void Set##name (const ST::string& v) { base->Set##basename(v); }
 
 //============================================================================
 // VaultPlayerNode
@@ -173,7 +173,7 @@ struct VaultSDLNode : NetVaultNodeAccess {
 #ifdef CLIENT
     bool GetStateDataRecord (class plStateDataRecord * out, unsigned readOptions = 0);
     void SetStateDataRecord (const class plStateDataRecord * rec, unsigned writeOptions = 0);
-    void InitStateDataRecord (const plString& sdlRecName, unsigned writeOptions = 0);
+    void InitStateDataRecord (const ST::string& sdlRecName, unsigned writeOptions = 0);
 #endif // def CLIENT
 };
 
@@ -190,8 +190,8 @@ struct VaultAgeLinkNode : NetVaultNodeAccess {
 #ifdef CLIENT
     bool CopyTo (plAgeLinkStruct * link);
     void AddSpawnPoint (const plSpawnPointInfo & point); // will only add if not there already.
-    void RemoveSpawnPoint (const plString & spawnPtName);
-    bool HasSpawnPoint (const plString & spawnPtName) const;
+    void RemoveSpawnPoint (const ST::string & spawnPtName);
+    bool HasSpawnPoint (const ST::string & spawnPtName) const;
     bool HasSpawnPoint (const plSpawnPointInfo & point) const;  // compares spawn name only, not title.
     void GetSpawnPoints (plSpawnPointVec * out) const;
     void SetSpawnPoints (const plSpawnPointVec & in);
@@ -299,9 +299,9 @@ struct VaultSystemNode : NetVaultNodeAccess {
 //============================================================================
 struct VaultMarker {
     uint32_t id;
-    plString age;
+    ST::string age;
     hsPoint3 pos;
-    plString description;
+    ST::string description;
 };
 
 struct VaultMarkerGameNode : NetVaultNodeAccess {

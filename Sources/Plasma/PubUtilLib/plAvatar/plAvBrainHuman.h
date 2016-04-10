@@ -402,7 +402,7 @@ public:
 bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const char *idleAnim,
                           const char *exitAnim, bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage,
                           plAvBrainGeneric::BrainType type = plAvBrainGeneric::kGeneric);
-bool PushRepeatEmote(plArmatureMod* avatar, const plString& anim);
+bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim);
 bool AvatarEmote(plArmatureMod *avatar, const char *emoteName);
 
 

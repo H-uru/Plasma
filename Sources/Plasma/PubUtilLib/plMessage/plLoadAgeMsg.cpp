@@ -72,7 +72,7 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);  
 
     // write agename
-    uint8_t len = static_cast<uint8_t>(fAgeFilename.GetSize());
+    uint8_t len = static_cast<uint8_t>(fAgeFilename.size());
     stream->WriteLE(len);
     if (len)
     {

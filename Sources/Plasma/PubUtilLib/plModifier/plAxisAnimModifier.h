@@ -73,8 +73,8 @@ protected:
     bool            fAllOrNothing;
     int             fIface;
     plNotifyMsg*    fNotify;
-    
-    plString        fAnimLabel;
+
+    ST::string      fAnimLabel;
 
     plAxisInputInterface    *fInputIface;
 
@@ -100,8 +100,8 @@ public:
     void SetNotificationKey(plKey k) { fNotificationKey = k; }
     plNotifyMsg* GetNotify() { return fNotify; }
 
-    plString GetAnimLabel() const { return fAnimLabel; }
-    void SetAnimLabel(const plString& a) { fAnimLabel = a; }
+    ST::string GetAnimLabel() const { return fAnimLabel; }
+    void SetAnimLabel(const ST::string& a) { fAnimLabel = a; }
 
 };
 

@@ -91,9 +91,9 @@ void plDniCoordinateInfo::Write( hsStream* s, hsResMgr* mgr )
     s->WriteLE( fTorans );
 }
 
-plString plDniCoordinateInfo::AsString( int level ) const
+ST::string plDniCoordinateInfo::AsString( int level ) const
 {
-    plString space = plString::Fill( level, ' ' );
-    return plFormat("{}DniCoords[{},{},{}]", space, fHSpans, fVSpans, fTorans);
+    ST::string space = ST::string::fill( level, ' ' );
+    return ST::format("{}DniCoords[{},{},{}]", space, fHSpans, fVSpans, fTorans);
 }
 #endif // def CLIENT

@@ -43,8 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plLoggable_inc
 
 #include "HeadSpin.h"
-#include "plString.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 
 // Stub interface implemented by plStatusLog
@@ -53,7 +52,7 @@ class plLog
 public:
     virtual ~plLog() { }
 
-    virtual bool AddLine(const plString& line) = 0;
+    virtual bool AddLine(const ST::string& line) = 0;
 };
 
 
@@ -122,9 +121,9 @@ public:
     }
 
     // logging
-    virtual bool Log(const plString& str) const
+    virtual bool Log(const ST::string& str) const
     {
-        if (str.IsNull() || str.IsEmpty()) {
+        if (str.is_empty()) {
             return true;
         }
 
@@ -138,68 +137,68 @@ public:
     }
 
 
-    virtual bool ErrorMsg(const plString& msg) const
+    virtual bool ErrorMsg(const ST::string& msg) const
     {
         return Log("ERR: " + msg);
     }
 
-    virtual bool WarningMsg(const plString& msg) const
+    virtual bool WarningMsg(const ST::string& msg) const
     {
         return Log("WRN: " + msg);
     }
 
-    virtual bool AppMsg(const plString& msg) const
+    virtual bool AppMsg(const ST::string& msg) const
     {
         return Log("APP: " + msg);
     }
 
-    virtual bool DebugMsg(const plString& msg) const
+    virtual bool DebugMsg(const ST::string& msg) const
     {
         return Log("DBG: " + msg);
     }
 
     virtual bool ErrorMsg(const char* msg) const
     {
-        return Log(plString("ERR: ") + msg);
+        return Log(ST_LITERAL("ERR: ") + msg);
     }
 
     virtual bool WarningMsg(const char* msg) const
     {
-        return Log(plString("WRN: ") + msg);
+        return Log(ST_LITERAL("WRN: ") + msg);
     }
 
     virtual bool AppMsg(const char* msg) const
     {
-        return Log(plString("APP: ") + msg);
+        return Log(ST_LITERAL("APP: ") + msg);
     }
 
     virtual bool DebugMsg(const char* msg) const
     {
-        return Log(plString("DBG: ") + msg);
+        return Log(ST_LITERAL("DBG: ") + msg);
     }
 
     template <typename... _Args>
     bool ErrorMsg(const char* fmt, _Args... args) const
     {
-        return ErrorMsg(plFormat(fmt, args...));
+        return ErrorMsg(ST::format(fmt, args...));
     }
 
     template <typename... _Args>
     bool DebugMsg(const char* fmt, _Args... args) const
     {
-        return DebugMsg(plFormat(fmt, args...));
+        return DebugMsg(ST::format(fmt, args...));
     }
 
     template <typename... _Args>
     bool WarningMsg(const char* fmt, _Args... args) const
     {
-        return WarningMsg(plFormat(fmt, args...));
+        return WarningMsg(ST::format(fmt, args...));
     }
 
     template <typename... _Args>
     bool AppMsg(const char* fmt, _Args... args) const
     {
-        return AppMsg(plFormat(fmt, args...));
+        return AppMsg(ST::format(fmt, args...));
     }
 };
 

@@ -54,14 +54,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 const uint32_t    plAgePage::kInvalidSeqSuffix = (uint32_t)-1;
 
-plAgePage::plAgePage( const plString &name, uint32_t seqSuffix, uint8_t flags )
+plAgePage::plAgePage( const ST::string &name, uint32_t seqSuffix, uint8_t flags )
 {
     fName = name;
     fSeqSuffix = seqSuffix;
     fFlags = flags;
 }
 
-plAgePage::plAgePage( const plString &stringFrom )
+plAgePage::plAgePage( const ST::string &stringFrom )
 {
     SetFromString( stringFrom );
 }
@@ -98,10 +98,10 @@ void plAgePage::SetFlags(uint8_t f, bool on)
 }
 
 // now preservs original string
-bool plAgePage::SetFromString( const plString &stringIn )
+bool plAgePage::SetFromString( const ST::string &stringIn )
 {
     // Parse. Format is going to be "pageName[,seqSuffix[,flags]]"
-    std::vector<plString> toks = stringIn.Tokenize(", \n");
+    std::vector<ST::string> toks = stringIn.tokenize(", \n");
     if (toks.size() == 0)
         return false;
 
@@ -110,19 +110,19 @@ bool plAgePage::SetFromString( const plString &stringIn )
     fFlags = 0;
 
     if (toks.size() > 1)
-        fSeqSuffix = toks[1].ToUInt();
+        fSeqSuffix = toks[1].to_uint();
     if (toks.size() > 2)
-        fFlags = toks[2].ToUInt();
+        fFlags = toks[2].to_uint();
 
     return true;
 }
 
-plString plAgePage::GetAsString( void ) const
+ST::string plAgePage::GetAsString( void ) const
 {
     if (fFlags)
-        return plFormat("{},{},{}", fName, fSeqSuffix, fFlags);
+        return ST::format("{},{},{}", fName, fSeqSuffix, fFlags);
 
-    return plFormat("{},{}", fName, fSeqSuffix);
+    return ST::format("{},{}", fName, fSeqSuffix);
 }
 
 
@@ -206,7 +206,7 @@ void plAgeDescription::ClearPageList()
     fPages.Reset();
 }
 
-void    plAgeDescription::AppendPage( const plString &name, int seqSuffix, uint8_t flags )
+void    plAgeDescription::AppendPage( const ST::string &name, int seqSuffix, uint8_t flags )
 {
     fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
 }
@@ -231,7 +231,7 @@ plAgePage   *plAgeDescription::GetNextPage( void )
     return ret;
 }
 
-void plAgeDescription::RemovePage( const plString &page )
+void plAgeDescription::RemovePage( const ST::string &page )
 {
     for (int i = 0; i < fPages.GetCount(); i++)
     {
@@ -243,7 +243,7 @@ void plAgeDescription::RemovePage( const plString &page )
     }
 }
 
-plAgePage *plAgeDescription::FindPage( const plString &name ) const
+plAgePage *plAgeDescription::FindPage( const ST::string &name ) const
 {
     for (int i = 0; i < fPages.GetCount(); i++)
     {
@@ -254,7 +254,7 @@ plAgePage *plAgeDescription::FindPage( const plString &name ) const
     return nil;
 }
 
-plLocation  plAgeDescription::CalcPageLocation( const plString &page ) const
+plLocation  plAgeDescription::CalcPageLocation( const ST::string &page ) const
 {
     plAgePage *ap = FindPage( page );
     if( ap != nil )
@@ -280,7 +280,7 @@ plLocation  plAgeDescription::CalcPageLocation( const plString &page ) const
         else
         {
             plLocation ret = plLocation::MakeNormal( combined );
-            if (!page.CompareI("builtin"))
+            if (!page.compare_i("builtin"))
                 ret.SetFlags(plLocation::kBuiltIn);
             return ret;
         }

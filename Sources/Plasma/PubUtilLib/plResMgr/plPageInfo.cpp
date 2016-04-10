@@ -98,7 +98,7 @@ void    plPageInfo::ISetFrom( const plPageInfo &src )
     fIndexStart = src.fIndexStart;
 }
 
-void    plPageInfo::SetStrings(const plString& age, const plString& page)
+void    plPageInfo::SetStrings(const ST::string& age, const ST::string& page)
 {
     fAge = age;
     fPage = page;

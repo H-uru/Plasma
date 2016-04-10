@@ -330,7 +330,7 @@ void plDispatch::IMsgDispatch()
                         if (plNetObjectDebuggerBase::GetInstance()->IsDebugObject(ko))
                         {
                             hsLogEntry(plNetObjectDebuggerBase::GetInstance()->LogMsg(
-                                plFormat("<RCV> object:{}, GameMessage {} st={.3f} rt={.3f}",
+                                ST::format("<RCV> object:{}, GameMessage {} st={.3f} rt={.3f}",
                                 ko->GetKeyName(), msg->ClassName(), hsTimer::GetSysSeconds(),
                                 hsTimer::GetSeconds()).c_str()));
                         }
@@ -341,7 +341,7 @@ void plDispatch::IMsgDispatch()
                 uint64_t rcvTicks = hsTimer::GetTicks();
 
                 // Object could be deleted by this message, so we need to log this stuff now
-                plString keyname = "(unknown)";
+                ST::string keyname = ST_LITERAL("(unknown)");
                 const char* className = "(unknown)";
                 uint32_t clonePlayerID = 0;
                 if (plDispatchLogBase::IsLoggingLong())

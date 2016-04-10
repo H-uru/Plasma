@@ -58,7 +58,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
     protected:
 
         hsTArray<plKey> fAnimationKeys;
-        plString        fAnimName;
+        ST::string      fAnimName;
 
                         // Computed once, once an anim is loaded that we can compute this with
         float           fAnimBegin, fAnimEnd;
@@ -102,7 +102,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
         void DontPlaySounds() { fPlaySound = false; }
 
         // Export only
-        void    SetAnimationKeys( hsTArray<plKey> &keys, const plString &name );
+        void    SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name );
 };
 
 #endif // _pfGUIProgressCtrl_h

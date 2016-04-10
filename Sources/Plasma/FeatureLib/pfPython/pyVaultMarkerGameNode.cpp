@@ -66,16 +66,16 @@ pyVaultMarkerGameNode::pyVaultMarkerGameNode(int n)
     fNode->SetNodeType(plVault::kNodeType_MarkerGame);
 }
 
-plString pyVaultMarkerGameNode::GetGameName () const
+ST::string pyVaultMarkerGameNode::GetGameName () const
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
         return access.GetGameName();
     }
-    return "";
+    return ST::string::null;
 }
 
-void pyVaultMarkerGameNode::SetGameName (const plString& name)
+void pyVaultMarkerGameNode::SetGameName (const ST::string& name)
 {
     if (fNode) {
         VaultMarkerGameNode access(fNode);
@@ -96,9 +96,9 @@ PyObject* pyVaultMarkerGameNode::GetMarkers() const
     for (size_t i = 0; i < collector.size(); ++i) {
         PyObject* marker_tup = PyTuple_New(4);
         PyTuple_SET_ITEM(marker_tup, 0, PyInt_FromLong(collector[i].id));
-        PyTuple_SET_ITEM(marker_tup, 1, PyUnicode_FromPlString(collector[i].age));
+        PyTuple_SET_ITEM(marker_tup, 1, PyUnicode_FromSTString(collector[i].age));
         PyTuple_SET_ITEM(marker_tup, 2, pyPoint3::New(collector[i].pos));
-        PyTuple_SET_ITEM(marker_tup, 3, PyUnicode_FromPlString(collector[i].description));
+        PyTuple_SET_ITEM(marker_tup, 3, PyUnicode_FromSTString(collector[i].description));
         PyList_SET_ITEM(list, i, marker_tup);
     }
     return list;

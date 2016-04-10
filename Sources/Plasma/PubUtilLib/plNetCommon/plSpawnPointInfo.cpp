@@ -120,7 +120,7 @@ void plSpawnPointInfo::Reset()
     (*this)=kDefaultSpawnPoint;
 }
 
-plString plSpawnPointInfo::AsString() const
+ST::string plSpawnPointInfo::AsString() const
 {
-    return plFormat("t:{},n:{},c:{}", fTitle, fSpawnPt, fCameraStack);
+    return ST::format("t:{},n:{},c:{}", fTitle, fSpawnPt, fCameraStack);
 }

@@ -79,7 +79,7 @@ public:
     plCoopCoordinator();
     plCoopCoordinator(plKey host, plKey guest,
                       plAvBrainCoop *hostBrain, plAvBrainCoop *guestBrain,
-                      const plString &synchBone, uint32_t hostOfferStage, uint32_t guestAcceptStage,
+                      const ST::string &synchBone, uint32_t hostOfferStage, uint32_t guestAcceptStage,
                       plMessage *guestAcceptMsg,
                       bool autoStartGuest);
 
@@ -123,7 +123,7 @@ protected:
 
     plMessage *fGuestAcceptMsg;         // send this when the guest accepts
 
-    plString fSynchBone;
+    ST::string fSynchBone;
     bool fAutoStartGuest;
     bool fGuestAccepted;
 

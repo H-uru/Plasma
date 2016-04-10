@@ -173,7 +173,7 @@ class plGeometrySpan
 
         // The following is only used for logging during export. It is never set
         // at runtime. Don't even think about using it for anything.
-        plString                            fMaxOwner;
+        ST::string                          fMaxOwner;
 
         // The following is ONLY used during pack; it's so we can do a reverse lookup
         // from the instanceRefs list to the correct span in the drawable

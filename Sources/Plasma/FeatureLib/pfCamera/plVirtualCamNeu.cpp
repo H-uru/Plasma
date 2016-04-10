@@ -518,12 +518,12 @@ void plVirtualCam1::SetRender(bool render)
 }
 
 // hack, hack, hack
-bool plVirtualCam1::RestoreFromName(const plString& name)
+bool plVirtualCam1::RestoreFromName(const ST::string& name)
 {
     for(plSOVec::iterator it = fCamerasLoaded.begin(); it != fCamerasLoaded.end(); ++it)
     {
         plKey cam = (*it)->GetKey();
-        if (name.Compare(cam->GetName(), plString::kCaseInsensitive) == 0)
+        if (name.compare(cam->GetName(), ST::case_insensitive) == 0)
         {
             RebuildStack(cam);
             return true;

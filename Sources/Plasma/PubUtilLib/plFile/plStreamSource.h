@@ -56,7 +56,7 @@ private:
     {
         plFileName      fFilename; // includes path
         plFileName      fDir; // parent directory
-        plString        fExt;
+        ST::string      fExt;
         hsStream*       fStream; // we own this pointer, so clean it up
     };
     std::map<plFileName, fileData, plFileName::less_i> fFileData; // key is filename
@@ -74,7 +74,7 @@ public:
 
     // File access functions
     hsStream* GetFile(const plFileName& filename); // internal builds will read from disk if it doesn't exist
-    std::vector<plFileName> GetListOfNames(const plFileName& dir, const plString& ext); // internal builds merge from disk
+    std::vector<plFileName> GetListOfNames(const plFileName& dir, const ST::string& ext); // internal builds merge from disk
 
     // For other classes to insert files (takes ownership of the stream if successful)
     bool InsertFile(const plFileName& filename, hsStream* stream);

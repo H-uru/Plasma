@@ -122,18 +122,18 @@ pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance( void )
 
 //// IGetNextKeyName /////////////////////////////////////////////////////////
 
-plString pfGUICtrlGenerator::IGetNextKeyName( const char *prefix )
+ST::string pfGUICtrlGenerator::IGetNextKeyName( const char *prefix )
 {
     static uint32_t keyCount = 0;
 
-    return plFormat("{}{}", prefix, keyCount++);
+    return ST::format("{}{}", prefix, keyCount++);
 }
 
 //// IAddKey /////////////////////////////////////////////////////////////////
 
 plKey pfGUICtrlGenerator::IAddKey( hsKeyedObject *ko, const char *prefix )
 {
-    plString keyName;
+    ST::string keyName;
 
     keyName = IGetNextKeyName( prefix );
     return hsgResMgr::ResMgr()->NewKey( keyName, ko, plLocation::kGlobalFixedLoc );

@@ -63,7 +63,7 @@ void plFontPreview::Update(plFont *font, const QString &text)
         return;
     }
 
-    plString testString = text.toUtf8().constData();
+    ST::string testString = text.toUtf8().constData();
 
     // Create us a mipmap to render onto, render onto it, then copy that to our DC
     plMipmap *mip = new plMipmap(width(), height(), plMipmap::kARGB32Config, 1);

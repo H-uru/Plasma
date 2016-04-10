@@ -65,7 +65,7 @@ plNPCSpawnMod::plNPCSpawnMod()
 }
 
 // plNPCSpawnMod ctor modelName accountName
-plNPCSpawnMod::plNPCSpawnMod(const plString &modelName, const plString &accountName, bool autoSpawn)
+plNPCSpawnMod::plNPCSpawnMod(const ST::string &modelName, const ST::string &accountName, bool autoSpawn)
 : fAutoSpawn(autoSpawn), fNotify(nil)
 {
     fModelName = modelName;
@@ -96,7 +96,7 @@ bool plNPCSpawnMod::Trigger()
     // will netpropagate
     if(this->IsLocallyOwned())
     {
-        if (!fModelName.IsEmpty())
+        if (!fModelName.is_empty())
         {
             // spawn the NPC
             plKey spawnPoint = GetTarget(0)->GetKey();

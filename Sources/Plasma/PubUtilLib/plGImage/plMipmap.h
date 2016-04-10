@@ -339,7 +339,7 @@ class plMipmap : public plBitmap
                 plRecord    *fNext;
                 plRecord    **fBackPtr;
 
-                plString    fKeyName;
+                ST::string  fKeyName;
                 void        *fImage;
                 uint32_t    fWidth, fHeight, fRowBytes;
                 uint8_t     fNumLevels;

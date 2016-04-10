@@ -62,11 +62,11 @@ class plResPatcher
 
     friend class plAgeLoader;
 
-    void OnCompletion(ENetError, const plString& msg);
+    void OnCompletion(ENetError, const ST::string& msg);
     void OnFileDownloadBegin(const plFileName& file);
     void OnFileDownloaded(const plFileName& file);
     bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
-    void OnProgressTick(uint64_t dl, uint64_t total, const plString& msg);
+    void OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg);
 
     class pfPatcher* CreatePatcher();
     void InitProgress();
@@ -79,8 +79,8 @@ public:
     plResPatcher();
     ~plResPatcher();
 
-    void Update(const std::vector<plString>& manifests);
-    void Update(const plString& manifest);
+    void Update(const std::vector<ST::string>& manifests);
+    void Update(const ST::string& manifest);
 };
 
 
