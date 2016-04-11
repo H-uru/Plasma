@@ -65,7 +65,7 @@ static bool InitPhysX()
             SHELLEXECUTEINFOW info;
             memset(&info, 0, sizeof(info));
             info.cbSize = sizeof(info);
-            info.lpFile = s_physXSetupExe.AsString().ToWchar();
+            info.lpFile = s_physXSetupExe.AsString().to_wchar();
             info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
             ShellExecuteExW(&info);
 

@@ -56,6 +56,8 @@ class plMessage;
 struct plMouseInfo;
 class plPipeline;
 
+namespace ST { class string; }
+
 class plInputDevice 
 {
 public:

@@ -557,7 +557,7 @@ static SOCKET ListenSocket(plNetAddress* listenAddr) {
         addr.sin_addr.S_un.S_addr = node;
         memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-            plString str = listenAddr->AsString();
+            ST::string str = listenAddr->AsString();
             LogMsg(kLogError, "bind to addr %s failed (err %u)", str.c_str(), WSAGetLastError());
             break;
         }

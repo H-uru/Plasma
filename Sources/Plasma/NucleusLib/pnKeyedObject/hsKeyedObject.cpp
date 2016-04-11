@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnDispatch/plDispatch.h"
 #include "pnMessage/plSelfDestructMsg.h"
 
+#include <string_theory/format>
+
 void hsKeyedObject::SetKey(plKey k)              
 {
     if (fpKey != nil)
@@ -148,8 +150,8 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
         {
 #if !HS_BUILD_FOR_UNIX      // disable for unix servers
             hsAssert(false,
-                plFormat("Request to Unregister wrong FixedKey, keyName={}, inUoid={}, myUoid={}",
-                         fpKey->GetName(), inUoid, myUoid).c_str());
+                ST::format("Request to Unregister wrong FixedKey, keyName={}, inUoid={}, myUoid={}",
+                           fpKey->GetName(), inUoid, myUoid).c_str());
 #endif
         }
         ((plKeyImp*)fpKey)->UnRegister();

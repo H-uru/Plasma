@@ -49,10 +49,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
  ** pfUnixPasswordStore                                                     **
  *****************************************************************************/
-const plString pfUnixPasswordStore::GetPassword(const plString& username)
+ST::string pfUnixPasswordStore::GetPassword(const ST::string& username)
 {
 }
 
-bool pfUnixPasswordStore::SetPassword(const plString& username, const plString& password)
+bool pfUnixPasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
 }

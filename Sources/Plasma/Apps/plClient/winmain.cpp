@@ -583,12 +583,13 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
             if (stream.Open("TOS.txt", "rt"))
             {
                 uint32_t dataLen = stream.GetSizeLeft();
-                plStringBuffer<char> eula;
-                char* eulaData = eula.CreateWritableBuffer(dataLen);
+                ST::char_buffer eula;
+                char* eulaData = eula.create_writable_buffer(dataLen);
                 memset(eulaData, 0, dataLen + 1);
                 stream.Read(dataLen, eulaData);
 
-                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT, plString(eula).ToWchar());
+                SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT,
+                                ST::string(eula, ST::substitute_invalid).to_wchar());
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);
@@ -611,7 +612,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
     return FALSE;
 }
 
-static void StoreHash(const plString& username, const plString& password, LoginDialogParam *pLoginParam)
+static void StoreHash(const ST::string& username, const ST::string& password, LoginDialogParam *pLoginParam)
 {
     //  Hash username and password before sending over the 'net.
     //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
@@ -619,9 +620,9 @@ static void StoreHash(const plString& username, const plString& password, LoginD
     static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
     std::cmatch match;
     std::regex_search(username.c_str(), match, re_domain);
-    if (match.empty() || plString(match[2].str().c_str()).CompareI("gametap") == 0) {
+    if (match.empty() || ST::string(match[2].str().c_str()).compare_i("gametap") == 0) {
         //  Plain Usernames...
-        plSHA1Checksum shasum(password.GetSize(), reinterpret_cast<const uint8_t*>(password.c_str()));
+        plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
         uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
         const uint32_t* from = reinterpret_cast<const uint32_t*>(shasum.GetValue());
 
@@ -639,18 +640,18 @@ static void StoreHash(const plString& username, const plString& password, LoginD
 
 static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
 {
-    plString theUser = pLoginParam->username;
-    plString thePass = password;
+    ST::string theUser = pLoginParam->username;
+    ST::string thePass = password;
 
     HKEY hKey;
-    RegCreateKeyEx(HKEY_CURRENT_USER, plFormat("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
+    RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
     RegSetValueEx(hKey, "LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, kMaxAccountNameLength);
     RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
     RegCloseKey(hKey);
 
     // If the password field is the fake string
     // then we've already loaded the hash.
-    if (thePass.Compare(FAKE_PASS_STRING) != 0)
+    if (thePass.compare(FAKE_PASS_STRING) != 0)
     {
         StoreHash(theUser, thePass, pLoginParam);
 
@@ -658,7 +659,7 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
         if (pLoginParam->remember)
             store->SetPassword(pLoginParam->username, thePass);
         else
-            store->SetPassword(pLoginParam->username, plString::Null);
+            store->SetPassword(pLoginParam->username, ST::string::null);
     }
 
     NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
@@ -674,7 +675,7 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     memset(accountName, 0, kMaxAccountNameLength);
     uint32_t rememberAccount = 0;
     DWORD acctLen = kMaxAccountNameLength, remLen = sizeof(rememberAccount);
-    RegOpenKeyEx(HKEY_CURRENT_USER, plFormat("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
+    RegOpenKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
     RegQueryValueEx(hKey, "LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
     RegQueryValueEx(hKey, "RememberPassword", 0, NULL, (LPBYTE) &rememberAccount, &remLen);
     RegCloseKey(hKey);
@@ -688,8 +689,8 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     if (pLoginParam->remember && pLoginParam->username[0] != '\0')
     {
         pfPasswordStore* store = pfPasswordStore::Instance();
-        plString password = store->GetPassword(pLoginParam->username);
-        if (!password.IsNull())
+        ST::string password = store->GetPassword(pLoginParam->username);
+        if (!password.is_empty())
             StoreHash(pLoginParam->username, password, pLoginParam);
         pLoginParam->focus = IDOK;
     }
@@ -725,7 +726,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 #ifdef USE_VLD
                 VLDEnable();
 #endif
-                plString statusUrl = GetServerStatusUrl();
+                ST::string statusUrl = GetServerStatusUrl();
                 CURL* hCurl = curl_easy_init();
 
                 // For reporting errors
@@ -738,7 +739,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
                     curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, hwndDlg);
 
-                    if (!statusUrl.IsEmpty() && curl_easy_perform(hCurl) != 0) {
+                    if (!statusUrl.is_empty() && curl_easy_perform(hCurl) != 0) {
                         // only perform request if there's actually a URL set
                         PostMessage(hwndDlg, WM_USER_SETSTATUSMSG, 0,
                                     reinterpret_cast<LPARAM>(curlError));
@@ -833,7 +834,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                     // When general.ini gets expanded, this will need to find a proper home somewhere.
                     {
                         plFileName gipath = plFileName::Join(plFileSystem::GetInitPath(), "general.ini");
-                        plString ini_str = plFormat("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
+                        ST::string ini_str = ST::format("App.SetLanguage {}\n", plLocalization::GetLanguageName(new_language));
                         hsStream* gini = plEncryptedStream::OpenEncryptedFileWrite(gipath);
                         gini->WriteString(ini_str);
                         gini->Close();
@@ -873,8 +874,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
-                plString signupurl = GetServerSignupUrl();
-                ShellExecuteW(NULL, L"open", signupurl.ToWchar(), NULL, NULL, SW_SHOWNORMAL);
+                ST::string signupurl = GetServerSignupUrl();
+                ShellExecuteW(NULL, L"open", signupurl.to_wchar(), NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }
@@ -1009,10 +1010,10 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // Set global handle
     gHInst = hInst;
 
-    std::vector<plString> args;
+    std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(plString::FromUtf8(__argv[i]));
+        args.push_back(ST::string::from_utf8(__argv[i]));
     }
 
     plCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));

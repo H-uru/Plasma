@@ -583,8 +583,8 @@ void plSimulationMgr::ISendUpdates()
                     const plKey physKey = physical->GetKey();
                     if (physKey)
                     {
-                        const plString &physName = physical->GetKeyName();
-                        if (!physName.IsNull())
+                        ST::string physName = physical->GetKeyName();
+                        if (!physName.is_empty())
                         {
                             plSimulationMgr::Log("Removing physical <%s> because of missing scene node.\n", physName.c_str());
                         }

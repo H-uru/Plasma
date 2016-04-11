@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXEnumerate.h"
 #include "plPipeline/hsG3DDeviceSelector.h"
 #include "hsGDirect3D.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 
 //// Local Typedefs ///////////////////////////////////////////////////////////
@@ -67,12 +67,12 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
     int i;
     for( i = 0; i < GetNumDrivers(); i++ )
     {
-        if (devRec->GetDriverDesc().CompareI(GetDriver(i)->fAdapterInfo.Description) == 0)
+        if (devRec->GetDriverDesc().compare_i(GetDriver(i)->fAdapterInfo.Description) == 0)
         {
             int j;
             for( j = 0; j < GetDriver(i)->fDevices.GetCount(); j++ )
             {
-                if (devRec->GetDeviceDesc().CompareI(GetDriver(i)->fDevices[j].fStrName) == 0)
+                if (devRec->GetDeviceDesc().compare_i(GetDriver(i)->fDevices[j].fStrName) == 0)
                 {
                     SetCurrentDriver(GetDriver(i));
                     SetCurrentDevice(&GetDriver(i)->fDevices[j]);
@@ -85,7 +85,7 @@ HRESULT hsGDirect3DTnLEnumerate::SelectFromDevMode(const hsG3DDeviceRecord* devR
             }
         }
     }
-    plString errStr = plFormat("Can't find requested device - {}:{}:{}:{}:{}",
+    ST::string errStr = ST::format("Can't find requested device - {}:{}:{}:{}:{}",
         devRec->GetG3DDeviceTypeName(),
         devRec->GetDriverDesc(),
         devRec->GetDriverName(),

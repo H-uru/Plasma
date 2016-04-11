@@ -642,13 +642,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
                 ( stricmp( szDriver, "i81xdd.dll" ) == 0 
-                  || ( desc.Find("intel") >= 0 && desc.Find("810") >= 0 ) ) )
+                  || ( desc.find("intel") >= 0 && desc.find("810") >= 0 ) ) )
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
-    else if( desc.Find("nvidia") >= 0 && desc.Find("geforce fx 5200") >= 0 )
+    else if( desc.find("nvidia") >= 0 && desc.find("geforce fx 5200") >= 0 )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );

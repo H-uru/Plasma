@@ -60,6 +60,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <string_theory/string>
+
 // Python Library Includes
 #include <Python.h>
 #include <marshal.h>
@@ -78,7 +80,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "plPhysical.h"
 #include "plPipeline.h"
-#include "plString.h"
 #include "pnKeyedObject/plKey.h"
 
 // pfPython Components

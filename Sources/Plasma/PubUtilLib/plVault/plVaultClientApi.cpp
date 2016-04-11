@@ -3659,16 +3659,16 @@ hsRef<RelVaultNode> VaultFindAgeSubAgeLink (const plAgeInfoStruct * info) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultFindAgeChronicleEntry (const plString& entryName, int entryType) {
+hsRef<RelVaultNode> VaultFindAgeChronicleEntry(const ST::string& entryName, int entryType) {
     hsAssert(false, "eric, implement me");
     return nil;
 }
 
 //============================================================================
 void VaultAddAgeChronicleEntry (
-    const plString& entryName,
-    int             entryType,
-    const plString& entryValue
+    const ST::string& entryName,
+    int               entryType,
+    const ST::string& entryValue
 ) {
     hsAssert(false, "eric, implement me");
 }

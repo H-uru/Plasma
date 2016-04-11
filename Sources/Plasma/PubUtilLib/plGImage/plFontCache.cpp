@@ -120,7 +120,7 @@ plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fo
 
     // If we failed, it's possible we have a face saved as "Times", for example, and someone's
     // asking for "Times New Roman", so strip all but the first word from our font and try the search again
-    ssize_t sp = face.find(' ');
+    ST_ssize_t sp = face.find(' ');
     if (sp >= 0)
     {
         return GetFont(face.left(sp), size, fontFlags);

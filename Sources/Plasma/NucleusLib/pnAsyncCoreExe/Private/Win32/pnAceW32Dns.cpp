@@ -333,7 +333,7 @@ void AsyncAddressLookupAddr (
     lookup->port            = 1;
     lookup->param           = param;
 
-    plString str = address.GetHostString();
+    ST::string str = address.GetHostString();
     strncpy(lookup->name, str.c_str(), arrsize(lookup->name));
 
     s_critsect.Enter();

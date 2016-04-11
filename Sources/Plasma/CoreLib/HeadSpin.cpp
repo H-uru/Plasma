@@ -491,7 +491,7 @@ std::vector<ST::string> DisplaySystemVersion()
 #ifndef VER_SUITE_PERSONAL
 #define VER_SUITE_PERSONAL 0x200
 #endif
-    std::vector<plString> versionStrs;
+    std::vector<ST::string> versionStrs;
     OSVERSIONINFOEX osvi;
     BOOL bOsVersionInfoEx;
 
@@ -508,7 +508,7 @@ std::vector<ST::string> DisplaySystemVersion()
 
         osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
         if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) )
-            return std::vector<plString>();
+            return std::vector<ST::string>();
     }
 
     switch (osvi.dwPlatformId)
@@ -584,7 +584,7 @@ std::vector<ST::string> DisplaySystemVersion()
 
         if ( osvi.dwMajorVersion <= 4 )
         {
-            versionStrs.push_back(plFormat("version {}.{} {} (Build {})\n",
+            versionStrs.push_back(ST::format("version {}.{} {} (Build {})\n",
                 osvi.dwMajorVersion,
                 osvi.dwMinorVersion,
                 osvi.szCSDVersion,
@@ -592,7 +592,7 @@ std::vector<ST::string> DisplaySystemVersion()
         }
         else
         {
-            versionStrs.push_back(plFormat("{} (Build {})\n",
+            versionStrs.push_back(ST::format("{} (Build {})\n",
                 osvi.szCSDVersion,
                 osvi.dwBuildNumber & 0xFFFF));
         }
