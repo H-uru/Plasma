@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 class plMipmap;
-class plString;
 
 class pyVaultImageNode : public pyVaultNode
 {

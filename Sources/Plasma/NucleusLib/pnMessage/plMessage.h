@@ -155,7 +155,7 @@ public:
 
 /////////////////////////////////////////////////////////////////
 // Helpers for reading/writing these types:
-//      plString
+//      ST::string
 //      std::string
 //      c strings (char *)
 //      c arrays (type [])

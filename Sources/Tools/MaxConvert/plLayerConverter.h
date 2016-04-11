@@ -68,7 +68,6 @@ class plBitmap;
 class plCubicRenderTarget;
 class hsConverterUtils;
 class plDynamicTextLayer;
-class plString;
 
 class plLayerConverter
 {

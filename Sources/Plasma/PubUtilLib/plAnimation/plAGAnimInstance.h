@@ -262,8 +262,8 @@ protected:
 //#endif
 #ifdef TRACK_AG_ALLOCS
 
-extern plString gGlobalAnimName;
-extern plString gGlobalChannelName;
+extern ST::string gGlobalAnimName;
+extern ST::string gGlobalChannelName;
 
 void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex);
 void UnRegisterAGAlloc(plAGChannel *object);

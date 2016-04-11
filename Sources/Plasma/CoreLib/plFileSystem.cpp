@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /* NOTE For this file:  Windows uses UTF-16 filenames, and does not support
  * the use of UTF-8 in their ANSI API.  In order to ensure proper unicode
- * support, we convert the UTF-8 format stored in plString to UTF-16 before
+ * support, we convert the UTF-8 format stored in ST::string to UTF-16 before
  * passing them along to Windows.
  */
 

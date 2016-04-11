@@ -52,7 +52,6 @@ class plRegistryKeyList;
 class hsStream;
 class plKeyImp;
 class plRegistryKeyIterator;
-class plString;
 
 enum PageCond
 {

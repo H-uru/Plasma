@@ -80,8 +80,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 #ifdef TRACK_AG_ALLOCS
-plString gGlobalAnimName;
-plString gGlobalChannelName;
+ST::string gGlobalAnimName;
+ST::string gGlobalChannelName;
 #endif // TRACK_AG_ALLOCS
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -175,7 +175,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fFadeBlend = fFadeAmp = false;
 
 #ifdef TRACK_AG_ALLOCS
-    gGlobalAnimName = "";
+    gGlobalAnimName = ST::string::null;
 #endif // TRACK_AG_ALLOCS
 }
 

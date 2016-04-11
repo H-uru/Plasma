@@ -67,7 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsMatrix44.h"
 #include "hsResMgr.h"
-#include "plString.h"
 #include "hsStringTokenizer.h"
 #include "hsTemplates.h"
 #include "plTweak.h"
@@ -92,6 +91,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <modstack.h>
 #include <notify.h>
 #include <stdmat.h>
+
+#include <string_theory/string>
 
 // MaxComponent
 #include "MaxComponent/plComponent.h"

@@ -100,9 +100,9 @@ const plKey plSynchedValueBase::ISaveOrLoad(const plKey key, bool32 save, hsStre
             stream->WriteByte(1);
             // I need to write a key to MY stream...
 #if 0       // DEBUG
-            plStringBuffer<char> buf = key->GetName()->ToIso8859_1();
-            stream->WriteLE32(buf.GetSize());
-            stream->Write(buf.GetSize(), buf.GetData());
+            ST::char_buffer buf = key->GetName()->to_latin_1();
+            stream->WriteLE32(buf.size());
+            stream->Write(buf.size(), buf.data());
 #endif
             key->GetUoid().Write(stream);
         }

@@ -226,7 +226,7 @@ int plNetMessage::PeekBuffer(const char* bufIn, int bufLen, uint32_t peekOptions
     readStream.LogSetList(el);
     readStream.Init(bufLen, bufIn);
     readStream.LogSubStreamStart("plNetMessage");
-    readStream.LogStringString(plFormat("ClassName: {}", this->ClassName()).c_str());
+    readStream.LogStringString(ST::format("ClassName: {}", this->ClassName()).c_str());
     int ret;
     if (peekOptions & kBaseClassOnly)
     {

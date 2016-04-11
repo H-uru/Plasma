@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnFactory/plCreatable.h"
 
-class plString;
-
 //
 // main logging switch
 //

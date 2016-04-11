@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 
 class plOperationProgress;
-class plString;
 
 /**
  * Plasma Resource Patcher

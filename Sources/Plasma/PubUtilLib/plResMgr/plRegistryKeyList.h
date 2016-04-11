@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plKeyImp;
 class plRegistryKeyIterator;
 class hsStream;
-class plString;
 class plUoid;
 
 //

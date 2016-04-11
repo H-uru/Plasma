@@ -89,8 +89,8 @@ class pfMacPasswordStore : public pfPasswordStore
 public:
     pfMacPasswordStore() { }
 
-    ST::string GetPassword(const plString& username) HS_OVERRIDE;
-    bool SetPassword(const plString& username, const plString& password) HS_OVERRIDE;
+    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
+    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
 };
 #endif //HS_BUILD_FOR_OSX
 
