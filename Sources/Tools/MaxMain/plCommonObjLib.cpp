@@ -221,7 +221,7 @@ bool    plCommonObjLib::RemoveObjectAndKey( plKey &key )
 //  our lib. Returns nil if not found. Use to find out if you already have a
 //  object of a given name that was previously exported.
 
-hsKeyedObject   *plCommonObjLib::FindObject( const plString &name, uint16_t classType /* = -1 */ )
+hsKeyedObject   *plCommonObjLib::FindObject( const ST::string &name, uint16_t classType /* = -1 */ )
 {
     int     i;
 
@@ -231,7 +231,7 @@ hsKeyedObject   *plCommonObjLib::FindObject( const plString &name, uint16_t clas
         const plUoid    &uoid = fObjects[ i ]->GetKey()->GetUoid();
 
 
-        if( uoid.GetObjectName().Compare( name, plString::kCaseInsensitive ) == 0 &&
+        if( uoid.GetObjectName().compare( name, ST::case_insensitive ) == 0 &&
             ( classType == (uint16_t)-1 || classType == uoid.GetClassType() ) )
         {
             return fObjects[ i ];

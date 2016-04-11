@@ -254,7 +254,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
     plFileName out_path = plFileName(name).StripFileName();
 
     // Apparently this was implied by the open dialog, but not if you call Max's ExportToFile() func
-    SetCurrentDirectoryW(out_path.AsString().ToWchar());
+    SetCurrentDirectoryW(out_path.AsString().to_wchar());
 
     // 
     // Setup ErrorMsg
@@ -306,7 +306,7 @@ int HSExport2::DoExport(const TCHAR *name,ExpInterface *ei,Interface *gi, BOOL s
 
     // Add disk source for writing
     plFileName datPath = plFileName::Join(out_path, "dat");
-    CreateDirectoryW(datPath.AsString().ToWchar(), NULL);
+    CreateDirectoryW(datPath.AsString().to_wchar(), NULL);
     plPluginResManager::ResMgr()->SetDataPath(datPath);
 
     if (hsgResMgr::Reset())

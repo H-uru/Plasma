@@ -454,8 +454,8 @@ bool plClickDragComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         pCall2->AddReceiver(axisKey);
 
         plAnimCmdMsg* pMsg = new plAnimCmdMsg;
-        plString tempAnimName = pAnim->GetAnimName();
-        if (tempAnimName.IsNull())
+        ST::string tempAnimName = pAnim->GetAnimName();
+        if (tempAnimName.is_empty())
         {
             //pMsg->SetAnimName(ENTIRE_ANIMATION_NAME);
             pMsg->SetAnimName(pAnim->GetModKey(node)->GetName());

@@ -339,7 +339,7 @@ plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrM
     plAnimCmdMsg *msg = new plAnimCmdMsg;
     msg->AddReceiver(animKey);
 
-    plString tempAnimName = comp->GetAnimName();
+    ST::string tempAnimName = comp->GetAnimName();
     msg->SetAnimName(tempAnimName);
 
     // Create and initialize a message for the command
@@ -370,7 +370,7 @@ plMessage *plResponderCmdAnim::ICreateAnimMsg(plMaxNode* node, plErrorMsg *pErrM
             // anims with a loop set in advance will actually work with this. -Colin
 //          msg->SetCmd(plAnimCmdMsg::kSetLoopBegin);
 //          msg->SetCmd(plAnimCmdMsg::kSetLoopEnd);
-            plString loopName = plString::FromUtf8(pb->GetStr(kAnimLoop));
+            ST::string loopName = ST::string::from_utf8(pb->GetStr(kAnimLoop));
             msg->SetLoopName(loopName);
         }
         break;
@@ -487,14 +487,14 @@ void plResponderCmdAnim::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
         return;
 
     plAnimComponent *animComp = (plAnimComponent*)GetComponent(pb);
-    plString animName = animComp->GetAnimName();
+    ST::string animName = animComp->GetAnimName();
 
     if (animComp)
     {
         plNotetrackAnim notetrackAnim(animComp, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).is_empty())
             waitPoints.push_back(marker);
     }
 }
@@ -514,11 +514,11 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
     eventMsg->fRepeats = 0;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (!waitInfo.point.IsNull())
+    if (!waitInfo.point.is_empty())
     {
         // FIXME COLIN - Error checking here?
         plAnimComponent *animComp = (plAnimComponent*)GetComponent(pb);
-        plString animName = animComp->GetAnimName();
+        ST::string animName = animComp->GetAnimName();
 
         plNotetrackAnim notetrackAnim(animComp, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
@@ -755,19 +755,19 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
     plComponentBase *comp = plResponderCmdAnim::Instance().GetComponent(pb);
     if (comp && comp->ClassID() == ANIM_COMP_CID)
     {
-        plString animName = ((plAnimComponent*)comp)->GetAnimName();
+        ST::string animName = ((plAnimComponent*)comp)->GetAnimName();
 
         // Get the shared animations for all the nodes this component is applied to
         plNotetrackAnim anim(comp, nil);
         plAnimInfo info = anim.GetAnimInfo(animName);
         // Get all the loops in this animation
-        plString loopName;
-        while (!(loopName = info.GetNextLoopName()).IsNull())
+        ST::string loopName;
+        while (!(loopName = info.GetNextLoopName()).is_empty())
         {
             int idx = ComboBox_AddString(hLoop, loopName.c_str());
             ComboBox_SetItemData(hLoop, idx, 1);
 
-            if (!loopName.Compare(savedName))
+            if (!loopName.compare(savedName))
                 ComboBox_SetCurSel(hLoop, idx);
         }
 

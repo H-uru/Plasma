@@ -1326,19 +1326,19 @@ bool plSwim2DComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     case kCurrentSpiral:
         {
             fSwimRegions[node] = new plSwimCircularCurrentRegion();
-            hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     case kCurrentStraight:
         {
             fSwimRegions[node] = new plSwimStraightCurrentRegion();
-            hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     default:
         {
             fSwimRegions[node] = new plSwimRegionInterface();
-            hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
+            hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fSwimRegions[node], node->GetLocation(), node->GetLoadMask());
             break;
         }
     }

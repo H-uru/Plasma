@@ -369,7 +369,7 @@ bool plLightMapGen::ICompressLightMaps()
                 {
                     const plLocation &textureLoc = plPluginResManager::ResMgr()->GetCommonPage(orig->GetKey()->GetUoid().GetLocation(),
                                                                                     plAgeDescription::kTextures );
-                    plString name = plFormat("{}_DX", orig->GetKey()->GetName());
+                    ST::string name = ST::format("{}_DX", orig->GetKey()->GetName());
 
                     plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), name));
                     if( compKey )
@@ -1255,7 +1255,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
             return mat->GetPiggyBack(i);
     }
 
-    plString newMatName = plFormat("{}_{}_LIGHTMAPGEN", mat->GetKey()->GetName(), node->GetName());
+    ST::string newMatName = ST::format("{}_{}_LIGHTMAPGEN", mat->GetKey()->GetName(), node->GetName());
     plLocation nodeLoc = node->GetLocation();
 
     plKey matKey = hsgResMgr::ResMgr()->FindKey(plUoid(nodeLoc, hsGMaterial::Index(), newMatName));
@@ -1293,7 +1293,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
     // Make sure layer (and mip) name are unique across pages by putting the page name in
     const plPageInfo* pageInfo = plKeyFinder::Instance().GetLocationInfo(node->GetLocation());
 
-    plString layName = plFormat("{}_{}_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
+    ST::string layName = ST::format("{}_{}_LIGHTMAPGEN", pageInfo->GetPage(), node->GetName());
     
     plKey layKey = node->FindPageKey(plLayer::Index(), layName);
 
@@ -1310,7 +1310,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
         }
         else
         {
-            plString mipmapName = plFormat("{}_mip", layName);
+            ST::string mipmapName = ST::format("{}_mip", layName);
 
             // Deleted the NOTE here because it was incorrect in every meaningful sense of the word. - mf
 
@@ -1320,7 +1320,7 @@ plLayerInterface* plLightMapGen::IMakeLightMapLayer(plMaxNode* node, plGeometryS
 
             if( !mipKey && !fRecalcLightMaps )
             {
-                plString compressedName = plFormat("{}_DX", mipmapName);
+                ST::string compressedName = ST::format("{}_DX", mipmapName);
 
                 plKey compKey = hsgResMgr::ResMgr()->FindKey(plUoid(textureLoc, plMipmap::Index(), compressedName));
 

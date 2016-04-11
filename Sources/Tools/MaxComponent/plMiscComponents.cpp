@@ -268,7 +268,7 @@ protected:
 
         for( int i = 0; i < ageFiles.GetCount(); i++ )
         {
-            plString ageName = ageFiles[i].GetFileNameNoExt();
+            ST::string ageName = ageFiles[i].GetFileNameNoExt();
 
             int idx = ComboBox_AddString( hAgeCombo, ageName.c_str() );
             // Store the pathas the item data for later (so don't free it yet!)
@@ -574,7 +574,7 @@ const char *plPageInfoComponent::GetAgeName()
 //  Checks in assetMan to make sure we have the latest .age file to export 
 //  with.
 
-void    plPageInfoComponent::IVerifyLatestAgeAsset( const plString &ageName, const plFileName &localPath, plErrorMsg *errMsg )
+void    plPageInfoComponent::IVerifyLatestAgeAsset( const ST::string &ageName, const plFileName &localPath, plErrorMsg *errMsg )
 {
 #ifdef MAXASS_AVAILABLE
     plFileName ageFileName, assetPath;
@@ -648,7 +648,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
         fCompPB->SetValue( kInfoSeqSuffix, 0, 0 );
         return;
     }
-    plFileName path = plFileName::Join(ageFolder, plFormat("{}.age", curAge));
+    plFileName path = plFileName::Join(ageFolder, ST::format("{}.age", curAge));
 
     IVerifyLatestAgeAsset( curAge, path, errMsg );
     std::unique_ptr<plAgeDescription> aged(plPageInfoUtils::GetAgeDesc(curAge));
@@ -689,7 +689,7 @@ void    plPageInfoComponent::IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg )
 
     while( ( page = aged->GetNextPage() ) != nil )
     {
-        if( page->GetName().CompareI( compPBPageName ) == 0 )
+        if( page->GetName().compare_i( compPBPageName ) == 0 )
         {
             fCompPB->SetValue( kInfoSeqSuffix, 0, (int)page->GetSeqSuffix() );
 
@@ -771,7 +771,7 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
     aged->SeekFirstPage();
     while( ( page = aged->GetNextPage() ) != nil )
     {
-        if (page->GetName().CompareI(pageName) == 0)
+        if (page->GetName().compare_i(pageName) == 0)
         {
             seqSuffix = page->GetSeqSuffix();
             break;
@@ -783,10 +783,10 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
     return CombineSeqNum( seqPrefix, seqSuffix );
 }
 
-plAgeDescription *plPageInfoUtils::GetAgeDesc( const plString &ageName )
+plAgeDescription *plPageInfoUtils::GetAgeDesc( const ST::string &ageName )
 {
     plFileName ageFolder = plPageInfoUtils::GetAgeFolder();
-    if (!ageFolder.IsValid() || ageName.IsNull())
+    if (!ageFolder.IsValid() || ageName.is_empty())
         return nullptr;
 
     plAgeDescription* aged = new plAgeDescription;

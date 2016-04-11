@@ -138,7 +138,7 @@ public:
     HWND    GetWinDlg( void ) const;
 
     // Interesting functions
-    plString    GetSegmentName( void ) const;
+    ST::string  GetSegmentName( void ) const;
     void        SetSegment( const char *name ); // nil for "entire animation"
 
     // Conversion from stealth's INode to the actual object
@@ -199,8 +199,8 @@ public:
     void    SetAutoStart( bool b );
 
     bool        GetLoop( void ) const;
-    plString    GetLoopName( void ) const;
-    void        SetLoop( bool b, const plString &name );
+    ST::string  GetLoopName( void ) const;
+    void        SetLoop( bool b, const ST::string &name );
 
     uint8_t     GetEaseInType( void ) const;
     float       GetEaseInLength( void ) const;
@@ -224,7 +224,7 @@ public:
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
     virtual bool    IsNodeRestricted( void ) { return true; }
-    virtual plString GetIfaceSegmentName( bool allowNil );
+    virtual ST::string GetIfaceSegmentName( bool allowNil );
     virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
     virtual bool        MightRequireSeparateMaterial( void ) { return true; }
 

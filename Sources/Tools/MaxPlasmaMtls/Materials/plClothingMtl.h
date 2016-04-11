@@ -48,8 +48,8 @@ class Bitmap;
 class plClothingItem;
 class plMaxNode;
 class plClothingElement;
-class plString;
 class Texmap;
+namespace ST { class string; }
 
 #define CLOTHING_MTL_CLASS_ID Class_ID(0x792c6de4, 0x1f952b65)
 
@@ -131,7 +131,7 @@ public:
     hsTArray<plClothingElement *> fElements;
     virtual void InitTilesets();
     virtual void ReleaseTilesets();
-    plClothingElement *FindElementByName(const plString &name) const;
+    plClothingElement *FindElementByName(const ST::string &name) const;
 
     int GetTilesetIndex() { return fBasicPB->GetInt(ParamID(kTileset)); }
     Texmap *GetTexmap(int index, int layer);

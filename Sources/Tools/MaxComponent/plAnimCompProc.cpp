@@ -320,12 +320,12 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     if (mtl)
     {
         plNotetrackAnim anim(mtl, nil);
-        plString animName;
-        while (!(animName = anim.GetNextAnimName()).IsNull())
+        ST::string animName;
+        while (!(animName = anim.GetNextAnimName()).is_empty())
         {
             int idx = ComboBox_AddString(hAnim, animName.c_str());
             ComboBox_SetItemData(hAnim, idx, 1);
-            if (!animName.Compare(savedName))
+            if (!animName.compare(savedName))
                 ComboBox_SetCurSel(hAnim, idx);
         }
 

@@ -49,9 +49,8 @@ class plMaxNodeBase;
 class plMessage;
 class Mtl;
 class IParamBlock2;
-class plString;
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString &segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string &segName, hsTArray<plKey>& keys);
 
 class plResponderCmdMtl : public plResponderCmd
 {
@@ -73,7 +72,7 @@ public:
     virtual void CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamBlock2 *pb, ResponderWaitInfo& waitInfo);
     
     Mtl *GetMtl(IParamBlock2 *pb);
-    plString GetAnim(IParamBlock2 *pb);
+    ST::string GetAnim(IParamBlock2 *pb);
 };
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys);
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys);

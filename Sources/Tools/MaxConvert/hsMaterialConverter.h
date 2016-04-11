@@ -59,7 +59,6 @@ class hsGAnimLayer;
 class plBitmap;
 class plMipmap;
 class plErrorMsg;
-class plString;
 class plLocation;
 
 class Animatable;
@@ -84,6 +83,8 @@ class plPassMtlBase;
 class plClothingItem;
 class plClothingMtl;
 class hsBitVector;
+
+namespace ST { class string; }
 
 class plExportMaterialData
 {
@@ -262,21 +263,21 @@ private:
     void IInsertSingleBlendLayer(plMipmap *texture, hsGMaterial *mat, plMaxNode *node, 
                                  int layerIdx, int UVChan);
 
-    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int subIndex, int numUVChannels, bool makeAlphaLayer);
-    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags = 0);
+    hsGMaterial *ICreateMaterial(Mtl *mtl, plMaxNode *node, const ST::string &name, int subIndex, int numUVChannels, bool makeAlphaLayer);
+    hsGMaterial *IProcessMaterial(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan, int subMtlFlags = 0);
 
     // ... calls one of:
-    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan);
-    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const plString &name, int UVChan, int subMtlFlags);
-    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const plString &name);
-    bool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const plString& namePrefix);
+    hsGMaterial *IProcessMultipassMtl(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan);
+    hsGMaterial *IProcessCompositeMtl(Mtl *mtl, plMaxNode *node, const ST::string &name, int UVChan, int subMtlFlags);
+    hsGMaterial *IProcessParticleMtl(Mtl *mtl, plMaxNode *node, const ST::string &name);
+    bool IProcessPlasmaMaterial(Mtl *mtl, plMaxNode *node, hsGMaterial *mat, const ST::string& namePrefix);
 
     hsGMaterial* IInsertDoneMaterial(Mtl *mtl, hsGMaterial *hMat, plMaxNode *node, bool isMultiMat, 
                              bool forceCopy, bool runtimeLit, uint32_t subMtlFlags, int numUVChannels, bool makeAlphaLayer);
 
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat, int bumpLayerIdx);
     void        IInsertBumpLayers(plMaxNode* node, hsGMaterial* mat);
-    plLayer*    IMakeBumpLayer(plMaxNode* node, const plString& nameBase, hsGMaterial* mat, uint32_t miscFlag);
+    plLayer*    IMakeBumpLayer(plMaxNode* node, const ST::string& nameBase, hsGMaterial* mat, uint32_t miscFlag);
     plMipmap*   IGetBumpLutTexture(plMaxNode* node);
 
     bool        IHasSubMtl(Mtl* base, Mtl* sub);

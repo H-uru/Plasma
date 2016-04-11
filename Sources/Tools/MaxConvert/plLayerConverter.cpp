@@ -297,7 +297,7 @@ plLayerInterface    *plLayerConverter::IConvertLayerTex( plPlasmaMAXLayer *layer
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( plString::FromUtf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
 
     // We're using a texture, try and get its info
     PBBitmap    *pbbm = nil;
@@ -432,7 +432,7 @@ plLayerInterface    *plLayerConverter::IConvertStaticEnvLayer( plPlasmaMAXLayer 
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( plString::FromUtf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
 
     // Get the texture info
     PBBitmap *pbbm = bitmapPB->GetBitmap( plStaticEnvLayer::kBmpFrontBitmap + 0 );
@@ -542,7 +542,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( plString::FromUtf8( layer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( layer->GetName() ), upperLayer, loc );
 
     // Get the anchor node
     plMaxNode   *anchor = (plMaxNode *)bitmapPB->GetINode( plDynamicEnvLayer::kBmpAnchorNode );
@@ -565,14 +565,14 @@ plLayerInterface    *plLayerConverter::IConvertDynamicEnvLayer( plPlasmaMAXLayer
     plasmaLayer->SetUVWSrc( plasmaLayer->GetUVWSrc() | plLayerInterface::kUVWReflect );
 
     // Create the texture.  If it works, assign it to the layer
-    plString texName;
+    ST::string texName;
     if( anchor == maxNode )
     {
         // Self-anchoring material, make sure the name is unique via the nodeName
-        texName = plFormat("{}_cubicRT@{}", plasmaLayer->GetKeyName(), maxNode->GetName());
+        texName = ST::format("{}_cubicRT@{}", plasmaLayer->GetKeyName(), maxNode->GetName());
     }
     else
-        texName = plFormat("{}_cubicRT", plasmaLayer->GetKeyName());
+        texName = ST::format("{}_cubicRT", plasmaLayer->GetKeyName());
 
     plBitmap *texture = (plBitmap *)IMakeCubicRenderTarget( texName, maxNode, anchor );
     if( texture )
@@ -608,7 +608,7 @@ plLayerInterface    *plLayerConverter::IConvertCameraLayer(plPlasmaMAXLayer *lay
         return nil;
     }
 
-    plLayer *plasmaLayer = ICreateLayer (plString::FromUtf8(layer->GetName()), upperLayer, loc);
+    plLayer *plasmaLayer = ICreateLayer (ST::string::from_utf8(layer->GetName()), upperLayer, loc);
 
     plMaxNode *rootNode = (plMaxNode*)pb->GetINode(ParamID(plMAXCameraLayer::kRootNode));
     plDynamicCamMap *map = plEnvMapComponent::GetCamMap(rootNode ? rootNode : maxNode);
@@ -680,7 +680,7 @@ plLayerInterface    *plLayerConverter::IConvertDynamicTextLayer( plPlasmaMAXLaye
     }
 
     // Get a new layer to play with
-    plLayer *plasmaLayer = ICreateLayer( plString::FromUtf8( maxLayer->GetName() ), upperLayer, loc );
+    plLayer *plasmaLayer = ICreateLayer( ST::string::from_utf8( maxLayer->GetName() ), upperLayer, loc );
 
 
     /// UV Gen
@@ -775,8 +775,8 @@ static uint32_t MakeUInt32Color(float r, float g, float b, float a)
 
 plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loClamp, int hiClamp)
 {
-    plString funkName = plFormat("{}_{}_{}", isAdd ? "AttenRampAdd" : "AttenRampMult",
-                                 loClamp, hiClamp);
+    ST::string funkName = ST::format("{}_{}_{}", isAdd ? "AttenRampAdd" : "AttenRampMult",
+                                     loClamp, hiClamp);
 
     float range = float(hiClamp - loClamp) * 1.e-2f;
     float lowest = float(loClamp) * 1.e-2f;
@@ -831,7 +831,7 @@ plBitmap* plLayerConverter::IGetAttenRamp(plMaxNode *node, BOOL isAdd, int loCla
 }
 
 
-plLayer* plLayerConverter::ICreateAttenuationLayer(const plString& name, plMaxNode *node, int uvwSrc,
+plLayer* plLayerConverter::ICreateAttenuationLayer(const ST::string& name, plMaxNode *node, int uvwSrc,
                                                             float tr0, float op0, float tr1, float op1,
                                                             int loClamp, int hiClamp)
 {
@@ -917,7 +917,7 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
 
     int uvwSrc = aaLay->Reflect() ? plLayerInterface::kUVWReflect : plLayerInterface::kUVWNormal;
 
-    plLayer* lut = ICreateAttenuationLayer(plString::FromUtf8(layer->GetName()), maxNode, uvwSrc, tr0, op0, tr1, op1, loClamp, hiClamp);
+    plLayer* lut = ICreateAttenuationLayer(ST::string::from_utf8(layer->GetName()), maxNode, uvwSrc, tr0, op0, tr1, op1, loClamp, hiClamp);
 
     return lut;
 
@@ -925,7 +925,7 @@ plLayerInterface* plLayerConverter::IConvertAngleAttenLayer(plPlasmaMAXLayer *la
 }
 //// ICreateLayer /////////////////////////////////////////////////////////////
 
-plLayer     *plLayerConverter::ICreateLayer( const plString &name, bool upperLayer, plLocation &loc )
+plLayer     *plLayerConverter::ICreateLayer( const ST::string &name, bool upperLayer, plLocation &loc )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateLayer" );
 
@@ -989,7 +989,7 @@ void    plLayerConverter::IProcessUVGen( plPlasmaMAXLayer *srcLayer, plLayer *de
 
 //// ICreateDynTextMap ////////////////////////////////////////////////////////
 
-plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const plString &layerName, uint32_t width, uint32_t height,
+plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const ST::string &layerName, uint32_t width, uint32_t height,
                                                         bool includeAlphaChannel, plMaxNode *node )
 {
     hsGuardBegin( "plPlasmaMAXLayer::ICreateDynTextMap" );
@@ -1000,7 +1000,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const plString &layerN
     
     // Need a unique key name for every layer that uses one. We could also key
     // off of width and height, but layerName should be more than plenty
-    plString texName = plFormat("{}_dynText", layerName);
+    ST::string texName = ST::format("{}_dynText", layerName);
 
     // Does it already exist?
     key = node->FindPageKey( plDynamicTextMap::Index(), texName );
@@ -1085,7 +1085,7 @@ plLayer *plLayerConverter::IAssignTexture( plBitmapData *bd, plMaxNode *maxNode,
 //  Makes a plCubicRenderTarget as a texture. Also constructs the associated
 //  modifier and attaches it to the necessary object (hacked for now)
 
-plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const plString &name, plMaxNode *node, plMaxNode *anchor )
+plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const ST::string &name, plMaxNode *node, plMaxNode *anchor )
 {
     plDynamicEnvMap* env = plEnvMapComponent::GetEnvMap(anchor);
     if( env )
@@ -1121,7 +1121,7 @@ plCubicRenderTarget *plLayerConverter::IMakeCubicRenderTarget( const plString &n
 
     /// Now make a modifier
     plCubicRenderTargetModifier *mod = new plCubicRenderTargetModifier();
-    plString modName = plFormat("{}_mod", name);
+    ST::string modName = ST::format("{}_mod", name);
 
     hsgResMgr::ResMgr()->NewKey( modName, mod, node->GetLocation() );
     hsgResMgr::ResMgr()->AddViaNotify( cubic->GetKey(), new plGenRefMsg( mod->GetKey(), plRefMsg::kOnCreate, 0, 0 ), plRefFlags::kPassiveRef );

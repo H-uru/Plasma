@@ -41,7 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plFormat.h"
+#include <string_theory/format>
 
 #include "plComponentBase.h"
 #include "plComponentReg.h"
@@ -286,7 +286,7 @@ bool plComponentBase::IsTarget(plMaxNodeBase *node)
     return false;
 }
 
-plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
+ST::string plComponentBase::IGetUniqueName(plMaxNodeBase* target)
 {
     // Make sure we've actually got multiple *used* targets.  (Some could be nil)
     int numUsedTargs = 0;
@@ -310,9 +310,9 @@ plString plComponentBase::IGetUniqueName(plMaxNodeBase* target)
     hsAssert(thisTargIdx != -1, "Bad target for IGetUniqueName");
 
     if (numUsedTargs > 1)
-        return plFormat("{}_{}", GetINode()->GetName(), thisTargIdx);
+        return ST::format("{}_{}", GetINode()->GetName(), thisTargIdx);
     else
-        return plString::FromUtf8(GetINode()->GetName());
+        return ST::string::from_utf8(GetINode()->GetName());
 }
 
 plMaxNodeBase *plComponentBase::GetINode()

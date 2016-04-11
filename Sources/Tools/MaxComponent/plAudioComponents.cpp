@@ -613,7 +613,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::GetSourceBuffer( const plFileName 
 plSoundBuffer *plBaseSoundEmitterComponent::IGetSourceBuffer(const plFileName &fileName, plMaxNode *srcNode, uint32_t srcBufferFlags)
 {
     plKey       key;
-    plString    keyName = fileName.GetFileName();
+    ST::string  keyName = fileName.GetFileName();
 
     // TEMP HACK until we get packed sounds: 
     // Given the source filename, we check to see if it's in our plasma game directory. If not, or if
@@ -879,8 +879,8 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
     {
         destSound->SetProperty( plSound::kPropLooping, true );
 
-        plString loop = plString::FromUtf8( fCompPB->GetStr((ParamID)kSoundLoopName) );
-        if (!loop.IsEmpty())
+        ST::string loop = ST::string::from_utf8( fCompPB->GetStr((ParamID)kSoundLoopName) );
+        if (!loop.is_empty())
         {
             SegmentMap *segMap = GetCompWaveSegmentMap( GetSoundFileName( kBaseSound ) );
             if (segMap && segMap->find(loop) != segMap->end())
@@ -904,7 +904,7 @@ bool    plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
     hsControlConverter& cc = hsControlConverter::Instance();
 
     float start, end;
-    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
     }
@@ -926,7 +926,7 @@ bool    plBaseSoundEmitterComponent::AddToAnim( plAGAnim *anim, plMaxNode *node 
 
         std::map<plMaxNode*, int>::iterator i = fIndices.begin();
         plSoundVolumeApplicator *app = new plSoundVolumeApplicator( (*i).second );
-        app->SetChannelName(plString::FromUtf8(node->GetName()));
+        app->SetChannelName(ST::string::from_utf8(node->GetName()));
         plAnimComponentBase::SetupCtl( anim, ctl, app, node );
         result = true;      
     }
@@ -1809,7 +1809,7 @@ public:
                 int idx = SendMessage(hLoop, CB_ADDSTRING, 0, (LPARAM)spec->fName.c_str());
                 SendMessage(hLoop, CB_SETITEMDATA, idx, 1);
 
-                if (!spec->fName.Compare(loop))
+                if (!spec->fName.compare(loop))
                     SendMessage(hLoop, CB_SETCURSEL, idx, 0);
             }
 
@@ -2174,7 +2174,7 @@ bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
 
-    plString keyName = plString::FromUtf8(GetINode()->GetName());
+    ST::string keyName = ST::string::from_utf8(GetINode()->GetName());
 
     plWin32Sound *sound = nil;
 
@@ -2207,7 +2207,7 @@ bool plSound3DEmitterComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 // Converts an array of components into a single grouped sound
 bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg )
 {
-    plString keyName;
+    ST::string keyName;
 
 
     if( !fValidNodes[ baseNode ] || !fCreateGrouped )
@@ -2317,7 +2317,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     if( fIndices.find( baseNode ) != fIndices.end() )
         index = fIndices[ baseNode ];
 
-    keyName = plFormat("{}_MergedSound", GetINode()->GetName());
+    keyName = ST::format("{}_MergedSound", GetINode()->GetName());
 
     plKey buffKey = baseNode->FindPageKey( plSoundBuffer::Index(), keyName );   
     if( buffKey != nil )
@@ -2338,7 +2338,7 @@ bool    plSound3DEmitterComponent::ConvertGrouped( plMaxNode *baseNode, hsTArray
     const plAudioInterface* ai = baseNode->GetSceneObject()->GetAudioInterface();
     plWinAudible* pAudible = (plWinAudible*)ai->GetAudible();
 
-    keyName = plString::FromUtf8(GetINode()->GetName());
+    keyName = ST::string::from_utf8(GetINode()->GetName());
     plWin32GroupedSound *sound = new plWin32GroupedSound;
     sound->SetPositionArray( startPoses.GetCount(), startPoses.AcquireArray(), volumes.AcquireArray() );
     sound->SetProperty( plSound::kPropLoadOnlyOnCall, true );
@@ -2485,7 +2485,7 @@ bool plBackgroundMusicComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     if( srcBuffer == nil )
         return false;
 
-    plString keyName = plFormat("{}_Win32BgndSnd", GetINode()->GetName());
+    ST::string keyName = ST::format("{}_Win32BgndSnd", GetINode()->GetName());
     plWin32Sound *sound = nil;
 
     if( srcBuffer->GetDataLengthInSecs() > 4.f )
@@ -2643,7 +2643,7 @@ bool plGUISoundComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         return false;
     }
 
-    plString keyName = plFormat("{}_Win32GUISound", GetINode()->GetName());
+    ST::string keyName = ST::format("{}_Win32GUISound", GetINode()->GetName());
 
     plWin32StaticSound *sound = new plWin32StaticSound;
     hsgResMgr::ResMgr()->NewKey(keyName, sound, node->GetLocation(), node->GetLoadMask());

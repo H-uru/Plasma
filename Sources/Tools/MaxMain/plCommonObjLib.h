@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCommonObjLibList;
 class plKey;
 class hsKeyedObject;
-class plString;
+namespace ST { class string; }
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -87,7 +87,7 @@ class plCommonObjLib
 
         void            AddObject( hsKeyedObject *object );
         bool            RemoveObjectAndKey( plKey &key );
-        hsKeyedObject   *FindObject( const plString &name, uint16_t classType = (uint16_t)-1 );
+        hsKeyedObject   *FindObject( const ST::string &name, uint16_t classType = (uint16_t)-1 );
         void            ClearObjectList( void );
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect

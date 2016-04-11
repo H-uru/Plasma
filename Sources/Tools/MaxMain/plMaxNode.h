@@ -126,7 +126,7 @@ public:
     enum { kSetupProperties, kPreConvert, kConvert };
     bool DoComponents(int convertType, plErrorMsg *, plConvertSettings *);
 
-    plKey AddModifier(plModifier *pMod, const plString& name);
+    plKey AddModifier(plModifier *pMod, const ST::string& name);
 
     bool ConvertToOccluder            (plErrorMsg* pErrMsg, bool twoSided, bool isHole);
 
@@ -175,7 +175,7 @@ public:
     plPhysicalProps *GetPhysicalProps();
 
     // Little helper function. Calls FindKey() in the resManager using the location (page) of this node
-    plKey   FindPageKey( uint16_t classIdx, const plString &name );
+    plKey   FindPageKey( uint16_t classIdx, const ST::string &name );
     const char *GetAgeName();
 
     void CheckSynchOptions(plSynchedObject* so);

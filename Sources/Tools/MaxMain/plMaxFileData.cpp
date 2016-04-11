@@ -41,7 +41,6 @@ Mead, WA   99021
 *==LICENSE==*/
 
 #include "HeadSpin.h"
-#include "plString.h"
 
 #include <max.h>
 #pragma hdrstop

@@ -525,31 +525,31 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     }
 
     // Get and mangle key name
-    plString name;
-    plString temp = bd->fileName.GetFileNameNoExt();
+    ST::string name;
+    ST::string temp = bd->fileName.GetFileNameNoExt();
 
     // Somehow, sometimes, we get the same file in with different cases. So we need to force the
     // case identical all the time, else the patching process for dat files will think they're
     // "different" when they're really not
-    temp = temp.ToLower();
+    temp = temp.to_lower();
 
     /// Mangle name for detail textures, so we don't end up overwriting settings elsewhere
     if( bd->createFlags & plMipmap::kCreateDetailMask )
     {   
         // Mangle of the form: name@dropStart&dropStop&max&min
         if( clipID != -1 )
-            name = plFormat("{}*{x}#{}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags, clipID,
+            name = ST::format("{}*{x}#{}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags, clipID,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags & plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
         else
-            name = plFormat("{}*{x}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags,
+            name = ST::format("{}*{x}@{}&{3.2f}&{3.2f}&{3.2f}&{3.2f}", temp, bd->texFlags,
                     bd->createFlags & plMipmap::kCreateDetailAlpha ? "al" : ( bd->createFlags == plMipmap::kCreateDetailAdd ? "ad" : "mu" ),
                     bd->detailDropoffStart, bd->detailDropoffStop, bd->detailMax, bd->detailMin );
     }
     else if( clipID != -1 )
-        name = plFormat("{}*{x}#{}", temp, bd->texFlags, clipID);
+        name = ST::format("{}*{x}#{}", temp, bd->texFlags, clipID);
     else
-        name = plFormat("{}*{x}", temp, bd->texFlags);
+        name = ST::format("{}*{x}", temp, bd->texFlags);
     if( bd->invertAlpha )
         name += "_inva";
     name += ".hsm";
@@ -565,7 +565,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     if( texture )
     {
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesExW(bd->fileName.AsString().ToWchar(), GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.AsString().to_wchar(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
 
         // If this texture has been modified since the last export, delete the old version but reuse the key
@@ -651,7 +651,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
 
         // Texture reuse optimization
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesExW(bd->fileName.AsString().ToWchar(), GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.AsString().to_wchar(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
         texture->SetModifiedTime(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
 
@@ -676,7 +676,7 @@ void    plBitmapCreator::IAddBitmap( plBitmap *bitmap, bool dontRef )
 //  of "converted" maps to clean up at the end of export.
 
 plMipmap    *plBitmapCreator::CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, 
-                                                 const plString &keyName, const plLocation &keyLocation )
+                                                 const ST::string &keyName, const plLocation &keyLocation )
 {
     hsGuardBegin( "plBitmapCreator::CreateBlankMipmap" );
 

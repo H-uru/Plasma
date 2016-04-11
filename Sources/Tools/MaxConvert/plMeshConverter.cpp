@@ -494,7 +494,7 @@ bool plMeshConverter::IValidateUVs(plMaxNode* node)
 
     if (uvsAreBad)
     {
-        plFileName logfile = plFormat("UV_{}.log", GetCOREInterface()->GetCurFileName().data());
+        plFileName logfile = ST::format("UV_{}.log", GetCOREInterface()->GetCurFileName().data());
         plStatusLog::AddLineS(logfile, "%s has suspicious UVs", node->GetName());
 
         if (fWarnSuspiciousUVs)

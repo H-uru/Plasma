@@ -61,11 +61,11 @@ float TimeValueToGameTime(TimeValue t)
     return float(t)/float(TPS);
 }
 
-bool GetSegMapAnimTime(const plString &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
+bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSpec::SegType type, float& begin, float& end)
 {
     if (segMap)
     {
-        if (!animName.IsNull() && segMap->find(animName) != segMap->end())
+        if (!animName.is_empty() && segMap->find(animName) != segMap->end())
         {
             SegmentSpec *spec = (*segMap)[animName];
             if (spec->fType == type)
@@ -127,7 +127,7 @@ SegmentMap *GetSharedAnimSegmentMap(std::vector<Animatable*>& anims, plErrorMsg 
     return segMap;
 }
 
-SegmentSpec::SegmentSpec(float start, float end, const plString & name, SegType type) :
+SegmentSpec::SegmentSpec(float start, float end, const ST::string & name, SegType type) :
     fStart(start), fEnd(end), fName(name), fType(type), fInitial(-1)
 {
 }
@@ -213,8 +213,8 @@ void GetSegment(const char *note, float time, SegmentMap *segMap, plErrorMsg *pE
 
     int matchedFields = sscanf(note, " %[^@] @ %s ", segName, segSuffix);
 
-    plString name = segName;
-    plString suffix = segSuffix;
+    ST::string name = segName;
+    ST::string suffix = segSuffix;
 
     if (matchedFields == 2)
     {

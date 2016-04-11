@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plString.h"
+#include <string_theory/string>
 
 class plAnimStage;
 class plBaseStage;
@@ -58,7 +58,7 @@ enum StageTypes
 class plBaseStage
 {
 protected:
-    plString fName;
+    ST::string fName;
 
     static BOOL CALLBACK IStaticDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
     virtual BOOL IDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -86,8 +86,8 @@ public:
 
     virtual plBaseStage* Clone()=0;
 
-    plString GetName();     // NOT const (this could change fName)
-    void SetName(const plString& name) { fName = name; }
+    ST::string GetName();     // NOT const (this could change fName)
+    void SetName(const ST::string& name) { fName = name; }
 };
 
 class plStandardStage : public plBaseStage
@@ -95,7 +95,7 @@ class plStandardStage : public plBaseStage
 protected:
     static HWND fDlg;
 
-    plString fAnimName;
+    ST::string fAnimName;
     uint32_t fNumLoops;
     bool fLoopForever;
     uint8_t fForward;

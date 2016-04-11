@@ -615,7 +615,7 @@ void plPythonMgr::LoadPythonFiles()
         for (auto iter = pys.begin(); iter != pys.end(); ++iter)
         {
             // Get the filename without the ".py" (module name)
-            plString fileName = iter->GetFileNameNoExt();
+            ST::string fileName = iter->GetFileNameNoExt();
 
             IQueryPythonFile(fileName.c_str());
         }
