@@ -65,6 +65,9 @@ public:
     /** Construct an empty filename. */
     plFileName() { }
 
+    /** Construct an empty filename. */
+    plFileName(const ST::null_t &) { }
+
     /** Construct a filename from the UTF-8 character data in \a cstr. */
     plFileName(const char *cstr) : fName(cstr) { }
 
@@ -78,6 +81,13 @@ public:
     plFileName &operator=(const char *cstr)
     {
         fName.operator=(cstr);
+        return *this;
+    }
+
+    /** Assignment operator.  Same as plFileName(const ST::null_t &). */
+    plFileName &operator=(const ST::null_t &)
+    {
+        fName.operator=(ST::null);
         return *this;
     }
 
