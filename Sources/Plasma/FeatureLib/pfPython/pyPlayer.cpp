@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 pyPlayer::pyPlayer() // only used by python glue, do NOT call
 {
     fAvatarKey = nil;
-    fPlayerName = ST::string::null;
+    fPlayerName = ST::null;
     fPlayerID = 0;
     fDistSq = -1;
     fIsCCR = false;

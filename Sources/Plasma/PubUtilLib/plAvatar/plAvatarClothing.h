@@ -304,7 +304,7 @@ public:
     plClothingItem *GetLRMatch(plClothingItem *item);
     bool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
 
-    static void ChangeAvatar(const ST::string& name, const plFileName &clothingFile = ST::string::null);
+    static void ChangeAvatar(const ST::string& name, const plFileName &clothingFile = ST::null);
     
     static plClothingMgr *GetClothingMgr() { return fInstance; }    
     static void Init();

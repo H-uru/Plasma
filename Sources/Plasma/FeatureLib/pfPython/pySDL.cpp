@@ -82,7 +82,7 @@ PyObject * pySDLStateDataRecord::FindVar( const ST::string & name ) const
 ST::string pySDLStateDataRecord::GetName() const
 {
     if (!fRec)
-        return ST::string::null;
+        return ST::null;
     const plStateDescriptor *stateDesc = fRec->GetDescriptor();
     return stateDesc->GetName();
 }
@@ -255,7 +255,7 @@ int pySimpleStateVariable::GetType() const
 ST::string pySimpleStateVariable::GetDisplayOptions() const
 {
     if (!fVar)
-        return ST::string::null;
+        return ST::null;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDisplayOptions();
 }
@@ -263,7 +263,7 @@ ST::string pySimpleStateVariable::GetDisplayOptions() const
 ST::string pySimpleStateVariable::GetDefault() const
 {
     if (!fVar)
-        return ST::string::null;
+        return ST::null;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDefault();
 }

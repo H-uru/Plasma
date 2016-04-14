@@ -175,7 +175,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fFadeBlend = fFadeAmp = false;
 
 #ifdef TRACK_AG_ALLOCS
-    gGlobalAnimName = ST::string::null;
+    gGlobalAnimName = ST::null;
 #endif // TRACK_AG_ALLOCS
 }
 
@@ -398,7 +398,7 @@ ST::string plAGAnimInstance::GetName()
     if(fAnimation)
         return fAnimation->GetName();
     else
-        return ST::string::null;
+        return ST::null;
 }
 
 // SetLoop ----------------------------------

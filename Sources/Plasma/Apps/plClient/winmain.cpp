@@ -659,7 +659,7 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
         if (pLoginParam->remember)
             store->SetPassword(pLoginParam->username, thePass);
         else
-            store->SetPassword(pLoginParam->username, ST::string::null);
+            store->SetPassword(pLoginParam->username, ST::null);
     }
 
     NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);

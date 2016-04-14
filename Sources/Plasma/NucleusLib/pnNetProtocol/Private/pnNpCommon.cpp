@@ -359,7 +359,7 @@ inline void IZero(T& dest)
 template<>
 inline void IZero<ST::string>(ST::string& dest)
 {
-    dest = ST::string::null;
+    dest = ST::null;
 }
 
 template<>

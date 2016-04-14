@@ -248,7 +248,7 @@ ST::string pyVaultPlayerNode::GetPlayerName() const
         VaultPlayerNode player(fNode);
         return player.GetPlayerName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
@@ -262,7 +262,7 @@ ST::string pyVaultPlayerNode::GetAvatarShapeName() const
         VaultPlayerNode player(fNode);
         return player.GetAvatarShapeName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultPlayerNode::SetDisabled(bool value)

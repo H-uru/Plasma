@@ -181,7 +181,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
         for (j = 0; j < layerCount; j++)
         {
             int layer = s->ReadByte();
-            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, ST::string::null, layer), plRefFlags::kActiveRef); // texture
+            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, ST::null, layer), plRefFlags::kActiveRef); // texture
         }
     }
 

@@ -60,7 +60,7 @@ ST::string PyString_AsStringEx(PyObject* obj)
 #endif
     }
 
-    return ST::string::null;
+    return ST::null;
 }
 
 bool PyString_CheckEx(PyObject* obj)

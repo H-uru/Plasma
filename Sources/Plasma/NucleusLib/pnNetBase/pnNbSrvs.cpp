@@ -49,9 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *
 ***/
 
-static ST::string s_authAddrs[] = { ST::string::null };
-static ST::string s_fileAddrs[] = { ST::string::null };
-static ST::string s_gateKeeperAddrs[] = { ST::string::null };
+static ST::string s_authAddrs[] = { ST::null };
+static ST::string s_fileAddrs[] = { ST::null };
+static ST::string s_gateKeeperAddrs[] = { ST::null };
 
 static unsigned s_clientPort = 14617;
 

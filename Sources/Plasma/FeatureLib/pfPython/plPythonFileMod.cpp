@@ -414,7 +414,7 @@ plPythonFileMod::~plPythonFileMod()
         // we need to set our pointer to nil to make sure we don't try to use it
         fModule = nil;
     }
-    fModuleName = ST::string::null;
+    fModuleName = ST::null;
 }
 
 #include "plPythonPack.h"

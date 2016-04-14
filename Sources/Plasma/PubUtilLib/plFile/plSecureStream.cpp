@@ -294,7 +294,7 @@ bool plSecureStream::Close()
         fRAMStream = nil;
     }
 
-    fWriteFileName = ST::string::null;
+    fWriteFileName = ST::null;
     fActualFileSize = 0;
     fBufferedStream = false;
     fOpenMode = kOpenFail;

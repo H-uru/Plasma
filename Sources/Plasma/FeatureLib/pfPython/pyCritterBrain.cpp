@@ -113,7 +113,7 @@ std::string pyCritterBrain::BehaviorName(int behavior) const
 ST::string pyCritterBrain::AnimationName(int behavior) const
 {
     if (!fBrain)
-        return ST::string::null;
+        return ST::null;
     return fBrain->AnimationName(behavior);
 }
 

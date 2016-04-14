@@ -58,7 +58,7 @@ plFileName plBrowseFolder::GetFolder(const plFileName &startPath, const ST::stri
     plFileName path;
     if (!iil) {
         // Browse failed, or cancel was selected
-        path = ST::string::null;
+        path = ST::null;
     } else {
         // Browse succeded.  Get the path.
         wchar_t buffer[MAX_PATH];

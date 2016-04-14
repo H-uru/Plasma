@@ -257,5 +257,5 @@ ST::string plGenericType::GetAsString() const
         hsAssert(false,"plGenericType::GetAsString unknown type");
     }
 
-    return ST::string::null;
+    return ST::null;
 }

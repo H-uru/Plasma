@@ -85,7 +85,7 @@ ST::string pyVaultChronicleNode::Chronicle_GetName() const
         VaultChronicleNode chron(fNode);
         return chron.GetEntryName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultChronicleNode::Chronicle_SetValue( const char * text )
@@ -102,7 +102,7 @@ ST::string pyVaultChronicleNode::Chronicle_GetValue() const
         VaultChronicleNode chron(fNode);
         return chron.GetEntryValue();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultChronicleNode::Chronicle_SetType( uint32_t type )

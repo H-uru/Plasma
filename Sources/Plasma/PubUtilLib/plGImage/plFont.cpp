@@ -117,7 +117,7 @@ void    plFont::IClear( bool onConstruct )
     if( !onConstruct )
         delete [] fBMapData;
 
-    fFace = ST::string::null;
+    fFace = ST::null;
     fSize = 0;
     fFlags = 0;
 

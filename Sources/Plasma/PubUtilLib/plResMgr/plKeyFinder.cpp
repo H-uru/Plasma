@@ -263,12 +263,12 @@ void plKeyFinder::IGetNames(std::vector<ST::string>& names, const ST::string& se
 
 void plKeyFinder::GetResponderNames(std::vector<ST::string>& names)
 {
-    IGetNames(names, ST::string::null, CLASS_INDEX_SCOPED(plResponderModifier));
+    IGetNames(names, ST::null, CLASS_INDEX_SCOPED(plResponderModifier));
 }
 
 void plKeyFinder::GetActivatorNames(std::vector<ST::string>& names)
 {
-    IGetNames(names, ST::string::null, CLASS_INDEX_SCOPED(plLogicModifier));
+    IGetNames(names, ST::null, CLASS_INDEX_SCOPED(plLogicModifier));
 }
 
 class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageIterator

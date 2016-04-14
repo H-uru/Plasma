@@ -204,10 +204,10 @@ void hsG3DDeviceRecord::Clear()
 {
     fFlags = kNone;
 
-    fG3DDriverDesc = ST::string::null;
-    fG3DDriverName = ST::string::null;
-    fG3DDriverVersion = ST::string::null;
-    fG3DDeviceDesc = ST::string::null;
+    fG3DDriverDesc = ST::null;
+    fG3DDriverName = ST::null;
+    fG3DDriverVersion = ST::null;
+    fG3DDeviceDesc = ST::null;
 
     fCaps.Clear();
     fLayersAtOnce = 0;

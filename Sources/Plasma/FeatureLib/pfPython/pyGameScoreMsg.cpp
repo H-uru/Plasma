@@ -73,7 +73,7 @@ ST::string pyGameScoreListMsg::GetName() const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pList->GetName();
-    return ST::string::null;
+    return ST::null;
 }
 
 uint32_t pyGameScoreListMsg::GetOwnerID() const

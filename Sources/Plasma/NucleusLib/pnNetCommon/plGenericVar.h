@@ -148,7 +148,7 @@ protected:
     ST::string    fName;
 public:
     plGenericVar(const plGenericVar &c) { CopyFrom(c); }
-    plGenericVar(const ST::string& name=ST::string::null) : fName(name) { }
+    plGenericVar(const ST::string& name=ST::null) : fName(name) { }
     virtual ~plGenericVar() { }
 
     virtual void Reset() { Value().Reset(); }   // reset runtime state, not inherent state

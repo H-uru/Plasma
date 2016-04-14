@@ -312,7 +312,7 @@ void EditDialog::AddClicked()
             else
             {
                 ST::string path = ST::format("{}.{}", key, newLanguage);
-                fCurrentLocPath = ST::string::null;
+                fCurrentLocPath = ST::null;
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
                 LoadLocalization(path);
@@ -366,7 +366,7 @@ void EditDialog::DeleteClicked()
 void SplitLocalizationPath(const ST::string &path, ST::string &ageName,
         ST::string &setName, ST::string &locName, ST::string &locLanguage)
 {
-    ageName = setName = locName = locLanguage = ST::string::null;
+    ageName = setName = locName = locLanguage = ST::null;
 
     std::vector<ST::string> tokens = path.tokenize(".");
     if (tokens.size() >= 1)

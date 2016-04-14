@@ -207,7 +207,7 @@ ST::string plAGAnim::GetChannelName(int index)
     {
         return fApps[index]->GetChannel()->GetName();
     } else {
-        return ST::string::null;
+        return ST::null;
     }
 }
 

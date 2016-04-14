@@ -103,12 +103,12 @@ public:
     plKeysAndValues GetSection(const ST::string & section, bool & found);
     std::vector<ST::string> GetSectionNames();
     // get value for key from given section
-    ST::string GetValue(const ST::string & section, const ST::string & key, const ST::string & defval=ST::string::null, bool * outFound=nil) const;
+    ST::string GetValue(const ST::string & section, const ST::string & key, const ST::string & defval=ST::null, bool * outFound=nil) const;
     int GetValue(const ST::string & section, const ST::string & key, int defval, bool * outFound=nil) const;
     double GetValue(const ST::string & section, const ST::string & key, double defval, bool * outFound=nil) const;
     std::vector<ST::string> GetAllValues(const ST::string & section, const ST::string & key) const;
     // get value for key from any section
-    ST::string GetValueAny(const ST::string & key, const ST::string & defval=ST::string::null, bool * outFound=nil) const;
+    ST::string GetValueAny(const ST::string & key, const ST::string & defval=ST::null, bool * outFound=nil) const;
     int GetValueAny(const ST::string & key, int defval, bool * outFound=nil) const;
     double GetValueAny(const ST::string & key, double defval, bool * outFound=nil) const;
     std::vector<ST::string> GetAllValuesAny(const ST::string & key) const;

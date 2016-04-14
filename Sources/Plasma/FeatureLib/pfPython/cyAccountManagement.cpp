@@ -102,7 +102,7 @@ ST::string cyAccountManagement::GetAccountName()
     if (acct)
         return acct->accountName;
     else
-        return ST::string::null;
+        return ST::null;
 }
 
 void cyAccountManagement::CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode)

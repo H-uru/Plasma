@@ -220,7 +220,7 @@ void plUoid::Invalidate()
     fCloneID = 0;
     fClonePlayerID = 0;
     fClassType = 0;
-    fObjectName = ST::string::null;
+    fObjectName = ST::null;
     fLocation.Invalidate();
     fLoadMask = plLoadMask::kAlways;
 

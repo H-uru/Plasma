@@ -214,7 +214,7 @@ ST::string plClientLauncher::GetAppArgs() const
 {
     // If -Repair was specified, there are no args for the next call...
     if (hsCheckBits(fFlags, kRepairGame)) {
-        return ST::string::null;
+        return ST::null;
     }
 
     ST::string_stream ss;
@@ -453,7 +453,7 @@ void plClientLauncher::ParseArguments()
 
     // last chance setup
     if (hsCheckBits(fFlags, kPatchOnly))
-        fClientExecutable = ST::string::null;
+        fClientExecutable = ST::null;
     else if (hsCheckBits(fFlags, kRepairGame))
         fClientExecutable = plManifest::PatcherExecutable();
 

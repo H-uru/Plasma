@@ -109,5 +109,5 @@ ST::string pyVaultFolderNode::Folder_GetName() const
         VaultFolderNode folder(fNode);
         return folder.GetFolderName();
     }
-    return ST::string::null;
+    return ST::null;
 }

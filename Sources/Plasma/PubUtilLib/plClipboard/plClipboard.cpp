@@ -64,11 +64,11 @@ bool plClipboard::IsTextInClipboard()
 ST::string plClipboard::GetClipboardText()
 {
     if (!IsTextInClipboard()) 
-        return ST::string::null;
+        return ST::null;
 
 #ifdef HS_BUILD_FOR_WIN32
     if (!::OpenClipboard(NULL))
-        return ST::string::null;
+        return ST::null;
 
     HANDLE clipboardData = ::GetClipboardData(CF_UNICODETEXT);
     size_t size = ::GlobalSize(clipboardData) / sizeof(wchar_t);
@@ -81,7 +81,7 @@ ST::string plClipboard::GetClipboardText()
 
     return result;
 #else
-    return ST::string::null;
+    return ST::null;
 #endif	
 }
 

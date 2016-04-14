@@ -135,7 +135,7 @@ ST::string pyVaultImageNode::Image_GetTitle() const
         VaultImageNode image(fNode);
         return image.GetImageTitle();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 PyObject* pyVaultImageNode::Image_GetImage( void )

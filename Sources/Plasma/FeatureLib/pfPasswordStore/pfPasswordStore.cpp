@@ -85,7 +85,7 @@ pfFilePasswordStore::pfFilePasswordStore()
 ST::string pfFilePasswordStore::GetPassword(const ST::string& username)
 {
     plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
-    ST::string password = ST::string::null;
+    ST::string password = ST::null;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory

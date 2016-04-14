@@ -183,7 +183,7 @@ ST::string pyVaultAgeInfoNode::GetAgeFilename() const
         VaultAgeInfoNode access(fNode);
         return access.GetAgeFilename();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultAgeInfoNode::SetAgeFilename(const ST::string& v)
@@ -196,7 +196,7 @@ ST::string pyVaultAgeInfoNode::GetAgeInstanceName() const
         VaultAgeInfoNode access(fNode);
         return access.GetAgeInstanceName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultAgeInfoNode::SetAgeInstanceName(const ST::string& v)
@@ -209,7 +209,7 @@ ST::string pyVaultAgeInfoNode::GetAgeUserDefinedName() const
         VaultAgeInfoNode access(fNode);
         return access.GetAgeUserDefinedName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultAgeInfoNode::SetAgeUserDefinedName(const ST::string& v)
@@ -236,7 +236,7 @@ ST::string pyVaultAgeInfoNode::GetAgeDescription() const
         VaultAgeInfoNode access(fNode);
         return access.GetAgeDescription();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultAgeInfoNode::SetAgeDescription(const ST::string& v)
@@ -303,7 +303,7 @@ ST::string pyVaultAgeInfoNode::GetDisplayName() const
         else
             return ST::format("{} {}", access.GetAgeUserDefinedName(), access.GetAgeInstanceName());
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 PyObject * pyVaultAgeInfoNode::AsAgeInfoStruct() const

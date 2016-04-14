@@ -616,7 +616,7 @@ ST::string plAnimComponentBase::GetAnimName()
 {
     const char *name = fCompPB->GetStr(kAnimName);
     if (!name || name[0] == '\0')
-        return ST::string::null;
+        return ST::null;
     return ST::string::from_utf8(name);
 }
 

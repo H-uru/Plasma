@@ -81,7 +81,7 @@ ST::string pyDniInfoSource::GetAgeName() const
 {
     hsRef<RelVaultNode> node = VaultGetAgeInfoNode();
     if (!node)
-        return ST::string::null;
+        return ST::null;
 
     VaultAgeInfoNode ageInfo(node);
     return ageInfo.GetAgeInstanceName();

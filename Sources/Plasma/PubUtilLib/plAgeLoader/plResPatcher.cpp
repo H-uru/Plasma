@@ -76,7 +76,7 @@ void plResPatcher::Shutdown()
 
 void plResPatcher::OnCompletion(ENetError result, const ST::string& status)
 {
-    ST::string error = ST::string::null;
+    ST::string error = ST::null;
     if (IS_NET_ERROR(result))
         error = ST::format("Update Failed: {}\n{}", NetErrorAsString(result), status);
     plgDispatch::Dispatch()->MsgQueue(new plResPatcherMsg(IS_NET_SUCCESS(result), error));

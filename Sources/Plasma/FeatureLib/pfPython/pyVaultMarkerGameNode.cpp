@@ -72,7 +72,7 @@ ST::string pyVaultMarkerGameNode::GetGameName () const
         VaultMarkerGameNode access(fNode);
         return access.GetGameName();
     }
-    return ST::string::null;
+    return ST::null;
 }
 
 void pyVaultMarkerGameNode::SetGameName (const ST::string& name)

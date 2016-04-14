@@ -326,7 +326,7 @@ std::string ConcatDirs(std::string fullPath, std::string partialPath)
     return retVal;
 }
 
-void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package=ST::string::null)
+void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package=ST::null)
 {
     std::vector<plFileName> packages;
     FindSubDirs(packages, path);

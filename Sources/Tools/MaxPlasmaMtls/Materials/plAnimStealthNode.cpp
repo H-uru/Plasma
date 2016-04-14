@@ -887,7 +887,7 @@ ST::string plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
 {
     // When sending messages to material animations, they're already addressed for the right
     // layer, no need for a segment name
-    return ST::string::null;
+    return ST::null;
 }
 
 //// Parameter Access Functions //////////////////////////////////////////////

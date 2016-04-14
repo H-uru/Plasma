@@ -383,7 +383,7 @@ public:
                     fString = str;
                 }
                 else
-                    fString = ST::string::null;
+                    fString = ST::null;
                 break;
 
             case kSceneObject:

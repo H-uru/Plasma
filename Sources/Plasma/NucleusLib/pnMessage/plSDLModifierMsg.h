@@ -71,7 +71,7 @@ protected:
     uint32_t fFlags;
 
 public:
-    plSDLModifierMsg(const ST::string& sdlName=ST::string::null, Action a=kActionNone);
+    plSDLModifierMsg(const ST::string& sdlName=ST::null, Action a=kActionNone);
     ~plSDLModifierMsg();
 
     CLASSNAME_REGISTER(plSDLModifierMsg);

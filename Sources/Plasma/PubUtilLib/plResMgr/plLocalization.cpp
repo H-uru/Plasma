@@ -109,7 +109,7 @@ plFileName plLocalization::IGetLocalized(const plFileName& name, Language lang)
             return name.AsString().replace(fLangTags[kEnglish], fLangTags[lang]);
     }
 
-    return ST::string::null;
+    return ST::null;
 }
 
 plFileName plLocalization::ExportGetLocalized(const plFileName& name, int lang)

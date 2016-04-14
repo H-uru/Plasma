@@ -1098,7 +1098,7 @@ ST::string plNetClientMgr::GetPlayerName(const plKey avKey) const
         return NetCommGetPlayer()->playerName;
 
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
-    return mbr ? mbr->GetPlayerName() : ST::string::null;
+    return mbr ? mbr->GetPlayerName() : ST::null;
 }
 
 ST::string plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
@@ -1107,7 +1107,7 @@ ST::string plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
         return NetCommGetPlayer()->playerName;
 
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
-    return mbr ? mbr->GetPlayerName() : ST::string::null;
+    return mbr ? mbr->GetPlayerName() : ST::null;
 }
 
 unsigned plNetClientMgr::GetPlayerIdByName (const ST::string & name) const {
