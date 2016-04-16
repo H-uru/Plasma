@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ***/
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const char format[], ...) {
+void CDECL LogMsg (ELogSeverity severity, const char *format, ...) {
     ASSERT(format);
 
     va_list args;
@@ -66,7 +66,7 @@ void CDECL LogMsg (ELogSeverity severity, const char format[], ...) {
 }
 
 //===========================================================================
-void CDECL LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
+void CDECL LogMsg (ELogSeverity severity, const wchar_t *format, ...) {
     ASSERT(format);
 
     va_list args;
@@ -76,7 +76,7 @@ void CDECL LogMsg (ELogSeverity severity, const wchar_t format[], ...) {
 }
 
 //===========================================================================
-void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
+void LogMsgV (ELogSeverity severity, const char *format, va_list args) {
     ASSERT(format);
 
     char msg[1024];
@@ -86,7 +86,7 @@ void LogMsgV (ELogSeverity severity, const char format[], va_list args) {
 }
 
 //===========================================================================
-void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
+void LogMsgV (ELogSeverity severity, const wchar_t *format, va_list args) {
     ASSERT(format);
     ASSERT(args);
 
@@ -97,27 +97,3 @@ void LogMsgV (ELogSeverity severity, const wchar_t format[], va_list args) {
     plStatusLog::AddLineS("OLD_ASYNC_LOG.log", to_log);
     delete[] to_log;
 }
-
-//============================================================================
-#ifdef HS_DEBUGGING
-void LogMsgDebug (const char  format[], ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(kLogDebug, format, args);
-    va_end(args);
-}
-#endif
-
-//============================================================================
-#ifdef HS_DEBUGGING
-void LogMsgDebug (const wchar_t format[], ...) {
-    ASSERT(format);
-
-    va_list args;
-    va_start(args, format);
-    LogMsgV(kLogDebug, format, args);
-    va_end(args);
-}
-#endif

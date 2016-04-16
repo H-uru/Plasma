@@ -973,7 +973,6 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const plString& clothing_nam
 PyObject* cyAvatar::GetMatchingClothingItem(const plString& clothing_name)
 {
     // Get all the clothes that we can wear
-    hsTArray<plClothingItem*> clothingList;
     plClothingItem* match = plClothingMgr::GetClothingMgr()->GetLRMatch(plClothingMgr::GetClothingMgr()->FindItemByName(clothing_name));
     if ( match )
     {

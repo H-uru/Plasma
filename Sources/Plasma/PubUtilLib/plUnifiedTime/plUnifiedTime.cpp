@@ -306,8 +306,8 @@ const char* plUnifiedTime::Print() const
 //  short year, month, day, hour, minute, second;
 //  GetTime(year, month, day, hour, minute, second);
 //
-//  s = plString::Format("yr %d mo %d day %d hour %d min %d sec %d",
-//          year, month, day, hour, minute, second);
+//  s = plFormat("yr {} mo {} day {} hour {} min {} sec {}",
+//               year, month, day, hour, minute, second);
 
     s = Format("%c");
     return s.c_str();

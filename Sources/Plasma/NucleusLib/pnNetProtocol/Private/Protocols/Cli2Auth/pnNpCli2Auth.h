@@ -119,7 +119,7 @@ enum {
     kCli2Auth_LogPythonTraceback,
     kCli2Auth_LogStackDump,
     kCli2Auth_LogClientDebuggerConnect,
-    
+
     // Score
     kCli2Auth_ScoreCreate,
     kCli2Auth_ScoreDelete,
@@ -130,6 +130,10 @@ enum {
     kCli2Auth_ScoreGetRanks,
 
     kCli2Auth_AccountExistsRequest,
+
+    // Extension messages
+    kCli2Auth_AgeRequestEx = 0x1000,
+    kCli2Auth_ScoreGetHighScores,
 
     kNumCli2AuthMessages
 };
@@ -209,6 +213,10 @@ enum {
     kAuth2Cli_ScoreGetRanksReply,
 
     kAuth2Cli_AccountExistsReply,
+
+    // Extension messages
+    kAuth2Cli_AgeReplyEx = 0x1000,
+    kAuth2Cli_ScoreGetHighScoresReply,
 
     kNumAuth2CliMessages
 };
@@ -641,6 +649,15 @@ struct Cli2Auth_ScoreGetRanks {
     uint32_t sortDesc;
 };
 
+extern const NetMsg kNetMsg_Cli2Auth_ScoreGetHighScores;
+struct Cli2Auth_ScoreGetHighScores {
+    uint32_t messageId;
+    uint32_t transId;
+    uint32_t ageId;
+    uint32_t maxScores;
+    wchar_t gameName[kMaxGameScoreNameLength];
+};
+
 
 /*****************************************************************************
 *
@@ -1038,6 +1055,18 @@ struct Auth2Cli_ScoreGetRanksReply {
     uint32_t           transId;
     ENetError       result;
     uint32_t           rankCount;
+    uint32_t           byteCount;
+    uint8_t            buffer[1];  // [byteCount], actually
+    // no more fields
+};
+
+// ScoreGetHighScoresReply
+extern const NetMsg kNetMsg_Auth2Cli_ScoreGetHighScoresReply;
+struct Auth2Cli_ScoreGetHighScoresReply {
+    uint32_t           messageId;
+    uint32_t           transId;
+    ENetError          result;
+    uint32_t           scoreCount;
     uint32_t           byteCount;
     uint8_t            buffer[1];  // [byteCount], actually
     // no more fields

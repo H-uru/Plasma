@@ -10,7 +10,6 @@ endif(WIN32)
 
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp
-    hsGColorizer.cpp
     plCaptureRender.cpp
     plCubicRenderTargetModifier.cpp
     plCullTree.cpp
@@ -18,14 +17,12 @@ set(plPipeline_SOURCES
     plDTProgressMgr.cpp
     plDynamicEnvMap.cpp
     plFogEnvironment.cpp
-    plGBufferGroup.cpp
     plPlates.cpp
     plRenderTarget.cpp
     plStatusLogDrawer.cpp
     plTextFont.cpp
     plTextGenerator.cpp
     plTransitionMgr.cpp
-    plVertCoder.cpp
 )
 
 set(plDXPipeline_SOURCES
@@ -42,8 +39,6 @@ set(plDXPipeline_SOURCES
 set(plPipeline_HEADERS
     hsFogControl.h
     hsG3DDeviceSelector.h
-    hsGColorizer.h
-    hsGDeviceRef.h
     hsWinRef.h
     plCaptureRender.h
     plCubicRenderTarget.h
@@ -55,8 +50,6 @@ set(plPipeline_HEADERS
     plDTProgressMgr.h
     plDynamicEnvMap.h
     plFogEnvironment.h
-    plGBufferGroup.h
-    plPipeDebugFlags.h
     plPipelineCreatable.h
     plPipelineCreate.h
     plPlates.h
@@ -66,7 +59,6 @@ set(plPipeline_HEADERS
     plTextFont.h
     plTextGenerator.h
     plTransitionMgr.h
-    plVertCoder.h
 )
 
 set(plDXPipeline_HEADERS

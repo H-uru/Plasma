@@ -237,6 +237,8 @@ private:
     int ISendGameMessage(plMessage* msg);
     void IDisableNet ();
 
+    void ICreateStatusLog() const HS_OVERRIDE;
+
 public:
     plNetClientMgr();
     ~plNetClientMgr();
@@ -263,7 +265,7 @@ public:
     void SendApplyAvatarCustomizationsMsg(const plKey msgReceiver, bool netPropagate=true, bool localPropagate=true);
 
     // plLoggable
-    bool Log(const char* str) const;
+    bool Log(const plString& str) const HS_OVERRIDE;
 
     // setters
     void SetIniAuthServer(const char * value)  { fIniAuthServer=value;}
@@ -356,7 +358,7 @@ public:
 
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
-    plUoid GetAgeSDLObjectUoid(const char* ageName) const;
+    plUoid GetAgeSDLObjectUoid(const plString& ageName) const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
     plString GetNextAgeFilename() const;
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }

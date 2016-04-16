@@ -118,7 +118,7 @@ void plRenderGlobalContext::MakeRenderInstances(plMaxNode* root, TimeValue t)
         fInstList[i].SetNext(&fInstList[i+1]);
 }
 
-RenderInstance* plRenderGlobalContext::GetRenderInstance(int i) const
+RenderInstance* plRenderGlobalContext::GetRenderInstance(int i)
 {
     if (fInstList.GetCount() > i)
         return &fInstList[i];

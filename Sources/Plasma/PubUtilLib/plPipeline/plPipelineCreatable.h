@@ -45,11 +45,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
+#ifdef HS_BUILD_FOR_WIN32
 #include <d3d9.h>
 
 #include "DX/plDXPipeline.h"
 
 REGISTER_NONCREATABLE( plDXPipeline );
+#endif
 
 #include "hsFogControl.h"
 

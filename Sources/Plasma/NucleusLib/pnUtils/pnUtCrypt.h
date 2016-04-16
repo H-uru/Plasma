@@ -83,19 +83,6 @@ void CryptKeyClose (
     CryptKey *      key
 );
 
-void CryptKeyGenerate (
-    ECryptAlgorithm algorithm,
-    unsigned        keyBits,    // used for algorithms with variable key strength
-    unsigned        randomBytes,
-    const void *    randomData,
-    ARRAY(uint8_t) *   privateData,
-    ARRAY(uint8_t) *   publicData  // only for public key cryptography
-);
-
-unsigned CryptKeyGetBlockSize (
-    CryptKey *      key
-);
-
 /*****************************************************************************
 *
 *   Encryption and Decryption
@@ -104,22 +91,8 @@ unsigned CryptKeyGetBlockSize (
 
 void CryptEncrypt (
     CryptKey *      key,
-    ARRAY(uint8_t) *   dest,
-    unsigned        sourceBytes,
-    const void *    sourceData
-);
-
-void CryptEncrypt (
-    CryptKey *      key,
     unsigned        bytes,
     void *          data
-);
-
-void CryptDecrypt (
-    CryptKey *      key,
-    ARRAY(uint8_t) *   dest,       // padded out to the algorithm's block size
-    unsigned        sourceBytes,
-    const void *    sourceData
 );
 
 void CryptDecrypt (

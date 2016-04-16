@@ -89,7 +89,7 @@ struct CliGkConn : hsRefCnt {
     LINK(CliGkConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    char            name[MAX_PATH];
+    plString        name;
     plNetAddress    addr;
     plUUID          token;
     unsigned        seq;
@@ -131,7 +131,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
 struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperFileSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    wchar_t                                               m_addr[64];
+    plString                                            m_addr;
     bool                                                m_isPatcher;
     
     FileSrvIpAddressRequestTrans (
@@ -154,8 +154,8 @@ struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
 struct AuthSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    wchar_t                                               m_addr[64];
-    
+    plString                                            m_addr;
+
     AuthSrvIpAddressRequestTrans (
         FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
         void *                                              param
@@ -463,7 +463,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const char          name[],
+    const plString&     name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -472,7 +472,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    strncpy(conn->name, name, arrsize(conn->name));
+    conn->name              = name;
 
     conn->Ref("Lifetime");
     conn->AutoReconnect();
@@ -530,8 +530,6 @@ CliGkConn::CliGkConn ()
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
-    memset(name, 0, sizeof(name));
-
     ++s_perf[kPerfConnCount];
 }
 
@@ -734,7 +732,7 @@ static bool Recv_AuthSrvIpAddressReply (
 *
 ***/
 
-#define MSG(s)  kNetMsg_Cli2GateKeeper_##s
+#define MSG(s)  &kNetMsg_Cli2GateKeeper_##s
 static NetMsgInitSend s_send[] = {
     { MSG(PingRequest)              },
     { MSG(FileSrvIpAddressRequest)  },
@@ -742,7 +740,7 @@ static NetMsgInitSend s_send[] = {
 };
 #undef MSG
 
-#define MSG(s)  kNetMsg_GateKeeper2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_GateKeeper2Cli_##s, Recv_##s
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(FileSrvIpAddressReply)    },
@@ -876,7 +874,7 @@ bool FileSrvIpAddressRequestTrans::Recv (
     
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    StrCopy(m_addr, reply.address, 64);
+    m_addr          = plString::FromWchar(reply.address);
 
     return true;
 }
@@ -933,7 +931,7 @@ bool AuthSrvIpAddressRequestTrans::Recv (
 
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    StrCopy(m_addr, reply.address, 64);
+    m_addr          = plString::FromWchar(reply.address);
 
     return true;
 }
@@ -1059,14 +1057,14 @@ unsigned GateKeeperGetConnId () {
 
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const char*   gateKeeperAddrList[],
-    uint32_t      gateKeeperAddrCount
+    const plString gateKeeperAddrList[],
+    uint32_t       gateKeeperAddrCount
 ) {
     gateKeeperAddrCount = std::min(gateKeeperAddrCount, 1u);
 
     for (unsigned i = 0; i < gateKeeperAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = gateKeeperAddrList[i];
+        const char* name = gateKeeperAddrList[i].c_str();
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -1074,7 +1072,7 @@ void NetCliGateKeeperStartConnect (
                 AsyncAddressLookupName(
                     &cancelId,
                     AsyncLookupCallback,
-                    gateKeeperAddrList[i],
+                    gateKeeperAddrList[i].c_str(),
                     GetClientPort(),
                     nil
                 );

@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDXLightRef.h"
 #include "plDXTextureRef.h"
 #include "plDXRenderTargetRef.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plDrawable/plGBufferGroup.h"
 #include "plDrawable/plGeometrySpan.h"
 #include "plDrawable/plDrawableSpans.h"
 #include "plGLight/plLightInfo.h"

@@ -104,10 +104,10 @@ struct NetAgeInfo {
     wchar_t       ageInstName[kMaxAgeNameLength];
     wchar_t       ageUserName[kMaxAgeNameLength];
     wchar_t       ageDesc[1024];
-    uint32_t       ageSequenceNumber;
-    uint32_t       ageLanguage;
-    uint32_t       population;         // only used with GetPublicAgeList query results
-    uint32_t       currentPopulation;  // only used with GetPublicAgeList query results
+    uint32_t      ageSequenceNumber;
+    uint32_t      ageLanguage;
+    uint32_t      population;         // only used with GetPublicAgeList query results
+    uint32_t      currentPopulation;  // only used with GetPublicAgeList query results
 };
 
 /*****************************************************************************
@@ -119,8 +119,8 @@ struct NetAgeInfo {
 struct NetGameScore {
     unsigned    scoreId;
     unsigned    ownerId;
-    uint32_t      createdTime;
-    wchar_t       gameName[kMaxGameScoreNameLength];
+    uint32_t    createdTime;
+    plString    gameName;
     unsigned    gameType;
     int         value;
 

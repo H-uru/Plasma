@@ -71,7 +71,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetTitle)
 {
-    return PyString_FromString(self->fThis->Note_GetTitle().c_str());
+    return PyString_FromPlString(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetText, args)
@@ -88,7 +88,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetText, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetText)
 {
-    return PyString_FromString(self->fThis->Note_GetText().c_str());
+    return PyString_FromPlString(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetType, args)
@@ -168,12 +168,12 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitle)
 {
-    return PyString_FromString(self->fThis->Note_GetTitle().c_str());
+    return PyString_FromPlString(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitleW)
 {
-    return PyUnicode_FromStringEx(self->fThis->Note_GetTitle());
+    return PyUnicode_FromPlString(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setText, args)
@@ -219,12 +219,12 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getText)
 {
-    return PyString_FromString(self->fThis->Note_GetText().c_str());
+    return PyString_FromPlString(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTextW)
 {
-    return PyUnicode_FromStringEx(self->fThis->Note_GetText());
+    return PyUnicode_FromPlString(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setType, args)

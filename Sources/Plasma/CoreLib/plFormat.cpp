@@ -45,6 +45,7 @@ Mead, WA   99021
 #include "HeadSpin.h"
 #include <cstdlib>
 #include <cstring>
+#include <type_traits>
 
 #define BADCHAR_REPLACEMENT (0xFFFDul)
 
@@ -66,7 +67,7 @@ namespace plFormat_Private
 
     static void _fetchPrefixChunk(_IFormatDataObject &data)
     {
-        do {
+        for ( ;; ) {
             const char *next = _scanNextFormat(data);
             if (*next && *(next + 1) == '{') {
                 // Escaped '{'
@@ -78,7 +79,8 @@ namespace plFormat_Private
             if (next != data.fFormatStr)
                 data.fOutput.append(data.fFormatStr, next - data.fFormatStr);
             data.fFormatStr = next;
-        } while (0);
+            break;
+        };
     }
 
     FormatSpec _FetchNextFormat(_IFormatDataObject &data)
@@ -119,11 +121,10 @@ namespace plFormat_Private
                 spec.fDigitClass = kDigitHexUpper;
                 break;
             case '+':
-                spec.fDigitClass = kDigitDecAlwaysSigned;
+                spec.fAlwaysSigned = true;
                 break;
             case 'd':
-                if (spec.fDigitClass != kDigitDecAlwaysSigned)
-                    spec.fDigitClass = kDigitDec;
+                spec.fDigitClass = kDigitDec;
                 break;
             case 'o':
                 spec.fDigitClass = kDigitOct;
@@ -225,7 +226,8 @@ static void _formatNumeric(const plFormat_Private::FormatSpec &format,
                            plStringStream &output, _IType value,
                            int radix, bool upperCase = false)
 {
-    char pad = format.fPadChar ? format.fPadChar : ' ';
+    static_assert(std::is_unsigned<_IType>::value,
+            "Signed numerics are currently only supported in Decimal formatting");
 
     size_t format_size = 0;
     _IType temp = value;
@@ -237,9 +239,9 @@ static void _formatNumeric(const plFormat_Private::FormatSpec &format,
     if (format_size == 0)
         format_size = 1;
 
-    hsAssert(format_size < 64, "Format length too long");
+    hsAssert(format_size < 65, "Format length too long");
 
-    char buffer[64];
+    char buffer[65];
     _IFormatNumeric_Impl<_IType>(buffer + format_size, value, radix, upperCase);
     _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
@@ -249,11 +251,11 @@ template <typename _IType>
 static void _formatDecimal(const plFormat_Private::FormatSpec &format,
                            plStringStream &output, _IType value)
 {
-    char pad = format.fPadChar ? format.fPadChar : ' ';
-    _IType abs = (value < 0) ? -value : value;
+    typedef typename std::make_unsigned<_IType>::type _UType;
+    _UType abs = (value < 0) ? -(_UType)value : value;
 
     size_t format_size = 0;
-    _IType temp = abs;
+    _UType temp = abs;
     while (temp) {
         ++format_size;
         temp /= 10;
@@ -262,21 +264,18 @@ static void _formatDecimal(const plFormat_Private::FormatSpec &format,
     if (format_size == 0)
         format_size = 1;
 
-    if (value < 0 || format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
+    if (value < 0 || format.fAlwaysSigned)
         ++format_size;
 
-    hsAssert(format_size < 21, "Format length too long");
+    hsAssert(format_size < 24, "Format length too long");
 
-    char buffer[21];
-    _IFormatNumeric_Impl<_IType>(buffer + format_size, abs, 10);
-
-    int signPos = arrsize(buffer) - static_cast<int>(format_size);
-    hsAssert(signPos >= 0, "Format buffer not large enough for sign");
+    char buffer[24];
+    _IFormatNumeric_Impl<_UType>(buffer + format_size, abs, 10);
 
     if (value < 0)
-        buffer[signPos] = '-';
-    else if (format.fDigitClass == plFormat_Private::kDigitDecAlwaysSigned)
-        buffer[signPos] = '+';
+        buffer[0] = '-';
+    else if (format.fAlwaysSigned)
+        buffer[0] = '+';
 
     _formatString(format, output, buffer, format_size, plFormat_Private::kAlignRight);
 }
@@ -293,9 +292,7 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
 
     // Yanked from plString
     if (ch > 0x10FFFF) {
-        hsAssert(0, "Unicode character out of range");
-
-        // Character out of range; Use U+FFFD instead for release builds
+        // Character out of range; Use U+FFFD instead
         format_size = 3;
         utf8[0] = 0xE0 | ((BADCHAR_REPLACEMENT >> 12) & 0x0F);
         utf8[1] = 0x80 | ((BADCHAR_REPLACEMENT >>  6) & 0x3F);
@@ -342,7 +339,6 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
             _formatNumeric<_utype>(format, output, value, 16, true); \
             break; \
         case plFormat_Private::kDigitDec: \
-        case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
             _formatDecimal<_stype>(format, output, value); \
             break; \
@@ -371,7 +367,6 @@ static void _formatChar(const plFormat_Private::FormatSpec &format,
             _formatNumeric<_utype>(format, output, value, 16, true); \
             break; \
         case plFormat_Private::kDigitDec: \
-        case plFormat_Private::kDigitDecAlwaysSigned: \
         case plFormat_Private::kDigitDefault: \
             _formatDecimal<_utype>(format, output, value); \
             break; \
@@ -404,6 +399,10 @@ PL_FORMAT_IMPL(double)
     size_t end = 0;
 
     format_buffer[end++] = '%';
+
+    if (format.fAlwaysSigned)
+        format_buffer[end++] = '+';
+
     if (format.fPrecision >= 0) {
         int count = snprintf(format_buffer + end, arrsize(format_buffer) - end,
                              ".%d", format.fPrecision);
@@ -461,7 +460,6 @@ PL_FORMAT_IMPL(char)
         _formatNumeric<unsigned char>(format, output, value, 16, true);
         break;
     case plFormat_Private::kDigitDec:
-    case plFormat_Private::kDigitDecAlwaysSigned:
         _formatDecimal<signed char>(format, output, value);
         break;
     case plFormat_Private::kDigitChar:
@@ -478,20 +476,19 @@ PL_FORMAT_IMPL(wchar_t)
 {
     switch (format.fDigitClass) {
     case plFormat_Private::kDigitBin:
-        _formatNumeric<wchar_t>(format, output, value, 2);
+        _formatNumeric<uint32_t>(format, output, value, 2);
         break;
     case plFormat_Private::kDigitOct:
-        _formatNumeric<wchar_t>(format, output, value, 8);
+        _formatNumeric<uint32_t>(format, output, value, 8);
         break;
     case plFormat_Private::kDigitHex:
-        _formatNumeric<wchar_t>(format, output, value, 16, false);
+        _formatNumeric<uint32_t>(format, output, value, 16, false);
         break;
     case plFormat_Private::kDigitHexUpper:
-        _formatNumeric<wchar_t>(format, output,value, 16, true);
+        _formatNumeric<uint32_t>(format, output, value, 16, true);
         break;
     case plFormat_Private::kDigitDec:
-    case plFormat_Private::kDigitDecAlwaysSigned:
-        _formatDecimal<wchar_t>(format, output, value);
+        _formatDecimal<uint32_t>(format, output, value);
         break;
     case plFormat_Private::kDigitChar:
     case plFormat_Private::kDigitDefault:

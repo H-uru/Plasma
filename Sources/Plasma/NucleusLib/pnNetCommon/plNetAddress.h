@@ -104,7 +104,7 @@ public:
      * @param addr The DNS hostname of the host.
      * @param port The port number as a 16-bit host order integer.
      */
-    plNetAddress(const char* addr, uint16_t port);
+    plNetAddress(const plString& addr, uint16_t port);
 
     virtual ~plNetAddress(){}
 
@@ -158,7 +158,7 @@ public:
      *
      * @param hostname The DNS name of the host.
      */
-    bool SetHost(const char* hostname);
+    bool SetHost(const plString& hostname);
 
     /**
      * Sets the IPv4 address of the host from an unsigned 32-bit integer in

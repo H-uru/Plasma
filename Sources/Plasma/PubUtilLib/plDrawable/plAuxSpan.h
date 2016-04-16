@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsTemplates.h"
 #include "plSpanTypes.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plGBufferGroup.h"
 
 class plDrawableSpans;
 class hsGMaterial;

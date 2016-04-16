@@ -46,10 +46,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnSceneObject/plSceneObject.h"
 #include "pnMessage/plSDLModifierMsg.h"
 
+#include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetMessage/plNetMessage.h"
 #include "plSDL/plSDL.h"
-#include "plNetClient/plNetClientMgr.h"
-#include "plNetClient/plNetObjectDebugger.h"
 
 plSDLModifier::plSDLModifier() : fStateCache(nil), fSentOrRecvdState(false)
 {
@@ -92,15 +91,40 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint
     bool dirtyOnly = (sendFlags & plSynchedObject::kForceFullSend) == 0;
     bool broadcast = (sendFlags & plSynchedObject::kBCastToClients) != 0;
     int writeOptions=0;
+
 //  if (dirtyOnly)
         writeOptions |= plSDL::kDirtyOnly;
     if (broadcast)
         writeOptions |= plSDL::kBroadcast;
-        
+
     writeOptions |= plSDL::kTimeStampOnRead;
-    
-    plNetClientMgr::GetInstance()->StoreSDLState(state, senderKey->GetUoid(), sendFlags, writeOptions);
-        
+
+
+    // send to server
+    plNetMsgSDLState* msg = state->PrepNetMsg(0, writeOptions);
+    msg->SetNetProtocol(kNetProtocolCli2Game);
+    msg->ObjectInfo()->SetUoid(senderKey->GetUoid());
+
+    if (sendFlags & plSynchedObject::kNewState)
+        msg->SetBit(plNetMessage::kNewSDLState);
+
+    if (sendFlags & plSynchedObject::kUseRelevanceRegions)
+        msg->SetBit(plNetMessage::kUseRelevanceRegions);
+
+    if (sendFlags & plSynchedObject::kDontPersistOnServer)
+        msg->SetPersistOnServer(false);
+
+    if (sendFlags & plSynchedObject::kIsAvatarState)
+        msg->SetIsAvatarState(true);
+
+    if (broadcast && plNetClientApp::GetInstance())
+    {
+        msg->SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
+    }
+
+    plNetClientApp::GetInstance()->SendMsg(msg);
+    msg->UnRef();
+
     fSentOrRecvdState = true;
 }
 

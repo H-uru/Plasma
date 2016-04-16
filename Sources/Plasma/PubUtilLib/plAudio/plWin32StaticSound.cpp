@@ -134,6 +134,15 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         }
         uint32_t bufferSize = buffer->GetDataLength();
 
+        if( header.fNumChannels > 1 && is3D )
+        {
+            // We can only do a single channel of 3D sound. So copy over one (later)
+            bufferSize              /= header.fNumChannels;
+            header.fBlockAlign      /= header.fNumChannels;
+            header.fAvgBytesPerSec  /= header.fNumChannels;
+            header.fNumChannels = 1;
+        }
+
         bool tryStatic = true;
         // If we want FX, we can't use a static voice, but EAX doesn't fit under that limitation :)
         if( 0 )

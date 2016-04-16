@@ -116,12 +116,8 @@ void plAvatarPhysicalSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* 
     {
         const plArmatureMod* kAvMod = (plArmatureMod*)sObj->GetModifierByType(plArmatureMod::Index());
         plArmatureMod * avMod = const_cast<plArmatureMod *>(kAvMod);
-        if(avMod && !avMod->GetCurrentBrain()->IsRunningTask())
+        if(avMod)
         {
-            plAvBrainGeneric* genBrain = plAvBrainGeneric::ConvertNoRef(avMod->GetCurrentBrain());
-            if (genBrain && (genBrain->GetType() == plAvBrainGeneric::kLadder || genBrain->GetType() == plAvBrainGeneric::kSit || genBrain->GetType() == plAvBrainGeneric::kSitOnGround))
-                return;
-
             plSimpleStateVariable* worldVar = srcState->FindVar(kStrSubworld);
             if (worldVar->IsDirty() && avMod->fController)
             {

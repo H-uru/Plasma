@@ -43,16 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef hsWinRef_inc
 #define hsWinRef_inc
 
+#include "HeadSpin.h"
 
-#ifdef HS_BUILD_FOR_WIN32
-
-
-typedef HWND hsWinRef;
-
-#else // Whatever
-
-typedef void* hsWinRef;
-
-#endif
+typedef hsWindowHndl hsWinRef;
 
 #endif // hsWinRef_inc

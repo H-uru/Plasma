@@ -177,8 +177,6 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         {
             plAudioCore::ChannelSelect select = buffer->GetReaderSelect();
 
-            bool streamCompressed = (buffer->HasFlag(plSoundBuffer::kStreamCompressed) != 0);
-
             /// Open da file
             plFileName strPath = plFileSystem::GetCWD();
 
@@ -269,6 +267,15 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         // Force a fail
         fFailed = true;
         return false;
+    }
+
+    if( header.fNumChannels > 1 && is3D )
+    {
+        // We can only do a single channel of 3D sound. So copy over one (later)
+        bufferSize              /= header.fNumChannels;
+        header.fBlockAlign      /= header.fNumChannels;
+        header.fAvgBytesPerSec  /= header.fNumChannels;
+        header.fNumChannels = 1;
     }
 
     // Actually create the buffer now (always looping)

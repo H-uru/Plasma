@@ -91,8 +91,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatGather/plProfileManagerFull.h"
 
 #include "plPipeline.h"
+#include "plPipeDebugFlags.h"
 #include "plPipeline/plPipelineCreate.h"
-#include "plPipeline/plPipeDebugFlags.h"
 #include "plPipeline/plTransitionMgr.h"
 #include "plPipeline/plCaptureRender.h"
 #include "plPipeline/plDynamicEnvMap.h"
@@ -135,7 +135,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfAnimation/plAnimDebugList.h"
 #include "pfGameGUIMgr/pfGUICtrlGenerator.h"
 
-#include "plGImage/plWinFontCache.h"
 #include "plGImage/plFontCache.h"
 
 #include "pfJournalBook/pfJournalBook.h"
@@ -1474,7 +1473,7 @@ bool plClient::StartInit()
 
     plSynchedObject::PushSynchDisabled(false);      // enable dirty tracking
 
-    if (StrCmp(NetCommGetStartupAge()->ageDatasetName, "StartUp") == 0)
+    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0)
     {
         plNetCommAuthMsg * msg  = new plNetCommAuthMsg();
         msg->result             = kNetSuccess;
@@ -2202,7 +2201,6 @@ void plClient::IOnAsyncInitComplete () {
 
     // Load our custom fonts from our current dat directory
     fFontCache->LoadCustomFonts("dat");
-    plWinFontCache::GetInstance().LoadCustomFonts("dat");
 
     // We'd like to do a SetHoldLoadRequests here, but the GUI stuff doesn't draw right
     // if you try to delay the loading for it.  To work around that, we allocate a

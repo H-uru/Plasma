@@ -46,8 +46,9 @@ Mead, WA   99021
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+#include "plCmdParser.h"
 
-#include "pnUtils/pnUtils.h" // for CCmdParser
+#include "pnUtils/pnUtils.h"
 #include "pnAsyncCore/pnAsyncCore.h"
 #include "plNetGameLib/plNetGameLib.h"
 #include "plStatusLog/plStatusLog.h"
@@ -103,13 +104,13 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 hsError plShardStatus::Run()
 {
     {
-        const char* url = GetServerStatusUrl();
+        plString url = GetServerStatusUrl();
 
         // initialize CURL
         std::unique_ptr<CURL, std::function<void(CURL*)>> curl(curl_easy_init(), curl_easy_cleanup);
         curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
         curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
-        curl_easy_setopt(curl.get(), CURLOPT_URL, url);
+        curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
         curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
         curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
 
@@ -123,7 +124,7 @@ hsError plShardStatus::Run()
             if (!fRunning)
                 break;
 
-            if (url[0] && curl_easy_perform(curl.get()))
+            if (!url.IsEmpty() && curl_easy_perform(curl.get()))
                 fShardFunc(fCurlError);
             fLastUpdate = hsTimer::GetSysSeconds();
         } while (fRunning);
@@ -334,16 +335,15 @@ bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) con
 
 // ===================================================
 
-static void IGotFileServIPs(ENetError result, void* param, const wchar_t* addr)
+static void IGotFileServIPs(ENetError result, void* param, const plString& addr)
 {
     plClientLauncher* launcher = static_cast<plClientLauncher*>(param);
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_SUCCESS(result)) {
         // bah... why do I even bother
-        plString eapSucks = plString::FromWchar(addr);
-        const char* eapReallySucks[] = { eapSucks.c_str() };
-        NetCliFileStartConnect(eapReallySucks, 1, true);
+        plString eapSucks[] = { addr };
+        NetCliFileStartConnect(eapSucks, 1, true);
 
         // Who knows if we will actually connect. So let's start updating.
         launcher->PatchClient();
@@ -373,8 +373,8 @@ void plClientLauncher::InitializeNetCore()
     NetClientSetTransTimeoutMs(kNetTransTimeout);
 
     // Gotta grab the filesrvs from the gate
-    const char** addrs;
-    uint32_t num = GetGateKeeperSrvHostnames(&addrs);
+    const plString* addrs;
+    uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
     NetCliGateKeeperFileSrvIpAddressRequest(IGotFileServIPs, this, true);
@@ -433,21 +433,27 @@ void plClientLauncher::ParseArguments()
 
     enum { kArgServerIni, kArgNoSelfPatch, kArgImage, kArgRepairGame, kArgPatchOnly,
            kArgSkipLoginDialog };
-    const CmdArgDef cmdLineArgs[] = {
-        { kCmdArgFlagged | kCmdTypeString, L"ServerIni", kArgServerIni },
-        { kCmdArgFlagged | kCmdTypeBool, L"NoSelfPatch", kArgNoSelfPatch },
-        { kCmdArgFlagged | kCmdTypeBool, L"Image", kArgImage },
-        { kCmdArgFlagged | kCmdTypeBool, L"Repair", kArgRepairGame },
-        { kCmdArgFlagged | kCmdTypeBool, L"PatchOnly", kArgPatchOnly },
-        { kCmdArgFlagged | kCmdTypeBool, L"SkipLoginDialog", kArgSkipLoginDialog }
+    const plCmdArgDef cmdLineArgs[] = {
+        { kCmdArgFlagged | kCmdTypeString, "ServerIni", kArgServerIni },
+        { kCmdArgFlagged | kCmdTypeBool, "NoSelfPatch", kArgNoSelfPatch },
+        { kCmdArgFlagged | kCmdTypeBool, "Image", kArgImage },
+        { kCmdArgFlagged | kCmdTypeBool, "Repair", kArgRepairGame },
+        { kCmdArgFlagged | kCmdTypeBool, "PatchOnly", kArgPatchOnly },
+        { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog }
     };
 
-    CCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
-    cmdParser.Parse();
+    std::vector<plString> args;
+    args.reserve(__argc);
+    for (size_t i = 0; i < __argc; i++) {
+        args.push_back(plString::FromUtf8(__argv[i]));
+    }
+
+    plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
+    cmdParser.Parse(args);
 
     // cache 'em
     if (cmdParser.IsSpecified(kArgServerIni))
-        fServerIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
+        fServerIni = cmdParser.GetString(kArgServerIni);
     APPLY_FLAG(kArgNoSelfPatch, kHaveSelfPatched);
     APPLY_FLAG(kArgImage, kClientImage);
     APPLY_FLAG(kArgRepairGame, kRepairGame);

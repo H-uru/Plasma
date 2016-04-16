@@ -69,4 +69,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Private/plNglAllIncludes.h"
 #include "Intern.h"
 
+#ifdef HS_BUILD_FOR_OSX
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif

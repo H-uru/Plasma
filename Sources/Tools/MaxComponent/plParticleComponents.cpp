@@ -80,7 +80,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "MaxMain/MaxCompat.h"
 #include "pnKeyedObject/plKey.h"
 #include "plSurface/hsGMaterial.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plDrawable/plGBufferGroup.h"
 
 #include "plParticleSystem/plParticleSystem.h"
 #include "plParticleSystem/plParticleEmitter.h"

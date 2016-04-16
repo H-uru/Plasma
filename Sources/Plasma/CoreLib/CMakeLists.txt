@@ -14,6 +14,7 @@ set(CoreLib_SOURCES
     hsBounds.cpp
     hsCpuID.cpp
     hsCritSect.cpp
+    hsExceptions.cpp
     hsExceptionStack.cpp
     hsFastMath.cpp
     hsGeometry3.cpp
@@ -28,6 +29,7 @@ set(CoreLib_SOURCES
     hsTemplates.cpp
     hsWide.cpp
     pcSmallRect.cpp
+    plCmdParser.cpp
     plFileSystem.cpp
     plFormat.cpp
     plGeneric.cpp
@@ -58,6 +60,7 @@ set(CoreLib_HEADERS
     hsCpuID.h
     hsCritSect.h
     hsExceptions.h
+    hsExceptionStack.h
     hsFastMath.h
     hsGeometry3.h
     hsHashTable.h
@@ -74,6 +77,7 @@ set(CoreLib_HEADERS
     hsWide.h
     hsWindows.h
     pcSmallRect.h
+    plCmdParser.h
     plFileSystem.h
     plFormat.h
     plGeneric.h

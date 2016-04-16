@@ -171,7 +171,7 @@ public:
     }
     static uint16_t ColStrideFromEncoding(const plSpanEncoding& encoding)
     {
-        switch(encoding.fCode & plSpanEncoding::kPosMask)
+        switch(encoding.fCode & plSpanEncoding::kColMask)
         {
         case plSpanEncoding::kColNone:
             return 0;

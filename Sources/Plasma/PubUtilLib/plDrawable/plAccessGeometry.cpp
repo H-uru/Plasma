@@ -57,8 +57,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAccessSnapShot.h"
 
 // For dipping directly into device buffers.
-#include "plPipeline/plGBufferGroup.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "plGBufferGroup.h"
+#include "hsGDeviceRef.h"
 #include "plPipeline.h"
 
 #include "plTweak.h"

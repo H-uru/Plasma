@@ -65,7 +65,7 @@ Mead, WA   99021
  * `<`           | Align left
  * `>`           | Align right
  * `NNN`         | Pad to NNN characters (minimum - can be more)
- * `+`           | Show a '+' char for positive signed values (decimal only)
+ * `+`           | Show a '+' char for positive signed values (decimal / float only)
  * `_C`          | Use C as the pad character (only '\001'..'\177' supported for now)
  * `x`           | Hex (lower-case)
  * `X`           | Hex (upper-case)
@@ -95,7 +95,6 @@ namespace plFormat_Private
     {
         kDigitDefault,          /**< Default digit formatting */
         kDigitDec,              /**< Format as decimal integer */
-        kDigitDecAlwaysSigned,  /**< Same as `kDigitDec`, but include a '+' for positive numbers too */
         kDigitHex,              /**< Hex integer (assume unsigned) */
         kDigitHexUpper,         /**< Hex integer with upper-case digits */
         kDigitOct,              /**< Octal integer (assume unsigned) */
@@ -118,6 +117,7 @@ namespace plFormat_Private
         int fPrecision = -1;        /**< Requested precision for floating-point */
 
         char fPadChar = 0;          /**< Explicit padding char (default is space) */
+        bool fAlwaysSigned = false; /**< Show + for positive numbers (dec/float) */
         Alignment fAlignment = kAlignDefault;   /**< Requested pad alignment */
         DigitClass fDigitClass = kDigitDefault; /**< Requested int formatting */
         FloatClass fFloatClass = kFloatDefault; /**< Requested float formatting */
@@ -215,6 +215,9 @@ namespace plFormat_Private
 
     // Format for plUUID
     PL_FORMAT_TYPE(const class plUUID &)
+
+    // Format for hsMatrix44
+    PL_FORMAT_TYPE(const struct hsMatrix44 &)
 
 // ==================================
 // END: Formattable type declarations

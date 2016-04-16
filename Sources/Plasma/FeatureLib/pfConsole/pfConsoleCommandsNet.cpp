@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 
 #include "plAgeLoader/plAgeLoader.h"
-#include "plNetClient/plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetClient/plNetLinkingMgr.h"
 #include "plAgeLoader/plResPatcher.h"
@@ -544,7 +544,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "returns the age of the age" )   // helpString
 {
     PrintStringF(PrintString, "Current age is %s, elapsed time since birth = %f secs", 
-        NetCommGetAge()->ageDatasetName, plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
+        NetCommGetAge()->ageDatasetName.c_str(), plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
 }
 
 PF_CONSOLE_CMD( Net, DownloadViaManifest,
@@ -789,11 +789,7 @@ PF_CONSOLE_CMD( Net_Vault,
                "string stationName, string mtSpawnPt",
                "Register an MT Station with your Nexus" )
 {
-    wchar_t wName[MAX_PATH];
-    wchar_t wObj[MAX_PATH];
-    StrToUnicode(wName, params[0], arrsize(wName));
-    StrToUnicode(wObj, params[1], arrsize(wObj));
-    VaultRegisterMTStationAndWait ( wName, wObj );
+    VaultRegisterMTStationAndWait((char*)params[0], (char*)params[1]);
     PrintString("Registered MT Station.");
 }
 

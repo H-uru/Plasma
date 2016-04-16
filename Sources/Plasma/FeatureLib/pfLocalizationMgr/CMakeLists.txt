@@ -1,11 +1,15 @@
 include_directories(../../CoreLib)
+include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 include_directories(${EXPAT_INCLUDE_DIR})
 
-add_definitions(-DWIN32)
-if(EXPAT_IS_STATIC)
-    add_definitions(-DXML_STATIC)
+if(WIN32)
+    add_definitions(-DWIN32)
+
+    if(EXPAT_IS_STATIC)
+        add_definitions(-DXML_STATIC)
+    endif()
 endif()
 
 set(pfLocalizationMgr_SOURCES

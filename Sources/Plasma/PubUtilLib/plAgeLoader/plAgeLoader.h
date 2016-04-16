@@ -68,7 +68,7 @@ class plAgeLoader : public hsKeyedObject
     friend class plNetClientJoinTask;
 private:
     typedef std::vector<plKey> plKeyVec;
-    typedef std::vector<std::string> plStringVec;
+    typedef std::vector<plFileName> plFileNameVec;
     
     enum Flags
     {
@@ -80,15 +80,15 @@ private:
     static plAgeLoader* fInstance;
 
     uint32_t  fFlags;
-    plStringVec fPendingAgeFniFiles;        // list of age .fni files to be parsed 
-    plStringVec fPendingAgeCsvFiles;        // list of age .csv files to be parsed 
+    plFileNameVec fPendingAgeFniFiles;        // list of age .fni files to be parsed
+    plFileNameVec fPendingAgeCsvFiles;        // list of age .csv files to be parsed
     plKeyVec    fPendingPageIns;    // keys of rooms which are currently being paged in.
     plKeyVec    fPendingPageOuts;   // keys of rooms which are currently being paged out.
     plAgeDescription    fCurAgeDescription;
     plStateDataRecord* fInitialAgeState;
-    char fAgeName[kMaxAgeNameLength];
-    
-    bool ILoadAge(const char ageName[]);
+    plString fAgeName;
+
+    bool ILoadAge(const plString& ageName);
     bool IUnloadAge();
     void ISetInitialAgeState(plStateDataRecord* s);     // sent from server with joinAck
     const plStateDataRecord* IGetInitialAgeState() const { return fInitialAgeState; }
@@ -102,21 +102,21 @@ public:
 
     static plAgeLoader* GetInstance();
     static void SetInstance(plAgeLoader* inst);
-    static hsStream* GetAgeDescFileStream(const char* ageName);
+    static hsStream* GetAgeDescFileStream(const plString& ageName);
 
     void Init();
     void Shutdown();
     bool MsgReceive(plMessage* msg);
-    bool LoadAge(const char ageName[]);
+    bool LoadAge(const plString& ageName);
     bool UnloadAge()                              { return IUnloadAge(); }
-    void UpdateAge(const char ageName[]);
+    void UpdateAge(const plString& ageName);
     void NotifyAgeLoaded( bool loaded );
 
     const plKeyVec& PendingPageOuts() const { return fPendingPageOuts; }
     const plKeyVec& PendingPageIns() const { return fPendingPageIns; }
-    const plStringVec& PendingAgeCsvFiles() const { return fPendingAgeCsvFiles; }
-    const plStringVec& PendingAgeFniFiles() const { return fPendingAgeFniFiles; }
-    
+    const plFileNameVec& PendingAgeCsvFiles() const { return fPendingAgeCsvFiles; }
+    const plFileNameVec& PendingAgeFniFiles() const { return fPendingAgeFniFiles; }
+
     void AddPendingPageInRoomKey(plKey r);
     bool RemovePendingPageInRoomKey(plKey r);
     bool IsPendingPageInRoomKey(plKey p, int* idx=nil);
@@ -126,12 +126,12 @@ public:
 
     // Fun debugging exclude commands (to prevent certain pages from loading)
     void    ClearPageExcludeList( void );
-    void    AddExcludedPage( const char *pageName, const char *ageName = nil );
-    bool    IsPageExcluded( const plAgePage *page, const char *ageName = nil );
+    void    AddExcludedPage( const plString& pageName, const plString& ageName = "" );
+    bool    IsPageExcluded( const plAgePage *page, const plString& ageName = "" );
 
     const plAgeDescription  &GetCurrAgeDesc( void ) const { return fCurAgeDescription; }
-    
-    // paging       
+
+    // paging
     void FinishedPagingInRoom(plKey* rmKey, int numRms);    // call when finished paging in/out a room      
     void StartPagingOutRoom(plKey* rmKey, int numRms);      // call when starting to page in/out a room
     void FinishedPagingOutRoom(plKey* rmKey, int numRms);

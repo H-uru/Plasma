@@ -4858,7 +4858,9 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
     stream->WriteString(prefix);
 
     char buff[512];
-    sprintf(buff, "%s\n", doneMat->fMaxMaterial ? doneMat->fMaxMaterial->GetName() : "BLANK");
+    snprintf(buff, arrsize(buff), "%s\n",
+             doneMat->fMaxMaterial ? (const char *)doneMat->fMaxMaterial->GetName()
+                                   : "BLANK");
     stream->WriteString(buff);
 
     sprintf(buff, "\t\t%d Layers\n", doneMat->fHsMaterial->GetNumLayers());

@@ -7,11 +7,9 @@ set(pnUtils_HEADERS
     pnUtCoreLib.h
     pnUtAllIncludes.h
     pnUtArray.h
-    pnUtCmd.h
     pnUtCrypt.h
     pnUtHash.h
     pnUtList.h
-    pnUtMisc.h
     pnUtPragma.h
     pnUtPriQ.h
     pnUtSort.h
@@ -21,33 +19,16 @@ set(pnUtils_HEADERS
 
 set(pnUtils_SOURCES
     pnUtArray.cpp
-    pnUtCmd.cpp
     pnUtCrypt.cpp
     pnUtHash.cpp
     pnUtList.cpp
-    pnUtMisc.cpp
     pnUtStr.cpp
     pnUtTime.cpp
 )
 
-if(WIN32)
-    set(pnUtils_WIN32
-        Win32/pnUtW32Misc.cpp
-        Win32/pnUtW32Str.cpp
-    )
-else()
-    set(pnUtils_UNIX
-        Unix/pnUtUxStr.cpp
-    )
-endif()
+add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES})
 
-add_library(pnUtils STATIC ${pnUtils_HEADERS} ${pnUtils_SOURCES}
-                           ${pnUtils_UNIX} ${pnUtils_WIN32})
+target_link_libraries(pnUtils CoreLib)
 
 source_group("Header Files" FILES ${pnUtils_HEADERS})
 source_group("Source Files" FILES ${pnUtils_SOURCES})
-if(WIN32)
-    source_group("Win32" FILES ${pnUtils_WIN32})
-else()
-    source_group("Unix" FILES ${pnUtils_UNIX})
-endif()

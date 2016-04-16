@@ -81,7 +81,7 @@ namespace pnNetCommon
 {
 #ifndef SERVER
 
-    uint32_t GetBinAddr(const char* textAddr);
+    uint32_t GetBinAddr(const plString& textAddr);
     plString GetTextAddr(uint32_t binAddr);
 
 #endif // SERVER

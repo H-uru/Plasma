@@ -129,7 +129,7 @@ void plStateDataRecord::IDeleteVarsList(VarsList& vars)
 void plStateDataRecord::IInitDescriptor(const plString& name, int version)
 {
     plStateDescriptor* sd = plSDLMgr::GetInstance()->FindDescriptor(name, version);
-    //hsAssert( sd, plString::Format("Failed to find sdl descriptor: %s,%d. Missing legacy descriptor?", name.c_str(), version ).c_str() );
+    //hsAssert( sd, plFormat("Failed to find sdl descriptor: {},{}. Missing legacy descriptor?", name, version ).c_str() );
     if (sd)
         IInitDescriptor(sd);
 }
@@ -274,9 +274,16 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch(...)
+    catch (std::exception &e)
     {
-        hsAssert( false, 
+        hsAssert(false,
+            plFormat("Something bad happened ({}) while reading simple var data, desc:{}",
+                     e.what(), fDescriptor ? fDescriptor->GetName() : "?").c_str());
+        return false;
+    }
+    catch (...)
+    {
+        hsAssert(false,
             plFormat("Something bad happened while reading simple var data, desc:{}",
                      fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
@@ -308,9 +315,16 @@ bool plStateDataRecord::Read(hsStream* s, float timeConvert, uint32_t readOption
             }
         }
     }
-    catch(...)
+    catch (std::exception &e)
     {
-        hsAssert( false, 
+        hsAssert(false,
+            plFormat("Something bad happened ({}) while reading nested var data, desc:{}",
+                     e.what(), fDescriptor ? fDescriptor->GetName() : "?").c_str());
+        return false;
+    }
+    catch (...)
+    {
+        hsAssert(false,
             plFormat("Something bad happened while reading nested var data, desc:{}",
                      fDescriptor ? fDescriptor->GetName() : "?").c_str());
         return false;
@@ -838,7 +852,7 @@ void plStateDataRecord::TimeStampDirtyVars()
     // set nested vars  
     for(i=0;i<fSDVarsList.size(); i++)
     {
-        if ( fVarsList[i]->IsDirty() )
+        if ( fSDVarsList[i]->IsDirty() )
             fSDVarsList[i]->TimeStamp();
     }
 }

@@ -60,15 +60,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTemplates.h"
 #include "hsTimer.h"
+#include "hsWindows.h"
 #include "plStatusLog.h"
 #include "plUnifiedTime/plUnifiedTime.h"
 #include "plProduct.h"
 
 #include "plEncryptLogLine.h"
 
-#if HS_BUILD_FOR_WIN32
-    #include <shlobj.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////////////
 //// plStatusLogMgr Stuff ////////////////////////////////////////////////////
@@ -496,6 +494,23 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 }
 
 //// AddLine /////////////////////////////////////////////////////////////////
+
+bool plStatusLog::AddLine(const plString& line)
+{
+    if (fLoggingOff && !fForceLog) {
+        return true;
+    }
+
+    bool ret = true;
+    std::vector<plString> lines = line.Split("\n");
+
+    for (plString& str : lines)
+    {
+        ret &= IAddLine(str.c_str(), -1, kWhite);
+    }
+
+    return ret;
+}
 
 bool plStatusLog::AddLine( const char *line, uint32_t color )
 {

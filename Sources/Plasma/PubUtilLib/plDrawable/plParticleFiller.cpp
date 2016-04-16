@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Getting at the destination data
 #include "pnSceneObject/plDrawInterface.h"
 #include "plDrawable/plDrawableSpans.h"
-#include "plPipeline/plGBufferGroup.h"
+#include "plGBufferGroup.h"
 
 // For shading
 #include "plGLight/plLightInfo.h"

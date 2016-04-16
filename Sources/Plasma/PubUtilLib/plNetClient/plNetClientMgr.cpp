@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysical.h"
 #include "plNetClientMsgHandler.h"
 #include "plNetLinkingMgr.h"
-#include "plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 
 #include "pnUtils/pnUtils.h"
 #include "plProduct.h"
@@ -111,7 +111,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <algorithm>
 #include <sstream>
-
+#include <cmath>
 
 
 ////////////////////////////////////////////////////////////////////
@@ -275,30 +275,42 @@ const char* ProcessTab(const char* fmt)
 }
 
 //
-// override for plLoggable
+// create StatusLog if necessary
 //
-bool plNetClientMgr::Log(const char* str) const
+void plNetClientMgr::ICreateStatusLog() const
 {
-    if (strlen(str) == 0)
-        return true;
-
-    // prepend raw time
-    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str));
-
-    if ( GetConsoleOutput() )
-        hsStatusMessage(buf2.c_str());
-
-    // create status log if necessary
-    if(fStatusLog==nil)
+    if (!fStatusLog)
     {
         fStatusLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "network.log",
             plStatusLog::kTimestamp | plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | 
             plStatusLog::kServerTimestamp);
-        fWeCreatedLog = true;
+    }
+}
+
+//
+// override for plLoggable
+//
+bool plNetClientMgr::Log(const plString& str) const
+{
+    if (str.IsNull() || str.IsEmpty()) {
+        return true;
     }
 
+    // prepend raw time
+    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
+
+    if ( GetConsoleOutput() )
+        hsStatusMessage(buf2.c_str());
+
+    GetLog();
+
     plNetObjectDebugger::GetInstance()->LogMsgIfMatch(buf2.c_str());
-    return fStatusLog->AddLine(buf2.c_str());
+
+    if (fStatusLog) {
+        return fStatusLog->AddLine(buf2);
+    }
+
+    return true;
 }
 
 //
@@ -1007,12 +1019,11 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         }
 
         // if we're linking to startup we don't need (or want) a player set
-        char ageName[kMaxAgeNameLength];
-        StrCopy(ageName, NetCommGetStartupAge()->ageDatasetName, arrsize(ageName));
-        if (!StrLen(ageName))
-            StrCopy(ageName, "StartUp", arrsize(ageName));
-        if (0 == StrCmpI(ageName, "StartUp"))
-            NetCommSetActivePlayer(0, nil);
+        plString ageName = NetCommGetStartupAge()->ageDatasetName;
+        if (ageName.IsEmpty())
+            ageName = "StartUp";
+        if (ageName.CompareI("StartUp") == 0)
+            NetCommSetActivePlayer(0, nullptr);
 
         plAgeLinkStruct link;
         link.GetAgeInfo()->SetAgeFilename(NetCommGetStartupAge()->ageDatasetName);
@@ -1084,9 +1095,9 @@ bool plNetClientMgr::CanSendMsg(plNetMessage * msg)
 plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 {
     // local case
-    if (!avKey || avKey==GetLocalPlayerKey())
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-    
+    if (!avKey || avKey == GetLocalPlayerKey())
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
@@ -1094,15 +1105,15 @@ plString plNetClientMgr::GetPlayerName(const plKey avKey) const
 plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     // local case
     if (NetCommGetPlayer()->playerInt == playerId)
-        return plString::FromIso8859_1(NetCommGetPlayer()->playerNameAnsi);
-        
+        return NetCommGetPlayer()->playerName;
+
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
     return mbr ? mbr->GetPlayerName() : plString::Null;
 }
 
 unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
     // local case
-    if (0 == name.Compare(NetCommGetPlayer()->playerNameAnsi))
+    if (name.CompareI(NetCommGetPlayer()->playerName) == 0)
         return NetCommGetPlayer()->playerInt;
 
     unsigned n = TransportMgr().GetNumMembers();
@@ -1365,9 +1376,9 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
     return cnt==0 ? false : true;
 }
 
-plUoid plNetClientMgr::GetAgeSDLObjectUoid(const char* ageName) const
+plUoid plNetClientMgr::GetAgeSDLObjectUoid(const plString& ageName) const
 {
-    hsAssert(ageName, "nil ageName");
+    hsAssert(!ageName.IsEmpty(), "nil ageName");
 
     // if age sdl hook is loaded
     if (fAgeSDLObjectKey)

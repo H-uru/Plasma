@@ -72,7 +72,7 @@ const unsigned kNumBlobFields   = 4;
 
 //============================================================================
 template <typename T>
-static inline void IReadValue (T * value, uint8_t ** buffer, unsigned * bufsz) {
+inline void IReadValue (T * value, uint8_t ** buffer, unsigned * bufsz) {
     ASSERT(*bufsz >= sizeof(T));
     *value = *(T *)*buffer;
     *buffer += sizeof(T);
@@ -81,7 +81,7 @@ static inline void IReadValue (T * value, uint8_t ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, unsigned * bufsz) {
+inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, unsigned * bufsz) {
     uint32_t bytes;
     IReadValue(&bytes, buffer, bufsz);
     ASSERT(bytes % sizeof(T) == 0);
@@ -96,7 +96,7 @@ static inline void IReadArray (T ** buf, unsigned * elems, uint8_t ** buffer, un
 
 //============================================================================
 template <typename T>
-static inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
+inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
     unsigned elems;
     IReadArray(buf, &elems, buffer, bufsz);
     // ensure the string is null-terminated
@@ -106,14 +106,14 @@ static inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-static inline void IWriteValue (const T & value, ARRAY(uint8_t) * buffer) {
+inline void IWriteValue (const T & value, ARRAY(uint8_t) * buffer) {
     T * ptr = (T *) buffer->New(sizeof(T));
     *ptr = value;
 }
 
 //============================================================================
 template <typename T>
-static inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer) {
+inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer) {
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
     T * dst = (T *) buffer->New(bytes);
@@ -122,19 +122,19 @@ static inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * 
 
 //============================================================================
 template <typename T>
-static inline void IWriteString (const T str[], ARRAY(uint8_t) * buffer) {
+inline void IWriteString (const T str[], ARRAY(uint8_t) * buffer) {
     IWriteArray(str, StrLen(str) + 1, buffer);
 }
 
 //============================================================================
 template <typename T>
-static inline bool ICompareValue (const T & lhs, const T & rhs) {
+inline bool ICompareValue (const T & lhs, const T & rhs) {
     return lhs == rhs;
 }
 
 //============================================================================
 template <typename T>
-static inline bool ICompareString (const T lhs[], const T rhs[]) {
+inline bool ICompareString (const T lhs[], const T rhs[]) {
     if (!lhs && !rhs)
         return true;
     if (!lhs || !rhs)
@@ -144,7 +144,7 @@ static inline bool ICompareString (const T lhs[], const T rhs[]) {
 
 //============================================================================
 template <typename T>
-static inline bool ICompareStringI (const T lhs[], const T rhs[]) {
+inline bool ICompareStringI (const T lhs[], const T rhs[]) {
     if (!lhs && !rhs)
         return true;
     if (!lhs || !rhs)
@@ -159,13 +159,13 @@ static inline bool ICompareArray (const uint8_t lhs[], const uint8_t rhs[]) {
 
 //============================================================================
 template <typename T>
-static inline void ICopyValue (T * plhs, const T & rhs) {
+inline void ICopyValue (T * plhs, const T & rhs) {
     *plhs = rhs;
 }
 
 //============================================================================
 template <typename T>
-static inline void ICopyString (T ** plhs, const T rhs[]) {
+inline void ICopyString (T ** plhs, const T rhs[]) {
     free(*plhs);
     if (rhs)
         *plhs = StrDup(rhs);
@@ -207,8 +207,8 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     IReadValue(&value, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    StrCopy(gameName, tempstr, arrsize(gameName));
-    delete tempstr;
+    gameName = plString::FromWchar(tempstr);
+    free(tempstr);
 
     if (end)
         *end = buffer;
@@ -226,7 +226,7 @@ unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
     IWriteValue(createdTime, buffer);
     IWriteValue(gameType, buffer);
     IWriteValue(value, buffer);
-    IWriteString(gameName, buffer);
+    IWriteString(gameName.ToWchar().GetData(), buffer);
 
     return buffer->Count() - pos;
 }
@@ -238,7 +238,7 @@ void NetGameScore::CopyFrom(const NetGameScore & score) {
     createdTime = score.createdTime;
     gameType    = score.gameType;
     value       = score.value;
-    StrCopy(gameName, score.gameName, arrsize(gameName));
+    gameName    = score.gameName;
 }
 
 /*****************************************************************************
@@ -260,7 +260,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     IReadString(&tempstr, &buffer, &bufsz);
 
     StrCopy(name, tempstr, arrsize(name));
-    delete tempstr;
+    free(tempstr);
 
     if (end)
         *end = buffer;
@@ -351,25 +351,25 @@ void NetVaultNode::Clear()
 
 //============================================================================
 template<typename T>
-static void IZero(T& dest)
+inline void IZero(T& dest)
 {
     dest = 0;
 }
 
 template<>
-static void IZero<plString>(plString& dest)
+inline void IZero<plString>(plString& dest)
 {
     dest = "";
 }
 
 template<>
-static void IZero<plUUID>(plUUID& dest)
+inline void IZero<plUUID>(plUUID& dest)
 {
     dest = kNilUuid;
 }
 
 template<>
-static void IZero<NetVaultNode::Blob>(NetVaultNode::Blob& blob)
+inline void IZero<NetVaultNode::Blob>(NetVaultNode::Blob& blob)
 {
     delete[] blob.buffer;
     blob.buffer = nullptr;
@@ -484,7 +484,7 @@ bool NetVaultNode::Matches(const NetVaultNode* rhs) const
 
 //============================================================================
 template<typename T>
-static void IRead(const uint8_t*& buf, T& dest)
+inline void IRead(const uint8_t*& buf, T& dest)
 {
     const T* ptr = reinterpret_cast<const T*>(buf);
     dest = *ptr;
@@ -492,7 +492,7 @@ static void IRead(const uint8_t*& buf, T& dest)
 }
 
 template<>
-static void IRead<plString>(const uint8_t*& buf, plString& dest)
+inline void IRead<plString>(const uint8_t*& buf, plString& dest)
 {
     uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
     uint32_t nChars = (size / sizeof(uint16_t)) - 1;
@@ -507,7 +507,7 @@ static void IRead<plString>(const uint8_t*& buf, plString& dest)
 }
 
 template<>
-static void IRead<NetVaultNode::Blob>(const uint8_t*& buf, NetVaultNode::Blob& blob)
+inline void IRead<NetVaultNode::Blob>(const uint8_t*& buf, NetVaultNode::Blob& blob)
 {
     blob.size = *(reinterpret_cast<const uint32_t*>(buf));
     buf += sizeof(uint32_t);
@@ -563,14 +563,14 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 
 //============================================================================
 template<typename T>
-static void IWrite(ARRAY(uint8_t)* buffer, const T& value)
+inline void IWrite(ARRAY(uint8_t)* buffer, const T& value)
 {
     uint8_t* ptr = buffer->New(sizeof(T));
     memcpy(ptr, &value, sizeof(T));
 }
 
 template<>
-static void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
+inline void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
 {
     plStringBuffer<uint16_t> utf16 = value.ToUtf16();
     uint32_t strsz = (utf16.GetSize() + 1) * 2;
@@ -581,7 +581,7 @@ static void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
 }
 
 template<>
-static void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
+inline void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
 {
     IWrite(buffer, static_cast<uint32_t>(blob.size));
 

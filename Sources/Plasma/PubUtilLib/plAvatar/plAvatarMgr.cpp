@@ -41,8 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #pragma warning(disable: 4503 4786)
 
-#include <algorithm>
-
 #include "plAvatarMgr.h"
 
 // local
@@ -86,6 +84,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plLoadClothingMsg.h"
 #include "pnMessage/plTimeMsg.h"
 #include "plStatusLog/plStatusLog.h"
+
+#include <algorithm>
+#include <cmath>
 
 // The static single instance, allocated on demand by GetInstance()
 plAvatarMgr     *plAvatarMgr::fInstance = nil;

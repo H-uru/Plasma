@@ -174,6 +174,7 @@ pfGUIMultiLineEditCtrl::pfGUIMultiLineEditCtrl()
     fFontSize = 0;
     fFontStyle = 0;
     fFontFlagsSet = 0;
+    fCanUpdate = true;
 }
 
 pfGUIMultiLineEditCtrl::~pfGUIMultiLineEditCtrl()
@@ -383,7 +384,7 @@ void    pfGUIMultiLineEditCtrl::IUpdate( int32_t startLine, int32_t endLine )
     int32_t       numVisibleLines, lastVisibleLine;
 
 
-    if( !fReadyToRender )
+    if (!fReadyToRender || !fCanUpdate)
         return;
 
     // Detect whether we need to recalc all of our dimensions entirely

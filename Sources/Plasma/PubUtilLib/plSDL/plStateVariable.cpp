@@ -39,8 +39,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#include <cfloat>
-#include <type_traits>
 #include "hsStream.h"
 #include "hsTimer.h"
 #include "plSDL.h"
@@ -61,6 +59,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResMgr/plResManager.h"
 #include "plUnifiedTime/plClientUnifiedTime.h"
 
+#include <type_traits>
+#include <cfloat>
+#include <cmath>
 
 /*****************************************************************************
 *
@@ -839,6 +840,7 @@ bool plSimpleStateVariable::IConvertFromShort(plVarDescriptor::Type newType)
             delete [] fS;
             fI = newI;
         }
+        break;
     case plVarDescriptor::kByte:
         {
             uint8_t* newBy = new uint8_t[fVar.GetCount()];
@@ -897,6 +899,7 @@ bool plSimpleStateVariable::IConvertFromByte(plVarDescriptor::Type newType)
             delete [] fBy;
             fI = newI;
         }
+        break;
     case plVarDescriptor::kShort:
         {
             short* newS = new short[fVar.GetCount()];
@@ -2306,7 +2309,7 @@ void plSimpleStateVariable::DumpToObjectDebugger(bool dirtyOnly, int level) cons
     }
 
     pad += "\t";
-    for (size_t i=0; i<GetCount(); i++)
+    for (int i=0; i<GetCount(); i++)
     {
         logMsg << pad;
         logMsg << "Var:" << i;
@@ -2349,7 +2352,7 @@ void plSimpleStateVariable::DumpToStream(hsStream* stream, bool dirtyOnly, int l
     }
 
     pad += "\t";
-    for (size_t i=0; i<GetCount(); i++)
+    for (int i=0; i<GetCount(); i++)
     {
         logMsg << pad;
         logMsg << "Var:" << i;

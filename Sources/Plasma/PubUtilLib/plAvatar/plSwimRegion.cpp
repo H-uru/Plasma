@@ -152,7 +152,6 @@ void plSwimCircularCurrentRegion::GetCurrent(plPhysicalControllerCore *physical,
 
     physical->GetPositionSim(pos);
     
-    bool applyPull = true;
     hsVector3 pos2Center(center.fX - pos.fX, center.fY - pos.fY, 0.f);
     float pullVel;
     float distSq = pos2Center.MagnitudeSquared();

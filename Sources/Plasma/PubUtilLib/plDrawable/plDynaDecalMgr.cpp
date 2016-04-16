@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAccessGeometry.h"
 #include "plAccessSpan.h"
+#include "plGBufferGroup.h"
 
 #include "plDrawableSpans.h"
 #include "plAuxSpan.h"
@@ -66,8 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerInterface.h"
 #include "plScene/plPageTreeMgr.h"
 
-#include "plPipeline/plGBufferGroup.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 
 #include "plMessage/plAgeLoadedMsg.h"
 #include "plMessage/plDynaDecalEnableMsg.h"
@@ -1450,9 +1450,7 @@ bool plDynaDecalMgr::ICutoutObject(plSceneObject* so, double secs)
         return retVal;
 
     plProfile_BeginTiming(Total);
-    int numGot = 0;
-    int j;
-    for( j = 0; j < di->GetNumDrawables(); j++ )
+    for (int j = 0; j < di->GetNumDrawables(); j++)
     {
         plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(j));
         // Nil dr - it hasn't loaded yet or something.

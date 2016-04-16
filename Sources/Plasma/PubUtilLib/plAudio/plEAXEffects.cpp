@@ -150,7 +150,13 @@ bool    plEAXListener::Init( void )
 
         SetGlobalEAXProperty(DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ROOM, &lRoom, sizeof( unsigned int ));
     }
-    catch ( ... )
+    catch (std::exception &e)
+    {
+        plStatusLog::AddLineS("audio.log", "Unable to set EAX Property Set (%s), disabling EAX...", e.what());
+        plgAudioSys::EnableEAX(false);
+        return false;
+    }
+    catch (...)
     {
         plStatusLog::AddLineS("audio.log", "Unable to set EAX Property Set, disabling EAX...");
         plgAudioSys::EnableEAX(false);

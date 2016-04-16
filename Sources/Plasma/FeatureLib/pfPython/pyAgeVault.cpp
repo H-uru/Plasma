@@ -173,27 +173,18 @@ plUUID pyAgeVault::GetAgeGuid( void )
 
 ///////////////
 // Chronicle
-PyObject* pyAgeVault::FindChronicleEntry( const char * entryName )
+PyObject* pyAgeVault::FindChronicleEntry( const plString& entryName )
 {
-    wchar_t wEntryName[kMaxVaultNodeStringLength];
-    StrToUnicode(wEntryName, entryName, arrsize(wEntryName));
-    
-    if (hsRef<RelVaultNode> rvn = VaultFindAgeChronicleEntry(wEntryName))
+    if (hsRef<RelVaultNode> rvn = VaultFindAgeChronicleEntry(entryName))
         return pyVaultChronicleNode::New(rvn);
     
     // just return a None object
     PYTHON_RETURN_NONE;
 }
 
-void pyAgeVault::AddChronicleEntry( const char * name, uint32_t type, const char * value )
+void pyAgeVault::AddChronicleEntry( const plString& name, uint32_t type, const plString& value )
 {
-    wchar_t * wEntryName = StrDupToUnicode(name);
-    wchar_t * wEntryValue = StrDupToUnicode(value);
-    
-    VaultAddAgeChronicleEntry(wEntryName, type, wEntryValue);
-    
-    free(wEntryName);
-    free(wEntryValue);
+    VaultAddAgeChronicleEntry(name, type, value);
 }
 
 // AGE DEVICES. AKA IMAGERS, WHATEVER.

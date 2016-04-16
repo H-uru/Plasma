@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "hsColorRGBA.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "hsPoint2.h"
 
 class plAccessSpan;
@@ -338,8 +338,6 @@ protected:
 
     void            IBeginAllocUnManaged();
     void            IEndAllocUnManaged();
-    void            ICheckTextureUsage();
-    void            ICheckVtxUsage();
     inline void     ICheckVBUsage(plDXVertexBufferRef* vRef);
 
     bool            IRefreshDynVertices(plGBufferGroup* group, plDXVertexBufferRef* vRef);
@@ -480,9 +478,6 @@ protected:
     void    IShowErrorMessage( char *errStr = nil );
     bool    ICreateFail( char *errStr );
 
-    // FPU mode check
-    void    IFPUCheck();
-
     // Device initialization
     void    IInvalidateState();
     void    IInitDeviceState();
@@ -525,7 +520,6 @@ protected:
     void            IProjectionMatrixToD3D();
     void            IWorldToCameraToD3D();
     void            ILocalToWorldToD3D();
-    void            ISavageYonHack();
     void            ISetLocalToWorld( const hsMatrix44& l2w, const hsMatrix44& w2l );
     void            ISetCullMode(bool flip=false);
     bool inline   IIsViewLeftHanded();
@@ -644,9 +638,6 @@ public:
     virtual bool                        BeginRender();
     virtual bool                        EndRender();
     virtual void                        RenderScreenElements();
-
-    virtual bool                        BeginDrawable(plDrawable* d);
-    virtual bool                        EndDrawable(plDrawable* d);
 
     virtual void                        BeginVisMgr(plVisMgr* visMgr);
     virtual void                        EndVisMgr(plVisMgr* visMgr);
@@ -769,10 +760,6 @@ public:
     virtual hsGMatState                 PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on);
     virtual void                        PopMaterialOverride(const hsGMatState& restore, bool on);
     virtual const hsGMatState&          GetMaterialOverride(bool on) const;
-
-    virtual hsColorOverride             PushColorOverride(const hsColorOverride& over);
-    virtual void                        PopColorOverride(const hsColorOverride& restore);
-    virtual const hsColorOverride&      GetColorOverride() const;
 
     virtual void                        SubmitShadowSlave(plShadowSlave* slave);
     virtual void                        SubmitClothingOutfit(plClothingOutfit* co);

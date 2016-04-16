@@ -120,6 +120,7 @@ public:
     virtual bool      IsCompressed() { return false; }
 
     uint32_t        WriteString(const plString & string) { return Write(string.GetSize(), string.c_str()); }
+    hsDeprecated("hsStream::WriteFmt is deprecated -- use plFormat instead")
     uint32_t        WriteFmt(const char * fmt, ...);
     uint32_t        WriteFmtV(const char * fmt, va_list av);
 

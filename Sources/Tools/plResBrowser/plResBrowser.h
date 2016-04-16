@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plResBrowser_h
 
 #include <QMainWindow>
+#include "HeadSpin.h"
 
 class plResBrowser : public QMainWindow
 {
@@ -55,8 +56,8 @@ public:
     void SetWindowTitle(const QString &title);
 
 protected:
-    virtual void dragEnterEvent(QDragEnterEvent *event) override;
-    virtual void dropEvent(QDropEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) HS_OVERRIDE;
+    void dropEvent(QDropEvent *event) HS_OVERRIDE;
 
 private slots:
     void OpenFile();

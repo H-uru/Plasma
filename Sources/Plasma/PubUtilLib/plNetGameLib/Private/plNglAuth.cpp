@@ -91,7 +91,7 @@ struct CliAuConn : hsRefCnt {
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    char            name[MAX_PATH];
+    plString        name;
     plNetAddress    addr;
     plUUID          token;
     unsigned        seq;
@@ -194,14 +194,14 @@ struct LoginRequestTrans : NetAuthTrans {
 struct AgeRequestTrans : NetAuthTrans {
     FNetCliAuthAgeRequestCallback       m_callback;
     void *                              m_param;
-    wchar_t                               m_ageName[kMaxAgeNameLength];
+    plString                            m_ageName;
     unsigned                            m_ageMcpId;
     plUUID                              m_ageInstId;
     unsigned                            m_ageVaultId;
     uint32_t                            m_gameSrvNode;
 
     AgeRequestTrans (
-        const wchar_t                         ageName[],
+        const plString&                     ageName,
         const plUUID&                       ageInstId,
         FNetCliAuthAgeRequestCallback       callback,
         void *                              param
@@ -290,19 +290,19 @@ struct PlayerCreateRequestTrans : NetAuthTrans {
     FNetCliAuthPlayerCreateRequestCallback  m_callback;
     void *                                  m_param;
 
-    // send    
-    wchar_t                                   m_playerName[kMaxPlayerNameLength];
-    wchar_t                                   m_avatarShape[MAX_PATH];
-    wchar_t                                   m_friendInvite[MAX_PATH];
+    // send
+    plString                                m_playerName;
+    plString                                m_avatarShape;
+    plString                                m_friendInvite;
 
     // recv
     NetCliAuthPlayerInfo                    m_playerInfo;
 
 
     PlayerCreateRequestTrans (
-        const wchar_t                             playerName[],
-        const wchar_t                             avatarShape[],
-        const wchar_t                             friendInvite[],
+        const plString&                         playerName,
+        const plString&                         avatarShape,
+        const plString&                         friendInvite,
         FNetCliAuthPlayerCreateRequestCallback  callback,
         void *                                  param
     );
@@ -400,13 +400,13 @@ struct AccountChangePasswordRequestTrans : NetAuthTrans {
     FNetCliAuthAccountChangePasswordRequestCallback m_callback;
     void *                                          m_param;
 
-    // send    
-    wchar_t                                   m_accountName[kMaxAccountNameLength];
+    // send
+    plString                                m_accountName;
     ShaDigest                               m_namePassHash;
 
     AccountChangePasswordRequestTrans (
-        const wchar_t                                     accountName[],
-        const wchar_t                                     password[],
+        const plString&                                 accountName,
+        const plString&                                 password,
         FNetCliAuthAccountChangePasswordRequestCallback callback,
         void *                                          param
     );
@@ -427,17 +427,17 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     void *                                  m_param;
     
     // send
-    wchar_t                                   m_ageName[MAX_PATH];
-    
+    plString                                m_ageName;
+
     // recv
     ARRAY(NetAgeInfo)                       m_ages;
     
     GetPublicAgeListTrans (
-        const wchar_t                         ageName[],
+        const plString&                     ageName,
         FNetCliAuthGetPublicAgeListCallback callback,
         void *                              param
     );
-        
+
     bool Send ();
     void Post ();
     bool Recv (
@@ -686,10 +686,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
 
     plUUID                      m_ageInstId;
     plUUID                      m_parentAgeInstId;
-    wchar_t *                   m_ageFilename;
-    wchar_t *                   m_ageInstName;
-    wchar_t *                   m_ageUserName;
-    wchar_t *                   m_ageDesc;
+    plString                    m_ageFilename;
+    plString                    m_ageInstName;
+    plString                    m_ageUserName;
+    plString                    m_ageDesc;
     unsigned                    m_ageSequenceNumber;
     unsigned                    m_ageLanguage;
 
@@ -701,10 +701,10 @@ struct VaultInitAgeTrans : NetAuthTrans {
         void *                      param,              // optional
         const plUUID&               ageInstId,          // optional. is used in match
         const plUUID&               parentAgeInstId,    // optional. is used in match
-        const wchar_t               ageFilename[],      // optional. is used in match
-        const wchar_t               ageInstName[],      // optional. not used in match
-        const wchar_t               ageUserName[],      // optional. not used in match
-        const wchar_t               ageDesc[],          // optional. not used in match
+        const plString              ageFilename,        // optional. is used in match
+        const plString              ageInstName,        // optional. not used in match
+        const plString              ageUserName,        // optional. not used in match
+        const plString              ageDesc,            // optional. not used in match
         unsigned                    ageSequenceNumber,  // optional. not used in match
         unsigned                    ageLanguage         // optional. not used in match
     );
@@ -942,14 +942,14 @@ struct SendFriendInviteTrans : NetAuthTrans {
     FNetCliAuthSendFriendInviteCallback m_callback;
     void *                              m_param;
 
-    // send    
-    wchar_t                               m_emailAddress[kMaxEmailAddressLength];
-    wchar_t                               m_toName[kMaxPlayerNameLength];
+    // send
+    plString                              m_emailAddress;
+    plString                              m_toName;
     plUUID                                m_inviteUuid;
 
     SendFriendInviteTrans(
-        const wchar_t                           emailAddr[],
-        const wchar_t                           toName[],
+        const plString&                         emailAddr,
+        const plString&                         toName,
         const plUUID&                           inviteUuid,
         FNetCliAuthSendFriendInviteCallback     callback,
         void *                                  param
@@ -982,17 +982,17 @@ struct ScoreCreateTrans : NetAuthTrans {
 
     // send    
     unsigned                        m_ownerId;
-    char                            m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
     unsigned                        m_gameType;
     int                             m_value;
 
     // recv
     unsigned                        m_scoreId;
-    uint32_t                          m_createdTime;
+    uint32_t                        m_createdTime;
 
     ScoreCreateTrans (
         unsigned                        ownerId,
-        const char*                     gameName,
+        const plString&                 gameName,
         unsigned                        gameType,
         int                             value,
         FNetCliAuthCreateScoreCallback  callback,
@@ -1038,9 +1038,9 @@ struct ScoreGetScoresTrans : NetAuthTrans {
     FNetCliAuthGetScoresCallback    m_callback;
     void *                          m_param;
 
-    // send    
+    // send
     unsigned                        m_ownerId;
-    char                            m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
 
     // recv
     NetGameScore *                  m_scores;
@@ -1048,7 +1048,7 @@ struct ScoreGetScoresTrans : NetAuthTrans {
 
     ScoreGetScoresTrans (
         unsigned                        ownerId,
-        const char*                     gameName,
+        const plString&                 gameName,
         FNetCliAuthGetScoresCallback    callback,
         void *                          param
     );
@@ -1150,11 +1150,11 @@ struct ScoreGetRanksTrans : NetAuthTrans {
     FNetCliAuthGetRanksCallback     m_callback;
     void *                          m_param;
 
-    // send    
+    // send
     unsigned                        m_ownerId;
     unsigned                        m_scoreGroup;
     unsigned                        m_parentFolderId;
-    wchar_t                           m_gameName[kMaxGameScoreNameLength];
+    plString                        m_gameName;
     unsigned                        m_timePeriod;
     unsigned                        m_numResults;
     unsigned                        m_pageNumber;
@@ -1168,7 +1168,7 @@ struct ScoreGetRanksTrans : NetAuthTrans {
         unsigned                    ownerId,
         unsigned                    scoreGroup,
         unsigned                    parentFolderId,
-        const char *                cGameName,
+        const plString&             gameName,
         unsigned                    timePeriod,
         unsigned                    numResults,
         unsigned                    pageNumber,
@@ -1183,6 +1183,40 @@ struct ScoreGetRanksTrans : NetAuthTrans {
         const uint8_t  msg[],
         unsigned    bytes
     );
+};
+
+//============================================================================
+// ScoreGetHighScoresTrans
+//============================================================================
+struct ScoreGetHighScoresTrans : NetAuthTrans {
+    FNetCliAuthGetScoresCallback    m_callback;
+    void *                          m_param;
+
+    // send
+    unsigned                        m_ageId;
+    unsigned                        m_maxScores;
+    plString                        m_gameName;
+
+    // recv
+    NetGameScore *                  m_scores;
+    unsigned                        m_scoreCount;
+
+    ScoreGetHighScoresTrans(
+        unsigned                        ageId,
+        unsigned                        maxScores,
+        const plString&                 gameName,
+        FNetCliAuthGetScoresCallback    callback,
+        void *                          param
+        );
+
+    ~ScoreGetHighScoresTrans();
+
+    bool Send();
+    void Post();
+    bool Recv(
+        const uint8_t  msg[],
+        unsigned    bytes
+        );
 };
 
 
@@ -1203,7 +1237,7 @@ static bool                         s_running;
 static CCritSect                    s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
-static wchar_t                      s_accountName[kMaxAccountNameLength];
+static plString                     s_accountName;
 static ShaDigest                    s_accountNamePassHash;
 static wchar_t                      s_authToken[kMaxPublisherAuthKeyLength];
 static wchar_t                      s_os[kMaxGTOSIdLength];
@@ -1231,42 +1265,28 @@ static FNotifyNewBuildHandler       s_notifyNewBuildHandler;
 ***/
 
 //===========================================================================
-static inline bool ICharIsSpace (unsigned ch) {
-    return ch == ' ';
-}
+static ENetError FixupPlayerName (plString& name) {
+    ASSERT(!name.IsEmpty());
 
-//===========================================================================
-static ENetError FixupPlayerName (wchar_t * name) {
-    ASSERT(name);
+    // Trim leading and trailing whitespace
+    name = name.Trim(" \t\n\r");
 
-    // Trim leading and trailing whitespace and convert
-    // multiple internal spaces into only one space
-    unsigned nonSpaceChars = 0;
-    wchar_t *dst = name;
-    for (wchar_t *src = name; *src; ) {
-        // Skip whitespace
-        while (*src && ICharIsSpace(*src))
-            src++;
+    // Convert remaining internal whitespace to a single space.
+    // Kind of hacky, but meh.
+    std::vector<plString> things = name.Tokenize(" \t\n\r");
 
-        // If the block skipped was not at the beginning
-        // of the string then add one space character
-        if (*src && (dst != name))
-            *dst++ = ' ';
-
-        // Copy characters until end-of-string or next whitespace
-        while (*src && !ICharIsSpace(*src)) {
-            ++nonSpaceChars;
-            *dst++ = *src++;
-        }
+    plStringStream ss;
+    for (auto it = things.begin(); it != things.end(); ++it) {
+        ss << *it;
+        if ((it + 1) != things.end())
+            ss << " ";
     }
+    name = ss.GetString();
 
-    // Ensure destination string is terminated
-    *dst = 0;
-
-    // Check for minimum name length
-    if (nonSpaceChars < 3)
+    // Now, check to see if we have the appropriate length
+    // We could count the characters, but lazy...
+    if (name.Replace(" ", "").GetSize() < 3)
         return kNetErrPlayerNameInvalid;
-
     return kNetSuccess;
 }
 
@@ -1529,7 +1549,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const char          name[],
+    const plString&     name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -1538,7 +1558,7 @@ static void Connect (
     conn->addr              = addr;
     conn->seq               = ConnNextSequence();
     conn->lastHeardTimeMs   = GetNonZeroTimeMs();   // used in connect timeout, and ping timeout
-    strncpy(conn->name, name, arrsize(conn->name));
+    conn->name              = name;
 
     conn->Ref("Lifetime");
     conn->AutoReconnect();
@@ -1594,8 +1614,6 @@ CliAuConn::CliAuConn ()
     , sock(nil), cli(nil), seq(0), serverChallenge(0)
     , cancelId(nil), abandoned(false)
 {
-    memset(name, 0, sizeof(name));
-
     ++s_perf[kPerfConnCount];
 }
 
@@ -2355,13 +2373,26 @@ static bool Recv_ScoreGetRanksReply (
     return true;
 }
 
+//============================================================================
+static bool Recv_ScoreGetHighScoresReply(
+    const uint8_t   msg[],
+    unsigned        bytes,
+    void *
+    ) {
+    const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
+
+    NetTransRecv(reply.transId, msg, bytes);
+
+    return true;
+}
+
 /*****************************************************************************
 *
 *   Cli2Auth protocol
 *
 ***/
 
-#define MSG(s)  kNetMsg_Cli2Auth_##s
+#define MSG(s)  &kNetMsg_Cli2Auth_##s
 static NetMsgInitSend s_send[] = {
     { MSG(PingRequest)              },
     { MSG(ClientRegisterRequest)    },
@@ -2409,10 +2440,11 @@ static NetMsgInitSend s_send[] = {
     { MSG(ScoreSetPoints)           },
     { MSG(ScoreGetRanks)            },
     { MSG(AccountExistsRequest)     },
+    { MSG(ScoreGetHighScores)       },
 };
 #undef MSG
 
-#define MSG(s)  kNetMsg_Auth2Cli_##s, Recv_##s
+#define MSG(s)  &kNetMsg_Auth2Cli_##s, Recv_##s
 static NetMsgInitRecv s_recv[] = {
     { MSG(PingReply)                },
     { MSG(ClientRegisterReply)      },
@@ -2458,6 +2490,7 @@ static NetMsgInitRecv s_recv[] = {
     { MSG(ScoreSetPointsReply)      },
     { MSG(ScoreGetRanksReply)       },
     { MSG(AccountExistsReply)       },
+    { MSG(ScoreGetHighScoresReply)  },
 };
 #undef MSG
 
@@ -2613,17 +2646,17 @@ LoginRequestTrans::LoginRequestTrans (
 
 //============================================================================
 void LoginRequestTrans::AddPlayer (
-    unsigned    playerInt,
+    unsigned      playerInt,
     const wchar_t playerName[],
     const wchar_t avatarShape[],
-    unsigned    explorer
+    unsigned      explorer
 ) {
     unsigned index = m_playerCount++;
     ASSERT(index < kMaxPlayersPerAccount);
-    m_players[index].playerInt  = playerInt;
-    m_players[index].explorer   = explorer;
-    StrCopy(m_players[index].playerName, playerName, arrsize(m_players[index].playerName));
-    StrCopy(m_players[index].avatarShape, avatarShape, arrsize(m_players[index].avatarShape));
+    m_players[index].playerInt   = playerInt;
+    m_players[index].explorer    = explorer;
+    m_players[index].playerName  = plString::FromWchar(playerName);
+    m_players[index].avatarShape = plString::FromWchar(avatarShape);
 }
 
 //============================================================================
@@ -2636,7 +2669,7 @@ bool LoginRequestTrans::Send () {
     uint32_t clientChallenge = 0;
 
     // Regex search for primary email domain
-    std::vector<plString> match = plString::FromWchar(s_accountName).RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    std::vector<plString> match = s_accountName.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
     if (match.empty() || match[2].CompareI("gametap") == 0) {
         memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
     } else {
@@ -2653,11 +2686,13 @@ bool LoginRequestTrans::Send () {
         );
     }
 
+    plStringBuffer<uint16_t> accountName = s_accountName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_AcctLoginRequest,
         m_transId,
         clientChallenge,
-        (uintptr_t) s_accountName,
+        (uintptr_t) accountName.GetData(),
         (uintptr_t) &challengeHash,
         (uintptr_t) s_authToken,
         (uintptr_t) s_os,
@@ -2723,16 +2758,16 @@ bool LoginRequestTrans::Recv (
 
 //============================================================================
 AgeRequestTrans::AgeRequestTrans (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
 ) : NetAuthTrans(kAgeRequestTrans)
+,   m_ageName(ageName)
 ,   m_ageInstId(ageInstId)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_ageName, ageName, arrsize(m_ageName));
 }
 
 //============================================================================
@@ -2744,10 +2779,12 @@ bool AgeRequestTrans::Send () {
     if (!AcquireConn())
         return true;
 
+    plStringBuffer<uint16_t> ageName = m_ageName.ToUtf16();
+
     const uintptr_t msg[] = {
-        kCli2Auth_AgeRequest,
-                        m_transId,
-        (uintptr_t)  m_ageName,
+                     kCli2Auth_AgeRequest,
+                     m_transId,
+        (uintptr_t)  ageName.GetData(),
         (uintptr_t) &m_ageInstId,
     };
 
@@ -2936,21 +2973,18 @@ bool AccountCreateFromKeyRequestTrans::Recv (
 
 //============================================================================
 PlayerCreateRequestTrans::PlayerCreateRequestTrans (
-    const wchar_t                             playerName[],
-    const wchar_t                             avatarShape[],
-    const wchar_t                             friendInvite[],
+    const plString&                         playerName,
+    const plString&                         avatarShape,
+    const plString&                         friendInvite,
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) : NetAuthTrans(kPlayerCreateRequestTrans)
+,   m_playerName(playerName)
+,   m_avatarShape(avatarShape)
+,   m_friendInvite(friendInvite)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_playerName, playerName, arrsize(m_playerName));
-    StrCopy(m_avatarShape, avatarShape, arrsize(m_avatarShape));
-    if (friendInvite)
-        StrCopy(m_friendInvite, friendInvite, arrsize(m_friendInvite));
-    else
-        m_friendInvite[0] = 0;
     memset(&m_playerInfo, 0, sizeof(m_playerInfo));
 }
 
@@ -2959,16 +2993,20 @@ bool PlayerCreateRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> playerName = m_playerName.ToUtf16();
+    plStringBuffer<uint16_t> avatarShape = m_avatarShape.ToUtf16();
+    plStringBuffer<uint16_t> friendInvite = m_friendInvite.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_PlayerCreateRequest,
                         m_transId,
-        (uintptr_t)  m_playerName,
-        (uintptr_t)  m_avatarShape,
-        (uintptr_t)  m_friendInvite,
+        (uintptr_t)     playerName.GetData(),
+        (uintptr_t)     avatarShape.GetData(),
+        (uintptr_t)     friendInvite.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
-    
+
     return true;
 }
 
@@ -2988,10 +3026,10 @@ bool PlayerCreateRequestTrans::Recv (
 ) {
     const Auth2Cli_PlayerCreateReply & reply = *(const Auth2Cli_PlayerCreateReply *) msg;
     if (!IS_NET_ERROR(reply.result)) {
-        m_playerInfo.playerInt  = reply.playerInt;
-        m_playerInfo.explorer   = reply.explorer;
-        StrCopy(m_playerInfo.playerName, reply.playerName, arrsize(m_playerInfo.playerName));
-        StrCopy(m_playerInfo.avatarShape, reply.avatarShape, arrsize(m_playerInfo.avatarShape));
+        m_playerInfo.playerInt   = reply.playerInt;
+        m_playerInfo.explorer    = reply.explorer;
+        m_playerInfo.playerName  = plString::FromWchar(reply.playerName);
+        m_playerInfo.avatarShape = plString::FromWchar(reply.avatarShape);
     }
     m_result    = reply.result;
     m_state     = kTransStateComplete;
@@ -3166,19 +3204,18 @@ bool SetPlayerRequestTrans::Recv (
 
 //============================================================================
 AccountChangePasswordRequestTrans::AccountChangePasswordRequestTrans (
-    const wchar_t                                   accountName[],
-    const wchar_t                                   password[],
+    const plString&                                 accountName,
+    const plString&                                 password,
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) : NetAuthTrans(kAccountChangePasswordRequestTrans)
+,   m_accountName(accountName)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
-    
     CryptHashPassword(
-        plString::FromWchar(m_accountName),
-        plString::FromWchar(password),
+        m_accountName,
+        password,
         m_namePassHash
     );
 }
@@ -3188,10 +3225,12 @@ bool AccountChangePasswordRequestTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> accountName = m_accountName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_AcctChangePasswordRequest,
                         m_transId,
-        (uintptr_t)  m_accountName,
+        (uintptr_t)  accountName.GetData(),
         (uintptr_t)  &m_namePassHash,
     };
 
@@ -3228,14 +3267,14 @@ bool AccountChangePasswordRequestTrans::Recv (
 
 //============================================================================
 GetPublicAgeListTrans::GetPublicAgeListTrans (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) : NetAuthTrans(kGetPublicAgeListTrans)
+,   m_ageName(ageName)
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_ageName, ageName, arrsize(m_ageName));
 }
 
 //============================================================================
@@ -3243,10 +3282,12 @@ bool GetPublicAgeListTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> ageName = m_ageName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_GetPublicAgeList,
                         m_transId,
-        (uintptr_t)  &m_ageName,
+        (uintptr_t)     ageName.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -3817,10 +3858,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
     void *                      param,              // optional
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
-    const wchar_t               ageFilename[],      // optional. is used in match
-    const wchar_t               ageInstName[],      // optional. not used in match
-    const wchar_t               ageUserName[],      // optional. not used in match
-    const wchar_t               ageDesc[],          // optional. not used in match
+    const plString              ageFilename,      // optional. is used in match
+    const plString              ageInstName,      // optional. not used in match
+    const plString              ageUserName,      // optional. not used in match
+    const plString              ageDesc,          // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage         // optional. not used in match
 ) : NetAuthTrans(kVaultInitAgeTrans)
@@ -3828,10 +3869,10 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 ,   m_param(param)
 ,   m_ageInstId(ageInstId)
 ,   m_parentAgeInstId(parentAgeInstId)
-,   m_ageFilename(StrDup(ageFilename ? ageFilename : L""))
-,   m_ageInstName(StrDup(ageInstName ? ageInstName : L""))
-,   m_ageUserName(StrDup(ageUserName ? ageUserName : L""))
-,   m_ageDesc(StrDup(ageDesc ? ageDesc : L""))
+,   m_ageFilename(ageFilename)
+,   m_ageInstName(ageInstName)
+,   m_ageUserName(ageUserName)
+,   m_ageDesc(ageDesc)
 ,   m_ageSequenceNumber(ageSequenceNumber)
 ,   m_ageLanguage(ageLanguage)
 ,   m_ageId(0)
@@ -3841,10 +3882,6 @@ VaultInitAgeTrans::VaultInitAgeTrans (
 
 //============================================================================
 VaultInitAgeTrans::~VaultInitAgeTrans () {
-    free(m_ageFilename);
-    free(m_ageInstName);
-    free(m_ageUserName);
-    free(m_ageDesc);
 }
 
 //============================================================================
@@ -3852,19 +3889,24 @@ bool VaultInitAgeTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> ageFilename = m_ageFilename.ToUtf16();
+    plStringBuffer<uint16_t> ageInstName = m_ageInstName.ToUtf16();
+    plStringBuffer<uint16_t> ageUserName = m_ageUserName.ToUtf16();
+    plStringBuffer<uint16_t> ageDesc = m_ageDesc.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_VaultInitAgeRequest,
                         m_transId,
         (uintptr_t) &m_ageInstId,
         (uintptr_t) &m_parentAgeInstId,
-        (uintptr_t)  m_ageFilename,
-        (uintptr_t)  m_ageInstName,
-        (uintptr_t)  m_ageUserName,
-        (uintptr_t)  m_ageDesc,
-                        m_ageSequenceNumber,
-                        m_ageLanguage,
+        (uintptr_t)  ageFilename.GetData(),
+        (uintptr_t)  ageInstName.GetData(),
+        (uintptr_t)  ageUserName.GetData(),
+        (uintptr_t)  ageDesc.GetData(),
+                     m_ageSequenceNumber,
+                     m_ageLanguage,
     };
-    
+
     m_conn->Send(msg, arrsize(msg));
 
     return true;
@@ -4416,8 +4458,8 @@ bool ChangePlayerNameRequestTrans::Recv (
 
 //============================================================================
 SendFriendInviteTrans::SendFriendInviteTrans (
-    const wchar_t                           emailAddr[],
-    const wchar_t                           toName[],
+    const plString&                         emailAddr,
+    const plString&                         toName,
     const plUUID&                           inviteUuid,
     FNetCliAuthSendFriendInviteCallback     callback,
     void *                                  param
@@ -4425,9 +4467,9 @@ SendFriendInviteTrans::SendFriendInviteTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_inviteUuid(inviteUuid)
+,   m_toName(toName)
+,   m_emailAddress(emailAddr)
 {
-    StrCopy(m_emailAddress, emailAddr, arrsize(m_emailAddress));
-    StrCopy(m_toName, toName, arrsize(m_toName));
 }
 
 //============================================================================
@@ -4435,12 +4477,15 @@ bool SendFriendInviteTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> emailAddress = m_emailAddress.ToUtf16();
+    plStringBuffer<uint16_t> toName = m_toName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_SendFriendInviteRequest,
                         m_transId,
         (uintptr_t) &m_inviteUuid,
-        (uintptr_t)  m_emailAddress,
-        (uintptr_t)  m_toName,
+        (uintptr_t)  emailAddress.GetData(),
+        (uintptr_t)  toName.GetData(),
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4491,7 +4536,7 @@ void AuthConnectedNotifyTrans::Post() {
 //============================================================================
 ScoreCreateTrans::ScoreCreateTrans (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     unsigned                        gameType,
     int                             value,
     FNetCliAuthCreateScoreCallback  callback,
@@ -4500,12 +4545,12 @@ ScoreCreateTrans::ScoreCreateTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_ownerId(ownerId)
+,   m_gameName(gameName)
 ,   m_gameType(gameType)
 ,   m_value(value)
 ,   m_scoreId(0)
 ,   m_createdTime(0)
 {
-    StrCopy(m_gameName, gameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4513,16 +4558,15 @@ bool ScoreCreateTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar_t wgameName[kMaxGameScoreNameLength];
-    StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
 
     const uintptr_t msg[] = {
-            kCli2Auth_ScoreCreate,
+                        kCli2Auth_ScoreCreate,
                         m_transId,
                         m_ownerId,
-        (uintptr_t)  wgameName,
+           (uintptr_t)  gameName.GetData(),
                         m_gameType,
-                        (uintptr_t)m_value
+           (uintptr_t)  m_value
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4626,17 +4670,17 @@ bool ScoreDeleteTrans::Recv (
 //============================================================================
 ScoreGetScoresTrans::ScoreGetScoresTrans (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) : NetAuthTrans(kScoreGetScoresTrans)
 ,   m_callback(callback)
 ,   m_param(param)
 ,   m_ownerId(ownerId)
-,   m_scores(nil)
+,   m_gameName(gameName)
+,   m_scores(nullptr)
 ,   m_scoreCount(0)
 {
-    StrCopy(m_gameName, gameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4649,14 +4693,13 @@ bool ScoreGetScoresTrans::Send () {
     if (!AcquireConn())
         return false;
 
-    wchar_t wgameName[kMaxGameScoreNameLength];
-    StrToUnicode(wgameName, m_gameName, arrsize(wgameName));
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
 
     const uintptr_t msg[] = {
-        kCli2Auth_ScoreGetScores,
-                        m_transId,
-                        m_ownerId,
-        (uintptr_t)  wgameName
+                    kCli2Auth_ScoreGetScores,
+                    m_transId,
+                    m_ownerId,
+        (uintptr_t) gameName.GetData()
     };
 
     m_conn->Send(msg, arrsize(msg));
@@ -4896,7 +4939,7 @@ ScoreGetRanksTrans::ScoreGetRanksTrans (
     unsigned                    ownerId,
     unsigned                    scoreGroup,
     unsigned                    parentFolderId,
-    const char *                cGameName,
+    const plString&             gameName,
     unsigned                    timePeriod,
     unsigned                    numResults,
     unsigned                    pageNumber,
@@ -4909,12 +4952,12 @@ ScoreGetRanksTrans::ScoreGetRanksTrans (
 ,   m_ownerId(ownerId)
 ,   m_scoreGroup(scoreGroup)
 ,   m_parentFolderId(parentFolderId)
+,   m_gameName(gameName)
 ,   m_timePeriod(timePeriod)
 ,   m_numResults(numResults)
 ,   m_pageNumber(pageNumber)
 ,   m_sortDesc(sortDesc)
 {
-    StrToUnicode(m_gameName, cGameName, arrsize(m_gameName));
 }
 
 //============================================================================
@@ -4922,13 +4965,15 @@ bool ScoreGetRanksTrans::Send () {
     if (!AcquireConn())
         return false;
 
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
+
     const uintptr_t msg[] = {
         kCli2Auth_ScoreGetRanks,
                         m_transId,
                         m_ownerId,
                         m_scoreGroup,
                         m_parentFolderId,
-        (uintptr_t)  m_gameName,
+        (uintptr_t)     gameName.GetData(),
                         m_timePeriod,
                         m_numResults,
                         m_pageNumber,
@@ -4977,6 +5022,95 @@ bool ScoreGetRanksTrans::Recv (
 
     m_result        = reply.result;
     m_state         = kTransStateComplete;
+    return true;
+}
+
+/*****************************************************************************
+*
+*   ScoreGetHighScoresTrans
+*
+***/
+
+//============================================================================
+ScoreGetHighScoresTrans::ScoreGetHighScoresTrans(
+    unsigned                        ageId,
+    unsigned                        maxScores,
+    const plString&                 gameName,
+    FNetCliAuthGetScoresCallback    callback,
+    void *                          param
+    ) : NetAuthTrans(kScoreGetHighScoresTrans)
+    , m_callback(callback)
+    , m_param(param)
+    , m_ageId(ageId)
+    , m_maxScores(maxScores)
+    , m_gameName(gameName)
+    , m_scores(nullptr)
+    , m_scoreCount(0)
+{
+}
+
+//============================================================================
+ScoreGetHighScoresTrans::~ScoreGetHighScoresTrans() {
+    delete[] m_scores;
+}
+
+//============================================================================
+bool ScoreGetHighScoresTrans::Send() {
+    if (!AcquireConn())
+        return false;
+
+    plStringBuffer<uint16_t> gameName = m_gameName.ToUtf16();
+
+    const uintptr_t msg[] = {
+        kCli2Auth_ScoreGetHighScores,
+        m_transId,
+        m_ageId,
+        m_maxScores,
+        (uintptr_t)gameName.GetData()
+    };
+
+    m_conn->Send(msg, arrsize(msg));
+
+    return true;
+}
+
+//============================================================================
+void ScoreGetHighScoresTrans::Post() {
+    if (m_callback) {
+        m_callback(
+            m_result,
+            m_param,
+            m_scores,
+            m_scoreCount
+            );
+    }
+}
+
+//============================================================================
+bool ScoreGetHighScoresTrans::Recv(
+    const uint8_t msg[],
+    unsigned      bytes
+    ) {
+    const Auth2Cli_ScoreGetHighScoresReply & reply = *(const Auth2Cli_ScoreGetHighScoresReply *)msg;
+
+    if (reply.scoreCount > 0) {
+        m_scoreCount = reply.scoreCount;
+        m_scores = new NetGameScore[m_scoreCount];
+
+        uint8_t*    bufferPos = const_cast<uint8_t*>(reply.buffer);
+        unsigned    bufferLength = reply.byteCount;
+
+        for (unsigned i = 0; i < m_scoreCount; ++i) {
+            bufferLength -= m_scores[i].Read(bufferPos, bufferLength, &bufferPos);
+        }
+    }
+    else {
+        m_scoreCount = 0;
+        m_scores = nullptr;
+    }
+
+    m_result = reply.result;
+    m_state = kTransStateComplete;
     return true;
 }
 
@@ -5124,7 +5258,7 @@ void AuthPingEnable (bool enable) {
 
 //============================================================================
 void NetCliAuthStartConnect (
-    const char*     authAddrList[],
+    const plString  authAddrList[],
     uint32_t        authAddrCount
 ) {
     // TEMP: Only connect to one auth server until we fill out this module
@@ -5133,7 +5267,7 @@ void NetCliAuthStartConnect (
 
     for (unsigned i = 0; i < authAddrCount; ++i) {
         // Do we need to lookup the address?
-        const char* name = authAddrList[i];
+        const char* name = authAddrList[i].c_str();
         while (unsigned ch = *name) {
             ++name;
             if (!(isdigit(ch) || ch == L'.' || ch == L':')) {
@@ -5141,7 +5275,7 @@ void NetCliAuthStartConnect (
                 AsyncAddressLookupName(
                     &cancelId,
                     AsyncLookupCallback,
-                    authAddrList[i],
+                    authAddrList[i].c_str(),
                     GetClientPort(),
                     nil
                 );
@@ -5230,7 +5364,7 @@ void NetCliAuthAccountExistsRequest (
 
 //============================================================================
 void NetCliAuthLoginRequest (
-    const wchar_t                   accountName[],
+    const plString&                 accountName,
     const ShaDigest *               accountNamePassHash,
     const wchar_t                   authToken[],
     const wchar_t                   os[],
@@ -5238,8 +5372,8 @@ void NetCliAuthLoginRequest (
     void *                          param
 ) {
     // Cache updated login info if provided.
-    if (accountName)
-        StrCopy(s_accountName, accountName, arrsize(s_accountName));
+    if (!accountName.IsEmpty())
+        s_accountName = accountName;
     if (accountNamePassHash)
         memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));
     if (authToken)
@@ -5253,7 +5387,7 @@ void NetCliAuthLoginRequest (
 
 //============================================================================
 void NetCliAuthAgeRequest (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     const plUUID&                       ageInstId,
     FNetCliAuthAgeRequestCallback       callback,
     void *                              param
@@ -5269,8 +5403,8 @@ void NetCliAuthAgeRequest (
 
 //============================================================================
 void NetCliAuthGetEncryptionKey (
-    uint32_t      key[],
-    unsigned    size
+    uint32_t    key[],
+    size_t      size
 ) {
     unsigned memSize = std::min(arrsize(s_encryptionKey), size);
     memSize *= sizeof(uint32_t);
@@ -5319,14 +5453,13 @@ void NetCliAuthAccountCreateFromKeyRequest (
 
 //============================================================================
 void NetCliAuthPlayerCreateRequest (
-    const wchar_t                             playerName[],
-    const wchar_t                             avatarShape[],
-    const wchar_t                             friendInvite[],
+    const plString&                         playerName,
+    const plString&                         avatarShape,
+    const plString&                         friendInvite,
     FNetCliAuthPlayerCreateRequestCallback  callback,
     void *                                  param
 ) {
-    wchar_t name[kMaxPlayerNameLength];
-    StrCopy(name, playerName, arrsize(name));
+    plString name = playerName;
     ENetError error = FixupPlayerName(name);
     if (IS_NET_ERROR(error)) {
         NetCliAuthPlayerInfo playerInfo;
@@ -5425,7 +5558,7 @@ void NetCliAuthSetAgePublic (
 
 //============================================================================
 void NetCliAuthGetPublicAgeList (
-    const wchar_t                         ageName[],
+    const plString&                     ageName,
     FNetCliAuthGetPublicAgeListCallback callback,
     void *                              param
 ) {
@@ -5439,8 +5572,8 @@ void NetCliAuthGetPublicAgeList (
 
 //============================================================================
 void NetCliAuthAccountChangePasswordRequest (
-    const wchar_t                                     accountName[],
-    const wchar_t                                     password[],
+    const plString&                                 accountName,
+    const plString&                                 password,
     FNetCliAuthAccountChangePasswordRequestCallback callback,
     void *                                          param
 ) {
@@ -5738,10 +5871,10 @@ void NetCliAuthVaultSendNode (
 void NetCliAuthVaultInitAge (
     const plUUID&               ageInstId,          // optional. is used in match
     const plUUID&               parentAgeInstId,    // optional. is used in match
-    const wchar_t               ageFilename[],      // optional. is used in match
-    const wchar_t               ageInstName[],      // optional. not used in match
-    const wchar_t               ageUserName[],      // optional. not used in match
-    const wchar_t               ageDesc[],          // optional. not used in match
+    const plString&             ageFilename,        // optional. is used in match
+    const plString&             ageInstName,        // optional. not used in match
+    const plString&             ageUserName,        // optional. not used in match
+    const plString&             ageDesc,            // optional. not used in match
     unsigned                    ageSequenceNumber,  // optional. not used in match
     unsigned                    ageLanguage,        // optional. not used in match
     FNetCliAuthAgeInitCallback  callback,           // optional
@@ -5771,7 +5904,7 @@ void NetCliAuthSetRecvBufferHandler (
 
 //============================================================================
 void NetCliAuthSendCCRPetition (
-    const wchar_t *       petitionText
+    const plString&       petitionText
 ) {
     hsAssert(false, "eric, implement me.");
 }
@@ -5907,9 +6040,9 @@ void NetCliAuthChangePlayerNameRequest (
 
 //============================================================================
 void NetCliAuthSendFriendInvite (
-    const wchar_t                         emailAddress[],
-    const wchar_t                         toName[],
-    const plUUID&                         inviteUuid,
+    const plString&                     emailAddress,
+    const plString&                     toName,
+    const plUUID&                       inviteUuid,
     FNetCliAuthSendFriendInviteCallback callback,
     void *                              param
 ) {
@@ -5926,7 +6059,7 @@ void NetCliAuthSendFriendInvite (
 //============================================================================
 void NetCliAuthScoreCreate (
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     unsigned                        gameType,
     int                             value,
     FNetCliAuthCreateScoreCallback  callback,
@@ -5960,7 +6093,7 @@ void NetCliAuthScoreDelete(
 //============================================================================
 void NetCliAuthScoreGetScores(
     unsigned                        ownerId,
-    const char*                     gameName,
+    const plString&                 gameName,
     FNetCliAuthGetScoresCallback    callback,
     void *                          param
 ) {
@@ -6028,7 +6161,7 @@ void NetCliAuthScoreGetRankList(
     unsigned                    ownerId,
     unsigned                    scoreGroup,
     unsigned                    parentFolderId,
-    const char *                gameName,
+    const plString&             gameName,
     unsigned                    timePeriod,
     unsigned                    numResults,
     unsigned                    pageNumber,
@@ -6045,6 +6178,24 @@ void NetCliAuthScoreGetRankList(
         numResults,
         pageNumber,
         sortDesc,
+        callback,
+        param
+    );
+    NetTransSend(trans);
+}
+
+//============================================================================
+void NetCliAuthScoreGetHighScores(
+    unsigned                        ageId,
+    unsigned                        maxScores,
+    const plString&                 gameName,
+    FNetCliAuthGetScoresCallback    callback,
+    void *                          param
+    ) {
+    ScoreGetHighScoresTrans * trans = new ScoreGetHighScoresTrans(
+        ageId,
+        maxScores,
+        gameName,
         callback,
         param
     );

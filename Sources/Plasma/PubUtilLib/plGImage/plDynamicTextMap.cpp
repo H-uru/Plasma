@@ -58,7 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsExceptions.h"
 
 #include "hsMatrix44.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plMessage/plDynamicTextMsg.h"
 #include "pnKeyedObject/plKey.h"
 #include "plProfile.h"
@@ -331,14 +331,14 @@ void    plDynamicTextMap::SetInitBuffer( uint32_t *buffer )
 
 //// CopyFrom /////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::CopyFrom( plMipmap *source )
+void plDynamicTextMap::CopyFrom(const plMipmap *source)
 {
     hsAssert( false, "Copying plDynamicTextMaps is not supported." );
 }
 
 //// Clone ////////////////////////////////////////////////////////////////////
 
-plMipmap    *plDynamicTextMap::Clone( void )
+plMipmap *plDynamicTextMap::Clone() const
 {
     static bool alreadyWarned = false;
 

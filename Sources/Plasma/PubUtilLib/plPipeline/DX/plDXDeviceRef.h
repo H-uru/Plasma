@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plDXDeviceRef_h
 
 #include "HeadSpin.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 
 
 //// Definition ///////////////////////////////////////////////////////////////

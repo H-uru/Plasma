@@ -181,20 +181,21 @@ enum ETransType {
     kScoreSetPointsTrans,
     kScoreGetRanksTrans,
     kSendFriendInviteTrans,
-    
+    kScoreGetHighScoresTrans,
+
     //========================================================================
     // NglGame.cpp transactions
     kJoinAgeRequestTrans,
     kGmRcvdPropagatedBufferTrans,
     kGmRcvdGameMgrMsgTrans,
-    
+
     //========================================================================
     // NglFile.cpp transactions
     kBuildIdRequestTrans,
     kManifestRequestTrans,
     kDownloadRequestTrans,
     kFileRcvdFileDownloadChunkTrans,
-    
+
     //========================================================================
     // NglCore.cpp transactions
     kReportNetErrorTrans,
@@ -251,6 +252,7 @@ static const char * s_transTypes[] = {
     "ScoreSetPointsTrans",
     "ScoreGetRanksTrans",
     "SendFriendInviteTrans",
+    "ScoreGetHighScoresTrans",
     
     // NglGame.cpp
     "JoinAgeRequestTrans",

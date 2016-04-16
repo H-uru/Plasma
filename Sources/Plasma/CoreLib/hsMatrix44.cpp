@@ -348,6 +348,8 @@ hsMatrix44&     hsMatrix44::SetRotate(int axis, float radians)
         c1 = 0;
         c2 = 1;
         break;
+    default:
+        hsAssert(false, "Invalid rotation axis specified");
     }
     fMap[c1][c1] = c;
     fMap[c2][c2] = c;
@@ -923,6 +925,16 @@ void hsMatrix44::Write(hsStream *stream)
         int i,j;
         for(i=0; i<4; i++)
             for(j=0; j<4; j++)
-                stream->WriteLEFloat(fMap[i][j]);         
+                stream->WriteLEFloat(fMap[i][j]);
     }
+}
+
+
+PL_FORMAT_IMPL(const hsMatrix44&)
+{
+    PL_FORMAT_FORWARD(plFormat("hsMatrix44[[{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]; [{.4f}, {.4f}, {.4f}, {.4f}]]",
+                    value.fMap[0][0], value.fMap[0][1], value.fMap[0][2], value.fMap[0][3],
+                    value.fMap[1][0], value.fMap[1][1], value.fMap[1][2], value.fMap[1][3],
+                    value.fMap[2][0], value.fMap[2][1], value.fMap[2][2], value.fMap[2][3],
+                    value.fMap[3][0], value.fMap[3][1], value.fMap[3][2], value.fMap[3][3]));
 }

@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCliAgeJoiner.h"
 #include "plNetClientMgr.h"
 #include "plNetLinkingMgr.h"
-#include "plNetObjectDebugger.h"
+#include "plNetCommon/plNetObjectDebugger.h"
 
 #include "pnSceneObject/plSceneObject.h"
 #include "pnSceneObject/plCoordinateInterface.h"
@@ -226,7 +226,7 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (StrLen(age.ageDatasetName) == 0 || StrCmpI(age.ageDatasetName, "StartUp") == 0) {
+    if (age.ageDatasetName.IsEmpty() || age.ageDatasetName.CompareI("StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
 
         // no need to update if we're not using a GameSrv
@@ -276,7 +276,7 @@ void plNCAgeJoiner::ExecNextOp () {
         case kLoadPlayer: {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadPlayer");
             // Start loading local player
-            const char * avatarName;
+            plString avatarName;
             if (NetCommNeedToLoadAvatar()) {
                 if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge))
                     avatarName = "Male";

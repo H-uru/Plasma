@@ -63,6 +63,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "hsResMgr.h"
 #include "plPipeline.h"
+#include "plPipeDebugFlags.h"
 #include "plGeometrySpan.h"
 #include "plSpaceTree.h"
 #include "plParticleFiller.h"
@@ -71,19 +72,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plClusterGroup.h"
 #include "plCluster.h"
 #include "plSpanTemplate.h"
-                                    
+#include "plGBufferGroup.h"
+
 #include "plMath/hsRadixSort.h"
 #include "plSurface/hsGMaterial.h"
 #include "plSurface/plLayerInterface.h"
 #include "plPipeline/plFogEnvironment.h"
-#include "plPipeline/hsGDeviceRef.h"
-#include "plPipeline/plPipeDebugFlags.h"
+#include "hsGDeviceRef.h"
 #include "pnMessage/plRefMsg.h"
 #include "pnMessage/plNodeRefMsg.h" 
 #include "pnMessage/plDISpansMsg.h"
 #include "plMessage/plDeviceRecreateMsg.h"
 #include "plMessage/plRenderMsg.h"
-#include "plPipeline/plGBufferGroup.h"
 #include "pnSceneObject/plDrawInterface.h"
 #include "pnKeyedObject/plKey.h"
 #include "plParticleSystem/plParticleEmitter.h"
@@ -1967,7 +1967,6 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 
     memset(newStarts, 0, kMaxBufferGroups * kMaxIndexBuffers * sizeof(int16_t));
 
-    uint32_t start = 0;
     for( i = 0; i < visList.GetCount(); i++ )
     {
         plIcicle* span = (plIcicle*)fSpans[visList[i]];

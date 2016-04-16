@@ -49,7 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGMatState.inl"
 #include "plMessage/plLayRefMsg.h"
 #include "plGImage/plBitmap.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plShader.h"
 
 #include "plPipeline.h"

@@ -227,7 +227,7 @@ PyObject* plPythonPack::OpenPacked(const plString& fileName)
 bool plPythonPack::IsPackedFile(const plString& fileName)
 {
     if (!Open())
-        return nil;
+        return false;
 
     plString pythonName = fileName + ".py";
 

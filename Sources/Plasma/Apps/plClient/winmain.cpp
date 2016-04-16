@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <curl/curl.h>
 
 #include "hsStream.h"
+#include "plCmdParser.h"
 #include "plClient.h"
 #include "plClientResMgr/plClientResMgr.h"
 #include "pfCrashHandler/plCrashCli.h"
@@ -93,14 +94,18 @@ enum
     kArgSkipLoginDialog,
     kArgServerIni,
     kArgLocalData,
-    kArgSkipPreload
+    kArgSkipPreload,
+    kArgPlayerId,
+    kArgStartUpAgeName,
 };
 
-static const CmdArgDef s_cmdLineArgs[] = {
-    { kCmdArgFlagged  | kCmdTypeBool,       L"SkipLoginDialog", kArgSkipLoginDialog },
-    { kCmdArgFlagged  | kCmdTypeString,     L"ServerIni",       kArgServerIni },
-    { kCmdArgFlagged  | kCmdTypeBool,       L"LocalData",       kArgLocalData   },
-    { kCmdArgFlagged  | kCmdTypeBool,       L"SkipPreload",     kArgSkipPreload },
+static const plCmdArgDef s_cmdLineArgs[] = {
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipLoginDialog", kArgSkipLoginDialog },
+    { kCmdArgFlagged  | kCmdTypeString,     "ServerIni",       kArgServerIni },
+    { kCmdArgFlagged  | kCmdTypeBool,       "LocalData",       kArgLocalData   },
+    { kCmdArgFlagged  | kCmdTypeBool,       "SkipPreload",     kArgSkipPreload },
+    { kCmdArgFlagged  | kCmdTypeInt,        "PlayerId",        kArgPlayerId },
+    { kCmdArgFlagged  | kCmdTypeString,     "Age",             kArgStartUpAgeName },
 };
 
 /// Made globals now, so we can set them to zero if we take the border and 
@@ -813,7 +818,7 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
             store->SetPassword(pLoginParam->username, plString::Null);
     }
 
-    NetCommSetAccountUsernamePassword(theUser.ToWchar(), pLoginParam->namePassHash);
+    NetCommSetAccountUsernamePassword(theUser, pLoginParam->namePassHash);
 
     // FIXME: Real OS detection
     NetCommSetAuthTokenAndOS(nil, L"win");
@@ -871,7 +876,7 @@ void StatusCallback(void *param)
 
     HWND hwnd = (HWND)param;
 
-    const char *statusUrl = GetServerStatusUrl();
+    plString statusUrl = GetServerStatusUrl();
     CURL *hCurl = curl_easy_init();
 
     // For reporting errors
@@ -880,14 +885,14 @@ void StatusCallback(void *param)
 
     while(s_loginDlgRunning)
     {
-        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl);
+        curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl.c_str());
         curl_easy_setopt(hCurl, CURLOPT_USERAGENT, "UruClient/1.0");
         curl_easy_setopt(hCurl, CURLOPT_WRITEFUNCTION, &CurlCallback);
         curl_easy_setopt(hCurl, CURLOPT_WRITEDATA, param);
 
-        if (statusUrl[0] && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
+        if (!statusUrl.IsEmpty() && curl_easy_perform(hCurl) != 0) // only perform request if there's actually a URL set
             PostMessage(hwnd, WM_USER_SETSTATUSMSG, 0, (LPARAM) curlError);
-        
+
         for(unsigned i = 0; i < UPDATE_STATUSMSG_SECONDS && s_loginDlgRunning; ++i)
         {
             Sleep(1000);
@@ -1033,8 +1038,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
-                const char* signupurl = GetServerSignupUrl();
-                ShellExecuteA(NULL, "open", signupurl, NULL, NULL, SW_SHOWNORMAL);
+                plString signupurl = GetServerSignupUrl();
+                ShellExecuteW(NULL, L"open", signupurl.ToWchar(), NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }
@@ -1132,8 +1137,14 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     // Set global handle
     gHInst = hInst;
 
-    CCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
-    cmdParser.Parse();
+    std::vector<plString> args;
+    args.reserve(__argc);
+    for (size_t i = 0; i < __argc; i++) {
+        args.push_back(plString::FromUtf8(__argv[i]));
+    }
+
+    plCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
+    cmdParser.Parse(args);
 
     bool doIntroDialogs = true;
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1146,11 +1157,15 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
     if (cmdParser.IsSpecified(kArgSkipPreload))
         gSkipPreload = true;
+    if (cmdParser.IsSpecified(kArgPlayerId))
+        NetCommSetIniPlayerId(cmdParser.GetInt(kArgPlayerId));
+    if (cmdParser.IsSpecified(kArgStartUpAgeName))
+        NetCommSetIniStartUpAge(cmdParser.GetString(kArgStartUpAgeName));
 #endif
 
     plFileName serverIni = "server.ini";
     if (cmdParser.IsSpecified(kArgServerIni))
-        serverIni = plString::FromWchar(cmdParser.GetString(kArgServerIni));
+        serverIni = cmdParser.GetString(kArgServerIni);
 
     // check to see if we were launched from the patcher
     bool eventExists = false;
@@ -1175,25 +1190,9 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     memset(&pi, 0, sizeof(pi));
     si.cb = sizeof(si);
 
-    const char** addrs;
-    
     if (!eventExists) // if it is missing, assume patcher wasn't launched
     {
-        plStringStream cmdLine;
-
-        GetAuthSrvHostnames(&addrs);
-        if (strlen(addrs[0]))
-            cmdLine << " /AuthSrv=" << addrs[0];
-
-        GetFileSrvHostnames(&addrs);
-        if (strlen(addrs[0]))
-            cmdLine << " /FileSrv=" << addrs[0];
-
-        GetGateKeeperSrvHostnames(&addrs);
-        if (strlen(addrs[0]))
-            cmdLine << " /GateKeeperSrv=" << addrs[0];
-
-        if(!CreateProcessW(s_patcherExeName, (LPWSTR)cmdLine.GetString().ToUtf16().GetData(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
+        if(!CreateProcessW(s_patcherExeName, NULL, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi))
         {
             hsMessageBox("Failed to launch patcher", "Error", hsMessageBoxNormal);
         }
@@ -1256,8 +1255,6 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     }
 
     NetCliAuthAutoReconnectEnable(false);
-
-    NetCommSetReadIniAccountInfo(!doIntroDialogs);
     InitNetClientComm();
 
     curl_global_init(CURL_GLOBAL_ALL);
@@ -1270,9 +1267,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
     if (!doIntroDialogs && loginParam.remember) {
         ENetError auth;
 
-        wchar_t wusername[kMaxAccountNameLength];
-        StrToUnicode(wusername, loginParam.username, arrsize(wusername));
-        NetCommSetAccountUsernamePassword(wusername, loginParam.namePassHash);
+        NetCommSetAccountUsernamePassword(loginParam.username, loginParam.namePassHash);
         bool cancelled = AuthenticateNetClientComm(&auth, NULL);
 
         if (IS_NET_ERROR(auth) || cancelled) {

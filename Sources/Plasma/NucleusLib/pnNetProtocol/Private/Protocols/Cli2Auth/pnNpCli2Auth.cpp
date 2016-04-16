@@ -335,6 +335,13 @@ static const NetMsgField kScoreGetRanksFields[] = {
     NET_MSG_FIELD_DWORD(),                          // sortDesc
 };
 
+static const NetMsgField kScoreGetHighScoresFields[] = {
+    kNetMsgFieldTransId,                            // transId
+    NET_MSG_FIELD_DWORD(),                          // ageId
+    NET_MSG_FIELD_DWORD(),                          // maxScores
+    NET_MSG_FIELD_STRING(kMaxGameScoreNameLength),  // gameName
+};
+
 
 /*****************************************************************************
 *
@@ -617,6 +624,14 @@ static const NetMsgField kScoreGetRanksReplyFields[] = {
     NET_MSG_FIELD_VAR_PTR(),                                // nodeBuffer
 };
 
+static const NetMsgField kScoreGetHighScoresReplyFields[] = {
+    kNetMsgFieldTransId,                                    // transId
+    kNetMsgFieldENetError,                                  // result
+    NET_MSG_FIELD_DWORD(),                                  // scoreCount
+    NET_MSG_FIELD_VAR_COUNT(1, 1024 * 1024),                // scoreBytes
+    NET_MSG_FIELD_VAR_PTR(),                                // scoreBuffer
+};
+
 } using namespace Cli2Auth;
 
 
@@ -673,6 +688,7 @@ const NetMsg kNetMsg_Cli2Auth_ScoreAddPoints            = NET_MSG(kCli2Auth_Scor
 const NetMsg kNetMsg_Cli2Auth_ScoreTransferPoints       = NET_MSG(kCli2Auth_ScoreTransferPoints,        kScoreTransferPointsFields);
 const NetMsg kNetMsg_Cli2Auth_ScoreSetPoints            = NET_MSG(kCli2Auth_ScoreSetPoints,             kScoreSetPointsFields);
 const NetMsg kNetMsg_Cli2Auth_ScoreGetRanks             = NET_MSG(kCli2Auth_ScoreGetRanks,              kScoreGetRanksFields);
+const NetMsg kNetMsg_Cli2Auth_ScoreGetHighScores        = NET_MSG(kCli2Auth_ScoreGetHighScores,         kScoreGetHighScoresFields);
 
 const NetMsg kNetMsg_Auth2Cli_PingReply                 = NET_MSG(kAuth2Cli_PingReply,                  kPingReplyFields);
 const NetMsg kNetMsg_Auth2Cli_ClientRegisterReply       = NET_MSG(kAuth2Cli_ClientRegisterReply,        kClientRegisterReplyFields);
@@ -719,3 +735,4 @@ const NetMsg kNetMsg_Auth2Cli_ScoreAddPointsReply       = NET_MSG(kAuth2Cli_Scor
 const NetMsg kNetMsg_Auth2Cli_ScoreTransferPointsReply  = NET_MSG(kAuth2Cli_ScoreTransferPointsReply,   kScoreTransferPointsReplyFields);
 const NetMsg kNetMsg_Auth2Cli_ScoreSetPointsReply       = NET_MSG(kAuth2Cli_ScoreSetPointsReply,        kScoreSetPointsReplyFields);
 const NetMsg kNetMsg_Auth2Cli_ScoreGetRanksReply        = NET_MSG(kAuth2Cli_ScoreGetRanksReply,         kScoreGetRanksReplyFields);
+const NetMsg kNetMsg_Auth2Cli_ScoreGetHighScoresReply   = NET_MSG(kAuth2Cli_ScoreGetHighScoresReply,    kScoreGetHighScoresReplyFields);

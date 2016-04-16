@@ -58,7 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define PRIORITY_TIME(class)            TPriorityTime< class >
 
-#define PRIQ(class,priority)            TPriorityQueue< class,priority >
 #define PRIQDECL(class,priority,field)  TPriorityQueueDecl< class,priority,offsetof(class,field) >
 
 

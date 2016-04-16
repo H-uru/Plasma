@@ -283,7 +283,7 @@ bool plDSoundBuffer::SetupStreamingSource(plAudioFileReader *stream)
     
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
-    alGetError();
+    error = alGetError();
     if( error != AL_NO_ERROR )
     {
         return false;
@@ -348,7 +348,7 @@ bool plDSoundBuffer::SetupStreamingSource(void *data, unsigned bytes)
     SetScalarVolume(0);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
-    alGetError();
+    error = alGetError();
     if( error != AL_NO_ERROR )
     {
         return false;
@@ -478,8 +478,7 @@ bool plDSoundBuffer::GetAvailableBufferId(unsigned *bufferId)
 
 bool plDSoundBuffer::SetupVoiceSource()
 {
-    ALenum error;
-    alGetError();
+    ALenum error = alGetError();
 
      // Generate AL Buffers
     alGenBuffers( STREAMING_BUFFERS, streamingBuffers );
@@ -507,13 +506,13 @@ bool plDSoundBuffer::SetupVoiceSource()
     SetScalarVolume(0);
     
     alSourcef(source, AL_ROLLOFF_FACTOR, 0.3048);
-    alGetError();
+    error = alGetError();
     if( error != AL_NO_ERROR )
     {
         return false;
     }
     alSourcei(source, AL_BUFFER, 0);
-    alGetError();
+    error = alGetError();
     //alSourcei(source, AL_PITCH, 0);
 
     // dont queue any buffers here

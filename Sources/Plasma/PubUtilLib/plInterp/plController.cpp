@@ -47,6 +47,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimTimeConvert.h"
 
 #include <algorithm>
+#include <type_traits>
+
 
 /////////////////////////////////////////////
 // Controller interp caching
@@ -78,7 +80,7 @@ void plControllerCacheInfo::SetATC(plAnimTimeConvert *atc)
 
 plLeafController::~plLeafController()
 {
-    delete[] fKeys;
+    delete[] reinterpret_cast<hsKeyFrame *>(fKeys);
 }
 
 void plLeafController::Interp(float time, float* result, plControllerCacheInfo *cache) const
@@ -373,11 +375,11 @@ hsMatrix44Key *plLeafController::GetMatrix44Key(uint32_t i) const
 
 void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
 {
-    int cIdx;
-    int kIdx;
+    int cIdx = 0;
+    int kIdx = 0;
     uint32_t stride = GetStride();
     uint8_t *keyPtr = (uint8_t *)fKeys;
-    for (cIdx = 0, kIdx = 0; cIdx < fNumKeys, kIdx < keyTimes.GetCount();)
+    while (cIdx < fNumKeys && kIdx < keyTimes.GetCount())
     {
         float kTime = keyTimes[kIdx];
         float cTime = ((hsKeyFrame*)(keyPtr + cIdx * stride))->fFrame / MAX_FRAMES_PER_SEC;
@@ -408,57 +410,81 @@ void plLeafController::GetKeyTimes(hsTArray<float> &keyTimes) const
 
 void plLeafController::AllocKeys(uint32_t numKeys, uint8_t type)
 {
-    delete fKeys;
+    delete[] reinterpret_cast<hsKeyFrame *>(fKeys);
     fNumKeys = numKeys;
     fType = type;
 
     switch (fType)
     {
     case hsKeyFrame::kPoint3KeyFrame:
+        static_assert(std::is_trivially_destructible<hsPoint3Key>::value,
+                      "hsPoint3Key MUST be trivially destructible");
         fKeys = new hsPoint3Key[fNumKeys];
         break;
 
     case hsKeyFrame::kBezPoint3KeyFrame:
+        static_assert(std::is_trivially_destructible<hsBezPoint3Key>::value,
+                      "hsBezPoint3Key MUST be trivially destructible");
         fKeys = new hsBezPoint3Key[fNumKeys];
         break;
 
     case hsKeyFrame::kScalarKeyFrame:
+        static_assert(std::is_trivially_destructible<hsScalarKey>::value,
+                      "hsScalarKey MUST be trivially destructible");
         fKeys = new hsScalarKey[fNumKeys];
         break;
 
     case hsKeyFrame::kBezScalarKeyFrame:
+        static_assert(std::is_trivially_destructible<hsBezScalarKey>::value,
+                      "hsBezScalarKey MUST be trivially destructible");
         fKeys = new hsBezScalarKey[fNumKeys];
         break;
 
     case hsKeyFrame::kScaleKeyFrame:
+        static_assert(std::is_trivially_destructible<hsScaleKey>::value,
+                      "hsScaleKey MUST be trivially destructible");
         fKeys = new hsScaleKey[fNumKeys];
         break;
 
     case hsKeyFrame::kBezScaleKeyFrame:
+        static_assert(std::is_trivially_destructible<hsBezScaleKey>::value,
+                      "hsBezScaleKey MUST be trivially destructible");
         fKeys = new hsBezScaleKey[fNumKeys];
         break;
 
     case hsKeyFrame::kQuatKeyFrame:
+        static_assert(std::is_trivially_destructible<hsQuatKey>::value,
+                      "hsQuatKey MUST be trivially destructible");
         fKeys = new hsQuatKey[fNumKeys];
         break;
 
     case hsKeyFrame::kCompressedQuatKeyFrame32:
+        static_assert(std::is_trivially_destructible<hsCompressedQuatKey32>::value,
+                      "hsCompressedQuatKey32 MUST be trivially destructible");
         fKeys = new hsCompressedQuatKey32[fNumKeys];
         break;
 
     case hsKeyFrame::kCompressedQuatKeyFrame64:
+        static_assert(std::is_trivially_destructible<hsCompressedQuatKey64>::value,
+                      "hsCompressedQuatKey64 MUST be trivially destructible");
         fKeys = new hsCompressedQuatKey64[fNumKeys];
         break;
 
     case hsKeyFrame::k3dsMaxKeyFrame:
+        static_assert(std::is_trivially_destructible<hsG3DSMaxKeyFrame>::value,
+                      "hsG3DSMaxKeyFrame MUST be trivially destructible");
         fKeys = new hsG3DSMaxKeyFrame[fNumKeys];
         break;
 
     case hsKeyFrame::kMatrix33KeyFrame:
+        static_assert(std::is_trivially_destructible<hsMatrix33Key>::value,
+                      "hsMatrix33Key MUST be trivially destructible");
         fKeys = new hsMatrix33Key[fNumKeys];
         break;
 
     case hsKeyFrame::kMatrix44KeyFrame:
+        static_assert(std::is_trivially_destructible<hsMatrix44Key>::value,
+                      "hsMatrix44Key MUST be trivially destructible");
         fKeys = new hsMatrix44Key[fNumKeys];
         break;
 

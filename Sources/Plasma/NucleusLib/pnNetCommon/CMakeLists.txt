@@ -9,7 +9,6 @@ set(pnNetCommon_HEADERS
     plNetAddress.h
     plNetApp.h
     plNetGroup.h
-    plNetResManager.h
     plNetServers.h
     plNetSharedState.h
     plSDLTypes.h
@@ -24,7 +23,6 @@ set(pnNetCommon_SOURCES
     plNetAddress.cpp
     plNetApp.cpp
     plNetGroup.cpp
-    plNetResManager.cpp
     plNetServers.cpp
     plNetSharedState.cpp
     plSDLTypes.cpp
@@ -39,7 +37,6 @@ target_link_libraries(pnNetCommon pnDispatch)
 target_link_libraries(pnNetCommon pnFactory)
 target_link_libraries(pnNetCommon pnKeyedObject)
 target_link_libraries(pnNetCommon pnUUID)
-target_link_libraries(pnNetCommon plStatusLog)
 if(WIN32)
     target_link_libraries(pnNetCommon ws2_32)
 endif(WIN32)

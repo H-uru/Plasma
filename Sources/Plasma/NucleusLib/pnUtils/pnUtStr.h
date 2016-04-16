@@ -55,9 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 // Got Damn eap...
 // Duplicate Symbols in shlwapi!
 #ifdef _INC_SHLWAPI
-#   undef StrChr
 #   undef StrDup
-#   undef StrStr
 #endif // _INC_SHLWAPI
 
 /*****************************************************************************
@@ -68,14 +66,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 inline char  CharLowerFast (char  ch) { return ((ch >=  'A') && (ch <=  'Z')) ? (char )(ch +  'a' -  'A') : ch; }
 inline wchar_t CharLowerFast (wchar_t ch) { return ((ch >= L'A') && (ch <= L'Z')) ? (wchar_t)(ch + L'a' - L'A') : ch; }
-
-unsigned StrBytes (const char str[]);   // includes space for terminator
-unsigned StrBytes (const wchar_t str[]);  // includes space for terminator
-
-char * StrChr (char * str, char ch, unsigned chars = (unsigned)-1);
-wchar_t * StrChr (wchar_t * str, wchar_t ch, unsigned chars = (unsigned)-1);
-const char * StrChr (const char str[], char ch, unsigned chars = (unsigned)-1);
-const wchar_t * StrChr (const wchar_t str[], wchar_t ch, unsigned chars = (unsigned)-1);
 
 unsigned StrPrintf (char * dest, unsigned count, const char format[], ...);
 unsigned StrPrintf (wchar_t * dest, unsigned count, const wchar_t format[], ...);
@@ -89,60 +79,18 @@ unsigned StrLen (const wchar_t str[]);
 char * StrDup (const char str[]);
 wchar_t * StrDup (const wchar_t str[]);
 
-char * StrDupLen (const char str[], unsigned chars);
-wchar_t * StrDupLen (const wchar_t str[], unsigned chars);
-
-wchar_t * StrDupToUnicode (const char str[]);
-char * StrDupToAnsi (const wchar_t str[]);
-
 int StrCmp (const char str1[], const char str2[], unsigned chars = (unsigned)-1);
 int StrCmp (const wchar_t str1[], const wchar_t str2[], unsigned chars = (unsigned)-1);
 
 int StrCmpI (const char str1[], const char str2[], unsigned chars = (unsigned)-1);
 int StrCmpI (const wchar_t str1[], const wchar_t str2[], unsigned chars = (unsigned)-1);
 
-char * StrStr (char * source, const char match[]);
-const char * StrStr (const char source[], const char match[]);
-wchar_t * StrStr (wchar_t * source, const wchar_t match[]);
-const wchar_t * StrStr (const wchar_t source[], const wchar_t match[]);
-
 void StrCopy (char * dest, const char source[], unsigned chars);
 void StrCopy (wchar_t * dest, const wchar_t source[], unsigned chars);
-
-void StrPack (char * dest, const char source[], unsigned chars);
-void StrPack (wchar_t * dest, const wchar_t source[], unsigned chars);
-
-unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars);
-unsigned StrToAnsi (char * dest, const wchar_t source[], unsigned destChars, unsigned codePage);
-
-unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars);
-unsigned StrToUnicode (wchar_t * dest, const char source[], unsigned destChars, unsigned codePage);
-
-// FIXME: Get rid of these
-inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars)
-    { return StrToUnicode(dest, source.c_str(), destChars); }
-inline unsigned StrToUnicode(wchar_t * dest, const plString & source, unsigned destChars, unsigned codePage)
-    { return StrToUnicode(dest, source.c_str(), destChars, codePage); }
-
-float StrToFloat (const char source[], const char ** endptr);
-float StrToFloat (const wchar_t source[], const wchar_t ** endptr);
-
-int StrToInt (const char source[], const char ** endptr);
-int StrToInt (const wchar_t source[], const wchar_t ** endptr);
-
-unsigned StrToUnsigned (char source[], char ** endptr, int radix);
-unsigned StrToUnsigned (wchar_t source[], wchar_t ** endptr, int radix);
-unsigned StrToUnsigned (const char source[], const char ** endptr, int radix);
-unsigned StrToUnsigned (const wchar_t source[], const wchar_t ** endptr, int radix);
 
 uint32_t StrHash (const char str[], unsigned chars = (unsigned)-1);
 uint32_t StrHash (const wchar_t str[], unsigned chars = (unsigned)-1);
 
 uint32_t StrHashI (const char str[], unsigned chars = (unsigned)-1);
 uint32_t StrHashI (const wchar_t str[], unsigned chars = (unsigned)-1);
-
-bool StrTokenize (const char * source[], char * dest, unsigned chars, const char whitespace[], unsigned maxWhitespaceSkipCount = (unsigned)-1);
-bool StrTokenize (const wchar_t * source[], wchar_t * dest, unsigned chars, const wchar_t whitespace[], unsigned maxWhitespaceSkipCount = (unsigned)-1);
-bool StrTokenize (const char * source[], ARRAY(char) * destArray, const char whitespace[], unsigned maxWhitespaceSkipCount = (unsigned)-1);
-bool StrTokenize (const wchar_t * source[], ARRAY(wchar_t) * destArray, const wchar_t whitespace[], unsigned maxWhitespaceSkipCount = (unsigned)-1);
 #endif

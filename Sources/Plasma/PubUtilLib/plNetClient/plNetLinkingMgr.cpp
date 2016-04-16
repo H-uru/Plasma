@@ -434,11 +434,7 @@ void plNetLinkingMgr::IDoLink(plLinkToAgeMsg* msg)
     NlmJoinAgeOp * joinAgeOp = new NlmJoinAgeOp;
     joinAgeOp->age.ageInstId = *GetAgeLink()->GetAgeInfo()->GetAgeInstanceGuid();
     joinAgeOp->muteSfx = !msg->PlayLinkInSfx();
-    StrCopy(
-        joinAgeOp->age.ageDatasetName,
-        GetAgeLink()->GetAgeInfo()->GetAgeFilename().c_str(),
-        arrsize(joinAgeOp->age.ageDatasetName)
-        );
+    joinAgeOp->age.ageDatasetName = GetAgeLink()->GetAgeInfo()->GetAgeFilename();
     StrCopy(
         joinAgeOp->age.spawnPtName,
         GetAgeLink()->SpawnPoint().GetName().c_str(),
@@ -878,7 +874,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
     // Fixup empty fields
     if (info->HasAgeFilename())
     {
-        info->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()).c_str());
+        info->SetAgeFilename(plNetLinkingMgr::GetProperAgeName(info->GetAgeFilename()));
 
         if (!info->HasAgeInstanceName())
         {
@@ -1069,14 +1065,10 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
         case plNetCommon::LinkingRules::kChildAgeBook:
             {
                 plAgeLinkStruct childLink;
-                wchar_t parentAgeName[MAX_PATH];
-                if (link->HasParentAgeFilename())
-                    StrToUnicode(parentAgeName, link->GetParentAgeFilename(), arrsize(parentAgeName));
-
                 switch(VaultAgeFindOrCreateChildAgeLink(
-                      (link->HasParentAgeFilename() ? parentAgeName : nil),
-                      info,
-                      &childLink))
+                          link->GetParentAgeFilename(),
+                          info,
+                          &childLink))
                 {
                     case static_cast<uint8_t>(hsFail):
                         success = kLinkFailed;

@@ -259,42 +259,28 @@ bool plAgeLoader::RemovePendingPageInRoomKey(plKey pKey)
 class plExcludePage
 {
     public:
-        char    *fPageName;
-        char    *fAgeName;
+        plString fPageName;
+        plString fAgeName;
 
-        plExcludePage() { fPageName = nil; fAgeName = nil; }
-        plExcludePage( char *p, char *a )
-        {
-            fPageName = p; 
-            fAgeName = a;
-        }
+        plExcludePage() { }
+        plExcludePage(const plString& p, const plString& a)
+            : fPageName(p), fAgeName(a)
+        { }
 };
 
 static hsTArray<plExcludePage>  sExcludeList;
 
 void    plAgeLoader::ClearPageExcludeList( void )
 {
-    int     i;
-
-
-    for( i = 0; i < sExcludeList.GetCount(); i++ )
-    {
-        delete [] sExcludeList[ i ].fPageName;
-        delete [] sExcludeList[ i ].fAgeName;
-    }
+    sExcludeList.Reset();
 }
 
-void    plAgeLoader::AddExcludedPage( const char *pageName, const char *ageName )
+void    plAgeLoader::AddExcludedPage( const plString& pageName, const plString& ageName )
 {
-    char *p = hsStrcpy( pageName );
-    char *a = nil;
-    if( ageName != nil )
-        a = hsStrcpy( ageName );
-
-    sExcludeList.Append( plExcludePage( p, a ) );
+    sExcludeList.Append( plExcludePage( pageName, ageName ) );
 }
 
-bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const char *ageName )
+bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const plString& ageName )
 {
     // check page flags
     if (page->GetFlags() & plAgePage::kPreventAutoLoad)
@@ -307,8 +293,8 @@ bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const char *ageName 
     {
         if( pageName.CompareI( sExcludeList[ i ].fPageName ) == 0 )
         {
-            if( ageName == nil || sExcludeList[ i ].fAgeName == nil ||
-                stricmp( ageName, sExcludeList[ i ].fAgeName ) == 0 )
+            if( ageName.IsEmpty() || sExcludeList[ i ].fAgeName.IsEmpty() ||
+                ageName.CompareI(sExcludeList[ i ].fAgeName) == 0 )
             {
                 return true;
             }

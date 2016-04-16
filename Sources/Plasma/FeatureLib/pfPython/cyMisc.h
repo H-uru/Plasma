@@ -299,7 +299,7 @@ public:
     //             : Return the current coordinates of the player within this age
     //             : Return the current time with the current age the player is in
     //
-    static const char* GetAgeName();
+    static plString GetAgeName();
     static PyObject* GetAgeInfo(); // returns pyAgeInfoStruct
     static plString GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
@@ -952,7 +952,7 @@ public:
     static plFileName GetInitPath();
 
     static void SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp);
-    static void SendFriendInvite(const wchar_t email[], const wchar_t toName[]);
+    static void SendFriendInvite(const plString& email, const plString& toName);
     static PyObject* PyGuidGenerate();
     static PyObject* GetAIAvatarsByModelName(const char* name);
     static void ForceVaultNodeUpdate(unsigned nodeId);

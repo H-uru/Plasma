@@ -1247,7 +1247,7 @@ bool plgAudioSys::SupportsEAX(const char *deviceName)
     {
         return fSys->SupportsEAX(deviceName);
     }
-    return nil;
+    return false;
 }
 
 void plgAudioSys::RegisterSoftSound( const plKey soundKey )

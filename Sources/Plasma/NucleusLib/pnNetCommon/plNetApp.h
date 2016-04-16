@@ -46,10 +46,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsBitVector.h"
 #include "plNetGroup.h"
 
+#include "plLoggable.h"
+
 #include "pnKeyedObject/hsKeyedObject.h"
 #include "pnKeyedObject/plUoid.h"
-
-#include "plStatusLog/plLoggable.h"
 
 #define plVerifyConditionRet(NetApp,cond,ret,str)   \
     do {    \
@@ -73,7 +73,7 @@ class plNetMessage;
 typedef std::vector<plNetMember*>       plNetMemberList;
 typedef std::vector<uint32_t>             plNetPlayerIDList;
 
-// 
+//
 // Common baseclasses for client and server net apps
 //
 
@@ -87,29 +87,43 @@ public:
     {
         kNullSend=0,
         kNetCoreSingleThreaded,
-        kScreenMessages,                        // filter out illegal net game messages, used by gameserver&client
+        kScreenMessages,          // filter out illegal net game messages, used by gameserver&client
 
-        FLAG_CEILING        = 10        // stay below this or conflict with client/server specific flags
+        FLAG_CEILING        = 10  // stay below this or conflict with client/server specific flags
     };
 
     static plNetApp* GetInstance();
     static void SetInstance(plNetApp* app);
 
-    plNetApp()  {}
+    plNetApp() {}
     virtual ~plNetApp() {}
 
-    CLASSNAME_REGISTER( plNetApp );
-    GETINTERFACE_ANY( plNetApp, hsKeyedObject);
+    CLASSNAME_REGISTER(plNetApp);
+    GETINTERFACE_ANY(plNetApp, hsKeyedObject);
 
     virtual void Shutdown() {}
 
     void SetFlagsBit(int b, bool on=true) { fFlagsVec.SetBit(b, on); }
-    bool GetFlagsBit(int b)     const { return fFlagsVec.IsBitSet(b) ? true : false; }
+    bool GetFlagsBit(int b) const { return fFlagsVec.IsBitSet(b) ? true : false; }
 
-    static bool StaticWarningMsg(const char* fmt, ...);
+    static bool StaticErrorMsg(const plString& msg);
+    static bool StaticWarningMsg(const plString& msg);
+    static bool StaticAppMsg(const plString& msg);
+    static bool StaticDebugMsg(const plString& msg);
+
+
+    // Deprecated
+    hsDeprecated("StaticErrorMsg with format is deprecated -- use plFormat instead")
     static bool StaticErrorMsg(const char* fmt, ...);
-    static bool StaticDebugMsg(const char* fmt, ...);
+
+    hsDeprecated("StaticWarningMsg with format is deprecated -- use plFormat instead")
+    static bool StaticWarningMsg(const char* fmt, ...);
+
+    hsDeprecated("StaticAppMsg with format is deprecated -- use plFormat instead")
     static bool StaticAppMsg(const char* fmt, ...);
+
+    hsDeprecated("StaticDebugMsg with format is deprecated -- use plFormat instead")
+    static bool StaticDebugMsg(const char* fmt, ...);
 };
 
 //
@@ -189,7 +203,7 @@ public:
     virtual plNetGroupId GetEffectiveNetGroup(const plSynchedObject* obj) const { hsAssert(false, "stub"); return plNetGroup::kNetGroupUnknown; }
     virtual int Update(double secs) { return hsOK;}
     virtual const char* GetServerLogTimeAsString(plString& ts) const { hsAssert(false, "stub"); return nil; }
-    virtual plUoid GetAgeSDLObjectUoid(const char* ageName) const { hsAssert(false, "stub"); return plUoid(); }
+    virtual plUoid GetAgeSDLObjectUoid(const plString& ageName) const { hsAssert(false, "stub"); return plUoid(); }
     virtual void StayAlive(double secs) {}
     virtual void QueueDisableNet( bool showDlg, const char msg[] ) {}
 

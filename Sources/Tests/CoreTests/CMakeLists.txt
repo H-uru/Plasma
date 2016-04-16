@@ -4,6 +4,8 @@ include_directories(../../Plasma/CoreLib)
 
 SET(CoreLibTest_SOURCES
     test_plString.cpp
+    test_plFormat.cpp
+    test_plCmdParser.cpp
     )
 
 add_executable(test_CoreLib ${CoreLibTest_SOURCES})

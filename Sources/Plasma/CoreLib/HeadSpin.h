@@ -130,6 +130,22 @@ typedef int32_t   hsError;
 #   define hsDeprecated(message)
 #endif
 
+#ifdef HAVE_OVERRIDE
+#   define HS_OVERRIDE  override
+#   define HS_FINAL     final
+#else
+#   define HS_OVERRIDE
+#   define HS_FINAL
+#endif
+
+#ifdef HAVE_NOEXCEPT
+#   define HS_NOEXCEPT          noexcept
+#   define HS_NOEXCEPT_IF(cond) noexcept(cond)
+#else
+#   define HS_NOEXCEPT          throw()
+#   define HS_NOEXCEPT_IF(cond)
+#endif
+
 //======================================
 // Endian swap funcitions
 //======================================
@@ -238,7 +254,12 @@ inline double hsSwapEndianDouble(double dvalue)
 *   StrPrintf(buffer, arrsize(buffer), "%u", value);
 *
 ***/
-#define  arrsize(a)     (sizeof(a) / sizeof((a)[0]))
+#ifdef HAVE_CONSTEXPR
+    template <typename _T, size_t _Sz>
+    constexpr size_t arrsize(_T(&)[_Sz]) { return _Sz; }
+#else
+#   define  arrsize(a)  (sizeof(a) / sizeof((a)[0]))
+#endif
 
 
 /****************************************************************************
@@ -369,8 +390,9 @@ hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 void ErrorEnableGui (bool enabled);
 void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
-bool DebugIsDebuggerPresent ();
-void DebugBreakIfDebuggerPresent ();
+bool DebugIsDebuggerPresent();
+void DebugBreakIfDebuggerPresent();
+void DebugBreakAlways();
 void DebugMsg(const char* fmt, ...);
 
 #ifdef HS_DEBUGGING
@@ -378,10 +400,10 @@ void DebugMsg(const char* fmt, ...);
     void    hsDebugMessage(const char* message, long refcon);
     #define hsDebugCode(code)                   code
     #define hsIfDebugMessage(expr, msg, ref)    (void)( ((expr) != 0) || (hsDebugMessage(msg, ref), 0) )
-    #define hsAssert(expr, msg)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
+    #define hsAssert(expr, ...)                 (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
     #define ASSERT(expr)                        (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, #expr), 0) )
-    #define ASSERTMSG(expr, msg)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, msg), 0) )
-    #define FATAL(msg)                          ErrorAssert(__LINE__, __FILE__, msg)
+    #define ASSERTMSG(expr, ...)                (void)( ((expr) != 0) || (ErrorAssert(__LINE__, __FILE__, __VA_ARGS__), 0) )
+    #define FATAL(...)                          ErrorAssert(__LINE__, __FILE__, __VA_ARGS__)
     #define DEBUG_MSG                           DebugMsg
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     DebugBreakIfDebuggerPresent
     
@@ -390,10 +412,10 @@ void DebugMsg(const char* fmt, ...);
     #define hsDebugMessage(message, refcon)     NULL_STMT
     #define hsDebugCode(code)                   /* empty */
     #define hsIfDebugMessage(expr, msg, ref)    NULL_STMT
-    #define hsAssert(expr, msg)                 NULL_STMT
+    #define hsAssert(expr, ...)                 NULL_STMT
     #define ASSERT(expr)                        NULL_STMT
-    #define ASSERTMSG(expr, msg)                NULL_STMT
-    #define FATAL(msg)                          NULL_STMT
+    #define ASSERTMSG(expr, ...)                NULL_STMT
+    #define FATAL(...)                          NULL_STMT
     #define DEBUG_MSG                           (void)
     #define DEBUG_MSGV                          NULL_STMT
     #define DEBUG_BREAK_IF_DEBUGGER_PRESENT     NULL_STMT

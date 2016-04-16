@@ -88,19 +88,6 @@ namespace Crypt {
 static void Rc4Codec (
     CryptKey *      key,
     bool            encrypt,
-    ARRAY(uint8_t) *   dest,
-    unsigned        sourceBytes,
-    const void *    sourceData
-) {
-    // RC4 uses the same algorithm to both encrypt and decrypt
-    dest->SetCount(sourceBytes);
-    RC4((RC4_KEY *)key->handle, sourceBytes, (const unsigned char *)sourceData, dest->Ptr());
-}
-
-//============================================================================
-static void Rc4Codec (
-    CryptKey *      key,
-    bool            encrypt,
     unsigned        bytes,
     void *          data
 ) {
@@ -159,51 +146,11 @@ void CryptKeyClose (
 }
 
 //============================================================================
-unsigned CryptKeyGetBlockSize (
-    CryptKey *      key
-) {
-    switch (key->algorithm) {
-        case kCryptRc4: {
-            return 1;
-        }
-        break;
-
-        case kCryptRsa: // Not implemented; fall-thru to FATAL
-//            return RsaGetBlockSize(key);
-
-        DEFAULT_FATAL(algorithm);
-    }
-}
-
-//============================================================================
-void CryptEncrypt (
-    CryptKey *      key,
-    ARRAY(uint8_t) *   dest,
-    unsigned        sourceBytes,
-    const void *    sourceData
-) {
-    switch (key->algorithm) {
-        case kCryptRc4: {
-            Rc4Codec(key, true, dest, sourceBytes, sourceData);
-        }
-        break;
-
-        case kCryptRsa: // Not implemented; fall-thru to FATAL
-//          RsaCodec(key, true, dest, sourceBytes, sourceData);
-//      break;
-
-        DEFAULT_FATAL(key->algorithm);
-    }
-}
-
-//============================================================================
 void CryptEncrypt (
     CryptKey *      key,
     unsigned        bytes,
     void *          data
 ) {
-    ASSERT(1 == CryptKeyGetBlockSize(key));
-
     switch (key->algorithm) {
         case kCryptRc4: {
             Rc4Codec(key, true, bytes, data);
@@ -221,32 +168,9 @@ void CryptEncrypt (
 //============================================================================
 void CryptDecrypt (
     CryptKey *      key,
-    ARRAY(uint8_t) *   dest,
-    unsigned        sourceBytes,
-    const void *    sourceData
-) {
-    switch (key->algorithm) {
-        case kCryptRc4: {
-            Rc4Codec(key, false, dest, sourceBytes, sourceData);
-        }
-        break;
-
-        case kCryptRsa: // Not implemented; fall-thru to FATAL
-//          RsaCodec(key, false, dest, sourceBytes, sourceData);
-//      break;
-
-        DEFAULT_FATAL(key->algorithm);
-    }
-}
-
-//============================================================================
-void CryptDecrypt (
-    CryptKey *      key,
     unsigned        bytes,
     void *          data
 ) {
-    ASSERT(1 == CryptKeyGetBlockSize(key));
-
     switch (key->algorithm) {
         case kCryptRc4: {
             Rc4Codec(key, false, bytes, data);

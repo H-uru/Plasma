@@ -67,7 +67,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfMessage/pfGUINotifyMsg.h"
 #include "plGImage/plMipmap.h"
 #include "plGImage/plDynamicTextMap.h"
-#include "plPipeline/hsGDeviceRef.h"
+#include "hsGDeviceRef.h"
 #include "plMessage/plAnimCmdMsg.h"
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnMessage/plRefMsg.h"

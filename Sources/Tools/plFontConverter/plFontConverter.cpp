@@ -350,12 +350,12 @@ class plMyBDFCallback : public plBDFConvertCallback
 public:
     plMyBDFCallback(QWidget *parent) : fProgress(parent) { }
 
-    virtual void NumChars(uint16_t chars) override
+    void NumChars(uint16_t chars) HS_OVERRIDE
     {
         fProgress.SetRange(chars);
     }
 
-    virtual void CharDone() override
+    void CharDone() HS_OVERRIDE
     {
         fPoint++;
         fProgress.SetValue(fPoint);
@@ -498,7 +498,7 @@ class NumListValidator : public QValidator
 public:
     NumListValidator(QObject *parent = nullptr) : QValidator(parent) { }
 
-    virtual State validate(QString &input, int &pos) const override
+    State validate(QString &input, int &pos) const HS_OVERRIDE
     {
         for (int ch = 0; ch < input.size(); ++ch)
         {

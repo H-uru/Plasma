@@ -61,4 +61,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "Private/Unix/pnAceUx.h"
 
 #include <process.h>
+
+#ifdef HS_BUILD_FOR_OSX
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif

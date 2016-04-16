@@ -43,64 +43,52 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsExceptionDefined
 
 #include "HeadSpin.h"
-
-// #define HS_NO_EXCEPTIONS -- this will turn off execptions you might want 
-// to do it with -D or equivalent instead of here since who knows who includes this.
-
-
+#include <exception>
 
 enum hsErrorEnum {
     kNo_hsError,
-    kBadAlloc_hsError,
     kNilParam_hsError,
     kBadParam_hsError,
     kInternal_hsError,
-    kOS_hsError
+    kOS_hsError,
+    hsErrorEnum_MAX
 };
 
 //////////////////////////////////////////////////////////////////////////////
 
-class hsException {
+class hsException : public std::exception {
 public:
     hsErrorEnum fError;
-    long            fParam;
-    
-    hsException(hsErrorEnum error, long param = 0) : fError(error), fParam(param) {}
-};
+    long        fParam;
+    char        fWhat[64];
 
-class hsBadAllocException : public hsException {
-public:
-    hsBadAllocException() : hsException(kBadAlloc_hsError) {}
+    hsException(hsErrorEnum error, long param = 0) HS_NOEXCEPT;
+    const char *what() const HS_NOEXCEPT HS_OVERRIDE { return fWhat; }
 };
 
 class hsNilParamException : public hsException {
 public:
-    hsNilParamException() : hsException(kNilParam_hsError) {}
+    hsNilParamException() HS_NOEXCEPT : hsException(kNilParam_hsError) {}
 };
 
 class hsBadParamException : public hsException {
 public:
-    hsBadParamException() : hsException(kBadParam_hsError) {}
+    hsBadParamException() HS_NOEXCEPT : hsException(kBadParam_hsError) {}
 };
 
 class hsInternalException : public hsException {
 public:
-    hsInternalException() : hsException(kInternal_hsError) {}
+    hsInternalException() HS_NOEXCEPT : hsException(kInternal_hsError) {}
 };
 
 class hsOSException : public hsException {
 public:
-    hsOSException(long error) : hsException(kOS_hsError, error) {}
+    hsOSException(long error) HS_NOEXCEPT : hsException(kOS_hsError, error) {}
 };
 
 /////////////////////////////////////////////////////////////////////////////////
 
-#ifndef HS_NO_EXCEPTIONS
-#define hsThrow(a) {hsAssert(0,#a);throw a;}
-#define hsCatch(a) catch (a)
-#define hsCatch2(a,b) catch (a b)
-
-#define hsTry try
+#define hsThrow(a) { hsAssert(0,#a); throw a; }
 
 inline void hsThrowIfNilParam(const void* p)
 {
@@ -164,49 +152,5 @@ inline void hsThrowIfFalse(bool condition, const char message[])
         throw message;
     }
 }
-
-#else
-#define hsThrow(a) {hsAssert(0,#a);}
-#define hsCatch(a) if(0)
-#define hsCatch2(a,b) if(0)
-#define hsTry 
-
-inline void hsThrowIfNilParam(const void* p)
-{
-    hsAssert(p!=nil,"hsThrowIfNilParam");
-}
-
-inline void hsThrowIfBadParam(bool trueIfBadParam)
-{
-    hsAssert(!trueIfBadParam,"hsThrowIfBadParam");
-}
-
-inline void hsThrowIfOSErr(long osErr)
-{
-    hsAssert(osErr==0,"hsThrowIfOSErr");
-}
-
-inline void hsThrowIfTrue(bool condition)
-{
-    hsAssert(!condition,"hsThrowIfTrue");
-}
-
-inline void hsThrowIfFalse(bool condition)
-{
-    hsAssert(condition,"hsThrowIfFalse");
-}
-
-inline void hsThrowIfTrue(bool condition, const char message[])
-{
-    hsAssert(!condition,message);
-}
-
-inline void hsThrowIfFalse(bool condition, const char message[])
-{
-    hsAssert(condition,message);
-}
-
-
-#endif
 
 #endif

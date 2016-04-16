@@ -89,8 +89,7 @@ CWaveFile::~CWaveFile()
 
     if( !m_bIsReadingFromMemory )
     {
-       delete[] m_pwfx;
-
+        free(m_pwfx);
     }
 
     int i;
@@ -127,7 +126,7 @@ HRESULT CWaveFile::Open(const char *strFileName, WAVEFORMATEX* pwfx, DWORD dwFla
     {
         if( strFileName == NULL )
             return E_INVALIDARG;
-        delete[] m_pwfx;
+        free(m_pwfx);
 
 #ifdef UNICODE
         m_hmmio = mmioOpen( (wchar_t*)wFileName.c_str(), NULL, MMIO_ALLOCBUF | MMIO_READ );
@@ -356,7 +355,7 @@ HRESULT CWaveFile::ReadMMIO()
     // uint16_t, and thats how many extra bytes to allocate.
     if( pcmWaveFormat.wf.wFormatTag == WAVE_FORMAT_PCM )
     {
-        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof( WAVEFORMATEX ) ] );
+        m_pwfx = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX));
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("m_pwfx"), E_FAIL );
 
@@ -371,7 +370,7 @@ HRESULT CWaveFile::ReadMMIO()
         if( mmioRead( m_hmmio, (CHAR*)&cbExtraBytes, sizeof(WORD)) != sizeof(WORD) )
             return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
 
-        m_pwfx = (WAVEFORMATEX*)( new CHAR[ sizeof(WAVEFORMATEX) + cbExtraBytes ] );
+        m_pwfx = (WAVEFORMATEX*)malloc(sizeof(WAVEFORMATEX) + cbExtraBytes);
         if( NULL == m_pwfx )
             return DXTRACE_ERR( TEXT("new"), E_FAIL );
 
@@ -383,7 +382,7 @@ HRESULT CWaveFile::ReadMMIO()
         if( mmioRead( m_hmmio, (CHAR*)(((BYTE*)&(m_pwfx->cbSize))+sizeof(WORD)),
                       cbExtraBytes ) != cbExtraBytes )
         {
-            delete m_pwfx;
+            free(m_pwfx);
             return DXTRACE_ERR( TEXT("mmioRead"), E_FAIL );
         }
     }
@@ -396,7 +395,7 @@ HRESULT CWaveFile::ReadMMIO()
     // Ascend the input file out of the 'fmt ' chunk.
     if( 0 != mmioAscend( m_hmmio, &ckIn, 0 ) )
     {
-        delete m_pwfx;
+        free(m_pwfx);
         return DXTRACE_ERR( TEXT("mmioAscend"), E_FAIL );
     }
 
@@ -440,7 +439,7 @@ HRESULT CWaveFile::ReadMMIO()
 
     if( 0 != mmioAscend( m_hmmio, &ckIn, 0 ) )
     {
-        delete m_pwfx;
+        free(m_pwfx);
         return DXTRACE_ERR( TEXT("mmioAscend"), E_FAIL );
     }
 
@@ -499,7 +498,7 @@ HRESULT CWaveFile::ReadMMIO()
 
     if( 0 != mmioAscend( m_hmmio, &ckIn, 0 ) )
     {
-        delete m_pwfx;
+        free(m_pwfx);
         return DXTRACE_ERR( TEXT("mmioAscend"), E_FAIL );
     }
 

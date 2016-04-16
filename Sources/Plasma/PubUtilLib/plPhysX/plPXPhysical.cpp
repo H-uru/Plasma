@@ -821,7 +821,18 @@ plKey plPXPhysical::GetSceneNode() const
 
 void plPXPhysical::SetSceneNode(plKey newNode)
 {
-    // Not Supported
+    plKey oldNode = GetSceneNode();
+    if (oldNode == newNode)
+        return;
+
+    // If we don't do this, we get leaked keys and a crash on exit with certain clones
+    // Note this has nothing do to with the world that the physical is in
+    if (newNode) {
+        plNodeRefMsg* refMsg = new plNodeRefMsg(newNode, plNodeRefMsg::kOnRequest, -1, plNodeRefMsg::kPhysical);
+        hsgResMgr::ResMgr()->SendRef(GetKey(), refMsg, plRefFlags::kActiveRef);
+    }
+    if (oldNode)
+        oldNode->Release(GetKey());
 }
 
 /////////////////////////////////////////////////////////////////////

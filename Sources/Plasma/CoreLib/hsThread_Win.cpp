@@ -69,7 +69,7 @@ static unsigned int __stdcall gEntryPointBT(void* param)
     unsigned int result = wtp->fThread->Run();
     ::ReleaseSemaphore(wtp->fQuitSemaH, 1, nil); // signal that we've quit
     wtp->fThread->OnQuit();
-    delete param;
+    delete wtp;
     return result;
 }
 
