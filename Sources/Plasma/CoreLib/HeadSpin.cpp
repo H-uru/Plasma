@@ -49,14 +49,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #pragma hdrstop
 
-#if defined(HS_DEBUGGING) && defined(HS_BUILD_FOR_UNIX)
+#if defined(HS_BUILD_FOR_UNIX)
 #   include <cstring>
 #   include <sys/stat.h>
 #   include <fcntl.h>
 #   include <unistd.h>
-#endif
-
-#if defined(HS_BUILD_FOR_UNIX)
 #   include <signal.h>
 #endif
 
