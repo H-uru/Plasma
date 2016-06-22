@@ -32,6 +32,7 @@ Plasma currently requires the following third-party libraries:
 - speex - http://www.speex.org/downloads/
 - zlib - http://zlib.net/
 - libcurl - http://curl.haxx.se/
+- string_theory - http://github.com/zrax/string_theory/
 
 The following libraries are optional:
 
