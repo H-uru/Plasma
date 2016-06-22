@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <process.h>
 #include <shellapi.h>   // ShellExecuteA
 #include <algorithm>
+#include <regex>
 
 #include <curl/curl.h>
 
@@ -615,8 +616,10 @@ static void StoreHash(const plString& username, const plString& password, LoginD
     //  Hash username and password before sending over the 'net.
     //  -- Legacy compatibility: @gametap (and other usernames with domains in them) need
     //     to be hashed differently.
-    std::vector<plString> match = username.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
-    if (match.empty() || match[2].CompareI("gametap") == 0) {
+    static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    std::cmatch match;
+    std::regex_search(username.c_str(), match, re_domain);
+    if (match.empty() || plString(match[2].str().c_str()).CompareI("gametap") == 0) {
         //  Plain Usernames...
         plSHA1Checksum shasum(password.GetSize(), reinterpret_cast<const uint8_t*>(password.c_str()));
         uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);

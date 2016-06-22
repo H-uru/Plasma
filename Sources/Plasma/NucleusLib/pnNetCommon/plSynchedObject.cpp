@@ -209,8 +209,8 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
     {
 #if 0
         if (plNetClientApp::GetInstance())
-            plNetClientApp::GetInstance()->DebugMsg(plFormat("NotOKToDirty - Not queueing SDL state, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+            plNetClientApp::GetInstance()->DebugMsg("NotOKToDirty - Not queueing SDL state, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
 #endif
         return false;
     }
@@ -219,8 +219,8 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
     {
 #if 0
         if (plNetClientApp::GetInstance())
-            plNetClientApp::GetInstance()->DebugMsg(plFormat("LocalOnly Object - Not queueing SDL msg, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+            plNetClientApp::GetInstance()->DebugMsg("LocalOnly Object - Not queueing SDL msg, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
 #endif
         return false;
     }
@@ -235,8 +235,8 @@ bool plSynchedObject::DirtySynchState(const plString& SDLStateName, uint32_t syn
         else
         {
             if (plNetClientApp::GetInstance())
-                plNetClientApp::GetInstance()->DebugMsg(plFormat("Queueing SDL state with 'maybe' ownership, obj {}, sdl {}",
-                    GetKeyName(), SDLStateName));
+                plNetClientApp::GetInstance()->DebugMsg("Queueing SDL state with 'maybe' ownership, obj {}, sdl {}",
+                    GetKeyName(), SDLStateName);
         }
     }
     
@@ -281,8 +281,8 @@ void plSynchedObject::IAddDirtyState(plKey objKey, const plString& sdlName, uint
     else
     {
 #if 0
-        plNetClientApp::GetInstance()->DebugMsg(plFormat("Not queueing diplicate request for SDL state, obj {}, sdl {}",
-                    objKey->GetName(), sdlName));
+        plNetClientApp::GetInstance()->DebugMsg("Not queueing diplicate request for SDL state, obj {}, sdl {}",
+                    objKey->GetName(), sdlName);
 #endif
     }
 }

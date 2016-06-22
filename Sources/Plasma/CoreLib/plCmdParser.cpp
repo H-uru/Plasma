@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 #include <algorithm>
+#include <regex>
 
 #define  WHITESPACE     " \"\t\r\n\x1A"
 #define  FLAGS          "-/"
@@ -239,7 +240,8 @@ bool plCmdParserImpl::Tokenize(plCmdTokenState* state, std::vector<plString>& st
         }
 
         // Identify and process flagged parameters
-        if ((*it).REMatch("[" FLAGS "].+") && TokenizeFlags(state, *it)) {
+        static const std::regex re_flags("[" FLAGS "].+");
+        if (std::regex_match(it->c_str(), re_flags) && TokenizeFlags(state, *it)) {
             continue;
         }
 
@@ -333,7 +335,8 @@ bool plCmdParserImpl::TokenizeFlags(plCmdTokenState* state, const plString& str)
         }
 
         // Check for an argument value provided using a separator
-        if (str.REMatch(".+[" SEPARATORS "].+") && !(*(++it)).IsEmpty()) {
+        static const std::regex re_separators(".+[" SEPARATORS "].+");
+        if (std::regex_match(str.c_str(), re_separators) && !(*(++it)).IsEmpty()) {
             result = ProcessValue(state, lastIndex, *it);
             break;
         }

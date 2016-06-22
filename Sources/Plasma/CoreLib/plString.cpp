@@ -510,46 +510,6 @@ double plString::ToDouble() const HS_NOEXCEPT
     return strtod(c_str(), nullptr);
 }
 
-// Microsoft doesn't provide this for us until VC++2013
-#if defined(_MSC_VER) && _MSC_VER < 1800
-#define va_copy(dest, src)  (dest) = (src)
-#endif
-
-plString plString::IFormat(const char *fmt, va_list vptr)
-{
-    char buffer[STRING_STACK_SIZE];
-    va_list vptr_save;
-    va_copy(vptr_save, vptr);
-
-    int chars = vsnprintf(buffer, STRING_STACK_SIZE, fmt, vptr);
-    if (chars < 0) {
-        // We will need to try this multiple times until we get a
-        // large enough buffer :(
-        int size = 4096;
-        for ( ;; ) {
-            va_copy(vptr, vptr_save);
-            plStringBuffer<char> bigbuffer;
-            char *data = bigbuffer.CreateWritableBuffer(size-1);
-            chars = vsnprintf(data, size, fmt, vptr);
-            if (chars >= 0) {
-                // We need to construct a new string here so the length
-                // parameter is accurate :(
-                return plString::FromUtf8(bigbuffer.GetData(), chars);
-            }
-
-            size *= 2;
-        }
-    } else if (chars >= STRING_STACK_SIZE) {
-        va_copy(vptr, vptr_save);
-        plStringBuffer<char> bigbuffer;
-        char *data = bigbuffer.CreateWritableBuffer(chars);
-        vsnprintf(data, chars+1, fmt, vptr);
-        return bigbuffer;
-    }
-
-    return plString::FromUtf8(buffer, chars);
-}
-
 ssize_t plString::Find(char ch, CaseSensitivity sense) const HS_NOEXCEPT
 {
     if (sense == kCaseSensitive) {
@@ -606,48 +566,6 @@ ssize_t plString::Find(const char *str, CaseSensitivity sense) const HS_NOEXCEPT
 
         return -1;
     }
-}
-
-bool plString::REMatch(const char *pattern, CaseSensitivity sense) const
-{
-    auto opts = std::regex_constants::ECMAScript;
-    if (sense == kCaseInsensitive)
-        opts |= std::regex_constants::icase;
-
-    std::regex re;
-    try {
-        re = std::regex(pattern, opts);
-        if (std::regex_match(c_str(), re))
-            return true;
-    } catch (const std::regex_error& e) {
-        hsAssert(0, plFormat("Regex match error: {}", e.what()).c_str());
-    }
-
-    return false;
-}
-
-std::vector<plString> plString::RESearch(const char *pattern,
-                                         CaseSensitivity sense) const
-{
-    auto opts = std::regex_constants::ECMAScript;
-    if (sense == kCaseInsensitive)
-        opts |= std::regex_constants::icase;
-
-    std::vector<plString> substrings;
-
-    try {
-        std::regex re(pattern, opts);
-        std::cmatch matches;
-        std::regex_search(c_str(), matches, re);
-        substrings.resize(matches.size());
-
-        for (size_t i = 0; i < matches.size(); ++i)
-            substrings[i] = matches[i].str().c_str();
-    } catch (const std::regex_error& e) {
-        hsAssert(0, plFormat("Regex search error: {}", e.what()).c_str());
-    }
-
-    return substrings;
 }
 
 static bool in_set(char key, const char *charset)

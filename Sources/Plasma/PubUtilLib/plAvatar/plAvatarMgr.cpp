@@ -185,7 +185,7 @@ plKey plAvatarMgr::LoadAvatar(plString name, plString accountName, bool isPlayer
     if(netMgr)      // can't clone without the net manager
     {
         hsAssert(!name.IsEmpty(), "name required by LoadPlayer fxn");
-        netMgr->DebugMsg("Local: Loading player %s", name.c_str());
+        netMgr->DebugMsg("Local: Loading player {}", name);
 
         // look up player by key name provided by user.
         // this string search should be replaced with some other method of 

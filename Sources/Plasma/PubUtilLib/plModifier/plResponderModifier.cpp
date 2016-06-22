@@ -250,11 +250,9 @@ void plResponderModifier::ISetResponderStateFromNotify(plNotifyMsg* msg)
 void plResponderModifier::Trigger(plNotifyMsg *msg)
 {
 #if 0
-    char str[256];
-    sprintf(str, "RM: Responder %s is triggering, num cmds=%d, enabled=%d, curCmd=%d, t=%f\n", 
-        GetKeyName(), fStates[fCurState].fCmds.GetCount(), 
-        ((int)fEnabled), ((int)fCurCommand), hsTimer::GetSysSeconds());
-    plNetClientApp::GetInstance()->DebugMsg(str);
+    plNetClientApp::GetInstance()->DebugMsg("RM: Responder {} is triggering, num cmds={}, enabled={}, curCmd={}, t={f}\n",
+        GetKeyName(), fStates[fCurState].fCmds.GetCount(),
+        fEnabled, fCurCommand, hsTimer::GetSysSeconds());
 #endif
 
     // If we're not in the middle of sending, reset and start sending commands

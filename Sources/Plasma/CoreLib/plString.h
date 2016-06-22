@@ -454,12 +454,6 @@ public:
     /** Convert the string to a double precision floating point value. */
     double ToDouble() const HS_NOEXCEPT;
 
-    /** Construct a plString using a printf-like format string.
-     *  This function should be called inside of other vararg functions,
-     *  but those should be eventually replaced with plFormat-based variants.
-     */
-    static plString IFormat(const char *fmt, va_list vptr);
-
     enum CaseSensitivity {
         kCaseSensitive, kCaseInsensitive
     };
@@ -555,20 +549,6 @@ public:
      */
     ssize_t Find(const plString &str, CaseSensitivity sense = kCaseSensitive) const HS_NOEXCEPT
     { return Find(str.c_str(), sense); }
-
-    /** Check that this string matches the specified regular expression.
-     *  This with only return true if the whole string can be matched
-     *  by \a pattern.
-     */
-    bool REMatch(const char *pattern, CaseSensitivity sense = kCaseSensitive) const;
-
-    /** Search for substrings which match the specified regular expression.
-     *  If capture groups are specified in the pattern, they will be
-     *  returned as additional strings in the returned vector, starting at
-     *  index 1 (index 0 contains the whole match).  If the pattern was not
-     *  found, this returns an empty vector.
-     */
-    std::vector<plString> RESearch(const char *pattern, CaseSensitivity sense = kCaseSensitive) const;
 
     /** Trim any characters in the supplied \a charset from the left of
      *  this string.

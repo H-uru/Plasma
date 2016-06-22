@@ -323,7 +323,7 @@ void plNetClientMgr::IDumpOSVersionInfo() const
     DebugMsg("*** OS Info");
     std::vector<plString> versionStrs = DisplaySystemVersion();
     for (auto version = versionStrs.begin(); version != versionStrs.end(); ++version)
-        DebugMsg(version->c_str());
+        DebugMsg(*version);
 }
 
 //
@@ -332,7 +332,7 @@ void plNetClientMgr::IDumpOSVersionInfo() const
 int plNetClientMgr::Init()
 {
     int ret=hsOK;
-    hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:%s", plUnifiedTime::GetCurrent().Print()) );
+    hsLogEntry( DebugMsg("*** plNetClientMgr::Init GMT:{}", plUnifiedTime::GetCurrent().Print()) );
     
     IDumpOSVersionInfo();
     
@@ -467,7 +467,7 @@ void plNetClientMgr::UpdateServerTimeOffset(plNetMessage* msg)
                 fServerTimeOffset = fServerTimeOffset + ((diff - fServerTimeOffset) / ++fTimeSamples);
             }
 
-            DebugMsg("Setting server time offset to %f", fServerTimeOffset);
+            DebugMsg("Setting server time offset to {f}", fServerTimeOffset);
         }
     }
 }
@@ -533,7 +533,7 @@ int plNetClientMgr::Update(double secs)
     double curTime=hsTimer::GetSeconds();
     if (curTime-lastUpdateTime > 1.f)
     {
-        DebugMsg("NetClient hasn't updated for %f secs", curTime-lastUpdateTime);
+        DebugMsg("NetClient hasn't updated for {f} secs", curTime-lastUpdateTime);
     }
     lastUpdateTime=curTime;
 
@@ -583,9 +583,9 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
             // So, if fKey is null at this point, this state is garbage
             if (!load->fKey)
             {
-                ErrorMsg("Key `%s` not found. Discarding state for `%s`",
-                          load->fUoid.GetObjectName().c_str(),
-                          load->fSDRec->GetDescriptor()->GetName().c_str());
+                ErrorMsg("Key `{}` not found. Discarding state for `{}`",
+                          load->fUoid.GetObjectName(),
+                          load->fSDRec->GetDescriptor()->GetName());
                 it = fPendingLoads.erase(it);
                 delete load;
                 continue;
@@ -604,10 +604,10 @@ void plNetClientMgr::ICheckPendingStateLoad(double secs)
 #ifdef HS_DEBUGGING
             if (plNetObjectDebugger::GetInstance()->IsDebugObject(synchObj))
             {
-                DebugMsg("Delivering SDL State '%s' to %s owned key %s",
-                    msg->GetState()->GetDescriptor()->GetName().c_str(),
+                DebugMsg("Delivering SDL State '{}' to {} owned key {}",
+                    msg->GetState()->GetDescriptor()->GetName(),
                     (synchObj->IsLocallyOwned() == plSynchedObject::kYes) ? "locally" : "remote",
-                    load->fUoid.StringIze().c_str());
+                    load->fUoid.StringIze());
             }
 #endif
             msg->Send(load->fKey);
@@ -897,7 +897,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         {
             hsAssert(fAgeSDLObjectKey==nil, "already have a ref to age sdl hook");
             fAgeSDLObjectKey = ref->GetRef()->GetKey();
-            DebugMsg("Age SDL hook object created, uoid=%s", fAgeSDLObjectKey->GetUoid().StringIze().c_str());
+            DebugMsg("Age SDL hook object created, uoid={}", fAgeSDLObjectKey->GetUoid().StringIze());
         }
         else
         {
@@ -973,7 +973,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRBanLinkingMsg* banLinking = plCCRBanLinkingMsg::ConvertNoRef(msg);
     if (banLinking)
     {
-        DebugMsg("Setting BanLinking to %d", banLinking->fBan);
+        DebugMsg("Setting BanLinking to {}", banLinking->fBan);
         SetFlagsBit(kBanLinking, banLinking->fBan);
         return true;
     }
@@ -981,7 +981,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRSilencePlayerMsg* silence = plCCRSilencePlayerMsg::ConvertNoRef(msg);
     if (silence)
     {
-        DebugMsg("Setting Silence to %d", silence->fSilence);
+        DebugMsg("Setting Silence to {}", silence->fSilence);
         SetFlagsBit(kSilencePlayer, silence->fSilence);
         return true;
     }
@@ -1038,7 +1038,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
 void plNetClientMgr::IncNumInitialSDLStates()
 {
     fNumInitialSDLStates++;
-    DebugMsg( "Received %d initial SDL states", fNumInitialSDLStates );
+    DebugMsg( "Received {} initial SDL states", fNumInitialSDLStates );
     if ( GetFlagsBit( plNetClientApp::kNeedInitialAgeStateCount ) )
     {
         DebugMsg( "Need initial SDL state count" );
@@ -1273,7 +1273,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         if (GetLocalPlayerKey() == playerKey)
         {
             fLocalPlayerKey = nil;
-            DebugMsg("Net: Unloading local player %s", playerKey->GetName().c_str());
+            DebugMsg("Net: Unloading local player {}", playerKey->GetName());
 
             // notify server - NOTE: he might not still be around to get this...
             plNetMsgPlayerPage npp (playerKey->GetUoid(), playerMsg->fUnload);
@@ -1283,7 +1283,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
         else if (IsRemotePlayerKey(playerKey, &idx))
         {
             fRemotePlayerKeys.erase(fRemotePlayerKeys.begin()+idx); // remove key from list
-            DebugMsg("Net: Unloading remote player %s", playerKey->GetName().c_str());
+            DebugMsg("Net: Unloading remote player {}", playerKey->GetName());
         }
     }
     else
@@ -1302,7 +1302,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                     GetLocalPlayerKey() == playerKey,
                     "Different local player already loaded");
 
-                hsLogEntry(DebugMsg("Adding LOCAL player %s\n", playerKey->GetName().c_str()));
+                hsLogEntry(DebugMsg("Adding LOCAL player {}\n", playerKey->GetName()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupLocalPlayer);
 
                 // don't save avatar state permanently on server
@@ -1325,7 +1325,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
             }
             else
             {
-                hsLogEntry(DebugMsg("Adding REMOTE player %s\n", playerKey->GetName().c_str()));
+                hsLogEntry(DebugMsg("Adding REMOTE player {}\n", playerKey->GetName()));
                 playerSO->SetNetGroupConstant(plNetGroup::kNetGroupRemotePlayer);
                 idx=fTransport.FindMember(playerMsg->fClientID);
                 if( idx != -1 )
@@ -1336,7 +1336,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 }
                 else
                 {
-                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : %s\n", playerKey->GetName().c_str()));
+                    hsLogEntry(DebugMsg("Ignoring player page msg (player not found in member list) : {}\n", playerKey->GetName()));
                 }
             }
 
@@ -1421,7 +1421,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
     // check for age SDL state
     if (!pl->fUoid.GetObjectName().IsNull() && !pl->fUoid.GetObjectName().Compare(plSDL::kAgeSDLObjectName))
     {
-        DebugMsg("Recv SDL state for age hook object, uoid=%s", pl->fUoid.StringIze().c_str());
+        DebugMsg("Recv SDL state for age hook object, uoid={}", pl->fUoid.StringIze());
         if (!pl->fKey)
             WarningMsg("Can't find age hook object, nil key!");
         else
@@ -1434,13 +1434,13 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
     {
         if (!pl->fKey->ObjectIsLoaded())
         {
-            WarningMsg("Object %s not loaded, withholding SDL state", 
-                pl->fKey->GetUoid().StringIze().c_str());
+            WarningMsg("Object {} not loaded, withholding SDL state",
+                pl->fKey->GetUoid().StringIze());
         }
         else if (!pl->fKey->ObjectIsLoaded()->IsFinal())
         {
-            WarningMsg("Object %s is not FINAL, withholding SDL state", 
-                pl->fKey->GetUoid().StringIze().c_str());
+            WarningMsg("Object {} is not FINAL, withholding SDL state",
+                pl->fKey->GetUoid().StringIze());
         }
     }
 

@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "../Pch.h"
 #pragma hdrstop
 
+#include <regex>
 #include "pnEncryption/plChallengeHash.h"
 #include "plVault/plVaultConstants.h"
 
@@ -2669,8 +2670,10 @@ bool LoginRequestTrans::Send () {
     uint32_t clientChallenge = 0;
 
     // Regex search for primary email domain
-    std::vector<plString> match = s_accountName.RESearch("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
-    if (match.empty() || match[2].CompareI("gametap") == 0) {
+    static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
+    std::cmatch match;
+    std::regex_search(s_accountName.c_str(), match, re_domain);
+    if (match.empty() || plString(match[2].str().c_str()).CompareI("gametap") == 0) {
         memcpy(challengeHash, s_accountNamePassHash, sizeof(ShaDigest));
     } else {
         CryptCreateRandomSeed(

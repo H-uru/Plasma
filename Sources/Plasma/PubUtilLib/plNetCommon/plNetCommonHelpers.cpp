@@ -248,7 +248,7 @@ void plCreatableListHelper::Read( hsStream* s, hsResMgr* mgr )
         hsAssert( ans!=0, "plCreatableListHelper: Failed to uncompress buffer." );
         hsAssert( tmp==bufSz, "compression size mismatch" );
         fFlags&=~kCompressed;
-        hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: uncompressed from %lu to %lu", zBufSz, bufSz ) );
+        hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: uncompressed from {} to {}", zBufSz, bufSz ) );
     }
     else
     {
@@ -317,7 +317,7 @@ void plCreatableListHelper::Write( hsStream* s, hsResMgr* mgr )
                 zBuf.resize( zBufSz );
                 buf = zBuf;
                 fFlags |= kCompressed;
-                hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: compressed from %lu to %lu", bufSz, zBufSz ) );
+                hsLogEntry( plNetApp::StaticDebugMsg( "plCreatableListHelper: compressed from {} to {}", bufSz, zBufSz ) );
             }
         }
 

@@ -109,21 +109,6 @@ void hsStream::CopyToMem(void* mem)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-uint32_t hsStream::WriteFmt(const char * fmt, ...)
-{
-    va_list av;
-    va_start( av, fmt );
-    uint32_t n = WriteFmtV( fmt, av );
-    va_end( av );
-    return n;
-}
-
-uint32_t hsStream::WriteFmtV(const char * fmt, va_list av)
-{
-    plString buf = plString::IFormat(fmt, av);
-    return Write( buf.GetSize(), buf.c_str() );
-}
-
 uint32_t hsStream::WriteSafeStringLong(const plString &string)
 {
     uint32_t len = string.GetSize();
@@ -1221,8 +1206,8 @@ bool hsBufferedStream::Close()
     if (fBufferReadIn + fReadDirect > 0)
         wasted -= int((float(fBufferReadOut+fReadDirect) / float(fBufferReadIn+fReadDirect)) * 100.f);
 
-    s.WriteFmt("%s,%d,%d,%u,%u,%u,%d,%s\n",
-        fFilename.c_str(), fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
+    s.WriteFmt("{},{},{},{},{},{},{},{}\n",
+        fFilename, fBufferHits, fBufferMisses, fBufferReadIn, fBufferReadOut, fReadDirect,
         wasted,
         fCloseReason ? fCloseReason : "Unknown");
 

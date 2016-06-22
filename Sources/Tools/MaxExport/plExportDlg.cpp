@@ -427,7 +427,7 @@ static bool AutoExportDir(const char* inputDir, const char* outputDir, const plF
         hsUNIXStream log;
         if (log.Open(outputLog, "ab"))
         {
-            log.WriteFmt("%s\r\n", iter->GetFileName().c_str());
+            log.WriteFmt("{}\r\n", iter->GetFileName());
             log.Close();
         }
 

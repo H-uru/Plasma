@@ -114,13 +114,13 @@ bool plNetClientMsgScreener::AllowOutgoingMessage(const plMessage* msg) const
         return true;
     if (ans==kNo)
     {
-        WarningMsg("Rejected: (Outgoing) %s [Illegal Message]", msg->ClassName());
+        WarningMsg("Rejected: (Outgoing) {} [Illegal Message]", msg->ClassName());
         return false;
     }
 
     if (!IValidateMessage(msg))
     {
-        WarningMsg("Rejected: (Outgoing) %s [Validation Failed]", msg->ClassName());
+        WarningMsg("Rejected: (Outgoing) {} [Validation Failed]", msg->ClassName());
         return false;
     }
     return true;
@@ -137,7 +137,7 @@ bool plNetClientMsgScreener::AllowIncomingMessage(const plMessage* msg) const
 
     bool result = IScreenIncoming(msg);
     if (!result)
-        WarningMsg("Rejected: (Incoming) %s", msg->ClassName());
+        WarningMsg("Rejected: (Incoming) {}", msg->ClassName());
 
     return result;
 }

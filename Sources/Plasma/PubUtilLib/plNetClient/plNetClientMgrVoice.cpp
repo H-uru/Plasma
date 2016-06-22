@@ -102,7 +102,7 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
     // set as new listen list
     if (changed)
     {   
-        DebugMsg("ListenList changed, forceSynch=%d\n", forceSynch);
+        DebugMsg("ListenList changed, forceSynch={}\n", forceSynch);
 
         plNetMsgListenListUpdate llu;
         llu.SetPlayerID(GetPlayerID());
@@ -143,8 +143,8 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
             {
                 int idx=fTransport.FindMember(llu.Receivers()->GetReceiverClientNum(i));
                 plNetTransportMember* mbr=fTransport.GetMember(idx);
-                DebugMsg("<SEND %s> ListenListUpdate msg, adding=%d\n", 
-                    mbr->AsStdString().c_str(), llu.GetAdding());
+                DebugMsg("<SEND {}> ListenListUpdate msg, adding={}\n",
+                    mbr->AsStdString(), llu.GetAdding());
             }
             
             SendMsg(&llu);
@@ -175,8 +175,8 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
                 int cNum=llu.Receivers()->GetReceiverClientNum(i);
                 int idx=fTransport.FindMember(cNum);
                 plNetTransportMember* mbr=fTransport.GetMember(idx);
-                DebugMsg("<SEND %s> ListenListUpdate msg, adding=%d, cNum=%d\n", 
-                    mbr->AsStdString().c_str(), llu.GetAdding(), cNum);
+                DebugMsg("<SEND {}> ListenListUpdate msg, adding={}, cNum={}\n",
+                    mbr->AsStdString(), llu.GetAdding(), cNum);
             }
 
             SendMsg(&llu);
@@ -188,14 +188,14 @@ bool plNetClientMgr::IApplyNewListenList(std::vector<DistSqInfo>& newListenList,
         //
         GetListenList()->Clear();
 #ifdef HS_DEBUGGING
-        DebugMsg("New ListenList, size=%d\n", newListenList.size());
+        DebugMsg("New ListenList, size={}\n", newListenList.size());
 #endif
         for(i=0;i<newListenList.size(); i++)
         {
             GetListenList()->AddMember(newListenList[i].fMbr);
 #ifdef HS_DEBUGGING
-            DebugMsg("\tLL Member %d, name=%s, cNum=%d, dist=%f\n", 
-                i, newListenList[i].fMbr->AsString().c_str(),
+            DebugMsg("\tLL Member {}, name={}, cNum={}, dist={f}\n",
+                i, newListenList[i].fMbr->AsString(),
                 newListenList[i].fMbr->GetPlayerID(), newListenList[i].fDistSq);
 #endif
         }
@@ -258,8 +258,8 @@ bool plNetClientMgr::IUpdateListenList(double secs)
 #if 0
                     if (!k)
                     {
-                        DebugMsg("UpdateListenList: Nil avatar key on member %s\n", 
-                            fTransport.GetMember(i)->AsStdString().c_str());
+                        DebugMsg("UpdateListenList: Nil avatar key on member {}\n",
+                            fTransport.GetMember(i)->AsStdString());
                     }
 #endif
                     plSceneObject* obj=plSceneObject::ConvertNoRef(k ? k->ObjectIsLoaded() : nil);

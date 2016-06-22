@@ -1188,8 +1188,8 @@ bool plSimpleStateVariable::ConvertTo(plSimpleVarDescriptor* toVar, bool force )
     if (fVar.GetType()==newType )
         return true;
 
-    hsLogEntry( plNetApp::StaticDebugMsg( "SSV(%p) converting %s from %s to %s",
-        this, fVar.GetName().c_str(), fVar.GetTypeString().c_str(), toVar->GetTypeString().c_str() ) );
+    hsLogEntry( plNetApp::StaticDebugMsg( "SSV(0x{x}) converting {} from {} to {}",
+        uintptr_t(this), fVar.GetName(), fVar.GetTypeString(), toVar->GetTypeString() ) );
 
     switch(fVar.GetType())  // original type
     {
@@ -1793,8 +1793,8 @@ bool plSimpleStateVariable::IWriteData(hsStream* s, float timeConvert, int idx, 
     if (!IsUsed())
     {
         // hsAssert(false, "plSimpleStateVariable::WriteData doesn't contain data?");
-        plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var %s doesn't contain data?",
-            GetName().c_str());
+        plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var {} doesn't contain data?",
+            GetName());
     }
 #endif
 
@@ -1963,8 +1963,8 @@ bool plSimpleStateVariable::WriteData(hsStream* s, float timeConvert, uint32_t w
     if (!IsUsed())
     {
         // hsAssert(false, "plSimpleStateVariable::WriteData Var doesn't contain data?");
-        plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var %s doesn't contain data?",
-            GetName().c_str());
+        plNetApp::StaticWarningMsg("plSimpleStateVariable::WriteData Var {} doesn't contain data?",
+            GetName());
     }
 #endif
 
@@ -2535,9 +2535,9 @@ void plSDStateVariable::ConvertTo(plSDStateVariable* otherSDVar, bool force )
 {
     plStateDescriptor* otherSD=otherSDVar->GetSDVarDescriptor()->GetStateDescriptor();
 
-    hsLogEntry( plNetApp::StaticDebugMsg( "SDSV(%p) converting %s from %s to %s (force:%d)",
-        this, fVarDescriptor->GetName().c_str(), fVarDescriptor->GetTypeString().c_str(),
-        otherSDVar->GetSDVarDescriptor()->GetTypeString().c_str(), force ) );
+    hsLogEntry( plNetApp::StaticDebugMsg( "SDSV(0x{x}) converting {} from {} to {} (force:{})",
+        uintptr_t(this), fVarDescriptor->GetName(), fVarDescriptor->GetTypeString(),
+        otherSDVar->GetSDVarDescriptor()->GetTypeString(), force ) );
 
     int j;
     for(j=0;j<GetCount(); j++)
