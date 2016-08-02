@@ -814,5 +814,9 @@ void plGLDevice::SetWorldToCameraMatrix(const hsMatrix44& src)
 
 void plGLDevice::SetLocalToWorldMatrix(const hsMatrix44& src)
 {
+    hsMatrix44 inv;
+    src.GetInverse(&inv);
+
     hsMatrix2GL(src, fMatrixL2W);
+    hsMatrix2GL(inv, fMatrixW2L);
 }
