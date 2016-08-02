@@ -63,7 +63,9 @@ enum NodeType {
     kTempVar,
     kArgument,
     kFnCall,
-    kConditional
+    kBlock,
+    kConditional,
+    kLoop
 };
 
 
@@ -101,45 +103,47 @@ class plVariableNode : public plShaderNode {
 public:
     ST::string name;
     ST::string type;
+    size_t count;
 
-    plVariableNode(NodeType klass, ST::string name, ST::string type)
+    plVariableNode(NodeType klass, ST::string name, ST::string type, size_t n = 1)
       : plShaderNode(klass),
         name(name),
-        type(type) { }
+        type(type),
+        count(n){ }
 };
 
 
 // ABSTRACT
 class plGlobalVariableNode : public plVariableNode {
 public:
-    plGlobalVariableNode(NodeType klass, ST::string name, ST::string type)
-      : plVariableNode(klass, name, type) { }
+    plGlobalVariableNode(NodeType klass, ST::string name, ST::string type, size_t n = 1)
+      : plVariableNode(klass, name, type, n) { }
 };
 
 
 class plAttributeNode : public plGlobalVariableNode {
 public:
-    plAttributeNode(ST::string name, ST::string type)
-      : plGlobalVariableNode(kAttribute, name, type) { }
+    plAttributeNode(ST::string name, ST::string type, size_t n = 1)
+      : plGlobalVariableNode(kAttribute, name, type, n) { }
 };
 
 class plUniformNode : public plGlobalVariableNode {
 public:
-    plUniformNode(ST::string name, ST::string type)
-      : plGlobalVariableNode(kUniform, name, type) { }
+    plUniformNode(ST::string name, ST::string type, size_t n = 1)
+      : plGlobalVariableNode(kUniform, name, type, n) { }
 };
 
 class plVaryingNode : public plGlobalVariableNode {
 public:
-    plVaryingNode(ST::string name, ST::string type)
-      : plGlobalVariableNode(kVarying, name, type) { }
+    plVaryingNode(ST::string name, ST::string type, size_t n = 1)
+      : plGlobalVariableNode(kVarying, name, type, n) { }
 };
 
 
 class plTempVariableNode : public plVariableNode {
 public:
-    plTempVariableNode(ST::string name, ST::string type)
-      : plVariableNode(kTempVar, name, type) { }
+    plTempVariableNode(ST::string name, ST::string type, size_t n = 1)
+      : plVariableNode(kTempVar, name, type, n) { }
 };
 
 class plArgumentNode : public plVariableNode {
@@ -206,15 +210,25 @@ public:
 };
 
 
-class plConditionNode : public plShaderNode {
+class plBlockNode : public plShaderNode {
+public:
+    std::vector<std::shared_ptr<plShaderNode>> nodes;
+
+    plBlockNode(NodeType klass = kBlock) : plShaderNode(klass) { }
+
+    void PushOp(std::shared_ptr<plShaderNode> op) {
+        nodes.push_back(op);
+    }
+};
+
+
+class plConditionNode : public plBlockNode {
 public:
     std::shared_ptr<plShaderNode> condition;
-    std::shared_ptr<plShaderNode> body;
 
-    plConditionNode(std::shared_ptr<plShaderNode> condition, std::shared_ptr<plShaderNode> body)
-      : plShaderNode(kConditional),
-        condition(condition),
-        body(body) { }
+    plConditionNode(std::shared_ptr<plShaderNode> condition)
+      : plBlockNode(kConditional),
+        condition(condition) { }
 };
 
 
@@ -222,7 +236,6 @@ bool plArgumentNodeSorterFunc(std::shared_ptr<plArgumentNode> a, std::shared_ptr
 
 class plShaderFunction : public std::enable_shared_from_this<plShaderFunction>
 {
-
     friend class plShaderContext;
 
     std::vector<std::shared_ptr<plShaderNode>> nodes;
@@ -246,6 +259,24 @@ public:
 };
 
 
+class plShaderStruct : public std::enable_shared_from_this<plShaderStruct>
+{
+    friend class plShaderContext;
+
+    std::vector<std::shared_ptr<plVariableNode>> fields;
+
+public:
+    ST::string name;
+
+    plShaderStruct(ST::string name)
+      : name(name) { }
+
+    void AddField(std::shared_ptr<plVariableNode> var) {
+        fields.push_back(var);
+    }
+};
+
+
 
 
 enum CtxType {
@@ -256,6 +287,7 @@ enum CtxType {
 class plShaderContext : public std::enable_shared_from_this<plShaderContext>
 {
     std::vector<std::shared_ptr<plShaderFunction>> funcs;
+    std::vector<std::shared_ptr<plShaderStruct>> structs;
     CtxType type;
     int32_t version;
 
@@ -268,6 +300,10 @@ public:
 
     void PushFunction(std::shared_ptr<plShaderFunction> fn) {
         funcs.push_back(fn);
+    }
+
+    void PushStruct(std::shared_ptr<plShaderStruct> st) {
+        structs.push_back(st);
     }
 
     ST::string Render();
@@ -291,6 +327,8 @@ private:
 #define IS_LESS(...)    std::make_shared<plOperatorNode>("<", __VA_ARGS__)
 #define RETURN(n)       std::make_shared<plReturnNode>(n)
 #define COND(...)       std::make_shared<plConditionNode>(__VA_ARGS__)
+
+#define STRUCTVAR(t, n) std::make_shared<plTempVariableNode>(n, t)
 
 // This one is a bit special because of the initializer_list
 #define CALL(fn, ...)   std::shared_ptr<plCallNode>(new plCallNode(fn, { __VA_ARGS__ }))

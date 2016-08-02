@@ -131,11 +131,11 @@ protected:
     void ICleanupShaderContexts();
 
     template <typename T>
-    std::shared_ptr<T> IFindVariable(const ST::string& name, const ST::string& type)
+    std::shared_ptr<T> IFindVariable(const ST::string& name, const ST::string& type, size_t n = 1)
     {
         auto it = fVariables.find(name);
         if (it == fVariables.end()) {
-            std::shared_ptr<T> var = std::make_shared<T>(name, type);
+            std::shared_ptr<T> var = std::make_shared<T>(name, type, n);
             fVariables[name] = var;
             return var;
         } else {
@@ -144,10 +144,11 @@ protected:
     }
 
     void ILoopOverLayers();
-    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> fn);
+    uint32_t IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> vfn, std::shared_ptr<plShaderFunction> ffn);
     uint32_t ILayersAtOnce(uint32_t which);
     bool ICanEatLayer(plLayerInterface* lay);
-    void IBuildBaseAlpha(plLayerInterface* layer, ShaderBuilder* sb);
+    std::shared_ptr<plTempVariableNode> ICalcLighting(std::shared_ptr<plShaderFunction> fn);
+    std::shared_ptr<plTempVariableNode> IBuildBaseAlpha(plLayerInterface* layer, std::shared_ptr<plShaderFunction> fn);
     void IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
     void IBuildLayerTexture(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb);
     void IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb);
