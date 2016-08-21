@@ -23,10 +23,10 @@ set(pnNucleusInc_HEADERS
     plProfile.h
     plProfileManager.h
     plRefFlags.h
-	plTimerCallbackManager.h
+    plTimerCallbackManager.h
     pnAllCreatables.h
     pnNucleusCreatables.h
-	pnTimerCreatable.h
+    pnTimerCreatable.h
 )
 
 set(pnNucleusInc_SOURCES
