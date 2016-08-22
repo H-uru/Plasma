@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plLogicModifier.h"
 #include "plgDispatch.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "plTimerCallbackManager.h"
 #include "pnModifier/plConditionalObject.h"
 #include "plPhysical/plDetectorModifier.h"
 #include "plMessage/plCondRefMsg.h"

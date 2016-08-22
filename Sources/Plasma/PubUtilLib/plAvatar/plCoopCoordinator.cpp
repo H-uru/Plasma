@@ -65,7 +65,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetCommon/plNetApp.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plPhysical.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "plTimerCallbackManager.h"
 #include "plMessage/plTimerCallbackMsg.h"
 
 const unsigned kAbortTimer = 1;

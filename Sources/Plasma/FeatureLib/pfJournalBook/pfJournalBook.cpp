@@ -86,7 +86,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // For notify sends
 #include "pnMessage/plNotifyMsg.h"
-#include "pnTimer/plTimerCallbackManager.h"
+#include "plTimerCallbackManager.h"
 #include "plMessage/plTimerCallbackMsg.h"
 
 // For custom cursors
