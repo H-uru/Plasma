@@ -353,6 +353,9 @@ void plGLMaterialShaderRef::ILoopOverLayers()
     vertMain->PushOp(ASSIGN(pos, MUL(mProj, pos)));
     vertMain->PushOp(ASSIGN(OUTPUT("gl_Position"), pos));
 
+    vertMain->PushOp(ASSIGN(PROP(OUTPUT("gl_Position"), "z"),
+                SUB(MUL(PROP(OUTPUT("gl_Position"), "z"), CONSTANT("2.0")), PROP(OUTPUT("gl_Position"), "w"))));
+
     // Build the fragment shader main function with the right passes
     std::shared_ptr<plShaderFunction> fragMain = std::make_shared<plShaderFunction>("main", "void");
     std::shared_ptr<plUniformNode> uPass = IFindVariable<plUniformNode>("uPassNumber", "int");
@@ -482,6 +485,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     sb.fIteration = 0;
     sb.fPrevAlpha = fBaseAlpha;
 
+#if 0
     if (state.fZFlags & hsGMatState::kZIncLayer) {
         // Set the Z-bias
         sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), ADD(CONSTANT("gl_FragCoord.z"), CONSTANT("-0.0001"))));
@@ -489,6 +493,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
         // Clear any Z-bias
         sb.fFunction->PushOp(ASSIGN(OUTPUT("gl_FragDepth"), CONSTANT("gl_FragCoord.z")));
     }
+#endif
 
     for (int32_t i = 0; i < currNumLayers; i++) {
         sb.fIteration = i;
@@ -518,7 +523,7 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
     // Handle High Alpha Threshold
     std::shared_ptr<plUniformNode> alphaThreshold = IFindVariable<plUniformNode>("uAlphaThreshold", "float");
 
-    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LESS(sb.fCurrAlpha, alphaThreshold));
+    std::shared_ptr<plConditionNode> alphaTest = COND(IS_LEQ(sb.fCurrAlpha, alphaThreshold));
     alphaTest->PushOp(CONSTANT("discard"));
 
     // if (final.a < alphaThreshold) { discard; }
