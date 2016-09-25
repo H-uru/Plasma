@@ -615,15 +615,22 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
         IHandleZMode(s);
         IHandleBlendMode(s);
 
-        // AlphaTestHigh is used for reducing sort artifacts on textures that
-        // are mostly opaque or transparent, but have regions of translucency
-        // in transition. Like a texture for a bush billboard. It lets there be
-        // some transparency falloff, but quit drawing before it gets so
-        // transparent that draw order problems (halos) become apparent.
-        if (lay->GetBlendFlags() & hsGMatState::kBlendAlphaTestHigh) {
-            glUniform1f(mRef->uAlphaThreshold, 0.25);
+        if (lay->GetBlendFlags() & (hsGMatState::kBlendTest |
+                                    hsGMatState::kBlendAlpha |
+                                    hsGMatState::kBlendAddColorTimesAlpha)
+            && !(lay->GetBlendFlags() & hsGMatState::kBlendAlphaAlways))
+        {
+            // AlphaTestHigh is used for reducing sort artifacts on textures that
+            // are mostly opaque or transparent, but have regions of translucency
+            // in transition. Like a texture for a bush billboard. It lets there be
+            // some transparency falloff, but quit drawing before it gets so
+            // transparent that draw order problems (halos) become apparent.
+            if (lay->GetBlendFlags() & hsGMatState::kBlendAlphaTestHigh)
+                glUniform1f(mRef->uAlphaThreshold, 40.f/255.f);
+            else
+                glUniform1f(mRef->uAlphaThreshold, 1.f/255.f);
         } else {
-            glUniform1f(mRef->uAlphaThreshold, 0.0);
+            glUniform1f(mRef->uAlphaThreshold, 0.f);
         }
 
         if (lay->GetMiscFlags() & hsGMatState::kMiscTwoSided) {
@@ -671,6 +678,15 @@ void plGLPipeline::IHandleZMode(hsGMatState flags)
         case hsGMatState::kZClearZ | hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead:
             hsAssert(false, "Illegal combination of Z Buffer modes (Clear but don't write)");
             break;
+    }
+
+    if (flags.fZFlags & hsGMatState::kZIncLayer) {
+        int32_t int_value = 8;
+        float value = *(float*)(&int_value);
+
+        glPolygonOffset(0.f, value);
+    } else {
+        glPolygonOffset(0.f, 0.f);
     }
 }
 
