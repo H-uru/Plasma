@@ -189,10 +189,9 @@ void pyImage::SaveAsJPEG(const plFileName& fileName, uint8_t quality)
     plJPEG::Instance().WriteToFile(fileName, this->GetImage());
 }
 
-void pyImage::SaveAsPNG(const plFileName& fileName)
+void pyImage::SaveAsPNG(const plFileName& fileName, const std::multimap<ST::string, ST::string>& textFields)
 {
-
-    plPNG::Instance().WriteToFile(fileName, this->GetImage());
+    plPNG::Instance().WriteToFile(fileName, this->GetImage(), textFields);
 }
 
 PyObject* pyImage::LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height)

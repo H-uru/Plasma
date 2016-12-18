@@ -165,21 +165,33 @@ PYTHON_METHOD_DEFINITION(ptImage, saveAsJPEG, args)
 
 PYTHON_METHOD_DEFINITION(ptImage, saveAsPNG, args)
 {
-    PyObject* filenameObj;
-    if (!PyArg_ParseTuple(args, "O", &filenameObj))
+    PyObject* filenameObj, *optionalText = nullptr;
+    if (!PyArg_ParseTuple(args, "O|O", &filenameObj, &optionalText))
     {
-        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string");
+        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string, and an optional dict of key-value string pairs");
         PYTHON_RETURN_ERROR;
     }
 
     if (PyString_CheckEx(filenameObj))
     {
-        self->fThis->SaveAsPNG(PyString_AsStringEx(filenameObj));
+        if (optionalText && PyDict_Check(optionalText)) {
+            std::multimap<ST::string, ST::string> textFields;
+            PyObject *key, *value;
+            Py_ssize_t pos = 0;
+            while (PyDict_Next(optionalText, &pos, &key, &value)) {
+                if (PyString_CheckEx(key) && PyString_CheckEx(value)) {
+                    textFields.emplace(PyString_AsStringEx(key), PyString_AsStringEx(value));
+                }
+            }
+            self->fThis->SaveAsPNG(PyString_AsStringEx(filenameObj), textFields);
+        }
+        else
+            self->fThis->SaveAsPNG(PyString_AsStringEx(filenameObj));
         PYTHON_RETURN_NONE;
     }
     else
     {
-        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string");
+        PyErr_SetString(PyExc_TypeError, "saveAsPNG expects a string, and an optional dict of key-value string pairs");
         PYTHON_RETURN_ERROR;
     }
 }
