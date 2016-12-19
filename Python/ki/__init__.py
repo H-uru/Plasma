@@ -1174,7 +1174,13 @@ class xKI(ptModifier):
         tryName = os.path.join(basePath, U"{}{:04d}.png".format(kImages.FileNameTemplate, firstMissing))
 
         PtDebugPrint(u"xKI.OnScreenCaptureDone(): Saving image to \"{}\".".format(tryName), level=kWarningLevel)
-        image.saveAsPNG(tryName)
+        gpsLocation = "{} {} {}".format(self.dniCoords.getTorans(), self.dniCoords.getHSpans(), self.dniCoords.getVSpans())
+        metadata = {
+            "Explorer" : PtGetLocalPlayer().getPlayerName(),
+            "Location" : gpsLocation,
+            "Age Name" : xKIHelpers.GetAgeName()
+            }
+        image.saveAsPNG(tryName, metadata)
 
     ## Called by Plasma when the player list has been updated.
     # This makes sure that everything is updated and refreshed.
