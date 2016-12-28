@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //       only be one instance of this interface. 
 //
 #include "HeadSpin.h"
+#include <string_theory/string>
 #include <string>
 #include <vector>
 
@@ -143,7 +144,7 @@ public:
     static PyObject* GetPlasmaItem(char* item);
 
     // Determine if the module name is unique
-    static bool IsModuleNameUnique(char* module);
+    static bool IsModuleNameUnique(const ST::string& module);
     // get an item (probably a function) from a specific module
     static PyObject* GetModuleItem(char* item, PyObject* module);
 

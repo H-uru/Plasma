@@ -961,39 +961,16 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 //
 ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
 {
-    // Forgive my general crapulance...
-    // This strips underscores out of module names 
-    // so python won't truncate them... -S
+    // This strips underscores out of module names so python won't truncate them... -S
 
     plKey pKey = GetKey();
     plKey sKey = sobj->GetKey();
 
-    const char* pKeyName = pKey->GetName().c_str();
-    const char* pSobjName = sKey->GetName().c_str();
+    ST::string soName = sKey->GetName().replace("_", "");
+    ST::string pmName = pKey->GetName().replace("_", "");
 
-    uint16_t len = pKey->GetName().size();
-    uint16_t slen = sKey->GetName().size();
-
-    hsAssert(len+slen < 256, "Warning: String length exceeds 256 characters.");
-    char modulename[256];
-    
-    int i, k = 0;
-    for(i = 0; i < slen; i++)
-    {
-        if(pSobjName[i] == '_') continue;
-
-        modulename[k++] = pSobjName[i];
-    }
-    for(i = 0; i < len; i++)
-    {
-        if(pKeyName[i] == '_') continue;
-
-        modulename[k++] = pKeyName[i];
-    }
-
-    modulename[k] = '\0';
     ST::string_stream name;
-    name << modulename;
+    name << soName << pmName;
 
     // check to see if we are attaching to a clone?
     plKeyImp* pKeyImp = (plKeyImp*)(sKey);
@@ -1008,7 +985,7 @@ ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     }
 
     // make sure that the actual modulue will be uniqie
-    if ( !PythonInterface::IsModuleNameUnique(modulename) )
+    if ( !PythonInterface::IsModuleNameUnique(name.to_string()))
     {
         // if not unique then add the sequence number to the end of the modulename
         uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
