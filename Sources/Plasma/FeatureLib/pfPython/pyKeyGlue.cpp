@@ -104,7 +104,7 @@ PYTHON_METHOD_DEFINITION(ptKey, netForce, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptKey, getName)
 {
-    return PyString_FromString(self->fThis->getName());
+    return PyString_FromSTString(self->fThis->getName());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptKey, enable, Enable)

@@ -94,9 +94,9 @@ bool pyKey::operator==(const pyKey &key) const
         return false;
 }
 
-const char* pyKey::getName() const
+ST::string pyKey::getName() const
 {
-    return fKey ? fKey->GetName().c_str() : "nil";
+    return fKey ? fKey->GetName() : "nil";
 }
 
 #ifndef BUILDING_PYPLASMA
