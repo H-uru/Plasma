@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXPhysical.h"
 
 #include <NxPhysics.h>
+#include <NxCooking.h>
 
 #include "hsResMgr.h"
 #include "hsStream.h"
@@ -889,12 +890,10 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     }
     else
     {
-        // Read in the cooked mesh
-        plPXStream pxs(stream);
         if (recipe.bounds == plSimDefs::kHullBounds)
-            recipe.convexMesh = plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
+            recipe.convexMesh = IReadHull(stream);
         else
-            recipe.triMesh = plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
+            recipe.triMesh = IReadTriMesh(stream);
     }
 
     Init(recipe);
@@ -950,6 +949,94 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
 
     fProxyGen = new plPhysicalProxy(hsColorRGBA().Set(0,0,0,1.f), physColor, opac);
     fProxyGen->Init(this);
+}
+
+static bool IIsNxStream(hsStream* s)
+{
+    char tag[4];
+    s->Read(sizeof(tag), tag);
+
+    // PhysX streams begin with the magic string "NXS\x01"
+    // Our hacked streams begin with the magic string "HSP\x01"
+    if (memcmp("HSP\x01", tag, sizeof(tag)) == 0)
+        return false;
+
+    // We're not going to compare to see if it says NXS. We will let the PhysX SDK
+    // worry about garbage data. Just rewind the stream back so PhysX can deal with it.
+    s->SetPosition(s->GetPosition() - sizeof(tag));
+    return true;
+}
+
+NxConvexMesh* plPXPhysical::IReadHull(hsStream* s)
+{
+    if (IIsNxStream(s)) {
+        plPXStream pxs(s);
+        return plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
+    } else {
+        std::vector<hsPoint3> verts;
+        verts.resize(s->ReadLE32());
+        for (size_t i = 0; i < verts.size(); ++i)
+            verts[i].Read(s);
+
+        // Unfortunately, the only way I know of to accomplish this is to cook to a RAM stream,
+        // then have PhysX read the cooked data from the RAM stream. Yes, this is very sad.
+        // I blame PhysX. It needs to die in a fiaaaaaaaaaaah
+        hsRAMStream ram;
+        plPXStream pxs(&ram);
+
+        NxConvexMeshDesc desc;
+        desc.numVertices = verts.size();
+        desc.pointStrideBytes = sizeof(hsPoint3);
+        desc.points = &verts[0];
+        desc.flags = NX_CF_COMPUTE_CONVEX | NX_CF_USE_UNCOMPRESSED_NORMALS;
+        if (!NxCookConvexMesh(desc, pxs)) {
+            SimLog("Failed to cook hull for '%s'", GetKey()->GetName().c_str());
+            return nullptr;
+        }
+
+        ram.Rewind();
+        return plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
+    }
+}
+
+NxTriangleMesh* plPXPhysical::IReadTriMesh(hsStream* s)
+{
+    if (IIsNxStream(s)) {
+        plPXStream pxs(s);
+        return plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
+    } else {
+        std::vector<hsPoint3> verts;
+        verts.resize(s->ReadLE32());
+        for (size_t i = 0; i < verts.size(); ++i)
+            verts[i].Read(s);
+        std::vector<uint32_t> indices;
+        uint32_t numTriangles = s->ReadLE32();
+        indices.resize(numTriangles * 3);
+        for (size_t i = 0; i < indices.size(); ++i)
+            indices[i] = s->ReadLE32();
+
+        // Unfortunately, the only way I know of to accomplish this is to cook to a RAM stream,
+        // then have PhysX read the cooked data from the RAM stream. Yes, this is very sad.
+        // I blame PhysX. It needs to die in a fiaaaaaaaaaaah
+        hsRAMStream ram;
+        plPXStream pxs(&ram);
+
+        NxTriangleMeshDesc desc;
+        desc.numVertices = verts.size();
+        desc.pointStrideBytes = sizeof(hsPoint3);
+        desc.points = &verts[0];
+        desc.numTriangles = numTriangles;
+        desc.triangleStrideBytes = sizeof(uint32_t) * 3;
+        desc.triangles = &indices[0];
+        desc.flags = 0;
+        if (!NxCookTriangleMesh(desc, pxs)) {
+            SimLog("Failed to cook trimesh for '%s'", GetKey()->GetName().c_str());
+            return nullptr;
+        }
+
+        ram.Rewind();
+        return plSimulationMgr::GetInstance()->GetSDK()->createTriangleMesh(pxs);
+    }
 }
 
 void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)

@@ -187,6 +187,9 @@ public:
 
     virtual float GetMass() {return fMass;}
 protected:
+    class NxConvexMesh* IReadHull(hsStream* s);
+    class NxTriangleMesh* IReadTriMesh(hsStream* s);
+
     void IGetPositionSim(hsPoint3& pos) const;
     void IGetRotationSim(hsQuat& rot) const;
     void ISetPositionSim(const hsPoint3& pos);
