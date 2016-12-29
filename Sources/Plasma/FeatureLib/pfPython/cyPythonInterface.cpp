@@ -1721,12 +1721,12 @@ PyObject* PythonInterface::FindModule(const char* module)
 //
 //  Returns    : True if unique , otherwise returns False
 //
-bool PythonInterface::IsModuleNameUnique(char* module)
+bool PythonInterface::IsModuleNameUnique(const ST::string& module)
 {
     PyObject *m;
     // first we must get rid of any old modules of the same name, we'll replace it
     PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
+    if ((m = PyDict_GetItemString(modules, module.c_str())) != NULL && PyModule_Check(m))
     {
         return false;
     }
