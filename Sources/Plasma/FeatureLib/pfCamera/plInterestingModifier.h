@@ -81,8 +81,8 @@ public:
     float GetInterestWeight() { return fInterestWeight; }
     float GetInterestRadius() { return fInterestRadius; }
 
-    void SetInterestWeight(float _InterestRadius) { fInterestWeight =_InterestRadius; }
-    void SetInterestRadius(float _InterestWeight) { fInterestRadius =_InterestWeight; }
+    void SetInterestWeight(float _InterestWeight) { fInterestWeight = _InterestWeight; }
+    void SetInterestRadius(float _InterestRadius) { fInterestRadius = _InterestRadius; }
     
     virtual void AddTarget(plSceneObject* so);
     
