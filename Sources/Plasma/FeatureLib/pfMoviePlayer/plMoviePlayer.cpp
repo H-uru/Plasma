@@ -242,6 +242,8 @@ bool plMoviePlayer::ILoadAudio()
 {
 #ifdef MOVIE_AVAILABLE
     // Fetch audio track information
+    if (!fAudioTrack)
+        return false;
     const mkvparser::AudioTrack* audio = static_cast<const mkvparser::AudioTrack*>(fAudioTrack->GetTrack());
     plWAVHeader header;
     header.fFormatTag = plWAVHeader::kPCMFormatTag;
