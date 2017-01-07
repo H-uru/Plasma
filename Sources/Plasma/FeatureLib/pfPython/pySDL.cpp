@@ -67,7 +67,7 @@ plStateDataRecord * pySDLStateDataRecord::GetRec() const
     return fRec;
 }
 
-PyObject * pySDLStateDataRecord::FindVar( const plString & name ) const
+PyObject * pySDLStateDataRecord::FindVar( const ST::string & name ) const
 {
     if ( !fRec )
         PYTHON_RETURN_NONE;
@@ -79,17 +79,17 @@ PyObject * pySDLStateDataRecord::FindVar( const plString & name ) const
     return pySimpleStateVariable::New( var );
 }
 
-plString pySDLStateDataRecord::GetName() const
+ST::string pySDLStateDataRecord::GetName() const
 {
     if (!fRec)
-        return "";
+        return ST::null;
     const plStateDescriptor *stateDesc = fRec->GetDescriptor();
     return stateDesc->GetName();
 }
 
-std::vector<plString> pySDLStateDataRecord::GetVarList()
+std::vector<ST::string> pySDLStateDataRecord::GetVarList()
 {
-    std::vector<plString> retVal;
+    std::vector<ST::string> retVal;
     if (!fRec)
         return retVal;
     const plStateDescriptor *stateDesc = fRec->GetDescriptor();
@@ -225,13 +225,13 @@ bool pySimpleStateVariable::GetBool( int idx ) const
     return v;
 }
 
-plString pySimpleStateVariable::GetString( int idx ) const
+ST::string pySimpleStateVariable::GetString( int idx ) const
 {
     if ( fVar )
     {
         char v[256];
         if ( fVar->Get( v, idx ) )
-            return plString::FromUtf8(v);
+            return ST::string::from_utf8(v);
     }
     return "";
 }
@@ -252,18 +252,18 @@ int pySimpleStateVariable::GetType() const
     return varDesc->GetType();
 }
 
-plString pySimpleStateVariable::GetDisplayOptions() const
+ST::string pySimpleStateVariable::GetDisplayOptions() const
 {
     if (!fVar)
-        return "";
+        return ST::null;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDisplayOptions();
 }
 
-plString pySimpleStateVariable::GetDefault() const
+ST::string pySimpleStateVariable::GetDefault() const
 {
     if (!fVar)
-        return "";
+        return ST::null;
     plVarDescriptor *varDesc = fVar->GetVarDescriptor();
     return varDesc->GetDefault();
 }

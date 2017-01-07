@@ -374,23 +374,23 @@ bool plLinkEffectsMgr::MsgReceive(plMessage *msg)
         if (linkKey == nc->GetLocalPlayerKey())
         {
             if(lm) {
-                plString ageName = lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename();
-                plString prevAgeName = lm->GetPrevAgeLink()->GetAgeInfo()->GetAgeFilename();
+                ST::string ageName = lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename();
+                ST::string prevAgeName = lm->GetPrevAgeLink()->GetAgeInfo()->GetAgeFilename();
 
-                bool linkToStartup = ageName.CompareI(kStartUpAgeFilename) == 0;      // To Startup
-                bool linkFromStartup = prevAgeName.CompareI(kStartUpAgeFilename) == 0;   // Leaving Startup
+                bool linkToStartup = ageName.compare_i(kStartUpAgeFilename) == 0;      // To Startup
+                bool linkFromStartup = prevAgeName.compare_i(kStartUpAgeFilename) == 0;   // Leaving Startup
 
                 bool cleftSolved = VaultHasChronicleEntry( kCleftSolved );
 
-                bool linkToACA = ageName.CompareI(kAvCustomizationFilename) == 0;
-                bool linkFromACA = prevAgeName.CompareI(kAvCustomizationFilename) == 0;
+                bool linkToACA = ageName.compare_i(kAvCustomizationFilename) == 0;
+                bool linkFromACA = prevAgeName.compare_i(kAvCustomizationFilename) == 0;
 
                 bool linkToFissureDrop = lm && 
                                         lm->GetAgeLink()->HasSpawnPt() &&
-                                        !lm->GetAgeLink()->SpawnPoint().GetName().CompareI(kCleftAgeLinkInPointFissureDrop);
+                                        !lm->GetAgeLink()->SpawnPoint().GetName().compare_i(kCleftAgeLinkInPointFissureDrop);
                 bool linkToDsntFromShell = lm && 
                                         lm->GetAgeLink()->HasSpawnPt() &&
-                                        !lm->GetAgeLink()->SpawnPoint().GetTitle().CompareI(kDescentLinkFromShell);
+                                        !lm->GetAgeLink()->SpawnPoint().GetTitle().compare_i(kDescentLinkFromShell);
                 if ( linkToACA || linkFromACA || linkToStartup || linkFromStartup || linkToFissureDrop || linkToDsntFromShell)
                 {
                     BCMsg->SetLinkFlag(plLinkEffectBCMsg::kMute);

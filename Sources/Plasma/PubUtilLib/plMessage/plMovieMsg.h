@@ -85,14 +85,14 @@ protected:
 
     float       fVolume;
 
-    plString    fFileName;
+    ST::string  fFileName;
 
     uint16_t    fCmd;
 
     hsTArray<plMessage*>    fCallbacks;
 
 public:
-    plMovieMsg(const plString& name, uint16_t cmd)
+    plMovieMsg(const ST::string& name, uint16_t cmd)
         : plMessage(nil, nil, nil) 
     { 
         fFileName = name;
@@ -157,8 +157,8 @@ public:
 
     // Include the movie folder, e.g. "avi/movie.webm"
     // String is copied, not pointer copy.
-    plString GetFileName() const { return fFileName; }
-    plMovieMsg& SetFileName(const plString& name) { fFileName = name; return *this; }
+    ST::string GetFileName() const { return fFileName; }
+    plMovieMsg& SetFileName(const ST::string& name) { fFileName = name; return *this; }
 
     // Color is mostly useful for alpha fade up and down.
     const hsColorRGBA& GetColor() const { return fColor; }

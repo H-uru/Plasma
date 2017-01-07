@@ -69,10 +69,10 @@ bool ReportRoomToServer(const plKey &key)
     plLocation keyLoc=key->GetUoid().GetLocation();
     bool skip=(keyLoc.IsReserved() || keyLoc.IsVirtual() ||
                 // HACK ALERT - replace with new uoid type flags
-                (!key->GetName().IsNull() &&
-                    (!key->GetName().CompareN("global", 6, plString::kCaseInsensitive) ||
-                    key->GetName().Find("_Male") >= 0 ||
-                    key->GetName().Find("_Female") >= 0
+                (!key->GetName().is_empty() &&
+                    (!key->GetName().compare_ni("global", 6) ||
+                    key->GetName().contains("_Male") ||
+                    key->GetName().contains("_Female")
                     )
                 )
             );  
@@ -259,11 +259,11 @@ bool plAgeLoader::RemovePendingPageInRoomKey(plKey pKey)
 class plExcludePage
 {
     public:
-        plString fPageName;
-        plString fAgeName;
+        ST::string fPageName;
+        ST::string fAgeName;
 
         plExcludePage() { }
-        plExcludePage(const plString& p, const plString& a)
+        plExcludePage(const ST::string& p, const ST::string& a)
             : fPageName(p), fAgeName(a)
         { }
 };
@@ -275,26 +275,26 @@ void    plAgeLoader::ClearPageExcludeList( void )
     sExcludeList.Reset();
 }
 
-void    plAgeLoader::AddExcludedPage( const plString& pageName, const plString& ageName )
+void    plAgeLoader::AddExcludedPage( const ST::string& pageName, const ST::string& ageName )
 {
     sExcludeList.Append( plExcludePage( pageName, ageName ) );
 }
 
-bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const plString& ageName )
+bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const ST::string& ageName )
 {
     // check page flags
     if (page->GetFlags() & plAgePage::kPreventAutoLoad)
         return true;
 
     // check exclude list
-    plString pageName = page->GetName();
+    ST::string pageName = page->GetName();
     int     i;
     for( i = 0; i < sExcludeList.GetCount(); i++ )
     {
-        if( pageName.CompareI( sExcludeList[ i ].fPageName ) == 0 )
+        if( pageName.compare_i( sExcludeList[ i ].fPageName ) == 0 )
         {
-            if( ageName.IsEmpty() || sExcludeList[ i ].fAgeName.IsEmpty() ||
-                ageName.CompareI(sExcludeList[ i ].fAgeName) == 0 )
+            if( ageName.is_empty() || sExcludeList[ i ].fAgeName.is_empty() ||
+                ageName.compare_i(sExcludeList[ i ].fAgeName) == 0 )
             {
                 return true;
             }

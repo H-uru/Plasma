@@ -177,42 +177,42 @@ PyObject * pyVaultAgeInfoNode::GetParentAgeLink () const
 }
 
 
-plString pyVaultAgeInfoNode::GetAgeFilename() const
+ST::string pyVaultAgeInfoNode::GetAgeFilename() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
         return access.GetAgeFilename();
     }
-    return "";
+    return ST::null;
 }
 
-void pyVaultAgeInfoNode::SetAgeFilename(const plString& v)
+void pyVaultAgeInfoNode::SetAgeFilename(const ST::string& v)
 {
 }
 
-plString pyVaultAgeInfoNode::GetAgeInstanceName() const
+ST::string pyVaultAgeInfoNode::GetAgeInstanceName() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
         return access.GetAgeInstanceName();
     }
-    return "";
+    return ST::null;
 }
 
-void pyVaultAgeInfoNode::SetAgeInstanceName(const plString& v)
+void pyVaultAgeInfoNode::SetAgeInstanceName(const ST::string& v)
 {
 }
 
-plString pyVaultAgeInfoNode::GetAgeUserDefinedName() const
+ST::string pyVaultAgeInfoNode::GetAgeUserDefinedName() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
         return access.GetAgeUserDefinedName();
     }
-    return "";
+    return ST::null;
 }
 
-void pyVaultAgeInfoNode::SetAgeUserDefinedName(const plString& v)
+void pyVaultAgeInfoNode::SetAgeUserDefinedName(const ST::string& v)
 {
 }
 
@@ -230,16 +230,16 @@ void pyVaultAgeInfoNode::SetAgeInstanceGuid( const char * sguid )
 {
 }
 
-plString pyVaultAgeInfoNode::GetAgeDescription() const
+ST::string pyVaultAgeInfoNode::GetAgeDescription() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
         return access.GetAgeDescription();
     }
-    return "";
+    return ST::null;
 }
 
-void pyVaultAgeInfoNode::SetAgeDescription(const plString& v)
+void pyVaultAgeInfoNode::SetAgeDescription(const ST::string& v)
 {
 }
 
@@ -294,16 +294,16 @@ bool pyVaultAgeInfoNode::IsPublic() const
     return false;
 }
 
-plString pyVaultAgeInfoNode::GetDisplayName() const
+ST::string pyVaultAgeInfoNode::GetDisplayName() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
         if (access.GetAgeSequenceNumber() > 0)
-            return plFormat("{}({}) {}", access.GetAgeUserDefinedName(), access.GetAgeSequenceNumber(), access.GetAgeInstanceName());
+            return ST::format("{}({}) {}", access.GetAgeUserDefinedName(), access.GetAgeSequenceNumber(), access.GetAgeInstanceName());
         else
-            return plFormat("{} {}", access.GetAgeUserDefinedName(), access.GetAgeInstanceName());
+            return ST::format("{} {}", access.GetAgeUserDefinedName(), access.GetAgeInstanceName());
     }
-    return "";
+    return ST::null;
 }
 
 PyObject * pyVaultAgeInfoNode::AsAgeInfoStruct() const

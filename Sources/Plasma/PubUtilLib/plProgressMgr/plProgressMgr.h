@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plProgressMgr_h
 
 #include "HeadSpin.h"
-#include "plString.h"
+#include <string_theory/string>
 
 class plPipeline;
 class plPlate;
@@ -74,9 +74,9 @@ class plOperationProgress
     protected:
 
         float    fValue, fMax;
-        plString fTitle;
-        plString fStatusText;
-        plString fInfoText;
+        ST::string fTitle;
+        ST::string fStatusText;
+        ST::string fInfoText;
         uint32_t fContext;
         double   fStartTime;
 
@@ -112,9 +112,9 @@ class plOperationProgress
 
         float GetMax() const { return fMax; }
         float GetProgress() const { return fValue; }
-        plString GetTitle() const { return fTitle; }
-        plString GetStatusText() const { return fStatusText; }
-        plString GetInfoText() const { return fInfoText; }
+        ST::string GetTitle() const { return fTitle; }
+        ST::string GetStatusText() const { return fStatusText; }
+        ST::string GetInfoText() const { return fInfoText; }
         uint32_t  GetContext() const { return fContext; }
         uint32_t GetElapsedSecs() { return fElapsedSecs; }
         uint32_t GetRemainingSecs() { return fRemainingSecs; }
@@ -130,13 +130,13 @@ class plOperationProgress
         void    SetLength( float length );
 
         /** Sets the progress bar's right justified info text */
-        void SetInfoText(const plString& info) { fInfoText = info; }
+        void SetInfoText(const ST::string& info) { fInfoText = info; }
 
         /** Sets the progress bar's left justified status text */
-        void    SetStatusText(const plString& status) { fStatusText = status; }
+        void    SetStatusText(const ST::string& status) { fStatusText = status; }
 
         /** Sets the progress bar's title */
-        void    SetTitle(const plString& title) { fTitle = title; }
+        void    SetTitle(const ST::string& title) { fTitle = title; }
 
         // Application data
         void    SetContext( uint32_t context ) { fContext = context;}
@@ -202,8 +202,8 @@ class plProgressMgr
     private:
 
         static plProgressMgr*    fManager;
-        static plString          fImageRotation[];
-        static const plString    fStaticTextIDs[];
+        static ST::string        fImageRotation[];
+        static const ST::string  fStaticTextIDs[];
 
     protected:
 
@@ -235,9 +235,9 @@ class plProgressMgr
         virtual ~plProgressMgr();
 
         static plProgressMgr* GetInstance() { return fManager; }
-        static const plString GetLoadingFrameID(int index);
+        static const ST::string GetLoadingFrameID(int index);
         uint32_t NumLoadingFrames() const;
-        static const plString GetStaticTextID(StaticText staticTextType);
+        static const ST::string GetStaticTextID(StaticText staticTextType);
 
         virtual void    Draw( plPipeline *p ) { }
 

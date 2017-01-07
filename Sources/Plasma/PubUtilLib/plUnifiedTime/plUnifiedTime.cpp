@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plUnifiedTime.h"
 #include "hsWindows.h"
 #include "hsStream.h"
-#include "plString.h"
 
 #if HS_BUILD_FOR_UNIX
 #include <sys/time.h>
@@ -306,8 +305,8 @@ const char* plUnifiedTime::Print() const
 //  short year, month, day, hour, minute, second;
 //  GetTime(year, month, day, hour, minute, second);
 //
-//  s = plFormat("yr {} mo {} day {} hour {} min {} sec {}",
-//               year, month, day, hour, minute, second);
+//  s = ST::format("yr {} mo {} day {} hour {} min {} sec {}",
+//                 year, month, day, hour, minute, second);
 
     s = Format("%c");
     return s.c_str();
@@ -315,8 +314,8 @@ const char* plUnifiedTime::Print() const
 
 const char* plUnifiedTime::PrintWMillis() const
 {
-    static plString s;
-    s = plFormat("{},s:{},ms:{}",
+    static ST::string s;
+    s = ST::format("{},s:{},ms:{}",
         Print(), (unsigned long)GetSecs(), GetMillis() );
     return s.c_str();
 }

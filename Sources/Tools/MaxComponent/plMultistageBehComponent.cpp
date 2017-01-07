@@ -326,14 +326,14 @@ void plMultistageBehComponent::FixStageNames()
     if (fStages.size() > 0)
     {
         plBaseStage* stage = fStages[0];
-        plString stageName = stage->GetName();
+        ST::string stageName = stage->GetName();
 
         if (stageName == "Stage 1")
         {
             for (int i = 0; i < fStages.size(); i++)
             {
                 plBaseStage* stage = fStages[i];
-                stage->SetName(plFormat("Stage {}", i));
+                stage->SetName(ST::format("Stage {}", i));
             }
         }
     }

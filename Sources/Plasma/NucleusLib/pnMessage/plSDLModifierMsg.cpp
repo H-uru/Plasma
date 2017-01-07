@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSDLModifierMsg.h"
 #include "plSDL/plSDL.h"    // ugh.
 
-plSDLModifierMsg::plSDLModifierMsg(const plString& sdlName, Action a) :
+plSDLModifierMsg::plSDLModifierMsg(const ST::string& sdlName, Action a) :
     fSDLName(sdlName),
     fAction(a),
     fState(nil),

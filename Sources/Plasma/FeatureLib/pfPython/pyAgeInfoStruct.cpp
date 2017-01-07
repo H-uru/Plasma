@@ -81,42 +81,42 @@ void pyAgeInfoStruct::CopyFromRef( const pyAgeInfoStructRef & other )
     fAgeInfo.CopyFrom( other.GetAgeInfo() );
 }
 
-plString pyAgeInfoStruct::GetAgeFilename() const
+ST::string pyAgeInfoStruct::GetAgeFilename() const
 {
     return fAgeInfo.GetAgeFilename();
 }
 
-void pyAgeInfoStruct::SetAgeFilename( const plString & v )
+void pyAgeInfoStruct::SetAgeFilename( const ST::string & v )
 {
     fAgeInfo.SetAgeFilename( v );
 }
 
-plString pyAgeInfoStruct::GetAgeInstanceName() const
+ST::string pyAgeInfoStruct::GetAgeInstanceName() const
 {
     return fAgeInfo.GetAgeInstanceName();
 }
 
-void pyAgeInfoStruct::SetAgeInstanceName( const plString & v )
+void pyAgeInfoStruct::SetAgeInstanceName( const ST::string & v )
 {
     fAgeInfo.SetAgeInstanceName( v );
 }
 
-plString pyAgeInfoStruct::GetAgeUserDefinedName() const
+ST::string pyAgeInfoStruct::GetAgeUserDefinedName() const
 {
     return fAgeInfo.GetAgeUserDefinedName();
 }
 
-void pyAgeInfoStruct::SetAgeUserDefinedName( const plString & v )
+void pyAgeInfoStruct::SetAgeUserDefinedName( const ST::string & v )
 {
     fAgeInfo.SetAgeUserDefinedName( v );
 }
 
-plString pyAgeInfoStruct::GetAgeDescription() const
+ST::string pyAgeInfoStruct::GetAgeDescription() const
 {
     return fAgeInfo.GetAgeDescription();
 }
 
-void pyAgeInfoStruct::SetAgeDescription( const plString & v )
+void pyAgeInfoStruct::SetAgeDescription( const ST::string & v )
 {
     fAgeInfo.SetAgeDescription( v );
 }
@@ -132,16 +132,16 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
     if ( guid[0] == '@' )
     {
         // if it starts with an @ then do a meta kind of GUID
-        plString curInst = fAgeInfo.GetAgeInstanceName();
-        plString y = curInst + guid;
+        ST::string curInst = fAgeInfo.GetAgeInstanceName();
+        ST::string y = curInst + guid;
 
         plMD5Checksum hash;
         hash.Start();
-        hash.AddTo(y.GetSize(), (uint8_t*)y.c_str());
+        hash.AddTo(y.size(), (uint8_t*)y.c_str());
         hash.Finish();
 
         const char* md5sum = hash.GetAsHexString();
-        plStringStream ss;
+        ST::string_stream ss;
         for (size_t i = 0; i < 16; i++) {
             ss << md5sum[2*i];
             ss << md5sum[(2*i)+1];
@@ -149,7 +149,7 @@ void pyAgeInfoStruct::SetAgeInstanceGuid( const char * guid )
             if (i == 3 || i == 5 || i == 7 || i == 9)
                 ss << '-';
         }
-        plUUID instanceGuid(ss.GetString());
+        plUUID instanceGuid(ss.to_string());
         fAgeInfo.SetAgeInstanceGuid(&instanceGuid);
     }
     else {
@@ -178,11 +178,11 @@ void pyAgeInfoStruct::SetAgeLanguage( int32_t v )
     fAgeInfo.SetAgeLanguage( v );
 }
 
-plString pyAgeInfoStruct::GetDisplayName() const
+ST::string pyAgeInfoStruct::GetDisplayName() const
 {
-    plString instance = GetAgeInstanceName();
-    plString user = GetAgeUserDefinedName();
-    bool namesEqual = (user.CompareI(instance) == 0); // Ae'gura Ae'gura
+    ST::string instance = GetAgeInstanceName();
+    ST::string user = GetAgeUserDefinedName();
+    bool namesEqual = (user.compare_i(instance) == 0); // Ae'gura Ae'gura
 
     if (namesEqual)
         return instance;
@@ -190,9 +190,9 @@ plString pyAgeInfoStruct::GetDisplayName() const
     {
         int32_t seq = GetAgeSequenceNumber();
         if (seq > 0)
-            return plFormat("{} ({}) {}", user, seq, instance);
+            return ST::format("{} ({}) {}", user, seq, instance);
         else
-            return plFormat("{} {}", user, instance);
+            return ST::format("{} {}", user, instance);
     }
 }
 
@@ -211,32 +211,32 @@ void pyAgeInfoStructRef::CopyFromRef( const pyAgeInfoStructRef & other )
     fAgeInfo.CopyFrom( other.GetAgeInfo() );
 }
 
-plString pyAgeInfoStructRef::GetAgeFilename() const
+ST::string pyAgeInfoStructRef::GetAgeFilename() const
 {
     return fAgeInfo.GetAgeFilename();
 }
 
-void pyAgeInfoStructRef::SetAgeFilename( const plString & v )
+void pyAgeInfoStructRef::SetAgeFilename( const ST::string & v )
 {
     fAgeInfo.SetAgeFilename( v );
 }
 
-plString pyAgeInfoStructRef::GetAgeInstanceName() const
+ST::string pyAgeInfoStructRef::GetAgeInstanceName() const
 {
     return fAgeInfo.GetAgeInstanceName();
 }
 
-void pyAgeInfoStructRef::SetAgeInstanceName( const plString & v )
+void pyAgeInfoStructRef::SetAgeInstanceName( const ST::string & v )
 {
     fAgeInfo.SetAgeInstanceName( v );
 }
 
-plString pyAgeInfoStructRef::GetAgeUserDefinedName() const
+ST::string pyAgeInfoStructRef::GetAgeUserDefinedName() const
 {
     return fAgeInfo.GetAgeUserDefinedName();
 }
 
-void pyAgeInfoStructRef::SetAgeUserDefinedName( const plString & v )
+void pyAgeInfoStructRef::SetAgeUserDefinedName( const ST::string & v )
 {
     fAgeInfo.SetAgeUserDefinedName( v );
 }
@@ -263,11 +263,11 @@ void pyAgeInfoStructRef::SetAgeSequenceNumber( int32_t v )
     fAgeInfo.SetAgeSequenceNumber( v );
 }
 
-plString pyAgeInfoStructRef::GetDisplayName() const
+ST::string pyAgeInfoStructRef::GetDisplayName() const
 {
-    plString instance = GetAgeInstanceName();
-    plString user = GetAgeUserDefinedName();
-    bool namesEqual = (user.CompareI(instance) == 0); // Ae'gura Ae'gura
+    ST::string instance = GetAgeInstanceName();
+    ST::string user = GetAgeUserDefinedName();
+    bool namesEqual = (user.compare_i(instance) == 0); // Ae'gura Ae'gura
 
     if (namesEqual)
         return instance;
@@ -275,8 +275,8 @@ plString pyAgeInfoStructRef::GetDisplayName() const
     {
         int32_t seq = GetAgeSequenceNumber();
         if (seq > 0)
-            return plFormat("{} ({}) {}", user, seq, instance);
+            return ST::format("{} ({}) {}", user, seq, instance);
         else
-            return plFormat("{} {}", user, instance);
+            return ST::format("{} {}", user, instance);
     }
 }

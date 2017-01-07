@@ -53,10 +53,10 @@ class plClientLauncher
 {
 public:
     typedef std::function<class pfPatcher*(void)> CreatePatcherFunc;
-    typedef std::function<void(ENetError, const plString&)> ErrorFunc;
+    typedef std::function<void(ENetError, const ST::string&)> ErrorFunc;
     typedef std::function<bool(const plFileName&)> InstallRedistFunc;
-    typedef std::function<void(const plFileName&, const plString&)> LaunchClientFunc;
-    typedef std::function<void(const plString&)> StatusFunc;
+    typedef std::function<void(const plFileName&, const ST::string&)> LaunchClientFunc;
+    typedef std::function<void(const ST::string&)> StatusFunc;
 
 private:
     enum Flags
@@ -82,9 +82,9 @@ private:
     LaunchClientFunc  fLaunchClientFunc;
     StatusFunc        fStatusFunc;
 
-    plString GetAppArgs() const;
+    ST::string GetAppArgs() const;
 
-    void IOnPatchComplete(ENetError result, const plString& msg);
+    void IOnPatchComplete(ENetError result, const ST::string& msg);
     bool IApproveDownload(const plFileName& file);
 
 public:

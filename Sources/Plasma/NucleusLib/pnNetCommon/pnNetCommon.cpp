@@ -59,18 +59,18 @@ namespace pnNetCommon
 #ifndef SERVER
 
 // NOTE: On Win32, WSAStartup() must be called before GetTextAddr() will work.
-plString GetTextAddr(uint32_t binAddr)
+ST::string GetTextAddr(uint32_t binAddr)
 {
     in_addr in;
     memcpy(&in, &binAddr, sizeof(binAddr));
-    return plString::FromUtf8(inet_ntoa(in));
+    return ST::string::from_utf8(inet_ntoa(in));
 }
 
 // NOTE: On Win32, WSAStartup() must be called before GetBinAddr() will work.
-uint32_t GetBinAddr(const plString& textAddr)
+uint32_t GetBinAddr(const ST::string& textAddr)
 {
     uint32_t addr = 0;
-    if (textAddr.IsEmpty())
+    if (textAddr.is_empty())
         return addr;
 
     addr = inet_addr(textAddr.c_str());

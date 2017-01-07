@@ -69,9 +69,9 @@ PyObject* cyAccountManagement::GetPlayerList()
     for (Py_ssize_t i = 0; i < playerList.size(); ++i)
     {
         PyObject* playerTuple   = PyTuple_New(3);
-        PyObject* playerName    = PyUnicode_FromPlString(playerList[i].playerName);
+        PyObject* playerName    = PyUnicode_FromSTString(playerList[i].playerName);
         PyObject* playerId      = PyInt_FromLong(playerList[i].playerInt);
-        PyObject* avatarShape   = PyString_FromPlString(playerList[i].avatarDatasetName);
+        PyObject* avatarShape   = PyString_FromSTString(playerList[i].avatarDatasetName);
 
         PyTuple_SET_ITEM(playerTuple, 0, playerName);
         PyTuple_SET_ITEM(playerTuple, 1, playerId);
@@ -96,13 +96,13 @@ PyObject* cyAccountManagement::GetPlayerList()
     return pList;
 }
 
-plString cyAccountManagement::GetAccountName()
+ST::string cyAccountManagement::GetAccountName()
 {
     const NetCommAccount* acct = NetCommGetAccount();
     if (acct)
         return acct->accountName;
     else
-        return "";
+        return ST::null;
 }
 
 void cyAccountManagement::CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode)
@@ -112,9 +112,9 @@ void cyAccountManagement::CreatePlayer(const char* playerName, const char* avata
 
 void cyAccountManagement::CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode)
 {
-    NetCommCreatePlayer(plString::FromWchar(playerName),
-        plString::FromWchar(avatar),
-        plString::FromWchar(invitationCode),
+    NetCommCreatePlayer(ST::string::from_wchar(playerName),
+        ST::string::from_wchar(avatar),
+        ST::string::from_wchar(invitationCode),
         0,
         nullptr);
 }
@@ -139,7 +139,7 @@ void cyAccountManagement::UpgradeVisitorToExplorer(unsigned playerId)
     NetCommUpgradeVisitorToExplorer(playerId, nil);
 }
 
-void cyAccountManagement::ChangePassword(const plString& password)
+void cyAccountManagement::ChangePassword(const ST::string& password)
 {
     NetCommChangeMyPassword(password);
 }

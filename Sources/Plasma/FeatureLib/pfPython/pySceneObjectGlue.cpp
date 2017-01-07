@@ -154,7 +154,7 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, findObject, args)
         PyErr_SetString(PyExc_TypeError, "findObject expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return self->fThis->findObj(plString::FromUtf8(name));
+    return self->fThis->findObj(ST::string::from_utf8(name));
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSceneobject, getName)

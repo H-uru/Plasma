@@ -463,7 +463,7 @@ void    plSceneNode::ICleanUp( void )
 
     if (fFilterGenerics)
     {
-        ssize_t i;
+        int i;
         for ( i = fSceneObjects.size() - 1; i >= 0; i--)
             GetKey()->Release(fSceneObjects[i]->GetKey());
         for ( i = fDrawPool.size() - 1; i >= 0; i--)

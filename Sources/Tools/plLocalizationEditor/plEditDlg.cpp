@@ -106,22 +106,22 @@ EditDialog::~EditDialog()
 // saves the current localization text to the data manager
 void EditDialog::SaveLocalizationText()
 {
-    if (fCurrentLocPath.IsEmpty())
+    if (fCurrentLocPath.is_empty())
         return; // no path to save
 
-    plString text = fUI->fLocalizationText->toPlainText().toUtf8().constData();
+    ST::string text = fUI->fLocalizationText->toPlainText().toUtf8().constData();
 
-    plString ageName, setName, elementName, elementLanguage;
+    ST::string ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
 
-    if (ageName.IsEmpty() || setName.IsEmpty() || elementName.IsEmpty() || elementLanguage.IsEmpty())
+    if (ageName.is_empty() || setName.is_empty() || elementName.is_empty() || elementLanguage.is_empty())
         return;
 
-    plString name = plFormat("{}.{}.{}", ageName, setName, elementName);
+    ST::string name = ST::format("{}.{}.{}", ageName, setName, elementName);
     pfLocalizationDataMgr::Instance().SetElementPlainTextData(name, elementLanguage, text);
 }
 
-void EditDialog::LoadLocalization(const plString &locPath)
+void EditDialog::LoadLocalization(const ST::string &locPath)
 {
     if (locPath == fCurrentLocPath)
         return;
@@ -129,22 +129,22 @@ void EditDialog::LoadLocalization(const plString &locPath)
     fCurrentLocPath = locPath;
     fUI->fTextPathLabel->setText(QString("&Text (%1):").arg(locPath.c_str()));
 
-    plString ageName, setName, elementName, elementLanguage;
+    ST::string ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
 
     // now make sure they've drilled down deep enough to enable the dialog
-    if (elementLanguage.IsEmpty()) // not deep enough
+    if (elementLanguage.is_empty()) // not deep enough
         EnableEdit(false);
     else
     {
         EnableEdit(true);
-        plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
-        plString elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
+        ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
+        ST::string elementText = pfLocalizationDataMgr::Instance().GetElementPlainTextData(key, elementLanguage);
         fUI->fLocalizationText->setPlainText(elementText.c_str());
     }
 
     // now to setup the add/delete buttons
-    if (!elementLanguage.IsEmpty()) // they have selected a language
+    if (!elementLanguage.is_empty()) // they have selected a language
     {
         fEditMode = kEditLocalization;
         fUI->fAddButton->setText(tr("&Add Localization"));
@@ -160,9 +160,9 @@ void EditDialog::LoadLocalization(const plString &locPath)
         fUI->fAddButton->setText(tr("&Add Element"));
         fUI->fAddButton->setEnabled(true);
         fUI->fDeleteButton->setText(tr("&Delete Element"));
-        if (!elementName.IsEmpty()) // they have selected an individual element
+        if (!elementName.is_empty()) // they have selected an individual element
         {
-            std::vector<plString> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
+            std::vector<ST::string> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
 
             // they can't delete the only subtitle in a set
             fUI->fDeleteButton->setEnabled(elementNames.size() > 1);
@@ -283,7 +283,7 @@ void EditDialog::AddClicked()
         plAddElementDlg dlg(fCurrentLocPath, this);
         if (dlg.DoPick())
         {
-            plString path = dlg.GetValue(); // path is age.set.name
+            ST::string path = dlg.GetValue(); // path is age.set.name
             if (!pfLocalizationDataMgr::Instance().AddElement(path))
             {
                 QMessageBox::critical(this, tr("Error"),
@@ -303,16 +303,16 @@ void EditDialog::AddClicked()
         plAddLocalizationDlg dlg(fCurrentLocPath, this);
         if (dlg.DoPick())
         {
-            plString newLanguage = dlg.GetValue();
-            plString ageName, setName, elementName, elementLanguage;
+            ST::string newLanguage = dlg.GetValue();
+            ST::string ageName, setName, elementName, elementLanguage;
             SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
-            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
+            ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
             if (!pfLocalizationDataMgr::Instance().AddLocalization(key, newLanguage))
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't add additional localization!"));
             else
             {
-                plString path = plFormat("{}.{}", key, newLanguage);
-                fCurrentLocPath = "";
+                ST::string path = ST::format("{}.{}", key, newLanguage);
+                fCurrentLocPath = ST::null;
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
                 LoadLocalization(path);
@@ -336,7 +336,7 @@ void EditDialog::DeleteClicked()
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't delete element!"));
             else
             {
-                plString path = fCurrentLocPath;
+                ST::string path = fCurrentLocPath;
                 fCurrentLocPath = "";
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
@@ -345,14 +345,14 @@ void EditDialog::DeleteClicked()
         }
         else if (fEditMode == kEditLocalization)
         {
-            plString ageName, setName, elementName, elementLanguage;
+            ST::string ageName, setName, elementName, elementLanguage;
             SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
-            plString key = plFormat("{}.{}.{}", ageName, setName, elementName);
+            ST::string key = ST::format("{}.{}.{}", ageName, setName, elementName);
             if (!pfLocalizationDataMgr::Instance().DeleteLocalization(key, elementLanguage))
                 QMessageBox::critical(this, tr("Error"), tr("Couldn't delete localization!"));
             else
             {
-                plString path = key + ".English";
+                ST::string path = key + ".English";
                 fCurrentLocPath = "";
                 fUI->fLocalizationTree->clear();
                 fUI->fLocalizationTree->LoadData(path);
@@ -363,12 +363,12 @@ void EditDialog::DeleteClicked()
 }
 
 // split a subtitle path up into its component parts
-void SplitLocalizationPath(const plString &path, plString &ageName,
-        plString &setName, plString &locName, plString &locLanguage)
+void SplitLocalizationPath(const ST::string &path, ST::string &ageName,
+        ST::string &setName, ST::string &locName, ST::string &locLanguage)
 {
-    ageName = setName = locName = locLanguage = "";
+    ageName = setName = locName = locLanguage = ST::null;
 
-    std::vector<plString> tokens = path.Tokenize(".");
+    std::vector<ST::string> tokens = path.tokenize(".");
     if (tokens.size() >= 1)
         ageName = tokens[0];
     if (tokens.size() >= 2)

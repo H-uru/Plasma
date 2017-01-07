@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plKeyImp;
 class plRegistryKeyIterator;
 class hsStream;
-class plString;
 class plUoid;
 
 //
@@ -85,7 +84,7 @@ public:
 
     uint16_t GetClassType() const { return fClassType; }
 
-    plKeyImp* FindKey(const plString& keyName) const;
+    plKeyImp* FindKey(const ST::string& keyName) const;
     plKeyImp* FindKey(const plUoid& uoid) const;
 
     bool IterateKeys(plRegistryKeyIterator* iterator);

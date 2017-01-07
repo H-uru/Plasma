@@ -187,7 +187,7 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     // Create and setup the callback message
     //
     plKey animKey = animComp->GetModKey(animNode);
-    plString animName = animComp->GetAnimName();
+    ST::string animName = animComp->GetAnimName();
 
     plAnimCmdMsg *animMsg = new plAnimCmdMsg;
     animMsg->SetCmd(plAnimCmdMsg::kAddCallbacks);
@@ -213,7 +213,7 @@ bool plAnimEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         int numMarkers = fCompPB->Count(kAnimMarkers);
         for (int i = 0; i < numMarkers; i++)
         {
-            plString marker = plString::FromUtf8(fCompPB->GetStr(kAnimMarkers, 0, i));
+            ST::string marker = ST::string::from_utf8(fCompPB->GetStr(kAnimMarkers, 0, i));
             float time = info.GetMarkerTime(marker);
 
             plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
@@ -259,12 +259,12 @@ static int ListBox_AddStringData(HWND hList, const char* text, int data)
     return idx;
 }
 
-static bool IsMarkerSelected(IParamBlock2* pb, int paramID, const plString& marker, bool remove=false)
+static bool IsMarkerSelected(IParamBlock2* pb, int paramID, const ST::string& marker, bool remove=false)
 {
     int numMarkers = pb->Count(paramID);
     for (int i = 0; i < numMarkers; i++)
     {
-        if (marker.Compare(pb->GetStr(paramID, 0, i)) == 0)
+        if (marker.compare(pb->GetStr(paramID, 0, i)) == 0)
         {
             if (remove)
                 pb->Delete(paramID, i, 1);
@@ -283,7 +283,7 @@ static void RemoveDeadMarkers(IParamBlock2* pb, int paramID, plAnimInfo& info)
     int numMarkers = pb->Count(paramID);
     for (int i = numMarkers-1; i >= 0; i--)
     {
-        float time = info.GetMarkerTime(plString::FromUtf8(pb->GetStr(paramID, 0, i)));
+        float time = info.GetMarkerTime(ST::string::from_utf8(pb->GetStr(paramID, 0, i)));
         if (time == -1)
         {
             pb->Delete(paramID, i, 1);
@@ -332,8 +332,8 @@ void plAnimEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
         RemoveDeadMarkers(pb, kAnimMarkers, info);
 
         // Get all the markers in this animation
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).is_empty())
         {
             idx = ListBox_AddStringData(hList, marker.c_str(), kAnimEventMarker);
 
@@ -360,7 +360,7 @@ bool plAnimEventProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int res
         {
             char buf[256];
             ListBox_GetText(hList, idx, buf);
-            plString text = plString::FromUtf8(buf);
+            ST::string text = ST::string::from_utf8(buf);
             if (selected)
             {
                 if (!IsMarkerSelected(pb, kAnimMarkers, text))
@@ -486,7 +486,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 
     Mtl* mtl = fCompPB->GetMtl(kMtlMtl);
     plMaxNodeBase* mtlNode = (plMaxNodeBase*)fCompPB->GetINode(kMtlNode);
-    plString mtlAnim = plString::FromUtf8(fCompPB->GetStr(kMtlAnim));
+    ST::string mtlAnim = ST::string::from_utf8(fCompPB->GetStr(kMtlAnim));
 
     //
     // Create and setup the callback message
@@ -518,7 +518,7 @@ bool plMtlEventComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         int numMarkers = fCompPB->Count(kMtlMarkers);
         for (int i = 0; i < numMarkers; i++)
         {
-            plString marker = plString::FromUtf8(fCompPB->GetStr(kMtlMarkers, 0, i));
+            ST::string marker = ST::string::from_utf8(fCompPB->GetStr(kMtlMarkers, 0, i));
             float time = info.GetMarkerTime(marker);
 
             plEventCallbackMsg *eventMsg = CreateCallbackMsg(animMsg, modKey);
@@ -582,7 +582,7 @@ void plMtlEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
 
     if (mtl)
     {
-        plString mtlAnim = plString::FromUtf8(pb->GetStr(kMtlAnim));
+        ST::string mtlAnim = ST::string::from_utf8(pb->GetStr(kMtlAnim));
 
         // Get the shared animations for all the nodes this component is applied to
         plNotetrackAnim anim(mtl, nil);
@@ -591,8 +591,8 @@ void plMtlEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
         RemoveDeadMarkers(pb, kMtlMarkers, info);
 
         // Get all the markers in this animation
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).is_empty())
         {
             idx = ListBox_AddStringData(hList, marker.c_str(), kAnimEventMarker);
 
@@ -619,7 +619,7 @@ bool plMtlEventProc::IUserCommand(HWND hWnd, IParamBlock2* pb, int cmd, int resI
         {
             char buf[256];
             ListBox_GetText(hList, idx, buf);
-            plString text = plString::FromUtf8(buf);
+            ST::string text = ST::string::from_utf8(buf);
             if (selected)
             {
                 if (!IsMarkerSelected(pb, kMtlMarkers, text))

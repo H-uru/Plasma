@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "hsWindows.h" // FIXME
-#include "plString.h"
 
 #include "hsStream.h"
 
@@ -104,7 +103,7 @@ public:
      * @param addr The DNS hostname of the host.
      * @param port The port number as a 16-bit host order integer.
      */
-    plNetAddress(const plString& addr, uint16_t port);
+    plNetAddress(const ST::string& addr, uint16_t port);
 
     virtual ~plNetAddress(){}
 
@@ -158,7 +157,7 @@ public:
      *
      * @param hostname The DNS name of the host.
      */
-    bool SetHost(const plString& hostname);
+    bool SetHost(const ST::string& hostname);
 
     /**
      * Sets the IPv4 address of the host from an unsigned 32-bit integer in
@@ -188,7 +187,7 @@ public:
      *
      * @return A string of the IPv4 host address.
      */
-    plString GetHostString() const;
+    ST::string GetHostString() const;
 
     /**
      * Return the IPv4 address and port number of the host as a string in
@@ -196,14 +195,14 @@ public:
      *
      * @return A string of the IPv4 host address and port number.
      */
-    plString GetHostWithPort() const;
+    ST::string GetHostWithPort() const;
 
     /**
      * Returns a string representation of the host address and port number.
      *
      * @return A string representation of the address.
      */
-    plString AsString() const;
+    ST::string AsString() const;
 
     /**
      * Reads and deserializes the address from a stream.

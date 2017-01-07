@@ -115,7 +115,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
 
         if( retVal == plSoundBuffer::kError )
         {
-            plString str = plFormat("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
+            ST::string str = ST::format("Unable to open .wav file {}", fDataBufferKey ? fDataBufferKey->GetName() : "nil");
             IPrintDbgMessage( str.c_str(), true );
             fFailed = true;
             return false;
@@ -152,9 +152,9 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         fDSoundBuffer = new plDSoundBuffer( bufferSize, header, is3D, IsPropertySet( kPropLooping ), tryStatic );
         if( !fDSoundBuffer->IsValid() )
         {
-            plString str = plFormat("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
-                                    " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
-                                    GetFileName());
+            ST::string str = ST::format("Can't create sound buffer for {}.wav. This could happen if the wav file is a stereo file."
+                                        " Stereo files are not supported on 3D sounds. If the file is not stereo then please report this error.",
+                                        GetFileName());
             IPrintDbgMessage(str.c_str(), true);
             fFailed = true;
 

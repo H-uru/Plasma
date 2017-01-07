@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-class plString;
 struct RelVaultNode;
 class pyVaultAgeLinkNode;
 
@@ -81,10 +80,10 @@ public:
 //
     void Note_SetTitle( const char * text );
     void Note_SetTitleW( const wchar_t * text );
-    plString Note_GetTitle() const;
+    ST::string Note_GetTitle() const;
     void Note_SetText( const char * text );
     void Note_SetTextW( const wchar_t * text );
-    plString Note_GetText() const;
+    ST::string Note_GetText() const;
     void Note_SetType( int32_t type );
     int32_t Note_GetType( void );
 

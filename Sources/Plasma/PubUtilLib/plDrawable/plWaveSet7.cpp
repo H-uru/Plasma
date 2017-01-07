@@ -1616,7 +1616,7 @@ plMipmap* plWaveSet7::ICreateBiasNoiseMap()
         plMipmap::kUncompressed,
         plMipmap::UncompressedInfo::kRGB8888);
 
-    plString buff = plFormat("{}_BiasBitPS", GetKey()->GetName());
+    ST::string buff = ST::format("{}_BiasBitPS", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
     int i;
@@ -1661,7 +1661,7 @@ plMipmap* plWaveSet7::ICreateBumpMipmapPS()
         plMipmap::kUncompressed,
         plMipmap::UncompressedInfo::kRGB8888);
 
-        plString buff = plFormat("{}_BumpBitPS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_BumpBitPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
         hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, kRefCosineLUT), plRefFlags::kActiveRef);
@@ -1713,7 +1713,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
         for( i = 0; i < 2; i++ )
         {
             plLayer* layer = new plLayer;
-            plString buff = plFormat("{}_Bias_{}", GetKey()->GetName(), i);
+            ST::string buff = ST::format("{}_Bias_{}", GetKey()->GetName(), i);
             hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
             layer->SetBlendFlags(hsGMatState::kBlendAdd);
@@ -1748,7 +1748,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
 plLayer* plWaveSet7::ICreateBumpLayerPS(plMipmap* mipMap, hsGMaterial* bumpMat, int which)
 {
     plLayer* layer = new plLayer;
-    plString buff = plFormat("{}_BumpLayerPS_{}", GetKey()->GetName(), which);
+    ST::string buff = ST::format("{}_BumpLayerPS_{}", GetKey()->GetName(), which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
     layer->SetBlendFlags(which ? hsGMatState::kBlendAdd : 0);
@@ -1805,7 +1805,7 @@ hsGMaterial* plWaveSet7::ICreateBumpLayersPS()
 
     // Create a blank material
     hsGMaterial* bumpMat = new hsGMaterial;
-    plString buff = plFormat("{}_BumpMatPS", GetKey()->GetName());
+    ST::string buff = ST::format("{}_BumpMatPS", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, bumpMat, GetKey()->GetUoid().GetLocation());
 
     plMipmap* mipMap = ICreateBumpMipmapPS();
@@ -1846,7 +1846,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
     {
         plShader* vShader = new plShader;
 
-        plString buff = plFormat("{}_BiasVS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_BiasVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
@@ -1909,7 +1909,7 @@ void plWaveSet7::IAddBumpBiasShaders(plLayer* layer)
     {
         plShader* pShader = new plShader;
 
-        plString buff = plFormat("{}_BiasPS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_BiasPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
@@ -1942,7 +1942,7 @@ void plWaveSet7::IAddBumpVertexShader(hsGMaterial* mat, int iShader, int iFirst,
             int iShader = iBase / kBumpPerPass;
 
             plShader* vShader = new plShader;
-            plString buff = plFormat("{}_BumpVS_{}", GetKey()->GetName(), iShader);
+            ST::string buff = ST::format("{}_BumpVS_{}", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
             vShader->SetIsPixelShader(false);
             
@@ -1987,7 +1987,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
             int iShader = iBase / kBumpPerPass;
 
             plShader* pShader = new plShader;
-            plString buff = plFormat("{}_BumpPS_{}", GetKey()->GetName(), iShader);
+            ST::string buff = ST::format("{}_BumpPS_{}", GetKey()->GetName(), iShader);
             hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
             pShader->SetIsPixelShader(true);
             
@@ -2029,7 +2029,7 @@ void plWaveSet7::IAddBumpPixelShader(hsGMaterial* mat, int iShader, int iFirst, 
 plDrawableSpans* plWaveSet7::ICreateBumpDrawable()
 {
     fBumpDraw = new plDrawableSpans;
-    plString buff = plFormat("{}_BumpDraw", GetKey()->GetName());
+    ST::string buff = ST::format("{}_BumpDraw", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, fBumpDraw, GetKey()->GetUoid().GetLocation());
 
     ICreateClearDrawable(fBumpDraw, fBumpMat);
@@ -2144,7 +2144,7 @@ plRenderTarget* plWaveSet7::ICreateTransferRenderTarget(const char* name, int si
     
     plRenderTarget* rt = new plRenderTarget(flags, size, size, bitDepth, zDepth, stencilDepth);
 
-    plString buff = plFormat("{}_{}", GetKey()->GetName(), name);
+    ST::string buff = ST::format("{}_{}", GetKey()->GetName(), name);
     hsgResMgr::ResMgr()->NewKey(buff, rt, GetKey()->GetUoid().GetLocation());
 
     return rt;
@@ -2156,7 +2156,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
     if( !layer )
     {
         layer = new plLayer;
-        plString buff = plFormat("{}_{}LayerPS_{}", GetKey()->GetName(), suff, which);
+        ST::string buff = ST::format("{}_{}LayerPS_{}", GetKey()->GetName(), suff, which);
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
         layer->SetAmbientColor(hsColorRGBA().Set(0.f, 0.f, 0.f, 1.f));
@@ -2190,7 +2190,7 @@ plLayer* plWaveSet7::ICreateTotalLayer(plBitmap* bm, hsGMaterial* mat, int which
 plLayer* plWaveSet7::ICreateTotalEnvLayer(plBitmap* envMap, hsGMaterial* mat, int which, const char* pref)
 {
     plLayer* layer = new plLayer;
-    plString buff = plFormat("{}_{}_EnvLayerPS_{}", GetKey()->GetName(), pref, which);
+    ST::string buff = ST::format("{}_{}_EnvLayerPS_{}", GetKey()->GetName(), pref, which);
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
     layer->SetBlendFlags(which ? hsGMatState::kBlendAddSigned : 0);
@@ -2290,7 +2290,7 @@ void plWaveSet7::IAddShoreVertexShader(hsGMaterial* mat)
 
         plShader* vShader = new plShader;
 
-        plString buff = plFormat("{}_ShoreVS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_ShoreVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
@@ -2343,7 +2343,7 @@ void plWaveSet7::IAddShorePixelShader(hsGMaterial* mat)
     {
         plShader* pShader = new plShader;
 
-        plString buff = plFormat("{}_ShorePS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_ShorePS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
 
@@ -2366,7 +2366,7 @@ void plWaveSet7::IAddFixedVertexShader(hsGMaterial* mat, const int numUVWs)
 
         plShader* vShader = new plShader;
 
-        plString buff = plFormat("{}_FixedVS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_FixedVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
@@ -2435,7 +2435,7 @@ void plWaveSet7::IAddFixedPixelShader(hsGMaterial* mat)
     if( !fFixedPShader )
     {
         plShader* pShader = new plShader;
-        plString buff = plFormat("{}_FixedPS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_FixedPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
@@ -2463,7 +2463,7 @@ void plWaveSet7::IAddRipVertexShader(hsGMaterial* mat, const plRipVSConsts& ripC
     if( !fRipVShader )
     {
         plShader* vShader = new plShader;
-        plString buff = plFormat("{}_RipVS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_RipVS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
@@ -2548,7 +2548,7 @@ void plWaveSet7::IAddRipPixelShader(hsGMaterial* mat, const plRipVSConsts& ripCo
     if( !fRipPShader )
     {
         plShader* pShader = new plShader;
-        plString buff = plFormat("{}_RipPS", GetKey()->GetName());
+        ST::string buff = ST::format("{}_RipPS", GetKey()->GetName());
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
@@ -2607,7 +2607,7 @@ plShader* plWaveSet7::ICreateDecalVShader(DecalVType t)
 
 
         plShader* vShader = new plShader;
-        plString buff = plFormat("{}_{}", GetKey()->GetName(), fname[t]);
+        ST::string buff = ST::format("{}_{}", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
         
@@ -2735,7 +2735,7 @@ plShader* plWaveSet7::ICreateDecalPShader(DecalPType t)
 
         plShader* pShader = new plShader;
 
-        plString buff = plFormat("{}_{}", GetKey()->GetName(), fname[t]);
+        ST::string buff = ST::format("{}_{}", GetKey()->GetName(), fname[t]);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
 
@@ -3676,7 +3676,7 @@ plDrawableSpans* plWaveSet7::ICreateGraphDrawable(plDrawableSpans* drawable, hsG
 plDrawableSpans* plWaveSet7::ICreateEmptyGraphDrawable(const char* name, uint32_t ref, int which)
 {
     plDrawableSpans* drawable = new plDrawableSpans;
-    plString buff = plFormat("{}_{}_{}", GetKey()->GetName(), name, which);
+    ST::string buff = ST::format("{}_{}_{}", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, drawable, GetKey()->GetUoid().GetLocation());
 
     hsgResMgr::ResMgr()->SendRef(drawable->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
@@ -3688,7 +3688,7 @@ hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, uint32_t ref, in
 {
     hsGMaterial* mat = new hsGMaterial;
 
-    plString buff = plFormat("{}_{}_{}", GetKey()->GetName(), name, which);
+    ST::string buff = ST::format("{}_{}_{}", GetKey()->GetName(), name, which);
     hsgResMgr::ResMgr()->NewKey(buff, mat, GetKey()->GetUoid().GetLocation());
 
     hsgResMgr::ResMgr()->SendRef(mat->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, which, (int8_t)ref), plRefFlags::kActiveRef);
@@ -3699,7 +3699,7 @@ hsGMaterial* plWaveSet7::ICreateEmptyMaterial(const char* name, uint32_t ref, in
 plLayer* plWaveSet7::ICreateBlankLayer(const char* name, int suff)
 {
     plLayer* lay = new plLayer;
-    plString buff = plFormat("{}_{}_{}", GetKey()->GetName(), name, suff);
+    ST::string buff = ST::format("{}_{}_{}", GetKey()->GetName(), name, suff);
     hsgResMgr::ResMgr()->NewKey(buff, lay, GetKey()->GetUoid().GetLocation());
 
     return lay;
@@ -3714,7 +3714,7 @@ plMipmap* plWaveSet7::ICreateBlankTex(const char* name, int width, int height, u
         plMipmap::kUncompressed,
         plMipmap::UncompressedInfo::kRGB8888);
 
-    plString buff = plFormat("{}_{}", GetKey()->GetName(), name);
+    ST::string buff = ST::format("{}_{}", GetKey()->GetName(), name);
     hsgResMgr::ResMgr()->NewKey(buff, mipMap, GetKey()->GetUoid().GetLocation());
 
     hsgResMgr::ResMgr()->SendRef(mipMap->GetKey(), new plGenRefMsg(GetKey(), plRefMsg::kOnRequest, 0, (int8_t)ref), plRefFlags::kActiveRef);
@@ -4120,7 +4120,7 @@ void plWaveSet7::IAddGraphVShader(hsGMaterial* mat, int iPass)
     if( !fGraphVShader[iPass] )
     {
         plShader* vShader = new plShader;
-        plString buff = plFormat("{}_GraphVS_{}", GetKey()->GetName(), iPass);
+        ST::string buff = ST::format("{}_GraphVS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, vShader, GetKey()->GetUoid().GetLocation());
         vShader->SetIsPixelShader(false);
 
@@ -4154,7 +4154,7 @@ void plWaveSet7::IAddGraphPShader(hsGMaterial* mat, int iPass)
     if( !fGraphPShader[iPass] )
     {
         plShader* pShader = new plShader;
-        plString buff = plFormat("{}_GraphPS_{}", GetKey()->GetName(), iPass);
+        ST::string buff = ST::format("{}_GraphPS_{}", GetKey()->GetName(), iPass);
         hsgResMgr::ResMgr()->NewKey(buff, pShader, GetKey()->GetUoid().GetLocation());
         pShader->SetIsPixelShader(true);
         
@@ -4224,11 +4224,10 @@ void plWaveSet7::ISetupGraphShore(hsGMaterial* mat)
 
 void plWaveSet7::IMakeShoreLayer(hsGMaterial* mat, int which)
 {
-    plString name;
     if( which >= mat->GetNumLayers() )
     {
         plLayer* lay = new plLayer;
-        name = plFormat("{}_lay_{}", mat->GetKey()->GetName(), which);
+        ST::string name = ST::format("{}_lay_{}", mat->GetKey()->GetName(), which);
         hsgResMgr::ResMgr()->NewKey(name, lay, GetKey()->GetUoid().GetLocation());
 
         lay->SetAmbientColor(hsColorRGBA().Set(0.f, 0.f, 0.f, 1.f));

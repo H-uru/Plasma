@@ -64,7 +64,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plBrowseFolder
 {
 public:
-    static plFileName GetFolder(const plFileName &startPath = "", const plString &title = "", HWND hwndOwner = NULL);
+    static plFileName GetFolder(const plFileName &startPath = ST::null,
+                                const ST::string &title = ST::null, HWND hwndOwner = NULL);
 
 protected:
     static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData);

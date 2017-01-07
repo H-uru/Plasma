@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if (REFCOUNT_DEBUGGING == REFCOUNT_DBG_LEAKS) || (REFCOUNT_DEBUGGING == REFCOUNT_DBG_ALL)
 #include <unordered_set>
 #include <mutex>
-#include "plFormat.h"
+#include <string_theory/format>
 
 // hsDebugMessage can get overridden to dump to a file :(
 #ifdef _MSC_VER
@@ -75,14 +75,14 @@ struct _RefCountLeakCheck
     {
         std::lock_guard<std::mutex> lock(m_mutex);
 
-        _LeakDebug(plFormat("Refs tracked:  {} created, {} destroyed\n",
-                            m_added, m_removed).c_str());
+        _LeakDebug(ST::format("Refs tracked:  {} created, {} destroyed\n",
+                              m_added, m_removed).c_str());
         if (m_refs.empty())
             return;
 
-        _LeakDebug(plFormat("    {} objects leaked...\n", m_refs.size()).c_str());
+        _LeakDebug(ST::format("    {} objects leaked...\n", m_refs.size()).c_str());
         for (hsRefCnt *ref : m_refs) {
-            _LeakDebug(plFormat("    0x{_08x} {}: {} refs remain\n",
+            _LeakDebug(ST::format("    {#08x} {}: {} refs remain\n",
                        (uintptr_t)ref, typeid(*ref).name(), ref->RefCnt()).c_str());
         }
     }

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPageOptimizer.h"
 #include "pnNetCommon/plSynchedObject.h"
+#include <string_theory/stdio>
 
 int main(int argc, char* argv[])
 {
@@ -53,7 +54,7 @@ int main(int argc, char* argv[])
     }
 
     plFileName filename = argv[1];
-    plPrintf("Optimizing {}...", filename);
+    ST::printf("Optimizing {}...", filename);
 
 #ifndef _DEBUG
     try {

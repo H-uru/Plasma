@@ -109,15 +109,15 @@ void plProfileManagerFull::ShowGroup(const char* groupName)
 
 void plProfileManagerFull::ShowNextGroup()
 {
-    plString curGroup;
+    ST::string curGroup;
     if (fShowGroups.begin() != fShowGroups.end())
         curGroup = *(fShowGroups.begin());
 
     GroupSet groups;
     GetGroups(groups);
 
-    plString nextGroup;
-    if (!curGroup.IsNull())
+    ST::string nextGroup;
+    if (!curGroup.is_empty())
     {
         CreateStandardGraphs(curGroup.c_str(), false);
 
@@ -135,7 +135,7 @@ void plProfileManagerFull::ShowNextGroup()
     }
 
     fShowGroups.clear();
-    if (!nextGroup.IsNull())
+    if (!nextGroup.is_empty())
     {
         ISetActive(nextGroup.c_str(), true);
         CreateStandardGraphs(nextGroup.c_str(), true);
@@ -304,12 +304,12 @@ void plProfileManagerFull::Update()
     GroupSet::iterator it;
     for (it = fShowGroups.begin(); it != fShowGroups.end(); it++)
     {
-        plString groupName = *it;
+        ST::string groupName = *it;
 
         std::vector<plProfileBase*> group;
 
         for (int i = 0; i < fVars.size(); i++)
-            if (groupName.Compare(fVars[i]->GetGroup()) == 0)
+            if (groupName.compare(fVars[i]->GetGroup()) == 0)
                 group.push_back(fVars[i]);
 
         int x = 10;
@@ -417,7 +417,7 @@ void plProfileManagerFull::IPrintGroup(hsStream* s, const char* groupName, bool 
     }
 }
 
-void plProfileManagerFull::LogStats(const plString& ageName, const plString& spawnName)
+void plProfileManagerFull::LogStats(const ST::string& ageName, const ST::string& spawnName)
 {
     fLogStats = true;
     fLogAgeName = ageName;
@@ -433,10 +433,10 @@ plFileName plProfileManagerFull::GetProfilePath()
         plUnifiedTime curTime = plUnifiedTime::GetCurrent(plUnifiedTime::kLocal);
 
         profilePath = plFileName::Join(plFileSystem::GetUserDataPath(), "Profile",
-            plFormat("{_02}-{_02}-{_04}_{_02}-{_02}",
-                     curTime.GetMonth(), curTime.GetDay(),
-                     curTime.GetYear(), curTime.GetHour(),
-                     curTime.GetMinute()));
+            ST::format("{02}-{02}-{04}_{02}-{02}",
+                       curTime.GetMonth(), curTime.GetDay(),
+                       curTime.GetYear(), curTime.GetHour(),
+                       curTime.GetMinute()));
 
         plFileSystem::CreateDir(profilePath, true);
     }
@@ -466,19 +466,19 @@ void plProfileManagerFull::ILogStats()
 
             for (it = groups.begin(); it != groups.end(); it++)
             {
-                plString groupName = *it;
+                ST::string groupName = *it;
                 IPrintGroup(&s, groupName.c_str(), true);
             }
             s.WriteByte('\r');
             s.WriteByte('\n');
         }
 
-        s.Write(fLogSpawnName.GetSize(), fLogSpawnName.c_str());
+        s.Write(fLogSpawnName.size(), fLogSpawnName.c_str());
         s.WriteByte(',');
 
         for (it = groups.begin(); it != groups.end(); it++)
         {
-            plString groupName = *it;
+            ST::string groupName = *it;
             IPrintGroup(&s, groupName.c_str());
         }
         s.WriteByte('\r');

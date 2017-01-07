@@ -1576,20 +1576,20 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     oldMip->SetCurrLevel(0);
 
     hsGMaterial* newMat = new hsGMaterial;
-    plString buff = plFormat("{}_EnvMat", GetKey()->GetName());
+    ST::string buff = ST::format("{}_EnvMat", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, newMat, GetKey()->GetUoid().GetLocation());
 
     static plTweak<float> kSmooth(1.f);
     plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kBubbleTest, kSmooth);
 //  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, plBumpMapGen::kNormalize, kSmooth);
 //  plMipmap* bumpMap = plBumpMapGen::QikNormalMap(nil, oldMip, 0xffffffff, 0, 0);
-    buff = plFormat("{}_BumpMap", GetKey()->GetName());
+    buff = ST::format("{}_BumpMap", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, bumpMap, GetKey()->GetUoid().GetLocation());
 
     bumpMap->SetFlags(bumpMap->GetFlags() | plMipmap::kBumpEnvMap | plMipmap::kForceNonCompressed);
 
     plLayer* bumpLay = new plLayer;
-    buff = plFormat("{}_BumpMap_0", GetKey()->GetName());
+    buff = ST::format("{}_BumpMap_0", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, bumpLay, GetKey()->GetUoid().GetLocation());
 
     bumpLay->SetState(oldLay->GetState());
@@ -1611,7 +1611,7 @@ hsGMaterial* plDynaDecalMgr::IConvertToEnvMap(hsGMaterial* mat, plBitmap* envMap
     newMat->AddLayerViaNotify(bumpLay);
 
     plLayer* envLay = new plLayer;
-    buff = plFormat("{}_EnvMap_0", GetKey()->GetName());
+    buff = ST::format("{}_EnvMap_0", GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(buff, envLay, GetKey()->GetUoid().GetLocation());
 
     envLay->SetBlendFlags(hsGMatState::kBlendMult);

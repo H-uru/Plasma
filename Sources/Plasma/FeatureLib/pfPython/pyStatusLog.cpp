@@ -46,9 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //  and interface to the ChatLog (ptChatStatusLog)
 //////////////////////////////////////////////////////////////////////
 
-#include "plString.h"
-#pragma hdrstop
-
 #include "pyColor.h"
 #include "pyStatusLog.h"
 #include "plStatusLog/plStatusLog.h"
@@ -65,14 +62,14 @@ pyStatusLog::~pyStatusLog()
 }
 
 
-bool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
+bool pyStatusLog::Open(const ST::string &logName, uint32_t numLines, uint32_t flags)
 {
     // make sure its closed first
     Close();
 
     // create a status log guy for this
     fICreatedLog = true;
-    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, logName.c_str(), flags );
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog( (uint8_t)numLines, logName, flags );
     if (fLog)
     {
         fLog->SetForceLog(true);
@@ -81,18 +78,18 @@ bool pyStatusLog::Open(plString logName, uint32_t numLines, uint32_t flags)
     return false;
 }
 
-bool pyStatusLog::Write(plString text)
+bool pyStatusLog::Write(const ST::string &text)
 {
     if (fLog)
     {
-        fLog->AddLine(text.c_str());
+        fLog->AddLine(text);
         return true;
     }
 
     return false;
 }
 
-bool pyStatusLog::WriteColor(plString text, pyColor& color)
+bool pyStatusLog::WriteColor(const ST::string &text, pyColor& color)
 {
     if (fLog)
     {

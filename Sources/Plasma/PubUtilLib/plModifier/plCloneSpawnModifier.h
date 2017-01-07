@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plCloneSpawnModifier : public plSingleModifier
 {
 protected:
-    plString fTemplateName;
+    ST::string fTemplateName;
     bool fExportTime;
 
     virtual bool IEval(double secs, float del, uint32_t dirty) { return true; }
@@ -63,14 +63,14 @@ public:
 
     virtual void SetTarget(plSceneObject* so);
 
-    void SetTemplateName(const plString &templateName) { fTemplateName = templateName; }
+    void SetTemplateName(const ST::string &templateName) { fTemplateName = templateName; }
 
     // Set this to true at export time so the clone mod won't try to make a
     // clone when it's attached
     void SetExportTime() { fExportTime = true; }
 
     // Console backdoor
-    static plKey SpawnClone(const plString& cloneName, const plString& cloneAge, const hsMatrix44& pos, plKey requestor);
+    static plKey SpawnClone(const ST::string& cloneName, const ST::string& cloneAge, const hsMatrix44& pos, plKey requestor);
 };
 
 #endif // plCloneSpawnModifier_inc

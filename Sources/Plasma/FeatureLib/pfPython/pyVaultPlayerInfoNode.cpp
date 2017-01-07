@@ -89,7 +89,7 @@ uint32_t pyVaultPlayerInfoNode::Player_GetPlayerID( void )
     return playerInfo.GetPlayerId();
 }
 
-void pyVaultPlayerInfoNode::Player_SetPlayerName(const plString& name)
+void pyVaultPlayerInfoNode::Player_SetPlayerName(const ST::string& name)
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
@@ -97,17 +97,17 @@ void pyVaultPlayerInfoNode::Player_SetPlayerName(const plString& name)
     }
 }
 
-plString pyVaultPlayerInfoNode::Player_GetPlayerName() const
+ST::string pyVaultPlayerInfoNode::Player_GetPlayerName() const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetPlayerName();
     }
-    return "";
+    return ST::null;
 }
 
 // age the player is currently in, if any.
-void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const plString& name)
+void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const ST::string& name)
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
@@ -115,13 +115,13 @@ void pyVaultPlayerInfoNode::Player_SetAgeInstanceName(const plString& name)
     }
 }
 
-plString pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
+ST::string pyVaultPlayerInfoNode::Player_GetAgeInstanceName() const
 {
     if (fNode) {
         VaultPlayerInfoNode playerInfo(fNode);
         return playerInfo.GetAgeInstName();
     }
-    return "";
+    return ST::null;
 }
 
 void pyVaultPlayerInfoNode::Player_SetAgeGuid( const char * guidtext)

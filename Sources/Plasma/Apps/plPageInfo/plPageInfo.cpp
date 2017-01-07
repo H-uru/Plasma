@@ -178,7 +178,7 @@ bool DumpSounds()
             {
                 uint32_t flags = 0;
 
-                if (filename.GetFileExt().CompareI("wav") != 0)
+                if (filename.GetFileExt().compare_i("wav") != 0)
                 {
                     if (buffer->HasFlag(plSoundBuffer::kOnlyLeftChannel) ||
                         buffer->HasFlag(plSoundBuffer::kOnlyRightChannel))
@@ -240,7 +240,7 @@ public:
         const plPageInfo& info = page->GetPageInfo();
 
         plFileName fileName = plFileName::Join(fOutputDir,
-                plFormat("{}_{}.csv", info.GetAge(), info.GetPage()));
+                ST::format("{}_{}.csv", info.GetAge(), info.GetPage()));
         fStream.Open(fileName, "wt");
 
         page->LoadKeys();

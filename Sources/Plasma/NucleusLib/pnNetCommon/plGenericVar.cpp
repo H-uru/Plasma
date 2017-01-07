@@ -73,7 +73,7 @@ int32_t plGenericType::IToInt( void ) const
 
     if( fType == kAny )
     {
-        return fS.ToInt();
+        return fS.to_int();
     }
     
     return fI;
@@ -85,7 +85,7 @@ uint32_t plGenericType::IToUInt( void ) const
 
     if( fType == kAny )
     {
-        return fS.ToUInt();
+        return fS.to_uint();
     }
     
     return fU;
@@ -97,7 +97,7 @@ double plGenericType::IToDouble( void ) const
 
     if( fType == kAny )
     {
-        return fS.ToDouble();
+        return fS.to_double();
     }
     
     return fD;
@@ -109,7 +109,7 @@ float plGenericType::IToFloat( void ) const
 
     if( fType == kAny )
     {
-        return fS.ToFloat();
+        return fS.to_float();
     }
     
     return fF;
@@ -121,13 +121,13 @@ bool plGenericType::IToBool( void ) const
 
     if( fType == kAny )
     {
-        return (fS.ToInt() > 0 || fS.CompareI("true") == 0);
+        return fS.to_bool();
     }
     
     return fB;
 }
 
-plString plGenericType::IToString( void ) const
+ST::string plGenericType::IToString( void ) const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 
@@ -140,7 +140,7 @@ char plGenericType::IToChar( void ) const
 
     if( fType == kAny )
     {
-        return fS.CharAt(0);
+        return fS.char_at(0);
     }
     
     return fC;
@@ -232,29 +232,30 @@ void    plGenericVar::Write(hsStream* s)
 
 //////////////////////////////////
 
-plString plGenericType::GetAsString() const
+ST::string plGenericType::GetAsString() const
 {
     switch (fType)
     {
     case kInt :
-        return plFormat("{}", fI);
+        return ST::string::from_int(fI);
     case kBool :
-        return plFormat("{}", fB ? 1 : 0);
+        return ST::string::from_int(fB ? 1 : 0);
     case kUInt:
-        return plFormat("{}", fU);
+        return ST::string::from_uint(fU);
     case kFloat :
     case kDouble :
-        return plFormat("{f}", fType==kDouble ? fD : fF);
+        return (fType==kDouble) ? ST::string::from_double(fD, 'f')
+                                : ST::string::from_float(fF, 'f');
     case kChar :
-        return plFormat("{}", fC);
+        return ST::string::fill(1, fC);
     case kAny :
     case kString :
         return fS;
     case kNone :
         break;
     default:
-        hsAssert(false,"plGenericType::GetAsStdString unknown type");
+        hsAssert(false,"plGenericType::GetAsString unknown type");
     }
 
-    return plString::Null;
+    return ST::null;
 }

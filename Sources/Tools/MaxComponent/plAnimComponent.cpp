@@ -612,12 +612,12 @@ plAnimComponentBase::plAnimComponentBase() : fNeedReset(true)
 }
 
 
-plString plAnimComponentBase::GetAnimName()
+ST::string plAnimComponentBase::GetAnimName()
 {
     const char *name = fCompPB->GetStr(kAnimName);
     if (!name || name[0] == '\0')
-        return plString::Null;
-    return plString::FromUtf8(name);
+        return ST::null;
+    return ST::string::from_utf8(name);
 }
 
 bool IsSubworld(plMaxNode* node)
@@ -702,7 +702,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         {
             if (!node->HasAGMod()) // Need to add this before the MasterMod, if it doesn't have one already.
             {
-                node->AddModifier(new plAGModifier(plString::FromUtf8(node->GetName())), IGetUniqueName(node));
+                node->AddModifier(new plAGModifier(ST::string::from_utf8(node->GetName())), IGetUniqueName(node));
             }
             mod = new plAGMasterMod();
 
@@ -722,9 +722,9 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // we've added all keys during convert. Some cleanup might
     // be necessary in this case.
 
-    plString animName = plString::FromUtf8(fCompPB->GetStr(kAnimName));
-    if (animName.IsEmpty())
-        animName = ENTIRE_ANIMATION_NAME;
+    ST::string animName = ST::string::from_utf8(fCompPB->GetStr(kAnimName));
+    if (animName.is_empty())
+        animName = ST_LITERAL(ENTIRE_ANIMATION_NAME);
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
     {
@@ -753,7 +753,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         if (fCompPB->GetInt(kAnimLoop))
         {
             ATCAnim->SetLoop(true);
-            plString loopName = plString::FromUtf8(fCompPB->GetStr(kAnimLoopName));
+            ST::string loopName = ST::string::from_utf8(fCompPB->GetStr(kAnimLoopName));
             float loopStart = info.GetLoopStart(loopName);
             float loopEnd = info.GetLoopEnd(loopName);
 
@@ -761,12 +761,12 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
             ATCAnim->SetLoopEnd(loopEnd == -1 ? ATCAnim->GetEnd() : loopEnd);
         }
     
-        plString loop;
-        while (!(loop = info.GetNextLoopName()).IsNull())
+        ST::string loop;
+        while (!(loop = info.GetNextLoopName()).is_empty())
             ATCAnim->AddLoop(loop, info.GetLoopStart(loop), info.GetLoopEnd(loop));
 
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).is_empty())
             ATCAnim->AddMarker(marker, info.GetMarkerTime(marker));
 
         float stopPoint = -1;
@@ -797,7 +797,7 @@ bool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorM
     hsAffineParts * parts = new hsAffineParts;
     plController* tmc;
 
-    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
         tmc = hsControlConverter::Instance().ConvertTMAnim(obj, node, parts);
     else 
         tmc = hsControlConverter::Instance().ConvertTMAnim(obj, node, parts, anim->GetStart(), anim->GetEnd());
@@ -805,11 +805,11 @@ bool plAnimComponentBase::IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorM
     if (tmc)
     {
         plMatrixChannelApplicator *app = new plMatrixChannelApplicator();
-            app->SetChannelName(plString::FromUtf8(node->GetName()));
+            app->SetChannelName(ST::string::from_utf8(node->GetName()));
         plMatrixControllerChannel *channel = new plMatrixControllerChannel(tmc, parts);
         app->SetChannel(channel);
         anim->AddApplicator(app);
-        if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+        if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
             anim->ExtendToLength(tmc->GetLength());
         result = true;
     }
@@ -868,7 +868,7 @@ bool plAnimComponentBase::IConvertNodeSegmentBranch(plMaxNode *node, plAGAnim *a
         // It has an animation, we're going to need a plAGMod when loading the anim
         if (!node->HasAGMod())
         {
-            node->AddModifier(new plAGModifier(plString::FromUtf8(node->GetName())), IGetUniqueName(node));
+            node->AddModifier(new plAGModifier(ST::string::from_utf8(node->GetName())), IGetUniqueName(node));
         }
         madeAnim = true;
     }
@@ -890,7 +890,7 @@ bool plAnimComponentBase::IMakePersistent(plMaxNode *node, plAGAnim *anim, plErr
     plAGMasterMod *mod = plAGMasterMod::ConvertNoRef(fMods[node]);
     hsAssert(mod != nil, "No MasterMod to make animation persistent!");
 
-    plString buffer = plFormat("{}_{}_anim_{}", node->GetName(), anim->GetName(), mod->GetNumPrivateAnimations());
+    ST::string buffer = ST::format("{}_{}_anim_{}", node->GetName(), anim->GetName(), mod->GetNumPrivateAnimations());
     plLocation nodeLoc = node->GetLocation();
     plKey animKey = hsgResMgr::ResMgr()->NewKey(buffer, anim, nodeLoc);
 
@@ -941,7 +941,7 @@ void plAnimComponentBase::SetupCtl( plAGAnim *anim, plController *ctl, plAGAppli
     plScalarControllerChannel *channel = new plScalarControllerChannel(ctl);
     app->SetChannel(channel);
     anim->AddApplicator(app);
-    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
         anim->ExtendToLength(ctl->GetLength());
 }
 
@@ -995,10 +995,10 @@ void    plAnimComponentBase::PickTargetNode( IParamBlock2 *destPB, ParamID destP
     pick.DoPick();
 }
 
-plString plAnimComponentBase::GetIfaceSegmentName( bool allowNil )
+ST::string plAnimComponentBase::GetIfaceSegmentName( bool allowNil )
 {
-    plString name = GetAnimName();
-    if( allowNil || !name.IsNull() )
+    ST::string name = GetAnimName();
+    if( allowNil || !name.is_empty() )
         return name;
     return ENTIRE_ANIMATION_NAME;
 }

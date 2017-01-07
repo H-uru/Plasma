@@ -86,9 +86,9 @@ private:
     plKeyVec    fPendingPageOuts;   // keys of rooms which are currently being paged out.
     plAgeDescription    fCurAgeDescription;
     plStateDataRecord* fInitialAgeState;
-    plString fAgeName;
+    ST::string fAgeName;
 
-    bool ILoadAge(const plString& ageName);
+    bool ILoadAge(const ST::string& ageName);
     bool IUnloadAge();
     void ISetInitialAgeState(plStateDataRecord* s);     // sent from server with joinAck
     const plStateDataRecord* IGetInitialAgeState() const { return fInitialAgeState; }
@@ -102,14 +102,14 @@ public:
 
     static plAgeLoader* GetInstance();
     static void SetInstance(plAgeLoader* inst);
-    static hsStream* GetAgeDescFileStream(const plString& ageName);
+    static hsStream* GetAgeDescFileStream(const ST::string& ageName);
 
     void Init();
     void Shutdown();
     bool MsgReceive(plMessage* msg);
-    bool LoadAge(const plString& ageName);
+    bool LoadAge(const ST::string& ageName);
     bool UnloadAge()                              { return IUnloadAge(); }
-    void UpdateAge(const plString& ageName);
+    void UpdateAge(const ST::string& ageName);
     void NotifyAgeLoaded( bool loaded );
 
     const plKeyVec& PendingPageOuts() const { return fPendingPageOuts; }
@@ -126,8 +126,8 @@ public:
 
     // Fun debugging exclude commands (to prevent certain pages from loading)
     void    ClearPageExcludeList( void );
-    void    AddExcludedPage( const plString& pageName, const plString& ageName = "" );
-    bool    IsPageExcluded( const plAgePage *page, const plString& ageName = "" );
+    void    AddExcludedPage( const ST::string& pageName, const ST::string& ageName = ST::null );
+    bool    IsPageExcluded( const plAgePage *page, const ST::string& ageName = ST::null );
 
     const plAgeDescription  &GetCurrAgeDesc( void ) const { return fCurAgeDescription; }
 

@@ -335,7 +335,7 @@ bool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetEnter) || fCompPB->GetInt(kVolumeTriggerOnFacing))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        plString tmpName = plFormat("{}_Enter", IGetUniqueName(node));
+        ST::string tmpName = ST::format("{}_Enter", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -349,7 +349,7 @@ bool plVolumeGadgetComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     if(fCompPB->GetInt(kVolumeGadgetExit))
     {   
         plLogicModifier *logic = new plLogicModifier;
-        plString tmpName = plFormat("{}_Exit", IGetUniqueName(node));
+        ST::string tmpName = ST::format("{}_Exit", IGetUniqueName(node));
         plKey logicKey = hsgResMgr::ResMgr()->NewKey(tmpName, logic, node->GetLocation());
         hsgResMgr::ResMgr()->AddViaNotify(logicKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
 
@@ -407,7 +407,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
         prefix = "Enter";
 
     // Register the detector
-    plString tmpName = plFormat("{}_{}", IGetUniqueName(node), prefix);
+    ST::string tmpName = ST::format("{}_{}", IGetUniqueName(node), prefix);
     plKey detectorKey = hsgResMgr::ResMgr()->NewKey(tmpName, detector, loc);
     hsgResMgr::ResMgr()->AddViaNotify(detectorKey, new plObjRefMsg(obj->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kModifier), plRefFlags::kActiveRef);
     plVolumeSensorConditionalObject* boxCond=nil;
@@ -419,7 +419,7 @@ void plVolumeGadgetComponent::ICreateConditions(plMaxNode* node, plErrorMsg* err
     {
         boxCond = new plVolumeSensorConditionalObjectNoArbitration;
     }
-    tmpName = plFormat("{}_{}", IGetUniqueName(node), prefix);
+    tmpName = ST::format("{}_{}", IGetUniqueName(node), prefix);
     plKey boxKey = hsgResMgr::ResMgr()->NewKey(tmpName, boxCond, loc);
 
     if (enter)

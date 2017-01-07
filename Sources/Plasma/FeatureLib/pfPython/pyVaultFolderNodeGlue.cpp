@@ -96,7 +96,7 @@ PYTHON_METHOD_DEFINITION(ptVaultFolderNode, folderSetName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, folderGetName)
 {
-    return PyString_FromPlString(self->fThis->Folder_GetName());
+    return PyString_FromSTString(self->fThis->Folder_GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderType, args)
@@ -159,12 +159,12 @@ PYTHON_METHOD_DEFINITION(ptVaultFolderNode, setFolderNameW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderName)
 {
-    return PyString_FromPlString(self->fThis->Folder_GetName());
+    return PyString_FromSTString(self->fThis->Folder_GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultFolderNode, getFolderNameW)
 {
-    return PyUnicode_FromPlString(self->fThis->Folder_GetName());
+    return PyUnicode_FromSTString(self->fThis->Folder_GetName());
 }
 
 PYTHON_START_METHODS_TABLE(ptVaultFolderNode)

@@ -255,12 +255,12 @@ plAnimStealthNode   *plAnimStealthNode::ConvertToStealth( INode *objNode )
 }
 
 
-plString plAnimStealthNode::GetSegmentName( void ) const
+ST::string plAnimStealthNode::GetSegmentName( void ) const
 {
     const char *str = fParamBlock->GetStr( (ParamID)kPBName );
     if( str == nil || str[ 0 ] == 0 )
         return ENTIRE_ANIMATION_NAME;
-    return plString::FromUtf8(str);
+    return ST::string::from_utf8(str);
 }
 
 void    plAnimStealthNode::SetSegment( const char *name )
@@ -715,8 +715,8 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     int defIdx = SendMessage( hLoops, CB_ADDSTRING, 0, (LPARAM)ENTIRE_ANIMATION_NAME );
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
-    plString segName = plString::FromUtf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
-    if( segName.IsNull() || fSegMap == nil )
+    ST::string segName = ST::string::from_utf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
+    if( segName.is_empty() || fSegMap == nil )
     {
         // Default of "entire animation", no other loop options
         SendMessage( hLoops, CB_SETCURSEL, defIdx, 0 );
@@ -883,11 +883,11 @@ void    plAnimStealthNode::PickTargetNode( IParamBlock2 *destPB, ParamID destPar
     pick.DoPick();
 }
 
-plString plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
+ST::string plAnimStealthNode::GetIfaceSegmentName( bool allowNil )
 {
     // When sending messages to material animations, they're already addressed for the right
     // layer, no need for a segment name
-    return plString::Null;
+    return ST::null;
 }
 
 //// Parameter Access Functions //////////////////////////////////////////////
@@ -898,8 +898,8 @@ bool    plAnimStealthNode::GetAutoStart( void ) const   { return (bool)fParamBlo
 void    plAnimStealthNode::SetAutoStart( bool b )       { fParamBlock->SetValue( (ParamID)kPBAutoStart, 0, (int)b ); };
 
 bool        plAnimStealthNode::GetLoop( void ) const                    { return fParamBlock->GetInt( (ParamID)kPBLoop ); }
-plString    plAnimStealthNode::GetLoopName( void ) const                { return plString::FromUtf8( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
-void        plAnimStealthNode::SetLoop( bool b, const plString &name )
+ST::string  plAnimStealthNode::GetLoopName( void ) const                { return ST::string::from_utf8( fParamBlock->GetStr( (ParamID)kPBLoopName ) ); }
+void        plAnimStealthNode::SetLoop( bool b, const ST::string &name )
 {
     fParamBlock->SetValue( (ParamID)kPBLoop, 0, (int)b );
     fParamBlock->SetValue( (ParamID)kPBLoopName, 0, (char *)name.c_str() );

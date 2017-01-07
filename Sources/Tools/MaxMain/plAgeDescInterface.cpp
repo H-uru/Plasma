@@ -77,7 +77,7 @@ public:
     jvUniqueId fAssetID;
 #endif
     plFileName  fPath;
-    plString    fAgeName;
+    ST::string  fAgeName;
 
     enum Types
     {
@@ -951,12 +951,12 @@ void plAgeDescInterface::IFillAgeTree( void )
 
 BOOL CALLBACK NewAgeDlgProc(HWND hDlg, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-    static plString *name = nil;
+    static ST::string *name = nil;
 
     switch (msg)
     {
     case WM_INITDIALOG:
-        name = reinterpret_cast<plString *>(lParam);
+        name = reinterpret_cast<ST::string *>(lParam);
         SetWindowText(hDlg, name->c_str());
         return TRUE;
 
@@ -1038,7 +1038,7 @@ void plAgeDescInterface::INewAge()
     if (!newAssetFilename.IsValid())
         return;
 
-    plString name = "New Age Name";
+    ST::string name = ST_LITERAL("New Age Name");
 
     // Get the name of the new age from the user
     int ret = DialogBoxParam(hInstance,
@@ -1068,7 +1068,7 @@ void plAgeDescInterface::INewAge()
 
 void plAgeDescInterface::INewPage()
 {
-    plString name = "New Page Name";
+    ST::string name = ST_LITERAL("New Page Name");
 
     // Get the name of the new age from the user
     int ret = DialogBoxParam(hInstance,
@@ -1087,7 +1087,7 @@ void plAgeDescInterface::INewPage()
     {
         char pageName[256];
         ListBox_GetText(hPages, i, pageName);
-        if (!name.CompareI(pageName))
+        if (!name.compare_i(pageName))
             return;
     }
 
@@ -1213,7 +1213,7 @@ void plAgeDescInterface::ILoadAge( const plFileName &path, bool checkSeqNum )
     plAgeDescription aged( path );
 
     // Get the name of the age
-    plString ageName = path.GetFileNameNoExt();
+    ST::string ageName = path.GetFileNameNoExt();
 
     // Check the sequence prefix #
     if( checkSeqNum )

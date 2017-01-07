@@ -98,13 +98,13 @@ public:
     };
 protected:
     static const uint8_t kVersion;      // for Read/Write format
-    plString    fDefault;               // set by .sdl
-    plString    fName;                  // set by .sdl
+    ST::string  fDefault;               // set by .sdl
+    ST::string  fName;                  // set by .sdl
     int         fCount;                 // set by .sdl
     Type        fType;                  // set by .sdl
-    plString    fTypeString;            // string version of fType
+    ST::string  fTypeString;            // string version of fType
     uint32_t    fFlags;
-    plString    fDisplayOptions;        // set by .sdl
+    ST::string  fDisplayOptions;        // set by .sdl
 public:
     plVarDescriptor() : fCount(1), fType(kNone), fFlags(0) { }
     virtual ~plVarDescriptor() { }
@@ -118,26 +118,26 @@ public:
     virtual const plSDVarDescriptor* GetAsSDVarDescriptor() const = 0;
 
     // getters
-    plString GetDefault()    const   { return fDefault; }
-    plString GetName()   const       { return fName; }
+    ST::string GetDefault()    const { return fDefault; }
+    ST::string GetName()   const     { return fName; }
     Type    GetType() const          { return fType; }
-    plString GetTypeString() const   { return fTypeString; }
+    ST::string GetTypeString() const { return fTypeString; }
     int     GetCount() const         { return fCount; }
     bool    IsInternal() const       { return (fFlags & kInternal) != 0; }
     bool    IsAlwaysNew() const      { return (fFlags & kAlwaysNew) != 0; }
     bool    IsVariableLength() const { return (fFlags & kVariableLength) != 0; }
-    plString GetDisplayOptions() const { return fDisplayOptions; }
+    ST::string GetDisplayOptions() const { return fDisplayOptions; }
     
     // setters
-    void    SetDefault(const plString& n)  { fDefault = n; }
-    void    SetName(const plString& n)  { fName = n; }
+    void    SetDefault(const ST::string& n)  { fDefault = n; }
+    void    SetName(const ST::string& n)  { fName = n; }
     void    SetCount(int c)             { fCount=c; }
-    virtual bool SetType(const plString& type);
+    virtual bool SetType(const ST::string& type);
     void    SetType(Type t)             { fType=t; }
     void    SetInternal(bool d)         { if (d) fFlags |= kInternal; else fFlags &= ~kInternal; }
     void    SetAlwaysNew(bool d)        { if (d) fFlags |= kAlwaysNew; else fFlags &= ~kAlwaysNew; }
     void    SetVariableLength(bool d)   { if (d) fFlags |= kVariableLength; else fFlags &= ~kVariableLength; }
-    void    SetDisplayOptions(const plString& s) { fDisplayOptions=s;   }
+    void    SetDisplayOptions(const ST::string& s) { fDisplayOptions=s;   }
 
     // IO
     virtual bool    Read(hsStream* s);  
@@ -172,7 +172,7 @@ public:
     int     GetAtomicCount() const      { return fAtomicCount; }    
     
     // setters
-    bool    SetType(const plString& type);
+    bool    SetType(const ST::string& type);
     void    SetType(Type t) { plVarDescriptor::SetType(t); }    // for lame compiler
     void    SetAtomicType(Type t) { fAtomicType=t; }    
 
@@ -224,7 +224,7 @@ private:
     typedef std::vector<plVarDescriptor*> VarsList; 
     VarsList fVarsList;
     int fVersion;
-    plString fName;
+    ST::string fName;
     plFileName fFilename;  // the filename this descriptor was read from
 
     void IDeInit();
@@ -233,7 +233,7 @@ public:
     ~plStateDescriptor(); 
 
     // getters
-    plString GetName() const { return fName; }
+    ST::string GetName() const { return fName; }
     int GetNumVars() const { return fVarsList.size(); }
     plVarDescriptor* GetVar(int i) const { return fVarsList[i]; }
     int GetVersion() const { return fVersion; }
@@ -241,11 +241,11 @@ public:
 
     // setters
     void SetVersion(int v) { fVersion=v; }
-    void SetName(const plString& n) { fName=n; }
+    void SetName(const ST::string& n) { fName=n; }
     void AddVar(plVarDescriptor* v) { fVarsList.push_back(v); }
     void SetFilename(const plFileName& n) { fFilename=n;}
 
-    plVarDescriptor* FindVar(const plString& name, int* idx=nil) const;
+    plVarDescriptor* FindVar(const ST::string& name, int* idx=nil) const;
 
     // IO
     bool Read(hsStream* s); 

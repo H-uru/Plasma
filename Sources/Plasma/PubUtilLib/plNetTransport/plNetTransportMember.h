@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "plNetCommon/plNetMember.h"
 #include "pnKeyedObject/plKey.h"
-#include "plString.h"
 
 //
 // This represents a participant in the game, ie. another 
@@ -64,7 +63,7 @@ public:
     };
 protected:
     plKey           fAvatarKey;
-    plString        fPlayerName;
+    ST::string      fPlayerName;
     uint32_t        fPlayerID;
     std::vector<int> fSubscriptions;    // list of channelGrp subscriptions
     uint32_t        fTransportFlags;
@@ -88,8 +87,8 @@ public:
         {
             fAvatarKey=k;
         }
-    void SetPlayerName(const plString & value) { fPlayerName=value;}
-    plString GetPlayerName() const { return fPlayerName;}
+    void SetPlayerName(const ST::string & value) { fPlayerName=value;}
+    ST::string GetPlayerName() const { return fPlayerName;}
     void SetPlayerID(uint32_t value) { fPlayerID=value;}
     uint32_t GetPlayerID() const { return fPlayerID;}
     void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
@@ -108,7 +107,7 @@ public:
     uint32_t GetTransportFlags() const { return fTransportFlags; }
 
     bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
-    plString AsString() const;
+    ST::string AsString() const HS_OVERRIDE;
     bool IsEqualTo(const plNetMember * other) const
     {
         const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);

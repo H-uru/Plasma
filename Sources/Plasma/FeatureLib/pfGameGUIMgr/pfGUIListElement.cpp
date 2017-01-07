@@ -82,7 +82,7 @@ pfGUIListText::pfGUIListText()
 {
 }
 
-pfGUIListText::pfGUIListText( const plString &text )
+pfGUIListText::pfGUIListText( const ST::string &text )
     : pfGUIListElement(kText), fText(text), fJustify(kLeftJustify)
 {
 }
@@ -140,7 +140,7 @@ int     pfGUIListText::CompareTo( pfGUIListElement *rightSide )
     if( text->fType != kText )
         return -2;
 
-    return GetText().Compare(text->GetText());
+    return GetText().compare(text->GetText());
 }
 
 void    pfGUIListText::SetJustify( JustifyTypes justify )
@@ -184,7 +184,7 @@ pfGUIListPicture::pfGUIListPicture( plKey mipKey, bool respectAlpha ) : pfGUILis
     {
         // Gotta make and grab an uncompressed one
         plMipmap *uncompBuffer = hsCodecManager::Instance().CreateUncompressedMipmap( mip, hsCodecManager::k32BitDepth );
-        plString str = plFormat("{}_uncomp", mip->GetKeyName());
+        ST::string str = ST::format("{}_uncomp", mip->GetKeyName());
         fMipmapKey = hsgResMgr::ResMgr()->NewKey( str, uncompBuffer, fMipmapKey->GetUoid().GetLocation() );
         fMipmapKey->RefObject();
     }
@@ -263,7 +263,7 @@ pfGUIListTreeRoot::pfGUIListTreeRoot()
 {
 }
 
-pfGUIListTreeRoot::pfGUIListTreeRoot( const plString &text )
+pfGUIListTreeRoot::pfGUIListTreeRoot( const ST::string &text )
     : pfGUIListElement(kTreeRoot), fText(text)
 {
 }
@@ -363,7 +363,7 @@ int     pfGUIListTreeRoot::CompareTo( pfGUIListElement *rightSide )
     if( text->fType != kTreeRoot )
         return -2;
 
-    return GetTitle().Compare(text->GetTitle());
+    return GetTitle().compare(text->GetTitle());
 }
 
 void    pfGUIListTreeRoot::AddChild( pfGUIListElement *el )

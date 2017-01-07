@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "plRefFlags.h"
-#include "plString.h"
+#include <string_theory/string>
 
 class hsKeyedObject;
 class plRefMsg;
@@ -97,7 +97,7 @@ class plKeyData
 {
 public:
     virtual const plUoid&   GetUoid() const=0;
-    virtual const plString& GetName() const=0;
+    virtual ST::string      GetName() const=0;
 
     virtual hsKeyedObject*  GetObjectPtr()=0;
     virtual hsKeyedObject*  ObjectIsLoaded() const=0;
@@ -131,7 +131,7 @@ protected:
 
 #ifdef HS_DEBUGGING
     // Debugging info fields
-    plString    fIDName;
+    ST::string  fIDName;
     const char* fClassType;
 #endif
 

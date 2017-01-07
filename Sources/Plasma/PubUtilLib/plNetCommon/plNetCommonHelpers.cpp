@@ -198,11 +198,11 @@ void plCreatableListHelper::AddDouble( uint16_t id, double value )
     AddItem( id, V, true );
 }
 
-plString plCreatableListHelper::GetString( uint16_t id )
+ST::string plCreatableListHelper::GetString( uint16_t id )
 {
     plCreatableGenericValue * V = plCreatableGenericValue::ConvertNoRef( GetItem( id ) );
-    if ( !V ) return plString::Null;
-    return (plString)V->Value();
+    if ( !V ) return ST::null;
+    return (ST::string)V->Value();
 }
 
 int32_t plCreatableListHelper::GetInt( uint16_t id )

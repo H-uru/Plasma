@@ -104,6 +104,7 @@ target_link_libraries(MaxMain ${PHYSX_LIBRARIES})
 target_link_libraries(MaxMain ${PYTHON_LIBRARIES})
 target_link_libraries(MaxMain ${Speex_LIBRARY})
 target_link_libraries(MaxMain ${Vorbis_LIBRARIES})
+target_link_libraries(MaxMain ${STRING_THEORY_LIBRARIES})
 
 # Carbon copy from plClient
 # TODO: Maybe see if some of these can be removed?

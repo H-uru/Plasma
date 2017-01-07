@@ -96,11 +96,11 @@ public:
 class plElementRefMsg : public plGenRefMsg
 {
 public:
-    plString    fElementName;
+    ST::string  fElementName;
     uint32_t    fLayer;
 
     plElementRefMsg() : plGenRefMsg(), fLayer(1) {}
-    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, const plString &name, uint8_t layer) : plGenRefMsg(r, c, which, type)
+    plElementRefMsg(const plKey &r, uint8_t c, int which, int type, const ST::string &name, uint8_t layer) : plGenRefMsg(r, c, which, type)
     {
         fLayer = layer;
         fElementName = name;

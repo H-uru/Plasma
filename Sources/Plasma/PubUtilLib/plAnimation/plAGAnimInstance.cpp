@@ -80,8 +80,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 /////////////////////////////////////////////////////////////////////////////////////////
 #ifdef TRACK_AG_ALLOCS
-plString gGlobalAnimName;
-plString gGlobalChannelName;
+ST::string gGlobalAnimName;
+ST::string gGlobalChannelName;
 #endif // TRACK_AG_ALLOCS
 
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +134,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     {
         plAGApplicator * app = fAnimation->GetApplicator(i);
         plAGChannel * inChannel = app->GetChannel();
-        plString channelName = app->GetChannelName();
+        ST::string channelName = app->GetChannelName();
         plAGModifier * channelMod = master->GetChannelMod(channelName);
         
         if(channelMod) {
@@ -175,7 +175,7 @@ plAGAnimInstance::plAGAnimInstance(plAGAnim * anim, plAGMasterMod * master,
     fFadeBlend = fFadeAmp = false;
 
 #ifdef TRACK_AG_ALLOCS
-    gGlobalAnimName = "";
+    gGlobalAnimName = ST::null;
 #endif // TRACK_AG_ALLOCS
 }
 
@@ -276,7 +276,7 @@ void plAGAnimInstance::SearchForGlobals()
     }
 }
 
-void plAGAnimInstance::IRegisterDetach(const plString &channelName, plAGChannel *channel)
+void plAGAnimInstance::IRegisterDetach(const ST::string &channelName, plAGChannel *channel)
 {
     plDetachMap::value_type newPair(channelName, channel);
     fManualDetachChannels.insert(newPair);
@@ -320,7 +320,7 @@ void plAGAnimInstance::DetachChannels()
 
     while(i != fManualDetachChannels.end())
     {
-        plString channelName = (*i).first;
+        ST::string channelName = (*i).first;
         plAGModifier *channelMod = fMaster->GetChannelMod(channelName, true);
 
         if(channelMod)
@@ -393,12 +393,12 @@ float plAGAnimInstance::GetAmplitude()
 
 // GetName -----------------------------
 // --------
-plString plAGAnimInstance::GetName()
+ST::string plAGAnimInstance::GetName()
 {
     if(fAnimation)
         return fAnimation->GetName();
     else
-        return plString::Null;
+        return ST::null;
 }
 
 // SetLoop ----------------------------------
@@ -479,7 +479,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
             eventMsg->fRepeats = 0;
             eventMsg->fUser = cb.fUser;
 
-            if (!cb.fMarker.IsNull())
+            if (!cb.fMarker.is_empty())
             {
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");

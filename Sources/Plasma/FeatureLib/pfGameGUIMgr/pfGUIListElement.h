@@ -117,14 +117,14 @@ class pfGUIListText : public pfGUIListElement
         };
 
     protected:
-        
-        plString    fText;
+
+        ST::string  fText;
         uint8_t     fJustify;   // This is not our JustifyTypes, but from plDynamicTextMap
 
     public:
 
         pfGUIListText();
-        pfGUIListText( const plString &text );
+        pfGUIListText( const ST::string &text );
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -137,8 +137,8 @@ class pfGUIListText : public pfGUIListElement
         virtual void    SetJustify( JustifyTypes justify );
 
         // These two are virtual so we can derive and override them
-        virtual plString    GetText() const { return fText; }
-        virtual void        SetText(const plString &text) { fText = text; }
+        virtual ST::string  GetText() const { return fText; }
+        virtual void        SetText(const ST::string &text) { fText = text; }
 };
 
 class pfGUIListPicture : public pfGUIListElement
@@ -172,8 +172,8 @@ class pfGUIListPicture : public pfGUIListElement
 class pfGUIListTreeRoot : public pfGUIListElement
 {
     protected:
-        
-        plString        fText;
+
+        ST::string      fText;
         bool            fShowChildren;
 
         hsTArray<pfGUIListElement *>    fChildren;
@@ -181,7 +181,7 @@ class pfGUIListTreeRoot : public pfGUIListElement
     public:
 
         pfGUIListTreeRoot();
-        pfGUIListTreeRoot( const plString &text );
+        pfGUIListTreeRoot( const ST::string &text );
         
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
@@ -192,8 +192,8 @@ class pfGUIListTreeRoot : public pfGUIListElement
 
         virtual bool    MouseClicked( uint16_t localX, uint16_t localY );
 
-        const plString   GetTitle() const { return fText; }
-        void        SetTitle(const plString &text) { fText = text; }
+        const ST::string GetTitle() const { return fText; }
+        void        SetTitle(const ST::string &text) { fText = text; }
 
         uint32_t            GetNumChildren() const { return fChildren.GetCount(); }
         pfGUIListElement    *GetChild( uint32_t i ) const { return fChildren[ i ]; }

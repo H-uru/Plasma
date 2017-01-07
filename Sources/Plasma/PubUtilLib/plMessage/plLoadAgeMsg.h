@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnMessage/plMessage.h"
 #include "pnUUID/pnUUID.h"
-#include "plString.h"
 
 
 //
@@ -56,7 +55,7 @@ class hsResMgr;
 class plLoadAgeMsg : public plMessage
 {
 protected:
-    plString fAgeFilename;             // the age to load/unload
+    ST::string fAgeFilename;           // the age to load/unload
     plUUID fAgeGuid;
     bool fUnload;         // true if we want to unload the age
     int fPlayerID;
@@ -66,8 +65,8 @@ public:
     CLASSNAME_REGISTER( plLoadAgeMsg );
     GETINTERFACE_ANY( plLoadAgeMsg, plMessage );
 
-    void SetAgeFilename(const plString& a) { fAgeFilename = a; }
-    plString GetAgeFilename() const { return fAgeFilename; }
+    void SetAgeFilename(const ST::string& a) { fAgeFilename = a; }
+    ST::string GetAgeFilename() const { return fAgeFilename; }
 
     void SetAgeGuid( const plUUID * v ) { fAgeGuid.CopyFrom( v ); }
     const plUUID * GetAgeGuid() const { return &fAgeGuid; }

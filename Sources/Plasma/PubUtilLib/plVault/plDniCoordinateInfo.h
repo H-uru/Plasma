@@ -79,7 +79,7 @@ public:
     void    Write( hsStream* s, hsResMgr* mgr );
 
     // debug
-    plString AsString( int level=0 ) const;
+    ST::string AsString( int level=0 ) const;
 };
 
 

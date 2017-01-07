@@ -358,13 +358,13 @@ void    pfGUIButtonMod::SetInteresting( bool i )
 }
 
 
-void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUIButtonMod::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
 {
     fAnimationKeys = keys;
     fAnimName = name;
 }
 
-void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const ST::string &name )
 {
     fMouseOverAnimKeys = keys;
     fMouseOverAnimName = name;

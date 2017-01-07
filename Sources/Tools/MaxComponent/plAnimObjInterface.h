@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plAnimObjInterface_h
 
 #include "hsTemplates.h"
-#include "plString.h"
 
 class plKey;
 
@@ -82,7 +81,7 @@ class plAnimObjInterface
 
         // Return the name of the segment/animation that this interface references. Pass "false" to get the 
         // ENTIRE_ANIMATION_NAME string for entire animations, "true" for nil.
-        virtual plString    GetIfaceSegmentName( bool allowNil ) = 0;
+        virtual ST::string  GetIfaceSegmentName( bool allowNil ) = 0;
 
         // This animation would require (depending on the node restriction) a separate material (i.e. material anim)
         virtual bool        MightRequireSeparateMaterial( void ) { return false; }

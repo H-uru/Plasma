@@ -254,12 +254,12 @@ Mtl *plResponderCmdMtl::GetMtl(IParamBlock2 *pb)
     return (Mtl*)pb->GetReferenceTarget(kMtlRef);
 }
 
-plString plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
+ST::string plResponderCmdMtl::GetAnim(IParamBlock2 *pb)
 {
-    return plString::FromUtf8(pb->GetStr(kMtlAnim));
+    return ST::string::from_utf8(pb->GetStr(kMtlAnim));
 }
 
-void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArray<plKey>& keys)
+void ISearchLayerRecur(plLayerInterface *layer, const ST::string &segName, hsTArray<plKey>& keys)
 {
     if (!layer)
         return;
@@ -267,8 +267,8 @@ void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArra
     plLayerAnimation *animLayer = plLayerAnimation::ConvertNoRef(layer);
     if (animLayer)
     {
-        plString ID = animLayer->GetSegmentID();
-        if (!segName.Compare(ID))
+        ST::string ID = animLayer->GetSegmentID();
+        if (!segName.compare(ID))
         {
             if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
                 keys.Append(animLayer->GetKey());
@@ -278,7 +278,7 @@ void ISearchLayerRecur(plLayerInterface *layer, const plString &segName, hsTArra
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
+int ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, hsTArray<plKey>& keys)
 {
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
@@ -286,7 +286,7 @@ int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>
     return keys.GetCount();
 }
 
-int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys)
+int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys)
 {
     int retVal = 0;
 
@@ -336,7 +336,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     if (!maxMtl)
         throw "No material specified";
 
-    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
+    ST::string animName = ST::string::from_utf8(pb->GetStr(kMtlAnim));
     float begin=-1.f;
     float end = -1.f;
 
@@ -357,8 +357,8 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
 
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
-    plString loopName = plString::FromUtf8(pb->GetStr(kMtlLoop));
-    if (segMap && !loopName.IsNull())
+    ST::string loopName = ST::string::from_utf8(pb->GetStr(kMtlLoop));
+    if (segMap && !loopName.is_empty())
         GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, begin, end);
 
     DeleteSegmentMap(segMap);
@@ -444,14 +444,14 @@ bool plResponderCmdMtl::IsWaitable(IParamBlock2 *pb)
 void plResponderCmdMtl::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
 {
     Mtl *mtl = GetMtl(pb);
-    plString animName = GetAnim(pb);
+    ST::string animName = GetAnim(pb);
 
     if (mtl)
     {
         plNotetrackAnim notetrackAnim(mtl, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
-        plString marker;
-        while (!(marker = info.GetNextMarkerName()).IsNull())
+        ST::string marker;
+        while (!(marker = info.GetNextMarkerName()).is_empty())
             waitPoints.push_back(marker);
     }
 }
@@ -468,11 +468,11 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     eventMsg->fEvent = kStop;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (!waitInfo.point.IsNull())
+    if (!waitInfo.point.is_empty())
     {
         // FIXME COLIN - Error checking here?
         Mtl *mtl = GetMtl(pb);
-        plString animName = GetAnim(pb);
+        ST::string animName = GetAnim(pb);
 
         plNotetrackAnim notetrackAnim(mtl, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
@@ -545,14 +545,14 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
     ComboBox_Enable(hLoop, TRUE);
 
     plNotetrackAnim anim(mtl, nil);
-    plString animName = plString::FromUtf8(pb->GetStr(kMtlAnim));
+    ST::string animName = ST::string::from_utf8(pb->GetStr(kMtlAnim));
     plAnimInfo info = anim.GetAnimInfo(animName);
 
-    plString loopName;
-    while (!(loopName = info.GetNextLoopName()).IsNull())
+    ST::string loopName;
+    while (!(loopName = info.GetNextLoopName()).is_empty())
     {
         sel = ComboBox_AddString(hLoop, loopName.c_str());
-        if (!loopName.Compare(savedName))
+        if (!loopName.compare(savedName))
             ComboBox_SetCurSel(hLoop, sel);
     }
 }

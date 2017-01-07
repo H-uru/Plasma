@@ -87,9 +87,9 @@ public:
     //---------------------------
     plKey               FindOriginalKey(const plUoid&);
     virtual plKey       FindKey(const plUoid&); // Same as above, but will check the uoid for clones
-    const plLocation&   FindLocation(const plString& age, const plString& page) const;
+    const plLocation&   FindLocation(const ST::string& age, const ST::string& page) const;
     // Use nil for any strings you don't need
-    void                GetLocationStrings(const plLocation& loc, plString* ageBuffer, plString* pageBuffer) const;
+    void                GetLocationStrings(const plLocation& loc, ST::string* ageBuffer, ST::string* pageBuffer) const;
 
     //---------------------------
     //  Establish reference linkage 
@@ -124,7 +124,7 @@ public:
     //---------------------------
     // Registry Modification Functions
     //---------------------------
-    virtual plKey NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
+    virtual plKey NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m = plLoadMask::kAlways);
     virtual plKey NewKey(plUoid& newUoid, hsKeyedObject* object);
 
     virtual plDispatchBase* Dispatch();
@@ -134,10 +134,10 @@ public:
     //---------------------------
     //  Load optimizations
     //---------------------------
-    void LoadAgeKeys(const plString& age);
-    void DropAgeKeys(const plString& age);
+    void LoadAgeKeys(const ST::string& age);
+    void DropAgeKeys(const ST::string& age);
     void PageInRoom(const plLocation& page, uint16_t objClassToRef, plRefMsg* refMsg);
-    void PageInAge(const plString& age);
+    void PageInAge(const ST::string& age);
 
     // Usually, a page file is kept open during load because the first keyed object
     // read causes all the other objects to be read before it returns.  In some
@@ -156,7 +156,7 @@ public:
     // Single page version
     bool IterateKeys(plRegistryKeyIterator* iterator, const plLocation& pageToRestrictTo);
     // Iterate through loaded pages
-    bool IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo = "");
+    bool IteratePages(plRegistryPageIterator* iterator, const ST::string& ageToRestrictTo = ST::null);
     // Iterate through ALL pages, loaded or not
     bool IterateAllPages(plRegistryPageIterator* iterator);
 
@@ -165,7 +165,7 @@ public:
     void UnloadPageObjects(plRegistryPageNode* pageNode, uint16_t classIndexHint);
     void DumpUnusedKeys(plRegistryPageNode* page) const;
     plRegistryPageNode* FindPage(const plLocation& location) const;
-    plRegistryPageNode* FindPage(const plString& age, const plString& page) const;
+    plRegistryPageNode* FindPage(const ST::string& age, const ST::string& page) const;
 
     // Runs through all the pages and verifies that the data versions are good
     bool VerifyPages();
@@ -175,7 +175,7 @@ protected:
     friend class plKeyImp;
     friend class plResManagerHelper;
 
-    virtual plKey   ReRegister(const plString& nm, const plUoid& uoid);
+    virtual plKey   ReRegister(const ST::string& nm, const plUoid& uoid);
     virtual bool    ReadObject(plKeyImp* key); // plKeys call this when needed
     virtual bool    IReadObject(plKeyImp* pKey, hsStream *stream);  
 
@@ -207,7 +207,7 @@ protected:
     // Adds a key to the registry. Assumes uoid already set
     void AddKey(plKeyImp* key);
 
-    plRegistryPageNode* CreatePage(const plLocation& location, const plString& age, const plString& page);
+    plRegistryPageNode* CreatePage(const plLocation& location, const ST::string& age, const ST::string& page);
 
     bool          fInited;
 
@@ -223,7 +223,7 @@ protected:
     uint32_t fCurClonePlayerID;
     uint32_t fCloningCounter; // Next clone ID to use.
 
-    typedef std::map<plString, plResAgeHolder*>   HeldAgeKeyMap;
+    typedef std::map<ST::string, plResAgeHolder*>   HeldAgeKeyMap;
     HeldAgeKeyMap   fHeldAgeKeys;
     plProgressProc  fProgressProc;
 

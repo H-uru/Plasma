@@ -55,7 +55,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <vector>
 
-class plString;
 struct RelVaultNode;
 class plUUID;
 
@@ -78,8 +77,8 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    plString        GetGameName () const;
-    void            SetGameName (const plString& name);
+    ST::string      GetGameName () const;
+    void            SetGameName (const ST::string& name);
 
     /** Returns a tuple of tuples */
     PyObject*       GetMarkers() const;

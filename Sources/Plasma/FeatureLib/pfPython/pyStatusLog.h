@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class pyColor;
 class plStatusLog;
-class plString;
 
 class pyStatusLog
 {
@@ -78,9 +77,9 @@ public:
     static void AddPlasmaClasses(PyObject *m);
     static void AddPlasmaConstantsClasses(PyObject *m);
 
-    virtual bool Open(plString logName, uint32_t numLines, uint32_t flags);
-    virtual bool Write(plString text);
-    virtual bool WriteColor(plString text, pyColor& color);
+    virtual bool Open(const ST::string &logName, uint32_t numLines, uint32_t flags);
+    virtual bool Write(const ST::string &text);
+    virtual bool WriteColor(const ST::string &text, pyColor& color);
     virtual void Close();
 
     virtual bool IsOpen() { return (fLog != nil); }

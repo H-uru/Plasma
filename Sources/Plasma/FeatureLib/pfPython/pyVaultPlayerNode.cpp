@@ -242,13 +242,13 @@ void pyVaultPlayerNode::SetPlayerName(const char *value)
     hsAssert(false, "python may not change a player's name this way");
 }
 
-plString pyVaultPlayerNode::GetPlayerName() const
+ST::string pyVaultPlayerNode::GetPlayerName() const
 {
     if (fNode) {
         VaultPlayerNode player(fNode);
         return player.GetPlayerName();
     }
-    return "";
+    return ST::null;
 }
 
 void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
@@ -256,13 +256,13 @@ void pyVaultPlayerNode::SetAvatarShapeName(const char *value)
     hsAssert(false, "python may not change a player's avatar this way");
 }
 
-plString pyVaultPlayerNode::GetAvatarShapeName() const
+ST::string pyVaultPlayerNode::GetAvatarShapeName() const
 {
     if (fNode) {
         VaultPlayerNode player(fNode);
         return player.GetAvatarShapeName();
     }
-    return "";
+    return ST::null;
 }
 
 void pyVaultPlayerNode::SetDisabled(bool value)

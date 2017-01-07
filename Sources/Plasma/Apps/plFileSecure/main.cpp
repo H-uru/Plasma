@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <ctime>
 #include <string>
 #include <algorithm>
+#include <string_theory/stdio>
 
 void print_version() {
     puts(plProduct::ProductString().c_str());
@@ -106,12 +107,12 @@ void GenerateKey(bool useDefault)
     out.Close();
 }
 
-void SecureFiles(const plFileName& dir, const plString& ext, uint32_t* key)
+void SecureFiles(const plFileName& dir, const ST::string& ext, uint32_t* key)
 {
     std::vector<plFileName> files = plFileSystem::ListDir(dir, ext.c_str());
     for (auto iter = files.begin(); iter != files.end(); ++iter)
     {
-        plPrintf("securing: {}\n", iter->GetFileName());
+        ST::printf("securing: {}\n", iter->GetFileName());
         plSecureStream::FileEncrypt(*iter, key);
     }
 }
@@ -121,7 +122,7 @@ int main(int argc, char *argv[])
     bool generatingKey = false;
     bool useDefault = false;
     plFileName directory;
-    plString ext;
+    ST::string ext;
 
     if (argc > 1)
     {
@@ -163,7 +164,7 @@ int main(int argc, char *argv[])
                 // else it is a directory or extension
                 if (!directory.IsValid())
                     directory = argv[i];
-                else if (ext.IsEmpty())
+                else if (ext.is_empty())
                     ext = argv[i];
                 else
                 {
@@ -173,7 +174,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (generatingKey && ((directory.IsValid()) || (!ext.IsEmpty())))
+        if (generatingKey && ((directory.IsValid()) || (!ext.is_empty())))
         {
             print_help();
             return 0;
@@ -192,9 +193,9 @@ int main(int argc, char *argv[])
     }
 
     // Make sure ext is a real pattern, or we won't find anything
-    if (ext.CharAt(0) == '.')
+    if (ext.char_at(0) == '.')
         ext = "*" + ext;
-    else if (ext.CharAt(0) != '*')
+    else if (ext.char_at(0) != '*')
         ext = "*." + ext;
 
     if (useDefault)

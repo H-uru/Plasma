@@ -204,10 +204,10 @@ void hsG3DDeviceRecord::Clear()
 {
     fFlags = kNone;
 
-    fG3DDriverDesc = plString::Null;
-    fG3DDriverName = plString::Null;
-    fG3DDriverVersion = plString::Null;
-    fG3DDeviceDesc = plString::Null;
+    fG3DDriverDesc = ST::null;
+    fG3DDriverName = ST::null;
+    fG3DDriverVersion = ST::null;
+    fG3DDeviceDesc = ST::null;
 
     fCaps.Clear();
     fLayersAtOnce = 0;
@@ -601,12 +601,12 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     }
 
     /// So capitalization won't matter in our tests
-    plString desc = plString::FromIso8859_1(szDesc).ToLower();
+    ST::string desc = ST::string::from_latin_1(szDesc).to_lower();
 
     /// Detect ATI Radeon chipset
     // We will probably need to differentiate between different Radeons at some point in 
     // the future, but not now.
-    ssize_t radeon = desc.Find("radeon");
+    ST_ssize_t radeon = desc.find("radeon");
     if (stricmp(szDriver, "ati2dvag.dll") == 0 || radeon >= 0)
     {
         int series = 0;
@@ -642,13 +642,13 @@ void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
     /// Detect Intel i810 chipset
     else if( deviceID == 0x00007125 &&
                 ( stricmp( szDriver, "i81xdd.dll" ) == 0 
-                  || ( desc.Find("intel") >= 0 && desc.Find("810") >= 0 ) ) )
+                  || ( desc.find("intel") >= 0 && desc.find("810") >= 0 ) ) )
     {
         hsStatusMessage( "== Using fudge factors for an Intel i810 chipset ==\n" );
         ISetFudgeFactors( kIntelI810Chipset, record );
     }
     /// Detect for a GeForc FX card. We only need to nerf the really low end one.
-    else if( desc.Find("nvidia") >= 0 && desc.Find("geforce fx 5200") >= 0 )
+    else if( desc.find("nvidia") >= 0 && desc.find("geforce fx 5200") >= 0 )
     {
         hsStatusMessage( "== Using fudge factors for an NVidia GeForceFX-based chipset ==\n" );
         ISetFudgeFactors( kNVidiaGeForceFXChipset, record );

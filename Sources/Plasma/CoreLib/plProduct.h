@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstdint>
 
-class plString;
+namespace ST { class string; }
 
 // Note:  These are all implemented in plProduct.cpp, so that only CoreLib
 //        has to get the product product ID compiler flags passed in.
@@ -52,14 +52,14 @@ namespace plProduct
     uint32_t BuildType();
     uint32_t BranchId();
 
-    plString CoreName();
-    plString ShortName();
-    plString LongName();
+    ST::string CoreName();
+    ST::string ShortName();
+    ST::string LongName();
 
     const char *UUID();
 
     /** Returns: "<ProductCoreName>.<BranchId>.<BuildId> - <External|Internal>.<Debug|Release>"
      *  Example: "Uru.3.204 - External.Release"
      */
-    plString ProductString();
+    ST::string ProductString();
 }

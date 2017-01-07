@@ -118,7 +118,7 @@ bool plUUID::FromString( const char * str )
     return true;
 }
 
-bool plUUID::ToString( plString & out ) const
+bool plUUID::ToString( ST::string & out ) const
 {
     uuid_t g;
     plUUIDHelper::CopyToNative( g, this );

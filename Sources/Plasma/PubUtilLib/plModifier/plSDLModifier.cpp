@@ -134,7 +134,7 @@ void plSDLModifier::ISendNetMsg(plStateDataRecord*& state, plKey senderKey, uint
 bool plSDLModifier::MsgReceive(plMessage* msg)
 {
     plSDLModifierMsg* sdlMsg = plSDLModifierMsg::ConvertNoRef(msg);
-    if (sdlMsg && !sdlMsg->GetSDLName().CompareI(GetSDLName()))
+    if (sdlMsg && !sdlMsg->GetSDLName().compare_i(GetSDLName()))
     {       
         uint32_t sendFlags = IApplyModFlags(sdlMsg->GetFlags());
 
@@ -202,7 +202,7 @@ void plSDLModifier::SendState(uint32_t sendFlags)
         {
             gMooseDump=true;
             plNetObjectDebugger::GetInstance()->SetDebugging(true);
-            curState->DumpToObjectDebugger(plFormat("Object {} SENDS SDL state",
+            curState->DumpToObjectDebugger(ST::format("Object {} SENDS SDL state",
                 GetStateOwnerKey()->GetName()).c_str(), dirtyOnly);
             gMooseDump=false;
         }
@@ -227,7 +227,7 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
     {
         gMooseDump=true;
         plNetObjectDebugger::GetInstance()->SetDebugging(true);
-        srcState->DumpToObjectDebugger(plFormat("Object {} RECVS SDL state",
+        srcState->DumpToObjectDebugger(ST::format("Object {} RECVS SDL state",
                                        GetStateOwnerKey()->GetName()).c_str());
         gMooseDump=false;
     }
@@ -253,7 +253,7 @@ void plSDLModifier::ReceiveState(const plStateDataRecord* srcState)
         plNetObjectDebugger::GetInstance()->SetDebugging(false);
 }
 
-void plSDLModifier::AddNotifyForVar(plKey key, const plString& varName, float tolerance) const
+void plSDLModifier::AddNotifyForVar(plKey key, const ST::string& varName, float tolerance) const
 {
     // create a SDL notifier object
     plStateChangeNotifier notifier(tolerance, key);

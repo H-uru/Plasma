@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //
 
 #include <list>
+#include <string_theory/format>
 
 #include "plSDLDescriptor.h"
 
@@ -99,7 +100,7 @@ namespace plSDL
         kDisallowTimeStamping = 0x1,
     };
 
-    extern const plString kAgeSDLObjectName;
+    extern const ST::string kAgeSDLObjectName;
     void VariableLengthRead(hsStream* s, int size, int* val);
     void VariableLengthWrite(hsStream* s, int size, int val);
 };
@@ -107,10 +108,10 @@ namespace plSDL
 class plStateVarNotificationInfo
 {
 private:
-    plString fHintString;
+    ST::string fHintString;
 public:
-    void SetHintString(const plString& c) { fHintString=c;  }
-    plString GetHintString() const { return fHintString; }
+    void SetHintString(const ST::string& c) { fHintString=c;  }
+    ST::string GetHintString() const { return fHintString; }
 
     void Read(hsStream* s, uint32_t readOptions);
     void Write(hsStream* s, uint32_t writeOptions) const;
@@ -137,8 +138,8 @@ public:
     plStateVariable() : fFlags(0) {}
     virtual ~plStateVariable() {}
 
-    plString GetName() const { return GetVarDescriptor()->GetName(); }
-    bool IsNamed(const char* n) const { return (n && !GetName().CompareI(n)); }
+    ST::string GetName() const { return GetVarDescriptor()->GetName(); }
+    bool IsNamed(const char* n) const { return (n && !GetName().compare_i(n)); }
     virtual int GetCount() const = 0;
 
     // conversion ops
@@ -193,7 +194,7 @@ public:
     int RemoveNotificationKey(plKey k);         // returns number of keys left after removal
     int RemoveNotificationKeys(KeyList keys);   // returns number of keys left after removal
 
-    void SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, const plString& sdlName);
+    void SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, const ST::string& sdlName);
     
     bool GetValue(float* i) const;
     bool SetValue(float i);
@@ -266,8 +267,8 @@ public:
     void TimeStamp( const plUnifiedTime & ut=plUnifiedTime::GetCurrent() );
     void CopyFrom(plVarDescriptor* v);
     void CopyData(const plSimpleStateVariable* other, uint32_t writeOptions=0);
-    bool SetFromString(const plString& value, int idx, bool timeStampNow);  // set value from string, type.  return false on err
-    plString GetAsString(int idx) const;
+    bool SetFromString(const ST::string& value, int idx, bool timeStampNow);  // set value from string, type.  return false on err
+    ST::string GetAsString(int idx) const;
     bool ConvertTo(plSimpleVarDescriptor* toVar, bool force=false);         // return false on err
     void Alloc(int cnt=-1 /* -1 means don't change count */);               // alloc memory after setting type
     void Reset();
@@ -303,7 +304,7 @@ public:
     const plUnifiedTime& GetTimeStamp() const { return fTimeStamp;  }
 
     // Special backdoor so the KI Manager can get the key name without having a ResMgr
-    plString GetKeyName(int idx=0) const;
+    ST::string GetKeyName(int idx=0) const;
 
     int GetCount() const { return fVar.GetCount(); }    // helper
     plVarDescriptor* GetVarDescriptor() { return &fVar; }
@@ -315,7 +316,7 @@ public:
     void AddStateChangeNotification(plStateChangeNotifier& n);
     void RemoveStateChangeNotification(plKey notificationObj);      // remove all with this key 
     void RemoveStateChangeNotification(plStateChangeNotifier n);    // remove ones which match
-    void NotifyStateChange(const plSimpleStateVariable* other, const plString& sdlName);        // send notification msg if necessary, internal use
+    void NotifyStateChange(const plSimpleStateVariable* other, const ST::string& sdlName);      // send notification msg if necessary, internal use
 
     void DumpToObjectDebugger(bool dirtyOnly, int level) const;
     void DumpToStream(hsStream* stream, bool dirtyOnly, int level) const;
@@ -411,14 +412,14 @@ protected:
     static const uint8_t kIOVersion;  // I/O Version
     
     void IDeleteVarsList(VarsList& vars);
-    void IInitDescriptor(const plString& name, int version);    // or plSDL::kLatestVersion
+    void IInitDescriptor(const ST::string& name, int version);    // or plSDL::kLatestVersion
     void IInitDescriptor(const plStateDescriptor* sd);
     
     void IReadHeader(hsStream* s);
     void IWriteHeader(hsStream* s) const;
     bool IConvertVar(plSimpleStateVariable* fromVar, plSimpleStateVariable* toVar, bool force);
 
-    plStateVariable* IFindVar(const VarsList& vars, const plString& name) const;
+    plStateVariable* IFindVar(const VarsList& vars, const ST::string& name) const;
     int IGetNumUsedVars(const VarsList& vars) const;
     int IGetUsedVars(const VarsList& varsOut, VarsList *varsIn) const;  // build a list of vars that have data
     bool IHasUsedVars(const VarsList& vars) const;
@@ -430,7 +431,7 @@ public:
     CLASSNAME_REGISTER( plStateDataRecord );
     GETINTERFACE_ANY( plStateDataRecord, plCreatable);
 
-    plStateDataRecord(const plString& sdName, int version=plSDL::kLatestVersion);
+    plStateDataRecord(const ST::string& sdName, int version=plSDL::kLatestVersion);
     plStateDataRecord(plStateDescriptor* sd);
     plStateDataRecord(const plStateDataRecord &other, uint32_t writeOptions=0 ):fFlags(0) { CopyFrom(other, writeOptions); }
     plStateDataRecord() : fDescriptor(nil), fFlags(0) {}
@@ -442,8 +443,8 @@ public:
     uint32_t GetFlags() const { return fFlags;    }
     void SetFlags(uint32_t f) { fFlags =f;    }
     
-    plSimpleStateVariable* FindVar(const plString& name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
-    plSDStateVariable* FindSDVar(const plString& name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
+    plSimpleStateVariable* FindVar(const ST::string& name) const { return (plSimpleStateVariable*)IFindVar(fVarsList, name); }
+    plSDStateVariable* FindSDVar(const ST::string& name) const { return (plSDStateVariable*)IFindVar(fSDVarsList, name); }
     
     plStateDataRecord& operator=(const plStateDataRecord& other) { CopyFrom(other); return *this; }
     void CopyFrom(const plStateDataRecord& other, uint32_t writeOptions=0);
@@ -479,7 +480,7 @@ public:
     bool HasDirtySDVars() const { return IHasDirtyVars(fSDVarsList); }
 
     const plStateDescriptor* GetDescriptor() const { return fDescriptor; }
-    void SetDescriptor(const plString& sdName, int version);
+    void SetDescriptor(const ST::string& sdName, int version);
     
     plNetMsgSDLState* PrepNetMsg(float timeConvert, uint32_t writeOptions) const; // create/prep a net msg with this data
     
@@ -498,7 +499,7 @@ public:
     bool Read(hsStream* s, float timeConvert, uint32_t readOptions=0);
     void Write(hsStream* s, float timeConvert, uint32_t writeOptions=0) const;
 
-    static bool ReadStreamHeader(hsStream* s, plString* name, int* version, plUoid* objUoid=nil);
+    static bool ReadStreamHeader(hsStream* s, ST::string* name, int* version, plUoid* objUoid=nil);
     void WriteStreamHeader(hsStream* s, plUoid* objUoid=nil) const;
 };
 
@@ -516,17 +517,17 @@ private:
     bool IParseStateDesc(const plFileName& fileName, hsStream* stream, char token[],
                          plStateDescriptor*& curDesc) const;
 
-    void DebugMsg(const plString& msg) const;
+    void DebugMsg(const ST::string& msg) const;
 
     void DebugMsg(const char* msg) const
     {
-        DebugMsg(plString(msg));
+        DebugMsg(ST::string(msg));
     }
 
     template <typename... _Args>
     void DebugMsg(const char* fmt, _Args... args) const
     {
-        DebugMsg(plFormat(fmt, args...));
+        DebugMsg(ST::format(fmt, args...));
     }
 
 public:
@@ -554,7 +555,7 @@ public:
     ~plSDLMgr();
 
     static plSDLMgr* GetInstance();
-    plStateDescriptor* FindDescriptor(const plString& name, int version, const plSDL::DescriptorList * dl=nil) const;   // version or kLatestVersion
+    plStateDescriptor* FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl=nil) const;   // version or kLatestVersion
     
     const plSDL::DescriptorList * GetDescriptors( void ) const { return &fDescriptors;}
 

@@ -79,26 +79,26 @@ protected:
     {
     protected:
         // Outer map is Age, then Set, finally Name
-        typedef std::map<plString, std::map<plString, std::map<plString, mapT> > > ThreePartMap;
+        typedef std::map<ST::string, std::map<ST::string, std::map<ST::string, mapT> > > ThreePartMap;
         ThreePartMap fData;
 
-        void ISplitString(plString key, plString &age, plString &set, plString &name);
+        void ISplitString(ST::string key, ST::string &age, ST::string &set, ST::string &name);
     public:
         // We will just have very basic functionality
-        bool exists(const plString & key); // returns true if the key exists
-        bool setExists(const plString & key); // returns true if the age.set exists (ignores name if passed in)
-        void erase(const plString & key); // erases the key from the map
+        bool exists(const ST::string & key); // returns true if the key exists
+        bool setExists(const ST::string & key); // returns true if the age.set exists (ignores name if passed in)
+        void erase(const ST::string & key); // erases the key from the map
 
-        mapT &operator[](const plString &key); // returns the item referenced by the key (and creates if necessary)
+        mapT &operator[](const ST::string &key); // returns the item referenced by the key (and creates if necessary)
 
-        std::vector<plString> getAgeList(); // returns a list of all ages in this map
-        std::vector<plString> getSetList(const plString & age); // returns a list of all sets in the specified age
-        std::vector<plString> getNameList(const plString & age, const plString & set);
+        std::vector<ST::string> getAgeList(); // returns a list of all ages in this map
+        std::vector<ST::string> getSetList(const ST::string & age); // returns a list of all sets in the specified age
+        std::vector<ST::string> getNameList(const ST::string & age, const ST::string & set);
     };
 
     LocalizationDatabase *fDatabase;
 
-    typedef std::map<plString, pfLocalizedString> localizedElement;
+    typedef std::map<ST::string, pfLocalizedString> localizedElement;
 
     // Contains all localized strings, the key is the Age.Set.Name specified by XML, in localizedElement, the key is the language string
     pf3PartMap<localizedElement> fLocalizedElements;
@@ -107,14 +107,14 @@ protected:
 
     localizedElement ICreateLocalizedElement(); // ease of use function that creates a basic localized element object
 
-    plString IGetCurrentLanguageName(); // get the name of the current language
-    std::vector<plString> IGetAllLanguageNames();
+    ST::string IGetCurrentLanguageName(); // get the name of the current language
+    std::vector<ST::string> IGetAllLanguageNames();
 
-    void IConvertElement(LocElementInfo *elementInfo, const plString & curPath);
-    void IConvertSet(LocSetInfo *setInfo, const plString & curPath);
-    void IConvertAge(LocAgeInfo *ageInfo, const plString & curPath);
+    void IConvertElement(LocElementInfo *elementInfo, const ST::string & curPath);
+    void IConvertSet(LocSetInfo *setInfo, const ST::string & curPath);
+    void IConvertAge(LocAgeInfo *ageInfo, const ST::string & curPath);
 
-    void IWriteText(const plFileName & filename, const plString & ageName, const plString & languageName); // Write localization text to the specified file
+    void IWriteText(const plFileName & filename, const ST::string & ageName, const ST::string & languageName); // Write localization text to the specified file
 
     pfLocalizationDataMgr(const plFileName & path);
 public:
@@ -128,35 +128,35 @@ public:
 
     void SetupData();
 
-    pfLocalizedString GetElement(const plString & name);
-    pfLocalizedString GetSpecificElement(const plString & name, const plString & languageName);
+    pfLocalizedString GetElement(const ST::string & name);
+    pfLocalizedString GetSpecificElement(const ST::string & name, const ST::string & languageName);
 
-    std::vector<plString> GetAgeList()
+    std::vector<ST::string> GetAgeList()
     {
         return fLocalizedElements.getAgeList();
     }
-    std::vector<plString> GetSetList(const plString & ageName)
+    std::vector<ST::string> GetSetList(const ST::string & ageName)
     {
         return fLocalizedElements.getSetList(ageName);
     }
-    std::vector<plString> GetElementList(const plString & ageName, const plString & setName)
+    std::vector<ST::string> GetElementList(const ST::string & ageName, const ST::string & setName)
     {
         return fLocalizedElements.getNameList(ageName, setName);
     }
-    std::vector<plString> GetLanguages(const plString & ageName, const plString & setName, const plString & elementName);    
+    std::vector<ST::string> GetLanguages(const ST::string & ageName, const ST::string & setName, const ST::string & elementName);
 
-    plString GetElementXMLData(const plString & name, const plString & languageName);
-    plString GetElementPlainTextData(const plString & name, const plString & languageName);
+    ST::string GetElementXMLData(const ST::string & name, const ST::string & languageName);
+    ST::string GetElementPlainTextData(const ST::string & name, const ST::string & languageName);
 
     // These convert the XML data to the actual subtitle and return true if successful (editor only)
-    bool SetElementXMLData(const plString & name, const plString & languageName, const plString & xmlData);
-    bool SetElementPlainTextData(const plString & name, const plString & languageName, const plString & plainText);
+    bool SetElementXMLData(const ST::string & name, const ST::string & languageName, const ST::string & xmlData);
+    bool SetElementPlainTextData(const ST::string & name, const ST::string & languageName, const ST::string & plainText);
 
     // Addition and deletion functions, return true if successful (editor only)
-    bool AddLocalization(const plString & name, const plString & newLanguage);
-    bool AddElement(const plString & name);
-    bool DeleteLocalization(const plString & name, const plString & languageName);
-    bool DeleteElement(const plString & name);
+    bool AddLocalization(const ST::string & name, const ST::string & newLanguage);
+    bool AddElement(const ST::string & name);
+    bool DeleteLocalization(const ST::string & name, const ST::string & languageName);
+    bool DeleteElement(const ST::string & name);
 
     // Writes the current database to the disk (editor only). It will create all the files and put them into path
     void WriteDatabaseToDisk(const plFileName & path);

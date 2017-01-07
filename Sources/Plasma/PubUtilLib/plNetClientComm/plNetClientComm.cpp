@@ -115,14 +115,14 @@ static bool                 s_loginComplete = false;
 static bool                 s_hasAuthSrvIpAddress = false;
 static bool                 s_hasFileSrvIpAddress = false;
 static ENetError            s_authResult = kNetErrAuthenticationFailed;
-static plString             s_authSrvAddr;
-static plString             s_fileSrvAddr;
+static ST::string           s_authSrvAddr;
+static ST::string           s_fileSrvAddr;
 
-static plString            s_iniAccountUsername;
+static ST::string          s_iniAccountUsername;
 static ShaDigest           s_namePassHash;
 static wchar_t             s_iniAuthToken[kMaxPublisherAuthKeyLength];
 static wchar_t             s_iniOS[kMaxGTOSIdLength];
-static plString            s_iniStartupAgeName = "StartUp";
+static ST::string          s_iniStartupAgeName = ST_LITERAL("StartUp");
 static plUUID              s_iniStartupAgeInstId;
 static unsigned            s_iniStartupPlayerId = 0;
 static bool                s_netError = false;
@@ -393,8 +393,8 @@ static void INetCliAuthLoginRequestCallback (
     s_player = nil;
     s_players.clear();
     
-    bool wantsStartUpAge = (s_startupAge.ageDatasetName.IsEmpty() ||
-                            s_startupAge.ageDatasetName.CompareI("StartUp") == 0);
+    bool wantsStartUpAge = (s_startupAge.ageDatasetName.is_empty() ||
+                            s_startupAge.ageDatasetName.compare_i("StartUp") == 0);
 
     s_loginComplete = true;
 
@@ -578,8 +578,8 @@ static void INetCliAuthAgeRequestCallback (
         s_age.ageInstId = ageInstId;
         s_age.ageVaultId = ageVaultId;
 
-        plString gameAddrStr = gameAddr.GetHostString();
-        plString ageInstIdStr = ageInstId.AsString();
+        ST::string gameAddrStr = gameAddr.GetHostString();
+        ST::string ageInstIdStr = ageInstId.AsString();
 
         LogMsg(
             kLogPerf,
@@ -648,7 +648,7 @@ static void INetCliAuthSendFriendInviteCallback (
 static void AuthSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 ) {
     s_authSrvAddr = addr;
     s_hasAuthSrvIpAddress = true;
@@ -658,7 +658,7 @@ static void AuthSrvIpAddressCallback (
 static void FileSrvIpAddressCallback (
     ENetError       result,
     void *          param,
-    const plString& addr
+    const ST::string& addr
 ) {
     s_fileSrvAddr = addr;
     s_hasFileSrvIpAddress = true;
@@ -703,7 +703,7 @@ void NetCommSetIniPlayerId(unsigned playerId) {
 }
 
 //============================================================================
-void NetCommSetIniStartUpAge(const plString& ageName) {
+void NetCommSetIniStartUpAge(const ST::string& ageName) {
     s_iniStartupAgeName = ageName;
 }
 
@@ -728,7 +728,7 @@ void NetCommSetAvatarLoaded (bool loaded /* = true */) {
 }
 
 //============================================================================
-void NetCommChangeMyPassword (const plString& password) {
+void NetCommChangeMyPassword (const ST::string& password) {
     NetCliAuthAccountChangePasswordRequest(s_account.accountName, password, INetCliAuthChangePasswordCallback, nil);
 }
 
@@ -809,12 +809,12 @@ void NetCommUpdate () {
 //============================================================================
 void NetCommConnect () {
 
-    const plString* addrs;
+    const ST::string* addrs;
     unsigned count;
     bool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
-    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].IsEmpty())
+    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].is_empty())
     {
         NetCliAuthStartConnect(addrs, count);
     }
@@ -832,7 +832,7 @@ void NetCommConnect () {
             AsyncSleep(10);
         }
             
-        const plString authSrv[] = {
+        const ST::string authSrv[] = {
             s_authSrvAddr
         };
         NetCliAuthStartConnect(authSrv, 1);
@@ -841,7 +841,7 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].IsEmpty())
+        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].is_empty())
         {
             NetCliFileStartConnect(addrs, count);
         }
@@ -861,7 +861,7 @@ void NetCommConnect () {
                 AsyncSleep(10);
             }
             
-            const plString fileSrv[] = {
+            const ST::string fileSrv[] = {
                 s_fileSrvAddr
             };
             NetCliFileStartConnect(fileSrv, 1);
@@ -1010,7 +1010,7 @@ void NetCommSetMsgPreHandler (
 
 //============================================================================
 void NetCommSetAccountUsernamePassword (
-    const plString&       username,
+    const ST::string&   username,
     const ShaDigest &   namePassHash
 ) {
     s_iniAccountUsername = username;
@@ -1116,9 +1116,9 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
 
 //============================================================================
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const plString&         playerName,
-    const plString&         avatarShape,
-    const plString&         friendInvite,
+    const ST::string&       playerName,
+    const ST::string&       avatarShape,
+    const ST::string&       friendInvite,
     unsigned                createFlags,
     void *                  param
 ) {
@@ -1148,7 +1148,7 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
 
 //============================================================================
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
-    const plString&                 ageName,
+    const ST::string&               ageName,
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype
 ) {
@@ -1262,9 +1262,9 @@ void NetCommSetCCRLevel (
 
 //============================================================================
 void NetCommSendFriendInvite (
-    const plString& emailAddress,
-    const plString& toName,
-    const plUUID&   inviteUuid
+    const ST::string& emailAddress,
+    const ST::string& toName,
+    const plUUID&     inviteUuid
 ) {
     NetCliAuthSendFriendInvite(
         emailAddress,

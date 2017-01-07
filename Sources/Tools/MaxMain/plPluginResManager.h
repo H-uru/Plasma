@@ -50,7 +50,6 @@ class plLocation;
 class plPageInfo;
 class plRegistryPageNode;
 class plSceneNode;
-class plString;
 
 class plPluginResManager : public plResManager
 {
@@ -62,10 +61,10 @@ public:
     //------------------------
 
     // Given a page string combo, returns the key of the sceneNode for that page. If the page does not exist, it creates one.
-    plKey NameToLoc(const plString& age, const plString& page, int32_t sequenceNumber, bool itinerant = false);
+    plKey NameToLoc(const ST::string& age, const ST::string& page, int32_t sequenceNumber, bool itinerant = false);
 
     // Verifies that the given sequence number belongs to the given string combo and ONLY that combo. Returns a new, unique sequenceNumber if not
-    int32_t VerifySeqNumber(int32_t sequenceNumber, const plString& age, const plString& page);
+    int32_t VerifySeqNumber(int32_t sequenceNumber, const ST::string& age, const ST::string& page);
 
     enum VerifyErrors
     {
@@ -98,10 +97,10 @@ public:
     void EndExport();
 
 protected:
-    plLocation ICreateLocation(const plString& age, const plString& page, bool itinerant);
-    plLocation ICreateLocation(const plString& age, const plString& page, int32_t seqNum, bool itinerant);
+    plLocation ICreateLocation(const ST::string& age, const ST::string& page, bool itinerant);
+    plLocation ICreateLocation(const ST::string& age, const ST::string& page, int32_t seqNum, bool itinerant);
 
-    plRegistryPageNode* INameToPage(const plString& age, const plString& page, int32_t sequenceNumber, bool itinerant = false);
+    plRegistryPageNode* INameToPage(const ST::string& age, const ST::string& page, int32_t sequenceNumber, bool itinerant = false);
 
     void IPreLoadTextures(plRegistryPageNode* pageNode, int32_t origSeqNumber);
 

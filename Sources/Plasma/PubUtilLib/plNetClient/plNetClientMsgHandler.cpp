@@ -236,12 +236,12 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
 
     // extract stateDataRecord from msg
     hsReadOnlyStream stream(m->StreamInfo()->GetStreamLen(), m->StreamInfo()->GetStreamBuf());
-    plString descName;
+    ST::string descName;
     int ver;
     plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver);
     plStateDescriptor* des = plSDLMgr::GetInstance()->FindDescriptor(descName, ver);
     
-    if (descName.CompareI(kSDLAvatarPhysical) == 0)
+    if (descName.compare_i(kSDLAvatarPhysical) == 0)
         rwFlags |= plSDL::kKeepDirty;
 
     //
@@ -250,11 +250,11 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgSDLState)
     plStateDataRecord* sdRec  = des ? new plStateDataRecord(des) : nil;
     if (!sdRec || sdRec->GetDescriptor()->GetVersion()!=ver)
     {
-        plString err;
+        ST::string err;
         if (!sdRec)
-            err = plFormat("SDL descriptor {} missing, v={}", descName, ver);
+            err = ST::format("SDL descriptor {} missing, v={}", descName, ver);
         else
-            err = plFormat("SDL descriptor {}, version mismatch, server v={}, client v={}",
+            err = ST::format("SDL descriptor {}, version mismatch, server v={}, client v={}",
                 descName, ver, sdRec->GetDescriptor()->GetVersion());
 
         hsAssert(false, err.c_str());

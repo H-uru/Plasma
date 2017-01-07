@@ -435,7 +435,7 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     plKey ourKey = GetKey();
     PhysRefType refType = PhysRefType(refMsg->fType);
 
-    plString refKeyName = refKey ? refKey->GetName() : "MISSING";
+    ST::string refKeyName = refKey ? refKey->GetName() : ST_LITERAL("MISSING");
 
     if (refType == kPhysRefWorld)
     {
@@ -510,7 +510,7 @@ plPhysical& plPXPhysical::SetProperty(int prop, bool status)
         case plSimulationInterface::kNoSynchronize:     propName = "kNoSynchronize";        break;
         }
 
-        plString name = "(unknown)";
+        ST::string name = ST_LITERAL("(unknown)");
         if (GetKey())
             name = GetKeyName();
         if (plSimulationMgr::fExtraProfile)
@@ -1021,7 +1021,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 // TESTING SDL
 // Send phys sendState msg to object's plPhysicalSDLModifier
 //
-bool plPXPhysical::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags )
+bool plPXPhysical::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags)
 {
     if (GetObjectKey())
     {

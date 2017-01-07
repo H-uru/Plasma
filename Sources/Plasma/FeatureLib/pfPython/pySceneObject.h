@@ -108,9 +108,9 @@ public:
 
     virtual void SetNetForce(bool state);
 
-    virtual PyObject* findObj(const plString& name); // pySceneObject
+    virtual PyObject* findObj(const ST::string& name); // pySceneObject
 
-    virtual plString GetName();
+    virtual ST::string GetName();
     virtual std::vector<PyObject*> GetResponders(); // pyKey list
     virtual std::vector<PyObject*> GetPythonMods(); // pyKey list
     //

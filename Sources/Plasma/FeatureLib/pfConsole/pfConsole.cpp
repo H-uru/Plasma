@@ -265,16 +265,16 @@ bool    pfConsole::MsgReceive( plMessage *msg )
     if (capMsg) {
         plFileName screenshots = plFileName::Join(plFileSystem::GetUserDataPath(), "Screenshots");
         plFileSystem::CreateDir(screenshots, false); // just in case...
-        plString prefix = plProduct::ShortName();
+        ST::string prefix = plProduct::ShortName();
 
         // List all of the PNG indices we have taken up already...
-        plString pattern = plFormat("{}*.png", prefix);
+        ST::string pattern = ST::format("{}*.png", prefix);
         std::vector<plFileName> images = plFileSystem::ListDir(screenshots, pattern.c_str());
         std::set<uint32_t> indices;
         std::for_each(images.begin(), images.end(),
             [&] (const plFileName& fn) {
-                plString idx = fn.GetFileNameNoExt().Substr(prefix.GetSize());
-                indices.insert(idx.ToUInt(10));
+                ST::string idx = fn.GetFileNameNoExt().substr(prefix.size());
+                indices.insert(idx.to_uint(10));
             }
         );
 
@@ -286,7 +286,7 @@ bool    pfConsole::MsgReceive( plMessage *msg )
         }
 
         // Got our num, save the screenshot.
-        plFileName fn = plFormat("{}{_04}.png", prefix, num);
+        plFileName fn = ST::format("{}{04}.png", prefix, num);
         plPNG::Instance().WriteToFile(plFileName::Join(screenshots, fn), capMsg->GetMipmap());
 
         AddLineF("Saved screenshot as '%s'", fn.AsString().c_str());
@@ -313,8 +313,8 @@ bool    pfConsole::MsgReceive( plMessage *msg )
             {
                 // Change the following line once we have a better way of reporting
                 // errors in the parsing
-                plString str = plFormat("Error parsing {}", cmd->GetString());
-                plString msg = plFormat("{}:\n\nCommand: '{}'\n{}", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
+                ST::string str = ST::format("Error parsing {}", cmd->GetString());
+                ST::string msg = ST::format("{}:\n\nCommand: '{}'\n{}", fEngine->GetErrorMsg(), fEngine->GetLastErrorLine(),
 #ifdef HS_DEBUGGING
                         "" );
 

@@ -239,7 +239,7 @@ char *hsConverterUtils::MangleReference(char *mangName, const char *nodeName, co
         // Default is to make it global, but you can set another default (like same
         // room as referencer) with defRoom.
 
-        plString tempName = plFormat("{}..{}", defRoom, nodeName);
+        ST::string tempName = ST::format("{}..{}", defRoom, nodeName);
         return hsStrcpy(mangName, tempName.c_str());
     }
 
@@ -254,7 +254,7 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
     if (!node)
         return nil;
 
-    plString tempName;
+    ST::string tempName;
     char *nodeName = node->GetName();
     char *roomName = nil;
     TSTR sdata;
@@ -278,9 +278,9 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
     )
         tempName = nodeName;
     else if (roomName && *roomName)
-        tempName = plFormat("{}..{}", roomName, nodeName);
+        tempName = ST::format("{}..{}", roomName, nodeName);
     else
-        tempName = plFormat("{}..{}", defRoom, nodeName);
+        tempName = ST::format("{}..{}", defRoom, nodeName);
 
     return hsStrcpy(mangName, tempName.c_str());
 

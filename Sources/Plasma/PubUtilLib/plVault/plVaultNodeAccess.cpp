@@ -68,7 +68,7 @@ enum EAgeInfoFields {
 
 #ifdef CLIENT
 void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
-    plStringStream str;
+    ST::string_stream str;
 
     for (unsigned i = 0; i < kNumAgeInfoFields; ++i) {
         switch (i) {
@@ -100,34 +100,34 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
         str << "|";
     }
 
-    SetNoteText(str.GetString());
+    SetNoteText(str.to_string());
 }
 #endif
 
 //============================================================================
 #ifdef CLIENT
 bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
-    std::vector<plString> toks = GetNoteText().Split("|");
+    std::vector<ST::string> toks = GetNoteText().split('|');
     hsAssert(toks.size() == kNumAgeInfoFields, "visit text note malformed--discarding");
     if (toks.size() != kNumAgeInfoFields)
         return false;
 
-    if (!toks[kAgeFilename].IsEmpty())
+    if (!toks[kAgeFilename].is_empty())
         info->SetAgeFilename(toks[kAgeFilename]);
-    if (!toks[kAgeInstName].IsEmpty())
+    if (!toks[kAgeInstName].is_empty())
         info->SetAgeInstanceName(toks[kAgeInstName]);
-    if (!toks[kAgeUserName].IsEmpty())
+    if (!toks[kAgeUserName].is_empty())
         info->SetAgeUserDefinedName(toks[kAgeUserName]);
-    if (!toks[kAgeDesc].IsEmpty())
+    if (!toks[kAgeDesc].is_empty())
         info->SetAgeDescription(toks[kAgeDesc]);
-    if (!toks[kAgeInstGuid].IsEmpty()) {
+    if (!toks[kAgeInstGuid].is_empty()) {
         std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
         info->SetAgeInstanceGuid(guid.get());
     }
-    if (!toks[kAgeLanguage].IsEmpty())
-        info->SetAgeLanguage(toks[kAgeLanguage].ToUInt());
-    if (!toks[kAgeSequence].IsEmpty())
-        info->SetAgeSequenceNumber(toks[kAgeSequence].ToUInt());
+    if (!toks[kAgeLanguage].is_empty())
+        info->SetAgeLanguage(toks[kAgeLanguage].to_uint());
+    if (!toks[kAgeSequence].is_empty())
+        info->SetAgeSequenceNumber(toks[kAgeSequence].to_uint());
     return true;
 }
 #endif
@@ -149,7 +149,7 @@ bool VaultSDLNode::GetStateDataRecord (plStateDataRecord * rec, unsigned readOpt
     ram.Write(GetSDLDataLength(), GetSDLData());
     ram.Rewind();
 
-    plString sdlRecName;
+    ST::string sdlRecName;
     int sdlRecVersion;
     if (!plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion))
         return false;
@@ -192,7 +192,7 @@ void VaultSDLNode::SetStateDataRecord (const plStateDataRecord * rec, unsigned w
 
 //============================================================================
 #ifdef CLIENT
-void VaultSDLNode::InitStateDataRecord (const plString& sdlRecName, unsigned writeOptions) {
+void VaultSDLNode::InitStateDataRecord (const ST::string& sdlRecName, unsigned writeOptions) {
     {
         plStateDataRecord * rec = new plStateDataRecord;
         bool exists = GetStateDataRecord(rec, 0);
@@ -283,14 +283,14 @@ bool VaultImageNode::ExtractImage (plMipmap ** dst) {
 #ifdef CLIENT
 struct MatchesSpawnPointTitle
 {
-    plString fTitle;
-    MatchesSpawnPointTitle( const plString & title ):fTitle( title ){}
+    ST::string fTitle;
+    MatchesSpawnPointTitle( const ST::string & title ):fTitle( title ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fTitle==fTitle ); }
 };
 struct MatchesSpawnPointName
 {
-    plString fName;
-    MatchesSpawnPointName( const plString & name ):fName( name ){}
+    ST::string fName;
+    MatchesSpawnPointName( const ST::string & name ):fName( name ){}
     bool operator ()( const plSpawnPointInfo & p ) const { return ( p.fSpawnPt==fName ); }
 };
 #endif
@@ -331,7 +331,7 @@ void VaultAgeLinkNode::AddSpawnPoint (const plSpawnPointInfo & point) {
 
 //============================================================================
 #ifdef CLIENT
-void VaultAgeLinkNode::RemoveSpawnPoint (const plString & spawnPtName) {
+void VaultAgeLinkNode::RemoveSpawnPoint (const ST::string & spawnPtName) {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
@@ -347,7 +347,7 @@ void VaultAgeLinkNode::RemoveSpawnPoint (const plString & spawnPtName) {
 
 //============================================================================
 #ifdef CLIENT
-bool VaultAgeLinkNode::HasSpawnPoint (const plString & spawnPtName) const {
+bool VaultAgeLinkNode::HasSpawnPoint (const ST::string & spawnPtName) const {
 
     plSpawnPointVec points;
     GetSpawnPoints( &points );                                                  
@@ -366,13 +366,13 @@ bool VaultAgeLinkNode::HasSpawnPoint (const plSpawnPointInfo & point) const {
 //============================================================================
 #ifdef CLIENT
 void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
-    
-    plString str = plString::FromUtf8(reinterpret_cast<const char*>(GetSpawnPoints()), GetSpawnPointsLength());
-    std::vector<plString> izer = str.Tokenize(";");
+
+    ST::string str = ST::string::from_utf8(reinterpret_cast<const char*>(GetSpawnPoints()), GetSpawnPointsLength());
+    std::vector<ST::string> izer = str.tokenize(";");
     for (auto token1 = izer.begin(); token1 != izer.end(); ++token1)
     {
         plSpawnPointInfo point;
-        std::vector<plString> izer2 = token1->Tokenize(":");
+        std::vector<ST::string> izer2 = token1->tokenize(":");
         if ( izer2.size() > 0)
             point.fTitle = izer2[0];
         if ( izer2.size() > 1)
@@ -389,15 +389,15 @@ void VaultAgeLinkNode::GetSpawnPoints (plSpawnPointVec * out) const {
 #ifdef CLIENT
 void VaultAgeLinkNode::SetSpawnPoints (const plSpawnPointVec & in) {
 
-    plStringStream ss;
+    ST::string_stream ss;
     for ( unsigned i=0; i<in.size(); i++ ) {
         ss
             << in[i].fTitle << ":"
             << in[i].fSpawnPt << ":"
             << in[i].fCameraStack << ";";
     }
-    plString blob = ss.GetString();
-    SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.GetSize());
+    ST::string blob = ss.to_string();
+    SetSpawnPoints(reinterpret_cast<const uint8_t *>(blob.c_str()), blob.size());
 }
 #endif
 

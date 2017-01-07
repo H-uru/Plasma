@@ -104,9 +104,9 @@ PYTHON_INIT_DEFINITION(ptBook, args, keywords)
         callbackKey = pyKey::ConvertFrom(callbackObj)->getKey();
     }
 
-    plString guiNameStr;
+    ST::string guiNameStr;
     if (guiName)
-        guiNameStr = plString::FromUtf8(guiName);
+        guiNameStr = ST::string::from_utf8(guiName);
 
     // convert the sourcecode object
     if (PyUnicode_Check(sourceObj))
@@ -228,7 +228,7 @@ PYTHON_METHOD_DEFINITION(ptBook, setGUI, args)
         PyErr_SetString(PyExc_TypeError, "setGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetGUI(plString::FromUtf8(guiName));
+    self->fThis->SetGUI(ST::string::from_utf8(guiName));
     PYTHON_RETURN_NONE;
 }
 
@@ -296,14 +296,14 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE(ptBook, "Params: esHTMLSource,coverImage=None,callbackKey=None,guiName=''\nCreates a new book");
 
 // required functions for PyObject interoperability
-PyObject *pyJournalBook::New(std::string htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, plString guiName /* = "" */)
+PyObject *pyJournalBook::New(std::string htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, const ST::string &guiName /* = "" */)
 {
     ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
     newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
     return (PyObject*)newObj;
 }
 
-PyObject *pyJournalBook::New(std::wstring htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, plString guiName /* = "" */)
+PyObject *pyJournalBook::New(std::wstring htmlSource, plKey coverImageKey /* = nil */, plKey callbackKey /* = nil */, const ST::string &guiName /* = "" */)
 {
     ptBook *newObj = (ptBook*)ptBook_type.tp_new(&ptBook_type, NULL, NULL);
     newObj->fThis->MakeBook(htmlSource, coverImageKey, callbackKey, guiName);
@@ -332,7 +332,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadBookGUI, args, "Params: guiName\nLoads the
         PyErr_SetString(PyExc_TypeError, "PtLoadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::LoadGUI(plString::FromUtf8(guiName));
+    pyJournalBook::LoadGUI(ST::string::from_utf8(guiName));
     PYTHON_RETURN_NONE;
 }
 
@@ -344,7 +344,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtUnloadBookGUI, args, "Params: guiName\nUnloads
         PyErr_SetString(PyExc_TypeError, "PtUnloadBookGUI expects a string");
         PYTHON_RETURN_ERROR;
     }
-    pyJournalBook::UnloadGUI(plString::FromUtf8(guiName));
+    pyJournalBook::UnloadGUI(ST::string::from_utf8(guiName));
     PYTHON_RETURN_NONE;
 }
 

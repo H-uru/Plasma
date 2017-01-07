@@ -104,7 +104,7 @@ public:
     } datarecord;
 
     plKey       fObjectKey;     // the plKey of the scene object (should be part of the union, but unions don't allow complex types)
-    plString    fString;
+    ST::string  fString;
 
 
     plPythonParameter()
@@ -235,7 +235,7 @@ public:
         fValueType = kbool;
         datarecord.fBool = state;
     }
-    void SetToString(const plString& string)
+    void SetToString(const ST::string& string)
     {
         SetToNone();
         fValueType = kString;
@@ -298,7 +298,7 @@ public:
         fValueType = kAnimation;
         fObjectKey = key;
     }
-    void SetToAnimationName(const plString& string)
+    void SetToAnimationName(const ST::string& string)
     {
         SetToNone();
         fValueType = kAnimationName;
@@ -376,14 +376,14 @@ public:
                 count = stream->ReadLE32();
                 if ( count != 0 )
                 {
-                    plStringBuffer<char> str;
-                    char *buffer = str.CreateWritableBuffer(count-1);
+                    ST::char_buffer str;
+                    char *buffer = str.create_writable_buffer(count-1);
                     stream->ReadLE(count, buffer);
                     buffer[count-1] = 0;
                     fString = str;
                 }
                 else
-                    fString = plString::Null;
+                    fString = ST::null;
                 break;
 
             case kSceneObject:
@@ -429,8 +429,8 @@ public:
 
             case kString:
             case kAnimationName:
-                if ( !fString.IsNull() )
-                    count = fString.GetSize()+1;
+                if ( !fString.is_empty() )
+                    count = fString.size()+1;
                 else
                     count = 0;
                 stream->WriteLE(count);

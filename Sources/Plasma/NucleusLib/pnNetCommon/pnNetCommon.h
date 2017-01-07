@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsStream.h"
 #include "pnFactory/plCreatable.h"
 
-class plString;
-
 //
 // main logging switch
 //
@@ -81,8 +79,8 @@ namespace pnNetCommon
 {
 #ifndef SERVER
 
-    uint32_t GetBinAddr(const plString& textAddr);
-    plString GetTextAddr(uint32_t binAddr);
+    uint32_t GetBinAddr(const ST::string& textAddr);
+    ST::string GetTextAddr(uint32_t binAddr);
 
 #endif // SERVER
 }

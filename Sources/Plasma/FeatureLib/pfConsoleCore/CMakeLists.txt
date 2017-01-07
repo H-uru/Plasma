@@ -8,14 +8,12 @@ set(pfConsoleCore_SOURCES
     pfConsoleCommandsCore.cpp
     pfConsoleContext.cpp
     pfConsoleEngine.cpp
-    pfUtilBase64.cpp
 )
 
 set(pfConsoleCore_HEADERS
     pfConsoleCmd.h
     pfConsoleContext.h
     pfConsoleEngine.h
-    pfUtilBase64.h
 )
 
 add_library(pfConsoleCore STATIC ${pfConsoleCore_SOURCES} ${pfConsoleCore_HEADERS})

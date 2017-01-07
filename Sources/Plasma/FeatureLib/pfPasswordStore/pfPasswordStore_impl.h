@@ -56,8 +56,8 @@ private:
 public:
     pfFilePasswordStore();
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
+    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
 };
 
 
@@ -70,8 +70,8 @@ class pfWin32PasswordStore : public pfPasswordStore
 public:
     pfWin32PasswordStore() { }
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
+    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
 };
 #endif //HS_BUILD_FOR_WIN32
 
@@ -89,8 +89,8 @@ class pfMacPasswordStore : public pfPasswordStore
 public:
     pfMacPasswordStore() { }
 
-    virtual const plString GetPassword(const plString& username);
-    virtual bool SetPassword(const plString& username, const plString& password);
+    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
+    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
 };
 #endif //HS_BUILD_FOR_OSX
 

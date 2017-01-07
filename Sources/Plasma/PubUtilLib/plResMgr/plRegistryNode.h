@@ -52,7 +52,6 @@ class plRegistryKeyList;
 class hsStream;
 class plKeyImp;
 class plRegistryKeyIterator;
-class plString;
 
 enum PageCond
 {
@@ -95,8 +94,8 @@ public:
     plRegistryPageNode(const plFileName& path);
 
     // For creating a new page.
-    plRegistryPageNode(const plLocation& location, const plString& age,
-                       const plString& page, const plFileName& dataPath);
+    plRegistryPageNode(const plLocation& location, const ST::string& age,
+                       const ST::string& page, const plFileName& dataPath);
     ~plRegistryPageNode();
 
     bool IsValid() const { return fValid == kPageOk; }
@@ -119,7 +118,7 @@ public:
     void UnloadKeys();  // Frees all our keys
 
     // Find a key by type and name
-    plKeyImp* FindKey(uint16_t classType, const plString& name) const;
+    plKeyImp* FindKey(uint16_t classType, const ST::string& name) const;
     // Find a key by direct uoid lookup (or fallback to name lookup if that doesn't work)
     plKeyImp* FindKey(const plUoid& uoid) const;
     

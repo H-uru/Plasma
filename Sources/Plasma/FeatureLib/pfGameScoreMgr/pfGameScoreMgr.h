@@ -47,7 +47,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnNetBase/pnNetBase.h"
 #include "hsRefCnt.h"
-#include "plString.h"
 
 // TODO: Rank List (seems to be unused in regular gameplay though...)
 //       That's some strange stuff...
@@ -61,7 +60,7 @@ class pfGameScore : public hsRefCnt
 {
     uint32_t fScoreId;
     uint32_t fOwnerId;
-    plString fName;
+    ST::string fName;
     uint32_t fGameType; // EGameScoreTypes
     int32_t  fValue;
 
@@ -69,11 +68,11 @@ class pfGameScore : public hsRefCnt
     friend class pfGameScoreUpdateMsg;
 
 public:
-    pfGameScore(uint32_t scoreId, uint32_t owner, plString name, uint32_t type, int32_t value = 0)
+    pfGameScore(uint32_t scoreId, uint32_t owner, const ST::string& name, uint32_t type, int32_t value = 0)
         : fScoreId(scoreId), fOwnerId(owner), fName(name), fGameType(type), fValue(value)
     { }
 
-    plString GetGameName() const { return fName; }
+    ST::string GetGameName() const { return fName; }
     uint32_t GetGameType() const { return fGameType; }
     uint32_t GetOwner() const { return fOwnerId; }
     int32_t  GetPoints() const { return fValue; }
@@ -84,9 +83,9 @@ public:
     void TransferPoints(pfGameScore* to, plKey rcvr = nil) { TransferPoints(to, fValue, rcvr); }
     void TransferPoints(pfGameScore* to, int32_t points, plKey rcvr = nil);
 
-    static void Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, const plKey& rcvr);
-    static void Find(uint32_t ownerId, const plString& name, const plKey& rcvr);
-    static void FindHighScores(uint32_t ageId, uint32_t maxScores, const plString& name, const plKey& rcvr);
+    static void Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr);
+    static void Find(uint32_t ownerId, const ST::string& name, const plKey& rcvr);
+    static void FindHighScores(uint32_t ageId, uint32_t maxScores, const ST::string& name, const plKey& rcvr);
 };
 
 #endif // _pfGameScoreMgr_h_

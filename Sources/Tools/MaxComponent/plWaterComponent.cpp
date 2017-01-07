@@ -571,7 +571,7 @@ bool plWaterComponent::IReadEnvObject(plMaxNode* node, plErrorMsg* pErrMsg, plFi
         size = uint32_t(1 << i);
 
         env = new plDynamicEnvMap(size, size, 32);
-        hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(ref->GetName()), env, node->GetLocation(), node->GetLoadMask());
+        hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(ref->GetName()), env, node->GetLocation(), node->GetLoadMask());
 
         Point3 pos = ref->GetNodeTM(TimeValue(0)).GetTrans();
         env->SetPosition(hsPoint3(pos.x, pos.y, pos.z));
@@ -1289,7 +1289,7 @@ plRenderTarget* plEnvMapComponent::IGetMap()
             fMap = cam = new plDynamicCamMap(size, size, 32);
 
         // Need to assign the key before we call all the setup functions.
-        hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(GetINode()->GetName()), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
+        hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(GetINode()->GetName()), fMap, firstTarg->GetLocation(), firstTarg->GetLoadMask());
 
 
         if (fCompPB->GetInt((ParamID(kMapType))) == kMapCubic)

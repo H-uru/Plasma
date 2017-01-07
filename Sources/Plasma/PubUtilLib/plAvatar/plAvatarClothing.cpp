@@ -181,7 +181,7 @@ void plClothingItem::Read(hsStream *s, hsResMgr *mgr)
         for (j = 0; j < layerCount; j++)
         {
             int layer = s->ReadByte();
-            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, plString::Null, layer), plRefFlags::kActiveRef); // texture
+            mgr->ReadKeyNotifyMe(s, new plElementRefMsg(GetKey(), plRefMsg::kOnCreate, i, -1, ST::null, layer), plRefFlags::kActiveRef); // texture
         }
     }
 
@@ -265,13 +265,13 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 
     // EXPORT ONLY
     plKey accessoryKey = nil;
-    if (!fAccessoryName.IsEmpty())
+    if (!fAccessoryName.is_empty())
     {
-        plString strBuf = plFormat("CItm_{}", fAccessoryName);
+        ST::string strBuf = ST::format("CItm_{}", fAccessoryName);
         accessoryKey = plKeyFinder::Instance().StupidSearch("GlobalClothing", "", plClothingItem::Index(), strBuf);
         if (accessoryKey == nil)
         {
-            strBuf = plFormat("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
+            strBuf = ST::format("Couldn't find accessory \"{}\". It won't show at runtime.", fAccessoryName);
             hsMessageBox(strBuf.c_str(), GetKeyName().c_str(), hsMessageBoxNormal);
         }
     }
@@ -299,7 +299,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 if (fElementNames.GetCount() <= eMsg->fWhich)
                     fElementNames.Expand(eMsg->fWhich + 1);
                 
-                if (fElementNames.Get(eMsg->fWhich).IsEmpty())
+                if (fElementNames.Get(eMsg->fWhich).is_empty())
                     fElementNames.Set(eMsg->fWhich, eMsg->fElementName);
                 if (fTextures.Get(eMsg->fWhich) == nil)
                 {
@@ -815,8 +815,8 @@ bool plClothingOutfit::IReadFromVault()
             hsRAMStream ram;
             ram.Write(sdl.GetSDLDataLength(), sdl.GetSDLData());
             ram.Rewind();
-            
-            plString sdlRecName;
+
+            ST::string sdlRecName;
             int sdlRecVersion;
             plStateDataRecord::ReadStreamHeader(&ram, &sdlRecName, &sdlRecVersion);
             plStateDescriptor * desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
@@ -1387,7 +1387,7 @@ bool plClothingOutfit::MsgReceive(plMessage* msg)
 // TESTING SDL
 // Send clothing sendState msg to object's plClothingSDLModifier
 //
-bool plClothingOutfit::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
+bool plClothingOutfit::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags)
 {
     plSynchEnabler ps(true);    // make sure synching is enabled, since this happens during load
     synchFlags |= plSynchedObject::kForceFullSend;  // TEMP
@@ -1407,7 +1407,7 @@ void plClothingOutfit::IInstanceSharedMeshes(plClothingItem *item)
 
     fAvatar->ValidateMesh();
 
-    bool partialSort = (item->fCustomText.Find("NeedsSort") >= 0);
+    bool partialSort = item->fCustomText.contains("NeedsSort");
     for (int i = 0; i < plClothingItem::kMaxNumLODLevels; i++)
     {
         const plSceneObject *so = fAvatar->GetClothingSO(i);
@@ -1519,7 +1519,7 @@ bool plClothingOutfit::IReadFromFile(const plFileName &filename)
     for (size_t i = 0; i < nodeCount; i++) {
         uint32_t dataLen = S.ReadLE32();
         if (dataLen) {
-            plString sdlRecName;
+            ST::string sdlRecName;
             int sdlRecVersion;
             plStateDataRecord::ReadStreamHeader(&S, &sdlRecName, &sdlRecVersion);
             plStateDescriptor* desc = plSDLMgr::GetInstance()->FindDescriptor(sdlRecName, sdlRecVersion);
@@ -1583,7 +1583,7 @@ plClothingMgr::~plClothingMgr()
         delete fItems.Pop();
 }
 
-plClothingLayout *plClothingMgr::GetLayout(const plString &name) const
+plClothingLayout *plClothingMgr::GetLayout(const ST::string &name) const
 {
     for (int i = 0; i < fLayouts.GetCount(); i++)
     {
@@ -1593,7 +1593,7 @@ plClothingLayout *plClothingMgr::GetLayout(const plString &name) const
     return nil;
 }
 
-plClothingElement *plClothingMgr::FindElementByName(const plString &name) const
+plClothingElement *plClothingMgr::FindElementByName(const ST::string &name) const
 {
     for (int i = 0; i < fElements.GetCount(); i++)
     {
@@ -1706,9 +1706,9 @@ void plClothingMgr::FilterUniqueMeshes(hsTArray<plClothingItem*> &items)
     }
 }
 
-plClothingItem *plClothingMgr::FindItemByName(const plString &name) const
+plClothingItem *plClothingMgr::FindItemByName(const ST::string &name) const
 {
-    if (name.IsEmpty())
+    if (name.is_empty())
         return nil;
 
     for (int i = 0; i < fItems.GetCount(); i++)
@@ -1883,7 +1883,7 @@ void plClothingMgr::IAddItem(plClothingItem *item)
         hsAssert(false, "Couldn't match all elements of added clothing item.");
 }
 
-void plClothingMgr::ChangeAvatar(const plString& name, const plFileName &clothingFile)
+void plClothingMgr::ChangeAvatar(const ST::string& name, const plFileName &clothingFile)
 {
     plAvatarMgr::GetInstance()->UnLoadLocalPlayer();
     plAvatarMgr::GetInstance()->LoadPlayerFromFile(name, "", clothingFile);

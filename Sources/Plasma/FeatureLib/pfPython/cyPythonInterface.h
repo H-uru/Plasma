@@ -47,8 +47,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //       only be one instance of this interface. 
 //
 #include "HeadSpin.h"
-#include "plString.h"
+#include <string_theory/string>
 #include <string>
+#include <vector>
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
 #include "../../Apps/CyPythonIDE/plCyDebug/plCyDebServer.h"
@@ -143,7 +144,7 @@ public:
     static PyObject* GetPlasmaItem(char* item);
 
     // Determine if the module name is unique
-    static bool IsModuleNameUnique(char* module);
+    static bool IsModuleNameUnique(const ST::string& module);
     // get an item (probably a function) from a specific module
     static PyObject* GetModuleItem(char* item, PyObject* module);
 

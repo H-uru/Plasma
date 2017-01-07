@@ -72,7 +72,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsTemplates.h"
 #include "hsThread.h"
 #include "plTweak.h"
-#include "plFormat.h"
 
 // Windows
 #include "hsWindows.h"
@@ -110,6 +109,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plResponderComponent.h"
 
 #include "resource.h"
+
+#include <string_theory/format>
 
 // Useful Stuff from MaxMain
 // Changing any of this would likely cause a rebuild, regardless of it being here.

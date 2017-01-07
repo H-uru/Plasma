@@ -314,7 +314,7 @@ void plAvBrainHuman::IInitBoneMap()
     for(int i = 0; i < numTuples; i++)
     {
         HumanBoneID id = tupleMap[i].fID;
-        plString name = tupleMap[i].fName;
+        ST::string name = tupleMap[i].fName;
         
         const plSceneObject * bone = this->fAvMod->FindBone(name);
         if( bone )
@@ -351,7 +351,7 @@ void plAvBrainHuman::Suspend()
     // Kind of hacky... but this is a rather rare case.
     // If the user lets up on the PushToTalk key in another brain
     // we'll miss the message to take off the animation.
-    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
+    ST::string chatAnimName = fAvMod->MakeAnimationName("Talk");
     plAGAnimInstance *anim = fAvMod->FindAnimInstance(chatAnimName);
     if (anim)
         anim->FadeAndDetach(0, 1);
@@ -707,7 +707,7 @@ void plAvBrainHuman::TurnToPoint(hsPoint3 point)
 
 void plAvBrainHuman::IChatOn()
 {
-    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
+    ST::string chatAnimName = fAvMod->MakeAnimationName("Talk");
 
     // check that we aren't adding this twice...
     if (!fAvMod->FindAnimInstance(chatAnimName))
@@ -725,7 +725,7 @@ void plAvBrainHuman::IChatOn()
 
 void plAvBrainHuman::IChatOff()
 {
-    plString chatAnimName = fAvMod->MakeAnimationName("Talk");
+    ST::string chatAnimName = fAvMod->MakeAnimationName("Talk");
     plKey avKey = fAvMod->GetKey();
     plAvAnimTask *animTask = new plAvAnimTask(chatAnimName, -1.0);
     if (animTask)
@@ -905,7 +905,7 @@ void plAvBrainHuman::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugT
     
     const char *grounded = fWalkingStrategy->IsOnGround() ? "yes" : "no";
     const char *pushing = (fWalkingStrategy->GetPushingPhysical() ? (fWalkingStrategy->GetFacingPushingPhysical() ? "facing" : "behind") : "none");
-    debugTxt.DrawString(x, y, plFormat("Ground: {>3}, AirTime: {5.2f} (Peak: {5.2f}), PushingPhys: {>6}",
+    debugTxt.DrawString(x, y, ST::format("Ground: {>3}, AirTime: {5.2f} (Peak: {5.2f}), PushingPhys: {>6}",
                 grounded, fWalkingStrategy->GetAirTime(), fWalkingStrategy->GetImpactTime(), pushing));
     y += lineHeight;
 
@@ -1423,7 +1423,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
     return true;
 }
 
-bool PushRepeatEmote(plArmatureMod* avatar, const plString& anim)
+bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim)
 {
     const char* names[1] = { anim.c_str() };
     if (!CanPushGenericBrain(avatar, names, arrsize(names), plAvBrainGeneric::kGeneric))
@@ -1453,7 +1453,7 @@ bool PushRepeatEmote(plArmatureMod* avatar, const plString& anim)
 bool AvatarEmote(plArmatureMod *avatar, const char *emoteName)
 {
     bool result = false;
-    plString fullName = avatar->MakeAnimationName(emoteName);
+    ST::string fullName = avatar->MakeAnimationName(emoteName);
     plAGAnim *anim = plAGAnim::FindAnim(fullName);
     plEmoteAnim *emote = plEmoteAnim::ConvertNoRef(anim);
     bool alreadyActive = avatar->FindAnimInstance(fullName) != nil;

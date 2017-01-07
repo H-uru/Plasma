@@ -173,7 +173,7 @@ struct VaultDownloadTrans {
     FVaultProgressCallback      progressCallback;
     void *                      cbProgressParam;
 
-    plString    tag;
+    ST::string  tag;
     unsigned    nodeCount;
     unsigned    nodesLeft;
     unsigned    vaultId;
@@ -185,7 +185,7 @@ struct VaultDownloadTrans {
     {
     }
 
-    VaultDownloadTrans (const plString& _tag, FVaultDownloadCallback _callback,
+    VaultDownloadTrans (const ST::string& _tag, FVaultDownloadCallback _callback,
                         void * _cbParam, FVaultProgressCallback _progressCallback,
                         void * _cbProgressParam, unsigned _vaultId)
         : callback(_callback), cbParam(_cbParam), progressCallback(_progressCallback),
@@ -279,7 +279,7 @@ static HASHTABLEDECL(
     link
 ) s_notifyAfterDownload;
 
-static std::unordered_map<plString, plString, plString::hash> s_ageDeviceInboxes;
+static std::unordered_map<ST::string, ST::string, ST::hash> s_ageDeviceInboxes;
 
 static bool s_processPlayerInbox = false;
 
@@ -1366,10 +1366,10 @@ void RelVaultNode::SetSeen (unsigned parentId, bool seen) {
 }
 
 //============================================================================
-void RelVaultNode::Print (const plString& tag, unsigned level) {
-    plStringStream ss;
+void RelVaultNode::Print (const ST::string& tag, unsigned level) {
+    ST::string_stream ss;
     ss << tag;
-    ss << plString::Fill(level * 2, ' ');
+    ss << ST::string::fill(level * 2, ' ');
     ss << " " << GetNodeId();
     ss << " " << plVault::NodeTypeStr(GetNodeType());
 
@@ -1389,7 +1389,7 @@ void RelVaultNode::Print (const plString& tag, unsigned level) {
         break;
 #define STPRINT_ESCAPE(flag) \
     case k##flag: \
-        ss << ", " #flag "=\"" << Get##flag().Replace("\"", "\\\"") << "\""; \
+        ss << ", " #flag "=\"" << Get##flag().replace("\"", "\\\"") << "\""; \
         break;
 #define STNAME(flag) \
     case k##flag: \
@@ -1435,7 +1435,7 @@ void RelVaultNode::Print (const plString& tag, unsigned level) {
 #undef STNAME
     }
 
-    plStatusLog::AddLineS("VaultClient.log", ss.GetString().c_str());
+    plStatusLog::AddLineS("VaultClient.log", ss.to_string().c_str());
 }
 
 //============================================================================
@@ -1780,8 +1780,8 @@ void VaultDeleteNode (
 
 //============================================================================
 void VaultPublishNode (
-    unsigned        nodeId,
-    const plString& deviceName
+    unsigned          nodeId,
+    const ST::string& deviceName
 ) {
     hsRef<RelVaultNode> rvn;
 
@@ -2319,9 +2319,9 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
     hsRef<RelVaultNode> fldr, link;
     
     for (;;) {
-        if (spawnPt.GetName().IsEmpty())
+        if (spawnPt.GetName().is_empty())
             break;
-        if (spawnPt.GetTitle().IsEmpty())
+        if (spawnPt.GetTitle().is_empty())
             break;
 
         fldr = VaultGetAgesIOwnFolder();
@@ -3241,7 +3241,7 @@ bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultFindChronicleEntry (const plString& entryName, int entryType) {
+hsRef<RelVaultNode> VaultFindChronicleEntry (const ST::string& entryName, int entryType) {
 
     hsRef<RelVaultNode> result;
     if (hsRef<RelVaultNode> rvnFldr = GetChildFolderNode(GetPlayerNode(), plVault::kChronicleFolder, 1)) {
@@ -3258,7 +3258,7 @@ hsRef<RelVaultNode> VaultFindChronicleEntry (const plString& entryName, int entr
 }
 
 //============================================================================
-bool VaultHasChronicleEntry (const plString& entryName, int entryType) {
+bool VaultHasChronicleEntry (const ST::string& entryName, int entryType) {
     if (VaultFindChronicleEntry(entryName, entryType))
         return true;
     return false;
@@ -3266,9 +3266,9 @@ bool VaultHasChronicleEntry (const plString& entryName, int entryType) {
 
 //============================================================================
 void VaultAddChronicleEntryAndWait (
-    const plString& entryName,
-    int             entryType,
-    const plString& entryValue
+    const ST::string& entryName,
+    int               entryType,
+    const ST::string& entryValue
 ) {
     if (hsRef<RelVaultNode> rvnChrn = VaultFindChronicleEntry(entryName, entryType)) {
         VaultChronicleNode chrnNode(rvnChrn);
@@ -3334,13 +3334,13 @@ bool VaultSetCCRStatus (bool online) {
 }
 
 //============================================================================
-void VaultDump (const plString& tag, unsigned vaultId) {
-    plStatusLog::AddLineS("VaultClient.log", plFormat("<---- ID:{}, Begin Vault {} ---->", vaultId, tag).c_str());
+void VaultDump (const ST::string& tag, unsigned vaultId) {
+    plStatusLog::AddLineS("VaultClient.log", ST::format("<---- ID:{}, Begin Vault {} ---->", vaultId, tag).c_str());
 
     if (hsRef<RelVaultNode> rvn = VaultGetNode(vaultId))
         rvn->PrintTree(0);
 
-    plStatusLog::AddLineS("VaultClient.log", plFormat("<---- ID:{}, End Vault {} ---->", vaultId, tag).c_str());
+    plStatusLog::AddLineS("VaultClient.log", ST::format("<---- ID:{}, End Vault {} ---->", vaultId, tag).c_str());
 }
 
 //============================================================================
@@ -3433,8 +3433,8 @@ bool VaultAmCzarOfAge (const plUUID& ageInstId) {
 
 //============================================================================
 bool VaultRegisterMTStationAndWait (
-    const plString& stationName,
-    const plString& linkBackSpawnPtObjName
+    const ST::string& stationName,
+    const ST::string& linkBackSpawnPtObjName
 ) {
     plAgeInfoStruct info;
     info.SetAgeFilename(kCityAgeFilename);
@@ -3659,22 +3659,22 @@ hsRef<RelVaultNode> VaultFindAgeSubAgeLink (const plAgeInfoStruct * info) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultFindAgeChronicleEntry (const plString& entryName, int entryType) {
+hsRef<RelVaultNode> VaultFindAgeChronicleEntry(const ST::string& entryName, int entryType) {
     hsAssert(false, "eric, implement me");
     return nil;
 }
 
 //============================================================================
 void VaultAddAgeChronicleEntry (
-    const plString& entryName,
-    int             entryType,
-    const plString& entryValue
+    const ST::string& entryName,
+    int               entryType,
+    const ST::string& entryValue
 ) {
     hsAssert(false, "eric, implement me");
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeAddDeviceAndWait (const plString& deviceName) {
+hsRef<RelVaultNode> VaultAgeAddDeviceAndWait (const ST::string& deviceName) {
     if (hsRef<RelVaultNode> existing = VaultAgeGetDevice(deviceName))
         return existing;
         
@@ -3702,7 +3702,7 @@ hsRef<RelVaultNode> VaultAgeAddDeviceAndWait (const plString& deviceName) {
 }
 
 //============================================================================
-void VaultAgeRemoveDevice (const plString& deviceName) {
+void VaultAgeRemoveDevice (const ST::string& deviceName) {
     if (hsRef<RelVaultNode> folder = VaultGetAgeDevicesFolder()) {
         hsRef<NetVaultNode> templateNode = new NetVaultNode;
         templateNode->SetNodeType(plVault::kNodeType_TextNote);
@@ -3719,7 +3719,7 @@ void VaultAgeRemoveDevice (const plString& deviceName) {
 }
 
 //============================================================================
-bool VaultAgeHasDevice (const plString& deviceName) {
+bool VaultAgeHasDevice (const ST::string& deviceName) {
     bool found = false;
     if (hsRef<RelVaultNode> folder = VaultGetAgeDevicesFolder()) {
         hsRef<NetVaultNode> templateNode = new NetVaultNode;
@@ -3733,7 +3733,7 @@ bool VaultAgeHasDevice (const plString& deviceName) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeGetDevice (const plString& deviceName) {
+hsRef<RelVaultNode> VaultAgeGetDevice (const ST::string& deviceName) {
     hsRef<RelVaultNode> result;
     if (hsRef<RelVaultNode> folder = VaultGetAgeDevicesFolder()) {
         hsRef<NetVaultNode> templateNode = new NetVaultNode;
@@ -3747,7 +3747,7 @@ hsRef<RelVaultNode> VaultAgeGetDevice (const plString& deviceName) {
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait (const plString& deviceName, const plString& inboxName) {
+hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait (const ST::string& deviceName, const ST::string& inboxName) {
     s_ageDeviceInboxes[deviceName] = inboxName;
 
     // if we found the inbox or its a global inbox then return here, otherwise if its the default inbox and
@@ -3780,7 +3780,7 @@ hsRef<RelVaultNode> VaultAgeSetDeviceInboxAndWait (const plString& deviceName, c
 }
 
 //============================================================================
-hsRef<RelVaultNode> VaultAgeGetDeviceInbox (const plString& deviceName) {
+hsRef<RelVaultNode> VaultAgeGetDeviceInbox (const ST::string& deviceName) {
     hsRef<RelVaultNode> result;
     auto it = s_ageDeviceInboxes.find(deviceName);
 
@@ -4248,7 +4248,7 @@ static void _AddChildNodeCallback (
 
 //============================================================================
 bool VaultAgeFindOrCreateChildAgeLinkAndWait (
-    const plString&         parentAgeName,
+    const ST::string&       parentAgeName,
     const plAgeInfoStruct * info,
     plAgeLinkStruct *       link
 ) {
@@ -4260,7 +4260,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 
     {   // Get id of child ages folder
         hsRef<RelVaultNode> rvnAgeInfo;
-        if (!parentAgeName.IsEmpty()) {
+        if (!parentAgeName.is_empty()) {
             plAgeInfoStruct pinfo;
             pinfo.SetAgeFilename(parentAgeName);
             if (hsRef<RelVaultNode> rvnAgeLink = VaultGetOwnedAgeLink(&pinfo))
@@ -4506,7 +4506,7 @@ namespace _VaultCreateChildAge {
 }; // namespace _VaultCreateAge
 
 uint8_t VaultAgeFindOrCreateChildAgeLink(
-    const plString&        parentAgeName,
+    const ST::string&      parentAgeName,
     const plAgeInfoStruct* info,
     plAgeLinkStruct*       link) 
 {
@@ -4585,7 +4585,7 @@ void VaultCCRDumpPlayers() {
 
 //============================================================================
 void VaultDownload (
-    const plString&             tag,
+    const ST::string&           tag,
     unsigned                    vaultId,
     FVaultDownloadCallback      callback,
     void *                      cbParam,
@@ -4617,7 +4617,7 @@ static void _DownloadVaultCallback (
 }
 
 void VaultDownloadAndWait (
-    const plString&             tag,
+    const ST::string&           tag,
     unsigned                    vaultId,
     FVaultProgressCallback      progressCallback,
     void *                      cbProgressParam

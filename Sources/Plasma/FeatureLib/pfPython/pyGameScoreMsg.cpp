@@ -40,9 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include "plString.h"
-#pragma hdrstop
-
 #include "pyGameScoreMsg.h"
 #include "pfMessage/pfGameScoreMsg.h"
 #include "pyGameScore.h"
@@ -58,11 +55,11 @@ PyObject* pyGameScoreMsg::CreateFinal(pfGameScoreMsg* msg)
     return nil;
 }
 
-plString pyGameScoreMsg::GetError() const
+ST::string pyGameScoreMsg::GetError() const
 {
     if (fMsg)
-        return plString::FromWchar(NetErrorToString(fMsg->GetResult()));
-    return "pfGameScoreMsg is NULL";
+        return ST::string::from_wchar(NetErrorToString(fMsg->GetResult()));
+    return ST_LITERAL("pfGameScoreMsg is NULL");
 }
 
 bool pyGameScoreMsg::IsValid() const
@@ -72,11 +69,11 @@ bool pyGameScoreMsg::IsValid() const
     return false;
 }
 
-plString pyGameScoreListMsg::GetName() const
+ST::string pyGameScoreListMsg::GetName() const
 {
     if (pfGameScoreListMsg* pList = pfGameScoreListMsg::ConvertNoRef(fMsg))
         return pList->GetName();
-    return plString::Null;
+    return ST::null;
 }
 
 uint32_t pyGameScoreListMsg::GetOwnerID() const

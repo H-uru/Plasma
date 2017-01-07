@@ -657,12 +657,12 @@ void plArmatureMod::IInitDefaults()
     fPhysHeight = 0.f;
     fPhysWidth = 0.f;
     fUpdateMsg = nil;
-    fRootName = plString::Null;
+    fRootName = ST::null;
     fDontPanicLink = false;
     fBodyAgeName = "GlobalAvatars";
     fBodyFootstepSoundPage = "Audio";
     fAnimationPrefix = "Male";
-    fUserStr = "";
+    fUserStr = ST::null;
 }
 
 plArmatureMod::plArmatureMod() : plArmatureModBase()
@@ -742,7 +742,7 @@ void plArmatureMod::GetPositionAndRotationSim(hsPoint3* position, hsQuat* rotati
     }
 }
 
-const plSceneObject *plArmatureMod::FindBone(const plString & name) const
+const plSceneObject *plArmatureMod::FindBone(const ST::string & name) const
 {
     plSceneObject *result = nil;
 
@@ -783,23 +783,23 @@ void plArmatureMod::WindowActivate(bool active)
     }
 }
 
-plString plArmatureMod::fSpawnPointOverride;
+ST::string plArmatureMod::fSpawnPointOverride;
 
-void plArmatureMod::SetSpawnPointOverride(const plString &overrideObjName)
+void plArmatureMod::SetSpawnPointOverride(const ST::string &overrideObjName)
 {
-    fSpawnPointOverride = overrideObjName.ToLower();
+    fSpawnPointOverride = overrideObjName.to_lower();
 }
 
 int plArmatureMod::IFindSpawnOverride()
 {
-    if (fSpawnPointOverride.IsEmpty())
+    if (fSpawnPointOverride.is_empty())
         return -1;
     int i;
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
     for (i = 0; i < mgr->NumSpawnPoints(); i++)
     {
-        const plString &name = mgr->GetSpawnPoint(i)->GetTarget(0)->GetKeyName();
-        if (name.Find(fSpawnPointOverride, plString::kCaseInsensitive) >= 0)
+        ST::string name = mgr->GetSpawnPoint(i)->GetTarget(0)->GetKeyName();
+        if (name.contains(fSpawnPointOverride, ST::case_insensitive))
             return i; // Found it!
     }
     return -1;
@@ -1023,9 +1023,9 @@ void plArmatureMod::PanicLink(bool playLinkOutAnim /* = true */)
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
 
-        plString animName = MakeAnimationName("FallingLinkOut");
+        ST::string animName = MakeAnimationName("FallingLinkOut");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
+        task->SetMarkerName(ST_LITERAL("touch"));
     
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->Send();
@@ -1046,9 +1046,9 @@ void plArmatureMod::PersonalLink()
     else
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
-        plString animName = MakeAnimationName("PersonalLink");
+        ST::string animName = MakeAnimationName("PersonalLink");
         task->SetAnimName(animName);
-        task->SetMarkerName("touch");
+        task->SetMarkerName(ST_LITERAL("touch"));
         
         plAvTaskMsg *taskMsg = new plAvTaskMsg(GetKey(), GetKey(), task);
         taskMsg->SetBCastFlag(plMessage::kNetPropagate);    
@@ -1789,7 +1789,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             {
                 // So it exists... but FindKey won't properly create our clone. So we do.
                 SOUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fFootSoundSOKey = mgr->ReRegister(plString::Null, SOUoid);
+                fFootSoundSOKey = mgr->ReRegister(ST::null, SOUoid);
             }
 
             // Add the effect to our effects manager
@@ -1798,7 +1798,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             if (effectKey)
             {
                 effectUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                effectKey = mgr->ReRegister(plString::Null, effectUoid);
+                effectKey = mgr->ReRegister(ST::null, effectUoid);
             }
             if (effectKey != nil)
                 mgr->AddViaNotify(effectKey, new plGenRefMsg(effectMgrKey, plRefMsg::kOnCreate, -1, -1), plRefFlags::kActiveRef);
@@ -1809,7 +1809,7 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
             if (fLinkSoundSOKey)
             {
                 LinkUoid.SetClone(myUoid.GetClonePlayerID(), myUoid.GetCloneID());
-                fLinkSoundSOKey = mgr->ReRegister(plString::Null, LinkUoid);
+                fLinkSoundSOKey = mgr->ReRegister(ST::null, LinkUoid);
             }
         }
     }
@@ -1826,10 +1826,10 @@ void plArmatureMod::Read(hsStream * stream, hsResMgr *mgr)
     plgDispatch::Dispatch()->RegisterForExactType(plAvatarStealthModeMsg::Index(), GetKey());
 }
 
-bool plArmatureMod::DirtySynchState(const plString& SDLStateName, uint32_t synchFlags)
+bool plArmatureMod::DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags)
 {
     // skip requests to synch non-avatar state
-    if (SDLStateName.CompareI(kSDLAvatar) != 0)
+    if (SDLStateName.compare_i(kSDLAvatar) != 0)
     {
         return false;
     }
@@ -2047,7 +2047,7 @@ bool plArmatureMod::ValidateMesh()
                 hsgResMgr::ResMgr()->SendRef(meshObj->GetKey(), refMsg, plRefFlags::kPassiveRef); 
             }
         }
-        if (!GetTarget(0)->GetKeyName().Compare("Yeesha"))
+        if (!GetTarget(0)->GetKeyName().compare("Yeesha"))
             ISetTransparentDrawOrder(true);
         else
             ISetTransparentDrawOrder(false);
@@ -2377,31 +2377,31 @@ bool plArmatureMod::FindMatchingGenericBrain(const char *names[], int count)
     return false;
 }
 
-plString plArmatureMod::MakeAnimationName(const plString& baseName) const
+ST::string plArmatureMod::MakeAnimationName(const ST::string& baseName) const
 {
     return fAnimationPrefix + baseName;
 }
 
-plString plArmatureMod::GetRootName()
+ST::string plArmatureMod::GetRootName()
 {
     return fRootName;
 }
 
-void plArmatureMod::SetRootName(const plString &name)
+void plArmatureMod::SetRootName(const ST::string &name)
 {
     fRootName = name;
 }
 
-plAGAnim *plArmatureMod::FindCustomAnim(const plString& baseName) const
+plAGAnim *plArmatureMod::FindCustomAnim(const ST::string& baseName) const
 {
-    plString customName = MakeAnimationName(baseName);
+    ST::string customName = MakeAnimationName(baseName);
     plAGAnim *result = plAGAnim::FindAnim(customName);
     return result;
 }
 
 void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *atc)
 {
-    std::vector<plString> markers;
+    std::vector<ST::string> markers;
     anim->CopyMarkerNames(markers);
 
     int i;
@@ -2410,12 +2410,12 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
         
         float time = -1;
         bool isLeft = false;
-        if (markers[i].Find("SndLeftFootDown") == 0)
+        if (markers[i].starts_with("SndLeftFootDown"))
         {
             isLeft = true;      
             time = anim->GetMarker(markers[i]);
         }
-        if (markers[i].Find("SndRightFootDown") == 0)
+        if (markers[i].starts_with("SndRightFootDown"))
             time = anim->GetMarker(markers[i]);
 
         if (time >= 0)
@@ -2450,35 +2450,35 @@ void plArmatureMod::ISetupMarkerCallbacks(plATCAnim *anim, plAnimTimeConvert *at
     }
 }
 
-plString plArmatureMod::GetAnimRootName(const plString &name)
+ST::string plArmatureMod::GetAnimRootName(const ST::string &name)
 {
-    return name.Substr(fAnimationPrefix.GetSize());
+    return name.substr(fAnimationPrefix.size());
 }
 
-int8_t plArmatureMod::AnimNameToIndex(const plString &name)
+int8_t plArmatureMod::AnimNameToIndex(const ST::string &name)
 {
-    plString rootName = GetAnimRootName(name);
+    ST::string rootName = GetAnimRootName(name);
     int8_t result = -1;
     
-    if (!rootName.Compare("Walk") || !rootName.Compare("WalkBack") ||
-        !rootName.Compare("LadderDown") || !rootName.Compare("LadderDownOn") ||
-        !rootName.Compare("LadderDownOff") || !rootName.Compare("LadderUp") ||
-        !rootName.Compare("LadderUpOn") || !rootName.Compare("LadderUpOff") ||
-        !rootName.Compare("SwimSlow") || !rootName.Compare("SwimBackward") ||
-        !rootName.Compare("BallPushWalk"))
+    if (!rootName.compare("Walk") || !rootName.compare("WalkBack") ||
+        !rootName.compare("LadderDown") || !rootName.compare("LadderDownOn") ||
+        !rootName.compare("LadderDownOff") || !rootName.compare("LadderUp") ||
+        !rootName.compare("LadderUpOn") || !rootName.compare("LadderUpOff") ||
+        !rootName.compare("SwimSlow") || !rootName.compare("SwimBackward") ||
+        !rootName.compare("BallPushWalk"))
         result = kWalk;
-    else if (!rootName.Compare("Run") || !rootName.Compare("SwimFast"))
+    else if (!rootName.compare("Run") || !rootName.compare("SwimFast"))
         result = kRun;
-    else if (!rootName.Compare("TurnLeft") || !rootName.Compare("TurnRight") ||
-             !rootName.Compare("StepLeft") || !rootName.Compare("StepRight") ||
-             !rootName.Compare("SideSwimLeft") || !rootName.Compare("SideSwimRight") ||
-             !rootName.Compare("TreadWaterTurnLeft") || !rootName.Compare("TreadWaterTurnRight"))
+    else if (!rootName.compare("TurnLeft") || !rootName.compare("TurnRight") ||
+             !rootName.compare("StepLeft") || !rootName.compare("StepRight") ||
+             !rootName.compare("SideSwimLeft") || !rootName.compare("SideSwimRight") ||
+             !rootName.compare("TreadWaterTurnLeft") || !rootName.compare("TreadWaterTurnRight"))
         result = kTurn;
-    else if (!rootName.Compare("GroundImpact") || !rootName.Compare("RunningImpact"))
+    else if (!rootName.compare("GroundImpact") || !rootName.compare("RunningImpact"))
         result = kImpact;
-    else if (rootName.Find("Run") >= 0) // Critters
+    else if (rootName.contains("Run")) // Critters
         result = kRun;
-    else if (rootName.Find("Idle") >= 0) // Critters
+    else if (rootName.contains("Idle")) // Critters
         result = kWalk;
         
     return result;
@@ -2551,9 +2551,9 @@ int  plArmatureMod::GetKILevel()
     return VaultGetKILevel();
 }
 
-void plArmatureMod::SetLinkInAnim(const plString &animName)
+void plArmatureMod::SetLinkInAnim(const ST::string &animName)
 {
-    if (!animName.IsNull())
+    if (!animName.is_empty())
     {
         plAGAnim *anim = FindCustomAnim(animName);
         fLinkInAnimKey = (anim ? anim->GetKey() : nil);
@@ -2579,7 +2579,7 @@ plArmatureLODMod::plArmatureLODMod()
 }
 
 // CTOR (physical, name)
-plArmatureLODMod::plArmatureLODMod(const plString& root_name)
+plArmatureLODMod::plArmatureLODMod(const ST::string& root_name)
 : plArmatureMod()
 {
     fRootName = root_name;
@@ -2652,7 +2652,7 @@ int plArmatureMod::RefreshDebugDisplay()
 
 void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plFormat("Armature <{}>:", fRootName), 255, 128, 128);
+    debugTxt.DrawString(x, y, ST::format("Armature <{}>:", fRootName), 255, 128, 128);
     y += lineHeight;
 
     plSceneObject * SO = GetTarget(0);
@@ -2662,7 +2662,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         hsMatrix44  l2w = SO->GetLocalToWorld();
         hsPoint3 worldPos = l2w.GetTranslate();
 
-        debugTxt.DrawString(x, y, plFormat("position(world): {.2f}, {.2f}, {.2f} Opaque: {>3}",
+        debugTxt.DrawString(x, y, ST::format("position(world): {.2f}, {.2f}, {.2f} Opaque: {>3}",
                             worldPos.fX, worldPos.fY, worldPos.fZ, IsOpaque() ? "yes" : "no"));
         y += lineHeight;
 
@@ -2674,18 +2674,18 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         plKey world = nil;
         if (fController)
             world = fController->GetSubworld();
-        debugTxt.DrawString(x, y, plFormat("In world: {}  Frozen: {}",
+        debugTxt.DrawString(x, y, ST::format("In world: {}  Frozen: {}",
                                     world ? world->GetName() : "nil", frozen));
         y+= lineHeight;
 
-        plString details;
+        ST::string details;
         if (fController)
         {
             hsPoint3 physPos;
             GetPositionAndRotationSim(&physPos, nil);
             const hsVector3& vel = fController->GetLinearVelocity();
-            details = plFormat("position(physical): <{.2f}, {.2f}, {.2f}> velocity: <{5.2f}, {5.2f}, {5.2f}>",
-                               physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
+            details = ST::format("position(physical): <{.2f}, {.2f}, {.2f}> velocity: <{5.2f}, {5.2f}, {5.2f}>",
+                                 physPos.fX, physPos.fY, physPos.fZ, vel.fX, vel.fY, vel.fZ);
         }
         else
         {
@@ -2710,7 +2710,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
         debugTxt.DrawString(x, y, "ItemsWorn:");
         y += lineHeight;
-        plStringStream outfit;
+        ST::string_stream outfit;
         int itemCount = 0; 
         for (i = 0; i < fClothingOutfit->fItems.GetCount(); i++)
         {
@@ -2722,9 +2722,9 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
             if (itemCount == 4)
             {
-                debugTxt.DrawString(x, y, outfit.GetString());
+                debugTxt.DrawString(x, y, outfit.to_string());
                 itemCount = 0;
-                outfit.Truncate();
+                outfit.truncate();
                 y += lineHeight;
             }
 
@@ -2733,7 +2733,7 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
         }
         if (itemCount > 0)
         {
-            debugTxt.DrawString(x, y, outfit.GetString());
+            debugTxt.DrawString(x, y, outfit.to_string());
             y += lineHeight;
         }
     }
@@ -2744,10 +2744,10 @@ void plArmatureMod::DumpToDebugDisplay(int &x, int &y, int lineHeight, plDebugTe
 
         debugTxt.DrawString(x, y, "Relevance Regions:");
         y += lineHeight;
-        debugTxt.DrawString(x, y, plFormat("          In: {}",
+        debugTxt.DrawString(x, y, ST::format("          In: {}",
                 plRelevanceMgr::Instance()->GetRegionNames(fRegionsImIn)));
         y += lineHeight;
-        debugTxt.DrawString(x, y, plFormat("  Care about: %s",
+        debugTxt.DrawString(x, y, ST::format("  Care about: {}",
                 plRelevanceMgr::Instance()->GetRegionNames(fRegionsICareAbout)));
         y += lineHeight;
     }
@@ -2789,11 +2789,11 @@ void plAvBoneMap::AddBoneMapping(uint32_t boneID, const plSceneObject *SO)
 
 void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugText &debugTxt)
 {
-    debugTxt.DrawString(x, y, plFormat("Mouse Input Map: {}",
+    debugTxt.DrawString(x, y, ST::format("Mouse Input Map: {}",
             plAvatarInputInterface::GetInstance()->GetInputMapName()));
     y += lineHeight;
 
-    debugTxt.DrawString(x, y, plFormat("Turn strength: {.2f} (key: {.2f}, analog: {.2f})",
+    debugTxt.DrawString(x, y, ST::format("Turn strength: {.2f} (key: {.2f}, analog: {.2f})",
             GetTurnStrength(), GetKeyTurnStrength(), GetAnalogTurnStrength()));
     y += lineHeight;
 
@@ -2801,9 +2801,9 @@ void plArmatureMod::DebugDumpMoveKeys(int &x, int &y, int lineHeight, plDebugTex
     y += lineHeight;
 }
 
-plString plArmatureMod::GetMoveKeyString() const
+ST::string plArmatureMod::GetMoveKeyString() const
 {
-    plStringStream keys;
+    ST::string_stream keys;
     keys << "Move keys: ";
 
     if(FastKeyDown())
@@ -2825,5 +2825,5 @@ plString plArmatureMod::GetMoveKeyString() const
     if(JumpKeyDown())
         keys << "JUMP ";
 
-    return keys.GetString();
+    return keys.to_string();
 }

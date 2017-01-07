@@ -200,12 +200,12 @@ void cyMisc::ConsoleNet(const char* command, bool netForce)
 //  PURPOSE    : Execute a console command from a python script,
 //                  optionally propagate over the net
 //
-PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
+PyObject* cyMisc::FindSceneObject(const ST::string& name, const char* ageName)
 {
     // assume that we won't find the sceneobject (key is equal to nil)
     plKey key=nil;
 
-    if ( !name.IsEmpty() )
+    if ( !name.is_empty() )
     {
         const char* theAge = ageName;
         if ( ageName[0] == 0 )
@@ -215,19 +215,19 @@ PyObject* cyMisc::FindSceneObject(const plString& name, const char* ageName)
 
     if ( key == nil )
     {
-        plString errmsg = plFormat("Sceneobject {} not found", name);
+        ST::string errmsg = ST::format("Sceneobject {} not found", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
         return nil; // return nil cause we errored
     }
     return pySceneObject::New(key);
 }
 
-PyObject* cyMisc::FindSceneObjects(const plString& name)
+PyObject* cyMisc::FindSceneObjects(const ST::string& name)
 {
     // assume that we won't find the sceneobject (key is equal to nil)
     std::vector<plKey> keys;
 
-    if ( !name.IsNull() )
+    if ( !name.is_empty() )
         plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plSceneObject::Index(), keys);
 
     PyObject* result = PyList_New(keys.size());
@@ -239,10 +239,10 @@ PyObject* cyMisc::FindSceneObjects(const plString& name)
 
 
 
-PyObject* cyMisc::FindActivator(const plString& name)
+PyObject* cyMisc::FindActivator(const ST::string& name)
 {
     plKey key = nil;
-    if (!name.IsEmpty())
+    if (!name.is_empty())
     {
         std::vector<plKey> keylist;
         plKeyFinder::Instance().ReallyStupidActivatorSearch(name, keylist);
@@ -443,7 +443,7 @@ void cyMisc::DetachObjectSO(pySceneObject& cobj, pySceneObject& pobj, bool netFo
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncState(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncState(pyKey &selfkey, const ST::string& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags);
 }
@@ -455,7 +455,7 @@ void cyMisc::SetDirtySyncState(pyKey &selfkey, const plString& SDLStateName, uin
 //
 //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
 //
-void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags)
+void cyMisc::SetDirtySyncStateWithClients(pyKey &selfkey, const ST::string& SDLStateName, uint32_t sendFlags)
 {
     selfkey.DirtySynchState(SDLStateName, sendFlags|plSynchedObject::kBCastToClients);
 }
@@ -499,7 +499,7 @@ bool cyMisc::WasLocallyNotified(pyKey &selfkey)
 //  PURPOSE    : Return the net client (account) name of the player whose avatar
 //              key is provided.
 //
-plString cyMisc::GetClientName(pyKey &avKey)
+ST::string cyMisc::GetClientName(pyKey &avKey)
 {
     return plNetClientMgr::GetInstance()->GetPlayerName(avKey.getKey());
 }
@@ -592,7 +592,7 @@ bool cyMisc::ValidateKey(pyKey& key)
 //
 //  PURPOSE    : Return the local net client (account) name
 //
-plString cyMisc::GetLocalClientName()
+ST::string cyMisc::GetLocalClientName()
 {
     return plNetClientMgr::GetInstance()->GetPlayerName();
 }
@@ -614,7 +614,7 @@ plString cyMisc::GetLocalClientName()
 //             : Return the current guid of the instance of the age the player is in
 //
 
-plString cyMisc::GetAgeName()
+ST::string cyMisc::GetAgeName()
 {
     return NetCommGetAge()->ageDatasetName;
 }
@@ -632,7 +632,7 @@ PyObject* cyMisc::GetAgeInfo()
 }
 
 
-plString cyMisc::GetPrevAgeName()
+ST::string cyMisc::GetPrevAgeName()
 {
     plNetLinkingMgr* nmgr = plNetLinkingMgr::GetInstance();
     if (nmgr)
@@ -641,7 +641,7 @@ plString cyMisc::GetPrevAgeName()
         if (als)
             return als->GetAgeInfo()->GetAgeFilename();
     }
-    return plString::Null;
+    return ST::null;
 }
 
 PyObject* cyMisc::GetPrevAgeInfo()
@@ -935,7 +935,7 @@ PyObject* cyMisc::GetDialogFromTagID(uint32_t tag)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plFormat("GUIDialog TagID {} not found", tag);
+    ST::string errmsg = ST::format("GUIDialog TagID {} not found", tag);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -951,7 +951,7 @@ PyObject* cyMisc::GetDialogFromString(const char* name)
             return pyGUIDialog::New(pdialog->GetKey());
     }
 
-    plString errmsg = plFormat("GUIDialog {} not found", name);
+    ST::string errmsg = ST::format("GUIDialog {} not found", name);
     PyErr_SetString(PyExc_KeyError, errmsg.c_str());
     return nil; // return nil, cause we threw an error
 }
@@ -1149,7 +1149,7 @@ float cyMisc::GetMaxListenDistSq()
 //
 //  RETURNS    : the flags that were sent with the message (may be modified)
 //
-uint32_t cyMisc::SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const plString& message, uint32_t flags)
+uint32_t cyMisc::SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const ST::string& message, uint32_t flags)
 {
     // create the messge that will contain the chat message
     pfKIMsg *msg = new pfKIMsg( pfKIMsg::kHACKChatMsg );
@@ -1221,7 +1221,7 @@ void cyMisc::SendKIMessageS(uint32_t command, const wchar_t* value)
     // create the mesage to send
     pfKIMsg *msg = new pfKIMsg( (uint8_t)command );
 
-    msg->SetString( plString::FromWchar( value ) );
+    msg->SetString( ST::string::from_wchar( value ) );
 
     // send it off
     plgDispatch::MsgSend( msg );
@@ -1566,7 +1566,7 @@ void cyMisc::FogSetDefExp2(float end, float density)
 void cyMisc::SetClearColor(float red, float green, float blue)
 {
     // do this command via the console to keep the maxplugins from barfing
-    plString command = plFormat("Graphics.Renderer.SetClearColor {f} {f} {f}", red, green, blue);
+    ST::string command = ST::format("Graphics.Renderer.SetClearColor {f} {f} {f}", red, green, blue);
 
     // create message to send to the console
     plControlEventMsg* pMsg = new plControlEventMsg;
@@ -1957,7 +1957,7 @@ int cyMisc::GetNumParticles(pyKey& host)
 }
 
 
-void cyMisc::SetLightColorValue(pyKey& light, const plString& lightName, float r, float g, float b, float a)
+void cyMisc::SetLightColorValue(pyKey& light, const ST::string& lightName, float r, float g, float b, float a)
 {
     // lightName is the name of the light object attached to the light that we want to talk to
     // for the bug lights, this would be "RTOmni-BugLightTest"
@@ -2005,7 +2005,7 @@ void cyMisc::SetLightColorValue(pyKey& light, const plString& lightName, float r
 }
 
 #include "pnMessage/plEnableMsg.h"
-void cyMisc::SetLightAnimationOn(pyKey& light, const plString& lightName, bool start)
+void cyMisc::SetLightAnimationOn(pyKey& light, const ST::string& lightName, bool start)
 {
     // lightName is the name of the light object attached to the light that we want to talk to
     // for the bug lights, this would be "RTOmni-BugLightTest"
@@ -2471,7 +2471,7 @@ int cyMisc::GetKILevel()
 
     if (hsRef<RelVaultNode> rvn = VaultFindChronicleEntry(pfKIMsg::kChronicleKILevel)) {
         VaultChronicleNode chron(rvn);
-        result = chron.GetEntryValue().ToInt();
+        result = chron.GetEntryValue().to_int();
     }
 
     return result;
@@ -2488,13 +2488,13 @@ int cyMisc::GetNumCameras()
     return (plVirtualCam1::Instance()->GetNumCameras());
 }
 
-plString cyMisc::GetCameraNumber(int number)
+ST::string cyMisc::GetCameraNumber(int number)
 {
     plCameraModifier1* pCam = plVirtualCam1::Instance()->GetCameraNumber(number-1);
     if (pCam && pCam->GetTarget())
     {
-        plString ret = pCam->GetTarget()->GetKeyName();
-        plString log = plFormat("saving camera named {} to chronicle\n", ret);
+        ST::string ret = pCam->GetTarget()->GetKeyName();
+        ST::string log = ST::format("saving camera named {} to chronicle\n", ret);
         plVirtualCam1::Instance()->AddMsgToLog(log.c_str());
         return ret;
     }
@@ -2502,16 +2502,16 @@ plString cyMisc::GetCameraNumber(int number)
     return "empty";
 }
 
-void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
+void cyMisc::RebuildCameraStack(const ST::string& name, const char* ageName)
 {
     plKey key=nil;
-    plString str = plFormat("attempting to restore camera named {} from chronicle\n", name);
+    ST::string str = ST::format("attempting to restore camera named {} from chronicle\n", name);
     plVirtualCam1::Instance()->AddMsgToLog(str.c_str());
 
-    if (name.Compare("empty") == 0)
+    if (name.compare("empty") == 0)
         return;
 
-    if ( !name.IsEmpty() )
+    if ( !name.is_empty() )
     {
         key=plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }
@@ -2522,7 +2522,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
         {
             // give up and force built in 3rd person
             plVirtualCam1::Instance()->PushThirdPerson();
-            plString errmsg = plFormat("Sceneobject {} not found", name);
+            ST::string errmsg = ST::format("Sceneobject {} not found", name);
             PyErr_SetString(PyExc_NameError, errmsg.c_str());
         }
     }
@@ -2546,7 +2546,7 @@ void cyMisc::RebuildCameraStack(const plString& name, const char* ageName)
             }
         }
         plVirtualCam1::Instance()->PushThirdPerson();
-        plString errmsg = plFormat("Sceneobject {} has no camera modifier", name);
+        ST::string errmsg = ST::format("Sceneobject {} has no camera modifier", name);
         PyErr_SetString(PyExc_NameError, errmsg.c_str());
     }
     
@@ -2596,7 +2596,7 @@ void cyMisc::DebugAssert( bool cond, const char * msg )
     hsAssert( cond, msg );
 }
 
-void cyMisc::DebugPrint(const plString& msg, uint32_t level)
+void cyMisc::DebugPrint(const ST::string& msg, uint32_t level)
 {
     if (level < fPythonLoggingLevel)
         return;
@@ -2736,10 +2736,10 @@ void cyMisc::FakeLinkToObject(pyKey& avatar, pyKey& object)
     plgDispatch::MsgSend(msg);
 }
 
-void cyMisc::FakeLinkToObjectNamed(const plString& name)
+void cyMisc::FakeLinkToObjectNamed(const ST::string& name)
 {
     plKey key = nil;
-    if ( !name.IsEmpty() )
+    if ( !name.is_empty() )
     {
         key = plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }
@@ -2781,7 +2781,7 @@ void cyMisc::ForceCursorShown()
 //              properly replaced (the list is a list of unicode strings) Name
 //              is in "Age.Set.Name" format
 //
-plString cyMisc::GetLocalizedString(plString name, const std::vector<plString> & arguments)
+ST::string cyMisc::GetLocalizedString(const ST::string& name, const std::vector<ST::string> & arguments)
 {
     if (pfLocalizationMgr::InstanceValid())
         return pfLocalizationMgr::Instance().GetString(name, arguments);
@@ -2875,7 +2875,7 @@ void cyMisc::SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp)
     }
 }
 
-void cyMisc::SendFriendInvite(const plString& email, const plString& toName)
+void cyMisc::SendFriendInvite(const ST::string& email, const ST::string& toName)
 {
     if (hsRef<RelVaultNode> pNode = VaultGetPlayerNode())
     {
@@ -2915,7 +2915,7 @@ PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
         {
             PyObject* tuple = PyTuple_New(2);
             PyTuple_SetItem(tuple, 0, pyCritterBrain::New(critterBrain));
-            PyTuple_SetItem(tuple, 1, PyString_FromPlString(armMod->GetUserStr()));
+            PyTuple_SetItem(tuple, 1, PyString_FromSTString(armMod->GetUserStr()));
 
             PyList_Append(avList, tuple);
             Py_DECREF(tuple);

@@ -89,7 +89,7 @@ struct CliGkConn : hsRefCnt {
     LINK(CliGkConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
-    plString        name;
+    ST::string      name;
     plNetAddress    addr;
     plUUID          token;
     unsigned        seq;
@@ -131,7 +131,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
 struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperFileSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    plString                                            m_addr;
+    ST::string                                          m_addr;
     bool                                                m_isPatcher;
     
     FileSrvIpAddressRequestTrans (
@@ -154,7 +154,7 @@ struct FileSrvIpAddressRequestTrans : NetGateKeeperTrans {
 struct AuthSrvIpAddressRequestTrans : NetGateKeeperTrans {
     FNetCliGateKeeperAuthSrvIpAddressRequestCallback    m_callback;
     void *                                              m_param;
-    plString                                            m_addr;
+    ST::string                                          m_addr;
 
     AuthSrvIpAddressRequestTrans (
         FNetCliGateKeeperAuthSrvIpAddressRequestCallback    callback,
@@ -463,7 +463,7 @@ static void Connect (
 
 //============================================================================
 static void Connect (
-    const plString&     name,
+    const ST::string&   name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -874,7 +874,7 @@ bool FileSrvIpAddressRequestTrans::Recv (
     
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    m_addr          = plString::FromWchar(reply.address);
+    m_addr          = ST::string::from_wchar(reply.address);
 
     return true;
 }
@@ -931,7 +931,7 @@ bool AuthSrvIpAddressRequestTrans::Recv (
 
     m_result        = kNetSuccess;
     m_state         = kTransStateComplete;
-    m_addr          = plString::FromWchar(reply.address);
+    m_addr          = ST::string::from_wchar(reply.address);
 
     return true;
 }
@@ -1057,8 +1057,8 @@ unsigned GateKeeperGetConnId () {
 
 //============================================================================
 void NetCliGateKeeperStartConnect (
-    const plString gateKeeperAddrList[],
-    uint32_t       gateKeeperAddrCount
+    const ST::string gateKeeperAddrList[],
+    uint32_t         gateKeeperAddrCount
 ) {
     gateKeeperAddrCount = std::min(gateKeeperAddrCount, 1u);
 

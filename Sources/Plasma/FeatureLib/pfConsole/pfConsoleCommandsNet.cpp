@@ -191,9 +191,9 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const plString& name, int type, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const plString& name, const char* typeName, const plString& ageName,
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -224,12 +224,12 @@ PF_CONSOLE_CMD( Net,        // groupName
                "broadcast chat msg" )   // helpString
 {
     // send chat text
-    plString text=plNetClientMgr::GetInstance()->GetPlayerName();
+    ST::string text=plNetClientMgr::GetInstance()->GetPlayerName();
     text += ":";
     int i;
     for(i=0;i<numParams;i++)
     {
-        text += plString::FromUtf8( (char*)params[i] );
+        text += ST::string::from_utf8( (char*)params[i] );
         text += " ";
     }
     plConsoleMsg    *cMsg = new plConsoleMsg( plConsoleMsg::kAddLine, text.c_str() );

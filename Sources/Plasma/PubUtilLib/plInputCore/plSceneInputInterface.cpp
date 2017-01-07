@@ -834,19 +834,19 @@ void plSceneInputInterface::ILinkOffereeToAge()
         // We must have an owned copy of the age before we can offer it, so make one now
         plUUID guid = plUUID::Generate();
         info.SetAgeInstanceGuid(&guid);
-        plString title, desc;
+        ST::string title, desc;
 
-        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().GetSize();
-        if (plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 's'
-                || plNetClientMgr::GetInstance()->GetPlayerName().CharAt(nameLen - 1) == 'S') {
-            title = plFormat("{}'", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = plFormat("{}' {}", plNetClientMgr::GetInstance()->GetPlayerName(),
-                            link.GetAgeInfo()->GetAgeInstanceName());
+        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().size();
+        if (plNetClientMgr::GetInstance()->GetPlayerName().char_at(nameLen - 1) == 's'
+                || plNetClientMgr::GetInstance()->GetPlayerName().char_at(nameLen - 1) == 'S') {
+            title = ST::format("{}'", plNetClientMgr::GetInstance()->GetPlayerName());
+            desc = ST::format("{}' {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+                              link.GetAgeInfo()->GetAgeInstanceName());
         }
         else {
-            title = plFormat("{}'s", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = plFormat("{}'s {}", plNetClientMgr::GetInstance()->GetPlayerName(),
-                            link.GetAgeInfo()->GetAgeInstanceName());
+            title = ST::format("{}'s", plNetClientMgr::GetInstance()->GetPlayerName());
+            desc = ST::format("{}'s {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+                              link.GetAgeInfo()->GetAgeInstanceName());
         }
 
         info.SetAgeUserDefinedName( title.c_str() );
@@ -870,7 +870,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         }
     }
 
-    if (!fSpawnPoint.IsEmpty()) {
+    if (!fSpawnPoint.is_empty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
         link.SetSpawnPoint(spawnPoint);
@@ -879,12 +879,12 @@ void plSceneInputInterface::ILinkOffereeToAge()
             
     // We now own the age, offer it
 
-    if (fOfferedAgeFile.CompareI(kPersonalAgeFilename) == 0)
+    if (fOfferedAgeFile.compare_i(kPersonalAgeFilename) == 0)
         plNetLinkingMgr::GetInstance()->OfferLinkToPlayer(&link, fOffereeID, fManager->GetKey());
     else
         plNetLinkingMgr::GetInstance()->LinkPlayerToAge(&link, fOffereeID);
         
-    if (!fPendingLink && fOfferedAgeFile.CompareI(kPersonalAgeFilename) != 0)
+    if (!fPendingLink && fOfferedAgeFile.compare_i(kPersonalAgeFilename) != 0)
     {   
         // tell our local dialog to pop up again...
         plKey avKey = plNetClientMgr::GetInstance()->GetLocalPlayerKey();

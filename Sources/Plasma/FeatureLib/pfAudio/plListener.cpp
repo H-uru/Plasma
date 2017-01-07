@@ -182,24 +182,24 @@ bool plListener::IEval(double secs, float del, uint32_t dirty)
 
     if( fPrintDbgInfo ) 
     {
-        plString str;
-        str = plFormat("Direction: ({3.2f},{3.2f},{3.2f}) from {}", dir.fX, dir.fY, dir.fZ,
-                       (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
+        ST::string str;
+        str = ST::format("Direction: ({3.2f},{3.2f},{3.2f}) from {}", dir.fX, dir.fY, dir.fZ,
+                         (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
         plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        str = plFormat("Up: ({3.2f},{3.2f},{3.2f}) from {}", up.fX, up.fY, up.fZ,
-                       (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
+        str = ST::format("Up: ({3.2f},{3.2f},{3.2f}) from {}", up.fX, up.fY, up.fZ,
+                         (facingType == kObject) ? pRefObject->GetKeyName() : "VCam");
         plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        str = plFormat("Position: ({3.2f},{3.2f},{3.2f}) from {}", position.fX, position.fY, position.fZ,
-                       (posType == kObject) ? pRefObject->GetKeyName() : "VCam");
+        str = ST::format("Position: ({3.2f},{3.2f},{3.2f}) from {}", position.fX, position.fY, position.fZ,
+                         (posType == kObject) ? pRefObject->GetKeyName() : "VCam");
         plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
 
-        str = plFormat("Velocity: ({3.2f},{3.2f},{3.2f}) from {}", velocity.fX, velocity.fY, velocity.fZ,
-                       (velType == kObject) ? pRefObject->GetKeyName() : "VCam");
+        str = ST::format("Velocity: ({3.2f},{3.2f},{3.2f}) from {}", velocity.fX, velocity.fY, velocity.fZ,
+                         (velType == kObject) ? pRefObject->GetKeyName() : "VCam");
         plDebugText::Instance().DrawString( x, y, str.c_str(), (uint32_t)0xffffffff );
         y += 12;
     }

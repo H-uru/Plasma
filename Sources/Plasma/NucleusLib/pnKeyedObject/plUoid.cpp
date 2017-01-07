@@ -112,14 +112,9 @@ bool plLocation::IsVirtual() const
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-plString plLocation::StringIze()  const // Format to displayable string
+ST::string plLocation::StringIze()  const // Format to displayable string
 {
-    return plFormat("S0x{x}F0x{x}", fSequenceNumber, fFlags);
-}
-
-PL_FORMAT_IMPL(const plLocation &)
-{
-    PL_FORMAT_FORWARD(value.StringIze());
+    return ST::format("S{#x}F{#x}", fSequenceNumber, fFlags);
 }
 
 plLocation plLocation::MakeReserved(uint32_t number)
@@ -134,7 +129,7 @@ plLocation plLocation::MakeNormal(uint32_t number)
 
 //// plUoid //////////////////////////////////////////////////////////////////
 
-plUoid::plUoid(const plLocation& location, uint16_t classType, const plString& objectName, const plLoadMask& m)
+plUoid::plUoid(const plLocation& location, uint16_t classType, const ST::string& objectName, const plLoadMask& m)
 {
     Invalidate();
 
@@ -158,7 +153,7 @@ plUoid::~plUoid()
 
 void plUoid::Read(hsStream* s)
 {
-    hsAssert(fObjectName.IsNull(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName.is_empty(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
     uint8_t contents = s->ReadByte();
@@ -225,7 +220,7 @@ void plUoid::Invalidate()
     fCloneID = 0;
     fClonePlayerID = 0;
     fClassType = 0;
-    fObjectName = plString::Null;
+    fObjectName = ST::null;
     fLocation.Invalidate();
     fLoadMask = plLoadMask::kAlways;
 
@@ -233,7 +228,7 @@ void plUoid::Invalidate()
 
 bool plUoid::IsValid() const
 {
-    if (!fLocation.IsValid() || fObjectName.IsNull())
+    if (!fLocation.IsValid() || fObjectName.is_empty())
         return false;
 
     return true;
@@ -264,17 +259,12 @@ plUoid& plUoid::operator=(const plUoid& rhs)
 }
 
 // THIS SHOULD BE FOR DEBUGGING ONLY <hint hint>
-plString plUoid::StringIze() const // Format to displayable string
+ST::string plUoid::StringIze() const // Format to displayable string
 {
-    return plFormat("(0x{x}:0x{x}:{}:C:[{},{}])",
+    return ST::format("({#x}:{#x}:{}:C:[{},{}])",
         fLocation.GetSequenceNumber(),
         fLocation.GetFlags(),
         fObjectName,
         GetClonePlayerID(),
         GetCloneID());
-}
-
-PL_FORMAT_IMPL(const plUoid &)
-{
-    PL_FORMAT_FORWARD(value.StringIze());
 }

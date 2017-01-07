@@ -99,15 +99,15 @@ void pyVaultFolderNode::Folder_SetNameW(const wchar_t* name)
 {
     if (fNode) {
         VaultFolderNode folder(fNode);
-        folder.SetFolderName(plString::FromWchar(name));
+        folder.SetFolderName(ST::string::from_wchar(name));
     }
 }
 
-plString pyVaultFolderNode::Folder_GetName() const
+ST::string pyVaultFolderNode::Folder_GetName() const
 {
     if (fNode) {
         VaultFolderNode folder(fNode);
         return folder.GetFolderName();
     }
-    return "";
+    return ST::null;
 }

@@ -64,9 +64,9 @@ class pfKIMsg : public plMessage
         uint32_t  fFlags;
 
         // for the hack chat message thingy
-        plString  fUser;
-        uint32_t  fPlayerID;
-        plString  fString;
+        ST::string  fUser;
+        uint32_t    fPlayerID;
+        ST::string  fString;
 
         // for the SetChatFadeDelay
         float fDelay;
@@ -77,8 +77,8 @@ class pfKIMsg : public plMessage
         void IInit()
         {
             fCommand = kNoCommand;
-            fString = plString::Null;
-            fUser = plString::Null;
+            fString = ST::null;
+            fUser = ST::null;
             fPlayerID = 0;
             fFlags = 0;
             fDelay = 0.0;
@@ -210,11 +210,11 @@ class pfKIMsg : public plMessage
 
         uint8_t     GetCommand( void ) const { return fCommand; }
 
-        void        SetString( const plString &str ) { fString = str; }
-        plString    GetString( void ) { return fString; }
+        void        SetString( const ST::string &str ) { fString = str; }
+        ST::string  GetString( void ) { return fString; }
 
-        void        SetUser(const plString &str, uint32_t pid=0) { fUser = str; fPlayerID = pid; }
-        plString    GetUser() const { return fUser; }
+        void        SetUser(const ST::string &str, uint32_t pid=0) { fUser = str; fPlayerID = pid; }
+        ST::string  GetUser() const { return fUser; }
         uint32_t    GetPlayerID() const { return fPlayerID; }
 
         void        SetFlags( uint32_t flags ) { fFlags = flags; }

@@ -56,7 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "pnUtils/pnUtils.h"
 #include "pnNetBase/pnNetBase.h"
-#include "plString.h"
 #include "plNetCommon/plNetServerSessionInfo.h"
 #include "plNetCommon/plNetCommonHelpers.h"
 #include "plMessage/plNetCommMsgs.h"
@@ -73,19 +72,19 @@ class plNetMessage;
 
 struct NetCommPlayer {
     unsigned    playerInt;
-    plString    playerName;
-    plString    avatarDatasetName;
+    ST::string  playerName;
+    ST::string  avatarDatasetName;
     unsigned    explorer;
 
     NetCommPlayer() { }
-    NetCommPlayer(unsigned id, const plString& name, const plString& shape, unsigned ex)
+    NetCommPlayer(unsigned id, const ST::string& name, const ST::string& shape, unsigned ex)
         : playerInt(id), playerName(name), avatarDatasetName(shape), explorer(ex)
     { }
 };
 
 struct NetCommAccount {
     plUUID      accountUuid;
-    plString    accountName;
+    ST::string  accountName;
     ShaDigest   accountNamePassHash;
     unsigned    accountFlags;
     unsigned    billingType;
@@ -94,7 +93,7 @@ struct NetCommAccount {
 struct NetCommAge {
     plUUID      ageInstId;
     unsigned    ageVaultId;
-    plString    ageDatasetName;
+    ST::string  ageDatasetName;
     char        spawnPtName[64];
 
     NetCommAge() : ageVaultId(0)
@@ -111,14 +110,14 @@ const std::vector<NetCommPlayer> &  NetCommGetPlayerList ();
 unsigned                            NetCommGetPlayerCount ();
 bool                                NetCommIsLoginComplete ();
 void                                NetCommSetIniPlayerId(unsigned playerId);
-void                                NetCommSetIniStartUpAge(const plString& ageName);
-void                                NetCommSetAccountUsernamePassword (const plString& username, const ShaDigest &  namePassHash);
+void                                NetCommSetIniStartUpAge(const ST::string& ageName);
+void                                NetCommSetAccountUsernamePassword (const ST::string& username, const ShaDigest &  namePassHash);
 void                                NetCommSetAuthTokenAndOS (wchar_t authToken[], wchar_t os[]);
 ENetError                           NetCommGetAuthResult ();
 
 bool                                NetCommNeedToLoadAvatar ();
 void                                NetCommSetAvatarLoaded (bool loaded = true);
-void                                NetCommChangeMyPassword (const plString& password);
+void                                NetCommChangeMyPassword (const ST::string& password);
 
 void NetCommStartup ();
 void NetCommShutdown ();
@@ -215,9 +214,9 @@ void NetCommSetActivePlayer (//--> plNetCommActivePlayerMsg
     void *                  param
 );
 void NetCommCreatePlayer (  // --> plNetCommCreatePlayerMsg
-    const plString&         playerName,
-    const plString&         avatarShape,
-    const plString&         friendInvite,
+    const ST::string&       playerName,
+    const ST::string&       avatarShape,
+    const ST::string&       friendInvite,
     unsigned                createFlags,
     void *                  param
 );
@@ -226,7 +225,7 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
     void *                  param
 );
 void NetCommGetPublicAgeList (//-> plNetCommPublicAgeListMsg
-    const plString&                 ageName,
+    const ST::string&               ageName,
     void *                          param,
     plNetCommReplyMsg::EParamType   ptype = plNetCommReplyMsg::kParamTypeOther
 );
@@ -282,9 +281,9 @@ void NetCommSetCCRLevel (
     unsigned                ccrLevel
 );
 void NetCommSendFriendInvite (
-    const plString& emailAddress,
-    const plString& toName,
-    const plUUID&   inviteUuid
+    const ST::string& emailAddress,
+    const ST::string& toName,
+    const plUUID&     inviteUuid
 );
 
 #endif // PLASMA20_SOURCES_PLASMA_PUBUTILLIB_PLNETCLIENTCOMM_PLNETCLIENTCOMM_H

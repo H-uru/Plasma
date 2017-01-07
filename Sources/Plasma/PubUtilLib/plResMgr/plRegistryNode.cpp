@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plRegistryKeyList.h"
 #include "plRegistryHelpers.h"
 
-#include "plString.h"
 #include "pnKeyedObject/plKeyImp.h"
 #include "plStatusLog/plStatusLog.h"
 #include "pnFactory/plFactory.h"
@@ -66,8 +65,8 @@ plRegistryPageNode::plRegistryPageNode(const plFileName& path)
     }
 }
 
-plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plString& age,
-                                       const plString& page, const plFileName& dataPath)
+plRegistryPageNode::plRegistryPageNode(const plLocation& location, const ST::string& age,
+                                       const ST::string& page, const plFileName& dataPath)
     : fValid(kPageOk)
     , fPageInfo(location)
     , fLoadedTypes(0)
@@ -78,7 +77,7 @@ plRegistryPageNode::plRegistryPageNode(const plLocation& location, const plStrin
 
     // Time to construct our actual file name. For now, we'll use the same old format
     // of age_page.extension
-    fPath = plFileName::Join(dataPath, plFormat("{}_District_{}.prp",
+    fPath = plFileName::Join(dataPath, ST::format("{}_District_{}.prp",
                 fPageInfo.GetAge(), fPageInfo.GetPage()));
 }
 
@@ -152,8 +151,8 @@ void plRegistryPageNode::LoadKeys()
     hsStream* stream = OpenStream();
     if (!stream)
     {
-        hsAssert(0, plFormat("plRegistryPageNode::LoadKeysFromSource - bad stream {},{}",
-                             GetPageInfo().GetAge(), GetPageInfo().GetPage()).c_str());
+        hsAssert(0, ST::format("plRegistryPageNode::LoadKeysFromSource - bad stream {},{}",
+                               GetPageInfo().GetAge(), GetPageInfo().GetPage()).c_str());
         return;
     }
 
@@ -290,7 +289,7 @@ bool plRegistryPageNode::IterateKeys(plRegistryKeyIterator* iterator, uint16_t c
     return true;
 }
 
-plKeyImp* plRegistryPageNode::FindKey(uint16_t classType, const plString& name) const
+plKeyImp* plRegistryPageNode::FindKey(uint16_t classType, const ST::string& name) const
 {
     plRegistryKeyList* keys = IGetKeyList(classType);
     if (keys == nil)
@@ -331,7 +330,7 @@ void plRegistryPageNode::AddKey(plKeyImp* key)
         // Attempt recovery
         for (int i = 0; i < 500; i++)
         {
-            plString tempName = plFormat("{}{}", key->GetUoid().GetObjectName(), i);
+            ST::string tempName = ST::format("{}{}", key->GetUoid().GetObjectName(), i);
             if (keys->FindKey(tempName) == nil)
             {
                 plUoid uoid(key->GetUoid().GetLocation(), key->GetUoid().GetClassType(), tempName, key->GetUoid().GetLoadMask());

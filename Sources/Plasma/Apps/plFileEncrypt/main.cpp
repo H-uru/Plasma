@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plFile/plEncryptedStream.h"
 #include "plProduct.h"
+#include <string_theory/stdio>
 
 
 void EncryptFiles(const plFileName& dir, const char* ext, bool encrypt);
@@ -108,12 +109,12 @@ void EncryptFiles(const plFileName& dir, const char* ext, bool encrypt)
     {
         if (encrypt)
         {
-            plPrintf("encrypting: {}\n", iter->GetFileName());
+            ST::printf("encrypting: {}\n", iter->GetFileName());
             plEncryptedStream::FileEncrypt(*iter);
         }
         else
         {
-            plPrintf("decrypting: {}\n", iter->GetFileName());
+            ST::printf("decrypting: {}\n", iter->GetFileName());
             plEncryptedStream::FileDecrypt(*iter);
         }
     }

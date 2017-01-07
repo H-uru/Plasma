@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsGeometry3.h"
 #include "hsCpuID.h"
+#include <string_theory/formatter>
 
 class hsQuat;
 
@@ -152,6 +153,8 @@ struct hsMatrix44 {
     typedef hsMatrix44(*mat_mult_ptr)(const hsMatrix44&, const hsMatrix44&);
     static hsCpuFunctionDispatcher<mat_mult_ptr> mat_mult;
 };
+
+ST_DECL_FORMAT_TYPE(const hsMatrix44&);
 
 ////////////////////////////////////////////////////////////////////////////
 #endif

@@ -108,18 +108,18 @@ hsStream* plStreamSource::GetFile(const plFileName& filename)
     return fFileData[sFilename].fStream;
 }
 
-std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, const plString& ext)
+std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, const ST::string& ext)
 {
     plFileName sDir = dir.Normalize('/');
-    hsAssert(ext.CharAt(0) != '.', "Don't add a dot");
+    hsAssert(ext.char_at(0) != '.', "Don't add a dot");
     std::lock_guard<std::mutex> lock(fMutex);
 
     // loop through all the file data records, and create the list
     std::vector<plFileName> retVal;
     for (auto curData = fFileData.begin(); curData != fFileData.end(); curData++)
     {
-        if ((curData->second.fDir.AsString().CompareI(sDir.AsString()) == 0) &&
-            (curData->second.fExt.CompareI(ext) == 0))
+        if ((curData->second.fDir.AsString().compare_i(sDir.AsString()) == 0) &&
+            (curData->second.fExt.compare_i(ext) == 0))
             retVal.push_back(curData->second.fFilename);
     }
 

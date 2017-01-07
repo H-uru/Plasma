@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "plPipeline.h"
 #include "hsResMgr.h"
-#include "plString.h"
 #pragma hdrstop
 
 #include "pyVaultImageNode.h"
@@ -68,7 +67,7 @@ static unsigned s_keyseq;
 
 //============================================================================
 static plKey CreateAndRefImageKey (unsigned nodeId, plMipmap * mipmap) {
-    plString keyName = plFormat("VaultImg_{}_{}", nodeId, s_keyseq++);
+    ST::string keyName = ST::format("VaultImg_{}_{}", nodeId, s_keyseq++);
 
     plKey key = hsgResMgr::ResMgr()->NewKey(keyName, mipmap, plLocation::kGlobalFixedLoc);
 
@@ -127,16 +126,16 @@ void pyVaultImageNode::Image_SetTitleW( const wchar_t* text )
         return;
 
     VaultImageNode image(fNode);
-    image.SetImageTitle(plString::FromWchar(text));
+    image.SetImageTitle(ST::string::from_wchar(text));
 }
 
-plString pyVaultImageNode::Image_GetTitle() const
+ST::string pyVaultImageNode::Image_GetTitle() const
 {
     if (fNode) {
         VaultImageNode image(fNode);
         return image.GetImageTitle();
     }
-    return "";
+    return ST::null;
 }
 
 PyObject* pyVaultImageNode::Image_GetImage( void )

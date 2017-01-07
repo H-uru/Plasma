@@ -735,9 +735,9 @@ bool plClient::MsgReceive(plMessage* msg)
     plEventCallbackMsg* callback = plEventCallbackMsg::ConvertNoRef(msg);
     if( callback )
     {
-        plString str = plFormat("Callback event from {}\n", callback->GetSender()
-                        ? callback->GetSender()->GetName()
-                        : "Unknown");
+        ST::string str = ST::format("Callback event from {}\n", callback->GetSender()
+                            ? callback->GetSender()->GetName()
+                            : ST_LITERAL("Unknown"));
         hsStatusMessage(str.c_str());
         static int gotten = 0;
         if( ++gotten > 5 )
@@ -823,7 +823,7 @@ bool plClient::MsgReceive(plMessage* msg)
 //============================================================================
 bool plClient::IHandleMovieMsg(plMovieMsg* mov)
 {
-    if (mov->GetFileName().IsEmpty())
+    if (mov->GetFileName().is_empty())
         return true;
 
     size_t i = fMovies.size();
@@ -831,7 +831,7 @@ bool plClient::IHandleMovieMsg(plMovieMsg* mov)
     {
         for (i = 0; i < fMovies.size(); i++)
         {
-            if (mov->GetFileName().CompareI(fMovies[i]->GetFileName().AsString()) == 0)
+            if (mov->GetFileName().compare_i(fMovies[i]->GetFileName().AsString()) == 0)
                 break;
         }
     }
@@ -932,7 +932,7 @@ void plClient::SetHoldLoadRequests(bool hold)
 void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 {
     bool allSameAge = true;
-    plString lastAgeName;
+    ST::string lastAgeName;
 
     uint32_t numRooms = 0;
     for (int i = 0; i < locs.size(); i++)
@@ -958,7 +958,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
         fLoadRooms.push_back(new LoadRequest(loc, hold));
 
-        if (lastAgeName.IsNull() || info->GetAge() == lastAgeName)
+        if (lastAgeName.is_empty() || info->GetAge() == lastAgeName)
             lastAgeName = info->GetAge();
         else
             allSameAge = false;
@@ -1477,7 +1477,7 @@ bool plClient::BeginGame()
     plNetClientMgr::GetInstance()->Init();
     IPlayIntroMovie("avi/CyanWorlds.webm", 0.f, 0.f, 0.f, 1.f, 1.f, 0.75);
     if (GetDone()) return false;
-    if (NetCommGetStartupAge()->ageDatasetName.CompareI("StartUp") == 0) {
+    if (NetCommGetStartupAge()->ageDatasetName.compare_i("StartUp") == 0) {
         // This is needed because there is no auth step in this case
         plNetCommAuthMsg* msg = new plNetCommAuthMsg();
         msg->result = kNetSuccess;
@@ -1505,7 +1505,7 @@ void plClient::InitDLLs()
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
     for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
     {
-        HMODULE hMod = LoadLibraryW(iter->AsString().ToWchar());
+        HMODULE hMod = LoadLibraryW(iter->AsString().to_wchar());
         if (hMod)
         {
             PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");

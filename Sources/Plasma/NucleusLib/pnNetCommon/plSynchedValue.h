@@ -144,7 +144,7 @@ public:
         {
             MakeDirty();                        // dirty value
             if (GetSynchedObject())
-                GetSynchedObject()->DirtySynchState(plString::Null, 0);    // dirty owner
+                GetSynchedObject()->DirtySynchState(ST::null, 0);    // dirty owner
         }
     }
 

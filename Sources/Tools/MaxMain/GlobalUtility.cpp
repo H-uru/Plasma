@@ -98,7 +98,7 @@ ClassDesc* GetGUPDesc() { return &PlasmaMaxCD; }
 //////////////////////////////////////////
 
 // This function is from the console.  This dummy version is here so that plNetLinkingMgr will build.
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString)
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString)
 {
     return nil;
 }

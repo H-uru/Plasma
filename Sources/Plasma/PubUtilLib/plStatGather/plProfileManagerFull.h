@@ -57,14 +57,14 @@ class plProfileVar;
 class plProfileManagerFull
 {
 public:
-    typedef std::set<plString, plString::less_i> GroupSet;
+    typedef std::set<ST::string, ST::less_i> GroupSet;
 
 protected:
     plProfileManager::VarVec& fVars;
 
     bool fLogStats; // If true, log the stats at the end of the frame
-    plString fLogAgeName;
-    plString fLogSpawnName;
+    ST::string fLogAgeName;
+    ST::string fLogSpawnName;
 
     std::vector<plGraphPlate*> fGraphs;
     plGraphPlate* fDetailGraph;
@@ -120,7 +120,7 @@ public:
 
     void ResetMax();
 
-    void LogStats(const plString& ageName, const plString& spawnName);
+    void LogStats(const ST::string& ageName, const ST::string& spawnName);
     plFileName GetProfilePath();
 
     // If you're going to call LogStats, make sure to call this first so all stats will be evaluated before logging

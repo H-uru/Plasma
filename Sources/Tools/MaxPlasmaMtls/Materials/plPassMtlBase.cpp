@@ -184,7 +184,7 @@ plAnimStealthNode   *plPassMtlBase::IGetStealth( int index, bool update )
     return (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, index );
 }
 
-plAnimStealthNode   *plPassMtlBase::IFindStealth( const plString &segmentName )
+plAnimStealthNode   *plPassMtlBase::IFindStealth( const ST::string &segmentName )
 {
     int     i;
 
@@ -192,9 +192,9 @@ plAnimStealthNode   *plPassMtlBase::IFindStealth( const plString &segmentName )
     for( i = 0; i < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); i++ )
     {
         plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, i );
-        plString name = node->GetSegmentName();
+        ST::string name = node->GetSegmentName();
 
-        if( node != nil && name.Compare( segmentName ) == 0 )
+        if( node != nil && name.compare( segmentName ) == 0 )
         {
             return node;
         }
@@ -206,7 +206,7 @@ plAnimStealthNode   *plPassMtlBase::IFindStealth( const plString &segmentName )
 //// IVerifyStealthPresent ///////////////////////////////////////////////////
 //  Ensures that we have a stealth for the given segment.
 
-plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animName )
+plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const ST::string &animName )
 {
     // If we're in the middle of loading, don't check
     if (plPostLoadHandler::IsLoading())
@@ -218,7 +218,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animN
         // New segment, add a new stealth node
         stealth = (plAnimStealthNode *)GetCOREInterface()->CreateInstance( HELPER_CLASS_ID, ANIMSTEALTH_CLASSID );
         INode *node = GetCOREInterface()->CreateObjectNode( stealth );
-        stealth->SetSegment( ( animName.Compare(ENTIRE_ANIMATION_NAME) != 0 ) ? animName.c_str() : nil );
+        stealth->SetSegment( ( animName.compare(ENTIRE_ANIMATION_NAME) != 0 ) ? animName.c_str() : nil );
         stealth->SetNodeName( GetName() );
         node->Freeze( true );
 
@@ -234,7 +234,7 @@ plAnimStealthNode   *plPassMtlBase::IVerifyStealthPresent( const plString &animN
 
         fAnimPB->Append( (ParamID)kPBAnimStealthNodes, 1, (ReferenceTarget **)&stealth );
 
-        plString realName = stealth->GetSegmentName();
+        ST::string realName = stealth->GetSegmentName();
 
         fStealthsChanged = true;
     }
@@ -517,7 +517,7 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
         for( int i = 0; i < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); i++ )
         {
             plAnimStealthNode *node = (plAnimStealthNode *)fAnimPB->GetReferenceTarget( (ParamID)kPBAnimStealthNodes, 0, i );
-            plString name = node->GetSegmentName();
+            ST::string name = node->GetSegmentName();
             node->SetAutoStart( false );
             node->SetLoop( true, ENTIRE_ANIMATION_NAME );
             node->SetEaseIn( plAnimEaseTypes::kNoEase, 1.f, 1.f, 1.f );
@@ -528,14 +528,14 @@ void    plPassMtlBase::PostLoadAnimPBFixup( void )
         const char *oldSel = (const char *)fAnimPB->GetStr( (ParamID)kPBAnimName );
         if( oldSel == nil )
             oldSel = ENTIRE_ANIMATION_NAME;
-        plAnimStealthNode *myNew = IFindStealth( plString::FromUtf8( oldSel ) );
+        plAnimStealthNode *myNew = IFindStealth( ST::string::from_utf8( oldSel ) );
         if( myNew != nil )
         {
 #pragma warning( push ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
 #pragma warning( disable:4800 ) // Forcing value to bool true or false (go figure, i'm even explicitly casting)
             myNew->SetAutoStart( (bool)fAnimPB->GetInt( (ParamID)kPBAnimAutoStart ) );
             myNew->SetLoop( (bool)fAnimPB->GetInt( (ParamID)kPBAnimLoop ),
-                            plString::FromUtf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
+                            ST::string::from_utf8( (char *)fAnimPB->GetStr( (ParamID)kPBAnimLoopName ) ) );
             myNew->SetEaseIn( (uint8_t)fAnimPB->GetInt( (ParamID)kPBAnimEaseInType ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInLength ),
                                 (float)fAnimPB->GetFloat( (ParamID)kPBAnimEaseInMin ),

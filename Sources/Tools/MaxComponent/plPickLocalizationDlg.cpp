@@ -129,16 +129,16 @@ HTREEITEM plPickLocalizationDlg::IAddVar(std::string name, std::string match, HT
 
 void plPickLocalizationDlg::IAddLocalizations(std::string ageName, std::string setName, std::string itemName)
 {
-    std::vector<plString> ages = pfLocalizationDataMgr::Instance().GetAgeList();
+    std::vector<ST::string> ages = pfLocalizationDataMgr::Instance().GetAgeList();
 
     for (int curAge = 0; curAge < ages.size(); curAge++)
     {
         HTREEITEM hAgeItem = IAddVar(ages[curAge].c_str(), ageName, TVI_ROOT);
 
-        std::vector<plString> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
+        std::vector<ST::string> sets = pfLocalizationDataMgr::Instance().GetSetList(ages[curAge]);
         for (int curSet = 0; curSet < sets.size(); curSet++)
         {
-            std::vector<plString> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
+            std::vector<ST::string> elements = pfLocalizationDataMgr::Instance().GetElementList(ages[curAge], sets[curSet]);
 
             HTREEITEM hSetItem = IAddVar(sets[curSet].c_str(), setName, hAgeItem);
             for (int curElement = 0; curElement < elements.size(); curElement++)

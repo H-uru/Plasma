@@ -151,7 +151,6 @@ void plNetClientMgr::IShowRooms()
 
     int y,x;
     const int yOff=10, xOff=300, startY=70, startX=10;
-    char str[256];
 
     // OWNEDLIST
     x=startX;
@@ -163,8 +162,7 @@ void plNetClientMgr::IShowRooms()
     {
         if ((*it).fOwnIt)
         {
-            sprintf(str, "%s", (*it).fGroup.GetDesc());
-            txt.DrawString(x,y,str);
+            txt.DrawString(x, y, it->fGroup.GetDesc());
             y+=yOff;
         }
     }
@@ -179,8 +177,7 @@ void plNetClientMgr::IShowRooms()
     {
         if (!(*it).fOwnIt)
         {
-            sprintf(str, "%s", (*it).fGroup.GetDesc());
-            txt.DrawString(x,y,str);
+            txt.DrawString(x, y, it->fGroup.GetDesc());
             y+=yOff;
         }
     }
@@ -245,7 +242,7 @@ void plNetClientMgr::IShowRelevanceRegions()
         if (mbr->IsServer())
             continue;
 
-        const plString& name = mbr->GetPlayerName();
+        ST::string name = mbr->GetPlayerName();
         txt.DrawString(x, y, name.c_str());
         maxPlayerName = std::max(maxPlayerName, txt.CalcStringWidth(name.c_str()));
         y += yOff;

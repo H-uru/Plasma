@@ -11,6 +11,7 @@ set(pnEncryptionTest_SOURCES
 add_executable(test_pnEncryption ${pnEncryptionTest_SOURCES})
 target_link_libraries(test_pnEncryption gtest gtest_main)
 target_link_libraries(test_pnEncryption pnEncryption)
+target_link_libraries(test_pnEncryption ${STRING_THEORY_LIBRARIES})
 
 add_test(NAME test_pnEncryption COMMAND test_pnEncryption)
 add_dependencies(check test_pnEncryption)

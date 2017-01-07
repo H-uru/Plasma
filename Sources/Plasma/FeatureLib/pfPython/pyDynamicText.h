@@ -118,7 +118,7 @@ public:
     void UnsetClipping();
     void SetWrapping(uint16_t wrapWidth, uint16_t wrapHeight);
     void UnsetWrapping();
-    void DrawText(int16_t x, int16_t y, const plString& text);
+    void DrawText(int16_t x, int16_t y, const ST::string& text);
     void DrawImage(uint16_t x, uint16_t y, pyImage& image, bool respectAlpha);
     void DrawImageClipped(uint16_t x, uint16_t y, pyImage& image, uint16_t cx, uint16_t cy,
                           uint16_t cw, uint16_t ch, bool respectAlpha);
@@ -127,7 +127,7 @@ public:
     // Actually return the visible width and height, since that's what you want to be drawing to
     uint16_t  GetWidth();
     uint16_t  GetHeight();
-    void      CalcTextExtents(const plString& text, uint16_t& width, uint16_t& height);
+    void      CalcTextExtents(const ST::string& text, uint16_t& width, uint16_t& height);
 
     void      SetJustify(uint8_t justify);
     void      SetLineSpacing(int16_t spacing);

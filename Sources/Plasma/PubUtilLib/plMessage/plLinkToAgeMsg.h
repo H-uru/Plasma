@@ -65,7 +65,7 @@ class plLinkToAgeMsg : public plMessage
 
     uint8_t fFlags;
     plAgeLinkStruct     fAgeLink;
-    plString fLinkInAnimName;
+    ST::string fLinkInAnimName;
 
 public:
     plLinkToAgeMsg();
@@ -81,8 +81,8 @@ public:
     bool PlayLinkInSfx() const { return (fFlags & kMuteLinkInSfx) == 0; }
     bool PlayLinkOutSfx() const { return (fFlags & kMuteLinkOutSfx) == 0; }
 
-    plString GetLinkInAnimName() { return fLinkInAnimName; }
-    void SetLinkInAnimName(const plString& name) { fLinkInAnimName = name; }
+    ST::string GetLinkInAnimName() { return fLinkInAnimName; }
+    void SetLinkInAnimName(const ST::string& name) { fLinkInAnimName = name; }
 
     void Read(hsStream* stream, hsResMgr* mgr);
     void Write(hsStream* stream, hsResMgr* mgr);

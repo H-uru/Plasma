@@ -158,7 +158,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
 #if HS_BUILD_FOR_WIN32
         if (fDeleteOnExit)
         {
-            fRef = CreateFileW(name.AsString().ToWchar(),
+            fRef = CreateFileW(name.AsString().to_wchar(),
                                 GENERIC_READ,   // open for reading
                                 0,              // no one can open the file until we're done
                                 NULL,           // default security
@@ -168,7 +168,7 @@ bool plSecureStream::Open(const plFileName& name, const char* mode)
         }
         else
         {
-            fRef = CreateFileW(name.AsString().ToWchar(),
+            fRef = CreateFileW(name.AsString().to_wchar(),
                                 GENERIC_READ,   // open for reading
                                 0,              // no one can open the file until we're done
                                 NULL,           // default security
@@ -294,7 +294,7 @@ bool plSecureStream::Close()
         fRAMStream = nil;
     }
 
-    fWriteFileName = plString::Null;
+    fWriteFileName = ST::null;
     fActualFileSize = 0;
     fBufferedStream = false;
     fOpenMode = kOpenFail;
@@ -644,7 +644,7 @@ bool plSecureStream::IsSecureFile(const plFileName& fileName)
     hsFD fp = INVALID_HANDLE_VALUE;
 
 #if HS_BUILD_FOR_WIN32
-    fp = CreateFileW(fileName.AsString().ToWchar(),
+    fp = CreateFileW(fileName.AsString().to_wchar(),
         GENERIC_READ,   // open for reading
         0,              // no one can open the file until we're done
         NULL,           // default security

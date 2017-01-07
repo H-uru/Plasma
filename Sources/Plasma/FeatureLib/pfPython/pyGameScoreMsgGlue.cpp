@@ -88,7 +88,7 @@ PYTHON_NO_INIT_DEFINITION(ptGameScoreListMsg);
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScoreListMsg, getName)
 {
-    return PyUnicode_FromPlString(self->fThis->GetName());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScoreListMsg, getOwnerID)

@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plClipboard_h
 #define _plClipboard_h
 
-#include "plString.h"
+namespace ST { class string; }
 
 //// Class Definition /////////////////////////////////////////////////////////
 
@@ -56,8 +56,8 @@ class plClipboard
         
     public:
         bool IsTextInClipboard();
-        plString GetClipboardText();
-        void SetClipboardText(const plString& text);
+        ST::string GetClipboardText();
+        void SetClipboardText(const ST::string& text);
         static plClipboard& GetInstance( void );
 };
 

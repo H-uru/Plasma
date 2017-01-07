@@ -84,27 +84,27 @@ enum ESrvType {
 *
 ***/
 
-class plString;
+namespace ST { class string; }
 
-unsigned GetAuthSrvHostnames (const plString*& addrs);   // returns addrCount
-void SetAuthSrvHostname (const plString& addr);
+unsigned GetAuthSrvHostnames (const ST::string*& addrs); // returns addrCount
+void SetAuthSrvHostname (const ST::string& addr);
 
-unsigned GetFileSrvHostnames (const plString*& addrs);   // returns addrCount
-void SetFileSrvHostname (const plString& addr);
+unsigned GetFileSrvHostnames (const ST::string*& addrs); // returns addrCount
+void SetFileSrvHostname (const ST::string& addr);
 
-unsigned GetGateKeeperSrvHostnames (const plString*& addrs); // returns addrCount
-void SetGateKeeperSrvHostname (const plString& addr);
+unsigned GetGateKeeperSrvHostnames (const ST::string*& addrs); // returns addrCount
+void SetGateKeeperSrvHostname (const ST::string& addr);
 
 unsigned GetClientPort();
 void SetClientPort(unsigned port);
 
-plString GetServerStatusUrl ();
-void SetServerStatusUrl (const plString& url);
+ST::string GetServerStatusUrl ();
+void SetServerStatusUrl (const ST::string& url);
 
-plString GetServerSignupUrl ();
-void SetServerSignupUrl (const plString& url);
+ST::string GetServerSignupUrl ();
+void SetServerSignupUrl (const ST::string& url);
 
-plString GetServerDisplayName ();
-void SetServerDisplayName (const plString& name);
+ST::string GetServerDisplayName ();
+void SetServerDisplayName (const ST::string& name);
 
 #endif // pnNbSrvs_inc

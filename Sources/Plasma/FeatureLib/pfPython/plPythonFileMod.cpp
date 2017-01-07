@@ -396,7 +396,7 @@ plPythonFileMod::~plPythonFileMod()
 
     // then get rid of this module
     //  NOTE: fModule shouldn't be made in the plugin, only at runtime
-    if ( !fModuleName.IsNull() && fModule )
+    if ( !fModuleName.is_empty() && fModule )
     {
         //_PyModule_Clear(fModule);
         PyObject *m;
@@ -414,7 +414,7 @@ plPythonFileMod::~plPythonFileMod()
         // we need to set our pointer to nil to make sure we don't try to use it
         fModule = nil;
     }
-    fModuleName = plString::Null;
+    fModuleName = ST::null;
 }
 
 #include "plPythonPack.h"
@@ -425,7 +425,7 @@ bool plPythonFileMod::ILoadPythonCode()
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
-    plFileName pyfile = plFileName::Join(".", "python", plFormat("{}.py", fPythonFile));
+    plFileName pyfile = plFileName::Join(".", "python", ST::format("{}.py", fPythonFile));
     if (plFileInfo(pyfile).Exists())
     {
         char fromLoad[256];
@@ -490,7 +490,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
     if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
     {
         // was there a python file module with this?
-        if ( !fPythonFile.IsEmpty() )
+        if ( !fPythonFile.is_empty() )
         {
             // has the module not been initialized yet
             if ( !fModule )
@@ -510,7 +510,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
 
             // set the name of the file (in the global dictionary of the module)
                 PyObject* dict = PyModule_GetDict(fModule);
-                PyObject* pfilename = PyString_FromPlString(fPythonFile);
+                PyObject* pfilename = PyString_FromSTString(fPythonFile);
                 PyDict_SetItemString(dict, "glue_name", pfilename);
             // next we need to:
             //  - create instance of class
@@ -633,8 +633,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                 }
                                 // if it wasn't a named string then must be normal string type
                                 if ( isNamedAttr == 0 )
-                                    if ( !parameter.fString.IsNull() )
-                                        value = PyString_FromPlString(parameter.fString);
+                                    if ( !parameter.fString.is_empty() )
+                                        value = PyString_FromSTString(parameter.fString);
                                 break;
                             case plPythonParameter::kSceneObject:
                             case plPythonParameter::kSceneObjectList:
@@ -959,41 +959,18 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 //
 // NOTE: This modifier wasn't intended to have multiple targets
 //
-plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
+ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
 {
-    // Forgive my general crapulance...
-    // This strips underscores out of module names 
-    // so python won't truncate them... -S
+    // This strips underscores out of module names so python won't truncate them... -S
 
     plKey pKey = GetKey();
     plKey sKey = sobj->GetKey();
 
-    const char* pKeyName = pKey->GetName().c_str();
-    const char* pSobjName = sKey->GetName().c_str();
+    ST::string soName = sKey->GetName().replace("_", "");
+    ST::string pmName = pKey->GetName().replace("_", "");
 
-    uint16_t len = pKey->GetName().GetSize();
-    uint16_t slen = sKey->GetName().GetSize();
-
-    hsAssert(len+slen < 256, "Warning: String length exceeds 256 characters.");
-    char modulename[256];
-    
-    int i, k = 0;
-    for(i = 0; i < slen; i++)
-    {
-        if(pSobjName[i] == '_') continue;
-
-        modulename[k++] = pSobjName[i];
-    }
-    for(i = 0; i < len; i++)
-    {
-        if(pKeyName[i] == '_') continue;
-
-        modulename[k++] = pKeyName[i];
-    }
-
-    modulename[k] = '\0';
-    plStringStream name;
-    name << modulename;
+    ST::string_stream name;
+    name << soName << pmName;
 
     // check to see if we are attaching to a clone?
     plKeyImp* pKeyImp = (plKeyImp*)(sKey);
@@ -1008,14 +985,14 @@ plString plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     }
 
     // make sure that the actual modulue will be uniqie
-    if ( !PythonInterface::IsModuleNameUnique(modulename) )
+    if ( !PythonInterface::IsModuleNameUnique(name.to_string()))
     {
         // if not unique then add the sequence number to the end of the modulename
         uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
         name << seqID;
     }
 
-    return name.GetString();
+    return name.to_string();
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1060,9 +1037,9 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, int32_t id)
+void plPythonFileMod::IFindResponderAndAdd(const ST::string &responderName, int32_t id)
 {
-    if ( !responderName.IsNull() )
+    if ( !responderName.is_empty() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -1088,9 +1065,9 @@ void plPythonFileMod::IFindResponderAndAdd(const plString &responderName, int32_
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindActivatorAndAdd(const plString &activatorName, int32_t id)
+void plPythonFileMod::IFindActivatorAndAdd(const ST::string &activatorName, int32_t id)
 {
-    if ( !activatorName.IsNull() )
+    if ( !activatorName.is_empty() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -1367,7 +1344,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                             // create event list
                             PyObject* event = PyList_New(4);
                             PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kVariable));
-                            PyList_SetItem(event, 1, PyString_FromPlString(eventData->fName));
+                            PyList_SetItem(event, 1, PyString_FromSTString(eventData->fName));
                             PyList_SetItem(event, 2, PyLong_FromLong(eventData->fDataType));
                             
                             // depending on the data type create the data
@@ -1843,7 +1820,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             // yes...
             // find the value that would go with a command
             PyObject* value;
-            plStringBuffer<wchar_t> str;
+            ST::wchar_buffer str;
             switch (pkimsg->GetCommand())
             {
                 case pfKIMsg::kSetChatFadeDelay:
@@ -1854,8 +1831,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
                 case pfKIMsg::kYesNoDialog:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetString().ToWchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.GetSize()));
+                    str = pkimsg->GetString().to_wchar();
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.size()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kGZInRange:
@@ -1865,23 +1842,23 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
                 case pfKIMsg::kRateIt:
                     value = PyTuple_New(3);
-                    str = pkimsg->GetString().ToWchar();
-                    PyTuple_SetItem(value,0,PyString_FromPlString(pkimsg->GetUser()));
-                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str, str.GetSize()));
+                    str = pkimsg->GetString().to_wchar();
+                    PyTuple_SetItem(value,0,PyString_FromSTString(pkimsg->GetUser()));
+                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str, str.size()));
                     PyTuple_SetItem(value,2,PyLong_FromLong(pkimsg->GetIntValue()));
                     break;
                 case pfKIMsg::kRegisterImager:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetString().ToWchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.GetSize()));
+                    str = pkimsg->GetString().to_wchar();
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.size()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kAddPlayerDevice:
                 case pfKIMsg::kRemovePlayerDevice:
                     {
-                        str = pkimsg->GetString().ToWchar();
-                        if ( str.GetSize() > 0 )
-                            value = PyUnicode_FromWideChar(str, str.GetSize());
+                        str = pkimsg->GetString().to_wchar();
+                        if ( str.size() > 0 )
+                            value = PyUnicode_FromWideChar(str, str.size());
                         else
                         {
                             Py_INCREF(Py_None);
@@ -1896,8 +1873,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kKIOKDialogNoQuit:
                 case pfKIMsg::kGZFlashUpdate:
                 case pfKIMsg::kKICreateMarkerNode:
-                    str = pkimsg->GetString().ToWchar();
-                    value = PyUnicode_FromWideChar(str, str.GetSize());
+                    str = pkimsg->GetString().to_wchar();
+                    value = PyUnicode_FromWideChar(str, str.size());
                     break;
                 case pfKIMsg::kMGStartCGZGame:
                 case pfKIMsg::kMGStopCGZGame:
@@ -2079,11 +2056,11 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     
                     case plVaultNotifyMsg::kPublicAgeCreated:
                     case plVaultNotifyMsg::kPublicAgeRemoved: {
-                        plString ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
-                        if (!ageName.IsEmpty()) {
+                        ST::string ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
+                        if (!ageName.is_empty()) {
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
-                            PyTuple_SetItem(ptuple, 0, PyString_FromPlString(ageName));
+                            PyTuple_SetItem(ptuple, 0, PyString_FromSTString(ageName));
                         }
                     }
                     break;
@@ -2139,15 +2116,15 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 else
                 {
                     // else if we could not find the player in our list, then just return a string of the user's name
-                    plString fromName = pkimsg->GetUser();
-                    if (fromName.IsEmpty())
+                    ST::string fromName = pkimsg->GetUser();
+                    if (fromName.is_empty())
                         fromName = "Anonymous Coward";
                     player = pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fromName, pkimsg->GetPlayerID(), 0.0);
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
-                plStringBuffer<wchar_t> wMessage = pkimsg->GetString().ToWchar();
-                PyObject* uMessage = PyUnicode_FromWideChar(wMessage, wMessage.GetSize());
+                ST::wchar_buffer wMessage = pkimsg->GetString().to_wchar();
+                PyObject* uMessage = PyUnicode_FromWideChar(wMessage, wMessage.size());
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_RTChat],
                         (char*)fFunctionNames[kfunc_RTChat],
@@ -2283,7 +2260,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         plSDLNotificationMsg* sn = plSDLNotificationMsg::ConvertNoRef(msg);
         if (sn)
         {
-            plString tag = sn->fHintString;
+            ST::string tag = sn->fHintString;
             // yes... then call it
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
@@ -2821,7 +2798,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 //
 void plPythonFileMod::ReportError()
 {
-    plString objectName = this->GetKeyName();
+    ST::string objectName = this->GetKeyName();
     objectName += " - ";
 
     PythonInterface::WriteToStdErr(objectName.c_str());
@@ -2853,7 +2830,7 @@ void plPythonFileMod::DisplayPythonOutput()
 //             : Compile it into a Python code object
 //             : (This is usually called by the component)
 //
-void plPythonFileMod::SetSourceFile(const plString& filename)
+void plPythonFileMod::SetSourceFile(const ST::string& filename)
 {
     fPythonFile = filename;
 }
@@ -2960,4 +2937,4 @@ void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
 //// kGlobalNameKonstant /////////////////////////////////////////////////
 //  My continued attempt to spread the CORRECT way to spell konstant. -mcn
 
-plString plPythonFileMod::kGlobalNameKonstant("VeryVerySpecialPythonFileMod");
+ST::string plPythonFileMod::kGlobalNameKonstant(ST_LITERAL("VeryVerySpecialPythonFileMod"));

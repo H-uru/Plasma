@@ -241,7 +241,7 @@ plRegistryPageNode* plResManager::FindSinglePage(const plFileName& path) const
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); it++)
     {
-        if (it->second->GetPagePath().AsString().CompareI(path.AsString()) == 0)
+        if (it->second->GetPagePath().AsString().compare_i(path.AsString()) == 0)
             return it->second;
     }
 
@@ -507,10 +507,10 @@ void plResManager::IPageOutSceneNodes(bool forceAll)
 
 inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
 {
-    const plString& objectName = uoid.GetObjectName();
+    const ST::string& objectName = uoid.GetObjectName();
 
     // If we're running localized, try to find a localized version first
-    if ((!objectName.IsNull()) && plLocalization::IsLocalized())
+    if ((!objectName.is_empty()) && plLocalization::IsLocalized())
     {
         plFileName localName = plLocalization::GetLocalized(objectName.c_str());
         if (localName.IsValid())
@@ -580,7 +580,7 @@ plKey plResManager::FindKey(const plUoid& uoid)
     return key;
 }
 
-const plLocation& plResManager::FindLocation(const plString& age, const plString& page) const
+const plLocation& plResManager::FindLocation(const ST::string& age, const ST::string& page) const
 {
     static plLocation invalidLoc;
 
@@ -591,12 +591,11 @@ const plLocation& plResManager::FindLocation(const plString& age, const plString
     return invalidLoc;
 }
 
-void plResManager::GetLocationStrings(const plLocation& loc, plString* ageBuffer, plString* pageBuffer) const
+void plResManager::GetLocationStrings(const plLocation& loc, ST::string* ageBuffer, ST::string* pageBuffer) const
 {
     plRegistryPageNode* page = FindPage(loc);
     const plPageInfo& info = page->GetPageInfo();
 
-    // Those buffers better be big enough...
     if (ageBuffer)
         *ageBuffer = info.GetAge();
     if (pageBuffer)
@@ -722,9 +721,9 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
 //  Creates a new key and assigns it to the given keyed object, also placing
 //  it into the registry.
 
-plKey plResManager::NewKey(const plString& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
+plKey plResManager::NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
 {
-    hsAssert(!name.IsEmpty(), "No name for new key");
+    hsAssert(!name.is_empty(), "No name for new key");
     plUoid newUoid(loc, object->ClassIndex(), name, m);
     return NewKey(newUoid, object);
 }
@@ -743,7 +742,7 @@ plKey plResManager::NewKey(plUoid& newUoid, hsKeyedObject* object)
     return keyPtr;
 }
 
-plKey plResManager::ReRegister(const plString& nm, const plUoid& oid)
+plKey plResManager::ReRegister(const ST::string& nm, const plUoid& oid)
 {
     hsAssert(fInited, "Attempting to reregister a key before we're inited!");
 
@@ -991,10 +990,10 @@ class plResAgeHolder : public hsRefCnt
 {
     public:
         std::set<plKey> fKeys;
-        plString        fAge;
+        ST::string      fAge;
 
         plResAgeHolder() {}
-        plResAgeHolder( const plString& age ) : fAge( age ) {}
+        plResAgeHolder( const ST::string& age ) : fAge( age ) {}
 };
 
 //// plResHolderIterator /////////////////////////////////////////////////////
@@ -1003,16 +1002,16 @@ class plResHolderIterator : public plRegistryPageIterator
 {
 protected:
     std::set<plKey>& fKeys;
-    plString fAgeName;
+    ST::string fAgeName;
     plResManager* fResMgr;
 
 public:
-    plResHolderIterator(const plString& age, std::set<plKey>& keys, plResManager* resMgr)
+    plResHolderIterator(const ST::string& age, std::set<plKey>& keys, plResManager* resMgr)
             : fAgeName(age), fKeys(keys), fResMgr(resMgr) {}
 
     virtual bool EatPage(plRegistryPageNode* page)
     {
-        if (page->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
+        if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0)
         {
             fResMgr->LoadPageKeys(page);
             plKeyCollector collector(fKeys);
@@ -1025,9 +1024,9 @@ public:
 
 //// LoadAndHoldAgeKeys //////////////////////////////////////////////////////
 
-void plResManager::LoadAgeKeys(const plString& age)
+void plResManager::LoadAgeKeys(const ST::string& age)
 {
-    hsAssert(!age.IsEmpty(), "age is nil");
+    hsAssert(!age.is_empty(), "age is nil");
     HeldAgeKeyMap::const_iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
     {
@@ -1051,7 +1050,7 @@ void plResManager::LoadAgeKeys(const plString& age)
 
 //// DropAgeKeys /////////////////////////////////////////////////////////////
 
-void plResManager::DropAgeKeys(const plString& age)
+void plResManager::DropAgeKeys(const ST::string& age)
 {
     HeldAgeKeyMap::iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
@@ -1153,16 +1152,16 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     PageCond cond = pageNode->GetPageCondition();
     if (cond != kPageOk)
     {
-        plString condStr = "Checksum invalid";
+        ST::string condStr = ST_LITERAL("Checksum invalid");
         if (cond == kPageTooNew) {
-            condStr = "Page Version too new";
+            condStr = ST_LITERAL("Page Version too new");
         } else if (cond == kPageOutOfDate) {
-            condStr = "Page Version out of date";
+            condStr = ST_LITERAL("Page Version out of date");
         }
 
         kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! (%s)", condStr.c_str()));
 
-        plString msg = plFormat("Data Problem: Age:{}  Page:{}  Error:{}",
+        ST::string msg = ST::format("Data Problem: Age:{}  Page:{}  Error:{}",
             pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr);
         hsMessageBox(msg.c_str(), "Error", hsMessageBoxNormal, hsMessageBoxIconError);
 
@@ -1230,11 +1229,11 @@ class plPageInAgeIter : public plRegistryPageIterator
 {
 private:
     plKey       fDestKey;
-    plString    fAgeName;
+    ST::string  fAgeName;
     std::vector<plLocation> fLocations;
 
 public:
-    plPageInAgeIter(plKey destKey, const plString &ageName) : fDestKey(destKey), fAgeName(ageName) {}
+    plPageInAgeIter(plKey destKey, const ST::string &ageName) : fDestKey(destKey), fAgeName(ageName) {}
     ~plPageInAgeIter()
     {
         plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoomHold);
@@ -1246,7 +1245,7 @@ public:
     }
     virtual bool EatPage(plRegistryPageNode* page)
     {
-        if (page->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
+        if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0)
         {
             plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
             fLocations.push_back(uoid.GetLocation());
@@ -1257,7 +1256,7 @@ public:
 
 // PageInAge is intended for bulk global ages, like GlobalAnimations or GlobalClothing
 // that store a lot of data we always want available. (Used to be known as PageInHold)
-void plResManager::PageInAge(const plString &age)
+void plResManager::PageInAge(const ST::string &age)
 {
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
     plUoid lu(kClient_KEY);
@@ -1377,8 +1376,8 @@ static void ICatPageNames(hsTArray<plRegistryPageNode*>& pages, char* buf, int b
             break;
         }
 
-        plString pageFile = pages[i]->GetPagePath().GetFileName();
-        if (strlen(buf) + pageFile.GetSize() > bufSize - 5)
+        ST::string pageFile = pages[i]->GetPagePath().GetFileName();
+        if (strlen(buf) + pageFile.size() > bufSize - 5)
         {
             strcat(buf, "...\n");
             break;
@@ -1486,7 +1485,7 @@ void plResManager::DumpUnusedKeys(plRegistryPageNode* page) const
     page->IterateKeys(&reffer);
 }
 
-plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const plString& age, const plString& page)
+plRegistryPageNode* plResManager::CreatePage(const plLocation& location, const ST::string& age, const ST::string& page)
 {
     plRegistryPageNode* pageNode = new plRegistryPageNode(location, age, page, fDataPath);
     fAllPages[location] = pageNode;
@@ -1555,14 +1554,14 @@ static void sIReportLeak(plKeyImp* key, plRegistryPageNode* page)
     if (refsLeft == 0)
         return;
 
-    plStringStream ss;
+    ST::string_stream ss;
     ss << "\t\t" << plFactory::GetNameOfClass(key->GetUoid().GetClassType()) << ": ";
     ss << key->GetUoid().StringIze() << " ";
     if (key->ObjectIsLoaded())
         ss << "- " << key->GetDataLen() << " bytes - " << refsLeft << " refs left";
     else
         ss << "(key only, " << refsLeft << " refs left)";
-    hsStatusMessage(ss.GetString().c_str());
+    hsStatusMessage(ss.to_string().c_str());
 }
 
 //// UnloadPageObjects ///////////////////////////////////////////////////////
@@ -1619,13 +1618,13 @@ plRegistryPageNode* plResManager::FindPage(const plLocation& location) const
 
 //// FindPage ////////////////////////////////////////////////////////////////
 
-plRegistryPageNode* plResManager::FindPage(const plString& age, const plString& page) const
+plRegistryPageNode* plResManager::FindPage(const ST::string& age, const ST::string& page) const
 {
     PageMap::const_iterator it;
     for (it = fAllPages.begin(); it != fAllPages.end(); ++it)
     {
         const plPageInfo& info = (it->second)->GetPageInfo();
-        if (info.GetAge().CompareI(age) == 0 && info.GetPage().CompareI(page) == 0)
+        if (info.GetAge().compare_i(age) == 0 && info.GetPage().compare_i(page) == 0)
             return it->second;
     }
 
@@ -1725,7 +1724,7 @@ bool plResManager::IterateKeys(plRegistryKeyIterator* iterator, const plLocation
 //// IteratePages ////////////////////////////////////////////////////////////
 //  Iterate through all LOADED pages
 
-bool plResManager::IteratePages(plRegistryPageIterator* iterator, const plString& ageToRestrictTo)
+bool plResManager::IteratePages(plRegistryPageIterator* iterator, const ST::string& ageToRestrictTo)
 {
     ILockPages();
 
@@ -1736,7 +1735,7 @@ bool plResManager::IteratePages(plRegistryPageIterator* iterator, const plString
         if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
             continue;
 
-        if (ageToRestrictTo.IsNull() || page->GetPageInfo().GetAge().CompareI(ageToRestrictTo) == 0)
+        if (ageToRestrictTo.is_empty() || page->GetPageInfo().GetAge().compare_i(ageToRestrictTo) == 0)
         {
             if (!iterator->EatPage(page))
             {

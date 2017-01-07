@@ -115,7 +115,7 @@ public:
     bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
     virtual plKey GetModKey(plMaxNode *node)=0;
-    plString GetAnimName();
+    ST::string GetAnimName();
     static bool IsAnimComponent(plComponentBase *comp);
 
     std::map<plMaxNode*, plAGAnim*> fAnims;
@@ -132,7 +132,7 @@ public:
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
     virtual bool    IsNodeRestricted( void ) { return true; }
-    virtual plString GetIfaceSegmentName( bool allowNil );
+    virtual ST::string GetIfaceSegmentName( bool allowNil );
 
 protected:
     bool IAddTMToAnim(plMaxNode *node, plAGAnim *anim, plErrorMsg *pErrMsg);

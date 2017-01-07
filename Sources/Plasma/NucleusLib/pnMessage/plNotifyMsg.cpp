@@ -593,7 +593,7 @@ void plNotifyMsg::AddControlKeyEvent( int32_t key, bool down )
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, float number)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, float number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
@@ -611,7 +611,7 @@ void plNotifyMsg::AddVariableEvent(const plString& name, float number)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, int32_t number)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, int32_t number)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
@@ -628,7 +628,7 @@ void plNotifyMsg::AddVariableEvent(const plString& name, int32_t number)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name)
+void plNotifyMsg::AddVariableEvent(const ST::string& name)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
@@ -645,7 +645,7 @@ void plNotifyMsg::AddVariableEvent(const plString& name)
 //
 //  PURPOSE    : Add a variable event record to this notify message
 //
-void plNotifyMsg::AddVariableEvent(const plString& name, const plKey &key)
+void plNotifyMsg::AddVariableEvent(const ST::string& name, const plKey &key)
 {
     // create the control key event record
     proVariableEventData* pED = new proVariableEventData;
@@ -1315,12 +1315,12 @@ void proControlKeyEventData::IWriteVersion(hsStream* s, hsResMgr* mgr)
 
 void proVariableEventData::IInit()
 {
-    fName = plString::Null;
+    fName = ST::null;
 }
 
 void proVariableEventData::IDestruct()
 {
-    fName = plString::Null;
+    fName = ST::null;
 }
 
 void proVariableEventData::IReadNumber(hsStream * stream) {

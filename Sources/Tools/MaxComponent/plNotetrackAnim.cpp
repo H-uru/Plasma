@@ -83,10 +83,10 @@ plNotetrackAnim::~plNotetrackAnim()
     DeleteSegmentMap(fSegMap);
 }
 
-plString plNotetrackAnim::GetNextAnimName()
+ST::string plNotetrackAnim::GetNextAnimName()
 {
     if (!fSegMap)
-        return plString::Null;
+        return ST::null;
 
     while (fAnimIt != fSegMap->end())
     {
@@ -98,26 +98,26 @@ plString plNotetrackAnim::GetNextAnimName()
     }
 
     fAnimIt = fSegMap->begin();
-    return plString::Null;
+    return ST::null;
 }
 
-plAnimInfo plNotetrackAnim::GetAnimInfo(const plString &animName)
+plAnimInfo plNotetrackAnim::GetAnimInfo(const ST::string &animName)
 {
     if (!fSegMap)
         return plAnimInfo();
 
-    if (animName.IsEmpty() || fSegMap->find(animName) == fSegMap->end())
-        return plAnimInfo(fSegMap, plString::Null);
+    if (animName.is_empty() || fSegMap->find(animName) == fSegMap->end())
+        return plAnimInfo(fSegMap, ST::null);
     else 
         return plAnimInfo(fSegMap, animName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-plAnimInfo::plAnimInfo(SegmentMap *segMap, const plString &animName)
+plAnimInfo::plAnimInfo(SegmentMap *segMap, const ST::string &animName)
 {
     fSegMap = segMap;
-    fAnimSpec = !animName.IsNull() ? (*fSegMap)[animName] : nil;
+    fAnimSpec = !animName.is_empty() ? (*fSegMap)[animName] : nil;
 
     if (fSegMap)
     {
@@ -127,9 +127,9 @@ plAnimInfo::plAnimInfo(SegmentMap *segMap, const plString &animName)
     }
 }
 
-plString plAnimInfo::GetAnimName()
+ST::string plAnimInfo::GetAnimName()
 {
-    return fAnimSpec ? fAnimSpec->fName : plString::Null;
+    return fAnimSpec ? fAnimSpec->fName : ST::null;
 }
 
 float plAnimInfo::GetAnimStart()
@@ -147,10 +147,10 @@ float plAnimInfo::GetAnimInitial()
     return fAnimSpec ? fAnimSpec->fInitial : -1;
 }
 
-plString plAnimInfo::GetNextLoopName()
+ST::string plAnimInfo::GetNextLoopName()
 {
     if (!fSegMap)
-        return plString::Null;
+        return ST::null;
 
     while (fLoopIt != fSegMap->end())
     {
@@ -163,12 +163,12 @@ plString plAnimInfo::GetNextLoopName()
     }
 
     fLoopIt = fSegMap->begin();
-    return plString::Null;
+    return ST::null;
 }
 
-float plAnimInfo::GetLoopStart(const plString &loopName)
+float plAnimInfo::GetLoopStart(const ST::string &loopName)
 {
-    if (!fSegMap || loopName.IsNull())
+    if (!fSegMap || loopName.is_empty())
         return -1;
 
     if (fSegMap->find(loopName) != fSegMap->end())
@@ -183,9 +183,9 @@ float plAnimInfo::GetLoopStart(const plString &loopName)
     return -1;
 }
 
-float plAnimInfo::GetLoopEnd(const plString &loopName)
+float plAnimInfo::GetLoopEnd(const ST::string &loopName)
 {
-    if (!fSegMap || loopName.IsNull())
+    if (!fSegMap || loopName.is_empty())
         return -1;
 
     if (fSegMap->find(loopName) != fSegMap->end())
@@ -200,10 +200,10 @@ float plAnimInfo::GetLoopEnd(const plString &loopName)
     return -1;
 }
 
-plString plAnimInfo::GetNextMarkerName()
+ST::string plAnimInfo::GetNextMarkerName()
 {
     if (!fSegMap)
-        return plString::Null;
+        return ST::null;
 
     while (fMarkerIt != fSegMap->end())
     {
@@ -216,10 +216,10 @@ plString plAnimInfo::GetNextMarkerName()
     }
 
     fMarkerIt = fSegMap->begin();
-    return plString::Null;
+    return ST::null;
 }
 
-float plAnimInfo::GetMarkerTime(const plString &markerName)
+float plAnimInfo::GetMarkerTime(const ST::string &markerName)
 {
     if (!fSegMap)
         return -1;
@@ -252,9 +252,9 @@ float plAnimInfo::GetNextStopPoint()
     return -1;
 }
 
-bool plAnimInfo::IsSuppressed(const plString &animName)
+bool plAnimInfo::IsSuppressed(const ST::string &animName)
 {
-    if (!fSegMap || animName.IsNull())
+    if (!fSegMap || animName.is_empty())
         return false;
 
     if (fSegMap->find(animName) != fSegMap->end())

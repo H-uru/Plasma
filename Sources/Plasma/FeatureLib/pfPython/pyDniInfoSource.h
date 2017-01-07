@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 
 class pyDniCoordinates;
-class plString;
 class plUUID;
 
 class pyDniInfoSource
@@ -70,7 +69,7 @@ public:
     // current time in current age (tbd)
     uint32_t          GetAgeTime( void ) const;
     // name of current age
-    plString    GetAgeName() const;
+    ST::string    GetAgeName() const;
     // unique identifier for this age instance
     plUUID          GetAgeGuid(void) const;
 };

@@ -95,7 +95,7 @@ public:
     // getter and setters
     virtual plKey getKey() { return fKey; }
     virtual void setKey(plKey key) { fKey=key; }
-    virtual const char* getName() const;
+    virtual ST::string getName() const;
 #ifndef BUILDING_PYPLASMA
     PyObject* GetPySceneObject();
 
@@ -123,7 +123,7 @@ public:
     // get a notify list item
     virtual plKey GetNotifyListItem(int32_t i);
     // Set the dirty state on the PythonModifier
-    virtual void DirtySynchState(const plString& SDLStateName, uint32_t sendFlags);
+    virtual void DirtySynchState(const ST::string& SDLStateName, uint32_t sendFlags);
 
     // register and unregister for control key envents
     virtual void EnableControlKeyEvents();

@@ -125,7 +125,7 @@ public:
     // helpers for typed arguments
     void    AddString( uint16_t id, const char * value );
     void    AddString( uint16_t id, std::string & value );
-    plString  GetString( uint16_t id );
+    ST::string  GetString( uint16_t id );
     void    AddInt( uint16_t id, int32_t value );
     int32_t   GetInt( uint16_t id );
     void    AddDouble( uint16_t id, double value );
@@ -140,10 +140,10 @@ struct plOperationTimer
     bool    fRunning;
     double  fStartTime;
     double  fEndTime;
-    std::string fComment;
-    std::string fSpacer;
+    ST::string fComment;
+    ST::string fSpacer;
     bool    fPrintAtStart;
-    std::string fTag;
+    ST::string fTag;
     plOperationTimer( const char * tag="", bool printAtStart=false )
         : fRunning( false )
         , fTag( tag )
@@ -154,7 +154,7 @@ struct plOperationTimer
     ~plOperationTimer() { Stop(); }
     void Start( const char * comment, int level=0 )
     {
-        fSpacer = std::string( level, '\t' );
+        fSpacer = ST::string::fill(level, '\t');
         Stop();
         fRunning = true;
         fComment = comment;

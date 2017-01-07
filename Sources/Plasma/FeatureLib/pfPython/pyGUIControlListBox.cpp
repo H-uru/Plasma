@@ -81,12 +81,12 @@ class pfColorListElement : public pfGUIListText
             if ( string1 )
             {
                 fString1 = hsStringToWString(string1);
-                fText = plString::Null;
+                fText = ST::null;
             }
             else
             {
                 fString1 = nil;
-                fText = "";
+                fText = ST::null;
             }
             fTextColor1 = color1;
             if (string2)
@@ -105,12 +105,12 @@ class pfColorListElement : public pfGUIListText
             {
                 fString1 = new wchar_t[wcslen(string1)+1];
                 wcscpy(fString1,string1);
-                fText = plString::Null;
+                fText = ST::null;
             }
             else
             {
                 fString1 = nil;
-                fText = "";
+                fText = ST::null;
             }
             fTextColor1 = color1;
             if (string2)
@@ -132,7 +132,7 @@ class pfColorListElement : public pfGUIListText
             {
                 delete [] fString1;
                 fString1 = nil;
-                fText = plString::Null;
+                fText = ST::null;
             }
             if ( fString2 )
                 delete [] fString2;
@@ -287,7 +287,7 @@ class pfListTextInBox : public pfGUIListText
         uint32_t              fMinHeight;
 
     public:
-        pfListTextInBox( const plString &text, uint32_t min_width=0, uint32_t min_height=0 ) : pfGUIListText( text )
+        pfListTextInBox( const ST::string &text, uint32_t min_width=0, uint32_t min_height=0 ) : pfGUIListText( text )
         {
             fMinWidth = min_width;
             fMinHeight = min_height;
@@ -503,7 +503,7 @@ uint16_t pyGUIControlListBox::GetNumElements( void )
     return 0;
 }
 
-void pyGUIControlListBox::SetElement( uint16_t idx, const plString& text )
+void pyGUIControlListBox::SetElement( uint16_t idx, const ST::string& text )
 {
     if ( fGCkey )
     {
@@ -548,7 +548,7 @@ void pyGUIControlListBox::SetStringJustify( uint16_t idx, uint32_t justify)
 }
 
 
-plString pyGUIControlListBox::GetElement( uint16_t idx )
+ST::string pyGUIControlListBox::GetElement( uint16_t idx )
 {
     if ( fGCkey )
     {
@@ -576,7 +576,7 @@ plString pyGUIControlListBox::GetElement( uint16_t idx )
     return "";
 }
 
-int16_t pyGUIControlListBox::AddString( const plString &string )
+int16_t pyGUIControlListBox::AddString( const ST::string &string )
 {
     if ( fGCkey )
     {
@@ -611,7 +611,7 @@ int16_t   pyGUIControlListBox::AddImage( pyImage& image, bool respectAlpha )
 }
 
 
-int16_t pyGUIControlListBox::FindString( const plString &toCompareTo )
+int16_t pyGUIControlListBox::FindString( const ST::string &toCompareTo )
 {
     if ( fGCkey )
     {
@@ -698,7 +698,7 @@ void pyGUIControlListBox::Add2TextWColorW( std::wstring str1, pyColor& textcolor
     }
 }
 
-int16_t pyGUIControlListBox::AddStringInBox( const plString &string, uint32_t min_width, uint32_t min_height )
+int16_t pyGUIControlListBox::AddStringInBox( const ST::string &string, uint32_t min_width, uint32_t min_height )
 {
     if ( fGCkey )
     {
@@ -871,7 +871,7 @@ void pyGUIControlListBox::Unclickable( void )
     }
 }
 
-void    pyGUIControlListBox::AddBranch( const plString &name, bool initiallyOpen )
+void    pyGUIControlListBox::AddBranch( const ST::string &name, bool initiallyOpen )
 {
     if ( fGCkey )
     {

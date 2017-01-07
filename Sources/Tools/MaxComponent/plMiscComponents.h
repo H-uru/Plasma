@@ -66,7 +66,7 @@ namespace plPageInfoUtils
     int32_t     CombineSeqNum( int prefix, int suffix );
     int32_t     GetCommonSeqNumFromNormal( int32_t normalSeqNumber, int whichCommonPage );
 
-    plAgeDescription    *GetAgeDesc( const plString &ageName );
+    plAgeDescription    *GetAgeDesc( const ST::string &ageName );
 };
 
 // PageInfo component definition, here so other components can get to the static function(s)
@@ -77,7 +77,7 @@ protected:
     bool        fItinerant;
     static char fCurrExportedAge[ 256 ];
 
-    void    IVerifyLatestAgeAsset( const plString &ageName, const plFileName &localPath, plErrorMsg *errMsg );
+    void    IVerifyLatestAgeAsset( const ST::string &ageName, const plFileName &localPath, plErrorMsg *errMsg );
     void    IUpdateSeqNumbersFromAgeFile( plErrorMsg *errMsg );
     
 public:

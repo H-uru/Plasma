@@ -43,14 +43,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef plMessage_inc
 #define plMessage_inc
 
-#include <string>
 #include "pnFactory/plCreatable.h"
 #include "pnKeyedObject/plKey.h"
 #include "hsTemplates.h"
 
 class plKey;
 class hsStream;
-class plString;
 
 // Base class for messages only has enough info to route it
 // and send it over the wire (Read/Write).
@@ -157,7 +155,7 @@ public:
 
 /////////////////////////////////////////////////////////////////
 // Helpers for reading/writing these types:
-//      plString
+//      ST::string
 //      std::string
 //      c strings (char *)
 //      c arrays (type [])
@@ -172,12 +170,12 @@ struct plMsgStdStringHelper
     static int PokeBig(const std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Poke(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
     static int PokeBig(const char * buf, uint32_t bufsz, hsStream* stream, const uint32_t peekOptions=0);
-    static int Poke(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PokeBig(const plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PokeBig(const ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int Peek(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
     static int PeekBig(std::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
-    static int PeekBig(plString & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
+    static int PeekBig(ST::string & stringref, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////
@@ -189,8 +187,8 @@ struct plMsgCStringHelper
     // deletes str and reallocates. you must delete [] str;
     static int Peek(char *& str, hsStream* stream, const uint32_t peekOptions=0);
 
-    static int Poke(const plString & str, hsStream* stream, const uint32_t peekOptions=0);
-    static int Peek(plString & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Poke(const ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
+    static int Peek(ST::string & str, hsStream* stream, const uint32_t peekOptions=0);
 };
 
 /////////////////////////////////////////////////////////////////

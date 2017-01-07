@@ -178,7 +178,7 @@ void plResTreeView::IFindNextObject()
         plKey key = fFoundItem->type() == plResTreeViewItem::Type
                   ? static_cast<plResTreeViewItem *>(fFoundItem)->GetKey()
                   : nullptr;
-        if (key && key->GetUoid().GetObjectName().Find(fSearchString, plString::kCaseInsensitive) >= 0)
+        if (key && key->GetUoid().GetObjectName().contains(fSearchString, ST::case_insensitive))
         {
             /// FOUND
             setCurrentItem(fFoundItem);

@@ -92,8 +92,8 @@ public:
     PyObject*       GetSubAgesFolder( void ); // returns pyVaultFolderNode
     PyObject*       GetChronicleFolder( void ); // returns pyVaultFolderNode
     // Age chronicle (not the player chronicle!)
-    PyObject*       FindChronicleEntry( const plString& entryName ); // returns pyVaultChronicleNode
-    void AddChronicleEntry( const plString& name, uint32_t type, const plString& value );
+    PyObject*       FindChronicleEntry( const ST::string& entryName ); // returns pyVaultChronicleNode
+    void AddChronicleEntry( const ST::string& name, uint32_t type, const ST::string& value );
     // Players who have published to devices in this age
     PyObject*       GetPeopleIKnowAboutFolder( void ); // returns pyVaultPlayerInfoListNode
     // PERSONAL AGE SPECIFIC

@@ -42,7 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plResTreeView_h
 #define _plResTreeView_h
 
-#include "plString.h"
+#include <string_theory/string>
 
 #include <QTreeWidget>
 
@@ -86,7 +86,7 @@ public slots:
 
 private:
     QTreeWidgetItem *fFoundItem;
-    plString fSearchString;
+    ST::string fSearchString;
 
     void IFindNextObject();
 };

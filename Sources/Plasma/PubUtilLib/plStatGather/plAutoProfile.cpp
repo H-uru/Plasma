@@ -80,7 +80,7 @@ protected:
     plStringList fAges;
     int fNextAge;
     int fNextSpawnPoint;
-    plString fLastSpawnPointName;
+    ST::string fLastSpawnPointName;
     // For profiling a single age
     std::string fAgeName;
     bool fLinkedToSingleAge;
@@ -88,7 +88,7 @@ protected:
 
     uint64_t fLinkTime;
 
-    plString fStatusMessage;
+    ST::string fStatusMessage;
 
     void INextProfile();
     bool INextAge();
@@ -208,15 +208,15 @@ void plAutoProfileImp::INextProfile()
     else
     {
         // Log the stats for this spawn point
-        if (!fLastSpawnPointName.IsNull())
+        if (!fLastSpawnPointName.is_empty())
         {
-            plString ageName = NetCommGetAge()->ageDatasetName;
+            ST::string ageName = NetCommGetAge()->ageDatasetName;
             plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName);
 
             plMipmap mipmap;
             if (plClient::GetInstance()->GetPipeline()->CaptureScreen(&mipmap))
             {
-                plString fileName = plFormat("{}\\{}_{}.jpg",
+                ST::string fileName = ST::format("{}\\{}_{}.jpg",
                     plProfileManagerFull::Instance().GetProfilePath(),
                     ageName, fLastSpawnPointName);
 
@@ -224,7 +224,7 @@ void plAutoProfileImp::INextProfile()
                 plJPEG::Instance().WriteToFile(fileName.c_str(), &mipmap);
             }
 
-            fLastSpawnPointName = plString::Null;
+            fLastSpawnPointName = ST::null;
         }
 
         // Try to go to the next spawn point
@@ -280,7 +280,6 @@ bool plAutoProfileImp::INextSpawnPoint()
         return false;
 
     const char* kPerfSpawnPrefix = "cPerf-";
-    int kPerfSpawnLen = strlen(kPerfSpawnPrefix);
 
     // Find the next perf spawn point
     bool foundGood = false;
@@ -289,7 +288,7 @@ bool plAutoProfileImp::INextSpawnPoint()
         const plSpawnModifier* spawnMod = plAvatarMgr::GetInstance()->GetSpawnPoint(fNextSpawnPoint);
         fLastSpawnPointName = spawnMod->GetKeyName();
 
-        if (fLastSpawnPointName.CompareN(kPerfSpawnPrefix, kPerfSpawnLen) == 0)
+        if (fLastSpawnPointName.starts_with(kPerfSpawnPrefix))
         {
             fStatusMessage = "Profiling spawn point ";
             fStatusMessage += fLastSpawnPointName;
@@ -303,7 +302,7 @@ bool plAutoProfileImp::INextSpawnPoint()
 
     if (!foundGood)
     {
-        fLastSpawnPointName = plString::Null;
+        fLastSpawnPointName = ST::null;
         fStatusMessage = "No profile spawn point found";
         return false;
     }
@@ -328,7 +327,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
     plEvalMsg* evalMsg = plEvalMsg::ConvertNoRef(msg);
     if (evalMsg)
     {
-        if (fStatusMessage.GetSize() > 0)
+        if (fStatusMessage.size() > 0)
             plDebugText::Instance().DrawString(10, 10, fStatusMessage.c_str());
     }
 

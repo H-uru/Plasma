@@ -110,14 +110,14 @@ void plArmatureBehavior::DumpDebug(int &x, int &y, int lineHeight, plDebugText &
     int bars = std::min(static_cast<int>(10 * strength), 10);
     blendBar[bars] = '\0';
 
-    plString details;
+    ST::string details;
     if (fAnim)
     {
         float time = fAnim->GetTimeConvert()->CurrentAnimTime();
-        details = plFormat("{>20} {>3} time: {5.2f} {}", fAnim->GetName(), onOff, time, blendBar);
+        details = ST::format("{>20} {>3} time: {5.2f} {}", fAnim->GetName(), onOff, time, blendBar);
     }
     else
-        details = plFormat("         Behavior {2} {>3} {}", fIndex, onOff, blendBar);
+        details = ST::format("         Behavior {2} {>3} {}", fIndex, onOff, blendBar);
 
     debugTxt.DrawString(x, y, details);
     y += lineHeight; 

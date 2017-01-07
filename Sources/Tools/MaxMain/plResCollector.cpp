@@ -80,7 +80,7 @@ void plResCollector::Collect()
     TexNameSet::iterator it = texNames.begin();
     for (; it != texNames.end(); it++)
     {
-        plString texName = *it;
+        ST::string texName = *it;
 
         char outpath[MAX_PATH], name[_MAX_FNAME+_MAX_EXT], ext[_MAX_EXT];
         _splitpath(texName.c_str(), NULL, NULL, name, ext);

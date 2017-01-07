@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClientMsg : public plMessage
 {
     int fMsgFlag;
-    plString fAgeName;
+    ST::string fAgeName;
     std::vector<plLocation> fRoomLocs;
 
     void IReset();
@@ -114,8 +114,8 @@ public:
     void AddRoomLoc(plLocation loc);
 
     // Used for kLoadAgeKeys, kLetGoOfAgeKeys only
-    plString    GetAgeName() const { return fAgeName; }
-    void        SetAgeName(const plString& age) { fAgeName = age; }
+    ST::string  GetAgeName() const { return fAgeName; }
+    void        SetAgeName(const ST::string& age) { fAgeName = age; }
 
     int GetNumRoomLocs() { return fRoomLocs.size(); }
     const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }

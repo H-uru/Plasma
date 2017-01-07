@@ -115,7 +115,7 @@ void    plGeometrySpan::IClearMembers( void )
 
     fDecalLevel = 0;
 
-    fMaxOwner = plString::Null;
+    fMaxOwner = ST::null;
 }
 
 //// ClearBuffers ////////////////////////////////////////////////////////////

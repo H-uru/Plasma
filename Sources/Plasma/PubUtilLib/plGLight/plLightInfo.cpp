@@ -395,7 +395,7 @@ bool plLightInfo::MsgReceive(plMessage* msg)
             case kProjection:
                 fProjection = plLayerInterface::ConvertNoRef(refMsg->GetRef());
                 {
-                    if( GetKey() && !GetKey()->GetName().CompareN("RTPatternLight", strlen("RTPatternLight")) )
+                    if( GetKey() && GetKey()->GetName().starts_with("RTPatternLight") )
                         SetProperty(kLPForceProj, true);
                 }
                 break;

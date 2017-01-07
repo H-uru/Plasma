@@ -78,7 +78,7 @@ PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, chronicleGetName)
 {
-    return PyString_FromPlString(self->fThis->Chronicle_GetName());
+    return PyString_FromSTString(self->fThis->Chronicle_GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetValue, args)
@@ -95,7 +95,7 @@ PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetValue, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, chronicleGetValue)
 {
-    return PyString_FromPlString(self->fThis->Chronicle_GetValue());
+    return PyString_FromSTString(self->fThis->Chronicle_GetValue());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, chronicleSetType, args)
@@ -129,7 +129,7 @@ PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, getName)
 {
-    return PyString_FromPlString(self->fThis->Chronicle_GetName());
+    return PyString_FromSTString(self->fThis->Chronicle_GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setValue, args)
@@ -146,7 +146,7 @@ PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setValue, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultChronicleNode, getValue)
 {
-    return PyString_FromPlString(self->fThis->Chronicle_GetValue());
+    return PyString_FromSTString(self->fThis->Chronicle_GetValue());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultChronicleNode, setEntryType, args)

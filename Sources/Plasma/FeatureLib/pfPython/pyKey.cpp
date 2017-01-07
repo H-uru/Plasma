@@ -94,9 +94,9 @@ bool pyKey::operator==(const pyKey &key) const
         return false;
 }
 
-const char* pyKey::getName() const
+ST::string pyKey::getName() const
 {
-    return fKey ? fKey->GetName().c_str() : "nil";
+    return fKey ? fKey->GetName() : "nil";
 }
 
 #ifndef BUILDING_PYPLASMA
@@ -206,7 +206,7 @@ plKey pyKey::GetNotifyListItem(int32_t i)
 
 
 // Set the dirty state on the PythonModifier
-void pyKey::DirtySynchState(const plString& SDLStateName, uint32_t sendFlags)
+void pyKey::DirtySynchState(const ST::string& SDLStateName, uint32_t sendFlags)
 {
     // see if we have a PythonFileModifier pointer
     if ( fPyFileMod )

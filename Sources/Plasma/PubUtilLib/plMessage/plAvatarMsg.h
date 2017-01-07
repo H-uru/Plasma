@@ -190,7 +190,7 @@ public:
     // tors
     plAvSeekMsg();
     plAvSeekMsg(const plKey& sender, const plKey& receiver, const plKey &seekKey, float duration, bool smartSeek,
-                plAvAlignment align = kAlignHandle, const plString& animName = "", bool noSeek = false, 
+                plAvAlignment align = kAlignHandle, const ST::string& animName = ST::null, bool noSeek = false,
                 uint8_t flags = kSeekFlagForce3rdPersonOnStart, plKey finishKey = nil);
     
     // plasma protocol
@@ -213,7 +213,7 @@ public:
     float fDuration;            // take this much time to do the move (only if smartSeek is false)
     bool fSmartSeek;          // seek by walking rather than floating
     bool fNoSeek;
-    plString fAnimName;
+    ST::string fAnimName;
     plAvAlignment fAlignType;
     uint8_t fFlags;
     plKey fFinishKey;
@@ -249,7 +249,7 @@ public:
     virtual ~plAvOneShotMsg();
     plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                    const plKey& seekKey, float duration, bool fSmartSeek,
-                   const plString &animName, bool drivable, bool reversible);
+                   const ST::string &animName, bool drivable, bool reversible);
 
     // plasma protocol
     CLASSNAME_REGISTER( plAvOneShotMsg );

@@ -44,7 +44,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define pfPasswordStore_inc
 
 #include "HeadSpin.h"
-#include "plString.h"
+
+namespace ST { class string; }
 
 class pfPasswordStore
 {
@@ -52,8 +53,8 @@ public:
     static pfPasswordStore* Instance();
 
 
-    virtual const plString GetPassword(const plString& username) = 0;
-    virtual bool SetPassword(const plString& username, const plString& password) = 0;
+    virtual ST::string GetPassword(const ST::string& username) = 0;
+    virtual bool SetPassword(const ST::string& username, const ST::string& password) = 0;
 };
 
 #endif //pfPasswordStore_inc

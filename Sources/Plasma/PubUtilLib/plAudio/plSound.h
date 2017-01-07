@@ -239,7 +239,7 @@ public:
     virtual void        UpdateSoftVolume( bool enable, bool firstTime = false );
 
     virtual bool        MsgReceive( plMessage* pMsg );
-    virtual bool        DirtySynchState( const plString &sdlName = "", uint32_t sendFlags = 0 ); // call when state has changed
+    virtual bool        DirtySynchState( const ST::string &sdlName = ST::null, uint32_t sendFlags = 0 ); // call when state has changed
 
     // Tests whether this sound is within range of the given position, not counting soft regions
     bool                IsWithinRange( const hsPoint3 &listenerPos, float *distSquared );

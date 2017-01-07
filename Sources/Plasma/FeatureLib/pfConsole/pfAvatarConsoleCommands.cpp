@@ -112,9 +112,9 @@ PF_CONSOLE_FILE_DUMMY(Avatar)
 //
 /////////////////////////////////////////////////////////////////
 
-plKey FindSceneObjectByName(const plString& name, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const plString& name, int type, const plString& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const plString& name, const char* typeName, const plString& ageName,
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
                                char* statusStr, bool subString=false);
 void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
@@ -173,7 +173,7 @@ PF_CONSOLE_CMD( Avatar_Spawn, Show, "", "Print a list of spawn points.")
         const plSpawnModifier * spawn = mgr->GetSpawnPoint(i);
         if(spawn)
         {
-            plString soName = "(none)";
+            ST::string soName = ST_LITERAL("(none)");
 
             if (spawn->GetNumTargets() > 0) 
             {
@@ -356,7 +356,7 @@ PF_CONSOLE_CMD( Avatar_Turn, SetMouseTurnSensitivity, "float sensitivity", "Set 
 PF_CONSOLE_CMD( Avatar_Multistage, Trigger, "string multiComp", "Triggers the named Multistage Animation component")
 {
     char str[256];
-    plKey key = FindObjectByNameAndType(plString::FromUtf8(params[0]), "plMultistageBehMod", "", str, true);
+    plKey key = FindObjectByNameAndType(ST::string::from_utf8(params[0]), "plMultistageBehMod", "", str, true);
     PrintString(str);
 
     if (key)
@@ -467,8 +467,8 @@ PF_CONSOLE_CMD( Avatar,
                "Mark whether avatars in regionA want updates on those on regionB" )
 {
     plRelevanceMgr *mgr = plRelevanceMgr::Instance();
-    plString regA = plString::FromUtf8(params[0]);
-    plString regB = plString::FromUtf8(params[1]);
+    ST::string regA = ST::string::from_utf8(params[0]);
+    ST::string regB = ST::string::from_utf8(params[1]);
     mgr->MarkRegion(mgr->GetIndex(regA), mgr->GetIndex(regB), params[2]);
 }
 
@@ -485,7 +485,7 @@ PF_CONSOLE_CMD( Avatar,
 
 PF_CONSOLE_CMD( Avatar, SeekPoint, "string seekpoint", "Move to the given seekpoint.")
 {
-    plString spName = plString::FromUtf8(params[0]);
+    ST::string spName = ST::string::from_utf8(params[0]);
     
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
     
@@ -587,7 +587,7 @@ PF_CONSOLE_CMD( Avatar, ClickToTurn, "bool b", "Set click-to-turn functionality.
 
 PF_CONSOLE_CMD( Avatar, FakeLinkToObj, "string objName", "Pseudo-Link the avatar to the specified object's location")
 {
-    plString spName = plString::FromUtf8(params[0]);
+    ST::string spName = ST::string::from_utf8(params[0]);
     char buff[256];
     plKey seekKey = FindSceneObjectByName(spName, "", buff);
     if (!seekKey)
@@ -633,11 +633,11 @@ PF_CONSOLE_CMD( Avatar_Physics, TogglePhysical, "", "Disable/enable physics on t
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "Blend the given animation with the current animation.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    ST::string animationName = ST::string::from_utf8(params[0]);
     float blendFactor = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.is_empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -651,12 +651,12 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "
 
 PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor, int priority", "Blend animation using priority.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    ST::string animationName = ST::string::from_utf8(params[0]);
     float blendFactor = params[1];
     int priority = params[2];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.is_empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -672,15 +672,15 @@ PF_CONSOLE_CMD( Avatar_Anim, PlaySimpleAnim, "string AvatarName, string Animatio
 {
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->FindAvatarByModelName((const char*)params[0]);
     if (avatar)
-        avatar->PlaySimpleAnim(plString::FromUtf8(params[1]));
+        avatar->PlaySimpleAnim(ST::string::from_utf8(params[1]));
 }
 
 PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given animation from the avatar.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    ST::string animationName = ST::string::from_utf8(params[0]);
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.is_empty())
     {
         plAGAnimInstance * instance = avatar->FindAnimInstance(animationName);
         if(instance)
@@ -692,11 +692,11 @@ PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given a
 
 PF_CONSOLE_CMD( Avatar_Anim, SetBlend, "string Animation, float blend", "Set the blend of the given animation.")
 {
-    plString animationName = plString::FromUtf8(params[0]);
+    ST::string animationName = ST::string::from_utf8(params[0]);
     float blend = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.IsNull())
+    if (avatar && !animationName.is_empty())
     {
         plAGAnimInstance *anim = avatar->FindAnimInstance(animationName);
         if(anim)

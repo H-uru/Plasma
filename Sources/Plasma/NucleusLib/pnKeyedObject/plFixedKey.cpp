@@ -63,11 +63,11 @@ struct plKeySeed
     // NOTE: The following fields are broken out to make adding to the fixed key list easier.
     // However, what they really are, are just the fields of plUoid (including plLocation)
     uint16_t    fType;
-    plString    fObj;
+    ST::string  fObj;
    
     bool Match( plKeySeed *p ) 
     {  
-        if( ( fType == p->fType ) && p->fObj.Compare( fObj, plString::kCaseInsensitive ) == 0 )
+        if( ( fType == p->fType ) && p->fObj.compare( fObj, ST::case_insensitive ) == 0 )
         {
             return true;
         }

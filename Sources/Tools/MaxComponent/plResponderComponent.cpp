@@ -499,11 +499,11 @@ void plResponderComponent::ISetupDefaultWait(plMaxNode* node, plErrorMsg* pErrMs
             int convertedIdx = cmdIdxs[i];
 
             ResponderWaitInfo waitInfo;
-            waitInfo.responderName = plString::FromUtf8(GetINode()->GetName());
+            waitInfo.responderName = ST::string::from_utf8(GetINode()->GetName());
             waitInfo.receiver = responder->GetKey();
             waitInfo.callbackUser = numCallbacks++;
             waitInfo.msg = cmds[convertedIdx].fMsg;
-            waitInfo.point = plString::Null;
+            waitInfo.point = ST::null;
 
             IParamBlock2 *pb = (IParamBlock2*)statePB->GetReferenceTarget(kStateCmdParams, 0, i);
             plResponderCmd *cmd = plResponderCmd::Find(pb);
@@ -533,7 +533,7 @@ void plResponderComponent::IConvertCmdWaits(plMaxNode* node, plErrorMsg* pErrMsg
             int convertedIdx = cmdIdxs[wait];
 
             ResponderWaitInfo waitInfo;
-            waitInfo.responderName = plString::FromUtf8(GetINode()->GetName());
+            waitInfo.responderName = ST::string::from_utf8(GetINode()->GetName());
             waitInfo.receiver = responder->GetKey();
             waitInfo.callbackUser = numCallbacks++;
             waitInfo.msg = cmds[convertedIdx].fMsg;
@@ -596,7 +596,7 @@ void plResponderProc::ICreateMenu()
 {
     fhMenu = CreatePopupMenu();
 
-    std::map<plString, HMENU> menus;
+    std::map<ST::string, HMENU> menus;
     int cmdID = 0;
 
     for (int i = 0; i < gResponderCmds.size(); i++)

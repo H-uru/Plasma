@@ -108,15 +108,15 @@ bool NameMatches(const char* obName, const char* pKName, bool subString)
     }
     else
     {
-        if (plString(p).Find(o, plString::kCaseInsensitive) >= 0)
+        if (ST::string(p).contains(o, ST::case_insensitive))
             return true;
     }
 
     return false;
 }
 
-plKey plKeyFinder::StupidSearch(const plString & age, const plString & rm,
-                                 const char *className, const plString &obName, bool subString)
+plKey plKeyFinder::StupidSearch(const ST::string & age, const ST::string & rm,
+                                 const char *className, const ST::string &obName, bool subString)
 {
     uint16_t ty = plFactory::FindClassIndex(className);
     return StupidSearch(age, rm, ty, obName, subString);
@@ -126,18 +126,18 @@ class plKeyFinderIter : public plRegistryKeyIterator, public plRegistryPageItera
 {
 protected:
     uint16_t    fClassType;
-    plString    fObjName;
+    ST::string  fObjName;
     bool        fSubstr;
     plKey       fFoundKey;
-    plString    fAgeName;
+    ST::string  fAgeName;
 
 public:
     plKey   GetFoundKey( void ) const { return fFoundKey; }
 
-    plKeyFinderIter( uint16_t classType, const plString &obName, bool substr ) 
+    plKeyFinderIter( uint16_t classType, const ST::string &obName, bool substr )
             : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ) { }
 
-    plKeyFinderIter( uint16_t classType, const plString &obName, bool substr, const plString &ageName )
+    plKeyFinderIter( uint16_t classType, const ST::string &obName, bool substr, const ST::string &ageName )
         : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ),
             fAgeName( ageName ) {}
 
@@ -159,7 +159,7 @@ public:
         try
         {
 #endif
-            if (pageNode->GetPageInfo().GetAge().CompareI(fAgeName) == 0)
+            if (pageNode->GetPageInfo().GetAge().compare_i(fAgeName) == 0)
             {
                 // Try loading and searching thru this page
                 std::set<plKey> keyRefs;
@@ -180,10 +180,10 @@ public:
     }
 };
 
-plKey plKeyFinder::StupidSearch(const plString & age, const plString & rm,
-                                 uint16_t classType, const plString &obName, bool subString)
+plKey plKeyFinder::StupidSearch(const ST::string & age, const ST::string & rm,
+                                 uint16_t classType, const ST::string &obName, bool subString)
 {
-    if (obName.IsNull())
+    if (obName.is_empty())
         return nil;
 
     plUoid newOid;
@@ -198,7 +198,7 @@ plKey plKeyFinder::StupidSearch(const plString & age, const plString & rm,
         return nil;
     }
 
-    if (!age.IsNull() && !rm.IsNull())
+    if (!age.is_empty() && !rm.is_empty())
     {
         const plLocation &loc = IGetResMgr()->FindLocation( age, rm );
         if( !loc.IsValid() )
@@ -213,7 +213,7 @@ plKey plKeyFinder::StupidSearch(const plString & age, const plString & rm,
             // Return value of false means it stopped somewhere, i.e. found something
             return keyFinder.GetFoundKey();
     }
-    else if (!age.IsNull())
+    else if (!age.is_empty())
     {
         plKeyFinderIter keyFinder(classType, obName, subString, age);
 
@@ -233,12 +233,12 @@ plKey plKeyFinder::StupidSearch(const plString & age, const plString & rm,
     return nil;
 }
 
-void plKeyFinder::ReallyStupidResponderSearch(const plString &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
+void plKeyFinder::ReallyStupidResponderSearch(const ST::string &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plResponderModifier), foundKeys, hintLocation);
 }
 
-void plKeyFinder::ReallyStupidActivatorSearch(const plString &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation)
+void plKeyFinder::ReallyStupidActivatorSearch(const ST::string &name, std::vector<plKey>& foundKeys, const plLocation &hintLocation)
 {
     // use the createable macro so we don't have to pull in all of Python
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plLogicModifier), foundKeys, hintLocation);
@@ -246,7 +246,7 @@ void plKeyFinder::ReallyStupidActivatorSearch(const plString &name, std::vector<
     ReallyStupidSubstringSearch(name, CLASS_INDEX_SCOPED(plSittingModifier), foundKeys, hintLocation);
 }
 
-void plKeyFinder::IGetNames(std::vector<plString>& names, const plString& searchName, int index)
+void plKeyFinder::IGetNames(std::vector<ST::string>& names, const ST::string& searchName, int index)
 {
     // Not really searching for any particular key, just need all the logic mods
     std::vector<plKey> keys;
@@ -261,14 +261,14 @@ void plKeyFinder::IGetNames(std::vector<plString>& names, const plString& search
     }
 }
 
-void plKeyFinder::GetResponderNames(std::vector<plString>& names)
+void plKeyFinder::GetResponderNames(std::vector<ST::string>& names)
 {
-    IGetNames(names, "", CLASS_INDEX_SCOPED(plResponderModifier));
+    IGetNames(names, ST::null, CLASS_INDEX_SCOPED(plResponderModifier));
 }
 
-void plKeyFinder::GetActivatorNames(std::vector<plString>& names)
+void plKeyFinder::GetActivatorNames(std::vector<ST::string>& names)
 {
-    IGetNames(names, "", CLASS_INDEX_SCOPED(plLogicModifier));
+    IGetNames(names, ST::null, CLASS_INDEX_SCOPED(plLogicModifier));
 }
 
 class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageIterator
@@ -276,19 +276,19 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
     protected:
 
         uint16_t    fClassType;
-        plString    fObjName;
+        ST::string  fObjName;
 
         std::vector<plKey>  &fFoundKeys;
 
     public:
     
-        plKeyFinderIterator( uint16_t classType, const plString &obName, std::vector<plKey>& foundKeys ) 
+        plKeyFinderIterator( uint16_t classType, const ST::string &obName, std::vector<plKey>& foundKeys )
                 : fClassType( classType ), fObjName( obName ), fFoundKeys( foundKeys ) { }
 
         virtual bool  EatKey( const plKey& key )
         {
             if( key->GetUoid().IsValid() && key->GetUoid().GetClassType() == fClassType &&
-                key->GetUoid().GetObjectName().Find( fObjName ) >= 0 )
+                key->GetUoid().GetObjectName().contains( fObjName ) )
             {
                 fFoundKeys.push_back( key );
             }
@@ -303,9 +303,9 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
         }
 };
 
-void plKeyFinder::ReallyStupidSubstringSearch(const plString &name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
+void plKeyFinder::ReallyStupidSubstringSearch(const ST::string &name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
-    if (name.IsNull())
+    if (name.is_empty())
         return;
 
     plKeyFinderIterator collector( objType, name, foundKeys );
@@ -335,14 +335,14 @@ class plPageFinder : public plRegistryPageIterator
     protected:
 
         plRegistryPageNode  **fPagePtr;
-        plString            fFindString, fAgeString;
+        ST::string          fFindString, fAgeString;
 
     public:
 
-        plPageFinder( plRegistryPageNode **page, const plString &find ) : fPagePtr( page ), fFindString( find )
+        plPageFinder( plRegistryPageNode **page, const ST::string &find ) : fPagePtr( page ), fFindString( find )
         { *fPagePtr = nil; }
 
-        plPageFinder( plRegistryPageNode **page, const plString &ageS, const plString &pageS ) : fPagePtr( page ), fFindString( pageS ), fAgeString( ageS )
+        plPageFinder( plRegistryPageNode **page, const ST::string &ageS, const ST::string &pageS ) : fPagePtr( page ), fFindString( pageS ), fAgeString( ageS )
         { *fPagePtr = nil; }
 
         virtual bool  EatPage( plRegistryPageNode *node )
@@ -350,9 +350,9 @@ class plPageFinder : public plRegistryPageIterator
             const plPageInfo    &info = node->GetPageInfo();
 
             // Are we searching by age/page?
-            if (!fAgeString.IsNull())
+            if (!fAgeString.is_empty())
             {
-                if (info.GetAge().CompareI(fAgeString) == 0 && info.GetPage().CompareI(fFindString) == 0)
+                if (info.GetAge().compare_i(fAgeString) == 0 && info.GetPage().compare_i(fFindString) == 0)
                 {
                     *fPagePtr = node;
                     return false;
@@ -361,14 +361,14 @@ class plPageFinder : public plRegistryPageIterator
             }
 
             // Try for page only
-            if (info.GetPage().CompareI(fFindString) == 0)
+            if (info.GetPage().compare_i(fFindString) == 0)
             {
                 *fPagePtr = node;
                 return false;
             }
 
             // Try for full location
-            if (plFormat("{}_{}", info.GetAge(), info.GetPage()).CompareI(fFindString) == 0)
+            if (ST::format("{}_{}", info.GetAge(), info.GetPage()).compare_i(fFindString) == 0)
             {
                 *fPagePtr = node;
                 return false;
@@ -385,7 +385,7 @@ class plPageFinder : public plRegistryPageIterator
 //  since the only time we call this function will be to actually load
 //  the darned thing.
 
-plKey   plKeyFinder::FindSceneNodeKey( const plString &pageOrFullLocName ) const
+plKey   plKeyFinder::FindSceneNodeKey( const ST::string &pageOrFullLocName ) const
 {
     plRegistryPageNode  *pageNode;
     plPageFinder        pageFinder( &pageNode, pageOrFullLocName );
@@ -402,7 +402,7 @@ plKey   plKeyFinder::FindSceneNodeKey( const plString &pageOrFullLocName ) const
 //// FindSceneNodeKey ////////////////////////////////////////////////////////
 //  Age/page pair version
 
-plKey   plKeyFinder::FindSceneNodeKey( const plString &ageName, const plString &pageName ) const
+plKey   plKeyFinder::FindSceneNodeKey( const ST::string &ageName, const ST::string &pageName ) const
 {
     plRegistryPageNode  *pageNode;
     plPageFinder        pageFinder( &pageNode, ageName, pageName );
@@ -469,9 +469,9 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
 
 //// FindLocation ////////////////////////////////////////////////////////////
 
-const plLocation    &plKeyFinder::FindLocation(const plString &age, const plString &page) const
+const plLocation    &plKeyFinder::FindLocation(const ST::string &age, const ST::string &page) const
 {
-    if (age == "")
+    if (age.is_empty())
     {
         static plLocation   invalidLoc;
         plRegistryPageNode *pageNode;

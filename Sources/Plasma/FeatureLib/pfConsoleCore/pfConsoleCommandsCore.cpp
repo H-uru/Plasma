@@ -47,8 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pfConsoleCmd.h"
 #include "pnNetBase/pnNetBase.h"
-#include "pfUtilBase64.h"
-#include "plString.h"
+#include <string_theory/codecs>
 
 #include <algorithm>
 
@@ -160,15 +159,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kAuthDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kAuthDhNData, sizeof(kAuthDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -178,15 +178,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Auth Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kAuthDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kAuthDhXData, sizeof(kAuthDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -211,15 +212,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGameDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGameDhNData, sizeof(kGameDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -229,15 +231,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the Game Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGameDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGameDhXData, sizeof(kGameDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -272,15 +275,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server N key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhNData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGateKeeperDhNData, sizeof(kGateKeeperDhNData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================
@@ -290,15 +294,16 @@ PF_CONSOLE_CMD(
     "string base64Key",
     "Set the GateKeeper Server X key"
 ) {
-    int baseLength = strlen((const char *)params[0]);
-    if ((kNetDiffieHellmanKeyBits / 8) != Base64DecodeSize(baseLength, (const char *)params[0])) {
+    ST::string base64key = ST::string::from_utf8(params[0]);
+    ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
+    if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
         PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
                      kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
-    Base64Decode(strlen((const char *)params[0]), (const char *)params[0],
-                 kNetDiffieHellmanKeyBits / 8, kGateKeeperDhXData);
+    ST_ssize_t bytes = ST::base64_decode(base64key, kGateKeeperDhXData, sizeof(kGateKeeperDhXData));
+    ASSERT(bytes >= 0);
 }
 
 //============================================================================

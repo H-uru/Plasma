@@ -130,7 +130,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         pfGUIMultiLineEditProc *fEventProc; // where we send events to
 
-        plString    fFontFace;
+        ST::string  fFontFace;
         hsColorRGBA fFontColor;
         uint8_t     fFontSize;
         uint8_t     fFontStyle;
@@ -274,7 +274,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         uint8_t   GetFontSize() {return fFontSize;} // because we're too cool to use the color scheme crap
 
-        void    SetFontFace(const plString &fontFace);
+        void    SetFontFace(const ST::string &fontFace);
         void    SetFontColor(hsColorRGBA fontColor) {fFontColor = fontColor; fFontFlagsSet |= kFontColorSet;}
         void    SetFontSize(uint8_t fontSize);
         void    SetFontStyle(uint8_t fontStyle) {fFontStyle = fontStyle; fFontFlagsSet |= kFontStyleSet;}

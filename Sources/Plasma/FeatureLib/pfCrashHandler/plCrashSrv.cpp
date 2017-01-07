@@ -78,7 +78,7 @@ plCrashSrv::~plCrashSrv()
 void plCrashSrv::IHandleCrash()
 {
     plFileName dumpPath = plFileName::Join(plFileSystem::GetLogPath(), "crash.dmp");
-    HANDLE file = CreateFileW(dumpPath.AsString().ToWchar(),
+    HANDLE file = CreateFileW(dumpPath.AsString().to_wchar(),
                               GENERIC_WRITE,
                               0,
                               NULL,

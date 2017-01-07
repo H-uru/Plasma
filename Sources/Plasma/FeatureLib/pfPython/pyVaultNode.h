@@ -137,7 +137,7 @@ public:
     PyObject* GetCreatorNode( void ); // returns pyVaultPlayerInfoNode
     uint32_t GetCreateTime( void );
     uint32_t GetCreateAgeTime( void );
-    plString GetCreateAgeName() const;
+    ST::string GetCreateAgeName() const;
     plUUID    GetCreateAgeGuid(void) const;
     PyObject* GetCreateAgeCoords ();
 

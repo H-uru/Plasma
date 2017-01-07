@@ -191,7 +191,7 @@ public:
     bool IsAtEnd();
 
     /** Get the name of the underlying animation. */
-    plString GetName();
+    ST::string GetName();
 
     /** Remove all channels from the master mode and remove us from
         our master modifier.
@@ -223,16 +223,16 @@ protected:
     /** Set up bookkeeping for a fade. */
     void ISetupFade(float goal, float rate, bool detach, uint8_t type);
 
-    void IRegisterDetach(const plString &channelName, plAGChannel *channel);
+    void IRegisterDetach(const ST::string &channelName, plAGChannel *channel);
 
     void IInitAnimTimeConvert(plAnimTimeConvert* atc, plATCAnim* anim, plAGMasterMod* master);
 
     const plAGAnim * fAnimation;
     plAGMasterMod * fMaster;
 
-    std::map<plString, plAGChannelApplicator *, plString::less_i> fChannels;
+    std::map<ST::string, plAGChannelApplicator *, ST::less_i> fChannels;
 
-    typedef std::multimap<plString, plAGChannel *> plDetachMap;
+    typedef std::multimap<ST::string, plAGChannel *> plDetachMap;
     plDetachMap fManualDetachChannels;
 
     std::vector<plAGChannel*> fCleanupChannels;
@@ -262,8 +262,8 @@ protected:
 //#endif
 #ifdef TRACK_AG_ALLOCS
 
-extern plString gGlobalAnimName;
-extern plString gGlobalChannelName;
+extern ST::string gGlobalAnimName;
+extern ST::string gGlobalChannelName;
 
 void RegisterAGAlloc(plAGChannel *object, const char *chanName, const char *animName, uint16_t classIndex);
 void UnRegisterAGAlloc(plAGChannel *object);

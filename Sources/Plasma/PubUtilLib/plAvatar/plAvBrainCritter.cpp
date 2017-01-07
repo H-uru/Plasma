@@ -40,6 +40,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include <string_theory/stl_formatter>
+
 #include "plPhysicalControllerCore.h"
 #include "plAvBrainCritter.h"
 #include "plAvBrainHuman.h"
@@ -95,7 +97,7 @@ public:
     void SetAnimTime(float time) {fAnim->SetCurrentTime(time, true);}
 
     std::string Name() const {return fName;}
-    plString AnimName() const {return fAnimName;}
+    ST::string AnimName() const {return fAnimName;}
     bool RandomStartPoint() const {return fRandomStartPoint;}
     float FadeInLength() const {return fFadeInLength;}
     float FadeOutLength() const {return fFadeOutLength;}
@@ -117,7 +119,7 @@ protected:
     plAvBrainCritter *fCritterBrain;
 
     std::string fName; // user-created name for this behavior, also used as the index into the brain's behavior map
-    plString fAnimName; // physical animation's name, for reference
+    ST::string fAnimName; // physical animation's name, for reference
     bool fRandomStartPoint; // do we want this behavior to start at a random frame every time we start it?
     float fFadeInLength; // how long to fade in this behavior
     float fFadeOutLength; // how long to fade out this behavior
@@ -297,10 +299,10 @@ std::string plAvBrainCritter::BehaviorName(int behavior) const
     return ((CritterBehavior*)fBehaviors[behavior])->Name();
 }
 
-plString plAvBrainCritter::AnimationName(int behavior) const
+ST::string plAvBrainCritter::AnimationName(int behavior) const
 {
     if ((behavior >= fBehaviors.Count()) || (behavior < 0))
-        return "";
+        return ST::null;
     return ((CritterBehavior*)fBehaviors[behavior])->AnimName();
 }
 
@@ -441,9 +443,9 @@ void plAvBrainCritter::DumpToDebugDisplay(int& x, int& y, int lineHeight, plDebu
     y += lineHeight;
 
     // extract the name from the behavior running
-    plString mode = "Mode: Unknown";
+    ST::string mode = ST_LITERAL("Mode: Unknown");
     if (fBehaviors[fCurMode])
-        mode = plFormat("Mode: {}", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name());
+        mode = ST::format("Mode: {}", ((CritterBehavior*)(fBehaviors[fCurMode]))->Name());
     
     // draw it
     debugTxt.DrawString(x, y, mode);

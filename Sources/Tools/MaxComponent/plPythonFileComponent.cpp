@@ -107,7 +107,7 @@ class plCommonPythonLib : public plCommonObjLib
             if( objectKey->GetUoid().GetClassType() == plPythonFileMod::Index() )
                 return true;
             if( objectKey->GetUoid().GetClassType() == plSceneObject::Index() &&
-                objectKey->GetUoid().GetObjectName().Compare( plSDL::kAgeSDLObjectName ) == 0 )
+                objectKey->GetUoid().GetObjectName().compare( plSDL::kAgeSDLObjectName ) == 0 )
                 return true;
             return false;
         }
@@ -806,8 +806,8 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                     {
                         plAnimComponentBase *animcomp = (plAnimComponentBase*)comp;
                         // save out the animation name first
-                        plString tempAnimName = animcomp->GetAnimName();
-                        if (tempAnimName.IsNull())
+                        ST::string tempAnimName = animcomp->GetAnimName();
+                        if (tempAnimName.is_empty())
                             pyParam.SetToAnimationName(ENTIRE_ANIMATION_NAME);
                         else
                             pyParam.SetToAnimationName(tempAnimName);

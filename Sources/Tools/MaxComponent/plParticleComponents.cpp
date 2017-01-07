@@ -170,7 +170,7 @@ bool plParticleCoreComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
     int32_t i, j, k;
 
     plLocation nodeLoc = node->GetKey()->GetUoid().GetLocation();
-    plString objName = node->GetKey()->GetName();
+    ST::string objName = node->GetKey()->GetName();
 
     plSceneObject *sObj = node->GetSceneObject();
     plParticleSystem *sys = new plParticleSystem();
@@ -523,7 +523,7 @@ bool plParticleCoreComponent::AddToAnim(plAGAnim *anim, plMaxNode *node)
     hsControlConverter& cc = hsControlConverter::Instance();
 
     float start, end;
-    if (!anim->GetName().Compare(ENTIRE_ANIMATION_NAME))
+    if (!anim->GetName().compare(ENTIRE_ANIMATION_NAME))
     {
         start = end = -1;
     }
@@ -1056,7 +1056,7 @@ void plParticleVolumeComponent::BuildVolume(plMaxNode *node)
         return; // already converted it
 
     fBound = new plBoundInterface;
-    hsgResMgr::ResMgr()->NewKey(plString::FromUtf8(node->GetName()), fBound, node->GetLocation(), node->GetLoadMask());
+    hsgResMgr::ResMgr()->NewKey(ST::string::from_utf8(node->GetName()), fBound, node->GetLocation(), node->GetLoadMask());
     fBound->Init(plMeshConverter::Instance().CreateConvexVolume(node));
     hsgResMgr::ResMgr()->AddViaNotify(fBound->GetKey(), new plObjRefMsg(node->GetKey(), plRefMsg::kOnCreate, -1, plObjRefMsg::kInterface), plRefFlags::kActiveRef);
 }

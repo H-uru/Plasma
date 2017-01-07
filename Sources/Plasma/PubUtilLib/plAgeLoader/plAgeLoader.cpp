@@ -171,13 +171,13 @@ bool plAgeLoader::MsgReceive(plMessage* msg)
 // return false on error
 //
 //============================================================================
-bool plAgeLoader::LoadAge(const plString& ageName)
+bool plAgeLoader::LoadAge(const ST::string& ageName)
 {
     return ILoadAge(ageName);
 }
 
 //============================================================================
-void plAgeLoader::UpdateAge(const plString& ageName)
+void plAgeLoader::UpdateAge(const ST::string& ageName)
 {
     plResPatcher::GetInstance()->Update(ageName);
 }
@@ -199,7 +199,7 @@ void plAgeLoader::NotifyAgeLoaded( bool loaded )
 //// ILoadAge ////////////////////////////////////////////////////////////////
 //  Does the loading-specific stuff for queueing an age to load
 
-bool plAgeLoader::ILoadAge(const plString& ageName)
+bool plAgeLoader::ILoadAge(const ST::string& ageName)
 {
     plNetClientApp* nc = plNetClientApp::GetInstance();
     ASSERT(!nc->GetFlagsBit(plNetClientApp::kPlayingGame));
@@ -227,8 +227,8 @@ bool plAgeLoader::ILoadAge(const plString& ageName)
 
     /// Step 2: Load the keys for this age, so we can find sceneNodes for them
     // exec age .fni file when data is done loading
-    fPendingAgeFniFiles.emplace_back(plFormat("dat\\{}.fni", fAgeName));
-    fPendingAgeCsvFiles.emplace_back(plFormat("dat\\{}.csv", fAgeName));
+    fPendingAgeFniFiles.emplace_back(ST::format("dat\\{}.fni", fAgeName));
+    fPendingAgeCsvFiles.emplace_back(ST::format("dat\\{}.csv", fAgeName));
 
     plSynchEnabler p( false );  // turn off dirty tracking while in this function   
 
@@ -324,13 +324,13 @@ class plUnloadAgeCollector : public plRegistryPageIterator
 {
     public:
         hsTArray<plRegistryPageNode *>  fPages;
-        const plString                  fAge;
+        const ST::string                fAge;
 
-        plUnloadAgeCollector(const plString& a) : fAge( a ) {}
+        plUnloadAgeCollector(const ST::string& a) : fAge( a ) {}
 
         virtual bool EatPage( plRegistryPageNode *page )
         {
-            if ( !fAge.IsEmpty() && page->GetPageInfo().GetAge().CompareI(fAge) == 0 )
+            if ( !fAge.is_empty() && page->GetPageInfo().GetAge().compare_i(fAge) == 0 )
             {
                 fPages.Append( page );
             }
@@ -434,17 +434,17 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
 // return alloced stream or nil
 // static
 //
-hsStream* plAgeLoader::GetAgeDescFileStream(const plString& ageName)
+hsStream* plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)
 {
-    if (ageName.IsEmpty())
+    if (ageName.is_empty())
         return nullptr;
 
-    plFileName ageDescFileName = plFormat("dat\\{}.age", ageName);
+    plFileName ageDescFileName = ST::format("dat\\{}.age", ageName);
 
     hsStream* stream = plEncryptedStream::OpenEncryptedFile(ageDescFileName);
     if (!stream)
     {
-        hsAssert(false, plFormat("Can't find age desc file {}", ageDescFileName).c_str());
+        hsAssert(false, ST::format("Can't find age desc file {}", ageDescFileName).c_str());
         return nullptr;
     }
 

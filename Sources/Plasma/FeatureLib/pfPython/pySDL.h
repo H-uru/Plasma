@@ -91,9 +91,9 @@ public:
     plStateDataRecord * GetRec() const;
 
     /////////////////////
-    PyObject * FindVar( const plString & name ) const; // returns pySimpleStateVariable
-    plString GetName() const;
-    std::vector<plString> GetVarList();
+    PyObject * FindVar( const ST::string & name ) const; // returns pySimpleStateVariable
+    ST::string GetName() const;
+    std::vector<ST::string> GetVarList();
     void SetFromDefaults(bool timeStampNow);
 };
 
@@ -133,12 +133,12 @@ public:
     float   GetFloat( int idx=0 ) const;
     double  GetDouble( int idx=0 ) const;           
     bool    GetBool( int idx=0 ) const;
-    plString GetString( int idx=0 ) const;
+    ST::string GetString( int idx=0 ) const;
     plKey   GetKey( int idx=0 ) const;
 
     int     GetType() const;
-    plString GetDisplayOptions() const;
-    plString GetDefault() const;
+    ST::string GetDisplayOptions() const;
+    ST::string GetDefault() const;
     bool    IsAlwaysNew() const;
     bool    IsInternal() const;
     bool    IsUsed() const;

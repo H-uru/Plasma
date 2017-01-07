@@ -120,7 +120,7 @@ struct NetGameScore {
     unsigned    scoreId;
     unsigned    ownerId;
     uint32_t    createdTime;
-    plString    gameName;
+    ST::string  gameName;
     unsigned    gameType;
     int         value;
 
@@ -230,7 +230,7 @@ private:
     uint32_t fNodeId;
     uint32_t fCreateTime;
     uint32_t fModifyTime;
-    plString fCreateAgeName;
+    ST::string fCreateAgeName;
     plUUID   fCreateAgeUuid;
     plUUID   fCreatorAcct;
     uint32_t fCreatorId;
@@ -247,16 +247,16 @@ private:
     plUUID   fUuid_2;
     plUUID   fUuid_3;
     plUUID   fUuid_4;
-    plString fString64_1;
-    plString fString64_2;
-    plString fString64_3;
-    plString fString64_4;
-    plString fString64_5;
-    plString fString64_6;
-    plString fIString64_1;
-    plString fIString64_2;
-    plString fText_1;
-    plString fText_2;
+    ST::string fString64_1;
+    ST::string fString64_2;
+    ST::string fString64_3;
+    ST::string fString64_4;
+    ST::string fString64_5;
+    ST::string fString64_6;
+    ST::string fIString64_1;
+    ST::string fIString64_2;
+    ST::string fText_1;
+    ST::string fText_2;
     Blob     fBlob_1;
     Blob     fBlob_2;
 
@@ -323,7 +323,7 @@ public:
     uint32_t GetNodeId() const { return fNodeId; }
     uint32_t GetCreateTime() const { return fCreateTime; }
     uint32_t GetModifyTime() const { return fModifyTime; }
-    plString GetCreateAgeName() const { return fCreateAgeName; }
+    ST::string GetCreateAgeName() const { return fCreateAgeName; }
     plUUID GetCreateAgeUuid() const { return fCreateAgeUuid; }
     plUUID GetCreatorAcct() const { return fCreatorAcct; }
     uint32_t GetCreatorId() const { return fCreatorId; }
@@ -340,16 +340,16 @@ public:
     plUUID GetUuid_2() const { return fUuid_2; }
     plUUID GetUuid_3() const { return fUuid_3; }
     plUUID GetUuid_4() const { return fUuid_4; }
-    plString GetString64_1() const { return fString64_1; }
-    plString GetString64_2() const { return fString64_2; }
-    plString GetString64_3() const { return fString64_3; }
-    plString GetString64_4() const { return fString64_4; }
-    plString GetString64_5() const { return fString64_5; }
-    plString GetString64_6() const { return fString64_6; }
-    plString GetIString64_1() const { return fIString64_1; }
-    plString GetIString64_2() const { return fIString64_2; }
-    plString GetText_1() const { return fText_1; }
-    plString GetText_2() const { return fText_2; }
+    ST::string GetString64_1() const { return fString64_1; }
+    ST::string GetString64_2() const { return fString64_2; }
+    ST::string GetString64_3() const { return fString64_3; }
+    ST::string GetString64_4() const { return fString64_4; }
+    ST::string GetString64_5() const { return fString64_5; }
+    ST::string GetString64_6() const { return fString64_6; }
+    ST::string GetIString64_1() const { return fIString64_1; }
+    ST::string GetIString64_2() const { return fIString64_2; }
+    ST::string GetText_1() const { return fText_1; }
+    ST::string GetText_2() const { return fText_2; }
 
     const uint8_t* GetBlob_1() const { return fBlob_1.buffer; }
     size_t GetBlob_1Length() const { return fBlob_1.size; }
@@ -362,9 +362,9 @@ public:
     void SetNodeId_NoDirty(uint32_t value) { ISetVaultField_NoDirty(kNodeId, fNodeId, value); }
     void SetCreateTime(uint32_t value) { ISetVaultField(kCreateTime, fCreateTime, value); }
     void SetModifyTime(uint32_t value) { ISetVaultField(kModifyTime, fModifyTime, value); }
-    void SetCreateAgeName(plString value) { ISetVaultField(kCreateAgeName, fCreateAgeName, value); }
-    void SetCreateAgeUuid(plUUID value) { ISetVaultField(kCreateAgeUuid, fCreateAgeUuid, value); }
-    void SetCreatorAcct(plUUID value) { ISetVaultField(kCreatorAcct, fCreatorAcct, value); }
+    void SetCreateAgeName(const ST::string& value) { ISetVaultField(kCreateAgeName, fCreateAgeName, value); }
+    void SetCreateAgeUuid(const plUUID& value) { ISetVaultField(kCreateAgeUuid, fCreateAgeUuid, value); }
+    void SetCreatorAcct(const plUUID& value) { ISetVaultField(kCreatorAcct, fCreatorAcct, value); }
     void SetCreatorId(uint32_t value) { ISetVaultField(kCreatorId, fCreatorId, value); }
     void SetNodeType(uint32_t value) { ISetVaultField(kNodeType, fNodeType, value); }
     void SetInt32_1(int32_t value) { ISetVaultField(kInt32_1, fInt32_1, value); }
@@ -379,16 +379,16 @@ public:
     void SetUuid_2(const plUUID& value) { ISetVaultField(kUuid_2, fUuid_2, value); }
     void SetUuid_3(const plUUID& value) { ISetVaultField(kUuid_3, fUuid_3, value); }
     void SetUuid_4(const plUUID& value) { ISetVaultField(kUuid_4, fUuid_4, value); }
-    void SetString64_1(const plString& value) { ISetVaultField(kString64_1, fString64_1, value); }
-    void SetString64_2(const plString& value) { ISetVaultField(kString64_2, fString64_2, value); }
-    void SetString64_3(const plString& value) { ISetVaultField(kString64_3, fString64_3, value); }
-    void SetString64_4(const plString& value) { ISetVaultField(kString64_4, fString64_4, value); }
-    void SetString64_5(const plString& value) { ISetVaultField(kString64_5, fString64_5, value); }
-    void SetString64_6(const plString& value) { ISetVaultField(kString64_6, fString64_6, value); }
-    void SetIString64_1(const plString& value) { ISetVaultField(kIString64_1, fIString64_1, value); }
-    void SetIString64_2(const plString& value) { ISetVaultField(kIString64_2, fIString64_2, value); }
-    void SetText_1(const plString& value) { ISetVaultField(kText_1, fText_1, value); }
-    void SetText_2(const plString& value) { ISetVaultField(kText_2, fText_2, value); }
+    void SetString64_1(const ST::string& value) { ISetVaultField(kString64_1, fString64_1, value); }
+    void SetString64_2(const ST::string& value) { ISetVaultField(kString64_2, fString64_2, value); }
+    void SetString64_3(const ST::string& value) { ISetVaultField(kString64_3, fString64_3, value); }
+    void SetString64_4(const ST::string& value) { ISetVaultField(kString64_4, fString64_4, value); }
+    void SetString64_5(const ST::string& value) { ISetVaultField(kString64_5, fString64_5, value); }
+    void SetString64_6(const ST::string& value) { ISetVaultField(kString64_6, fString64_6, value); }
+    void SetIString64_1(const ST::string& value) { ISetVaultField(kIString64_1, fIString64_1, value); }
+    void SetIString64_2(const ST::string& value) { ISetVaultField(kIString64_2, fIString64_2, value); }
+    void SetText_1(const ST::string& value) { ISetVaultField(kText_1, fText_1, value); }
+    void SetText_2(const ST::string& value) { ISetVaultField(kText_2, fText_2, value); }
 
     void SetBlob_1(const uint8_t* buf, size_t size) { ISetVaultBlob(kBlob_1, fBlob_1, buf, size); }
     void SetBlob_2(const uint8_t* buf, size_t size) { ISetVaultBlob(kBlob_2, fBlob_2, buf, size); }

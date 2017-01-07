@@ -207,7 +207,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
     IReadValue(&value, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    gameName = plString::FromWchar(tempstr);
+    gameName = ST::string::from_wchar(tempstr);
     free(tempstr);
 
     if (end)
@@ -226,7 +226,7 @@ unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
     IWriteValue(createdTime, buffer);
     IWriteValue(gameType, buffer);
     IWriteValue(value, buffer);
-    IWriteString(gameName.ToWchar().GetData(), buffer);
+    IWriteString(gameName.to_wchar().data(), buffer);
 
     return buffer->Count() - pos;
 }
@@ -357,9 +357,9 @@ inline void IZero(T& dest)
 }
 
 template<>
-inline void IZero<plString>(plString& dest)
+inline void IZero<ST::string>(ST::string& dest)
 {
-    dest = "";
+    dest = ST::null;
 }
 
 template<>
@@ -441,7 +441,7 @@ bool NetVaultNode::Matches(const NetVaultNode* rhs) const
             return false;
 
 #define COMPARE(field) if (k##field == bit && f##field != rhs->f##field) return false;
-#define COMPARE_ISTRING(field) if (k##field == bit && f##field.CompareI(rhs->f##field) != 0) return false;
+#define COMPARE_ISTRING(field) if (k##field == bit && f##field.compare_i(rhs->f##field) != 0) return false;
     COMPARE(NodeId);
     COMPARE(CreateTime);
     COMPARE(ModifyTime);
@@ -492,17 +492,17 @@ inline void IRead(const uint8_t*& buf, T& dest)
 }
 
 template<>
-inline void IRead<plString>(const uint8_t*& buf, plString& dest)
+inline void IRead<ST::string>(const uint8_t*& buf, ST::string& dest)
 {
     uint32_t size = *(reinterpret_cast<const uint32_t*>(buf));
-    uint32_t nChars = (size / sizeof(uint16_t)) - 1;
+    uint32_t nChars = (size / sizeof(char16_t)) - 1;
     buf += sizeof(uint32_t);
 
-    plStringBuffer<uint16_t> str;
-    uint16_t* theStrBuffer = str.CreateWritableBuffer(nChars);
+    ST::utf16_buffer str;
+    char16_t* theStrBuffer = str.create_writable_buffer(nChars);
     memcpy(theStrBuffer, buf, size);
     theStrBuffer[nChars] = 0;
-    dest = plString::FromUtf16(str);
+    dest = ST::string::from_utf16(str);
     buf += size;
 }
 
@@ -570,14 +570,14 @@ inline void IWrite(ARRAY(uint8_t)* buffer, const T& value)
 }
 
 template<>
-inline void IWrite<plString>(ARRAY(uint8_t)* buffer, const plString& value)
+inline void IWrite<ST::string>(ARRAY(uint8_t)* buffer, const ST::string& value)
 {
-    plStringBuffer<uint16_t> utf16 = value.ToUtf16();
-    uint32_t strsz = (utf16.GetSize() + 1) * 2;
+    ST::utf16_buffer utf16 = value.to_utf16();
+    uint32_t strsz = (utf16.size() + 1) * sizeof(char16_t);
     IWrite(buffer, strsz);
 
     uint8_t* ptr = buffer->New(strsz);
-    memcpy(ptr, utf16.GetData(), strsz);
+    memcpy(ptr, utf16.data(), strsz);
 }
 
 template<>

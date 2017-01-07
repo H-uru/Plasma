@@ -103,7 +103,7 @@ pfGUIColorScheme::pfGUIColorScheme( hsColorRGBA &foreColor, hsColorRGBA &backCol
     fBackColor = backColor;
 }
 
-pfGUIColorScheme::pfGUIColorScheme( const plString &face, uint8_t size, uint8_t fontFlags )
+pfGUIColorScheme::pfGUIColorScheme( const ST::string &face, uint8_t size, uint8_t fontFlags )
 {
     IReset();
     fFontFace = face;

@@ -43,7 +43,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _plLocTreeView_h
 
 #include <QTreeWidget>
-#include "plString.h"
+
+namespace ST { class string; }
 
 class plLocTreeView : public QTreeWidget
 {
@@ -55,8 +56,8 @@ public:
 
     plLocTreeView(QWidget *parent = nullptr) : QTreeWidget(parent) { }
 
-    void LoadData(const plString &path);
-    plString CurrentPath() const;
+    void LoadData(const ST::string &path);
+    ST::string CurrentPath() const;
 };
 
 #endif //_plLocTreeView_h

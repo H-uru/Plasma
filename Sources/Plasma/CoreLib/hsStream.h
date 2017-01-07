@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsMemory.h"
 #include "plFileSystem.h"
+#include <string_theory/format>
 
 
 // Define this for use of Streams with Logging (commonly used w/ a packet sniffer)
@@ -119,20 +120,20 @@ public:
     virtual void      CopyToMem(void* mem);
     virtual bool      IsCompressed() { return false; }
 
-    uint32_t        WriteString(const plString & string) { return Write(string.GetSize(), string.c_str()); }
+    uint32_t        WriteString(const ST::string & string) { return Write(string.size(), string.c_str()); }
 
     template        <typename... _Args>
-    uint32_t        WriteFmt(const char * fmt, _Args ... args) { return WriteString(plFormat(fmt, args...)); }
+    uint32_t        WriteFmt(const char * fmt, _Args ... args) { return WriteString(ST::format(fmt, args...)); }
 
-    uint32_t        WriteSafeStringLong(const plString &string);    // uses 4 bytes for length
-    uint32_t        WriteSafeWStringLong(const plString &string);
-    plString        ReadSafeStringLong();
-    plString        ReadSafeWStringLong();
+    uint32_t        WriteSafeStringLong(const ST::string &string);  // uses 4 bytes for length
+    uint32_t        WriteSafeWStringLong(const ST::string &string);
+    ST::string      ReadSafeStringLong();
+    ST::string      ReadSafeWStringLong();
 
-    uint32_t        WriteSafeString(const plString &string);        // uses 2 bytes for length
-    uint32_t        WriteSafeWString(const plString &string);
-    plString        ReadSafeString();
-    plString        ReadSafeWString();
+    uint32_t        WriteSafeString(const ST::string &string);      // uses 2 bytes for length
+    uint32_t        WriteSafeWString(const ST::string &string);
+    ST::string      ReadSafeString();
+    ST::string      ReadSafeWString();
 
     bool            GetToken(char *s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);
     bool            ReadLn(char* s, uint32_t maxLen=uint32_t(-1), const char beginComment=kComment, const char endComment=kEolnCode);

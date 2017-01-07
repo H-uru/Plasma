@@ -64,7 +64,7 @@ struct CliFileConn : hsRefCnt {
     LINK(CliFileConn)   link;
     hsReaderWriterLock  sockLock; // to protect the socket pointer so we don't nuke it while using it
     AsyncSocket         sock;
-    plString            name;
+    ST::string          name;
     plNetAddress        addr;
     unsigned            seq;
     ARRAY(uint8_t)      recvBuffer;
@@ -536,7 +536,7 @@ static void Connect (CliFileConn * conn) {
 
 //============================================================================
 static void Connect (
-    const plString&     name,
+    const ST::string&   name,
     const plNetAddress& addr
 ) {
     ASSERT(s_running);
@@ -1154,7 +1154,7 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename.AsString().ToWchar(), arrsize(filedownloadReq.filename));
+    StrCopy(filedownloadReq.filename, m_filename.AsString().to_wchar(), arrsize(filedownloadReq.filename));
     filedownloadReq.messageId = kCli2File_FileDownloadRequest;
     filedownloadReq.transId = m_transId;
     filedownloadReq.messageBytes = sizeof(filedownloadReq);
@@ -1343,7 +1343,7 @@ unsigned FileGetConnId () {
 
 //============================================================================
 void NetCliFileStartConnect (
-    const plString  fileAddrList[],
+    const ST::string  fileAddrList[],
     uint32_t        fileAddrCount,
     bool            isPatcher /* = false */
 ) {

@@ -89,20 +89,20 @@ public:
 
     PyObject * GetParentAgeLink () const;   // returns pyVaultAgeLinkNode, or None if not a child age.
 
-    plString GetAgeFilename() const;
-    void     SetAgeFilename(const plString& v);
+    ST::string GetAgeFilename() const;
+    void     SetAgeFilename(const ST::string& v);
 
-    plString GetAgeInstanceName() const;
-    void     SetAgeInstanceName(const plString& v);
+    ST::string GetAgeInstanceName() const;
+    void     SetAgeInstanceName(const ST::string& v);
 
-    plString GetAgeUserDefinedName() const;
-    void     SetAgeUserDefinedName(const plString& v);
+    ST::string GetAgeUserDefinedName() const;
+    void     SetAgeUserDefinedName(const ST::string& v);
 
     plUUID  GetAgeInstanceGuid() const;
     void    SetAgeInstanceGuid( const char * guid );
 
-    plString GetAgeDescription() const;
-    void     SetAgeDescription(const plString& v);
+    ST::string GetAgeDescription() const;
+    void     SetAgeDescription(const ST::string& v);
 
     int32_t  GetSequenceNumber() const;
     void     SetSequenceNumber( int32_t v );
@@ -117,7 +117,7 @@ public:
 
     bool     IsPublic() const;
 
-    plString GetDisplayName() const;
+    ST::string GetDisplayName() const;
 
     PyObject * AsAgeInfoStruct() const; // returns pyAgeInfoStruct
 };

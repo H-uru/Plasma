@@ -565,7 +565,7 @@ Interval plClothingMtl::DisplacementValidity(TimeValue t)
     return iv;  
 }
 
-plClothingElement *plClothingMtl::FindElementByName(const plString &name) const
+plClothingElement *plClothingMtl::FindElementByName(const ST::string &name) const
 {
     int i;
     for (i = 0; i < fElements.GetCount(); i++)

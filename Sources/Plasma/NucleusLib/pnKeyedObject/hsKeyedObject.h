@@ -62,7 +62,7 @@ public:
     GETINTERFACE_ANY(hsKeyedObject, plReceiver);
 
     const plKey&    GetKey() const { return fpKey; }
-    plString        GetKeyName() const;
+    ST::string      GetKeyName() const;
 
     virtual void Validate();
 
@@ -85,7 +85,7 @@ public:
     void    UnRegisterAs(plFixedKeyId fixedKey);
 
     // used when manually loading the player room
-    plKey   RegisterAsManual(plUoid& uoid, const plString& p);
+    plKey   RegisterAsManual(plUoid& uoid, const ST::string& p);
     void    UnRegisterAsManual(plUoid& uoid);
 
     // If you want clone keys to share a type of object, override this function

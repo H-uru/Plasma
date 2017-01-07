@@ -67,7 +67,7 @@ class plDisplayMode;
 class plUUID;
 class plFileName;
 struct PipelineParams;
-class plString;
+namespace ST { class string; }
 
 typedef struct _object PyObject;
 typedef struct PyMethodDef PyMethodDef;
@@ -147,9 +147,9 @@ public:
     //  PURPOSE    : Execute a console command from a python script,
     //                  optionally propagate over the net
     //
-    static PyObject* FindSceneObject(const plString& name, const char* ageName); // returns pySceneObject
-    static PyObject* FindSceneObjects(const plString& name);
-    static PyObject* FindActivator(const plString& name); // returns pyKey
+    static PyObject* FindSceneObject(const ST::string& name, const char* ageName); // returns pySceneObject
+    static PyObject* FindSceneObjects(const ST::string& name);
+    static PyObject* FindActivator(const ST::string& name); // returns pyKey
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -218,7 +218,7 @@ public:
     //
     //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
     //
-    static void SetDirtySyncState(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags);
+    static void SetDirtySyncState(pyKey &selfkey, const ST::string& SDLStateName, uint32_t sendFlags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -228,7 +228,7 @@ public:
     //  PURPOSE    : set the Python modifier to be dirty and asked to be saved out
     //                  specifies that state should be sent to other clients as well as server
     //
-    static void SetDirtySyncStateWithClients(pyKey &selfkey, const plString& SDLStateName, uint32_t sendFlags);
+    static void SetDirtySyncStateWithClients(pyKey &selfkey, const ST::string& SDLStateName, uint32_t sendFlags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -267,7 +267,7 @@ public:
     //  PURPOSE    : Return the net client (account) name of the player whose avatar
     //              key is provided.
     //
-    static plString GetClientName(pyKey &avKey);
+    static ST::string GetClientName(pyKey &avKey);
 
     static PyObject* GetAvatarKeyFromClientID(int clientID); // returns pyKey
     static int GetLocalClientID();
@@ -283,7 +283,7 @@ public:
     //
     //  PURPOSE    : Return the local net client (account) name
     //
-    static plString GetLocalClientName();
+    static ST::string GetLocalClientName();
 
 
     //
@@ -299,9 +299,9 @@ public:
     //             : Return the current coordinates of the player within this age
     //             : Return the current time with the current age the player is in
     //
-    static plString GetAgeName();
+    static ST::string GetAgeName();
     static PyObject* GetAgeInfo(); // returns pyAgeInfoStruct
-    static plString GetPrevAgeName();
+    static ST::string GetPrevAgeName();
     static PyObject* GetPrevAgeInfo();
     // current time in current age
     static uint32_t GetAgeTime( void );
@@ -464,7 +464,7 @@ public:
     //
     //  RETURNS    : the flags that were sent with the message (may be modified)
     //
-    static uint32_t SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const plString& message, uint32_t flags);
+    static uint32_t SendRTChat(const pyPlayer& from, const std::vector<pyPlayer*> & tolist, const ST::string& message, uint32_t flags);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -721,8 +721,8 @@ public:
     static void SetParticleOffset(float x, float y, float z, pyKey& particles);
     static void KillParticles(float time, float pct, pyKey& particles);
     static int  GetNumParticles(pyKey& host);
-    static void SetLightColorValue(pyKey& light, const plString& lightName, float r, float g, float b, float a);
-    static void SetLightAnimationOn(pyKey& light, const plString& lightName, bool start);
+    static void SetLightColorValue(pyKey& light, const ST::string& lightName, float r, float g, float b, float a);
+    static void SetLightAnimationOn(pyKey& light, const ST::string& lightName, bool start);
     //////////////////////////////////////////////////////////////////////////////
     //
     // Function   : RegisterForControlEventMessages
@@ -822,8 +822,8 @@ public:
     //
 
     static int GetNumCameras();
-    static plString GetCameraNumber(int number);
-    static void RebuildCameraStack(const plString& name, const char* ageName);
+    static ST::string GetCameraNumber(int number);
+    static void RebuildCameraStack(const ST::string& name, const char* ageName);
     static void PyClearCameraStack();
     static void RecenterCamera();
     static bool IsFirstPerson();
@@ -854,7 +854,7 @@ public:
     // PURPOSE    : debugging
     //
     static void DebugAssert( bool cond, const char * msg );
-    static void DebugPrint(const plString& msg, uint32_t level);
+    static void DebugPrint(const ST::string& msg, uint32_t level);
 
 
     //////////////////////////////////////////////////////////////////////////////
@@ -903,7 +903,7 @@ public:
     //              to that object's position.  appears to be a link to other players
     //
     static void FakeLinkToObject(pyKey& avatar, pyKey& object);
-    static void FakeLinkToObjectNamed(const plString& name);
+    static void FakeLinkToObjectNamed(const ST::string& name);
     
     //////////////////////////////////////////////////////////////////////////////
     //
@@ -933,7 +933,7 @@ public:
     //              properly replaced (the list is a list of unicode strings) Name
     //              is in "Age.Set.Name" format
     //
-    static plString GetLocalizedString(plString name, const std::vector<plString> & arguments);
+    static ST::string GetLocalizedString(const ST::string& name, const std::vector<ST::string> & arguments);
 
     static void EnablePlanarReflections(bool enable = true);
     static void SetGraphicsOptions(int Width, int Height, int ColorDepth, bool Windowed, int NumAASamples, int MaxAnisotropicSamples, bool VSync);
@@ -952,7 +952,7 @@ public:
     static plFileName GetInitPath();
 
     static void SetBehaviorNetFlags(pyKey & behKey, bool netForce, bool netProp);
-    static void SendFriendInvite(const plString& email, const plString& toName);
+    static void SendFriendInvite(const ST::string& email, const ST::string& toName);
     static PyObject* PyGuidGenerate();
     static PyObject* GetAIAvatarsByModelName(const char* name);
     static void ForceVaultNodeUpdate(unsigned nodeId);

@@ -56,8 +56,8 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     stream->ReadLE(&len);
     if (len)
     {
-        plStringBuffer<char> filename;
-        char* buffer = filename.CreateWritableBuffer(len);
+        ST::char_buffer filename;
+        char* buffer = filename.create_writable_buffer(len);
         stream->Read(len, buffer);
         buffer[len] = 0;
         fAgeFilename = filename;
@@ -72,7 +72,7 @@ void plLoadAgeMsg::Write(hsStream* stream, hsResMgr* mgr)
     plMessage::IMsgWrite(stream, mgr);  
 
     // write agename
-    uint8_t len = static_cast<uint8_t>(fAgeFilename.GetSize());
+    uint8_t len = static_cast<uint8_t>(fAgeFilename.size());
     stream->WriteLE(len);
     if (len)
     {

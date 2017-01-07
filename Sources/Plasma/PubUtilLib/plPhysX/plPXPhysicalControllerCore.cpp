@@ -850,14 +850,14 @@ void plPXPhysicalControllerCore::IProcessDynamicHits()
 void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
 {
     plDebugText &debugTxt = plDebugText::Instance();
-    plString debugString;
+    ST::string debugString;
     int lineHeight = debugTxt.GetFontSize() + 4;
     int x = 10;     // Initial draw position
     static int y = 10;
     if (controllerIdx == 0)
     {
         y = 10;
-        debugString = plFormat("Controller Count: {}", gControllers.size());
+        debugString = ST::format("Controller Count: {}", gControllers.size());
         debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
     }
@@ -866,7 +866,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
     int collisionCount = fDbgCollisionInfo.GetCount();
     if (collisionCount > 0)
     {
-        debugString = plFormat("Controller #{} ({}) Collisions:",
+        debugString = ST::format("Controller #{} ({}) Collisions:",
             controllerIdx + 1, gControllers[controllerIdx]->fOwner->GetName());
         debugTxt.DrawString(x, y, debugString);
         y += lineHeight;
@@ -876,7 +876,7 @@ void plPXPhysicalControllerCore::IDrawDebugDisplay(int controllerIdx)
             hsVector3 normal = fDbgCollisionInfo[i].fNormal;
             const char* overlapStr = fDbgCollisionInfo[i].fOverlap ? "yes" : "no";
             float angle = hsRadiansToDegrees(acos(normal * hsVector3(0, 0, 1)));
-            debugString = plFormat("\tObj: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f}), Overlap({})",
+            debugString = ST::format("\tObj: {}, Normal: ({.2f}, {.2f}, {.2f}), Angle({.1f}), Overlap({})",
                     fDbgCollisionInfo[i].fSO->GetKeyName(),
                     normal.fX, normal.fY, normal.fZ, angle,
                     overlapStr);

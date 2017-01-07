@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyVaultNode.h"
 
 class pyAgeInfoStruct;
-class plString;
 struct RelVaultNode;
 
 class pyVaultPlayerNode : public pyVaultNode
@@ -101,10 +100,10 @@ public:
     PyObject *FindChronicleEntry(const char *entryName); // returns pyVaultChronicleNode
 
     void SetPlayerName(const char *value);
-    plString GetPlayerName() const;
+    ST::string GetPlayerName() const;
 
     void SetAvatarShapeName(const char *value);
-    plString GetAvatarShapeName() const;
+    ST::string GetAvatarShapeName() const;
 
     void SetDisabled(bool value);
     bool IsDisabled();

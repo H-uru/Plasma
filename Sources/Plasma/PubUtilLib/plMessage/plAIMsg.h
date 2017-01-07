@@ -63,8 +63,8 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    void BrainUserString(const plString& userStr) {fBrainUserStr = userStr;}
-    plString BrainUserString() const {return fBrainUserStr;}
+    void BrainUserString(const ST::string& userStr) {fBrainUserStr = userStr;}
+    ST::string BrainUserString() const {return fBrainUserStr;}
 
     // enum for all messages to make things easier for people that use us
     enum
@@ -75,7 +75,7 @@ public:
     };
 
 private:
-    plString fBrainUserStr;
+    ST::string fBrainUserStr;
 };
 
 // message spammed to anyone listening so they can grab the brain's key and talk to it

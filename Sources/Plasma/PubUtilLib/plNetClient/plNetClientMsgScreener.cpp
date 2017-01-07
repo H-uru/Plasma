@@ -72,10 +72,10 @@ void plNetClientMsgScreener::ICreateStatusLog() const
 //
 // return cur age name
 //
-plString plNetClientMsgScreener::IGetAgeName() const
+ST::string plNetClientMsgScreener::IGetAgeName() const
 {
     plNetLinkingMgr *lm = plNetLinkingMgr::GetInstance();
-    return lm && lm->GetAgeLink()->GetAgeInfo() ? lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename() : "?";
+    return lm && lm->GetAgeLink()->GetAgeInfo() ? lm->GetAgeLink()->GetAgeInfo()->GetAgeFilename() : ST_LITERAL("?");
 }
 
 //

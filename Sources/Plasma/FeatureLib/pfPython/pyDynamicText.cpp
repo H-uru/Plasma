@@ -266,7 +266,7 @@ void pyDynamicText::UnsetWrapping()
 //
 // Draw text paying attention to Clipping and Wrapping if user wanted it
 //
-void pyDynamicText::DrawText( int16_t x, int16_t y, const plString& text )
+void pyDynamicText::DrawText( int16_t x, int16_t y, const ST::string& text )
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -349,7 +349,7 @@ uint16_t  pyDynamicText::GetHeight( void )
     return (uint16_t)dtMap->GetHeight();
 }
 
-void pyDynamicText::CalcTextExtents(const plString& text, uint16_t& width, uint16_t& height)
+void pyDynamicText::CalcTextExtents(const ST::string& text, uint16_t& width, uint16_t& height)
 {
     width = 0;
     height = 0;

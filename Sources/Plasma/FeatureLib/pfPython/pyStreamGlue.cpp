@@ -79,7 +79,7 @@ PYTHON_METHOD_DEFINITION(ptStream, open, args)
         PYTHON_RETURN_ERROR;
     }
 
-    plString flags;
+    ST::string flags;
     if (PyString_CheckEx(flagsObj))
     {
         flags = PyString_AsStringEx(flagsObj);

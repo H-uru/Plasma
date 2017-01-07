@@ -64,7 +64,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Helpers /////////////////////////////////////////////////////////////////
 
-static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName, hsTArray<plKey>& keys )
+static void ISearchLayerRecur( plLayerInterface *layer, const ST::string &segName, hsTArray<plKey>& keys )
 {
     if( !layer )
         return;
@@ -72,8 +72,8 @@ static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName,
     plLayerAnimation *animLayer = plLayerAnimation::ConvertNoRef(layer);
     if (animLayer)
     {
-        plString ID = animLayer->GetSegmentID();
-        if (!ID.Compare(segName))
+        ST::string ID = animLayer->GetSegmentID();
+        if (!ID.compare(segName))
         {
             if( keys.kMissingIndex == keys.Find(animLayer->GetKey()) )
                 keys.Append(animLayer->GetKey());
@@ -83,16 +83,16 @@ static void ISearchLayerRecur( plLayerInterface *layer, const plString &segName,
     ISearchLayerRecur(layer->GetAttached(), segName, keys);
 }
 
-static int ISearchLayerRecur(hsGMaterial* mat, const plString &segName, hsTArray<plKey>& keys)
+static int ISearchLayerRecur(hsGMaterial* mat, const ST::string &segName, hsTArray<plKey>& keys)
 {
-    plString name = ( segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? "" : segName;
+    ST::string name = ( segName.compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? ST::null : segName;
     int i;
     for( i = 0; i < mat->GetNumLayers(); i++ )
         ISearchLayerRecur(mat->GetLayer(i), name, keys);
     return keys.GetCount();
 }
 
-static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const plString& segName, hsTArray<plKey>& keys)
+static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& segName, hsTArray<plKey>& keys)
 {
     int retVal = 0;
 
@@ -128,8 +128,8 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
 {
     if( fCachedSegMap != nil )
     {
-        plString name = GetSegmentName();
-        if( !name.IsNull() )
+        ST::string name = GetSegmentName();
+        if( !name.is_empty() )
         {
             SegmentMap::iterator i = fCachedSegMap->find( name );
             if( i != fCachedSegMap->end() )
@@ -166,8 +166,8 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
     start = GetSegStart();
     end = GetSegEnd();
 
-    plString loopName = GetLoopName();
-    if( !loopName.IsEmpty() && fCachedSegMap != nil )
+    ST::string loopName = GetLoopName();
+    if( !loopName.is_empty() && fCachedSegMap != nil )
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
@@ -192,8 +192,8 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
 
 void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength )
 {
-    plString segName = GetSegmentName();
-    bool isEntire = ( segName.IsNull() || segName.Compare( ENTIRE_ANIMATION_NAME ) == 0 ) ? true : false;
+    ST::string segName = GetSegmentName();
+    bool isEntire = ( segName.is_empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
 
     if( isEntire )
     {

@@ -45,6 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnDispatch/plDispatch.h"
 #include "pnMessage/plSelfDestructMsg.h"
 
+#include <string_theory/format>
+
 void hsKeyedObject::SetKey(plKey k)              
 {
     if (fpKey != nil)
@@ -65,12 +67,12 @@ bool hsKeyedObject::SendRef(plRefMsg* refMsg, plRefFlags::Type flags)
     return hsgResMgr::SendRef(key, refMsg, flags);
 }
 
-plString hsKeyedObject::GetKeyName() const
+ST::string hsKeyedObject::GetKeyName() const
 {
     if (fpKey)
         return fpKey->GetName();
     else
-        return "(unknown)";
+        return ST_LITERAL("(unknown)");
 }
 
 hsKeyedObject::~hsKeyedObject()
@@ -127,7 +129,7 @@ void hsKeyedObject::UnRegisterAs(plFixedKeyId fixedKey)
     UnRegisterAsManual(uoid);
 }
 
-plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const plString& p)
+plKey hsKeyedObject::RegisterAsManual(plUoid& meUoid, const ST::string& p)
 {
     hsAssert(meUoid.GetClassType() == ClassIndex(),"Registering as wrong type!");
     // Really should be a NewKey() call just for fixed keys, so change this once player rooms behave
@@ -148,8 +150,8 @@ void hsKeyedObject::UnRegisterAsManual(plUoid& inUoid)
         {
 #if !HS_BUILD_FOR_UNIX      // disable for unix servers
             hsAssert(false,
-                plFormat("Request to Unregister wrong FixedKey, keyName={}, inUoid={}, myUoid={}",
-                         fpKey->GetName(), inUoid, myUoid).c_str());
+                ST::format("Request to Unregister wrong FixedKey, keyName={}, inUoid={}, myUoid={}",
+                           fpKey->GetName(), inUoid, myUoid).c_str());
 #endif
         }
         ((plKeyImp*)fpKey)->UnRegister();

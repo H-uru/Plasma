@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <string_theory/stdio>
 
 #if HS_BUILD_FOR_WIN32
 #    include "hsWindows.h"
@@ -75,20 +76,20 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 {
     hsUNIXStream pyStream, glueStream;
     plFileName filePath;
-    ssize_t filestart = fileName.AsString().FindLast('.');
+    ST_ssize_t filestart = fileName.AsString().find_last('.');
     if (filestart >= 0)
-        filePath = fileName.AsString().Substr(filestart+1);
+        filePath = fileName.AsString().substr(filestart+1);
     else
         filePath = fileName;
     filePath = plFileName::Join(path, filePath + ".py");
 
     if (!pyStream.Open(filePath) || !glueStream.Open(glueFile))
     {
-        plPrintf("Unable to open path {}, ", filePath);
+        ST::printf("Unable to open path {}, ", filePath);
         return;
     }
 
-    plPrintf("==Packing {}, ", fileName);
+    ST::printf("==Packing {}, ", fileName);
 
     pyStream.FastFwd();
     uint32_t pyFileSize = pyStream.GetPosition();
@@ -181,7 +182,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
             int chars_read = PythonInterface::getOutputAndReset(&errmsg);
             if (chars_read > 0)
             {
-                plPrintf("{}\n", errmsg);
+                puts(errmsg);
             }
         }
     }
@@ -199,7 +200,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         int chars_read = PythonInterface::getOutputAndReset(&errmsg);
         if (chars_read > 0)
         {
-            plPrintf("{}\n", errmsg);
+            puts(errmsg);
         }
         s->WriteLE32(size);
         s->Write(size, pycode);
@@ -216,7 +217,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         int chars_read = PythonInterface::getOutputAndReset(&errmsg);
         if (chars_read > 0)
         {
-            plPrintf("{}\n", errmsg);
+            puts(errmsg);
         }
     }
 
@@ -255,8 +256,8 @@ void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
 {
     std::vector<plFileName> subdirs = plFileSystem::ListSubdirs(path);
     for (auto iter = subdirs.begin(); iter != subdirs.end(); ++iter) {
-        plString name = iter->GetFileName();
-        if (name.CompareI("system") != 0 && name.CompareI("plasma") != 0)
+        ST::string name = iter->GetFileName();
+        if (name.compare_i("system") != 0 && name.compare_i("plasma") != 0)
             dirnames.push_back(name);
     }
 }
@@ -325,14 +326,14 @@ std::string ConcatDirs(std::string fullPath, std::string partialPath)
     return retVal;
 }
 
-void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const plString& parent_package="")
+void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& pathNames, const plFileName& path, const ST::string& parent_package=ST::null)
 {
     std::vector<plFileName> packages;
     FindSubDirs(packages, path);
     for (int i = 0; i < packages.size(); i++)
     {
-        plString packageName;
-        if (!parent_package.IsEmpty())
+        ST::string packageName;
+        if (!parent_package.is_empty())
             packageName = parent_package + ".";
         packageName += packages[i].AsString();
         std::vector<plFileName> packageFileNames;
@@ -353,16 +354,16 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
 
 void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFileName& pakName, std::vector<plFileName>& extraDirs, bool packSysAndPlasma = false)
 {
-    plPrintf("\nCreating {} using the contents of {}\n", pakName, dir);
-    plPrintf("Changing working directory to {}\n", rootPath);
+    ST::printf("\nCreating {} using the contents of {}\n", pakName, dir);
+    ST::printf("Changing working directory to {}\n", rootPath);
     if (!plFileSystem::SetCWD(rootPath))
     {
-        plPrintf("ERROR: Directory change to {} failed for some reason\n", rootPath);
+        ST::printf("ERROR: Directory change to {} failed for some reason\n", rootPath);
         fputs("Unable to continue with the packing of this directory, aborting...\n", stdout);
         return;
     }
     else
-        plPrintf("Directory changed to {}\n", rootPath);
+        ST::printf("Directory changed to {}\n", rootPath);
 
     std::vector<plFileName> fileNames;
     std::vector<plFileName> pathNames;

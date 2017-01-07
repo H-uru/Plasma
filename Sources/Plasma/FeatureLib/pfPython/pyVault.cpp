@@ -489,7 +489,7 @@ bool pyVault::AmAgeCzar( const pyAgeInfoStruct * ageInfo )
     return VaultAmCzarOfAge(ageInstId);
 }
 
-void pyVault::RegisterMTStation( const plString& stationName, const plString& backLinkSpawnPtObjName )
+void pyVault::RegisterMTStation( const ST::string& stationName, const ST::string& backLinkSpawnPtObjName )
 {
     // Note: This doesn't actually block (~Hoikas)
     VaultRegisterMTStationAndWait(stationName, backLinkSpawnPtObjName);
@@ -587,19 +587,19 @@ void pyVault::CreateNeighborhood()
     link.GetAgeInfo()->SetAgeFilename(kNeighborhoodAgeFilename);
     link.GetAgeInfo()->SetAgeInstanceName(kNeighborhoodAgeInstanceName);
 
-    plString title;
-    plString desc;
+    ST::string title;
+    ST::string desc;
 
-    unsigned nameLen = nc->GetPlayerName().GetSize();
-    if (nc->GetPlayerName().CharAt(nameLen - 1) == 's' || nc->GetPlayerName().CharAt(nameLen - 1) == 'S')
+    unsigned nameLen = nc->GetPlayerName().size();
+    if (nc->GetPlayerName().char_at(nameLen - 1) == 's' || nc->GetPlayerName().char_at(nameLen - 1) == 'S')
     {
-        title = plFormat("{}'", nc->GetPlayerName());
-        desc = plFormat("{}' {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
+        title = ST::format("{}'", nc->GetPlayerName());
+        desc = ST::format("{}' {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
     }
     else
     {
-        title = plFormat("{}'s", nc->GetPlayerName());
-        desc = plFormat("{}'s {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
+        title = ST::format("{}'s", nc->GetPlayerName());
+        desc = ST::format("{}'s {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());
     }
 
     plUUID guid = plUUID::Generate();

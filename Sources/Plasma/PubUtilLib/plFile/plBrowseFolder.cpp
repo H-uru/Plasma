@@ -45,25 +45,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <shlobj.h>
 
-plFileName plBrowseFolder::GetFolder(const plFileName &startPath, const plString &title, HWND hwndOwner)
+plFileName plBrowseFolder::GetFolder(const plFileName &startPath, const ST::string &title, HWND hwndOwner)
 {
     BROWSEINFOW bi;
     memset(&bi, 0, sizeof(bi));
     bi.hwndOwner    = hwndOwner;
-    bi.lpszTitle    = title.ToWchar();
+    bi.lpszTitle    = title.to_wchar();
     bi.lpfn         = BrowseCallbackProc;
-    bi.lParam       = (LPARAM) startPath.AsString().ToWchar().GetData();
+    bi.lParam       = (LPARAM) startPath.AsString().to_wchar().data();
 
     LPITEMIDLIST iil = SHBrowseForFolderW(&bi);
     plFileName path;
     if (!iil) {
         // Browse failed, or cancel was selected
-        path = "";
+        path = ST::null;
     } else {
         // Browse succeded.  Get the path.
         wchar_t buffer[MAX_PATH];
         SHGetPathFromIDListW(iil, buffer);
-        path = plString::FromWchar(buffer);
+        path = ST::string::from_wchar(buffer);
     }
 
     // Free the memory allocated by SHBrowseForFolder

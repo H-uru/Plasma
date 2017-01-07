@@ -398,20 +398,20 @@ bool    pfGUIEditBoxMod::HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef
             {
                 if (key == KEY_C) 
                 {
-                    plClipboard::GetInstance().SetClipboardText(plString::FromWchar(fBuffer));
+                    plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer));
                 }
                 else if (key == KEY_V)
                 {
-                    plString contents = plClipboard::GetInstance().GetClipboardText();
-                    plStringBuffer<wchar_t> tmp = contents.ToWchar();
-                    size_t len = tmp.GetSize();
+                    ST::string contents = plClipboard::GetInstance().GetClipboardText();
+                    ST::wchar_buffer tmp = contents.to_wchar();
+                    size_t len = tmp.size();
                     if (len > 0) {
                         --len; //skip \0 on end
                         wchar_t* insertTarget = fBuffer + fCursorPos;
                         size_t bufferTailLen = wcslen(insertTarget);
                         if (fCursorPos + len + bufferTailLen < fBufferSize) {
                             memmove(insertTarget + len, insertTarget, bufferTailLen * sizeof(wchar_t));
-                            memcpy(insertTarget, tmp.GetData(), len * sizeof(wchar_t));
+                            memcpy(insertTarget, tmp.data(), len * sizeof(wchar_t));
                             fCursorPos += len;
                             HandleExtendedEvent( kValueChanging );
                         }

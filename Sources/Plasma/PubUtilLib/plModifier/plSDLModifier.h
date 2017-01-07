@@ -80,7 +80,7 @@ public:
     plStateDataRecord* GetStateCache() const { return fStateCache; }
     virtual void AddTarget(plSceneObject* so);
     
-    void AddNotifyForVar(plKey key, const plString& varName, float tolerance) const;
+    void AddNotifyForVar(plKey key, const ST::string& varName, float tolerance) const;
 };
 
 #endif  // plSDLModifier_inc

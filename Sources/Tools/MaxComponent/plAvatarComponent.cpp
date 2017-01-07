@@ -453,7 +453,7 @@ plAvatarComponent::plAvatarComponent()
 
 void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plString name = node->GetKey()->GetName();
+    ST::string name = node->GetKey()->GetName();
 
     plMaxNode *meshNode = (plMaxNode *)fCompPB->GetINode(plAvatarComponent::kMeshNode);
     plKey meshKey = meshNode->GetSceneObject()->GetKey();
@@ -476,7 +476,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    avMod->SetAnimationPrefix(ST::string::from_utf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     //AddLinkSound(node, node->GetSceneObject()->GetKey(), pErrMsg );
 
@@ -491,7 +491,7 @@ void plAvatarComponent::IAttachModifiers(plMaxNode *node, plErrorMsg *pErrMsg)
 void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMaterial *mat, plErrorMsg *pErrMsg)
 {
     plGenRefMsg *msg;
-    plString keyName;
+    ST::string keyName;
     TSTR sdata;
     hsStringTokenizer toker;
 
@@ -509,11 +509,11 @@ void AddClothingToMod(plMaxNode *node, plArmatureMod *mod, int group, hsGMateria
     }
     else 
         base->SetLayoutName("BasicHuman");
-    keyName = plFormat("{}_ClothingBase", node->GetName());
+    keyName = ST::format("{}_ClothingBase", node->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, base, node->GetLocation());
     plClothingOutfit *outfit = new plClothingOutfit();
     outfit->fGroup = group;
-    keyName = plFormat("{}_outfit", mod->GetKey()->GetName());
+    keyName = ST::format("{}_outfit", mod->GetKey()->GetName());
     hsgResMgr::ResMgr()->NewKey(keyName, outfit, node->GetLocation());
     
     msg = new plGenRefMsg(outfit->GetKey(), plRefMsg::kOnCreate, -1, -1);
@@ -682,7 +682,7 @@ bool plCompoundCtrlComponent::SetupProperties(plMaxNode *node, plErrorMsg *pErrM
 
 bool plCompoundCtrlComponent::Convert(plMaxNode* node, plErrorMsg *pErrMsg)
 {
-    plString name = node->GetKey()->GetName();
+    ST::string name = node->GetKey()->GetName();
 
     node->MakeCharacterHierarchy(pErrMsg);
     node->SetupBonesAliasesRecur(name.c_str());
@@ -1052,7 +1052,7 @@ plLODAvatarComponent::plLODAvatarComponent() : fMaterial(nil)
 
 void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    plString avatarName = node->GetKey()->GetName();
+    ST::string avatarName = node->GetKey()->GetName();
     plMaxNode *animRoot = (plMaxNode *)fCompPB->GetINode(plLODAvatarComponent::kRootNodeAddBtn);
     plKey animRootKey = animRoot->GetSceneObject()->GetKey();
     plArmatureLODMod* avMod = new plArmatureLODMod(avatarName);
@@ -1066,7 +1066,7 @@ void plLODAvatarComponent::IAttachModifiers(    plMaxNode *node, plErrorMsg *pEr
 
     avMod->SetBodyAgeName(node->GetAgeName());
     avMod->SetBodyFootstepSoundPage(fCompPB->GetStr(ParamID(kBodyFootstepSoundPage)));
-    avMod->SetAnimationPrefix(plString::FromUtf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
+    avMod->SetAnimationPrefix(ST::string::from_utf8(fCompPB->GetStr(ParamID(kAnimationPrefix))));
 
     int iLODCount = fCompPB->Count(plLODAvatarComponent::kMeshNodeTab);
     for (int i = 0; i < iLODCount; i++)

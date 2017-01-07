@@ -444,7 +444,7 @@ public:
 
 //// Book data class /////////////////////////////////////////////////////////
 
-pfBookData::pfBookData(const plString &guiName /* = nil */)
+pfBookData::pfBookData(const ST::string &guiName /* = nil */)
 {
     fCurrBook = nil;
     fDialog = nil;
@@ -468,10 +468,10 @@ pfBookData::pfBookData(const plString &guiName /* = nil */)
     fEditable = false;
     fAdjustCursorTo = -1;
     
-    if (!guiName.IsEmpty())
+    if (!guiName.is_empty())
         fGUIName = guiName;
     else
-        fGUIName = "BkBook";
+        fGUIName = ST_LITERAL("BkBook");
 }
 
 pfBookData::~pfBookData()
@@ -866,7 +866,7 @@ void pfBookData::ITriggerPageFlip(bool flipBackwards, bool immediate)
     // in MAX, we just use a GUI check box to grab them for us, even though we never
     // actually use the functionality of the checkbox itself
     const hsTArray<plKey> &keys = fTurnPageButton->GetAnimationKeys();
-    plString animName = fTurnPageButton->GetAnimationName();
+    ST::string animName = fTurnPageButton->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     if (immediate)
@@ -1135,7 +1135,7 @@ void pfBookData::EnableEditGUI(bool enable/* =true */)
 //// Our Singleton Stuff /////////////////////////////////////////////////////
 
 //pfJournalBook *pfJournalBook::fInstance = nil;
-std::map<plString,pfBookData*> pfJournalBook::fBookGUIs;
+std::map<ST::string,pfBookData*> pfJournalBook::fBookGUIs;
 
 void    pfJournalBook::SingletonInit( void )
 {
@@ -1146,7 +1146,7 @@ void    pfJournalBook::SingletonInit( void )
 
 void    pfJournalBook::SingletonShutdown( void )
 {
-    std::map<plString,pfBookData*>::iterator i = fBookGUIs.begin();
+    std::map<ST::string,pfBookData*>::iterator i = fBookGUIs.begin();
     while (i != fBookGUIs.end())
     {
         pfBookData *bookData = i->second;
@@ -1157,7 +1157,7 @@ void    pfJournalBook::SingletonShutdown( void )
     fBookGUIs.clear();
 }
 
-void    pfJournalBook::LoadGUI( const plString &guiName )
+void    pfJournalBook::LoadGUI( const ST::string &guiName )
 {
     if (fBookGUIs.find(guiName) == fBookGUIs.end()) // is it already loaded?
     { // nope, load it
@@ -1167,11 +1167,11 @@ void    pfJournalBook::LoadGUI( const plString &guiName )
     }
 }
 
-void    pfJournalBook::UnloadGUI( const plString &guiName )
+void    pfJournalBook::UnloadGUI( const ST::string &guiName )
 {
-    if (guiName.Compare("BkBook")==0)
+    if (guiName.compare("BkBook")==0)
         return; // do not allow people to unload the default book gui
-    std::map<plString,pfBookData*>::iterator loc = fBookGUIs.find(guiName);
+    std::map<ST::string,pfBookData*>::iterator loc = fBookGUIs.find(guiName);
     if (loc != fBookGUIs.end()) // make sure it's loaded
     {
         fBookGUIs[guiName]->GetKey()->UnRefObject();
@@ -1182,11 +1182,11 @@ void    pfJournalBook::UnloadGUI( const plString &guiName )
 
 void    pfJournalBook::UnloadAllGUIs()
 {
-    std::map<plString,pfBookData*>::iterator i = fBookGUIs.begin();
-    std::vector<plString> names;
+    std::map<ST::string,pfBookData*>::iterator i = fBookGUIs.begin();
+    std::vector<ST::string> names;
     while (i != fBookGUIs.end())
     {
-        plString name = i->first;
+        ST::string name = i->first;
         names.push_back(name); // store a list of keys
         i++;
     }
@@ -1201,9 +1201,9 @@ void    pfJournalBook::UnloadAllGUIs()
 // key is the keyed object to send event messages to (see <img> tag).
 
 pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const plString &guiName /* = nil */ )
+                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
 {
-    if (!guiName.IsEmpty())
+    if (!guiName.is_empty())
         fCurBookGUI = guiName;
     else
         fCurBookGUI = "BkBook";
@@ -1237,9 +1237,9 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
 }
 
 pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
-                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const plString &guiName /* = nil */ )
+                                const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
 {
-    if (!guiName.IsEmpty())
+    if (!guiName.is_empty())
         fCurBookGUI = guiName;
     else
         fCurBookGUI = "BkBook";
@@ -1286,9 +1286,9 @@ bool    pfJournalBook::MsgReceive( plMessage *pMsg )
     return hsKeyedObject::MsgReceive( pMsg );
 }
 
-void    pfJournalBook::SetGUI( const plString &guiName )
+void    pfJournalBook::SetGUI( const ST::string &guiName )
 {
-    if (!guiName.IsEmpty())
+    if (!guiName.is_empty())
         fCurBookGUI = guiName;
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
         fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
@@ -1473,7 +1473,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediat
     fBookGUIs[fCurBookGUI]->CurrentlyOpen(!closeNotOpen);
 
     const hsTArray<plKey> &keys = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationKeys();
-    plString animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
+    ST::string animName = fBookGUIs[fCurBookGUI]->CoverButton()->GetAnimationName();
 
     plAnimCmdMsg *msg = new plAnimCmdMsg();
     if( !immediate )
@@ -2497,14 +2497,14 @@ void    pfJournalBook::IFreeSource( void )
 
 plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc )
 {
-    plString cName = plString::FromWchar(name);
+    ST::string cName = ST::string::from_wchar(name);
 #ifndef PLASMA_EXTERNAL_RELEASE
-    if( cName.Find( '/' ) >= 0 || cName.Find( '\\' ) >= 0 )
+    if( cName.contains( '/' ) || cName.contains( '\\' ) )
     {
         // For internal use only--allow local path names of PNG and JPEG images, to
         // facilitate fast prototyping
         plMipmap *mip;
-        if( cName.Find( ".png" ) >= 0 )
+        if( cName.contains( ".png" ) )
             mip = plPNG::Instance().ReadFromFile( cName.c_str() );
         else
             mip = plJPEG::Instance().ReadFromFile( cName.c_str() );
@@ -2535,8 +2535,8 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     // Do a search through our current age with just the name given
     if( plNetClientMgr::GetInstance() != nil )
     {
-        plString thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if (!thisAge.IsNull())
+        ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
+        if (!thisAge.is_empty())
         {
             key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
             if( key != nil )
@@ -2609,7 +2609,7 @@ void    pfJournalBook::IRenderPage( uint32_t page, uint32_t whichDTMap, bool sup
         uint16_t width, height, y, x, ascent, lastX, lastY;
         
         uint8_t     fontFlags, fontSize;
-        plString    fontFace;
+        ST::string  fontFace;
         hsColorRGBA fontColor;
         int16_t     fontSpacing;
         bool        needSFX = false;
@@ -3034,13 +3034,13 @@ plLayerAVI *pfJournalBook::IMakeMovieLayer(pfEsHTMLChunk *chunk, uint16_t x, uin
 
         // We'll need a unique name. This is a hack, but an effective hack.
         static int uniqueSuffix = 0;
-        plString buff;
+        ST::string buff;
 
-        buff = plFormat("{}_{}_ml", GetKey()->GetName(), uniqueSuffix);
+        buff = ST::format("{}_{}_ml", GetKey()->GetName(), uniqueSuffix);
         layer = new plLayer;
         hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
 
-        buff = plFormat("{}_{}_m", GetKey()->GetName(), uniqueSuffix++);
+        buff = ST::format("{}_{}_m", GetKey()->GetName(), uniqueSuffix++);
         movieLayer = new plLayerAVI;
         hsgResMgr::ResMgr()->NewKey(buff, movieLayer, GetKey()->GetUoid().GetLocation());
         movieLayer->GetKey()->RefObject(); // we want to own a ref so we can nuke it at will
@@ -3183,7 +3183,7 @@ plLayerInterface *pfJournalBook::IMakeBaseLayer(plMipmap *image)
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plFormat("{}_{}", GetKey()->GetName(), uniqueSuffix++);
+    ST::string buff = ST::format("{}_{}", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3237,7 +3237,7 @@ plLayerInterface *pfJournalBook::IMakeDecalLayer(pfEsHTMLChunk *decalChunk, plMi
 
     // We'll need a unique name. This is a hack, but an effective hack.
     static int uniqueSuffix = 0;
-    plString buff = plFormat("{}_{}_d", GetKey()->GetName(), uniqueSuffix++);
+    ST::string buff = ST::format("{}_{}_d", GetKey()->GetName(), uniqueSuffix++);
 
     plLayer* layer = new plLayer;
     hsgResMgr::ResMgr()->NewKey(buff, layer, GetKey()->GetUoid().GetLocation());
@@ -3339,7 +3339,7 @@ void pfJournalBook::ISetDecalLayers(hsGMaterial *material,hsTArray<plLayerInterf
 // Starting at the given chunk, works backwards to determine the full set of current
 // font properties at that point, or assigns defaults if none were specified
 
-void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, plString &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
+void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing )
 {
     enum Which
     {
@@ -3369,7 +3369,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, plString &face, uint8_
             // What do we (still) need?
             if( !( found & kFace ) && chunk->fText != L"" )
             {
-                face = plString::FromWchar(chunk->fText.c_str());
+                face = ST::string::from_wchar(chunk->fText.c_str());
                 found |= kFace;
             }
             if( !( found & kSize ) && chunk->fFontSize > 0 )

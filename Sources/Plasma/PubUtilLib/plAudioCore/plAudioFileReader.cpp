@@ -65,11 +65,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plAudioFileReader* plAudioFileReader::CreateReader(const plFileName& path, plAudioCore::ChannelSelect whichChan, StreamType type)
 {
-    plString ext = path.GetFileExt();
+    ST::string ext = path.GetFileExt();
 
     if (type == kStreamWAV)
     {
-        bool isWav = (ext.CompareI("wav") == 0);
+        bool isWav = (ext.compare_i("wav") == 0);
         // We want to stream a wav off disk, but this is a compressed file.
         // Get the uncompressed path. Ignore the requested channel, since it 
         // will have already been split into two files if that is necessary.

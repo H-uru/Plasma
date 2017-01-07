@@ -252,10 +252,10 @@ void plNetClientMgr::SetNullSend(bool on)
 //
 // returns server time in the form "[m/d/y h:m:s]"
 //
-const char* plNetClientMgr::GetServerLogTimeAsString(plString& timestamp) const
+const char* plNetClientMgr::GetServerLogTimeAsString(ST::string& timestamp) const
 {
     const plUnifiedTime st=GetServerTime();
-    timestamp = plFormat("{{{_02}/{_02} {_02}:{_02}:{_02}}",
+    timestamp = ST::format("{{{02}/{02} {02}:{02}:{02}}",
         st.GetMonth(), st.GetDay(), st.GetHour(), st.GetMinute(), st.GetSecond());
     return timestamp.c_str();
 }
@@ -265,10 +265,10 @@ const char* plNetClientMgr::GetServerLogTimeAsString(plString& timestamp) const
 //
 const char* ProcessTab(const char* fmt)
 {
-    static plString s;
+    static ST::string s;
     if (fmt && *fmt=='\t')
     {
-        s = plFormat("  {}", fmt);
+        s = ST::format("  {}", fmt);
         return s.c_str();
     }
     return fmt;
@@ -290,14 +290,14 @@ void plNetClientMgr::ICreateStatusLog() const
 //
 // override for plLoggable
 //
-bool plNetClientMgr::Log(const plString& str) const
+bool plNetClientMgr::Log(const ST::string& str) const
 {
-    if (str.IsNull() || str.IsEmpty()) {
+    if (str.is_empty()) {
         return true;
     }
 
     // prepend raw time
-    plString buf2 = plFormat("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
+    ST::string buf2 = ST::format("{.2f} {}", hsTimer::GetSeconds(), ProcessTab(str.c_str()));
 
     if ( GetConsoleOutput() )
         hsStatusMessage(buf2.c_str());
@@ -316,12 +316,12 @@ bool plNetClientMgr::Log(const plString& str) const
 //
 // Display OS version info for log
 //
-extern std::vector<plString> DisplaySystemVersion();
+extern std::vector<ST::string> DisplaySystemVersion();
 
 void plNetClientMgr::IDumpOSVersionInfo() const
 {
     DebugMsg("*** OS Info");
-    std::vector<plString> versionStrs = DisplaySystemVersion();
+    std::vector<ST::string> versionStrs = DisplaySystemVersion();
     for (auto version = versionStrs.begin(); version != versionStrs.end(); ++version)
         DebugMsg(*version);
 }
@@ -1018,10 +1018,10 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
         }
 
         // if we're linking to startup we don't need (or want) a player set
-        plString ageName = NetCommGetStartupAge()->ageDatasetName;
-        if (ageName.IsEmpty())
-            ageName = "StartUp";
-        if (ageName.CompareI("StartUp") == 0)
+        ST::string ageName = NetCommGetStartupAge()->ageDatasetName;
+        if (ageName.is_empty())
+            ageName = ST_LITERAL("StartUp");
+        if (ageName.compare_i("StartUp") == 0)
             NetCommSetActivePlayer(0, nullptr);
 
         plAgeLinkStruct link;
@@ -1091,34 +1091,34 @@ bool plNetClientMgr::CanSendMsg(plNetMessage * msg)
 // Return the net client (account) name of the player whose avatar
 // key is provided.  If avKey is nil, returns local client name.
 //
-plString plNetClientMgr::GetPlayerName(const plKey avKey) const
+ST::string plNetClientMgr::GetPlayerName(const plKey avKey) const
 {
     // local case
     if (!avKey || avKey == GetLocalPlayerKey())
         return NetCommGetPlayer()->playerName;
 
     plNetTransportMember* mbr=TransportMgr().GetMember(TransportMgr().FindMember(avKey));
-    return mbr ? mbr->GetPlayerName() : plString::Null;
+    return mbr ? mbr->GetPlayerName() : ST::null;
 }
 
-plString plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
+ST::string plNetClientMgr::GetPlayerNameById (unsigned playerId) const {
     // local case
     if (NetCommGetPlayer()->playerInt == playerId)
         return NetCommGetPlayer()->playerName;
 
     plNetTransportMember * mbr = TransportMgr().GetMember(TransportMgr().FindMember(playerId));
-    return mbr ? mbr->GetPlayerName() : plString::Null;
+    return mbr ? mbr->GetPlayerName() : ST::null;
 }
 
-unsigned plNetClientMgr::GetPlayerIdByName (const plString & name) const {
+unsigned plNetClientMgr::GetPlayerIdByName (const ST::string & name) const {
     // local case
-    if (name.CompareI(NetCommGetPlayer()->playerName) == 0)
+    if (name.compare_i(NetCommGetPlayer()->playerName) == 0)
         return NetCommGetPlayer()->playerInt;
 
     unsigned n = TransportMgr().GetNumMembers();
     for (unsigned i = 0; i < n; ++i)
         if (plNetTransportMember * member = TransportMgr().GetMember(i))
-            if (0 == name.Compare(member->GetPlayerName()))
+            if (0 == name.compare(member->GetPlayerName()))
                 return member->GetPlayerID();
     return 0;
 }
@@ -1158,7 +1158,7 @@ bool plNetClientMgr::ObjectInLocalAge(const plSynchedObject* obj) const
 //
 // the next age we are going to
 //
-plString plNetClientMgr::GetNextAgeFilename() const
+ST::string plNetClientMgr::GetNextAgeFilename() const
 { 
     // set when we start linking to an age.
     plNetLinkingMgr * lm = plNetLinkingMgr::GetInstance();
@@ -1244,7 +1244,7 @@ void plNetClientMgr::IDisableNet () {
             if (!GetFlagsBit(plNetClientApp::kPlayingGame))
             {
                 // KI may not be loaded
-                plString title = plFormat("{} Error", plProduct::CoreName());
+                ST::string title = ST::format("{} Error", plProduct::CoreName());
                 hsMessageBox(fDisableMsg->str, title.c_str(), hsMessageBoxNormal, hsMessageBoxIconError );
                 plClientMsg *quitMsg = new plClientMsg(plClientMsg::kQuit);
                 quitMsg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
@@ -1331,7 +1331,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 if( idx != -1 )
                 {
                     hsAssert(playerKey, "NIL KEY?");
-                    hsAssert(!playerKey->GetName().IsNull(), "UNNAMED KEY");
+                    hsAssert(!playerKey->GetName().is_empty(), "UNNAMED KEY");
                     fTransport.GetMember(idx)->SetAvatarKey(playerKey);
                 }
                 else
@@ -1370,14 +1370,14 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
                 cnt++;
     }
 
-    hsAssert(cnt<2, plFormat("Object {} has multiple SDL modifiers of the same kind ({})?",
+    hsAssert(cnt<2, ST::format("Object {} has multiple SDL modifiers of the same kind ({})?",
              obj->GetKeyName(), plFactory::GetNameOfClass(classIdx)).c_str());
     return cnt==0 ? false : true;
 }
 
-plUoid plNetClientMgr::GetAgeSDLObjectUoid(const plString& ageName) const
+plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
 {
-    hsAssert(!ageName.IsEmpty(), "nil ageName");
+    hsAssert(!ageName.is_empty(), "nil ageName");
 
     // if age sdl hook is loaded
     if (fAgeSDLObjectKey)
@@ -1419,7 +1419,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
 
 #ifdef HS_DEBUGGING
     // check for age SDL state
-    if (!pl->fUoid.GetObjectName().IsNull() && !pl->fUoid.GetObjectName().Compare(plSDL::kAgeSDLObjectName))
+    if (!pl->fUoid.GetObjectName().is_empty() && !pl->fUoid.GetObjectName().compare(plSDL::kAgeSDLObjectName))
     {
         DebugMsg("Recv SDL state for age hook object, uoid={}", pl->fUoid.StringIze());
         if (!pl->fKey)

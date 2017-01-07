@@ -276,7 +276,7 @@ bool plObjectFlockerComponent::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
 
 bool plObjectFlockerComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
 {
-    node->AddModifier(fFlocker, plString::Null);
+    node->AddModifier(fFlocker, ST::null);
 
     return true;
 }

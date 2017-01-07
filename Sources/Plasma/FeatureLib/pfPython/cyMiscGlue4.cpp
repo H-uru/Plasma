@@ -144,17 +144,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    plString name;
-    if (PyUnicode_Check(nameObj))
+    ST::string name;
+    if (PyString_CheckEx(nameObj))
     {
-        PyObject* utf8 = PyUnicode_AsUTF8String(nameObj);
-        name = plString::FromUtf8(PyString_AsString(utf8));
-        Py_DECREF(utf8);
-    }
-    else if (PyString_Check(nameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        name = plString::FromUtf8(PyString_AsString(nameObj));
+        name = PyString_AsStringEx(nameObj);
     }
     else
     {
@@ -181,17 +174,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,sta
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    plString name;
-    if (PyUnicode_Check(nameObj))
+    ST::string name;
+    if (PyString_CheckEx(nameObj))
     {
-        PyObject* utf8 = PyUnicode_AsUTF8String(nameObj);
-        name = plString::FromUtf8(PyString_AsString(utf8));
-        Py_DECREF(utf8);
-    }
-    else if (PyString_Check(nameObj))
-    {
-        // we'll allow this, just in case something goes weird
-        name = plString::FromUtf8(PyString_AsString(nameObj));
+        name = PyString_AsStringEx(nameObj);
     }
     else
     {
@@ -337,7 +323,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetCameraNumber, args, "Params: x\nReturns cam
         PyErr_SetString(PyExc_TypeError, "PtGetCameraNumber expects an int");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromPlString(cyMisc::GetCameraNumber(x));
+    return PyString_FromSTString(cyMisc::GetCameraNumber(x));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumCameras, "returns camera stack size")
@@ -354,7 +340,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtRebuildCameraStack, args, "Params: name,ageNam
         PyErr_SetString(PyExc_TypeError, "PtRebuildCameraStack expects two strings");
         PYTHON_RETURN_ERROR;
     }
-    cyMisc::RebuildCameraStack(plString::FromUtf8(name), ageName);
+    cyMisc::RebuildCameraStack(ST::string::from_utf8(name), ageName);
     PYTHON_RETURN_NONE;
 }
 
@@ -703,12 +689,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress,
         PYTHON_RETURN_ERROR;
     }
 
-    plString email = emailIn;
-    plString name = nameIn ? nameIn : "Friend";
+    ST::string email = emailIn;
+    ST::string name = nameIn ? nameIn : ST_LITERAL("Friend");
     PyMem_Free(emailIn);
     PyMem_Free(nameIn);
 
-    if (email.GetSize() >= kMaxEmailAddressLength)
+    if (email.size() >= kMaxEmailAddressLength)
     {
         PyErr_SetString(PyExc_TypeError, "PtSendFriendInvite: Email address too long");
         PYTHON_RETURN_ERROR;

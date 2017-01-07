@@ -134,7 +134,7 @@ plStatusLog *plStatusLogMgr::CreateStatusLog( uint8_t numDisplayLines, const plF
     plStatusLog** nextLog = &fDisplays;
     while (*nextLog)
     {
-        if (filename.AsString().CompareI((*nextLog)->GetFileName().AsString()) <= 0)
+        if (filename.AsString().compare_i((*nextLog)->GetFileName().AsString()) <= 0)
             break;
         nextLog = &(*nextLog)->fNext;
     }
@@ -206,7 +206,7 @@ plStatusLog *plStatusLogMgr::FindLog( const plFileName &filename, bool createIfN
 
     while( log != nil )
     {
-        if (log->GetFileName().AsString().CompareI(filename.AsString()) == 0)
+        if (log->GetFileName().AsString().compare_i(filename.AsString()) == 0)
             return log;
 
         log = log->fNext;
@@ -326,17 +326,17 @@ bool plStatusLog::IReOpen( void )
     if(!(fFlags & kDontWriteFile))
     {
         plFileName fileNoExt;
-        plString ext;
+        ST::string ext;
         IParseFileName(fileNoExt, ext);
-        plFileName fileToOpen = plFormat("{}.0.{}", fileNoExt, ext);
+        plFileName fileToOpen = ST::format("{}.0.{}", fileNoExt, ext);
         if (!(fFlags & kDontRotateLogs))
         {
             plFileName work, work2;
-            work = plFormat("{}.3.{}", fileNoExt, ext);
+            work = ST::format("{}.3.{}", fileNoExt, ext);
             plFileSystem::Unlink(work);
-            work2 = plFormat("{}.2.{}", fileNoExt, ext);
+            work2 = ST::format("{}.2.{}", fileNoExt, ext);
             plFileSystem::Move(work2, work);
-            work = plFormat("{}.1.{}", fileNoExt, ext);
+            work = ST::format("{}.1.{}", fileNoExt, ext);
             plFileSystem::Move(work, work2);
             plFileSystem::Move(fileToOpen, work);
         }
@@ -387,7 +387,7 @@ void    plStatusLog::IFini( void )
     delete [] fColors;
 }
 
-void plStatusLog::IParseFileName(plFileName& fileNoExt, plString& ext) const
+void plStatusLog::IParseFileName(plFileName& fileNoExt, ST::string& ext) const
 {
     plFileName base = plStatusLogMgr::IGetBasePath();
     plFileName file;
@@ -495,16 +495,16 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine(const plString& line)
+bool plStatusLog::AddLine(const ST::string& line)
 {
     if (fLoggingOff && !fForceLog) {
         return true;
     }
 
     bool ret = true;
-    std::vector<plString> lines = line.Split("\n");
+    std::vector<ST::string> lines = line.split('\n');
 
-    for (plString& str : lines)
+    for (const ST::string& str : lines)
     {
         ret &= IAddLine(str.c_str(), -1, kWhite);
     }
@@ -730,7 +730,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
 
     }
 
-    plString out_str = plString::FromUtf8(line, count) + "\n";
+    ST::string out_str = ST::string::from_utf8(line, count) + "\n";
     if (fFlags & kDebugOutput)
     {
 

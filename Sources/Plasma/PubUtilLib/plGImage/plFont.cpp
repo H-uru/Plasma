@@ -117,7 +117,7 @@ void    plFont::IClear( bool onConstruct )
     if( !onConstruct )
         delete [] fBMapData;
 
-    fFace = plString::Null;
+    fFace = ST::null;
     fSize = 0;
     fFlags = 0;
 
@@ -222,10 +222,10 @@ static inline bool  IIsDrawableWordBreak( const char c )
 //  The base render function. Additional options are specified externally,
 //  so that their effects can be cached for optimization
 
-void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const plString &string, uint16_t *lastX, uint16_t *lastY )
+void    plFont::RenderString( plMipmap *mip, uint16_t x, uint16_t y, const ST::string &string, uint16_t *lastX, uint16_t *lastY )
 {
     // TEMP
-    RenderString(mip, x, y, string.ToWchar().GetData(), lastX, lastY);
+    RenderString(mip, x, y, string.to_wchar().data(), lastX, lastY);
 }
 
 
@@ -1172,7 +1172,7 @@ void    plFont::IRenderCharNull( const plCharacter &c )
 
 //// CalcString Variations ////////////////////////////////////////////////////
 
-uint16_t  plFont::CalcStringWidth( const plString &string )
+uint16_t  plFont::CalcStringWidth( const ST::string &string )
 {
     uint16_t w, h, a, lX, lY;
     uint32_t s;
@@ -1188,10 +1188,10 @@ uint16_t  plFont::CalcStringWidth( const wchar_t *string )
     return w;
 }
 
-void    plFont::CalcStringExtents( const plString &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
+void    plFont::CalcStringExtents( const ST::string &string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
 {
     // convert the char string to a wchar_t string
-    CalcStringExtents(string.ToWchar().GetData(), width, height, ascent, firstClippedChar, lastX, lastY);
+    CalcStringExtents(string.to_wchar().data(), width, height, ascent, firstClippedChar, lastX, lastY);
 }
 
 void    plFont::CalcStringExtents( const wchar_t *string, uint16_t &width, uint16_t &height, uint16_t &ascent, uint32_t &firstClippedChar, uint16_t &lastX, uint16_t &lastY )
@@ -2158,7 +2158,7 @@ bool    plFont::ReadRaw( hsStream *s )
 bool    plFont::WriteRaw( hsStream *s )
 {
     char face_buf[256] = { 0 };
-    memcpy(face_buf, fFace.c_str(), fFace.GetSize() * sizeof(char));
+    memcpy(face_buf, fFace.c_str(), fFace.size() * sizeof(char));
     s->Write(sizeof(face_buf), face_buf);
 
     s->WriteByte( fSize );

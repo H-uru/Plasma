@@ -191,7 +191,7 @@ void    pfGUICheckBoxCtrl::SetChecked( bool checked, bool immediate /*= false*/ 
     }
 }
 
-void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const plString &name )
+void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string &name )
 {
     fAnimationKeys = keys;
     fAnimName = name;

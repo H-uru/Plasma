@@ -50,7 +50,7 @@ plGeneric::plGeneric(const int& val): fType(kInt), fBoolVal(false), fIntVal(val)
 
 plGeneric::plGeneric(const double& val): fType(kFloat), fBoolVal(false), fIntVal(0), fFloatVal(val) {}
 
-plGeneric::plGeneric(const plString& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
+plGeneric::plGeneric(const ST::string& val): fType(kString), fBoolVal(false), fIntVal(0), fFloatVal(0.0),
 fStringVal(val) {}
 
 void plGeneric::IReset()
@@ -86,7 +86,7 @@ plGeneric& plGeneric::operator=(const double& val)
     return *this;
 }
 
-plGeneric& plGeneric::operator=(const plString& val)
+plGeneric& plGeneric::operator=(const ST::string& val)
 {
     IReset();
     fType = kString;

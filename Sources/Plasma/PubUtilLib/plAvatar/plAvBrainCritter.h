@@ -100,7 +100,7 @@ public:
     bool RunningBehavior(const std::string& behaviorName) const;
 
     std::string BehaviorName(int behavior) const;
-    plString AnimationName(int behavior) const;
+    ST::string AnimationName(int behavior) const;
     int CurBehavior() const {return fCurMode;}
     int NextBehavior() const {return fNextMode;}
 

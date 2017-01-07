@@ -51,6 +51,7 @@ add_executable(plResBrowser WIN32 MACOSX_BUNDLE
 target_link_libraries(plResBrowser CoreLib)
 target_link_libraries(plResBrowser plResMgr)
 target_link_libraries(plResBrowser pnSceneObject)
+target_link_libraries(plResBrowser ${STRING_THEORY_LIBRARIES})
 target_link_libraries(plResBrowser Qt5::Widgets)
 
 if(USE_VLD)

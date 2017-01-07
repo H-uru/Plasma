@@ -105,6 +105,7 @@ target_link_libraries(test_pfPython ${Ogg_LIBRARIES})
 target_link_libraries(test_pfPython ${Vorbis_LIBRARIES})
 target_link_libraries(test_pfPython ${DirectX_LIBRARIES})
 target_link_libraries(test_pfPython ${CURL_LIBRARY})
+target_link_libraries(test_pfPython ${STRING_THEORY_LIBRARIES})
 
 if (WIN32)
     target_link_libraries(test_pfPython Rpcrt4)

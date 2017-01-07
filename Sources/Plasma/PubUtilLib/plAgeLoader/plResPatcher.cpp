@@ -74,19 +74,19 @@ void plResPatcher::Shutdown()
 
 /////////////////////////////////////////////////////////////////////////////
 
-void plResPatcher::OnCompletion(ENetError result, const plString& status)
+void plResPatcher::OnCompletion(ENetError result, const ST::string& status)
 {
-    plString error = plString::Null;
+    ST::string error = ST::null;
     if (IS_NET_ERROR(result))
-        error = plFormat("Update Failed: {}\n{}", NetErrorAsString(result), status);
+        error = ST::format("Update Failed: {}\n{}", NetErrorAsString(result), status);
     plgDispatch::Dispatch()->MsgQueue(new plResPatcherMsg(IS_NET_SUCCESS(result), error));
 }
 
 void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 {
-    fProgress->SetTitle(plFormat("Downloading {}...", file.GetFileName()));
+    fProgress->SetTitle(ST::format("Downloading {}...", file.GetFileName()));
 
-    if (file.GetFileExt().CompareI("prp") == 0) {
+    if (file.GetFileExt().compare_i("prp") == 0) {
         plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
         if (mgr)
             mgr->RemoveSinglePage(file);
@@ -95,7 +95,7 @@ void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 
 void plResPatcher::OnFileDownloaded(const plFileName& file)
 {
-    if (file.GetFileExt().CompareI("prp") == 0) {
+    if (file.GetFileExt().compare_i("prp") == 0) {
         plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
         if (mgr)
             mgr->AddSinglePage(file);
@@ -117,14 +117,14 @@ bool plResPatcher::OnGameCodeDiscovered(const plFileName& file, hsStream* stream
     return true; // ASSume success for now...
 }
 
-void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const plString& msg)
+void plResPatcher::OnProgressTick(uint64_t dl, uint64_t total, const ST::string& msg)
 {
     if (dl && total) {
         fProgress->SetLength(total);
         fProgress->SetHowMuch(dl);
     }
 
-    plString status = plFormat("{} / {}",
+    ST::string status = ST::format("{} / {}",
         plFileSystem::ConvertFileSize(dl),
         plFileSystem::ConvertFileSize(total)
     );
@@ -167,7 +167,7 @@ plResPatcher::~plResPatcher()
     delete fProgress;
 }
 
-void plResPatcher::Update(const std::vector<plString>& manifests)
+void plResPatcher::Update(const std::vector<ST::string>& manifests)
 {
     if (gDataServerLocal)
         plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());
@@ -179,7 +179,7 @@ void plResPatcher::Update(const std::vector<plString>& manifests)
     }
 }
 
-void plResPatcher::Update(const plString& manifest)
+void plResPatcher::Update(const ST::string& manifest)
 {
     if (gDataServerLocal)
         plgDispatch::Dispatch()->MsgSend(new plResPatcherMsg());

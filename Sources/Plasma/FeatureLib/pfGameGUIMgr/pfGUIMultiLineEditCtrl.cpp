@@ -61,7 +61,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "plClipboard/plClipboard.h"
-#include "plString.h"
 
 //// Tiny Helper Class ///////////////////////////////////////////////////////
 
@@ -1122,12 +1121,12 @@ bool    pfGUIMultiLineEditCtrl::HandleKeyEvent( pfGameGUIMgr::EventType event, p
             // Too lazy to worry about that...
             if (key == KEY_C) 
             {
-                plClipboard::GetInstance().SetClipboardText(plString::FromWchar(fBuffer.AcquireArray()));
+                plClipboard::GetInstance().SetClipboardText(ST::string::from_wchar(fBuffer.AcquireArray()));
             }
             else if (key == KEY_V)
             {
-                plString contents = plClipboard::GetInstance().GetClipboardText();
-                InsertString(contents.ToWchar().GetData());
+                ST::string contents = plClipboard::GetInstance().GetClipboardText();
+                InsertString(contents.to_wchar().data());
             }
         } 
         else if( key == KEY_ESCAPE )
@@ -1837,7 +1836,7 @@ void pfGUIMultiLineEditCtrl::IHitBeginningOfControlList(int32_t cursorPos)
     }
 }
 
-void pfGUIMultiLineEditCtrl::SetFontFace(const plString &fontFace)
+void pfGUIMultiLineEditCtrl::SetFontFace(const ST::string &fontFace)
 {
     fFontFace = fontFace;
     fFontFlagsSet |= kFontFaceSet;

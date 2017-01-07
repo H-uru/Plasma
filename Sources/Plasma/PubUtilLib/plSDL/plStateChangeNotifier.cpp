@@ -120,8 +120,9 @@ bool plStateChangeNotifier::operator==(const plStateChangeNotifier &other) const
 //
 // send notification msg to all registered recipients
 //
-void plStateChangeNotifier::SendNotificationMsg(const plSimpleStateVariable* srcVar, const plSimpleStateVariable* dstVar, 
-                                                const plString& sdlName)
+void plStateChangeNotifier::SendNotificationMsg(const plSimpleStateVariable* srcVar,
+                                                const plSimpleStateVariable* dstVar,
+                                                const ST::string& sdlName)
 {
     plSDLNotificationMsg* m = new plSDLNotificationMsg;
 

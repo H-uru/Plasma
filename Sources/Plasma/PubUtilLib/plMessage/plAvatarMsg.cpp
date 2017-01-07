@@ -186,7 +186,7 @@ plAvSeekMsg::plAvSeekMsg()
 // CTOR(sender, receiver, seekKey, time)
 plAvSeekMsg::plAvSeekMsg(const plKey& sender, const plKey& receiver,
                          const plKey &seekKey, float duration, bool smartSeek,
-                         plAvAlignment alignType, const plString& animName, bool noSeek, 
+                         plAvAlignment alignType, const ST::string& animName, bool noSeek,
                          uint8_t flags, plKey finishKey)
 : plAvTaskMsg(sender, receiver),
   fSeekPoint(seekKey),
@@ -296,7 +296,7 @@ plAvOneShotMsg::plAvOneShotMsg()
 // CTOR(sender, receiver, seekKey, time)
 plAvOneShotMsg::plAvOneShotMsg(const plKey &sender, const plKey& receiver,
                          const plKey& seekKey, float duration, bool smartSeek,
-                         const plString &animName, bool drivable, bool reversible)
+                         const ST::string &animName, bool drivable, bool reversible)
 : plAvSeekMsg(sender, receiver, seekKey, duration, smartSeek, kAlignHandle, animName),
   fDrivable(drivable), fReversible(reversible), fCallbacks(nil)
 {

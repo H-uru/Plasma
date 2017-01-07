@@ -265,7 +265,7 @@ public:
     void SendApplyAvatarCustomizationsMsg(const plKey msgReceiver, bool netPropagate=true, bool localPropagate=true);
 
     // plLoggable
-    bool Log(const plString& str) const HS_OVERRIDE;
+    bool Log(const ST::string& str) const HS_OVERRIDE;
 
     // setters
     void SetIniAuthServer(const char * value)  { fIniAuthServer=value;}
@@ -282,9 +282,9 @@ public:
     
     // getters
     uint32_t            GetPlayerID( void ) const;
-    plString            GetPlayerName( const plKey avKey=nil ) const;
-    plString            GetPlayerNameById (unsigned playerId) const;
-    unsigned            GetPlayerIdByName(const plString & name) const;
+    ST::string          GetPlayerName( const plKey avKey=nil ) const;
+    ST::string          GetPlayerNameById (unsigned playerId) const;
+    unsigned            GetPlayerIdByName(const ST::string & name) const;
 
     uint8_t GetJoinOrder()              const { return fJoinOrder; }    // only valid at join time
 
@@ -344,7 +344,7 @@ public:
     
     // time converters
     plUnifiedTime GetServerTime() const;
-    const char* GetServerLogTimeAsString(plString& ts) const;
+    const char* GetServerLogTimeAsString(ST::string& ts) const;
     double GetCurrentAgeElapsedSeconds() const;
     float GetCurrentAgeTimeOfDayPercent() const;
 
@@ -358,9 +358,9 @@ public:
 
     void AddPendingLoad(PendingLoad *pl);
     const plKey& GetAgeSDLObjectKey() const { return fAgeSDLObjectKey; }
-    plUoid GetAgeSDLObjectUoid(const plString& ageName) const;
+    plUoid GetAgeSDLObjectUoid(const ST::string& ageName) const;
     plNetClientComm& GetNetClientComm()  { return fNetClientComm; }
-    plString GetNextAgeFilename() const;
+    ST::string GetNextAgeFilename() const;
     void SetOverrideAgeTimeOfDayPercent(float f) { fOverrideAgeTimeOfDayPercent=f;  }
 
     void AddPendingPagingRoomMsg( plNetMsgPagingRoom * msg );

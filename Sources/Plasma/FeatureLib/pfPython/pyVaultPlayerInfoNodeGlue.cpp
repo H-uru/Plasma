@@ -89,7 +89,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetName)
 {
-    return PyString_FromPlString(self->fThis->Player_GetPlayerName());
+    return PyString_FromSTString(self->fThis->Player_GetPlayerName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeInstanceName, args)
@@ -106,7 +106,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetAgeInstanceName)
 {
-    return PyString_FromPlString(self->fThis->Player_GetAgeInstanceName());
+    return PyString_FromSTString(self->fThis->Player_GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeGuid, args)
@@ -123,7 +123,7 @@ PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetAgeGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultPlayerInfoNode, playerGetAgeGuid)
 {
-    return PyString_FromPlString(self->fThis->Player_GetAgeGuid().AsString());
+    return PyString_FromSTString(self->fThis->Player_GetAgeGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultPlayerInfoNode, playerSetOnline, args)

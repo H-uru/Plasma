@@ -111,7 +111,7 @@ bool plLayerMovie::ISetupBitmap()
         memset(b->GetImage(), 0x10, b->GetHeight() * b->GetRowBytes() );
         b->SetFlags( b->GetFlags() | plMipmap::kDontThrowAwayImage );
 
-        plString name = plFormat("{}_BMap", fMovieName);
+        ST::string name = ST::format("{}_BMap", fMovieName);
         hsgResMgr::ResMgr()->NewKey( name, b, plLocation::kGlobalFixedLoc );
 
         *fTexture = (plBitmap *)b;
@@ -182,11 +182,11 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     int len = s->ReadLE32();
     if( len )
     {
-        plStringBuffer<char> movieName;
-        char *buf = movieName.CreateWritableBuffer(len);
+        ST::char_buffer movieName;
+        char *buf = movieName.create_writable_buffer(len);
         s->Read(len, buf);
         buf[len] = 0;
-        fMovieName = plString(movieName);
+        fMovieName = ST::string(movieName);
     }
     else
     {

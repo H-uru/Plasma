@@ -87,16 +87,16 @@ void pyVaultTextNoteNode::Note_SetTitleW( const wchar_t * text )
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteTitle(plString::FromWchar(text));
+    textNote.SetNoteTitle(ST::string::from_wchar(text));
 }
 
-plString pyVaultTextNoteNode::Note_GetTitle() const
+ST::string pyVaultTextNoteNode::Note_GetTitle() const
 {
     if (fNode) {
         VaultTextNoteNode note(fNode);
         return note.GetNoteTitle();
     }
-    return "";
+    return ST::null;
 }
 
 void pyVaultTextNoteNode::Note_SetText(const char * text)
@@ -113,16 +113,16 @@ void pyVaultTextNoteNode::Note_SetTextW( const wchar_t * text )
         return;
 
     VaultTextNoteNode textNote(fNode);
-    textNote.SetNoteText(plString::FromWchar(text));
+    textNote.SetNoteText(ST::string::from_wchar(text));
 }
 
-plString pyVaultTextNoteNode::Note_GetText() const
+ST::string pyVaultTextNoteNode::Note_GetText() const
 {
     if (fNode) {
         VaultTextNoteNode note(fNode);
         return note.GetNoteText();
     }
-    return "";
+    return ST::null;
 }
 
 void pyVaultTextNoteNode::Note_SetType( int32_t type )

@@ -89,7 +89,7 @@ void    plFontCache::Clear( void )
 {
 }
 
-plFont  *plFontCache::GetFont( const plString &face, uint8_t size, uint32_t fontFlags )
+plFont  *plFontCache::GetFont( const ST::string &face, uint8_t size, uint32_t fontFlags )
 {
     uint32_t  i, currIdx = (uint32_t)-1;
     int     currDeltaSize = 100000;
@@ -97,7 +97,7 @@ plFont  *plFontCache::GetFont( const plString &face, uint8_t size, uint32_t font
 
     for( i = 0; i < fCache.GetCount(); i++ )
     {
-        if (fCache[i]->GetFace().CompareNI(face, face.GetSize()) == 0 &&
+        if (fCache[i]->GetFace().compare_ni(face, face.size()) == 0 &&
             (fCache[i]->GetFlags() == fontFlags))
         {
             int delta = fCache[ i ]->GetSize() - size;
@@ -120,10 +120,10 @@ plFont  *plFontCache::GetFont( const plString &face, uint8_t size, uint32_t font
 
     // If we failed, it's possible we have a face saved as "Times", for example, and someone's
     // asking for "Times New Roman", so strip all but the first word from our font and try the search again
-    ssize_t sp = face.Find(' ');
+    ST_ssize_t sp = face.find(' ');
     if (sp >= 0)
     {
-        return GetFont(face.Left(sp), size, fontFlags);
+        return GetFont(face.left(sp), size, fontFlags);
     }
     else if( fontFlags != 0 )
     {
@@ -160,10 +160,10 @@ void plFontCache::ILoadCustomFonts( void )
             delete font;
         else
         {
-            plString keyName;
+            ST::string keyName;
             if (font->GetKey() == nil)
             {
-                keyName = plFormat("{}-{}", font->GetFace(), font->GetSize());
+                keyName = ST::format("{}-{}", font->GetFace(), font->GetSize());
                 hsgResMgr::ResMgr()->NewKey( keyName, font, plLocation::kGlobalFixedLoc );
             }
 

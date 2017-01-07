@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plDXShader_inc
 
 #include "plDXDeviceRef.h"
-#include "plString.h"
+#include <string_theory/string>
 
 class plShader;
 class plDXPipeline;
@@ -53,7 +53,7 @@ class plDXShader : public plDXDeviceRef
 {
 protected:
     plShader*           fOwner;
-    plString            fErrorString;
+    ST::string          fErrorString;
     plDXPipeline*       fPipe;
 
     HRESULT             IOnError(HRESULT hr, const char* errStr);
@@ -66,7 +66,7 @@ public:
     plDXShader(plShader* owner);
     virtual ~plDXShader();
 
-    plString        GetErrorString() const { return fErrorString; }
+    ST::string      GetErrorString() const { return fErrorString; }
     void            SetOwner(plShader* owner);
 };
 

@@ -87,10 +87,10 @@ void plBaseStage::IDestroyDlg(HWND hDlg)
         GetCOREInterface()->DeleteRollupPage(hDlg);
 }
 
-plString plBaseStage::GetName()
+ST::string plBaseStage::GetName()
 {
-    if (fName.IsEmpty())
-        fName = "DefaultName";
+    if (fName.is_empty())
+        fName = ST_LITERAL("DefaultName");
     return fName;
 }
 

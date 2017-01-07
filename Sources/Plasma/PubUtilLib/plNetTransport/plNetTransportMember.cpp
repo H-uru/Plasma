@@ -73,11 +73,11 @@ int plNetTransportMember::FindSubscription(int chan)
     return (it==fSubscriptions.end()) ? -1 : (it-fSubscriptions.begin());
 }
 
-plString plNetTransportMember::AsString() const
+ST::string plNetTransportMember::AsString() const
 {
     if (IsServer())
     {
-        return "(server)";
+        return ST_LITERAL("(server)");
     }
     else
     {

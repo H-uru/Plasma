@@ -47,10 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 struct ScoreFindParam
 {
     uint32_t fOwnerId;
-    plString fName;
+    ST::string fName;
     plKey fReceiver; // because plKey as a void* isn't cool
 
-    ScoreFindParam(uint32_t ownerId, plString name, plKey r)
+    ScoreFindParam(uint32_t ownerId, const ST::string& name, plKey r)
         : fOwnerId(ownerId), fName(name), fReceiver(r)
     { }
 };
@@ -138,7 +138,7 @@ static void OnScoreCreate(
     uint32_t        scoreId,
     uint32_t        createdTime, // ignored
     uint32_t        ownerId,
-    const plString& gameName,
+    const ST::string& gameName,
     uint32_t        gameType,
     int32_t         value
 ) {
@@ -149,7 +149,7 @@ static void OnScoreCreate(
     delete p;
 }
 
-void pfGameScore::Create(uint32_t ownerId, const plString& name, uint32_t type, int32_t value, const plKey& rcvr)
+void pfGameScore::Create(uint32_t ownerId, const ST::string& name, uint32_t type, int32_t value, const plKey& rcvr)
 {
     NetCliAuthScoreCreate(ownerId, name, type, value, OnScoreCreate, new ScoreUpdateParam(nil, rcvr));
 }
@@ -174,12 +174,12 @@ static void OnScoreFound(
     delete p;
 }
 
-void pfGameScore::Find(uint32_t ownerId, const plString& name, const plKey& rcvr)
+void pfGameScore::Find(uint32_t ownerId, const ST::string& name, const plKey& rcvr)
 {
     NetCliAuthScoreGetScores(ownerId, name, OnScoreFound, new ScoreFindParam(ownerId, name, rcvr));
 }
 
-void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const plString& name, const plKey& rcvr)
+void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const ST::string& name, const plKey& rcvr)
 {
     NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
 }

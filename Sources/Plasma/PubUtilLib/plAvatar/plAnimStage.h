@@ -50,7 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <vector>
 #include "hsMatrix44.h"
 #include "pnFactory/plCreatable.h"
-#include "plString.h"
 
 class plMessage;
 class plAGAnimInstance;
@@ -159,7 +158,7 @@ public:
                         animation attempts to reposition the avatar by having a
                         channel attached to the avatar's handle.
     */
-    plAnimStage(const plString &animName,
+    plAnimStage(const ST::string &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType backward,
@@ -173,7 +172,7 @@ public:
         will be played after this one, depending on which direction the stage is
         moving.
     */
-    plAnimStage(const plString &animName,
+    plAnimStage(const ST::string &animName,
                 uint8_t notify,
                 ForwardType forward,
                 BackType back,
@@ -190,7 +189,7 @@ public:
         \param animName The name of the animation controlled by this stage.
         \param notify Flags for when to send notify messages
         */
-    plAnimStage(const plString &animName, uint8_t notify);
+    plAnimStage(const ST::string &animName, uint8_t notify);
     virtual ~plAnimStage();
     const plAnimStage& operator=(const plAnimStage& src);
 
@@ -201,7 +200,7 @@ public:
     bool MoveRelative(double worldTime, float delta, float &overage, plArmatureMod *avMod);
 
     /** The name of the animation associated with this stage. */
-    plString GetAnimName() const { return fAnimName; }
+    ST::string GetAnimName() const { return fAnimName; }
 
     ForwardType GetForwardType();
     void SetForwardType(ForwardType t);
@@ -255,7 +254,7 @@ protected:
 
     bool ISendNotify(uint32_t notifyMask, uint32_t notifyType, plArmatureMod *armature, plArmatureBrain *brain);
 
-    plString fAnimName;         // the name of our animation
+    ST::string fAnimName;       // the name of our animation
     uint8_t fNotify;            // flags for which events will cause notification events
     int fLoops;                 // how many times will this animation loop (after initial playthrough?)
 

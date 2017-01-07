@@ -82,10 +82,10 @@ pfFilePasswordStore::pfFilePasswordStore()
 }
 
 
-const plString pfFilePasswordStore::GetPassword(const plString& username)
+ST::string pfFilePasswordStore::GetPassword(const ST::string& username)
 {
     plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
-    plString password = plString::Null;
+    ST::string password = ST::null;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // internal builds can use the local init directory
@@ -102,8 +102,8 @@ const plString pfFilePasswordStore::GetPassword(const plString& username)
 
         if (memcmp(fCryptKey, savedKey, sizeof(savedKey)) == 0 && !stream->AtEnd())
         {
-            plString uname = stream->ReadSafeString();
-            if (username.CompareI(uname) == 0) {
+            ST::string uname = stream->ReadSafeString();
+            if (username.compare_i(uname) == 0) {
                 password = stream->ReadSafeString();
             }
         }
@@ -116,7 +116,7 @@ const plString pfFilePasswordStore::GetPassword(const plString& username)
 }
 
 
-bool pfFilePasswordStore::SetPassword(const plString& username, const plString& password)
+bool pfFilePasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
     plFileName loginDat = plFileName::Join(plFileSystem::GetInitPath(), "login.dat");
 

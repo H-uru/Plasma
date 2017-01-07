@@ -75,8 +75,8 @@ protected:
     pyJournalBook( std::wstring esHTMLSource, pyKey callbackKey );
     pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey );
     pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey );
-    pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey, const plString &guiName );
-    pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey, const plString &guiName );
+    pyJournalBook( const char *esHTMLSource, pyImage &coverImage, pyKey callbackKey, const ST::string &guiName );
+    pyJournalBook( std::wstring esHTMLSource, pyImage &coverImage, pyKey callbackKey, const ST::string &guiName );
 
 public:
     virtual ~pyJournalBook();
@@ -85,8 +85,8 @@ public:
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptBook);
-    static PyObject *New(std::string htmlSource, plKey coverImageKey = nil, plKey callbackKey = nil, plString guiName = "");
-    static PyObject *New(std::wstring htmlSource, plKey coverImageKey = nil, plKey callbackKey = nil, plString guiName = "");
+    static PyObject *New(std::string htmlSource, plKey coverImageKey = nil, plKey callbackKey = nil, const ST::string &guiName = ST::null);
+    static PyObject *New(std::wstring htmlSource, plKey coverImageKey = nil, plKey callbackKey = nil, const ST::string &guiName = ST::null);
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyJournalBook object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyJournalBook); // converts a PyObject to a pyJournalBook (throws error if not correct type)
 
@@ -95,8 +95,8 @@ public:
     static void AddPlasmaConstantsClasses(PyObject *m);
 
     // Deletes the existing book and re-creates it, for use by the python glue
-    void MakeBook(std::string esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, plString guiName = "");
-    void MakeBook(std::wstring esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, plString guiName = "");
+    void MakeBook(std::string esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const ST::string &guiName = ST::null);
+    void MakeBook(std::wstring esHTMLSource, plKey coverImageKey = nil, plKey callbackKey = nil, const ST::string &guiName = ST::null);
 
     // Interface functions per book
     virtual void    Show( bool startOpened );
@@ -114,10 +114,10 @@ public:
 
     virtual void    SetSize( float width, float height );
 
-    virtual void    SetGUI( const plString &guiName );
+    virtual void    SetGUI( const ST::string &guiName );
 
-    static void     LoadGUI( const plString &guiName );
-    static void     UnloadGUI( const plString &guiName );
+    static void     LoadGUI( const ST::string &guiName );
+    static void     UnloadGUI( const ST::string &guiName );
     static void     UnloadAllGUIs();
 
     virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation

@@ -100,7 +100,7 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 
 void plShardStatus::Run()
 {
-    plString url = GetServerStatusUrl();
+    ST::string url = GetServerStatusUrl();
 
     // initialize CURL
     std::unique_ptr<CURL, decltype(&curl_easy_cleanup)> curl(curl_easy_init(), curl_easy_cleanup);
@@ -119,7 +119,7 @@ void plShardStatus::Run()
         if (GetQuit())
             break;
 
-        if (!url.IsEmpty() && curl_easy_perform(curl.get()))
+        if (!url.is_empty() && curl_easy_perform(curl.get()))
             fShardFunc(fCurlError);
         fLastUpdate = hsTimer::GetSysSeconds();
     } while (!GetQuit());
@@ -210,14 +210,14 @@ plClientLauncher::~plClientLauncher() { }
 
 // ===================================================
 
-plString plClientLauncher::GetAppArgs() const
+ST::string plClientLauncher::GetAppArgs() const
 {
     // If -Repair was specified, there are no args for the next call...
     if (hsCheckBits(fFlags, kRepairGame)) {
-        return "";
+        return ST::null;
     }
 
-    plStringStream ss;
+    ST::string_stream ss;
     ss << "-ServerIni=";
     ss << fServerIni.AsString();
 
@@ -229,10 +229,10 @@ plString plClientLauncher::GetAppArgs() const
     if (hsCheckBits(fFlags, kSkipLoginDialog))
         ss << " -SkipLoginDialog";
 
-    return ss.GetString();
+    return ss.to_string();
 }
 
-void plClientLauncher::IOnPatchComplete(ENetError result, const plString& msg)
+void plClientLauncher::IOnPatchComplete(ENetError result, const ST::string& msg)
 {
     if (IS_NET_SUCCESS(result)) {
         // a couple of options
@@ -257,7 +257,7 @@ bool plClientLauncher::IApproveDownload(const plFileName& file)
     // So, for a repair, what we want to do is quite simple.
     // That is: download everything that is NOT in the root directory.
     plFileName path = file.StripFileName();
-    return !path.AsString().IsEmpty();
+    return !path.AsString().is_empty();
 }
 
 void plClientLauncher::LaunchClient() const
@@ -302,8 +302,8 @@ bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) con
     if (hsCheckBits(fFlags, kHaveSelfPatched))
         return false;
 
-    plString myExe = plFileSystem::GetCurrentAppPath().GetFileName();
-    if (myExe.CompareI(plManifest::PatcherExecutable().AsString()) != 0) {
+    ST::string myExe = plFileSystem::GetCurrentAppPath().GetFileName();
+    if (myExe.compare_i(plManifest::PatcherExecutable().AsString()) != 0) {
         waitProc();
 
         // so now we need to unlink the old patcher, and move ME into that fool's place...
@@ -326,14 +326,14 @@ bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) con
 
 // ===================================================
 
-static void IGotFileServIPs(ENetError result, void* param, const plString& addr)
+static void IGotFileServIPs(ENetError result, void* param, const ST::string& addr)
 {
     plClientLauncher* launcher = static_cast<plClientLauncher*>(param);
     NetCliGateKeeperDisconnect();
 
     if (IS_NET_SUCCESS(result)) {
         // bah... why do I even bother
-        plString eapSucks[] = { addr };
+        ST::string eapSucks[] = { addr };
         NetCliFileStartConnect(eapSucks, 1, true);
 
         // Who knows if we will actually connect. So let's start updating.
@@ -345,7 +345,7 @@ static void IGotFileServIPs(ENetError result, void* param, const plString& addr)
 static void IEapSucksErrorProc(ENetProtocol protocol, ENetError error)
 {
     if (s_errorProc) {
-        plString msg = plFormat("Protocol: {}", NetProtocolToString(protocol));
+        ST::string msg = ST::format("Protocol: {}", NetProtocolToString(protocol));
         s_errorProc(error, msg);
     }
 }
@@ -364,7 +364,7 @@ void plClientLauncher::InitializeNetCore()
     NetClientSetTransTimeoutMs(kNetTransTimeout);
 
     // Gotta grab the filesrvs from the gate
-    const plString* addrs;
+    const ST::string* addrs;
     uint32_t num = GetGateKeeperSrvHostnames(addrs);
 
     NetCliGateKeeperStartConnect(addrs, num);
@@ -433,10 +433,10 @@ void plClientLauncher::ParseArguments()
         { kCmdArgFlagged | kCmdTypeBool, "SkipLoginDialog", kArgSkipLoginDialog }
     };
 
-    std::vector<plString> args;
+    std::vector<ST::string> args;
     args.reserve(__argc);
     for (size_t i = 0; i < __argc; i++) {
-        args.push_back(plString::FromUtf8(__argv[i]));
+        args.push_back(ST::string::from_utf8(__argv[i]));
     }
 
     plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
@@ -453,7 +453,7 @@ void plClientLauncher::ParseArguments()
 
     // last chance setup
     if (hsCheckBits(fFlags, kPatchOnly))
-        fClientExecutable = "";
+        fClientExecutable = ST::null;
     else if (hsCheckBits(fFlags, kRepairGame))
         fClientExecutable = plManifest::PatcherExecutable();
 

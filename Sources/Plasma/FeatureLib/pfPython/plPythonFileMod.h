@@ -71,10 +71,10 @@ protected:
 
     bool IEval(double secs, float del, uint32_t dirty);
 
-    plString IMakeModuleName(plSceneObject* sobj);
+    ST::string IMakeModuleName(plSceneObject* sobj);
 
-    plString    fPythonFile;
-    plString    fModuleName;
+    ST::string  fPythonFile;
+    ST::string  fModuleName;
 
     // the list of receivers that want to be notified
     hsTArray<plKey>         fReceivers;
@@ -101,15 +101,15 @@ protected:
 
     struct NamedComponent
     {
-        plString    name;
+        ST::string  name;
         int32_t     id;
         bool        isActivator;
     };
 
     hsTArray<NamedComponent> fNamedCompQueue;
 
-    virtual void IFindResponderAndAdd(const plString &responderName, int32_t id);
-    virtual void IFindActivatorAndAdd(const plString &activatorName, int32_t id);
+    virtual void IFindResponderAndAdd(const ST::string &responderName, int32_t id);
+    virtual void IFindActivatorAndAdd(const ST::string &activatorName, int32_t id);
     void ISetKeyValue(const plKey& key, int32_t id);
 
     bool ILoadPythonCode();
@@ -131,7 +131,7 @@ public:
     plPythonSDLModifier* GetSDLMod() { return fSDLMod; }
     bool WasLocalNotify() { return fLocalNotify; }
     plPipeline* GetPipeline() { return fPipe; }
-    virtual void SetSourceFile(const plString& filename);
+    virtual void SetSourceFile(const ST::string& filename);
     virtual int getPythonOutput(std::string* line);
     virtual void ReportError();
     virtual void DisplayPythonOutput();
@@ -206,7 +206,7 @@ public:
     static const char* fFunctionNames[];
 
     // The konstant hard-coded name to be used for all global pythonFileMods
-    static plString kGlobalNameKonstant;
+    static ST::string kGlobalNameKonstant;
 
     // API for processing discarded keys as the deafult key catcher
     void    HandleDiscardedKey( plKeyEventMsg *msg );

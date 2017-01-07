@@ -32,11 +32,9 @@ set(CoreLib_SOURCES
     pcSmallRect.cpp
     plCmdParser.cpp
     plFileSystem.cpp
-    plFormat.cpp
     plGeneric.cpp
     plLoadMask.cpp
     plProduct.cpp
-    plString.cpp
     plViewTransform.cpp
 )
 
@@ -80,12 +78,10 @@ set(CoreLib_HEADERS
     pcSmallRect.h
     plCmdParser.h
     plFileSystem.h
-    plFormat.h
     plGeneric.h
     plLoadMask.h
     plProduct.h
     plQuality.h
-    plString.h
     plTweak.h
     plViewTransform.h
 )

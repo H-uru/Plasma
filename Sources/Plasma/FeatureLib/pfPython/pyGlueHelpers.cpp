@@ -41,26 +41,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include <Python.h>
+#include <string_theory/string>
 #include "pyGlueHelpers.h"
-#include "plString.h"
 #pragma hdrstop
 
-plString PyString_AsStringEx(PyObject* obj) 
+ST::string PyString_AsStringEx(PyObject* obj)
 {
     if (PyString_Check(obj))
-        return plString::FromUtf8(PyString_AsString(obj));
+        return ST::string::from_utf8(PyString_AsString(obj));
 
     if (PyUnicode_Check(obj)) {
 #if (Py_UNICODE_SIZE == 2)
-        return plString::FromUtf16(reinterpret_cast<const uint16_t *>(PyUnicode_AsUnicode(obj)));
+        return ST::string::from_utf16(reinterpret_cast<const char16_t *>(PyUnicode_AsUnicode(obj)));
 #elif (Py_UNICODE_SIZE == 4)
-        return plString::FromUtf32(reinterpret_cast<const plUniChar *>(PyUnicode_AsUnicode(obj)));
+        return ST::string::from_utf32(reinterpret_cast<const char32_t *>(PyUnicode_AsUnicode(obj)));
 #else
 #       error "Py_UNICODE is an unexpected size"
 #endif
     }
 
-    return plString::Null;
+    return ST::null;
 }
 
 bool PyString_CheckEx(PyObject* obj)
@@ -68,8 +68,8 @@ bool PyString_CheckEx(PyObject* obj)
     return (PyString_Check(obj) || PyUnicode_Check(obj));
 }
 
-PyObject* PyUnicode_FromPlString(const plString& str)
+PyObject* PyUnicode_FromSTString(const ST::string& str)
 {
-    plStringBuffer<wchar_t> buf = str.ToWchar();
-    return PyUnicode_FromWideChar(buf.GetData(), buf.GetSize());
+    ST::wchar_buffer buf = str.to_wchar();
+    return PyUnicode_FromWideChar(buf.data(), buf.size());
 }

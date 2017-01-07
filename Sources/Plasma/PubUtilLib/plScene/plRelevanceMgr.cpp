@@ -149,12 +149,12 @@ bool plRelevanceMgr::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-uint32_t plRelevanceMgr::GetIndex(const plString &regionName)
+uint32_t plRelevanceMgr::GetIndex(const ST::string &regionName)
 {
     int i;
     for (i = 0; i < fRegions.GetCount(); i++)
     {
-        if (fRegions[i] && !regionName.Compare(fRegions[i]->GetKeyName(), plString::kCaseInsensitive))
+        if (fRegions[i] && !regionName.compare(fRegions[i]->GetKeyName(), ST::case_insensitive))
             return i + 1;
     }
 
@@ -248,24 +248,24 @@ void plRelevanceMgr::ParseCsvInput(hsStream *s)
         delete regions[i];
 }
 
-plString plRelevanceMgr::GetRegionNames(hsBitVector regions)
+ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
 {
-    plString retVal;
+    ST::string retVal;
     if (regions.IsBitSet(0))
-        retVal = "-Nowhere (0)-";
+        retVal = ST_LITERAL("-Nowhere (0)-");
 
     for (int i = 0; i < fRegions.GetCount(); ++i)
     {
         if (regions.IsBitSet(i + 1))
         {
-            if (!retVal.IsEmpty())
+            if (!retVal.is_empty())
                 retVal += ", ";
             if (fRegions[i])
                 retVal += fRegions[i]->GetKeyName();
         }
     }
 
-    if (retVal.IsEmpty())
-        retVal = "<NONE>";
+    if (retVal.is_empty())
+        retVal = ST_LITERAL("<NONE>");
     return retVal;
 }

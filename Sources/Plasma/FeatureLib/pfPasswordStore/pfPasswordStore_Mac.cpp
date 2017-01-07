@@ -50,42 +50,42 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /*****************************************************************************
  ** pfMacPasswordStore                                                      **
  *****************************************************************************/
-const plString pfMacPasswordStore::GetPassword(const plString& username)
+ST::string pfMacPasswordStore::GetPassword(const ST::string& username)
 {
-    plString service = GetServerDisplayName();
+    ST::string service = GetServerDisplayName();
 
     void* passwd = nullptr;
     uint32_t passwd_len = 0;
 
     if (SecKeychainFindGenericPassword(nullptr,
-                                       service.GetSize(),
+                                       service.size(),
                                        service.c_str(),
-                                       username.GetSize(),
+                                       username.size(),
                                        username.c_str(),
                                        &passwd_len,
                                        &passwd,
                                        nullptr) != errSecSuccess)
     {
-        return plString::Null;
+        return ST::null;
     }
 
-    plString ret(reinterpret_cast<const char*>(passwd), size_t(passwd_len));
+    ST::string ret(reinterpret_cast<const char*>(passwd), size_t(passwd_len));
 
     SecKeychainItemFreeContent(nullptr, passwd);
 
     return ret;
 }
 
-bool pfMacPasswordStore::SetPassword(const plString& username, const plString& password)
+bool pfMacPasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
-    plString service = GetServerDisplayName();
+    ST::string service = GetServerDisplayName();
 
     return SecKeychainAddGenericPassword(nullptr,
-                                         service.GetSize(),
+                                         service.size(),
                                          service.c_str(),
-                                         username.GetSize(),
+                                         username.size(),
                                          username.c_str(),
-                                         password.GetSize(),
+                                         password.size(),
                                          password.c_str(),
                                          nullptr) == errSecSuccess;
 }

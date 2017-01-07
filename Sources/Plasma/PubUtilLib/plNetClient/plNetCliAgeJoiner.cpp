@@ -226,7 +226,7 @@ void plNCAgeJoiner::Start () {
 
     // if we're linking to startup then set the OfflineAge flag
     // so we by-pass the game server
-    if (age.ageDatasetName.IsEmpty() || age.ageDatasetName.CompareI("StartUp") == 0) {
+    if (age.ageDatasetName.is_empty() || age.ageDatasetName.compare_i("StartUp") == 0) {
         nc->SetFlagsBit(plNetClientApp::kLinkingToOfflineAge);
 
         // no need to update if we're not using a GameSrv
@@ -259,9 +259,9 @@ void plNCAgeJoiner::ExecNextOp () {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadAge");
 
             // Start progress bar
-            plString str;
+            ST::string str;
 #ifndef PLASMA_EXTERNAL_RELEASE
-            str = plFormat("Loading age... {}", age.ageDatasetName);
+            str = ST::format("Loading age... {}", age.ageDatasetName);
 #endif
             progressBar = plProgressMgr::GetInstance()->RegisterOperation(0, str.c_str(), plProgressMgr::kNone, false, true);
             plDispatch::SetMsgRecieveCallback(IDispatchMsgReceiveCallback);
@@ -276,13 +276,13 @@ void plNCAgeJoiner::ExecNextOp () {
         case kLoadPlayer: {
             LogMsg(kLogPerf, L"AgeJoiner: Exec:kLoadPlayer");
             // Start loading local player
-            plString avatarName;
+            ST::string avatarName;
             if (NetCommNeedToLoadAvatar()) {
                 if (nc->GetFlagsBit(plNetClientApp::kLinkingToOfflineAge))
-                    avatarName = "Male";
+                    avatarName = ST_LITERAL("Male");
                 else
                     avatarName = NetCommGetPlayer()->avatarDatasetName;
-                plString linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
+                ST::string linkInName = plNetLinkingMgr::GetInstance()->GetAgeLink()->SpawnPoint().GetName();
                 am->LoadPlayer(avatarName, "", linkInName);
             }
             else {

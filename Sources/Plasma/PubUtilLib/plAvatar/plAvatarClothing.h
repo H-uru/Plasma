@@ -85,23 +85,23 @@ public:
 
     // If you change the format of a clothing item, chances are you need
     // to change plClothingMgr::IsLRMatch() as well
-    plString fName;
+    ST::string fName;
     plSharedMesh *fMeshes[kMaxNumLODLevels];
     hsTArray<plMipmap **> fTextures;
-    hsTArray<plString> fElementNames;
+    hsTArray<ST::string> fElementNames;
     hsTArray<plClothingElement *> fElements;
     uint8_t fGroup;   // Each avatar can wear one of the available groups
     uint8_t fType;    // Each group has multiple types of clothes (shirt/pants/etc)
     uint8_t fTileset;
     uint8_t fSortOrder;
-    plString fDescription;
-    plString fCustomText;
+    ST::string fDescription;
+    ST::string fCustomText;
     plMipmap *fThumbnail;
     plClothingItem *fAccessory; // Forced accessory to always wear with this item.
     uint8_t fDefaultTint1[3];
     uint8_t fDefaultTint2[3];
 
-    plString fAccessoryName; // Export only
+    ST::string fAccessoryName; // Export only
 
 
 
@@ -111,8 +111,8 @@ public:
     CLASSNAME_REGISTER( plClothingItem );
     GETINTERFACE_ANY( plClothingItem, hsKeyedObject );
 
-    void SetName(const plString &name) { fName = name; }
-    plString GetName() const { return fName; }
+    void SetName(const ST::string &name) { fName = name; }
+    ST::string GetName() const { return fName; }
     bool CanWearWith(plClothingItem *item);
     bool WearBefore(plClothingItem *item); // Should we come before the arg item? (texture gen order)
     bool HasBaseAlpha();
@@ -138,16 +138,16 @@ public:
 class plClothingBase : public hsKeyedObject
 {
 public:
-    plString fName;
+    ST::string fName;
     plMipmap *fBaseTexture;
-    plString fLayoutName;
+    ST::string fLayoutName;
 
     plClothingBase();
 
     CLASSNAME_REGISTER( plClothingBase );
     GETINTERFACE_ANY( plClothingBase, hsKeyedObject );
     
-    void SetLayoutName(const plString &name) { fLayoutName = name; }
+    void SetLayoutName(const ST::string &name) { fLayoutName = name; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -195,7 +195,7 @@ public:
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
-    bool DirtySynchState(const plString& SDLStateName, uint32_t synchFlags);
+    bool DirtySynchState(const ST::string& SDLStateName, uint32_t synchFlags);
 
     void StripAccessories();
     void WearDefaultClothing();
@@ -281,8 +281,8 @@ public:
     CLASSNAME_REGISTER( plClothingMgr );
     GETINTERFACE_ANY( plClothingMgr, hsKeyedObject );
 
-    plClothingLayout *GetLayout(const plString &name) const;
-    plClothingElement *FindElementByName(const plString &name) const;
+    plClothingLayout *GetLayout(const ST::string &name) const;
+    plClothingElement *FindElementByName(const ST::string &name) const;
 
 
     // Functions that just relate to the clothing you have permission to wear (closet)
@@ -290,7 +290,7 @@ public:
     void GetClosetItems(hsTArray<plClosetItem> &out);
 
     // Functions that relate to all existing clothing
-    plClothingItem *FindItemByName(const plString &name) const;
+    plClothingItem *FindItemByName(const ST::string &name) const;
     hsTArray<plClothingItem*>& GetItemList() { return fItems; }
     void GetItemsByGroup(uint8_t group, hsTArray<plClothingItem*> &out);
     void GetItemsByGroupAndType(uint8_t group, uint8_t type, hsTArray<plClothingItem*> &out);
@@ -304,7 +304,7 @@ public:
     plClothingItem *GetLRMatch(plClothingItem *item);
     bool IsLRMatch(plClothingItem *item1, plClothingItem *item2);
 
-    static void ChangeAvatar(const plString& name, const plFileName &clothingFile = "");
+    static void ChangeAvatar(const ST::string& name, const plFileName &clothingFile = ST::null);
     
     static plClothingMgr *GetClothingMgr() { return fInstance; }    
     static void Init();

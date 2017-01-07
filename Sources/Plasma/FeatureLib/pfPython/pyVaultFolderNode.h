@@ -52,7 +52,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #include "pyVaultNode.h"
 
-class plString;
 struct RelVaultNode;
 
 class pyVaultFolderNode : public pyVaultNode
@@ -81,7 +80,7 @@ public:
     virtual int     Folder_GetType( void );
     void    Folder_SetName(const char* name);
     void    Folder_SetNameW(const wchar_t* name);
-    plString Folder_GetName() const;
+    ST::string Folder_GetName() const;
 
 
 

@@ -109,9 +109,9 @@ void hsStream::CopyToMem(void* mem)
 
 //////////////////////////////////////////////////////////////////////////////////
 
-uint32_t hsStream::WriteSafeStringLong(const plString &string)
+uint32_t hsStream::WriteSafeStringLong(const ST::string &string)
 {
-    uint32_t len = string.GetSize();
+    uint32_t len = string.size();
     WriteLE32(len);
     if (len > 0)
     {   
@@ -127,30 +127,30 @@ uint32_t hsStream::WriteSafeStringLong(const plString &string)
         return 0;
 }
 
-uint32_t hsStream::WriteSafeWStringLong(const plString &string)
+uint32_t hsStream::WriteSafeWStringLong(const ST::string &string)
 {
-    plStringBuffer<uint16_t> wbuff = string.ToUtf16();
-    uint32_t len = wbuff.GetSize();
+    ST::utf16_buffer wbuff = string.to_utf16();
+    uint32_t len = wbuff.size();
     WriteLE32(len);
     if (len > 0)
     {
-        const uint16_t *buffp = wbuff.GetData();
+        const char16_t *buffp = wbuff.data();
         for (uint32_t i=0; i<len; i++)
         {
             WriteLE16(~buffp[i]);
         }
-        WriteLE16(static_cast<uint16_t>(0));
+        WriteLE16(static_cast<char16_t>(0));
     }
     return 0;
 }
 
-plString hsStream::ReadSafeStringLong()
+ST::string hsStream::ReadSafeStringLong()
 {
-    plStringBuffer<char> name;
+    ST::char_buffer name;
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        char *buff = name.CreateWritableBuffer(numChars);
+        char *buff = name.create_writable_buffer(numChars);
         Read(numChars, buff);
         buff[numChars] = 0;
 
@@ -165,13 +165,13 @@ plString hsStream::ReadSafeStringLong()
     return name;
 }
 
-plString hsStream::ReadSafeWStringLong()
+ST::string hsStream::ReadSafeWStringLong()
 {
-    plStringBuffer<uint16_t> retVal;
+    ST::utf16_buffer retVal;
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        uint16_t *buff = retVal.CreateWritableBuffer(numChars);
+        char16_t *buff = retVal.create_writable_buffer(numChars);
         for (int i=0; i<numChars; i++)
             buff[i] = ReadLE16();
         ReadLE16(); // we wrote the null out, read it back in
@@ -184,13 +184,13 @@ plString hsStream::ReadSafeWStringLong()
         }
     }
 
-    return plString::FromUtf16(retVal);
+    return ST::string::from_utf16(retVal);
 }
 
-uint32_t hsStream::WriteSafeString(const plString &string)
+uint32_t hsStream::WriteSafeString(const ST::string &string)
 {
-    int len = string.GetSize();
-    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
+    int len = string.size();
+    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeString {}, use WriteSafeStringLong",
         len, string).c_str() );
 
     WriteLE16(len | 0xf000);
@@ -208,17 +208,17 @@ uint32_t hsStream::WriteSafeString(const plString &string)
         return 0;
 }
 
-uint32_t hsStream::WriteSafeWString(const plString &string)
+uint32_t hsStream::WriteSafeWString(const ST::string &string)
 {
-    plStringBuffer<uint16_t> wbuff = string.ToUtf16();
-    uint32_t len = wbuff.GetSize();
-    hsAssert(len<0xf000, plFormat("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
+    ST::utf16_buffer wbuff = string.to_utf16();
+    uint32_t len = wbuff.size();
+    hsAssert(len<0xf000, ST::format("string len of {} is too long for WriteSafeWString, use WriteSafeWStringLong",
         len).c_str() );
 
     WriteLE16(len | 0xf000);
     if (len > 0)
     {
-        const uint16_t *buffp = wbuff.GetData();
+        const char16_t *buffp = wbuff.data();
         for (uint32_t i=0; i<len; i++)
         {
             WriteLE16(~buffp[i]);
@@ -228,9 +228,9 @@ uint32_t hsStream::WriteSafeWString(const plString &string)
     return 0;
 }
 
-plString hsStream::ReadSafeString()
+ST::string hsStream::ReadSafeString()
 {
-    plStringBuffer<char> name;
+    ST::char_buffer name;
     uint16_t numChars = ReadLE16();
 
 #ifndef REMOVE_ME_SOON
@@ -244,7 +244,7 @@ plString hsStream::ReadSafeString()
     hsAssert(numChars <= GetSizeLeft(), "Bad string");
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        char *buff = name.CreateWritableBuffer(numChars);
+        char *buff = name.create_writable_buffer(numChars);
         Read(numChars, buff);
         buff[numChars] = 0;
 
@@ -260,16 +260,16 @@ plString hsStream::ReadSafeString()
     return name;
 }
 
-plString hsStream::ReadSafeWString()
+ST::string hsStream::ReadSafeWString()
 {
-    plStringBuffer<uint16_t> retVal;
+    ST::utf16_buffer retVal;
     uint32_t numChars = ReadLE16();
     
     numChars &= ~0xf000;
     hsAssert(numChars <= GetSizeLeft()/2, "Bad string");
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        uint16_t *buff = retVal.CreateWritableBuffer(numChars);
+        char16_t *buff = retVal.create_writable_buffer(numChars);
         for (int i=0; i<numChars; i++)
             buff[i] = ReadLE16();
         ReadLE16(); // we wrote the null out, read it back in
@@ -282,7 +282,7 @@ plString hsStream::ReadSafeWString()
         }
     }
 
-    return plString::FromUtf16(retVal);
+    return ST::string::from_utf16(retVal);
 }
 
 bool  hsStream::Read4Bytes(void *pv)  // Virtual, faster version in sub classes

@@ -154,8 +154,8 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitle)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultImageNode, getTitleW)
 {
-    plStringBuffer<wchar_t> retVal = self->fThis->Image_GetTitle().ToWchar();
-    return PyUnicode_FromWideChar(retVal.GetData(), retVal.GetSize());
+    ST::wchar_buffer retVal = self->fThis->Image_GetTitle().to_wchar();
+    return PyUnicode_FromWideChar(retVal.data(), retVal.size());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultImageNode, setImage, args)
