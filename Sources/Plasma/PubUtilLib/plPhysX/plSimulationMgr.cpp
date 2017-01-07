@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSimulationMgr.h"
 
 #include <NxPhysics.h>
+#include <NxCooking.h>
 
 #include <algorithm>
 
@@ -292,11 +293,20 @@ plSimulationMgr::plSimulationMgr()
 bool plSimulationMgr::InitSimulation()
 {
     fSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &gErrorStream);
-    if (!fSDK)
+    if (!fSDK) {
+        fLog->AddLine("Phailed to init PhysX SDK");
         return false; // client will handle this and ask user to install
+    }
 
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Simulation.log", plStatusLog::kFilledBackground | plStatusLog::kAlignToTop);
-    fLog->AddLine("Initialized simulation mgr");
+    fLog->AddLine("Initialized PhysX SDK");
+
+    if (!NxInitCooking(nullptr, &gErrorStream)) {
+        fLog->AddLine("Phailed to init NxCooking");
+        fSDK->release();
+        fSDK = nullptr;
+        return false;
+    }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
     // If this is an internal build, enable the PhysX debugger
@@ -316,8 +326,10 @@ plSimulationMgr::~plSimulationMgr()
 
     hsAssert(fScenes.empty(), "Unreleased scenes at shutdown");
 
-    if (fSDK)
+    if (fSDK) {
+        NxCloseCooking();
         fSDK->release();
+    }
 
     delete fLog;
     fLog = nil;
