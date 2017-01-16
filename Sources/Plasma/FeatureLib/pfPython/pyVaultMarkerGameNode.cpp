@@ -83,6 +83,23 @@ void pyVaultMarkerGameNode::SetGameName (const ST::string& name)
     }
 }
 
+ST::string pyVaultMarkerGameNode::GetReward() const
+{
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        return access.GetReward();
+    }
+    return ST::null;
+}
+
+void pyVaultMarkerGameNode::SetReward(const ST::string& value)
+{
+    if (fNode) {
+        VaultMarkerGameNode access(fNode);
+        access.SetReward(value);
+    }
+}
+
 PyObject* pyVaultMarkerGameNode::GetMarkers() const
 {
     if (!fNode)

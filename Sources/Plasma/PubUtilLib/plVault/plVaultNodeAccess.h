@@ -306,6 +306,7 @@ struct VaultMarker {
 
 struct VaultMarkerGameNode : NetVaultNodeAccess {
     VNODE_STRING  (                 GameName,           Text_1);
+    VNODE_STRING  (                 Reward,             Text_2);
     VNODE_ACCESSOR(plUUID,          GameGuid,           Uuid_1);
 
     VaultMarkerGameNode (NetVaultNode * node) : NetVaultNodeAccess(node) { }
