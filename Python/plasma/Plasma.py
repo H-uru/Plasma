@@ -8311,6 +8311,10 @@ class ptVaultMarkerGameNode(ptVaultNode):
         """Returns the node ID of the owner of this node"""
         pass
 
+    def getReward(self):
+        """Returns a string representing the reward for completing this game"""
+        pass
+
     def getType(self):
         """Returns the type of ptVaultNode this is.
 See PlasmaVaultTypes.py"""
@@ -8370,6 +8374,10 @@ See PlasmaVaultTypes.py"""
 
     def setOwnerNodeID(self,id):
         """Set node ID of the owner of this node"""
+        pass
+
+    def setReward(self,reward):
+        """Sets the reward for completing this marker game"""
         pass
 
     def setType(self,type):
