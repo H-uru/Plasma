@@ -1406,3 +1406,23 @@ class CommandsProcessor:
             self.chatMgr.DisplayStatusMessage(PtGetClientName() + " threatens " + name, 1)
         else:
             self.chatMgr.AddChatLine(None, "You are too far away", kChat.SystemMessage)
+
+    ## Sets a reward for the current marker game
+    def MarkerGameReward(self, reward):
+        markerMgr = self.chatMgr.markerGameManager
+        if not markerMgr.is_game_loaded or not hasattr(markerMgr, "reward"):
+            self.chatMgr.AddChatLine(None, "There is no active marker game that can grant rewards.", kChat.SystemMessage)
+            return
+        if reward:
+            self.chatMgr.AddChatLine(None, "Old Reward: '{}'".format(markerMgr.reward), 0)
+            try:
+                markerMgr.reward = reward
+            except:
+                self.chatMgr.AddChatLine(None, "Failed to set reward.", kChat.SystemMessage)
+                raise
+            else:
+                self.chatMgr.AddChatLine(None, "New Reward: '{}'".format(reward), 0)
+        elif markerMgr.reward:
+            self.chatMgr.AddChatLine(None, "Current Reward: '{}'".format(markerMgr.reward), 0)
+        else:
+            self.chatMgr.AddChatLine(None, "This game has no associated reward.", 0)

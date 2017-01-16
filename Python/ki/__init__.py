@@ -356,6 +356,7 @@ class xKI(ptModifier):
         PtLoadDialog("KIMiniMarkers", self.key)
 
         self.markerGameManager = xMarkerMgr.MarkerGameManager()
+        self.chatMgr.markerGameManager = self.markerGameManager
 
         # Pass the newly-initialized key to the modules.
         self.chatMgr.key = self.key

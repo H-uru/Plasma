@@ -42,6 +42,14 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
  *==LICENSE==* """
 
 from Plasma import *
+from PlasmaTypes import *
+
+def _str2color(col):
+    r, g, b = col.strip().split(',', 3)
+    r = float(r.strip()) / 255.0
+    g = float(g.strip()) / 255.0
+    b = float(b.strip()) / 255.0
+    return ptColor(r, g, b)
 
 class UCMarkerGame(object):
     def __init__(self, markerNode):
@@ -103,6 +111,32 @@ class UCMarkerGame(object):
     def game_name(self):
         return self._node.getGameName()
 
+    def _GiveReward(self):
+        for reward in self._node.getReward().split(';'):
+            things = reward.split(':')
+            if things[0] == "chron":
+                value = things[2] if len(things) > 2 else "1"
+                PtDebugPrint("UCMarkerGame._GiveReward():\tSetting chronicle '{}' = '{}'".format(things[1], value), level=kWarningLevel)
+                # NOTE: searches for a matching entry before creating
+                ptVault().addChronicleEntry(things[1], 0, value)
+            elif things[0] == "clothing":
+                av = PtGetLocalAvatar().avatar
+                gender = "F" if av.getAvatarClothingGroup() else "M"
+                clothing = "{}{}".format(gender, things[1])
+                if clothing in av.getWardrobeClothingList():
+                    PtDebugPrint("UCMarkerGame._GiveReward():\tAlready have clothing item '{}'".format(clothing), level=kWarningLevel)
+                else:
+                    PtDebugPrint("UCMarkerGame._GiveReward():\tGiving clothing item '{}'".format(clothing), level=kWarningLevel)
+                    try:
+                        tint1 = _str2color(things[2])
+                    except IndexError:
+                        tint1 = ptColor().white()
+                    try:
+                        tint2 = _str2color(things[3])
+                    except IndexError:
+                        tint2 = ptColor().white()
+                    av.addWardrobeClothingItem(clothing, tint1, tint2)
+
     @property
     def marker_total(self):
         return len(self._markers)
@@ -141,6 +175,12 @@ class UCMarkerGame(object):
         mgr.clearSelectedMarker()
         mgr.removeAllMarkers()
         return mgr
+
+    def _get_reward(self):
+        return self._node.getReward()
+    def _set_reward(self, value):
+        self._node.setReward(value)
+    reward = property(_get_reward, _set_reward)
 
     @property
     def selected_marker(self):
