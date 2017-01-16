@@ -1029,7 +1029,7 @@ plDynamicTextMap    *plLayerConverter::ICreateDynTextMap( const ST::string &laye
 ///////////////////////////////////////////////////////////////////////////////
 
 plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLocation &loc, 
-                                                uint32_t clipID /* = 0 */, uint32_t texFlags /* = 0 */, bool useJPEG /* = false */)
+                                                uint32_t clipID /* = 0 */, uint32_t texFlags /* = 0 */, bool usePNG /* = false */)
 {
     plBitmapData bd;
     bd.fileName = fileName;
@@ -1043,7 +1043,7 @@ plBitmap *plLayerConverter::CreateSimpleTexture(const char *fileName, const plLo
     bd.isStaticCubicEnvMap = false;
     bd.invertAlpha = false;
     bd.clampFlags = 0;
-    bd.useJPEG = useJPEG;
+    bd.usePNG = usePNG;
 
     return plBitmapCreator::Instance().CreateTexture(&bd, loc, clipID);
 }

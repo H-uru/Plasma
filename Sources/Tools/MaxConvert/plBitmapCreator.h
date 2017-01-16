@@ -74,7 +74,7 @@ public:
     const char  *faceNames[ 6 ];
     uint32_t  maxDimension;
     uint8_t   clampFlags;
-    bool    useJPEG;
+    bool    usePNG;
 
     plBitmapData()
     {
@@ -88,7 +88,7 @@ public:
         faceNames[ 0 ] = faceNames[ 1 ] = faceNames[ 2 ] = faceNames[ 3 ] = faceNames[ 4 ] = faceNames[ 5 ] = nil;
         maxDimension = 0;
         clampFlags = 0;
-        useJPEG = false;
+        usePNG = false;
     }
 };
 

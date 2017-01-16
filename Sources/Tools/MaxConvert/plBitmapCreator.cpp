@@ -234,19 +234,12 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
         flagsToSet |= plMipmap::kDontThrowAwayImage;
 
     hBitmap->SetFlags( hBitmap->GetFlags() | flagsToSet );
-    if (bd->useJPEG)
-        hBitmap->fCompressionType = plMipmap::kJPEGCompression;
+    if (bd->usePNG)
+        hBitmap->fCompressionType = plMipmap::kPNGCompression;
 
-    // FIXME
-    if (/*fSave &&*/ !(bd->texFlags & plMipmap::kForceNonCompressed) && !bd->useJPEG)
-    {
-        // Are we on?  Check Plasma Util panel
-//      SwitchUtil *pu = (SwitchUtil *)CreateInstance(UTILITY_CLASS_ID, PlasmaUtilClassID);
-//      if (!pu || pu->TextureCompressionEnabled()) 
+    if (!(bd->texFlags & plMipmap::kForceNonCompressed) && !bd->usePNG)
         {
             plMipmap *compressed = hsCodecManager::Instance().CreateCompressedMipmap(plMipmap::kDirectXCompression, hBitmap);
-//              hsDXTSoftwareCodec::Instance().CreateCompressedBitmap(hBitmap);
-//              hsDXTDirectXCodec::Instance().CreateCompressedBitmap(hBitmap);
 
             if (compressed)
             {
@@ -255,7 +248,6 @@ plMipmap *plBitmapCreator::ICreateBitmap(plBitmapData *bd)
                 hBitmap->SetFlags( hBitmap->GetFlags() | flagsToSet );
             }
         }
-    }
 
     return hBitmap;
     hsGuardEnd; 

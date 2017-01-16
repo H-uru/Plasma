@@ -60,6 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGDeviceRef.h"
 #include "plProfile.h"
 #include "plJPEG.h"
+#include "plPNG.h"
 #include <cmath>
 #include <algorithm>
 
@@ -124,11 +125,8 @@ void    plMipmap::Create( uint32_t width, uint32_t height, unsigned config, uint
     }
     
     fCompressionType = compType;
-    if( compType == kUncompressed )
-    {
-        fUncompressedInfo.fType = format;
-    }
-    else if( compType == kJPEGCompression )
+    if( compType == kUncompressed || compType == kJPEGCompression ||
+        compType == kPNGCompression )
     {
         fUncompressedInfo.fType = format;
     }
@@ -271,6 +269,10 @@ uint32_t  plMipmap::Read( hsStream *s )
             case kJPEGCompression:
                 IReadJPEGImage( s );
                 break;
+
+            case kPNGCompression:
+                IReadPNGImage( s );
+                break;
                 
             default:
                 hsAssert( false, "Unknown compression type in plMipmap::Read()" );
@@ -309,6 +311,10 @@ uint32_t  plMipmap::Write( hsStream *s )
 
             case kJPEGCompression:
                 IWriteJPEGImage( s );
+                break;
+
+            case kPNGCompression:
+                IWritePNGImage( s );
                 break;
 
             default:
@@ -578,6 +584,23 @@ void plMipmap::IWriteJPEGImage( hsStream *stream )
     delete alpha;
 }
 
+void plMipmap::IReadPNGImage(hsStream* stream)
+{
+    plMipmap* temp = nullptr;
+
+    temp = plPNG::Instance().ReadFromStream(stream);
+
+    if (temp) {
+        CopyFrom(temp);
+        delete temp;
+    }
+}
+
+void plMipmap::IWritePNGImage(hsStream* stream)
+{
+    plPNG::Instance().WriteToStream(stream, this);
+}
+
 //// GetLevelSize /////////////////////////////////////////////////////////////
 //  Get the size of a single mipmap level (0 is the largest)
 
@@ -615,6 +638,7 @@ void    plMipmap::IBuildLevelSizes()
 
             case kUncompressed:
             case kJPEGCompression:
+            case kPNGCompression:
                 fLevelSizes[ level ] = height * rowBytes;
                 break;
 
@@ -1588,6 +1612,7 @@ void    plMipmap::CopyFrom( const plMipmap *source )
             break;
         case kUncompressed:
         case kJPEGCompression:
+        case kPNGCompression:
             fUncompressedInfo.fType = source->fUncompressedInfo.fType;
             break;
         default:
