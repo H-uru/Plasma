@@ -1157,30 +1157,22 @@ class xKI(ptModifier):
         self.takingAPicture = False
 
         # Save the image to the filesystem.
-        if "saveAsPNG" in dir(image):
-            preferredExtension = "png"
-        else:
-            preferredExtension = "jpg"
-
         basePath = os.path.join(PtGetUserPath(), kImages.Directory)
         if not PtCreateDir(basePath):
             PtDebugPrint(u"xKI.OnScreenCaptureDone(): Unable to create \"{}\" directory. Image not saved to disk.".formatZ(basePath))
             return
 
-        imageList = glob.iglob(os.path.join(basePath, "{}[0-9][0-9][0-9][0-9].{}".format(kImages.FileNameTemplate, preferredExtension)))
+        imageList = glob.iglob(os.path.join(basePath, "{}[0-9][0-9][0-9][0-9].png".format(kImages.FileNameTemplate)))
         imageNumbers = [int(os.path.basename(img)[7:-4]) for img in imageList] + [0]
         missingNumbers = set(range(1, max(imageNumbers))).difference(set(imageNumbers))
         if len(missingNumbers) > 0:
             firstMissing = min(missingNumbers)
         else:
             firstMissing = max(imageNumbers) + 1
-        tryName = os.path.join(basePath, U"{}{:04d}.{}".format(kImages.FileNameTemplate, firstMissing, preferredExtension))
+        tryName = os.path.join(basePath, U"{}{:04d}.png".format(kImages.FileNameTemplate, firstMissing))
 
         PtDebugPrint(u"xKI.OnScreenCaptureDone(): Saving image to \"{}\".".format(tryName), level=kWarningLevel)
-        if "saveAsPNG" in dir(image):
-            image.saveAsPNG(tryName)
-        else:
-            image.saveAsJPEG(tryName, 90)
+        image.saveAsPNG(tryName)
 
     ## Called by Plasma when the player list has been updated.
     # This makes sure that everything is updated and refreshed.
