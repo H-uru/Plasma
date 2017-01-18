@@ -3193,6 +3193,15 @@ PF_CONSOLE_CMD(Logic, WriteDetectorLog, "", "Write detector log to logfile")
     DetectorDoLogfile();
 }
 
+PF_CONSOLE_CMD(Logic,
+               DelayArbitration,
+               "int millis",
+               "Simulates network delay for LogicMod arbitration")
+{
+    int ms = params[0];
+    plLogicModBase::SetArbitrationDelay(ms);
+}
+
 #endif // LIMIT_CONSOLE_COMMANDS
 
 ////////////////////////////////////////////////////////////////////////

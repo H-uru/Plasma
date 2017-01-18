@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "hsResMgr.h"
 #include "hsTimer.h"
+#include "plTimerCallbackManager.h"
 #include "pnSceneObject/plSceneObject.h"
 #include "pnNetCommon/plGenericVar.h"
 #include "pnNetCommon/plNetApp.h"
@@ -52,6 +53,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnMessage/plNotifyMsg.h"
 #include "pnMessage/plEnableMsg.h"
 #include "pnMessage/plServerReplyMsg.h"
+
+uint32_t plLogicModBase::sArbitrationDelayMs = 0;
 
 void plLogicModBase::ConsoleTrigger(plKey playerKey)
 {
@@ -136,32 +139,13 @@ bool plLogicModBase::MsgReceive(plMessage* msg)
 {
     // read messages:
     plServerReplyMsg* pSMsg = plServerReplyMsg::ConvertNoRef(msg);
-    if (pSMsg)
-    {
-        hsAssert(pSMsg->GetType() != plServerReplyMsg::kUnInit, "uninit server reply msg");
-
-#if 1
-        plNetClientApp::GetInstance()->DebugMsg("LM: LogicModifier {} recvd trigger request reply:{}, wasRequesting={}, t={f}\n",
-            GetKeyName(),
-            pSMsg->GetType() == plServerReplyMsg::kDeny ? "denied" : "confirmed", 
-            HasFlag(kRequestingTrigger), hsTimer::GetSysSeconds());
-#endif
-
-        if (pSMsg->GetType() == plServerReplyMsg::kDeny)
-        {
-            if (HasFlag(kRequestingTrigger))
-            {
-                plNetClientApp::GetInstance()->DebugMsg("\tLM: Denied, clearing requestingTrigger");
-                ClearFlag(kRequestingTrigger);
-            }
-            else
-                plNetClientApp::GetInstance()->DebugMsg("\tLM: Denied, but not requesting?");
-        }
-        else
-        {
-            bool netRequest=false;    // we're triggering as a result of a local activation
-            PreTrigger(netRequest);
-            IUpdateSharedState(false /* untriggering */);
+    if (pSMsg) {
+        if (sArbitrationDelayMs == 0 || pSMsg->GetWasDelayed()) {
+            IHandleArbitration(pSMsg);
+        } else {
+            pSMsg->SetWasDelayed(true);
+            pSMsg->Ref(); // timer callback manager steals this reference
+            plgTimerCallbackMgr::NewTimer(static_cast<float>(sArbitrationDelayMs) / 1000, pSMsg);
         }
         return true;
     }
@@ -183,6 +167,28 @@ bool plLogicModBase::MsgReceive(plMessage* msg)
     }
 
     return plSingleModifier::MsgReceive(msg);
+}
+
+void plLogicModBase::IHandleArbitration(plServerReplyMsg* pSMsg)
+{
+    hsAssert(pSMsg->GetType() != plServerReplyMsg::kUnInit, "uninit server reply msg");
+    plNetClientApp::GetInstance()->DebugMsg("LM: LogicModifier {} recvd trigger request reply:{}, wasRequesting={}, t={f}\n",
+                                            GetKeyName().c_str(),
+                                            pSMsg->GetType() == plServerReplyMsg::kDeny ? "denied" : "confirmed",
+                                            HasFlag(kRequestingTrigger), hsTimer::GetSysSeconds());
+
+    if (pSMsg->GetType() == plServerReplyMsg::kDeny) {
+        if (HasFlag(kRequestingTrigger)) {
+            plNetClientApp::GetInstance()->DebugMsg("\tLM: Denied, clearing requestingTrigger");
+            ClearFlag(kRequestingTrigger);
+        } else {
+            plNetClientApp::GetInstance()->DebugMsg("\tLM: Denied, but not requesting?");
+        }
+    } else {
+        bool netRequest=false;    // we're triggering as a result of a local activation
+        PreTrigger(netRequest);
+        IUpdateSharedState(false /* untriggering */);
+    }
 }
 
 void plLogicModBase::RequestTrigger(bool netRequest)
