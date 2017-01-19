@@ -221,7 +221,7 @@ public:
     void GetPositionAndRotationSim(hsPoint3* position, hsQuat* rotation);
 
     bool IsLocalAvatar();
-    bool IsLocalAI();
+    bool IsLocalAI() const;
     virtual const plSceneObject *FindBone(const ST::string & name) const;
     virtual const plSceneObject *FindBone(uint32_t id) const; // use an id from an appropriate taxonomy, such as plAvBrainHuman::BoneID
     virtual void AddBoneMapping(uint32_t id, const plSceneObject *bone);

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnModifier/plConditionalObject.h"
 #include "hsTemplates.h"
+#include <set>
 
 class plKey;
 
@@ -76,56 +77,61 @@ class plVolumeSensorConditionalObject : public plConditionalObject
 {
 
 protected:
-
-    hsTArray<plKey> fInside;
+    std::set<plKey>     fInside;
     int                 fTrigNum;
     int                 fType;
     bool                fFirst;
     bool                fTriggered;
-    bool                fIgnoreExtraEnters;
+
+    plKey               fHittee;
+    uint32_t            fFlags;
+
+    enum
+    {
+        /** */
+        kIgnoreExtraEnters = (1<<0),
+        kNoServerArbitration = (1<<1),
+    };
+
+    bool IIsLocal(const plKey& key) const;
+
 public:
-
-    static bool makeBriceHappyVar;
-
-
     enum
     {
         kTypeEnter  = 1,
         kTypeExit,
     };
+
     plVolumeSensorConditionalObject();
     ~plVolumeSensorConditionalObject(){;}
-    
-    CLASSNAME_REGISTER( plVolumeSensorConditionalObject );
-    GETINTERFACE_ANY( plVolumeSensorConditionalObject, plConditionalObject );
-    
-    virtual bool MsgReceive(plMessage* msg);
 
-    void Evaluate(){;}
+    CLASSNAME_REGISTER(plVolumeSensorConditionalObject);
+    GETINTERFACE_ANY(plVolumeSensorConditionalObject, plConditionalObject);
+
+    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
+
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
-    virtual bool Satisfied();
-    void    SetType(int i) { fType = i; }
+    bool Satisfied() HS_OVERRIDE;
+    void SetType(int i) { fType = i; }
 
     void SetTrigNum(int i) { fTrigNum = i; }
     void SetFirst(bool b) { fFirst = b; }
 
-    void IgnoreExtraEnters(bool ignore = true) {fIgnoreExtraEnters = ignore;}
+    void IgnoreExtraEnters(bool ignore = true);
+    void NoServerArbitration(bool noArbitration = true);
 
-    virtual void Read(hsStream* stream, hsResMgr* mgr); 
-    virtual void Write(hsStream* stream, hsResMgr* mgr);
+    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 
 };
 class plVolumeSensorConditionalObjectNoArbitration : public plVolumeSensorConditionalObject
 {
 public:
-    plVolumeSensorConditionalObjectNoArbitration ():plVolumeSensorConditionalObject(){;}
-    ~plVolumeSensorConditionalObjectNoArbitration (){;}
-    CLASSNAME_REGISTER( plVolumeSensorConditionalObjectNoArbitration );
-    GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plConditionalObject );
-    virtual bool MsgReceive(plMessage* msg);
-    virtual void Read(hsStream* stream, hsResMgr* mgr); 
-protected:
-    plKey fHittee;
+    CLASSNAME_REGISTER(plVolumeSensorConditionalObjectNoArbitration);
+    GETINTERFACE_ANY( plVolumeSensorConditionalObjectNoArbitration, plVolumeSensorConditionalObject);
+
+    virtual void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
 };
 
 

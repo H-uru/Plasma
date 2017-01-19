@@ -173,7 +173,7 @@ void plLogicModBase::IHandleArbitration(plServerReplyMsg* pSMsg)
 {
     hsAssert(pSMsg->GetType() != plServerReplyMsg::kUnInit, "uninit server reply msg");
     plNetClientApp::GetInstance()->DebugMsg("LM: LogicModifier {} recvd trigger request reply:{}, wasRequesting={}, t={f}\n",
-                                            GetKeyName().c_str(),
+                                            GetKeyName(),
                                             pSMsg->GetType() == plServerReplyMsg::kDeny ? "denied" : "confirmed",
                                             HasFlag(kRequestingTrigger), hsTimer::GetSysSeconds());
 

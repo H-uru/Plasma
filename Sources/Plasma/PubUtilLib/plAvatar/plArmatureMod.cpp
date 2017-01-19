@@ -1946,7 +1946,7 @@ bool plArmatureMod::IsLocalAvatar()
     return plAvatarMgr::GetInstance()->GetLocalAvatar() == this;
 }
 
-bool plArmatureMod::IsLocalAI()
+bool plArmatureMod::IsLocalAI() const
 {
     // Formerly a lot of silly cached rigamaroll... Now, we'll just rely
     // on the fact that one player is the game master. HACK TURD if net groups

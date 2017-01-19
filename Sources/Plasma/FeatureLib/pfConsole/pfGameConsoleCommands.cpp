@@ -421,11 +421,3 @@ PF_CONSOLE_CMD( Game, SetLocalClientAsAdmin, "bool enable", "Makes chat messages
     plgDispatch::MsgSend( msg );
 }
 #endif
-
-#include "pfConditional/plObjectInBoxConditionalObject.h"
-
-PF_CONSOLE_CMD( Game, BreakVolumeSensors, "bool break", "reverts to old broken volume sensor logic" )
-{
-    bool b =  params[ 0 ];
-    plVolumeSensorConditionalObject::makeBriceHappyVar = !b;
-}
