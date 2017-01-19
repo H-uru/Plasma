@@ -455,6 +455,17 @@ PYTHON_METHOD_DEFINITION(ptSceneobject, volumeSensorIgnoreExtraEnters, args)
     PYTHON_RETURN_NONE;
 }
 
+PYTHON_METHOD_DEFINITION(ptSceneobject, volumeSensorNoArbitration, args)
+{
+    bool noArbitration = true;
+    if (!PyArg_ParseTuple(args, "|b", &noArbitration)) {
+        PyErr_SetString(PyExc_TypeError, "volumeSensorNoArbitration expects an optional boolean");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->VolumeSensorNoArbitration(noArbitration);
+    PYTHON_RETURN_NONE;
+}
+
 PYTHON_START_METHODS_TABLE(ptSceneobject)
     PYTHON_METHOD(ptSceneobject, addKey, "Params: key\nMostly used internally.\n"
                 "Add another sceneobject ptKey"),
@@ -513,6 +524,7 @@ PYTHON_START_METHODS_TABLE(ptSceneobject)
     PYTHON_METHOD(ptSceneobject, getSoundIndex, "Params: sndComponentName\nGet the index of the requested sound component"),
 
     PYTHON_METHOD(ptSceneobject, volumeSensorIgnoreExtraEnters, "Params: ignore\nTells the volume sensor attached to this object to ignore extra enters (default), or not (hack for garrison)."),
+    PYTHON_METHOD(ptSceneobject, volumeSensorNoArbitration, "Params: noArbitration\nTells the volume sensor attached to this object whether or not to negotiate exclusive locks with the server."),
 PYTHON_END_METHODS_TABLE;
 
 PYTHON_GET_DEFINITION(ptSceneobject, draw)

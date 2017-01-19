@@ -995,3 +995,17 @@ void pySceneObject::VolumeSensorIgnoreExtraEnters(bool ignore)
         }
     }
 }
+
+void pySceneObject::VolumeSensorNoArbitration(bool noArbitration)
+{
+    if (fSceneObjects.Count() > 0) {
+        plSceneObject* obj = plSceneObject::ConvertNoRef(fSceneObjects[0]->ObjectIsLoaded());
+        if (obj) {
+            for (size_t i = 0; i < obj->GetNumModifiers(); ++i) {
+                plLogicModifier* logic = const_cast<plLogicModifier*>(plLogicModifier::ConvertNoRef(obj->GetModifier(i)));
+                if (logic)
+                    logic->VolumeNoArbitration(noArbitration);
+            }
+        }
+    }
+}

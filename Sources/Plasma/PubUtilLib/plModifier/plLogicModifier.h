@@ -70,6 +70,7 @@ public:
     virtual void Reset(bool bCounterReset);
 
     void VolumeIgnoreExtraEnters(bool ignore = true); // hack for garrison
+    void VolumeNoArbitration(bool noArbitration = true);
 
     int fMyCursor;
 };
