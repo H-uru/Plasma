@@ -457,6 +457,9 @@ class ptAttribActivator(ptAttributeKeyList):
     def volumeSensorIgnoreExtraEnters(self,state):
         for key in self.value:
             key.getSceneObject().volumeSensorIgnoreExtraEnters(state)
+    def volumeSensorNoArbitration(self, noArbitration=True):
+        for key in self.value:
+            key.getSceneObject().volumeSensorNoArbitration(noArbitration)
 
 # Activator attribute (pick activator types box)
 class ptAttribActivatorList(ptAttributeKeyList):
