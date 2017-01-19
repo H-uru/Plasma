@@ -63,17 +63,20 @@ class xExitSubworld(ptResponder):
         ptResponder.__init__(self)
         self.id = 53634
         self.version = 1
-    
-        
-            
+
+    def OnServerInitComplete(self):
+        # If you delay waiting on an exclusive lock from the server, slow clients
+        # will fall through the exit region and panic link... bye-bye muzzafakka!
+        exitRgn.volumeSensorNoArbitration()
+
     def OnNotify(self,state,id,events):
         global inSafetyRegion
-        
+
         local = PtGetLocalAvatar()
         avatar = PtFindAvatar(events)
         if (avatar != local):
             return
-        
+
         for event in events:
             if (event[0] == kCollisionEvent):
                 entry = event[1]  # are we entering or exiting?
