@@ -54,7 +54,6 @@ extern ClassDesc2* GetDynamicTextLayerDesc();
 extern ClassDesc2* GetClothingMtlDesc();
 extern ClassDesc2* GetAngleAttenLayerDesc();
 extern ClassDesc2* GetStealthClassDesc();
-extern ClassDesc2* GetBinkClassDesc();
 extern ClassDesc2* GetMAXCameraLayerDesc();
 
 int         plPlasmaMtlImport::GetNumMtlDescs( void )
@@ -79,7 +78,7 @@ ClassDesc2  *plPlasmaMtlImport::GetMtlDesc( int i )
         case 10: return GetClothingMtlDesc();
         case 11: return GetAngleAttenLayerDesc();
         case 12: return GetStealthClassDesc();
-        case 13: return GetBinkClassDesc();
+        case 13: return NULL;
         case 14: return GetMAXCameraLayerDesc();
         default: return 0;
     }

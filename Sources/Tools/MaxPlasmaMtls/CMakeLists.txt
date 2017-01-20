@@ -80,7 +80,6 @@ set(MaxPlasmaMtls_RESOURCES
 )
 
 set(MaxPlasmaMtls_SOURCES
-    plBinkBitmap.cpp
     plBMSampler.cpp
     plDetailCurveCtrl.cpp
     plMtlImport.cpp
