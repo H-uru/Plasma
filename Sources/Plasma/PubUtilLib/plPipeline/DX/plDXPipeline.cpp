@@ -58,12 +58,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <d3dx9mesh.h>
 #include "hsGDirect3D.h"
 
-#if defined(DX_OLD_SDK) || defined(__MINGW32__)
+#if defined(DX_OLD_SDK)
     #include <dxerr9.h>
-    #ifndef DXGetErrorString9
-        #define DXGetErrorString9 DXGetErrorString
-    #endif
-    #ifdef __MINGW32__ // UGH!
+    #define DXGetErrorString DXGetErrorString9
+#elif defined(__MINGW32__)
+    #include <dxerr9.h>
+    #ifndef DXGetErrorString
         #define DXGetErrorString DXGetErrorString9
     #endif
 #else

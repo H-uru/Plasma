@@ -55,7 +55,7 @@ protected:
 
     bool                        ICloseMovie();
 
-    virtual int32_t               ISecsToFrame(float secs);
+    virtual int32_t             ISecsToFrame(float secs);
     virtual bool                IInit();
     virtual bool                IGetCurrentFrame();
     virtual bool                IRelease();

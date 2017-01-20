@@ -4,7 +4,6 @@ include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
 if(WIN32)
-    include_directories(${DirectX_INCLUDE_DIR})
     add_definitions(-DWIN32)
 endif(WIN32)
 
