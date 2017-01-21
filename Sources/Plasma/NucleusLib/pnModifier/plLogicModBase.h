@@ -66,6 +66,8 @@ public:
     };
 
 protected:
+    static uint32_t sArbitrationDelayMs;
+
     hsTArray<plMessage*>            fCommandList;
     hsTArray<plKey>                 fReceiverList;
     uint32_t                          fCounterLimit;
@@ -77,15 +79,16 @@ protected:
 
     virtual bool IEval(double secs, float del, uint32_t dirty) {return false;}
     void IUpdateSharedState(bool triggered) const;
+    void IHandleArbitration(class plServerReplyMsg* msg);
     bool IEvalCounter();
     virtual void PreTrigger(bool netRequest);
     virtual void Trigger(bool netRequest);
     virtual void UnTrigger();
     
     void CreateNotifyMsg();
-    
+
 public:
-    friend class plVolumeSensorConditionalObjectNoArbitration;
+    friend class plVolumeSensorConditionalObject;
     plLogicModBase();
     ~plLogicModBase();
     CLASSNAME_REGISTER( plLogicModBase );
@@ -121,6 +124,9 @@ public:
     // for debug purposes only!
     void ConsoleTrigger(plKey playerKey);
     void ConsoleRequestTrigger();
+
+    /** Specifies an amount of time (in milliseconds) to delay processing server arbitration responses */
+    static void SetArbitrationDelay(uint32_t ms) { sArbitrationDelayMs = ms; }
 };
 
 

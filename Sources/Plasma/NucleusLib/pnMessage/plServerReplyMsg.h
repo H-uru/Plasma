@@ -57,6 +57,7 @@ class hsResMgr;
 class plServerReplyMsg : public plMessage
 {
     int fType;
+    bool fWasDelayed;
 public:
 
     enum
@@ -67,10 +68,13 @@ public:
     };
 
     void SetType(int t) { fType = t; }
-    int GetType() { return fType; }
+    int GetType() const { return fType; }
 
-    plServerReplyMsg() : fType(kUnInit) { }
-    plServerReplyMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t), fType(kUnInit) { }
+    void SetWasDelayed(bool v) { fWasDelayed = v; }
+    bool GetWasDelayed() const { return fWasDelayed; }
+
+    plServerReplyMsg() : fType(kUnInit), fWasDelayed(false) { }
+    plServerReplyMsg(const plKey &s, const plKey &r, const double* t) : plMessage(s,r,t), fType(kUnInit), fWasDelayed(false) { }
 
     CLASSNAME_REGISTER(plServerReplyMsg);
     GETINTERFACE_ANY(plServerReplyMsg, plMessage);

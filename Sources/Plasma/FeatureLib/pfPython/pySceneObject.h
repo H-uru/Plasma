@@ -194,6 +194,9 @@ public:
 
     // hack for garrison
     void VolumeSensorIgnoreExtraEnters(bool ignore);
+
+    /** More SubWorld hacks */
+    void VolumeSensorNoArbitration(bool noArbitration);
 };
 
 #endif // _pySceneObject_h_

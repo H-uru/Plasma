@@ -279,3 +279,12 @@ void plLogicModifier::VolumeIgnoreExtraEnters(bool ignore /* = true */)
             condition->IgnoreExtraEnters(ignore);
     }
 }
+
+void plLogicModifier::VolumeNoArbitration(bool noArbitration)
+{
+    for (size_t i = 0; i < fConditionList.Count(); ++i) {
+        plVolumeSensorConditionalObject* condition = plVolumeSensorConditionalObject::ConvertNoRef(fConditionList[i]);
+        if (condition)
+            condition->NoServerArbitration(noArbitration);
+    }
+}
