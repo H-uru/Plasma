@@ -97,7 +97,8 @@ void VaultTextNoteNode::SetVisitInfo (const plAgeInfoStruct & info) {
         DEFAULT_FATAL(i);
         }
 
-        str << "|";
+        if (i+1 != kNumAgeInfoFields)
+            str << "|";
     }
 
     SetNoteText(str.to_string());
