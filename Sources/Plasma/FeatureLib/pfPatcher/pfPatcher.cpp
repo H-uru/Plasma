@@ -164,30 +164,40 @@ class pfPatcherStream : public plZlibStream
 
 public:
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, uint64_t size)
-        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0), fDLStartTime(0.f)
+        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0), fDLStartTime(0.f), plZlibStream()
     {
         fParent->fTotalBytes += size;
         fOutput = new hsRAMStream;
     }
 
-    pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, const NetCliFileManifestEntry& entry)
-        : fParent(parent), fFlags(entry.flags), fBytesWritten(0)
+    pfPatcherStream(pfPatcherWorker* parent, const plFileName& reqName, const plFileName& cliName, const NetCliFileManifestEntry& entry)
+        : fParent(parent), fFilename(cliName.Normalize()), fFlags(entry.flags), fBytesWritten(0), plZlibStream()
     {
         // ugh. eap removed the compressed flag in his fail manifests
-        if (filename.GetFileExt().compare_i("gz") == 0) {
+        if (reqName.GetFileExt().compare_i("gz") == 0) {
             fFlags |= pfPatcherWorker::kFlagZipped;
             parent->fTotalBytes += entry.zipSize;
         } else
             parent->fTotalBytes += entry.fileSize;
     }
 
-    virtual bool Open(const plFileName& filename, const char* mode)
+    void Begin()
     {
-        fFilename = filename.Normalize();
-        return plZlibStream::Open(fFilename, mode);
+        fDLStartTime = hsTimer::GetSysSeconds();
+        if (!fOutput)
+            Open(fFilename, "wb");
     }
 
-    virtual uint32_t Write(uint32_t count, const void* buf)
+    bool Open(const plFileName& filename, const char* mode) HS_OVERRIDE
+    {
+        hsAssert(filename == fFilename, "trying to save to a different file, eh?");
+        bool retVal = plZlibStream::Open(filename, mode);
+        if (!retVal)
+            PatcherLogRed("\tPhailed to open %s: '%s'", filename.AsString().c_str(), strerror(errno));
+        return retVal;
+    }
+
+    uint32_t Write(uint32_t count, const void* buf) HS_OVERRIDE
     {
         // tick whatever progress bar we have
         IUpdateProgress(count);
@@ -199,16 +209,14 @@ public:
             return fOutput->Write(count, buf);
     }
 
-    virtual bool AtEnd() { return fOutput->AtEnd(); }
-    virtual uint32_t GetEOF() { return fOutput->GetEOF(); }
-    virtual uint32_t GetPosition() const { return fOutput->GetPosition(); }
-    virtual uint32_t GetSizeLeft() const { return fOutput->GetSizeLeft(); }
-    virtual uint32_t Read(uint32_t count, void* buf) { return fOutput->Read(count, buf); }
-    virtual void Rewind() { fOutput->Rewind(); }
-    virtual void SetPosition(uint32_t pos) { fOutput->SetPosition(pos); }
-    virtual void Skip(uint32_t deltaByteCount) { fOutput->Skip(deltaByteCount); }
+    bool AtEnd() HS_OVERRIDE { return fOutput->AtEnd(); }
+    uint32_t GetEOF() HS_OVERRIDE { return fOutput->GetEOF(); }
+    uint32_t GetPosition() const HS_OVERRIDE { return fOutput->GetPosition(); }
+    uint32_t Read(uint32_t count, void* buf) HS_OVERRIDE { return fOutput->Read(count, buf); }
+    void Rewind() HS_OVERRIDE { fOutput->Rewind(); }
+    void SetPosition(uint32_t pos) HS_OVERRIDE { fOutput->SetPosition(pos); }
+    void Skip(uint32_t deltaByteCount) HS_OVERRIDE { fOutput->Skip(deltaByteCount); }
 
-    void Begin() { fDLStartTime = hsTimer::GetSysSeconds(); }
     plFileName GetFileName() const { return fFilename; }
     bool IsRedistUpdate() const { return hsCheckBits(fFlags, pfPatcherWorker::kRedistUpdate); }
     bool IsSelfPatch() const { return hsCheckBits(fFlags, pfPatcherWorker::kSelfPatch); }
@@ -500,7 +508,7 @@ void pfPatcherWorker::ProcessFile()
         }
 
         // If you got here, they're different and we want it.
-        PatcherLogYellow("\tEnqueuing '%S'", entry.clientName);
+        PatcherLogYellow("\tEnqueuing '%S'", entry.downloadName);
         plFileSystem::CreateDir(plFileName(clName).StripFileName());
 
         // If someone registered for SelfPatch notifications, then we should probably
@@ -512,9 +520,7 @@ void pfPatcherWorker::ProcessFile()
             }
         }
 
-        pfPatcherStream* s = new pfPatcherStream(this, dlName, entry);
-        s->Open(clName, "wb");
-
+        pfPatcherStream* s = new pfPatcherStream(this, dlName, clName, entry);
         {
             std::lock_guard<std::mutex> lock(fRequestMut);
             fRequests.push_back(Request(dlName, Request::kFile, s));
