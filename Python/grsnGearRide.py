@@ -115,7 +115,7 @@ class grsnGearRide(ptResponder):
             keepAwayFromGear.clear(self.key)
         else:
             keepAwayFromGear.release(self.key)
-        
+
         # Set some default states
         gearEnterRegion.disable()
         gearExitRegion.disable()
@@ -123,13 +123,18 @@ class grsnGearRide(ptResponder):
         self._ClearExcludeRegions()
         self._inNiche = False
         self._canChangeSubworld = False
-        
+
         # This sets up the regions to continuously fire notifications to us...
+        # Further, don't wait for server arbitration on these bitches.
         # Useful, given the niche only opens up for a few frames.
-        gearEnterRegion.volumeSensorIgnoreExtraEnters(False)
-        gearExitRegion.volumeSensorIgnoreExtraEnters(False)
-        gearExitCrackRegion.volumeSensorIgnoreExtraEnters(False)
-    
+        for i in (gearEnterRegion, gearExitRegion, gearExitCrackRegion):
+            i.volumeSensorIgnoreExtraEnters(False)
+            i.volumeSensorNoArbitration()
+
+        # These are subworld enter regions, so, again, don't wait on server arb
+        for i in (safetyRegion1, safetyRegion2, safetyRegion3):
+            i.volumeSensorNoArbitration()
+
     def OnNotify(self, state, id, events):
         """Performs basic event processing"""
         

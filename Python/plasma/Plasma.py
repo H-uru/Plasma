@@ -6220,6 +6220,11 @@ its draw, physics, avatar, particle objects"""
         """Tells the volume sensor attached to this object to ignore extra enters (default), or not (hack for garrison)."""
         pass
 
+    def volumeSensorNoArbitration(self, noArbitration):
+        """Tells the volume sensor attached to this object whether or not to negotiate exclusive locks with the server."""
+        pass
+
+
 class ptSimpleStateVariable:
     """Basic SDL state data record class"""
     def __init__(self):

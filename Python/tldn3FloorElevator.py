@@ -170,6 +170,10 @@ class tldn3FloorElevator(ptResponder):
             xrgnOnboardDoorA.clearNow(self.key)
             xrgnOnboardDoorB.clearNow(self.key)
 
+        # Don't wait for server arbitration to exit the subworld, otherwise the player may fall
+        # through the floor. Dagnabbit!
+        actSubworld.volumeSensorNoArbitration()
+
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         global elevPwrOn
         global elevLocked
