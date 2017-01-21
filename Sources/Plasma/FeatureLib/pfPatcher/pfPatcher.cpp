@@ -262,8 +262,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
                 // We purposefully do NOT Open this stream! This uses a special auth-file constructor that
                 // utilizes a backing hsRAMStream. This will be fed to plStreamSource later...
                 pfPatcherStream* s = new pfPatcherStream(patcher, fn, infoArr[i].filesize);
-                pfPatcherWorker::Request req = pfPatcherWorker::Request(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
-                patcher->fRequests.push_back(req);
+                patcher->fRequests.emplace_back(fn.AsString(), pfPatcherWorker::Request::kAuthFile, s);
             }
         }
         patcher->IssueRequest();
@@ -297,8 +296,8 @@ static void IPreloaderManifestDownloadCB(ENetError result, void* param, const wc
         // so, we need to ask the AuthSrv about our game code
         {
             std::lock_guard<std::mutex> lock(patcher->fRequestMut);
-            patcher->fRequests.push_back(pfPatcherWorker::Request(ST::null, pfPatcherWorker::Request::kPythonList));
-            patcher->fRequests.push_back(pfPatcherWorker::Request(ST::null, pfPatcherWorker::Request::kSdlList));
+            patcher->fRequests.emplace_back(ST::null, pfPatcherWorker::Request::kPythonList);
+            patcher->fRequests.emplace_back(ST::null, pfPatcherWorker::Request::kSdlList);
         }
 
         // continue pumping requests
@@ -523,7 +522,7 @@ void pfPatcherWorker::ProcessFile()
         pfPatcherStream* s = new pfPatcherStream(this, dlName, clName, entry);
         {
             std::lock_guard<std::mutex> lock(fRequestMut);
-            fRequests.push_back(Request(dlName, Request::kFile, s));
+            fRequests.emplace_back(dlName, Request::kFile, s);
         }
         fQueuedFiles.pop_front();
 
@@ -624,13 +623,13 @@ void pfPatcher::OnSelfPatch(FileDownloadFunc cb)
 void pfPatcher::RequestGameCode()
 {
     std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
-    fWorker->fRequests.push_back(pfPatcherWorker::Request("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader));
+    fWorker->fRequests.emplace_back("SecurePreloader", pfPatcherWorker::Request::kSecurePreloader);
 }
 
 void pfPatcher::RequestManifest(const ST::string& mfs)
 {
     std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
-    fWorker->fRequests.push_back(pfPatcherWorker::Request(mfs, pfPatcherWorker::Request::kManifest));
+    fWorker->fRequests.emplace_back(mfs, pfPatcherWorker::Request::kManifest);
 }
 
 void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
@@ -638,7 +637,7 @@ void pfPatcher::RequestManifest(const std::vector<ST::string>& mfs)
     std::lock_guard<std::mutex> lock(fWorker->fRequestMut);
     std::for_each(mfs.begin(), mfs.end(),
         [&] (const ST::string& name) {
-            fWorker->fRequests.push_back(pfPatcherWorker::Request(name, pfPatcherWorker::Request::kManifest));
+            fWorker->fRequests.emplace_back(name, pfPatcherWorker::Request::kManifest);
         }
     );
 }
