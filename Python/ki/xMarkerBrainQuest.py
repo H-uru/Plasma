@@ -106,8 +106,12 @@ class QuestMarkerBrain(object):
     def RefreshMarkers(self):
         mgr = ptMarkerMgr()
         mgr.removeAllMarkers()
+
+        ageName = PtGetAgeName().lower()
         captures = self._captures
         for i, age, pos, desc in self.markers:
+            if ageName != age.lower():
+                continue
             try:
                 captured = captures[i]
             except LookupError:
