@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 #include "pnNetCommon/plSynchedObject.h"
 #include "pnNetCommon/plNetApp.h"
+#include "plAgeDescription/plAgeDescription.h"
 
 bool gDataServerLocal = false;
 
@@ -1231,24 +1232,30 @@ private:
     plKey       fDestKey;
     ST::string  fAgeName;
     std::vector<plLocation> fLocations;
+    plAgeDescription fAgeDesc;
 
 public:
-    plPageInAgeIter(plKey destKey, const ST::string &ageName) : fDestKey(destKey), fAgeName(ageName) {}
+    plPageInAgeIter(plKey destKey, const plFileName& dataPath, const ST::string &ageName)
+        : fDestKey(destKey), fAgeName(ageName)
+    {
+        plFileName ageFile = plFileName::Join(dataPath, ST::format("{}.age", ageName));
+        if (!fAgeDesc.ReadFromFile(ageFile))
+            kResMgrLog(3, ILog(3, "PageInAge: Failed to load '%s'", ageFile.AsString().c_str()));
+    }
+
     ~plPageInAgeIter()
     {
         plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoomHold);
-        for (int i = 0; i < fLocations.size(); i++)
-        {
+        for (size_t i = 0; i < fLocations.size(); i++)
             pMsg1->AddRoomLoc(fLocations[i]);
-        }
         pMsg1->Send(fDestKey);
     }
-    virtual bool EatPage(plRegistryPageNode* page)
+
+    bool EatPage(plRegistryPageNode* page) HS_OVERRIDE
     {
-        if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0)
-        {
-            plUoid uoid(page->GetPageInfo().GetLocation(), 0, "");
-            fLocations.push_back(uoid.GetLocation());
+        if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0) {
+            if (fAgeDesc.FindPage(page->GetPageInfo().GetPage()))
+                fLocations.push_back(page->GetPageInfo().GetLocation());
         }
         return true;
     }
@@ -1269,7 +1276,7 @@ void plResManager::PageInAge(const ST::string &age)
 
     // Then iterate through each room in the age. The iterator will send the load message
     // off on destruction.
-    plPageInAgeIter iter(clientKey, age);
+    plPageInAgeIter iter(clientKey, fDataPath, age);
     IterateAllPages(&iter);
 }
 
