@@ -476,28 +476,39 @@ void pfPatcherWorker::Run()
 
 void pfPatcherWorker::ProcessFile()
 {
+    plFileName clientDir = plFileSystem::GetCurrentAppPath().StripFileName();
+
     do {
         NetCliFileManifestEntry& entry = fQueuedFiles.front();
+        fQueuedFiles.pop_front();
 
         // eap sucks
         plFileName clName = ST::string::from_wchar(entry.clientName);
         ST::string dlName = ST::string::from_wchar(entry.downloadName);
 
+        // Only operate on files if they are contained within the client directory...
+        plFileName clAbsPath = clName.AbsolutePath();
+        if (!clAbsPath.AsString().starts_with(clientDir.AsString())) {
+            PatcherLogRed("\t!!! Rejecting '%S' because it is outside the client directory !!!", entry.clientName);
+            continue;
+        }
+
         // Check to see if ours matches
-        plFileInfo mine(clName);
+        plFileInfo mine(clAbsPath);
         if (mine.FileSize() == entry.fileSize) {
-            plMD5Checksum cliMD5(clName);
+            plMD5Checksum cliMD5(clAbsPath);
             plMD5Checksum srvMD5;
             srvMD5.SetFromHexString(ST::string::from_wchar(entry.md5, 32).c_str());
 
             if (cliMD5 == srvMD5) {
-                WhitelistFile(clName, false);
-                fQueuedFiles.pop_front();
+                WhitelistFile(clAbsPath, false);
                 continue;
             }
         }
 
-        // It's different... but do we want it?
+        // We know the file has changed somehow... But do we want to fetch this change?
+        // If we're imaging from another server, we won't want to download their client bins
+        // So let the launcher code decide, if applicable
         if (fFileDownloadDesired) {
             if (!fFileDownloadDesired(clName)) {
                 PatcherLogRed("\tDeclined '%S'", entry.clientName);
@@ -508,23 +519,23 @@ void pfPatcherWorker::ProcessFile()
 
         // If you got here, they're different and we want it.
         PatcherLogYellow("\tEnqueuing '%S'", entry.downloadName);
-        plFileSystem::CreateDir(plFileName(clName).StripFileName());
+        plFileSystem::CreateDir(clAbsPath.StripFileName());
 
         // If someone registered for SelfPatch notifications, then we should probably
         // let them handle the gruntwork... Otherwise, go nuts!
         if (fSelfPatch) {
-            if (clName == plFileSystem::GetCurrentAppPath().GetFileName()) {
-                clName += ".tmp"; // don't overwrite myself!
+            if (clAbsPath == plFileSystem::GetCurrentAppPath()) {
+                clAbsPath += ".tmp"; // don't overwrite myself!
                 entry.flags |= kSelfPatch;
             }
         }
 
-        pfPatcherStream* s = new pfPatcherStream(this, dlName, clName, entry);
+        pfPatcherStream* s = new pfPatcherStream(this, dlName, clAbsPath, entry);
+
         {
             std::lock_guard<std::mutex> lock(fRequestMut);
             fRequests.emplace_back(dlName, Request::kFile, s);
         }
-        fQueuedFiles.pop_front();
 
         if (!fRequestActive)
             IssueRequest();
