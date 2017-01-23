@@ -304,7 +304,7 @@ static bool DumpSpecificMsgInfo(plMessage* msg, ST::string& info)
 
         case plClientMsg::kLoadAgeKeys:
         case plClientMsg::kReleaseAgeKeys:
-            info += ST::format(" - Age: {}", clientMsg->GetAgeName());
+            info += ST::format(" - Age: {}", clientMsg->GetPath());
             break;
         }
         return true;

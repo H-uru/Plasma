@@ -266,7 +266,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
     // Tell the client to load-and-hold all the keys for this age, to make the loading process work better
     plClientMsg *loadAgeKeysMsg = new plClientMsg( plClientMsg::kLoadAgeKeys );
-    loadAgeKeysMsg->SetAgeName( fAgeName);
+    loadAgeKeysMsg->SetPath(fAgeName);
     loadAgeKeysMsg->Send( clientKey );
 
     //
@@ -281,7 +281,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
     int nPages = 0;
 
     plClientMsg* pMsg1 = new plClientMsg(plClientMsg::kLoadRoom);
-    pMsg1->SetAgeName(fAgeName);
+    pMsg1->SetPath(fAgeName);
 
     // Loop and ref!
     while( ( page = ad.GetNextPage() ) != nil )
@@ -302,7 +302,7 @@ bool plAgeLoader::ILoadAge(const ST::string& ageName)
 
     // Send the client a message to let go of the extra keys it was holding on to
     plClientMsg *dumpAgeKeys = new plClientMsg( plClientMsg::kReleaseAgeKeys );
-    dumpAgeKeys->SetAgeName( fAgeName);
+    dumpAgeKeys->SetPath(fAgeName);
     dumpAgeKeys->Send( clientKey );
 
     if ( nPages==0 )

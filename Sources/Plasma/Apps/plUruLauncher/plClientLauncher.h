@@ -85,7 +85,7 @@ private:
     ST::string GetAppArgs() const;
 
     void IOnPatchComplete(ENetError result, const ST::string& msg);
-    bool IApproveDownload(const plFileName& file);
+    bool IApproveDownload(const plFileName& file, bool deleting);
 
 public:
     plClientLauncher();

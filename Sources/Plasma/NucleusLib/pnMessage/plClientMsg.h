@@ -56,7 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClientMsg : public plMessage
 {
     int fMsgFlag;
-    ST::string fAgeName;
+    ST::string fPath;
     std::vector<plLocation> fRoomLocs;
 
     void IReset();
@@ -95,6 +95,9 @@ public:
         kSetGraphicsDefaults,
 
         kFlashWindow,
+
+        kAddPage,  // adds a page to the registry
+        kDropPage, // drops a page from the registry
     };
 
     // graphics settings fields
@@ -105,6 +108,7 @@ public:
     plClientMsg(const plKey &s) { IReset();}  
     plClientMsg(int i) { IReset(); fMsgFlag = i; }  
     plClientMsg(const plKey &s, const plKey &r, const double* t) { IReset(); }
+    ~plClientMsg() { }
 
     CLASSNAME_REGISTER(plClientMsg);
     GETINTERFACE_ANY(plClientMsg, plMessage);
@@ -113,9 +117,9 @@ public:
 
     void AddRoomLoc(plLocation loc);
 
-    // Used for kLoadAgeKeys, kLetGoOfAgeKeys only
-    ST::string  GetAgeName() const { return fAgeName; }
-    void        SetAgeName(const ST::string& age) { fAgeName = age; }
+    // Used for kLoadAgeKeys, kLetGoOfAgeKeys, kAddPage, and kDropPage
+    const ST::string& GetPath() const { return fPath; }
+    void              SetPath(const ST::string& path) { fPath = path; }
 
     int GetNumRoomLocs() { return fRoomLocs.size(); }
     const plLocation& GetRoomLoc(int i) const { return fRoomLocs[i]; }

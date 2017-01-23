@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFile/plEncryptedStream.h"
 #include "plFile/plStreamSource.h"
 #include "plFile/plSecureStream.h"
+#include "pnMessage/plClientMsg.h"
 #include "plMessage/plResPatcherMsg.h"
 #include "pfPatcher/pfPatcher.h"
 #include "plProgressMgr/plProgressMgr.h"
@@ -82,23 +83,35 @@ void plResPatcher::OnCompletion(ENetError result, const ST::string& status)
     plgDispatch::Dispatch()->MsgQueue(new plResPatcherMsg(IS_NET_SUCCESS(result), error));
 }
 
+void plResPatcher::OnFileDeleted(const plFileName& file)
+{
+    // This is the patcher thread. We cannot modify the res manager, or really even touch
+    // anything related to registry pages here. So, let the dispatcher manage us
+    if (file.GetFileExt().compare_i("prp") == 0) {
+        plClientMsg* msg = new plClientMsg(plClientMsg::kDropPage);
+        msg->AddReceiver(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
+        msg->SetPath(file.AsString());
+        plgDispatch::Dispatch()->MsgQueue(msg);
+    }
+}
+
 void plResPatcher::OnFileDownloadBegin(const plFileName& file)
 {
     fProgress->SetTitle(ST::format("Downloading {}...", file.GetFileName()));
 
     if (file.GetFileExt().compare_i("prp") == 0) {
-        plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
-        if (mgr)
-            mgr->RemoveSinglePage(file);
+        plClientMsg* msg = new plClientMsg(plClientMsg::kDropPage);
+        msg->SetPath(file.AsString());
+        msg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
     }
 }
 
 void plResPatcher::OnFileDownloaded(const plFileName& file)
 {
     if (file.GetFileExt().compare_i("prp") == 0) {
-        plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
-        if (mgr)
-            mgr->AddSinglePage(file);
+        plClientMsg* msg = new plClientMsg(plClientMsg::kAddPage);
+        msg->SetPath(file.AsString());
+        msg->Send(hsgResMgr::ResMgr()->FindKey(kClient_KEY));
     }
 }
 
@@ -137,6 +150,7 @@ pfPatcher* plResPatcher::CreatePatcher()
 {
     pfPatcher* patcher = new pfPatcher;
     patcher->OnCompletion(std::bind(&plResPatcher::OnCompletion, this, std::placeholders::_1, std::placeholders::_2));
+    patcher->OnFileDeleted(std::bind(&plResPatcher::OnFileDeleted, this, std::placeholders::_1));
     patcher->OnFileDownloadBegin(std::bind(&plResPatcher::OnFileDownloadBegin, this, std::placeholders::_1));
     patcher->OnFileDownloaded(std::bind(&plResPatcher::OnFileDownloaded, this, std::placeholders::_1));
     patcher->OnProgressTick(std::bind(&plResPatcher::OnProgressTick, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));

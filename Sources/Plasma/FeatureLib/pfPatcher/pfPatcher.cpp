@@ -94,9 +94,12 @@ struct pfPatcherWorker : public hsThread
         // Executable flags
         kRedistUpdate               = 1<<4,
 
+        // Deleted file
+        kFileDeleted                = 1<<5,
+
         // Begin internal flags
-        kLastManifestFlag           = 1<<5,
-        kSelfPatch                  = 1<<6,
+        kLastManifestFlag           = 1<<6,
+        kSelfPatch                  = 1<<7,
     };
 
     std::deque<Request> fRequests;
@@ -108,6 +111,7 @@ struct pfPatcherWorker : public hsThread
 
     pfPatcher::CompletionFunc fOnComplete;
     pfPatcher::FileDownloadFunc fFileBeginDownload;
+    pfPatcher::FileDownloadFunc fFileDeleted;
     pfPatcher::FileDesiredFunc fFileDownloadDesired;
     pfPatcher::FileDownloadFunc fFileDownloaded;
     pfPatcher::GameCodeDiscoverFunc fGameCodeDiscovered;
@@ -171,7 +175,7 @@ public:
     }
 
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& reqName, const plFileName& cliName, const NetCliFileManifestEntry& entry)
-        : fParent(parent), fFilename(cliName.Normalize()), fFlags(entry.flags), fBytesWritten(0), plZlibStream()
+        : fParent(parent), fFilename(cliName), fFlags(entry.flags), fBytesWritten(0), plZlibStream()
     {
         // ugh. eap removed the compressed flag in his fail manifests
         if (reqName.GetFileExt().compare_i("gz") == 0) {
@@ -483,7 +487,7 @@ void pfPatcherWorker::ProcessFile()
         fQueuedFiles.pop_front();
 
         // eap sucks
-        plFileName clName = ST::string::from_wchar(entry.clientName);
+        plFileName clName = plFileName(ST::string::from_wchar(entry.clientName)).Normalize();
         ST::string dlName = ST::string::from_wchar(entry.downloadName);
 
         // Only operate on files if they are contained within the client directory...
@@ -494,8 +498,9 @@ void pfPatcherWorker::ProcessFile()
         }
 
         // Check to see if ours matches
+        bool wantToDelete = hsCheckBits(entry.flags, pfPatcherWorker::kFileDeleted);
         plFileInfo mine(clAbsPath);
-        if (mine.FileSize() == entry.fileSize) {
+        if (!wantToDelete && mine.FileSize() == entry.fileSize) {
             plMD5Checksum cliMD5(clAbsPath);
             plMD5Checksum srvMD5;
             srvMD5.SetFromHexString(ST::string::from_wchar(entry.md5, 32).c_str());
@@ -510,11 +515,22 @@ void pfPatcherWorker::ProcessFile()
         // If we're imaging from another server, we won't want to download their client bins
         // So let the launcher code decide, if applicable
         if (fFileDownloadDesired) {
-            if (!fFileDownloadDesired(clName)) {
-                PatcherLogRed("\tDeclined '%S'", entry.clientName);
-                fQueuedFiles.pop_front();
+            if (!fFileDownloadDesired(clName, wantToDelete)) {
+                PatcherLogRed("\tClient CB declined '%S'", entry.clientName);
                 continue;
             }
+        }
+
+        // Handle file deletion here AFTER asking the launcher if it's OK to commit
+        // Don't download deleted files 'cause they don't exist on the server :)
+        if (wantToDelete) {
+            if (mine.Exists()) {
+                PatcherLogYellow("\tDeleting '%S'", entry.clientName);
+                if (fFileDeleted)
+                    fFileDeleted(clName);
+                plFileSystem::Unlink(clAbsPath);
+            }
+            continue;
         }
 
         // If you got here, they're different and we want it.
@@ -530,7 +546,7 @@ void pfPatcherWorker::ProcessFile()
             }
         }
 
-        pfPatcherStream* s = new pfPatcherStream(this, dlName, clAbsPath, entry);
+        pfPatcherStream* s = new pfPatcherStream(this, dlName, clName, entry);
 
         {
             std::lock_guard<std::mutex> lock(fRequestMut);
@@ -592,6 +608,11 @@ pfPatcher::~pfPatcher() { }
 void pfPatcher::OnCompletion(CompletionFunc cb)
 {
     fWorker->fOnComplete = cb;
+}
+
+void pfPatcher::OnFileDeleted(FileDownloadFunc cb)
+{
+    fWorker->fFileDeleted = cb;
 }
 
 void pfPatcher::OnFileDownloadBegin(FileDownloadFunc cb)

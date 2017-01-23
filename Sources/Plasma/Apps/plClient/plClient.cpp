@@ -682,14 +682,14 @@ bool plClient::MsgReceive(plMessage* msg)
         case plClientMsg::kLoadAgeKeys:
             {
                 plResManager *mgr = (plResManager *)hsgResMgr::ResMgr();
-                mgr->LoadAgeKeys( pMsg->GetAgeName() );
+                mgr->LoadAgeKeys( pMsg->GetPath() );
             }
             break;
 
         case plClientMsg::kReleaseAgeKeys:
             {
                 plResManager *mgr = (plResManager *)hsgResMgr::ResMgr();
-                mgr->DropAgeKeys( pMsg->GetAgeName() );
+                mgr->DropAgeKeys( pMsg->GetPath() );
             }
             break;
             
@@ -721,6 +721,20 @@ bool plClient::MsgReceive(plMessage* msg)
         case plClientMsg::kFlashWindow:
             {
                 FlashWindow();
+            }
+            break;
+
+        case plClientMsg::kAddPage:
+            {
+                plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
+                mgr->AddSinglePage(pMsg->GetPath());
+            }
+            break;
+
+        case plClientMsg::kDropPage:
+            {
+                plResManager* mgr = static_cast<plResManager*>(hsgResMgr::ResMgr());
+                mgr->RemoveSinglePage(pMsg->GetPath());
             }
             break;
         }

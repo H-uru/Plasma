@@ -45,7 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 void plClientMsg::IReset()
 { 
     fMsgFlag = 0;
-    fAgeName = "";
+    fPath = "";
 }
 
 void plClientMsg::AddRoomLoc(plLocation loc)

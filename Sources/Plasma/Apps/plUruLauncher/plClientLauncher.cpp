@@ -252,8 +252,12 @@ void plClientLauncher::IOnPatchComplete(ENetError result, const ST::string& msg)
         s_errorProc(result, msg);
 }
 
-bool plClientLauncher::IApproveDownload(const plFileName& file)
+bool plClientLauncher::IApproveDownload(const plFileName& file, bool deleting)
 {
+    // No deletions allowed!
+    if (deleting)
+        return false;
+
     // So, for a repair, what we want to do is quite simple.
     // That is: download everything that is NOT in the root directory.
     plFileName path = file.StripFileName();
@@ -284,7 +288,7 @@ void plClientLauncher::PatchClient()
 
     // If this is a repair, we need to approve the downloads...
     if (hsCheckBits(fFlags, kGameDataOnly))
-        patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
+        patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1, std::placeholders::_2));
 
     // Let's get 'er done.
     if (hsCheckBits(fFlags, kHaveSelfPatched)) {

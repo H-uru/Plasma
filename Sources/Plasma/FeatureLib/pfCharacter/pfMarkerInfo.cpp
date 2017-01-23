@@ -68,7 +68,7 @@ void pfMarkerInfo::Init()
 
     // Force the client to keep the GlobalMarkers keys loaded, so we don't load them every time we clone
     plClientMsg* loadAgeKeysMsg = new plClientMsg(plClientMsg::kLoadAgeKeys);
-    loadAgeKeysMsg->SetAgeName("GlobalMarkers");
+    loadAgeKeysMsg->SetPath("GlobalMarkers");
     loadAgeKeysMsg->Send(resMgr->FindKey(kClient_KEY));
 
     //

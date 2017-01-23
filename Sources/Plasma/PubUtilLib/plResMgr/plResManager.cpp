@@ -1264,7 +1264,7 @@ void plResManager::PageInAge(const ST::string &age)
 
     // Tell the client to load all the keys for this age, to make the loading process work better
     plClientMsg *loadAgeKeysMsg = new plClientMsg(plClientMsg::kLoadAgeKeys);
-    loadAgeKeysMsg->SetAgeName(age);
+    loadAgeKeysMsg->SetPath(age);
     loadAgeKeysMsg->Send(clientKey);
 
     // Then iterate through each room in the age. The iterator will send the load message

@@ -62,6 +62,7 @@ class plResPatcher
     friend class plAgeLoader;
 
     void OnCompletion(ENetError, const ST::string& msg);
+    void OnFileDeleted(const plFileName& file);
     void OnFileDownloadBegin(const plFileName& file);
     void OnFileDownloaded(const plFileName& file);
     bool OnGameCodeDiscovered(const plFileName& file, class hsStream* stream);
