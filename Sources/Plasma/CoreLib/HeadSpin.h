@@ -120,6 +120,13 @@ typedef int32_t   hsError;
 #define hsFailed(r)         ((hsError)(r)<hsOK)
 #define hsSucceeded(r)      ((hsError)(r)>=hsOK)
 
+// Indirection required for joining preprocessor macros together
+#define _hsMacroJoin_(lhs, rhs) lhs ## rhs
+#define hsMacroJoin(lhs, rhs)   _hsMacroJoin_(lhs, rhs)
+
+// Declare a file-unique identifier without caring what its full name is
+#define hsUniqueIdentifier(prefix) hsMacroJoin(prefix, __LINE__)
+
 #if defined(HAVE_GCC_DEPRECATED_ATTR)
 #   define hsDeprecated(message) __attribute__((deprecated(message)))
 #elif defined(HAVE_CXX14_DEPRECATED_ATTR)

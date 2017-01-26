@@ -283,5 +283,26 @@ public:
     }
 };
 
-#endif
 
+/* Provides the inverse of std::lock_guard */
+template <typename T>
+class hsLockGuardUnlock
+{
+public:
+    hsLockGuardUnlock(T& mutex) : fMutex(mutex) { fMutex.unlock(); }
+    ~hsLockGuardUnlock() { fMutex.lock(); }
+
+    hsLockGuardUnlock(const hsLockGuardUnlock<T>&) = delete;
+    hsLockGuardUnlock<T>& operator=(const hsLockGuardUnlock<T>&) = delete;
+
+private:
+    T& fMutex;
+};
+
+/* Shorthand for creating scope locks, since std::lock_guard is not movable,
+ * and template type deduction in constructors is a C++17 feature.
+ */
+#define hsLockGuard(mutex) std::lock_guard<decltype(mutex)> hsUniqueIdentifier(_LockGuard_)(mutex)
+#define hsUnlockGuard(mutex) hsLockGuardUnlock<decltype(mutex)>  hsUniqueIdentifier(_UnlockGuard_)(mutex)
+
+#endif

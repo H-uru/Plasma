@@ -83,11 +83,6 @@ enum EOpType {
     kNumOpTypes
 };
 
-class CNtCritSect : public CCritSect {
-public:
-    BOOL TryEnter () { return TryEnterCriticalSection(&m_handle); }
-};
-
 class CNtWaitHandle : public hsRefCnt {
     HANDLE  m_event;
 
@@ -122,7 +117,7 @@ struct Operation {
 };
 
 struct NtObject {
-    CNtCritSect                 critsect;
+    std::recursive_mutex        critsect;
     EIoType                     ioType;
     HANDLE                      handle;
     void *                      userState;
