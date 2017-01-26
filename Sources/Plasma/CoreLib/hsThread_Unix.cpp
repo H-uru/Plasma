@@ -192,14 +192,3 @@ void hsGlobalSemaphore::Signal()
     hsThrowIfOSErr(status);
 #endif
 }
-
-void hsSleep::Sleep(uint32_t millis)
-{
-    uint32_t secs = millis / 1000;
-    if (secs > 0)
-    {
-        millis %= 1000;
-        ::sleep(secs);
-    }
-    usleep(millis*1000);
-}

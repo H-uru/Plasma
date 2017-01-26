@@ -78,10 +78,3 @@ void hsGlobalSemaphore::Signal()
 {
     ::ReleaseSemaphore(fSemaH, 1, nil);
 }
-
-///////////////////////////////////////////////////////////////
-
-void hsSleep::Sleep(uint32_t millis)
-{
-    ::Sleep(millis);
-}

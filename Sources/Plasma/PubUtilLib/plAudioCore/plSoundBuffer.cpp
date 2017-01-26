@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"
 
+#include <thread>
+#include <chrono>
+
 static plFileName GetFullPath(const plFileName &filename)
 {
     if (filename.StripFileName().IsValid())
@@ -177,7 +180,7 @@ plSoundBuffer::~plSoundBuffer()
     {
         while(!fLoaded)
         {
-            hsSleep::Sleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 
