@@ -94,7 +94,7 @@ void plSoundPreloader::Run()
     while (fRunning)
     {
         {
-            std::lock_guard<std::mutex> lock(fCritSect);
+            hsLockGuard(fCritSect);
             while (fBuffers.GetCount())
             {
                 templist.Append(fBuffers.Pop());
@@ -136,7 +136,7 @@ void plSoundPreloader::Run()
     // we need to be sure that all buffers are removed from our load list when shutting this thread down or we will hang,
     // since the sound buffer will wait to be destroyed until it is marked as loaded
     {
-        std::lock_guard<std::mutex> lock(fCritSect);
+        hsLockGuard(fCritSect);
         while (fBuffers.GetCount())
         {
             plSoundBuffer* buf = fBuffers.Pop();

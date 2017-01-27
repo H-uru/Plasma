@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <mutex>
 #include <condition_variable>
 #include <thread>
+#include "hsLockGuard.h"
 
 typedef uint32_t hsMilliseconds;
 
@@ -212,7 +213,7 @@ private:
     void LockForReading()
     {
         // Don't allow us to start reading if there's still an active writer
-        std::lock_guard<std::mutex> lock(fReaderLock);
+        hsLockGuard(fReaderLock);
 
         fReaderCount++;
         if (fReaderCount == 1) {
@@ -282,27 +283,5 @@ public:
         fLock.UnlockForWriting();
     }
 };
-
-
-/* Provides the inverse of std::lock_guard */
-template <typename T>
-class hsLockGuardUnlock
-{
-public:
-    hsLockGuardUnlock(T& mutex) : fMutex(mutex) { fMutex.unlock(); }
-    ~hsLockGuardUnlock() { fMutex.lock(); }
-
-    hsLockGuardUnlock(const hsLockGuardUnlock<T>&) = delete;
-    hsLockGuardUnlock<T>& operator=(const hsLockGuardUnlock<T>&) = delete;
-
-private:
-    T& fMutex;
-};
-
-/* Shorthand for creating scope locks, since std::lock_guard is not movable,
- * and template type deduction in constructors is a C++17 feature.
- */
-#define hsLockGuard(mutex) std::lock_guard<decltype(mutex)> hsUniqueIdentifier(_LockGuard_)(mutex)
-#define hsUnlockGuard(mutex) hsLockGuardUnlock<decltype(mutex)>  hsUniqueIdentifier(_UnlockGuard_)(mutex)
 
 #endif

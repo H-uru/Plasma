@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStreamSource.h"
 #include "plSecureStream.h"
 #include "plEncryptedStream.h"
+#include "hsLockGuard.h"
 
 #if HS_BUILD_FOR_UNIX
 #    include <wctype.h>
@@ -56,7 +57,7 @@ plStreamSource::plStreamSource()
 
 void plStreamSource::ICleanup()
 {
-    std::lock_guard<std::mutex> lock(fMutex);
+    hsLockGuard(fMutex);
 
     // loop through all the file data records, and delete the streams
     decltype(fFileData.begin()) curData;
@@ -72,7 +73,7 @@ void plStreamSource::ICleanup()
 
 hsStream* plStreamSource::GetFile(const plFileName& filename)
 {
-    std::lock_guard<std::mutex> lock(fMutex);
+    hsLockGuard(fMutex);
 
     plFileName sFilename = filename.Normalize('/');
     if (fFileData.find(sFilename) == fFileData.end())
@@ -112,7 +113,7 @@ std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, co
 {
     plFileName sDir = dir.Normalize('/');
     hsAssert(ext.char_at(0) != '.', "Don't add a dot");
-    std::lock_guard<std::mutex> lock(fMutex);
+    hsLockGuard(fMutex);
 
     // loop through all the file data records, and create the list
     std::vector<plFileName> retVal;
@@ -142,7 +143,7 @@ bool plStreamSource::InsertFile(const plFileName& filename, hsStream* stream)
 {
     plFileName sFilename = filename.Normalize('/');
 
-    std::lock_guard<std::mutex> lock(fMutex);
+    hsLockGuard(fMutex);
     if (fFileData.find(sFilename) != fFileData.end())
         return false; // duplicate entry, return failure
 

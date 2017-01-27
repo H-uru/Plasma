@@ -56,6 +56,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <unordered_set>
 #include <mutex>
 #include <string_theory/format>
+#include "hsLockGuard.h"
 
 // hsDebugMessage can get overridden to dump to a file :(
 #ifdef _MSC_VER
@@ -73,7 +74,7 @@ struct _RefCountLeakCheck
 
     ~_RefCountLeakCheck()
     {
-        std::lock_guard<std::mutex> lock(m_mutex);
+        hsLockGuard(m_mutex);
 
         _LeakDebug(ST::format("Refs tracked:  {} created, {} destroyed\n",
                               m_added, m_removed).c_str());
@@ -96,7 +97,7 @@ struct _RefCountLeakCheck
     static void add(hsRefCnt *ref)
     {
         _RefCountLeakCheck *this_p = _instance();
-        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        hsLockGuard(this_p->m_mutex);
         ++this_p->m_added;
         this_p->m_refs.insert(ref);
     }
@@ -104,7 +105,7 @@ struct _RefCountLeakCheck
     static void del(hsRefCnt *ref)
     {
         _RefCountLeakCheck *this_p = _instance();
-        std::lock_guard<std::mutex> lock(this_p->m_mutex);
+        hsLockGuard(this_p->m_mutex);
         ++this_p->m_removed;
         this_p->m_refs.erase(ref);
     }

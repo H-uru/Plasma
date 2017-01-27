@@ -49,6 +49,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <list>
 #include <mutex>
 #include "hsRefCnt.h"
+#include "hsLockGuard.h"
 #pragma hdrstop
 
 
@@ -110,7 +111,7 @@ static std::list<NetMsgChannel*>*   s_channels;
 
 //===========================================================================
 ChannelCrit::~ChannelCrit () {
-    std::lock_guard<ChannelCrit> lock(*this);
+    hsLockGuard(*this);
 
     if (s_channels) {
         while (s_channels->size()) {
@@ -301,7 +302,7 @@ NetMsgChannel * NetMsgChannelLock (
     uint32_t *      largestRecv
 ) {
     NetMsgChannel * channel;
-    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+    hsLockGuard(s_channelCrit);
     if (nullptr != (channel = FindChannel_CS(protocol, server))) {
         *largestRecv = channel->m_largestRecv;
         channel->Ref("ChannelLock");
@@ -316,7 +317,7 @@ NetMsgChannel * NetMsgChannelLock (
 void NetMsgChannelUnlock (
     NetMsgChannel * channel
 ) {
-    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+    hsLockGuard(s_channelCrit);
 
     channel->UnRef("ChannelLock");
 }
@@ -388,7 +389,7 @@ void NetMsgProtocolRegister (
     const plBigNum&         dh_xa,    // client: dh_x     server: dh_a
     const plBigNum&         dh_n
 ) {
-    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+    hsLockGuard(s_channelCrit);
 
     NetMsgChannel * channel = FindOrCreateChannel_CS(protocol, server);
 
@@ -409,7 +410,7 @@ void NetMsgProtocolRegister (
 
 //===========================================================================
 void NetMsgProtocolDestroy (uint32_t protocol, bool server) {
-    std::lock_guard<ChannelCrit> lock(s_channelCrit);
+    hsLockGuard(s_channelCrit);
 
     if (NetMsgChannel* channel = FindChannel_CS(protocol, server)) {
         s_channels->remove(channel);

@@ -61,6 +61,7 @@ set(CoreLib_HEADERS
     hsFastMath.h
     hsGeometry3.h
     hsHashTable.h
+    hsLockGuard.h
     hsMatrix44.h
     hsMemory.h
     hsPoint2.h
