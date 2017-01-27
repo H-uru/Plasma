@@ -246,7 +246,8 @@ class kCommands:
     Jalak = {"/savecolumns" : "SaveColumns",
              "/loadcolumns" : "LoadColumns"}
     Internal = {"/revisitcleft" : "RevisitCleft",
-                "/restart" : "RestartGame"}
+                "/restart" : "RestartGame",
+                "/gamereward" : "MarkerGameReward"}
     EasterEggs = {"/look" : "LookAround",
                   "/get feather" : "GetFeather",
                   "/look in pocket" : "LookForFeathers"}

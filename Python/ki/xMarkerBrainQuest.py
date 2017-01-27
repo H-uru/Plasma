@@ -185,8 +185,7 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
         if self.playing:
             QuestMarkerBrain.CaptureMarker(self, id)
             if self._finished_game:
-                congrats = PtGetLocalizedString("KI.MarkerGame.FinishedGame", [self.game_name])
-                PtSendKIMessage(kKILocalChatStatusMsg, congrats)
+                self._GiveReward()
 
     def Cleanup(self):
         QuestMarkerBrain.Cleanup(self)
@@ -205,6 +204,14 @@ class UCQuestMarkerGame(QuestMarkerBrain, UCMarkerGame):
             if idx not in self._captures:
                 return False
         return True
+
+    def _GiveReward(self):
+        # Send a congratulatory note to the KI
+        congrats = PtGetLocalizedString("KI.MarkerGame.FinishedGame", [self.game_name])
+        PtSendKIMessage(kKILocalChatStatusMsg, congrats)
+
+        # Apply any game-specific reward
+        UCMarkerGame._GiveReward(self)
 
     @staticmethod
     def LoadFromVault():
