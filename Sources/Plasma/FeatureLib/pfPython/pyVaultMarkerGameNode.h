@@ -80,6 +80,9 @@ public:
     ST::string      GetGameName () const;
     void            SetGameName (const ST::string& name);
 
+    ST::string GetReward() const;
+    void SetReward(const ST::string& value);
+
     /** Returns a tuple of tuples */
     PyObject*       GetMarkers() const;
     void            SetMarkers(const std::vector<struct VaultMarker>& markers);
