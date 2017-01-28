@@ -209,10 +209,10 @@ void pfMarkerMgr::SetSelectedMarker(uint32_t id)
 
     if (id != kNoMarkerSelected)
     {
+        fSelectedMarker = id;
         if (fMarkers.find(id) != fMarkers.end())
         {
             fMarkers[id]->SetType(pfMarkerInfo::kMarkerLocalSelected);
-            fSelectedMarker = id;
         }
     }
 }
