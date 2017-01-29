@@ -141,4 +141,15 @@ enum EScoreTimePeriods {
     kScoreTimePeriodDay
 };
 
+/*****************************************************************************
+*
+*   Server Capabilities
+*
+***/
+
+enum EServerCaps {
+    kCapsScoreLeaderBoards = 0,
+};
+
+
 #endif //pnNbConst_inc

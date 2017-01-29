@@ -181,5 +181,11 @@ void pfGameScore::Find(uint32_t ownerId, const ST::string& name, const plKey& rc
 
 void pfGameScore::FindHighScores(uint32_t ageId, uint32_t maxScores, const ST::string& name, const plKey& rcvr)
 {
-    NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
+    // This functionality is only supported by next-gen servers
+    if (NetCliAuthCheckCap(kCapsScoreLeaderBoards)) {
+        NetCliAuthScoreGetHighScores(ageId, maxScores, name, OnScoreFound, new ScoreFindParam(ageId, name, rcvr));
+    } else {
+        pfGameScoreListMsg* msg = new pfGameScoreListMsg(kNetErrNotSupported, ageId, name);
+        msg->Send(rcvr);
+    }
 }
