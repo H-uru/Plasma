@@ -97,6 +97,7 @@ struct CliAuConn : hsRefCnt {
     plUUID          token;
     unsigned        seq;
     unsigned        serverChallenge;
+    hsBitVector     caps;
     AsyncCancelId   cancelId;
     bool            abandoned;
 };
@@ -2355,6 +2356,20 @@ static bool Recv_ScoreGetHighScoresReply(
     return true;
 }
 
+//============================================================================
+static bool Recv_ServerCaps(
+    const uint8_t   msg[],
+    unsigned        bytes,
+    void *          param
+    ) {
+    const Auth2Cli_ServerCaps & caps = *(const Auth2Cli_ServerCaps *)msg;
+
+    hsReadOnlyStream stream(caps.byteCount, reinterpret_cast<const void*>(caps.buffer));
+    ((CliAuConn*)param)->caps.Read(&stream);
+
+    return true;
+}
+
 /*****************************************************************************
 *
 *   Cli2Auth protocol
@@ -2460,6 +2475,7 @@ static NetMsgInitRecv s_recv[] = {
     { MSG(ScoreGetRanksReply)       },
     { MSG(AccountExistsReply)       },
     { MSG(ScoreGetHighScoresReply)  },
+    { MSG(ServerCaps)               },
 };
 #undef MSG
 
@@ -5283,6 +5299,12 @@ void NetCliAuthSetConnectCallback (
     FNetCliAuthConnectCallback  callback
 ) {
     s_connectedCb = callback;
+}
+
+//============================================================================
+bool NetCliAuthCheckCap (uint32_t cap) {
+    hsLockGuard(s_critsect);
+    return s_active ? s_active->caps.IsBitSet(cap) : false;
 }
 
 //============================================================================
