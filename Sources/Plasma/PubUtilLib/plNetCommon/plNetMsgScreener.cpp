@@ -76,8 +76,8 @@ void plNetMsgScreener::IRejectLogMsg(int16_t classIndex, const char* desc, const
 //
 void plNetMsgScreener::IRejectLogMsg(const plMessage* msg, const char* desc, const plNetGameMember* gm) const
 {
-    const char* senderName = msg->GetSender() ? msg->GetSender()->GetUoid().GetObjectName().c_str() : "?";
-    const char* rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName().c_str() : "?";
+    ST::string senderName = msg->GetSender() ? msg->GetSender()->GetUoid().GetObjectName() : ST_LITERAL("?");
+    ST::string rcvrName = msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetUoid().GetObjectName() : ST_LITERAL("?");
 
     DebugMsg("Message {} was rejected, reason:{}, age:{}, client:{}, msgSndr:{}, msgRcvr:{}",
         msg->ClassName(), desc, IGetAgeName(), IGetSenderName(gm),
