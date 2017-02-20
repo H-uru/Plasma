@@ -4847,7 +4847,10 @@ class xKI(ptModifier):
         # Is the player merely looking at a Marker Game?
         if self.MFdialogMode == kGames.MFOverview:
             mrkfldTitleBtn.disable()
-            mbtnDelete.show()
+            if self.IsContentMutable(self.BKCurrentContent):
+                mbtnDelete.show()
+            else:
+                mbtnDelete.hide()
             mbtnGameTimePullD.hide()
             mbtnGameTimeArrow.hide()
             if element.getCreatorNodeID() == PtGetLocalClientID():
