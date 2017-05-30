@@ -203,15 +203,15 @@ class Ahnonay(ptResponder):
     ###########################
     def OnPageLoad(self,what,who):
         global spherePages
-        print "Ahnonay.OnPageLoad(): what=%s who=%s" % (what, who)
+        PtDebugPrint(u"Ahnonay.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
 
         if what == kLoaded:
             if who in spherePages: 
                 ageSDL = PtGetAgeSDL()
                 sphere = str(ageSDL["ahnyCurrentSphere"][0])
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
-                print "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
-                
+                PtDebugPrint("Ahnonay.OnPageLoad(): Sphere0{} loaded with offset:{}".format(sphere, offset), level=kWarningLevel)
+
                 linkmgr = ptNetLinkingMgr()
                 link = linkmgr.getCurrAgeLink()
                 spawnPoint = link.getSpawnPoint()
