@@ -486,7 +486,7 @@ class xOptionsMenu(ptModifier):
     def OnPageLoad(self,what,room):
         global gFirstReltoVisit
 
-        if (room == "Personal_psnlMYSTII" or room == "Personal_District_psnlMYSTII") and gFirstReltoVisit:
+        if room in {u"Personal_psnlMYSTII", u"Personal_District_psnlMYSTII"} and gFirstReltoVisit:
             gFirstReltoVisit = false
 
             vault = ptVault()
