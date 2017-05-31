@@ -1749,17 +1749,14 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         plRoomLoadNotifyMsg* pRLNMsg = plRoomLoadNotifyMsg::ConvertNoRef(msg);
         if (pRLNMsg)
         {
-            // yes...
-            // call it
-            const char* roomname = "";
-            if ( pRLNMsg->GetRoom() != nil )
-                roomname = pRLNMsg->GetRoom()->GetName().c_str();
+            PyObject* roomname = PyUnicode_FromSTString(pRLNMsg->GetRoom() ?
+                                                        pRLNMsg->GetRoom()->GetName() : ST::null);
 
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_PageLoad],
                     (char*)fFunctionNames[kfunc_PageLoad],
-                    "ls", pRLNMsg->GetWhatHappen(), roomname);
+                    "lO", pRLNMsg->GetWhatHappen(), roomname);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1769,6 +1766,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 // if there was an error make sure that the stderr gets flushed so it can be seen
                 ReportError();
             }
+            Py_DECREF(roomname);
             Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
             // display any output (NOTE: this would be disabled in production)
