@@ -10,6 +10,7 @@ set(plPhysX_SOURCES
     plPXConvert.cpp
     plPXPhysical.cpp
     plPXPhysicalControllerCore.cpp
+    plPXSubWorld.cpp
     plSimulationMgr.cpp
 )
 
@@ -20,6 +21,7 @@ set(plPhysX_HEADERS
     plPXPhysical.h
     plPXPhysicalControllerCore.h
     plPXStream.h
+    plPXSubWorld.h
     plSimulationMgr.h
 )
 

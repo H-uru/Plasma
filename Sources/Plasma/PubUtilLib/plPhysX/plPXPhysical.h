@@ -153,7 +153,7 @@ public:
     virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bool force=false);
     virtual void GetTransform(hsMatrix44& l2w, hsMatrix44& w2l);
 
-    virtual int GetGroup() const { return fRecipe.group; }
+    virtual int GetGroup() const { return fGroup; }
 
     virtual void    AddLOSDB(uint16_t flag) { hsSetBits(fLOSDBs, flag); }
     virtual void    RemoveLOSDB(uint16_t flag) { hsClearBits(fLOSDBs, flag); }

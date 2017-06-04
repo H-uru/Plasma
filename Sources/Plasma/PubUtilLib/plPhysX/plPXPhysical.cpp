@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plCorrectionMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
@@ -71,6 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plPXConvert.h"
 #include "plPXPhysicalControllerCore.h"
+#include "plPXSubWorld.h"
 
 #include "plModifier/plDetectorLog.h"
 
@@ -182,7 +184,6 @@ bool plPXPhysical::Init()
     fObjectKey = fRecipe.objectKey;
     fReportsOn = fRecipe.reportsOn;
     fSceneNode = fRecipe.sceneNode;
-    fWorldKey = fRecipe.worldKey;
 
     NxActorDesc actorDesc;
     NxSphereShapeDesc sphereDesc;
@@ -343,12 +344,6 @@ bool plPXPhysical::Init()
     plNodeRefMsg* refMsg = new plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kPhysical); 
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kActiveRef);
 
-    if (fWorldKey)
-    {
-        plGenRefMsg* ref = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld);
-        hsgResMgr::ResMgr()->AddViaNotify(fWorldKey, ref, plRefFlags::kActiveRef);
-    }
-
     // only dynamic physicals without noSync need SDLs
     if ( fRecipe.group == plSimDefs::kGroupDynamic && !fProps.IsBitSet(plSimulationInterface::kNoSynchronize) )
     {
@@ -407,33 +402,65 @@ bool plPXPhysical::MsgReceive( plMessage* msg )
 bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
 {
     uint8_t refCtxt = refMsg->GetContext();
-    plKey refKey = refMsg->GetRef()->GetKey();
-    plKey ourKey = GetKey();
-    PhysRefType refType = PhysRefType(refMsg->fType);
 
-    ST::string refKeyName = refKey ? refKey->GetName() : ST_LITERAL("MISSING");
-
-    if (refType == kPhysRefWorld)
-    {
-        if (refCtxt == plRefMsg::kOnCreate || refCtxt == plRefMsg::kOnRequest)
-        {
-            // Cache the initial transform, since we assume the sceneobject already knows
-            // that and doesn't need to be told again
-            IGetTransformGlobal(fCachedLocal2World);
-        }
-        if (refCtxt == plRefMsg::kOnDestroy)
-        {
-            // our world was deleted out from under us: move to the main world
-//          hsAssert(0, "Lost world");
-        }
-    }
-    else if (refType == kPhysRefSndGroup)
-    {
-        switch (refCtxt)
-        {
+    switch (refMsg->fType) {
+    case kPhysRefWorld: {
+        switch (refCtxt) {
         case plRefMsg::kOnCreate:
         case plRefMsg::kOnRequest:
-            fSndGroup = plPhysicalSndGroup::ConvertNoRef( refMsg->GetRef() );
+            // PotS files specify a plHKSubWorld as the subworld key. For everything else,
+            // the subworlds are a plSceneObject key. For sanity purposes, we will allow
+            // references to the plPXSubWorld here. HOWEVER, we will need to grab the target
+            // and replace our reference...
+            if (plPXSubWorld* subWorldIface = plPXSubWorld::ConvertNoRef(refMsg->GetRef())) {
+                hsAssert(subWorldIface->GetOwnerKey(), "subworld owner is NULL?! Uh oh...");
+                plGenRefMsg* replaceRefMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnReplace, 0, kPhysRefWorld);
+                hsgResMgr::ResMgr()->AddViaNotify(subWorldIface->GetOwnerKey(), replaceRefMsg, plRefFlags::kActiveRef);
+            }
+
+        // fall-thru is intentional :)
+        case plRefMsg::kOnReplace:
+            // loading into a subworld
+            if (plSceneObject* subSO = plSceneObject::ConvertNoRef(refMsg->GetRef())) {
+                fWorldKey = subSO->GetKey();
+
+                // Cyan produced files will never have plPXSubWorld as this is a H'uru-ism.
+                // Let us make a default one such that we can play with default subworlds at runtime.
+                // HAAAAAAAAAX!!!
+                plPXSubWorld* subWorldIface = plPXSubWorld::ConvertNoRef(subSO->GetGenericInterface(plPXSubWorld::Index()));
+                if (!subWorldIface) {
+                    subWorldIface = new plPXSubWorld();
+                    hsgResMgr::ResMgr()->NewKey(ST::format("{}_DefSubWorld", subSO->GetKeyName()),
+                                                subWorldIface, GetKey()->GetUoid().GetLocation());
+                    plObjRefMsg* subIfaceRef = new plObjRefMsg(subSO->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface);
+                    // this will send the reference immediately
+                    hsgResMgr::ResMgr()->SendRef(subWorldIface, subIfaceRef, plRefFlags::kActiveRef);
+                }
+
+                // Now, we can initialize the physical...
+                Init();
+                IGetTransformGlobal(fCachedLocal2World);
+                return true;
+            }
+        }
+        break;
+
+        case plRefMsg::kOnDestroy: {
+            // our world was deleted out from under us: move to the main world
+            // NOTE: this was not implemented even before the PXSubWorld rewrite.
+            //       not going to bother!
+//          hsAssert(0, "Lost world");
+        }
+        break;
+
+    }
+    break;
+
+    case kPhysRefSndGroup: {
+        switch (refCtxt) {
+        case plRefMsg::kOnCreate:
+        case plRefMsg::kOnRequest:
+            fSndGroup = plPhysicalSndGroup::ConvertNoRef(refMsg->GetRef());
             break;
 
         case plRefMsg::kOnDestroy:
@@ -441,9 +468,11 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
             break;
         }
     }
-    else
-    {
+    break;
+
+    default:
         hsAssert(0, "Unknown ref type, who sent us this?");
+        break;
     }
 
     return true;
@@ -672,15 +701,12 @@ void plPXPhysical::IGetTransformGlobal(hsMatrix44& l2w) const
 {
     plPXConvert::Matrix(fActor->getGlobalPose(), l2w);
 
-    if (fWorldKey)
-    {
+    if (fWorldKey) {
         plSceneObject* so = plSceneObject::ConvertNoRef(fWorldKey->ObjectIsLoaded());
         hsAssert(so, "Scene object not loaded while accessing subworld.");
-        // We'll hit this at export time, when the ci isn't ready yet, so do a check
-        if (so->GetCoordinateInterface())
-        {
-            const hsMatrix44& s2w = so->GetCoordinateInterface()->GetLocalToWorld();
-            l2w = s2w * l2w;
+        if (so->GetCoordinateInterface()) {
+             const hsMatrix44& s2w = so->GetCoordinateInterface()->GetLocalToWorld();
+             l2w = s2w * l2w;
         }
     }
 }
@@ -839,8 +865,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     //
     fRecipe.objectKey = mgr->ReadKey(stream);
     fRecipe.sceneNode = mgr->ReadKey(stream);
-    fRecipe.worldKey = mgr->ReadKey(stream);
-
+    fRecipe.worldKey = mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld), plRefFlags::kActiveRef);
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefSndGroup), plRefFlags::kActiveRef);
 
     hsPoint3 pos;
@@ -870,7 +895,10 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
             fRecipe.triMesh = IReadTriMesh(stream);
     }
 
-    Init();
+    // If we do not have a world, specified, we go ahead and init into the main world...
+    // This will been done in MsgReceive otherwise
+    if (!fRecipe.worldKey)
+        Init();
 
     hsAssert(!fProxyGen, "Already have proxy gen, double read?");
 
