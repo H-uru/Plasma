@@ -22,7 +22,7 @@ from __future__ import division
 import sys
 import math
 try:
-	import Image
+	from PIL import Image
 except ImportError:
 	print("Scaling requires the Python Imaging Library.")
 	raise
