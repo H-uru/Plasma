@@ -58,6 +58,7 @@ set(DirectX_LIBRARIES
     ${DirectX_dsound}
     ${DirectX_dxguid}
     ${DirectX_dxerr}
+    legacy_stdio_definitions.lib
 )
 
 
