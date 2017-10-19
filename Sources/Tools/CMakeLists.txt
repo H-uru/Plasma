@@ -1,4 +1,4 @@
-find_package(Qt5Core)
+find_package(Qt5 COMPONENTS Core Widgets)
 set_package_properties(Qt5Core PROPERTIES
     URL "http://www.qt.io/"
     DESCRIPTION "Cross-platform GUI framework for C++"
@@ -6,22 +6,9 @@ set_package_properties(Qt5Core PROPERTIES
     PURPOSE "Required for building GUI tools for Plasma"
 )
 
-find_package(Qt5Widgets)
-set_package_properties(Qt5Widgets PROPERTIES
-    URL "http://www.qt.io/"
-    DESCRIPTION "Cross-platform GUI framework for C++"
-    TYPE OPTIONAL
-    PURPOSE "Required for building GUI tools for Plasma"
-)
-
-if(Qt5Core_FOUND AND Qt5Widgets_FOUND)
-    set(Qt5_LIBS_FOUND 1)
-else()
-    set(Qt5_LIBS_FOUND 0)
-endif()
 
 if(PLASMA_BUILD_TOOLS)
-    if(Qt5_LIBS_FOUND)
+    if(Qt5_FOUND)
         add_subdirectory(plLocalizationEditor)
         add_subdirectory(plResBrowser)
 
@@ -36,7 +23,7 @@ if(PLASMA_BUILD_TOOLS)
         add_dependencies(tools plShaderAssembler)
     endif()
 
-    if(FREETYPE_FOUND AND Qt5_LIBS_FOUND)
+    if(FREETYPE_FOUND AND Qt5_FOUND)
         add_subdirectory(plFontConverter)
         add_dependencies(tools plFontConverter)
     endif()
