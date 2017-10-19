@@ -12,16 +12,8 @@ find_path(Opus_INCLUDE_DIR opus.h
 find_library(Opus_LIBRARY NAMES opus
              PATHS /usr/local/lib /usr/lib)
 
-find_library(Celt_LIBRARY NAMES celt
-             PATHS /usr/local/lib /usr/lib)
-
-find_library(Silk_LIBRARY NAMES silk_common
-             PATHS /usr/local/lib /usr/lib)
-
 set(Opus_LIBRARIES
     ${Opus_LIBRARY}
-    ${Celt_LIBRARY}
-    ${Silk_LIBRARY}
 )
 
 if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
