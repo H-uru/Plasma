@@ -232,7 +232,7 @@ bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
 }
 
 //============================================================================
-
+#ifdef OPENSSL_HAVE_SHA0
 plSHAChecksum::plSHAChecksum(size_t size, uint8_t* buffer)
 {
     fValid = false;
@@ -359,6 +359,7 @@ bool plSHAChecksum::operator==(const plSHAChecksum& rhs) const
 {
     return (fValid && rhs.fValid && memcmp(fChecksum, rhs.fChecksum, sizeof(fChecksum)) == 0);
 }
+#endif /* OPENSSL_HAVE_SHA0 */
 
 //============================================================================
 
