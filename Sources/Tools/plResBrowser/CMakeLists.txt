@@ -49,7 +49,6 @@ add_executable(plResBrowser WIN32 MACOSX_BUNDLE
                ${plResBrowser_RCC} ${plResBrowser_UIC} ${plResBrowser_MOC})
 
 target_link_libraries(plResBrowser CoreLib)
-target_link_libraries(plResBrowser plAgeDescription)
 target_link_libraries(plResBrowser plResMgr)
 target_link_libraries(plResBrowser pnSceneObject)
 target_link_libraries(plResBrowser ${STRING_THEORY_LIBRARIES})

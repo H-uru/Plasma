@@ -88,7 +88,7 @@ PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, setGameName, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultMarkerGameNode, getReward)
+PYTHON_METHOD_DEFINITION_NOARGS(ptVaultMarkerGameNode, getReward)
 {
     return PyUnicode_FromSTString(self->fThis->GetReward());
 }

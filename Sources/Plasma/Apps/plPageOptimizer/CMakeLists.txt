@@ -20,7 +20,6 @@ set(plPageOptimizer_HEADERS
 add_executable(plPageOptimizer ${plPageOptimizer_SOURCES})
 
 target_link_libraries(plPageOptimizer CoreLib)
-target_link_libraries(plPageOptimizer plAgeDescription)
 target_link_libraries(plPageOptimizer plResMgr)
 target_link_libraries(plPageOptimizer pnUUID)
 target_link_libraries(plPageOptimizer ${STRING_THEORY_LIBRARIES})

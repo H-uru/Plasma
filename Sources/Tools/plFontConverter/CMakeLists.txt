@@ -48,7 +48,6 @@ add_executable(plFontConverter WIN32 MACOSX_BUNDLE
 target_link_libraries(plFontConverter CoreLib)
 target_link_libraries(plFontConverter pnKeyedObject)
 target_link_libraries(plFontConverter pnSceneObject)
-target_link_libraries(plFontConverter plAgeDescription)
 target_link_libraries(plFontConverter plGImage)
 target_link_libraries(plFontConverter plPipeline)
 target_link_libraries(plFontConverter plResMgr)
