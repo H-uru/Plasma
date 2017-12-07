@@ -8,8 +8,10 @@ set(pnMessage_HEADERS
     plAudioSysMsg.h
     plCameraMsg.h
     plClientMsg.h
+    plCmdIfaceModMsg.h
     plCorrectionMsg.h
     plCursorChangeMsg.h
+    plDISpansMsg.h
     plEnableMsg.h
     plEventCallbackMsg.h
     plFakeOutMsg.h

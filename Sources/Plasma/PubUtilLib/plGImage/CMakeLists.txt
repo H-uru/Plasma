@@ -25,6 +25,7 @@ set(plGImage_SOURCES
 )
 
 set(plGImage_HEADERS
+    hsCodec.h
     hsCodecManager.h
     hsDXTDirectXCodec.h
     hsDXTSoftwareCodec.h

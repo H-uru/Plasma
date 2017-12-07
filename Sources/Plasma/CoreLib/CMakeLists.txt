@@ -82,6 +82,7 @@ set(CoreLib_HEADERS
     plLoadMask.h
     plProduct.h
     plQuality.h
+    plRenderLevel.h
     plTweak.h
     plViewTransform.h
 )
