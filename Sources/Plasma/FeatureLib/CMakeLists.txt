@@ -14,8 +14,6 @@ endif()
 add_subdirectory(pfGameGUIMgr)
 add_subdirectory(pfGameScoreMgr)
 add_subdirectory(pfJournalBook)
-# pfKI is apparently just a historical oddity at this point
-# add_subdirectory(pfKI)
 add_subdirectory(pfLocalizationMgr)
 add_subdirectory(pfMessage)
 add_subdirectory(pfMoviePlayer)
