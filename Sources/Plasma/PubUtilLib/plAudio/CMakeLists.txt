@@ -33,6 +33,7 @@ set(plAudio_HEADERS
     plDSoundBuffer.h
     plEAXEffects.h
     plEAXListenerMod.h
+    plEAXStructures.h
     plSound.h
     plSoundEvent.h
     plVoiceChat.h

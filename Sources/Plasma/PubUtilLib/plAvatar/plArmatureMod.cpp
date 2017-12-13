@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 // local
 #include "plAvBrain.h"
-#include "plAvBrainUser.h"
 #include "plAvatarMgr.h"
 #include "plAnimation/plAGModifier.h"
 #include "plAvatarClothing.h"

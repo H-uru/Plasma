@@ -96,6 +96,7 @@ set(plMessage_HEADERS
     plOneShotMsg.h
     plParticleUpdateMsg.h
     plPickedMsg.h
+    plPlayerMsg.h
     plRenderMsg.h
     plRenderRequestMsg.h
     plReplaceGeometryMsg.h
