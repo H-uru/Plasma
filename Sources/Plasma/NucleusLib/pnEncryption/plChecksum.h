@@ -45,6 +45,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include <openssl/md5.h>
 #include <openssl/sha.h>
+#include <openssl/opensslv.h>
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+#define OPENSSL_HAVE_SHA0 1
+#endif
 
 class plChecksum
 {
@@ -106,6 +111,7 @@ class plMD5Checksum
  */
 typedef uint8_t ShaDigest[SHA_DIGEST_LENGTH];
 
+#ifdef OPENSSL_HAVE_SHA0
 class plSHAChecksum
 {
     protected:
@@ -144,6 +150,7 @@ class plSHAChecksum
         bool operator==(const plSHAChecksum& rhs) const;
         bool operator!=(const plSHAChecksum& rhs) const { return !operator==(rhs); }
 };
+#endif
 
 class plSHA1Checksum
 {
