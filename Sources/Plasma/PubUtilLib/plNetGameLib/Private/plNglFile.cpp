@@ -1154,7 +1154,7 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename.AsString().to_wchar(), arrsize(filedownloadReq.filename));
+    StrCopy(filedownloadReq.filename, m_filename.AsString().to_wchar().data(), arrsize(filedownloadReq.filename));
     filedownloadReq.messageId = kCli2File_FileDownloadRequest;
     filedownloadReq.transId = m_transId;
     filedownloadReq.messageBytes = sizeof(filedownloadReq);

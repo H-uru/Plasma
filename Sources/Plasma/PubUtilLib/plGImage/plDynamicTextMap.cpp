@@ -830,7 +830,7 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
                         textMsg->fBottom - textMsg->fTop + 1, textMsg->fColor );
 
         if( (textMsg->fCmd & plDynamicTextMsg::kDrawString ) && !textMsg->fString.is_empty())
-            DrawString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar() );
+            DrawString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar().data() );
 
         if( (textMsg->fCmd & plDynamicTextMsg::kDrawClippedString ) && !textMsg->fString.is_empty())
             DrawClippedString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar().data(),

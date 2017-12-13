@@ -3633,7 +3633,7 @@ bool FileDownloadRequestTrans::Send () {
         return false;
 
     wchar_t filename[MAX_PATH];
-    wcsncpy(filename, m_filename.AsString().to_wchar(), arrsize(filename));
+    wcsncpy(filename, m_filename.AsString().to_wchar().data(), arrsize(filename));
 
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,

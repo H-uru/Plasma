@@ -1830,7 +1830,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kYesNoDialog:
                     value = PyTuple_New(2);
                     str = pkimsg->GetString().to_wchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.size()));
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.data(), str.size()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kGZInRange:
@@ -1842,13 +1842,13 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     value = PyTuple_New(3);
                     str = pkimsg->GetString().to_wchar();
                     PyTuple_SetItem(value,0,PyString_FromSTString(pkimsg->GetUser()));
-                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str, str.size()));
+                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str.data(), str.size()));
                     PyTuple_SetItem(value,2,PyLong_FromLong(pkimsg->GetIntValue()));
                     break;
                 case pfKIMsg::kRegisterImager:
                     value = PyTuple_New(2);
                     str = pkimsg->GetString().to_wchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str, str.size()));
+                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.data(), str.size()));
                     PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kAddPlayerDevice:
@@ -1856,7 +1856,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     {
                         str = pkimsg->GetString().to_wchar();
                         if ( str.size() > 0 )
-                            value = PyUnicode_FromWideChar(str, str.size());
+                            value = PyUnicode_FromWideChar(str.data(), str.size());
                         else
                         {
                             Py_INCREF(Py_None);
@@ -1872,7 +1872,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kGZFlashUpdate:
                 case pfKIMsg::kKICreateMarkerNode:
                     str = pkimsg->GetString().to_wchar();
-                    value = PyUnicode_FromWideChar(str, str.size());
+                    value = PyUnicode_FromWideChar(str.data(), str.size());
                     break;
                 case pfKIMsg::kMGStartCGZGame:
                 case pfKIMsg::kMGStopCGZGame:
@@ -2122,7 +2122,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
                 plProfile_BeginTiming(PythonUpdate);
                 ST::wchar_buffer wMessage = pkimsg->GetString().to_wchar();
-                PyObject* uMessage = PyUnicode_FromWideChar(wMessage, wMessage.size());
+                PyObject* uMessage = PyUnicode_FromWideChar(wMessage.data(), wMessage.size());
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_RTChat],
                         (char*)fFunctionNames[kfunc_RTChat],

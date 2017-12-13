@@ -412,12 +412,12 @@ bool pfPatcherWorker::IssueRequest()
             NetCliFileDownloadRequest(req.fName, req.fStream, IFileThingDownloadCB, this);
             break;
         case Request::kManifest:
-            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_wchar());
+            NetCliFileManifestRequest(IFileManifestDownloadCB, this, req.fName.to_wchar().data());
             break;
         case Request::kSecurePreloader:
             // so, yeah, this is usually the "SecurePreloader" manifest on the file server...
             // except on legacy servers, this may not exist, so we need to fall back without nuking everything!
-            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_wchar());
+            NetCliFileManifestRequest(IPreloaderManifestDownloadCB, this, req.fName.to_wchar().data());
             break;
         case Request::kAuthFile:
             // ffffffuuuuuu
