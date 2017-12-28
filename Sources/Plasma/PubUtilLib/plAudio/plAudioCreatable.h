@@ -68,6 +68,4 @@ REGISTER_CREATABLE( plWin32GroupedSound );
 #include "plEAXListenerMod.h"
 REGISTER_CREATABLE( plEAXListenerMod );
 
-#include "plAudioReaderCreatable.h"
-
 #endif // plAudioCreatable_inc

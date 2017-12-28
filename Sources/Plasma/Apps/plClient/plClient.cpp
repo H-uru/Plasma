@@ -83,8 +83,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plPageTreeMgr.h"
 #include "plScene/plVisMgr.h"
 
-#include "pfKI/pfKI.h"
-
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plAudioCaps.h"
 
