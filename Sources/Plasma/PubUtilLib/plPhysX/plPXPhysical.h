@@ -72,8 +72,6 @@ class NxCapsule;
 class PhysRecipe
 {
 public:
-    PhysRecipe();
-
     float mass;
     float friction;
     float restitution;
@@ -100,6 +98,12 @@ public:
 
     // For export time only.  The original data used to create the mesh
     hsVectorStream* meshStream;
+
+    PhysRecipe()
+        : mass(0.f), friction(0.f), restitution(0.f), bounds(plSimDefs::kBoundsMax),
+          group(plSimDefs::kGroupMax), reportsOn(0), convexMesh(nullptr), triMesh(nullptr),
+          radius(0.f), offset(0.f, 0.f, 0.f), meshStream(nullptr)
+    { }
 };
 
 class plPXPhysical : public plPhysical
@@ -120,7 +124,7 @@ public:
     GETINTERFACE_ANY(plPXPhysical, plPhysical);
 
     // Export time and internal use only
-    bool Init(PhysRecipe& recipe);
+    bool Init();
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -185,7 +189,11 @@ public:
     //Hack to check if there is an overlap with the avatar controller
     bool OverlapWithController(const class plPXPhysicalControllerCore* controller);
 
-    virtual float GetMass() {return fMass;}
+    virtual float GetMass() { return fRecipe.mass; }
+
+    PhysRecipe& GetRecipe() { return fRecipe; }
+    const PhysRecipe& GetRecipe() const { return fRecipe; }
+
 protected:
     class NxConvexMesh* IReadHull(hsStream* s);
     class NxTriangleMesh* IReadTriMesh(hsStream* s);
@@ -228,12 +236,11 @@ protected:
     NxActor* fActor;
     plKey fWorldKey;    // either a subworld or nil
 
-    plSimDefs::Bounds fBoundsType;
+    PhysRecipe fRecipe;
     plSimDefs::Group fGroup;
     uint32_t fReportsOn;          // bit vector for groups we report interactions with
     uint16_t fLOSDBs;             // Which LOS databases we get put into
     hsBitVector fProps;         // plSimulationInterface::plSimulationProperties kept here
-    float   fMass;
 
     plKey fObjectKey;           // the key to our scene object
     plKey fSceneNode;           // the room we're in

@@ -672,7 +672,8 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
 
     plMaxNode* subworld = physProps->GetSubworld();
 
-    PhysRecipe recipe;
+    plPXPhysical* physical = new plPXPhysical();
+    PhysRecipe& recipe = physical->GetRecipe();
     recipe.mass = mass;
     recipe.friction = physProps->GetFriction();
     recipe.restitution = physProps->GetRestitution();
@@ -784,16 +785,9 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
         break;
     case plSimDefs::kHullBounds:
         {
-            
-            
-            
             if ( group == plSimDefs::kGroupDynamic )
             {
-                
-                            
                 recipe.meshStream = plPhysXCooking::IMakePolytope(mesh);
-                
-                
                 if (!recipe.meshStream)
                 {
                     pErrMsg->Set(true, "Physics Error", "polyTope-convexhull failed for physical %s", GetName()).Show();
@@ -818,17 +812,15 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     delete [] mesh.fFaces;
     delete [] mesh.fVerts;
 
-    //
-    // Create the physical
-    //
-    plPXPhysical* physical = new plPXPhysical;
-
     // add the object to the resource manager, keyed to the new name
     plLocation nodeLoc = GetKey()->GetUoid().GetLocation();
     ST::string objName = GetKey()->GetName();
     plKey physKey = hsgResMgr::ResMgr()->NewKey(objName, physical, nodeLoc, GetLoadMask());
 
-    if (!physical->Init(recipe))
+    //
+    // Create the physical
+    //
+    if (!physical->Init())
     {
         pErrMsg->Set(true, "Physics Error", "Physical creation failed for object %s", GetName()).Show();
         physKey->RefObject();

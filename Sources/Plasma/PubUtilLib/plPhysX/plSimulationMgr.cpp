@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPXPhysical.h"
 #include "plPXPhysicalControllerCore.h"
 #include "plPXConvert.h"
+#include "plPXSubWorld.h"
 #include "plLOSDispatch.h"
 #include "plPhysical/plPhysicsSoundMgr.h"
 #include "plStatusLog/plStatusLog.h"
@@ -339,13 +340,21 @@ NxScene* plSimulationMgr::GetScene(plKey world)
 {
     if (!world)
         world = GetKey();
-
     NxScene* scene = fScenes[world];
 
-    if (!scene)
-    {
+    if (!scene) {
+        // The world key is assumed to be loaded (or null for main world) if we are here.
+        // As such, let us grab the plSceneObject's PXSubWorld definition to figure out
+        // what gravity should look like. Who knows, we might be in MC Escher land...
+        NxVec3 gravity(X_GRAVITY, Y_GRAVITY, Z_GRAVITY);
+        if (plSceneObject* so = plSceneObject::ConvertNoRef(world->VerifyLoaded())) {
+            if (plPXSubWorld* subworld = plPXSubWorld::ConvertNoRef(so->GetGenericInterface(plPXSubWorld::Index()))) {
+                gravity = plPXConvert::Vector(subworld->GetGravity());
+            }
+        }
+
         NxSceneDesc sceneDesc;
-        sceneDesc.gravity.set(0, 0, -32.174049f);
+        sceneDesc.gravity = gravity;
         sceneDesc.userTriggerReport = &gSensorReport;
         sceneDesc.userContactReport = &gContactReport;
         scene = fSDK->createScene(sceneDesc);

@@ -367,6 +367,7 @@ CLASS_INDEX_LIST_START
     CLASS_INDEX(plDynamicCamMap),
     CLASS_INDEX(plRidingAnimatedPhysicalDetector),
     CLASS_INDEX(plVolumeSensorConditionalObjectNoArbitration),
+    CLASS_INDEX(plPXSubWorld),
 //---------------------------------------------------------
 // Keyed objects above this line, unkeyed (such as messages) below..
 //---------------------------------------------------------

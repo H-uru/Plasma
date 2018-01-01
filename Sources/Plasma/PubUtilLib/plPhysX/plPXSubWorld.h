@@ -39,36 +39,37 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plPhysXCreatable_inc
-#define plPhysXCreatable_inc
 
-#include "pnFactory/plCreator.h"
+#ifndef plPXSubWorld_h_inc
+#define plPXSubWorld_h_inc
 
-#include "plPXPhysical.h"
+#include "pnSceneObject/plObjInterface.h"
+#include "hsGeometry3.h"
 
-REGISTER_CREATABLE(plPXPhysical);
+#define X_GRAVITY 0.f
+#define Y_GRAVITY 0.f
+#define Z_GRAVITY -32.174049f
 
-#include "plPXSubWorld.h"
-REGISTER_CREATABLE(plPXSubWorld);
+class plPXSubWorld : public plObjInterface
+{
+    hsVector3 fGravity;
 
-//#include "plHKSimulationSynchMsg.h"
-//REGISTER_CREATABLE(plHKSimulationSynchMsg);
+public:
+    plPXSubWorld() : fGravity(X_GRAVITY, Y_GRAVITY, Z_GRAVITY) { }
+    plPXSubWorld(const hsVector3& gravity) : fGravity(gravity) { }
 
-//#include "plHavokConstraintTools.h"
-//REGISTER_NONCREATABLE(plHavokConstraintsMod);
-//REGISTER_CREATABLE(plHingeConstraintMod);
-//REGISTER_CREATABLE(plStrongSpringConstraintMod);
-//REGISTER_CREATABLE(plWheelConstraintMod);
+    CLASSNAME_REGISTER(plPXSubWorld);
+    GETINTERFACE_ANY(plPXSubWorld, plObjInterface);
 
+    void Read(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void Write(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
 
-#include "plLOSDispatch.h"
-REGISTER_CREATABLE( plLOSDispatch );
+    int32_t GetNumProperties() const HS_OVERRIDE { return 0; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) HS_OVERRIDE;
 
-#include "plSimulationMgr.h"
-REGISTER_CREATABLE( plSimulationMgr );
+    const hsVector3& GetGravity() const { return fGravity; }
+    hsVector3& GetGravity() { return fGravity; }
+    void SetGravity(const hsVector3& gravity) { fGravity = gravity; }
+};
 
-//#include "plVehicleModifier.h"
-//REGISTER_CREATABLE(plVehicleModifier);
-
-
-#endif // plPhysXCreatable_inc
+#endif // plPXSubWorld_h_inc

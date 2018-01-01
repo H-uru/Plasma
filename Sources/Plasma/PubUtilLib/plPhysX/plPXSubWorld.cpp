@@ -39,36 +39,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plPhysXCreatable_inc
-#define plPhysXCreatable_inc
-
-#include "pnFactory/plCreator.h"
-
-#include "plPXPhysical.h"
-
-REGISTER_CREATABLE(plPXPhysical);
 
 #include "plPXSubWorld.h"
-REGISTER_CREATABLE(plPXSubWorld);
 
-//#include "plHKSimulationSynchMsg.h"
-//REGISTER_CREATABLE(plHKSimulationSynchMsg);
+void plPXSubWorld::Read(hsStream* s, hsResMgr* mgr)
+{
+    plObjInterface::Read(s, mgr);
+    fGravity.Read(s);
+}
 
-//#include "plHavokConstraintTools.h"
-//REGISTER_NONCREATABLE(plHavokConstraintsMod);
-//REGISTER_CREATABLE(plHingeConstraintMod);
-//REGISTER_CREATABLE(plStrongSpringConstraintMod);
-//REGISTER_CREATABLE(plWheelConstraintMod);
+void plPXSubWorld::Write(hsStream* s, hsResMgr* mgr)
+{
+    plObjInterface::Write(s, mgr);
+    fGravity.Write(s);
+}
 
-
-#include "plLOSDispatch.h"
-REGISTER_CREATABLE( plLOSDispatch );
-
-#include "plSimulationMgr.h"
-REGISTER_CREATABLE( plSimulationMgr );
-
-//#include "plVehicleModifier.h"
-//REGISTER_CREATABLE(plVehicleModifier);
-
-
-#endif // plPhysXCreatable_inc
+void plPXSubWorld::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l)
+{
+    // All this magick is handled elsewhere... Not asserting due to call spam.
+}

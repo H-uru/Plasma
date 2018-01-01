@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plKey.h"
 #include "pnMessage/plCorrectionMsg.h"
 #include "pnMessage/plNodeRefMsg.h"
+#include "pnMessage/plObjRefMsg.h"
 #include "pnMessage/plSDLModifierMsg.h"
 #include "plMessage/plSimStateMsg.h"
 #include "plMessage/plLinearVelocityMsg.h"
@@ -71,6 +72,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "plPXConvert.h"
 #include "plPXPhysicalControllerCore.h"
+#include "plPXSubWorld.h"
 
 #include "plModifier/plDetectorLog.h"
 
@@ -85,25 +87,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
               
 #define LogActivate(func) if (fActor->isSleeping()) SimLog("%s activated by %s", GetKeyName().c_str(), func);
-
-PhysRecipe::PhysRecipe()
-    : mass(0.f)
-    , friction(0.f)
-    , restitution(0.f)
-    , bounds(plSimDefs::kBoundsMax)
-    , group(plSimDefs::kGroupMax)
-    , reportsOn(0)
-    , objectKey(nil)
-    , sceneNode(nil)
-    , worldKey(nil)
-    , convexMesh(nil)
-    , triMesh(nil)
-    , radius(0.f)
-    , offset(0.f, 0.f, 0.f)
-    , meshStream(nil)
-{
-    l2s.Reset();
-}
 
 plProfile_Extern(MaySendLocation);
 plProfile_Extern(LocationsSent);
@@ -130,16 +113,12 @@ int plPXPhysical::fNumberAnimatedActivators = 0;
 plPXPhysical::plPXPhysical()
     : fSDLMod(nil)
     , fActor(nil)
-    , fBoundsType(plSimDefs::kBoundsMax)
     , fLOSDBs(plSimDefs::kLOSDBNone)
     , fGroup(plSimDefs::kGroupMax)
     , fReportsOn(0)
     , fLastSyncTime(0.0f)
     , fProxyGen(nil)
-    , fSceneNode(nil)
-    , fWorldKey(nil)
     , fSndGroup(nil)
-    , fMass(0.f)
     , fWeWereHit(false)
     , fHitForce(0,0,0)
     , fHitPos(0,0,0)
@@ -198,15 +177,13 @@ plPXPhysical::~plPXPhysical()
     delete fSDLMod;
 }
 
-bool plPXPhysical::Init(PhysRecipe& recipe)
+bool plPXPhysical::Init()
 {
     bool    startAsleep = false;
-    fBoundsType = recipe.bounds;
-    fGroup = recipe.group;
-    fReportsOn = recipe.reportsOn;
-    fObjectKey = recipe.objectKey;
-    fSceneNode = recipe.sceneNode;
-    fWorldKey = recipe.worldKey;
+    fGroup = fRecipe.group;
+    fObjectKey = fRecipe.objectKey;
+    fReportsOn = fRecipe.reportsOn;
+    fSceneNode = fRecipe.sceneNode;
 
     NxActorDesc actorDesc;
     NxSphereShapeDesc sphereDesc;
@@ -214,52 +191,52 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
     NxTriangleMeshShapeDesc trimeshShapeDesc;
     NxBoxShapeDesc boxDesc;
 
-    plPXConvert::Matrix(recipe.l2s, actorDesc.globalPose);
+    plPXConvert::Matrix(fRecipe.l2s, actorDesc.globalPose);
 
-    switch (fBoundsType)
+    switch (fRecipe.bounds)
     {
     case plSimDefs::kSphereBounds:
         {
             hsMatrix44 sphereL2W;
             sphereL2W.Reset();
-            sphereL2W.SetTranslate(&recipe.offset);
+            sphereL2W.SetTranslate(&fRecipe.offset);
 
-            sphereDesc.radius = recipe.radius;
+            sphereDesc.radius = fRecipe.radius;
             plPXConvert::Matrix(sphereL2W, sphereDesc.localPose);
-            sphereDesc.group = fGroup;
+            sphereDesc.group = fRecipe.group;
             actorDesc.shapes.pushBack(&sphereDesc);
         }
         break;
     case plSimDefs::kHullBounds:
         {
-            convexShapeDesc.meshData = recipe.convexMesh;
-            convexShapeDesc.userData = recipe.meshStream;
-            convexShapeDesc.group = fGroup;
+            convexShapeDesc.meshData = fRecipe.convexMesh;
+            convexShapeDesc.userData = fRecipe.meshStream;
+            convexShapeDesc.group = fRecipe.group;
             actorDesc.shapes.pushBack(&convexShapeDesc);
         }
         break;
     case plSimDefs::kBoxBounds:
         {
-            boxDesc.dimensions = plPXConvert::Point(recipe.bDimensions);
+            boxDesc.dimensions = plPXConvert::Point(fRecipe.bDimensions);
 
             hsMatrix44 boxL2W;
             boxL2W.Reset();
-            boxL2W.SetTranslate(&recipe.bOffset);
+            boxL2W.SetTranslate(&fRecipe.bOffset);
             plPXConvert::Matrix(boxL2W, boxDesc.localPose);
 
-            boxDesc.group = fGroup;
+            boxDesc.group = fRecipe.group;
             actorDesc.shapes.push_back(&boxDesc);
         }
         break;
     case plSimDefs::kExplicitBounds:
     case plSimDefs::kProxyBounds:
-        if (fGroup == plSimDefs::kGroupDetector)
+        if (fRecipe.group == plSimDefs::kGroupDetector)
         {
             SimLog("Someone using an Exact on a detector region: %s", GetKeyName().c_str());
         }
-        trimeshShapeDesc.meshData = recipe.triMesh;
-        trimeshShapeDesc.userData = recipe.meshStream;
-        trimeshShapeDesc.group = fGroup;
+        trimeshShapeDesc.meshData = fRecipe.triMesh;
+        trimeshShapeDesc.userData = fRecipe.meshStream;
+        trimeshShapeDesc.group = fRecipe.group;
         actorDesc.shapes.pushBack(&trimeshShapeDesc);
         break;
     default:
@@ -270,10 +247,9 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
 
     //  Now fill out the body, or dynamic part of the physical
     NxBodyDesc bodyDesc;
-    fMass = recipe.mass;
-    if (recipe.mass != 0)
+    if (fRecipe.mass != 0)
     {
-        bodyDesc.mass = recipe.mass;
+        bodyDesc.mass = fRecipe.mass;
         actorDesc.body = &bodyDesc;
 
         if (GetProperty(plSimulationInterface::kPinned))
@@ -282,13 +258,13 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
             startAsleep = true;             // put it to sleep if they are going to be frozen
         }
 
-        if (fGroup != plSimDefs::kGroupDynamic || GetProperty(plSimulationInterface::kPhysAnim))
+        if (fRecipe.group != plSimDefs::kGroupDynamic || GetProperty(plSimulationInterface::kPhysAnim))
         {
             SetProperty(plSimulationInterface::kPassive, true);
 
             // Even though the code for animated physicals and animated activators are the same
             // keep these code snippets separated for fine tuning. Thanks.
-            if (fGroup == plSimDefs::kGroupDynamic)
+            if (fRecipe.group == plSimDefs::kGroupDynamic)
             {
                 // handle the animated physicals.... make kinematic for now.
                 fNumberAnimatedPhysicals++;
@@ -316,7 +292,7 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
 
     // Put the dynamics into actor group 1.  The actor groups are only used for
     // deciding who we get contact reports for.
-    if (fGroup == plSimDefs::kGroupDynamic)
+    if (fRecipe.group == plSimDefs::kGroupDynamic)
         actorDesc.group = 1;
 
     NxScene* scene = plSimulationMgr::GetInstance()->GetScene(fWorldKey);
@@ -333,7 +309,7 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
         return false;
 
     NxShape* shape = fActor->getShapes()[0];
-    shape->setMaterial(plSimulationMgr::GetInstance()->GetMaterialIdx(scene, recipe.friction, recipe.restitution));
+    shape->setMaterial(plSimulationMgr::GetInstance()->GetMaterialIdx(scene, fRecipe.friction, fRecipe.restitution));
 
     // Turn on the trigger flags for any detectors.
     //
@@ -344,7 +320,7 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
     // problems trying to calculate an intertial tensor.  By letting it be
     // created as a normal dynamic first, then setting the flags, we work around
     // that problem.
-    if (fGroup == plSimDefs::kGroupDetector)
+    if (fRecipe.group == plSimDefs::kGroupDetector)
     {
         shape->setFlag(NX_TRIGGER_ON_ENTER, true);
         shape->setFlag(NX_TRIGGER_ON_LEAVE, true);
@@ -368,14 +344,8 @@ bool plPXPhysical::Init(PhysRecipe& recipe)
     plNodeRefMsg* refMsg = new plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kPhysical); 
     hsgResMgr::ResMgr()->AddViaNotify(GetKey(), refMsg, plRefFlags::kActiveRef);
 
-    if (fWorldKey)
-    {
-        plGenRefMsg* ref = new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld);
-        hsgResMgr::ResMgr()->AddViaNotify(fWorldKey, ref, plRefFlags::kActiveRef);
-    }
-
     // only dynamic physicals without noSync need SDLs
-    if ( fGroup == plSimDefs::kGroupDynamic && !fProps.IsBitSet(plSimulationInterface::kNoSynchronize) )
+    if ( fRecipe.group == plSimDefs::kGroupDynamic && !fProps.IsBitSet(plSimulationInterface::kNoSynchronize) )
     {
         // add SDL modifier
         plSceneObject* sceneObj = plSceneObject::ConvertNoRef(fObjectKey->ObjectIsLoaded());
@@ -432,33 +402,65 @@ bool plPXPhysical::MsgReceive( plMessage* msg )
 bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
 {
     uint8_t refCtxt = refMsg->GetContext();
-    plKey refKey = refMsg->GetRef()->GetKey();
-    plKey ourKey = GetKey();
-    PhysRefType refType = PhysRefType(refMsg->fType);
 
-    ST::string refKeyName = refKey ? refKey->GetName() : ST_LITERAL("MISSING");
-
-    if (refType == kPhysRefWorld)
-    {
-        if (refCtxt == plRefMsg::kOnCreate || refCtxt == plRefMsg::kOnRequest)
-        {
-            // Cache the initial transform, since we assume the sceneobject already knows
-            // that and doesn't need to be told again
-            IGetTransformGlobal(fCachedLocal2World);
-        }
-        if (refCtxt == plRefMsg::kOnDestroy)
-        {
-            // our world was deleted out from under us: move to the main world
-//          hsAssert(0, "Lost world");
-        }
-    }
-    else if (refType == kPhysRefSndGroup)
-    {
-        switch (refCtxt)
-        {
+    switch (refMsg->fType) {
+    case kPhysRefWorld: {
+        switch (refCtxt) {
         case plRefMsg::kOnCreate:
         case plRefMsg::kOnRequest:
-            fSndGroup = plPhysicalSndGroup::ConvertNoRef( refMsg->GetRef() );
+            // PotS files specify a plHKSubWorld as the subworld key. For everything else,
+            // the subworlds are a plSceneObject key. For sanity purposes, we will allow
+            // references to the plPXSubWorld here. HOWEVER, we will need to grab the target
+            // and replace our reference...
+            if (plPXSubWorld* subWorldIface = plPXSubWorld::ConvertNoRef(refMsg->GetRef())) {
+                hsAssert(subWorldIface->GetOwnerKey(), "subworld owner is NULL?! Uh oh...");
+                plGenRefMsg* replaceRefMsg = new plGenRefMsg(GetKey(), plRefMsg::kOnReplace, 0, kPhysRefWorld);
+                hsgResMgr::ResMgr()->AddViaNotify(subWorldIface->GetOwnerKey(), replaceRefMsg, plRefFlags::kActiveRef);
+            }
+
+        // fall-thru is intentional :)
+        case plRefMsg::kOnReplace:
+            // loading into a subworld
+            if (plSceneObject* subSO = plSceneObject::ConvertNoRef(refMsg->GetRef())) {
+                fWorldKey = subSO->GetKey();
+
+                // Cyan produced files will never have plPXSubWorld as this is a H'uru-ism.
+                // Let us make a default one such that we can play with default subworlds at runtime.
+                // HAAAAAAAAAX!!!
+                plPXSubWorld* subWorldIface = plPXSubWorld::ConvertNoRef(subSO->GetGenericInterface(plPXSubWorld::Index()));
+                if (!subWorldIface) {
+                    subWorldIface = new plPXSubWorld();
+                    hsgResMgr::ResMgr()->NewKey(ST::format("{}_DefSubWorld", subSO->GetKeyName()),
+                                                subWorldIface, GetKey()->GetUoid().GetLocation());
+                    plObjRefMsg* subIfaceRef = new plObjRefMsg(subSO->GetKey(), plRefMsg::kOnCreate, 0, plObjRefMsg::kInterface);
+                    // this will send the reference immediately
+                    hsgResMgr::ResMgr()->SendRef(subWorldIface, subIfaceRef, plRefFlags::kActiveRef);
+                }
+
+                // Now, we can initialize the physical...
+                Init();
+                IGetTransformGlobal(fCachedLocal2World);
+                return true;
+            }
+        }
+        break;
+
+        case plRefMsg::kOnDestroy: {
+            // our world was deleted out from under us: move to the main world
+            // NOTE: this was not implemented even before the PXSubWorld rewrite.
+            //       not going to bother!
+//          hsAssert(0, "Lost world");
+        }
+        break;
+
+    }
+    break;
+
+    case kPhysRefSndGroup: {
+        switch (refCtxt) {
+        case plRefMsg::kOnCreate:
+        case plRefMsg::kOnRequest:
+            fSndGroup = plPhysicalSndGroup::ConvertNoRef(refMsg->GetRef());
             break;
 
         case plRefMsg::kOnDestroy:
@@ -466,9 +468,11 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
             break;
         }
     }
-    else
-    {
+    break;
+
+    default:
         hsAssert(0, "Unknown ref type, who sent us this?");
+        break;
     }
 
     return true;
@@ -697,15 +701,12 @@ void plPXPhysical::IGetTransformGlobal(hsMatrix44& l2w) const
 {
     plPXConvert::Matrix(fActor->getGlobalPose(), l2w);
 
-    if (fWorldKey)
-    {
+    if (fWorldKey) {
         plSceneObject* so = plSceneObject::ConvertNoRef(fWorldKey->ObjectIsLoaded());
         hsAssert(so, "Scene object not loaded while accessing subworld.");
-        // We'll hit this at export time, when the ci isn't ready yet, so do a check
-        if (so->GetCoordinateInterface())
-        {
-            const hsMatrix44& s2w = so->GetCoordinateInterface()->GetLocalToWorld();
-            l2w = s2w * l2w;
+        if (so->GetCoordinateInterface()) {
+             const hsMatrix44& s2w = so->GetCoordinateInterface()->GetLocalToWorld();
+             l2w = s2w * l2w;
         }
     }
 }
@@ -846,57 +847,58 @@ void plPXPhysical::SetSceneNode(plKey newNode)
 
 void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
 {
-    plPhysical::Read(stream, mgr);  
+    plPhysical::Read(stream, mgr);
     ClearMatrix(fCachedLocal2World);
 
-    PhysRecipe recipe;
-    recipe.mass = stream->ReadLEScalar();
-    recipe.friction = stream->ReadLEScalar();
-    recipe.restitution = stream->ReadLEScalar();
-    recipe.bounds = (plSimDefs::Bounds)stream->ReadByte();
-    recipe.group = (plSimDefs::Group)stream->ReadByte();
-    recipe.reportsOn = stream->ReadLE32();
+    fRecipe.mass = stream->ReadLEScalar();
+    fRecipe.friction = stream->ReadLEScalar();
+    fRecipe.restitution = stream->ReadLEScalar();
+    fRecipe.bounds = (plSimDefs::Bounds)stream->ReadByte();
+    fRecipe.group = (plSimDefs::Group)stream->ReadByte();
+    fRecipe.reportsOn = stream->ReadLE32();
     fLOSDBs = stream->ReadLE16();
     //hack for swim regions currently they are labeled as static av blockers
     if(fLOSDBs==plSimDefs::kLOSDBSwimRegion)
     {
-        recipe.group=plSimDefs::kGroupMax;
+        fRecipe.group=plSimDefs::kGroupMax;
     }
     //
-    recipe.objectKey = mgr->ReadKey(stream);
-    recipe.sceneNode = mgr->ReadKey(stream);
-    recipe.worldKey = mgr->ReadKey(stream);
-
+    fRecipe.objectKey = mgr->ReadKey(stream);
+    fRecipe.sceneNode = mgr->ReadKey(stream);
+    fRecipe.worldKey = mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld), plRefFlags::kActiveRef);
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefSndGroup), plRefFlags::kActiveRef);
 
     hsPoint3 pos;
     hsQuat rot;
     pos.Read(stream);
     rot.Read(stream);
-    rot.MakeMatrix(&recipe.l2s);
-    recipe.l2s.SetTranslate(&pos);
+    rot.MakeMatrix(&fRecipe.l2s);
+    fRecipe.l2s.SetTranslate(&pos);
 
     fProps.Read(stream);
 
-    if (recipe.bounds == plSimDefs::kSphereBounds)
+    if (fRecipe.bounds == plSimDefs::kSphereBounds)
     {
-        recipe.radius = stream->ReadLEScalar();
-        recipe.offset.Read(stream);
+        fRecipe.radius = stream->ReadLEScalar();
+        fRecipe.offset.Read(stream);
     }
-    else if (recipe.bounds == plSimDefs::kBoxBounds)
+    else if (fRecipe.bounds == plSimDefs::kBoxBounds)
     {
-        recipe.bDimensions.Read(stream);
-        recipe.bOffset.Read(stream);
+        fRecipe.bDimensions.Read(stream);
+        fRecipe.bOffset.Read(stream);
     }
     else
     {
-        if (recipe.bounds == plSimDefs::kHullBounds)
-            recipe.convexMesh = IReadHull(stream);
+        if (fRecipe.bounds == plSimDefs::kHullBounds)
+            fRecipe.convexMesh = IReadHull(stream);
         else
-            recipe.triMesh = IReadTriMesh(stream);
+            fRecipe.triMesh = IReadTriMesh(stream);
     }
 
-    Init(recipe);
+    // If we do not have a world, specified, we go ahead and init into the main world...
+    // This will been done in MsgReceive otherwise
+    if (!fRecipe.worldKey)
+        Init();
 
     hsAssert(!fProxyGen, "Already have proxy gen, double read?");
 
@@ -916,7 +918,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     }
     else if (fGroup == plSimDefs::kGroupDetector)
     {
-        if(!fWorldKey)
+        if(!fRecipe.worldKey)
         {
             // Detectors are blue, and transparent
             physColor.Set(0.f,0.f,1.f,1.f);
@@ -938,7 +940,7 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
             // Statics are yellow
             physColor.Set(1.f,0.8f,0.2f,1.f);
         // if in a subworld... slightly transparent
-        if(fWorldKey)
+        if(fRecipe.worldKey)
             opac = 0.6f;
     }
     else
@@ -1056,7 +1058,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteLEScalar(fActor->getMass());
     stream->WriteLEScalar(friction);
     stream->WriteLEScalar(restitution);
-    stream->WriteByte(fBoundsType);
+    stream->WriteByte(fRecipe.bounds);
     stream->WriteByte(fGroup);
     stream->WriteLE32(fReportsOn);
     stream->WriteLE16(fLOSDBs);
@@ -1074,14 +1076,14 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
 
     fProps.Write(stream);
 
-    if (fBoundsType == plSimDefs::kSphereBounds)
+    if (fRecipe.bounds == plSimDefs::kSphereBounds)
     {
         const NxSphereShape* sphereShape = shape->isSphere();
         stream->WriteLEScalar(sphereShape->getRadius());
         hsPoint3 localPos = plPXConvert::Point(sphereShape->getLocalPosition());
         localPos.Write(stream);
     }
-    else if (fBoundsType == plSimDefs::kBoxBounds)
+    else if (fRecipe.bounds == plSimDefs::kBoxBounds)
     {
         const NxBoxShape* boxShape = shape->isBox();
         hsPoint3 dim = plPXConvert::Point(boxShape->getDimensions());
@@ -1091,7 +1093,7 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     }
     else
     {
-        if (fBoundsType == plSimDefs::kHullBounds)
+        if (fRecipe.bounds== plSimDefs::kHullBounds)
             hsAssert(shape->isConvexMesh(), "Hull shape isn't a convex mesh");
         else
             hsAssert(shape->isTriangleMesh(), "Exact shape isn't a trimesh");
