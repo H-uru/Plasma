@@ -43,7 +43,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define __PLAVATARCOMPONENT_H__
 
 #include "plAvatar/plCritterCommands.h"
-#include "plAvatar/plPuppetCommands.h"
 
 #define AVATAR_CLASS_ID     Class_ID(0x49247847, 0xd3908fe)
 #define LOD_AVATAR_CLASS_ID Class_ID(0x50100640, 0x72f94120)
