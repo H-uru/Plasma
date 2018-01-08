@@ -589,7 +589,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
                 stream.Read(dataLen, eulaData);
 
                 SetDlgItemTextW(hwndDlg, IDC_URULOGIN_EULATEXT,
-                                ST::string(eula, ST::substitute_invalid).to_wchar());
+                                ST::string(eula, ST::substitute_invalid).to_wchar().data());
             }
             else // no TOS found, go ahead
                 EndDialog(hwndDlg, true);
@@ -620,7 +620,7 @@ static void StoreHash(const ST::string& username, const ST::string& password, Lo
     static const std::regex re_domain("[^@]+@([^.]+\\.)*([^.]+)\\.[^.]+");
     std::cmatch match;
     std::regex_search(username.c_str(), match, re_domain);
-    if (match.empty() || ST::string(match[2].str().c_str()).compare_i("gametap") == 0) {
+    if (match.empty() || ST::string(match[2].str()).compare_i("gametap") == 0) {
         //  Plain Usernames...
         plSHA1Checksum shasum(password.size(), reinterpret_cast<const uint8_t*>(password.c_str()));
         uint32_t* dest = reinterpret_cast<uint32_t*>(pLoginParam->namePassHash);
@@ -875,7 +875,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
             {
                 ST::string signupurl = GetServerSignupUrl();
-                ShellExecuteW(NULL, L"open", signupurl.to_wchar(), NULL, NULL, SW_SHOWNORMAL);
+                ShellExecuteW(NULL, L"open", signupurl.to_wchar().data(), NULL, NULL, SW_SHOWNORMAL);
 
                 return TRUE;
             }

@@ -50,6 +50,7 @@ set_package_properties(string_theory PROPERTIES
     TYPE REQUIRED
 )
 include_directories(${STRING_THEORY_INCLUDE_DIRS})
+add_definitions(-DST_NO_2_0_DEPRECATION)
 
 find_package(OpenSSL REQUIRED)
 set_package_properties(OpenSSL PROPERTIES

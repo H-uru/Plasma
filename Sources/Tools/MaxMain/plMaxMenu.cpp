@@ -315,7 +315,7 @@ void plCreateMenu()
     bool newlyRegistered = pMenuMan->RegisterMenuBarContext(kMyMenuContextId, kMenuName);
 
     // Is the Max menu version the most recent?
-    bool wrongVersion = GetPrivateProfileIntW(L"Menu", L"Version", 0, plMaxConfig::GetPluginIni().AsString().to_wchar()) < kMenuVersion;
+    bool wrongVersion = GetPrivateProfileIntW(L"Menu", L"Version", 0, plMaxConfig::GetPluginIni().WideString().data()) < kMenuVersion;
     if (wrongVersion)
     {
         // Delete the old version of the menu
@@ -326,7 +326,7 @@ void plCreateMenu()
         // Update the menu version
         wchar_t buf[12];
         snwprintf(buf, arrsize(buf), L"%d", kMenuVersion);
-        WritePrivateProfileStringW(L"Menu", L"Version", buf, plMaxConfig::GetPluginIni().AsString().to_wchar());
+        WritePrivateProfileStringW(L"Menu", L"Version", buf, plMaxConfig::GetPluginIni().WideString().data());
     }
     
     if (wrongVersion || newlyRegistered)

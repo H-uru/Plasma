@@ -138,6 +138,9 @@ public:
      */
     const ST::string &AsString() const { return fName; }
 
+    /** Convert the filename to a wchar_t buffer (for use in Win32 APIs). */
+    ST::wchar_buffer WideString() const { return fName.to_wchar(); }
+
     /** Return the name portion of the path (including extension).
      *  For example:
      *  <pre>plFileName("C:\\Path\\Filename.ext") => "Filename.ext"</pre>
