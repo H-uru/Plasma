@@ -202,44 +202,44 @@ ParamBlockDesc2 gResponderBlock
 
     kResponderState,    _T("state"),        TYPE_REFTARG_TAB, 0,        0, 0,
         p_accessor,     &gResponderAccessor,
-        end,
+        p_end,
     kResponderStateName, _T("stateName"),   TYPE_STRING_TAB, 0,         0, 0,
-        end,
+        p_end,
 
     kResponderActivators,   _T("activators"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
         p_accessor,     &gResponderAccessor,
-        end,
+        p_end,
 
     kResponderStateDef, _T("defState"),     TYPE_INT,                   0, 0,
-        end,
+        p_end,
 
     kResponderEnabled, _T("enabled"),   TYPE_BOOL,                  0, 0,
         p_default,  TRUE,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLED,
-        end,
+        p_end,
 
     kResponderTrigger, _T("trigger"),   TYPE_BOOL,                  0, 0,
         p_default,  TRUE,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_CHECK_TRIGGER,
-        end,
+        p_end,
 
     kResponderUnTrigger, _T("unTrigger"),   TYPE_BOOL,              0, 0,
         p_default,  FALSE,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_CHECK_UNTRIGGER,
-        end,
+        p_end,
 
     kResponderLocalDetect, _T("localDetect"),   TYPE_BOOL,          0, 0,
         p_default,  FALSE,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_DETECT_LOCAL_CHECK,
-        end,
+        p_end,
 
     kResponderSkipFFSound, _T("skipFFSound"),   TYPE_BOOL,                  0, 0,
         p_default,  FALSE,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_CHECK_SKIPFFSOUND,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 ParamBlockDesc2 gStateBlock
@@ -247,19 +247,19 @@ ParamBlockDesc2 gStateBlock
     kResponderStateBlk, _T("responderState"), 0, &gResponderDesc, 0,
 
     kStateCmdParams, _T("cmdParam"),    TYPE_REFTARG_TAB, 0,        0, 0,
-        end,
+        p_end,
 
     kStateCmdWait,  _T("cmdWait"),      TYPE_REFTARG_TAB, 0,        0, 0,
-        end,
+        p_end,
 
     kStateCmdSwitch, _T("cmdSwitch"),   TYPE_INT,                   0, 0,
-        end,
+        p_end,
 
     kStateCmdEnabled, _T("enabled"),    TYPE_BOOL_TAB, 0,           0, 0,
         p_default,  TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 std::vector<plResponderCmd*> gResponderCmds;

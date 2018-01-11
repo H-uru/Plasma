@@ -78,30 +78,30 @@ ParamBlockDesc2 gBlowBk
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_STRENGTH, IDC_COMP_BLOW_STRENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kSpeed, _T("Speed"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_SPEED, IDC_COMP_BLOW_SPEED_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kFlutter, _T("Flutter"), TYPE_FLOAT,   0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_FLUTTER, IDC_COMP_BLOW_FLUTTER_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plBlowComponent::kConstancy, _T("Constancy"), TYPE_FLOAT,   0, 0,   
         p_default, 25.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_BLOW_CONSTANCY, IDC_COMP_BLOW_CONSTANCY_SPIN, 1.0,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 
@@ -166,23 +166,23 @@ ParamBlockDesc2 gFlexibilityBk
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_FLEX, IDC_COMP_FLEX_FLEX_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plFlexibilityComponent::kInterRand, _T("InterRand"), TYPE_FLOAT,    0, 0,   
         p_default, 0.0,
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_INTER, IDC_COMP_FLEX_INTER_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plFlexibilityComponent::kIntraRand, _T("IntraRand"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 0.f, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FLEX_INTRA, IDC_COMP_FLEX_INTRA_SPIN, 1.0,
-        end,    
+        p_end,    
     
-    end
+    p_end
 );
 
 plFlexibilityComponent::plFlexibilityComponent()

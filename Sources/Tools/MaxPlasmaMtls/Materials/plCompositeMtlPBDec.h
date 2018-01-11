@@ -42,6 +42,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plCompositeMtl.h"
 //#include "plCompositeMtlPB.h"
 
+#include "MaxMain/MaxCompat.h"
+
 ClassDesc2* GetCompMtlDesc();
 
 static ParamBlockDesc2 gCompositeMtlPB
@@ -50,18 +52,18 @@ static ParamBlockDesc2 gCompositeMtlPB
     P_AUTO_CONSTRUCT, plCompositeMtl::kRefPasses, 
 
     plCompositeMtl::kCompPasses,        _T("passes"),           TYPE_MTL_TAB, 3,        0, 0,
-        end,
+        p_end,
     plCompositeMtl::kCompOn,            _T("passOn"),           TYPE_BOOL_TAB, 2,       0, 0,
         p_default,      TRUE,
-        end,
+        p_end,
     plCompositeMtl::kCompBlend,         _T("BlendMethod"),      TYPE_INT_TAB, 2,        0, 0,
         p_default,      0,
-        end,
+        p_end,
     plCompositeMtl::kCompUVChannels,    _T("UVChannels"),       TYPE_INT_TAB, 2,        0, 0,
         p_default,      0,
-        end,
+        p_end,
     plCompositeMtl::kCompLayerCounts,   _T("LayerCounts"),      TYPE_INT_TAB, 3,        0, 0,
         p_default,      0,
-        end,
-    end
+        p_end,
+    p_end
 );

@@ -143,16 +143,16 @@ ParamBlockDesc2 gClimbTriggerBk
 
     plClimbTriggerComponent::kCommand, _T("Command"),   TYPE_INT, 0, 0,
         p_default, kMount,
-        end,
+        p_end,
 
     plClimbTriggerComponent::kDirection, _T("Direction"),   TYPE_INT, 0, 0,
         p_default, kUp,
-        end,
+        p_end,
 
     plClimbTriggerComponent::kWallPicker, _T("WallPicker"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 /////////////////////////////////////////////////////////////////
@@ -390,7 +390,7 @@ ParamBlockDesc2 gClimbBlockBk
 
     IDD_COMP_CLIMB_BLOCK, IDS_COMP_CLIMB_BLOCKER, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plClimbBlockerComponent::plClimbBlockerComponent()

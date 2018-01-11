@@ -145,37 +145,37 @@ ParamBlockDesc2 gAvLadderComponentBlock
     IDD_COMP_NAV_LADDER, IDS_COMP_NAV_LADDERS, 0, 0, &gAvLadderComponentProc,
 
     kTypeCombo, _T("Ladder Type"), TYPE_INT, 0,0,
-        end,
+        p_end,
 
     kDirectionBool, _T("Climbing Direction"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_UP,   IDC_RADIO_DOWN,
         p_vals,                     true,           false,
-        end,
+        p_end,
 
     kLoopsInt,  _T("BigLadderNumLoop"), TYPE_INT, 0, 0, 
         p_default, 0,
         p_range, 0, 500,
         p_ui,   TYPE_SPINNER,   EDITTYPE_INT,
         IDC_COMP_NAV_LADDER_LOOPS_EDIT, IDC_COMP_NAV_LADDER_LOOPS_SPIN, 0.4,
-        end,
+        p_end,
 
     kTriggerNode, _T("Trigger Node"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_NAV_TRIGGER,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
         //p_accessor, &gPhysCoreAccessor,
-        end,
+        p_end,
 
     kLadderNode, _T("ladder"),          TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_NAV_LADDER,
-        end,
+        p_end,
 
     kEnabled,   _T("enabled"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_ENABLED,
         p_default, TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAvLadderComponent::plAvLadderComponent()

@@ -184,75 +184,75 @@ ParamBlockDesc2 gClickDragBlock
 
     kClickDragDirectional,      _T("directional"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_OMNI,
-        end,
+        p_end,
 
     kClickDragDegrees, _T("degrees"),   TYPE_INT,   P_ANIMATABLE, 0,    
         p_range, 1, 180,
         p_default, 180,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT, 
         IDC_COMP_CLICK_DRAG_DEG,    IDC_COMP_CLICK_DRAG_DEGSPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kClickDragUseProxy,     _T("useProxy"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_USEPROXYPHYS,
         p_enable_ctrls, 1, kClickDragProxy,
-        end,
+        p_end,
 
     kClickDragProxy, _T("proxyPrimitave"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_DRAG_PROXY,
         p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kClickDragProxyRegion, _T("proxyRegion"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_DRAG_PROXYREGION,
         p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
 
     kClickDragUseX,     _T("useXAnim"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_USEX,
-        end,
+        p_end,
     
     kClickDragAnimX,    _T("XanimName"),        TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kClickDragUseY,     _T("useYAnim"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_USEYANIM,
-        end,
+        p_end,
     
     kClickDragAnimY,    _T("YanimName"),        TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kClickDragUseLoopX,     _T("useLoopXAnim"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_USE_LOOPX,
-        end,
+        p_end,
     
     kClickDragUseLoopY,     _T("useLoopYAnim"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_USE_LOOPY,
-        end,
+        p_end,
 
     kClickDragAllOrNothing,     _T("allOrNot"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_DRAG_ALLORNOT,
-        end,
+        p_end,
 
     kClickDragOneShot,      _T("oneshot"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_ONESHOT,
-        end,
+        p_end,
 
     kClikDragBoundsType,    _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     kClikDragEnabled,       _T("enabled"),      TYPE_BOOL,          0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_ENABLE,
         p_default, TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plClickDragComponent::plClickDragComponent()

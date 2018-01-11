@@ -90,7 +90,7 @@ ParamBlockDesc2 gLightMapBk
         p_ui,   TYPE_SPINNER, EDITTYPE_INT, IDC_COMP_LIGHTMAP_EDIT1, IDC_COMP_LIGHTMAP_SPIN1,   0.4,
         p_default, 1,
         p_range, 1, plGeometrySpan::kMaxNumUVChannels,
-        end,
+        p_end,
 //
 //      kResolutionLevelRadio,  _T("Resolution Level"),     TYPE_INT,       0, 0,
 //      p_ui,       TYPE_RADIO, 5,  IDC_RADIO_LM1,  IDC_RADIO_LM2,  IDC_RADIO_LM3,  IDC_RADIO_LM4, IDC_RADIO_LM5,
@@ -102,24 +102,24 @@ ParamBlockDesc2 gLightMapBk
         p_ui,   TYPE_SLIDER,    EDITTYPE_INT, IDC_COMP_LM_DUMMY, IDC_COMP_LIGHT_SLIDER, 4,
         p_range, 0, 4,
         p_default, 2,
-        end,
+        p_end,
     
         kMapInitColor, _T("Initial map color"), TYPE_RGBA, 0, 0,
         p_ui, TYPE_COLORSWATCH,         IDC_COMP_LIGHTMAP_COLOR,
         p_default, Color(0,0,0),
-        end,
+        p_end,
 
         kCompress,  _T("Compress"), TYPE_BOOL,      0, 0,
             p_default,  TRUE,
             p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTMAP_COMPRESS,
-            end,
+            p_end,
 
         kShared,  _T("Shared"), TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTMAP_SHARED,
-            end,
+            p_end,
 
-    end
+    p_end
 );
 
 

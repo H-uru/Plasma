@@ -171,27 +171,27 @@ ParamBlockDesc2 gLimitPaneraBk
 
     kLimitPanX, _T("Limit X"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_X_AXIS,
-    end,
+    p_end,
 
     kLimitPanZ, _T("Limit Z"),      TYPE_BOOL,              0, 0,
     p_ui,               TYPE_SINGLECHEKBOX, IDC_Z_AXIS,
-    end,
+    p_end,
 
     kPanXDeg,   _T("X degrees"), TYPE_FLOAT,    P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kPanZDeg,   _T("Z degrees"), TYPE_FLOAT,    P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
-    end
+    p_end
 );
 
 plLimitPanComponent::plLimitPanComponent()
@@ -256,23 +256,23 @@ ParamBlockDesc2 gCameraZoomeraBk
     p_default, 120.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kZoomMinDeg,    _T("min degrees"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 35.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
     kZoomRate,  _T("degrees per sec"), TYPE_FLOAT,  P_ANIMATABLE,   0,
     p_range, 0.0f, 180.0f,
     p_default, 90.0f,
     p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
     IDC_CAMERACMD_OFFSETY2, IDC_CAMERACMD_SPIN_OFFSETY2, SPIN_AUTOSCALE,
-    end,
+    p_end,
 
-    end
+    p_end
 );
 
 plCameraZoomComponent::plCameraZoomComponent()
@@ -350,72 +350,72 @@ ParamBlockDesc2 gTransOverrideeraBk
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kCutTrans,  _T("cut"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kTrackTrans,    _T("track"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK2,
         p_enable_ctrls, 3, kTransVelocity, kTransAccel, kTransDecel,
-        end,
+        p_end,
 
     kCutPOA,    _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK3,
-        end,
+        p_end,
 
     kTrackPOA,  _T("trackPOA"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK4,
         p_enable_ctrls, 3, kTransPOASpeed, kTransPOAAccel, kTransPOADecel,
-        end,
+        p_end,
 
     kTransVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kTransAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransDecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransPOAVelocity,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kTransPOAAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kTransPOADecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -200.0f, 200.0f,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kIgnoreTrans,   _T("ignore"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_CHECK_IGNORE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plTransOverrideComponent::plTransOverrideComponent()
@@ -536,28 +536,27 @@ ParamBlockDesc2 gPOAAvatareraBk
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAOffY, _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAOffZ, _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAvPOAWorldspace,   _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POA_WORLDSPACE,
-        end,
-
-        
-    end
+        p_end,
+  
+    p_end
 );
 
 plPOAAvatarComponent::plPOAAvatarComponent()
@@ -600,34 +599,34 @@ ParamBlockDesc2 gPOAObjecteraBk
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
         p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
     
     kPOAObjOffsetX, _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjOffsetY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjOffsetZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kPOAObjWorldspace,  _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_OBJECTPOA_WORLDSPACE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPOAObjectComponent::plPOAObjectComponent()
@@ -696,8 +695,7 @@ ParamBlockDesc2 gMakeDefaultCameraBk
 (   
     1, _T("camera"), 0, &gMakeDefaultCameraDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-        
-    end
+    p_end
 );
 
 plMakeDefaultCamComponent::plMakeDefaultCamComponent()
@@ -1079,7 +1077,7 @@ ParamBlockDesc2 gCamera1Bk
 (   
     1, _T("camera"), 0, &gCamera1Desc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -1146,7 +1144,7 @@ ParamBlockDesc2 gCameraIgnoreSubBk
 (   
     1, _T("camera"), 0, &gCameraIgnoreSubDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 
@@ -1216,114 +1214,115 @@ ParamBlockDesc2 gAutoCameraBk
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamOffY,   _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamOffZ,   _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffX,   _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffY,   _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoPOAOffZ,   _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamLOS,    _T("maintainLOS"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS,
-        end,
+        p_end,
 
     kAutoCamCut,    _T("cutPos"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS2,
-        end,
+        p_end,
 
     kAutoCamCutPOA, _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_default, 1,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS3,
-        end,
+        p_end,
 
     kAutoCamPosWorldspace,  _T("PosWorldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POS_WORLDSPACE,
-        end,
+        p_end,
 
     kAutoCamPOAWorldspace,  _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kAutoCamVelocity,   _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kAutoCamAccel,  _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamDecel,  _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamPOASpeed,   _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kAutoCamPOAAccel,   _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamPOADecel,   _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kAutoCamVerticalInFall, _T("vertical"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_VERTICAL,
-        end,
+        p_end,
 
     kAutoCamFastRun,    _T("runspeedup"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_RUN,
-        end,
-end
+        p_end,
+
+    p_end
 );
 
 plAutoCamComponent::plAutoCamComponent()
@@ -1439,51 +1438,51 @@ ParamBlockDesc2 gFPCameraBk
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamOffY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 1.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamOffZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 6.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffX,  _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffY,  _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFPCamPOAOffZ,  _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 6.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFpCamPOAWorldspace,    _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kFpCamPosWorldspace,    _T("Posworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_POS_WORLDSPACE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plFPCamComponent::plFPCamComponent()
@@ -1574,57 +1573,56 @@ ParamBlockDesc2 gRailCameraBk
 
     kRailCamObj, _T("PathObjectChoice"),    TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LINE_CHOOSE_PATH,
-        end,
+        p_end,
 
     kRailFarthest,  _T("farthest"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kRailVelocity,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kRailAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailDecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 5.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailPOASpeed,  _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kRailPOAAccel,  _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kRailPOADecel,  _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plRailCameraComponent::plRailCameraComponent()
@@ -1851,39 +1849,37 @@ ParamBlockDesc2 gCircleCameraBk
     kCircleFarthest,  _T("farthest"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
     kCircleSpeed,   _T("Lag Scale"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, 0.1f, 1.0f,
         p_default, 0.1f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX3, IDC_CAMERACMD_SPIN_OFFSETX3, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCirclePOAVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kCirclePOAAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCirclePOADecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-
-    end
-
+    p_end
 );
 
 plCircleCameraComponent::plCircleCameraComponent()
@@ -2019,11 +2015,9 @@ ParamBlockDesc2 gCameraRegionBlock
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 
@@ -2176,106 +2170,106 @@ ParamBlockDesc2 gFollowCameraBk
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamOffY, _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamOffZ, _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffX, _T("PX Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX5, IDC_CAMERACMD_SPIN_OFFSETX5, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffY, _T("PY Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY4, IDC_CAMERACMD_SPIN_OFFSETY4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowPOAOffZ, _T("PZ Offset"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -50.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ2, IDC_CAMERACMD_SPIN_OFFSETZ2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamLOS,  _T("maintainLOS"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS,
-        end,
+        p_end,
 
     kFollowCamCut,  _T("cutPos"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS2,
-        end,
+        p_end,
 
     kFollowCamCutPOA,   _T("cutPOA"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_LOS3,
-        end,
+        p_end,
 
     kFollowCamPosWorldspace,    _T("PosWorldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POS_WORLDSPACE,
-        end,
+        p_end,
 
     kFollowCamPOAWorldspace,    _T("POAworldspace"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_AUTOCAM_POA_WORLDSPACE,
-        end,
+        p_end,
 
     kFollowCamVelocity, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL, IDC_CAMERA_VEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kFollowCamAccel,    _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL, IDC_CAMERA_ACCEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamDecel,    _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL, IDC_CAMERA_DECEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamPOASpeed, _T("Velocity"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_VEL2, IDC_CAMERA_VEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
     
     kFollowCamPOAAccel, _T("Accel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_ACCEL2, IDC_CAMERA_ACCEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kFollowCamPOADecel, _T("Decel"), TYPE_FLOAT,    P_ANIMATABLE,   0,
         p_range, -100.0f, 100.0f,
         p_default, 60.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERA_DECEL2, IDC_CAMERA_DECEL_SPIN2, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFollowCamComponent::plFollowCamComponent()
@@ -2378,20 +2372,20 @@ ParamBlockDesc2 gAnimcamCmdBlock
 
     kAnimateOnPush, _T("animOnPush"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_BEGINONPUSH,
-        end,
+        p_end,
 
     kStopOnPop, _T("stopOnPop"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_STOPONPOP,
-        end,
+        p_end,
 
     kResetOnPop,    _T("resetOnPop"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_RESETONPOP,
-        end,
+        p_end,
 
     kIgnoreFOV, _T("ignoreFOV"),        TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_IGNOREFOV,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 
@@ -2497,42 +2491,40 @@ ParamBlockDesc2 gCameraCmdBlock
 
     kCommand,       _T("Command"),      TYPE_INT,               0, 0,
         p_default, kCommandSetFixedCam,
-        end,
+        p_end,
         
     kOffsetX,   _T("X Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETX, IDC_CAMERACMD_SPIN_OFFSETX, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kOffsetY,   _T("Y Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 10.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETY, IDC_CAMERACMD_SPIN_OFFSETY, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kOffsetZ,   _T("Z Offset"), TYPE_FLOAT, P_ANIMATABLE,   0,
         p_range, 0.0f, 50.0f,
         p_default, 3.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_CAMERACMD_OFFSETZ, IDC_CAMERACMD_SPIN_OFFSETZ, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kCustomBoundListStuff, _T("FixedCamera"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERACMD_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kSmooth,    _T("useCut"),       TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CAMERACMD_CUT,
-        end,
+        p_end,
 
-
-
-    end
+    p_end
 );
 
 plCameraCmdComponent::plCameraCmdComponent()

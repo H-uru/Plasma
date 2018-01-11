@@ -91,23 +91,23 @@ ParamBlockDesc2 gResponderWaitBlock
     IDD_COMP_RESPOND_WAIT, IDS_COMP_WAIT, 0, 0, &gResponderWaitProc,
 
     kWaitWhoOld,    _T("whoOld"),       TYPE_INT_TAB, 0,        0, 0,
-        end,
+        p_end,
 
     kWaitPointOld,  _T("pointOld"), TYPE_STRING_TAB, 0,     0, 0,
-        end,
+        p_end,
 
     kWaitMe,    _T("me"),       TYPE_BOOL,              0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_WAIT_ON_ME_CHECK,
-        end,
+        p_end,
 
     kWaitWho, _T("who"),        TYPE_INT,               0, 0,
         p_default,  -1,
-        end,
+        p_end,
 
     kWaitPoint, _T("point"),    TYPE_STRING,            0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 void ResponderWait::SetDesc(ClassDesc2 *desc) { gResponderWaitBlock.SetClassDesc(desc); }
 

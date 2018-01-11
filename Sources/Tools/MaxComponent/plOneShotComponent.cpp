@@ -132,34 +132,35 @@ ParamBlockDesc2 gOneShotBlock
     //params
     kOneShotAnimName,  _T("AnimationName"),    TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_COMP_ONESHOT_ANIM_TEXTBOX,
-        end,
+        p_end,
 
     kPlayBackwardsBool, _T("PlayBackwardsBool"), TYPE_BOOL, 0,  0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_PLAY_BACK_BOOL,
-        end,
+        p_end,
 
     kControlSpeedBool, _T("ControlSpeedBool"), TYPE_BOOL, 0,    0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_ONESHOT_CONT_SPEED_BOOL,
-        end,
+        p_end,
 
     kSeekTimeFloat, _T("SeekTimeFloat"), TYPE_FLOAT, 0, 0,
         p_default, 1.0f,
         p_ui,   TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_ONESHOT_SEEK_FIELD_EDIT, IDC_COMP_ONESHOT_SEEK_FIELD_SPIN, .1f, 
-        end,
+        p_end,
 
     kSmartSeekBool, _T("SmartSeekBool"), TYPE_BOOL, 0,  0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SMART_SEEK,
-        end,
+        p_end,
 
     kNoSeekBool, _T("NoSeekBool"), TYPE_BOOL, 0,    0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_NO_SEEK,
-        end,
-    end
+        p_end,
+
+    p_end
 );
 
 

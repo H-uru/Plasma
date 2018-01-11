@@ -83,15 +83,15 @@ ParamBlockDesc2 gFootstepSoundBk
 
     plFootstepSoundComponent::kSurface, _T("Surface"),      TYPE_INT,   0, 0,
         p_default, plArmatureEffectsMgr::kFootDirt,
-        end,
+        p_end,
 
     plFootstepSoundComponent::kSurfaceList, _T("SoundGroups"),  TYPE_INODE_TAB, plArmatureEffectsMgr::kMaxSurface,      0, 0,
-        end,
+        p_end,
 
     plFootstepSoundComponent::kNodePicker, _T("NodePicker"),    TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plFootstepSoundComponent::plFootstepSoundComponent()

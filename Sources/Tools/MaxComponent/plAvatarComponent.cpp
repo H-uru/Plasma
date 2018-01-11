@@ -365,84 +365,84 @@ ParamBlockDesc2 gPAvatarBk
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKB,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plAvatarComponent::kFriction,   _T("Friction"), TYPE_FLOAT, 0, 0,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_AVATAR_FRICTION_EDIT, IDC_COMP_AVATAR_FRICTION_SPIN, 0.1f,
         p_default, 0.9f,
-        end,
+        p_end,
 
     plAvatarComponent::kRootNode, _T("RootNode"),   TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_ROOT_PICKB,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
     
     plAvatarComponent::kMeshNode, _T("MeshNode"),   TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_MESH_PICKB,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
         
     plAvatarComponent::kClothingGroup,  _T("ClothingGroup"),    TYPE_INT,   0, 0,
         p_default, plClothingMgr::kClothingBaseMale,
-        end,
+        p_end,
 
     plArmatureComponent::kBounceGroups, _T("bounceGroups"), TYPE_INT,   0,0,
         p_default,  plPhysicsGroups_DEAD::kCreatures |
                     plPhysicsGroups_DEAD::kStaticSimulated |
                     plPhysicsGroups_DEAD::kDynamicSimulated |
                     plPhysicsGroups_DEAD::kAnimated,
-        end,
+        p_end,
 
     plArmatureComponent::kReportGroups, _T("reportGroups"), TYPE_INT,   0,0,
-        end,
+        p_end,
 
     plAvatarComponent::kBrainType, _T("Brain"), TYPE_INT, 0, 0,
         p_default, plAvatarComponent::kBrainHuman,
-        end,
+        p_end,
         
     plAvatarComponent::kSkeleton, _T("Skeleton"),   TYPE_INT, 0, 0,
         p_default, plArmatureMod::kBoneBaseMale,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsProxyTorso_DEAD, _T("ProxyTorso"),   TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKT,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
  
     plAvatarComponent::kPhysicsProxyHead_DEAD, _T("ProxyHead"), TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKH,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsHeight,  _T("physHeight"), TYPE_FLOAT,   0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 5.f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_HEIGHT_EDIT, IDC_PHYS_HEIGHT_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plAvatarComponent::kPhysicsWidth,   _T("physWidth"), TYPE_FLOAT,    0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 2.5f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_WIDTH_EDIT, IDC_PHYS_WIDTH_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plAvatarComponent::kBodyFootstepSoundPage,  _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
         p_default, "Audio",
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
-        end,
+        p_end,
 
     plAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING, 0,  0,
         p_default, "Male",
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAvatarComponent::plAvatarComponent()
@@ -932,112 +932,112 @@ ParamBlockDesc2 gPLODAvatarBk
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKB,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kFriction,    _T("Friction"), TYPE_FLOAT, 0, 0,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_POS_FLOAT,
         IDC_COMP_AVATAR_FRICTION_EDIT, IDC_COMP_AVATAR_FRICTION_SPIN, 0.1f,
         p_default, 0.9f,
-        end,
+        p_end,
 
     plLODAvatarComponent::kLODState, _T("LODState"),        TYPE_INT,   0, 0,
         p_range, 1, plLODAvatarComponent::kMaxNumLODLevels,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMeshNodeTab, _T("MeshObject"),   TYPE_INODE_TAB, plLODAvatarComponent::kMaxNumLODLevels,     0, 0,
         p_accessor,     &gLODAvatarAccessor,
-        end,
+        p_end,
 
     plLODAvatarComponent::kRootNodeAddBtn, _T("RtNodePicker"),  TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_LOD_AVATAR_ROOT_PICKB,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMeshNodeAddBtn, _T("MshNodePicker"), TYPE_INODE,     0, 0,
         p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_LOD_AVATAR_MESH_PICKB,
         //p_sclassID,   GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kClothingGroup,   _T("ClothingGroup"),    TYPE_INT,   0, 0,
         p_default, plClothingMgr::kClothingBaseMale,
-        end,
+        p_end,
 
     plArmatureComponent::kBounceGroups, _T("bounceGroups"), TYPE_INT,   0,0,
         p_default,  plPhysicsGroups_DEAD::kCreatures |
                     plPhysicsGroups_DEAD::kStaticSimulated |
                     plPhysicsGroups_DEAD::kDynamicSimulated |
                     plPhysicsGroups_DEAD::kAnimated,
-        end,
+        p_end,
 
     plArmatureComponent::kReportGroups, _T("reportGroups"), TYPE_INT,   0,0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBrainType, _T("Brain"), TYPE_INT, 0, 0,
         p_default, plLODAvatarComponent::kBrainHuman,
-        end,
+        p_end,
         
     plLODAvatarComponent::kGroupIdx,    _T("GroupIndex"),   TYPE_INT,   0, 0,
         p_default, 0,
         p_range, 0, plLODAvatarComponent::kMaxNumLODLevels - 1,
         p_ui, kArmMain, TYPE_SPINNER,   EDITTYPE_INT,
         IDC_COMP_LOD_AVATAR_GROUP, IDC_COMP_LOD_AVATAR_GROUP_SPIN, 1.f,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBoneList, _T("Bones"), TYPE_INODE_TAB, 0,    0, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kGroupTotals, _T("Totals"), TYPE_INT_TAB, plLODAvatarComponent::kMaxNumLODLevels, 0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kLastPick, _T("LastPick"), TYPE_INODE,    0, 0, // Temp storage space for the bone picker
-        end,
+        p_end,
 
     plLODAvatarComponent::kSkeleton, _T("Skeleton"),    TYPE_INT, 0, 0,
         p_default, plArmatureMod::kBoneBaseMale,
-        end,
+        p_end,
 
     plLODAvatarComponent::kMaterial, _T("Material"),    TYPE_MTL, 0, 0,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsProxyTorso_DEAD, _T("ProxyTorso"),    TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKT,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 // 
     plLODAvatarComponent::kPhysicsProxyHead_DEAD, _T("ProxyHead"),  TYPE_INODE,     0, 0,
 //      p_ui,   kArmMain, TYPE_PICKNODEBUTTON, IDC_COMP_AVATAR_PROXY_PICKH,
 //      p_sclassID, GEOMOBJECT_CLASS_ID,
 //      p_prompt, IDS_COMP_AVATAR_PROXYS,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsHeight,   _T("physHeight"), TYPE_FLOAT,   0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 5.f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_HEIGHT_EDIT, IDC_PHYS_HEIGHT_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plLODAvatarComponent::kPhysicsWidth,    _T("physWidth"), TYPE_FLOAT,    0,  0,
         p_range, 0.1f, 50.0f,
         p_default, 2.5f,
         p_ui,   kArmMain, TYPE_SPINNER, EDITTYPE_FLOAT,
         IDC_PHYS_WIDTH_EDIT, IDC_PHYS_WIDTH_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plLODAvatarComponent::kBodyFootstepSoundPage,   _T("bodyFootstepPage"), TYPE_STRING,    0,  0,
         p_default, "Audio",
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_BODYFOOTSTEPPAGE_EDIT,
-        end,
+        p_end,
 
     plLODAvatarComponent::kAnimationPrefix,_T("animationPrefix"), TYPE_STRING,  0,  0,
         p_default, "Male",
         p_ui,   kArmMain, TYPE_EDITBOX, IDC_ANIMATIONPREFIX_EDIT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plLODAvatarComponent::plLODAvatarComponent() : fMaterial()

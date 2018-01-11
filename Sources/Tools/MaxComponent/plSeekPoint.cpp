@@ -90,7 +90,7 @@ ParamBlockDesc2 gSeekPtBk
 (
     1, _T(""), 0, &gSeekPtDesc, P_AUTO_CONSTRUCT, 0,
 
-    end
+    p_end
 );
 
 // CTOR (default)

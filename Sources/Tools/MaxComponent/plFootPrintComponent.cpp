@@ -216,76 +216,76 @@ ParamBlockDesc2 gFootPrintBk
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 30.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.1,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plFootPrintComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -593,76 +593,76 @@ ParamBlockDesc2 gRippleBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plRippleComponent::IFakeParams()
@@ -776,76 +776,76 @@ ParamBlockDesc2 gPuddleBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plPuddleComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -935,76 +935,76 @@ ParamBlockDesc2 gBulletBk
         p_range, 25.0, 400.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_SCALE, IDC_COMP_FP_SCALE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 100.0,
 //      p_range, 25.0, 400.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 15.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.1,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
 //      p_default, 10.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
 //      p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plBulletComponent::IFakeParams()
@@ -1097,76 +1097,76 @@ ParamBlockDesc2 gTorpedoBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
 //      p_default, 1.0,
 //      p_range, 0.25, 10.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
         p_default, 5.0,
         p_range, 0.0, 10.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 0.25,
         p_range, 0.1, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plTorpedoComponent::IFakeParams()
@@ -1257,76 +1257,76 @@ ParamBlockDesc2 gWakeBk
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_WIDTH, IDC_COMP_FP_WIDTH_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLength, _T("Length"), TYPE_FLOAT,    0, 0,   
         p_default, 100.0,
         p_range, 25.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_LENGTH, IDC_COMP_FP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeOut, _T("FadeOut"), TYPE_FLOAT,  0, 0,   
 //      p_default, 3.5,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_FADEOUT, IDC_COMP_FP_FADEOUT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLifeSpan, _T("LifeSpan"), TYPE_FLOAT,    0, 0,   
 //      p_default, 5.0,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_LIFESPAN2, IDC_COMP_FP_LIFESPAN_SPIN2, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kFadeIn, _T("FadeIn"), TYPE_FLOAT,    0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.0, 300.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_RAMPEND, IDC_COMP_FP_RAMPEND_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kLayer,   _T("Layer"),    TYPE_TEXMAP, 0, 0,
         p_ui, TYPE_TEXMAPBUTTON, IDC_COMP_FP_TEXMAP,
-        end,
+        p_end,
 
     plFootPrintComponent::kBlend, _T("Blend"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_RADIO_ALPHA, IDC_RADIO_MADD, IDC_RADIO_ADD, IDC_RADIO_MULT,
         p_vals, plFootPrintComponent::kAlpha, plFootPrintComponent::kMADD, plFootPrintComponent::kAdd, plFootPrintComponent::kMult,
         p_default, plFootPrintComponent::kAlpha,
-        end,
+        p_end,
 
     plFootPrintComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kNotifies,    _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plFootPrintComponent::kIntensity, _T("Intensity"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_INTENSITY, IDC_COMP_FP_INTENSITY_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plFootPrintComponent::kParticles,   _T("Particles"),    TYPE_INODE_TAB, 0,      0, 0,
 //      p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS2, 0, 0, IDC_DEL_TARGS2,
-        end,
+        p_end,
 
     plFootPrintComponent::kPartyTime, _T("PartyTime"), TYPE_FLOAT,  0, 0,   
 //      p_default, 0.25,
 //      p_range, 0.1, 5.0,
 //      p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
 //      IDC_COMP_FP_PARTYTIME, IDC_COMP_FP_PARTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 void plWakeComponent::IFakeParams()
@@ -1459,16 +1459,16 @@ ParamBlockDesc2 gDirtyBk
 
     plDirtyComponent::kDecals,  _T("Decals"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plDirtyComponent::kDirtyTime, _T("DirtyTime"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 300.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FP_DIRTYTIME, IDC_COMP_FP_DIRTYTIME_SPIN, 0.1,
-        end,    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plDirtyComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -1578,25 +1578,23 @@ ParamBlockDesc2 gPrintShapeBk
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_WIDTH, IDC_COMP_WIDTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plPrintShapeComponent::kLength, _T("Length"), TYPE_FLOAT,   0, 0,   
         p_default, 0.9,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LENGTH, IDC_COMP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plPrintShapeComponent::kHeight, _T("Height"), TYPE_FLOAT,   0, 0,   
         p_default, 1.0,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_HEIGHT, IDC_COMP_HEIGHT_SPIN, 0.1,
-        end,    
+        p_end,    
 
-
-
-    end
+    p_end
 );
 
 bool plPrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -1724,27 +1722,27 @@ ParamBlockDesc2 gActivePrintShapeBk
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_WIDTH, IDC_COMP_WIDTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kLength, _T("Length"), TYPE_FLOAT,     0, 0,   
         p_default, 0.9,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LENGTH, IDC_COMP_LENGTH_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kHeight, _T("Height"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 30.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_HEIGHT, IDC_COMP_HEIGHT_SPIN, 0.1,
-        end,    
+        p_end,    
 
     plActivePrintShapeComponent::kNotifies, _T("Notifies"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 bool plActivePrintShapeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)

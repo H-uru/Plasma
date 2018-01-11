@@ -116,24 +116,24 @@ ParamBlockDesc2 gResponderMtlBlock
     IDD_COMP_RESPOND_MTL, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMtlProc,
 
     kMtlRef,    _T("mtl"),      TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kMtlAnim,   _T("anim"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlLoop,   _T("loop"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kMtlType,   _T("type"),     TYPE_INT,           0, 0,
-        end,
+        p_end,
 
     kMtlNode,   _T("node"),     TYPE_INODE,         0, 0,
-        end,
+        p_end,
 
     kMtlNodeType,   _T("nodeType"), TYPE_INT,   0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdMtl& plResponderCmdMtl::Instance()

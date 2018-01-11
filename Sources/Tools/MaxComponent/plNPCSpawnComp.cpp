@@ -117,19 +117,19 @@ ParamBlockDesc2 gNPCSpawnBlock
     //params
     kModelName, _T("ModelName"),    TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_NPC_SPAWN_MODEL_TEXT_BOX,
-        end,
+        p_end,
 
     //params
     kAccountName,   _T("AccountName"),  TYPE_STRING,    0, 0,
         p_ui,   TYPE_EDITBOX, IDC_NPC_SPAWN_ACCOUNT_TEXT_BOX,
-        end,
+        p_end,
 
     kAutoSpawn, _T("AutoSpawn"), TYPE_BOOL, 0,  0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_NPC_SPAWN_AUTOSPAWN_BOOL,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plNPCSpawnComp::plNPCSpawnComp()

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_COMPONENT_REG_H
 
 #include "plComponentMgr.h"
+#include "MaxMain/MaxCompat.h"
 
 class TargetValidator;
 extern TargetValidator gTargetValidator;
@@ -118,7 +119,7 @@ TARG_BLOCK(classname, varname)
 #define OBSOLETE_CLASS( classname, descname, strname, sn, type, classid ) class classname : public plComponent { public:    classname##(); bool Convert( plMaxNode *n, plErrorMsg *e ) { return true; } }; \
                             OBSOLETE_CLASS_DESC( classname, descname, strname, sn, type, classid ) \
                             classname##::##classname() { fClassDesc = &##descname##; fClassDesc->MakeAutoParamBlocks(this); } \
-                            ParamBlockDesc2 classname##blk ( plComponent::kBlkComp, _T("##descname##"), 0, &##descname##, P_AUTO_CONSTRUCT, plComponent::kRefComp, end );
+                            ParamBlockDesc2 classname##blk ( plComponent::kBlkComp, _T("##descname##"), 0, &##descname##, P_AUTO_CONSTRUCT, plComponent::kRefComp, p_end );
 
 //
 // Creates the targets paramblock for a component
@@ -130,8 +131,8 @@ static ParamBlockDesc2 g##classname##TargsBlock             \
     P_AUTO_CONSTRUCT, plComponentBase::kRefTargs,           \
                                                             \
     kTargs, _T("targets"), TYPE_INODE_TAB, 0, 0, 0,         \
-        end,                                                \
-    end                                                     \
+        p_end,                                              \
+    p_end                                                   \
 );
 
 // Component categories

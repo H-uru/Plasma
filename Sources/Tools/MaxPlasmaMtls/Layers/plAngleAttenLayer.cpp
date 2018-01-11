@@ -86,50 +86,50 @@ static ParamBlockDesc2 gAngleAttenParamBlk
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TRANSP_ANGLE_0, IDC_TRANSP_ANGLE_0_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefTransp0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kOpaqueAngle0,   _T("opaque0"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_OPAQUE_ANGLE_0, IDC_OPAQUE_ANGLE_0_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefOpaque0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kDoubleFade, _T("doubleFade"),   TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DOUBLE_FADE,
         p_enable_ctrls,     2, plAngleAttenLayer::kOpaqueAngle1, plAngleAttenLayer::kTranspAngle1,
         p_default,      false,
-        end,
+        p_end,
 
     plAngleAttenLayer::kOpaqueAngle1,   _T("opaque1"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_OPAQUE_ANGLE_1, IDC_OPAQUE_ANGLE_1_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefTransp1,
-        end,
+        p_end,
 
     plAngleAttenLayer::kTranspAngle1,   _T("transp1"),  TYPE_FLOAT, 0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TRANSP_ANGLE_1, IDC_TRANSP_ANGLE_1_SPIN, SPIN_AUTOSCALE,
         p_range,        0.0, 180.0,
         p_default,      kDefOpaque1,
-        end,
+        p_end,
 
     plAngleAttenLayer::kReflect,    _T("reflect"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_REFLECT,
         p_default,      false,
-        end,
+        p_end,
 
     plAngleAttenLayer::kLoClamp,    _T("loClamp"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_LO_CLAMP, IDC_LO_CLAMP_SPIN, SPIN_AUTOSCALE,
         p_range,        0, 100,
         p_default,      0,
-        end,
+        p_end,
 
     plAngleAttenLayer::kHiClamp,    _T("hiClamp"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_HI_CLAMP, IDC_HI_CLAMP_SPIN, SPIN_AUTOSCALE,
         p_range,        0, 100,
         p_default,      100,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAngleAttenLayer::plAngleAttenLayer() :

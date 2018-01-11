@@ -1184,75 +1184,75 @@ static ParamBlockDesc2 sSoundSharedPB
     kSndVersionCount, _T(""), TYPE_INT, 0, 0,
         p_range, 0, 10000,
         p_default, 0,
-        end,
+        p_end,
     
     kSoundFileName,     _T("fileName"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
     
     kSoundAutoStartCkBx, _T("autoStart"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_AUTOSTART_CKBX,
-        end,
+        p_end,
     
     kSoundLoopCkBx, _T("loop"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_LOOPCHKBOX,
-        end,
+        p_end,
     kSoundLoopName, _T("loopName"), TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kSndDisableLOD, _T("disableLOD"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSndSharedParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND_DISABLELOD,
-        end,
+        p_end,
 
     kSoundVolumeSlider, _T("volume"),   TYPE_FLOAT,  P_ANIMATABLE,  IDS_SND_VOLUME,
         p_ui,   kSndSharedParams, TYPE_SLIDER,  EDITTYPE_FLOAT, IDC_COMP_SOUND3D_SLIDERVIEWER, IDC_COMP_SOUND3D_VOLSLIDER, 4,
         p_range, -48.0f, 0.f,
         p_default, 0.f,
-        end,
+        p_end,
 
     kNotSoOldSoundVolumeSlider, _T(""), TYPE_FLOAT,     0,  0,
-        end,
+        p_end,
 
     kOldSoundVolumeSlider, _T(""),  TYPE_INT,       0,  0,
-        end,
+        p_end,
 
     kSndCategory, _T("category"),   TYPE_INT,   0, 0,   
         p_range, plSound::kStartType, plSound::kNumTypes - 1,
         p_default, plSound::kSoundFX,
-        end,
+        p_end,
 
     /// Fade Parameters rollout
     kSndFadeInEnable, _T("fadeInEnable"),       TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSoundFadeParams, TYPE_SINGLECHEKBOX, IDC_SOUND3D_INENABLE,
-        end,
+        p_end,
 
     kSndFadeInType, _T("fadeInType"),       TYPE_INT,       0, 0,
         p_default,  0,
-        end,
+        p_end,
 
     kSndFadeInLength, _T("fadeInLength"),   TYPE_FLOAT, 0,0,
         p_ui,   kSoundFadeParams, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_SOUND3D_INLENGTH, IDC_SOUND3D_INLENGTHSPIN, 1.0f,
         p_default,  1.f,
-        end,
+        p_end,
 
     kSndFadeOutEnable, _T("fadeOutEnable"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kSoundFadeParams, TYPE_SINGLECHEKBOX, IDC_SOUND3D_OUTENABLE,
-        end,
+        p_end,
 
     kSndFadeOutType, _T("fadeOutType"),     TYPE_INT,       0, 0,
         p_default,  0,
-        end,
+        p_end,
 
     kSndFadeOutLength, _T("fadeOutLength"), TYPE_FLOAT, 0,0,
         p_ui,   kSoundFadeParams, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_SOUND3D_OUTLENGTH, IDC_SOUND3D_OUTLENGTHSPIN, 1.0f,
         p_default,  1.f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 //// ParamBlock Macros for Waveform Properties Rollout ///////////////////////////////////////////
@@ -1265,19 +1265,19 @@ static ParamBlockDesc2 sSoundSharedPB
         p_default, 0,                                                                                       \
         p_ui, kSndWaveformParams, TYPE_SINGLECHEKBOX, IDC_SND_ISSTEREO_HIDDEN,                              \
         p_enable_ctrls, 1, kSndChannelSelect,                                                               \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     /* Channel select for stereo sources */                                                                 \
     kSndChannelSelect, _T( "sourceChannel" ), TYPE_INT, 0, 0,                                               \
         p_ui,   kSndWaveformParams, TYPE_RADIO, 2, IDC_SND_CHANSRC1, IDC_SND_CHANSRC2,                      \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kSndPriority,           _T("sndPriority"), TYPE_INT, 0, 0,                                              \
         p_range, 0, 10,                                                                                     \
         p_ui,   kSndWaveformParams, TYPE_SPINNER, EDITTYPE_INT, IDC_SND_PRIORITY, IDC_SND_PRIORITY_SPIN, 1.f,   \
         p_default, 0,                                                                                       \
-        end                                                                                             
+        p_end                                                                                             
 
 //// Enums Source EAX Properties Rollout ////////////////////////////////////////////////////////
 
@@ -1520,129 +1520,129 @@ static plEAXPropsDlgProc    sEAXPropsDlgProc;
         p_enable_ctrls, 10, kEAXRoom, kEAXRoomHF, kEAXRoomAuto, kEAXRoomHFAuto,                             \
                 kEAXOutsideVolHF, kEAXAirAbsorptionFact, kEAXRoomRolloffFact, kEAXDopplerFact, kEAXRolloffFact,         \
                 kEAXEnableOcclusion,                                                                        \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoom, _T("eaxRoom"),    TYPE_INT,       0,  0,                                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_ROOM_EDIT, IDC_EAX_ROOM, 8,               \
         p_range, -10000, 1000,                                                                              \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomHF, _T("eaxRoomHF"),    TYPE_INT,       0,  0,                                                  \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_ROOMHF_EDIT, IDC_EAX_ROOMHF, 8,           \
         p_range, -10000, 0,                                                                                 \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomAuto,       _T( "eaxRoomAuto" ), TYPE_BOOL, 0, 0,                                               \
         p_default, 1,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ROOMAUTO,                                          \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXRoomHFAuto,     _T( "eaxRoomHFAuto" ), TYPE_BOOL, 0, 0,                                             \
         p_default, 1,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ROOMHFAUTO,                                        \
-        end,                                                                                                    \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXOutsideVolHF, _T("eaxOutsideVolHF"),    TYPE_INT,       0,  0,                                                  \
+    kEAXOutsideVolHF, _T("eaxOutsideVolHF"),    TYPE_INT,       0,  0,                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_OUTSIDEVOLHF_EDIT, IDC_EAX_OUTSIDEVOLHF, 8,           \
         p_range, -10000, 0,                                                                                 \
         p_default, 0,                                                                                       \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXAirAbsorptionFact, _T("eaxAirAbsorptionFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXAirAbsorptionFact, _T("eaxAirAbsorptionFact"),  TYPE_FLOAT,     0,  0,                              \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_AIRABSORPTFACT_EDIT, IDC_EAX_AIRABSORPTFACT, 8,         \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 1.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXRoomRolloffFact, _T("eaxRoomRolloffFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXRoomRolloffFact, _T("eaxRoomRolloffFact"),  TYPE_FLOAT,     0,  0,                                  \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_ROOMROLLOFFFACT_EDIT, IDC_EAX_ROOMROLLOFFFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXDopplerFact, _T("eaxDopplerFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXDopplerFact, _T("eaxDopplerFact"),  TYPE_FLOAT,     0,  0,                                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_DOPPLERFACT_EDIT, IDC_EAX_DOPPLERFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXRolloffFact, _T("eaxRolloffFact"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXRolloffFact, _T("eaxRolloffFact"),  TYPE_FLOAT,     0,  0,                                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_ROLLOFFFACT_EDIT, IDC_EAX_ROLLOFFFACT, 8,           \
         p_range, 0.f, 10.f,                                                                                 \
         p_default, 0.f,                                                                                     \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXEnableOcclusion, _T("eaxEnableOcclusion"), TYPE_BOOL, 0, 0,                                         \
         p_default, 0,                                                                                       \
         p_ui, kSndEAXParams, TYPE_SINGLECHEKBOX, IDC_EAX_ENABLEOCCLUSION,                                   \
         p_enable_ctrls, 6, kEAXOcclusionRegion, kEAXTempOcclusion, kEAXTempOcclusionLFRatio, kEAXTempOcclusionRoomRatio,    \
                 kEAXTempOcclusionDirectRatio, kEAXTempOccSwapper,                                           \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXOcclusionRegion, _T("eaxOcclusionRegion"),  TYPE_INODE,     0,  0,                                      \
-        end,                                                                                                \
+    kEAXOcclusionRegion, _T("eaxOcclusionRegion"),  TYPE_INODE,     0,  0,                                  \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusion, _T("eaxStartOcclusion"),    TYPE_INT,       0,  0,                                                  \
+    kEAXStartOcclusion, _T("eaxStartOcclusion"),    TYPE_INT,       0,  0,                                  \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionLFRatio, _T("eaxStartOccLFRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionLFRatio, _T("eaxStartOccLFRatio"),    TYPE_FLOAT,     0,  0,                          \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionRoomRatio, _T("eaxStartOccRoomRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionRoomRatio, _T("eaxStartOccRoomRatio"),    TYPE_FLOAT,     0,  0,                      \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXStartOcclusionDirectRatio, _T("eaxStartOccDirectRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXStartOcclusionDirectRatio, _T("eaxStartOccDirectRatio"),    TYPE_FLOAT,     0,  0,                  \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusion, _T("eaxEndOcclusion"),    TYPE_INT,       0,  0,                                                  \
+    kEAXEndOcclusion, _T("eaxEndOcclusion"),    TYPE_INT,       0,  0,                                      \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionLFRatio, _T("eaxEndOccLFRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionLFRatio, _T("eaxEndOccLFRatio"),    TYPE_FLOAT,     0,  0,                              \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionRoomRatio, _T("eaxEndOccRoomRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionRoomRatio, _T("eaxEndOccRoomRatio"),    TYPE_FLOAT,     0,  0,                          \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXEndOcclusionDirectRatio, _T("eaxEndOccDirectRatio"),    TYPE_FLOAT,     0,  0,                                                  \
+    kEAXEndOcclusionDirectRatio, _T("eaxEndOccDirectRatio"),    TYPE_FLOAT,     0,  0,                      \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXWhichOccSwapped, _T("eaxWhichOccSwapped"),  TYPE_INT,       0,  0,                                                  \
-        end,                                                                                                \
+    kEAXWhichOccSwapped, _T("eaxWhichOccSwapped"),  TYPE_INT,       0,  0,                                  \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXTempOccSwapper, _T("eaxOccSwapper"),    TYPE_INT,       0,  0,                                      \
         p_ui, kSndEAXParams, TYPE_RADIO, 2, IDC_EAX_STARTOCC, IDC_EAX_ENDOCC,                               \
-        p_default, 0,                                                               \
-        end,                                                                                                \
+        p_default, 0,                                                                                       \
+        p_end,                                                                                              \
                                                                                                             \
     kEAXTempOcclusion, _T("eaxTempOcclusion"),  TYPE_INT,       0,  0,                                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_INT, IDC_EAX_OCCLUSION_EDIT, IDC_EAX_OCCLUSION, 8,     \
         p_range, -10000, 0, p_default, 0,                                                                   \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionLFRatio, _T("eaxTempOccLFRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionLFRatio, _T("eaxTempOccLFRatio"),  TYPE_FLOAT,     0,  0,                              \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCLFRATIO_EDIT, IDC_EAX_OCCLFRATIO, 8,         \
         p_range, 0.f, 1.f, p_default, 0.25f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionRoomRatio, _T("eaxTempOccRoomRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionRoomRatio, _T("eaxTempOccRoomRatio"),  TYPE_FLOAT,     0,  0,                          \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCROOMRATIO_EDIT, IDC_EAX_OCCROOMRATIO, 8,         \
         p_range, 0.f, 10.f, p_default, 1.5f,                                                                \
-        end,                                                                                                \
+        p_end,                                                                                              \
                                                                                                             \
-    kEAXTempOcclusionDirectRatio, _T("eaxTempOccDirectRatio"),  TYPE_FLOAT,     0,  0,                                                  \
+    kEAXTempOcclusionDirectRatio, _T("eaxTempOccDirectRatio"),  TYPE_FLOAT,     0,  0,                      \
         p_ui,   kSndEAXParams, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_EAX_OCCDIRECTRATIO_EDIT, IDC_EAX_OCCDIRECTRATIO, 8,         \
         p_range, 0.f, 10.f, p_default, 1.0f,                                                                \
-        end                                                                                             
+        p_end                                                                                             
 
 //  , end
 //);
@@ -1989,7 +1989,7 @@ ParamBlockDesc2 gSound3DEmitterBk
     kSndIsLocalOnly, _T("noNetworkSynch"),      TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_LOCALONLY,
-        end,
+        p_end,
     
 
     kMinFallOffRad, _T("minFalloff"),   TYPE_INT,   0, 0,   
@@ -1997,20 +1997,20 @@ ParamBlockDesc2 gSound3DEmitterBk
         p_default, 1,
         p_ui,   kS3DBaseParams, TYPE_SPINNER,   EDITTYPE_POS_INT,
         IDC_COMP_SOUND3D_EDIT3, IDC_COMP_SOUND3D_SPIN3, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kMaxFallOffRad, _T("maxFalloff"),   TYPE_INT,   0, 0,   
         p_range, 1, 1000000000,
         p_default, 1000000000,
         p_ui,   kS3DBaseParams, TYPE_SPINNER,   EDITTYPE_POS_INT,
         IDC_COMP_SOUND3D_EDIT4, IDC_COMP_SOUND3D_SPIN4, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kSoundConeBool, _T("SoundCone"),        TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_enable_ctrls, 3, kSoundIConeAngle, kSoundOConeAngle, kSoundOConeVolumeSlider,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_COMP_SOUND3D_CONEEFFECT_CKBX,
-        end,
+        p_end,
 
 
     kSoundIConeAngle,   _T("insideConeAngle"), TYPE_INT,    0,  0,
@@ -2018,40 +2018,40 @@ ParamBlockDesc2 gSound3DEmitterBk
         p_default, 360,
         p_ui,   kS3DBaseParams, TYPE_SPINNER, EDITTYPE_INT,
         IDC_COMP_SOUND3D_ICONEANGLE_EDIT, IDC_COMP_SOUND3D_ICONEANGLE_SPIN, 1.0f,
-        end,
+        p_end,
 
     kSoundOConeAngle,   _T("outsideConeAngle"), TYPE_INT,   0,  0,
         p_range, 0, 360,
         p_default, 360,
         p_ui,   kS3DBaseParams, TYPE_SPINNER, EDITTYPE_INT,
         IDC_COMP_SOUND3D_OCONEANGLE_EDIT, IDC_COMP_SOUND3D_OCONEANGLE_SPIN, 1.0f,
-        end,
+        p_end,
         
     kSoundOConeVolumeSlider, _T("outsideConeVolSlider"),    TYPE_INT,       0,  0,
         p_ui,   kS3DBaseParams, TYPE_SLIDER,    EDITTYPE_INT, IDC_COMP_SOUND3D_SLIDERVIEWER2, IDC_COMP_SOUND3D_VOLSLIDER2, 4,
         p_range, 5000,  10000,
         p_default, 5000,
-        end,
+        p_end,
 
     /// Soft Region/Volume Parameters rollout
     kSndSoftRegionEnable,   _T( "enableSoftRegion" ), TYPE_BOOL, 0, 0,
         p_ui,   kS3DSoftVolumeParams, TYPE_SINGLECHEKBOX, IDC_SOUND_SOFTENABLE,
         p_default, FALSE,
-        end,
+        p_end,
 
     kSndSoftRegion, _T("softRegion"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_SOUNDSOFTSELECT,
         p_accessor, &gSoundSoftVolAccessor,
-        end,
+        p_end,
                 
     kSndIncidental, _T("isIncidental"), TYPE_INT, 0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_INCIDENTAL,
-        end,
+        p_end,
         
     sSndEAXPropsParamTemplate,  // it's a #define
 
-    end
+    p_end
 );
 
 
@@ -2405,24 +2405,24 @@ ParamBlockDesc2 gBgndMusicEmitterBk
     kSndIsLocalOnly, _T("noNetworkSynch"),      TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_SND_LOCALONLY,
-        end,
+        p_end,
 
     kSndStreamCompressed,   _T("stream"),       TYPE_BOOL,      0, 0,
         p_ui,   kS3DBaseParams, TYPE_SINGLECHEKBOX, IDC_CHECK_STREAM,
-        end,
+        p_end,
 
     /// Soft Region/Volume Parameters rollout
     kSndSoftRegionEnable,   _T( "enableSoftRegion" ), TYPE_BOOL, 0, 0,
         p_ui,   kS3DSoftVolumeParams, TYPE_SINGLECHEKBOX, IDC_SOUND_SOFTENABLE,
         p_default, FALSE,
-        end,
+        p_end,
 
     kSndSoftRegion, _T("softRegion"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_SOUNDSOFTSELECT,
         p_accessor, &gSoundSoftVolAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -2571,7 +2571,7 @@ ParamBlockDesc2 gGUISoundEmitterBk
     // Included paramblock
     &sSoundSharedPB,
 
-    end
+    p_end
 );
 
 
@@ -2856,48 +2856,48 @@ ParamBlockDesc2 gEAXListenerBlk
 
     plEAXListenerComponent::kRefSoftRegion, _T("SoftRegion"),   TYPE_INODE,     0, 0,
         p_accessor,     &gEAXListenerAccessor,
-        end,
+        p_end,
     
     plEAXListenerComponent::kRefWhichSettings, _T("whichSettings"), TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 2, IDC_EAX_PRESET, IDC_EAX_CUSTOM,
         p_default, 0,
-        end,
+        p_end,
 
     plEAXListenerComponent::kRefPreset, _T("preset"),   TYPE_INT,       0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     // This is just a label for now, so the users know what file the presets came from
     plEAXListenerComponent::kRefCustFile, _T("custFile"), TYPE_STRING, 0, 0,
         p_default, _T(""),
-        end,
+        p_end,
 
     // EAX listener params (should be private)
-    plEAXListenerComponent::kRefEnvironmentSize,        _T(""), TYPE_FLOAT, 0, 0, end,      // float
-    plEAXListenerComponent::kRefEnvironmentDiffusion,   _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefRoom,                   _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefRoomHF,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefRoomLF,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefDecayTime,              _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefDecayHFRatio,           _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefDecayLFRatio,           _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefReflections,            _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefReflectionsDelay,       _T(""), TYPE_FLOAT, 0, 0, end,// float
+    plEAXListenerComponent::kRefEnvironmentSize,        _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefEnvironmentDiffusion,   _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefRoom,                   _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefRoomHF,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefRoomLF,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefDecayTime,              _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefDecayHFRatio,           _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefDecayLFRatio,           _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefReflections,            _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefReflectionsDelay,       _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
         // panning goes here
-    plEAXListenerComponent::kRefReverb,                 _T(""), TYPE_INT, 0, 0, end,// long
-    plEAXListenerComponent::kRefReverbDelay,            _T(""), TYPE_FLOAT, 0, 0, end,// float
+    plEAXListenerComponent::kRefReverb,                 _T(""), TYPE_INT, 0, 0, p_end,        // long
+    plEAXListenerComponent::kRefReverbDelay,            _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
         // Reverb pan
-    plEAXListenerComponent::kRefEchoTime,               _T(""), TYPE_FLOAT, 0, 0, end,// float
-    plEAXListenerComponent::kRefEchoDepth,              _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefModulationTime,         _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefModulationDepth,        _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefAirAbsorptionHF,        _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefHFReference,            _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefLFReference,            _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefRoomRolloffFactor,      _T(""), TYPE_FLOAT, 0, 0, end,
-    plEAXListenerComponent::kRefFlags,                  _T(""), TYPE_INT, 0, 0, end,// unsigned long
+    plEAXListenerComponent::kRefEchoTime,               _T(""), TYPE_FLOAT, 0, 0, p_end,      // float
+    plEAXListenerComponent::kRefEchoDepth,              _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefModulationTime,         _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefModulationDepth,        _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefAirAbsorptionHF,        _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefHFReference,            _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefLFReference,            _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefRoomRolloffFactor,      _T(""), TYPE_FLOAT, 0, 0, p_end,
+    plEAXListenerComponent::kRefFlags,                  _T(""), TYPE_INT, 0, 0, p_end,        // unsigned long
 
-    end
+    p_end
 );
 
 plEAXListenerComponent::plEAXListenerComponent()
@@ -3241,59 +3241,59 @@ ParamBlockDesc2 gRandomSoundBk
     kAutoStart,  _T("AutoStart"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui, kRandomSoundMain, TYPE_SINGLECHEKBOX, IDC_COMP_RS_AUTOSTART,
-        end,
+        p_end,
 
     kSelectMode,    _T("SelectMode"),       TYPE_INT,       0, 0,
         p_ui, kRandomSoundMain, TYPE_RADIO, 5,  IDC_RADIO_RS_NORMAL,    IDC_RADIO_RS_NOREP, IDC_RADIO_RS_FSREP, IDC_RADIO_RS_FSSTOP, IDC_RADIO_RS_SEQ,
-        end,
+        p_end,
 
     kDelayMode, _T("DelayMode"),        TYPE_INT,       0, 0,
         p_ui, kRandomSoundMain, TYPE_RADIO, 3,  IDC_RADIO_RS_DELAYSTART,    IDC_RADIO_RS_DELAYEND,  IDC_RADIO_RS_DELAYNEVER, 
-        end,
+        p_end,
 
     kMinDelay,      _T("MinDelay"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, -500.0, 1000.0,
         p_ui, kRandomSoundMain, TYPE_SPINNER,   EDITTYPE_FLOAT, 
         IDC_COMP_RS_DELAYMIN, IDC_COMP_RS_DELAYMIN_SPIN, 1.0,
-        end,
+        p_end,
 
     kMaxDelay,      _T("MaxDelay"),     TYPE_FLOAT,     0, 0,   
         p_default, 0.0,
         p_range, -500.0, 1000.0,
         p_ui, kRandomSoundMain, TYPE_SPINNER,   EDITTYPE_FLOAT, 
         IDC_COMP_RS_DELAYMAX, IDC_COMP_RS_DELAYMAX_SPIN, 0.1,
-        end,
+        p_end,
 
     // Group rollout
     kUseAll,    _T("UseAll"),   TYPE_BOOL,  0, 0,
         p_default,  TRUE,
         p_ui, kRandomSoundGroup, TYPE_SINGLECHEKBOX, IDC_COMP_RS_USEALL,
-        end,
+        p_end,
 
     kGroupIdx,  _T("GroupIndex"),   TYPE_INT,   0, 0,
         p_default, 1,
         p_range, 1, kMaxGroups,
         p_ui, kRandomSoundGroup, TYPE_SPINNER,  EDITTYPE_INT,
         IDC_COMP_RS_GROUP, IDC_COMP_RS_GROUP_SPIN, 1.f,
-        end,
+        p_end,
 
     kSoundList, _T("Sounds"), TYPE_INODE_TAB, 0,    0, 0,
-        end,
+        p_end,
 
     kGroupTotals, _T("Totals"), TYPE_INT_TAB, kMaxGroups,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     kLastPick, _T("LastPick"), TYPE_INODE,  0, 0, // Temp storage space for the comp picker
-        end,
+        p_end,
 
     kCombineSounds, _T("combineSounds"), TYPE_BOOL, 0, 0,
         p_default, FALSE,
         p_ui, kRandomSoundGroup, TYPE_SINGLECHEKBOX, IDC_RAND_COMBINESOUNDS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRandomSoundComponent::plRandomSoundComponent()
@@ -3870,20 +3870,20 @@ ParamBlockDesc2 gPhysSndGrpBk
 
     plPhysicsSndGroupComp::kRefGroup,  _T("Group"), TYPE_INT,       0, 0,
         p_default,  (int)plPhysicalSndGroup::kNone,
-        end,
+        p_end,
 
     plPhysicsSndGroupComp::kRefDummyPickNode, _T( "Dummy" ), TYPE_INODE, 0, 0,
-        end,
+        p_end,
         
     plPhysicsSndGroupComp::kRefImpactSounds,  _T("Impacts"), TYPE_INODE_TAB,        0, 0, 0,
 //      p_accessor, glPhysicsSndGroupAccessor,
-        end,
+        p_end,
 
     plPhysicsSndGroupComp::kRefSlideSounds,  _T("Slides"), TYPE_INODE_TAB,      0, 0, 0,
 //      p_accessor, glPhysicsSndGroupAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysicsSndGroupComp::plPhysicsSndGroupComp() 

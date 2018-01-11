@@ -70,6 +70,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         maxObject->DoEnumDependents(proc);
 #endif //MAX_VERSION_MAJOR
 
+#if MAX_VERSION_MAJOR <= 14 // Max 2012
+#   define p_end end
+#endif // MAX_VERSION_MAJOR
+
 #if MAX_VERSION_MAJOR <= 13
 #   define GetParamBlock2Controller(pb, id) pb->GetController(id)
 #   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetController(id, tab, ctl)

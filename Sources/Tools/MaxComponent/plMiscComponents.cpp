@@ -153,22 +153,22 @@ ParamBlockDesc2 gInterestBk
 
     // params
     kInteresting,       _T("interesting"),      TYPE_STRING,        0, 0,   
-        end,
+        p_end,
     
     kCamInterestRadius, _T("CamInterestRadius"),   TYPE_FLOAT,     P_ANIMATABLE, 0,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_INTEREST_EDIT1, IDC_COMP_INTEREST_SPIN1, 1.0f,
-        end,
+        p_end,
 
     kCamInterestWeight, _T("CamInterestWeight"),   TYPE_FLOAT, P_ANIMATABLE, 0,
         p_range, 0.0, 1.0,
         p_default, 1.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
         IDC_COMP_INTEREST_EDIT2,    IDC_COMP_INTEREST_SPIN2, 0.001f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -350,27 +350,26 @@ ParamBlockDesc2 gPageInfoCompBk
     IDD_COMP_PAGEINFO, IDS_COMP_PAGEINFOS, 0,   0,  &gPageInfoCompProc,
 
     plPageInfoComponent::kInfoAge,  _T("ageName"),  TYPE_STRING,        0,  0,  
-        end,
+        p_end,
 
     plPageInfoComponent::kInfoPage, _T("pageName"), TYPE_STRING,        0,  0,  
-        end,
+        p_end,
 
     plPageInfoComponent::kInfoSeqPrefix, _T("sequencePrefix"), TYPE_INT, 0, 0,
-        end,
+        p_end,
 
     plPageInfoComponent::kInfoSeqSuffix, _T("sequenceSuffix"), TYPE_INT, 0, 0,
-        end,
+        p_end,
 
     plPageInfoComponent::kRefVolatile_PageInfoUpdated, _T( "pageInfoUpdated" ), TYPE_BOOL, 0, 0,
         p_default, 0,
-        end,
+        p_end,
         
     plPageInfoComponent::kItinerant,    _T("itinerant"), TYPE_BOOL, 0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CHECK1,
-        end,
+        p_end,
 
-
-    end
+    p_end
 );
 
 char    plPageInfoComponent::fCurrExportedAge[ 256 ] = "";
@@ -884,21 +883,21 @@ ParamBlockDesc2 gRoomCompBk
     // params
     kLocAge,            _T("Age"),      TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_COMP_ROOM_AGE_TEXTBOX,
-        end,
+        p_end,
 
     kLocDistrict,       _T("District"),     TYPE_STRING,        0, 0,   
         p_ui,   TYPE_EDITBOX,   IDC_COMP_ROOM_DISTRICT_TEXTBOX,
-        end,
+        p_end,
 
     kLocRoom,           _T("Room"),     TYPE_STRING,        0, 0,   
         p_ui,   TYPE_EDITBOX,   IDC_COMP_ROOM_ROOM_TEXTBOX,
-        end,
+        p_end,
 
     kLocSeqNumber,      _T("seqNumber"), TYPE_INT, 0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_POS_INT, IDC_ROOM_SEQEDIT, IDC_ROOM_SEQSPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRoomComponent::plRoomComponent()
@@ -972,7 +971,7 @@ ParamBlockDesc2 gViewFacingBk
         IDC_COMP_VFSCALE_EDIT3, IDC_COMP_VFSCALE_SPIN3, 0.1f,
         end,
 #endif
-    end
+    p_end
 );
 
 
@@ -1172,7 +1171,7 @@ ParamBlockDesc2 gSpriteBk
 (   // KLUDGE: not the defined block ID, but kept for backwards compat.
     1, _T("Sprite"), 0, &gSpriteDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plSpriteComponent::plSpriteComponent()
@@ -1269,9 +1268,9 @@ ParamBlockDesc2 gOcclusionBk
     kOccTwoSidedChekbox, _T("TwoSided"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_OCCLUSION_CKBX,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plOcclusionComponent::plOcclusionComponent()
@@ -1336,7 +1335,7 @@ ParamBlockDesc2 gCamViewBk
 
 //  IDD_COMP_CAMVIEW, IDS_COMP_CAMVIEWS, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plCamViewComponent::plCamViewComponent()
@@ -1571,36 +1570,36 @@ ParamBlockDesc2 gFollowBk
     kAffectX,  _T("X"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FOLLOW_X,
-        end,
+        p_end,
 
     kAffectY,  _T("Y"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FOLLOW_Y,
-        end,
+        p_end,
 
     kAffectZ,  _T("Z"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FOLLOW_Z,
-        end,
+        p_end,
 
     kAffectRotate,  _T("Rotate"), TYPE_BOOL,        0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_FOLLOW_ROTATE,
-        end,
+        p_end,
 
     kLeaderTypeRadio, _T("LeaderType"),     TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4,  IDC_F_RADIO_PLAYER, IDC_F_RADIO_CAMERA,     IDC_F_RADIO_LISTENER,               IDC_F_RADIO_OBJECT, 
         p_vals,                     plFollowMod::kLocalPlayer,  plFollowMod::kCamera,   plFollowMod::kListener, plFollowMod::kObject,       
         p_default, plFollowMod::kLocalPlayer,
-        end,
+        p_end,
 
     kLeaderObjectSel, _T("ObjectChoice"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_FOLLOW_CHOOSE_OBJECT,
         p_prompt, IDS_COMP_LINE_CHOSE_OBJECT,
         p_accessor, &gLeaderObjAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 
 );
 
@@ -1739,7 +1738,7 @@ ParamBlockDesc2 gUnleashBk
 
     IDD_COMP_UNLEASH, IDS_COMP_UNLEASH, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plUnleashComponent::plUnleashComponent()
@@ -1791,7 +1790,7 @@ ParamBlockDesc2 gForceRTLightBk
 
     IDD_COMP_FORCE_RTLIGHT, IDS_COMP_FORCE_RTLIGHT, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plForceRTLightComponent::plForceRTLightComponent()
@@ -1916,33 +1915,33 @@ ParamBlockDesc2 gGeoDiceBk
     plGeoDiceComponent::kActive,  _T("Active"), TYPE_BOOL,      0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_GEO_DICE_ACTIVE,
-        end,
+        p_end,
 
     plGeoDiceComponent::kMaxFaces, _T("MaxFaces"), TYPE_INT, 0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_INT, IDC_COMP_GEO_DICE_MAXFACES, IDC_COMP_GEO_DICE_MAXFACES_SPIN,    1.f,
         p_default, 1000,
         p_range, 10, 10000,
-        end,
+        p_end,
 
     plGeoDiceComponent::kMaxSize, _T("MaxSize"),        TYPE_FLOAT, 0, 0,
         p_default, 100.0f,
         p_range, 0.0, 10000.0,
         p_ui,   TYPE_SPINNER, EDITTYPE_FLOAT, 
         IDC_COMP_GEO_DICE_MAXSIZE, IDC_COMP_GEO_DICE_MAXSIZE_SPIN, 0.1f,
-        end,
+        p_end,
 
     plGeoDiceComponent::kMinFaces, _T("MinFaces"), TYPE_INT, 0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_INT, IDC_COMP_GEO_DICE_MINFACES, IDC_COMP_GEO_DICE_MINFACES_SPIN,    1.f,
         p_default, 300,
         p_range, 0, 5000,
-        end,
+        p_end,
 
     plGeoDiceComponent::kOverride,  _T("Override"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_GEO_DICE_OVERRIDE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGeoDiceComponent::plGeoDiceComponent()
@@ -1989,7 +1988,7 @@ ParamBlockDesc2 gReferencePointBk
 (   
     1, _T("reference"), 0, &gReferencePointDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plReferencePointComponent::plReferencePointComponent()
@@ -2115,49 +2114,49 @@ ParamBlockDesc2 gHighSDLBk
 
     kNetSyncLocalOnly, _T("LocalOnly"), TYPE_BOOL, 0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_LOCAL_ONLY_CHECK,
-        end,
+        p_end,
 
     kNetSyncOverride, _T("Override"), TYPE_BOOL, 0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_OVERRIDE_CHECK,
-        end,
+        p_end,
 
     kNetSyncPhys,   _T("PhysSDL"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_PHYS_ALLOW_RADIO, IDC_PHYS_NOSAVE_RADIO, IDC_PHYS_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
     
     kNetSyncAnim,   _T("AnimSDL"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_ANIM_ALLOW_RADIO, IDC_ANIM_NOSAVE_RADIO, IDC_ANIM_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
 
     kNetSyncSnd,    _T("SndSDL"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_SND_ALLOW_RADIO, IDC_SND_NOSAVE_RADIO, IDC_SND_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
 
     kNetSyncMat,    _T("MatSDL"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_MAT_ALLOW_RADIO, IDC_MAT_NOSAVE_RADIO, IDC_MAT_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
 
     kNetSyncResp,   _T("RespSDL"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_RESP_ALLOW_RADIO, IDC_RESP_NOSAVE_RADIO, IDC_RESP_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
 
     kNetSyncXReg,   _T("XRegSDL"),      TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 3,  IDC_XREG_ALLOW_RADIO, IDC_XREG_NOSAVE_RADIO, IDC_XREG_DENY_RADIO,
         p_vals,     kNetSyncRadioAllow, kNetSyncRadioNoSave, kNetSyncRadioDeny,
         p_default,  kNetSyncRadioAllow,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plNetSyncComponent::plNetSyncComponent()
@@ -2438,13 +2437,13 @@ ParamBlockDesc2 gImageLibBlock
 
     // params
     pfImageLibComponent::kRefImageList,     _T("imageList"), TYPE_TEXMAP_TAB, 0,        0, 0,   
-        end,
+        p_end,
 
     pfImageLibComponent::kCompressImage,    _T("compress"),     TYPE_BOOL_TAB, 0,       0, 0,
         p_default, 1,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 pfImageLibComponent::pfImageLibComponent()

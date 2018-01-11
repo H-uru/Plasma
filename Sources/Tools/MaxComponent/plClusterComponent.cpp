@@ -136,41 +136,41 @@ ParamBlockDesc2 gClusterBk
     IDD_COMP_CLUSTER, IDS_COMP_CLUSTERS, 0, 0, &gClusterCompProc,
 
     plClusterComponent::kClusters,  _T("Clusters"), TYPE_INODE_TAB, 0,      0, 0,
-        end,
+        p_end,
 
     plClusterComponent::kOptimization, _T("Optimization"), TYPE_FLOAT,  0, 0,   
         p_default, 100.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_CLUSTERSIZE, IDC_COMP_CLUSTERSIZE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plClusterComponent::kFadeIns, _T("FadeIns"), TYPE_POINT3_TAB, 0,    0, 0,
-        end,
+        p_end,
 
     plClusterComponent::kFadeOuts, _T("FadeOuts"), TYPE_POINT3_TAB, 0,  0, 0,
-        end,
+        p_end,
 
     // OBSOLETE
     plClusterComponent::kWindBone, _T("WindBone"),  TYPE_INODE,     0, 0,
 //      p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLUSTER_WINDBONE,
 //      p_prompt, IDS_COMP_CLUSTER_CHOSE_WINDBONE,
-        end,
+        p_end,
 
     plClusterComponent::kWindBones, _T("WindBones"),    TYPE_INODE_TAB, 0,      0, 0,
-        end,
+        p_end,
 
     plClusterComponent::kAutoGen,   _T("AutoGen"),  TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_CLUST_AUTOEXPORT,
-        end,
+        p_end,
 
     plClusterComponent::kAutoInstance,  _T("AutoInstance"), TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_CLUST_AUTOINSTANCE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 

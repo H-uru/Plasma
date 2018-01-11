@@ -414,9 +414,9 @@ ParamBlockDesc2 gGUITagBk
     IDD_COMP_GUITAG, IDS_COMP_GUITAG, 0, 0, &gGUITagProc,
 
         plGUITagComponent::kRefCurrIDSel,   _T("currSel"),      TYPE_INT,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 void    plGUITagProc::ILoadTags( HWND hWnd, IParamBlock2 *pb )
@@ -704,47 +704,47 @@ static ParamBlockDesc2  gGUIColorSchemeBk
     plGUIColorSchemeComp::kRefForeColor,    _T("foreColor"),        TYPE_RGBA,      0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_COLORSWATCH, IDC_GUI_FGCOLOR,
         p_default, Color( 1.f, 1.f, 1.f ),
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefBackColor,    _T("backColor"),        TYPE_RGBA,      0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_COLORSWATCH, IDC_GUI_BGCOLOR,
         p_default, Color( 0.f, 0.f, 0.f ),
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefSelForeColor, _T("selForeColor"),     TYPE_RGBA,      0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_COLORSWATCH, IDC_GUI_SFGCOLOR,
         p_default, Color( 1.f, 1.f, 1.f ),
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefSelBackColor, _T("selBackColor"),     TYPE_RGBA,      0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_COLORSWATCH, IDC_GUI_SBGCOLOR,
         p_default, Color( 0.f, 0.f, 1.f ),
-        end,
+        p_end,
 
 
     plGUIColorSchemeComp::kRefForeAlpha,    _T("foreAlpha"),        TYPE_FLOAT,         0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_GUI_FGAEDIT, IDC_GUI_FGALPHA, 4,
         p_range, 0.f, 1.f,
         p_default, 1.f,
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefBackAlpha,    _T("backAlpha"),        TYPE_FLOAT,         0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_GUI_BGAEDIT, IDC_GUI_BGALPHA, 4,
         p_range, 0.f, 1.f,
         p_default, 1.f,
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefSelForeAlpha, _T("selForeAlpha"),     TYPE_FLOAT,         0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_GUI_SFGAEDIT, IDC_GUI_SFGALPHA, 4,
         p_range, 0.f, 1.f,
         p_default, 1.f,
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefSelBackAlpha, _T("selBackAlpha"),     TYPE_FLOAT,         0, 0,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SLIDER, EDITTYPE_FLOAT, IDC_GUI_SBGAEDIT, IDC_GUI_SBGALPHA, 4,
         p_range, 0.f, 1.f,
         p_default, 1.f,
-        end,
+        p_end,
 
 
     plGUIColorSchemeComp::kRefUseAlphas, _T("useAlphas"),       TYPE_BOOL,      0, 0,
@@ -752,34 +752,34 @@ static ParamBlockDesc2  gGUIColorSchemeBk
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SINGLECHEKBOX, IDC_GUI_USEALPHAS,
         p_enable_ctrls, 4, plGUIColorSchemeComp::kRefForeAlpha, plGUIColorSchemeComp::kRefBackAlpha, 
                             plGUIColorSchemeComp::kRefSelForeAlpha, plGUIColorSchemeComp::kRefSelBackAlpha,
-        end,        
+        p_end,        
 
 
     plGUIColorSchemeComp::kRefFontFace, _T("fontFace"),     TYPE_STRING,        0, 0,
         p_default,  _T( "Times New Roman" ),
-        end,        
+        p_end,        
 
     plGUIColorSchemeComp::kRefFontSize, _T("fontSize"),     TYPE_INT,       0, 0,
         p_ui,   plGUIDialogComponent::kSchemeRollout, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_GUI_FONTSIZE, IDC_GUI_FONTSIZE_SPIN, SPIN_AUTOSCALE,
         p_default, 10,
-        end,
+        p_end,
 
     plGUIColorSchemeComp::kRefFontBold, _T("fontBold"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SINGLECHEKBOX, IDC_GUI_FONTBOLD,
-        end,        
+        p_end,        
 
     plGUIColorSchemeComp::kRefFontItalic, _T("fontItalic"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SINGLECHEKBOX, IDC_GUI_FONTITALIC,
-        end,        
+        p_end,        
 
     plGUIColorSchemeComp::kRefFontShadowed, _T("fontShadowed"),     TYPE_BOOL,      0, 0,
         p_default,  FALSE,
         p_ui, plGUIDialogComponent::kSchemeRollout, TYPE_SINGLECHEKBOX, IDC_GUI_FONTSHADOWED,
-        end,        
+        p_end,        
 
-    end
+    p_end
 );
 
 int CALLBACK plGUIColorSchemeProc::IMyFontEnumProc( const ENUMLOGFONTEX *logFontData, const NEWTEXTMETRICEX *physFontData,
@@ -1093,7 +1093,7 @@ static plGUIProxyDlgProc    sGUIProxyDlgProc;
     kRefBetterHitTests, _T("guiBetterHitTests"), TYPE_BOOL, 0, 0,                                                       \
         p_ui, plGUIControlBase::kRollProxy, TYPE_SINGLECHEKBOX, IDC_GUI_BETTERHIT,                          \
         p_default, false,                                                                                   \
-        end                                                                                             
+        p_end                                                                                             
 
 //  , end
 //);
@@ -1137,26 +1137,26 @@ ParamBlockDesc2 gGUIDialogBk
 
         plGUIDialogComponent::kRefDialogName,   _T("DialogName"),       TYPE_STRING,        0, 0,
 //          p_ui, plGUIDialogComponent::kMainRollout, TYPE_EDITBOX, IDC_GUIDLG_NAME,
-            end,
+            p_end,
 
         plGUIDialogComponent::kRefAgeName,  _T("ageName"),      TYPE_STRING,        0, 0,
             p_default, _T( "GUI" ),
-            end,
+            p_end,
             
         plGUIDialogComponent::kRefIsModal, _T("isModal"),       TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui, plGUIDialogComponent::kMainRollout, TYPE_SINGLECHEKBOX, IDC_COMP_GUI_MODAL,
-            end,        
+            p_end,        
 
         plGUIDialogComponent::kRefVersion,  _T("version"),      TYPE_INT,       0, 0,
             p_ui,   plGUIDialogComponent::kMainRollout, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_GUI_VERSION, IDC_GUI_VERSION_SPIN, SPIN_AUTOSCALE,
             p_default, 0,
-            end,
+            p_end,
 
         plGUITagComponent::kRefCurrIDSel,   _T("currSel"),      TYPE_INT,       0, 0,
-            end,
+            p_end,
 
-    end
+    p_end
 );
 
 plGUIDialogComponent::plGUIDialogComponent( bool dontInit )
@@ -1836,13 +1836,13 @@ static ParamBlockDesc2  sGUIControlProcParamTemplate
     plGUIControlBase::kRefChoice,   _T("which"), TYPE_INT,      0, 0,
         p_ui,   plGUIControlBase::kRollProc, TYPE_RADIO, 4, IDC_GUI_CONRADIO, IDC_GUI_INHERITRADIO, IDC_GUI_CLOSERADIO, IDC_GUI_NILRADIO,
         p_default, 1,
-        end,
+        p_end,
 
     plGUIControlBase::kRefConsoleCmd,   _T("ConsoleCmd"),       TYPE_STRING,        0, 0,
         p_ui,   plGUIControlBase::kRollProc, TYPE_EDITBOX, IDC_GUI_CONCMD,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -2002,10 +2002,10 @@ static plPlasmaAnimSelectDlgProc    sGUIButtonProc( plGUIButtonComponent::kRefMo
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_M##allCapsEvt##SND,      \
             p_default, FALSE,                                                                       \
             p_enable_ctrls, 1, comp##::kRefMouse##evt##SoundComp,                                   \
-            end,                                                                                    \
+            p_end,                                                                                  \
         comp##::kRefMouse##evt##SoundComp, _T("mouse##evt##SoundComp"), TYPE_INODE,     0, 0,       \
             p_accessor, &sGUIButtonAccessor,                                                        \
-            end
+            p_end
 
 //Max desc stuff necessary below.
 CLASS_DESC(plGUIButtonComponent, gGUIButtonDesc, "GUI Button",  "GUIButton", COMP_TYPE_GUI, GUI_BUTTON_CLASSID )
@@ -2025,23 +2025,23 @@ ParamBlockDesc2 gGUIButtonBk
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ANIMATE,
             p_default, FALSE,
             p_enable_ctrls, 1, plGUIButtonComponent::kRefAnimation,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefAnimation, _T("animation"),   TYPE_INODE,     0, 0,
             p_prompt, IDS_COMP_GUI_SELECTANIM,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefMouseOverAnimate, _T( "mouseOverAnimate" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_MOUSEOVERANIM,
             p_default, FALSE,
             p_enable_ctrls, 1, plGUIButtonComponent::kRefMouseOverAnimation,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefMouseOverAnimation, _T("mouseOverAnimation"), TYPE_INODE,     0, 0,
             p_prompt, IDS_COMP_GUI_SELECTMOUSEOVERANIM,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         GUI_SOUND_REF( plGUIButtonComponent, Down, DOWN ),
         GUI_SOUND_REF( plGUIButtonComponent, Up, UP ),
@@ -2052,34 +2052,34 @@ ParamBlockDesc2 gGUIButtonBk
 
         plGUIButtonComponent::kRefAnimationNode, _T("animationNode"),   TYPE_INODE,     0, 0,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefAnimationNodeType, _T("animationNodeType"),   TYPE_INT,       0, 0,
             p_default, plAnimObjInterface::kUseOwnerNode,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefMouseOverAnimationNode, _T("moAnimationNode"),    TYPE_INODE,     0, 0,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefMouseOverAnimationNodeType, _T("moAnimationNodeType"),    TYPE_INT,       0, 0,
             p_default, plAnimObjInterface::kUseOwnerNode,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefUseDraggableChild,    _T( "useDragChild" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_USEDRAGCHILD,
             p_default, FALSE,
             p_enable_ctrls, 1, plGUIButtonComponent::kRefDraggableChild,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefDraggableChild,   _T( "dragChild" ), TYPE_INODE, 0, 0,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         plGUIButtonComponent::kRefNotifyType,   _T("notifyType"),       TYPE_INT,       0, 0,
             p_default, pfGUIButtonMod::kNotifyOnUp,
-            end,
-    end
+            p_end,
+    p_end
 );
 
 plGUIButtonComponent::plGUIButtonComponent()
@@ -2302,29 +2302,29 @@ ParamBlockDesc2 gGUICheckBoxBk
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ANIMATE,
             p_default, FALSE,
             p_enable_ctrls, 1, plGUIButtonComponent::kRefAnimation,
-            end,
+            p_end,
 
         plGUICheckBoxComponent::kRefAnimation, _T("animation"), TYPE_INODE,     0, 0,
             p_prompt, IDS_COMP_GUI_SELECTANIM,
             p_accessor, &sGUICheckBoxAccessor,
-            end,
+            p_end,
 
     sGUIProxyParamTemplate,
 
         plGUICheckBoxComponent::kRefAnimationNode, _T("animationNode"), TYPE_INODE,     0, 0,
             p_accessor, &sGUIButtonAccessor,
-            end,
+            p_end,
 
         plGUICheckBoxComponent::kRefAnimationNodeType, _T("animationNodeType"), TYPE_INT,       0, 0,
             p_default, plAnimObjInterface::kUseOwnerNode,
-            end,
+            p_end,
 
         GUI_SOUND_REF( plGUICheckBoxComponent, Down, DOWN ),
         GUI_SOUND_REF( plGUICheckBoxComponent, Up, UP ),
         GUI_SOUND_REF( plGUICheckBoxComponent, Over, OVER ),
         GUI_SOUND_REF( plGUICheckBoxComponent, Off, OFF ),
 
-    end
+    p_end
 );
 
 plGUICheckBoxComponent::plGUICheckBoxComponent()
@@ -2455,19 +2455,19 @@ ParamBlockDesc2 gGUIDraggableBk
     plGUIDraggableComponent::kRefReportDragging, _T("reportWhileDragging"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_REPORTDRAG,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIDraggableComponent::kRefHideCursor, _T("hideCursorWhileDragging"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_HIDECURSOR,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIDraggableComponent::kRefAlwaysSnap, _T("alwaysSnapBackToStart"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SNAPSTART,
         p_default, FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIDraggableComponent::plGUIDraggableComponent()
@@ -2575,53 +2575,53 @@ ParamBlockDesc2 gGUIKnobCtrlBk
     plGUIKnobCtrlComponent::kRefMinValue, _T("minValue"),   TYPE_FLOAT, 0, 0,   
         p_default, 0.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_LOWER, IDC_GUI_LOWER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefMaxValue, _T("maxValue"),   TYPE_FLOAT, 0, 0,   
         p_default, 10.0f,
         p_range, -10000.f, 10000.f,         // WHY do we even need to specify this?
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_UPPER, IDC_GUI_UPPER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefStep, _T("step"),   TYPE_FLOAT, 0, 0,   
         p_default, 1.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_STEP, IDC_GUI_STEP_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kReverseValues, _T("reverseValues"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_REVERSE,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefOrientation,    _T("orientation"), TYPE_INT,        0, 0,
         p_ui,   plGUIControlBase::kRollMain, TYPE_RADIO, 2, IDC_ORIENTATION_RADIO, IDC_ORIENTATION_RADIO2,
         p_default, 0,
-        end,
+        p_end,
     
     plGUIKnobCtrlComponent::kRefMouseMapping, _T("mouseMapping"), TYPE_INT, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_RADIO, 3, IDC_GUI_MOUSEMAPREL, IDC_GUI_MOUSEMAPANIM, IDC_GUI_MOUSEMAPSCRN,
         p_default, 0,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefTriggerOnMouseUp, _T("triggerOnMouseUp"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_TRIGGERONUP,
         p_default, FALSE,
-        end,
+        p_end,
         
     sGUIProxyParamTemplate,
 
     plGUIKnobCtrlComponent::kRefAnimation, _T("animation"), TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTANIM,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefAnimationNode, _T("animationNode"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     plGUIKnobCtrlComponent::kRefAnimationNodeType, _T("animationNodeType"), TYPE_INT,       0, 0,
         p_default, plAnimObjInterface::kUseOwnerNode,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIKnobCtrlComponent::plGUIKnobCtrlComponent()
@@ -2845,67 +2845,67 @@ ParamBlockDesc2 gGUIListBoxBk
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCROLLCTRL,
         p_default, FALSE,
         p_enable_ctrls, 1, plGUIListBoxComponent::kRefScrollCtrl,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefScrollCtrl, _T("scrollControl"), TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTSCROLL,
         p_accessor, &sGUIListBoxAccessor,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefSingleSelect,    _T( "singleSelect" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SINGLESEL,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefXparentBgnd, _T( "xparentBgnd" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_XPARENT,
         p_default, FALSE,
-        end,
+        p_end,
     
     plGUIListBoxComponent::kRefDragDropSource,  _T( "dragDropCapable" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_DRAGDROPSRC,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefDisableKeys, _T( "disableKeys" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_DISABLEKEYS,
         p_default, FALSE,
-        end,
+        p_end,
     
     plGUIListBoxComponent::kRefAllow2DElementGrid,  _T( "allow2DElementGrid" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ALLOWMULTIROW,
         p_default, FALSE,
-        end,
+        p_end,
     
     plGUIListBoxComponent::kRefScrollLeftToRight,   _T( "scrollLeftToRight" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCROLLL2R,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefScaleWithRes,    _T( "scaleWithRes" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCALERES,
         p_default, FALSE,
-        end,
+        p_end,
                 
     plGUIListBoxComponent::kRefPassClicksThrough,   _T( "passClicksThru" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_PASSTHRU,
         p_default, FALSE,
-        end,
+        p_end,
         
     plGUIListBoxComponent::kRefEnableTreeBehavior,  _T( "makeLikeATree" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ENABLETREE,
         p_default, FALSE,
-        end,
+        p_end,
                 
     plGUIListBoxComponent::kRefSkin, _T("skin"),    TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     plGUIListBoxComponent::kRefHandsOffMultiSelect, _T( "handsOffMultiSelect" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_HANDSOFF,
         p_default, FALSE,
-        end,
-        
-    end
+        p_end,
+
+    p_end
 );
 
 plGUIListBoxComponent::plGUIListBoxComponent()
@@ -3216,31 +3216,31 @@ ParamBlockDesc2 gGUITextBoxBk
 
         plGUITextBoxComponent::kRefInitText,    _T("InitText"),     TYPE_STRING,        0, 0,
 //          p_ui,   plGUIControlBase::kRollMain, TYPE_EDITBOX, IDC_GUI_INITTEXT,
-            end,
+            p_end,
 
         plGUITextBoxComponent::kRefXparentBgnd, _T( "xparentBgnd" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_XPARENT,
             p_default, FALSE,
-            end,
+            p_end,
     
         plGUITextBoxComponent::kRefJustify, _T("justify"), TYPE_INT,        0, 0,
             p_ui,   plGUIControlBase::kRollMain, TYPE_RADIO, 3, IDC_JUSTIFYRADIO, IDC_JUSTRADIO2, IDC_JUSTRADIO3, 
             p_default, 0,
-            end,
+            p_end,
 
         plGUITextBoxComponent::kRefScaleWithRes,    _T( "scaleWithRes" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCALERES,
             p_default, FALSE,
-            end,
+            p_end,
 
         plGUITextBoxComponent::kRefUseLocalization, _T( "useLocalization" ), TYPE_BOOL, 0, 0,
             p_default, FALSE,
-            end,
+            p_end,
 
         plGUITextBoxComponent::kRefLocalizationPath,_T( "localizationPath" ),TYPE_STRING, 0, 0,
-            end,
+            p_end,
                 
-    end
+    p_end
 );
 
 plGUITextBoxComponent::plGUITextBoxComponent()
@@ -3338,14 +3338,14 @@ ParamBlockDesc2 gGUIEditBoxBk
     plGUIEditBoxComponent::kRefXparentBgnd, _T( "xparentBgnd" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_XPARENT,
         p_default, FALSE,
-        end,
+        p_end,
     
     plGUIEditBoxComponent::kRefScaleWithRes,    _T( "scaleWithRes" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCALERES,
         p_default, FALSE,
-        end,
+        p_end,
             
-    end
+    p_end
 );
 
 plGUIEditBoxComponent::plGUIEditBoxComponent()
@@ -3532,29 +3532,29 @@ ParamBlockDesc2 gGUIUDPairBk
     plGUIUpDownPairComponent::kRefUpControl, _T("upControl"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTUDCTRL,
         p_accessor, &sGUIUDAccessor,
-        end,
+        p_end,
 
     plGUIUpDownPairComponent::kRefDownControl, _T("downControl"),   TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTUDCTRL,
         p_accessor, &sGUIUDAccessor,
-        end,
+        p_end,
 
     plGUIUpDownPairComponent::kRefMinValue, _T("minValue"), TYPE_FLOAT, 0, 0,   
         p_default, 0.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_LOWER, IDC_GUI_LOWER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIUpDownPairComponent::kRefMaxValue, _T("maxValue"), TYPE_FLOAT, 0, 0,   
         p_default, 10.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_UPPER, IDC_GUI_UPPER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIUpDownPairComponent::kRefStep, _T("step"), TYPE_FLOAT, 0, 0,   
         p_default, 1.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_STEP, IDC_GUI_STEP_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIUpDownPairComponent::plGUIUpDownPairComponent()
@@ -3640,7 +3640,7 @@ ParamBlockDesc2 gGUIDragBarBk
 
     sGUIProxyParamTemplate,
 
-    end
+    p_end
 );
 
 plGUIDragBarComponent::plGUIDragBarComponent()
@@ -3829,21 +3829,21 @@ ParamBlockDesc2 gGUIRadioGroupBk
     plGUIRadioGroupComponent::kRefCheckBoxes,   _T("checkBoxes"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           plGUIControlBase::kRollMain, TYPE_NODELISTBOX, IDC_GUI_CHECKLIST, 0, 0, IDC_GUI_DELCHECK,
         p_accessor,     &sGUIRadioGroupAccessor,
-        end,
+        p_end,
 
     plGUIRadioGroupComponent::kRefDefaultSel, _T("defaultSelection"),   TYPE_INT,   0, 0,   
         p_default, 0,
         p_range, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_INT, IDC_GUI_DEFSEL, IDC_GUI_DEFSEL_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIRadioGroupComponent::kRefAllowNoSel,   _T( "allowNoSel" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ALLOWNONE,
         p_default, FALSE,
         p_accessor, &sGUIRadioGroupAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIRadioGroupComponent::plGUIRadioGroupComponent()
@@ -3991,9 +3991,9 @@ ParamBlockDesc2 gGUIDynDisplayBk
 
     plGUIDynDisplayComponent::kRefDynLayer, _T("dynLayer"), TYPE_TEXMAP, 0, 0,
 //      p_ui, plGUIControlBase::kRollMain, TYPE_TEXMAPBUTTON, IDC_GUI_COMPSELBTN,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIDynDisplayComponent::plGUIDynDisplayComponent()
@@ -4119,25 +4119,25 @@ ParamBlockDesc2 gGUIMultiLineEditBoxBk
     plGUIMultiLineEditComp::kRefXparentBgnd,    _T( "xparentBgnd" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_XPARENT,
         p_default, FALSE,
-        end,
+        p_end,
     
     plGUIMultiLineEditComp::kRefScaleWithRes,   _T( "scaleWithRes" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCALERES,
         p_default, FALSE,
-        end,
+        p_end,
             
     plGUIMultiLineEditComp::kRefUseScroll,  _T( "enableScrolling" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_SCROLLCTRL,
         p_default, FALSE,
         p_enable_ctrls, 1, plGUIMultiLineEditComp::kRefScrollCtrl,
-        end,
+        p_end,
 
     plGUIMultiLineEditComp::kRefScrollCtrl, _T("scrollControl"),    TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTSCROLL,
         p_accessor, &sGUIListBoxAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIMultiLineEditComp::plGUIMultiLineEditComp()
@@ -4323,46 +4323,46 @@ ParamBlockDesc2 gGUIProgressCtrlBk
     plGUIProgressCtrlComponent::kRefMinValue, _T("minValue"),   TYPE_FLOAT, 0, 0,   
         p_default, 0.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_LOWER, IDC_GUI_LOWER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefMaxValue, _T("maxValue"),   TYPE_FLOAT, 0, 0,   
         p_default, 10.0f,
         p_range, -10000.f, 10000.f,         // WHY do we even need to specify this?
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_UPPER, IDC_GUI_UPPER_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefStep, _T("step"),   TYPE_FLOAT, 0, 0,   
         p_default, 1.0f,
         p_ui, plGUIControlBase::kRollMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, IDC_GUI_STEP, IDC_GUI_STEP_SPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kReverseValues, _T("reverseValues"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_REVERSE,
         p_default, FALSE,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefAnimation, _T("animation"), TYPE_INODE,     0, 0,
         p_prompt, IDS_COMP_GUI_SELECTANIM,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefAnimationNode, _T("animationNode"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefAnimationNodeType, _T("animationNodeType"), TYPE_INT,       0, 0,
         p_default, plAnimObjInterface::kUseOwnerNode,
-        end,
+        p_end,
 
     plGUIProgressCtrlComponent::kRefAnimateSound,   _T( "animateSound" ), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ANIMSND,
         p_default, FALSE,
         p_enable_ctrls, 1, plGUIProgressCtrlComponent::kRefAnimateSoundComp,
-        end,
+        p_end,
         
     plGUIProgressCtrlComponent::kRefAnimateSoundComp, _T("animateSoundComp"),   TYPE_INODE,     0, 0,
         p_accessor, &sGUIProgressCtrlAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIProgressCtrlComponent::plGUIProgressCtrlComponent()
@@ -4495,9 +4495,9 @@ ParamBlockDesc2 gGUIClickMapBk
     plGUIClickMapComponent::kRefReportDragging, _T("reportWhileDragging"), TYPE_BOOL, 0, 0,
         p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_REPORTDRAG,
         p_default, FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGUIClickMapComponent::plGUIClickMapComponent()
@@ -4558,10 +4558,10 @@ static pfGUISkinProc gGUISkinProc;
 
 // Component defined in pfGUISkinProc.h
 
-#define kDeclSkinRectValues( ref ) (plGUISkinComp::##ref + 0), _T("f##ref##.left"), TYPE_INT, 0, 0, p_default, 0, end, \
-                                    (plGUISkinComp::##ref + 1), _T("f##ref##.top"), TYPE_INT, 0, 0, p_default, 0, end, \
-                                    (plGUISkinComp::##ref + 2), _T("f##ref##.width"), TYPE_INT, 0, 0, p_default, 8, end, \
-                                    (plGUISkinComp::##ref + 3), _T("f##ref##.height"), TYPE_INT, 0, 0, p_default, 8, end
+#define kDeclSkinRectValues( ref ) (plGUISkinComp::##ref + 0), _T("f##ref##.left"), TYPE_INT, 0, 0, p_default, 0, p_end,  \
+                                   (plGUISkinComp::##ref + 1), _T("f##ref##.top"), TYPE_INT, 0, 0, p_default, 0, p_end,   \
+                                   (plGUISkinComp::##ref + 2), _T("f##ref##.width"), TYPE_INT, 0, 0, p_default, 8, p_end, \
+                                   (plGUISkinComp::##ref + 3), _T("f##ref##.height"), TYPE_INT, 0, 0, p_default, 8, p_end
 
 #define kSetSkinRectValues( pb, ref, l, t, w, h ) { pb->SetValue( ref + 0, 0, (int) l ); \
                                                     pb->SetValue( ref + 1, 0, (int) t ); \
@@ -4580,7 +4580,7 @@ static ParamBlockDesc2  gGUISkinBk
     IDD_COMP_GUISKIN, IDS_COMP_GUISKIN, 0, 0, &gGUISkinProc,    
 
     plGUISkinComp::kRefBitmap,  _T("bitmap"),       TYPE_TEXMAP,        0, 0,
-        end,
+        p_end,
 
     kDeclSkinRectValues( kRefUpLeftCorner ),
     kDeclSkinRectValues( kRefTopSpan ),
@@ -4600,14 +4600,14 @@ static ParamBlockDesc2  gGUISkinBk
     plGUISkinComp::kRefItemMargin,  _T("itemMargin"),       TYPE_INT,       0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_POS_INT, IDC_GUI_IMARGIN, IDC_GUI_IMARGIN_SPIN, SPIN_AUTOSCALE,
         p_default, 1,
-        end,
+        p_end,
 
     plGUISkinComp::kRefBorderMargin,    _T("borderMargin"),     TYPE_INT,       0, 0,
         p_ui,   TYPE_SPINNER, EDITTYPE_POS_INT, IDC_GUI_BMARGIN, IDC_GUI_BMARGIN_SPIN, SPIN_AUTOSCALE,
         p_default, 4,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 // Editor proc
@@ -4833,49 +4833,49 @@ ParamBlockDesc2 gGUIMenuBk
 
         plGUIMenuComponent::kRefDialogName, _T("MenuName"),     TYPE_STRING,        0, 0,
 //          p_ui, plGUIMenuComponent::kMainRollout, TYPE_EDITBOX, IDC_GUIDLG_NAME,
-            end,
+            p_end,
 
         plGUIMenuComponent::kRefAgeName,    _T("ageName"),      TYPE_STRING,        0, 0,
             p_default, _T( "GUI" ),
-            end,
+            p_end,
             
         plGUIMenuComponent::kRefVersion,    _T("version"),      TYPE_INT,       0, 0,
             p_ui,   plGUIMenuComponent::kMainRollout, TYPE_SPINNER, EDITTYPE_POS_INT, IDC_GUI_VERSION, IDC_GUI_VERSION_SPIN, SPIN_AUTOSCALE,
             p_default, 0,
-            end,
+            p_end,
 
         plGUITagComponent::kRefCurrIDSel,   _T("currSel"),      TYPE_INT,       0, 0,
-            end,
+            p_end,
 
         plGUIMenuComponent::kRefSkin, _T("skin"),   TYPE_INODE,     0, 0,
-            end,
+            p_end,
 
         plGUIMenuComponent::kRefNeverClose, _T("neverClose"),       TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui, plGUIMenuComponent::kMainRollout, TYPE_SINGLECHEKBOX, IDC_GUI_NEVERCLOSE,
-            end,        
+            p_end,        
 
         plGUIMenuComponent::kRefModalOutside, _T("modalOutside"),       TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui, plGUIMenuComponent::kMainRollout, TYPE_SINGLECHEKBOX, IDC_GUI_MODALOUTSIDE,
-            end,        
+            p_end,        
 
         plGUIMenuComponent::kRefOpenOnHover, _T("openSubsOnHover"),     TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui, plGUIMenuComponent::kMainRollout, TYPE_SINGLECHEKBOX, IDC_GUI_HOVER,
-            end,        
+            p_end,        
 
         plGUIMenuComponent::kRefAlignment, _T("alignment"), TYPE_INT, 0, 0,
             p_default, 3,
             p_ui, plGUIMenuComponent::kMainRollout, TYPE_RADIO, 4, IDC_ALIGNRADIO1, IDC_ALIGNRADIO2, IDC_ALIGNRADIO3, IDC_ALIGNRADIO4,
-            end,
+            p_end,
 
         plGUIMenuComponent::kRefScaleWithScreenRes, _T("maintainSizeAcrossRes"),        TYPE_BOOL,      0, 0,
             p_default,  FALSE,
             p_ui, plGUIMenuComponent::kMainRollout, TYPE_SINGLECHEKBOX, IDC_GUI_SCALERES,
-            end,        
+            p_end,        
 
-    end
+    p_end
 );
 
 plGUIMenuComponent::plGUIMenuComponent() : plGUIDialogComponent( true )

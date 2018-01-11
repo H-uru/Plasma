@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plPhysicalComponents.h"
 #include "plMiscComponents.h"
 
+#include "MaxMain/MaxCompat.h"
 #include "MaxMain/plMaxNode.h"
 #include "resource.h"
 
@@ -413,83 +414,83 @@ ParamBlockDesc2 gAnimBlock
     kAnimAutoStart, _T("autoStart"),    TYPE_BOOL,      0, 0,
         p_ui,       kAnimMain, TYPE_SINGLECHEKBOX, IDC_COMP_ANIM_AUTOSTART_CKBX,
         p_default,  FALSE,
-        end,
+        p_end,
     kAnimLoop,      _T("loop"),         TYPE_BOOL,      0, 0,
         p_ui,       kAnimMain, TYPE_SINGLECHEKBOX, IDC_COMP_ANIM_LOOP_CKBX,
         p_default,  FALSE,
-        end,
+        p_end,
     kAnimName,      _T("animName"),     TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kAnimUseGlobal,     _T("UseGlobal"),    TYPE_BOOL,  0, 0,
         p_default,  FALSE,
         p_ui,   kAnimMain, TYPE_SINGLECHEKBOX,  IDC_COMP_ANIM_USE_GLOBAL,
-        end,
+        p_end,
     kAnimGlobalName,    _T("GlobalName"),   TYPE_STRING,    0,  0,
         p_default, _T(""),
-        end,
+        p_end,
     kAnimLoopName,  _T("loopName"),     TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kAnimPhysAnim,  _T("PhysAnim"),     TYPE_BOOL,  0, 0,
         p_default, TRUE,
         p_ui,   kAnimMain, TYPE_SINGLECHEKBOX, IDC_COMP_ANIM_PHYSANIM,
-        end,
+        p_end,
 
     // Anim Ease rollout
     kAnimEaseInType,    _T("easeInType"),   TYPE_INT,       0, 0,
         p_ui,       kAnimEase, TYPE_RADIO, 3, IDC_COMP_ANIM_EASE_IN_NONE, IDC_COMP_ANIM_EASE_IN_CONST_ACCEL, IDC_COMP_ANIM_EASE_IN_SPLINE,
         p_vals,     plAnimEaseTypes::kNoEase, plAnimEaseTypes::kConstAccel, plAnimEaseTypes::kSpline,
         p_default,  plAnimEaseTypes::kNoEase,
-        end,
+        p_end,
     kAnimEaseInLength,  _T("easeInLength"), TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_IN_TIME, IDC_COMP_ANIM_EASE_IN_TIME_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
     kAnimEaseInMin,     _T("easeInMin"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_IN_MIN, IDC_COMP_ANIM_EASE_IN_MIN_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
     kAnimEaseInMax, _T("easeInMax"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_IN_MAX, IDC_COMP_ANIM_EASE_IN_MAX_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
 
     kAnimEaseOutType,   _T("easeOutType"),  TYPE_INT,       0, 0,
         p_ui,       kAnimEase, TYPE_RADIO, 3, IDC_COMP_ANIM_EASE_OUT_NONE, IDC_COMP_ANIM_EASE_OUT_CONST_ACCEL, IDC_COMP_ANIM_EASE_OUT_SPLINE,
         p_vals,     plAnimEaseTypes::kNoEase, plAnimEaseTypes::kConstAccel, plAnimEaseTypes::kSpline,
         p_default,  plAnimEaseTypes::kNoEase,
-        end,
+        p_end,
     kAnimEaseOutLength, _T("easeOutLength"),    TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_OUT_TIME, IDC_COMP_ANIM_EASE_OUT_TIME_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
     kAnimEaseOutMin,        _T("easeOutMin"),   TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_OUT_MIN, IDC_COMP_ANIM_EASE_OUT_MIN_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
     kAnimEaseOutMax,    _T("easeOutMax"),   TYPE_FLOAT,     0, 0,   
         p_default, 1.0,
         p_range, 0.1, 99.0,
         p_ui,   kAnimEase, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_EASE_OUT_MAX, IDC_COMP_ANIM_EASE_OUT_MAX_SPIN, 1.0,
         p_accessor, &gAnimCompEaseAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 ParamBlockDesc2 gAnimGroupedBlock
@@ -504,7 +505,7 @@ ParamBlockDesc2 gAnimGroupedBlock
     // use params from existing descriptor
     &gAnimBlock,
 
-    end
+    p_end
 );
 
 plAnimComponent::plAnimComponent()
@@ -1175,16 +1176,16 @@ ParamBlockDesc2 gAnimCompressBk
         p_ui,       TYPE_RADIO, 3, IDC_COMP_ANIM_COMPRESS_NONE, IDC_COMP_ANIM_COMPRESS_LOW, IDC_COMP_ANIM_COMPRESS_HIGH,
         p_vals,     plAnimCompressComp::kCompressionNone, plAnimCompressComp::kCompressionLow, plAnimCompressComp::kCompressionHigh,
         p_default,  plAnimCompressComp::kCompressionLow,
-        end,
+        p_end,
 
     plAnimCompressComp::kAnimCompressThreshold, _T("Threshold"),    TYPE_FLOAT,     0, 0,   
         p_default, 0.01,
         p_range, 0.0, 1.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_ANIM_COMPRESS_THRESHOLD, IDC_COMP_ANIM_COMPRESS_THRESHOLD_SPIN, 0.001,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plAnimCompressComp::plAnimCompressComp()

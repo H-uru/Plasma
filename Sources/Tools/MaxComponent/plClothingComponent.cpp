@@ -127,30 +127,30 @@ ParamBlockDesc2 gClothingBk
     IDD_COMP_CLOTHING, IDS_COMP_CLOTHING, 0, 0, &gClothingComponentProc,
 
     plClothingComponent::kMaterials,    _T("ClothingMaterials"),    TYPE_MTL_TAB, 0,    0, 0,   
-        end,
+        p_end,
         
     plClothingComponent::kGroup,    _T("ClothingGroup"),    TYPE_INT, 0, 0,
-        end,
+        p_end,
         
     plClothingComponent::kType,     _T("ClothingType"),     TYPE_INT, 0, 0,
-        end,
+        p_end,
 
     plClothingComponent::kLODState, _T("LODState"),     TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plClothingComponent::kMeshNodeTab,  _T("MeshObject"),   TYPE_INODE_TAB, plLODAvatarComponent::kMaxNumLODLevels,     0, 0,
         p_accessor,     &gClothingAccessor,
-        end,
+        p_end,
 
     plClothingComponent::kMeshNodeAddBtn, _T("MshNodePicker"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LOD_CLOTHING_MESH_PICKB,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_AVATAR_PROXYS,
         p_accessor, &gClothingAccessor,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plClothingComponent::plClothingComponent()

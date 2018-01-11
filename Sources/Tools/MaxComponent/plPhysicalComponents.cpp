@@ -364,48 +364,48 @@ ParamBlockDesc2 gPhysTerrainBk
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
     
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT2, IDC_COMP_PHYS_TERRAIN_SPIN2, 0.0001f,
-        end,
+        p_end,
     
     plPhysicCoreComponent::kBoundCondRadio, _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCustomBoundListStuff, _T("UserBoundChoice"),    TYPE_INODE,     0, 0,
         p_ui,   kPhysMain, TYPE_PICKNODEBUTTON, IDC_COMP_PHYS_PICKSTATE_TERRAIN,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_TERRAIN,
         p_accessor, &gPhysCoreAccessor,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCustomBoundField, _T("UserBoundCheckBx"),       TYPE_BOOL,      0,      0,
         p_default, false,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_PHYS_CUSTOMCHK,
         p_enable_ctrls, 1, plPhysicCoreComponent::kCustomBoundListStuff,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kAlignProxyShape, _T("AlignShapeChkBx"),     TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_PHYS_ALIGN_SHAPE_BOOL,
-        end,
+        p_end,
 
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysTerrainComponent::plPhysTerrainComponent()
@@ -499,45 +499,45 @@ ParamBlockDesc2 gPhysInvisibleBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kUILOSChkBx, _T("UILOSChkBx"),       TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_CHECK_LOS,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCamLOSChkBx, _T("CamLOSChkBx"),     TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_CHECK_LOS2,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCamAvoidChkBx, _T("CamLOSChkBx"),       TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_CHECK_LOS3,
-        end,
+        p_end,
         
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_INVIS_BOUNCE_EDIT, IDC_COMP_PHYS_INVIS_BOUNCE_SPIN, 0.0001f,
-        end,
+        p_end,
 
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plProxyTerrainComponent::plProxyTerrainComponent()
@@ -613,16 +613,16 @@ ParamBlockDesc2 gCameraOccludeBlock
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plCameraBlockerComponent::plCameraBlockerComponent()
@@ -687,72 +687,72 @@ ParamBlockDesc2 gPhysSimpleBk
         p_range, 0.001, 500.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_SIMP_EDIT1, IDC_COMP_PHYS_SIMP_SPIN1, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_SIMP_EDIT2, IDC_COMP_PHYS_SIMP_SPIN2, 0.1,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_SIMP_EDIT3, IDC_COMP_PHYS_SIMP_SPIN3, 0.1,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBoundCondRadio, _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCustomBoundListStuff, _T("UserBoundChoice"),    TYPE_INODE,     0, 0,
         p_ui,   kPhysMain, TYPE_PICKNODEBUTTON, IDC_COMP_PHYS_PICKSTATE_SIMP,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_SIMP,
         p_accessor, &gPhysCoreAccessor,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kCustomBoundField, _T("UserBoundCheckBx"),       TYPE_BOOL,      0,      0,
         p_default, false,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_PHYS_CUSTOMCHK,
         p_enable_ctrls, 1, plPhysicCoreComponent::kCustomBoundListStuff,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kAlignProxyShape, _T("AlignShapeChkBx"),     TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_PHYS_ALIGN_SHAPE_BOOL,
-        end,
+        p_end,
         
     plPhysicCoreComponent::kNoSynchronize, _T("DontSynchronizeChkBx"),  TYPE_BOOL,  0,  0,
         p_default, false,
         p_ui,   kPhysMain,  TYPE_SINGLECHEKBOX, IDC_PH_NO_SYNC_CHK,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kStartInactive, _T("StartInactiveChkBx"),    TYPE_BOOL, 0, 0,
         p_default, true,
         p_ui,   kPhysMain,  TYPE_SINGLECHEKBOX, IDC_PH_INACTIVE_CHK,
-        end,
+        p_end,
         
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kDynamicSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
         p_default,  plPhysicsGroups_DEAD::kStaticSimulated |
                     plPhysicsGroups_DEAD::kDynamicSimulated |
                     plPhysicsGroups_DEAD::kAnimated,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kAvAnimPushable, _T("AvAnimPushable"),   TYPE_BOOL,  0,  0,
         p_default, false,
         p_ui,   kPhysMain,  TYPE_SINGLECHEKBOX, IDC_PH_AVANIMPUSHABLE,
-        end,
+        p_end,
         
-    end
+    p_end
 );  
 
 plPhysSimpleComponent::plPhysSimpleComponent()
@@ -828,41 +828,41 @@ ParamBlockDesc2 gPhysBlockerBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kLOSChkBx, _T("LOSChkBx"),       TYPE_BOOL,  P_ANIMATABLE, 0,    
         p_default, FALSE,
         p_ui,   kPhysMain, TYPE_SINGLECHEKBOX, IDC_COMP_CHECK_LOS,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_INVIS_BOUNCE_EDIT, IDC_COMP_PHYS_INVIS_BOUNCE_SPIN, 0.0001f,
-        end,
+        p_end,
 
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kGroup, _T("group"),     TYPE_INT,       0, 0,
         p_ui,       kPhysMain, TYPE_RADIO, 2, IDC_RADIO_BLOCK_AVATAR, IDC_RADIO_BLOCK_DYNAMIC,
         p_vals,     plSimDefs::kGroupAvatarBlocker,     plSimDefs::kGroupDynamicBlocker,
         p_default, plSimDefs::kGroupAvatarBlocker,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysBlockerComponent::plPhysBlockerComponent()
@@ -927,31 +927,30 @@ ParamBlockDesc2 gPhysWalkableBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
-
+        p_end,
 
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_INVIS_BOUNCE_EDIT, IDC_COMP_PHYS_INVIS_BOUNCE_SPIN, 0.0001f,
-        end,
+        p_end,
     
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysWalkableComponent::plPhysWalkableComponent()
@@ -1009,30 +1008,30 @@ ParamBlockDesc2 gPhysClimbableBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_INVIS_BOUNCE_EDIT, IDC_COMP_PHYS_INVIS_BOUNCE_SPIN, 0.0001f,
-        end,
+        p_end,
     
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysClimbableComponent::plPhysClimbableComponent()
@@ -1157,117 +1156,117 @@ ParamBlockDesc2 gPhysSwimSurfaceBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,     plSimDefs::kSphereBounds,   plSimDefs::kBoxBounds,  plSimDefs::kHullBounds, plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
         
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentType, _T("CurrentType"),     TYPE_INT,       0, 0,
         p_ui,       kPhysMain, TYPE_RADIO, 3, IDC_SWIM_CURRENT_NONE, IDC_SWIM_CURRENT_SPIRAL, IDC_SWIM_CURRENT_STRAIGHT,
         p_vals,     plSwim2DComponent::kCurrentNone,    plSwim2DComponent::kCurrentSpiral, plSwim2DComponent::kCurrentStraight,
         p_default,  plSwim2DComponent::kCurrentNone,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentRotation, _T("SwimRotation"), TYPE_FLOAT, 0, 0,  
         p_default, 1.0,
         p_range, -100.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_ROTATION, IDC_SWIM_CURRENT_ROTATION_SPIN, 1.0,
-        end,
+        p_end,
         
     plPhysicCoreComponent::kSwimDetectorNode, _T("swimDetector"),   TYPE_INODE,     0, 0,
         p_ui,       kPhysMain, TYPE_PICKNODEBUTTON, IDC_SWIM_DETECTOR_NODE,
         p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_SWIM_DETECTOR_NODE,
-        end,
+        p_end,
         
     plPhysicCoreComponent::kSwimCurrentNode, _T("swimCurrentNode"), TYPE_INODE,     0, 0,
         p_ui,       kPhysMain, TYPE_PICKNODEBUTTON, IDC_SWIM_CURRENT_NODE,
         //p_sclassID,    DUMMY_CLASS_ID,
         p_prompt, IDS_SWIM_CURRENT_NODE,
-        end,
+        p_end,
         
     plPhysicCoreComponent::kSwimBuoyancyDown, _T("BuoyancyDown"), TYPE_FLOAT, 0, 0, 
         p_default, 3.0,
         p_range, 0.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_SWIM_BUOYANCY_DOWN, IDC_SWIM_BUOYANCY_DOWN_SPIN, 0.1,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimBuoyancyUp, _T("BuoyancyUp"), TYPE_FLOAT, 0, 0, 
         p_default, 0.05,
         p_range, 0.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_SWIM_BUOYANCY_UP, IDC_SWIM_BUOYANCY_UP_SPIN, 0.1,
-        end,
+        p_end,
     
     plPhysicCoreComponent::kSwimMaxUpVel, _T("MaxUpVel"), TYPE_FLOAT, 0, 0, 
         p_default, 3.0,
         p_range, 0.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_SWIM_MAX_UP_VEL, IDC_SWIM_MAX_UP_VEL_SPIN, 0.1,
-        end,        
+        p_end,        
 
     plPhysicCoreComponent::kSwimCurrentPullNearDist, _T("PullNearDist"), TYPE_FLOAT, 0, 0,  
         p_default, 1.0,
         p_range, 0.0, 10000.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_SWIM_CURRENT_PULL_NEAR_DIST, IDC_SWIM_CURRENT_PULL_NEAR_DIST_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentPullNearVel, _T("PullNearVel"), TYPE_FLOAT, 0, 0,    
         p_default, 0.0,
         p_range, -100.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_PULL_NEAR_VEL, IDC_SWIM_CURRENT_PULL_NEAR_VEL_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentPullFarDist, _T("PullFarDist"), TYPE_FLOAT, 0, 0,    
         p_default, 1.0,
         p_range, 0.0, 10000.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_SWIM_CURRENT_PULL_FAR_DIST, IDC_SWIM_CURRENT_PULL_FAR_DIST_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentPullFarVel, _T("PullFarVel"), TYPE_FLOAT, 0, 0,  
         p_default, 0.0,
         p_range, -100.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_PULL_FAR_VEL, IDC_SWIM_CURRENT_PULL_FAR_VEL_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentStraightNearDist, _T("StraightNearDist"), TYPE_FLOAT, 0, 0,  
         p_default, 1.0,
         p_range, -10000.0, 10000.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_STRAIGHT_NEAR_DIST, IDC_SWIM_CURRENT_STRAIGHT_NEAR_DIST_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentStraightNearVel, _T("StraightNearVel"), TYPE_FLOAT, 0, 0,    
         p_default, 0.0,
         p_range, -100.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_STRAIGHT_NEAR_VEL, IDC_SWIM_CURRENT_STRAIGHT_NEAR_VEL_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentStraightFarDist, _T("StraightFarDist"), TYPE_FLOAT, 0, 0,    
         p_default, 1.0,
         p_range, -10000.0, 10000.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_STRAIGHT_FAR_DIST, IDC_SWIM_CURRENT_STRAIGHT_FAR_DIST_SPIN, 1.0,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kSwimCurrentStraightFarVel, _T("StraightFarVel"), TYPE_FLOAT, 0, 0,  
         p_default, 0.0,
         p_range, -100.0, 100.0,
         p_ui,       kPhysMain, TYPE_SPINNER,    EDITTYPE_FLOAT, 
         IDC_SWIM_CURRENT_STRAIGHT_FAR_VEL, IDC_SWIM_CURRENT_STRAIGHT_FAR_VEL_SPIN, 1.0,
-        end,
-        
-    end
+        p_end,
+
+    p_end
     );
 
 // plSwim2DComponent -----------------
@@ -1451,30 +1450,30 @@ ParamBlockDesc2 gPhysSwim3DBk
         p_ui,       kPhysMain, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kFriction,   _T("Friction"), TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.5,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_TERRAIN_EDIT1, IDC_COMP_PHYS_TERRAIN_SPIN1, 0.0001f,
-        end,
+        p_end,
 
     plPhysicCoreComponent::kBounce, _T("Bounce"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
         p_default, 0.0,
         p_range, 0.0, 1.0,
         p_ui,   kPhysMain, TYPE_SPINNER,    EDITTYPE_POS_FLOAT, 
         IDC_COMP_PHYS_INVIS_BOUNCE_EDIT, IDC_COMP_PHYS_INVIS_BOUNCE_SPIN, 0.0001f,
-        end,
+        p_end,
     
     // Event Groups
     plPhysicCoreComponent::kMemberGroups_DEAD, _T("memberGroups"), TYPE_INT,    0,0,
         p_default, plPhysicsGroups_DEAD::kStaticSimulated,
-        end,
+        p_end,
     plPhysicCoreComponent::kBounceGroups_DEAD, _T("bounceGroups"), TYPE_INT,    0,0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plPhysSwim3DComponent::plPhysSwim3DComponent()
@@ -1523,7 +1522,7 @@ ParamBlockDesc2 gPhysPlayerBk
 (   
     plComponent::kBlkComp, _T("Player"), 0, &gPhysPlayerDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plPhysPlayerComponent::plPhysPlayerComponent()
@@ -1546,7 +1545,7 @@ ParamBlockDesc2 gPhysBoundBlockerBk
 (   
     plComponent::kBlkComp, _T("(ex)Boundary Blocker"), 0, &gPhysBoundBlockerDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plPhysBoundBlockerComponent::plPhysBoundBlockerComponent()
@@ -1569,7 +1568,7 @@ ParamBlockDesc2 gPhysDetectorBk
 (   
     plComponent::kBlkComp, _T("Detector"), 0, &gPhysDetectorDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plPhysDetectorComponent::plPhysDetectorComponent()
@@ -1599,7 +1598,7 @@ ParamBlockDesc2 gPhysSubWorldBk
     //Roll out
     IDD_COMP_PHYS_SUBWORLD, IDS_COMP_PHYS_SUBWORLD, 0, 0, nullptr,
 
-    end
+    p_end
 );  
 
 plPhysSubWorldComponent::plPhysSubWorldComponent()
@@ -1720,15 +1719,15 @@ ParamBlockDesc2 gSubworldRegionBlock
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  HELPER_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kSubworldTriggerOn, _T("triggerOn"),    TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 2, IDC_RADIO_ENTER, IDC_RADIO_EXIT,
         p_vals,     kSubTriggerOnEnter, kSubTriggerOnExit,
         p_default,  kSubTriggerOnEnter,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plSubworldDetectorComponent::plSubworldDetectorComponent()
@@ -1842,9 +1841,9 @@ ParamBlockDesc2 gPanicLinkRegionBlock
     plPanicLinkDetectorComponent::kPlayAnim, _T("PlayAnim"),        TYPE_BOOL,      0,      0,
     p_default, true,
     p_ui, TYPE_SINGLECHEKBOX, IDC_COMP_PANIC_ANIM,
-    end,
+    p_end,
     
-    end
+    p_end
 );
 
 
@@ -1918,7 +1917,7 @@ ParamBlockDesc2 gShootableBk
 
     IDD_COMP_SHOOTABLE, IDS_COMP_SHOOTABLE, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 plShootableComponent::plShootableComponent()
@@ -1970,8 +1969,8 @@ plPhysicCoreComponent::kBoundCondRadio, _T("BoundingConditions"), TYPE_INT, 0, 0
     p_ui, TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
     p_vals, plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kExplicitBounds,
     p_default, plSimDefs::kHullBounds,  
-    end,
-    end
+    p_end,
+    p_end
 );
 plRideAnimatedPhysicalComponent::plRideAnimatedPhysicalComponent()
 {

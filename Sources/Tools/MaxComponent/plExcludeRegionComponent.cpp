@@ -77,20 +77,20 @@ ParamBlockDesc2 gExcludeRegionBlock
     kXRegionSafePoints,     _T("safePoints"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_SAFE, IDC_ADD_SAFE, 0, IDC_DEL_SAFE,
         p_classID,      Class_ID(DUMMY_CLASS_ID, 0),
-        end,
+        p_end,
 
     kXRegionInitiallyCleared,   _T("initiallyCleared"), TYPE_BOOL,              0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_CLEARED,
-        end,
+        p_end,
 
     kXRegionSmartSeek,  _T("smartSeek"), TYPE_BOOL,             0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_SMARTSEEK   ,
-        end,
+        p_end,
 
     kXRegionBlockCameras,   _T("blockCameras"), TYPE_BOOL,              0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_CAMERA_LOS,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plExcludeRegionComponent::plExcludeRegionComponent()

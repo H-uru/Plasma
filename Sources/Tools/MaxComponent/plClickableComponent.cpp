@@ -103,65 +103,65 @@ ParamBlockDesc2 gClickableBlock
 
     kClickableDirectional,      _T("directional"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_OMNI,
-        end,
+        p_end,
 
     kClickableDegrees, _T("degrees"),   TYPE_INT,   P_ANIMATABLE, 0,    
         p_range, 1, 180,
         p_default, 180,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_INT, 
         IDC_COMP_CLICK_DEG, IDC_COMP_CLICK_DEGSPIN, SPIN_AUTOSCALE,
-        end,
+        p_end,
 
     kClickableUseProxy,     _T("useProxy"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COMP_CLICK_USEPROXY,
         p_enable_ctrls, 1, kClickableProxy,
-        end,
+        p_end,
         
 
     kClickableProxy, _T("proxyPrimitave"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXY,
 //      p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kClickableProxyRegion, _T("proxyRegion"),   TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CLICK_PROXYREGION,
 //      p_sclassID,  GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
     
     kClickableOneShot,      _T("oneshot"),      TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_ONESHOT,
-        end,
+        p_end,
 
     kClickableBoundsType,   _T("BoundingConditions"),       TYPE_INT,       0, 0,
         p_ui,       TYPE_RADIO, 4, IDC_RADIO_BSPHERE, IDC_RADIO_BBOX, IDC_RADIO_BHULL, IDC_RADIO_PICKSTATE,
         p_vals,                     plSimDefs::kSphereBounds,       plSimDefs::kBoxBounds,      plSimDefs::kHullBounds,     plSimDefs::kProxyBounds,
         p_default, plSimDefs::kHullBounds,
-        end,
+        p_end,
 
     kClickableEnabled,      _T("enabled"),      TYPE_BOOL,          0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_ENABLED,
         p_default, TRUE,
-        end,
+        p_end,
 
     kClickablePhysical,     _T("physical"),     TYPE_BOOL,              0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_COLLIDABLE_CHECK,
         p_default, TRUE,
-        end,
+        p_end,
 
     kClickableIgnoreProxyRegion, _T("ignoreProxyRegion"), TYPE_BOOL,    0, 0,
         p_ui,               TYPE_SINGLECHEKBOX, IDC_IGNORE_REGION_CHECK,
         p_default, FALSE,
-        end,
+        p_end,
 
     kClickableFriction, _T("friction"), TYPE_FLOAT, 0, 0,   
         p_range, 0.0f, FLT_MAX,
         p_default, 0.0f,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_CLICKABLE_FRIC_EDIT1,  IDC_COMP_CLICKABLE_FRIC_SPIN1, SPIN_AUTOSCALE,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plClickableComponent::plClickableComponent()
@@ -412,7 +412,7 @@ ParamBlockDesc2 gNoBlkClickableBlock
 (
     plComponent::kBlkComp, _T("NonPhysicalClickableProxy"), 0, &gNoBlkClickableDesc, P_AUTO_CONSTRUCT, plComponent::kRefComp,
 
-    end
+    p_end
 );
 
 plNoBlkClickableComponent::plNoBlkClickableComponent()

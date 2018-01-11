@@ -52,6 +52,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plDynamicEnvLayer.h"
 
+#include "MaxMain/MaxCompat.h"
+
 ///////////////////////////////////////////////////////////////////////////////
 //// PickAnchorNode ///////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,18 +253,18 @@ static ParamBlockDesc2 gBitmapParamBlk
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_TEXSIZE_EDIT, IDC_TEXSIZE_SPIN, SPIN_AUTOSCALE,
         p_range,        4, 512,
         p_default,      64,
-        end,
+        p_end,
     plDynamicEnvLayer::kBmpAnchorNode, _T("anchorNode"), TYPE_INODE, 0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_ANCHOR_NODE,
         p_prompt,       IDS_SELECT_ANCHOR,
         p_accessor,     &gBleahPBAccessor,
-        end,
+        p_end,
     plDynamicEnvLayer::kBmpLastTextureSize, _T("lastTextureSize"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     plDynamicEnvLayer::kBmpRefract, _T("refract"),TYPE_BOOL,        0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_REFRACT,
-        end,
+        p_end,
 
-    end
+    p_end
 );

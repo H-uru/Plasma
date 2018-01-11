@@ -149,9 +149,9 @@ ParamBlockDesc2 gRepresentBk
 
     plRepresentComp::kQuality,  _T("Quality"),  TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRepresentComp::plRepresentComp()
@@ -375,9 +375,9 @@ ParamBlockDesc2 gRepGroupBk
 
     plRepGroupComp::kReps,  _T("Reps"), TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_REPS, 0, 0, IDC_DEL_REPS,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plRepGroupComp::plRepGroupComp()

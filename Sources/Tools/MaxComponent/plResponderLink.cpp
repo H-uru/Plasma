@@ -151,38 +151,38 @@ ParamBlockDesc2 gResponderLinkBlock
 
     kLinkingRule,   _T("linkingRule"),      TYPE_INT,           0, 0,
         p_default,  plNetCommon::LinkingRules::kBasicLink,
-        end,
+        p_end,
 
     kLinkAgeFilename,   _T("ageFilename"),      TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kLinkAgeInstanceName,   _T("ageInstanceName"),      TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGEINSTANCENAME,
-        end,
+        p_end,
 
     kLinkAgeSpawnPointName, _T("ageSpawnPoint"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINT,
         p_default,  kDefaultSpawnPtName,
-        end,
+        p_end,
 
     kLinkAgeSpawnPointTitle,    _T("ageSpawnPointTitle"),   TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKSPAWNPOINTTITLE,
         p_default,  kDefaultSpawnPtTitle,
-        end,
+        p_end,
 
     kLinkAgeLinkInAnimName,     _T("ageLinkInAnimName"),    TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGELINKINANIMNAME,
         p_default,  kDefaultLinkInAnimName,
-        end,
+        p_end,
 
     kLinkParentAgeFilename, _T("parentageFilename"),        TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kLinkAgeInstanceGuid,   _T("ageInstanceGUID"),      TYPE_STRING,        0, 0,
         p_ui,   TYPE_EDITBOX, IDC_LINKAGEINSTANCEGUID,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdLink& plResponderCmdLink::Instance()
@@ -440,15 +440,15 @@ ParamBlockDesc2 gResponderEnableBlock
     kEnable,        _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
     kEnableNode,    _T("node"),         TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kEnableResponder, _T("responder"),  TYPE_REFTARG,       P_NO_REF, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdEnable& plResponderCmdEnable::Instance()
@@ -510,13 +510,13 @@ ParamBlockDesc2 gPhysicalEnableBlock
     kEnablePhys,    _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
     kEnablePhysNode,    _T("node"), TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdPhysEnable& plResponderCmdPhysEnable::Instance()
@@ -618,12 +618,12 @@ ParamBlockDesc2 gResponderOneShotBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderOneShotProc,
 
     kOneShotComp,   _T("oneShotComp"),          TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kOneShotNode,   _T("oneShotNode"),          TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdOneShot& plResponderCmdOneShot::Instance()
@@ -687,7 +687,7 @@ ParamBlockDesc2 gResponderNotifyBlock
 (
     kResponderNotifyMsgBlk, _T("notifyCmd"), 0, nullptr, 0,
 
-    end
+    p_end
 );
 
 plResponderCmdNotify& plResponderCmdNotify::Instance()
@@ -763,14 +763,14 @@ ParamBlockDesc2 gResponderActivatorEnableBlock
     IDD_COMP_RESPOND_ENABLE, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderActivatorEnableProc,
 
     kActivatorComp, _T("activatorComp"),        TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kActivatorEnable, _T("enable"),             TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_ENABLE_CHECK,
         p_default,  TRUE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdDetectorEnable& plResponderCmdDetectorEnable::Instance()
@@ -914,15 +914,15 @@ ParamBlockDesc2 gResponderXRegionBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderXRegionProc,
 
     kXRegionComp,   _T("xRegionComp"),      TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kXRegionNode,   _T("xRegionNode"),      TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kXRegionType,   _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 // Old types kept for backwards compatibility
@@ -1040,14 +1040,14 @@ ParamBlockDesc2 gResponderCameraTransitionBlock
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CAMERARGN_PICKSTATE_BASE,
         p_sclassID,  CAMERA_CLASS_ID,
         p_prompt, IDS_COMP_PHYS_CHOSEN_BASE,
-        end,
+        p_end,
 
     kPopCamera,     _T("enable"),       TYPE_BOOL,      0, 0,
         p_ui,       TYPE_SINGLECHEKBOX, IDC_CHECK1,
         p_default,  FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdCamTransition& plResponderCmdCamTransition::Instance()
@@ -1141,9 +1141,9 @@ ParamBlockDesc2 gResponderCameraForceBlock
         p_ui,       TYPE_RADIO, 2,  IDC_RADIO_THIRD, IDC_RADIO_FIRST,   
         p_vals,     plResponderCmdCamForce::kForce3rd, plResponderCmdCamForce::kResume1st,
         p_default,  plResponderCmdCamForce::kForce3rd,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdCamForce& plResponderCmdCamForce::Instance()
@@ -1194,9 +1194,9 @@ ParamBlockDesc2 gResponderDelayBlock
         p_default,  1.0f,
         p_range,    0.01f, 500.0f,
         p_ui, TYPE_SPINNER, EDITTYPE_FLOAT, IDC_DELAY_EDIT, IDC_DELAY_SPIN, .1f,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdDelay& plResponderCmdDelay::Instance()
@@ -1267,17 +1267,17 @@ ParamBlockDesc2 gResponderVisibilityBlock
 
     kVisibilityNode,    _T("VisibilityNode"),   TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
     kVisibilityType,    _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     kVisibilityChildren, _T("children"),        TYPE_BOOL,      0, 0,
         p_default, FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_CHECK_CHILDREN,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 enum
@@ -1443,12 +1443,12 @@ ParamBlockDesc2 gResponderSubWorldBlock
 
     kSubWorldNode,  _T("SubWorldNode"), TYPE_INODE,     0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_NODE_BUTTON,
-        end,
+        p_end,
 
     kSubWorldType,  _T("type"),             TYPE_INT,       0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdSubWorld& plResponderCmdSubWorld::Instance()
@@ -1585,9 +1585,9 @@ ParamBlockDesc2 gResponderFootSurfaceBlock
 
     kSurface,   _T("Surface"),  TYPE_INT,       0, 0,
         p_default,  plArmatureEffectsMgr::kFootDirt,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdFootSurface& plResponderCmdFootSurface::Instance()
@@ -1673,12 +1673,12 @@ ParamBlockDesc2 gResponderMultistageBlock
     IDD_COMP_RESPOND_ONESHOT, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderMultistageProc,
 
     kMultistageComp,    _T("comp"),     TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMultistageNode,    _T("node"),     TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plResponderCmdMultistage& plResponderCmdMultistage::Instance()

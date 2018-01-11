@@ -225,9 +225,9 @@ ParamBlockDesc2 generalAttribBlock
     // params
     kRoomName,      _T("roomName"),         TYPE_STRING,        0,  0,
     p_default,      "", 
-    end,
+    p_end,
 
-    end
+    p_end
 );
 
 plGeneralAttrib::plGeneralAttrib() : fClassDesc(&theGeneralAttribClassDesc), fPBlock()

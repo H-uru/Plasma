@@ -73,40 +73,39 @@ ParamBlockDesc2 gLODFadeBk
     plLODFadeComponent::kHasBase,   _T("HasBase"),  TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LODFADE_HASBASE,
-        end,
+        p_end,
 
     plLODFadeComponent::kBase, _T("Base"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_LODFADE_BASE,
         p_prompt, IDS_COMP_LODFADE_BASE,
-        end,
+        p_end,
 
     plLODFadeComponent::kDistance, _T("Distance"), TYPE_FLOAT,  0, 0,   
         p_default, 50.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LODFADE_DISTANCE, IDC_COMP_LODFADE_DISTANCE_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plLODFadeComponent::kTransition, _T("Transition"), TYPE_FLOAT,  0, 0,   
         p_default, 10.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_LODFADE_TRANSITION, IDC_COMP_LODFADE_TRANSITION_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plLODFadeComponent::kFadeBase,  _T("FadeBase"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LODFADE_FADEBASE,
         p_enable_ctrls,     1, plLODFadeComponent::kBaseFirst,
-        end,
+        p_end,
 
     plLODFadeComponent::kBaseFirst, _T("BaseFirst"),    TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LODFADE_BASEFIRST,
-        end,
+        p_end,
 
-
-    end
+    p_end
 );
 
 void plLODFadeComponent::ISetToFadeBase(plMaxNode* node, plMaxNode* base, plErrorMsg* pErrMsg)
@@ -188,15 +187,14 @@ ParamBlockDesc2 gBlendOntoBk
     plBlendOntoComponent::kBaseNodes,   _T("BaseNodes"),    TYPE_INODE_TAB, 0,      P_CAN_CONVERT, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
         p_classID,      triObjectClassID,
-        end,
+        p_end,
 
     plBlendOntoComponent::kSortFaces,   _T("SortFaces"),    TYPE_BOOL, 0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_BLENDONTO_SORTFACES,
-        end,
+        p_end,
 
-
-    end
+    p_end
 );
 
 bool plBlendOntoComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -255,25 +253,24 @@ ParamBlockDesc2 gBlendOntoAdvBk
     plBlendOntoAdvComponent::kBaseNodes,    _T("BaseNodes"),    TYPE_INODE_TAB, 0,      P_CAN_CONVERT, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
         p_classID,      triObjectClassID,
-        end,
+        p_end,
 
     plBlendOntoAdvComponent::kSortFaces,    _T("SortFaces"),    TYPE_BOOL, 0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_BLENDONTOADV_SORTFACES,
-        end,
+        p_end,
 
     plBlendOntoAdvComponent::kSortObjects,  _T("SortObjects"),  TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_BLENDONTOADV_SORTOBJECTS,
-        end,
+        p_end,
 
     plBlendOntoAdvComponent::kOntoBlending, _T("OntoBlending"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_BLENDONTOADV_ONTOBLENDING,
-        end,
+        p_end,
 
-
-    end
+    p_end
 );
 
 bool plBlendOntoAdvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -347,7 +344,7 @@ ParamBlockDesc2 gB4AvBk
 
     IDD_COMP_SORT_AS_OPAQUE, IDS_COMP_SORT_AS_OPAQUE, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 bool plB4AvComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -387,44 +384,43 @@ ParamBlockDesc2 gDistFadeBk
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_DISTFADE_IN_ACTIVE,
         p_enable_ctrls,     2, plDistFadeComponent::kFadeInStart, plDistFadeComponent::kFadeInEnd,
-        end,
+        p_end,
 
     plDistFadeComponent::kFadeInStart, _T("FadeInStart"), TYPE_FLOAT,   0, 0,   
         p_default, 5.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTFADE_INSTART, IDC_COMP_DISTFADE_INSTART_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistFadeComponent::kFadeInEnd, _T("FadeInEnd"), TYPE_FLOAT,   0, 0,   
         p_default, 10.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTFADE_INEND, IDC_COMP_DISTFADE_INEND_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistFadeComponent::kFadeOutActive,    _T("FadeOutActive"),    TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_DISTFADE_OUT_ACTIVE,
         p_enable_ctrls,     2, plDistFadeComponent::kFadeOutStart, plDistFadeComponent::kFadeOutEnd,
-        end,
+        p_end,
 
     plDistFadeComponent::kFadeOutStart, _T("FadeOutStart"), TYPE_FLOAT,     0, 0,   
         p_default, 50.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTFADE_OUTSTART, IDC_COMP_DISTFADE_OUTSTART_SPIN, 1.0,
-        end,    
+        p_end,    
 
     plDistFadeComponent::kFadeOutEnd, _T("FadeOutEnd"), TYPE_FLOAT,     0, 0,   
         p_default, 100.0,
         p_range, 0.0, 1000.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_DISTFADE_OUTEND, IDC_COMP_DISTFADE_OUTEND_SPIN, 1.0,
-        end,    
+        p_end,    
 
-
-    end
+    p_end
 );
 
 bool plDistFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -593,14 +589,14 @@ ParamBlockDesc2 gLOSFadeBk
     plLOSFadeComponent::kBoundsCenter,  _T("BoundsCenter"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_BOUNDSCENTER,
-        end,
+        p_end,
 
     plLOSFadeComponent::kFadeInTime, _T("kFadeInTime"), TYPE_FLOAT,     0, 0,   
         p_default, 0.5,
         p_range, 0.0, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FADEINTIME, IDC_COMP_FADEINTIME_SPIN, 1.0,
-        end,    
+        p_end,    
     
 
     plLOSFadeComponent::kFadeOutTime, _T("kFadeOutTime"), TYPE_FLOAT,   0, 0,   
@@ -608,10 +604,9 @@ ParamBlockDesc2 gLOSFadeBk
         p_range, 0.0, 5.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_FADEOUTTIME, IDC_COMP_FADEOUTTIME_SPIN, 1.0,
-        end,    
-    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plLOSFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -689,17 +684,16 @@ ParamBlockDesc2 gGZFadeBk
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_GZ_OPAQUE, IDC_COMP_GZ_OPAQUE_SPIN, 1.0,
-        end,    
+        p_end,    
     
     plGZFadeComponent::kTransp, _T("kTransp"), TYPE_FLOAT,  0, 0,   
         p_default, 20.0,
         p_range, 0.0, 100.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_GZ_TRANSP, IDC_COMP_GZ_TRANSP_SPIN, 1.0,
-        end,    
-    
+        p_end,    
 
-    end
+    p_end
 );
 
 bool plGZFadeComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
@@ -776,7 +770,7 @@ ParamBlockDesc2 gDynMatBk
 
     IDD_COMP_DYNMAT, IDS_COMP_DYNMAT, 0, 0, nullptr,
 
-    end
+    p_end
 );
 
 bool plDynMatComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)

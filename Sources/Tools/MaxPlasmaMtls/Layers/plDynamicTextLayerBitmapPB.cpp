@@ -251,47 +251,47 @@ static ParamBlockDesc2 gBitmapParamBlk
     // Texture Color/Alpha
     plDynamicTextLayer::kBmpDiscardColor,   _T("discardColor"), TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_NO_COLOR,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInvertColor,    _T("invertColor"),  TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_COLOR,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpDiscardAlpha,   _T("discardAlpha"), TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_DISCARD_ALPHA,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInvertAlpha,    _T("invertAlpha"),  TYPE_BOOL,      0, 0,
 //      p_ui,           TYPE_SINGLECHEKBOX, IDC_BLEND_INV_ALPHA,
-        end,
+        p_end,
     
     // Texture size
     plDynamicTextLayer::kBmpExportWidth,    _T("exportWidth"),  TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTWIDTH, IDC_EXPORTWIDTH_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportHeight,   _T("exportHeight"), TYPE_INT,   0, 0,
         p_ui,           TYPE_SPINNER, EDITTYPE_INT, IDC_EXPORTHEIGHT, IDC_EXPORTHEIGHT_SPINNER, SPIN_AUTOSCALE,
         p_range,        4, 2048,
         p_default,      512,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportLastWidth,    _T("lastExportWidth"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpExportLastHeight,   _T("lastExportHeight"), TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     plDynamicTextLayer::kBmpIncludeAlphaChannel,    _T("includeAlphaChannel"),  TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_DYNTEXT_ALPHA,
         p_default, FALSE,
-        end,
+        p_end,
         
     // Initial image
     plDynamicTextLayer::kBmpUseInitImage,   _T("useInitImage"), TYPE_BOOL,      0, 0,
         p_ui,           TYPE_SINGLECHEKBOX, IDC_USEINITIMAGE,
         p_enable_ctrls, 1, plDynamicTextLayer::kBmpInitBitmap, 
         p_accessor,     &gDTLPBAccessor,
-        end,
+        p_end,
     plDynamicTextLayer::kBmpInitBitmap, _T("initBitmap"),       TYPE_BITMAP,    P_SHORT_LABELS, 0,
         p_accessor,     &gDTLPBAccessor,
-        end,
+        p_end,
 
 /*      plGUIButtonComponent::kRefAnimate,  _T( "animate" ), TYPE_BOOL, 0, 0,
             p_ui, plGUIControlBase::kRollMain, TYPE_SINGLECHEKBOX, IDC_GUI_ANIMATE,
@@ -314,6 +314,6 @@ static ParamBlockDesc2 gBitmapParamBlk
     plDynamicTextLayer::kBmpRightMargin,
     plDynamicTextLayer::kBmpBottomMargin,
 */
-    end
+    p_end
 );
 

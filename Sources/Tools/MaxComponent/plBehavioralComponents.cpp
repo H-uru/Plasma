@@ -105,29 +105,29 @@ ParamBlockDesc2 gAvBehavioralSittingBk
     
     // params
     plAvBehaviorSittingComponent::kDetector, _T("detector"),    TYPE_INODE,     0, 0,
-        end,
+        p_end,
     
     plAvBehaviorSittingComponent::kApproachFront, _T("ApproachFront"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_FRONT,
         p_default, FALSE,
-        end,
+        p_end,
 
     plAvBehaviorSittingComponent::kApproachLeft, _T("ApproachLeft"),        TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_LEFT,
         p_default, TRUE,
-        end,
+        p_end,
 
     plAvBehaviorSittingComponent::kApproachRight, _T("ApproachRight"),      TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_APP_RIGHT,
         p_default, TRUE,
-        end,
+        p_end,
         
     plAvBehaviorSittingComponent::kDisableForward, _T("DisableForward"),        TYPE_BOOL,      0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_SIT_NOFORWARD,
         p_default, TRUE,
-        end,        
+        p_end,        
 
-    end
+    p_end
 );
 
 plAvBehaviorSittingComponent::plAvBehaviorSittingComponent()

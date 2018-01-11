@@ -88,18 +88,17 @@ ParamBlockDesc2 gLightGrpBk
     kIncludeChars,  _T("Include characters"), TYPE_BOOL,        0, 0,
         p_default,  TRUE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTINC_CHARS,
-        end,
+        p_end,
 
     kAffectedLightSel, _T("AffectedLightChoice"),   TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kTest, _T("TestBox"), TYPE_BOOL, 0, 0,
         p_default,  FALSE,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_COMP_LIGHTINC_FILTER,
-        end,
+        p_end,
 
-    end
-
+    p_end
 );
 
 plLightGrpComponent::plLightGrpComponent()

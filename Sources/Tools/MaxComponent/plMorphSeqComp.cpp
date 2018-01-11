@@ -101,9 +101,9 @@ ParamBlockDesc2 gMorphLayBk
     plMorphLayComp::kDeltas,    _T("Deltas"),   TYPE_INODE_TAB, 0,      P_CAN_CONVERT, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, IDC_ADD_TARGS, 0, IDC_DEL_TARGS,
         p_classID,      triObjectClassID,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 
@@ -266,15 +266,15 @@ ParamBlockDesc2 gMorphSeqBk
 
     plMorphSeqComp::kLayers,    _T("Layers"),   TYPE_INODE_TAB, 0,      0, 0,
         p_ui,           TYPE_NODELISTBOX, IDC_LIST_TARGS, 0, 0, IDC_DEL_TARGS,
-        end,
+        p_end,
 
     plMorphSeqComp::kBaseNode, _T("BaseNode"),  TYPE_INODE,     0, 0,
         p_ui,   TYPE_PICKNODEBUTTON, IDC_COMP_CHOOSE_OBJECT,
         p_sclassID, GEOMOBJECT_CLASS_ID,
         p_prompt, IDS_COMP_CHOSE_OBJECT,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 bool plMorphSeqComp::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)

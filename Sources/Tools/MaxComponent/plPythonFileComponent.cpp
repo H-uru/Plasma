@@ -1213,17 +1213,17 @@ ParamBlockDesc2 gPythonFileBlk
     IDD_COMP_PYTHON_FILE, IDS_COMP_PYTHON, 0, 0, &gPythonFileProc,
 
     kPythonFilePB,          _T("pb"),       TYPE_REFTARG,   0, 0,
-        end,
+        p_end,
 
     kPythonVersion,         _T("version"),  TYPE_INT,       0, 0,
-        end,
+        p_end,
 
     kPythonFileIsGlobal,    _T("isGlobal"), TYPE_BOOL, 0, 0,
         p_ui,   TYPE_SINGLECHEKBOX, IDC_PYTHON_GLOBAL,
         p_default, FALSE,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 #define WM_LOAD_AUTO_UI WM_APP+1

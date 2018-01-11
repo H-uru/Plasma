@@ -100,7 +100,7 @@ ParamBlockDesc2 gStartPtBk
 (
     1, _T(""), 0, &gStartPtDesc, P_AUTO_CONSTRUCT, 0,
 
-    end
+    p_end
 );
 
 plStartingPointComponent::plStartingPointComponent()
@@ -209,38 +209,38 @@ ParamBlockDesc2 gVehicleBlock
 
     kVehicleChassis,    _T("chassis"),      TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_CHASSIS,
-        end,
+        p_end,
 
     kVehicleWheelFR,    _T("wheelFR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FR_WHEEL,
-        end,
+        p_end,
     kVehicleWheelFL,    _T("wheelFL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FL_WHEEL,
-        end,
+        p_end,
     kVehicleWheelRR,    _T("wheelRR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RR_WHEEL,
-        end,
+        p_end,
     kVehicleWheelRL,    _T("wheelRL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RL_WHEEL,
-        end,
+        p_end,
 
     kVehicleHardpointFR,    _T("hardpointFR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FR_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointFL,    _T("hardpointFL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_FL_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointRR,    _T("hardpointRR"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RR_HARDPOINT,
-        end,
+        p_end,
     kVehicleHardpointRL,    _T("hardpointRL"),  TYPE_INODE,     0, 0,
         p_ui,           TYPE_PICKNODEBUTTON, IDC_RL_HARDPOINT,
-        end,
+        p_end,
 
     kVehicleDriveDet,   _T("driveDet"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plVehicleComponent::plVehicleComponent() : fMod()
@@ -445,8 +445,8 @@ ParamBlockDesc2 gMaintainersBk
     kCalibrated, _T("Calibrated"),      TYPE_INT,       0, 0,
         p_ui, TYPE_RADIO, 3,    IDC_RADIO_BROKEN, IDC_RADIO_REPAIRED, IDC_RADIO_CALIBRATED,
         p_vals, plMaintainersMarkerModifier::kBroken, plMaintainersMarkerModifier::kRepaired, plMaintainersMarkerModifier::kCalibrated,
-        end,
-    end
+        p_end,
+    p_end
 );
 
 plMaintainersMarkerComponent::plMaintainersMarkerComponent()
@@ -651,33 +651,33 @@ ParamBlockDesc2 gGameMarkerBlk
 
     kMarkerPhys,    _T("physical"),     TYPE_INODE,     0, 0,
         p_ui,       TYPE_PICKNODEBUTTON, IDC_MARKER_PHYS,
-        end,
+        p_end,
 
     kMarkerMtl,     _T("mtl"),          TYPE_MTL,       0, 0,
-        end,
+        p_end,
 
     kMarkerGreenAnim,   _T("green"),    TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kMarkerRedAnim,     _T("red"),      TYPE_STRING,    0, 0,
-        end,
+        p_end,
     kMarkerOpenAnim,    _T("open"),     TYPE_STRING,    0, 0,
-        end,
+        p_end,
 
     kMarkerBounceNode,  _T("bounceNode"), TYPE_INODE, 0, 0,
-        end,
+        p_end,
     kMarkerBounceComp,  _T("bounceComp"), TYPE_INODE, 0, 0,
-        end,
+        p_end,
 
     kMarkerMtlNode,     _T("mtlNode"),  TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMarkerSndPlace,    _T("sndPlace"), TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
     kMarkerSndHit,      _T("sndHit"),   TYPE_INODE,     0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 plGameMarkerComponent::plGameMarkerComponent()
@@ -804,14 +804,14 @@ ParamBlockDesc2 gCameraBk
     kCamera,    _T("Animation"),        TYPE_INT,       0, 0,
         p_default, 0,
         p_ui,       TYPE_RADIO, 2, /*IDC_RADIO_DEFAULT,*/ IDC_RADIO_FIXEDCAM, IDC_RADIO_FIXEDPANCAM,
-        end,
+        p_end,
     //kCamera,  _T("CamType"),      TYPE_INT,       0, 0,
     /// p_ui,       TYPE_RADIO, 2, IDC_RADIO_FIXEDCAM, IDC_RADIO_FIXEDPANCAM,
     //  end,
 
 
 
-    end
+    p_end
 );
 
 plCameraComponent::plCameraComponent()

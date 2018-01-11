@@ -656,21 +656,21 @@ ParamBlockDesc2 gResponderAnimBlock
     IDD_COMP_RESPOND_ANIM, IDS_COMP_CMD_PARAMS, 0, 0, &gResponderAnimProc,
 
     kRespAnimComp,  _T("comp"),     TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kRespAnimObject, _T("object"),  TYPE_REFTARG,       0, 0,
-        end,
+        p_end,
 
     kRespAnimLoop,  _T("loop"),     TYPE_STRING,        0, 0,
-        end,
+        p_end,
 
     kRespAnimType,  _T("type"),     TYPE_INT,           0, 0,
-        end,
+        p_end,
 
     kRespAnimObjectType,    _T("objType"),  TYPE_INT,   0, 0,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 ParamBlockDesc2 *plResponderCmdAnim::GetDesc()

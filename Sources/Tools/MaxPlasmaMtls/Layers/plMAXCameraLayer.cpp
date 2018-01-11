@@ -137,34 +137,34 @@ static ParamBlockDesc2 gMAXCameraLayerParamBlk
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_CAMERA,
         p_classID, Class_ID(LOOKAT_CAM_CLASS_ID, 0),
         p_prompt, IDS_CAM_LAYER_CAMERA,
-        end,
+        p_end,
 
     plMAXCameraLayer::kUVSource, _T("UVSource"),    TYPE_INT,   0, 0,
         p_default, 0,
-        end,
+        p_end,
 
     plMAXCameraLayer::kExplicitCam, _T("explicitCam"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_EXPLICIT_CAM,
         p_default, false,
         p_enable_ctrls, 1, plMAXCameraLayer::kCamera,
-        end,
+        p_end,
 
     plMAXCameraLayer::kRootNode, _T("rootNode"),    TYPE_INODE, 0, 0,
         p_ui, TYPE_PICKNODEBUTTON, IDC_CAM_LAYER_ROOT_NODE,
         p_prompt, IDS_CAM_LAYER_ROOT_NODE,
-        end,
+        p_end,
 
     plMAXCameraLayer::kDisableColor, _T("disableColor"), TYPE_RGBA, 0, 0,
         p_ui,           TYPE_COLORSWATCH, IDC_CAM_LAYER_DISABLE_COLOR,
         p_default,      Color(0,0,0),
-        end,
+        p_end,
 
     plMAXCameraLayer::kForce, _T("force"),  TYPE_BOOL,      0, 0,
         p_ui, TYPE_SINGLECHEKBOX, IDC_CAM_LAYER_FORCE,
         p_default, false,
-        end,
+        p_end,
 
-    end
+    p_end
 );
 
 /////////////////////////////////////////////////////////////////////////////
