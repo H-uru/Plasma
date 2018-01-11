@@ -70,9 +70,19 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
         maxObject->DoEnumDependents(proc);
 #endif //MAX_VERSION_MAJOR
 
-#if MAX_VERSION_MAJOR <= 14 // Max 2012
-#   define p_end end
-#endif // MAX_VERSION_MAJOR
+#if MAX_VERSION_MAJOR <= 10 // Max 2008
+#   define GETNAME_RETURN_TYPE TCHAR*
+#   define SETTEXT_VALUE_TYPE MCHAR*
+#else
+#   define GETNAME_RETURN_TYPE const TCHAR*
+#   define SETTEXT_VALUE_TYPE const MCHAR*
+#endif
+
+#if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
+#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
+#else
+#   define INIT_CUSTOM_CONTROLS(instance)
+#endif
 
 #if MAX_VERSION_MAJOR <= 13
 #   define GetParamBlock2Controller(pb, id) pb->GetController(id)
@@ -82,19 +92,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   define SetParamBlock2Controller(pb, id, tab, ctl) pb->SetControllerByID(id, tab, ctl)
 #endif // MAX_VERSION_MAJOR
 
-#if MAX_VERSION_MAJOR <= 11 // max 2009. Just a guess, really. 2010 doesn't need this function.
-#   define INIT_CUSTOM_CONTROLS(instance) InitCustomControls(instance)
-#else
-#   define INIT_CUSTOM_CONTROLS(instance)
-#endif
-
-#if MAX_VERSION_MAJOR <= 10 // Max 2008
-#   define GETNAME_RETURN_TYPE TCHAR*
-#   define SETTEXT_VALUE_TYPE MCHAR*
-#else
-#   define GETNAME_RETURN_TYPE const TCHAR*
-#   define SETTEXT_VALUE_TYPE const MCHAR*
-#endif
+#if MAX_VERSION_MAJOR <= 14 // Max 2012
+#   define p_end end
+#endif // MAX_VERSION_MAJOR
 
 // Old versions of Max define this as an integer, not a Class_ID
 #define XREFOBJ_COMPAT_CLASS_ID Class_ID(0x92aab38c, 0)
