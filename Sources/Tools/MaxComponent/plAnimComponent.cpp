@@ -624,7 +624,7 @@ void SetPhysAnimRecurse(plMaxNode *node, plErrorMsg *pErrMsg)
         return;
 
     if (HasPhysicalComponent(node, false))
-    {   char* debugName = node->GetName();
+    {   GETOBJNAME_RETURN_TYPE debugName = node->GetName();
         node->GetPhysicalProps()->SetPhysAnim(true, node, pErrMsg);
     }
     int i;
@@ -1003,8 +1003,8 @@ public:
         strcpy( fTitle, title );
     }
 
-    TCHAR *dialogTitle() override { return fTitle; }
-    TCHAR *buttonText() override { return "OK"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return fTitle; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return "OK"; }
 
     int filter(INode *node) override
     {

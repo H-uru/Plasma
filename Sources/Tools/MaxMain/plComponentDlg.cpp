@@ -1000,8 +1000,8 @@ public:
         return true;
     }
 
-    TCHAR *dialogTitle() override { return "Select Nodes"; }
-    TCHAR *buttonText() override { return "Copy"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return "Select Nodes"; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return "Copy"; }
 
     int filter(INode *node) override
     {

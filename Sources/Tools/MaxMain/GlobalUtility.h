@@ -71,6 +71,7 @@ public:
     // GUP Methods
     DWORD Start();
     void Stop();
+    void DeleteThis() {};
 
     enum ControlVals
     {

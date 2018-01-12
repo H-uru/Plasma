@@ -177,8 +177,8 @@ public:
         strcpy( fTitle, title );
     }
 
-    TCHAR *dialogTitle() override { return fTitle; }
-    TCHAR *buttonText() override { return "OK"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return fTitle; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return "OK"; }
 
     int filter(INode *node) override
     {

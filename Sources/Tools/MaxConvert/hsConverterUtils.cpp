@@ -249,7 +249,7 @@ char *hsConverterUtils::MangleReference(char *mangName, INode *node, const char*
         return nullptr;
 
     ST::string tempName;
-    char *nodeName = node->GetName();
+    GETOBJNAME_RETURN_TYPE nodeName = node->GetName();
     char *roomName = nullptr;
     TSTR sdata;
     hsStringTokenizer toker;
@@ -455,7 +455,7 @@ INode* hsConverterUtils::IGetINodeByNameRecur(INode* node, const char* wantName)
     if (!node || !node->GetName())
         return nullptr;
 
-    char* nodeName=node->GetName();
+    GETOBJNAME_RETURN_TYPE nodeName=node->GetName();
     if (!_stricmp(nodeName, wantName))
         return node;
 

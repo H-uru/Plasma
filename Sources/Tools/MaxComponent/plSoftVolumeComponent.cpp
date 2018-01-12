@@ -85,8 +85,8 @@ protected:
 public:
     plVolumeHitCallback(INode* owner, IParamBlock2 *pb, ParamID nodeListID, TCHAR *title = nullptr, BOOL singleSel=false);
 
-    TCHAR *dialogTitle() override { return fTitle; }
-    TCHAR *buttonText() override { return "OK"; }
+    GETDLGTEXT_RETURN_TYPE dialogTitle() override { return fTitle; }
+    GETDLGTEXT_RETURN_TYPE buttonText() override { return "OK"; }
     int filter(INode *node) override;
     void proc(INodeTab &nodeTab) override;
     BOOL showHiddenAndFrozen() override { return TRUE; }

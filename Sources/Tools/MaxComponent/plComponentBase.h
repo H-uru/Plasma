@@ -152,7 +152,7 @@ public:
     ///////////////////////////////////////////////////////////////////////////////////////
     // Required Max functions
     //
-    TCHAR* GetObjectName()     override { return (TCHAR*)fClassDesc->ClassName(); }
+    GETOBJNAME_RETURN_TYPE GetObjectName() override { return (GETOBJNAME_RETURN_TYPE)fClassDesc->ClassName(); }
     void InitNodeName(TSTR& s) override { s = fClassDesc->InternalName(); }
     void GetClassName(TSTR& s) override { s = fClassDesc->ClassName(); }
     Class_ID ClassID()         override { return fClassDesc->ClassID(); }

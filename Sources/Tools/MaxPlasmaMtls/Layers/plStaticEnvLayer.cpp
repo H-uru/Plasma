@@ -584,7 +584,7 @@ Matrix3 plStaticEnvLayer::IGetViewTM( int i )
 
 //// IWriteBM /////////////////////////////////////////////////////////////////
 
-int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name )
+int plStaticEnvLayer::IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name )
 {
     bi->SetName( name );
     if( bm->OpenOutput( bi ) == BMMRES_SUCCESS )

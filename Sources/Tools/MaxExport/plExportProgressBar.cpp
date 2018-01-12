@@ -80,7 +80,7 @@ void plExportProgressBar::Start(char *name, uint32_t steps)
    }   
 }
 
-bool plExportProgressBar::Update(char *name, uint32_t inc)
+bool plExportProgressBar::Update(GETOBJNAME_RETURN_TYPE name, uint32_t inc)
 {
     fCurStep += inc;
 

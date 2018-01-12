@@ -55,6 +55,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPlasmaMAXLayer.h"
 
+#include "MaxMain/MaxCompat.h"
+
 class ClassDesc2;
 class IParamBlock2;
 class Bitmap;
@@ -87,7 +89,7 @@ protected:
 
 
     Matrix3     IGetViewTM( int i );
-    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, TCHAR *name );
+    int         IWriteBM( BitmapInfo *bi, Bitmap *bm, BMNAME_VALUE_TYPE name );
 
 public:
     // Ref nums

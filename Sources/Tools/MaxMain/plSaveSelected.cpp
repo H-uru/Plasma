@@ -282,7 +282,7 @@ void plMerge()
             continue;
 
         plComponentBase *oldComp = renamedNodes[i]->ConvertToComponent();
-        char *oldCompName = oldComp->GetINode()->GetName();
+        GETOBJNAME_RETURN_TYPE oldCompName = oldComp->GetINode()->GetName();
 
         for (int j = 0; j < components.size(); j++)
         {

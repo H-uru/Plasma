@@ -167,7 +167,7 @@ bool plClothingComponent::SetupProperties(plMaxNode* node, plErrorMsg* pErrMsg)
         plMaxNode *LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
         if (LODNode != nullptr)
         {
-            char *dbgNodeName = LODNode->GetName();
+            GETOBJNAME_RETURN_TYPE dbgNodeName = LODNode->GetName();
             //LODNode->SetCanConvert(false);
             LODNode->SetDrawable(false);
             LODNode->SetForceShadow(true);
@@ -209,7 +209,7 @@ bool plClothingComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
         LODNode = (plMaxNode *)fCompPB->GetINode(kMeshNodeTab, 0, i);
         if (LODNode != nullptr)
         {
-            char *dbgNodeName = LODNode->GetName();
+            GETOBJNAME_RETURN_TYPE dbgNodeName = LODNode->GetName();
             keys.emplace_back(LODNode->GetSwappableGeom()->GetKey());
             locationNode = LODNode;
 

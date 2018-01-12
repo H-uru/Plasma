@@ -674,7 +674,7 @@ void hsControlConverter::ISetSegRange(float start, float end)
 }
 
 
-void hsControlConverter::IConvertSubTransform(Control *control, char *ctlName, plMaxNode *node, plCompoundController *tmc,
+void hsControlConverter::IConvertSubTransform(Control *control, SUBTFNAME_VALUE_TYPE ctlName, plMaxNode *node, plCompoundController *tmc,
                                               float start, float end)
 {
     if (control)
@@ -1240,7 +1240,7 @@ int32_t hsControlConverter::ICreateHSInterpKey(Control* control, IKey* mKey, Tim
 
     Class_ID cID = control->ClassID();
     SClass_ID sID = control->SuperClassID();
-    char* nodeName = node ? node->GetName() : nullptr;
+    GETNODENAME_RETURN_TYPE nodeName = node ? node->GetName() : nullptr;
 
     // BEZ
     if (cID == Class_ID(HYBRIDINTERP_POSITION_CLASS_ID,0) ||
@@ -1418,7 +1418,7 @@ uint8_t hsControlConverter::GetKeyType(Control* control, bool rotQuat)
 //
 //
 //
-int32_t hsControlConverter::IGetRangeCoverKeyIndices(char* nodeName, Control* cont, int32_t &start, int32_t &end)
+int32_t hsControlConverter::IGetRangeCoverKeyIndices(RCKEYNAME_VALUE_TYPE nodeName, Control* cont, int32_t &start, int32_t &end)
 {
     hsGuardBegin("hsControlConverter::IGetRangeCoverKeyIndices");
 
@@ -1519,7 +1519,7 @@ bool hsControlConverter::ForceOrigin(plMaxNode* node)
 {
     hsGuardBegin("hsControlConverter::ForceOrigin");
 
-    char* nn = node->GetName();
+    GETNODENAME_RETURN_TYPE nn = node->GetName();
 
     if (node->IsRootNode())
     {
@@ -1931,7 +1931,7 @@ bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &t
 {
     hsGuardBegin( "hsControlConverter::GetGeomKeyTimes" );
 
-    char *dgbNodeName = node->GetName();
+    GETOBJNAME_RETURN_TYPE dgbNodeName = node->GetName();
     Object *obj = node->GetObjectRef();
     if( !obj )
         return false;
@@ -1956,7 +1956,7 @@ bool    hsControlConverter::IGetGeomKeyTimes( plMaxNode *node, Tab<TimeValue> &t
     for( i = 0; i < derObj->NumModifiers(); i++ )
     {
         Modifier *mod = derObj->GetModifier(i);
-        char *dbgModName = mod->GetName();
+        GETOBJNAME_RETURN_TYPE dbgModName = mod->GetName();
         if( mod )
         {
             ChannelMask mask = mod->ChannelsChanged();

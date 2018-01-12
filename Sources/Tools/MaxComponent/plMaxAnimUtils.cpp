@@ -357,7 +357,7 @@ SegmentMap * GetAnimSegmentMap(Animatable *anim, plErrorMsg *pErrMsg)
 
         for (int j = 0; j < numKeys; j++)
         {
-            char *note = track->keys[j]->note;
+            NOTE_TYPE note = track->keys[j]->note;
             float time = TimeValueToGameTime(track->keys[j]->time);
             GetSegment(note, time, segMap, pErrMsg);
         }

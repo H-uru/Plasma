@@ -112,11 +112,11 @@ IOResult plMaxFileDataControl::Load(ILoad *iload)
         {
             uint8_t version = 0;
             res = iload->Read(&version, sizeof(uint8_t), &nb);
-            res = iload->Read(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+            res = iload->READ_VOID_BUFFER(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
             int branchLen = 0;
             iload->Read(&branchLen, sizeof(int), &nb);
-            iload->Read(&fBranch, branchLen, &nb);
+            iload->READ_VOID_BUFFER(&fBranch, branchLen, &nb);
         }
 
         iload->CloseChunk();
@@ -133,11 +133,11 @@ IOResult plMaxFileDataControl::Save(ISave *isave)
     isave->BeginChunk(MAXFILE_DATA_CHUNK);
 
     isave->Write(&kVersion, sizeof(kVersion), &nb);
-    isave->Write(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
+    isave->WRITE_VOID_BUFFER(&fCodeBuildTime, sizeof(SYSTEMTIME), &nb);
 
     int branchLen = strlen(fBranch)+1;
     isave->Write(&branchLen, sizeof(int), &nb);
-    isave->Write(&fBranch, branchLen, &nb);
+    isave->WRITE_VOID_BUFFER(&fBranch, branchLen, &nb);
 
     isave->EndChunk();
     return IO_OK;
