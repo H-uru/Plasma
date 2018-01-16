@@ -33,7 +33,7 @@ if(APPLE)
 endif(APPLE)
 
 add_library(pfPasswordStore STATIC ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
-target_link_libraries(pfPasswordStore CoreLib plFile)
+target_link_libraries(pfPasswordStore CoreLib plFile pnNetBase)
 
 if(APPLE)
     find_library(SECURITY_LIBRARY Security)
