@@ -52,14 +52,14 @@ pfPasswordStore* pfPasswordStore::Instance()
     static pfPasswordStore* store = nullptr;
 
     if (store == nullptr) {
-#ifdef HS_BUILD_FOR_WIN32
+#if defined(HS_BUILD_FOR_WIN32)
         store = new pfWin32PasswordStore();
-#else
-#ifdef HS_BUILD_FOR_OSX
+#elif defined(HS_BUILD_FOR_OSX)
         store = new pfMacPasswordStore();
+#elif defined(HAVE_LIBSECRET)
+        store = new pfUnixPasswordStore();
 #else
         store = new pfFilePasswordStore();
-#endif
 #endif
     }
 

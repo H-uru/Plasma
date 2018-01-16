@@ -18,11 +18,13 @@ if(WIN32 AND NOT CYGWIN)
     )
 endif(WIN32 AND NOT CYGWIN)
 
-if(UNIX)
+if(HAVE_LIBSECRET)
+    add_definitions(-DHAVE_LIBSECRET)
     set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
         pfPasswordStore_Unix.cpp
     )
-endif(UNIX)
+    include_directories(${LIBSECRET_INCLUDE_DIRS})
+endif(HAVE_LIBSECRET)
 
 if(APPLE)
     set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
@@ -31,12 +33,16 @@ if(APPLE)
 endif(APPLE)
 
 add_library(pfPasswordStore STATIC ${pfPasswordStore_HEADERS} ${pfPasswordStore_SOURCES})
-target_link_libraries(pfPasswordStore CoreLib plFile)
+target_link_libraries(pfPasswordStore CoreLib plFile pnNetBase)
 
 if(APPLE)
     find_library(SECURITY_LIBRARY Security)
     target_link_libraries(pfPasswordStore ${SECURITY_LIBRARY})
 endif(APPLE)
+
+if(HAVE_LIBSECRET)
+    target_link_libraries(pfPasswordStore ${LIBSECRET_LIBRARIES})
+endif(HAVE_LIBSECRET)
 
 source_group("Header Files" FILES ${pfPasswordStore_HEADERS})
 source_group("Source Files" FILES ${pfPasswordStore_SOURCES})

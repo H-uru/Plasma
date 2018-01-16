@@ -75,10 +75,19 @@ public:
 };
 #endif //HS_BUILD_FOR_WIN32
 
-
+#ifdef HAVE_LIBSECRET
 /**
-* @todo A Linux libsecret-based storage mechanism.
-*/
+ * A libsecret-based password storage mechanism.
+ */
+class pfUnixPasswordStore : public pfPasswordStore
+{
+public:
+    pfUnixPasswordStore() { }
+
+    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
+    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
+};
+#endif // HAVE_LIBSECRET
 
 #ifdef HS_BUILD_FOR_OSX
 /**
