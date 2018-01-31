@@ -74,7 +74,7 @@ typedef std::unique_ptr<void, std::function<BOOL(HANDLE)>> handleptr_t;
 /** Create a global patcher mutex that is backwards compatible with eap's */
 static handleptr_t CreatePatcherMutex()
 {
-    return handleptr_t(CreateMutexW(nullptr, TRUE, plManifest::PatcherExecutable().AsString().to_wchar()),
+    return handleptr_t(CreateMutexW(nullptr, TRUE, plManifest::PatcherExecutable().WideString().data()),
                        CloseHandle);
 }
 
@@ -159,7 +159,7 @@ static void ShowPatcherDialog(HINSTANCE hInstance)
 {
     s_dialog = ::CreateDialogW(hInstance, MAKEINTRESOURCEW(IDD_DIALOG), nullptr, PatcherDialogProc);
     SetDlgItemTextW(s_dialog, IDC_TEXT, L"Connecting...");
-    SetDlgItemTextW(s_dialog, IDC_PRODUCTSTRING, plProduct::ProductString().to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_PRODUCTSTRING, plProduct::ProductString().to_wchar().data());
     SetDlgItemTextW(s_dialog, IDC_DLSIZE, L"");
     SetDlgItemTextW(s_dialog, IDC_DLSPEED, L"");
     IShowMarquee();
@@ -187,7 +187,7 @@ static void PumpMessages()
 static void IOnDownloadBegin(const plFileName& file)
 {
     ST::string msg = ST::format("Downloading... {}", file);
-    SetDlgItemTextW(s_dialog, IDC_TEXT, msg.to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_TEXT, msg.to_wchar().data());
 }
 
 static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::string& status)
@@ -198,10 +198,10 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::st
     // DL size
     ST::string size = ST::format("{} / {}", plFileSystem::ConvertFileSize(curBytes),
                                  plFileSystem::ConvertFileSize(totalBytes));
-    SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_DLSIZE, size.to_wchar().data());
 
     // DL speed
-    SetDlgItemTextW(s_dialog, IDC_DLSPEED, status.to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_DLSPEED, status.to_wchar().data());
     HWND progress = GetDlgItem(s_dialog, IDC_PROGRESS);
 
     // hey look... ULONGLONG. that's exactly what we need >.<
@@ -223,7 +223,7 @@ static void IOnProgressTick(uint64_t curBytes, uint64_t totalBytes, const ST::st
 
 static void ISetDownloadStatus(const ST::string& status)
 {
-    SetDlgItemTextW(s_dialog, IDC_TEXT, status.to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_TEXT, status.to_wchar().data());
 
     // consider this a reset of the download status...
     IShowMarquee();
@@ -245,13 +245,13 @@ static handleptr_t ICreateProcess(const plFileName& exe, const ST::string& args)
 
     // Create wchar things and stuff :/
     ST::string cmd = ST::format("{} {}", exe, args);
-    ST::wchar_buffer file = exe.AsString().to_wchar();
+    ST::wchar_buffer file = exe.WideString();
     ST::wchar_buffer params = cmd.to_wchar();
 
     // Guess what? CreateProcess isn't smart enough to throw up an elevation dialog... We need ShellExecute for that.
     // But guess what? ShellExecute won't run ".exe.tmp" files. GAAAAAAAAHHHHHHHHH!!!!!!!
     BOOL result = CreateProcessW(
-        file,
+        file.data(),
         const_cast<wchar_t*>(params.data()),
         nullptr,
         nullptr,
@@ -273,7 +273,8 @@ static handleptr_t ICreateProcess(const plFileName& exe, const ST::string& args)
         info.cbSize = sizeof(info);
         info.lpFile = file.data();
         info.fMask = SEE_MASK_NOCLOSEPROCESS | SEE_MASK_NOASYNC;
-        info.lpParameters = args.to_wchar();
+        ST::wchar_buffer argsW = args.to_wchar();
+        info.lpParameters = argsW.data();
         ShellExecuteExW(&info);
 
         return handleptr_t(info.hProcess, CloseHandle);
@@ -357,7 +358,7 @@ static void IOnNetError(ENetError result, const ST::string& msg)
 
 static void ISetShardStatus(const ST::string& status)
 {
-    SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.to_wchar());
+    SetDlgItemTextW(s_dialog, IDC_STATUS_TEXT, status.to_wchar().data());
 }
 
 static pfPatcher* IPatcherFactory()
@@ -396,7 +397,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     // Ensure there is only ever one patcher running...
     if (IsPatcherRunning()) {
         ST::string text = ST::format("{} is already running", plProduct::LongName());
-        IShowErrorDialog(text.to_wchar());
+        IShowErrorDialog(text.to_wchar().data());
         return PLASMA_OK;
     }
     HANDLE _onePatcherMut = CreatePatcherMutex().release();
@@ -412,7 +413,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     // So there appears to be some sort of issue with calling MessageBox once we've set up our dialog...
     // WTF?!?! So, to hack around that, we'll wait until everything shuts down to display any error.
     if (!s_error.is_empty())
-        IShowErrorDialog(s_error.to_wchar());
+        IShowErrorDialog(s_error.to_wchar().data());
 
     // Alrighty now we just need to clean up behind ourselves!
     // NOTE: We shut down the netcore in the WM_QUIT handler so

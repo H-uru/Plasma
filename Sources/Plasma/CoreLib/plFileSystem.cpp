@@ -156,13 +156,13 @@ plFileName plFileName::AbsolutePath() const
     plFileName path = Normalize();
 
 #if HS_BUILD_FOR_WIN32
-    ST::wchar_buffer wideName = path.fName.to_wchar();
+    ST::wchar_buffer wideName = path.WideString();
     wchar_t path_sm[MAX_PATH];
-    uint32_t path_length = GetFullPathNameW(wideName, MAX_PATH, path_sm, nullptr);
+    uint32_t path_length = GetFullPathNameW(wideName.data(), MAX_PATH, path_sm, nullptr);
     if (path_length >= MAX_PATH) {
         // Buffer not big enough
         wchar_t *path_lg = new wchar_t[path_length];
-        GetFullPathNameW(wideName, path_length, path_lg, nullptr);
+        GetFullPathNameW(wideName.data(), path_length, path_lg, nullptr);
         path = ST::string::from_wchar(path_lg);
         delete [] path_lg;
     } else {
@@ -208,7 +208,7 @@ plFileInfo::plFileInfo(const plFileName &filename)
 
 #if HS_BUILD_FOR_WIN32
     struct __stat64 info;
-    if (_wstat64(filename.AsString().to_wchar(), &info) != 0)
+    if (_wstat64(filename.WideString().data(), &info) != 0)
         return;
 #else
     struct stat info;
@@ -257,7 +257,7 @@ plFileName plFileSystem::GetCWD()
 bool plFileSystem::SetCWD(const plFileName &cwd)
 {
 #if HS_BUILD_FOR_WIN32
-    return SetCurrentDirectoryW(cwd.AsString().to_wchar());
+    return SetCurrentDirectoryW(cwd.WideString().data());
 #else
     return (chdir(cwd.AsString().c_str()) == 0);
 #endif
@@ -277,7 +277,7 @@ FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
     }
     wmode[mlen] = 0;
 
-    return _wfopen(filename.AsString().to_wchar(), wmode);
+    return _wfopen(filename.WideString().data(), wmode);
 #else
     return fopen(filename.AsString().c_str(), mode);
 #endif
@@ -286,9 +286,9 @@ FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 bool plFileSystem::Unlink(const plFileName &filename)
 {
 #if HS_BUILD_FOR_WIN32
-    ST::wchar_buffer wfilename = filename.AsString().to_wchar();
-    _wchmod(wfilename, S_IWRITE);
-    return _wunlink(wfilename) == 0;
+    ST::wchar_buffer wfilename = filename.WideString();
+    _wchmod(wfilename.data(), S_IWRITE);
+    return _wunlink(wfilename.data()) == 0;
 #else
     chmod(filename.AsString().c_str(), S_IWRITE);
     return unlink(filename.AsString().c_str()) == 0;
@@ -298,7 +298,7 @@ bool plFileSystem::Unlink(const plFileName &filename)
 bool plFileSystem::Move(const plFileName &from, const plFileName &to)
 {
 #if HS_BUILD_FOR_WIN32
-    return MoveFileExW(from.AsString().to_wchar(), to.AsString().to_wchar(),
+    return MoveFileExW(from.WideString().data(), to.WideString().data(),
                        MOVEFILE_REPLACE_EXISTING);
 #else
     if (!Copy(from, to))
@@ -310,7 +310,7 @@ bool plFileSystem::Move(const plFileName &from, const plFileName &to)
 bool plFileSystem::Copy(const plFileName &from, const plFileName &to)
 {
 #if HS_BUILD_FOR_WIN32
-    return CopyFileW(from.AsString().to_wchar(), to.AsString().to_wchar(), FALSE);
+    return CopyFileW(from.WideString().data(), to.WideString().data(), FALSE);
 #else
     typedef std::unique_ptr<FILE, std::function<int (FILE *)>> _FileRef;
 
@@ -350,7 +350,7 @@ bool plFileSystem::CreateDir(const plFileName &dir, bool checkParents)
         return true;
 
 #if HS_BUILD_FOR_WIN32
-    return CreateDirectoryW(fdir.AsString().to_wchar(), nullptr);
+    return CreateDirectoryW(fdir.WideString().data(), nullptr);
 #else
     return (mkdir(fdir.AsString().c_str(), 0755) == 0);
 #endif
@@ -366,7 +366,7 @@ std::vector<plFileName> plFileSystem::ListDir(const plFileName &path, const char
     plFileName searchPattern = plFileName::Join(path, pattern);
 
     WIN32_FIND_DATAW findData;
-    HANDLE hFind = FindFirstFileW(searchPattern.AsString().to_wchar(), &findData);
+    HANDLE hFind = FindFirstFileW(searchPattern.WideString().data(), &findData);
     if (hFind == INVALID_HANDLE_VALUE)
         return contents;
 
@@ -413,7 +413,7 @@ std::vector<plFileName> plFileSystem::ListSubdirs(const plFileName &path)
     plFileName searchPattern = plFileName::Join(path, "*");
 
     WIN32_FIND_DATAW findData;
-    HANDLE hFind = FindFirstFileW(searchPattern.AsString().to_wchar(), &findData);
+    HANDLE hFind = FindFirstFileW(searchPattern.WideString().data(), &findData);
     if (hFind == INVALID_HANDLE_VALUE)
         return contents;
 

@@ -64,7 +64,7 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
     // Get the saved path
     wchar_t buffer[MAX_PATH];
     uint32_t len = GetPrivateProfileStringW(L"SceneViewer", L"Directory", L"", buffer, MAX_PATH,
-                                            plugDir.AsString().to_wchar());
+                                            plugDir.WideString().data());
     plFileName plasmaPath = ST::string::from_wchar(buffer);
 
     // If we didn't find a path, or we want a new one, ask the user for one
@@ -73,8 +73,8 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
         // If the user selects one, save it
         plasmaPath = plBrowseFolder::GetFolder(plasmaPath, "Specify your client folder");
         if (plasmaPath.IsValid())
-            WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.AsString().to_wchar(),
-                                       plugDir.AsString().to_wchar());
+            WritePrivateProfileStringW(L"SceneViewer", L"Directory", plasmaPath.WideString().data(),
+                                       plugDir.WideString().data());
     }
 
     // Return the path if we got one
@@ -84,8 +84,8 @@ plFileName plMaxConfig::GetClientPath(bool getNew, bool quiet)
 void plMaxConfig::SetClientPath(const plFileName &path)
 {
     plFileName plugDir = GetPluginIni();
-    WritePrivateProfileStringW(L"SceneViewer", L"Directory", path.AsString().to_wchar(),
-                               plugDir.AsString().to_wchar());
+    WritePrivateProfileStringW(L"SceneViewer", L"Directory", path.WideString().data(),
+                               plugDir.WideString().data());
 }
 
 bool plMaxConfig::AssetManInterfaceDisabled()
@@ -100,7 +100,7 @@ bool plMaxConfig::AssetManInterfaceDisabled()
 
         plFileName plugDir = GetPluginIni();
         uint32_t len = GetPrivateProfileStringW(L"AssetMan", L"Disable", L"", configstr, MAX_PATH,
-                                                plugDir.AsString().to_wchar());
+                                                plugDir.WideString().data());
 
         if (wcscmp(configstr, L"1") == 0 || wcsicmp(configstr, L"true") == 0)
             disabled = true;

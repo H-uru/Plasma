@@ -1503,7 +1503,7 @@ void plClient::InitDLLs()
     std::vector<plFileName> dlls = plFileSystem::ListDir("ModDLL", "*.dll");
     for (auto iter = dlls.begin(); iter != dlls.end(); ++iter)
     {
-        HMODULE hMod = LoadLibraryW(iter->AsString().to_wchar());
+        HMODULE hMod = LoadLibraryW(iter->WideString().data());
         if (hMod)
         {
             PInitGlobalsFunc initGlobals = (PInitGlobalsFunc)GetProcAddress(hMod, "InitGlobals");

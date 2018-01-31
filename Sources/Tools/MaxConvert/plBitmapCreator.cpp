@@ -557,7 +557,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
     if( texture )
     {
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesExW(bd->fileName.AsString().to_wchar(), GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.WideString().data(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
 
         // If this texture has been modified since the last export, delete the old version but reuse the key
@@ -643,7 +643,7 @@ plBitmap *plBitmapCreator::ICreateTexture( plBitmapData *bd, const plLocation &l
 
         // Texture reuse optimization
         WIN32_FILE_ATTRIBUTE_DATA fileAttrib;
-        GetFileAttributesExW(bd->fileName.AsString().to_wchar(), GetFileExInfoStandard, &fileAttrib);
+        GetFileAttributesExW(bd->fileName.WideString().data(), GetFileExInfoStandard, &fileAttrib);
         FILETIME &fileTime = fileAttrib.ftLastWriteTime;
         texture->SetModifiedTime(fileTime.dwLowDateTime, fileTime.dwHighDateTime);
 
