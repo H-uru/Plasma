@@ -588,7 +588,7 @@ template <typename T>
 void PrintTupleTo(const T& t, ::std::ostream* os);
 #endif  // GTEST_HAS_TR1_TUPLE || GTEST_HAS_STD_TUPLE_
 
-#if GTEST_HAS_TR1_TUPLE
+#if GTEST_HAS_TR1_TUPLE && (!defined(_MSC_VER) || _MSC_VER < 1900)
 // Overload for ::std::tr1::tuple.  Needed for printing function arguments,
 // which are packed as tuples.
 
@@ -868,7 +868,7 @@ typedef ::std::vector<string> Strings;
 template <typename TupleT>
 struct TuplePolicy;
 
-#if GTEST_HAS_TR1_TUPLE
+#if GTEST_HAS_TR1_TUPLE && (!defined(_MSC_VER) || _MSC_VER < 1900)
 template <typename TupleT>
 struct TuplePolicy {
   typedef TupleT Tuple;
