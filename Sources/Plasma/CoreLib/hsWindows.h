@@ -81,6 +81,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   ifdef USE_VLD
 #       include <vld.h>
 #   endif // USE_VLD
+
+    const RTL_OSVERSIONINFOW& hsGetWindowsVersion();
 #endif // HS_BUILD_FOR_WIN32
 
 #endif // _hsWindows_inc_

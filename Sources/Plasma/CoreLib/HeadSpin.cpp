@@ -631,3 +631,30 @@ std::vector<ST::string> DisplaySystemVersion()
     return std::vector<ST::string>();
 #endif
 }
+
+#ifdef HS_BUILD_FOR_WIN32
+static RTL_OSVERSIONINFOW s_WinVer;
+
+const RTL_OSVERSIONINFOW& hsGetWindowsVersion()
+{
+    static bool done = false;
+    if (!done) {
+        memset(&s_WinVer, 0, sizeof(RTL_OSVERSIONINFOW));
+        HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
+        hsAssert(ntdll, "Failed to LoadLibrary on ntdll???");
+
+        if (ntdll) {
+            s_WinVer.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
+            typedef LONG(WINAPI* RtlGetVersionPtr)(RTL_OSVERSIONINFOW*);
+            RtlGetVersionPtr getVersion = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
+            hsAssert(getVersion, "Could not find RtlGetVersion in ntdll");
+            if (getVersion) {
+                getVersion(&s_WinVer);
+                done = true;
+            }
+        }
+        FreeLibrary(ntdll);
+    }
+    return s_WinVer;
+}
+#endif
