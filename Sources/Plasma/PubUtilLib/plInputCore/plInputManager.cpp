@@ -263,6 +263,22 @@ plKeyDef plInputManager::UntranslateKey(plKeyDef key, bool extended)
 }
 
 #if HS_BUILD_FOR_WIN32
+/** Determines if we need to hackily flush cursor updates
+ *  \remarks Normally, we would just call SetCursorPos directly. However, in Windows 10's
+ *           2017 Fall Creator's Update, SetCursorPos, GetCursorPos, and WM_MOUSEMOVE are buggy.
+ *           Research done by Deledrius matches my independent observations and failed fixes:
+ *           https://discourse.libsdl.org/t/win10-fall-creators-update-breaks-mouse-warping/23526
+ *           Many thanks to these fine folks who work on libsdl!
+ */
+static bool INeedsWin10CursorHack()
+{
+    // According to Chromium, Microsoft will be fixing the cursor bug in the next build
+    // of Windows 10, so we only need to test for the dreaded 2017 FCU...
+    // Reference: https://bugs.chromium.org/p/chromium/issues/detail?id=781182#c15
+    const RTL_OSVERSIONINFOW& version = hsGetWindowsVersion();
+    return version.dwMajorVersion == 10 && version.dwBuildNumber == 16299;
+}
+
 void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM Lparam, hsWindowHndl hWnd)
 {
     if( !fhWnd )
@@ -398,6 +414,12 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             {       
                 pt.x = (rect.right - rect.left) / 2;
                 pt.y = HIWORD(Lparam);
+                if (INeedsWin10CursorHack()) {
+                    pXMsg->fWx = pt.x;
+                    pXMsg->fX = pt.x / (float)rect.right;
+                    for (int i = 0; i < fInputDevices.Count(); i++)
+                        fInputDevices[i]->MsgReceive(pXMsg);
+                }
                 ClientToScreen(hWnd, &pt);
                 SetCursorPos( pt.x, pt.y );
             }
@@ -406,6 +428,12 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             {       
                 pt.y = (rect.bottom - rect.top) / 2;
                 pt.x = LOWORD(Lparam);
+                if (INeedsWin10CursorHack()) {
+                    pYMsg->fWy = pt.y;
+                    pYMsg->fY = pYMsg->fWy / (float)rect.bottom;
+                    for (int i = 0; i < fInputDevices.Count(); i++)
+                        fInputDevices[i]->MsgReceive(pYMsg);
+                }
                 ClientToScreen(hWnd, &pt);
                 SetCursorPos( pt.x, pt.y );
             }
@@ -413,14 +441,23 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             {
                 pt.y = (rect.bottom - rect.top) / 2;
                 pt.x = (rect.right - rect.left) / 2;
+                if (INeedsWin10CursorHack()) {
+                    pXMsg->fWx = pt.x;
+                    pXMsg->fX = pXMsg->fWx / (float)rect.right;
+                    pYMsg->fWy = pt.y;
+                    pYMsg->fY = pYMsg->fWy / (float)rect.bottom;
+
+                    for (int i = 0; i < fInputDevices.Count(); i++) {
+                        fInputDevices[i]->MsgReceive(pXMsg);
+                        fInputDevices[i]->MsgReceive(pYMsg);
+                    }
+                }
                 ClientToScreen(hWnd, &pt);
                 SetCursorPos( pt.x, pt.y );
             }
             delete(pXMsg);
             delete(pYMsg);
             delete(pBMsg);
-
-            
 
         }
         break;
