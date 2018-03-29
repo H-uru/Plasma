@@ -275,7 +275,7 @@ static bool INeedsWin10CursorHack()
     // According to Chromium, Microsoft will be fixing the cursor bug in the next build
     // of Windows 10, so we only need to test for the dreaded 2017 FCU...
     // Reference: https://bugs.chromium.org/p/chromium/issues/detail?id=781182#c15
-    const RTL_OSVERSIONINFOW& version = hsGetWindowsVersion();
+    const RTL_OSVERSIONINFOEXW& version = hsGetWindowsVersion();
     return version.dwMajorVersion == 10 && version.dwBuildNumber == 16299;
 }
 
