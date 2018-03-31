@@ -203,7 +203,8 @@ plClientLauncher::plClientLauncher() :
     fPatcherFactory(nullptr),
     fClientExecutable(plManifest::ClientExecutable()),
     fStatusThread(new plShardStatus()),
-    fInstallerThread(new plRedistUpdater())
+    fInstallerThread(new plRedistUpdater()),
+    fNetCoreState(kNetCoreInactive)
 {
     pfPatcher::GetLog()->AddLine(plProduct::ProductString().c_str());
 }
@@ -380,26 +381,33 @@ void plClientLauncher::InitializeNetCore()
 
     NetCliGateKeeperStartConnect(addrs, num);
     NetCliGateKeeperFileSrvIpAddressRequest(IGotFileServIPs, this, true);
+
+    // Windows is getting a little unreliable about reporting its own state, so we keep
+    // track of whether or not we are active now.
+    fNetCoreState = kNetCoreActive;
 }
 
 // ===================================================
 
-void plClientLauncher::PumpNetCore() const
+bool plClientLauncher::PumpNetCore() const
 {
     // this ain't net core, but it needs to be pumped :(
     hsTimer::IncSysSeconds();
 
-    // pump eap
-    NetClientUpdate();
+    if (fNetCoreState == kNetCoreActive) {
+        // pump eap
+        NetClientUpdate();
 
-    // pump shard status
-    fStatusThread->Update();
+        // pump shard status
+        fStatusThread->Update();
+    }
 
     // don't nom all the CPU... kthx
     std::this_thread::sleep_for(kNetCoreUpdateSleepTime);
+    return fNetCoreState != kNetCoreShutdown;
 }
 
-void plClientLauncher::ShutdownNetCore() const
+void plClientLauncher::ShutdownNetCore()
 {
     // shutdown shard status
     fStatusThread->Shutdown();
@@ -415,6 +423,9 @@ void plClientLauncher::ShutdownNetCore() const
 
     // shutdown eap (part deux)
     AsyncCoreDestroy(kAsyncCoreShutdownTime);
+
+    // Denote shutdown
+    fNetCoreState = kNetCoreShutdown;
 }
 
 // ===================================================
