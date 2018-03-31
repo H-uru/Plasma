@@ -88,7 +88,7 @@ struct CliAuConn : hsRefCnt {
     
     void Send (const uintptr_t fields[], unsigned count);
 
-    CCritSect       critsect;
+    std::recursive_mutex  critsect;
     LINK(CliAuConn) link;
     AsyncSocket     sock;
     NetCli *        cli;
@@ -1235,7 +1235,7 @@ enum {
 };
 
 static bool                         s_running;
-static CCritSect                    s_critsect;
+static std::recursive_mutex         s_critsect;
 static LISTDECL(CliAuConn, link)    s_conns;
 static CliAuConn *                  s_active;
 static ST::string                   s_accountName;
@@ -1309,13 +1309,8 @@ static CliAuConn * GetConnIncRef_CS (const char tag[]) {
 
 //============================================================================
 static CliAuConn * GetConnIncRef (const char tag[]) {
-    CliAuConn * conn;
-    s_critsect.Enter();
-    {
-        conn = GetConnIncRef_CS(tag);
-    }
-    s_critsect.Leave();
-    return conn;
+    hsLockGuard(s_critsect);
+    return GetConnIncRef_CS(tag);
 }
 
 //============================================================================
@@ -1414,15 +1409,14 @@ static void CheckedReconnect (CliAuConn * conn, ENetError error) {
 //============================================================================
 static void NotifyConnSocketConnectFailed (CliAuConn * conn) {
 
-    s_critsect.Enter();
     {
+        hsLockGuard(s_critsect);
         conn->cancelId = 0;
         s_conns.Unlink(conn);
 
         if (conn == s_active)
             s_active = nil;
     }
-    s_critsect.Leave();
     
     CheckedReconnect(conn, kNetErrConnectFailed);
     
@@ -1434,15 +1428,14 @@ static void NotifyConnSocketDisconnect (CliAuConn * conn) {
 
     conn->StopAutoPing();
 
-    s_critsect.Enter();
     {
+        hsLockGuard(s_critsect);
         conn->cancelId = 0;
         s_conns.Unlink(conn);
             
         if (conn == s_active)
             s_active = nil;
     }
-    s_critsect.Leave();
 
 
     CheckedReconnect(conn, kNetErrDisconnected);
@@ -1474,13 +1467,12 @@ static bool SocketNotifyCallback (
             conn = (CliAuConn *) notify->param;
             *userState = conn;
             bool abandoned;
-            s_critsect.Enter();
             {
+                hsLockGuard(s_critsect);
                 conn->sock      = sock;
                 conn->cancelId  = 0;
                 abandoned       = conn->abandoned;
             }
-            s_critsect.Leave();
             if (abandoned)
                 AsyncSocketDisconnect(sock, true);
             else
@@ -1514,8 +1506,8 @@ static void Connect (
 
     conn->pingSendTimeMs = 0;
 
-    s_critsect.Enter();
     {
+        hsLockGuard(s_critsect);
         while (CliAuConn * oldConn = s_conns.Head()) {
             if (oldConn != conn)
                 UnlinkAndAbandonConn_CS(oldConn);
@@ -1524,7 +1516,6 @@ static void Connect (
         }
         s_conns.Link(conn);
     }
-    s_critsect.Leave();
     
     Cli2Auth_Connect connect;
     connect.hdr.connType        = kConnTypeCliToAuth;
@@ -1631,9 +1622,8 @@ void CliAuConn::TimerReconnect () {
     ASSERT(!cancelId);
     
     if (!s_running) {
-        s_critsect.Enter();
+        hsLockGuard(s_critsect);
         UnlinkAndAbandonConn_CS(this);
-        s_critsect.Leave();
     }
     else {
         Ref("Connecting");
@@ -1650,7 +1640,7 @@ void CliAuConn::TimerReconnect () {
 //===========================================================================
 // This function is called when after a disconnect to start a new connection
 void CliAuConn::StartAutoReconnect () {
-    critsect.Enter();
+    hsLockGuard(critsect);
     if (reconnectTimer && !s_perf[kAutoReconnectDisabled]) {
         // Make reconnect attempts at regular intervals. If the last attempt
         // took more than the specified max interval time then reconnect
@@ -1665,7 +1655,6 @@ void CliAuConn::StartAutoReconnect () {
         }
         AsyncTimerUpdate(reconnectTimer, remainingMs);
     }
-    critsect.Leave();
 }
 
 //===========================================================================
@@ -1676,28 +1665,22 @@ void CliAuConn::AutoReconnect () {
         
     ASSERT(!reconnectTimer);
     Ref("ReconnectTimer");
-    critsect.Enter();
-    {
-        AsyncTimerCreate(
-            &reconnectTimer,
-            CliAuConnReconnectTimerProc,
-            0,  // immediate callback
-            this
-        );
-    }
-    critsect.Leave();
+    hsLockGuard(critsect);
+    AsyncTimerCreate(
+        &reconnectTimer,
+        CliAuConnReconnectTimerProc,
+        0,  // immediate callback
+        this
+    );
 }
 
 //============================================================================
 void CliAuConn::StopAutoReconnect () {
-    critsect.Enter();
-    {
-        if (AsyncTimer * timer = reconnectTimer) {
-            reconnectTimer = nil;
-            AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
-        }
+    hsLockGuard(critsect);
+    if (AsyncTimer * timer = reconnectTimer) {
+        reconnectTimer = nil;
+        AsyncTimerDeleteCallback(timer, CliAuConnTimerDestroyed);
     }
-    critsect.Leave();
 }
 
 //============================================================================
@@ -1710,28 +1693,22 @@ bool CliAuConn::AutoReconnectEnabled () {
 void CliAuConn::AutoPing () {
     ASSERT(!pingTimer);
     Ref("PingTimer");
-    critsect.Enter();
-    {
-        AsyncTimerCreate(
-            &pingTimer,
-            CliAuConnPingTimerProc,
-            sock ? 0 : kAsyncTimeInfinite,
-            this
-        );
-    }
-    critsect.Leave();
+    hsLockGuard(critsect);
+    AsyncTimerCreate(
+        &pingTimer,
+        CliAuConnPingTimerProc,
+        sock ? 0 : kAsyncTimeInfinite,
+        this
+    );
 }
 
 //============================================================================
 void CliAuConn::StopAutoPing () {
-    critsect.Enter();
-    {
-        if (pingTimer) {
-            AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
-            pingTimer = nil;
-        }
+    hsLockGuard(critsect);
+    if (pingTimer) {
+        AsyncTimerDeleteCallback(pingTimer, CliAuConnTimerDestroyed);
+        pingTimer = nil;
     }
-    critsect.Leave();
 }
 
 //============================================================================
@@ -1752,12 +1729,9 @@ void CliAuConn::TimerPing () {
 
 //============================================================================
 void CliAuConn::Send (const uintptr_t fields[], unsigned count) {
-    critsect.Enter();
-    {
-        NetCliSend(cli, fields, count);
-        NetCliFlush(cli);
-    }
-    critsect.Leave();
+    hsLockGuard(critsect);
+    NetCliSend(cli, fields, count);
+    NetCliFlush(cli);
 }
 
 
@@ -1808,11 +1782,8 @@ static bool Recv_ClientRegisterReply (
     conn->serverChallenge = reply.serverChallenge;
 
     // Make this the active server
-    s_critsect.Enter();
-    {
-        s_active = conn;
-    }
-    s_critsect.Leave();
+    hsLockGuard(s_critsect);
+    s_active = conn;
 
     return true;
 }
@@ -2218,17 +2189,14 @@ static bool Recv_ServerAddr (
     // the auth (but only if we reconnect in a short period of time!)
     const Auth2Cli_ServerAddr & msg = *(const Auth2Cli_ServerAddr *)in;
     
-    s_critsect.Enter();
-    {
-        if (s_active) {
-            s_active->token = msg.token;
-            s_active->addr.SetHost(msg.srvAddr);
+    hsLockGuard(s_critsect);
+    if (s_active) {
+        s_active->token = msg.token;
+        s_active->addr.SetHost(msg.srvAddr);
 
-            LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
-        }
+        LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
     }
-    s_critsect.Leave();
-    
+
     return true;
 }
 
@@ -5196,13 +5164,12 @@ void AuthDestroy (bool wait) {
         false
     );
 
-    s_critsect.Enter();
     {
+        hsLockGuard(s_critsect);
         while (CliAuConn * conn = s_conns.Head())
             UnlinkAndAbandonConn_CS(conn);
         s_active = nil;
     }
-    s_critsect.Leave();
 
     if (!wait)
         return;
@@ -5215,28 +5182,20 @@ void AuthDestroy (bool wait) {
 
 //============================================================================
 bool AuthQueryConnected () {
-    bool result;
-    s_critsect.Enter();
-    {
-        result = (s_active && s_active->cli);
-    }
-    s_critsect.Leave();
-    return result;
+    hsLockGuard(s_critsect);
+    return (s_active && s_active->cli);
 }
 
 //============================================================================
 unsigned AuthGetConnId () {
-    unsigned connId;
-    s_critsect.Enter();
-    connId = (s_active) ? s_active->seq : 0;
-    s_critsect.Leave();
-    return connId;
+    hsLockGuard(s_critsect);
+    return (s_active) ? s_active->seq : 0;
 }
 
 //============================================================================
 void AuthPingEnable (bool enable) {
     s_perf[kPingDisabled] = !enable;
-    s_critsect.Enter();
+    hsLockGuard(s_critsect);
     for (;;) {
         if (!s_active)
             break;
@@ -5246,7 +5205,6 @@ void AuthPingEnable (bool enable) {
             s_active->StopAutoPing();
         break;
     }
-    s_critsect.Leave();
 }
 
 
@@ -5307,23 +5265,17 @@ void NetCliAuthAutoReconnectEnable (bool enable) {
 //============================================================================
 void NetCliAuthDisconnect () {
 
-    s_critsect.Enter();
-    {
-        while (CliAuConn * conn = s_conns.Head())
-            UnlinkAndAbandonConn_CS(conn);
-        s_active = nil;
-    }
-    s_critsect.Leave();
+    hsLockGuard(s_critsect);
+    while (CliAuConn * conn = s_conns.Head())
+        UnlinkAndAbandonConn_CS(conn);
+    s_active = nil;
 }
 
 //============================================================================
 void NetCliAuthUnexpectedDisconnect () {
-    s_critsect.Enter();
-    {
-        if (s_active && s_active->sock)
-            AsyncSocketDisconnect(s_active->sock, true);
-    }
-    s_critsect.Leave();
+    hsLockGuard(s_critsect);
+    if (s_active && s_active->sock)
+        AsyncSocketDisconnect(s_active->sock, true);
 }
 
 //============================================================================

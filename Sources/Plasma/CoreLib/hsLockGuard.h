@@ -39,56 +39,28 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef hsLockGuard_Defined
+#define hsLockGuard_Defined
 
-#include "HeadSpin.h"
-#pragma hdrstop
+/* Provides the inverse of std::lock_guard */
+template <typename T>
+class hsLockGuardUnlock
+{
+public:
+    hsLockGuardUnlock(T& mutex) : fMutex(mutex) { fMutex.unlock(); }
+    ~hsLockGuardUnlock() { fMutex.lock(); }
 
-#include "hsCritSect.h"
+    hsLockGuardUnlock(const hsLockGuardUnlock<T>&) = delete;
+    hsLockGuardUnlock<T>& operator=(const hsLockGuardUnlock<T>&) = delete;
 
+private:
+    T& fMutex;
+};
 
-/****************************************************************************
-*
-*   Critical section implementation
-*
-***/
+/* Shorthand for creating scope locks, since std::lock_guard is not movable,
+* and template type deduction in constructors is a C++17 feature.
+*/
+#define hsLockGuard(mutex) std::lock_guard<decltype(mutex)> hsUniqueIdentifier(_LockGuard_)(mutex)
+#define hsUnlockGuard(mutex) hsLockGuardUnlock<decltype(mutex)>  hsUniqueIdentifier(_UnlockGuard_)(mutex)
 
-#ifdef HS_BUILD_FOR_WIN32
-//===========================================================================
-CCritSect::CCritSect () {
-    InitializeCriticalSection(&m_handle);
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-    DeleteCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    EnterCriticalSection(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    LeaveCriticalSection(&m_handle);
-}
-#elif HS_BUILD_FOR_UNIX
-//===========================================================================
-CCritSect::CCritSect () {
-    m_handle = (pthread_mutex_t)PTHREAD_MUTEX_INITIALIZER;
-}
-
-//===========================================================================
-CCritSect::~CCritSect () {
-}
-
-//===========================================================================
-void CCritSect::Enter () {
-    pthread_mutex_lock(&m_handle);
-}
-
-//===========================================================================
-void CCritSect::Leave () {
-    pthread_mutex_unlock(&m_handle);
-}
 #endif

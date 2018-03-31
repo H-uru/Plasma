@@ -188,7 +188,7 @@ public:
 
     void AddBuffer(plSoundBuffer* buffer) {
         {
-            std::lock_guard<std::mutex> lock(fCritSect);
+            hsLockGuard(fCritSect);
             fBuffers.Push(buffer);
         }
 

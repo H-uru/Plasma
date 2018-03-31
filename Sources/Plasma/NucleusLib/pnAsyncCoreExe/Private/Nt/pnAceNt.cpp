@@ -147,53 +147,53 @@ static void INtOpDispatch (
         // because nextCompleteSequence would be prematurely incremented. Instead
         // convert the operation to OP_NULL, which will get completed when it reaches
         // the head of the list.
-        ntObj->critsect.Enter();
-        if (ntObj->opList.Prev(op)) {
-            // setting the completion flag must be done inside the critical section
-            // because it will be checked by sibling operations when they have the
-            // critical section.
-            op->pending = 0;
-            ntObj->critsect.Leave();
-            return;
-        }
-
-        // complete processing this event, and, since we're still inside the critical
-        // section, finish all completed operations since we don't have to leave the
-        // critical section to do so. This is a big win because a single operation
-        // that takes a long time to complete can backlog a long list of completed ops.
         bool continueDispatch;
-        for (;;) {
-            // wake up any other threads waiting on this event
-            CNtWaitHandle * signalComplete = op->signalComplete;
-            op->signalComplete = nil;
-
-            // since this operation is at the head of the list we can complete it
-            if (op->asyncId && !++ntObj->nextCompleteSequence)
-                ++ntObj->nextCompleteSequence;
-            Operation * next = ntObj->opList.Next(op);
-            ntObj->opList.Delete(op);
-            op = next;
-
-            // set event *after* operation is complete
-            if (signalComplete) {
-                signalComplete->SignalObject();
-                signalComplete->UnRef();
+        {
+            hsLockGuard(ntObj->critsect);
+            if (ntObj->opList.Prev(op)) {
+                // setting the completion flag must be done inside the critical section
+                // because it will be checked by sibling operations when they have the
+                // critical section.
+                op->pending = 0;
+                return;
             }
 
-            // if we just deleted the last operation then stop dispatching
-            if (!op) {
-                continueDispatch = false;
-                break;
+            // complete processing this event, and, since we're still inside the critical
+            // section, finish all completed operations since we don't have to leave the
+            // critical section to do so. This is a big win because a single operation
+            // that takes a long time to complete can backlog a long list of completed ops.
+            for (;;) {
+                // wake up any other threads waiting on this event
+                CNtWaitHandle * signalComplete = op->signalComplete;
+                op->signalComplete = nil;
+
+                // since this operation is at the head of the list we can complete it
+                if (op->asyncId && !++ntObj->nextCompleteSequence)
+                    ++ntObj->nextCompleteSequence;
+                Operation * next = ntObj->opList.Next(op);
+                ntObj->opList.Delete(op);
+                op = next;
+
+                // set event *after* operation is complete
+                if (signalComplete) {
+                    signalComplete->SignalObject();
+                    signalComplete->UnRef();
+                }
+
+                // if we just deleted the last operation then stop dispatching
+                if (!op) {
+                    continueDispatch = false;
+                    break;
+                }
+
+                // opTypes >= kOpSequence complete when they reach the head of the list
+                continueDispatch = op->opType >= kOpSequence;
+                if (op->pending)
+                    break;
+
+                --ntObj->ioCount;
             }
-
-            // opTypes >= kOpSequence complete when they reach the head of the list
-            continueDispatch = op->opType >= kOpSequence;
-            if (op->pending)
-                break;
-
-            --ntObj->ioCount;
         }
-        ntObj->critsect.Leave();
 
         INtConnCompleteOperation(ntObj);
 

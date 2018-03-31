@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnEncryption/plChallengeHash.h"
 #include "pnUUID/pnUUID.h"
+#include "hsLockGuard.h"
+#include <mutex>
 
 //#define NCCLI_DEBUGGING
 #ifdef NCCLI_DEBUGGING
@@ -71,9 +73,9 @@ struct NetLogMessage_Header
 
 #define HURU_PIPE_NAME "\\\\.\\pipe\\H-Uru_NetLog"
 
-static CRITICAL_SECTION s_pipeCritical;
-static HANDLE           s_netlog = 0;
-static ULARGE_INTEGER   s_timeOffset;
+static std::recursive_mutex s_pipeCritical;
+static HANDLE               s_netlog = 0;
+static ULARGE_INTEGER       s_timeOffset;
 
 static unsigned GetAdjustedTimer()
 {
@@ -193,11 +195,10 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
         header.m_time = GetAdjustedTimer();
         header.m_size = bytes;
 
-        EnterCriticalSection(&s_pipeCritical);
+        hsLockGuard(s_pipeCritical);
         DWORD bytesWritten;
         WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
         WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
-        LeaveCriticalSection(&s_pipeCritical);
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
@@ -932,8 +933,7 @@ static NetCli * ConnCreate (
 #if !defined(PLASMA_EXTERNAL_RELEASE) && defined(HS_BUILD_FOR_WIN32)
     // Network debug pipe
     if (!s_netlog) {
-        InitializeCriticalSection(&s_pipeCritical);
-        WaitNamedPipe(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
+        WaitNamedPipeA(HURU_PIPE_NAME, NMPWAIT_WAIT_FOREVER);
         s_netlog = CreateFileA(
             HURU_PIPE_NAME,
             GENERIC_READ | GENERIC_WRITE,
@@ -1143,11 +1143,10 @@ bool NetCliDispatch (
                 header.m_time = GetAdjustedTimer();
                 header.m_size = bytes;
 
-                EnterCriticalSection(&s_pipeCritical);
+                hsLockGuard(s_pipeCritical);
                 DWORD bytesWritten;
                 WriteFile(s_netlog, &header, sizeof(header), &bytesWritten, NULL);
                 WriteFile(s_netlog, data, bytes, &bytesWritten, NULL);
-                LeaveCriticalSection(&s_pipeCritical);
             }
 #endif // PLASMA_EXTERNAL_RELEASE
 

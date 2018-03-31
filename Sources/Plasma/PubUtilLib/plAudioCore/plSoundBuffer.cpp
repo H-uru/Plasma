@@ -53,6 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 #include "hsTimer.h"
 
+#include <thread>
+#include <chrono>
+
 static plFileName GetFullPath(const plFileName &filename)
 {
     if (filename.StripFileName().IsValid())
@@ -91,7 +94,7 @@ void plSoundPreloader::Run()
     while (fRunning)
     {
         {
-            std::lock_guard<std::mutex> lock(fCritSect);
+            hsLockGuard(fCritSect);
             while (fBuffers.GetCount())
             {
                 templist.Append(fBuffers.Pop());
@@ -133,7 +136,7 @@ void plSoundPreloader::Run()
     // we need to be sure that all buffers are removed from our load list when shutting this thread down or we will hang,
     // since the sound buffer will wait to be destroyed until it is marked as loaded
     {
-        std::lock_guard<std::mutex> lock(fCritSect);
+        hsLockGuard(fCritSect);
         while (fBuffers.GetCount())
         {
             plSoundBuffer* buf = fBuffers.Pop();
@@ -177,7 +180,7 @@ plSoundBuffer::~plSoundBuffer()
     {
         while(!fLoaded)
         {
-            hsSleep::Sleep(10);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
 

@@ -228,7 +228,7 @@ bool plDispatch::IListeningForExactType(uint16_t hClass)
 void plDispatch::IMsgEnqueue(plMsgWrap* msgWrap, bool async)
 {
     {
-        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
+        hsLockGuard(fMsgCurrentMutex);
 
 #ifdef HS_DEBUGGING
         if (msgWrap->fMsg->HasBCastFlag(plMessage::kMsgWatch))
@@ -413,7 +413,7 @@ void plDispatch::IMsgDispatch()
 bool plDispatch::IMsgNetPropagate(plMessage* msg)
 {
     {
-        std::lock_guard<std::mutex> lock(fMsgCurrentMutex);
+        hsLockGuard(fMsgCurrentMutex);
 
         // Make sure cascaded messages all have the same net flags
         plNetClientApp::InheritNetMsgFlags(fMsgCurrent ? fMsgCurrent->fMsg : nil, msg, false);
@@ -504,7 +504,7 @@ void plDispatch::MsgQueue(plMessage* msg)
 {
     if (fQueuedMsgOn)
     {
-        std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
+        hsLockGuard(fQueuedMsgListMutex);
         hsAssert(msg,"Message missing");
         fQueuedMsgList.push_back(msg);
     }
@@ -521,7 +521,7 @@ void plDispatch::MsgQueueProcess()
     {
         plMessage * pMsg = nullptr;
         {
-            std::lock_guard<std::mutex> lock(fQueuedMsgListMutex);
+            hsLockGuard(fQueuedMsgListMutex);
             empty = fQueuedMsgList.empty();
             if (!empty)
             {

@@ -131,7 +131,7 @@ struct NtSock : NtObject {
 };
 
 
-static CNtCritSect                      s_listenCrit;
+static std::recursive_mutex             s_listenCrit;
 static LISTDECL(NtListener, nextPort)   s_listenList;
 static LISTDECL(NtOpConnAttempt, link)  s_connectList;
 static bool                             s_runListenThread;
@@ -141,7 +141,7 @@ static HANDLE                           s_listenEvent;
 
 
 const unsigned kCloseTimeoutMs = 8*1000;
-static CNtCritSect                      s_socketCrit;
+static std::recursive_mutex             s_socketCrit;
 static AsyncTimer *                     s_socketTimer;
 static LISTDECL(NtSock, link)           s_socketList;
 
@@ -165,9 +165,8 @@ NtSock::~NtSock () {
     // To avoid a race condition, the socket must be unlinked from
     // the soft disconnect list prior to closing the handle
     if (link.IsLinked()) {
-        s_socketCrit.Enter();
+        hsLockGuard(s_socketCrit);
         link.Unlink();
-        s_socketCrit.Leave();
     }
 
     if (handle != INVALID_HANDLE_VALUE)
@@ -221,21 +220,23 @@ static void SocketGetAddresses (
 static void SocketStartAsyncRead (NtSock * sock) {
     // enter critical section in case someone attempts to close socket from another thread
     bool readResult;
-    sock->critsect.Enter();
-    if (sock->handle != INVALID_HANDLE_VALUE) {
-        ++sock->ioCount;
-        readResult = ReadFile(
-            sock->handle,
-            sock->buffer + sock->bytesLeft,
-            sizeof(sock->buffer) - sock->bytesLeft,
-            0,
-            &sock->opRead.overlapped
-        );
+    {
+        hsLockGuard(sock->critsect);
+
+        if (sock->handle != INVALID_HANDLE_VALUE) {
+            ++sock->ioCount;
+            readResult = ReadFile(
+                sock->handle,
+                sock->buffer + sock->bytesLeft,
+                sizeof(sock->buffer) - sock->bytesLeft,
+                0,
+                &sock->opRead.overlapped
+            );
+        }
+        else {
+            readResult = true;
+        }
     }
-    else {
-        readResult = true;
-    }
-    sock->critsect.Leave();
 
     DWORD err = GetLastError();
     if (!readResult && (err != ERROR_IO_PENDING))
@@ -711,10 +712,11 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
     fd_set readfds;
     fd_set writefds;
     for (;;) {
-        s_listenCrit.Enter();
-        ListenPrepareListeners(&readfds);
-        ListenPrepareConnectors(&writefds);
-        s_listenCrit.Leave();
+        {
+            hsLockGuard(s_listenCrit);
+            ListenPrepareListeners(&readfds);
+            ListenPrepareConnectors(&writefds);
+        }
         if (!s_runListenThread)
             break;
 
@@ -734,7 +736,7 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         if (!result)
             continue;
 
-        s_listenCrit.Enter();
+        hsLockGuard(s_listenCrit);
 
         // complete listen() operations
         unsigned count = 0;
@@ -762,12 +764,10 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
                 INtConnPostOperation(nil, op, 0);
             }
         }
-
-        s_listenCrit.Leave();
     }
 
     // cleanup all connectors
-    s_listenCrit.Enter();
+    hsLockGuard(s_listenCrit);
     for (NtOpConnAttempt * op; (op = s_connectList.Head()) != nil; s_connectList.Unlink(op)) {
         if (op->hSocket != INVALID_SOCKET) {
             closesocket(op->hSocket);
@@ -775,7 +775,6 @@ static unsigned THREADCALL ListenThreadProc (AsyncThread *) {
         }
         INtConnPostOperation(nil, op, 0);
     }
-    s_listenCrit.Leave();
 
     return 0;
 }
@@ -844,37 +843,38 @@ static unsigned SocketCloseTimerCallback (void *) {
 
     unsigned sleepMs;
     unsigned currTimeMs = TimeGetMs();
-    s_socketCrit.Enter();
-    for (;;) {
-        // If there are no more sockets pending destruction then
-        // wait forever; the timer will be restarted when the
-        // next socket is queued onto the list.
-        NtSock * sock = s_socketList.Head();
-        if (!sock) {
-            sleepMs = kAsyncTimeInfinite;
-            break;
-        }
+    {
+        hsLockGuard(s_socketCrit);
 
-        // Wait until the socket close timer expires
-        if (0 < (signed) (sleepMs = sock->closeTimeMs - currTimeMs))
-            break;
-        
-        // Get the socket (safely)
-        HANDLE handle;
-        sock->critsect.Enter();
-        {
-            handle = sock->handle;
-            sock->handle = INVALID_HANDLE_VALUE;
-        }
-        sock->critsect.Leave();
-        if (handle != INVALID_HANDLE_VALUE)
-            sockets.Push((SOCKET) handle);
+        for (;;) {
+            // If there are no more sockets pending destruction then
+            // wait forever; the timer will be restarted when the
+            // next socket is queued onto the list.
+            NtSock * sock = s_socketList.Head();
+            if (!sock) {
+                sleepMs = kAsyncTimeInfinite;
+                break;
+            }
 
-        // To avoid a race condition, this unlink must occur
-        // after the socket handle has been cleared
-        s_socketList.Unlink(sock);
+            // Wait until the socket close timer expires
+            if (0 < (signed) (sleepMs = sock->closeTimeMs - currTimeMs))
+                break;
+
+            // Get the socket (safely)
+            HANDLE handle;
+            {
+                hsLockGuard(sock->critsect);
+                handle = sock->handle;
+                sock->handle = INVALID_HANDLE_VALUE;
+            }
+            if (handle != INVALID_HANDLE_VALUE)
+                sockets.Push((SOCKET) handle);
+
+            // To avoid a race condition, this unlink must occur
+            // after the socket handle has been cleared
+            s_socketList.Unlink(sock);
+        }
     }
-    s_socketCrit.Leave();
 
     // Abortive close all open sockets; any unsent data is lost
     SOCKET * cur = sockets.Ptr();
@@ -916,10 +916,9 @@ void INtSocketStartCleanup (unsigned exitThreadWaitMs) {
         s_listenEvent = nil;
     }
 
-    s_listenCrit.Enter();
+    hsLockGuard(s_listenCrit);
     ASSERT(!s_connectList.Head());
     ASSERT(!s_listenList.Head());
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1091,17 +1090,19 @@ bool INtSocketOpCompleteQueuedSocketWrite (
     PerfAddCounter(kAsyncPerfSocketBytesWriteQueued, op->write.bytes);
 
     // must enter critical section in case someone attempts to close socket from another thread
-    sock->critsect.Enter();
-    op->opType = kOpSocketWrite;
-    ASSERT(!op->overlapped.hEvent);
-    const bool writeResult = WriteFile(
-        sock->handle, 
-        op->write.buffer, 
-        op->write.bytes, 
-        0, 
-        &op->overlapped
-    );
-    sock->critsect.Leave();
+    bool writeResult;
+    {
+        hsLockGuard(sock->critsect);
+        op->opType = kOpSocketWrite;
+        ASSERT(!op->overlapped.hEvent);
+        writeResult = WriteFile(
+            sock->handle,
+            op->write.buffer,
+            op->write.bytes,
+            0,
+            &op->overlapped
+        );
+    }
 
 //    LogMsg(kLogPerf, L"Nt sock %p wrote %u bytes", sock, op->write.bytes);
     
@@ -1134,27 +1135,28 @@ unsigned NtSocketStartListening (
     const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    s_listenCrit.Enter();
-    StartListenThread();
     plNetAddress addr = listenAddr;
-    for (;;) {
-        // if the port is already open then just increment the reference count
-        if (ListenPortIncrement(addr, notifyProc, 1))
-            break;
+    {
+        hsLockGuard(s_listenCrit);
+        StartListenThread();
+        for (;;) {
+            // if the port is already open then just increment the reference count
+            if (ListenPortIncrement(addr, notifyProc, 1))
+                break;
 
-        SOCKET s;
-        if (INVALID_SOCKET == (s = ListenSocket(&addr)))
-            break;
+            SOCKET s;
+            if (INVALID_SOCKET == (s = ListenSocket(&addr)))
+                break;
 
-        // create a new listener record
-        NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
-        listener->hSocket       = s;
-        listener->addr          = addr;
-        listener->notifyProc    = notifyProc;
-        listener->listenCount   = 1;
-        break;
+            // create a new listener record
+            NtListener * listener   = s_listenList.New(kListTail, nil, __FILE__, __LINE__);
+            listener->hSocket       = s;
+            listener->addr          = addr;
+            listener->notifyProc    = notifyProc;
+            listener->listenCount   = 1;
+            break;
+        }
     }
-    s_listenCrit.Leave();
 
     unsigned port = addr.GetPort();
     if (port)
@@ -1168,9 +1170,8 @@ void NtSocketStopListening (
     const plNetAddress&     listenAddr,
     FAsyncNotifySocketProc  notifyProc
 ) {
-    s_listenCrit.Enter();
+    hsLockGuard(s_listenCrit);
     ListenPortIncrement(listenAddr, notifyProc, -1);
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1216,16 +1217,17 @@ void NtSocketConnect (
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutCurr, 1);
     PerfAddCounter(kAsyncPerfSocketConnAttemptsOutTotal, 1);
 
-    s_listenCrit.Enter();
-    StartListenThread();
+    {
+        hsLockGuard(s_listenCrit);
+        StartListenThread();
 
-    // get cancel id; we can avoid checking for zero by always using an odd number
-    ASSERT(s_nextConnectCancelId & 1);
-    s_nextConnectCancelId += 2;
+        // get cancel id; we can avoid checking for zero by always using an odd number
+        ASSERT(s_nextConnectCancelId & 1);
+        s_nextConnectCancelId += 2;
 
-    *cancelId = op->cancelId = (AsyncCancelId) s_nextConnectCancelId;
-    s_connectList.Link(op, kListTail);
-    s_listenCrit.Leave();
+        *cancelId = op->cancelId = (AsyncCancelId)s_nextConnectCancelId;
+        s_connectList.Link(op, kListTail);
+    }
     SetEvent(s_listenEvent);
 }
 
@@ -1236,7 +1238,7 @@ void NtSocketConnectCancel (
     FAsyncNotifySocketProc notifyProc,
     AsyncCancelId          cancelId        // nil = cancel all with specified notifyProc
 ) {
-    s_listenCrit.Enter();
+    hsLockGuard(s_listenCrit);
     for (NtOpConnAttempt * op = s_connectList.Head(); op; op = s_connectList.Next(op)) {
         if (cancelId && (op->cancelId != cancelId))
             continue;
@@ -1244,7 +1246,6 @@ void NtSocketConnectCancel (
             continue;
         op->canceled = true;
     }
-    s_listenCrit.Leave();
 }
 
 //===========================================================================
@@ -1269,30 +1270,31 @@ void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
 
     // must enter critical section in case someone attempts to close socket from another thread
     HANDLE handle;
-    sock->critsect.Enter();
-    if (hardClose) {
-        // Prepare to close the socket immediately once we leave the critsect
-        handle          = sock->handle;
-        sock->handle    = INVALID_HANDLE_VALUE;
+    {
+        hsLockGuard(sock->critsect);
+        if (hardClose) {
+            // Prepare to close the socket immediately once we leave the critsect
+            handle          = sock->handle;
+            sock->handle    = INVALID_HANDLE_VALUE;
 
-        // Mark the socket closed in such a way that, if it has already been
-        // soft closed, the mark won't invalidate the ordering of s_socketList
-        sock->closeTimeMs |= 1;
+            // Mark the socket closed in such a way that, if it has already been
+            // soft closed, the mark won't invalidate the ordering of s_socketList
+            sock->closeTimeMs |= 1;
+        }
+        else if (!sock->closeTimeMs) {
+            // The socket hasn't been closed previously; perform shutdown,
+            // and mark the socket closed with a time value that indicates
+            // its ordering in s_socketList;
+            handle              = INVALID_HANDLE_VALUE;
+            sock->closeTimeMs   = (TimeGetMs() + kCloseTimeoutMs) | 1;
+            shutdown((SOCKET) sock->handle, SD_SEND);
+        }
+        else {
+            // The socket has already been closed previously
+            handle      = INVALID_HANDLE_VALUE;
+            hardClose   = true;
+        }
     }
-    else if (!sock->closeTimeMs) {
-        // The socket hasn't been closed previously; perform shutdown,
-        // and mark the socket closed with a time value that indicates
-        // its ordering in s_socketList;
-        handle              = INVALID_HANDLE_VALUE;
-        sock->closeTimeMs   = (TimeGetMs() + kCloseTimeoutMs) | 1;
-        shutdown((SOCKET) sock->handle, SD_SEND);
-    }
-    else {
-        // The socket has already been closed previously
-        handle      = INVALID_HANDLE_VALUE;
-        hardClose   = true;
-    }
-    sock->critsect.Leave();
 
     if (handle != INVALID_HANDLE_VALUE) {
         HardCloseSocket((SOCKET) handle);
@@ -1301,12 +1303,11 @@ void NtSocketDisconnect (AsyncSocket conn, bool hardClose) {
         // Add the socket to the close list in sorted order by close time;
         // if this socket is the first on the list then start the timer
         bool startTimer;
-        s_socketCrit.Enter();
         {
+            hsLockGuard(s_socketCrit);
             s_socketList.Link(sock, kListTail);
             startTimer = s_socketList.Head() == sock;
         }
-        s_socketCrit.Leave();
 
         // If this is the first item queued in the socket list then start timer.
         // This operation should be safe to perform outside the critical section
@@ -1331,7 +1332,7 @@ bool NtSocketSend (
 //    LogMsg(kLogPerf, L"Nt sock %p sending %u bytes", sock, bytes);
 
     bool result;
-    sock->critsect.Enter();
+    hsLockGuard(sock->critsect);
     for (;;) {
         // Is the socket closing?
         if (sock->closeTimeMs) {
@@ -1370,7 +1371,6 @@ bool NtSocketSend (
             result = true;
         break;
     }
-    sock->critsect.Leave();
 
     return result;
 }
@@ -1390,7 +1390,7 @@ bool NtSocketWrite (
 //    LogMsg(kLogPerf, L"Nt sock %p writing %u bytes", sock, bytes);
 
     bool result;
-    sock->critsect.Enter();
+    hsLockGuard(sock->critsect);
     for (;;) {
         // Is the socket closing?
         if (sock->closeTimeMs) {
@@ -1428,7 +1428,7 @@ bool NtSocketWrite (
             result = true;
         break;
     }
-    sock->critsect.Leave();
+
     return result;
 }
 
@@ -1440,7 +1440,7 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
     ASSERT(sock->ioType == kNtSocket);
     
     // must enter critical section in case someone attempts to close socket from another thread
-    sock->critsect.Enter();
+    hsLockGuard(sock->critsect);
     if (sock->handle != INVALID_HANDLE_VALUE) {
         BOOL noDelay = !enable;
         const int result = setsockopt(
@@ -1453,7 +1453,6 @@ void NtSocketEnableNagling (AsyncSocket conn, bool enable) {
         if (result)
             LogMsg(kLogError, "setsockopt failed (nagling)");
     }
-    sock->critsect.Leave();
 }
 
 //===========================================================================

@@ -47,6 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <mutex>
 #include <condition_variable>
 #include <thread>
+#include "hsLockGuard.h"
 
 typedef uint32_t hsMilliseconds;
 
@@ -201,13 +202,6 @@ public:
 };
 
 //////////////////////////////////////////////////////////////////////////////
-class hsSleep
-{
-public:
-    static void Sleep(uint32_t millis);
-};
-
-//////////////////////////////////////////////////////////////////////////////
 // Allows multiple readers, locks out readers for writing.
 
 class hsReaderWriterLock
@@ -219,7 +213,7 @@ private:
     void LockForReading()
     {
         // Don't allow us to start reading if there's still an active writer
-        std::lock_guard<std::mutex> lock(fReaderLock);
+        hsLockGuard(fReaderLock);
 
         fReaderCount++;
         if (fReaderCount == 1) {
@@ -291,4 +285,3 @@ public:
 };
 
 #endif
-
