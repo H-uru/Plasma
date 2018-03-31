@@ -258,8 +258,20 @@ bool plClientLauncher::IApproveDownload(const plFileName& file)
 {
     // So, for a repair, what we want to do is quite simple.
     // That is: download everything that is NOT in the root directory.
-    plFileName path = file.StripFileName();
-    return !path.AsString().is_empty();
+    if (hsCheckBits(fFlags, kGameDataOnly)) {
+        plFileName path = file.StripFileName();
+        return !path.AsString().is_empty();
+    }
+
+    // If we have successfully self-patched, don't accept any manifest
+    // entries matching the patcher, in case the patcher appears in the
+    // client manifests...
+    if (hsCheckBits(fFlags, kHaveSelfPatched)) {
+        return file.AsString().compare_i(plManifest::PatcherExecutable().AsString()) != 0;
+    }
+
+    // Passes a sniff test!
+    return true;
 }
 
 void plClientLauncher::LaunchClient() const
@@ -281,12 +293,9 @@ void plClientLauncher::PatchClient()
 
     pfPatcher* patcher = fPatcherFactory();
     patcher->OnCompletion(std::bind(&plClientLauncher::IOnPatchComplete, this, std::placeholders::_1, std::placeholders::_2));
+    patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
     patcher->OnSelfPatch([&](const plFileName& file) { fClientExecutable = file; });
     patcher->OnRedistUpdate([&](const plFileName& file) { fInstallerThread->fRedistQueue.push_back(file); });
-
-    // If this is a repair, we need to approve the downloads...
-    if (hsCheckBits(fFlags, kGameDataOnly))
-        patcher->OnFileDownloadDesired(std::bind(&plClientLauncher::IApproveDownload, this, std::placeholders::_1));
 
     // Let's get 'er done.
     if (hsCheckBits(fFlags, kHaveSelfPatched)) {
