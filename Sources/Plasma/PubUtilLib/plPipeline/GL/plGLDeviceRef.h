@@ -39,46 +39,35 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef _plGLDeviceRef_inc_
+#define _plGLDeviceRef_inc_
 
-#ifndef plPipelineCreatable_inc
-#define plPipelineCreatable_inc
+#include "HeadSpin.h"
+#include "hsGDeviceRef.h"
 
-#include "pnFactory/plCreator.h"
+#include <GL/gl.h>
 
-#include "pl3DPipeline.h"
-REGISTER_NONCREATABLE(pl3DPipeline);
+class plGLDeviceRef : public hsGDeviceRef
+{
+protected:
+    GLint fRef;
 
-#if defined(PLASMA_PIPELINE_DX)
-    #include <d3d9.h>
-    #include "DX/plDXPipeline.h"
-    REGISTER_NONCREATABLE(plDXPipeline);
-#elif defined(PLASMA_PIPELINE_GL)
-    #include "GL/plGLPipeline.h"
-    REGISTER_NONCREATABLE(plGLPipeline);
-#endif
+    plGLDeviceRef*  fNext;
+    plGLDeviceRef** fBack;
 
-#include "plFogEnvironment.h"
+public:
+    void            Unlink();
+    void            Link(plGLDeviceRef **back);
+    plGLDeviceRef*  GetNext() { return fNext; }
+    bool            IsLinked() { return fBack != nullptr; }
 
-REGISTER_CREATABLE( plFogEnvironment );
+    virtual void    Release() = 0;
 
-#include "plRenderTarget.h"
+    plGLDeviceRef();
 
-REGISTER_CREATABLE( plRenderTarget );
+    virtual ~plGLDeviceRef();
+};
 
-#include "plCubicRenderTarget.h"
 
-REGISTER_CREATABLE( plCubicRenderTarget );
+#endif // _plGLDeviceRef_inc_
 
-#include "plCubicRenderTargetModifier.h"
-
-REGISTER_CREATABLE( plCubicRenderTargetModifier );
-
-#include "plTransitionMgr.h"
-
-REGISTER_CREATABLE( plTransitionMgr );
-
-#include "plDynamicEnvMap.h"
-REGISTER_CREATABLE( plDynamicEnvMap );
-REGISTER_CREATABLE( plDynamicCamMap );
-
-#endif // plPipelineCreatable_inc

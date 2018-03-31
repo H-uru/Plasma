@@ -39,46 +39,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+///////////////////////////////////////////////////////////////////////////////
+//                                                                           //
+//  plGLPipeline Class Functions                                             //
+//  plPipeline derivative for OpenGL ES                                      //
+//                                                                           //
+///////////////////////////////////////////////////////////////////////////////
 
-#ifndef plPipelineCreatable_inc
-#define plPipelineCreatable_inc
+#include "HeadSpin.h"
+#include "hsWindows.h"
+#include "plPipeline/hsWinRef.h"
 
-#include "pnFactory/plCreator.h"
+#include "plGLPipeline.h"
+#include "plPipeline/plPipelineCreate.h"
 
-#include "pl3DPipeline.h"
-REGISTER_NONCREATABLE(pl3DPipeline);
-
-#if defined(PLASMA_PIPELINE_DX)
-    #include <d3d9.h>
-    #include "DX/plDXPipeline.h"
-    REGISTER_NONCREATABLE(plDXPipeline);
-#elif defined(PLASMA_PIPELINE_GL)
-    #include "GL/plGLPipeline.h"
-    REGISTER_NONCREATABLE(plGLPipeline);
+#ifdef HS_SIMD_INCLUDE
+#  include HS_SIMD_INCLUDE
 #endif
-
-#include "plFogEnvironment.h"
-
-REGISTER_CREATABLE( plFogEnvironment );
-
-#include "plRenderTarget.h"
-
-REGISTER_CREATABLE( plRenderTarget );
-
-#include "plCubicRenderTarget.h"
-
-REGISTER_CREATABLE( plCubicRenderTarget );
-
-#include "plCubicRenderTargetModifier.h"
-
-REGISTER_CREATABLE( plCubicRenderTargetModifier );
-
-#include "plTransitionMgr.h"
-
-REGISTER_CREATABLE( plTransitionMgr );
-
-#include "plDynamicEnvMap.h"
-REGISTER_CREATABLE( plDynamicEnvMap );
-REGISTER_CREATABLE( plDynamicCamMap );
-
-#endif // plPipelineCreatable_inc

@@ -39,46 +39,53 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include "plPipeline/hsWinRef.h"
 
-#ifndef plPipelineCreatable_inc
-#define plPipelineCreatable_inc
+#include "plGLPipeline.h"
+#include "plGLDeviceRef.h"
 
-#include "pnFactory/plCreator.h"
+#include "plProfile.h"
+#include "plStatusLog/plStatusLog.h"
 
-#include "pl3DPipeline.h"
-REGISTER_NONCREATABLE(pl3DPipeline);
+plProfile_CreateMemCounter("Vertices", "Memory", MemVertex);
+plProfile_CreateMemCounter("Indices", "Memory", MemIndex);
+plProfile_CreateMemCounter("Textures", "Memory", MemTexture);
 
-#if defined(PLASMA_PIPELINE_DX)
-    #include <d3d9.h>
-    #include "DX/plDXPipeline.h"
-    REGISTER_NONCREATABLE(plDXPipeline);
-#elif defined(PLASMA_PIPELINE_GL)
-    #include "GL/plGLPipeline.h"
-    REGISTER_NONCREATABLE(plGLPipeline);
-#endif
 
-#include "plFogEnvironment.h"
+/*****************************************************************************
+ ** Generic plGLDeviceRef Functions                                         **
+ *****************************************************************************/
+plGLDeviceRef::plGLDeviceRef()
+{
+    fNext = nullptr;
+    fBack = nullptr;
+}
 
-REGISTER_CREATABLE( plFogEnvironment );
+plGLDeviceRef::~plGLDeviceRef()
+{
+    if (fNext != nullptr || fBack != nullptr)
+        Unlink();
+}
 
-#include "plRenderTarget.h"
+void plGLDeviceRef::Unlink()
+{
+    hsAssert(fBack, "plGLDeviceRef not in list");
 
-REGISTER_CREATABLE( plRenderTarget );
+    if (fNext)
+        fNext->fBack = fBack;
+    *fBack = fNext;
 
-#include "plCubicRenderTarget.h"
+    fBack = nullptr;
+    fNext = nullptr;
+}
 
-REGISTER_CREATABLE( plCubicRenderTarget );
+void plGLDeviceRef::Link(plGLDeviceRef** back)
+{
+    hsAssert(fNext == nullptr && fBack == nullptr, "Trying to link a plGLDeviceRef that's already linked");
 
-#include "plCubicRenderTargetModifier.h"
-
-REGISTER_CREATABLE( plCubicRenderTargetModifier );
-
-#include "plTransitionMgr.h"
-
-REGISTER_CREATABLE( plTransitionMgr );
-
-#include "plDynamicEnvMap.h"
-REGISTER_CREATABLE( plDynamicEnvMap );
-REGISTER_CREATABLE( plDynamicCamMap );
-
-#endif // plPipelineCreatable_inc
+    fNext = *back;
+    if (*back)
+        (*back)->fBack = &fNext;
+    fBack = back;
+    *back = this;
+}

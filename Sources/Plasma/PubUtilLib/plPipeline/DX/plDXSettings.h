@@ -74,75 +74,14 @@ class plDXDeviceRef;
 class plDXVertexBufferRef;
 class plDXIndexBufferRef;
 
-class plDXViewSettings
-{
-public:
-    uint32_t                  fRenderState;
-
-    plRenderRequest*        fRenderRequest;
-
-    uint32_t                  fDrawableTypeMask;
-    uint32_t                  fSubDrawableTypeMask;
-
-    DWORD                   fClearColor;
-    float                   fClearDepth;
-
-    plFogEnvironment        fDefaultFog;
-
-    plCullTree              fCullTree;
-    bool                    fCullTreeDirty;
-    uint16_t                  fCullMaxNodes;
-
-    enum XformResets
-    {
-        kResetProjection    = 0x01,
-        kResetCamera        = 0x02,
-        kResetL2W           = 0x04,
-
-        kResetAll           = 0x07
-    };
-
-    uint8_t                   fXformResetFlags;
-    bool                    fLocalToWorldLeftHanded;
-    bool                    fWorldToCamLeftHanded;
-
-    mutable hsVector3       fDirection;
-    mutable hsVector3       fUp;
-    mutable hsVector3       fAcross;
-    hsPoint3                fWorldPos;
-
-    mutable bool            fViewVectorsDirty;
-
-    hsMatrix44              fLocalToWorld;
-    hsMatrix44              fWorldToLocal;
-
-    const hsMatrix44&       GetLocalToWorld() const { return fLocalToWorld; }
-    const hsMatrix44&       GetWorldToLocal() const { return fWorldToLocal; }
-
-    plViewTransform         fTransform;
-
-    const hsMatrix44&       GetWorldToCamera() const { return fTransform.GetWorldToCamera(); }
-    const hsMatrix44&       GetCameraToWorld() const { return fTransform.GetCameraToWorld(); }
-    bool                    IsPerspective() const { return fTransform.GetPerspective(); }
-
-    void            Reset();
-};
-
 class plDXGeneralSettings
 {
     public:
 
         bool                    fFullscreen;
-        hsWinRef                fHWnd;
-        uint32_t                  fColorDepth;
         uint8_t                   fNumAASamples;
         uint32_t                  fD3DCaps, fBoardKluge, fStageEnd;
-        uint32_t                  fMaxNumLights;
-        uint32_t                  fMaxNumProjectors;
-        uint32_t                  fMaxLayersAtOnce;
-        uint32_t                  fMaxPiggyBacks;
         int32_t                   fBoundsDrawLevel;
-        uint32_t                  fProperties;
         DWORD                   fClearColor;
         uint8_t                   fMaxAnisotropicSamples;
         D3DPRESENT_PARAMETERS   fPresentParams;
@@ -156,17 +95,8 @@ class plDXGeneralSettings
         bool                    fCurrAnisotropy;
         bool                    fIsIntel;
 
-        IDirect3DSurface9       *fCurrD3DMainSurface;
-        IDirect3DSurface9       *fCurrD3DDepthSurface;
-
-        hsTArray<plDXViewSettings>      fViewStack; // One for the main view, then one for each rendertarget
-        hsTArray<plRenderTarget *>      fRenderTargets;
-        plRenderTarget                  *fCurrRenderTarget;
-        plRenderTarget                  *fCurrBaseRenderTarget;
-        plDXDeviceRef                   *fCurrRenderTargetRef;
         plDXVertexBufferRef         *fCurrVertexBuffRef;
         plDXIndexBufferRef              *fCurrIndexBuffRef;
-        uint32_t                          fOrigWidth, fOrigHeight;
 
         IDirect3DVertexShader9          *fCurrVertexShader;
         IDirect3DPixelShader9           *fCurrPixelShader;
@@ -178,45 +108,12 @@ class plDXGeneralSettings
         void    Reset( void );
 };
 
-//// Tweak Settings ///////////////////////////////////////////////////////////
-
-class plDXTweakSettings
-{
-    public:
-        float   fDefaultPerspLayerScale;
-        float   fPerspLayerScale;
-        float   fPerspLayerTrans;
-        float   fDefaultLODBias;
-        float   fFogExpApproxStart;
-        float   fFogExp2ApproxStart;
-        float   fFogEndBias;
-
-        float   fExp2FogKnee;
-        float   fExp2FogKneeVal;
-        float   fExpFogKnee;
-        float   fExpFogKneeVal;
-        
-        void    Reset( void )
-        {
-            fDefaultPerspLayerScale = 0.00001f;
-            fPerspLayerScale = 0.00001f;
-            fPerspLayerTrans = 0.00002f;
-            fDefaultLODBias = -0.25f;
-            fFogExpApproxStart = 0.0f;
-            fFogExp2ApproxStart = 0.0f;
-            fFogEndBias = 0.0f;
-
-            fExpFogKnee = fExp2FogKnee = 0.5f;
-            fExpFogKneeVal = fExp2FogKneeVal = 0.15f;
-        }
-};
-
 //// Fog Settings /////////////////////////////////////////////////////////////
 
 class plDXFogSettings
 {
     public:
-        plFogEnvironment*   fEnvPtr;        // nil means no fog
+        const plFogEnvironment*   fEnvPtr;        // nil means no fog
         D3DFOGMODE          fMode;
         uint8_t               fIsVertex;
         uint8_t               fIsShader;

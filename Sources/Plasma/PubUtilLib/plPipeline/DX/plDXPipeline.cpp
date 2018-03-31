@@ -170,8 +170,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //#define MF_TOSSER
 
 int mfCurrentTest = 100;
-PipelineParams plPipeline::fDefaultPipeParams;
-PipelineParams plPipeline::fInitialPipeParams;
 //#define MF_ENABLE_HACKOFF
 #ifdef MF_ENABLE_HACKOFF
 //WHITE
@@ -285,9 +283,6 @@ static const enum _D3DTRANSFORMSTATETYPE    sTextureStages[ 8 ] =
     D3DTS_TEXTURE4, D3DTS_TEXTURE5, D3DTS_TEXTURE6, D3DTS_TEXTURE7
 };
 
-static const float kPerspLayerScale  = 0.00001f;
-static const float kPerspLayerScaleW = 0.001f;
-static const float kPerspLayerTrans  = 0.00002f;
 static const float kAvTexPoolShrinkThresh = 30.f; // seconds
 
 // This caps the number of D3D lights we use. We'll use up to the max allowed
@@ -319,30 +314,15 @@ plProfile_CreateCounter("Feed Triangles", "Draw", DrawFeedTriangles);
 plProfile_CreateCounter("Polys", "General", DrawTriangles);
 plProfile_CreateCounter("Draw Prim Static", "Draw", DrawPrimStatic);
 plProfile_CreateMemCounter("Total Texture Size", "Draw", TotalTexSize);
-plProfile_CreateTimer("Harvest", "Draw", Harvest);
 plProfile_CreateCounter("Material Change", "Draw", MatChange);
 plProfile_CreateCounter("Layer Change", "Draw", LayChange);
 
-plProfile_Extern(DrawOccBuild);
-
 plProfile_CreateCounterNoReset("Reload", "PipeC", PipeReload);
 
-plProfile_CreateTimer("RenderScene", "PipeT", RenderScene);
-plProfile_CreateTimer("VisEval", "PipeT", VisEval);
-plProfile_CreateTimer("VisSelect", "PipeT", VisSelect);
-plProfile_CreateTimer("FindSceneLights", "PipeT", FindSceneLights);
 plProfile_CreateTimer("PrepShadows", "PipeT", PrepShadows);
 plProfile_CreateTimer("PrepDrawable", "PipeT", PrepDrawable);
 plProfile_CreateTimer("  Skin", "PipeT", Skin);
 plProfile_CreateTimer("  AvSort", "PipeT", AvatarSort);
-plProfile_CreateTimer("  Find Lights", "PipeT", FindLights);
-plProfile_CreateTimer("    Find Perms", "PipeT", FindPerm);
-plProfile_CreateTimer("    FindSpan", "PipeT", FindSpan);
-plProfile_CreateTimer("    FindActiveLights", "PipeT", FindActiveLights);
-plProfile_CreateTimer("    ApplyActiveLights", "PipeT", ApplyActiveLights);
-plProfile_CreateTimer("      ApplyMoving", "PipeT", ApplyMoving);
-plProfile_CreateTimer("      ApplyToSpec", "PipeT", ApplyToSpec);
-plProfile_CreateTimer("      ApplyToMoving", "PipeT", ApplyToMoving);
 plProfile_CreateTimer("     ClearLights", "PipeT", ClearLights);
 plProfile_CreateTimer("RenderSpan", "PipeT", RenderSpan);
 plProfile_CreateTimer("  MergeCheck", "PipeT", MergeCheck);
@@ -363,24 +343,13 @@ plProfile_CreateMemCounter("DefMem", "PipeC", DefaultMem);
 plProfile_CreateMemCounter("ManMem", "PipeC", ManagedMem);
 plProfile_CreateMemCounterReset("CurrTex", "PipeC", CurrTex);
 plProfile_CreateMemCounterReset("CurrVB", "PipeC", CurrVB);
-plProfile_CreateMemCounter("TexTot", "PipeC", TexTot);
 plProfile_CreateMemCounterReset("fTexUsed", "PipeC", fTexUsed);
 plProfile_CreateMemCounterReset("fTexManaged", "PipeC", fTexManaged);
 plProfile_CreateMemCounterReset("fVtxUsed", "PipeC", fVtxUsed);
 plProfile_CreateMemCounterReset("fVtxManaged", "PipeC", fVtxManaged);
-plProfile_CreateMemCounter("ManSeen", "PipeC", ManSeen);
-plProfile_CreateCounterNoReset("ManEvict", "PipeC", ManEvict);
-plProfile_CreateCounter("LightOn", "PipeC", LightOn);
-plProfile_CreateCounter("LightVis", "PipeC", LightVis);
-plProfile_CreateCounter("LightChar", "PipeC", LightChar);
-plProfile_CreateCounter("LightActive", "PipeC", LightActive);
-plProfile_CreateCounter("Lights Found", "PipeC", FindLightsFound);
-plProfile_CreateCounter("Perms Found", "PipeC", FindLightsPerm);
 plProfile_CreateCounter("Merge", "PipeC", SpanMerge);
 plProfile_CreateCounter("TexNum", "PipeC", NumTex);
 plProfile_CreateCounter("LiState", "PipeC", MatLightState);
-plProfile_CreateCounter("OccPoly", "PipeC", OccPolyUsed);
-plProfile_CreateCounter("OccNode", "PipeC", OccNodeUsed);
 plProfile_CreateCounter("NumSkin", "PipeC", NumSkin);
 plProfile_CreateCounter("AvatarFaces", "PipeC", AvatarFaces);
 plProfile_CreateCounter("VertexChange", "PipeC", VertexChange);
@@ -391,6 +360,10 @@ plProfile_CreateCounter("AvRTPoolUsed", "PipeC", AvRTPoolUsed);
 plProfile_CreateCounter("AvRTPoolCount", "PipeC", AvRTPoolCount);
 plProfile_CreateCounter("AvRTPoolRes", "PipeC", AvRTPoolRes);
 plProfile_CreateCounter("AvRTShrinkTime", "PipeC", AvRTShrinkTime);
+
+static const float kPerspLayerScale = 0.00001f;
+static const float kPerspLayerScaleW = 0.001f;
+static const float kPerspLayerTrans = 0.00002f;
 
 #ifndef PLASMA_EXTERNAL_RELEASE
 /// Fun inlines for keeping track of surface creation/deletion memory
@@ -587,7 +560,8 @@ uint32_t plDXPipeline::fVtxUsed(0);
 uint32_t plDXPipeline::fVtxManaged(0);
 
 plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeRec )
-:   fManagedAlloced(false),
+:   pl3DPipeline(devModeRec),
+    fManagedAlloced(false),
     fAllocUnManaged(false)
 {
     hsAssert(D3DTSS_TCI_PASSTHRU == plLayerInterface::kUVWPassThru, "D3D Enum has changed. Notify graphics department.");
@@ -603,22 +577,9 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     const hsG3DDeviceMode *devMode = devModeRec->GetMode();
 
     /// Init our screen mode
-    fSettings.fHWnd = hWnd;
-    if(!fInitialPipeParams.Windowed)
-    {
-        fSettings.fOrigWidth = devMode->GetWidth();
-        fSettings.fOrigHeight = devMode->GetHeight();
-    }
-    else
-    {
-        // windowed can run in any mode
-        fSettings.fOrigHeight = fInitialPipeParams.Height;
-        fSettings.fOrigWidth = fInitialPipeParams.Width;
-    }
-    IGetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-    fSettings.fColorDepth = devMode->GetColorDepth();
-    fVSync = fInitialPipeParams.VSync;
-    
+    fDevice.fHWnd = hWnd;
+    fDevice.fPipeline = this;
+
     if( devRec->GetAASetting() == 0 )
         fSettings.fNumAASamples = 0;
     else
@@ -658,31 +619,17 @@ plDXPipeline::plDXPipeline( hsWinRef hWnd, const hsG3DDeviceModeRecord *devModeR
     if(fSettings.fMaxAnisotropicSamples > fCurrentDevice->fDDCaps.MaxAnisotropy)
         fSettings.fMaxAnisotropicSamples = (uint8_t)fCurrentDevice->fDDCaps.MaxAnisotropy;
 
-
     plConst(uint32_t) kDefaultDynVtxSize(32000 * 44);
     plConst(uint32_t) kDefaultDynIdxSize(0 * plGBufferGroup::kMaxNumIndicesPerBuffer * 2);
     fDynVtxSize = kDefaultDynVtxSize;
     fVtxRefTime = 0;
-    
+
     // Go create surfaces and DX-dependent objects
     if( ICreateDeviceObjects() )
     {
         IShowErrorMessage( "Cannot create Direct3D device" );
         return;
     }
-    /*plStatusLog::AddLineS("pipeline.log", "Supported Resolutions:");
-    std::vector<plDisplayMode> temp;
-    GetSupportedDisplayModes( &temp, 16 );
-    for(int i = 0; i < temp.size(); i++)
-    {
-        plStatusLog::AddLineS("pipeline.log", "%d, %d, %d", temp[i].Width, temp[i].Height, 16);
-    }
-    temp.clear();
-    GetSupportedDisplayModes( &temp, 32 );
-    for(int i = 0; i < temp.size(); i++)
-    {
-        plStatusLog::AddLineS("pipeline.log", "%d, %d, %d", temp[i].Width, temp[i].Height, 32);
-    }*/
 
     // We don't need the TnL enumeration for the lifetime of the game, so say goodbye!
     hsGDirect3D::ReleaseTnLEnum();
@@ -694,10 +641,10 @@ plDXPipeline::~plDXPipeline()
     fCurrLay = nil;
     hsAssert( fCurrMaterial == nil, "Current material not unrefed properly" );
 
-    // fCullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
+    // CullProxy is a debugging representation of our CullTree. See plCullTree.cpp, 
     // plScene/plOccluder.cpp and plScene/plOccluderProxy.cpp for more info
-    if( fCullProxy )
-        fCullProxy->GetKey()->UnRefObject();
+    if( fView.HasCullProxy() )
+        fView.GetCullProxy()->GetKey()->UnRefObject();
     delete fCurrentDriver;
     delete fCurrentDevice;
     delete fCurrentMode;
@@ -719,16 +666,11 @@ plDXPipeline::~plDXPipeline()
 void    plDXPipeline::IClearMembers()
 {
     /// Clear some stuff
-    fVtxBuffRefList = nil;
-    fIdxBuffRefList = nil;
     fTextureRefList = nil;
     fTextFontRefList = nil;
     fRenderTargetRefList = nil;
     fVShaderRefList = nil;
     fPShaderRefList = nil;
-    fCurrMaterial = nil;
-    fCurrLay = nil;
-    fCurrRenderLayer = 0;
 #if MCN_BOUNDS_SPANS
     fBoundsMat = nil;
     fBoundsSpans = nil;
@@ -736,16 +678,12 @@ void    plDXPipeline::IClearMembers()
     fPlateMgr = nil;
     fLogDrawer = nil;
     fDebugTextMgr = nil;
-    fCurrLightingMethod = plSpan::kLiteMaterial;
 
-    fCurrCullMode = D3DCULL_CW;
     fTexturing = false;
-    fCurrNumLayers = 0;
     fLastEndingStage = -1;
 
     fSettings.Reset();
     fStencil.Reset();
-    fTweaks.Reset();
     fLights.Reset(this);
     fCurrFog.Reset();
     fDeviceLost = false;
@@ -756,19 +694,12 @@ void    plDXPipeline::IClearMembers()
     fNextDynVtx = 0;
 
     int i;
-    for( i = 0; i < 8; i++ )
-        fLayerRef[i] = nil;
 
     IResetRenderTargetPools();
     fULutTextureRef = nil;
     for( i = 0; i < kMaxRenderTargetNext; i++ )
         fBlurVBuffers[i] = nil;
     fBlurVSHandle = 0;
-
-    fD3DDevice = nil;
-    fD3DBackBuff = nil;
-    fD3DDepthSurface = nil;
-    fD3DMainSurface = nil;
 
     fSharedDepthSurface[0] = nil;
     fSharedDepthFormat[0] = D3DFMT_UNKNOWN;
@@ -779,82 +710,21 @@ void    plDXPipeline::IClearMembers()
     fCurrentDriver = nil;
     fCurrentDevice = nil;
 
-    fOverLayerStack.Reset();
-    fOverBaseLayer = nil;
-    fOverAllLayer = nil;
-    fPiggyBackStack.Reset();
-    fMatPiggyBacks = 0;
-    fActivePiggyBacks = 0;
-
     for( i = 0; i < 8; i++ )
     {
         fLayerState[i].Reset();
         fOldLayerState[i].Reset();
     }
-    fMatOverOn.Reset();
-    fMatOverOff.Reset();
-//  SetMaterialOverride( hsGMatState::kShade, hsGMatState::kShadeSpecularHighlight, false );
 
-    fView.Reset();
+    fMaxNumLights = kD3DMaxTotalLights;
+    fMaxNumProjectors = kMaxProjectors;
 
-    fCullProxy = nil;
-
-    fTime = 0;
-    fFrame = 0;
-
-    fInSceneDepth = 0;
-    fTextUseTime = 0;
-    fEvictTime = 0;
-    fManagedSeen = 0;
-    fManagedCutoff = 0;
     fRenderCnt = 0;
-
-    fDebugFlags.Clear();
 
     fForceMatHandle = true;
     fAvRTShrinkValidSince = 0;
     fAvRTWidth = 1024;
     fAvNextFreeRT = 0;
-}
-
-// plDXViewSettings are just a convenience member struct to segregate the current view settings.
-//
-// Reset - Initialize the ViewSettings to default (normal/neutral) values.
-void plDXViewSettings::Reset()
-{
-    // Normal render, on clear, clear the color buffer and depth buffer.
-    fRenderState = plPipeline::kRenderNormal | plPipeline::kRenderClearColor | plPipeline::kRenderClearDepth;
-
-    fRenderRequest = nil;
-
-    fDrawableTypeMask = plDrawable::kNormal;
-    fSubDrawableTypeMask = plDrawable::kSubNormal;
-
-    // Clear color to black, depth to yon.
-    fClearColor = 0;
-    fClearDepth = 1.f;
-    fDefaultFog.Clear();
-
-    // Want to limit the number of nodes in the cull tree. After adding so many nodes,
-    // the benefits (#objects culled) falls off, but the cost (evaluating objects against
-    // node planes) keeps rising.
-    const uint16_t kCullMaxNodes = 250;
-    fCullTree.Reset();
-    fCullTreeDirty = true;
-    fCullMaxNodes = kCullMaxNodes;
-
-    // Object Local to world transform and its inverse.
-    fLocalToWorld.Reset();
-    fWorldToLocal.Reset();
-
-    // see Core/plViewTransform.h
-    fTransform.Reset();
-
-    fTransform.SetScreenSize(800, 600);
-
-    // Keep track of handedness of local to world and camera transform for winding.
-    fLocalToWorldLeftHanded = false;
-    fWorldToCamLeftHanded = false;
 }
 
 //// plDXGeneralSettings::Reset //////////////////////////////////////////////
@@ -865,18 +735,11 @@ void    plDXGeneralSettings::Reset()
     fCurrVertexBuffRef = nil;
     fCurrIndexBuffRef = nil;
     fFullscreen = false;
-    fHWnd = nil;
-    fColorDepth = 32;
     fD3DCaps = 0;
     fBoardKluge = 0;
     fStageEnd = 0;
-    fMaxNumLights = kD3DMaxTotalLights;
-    fMaxNumProjectors = kMaxProjectors;
-    fMaxLayersAtOnce = 1;
-    fMaxPiggyBacks = 0;
     fBoundsDrawLevel = -1;
 
-    fProperties = 0;
     fClearColor = 0;
 
     fNoGammaCorrect = false;
@@ -889,12 +752,6 @@ void    plDXGeneralSettings::Reset()
 
     fDXError = D3D_OK;
     memset( fErrorStr, 0, sizeof( fErrorStr ) );
-
-    fCurrRenderTarget = nil;
-    fCurrBaseRenderTarget = nil;
-    fCurrD3DMainSurface = nil;
-    fCurrD3DDepthSurface = nil;
-    fCurrRenderTargetRef = nil;
 
     fCurrFVFFormat = 0;
     fCurrVertexShader = nil;
@@ -912,7 +769,7 @@ void    plDXGeneralSettings::Reset()
 void    plDXPipeline::IInitDeviceState()
 {
     fLayerState[0].Reset();
-    fCurrCullMode = D3DCULL_CW;
+    fDevice.fCurrCullMode = D3DCULL_CW;
 
     /// Set D3D states
     fCurrFog.Reset();
@@ -922,7 +779,7 @@ void    plDXPipeline::IInitDeviceState()
     fD3DDevice->SetRenderState( D3DRS_ZWRITEENABLE, TRUE );
     fD3DDevice->SetRenderState( D3DRS_ZENABLE,      D3DZB_TRUE );
     fD3DDevice->SetRenderState( D3DRS_CLIPPING,     TRUE ); 
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE,     fCurrCullMode );
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE,     fDevice.fCurrCullMode );
     ISetCullMode();
 
     fD3DDevice->SetRenderState( D3DRS_ALPHATESTENABLE,  TRUE );
@@ -1062,9 +919,9 @@ void    plDXPipeline::ISetCaps()
         fSettings.fD3DCaps |= kCapsLuminanceTextures;
 
     /// Max # of hardware lights
-    fSettings.fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
-    if ( fSettings.fMaxNumLights > kD3DMaxTotalLights )
-        fSettings.fMaxNumLights = kD3DMaxTotalLights;
+    fMaxNumLights = fCurrentDevice->fDDCaps.MaxActiveLights;
+    if ( fMaxNumLights > kD3DMaxTotalLights )
+        fMaxNumLights = kD3DMaxTotalLights;
 
     // Intel Extreme chips report 0 lights, meaning T&L is done
     // in software, so you can have as many lights as you want.
@@ -1072,23 +929,23 @@ void    plDXPipeline::ISetCaps()
     // since the extreme can't really afford them, and record
     // the fact this is the extreme for other driver problem
     // workarounds.
-    if ( !fSettings.fMaxNumLights )
+    if ( !fMaxNumLights )
     {
-        fSettings.fMaxNumLights = kD3DMaxTotalLights;
+        fMaxNumLights = kD3DMaxTotalLights;
         fSettings.fIsIntel = true;
         plShadowCaster::SetCanShadowCast(false);
     }
 
     /// Max # of textures at once
-    fSettings.fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
+    fMaxLayersAtOnce = fCurrentDevice->fDDCaps.MaxSimultaneousTextures;
     if ( fCurrentDevice->fDDCaps.DevCaps & D3DDEVCAPS_SEPARATETEXTUREMEMORIES )
-        fSettings.fMaxLayersAtOnce = 1;
+        fMaxLayersAtOnce = 1;
     // Alloc half our simultaneous textures to piggybacks.
     // Won't hurt us unless we try to many things at once.
-    fSettings.fMaxPiggyBacks = fSettings.fMaxLayersAtOnce >> 1; 
+    fMaxPiggyBacks = fMaxLayersAtOnce >> 1; 
 
     // Less than 4 layers at once means we have to fallback on uv bumpmapping
-    if (fSettings.fMaxLayersAtOnce < 4)
+    if (fMaxLayersAtOnce < 4)
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
 
     fSettings.fMaxAnisotropicSamples = (uint8_t)(fCurrentDevice->fDDCaps.MaxAnisotropy);
@@ -1197,47 +1054,18 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 
     // Max # of layers
     uint32_t max = devRec.GetLayersAtOnce();
-    if( max > 0 && max < fSettings.fMaxLayersAtOnce )
-        fSettings.fMaxLayersAtOnce = max;
+    if( max > 0 && max < fMaxLayersAtOnce )
+        fMaxLayersAtOnce = max;
 
     /// Debug flag to force high-level cards down to GeForce 2 caps
     if( fDbgSetupInitFlags & 0x00000004 )
     {
         fSettings.fD3DCaps &= ~kCapsFSAntiAlias;
-        if( fSettings.fMaxLayersAtOnce > 2 )
-            fSettings.fMaxLayersAtOnce = 2;
+        if( fMaxLayersAtOnce > 2 )
+            fMaxLayersAtOnce = 2;
         fSettings.fMaxAnisotropicSamples = 0;
 
         plQuality::SetCapability(plQuality::kMinimum);
-    }
-
-    // There's a bug in NVidia drivers on Windows 2000 for GeForce1-4 (all flavors, including MX).
-    // When the amount allocated into managed memory approaches the on board memory size, the performance
-    // severely degrades, no matter how little is actually in use in the current rendering. So say all
-    // our d3d textures are created into managed memory at age load. Also say you are
-    // consistently viewing only 5Mb of managed materials (texture + vertex buffer). So as
-    // you walk through the age, the new textures you see get loaded on demand into video memory.
-    // Once you've seen enough to fill the on board memory, your frame rate starts falling and 
-    // continues to fall as more textures get loaded. So either the memory manager is not letting
-    // go of LRU textures, or fragmentation is so horrible as to make the manager useless.
-    // So on these boards and with this OS, we keep track of how much managed memory we've seen,
-    // and when it reaches a threshhold, we flush managed memory with an EvictManagedResources() call.
-    // There's an unfortunate glitch, and then the frame rate is fine again.
-    // So if we need this workaround, we set fManagedCutoff to 1 here, and then once we have our
-    // D3D device, we query for the amount of memory and set the threshhold for flushing memory
-    // based on that.
-    OSVERSIONINFO osinfo;
-    memset(&osinfo, 0, sizeof(osinfo));
-    osinfo.dwOSVersionInfoSize = sizeof(osinfo);
-    GetVersionEx(&osinfo);
-    if( (osinfo.dwMajorVersion == 5)
-        &&(osinfo.dwMinorVersion == 0) )
-    {
-        // It's the dreaded win2k
-        if( devRec.GetCap(hsG3DDeviceSelector::kCapsDoubleFlush) )
-            fManagedCutoff = 1;
-        else if( devRec.GetCap(hsG3DDeviceSelector::kCapsSingleFlush) )
-            fManagedCutoff = 1;
     }
 
     /// Set up the z-bias scale values
@@ -1245,7 +1073,7 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
 
 
     // Less than 4 layers at once means we have to fallback on uv bumpmapping
-    if( fSettings.fMaxLayersAtOnce < 4 )
+    if( fMaxLayersAtOnce < 4 )
         SetDebugFlag(plPipeDbg::kFlagBumpUV, true);
 
     if( ( fSettings.fD3DCaps & kCapsHWTransform ) && ( fCurrentMode->fDDBehavior == D3DCREATE_SOFTWARE_VERTEXPROCESSING ) )
@@ -1259,21 +1087,6 @@ void    plDXPipeline::IRestrictCaps( const hsG3DDeviceRecord& devRec )
     //  fSettings.fMaxAnisotropicSamples = devRec.GetMaxAnisotropicSamples();
     if( devRec.GetCap(hsG3DDeviceSelector::kCapsNoAniso) || (fSettings.fMaxAnisotropicSamples <= 1) )
         fSettings.fMaxAnisotropicSamples = 0;
-}
-
-//// Get/SetZBiasScale ////////////////////////////////////////////////////////
-// If the board really doesn't support Z-biasing, we adjust the perspective matrix in IGetCameraToNDC
-// The layer scale and translation are tailored to the current hardware.
-float    plDXPipeline::GetZBiasScale() const
-{
-    return ( fTweaks.fPerspLayerScale / fTweaks.fDefaultPerspLayerScale ) - 1.0f;
-}
-
-void    plDXPipeline::SetZBiasScale( float scale )
-{
-    scale += 1.0f;
-    fTweaks.fPerspLayerScale = fTweaks.fDefaultPerspLayerScale * scale;
-    fTweaks.fPerspLayerTrans = kPerspLayerTrans * scale;
 }
 
 // Create all our video memory consuming D3D objects.
@@ -1510,41 +1323,6 @@ bool      plDXPipeline::ITextureFormatAllowed( D3DFORMAT format )
     return true;
 }
 
-//// SetDebugFlag /////////////////////////////////////////////////////////////
-// Debug flags should never be employed to do a game effect, although they can
-// be useful for developing effects. Mostly they help in diagnosing problems
-// in rendering or performance.
-void        plDXPipeline::SetDebugFlag( uint32_t flag, bool on )
-{
-    fDebugFlags.SetBit(flag, on);
-
-    if (flag == plPipeDbg::kFlagColorizeMipmaps)
-    {
-        // Force textures to reload
-        plDXTextureRef      *ref = fTextureRefList;
-        while( ref != nil )
-        {
-            ref->SetDirty( true );
-            ref = ref->GetNext();
-        }
-
-        // Reset mipmap filtering state (usually is LINEAR, but we set it to POINT for coloring)
-        int i;
-        for( i = 0; i < 8; i++ )
-            fD3DDevice->SetSamplerState( i, D3DSAMP_MIPFILTER, on ? D3DTEXF_POINT : D3DTEXF_LINEAR );
-    }
-
-    if (flag == plPipeDbg::kFlagNoAnisotropy)
-    {
-        ISetAnisotropy(!on);
-    }
-}
-
-bool plDXPipeline::IsDebugFlagSet( uint32_t flag ) const
-{
-    return fDebugFlags.IsBitSet(flag);
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //// Device Creation //////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -1580,11 +1358,11 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     if( windowed )
     {
         // Reset fColor, since we're getting the desktop bitdepth
-        fSettings.fColorDepth = GetDXBitDepth( dispMode.Format );
-        if(fSettings.fOrigWidth > fDesktopParams.Width || fSettings.fOrigHeight > fDesktopParams.Height)
+        fColorDepth = GetDXBitDepth( dispMode.Format );
+        if(fOrigWidth > fDesktopParams.Width || fOrigHeight > fDesktopParams.Height)
         {
-            fSettings.fOrigWidth = fDesktopParams.Width;
-            fSettings.fOrigHeight = fDesktopParams.Height;
+            fOrigWidth = fDesktopParams.Width;
+            fOrigHeight = fDesktopParams.Height;
             IGetViewTransform().SetScreenSize(fDesktopParams.Width, fDesktopParams.Height);
         }
     }
@@ -1650,7 +1428,7 @@ bool plDXPipeline::ICreateDevice(bool windowed)
     hsDebugMessage( msg, 0 );
 #endif
 
-    params.hDeviceWindow = fSettings.fHWnd;
+    params.hDeviceWindow = fDevice.fHWnd;
 
     // Enable this to switch to a pure device. 
 //  fCurrentMode->fDDBehavior |= D3DCREATE_PUREDEVICE;
@@ -1680,27 +1458,12 @@ bool plDXPipeline::ICreateDevice(bool windowed)
 #endif // PLASMA_EXTERNAL_RELEASE
 
     INIT_ERROR_CHECK( d3d->CreateDevice( fCurrentAdapter, fCurrentDevice->fDDType,
-                                         fSettings.fHWnd, fCurrentMode->fDDBehavior,
+                                         fDevice.fHWnd, fCurrentMode->fDDBehavior,
                                          &params, &fD3DDevice ),
                         "Cannot create primary display surface via CreateDevice()" );
 
+    fDevice.fD3DDevice = fD3DDevice;
     fSettings.fPresentParams = params;
-
-    // This bit matches up with the fManagedCutoff workaround for a problem
-    // with the NVidia drivers on win2k. Search for "GetVersionEx" in IRestrictCaps
-    // for more info.
-    uint32_t mem = fD3DDevice->GetAvailableTextureMem();
-    plProfile_IncCount(TexTot, mem);
-
-    const uint32_t kSingleFlush(40000000);
-    const uint32_t kDoubleFlush(24000000);
-    if( fManagedCutoff )
-    {
-        if( mem < 64000000 )
-            fManagedCutoff = kDoubleFlush;
-        else
-            fManagedCutoff = kSingleFlush;
-    }
 
     return false;
 }
@@ -1771,24 +1534,24 @@ bool plDXPipeline::IFindDepthFormat(D3DPRESENT_PARAMETERS& params)
 bool plDXPipeline::ICreateNormalSurfaces()
 {
     /// Now get the backbuffer surface pointer
-    INIT_ERROR_CHECK( fD3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &fD3DBackBuff ), 
+    INIT_ERROR_CHECK( fD3DDevice->GetBackBuffer( 0, 0, D3DBACKBUFFER_TYPE_MONO, &fDevice.fD3DBackBuff ), 
                         "Cannot get primary surface's back buffer" );
 
     /// And finally, get the main D3D surfaces (for restoring after rendertargets )
-    INIT_ERROR_CHECK( fD3DDevice->GetRenderTarget( 0, &fD3DMainSurface ), "Cannot capture primary surface" );
-    INIT_ERROR_CHECK( fD3DDevice->GetDepthStencilSurface( &fD3DDepthSurface ), "Cannot capture primary depth surface" );
+    INIT_ERROR_CHECK( fD3DDevice->GetRenderTarget( 0, &fDevice.fD3DMainSurface ), "Cannot capture primary surface" );
+    INIT_ERROR_CHECK( fD3DDevice->GetDepthStencilSurface( &fDevice.fD3DDepthSurface ), "Cannot capture primary depth surface" );
 
-    fSettings.fCurrD3DMainSurface = fD3DMainSurface;
-    fSettings.fCurrD3DDepthSurface = fD3DDepthSurface;
+    fDevice.fCurrD3DMainSurface = fDevice.fD3DMainSurface;
+    fDevice.fCurrD3DDepthSurface = fDevice.fD3DDepthSurface;
 
-    D3DSURF_MEMNEW( fD3DMainSurface );
-    D3DSURF_MEMNEW( fD3DDepthSurface );
-    D3DSURF_MEMNEW( fD3DBackBuff );
+    D3DSURF_MEMNEW( fDevice.fD3DMainSurface );
+    D3DSURF_MEMNEW( fDevice.fD3DDepthSurface );
+    D3DSURF_MEMNEW( fDevice.fD3DBackBuff );
 
     D3DSURFACE_DESC info; 
-    fD3DMainSurface->GetDesc( &info );
-    fD3DDepthSurface->GetDesc( &info );
-    fD3DBackBuff->GetDesc( &info );
+    fDevice.fD3DMainSurface->GetDesc( &info );
+    fDevice.fD3DDepthSurface->GetDesc( &info );
+    fDevice.fD3DBackBuff->GetDesc( &info );
 
     return false;
 }
@@ -1899,13 +1662,13 @@ void plDXPipeline::IReleaseDynDeviceObjects()
         fSharedDepthFormat[1] = D3DFMT_UNKNOWN;
     }
 
-    D3DSURF_MEMDEL( fD3DMainSurface );
-    D3DSURF_MEMDEL( fD3DDepthSurface );
-    D3DSURF_MEMDEL( fD3DBackBuff );
+    D3DSURF_MEMDEL( fDevice.fD3DMainSurface );
+    D3DSURF_MEMDEL( fDevice.fD3DDepthSurface );
+    D3DSURF_MEMDEL( fDevice.fD3DBackBuff );
 
-    ReleaseObject( fD3DBackBuff );
-    ReleaseObject( fD3DDepthSurface );
-    ReleaseObject( fD3DMainSurface );
+    ReleaseObject( fDevice.fD3DBackBuff );
+    ReleaseObject( fDevice.fD3DDepthSurface );
+    ReleaseObject( fDevice.fD3DMainSurface );
 
 }
 
@@ -2141,11 +1904,11 @@ void plDXPipeline::IResetToDefaults(D3DPRESENT_PARAMETERS *params)
     // this will reset device parameters to default and make sure all other necessary parameters are updated
     params->BackBufferWidth = fDefaultPipeParams.Width;
     params->BackBufferHeight = fDefaultPipeParams.Height;
-    fSettings.fOrigWidth = fDefaultPipeParams.Width;
-    fSettings.fOrigHeight = fDefaultPipeParams.Height;
+    fOrigWidth = fDefaultPipeParams.Width;
+    fOrigHeight = fDefaultPipeParams.Height;
     IGetViewTransform().SetScreenSize(fDefaultPipeParams.Width, fDefaultPipeParams.Height);
     params->BackBufferFormat = D3DFMT_X8R8G8B8;
-    fSettings.fColorDepth = fDefaultPipeParams.ColorDepth;
+    fColorDepth = fDefaultPipeParams.ColorDepth;
 
     int i;
     hsTArray<D3DEnum_ModeInfo> *modes = &fCurrentDevice->fModes;
@@ -2273,7 +2036,7 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
 {
     if( fSettings.fPresentParams.BackBufferWidth == Width &&
         fSettings.fPresentParams.BackBufferHeight == Height &&
-        (fSettings.fPresentParams.Windowed ? 1 : fSettings.fColorDepth == ColorDepth) && // if we're windowed dont check color depth we just use the desktop colordepth
+        (fSettings.fPresentParams.Windowed ? 1 : fColorDepth == ColorDepth) && // if we're windowed dont check color depth we just use the desktop colordepth
         ((fSettings.fPresentParams.Windowed && Windowed)  || (!fSettings.fPresentParams.Windowed && !Windowed)) &&
         fSettings.fNumAASamples == NumAASamples &&
         fSettings.fMaxAnisotropicSamples == MaxAnisotropicSamples &&
@@ -2304,12 +2067,12 @@ void plDXPipeline::ResetDisplayDevice(int Width, int Height, int ColorDepth, boo
     if(i != modes->Count())
     {
         // Set Resolution
-        fSettings.fOrigWidth = Width;
-        fSettings.fOrigHeight = Height;
+        fOrigWidth = Width;
+        fOrigHeight = Height;
         IGetViewTransform().SetScreenSize(Width, Height);
         fSettings.fPresentParams.BackBufferWidth = Width;
         fSettings.fPresentParams.BackBufferHeight = Height;
-        fSettings.fColorDepth = ColorDepth;
+        fColorDepth = ColorDepth;
         fSettings.fPresentParams.BackBufferFormat = D3DFMT_X8R8G8B8;
     }
 
@@ -2493,10 +2256,10 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
     if( width != 0 && height != 0 )
     {
         // Width and height of zero mean just recreate
-        fSettings.fOrigWidth = width;
-        fSettings.fOrigHeight = height;
-        IGetViewTransform().SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-        resetTransform.SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
+        fOrigWidth = width;
+        fOrigHeight = height;
+        IGetViewTransform().SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
+        resetTransform.SetScreenSize((uint16_t)(fOrigWidth), (uint16_t)(fOrigHeight));
     }
     else
     {
@@ -2520,7 +2283,7 @@ void    plDXPipeline::Resize( uint32_t width, uint32_t height )
 
     // Restore states
     SetViewTransform(resetTransform);
-    IProjectionMatrixToD3D();
+    IProjectionMatrixToDevice();
 
     /// Broadcast a message letting everyone know that we were recreated and that
     /// all device-specific stuff needs to be recreated
@@ -2567,10 +2330,10 @@ bool  plDXPipeline::PreRender( plDrawable* drawable, hsTArray<int16_t>& visList,
     plDrawableSpans *ds = plDrawableSpans::ConvertNoRef(drawable);
     if( !ds )
         return false;
-    if( ( ds->GetType() & fView.fDrawableTypeMask ) == 0 )
+    if( ( ds->GetType() & fView.GetDrawableTypeMask() ) == 0 )
         return false;
 
-    IGetVisibleSpans( ds, visList, visMgr );
+    fView.GetVisibleSpans( ds, visList, visMgr );
 
 #if MCN_BOUNDS_SPANS
     if( ( drawable != fBoundsSpans ) && IsDebugFlagSet(plPipeDbg::kFlagShowAllBounds) )
@@ -2821,540 +2584,6 @@ bool plDXPipeline::PrepForRender(plDrawable* d, hsTArray<int16_t>& visList, plVi
     return true;
 }
 
-// Draw ///////////////////////////////////////////////////////////
-// Convenience function for a drawable that needs to get drawn outside of
-// the normal scene graph render (i.e. something not managed by the plPageTreeMgr).
-// Not nearly as efficient, so only useful as a special case.
-void    plDXPipeline::Draw( plDrawable *d )
-{
-    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef( d );
-
-    if( ds )
-    {
-        if( ( ds->GetType() & fView.fDrawableTypeMask ) == 0 )
-            return;
-
-        static hsTArray<int16_t>visList;
-
-        PreRender( ds, visList );
-        PrepForRender(ds, visList);
-        Render( ds, visList );
-    }
-}
-
-// Render ////////////////////////////////////////////////////////////////////////////////
-// The normal way to render a subset of a drawable.
-// This assumes that PreRender and PrepForRender have already been called.
-// Note that PreRender and PrepForRender are called once per drawable per render
-// with a visList containing all of the spans which will be rendered, but
-// Render itself may be called with multiple visList subsets which union to
-// the visList passed into PreRender/PrepForRender. This happens when drawing
-// sorted spans, because some spans from drawable B may be in the middle of 
-// the spans of drawable A, so the sequence would be:
-// 
-// PreRender(A, ATotalVisList);
-// PreRender(B, BTotalVisList);
-// PrepForRender(A, ATotalVisList);
-// PrepForRender(B, BTotalVisList);
-// Render(A, AFarHalfVisList);
-// Render(B, BTotalVisList);
-// Render(A, ANearHalfVisList);
-// See plPageTreeMgr, which handles all this.
-void    plDXPipeline::Render( plDrawable *d, const hsTArray<int16_t>& visList )
-{
-    // Reset here, since we can push/pop renderTargets after BeginRender() but before
-    // this function, which necessitates this being called
-    if( fView.fXformResetFlags != 0 )
-        ITransformsToD3D();
-
-    plDrawableSpans *ds = plDrawableSpans::ConvertNoRef( d );
-
-    if( ds )
-    {
-        IRenderSpans( ds, visList );
-    }
-}
-
-// IMakeLightLists ///////////////////////////////////////////////////////////
-// Look through all the current lights, and fill out two lists.
-// Only active lights (not disabled, not exactly black, and not
-// ignored because of visibility regions by plVisMgr) will
-// be considered.
-// The first list is lights that will affect the avatar and similar
-// indeterminately mobile (physical) objects - fLights.fCharLights.
-// The second list is lights that aren't restricted by light include
-// lists. 
-// These two abbreviated lists will be further refined for each object
-// and avatar to find the strongest 8 lights which affect that object.
-// A light with an include list, or LightGroup Component) has
-// been explicitly told which objects it affects, so they don't
-// need to be in the search lists.
-// These lists are only constructed once per render, but searched
-// multiple times
-void plDXPipeline::IMakeLightLists(plVisMgr* visMgr)
-{
-    plProfile_BeginTiming(FindSceneLights);
-    fLights.fCharLights.SetCount(0);
-    fLights.fVisLights.SetCount(0);
-    if( visMgr )
-    {
-        const hsBitVector& visSet = visMgr->GetVisSet();
-        const hsBitVector& visNot = visMgr->GetVisNot();
-        plLightInfo* light;
-        for( light = fLights.fActiveList; light != nil; light = light->GetNext() )
-        {
-            plProfile_IncCount(LightActive, 1);
-            if( !light->IsIdle() && !light->InVisNot(visNot) && light->InVisSet(visSet) )
-            {
-                plProfile_IncCount(LightOn, 1);
-                if( light->GetProperty(plLightInfo::kLPHasIncludes) )
-                {
-                    if( light->GetProperty(plLightInfo::kLPIncludesChars) )
-                        fLights.fCharLights.Append(light);
-                }
-                else
-                {
-                    fLights.fVisLights.Append(light);
-                    fLights.fCharLights.Append(light);
-                }
-            }
-        }
-    }
-    else
-    {
-        plLightInfo* light;
-        for( light = fLights.fActiveList; light != nil; light = light->GetNext() )
-        {
-            plProfile_IncCount(LightActive, 1);
-            if( !light->IsIdle() )
-            {
-                plProfile_IncCount(LightOn, 1);
-                if( light->GetProperty(plLightInfo::kLPHasIncludes) )
-                {
-                    if( light->GetProperty(plLightInfo::kLPIncludesChars) )
-                        fLights.fCharLights.Append(light);
-                }
-                else
-                {
-                    fLights.fVisLights.Append(light);
-                    fLights.fCharLights.Append(light);
-                }
-            }
-        }
-    }
-    plProfile_IncCount(LightVis, fLights.fVisLights.GetCount());
-    plProfile_IncCount(LightChar, fLights.fCharLights.GetCount());
-
-    plProfile_EndTiming(FindSceneLights);
-}
-
-// BeginVisMgr /////////////////////////////////////////////////////////
-// Marks the beginning of a render with the given visibility manager.
-// In particular, we cache which lights the visMgr believes to be
-// currently active
-void plDXPipeline::BeginVisMgr(plVisMgr* visMgr)
-{
-    IMakeLightLists(visMgr);
-}
-
-// EndVisMgr ///////////////////////////////////////////////////////////
-// Marks the end of a render with the given visibility manager.
-void plDXPipeline::EndVisMgr(plVisMgr* visMgr)
-{
-    fLights.fCharLights.SetCount(0);
-    fLights.fVisLights.SetCount(0);
-}
-
-// ICheckLighting ///////////////////////////////////////////////////////
-// For every span in the list of visible span indices, find the list of
-// lights that currently affect the span with an estimate of the strength
-// of how much the light affects it. The strongest 8 lights will be used
-// to illuminate that span.
-// For projective lights, there is no limit on how many are supported, other
-// than performance (usually fill rate limited).
-// The permaLights and permaProjs are lights explicitly selected for a span
-// via the LightGroup component.
-// For static objects and static lights, the lighting was done offline and stored
-// in the vertex diffuse color.
-// So here we're only looking for:
-// A) moving objects, which can't be staticly lit, so are affected by all runtime lights.
-// B) moving lights, which can't staticly light, so affect all objects
-// C) specular objects + specular lights, since specular can't be precomputed.
-void plDXPipeline::ICheckLighting(plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr)
-{
-    if( fView.fRenderState & kRenderNoLights )
-        return;
-
-    if( !visList.GetCount() )
-        return;
-
-    plLightInfo     *light;
-    int             j;
-
-    // First add in the explicit lights (from LightGroups).
-    // Refresh the lights as they are added (actually a lazy eval).
-    plProfile_BeginTiming(FindLights);
-    plProfile_BeginTiming(FindPerm);
-    for( j = 0; j < visList.GetCount(); j++ )
-    {
-        drawable->GetSpan( visList[ j ] )->ClearLights();
-
-        if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
-            continue;
-
-        // Set the bits for the lights added from the permanent lists (during ClearLights()).
-        int k;
-        const hsTArray<plLightInfo*>& permaLights = drawable->GetSpan(visList[j])->fPermaLights;
-        for( k = 0; k < permaLights.GetCount(); k++ )
-        {
-            permaLights[k]->Refresh();
-            if( permaLights[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaLights[k]->IsIdle() )
-            {
-                // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaLights[k]);
-            }
-        }
-        const hsTArray<plLightInfo*>& permaProjs = drawable->GetSpan(visList[j])->fPermaProjs;
-        for( k = 0; k < permaProjs.GetCount(); k++ )
-        {
-            permaProjs[k]->Refresh();
-            if( permaProjs[k]->GetProperty(plLightInfo::kLPShadowLightGroup) && !permaProjs[k]->IsIdle() )
-            {
-                // If it casts a shadow, attach the shadow now.
-                ISetShadowFromGroup(drawable, drawable->GetSpan(visList[j]), permaProjs[k]);
-            }
-        }
-    }
-    plProfile_EndTiming(FindPerm);
-
-    if (IsDebugFlagSet(plPipeDbg::kFlagNoRuntimeLights))
-    {
-        plProfile_EndTiming( FindLights );
-        return;
-    }
-
-    // Sort the incoming spans as either
-    // A) moving - affected by all lights - moveList
-    // B) specular - affected by specular lights - specList
-    // C) visible - affected by moving lights - visList
-    static hsTArray<int16_t> tmpList;
-    static hsTArray<int16_t> moveList;
-    static hsTArray<int16_t> specList;
-    
-    moveList.SetCount(0);
-    specList.SetCount(0);
-    
-    plProfile_BeginTiming(FindSpan);
-    int k;
-    for( k = 0; k < visList.GetCount(); k++ )
-    {
-        const plSpan* span = drawable->GetSpan(visList[k]);
-        
-        if( span->fProps & plSpan::kPropRunTimeLight )
-        {
-            moveList.Append(visList[k]);
-            specList.Append(visList[k]);
-        }
-        else if( span->fProps & plSpan::kPropMatHasSpecular )
-            specList.Append(visList[k]);
-    }
-    plProfile_EndTiming(FindSpan);
-
-    // Make a list of lights that can potentially affect spans in this drawable
-    // based on the drawables bounds and properties.
-    // If the drawable has the PropCharacter property, it is affected by lights
-    // in fLights.fCharLights, else only by the smaller list of fLights.fVisLights.
-    plProfile_BeginTiming(FindActiveLights);
-    static hsTArray<plLightInfo*> lightList;
-    lightList.SetCount(0);
-    const bool isChar = 0 != drawable->GetNativeProperty(plDrawable::kPropCharacter);
-    if( isChar )
-    {
-        int i;
-        for( i = 0; i < fLights.fCharLights.GetCount(); i++ )
-        {
-            if( fLights.fCharLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
-                lightList.Append(fLights.fCharLights[i]);
-        }
-    }
-    else
-    {
-        int i;
-        for( i = 0; i < fLights.fVisLights.GetCount(); i++ )
-        {
-            if( fLights.fVisLights[i]->AffectsBound(drawable->GetSpaceTree()->GetWorldBounds()) )
-                lightList.Append(fLights.fVisLights[i]);
-        }
-    }
-    plProfile_EndTiming(FindActiveLights);
-    
-    // Loop over the lights and for each light, extract a list of the spans that light
-    // affects. Append the light to each spans list with a scalar strength of how strongly
-    // the light affects it. Since the strength is based on the object's center position, 
-    // it's not very accurate, but good enough for selecting which lights to use.
-    plProfile_BeginTiming(ApplyActiveLights);
-    for( k = 0; k < lightList.GetCount(); k++ )
-    {
-        light = lightList[k];
-        
-        tmpList.SetCount(0);
-        if( light->GetProperty(plLightInfo::kLPMovable) )
-        {
-            plProfile_BeginTiming(ApplyMoving);
-
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(), 
-                visList, 
-                tmpList, 
-                drawable->GetNativeProperty(plDrawable::kPropCharacter) );
-            
-            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
-            if( fView.fRenderState & kRenderNoProjection )
-                proj = false;
-            
-            for( j = 0; j < litList.GetCount(); j++ )
-            {
-                // Use the light IF light is enabled and 
-                //      1) light is movable
-                //      2) span is movable, or
-                //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
-                bool currProj = proj;
-                if( span->fProps & plSpan::kPropProjAsVtx )
-                    currProj = false;
-
-                if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
-                {
-                    plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    float        strength, scale;
-                    
-                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
-                    
-                    // We can't pitch a light because it's "strength" is zero, because the strength is based
-                    // on the center of the span and isn't conservative enough. We can pitch based on the
-                    // scale though, since a light scaled down to zero will have no effect no where.
-                    if( scale > 0 )
-                    {
-                        plProfile_Inc(FindLightsFound);
-                        span->AddLight(light, strength, scale, currProj);
-                    }
-                }
-            }
-            plProfile_EndTiming(ApplyMoving);
-            
-        }
-        else if( light->GetProperty(plLightInfo::kLPHasSpecular) )
-        {
-            if( !specList.GetCount() )
-                continue;
-            
-            plProfile_BeginTiming(ApplyToSpec);
-
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(), 
-                specList, 
-                tmpList, 
-                drawable->GetNativeProperty(plDrawable::kPropCharacter) );
-            
-            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
-            if( fView.fRenderState & kRenderNoProjection )
-                proj = false;
-            
-            for( j = 0; j < litList.GetCount(); j++ )
-            {
-                // Use the light IF light is enabled and 
-                //      1) light is movable
-                //      2) span is movable, or
-                //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
-                bool currProj = proj;
-                if( span->fProps & plSpan::kPropProjAsVtx )
-                    currProj = false;
-
-                if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
-                {
-                    plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    float        strength, scale;
-                    
-                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
-                    
-                    // We can't pitch a light because it's "strength" is zero, because the strength is based
-                    // on the center of the span and isn't conservative enough. We can pitch based on the
-                    // scale though, since a light scaled down to zero will have no effect no where.
-                    if( scale > 0 )
-                    {
-                        plProfile_Inc(FindLightsFound);
-                        span->AddLight(light, strength, scale, currProj);
-                    }
-                }
-            }
-            plProfile_EndTiming(ApplyToSpec);
-        }
-        else
-        {
-            if( !moveList.GetCount() )
-                continue;
-            
-            plProfile_BeginTiming(ApplyToMoving);
-
-            const hsTArray<int16_t>& litList = light->GetAffected(drawable->GetSpaceTree(), 
-                moveList, 
-                tmpList, 
-                drawable->GetNativeProperty(plDrawable::kPropCharacter) );
-            
-            // PUT OVERRIDE FOR KILLING PROJECTORS HERE!!!!
-            bool proj = nil != light->GetProjection();
-            if( fView.fRenderState & kRenderNoProjection )
-                proj = false;
-            
-            for( j = 0; j < litList.GetCount(); j++ )
-            {
-                // Use the light IF light is enabled and 
-                //      1) light is movable
-                //      2) span is movable, or
-                //      3) Both the light and the span have specular
-                const plSpan* span = drawable->GetSpan(litList[j]);
-                bool currProj = proj;
-                if( span->fProps & plSpan::kPropProjAsVtx )
-                    currProj = false;
-
-                if( !(currProj && (span->fProps & plSpan::kPropSkipProjection)) )
-                {
-                    plDXLightRef    *ref = (plDXLightRef *)light->GetDeviceRef();
-                    float        strength, scale;
-                    
-                    light->GetStrengthAndScale(span->fWorldBounds, strength, scale);
-                    
-                    // We can't pitch a light because it's "strength" is zero, because the strength is based
-                    // on the center of the span and isn't conservative enough. We can pitch based on the
-                    // scale though, since a light scaled down to zero will have no effect no where.
-                    if( scale > 0 )
-                    {
-                        plProfile_Inc(FindLightsFound);
-                        span->AddLight(light, strength, scale, currProj);
-                    }
-                }
-            }
-            plProfile_EndTiming(ApplyToMoving);
-            
-        }
-        
-    }
-    plProfile_EndTiming(ApplyActiveLights);
-
-    IAttachShadowsToReceivers(drawable, visList);
-
-    plProfile_EndTiming(FindLights);
-}
-
-// HarvestVisible ////////////////////////////////////////////////////////////////////////
-// Contruct a list of the indices of leaf nodes in the given spacetree which are currently
-// visible according to the current cull tree. The cull tree factors in camera frustum and
-// occluder polys, but _not_ the current visibility regions, plVisMgr.
-// This is the normal path for visibility culling at a gross level (e.g. which SceneNodes
-// to bother with, which drawables within the SceneNode). For finer objects, like the spans
-// themselves, the culling is done via IGetVisibleSpans, which also takes the plVisMgr into
-// account.
-bool plDXPipeline::HarvestVisible(plSpaceTree* space, hsTArray<int16_t>& visList)
-{
-    if( !space )
-        return false;
-
-    space->SetViewPos(GetViewPositionWorld());
-
-    space->Refresh();
-
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-
-    plProfile_BeginTiming(Harvest);
-    fView.fCullTree.Harvest(space, visList);
-    plProfile_EndTiming(Harvest);
-
-    return visList.GetCount() != 0;
-}
-
-//// IGetVisibleSpans /////////////////////////////////////////////////////
-//  Given a drawable, returns a list of visible span indices. Disabled spans will not
-//  show up in the list, behaving as if they were culled. 
-//  See plCullTree (in plPipeline) and plSpaceTree (in plDrawable) and plVisMgr (in plScene).
-void plDXPipeline::IGetVisibleSpans( plDrawableSpans* drawable, hsTArray<int16_t>& visList, plVisMgr* visMgr )
-{
-    static hsTArray<int16_t> tmpVis;
-    tmpVis.SetCount(0);
-    visList.SetCount(0);
-
-    drawable->GetSpaceTree()->SetViewPos(GetViewPositionWorld());
-
-    drawable->GetSpaceTree()->Refresh();
-
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-
-    const float viewDist = GetViewDirWorld().InnerProduct(GetViewPositionWorld());
-
-    const hsTArray<plSpan *>    &spans = drawable->GetSpanArray();
-
-    plProfile_BeginTiming(Harvest);
-    if( visMgr )
-    {
-        drawable->SetVisSet(visMgr);
-        fView.fCullTree.Harvest(drawable->GetSpaceTree(), tmpVis);
-        drawable->SetVisSet(nil);
-    }
-    else
-    {
-        fView.fCullTree.Harvest(drawable->GetSpaceTree(), tmpVis);
-    }
-
-    // This is a big waste of time, As a desparate "optimization" pass, the artists
-    // insist on going through and marking objects to fade or pop out of rendering
-    // past a certain distance. This breaks the batching and requires more CPU to
-    // check the objects by distance. Since there is no pattern to the distance at
-    // which objects will be told not to draw, there's no way to make this hierarchical,
-    // which is what it would take to make it a performance win. So they succeed in
-    // reducing the poly count, but generally the frame rate goes _down_ as well.
-    // Unfortunately, this technique actually does work in a few key areas, so
-    // I haven't been able to purge it.
-    if (IsDebugFlagSet(plPipeDbg::kFlagSkipVisDist))
-    {
-        int i;
-        for( i = 0; i < tmpVis.GetCount(); i++ )
-        {
-            if( spans[tmpVis[i]]->fSubType & GetSubDrawableTypeMask() )
-            {
-                visList.Append(tmpVis[i]);
-            }
-        }
-    }
-    else
-    {
-        int i;
-        for( i = 0; i < tmpVis.GetCount(); i++ )
-        {
-            if( spans[tmpVis[i]]->fSubType & GetSubDrawableTypeMask() )
-            {
-                // We'll check here for spans we can discard because they've completely distance faded out.
-                // Note this is based on view direction distance (because the fade is), rather than the
-                // preferrable distance to camera we sort by.
-                float minDist, maxDist;
-                if( drawable->GetSubVisDists(tmpVis[i], minDist, maxDist) )
-                {
-                    const hsBounds3Ext& bnd = drawable->GetSpaceTree()->GetNode(tmpVis[i]).fWorldBounds;
-                    hsPoint2 depth;
-                    bnd.TestPlane(GetViewDirWorld(), depth);
-                    if( (0 < minDist + viewDist - depth.fY)
-                            ||(0 > maxDist + viewDist - depth.fX) )
-                        continue;
-                }
-
-                visList.Append(tmpVis[i]);
-            }
-        }
-    }
-    plProfile_EndTiming(Harvest);
-}
-
 // ISetupTransforms //////////////////////////////////////////////////////////////////////////////////
 // Set the D3D world transform according to the input span.
 // Engine currently supports HW vertex blending with 2 matrices,
@@ -3390,7 +2619,7 @@ void plDXPipeline::ISetupTransforms(plDrawableSpans* drawable, const plSpan& spa
 
     if( span.fNumMatrices == 2 )
     {
-        D3DXMATRIX  mat;    
+        D3DXMATRIX  mat;
         IMatrix44ToD3DMatrix(mat, drawable->GetPaletteMatrix(span.fBaseMatrix+1));
         fD3DDevice->SetTransform(D3DTS_WORLDMATRIX(1), &mat);
         fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_1WEIGHTS);
@@ -3558,11 +2787,11 @@ bool plDXPipeline::ICheckDynBuffers(plDrawableSpans* drawable, plGBufferGroup* g
     return false; // No error
 }
 
-//// IRenderSpans /////////////////////////////////////////////////////////////
+//// RenderSpans /////////////////////////////////////////////////////////////
 // Renders an array of spans obtained from a plDrawableSpans object
 // The incoming visList gives the indices of the spans which are visible and should
 // be drawn now, and gives them in sorted order.
-void    plDXPipeline::IRenderSpans( plDrawableSpans *drawable, const hsTArray<int16_t>& visList )
+void    plDXPipeline::RenderSpans( plDrawableSpans *drawable, const hsTArray<int16_t>& visList )
 {
     plProfile_BeginTiming(RenderSpan);
 
@@ -3801,8 +3030,6 @@ bool plDXPipeline::BeginRender()
     {
         IReleaseShaders();
         fD3DDevice->EvictManagedResources();
-        fEvictTime = fTextUseTime;
-        fManagedSeen = 0;
         SetDebugFlag(plPipeDbg::kFlagReload, false);
     }
 
@@ -3812,26 +3039,11 @@ bool plDXPipeline::BeginRender()
     // If this is the primary BeginRender, make sure we're really ready.
     if( !fInSceneDepth++ )
     {
-        // Workaround for NVidia memory manager bug. Search for "OSVERSIONINFO" to
-        // find notes on the bug. This is where we purge managed memory periodically.
-        plProfile_Set(ManSeen, fManagedSeen);
-        if( fManagedCutoff )
-        {
-            plConst(uint32_t) kMinEvictTime(1800); // ~2 minutes @ 15FPS
-            if( (fManagedSeen > fManagedCutoff) && (fTexUsed + fVtxUsed < fManagedCutoff) && (fTextUseTime - fEvictTime > kMinEvictTime) )
-            {
-                fD3DDevice->EvictManagedResources();
-                fManagedSeen = 0;
-                fEvictTime = fTextUseTime;
-                plProfile_IncCount(ManEvict, 1);
-            }
-        }
-
         // Superfluous setting of Z state.
         fD3DDevice->SetRenderState( D3DRS_ZENABLE, D3DZB_TRUE );
 
         /// If we have a renderTarget active, use its viewport
-        ISetViewport();
+        fDevice.SetViewport();
 
         // Tell D3D we're ready to start rendering.
         if( FAILED(fD3DDevice->BeginScene()) )
@@ -3845,7 +3057,6 @@ bool plDXPipeline::BeginRender()
 
         fTexUsed = 0;
         fVtxUsed = 0;
-        fTextUseTime++;
 
         // Render any shadow maps that have been submitted for this frame.
         IPreprocessShadows();
@@ -3859,19 +3070,6 @@ bool plDXPipeline::BeginRender()
     return false;
 }
 
-//// ISetViewport /////////////////////////////////////////////////////////////
-// Translate our viewport into a D3D viewport
-void    plDXPipeline::ISetViewport()
-{
-    D3DVIEWPORT9 vp = { GetViewTransform().GetViewPortLeft(),
-                        GetViewTransform().GetViewPortTop(),
-                        GetViewTransform().GetViewPortWidth(),
-                        GetViewTransform().GetViewPortHeight(),
-                        0.f, 1.f };
-
-    
-    WEAK_ERROR_CHECK( fD3DDevice->SetViewport( &vp ) );
-}
 
 //// RenderScreenElements /////////////////////////////////////////////////////
 //  Renders all the screen elements, such as debug text and plates. Also puts
@@ -3896,8 +3094,8 @@ void    plDXPipeline::RenderScreenElements()
         fBSpansToDelete.Reset();
     }
 #endif
-    if( fCullProxy )
-        Draw( fCullProxy );
+    if( fView.HasCullProxy())
+        Draw( fView.GetCullProxy() );
 
 #ifdef MF_ENABLE_HACKOFF
     //WHITE
@@ -4084,9 +3282,9 @@ bool  plDXPipeline::IFlipSurface()
 {
     /// Works now for both fullscreen and windowed modes
     HRESULT hr = D3D_OK;
-    if( fSettings.fCurrRenderTarget == nil )
+    if( fCurrRenderTarget == nil )
     {
-        hr = fD3DDevice->Present( nil, nil, fSettings.fHWnd, nil );
+        hr = fD3DDevice->Present( nil, nil, fDevice.fHWnd, nil );
     }
 
     if( FAILED(hr) )
@@ -4197,8 +3395,8 @@ bool  plDXPipeline::CaptureScreen( plMipmap *dest, bool flipVertical, uint16_t d
         if (FAILED(fD3DDevice->CreateOffscreenPlainSurface(bigWidth, bigHeight, D3DFMT_A8R8G8B8, D3DPOOL_SCRATCH, &surface, NULL)))
             return false;
 
-        GetClientRect( fSettings.fHWnd, &rToLock );
-        MapWindowPoints( fSettings.fHWnd, nil, (POINT *)&rToLock, 2 );
+        GetClientRect( fDevice.fHWnd, &rToLock );
+        MapWindowPoints( fDevice.fHWnd, nil, (POINT *)&rToLock, 2 );
 
         if( rToLock.right > bigWidth )
         {
@@ -4913,12 +4111,12 @@ bool  plDXPipeline::IFindRenderTargetInfo( plRenderTarget *owner, D3DFORMAT &sur
 void plDXPipeline::PushRenderRequest(plRenderRequest* req)
 {
     // Save these, since we want to copy them to our current view
-    hsMatrix44 l2w = fView.fLocalToWorld;
-    hsMatrix44 w2l = fView.fWorldToLocal;
+    hsMatrix44 l2w = fView.GetLocalToWorld();
+    hsMatrix44 w2l = fView.GetWorldToLocal();
 
-    plFogEnvironment defFog = fView.fDefaultFog;
+    plFogEnvironment defFog = fView.GetDefaultFog();
 
-    fSettings.fViewStack.Push(fView);
+    fViewStack.push(fView);
 
     SetViewTransform(req->GetViewTransform());
 
@@ -4931,16 +4129,17 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
     SetDrawableTypeMask(req->GetDrawableMask());
     SetSubDrawableTypeMask(req->GetSubDrawableMask());
 
-    fView.fClearColor = inlGetD3DColor( req->GetClearColor() );
-    fView.fClearDepth = req->GetClearDepth();
+    float depth = req->GetClearDepth();
+    fView.SetClear(&req->GetClearColor(), &depth);
 
     if( req->GetFogStart() < 0 )
     {
-        fView.fDefaultFog = defFog;
+        fView.SetDefaultFog(defFog);
     }
     else
     {
-        fView.fDefaultFog.Set( req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
+        defFog.Set(req->GetYon() * (1.f - req->GetFogStart()), req->GetYon(), 1.f, &req->GetClearColor());
+        fView.SetDefaultFog(defFog);
         fCurrFog.fEnvPtr = nil;
     }
 
@@ -4948,13 +4147,13 @@ void plDXPipeline::PushRenderRequest(plRenderRequest* req)
         PushOverrideMaterial(req->GetOverrideMat());
 
     // Set from our saved ones...
-    fView.fWorldToLocal = w2l;
-    fView.fLocalToWorld = l2w;
+    fView.SetWorldToLocal(w2l);
+    fView.SetLocalToWorld(l2w);
 
     RefreshMatrices();
 
     if (req->GetIgnoreOccluders())
-        fView.fCullMaxNodes = 0;
+        fView.SetMaxCullNodes(0);
 
     fView.fCullTreeDirty = true;
 }
@@ -4967,7 +4166,8 @@ void plDXPipeline::PopRenderRequest(plRenderRequest* req)
         PopOverrideMaterial(nil);
 
     hsRefCnt_SafeUnRef(fView.fRenderRequest);
-    fView = fSettings.fViewStack.Pop();
+    fView = fViewStack.top();
+    fViewStack.pop();
 
     // Force the next thing drawn to update the fog settings.
     fD3DDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
@@ -4977,65 +4177,6 @@ void plDXPipeline::PopRenderRequest(plRenderRequest* req)
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
 }
 
-//// PushRenderTarget /////////////////////////////////////////////////////////
-// Begin rendering to the specified target. If target is nil, that's the primary surface.
-void    plDXPipeline::PushRenderTarget( plRenderTarget *target )
-{
-    //WHITE
-#ifdef MF_ENABLE_HACKOFF
-    if( target && (hackOffscreens.kMissingIndex == hackOffscreens.Find(target)) )
-        hackOffscreens.Append(target);
-#endif // MF_ENABLE_HACKOFF
-
-
-    fSettings.fCurrRenderTarget = target;
-    hsRefCnt_SafeAssign( fSettings.fCurrRenderTargetRef, ( target != nil ) ? (plDXDeviceRef *)target->GetDeviceRef() : nil );
-
-    while( target != nil )
-    {
-        fSettings.fCurrBaseRenderTarget = target;
-        target = target->GetParent();
-    }
-
-    fSettings.fRenderTargets.Push( fSettings.fCurrRenderTarget );
-    ISetRenderTarget( fSettings.fCurrRenderTarget );
-}
-
-//// PopRenderTarget //////////////////////////////////////////////////////////
-// Resume rendering to the render target before the last PushRenderTarget, 
-// making sure we aren't holding on to anything from the render target getting
-// popped.
-plRenderTarget      *plDXPipeline::PopRenderTarget()
-{
-    plRenderTarget  *old = fSettings.fRenderTargets.Pop(), *temp;
-    int             i = fSettings.fRenderTargets.GetCount();
-
-    if( i == 0 )
-    {
-        fSettings.fCurrRenderTarget = nil;
-        fSettings.fCurrBaseRenderTarget = nil;
-        hsRefCnt_SafeUnRef( fSettings.fCurrRenderTargetRef );
-        fSettings.fCurrRenderTargetRef = nil;
-    }
-    else
-    {
-        fSettings.fCurrRenderTarget = fSettings.fRenderTargets[ i - 1 ];
-        temp = fSettings.fCurrRenderTarget;
-        while( temp != nil )
-        {
-            fSettings.fCurrBaseRenderTarget = temp;
-            temp = temp->GetParent();
-        }
-        hsRefCnt_SafeAssign( fSettings.fCurrRenderTargetRef, 
-                             ( fSettings.fCurrRenderTarget != nil ) ? 
-                                    (plDXDeviceRef *)fSettings.fCurrRenderTarget->GetDeviceRef() 
-                                    : nil );
-    }
-    
-    ISetRenderTarget( fSettings.fCurrRenderTarget );
-
-    return old;
-}
 
 // ISetAnisotropy ///////////////////////////////////////////////////////////
 // Set the current anisotropic filtering settings to D3D
@@ -5073,72 +4214,6 @@ void plDXPipeline::ISetAnisotropy(bool on)
     }
 }
 
-//// ISetRenderTarget /////////////////////////////////////////////////////////
-// Set rendering to the specified render target. Nil rendertarget is the primary.
-// Invalidates the state as required by experience, not documentation.
-void    plDXPipeline::ISetRenderTarget( plRenderTarget *target )
-{
-    IDirect3DSurface9       *main, *depth;
-    plDXRenderTargetRef *ref = nil;
-
-
-    if( target != nil )
-    {
-        ref = (plDXRenderTargetRef *)target->GetDeviceRef();
-        if( ref == nil || ref->IsDirty() )
-            ref = (plDXRenderTargetRef *)MakeRenderTargetRef( target );
-    }
-
-    if( ref == nil || ref->GetColorSurface() == nil )
-    {
-        /// Set to main screen
-        main = fD3DMainSurface;
-        depth = fD3DDepthSurface;
-    }
-    else
-    {
-        /// Set to this target
-        main = ref->GetColorSurface();
-        depth = ref->fD3DDepthSurface;
-    }
-
-    if( main != fSettings.fCurrD3DMainSurface || depth != fSettings.fCurrD3DDepthSurface )
-    {
-        fSettings.fCurrD3DMainSurface = main;
-        fSettings.fCurrD3DDepthSurface = depth;
-        fD3DDevice->SetRenderTarget(0, main);
-        fD3DDevice->SetDepthStencilSurface(depth);
-    }
-
-    IInvalidateState();
-
-    ISetViewport();
-}
-
-// SetClear /////////////////////////////////////////////////////////////////////
-// Set the color and depth clear values.
-void plDXPipeline::SetClear(const hsColorRGBA* col, const float* depth)
-{
-    if( col )
-        fView.fClearColor = inlGetD3DColor(*col);
-    if( depth )
-        fView.fClearDepth = *depth;
-}
-
-// GetClearColor ////////////////////////////////////////////////////////////////
-// Return the current clear color.
-hsColorRGBA plDXPipeline::GetClearColor() const
-{
-    return hsColorRGBA().FromARGB32(fView.fClearColor);
-}
-
-// GetClearDepth ////////////////////////////////////////////////////////////////
-// Return the current clear depth.
-float plDXPipeline::GetClearDepth() const
-{
-    return fView.fClearDepth;
-}
-
 //// ClearRenderTarget ////////////////////////////////////////////////////////
 // Clear the current color and depth buffers. If a drawable is passed in, then
 // the color buffer will be cleared by rendering that drawable.
@@ -5162,26 +4237,26 @@ void plDXPipeline::ClearRenderTarget( plDrawable* d )
 
         if( useRect )
         {
-            WEAK_ERROR_CHECK( fD3DDevice->Clear( 1, &r, D3DCLEAR_ZBUFFER, 0, fView.fClearDepth, 0L ) );
+            WEAK_ERROR_CHECK( fD3DDevice->Clear( 1, &r, D3DCLEAR_ZBUFFER, 0, fView.GetClearDepth(), 0L ) );
         }
         else
         {
-            WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER, 0, fView.fClearDepth, 0L ) );
+            WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER, 0, fView.GetClearDepth(), 0L ) );
 // debug, clears to red         WEAK_ERROR_CHECK( fD3DDevice->Clear( 0, nil, D3DCLEAR_ZBUFFER | D3DCLEAR_TARGET, 0xffff0000, fView.fClearDepth, 0L ) );
         }
     }
 
     uint32_t s = fView.fRenderState;
-    uint32_t dtm = fView.fDrawableTypeMask;
-    uint32_t sdtm = fView.fSubDrawableTypeMask;
+    uint32_t dtm = fView.GetDrawableTypeMask();
+    uint32_t sdtm = fView.GetSubDrawableTypeMask();
     
-    fView.fDrawableTypeMask = plDrawable::kNormal;
-    fView.fSubDrawableTypeMask = uint32_t(-1);
+    fView.SetDrawableTypeMask(plDrawable::kNormal);
+    fView.SetSubDrawableTypeMask(uint32_t(-1));
 
     Draw(d);
 
-    fView.fSubDrawableTypeMask = sdtm;
-    fView.fDrawableTypeMask = dtm;
+    fView.SetSubDrawableTypeMask(sdtm);
+    fView.SetDrawableTypeMask(dtm);
     fView.fRenderState = s;
 
 }
@@ -5197,14 +4272,14 @@ bool plDXPipeline::IGetClearViewPort(D3DRECT& r)
     r.y2 = GetViewTransform().GetViewPortBottom();
 
     bool useRect = false;
-    if( fSettings.fCurrRenderTarget != nil )
+    if( fCurrRenderTarget != nil )
     {
-        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fSettings.fCurrRenderTarget->GetWidth()) || (r.y2 != fSettings.fCurrRenderTarget->GetHeight()) );
+        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fCurrRenderTarget->GetWidth()) || (r.y2 != fCurrRenderTarget->GetHeight()) );
 
     }
     else
     {
-        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fSettings.fOrigWidth) || (r.y2 != fSettings.fOrigHeight) );
+        useRect = ( (r.x1 != 0) || (r.y1 != 0) || (r.x2 != fOrigWidth) || (r.y2 != fOrigHeight) );
     }
 
     return useRect;
@@ -5217,7 +4292,7 @@ void    plDXPipeline::ClearRenderTarget( const hsColorRGBA *col, const float* de
     if( fView.fRenderState & (kRenderClearColor | kRenderClearDepth) )
     {
         DWORD clearColor = inlGetD3DColor(col ? *col : GetClearColor());
-        float clearDepth = depth ? *depth : fView.fClearDepth;
+        float clearDepth = depth ? *depth : fView.GetClearDepth();
 
         DWORD   dwFlags = 0;//fStencil.fDepth > 0 ? D3DCLEAR_STENCIL : 0;
         if( fView.fRenderState & kRenderClearColor )
@@ -5299,7 +4374,7 @@ void plDXPipeline::ISetFogParameters(const plSpan* span, const plLayerInterface*
     }
 #endif // PLASMA_EXTERNAL_RELEASE
 
-    plFogEnvironment* fog = (span ? (span->fFogEnvironment ? span->fFogEnvironment : &fView.fDefaultFog) : nil);
+    const plFogEnvironment* fog = (span ? (span->fFogEnvironment ? span->fFogEnvironment : &fView.GetDefaultFog()) : nil);
 
     uint8_t isVertex = 0;
     uint8_t isShader = false;
@@ -5653,7 +4728,6 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
 {
     plDXLightRef    *lRef = new plDXLightRef();
 
-        
     /// Assign stuff and update
     lRef->fD3DIndex = fLights.ReserveD3DIndex();
     lRef->fOwner = owner;
@@ -5676,10 +4750,7 @@ hsGDeviceRef    *plDXPipeline::IMakeLightRef( plLightInfo *owner )
 // ready to illuminate the scene.
 void plDXPipeline::RegisterLight(plLightInfo* liInfo)
 {
-    if( liInfo->IsLinked() )
-        return;
-
-    liInfo->Link( &fLights.fActiveList );
+    pl3DPipeline::RegisterLight(liInfo);
     liInfo->SetDeviceRef( IMakeLightRef( liInfo ) );
     fLights.fTime++;
 }
@@ -5689,8 +4760,7 @@ void plDXPipeline::RegisterLight(plLightInfo* liInfo)
 // no longer illuminate the scene.
 void plDXPipeline::UnRegisterLight(plLightInfo* liInfo)
 {
-    liInfo->SetDeviceRef( nil );
-    liInfo->Unlink();
+    pl3DPipeline::UnRegisterLight(liInfo);
 
     fLights.fTime++;
 }
@@ -5704,12 +4774,12 @@ void plDXPipeline::UnRegisterLight(plLightInfo* liInfo)
 void    plDXPipeline::IEnableLights( plSpan *span )
 {
     plProfile_BeginTiming(SelectLights);
-    ISelectLights( span, fSettings.fMaxNumLights, false );
+    ISelectLights( span, fMaxNumLights, false );
     plProfile_EndTiming(SelectLights);
     if( !(fView.fRenderState & kRenderNoProjection) )
     {
         plProfile_BeginTiming(SelectProj);
-        ISelectLights( span, fSettings.fMaxNumProjectors, true );
+        ISelectLights( span, fMaxNumProjectors, true );
         plProfile_EndTiming(SelectProj);
     }
 }
@@ -6206,10 +5276,6 @@ void    plDXLightSettings::Release()
         ref->Unlink();
     }
 
-    // Tell the light infos to unlink themselves
-    while( fActiveList )
-        fPipeline->UnRegisterLight( fActiveList );
-
     fShadowLights.SetCount(fShadowLights.GetNumAlloc());
     int i;
     for( i = 0; i < fShadowLights.GetCount(); i++ )
@@ -6276,7 +5342,7 @@ void    plDXPipeline::ISetLayer( uint32_t lay )
 
             plCONST(int) kBiasMult = 8;
             if( !( fSettings.fD3DCaps & kCapsZBias ) )
-                IProjectionMatrixToD3D();
+                IProjectionMatrixToDevice();
             else
                 fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, kBiasMult * fCurrRenderLayer );
         }
@@ -6293,7 +5359,7 @@ void    plDXPipeline::IBottomLayer()
     {
         fCurrRenderLayer = 0;
         if( !( fSettings.fD3DCaps & kCapsZBias ) )
-            IProjectionMatrixToD3D();
+            IProjectionMatrixToDevice();
         else
             fD3DDevice->SetRenderState( D3DRS_DEPTHBIAS, 0 );
     }
@@ -6395,7 +5461,7 @@ plLayerInterface* plDXPipeline::IPopOverAllLayer(plLayerInterface* li)
 // Calculate the number of active piggy backs.
 int plDXPipeline::ISetNumActivePiggyBacks()
 {
-    return fActivePiggyBacks = std::min(static_cast<int>(fSettings.fMaxPiggyBacks), fPiggyBackStack.GetCount());
+    return fActivePiggyBacks = std::min(static_cast<int>(fMaxPiggyBacks), fPiggyBackStack.GetCount());
 }
 
 // IPushProjPiggyBack //////////////////////////////////////////////////
@@ -6530,8 +5596,8 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
 
     /// Workaround for a D3D limitation--you're not allowed to render with a texture that you're
     /// rendering INTO. Hence we can't have self-reflecting cubicRenderTargets (damn)
-    if( fSettings.fCurrBaseRenderTarget != nil && 
-        newMat->GetLayer( layer )->GetTexture() == plBitmap::ConvertNoRef( fSettings.fCurrBaseRenderTarget ) )
+    if( fCurrBaseRenderTarget != nil && 
+        newMat->GetLayer( layer )->GetTexture() == plBitmap::ConvertNoRef( fCurrBaseRenderTarget ) )
     {
         return -1;
     }
@@ -6655,9 +5721,9 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
                 return -1;
 
             // Can't render into a render target using same rendertarget as a texture.
-            if( fSettings.fCurrBaseRenderTarget 
+            if( fCurrBaseRenderTarget 
                 && 
-                layPtr->GetTexture() == (plBitmap*)(fSettings.fCurrBaseRenderTarget) )
+                layPtr->GetTexture() == (plBitmap*)(fCurrBaseRenderTarget) )
             {
                 // Oops, just bail
                 return -1;
@@ -6672,7 +5738,7 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
     }
 
     // More cleanup for the DX9.0c 2 texture limitation. See ILayersAtOnce()
-    if (fSettings.fMaxLayersAtOnce == 2)
+    if (fMaxLayersAtOnce == 2)
     {
         if ((fLayerState[0].fBlendFlags & hsGMatState::kBlendAdd)
             && (newMat->GetNumLayers() > fCurrLayerIdx + 1)
@@ -6691,8 +5757,8 @@ int32_t   plDXPipeline::IHandleMaterial( hsGMaterial *newMat, uint32_t layer, co
     {
         /// Tack lightmap onto last stage if we have one
         numActivePiggyBacks = fActivePiggyBacks;
-        if( numActivePiggyBacks > fSettings.fMaxLayersAtOnce - fCurrNumLayers )
-            numActivePiggyBacks = fSettings.fMaxLayersAtOnce - fCurrNumLayers;
+        if( numActivePiggyBacks > fMaxLayersAtOnce - fCurrNumLayers )
+            numActivePiggyBacks = fMaxLayersAtOnce - fCurrNumLayers;
         if( numActivePiggyBacks )
         {
             int i;
@@ -7102,7 +6168,7 @@ void    plDXPipeline::IHandleStageBlend(int stage)
             fD3DDevice->SetTextureStageState( stage, D3DTSS_ALPHAOP,   D3DTOP_SELECTARG2 );
             fD3DDevice->SetTextureStageState( stage, D3DTSS_ALPHAARG2, D3DTA_CURRENT ); 
             
-            if (fSettings.fMaxLayersAtOnce == 2 && stage == 1)
+            if (fMaxLayersAtOnce == 2 && stage == 1)
             {
                 // On these boards, the only way we can do 2 textures plus diffuse is to
                 // multiply it in during stage 0, but that only gives the same result
@@ -7916,21 +6982,6 @@ void    plDXPipeline::IUseTextureRef( int stage, hsGDeviceRef *dRef, plLayerInte
 
     uint32_t uvwSrc = layer->GetUVWSrc();
 
-    // Keep track of how much managed memory has been "seen" since the last
-    // evict, for that NVidia bug. Look for OSVERSIONINFO for more notes.
-    if( ref->fUseTime <= fEvictTime )
-        fManagedSeen += ref->fDataSize;
-
-    // Also used for the same thing.
-    if( ref->fUseTime ^ fTextUseTime )
-    {
-        plProfile_NewMem(CurrTex, ref->fDataSize);
-        plProfile_Inc(NumTex);
-        ref->fUseTime = fTextUseTime;
-
-        fTexUsed += ref->fDataSize;
-    }
-
     // DX pixel shaders require the TEXCOORDINDEX to be equal to the stage,
     // even though its ignored.
     if( layer->GetPixelShader() && (stage != uvwSrc) )
@@ -8014,7 +7065,7 @@ void    plDXPipeline::IStageStop( uint32_t stage )
         // See ILayersAtOnce()
         if ((fLayerState[0].fBlendFlags & hsGMatState::kBlendNoTexColor)
             || (fLayerState[1].fBlendFlags & hsGMatState::kBlendNoTexColor)
-            || fSettings.fMaxLayersAtOnce == 2)
+            || fMaxLayersAtOnce == 2)
         {
             fD3DDevice->SetTextureStageState(2, D3DTSS_COLOROP, D3DTOP_DISABLE);
             disableStage = 2;
@@ -8160,7 +7211,7 @@ uint32_t  plDXPipeline::ILayersAtOnce( hsGMaterial *mat, uint32_t which )
     // We used to be able to set stage 0 and 1 to textures, and set stage 2 to the
     // diffuse color. With DX9.0c we just get two texture stages. Period. 
     // Either we give up a texture or the diffuse color.
-    if (fSettings.fMaxLayersAtOnce == 2)
+    if (fMaxLayersAtOnce == 2)
     {
         if ((mat->GetNumLayers() > which + 1)
             && !(mat->GetLayer(which + 1)->GetBlendFlags() & hsGMatState::kBlendNoTexColor))
@@ -8172,12 +7223,12 @@ uint32_t  plDXPipeline::ILayersAtOnce( hsGMaterial *mat, uint32_t which )
     }
 
     int i;
-    int maxLayersAtOnce = fSettings.fMaxLayersAtOnce;
+    int maxLayersAtOnce = fMaxLayersAtOnce;
 
     // Now Reserve space for piggy backs, and see if there are 
     // are any more layers we can pick up.
     // 
-    maxLayersAtOnce = fSettings.fMaxLayersAtOnce - fActivePiggyBacks;
+    maxLayersAtOnce = fMaxLayersAtOnce - fActivePiggyBacks;
     if( which + maxLayersAtOnce > mat->GetNumLayers() )
         maxLayersAtOnce = mat->GetNumLayers() - which;
 
@@ -8791,7 +7842,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
                 formatType = D3DFMT_A8L8;
                 texSize = 16;
             }
-            else if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
+            else if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
             {
                 formatType = D3DFMT_A4R4G4B4;
                 texSize = 16;
@@ -8814,7 +7865,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
                 formatType = D3DFMT_L8;
                 texSize = 8;
             }
-            else if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
+            else if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
             {
                 formatType = D3DFMT_A1R5G5B5;
                 texSize = 16;
@@ -8835,7 +7886,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
     {
         if( b->GetFlags() & plMipmap::kAlphaChannelFlag )
         {
-            if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
+            if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A4R4G4B4 ) )
             {
                 formatType = D3DFMT_A4R4G4B4;
                 texSize = 16;
@@ -8853,7 +7904,7 @@ void    plDXPipeline::IGetD3DTextureFormat( plBitmap *b, D3DFORMAT &formatType, 
         }
         else
         {
-            if( !prefer32bit && ( fSettings.fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
+            if( !prefer32bit && ( fColorDepth == 16 ) && ITextureFormatAllowed( D3DFMT_A1R5G5B5 ) )
             {
                 formatType = D3DFMT_A1R5G5B5;
                 texSize = 16;
@@ -8997,520 +8048,15 @@ void    plDXPipeline::IFormatTextureData( uint32_t formatType, uint32_t numPix, 
 //// View Stuff ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-
-//// TestVisibleWorld /////////////////////////////////////////////////////////
-// Check if the world space bounds are visible within the current view frustum.
-bool plDXPipeline::TestVisibleWorld( const hsBounds3Ext& wBnd )
-{
-    if( fView.fCullTreeDirty )
-        IRefreshCullTree();
-    if (wBnd.GetType() == kBoundsNormal)
-        return fView.fCullTree.BoundsVisible(wBnd);
-    else
-        return false;
-}
-
-bool plDXPipeline::TestVisibleWorld( const plSceneObject* sObj )
-{
-    const plDrawInterface* di = sObj->GetDrawInterface();
-    if( !di )
-        return false;
-
-    const int numDraw = di->GetNumDrawables();
-    int i;
-    for( i = 0; i < numDraw; i++ )
-    {
-        plDrawableSpans* dr = plDrawableSpans::ConvertNoRef(di->GetDrawable(i));
-        if( !dr )
-            continue;
-
-        plDISpanIndex& diIndex = dr->GetDISpans(di->GetDrawableMeshIndex(i));
-        if( diIndex.IsMatrixOnly() )
-            continue;
-
-        const int numSpan = diIndex.GetCount();
-        int j;
-        for( j = 0; j < numSpan; j++ )
-        {
-            const plSpan* span = dr->GetSpan(diIndex[j]);
-
-            if( span->fProps & plSpan::kPropNoDraw )
-                continue;
-
-            if( !span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisSet())
-                || span->GetVisSet().Overlap(plGlobalVisMgr::Instance()->GetVisNot()) )
-
-                continue;
-
-            if( !TestVisibleWorld(span->fWorldBounds) )
-                continue;
-
-            return true;
-        }
-    }
-    return false;
-}
-
-//// GetViewAxesWorld /////////////////////////////////////////////////////////
-// Get the current view direction, up and direction X up.
-void    plDXPipeline::GetViewAxesWorld(hsVector3 axes[3] /* ac,up,at */ ) const
-{
-    axes[ 0 ] = GetViewAcrossWorld();
-    axes[ 1 ] = GetViewUpWorld();
-    axes[ 2 ] = GetViewDirWorld();
-}
-
-//// GetFOV ///////////////////////////////////////////////////////////////////
-// Get the current FOV in degrees.
-void    plDXPipeline::GetFOV(float& fovX, float& fovY) const
-{
-    fovX = GetViewTransform().GetFovXDeg();
-    fovY = GetViewTransform().GetFovYDeg();
-}
-
-//// SetFOV ///////////////////////////////////////////////////////////////////
-// Set the current FOV in degrees. Forces perspective rendering to be true.
-void    plDXPipeline::SetFOV( float fovX, float fovY )
-{
-    IGetViewTransform().SetFovDeg(fovX, fovY);
-    IGetViewTransform().SetPerspective(true);
-}
-
-// Get the orthogonal projection view size in world units (e.g. feet).
-void    plDXPipeline::GetSize( float& width, float& height ) const
-{
-    width = GetViewTransform().GetScreenWidth();
-    height = GetViewTransform().GetScreenHeight();
-}
-
-// Set the orthogonal projection view size in world units (e.g. feet).
-// Forces projection to orthogonal if it wasn't.
-void    plDXPipeline::SetSize( float width, float height )
-{
-    IGetViewTransform().SetWidth(width);
-    IGetViewTransform().SetHeight(height);
-    IGetViewTransform().SetOrthogonal(true);
-}
-
-//// GetDepth /////////////////////////////////////////////////////////////////
-// Get the current hither and yon.
-void plDXPipeline::GetDepth(float& hither, float& yon) const
-{
-    GetViewTransform().GetDepth(hither, yon);
-}
-
-//// SetDepth /////////////////////////////////////////////////////////////////
-// Set the current hither and yon.
-void plDXPipeline::SetDepth(float hither, float yon)
-{
-    IGetViewTransform().SetDepth(hither, yon);
-}
-
-//// GetWorldToCamera /////////////////////////////////////////////////////////
-// Return current world to camera transform.
-const hsMatrix44& plDXPipeline::GetWorldToCamera() const
-{
-    return fView.GetWorldToCamera();
-}
-
-//// GetCameraToWorld /////////////////////////////////////////////////////////
-// Return current camera to world transform.
-const hsMatrix44& plDXPipeline::GetCameraToWorld() const
-{
-    return fView.GetCameraToWorld();
-}
-
-// IUpdateViewFlags /////////////////////////////////////////////////////////
-// Dirty anything cached dependent on the current camera matrix.
-void plDXPipeline::IUpdateViewFlags()
-{
-    fView.fCullTreeDirty = true;
-
-    fView.fWorldToCamLeftHanded = fView.GetWorldToCamera().GetParity();
-}
-//// SetWorldToCamera /////////////////////////////////////////////////////////
-// Immediate set of camera transform.
-void plDXPipeline::SetWorldToCamera(const hsMatrix44& w2c, const hsMatrix44& c2w)
-{
-    IGetViewTransform().SetCameraTransform(w2c, c2w);
-
-    IUpdateViewFlags();
-
-    IWorldToCameraToD3D();
-}
-
-// IWorldToCameraToD3D ///////////////////////////////////////////////////////
-// Pass the current camera transform through to D3D.
-void plDXPipeline::IWorldToCameraToD3D()
-{
-    D3DXMATRIX  mat;
-
-    IMatrix44ToD3DMatrix( mat, fView.GetWorldToCamera() );
-    fD3DDevice->SetTransform( D3DTS_VIEW, &mat );
-
-    fView.fXformResetFlags &= ~fView.kResetCamera;
-
-    fFrame++;
-}
-
-// SetViewTransform ///////////////////////////////////////////////////////////
-// ViewTransform encapsulates everything about the current camera, viewport and
-// window necessary to render or convert from world space to pixel space. Doesn't
-// include the object dependent local to world transform.
-// Set plViewTransform.h
-void plDXPipeline::SetViewTransform(const plViewTransform& v)
-{
-    fView.fTransform = v;
-
-    if( !v.GetScreenWidth() || !v.GetScreenHeight() )
-    {
-        fView.fTransform.SetScreenSize((uint16_t)(fSettings.fOrigWidth), (uint16_t)(fSettings.fOrigHeight));
-    }
-
-    IUpdateViewFlags();
-    IWorldToCameraToD3D();
-}
-
-//// GetWorldToLocal //////////////////////////////////////////////////////////
-// Return current World to Local transform. Note that this is only meaningful while an
-// object is being rendered, so this function is pretty worthless.
-const hsMatrix44& plDXPipeline::GetWorldToLocal() const
-{
-    return fView.fWorldToLocal;
-}
-
-//// GetLocalToWorld //////////////////////////////////////////////////////////
-// Return current Local to World transform. Note that this is only meaningful while an
-// object is being rendered, so this function is pretty worthless.
-
-const hsMatrix44& plDXPipeline::GetLocalToWorld() const
-{
-    return fView.fLocalToWorld;
-}
-
-//// ISetLocalToWorld /////////////////////////////////////////////////////////
-// Record and pass on to D3D the current local to world transform for the object
-// about to be rendered.
-void    plDXPipeline::ISetLocalToWorld( const hsMatrix44& l2w, const hsMatrix44& w2l )
-{
-    
-    fView.fLocalToWorld = l2w;
-    fView.fWorldToLocal = w2l;
-
-    fView.fViewVectorsDirty = true;
-
-    // We keep track of parity for winding order culling.
-    fView.fLocalToWorldLeftHanded = fView.fLocalToWorld.GetParity();
-
-    ILocalToWorldToD3D();
-}
-
-// ILocalToWorldToD3D ///////////////////////////////////////////////////////////
-// pass the current local to world tranform on to D3D.
-void plDXPipeline::ILocalToWorldToD3D()
-{
-    D3DXMATRIX  mat;
-
-    if( fView.fLocalToWorld.fFlags & hsMatrix44::kIsIdent )
-        fD3DDevice->SetTransform( D3DTS_WORLD, &d3dIdentityMatrix );
-    else
-    {
-        IMatrix44ToD3DMatrix( mat, fView.fLocalToWorld );
-        fD3DDevice->SetTransform( D3DTS_WORLD, &mat );
-    }
-
-    fView.fXformResetFlags &= ~fView.kResetL2W;
-}
-
 //// IIsViewLeftHanded ////////////////////////////////////////////////////////
 //  Returns true if the combination of the local2world and world2camera
 //  matrices is left-handed.
 
 bool  plDXPipeline::IIsViewLeftHanded()
 {
-    return fView.fTransform.GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
+    return fView.GetViewTransform().GetOrthogonal() ^ ( fView.fLocalToWorldLeftHanded ^ fView.fWorldToCamLeftHanded ) ? true : false;
 }
 
-//// ScreenToWorldPoint ///////////////////////////////////////////////////////
-// Given a screen space pixel position, and a world space distance from the camera, return a
-// full world space position. I.e. cast a ray through a screen pixel dist feet, and where
-// is it.
-void    plDXPipeline::ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, float dist, uint32_t strideOut, hsPoint3 *worldOut )
-{
-    while( n-- )
-    {
-        hsPoint3 scrP;
-        scrP.Set(float(*scrX++), float(*scrY++), float(dist));
-        *worldOut++ = GetViewTransform().ScreenToWorld(scrP);
-    }
-}
-
-// IRefreshCullTree ////////////////////////////////////////////////////////////////////
-// The cull tree captures the view frustum and any occluders in the scene into a single
-// BSP tree. See plCullTree.h. It must be recomputed any time the camera moves.
-void plDXPipeline::IRefreshCullTree()
-{
-    if( fView.fCullTreeDirty )
-    {
-        plProfile_BeginTiming(DrawOccBuild);
-
-        fView.fCullTree.Reset();
-
-        fView.fCullTree.SetViewPos(GetViewPositionWorld());
-
-        if (fCullProxy && !IsDebugFlagSet(plPipeDbg::kFlagOcclusionSnap))
-        {
-            fCullProxy->GetKey()->UnRefObject();
-            fCullProxy = nil;
-            SetDrawableTypeMask(GetDrawableTypeMask() & ~plDrawable::kOccSnapProxy);
-        }
-        bool doCullSnap = IsDebugFlagSet(plPipeDbg::kFlagOcclusionSnap)&& !fCullProxy && !fSettings.fViewStack.GetCount();
-        if( doCullSnap )
-        {
-            fView.fCullTree.BeginCapturePolys();
-            fView.fCullTree.SetVisualizationYon(GetViewTransform().GetYon());
-        }
-        fView.fCullTree.InitFrustum(GetViewTransform().GetWorldToNDC());
-        fView.fCullTreeDirty = false;
-
-        if( fView.fCullMaxNodes )
-        {
-            int i;
-            for( i = 0; i < fCullPolys.GetCount(); i++ )
-            {
-                fView.fCullTree.AddPoly(*fCullPolys[i]);
-                if( fView.fCullTree.GetNumNodes() >= fView.fCullMaxNodes )
-                    break;
-            }
-            fCullPolys.SetCount(0);
-            plProfile_Set(OccPolyUsed, i);
-
-            for( i = 0; i < fCullHoles.GetCount(); i++ )
-            {
-                fView.fCullTree.AddPoly(*fCullHoles[i]);
-            }
-            fCullHoles.SetCount(0);
-            plProfile_Set(OccNodeUsed, fView.fCullTree.GetNumNodes());
-        }
-        if( doCullSnap )
-        {
-            fView.fCullTree.EndCapturePolys();
-            IMakeOcclusionSnap();
-        }
-
-        plProfile_EndTiming(DrawOccBuild);
-    }
-}
-
-// IMakeOcclusionSnap /////////////////////////////////////////////////////////////////////
-// Debugging visualization tool only. Takes a snapshot of the current occlusion
-// BSP tree and renders it until told to stop.
-void plDXPipeline::IMakeOcclusionSnap()
-{
-    hsTArray<hsPoint3>& pos = fView.fCullTree.GetCaptureVerts();
-    hsTArray<hsVector3>& norm = fView.fCullTree.GetCaptureNorms();
-    hsTArray<hsColorRGBA>& color = fView.fCullTree.GetCaptureColors();
-    hsTArray<uint16_t>& tris = fView.fCullTree.GetCaptureTris();
-
-    if( tris.GetCount() )
-    {
-        hsMatrix44 ident;
-        ident.Reset();
-
-        hsGMaterial* mat = new hsGMaterial;
-        hsgResMgr::ResMgr()->NewKey( "OcclusionSnapMat", mat, plLocation::kGlobalFixedLoc );
-        plLayer *lay = mat->MakeBaseLayer();
-        lay->SetZFlags(hsGMatState::kZNoZWrite);
-        lay->SetPreshadeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));
-        lay->SetRuntimeColor(hsColorRGBA().Set(1.f, 0.5f, 0.5f, 1.f));
-        lay->SetAmbientColor(hsColorRGBA().Set(0,0,0,1.f));
-        lay->SetOpacity(0.5f);
-        lay->SetBlendFlags(lay->GetBlendFlags() | hsGMatState::kBlendAlpha);
-
-        fCullProxy = plDrawableGenerator::GenerateDrawable(pos.GetCount(), 
-                                            pos.AcquireArray(),
-                                            norm.AcquireArray(),
-                                            nil,
-                                            0,
-                                            color.AcquireArray(),
-                                            true,
-                                            nil,
-                                            tris.GetCount(),
-                                            tris.AcquireArray(),
-                                            mat,
-                                            ident,
-                                            true,
-                                            nil,
-                                            nil);
-
-        if( fCullProxy )
-        {
-            fCullProxy->GetKey()->RefObject();
-            fCullProxy->SetType(plDrawable::kOccSnapProxy);
-
-            SetDrawableTypeMask(GetDrawableTypeMask() | plDrawable::kOccSnapProxy);
-            
-            fCullProxy->PrepForRender(this);
-        }
-    }
-    fView.fCullTree.ReleaseCapture();
-}
-
-// SubmitOccluders /////////////////////////////////////////////////////////////
-// Add the input polys into the list of polys from which to generate the cull tree.
-bool plDXPipeline::SubmitOccluders(const hsTArray<const plCullPoly*>& polyList)
-{
-    fCullPolys.SetCount(0);
-    fCullHoles.SetCount(0);
-    int i;
-    for( i = 0; i < polyList.GetCount(); i++ )
-    {
-        if( polyList[i]->IsHole() )
-            fCullHoles.Append(polyList[i]);
-        else
-            fCullPolys.Append(polyList[i]);
-    }
-    fView.fCullTreeDirty = true;
-
-    return true;
-}
-
-//// RefreshScreenMatrices ////////////////////////////////////////////////////
-// Force a refresh of cached state when the projection matrix changes.
-void    plDXPipeline::RefreshScreenMatrices()
-{
-    fView.fCullTreeDirty = true;
-    IProjectionMatrixToD3D();
-}   
-
-//// RefreshMatrices //////////////////////////////////////////////////////////
-//  Just a wrapper
-
-void    plDXPipeline::RefreshMatrices()
-{
-    RefreshScreenMatrices();
-}
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-//// Overrides ////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-//// PushOverrideMaterial /////////////////////////////////////////////////////
-// Push a material to be used instead of the material associated with objects
-// for rendering.
-// Must be matched with a PopOverrideMaterial.
-hsGMaterial *plDXPipeline::PushOverrideMaterial( hsGMaterial *mat )
-{
-    hsGMaterial *ret = GetOverrideMaterial();
-    hsRefCnt_SafeRef( mat );
-    fOverrideMat.Push( mat );
-    fForceMatHandle = true;
-
-    return ret;
-}
-
-//// PopOverrideMaterial //////////////////////////////////////////////////////
-// Stop overriding with the current override material.
-// Must match a preceding PushOverrideMaterial.
-void plDXPipeline::PopOverrideMaterial( hsGMaterial *restore )
-{
-    hsGMaterial *pop = fOverrideMat.Pop();
-    hsRefCnt_SafeUnRef( pop );
-
-    if( fCurrMaterial == pop )
-    {
-        fForceMatHandle = true;
-    }
-}
-
-//// GetOverrideMaterial //////////////////////////////////////////////////////
-// Return the current override material, or nil if there isn't any.
-hsGMaterial *plDXPipeline::GetOverrideMaterial() const
-{
-    return fOverrideMat.GetCount() ? fOverrideMat.Peek() : nil;
-}
-
-//// GetMaterialOverrideOn ////////////////////////////////////////////////////
-// Return the current bits set to be always on for the given category (e.g. ZFlags).
-uint32_t  plDXPipeline::GetMaterialOverrideOn( hsGMatState::StateIdx category ) const
-{
-    return fMatOverOn.Value(category);
-}
-
-//// GetMaterialOverrideOff ///////////////////////////////////////////////////
-// Return the current bits set to be always off for the given category (e.g. ZFlags).
-uint32_t  plDXPipeline::GetMaterialOverrideOff( hsGMatState::StateIdx category ) const
-{
-    return fMatOverOff.Value(category);
-}
-
-//// PushMaterialOverride /////////////////////////////////////////////////////
-// Force material state bits on or off. If you use this, save the return value
-// as input to PopMaterialOverride, to restore previous values.
-hsGMatState plDXPipeline::PushMaterialOverride( const hsGMatState& state, bool on )
-{
-    hsGMatState ret = GetMaterialOverride( on );
-    if( on )
-    {
-        fMatOverOn |= state;
-        fMatOverOff -= state;
-    }
-    else
-    {
-        fMatOverOff |= state;
-        fMatOverOn -= state;
-    }
-    fForceMatHandle = true;
-    return ret;
-}
-
-// PushMaterialOverride ///////////////////////////////////////////////////////
-// Force material state bits on or off. If you use this, save the return value
-// as input to PopMaterialOverride, to restore previous values.
-// This version just sets for one category (e.g. Z flags).
-hsGMatState plDXPipeline::PushMaterialOverride(hsGMatState::StateIdx cat, uint32_t which, bool on)
-{
-    hsGMatState ret = GetMaterialOverride( on );
-    if( on )
-    {
-        fMatOverOn[ cat ] |= which;
-        fMatOverOff[ cat ] &= ~which;
-    }
-    else
-    {
-        fMatOverOn[ cat ] &= ~which;
-        fMatOverOff[ cat ] |= which;
-    }
-    fForceMatHandle = true;
-    return ret;
-}
-
-//// PopMaterialOverride //////////////////////////////////////////////////////
-// Restore the previous settings returned from the matching PushMaterialOverride.
-void plDXPipeline::PopMaterialOverride(const hsGMatState& restore, bool on)
-{
-    if( on )
-    {
-        fMatOverOn = restore;
-        fMatOverOff.Clear( restore );
-    }
-    else
-    {
-        fMatOverOff = restore;
-        fMatOverOn.Clear( restore );
-    }
-    fForceMatHandle = true;
-}
-
-//// GetMaterialOverride //////////////////////////////////////////////////////
-// Return the current material state bits force to on or off, depending on input <on>.
-const hsGMatState& plDXPipeline::GetMaterialOverride(bool on) const
-{
-    return on ? fMatOverOn : fMatOverOff;
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 //// Transforms ///////////////////////////////////////////////////////////////
@@ -9550,61 +8096,6 @@ D3DXMATRIX&     plDXPipeline::IMatrix44ToD3DMatrix( D3DXMATRIX& dst, const hsMat
     return dst;
 }
 
-/////////////////////////////////////////////////////////
-// IGetCameraToNDC /////////////////////////////////////////////
-// Get the camera to NDC transform. This may be adjusted to create
-// a Z bias towards the camera for cases where the D3D Z bias fails us.
-hsMatrix44 plDXPipeline::IGetCameraToNDC()
-{
-    hsMatrix44 cam2ndc = GetViewTransform().GetCameraToNDC();
-    
-    if( fView.IsPerspective() )
-    {
-        // Want to scale down W and offset in Z without
-        // changing values of x/w, y/w. This is just
-        // minimal math for
-        // Mproj' * p = Mscaletrans * Mproj * p
-        // where Mscaletrans = 
-        // [ s 0 0 0 ]
-        // [ 0 s 0 0 ]
-        // [ 0 0 s 0 ]
-        // [ 0 0 t s ]
-        // Resulting matrix Mproj' is not exactly "Fog Friendly",
-        // but is close enough.
-        // Resulting point is [sx, sy, sz + tw, sw] and after divide
-        // is [x/w, y/w, z/w + t/s, 1/sw]
-
-
-        float scale = 1.f - float(fCurrRenderLayer) * fTweaks.fPerspLayerScale;
-        float zTrans = -scale * float(fCurrRenderLayer) * fTweaks.fPerspLayerTrans;
-
-        cam2ndc.fMap[0][0] *= scale;
-        cam2ndc.fMap[1][1] *= scale;
-
-        cam2ndc.fMap[2][2] *= scale;
-        cam2ndc.fMap[2][2] += zTrans * cam2ndc.fMap[3][2];
-        cam2ndc.fMap[3][2] *= scale;
-    }
-    else
-    {
-        plConst(float) kZTrans = -1.e-4f;
-        cam2ndc.fMap[2][3] += kZTrans * fCurrRenderLayer;
-    }
-
-    return cam2ndc;
-}
-
-// IProjectionMatrixToD3D //////////////////////////////////////////////////////////
-// Send the current camera to NDC transform to D3D.
-void plDXPipeline::IProjectionMatrixToD3D()
-{
-    D3DXMATRIX matProjection;
-
-    IMatrix44ToD3DMatrix( matProjection, IGetCameraToNDC() );
-
-    fD3DDevice->SetTransform( D3DTS_PROJECTION, &matProjection );
-    fView.fXformResetFlags &= ~fView.kResetProjection;
-}
 
 //// ISetCullMode /////////////////////////////////////////////////////////////
 //  Tests and sets the current winding order cull mode (CW, CCW, or none).
@@ -9617,28 +8108,11 @@ void    plDXPipeline::ISetCullMode(bool flip)
     if( !(fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided) )
         newCull = !IIsViewLeftHanded() ^ !flip ? D3DCULL_CW : D3DCULL_CCW;
 
-    if( newCull != fCurrCullMode )
+    if( newCull != fDevice.fCurrCullMode )
     {
-        fCurrCullMode = newCull;
-        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode );
+        fDevice.fCurrCullMode = newCull;
+        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode );
     }
-}
-
-//// ITransformsToD3D //////////////////////////////////////////////////////////
-//  Refreshes all transforms. Useful after popping renderTargets :)
-
-void plDXPipeline::ITransformsToD3D()
-{
-    bool resetCullMode = fView.fXformResetFlags & (fView.kResetCamera | fView.kResetL2W);
-
-    if( fView.fXformResetFlags & fView.kResetCamera )
-        IWorldToCameraToD3D();
-
-    if( fView.fXformResetFlags & fView.kResetL2W )
-        ILocalToWorldToD3D();
-
-    if( fView.fXformResetFlags & fView.kResetProjection )
-        IProjectionMatrixToD3D();
 }
 
 // ISetupVertexBufferRef /////////////////////////////////////////////////////////
@@ -10208,8 +8682,6 @@ void plDXPipeline::IBeginAllocUnManaged()
 {
     // Flush out all managed resources to make room for unmanaged resources.
     fD3DDevice->EvictManagedResources();
-    fEvictTime = fTextUseTime;
-    fManagedSeen = 0;
 
     fManagedAlloced = false;
     fAllocUnManaged = true; // we're currently only allocating POOL_DEFAULT
@@ -10224,8 +8696,6 @@ void plDXPipeline::IEndAllocUnManaged()
 
     // Flush the (should be empty) resource manager to reset its internal allocation pool.
     fD3DDevice->EvictManagedResources();
-    fEvictTime = fTextUseTime;
-    fManagedSeen = 0;
 }
 
 bool plDXPipeline::CheckResources()
@@ -10919,25 +9389,6 @@ void plDXPipeline::IRenderAuxSpans(const plSpan& span)
 
 }
 
-// ICheckVBUsage //////////////////////////////////////////////////////////////
-// Keep track of how much managed vertex buffer memory is being used and
-// has been used since the last evict.
-inline void plDXPipeline::ICheckVBUsage(plDXVertexBufferRef* vRef)
-{
-    if( !vRef->fOwner->AreVertsVolatile() )
-    {
-        if( vRef->fUseTime <= fEvictTime )
-            fManagedSeen += vRef->fVertexSize * vRef->fCount;
-
-        if( vRef->fUseTime != fTextUseTime )
-        {
-            plProfile_NewMem(CurrVB, vRef->fVertexSize * vRef->fCount);
-            fVtxUsed += vRef->fVertexSize * vRef->fCount;
-            vRef->fUseTime = fTextUseTime;
-        }
-    }
-}
-
 //// IRenderBufferSpan ////////////////////////////////////////////////////////
 // Sets up the vertex and index buffers for a span, and then
 // renders it in as many passes as it takes in ILoopOverLayers.
@@ -10979,8 +9430,6 @@ void    plDXPipeline::IRenderBufferSpan( const plIcicle& span,
             fD3DDevice->SetFVF(fSettings.fCurrFVFFormat = fvf);
 
         vRef->SetRebuiltSinceUsed(false);
-
-        ICheckVBUsage(vRef);
     }
 
     // Note: both these stats are the same, since we don't do any culling or clipping on the tris
@@ -11442,7 +9891,7 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
     // or http://msdn.microsoft.com/en-us/library/bb219690(VS.85).aspx).
     D3DXMatrixTranslation(&mat, -0.5f/scrnWidthDiv2, -0.5f/scrnHeightDiv2, 0.0f);
     fD3DDevice->SetTransform( D3DTS_VIEW, &mat );
-    oldCullMode = dxPipe->fCurrCullMode;
+    oldCullMode = dxPipe->fDevice.fCurrCullMode;
 
     for( plate = fPlates; plate != nil; plate = plate->GetNext() )
     {
@@ -11500,8 +9949,8 @@ void    plDXPlateManager::IDrawToDevice( plPipeline *pipe )
         }
     }
 
-    dxPipe->fCurrCullMode = ( dxPipe->fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided ) ? D3DCULL_NONE : oldCullMode;
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE, dxPipe->fCurrCullMode );
+    dxPipe->fDevice.fCurrCullMode = ( dxPipe->fLayerState[0].fMiscFlags & hsGMatState::kMiscTwoSided ) ? D3DCULL_NONE : oldCullMode;
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE, dxPipe->fDevice.fCurrCullMode );
 }
 
 // IDrawPlate ///////////////////////////////////////////////////////////////////////
@@ -11540,7 +9989,7 @@ void    plDXPipeline::IDrawPlate( plPlate *plate )
         // To override the transform done by the z-bias
         fD3DDevice->SetTransform( D3DTS_PROJECTION, &mat );
         // And this to override cullmode set based on material 2-sidedness.
-        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode = D3DCULL_CW );
+        fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode = D3DCULL_CW );
 
         WEAK_ERROR_CHECK( fD3DDevice->DrawPrimitive( D3DPT_TRIANGLESTRIP, 0, 2 ) );
     }
@@ -11768,197 +10217,13 @@ const char  *plDXPipeline::IGetDXFormatName( D3DFORMAT format )
     }
 }
 
-// PushPiggyBackLayer /////////////////////////////////////////////////////
-// Push a piggy back onto the stack.
-plLayerInterface* plDXPipeline::PushPiggyBackLayer(plLayerInterface* li)
-{
-    fPiggyBackStack.Push(li);
-
-    ISetNumActivePiggyBacks();
-
-    fForceMatHandle = true;
-
-    return li;
-}
-
-// PopPiggyBackLayer ///////////////////////////////////////////////////////////////////
-// Pull the piggy back out of the stack (if it's there).
-plLayerInterface* plDXPipeline::PopPiggyBackLayer(plLayerInterface* li)
-{
-    int idx = fPiggyBackStack.Find(li);
-    if( fPiggyBackStack.kMissingIndex == idx )
-        return nil;
-    fPiggyBackStack.Remove(idx);
-
-    ISetNumActivePiggyBacks();
-
-    fForceMatHandle = true;
-
-    return li;
-}
-
-// AppendLayerInterface ///////////////////////////////////////////////////////////////////
-// Setup a layer wrapper to wrap around either all layers rendered with or just the base layers.
-// Note that a single material has multiple base layers if it takes mutliple passes to render.
-// Stays in effect until removed by RemoveLayerInterface.
-plLayerInterface* plDXPipeline::AppendLayerInterface(plLayerInterface* li, bool onAllLayers)
-{
-    fForceMatHandle = true;
-    if( onAllLayers )
-        return fOverAllLayer = li->Attach(fOverAllLayer);
-    else
-        return fOverBaseLayer = li->Attach(fOverBaseLayer);
-}
-
-// RemoveLayerInterface //////////////////////////////////////////////////////////////////
-// Removes a layer wrapper installed by AppendLayerInterface.
-plLayerInterface* plDXPipeline::RemoveLayerInterface(plLayerInterface* li, bool onAllLayers)
-{
-    fForceMatHandle = true;
-
-    if( onAllLayers )
-    {
-        if( !fOverAllLayer )
-            return nil;
-        return fOverAllLayer = fOverAllLayer->Remove(li);
-    }
-    
-    if( !fOverBaseLayer )
-        return nil;
-
-    return fOverBaseLayer = fOverBaseLayer->Remove(li);
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 //// ShadowSection
 //// Shadow specific internal functions
 ///////////////////////////////////////////////////////////////////////////////
 // See plGLight/plShadowMaster.cpp for more notes.
 
-// IAttachShadowsToReceivers ///////////////////////////////////////////////////////////
-// For each active shadow map (in fShadows), attach it to all of the visible spans in drawable
-// that it affects. Shadows explicitly attached via light groups are handled separately in ISetShadowFromGroup.
-void plDXPipeline::IAttachShadowsToReceivers(plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
-{
-    int i;
-    for( i = 0; i < fShadows.GetCount(); i++ )
-        IAttachSlaveToReceivers(i, drawable, visList);
-}
 
-// IAttachSlaveToReceivers /////////////////////////////////////////////////////
-// Find all the visible spans in this drawable affected by this shadow map, 
-// and attach it to them.
-void plDXPipeline::IAttachSlaveToReceivers(int which, plDrawableSpans* drawable, const hsTArray<int16_t>& visList)
-{
-    plShadowSlave* slave = fShadows[which];
-
-    // Whether the drawable is a character affects which lights/shadows affect it.
-    bool isChar = drawable->GetNativeProperty(plDrawable::kPropCharacter);
-
-    // If the shadow is part of a light group, it gets handled in ISetShadowFromGroup.
-    // Unless the drawable is a character (something that moves around indeterminately, 
-    // like the avatar or a physical object), and the shadow affects all characters.
-    if( slave->ObeysLightGroups() && !(slave->IncludesChars() && isChar) )
-        return;
-
-    // Do a space tree harvest looking for spans that are visible and whose bounds
-    // intercect the shadow volume.
-    plSpaceTree* space = drawable->GetSpaceTree();
-
-    static hsBitVector cache;
-    cache.Clear();
-    space->EnableLeaves(visList, cache);
-
-    static hsTArray<int16_t> hitList;
-    hitList.SetCount(0);
-    space->HarvestEnabledLeaves(slave->fIsect, cache, hitList);
-
-    // For the visible spans that intercect the shadow volume, attach the shadow
-    // to all appropriate for receiving this shadow map.
-    int i;
-    for( i = 0; i < hitList.GetCount(); i++ )
-    {
-        const plSpan* span = drawable->GetSpan(hitList[i]);
-        hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
-
-        // Check that the span isn't flagged as unshadowable, or has
-        // a material that we can't shadow onto.
-        if( !IReceivesShadows(span, mat) )
-            continue;
-
-        // Check for self shadowing. If the shadow doesn't want self shadowing,
-        // and the span is part of the shadow caster, then skip.
-        if( !IAcceptsShadow(span, slave) )
-            continue;
-
-        // Add it to this span's shadow list for this frame.
-        span->AddShadowSlave(fShadows[which]->fIndex);
-    }
-
-}
-
-// ISetShadowFromGroup ////////////////////////////////////////////////////////////////////////
-// The light casting this shadow has been explicitly attached to this span, so no need
-// for checking bounds, but we do anyway because the artists aren't very conservative
-// along those lines. The light has a bitvector indicating which of the current shadows
-// are from it (there will be a shadow map for each shadow-light/shadow-caster pair),
-// so we look through those shadow maps and if they are acceptable, attach them to
-// the span.
-// Note that a shadow slave corresponds to a shadow map.
-void plDXPipeline::ISetShadowFromGroup(plDrawableSpans* drawable, const plSpan* span, plLightInfo* liInfo)
-{
-    hsGMaterial* mat = drawable->GetMaterial(span->fMaterialIdx);
-
-    // Check that this span/material combo can receive shadows at all.
-    if( !IReceivesShadows(span, mat) )
-        return;
-
-    const hsBitVector& slaveBits = liInfo->GetSlaveBits();
-    int i;
-    for( i = 0; i < fShadows.GetCount(); i++ )
-    {
-        if( slaveBits.IsBitSet(fShadows[i]->fIndex) )
-        {
-            // Check self shadowing.
-            if( IAcceptsShadow(span, fShadows[i]) )
-            {
-                // Check for overlapping bounds.
-                if( fShadows[i]->fIsect->Test(span->fWorldBounds) != kVolumeCulled )
-                    span->AddShadowSlave(fShadows[i]->fIndex);
-            }
-        }
-    }
-}
-
-
-// SubmitShadowSlave ////////////////////////////////////////////////////////
-// Puts the slave in a list valid for this frame only. The list will
-// be preprocessed at BeginRender. See IPreprocessShadows.
-
-void plDXPipeline::SubmitShadowSlave(plShadowSlave* slave)
-{
-    // Check that it's a valid slave.
-    if( !(slave && slave->fCaster && slave->fCaster->GetKey()) )
-        return;
-
-    // Ref the shadow caster so we're sure it will still be around when we go to
-    // render it.
-    slave->fCaster->GetKey()->RefObject();
-
-    // Keep the shadow slaves in a priority sorted list. For performance reasons,
-    // we may want only the strongest N or those of a minimum priority.
-    int i;
-    for( i = 0; i < fShadows.GetCount(); i++ )
-    {
-        if( slave->fPriority <= fShadows[i]->fPriority )
-            break;
-    }
-
-    // Note that fIndex is no longer the index in the fShadows list, but
-    // is still used as a unique identifier for this slave.
-    slave->fIndex = fShadows.GetCount();
-    fShadows.Insert(i, slave);
-}
 
 float blurScale = -1.f;
 static  const int kL2NumSamples = 3; // Log2(4)
@@ -12105,8 +10370,8 @@ void plDXPipeline::IBlurSetRenderTarget(plRenderTarget* rt)
     IDirect3DSurface9* main = ref->GetColorSurface();
     IDirect3DSurface9* depth = ref->fD3DDepthSurface;
 
-    fSettings.fCurrD3DMainSurface = main;
-    fSettings.fCurrD3DDepthSurface = depth;
+    fDevice.fCurrD3DMainSurface = main;
+    fDevice.fCurrD3DDepthSurface = depth;
     fD3DDevice->SetRenderTarget(0, main);
     fD3DDevice->SetDepthStencilSurface(depth);
 
@@ -12136,7 +10401,7 @@ void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderT
     // Figure out how many passes we'll need.
 //  const int kNumSamples = 1 << kL2NumSamples; // HACKSAMPLE
     const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-    int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+    int nPasses = (int)ceil(float(kNumSamples) / fMaxLayersAtOnce);
     int nSamplesPerPass = kNumSamples / nPasses;
 
     // Attenuate by number of passes, to average as we sum.
@@ -12165,8 +10430,8 @@ void plDXPipeline::IRenderBlurFromShadowMap(plRenderTarget* scratchRT, plRenderT
     fLayerState[0].fZFlags |= hsGMatState::kZNoZWrite | hsGMatState::kZNoZRead;
     //
     //  Cullmode is NONE
-    fCurrCullMode = D3DCULL_NONE; 
-    fD3DDevice->SetRenderState( D3DRS_CULLMODE, fCurrCullMode );
+    fDevice.fCurrCullMode = D3DCULL_NONE; 
+    fD3DDevice->SetRenderState( D3DRS_CULLMODE, fDevice.fCurrCullMode );
 
     plDXTextureRef* ref = (plDXTextureRef*)smap->GetDeviceRef();
     hsAssert(ref, "Shadow map ref should have been made when it was rendered");
@@ -12787,10 +11052,10 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     fLayerState[0].fShadeFlags &= ~hsGMatState::kShadeSpecular;
 
     // Push the shadow slave's view transform as our current render state.
-    fSettings.fViewStack.Push(fView);
-    fView.fCullMaxNodes = 0;
+    fViewStack.push(fView);
+    fView.SetMaxCullNodes(0);
     SetViewTransform(slave->fView);
-    IProjectionMatrixToD3D();
+    IProjectionMatrixToDevice();
 
     // Push the shadow map as the current render target
     PushRenderTarget(renderTarg);
@@ -12841,7 +11106,7 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     if( slave->fBlurScale > 0 )
     {
         const int kNumSamples = mfCurrentTest > 101 ? 8 : 4;
-        int nPasses = (int)ceil(float(kNumSamples) / fSettings.fMaxLayersAtOnce);
+        int nPasses = (int)ceil(float(kNumSamples) / fMaxLayersAtOnce);
         int nSamplesPerPass = kNumSamples / nPasses;
         DWORD k = int(128.f / float(nSamplesPerPass));
         intens = (0xff << 24)
@@ -12919,8 +11184,8 @@ bool plDXPipeline::IPushShadowCastState(plShadowSlave* slave)
     }
 
     // Bring the viewport in (AFTER THE CLEAR) to protect the alpha boundary.
-    fView.fTransform.SetViewPort(1, 1, (float)(slave->fWidth-2), (float)(slave->fHeight-2), false);
-    ISetViewport();
+    fView.GetViewTransform().SetViewPort(1, 1, (float)(slave->fWidth-2), (float)(slave->fHeight-2), false);
+    fDevice.SetViewport();
 
     inlEnsureLightingOff();
 
@@ -13022,7 +11287,8 @@ plDXLightRef* plDXPipeline::INextShadowLight(plShadowSlave* slave)
 // a different shadow caster, or go on to our main render.
 bool plDXPipeline::IPopShadowCastState(plShadowSlave* slave)
 {
-    fView = fSettings.fViewStack.Pop();
+    fView = fViewStack.top();
+    fViewStack.pop();
 
     PopRenderTarget();
     fView.fXformResetFlags = fView.kResetProjection | fView.kResetCamera;
@@ -13524,7 +11790,7 @@ void plDXPipeline::ISetupShadowRcvTextureStages(hsGMaterial* mat)
 
     // If mat's base layer is alpha'd, and we have > 3 TMU's factor
     // in the base layer's alpha.   
-    if( (fSettings.fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
+    if( (fMaxLayersAtOnce > 3) && mat->GetLayer(0)->GetTexture() && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
     {
         plLayerInterface* layer = mat->GetLayer(0);
 
@@ -13748,52 +12014,6 @@ void plDXPipeline::IEnableShadowLight(plShadowSlave* slave)
     fD3DDevice->LightEnable(slave->fLightIndex, true);
 }
 
-// IAcceptsShadow ////////////////////////////////////////////////////////////////
-// Only allow self shadowing if requested.
-bool plDXPipeline::IAcceptsShadow(const plSpan* span, plShadowSlave* slave)
-{
-    // The span's shadow bits records which shadow maps that span was rendered
-    // into.
-    return slave->SelfShadow() || !span->IsShadowBitSet(slave->fIndex);
-}
-
-// IReceivesShadows ////////////////////////////////////////////////////////////////////
-// Want artists to be able to just disable shadows for spans where they'll either
-// look goofy, or won't contribute.
-// Also, if we have less than 3 simultaneous textures, we want to skip anything with
-// an alpha'd base layer, unless it's been overriden.
-bool plDXPipeline::IReceivesShadows(const plSpan* span, hsGMaterial* mat)
-{
-    if( span->fProps & plSpan::kPropNoShadow )
-        return false;
-
-    if( span->fProps & plSpan::kPropForceShadow )
-        return true;
-
-    if( span->fProps & (plSpan::kPropSkipProjection | plSpan::kPropProjAsVtx) )
-        return false;
-
-    if( (fSettings.fMaxLayersAtOnce < 3) 
-        && mat->GetLayer(0)->GetTexture() 
-        && (mat->GetLayer(0)->GetBlendFlags() & hsGMatState::kBlendAlpha) )
-        return false;
-
-#ifdef ENABLE_INTEL_SHADOWS
-    // Shouldn't hit this, since we're disabling shadows on the Intel chips,
-    // but just in case.
-    // To enable this, you'll need to start passing in the drawable as well.
-    if( fSettings.fIsIntel )
-    {
-        const plVertexSpan* vertSpan = static_cast<const plVertexSpan*>(span);
-        plGBufferGroup* group = drawable->GetBufferGroup(vertSpan->fGroupIdx);
-        if( !group->GetNumUVs() )
-            return false;
-    }
-#endif // ENABLE_INTEL_SHADOWS
-
-    return true;
-}
-
 void plDXPipeline::SubmitClothingOutfit(plClothingOutfit* co)
 {
     if (fClothingOutfits.Find(co) == fClothingOutfits.kMissingIndex)
@@ -13938,7 +12158,7 @@ void plDXPipeline::IPreprocessAvatarTextures()
     fD3DDevice->SetTransform(D3DTS_VIEW, &d3dIdentityMatrix);
     fD3DDevice->SetTransform(D3DTS_WORLD, &d3dIdentityMatrix);
     fD3DDevice->SetTransform(D3DTS_PROJECTION, &d3dIdentityMatrix);
-    fD3DDevice->SetRenderState(D3DRS_CULLMODE, fCurrCullMode = D3DCULL_NONE);
+    fD3DDevice->SetRenderState(D3DRS_CULLMODE, fDevice.fCurrCullMode = D3DCULL_NONE);
     fD3DDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_DISABLE);
     fD3DDevice->SetRenderState(D3DRS_ZFUNC, D3DCMP_ALWAYS);
     fD3DDevice->SetRenderState(D3DRS_ZWRITEENABLE, FALSE);

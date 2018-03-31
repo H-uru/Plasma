@@ -39,46 +39,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#ifndef _plDXDevice_h_
+#define _plDXDevice_h_
 
-#ifndef plPipelineCreatable_inc
-#define plPipelineCreatable_inc
+#include "HeadSpin.h"
+#include "hsMatrix44.h"
+#include "plDXBufferRefs.h"
 
-#include "pnFactory/plCreator.h"
+#include "hsWindows.h"
+#include <d3d9.h>
 
-#include "pl3DPipeline.h"
-REGISTER_NONCREATABLE(pl3DPipeline);
+class plDXPipeline;
+class plRenderTarget;
+struct IDirect3DDevice9;
+struct IDirect3DSurface9;
 
-#if defined(PLASMA_PIPELINE_DX)
-    #include <d3d9.h>
-    #include "DX/plDXPipeline.h"
-    REGISTER_NONCREATABLE(plDXPipeline);
-#elif defined(PLASMA_PIPELINE_GL)
-    #include "GL/plGLPipeline.h"
-    REGISTER_NONCREATABLE(plGLPipeline);
+class plDXDevice
+{
+public:
+    typedef plDXVertexBufferRef VertexBufferRef;
+    typedef plDXIndexBufferRef  IndexBufferRef;
+
+public:
+    plDXPipeline*       fPipeline;
+    hsWindowHndl        fHWnd;
+
+    IDirect3DDevice9*   fD3DDevice;
+    IDirect3DSurface9*  fD3DMainSurface;
+    IDirect3DSurface9*  fD3DDepthSurface;
+    IDirect3DSurface9*  fD3DBackBuff;
+
+    IDirect3DSurface9*  fCurrD3DMainSurface;
+    IDirect3DSurface9*  fCurrD3DDepthSurface;
+
+    D3DCULL             fCurrCullMode;
+
+
+public:
+    plDXDevice();
+
+    bool InitDevice();
+
+    /**
+     * Set rendering to the specified render target.
+     *
+     * Null rendertarget is the primary. Invalidates the state as required by
+     * experience, not documentation.
+     */
+    void SetRenderTarget(plRenderTarget* target);
+
+    /** Translate our viewport into a D3D viewport. */
+    void SetViewport();
+
+
+    void SetProjectionMatrix(const hsMatrix44& src);
+    void SetWorldToCameraMatrix(const hsMatrix44& src);
+    void SetLocalToWorldMatrix(const hsMatrix44& src);
+
+    const char* GetErrorString() const;
+};
+
 #endif
-
-#include "plFogEnvironment.h"
-
-REGISTER_CREATABLE( plFogEnvironment );
-
-#include "plRenderTarget.h"
-
-REGISTER_CREATABLE( plRenderTarget );
-
-#include "plCubicRenderTarget.h"
-
-REGISTER_CREATABLE( plCubicRenderTarget );
-
-#include "plCubicRenderTargetModifier.h"
-
-REGISTER_CREATABLE( plCubicRenderTargetModifier );
-
-#include "plTransitionMgr.h"
-
-REGISTER_CREATABLE( plTransitionMgr );
-
-#include "plDynamicEnvMap.h"
-REGISTER_CREATABLE( plDynamicEnvMap );
-REGISTER_CREATABLE( plDynamicCamMap );
-
-#endif // plPipelineCreatable_inc

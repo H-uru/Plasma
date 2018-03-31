@@ -356,7 +356,7 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
 {
     IClear();
 
-#ifdef HS_BUILD_FOR_WIN32
+#ifdef PLASMA_PIPELINE_DX
     /// 9.6.2000 - Create the class to use as our temporary window class
     WNDCLASS    tempClass;
 
@@ -368,11 +368,9 @@ void hsG3DDeviceSelector::Enumerate(hsWinRef winRef)
     tempClass.lpszClassName = fTempWinClass;
     uint16_t ret = RegisterClass(&tempClass);
     hsAssert(ret, "Cannot create temporary window class to test for device modes" );
-#endif
 
     ITryDirect3DTnL(winRef);
 
-#ifdef HS_BUILD_FOR_WIN32
     /// Get rid of the class
     UnregisterClass( fTempWinClass, GetModuleHandle( nil ) );
 #endif
@@ -577,7 +575,7 @@ namespace
 //  Checks this DirectX device against all our known types and fudges our caps 
 //  flags and bias values, etc, accordingly
 
-#ifdef HS_SELECT_DIRECT3D
+#ifdef PLASMA_PIPELINE_DX
 void    hsG3DDeviceSelector::IFudgeDirectXDevice( hsG3DDeviceRecord &record,
                                                     D3DEnum_DriverInfo *driverInfo,
                                                     D3DEnum_DeviceInfo *deviceInfo )

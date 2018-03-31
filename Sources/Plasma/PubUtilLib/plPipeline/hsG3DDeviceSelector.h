@@ -62,10 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string_theory/string>
 
 #ifdef HS_BUILD_FOR_WIN32
-#define HS_SELECT_DIRECT3D // not supported on the Mac.
-#endif // HS_BUILD_FOR_WIN32
-
-#ifdef HS_BUILD_FOR_WIN32
 #define __MSC__
 #define DYNAHEADER 1
 #endif // HS_BUILD_FOR_WIN32

@@ -101,19 +101,19 @@ class plFogEnvironment : public hsKeyedObject
         void    Clear( void ) { fType = kNoFog; }
 
         // Gets the type
-        uint8_t   GetType( void ) { return fType; }
+        uint8_t   GetType( void ) const { return fType; }
 
         // Gets the color
         hsColorRGBA &GetColor( void ) { return fColor; }
 
         // Gets the parameters. Sets start to 0 if the type is not linear (can be nil)
-        void    GetParameters( float *start, float *end, float *density, hsColorRGBA *color );
+        void    GetParameters( float *start, float *end, float *density, hsColorRGBA *color ) const;
 
         // Gets linear pipeline (DX) specific parameters.
-        void    GetPipelineParams( float *start, float *end, hsColorRGBA *color );
+        void    GetPipelineParams( float *start, float *end, hsColorRGBA *color ) const;
 
         // Gets exp or exp^2 pipeline (DX) specific parameters.
-        void    GetPipelineParams( float *density, hsColorRGBA *color );
+        void    GetPipelineParams( float *density, hsColorRGBA *color ) const;
 
         virtual void Read(hsStream *s, hsResMgr *mgr);
         virtual void Write(hsStream *s, hsResMgr *mgr);

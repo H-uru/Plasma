@@ -58,6 +58,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "hsTemplates.h"
 #include "plDXDeviceRef.h"
+#include "plDrawable/plGBufferGroup.h"
+
+#include "hsWindows.h"
+#include <d3d9.h>
 
 struct IDirect3DVertexShader9;
 
