@@ -51,6 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pyGlueHelpers.h"
 #include <vector>
+#include <map>
 
 #include "pnKeyedObject/plKey.h"
 #include "pyColor.h"
@@ -144,7 +145,7 @@ public:
     uint32_t GetWidth(); // returns the width of the image
     uint32_t GetHeight(); // returns the height of the image
     void SaveAsJPEG(const plFileName& fileName, uint8_t quality = 75);
-    void SaveAsPNG(const plFileName& fileName);
+    void SaveAsPNG(const plFileName& fileName, const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>());
     static PyObject* LoadJPEGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
     static PyObject* LoadPNGFromDisk(const plFileName& filename, uint16_t width, uint16_t height); // returns pyImage
 #endif
