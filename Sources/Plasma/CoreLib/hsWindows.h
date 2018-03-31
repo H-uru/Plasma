@@ -82,7 +82,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #       include <vld.h>
 #   endif // USE_VLD
 
-    const RTL_OSVERSIONINFOW& hsGetWindowsVersion();
+    const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion();
 #endif // HS_BUILD_FOR_WIN32
 
 #endif // _hsWindows_inc_

@@ -487,165 +487,98 @@ char    *hsWStringToString( const wchar_t *str )
 //
 std::vector<ST::string> DisplaySystemVersion()
 {
+    std::vector<ST::string> versionStrs;
 #if HS_BUILD_FOR_WIN32
 #ifndef VER_SUITE_PERSONAL
 #define VER_SUITE_PERSONAL 0x200
 #endif
-    std::vector<ST::string> versionStrs;
-    OSVERSIONINFOEX osvi;
-    BOOL bOsVersionInfoEx;
+    const RTL_OSVERSIONINFOEXW& version = hsGetWindowsVersion();
 
-    // Try calling GetVersionEx using the OSVERSIONINFOEX structure.
-    //
-    // If that fails, try using the OSVERSIONINFO structure.
-
-    ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-    osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-
-    if( !(bOsVersionInfoEx = GetVersionEx ((OSVERSIONINFO *) &osvi)) )
-    {
-        // If OSVERSIONINFOEX doesn't work, try OSVERSIONINFO.
-
-        osvi.dwOSVersionInfoSize = sizeof (OSVERSIONINFO);
-        if (! GetVersionEx ( (OSVERSIONINFO *) &osvi) )
-            return std::vector<ST::string>();
-    }
-
-    switch (osvi.dwPlatformId)
+    switch (version.dwPlatformId)
     {
     case VER_PLATFORM_WIN32_NT:
 
         // Test for the product.
 
-        if ( osvi.dwMajorVersion <= 4 )
+        if ( version.dwMajorVersion <= 4 )
             versionStrs.push_back("Microsoft Windows NT ");
 
-        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 0 )
+        if ( version.dwMajorVersion == 5 && version.dwMinorVersion == 0 )
             versionStrs.push_back("Microsoft Windows 2000 ");
 
-        if ( osvi.dwMajorVersion == 5 && osvi.dwMinorVersion == 1 )
+        if ( version.dwMajorVersion == 5 && version.dwMinorVersion == 1 )
             versionStrs.push_back("Microsoft Windows XP ");
 
-        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 0 )
+        if ( version.dwMajorVersion == 6 && version.dwMinorVersion == 0 )
             versionStrs.push_back("Microsoft Windows Vista ");
 
-        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 1 )
+        if ( version.dwMajorVersion == 6 && version.dwMinorVersion == 1 )
             versionStrs.push_back("Microsoft Windows 7 ");
 
-        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 2 )
+        if ( version.dwMajorVersion == 6 && version.dwMinorVersion == 2 )
             versionStrs.push_back("Microsoft Windows 8 ");
 
-        if ( osvi.dwMajorVersion == 6 && osvi.dwMinorVersion == 3 )
+        if ( version.dwMajorVersion == 6 && version.dwMinorVersion == 3 )
             versionStrs.push_back("Microsoft Windows 8.1 ");
+
+        if ( version.dwMajorVersion == 10 && version.dwMinorVersion == 0 )
+            versionStrs.push_back("Microsoft Windows 10 ");
 
         // Test for product type.
 
-        if( bOsVersionInfoEx )
+        if ( version.wProductType == VER_NT_WORKSTATION )
         {
-            if ( osvi.wProductType == VER_NT_WORKSTATION )
-            {
-                if( osvi.wSuiteMask & VER_SUITE_PERSONAL )
-                    versionStrs.push_back("Personal ");
-                else
-                    versionStrs.push_back("Professional ");
-            }
-
-            else if ( osvi.wProductType == VER_NT_SERVER )
-            {
-                if( osvi.wSuiteMask & VER_SUITE_DATACENTER )
-                    versionStrs.push_back("DataCenter Server ");
-                else if( osvi.wSuiteMask & VER_SUITE_ENTERPRISE )
-                    versionStrs.push_back("Advanced Server ");
-                else
-                    versionStrs.push_back("Server ");
-            }
-        }
-        else
-        {
-            HKEY hKey;
-            char szProductType[80];
-            DWORD dwBufLen;
-
-            RegOpenKeyEx( HKEY_LOCAL_MACHINE,
-                "SYSTEM\\CurrentControlSet\\Control\\ProductOptions",
-                0, KEY_QUERY_VALUE, &hKey );
-            RegQueryValueEx( hKey, "ProductType", NULL, NULL,
-                (LPBYTE) szProductType, &dwBufLen);
-            RegCloseKey( hKey );
-            if ( lstrcmpi( "WINNT", szProductType) == 0 )
+            if( version.wSuiteMask & VER_SUITE_PERSONAL )
+                versionStrs.push_back("Personal ");
+            else
                 versionStrs.push_back("Professional ");
-            if ( lstrcmpi( "LANMANNT", szProductType) == 0 )
-                versionStrs.push_back("Server ");
-            if ( lstrcmpi( "SERVERNT", szProductType) == 0 )
+        }
+        else if ( version.wProductType == VER_NT_SERVER )
+        {
+            if( version.wSuiteMask & VER_SUITE_DATACENTER )
+                versionStrs.push_back("DataCenter Server ");
+            else if( version.wSuiteMask & VER_SUITE_ENTERPRISE )
                 versionStrs.push_back("Advanced Server ");
+            else
+                versionStrs.push_back("Server ");
         }
 
         // Display version, service pack (if any), and build number.
 
-        if ( osvi.dwMajorVersion <= 4 )
+        if ( version.dwMajorVersion <= 4 )
         {
             versionStrs.push_back(ST::format("version {}.{} {} (Build {})\n",
-                osvi.dwMajorVersion,
-                osvi.dwMinorVersion,
-                osvi.szCSDVersion,
-                osvi.dwBuildNumber & 0xFFFF));
+                version.dwMajorVersion,
+                version.dwMinorVersion,
+                version.szCSDVersion,
+                version.dwBuildNumber & 0xFFFF));
         }
         else
         {
             versionStrs.push_back(ST::format("{} (Build {})\n",
-                osvi.szCSDVersion,
-                osvi.dwBuildNumber & 0xFFFF));
+                version.szCSDVersion,
+                version.dwBuildNumber & 0xFFFF));
         }
-        break;
-
-    case VER_PLATFORM_WIN32_WINDOWS:
-
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 0)
-        {
-            versionStrs.push_back("Microsoft Windows 95 ");
-            if ( osvi.szCSDVersion[1] == 'C' || osvi.szCSDVersion[1] == 'B' )
-                versionStrs.push_back("OSR2 ");
-        }
-
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 10)
-        {
-            versionStrs.push_back("Microsoft Windows 98 ");
-            if ( osvi.szCSDVersion[1] == 'A' )
-                versionStrs.push_back("SE ");
-        }
-
-        if (osvi.dwMajorVersion == 4 && osvi.dwMinorVersion == 90)
-        {
-            versionStrs.push_back("Microsoft Windows Me ");
-        }
-        break;
-
-    case VER_PLATFORM_WIN32s:
-
-        versionStrs.push_back("Microsoft Win32s ");
         break;
     }
-
-    return versionStrs;
-#else
-    return std::vector<ST::string>();
 #endif
+    return versionStrs;
 }
 
 #ifdef HS_BUILD_FOR_WIN32
-static RTL_OSVERSIONINFOW s_WinVer;
+static RTL_OSVERSIONINFOEXW s_WinVer;
 
-const RTL_OSVERSIONINFOW& hsGetWindowsVersion()
+const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion()
 {
     static bool done = false;
     if (!done) {
-        memset(&s_WinVer, 0, sizeof(RTL_OSVERSIONINFOW));
+        memset(&s_WinVer, 0, sizeof(RTL_OSVERSIONINFOEXW));
         HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
         hsAssert(ntdll, "Failed to LoadLibrary on ntdll???");
 
         if (ntdll) {
-            s_WinVer.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOW);
-            typedef LONG(WINAPI* RtlGetVersionPtr)(RTL_OSVERSIONINFOW*);
+            s_WinVer.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOEXW);
+            typedef LONG(WINAPI* RtlGetVersionPtr)(RTL_OSVERSIONINFOEXW*);
             RtlGetVersionPtr getVersion = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
             hsAssert(getVersion, "Could not find RtlGetVersion in ntdll");
             if (getVersion) {
