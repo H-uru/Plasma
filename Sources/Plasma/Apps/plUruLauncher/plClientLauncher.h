@@ -77,9 +77,9 @@ private:
         kNetCoreShutdown,
     };
 
-    uint32_t   fFlags;
-    plFileName fServerIni;
-    uint8_t    fNetCoreState;
+    uint32_t    fFlags;
+    plFileName  fServerIni;
+    NetCoreState fNetCoreState;
 
     plFileName fClientExecutable;
 

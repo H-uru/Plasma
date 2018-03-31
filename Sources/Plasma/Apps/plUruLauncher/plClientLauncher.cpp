@@ -261,7 +261,7 @@ bool plClientLauncher::IApproveDownload(const plFileName& file)
     // That is: download everything that is NOT in the root directory.
     if (hsCheckBits(fFlags, kGameDataOnly)) {
         plFileName path = file.StripFileName();
-        return !path.AsString().is_empty();
+        return path.IsValid();
     }
 
     // If we have successfully self-patched, don't accept any manifest
