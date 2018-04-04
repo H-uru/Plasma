@@ -196,7 +196,7 @@ bool plMoviePlayer::IOpenMovie()
 {
 #ifdef MOVIE_AVAILABLE
     if (!plFileInfo(fMoviePath).Exists()) {
-        hsAssert(false, "Tried to play a movie that doesn't exist");
+        plStatusLog::AddLineS("movie.log", "%s: Tried to play a movie that doesn't exist.", fMoviePath.AsString().c_str());
         return false;
     }
 
