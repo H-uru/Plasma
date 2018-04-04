@@ -399,7 +399,7 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))
 #else
-#   define ALIGN(n) __attribute__(aligned(n))
+#   define ALIGN(n) __attribute__((aligned(n)))
 #endif
 
 /************************ Debug/Error Macros **************************/
