@@ -109,6 +109,8 @@ void plShardStatus::Run()
     curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, fCurlError);
     curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "UruClient/1.0");
     curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1);
+    curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 5);
     curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, this);
     curl_easy_setopt(curl.get(), CURLOPT_WRITEFUNCTION, ICurlCallback);
 
