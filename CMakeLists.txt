@@ -227,7 +227,6 @@ if(PLASMA_TARGETS STREQUAL "Ethereal")
 endif(PLASMA_TARGETS STREQUAL "Ethereal")
 
 
-set_property(CACHE PLASMA_PIPELINE PROPERTY STRINGS "DirectX" "OpenGL")
 if(WIN32)
     set(PLASMA_PIPELINE "DirectX"
                         CACHE STRING "Which graphics backend to use")
@@ -235,6 +234,7 @@ else(WIN32)
     set(PLASMA_PIPELINE "OpenGL"
                         CACHE STRING "Which graphics backend to use")
 endif(WIN32)
+set_property(CACHE PLASMA_PIPELINE PROPERTY STRINGS "DirectX" "OpenGL")
 
 if(PLASMA_PIPELINE STREQUAL "DirectX")
     find_package(DirectX REQUIRED)
