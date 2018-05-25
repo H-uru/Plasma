@@ -237,22 +237,36 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
         time_t rawtime = time(nullptr);
         strftime(time_string, sizeof(time_string), "%a, %d-%b-%Y %T", gmtime(&rawtime));
 
+        std::vector<std::pair<ST::char_buffer, ST::char_buffer>> all_fields;
+        auto addField = [&](const ST::string& key, const ST::string& value) {
+            auto keyData = key.left(PNG_KEYWORD_MAX_LENGTH).trim().to_latin_1();
+#ifdef PNG_WRITE_iTXT_SUPPORTED
+            auto valueData = value.to_utf8();
+#else
+            auto valueData = value.to_latin_1();
+#endif
+            all_fields.emplace_back(std::move(keyData), std::move(valueData));
+        };
         // Add our standard fields, then combine with the custom fields
-        std::multimap<ST::string, ST::string> all_fields;
-        all_fields.emplace("Software", plProduct::ProductString());
-        all_fields.emplace("Creation Time", time_string);
+        all_fields.reserve(textFields.size() + 2);
+        addField("Software", plProduct::ProductString());
+        addField("Creation Time", time_string);
         for (auto field : textFields)
-            all_fields.insert(field);
+            addField(field.first, field.second);
 
         png_text* text = new png_text[all_fields.size()];
         size_t num_txtfields = 0;
         for (auto it = all_fields.begin(); it != all_fields.end(); it++, num_txtfields++) {
             // The PNG specification requires Latin-1 in the 'key' field
-            text[num_txtfields].key = (png_charp)(strdup(it->first.left(PNG_KEYWORD_MAX_LENGTH).trim().to_latin_1().data()));
-            text[num_txtfields].text = (png_charp)(it->second.c_str());
+            text[num_txtfields].key = it->first.data();
+            text[num_txtfields].text = it->second.data();
+#ifdef PNG_WRITE_iTXT_SUPPORTED
             text[num_txtfields].lang = "en-us";  //  Language used in 'text' and 'lang_key'.
             text[num_txtfields].lang_key = "";   //  Translation of 'key' into 'lang', if needed.
             text[num_txtfields].compression = PNG_ITXT_COMPRESSION_NONE;
+#else
+            text[num_txtfields].compression = PNG_TEXT_COMPRESSION_NONE;
+#endif
         }
 
         // Write Textual Metadata
@@ -260,10 +274,6 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
 
         // Finish Up
         png_write_end(png_ptr, info_ptr);
-
-        //  Clean up text buffers
-        for (size_t i = 0; i < num_txtfields; i++)
-            free(text[i].key);
 
         //  Clean up allocated structs
         png_destroy_write_struct(&png_ptr, &info_ptr);
