@@ -68,6 +68,11 @@ public:
     void SetProjectionMatrix(const hsMatrix44& src);
     void SetWorldToCameraMatrix(const hsMatrix44& src);
     void SetLocalToWorldMatrix(const hsMatrix44& src);
+
+    struct VertexBufferRef;
+    struct IndexBufferRef;
+
+    const char* GetErrorString();
 };
 
 #endif
