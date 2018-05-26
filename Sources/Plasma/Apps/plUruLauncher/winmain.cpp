@@ -178,8 +178,7 @@ static void PumpMessages()
         }
 
         // Now we need to pump the netcore while we have some spare time...
-        s_launcher.PumpNetCore();
-    } while (msg.message != WM_QUIT);
+    } while (s_launcher.PumpNetCore());
 }
 
 // ===================================================

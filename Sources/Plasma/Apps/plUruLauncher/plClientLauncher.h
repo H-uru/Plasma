@@ -70,8 +70,16 @@ private:
         kRepairGame = kHaveSelfPatched | kClientImage | kGameDataOnly,
     };
 
-    uint32_t   fFlags;
-    plFileName fServerIni;
+    enum NetCoreState
+    {
+        kNetCoreInactive,
+        kNetCoreActive,
+        kNetCoreShutdown,
+    };
+
+    uint32_t    fFlags;
+    plFileName  fServerIni;
+    NetCoreState fNetCoreState;
 
     plFileName fClientExecutable;
 
@@ -119,12 +127,12 @@ public:
      *  So be certain that you've thought that through!
      *  \remarks This method will cause the thread to sleep so that we don't hog the CPU.
      */
-    void PumpNetCore() const;
+    bool PumpNetCore() const;
 
     /** Shutdown eap's netcore and purge any other crap that needs to happen while the app is
      *  visible. In other words, tear down evil threaded crap.
      */
-    void ShutdownNetCore() const;
+    void ShutdownNetCore();
 
     /** Load the server configuration file. Note that you MUST parse the command
      *  arguments before calling this function!
