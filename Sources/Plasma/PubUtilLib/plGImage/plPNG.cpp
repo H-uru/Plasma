@@ -258,8 +258,8 @@ bool plPNG::IWrite(plMipmap* source, hsStream* outStream, const std::multimap<ST
         size_t num_txtfields = 0;
         for (auto it = all_fields.begin(); it != all_fields.end(); it++, num_txtfields++) {
             // The PNG specification requires Latin-1 in the 'key' field
-            text[num_txtfields].key = it->first.data();
-            text[num_txtfields].text = it->second.data();
+            text[num_txtfields].key = (png_charp)it->first.data();
+            text[num_txtfields].text = (png_charp)it->second.data();
 #ifdef PNG_WRITE_iTXT_SUPPORTED
             text[num_txtfields].lang = "en-us";  //  Language used in 'text' and 'lang_key'.
             text[num_txtfields].lang_key = "";   //  Translation of 'key' into 'lang', if needed.
