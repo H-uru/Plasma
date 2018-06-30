@@ -863,6 +863,10 @@ void    plDXPipeline::IInitDeviceState()
 
     fLights.Reset(this);
 
+    // Tell the light infos to unlink themselves
+    while (fActiveLights)
+        UnRegisterLight(fActiveLights);
+
     return;
 }
 
