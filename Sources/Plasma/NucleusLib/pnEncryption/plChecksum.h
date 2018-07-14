@@ -75,7 +75,7 @@ class plMD5Checksum
         uint8_t fChecksum[MD5_DIGEST_LENGTH];
 
     public:
-        plMD5Checksum(size_t size, uint8_t* buffer);
+        plMD5Checksum(size_t size, const uint8_t* buffer);
         plMD5Checksum();
         plMD5Checksum(const plMD5Checksum& rhs);
         plMD5Checksum(const plFileName& fileName);
@@ -120,7 +120,7 @@ class plSHAChecksum
         ShaDigest fChecksum;
 
     public:
-        plSHAChecksum(size_t size, uint8_t* buffer);
+        plSHAChecksum(size_t size, const uint8_t* buffer);
         plSHAChecksum();
         plSHAChecksum(const plSHAChecksum& rhs);
         plSHAChecksum(const plFileName& fileName);

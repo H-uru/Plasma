@@ -104,7 +104,7 @@ plChecksum::plChecksum(unsigned int bufsize, const char* buffer)
 
 //============================================================================
 
-plMD5Checksum::plMD5Checksum(size_t size, uint8_t* buffer)
+plMD5Checksum::plMD5Checksum(size_t size, const uint8_t* buffer)
 {
     fValid = false;
     Start();
@@ -233,7 +233,7 @@ bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
 
 //============================================================================
 #ifdef OPENSSL_HAVE_SHA0
-plSHAChecksum::plSHAChecksum(size_t size, uint8_t* buffer)
+plSHAChecksum::plSHAChecksum(size_t size, const uint8_t* buffer)
 {
     fValid = false;
     Start();
