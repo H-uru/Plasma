@@ -247,7 +247,7 @@ bool plMD5Checksum::operator==(const plMD5Checksum& rhs) const
 
 //============================================================================
 plSHAChecksum::plSHAChecksum(size_t size, const uint8_t* buffer)
-    : fValid(), fContext()
+    : fValid(), fOpenSSLContext()
 {
     Start();
     AddTo(size, buffer);
@@ -255,34 +255,34 @@ plSHAChecksum::plSHAChecksum(size_t size, const uint8_t* buffer)
 }
 
 plSHAChecksum::plSHAChecksum()
-    : fValid(), fContext()
+    : fValid(), fOpenSSLContext()
 {
     memset(fChecksum, 0, sizeof(fChecksum));
 }
 
 plSHAChecksum::plSHAChecksum(const plSHAChecksum& rhs)
-    : fValid(rhs.fValid), fContext()
+    : fValid(rhs.fValid), fOpenSSLContext()
 {
     memcpy(fChecksum, rhs.fChecksum, sizeof(fChecksum));
 }
 
 plSHAChecksum::plSHAChecksum(const plFileName& fileName)
-    : fValid(), fContext()
+    : fValid(), fOpenSSLContext()
 {
     CalcFromFile(fileName);
 }
 
 plSHAChecksum::plSHAChecksum(hsStream* stream)
-    : fValid(), fContext()
+    : fValid(), fOpenSSLContext()
 {
     CalcFromStream(stream);
 }
 
 void plSHAChecksum::Clear()
 {
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
+    if (fOpenSSLContext)
+        EVP_MD_CTX_destroy(fOpenSSLContext);
+    fOpenSSLContext = nullptr;
     memset(fChecksum, 0, sizeof(fChecksum));
     fValid = false;
 }
@@ -320,29 +320,39 @@ void plSHAChecksum::CalcFromStream(hsStream* stream)
 void plSHAChecksum::Start()
 {
     const EVP_MD* md = EVP_get_digestbyname("sha");
-    hsAssert(md, "This OpenSSL has no support for SHA0");
+    if (md) {
+        size_t out_size = EVP_MD_size(md);
+        hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA0");
 
-    size_t out_size = EVP_MD_size(md);
-    hsAssert(out_size == sizeof(fChecksum), "Incorrect output size for SHA0");
-
-    fContext = EVP_MD_CTX_create();
-    EVP_DigestInit_ex(fContext, md, nullptr);
+        fOpenSSLContext = EVP_MD_CTX_create();
+        EVP_DigestInit_ex(fOpenSSLContext, md, nullptr);
+    } else {
+        fOpenSSLContext = nullptr;
+        fPlasmaContext.Start();
+    }
     fValid = false;
 }
 
 void plSHAChecksum::AddTo(size_t size, const uint8_t* buffer)
 {
-    EVP_DigestUpdate(fContext, buffer, size);
+    if (fOpenSSLContext)
+        EVP_DigestUpdate(fOpenSSLContext, buffer, size);
+    else
+        fPlasmaContext.AddTo(size, buffer);
 }
 
 void plSHAChecksum::Finish()
 {
-    unsigned int out_size;
-    EVP_DigestFinal_ex(fContext, fChecksum, &out_size);
+    if (fOpenSSLContext) {
+        unsigned int out_size;
+        EVP_DigestFinal_ex(fOpenSSLContext, fChecksum, &out_size);
+        if (fOpenSSLContext)
+            EVP_MD_CTX_destroy(fOpenSSLContext);
+        fOpenSSLContext = nullptr;
+    } else {
+        fPlasmaContext.Finish(fChecksum);
+    }
     fValid = true;
-    if (fContext)
-        EVP_MD_CTX_destroy(fContext);
-    fContext = nullptr;
 }
 
 const char* plSHAChecksum::GetAsHexString() const

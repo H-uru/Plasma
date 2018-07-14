@@ -5,6 +5,7 @@ include_directories(../../../Plasma/NucleusLib)
 
 set(pnEncryptionTest_SOURCES
     test_plMD5Checksum.cpp
+    test_plSHAChecksum.cpp
     test_plSHA1Checksum.cpp
     )
 

@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define PL_CHECKSUM_H
 
 #include "HeadSpin.h"
+#include "plSha0.h"
 #include <openssl/evp.h>
 
 #define MD5_DIGEST_LENGTH 16
@@ -113,7 +114,8 @@ class plSHAChecksum
 {
     protected:
         bool        fValid;
-        EVP_MD_CTX* fContext;
+        EVP_MD_CTX* fOpenSSLContext;
+        plSha0      fPlasmaContext;
         ShaDigest   fChecksum;
 
     public:

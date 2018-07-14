@@ -156,6 +156,15 @@ typedef int32_t   hsError;
 //======================================
 // Endian swap funcitions
 //======================================
+#ifdef _MSC_VER
+    #define hsSwapEndian16(val) _byteswap_ushort(val)
+    #define hsSwapEndian32(val) _byteswap_ulong(val)
+    #define hsSwapEndian64(val) _byteswap_uint64(val)
+#elif defined(__llvm__) || (defined(__GNUC__) && ((__GNUC__ * 100) + __GNUC_MINOR__) >= 408)
+    #define hsSwapEndian16(val) __builtin_bswap16(val)
+    #define hsSwapEndian32(val) __builtin_bswap32(val)
+    #define hsSwapEndian64(val) __builtin_bswap64(val)
+#else
 inline uint16_t hsSwapEndian16(uint16_t value)
 {
     return (value >> 8) | (value << 8);
@@ -178,6 +187,8 @@ inline uint64_t hsSwapEndian64(uint64_t value)
             ((value & 0x00ff000000000000) >> 40) |
             ((value)                      >> 56);
 }
+#endif
+
 inline float hsSwapEndianFloat(float fvalue)
 {
     union {
