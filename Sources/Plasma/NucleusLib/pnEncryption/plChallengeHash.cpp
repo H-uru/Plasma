@@ -49,7 +49,6 @@ ShaDigest fSeed;
 
 void CryptCreateRandomSeed(size_t length, uint8_t* data)
 {
-#ifdef OPENSSL_HAVE_SHA0
     uint32_t seedIdx = 0;
     uint32_t dataIdx = 0;
     size_t cur = 0;
@@ -92,14 +91,10 @@ void CryptCreateRandomSeed(size_t length, uint8_t* data)
     for (size_t i = 0; i < sizeof(ShaDigest); i++) {
         fSeed[i] ^= digest[i];
     }
-#else
-    FATAL("OpenSSL 1.1+ does not include SHA0 support");
-#endif
 }
 
 void CryptHashPassword(const ST::string& username, const ST::string& password, ShaDigest dest)
 {
-#ifdef OPENSSL_HAVE_SHA0
     ST::string_stream buf;
     buf << password.left(password.size() - 1) << '\0';
     buf << username.to_lower().left(username.size() - 1) << '\0';
@@ -107,14 +102,10 @@ void CryptHashPassword(const ST::string& username, const ST::string& password, S
     plSHAChecksum sum(result.size() * sizeof(char16_t), (uint8_t*)result.data());
 
     memcpy(dest, sum.GetValue(), sizeof(ShaDigest));
-#else
-    FATAL("OpenSSL 1.1+ does not include SHA0 support");
-#endif
 }
 
 void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallenge, ShaDigest namePassHash, ShaDigest challengeHash)
 {
-#ifdef OPENSSL_HAVE_SHA0
     plSHAChecksum sum;
 
     sum.Start();
@@ -124,7 +115,4 @@ void CryptHashPasswordChallenge(uint32_t clientChallenge, uint32_t serverChallen
     sum.Finish();
 
     memcpy(challengeHash, sum.GetValue(), sizeof(ShaDigest));
-#else
-    FATAL("OpenSSL 1.1+ does not include SHA0 support");
-#endif
 }
