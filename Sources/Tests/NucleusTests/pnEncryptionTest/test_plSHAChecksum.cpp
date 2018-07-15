@@ -119,7 +119,7 @@ TEST(plSHAChecksum, well_known_hashes)
 
 #if 0
     // case5_text repeated 16,777,216 times
-    // This test is too slow (~40 sec) with the built-in SHA0, but it can be
+    // This test is too slow (~12 sec) with the built-in SHA0, but it can be
     // enabled if more conformance testing is desired.
     const char case5_text[] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmno";
     const size_t case5_text_len = strlen(case5_text);
