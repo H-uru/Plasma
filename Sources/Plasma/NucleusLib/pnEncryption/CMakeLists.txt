@@ -6,12 +6,14 @@ set(pnEncryption_SOURCES
     plBigNum.cpp
     plChallengeHash.cpp
     plChecksum.cpp
+    plSha0.cpp
 )
 
 set(pnEncryption_HEADERS
     plBigNum.h
     plChallengeHash.h
     plChecksum.h
+    plSha0.h
     plRandom.h
 )
 
