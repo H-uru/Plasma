@@ -131,7 +131,6 @@ boolCleftSolved = 0
 kWriteTimestamps = 8
 BahroPoles = xEnum.Enum("Teledahn = 1, Garrison, Garden, Kadish")
 HidingPoles = 0
-IsVisitorPlayer = true  #whether or not the player is a visitor
 
 # Bahro pole SDL variable states
 #   0: Initial state, no pole, hydrant up, sheath up, clicking hand changes to state 1
@@ -194,10 +193,7 @@ class psnlBahroPoles(ptModifier):
         #global GotCleftBook
         global boolCleftSolved
         global HidingPoles
-        global IsVisitorPlayer
 
-        #Init visitor support
-        IsVisitorPlayer = not PtIsSubscriptionActive()
 
         PtDebugPrint("DEBUG: psnlBahroPoles.OnServerInitComplete():\tEverything ok so far")
 
@@ -819,7 +815,7 @@ class psnlBahroPoles(ptModifier):
         
         PtDebugPrint("Oneshot finished on age %s" % age)
 
-        if IsVisitorPlayer or not IamOwner:
+        if not IamOwner:
             return
 
         self.UpdatePoleStates()

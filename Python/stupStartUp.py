@@ -52,9 +52,10 @@ from Plasma import *
 from PlasmaTypes import *
 
 # define the attributes that will be entered in max
-Camera = ptAttribSceneobject(1,"Camera")
+Camera = ptAttribSceneobject(1, "Camera")
 
-#====================================
+
+# ====================================
 
 class stupStartUp(ptResponder):
     ###########################
@@ -62,7 +63,8 @@ class stupStartUp(ptResponder):
         ptResponder.__init__(self)
         self.id = 5339
         self.version = 1
-        print "stupStartUp: init  version = %d" % self.version
+        print
+        "stupStartUp: init  version = %d" % self.version
 
     ###########################
     def OnFirstUpdate(self):
@@ -74,7 +76,6 @@ class stupStartUp(ptResponder):
         PtLoadDialog("GUIDialog06")
         PtLoadDialog("GUIDialog06a")
 
-
     def __del__(self):
         PtUnloadDialog("GUIDialog04a")
         PtUnloadDialog("GUIDialog04b")
@@ -84,34 +85,24 @@ class stupStartUp(ptResponder):
         PtUnloadDialog("GUIDialog06")
         PtUnloadDialog("GUIDialog06a")
 
-
     ###########################
     def OnServerInitComplete(self):
         if PtIsActivePlayerSet():
             PtSetActivePlayer(0)
-        
+
         avatar = PtGetLocalAvatar()
         avatar.physics.suppress(true)
-        
+
         cam = ptCamera()
         cam.undoFirstPerson()
         cam.disableFirstPersonOverride()
 
         virtCam = ptCamera()
         virtCam.save(Camera.sceneobject.getKey())
-        
+
         playerList = PtGetAccountPlayerList()
 
-        if PtIsSubscriptionActive():
-            print "stupStartUp: Paying customer"
-            if playerList[0] or len(playerList) > 1:
-                PtShowDialog("GUIDialog04b")
-            else:
-                PtShowDialog("GUIDialog06")
+        if playerList[0] or len(playerList) > 1:
+            PtShowDialog("GUIDialog04b")
         else:
-            print "stupStartUp: Visitor"
-            if playerList[0] or len(playerList) > 1:
-                PtShowDialog("GUIDialog04a")
-            else:
-                PtShowDialog("GUIDialog06")
-                
+            PtShowDialog("GUIDialog06")

@@ -45,8 +45,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 
-# for visitor checking/dialogs
-import xVisitorUtils
 
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
@@ -115,11 +113,7 @@ class grsnDownElevator(ptResponder):
         ptResponder.__init__(self)
         self.id = 51001
         self.version = 9
-        PtLoadDialog(xVisitorUtils.kVisitorNagDialog)
         print "Initialized: grsnDownElevator"
-
-    def __del__(self):
-        PtUnloadDialog(xVisitorUtils.kVisitorNagDialog)
 
     def OnServerInitComplete(self):
         #set initial elevator state
@@ -286,11 +280,6 @@ class grsnDownElevator(ptResponder):
                     return
 
         if state:
-            if not PtIsSubscriptionActive():
-                print "grsnDownElevator: Elevators are disabled for visitors"
-                PtShowDialog(xVisitorUtils.kVisitorNagDialog)
-                return
-
             if id == downElevTrigger.id:
                 downElevTrigger.disable()
                 avatarInElevator = PtFindAvatar(events)
