@@ -54,7 +54,6 @@ from PlasmaTypes import *
 # define the attributes that will be entered in max
 Camera = ptAttribSceneobject(1, "Camera")
 
-
 # ====================================
 
 class stupStartUp(ptResponder):
@@ -63,8 +62,7 @@ class stupStartUp(ptResponder):
         ptResponder.__init__(self)
         self.id = 5339
         self.version = 1
-        print
-        "stupStartUp: init  version = %d" % self.version
+        print "stupStartUp: init  version = %d" % self.version
 
     ###########################
     def OnFirstUpdate(self):
