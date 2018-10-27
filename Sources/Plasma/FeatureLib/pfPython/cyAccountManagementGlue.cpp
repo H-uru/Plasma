@@ -49,11 +49,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plMessage/plAccountUpdateMsg.h"
 
-PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsSubscriptionActive, "Returns true if the current player is a paying subscriber")
-{
-    PYTHON_RETURN_BOOL(cyAccountManagement::IsSubscriptionActive());
-}
-
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAccountPlayerList, "Returns list of players associated with the current account")
 {
     return cyAccountManagement::GetPlayerList();
@@ -224,7 +219,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePassword, args, "Params: password\nChang
 
 void cyAccountManagement::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
 {
-    PYTHON_GLOBAL_METHOD_NOARGS(methods, PtIsSubscriptionActive);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountPlayerList);
     PYTHON_GLOBAL_METHOD_NOARGS(methods, PtGetAccountName);
     PYTHON_GLOBAL_METHOD(methods, PtCreatePlayer);

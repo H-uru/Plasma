@@ -61,7 +61,6 @@ public:
     static void         AddPlasmaMethods(std::vector<PyMethodDef> &methods);
     static void         AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool         IsSubscriptionActive();
     static PyObject*    GetPlayerList();
     static ST::string   GetAccountName();
     static void         CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode);

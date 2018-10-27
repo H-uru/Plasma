@@ -53,12 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyAccountManagement.h"
 #include "plNetClientComm/plNetClientComm.h"
 
-bool cyAccountManagement::IsSubscriptionActive()
-{
-    const NetCommAccount* account = NetCommGetAccount();    
-    return (account->billingType & kBillingTypePaidSubscriber);
-}
-
 PyObject* cyAccountManagement::GetPlayerList()
 {
     const std::vector<NetCommPlayer>& playerList = NetCommGetPlayerList();
