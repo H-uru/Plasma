@@ -68,7 +68,6 @@ public:
     static void         DeletePlayer(unsigned playerId);
     static void         SetActivePlayer(unsigned playerId);
     static bool         IsActivePlayerSet();
-    static void         UpgradeVisitorToExplorer(unsigned playerId);
     static void         ChangePassword(const ST::string& password);
 };
 

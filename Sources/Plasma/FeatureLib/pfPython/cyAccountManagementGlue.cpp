@@ -191,19 +191,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsActivePlayerSet, "Returns whether or 
     PYTHON_RETURN_BOOL(cyAccountManagement::IsActivePlayerSet());
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION(PtUpgradeVisitorToExplorer, args, "Params: playerInt\nUpgrades the player to explorer status")
-{
-    unsigned playerInt = 0;
-    if (!PyArg_ParseTuple(args, "I", &playerInt))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtUpgradeVisitorToExplorer expects a unsigned int");
-        PYTHON_RETURN_ERROR;
-    }
-
-    cyAccountManagement::UpgradeVisitorToExplorer(playerInt);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_GLOBAL_METHOD_DEFINITION(PtChangePassword, args, "Params: password\nChanges the current account's password")
 {
     char* password = nil;
@@ -226,7 +213,6 @@ void cyAccountManagement::AddPlasmaMethods(std::vector<PyMethodDef> &methods)
     PYTHON_GLOBAL_METHOD(methods, PtDeletePlayer);
     PYTHON_GLOBAL_METHOD(methods, PtSetActivePlayer);
     PYTHON_GLOBAL_METHOD(methods, PtIsActivePlayerSet);
-    PYTHON_GLOBAL_METHOD(methods, PtUpgradeVisitorToExplorer);
     PYTHON_GLOBAL_METHOD(methods, PtChangePassword);
 }
 
@@ -235,7 +221,6 @@ void cyAccountManagement::AddPlasmaConstantsClasses(PyObject *m)
     PYTHON_ENUM_START(PtAccountUpdateType);
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kCreatePlayer,     plAccountUpdateMsg::kCreatePlayer);
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kDeletePlayer,     plAccountUpdateMsg::kDeletePlayer);
-    PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kUpgradePlayer,    plAccountUpdateMsg::kUpgradePlayer);
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kActivePlayer,     plAccountUpdateMsg::kActivePlayer);
     PYTHON_ENUM_ELEMENT(PtAccountUpdateType, kChangePassword,   plAccountUpdateMsg::kChangePassword);
     PYTHON_ENUM_END(m, PtAccountUpdateType);

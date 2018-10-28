@@ -128,11 +128,6 @@ bool cyAccountManagement::IsActivePlayerSet()
     return NetCommGetPlayer()->playerInt != 0;
 }
 
-void cyAccountManagement::UpgradeVisitorToExplorer(unsigned playerId)
-{
-    NetCommUpgradeVisitorToExplorer(playerId, nil);
-}
-
 void cyAccountManagement::ChangePassword(const ST::string& password)
 {
     NetCommChangeMyPassword(password);
