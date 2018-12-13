@@ -55,6 +55,7 @@ Mead, WA   99021
 #include <commctrl.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include <openssl/evp.h>
 
 // ===================================================
 
@@ -373,6 +374,9 @@ static pfPatcher* IPatcherFactory()
 
 int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLink, int nCmdShow)
 {
+    // OpenSSL sucks
+    OpenSSL_add_all_algorithms();
+
     // Let's initialize our plClientLauncher friend
     s_launcher.ParseArguments();
     s_launcher.SetErrorProc(IOnNetError);
@@ -420,6 +424,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     //       awhile (it can... dang eap...)
     ReleaseMutex(_onePatcherMut);
     CloseHandle(_onePatcherMut);
+    EVP_cleanup();
 
     // kthxbai
     return s_error.is_empty() ? PLASMA_OK : PLASMA_PHAILURE;

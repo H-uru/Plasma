@@ -1005,6 +1005,7 @@ bool WinInit(HINSTANCE hInst)
 #include "plResMgr/plVersion.h"
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nCmdShow)
 {
+    OpenSSL_add_all_algorithms();
     PF_CONSOLE_INIT_ALL()
 
     // Set global handle
@@ -1230,6 +1231,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     gClient.ShutdownEnd();
     DeInitNetClientComm();
+    EVP_cleanup();
 
     // Exit WinMain and terminate the app....
     return PARABLE_NORMAL_EXIT;
