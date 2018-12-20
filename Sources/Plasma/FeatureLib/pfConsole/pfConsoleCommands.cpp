@@ -1560,7 +1560,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeCam,
     hsPoint3 pos = pfConsole::GetPipeline()->GetViewPositionWorld();
 
     hsColorRGBA clearColor = plClient::GetInstance()->GetClearColor();
-    const char* pref = params[1];
+    const char* pref = params[0];
     plGrabCubeMap grabCube;
     grabCube.GrabCube(pfConsole::GetPipeline(), pos, pref, clearColor);
 }
