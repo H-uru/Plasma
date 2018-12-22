@@ -58,6 +58,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plProduct.h"
 #include "hsThread.h"
 #include "hsTimer.h"
+#include "hsBitVector.h"
 
 #define USES_PROTOCOL_CLI2AUTH
 #define USES_PROTOCOL_CLI2GAME

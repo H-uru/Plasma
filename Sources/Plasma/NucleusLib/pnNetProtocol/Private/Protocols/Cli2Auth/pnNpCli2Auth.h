@@ -217,6 +217,7 @@ enum {
     // Extension messages
     kAuth2Cli_AgeReplyEx = 0x1000,
     kAuth2Cli_ScoreGetHighScoresReply,
+    kAuth2Cli_ServerCaps,
 
     kNumAuth2CliMessages
 };
@@ -1070,6 +1071,14 @@ struct Auth2Cli_ScoreGetHighScoresReply {
     uint32_t           byteCount;
     uint8_t            buffer[1];  // [byteCount], actually
     // no more fields
+};
+
+// ServerCaps
+extern const NetMsg kNetMsg_Auth2Cli_ServerCaps;
+struct Auth2Cli_ServerCaps {
+    uint32_t           messageId;
+    uint32_t           byteCount;
+    uint8_t            buffer[1];  // [byteCount], actually
 };
 
 //============================================================================
