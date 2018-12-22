@@ -121,9 +121,9 @@ protected:
 
 public:
     inline CBaseLink ();
-    inline CBaseLink (const CBaseLink & source);
+    inline CBaseLink (const CBaseLink & source) = delete;
     inline ~CBaseLink ();
-    inline CBaseLink & operator= (const CBaseLink & source);
+    CBaseLink & operator= (const CBaseLink & source) = delete;
     inline bool IsLinked () const;
     inline void Unlink ();
 
@@ -135,25 +135,8 @@ CBaseLink::CBaseLink () {
 }
 
 //===========================================================================
-CBaseLink::CBaseLink (const CBaseLink & source) {
-#ifdef HS_DEBUGGING
-    if (source.IsLinked())
-        FATAL("No copy constructor");
-#endif
-    InitializeLinks();
-}
-
-//===========================================================================
 CBaseLink::~CBaseLink () {
     UnlinkFromNeighbors();
-}
-
-//===========================================================================
-CBaseLink & CBaseLink::operator= (const CBaseLink & source) {
-#ifdef HS_DEBUGGING
-    FATAL("No assignment operator");
-#endif
-    return *this;
 }
 
 //===========================================================================
