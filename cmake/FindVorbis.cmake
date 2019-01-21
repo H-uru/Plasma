@@ -8,11 +8,13 @@ find_path(Vorbis_INCLUDE_DIR vorbis/codec.h
           /usr/include
 )
 
-find_library(Vorbis_LIBRARY NAMES vorbis
+find_library(Vorbis_LIBRARY
+             NAMES vorbis libvorbis libvorbis_static
              PATHS /usr/local/lib /usr/lib
 )
 
-find_library(VorbisFile_LIBRARY NAMES vorbisfile
+find_library(VorbisFile_LIBRARY
+             NAMES vorbisfile libvorbisfile libvorbisfile_static
              PATHS /usr/local/lib /usr/lib
 )
 

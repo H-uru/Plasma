@@ -2,10 +2,8 @@ if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
     set(Opus_FIND_QUIETLY TRUE)
 endif()
 
-find_path(Opus_INCLUDE_DIR opus.h
-          /usr/local/include/opus
+find_path(Opus_INCLUDE_DIR opus/opus.h
           /usr/local/include
-          /usr/include/opus
           /usr/include
 )
 
@@ -18,17 +16,22 @@ find_library(Celt_LIBRARY NAMES celt
 find_library(Silk_LIBRARY NAMES silk_common
              PATHS /usr/local/lib /usr/lib)
 
-set(Opus_LIBRARIES
-    ${Opus_LIBRARY}
-    ${Celt_LIBRARY}
-    ${Silk_LIBRARY}
-)
-
 if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
     set(Opus_FOUND TRUE)
+    if(Celt_LIBRARY AND Silk_LIBRARY)
+        set(Opus_LIBRARIES
+            ${Opus_LIBRARY}
+            ${Celt_LIBRARY}
+            ${Silk_LIBRARY}
+        )
+    else()
+        set(Opus_LIBRARIES
+            ${Opus_LIBRARY}
+        )
+    endif()
 endif()
 
-if (Opus_FOUND)
+if(Opus_FOUND)
     if(NOT Opus_FIND_QUIETLY)
         message(STATUS "Found libopus: ${Opus_INCLUDE_DIR}")
     endif()
