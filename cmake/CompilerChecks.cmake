@@ -42,9 +42,9 @@ endif()
 try_compile(HAVE_CPUID ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_cpuid.cpp)
 if(HAVE_CPUID)
-    message("CPUID header found -- using hardware math acceleration when available")
+    message(STATUS "CPUID header found -- using hardware math acceleration when available")
 else()
-    message("CPUID header not found -- using software math")
+    message(STATUS "CPUID header not found -- using software math")
 endif()
 
 # Look for a supported "deprecated" attribute specifier.

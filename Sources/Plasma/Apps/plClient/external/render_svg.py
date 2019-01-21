@@ -251,7 +251,7 @@ if __name__ == '__main__':
 	inpath = os.path.expanduser(options.inpath)
 
 	if not os.path.exists(outpath):
-		os.mkdir(outpath)
+		os.makedirs(outpath)
 
 	## Do the work!
 	print("Rendering SVGs...")
