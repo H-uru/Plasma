@@ -189,6 +189,7 @@ if (WIN32)
     target_link_libraries(plClient ws2_32)
     target_link_libraries(plClient winmm)
     target_link_libraries(plClient strmiids)
+    target_link_libraries(plClient crypt32)
 endif(WIN32)
 
 source_group("Source Files" FILES ${plClient_SOURCES})

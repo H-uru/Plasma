@@ -8,7 +8,7 @@ find_path(Ogg_INCLUDE_DIR ogg/ogg.h
           /usr/include
 )
 
-find_library(Ogg_LIBRARY NAMES ogg
+find_library(Ogg_LIBRARY NAMES ogg libogg libogg_static
              PATHS /usr/local/lib /usr/lib
 )
 

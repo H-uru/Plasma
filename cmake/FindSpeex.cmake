@@ -9,7 +9,7 @@ find_path(Speex_INCLUDE_DIR speex/speex.h
           /usr/include
 )
 
-find_library(Speex_LIBRARY NAMES speex
+find_library(Speex_LIBRARY NAMES speex libspeex
              PATHS /usr/local/lib /usr/lib
 )
 
