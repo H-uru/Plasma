@@ -58,9 +58,13 @@ set(DirectX_LIBRARIES
     ${DirectX_dsound}
     ${DirectX_dxguid}
     ${DirectX_dxerr}
-    legacy_stdio_definitions.lib
 )
 
+if(MSVC AND NOT (MSVC_VERSION LESS 1900))
+    # MSVC 2015 (v14) or newer need this library for backwards-compatibility
+    # For more information: https://msdn.microsoft.com/en-us/library/bb531344.aspx
+    list(APPEND DirectX_LIBRARIES "legacy_stdio_definitions.lib")
+endif()
 
 if(DirectX_INCLUDE_DIR AND DirectX_d3d9 AND DirectX_d3dx9 AND DirectX_dinput8
                        AND DirectX_dsound AND DirectX_dxguid AND DirectX_dxerr)
