@@ -92,16 +92,16 @@ prevAudioDeviceName = None
 # =====================================
 # Aspect Ratios
 #---------
-_ratios = {
-    "5:4": (1.25, 1.27),
-    "4:3": (1.32, 1.34),
-    "3:2": (1.47, 1.54),
-    "14:9": (1.55, 1.57),
-    "16:10": (1.58, 1.61,),
-    "5:3": (1.65, 1.67),
-    "16:9": (1.76, 1.78),
-    "21:9": (2.34, 2.41)
-}
+_ratios = (
+    ("5:4", 1.25, 1.27),
+    ("4:3", 1.28, 1.35),
+    ("3:2", 1.47, 1.54),
+    ("14:9", 1.55, 1.57),
+    ("16:10", 1.58, 1.61),
+    ("5:3", 1.65, 1.67),
+    ("16:9", 1.70, 1.79),
+    ("21:9", 2.34, 2.41),
+)
 
 # =====================================
 # Options Menu dialog globals
@@ -1556,10 +1556,10 @@ class xOptionsMenu(ptModifier):
         """Returns the appropriate aspect ratio for the given resolution"""
         # Compares between a range of acceptable aspect ratios due to liberal decisions and marketing
         # done by both GPU vendors and marketing departments. CWalther reported initially that 1280x854
-        # is not mathematically 3/2. Ultrawide monitors beging marketed as "21:9" despite their being
+        # is not mathematically 3/2. Ultrawide monitors being marketed as "21:9" despite their being
         # 2.35∶1 in some cases (or some other unknown ratio) makes this even more annoying...
-        aspect = round((float(w) / float(h)), 2)
-        for ratio, (lower, upper) in _ratios.iteritems():
+        aspect = float(w) / float(h)
+        for ratio, lower, upper in _ratios:
             if upper >= aspect>= lower:
                 return " [{}]".format(ratio)
         return ""
