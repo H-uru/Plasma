@@ -90,6 +90,20 @@ gPreviewStarted = 0
 prevAudioDeviceName = None
 
 # =====================================
+# Aspect Ratios
+#---------
+_ratios = (
+    ("5:4", 1.25, 1.27),
+    ("4:3", 1.28, 1.35),
+    ("3:2", 1.47, 1.54),
+    ("14:9", 1.55, 1.57),
+    ("16:10", 1.58, 1.61),
+    ("5:3", 1.65, 1.67),
+    ("16:9", 1.70, 1.79),
+    ("21:9", 2.34, 2.41),
+)
+
+# =====================================
 # Options Menu dialog globals
 #---------
 kOptionsKeyMapBtn = 299
@@ -1540,13 +1554,14 @@ class xOptionsMenu(ptModifier):
 
     def _AspectRatio(self, w, h):
         """Returns the appropriate aspect ratio for the given resolution"""
-        ratios = ((5, 4), (4, 3), (3, 2), (16, 10), (5, 3), (16, 9), (16, 9.375),)
-        w = float(w) # comes in as string, want float (not int) for division
-        h = float(h)
-        for r in ratios:
-            # resolution is within 1 pixel wiggle room in any direction from the exact aspect ratio (needed to recognize 1280x854 as 3:2)
-            if (w+1)/(h-1) >= float(r[0])/float(r[1]) >= (w-1)/(h+1):
-                return " [%i:%i]" % (r[0], r[1])
+        # Compares between a range of acceptable aspect ratios due to liberal decisions and marketing
+        # done by both GPU vendors and marketing departments. CWalther reported initially that 1280x854
+        # is not mathematically 3/2. Ultrawide monitors being marketed as "21:9" despite their being
+        # 2.35∶1 in some cases (or some other unknown ratio) makes this even more annoying...
+        aspect = float(w) / float(h)
+        for ratio, lower, upper in _ratios:
+            if upper >= aspect>= lower:
+                return " [{}]".format(ratio)
         return ""
     
     def GetVidResField(self):
