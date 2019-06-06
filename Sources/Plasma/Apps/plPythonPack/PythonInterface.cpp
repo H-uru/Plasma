@@ -95,7 +95,7 @@ void PythonInterface::initPython(const plFileName& rootDir)
             PyList_Append(path_list, more_path3);
             temp = plFileName::Join(rootDir, "system");
             printf("%s\n\n", temp.AsString().c_str());
-            PyObject* more_path2 = PyString_FromString("system");
+            PyObject* more_path2 = PyString_FromString(temp.AsString().c_str());
             PyList_Append(path_list, more_path2);
             // set the path to be this one
             PyDict_SetItemString(sys_dict, "path", path_list);
