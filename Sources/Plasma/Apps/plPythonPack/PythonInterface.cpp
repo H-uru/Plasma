@@ -77,9 +77,10 @@ void PythonInterface::initPython(const plFileName& rootDir, FILE* outstream, FIL
         {
             // get the sys's dictionary to find the stdout and stderr
             PyObject* sys_dict = PyModule_GetDict(sysmod);
-            if (sys_dict != nullptr && stdOut != nullptr && stdErr != nullptr)
-            {
+            if (sys_dict != nullptr && stdOut != nullptr) {
                 PyDict_SetItemString(sys_dict, "stdout", stdOut);
+            }
+            if (sys_dict != nullptr && stdErr != nullptr) {
                 PyDict_SetItemString(sys_dict, "stderr", stdErr);
             }
             // NOTE: we will reset the path to not include paths
