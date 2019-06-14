@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "PythonInterface.h"
 
 #include "hsStream.h"
+#include "plCmdParser.h"
 
 #include <vector>
 #include <string>
@@ -367,22 +368,37 @@ int main(int argc, char *argv[])
 {
     // Parse arguments
     ST::string packDir = ".";
-    for (int i = 1; i < argc; i++) {
-        ST::string arg = argv[i];
 
-        if (arg.starts_with("?") || arg.starts_with("-") || arg.starts_with("/")) {
-            // Option
-            ST::string option = arg.to_lower().trim_left("/-");
-            if (arg == "?" || option == "h" || option == "help" || option == "?") {
-                PrintUsage();
-                return 0;
-            } else if (option == "q" || option == "quiet") {
-                out = fopen(NULL_DEVICE, "w");
-            }
-        } else {
-            // Path
-            packDir = arg;
+    enum { kArgPath, kArgQuiet, kArgHelp1, kArgHelp2 };
+    const plCmdArgDef cmdLineArgs[] = {
+        { kCmdArgOptional | kCmdTypeString, "path",  kArgPath},
+        { kCmdArgFlagged  | kCmdTypeBool,   "quiet", kArgQuiet},
+        { kCmdArgFlagged  | kCmdTypeBool,   "help",  kArgHelp1},
+        { kCmdArgFlagged  | kCmdTypeBool,   "?",     kArgHelp2},
+    };
+
+    std::vector<ST::string> args;
+    args.reserve(argc);
+    for (size_t i = 0; i < argc; i++) {
+        args.emplace_back(ST::string::from_utf8(argv[i]));
+    }
+
+    plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
+    if (cmdParser.Parse(args)) {
+        if (cmdParser.GetBool(kArgHelp1) || cmdParser.GetBool(kArgHelp2)) {
+            PrintUsage();
+            return 0;
         }
+
+        if (cmdParser.GetBool(kArgQuiet))
+            out = fopen(NULL_DEVICE, "w");
+
+        if (cmdParser.IsSpecified(kArgPath))
+            packDir = cmdParser.GetString(kArgPath);
+    } else {
+        ST::printf(stderr, "An error occurred while parsing the provided arguments.\n");
+        ST::printf(stderr, "Use the --help option to display usage information.\n");
+        return 1;
     }
 
     ST::printf(out, "The Python Pack Utility\n");
