@@ -47,12 +47,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cStringIO.h"
 #include "plFileSystem.h"
 
-static PyObject* stdFile;   // python object of the stdout and err file
+#include <string_theory/stdio>
+#include <string_theory/string>
 
-void PythonInterface::initPython(const plFileName& rootDir)
+static PyObject* stdOut;    // python object of the stdout file
+static PyObject* stdErr;    // python object of the stderr file
+
+void PythonInterface::initPython(const plFileName& rootDir, FILE* outstream, FILE* errstream)
 {
     // if haven't been initialized then do it
-    if ( Py_IsInitialized() == 0 )
+    if (Py_IsInitialized() == 0)
     {
         // initialize the Python stuff
         // let Python do some intialization...
@@ -61,45 +65,46 @@ void PythonInterface::initPython(const plFileName& rootDir)
         Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
 
-        // intialize any of our special plasma python modules
-//      initP2PInterface();
-        // save object to the Plasma module
-//      plasmaMod = PyImport_ImportModule("Plasma");
-
         // create the StringIO for the stdout and stderr file
         PycStringIO = (struct PycStringIO_CAPI*)PyCObject_Import(const_cast<char*>("cStringIO"), const_cast<char*>("cStringIO_CAPI"));
-        stdFile = (*PycStringIO->NewOutput)(20000);
+        stdOut = (*PycStringIO->NewOutput)(20000);
+        stdErr = (*PycStringIO->NewOutput)(20000);
+
         // if we need the builtins then find the builtin module
         PyObject* sysmod = PyImport_ImportModule("sys");
-        // then add the builtin dicitionary to our module's dictionary
-        if (sysmod != NULL )
+        // then add the builtin dictionary to our module's dictionary
+        if (sysmod != NULL)
         {
             // get the sys's dictionary to find the stdout and stderr
             PyObject* sys_dict = PyModule_GetDict(sysmod);
-            if (stdFile != nil)
-            {
-                PyDict_SetItemString(sys_dict, "stdout", stdFile);
-                PyDict_SetItemString(sys_dict, "stderr", stdFile);
+            if (sys_dict != nullptr && stdOut != nullptr) {
+                PyDict_SetItemString(sys_dict, "stdout", stdOut);
+            }
+            if (sys_dict != nullptr && stdErr != nullptr) {
+                PyDict_SetItemString(sys_dict, "stderr", stdErr);
             }
             // NOTE: we will reset the path to not include paths
-            // ...that Python may have found in the registery
+            // ...that Python may have found in the registry
             PyObject* path_list = PyList_New(0);
-            printf("Setting up include dirs:\n");
-            printf("%s\n", rootDir.AsString().c_str());
+            ST::printf(outstream, "Setting up include dirs:\n");
+
+            ST::printf(outstream, "{}\n", rootDir);
             PyObject* more_path = PyString_FromString(rootDir.AsString().c_str());
             PyList_Append(path_list, more_path);
+
             // make sure that our plasma libraries are gotten before the system ones
             plFileName temp = plFileName::Join(rootDir, "plasma");
-            printf("%s\n", temp.AsString().c_str());
+            ST::printf(outstream, "{}\n", temp);
             PyObject* more_path3 = PyString_FromString(temp.AsString().c_str());
             PyList_Append(path_list, more_path3);
+
             temp = plFileName::Join(rootDir, "system");
-            printf("%s\n\n", temp.AsString().c_str());
+            ST::printf(outstream, "{}\n\n", temp);
             PyObject* more_path2 = PyString_FromString(temp.AsString().c_str());
             PyList_Append(path_list, more_path2);
+
             // set the path to be this one
             PyDict_SetItemString(sys_dict, "path", path_list);
-
 
             Py_DECREF(sysmod);
         }
@@ -107,7 +112,7 @@ void PythonInterface::initPython(const plFileName& rootDir)
 //  initialized++;
 }
 
-void PythonInterface::addPythonPath(const plFileName& path)
+void PythonInterface::addPythonPath(const plFileName& path, FILE* outstream)
 {
     PyObject* sysmod = PyImport_ImportModule("sys");
     if (sysmod != NULL)
@@ -115,7 +120,7 @@ void PythonInterface::addPythonPath(const plFileName& path)
         PyObject* sys_dict = PyModule_GetDict(sysmod);
         PyObject* path_list = PyDict_GetItemString(sys_dict, "path");
 
-        printf("Adding path %s\n", path.AsString().c_str());
+        ST::printf(outstream, "Adding path {}\n", path);
         PyObject* more_path = PyString_FromString(path.AsString().c_str());
         PyList_Append(path_list, more_path);
 
@@ -183,34 +188,31 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
 //  Function   : getOutputAndReset
 //  PARAMETERS : none
 //
-//  PURPOSE    : get the Output to the error file to be displayed
+//  PURPOSE    : get the Output to the stdout file to be displayed
 //
-int PythonInterface::getOutputAndReset(char** line)
+void PythonInterface::getOutputAndReset(ST::string& outmsg)
 {
-    PyObject* pyStr = (*PycStringIO->cgetvalue)(stdFile);
-    char *str = PyString_AsString( pyStr );
-    int size = PyString_Size( pyStr );
+    PyObject* pyStr = (*PycStringIO->cgetvalue)(stdOut);
+    outmsg = PyString_AsString(pyStr);
 
     // reset the file back to zero
-    PyObject_CallMethod(stdFile, const_cast<char*>("reset"), const_cast<char*>(""));
-/*
-    // check to see if the debug python module is loaded
-    if ( dbgOut != nil )
-    {
-        // then send it the new text
-        if ( PyObject_CallFunction(dbgOut,"s",str) == nil )
-        {
-            // for some reason this function didn't, remember that and not call it again
-            dbgOut = nil;
-            // if there was an error make sure that the stderr gets flushed so it can be seen
-            PyErr_Print();      // make sure the error is printed
-            PyErr_Clear();      // clear the error
-        }
-    }
-*/
-    if (line)
-        *line = str;
-    return size;
+    PyObject_CallMethod(stdOut, const_cast<char*>("reset"), const_cast<char*>(""));
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : getErrorAndReset
+//  PARAMETERS : none
+//
+//  PURPOSE    : get the Output to the stderr file to be displayed
+//
+void PythonInterface::getErrorAndReset(ST::string& errmsg)
+{
+    PyObject* pyStr = (*PycStringIO->cgetvalue)(stdErr);
+    errmsg = PyString_AsString(pyStr);
+
+    // reset the file back to zero
+    PyObject_CallMethod(stdErr, const_cast<char*>("reset"), const_cast<char*>(""));
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -293,11 +295,10 @@ bool PythonInterface::RunPYC(PyObject* code, PyObject* module)
 //
 PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
 {
-    if ( module )
-    {
+    if (module) {
         PyObject* d = PyModule_GetDict(module);
         return PyDict_GetItemString(d, item);
     }
-    return nil;
+    return nullptr;
 }
 
