@@ -1142,7 +1142,7 @@ void NetCommDeletePlayer (  // --> plNetCommDeletePlayerMsg
     NetCliAuthPlayerDeleteRequest(
         playerInt,
         INetCliAuthDeletePlayerCallback,
-        (void*)playerInt
+        (void*)(uintptr_t)playerInt
     );
 }
 
@@ -1244,7 +1244,7 @@ void NetCommUpgradeVisitorToExplorer (
     NetCliAuthUpgradeVisitorRequest(
         playerInt,
         INetCliAuthUpgradeVisitorRequestCallback,
-        (void*)playerInt
+        (void*)(uintptr_t)playerInt
     );
 }
 
