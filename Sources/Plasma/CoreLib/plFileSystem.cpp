@@ -535,7 +535,7 @@ plFileName plFileSystem::GetCurrentAppPath()
     if (appPath.IsValid())
         return appPath;
 
-    hsAssert(0, "Your OS doesn't make life easy, does it?");
+    FATAL("Your OS doesn't make life easy, does it?");
 #endif
 }
 

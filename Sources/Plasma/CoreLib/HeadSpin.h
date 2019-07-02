@@ -409,8 +409,10 @@ inline float hsRadiansToDegrees(float rad) { return float(rad * (180 / M_PI)); }
 
 #ifdef _MSC_VER
 #   define ALIGN(n) __declspec(align(n))
+#   define NORETURN __declspec(noreturn)
 #else
 #   define ALIGN(n) __attribute__((aligned(n)))
+#   define NORETURN __attribute__((noreturn))
 #endif
 
 /************************ Debug/Error Macros **************************/
@@ -424,7 +426,7 @@ extern hsDebugMessageProc gHSStatusProc;
 hsDebugMessageProc hsSetStatusMessageProc(hsDebugMessageProc newProc);
 
 void ErrorEnableGui (bool enabled);
-void ErrorAssert (int line, const char* file, const char* fmt, ...);
+NORETURN void ErrorAssert (int line, const char* file, const char* fmt, ...);
 
 bool DebugIsDebuggerPresent();
 void DebugBreakIfDebuggerPresent();
