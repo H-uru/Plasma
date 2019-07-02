@@ -659,8 +659,7 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
     if( fFileHandle != nil )
     {
         char work[256];
-        char buf[2000];
-        buf[0] = 0;
+        ST::string_stream buf;
 
         //build line to encrypt
 
@@ -669,50 +668,41 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
             if ( fFlags & kTimestamp )
             {
                 snprintf(work, arrsize(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
             if ( fFlags & kTimestampGMT )
             {
                 snprintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC").c_str());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
             if ( fFlags & kTimeInSeconds )
             {
                 snprintf(work, arrsize(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
             if ( fFlags & kTimeAsDouble )
             {
                 snprintf(work, arrsize(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
             if (fFlags & kRawTimeStamp)
             {
                 snprintf(work, arrsize(work), "[t=%10f] ", hsTimer::GetSeconds());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
             if (fFlags & kThreadID)
             {
                 snprintf(work, arrsize(work), "[t=%lu] ", hsThread::ThisThreadHash());
-                strncat(buf, work, arrsize(work));
+                buf.append(work);
             }
 
-            size_t remaining = arrsize(buf) - strlen(buf) - 1;
-            remaining -= 1;
-            if (count <= remaining) {
-                strncat(buf, line, count);
-            } else {
-                strncat(buf, line, remaining);
-            }
-
-            strncat(buf, "\n", 1);
+            buf.append(line, count);
+            buf.append_char('\n');
         }
-
-        unsigned length = strlen(buf);
 
         {
             int err;
-            err = fwrite(buf,1,length,fFileHandle);
+            err = fwrite(buf.raw_buffer(), 1, buf.size(), fFileHandle);
             ret = ( ferror( fFileHandle )==0 );
 
             if ( ret )
