@@ -1012,8 +1012,7 @@ PyObject* cyMisc::GetNPC(int npcID)
     if ( so )
         return pySceneObject::New(so->GetKey());
 
-    char* errmsg = "NPC not found";
-    PyErr_SetString(PyExc_NameError, errmsg);
+    PyErr_SetString(PyExc_NameError, "NPC not found");
     PYTHON_RETURN_ERROR;
 }
 
@@ -2369,7 +2368,8 @@ public:
                             PyTuple_SetItem(t, 1, PyLong_FromUnsignedLong(nPlayers));
                             PyList_SetItem(pyEL, i, t); // steals the ref
                         }
-                        PyObject* retVal = PyObject_CallMethod(fPyObject, "gotPublicAgeList", "O", pyEL);
+                        PyObject* retVal = PyObject_CallMethod(fPyObject,
+                                                _pycs("gotPublicAgeList"), _pycs("O"), pyEL);
                         Py_XDECREF(retVal);
                     }
                 }
@@ -2387,7 +2387,8 @@ public:
                     if ( ageInfo )
                     {
                         PyObject* ageInfoObj = pyAgeInfoStruct::New(ageInfo);
-                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeCreated", "O", ageInfoObj);
+                        PyObject* retVal = PyObject_CallMethod(fPyObject,
+                                                _pycs("publicAgeCreated"), _pycs("O"), ageInfoObj);
                         Py_XDECREF(retVal);
                         Py_DECREF(ageInfoObj);
                     }
@@ -2405,7 +2406,9 @@ public:
 
                     if ( guid )
                     {
-                        PyObject* retVal = PyObject_CallMethod(fPyObject, "publicAgeRemoved", "s", guid->AsString().c_str());
+                        PyObject* retVal = PyObject_CallMethod(fPyObject,
+                                                _pycs("publicAgeRemoved"), _pycs("s"),
+                                                guid->AsString().c_str());
                         Py_XDECREF(retVal);
                     }
                 }

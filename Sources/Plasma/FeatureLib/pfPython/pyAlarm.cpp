@@ -42,6 +42,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <Python.h>
 #include "hsTimer.h"
+#include "pyGlueHelpers.h"
 #pragma hdrstop
 
 #include "pyAlarm.h"
@@ -87,7 +88,8 @@ struct pyAlarm
             {
                 if ( PyCallable_Check(func)>0 )
                 {
-                    PyObject *retVal = PyObject_CallMethod(fCb, "onAlarm", "l", fCbContext);
+                    PyObject *retVal = PyObject_CallMethod(fCb,
+                                            _pycs("onAlarm"), _pycs("l"), fCbContext);
                     Py_XDECREF(retVal);
                 }
             }

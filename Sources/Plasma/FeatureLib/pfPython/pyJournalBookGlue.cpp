@@ -58,12 +58,13 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptBook)
 
 PYTHON_INIT_DEFINITION(ptBook, args, keywords)
 {
-    char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", NULL};
+    const char* kwlist[] = {"esHTMLSource", "coverImage", "callbackKey", "guiName", NULL};
     PyObject* sourceObj = NULL;
     PyObject* coverObj = NULL;
     PyObject* callbackObj = NULL;
     char* guiName = NULL;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|OOs", kwlist, &sourceObj, &coverObj, &callbackObj, &guiName))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|OOs", const_cast<char **>(kwlist),
+                                     &sourceObj, &coverObj, &callbackObj, &guiName))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects a string or unicode string, and optionally a ptImage, ptKey, and string");
         PYTHON_RETURN_INIT_ERROR;

@@ -1021,7 +1021,7 @@ void PythonInterface::initPython()
         FirstTimeInit = false;
         // initialize the Python stuff
         // let Python do some initialization...
-        Py_SetProgramName("plasma");
+        Py_SetProgramName(_pycs("plasma"));
         Py_NoSiteFlag = 1;
         Py_IgnoreEnvironmentFlag = 1;
         Py_Initialize();
@@ -1644,7 +1644,7 @@ int PythonInterface::getOutputAndReset(std::string *output)
         if ( dbgOut != nil )
         {
             // then send it the new text
-            PyObject* retVal = PyObject_CallFunction(dbgOut,"s",strVal.c_str());
+            PyObject* retVal = PyObject_CallFunction(dbgOut, _pycs("s"), strVal.c_str());
             if ( retVal == nil )
             {
                 // for some reason this function didn't, remember that and not call it again
@@ -1778,7 +1778,7 @@ PyObject* PythonInterface::CreateModule(const char* module)
 //
 //  PURPOSE    : get an item (probably a function) from the Plasma module
 //
-PyObject* PythonInterface::GetPlasmaItem(char* item)
+PyObject* PythonInterface::GetPlasmaItem(const char* item)
 {
     if ( plasmaMod )
     {
@@ -1796,7 +1796,7 @@ PyObject* PythonInterface::GetPlasmaItem(char* item)
 //
 //  PURPOSE    : get an item (probably a function) from a specific module
 //
-PyObject* PythonInterface::GetModuleItem(char* item, PyObject* module)
+PyObject* PythonInterface::GetModuleItem(const char* item, PyObject* module)
 {
     if ( module )
     {

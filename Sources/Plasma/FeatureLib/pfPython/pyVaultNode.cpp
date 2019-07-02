@@ -119,7 +119,8 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationStarted( uint32_t 
             {
                 if ( PyCallable_Check(func)>0 )
                 {
-                    PyObject* retVal = PyObject_CallMethod(fCbObject, "vaultOperationStarted", "l", context);
+                    PyObject* retVal = PyObject_CallMethod(fCbObject,
+                                            _pycs("vaultOperationStarted"), _pycs("l"), context);
                     Py_XDECREF(retVal);
                 }
             }
@@ -145,7 +146,9 @@ void pyVaultNode::pyVaultNodeOperationCallback::VaultOperationComplete( uint32_t
                     PyObject* t = PyTuple_New(2);
                     PyTuple_SetItem(t, 0, pyNode);
                     PyTuple_SetItem(t, 1, fPyNodeRef);
-                    PyObject* retVal = PyObject_CallMethod(fCbObject, "vaultOperationComplete", "lOi", context, t, resultCode);
+                    PyObject* retVal = PyObject_CallMethod(fCbObject,
+                                            _pycs("vaultOperationComplete"), _pycs("lOi"),
+                                            context, t, resultCode);
                     Py_XDECREF(retVal);
                     Py_DECREF(t);
                 }

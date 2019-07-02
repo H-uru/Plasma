@@ -53,13 +53,14 @@ PYTHON_DEFAULT_DEALLOC_DEFINITION(ptColor)
 
 PYTHON_INIT_DEFINITION(ptColor, args, keywords)
 {
-    char *kwlist[] = {"red", "green", "blue", "alpha", NULL};
+    const char *kwlist[] = {"red", "green", "blue", "alpha", NULL};
     PyObject* redObj = NULL;
     PyObject* greenObj = NULL;
     PyObject* blueObj = NULL;
     PyObject* alphaObj = NULL;
     float red = 0.0f, green = 0.0f, blue = 0.0f, alpha = 0.0f;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "|OOOO", kwlist, &redObj, &greenObj, &blueObj, &alphaObj))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "|OOOO", const_cast<char **>(kwlist),
+                                     &redObj, &greenObj, &blueObj, &alphaObj))
     {
         PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
         PYTHON_RETURN_INIT_ERROR;
