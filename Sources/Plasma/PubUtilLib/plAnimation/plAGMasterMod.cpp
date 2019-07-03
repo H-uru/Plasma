@@ -465,7 +465,7 @@ plAGAnimInstance * plAGMasterMod::FindAnimInstance(const ST::string &name)
 {
     plAGAnimInstance *result = nil;
 
-    if (!name.is_empty())
+    if (!name.empty())
     {
         for (int i = 0; i < fAnimInstances.size(); i++)
         {
@@ -628,7 +628,7 @@ bool plAGMasterMod::MsgReceive(plMessage* msg)
     {
         ST::string targetName = cmdMsg->GetAnimName();
 
-        if (targetName.is_empty())
+        if (targetName.empty())
             targetName = ENTIRE_ANIMATION_NAME;
 
         plAGAnimInstance *inst = FindAnimInstance(targetName);

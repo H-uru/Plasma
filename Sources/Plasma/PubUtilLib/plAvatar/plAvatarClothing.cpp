@@ -265,7 +265,7 @@ void plClothingItem::Write(hsStream *s, hsResMgr *mgr)
 
     // EXPORT ONLY
     plKey accessoryKey = nil;
-    if (!fAccessoryName.is_empty())
+    if (!fAccessoryName.empty())
     {
         ST::string strBuf = ST::format("CItm_{}", fAccessoryName);
         accessoryKey = plKeyFinder::Instance().StupidSearch("GlobalClothing", "", plClothingItem::Index(), strBuf);
@@ -299,7 +299,7 @@ bool plClothingItem::MsgReceive(plMessage* msg)
                 if (fElementNames.GetCount() <= eMsg->fWhich)
                     fElementNames.Expand(eMsg->fWhich + 1);
                 
-                if (fElementNames.Get(eMsg->fWhich).is_empty())
+                if (fElementNames.Get(eMsg->fWhich).empty())
                     fElementNames.Set(eMsg->fWhich, eMsg->fElementName);
                 if (fTextures.Get(eMsg->fWhich) == nil)
                 {
@@ -1708,7 +1708,7 @@ void plClothingMgr::FilterUniqueMeshes(hsTArray<plClothingItem*> &items)
 
 plClothingItem *plClothingMgr::FindItemByName(const ST::string &name) const
 {
-    if (name.is_empty())
+    if (name.empty())
         return nil;
 
     for (int i = 0; i < fItems.GetCount(); i++)

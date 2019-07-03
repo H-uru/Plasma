@@ -332,7 +332,7 @@ static void ILaunchClientExecutable(const plFileName& exe, const ST::string& arg
 
     // Only launch a client executable if we're given one. If not, that's probably a cue that we're
     // done with some service operation and need to go away.
-    if (!exe.AsString().is_empty()) {
+    if (!exe.AsString().empty()) {
         handleptr_t hEvent = handleptr_t(CreateEventW(nullptr, TRUE, FALSE, L"UruPatcherEvent"), CloseHandle);
         handleptr_t process = ICreateProcess(exe, args);
 
@@ -415,7 +415,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
 
     // So there appears to be some sort of issue with calling MessageBox once we've set up our dialog...
     // WTF?!?! So, to hack around that, we'll wait until everything shuts down to display any error.
-    if (!s_error.is_empty())
+    if (!s_error.empty())
         IShowErrorDialog(s_error.to_wchar().data());
 
     // Alrighty now we just need to clean up behind ourselves!
@@ -427,7 +427,7 @@ int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdL
     EVP_cleanup();
 
     // kthxbai
-    return s_error.is_empty() ? PLASMA_OK : PLASMA_PHAILURE;
+    return s_error.empty() ? PLASMA_OK : PLASMA_PHAILURE;
 }
 
 /* Enable themes in Windows XP and later */

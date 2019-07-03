@@ -757,7 +757,7 @@ bool plAvOneShotLinkTask::Start(plArmatureMod *avatar, plArmatureBrain *brain, d
     bool result = plAvOneShotTask::Start(avatar, brain, time, elapsed);
     fStartTime = time;
 
-    if (fAnimInstance && !fMarkerName.is_empty())
+    if (fAnimInstance && !fMarkerName.empty())
     {
         const plATCAnim *anim = plATCAnim::ConvertNoRef(fAnimInstance->GetAnimation());
         if (anim)

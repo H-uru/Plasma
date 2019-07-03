@@ -791,7 +791,7 @@ void plArmatureMod::SetSpawnPointOverride(const ST::string &overrideObjName)
 
 int plArmatureMod::IFindSpawnOverride()
 {
-    if (fSpawnPointOverride.is_empty())
+    if (fSpawnPointOverride.empty())
         return -1;
     int i;
     plAvatarMgr *mgr = plAvatarMgr::GetInstance();
@@ -2552,7 +2552,7 @@ int  plArmatureMod::GetKILevel()
 
 void plArmatureMod::SetLinkInAnim(const ST::string &animName)
 {
-    if (!animName.is_empty())
+    if (!animName.empty())
     {
         plAGAnim *anim = FindCustomAnim(animName);
         fLinkInAnimKey = (anim ? anim->GetKey() : nil);

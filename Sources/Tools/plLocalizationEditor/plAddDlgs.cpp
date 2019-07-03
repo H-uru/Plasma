@@ -149,7 +149,7 @@ void plAddElementDlg::Update(const QString &text)
         fUI->fParentSet->setCurrentText(fSetName.c_str());
     }
 
-    bool valid = !(fAgeName.is_empty() || fSetName.is_empty() || fElementName.is_empty());
+    bool valid = !(fAgeName.empty() || fSetName.empty() || fElementName.empty());
     fUI->fButtons->button(QDialogButtonBox::Ok)->setEnabled(valid);
 }
 

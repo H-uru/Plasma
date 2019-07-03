@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plNetCommon.h"
 #include "plVault/plVault.h"
 
-#define SAFE(s) ((s).is_empty() ? "(nil)" : (s))
+#define SAFE(s) ((s).empty() ? "(nil)" : (s))
 #define kComma  ","
 #define kEmpty  ""
 #define kSemicolon  ";"
@@ -248,7 +248,7 @@ ST::string plAgeInfoStruct::AsString() const
 
 void plAgeInfoStruct::SetAgeFilename( const ST::string & v )
 {
-    if (!v.is_empty())
+    if (!v.empty())
     {
         SetFlag( kHasAgeFilename );
         fAgeFilename=v;
@@ -261,7 +261,7 @@ void plAgeInfoStruct::SetAgeFilename( const ST::string & v )
 
 void plAgeInfoStruct::SetAgeInstanceName( const ST::string & v )
 {
-    if (!v.is_empty())
+    if (!v.empty())
     {
         SetFlag( kHasAgeInstanceName );
         fAgeInstanceName=v;
@@ -288,7 +288,7 @@ void plAgeInfoStruct::SetAgeInstanceGuid( const plUUID * v )
 
 void plAgeInfoStruct::SetAgeUserDefinedName( const ST::string & v )
 {
-    if (!v.is_empty())
+    if (!v.empty())
     {
         SetFlag( kHasAgeUserDefinedName );
         fAgeUserDefinedName=v;
@@ -314,7 +314,7 @@ void plAgeInfoStruct::SetAgeSequenceNumber( uint32_t v )
 
 void plAgeInfoStruct::SetAgeDescription( const ST::string & v )
 {
-    if (!v.is_empty())
+    if (!v.empty())
     {
         SetFlag( kHasAgeDescription );
         fAgeDescription=v;
@@ -340,12 +340,12 @@ void plAgeInfoStruct::SetAgeLanguage( uint32_t v )
 
 void plAgeInfoStruct::UpdateFlags() const
 {
-    SetFlag( kHasAgeFilename, !fAgeFilename.is_empty() );
-    SetFlag( kHasAgeInstanceName, !fAgeInstanceName.is_empty() );
-    SetFlag( kHasAgeUserDefinedName, !fAgeUserDefinedName.is_empty() );
+    SetFlag( kHasAgeFilename, !fAgeFilename.empty() );
+    SetFlag( kHasAgeInstanceName, !fAgeInstanceName.empty() );
+    SetFlag( kHasAgeUserDefinedName, !fAgeUserDefinedName.empty() );
     SetFlag( kHasAgeInstanceGuid, fAgeInstanceGuid.IsSet() );
     SetFlag( kHasAgeSequenceNumber, fAgeSequenceNumber!=0 );
-    SetFlag( kHasAgeDescription, !fAgeDescription.is_empty() );
+    SetFlag( kHasAgeDescription, !fAgeDescription.empty() );
     SetFlag( kHasAgeLanguage, fAgeLanguage>=0 );
 }
 
@@ -723,7 +723,7 @@ bool plNetServerSessionInfo::IsEqualTo(const plNetServerSessionInfo * other) con
 void plNetServerSessionInfo::SetServerName(const ST::string & val)
 {
     fServerName = val;
-    if (!val.is_empty())
+    if (!val.empty())
     {
         SetFlag(kHasServerName);
     }
@@ -750,7 +750,7 @@ void plNetServerSessionInfo::SetServerType(uint8_t val)
 void plNetServerSessionInfo::SetServerAddr(const ST::string & val)
 {
     fServerAddr = val;
-    if (!val.is_empty())
+    if (!val.empty())
     {
         SetFlag(kHasServerAddr);
     }

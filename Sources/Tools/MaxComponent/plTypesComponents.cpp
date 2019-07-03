@@ -541,7 +541,7 @@ protected:
         ComboBox_ResetContent(hCombo);
 
         ST::string animName;
-        while (!(animName = anim.GetNextAnimName()).is_empty())
+        while (!(animName = anim.GetNextAnimName()).empty())
         {
             int sel = ComboBox_AddString(hCombo, animName.c_str());
             if (animName.compare(savedName) == 0)

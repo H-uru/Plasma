@@ -208,7 +208,7 @@ void plAutoProfileImp::INextProfile()
     else
     {
         // Log the stats for this spawn point
-        if (!fLastSpawnPointName.is_empty())
+        if (!fLastSpawnPointName.empty())
         {
             ST::string ageName = NetCommGetAge()->ageDatasetName;
             plProfileManagerFull::Instance().LogStats(ageName, fLastSpawnPointName);

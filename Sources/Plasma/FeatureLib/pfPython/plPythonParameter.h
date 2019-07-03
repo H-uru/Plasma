@@ -377,9 +377,9 @@ public:
                 if ( count != 0 )
                 {
                     ST::char_buffer str;
-                    char *buffer = str.create_writable_buffer(count-1);
-                    stream->ReadLE(count, buffer);
-                    buffer[count-1] = 0;
+                    str.allocate(count - 1);
+                    stream->ReadLE(count - 1, str.data());
+                    (void)stream->ReadByte();
                     fString = str;
                 }
                 else
@@ -429,7 +429,7 @@ public:
 
             case kString:
             case kAnimationName:
-                if ( !fString.is_empty() )
+                if ( !fString.empty() )
                     count = fString.size()+1;
                 else
                     count = 0;

@@ -605,7 +605,7 @@ void plSimulationMgr::ISendUpdates()
                     if (physKey)
                     {
                         ST::string physName = physical->GetKeyName();
-                        if (!physName.is_empty())
+                        if (!physName.empty())
                         {
                             plSimulationMgr::Log("Removing physical <%s> because of missing scene node.\n", physName.c_str());
                         }

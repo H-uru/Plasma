@@ -129,7 +129,7 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
     if( fCachedSegMap != nil )
     {
         ST::string name = GetSegmentName();
-        if( !name.is_empty() )
+        if( !name.empty() )
         {
             SegmentMap::iterator i = fCachedSegMap->find( name );
             if( i != fCachedSegMap->end() )
@@ -167,7 +167,7 @@ void    plAnimStealthNode::GetLoopPoints( float &start, float &end ) const
     end = GetSegEnd();
 
     ST::string loopName = GetLoopName();
-    if( !loopName.is_empty() && fCachedSegMap != nil )
+    if( !loopName.empty() && fCachedSegMap != nil )
         GetSegMapAnimTime( loopName, fCachedSegMap, SegmentSpec::kLoop, start, end );
 }
 
@@ -193,7 +193,7 @@ void    plAnimStealthNode::GetAllStopPoints( hsTArray<float> &out )
 void    plAnimStealthNode::StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength )
 {
     ST::string segName = GetSegmentName();
-    bool isEntire = ( segName.is_empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
+    bool isEntire = ( segName.empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
 
     if( isEntire )
     {

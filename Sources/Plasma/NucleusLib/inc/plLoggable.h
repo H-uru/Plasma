@@ -123,7 +123,7 @@ public:
     // logging
     virtual bool Log(const ST::string& str) const
     {
-        if (str.is_empty()) {
+        if (str.empty()) {
             return true;
         }
 

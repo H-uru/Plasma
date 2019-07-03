@@ -716,7 +716,7 @@ void plStealthDlgProc::ILoadLoops(IParamBlock2 *pb)
     SendMessage( hLoops, CB_SETITEMDATA, defIdx, kDefault );
 
     ST::string segName = ST::string::from_utf8( pb->GetStr( (ParamID)plAnimStealthNode::kPBName ) );
-    if( segName.is_empty() || fSegMap == nil )
+    if( segName.empty() || fSegMap == nil )
     {
         // Default of "entire animation", no other loop options
         SendMessage( hLoops, CB_SETCURSEL, defIdx, 0 );

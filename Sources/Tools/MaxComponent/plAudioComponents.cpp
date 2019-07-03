@@ -880,7 +880,7 @@ void    plBaseSoundEmitterComponent::ISetBaseParameters( plSound *destSound, plE
         destSound->SetProperty( plSound::kPropLooping, true );
 
         ST::string loop = ST::string::from_utf8( fCompPB->GetStr((ParamID)kSoundLoopName) );
-        if (!loop.is_empty())
+        if (!loop.empty())
         {
             SegmentMap *segMap = GetCompWaveSegmentMap( GetSoundFileName( kBaseSound ) );
             if (segMap && segMap->find(loop) != segMap->end())

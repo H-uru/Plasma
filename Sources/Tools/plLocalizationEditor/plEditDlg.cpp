@@ -106,7 +106,7 @@ EditDialog::~EditDialog()
 // saves the current localization text to the data manager
 void EditDialog::SaveLocalizationText()
 {
-    if (fCurrentLocPath.is_empty())
+    if (fCurrentLocPath.empty())
         return; // no path to save
 
     ST::string text = fUI->fLocalizationText->toPlainText().toUtf8().constData();
@@ -114,7 +114,7 @@ void EditDialog::SaveLocalizationText()
     ST::string ageName, setName, elementName, elementLanguage;
     SplitLocalizationPath(fCurrentLocPath, ageName, setName, elementName, elementLanguage);
 
-    if (ageName.is_empty() || setName.is_empty() || elementName.is_empty() || elementLanguage.is_empty())
+    if (ageName.empty() || setName.empty() || elementName.empty() || elementLanguage.empty())
         return;
 
     ST::string name = ST::format("{}.{}.{}", ageName, setName, elementName);
@@ -133,7 +133,7 @@ void EditDialog::LoadLocalization(const ST::string &locPath)
     SplitLocalizationPath(locPath, ageName, setName, elementName, elementLanguage);
 
     // now make sure they've drilled down deep enough to enable the dialog
-    if (elementLanguage.is_empty()) // not deep enough
+    if (elementLanguage.empty()) // not deep enough
         EnableEdit(false);
     else
     {
@@ -144,7 +144,7 @@ void EditDialog::LoadLocalization(const ST::string &locPath)
     }
 
     // now to setup the add/delete buttons
-    if (!elementLanguage.is_empty()) // they have selected a language
+    if (!elementLanguage.empty()) // they have selected a language
     {
         fEditMode = kEditLocalization;
         fUI->fAddButton->setText(tr("&Add Localization"));
@@ -160,7 +160,7 @@ void EditDialog::LoadLocalization(const ST::string &locPath)
         fUI->fAddButton->setText(tr("&Add Element"));
         fUI->fAddButton->setEnabled(true);
         fUI->fDeleteButton->setText(tr("&Delete Element"));
-        if (!elementName.is_empty()) // they have selected an individual element
+        if (!elementName.empty()) // they have selected an individual element
         {
             std::vector<ST::string> elementNames = pfLocalizationDataMgr::Instance().GetElementList(ageName, setName);
 

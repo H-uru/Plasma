@@ -184,7 +184,7 @@ plKey plAvatarMgr::LoadAvatar(ST::string name, const ST::string &accountName, bo
 
     if(netMgr)      // can't clone without the net manager
     {
-        hsAssert(!name.is_empty(), "name required by LoadPlayer fxn");
+        hsAssert(!name.empty(), "name required by LoadPlayer fxn");
         netMgr->DebugMsg("Local: Loading player {}", name);
 
         // look up player by key name provided by user.

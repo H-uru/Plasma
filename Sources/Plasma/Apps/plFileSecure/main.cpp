@@ -164,7 +164,7 @@ int main(int argc, char *argv[])
                 // else it is a directory or extension
                 if (!directory.IsValid())
                     directory = argv[i];
-                else if (ext.is_empty())
+                else if (ext.empty())
                     ext = argv[i];
                 else
                 {
@@ -174,7 +174,7 @@ int main(int argc, char *argv[])
             }
         }
 
-        if (generatingKey && ((directory.IsValid()) || (!ext.is_empty())))
+        if (generatingKey && ((directory.IsValid()) || (!ext.empty())))
         {
             print_help();
             return 0;
@@ -193,9 +193,9 @@ int main(int argc, char *argv[])
     }
 
     // Make sure ext is a real pattern, or we won't find anything
-    if (ext.char_at(0) == '.')
+    if (ext.front() == '.')
         ext = "*" + ext;
-    else if (ext.char_at(0) != '*')
+    else if (ext.front() != '*')
         ext = "*." + ext;
 
     if (useDefault)

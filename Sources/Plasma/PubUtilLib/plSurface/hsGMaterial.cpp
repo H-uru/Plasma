@@ -133,7 +133,7 @@ plLayer* hsGMaterial::MakeBaseLayer()
     hsAssert(GetKey(), "All materials need a key (or temp key)");
 
     ST::string buff;
-    if( !GetKeyName().is_empty() )
+    if( !GetKeyName().empty() )
         buff = ST::format("{}_Layer", GetKeyName());
     else
         buff = ST_LITERAL("Layer");

@@ -96,7 +96,7 @@ bool plNPCSpawnMod::Trigger()
     // will netpropagate
     if(this->IsLocallyOwned())
     {
-        if (!fModelName.is_empty())
+        if (!fModelName.empty())
         {
             // spawn the NPC
             plKey spawnPoint = GetTarget(0)->GetKey();

@@ -87,7 +87,7 @@ ST::string plClipboard::GetClipboardText()
 
 void plClipboard::SetClipboardText(const ST::string& text)
 {
-    if (text.is_empty())
+    if (text.empty())
         return;
 #ifdef HS_BUILD_FOR_WIN32
     ST::wchar_buffer buf = text.to_wchar();

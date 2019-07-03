@@ -1268,7 +1268,7 @@ static FNotifyNewBuildHandler       s_notifyNewBuildHandler;
 
 //===========================================================================
 static ENetError FixupPlayerName (ST::string& name) {
-    ASSERT(!name.is_empty());
+    ASSERT(!name.empty());
 
     // Trim leading and trailing whitespace
     name = name.trim(" \t\n\r");
@@ -5349,7 +5349,7 @@ void NetCliAuthLoginRequest (
     void *                          param
 ) {
     // Cache updated login info if provided.
-    if (!accountName.is_empty())
+    if (!accountName.empty())
         s_accountName = accountName;
     if (accountNamePassHash)
         memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));

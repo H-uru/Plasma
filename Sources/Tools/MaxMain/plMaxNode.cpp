@@ -2244,7 +2244,7 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
 
         // Register it.
         ST::string tmpName;
-        if( GetKey() && !GetKey()->GetName().is_empty() )
+        if( GetKey() && !GetKey()->GetName().empty() )
         {
             tmpName = ST::format("{}_Occluder", GetKey()->GetName());
         }

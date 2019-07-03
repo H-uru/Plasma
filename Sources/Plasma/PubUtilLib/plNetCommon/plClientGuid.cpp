@@ -107,7 +107,7 @@ void plClientGuid::SetTempPlayerID(uint32_t id)
 void plClientGuid::SetPlayerName( const ST::string & v )
 {
     fPlayerName = v;
-    if ( !fPlayerName.is_empty() )
+    if ( !fPlayerName.empty() )
         fFlags|=kPlayerName;
     else
         fFlags&=~kPlayerName;
@@ -157,7 +157,7 @@ void plClientGuid::SetReserved(bool b)
 void plClientGuid::SetClientKey(const ST::string& key)
 {
     fClientKey = key;
-    if ( !fClientKey.is_empty() )
+    if ( !fClientKey.empty() )
         fFlags|=kClientKey;
     else
         fFlags&=~kClientKey;

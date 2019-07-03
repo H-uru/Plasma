@@ -396,7 +396,7 @@ plPythonFileMod::~plPythonFileMod()
 
     // then get rid of this module
     //  NOTE: fModule shouldn't be made in the plugin, only at runtime
-    if ( !fModuleName.is_empty() && fModule )
+    if ( !fModuleName.empty() && fModule )
     {
         //_PyModule_Clear(fModule);
         PyObject *m;
@@ -490,7 +490,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
     if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
     {
         // was there a python file module with this?
-        if ( !fPythonFile.is_empty() )
+        if ( !fPythonFile.empty() )
         {
             // has the module not been initialized yet
             if ( !fModule )
@@ -634,7 +634,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                 }
                                 // if it wasn't a named string then must be normal string type
                                 if ( isNamedAttr == 0 )
-                                    if ( !parameter.fString.is_empty() )
+                                    if ( !parameter.fString.empty() )
                                         value = PyString_FromSTString(parameter.fString);
                                 break;
                             case plPythonParameter::kSceneObject:
@@ -1041,7 +1041,7 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 //
 void plPythonFileMod::IFindResponderAndAdd(const ST::string &responderName, int32_t id)
 {
-    if ( !responderName.is_empty() )
+    if ( !responderName.empty() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -1069,7 +1069,7 @@ void plPythonFileMod::IFindResponderAndAdd(const ST::string &responderName, int3
 //
 void plPythonFileMod::IFindActivatorAndAdd(const ST::string &activatorName, int32_t id)
 {
-    if ( !activatorName.is_empty() )
+    if ( !activatorName.empty() )
     {
         std::vector<plKey> keylist;
         const plLocation &loc = GetKey()->GetUoid().GetLocation();
@@ -2057,7 +2057,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     case plVaultNotifyMsg::kPublicAgeCreated:
                     case plVaultNotifyMsg::kPublicAgeRemoved: {
                         ST::string ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
-                        if (!ageName.is_empty()) {
+                        if (!ageName.empty()) {
                             Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
                             PyTuple_SetItem(ptuple, 0, PyString_FromSTString(ageName));
@@ -2117,7 +2117,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 {
                     // else if we could not find the player in our list, then just return a string of the user's name
                     ST::string fromName = pkimsg->GetUser();
-                    if (fromName.is_empty())
+                    if (fromName.empty())
                         fromName = "Anonymous Coward";
                     player = pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fromName, pkimsg->GetPlayerID(), 0.0);
                 }

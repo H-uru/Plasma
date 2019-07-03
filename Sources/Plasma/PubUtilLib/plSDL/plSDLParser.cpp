@@ -226,7 +226,7 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
                     }
                 }
             }
-            if (!defaultStr.is_empty())
+            if (!defaultStr.empty())
             {
                 curVar->SetDefault(defaultStr);
                 dbgStr += " DEFAULT=" + defaultStr;
@@ -242,7 +242,7 @@ bool plSDLParser::IParseVarDesc(const plFileName& fileName, hsStream* stream, ch
             if (read)
             {
                 ST::string oldOptions=curVar->GetDisplayOptions();
-                if (!oldOptions.is_empty())
+                if (!oldOptions.empty())
                     oldOptions += ",";
                 oldOptions += token;
                 curVar->SetDisplayOptions(oldOptions);

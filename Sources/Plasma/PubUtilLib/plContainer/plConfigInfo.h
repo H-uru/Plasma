@@ -401,8 +401,8 @@ public:
     ST::string GetConfigName() const { return fConfigName;}
     void SetConfigGroup(const ST::string & group) { fConfigGroup=group;}
     ST::string GetConfigGroup() const { return fConfigGroup;}
-    bool HasConfigName() { return !fConfigName.is_empty();}
-    bool HasConfigGroup() { return !fConfigGroup.is_empty();}
+    bool HasConfigName() { return !fConfigName.empty();}
+    bool HasConfigGroup() { return !fConfigGroup.empty();}
     virtual void ConfigRead(plConfigInfo * opts);
     virtual void ConfigWrite(plConfigInfo * opts);
     void SetValue(const ST::string & value);

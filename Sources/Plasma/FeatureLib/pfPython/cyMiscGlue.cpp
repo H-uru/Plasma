@@ -418,7 +418,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
 
     // convert name from a string
     name = PyString_AsStringEx(nameObj);
-    if (name.is_empty())
+    if (name.empty())
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;

@@ -494,7 +494,7 @@ void plResponderCmdAnim::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
         plNotetrackAnim notetrackAnim(animComp, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
         ST::string marker;
-        while (!(marker = info.GetNextMarkerName()).is_empty())
+        while (!(marker = info.GetNextMarkerName()).empty())
             waitPoints.push_back(marker);
     }
 }
@@ -514,7 +514,7 @@ void plResponderCmdAnim::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParam
     eventMsg->fRepeats = 0;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (!waitInfo.point.is_empty())
+    if (!waitInfo.point.empty())
     {
         // FIXME COLIN - Error checking here?
         plAnimComponent *animComp = (plAnimComponent*)GetComponent(pb);
@@ -762,7 +762,7 @@ void plResponderAnimProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
         plAnimInfo info = anim.GetAnimInfo(animName);
         // Get all the loops in this animation
         ST::string loopName;
-        while (!(loopName = info.GetNextLoopName()).is_empty())
+        while (!(loopName = info.GetNextLoopName()).empty())
         {
             int idx = ComboBox_AddString(hLoop, loopName.c_str());
             ComboBox_SetItemData(hLoop, idx, 1);

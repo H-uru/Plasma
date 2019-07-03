@@ -106,7 +106,7 @@ plAnimInfo plNotetrackAnim::GetAnimInfo(const ST::string &animName)
     if (!fSegMap)
         return plAnimInfo();
 
-    if (animName.is_empty() || fSegMap->find(animName) == fSegMap->end())
+    if (animName.empty() || fSegMap->find(animName) == fSegMap->end())
         return plAnimInfo(fSegMap, ST::null);
     else 
         return plAnimInfo(fSegMap, animName);
@@ -117,7 +117,7 @@ plAnimInfo plNotetrackAnim::GetAnimInfo(const ST::string &animName)
 plAnimInfo::plAnimInfo(SegmentMap *segMap, const ST::string &animName)
 {
     fSegMap = segMap;
-    fAnimSpec = !animName.is_empty() ? (*fSegMap)[animName] : nil;
+    fAnimSpec = !animName.empty() ? (*fSegMap)[animName] : nil;
 
     if (fSegMap)
     {
@@ -168,7 +168,7 @@ ST::string plAnimInfo::GetNextLoopName()
 
 float plAnimInfo::GetLoopStart(const ST::string &loopName)
 {
-    if (!fSegMap || loopName.is_empty())
+    if (!fSegMap || loopName.empty())
         return -1;
 
     if (fSegMap->find(loopName) != fSegMap->end())
@@ -185,7 +185,7 @@ float plAnimInfo::GetLoopStart(const ST::string &loopName)
 
 float plAnimInfo::GetLoopEnd(const ST::string &loopName)
 {
-    if (!fSegMap || loopName.is_empty())
+    if (!fSegMap || loopName.empty())
         return -1;
 
     if (fSegMap->find(loopName) != fSegMap->end())
@@ -254,7 +254,7 @@ float plAnimInfo::GetNextStopPoint()
 
 bool plAnimInfo::IsSuppressed(const ST::string &animName)
 {
-    if (!fSegMap || animName.is_empty())
+    if (!fSegMap || animName.empty())
         return false;
 
     if (fSegMap->find(animName) != fSegMap->end())

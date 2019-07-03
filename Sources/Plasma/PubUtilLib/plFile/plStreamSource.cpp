@@ -112,7 +112,7 @@ hsStream* plStreamSource::GetFile(const plFileName& filename)
 std::vector<plFileName> plStreamSource::GetListOfNames(const plFileName& dir, const ST::string& ext)
 {
     plFileName sDir = dir.Normalize('/');
-    hsAssert(ext.char_at(0) != '.', "Don't add a dot");
+    hsAssert(ext.front() != '.', "Don't add a dot");
     hsLockGuard(fMutex);
 
     // loop through all the file data records, and create the list

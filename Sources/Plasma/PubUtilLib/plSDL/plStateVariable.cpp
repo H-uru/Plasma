@@ -110,7 +110,7 @@ void plStateVarNotificationInfo::Read(hsStream* s, uint32_t readOptions)
 {
     uint8_t saveFlags=s->ReadByte();  // unused
     ST::string hint=s->ReadSafeString();
-    if (!hint.is_empty() && !(readOptions & plSDL::kSkipNotificationInfo))
+    if (!hint.empty() && !(readOptions & plSDL::kSkipNotificationInfo))
         fHintString = hint;
 }
 
@@ -329,7 +329,7 @@ void plSimpleStateVariable::TimeStamp( const plUnifiedTime & ut/*=plUnifiedTime:
 //
 bool plSimpleStateVariable::SetFromString(const ST::string& value, int idx, bool timeStampNow)
 {
-    if (value.is_empty())
+    if (value.empty())
         return false;
 
     plVarDescriptor::Type type=fVar.GetAtomicType();

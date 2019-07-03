@@ -836,16 +836,15 @@ void plSceneInputInterface::ILinkOffereeToAge()
         info.SetAgeInstanceGuid(&guid);
         ST::string title, desc;
 
-        unsigned nameLen = plNetClientMgr::GetInstance()->GetPlayerName().size();
-        if (plNetClientMgr::GetInstance()->GetPlayerName().char_at(nameLen - 1) == 's'
-                || plNetClientMgr::GetInstance()->GetPlayerName().char_at(nameLen - 1) == 'S') {
-            title = ST::format("{}'", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = ST::format("{}' {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+        ST::string playerName = plNetClientMgr::GetInstance()->GetPlayerName();
+        if (playerName.back() == 's' || playerName.back() == 'S') {
+            title = ST::format("{}'", playerName);
+            desc = ST::format("{}' {}", playerName,
                               link.GetAgeInfo()->GetAgeInstanceName());
         }
         else {
-            title = ST::format("{}'s", plNetClientMgr::GetInstance()->GetPlayerName());
-            desc = ST::format("{}'s {}", plNetClientMgr::GetInstance()->GetPlayerName(),
+            title = ST::format("{}'s", playerName);
+            desc = ST::format("{}'s {}", playerName,
                               link.GetAgeInfo()->GetAgeInstanceName());
         }
 
@@ -870,7 +869,7 @@ void plSceneInputInterface::ILinkOffereeToAge()
         }
     }
 
-    if (!fSpawnPoint.is_empty()) {
+    if (!fSpawnPoint.empty()) {
         plSpawnPointInfo spawnPoint;
         spawnPoint.SetName(fSpawnPoint);
         link.SetSpawnPoint(spawnPoint);

@@ -321,7 +321,7 @@ void plMtlAnimProc::ILoadAnimCombo(HWND hWnd, IParamBlock2* pb)
     {
         plNotetrackAnim anim(mtl, nil);
         ST::string animName;
-        while (!(animName = anim.GetNextAnimName()).is_empty())
+        while (!(animName = anim.GetNextAnimName()).empty())
         {
             int idx = ComboBox_AddString(hAnim, animName.c_str());
             ComboBox_SetItemData(hAnim, idx, 1);

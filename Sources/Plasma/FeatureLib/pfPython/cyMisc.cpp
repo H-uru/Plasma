@@ -205,7 +205,7 @@ PyObject* cyMisc::FindSceneObject(const ST::string& name, const char* ageName)
     // assume that we won't find the sceneobject (key is equal to nil)
     plKey key=nil;
 
-    if ( !name.is_empty() )
+    if ( !name.empty() )
     {
         const char* theAge = ageName;
         if ( ageName[0] == 0 )
@@ -227,7 +227,7 @@ PyObject* cyMisc::FindSceneObjects(const ST::string& name)
     // assume that we won't find the sceneobject (key is equal to nil)
     std::vector<plKey> keys;
 
-    if ( !name.is_empty() )
+    if ( !name.empty() )
         plKeyFinder::Instance().ReallyStupidSubstringSearch(name, plSceneObject::Index(), keys);
 
     PyObject* result = PyList_New(keys.size());
@@ -242,7 +242,7 @@ PyObject* cyMisc::FindSceneObjects(const ST::string& name)
 PyObject* cyMisc::FindActivator(const ST::string& name)
 {
     plKey key = nil;
-    if (!name.is_empty())
+    if (!name.empty())
     {
         std::vector<plKey> keylist;
         plKeyFinder::Instance().ReallyStupidActivatorSearch(name, keylist);
@@ -2514,7 +2514,7 @@ void cyMisc::RebuildCameraStack(const ST::string& name, const char* ageName)
     if (name.compare("empty") == 0)
         return;
 
-    if ( !name.is_empty() )
+    if ( !name.empty() )
     {
         key=plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }
@@ -2742,7 +2742,7 @@ void cyMisc::FakeLinkToObject(pyKey& avatar, pyKey& object)
 void cyMisc::FakeLinkToObjectNamed(const ST::string& name)
 {
     plKey key = nil;
-    if ( !name.is_empty() )
+    if ( !name.empty() )
     {
         key = plKeyFinder::Instance().StupidSearch("", "", plSceneObject::Index(), name, false);
     }

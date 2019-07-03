@@ -786,7 +786,7 @@ int32_t   plPageInfoUtils::GetSeqNumFromAgeDesc( const char *ageName, const char
 plAgeDescription *plPageInfoUtils::GetAgeDesc( const ST::string &ageName )
 {
     plFileName ageFolder = plPageInfoUtils::GetAgeFolder();
-    if (!ageFolder.IsValid() || ageName.is_empty())
+    if (!ageFolder.IsValid() || ageName.empty())
         return nullptr;
 
     plAgeDescription* aged = new plAgeDescription;

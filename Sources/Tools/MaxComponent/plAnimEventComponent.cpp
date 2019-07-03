@@ -333,7 +333,7 @@ void plAnimEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
 
         // Get all the markers in this animation
         ST::string marker;
-        while (!(marker = info.GetNextMarkerName()).is_empty())
+        while (!(marker = info.GetNextMarkerName()).empty())
         {
             idx = ListBox_AddStringData(hList, marker.c_str(), kAnimEventMarker);
 
@@ -592,7 +592,7 @@ void plMtlEventProc::ILoadUser(HWND hWnd, IParamBlock2* pb)
 
         // Get all the markers in this animation
         ST::string marker;
-        while (!(marker = info.GetNextMarkerName()).is_empty())
+        while (!(marker = info.GetNextMarkerName()).empty())
         {
             idx = ListBox_AddStringData(hList, marker.c_str(), kAnimEventMarker);
 
