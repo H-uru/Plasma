@@ -120,7 +120,7 @@ void ErrorEnableGui(bool enabled)
     s_GuiAsserts = enabled;
 }
 
-void ErrorAssert(int line, const char* file, const char* fmt, ...)
+NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
     char msg[1024];
@@ -146,6 +146,9 @@ void ErrorAssert(int line, const char* file, const char* fmt, ...)
 #else
     DebugBreakIfDebuggerPresent();
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
+
+    // If no debugger break occurred, just crash.
+    std::abort();
 }
 
 bool DebugIsDebuggerPresent()

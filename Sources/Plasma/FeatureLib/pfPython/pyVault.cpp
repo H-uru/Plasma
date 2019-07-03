@@ -534,7 +534,7 @@ void pyVault::InvitePlayerToAge( const pyAgeLinkStruct & link, uint32_t playerID
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_Visit);
     visitAcc.SetVisitInfo(*link.GetAgeLink()->GetAgeInfo());
-    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, (void*)playerID);
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_InvitePlayerToAge, nil, (void*)(uintptr_t)playerID);
 }
 
 //============================================================================
@@ -562,7 +562,7 @@ void pyVault::UnInvitePlayerToAge( const char * str, uint32_t playerID )
     VaultTextNoteNode visitAcc(templateNode);
     visitAcc.SetNoteType(plVault::kNoteType_UnVisit);
     visitAcc.SetVisitInfo(info);
-    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, (void*)playerID);
+    VaultCreateNode(templateNode, (FVaultCreateNodeCallback)_UninvitePlayerToAge, nil, (void*)(uintptr_t)playerID);
 }
 
 //============================================================================

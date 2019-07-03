@@ -55,6 +55,12 @@ bool PyString_CheckEx(PyObject* obj);
 PyObject* PyUnicode_FromSTString(const ST::string& str);
 #define PyString_FromSTString(x) PyString_FromStringAndSize((x).c_str(), (x).size())
 
+// Python 2.7 uses non-const "char *" in many places where a string literal
+// should be accepted.  This makes many compilers unhappy.
+// This hack is borrowed from libhsplasma
+template <size_t size>
+inline char* _pycs(const char (&str)[size]) { return const_cast<char*>(str); }
+
 // A set of macros to take at least some of the tediousness out of creating straight python glue code
 
 /////////////////////////////////////////////////////////////////////
@@ -442,13 +448,13 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 // starts off the get/set table
 #define PYTHON_START_GETSET_TABLE(pythonClassName) static PyGetSetDef pythonClassName##_getseters[] = {
 
-// and easy terminator to make things look pretty (automatically adds sentinal value)
+// and easy terminator to make things look pretty (automatically adds sentinel value)
 #define PYTHON_END_GETSET_TABLE {NULL} }
 
 // the get/set definition
-#define PYTHON_GETSET(pythonClassName, attribName, docString) {#attribName, \
+#define PYTHON_GETSET(pythonClassName, attribName, docString) {_pycs(#attribName), \
     (getter)pythonClassName##_get##attribName, (setter)pythonClassName##_set##attribName, \
-    docString, NULL}
+    _pycs(docString), NULL}
 
 /////////////////////////////////////////////////////////////////////
 // as_ table macros

@@ -149,12 +149,15 @@ PYTHON_METHOD_DEFINITION(ptCritterBrain, getSceneObject, GetSceneObject)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 {
-    char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos", "fadeInLen", "fadeOutLen", NULL};
+    const char* kwlist[] = {"animationName", "behaviorName", "loop", "randomStartPos",
+                            "fadeInLen", "fadeOutLen", NULL};
     PyObject* animNameObj = NULL;
     PyObject* behNameObj = NULL;
     char loop = 1, randomStartPos = 1;
     float fadeInLen = 2.f, fadeOutLen = 2.f;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "OO|bbff", kwlist, &animNameObj, &behNameObj, &loop, &randomStartPos, &fadeInLen, &fadeOutLen))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "OO|bbff", const_cast<char **>(kwlist),
+                                     &animNameObj, &behNameObj, &loop, &randomStartPos,
+                                     &fadeInLen, &fadeOutLen))
     {
         PyErr_SetString(PyExc_TypeError, "addBehavior expects two strings, and optionally two booleans and two floats");
         PYTHON_RETURN_ERROR;
@@ -206,10 +209,11 @@ PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, addBehavior, args, keywords)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, startBehavior, args, keywords)
 {
-    char* kwlist[] = {"behaviorName", "fade", NULL};
+    const char* kwlist[] = {"behaviorName", "fade", NULL};
     PyObject* behNameObj = NULL;
     char fade = 1;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", kwlist, &behNameObj, &fade))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", const_cast<char **>(kwlist),
+                                     &behNameObj, &fade))
     {
         PyErr_SetString(PyExc_TypeError, "startBehavior expects a string, and an optional boolean");
         PYTHON_RETURN_NONE;
@@ -316,10 +320,11 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptCritterBrain, runBehaviorName)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptCritterBrain, goToGoal, args, keywords)
 {
-    char* kwlist[] = {"newGoal", "avoidingAvatars", NULL};
+    const char* kwlist[] = {"newGoal", "avoidingAvatars", NULL};
     PyObject* goalObj = NULL;
     char avoidingAvatars = 0;
-    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", kwlist, &goalObj, &avoidingAvatars))
+    if (!PyArg_ParseTupleAndKeywords(args, keywords, "O|b", const_cast<char **>(kwlist),
+                                     &goalObj, &avoidingAvatars))
     {
         PyErr_SetString(PyExc_TypeError, "goToGoal expects a ptPoint and an optional boolean.");
         PYTHON_RETURN_ERROR;

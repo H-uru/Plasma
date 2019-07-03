@@ -551,7 +551,10 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
             if( fWorkingLine[ 0 ] == 0 )
                 IPrintSomeHelp();
             else if( stricmp( fWorkingLine, "commands" ) == 0 )
-                fEngine->PrintCmdHelp( "", IAddLineCallback );
+            {
+                char empty[] = "";
+                fEngine->PrintCmdHelp( empty, IAddLineCallback );
+            }
             else if( !fEngine->PrintCmdHelp( fWorkingLine, IAddLineCallback ) )
             {
                 c = (char *)fEngine->GetErrorMsg();

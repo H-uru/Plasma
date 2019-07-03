@@ -636,7 +636,7 @@ static void VaultNodeAdded (
             "NodeAdded",
             nodeIds[i],
             VaultNodeAddedDownloadCallback,
-            (void*)nodeIds[i],
+            (void*)(uintptr_t)nodeIds[i],
             nil,
             nil
         );
@@ -2742,7 +2742,7 @@ namespace _VaultRegisterOwnedAge {
     void _InitAgeCallback(ENetError result, void* state, void* param, uint32_t ageVaultId, uint32_t ageInfoVaultId) {
         if (IS_NET_SUCCESS(result)) {
             _Params* p = new _Params();
-            p->fAgeInfoId = (void*)ageInfoVaultId;
+            p->fAgeInfoId = (void*)(uintptr_t)ageInfoVaultId;
             p->fSpawn = (plSpawnPointInfo*)param;
 
             VaultDownload(
@@ -3096,7 +3096,7 @@ namespace _VaultRegisterVisitAge {
 
         // Save the AgeInfo nodeID, then download the age vault
         _Params* p = (_Params*)param;
-        p->fAgeInfoId = (void*)ageInfoId;
+        p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
         
         VaultDownload("RegisterVisitAge",
                       ageInfoId,
@@ -4149,7 +4149,7 @@ namespace _VaultCreateSubAge {
         VaultDownload("CreateSubAge",
                       ageInfoId,
                       (FVaultDownloadCallback)_DownloadCallback,
-                      (void*)ageInfoId,
+                      (void*)(uintptr_t)ageInfoId,
                       nil,
                       nil
         );
@@ -4492,7 +4492,7 @@ namespace _VaultCreateChildAge {
         }
 
         _Params* p = (_Params*)param;
-        p->fAgeInfoId = (void*)ageInfoId;
+        p->fAgeInfoId = (void*)(uintptr_t)ageInfoId;
 
         // Download age vault
         VaultDownload("CreateChildAge",
@@ -4548,7 +4548,7 @@ uint8_t VaultAgeFindOrCreateChildAgeLink(
             retval = true;
         } else {
             _Params* p = new _Params;
-            p->fChildAgesFldr = (void*)rvnChildAges->GetNodeId();
+            p->fChildAgesFldr = (void*)(uintptr_t)rvnChildAges->GetNodeId();
 
             VaultAgeInfoNode accParentInfo(rvnParentInfo);
             VaultInitAge(info,

@@ -141,12 +141,12 @@ public:
 
     // checks to see if a specific function is defined in this module
     // get an item (probably a function) from the Plasma module
-    static PyObject* GetPlasmaItem(char* item);
+    static PyObject* GetPlasmaItem(const char* item);
 
     // Determine if the module name is unique
     static bool IsModuleNameUnique(const ST::string& module);
     // get an item (probably a function) from a specific module
-    static PyObject* GetModuleItem(char* item, PyObject* module);
+    static PyObject* GetModuleItem(const char* item, PyObject* module);
 
     // check a specific module for the define funcitons
     static void CheckModuleForFunctions(PyObject* module, char** funcNames, PyObject** funcTable);

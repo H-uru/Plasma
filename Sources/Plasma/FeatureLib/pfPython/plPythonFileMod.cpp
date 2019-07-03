@@ -217,8 +217,8 @@ public:
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
-                    "lO",pyVault::kVaultNodeRefAdded,ptuple);
+                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                    _pycs("lO"), pyVault::kVaultNodeRefAdded,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -247,8 +247,8 @@ public:
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
-                    "lO",pyVault::kVaultRemovingNodeRef,ptuple);
+                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                    _pycs("lO"), pyVault::kVaultRemovingNodeRef,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -277,8 +277,8 @@ public:
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    (char*)fPyFileMod->fFunctionNames[fFunctionIdx],
-                    "lO",pyVault::kVaultNodeSaved,ptuple);
+                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                    _pycs("lO"), pyVault::kVaultNodeSaved,ptuple);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -601,7 +601,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                 isNamedAttr = 0;
                                 if ( check_isNamed!=nil && PyCallable_Check(check_isNamed) )
                                 {
-                                    retvalue = PyObject_CallFunction(check_isNamed,"l", parameter.fID);
+                                    retvalue = PyObject_CallFunction(check_isNamed,
+                                                    _pycs("l"), parameter.fID);
                                     if ( retvalue == nil )
                                     {
                                         ReportError();
@@ -669,7 +670,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                         // if there is a value that was converted then tell the Python code
                         if ( value != nil )
                         {
-                            PyObject* retVal = PyObject_CallFunction(setParams,"lO", parameter.fID, value);
+                            PyObject* retVal = PyObject_CallFunction(setParams,
+                                                    _pycs("lO"), parameter.fID, value);
                             if ( retVal == nil )
                             {
                                 // if there was an error make sure that the stderr gets flushed so it can be seen
@@ -879,7 +881,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                     // get the sceneObject that should already be created
                     PyObject* pSceneObject = PyObject_GetAttrString(fInstance,"sceneobject");
                     // add our new object to the list of objects that are in the _selfObject
-                    PyObject* retVal = PyObject_CallMethod(pSceneObject,"addKey","O",pkeyObj );
+                    PyObject* retVal = PyObject_CallMethod(pSceneObject, _pycs("addKey"), _pycs("O"), pkeyObj);
                     Py_XDECREF(retVal);
                     // GetAttrString put a ref on pSceneObject, but we're done with it now.
                     Py_XDECREF(pSceneObject); 
@@ -925,8 +927,8 @@ void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
 
     PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
-                (char*)fFunctionNames[ kfunc_OnDefaultKeyCaught ],
-                "ciiiii",
+                const_cast<char*>(fFunctionNames[kfunc_OnDefaultKeyCaught]),
+                _pycs("ciiiii"),
                 msg->GetKeyChar(), 
                 (int)msg->GetKeyDown(),
                 (int)msg->GetRepeat(),
@@ -1016,7 +1018,7 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 
             if ( value != nil )
             {
-                PyObject* retVal = PyObject_CallFunction(setParams,"lO", id, value);
+                PyObject* retVal = PyObject_CallFunction(setParams, _pycs("lO"), id, value);
                 if ( retVal == nil )
                 {
                     // if there was an error make sure that the stderr gets flushed so it can be seen
@@ -1161,8 +1163,8 @@ bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
             // call it
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_Update],
-                    (char*)fFunctionNames[kfunc_Update],
-                    "df", secs, del);
+                    const_cast<char*>(fFunctionNames[kfunc_Update]),
+                    _pycs("df"), secs, del);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1519,8 +1521,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_Notify],
-                    (char*)fFunctionNames[kfunc_Notify],
-                    "flO", pNtfyMsg->fState, id, levents);
+                    const_cast<char*>(fFunctionNames[kfunc_Notify]),
+                    _pycs("flO"), pNtfyMsg->fState, id, levents);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1551,8 +1553,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnKeyEvent],
-                    (char*)fFunctionNames[kfunc_OnKeyEvent],
-                    "ll", pEMsg->GetControlCode(),
+                    const_cast<char*>(fFunctionNames[kfunc_OnKeyEvent]),
+                    _pycs("ll"), pEMsg->GetControlCode(),
                     pEMsg->ControlActivated());
             if ( retVal == nil )
             {
@@ -1585,8 +1587,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_AtTimer],
-                    (char*)fFunctionNames[kfunc_AtTimer],
-                    "l", pTimerMsg->fID);
+                    const_cast<char*>(fFunctionNames[kfunc_AtTimer]),
+                    _pycs("l"), pTimerMsg->fID);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1721,8 +1723,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_GUINotify],
-                    (char*)fFunctionNames[kfunc_GUINotify],
-                    "lOl", id, pyControl, pGUIMsg->GetEvent());
+                    const_cast<char*>(fFunctionNames[kfunc_GUINotify]),
+                    _pycs("lOl"), id, pyControl, pGUIMsg->GetEvent());
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1755,8 +1757,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_PageLoad],
-                    (char*)fFunctionNames[kfunc_PageLoad],
-                    "lO", pRLNMsg->GetWhatHappen(), roomname);
+                    const_cast<char*>(fFunctionNames[kfunc_PageLoad]),
+                    _pycs("lO"), pRLNMsg->GetWhatHappen(), roomname);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1885,8 +1887,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_KIMsg],
-                    (char*)fFunctionNames[kfunc_KIMsg],
-                    "lO", pkimsg->GetCommand(), value);
+                    const_cast<char*>(fFunctionNames[kfunc_KIMsg]),
+                    _pycs("lO"), pkimsg->GetCommand(), value);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -1970,8 +1972,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_RemoteAvatarInfo],
-                    (char*)fFunctionNames[kfunc_RemoteAvatarInfo],
-                    "O", player);
+                    const_cast<char*>(fFunctionNames[kfunc_RemoteAvatarInfo]),
+                    _pycs("O"), player);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2005,8 +2007,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnCCRMsg],
-                    (char*)fFunctionNames[kfunc_OnCCRMsg],
-                    "lsl", ccrmsg->GetType(), textmessage,
+                    const_cast<char*>(fFunctionNames[kfunc_OnCCRMsg]),
+                    _pycs("lsl"), ccrmsg->GetType(), textmessage,
                     ccrmsg->GetCCRPlayerID());
             if ( retVal == nil )
             {
@@ -2067,8 +2069,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 plProfile_BeginTiming(PythonUpdate);
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_OnVaultNotify],
-                        (char*)fFunctionNames[kfunc_OnVaultNotify],
-                        "lO", vaultNotifyMsg->GetType(), ptuple);
+                        const_cast<char*>(fFunctionNames[kfunc_OnVaultNotify]),
+                        _pycs("lO"), vaultNotifyMsg->GetType(), ptuple);
                 if ( retVal == nil )
                 {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2125,8 +2127,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 PyObject* uMessage = PyUnicode_FromWideChar(wMessage.data(), wMessage.size());
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_RTChat],
-                        (char*)fFunctionNames[kfunc_RTChat],
-                        "OOl", player, uMessage, pkimsg->GetFlags());
+                        const_cast<char*>(fFunctionNames[kfunc_RTChat]),
+                        _pycs("OOl"), player, uMessage, pkimsg->GetFlags());
                 Py_DECREF(uMessage);
                 if ( retVal == nil )
                 {
@@ -2161,8 +2163,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_AvatarPage],
-                        (char*)fFunctionNames[kfunc_AvatarPage],
-                        "Oli", pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
+                        const_cast<char*>(fFunctionNames[kfunc_AvatarPage]),
+                        _pycs("Oli"), pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
                 if ( retVal == nil )
                 {
     #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2196,8 +2198,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     
                 PyObject* retVal = PyObject_CallMethod(
                         fPyFunctionInstances[kfunc_OnBeginAgeLoad],
-                        (char*)fFunctionNames[kfunc_OnBeginAgeLoad],
-                        "O", pSobj);
+                        const_cast<char*>(fFunctionNames[kfunc_OnBeginAgeLoad]),
+                        _pycs("O"), pSobj);
                 if ( retVal == nil )
                 {
     #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2263,8 +2265,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_SDLNotify],
-                    (char*)fFunctionNames[kfunc_SDLNotify],
-                    "ssls", sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
+                    const_cast<char*>(fFunctionNames[kfunc_SDLNotify]),
+                    _pycs("ssls"), sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
                     sn->fPlayerID, tag.c_str());
             if ( retVal == nil )
             {
@@ -2335,8 +2337,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
 
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnMarkerMsg],
-                    (char*)fFunctionNames[kfunc_OnMarkerMsg],
-                    "lO", (uint32_t)markermsg->fType, ptuple);
+                    const_cast<char*>(fFunctionNames[kfunc_OnMarkerMsg]),
+                    _pycs("lO"), (uint32_t)markermsg->fType, ptuple);
             if (retVal == nil)
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2368,8 +2370,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnBackdoorMsg],
-                    (char*)fFunctionNames[kfunc_OnBackdoorMsg],
-                    "ss", dt->GetTarget().c_str(), dt->GetString().c_str());
+                    const_cast<char*>(fFunctionNames[kfunc_OnBackdoorMsg]),
+                    _pycs("ss"), dt->GetTarget().c_str(), dt->GetString().c_str());
             if ( retVal == nil )
             {
                 // if there was an error make sure that the stderr gets flushed so it can be seen
@@ -2412,8 +2414,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnLOSNotify],
-                    (char*)fFunctionNames[kfunc_OnLOSNotify],
-                    "llOOf", pLOSMsg->fRequestID, pLOSMsg->fNoHit,
+                    const_cast<char*>(fFunctionNames[kfunc_OnLOSNotify]),
+                    _pycs("llOOf"), pLOSMsg->fRequestID, pLOSMsg->fNoHit,
                     scobj, hitpoint, pLOSMsg->fDistance);
             if ( retVal == nil )
             {
@@ -2460,8 +2462,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnBehaviorNotify],
-                    (char*)fFunctionNames[kfunc_OnBehaviorNotify],
-                    "lOl", behNotifymsg->fType, pSobj,
+                    const_cast<char*>(fFunctionNames[kfunc_OnBehaviorNotify]),
+                    _pycs("lOl"), behNotifymsg->fType, pSobj,
                     behNotifymsg->state);
             if ( retVal == nil )
             {
@@ -2493,8 +2495,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnMovieEvent],
-                    (char*)fFunctionNames[kfunc_OnMovieEvent],
-                    "si", moviemsg->fMovieName.AsString().c_str(), (uint32_t)moviemsg->fReason);
+                    const_cast<char*>(fFunctionNames[kfunc_OnMovieEvent]),
+                    _pycs("si"), moviemsg->fMovieName.AsString().c_str(), (uint32_t)moviemsg->fReason);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2536,8 +2538,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnScreenCaptureDone],
-                    (char*)fFunctionNames[kfunc_OnScreenCaptureDone],
-                    "O", pSobj);
+                    const_cast<char*>(fFunctionNames[kfunc_OnScreenCaptureDone]),
+                    _pycs("O"), pSobj);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2567,8 +2569,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
-                    (char*)fFunctionNames[kfunc_OnClimbBlockerEvent],
-                    "O", pSobj);
+                    const_cast<char*>(fFunctionNames[kfunc_OnClimbBlockerEvent]),
+                    _pycs("O"), pSobj);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2590,8 +2592,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         {
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnAvatarSpawn],
-                    (char*)fFunctionNames[kfunc_OnAvatarSpawn],
-                    "l", 1);
+                    const_cast<char*>(fFunctionNames[kfunc_OnAvatarSpawn]),
+                    _pycs("l"), 1);
             if ( retVal == nil )
             {
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -2614,8 +2616,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             plProfile_BeginTiming(PythonUpdate);
             PyObject* retVal = PyObject_CallMethod(
                     fPyFunctionInstances[kfunc_OnAccountUpdate],
-                    (char*)fFunctionNames[kfunc_OnAccountUpdate],
-                    "iii", (int)pUpdateMsg->GetUpdateType(), 
+                    const_cast<char*>(fFunctionNames[kfunc_OnAccountUpdate]),
+                    _pycs("iii"), (int)pUpdateMsg->GetUpdateType(),
                     (int)pUpdateMsg->GetResult(),
                     (int)pUpdateMsg->GetPlayerInt()
             );
@@ -2659,8 +2661,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_gotPublicAgeList],
-                (char*)fFunctionNames[kfunc_gotPublicAgeList],
-                "O",
+                const_cast<char*>(fFunctionNames[kfunc_gotPublicAgeList]),
+                _pycs("O"),
                 pyEL
             );
             if ( retVal == nil )
@@ -2729,8 +2731,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             // call the function with the above arguments
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_OnAIMsg],
-                (char*)fFunctionNames[kfunc_OnAIMsg],
-                "OisO",
+                const_cast<char*>(fFunctionNames[kfunc_OnAIMsg]),
+                _pycs("OisO"),
                 brainObj, msgType, aiMsg->BrainUserString().c_str(), args
             );
             Py_DECREF(brainObj);
@@ -2765,8 +2767,8 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyObject* pyMsg = pyGameScoreMsg::CreateFinal(pScoreMsg);
             PyObject* retVal = PyObject_CallMethod(
                 fPyFunctionInstances[kfunc_OnGameScoreMsg],
-                (char*)fFunctionNames[kfunc_OnGameScoreMsg],
-                "O", pyMsg
+                const_cast<char*>(fFunctionNames[kfunc_OnGameScoreMsg]),
+                _pycs("O"), pyMsg
             );
             Py_DECREF(pyMsg);
 

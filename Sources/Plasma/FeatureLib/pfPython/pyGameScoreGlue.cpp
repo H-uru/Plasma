@@ -104,11 +104,12 @@ PYTHON_METHOD_DEFINITION(ptGameScore, addPoints, args)
 
 PYTHON_METHOD_DEFINITION_WKEY(ptGameScore, transferPoints, args, kwargs)
 {
-    char* kwlist[] = { "dest", "points", "key", nil };
+    const char* kwlist[] = { "dest", "points", "key", nil };
     PyObject* destObj = nil;
     int32_t   points  = 0; // Hmmm... Evil?
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iO", kwlist, &destObj, &points, &keyObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iO", const_cast<char **>(kwlist),
+                                     &destObj, &points, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "transferPoints expects a ptGameScore, an optional int, and an optional ptKey");
         PYTHON_RETURN_ERROR;
@@ -150,12 +151,13 @@ PYTHON_METHOD_DEFINITION(ptGameScore, setPoints, args)
 
 PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createAgeScore, args, kwargs)
 {
-    char* kwlist[] = { "scoreName", "type", "points", "key", nil };
+    const char* kwlist[] = { "scoreName", "type", "points", "key", nil };
     PyObject* nameObj = nil;
     uint32_t type     = 0;
     int32_t points    = 0;
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", kwlist, &nameObj, &type, &points, &keyObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", const_cast<char **>(kwlist),
+                                     &nameObj, &type, &points, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "createAgeScore expects a string, an int, an optional int, and an optional ptKey");
         PYTHON_RETURN_ERROR;
@@ -174,12 +176,13 @@ PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createAgeScore, args, kwargs)
 
 PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createGlobalScore, args, kwargs)
 {
-    char* kwlist[] = { "scoreName", "type", "points", "key", nil };
+    const char* kwlist[] = { "scoreName", "type", "points", "key", nil };
     PyObject* nameObj = nil;
     uint32_t type     = 0;
     int32_t points    = 0;
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", kwlist, &nameObj, &type, &points, &keyObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", const_cast<char **>(kwlist),
+                                     &nameObj, &type, &points, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "createGlobalScore expects a string, an int, an optional int, and an optional ptKey");
         PYTHON_RETURN_ERROR;
@@ -198,12 +201,13 @@ PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createGlobalScore, args, kwarg
 
 PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createPlayerScore, args, kwargs)
 {
-    char* kwlist[] = { "scoreName", "type", "points", "key", nil };
+    const char* kwlist[] = { "scoreName", "type", "points", "key", nil };
     PyObject* nameObj = nil;
     uint32_t type     = 0;
     int32_t points    = 0;
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", kwlist, &nameObj, &type, &points, &keyObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OI|iO", const_cast<char **>(kwlist),
+                                     &nameObj, &type, &points, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "createPlayerScore expects a string, an int, an optional int, and an optional ptKey");
         PYTHON_RETURN_ERROR;
@@ -222,13 +226,14 @@ PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createPlayerScore, args, kwarg
 
 PYTHON_METHOD_DEFINITION_STATIC_WKEY(ptGameScore, createScore, args, kwargs)
 {
-    char* kwlist[] = { "ownerID", "scoreName", "type", "points", "key", nil };
+    const char* kwlist[] = { "ownerID", "scoreName", "type", "points", "key", nil };
     uint32_t ownerID  = 0;
     PyObject* nameObj = nil;
     uint32_t type     = 0;
     int32_t points    = 0;
     PyObject* keyObj  = nil;
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "IOI|iO", kwlist, &ownerID, &nameObj, &type, &points, &keyObj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "IOI|iO", const_cast<char **>(kwlist),
+                                     &ownerID, &nameObj, &type, &points, &keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "createScore expects an int, a string, an int, an optional int, and an optional ptKey");
         PYTHON_RETURN_ERROR;

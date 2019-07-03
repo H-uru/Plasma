@@ -135,7 +135,7 @@ public:
     {
         // Cyan's code uses 3 checks, so we'll follow suit.
         // This provides an accurate answer to p < 0.015625
-        return BN_is_prime_fasttest(m_number, 3, nil, GetContext(), nil, 1) > 0;
+        return BN_is_prime_fasttest_ex(m_number, 3, GetContext(), 1, nullptr) > 0;
     }
 
     void Mod(const plBigNum& a, const plBigNum& b)
@@ -182,7 +182,7 @@ public:
 
     void RandPrime(uint32_t bits, plBigNum* seed)
     {
-        BN_generate_prime(m_number, bits, 1, nil, nil, nil, nil);
+        BN_generate_prime_ex(m_number, bits, 1, nullptr, nullptr, nullptr);
     }
 
     void Set(const plBigNum& a)
