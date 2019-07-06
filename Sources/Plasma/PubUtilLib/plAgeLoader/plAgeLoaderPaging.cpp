@@ -69,7 +69,7 @@ bool ReportRoomToServer(const plKey &key)
     plLocation keyLoc=key->GetUoid().GetLocation();
     bool skip=(keyLoc.IsReserved() || keyLoc.IsVirtual() ||
                 // HACK ALERT - replace with new uoid type flags
-                (!key->GetName().is_empty() &&
+                (!key->GetName().empty() &&
                     (!key->GetName().compare_ni("global", 6) ||
                     key->GetName().contains("_Male") ||
                     key->GetName().contains("_Female")
@@ -293,7 +293,7 @@ bool    plAgeLoader::IsPageExcluded( const plAgePage *page, const ST::string& ag
     {
         if( pageName.compare_i( sExcludeList[ i ].fPageName ) == 0 )
         {
-            if( ageName.is_empty() || sExcludeList[ i ].fAgeName.is_empty() ||
+            if( ageName.empty() || sExcludeList[ i ].fAgeName.empty() ||
                 ageName.compare_i(sExcludeList[ i ].fAgeName) == 0 )
             {
                 return true;

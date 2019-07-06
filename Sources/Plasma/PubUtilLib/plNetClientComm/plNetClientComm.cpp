@@ -393,7 +393,7 @@ static void INetCliAuthLoginRequestCallback (
     s_player = nil;
     s_players.clear();
     
-    bool wantsStartUpAge = (s_startupAge.ageDatasetName.is_empty() ||
+    bool wantsStartUpAge = (s_startupAge.ageDatasetName.empty() ||
                             s_startupAge.ageDatasetName.compare_i("StartUp") == 0);
 
     s_loginComplete = true;
@@ -814,7 +814,7 @@ void NetCommConnect () {
     bool connectedToKeeper = false;
 
     // if a console override was specified for a authserv, connect directly to the authserver rather than going through the gatekeeper
-    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].is_empty())
+    if((count = GetAuthSrvHostnames(addrs)) && !addrs[0].empty())
     {
         NetCliAuthStartConnect(addrs, count);
     }
@@ -841,7 +841,7 @@ void NetCommConnect () {
     if (!gDataServerLocal) {
 
         // if a console override was specified for a filesrv, connect directly to the fileserver rather than going through the gatekeeper
-        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].is_empty())
+        if((count = GetFileSrvHostnames(addrs)) && !addrs[0].empty())
         {
             NetCliFileStartConnect(addrs, count);
         }

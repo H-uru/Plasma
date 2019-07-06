@@ -121,7 +121,7 @@ void plShardStatus::Run()
         if (GetQuit())
             break;
 
-        if (!url.is_empty() && curl_easy_perform(curl.get()))
+        if (!url.empty() && curl_easy_perform(curl.get()))
             fShardFunc(fCurlError);
         fLastUpdate = hsTimer::GetSysSeconds();
     } while (!GetQuit());

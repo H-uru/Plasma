@@ -2319,9 +2319,9 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
     hsRef<RelVaultNode> fldr, link;
     
     for (;;) {
-        if (spawnPt.GetName().is_empty())
+        if (spawnPt.GetName().empty())
             break;
-        if (spawnPt.GetTitle().is_empty())
+        if (spawnPt.GetTitle().empty())
             break;
 
         fldr = VaultGetAgesIOwnFolder();
@@ -4260,7 +4260,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
 
     {   // Get id of child ages folder
         hsRef<RelVaultNode> rvnAgeInfo;
-        if (!parentAgeName.is_empty()) {
+        if (!parentAgeName.empty()) {
             plAgeInfoStruct pinfo;
             pinfo.SetAgeFilename(parentAgeName);
             if (hsRef<RelVaultNode> rvnAgeLink = VaultGetOwnedAgeLink(&pinfo))

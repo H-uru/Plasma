@@ -525,7 +525,7 @@ bool plSynchedObject::IOKToNetwork(const ST::string& sdlName, uint32_t* synchFla
  
 plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateList(const SDLStateList& list, const ST::string& sdlName) const
 {
-    if (sdlName.is_empty())
+    if (sdlName.empty())
         return list.end();  // false
 
     SDLStateList::const_iterator it = list.begin();
@@ -542,7 +542,7 @@ plSynchedObject::SDLStateList::const_iterator plSynchedObject::IFindInSDLStateLi
 
 void plSynchedObject::AddToSDLExcludeList(const ST::string& sdlName)
 {
-    if (!sdlName.is_empty())
+    if (!sdlName.empty())
     {
         if (IFindInSDLStateList(fSDLExcludeList, sdlName)==fSDLExcludeList.end())
         {
@@ -581,7 +581,7 @@ bool plSynchedObject::IsInSDLExcludeList(const ST::string& sdlName) const
 
 void plSynchedObject::AddToSDLVolatileList(const ST::string& sdlName)
 {
-    if (!sdlName.is_empty())
+    if (!sdlName.empty())
     {
         if (IFindInSDLStateList(fSDLVolatileList,sdlName)==fSDLVolatileList.end())
         {

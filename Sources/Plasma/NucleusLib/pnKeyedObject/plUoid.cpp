@@ -153,7 +153,7 @@ plUoid::~plUoid()
 
 void plUoid::Read(hsStream* s)
 {
-    hsAssert(fObjectName.is_empty(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
+    hsAssert(fObjectName.empty(), "Reading over an old uoid? You're just asking for trouble, aren't you?");
 
     // first read contents flags
     uint8_t contents = s->ReadByte();
@@ -228,7 +228,7 @@ void plUoid::Invalidate()
 
 bool plUoid::IsValid() const
 {
-    if (!fLocation.IsValid() || fObjectName.is_empty())
+    if (!fLocation.IsValid() || fObjectName.empty())
         return false;
 
     return true;

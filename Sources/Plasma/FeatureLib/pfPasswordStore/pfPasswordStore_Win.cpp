@@ -76,7 +76,7 @@ bool pfWin32PasswordStore::SetPassword(const ST::string& username, const ST::str
     CREDENTIALW credential;
     ST::string target = ST::format("{}__{}", GetServerDisplayName(), username);
 
-    if (password.is_empty()) {
+    if (password.empty()) {
         if (CredDeleteW(target.to_wchar().data(), CRED_TYPE_GENERIC, 0)) {
             return true;
         }

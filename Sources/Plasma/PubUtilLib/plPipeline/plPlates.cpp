@@ -240,7 +240,7 @@ plMipmap    *plPlate::CreateMaterial( uint32_t width, uint32_t height, bool with
 
 void plPlate::CreateFromResource(const ST::string& resName)
 {
-    if (!resName.is_empty())
+    if (!resName.empty())
     {
         plMipmap* resTexture = new plMipmap;
         resTexture->CopyFrom(plClientResMgr::Instance().getResource(resName));
@@ -258,7 +258,7 @@ void plPlate::CreateFromResource(const ST::string& resName)
 
 void plPlate::ReloadFromResource(const ST::string& resName)
 {
-    if (!resName.is_empty())
+    if (!resName.empty())
     {
         fMipmap->CopyFrom(plClientResMgr::Instance().getResource(resName));
     }

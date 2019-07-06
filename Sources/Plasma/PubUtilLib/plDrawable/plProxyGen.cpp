@@ -160,7 +160,7 @@ hsGMaterial* plProxyGen::IMakeProxyMaterial() const
     hsGMaterial* retVal = new hsGMaterial();
 
     ST::string buff;
-    if( !GetKeyName().is_empty() )
+    if( !GetKeyName().empty() )
         buff = ST::format("{}_Material", GetKeyName());
     else
         buff = "ProxyMaterial";
@@ -235,7 +235,7 @@ void plProxyGen::IGenerateProxy()
     if( fProxyDrawables[idx] && !fProxyDrawables[idx]->GetKey() )
     {
         ST::string buff;
-        if( !GetKeyName().is_empty() )
+        if( !GetKeyName().empty() )
             buff = ST::format("{}_ProxyDrawable", GetKeyName());
         else
             buff = "ProxyDrawable";

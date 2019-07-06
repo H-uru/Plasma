@@ -294,7 +294,7 @@ void plMouseDevice::IUpdateCursorSize()
 
 void plMouseDevice::AddNameToCursor(const ST::string& name)
 {
-    if (fInstance && !name.is_empty())
+    if (fInstance && !name.empty())
     {
         plDebugText     &txt = plDebugText::Instance();
         txt.DrawString(fInstance->fWXPos + 12 ,fInstance->fWYPos - 7,name);

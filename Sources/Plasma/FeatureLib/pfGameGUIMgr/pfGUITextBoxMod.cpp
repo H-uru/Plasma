@@ -120,7 +120,7 @@ void    pfGUITextBoxMod::IUpdate( void )
     fDynTextMap->ClearToColor( GetColorScheme()->fBackColor );
 
     std::wstring drawStr;
-    if (fUseLocalizationPath && !fLocalizationPath.is_empty() && pfLocalizationMgr::InstanceValid())
+    if (fUseLocalizationPath && !fLocalizationPath.empty() && pfLocalizationMgr::InstanceValid())
         drawStr = pfLocalizationMgr::Instance().GetString(fLocalizationPath).to_wchar().data();
     else
     {
@@ -189,7 +189,7 @@ void    pfGUITextBoxMod::Write( hsStream *s, hsResMgr *mgr )
 
     // Make sure we only write out to use localization path if the box is checked
     // and the path isn't empty
-    bool useLoc = fUseLocalizationPath && !fLocalizationPath.is_empty();
+    bool useLoc = fUseLocalizationPath && !fLocalizationPath.empty();
 
     s->WriteBool(useLoc);
     if (useLoc)
@@ -239,7 +239,7 @@ void    pfGUITextBoxMod::SetText( const wchar_t *text )
 
 void pfGUITextBoxMod::SetLocalizationPath(const ST::string& path)
 {
-    if (!path.is_empty())
+    if (!path.empty())
         fLocalizationPath = path;
 }
 

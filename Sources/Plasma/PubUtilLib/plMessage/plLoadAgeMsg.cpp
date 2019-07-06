@@ -57,9 +57,8 @@ void plLoadAgeMsg::Read(hsStream* stream, hsResMgr* mgr)
     if (len)
     {
         ST::char_buffer filename;
-        char* buffer = filename.create_writable_buffer(len);
-        stream->Read(len, buffer);
-        buffer[len] = 0;
+        filename.allocate(len);
+        stream->Read(len, filename.data());
         fAgeFilename = filename;
     }
     fUnload = stream->ReadBool();

@@ -511,7 +511,7 @@ inline plKeyImp* IFindKeyLocalized(const plUoid& uoid, plRegistryPageNode* page)
     const ST::string& objectName = uoid.GetObjectName();
 
     // If we're running localized, try to find a localized version first
-    if ((!objectName.is_empty()) && plLocalization::IsLocalized())
+    if ((!objectName.empty()) && plLocalization::IsLocalized())
     {
         plFileName localName = plLocalization::GetLocalized(objectName.c_str());
         if (localName.IsValid())
@@ -724,7 +724,7 @@ plKey plResManager::ReadKeyNotifyMe(hsStream* stream, plRefMsg* msg, plRefFlags:
 
 plKey plResManager::NewKey(const ST::string& name, hsKeyedObject* object, const plLocation& loc, const plLoadMask& m )
 {
-    hsAssert(!name.is_empty(), "No name for new key");
+    hsAssert(!name.empty(), "No name for new key");
     plUoid newUoid(loc, object->ClassIndex(), name, m);
     return NewKey(newUoid, object);
 }
@@ -1027,7 +1027,7 @@ public:
 
 void plResManager::LoadAgeKeys(const ST::string& age)
 {
-    hsAssert(!age.is_empty(), "age is nil");
+    hsAssert(!age.empty(), "age is nil");
     HeldAgeKeyMap::const_iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
     {
@@ -1742,7 +1742,7 @@ bool plResManager::IteratePages(plRegistryPageIterator* iterator, const ST::stri
         if (page->GetPageInfo().GetLocation() == plLocation::kGlobalFixedLoc)
             continue;
 
-        if (ageToRestrictTo.is_empty() || page->GetPageInfo().GetAge().compare_i(ageToRestrictTo) == 0)
+        if (ageToRestrictTo.empty() || page->GetPageInfo().GetAge().compare_i(ageToRestrictTo) == 0)
         {
             if (!iterator->EatPage(page))
             {

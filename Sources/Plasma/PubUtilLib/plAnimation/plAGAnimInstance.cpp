@@ -479,7 +479,7 @@ void plAGAnimInstance::AttachCallbacks(plOneShotCallbacks *callbacks)
             eventMsg->fRepeats = 0;
             eventMsg->fUser = cb.fUser;
 
-            if (!cb.fMarker.is_empty())
+            if (!cb.fMarker.empty())
             {
                 float marker = anim->GetMarker(cb.fMarker);
                 hsAssert(marker != -1, "Bad marker name");

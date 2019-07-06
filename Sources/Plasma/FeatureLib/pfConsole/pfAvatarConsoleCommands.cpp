@@ -636,7 +636,7 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnim, "string Animation, float blendFactor", "
     float blendFactor = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.is_empty())
+    if (avatar && !animationName.empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -655,7 +655,7 @@ PF_CONSOLE_CMD( Avatar_Anim, BlendAnimPri, "string Animation, float blendFactor,
     int priority = params[2];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.is_empty())
+    if (avatar && !animationName.empty())
     {
         plAGAnim * anim = plAGAnim::FindAnim(animationName);
         if(anim)
@@ -679,7 +679,7 @@ PF_CONSOLE_CMD( Avatar_Anim, DetachAnim, "string Animation", "Remove the given a
     ST::string animationName = ST::string::from_utf8(params[0]);
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.is_empty())
+    if (avatar && !animationName.empty())
     {
         plAGAnimInstance * instance = avatar->FindAnimInstance(animationName);
         if(instance)
@@ -695,7 +695,7 @@ PF_CONSOLE_CMD( Avatar_Anim, SetBlend, "string Animation, float blend", "Set the
     float blend = params[1];
     plArmatureMod *avatar = plAvatarMgr::GetInstance()->GetLocalAvatar();
 
-    if (avatar && !animationName.is_empty())
+    if (avatar && !animationName.empty())
     {
         plAGAnimInstance *anim = avatar->FindAnimInstance(animationName);
         if(anim)

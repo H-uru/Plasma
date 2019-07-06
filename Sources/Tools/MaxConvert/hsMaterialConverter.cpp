@@ -1841,7 +1841,7 @@ plLayerAnimation *IConvertNoteTrackAnims(plLayerAnimation *animLayer, SegmentMap
 void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segMap)
 {
     ST::string animName = mtl->GetAnimName();
-    if( segMap && !animName.is_empty() && (segMap->find(animName) != segMap->end()) )
+    if( segMap && !animName.empty() && (segMap->find(animName) != segMap->end()) )
     {
         SegmentSpec *spec = (*segMap)[animName];
         tc.SetBegin(spec->fStart);
@@ -1861,7 +1861,7 @@ void ISetDefaultAnim(plPassMtlBase* mtl, plAnimTimeConvert& tc, SegmentMap* segM
 
         // If there's a loop, use it
         ST::string loopName = ST::string::from_utf8(mtl->GetAnimLoopName());
-        if (!loopName.is_empty() && segMap)
+        if (!loopName.empty() && segMap)
             GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, loopStart, loopEnd);
 
         tc.SetLoopPoints(loopStart, loopEnd);
@@ -1947,7 +1947,7 @@ static plAnimStealthNode* IGetEntireAnimation(plPassMtlBase* mtl)
         plAnimStealthNode* stealth = mtl->GetStealth(i);
 
         ST::string segName = stealth->GetSegmentName();
-        if( segName.is_empty() || !segName.compare(ENTIRE_ANIMATION_NAME, ST::case_insensitive) )
+        if( segName.empty() || !segName.compare(ENTIRE_ANIMATION_NAME, ST::case_insensitive) )
             return stealth;
 
     }
@@ -2058,7 +2058,7 @@ plLayerInterface* IProcessLayerAnimation(plPassMtlBase* mtl, plLayerTex* layTex,
         node->CheckSynchOptions(noteAnim);
 
         ST::string segName = stealth->GetSegmentName();
-        bool isDefault = ( segName.is_empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
+        bool isDefault = ( segName.empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
 
         ST::string animName = name + ( ( isDefault ) ? "_LayerAnim_"
                                    : ( ST_LITERAL("_LayerAnim") + segName ) );
@@ -2174,7 +2174,7 @@ plLayerInterface* IProcessAnimation(plPassMtlBase *mtl, plMaxNode *node, const S
         node->CheckSynchOptions(noteAnim);
 
         ST::string segName = stealth->GetSegmentName();
-        bool isDefault = ( segName.is_empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
+        bool isDefault = ( segName.empty() || segName.compare( ENTIRE_ANIMATION_NAME ) == 0 );
 
         ST::string animName = name + ( ( isDefault ) ? "_anim"
                                    : ( ST_LITERAL("_anim_") + segName ) );

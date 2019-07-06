@@ -422,7 +422,7 @@ bool plConfigInfo::WriteTo(plConfigSource * src)
 
 void plConfigSource::SplitAt(ST::string & key, ST::string & value, char splitter, const ST::string & in)
 {
-    if (in.is_empty())
+    if (in.empty())
         return;
     
     ST_ssize_t t = in.find(splitter);
@@ -442,15 +442,15 @@ bool plConfigSource::ReadString(const ST::string & in)
     ST::string work = in.trim();
     
     // comment
-    if (work.char_at(0) == '#')
+    if (work.front() == '#')
         return true;
     
     // comment
-    if (work.char_at(0) == ';')
+    if (work.front() == ';')
         return true;
     
     // section
-    if (work.char_at(0) == '[')
+    if (work.front() == '[')
     {
         ST_ssize_t close = work.find(']');
         if (close < 0)
@@ -490,7 +490,7 @@ bool plConfigSource::ReadPair(ST::string & key, ST::string & value)
     key = key.trim();
     value = value.trim(" \t\r\n\"'");
     
-    if (key.is_empty())
+    if (key.empty())
         return true;
     
     return fConfigInfo->AddValue(fEffectiveSection, key, value, fAddMode);
@@ -769,7 +769,7 @@ bool plIniSectionConfigSource::ReadPair(ST::string & key, ST::string & value)
     key = key.trim();
     value = value.trim(" \t\r\n\"'");
     
-    if (key.is_empty())
+    if (key.empty())
         return true;
 
     if (key.compare_i("section") == 0)
@@ -798,11 +798,11 @@ bool plIniNoSectionsConfigSource::ReadString(const ST::string & in)
     ST::string work = in.trim();
     
     // ignore comments
-    if (work.char_at(0)=='#' || work.char_at(0)==';')
+    if (work.front() == '#' || work.front() == ';')
         return true;
     
     // ignore sections
-    if (work.char_at(0) == '[')
+    if (work.front() == '[')
         return true;
 
     // parse key value
@@ -1107,9 +1107,9 @@ bool plWWWAuthenticateConfigSource::ReadInto(plConfigInfo & configInfo, KAddValu
         bool inQuote = false;
         unsigned int begin = i,end;
         while (i < fAuth.size()
-            && ((fAuth.char_at(i) != ',' && !inQuote) || inQuote))
+            && ((fAuth[i] != ',' && !inQuote) || inQuote))
         {
-                if (fAuth.char_at(i) == '"')
+                if (fAuth[i] == '"')
                     inQuote = ! inQuote;
                 i++;
         }

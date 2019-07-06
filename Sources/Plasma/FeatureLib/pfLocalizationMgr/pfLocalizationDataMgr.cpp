@@ -258,7 +258,7 @@ void XMLCALL LocalizationXMLFile::HandleData(void *userData, const XML_Char *dat
 
 void LocalizationXMLFile::IHandleLocalizationsTag(const LocalizationXMLFile::tagInfo & parentTag, const LocalizationXMLFile::tagInfo & thisTag)
 {
-    if (!parentTag.fTag.is_empty()) // we only allow <localizations> tags at root level
+    if (!parentTag.fTag.empty()) // we only allow <localizations> tags at root level
     {
         AddError("localizations tag only allowed at root level");
         return;
@@ -686,7 +686,7 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::exists(const ST::string & key)
 {
     ST::string age, set, name;
     ISplitString(key, age, set, name);
-    if (age.is_empty() || set.is_empty() || name.is_empty()) // if any are missing, it's invalid, so we don't have it
+    if (age.empty() || set.empty() || name.empty()) // if any are missing, it's invalid, so we don't have it
         return false;
 
     // now check individually
@@ -711,7 +711,7 @@ bool pfLocalizationDataMgr::pf3PartMap<mapT>::setExists(const ST::string & key)
 {
     ST::string age, set, name;
     ISplitString(key, age, set, name);
-    if (age.is_empty() || set.is_empty()) // if any are missing, it's invalid, so we don't have it (ignoring name)
+    if (age.empty() || set.empty()) // if any are missing, it's invalid, so we don't have it (ignoring name)
         return false;
 
     // now check individually
@@ -733,7 +733,7 @@ void pfLocalizationDataMgr::pf3PartMap<mapT>::erase(const ST::string & key)
 {
     ST::string age, set, name;
     ISplitString(key, age, set, name);
-    if (age.is_empty() || set.is_empty() || name.is_empty()) // if any are missing, it's invalid, so we don't delete it
+    if (age.empty() || set.empty() || name.empty()) // if any are missing, it's invalid, so we don't delete it
         return;
 
     // now check individually
@@ -1101,7 +1101,7 @@ std::vector<ST::string> pfLocalizationDataMgr::GetLanguages(const ST::string & a
         for (curLanguage = elem.begin(); curLanguage != elem.end(); curLanguage++)
         {
             ST::string language = curLanguage->first;
-            if (!language.is_empty()) // somehow blank language names sneak in... so don't return them
+            if (!language.empty()) // somehow blank language names sneak in... so don't return them
                 retVal.push_back(curLanguage->first);
         }
     }

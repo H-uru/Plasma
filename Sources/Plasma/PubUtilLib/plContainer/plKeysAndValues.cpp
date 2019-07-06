@@ -210,18 +210,16 @@ void plKeysAndValues::Read(hsStream * s)
         uint16_t strlen;
         s->ReadLE(&strlen);
         ST::char_buffer key;
-        char* kdata = key.create_writable_buffer(strlen);
-        s->Read(strlen,(void*)kdata);
-        kdata[strlen] = 0;
+        key.allocate(strlen);
+        s->Read(strlen, key.data());
         uint16_t nvalues;
         s->ReadLE(&nvalues);
         for (int vi=0; vi<nvalues; vi++)
         {
             s->ReadLE(&strlen);
             ST::char_buffer value;
-            char* vdata = value.create_writable_buffer(strlen);
-            s->Read(strlen,(void*)vdata);
-            vdata[strlen] = 0;
+            value.allocate(strlen);
+            s->Read(strlen, value.data());
             // for now, only single value for key on stream is allowed.
             SetValue(key,value);
         }

@@ -113,21 +113,21 @@ bool VaultTextNoteNode::GetVisitInfo (plAgeInfoStruct * info) {
     if (toks.size() != kNumAgeInfoFields)
         return false;
 
-    if (!toks[kAgeFilename].is_empty())
+    if (!toks[kAgeFilename].empty())
         info->SetAgeFilename(toks[kAgeFilename]);
-    if (!toks[kAgeInstName].is_empty())
+    if (!toks[kAgeInstName].empty())
         info->SetAgeInstanceName(toks[kAgeInstName]);
-    if (!toks[kAgeUserName].is_empty())
+    if (!toks[kAgeUserName].empty())
         info->SetAgeUserDefinedName(toks[kAgeUserName]);
-    if (!toks[kAgeDesc].is_empty())
+    if (!toks[kAgeDesc].empty())
         info->SetAgeDescription(toks[kAgeDesc]);
-    if (!toks[kAgeInstGuid].is_empty()) {
+    if (!toks[kAgeInstGuid].empty()) {
         std::unique_ptr<plUUID> guid = std::make_unique<plUUID>(toks[kAgeInstGuid]);
         info->SetAgeInstanceGuid(guid.get());
     }
-    if (!toks[kAgeLanguage].is_empty())
+    if (!toks[kAgeLanguage].empty())
         info->SetAgeLanguage(toks[kAgeLanguage].to_uint());
-    if (!toks[kAgeSequence].is_empty())
+    if (!toks[kAgeSequence].empty())
         info->SetAgeSequenceNumber(toks[kAgeSequence].to_uint());
     return true;
 }

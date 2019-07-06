@@ -330,7 +330,7 @@ class plUnloadAgeCollector : public plRegistryPageIterator
 
         virtual bool EatPage( plRegistryPageNode *page )
         {
-            if ( !fAge.is_empty() && page->GetPageInfo().GetAge().compare_i(fAge) == 0 )
+            if ( !fAge.empty() && page->GetPageInfo().GetAge().compare_i(fAge) == 0 )
             {
                 fPages.Append( page );
             }
@@ -436,7 +436,7 @@ void plAgeLoader::ExecPendingAgeCsvFiles()
 //
 hsStream* plAgeLoader::GetAgeDescFileStream(const ST::string& ageName)
 {
-    if (ageName.is_empty())
+    if (ageName.empty())
         return nullptr;
 
     plFileName ageDescFileName = ST::format("dat\\{}.age", ageName);

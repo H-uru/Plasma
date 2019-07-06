@@ -104,7 +104,7 @@ plSDLMgr* plSDLMgr::GetInstance()
 //
 plStateDescriptor* plSDLMgr::FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl) const
 {
-    if (name.is_empty())
+    if (name.empty())
         return nil;
 
     if ( !dl )

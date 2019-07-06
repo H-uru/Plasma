@@ -358,7 +358,7 @@ plMessage *plResponderCmdMtl::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, IP
     GetMatAnimModKey(maxMtl, mtlNode, animName, keys);
 
     ST::string loopName = ST::string::from_utf8(pb->GetStr(kMtlLoop));
-    if (segMap && !loopName.is_empty())
+    if (segMap && !loopName.empty())
         GetSegMapAnimTime(loopName, segMap, SegmentSpec::kLoop, begin, end);
 
     DeleteSegmentMap(segMap);
@@ -451,7 +451,7 @@ void plResponderCmdMtl::GetWaitPoints(IParamBlock2 *pb, WaitPoints& waitPoints)
         plNotetrackAnim notetrackAnim(mtl, nil);
         plAnimInfo info = notetrackAnim.GetAnimInfo(animName);
         ST::string marker;
-        while (!(marker = info.GetNextMarkerName()).is_empty())
+        while (!(marker = info.GetNextMarkerName()).empty())
             waitPoints.push_back(marker);
     }
 }
@@ -468,7 +468,7 @@ void plResponderCmdMtl::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IParamB
     eventMsg->fEvent = kStop;
     eventMsg->fUser = waitInfo.callbackUser;
 
-    if (!waitInfo.point.is_empty())
+    if (!waitInfo.point.empty())
     {
         // FIXME COLIN - Error checking here?
         Mtl *mtl = GetMtl(pb);
@@ -549,7 +549,7 @@ void plResponderMtlProc::ILoadUser(HWND hWnd, IParamBlock2 *pb)
     plAnimInfo info = anim.GetAnimInfo(animName);
 
     ST::string loopName;
-    while (!(loopName = info.GetNextLoopName()).is_empty())
+    while (!(loopName = info.GetNextLoopName()).empty())
     {
         sel = ComboBox_AddString(hLoop, loopName.c_str());
         if (!loopName.compare(savedName))

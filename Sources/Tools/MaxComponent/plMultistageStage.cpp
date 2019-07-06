@@ -89,7 +89,7 @@ void plBaseStage::IDestroyDlg(HWND hDlg)
 
 ST::string plBaseStage::GetName()
 {
-    if (fName.is_empty())
+    if (fName.empty())
         fName = ST_LITERAL("DefaultName");
     return fName;
 }

@@ -253,7 +253,7 @@ void FindPackages(std::vector<plFileName>& fileNames, std::vector<plFileName>& p
     for (int i = 0; i < packages.size(); i++)
     {
         ST::string packageName;
-        if (!parent_package.is_empty())
+        if (!parent_package.empty())
             packageName = parent_package + ".";
         packageName += packages[i].AsString();
         std::vector<plFileName> packageFileNames;

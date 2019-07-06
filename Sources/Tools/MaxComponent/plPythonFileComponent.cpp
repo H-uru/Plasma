@@ -807,7 +807,7 @@ bool plPythonFileComponent::Convert(plMaxNode *node, plErrorMsg *pErrMsg)
                         plAnimComponentBase *animcomp = (plAnimComponentBase*)comp;
                         // save out the animation name first
                         ST::string tempAnimName = animcomp->GetAnimName();
-                        if (tempAnimName.is_empty())
+                        if (tempAnimName.empty())
                             pyParam.SetToAnimationName(ENTIRE_ANIMATION_NAME);
                         else
                             pyParam.SetToAnimationName(tempAnimName);

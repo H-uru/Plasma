@@ -468,7 +468,7 @@ pfBookData::pfBookData(const ST::string &guiName /* = nil */)
     fEditable = false;
     fAdjustCursorTo = -1;
     
-    if (!guiName.is_empty())
+    if (!guiName.empty())
         fGUIName = guiName;
     else
         fGUIName = ST_LITERAL("BkBook");
@@ -1203,7 +1203,7 @@ void    pfJournalBook::UnloadAllGUIs()
 pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
                                 const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
 {
-    if (!guiName.is_empty())
+    if (!guiName.empty())
         fCurBookGUI = guiName;
     else
         fCurBookGUI = "BkBook";
@@ -1239,7 +1239,7 @@ pfJournalBook::pfJournalBook( const char *esHTMLSource, plKey coverImageKey, plK
 pfJournalBook::pfJournalBook( const wchar_t *esHTMLSource, plKey coverImageKey, plKey callbackKey /*= nil*/, 
                                 const plLocation &hintLoc /* = plLocation::kGlobalFixedLoc */, const ST::string &guiName /* = nil */ )
 {
-    if (!guiName.is_empty())
+    if (!guiName.empty())
         fCurBookGUI = guiName;
     else
         fCurBookGUI = "BkBook";
@@ -1288,7 +1288,7 @@ bool    pfJournalBook::MsgReceive( plMessage *pMsg )
 
 void    pfJournalBook::SetGUI( const ST::string &guiName )
 {
-    if (!guiName.is_empty())
+    if (!guiName.empty())
         fCurBookGUI = guiName;
     if (fBookGUIs.find(fCurBookGUI) == fBookGUIs.end())
         fCurBookGUI = "BkBook"; // requested GUI isn't loaded, so use default GUI
@@ -2536,7 +2536,7 @@ plKey   pfJournalBook::IGetMipmapKey( const wchar_t *name, const plLocation &loc
     if( plNetClientMgr::GetInstance() != nil )
     {
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if (!thisAge.is_empty())
+        if (!thisAge.empty())
         {
             key = plKeyFinder::Instance().StupidSearch( thisAge, "", plMipmap::Index(), cName, true );
             if( key != nil )

@@ -73,7 +73,7 @@ void plAGApplicator::Apply(const plAGModifier *mod, double time, bool force)
 
 void plAGApplicator::SetChannelName(const ST::string &name)
 {
-    if(!name.is_empty())
+    if(!name.empty())
         fChannelName = name;
 };
 

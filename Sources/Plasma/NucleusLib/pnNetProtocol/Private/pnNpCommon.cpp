@@ -499,9 +499,8 @@ inline void IRead<ST::string>(const uint8_t*& buf, ST::string& dest)
     buf += sizeof(uint32_t);
 
     ST::utf16_buffer str;
-    char16_t* theStrBuffer = str.create_writable_buffer(nChars);
-    memcpy(theStrBuffer, buf, size);
-    theStrBuffer[nChars] = 0;
+    str.allocate(nChars);
+    memcpy(str.data(), buf, nChars * sizeof(char16_t));
     dest = ST::string::from_utf16(str);
     buf += size;
 }

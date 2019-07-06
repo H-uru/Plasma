@@ -590,8 +590,7 @@ void pyVault::CreateNeighborhood()
     ST::string title;
     ST::string desc;
 
-    unsigned nameLen = nc->GetPlayerName().size();
-    if (nc->GetPlayerName().char_at(nameLen - 1) == 's' || nc->GetPlayerName().char_at(nameLen - 1) == 'S')
+    if (nc->GetPlayerName().back() == 's' || nc->GetPlayerName().back() == 'S')
     {
         title = ST::format("{}'", nc->GetPlayerName());
         desc = ST::format("{}' {}", nc->GetPlayerName(), link.GetAgeInfo()->GetAgeInstanceName());

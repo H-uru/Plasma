@@ -723,7 +723,7 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
     // be necessary in this case.
 
     ST::string animName = ST::string::from_utf8(fCompPB->GetStr(kAnimName));
-    if (animName.is_empty())
+    if (animName.empty())
         animName = ST_LITERAL(ENTIRE_ANIMATION_NAME);
 
     if (fCompPB->GetInt(ParamID(kAnimUseGlobal)))
@@ -762,11 +762,11 @@ bool plAnimComponentBase::PreConvert(plMaxNode *node, plErrorMsg *pErrMsg)
         }
     
         ST::string loop;
-        while (!(loop = info.GetNextLoopName()).is_empty())
+        while (!(loop = info.GetNextLoopName()).empty())
             ATCAnim->AddLoop(loop, info.GetLoopStart(loop), info.GetLoopEnd(loop));
 
         ST::string marker;
-        while (!(marker = info.GetNextMarkerName()).is_empty())
+        while (!(marker = info.GetNextMarkerName()).empty())
             ATCAnim->AddMarker(marker, info.GetMarkerTime(marker));
 
         float stopPoint = -1;
@@ -998,7 +998,7 @@ void    plAnimComponentBase::PickTargetNode( IParamBlock2 *destPB, ParamID destP
 ST::string plAnimComponentBase::GetIfaceSegmentName( bool allowNil )
 {
     ST::string name = GetAnimName();
-    if( allowNil || !name.is_empty() )
+    if( allowNil || !name.empty() )
         return name;
     return ENTIRE_ANIMATION_NAME;
 }

@@ -183,7 +183,7 @@ public:
 plKey plKeyFinder::StupidSearch(const ST::string & age, const ST::string & rm,
                                  uint16_t classType, const ST::string &obName, bool subString)
 {
-    if (obName.is_empty())
+    if (obName.empty())
         return nil;
 
     plUoid newOid;
@@ -198,7 +198,7 @@ plKey plKeyFinder::StupidSearch(const ST::string & age, const ST::string & rm,
         return nil;
     }
 
-    if (!age.is_empty() && !rm.is_empty())
+    if (!age.empty() && !rm.empty())
     {
         const plLocation &loc = IGetResMgr()->FindLocation( age, rm );
         if( !loc.IsValid() )
@@ -213,7 +213,7 @@ plKey plKeyFinder::StupidSearch(const ST::string & age, const ST::string & rm,
             // Return value of false means it stopped somewhere, i.e. found something
             return keyFinder.GetFoundKey();
     }
-    else if (!age.is_empty())
+    else if (!age.empty())
     {
         plKeyFinderIter keyFinder(classType, obName, subString, age);
 
@@ -305,7 +305,7 @@ class plKeyFinderIterator : public plRegistryKeyIterator, public plRegistryPageI
 
 void plKeyFinder::ReallyStupidSubstringSearch(const ST::string &name, uint16_t objType, std::vector<plKey>& foundKeys, const plLocation &hintLocation )
 {
-    if (name.is_empty())
+    if (name.empty())
         return;
 
     plKeyFinderIterator collector( objType, name, foundKeys );
@@ -350,7 +350,7 @@ class plPageFinder : public plRegistryPageIterator
             const plPageInfo    &info = node->GetPageInfo();
 
             // Are we searching by age/page?
-            if (!fAgeString.is_empty())
+            if (!fAgeString.empty())
             {
                 if (info.GetAge().compare_i(fAgeString) == 0 && info.GetPage().compare_i(fFindString) == 0)
                 {
@@ -471,7 +471,7 @@ plKey plKeyFinder::IFindSceneNodeKey(plRegistryPageNode* page) const
 
 const plLocation    &plKeyFinder::FindLocation(const ST::string &age, const ST::string &page) const
 {
-    if (age.is_empty())
+    if (age.empty())
     {
         static plLocation   invalidLoc;
         plRegistryPageNode *pageNode;

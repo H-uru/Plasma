@@ -65,7 +65,7 @@ bool GetSegMapAnimTime(const ST::string &animName, SegmentMap *segMap, SegmentSp
 {
     if (segMap)
     {
-        if (!animName.is_empty() && segMap->find(animName) != segMap->end())
+        if (!animName.empty() && segMap->find(animName) != segMap->end())
         {
             SegmentSpec *spec = (*segMap)[animName];
             if (spec->fType == type)

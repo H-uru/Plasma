@@ -117,7 +117,7 @@ void plProfileManagerFull::ShowNextGroup()
     GetGroups(groups);
 
     ST::string nextGroup;
-    if (!curGroup.is_empty())
+    if (!curGroup.empty())
     {
         CreateStandardGraphs(curGroup.c_str(), false);
 
@@ -135,7 +135,7 @@ void plProfileManagerFull::ShowNextGroup()
     }
 
     fShowGroups.clear();
-    if (!nextGroup.is_empty())
+    if (!nextGroup.empty())
     {
         ISetActive(nextGroup.c_str(), true);
         CreateStandardGraphs(nextGroup.c_str(), true);

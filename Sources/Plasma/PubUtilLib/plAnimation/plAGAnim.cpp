@@ -92,7 +92,7 @@ plAGAnim::plAGAnim(const ST::string &name, double start, double end)
 // -----
 plAGAnim::~plAGAnim()
 {
-    if (!fName.is_empty())
+    if (!fName.empty())
     {
         RemoveAnim(fName);
     }

@@ -821,7 +821,7 @@ bool plClient::MsgReceive(plMessage* msg)
 //============================================================================
 bool plClient::IHandleMovieMsg(plMovieMsg* mov)
 {
-    if (mov->GetFileName().is_empty())
+    if (mov->GetFileName().empty())
         return true;
 
     size_t i = fMovies.size();
@@ -956,7 +956,7 @@ void plClient::IQueueRoomLoad(const std::vector<plLocation>& locs, bool hold)
 
         fLoadRooms.push_back(new LoadRequest(loc, hold));
 
-        if (lastAgeName.is_empty() || info->GetAge() == lastAgeName)
+        if (lastAgeName.empty() || info->GetAge() == lastAgeName)
             lastAgeName = info->GetAge();
         else
             allSameAge = false;

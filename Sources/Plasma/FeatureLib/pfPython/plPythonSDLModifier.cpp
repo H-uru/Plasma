@@ -376,7 +376,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -384,7 +384,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = (int)PyLong_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -393,7 +393,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             int v = (int)PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -404,7 +404,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             float v = (float)PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -413,7 +413,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             float v = (float)PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -424,7 +424,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             char* v = PyString_AsString(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
         }
         break;
@@ -434,7 +434,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
             pyKey* key = PythonInterface::GetpyKeyFromPython(pyVar);
             if ( key )
                 var->Set(key->getKey(),varIdx);
-                if (!hintstring.is_empty())
+                if (!hintstring.empty())
                     var->GetNotificationInfo().SetHintString(hintstring);
         }
         break;
@@ -444,7 +444,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             double v = PyFloat_AsDouble(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -452,7 +452,7 @@ bool plPythonSDLModifier::IPythonVarIdxToSDL(plSimpleStateVariable* var, int var
         {
             double v = (double)PyInt_AsLong(pyVar);
             var->Set(v, varIdx);
-            if (!hintstring.is_empty())
+            if (!hintstring.empty())
                 var->GetNotificationInfo().SetHintString(hintstring);
             return true;
         }
@@ -592,7 +592,7 @@ plPythonSDLModifier* plPythonSDLModifier::FindAgeSDL()
 {
     ST::string ageName = cyMisc::GetAgeName();
 
-    if (ageName.is_empty())
+    if (ageName.empty())
         return nullptr; // don't have an age, probably because we're running in max?
 
     // find the Age Global object
@@ -681,7 +681,7 @@ pySDLModifier::pySDLModifier(plPythonSDLModifier* sdlMod)
 PyObject* pySDLModifier::GetAgeSDL()
 {
     ST::string ageName = cyMisc::GetAgeName();
-    if (ageName.is_empty())
+    if (ageName.empty())
         PYTHON_RETURN_NONE; // just return none if the age is blank (running in max?)
 
     const plPythonSDLModifier* ageSDL = plPythonSDLModifier::FindAgeSDL();

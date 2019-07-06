@@ -183,9 +183,8 @@ void plLayerMovie::Read(hsStream* s, hsResMgr* mgr)
     if( len )
     {
         ST::char_buffer movieName;
-        char *buf = movieName.create_writable_buffer(len);
-        s->Read(len, buf);
-        buf[len] = 0;
+        movieName.allocate(len);
+        s->Read(len, movieName.data());
         fMovieName = ST::string(movieName);
     }
     else

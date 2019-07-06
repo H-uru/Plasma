@@ -812,7 +812,7 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
         if( textMsg->fCmd & plDynamicTextMsg::kSetTextColor )
             SetTextColor( textMsg->fColor, textMsg->fBlockRGB );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kSetFont ) && !textMsg->fString.is_empty())
+        if( (textMsg->fCmd & plDynamicTextMsg::kSetFont ) && !textMsg->fString.empty())
             SetFont( textMsg->fString, textMsg->fX, (uint8_t)(textMsg->fFlags) );
         
         if( textMsg->fCmd & plDynamicTextMsg::kSetLineSpacing )
@@ -829,15 +829,15 @@ bool    plDynamicTextMap::MsgReceive( plMessage *msg )
             FrameRect( textMsg->fLeft, textMsg->fTop, textMsg->fRight - textMsg->fLeft + 1,
                         textMsg->fBottom - textMsg->fTop + 1, textMsg->fColor );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawString ) && !textMsg->fString.is_empty())
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawString ) && !textMsg->fString.empty())
             DrawString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar().data() );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawClippedString ) && !textMsg->fString.is_empty())
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawClippedString ) && !textMsg->fString.empty())
             DrawClippedString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar().data(),
                                 textMsg->fLeft, textMsg->fTop, textMsg->fRight - textMsg->fLeft + 1,
                                 textMsg->fBottom - textMsg->fTop + 1 );
 
-        if( (textMsg->fCmd & plDynamicTextMsg::kDrawWrappedString ) && !textMsg->fString.is_empty())
+        if( (textMsg->fCmd & plDynamicTextMsg::kDrawWrappedString ) && !textMsg->fString.empty())
             DrawWrappedString( textMsg->fX, textMsg->fY, textMsg->fString.to_wchar().data(), textMsg->fRight, textMsg->fBottom );
 
         if( textMsg->fCmd & plDynamicTextMsg::kDrawImage )

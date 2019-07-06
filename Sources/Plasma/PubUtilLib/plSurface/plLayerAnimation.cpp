@@ -686,7 +686,7 @@ uint32_t plLayerSDLAnimation::Eval(double wSecs, uint32_t frame, uint32_t ignore
 
         if (fEvalTime < 0)
         {
-            if (!fVarName.is_empty())
+            if (!fVarName.empty())
             {
                 extern const plSDLModifier *ExternFindAgeSDL();
                 const plSDLModifier *sdlMod = ExternFindAgeSDL();

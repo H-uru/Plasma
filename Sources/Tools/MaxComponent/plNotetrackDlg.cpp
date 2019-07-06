@@ -161,7 +161,7 @@ void plNoteTrackDlg::ILoadLoops()
         // Get the animation segment (or leave it nil if we're using the entire animation)
         SegmentSpec *animSpec = nil;
         ST::string animName = ST::string::from_utf8(fPB->GetStr(fAnimID));
-        if (!animName.is_empty() && fSegMap->find(animName) != fSegMap->end())
+        if (!animName.empty() && fSegMap->find(animName) != fSegMap->end())
             animSpec = (*fSegMap)[animName];
 
         // Get the saved loop name

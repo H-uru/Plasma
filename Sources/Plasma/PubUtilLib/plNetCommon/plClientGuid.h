@@ -93,7 +93,7 @@ public:
 
     bool    HasAccountUUID() const { return (fFlags&kAccountUUID&&!fAccountUUID.IsNull())?true:false;}
     bool    HasPlayerID() const { return (fFlags&kPlayerID&&fPlayerID>0)?true:false;}
-    bool    HasPlayerName() const { return (fFlags&kPlayerName&&!fPlayerName.is_empty()); }
+    bool    HasPlayerName() const { return (fFlags&kPlayerName&&!fPlayerName.empty()); }
     bool    HasCCRLevel() const { return (fFlags&kCCRLevel)?true:false;}
     bool    HasProtectedLogin() const { return (fFlags&kProtectedLogin)?true:false;}
     bool    HasBuildType() const { return (fFlags&kBuildType)?true:false;}

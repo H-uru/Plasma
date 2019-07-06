@@ -99,7 +99,7 @@ void plLocTreeView::LoadData(const ST::string &selectionPath)
                     scrollToItem(subItem);
                     elementMatched = true;
 
-                    if (targetLang.is_empty())
+                    if (targetLang.empty())
                         targetLang = ST_LITERAL("English");
                 }
                 else

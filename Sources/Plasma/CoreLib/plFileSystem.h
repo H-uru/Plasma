@@ -128,7 +128,7 @@ public:
     };
 
     /** Return whether this filename is valid (not empty). */
-    bool IsValid() const { return !fName.is_empty(); }
+    bool IsValid() const { return !fName.empty(); }
 
     /** Return the length of the filename string (UTF-8). */
     size_t GetSize() const { return fName.size(); }

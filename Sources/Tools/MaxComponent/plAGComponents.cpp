@@ -220,14 +220,14 @@ bool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
     {
         // for each segment we found:
         ST::string animName;
-        while (!(animName = noteAnim.GetNextAnimName()).is_empty())
+        while (!(animName = noteAnim.GetNextAnimName()).empty())
         {
             plAnimInfo info = noteAnim.GetAnimInfo(animName);
 
             plATCAnim *anim = NewAnimation(info.GetAnimName(), info.GetAnimStart(), info.GetAnimEnd());
 
             ST::string loopName = info.GetNextLoopName();
-            if (!loopName.is_empty())
+            if (!loopName.empty())
             {
                 anim->SetLoop(true);
                 float loopStart = info.GetLoopStart(loopName);
@@ -236,7 +236,7 @@ bool plAnimAvatarComponent::ConvertNode(plMaxNode *node, plErrorMsg *pErrMsg)
                 anim->SetLoopEnd(loopEnd == -1 ? anim->GetEnd() : loopEnd);
             }
             ST::string marker;
-            while (!(marker = info.GetNextMarkerName()).is_empty())
+            while (!(marker = info.GetNextMarkerName()).empty())
                 anim->AddMarker(marker, info.GetMarkerTime(marker));
 
             ConvertNodeSegmentBranch(node, anim, pErrMsg);

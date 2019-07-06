@@ -931,8 +931,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     {
                         // set user-defined name
                         ST::string title;
-                        unsigned nameLen = nc->GetPlayerName().size();
-                        if (nc->GetPlayerName().to_lower().char_at(nameLen - 1) == 's')
+                        if (nc->GetPlayerName().to_lower().back() == 's')
                             title = ST::format("{}'", nc->GetPlayerName());
                         else
                             title = ST::format("{}'s", nc->GetPlayerName());
@@ -942,8 +941,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                     {
                         // set description
                         ST::string desc;
-                        unsigned nameLen = nc->GetPlayerName().size();
-                        if (nc->GetPlayerName().to_lower().char_at(nameLen - 1) == 's')
+                        if (nc->GetPlayerName().to_lower().back() == 's')
                             desc = ST::format("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                         else
                             desc = ST::format("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());
@@ -970,8 +968,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             {
                                 // set user-defined name
                                 ST::string title;
-                                unsigned nameLen = nc->GetPlayerName().size();
-                                if (nc->GetPlayerName().to_lower().char_at(nameLen - 1) == 's')
+                                if (nc->GetPlayerName().to_lower().back() == 's')
                                     title = ST::format("{}'", nc->GetPlayerName());
                                 else
                                     title = ST::format("{}'s", nc->GetPlayerName());
@@ -982,8 +979,7 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
                             {
                                 // set description
                                 ST::string desc;
-                                unsigned nameLen = nc->GetPlayerName().size();
-                                if (nc->GetPlayerName().to_lower().char_at(nameLen - 1) == 's')
+                                if (nc->GetPlayerName().to_lower().back() == 's')
                                     desc = ST::format("{}' {}", nc->GetPlayerName(), info->GetAgeInstanceName());
                                 else
                                     desc = ST::format("{}'s {}", nc->GetPlayerName(), info->GetAgeInstanceName());

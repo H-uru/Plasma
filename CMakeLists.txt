@@ -43,14 +43,13 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${Plasma_BINARY_DIR}/bin)
 
 # Find all 3rd-party libraries that are required
-find_package(string_theory REQUIRED)
+find_package(string_theory 2.0 REQUIRED)
 set_package_properties(string_theory PROPERTIES
     URL "http://github.com/zrax/string_theory"
     DESCRIPTION "Flexible C++11 string library and type-safe formatter"
     TYPE REQUIRED
 )
 include_directories(${STRING_THEORY_INCLUDE_DIRS})
-add_definitions(-DST_NO_2_0_DEPRECATION)
 
 find_package(OpenSSL REQUIRED)
 set_package_properties(OpenSSL PROPERTIES

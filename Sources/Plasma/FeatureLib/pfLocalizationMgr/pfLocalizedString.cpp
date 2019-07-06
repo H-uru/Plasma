@@ -78,14 +78,14 @@ void pfLocalizedString::IParameterize(const ST::string & inString)
     int curParameter = 0;
     ST_ssize_t nextToken = -1;
 
-    while (!remainder.is_empty())
+    while (!remainder.empty())
     {
         // Check if we have any params.
         nextToken = remainder.find('%');
         if (nextToken != -1)
         {
             // Check it's not escaped.
-            if ((nextToken == 0) || ((nextToken > 0) && (remainder.char_at(nextToken-1) != '\\')))
+            if ((nextToken == 0) || ((nextToken > 0) && (remainder[nextToken-1] != '\\')))
             {
                 // Check if it has an end (ignoring any terminators we need to cross a space to find).
                 ST_ssize_t endToken = remainder.substr(nextToken).find('s');
@@ -94,7 +94,7 @@ void pfLocalizedString::IParameterize(const ST::string & inString)
                     // Store existing block if it contains anything.
                     newText << remainder.substr(0, nextToken);
                     curTextBlock.fText = newText.to_string().replace("\\\\", "\\");
-                    if (!curTextBlock.fText.is_empty())
+                    if (!curTextBlock.fText.empty())
                     {
                         fText.push_back(curTextBlock);
                         newText.truncate();
@@ -145,7 +145,7 @@ void pfLocalizedString::IParameterize(const ST::string & inString)
             newText << remainder;
             remainder = "";
             curTextBlock.fText = newText.to_string().replace("\\\\", "\\");
-            if (!curTextBlock.fText.is_empty())
+            if (!curTextBlock.fText.empty())
             {
                 fText.push_back(curTextBlock);
                 newText.truncate();

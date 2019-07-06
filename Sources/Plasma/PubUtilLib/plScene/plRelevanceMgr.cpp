@@ -258,14 +258,14 @@ ST::string plRelevanceMgr::GetRegionNames(hsBitVector regions)
     {
         if (regions.IsBitSet(i + 1))
         {
-            if (!retVal.is_empty())
+            if (!retVal.empty())
                 retVal += ", ";
             if (fRegions[i])
                 retVal += fRegions[i]->GetKeyName();
         }
     }
 
-    if (retVal.is_empty())
+    if (retVal.empty())
         retVal = ST_LITERAL("<NONE>");
     return retVal;
 }

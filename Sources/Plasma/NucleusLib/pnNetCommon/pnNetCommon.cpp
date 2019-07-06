@@ -70,7 +70,7 @@ ST::string GetTextAddr(uint32_t binAddr)
 uint32_t GetBinAddr(const ST::string& textAddr)
 {
     uint32_t addr = 0;
-    if (textAddr.is_empty())
+    if (textAddr.empty())
         return addr;
 
     addr = inet_addr(textAddr.c_str());

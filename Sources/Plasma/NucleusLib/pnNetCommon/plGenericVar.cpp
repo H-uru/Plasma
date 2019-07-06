@@ -140,7 +140,7 @@ char plGenericType::IToChar( void ) const
 
     if( fType == kAny )
     {
-        return fS.char_at(0);
+        return fS.front();
     }
     
     return fC;

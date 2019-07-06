@@ -292,7 +292,7 @@ void plNetClientMgr::ICreateStatusLog() const
 //
 bool plNetClientMgr::Log(const ST::string& str) const
 {
-    if (str.is_empty()) {
+    if (str.empty()) {
         return true;
     }
 
@@ -1019,7 +1019,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
 
         // if we're linking to startup we don't need (or want) a player set
         ST::string ageName = NetCommGetStartupAge()->ageDatasetName;
-        if (ageName.is_empty())
+        if (ageName.empty())
             ageName = ST_LITERAL("StartUp");
         if (ageName.compare_i("StartUp") == 0)
             NetCommSetActivePlayer(0, nullptr);
@@ -1331,7 +1331,7 @@ bool plNetClientMgr::IHandlePlayerPageMsg(plPlayerPageMsg *playerMsg)
                 if( idx != -1 )
                 {
                     hsAssert(playerKey, "NIL KEY?");
-                    hsAssert(!playerKey->GetName().is_empty(), "UNNAMED KEY");
+                    hsAssert(!playerKey->GetName().empty(), "UNNAMED KEY");
                     fTransport.GetMember(idx)->SetAvatarKey(playerKey);
                 }
                 else
@@ -1377,7 +1377,7 @@ bool plNetClientMgr::IFindModifier(plSynchedObject* obj, int16_t classIdx)
 
 plUoid plNetClientMgr::GetAgeSDLObjectUoid(const ST::string& ageName) const
 {
-    hsAssert(!ageName.is_empty(), "nil ageName");
+    hsAssert(!ageName.empty(), "nil ageName");
 
     // if age sdl hook is loaded
     if (fAgeSDLObjectKey)
@@ -1419,7 +1419,7 @@ void plNetClientMgr::AddPendingLoad(PendingLoad *pl)
 
 #ifdef HS_DEBUGGING
     // check for age SDL state
-    if (!pl->fUoid.GetObjectName().is_empty() && !pl->fUoid.GetObjectName().compare(plSDL::kAgeSDLObjectName))
+    if (!pl->fUoid.GetObjectName().empty() && !pl->fUoid.GetObjectName().compare(plSDL::kAgeSDLObjectName))
     {
         DebugMsg("Recv SDL state for age hook object, uoid={}", pl->fUoid.StringIze());
         if (!pl->fKey)

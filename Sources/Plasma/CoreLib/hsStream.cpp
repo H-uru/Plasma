@@ -150,16 +150,15 @@ ST::string hsStream::ReadSafeStringLong()
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        char *buff = name.create_writable_buffer(numChars);
-        Read(numChars, buff);
-        buff[numChars] = 0;
+        name.allocate(numChars);
+        Read(numChars, name.data());
 
         // if the high bit is set, flip the bits. Otherwise it's a normal string, do nothing.
-        if (buff[0] & 0x80)
+        if (name[0] & 0x80)
         {
             for (int i = 0; i < numChars; i++)
-                buff[i] = ~buff[i];
-        }       
+                name[i] = ~name[i];
+        }
     }
 
     return name;
@@ -171,16 +170,15 @@ ST::string hsStream::ReadSafeWStringLong()
     uint32_t numChars = ReadLE32();
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        char16_t *buff = retVal.create_writable_buffer(numChars);
+        retVal.allocate(numChars);
         for (int i=0; i<numChars; i++)
-            buff[i] = ReadLE16();
+            retVal[i] = ReadLE16();
         ReadLE16(); // we wrote the null out, read it back in
-        buff[numChars] = 0; // But terminate it safely anyway
 
-        if (buff[0]* 0x80)
+        if (retVal[0]* 0x80)
         {
             for (int i=0; i<numChars; i++)
-                buff[i] = ~buff[i];
+                retVal[i] = ~retVal[i];
         }
     }
 
@@ -244,16 +242,15 @@ ST::string hsStream::ReadSafeString()
     hsAssert(numChars <= GetSizeLeft(), "Bad string");
     if (numChars > 0 && numChars <= GetSizeLeft())
     {
-        char *buff = name.create_writable_buffer(numChars);
-        Read(numChars, buff);
-        buff[numChars] = 0;
+        name.allocate(numChars);
+        Read(numChars, name.data());
 
         // if the high bit is set, flip the bits. Otherwise it's a normal string, do nothing.
-        if (buff[0] & 0x80)
+        if (name[0] & 0x80)
         {
             int i;
             for (i = 0; i < numChars; i++)
-                buff[i] = ~buff[i];
+                name[i] = ~name[i];
         }
     }
 
@@ -269,16 +266,15 @@ ST::string hsStream::ReadSafeWString()
     hsAssert(numChars <= GetSizeLeft()/2, "Bad string");
     if (numChars > 0 && numChars <= (GetSizeLeft()/2)) // divide by two because each char is two bytes
     {
-        char16_t *buff = retVal.create_writable_buffer(numChars);
+        retVal.allocate(numChars);
         for (int i=0; i<numChars; i++)
-            buff[i] = ReadLE16();
+            retVal[i] = ReadLE16();
         ReadLE16(); // we wrote the null out, read it back in
-        buff[numChars] = 0; // But terminate it safely anyway
 
-        if (buff[0]* 0x80)
+        if (retVal[0]* 0x80)
         {
             for (int i=0; i<numChars; i++)
-                buff[i] = ~buff[i];
+                retVal[i] = ~retVal[i];
         }
     }
 

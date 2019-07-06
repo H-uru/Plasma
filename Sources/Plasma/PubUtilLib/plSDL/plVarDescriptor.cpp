@@ -59,7 +59,7 @@ const uint8_t plVarDescriptor::kVersion=3;        // for Read/Write format
 //
 bool plVarDescriptor::SetType(const ST::string& type)
 {
-    if (type.is_empty())
+    if (type.empty())
         return false;
 
     if (!type.compare_i("vector3"))
@@ -119,7 +119,7 @@ bool plVarDescriptor::SetType(const ST::string& type)
     if (!type.compare_i("message") || !type.compare_i("creatable") )
         fType=kCreatable;
     else
-    if (type.char_at(0)=='$')
+    if (type.front() == '$')
         fType=kStateDescriptor;
     else
         return false;   // err

@@ -272,7 +272,7 @@ void PrintStringF(void pfun(const char *),const char * fmt, ...);
 //
 plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString)
 {
-    if (name.is_empty())
+    if (name.empty())
     {
         if (statusStr)
             sprintf(statusStr, "Object name is nil");
@@ -290,10 +290,10 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
     // Try restricted to our age first, if we're not given an age name. This works
     // around most of the problems associated with unused keys in pages causing the pages to be marked
     // as not loaded and thus screwing up our searches
-    if (ageName.is_empty() && plNetClientMgr::GetInstance() != nil)
+    if (ageName.empty() && plNetClientMgr::GetInstance() != nil)
     {
         ST::string thisAge = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
-        if (!thisAge.is_empty())
+        if (!thisAge.empty())
         {
             key = plKeyFinder::Instance().StupidSearch(thisAge, ST::null, type, name, subString);
             if (key != nil)
