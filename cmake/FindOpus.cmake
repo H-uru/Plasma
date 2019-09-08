@@ -2,10 +2,9 @@ if(Opus_INCLUDE_DIR AND Opus_LIBRARY)
     set(Opus_FIND_QUIETLY TRUE)
 endif()
 
-find_path(Opus_INCLUDE_DIR opus/opus.h
-          /usr/local/include
-          /usr/include
-)
+find_path(Opus_INCLUDE_DIR NAMES opus.h
+          PATHS /usr/local/include /usr/include
+          PATH_SUFFIXES opus)
 
 find_library(Opus_LIBRARY NAMES opus
              PATHS /usr/local/lib /usr/lib)
