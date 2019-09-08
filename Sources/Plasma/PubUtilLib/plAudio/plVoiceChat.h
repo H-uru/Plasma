@@ -47,14 +47,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 
 // voice flags
-#define VOICE_ENCODED       ( 1 << 0 )
+enum plVoiceFlags
+{
+    kEncoded       = (1<<0),
+    kEncodedSpeex  = (1<<1),
+    kEncodedOpus   = (1<<2),
+
+    kLastVoiceFlag = (1<<3),
+};
+static_assert((plVoiceFlags::kLastVoiceFlag >> 1) <= UINT8_MAX, "plVoiceFlags overflows uint8");
+
 #define VOICE_NARROWBAND    ( 1 << 1 )
-#define VOICE_ENH           ( 1 << 2 )
+
 #define BUFFER_LEN_SECONDS      4
 #define FREQUENCY               8000
 
 struct hsVector3;
-struct SpeexBits;
 class  plWinAudible;
 class  plPlate;
 class  plStatusLog;
@@ -69,11 +77,11 @@ public:
     plVoiceSound();
     ~plVoiceSound();
     bool LoadSound( bool is3D );
-    void AddVoiceData(void *data, unsigned bytes);
+    void AddVoiceData(const void *data, size_t bytes);
     void Update();
     void Play();
     virtual void SetStartPos(unsigned bytes){}
-    
+
 private:
     virtual bool    ILoadDataBuffer( void ){ return true; }
     virtual void    IUnloadDataBuffer( void ){}
@@ -91,19 +99,23 @@ class plVoicePlayer
 public:
     plVoicePlayer();
     ~plVoicePlayer();
-    void PlaybackVoiceMessage(void* data, unsigned size, int numFramesInBuffer);
-    void PlaybackUncompressedVoiceMessage(void* data, unsigned size);
+    void PlaybackVoiceMessage(const void* data, size_t size, int numFramesInBuffer, uint8_t flags);
+    void PlaybackUncompressedVoiceMessage(const void* data, size_t size);
     void SetVelocity(const hsVector3 vel);
     void SetPosition(const hsPoint3 pos);
     void SetOrientation(const hsPoint3 pos);
-    
+
     void SetTalkIcon(int index, uint32_t str){}
     void ClearTalkIcon(){}
     plVoiceSound *GetSoundPtr() { return &fSound; }
     static void Enable(bool enable) { fEnabled = enable; }
 
+protected:
+    class plVoiceDecoder* GetDecoder(uint8_t voiceFlags) const;
+
 private:
     plVoiceSound fSound;
+
     static bool fEnabled;
 };
 
@@ -117,7 +129,7 @@ public:
     void SetMikeOpen(bool b);
     void DrawTalkIcon(bool b);
     void DrawDisabledIcon(bool b);
-    
+
     void    SetTalkIcon(int index, uint32_t str);
     void    ClearTalkIcon();
 
@@ -139,12 +151,11 @@ public:
     static void SetMode(int mode);  // sets nb or wb mode
     static void SetVBR(bool vbr);
     static void SetComplexity(int c);
-    static void SetENH(bool b);
     static short GetSampleRate() { return fSampleRate; }
-    
+
 private:
-    
-    bool                    fMikeOpen;
+
+    bool                    fMicOpen;
     bool                    fMikeJustClosed;
     static bool             fMicAlwaysOpen;
     static bool             fShowIcons;
@@ -154,59 +165,7 @@ private:
     static short            fSampleRate;
     plPlate*                fDisabledIcon;
     plPlate*                fTalkIcon;
-    static float         fRecordThreshhold;
-};
-
-
-// Speex voice encoder/decoder class
-class plSpeex 
-{
-public:
-    ~plSpeex();
-    
-    enum Mode
-    {
-        kNarrowband,
-        kWideband,
-        kUltraWideband
-    };
-    static plSpeex *GetInstance()   
-    {
-        static plSpeex instance;
-        return &instance;
-    }
-
-    bool Init(Mode mode);
-    bool Shutdown();
-    bool Encode(short *data, int numFrames, int *packedLength, hsRAMStream *out);
-    bool Decode(uint8_t *data, int size, int numFrames, int *numOutputBytes, short *out);
-    int    GetFrameSize() { return fFrameSize; }
-    void   VBR(bool b);                                   // turn variable bit rate on/off
-    void   SetVBR(uint32_t vbr);                              // Set variable bit rate quality
-    void   ABR(bool b);                                   // turn average bit rate on/off
-    void   SetABR(uint32_t abr);                              // Set average bit rate quality
-    void   SetQuality(uint32_t quality);                      // Set encoder quality
-    bool IsUsingVBR()         { return fVBR; }
-    int    GetQuality()         { return fQuality; }
-    void   SetENH(bool b);
-    void   SetComplexity(uint8_t c);
-
-    bool Initialized() { return fInitialized; }
-    
-private:
-    plSpeex();
-    SpeexBits*                  fBits;                  // main speex structure
-    bool                        fBitsInit;
-    void*                       fEncoderState;
-    void*                       fDecoderState;
-    int                         fSampleRate;
-    int                         fFrameSize;             // frame size from speex - 160 for nb
-    int                         fQuality;               // 0-10 speex encode quality
-    bool                        fVBR;                   // toggle variable bit rate
-    int                         fAverageBitrate;        // n-bits per second
-    uint8_t                       fComplexity;            // 1-10 sets cpu resources allowed for encoder
-    bool                        fENH;                   // perceptual enhancement
-    bool                        fInitialized;           
+    static float            fRecordThreshhold;
 };
 
 #endif //plVoiceChat_h

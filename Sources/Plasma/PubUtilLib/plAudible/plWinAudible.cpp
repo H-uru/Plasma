@@ -741,12 +741,7 @@ void pl2WayWinAudible::Read(hsStream* s, hsResMgr* mgr)
 void pl2WayWinAudible::PlayNetworkedSpeech(const char* addr, int32_t size, int numFrames, unsigned char flags)
 {
     if (fVoicePlayer)
-    {
-        if (!(flags & VOICE_ENCODED))
-            fVoicePlayer->PlaybackUncompressedVoiceMessage((uint8_t*)addr, size);
-        else
-            fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames);
-    }
+        fVoicePlayer->PlaybackVoiceMessage((uint8_t*)addr, size, numFrames, flags);
 }
 
 plAudible& pl2WayWinAudible::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, int index)

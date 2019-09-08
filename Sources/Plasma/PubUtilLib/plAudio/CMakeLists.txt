@@ -18,6 +18,7 @@ set(plAudio_SOURCES
     plSound.cpp
     plSoundEvent.cpp
     plVoiceChat.cpp
+    plVoiceCodec.cpp
     plWin32GroupedSound.cpp
     plWin32Sound.cpp
     plWin32StaticSound.cpp
@@ -37,6 +38,7 @@ set(plAudio_HEADERS
     plSound.h
     plSoundEvent.h
     plVoiceChat.h
+    plVoiceCodec.h
     plWin32GroupedSound.h
     plWin32Sound.h
     plWin32StaticSound.h

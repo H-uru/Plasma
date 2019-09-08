@@ -541,7 +541,7 @@ void plDSoundBuffer::UnQueueVoiceBuffers()
 }
 
 //============================================================================ 
-bool plDSoundBuffer::VoiceFillBuffer(void *data, unsigned bytes, unsigned bufferId)
+bool plDSoundBuffer::VoiceFillBuffer(const void *data, size_t bytes, unsigned bufferId)
 {
     if(!source)
         return false;
