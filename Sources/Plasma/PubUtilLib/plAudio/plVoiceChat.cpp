@@ -68,17 +68,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define VOICE_STOP_MS       2000
 #define MAX_DATA_SIZE       1024 * 4    // 4 KB
 
-bool                    plVoiceRecorder::fCompress =                true;
 bool                    plVoiceRecorder::fRecording =               true;
 bool                    plVoiceRecorder::fNetVoice =                false;
 short                   plVoiceRecorder::fSampleRate =              FREQUENCY;
+uint8_t                 plVoiceRecorder::fVoiceFlags =              plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus;
 float                   plVoiceRecorder::fRecordThreshhold =        200.0f;
 bool                    plVoiceRecorder::fShowIcons =               true;
 bool                    plVoiceRecorder::fMicAlwaysOpen =           false;
 bool                    plVoicePlayer::fEnabled =                   true;
 
-static inline plVoiceEncoder* GetEncoder()
+plVoiceEncoder* plVoiceRecorder::GetEncoder()
 {
+    if (fVoiceFlags & plVoiceFlags::kEncodedOpus)
+        return plVoiceEncoder::GetOpus();
+    if (!(fVoiceFlags & plVoiceFlags::kEncoded))
+        return nullptr;
     return plVoiceEncoder::GetSpeex();
 }
 
@@ -235,25 +239,22 @@ void plVoiceRecorder::Update(double time)
         return;
 
     plVoiceEncoder* encoder = GetEncoder();
-    if (!encoder)
-        return;
-
-    int EncoderFrameSize = encoder->GetFrameSize();
-    if (EncoderFrameSize == -1)
-        return;
+    int EncoderFrameSize = FREQUENCY / AUDIO_FPS;
+    if (encoder) {
+        EncoderFrameSize = encoder->GetFrameSize();
+        if (EncoderFrameSize == -1)
+            return;
+    }
 
     ALCdevice* captureDevice = plgAudioSys::GetCaptureDevice();
     if (!captureDevice)
         return;
 
-    // We must have at least 10ms of audio samples to send.
-    uint32_t minSamples = encoder->GetSampleRate() / 100;
-
     ALCint samples;
     alcGetIntegerv(captureDevice, ALC_CAPTURE_SAMPLES, sizeof(samples), &samples);
-    
+
     if (samples > 0) {
-        if (samples >= minSamples) {
+        if (samples >= EncoderFrameSize) {
             // The point of this is to ensure that we only capture full frames for the encoder
             // Presently, frames are assumed to be 20ms in length.
             int numFrames = (int)(samples / EncoderFrameSize);
@@ -266,7 +267,7 @@ void plVoiceRecorder::Update(double time)
             std::unique_ptr<short> buffer{ new short[totalSamples] };
             alcCaptureSamples(captureDevice, buffer.get(), totalSamples);
 
-            if (!CompressionEnabled()) {
+            if (!encoder) {
                 plNetMsgVoice pMsg;
                 pMsg.SetNetProtocol(kNetProtocolCli2Game);
                 pMsg.SetVoiceData(buffer.get(), totalSamples * sizeof(short));
@@ -274,7 +275,6 @@ void plVoiceRecorder::Update(double time)
                 if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kEchoVoice))
                     pMsg.SetBit(plNetMessage::kEchoBackToSender);
                 plNetClientApp::GetInstance()->SendMsg(&pMsg);
-            
             } else {
                 std::unique_ptr<uint8_t> packet{ new uint8_t[totalSamples] }; // packet to send encoded data in
                 int packedLength = 0;                                         // the size of the packet that will be sent
@@ -294,7 +294,7 @@ void plVoiceRecorder::Update(double time)
                     plNetClientApp::GetInstance()->SendMsg(&pMsg);
                 }
             }
-        } else if(!fMicOpen) {
+        } else if (!fMicOpen) {
             std::unique_ptr<short> buffer{ new short[samples] };
             // the mike has since closed, and there isn't enough data to meet our minimum, so throw this data out
             alcCaptureSamples(captureDevice, buffer.get(), samples);
@@ -303,6 +303,7 @@ void plVoiceRecorder::Update(double time)
 }
 
 plVoicePlayer::plVoicePlayer()
+    : fSound(), fOpusDecoder(plVoiceDecoder::CreateOpus())
 {
 }
 
@@ -329,8 +330,6 @@ void plVoicePlayer::PlaybackVoiceMessage(const void* data, size_t size, int numF
             std::unique_ptr<short> nBuff{ new short[bufferSize] };
             if (decoder->Decode(data, size, numFramesInBuffer, numBytes, nBuff.get()))
                 PlaybackUncompressedVoiceMessage(nBuff.get(), numBytes);
-        } else {
-
         }
     } else {
         PlaybackUncompressedVoiceMessage(data, size);
@@ -354,10 +353,10 @@ void plVoicePlayer::SetOrientation(const hsPoint3 pos)
 
 plVoiceDecoder* plVoicePlayer::GetDecoder(uint8_t voiceFlags) const
 {
+    if (voiceFlags & plVoiceFlags::kEncodedOpus)
+        return fOpusDecoder;
     if (!(voiceFlags & plVoiceFlags::kEncoded))
         return nullptr;
-
-    // TODO: opus support
     return plVoiceDecoder::GetSpeex();
 }
 

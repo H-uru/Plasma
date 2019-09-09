@@ -57,10 +57,9 @@ enum plVoiceFlags
 };
 static_assert((plVoiceFlags::kLastVoiceFlag >> 1) <= UINT8_MAX, "plVoiceFlags overflows uint8");
 
-#define VOICE_NARROWBAND    ( 1 << 1 )
-
 #define BUFFER_LEN_SECONDS      4
 #define FREQUENCY               8000
+#define AUDIO_FPS               50
 
 struct hsVector3;
 class  plWinAudible;
@@ -68,6 +67,8 @@ class  plPlate;
 class  plStatusLog;
 class  plSpeex;
 typedef struct ALCdevice_struct ALCdevice;
+class plVoiceDecoder;
+class plVoiceEncoder;
 
 
 // Sound used for playing back dynamic voice chat data. this allows us to hook voice chat into the audio system
@@ -111,10 +112,11 @@ public:
     static void Enable(bool enable) { fEnabled = enable; }
 
 protected:
-    class plVoiceDecoder* GetDecoder(uint8_t voiceFlags) const;
+    plVoiceDecoder* GetDecoder(uint8_t voiceFlags) const;
 
 private:
     plVoiceSound fSound;
+    plVoiceDecoder* fOpusDecoder;
 
     static bool fEnabled;
 };
@@ -135,12 +137,13 @@ public:
 
     static bool     RecordingEnabled() { return fRecording; }
     static bool     NetVoiceEnabled() { return fNetVoice; }
-    static bool     CompressionEnabled() { return fCompress; }
+    static uint8_t  VoiceFlags() { return fVoiceFlags; }
+
     static void     EnablePushToTalk(bool b) { fMicAlwaysOpen = !b; }
     static void     EnableIcons(bool b) { fShowIcons = b; }
     static void     EnableRecording(bool b) { fRecording = b; }
     static void     EnableNetVoice(bool b) { fNetVoice = b; }
-    static void     EnableCompression(bool b) { fCompress = b; }
+    static void     SetVoiceFlags(uint8_t flags) { fVoiceFlags = flags; }
     static void     SetSampleRate(short s) { fSampleRate = s; }
     static void     SetSquelch(float f) { fRecordThreshhold = f; }
 
@@ -153,18 +156,22 @@ public:
     static void SetComplexity(int c);
     static short GetSampleRate() { return fSampleRate; }
 
+protected:
+    static plVoiceEncoder* GetEncoder();
+
 private:
 
     bool                    fMicOpen;
     bool                    fMikeJustClosed;
-    static bool             fMicAlwaysOpen;
-    static bool             fShowIcons;
-    static bool             fCompress;
-    static bool             fNetVoice;
-    static bool             fRecording;
-    static short            fSampleRate;
     plPlate*                fDisabledIcon;
     plPlate*                fTalkIcon;
+
+    static bool             fMicAlwaysOpen;
+    static bool             fShowIcons;
+    static bool             fNetVoice;
+    static bool             fRecording;
+    static uint8_t          fVoiceFlags;
+    static short            fSampleRate;
     static float            fRecordThreshhold;
 };
 

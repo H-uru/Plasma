@@ -3340,16 +3340,6 @@ PF_CONSOLE_CMD( Audio, SetDeviceName, "string deviceName", "Meant for plClient i
 }
 
 PF_CONSOLE_CMD( Audio,      // groupName
-               EnableVoiceCompression,      // fxnName
-               "bool b", // paramList
-               "turn voice compression on and off" )    // helpString
-{
-    bool b = params[0];
-    plVoiceRecorder::EnableCompression(b);
-
-}
-
-PF_CONSOLE_CMD( Audio,      // groupName
                ShowIcons,       // fxnName
                "bool b", // paramList
                "turn voice recording icons on and off" )    // helpString
@@ -3388,6 +3378,22 @@ PF_CONSOLE_CMD( Audio,      // groupName
     bool b = params[0];
     plVoiceRecorder::EnableNetVoice(b);
 
+}
+
+PF_CONSOLE_CMD(Audio,                                // groupName
+               SetVoiceCodec,                        // fxnName
+               "string codec",                       // paramList
+               "Sets the codec used for voice chat") // helpString
+{
+    const char* codec = params[0];
+    if (stricmp(codec, "none") == 0)
+        plVoiceRecorder::SetVoiceFlags(0);
+    else if (stricmp(codec, "speex") == 0)
+        plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedSpeex);
+    else if (stricmp(codec, "opus") == 0)
+        plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
+    else
+        PrintString("Invalid codec specified");
 }
 
 PF_CONSOLE_CMD( Audio,                              // groupName

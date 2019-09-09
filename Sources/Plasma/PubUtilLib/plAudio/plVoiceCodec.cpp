@@ -47,6 +47,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static constexpr int kSpeexSampleRate = 8000;
 
+// TODO: The opus decoder can operate an an independent rate from the encoder. This will offer
+// lots of flexibility for what we send down in plNetMsgVoice.
+static constexpr int kOpusSampleRate  = 8000;
+
 /*****************************************************************************
 *
 *   Speex Voice Encoding/Decoding
@@ -67,7 +71,7 @@ public:
 
     int GetSampleRate() const HS_OVERRIDE { return fSampleRate; }
 
-    bool Encode(const short* data, int& numFrames, int& packedLength, void* out, int outsz) HS_OVERRIDE;
+    bool Encode(const short* data, int numFrames, int& packedLength, void* out, int outsz) HS_OVERRIDE;
     bool Decode(const void* data, int size, int numFrames, int& numOutputBytes, short* out) HS_OVERRIDE;
 
     int GetFrameSize() const HS_OVERRIDE { return fFrameSize; }
@@ -159,7 +163,7 @@ bool plSpeex::Shutdown()
     return true;
 }
 
-bool plSpeex::Encode(const short* data, int& numFrames, int& packedLength, void* out, int outsz)
+bool plSpeex::Encode(const short* data, int numFrames, int& packedLength, void* out, int outsz)
 {
     packedLength = 0;
 
@@ -277,4 +281,190 @@ plVoiceDecoder* plVoiceDecoder::GetSpeex()
 plVoiceEncoder* plVoiceEncoder::GetSpeex()
 {
     return &s_speexInstance;
+}
+
+/*****************************************************************************
+*
+*   Opus Voice Encoding/Decoding
+*
+***/
+
+#include <opus.h>
+
+class plOpusDecoder : public plVoiceDecoder
+{
+    OpusDecoder* fOpus;
+
+public:
+    plOpusDecoder();
+    ~plOpusDecoder();
+
+    int GetSampleRate() const HS_OVERRIDE;
+    int GetFrameSize() const HS_OVERRIDE;
+
+    bool Decode(const void* data, int size, int numFrames, int& numOutputBytes, short* out) HS_OVERRIDE;
+};
+
+plOpusDecoder::plOpusDecoder()
+    : fOpus(opus_decoder_create(kOpusSampleRate, 1, nullptr))
+{
+}
+
+plOpusDecoder::~plOpusDecoder()
+{
+    opus_decoder_destroy(fOpus);
+}
+
+int plOpusDecoder::GetSampleRate() const
+{
+    opus_int32 sampleRate;
+    opus_decoder_ctl(fOpus, OPUS_GET_SAMPLE_RATE(&sampleRate));
+    return sampleRate;
+}
+
+int plOpusDecoder::GetFrameSize() const
+{
+    // frames are 20ms
+    return (GetSampleRate() / AUDIO_FPS);
+}
+
+bool plOpusDecoder::Decode(const void* data, int size, int numFrames, int& numOutputBytes, short* out)
+{
+    // Welcome to HAXland!
+    // So, the legacy client assumes all encoded data is speex. Of course, this totally violates that
+    // assumption and causes a wonderful crash. Initially, the plan was to tell everyone that these
+    // bcasts contained zero frames and let opus figure it out using opus_packet_get_nb_frames.
+    // For some reason, however, opus_packet_nb_frames does not return the correct amount of frames
+    // in an encoded packet. Therefore, we MUST rely on the plNetMsgVoice frame count.
+    // So, the workaround for the workaround is to prepend the opus packet with a zero, indicating
+    // to speex that each frame is of length zero. In my testing, this prevents the standard MOULa
+    // client from crashing on opus data... also, no garbage audio is played!
+    const unsigned char* srcp = (const unsigned char*)data + sizeof(uint32_t);
+    size -= sizeof(uint32_t);
+
+    int result = opus_decode(fOpus, srcp, size, out, numFrames * GetFrameSize(), 0);
+    if (result < 0) {
+        hsAssert(0, opus_strerror(result));
+        numOutputBytes = 0;
+        return false;
+    } else {
+        numOutputBytes = result * sizeof(short);
+        return true;
+    }
+}
+
+plVoiceDecoder* plVoiceDecoder::CreateOpus()
+{
+    return new plOpusDecoder;
+}
+
+// ===================================================
+
+class plOpusEncoder : public plVoiceEncoder
+{
+    OpusEncoder* fOpus;
+
+public:
+    plOpusEncoder();
+    ~plOpusEncoder();
+
+    int GetSampleRate() const HS_OVERRIDE;
+    int GetFrameSize() const HS_OVERRIDE;
+
+    bool Encode(const short* data, int numFrames, int& packedLength, void* out, int outsz) HS_OVERRIDE;
+
+    uint8_t GetVoiceFlag() const HS_OVERRIDE;
+    void VBR(bool b) HS_OVERRIDE;
+    void SetABR(uint32_t abr) HS_OVERRIDE;
+    void SetQuality(uint32_t quality) HS_OVERRIDE;
+    bool IsUsingVBR() const HS_OVERRIDE;
+    int GetQuality() const HS_OVERRIDE;
+    void SetComplexity(uint8_t c) HS_OVERRIDE;
+};
+
+plOpusEncoder::plOpusEncoder()
+    : fOpus(opus_encoder_create(kOpusSampleRate, 1, OPUS_APPLICATION_VOIP, nullptr))
+{
+}
+
+plOpusEncoder::~plOpusEncoder()
+{
+    opus_encoder_destroy(fOpus);
+}
+
+int plOpusEncoder::GetSampleRate() const
+{
+    opus_int32 sampleRate;
+    opus_encoder_ctl(fOpus, OPUS_GET_SAMPLE_RATE(&sampleRate));
+    return sampleRate;
+}
+
+int plOpusEncoder::GetFrameSize() const
+{
+    // frames are 20ms
+    return (GetSampleRate() / AUDIO_FPS);
+}
+
+bool plOpusEncoder::Encode(const short* data, int numFrames, int& packedLength, void* out, int outsz)
+{
+    // See above... This should be sufficient to trick Speex.
+    unsigned char* outp = (unsigned char*)out;
+    *((uint32_t*)outp) = 0;
+    outp += sizeof(uint32_t);
+    outsz -= sizeof(uint32_t);
+
+    opus_int32 result = opus_encode(fOpus, data, numFrames * GetFrameSize(), outp, outsz);
+    if (result < 0) {
+        hsAssert(0, opus_strerror(result));
+        packedLength = 0;
+        return false;
+    } else {
+        packedLength = result + sizeof(uint32_t);
+        return true;
+    }
+}
+
+uint8_t plOpusEncoder::GetVoiceFlag() const
+{
+    return (plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
+}
+
+void plOpusEncoder::VBR(bool b)
+{
+    opus_encoder_ctl(fOpus, OPUS_SET_VBR(b ? 1 : 0));
+}
+
+void plOpusEncoder::SetABR(uint32_t abr)
+{
+    hsAssert((abr >= 500 && abr <= 512000), "Invalid bitrate provided for opus");
+    opus_encoder_ctl(fOpus, OPUS_SET_BITRATE(abr));
+}
+
+void plOpusEncoder::SetQuality(uint32_t quality)
+{
+    // Opus does not have an equivalent to speex's "quality"
+}
+
+bool plOpusEncoder::IsUsingVBR() const
+{
+    opus_int32 result;
+    opus_encoder_ctl(fOpus, OPUS_GET_VBR(&result));
+    return (result != 0);
+}
+
+int plOpusEncoder::GetQuality() const
+{
+    // Opus does not have an equivalent to speex's "quality"
+    return 10;
+}
+
+void plOpusEncoder::SetComplexity(uint8_t c)
+{
+    opus_encoder_ctl(fOpus, OPUS_SET_COMPLEXITY(c));
+}
+
+plVoiceEncoder* plVoiceEncoder::GetOpus()
+{
+    static plOpusEncoder s_instance;
+    return &s_instance;
 }

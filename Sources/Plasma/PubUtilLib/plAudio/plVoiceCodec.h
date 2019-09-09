@@ -50,7 +50,6 @@ struct SpeexBits;
 class plVoiceCodec
 {
 public:
-    virtual uint8_t GetVoiceFlag() const = 0;
     virtual int GetSampleRate() const = 0;
     virtual int GetFrameSize() const = 0;
 };
@@ -61,14 +60,16 @@ public:
     virtual bool Decode(const void* data, int size, int numFrames, int& numOutputBytes, short* out) = 0;
 
 public:
+    static plVoiceDecoder* CreateOpus();
     static plVoiceDecoder* GetSpeex();
 };
 
 class plVoiceEncoder : public plVoiceCodec
 {
 public:
-    virtual bool Encode(const short* data, int& numFrames, int& packedLength, void* out, int outsz) = 0;
+    virtual bool Encode(const short* data, int numFrames, int& packedLength, void* out, int outsz) = 0;
 
+    virtual uint8_t GetVoiceFlag() const = 0;
     virtual void VBR(bool on) = 0;
     virtual void SetABR(uint32_t abr) = 0;
     virtual void SetQuality(uint32_t quality) = 0;
@@ -77,6 +78,7 @@ public:
     virtual void SetComplexity(uint8_t c) = 0;
 
 public:
+    static plVoiceEncoder* GetOpus();
     static plVoiceEncoder* GetSpeex();
 };
 
