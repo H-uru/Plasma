@@ -40,6 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
+#include "hsConfig.h"
 #include <memory>
 #include "hsStream.h"
 #include "plVoiceCodec.h"
@@ -56,6 +57,8 @@ static constexpr int kOpusSampleRate  = 8000;
 *   Speex Voice Encoding/Decoding
 *
 ***/
+
+#ifdef PLASMA_USE_SPEEX
 
 #include <speex/speex.h>
 #include <speex/speex_bits.h>
@@ -283,11 +286,27 @@ plVoiceEncoder* plVoiceEncoder::GetSpeex()
     return &s_speexInstance;
 }
 
+#else
+
+plVoiceDecoder* plVoiceDecoder::GetSpeex()
+{
+    return nullptr;
+}
+
+plVoiceEncoder* plVoiceEncoder::GetSpeex()
+{
+    return nullptr;
+}
+
+#endif // PLASMA_USE_SPEEX
+
 /*****************************************************************************
 *
 *   Opus Voice Encoding/Decoding
 *
 ***/
+
+#ifdef PLASMA_USE_OPUS
 
 #include <opus.h>
 
@@ -468,3 +487,17 @@ plVoiceEncoder* plVoiceEncoder::GetOpus()
     static plOpusEncoder s_instance;
     return &s_instance;
 }
+
+#else
+
+plVoiceDecoder* plVoiceDecoder::CreateOpus()
+{
+    return nullptr;
+}
+
+plVoiceEncoder* plVoiceEncoder::GetOpus()
+{
+    return nullptr;
+}
+
+#endif  // PLASMA_USE_OPUS

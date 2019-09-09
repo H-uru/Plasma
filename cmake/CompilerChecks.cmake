@@ -69,4 +69,3 @@ try_compile(HAVE_NOEXCEPT ${PROJECT_BINARY_DIR}
 
 configure_file(${PROJECT_SOURCE_DIR}/cmake/hsCompilerSpecific.h.cmake
                ${PROJECT_BINARY_DIR}/hsCompilerSpecific.h)
-include_directories(${PROJECT_BINARY_DIR})
