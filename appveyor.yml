@@ -51,7 +51,11 @@ install:
         Write-Host "Installing library dependencies... "
         Set-Location C:\tools\vcpkg
         # Create our own custom triplet, for static-linking of libraries, but dynamic CRT linkage.
-        Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)"
+        If ($Env:CONFIGURATION -eq "Release") {
+          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`nset(VCPKG_BUILD_TYPE release)`n"
+        } Else {
+          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`n"
+        }
         git pull 2> $null
         bootstrap-vcpkg.bat
         vcpkg integrate install
