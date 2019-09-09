@@ -674,16 +674,10 @@ bool pl2WayWinAudible::MsgReceive(plMessage* msg)
 void pl2WayWinAudible::Init(bool isLocal)
 {
     if (!fVoicePlayer)
-    {
-        if(!isLocal)
-            fVoicePlayer = new plVoicePlayer;
-    }
-    if(!fVoiceRecorder)
-    {
-        if(isLocal)
-        {
+        fVoicePlayer = new plVoicePlayer;
+    if (!fVoiceRecorder) {
+        if (isLocal)
             fVoiceRecorder = new plVoiceRecorder;
-        }
     }
     Activate();
 }
