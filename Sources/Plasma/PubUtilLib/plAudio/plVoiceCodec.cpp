@@ -48,9 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static constexpr int kSpeexSampleRate = 8000;
 
-// TODO: The opus decoder can operate an an independent rate from the encoder. This will offer
-// lots of flexibility for what we send down in plNetMsgVoice.
-static constexpr int kOpusSampleRate  = 8000;
+static constexpr int kOpusEncoderSampleRate =  8000;
+static constexpr int kOpusDecoderSampleRate = 48000;
 
 /*****************************************************************************
 *
@@ -85,6 +84,7 @@ public:
     int GetQuality() const HS_OVERRIDE { return fQuality; }
     void SetComplexity(uint8_t c) HS_OVERRIDE;
     uint8_t GetVoiceFlag() const HS_OVERRIDE;
+    bool SetSampleRate(uint32_t rate) HS_OVERRIDE;
 
 private:
     std::unique_ptr<SpeexBits>  fBits;                  // main speex structure
@@ -105,7 +105,7 @@ plSpeex::plSpeex() :
     fBits(new SpeexBits),
     fEncoderState(),
     fDecoderState(),
-    fSampleRate(plVoiceRecorder::GetSampleRate()),
+    fSampleRate(kSpeexSampleRate),
     fFrameSize(-1),
     fQuality(7),
     fVBR(true),
@@ -272,6 +272,12 @@ uint8_t plSpeex::GetVoiceFlag() const
     return (plVoiceFlags::kEncoded | plVoiceFlags::kEncodedSpeex);
 }
 
+bool plSpeex::SetSampleRate(uint32_t rate)
+{
+    // speex cannot have independent sampling rates
+    return false;
+}
+
 // ===================================================
 
 static plSpeex s_speexInstance;
@@ -325,7 +331,7 @@ public:
 };
 
 plOpusDecoder::plOpusDecoder()
-    : fOpus(opus_decoder_create(kOpusSampleRate, 1, nullptr))
+    : fOpus(opus_decoder_create(kOpusDecoderSampleRate, 1, nullptr))
 {
 }
 
@@ -399,10 +405,11 @@ public:
     bool IsUsingVBR() const HS_OVERRIDE;
     int GetQuality() const HS_OVERRIDE;
     void SetComplexity(uint8_t c) HS_OVERRIDE;
+    bool SetSampleRate(uint32_t rate) HS_OVERRIDE;
 };
 
 plOpusEncoder::plOpusEncoder()
-    : fOpus(opus_encoder_create(kOpusSampleRate, 1, OPUS_APPLICATION_VOIP, nullptr))
+    : fOpus(opus_encoder_create(kOpusEncoderSampleRate, 1, OPUS_APPLICATION_VOIP, nullptr))
 {
 }
 
@@ -475,6 +482,14 @@ int plOpusEncoder::GetQuality() const
 {
     // Opus does not have an equivalent to speex's "quality"
     return 10;
+}
+
+bool plOpusEncoder::SetSampleRate(uint32_t rate)
+{
+    // No way to set the sampling rate, unfortunately... So, we must reconstruct it.
+    int result = opus_encoder_init(fOpus, rate, 1, OPUS_APPLICATION_VOIP);
+    hsAssert(result == OPUS_OK, opus_strerror(result));
+    return result == OPUS_OK;
 }
 
 void plOpusEncoder::SetComplexity(uint8_t c)

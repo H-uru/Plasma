@@ -664,7 +664,7 @@ bool pl2WayWinAudible::MsgReceive(plMessage* msg)
     if (pCtrlMsg)
     {
         if (pCtrlMsg->GetControlCode() == S_PUSH_TO_TALK && fVoiceRecorder)
-            fVoiceRecorder->SetMikeOpen(pCtrlMsg->ControlActivated());
+            fVoiceRecorder->SetMicOpen(pCtrlMsg->ControlActivated());
         return true;
     }
 

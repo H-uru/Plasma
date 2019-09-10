@@ -76,12 +76,13 @@ class plVoiceSound : public plWin32Sound
 {
 public:
     plVoiceSound();
-    ~plVoiceSound();
+
     bool LoadSound( bool is3D );
     void AddVoiceData(const void *data, size_t bytes);
     void Update();
     void Play();
     virtual void SetStartPos(unsigned bytes){}
+    void SetSampleRate(uint32_t rate);
 
 private:
     virtual bool    ILoadDataBuffer( void ){ return true; }
@@ -91,8 +92,10 @@ private:
     virtual void    ISetActualTime( double t ){}
     virtual float   GetActualTimeSec() { return 0.0f; }
     virtual void    IRefreshParams( void );
+
     static unsigned fCount;
     double   fLastUpdate;
+    uint32_t fSampleRate;
 };
 
 class plVoicePlayer
@@ -101,7 +104,7 @@ public:
     plVoicePlayer();
     ~plVoicePlayer();
     void PlaybackVoiceMessage(const void* data, size_t size, int numFramesInBuffer, uint8_t flags);
-    void PlaybackUncompressedVoiceMessage(const void* data, size_t size);
+    void PlaybackUncompressedVoiceMessage(const void* data, size_t size, uint32_t rate);
     void SetVelocity(const hsVector3 vel);
     void SetPosition(const hsPoint3 pos);
     void SetOrientation(const hsPoint3 pos);
@@ -128,7 +131,7 @@ public:
     ~plVoiceRecorder();
 
     void Update(double time);
-    void SetMikeOpen(bool b);
+    void SetMicOpen(bool b);
     void DrawTalkIcon(bool b);
     void DrawDisabledIcon(bool b);
 
@@ -136,15 +139,13 @@ public:
     void    ClearTalkIcon();
 
     static bool     RecordingEnabled() { return fRecording; }
-    static bool     NetVoiceEnabled() { return fNetVoice; }
     static uint8_t  VoiceFlags() { return fVoiceFlags; }
 
     static void     EnablePushToTalk(bool b) { fMicAlwaysOpen = !b; }
     static void     EnableIcons(bool b) { fShowIcons = b; }
     static void     EnableRecording(bool b) { fRecording = b; }
-    static void     EnableNetVoice(bool b) { fNetVoice = b; }
     static void     SetVoiceFlags(uint8_t flags) { fVoiceFlags = flags; }
-    static void     SetSampleRate(short s) { fSampleRate = s; }
+    static void     SetSampleRate(uint32_t s);
     static void     SetSquelch(float f) { fRecordThreshhold = f; }
 
     static void IncreaseRecordingThreshhold();
@@ -154,7 +155,6 @@ public:
     static void SetMode(int mode);  // sets nb or wb mode
     static void SetVBR(bool vbr);
     static void SetComplexity(int c);
-    static short GetSampleRate() { return fSampleRate; }
 
 protected:
     static plVoiceEncoder* GetEncoder();
@@ -171,7 +171,6 @@ private:
     static bool             fNetVoice;
     static bool             fRecording;
     static uint8_t          fVoiceFlags;
-    static short            fSampleRate;
     static float            fRecordThreshhold;
 };
 

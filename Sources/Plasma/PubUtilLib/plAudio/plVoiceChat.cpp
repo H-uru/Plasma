@@ -42,8 +42,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsTimer.h"
 #include "hsResMgr.h"
-#include <al.h>
-#include <alc.h>
 #include "plDSoundBuffer.h"
 #include "plVoiceCodec.h"
 #include "hsGeometry3.h"
@@ -69,8 +67,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define MAX_DATA_SIZE       1024 * 4    // 4 KB
 
 bool                    plVoiceRecorder::fRecording =               true;
-bool                    plVoiceRecorder::fNetVoice =                false;
-short                   plVoiceRecorder::fSampleRate =              FREQUENCY;
 uint8_t                 plVoiceRecorder::fVoiceFlags =              plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus;
 float                   plVoiceRecorder::fRecordThreshhold =        200.0f;
 bool                    plVoiceRecorder::fShowIcons =               true;
@@ -136,6 +132,14 @@ void plVoiceRecorder::DecreaseRecordingThreshhold()
     txt.DrawString(400,300,str);
 }
 
+void plVoiceRecorder::SetSampleRate(uint32_t rate)
+{
+    if (plVoiceEncoder* speex = plVoiceEncoder::GetSpeex())
+        speex->SetSampleRate(rate);
+    if (plVoiceEncoder* opus = plVoiceEncoder::GetOpus())
+        opus->SetSampleRate(rate);
+}
+
 // Set the quality of speex encoder
 void plVoiceRecorder::SetQuality(int quality)
 {
@@ -181,14 +185,13 @@ void plVoiceRecorder::SetComplexity(int c)
     }
 }
 
-void plVoiceRecorder::SetMikeOpen(bool b)
+void plVoiceRecorder::SetMicOpen(bool b)
 {
-    ALCdevice *device = plgAudioSys::GetCaptureDevice();
-    if (fRecording && device) {
+    if (fRecording) {
         if (b)
-            alcCaptureStart(device);
+            plgAudioSys::Sys()->BeginCapture();
         else
-            alcCaptureStop(device);
+            plgAudioSys::Sys()->EndCapture();
         DrawTalkIcon(b);
         fMicOpen = b;
     } else {
@@ -241,18 +244,15 @@ void plVoiceRecorder::Update(double time)
     plVoiceEncoder* encoder = GetEncoder();
     int EncoderFrameSize = FREQUENCY / AUDIO_FPS;
     if (encoder) {
+        // this is a no-op if there was no change
+        plgAudioSys::Sys()->SetCaptureSampleRate(encoder->GetSampleRate());
+
         EncoderFrameSize = encoder->GetFrameSize();
         if (EncoderFrameSize == -1)
             return;
     }
 
-    ALCdevice* captureDevice = plgAudioSys::GetCaptureDevice();
-    if (!captureDevice)
-        return;
-
-    ALCint samples;
-    alcGetIntegerv(captureDevice, ALC_CAPTURE_SAMPLES, sizeof(samples), &samples);
-
+    uint32_t samples = plgAudioSys::Sys()->GetCaptureSampleCount();
     if (samples > 0) {
         if (samples >= EncoderFrameSize) {
             // The point of this is to ensure that we only capture full frames for the encoder
@@ -264,13 +264,13 @@ void plVoiceRecorder::Update(double time)
             totalSamples = std::min(totalSamples, MAX_DATA_SIZE);
 
             // convert to correct units:
-            std::unique_ptr<short> buffer{ new short[totalSamples] };
-            alcCaptureSamples(captureDevice, buffer.get(), totalSamples);
+            std::unique_ptr<int16_t> buffer{ new int16_t[totalSamples] };
+            plgAudioSys::Sys()->CaptureSamples(totalSamples, buffer.get());
 
             if (!encoder) {
                 plNetMsgVoice pMsg;
                 pMsg.SetNetProtocol(kNetProtocolCli2Game);
-                pMsg.SetVoiceData(buffer.get(), totalSamples * sizeof(short));
+                pMsg.SetVoiceData(buffer.get(), totalSamples * sizeof(int16_t));
                 pMsg.SetPlayerID(plNetClientApp::GetInstance()->GetPlayerID());
                 if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kEchoVoice))
                     pMsg.SetBit(plNetMessage::kEchoBackToSender);
@@ -294,10 +294,6 @@ void plVoiceRecorder::Update(double time)
                     plNetClientApp::GetInstance()->SendMsg(&pMsg);
                 }
             }
-        } else if (!fMicOpen) {
-            std::unique_ptr<short> buffer{ new short[samples] };
-            // the mike has since closed, and there isn't enough data to meet our minimum, so throw this data out
-            alcCaptureSamples(captureDevice, buffer.get(), samples);
         }
     }
 }
@@ -311,9 +307,10 @@ plVoicePlayer::~plVoicePlayer()
 {
 }
 
-void plVoicePlayer::PlaybackUncompressedVoiceMessage(const void* data, size_t size)
+void plVoicePlayer::PlaybackUncompressedVoiceMessage(const void* data, size_t size, uint32_t rate)
 {
     if (fEnabled) {
+        fSound.SetSampleRate(rate);
         if (!fSound.IsPlaying())
             fSound.Play();
         fSound.AddVoiceData(data, size);
@@ -329,10 +326,10 @@ void plVoicePlayer::PlaybackVoiceMessage(const void* data, size_t size, int numF
             int bufferSize = numFramesInBuffer * decoder->GetFrameSize();
             std::unique_ptr<short> nBuff{ new short[bufferSize] };
             if (decoder->Decode(data, size, numFramesInBuffer, numBytes, nBuff.get()))
-                PlaybackUncompressedVoiceMessage(nBuff.get(), numBytes);
+                PlaybackUncompressedVoiceMessage(nBuff.get(), numBytes, decoder->GetSampleRate());
         }
     } else {
-        PlaybackUncompressedVoiceMessage(data, size);
+        PlaybackUncompressedVoiceMessage(data, size, FREQUENCY);
     }
 }
 
@@ -367,7 +364,8 @@ plVoiceDecoder* plVoicePlayer::GetDecoder(uint8_t voiceFlags) const
 ***/
 unsigned plVoiceSound::fCount = 0;
 
-plVoiceSound::plVoiceSound() 
+plVoiceSound::plVoiceSound()
+    : fLastUpdate(0), fSampleRate(FREQUENCY)
 {
     fInnerCone = 90;
     fOuterCone = 240;
@@ -384,32 +382,27 @@ plVoiceSound::plVoiceSound()
     fType = plgAudioSys::kVoice;
 
     fEAXSettings.SetRoomParams(-1200, -100, 0, 0);
-    fLastUpdate = 0;
 
     ST::string keyName = ST::format("VoiceSound_{}", fCount);
     fCount++;
     hsgResMgr::ResMgr()->NewKey(keyName, this, plLocation::kGlobalFixedLoc);
 }
 
-plVoiceSound::~plVoiceSound()
+bool plVoiceSound::LoadSound(bool is3D)
 {
-}
-
-bool plVoiceSound::LoadSound( bool is3D )
-{
-    if( fFailed )
+    if (fFailed)
         return false;
-    if( !plgAudioSys::Active() || fDSoundBuffer )
+    if (!plgAudioSys::Active() || fDSoundBuffer)
         return false;
 
-    if( fPriority > plgAudioSys::GetPriorityCutoff() )
+    if (fPriority > plgAudioSys::GetPriorityCutoff())
         return false;   // Don't set the failed flag, just return
 
     plWAVHeader header;
     header.fFormatTag = 0x1; // WAVE_FORMAT_PCM
     header.fBitsPerSample  = 16;
     header.fNumChannels = 1;
-    header.fNumSamplesPerSec = FREQUENCY;
+    header.fNumSamplesPerSec = fSampleRate;
     header.fBlockAlign = header.fNumChannels * header.fBitsPerSample / 8;
     header.fAvgBytesPerSec = header.fNumSamplesPerSec * header.fBlockAlign;
 
@@ -419,7 +412,7 @@ bool plVoiceSound::LoadSound( bool is3D )
     fDSoundBuffer->SetupVoiceSource();
 
     IRefreshParams();
-    IRefreshEAXSettings( true );
+    IRefreshEAXSettings(true);
     fDSoundBuffer->SetScalarVolume(1.0);
     return true;
 }
@@ -427,10 +420,20 @@ bool plVoiceSound::LoadSound( bool is3D )
 void plVoiceSound::Play()
 {
     fPlaying = true;
-    if( IWillBeAbleToPlay() ) {
+    if (IWillBeAbleToPlay()) {
         IRefreshParams();
         SetVolume(fDesiredVol);
         IActuallyPlay();
+    }
+}
+
+void plVoiceSound::SetSampleRate(uint32_t rate)
+{
+    if (fSampleRate != rate) {
+        fSampleRate = rate;
+        delete fDSoundBuffer;
+        fDSoundBuffer = nullptr;
+        fReallyPlaying = false;
     }
 }
 
@@ -446,8 +449,9 @@ void plVoiceSound::AddVoiceData(const void *data, size_t bytes)
 {
     unsigned size;
     unsigned bufferId;
+
     if (!fDSoundBuffer) {
-        if(!LoadSound(true))
+        if (!LoadSound(true))
             return;
     }
 

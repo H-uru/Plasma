@@ -550,7 +550,7 @@ bool plDSoundBuffer::VoiceFillBuffer(const void *data, size_t bytes, unsigned bu
     unsigned int size = bytes < STREAM_BUFFER_SIZE ? bytes : STREAM_BUFFER_SIZE;
 
     ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
-    alBufferData( bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec );
+    alBufferData(bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec);
     if( (error = alGetError()) != AL_NO_ERROR )
     {
         plStatusLog::AddLineS("audio.log", "Failed to copy data to sound buffer %d", error);

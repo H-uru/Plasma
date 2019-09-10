@@ -76,6 +76,7 @@ public:
     virtual bool IsUsingVBR() const = 0;
     virtual int GetQuality() const = 0;
     virtual void SetComplexity(uint8_t c) = 0;
+    virtual bool SetSampleRate(uint32_t rate) = 0;
 
 public:
     static plVoiceEncoder* GetOpus();

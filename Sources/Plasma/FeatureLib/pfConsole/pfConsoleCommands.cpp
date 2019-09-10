@@ -3370,16 +3370,6 @@ PF_CONSOLE_CMD( Audio,      // groupName
 
 }
 
-PF_CONSOLE_CMD( Audio,      // groupName
-               EnableVoiceNetBroadcast,     // fxnName
-               "bool b", // paramList
-               "turn voice-over-net on and off" )   // helpString
-{
-    bool b = params[0];
-    plVoiceRecorder::EnableNetVoice(b);
-
-}
-
 PF_CONSOLE_CMD(Audio,                                // groupName
                SetVoiceCodec,                        // fxnName
                "string codec",                       // paramList
@@ -3394,6 +3384,14 @@ PF_CONSOLE_CMD(Audio,                                // groupName
         plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
     else
         PrintString("Invalid codec specified");
+}
+
+PF_CONSOLE_CMD(Audio,                                // groupName
+               SetVoiceSampleRate,                   // fxnName
+               "int rate",                           // paramList
+               "Sets the voice chat sampling rate")  // helpString
+{
+    plVoiceRecorder::SetSampleRate((int)params[0]);
 }
 
 PF_CONSOLE_CMD( Audio,                              // groupName
