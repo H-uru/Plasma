@@ -5140,3 +5140,8 @@ plMipmap *hsMaterialConverter::GetStaticColorTexture(Color c, plLocation &loc)
 
     return texture;
 }
+
+static inline ST_FORMAT_TYPE(CStr)
+{
+    ST_FORMAT_FORWARD(value.data());
+}

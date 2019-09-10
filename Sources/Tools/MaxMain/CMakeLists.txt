@@ -189,6 +189,7 @@ target_link_libraries(MaxMain pnUUID)
 
 if (WIN32)
     target_link_libraries(MaxMain comctl32)
+    target_link_libraries(MaxMain crypt32)
     target_link_libraries(MaxMain rpcrt4)
     target_link_libraries(MaxMain shlwapi)
     target_link_libraries(MaxMain strmiids)

@@ -40,7 +40,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 
-#include <string_theory/stl_formatter>
+#include <string_theory/formatter>
 
 #include "plPhysicalControllerCore.h"
 #include "plAvBrainCritter.h"
