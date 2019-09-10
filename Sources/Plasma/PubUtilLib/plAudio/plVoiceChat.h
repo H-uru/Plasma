@@ -147,6 +147,7 @@ public:
     static void     SetVoiceFlags(uint8_t flags) { fVoiceFlags = flags; }
     static void     SetSampleRate(uint32_t s);
     static void     SetSquelch(float f) { fRecordThreshhold = f; }
+    static void     ShowGraph(bool b);
 
     static void IncreaseRecordingThreshhold();
     static void DecreaseRecordingThreshhold();
@@ -165,6 +166,7 @@ private:
     bool                    fMikeJustClosed;
     plPlate*                fDisabledIcon;
     plPlate*                fTalkIcon;
+    float                   fCaptureOpenSecs;
 
     static bool             fMicAlwaysOpen;
     static bool             fShowIcons;
@@ -172,6 +174,7 @@ private:
     static bool             fRecording;
     static uint8_t          fVoiceFlags;
     static float            fRecordThreshhold;
+    static plGraphPlate*    fGraph;
 };
 
 #endif //plVoiceChat_h

@@ -3434,6 +3434,14 @@ PF_CONSOLE_CMD( Audio,
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
+PF_CONSOLE_CMD(Audio,
+               ShowVoiceGraph,
+               "bool b",
+               "Show voice chat graph")
+{
+    plVoiceRecorder::ShowGraph((bool)params[0]);
+}
+
 PF_CONSOLE_CMD( Audio, NextDebugPlate, "", "Cycles through the volume displays for all registered sounds" )
 {
     plgAudioSys::NextDebugSound();

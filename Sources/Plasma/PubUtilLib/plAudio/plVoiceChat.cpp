@@ -71,6 +71,7 @@ uint8_t                 plVoiceRecorder::fVoiceFlags =              plVoiceFlags
 float                   plVoiceRecorder::fRecordThreshhold =        200.0f;
 bool                    plVoiceRecorder::fShowIcons =               true;
 bool                    plVoiceRecorder::fMicAlwaysOpen =           false;
+plGraphPlate*           plVoiceRecorder::fGraph =                   nullptr;
 bool                    plVoicePlayer::fEnabled =                   true;
 
 plVoiceEncoder* plVoiceRecorder::GetEncoder()
@@ -83,15 +84,16 @@ plVoiceEncoder* plVoiceRecorder::GetEncoder()
 }
 
 plVoiceRecorder::plVoiceRecorder()
+    : fMicOpen(), fMikeJustClosed(), fDisabledIcon(), fTalkIcon(), fCaptureOpenSecs()
 {
-    plPlateManager::Instance().CreatePlate( &fDisabledIcon );
-    fDisabledIcon->CreateFromResource( MICROPHONE );
+    plPlateManager::Instance().CreatePlate(&fDisabledIcon);
+    fDisabledIcon->CreateFromResource(MICROPHONE);
     fDisabledIcon->SetPosition(-0.90, -0.90);
     fDisabledIcon->SetSize(0.064, 0.064, true);
     fDisabledIcon->SetVisible(false);
 
-    plPlateManager::Instance().CreatePlate( &fTalkIcon );
-    fTalkIcon->CreateFromResource( TALKING );
+    plPlateManager::Instance().CreatePlate(&fTalkIcon);
+    fTalkIcon->CreateFromResource(TALKING);
     fTalkIcon->SetPosition(-0.9,-0.9);
     fTalkIcon->SetSize(0.064, 0.064, true);
     fTalkIcon->SetVisible(false);
@@ -99,13 +101,27 @@ plVoiceRecorder::plVoiceRecorder()
 
 plVoiceRecorder::~plVoiceRecorder()
 {
-    if(fDisabledIcon)
-        plPlateManager::Instance().DestroyPlate( fDisabledIcon);
+    if (fDisabledIcon)
+        plPlateManager::Instance().DestroyPlate(fDisabledIcon);
     fDisabledIcon = nullptr;
 
     if (fTalkIcon)
-        plPlateManager::Instance().DestroyPlate( fTalkIcon );
+        plPlateManager::Instance().DestroyPlate(fTalkIcon );
     fTalkIcon = nullptr;
+}
+
+void plVoiceRecorder::ShowGraph(bool b)
+{
+    if (!fGraph) {
+        plPlateManager::Instance().CreateGraphPlate(&fGraph);
+        fGraph->SetDataRange(0, 100, 100);
+        fGraph->SetLabelText("Voice Send Rate");
+        fGraph->SetTitle("Voice Recorder");
+    }
+
+    fGraph->SetSize(.4f, .25f);
+    fGraph->SetPosition(-.5f, 0.f);
+    fGraph->SetVisible(b);
 }
 
 void plVoiceRecorder::IncreaseRecordingThreshhold()
@@ -188,10 +204,14 @@ void plVoiceRecorder::SetComplexity(int c)
 void plVoiceRecorder::SetMicOpen(bool b)
 {
     if (fRecording) {
-        if (b)
+        if (b) {
             plgAudioSys::Sys()->BeginCapture();
-        else
+            fCaptureOpenSecs = hsTimer::GetSeconds<float>();
+        } else {
             plgAudioSys::Sys()->EndCapture();
+            if (fGraph)
+                fGraph->SetTitle("Voice Recorder");
+        }
         DrawTalkIcon(b);
         fMicOpen = b;
     } else {
@@ -203,9 +223,9 @@ void plVoiceRecorder::DrawDisabledIcon(bool b)
 {
     if (!fDisabledIcon) {
         // at least try and make one here...
-        plPlateManager::Instance().CreatePlate( &fDisabledIcon );
+        plPlateManager::Instance().CreatePlate(&fDisabledIcon);
         if (fDisabledIcon) {
-            fDisabledIcon->CreateFromResource( MICROPHONE );
+            fDisabledIcon->CreateFromResource(MICROPHONE);
             fDisabledIcon->SetPosition(-0.90, -0.90);
             fDisabledIcon->SetSize(0.064, 0.064, true);
             fDisabledIcon->SetVisible(false);
@@ -221,7 +241,7 @@ void plVoiceRecorder::DrawDisabledIcon(bool b)
 void plVoiceRecorder::DrawTalkIcon(bool b)
 {
     if (!fTalkIcon) {
-        plPlateManager::Instance().CreatePlate( &fTalkIcon );
+        plPlateManager::Instance().CreatePlate(&fTalkIcon);
         if (fTalkIcon) {
             fTalkIcon->CreateFromResource( TALKING );
             fTalkIcon->SetPosition(-0.9,-0.9);
@@ -253,6 +273,7 @@ void plVoiceRecorder::Update(double time)
     }
 
     uint32_t samples = plgAudioSys::Sys()->GetCaptureSampleCount();
+    uint32_t bytesSent = 0;
     if (samples > 0) {
         if (samples >= EncoderFrameSize) {
             // The point of this is to ensure that we only capture full frames for the encoder
@@ -275,12 +296,14 @@ void plVoiceRecorder::Update(double time)
                 if (plNetClientApp::GetInstance()->GetFlagsBit(plNetClientApp::kEchoVoice))
                     pMsg.SetBit(plNetMessage::kEchoBackToSender);
                 plNetClientApp::GetInstance()->SendMsg(&pMsg);
+                bytesSent = totalSamples * sizeof(int16_t);
             } else {
                 std::unique_ptr<uint8_t> packet{ new uint8_t[totalSamples] }; // packet to send encoded data in
                 int packedLength = 0;                                         // the size of the packet that will be sent
                 int numFrames = totalSamples / EncoderFrameSize;              // number of frames to be encoded
 
                 encoder->Encode(buffer.get(), numFrames, packedLength, packet.get(), totalSamples);
+                bytesSent = packedLength;
 
                 if (packedLength) {
                     plNetMsgVoice pMsg;
@@ -294,6 +317,15 @@ void plVoiceRecorder::Update(double time)
                     plNetClientApp::GetInstance()->SendMsg(&pMsg);
                 }
             }
+
+            float now = hsTimer::GetSeconds<float>();
+            if (fGraph) {
+                float sendRate = ((float)bytesSent / (now - fCaptureOpenSecs)) / 1024.f;
+                // Scale the graph such that 8 KiB/s is the max
+                fGraph->AddData((int32_t)((100.f * sendRate) / 8.f));
+                fGraph->SetTitle(ST::format("{.2f} KiB/s", sendRate).c_str());
+            }
+            fCaptureOpenSecs = now;
         }
     }
 }
