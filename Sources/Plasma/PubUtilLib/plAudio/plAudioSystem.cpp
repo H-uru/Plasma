@@ -1044,7 +1044,7 @@ bool plAudioSystem::EndCapture()
     ALCsizei samples;
     alcGetIntegerv(fCaptureDevice, ALC_CAPTURE_SAMPLES, sizeof(samples), &samples);
     if (samples) {
-        std::unique_ptr<int16_t> buf{ new int16_t[samples] };
+        auto buf = std::make_unique<int16_t[]>(samples);
         alcCaptureSamples(fCaptureDevice, buf.get(), samples);
     }
 

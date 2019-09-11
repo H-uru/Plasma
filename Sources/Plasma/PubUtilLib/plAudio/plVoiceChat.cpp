@@ -285,7 +285,7 @@ void plVoiceRecorder::Update(double time)
             totalSamples = std::min(totalSamples, MAX_DATA_SIZE);
 
             // convert to correct units:
-            std::unique_ptr<int16_t> buffer{ new int16_t[totalSamples] };
+            auto buffer = std::make_unique<int16_t[]>(totalSamples);
             plgAudioSys::Sys()->CaptureSamples(totalSamples, buffer.get());
 
             if (!encoder) {
@@ -298,7 +298,7 @@ void plVoiceRecorder::Update(double time)
                 plNetClientApp::GetInstance()->SendMsg(&pMsg);
                 bytesSent = totalSamples * sizeof(int16_t);
             } else {
-                std::unique_ptr<uint8_t> packet{ new uint8_t[totalSamples] }; // packet to send encoded data in
+                auto packet = std::make_unique<uint8_t[]>(totalSamples);      // packet to send encoded data in
                 int packedLength = 0;                                         // the size of the packet that will be sent
                 int numFrames = totalSamples / EncoderFrameSize;              // number of frames to be encoded
 
@@ -356,7 +356,7 @@ void plVoicePlayer::PlaybackVoiceMessage(const void* data, size_t size, int numF
         if (decoder) {
             int numBytes;
             int bufferSize = numFramesInBuffer * decoder->GetFrameSize();
-            std::unique_ptr<short> nBuff{ new short[bufferSize] };
+            auto nBuff = std::make_unique<short[]>(bufferSize);
             if (decoder->Decode(data, size, numFramesInBuffer, numBytes, nBuff.get()))
                 PlaybackUncompressedVoiceMessage(nBuff.get(), numBytes, decoder->GetSampleRate());
         }

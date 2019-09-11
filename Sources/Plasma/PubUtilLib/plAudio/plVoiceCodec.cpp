@@ -171,16 +171,16 @@ bool plSpeex::Encode(const short* data, int numFrames, int& packedLength, void* 
     packedLength = 0;
 
     const short* pData = data;                               // pointer to input data
-    std::unique_ptr<float> input{ new float[fFrameSize] };   // input to speex - used as am intermediate array since speex requires float data
+    auto input = std::make_unique<float[]>(fFrameSize);      // input to speex - used as am intermediate array since speex requires float data
     uint8_t frameLength;                                     // number of bytes speex compressed frame to
-    std::unique_ptr<char> frameData{ new char[fFrameSize] }; // holds one frame of encoded data
+    auto frameData = std::make_unique<char[]>(fFrameSize);   // holds one frame of encoded data
 
     // encode data
     hsRAMStream stream;
     for (int i = 0; i < numFrames; i++) {
         // convert input data to floats
         for (int j = 0; j < fFrameSize; j++)
-            input.get()[j] = pData[j];
+            input[j] = pData[j];
 
         speex_bits_reset(fBits.get());          // reset bit structure
 
@@ -194,7 +194,7 @@ bool plSpeex::Encode(const short* data, int numFrames, int& packedLength, void* 
         stream.Write(frameLength, frameData.get());
         packedLength += frameLength;           // update length
 
-        pData += fFrameSize;                    // move input pointer
+        pData += fFrameSize;                   // move input pointer
     }
 
     // copy to output buffer
@@ -207,16 +207,17 @@ bool plSpeex::Encode(const short* data, int numFrames, int& packedLength, void* 
 
 bool plSpeex::Decode(const void* data, int size, int numFrames, int& numOutputBytes, short* out)
 {
-    if (!fInitialized) return false;
+    if (!fInitialized)
+        return false;
     numOutputBytes = 0;
 
     hsReadOnlyStream stream(size, data);
-    std::unique_ptr<float> speexOutput{ new float[fFrameSize] };        // holds output from speex
+    auto speexOutput = std::make_unique<float[]>(fFrameSize);           // holds output from speex
     size_t outputCount = (numFrames * fFrameSize);                      // length of decoded voice data(out) in samples
     short* pOut = out;                                                  // pointer to output short buffer
 
     // create buffer for input data
-    std::unique_ptr<char> frameData{ new char[fFrameSize] };            // holds the current frames data to be decoded
+    auto frameData = std::make_unique<char[]>(fFrameSize);              // holds the current frames data to be decoded
     uint8_t frameLen;                                                   // holds the length of the current frame being decoded.
 
     // Decode data
@@ -229,7 +230,7 @@ bool plSpeex::Decode(const void* data, int size, int numFrames, int& numOutputBy
         speex_decode(fDecoderState, fBits.get(), speexOutput.get());    // decode data
 
         for (int j = 0; j < fFrameSize; j++)
-            pOut[j] = (short)(speexOutput.get()[j]);                    // convert floats to shorts
+            pOut[j] = (short)(speexOutput[j]);                          // convert floats to shorts
         pOut += fFrameSize;
     }
 
