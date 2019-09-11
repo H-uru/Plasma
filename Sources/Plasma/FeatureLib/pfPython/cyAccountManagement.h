@@ -61,7 +61,6 @@ public:
     static void         AddPlasmaMethods(std::vector<PyMethodDef> &methods);
     static void         AddPlasmaConstantsClasses(PyObject *m);
 
-    static bool         IsSubscriptionActive();
     static PyObject*    GetPlayerList();
     static ST::string   GetAccountName();
     static void         CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode);
@@ -69,7 +68,6 @@ public:
     static void         DeletePlayer(unsigned playerId);
     static void         SetActivePlayer(unsigned playerId);
     static bool         IsActivePlayerSet();
-    static void         UpgradeVisitorToExplorer(unsigned playerId);
     static void         ChangePassword(const ST::string& password);
 };
 
