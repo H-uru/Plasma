@@ -57,8 +57,6 @@ import PlasmaControlKeys
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 
-import xVisitorUtils #For non-subscription based players
-
 # define the attributes that will be entered in max
 #PALGUI = ptAttribGUIDialog(2,"The PAL GUI")
 actBookshelf = ptAttribActivator(3, "Actvtr:Bookshelf")
@@ -131,11 +129,6 @@ class psnlBookshelf(ptModifier):
         version = 10
         self.version = version
         print "__init__psnlBookshelf v.", version
-        PtLoadDialog(xVisitorUtils.kVisitorNagDialog)
-
-
-    def __del__(self):
-        PtUnloadDialog(xVisitorUtils.kVisitorNagDialog)
 
 
     def OnFirstUpdate(self):
@@ -1103,14 +1096,6 @@ class psnlBookshelf(ptModifier):
                 objBookPicked = None
             elif vault.inMyPersonalAge():
                 if bookAge == "Neighborhood":
-                    #Don't allow visitors (i.e. non-subscribers) to delete their neighborhood
-                    if not PtIsSubscriptionActive():
-                        PtShowDialog(xVisitorUtils.kVisitorNagDialog)
-                        actTray.enable()
-                        actBook.enable()
-                        actLock.enable()
-                        return
-                    
                     PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteNeighborhoodBook"))
                 else:
                     PtYesNoDialog(self.key, PtGetLocalizedString("Personal.Bookshelf.DeleteBook"))
@@ -1686,13 +1671,6 @@ class psnlBookshelf(ptModifier):
             link = ptAgeLinkStruct()
             link.setAgeInfo(info)
             
-        elif link.getAgeInfo().getAgeFilename() == "Neighborhood" and not PtIsSubscriptionActive():
-            info = ptAgeInfoStruct()
-            info.setAgeFilename("Neighborhood")
-            info.setAgeInstanceGuid("366f9aa1-c4c9-4c4c-a23a-cbe6896cc3b9")
-            link = ptAgeLinkStruct()
-            link.setAgeInfo(info)
-
         info = link.getAgeInfo()
         ageName = info.getAgeFilename()
 
@@ -1730,7 +1708,7 @@ class psnlBookshelf(ptModifier):
         # If in my personal age, link with kOwnedBook rules.
         #   This will startup a new, private age instance for me.
         if (vault.inMyPersonalAge()):
-            if ageName == "Ahnonay" or (ageName == "Neighborhood" and not PtIsSubscriptionActive()):
+            if ageName == "Ahnonay":
                 als.setLinkingRules( PtLinkingRules.kBasicLink )
             elif IsChildLink:
                 print "psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName
