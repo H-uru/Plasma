@@ -48,7 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static constexpr int kSpeexSampleRate = 8000;
 
-static constexpr int kOpusEncoderSampleRate =  8000;
+static constexpr int kOpusEncoderSampleRate = 16000;
 static constexpr int kOpusDecoderSampleRate = 48000;
 
 /*****************************************************************************
