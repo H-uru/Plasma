@@ -29,7 +29,6 @@ Plasma currently requires the following third-party libraries:
 - eXpat - http://expat.sourceforge.net/
 - libJPEG - http://libjpeg-turbo.virtualgl.org/
 - libPNG - http://www.libpng.org/
-- speex - http://www.speex.org/downloads/
 - zlib - http://zlib.net/
 - libcurl - http://curl.haxx.se/
 - string_theory - http://github.com/zrax/string_theory/
@@ -41,7 +40,8 @@ The following libraries are optional:
 - (for plFontConverter) Freetype - http://freetype.org/
 - (for the GUI tools) Qt5 - http://www.qt.io/download-open-source/
 - (for video) VPX - http://www.webmproject.org/
-- (for video) Opus - http://www.opus-codec.org/
+- (for video and voice chat) Opus - http://www.opus-codec.org/
+- (for legacy voice chat) speex - http://www.speex.org/downloads/
 
 Reducing the use of proprietary libraries is a focus of development and should be expected to change.
 
