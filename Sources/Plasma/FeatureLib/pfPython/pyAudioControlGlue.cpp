@@ -191,23 +191,6 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, setTwoStageLOD, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, useHardwareAcceleration, args)
-{
-    char stateFlag;
-    if (!PyArg_ParseTuple(args, "b", &stateFlag))
-    {
-        PyErr_SetString(PyExc_TypeError, "useHardwareAcceleration expects a boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->UseHardwareAcceleration(stateFlag != 0);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isHardwareAccelerated)
-{
-    PYTHON_RETURN_BOOL(self->fThis->IsHardwareAccelerated());
-}
-
 PYTHON_METHOD_DEFINITION(ptAudioControl, useEAXAcceleration, args)
 {
     char stateFlag;
@@ -225,15 +208,9 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isUsingEAXAcceleration)
     PYTHON_RETURN_BOOL(self->fThis->IsUsingEAXAcceleration());
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, supportsEAX, args)
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isEAXSupported)
 {
-    char *deviceName;
-    if (!PyArg_ParseTuple(args, "s", &deviceName))
-    {
-        PyErr_SetString(PyExc_TypeError, "supportsEAX expects a string");
-        PYTHON_RETURN_ERROR;
-    }
-    PYTHON_RETURN_BOOL(self->fThis->SupportEAX(deviceName));
+    PYTHON_RETURN_BOOL(self->fThis->IsEAXSupported());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, muteAll, MuteAll)
@@ -356,30 +333,6 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, squelchLevel, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, recordFrame, args)
-{
-    long frameSize;
-    if (!PyArg_ParseTuple(args, "l", &frameSize))
-    {
-        PyErr_SetString(PyExc_TypeError, "recordFrame expects a long");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->RecordFrame(frameSize);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION(ptAudioControl, recordSampleRate, args)
-{
-    long sampleRate;
-    if (!PyArg_ParseTuple(args, "l", &sampleRate))
-    {
-        PyErr_SetString(PyExc_TypeError, "recordSampleRate expects a long");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->RecordSampleRate(sampleRate);
-    PYTHON_RETURN_NONE;
-}
-
 PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPriorityCutoff)
 {
     return PyInt_FromLong(self->fThis->GetPriorityCutoff());
@@ -397,61 +350,31 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, setPriorityCutoff, args)
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, setMode, args)
+PYTHON_METHOD_DEFINITION(ptAudioControl, setPlaybackDevice, args)
 {
-    int mode;
-    if (!PyArg_ParseTuple(args, "i", &mode))
-    {
-        PyErr_SetString(PyExc_TypeError, "setMode expects an integer");
+    PyObject* devicename;
+    int restart = 0;
+    if (!PyArg_ParseTuple(args, "O|i", &devicename, &restart) || !PyString_CheckEx(devicename)) {
+        PyErr_SetString(PyExc_TypeError, "setPlaybackDevice expects a string and an optional bool");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetAudioSystemMode(mode);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getMode)
-{
-    return PyInt_FromLong((long)self->fThis->GetAudioSystemMode());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getHighestMode)
-{
-    return PyInt_FromLong((long)self->fThis->GetHighestAudioMode());
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getNumAudioDevices)
-{
-    return PyInt_FromLong(self->fThis->GetNumAudioDevices());
-}
-
-PYTHON_METHOD_DEFINITION(ptAudioControl, getAudioDeviceName, args)
-{
-    int index;
-    if (!PyArg_ParseTuple(args, "i", &index))
-    {
-        PyErr_SetString(PyExc_TypeError, "getAudioDeviceName expects an int");
-        PYTHON_RETURN_ERROR;
-    }
-    return PyString_FromString(self->fThis->GetAudioDeviceName(index));
-}
-
-PYTHON_METHOD_DEFINITION(ptAudioControl, setDeviceName, args)
-{
-    char *devicename = NULL;
-    int restart;
-    if (!PyArg_ParseTuple(args, "si", &devicename, &restart))
-    {
-        PyErr_SetString(PyExc_TypeError, "setDeviceName expects a string and a bool");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->SetDeviceName(devicename, restart != 0);
+    self->fThis->SetPlaybackDevice(PyString_AsStringEx(devicename), restart != 0);
     PYTHON_RETURN_NONE;
 }
 
 
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getDeviceName)
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevice)
 {
-    return PyString_FromString(self->fThis->GetDeviceName());
+    return PyUnicode_FromSTString(self->fThis->GetPlaybackDevice());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevices)
+{
+    std::vector<ST::string> devices = self->fThis->GetPlaybackDevices();
+    PyObject* tup = PyTuple_New(devices.size());
+    for (size_t i = 0; i < devices.size(); ++i)
+        PyTuple_SET_ITEM(tup, i, PyUnicode_FromSTString(devices[i]));
+    return tup;
 }
 
 PYTHON_START_METHODS_TABLE(ptAudioControl)
@@ -479,13 +402,16 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD(ptAudioControl, setLoadOnDemand, "Params: state\nEnables or disables the load on demand for sounds."),
     PYTHON_METHOD(ptAudioControl, setTwoStageLOD, "Params: state\nEnables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.\n"
                 "...Less of a performance hit, harder on memory."),
-    PYTHON_METHOD(ptAudioControl, useHardwareAcceleration, "Params: state\nEnables or disables audio hardware acceleration."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isHardwareAccelerated, "Is audio hardware acceleration enabled? Returns 1 if true otherwise returns 0."),
     PYTHON_METHOD(ptAudioControl, useEAXAcceleration, "Params: state\nEnables or disables EAX sound acceleration (requires hardware acceleration)."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isUsingEAXAcceleration, "Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, isEAXSupported, "Is EAX acceleration supported by the current device?"),
     PYTHON_BASIC_METHOD(ptAudioControl, muteAll, "Mutes all sounds."),
     PYTHON_BASIC_METHOD(ptAudioControl, unmuteAll, "Unmutes all sounds."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isMuted, "Are all sounds muted? Returns 1 if true otherwise returns 0."),
+    PYTHON_METHOD(ptAudioControl, setPlaybackDevice, "Params: devicename,restart\nSets audio system output device by name, and optionally restarts it"),
+    PYTHON_METHOD(ptAudioControl, getPlaybackDevice, "Gets the name for the device being used by the audio system"),
+    PYTHON_METHOD_NOARGS(ptAudioControl, getPlaybackDevices, "Gets the names of all available audio playback devices"),
+
     PYTHON_METHOD_NOARGS(ptAudioControl, canSetMicLevel, "Can the microphone level be set? Returns 1 if true otherwise returns 0."),
     PYTHON_METHOD(ptAudioControl, setMicLevel, "Params: level\nSets the microphone recording level (0.0 to 1.0)."),
     PYTHON_METHOD_NOARGS(ptAudioControl, getMicLevel, "Returns the microphone recording level (0.0 to 1.0)."),
@@ -499,18 +425,8 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_BASIC_METHOD(ptAudioControl, hideIcons, "Hides (disables) the voice recording icons."),
     PYTHON_METHOD(ptAudioControl, pushToTalk, "Params: state\nEnables or disables 'push-to-talk'."),
     PYTHON_METHOD(ptAudioControl, squelchLevel, "Params: level\nSets the squelch level."),
-    PYTHON_METHOD(ptAudioControl, recordFrame, "Params: size\nSets the voice packet frame size."),
-    PYTHON_METHOD(ptAudioControl, recordSampleRate, "Params: sampleRate\nSets the recording sample rate."),
     PYTHON_METHOD_NOARGS(ptAudioControl, getPriorityCutoff, "Returns current sound priority"),
     PYTHON_METHOD(ptAudioControl, setPriorityCutoff, "Params: priority\nSets the sound priority"),
-    PYTHON_METHOD(ptAudioControl, setMode, "Params: mode\nSets the audio system mode"),
-    PYTHON_METHOD_NOARGS(ptAudioControl, getMode, "Gets the audio system mode"),
-    PYTHON_METHOD_NOARGS(ptAudioControl, getHighestMode, "Gets the highest possible audio system mode"),
-    PYTHON_METHOD_NOARGS(ptAudioControl, getNumAudioDevices, "Returns the number of available audio devices."),
-    PYTHON_METHOD(ptAudioControl, getAudioDeviceName, "Params: index\nGets the name of audio device for the given index"),
-    PYTHON_METHOD(ptAudioControl, setDeviceName, "Params: devicename,restart\nSets the device name for the audio system, and optionally restarts it"),
-    PYTHON_METHOD(ptAudioControl, getDeviceName, "Gets the name for the device being used by the audio system"),
-    PYTHON_METHOD(ptAudioControl, supportsEAX, "Returns true or false based on whether or not a the device specified supports EAX"),
     PYTHON_METHOD(ptAudioControl, enableVoiceChat, "Params: state\nEnables or disables voice chat."),
 
 PYTHON_END_METHODS_TABLE;

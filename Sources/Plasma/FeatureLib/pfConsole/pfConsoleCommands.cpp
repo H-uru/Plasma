@@ -3102,12 +3102,6 @@ PF_CONSOLE_CMD( Audio, Enable, "bool on", "Switch DirectX Audio on or off at run
     plgAudioSys::Activate( on );
 }
 
-PF_CONSOLE_CMD( Audio, UseHardware, "bool on", "Enable audio hardware acceleration")
-{
-    bool on = params[0];
-    plgAudioSys::SetUseHardware( on );
-}
-
 PF_CONSOLE_CMD( Audio, UseEAX, "bool on", "Enable EAX sound acceleration (requires hardware acceleration)")
 {
     bool on = params[0];
@@ -3208,14 +3202,6 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
     PrintString(msg.c_str());
 }
 
-PF_CONSOLE_CMD( Audio, Set2D3DBias, "float bias", "Sets the 2D/3D bias when not using hardware acceleration.")
-{
-
-    float    bias = (float)(float)params[ 0 ];
-    plgAudioSys::Set2D3DBias( bias );
-
-}
-
 PF_CONSOLE_CMD( Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Direct sounds buffers in use")
 {
     plgAudioSys::ShowNumBuffers((bool)params[0]);
@@ -3223,7 +3209,7 @@ PF_CONSOLE_CMD( Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Dire
 
 PF_CONSOLE_CMD( Audio, SetDeviceName, "string deviceName", "Meant for plClient init only")
 {
-    plgAudioSys::SetDeviceName(params[0]);      // this will set the name of the audio system device without actually reseting it
+    plgAudioSys::SetPlaybackDevice(ST::string::from_utf8(params[0]));
 }
 
 PF_CONSOLE_CMD( Audio,      // groupName

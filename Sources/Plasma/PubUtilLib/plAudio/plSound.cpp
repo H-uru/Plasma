@@ -549,15 +549,10 @@ void plSound::Update()
 float plSound::IGetChannelVolume() const
 {
     float channelVol = plgAudioSys::GetChannelVolume( (plgAudioSys::ASChannel)fType );
-
-    // if not using hardware acceleration then apply 2D/3D bias to non 3D sounds
-    if( !plgAudioSys::Hardware() && !IsPropertySet( kPropIs3DSound ) )
-        channelVol *= plgAudioSys::Get2D3Dbias();
-
-    if( IsPropertySet( kPropDontFade ) )
+    if (IsPropertySet(kPropDontFade))
         return channelVol;
-    
-    return channelVol * plgAudioSys::GetGlobalFadeVolume();
+    else
+        return channelVol * plgAudioSys::GetGlobalFadeVolume();
 }
 
 void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )

@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include "pyGlueHelpers.h"
+#include <string_theory/string>
+#include <vector>
 
 class pyAudioControl
 {
@@ -96,30 +98,24 @@ public:
     // ...Less of a performance hit, harder on memory.
     virtual void SetTwoStageLOD( bool state );
 
-    // Enable audio hardware acceleration
-    virtual void UseHardwareAcceleration( bool state );
-    virtual bool IsHardwareAccelerated();
-
-    // Enable EAX sound acceleration (requires hardware acceleration)
+    // Enable EAX sound acceleration
     virtual void UseEAXAcceleration( bool state );
     virtual bool IsUsingEAXAcceleration();
+    bool IsEAXSupported() const;
 
     // Mute or unmute all sounds
     virtual void MuteAll();
     virtual void UnmuteAll();
     virtual bool IsMuted();
 
-    virtual void SetAudioSystemMode(int mode);  // sets the current mode
-    virtual int  GetAudioSystemMode();          // returns the current mode
-    virtual int  GetHighestAudioMode();         // returns the highest mode the card is capable of handling
-    virtual int GetNumAudioDevices();
-    virtual const char *GetAudioDeviceName(int index);
-    virtual void SetDeviceName(const char *device, bool restart);
-    virtual const char *GetDeviceName();
+    void SetPlaybackDevice(const ST::string& device, bool restart);
+    ST::string GetPlaybackDevice() const;
 
+    std::vector<ST::string> GetPlaybackDevices() const;
 
 
     //------------------------
+
     // Voice Settings
 
     // Sets the microphone volume, in the range of 0 to 1
@@ -151,17 +147,8 @@ public:
     // Set the squelch level
     virtual void SquelchLevel( float level );
 
-    // Adjust voice packet frame size
-    virtual void RecordFrame( int32_t size );
-
-    // Set the sample rate for recording
-    virtual void RecordSampleRate( int32_t sample_rate );
-
     virtual uint8_t GetPriorityCutoff();
     virtual void  SetPriorityCutoff( uint8_t cut );
-
-    // does the device specified support EAX
-    virtual bool SupportEAX(const char *deviceName);
 
 };
 
