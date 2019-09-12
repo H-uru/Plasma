@@ -50,10 +50,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsGeometry3.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
-#define DEFAULT_AUDIO_DEVICE_NAME "Generic Software"
-
-typedef wchar_t WCHAR;
-
 class plSound;
 class plSoftSoundNode;
 class plgAudioSys;
@@ -95,24 +91,41 @@ public:
     void    Shutdown();
 
     void    SetActive( bool b );
-    
+
     void SetListenerPos(const hsPoint3 pos);
     void SetListenerVelocity(const hsVector3 vel);
     void SetListenerOrientation(const hsVector3 view, const hsVector3 up);
     void SetMaxNumberOfActiveSounds();      // sets the max number of active sounds based on the priority cutoff
     void SetDistanceModel(int i);
-    
+
     virtual bool MsgReceive(plMessage* msg);
     double GetTime();
-    
+
     void        NextDebugSound();
     hsPoint3    GetCurrListenerPos() const { return fCurrListenerPos; }
 
-    int         GetNumAudioDevices();
-    const char *GetAudioDeviceName(int index);
-    bool        SupportsEAX(const char *deviceName);
+    /**
+     * \brief Gets a vector of all available playback devices.
+     * This returns a vector of all playback devices available to OpenAL. If the enumerate all
+     * extension is available in the OpenAL implementation, it should include all audio endpoints
+     * on the system. Otherwise, the standard wrapper "devices" will be returned for the default
+     * endpoint.
+     */
+    std::vector<ST::string> GetPlaybackDevices() const;
 
-    void        SetFadeLength(float lengthSec);
+    /**
+     * \brief Gets the name of the default playback device.
+     * This returns the string name of the system's default audio playback device. If the enumerate
+     * all extension is available in the OpenAL implementation, this can be any of the audio endpoints
+     * on the system. Otherwise, the standard wrapper "device" will be returned for the default
+     * system audio endpoint.
+     */
+    ST::string GetDefaultPlaybackDevice() const;
+
+    /** Does the current playback device support EAX? */
+    bool IsEAXSupported() const { return fEAXSupported; }
+
+    void SetFadeLength(float lengthSec);
 
     /**
      * \brief Begin capturing audio samples.
@@ -128,7 +141,7 @@ protected:
 
     friend class plgAudioSys;
 
-    ALCdevice*     fDevice;
+    ALCdevice*     fPlaybackDevice;
     ALCcontext*    fContext;
     ALCdevice*     fCaptureDevice;
     uint32_t       fCaptureFrequency;
@@ -152,12 +165,11 @@ protected:
     bool                fAvatarPosSet;      // used for listener stuff
 
     bool                fDisplayNumBuffers;
-    
-    std::vector<DeviceDescriptor> fDeviceList;      // list of openal device names
 
     double          fStartFade;
     float           fFadeLength;
     unsigned int    fMaxNumSources;     // max openal sources
+    bool            fEAXSupported;
     double          fLastUpdateTimeMs;
 
     void    RegisterSoftSound( const plKey soundKey );
@@ -190,16 +202,7 @@ public:
         kDisableLeftSelect  = 0x00000002
     };
 
-    enum AudioMode
-    {
-        kDisabled,
-        kSoftware,
-        kHardware,
-        kHardwarePlusEAX,
-    };
     static void Init();
-    static bool Hardware() { return fUseHardware; }
-    static void SetUseHardware(bool b);
     static void SetActive(bool b);
     static void SetMuted( bool b );
     static void EnableEAX( bool b );
@@ -215,9 +218,6 @@ public:
 
     static void     SetChannelVolume( ASChannel chan, float vol );
     static float GetChannelVolume( ASChannel chan );
-
-    static void     Set2D3DBias( float bias );
-    static float Get2D3Dbias();
 
     static void     SetGlobalFadeVolume( float vol );
     static float GetGlobalFadeVolume() { return fGlobalFadeVolume; }
@@ -244,17 +244,19 @@ public:
 
     static void ShowNumBuffers(bool b) { if(fSys) fSys->fDisplayNumBuffers = b; }
 
-    static void SetAudioMode(AudioMode mode);
-    static int GetAudioMode();
     static bool LogStreamingUpdates() { return fLogStreamingUpdates; }
     static void SetLogStreamingUpdates(bool logUpdates) { fLogStreamingUpdates = logUpdates; }
-    static void SetDeviceName(const char *device, bool restart = false);
-    static const char *GetDeviceName() { return fDeviceName.c_str(); }
-    static int GetNumAudioDevices();
-    static const char *GetAudioDeviceName(int index);
-    static bool SupportsEAX(const char *deviceName);
     static void RegisterSoftSound( const plKey soundKey );
     static void UnregisterSoftSound( const plKey soundKey );
+
+    static ST::string GetPlaybackDevice() { return fPlaybackDeviceName; }
+
+    static void SetPlaybackDevice(const ST::string& name, bool restart = false)
+    {
+        fPlaybackDeviceName = name;
+        if (restart)
+            Restart();
+    }
 
     static bool IsRestarting() {return fRestarting;}
 
@@ -265,19 +267,18 @@ private:
     static bool                 fInit;
     static bool                 fActive;
     static bool                 fMuted;
-    static bool                 fUseHardware;
     static bool                 fDelayedActivate;
-    static float             fChannelVolumes[ kNumChannels ];
-    static float             fGlobalFadeVolume;
-    static uint32_t               fDebugFlags;
+    static float                fChannelVolumes[kNumChannels];
+    static float                fGlobalFadeVolume;
+    static uint32_t             fDebugFlags;
     static bool                 fEnableEAX;
-    static float             fStreamingBufferSize;
-    static uint8_t                fPriorityCutoff;
+    static float                fStreamingBufferSize;
+    static uint8_t              fPriorityCutoff;
     static bool                 fEnableExtendedLogs;
-    static float             fStreamFromRAMCutoff;
-    static float             f2D3DBias;
+    static float                fStreamFromRAMCutoff;
+    static float                f2D3DBias;
     static bool                 fLogStreamingUpdates;
-    static std::string          fDeviceName;
+    static ST::string           fPlaybackDeviceName;
     static bool                 fRestarting;
     static bool                 fMutedStateChange;
 

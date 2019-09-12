@@ -16,7 +16,6 @@ if(PLASMA_USE_SPEEX)
 endif()
 
 set(plAudio_SOURCES
-    plAudioCaps.cpp
     plAudioSystem.cpp
     plDSoundBuffer.cpp
     plEAXEffects.cpp
@@ -34,7 +33,6 @@ set(plAudio_SOURCES
 )
 
 set(plAudio_HEADERS
-    plAudioCaps.h
     plAudioCreatable.h
     plAudioSystem.h
     plDSoundBuffer.h

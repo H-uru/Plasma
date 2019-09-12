@@ -53,8 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAudio/plVoiceChat.h"
 #include "plAudio/plWinMicLevel.h"
 
-#include "plAudio/plAudioCaps.h"
-
 // Sets the master volume of a given audio channel
 void pyAudioControl::SetSoundFXVolume( float volume )
 {
@@ -217,19 +215,6 @@ void pyAudioControl::SetTwoStageLOD( bool state )
     plSound::SetLoadFromDiskOnDemand( !state );
 }
 
-
-// Enable audio hardware acceleration
-void pyAudioControl::UseHardwareAcceleration( bool state )
-{
-    plgAudioSys::SetUseHardware(state);
-}
-
-bool pyAudioControl::IsHardwareAccelerated()
-{
-    return plgAudioSys::Hardware();
-}
-
-
 // Enable EAX sound acceleration (requires hardware acceleration)
 void pyAudioControl::UseEAXAcceleration( bool state )
 {
@@ -239,6 +224,13 @@ void pyAudioControl::UseEAXAcceleration( bool state )
 bool pyAudioControl::IsUsingEAXAcceleration()
 {
     return plgAudioSys::UsingEAX();
+}
+
+bool pyAudioControl::IsEAXSupported() const
+{
+    if (plgAudioSys::Sys())
+        return plgAudioSys::Sys()->IsEAXSupported();
+    return false;
 }
 
 
@@ -256,11 +248,6 @@ void pyAudioControl::UnmuteAll()
 bool pyAudioControl::IsMuted()
 {
     return plgAudioSys::IsMuted();
-}
-
-bool pyAudioControl::SupportEAX(const char *deviceName)
-{
-    return plgAudioSys::SupportsEAX(deviceName);
 }
 
 
@@ -355,18 +342,6 @@ void pyAudioControl::SquelchLevel( float level )
     plVoiceRecorder::SetSquelch(level);
 }
 
-
-// Adjust voice packet frame size
-void pyAudioControl::RecordFrame( int32_t size )
-{
-}
-
-
-// Set the sample rate for recording
-void pyAudioControl::RecordSampleRate( int32_t sample_rate )
-{
-}
-
 uint8_t pyAudioControl::GetPriorityCutoff()
 {
     return plgAudioSys::GetPriorityCutoff();
@@ -377,75 +352,19 @@ void pyAudioControl::SetPriorityCutoff( uint8_t cut )
     plgAudioSys::SetPriorityCutoff( cut );
 }
 
-void pyAudioControl::SetAudioSystemMode(int mode)
+void pyAudioControl::SetPlaybackDevice(const ST::string& device, bool restart)
 {
-    switch (mode)
-    {
-    case plgAudioSys::kDisabled:
-        plgAudioSys::SetAudioMode(plgAudioSys::kDisabled);
-        break;
-    case plgAudioSys::kSoftware:
-        plgAudioSys::SetAudioMode(plgAudioSys::kSoftware);
-        break;
-    case plgAudioSys::kHardware:
-        plgAudioSys::SetAudioMode(plgAudioSys::kHardware);
-        break;
-    case plgAudioSys::kHardwarePlusEAX:
-        plgAudioSys::SetAudioMode(plgAudioSys::kHardwarePlusEAX);
-        break;
-    default:
-        break;
-    }
+    plgAudioSys::SetPlaybackDevice(device, restart);
 }
 
-int pyAudioControl::GetAudioSystemMode()
+ST::string pyAudioControl::GetPlaybackDevice() const
 {
-    return plgAudioSys::GetAudioMode();
+    return plgAudioSys::GetPlaybackDevice();
 }
 
-int pyAudioControl::GetHighestAudioMode()
+std::vector<ST::string> pyAudioControl::GetPlaybackDevices() const
 {
-    int highestMode = plgAudioSys::kDisabled;
-    plAudioCaps caps = plAudioCapsDetector::Detect();
-
-    if ( caps.IsEAXAvailable() )
-    {
-        highestMode = plgAudioSys::kHardwarePlusEAX;
-    }
-    else
-    {
-        if ( 1 )        // This is taken care of in the audio system
-        {
-            highestMode = plgAudioSys::kHardware;
-        }
-        else
-        {
-            if ( caps.IsAvailable() )
-            {
-                highestMode = plgAudioSys::kSoftware;
-            }
-        }
-    }
-
-    return highestMode;
-}
-
-int pyAudioControl::GetNumAudioDevices()
-{
-    return plgAudioSys::GetNumAudioDevices();
-}
-
-const char *pyAudioControl::GetAudioDeviceName(int index)
-{
-    return plgAudioSys::GetAudioDeviceName(index);
-}
-
-void pyAudioControl::SetDeviceName(const char *device, bool restart)
-{
-    plgAudioSys::SetDeviceName(device, restart);
-}
-
-const char * pyAudioControl::GetDeviceName()
-{
-    return plgAudioSys::GetDeviceName();
+    if (plgAudioSys::Sys())
+        return plgAudioSys::Sys()->GetPlaybackDevices();
+    return std::vector<ST::string>();
 }

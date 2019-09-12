@@ -54,7 +54,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #include "plSound.h"
-#include "plAudioCaps.h"
 #include "plAudioSystem.h"
 #include "plDSoundBuffer.h"
 #include "plEAXEffects.h"
@@ -70,8 +69,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKey.h"
 
+static const ST::string s_defaultDeviceMagic = ST_LITERAL("(Default Device)");
 
-#define SAFE_RELEASE(p) if(p){ p->Release(); p = nil; }
 #define FADE_TIME   3
 #define MAX_NUM_SOURCES 128
 #define UPDATE_TIME_MS 100
@@ -80,8 +79,6 @@ plProfile_CreateTimer("EAX Update", "Sound", SoundEAXUpdate);
 plProfile_CreateTimer("Soft Update", "Sound", SoundSoftUpdate);
 plProfile_CreateCounter("Max Sounds", "Sound", SoundMaxNum);
 plProfile_CreateTimer("AudioUpdate", "RenderSetup", AudioUpdate);
-
-typedef std::vector<DeviceDescriptor>::iterator DeviceIter;
 
 //// Internal plSoftSoundNode Class Definition ///////////////////////////////
 class plSoftSoundNode
@@ -166,22 +163,24 @@ int32_t   plAudioSystem::fMaxNumSounds = 16;
 int32_t   plAudioSystem::fNumSoundsSlop = 8;
 
 plAudioSystem::plAudioSystem() :
+fPlaybackDevice(),
 fCaptureFrequency(8000),
-fStartTime(0),
-fListenerInit(false),
-fSoftRegionSounds(nil),
-fActiveSofts(nil),
-fCurrDebugSound(nil),
-fDebugActiveSoundDisplay(nil),
-fUsingEAX(false),
-fRestartOnDestruct(false),
-fWaitingForShutdown(false),
-fActive(false),
-fDisplayNumBuffers(false),
-fStartFade(0),
+fStartTime(),
+fListenerInit(),
+fSoftRegionSounds(),
+fActiveSofts(),
+fCurrDebugSound(),
+fDebugActiveSoundDisplay(),
+fUsingEAX(),
+fRestartOnDestruct(),
+fWaitingForShutdown(),
+fActive(),
+fDisplayNumBuffers(),
+fStartFade(),
 fFadeLength(FADE_TIME),
-fCaptureDevice(nil),
-fLastUpdateTimeMs(0)
+fCaptureDevice(),
+fEAXSupported(),
+fLastUpdateTimeMs()
 {
     fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
     //fCommittedListenerPos.Set( -1.e30, -1.e30, -1.e30 );
@@ -192,157 +191,98 @@ plAudioSystem::~plAudioSystem()
 {
 }
 
-void plAudioSystem::IEnumerateDevices()
+std::vector<ST::string> plAudioSystem::GetPlaybackDevices() const
 {
-    fDeviceList.clear();
-    plStatusLog::AddLineS("audio.log", "--Audio Devices --" );
-    char *devices = (char *)alcGetString(nil, ALC_DEVICE_SPECIFIER);
-    int major, minor;
+    std::vector<ST::string> retval;
+    retval.push_back(s_defaultDeviceMagic);
 
-    while (*devices)
-    {
-        ALCdevice *device = alcOpenDevice(devices);
-        if (device) 
-        {
-            ALCcontext *context = alcCreateContext(device, NULL);
-            if (context)
-            {
-                alcMakeContextCurrent(context);
-                // if new actual device name isn't already in the list, then add it...
-                bool bNewName = true;
-                for (DeviceIter i = fDeviceList.begin(); i != fDeviceList.end(); i++) 
-                {
-                    if (strcmp((*i).GetDeviceName(), devices) == 0) 
-                    {
-                        bNewName = false;
-                    }
-                }
-                if ((bNewName)) 
-                {
-                    alcGetIntegerv(device, ALC_MAJOR_VERSION, sizeof(int), &major);
-                    alcGetIntegerv(device, ALC_MINOR_VERSION, sizeof(int), &minor);
-                    plStatusLog::AddLineSF("audio.log", "{} OpenAL ver: {}.{}", devices, major, minor );
-
-                    // filter out any devices that aren't openal 1.1 compliant
-                    if(major > 1 || (major == 1 && minor >= 1))
-                    {
-                        bool supportsEAX = false;
-#ifdef EAX_SDK_AVAILABLE
-                        if(alIsExtensionPresent((ALchar *)"EAX4.0") || alIsExtensionPresent((ALchar *) "EAX4.0Emulated"))       
-                        {
-                            supportsEAX = true;
-                        }
-#endif
-                        DeviceDescriptor desc(devices, supportsEAX);
-                        fDeviceList.push_back(desc);
-                    }
-                }
-                alcMakeContextCurrent(nil);
-                alcDestroyContext(context);
-            }
-            alcCloseDevice(device);
-        }
-        devices += strlen(devices) + 1;
+    const ALchar* devices = nullptr;
+    if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATE_ALL_EXT")) {
+        devices = alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER);
+    } else if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATION_EXT")) {
+        plStatusLog::AddLineS("audio.log", plStatusLog::kYellow, "ASYS: WARNING! ALC_ENUMERATE_ALL_EXT not available.");
+        devices = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
+    } else {
+        plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: Unable to fetch list of playback devices.");
+        return retval;
     }
 
-    DeviceDescriptor temp("", 0);
-    // attempt to order devices
-    for(unsigned i = 0; i < fDeviceList.size(); ++i)
-    {
-        if(strstr(fDeviceList[i].GetDeviceName(), "Software"))
-        {
-            temp = fDeviceList[i];
-            fDeviceList[i] = fDeviceList[0];
-            fDeviceList[0] = temp;
-        }
-        if(strstr(fDeviceList[i].GetDeviceName(), "Hardware"))
-        {   
-            temp = fDeviceList[i];
-            fDeviceList[i] = fDeviceList[1];
-            fDeviceList[1] = temp;
-        }
+    const ALchar* ptr = devices;
+    while (*ptr) {
+        ST::string deviceName = ST::string::from_utf8(ptr);
+
+        // No hardware devices, sorry not sorry.
+        // Also, amusing, in the MOULa OpenAL32.dll, a "Generic Hardware" device is exposed but
+        // is actually a software renderer.
+        if (!deviceName.starts_with("Generic Hardware"))
+            retval.push_back(deviceName);
+        ptr += deviceName.size() + sizeof(ALchar);
+    }
+    return retval;
+}
+
+ST::string plAudioSystem::GetDefaultPlaybackDevice() const
+{
+    if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATE_ALL_EXT")) {
+        return ST::string::from_utf8(alcGetString(nullptr, ALC_ALL_DEVICES_SPECIFIER));
+    } else if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATION_EXT")) {
+        return ST::string::from_utf8(alcGetString(nullptr, ALC_DEVICE_SPECIFIER));
+    } else {
+        plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: Unable to fetch the default playback device name.");
+        return ST::null;
     }
 }
 
 //// Init ////////////////////////////////////////////////////////////////////
-bool    plAudioSystem::Init()
+bool plAudioSystem::Init()
 {
     plgAudioSys::fRestarting = false;
-    static bool firstTimeInit = true; 
-    plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Init --" );
-    
+    plStatusLog::AddLineS("audio.log", plStatusLog::kBlue, "ASYS: -- Init --");
+
     fMaxNumSources = 0;
-    plStatusLog::AddLineS( "audio.log", plStatusLog::kGreen, "ASYS: Detecting caps..." );
     plSoundBuffer::Init();
 
-    // Set the maximum number of sounds based on priority cutoff slider
-    SetMaxNumberOfActiveSounds();
-    const char *deviceName = plgAudioSys::fDeviceName.c_str();
-    bool useDefaultDevice = true;
-    
-    if(firstTimeInit)
-    {
-        IEnumerateDevices();
-        firstTimeInit = false;
+    // Try to init using the provided device. Otherwise, fall back to the default.
+    std::vector<ST::string> devices = GetPlaybackDevices();
+    for (const ST::string& device : devices) {
+        if (device != s_defaultDeviceMagic)
+            plStatusLog::AddLineSF("audio.log", plStatusLog::kGreen, "ASYS: Found device {}", device);
     }
+    ST::string deviceName = plgAudioSys::fPlaybackDeviceName;
+    bool defaultDeviceRequested = (deviceName.empty() || deviceName == s_defaultDeviceMagic);
+    if (defaultDeviceRequested)
+        deviceName = s_defaultDeviceMagic;
 
-    if(!fDeviceList.size())
-    {
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: ERROR Unable to query any devices, is openal installed?" );
-        return false;
-    }
-
-    // shouldn't ever happen, but just in case
-    if(!deviceName)
-        plgAudioSys::SetDeviceName(DEFAULT_AUDIO_DEVICE_NAME);
-
-    for(DeviceIter i = fDeviceList.begin(); i != fDeviceList.end(); i++)
-    {
-        if(!strcmp((*i).GetDeviceName(), deviceName))
-        {
-            useDefaultDevice = false;
-            break;
+    plStatusLog::AddLineSF("audio.log", plStatusLog::kBlue, "ASYS: Device '{}' selected", deviceName);
+    if (!defaultDeviceRequested) {
+        auto deviceIt = std::find(devices.begin(), devices.end(), deviceName);
+        if (deviceIt == devices.end()) {
+            plStatusLog::AddLineS("audio.log", plStatusLog::kYellow, "ASYS: WARNING! Device not in list.");
         }
     }
-    
-    if(useDefaultDevice)
-    {
-        // if no device has been specified we will use the "Generic Software" device by default. If "Generic Software" is unavailable(which can happen) we select the first available device
-        // We want to use software by default since some audio cards have major problems with hardware + eax.
-        const char *defaultDev = fDeviceList.front().GetDeviceName();
-        for(DeviceIter i = fDeviceList.begin(); i != fDeviceList.end(); i++)
-        {
-            if(!strcmp(DEFAULT_AUDIO_DEVICE_NAME, (*i).GetDeviceName()))
-            {
-                defaultDev = DEFAULT_AUDIO_DEVICE_NAME;
-                break;
-            }
-        }
 
-        plgAudioSys::SetDeviceName(defaultDev, false);
-        fDevice = alcOpenDevice(defaultDev);
-        plStatusLog::AddLineSF( "audio.log", plStatusLog::kRed, "ASYS: {} device selected", defaultDev );
-        deviceName = defaultDev;
+    if (!defaultDeviceRequested) {
+        fPlaybackDevice = alcOpenDevice(deviceName.c_str());
+        if (!fPlaybackDevice)
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! alcOpenDevice failed, retrying with default device.");
     }
-    else
-    {
-        plgAudioSys::SetDeviceName(deviceName, false);
-        fDevice = alcOpenDevice(deviceName);
-        plStatusLog::AddLineSF( "audio.log", plStatusLog::kRed, "ASYS: {} device selected", deviceName );
+
+    if (!fPlaybackDevice) {
+        plgAudioSys::fPlaybackDeviceName = s_defaultDeviceMagic;
+        fPlaybackDevice = alcOpenDevice(nullptr);
+        if (!fPlaybackDevice) {
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! alcOpenDevice failed on default device.");
+            return false;
+        }
     }
-    if(!fDevice)
-    {
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: ERROR initializing OpenAL" );
-        return false;
-    }
-    
-    fContext = alcCreateContext(fDevice, 0);
+
+    plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: Device Init Success!");
+
+    fContext = alcCreateContext(fPlaybackDevice, 0);
     alcMakeContextCurrent(fContext);
 
-    ALenum error;
-    if(alGetError() != AL_NO_ERROR)
-    {
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: ERROR alcMakeContextCurrent failed" );
+    if (alGetError() != AL_NO_ERROR) {
+        plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR alcMakeContextCurrent failed");
         return false;
     }
 
@@ -350,45 +290,42 @@ bool    plAudioSystem::Init()
     plStatusLog::AddLineSF("audio.log", "OpenAL version: {}",    alGetString(AL_VERSION));
     plStatusLog::AddLineSF("audio.log", "OpenAL renderer: {}",   alGetString(AL_RENDERER));
     plStatusLog::AddLineSF("audio.log", "OpenAL extensions: {}", alGetString(AL_EXTENSIONS));
-    plAudioCaps caps = plAudioCapsDetector::Detect();
+    plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: Detecting caps...");
 
-    if(strcmp(deviceName, DEFAULT_AUDIO_DEVICE_NAME))       
-    {
-        // we are using a hardware device, set priority based on number of hardware voices
-        unsigned int numVoices = caps.GetMaxNumVoices();
-        
-        if(numVoices < 16)
-            plgAudioSys::SetPriorityCutoff(3);
-        
-        SetMaxNumberOfActiveSounds();
+    // Detect maximum number of voices that can be created.
+    // NOTE: This was copy-pasta'd from some old code. It is probably no longer needed since OpenAL
+    //       should always use software voices, meaning we are limited only by the system RAM/CPU.
+    //       Besides, even if we were using HW devices, this still isn't very useful because you
+    //       may not see any errors until you actually try to *play* the sources simultaneously.
+    ALuint sources[MAX_NUM_SOURCES];
+    ALuint i;
+    for (i = 0; i < arrsize(sources); ++i) {
+        alGenSources(1, &sources[i]);
+        if (alGetError() != AL_NO_ERROR)
+            break;
     }
+    alDeleteSources(i, sources);
+    fMaxNumSources = i;
+    plStatusLog::AddLineSF("audio.log", "Max Number of sources: {}", fMaxNumSources);
+    SetMaxNumberOfActiveSounds();
 
-    fMaxNumSources = caps.GetMaxNumVoices();
+    // TODO: Detect EAX support. Not adding this in now until the replacement is implemented.
 
-    // attempt to init the EAX listener. 
-    if( plgAudioSys::fEnableEAX )
-    {
+    // attempt to init the EAX listener.
+    if (plgAudioSys::fEnableEAX) {
         fUsingEAX = plEAXListener::GetInstance().Init();
-        if( fUsingEAX )
-        {
-            plStatusLog::AddLineS( "audio.log", plStatusLog::kGreen, "ASYS: EAX support detected and enabled." );
-        }
+        if (fUsingEAX)
+            plStatusLog::AddLineS("audio.log", plStatusLog::kGreen, "ASYS: EAX support detected and enabled.");
         else
-        {
-            plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: EAX support NOT detected. EAX effects disabled." );
-        }
-    }
-    else
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: EAX support NOT detected. EAX effects disabled.");
+    } else {
         fUsingEAX = false;
-    
+    }
+
     plProfile_Set(SoundMaxNum, fMaxNumSounds);
-
-    alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);   
-    
-    error = alGetError();
-
+    alDistanceModel(AL_INVERSE_DISTANCE_CLAMPED);
     fWaitingForShutdown = false;
-    plgDispatch::Dispatch()->RegisterForExactType( plAgeLoadedMsg::Index(), GetKey() );
+    plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
     return true;
 }
 
@@ -396,99 +333,67 @@ bool    plAudioSystem::Init()
 
 void plAudioSystem::Shutdown()
 {
-    plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Shutdown --" );
+    plStatusLog::AddLineS("audio.log", plStatusLog::kBlue, "ASYS: -- Shutdown --");
 
     plSoundBuffer::Shutdown();
 
     // Delete our active sounds list
     delete fDebugActiveSoundDisplay;
-    fDebugActiveSoundDisplay = nil;
+    fDebugActiveSoundDisplay = nullptr;
 
     // Unregister soft sounds
-    while( fSoftRegionSounds != nil )
-    {
+    while (fSoftRegionSounds) {
         fSoftRegionSounds->BootSourceOff();
         delete fSoftRegionSounds;
     }
-    while( fActiveSofts != nil )
-    {
+    while (fActiveSofts) {
         fActiveSofts->BootSourceOff();
         delete fActiveSofts;
     }
 
-    while( fEAXRegions.GetCount() > 0 )
-    {
-        if( fEAXRegions[ 0 ] != nil && fEAXRegions[ 0 ]->GetKey() != nil )
-        {
-            GetKey()->Release( fEAXRegions[ 0 ]->GetKey() );
-        }
-        fEAXRegions.Remove( 0 );
+    while (fEAXRegions.GetCount() > 0) {
+        if (fEAXRegions[0] && fEAXRegions[0]->GetKey())
+            GetKey()->Release(fEAXRegions[0]->GetKey());
+        fEAXRegions.Remove(0);
     }
     plEAXListener::GetInstance().ClearProcessCache();
 
-    plSound::SetCurrDebugPlate( nil );
-    fCurrDebugSound = nil;
+    plSound::SetCurrDebugPlate(nullptr);
+    fCurrDebugSound = nullptr;
 
     // Reset this, just in case
     fPendingRegisters.Reset();
 
     //fListenerInit = false;
-    
-    if( fUsingEAX )
-    {
+
+    if (fUsingEAX) {
         plEAXListener::GetInstance().Shutdown();
     }
 
-    alcCaptureStop(fCaptureDevice);
-    alcCaptureCloseDevice(fCaptureDevice);
-    fCaptureDevice = nil;
+    if (fCaptureDevice) {
+        alcCaptureStop(fCaptureDevice);
+        alcCaptureCloseDevice(fCaptureDevice);
+        fCaptureDevice = nullptr;
+    }
 
-    alcMakeContextCurrent(nil);
+    alcMakeContextCurrent(nullptr);
     alcDestroyContext(fContext);
-    alcCloseDevice(fDevice);
-    fContext = nil;
-    fDevice = nil;
+    alcCloseDevice(fPlaybackDevice);
+    fContext = nullptr;
+    fPlaybackDevice = nullptr;
 
     fStartTime = 0;
     fUsingEAX = false;
     fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
     //fCommittedListenerPos.Set( -1.e30, -1.e30, -1.e30 );
-    
-    if( fRestartOnDestruct )
-    {
+
+    if (fRestartOnDestruct) {
         fRestartOnDestruct = false;
-        plgAudioSys::Activate( true );
+        plgAudioSys::Activate(true);
     }
 
-    plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), GetKey() );
+    plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
     fWaitingForShutdown = false;
-}
-
-int plAudioSystem::GetNumAudioDevices()
-{
-    return fDeviceList.size();
-}
-
-const char *plAudioSystem::GetAudioDeviceName(int index)
-{
-    if(index < 0 || index >= fDeviceList.size())
-    {
-        hsAssert(false, "Invalid index passed to GetAudioDeviceName");
-        return nil;
-    }
-    return fDeviceList[index].GetDeviceName();
-}
-
-bool plAudioSystem::SupportsEAX(const char *deviceName)
-{
-    for(DeviceIter i = fDeviceList.begin(); i != fDeviceList.end(); i++)
-    {
-        if(!strcmp((*i).GetDeviceName(), deviceName))
-        {
-            return (*i).SupportsEAX();
-        }
-    }
-    return false;
 }
 
 void plAudioSystem::SetDistanceModel(int i)
@@ -510,9 +415,9 @@ void plAudioSystem::SetMaxNumberOfActiveSounds()
 {
     uint16_t priorityCutoff = plgAudioSys::GetPriorityCutoff();
     int maxNumSounds = 24;
-    
+
     // Keep this to a reasonable amount based on the users hardware, since we want the sounds to be played in hardware
-    if(maxNumSounds > fMaxNumSources && fMaxNumSources != 0 )
+    if (maxNumSounds > fMaxNumSources && fMaxNumSources != 0 )
         maxNumSounds = fMaxNumSources / 2;
 
     // Allow a certain number of sounds based on a user specified setting.
@@ -523,7 +428,7 @@ void plAudioSystem::SetMaxNumberOfActiveSounds()
     fMaxNumSounds = maxNumSounds;
     fNumSoundsSlop = fMaxNumSounds / 2;
 
-    plStatusLog::AddLineSF( "audio.log", "Max Number of Sounds Set to: {}", fMaxNumSounds);
+    plStatusLog::AddLineSF("audio.log", "Max Number of Sounds Set to: {}", fMaxNumSounds);
 }
 
 void plAudioSystem::SetListenerPos(const hsPoint3 pos)
@@ -1054,34 +959,32 @@ bool plAudioSystem::EndCapture()
 plAudioSystem*  plgAudioSys::fSys = nullptr;
 bool            plgAudioSys::fInit = false;
 bool            plgAudioSys::fActive = false;
-bool            plgAudioSys::fUseHardware = false;
 bool            plgAudioSys::fMuted = true;
 bool            plgAudioSys::fDelayedActivate = false;
 bool            plgAudioSys::fEnableEAX = false;
-float        plgAudioSys::fChannelVolumes[ kNumChannels ] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
-float        plgAudioSys::f2D3DBias = 0.75f;
-uint32_t          plgAudioSys::fDebugFlags = 0;
-float        plgAudioSys::fStreamingBufferSize = 2.f;
-float        plgAudioSys::fStreamFromRAMCutoff = 10.f;
-uint8_t           plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
+float           plgAudioSys::fChannelVolumes[kNumChannels] = { 1.f, 1.f, 1.f, 1.f, 1.f, 1.f };
+uint32_t        plgAudioSys::fDebugFlags = 0;
+float           plgAudioSys::fStreamingBufferSize = 2.f;
+float           plgAudioSys::fStreamFromRAMCutoff = 10.f;
+uint8_t         plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds above this priority
 bool            plgAudioSys::fEnableExtendedLogs = false;
-float        plgAudioSys::fGlobalFadeVolume = 1.f;
+float           plgAudioSys::fGlobalFadeVolume = 1.f;
 bool            plgAudioSys::fLogStreamingUpdates = false;
-std::string     plgAudioSys::fDeviceName;
+ST::string      plgAudioSys::fPlaybackDeviceName;
 bool            plgAudioSys::fRestarting = false;
 bool            plgAudioSys::fMutedStateChange = false;
 
 void plgAudioSys::Init()
 {
     fSys = new plAudioSystem;
-    fSys->RegisterAs( kAudioSystem_KEY );
-    plgDispatch::Dispatch()->RegisterForExactType( plAudioSysMsg::Index(), fSys->GetKey() );
-    plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), fSys->GetKey() );
+    fSys->RegisterAs(kAudioSystem_KEY);
+    plgDispatch::Dispatch()->RegisterForExactType(plAudioSysMsg::Index(), fSys->GetKey());
+    plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), fSys->GetKey());
 
-    if(fMuted)
+    if (fMuted)
         SetGlobalFadeVolume(0.0f);
 
-    if( fDelayedActivate )
+    if (fDelayedActivate)
         Activate( true );
 }
 
@@ -1101,72 +1004,11 @@ void plgAudioSys::SetMuted( bool b )
         SetGlobalFadeVolume(1.0);
 }
 
-void plgAudioSys::SetUseHardware(bool b)
-{
-    fUseHardware = b;
-    if( fActive )
-        Restart();
-}
-
 void plgAudioSys::EnableEAX( bool b )
 {
     fEnableEAX = b;
     if( fActive )
         Restart();
-}
-
-void plgAudioSys::SetAudioMode(AudioMode mode)
-{
-    if(mode == kDisabled)
-    {
-        Activate(false);
-        return;
-    }
-    else if(mode == kSoftware)
-    {
-        fActive = true;
-        fUseHardware = false;
-        fEnableEAX = false;
-    }
-    else if(mode == kHardware)
-    {
-        fActive = true;
-        fUseHardware = true;
-        fEnableEAX = false;
-    }
-    else if(mode == kHardwarePlusEAX)
-    {
-        fActive = true;
-        fUseHardware = true;
-        fEnableEAX = true;
-    }
-    Restart();
-}
-
-int plgAudioSys::GetAudioMode()
-{
-    if (fActive)
-    {
-        if (fUseHardware)
-        {
-            if (fEnableEAX)
-            {
-                return kHardwarePlusEAX;
-            }
-            else
-            {
-                return kHardware;
-            }
-        }
-        else
-        {
-            return kSoftware;
-        }
-    }
-    else
-    {
-        return kDisabled;
-    }
 }
 
 void plgAudioSys::Restart()
@@ -1259,48 +1101,6 @@ float    plgAudioSys::GetChannelVolume( ASChannel chan )
 void    plgAudioSys::NextDebugSound()
 {
     fSys->NextDebugSound();
-}
-
-void plgAudioSys::Set2D3DBias( float bias )
-{
-    f2D3DBias = bias;
-}
-
-float plgAudioSys::Get2D3Dbias()
-{
-    return f2D3DBias;
-}
-
-void plgAudioSys::SetDeviceName(const char *device, bool restart /* = false */)
-{
-    fDeviceName = device;
-    if(restart)
-        Restart();
-}
-
-int plgAudioSys::GetNumAudioDevices()
-{
-    if(fSys)
-        return fSys->GetNumAudioDevices();
-    return 0;
-}
-
-const char *plgAudioSys::GetAudioDeviceName(int index)
-{
-    if(fSys)
-    {
-        return fSys->GetAudioDeviceName(index);
-    }
-    return nil;
-}
-
-bool plgAudioSys::SupportsEAX(const char *deviceName)
-{
-    if(fSys)
-    {
-        return fSys->SupportsEAX(deviceName);
-    }
-    return false;
 }
 
 void plgAudioSys::RegisterSoftSound( const plKey soundKey )
