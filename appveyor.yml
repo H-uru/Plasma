@@ -1,0 +1,93 @@
+version: 1.0-{build}
+image:
+- Visual Studio 2017
+configuration:
+- Debug
+- Release
+clone_depth: 1
+environment:
+  QT_VER: 5.12.4
+  matrix:
+  - CLIENT_TYPE: Internal
+  - CLIENT_TYPE: External
+install:
+- ps: |
+    $devlibs_url = "https://guildofwriters.org/cwe_nonfree/vs2015-appveyor-min.zip"
+
+    If ($Env:CLIENT_TYPE -eq "External") {
+      $Env:PLASMA_EXTERNAL_RELEASE = "ON"
+    }
+
+    if (!(Test-Path -PathType Container build)) {
+        Write-Host "Creating build folder... " -noNewLine
+        New-Item -ItemType directory build | Out-Null
+        Write-Host "OK" -foregroundColor Green
+    }
+
+    Set-Location build
+
+    $path = (Get-Location).Path
+
+    if (!(Test-Path -PathType Container devlibs)) {
+        Write-Host "Downloading development libraries... " -noNewLine
+        Invoke-WebRequest $devlibs_url -OutFile devlibs.zip
+        Write-Host "OK" -foregroundColor Green
+
+        Write-Host "Extracting development libraries... " -noNewLine
+        New-Item -ItemType directory devlibs | Out-Null
+        $shell_app = New-Object -com shell.application
+        $zip  = $shell_app.namespace($path + "\devlibs.zip")
+        $dest = $shell_app.namespace($path + "\devlibs")
+        $dest.CopyHere($zip.items(), 0x14)
+        $Env:Path = $Env:Path + ";" + $path + "\devlibs\bin"
+        Write-Host "OK" -foregroundColor Green
+
+        Write-Host "Installing Python modules... " -noNewLine
+        Invoke-WebRequest "http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.24/pygtk-all-in-one-2.24.2.win32-py2.7.msi" -OutFile pygtk-all-in-one-2.24.2.win32-py2.7.msi
+        Start-Process msiexec -ArgumentList "/i pygtk-all-in-one-2.24.2.win32-py2.7.msi TRANSFORMS=devlibs\EnableRSVG.mst TARGETDIR=C:\Python27 /qn /norestart" -wait
+        C:\Python27\python.exe -m pip install -q Pillow 2> $null
+        Write-Host "OK" -foregroundColor Green
+
+        Write-Host "Installing library dependencies... "
+        Set-Location C:\tools\vcpkg
+        # Create our own custom triplet, for static-linking of libraries, but dynamic CRT linkage.
+        If ($Env:CONFIGURATION -eq "Release") {
+          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`nset(VCPKG_BUILD_TYPE release)`n"
+        } Else {
+          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`n"
+        }
+        git pull 2> $null
+        bootstrap-vcpkg.bat
+        vcpkg integrate install
+        vcpkg install curl expat freetype libjpeg-turbo libogg libpng libtheora libvorbis libvpx opus pcre speex string-theory zlib --triplet x86-windows-static-dyncrt 2> $null
+        Write-Host "OK" -foregroundColor Green
+
+        Set-Location $path
+    }
+
+    Set-Location ..
+
+    refreshenv
+cache: C:\tools\vcpkg\installed
+before_build:
+- ps: |
+    Set-Location build
+
+    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows-static-dyncrt `
+    -DCMAKE_INSTALL_PREFIX=devlibs -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin -DPHYSX_SDK_PATH=devlibs\PhysX -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
+    -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
+build:
+  project: build/Plasma.sln
+  parallel: true
+  verbosity: quiet
+before_package:
+- ps: |
+    if ((Test-Path -PathType Container bin\$Env:CONFIGURATION)) {
+      Set-Location bin\$Env:CONFIGURATION
+      Get-ChildItem -File *.exe | Foreach {& "C:\Qt\$Env:QT_VER\msvc2017\bin\windeployqt.exe" --verbose 0 $_.fullname 2> $null}
+      ls
+    }
+test: off
+artifacts:
+- path: build\bin
+  name: Plasma-$(APPVEYOR_BUILD_VERSION)-$(CLIENT_TYPE)-$(CONFIGURATION)
