@@ -517,8 +517,8 @@ bool plClient::InitPipeline()
 
     float   yon = 500.0f;
 
-    pipe->SetFOV( 60.f, int32_t( 60.f * pipe->Height() / pipe->Width() ) );
-    pipe->SetDepth( 0.3f, yon );
+    pipe->SetFOV(60.f, 60.f * (float)pipe->Height() / (float)pipe->Width());
+    pipe->SetDepth(0.3f, yon);
 
     hsMatrix44 id;
     id.Reset();

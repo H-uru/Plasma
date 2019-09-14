@@ -221,7 +221,7 @@ int plMsgStdStringHelper::Poke(const std::string & stringref, hsStream* stream, 
 {
     plMessage::plStrLen strlen;
     hsAssert( stringref.length()<0xFFFF, "buf too big for plMsgStdStringHelper" );
-    strlen = stringref.length();
+    strlen = (plMessage::plStrLen)stringref.length();
     stream->WriteLE(strlen);
     if (strlen)
         stream->Write(strlen,stringref.data());
@@ -334,7 +334,7 @@ int plMsgStdStringHelper::PeekBig(ST::string & stringref, hsStream* stream, cons
 // STATIC
 int plMsgCStringHelper::Poke(const char * str, hsStream* stream, const uint32_t peekOptions)
 {
-    plMessage::plStrLen len = (str) ? strlen(str) : 0;
+    plMessage::plStrLen len = (str) ? (plMessage::plStrLen)strlen(str) : 0;
     stream->WriteLE(len);
     if (len)
         stream->Write(len,str);
