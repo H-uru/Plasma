@@ -73,40 +73,40 @@ public:
     // Audio settings
 
     // Sets the master volume of a given audio channel
-    virtual void SetSoundFXVolume( float volume );
-    virtual void SetMusicVolume( float volume );
-    virtual void SetVoiceVolume( float volume );
-    virtual void SetAmbienceVolume( float volume );
-    virtual void SetGUIVolume( float volume );
-    virtual void SetNPCVoiceVolume( float volume );
-    virtual float GetSoundFXVolume();
-    virtual float GetMusicVolume();
-    virtual float GetVoiceVolume();
-    virtual float GetAmbienceVolume();
-    virtual float GetGUIVolume();
-    virtual float GetNPCVoiceVolume();
+    void SetSoundFXVolume(float volume);
+    void SetMusicVolume(float volume);
+    void SetVoiceVolume(float volume);
+    void SetAmbienceVolume(float volume);
+    void SetGUIVolume(float volume);
+    void SetNPCVoiceVolume(float volume);
+    float GetSoundFXVolume() const;
+    float GetMusicVolume() const;
+    float GetVoiceVolume() const;
+    float GetAmbienceVolume() const;
+    float GetGUIVolume() const;
+    float GetNPCVoiceVolume() const;
 
-    // Switch DirectX Audio on or off at runtime
-    virtual void Enable();
-    virtual void Disable();
-    virtual bool IsEnabled();
+    // Switch audio on or off at runtime
+    void Enable();
+    void Disable();
+    bool IsEnabled() const;
 
     // Enable or disable load-on-demand for sounds
-    virtual void SetLoadOnDemand( bool state );
+    void SetLoadOnDemand(bool state);
 
     // Enables or disables two-stage LOD, where sounds can be loaded into RAM but not into sound buffers.
     // ...Less of a performance hit, harder on memory.
-    virtual void SetTwoStageLOD( bool state );
+    void SetTwoStageLOD(bool state);
 
     // Enable EAX sound acceleration
-    virtual void UseEAXAcceleration( bool state );
-    virtual bool IsUsingEAXAcceleration();
+    void UseEAXAcceleration(bool state);
+    bool IsUsingEAXAcceleration() const;
     bool IsEAXSupported() const;
 
     // Mute or unmute all sounds
-    virtual void MuteAll();
-    virtual void UnmuteAll();
-    virtual bool IsMuted();
+    void MuteAll();
+    void UnmuteAll();
+    bool IsMuted() const;
 
     void SetPlaybackDevice(const ST::string& device, bool restart);
     ST::string GetPlaybackDevice() const;
@@ -119,37 +119,36 @@ public:
     // Voice Settings
 
     // Sets the microphone volume, in the range of 0 to 1
-    virtual bool CanSetMicLevel();
-    virtual void SetMicLevel( float level );
-    virtual float GetMicLevel();
+    bool CanSetMicLevel() const;
+    void SetMicLevel(float level);
+    float GetMicLevel() const;
 
     // turn voice recording on or off
-    virtual void EnableVoiceRecording( bool state );
-    virtual bool IsVoiceRecordingEnabled();
+    void EnableVoiceRecording(bool state);
+    bool IsVoiceRecordingEnabled() const;
 
     // turn voice compression on and off
-    virtual void EnableVoiceCompression( bool state );
-    virtual bool IsVoiceCompressionEnabled();
+    void EnableVoiceCompression(bool state);
+    bool IsVoiceCompressionEnabled() const;
 
     // turn voice-over-net on and off
-    virtual void EnableVoiceNetBroadcast( bool state );
-    virtual bool IsVoiceNetBroadcastEnabled();
+    void EnableVoiceNetBroadcast(bool state);
+    bool IsVoiceNetBroadcastEnabled() const;
 
     void EnableVoiceChat(bool enable);
 
     // turn voice recording icons on and off
-    virtual void ShowIcons();
-    virtual void HideIcons();
+    void ShowIcons();
+    void HideIcons();
 
     // turn push-to-talk on or off
-    virtual void PushToTalk( bool state );
+    void PushToTalk(bool state);
 
     // Set the squelch level
-    virtual void SquelchLevel( float level );
+    void SquelchLevel(float level);
 
-    virtual uint8_t GetPriorityCutoff();
-    virtual void  SetPriorityCutoff( uint8_t cut );
-
+    uint8_t GetPriorityCutoff() const;
+    void  SetPriorityCutoff(uint8_t cut);
 };
 
 #endif // _pyAudioControl_h_
