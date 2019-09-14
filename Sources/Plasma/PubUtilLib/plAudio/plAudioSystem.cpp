@@ -183,7 +183,6 @@ fEAXSupported(),
 fLastUpdateTimeMs()
 {
     fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
-    //fCommittedListenerPos.Set( -1.e30, -1.e30, -1.e30 );
     fLastPos.Set(100, 100, 100);
 }
 
@@ -351,24 +350,15 @@ void plAudioSystem::Shutdown()
         delete fActiveSofts;
     }
 
-    while (fEAXRegions.GetCount() > 0) {
-        if (fEAXRegions[0] && fEAXRegions[0]->GetKey())
-            GetKey()->Release(fEAXRegions[0]->GetKey());
-        fEAXRegions.Remove(0);
-    }
+    for (auto rgn : fEAXRegions)
+        GetKey()->Release(rgn->GetKey());
+    fEAXRegions.clear();
     plEAXListener::GetInstance().ClearProcessCache();
+    if (fUsingEAX)
+        plEAXListener::GetInstance().Shutdown();
 
     plSound::SetCurrDebugPlate(nullptr);
     fCurrDebugSound = nullptr;
-
-    // Reset this, just in case
-    fPendingRegisters.Reset();
-
-    //fListenerInit = false;
-
-    if (fUsingEAX) {
-        plEAXListener::GetInstance().Shutdown();
-    }
 
     if (fCaptureDevice) {
         alcCaptureStop(fCaptureDevice);
@@ -385,7 +375,6 @@ void plAudioSystem::Shutdown()
     fStartTime = 0;
     fUsingEAX = false;
     fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
-    //fCommittedListenerPos.Set( -1.e30, -1.e30, -1.e30 );
 
     if (fRestartOnDestruct) {
         fRestartOnDestruct = false;
@@ -844,7 +833,6 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
                     plEAXListener::GetInstance().ProcessMods( fEAXRegions );
                     plProfile_EndTiming(SoundEAXUpdate);
                 }
-                //fCommittedListenerPos = fCurrListenerPos;
             }
             plProfile_EndLap(AudioUpdate, this->GetKey()->GetUoid().GetObjectName().c_str());
         }
@@ -856,14 +844,12 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
     {
         if( refMsg->GetContext() & ( plRefMsg::kOnCreate | plRefMsg::kOnRequest | plRefMsg::kOnReplace ) )
         {
-            fEAXRegions.Append( plEAXListenerMod::ConvertNoRef( refMsg->GetRef() ) );
+            fEAXRegions.insert(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
             plEAXListener::GetInstance().ClearProcessCache();
         }
         else if( refMsg->GetContext() & ( plRefMsg::kOnRemove | plRefMsg::kOnDestroy ) )
         {
-            int idx = fEAXRegions.Find( plEAXListenerMod::ConvertNoRef( refMsg->GetRef() ) );
-            if( idx != fEAXRegions.kMissingIndex )
-                fEAXRegions.Remove( idx );
+            fEAXRegions.erase(plEAXListenerMod::ConvertNoRef(refMsg->GetRef()));
             plEAXListener::GetInstance().ClearProcessCache();
         }
         return true;

@@ -300,7 +300,7 @@ void    plEAXListener::ClearProcessCache()
 //  can wisely skip is if our current big region == fLastBigRegion *and*
 //  the total strength is the same.
 
-void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
+void    plEAXListener::ProcessMods(const std::set<plEAXListenerMod*>& modArray )
 {
 #ifdef EAX_SDK_AVAILABLE
     int     i;
@@ -326,20 +326,20 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
     if( myLog != nil )
         myLog->Clear();
 
-    if( modArray.GetCount() != fLastModCount )
+    if( modArray.size() != fLastModCount )
     {
         DebugLog( "Clearing cache..." );
         ClearProcessCache();    // Code path changed, clear the entire cache
-        fLastModCount = modArray.GetCount();
+        fLastModCount = modArray.size();
     }
     else
     {
         DebugLog( "" );
     }
 
-    if( modArray.GetCount() > 0 )
+    if( modArray.size() > 0 )
     {
-        DebugLog( "{} regions to calc", modArray.GetCount() );
+        DebugLog( "{} regions to calc", modArray.size() );
 
         // Reset and find a new one if applicable
         thisBigRegion = nil;
@@ -347,10 +347,10 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
         // Accumulate settings from all the active listener regions (shouldn't be too many, we hope)
         totalStrength = 0.f;
         firstOne = true;
-        for( i = 0; i < modArray.GetCount(); i++ )
+        for (auto mod : modArray)
         {
             float strength = modArray[ i ]->GetStrength();
-            DebugLog( "{4.2f} - {}", strength, modArray[ i ]->GetKey()->GetUoid().GetObjectName() );
+            DebugLog( "{4.2f} - {}", strength, modArray->GetKey()->GetUoid().GetObjectName() );
             if( strength > 0.f )
             {
                 // fLastBigRegion will point to a region iff it's the only region w/ strength > 0
@@ -362,14 +362,14 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
                 if( firstOne )
                 {
                     // First one, just init to it
-                    memcpy( &finalProps, modArray[ i ]->GetListenerProps(), sizeof( finalProps ) );
+                    memcpy( &finalProps, mod->GetListenerProps(), sizeof( finalProps ) );
                     totalStrength = strength;
                     firstOne = false;
                 }
                 else
                 {
                     float scale = strength / ( totalStrength + strength );
-                    EAX3ListenerInterpolate( &finalProps, modArray[ i ]->GetListenerProps(), scale, &finalProps, false );
+                    EAX3ListenerInterpolate( &finalProps, mod->GetListenerProps(), scale, &finalProps, false );
                     totalStrength += strength;
                     bMorphing = true;
                 }

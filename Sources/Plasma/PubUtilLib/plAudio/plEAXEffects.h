@@ -51,7 +51,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 
 #include "HeadSpin.h"
-#include "hsTemplates.h"
+#include <set>
 
 
 //// Listener Settings Class Definition ///////////////////////////////////////
@@ -82,8 +82,8 @@ public:
 
     bool SetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
     bool GetGlobalEAXProperty(GUID guid, unsigned long ulProperty, void *pData, unsigned long ulDataSize );
-    
-    void    ProcessMods( hsTArray<plEAXListenerMod *> &modArray );
+
+    void    ProcessMods(const std::set<plEAXListenerMod*>& modArray );
     void    ClearProcessCache();
 
 protected:

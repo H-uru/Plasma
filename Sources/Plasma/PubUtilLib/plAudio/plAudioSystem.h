@@ -43,10 +43,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAudioSystem_h
 
 #include "HeadSpin.h"
+#include <set>
 #include <string>
 #include <alc.h>
 
-#include "hsTemplates.h"
 #include "hsGeometry3.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
@@ -99,7 +99,6 @@ public:
     void SetDistanceModel(int i);
 
     virtual bool MsgReceive(plMessage* msg);
-    double GetTime();
 
     void        NextDebugSound();
     hsPoint3    GetCurrListenerPos() const { return fCurrListenerPos; }
@@ -152,19 +151,17 @@ protected:
 
     static int32_t        fMaxNumSounds, fNumSoundsSlop;      // max number of sounds the engine is allowed to audibly play. Different than fMaxNumSources. That is the max number of sounds the audio card can play
     plSoftSoundNode     *fCurrDebugSound;
-    hsTArray<plKey>     fPendingRegisters;
 
-    hsPoint3    fCurrListenerPos;//, fCommittedListenerPos;
+    hsPoint3    fCurrListenerPos;
     bool        fActive, fUsingEAX, fRestartOnDestruct, fWaitingForShutdown;
     int64_t     fStartTime;
 
-    hsTArray<hsKeyedObject *>       fMyRefs;
-    hsTArray<plEAXListenerMod *>    fEAXRegions;
+    std::set<plEAXListenerMod*> fEAXRegions;
 
     hsPoint3            fLastPos;
-    bool                fAvatarPosSet;      // used for listener stuff
 
     bool                fDisplayNumBuffers;
+    bool                fListenerInit;
 
     double          fStartFade;
     float           fFadeLength;
@@ -175,11 +172,6 @@ protected:
     void    RegisterSoftSound( const plKey soundKey );
     void    UnregisterSoftSound( const plKey soundKey );
     void    IUpdateSoftSounds( const hsPoint3 &newPosition );
-    uint32_t  IScaleVolume(float volume);
-    void    IEnumerateDevices();
-
-public:
-    bool                            fListenerInit;
 };
 
 class plgAudioSys
