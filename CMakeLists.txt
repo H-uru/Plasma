@@ -17,9 +17,6 @@ set(PRODUCT_LONG_NAME   "Uru Live"  CACHE STRING "Product Long Name")
 set(PRODUCT_UUID        "ea489821-6c35-4bd0-9dae-bb17c585e680"
                                     CACHE STRING "Product UUID")
 
-# Configure compile-time compiler-specific flags
-include(cmake/CompilerChecks.cmake)
-
 # HeadSpin Configuration
 if(WIN32 AND NOT CYGWIN)
     add_definitions(-DHS_BUILD_FOR_WIN32)
@@ -119,13 +116,12 @@ set_package_properties(Vorbis PROPERTIES
     PURPOSE "Required for audio support in the client"
 )
 
-#TODO: Not required if we aren't building the client
-find_package(Speex REQUIRED)
+find_package(Speex)
 set_package_properties(Speex PROPERTIES
     URL "http://www.speex.org/"
     DESCRIPTION "Free and open audio codec specifically designed for speech"
-    TYPE REQUIRED
-    PURPOSE "Required for in-game voice chat in the client"
+    TYPE OPTIONAL
+    PURPOSE "Required for legacy in-game voice chat in the client"
 )
 
 find_package(VPX)
@@ -141,7 +137,7 @@ set_package_properties(Opus PROPERTIES
     URL "https://www.opus-codec.org/"
     DESCRIPTION "Versatile free and open audio codec"
     TYPE OPTIONAL
-    PURPOSE "Required for in-game video playback support"
+    PURPOSE "Required for in-game video playback and voice chat support"
 )
 
 find_package(CURL REQUIRED)
@@ -176,11 +172,6 @@ if(UNIX AND NOT APPLE)
         set(HAVE_LIBSECRET TRUE)
     endif(LIBSECRET_FOUND)
 endif(UNIX AND NOT APPLE)
-
-if(VPX_FOUND AND Opus_FOUND)
-    set(MOVIE_AVAILABLE TRUE)
-    add_definitions(-DMOVIE_AVAILABLE)
-endif()
 
 include(PrecompiledHeader)    #Precompiled Header helper macros
 
@@ -288,6 +279,11 @@ if(WIN32)
         include_directories(${VLD_INCLUDE_DIR})
     endif()
 endif()
+
+# Configure compile-time compiler-specific flags and other config files
+include(cmake/CompilerChecks.cmake)
+include(cmake/Config.cmake)
+include_directories(${PROJECT_BINARY_DIR})
 
 if(PLASMA_BUILD_TOOLS)
     # Custom dummy target for compiling all tools

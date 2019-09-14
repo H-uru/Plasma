@@ -3340,16 +3340,6 @@ PF_CONSOLE_CMD( Audio, SetDeviceName, "string deviceName", "Meant for plClient i
 }
 
 PF_CONSOLE_CMD( Audio,      // groupName
-               EnableVoiceCompression,      // fxnName
-               "bool b", // paramList
-               "turn voice compression on and off" )    // helpString
-{
-    bool b = params[0];
-    plVoiceRecorder::EnableCompression(b);
-
-}
-
-PF_CONSOLE_CMD( Audio,      // groupName
                ShowIcons,       // fxnName
                "bool b", // paramList
                "turn voice recording icons on and off" )    // helpString
@@ -3380,14 +3370,28 @@ PF_CONSOLE_CMD( Audio,      // groupName
 
 }
 
-PF_CONSOLE_CMD( Audio,      // groupName
-               EnableVoiceNetBroadcast,     // fxnName
-               "bool b", // paramList
-               "turn voice-over-net on and off" )   // helpString
+PF_CONSOLE_CMD(Audio,                                // groupName
+               SetVoiceCodec,                        // fxnName
+               "string codec",                       // paramList
+               "Sets the codec used for voice chat") // helpString
 {
-    bool b = params[0];
-    plVoiceRecorder::EnableNetVoice(b);
+    const char* codec = params[0];
+    if (stricmp(codec, "none") == 0)
+        plVoiceRecorder::SetVoiceFlags(0);
+    else if (stricmp(codec, "speex") == 0)
+        plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedSpeex);
+    else if (stricmp(codec, "opus") == 0)
+        plVoiceRecorder::SetVoiceFlags(plVoiceFlags::kEncoded | plVoiceFlags::kEncodedOpus);
+    else
+        PrintString("Invalid codec specified");
+}
 
+PF_CONSOLE_CMD(Audio,                                // groupName
+               SetVoiceSampleRate,                   // fxnName
+               "int rate",                           // paramList
+               "Sets the voice chat sampling rate")  // helpString
+{
+    plVoiceRecorder::SetSampleRate((int)params[0]);
 }
 
 PF_CONSOLE_CMD( Audio,                              // groupName
@@ -3429,6 +3433,14 @@ PF_CONSOLE_CMD( Audio,
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
+
+PF_CONSOLE_CMD(Audio,
+               ShowVoiceGraph,
+               "bool b",
+               "Show voice chat graph")
+{
+    plVoiceRecorder::ShowGraph((bool)params[0]);
+}
 
 PF_CONSOLE_CMD( Audio, NextDebugPlate, "", "Cycles through the volume displays for all registered sounds" )
 {

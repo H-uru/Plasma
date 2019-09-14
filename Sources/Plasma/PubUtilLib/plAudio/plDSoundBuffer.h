@@ -105,7 +105,7 @@ public:
     bool        StreamingFillBuffer(plAudioFileReader *stream);
 
     bool        SetupVoiceSource();
-    bool        VoiceFillBuffer(void *data, unsigned bytes, unsigned buferId);
+    bool        VoiceFillBuffer(const void *data, size_t bytes, unsigned buferId);
     void        UnQueueVoiceBuffers();
 
     

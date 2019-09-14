@@ -405,51 +405,39 @@ MSG_HANDLER_DEFN(plNetClientMsgHandler,plNetMsgVoice)
     uint8_t numFrames = m->GetNumFrames();
     plKey key;
 
-    // plKey key=hsgResMgr::ResMgr()->FindKey(m->ObjectInfo()->GetUoid());
-
     // Filter ignored sender
-    if ( VaultAmIgnoringPlayer( m->GetPlayerID() ) )
-    {
-        hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player {}", m->GetPlayerID() ) );
+    if (VaultAmIgnoringPlayer(m->GetPlayerID())) {
+        hsLogEntry(nc->DebugMsg("Ignoring voice chat from ignored player {}", m->GetPlayerID()));
         return hsOK;
     }
 
     int idx=nc->fTransport.FindMember(m->GetPlayerID());
-    plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nil;
-    
-    if (mbr)
-    {
+    plNetTransportMember* mbr = idx != -1 ? nc->fTransport.GetMember(idx) : nullptr;
+
+    if (mbr) {
         key = mbr->GetAvatarKey();
         // filter based on listen/talk list (for forced mode)
-        if (nc->GetListenListMode() == plNetClientMgr::kListenList_Forced)
-        {
-            if (nc->GetListenList()->FindMember( mbr ))
-            {       
-                hsLogEntry( nc->DebugMsg( "Ignoring voice chat from ignored player {}", m->GetPlayerID() ) );
+        if (nc->GetListenListMode() == plNetClientMgr::kListenList_Forced) {
+            if (nc->GetListenList()->FindMember(mbr)) {
+                hsLogEntry(nc->DebugMsg("Ignoring voice chat from ignored player {}", m->GetPlayerID()));
                 return hsOK;
             }
         }
         mbr->SetTransportFlags(mbr->GetTransportFlags() | plNetTransportMember::kSendingVoice);
+    } else if (m->GetPlayerID() == nc->GetPlayerID()) {
+        key = nc->GetLocalPlayerKey();
     }
 
 
-//  hsKeyedObject* obj = key ? key->ObjectIsLoaded() : nil;
-    plSceneObject* avObj = key ? plSceneObject::ConvertNoRef( key->ObjectIsLoaded() ) : nil;
-
-//  if (obj)
-    if (avObj)
-    {
+    plSceneObject* avObj = key ? plSceneObject::ConvertNoRef(key->ObjectIsLoaded()) : nullptr;
+    if (avObj) {
         plAudible * aud = avObj->GetAudioInterface()->GetAudible();
         pl2WayWinAudible* pAud = pl2WayWinAudible::ConvertNoRef(aud);
         if (pAud)
             pAud->PlayNetworkedSpeech(buf, bufLen,  numFrames, flags);
         else
-        {
             nc->ErrorMsg("\tObject doesn't have audible");
-        }
-    }
-    else
-    {
+    } else {
         nc->DebugMsg("\tCan't find loaded object\n");
     }
     return hsOK;

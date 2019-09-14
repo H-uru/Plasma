@@ -1191,9 +1191,9 @@ void plNetMsgVoice::WriteVersion(hsStream* s, hsResMgr* mgr)
     plMsgStdStringHelper::Poke(fVoiceData, s);
 }
 
-void plNetMsgVoice::SetVoiceData(char *data, int len)
-{   
-    fVoiceData.resize( len );
+void plNetMsgVoice::SetVoiceData(const void* data, size_t len)
+{
+    fVoiceData.resize(len);
     memcpy((void *)fVoiceData.data(), data, len );
 }
 

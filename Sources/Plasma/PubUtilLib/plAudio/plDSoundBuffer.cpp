@@ -541,7 +541,7 @@ void plDSoundBuffer::UnQueueVoiceBuffers()
 }
 
 //============================================================================ 
-bool plDSoundBuffer::VoiceFillBuffer(void *data, unsigned bytes, unsigned bufferId)
+bool plDSoundBuffer::VoiceFillBuffer(const void *data, size_t bytes, unsigned bufferId)
 {
     if(!source)
         return false;
@@ -550,7 +550,7 @@ bool plDSoundBuffer::VoiceFillBuffer(void *data, unsigned bytes, unsigned buffer
     unsigned int size = bytes < STREAM_BUFFER_SIZE ? bytes : STREAM_BUFFER_SIZE;
 
     ALenum format = IGetALFormat(fBufferDesc->fBitsPerSample, fBufferDesc->fNumChannels);
-    alBufferData( bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec );
+    alBufferData(bufferId, format, data, size, fBufferDesc->fNumSamplesPerSec);
     if( (error = alGetError()) != AL_NO_ERROR )
     {
         plStatusLog::AddLineS("audio.log", "Failed to copy data to sound buffer %d", error);

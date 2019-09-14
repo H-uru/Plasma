@@ -3,7 +3,7 @@ include_directories(../../NucleusLib)
 include_directories(../../NucleusLib/inc)
 include_directories(../../PubUtilLib)
 
-if(MOVIE_AVAILABLE)
+if(PLASMA_USE_WEBM)
     include_directories(${VPX_INCLUDE_DIR})
     include_directories(${Opus_INCLUDE_DIR})
 endif()

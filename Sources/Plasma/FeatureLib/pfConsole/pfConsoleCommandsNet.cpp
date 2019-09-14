@@ -653,7 +653,7 @@ PF_CONSOLE_CMD( Net_Voice,      // groupName
                "Turn on/off echoing of voice packets" ) // helpString
 {
     bool on = params[0];
-    plNetClientMgr::GetInstance()->SetFlagsBit(plNetClientMgr::kEchoVoice,on);  
+    plNetClientMgr::GetInstance()->SetFlagsBit(plNetClientMgr::kEchoVoice, on);
 }
 
 PF_CONSOLE_CMD( Net_Voice,                  // groupName
