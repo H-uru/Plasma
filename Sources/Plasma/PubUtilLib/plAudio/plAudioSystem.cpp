@@ -93,7 +93,9 @@ class plSoftSoundNode
         plSoftSoundNode *fSortNext;
         plSoftSoundNode **fSortPrev;
 
-        plSoftSoundNode( const plKey s ) : fSoundKey( s ) { fNext = nil; fPrev = nil; }
+        plSoftSoundNode(const plKey& s)
+            : fSoundKey(s), fNext(), fPrev(), fSortNext(), fSortPrev()
+        { }
         ~plSoftSoundNode() { Unlink(); }
 
         void    Link( plSoftSoundNode **prev )
@@ -420,18 +422,18 @@ void plAudioSystem::SetMaxNumberOfActiveSounds()
     plStatusLog::AddLineSF("audio.log", "Max Number of Sounds Set to: {}", fMaxNumSounds);
 }
 
-void plAudioSystem::SetListenerPos(const hsPoint3 pos)
+void plAudioSystem::SetListenerPos(const hsPoint3& pos)
 {
     fCurrListenerPos = pos;
     alListener3f(AL_POSITION, pos.fX, pos.fZ, -pos.fY);     // negate z coord, since openal uses opposite handedness
 }
 
-void plAudioSystem::SetListenerVelocity(const hsVector3 vel)
+void plAudioSystem::SetListenerVelocity(const hsVector3& vel)
 {
     alListener3f(AL_VELOCITY, 0, 0, 0); // no doppler shift
 }
 
-void plAudioSystem::SetListenerOrientation(const hsVector3 view, const hsVector3 up)
+void plAudioSystem::SetListenerOrientation(const hsVector3& view, const hsVector3& up)
 {
     ALfloat orientation[] = { view.fX, view.fZ, -view.fY, up.fX, up.fZ, -up.fY };
     alListenerfv(AL_ORIENTATION, orientation);
@@ -453,7 +455,7 @@ void    plAudioSystem::SetActive( bool b )
 //  least all the calc code is in one place. Possible optimization in the
 //  future: when calling IUpdate(), any sounds that are already active don't
 //  need to be recalced, just resorted.
-void    plAudioSystem::RegisterSoftSound( const plKey soundKey )
+void    plAudioSystem::RegisterSoftSound(const plKey& soundKey)
 {
     plSoftSoundNode *node = new plSoftSoundNode( soundKey );
     node->Link( &fSoftRegionSounds );
@@ -464,7 +466,7 @@ void    plAudioSystem::RegisterSoftSound( const plKey soundKey )
 
 //// IUnregisterSoftSound ////////////////////////////////////////////////////
 
-void    plAudioSystem::UnregisterSoftSound( const plKey soundKey )
+void    plAudioSystem::UnregisterSoftSound(const plKey& soundKey)
 {
     plSoftSoundNode *node;
     for( node = fActiveSofts; node != nil; node = node->fNext )
@@ -1052,7 +1054,6 @@ void plgAudioSys::Activate(bool b)
     }
 
     fSys->SetActive( false );
-    
     plStatusLog::AddLineS("audio.log", plStatusLog::kBlue, "ASYS: -- Sending deactivate/destroy messages --");
     plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
 
@@ -1061,27 +1062,26 @@ void plgAudioSys::Activate(bool b)
     plAudioSysMsg *msg = new plAudioSysMsg( plAudioSysMsg::kDestroy );
     msg->SetBCastFlag( plMessage::kBCastByExactType, false );
     msg->Send( fSys->GetKey() );
-//  fSys->Shutdown();
 
     fInit = false;
 }
 
-void    plgAudioSys::SetChannelVolume( ASChannel chan, float vol )
+void plgAudioSys::SetChannelVolume(ASChannel chan, float vol)
 {
-    fChannelVolumes[ chan ] = vol;
+    fChannelVolumes[chan] = vol;
 }
 
-void    plgAudioSys::SetGlobalFadeVolume( float vol )
+void    plgAudioSys::SetGlobalFadeVolume(float vol)
 {
-    if(!fMuted)
+    if (!fMuted)
         fGlobalFadeVolume = vol;
     else
         fGlobalFadeVolume = 0;
 }
 
-float    plgAudioSys::GetChannelVolume( ASChannel chan )
+float    plgAudioSys::GetChannelVolume(ASChannel chan)
 {
-    return fChannelVolumes[ chan ];
+    return fChannelVolumes[chan];
 }
 
 void    plgAudioSys::NextDebugSound()
@@ -1089,42 +1089,32 @@ void    plgAudioSys::NextDebugSound()
     fSys->NextDebugSound();
 }
 
-void plgAudioSys::RegisterSoftSound( const plKey soundKey )
+void plgAudioSys::RegisterSoftSound(const plKey& soundKey)
 {
-    if(fSys)
-    {
+    if (fSys)
         fSys->RegisterSoftSound(soundKey);
-    }
 }
 
-void plgAudioSys::UnregisterSoftSound( const plKey soundKey )
+void plgAudioSys::UnregisterSoftSound(const plKey& soundKey)
 {
-    if(fSys)
-    {
+    if (fSys)
         fSys->UnregisterSoftSound(soundKey);
-    }
 }
 
-void plgAudioSys::SetListenerPos(const hsPoint3 pos)
+void plgAudioSys::SetListenerPos(const hsPoint3& pos)
 {
-    if(fSys)
-    {
+    if (fSys)
         fSys->SetListenerPos(pos);
-    }
 }
 
-void plgAudioSys::SetListenerVelocity(const hsVector3 vel)
+void plgAudioSys::SetListenerVelocity(const hsVector3& vel)
 {
-    if(fSys)
-    {
+    if (fSys)
         fSys->SetListenerVelocity(vel);
-    }
 }
 
-void plgAudioSys::SetListenerOrientation(const hsVector3 view, const hsVector3 up)
+void plgAudioSys::SetListenerOrientation(const hsVector3& view, const hsVector3& up)
 {
-    if(fSys)
-    {
+    if (fSys)
         fSys->SetListenerOrientation(view, up);
-    }
 }

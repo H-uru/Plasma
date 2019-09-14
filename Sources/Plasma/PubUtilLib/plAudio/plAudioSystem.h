@@ -92,9 +92,9 @@ public:
 
     void    SetActive( bool b );
 
-    void SetListenerPos(const hsPoint3 pos);
-    void SetListenerVelocity(const hsVector3 vel);
-    void SetListenerOrientation(const hsVector3 view, const hsVector3 up);
+    void SetListenerPos(const hsPoint3& pos);
+    void SetListenerVelocity(const hsVector3& vel);
+    void SetListenerOrientation(const hsVector3& view, const hsVector3& up);
     void SetMaxNumberOfActiveSounds();      // sets the max number of active sounds based on the priority cutoff
     void SetDistanceModel(int i);
 
@@ -169,9 +169,9 @@ protected:
     bool            fEAXSupported;
     double          fLastUpdateTimeMs;
 
-    void    RegisterSoftSound( const plKey soundKey );
-    void    UnregisterSoftSound( const plKey soundKey );
-    void    IUpdateSoftSounds( const hsPoint3 &newPosition );
+    void    RegisterSoftSound(const plKey& soundKey);
+    void    UnregisterSoftSound(const plKey& soundKey);
+    void    IUpdateSoftSounds(const hsPoint3& newPosition);
 };
 
 class plgAudioSys
@@ -201,27 +201,27 @@ public:
     static bool Active() { return fInit; }
     static void Shutdown();
     static void Activate(bool b);
-    static bool     IsMuted() { return fMuted; }
+    static bool IsMuted() { return fMuted; }
     static plAudioSystem* Sys() { return fSys; }
     static void Restart();
-    static bool     UsingEAX() { return fSys->fUsingEAX; }
+    static bool UsingEAX() { return fSys->fUsingEAX; }
 
     static void NextDebugSound();
 
-    static void     SetChannelVolume( ASChannel chan, float vol );
+    static void  SetChannelVolume( ASChannel chan, float vol );
     static float GetChannelVolume( ASChannel chan );
 
-    static void     SetGlobalFadeVolume( float vol );
+    static void  SetGlobalFadeVolume( float vol );
     static float GetGlobalFadeVolume() { return fGlobalFadeVolume; }
 
-    static void     SetDebugFlag( uint32_t flag, bool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
-    static bool     IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
-    static void     ClearDebugFlags() { fDebugFlags = 0; }
+    static void  SetDebugFlag( uint32_t flag, bool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
+    static bool  IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
+    static void  ClearDebugFlags() { fDebugFlags = 0; }
 
     static float GetStreamingBufferSize() { return fStreamingBufferSize; }
-    static void     SetStreamingBufferSize( float size ) { fStreamingBufferSize = size; }
+    static void  SetStreamingBufferSize( float size ) { fStreamingBufferSize = size; }
 
-    static uint8_t    GetPriorityCutoff() { return fPriorityCutoff; }
+    static uint8_t  GetPriorityCutoff( void ) { return fPriorityCutoff; }
     static void     SetPriorityCutoff( uint8_t cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
 
     static bool     AreExtendedLogsEnabled() { return fEnableExtendedLogs; }
@@ -230,16 +230,16 @@ public:
     static float GetStreamFromRAMCutoff() { return fStreamFromRAMCutoff; }
     static void     SetStreamFromRAMCutoff( float c ) { fStreamFromRAMCutoff = c; }
 
-    static void SetListenerPos(const hsPoint3 pos);
-    static void SetListenerVelocity(const hsVector3 vel);
-    static void SetListenerOrientation(const hsVector3 view, const hsVector3 up);
+    static void SetListenerPos(const hsPoint3& pos);
+    static void SetListenerVelocity(const hsVector3& vel);
+    static void SetListenerOrientation(const hsVector3& view, const hsVector3& up);
 
     static void ShowNumBuffers(bool b) { if(fSys) fSys->fDisplayNumBuffers = b; }
 
     static bool LogStreamingUpdates() { return fLogStreamingUpdates; }
     static void SetLogStreamingUpdates(bool logUpdates) { fLogStreamingUpdates = logUpdates; }
-    static void RegisterSoftSound( const plKey soundKey );
-    static void UnregisterSoftSound( const plKey soundKey );
+    static void RegisterSoftSound(const plKey& soundKey);
+    static void UnregisterSoftSound(const plKey& soundKey);
 
     static ST::string GetPlaybackDevice() { return fPlaybackDeviceName; }
 
@@ -250,7 +250,7 @@ public:
             Restart();
     }
 
-    static bool IsRestarting() {return fRestarting;}
+    static bool IsRestarting() { return fRestarting; }
 
 private:
     friend class plAudioSystem;
