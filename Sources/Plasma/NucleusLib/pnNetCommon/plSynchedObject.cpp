@@ -370,8 +370,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kExcludePersistentState)
     {
-        int16_t num=fSDLExcludeList.size();
-        stream->WriteLE(num);
+        stream->WriteLE((uint16_t)fSDLExcludeList.size());
 
         SDLStateList::iterator it=fSDLExcludeList.begin();
         for(; it != fSDLExcludeList.end(); it++)
@@ -382,8 +381,7 @@ void    plSynchedObject::Write(hsStream* stream, hsResMgr* mgr)
 
     if (fSynchFlags & kHasVolatileState)
     {
-        int16_t num=fSDLVolatileList.size();
-        stream->WriteLE(num);
+        stream->WriteLE((uint16_t)fSDLVolatileList.size());
 
         SDLStateList::iterator it=fSDLVolatileList.begin();
         for(; it != fSDLVolatileList.end(); it++)

@@ -147,7 +147,7 @@ class pfPatcherStream : public plZlibStream
 
     ST::string IMakeStatusMsg() const
     {
-        float secs = hsTimer::GetSysSeconds() - fDLStartTime;
+        float secs = hsTimer::GetSeconds<float>() - fDLStartTime;
         float bytesPerSec = fBytesWritten / secs;
         return plFileSystem::ConvertFileSize(bytesPerSec) + "/s";
     }
@@ -164,14 +164,14 @@ class pfPatcherStream : public plZlibStream
 
 public:
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& filename, uint64_t size)
-        : fParent(parent), fFilename(filename), fFlags(0), fBytesWritten(0), fDLStartTime(0.f), plZlibStream()
+        : fParent(parent), fFilename(filename), fFlags(), fBytesWritten(), fDLStartTime(), plZlibStream()
     {
         fParent->fTotalBytes += size;
         fOutput = new hsRAMStream;
     }
 
     pfPatcherStream(pfPatcherWorker* parent, const plFileName& reqName, const plFileName& cliName, const NetCliFileManifestEntry& entry)
-        : fParent(parent), fFilename(cliName.Normalize()), fFlags(entry.flags), fBytesWritten(0), plZlibStream()
+        : fParent(parent), fFilename(cliName.Normalize()), fFlags(entry.flags), fBytesWritten(), fDLStartTime(), plZlibStream()
     {
         // ugh. eap removed the compressed flag in his fail manifests
         if (reqName.GetFileExt().compare_i("gz") == 0) {
@@ -183,7 +183,7 @@ public:
 
     void Begin()
     {
-        fDLStartTime = hsTimer::GetSysSeconds();
+        fDLStartTime = hsTimer::GetSeconds<float>();
         if (!fOutput)
             Open(fFilename, "wb");
     }

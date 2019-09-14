@@ -218,7 +218,7 @@ void plProfileBase::IPrintValue(uint64_t value, char* buf, bool printType)
             strcpy(buf, valueStr);
         }
         else
-            sprintf(buf, "%u", value);
+            sprintf(buf, "%llu", value);
     }
     else if (hsCheckBits(fDisplayFlags, kDisplayFPS))
     {
