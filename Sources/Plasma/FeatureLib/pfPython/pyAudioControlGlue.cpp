@@ -377,6 +377,31 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevices)
     return tup;
 }
 
+PYTHON_METHOD_DEFINITION(ptAudioControl, setCaptureDevice, args)
+{
+    PyObject* devicename;
+    if (!PyArg_ParseTuple(args, "O", &devicename) || !PyString_CheckEx(devicename)) {
+        PyErr_SetString(PyExc_TypeError, "setCaptureDevice expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    self->fThis->SetCaptureDevice(PyString_AsStringEx(devicename));
+    PYTHON_RETURN_NONE;
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getCaptureDevice)
+{
+    return PyUnicode_FromSTString(self->fThis->GetCaptureDevice());
+}
+
+PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getCaptureDevices)
+{
+    std::vector<ST::string> devices = self->fThis->GetCaptureDevices();
+    PyObject* tup = PyTuple_New(devices.size());
+    for (size_t i = 0; i < devices.size(); ++i)
+        PyTuple_SET_ITEM(tup, i, PyUnicode_FromSTString(devices[i]));
+    return tup;
+}
+
 PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD(ptAudioControl, setSoundFXVolume, "Params: volume\nSets the SoundFX volume (0.0 to 1.0) for the game.\n"
                 "This only sets the volume for this game session."),
@@ -428,6 +453,9 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD_NOARGS(ptAudioControl, getPriorityCutoff, "Returns current sound priority"),
     PYTHON_METHOD(ptAudioControl, setPriorityCutoff, "Params: priority\nSets the sound priority"),
     PYTHON_METHOD(ptAudioControl, enableVoiceChat, "Params: state\nEnables or disables voice chat."),
+    PYTHON_METHOD(ptAudioControl, setCaptureDevice, "Sets the audio capture device by name."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, getCaptureDevice, "Gets the name for the capture device being used by the audio system."),
+    PYTHON_METHOD_NOARGS(ptAudioControl, getCaptureDevices, "Gets the name of all available audio capture devices."),
 
 PYTHON_END_METHODS_TABLE;
 

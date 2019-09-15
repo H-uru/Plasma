@@ -1297,6 +1297,14 @@ class ptAudioControl:
         """Returns the volume (0.0 to 1.0) for the Ambiance."""
         pass
 
+    def getCaptureDevice(self):
+        """Gets the name for the capture device being used by the audio system."""
+        pass
+
+    def getCaptureDevices(self):
+        """Gets the name of all available audio capture devices."""
+        pass
+
     def getGUIVolume(self):
         """Returns the volume (0.0 to 1.0) for the GUI dialogs."""
         pass
@@ -1384,6 +1392,10 @@ class ptAudioControl:
     def setAmbienceVolume(self,volume):
         """Sets the Ambience volume (0.0 to 1.0) for the game.
 This only sets the volume for this game session."""
+        pass
+
+    def setCaptureDevice(self, devicename):
+        """Sets the audio capture device by name."""
         pass
 
     def setGUIVolume(self,volume):

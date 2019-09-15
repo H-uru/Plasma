@@ -367,3 +367,20 @@ std::vector<ST::string> pyAudioControl::GetPlaybackDevices() const
         return plgAudioSys::Sys()->GetPlaybackDevices();
     return std::vector<ST::string>();
 }
+
+void pyAudioControl::SetCaptureDevice(const ST::string& device)
+{
+    plgAudioSys::SetCaptureDevice(device);
+}
+
+ST::string pyAudioControl::GetCaptureDevice() const
+{
+    return plgAudioSys::GetCaptureDevice();
+}
+
+std::vector<ST::string> pyAudioControl::GetCaptureDevices() const
+{
+    if (plgAudioSys::Sys())
+        return plgAudioSys::Sys()->GetCaptureDevices();
+    return std::vector<ST::string>();
+}

@@ -149,6 +149,11 @@ public:
 
     uint8_t GetPriorityCutoff() const;
     void  SetPriorityCutoff(uint8_t cut);
+
+    void SetCaptureDevice(const ST::string& device);
+    ST::string GetCaptureDevice() const;
+
+    std::vector<ST::string> GetCaptureDevices() const;
 };
 
 #endif // _pyAudioControl_h_
