@@ -45,9 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #cmakedefine HAVE_CPUID
 
-#define WCHAR_BYTES ${WCHAR_BYTES}
-#define SIZEOF_LONG ${SIZEOF_LONG}
-
 #cmakedefine HAVE_CXX14_DEPRECATED_ATTR
 #cmakedefine HAVE_GCC_DEPRECATED_ATTR
 
