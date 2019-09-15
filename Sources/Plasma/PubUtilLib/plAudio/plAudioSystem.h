@@ -121,6 +121,12 @@ public:
      */
     ST::string GetDefaultPlaybackDevice() const;
 
+    /** Gets a vector of all available audio capture devices. */
+    std::vector<ST::string> GetCaptureDevices() const;
+
+    /** Gets the name of the default audio capture device. */
+    ST::string GetDefaultCaptureDevice() const;
+
     /** Does the current playback device support EAX? */
     bool IsEAXSupported() const { return fEAXSupported; }
 
@@ -133,6 +139,7 @@ public:
     bool BeginCapture();
     bool CaptureSamples(uint32_t samples, int16_t* data) const;
     uint32_t GetCaptureSampleCount() const;
+    bool IsCapturing() const { return fCaptureDevice != nullptr; }
     bool SetCaptureSampleRate(uint32_t sampleRate);
     bool EndCapture();
 
@@ -168,6 +175,8 @@ protected:
     unsigned int    fMaxNumSources;     // max openal sources
     bool            fEAXSupported;
     double          fLastUpdateTimeMs;
+
+    bool OpenCaptureDevice();
 
     void    RegisterSoftSound(const plKey& soundKey);
     void    UnregisterSoftSound(const plKey& soundKey);
@@ -250,6 +259,9 @@ public:
             Restart();
     }
 
+    static ST::string GetCaptureDevice() { return fCaptureDeviceName; }
+    static void SetCaptureDevice(const ST::string& name);
+
     static bool IsRestarting() { return fRestarting; }
 
 private:
@@ -271,6 +283,7 @@ private:
     static float                f2D3DBias;
     static bool                 fLogStreamingUpdates;
     static ST::string           fPlaybackDeviceName;
+    static ST::string           fCaptureDeviceName;
     static bool                 fRestarting;
     static bool                 fMutedStateChange;
 

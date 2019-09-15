@@ -234,6 +234,27 @@ ST::string plAudioSystem::GetDefaultPlaybackDevice() const
     }
 }
 
+std::vector<ST::string> plAudioSystem::GetCaptureDevices() const
+{
+    std::vector<ST::string> retval;
+    retval.push_back(s_defaultDeviceMagic);
+
+    const ALchar* devices = alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
+    const ALchar* ptr = devices;
+    while (*ptr) {
+        ST::string deviceName = ST::string::from_utf8(ptr);
+        retval.push_back(deviceName);
+        ptr += deviceName.size() + sizeof(ALchar);
+    }
+
+    return retval;
+}
+
+ST::string plAudioSystem::GetDefaultCaptureDevice() const
+{
+    return ST::string::from_utf8(alcGetString(nullptr, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
+}
+
 //// Init ////////////////////////////////////////////////////////////////////
 bool plAudioSystem::Init()
 {
@@ -873,16 +894,38 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
     return hsKeyedObject::MsgReceive(msg);
 }
 
-bool plAudioSystem::BeginCapture()
+bool plAudioSystem::OpenCaptureDevice()
 {
-    if (fCaptureDevice) {
-        if (!EndCapture())
-            return false;
+    const ST::string& deviceName = plgAudioSys::fCaptureDeviceName;
+    bool defaultDeviceRequested = (deviceName.empty() || deviceName == s_defaultDeviceMagic);
+    if (defaultDeviceRequested)
+        plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
+    ALCsizei bufferSize = fCaptureFrequency * sizeof(int16_t) * BUFFER_LEN_SECONDS;
+
+    if (!defaultDeviceRequested) {
+        fCaptureDevice = alcCaptureOpenDevice(deviceName.c_str(), fCaptureFrequency, AL_FORMAT_MONO16, bufferSize);
+        if (!fCaptureDevice) {
+            plStatusLog::AddLineSF("audio.log", plStatusLog::kRed, "ASYS: ERROR! Failed to open capture device '{}'.", deviceName);
+        }
     }
 
-    ALCsizei bufferSize = fCaptureFrequency * sizeof(int16_t) * BUFFER_LEN_SECONDS;
-    fCaptureDevice = alcCaptureOpenDevice(nullptr, fCaptureFrequency, AL_FORMAT_MONO16, bufferSize);
-    if (fCaptureDevice) {
+    if (!fCaptureDevice) {
+        plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
+        fCaptureDevice = alcCaptureOpenDevice(nullptr, fCaptureFrequency, AL_FORMAT_MONO16, bufferSize);
+        if (!fCaptureDevice) {
+            plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! Failed to open default capture device.");
+        }
+    }
+
+    return fCaptureDevice != nullptr;
+}
+
+bool plAudioSystem::BeginCapture()
+{
+    if (IsCapturing())
+        return true;
+
+    if (OpenCaptureDevice()) {
         alcCaptureStart(fCaptureDevice);
         return true;
     } else {
@@ -892,7 +935,7 @@ bool plAudioSystem::BeginCapture()
 
 bool plAudioSystem::CaptureSamples(uint32_t samples, int16_t* data) const
 {
-    if (!fCaptureDevice)
+    if (!IsCapturing())
         return false;
 
     alcCaptureSamples(fCaptureDevice, data, samples);
@@ -913,7 +956,7 @@ bool plAudioSystem::SetCaptureSampleRate(uint32_t sampleRate)
 {
     if (fCaptureFrequency != sampleRate) {
         fCaptureFrequency = sampleRate;
-        if (fCaptureDevice) {
+        if (IsCapturing()) {
             if (!EndCapture())
                 return false;
             return BeginCapture();
@@ -924,7 +967,7 @@ bool plAudioSystem::SetCaptureSampleRate(uint32_t sampleRate)
 
 bool plAudioSystem::EndCapture()
 {
-    if (!fCaptureDevice)
+    if (!IsCapturing())
         return false;
 
     alcCaptureStop(fCaptureDevice);
@@ -958,7 +1001,8 @@ uint8_t         plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds
 bool            plgAudioSys::fEnableExtendedLogs = false;
 float           plgAudioSys::fGlobalFadeVolume = 1.f;
 bool            plgAudioSys::fLogStreamingUpdates = false;
-ST::string      plgAudioSys::fPlaybackDeviceName;
+ST::string      plgAudioSys::fPlaybackDeviceName = s_defaultDeviceMagic;
+ST::string      plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
 bool            plgAudioSys::fRestarting = false;
 bool            plgAudioSys::fMutedStateChange = false;
 
@@ -1117,4 +1161,13 @@ void plgAudioSys::SetListenerOrientation(const hsVector3& view, const hsVector3&
 {
     if (fSys)
         fSys->SetListenerOrientation(view, up);
+}
+
+void plgAudioSys::SetCaptureDevice(const ST::string& name)
+{
+    fCaptureDeviceName = name;
+    if (fSys && fSys->IsCapturing()) {
+        if (fSys->EndCapture())
+            fSys->BeginCapture();
+    }
 }

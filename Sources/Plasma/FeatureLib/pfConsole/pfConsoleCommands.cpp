@@ -3212,6 +3212,11 @@ PF_CONSOLE_CMD( Audio, SetDeviceName, "string deviceName", "Meant for plClient i
     plgAudioSys::SetPlaybackDevice(ST::string::from_utf8(params[0]));
 }
 
+PF_CONSOLE_CMD(Audio, SetCaptureDeviceName, "string deviceName", "Sets the audio capture device name")
+{
+    plgAudioSys::SetCaptureDevice(ST::string::from_utf8(params[0]));
+}
+
 PF_CONSOLE_CMD( Audio,      // groupName
                ShowIcons,       // fxnName
                "bool b", // paramList
