@@ -17,5 +17,3 @@ endif()
 if(PLASMA_USE_OPUS AND PLASMA_USE_VPX)
     set(PLASMA_USE_WEBM TRUE)
 endif()
-
-configure_file("${PROJECT_SOURCE_DIR}/cmake/hsConfig.h.cmake" "${PROJECT_BINARY_DIR}/hsConfig.h")

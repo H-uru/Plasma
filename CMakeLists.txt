@@ -288,6 +288,8 @@ endif()
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)
 include(cmake/Config.cmake)
+
+configure_file("${PROJECT_SOURCE_DIR}/cmake/hsConfig.h.cmake" "${PROJECT_BINARY_DIR}/hsConfig.h")
 include_directories(${PROJECT_BINARY_DIR})
 
 if(PLASMA_BUILD_TOOLS)

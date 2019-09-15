@@ -39,6 +39,3 @@ try_compile(HAVE_OVERRIDE ${PROJECT_BINARY_DIR}
 # Look for C++11 noexcept specifier
 try_compile(HAVE_NOEXCEPT ${PROJECT_BINARY_DIR}
             ${PROJECT_SOURCE_DIR}/cmake/check_noexcept.cpp)
-
-configure_file(${PROJECT_SOURCE_DIR}/cmake/hsCompilerSpecific.h.cmake
-               ${PROJECT_BINARY_DIR}/hsCompilerSpecific.h)
