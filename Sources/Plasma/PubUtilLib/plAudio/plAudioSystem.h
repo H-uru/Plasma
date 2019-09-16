@@ -59,8 +59,8 @@ class plgAudioSys;
 class plStatusLog;
 class plEAXListenerMod;
 
-typedef struct ALCdevice_struct ALCdevice;
-typedef struct ALCcontext_struct ALCcontext;
+struct ALCdevice;
+struct ALCcontext;
 
 
 class DeviceDescriptor
