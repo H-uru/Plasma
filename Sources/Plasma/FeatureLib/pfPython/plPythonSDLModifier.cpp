@@ -66,8 +66,8 @@ plStateDataRecord * GetAgeSDL()
 }
 
 
-#define PyLoggedAssert(cond, text)                  \
-    if (!cond) PythonInterface::WriteToLog(text);   \
+#define PyLoggedAssert(cond, text)                              \
+    if (!cond) PythonInterface::WriteToLog(ST_LITERAL(text));   \
     hsAssert(cond, text);
 
 plPythonSDLModifier::plPythonSDLModifier(plPythonFileMod* owner) : fOwner(owner)

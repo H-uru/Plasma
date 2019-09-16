@@ -126,7 +126,7 @@ public:
     static int getOutputAndReset(std::string* output = nil);
 
     // Writes 'text' to the Python log
-    static void WriteToLog(const char* text);
+    static void WriteToLog(const ST::string& text);
 
     // Writes 'text' to stderr specified in the python interface
     static void WriteToStdErr(const char* text);

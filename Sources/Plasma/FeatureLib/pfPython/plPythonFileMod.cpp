@@ -421,36 +421,29 @@ plPythonFileMod::~plPythonFileMod()
 
 bool plPythonFileMod::ILoadPythonCode()
 {
-
 #ifndef PLASMA_EXTERNAL_RELEASE
     // get code from file and execute in module
     // see if the file exists first before trying to import it
     plFileName pyfile = plFileName::Join(".", "python", ST::format("{}.py", fPythonFile));
-    if (plFileInfo(pyfile).Exists())
-    {
-        char fromLoad[256];
-        //sprintf(fromLoad,"from %s import *", fPythonFile.c_str());
+    if (plFileInfo(pyfile).Exists()) {
         // ok... we can't really use import because Python remembers too much where global variables came from
         // ...and using execfile make it sure that globals are defined in this module and not in the imported module
-        sprintf(fromLoad,"execfile('.\\\\python\\\\%s.py')", fPythonFile.c_str());
-        if ( PythonInterface::RunString( fromLoad, fModule) )
-        {
+        ST::string fromLoad = ST::format(R"(execfile('.\\python\\{}.py'))", fPythonFile);
+        if (PythonInterface::RunString(fromLoad.c_str(), fModule)) {
             // we've loaded the code into our module
             // now attach the glue python code to the end
-            if ( !PythonInterface::RunString("execfile('.\\\\python\\\\plasma\\\\glue.py')", fModule) )
-            {
+            if (!PythonInterface::RunString(R"(execfile('.\\python\\plasma\\glue.py'))", fModule)) {
                 // display any output (NOTE: this would be disabled in production)
                 DisplayPythonOutput();
                 return false;
-            }
-            else
+            } else {
                 return true;
+            }
         }
         DisplayPythonOutput();
-        char errMsg[256];
-        snprintf(errMsg, arrsize(errMsg), "Python file %s.py had errors!!! Could not load.", fPythonFile.c_str());
+
+        ST::string errMsg = ST::format("Python file {}.py had errors!!! Could not load.", fPythonFile);
         PythonInterface::WriteToLog(errMsg);
-        hsAssert(0,errMsg);
         return false;
     }
 #endif  //PLASMA_EXTERNAL_RELEASE
@@ -462,10 +455,9 @@ bool plPythonFileMod::ILoadPythonCode()
         return true;
 
     DisplayPythonOutput();
-    char errMsg[256];
-    snprintf(errMsg, arrsize(errMsg), "Python file %s.py was not found.", fPythonFile.c_str());
+
+    ST::string errMsg = ST::format("Python file {}.py was not found.", fPythonFile);
     PythonInterface::WriteToLog(errMsg);
-    hsAssert(0,errMsg);
     return false;
 }
 
@@ -525,13 +517,10 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 }
                 // display any output
                 DisplayPythonOutput();
-                if ( fInstance == nil )     // then there was an error
-                {
+                if (!fInstance) {
                     // display any output (NOTE: this would be disabled in production)
-                    char errMsg[256];
-                    snprintf(errMsg, arrsize(errMsg), "Python file %s.py, instance not found.", fPythonFile.c_str());
+                    ST::string errMsg = ST::format("Python file {}.py, instance not found.", fPythonFile);
                     PythonInterface::WriteToLog(errMsg);
-                    hsAssert(0, errMsg);
                     return;         // if we can't create the instance then there is nothing to do here
                 }
 
