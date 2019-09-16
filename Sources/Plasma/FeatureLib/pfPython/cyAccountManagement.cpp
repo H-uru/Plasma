@@ -99,18 +99,9 @@ ST::string cyAccountManagement::GetAccountName()
         return ST::null;
 }
 
-void cyAccountManagement::CreatePlayer(const char* playerName, const char* avatar, const char* invitationCode)
+void cyAccountManagement::CreatePlayer(const ST::string& playerName, const ST::string& avatar, const ST::string& invitationCode)
 {
     NetCommCreatePlayer(playerName, avatar, invitationCode, 0, nil);
-}
-
-void cyAccountManagement::CreatePlayerW(const wchar_t* playerName, const wchar_t* avatar, const wchar_t* invitationCode)
-{
-    NetCommCreatePlayer(ST::string::from_wchar(playerName),
-        ST::string::from_wchar(avatar),
-        ST::string::from_wchar(invitationCode),
-        0,
-        nullptr);
 }
 
 void cyAccountManagement::DeletePlayer(unsigned playerId)

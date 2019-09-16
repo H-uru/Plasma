@@ -338,45 +338,16 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessageInt, args, "Params: command,value
 PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spawnPoint, userStr = \"\"\nLoads an avatar model at the given spawn point. Assigns the user specified string to it.")
 {
     char* modelName;
-    PyObject* keyObj = NULL;
-    PyObject* userStrObj = NULL;
-    if (!PyArg_ParseTuple(args, "sO|O", &modelName, &keyObj, &userStrObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtLoadAvatarModel expects a string, a ptKey, and an optional string");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyKey::Check(keyObj))
-    {
+    PyObject* keyObj;
+    PyObject* userStr = nullptr;
+    if (!PyArg_ParseTuple(args, "sO|O", &modelName, &keyObj, &userStr) ||
+        !pyKey::Check(keyObj) || (userStr && !PyString_CheckEx(userStr))) {
         PyErr_SetString(PyExc_TypeError, "PtLoadAvatarModel expects a string, a ptKey, and an optional string");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
 
-    std::string userStr = "";
-    // convert name from a string or unicode string
-    if (userStrObj)
-    {
-        if (PyUnicode_Check(userStrObj))
-        {
-            int len = PyUnicode_GetSize(userStrObj);
-            wchar_t* buffer = new wchar_t[len + 1];
-            PyUnicode_AsWideChar((PyUnicodeObject*)userStrObj, buffer, len);
-            buffer[len] = L'\0';
-            char* temp = hsWStringToString(buffer);
-            delete [] buffer;
-            userStr = temp;
-            delete [] temp;
-        }
-        else if (PyString_Check(userStrObj))
-            userStr = PyString_AsString(userStrObj);
-        else
-        {
-            PyErr_SetString(PyExc_TypeError, "PtLoadAvatarModel expects a string, a ptKey, and an optional string");
-            PYTHON_RETURN_ERROR;
-        }
-    }
-
-    return cyMisc::LoadAvatarModel(modelName, *key, userStr.c_str());
+    return cyMisc::LoadAvatarModel(modelName, *key, PyString_AsStringEx(userStr));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nForcibly unloads the specified avatar model.\n"
@@ -451,37 +422,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")
 {
-    PyObject* folderObj = NULL;
-    if (!PyArg_ParseTuple(args, "O|O", &folderObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtDumpLogs expects a unicode or standard string");
+    PyObject* folder;
+    if (!PyArg_ParseTuple(args, "O", &folder) || !PyString_CheckEx(folder)) {
+        PyErr_SetString(PyExc_TypeError, "PtDumpLogs expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    // convert folder from a string or unicode string
-    if (PyUnicode_Check(folderObj))
-    {
-        int len = PyUnicode_GetSize(folderObj);
-        wchar_t* buffer = new wchar_t[len + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)folderObj, buffer, len);
-        buffer[len] = L'\0';
-        bool retVal = cyMisc::DumpLogs(buffer);
-        delete [] buffer;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else if (PyString_Check(folderObj))
-    {
-        char* temp = PyString_AsString(folderObj);
-        wchar_t* wTemp = hsStringToWString(temp);
-        bool retVal = cyMisc::DumpLogs(wTemp);
-        delete [] wTemp;
-        PYTHON_RETURN_BOOL(retVal);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtDumpLogs expects a unicode or standard string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(cyMisc::DumpLogs(PyString_AsStringEx(folder)));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")
