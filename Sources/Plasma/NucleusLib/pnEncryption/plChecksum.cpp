@@ -44,6 +44,21 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <cstring>
 
+struct _InitOpenSSL
+{
+    _InitOpenSSL()
+    {
+        // This ensures algorithms used by the EVP APIs are available,
+        // regardless of the entry point to this code.
+        OpenSSL_add_all_algorithms();
+    }
+
+    ~_InitOpenSSL()
+    {
+        EVP_cleanup();
+    }
+
+} s_initOpenSSL;
 
 static uint8_t IHexCharToInt(char c)
 {
