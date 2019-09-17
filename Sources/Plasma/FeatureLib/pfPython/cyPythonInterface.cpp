@@ -1846,7 +1846,7 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
 //  PURPOSE    : checks to see if a specific function is defined in this instance of a class
 //             : and will fill out the funcTable with object instances of where the funciton is
 //
-void PythonInterface::CheckInstanceForFunctions(PyObject* instance, char** funcNames, PyObject** funcTable)
+void PythonInterface::CheckInstanceForFunctions(PyObject* instance, const char** funcNames, PyObject** funcTable)
 {
     // start looking for the functions
     int i=0;

@@ -154,6 +154,7 @@ set(pfPython_HEADERS
     pyNetLinkingMgr.h
     pyNetServerSessionInfo.h
     pyNotify.h
+    pyObjectRef.h
     pyPlayer.h
     pySceneObject.h
     pySDL.h

@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plgDispatch.h"
 #include "pyGeometry3.h"
 #include "pyKey.h"
+#include "pyObjectRef.h"
 #include "hsResMgr.h"
 #include "hsStream.h"
 #pragma hdrstop
@@ -189,7 +190,7 @@ const char* plPythonFileMod::fFunctionNames[] =
     "gotPublicAgeList",     // kfunc_gotPublicAgeList
     "OnAIMsg",              // kfunc_OnAIMsg
     "OnGameScoreMsg",       // kfunc_OnGameScoreMsg
-    nil
+    nullptr
 };
 
 //// Callback From the Vault Events //////////////////////////////////////////////
@@ -200,99 +201,63 @@ protected:
     int     fFunctionIdx;
 
 public:
-    PythonVaultCallback( plPythonFileMod *pymod, int fidx )
+    PythonVaultCallback(plPythonFileMod* pymod, int fidx)
+        : fPyFileMod(pymod), fFunctionIdx(fidx)
     {
-        fPyFileMod = pymod;
-        fFunctionIdx = fidx;
     }
 
-    void AddedChildNode ( RelVaultNode * parentNode, RelVaultNode * childNode )
+    void AddedChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
     {
         // is there an 'OnVaultEvent' defined?
-        if ( fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx] != nil )
-        {
-            PyObject* ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
-            // call it
+        if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
+            pyObjectRef ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNodeRef::New(parentNode, childNode));
+
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                    _pycs("lO"), pyVault::kVaultNodeRefAdded,ptuple);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFileMod->fPyFunctionInstances[fFunctionIdx] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                                                     _pycs("lO"), pyVault::kVaultNodeRefAdded,
+                                                     ptuple.Get());
+            if (!retVal)
                 fPyFileMod->ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(ptuple);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             fPyFileMod->DisplayPythonOutput();
         }
     }
 
-    void RemovingChildNode ( RelVaultNode * parentNode, RelVaultNode * childNode )
+    void RemovingChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
     {
         // is there an 'OnVaultEvent' defined?
-        if ( fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx] != nil )
-        {
-            PyObject* ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
-            // call it
+        if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
+            pyObjectRef ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNodeRef::New(parentNode, childNode));
+
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                    _pycs("lO"), pyVault::kVaultRemovingNodeRef,ptuple);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFileMod->fPyFunctionInstances[fFunctionIdx] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                                                     _pycs("lO"), pyVault::kVaultRemovingNodeRef,
+                                                     ptuple.Get());
+            if (!retVal)
                 fPyFileMod->ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(ptuple);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
-            fPyFileMod->DisplayPythonOutput();
         }
     }
 
-    void ChangedNode ( RelVaultNode * changedNode )
+    void ChangedNode(RelVaultNode* changedNode)
     {
         // is there an 'OnVaultEvent' defined?
-        if ( fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx] != nil )
-        {
-            PyObject* ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple, 0, pyVaultNode::New(changedNode));
-            // call it
+        if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
+            pyObjectRef ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNode::New(changedNode));
+
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                    const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                    _pycs("lO"), pyVault::kVaultNodeSaved,ptuple);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFileMod->fPyFunctionInstances[fFunctionIdx] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
+                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
+                                                     _pycs("lO"), pyVault::kVaultNodeSaved,
+                                                     ptuple.Get());
+            if (!retVal)
                 fPyFileMod->ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(ptuple);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
-            fPyFileMod->DisplayPythonOutput();
         }
     }
 };
@@ -478,404 +443,291 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
     plgDispatch::Dispatch()->RegisterForExactType(plPlayerPageMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plAgeBeginLoadingMsg::Index(), GetKey());
     plgDispatch::Dispatch()->RegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
-    // initialize the python stuff
-    if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
-    {
-        // was there a python file module with this?
-        if ( !fPythonFile.empty() )
-        {
-            // has the module not been initialized yet
-            if ( !fModule )
-            {
-                plKey pkey = sobj->GetKey();
-                // nope, must be the first object. Then use it as the basis for the module
-                fModuleName = IMakeModuleName(sobj);
-                fModule = PythonInterface::CreateModule(fModuleName.c_str());
 
-                // if we can't create the instance then there is nothing to do here
-                if (!ILoadPythonCode())
-                {
-                    // things are getting off on a bad foot... just say there wasn't a module...
-                    fModule = nil;
-                    return;
-                }
+    // This initializes the PFM for gameplay, so do nothing if we're exporting in 3ds Max.
+    if (!fAtConvertTime && !fPythonFile.empty()) {
+        if (!fModule) {
+            const plKey& pkey = sobj->GetKey();
+
+            // nope, must be the first object. Then use it as the basis for the module
+            fModuleName = IMakeModuleName(sobj);
+            fModule = PythonInterface::CreateModule(fModuleName.c_str());
+
+            // if we can't create the instance then there is nothing to do here
+            if (!ILoadPythonCode()) {
+                // things are getting off on a bad foot... just say there wasn't a module...
+                fModule = nullptr;
+                return;
+            }
 
             // set the name of the file (in the global dictionary of the module)
-                PyObject* dict = PyModule_GetDict(fModule);
-                PyObject* pfilename = PyString_FromSTString(fPythonFile);
-                PyDict_SetItemString(dict, "glue_name", pfilename);
+            PyObject* dict = PyModule_GetDict(fModule);
+            PyObject* pfilename = PyString_FromSTString(fPythonFile);
+            PyDict_SetItemString(dict, "glue_name", pfilename);
+
             // next we need to:
             //  - create instance of class
-                PyObject* getInst = PythonInterface::GetModuleItem("glue_getInst",fModule);
-                fInstance = nil;
-                if ( getInst!=nil && PyCallable_Check(getInst) )
-                {
-                    fInstance = PyObject_CallFunction(getInst,nil);
-                    if ( fInstance == nil )
-                        // if there was an error make sure that the stderr gets flushed so it can be seen
-                        ReportError();
-                }
-                // display any output
-                DisplayPythonOutput();
-                if (!fInstance) {
-                    // display any output (NOTE: this would be disabled in production)
-                    ST::string errMsg = ST::format("Python file {}.py, instance not found.", fPythonFile);
-                    PythonInterface::WriteToLog(errMsg);
-                    return;         // if we can't create the instance then there is nothing to do here
-                }
+            PyObject* getInst = PythonInterface::GetModuleItem("glue_getInst",fModule);
+            fInstance = nullptr;
+            if (getInst && PyCallable_Check(getInst)) {
+                fInstance = PyObject_CallFunction(getInst, nullptr);
+                if (!fInstance)
+                    ReportError();
+            }
 
-                // Add the SDL modifier
-                if (plPythonSDLModifier::HasSDL(fPythonFile))
-                {
-                    plSceneObject* sceneObj = plSceneObject::ConvertNoRef(GetTarget(0)->GetKey()->ObjectIsLoaded());
-                    if (sceneObj)
-                    {
-                        hsAssert(!fSDLMod, "Python SDL modifier already created");
-                        fSDLMod = new plPythonSDLModifier(this);
-                        sceneObj->AddModifier(fSDLMod);
-                    }
-                }
+            // if we can't create the instance then there is nothing to do here
+            DisplayPythonOutput();
+            if (!fInstance) {
+                ST::string errMsg = ST::format("Python file {}.py, instance not found.", fPythonFile);
+                PythonInterface::WriteToLog(errMsg);
+                return;
+            }
 
-                //  - set the self.key and self.sceneobject in the instance of the class
-                // create the pyKey for this modifier
-                fSelfKey = pyKey::New(GetKey(),this);
-                // set the selfKey as an attribute to their instance
-                PyObject_SetAttrString(fInstance, "key", fSelfKey);
-                // create the sceneobject
-                PyObject* pSobj = pySceneObject::New(pkey, fSelfKey);
-                // set the sceneobject as an attribute to their instance
-                PyObject_SetAttrString(fInstance, "sceneobject", pSobj);
-                Py_DECREF(pSobj);
-                // set the isInitialStateLoaded to not loaded... yet
-                PyObject* pInitialState = PyInt_FromLong(0);
-                PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState);
-                Py_DECREF(pInitialState);
-                // Give the SDL mod to Python
-                if (fSDLMod)
-                {
-                    PyObject* pSDL = pySDLModifier::New(fSDLMod);
-                    PyObject_SetAttrString(fInstance, "SDL", pSDL);
-                    Py_DECREF(pSDL);
+            // Add the SDL modifier
+            if (plPythonSDLModifier::HasSDL(fPythonFile)) {
+                plSceneObject* sceneObj = plSceneObject::ConvertNoRef(GetTarget(0)->GetKey()->ObjectIsLoaded());
+                if (sceneObj) {
+                    hsAssert(!fSDLMod, "Python SDL modifier already created");
+                    fSDLMod = new plPythonSDLModifier(this);
+                    sceneObj->AddModifier(fSDLMod);
                 }
+            }
 
-                //  - set the parameters
-                PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam",fModule);
-                PyObject* check_isNamed = PythonInterface::GetModuleItem("glue_isNamedAttribute",fModule);
-                if ( setParams!=nil && PyCallable_Check(setParams) )
-                {
-                    // loop throught the parameters and set them by id
-                    // (will need to create the appropiate Python object for each type)
-                    int nparam;
-                    for ( nparam=0; nparam<GetParameterListCount() ; nparam++ )
-                    {
-                        plPythonParameter parameter = GetParameterItem(nparam);
-                        // create the python object that matches the type
-                        // (NOTE: this relies on function created above to help create Plasma python objects)
-                        PyObject* value = nil;      // assume that there is no conversion available
-                        int isNamedAttr = 0;
-                        PyObject* retvalue;
-                        switch (parameter.fValueType)
-                        {
-                            case plPythonParameter::kInt:
-                                value = PyInt_FromLong(parameter.datarecord.fIntNumber);
-                                break;
-                            case plPythonParameter::kFloat:
-                                value = PyFloat_FromDouble(parameter.datarecord.fFloatNumber);
-                                break;
-                            case plPythonParameter::kbool:
-                                value = PyInt_FromLong(parameter.datarecord.fBool);
-                                break;
-                            case plPythonParameter::kString:
-                            case plPythonParameter::kAnimationName:
-                                isNamedAttr = 0;
-                                if ( check_isNamed!=nil && PyCallable_Check(check_isNamed) )
-                                {
-                                    retvalue = PyObject_CallFunction(check_isNamed,
-                                                    _pycs("l"), parameter.fID);
-                                    if ( retvalue == nil )
-                                    {
-                                        ReportError();
-                                        DisplayPythonOutput();
-                                    }
-                                    if ( retvalue && PyInt_Check(retvalue) )
-                                        isNamedAttr = PyInt_AsLong(retvalue);
-                                    Py_XDECREF(retvalue);
-                                    // is it a NamedActivator
-                                    if ( isNamedAttr == 1 || isNamedAttr == 2)
-                                    {
-                                        if (plAgeLoader::GetInstance()->IsLoadingAge())
-                                        {
-                                            NamedComponent comp;
-                                            comp.isActivator = (isNamedAttr == 1);
-                                            comp.id = parameter.fID;
-                                            comp.name = parameter.fString;
-                                            
-                                            fNamedCompQueue.Append(comp);
-                                        }
+            //  - set the self.key and self.sceneobject in the instance of the class
+            // set the selfKey as an attribute to their instance
+            fSelfKey = pyKey::New(GetKey(), this);
+            PyObject_SetAttrString(fInstance, "key", fSelfKey);
+
+            // set the sceneobject as an attribute to their instance
+            pyObjectRef pSobj = pySceneObject::New(pkey, fSelfKey);
+            PyObject_SetAttrString(fInstance, "sceneobject", pSobj.Get());
+
+            // set the isInitialStateLoaded to not loaded... yet
+            pyObjectRef pInitialState = PyInt_FromLong(0);
+            PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState.Get());
+
+            // Give the SDL mod to Python
+            if (fSDLMod) {
+                pyObjectRef pSDL = pySDLModifier::New(fSDLMod);
+                PyObject_SetAttrString(fInstance, "SDL", pSDL.Get());
+            }
+
+            //  - set the parameters
+            PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam", fModule);
+            PyObject* check_isNamed = PythonInterface::GetModuleItem("glue_isNamedAttribute",fModule);
+            if (setParams && PyCallable_Check(setParams)) {
+                // loop throught the parameters and set them by id
+                // (will need to create the appropiate Python object for each type)
+                for (int nparam=0; nparam < GetParameterListCount(); nparam++) {
+                    plPythonParameter parameter = GetParameterItem(nparam);
+
+                    pyObjectRef value;
+                    int isNamedAttr = 0;
+                    pyObjectRef retvalue;
+                    switch (parameter.fValueType) {
+                        case plPythonParameter::kInt:
+                            value = PyInt_FromLong(parameter.datarecord.fIntNumber);
+                            break;
+                        case plPythonParameter::kFloat:
+                            value = PyFloat_FromDouble(parameter.datarecord.fFloatNumber);
+                            break;
+                        case plPythonParameter::kbool:
+                            value = PyInt_FromLong(parameter.datarecord.fBool);
+                            break;
+                        case plPythonParameter::kString:
+                        case plPythonParameter::kAnimationName:
+                            isNamedAttr = 0;
+                            if (check_isNamed && PyCallable_Check(check_isNamed)) {
+                                retvalue = PyObject_CallFunction(check_isNamed, _pycs("l"), parameter.fID);
+                                if (!retvalue ) {
+                                    ReportError();
+                                    DisplayPythonOutput();
+                                }
+                                if (retvalue && PyInt_Check(retvalue.Get()) )
+                                    isNamedAttr = PyInt_AsLong(retvalue.Get());
+                                // is it a NamedActivator
+                                if (isNamedAttr == 1 || isNamedAttr == 2) {
+                                    if (plAgeLoader::GetInstance()->IsLoadingAge()) {
+                                        NamedComponent comp;
+                                        comp.isActivator = (isNamedAttr == 1);
+                                        comp.id = parameter.fID;
+                                        comp.name = parameter.fString;
+                                        fNamedCompQueue.Append(comp);
+                                    } else {
+                                        if (isNamedAttr == 1)
+                                            IFindActivatorAndAdd(parameter.fString, parameter.fID);
                                         else
-                                        {
-                                            if (isNamedAttr == 1)
-                                                IFindActivatorAndAdd(parameter.fString, parameter.fID);
-                                            else
-                                                IFindResponderAndAdd(parameter.fString, parameter.fID);
-                                        }
+                                            IFindResponderAndAdd(parameter.fString, parameter.fID);
                                     }
                                 }
-                                // if it wasn't a named string then must be normal string type
-                                if ( isNamedAttr == 0 )
-                                    if ( !parameter.fString.empty() )
-                                        value = PyString_FromSTString(parameter.fString);
-                                break;
-                            case plPythonParameter::kSceneObject:
-                            case plPythonParameter::kSceneObjectList:
-                                if ( parameter.fObjectKey != nil )
-                                {
-                                    // create the sceneobject
-                                    value = pySceneObject::New(parameter.fObjectKey, fSelfKey);
-                                }
-                                break;
-                            case plPythonParameter::kActivatorList:
-                            case plPythonParameter::kResponderList:
-                            case plPythonParameter::kDynamicText:
-                            case plPythonParameter::kGUIDialog:
-                            case plPythonParameter::kExcludeRegion:
-                            case plPythonParameter::kAnimation:
-                            case plPythonParameter::kBehavior:
-                            case plPythonParameter::kMaterial:
-                            case plPythonParameter::kGUIPopUpMenu:
-                            case plPythonParameter::kGUISkin:
-                            case plPythonParameter::kWaterComponent:
-                            case plPythonParameter::kSwimCurrentInterface:
-                            case plPythonParameter::kClusterComponentList:
-                            case plPythonParameter::kMaterialAnimation:
-                            case plPythonParameter::kGrassShaderComponent:
-                                if ( parameter.fObjectKey != nil )
-                                {
-                                    // create pyKey for the object
-                                    value = pyKey::New(parameter.fObjectKey);
-                                }
-                                break;
-                        }
-                        // if there is a value that was converted then tell the Python code
-                        if ( value != nil )
-                        {
-                            PyObject* retVal = PyObject_CallFunction(setParams,
-                                                    _pycs("lO"), parameter.fID, value);
-                            if ( retVal == nil )
-                            {
-                                // if there was an error make sure that the stderr gets flushed so it can be seen
-                                ReportError();
                             }
-                            Py_XDECREF(retVal);
-                            Py_DECREF(value);
-                        }
+                            // if it wasn't a named string then must be normal string type
+                            if (isNamedAttr == 0)
+                                if (!parameter.fString.empty())
+                                    value = PyString_FromSTString(parameter.fString);
+                            break;
+                        case plPythonParameter::kSceneObject:
+                        case plPythonParameter::kSceneObjectList:
+                            if (parameter.fObjectKey) {
+                                // create the sceneobject
+                                value = pySceneObject::New(parameter.fObjectKey, fSelfKey);
+                            }
+                            break;
+                        case plPythonParameter::kActivatorList:
+                        case plPythonParameter::kResponderList:
+                        case plPythonParameter::kDynamicText:
+                        case plPythonParameter::kGUIDialog:
+                        case plPythonParameter::kExcludeRegion:
+                        case plPythonParameter::kAnimation:
+                        case plPythonParameter::kBehavior:
+                        case plPythonParameter::kMaterial:
+                        case plPythonParameter::kGUIPopUpMenu:
+                        case plPythonParameter::kGUISkin:
+                        case plPythonParameter::kWaterComponent:
+                        case plPythonParameter::kSwimCurrentInterface:
+                        case plPythonParameter::kClusterComponentList:
+                        case plPythonParameter::kMaterialAnimation:
+                        case plPythonParameter::kGrassShaderComponent:
+                            if (parameter.fObjectKey) {
+                                // create pyKey for the object
+                                value = pyKey::New(parameter.fObjectKey);
+                            }
+                            break;
+                    }
+                    // if there is a value that was converted then tell the Python code
+                    if (value) {
+                        pyObjectRef retVal = PyObject_CallFunction(setParams, _pycs("lO"),
+                                                                   parameter.fID, value.Get());
+                        if (!retVal)
+                            ReportError();
                     }
                 }
+            }
 
-                // check if we need to register named activators or responders
-                if (fNamedCompQueue.Count() > 0)
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType( plAgeLoadedMsg::Index(), GetKey() );
-                }
+            // check if we need to register named activators or responders
+            if (fNamedCompQueue.Count() > 0)
+                plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 
             //  - find functions in class they've defined.
-                PythonInterface::CheckInstanceForFunctions(fInstance,(char**)fFunctionNames,fPyFunctionInstances);
-                // clear any errors created by checking for methods in a class
-                PyErr_Clear();      // clear the error
-            // register for messages that they have functions defined for
-                // register for PageLoaded message if needed
-                if ( fPyFunctionInstances[kfunc_PageLoad] != nil )
-                {
-                    // register for plRoomLoadNotifyMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plRoomLoadNotifyMsg::Index(), GetKey());
-                }
+            PythonInterface::CheckInstanceForFunctions(fInstance, fFunctionNames, fPyFunctionInstances);
+            // clear any errors created by checking for methods in a class
+            PyErr_Clear();
 
-                // register for ClothingUpdate message if needed
-                if ( fPyFunctionInstances[kfunc_ClothingUpdate] != nil )
-                {
-                    // register for plRoomLoadNotifyMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plClothingUpdateBCMsg::Index(), GetKey());
-                }
+            // register for PageLoaded message if needed
+            if (fPyFunctionInstances[kfunc_PageLoad])
+                plgDispatch::Dispatch()->RegisterForExactType(plRoomLoadNotifyMsg::Index(), GetKey());
 
-                // register for pfKIMsg message if needed
-                if ( fPyFunctionInstances[kfunc_KIMsg] != nil )
-                {
-                    // register for pfKIMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(pfKIMsg::Index(), GetKey());
-                }
+            // register for ClothingUpdate message if needed
+            if (fPyFunctionInstances[kfunc_ClothingUpdate])
+                plgDispatch::Dispatch()->RegisterForExactType(plClothingUpdateBCMsg::Index(), GetKey());
 
-                // register for Member update message if needed
-                if ( fPyFunctionInstances[kfunc_MemberUpdate] != nil )
-                {
-                    // register for plMemberUpdateMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plMemberUpdateMsg::Index(), GetKey());
-                }
+            // register for pfKIMsg message if needed
+            if (fPyFunctionInstances[kfunc_KIMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(pfKIMsg::Index(), GetKey());
 
-                // register for Remote Avatar Info message if needed
-                if ( fPyFunctionInstances[kfunc_RemoteAvatarInfo] != nil )
-                {
-                    // register for plRemoteAvatarInfoMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
-                }
+            // register for Member update message if needed
+            if (fPyFunctionInstances[kfunc_MemberUpdate])
+                plgDispatch::Dispatch()->RegisterForExactType(plMemberUpdateMsg::Index(), GetKey());
 
-                // register for CCR message if needed
-                if ( fPyFunctionInstances[kfunc_OnCCRMsg] != nil )
-                {
-                    // register for plCCRCommunicationMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plCCRCommunicationMsg::Index(), GetKey());
-                }
+            // register for Remote Avatar Info message if needed
+            if (fPyFunctionInstances[kfunc_RemoteAvatarInfo])
+                plgDispatch::Dispatch()->RegisterForExactType(plRemoteAvatarInfoMsg::Index(), GetKey());
 
-                // register for VaultNotify message if needed
-                if ( fPyFunctionInstances[kfunc_OnVaultNotify] != nil )
-                {
-                    // register for plVaultNotifyMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plVaultNotifyMsg::Index(), GetKey());
-                }
+            // register for CCR message if needed
+            if (fPyFunctionInstances[kfunc_OnCCRMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(plCCRCommunicationMsg::Index(), GetKey());
 
-                // register for Owndership change notification message if needed
-                if ( fPyFunctionInstances[kfunc_OwnershipNotify] != nil )
-                {
-                    // register for plNetOwnershipMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(plNetOwnershipMsg::Index(), GetKey());
-                }
+            // register for VaultNotify message if needed
+            if (fPyFunctionInstances[kfunc_OnVaultNotify])
+                plgDispatch::Dispatch()->RegisterForExactType(plVaultNotifyMsg::Index(), GetKey());
+
+            // register for Owndership change notification message if needed
+            if (fPyFunctionInstances[kfunc_OwnershipNotify])
+                plgDispatch::Dispatch()->RegisterForExactType(plNetOwnershipMsg::Index(), GetKey());
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-                // register for Backdoor message if needed
-                if ( fPyFunctionInstances[kfunc_OnBackdoorMsg] != nil )
-                {
-                    // register for pfDebugTriggerMsg
-                    plgDispatch::Dispatch()->RegisterForExactType(pfBackdoorMsg::Index(), GetKey());
-                }
+            // register for Backdoor message if needed
+            if (fPyFunctionInstances[kfunc_OnBackdoorMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(pfBackdoorMsg::Index(), GetKey());
 #endif  //PLASMA_EXTERNAL_RELEASE
 
-                // register for VaultCallback events if needed
-                if ( fPyFunctionInstances[kfunc_VaultEvent] != nil )
-                {
-                    // create the callback object
-                    // Set the callback for the vault thingy
-                    fVaultCallback = new PythonVaultCallback( this, kfunc_VaultEvent );
-                    VaultRegisterCallback(fVaultCallback);
-                }
-
-                // register ourselves to be the default key catcher if necessary
-                if ( fPyFunctionInstances[kfunc_OnDefaultKeyCaught] != nil )
-                {
-                    // Make us a key catcher
-                    fKeyCatcher = new pfPythonKeyCatcher( this );
-
-                    // Tell the input interface manager to use our catcher
-                    plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher( fKeyCatcher );
-                }
-
-                // register for Marker messages if needed
-                if ( fPyFunctionInstances[kfunc_OnMarkerMsg] != nil )
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType(pfMarkerMsg::Index(), GetKey());
-                }
-
-                // if they are going to get LOS hit messages then we need to get the Pipeline pointer
-                if ( fPyFunctionInstances[kfunc_OnLOSNotify] != nil )
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType( plRenderMsg::Index(), GetKey() );
-                }
-                
-                // if this is a climbing-wall function, we need to register for climbing wall messages
-                if ( fPyFunctionInstances[kfunc_OnClimbBlockerEvent] != nil)
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType( plClimbEventMsg::Index(), GetKey() );    
-                }
-                if ( fPyFunctionInstances[kfunc_OnAvatarSpawn] != nil)
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType( plAvatarSpawnNotifyMsg::Index(), GetKey() ); 
-                }
-                if ( fPyFunctionInstances[kfunc_OnAccountUpdate] != nil)
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType( plAccountUpdateMsg::Index(), GetKey() ); 
-                }
-                if ( fPyFunctionInstances[kfunc_gotPublicAgeList] != nil)
-                {
-                    plgDispatch::Dispatch()->RegisterForExactType(plNetCommPublicAgeListMsg::Index(), GetKey());
-                }
-                if ( fPyFunctionInstances[kfunc_OnAIMsg] != nil)
-                {
-                    // the message that is spammed to anyone who will listen
-                    plgDispatch::Dispatch()->RegisterForExactType(plAIBrainCreatedMsg::Index(), GetKey());
-                }
-
-                // As the last thing... call the OnInit function if they have one
-                if ( fPyFunctionInstances[kfunc_Init] != nil )
-                {
-                    plProfile_BeginTiming(PythonUpdate);
-                    // call it
-                    PyObject* retVal = PyObject_CallMethod(
-                            fPyFunctionInstances[kfunc_Init],
-                            (char*)fFunctionNames[kfunc_Init], nil);
-                    if ( retVal == nil )
-                    {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                        // for some reason this function didn't, remember that and not call it again
-                        fPyFunctionInstances[kfunc_Init] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                        // if there was an error make sure that the stderr gets flushed so it can be seen
-                        ReportError();
-                    }
-                    Py_XDECREF(retVal);
-                    plProfile_EndTiming(PythonUpdate);
-                    // display any output (NOTE: this would be disabled in production)
-                    DisplayPythonOutput();
-                }
-
-                // Oversight fix... Sometimes PythonFileMods are loaded after the AgeInitialState is received.
-                // We should really let the script know about that via OnServerInitComplete anyway because it's
-                // not good to make assumptions about game state in workarounds for that method not being called
-                plNetClientApp* na = plNetClientApp::GetInstance();
-                if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) && na->GetFlagsBit(plNetClientApp::kPlayingGame))
-                {
-                    plgDispatch::Dispatch()->UnRegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
-                    if (fPyFunctionInstances[kfunc_OnServerInitComplete])
-                    {
-                        plProfile_BeginTiming(PythonUpdate);
-                        // call it
-                        PyObject* retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
-                                (char*)fFunctionNames[kfunc_OnServerInitComplete], nil);
-                        if ( retVal == nil )
-                        {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                            // for some reason this function didn't, remember that and not call it again
-                            fPyFunctionInstances[kfunc_OnServerInitComplete] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                            // if there was an error make sure that the stderr gets flushed so it can be seen
-                            ReportError();
-                        }
-                        Py_XDECREF(retVal);
-                        plProfile_EndTiming(PythonUpdate);
-                        // display any output (NOTE: this would be disabled in production)
-                        DisplayPythonOutput();
-                    }
-                }
-
-                // display python output
-                DisplayPythonOutput();
+            // register for VaultCallback events if needed
+            if (fPyFunctionInstances[kfunc_VaultEvent]) {
+                fVaultCallback = new PythonVaultCallback(this, kfunc_VaultEvent);
+                VaultRegisterCallback(fVaultCallback);
             }
-            else
-            {
-            // else if module is already created... Then we are just adding an addition object to the already existing SceneObject
-                if ( fInstance )        // make sure that we have an instance already also
-                {
-                    PyObject* dict = PyModule_GetDict(fModule);
-                    // create pyKey for the object
-                    PyObject* pkeyObj = pyKey::New(sobj->GetKey());
-                    // need to get the instance, that holds the sceneobject that we are attached to
-                    PyObject* getInst = PythonInterface::GetModuleItem("glue_getInst",fModule);
-                    // get the sceneObject that should already be created
-                    PyObject* pSceneObject = PyObject_GetAttrString(fInstance,"sceneobject");
-                    // add our new object to the list of objects that are in the _selfObject
-                    PyObject* retVal = PyObject_CallMethod(pSceneObject, _pycs("addKey"), _pycs("O"), pkeyObj);
-                    Py_XDECREF(retVal);
-                    // GetAttrString put a ref on pSceneObject, but we're done with it now.
-                    Py_XDECREF(pSceneObject); 
-                    Py_DECREF(pkeyObj);
+
+            // register ourselves to be the default key catcher if necessary
+            if (fPyFunctionInstances[kfunc_OnDefaultKeyCaught]) {
+                fKeyCatcher = new pfPythonKeyCatcher(this);
+                plInputInterfaceMgr::GetInstance()->SetDefaultKeyCatcher(fKeyCatcher);
+            }
+
+            // register for Marker messages if needed
+            if (fPyFunctionInstances[kfunc_OnMarkerMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(pfMarkerMsg::Index(), GetKey());
+
+            // if they are going to get LOS hit messages then we need to get the Pipeline pointer
+            if (fPyFunctionInstances[kfunc_OnLOSNotify])
+                plgDispatch::Dispatch()->RegisterForExactType(plRenderMsg::Index(), GetKey());
+
+            // if this is a climbing-wall function, we need to register for climbing wall messages
+            if (fPyFunctionInstances[kfunc_OnClimbBlockerEvent])
+                plgDispatch::Dispatch()->RegisterForExactType(plClimbEventMsg::Index(), GetKey());
+
+            if (fPyFunctionInstances[kfunc_OnAvatarSpawn])
+                plgDispatch::Dispatch()->RegisterForExactType(plAvatarSpawnNotifyMsg::Index(), GetKey());
+
+            if (fPyFunctionInstances[kfunc_OnAccountUpdate])
+                plgDispatch::Dispatch()->RegisterForExactType(plAccountUpdateMsg::Index(), GetKey());
+
+            if (fPyFunctionInstances[kfunc_gotPublicAgeList])
+                plgDispatch::Dispatch()->RegisterForExactType(plNetCommPublicAgeListMsg::Index(), GetKey());
+
+            if (fPyFunctionInstances[kfunc_OnAIMsg])
+                plgDispatch::Dispatch()->RegisterForExactType(plAIBrainCreatedMsg::Index(), GetKey());
+
+            // As the last thing... call the OnInit function if they have one
+            if (fPyFunctionInstances[kfunc_Init]){
+                plProfile_BeginTiming(PythonUpdate);
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Init],
+                                                         const_cast<char*>(fFunctionNames[kfunc_Init]),
+                                                         nullptr);
+                if (!retVal)
+                    ReportError();
+                plProfile_EndTiming(PythonUpdate);
+            }
+
+            // Oversight fix... Sometimes PythonFileMods are loaded after the AgeInitialState is received.
+            // We should really let the script know about that via OnServerInitComplete anyway because it's
+            // not good to make assumptions about game state in workarounds for that method not being called
+            plNetClientApp* na = plNetClientApp::GetInstance();
+            if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) && na->GetFlagsBit(plNetClientApp::kPlayingGame)) {
+                plgDispatch::Dispatch()->UnRegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
+                if (fPyFunctionInstances[kfunc_OnServerInitComplete]) {
+                    plProfile_BeginTiming(PythonUpdate);
+                    pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
+                                                             const_cast<char*>(fFunctionNames[kfunc_OnServerInitComplete]),
+                                                             nullptr);
+                    if (!retVal)
+                        ReportError();
+                    plProfile_EndTiming(PythonUpdate);
                 }
+            }
+
+            // display python output
+            DisplayPythonOutput();
+        } else {
+            // else if module is already created... Then we are just adding an additional object
+            // to the already existing SceneObject. We need to get the instance and add this new
+            // target's key to the pySceneObject.
+            if (fInstance) {
+                PyObject* dict = PyModule_GetDict(fModule);
+
+                pyObjectRef pkeyObj = pyKey::New(sobj->GetKey());
+                pyObjectRef pSceneObject = PyObject_GetAttrString(fInstance, "sceneobject");
+                pyObjectRef retVal = PyObject_CallMethod(pSceneObject.Get(), _pycs("addKey"),
+                                                         _pycs("O"), pkeyObj.Get());
             }
         }
     }
@@ -884,16 +736,14 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
 void plPythonFileMod::RemoveTarget(plSceneObject* so)
 {
     // remove sdl modifier
-    if (fSDLMod)
-    {
-        if (GetNumTargets() > 0)
-        {
+    if (fSDLMod) {
+        if (GetNumTargets()) {
             plSceneObject* sceneObj = plSceneObject::ConvertNoRef(GetTarget(0)->GetKey()->ObjectIsLoaded());
             if (sceneObj && fSDLMod)
                 sceneObj->RemoveModifier(fSDLMod);
         }
         delete fSDLMod;
-        fSDLMod = nil;
+        fSDLMod = nullptr;
     }
 
     plMultiModifier::RemoveTarget(so);
@@ -907,36 +757,26 @@ void plPythonFileMod::RemoveTarget(plSceneObject* so)
 //  PURPOSE    : API for processing discarded keys as the deafult key catcher
 //
 
-void    plPythonFileMod::HandleDiscardedKey( plKeyEventMsg *msg )
+void    plPythonFileMod::HandleDiscardedKey(plKeyEventMsg* msg)
 {
     if (!fPyFunctionInstances[kfunc_OnDefaultKeyCaught])
         return;
 
-    plProfile_BeginTiming( PythonUpdate );
+    plProfile_BeginTiming(PythonUpdate);
 
-    PyObject* retVal = PyObject_CallMethod(
-                fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
-                const_cast<char*>(fFunctionNames[kfunc_OnDefaultKeyCaught]),
-                _pycs("ciiiii"),
-                msg->GetKeyChar(), 
-                (int)msg->GetKeyDown(),
-                (int)msg->GetRepeat(),
-                (int)msg->GetShiftKeyDown(),
-                (int)msg->GetCtrlKeyDown(),
-                (int)msg->GetKeyCode() );
-    if( retVal == nil )
-    {
-#ifndef PLASMA_EXTERNAL_RELEASE
-        // for some reason this function didn't, remember that and not call it again
-        fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-        // if there was an error make sure that the stderr gets flushed so it can be seen
+    pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
+                                             const_cast<char*>(fFunctionNames[kfunc_OnDefaultKeyCaught]),
+                                             _pycs("ciiiii"),
+                                             msg->GetKeyChar(),
+                                            (int)msg->GetKeyDown(),
+                                            (int)msg->GetRepeat(),
+                                            (int)msg->GetShiftKeyDown(),
+                                            (int)msg->GetCtrlKeyDown(),
+                                            (int)msg->GetKeyCode());
+    if (!retVal)
         ReportError();
-    }
-    Py_XDECREF(retVal);
 
-    plProfile_EndTiming( PythonUpdate );
-    // display any output (NOTE: this would be disabled in production)
+    plProfile_EndTiming(PythonUpdate);
     DisplayPythonOutput();
 }
 
@@ -997,24 +837,16 @@ ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
 void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 {
     PyObject* setParams = PythonInterface::GetModuleItem("glue_setParam",fModule);
-    
-    if ( setParams != nil && PyCallable_Check(setParams) )
-    {
-        if ( key != nil )
-        {
-            // create pyKey for the object
-            PyObject* value = pyKey::New(key);
 
-            if ( value != nil )
-            {
-                PyObject* retVal = PyObject_CallFunction(setParams, _pycs("lO"), id, value);
-                if ( retVal == nil )
-                {
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
+    if (setParams && PyCallable_Check(setParams)) {
+        if (key) {
+            // create pyKey for the object
+            pyObjectRef value = pyKey::New(key);
+
+            if (value) {
+                pyObjectRef retVal = PyObject_CallFunction(setParams, _pycs("lO"), id, value.Get());
+                if (!retVal)
                     ReportError();
-                }
-                Py_XDECREF(retVal);
-                Py_DECREF(value);
             }
         }
     }
@@ -1114,58 +946,31 @@ void plPythonFileMod::IFindActivatorAndAdd(const ST::string &activatorName, int3
 //
 bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 {
-    if ( fModule )
-    {
-        // if this is the first time at the Eval, then run Python init
-        if ( fIsFirstTimeEval )
-        {
-            fIsFirstTimeEval = false;       // no longer the first time
-            // now run the __init__ function if there is one.
-            // is the Update function defined and working (as far as we know)?
-            if ( fPyFunctionInstances[kfunc_FirstUpdate] != nil )
-            {
+    if (fModule) {
+        // if this is the first time at the Eval, then run Python OnFirstUpdate
+        if (fIsFirstTimeEval) {
+            fIsFirstTimeEval = false;
+            if (fPyFunctionInstances[kfunc_FirstUpdate]) {
                 plProfile_BeginTiming(PythonUpdate);
-                // call it
-                PyObject* retVal = PyObject_CallMethod(
-                        fPyFunctionInstances[kfunc_FirstUpdate],
-                        (char*)fFunctionNames[kfunc_FirstUpdate], nil);
-                if ( retVal == nil )
-                {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_FirstUpdate] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_FirstUpdate],
+                                                         (char*)fFunctionNames[kfunc_FirstUpdate],
+                                                         nullptr);
+                if (!retVal)
                     ReportError();
-                }
-                Py_XDECREF(retVal);
                 plProfile_EndTiming(PythonUpdate);
-                // display any output (NOTE: this would be disabled in production)
                 DisplayPythonOutput();
             }
         }
 
         // is the Update function defined and working (as far as we know)?
-        if ( fPyFunctionInstances[kfunc_Update] != nil )
-        {
+        if (fPyFunctionInstances[kfunc_Update]) {
             plProfile_BeginTiming(PythonUpdate);
-            // call it
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_Update],
-                    const_cast<char*>(fFunctionNames[kfunc_Update]),
-                    _pycs("df"), secs, del);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_Update] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Update],
+                                                     const_cast<char*>(fFunctionNames[kfunc_Update]),
+                                                     _pycs("df"), secs, del);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
         }
     }
@@ -1234,241 +1039,201 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     }
 
     // are they looking for an Notify message? should be coming from a proActivator
-    if (fPyFunctionInstances[kfunc_Notify] != nil)
-    {
+    if (fPyFunctionInstances[kfunc_Notify]) {
         // yes, so was there actually a plActivateMsg?
         plNotifyMsg* pNtfyMsg = plNotifyMsg::ConvertNoRef(msg);
-        if (pNtfyMsg)
-        {
+        if (pNtfyMsg) {
             // remember if this was a Local Broad cast or not
             fLocalNotify = (pNtfyMsg->HasBCastFlag(plMessage::kNetNonLocal)) ? false : true;
 
-            // create a list for the event records
-            PyObject* levents = PyList_New(0); // start with a list of no elements
-            // loop thought the event records to get the data and transform into python objects
-            int32_t num_records = pNtfyMsg->GetEventCount();
-            int j;
-            for ( j=0; j<num_records; j++ )
-            {
-                // get an event record
-                proEventData* pED = pNtfyMsg->GetEventRecord(j);
-                switch ( pED->fEventType )
-                {
-
+            pyObjectRef levents = PyTuple_New(pNtfyMsg->GetEventCount());
+            for (int i = 0; i < pNtfyMsg->GetEventCount(); i++) {
+                proEventData* pED = pNtfyMsg->GetEventRecord(i);
+                switch (pED->fEventType) {
                     case proEventData::kCollision:
                         {
-                            proCollisionEventData *eventData = (proCollisionEventData *)pED;
-                            // get data from the collision
-                            // create list
-                            PyObject* event = PyList_New(4);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kCollision));
-                            PyList_SetItem(event, 1, PyInt_FromLong(eventData->fEnter ? 1 : 0));
-                            PyList_SetItem(event, 2, pySceneObject::New(eventData->fHitter, fSelfKey));
-                            PyList_SetItem(event, 3, pySceneObject::New(eventData->fHittee, fSelfKey));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proCollisionEventData* eventData = (proCollisionEventData*)pED;
+
+                            PyObject* event = PyTuple_New(4);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kCollision));
+                            PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fEnter ? 1 : 0));
+                            PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fHitter, fSelfKey));
+                            PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fHittee, fSelfKey));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
                         
                     case proEventData::kSpawned:
                         {
-                            proSpawnedEventData *eventData = (proSpawnedEventData *)pED;
-                            PyObject* event = PyList_New(3);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kSpawned));
-                            PyList_SetItem(event, 1, pySceneObject::New(eventData->fSpawner, fSelfKey));
-                            PyList_SetItem(event, 2, pySceneObject::New(eventData->fSpawnee, fSelfKey));
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proSpawnedEventData* eventData = (proSpawnedEventData*)pED;
+
+                            PyObject* event = PyTuple_New(3);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kSpawned));
+                            PyTuple_SET_ITEM(event, 1, pySceneObject::New(eventData->fSpawner, fSelfKey));
+                            PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fSpawnee, fSelfKey));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kPicked:
                         {
-                            // get data from the picked event
-                            proPickedEventData *eventData = (proPickedEventData *)pED;
-                            // create list
-                            PyObject* event = PyList_New(6);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kPicked));
-                            PyList_SetItem(event, 1, PyInt_FromLong(eventData->fEnabled ? 1 : 0));
-                            PyList_SetItem(event, 2, pySceneObject::New(eventData->fPicker, fSelfKey));
-                            PyList_SetItem(event, 3, pySceneObject::New(eventData->fPicked, fSelfKey));
-                            PyList_SetItem(event, 4, pyPoint3::New(eventData->fHitPoint));
+                            proPickedEventData* eventData = (proPickedEventData*)pED;
+                            PyObject* event = PyTuple_New(6);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kPicked));
+                            PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fEnabled ? 1 : 0));
+                            PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fPicker, fSelfKey));
+                            PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fPicked, fSelfKey));
+                            PyTuple_SET_ITEM(event, 4, pyPoint3::New(eventData->fHitPoint));
 
                             // make it in the local space
-                            hsPoint3 tolocal(0,0,0);
-                            if(eventData->fPicked)
-                            {
+                            hsPoint3 tolocal{ 0.f, 0.f, 0.f };
+                            if (eventData->fPicked){
                                 plSceneObject* obj = plSceneObject::ConvertNoRef(eventData->fPicked->ObjectIsLoaded());
-                                if ( obj )
-                                {
+                                if (obj) {
                                     const plCoordinateInterface* ci = obj->GetCoordinateInterface();
-                                    if ( ci )
+                                    if (ci)
                                         tolocal = (hsMatrix44)ci->GetWorldToLocal() * eventData->fHitPoint;
                                 }
                             }
-                            PyList_SetItem(event, 5, pyPoint3::New(tolocal));
-
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            PyTuple_SET_ITEM(event, 5, pyPoint3::New(tolocal));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kControlKey:
                         {
-                            proControlKeyEventData *eventData = (proControlKeyEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(3);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kControlKey));
-                            PyList_SetItem(event, 1, PyLong_FromLong(eventData->fControlKey));
-                            PyList_SetItem(event, 2, PyInt_FromLong(eventData->fDown ? 1 : 0));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proControlKeyEventData* eventData = (proControlKeyEventData*)pED;
+
+                            PyObject* event = PyTuple_New(3);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kControlKey));
+                            PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fControlKey));
+                            PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->fDown ? 1 : 0));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kVariable:
                         {
-                            proVariableEventData *eventData = (proVariableEventData *)pED;
+                            proVariableEventData* eventData = (proVariableEventData*)pED;
                             // create event list
-                            PyObject* event = PyList_New(4);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kVariable));
-                            PyList_SetItem(event, 1, PyString_FromSTString(eventData->fName));
-                            PyList_SetItem(event, 2, PyLong_FromLong(eventData->fDataType));
-                            
+                            PyObject* event = PyTuple_New(4);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kVariable));
+                            PyTuple_SET_ITEM(event, 1, PyString_FromSTString(eventData->fName));
+                            PyTuple_SET_ITEM(event, 2, PyLong_FromLong(eventData->fDataType));
+
                             // depending on the data type create the data
-                            switch ( eventData->fDataType )
-                            {
+                            switch ( eventData->fDataType ) {
                                 case proEventData::kFloat:
-                                    PyList_SetItem(event, 3, PyFloat_FromDouble(eventData->fNumber.f));
+                                    PyTuple_SET_ITEM(event, 3, PyFloat_FromDouble(eventData->fNumber.f));
                                     break;
                                 case proEventData::kKey:
-                                    PyList_SetItem(event, 3, pyKey::New(eventData->fKey));
+                                    PyTuple_SET_ITEM(event, 3, pyKey::New(eventData->fKey));
                                     break;
                                 case proEventData::kInt:
-                                    PyList_SetItem(event, 3, PyInt_FromLong(eventData->fNumber.i));
+                                    PyTuple_SET_ITEM(event, 3, PyInt_FromLong(eventData->fNumber.i));
                                     break;
                                 default:
-                                    Py_XINCREF(Py_None);
-                                    PyList_SetItem(event, 3, Py_None);
+                                    Py_INCREF(Py_None);
+                                    PyTuple_SET_ITEM(event, 3, Py_None);
                                     break;
                             }
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kFacing:
                         {
-                            proFacingEventData *eventData = (proFacingEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(5);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kFacing));
-                            PyList_SetItem(event, 1, PyInt_FromLong(eventData->enabled ? 1 : 0));
-                            PyList_SetItem(event, 2, pySceneObject::New(eventData->fFacer, fSelfKey));
-                            PyList_SetItem(event, 3, pySceneObject::New(eventData->fFacee, fSelfKey));
-                            PyList_SetItem(event, 4, PyFloat_FromDouble(eventData->dot));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proFacingEventData* eventData = (proFacingEventData*)pED;
+                            PyObject* event = PyTuple_New(5);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kFacing));
+                            PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->enabled ? 1 : 0));
+                            PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fFacer, fSelfKey));
+                            PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fFacee, fSelfKey));
+                            PyTuple_SET_ITEM(event, 4, PyFloat_FromDouble(eventData->dot));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kContained:
                         {
-                            proContainedEventData *eventData = (proContainedEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(4);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kContained));
-                            PyList_SetItem(event, 1, PyInt_FromLong(eventData->fEntering ? 1 : 0));
-                            PyList_SetItem(event, 2, pySceneObject::New(eventData->fContained, fSelfKey));
-                            PyList_SetItem(event, 3, pySceneObject::New(eventData->fContainer, fSelfKey));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proContainedEventData* eventData = (proContainedEventData*)pED;
+
+                            PyObject* event = PyTuple_New(4);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kContained));
+                            PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fEntering ? 1 : 0));
+                            PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fContained, fSelfKey));
+                            PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fContainer, fSelfKey));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kActivate:
                         {
-                            proActivateEventData *eventData = (proActivateEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(3);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kActivate));
-                            PyList_SetItem(event, 1, PyInt_FromLong(eventData->fActive ? 1 : 0));
-                            PyList_SetItem(event, 2, PyInt_FromLong(eventData->fActivate ? 1 : 0));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proActivateEventData* eventData = (proActivateEventData*)pED;
+
+                            PyObject* event = PyTuple_New(3);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kActivate));
+                            PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fActive ? 1 : 0));
+                            PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->fActivate ? 1 : 0));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kCallback:
                         {
-                            proCallbackEventData *eventData = (proCallbackEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(2);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kCallback));
-                            PyList_SetItem(event, 1, PyLong_FromLong(eventData->fEventType));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proCallbackEventData* eventData = (proCallbackEventData*)pED;
+
+                            PyObject* event = PyTuple_New(2);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kCallback));
+                            PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fEventType));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kResponderState:
                         {
-                            proResponderStateEventData *eventData = (proResponderStateEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(2);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kResponderState));
-                            PyList_SetItem(event, 1, PyLong_FromLong(eventData->fState));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proResponderStateEventData* eventData = (proResponderStateEventData*)pED;
+
+                            PyObject* event = PyTuple_New(2);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kResponderState));
+                            PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fState));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
 
                     case proEventData::kMultiStage:
                         {
-                            proMultiStageEventData *eventData = (proMultiStageEventData *)pED;
-                            // create event list
-                            PyObject* event = PyList_New(4);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kMultiStage));
-                            PyList_SetItem(event, 1, PyLong_FromLong(eventData->fStage));
-                            PyList_SetItem(event, 2, PyLong_FromLong(eventData->fEvent));
-                            PyList_SetItem(event, 3, pySceneObject::New(eventData->fAvatar, fSelfKey));
-                            // add this event record to the main event list (lists within a list)
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+                            proMultiStageEventData* eventData = (proMultiStageEventData*)pED;
+
+                            PyObject* event = PyTuple_New(4);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kMultiStage));
+                            PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fStage));
+                            PyTuple_SET_ITEM(event, 2, PyLong_FromLong(eventData->fEvent));
+                            PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fAvatar, fSelfKey));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
                     case proEventData::kOfferLinkingBook:
                         {
                             proOfferLinkingBookEventData* eventData = (proOfferLinkingBookEventData*)pED;
-                            // create event list
-                            PyObject* event = PyList_New(4);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kOfferLinkingBook));
-                            PyList_SetItem(event, 1, pySceneObject::New(eventData->offerer, fSelfKey));
-                            PyList_SetItem(event, 2, PyInt_FromLong(eventData->targetAge));
-                            PyList_SetItem(event, 3, PyInt_FromLong(eventData->offeree));
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+
+                            PyObject* event = PyTuple_New(4);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kOfferLinkingBook));
+                            PyTuple_SET_ITEM(event, 1, pySceneObject::New(eventData->offerer, fSelfKey));
+                            PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->targetAge));
+                            PyTuple_SET_ITEM(event, 3, PyInt_FromLong(eventData->offeree));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
                     case proEventData::kBook:
                         {
                             proBookEventData* eventData = (proBookEventData*)pED;
-                            // create event list
-                            PyObject* event = PyList_New(3);
-                            PyList_SetItem(event, 0, PyLong_FromLong((long)proEventData::kBook));
-                            PyList_SetItem(event, 1, PyLong_FromUnsignedLong(eventData->fEvent));
-                            PyList_SetItem(event, 2, PyLong_FromUnsignedLong(eventData->fLinkID));
-                            PyList_Append(levents, event);
-                            Py_DECREF(event);
+
+                            PyObject* event = PyTuple_New(3);
+                            PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kBook));
+                            PyTuple_SET_ITEM(event, 1, PyLong_FromUnsignedLong(eventData->fEvent));
+                            PyTuple_SET_ITEM(event, 2, PyLong_FromUnsignedLong(eventData->fLinkID));
+                            PyTuple_SET_ITEM(levents.Get(), i, event);
                         }
                         break;
                 }
@@ -1477,25 +1242,19 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             // Need to determine which of the Activators sent this plNotifyMsg
             // and set the ID appropriately
             int32_t id = -1;  // assume that none was found
-            if ( pNtfyMsg->GetSender() != nil )
-            {
+            if (pNtfyMsg->GetSender()) {
                 // loop throught the parameters and set them by id
                 // (will need to create the appropiate Python object for each type)
-                int npm;
-                for ( npm=0; npm<GetParameterListCount() ; npm++ )
-                {
+                for (int npm = 0; npm<GetParameterListCount(); npm++) {
                     plPythonParameter parameter = GetParameterItem(npm);
                     // is it something that could produce a plNotifiyMsg?
-                    if ( parameter.fValueType == plPythonParameter::kActivatorList
+                    if (parameter.fValueType == plPythonParameter::kActivatorList
                         || parameter.fValueType == plPythonParameter::kBehavior 
-                        || parameter.fValueType == plPythonParameter::kResponderList )
-                    {
+                        || parameter.fValueType == plPythonParameter::kResponderList) {
                         // is there an actual ObjectKey to look at?
-                        if (parameter.fObjectKey != nil )
-                        {
+                        if (parameter.fObjectKey) {
                             // is it the same as the sender of the notify message?
-                            if ( pNtfyMsg->GetSender()->GetUoid() == parameter.fObjectKey->GetUoid() )
-                            {
+                            if (pNtfyMsg->GetSender()->GetUoid() == parameter.fObjectKey->GetUoid()) {
                                 // match! Then return that as the ID
                                 id = parameter.fID;
                             }
@@ -1504,118 +1263,61 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 }
             }
 
-
-
-            // call it
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_Notify],
-                    const_cast<char*>(fFunctionNames[kfunc_Notify]),
-                    _pycs("flO"), pNtfyMsg->fState, id, levents);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_Notify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Notify],
+                                                     const_cast<char*>(fFunctionNames[kfunc_Notify]),
+                                                     _pycs("flO"), pNtfyMsg->fState, id, levents.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(levents);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for a key event message?
-    if (fPyFunctionInstances[kfunc_OnKeyEvent] != nil)
-    {
-        // we are looking for collision messages, is it one?
+    if (fPyFunctionInstances[kfunc_OnKeyEvent]) {
         plControlEventMsg* pEMsg = plControlEventMsg::ConvertNoRef(msg);
-        if (pEMsg)
-        {
-            // call it
+        if (pEMsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnKeyEvent],
-                    const_cast<char*>(fFunctionNames[kfunc_OnKeyEvent]),
-                    _pycs("ll"), pEMsg->GetControlCode(),
-                    pEMsg->ControlActivated());
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnKeyEvent] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnKeyEvent],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnKeyEvent]),
+                                                     _pycs("ll"), pEMsg->GetControlCode(),
+                                                     pEMsg->ControlActivated());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
-
     }
 
     // are they looking for an Timer message?
-    if (fPyFunctionInstances[kfunc_AtTimer])
-    {
-        // yes, so was there actually a plActivateMsg?
+    if (fPyFunctionInstances[kfunc_AtTimer]) {
         plTimerCallbackMsg* pTimerMsg = plTimerCallbackMsg::ConvertNoRef(msg);
-        if (pTimerMsg)
-        {
-            // yes...
-            // call it
+        if (pTimerMsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_AtTimer],
-                    const_cast<char*>(fFunctionNames[kfunc_AtTimer]),
-                    _pycs("l"), pTimerMsg->fID);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_AtTimer] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AtTimer],
+                                                     const_cast<char*>(fFunctionNames[kfunc_AtTimer]),
+                                                     _pycs("l"), pTimerMsg->fID);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
-            DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for an GUINotify message?
-    if (fPyFunctionInstances[kfunc_GUINotify])
-    {
-        // yes, so was there actually a plActivateMsg?
+    if (fPyFunctionInstances[kfunc_GUINotify]) {
         pfGUINotifyMsg* pGUIMsg = pfGUINotifyMsg::ConvertNoRef(msg);
-        if (pGUIMsg)
-        {
-            // yes...
-            // call it ... but first create the control that started this mess
-            // create the key
-            PyObject* pyControl = nil;
-            if ( pGUIMsg->GetControlKey() )     // make sure there is a control key
-            {
+        if (pGUIMsg) {
+            pyObjectRef pyControl;
+            if (pGUIMsg->GetControlKey()) {
                 // now create the control... but first we need to find out what it is
-                PyObject* pyCtrlKey = pyKey::New(pGUIMsg->GetControlKey());
-                uint32_t control_type = pyGUIDialog::WhatControlType(*(pyKey::ConvertFrom(pyCtrlKey)));
-                Py_DECREF(pyCtrlKey);
+                pyObjectRef pyCtrlKey = pyKey::New(pGUIMsg->GetControlKey());
+                uint32_t control_type = pyGUIDialog::WhatControlType(*(pyKey::ConvertFrom(pyCtrlKey.Get())));
 
-                switch (control_type)
-                {
+                switch (control_type) {
                     case pyGUIDialog::kDialog:
                         pyControl = pyGUIDialog::New(pGUIMsg->GetControlKey());
                         break;
@@ -1675,23 +1377,17 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             // Need to determine which of the GUIDialogs sent this plGUINotifyMsg
             // and set the ID appropriately
             int32_t id = -1;  // assume that none was found
-            if ( pGUIMsg->GetSender() != nil )
-            {
+            if (pGUIMsg->GetSender()) {
                 // loop throught the parameters and set them by id
                 // (will need to create the appropiate Python object for each type)
-                int npm;
-                for ( npm=0; npm<GetParameterListCount() ; npm++ )
-                {
+                for (int npm = 0; npm < GetParameterListCount(); npm++) {
                     plPythonParameter parameter = GetParameterItem(npm);
                     // is it something that could produce a plNotifiyMsg?
-                    if ( parameter.fValueType == plPythonParameter::kGUIDialog || parameter.fValueType == plPythonParameter::kGUIPopUpMenu )
-                    {
+                    if (parameter.fValueType == plPythonParameter::kGUIDialog || parameter.fValueType == plPythonParameter::kGUIPopUpMenu) {
                         // is there an actual ObjectKey to look at?
-                        if (parameter.fObjectKey != nil )
-                        {
+                        if (parameter.fObjectKey) {
                             // is it the same of the sender of the notify message?
-                            if ( pGUIMsg->GetSender()->GetUoid() == parameter.fObjectKey->GetUoid() )
-                            {
+                            if (pGUIMsg->GetSender()->GetUoid() == parameter.fObjectKey->GetUoid()) {
                                 // match! then set the ID to what the parameter is, so the python programmer can find it
                                 id = parameter.fID;
                             }
@@ -1701,117 +1397,64 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
 
             // make sure that we found a control to go with this
-            if ( pyControl == nil )
-            {
-                // if none then return a Python None object
-                Py_INCREF(Py_None);
-                pyControl = Py_None;
-            }
+            if (!pyControl)
+                pyControl.SetPyNone();
 
             // call their OnGUINotify method
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_GUINotify],
-                    const_cast<char*>(fFunctionNames[kfunc_GUINotify]),
-                    _pycs("lOl"), id, pyControl, pGUIMsg->GetEvent());
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_GUINotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_GUINotify],
+                                                     const_cast<char*>(fFunctionNames[kfunc_GUINotify]),
+                                                     _pycs("lOl"), id, pyControl.Get(), pGUIMsg->GetEvent());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(pyControl);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for an RoomLoadNotify message?
-    if (fPyFunctionInstances[kfunc_PageLoad])
-    {
-        // yes, so was there actually a plRoomLoadNotifyMsg?
+    if (fPyFunctionInstances[kfunc_PageLoad]) {
         plRoomLoadNotifyMsg* pRLNMsg = plRoomLoadNotifyMsg::ConvertNoRef(msg);
-        if (pRLNMsg)
-        {
-            PyObject* roomname = PyUnicode_FromSTString(pRLNMsg->GetRoom() ?
+        if (pRLNMsg) {
+            pyObjectRef roomname = PyUnicode_FromSTString(pRLNMsg->GetRoom() ?
                                                         pRLNMsg->GetRoom()->GetName() : ST::null);
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_PageLoad],
-                    const_cast<char*>(fFunctionNames[kfunc_PageLoad]),
-                    _pycs("lO"), pRLNMsg->GetWhatHappen(), roomname);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_PageLoad] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_PageLoad],
+                                                     const_cast<char*>(fFunctionNames[kfunc_PageLoad]),
+                                                     _pycs("lO"), pRLNMsg->GetWhatHappen(), roomname.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_DECREF(roomname);
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
 
     // are they looking for an ClothingUpdate message?
-    if (fPyFunctionInstances[kfunc_ClothingUpdate])
-    {
-        // yes, so was there actually a plClothingUpdateBCMsg?
+    if (fPyFunctionInstances[kfunc_ClothingUpdate]) {
         plClothingUpdateBCMsg* pCUMsg = plClothingUpdateBCMsg::ConvertNoRef(msg);
-        if (pCUMsg)
-        {
-            // yes...
-            // call it
+        if (pCUMsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_ClothingUpdate],
-                    (char*)fFunctionNames[kfunc_ClothingUpdate], nil);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_ClothingUpdate] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_ClothingUpdate],
+                                                     const_cast<char*>(fFunctionNames[kfunc_ClothingUpdate]),
+                                                     nullptr);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for an KIMsg message?
-    if (fPyFunctionInstances[kfunc_KIMsg])
-    {
-        // yes, so was there actually a pfKIMsg?
+    if (fPyFunctionInstances[kfunc_KIMsg]) {
         pfKIMsg* pkimsg = pfKIMsg::ConvertNoRef(msg);
-        if (pkimsg && pkimsg->GetCommand() != pfKIMsg::kHACKChatMsg)
-        {
-            // yes...
-            // find the value that would go with a command
-            PyObject* value;
-            ST::wchar_buffer str;
-            switch (pkimsg->GetCommand())
-            {
+        if (pkimsg && pkimsg->GetCommand() != pfKIMsg::kHACKChatMsg) {
+            pyObjectRef value;
+            switch (pkimsg->GetCommand()) {
                 case pfKIMsg::kSetChatFadeDelay:
                     value = PyFloat_FromDouble(pkimsg->GetDelay());
                     break;
@@ -1820,39 +1463,33 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
                 case pfKIMsg::kYesNoDialog:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetString().to_wchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.data(), str.size()));
-                    PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
+                    PyTuple_SET_ITEM(value.Get(), 0, PyUnicode_FromSTString(pkimsg->GetString()));
+                    PyTuple_SET_ITEM(value.Get(), 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kGZInRange:
                     value = PyTuple_New(2);
-                    PyTuple_SetItem(value, 0, PyLong_FromLong(pkimsg->GetIntValue()));
-                    PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
+                    PyTuple_SET_ITEM(value.Get(), 0, PyLong_FromLong(pkimsg->GetIntValue()));
+                    PyTuple_SET_ITEM(value.Get(), 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kRateIt:
                     value = PyTuple_New(3);
-                    str = pkimsg->GetString().to_wchar();
-                    PyTuple_SetItem(value,0,PyString_FromSTString(pkimsg->GetUser()));
-                    PyTuple_SetItem(value,1,PyUnicode_FromWideChar(str.data(), str.size()));
-                    PyTuple_SetItem(value,2,PyLong_FromLong(pkimsg->GetIntValue()));
+                    PyTuple_SET_ITEM(value.Get(), 0, PyString_FromSTString(pkimsg->GetUser()));
+                    PyTuple_SET_ITEM(value.Get(), 1, PyUnicode_FromSTString(pkimsg->GetString()));
+                    PyTuple_SET_ITEM(value.Get(), 2, PyLong_FromLong(pkimsg->GetIntValue()));
                     break;
                 case pfKIMsg::kRegisterImager:
                     value = PyTuple_New(2);
-                    str = pkimsg->GetString().to_wchar();
-                    PyTuple_SetItem(value, 0, PyUnicode_FromWideChar(str.data(), str.size()));
-                    PyTuple_SetItem(value, 1, pyKey::New(pkimsg->GetSender()));
+                    PyTuple_SET_ITEM(value.Get(), 0, PyUnicode_FromSTString(pkimsg->GetString()));
+                    PyTuple_SET_ITEM(value.Get(), 1, pyKey::New(pkimsg->GetSender()));
                     break;
                 case pfKIMsg::kAddPlayerDevice:
                 case pfKIMsg::kRemovePlayerDevice:
                     {
-                        str = pkimsg->GetString().to_wchar();
-                        if ( str.size() > 0 )
-                            value = PyUnicode_FromWideChar(str.data(), str.size());
+                        ST::string str = pkimsg->GetString();
+                        if (str.empty())
+                            value.SetPyNone();
                         else
-                        {
-                            Py_INCREF(Py_None);
-                            value = Py_None;
-                        }
+                            value = PyUnicode_FromSTString(str);
                     }
                     break;
                 case pfKIMsg::kKIChatStatusMsg:
@@ -1862,8 +1499,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 case pfKIMsg::kKIOKDialogNoQuit:
                 case pfKIMsg::kGZFlashUpdate:
                 case pfKIMsg::kKICreateMarkerNode:
-                    str = pkimsg->GetString().to_wchar();
-                    value = PyUnicode_FromWideChar(str.data(), str.size());
+                    value = PyUnicode_FromSTString(pkimsg->GetString());
                     break;
                 case pfKIMsg::kMGStartCGZGame:
                 case pfKIMsg::kMGStopCGZGame:
@@ -1874,171 +1510,98 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_KIMsg],
-                    const_cast<char*>(fFunctionNames[kfunc_KIMsg]),
-                    _pycs("lO"), pkimsg->GetCommand(), value);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_KIMsg] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_KIMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_KIMsg]),
+                                                     _pycs("lO"), pkimsg->GetCommand(), value.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(value);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for an MemberUpdate message?
-    if (fPyFunctionInstances[kfunc_MemberUpdate])
-    {
-        // yes, so was there actually a plMemberUpdateMsg?
+    if (fPyFunctionInstances[kfunc_MemberUpdate]) {
         plMemberUpdateMsg* pmumsg = plMemberUpdateMsg::ConvertNoRef(msg);
-        if (pmumsg)
-        {
-            // yes... then call it
+        if (pmumsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_MemberUpdate],
-                    (char*)fFunctionNames[kfunc_MemberUpdate], nil);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_MemberUpdate] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_MemberUpdate],
+                                                     const_cast<char*>(fFunctionNames[kfunc_MemberUpdate]),
+                                                     nullptr);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for a RemoteAvatar Info message?
-    if (fPyFunctionInstances[kfunc_RemoteAvatarInfo])
-    {
-        // yes, so was there actually a plActivateMsg?
+    if (fPyFunctionInstances[kfunc_RemoteAvatarInfo]) {
         plRemoteAvatarInfoMsg* pramsg = plRemoteAvatarInfoMsg::ConvertNoRef(msg);
-        if (pramsg)
-        {
-            // yes...
-            PyObject* player;
-            // if there was no avatar key in the message
-            if ( pramsg->GetAvatarKey() == nil )
-            {
-                // then just return a None... same thing as nil.. which I guess means a non-avatar is selected
-                player = PyInt_FromLong(0);
-            }
-            else
-            {
+        if (pramsg) {
+            pyObjectRef player;
+            if (pramsg->GetAvatarKey()) {
                 // try to create the pyPlayer for where this message came from
                 int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pramsg->GetAvatarKey());
-                if ( mbrIndex != -1 )
-                {
+                if (mbrIndex != -1) {
                     plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
                     player = pyPlayer::New(mbr->GetAvatarKey(), mbr->GetPlayerName(), mbr->GetPlayerID(), mbr->GetDistSq());
                 }
-                else
-                {
-                    // else if we could not find the player in our list, then no avatar selected
-                    player = PyInt_FromLong(0);
-                }
             }
+            if (!player)
+                player = PyInt_FromLong(0);
 
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_RemoteAvatarInfo],
-                    const_cast<char*>(fFunctionNames[kfunc_RemoteAvatarInfo]),
-                    _pycs("O"), player);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_RemoteAvatarInfo] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RemoteAvatarInfo],
+                                                     const_cast<char*>(fFunctionNames[kfunc_RemoteAvatarInfo]),
+                                                     _pycs("O"), player.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(player);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
 
     // are they looking for a CCR communication message?
-    if (fPyFunctionInstances[kfunc_OnCCRMsg])
-    {
-        // yes, so was there actually a plActivateMsg?
+    if (fPyFunctionInstances[kfunc_OnCCRMsg]) {
         plCCRCommunicationMsg* ccrmsg = plCCRCommunicationMsg::ConvertNoRef(msg);
-        if (ccrmsg)
-        {
+        if (ccrmsg) {
             const char* textmessage = ccrmsg->GetMessage();
-            if ( textmessage == nil)
+            if (!textmessage)
                 textmessage = "";
+
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnCCRMsg],
-                    const_cast<char*>(fFunctionNames[kfunc_OnCCRMsg]),
-                    _pycs("lsl"), ccrmsg->GetType(), textmessage,
-                    ccrmsg->GetCCRPlayerID());
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnCCRMsg] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnCCRMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnCCRMsg]),
+                                                     _pycs("lsl"), ccrmsg->GetType(), textmessage,
+                                                      ccrmsg->GetCCRPlayerID());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
-
     // are they looking for a VaultNotify message?
-    if (fPyFunctionInstances[kfunc_OnVaultNotify])
-    {
-        // yes, so was there actually a plVaultNotifyMsg?
-        if (plVaultNotifyMsg * vaultNotifyMsg = plVaultNotifyMsg::ConvertNoRef(msg))
-        {
-            if ( hsSucceeded( vaultNotifyMsg->GetResultCode() ) )
-            {
+    if (fPyFunctionInstances[kfunc_OnVaultNotify]) {
+        if (plVaultNotifyMsg * vaultNotifyMsg = plVaultNotifyMsg::ConvertNoRef(msg)) {
+            if (hsSucceeded(vaultNotifyMsg->GetResultCode())) {
                 // Create a tuple for second argument according to msg type.
                 // Default to an empty tuple.
-                PyObject* ptuple = PyTuple_New(0);
-                switch ( vaultNotifyMsg->GetType() )
-                {
+                pyObjectRef ptuple;
+                switch (vaultNotifyMsg->GetType()) {
                     case plVaultNotifyMsg::kRegisteredOwnedAge:
                     case plVaultNotifyMsg::kRegisteredVisitAge:
                     case plVaultNotifyMsg::kUnRegisteredOwnedAge:
                     case plVaultNotifyMsg::kUnRegisteredVisitAge: {
                         if (hsRef<RelVaultNode> rvn = VaultGetNode(vaultNotifyMsg->GetArgs()->GetInt(plNetCommon::VaultTaskArgs::kAgeLinkNode))) {
-                            Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
-                            PyTuple_SetItem(ptuple, 0, pyVaultAgeLinkNode::New(rvn));
+                            PyTuple_SET_ITEM(ptuple.Get(), 0, pyVaultAgeLinkNode::New(rvn));
                         }
                     }
                     break;
@@ -2047,63 +1610,41 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     case plVaultNotifyMsg::kPublicAgeRemoved: {
                         ST::string ageName = vaultNotifyMsg->GetArgs()->GetString(plNetCommon::VaultTaskArgs::kAgeFilename);
                         if (!ageName.empty()) {
-                            Py_DECREF(ptuple);
                             ptuple = PyTuple_New(1);
-                            PyTuple_SetItem(ptuple, 0, PyString_FromSTString(ageName));
+                            PyTuple_SET_ITEM(ptuple.Get(), 0, PyString_FromSTString(ageName));
                         }
                     }
                     break;
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
-                PyObject* retVal = PyObject_CallMethod(
-                        fPyFunctionInstances[kfunc_OnVaultNotify],
-                        const_cast<char*>(fFunctionNames[kfunc_OnVaultNotify]),
-                        _pycs("lO"), vaultNotifyMsg->GetType(), ptuple);
-                if ( retVal == nil )
-                {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_OnVaultNotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnVaultNotify],
+                                                         const_cast<char*>(fFunctionNames[kfunc_OnVaultNotify]),
+                                                         _pycs("lO"), vaultNotifyMsg->GetType(), ptuple.Get());
+                if (!retVal)
                     ReportError();
-                }
-                Py_XDECREF(retVal);
-                Py_DECREF(ptuple);
                 plProfile_EndTiming(PythonUpdate);
-                // display any output (NOTE: this would be disabled in production)
                 DisplayPythonOutput();
-                // we handled this message (I think)
             }
             return true;
         }
     }
 
-    
     // are they looking for a RealTimeChat message?
-    if (fPyFunctionInstances[kfunc_RTChat])
-    {
-        // yes, so was there actually a pfKIMsg?
+    if (fPyFunctionInstances[kfunc_RTChat]) {
         pfKIMsg* pkimsg = pfKIMsg::ConvertNoRef(msg);
-        if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg)
-        {
-            // yes...
-            // filter ignored player
-            if ( !VaultAmIgnoringPlayer( pkimsg->GetPlayerID() ) )
-            {
-                // create the pyPlayer for where this message came from
-                PyObject* player;
+        if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
+            if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
+                pyObjectRef uMessage = PyUnicode_FromSTString(pkimsg->GetString());
+
+                pyObjectRef player;
                 PyObject* ptPlayerClass = PythonInterface::GetPlasmaItem("ptPlayer");
-                hsAssert(ptPlayerClass,"Could not create a ptPlayer");
+                hsAssert(ptPlayerClass, "Could not locate the ptPlayer class.");
                 int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
-                if ( mbrIndex != -1 )
-                {
+                if (mbrIndex != -1) {
                     plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
                     player = pyPlayer::New(mbr->GetAvatarKey(), pkimsg->GetUser(), mbr->GetPlayerID(), mbr->GetDistSq());
-                }
-                else
-                {
+                } else {
                     // else if we could not find the player in our list, then just return a string of the user's name
                     ST::string fromName = pkimsg->GetUser();
                     if (fromName.empty())
@@ -2112,665 +1653,392 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 }
 
                 plProfile_BeginTiming(PythonUpdate);
-                ST::wchar_buffer wMessage = pkimsg->GetString().to_wchar();
-                PyObject* uMessage = PyUnicode_FromWideChar(wMessage.data(), wMessage.size());
-                PyObject* retVal = PyObject_CallMethod(
-                        fPyFunctionInstances[kfunc_RTChat],
-                        const_cast<char*>(fFunctionNames[kfunc_RTChat]),
-                        _pycs("OOl"), player, uMessage, pkimsg->GetFlags());
-                Py_DECREF(uMessage);
-                if ( retVal == nil )
-                {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_RTChat] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RTChat],
+                                                         const_cast<char*>(fFunctionNames[kfunc_RTChat]),
+                                                         _pycs("OOl"), player.Get(), uMessage.Get(),
+                                                         pkimsg->GetFlags());
+                if (!retVal)
                     ReportError();
-                }
-                Py_XDECREF(retVal);
-                Py_DECREF(player);
                 plProfile_EndTiming(PythonUpdate);
-                // display any output (NOTE: this would be disabled in production)
                 DisplayPythonOutput();
-                // we handled this message (I think)
                 return true;
             }
         }
     }
-    if (plPlayerPageMsg::ConvertNoRef(msg))
-    {
-        if (fPyFunctionInstances[kfunc_AvatarPage])
-        {
-            // yes, so was there actually a player page msg
-            plPlayerPageMsg* ppMsg = plPlayerPageMsg::ConvertNoRef(msg);
-            if (ppMsg)
-            {
-                PyObject* pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
-                plProfile_BeginTiming(PythonUpdate);
-                plSynchEnabler ps(true);    // enable dirty state tracking during shutdown  
-    
-                PyObject* retVal = PyObject_CallMethod(
-                        fPyFunctionInstances[kfunc_AvatarPage],
-                        const_cast<char*>(fFunctionNames[kfunc_AvatarPage]),
-                        _pycs("Oli"), pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
-                if ( retVal == nil )
-                {
-    #ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_AvatarPage] = nil;
-    #endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
-                    ReportError();
-                }
-                Py_XDECREF(retVal);
-                Py_DECREF(pSobj);
-                plProfile_EndTiming(PythonUpdate);
-                // display any output (NOTE: this would be disabled in production)
-                DisplayPythonOutput();
-                // we handled this message (I think)
-                return true;
-            }
-        }
-    }
-    if (plAgeBeginLoadingMsg::ConvertNoRef(msg))
-    {
-        if (fPyFunctionInstances[kfunc_OnBeginAgeLoad])
-        {
-            // yes, so was there actually a player page msg
-            plAgeBeginLoadingMsg* ppMsg = plAgeBeginLoadingMsg::ConvertNoRef(msg);
-            if (ppMsg)
-            {
-                PyObject* pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
-                plProfile_BeginTiming(PythonUpdate);
-                plSynchEnabler ps(true);    // enable dirty state tracking during shutdown  
-    
-                PyObject* retVal = PyObject_CallMethod(
-                        fPyFunctionInstances[kfunc_OnBeginAgeLoad],
-                        const_cast<char*>(fFunctionNames[kfunc_OnBeginAgeLoad]),
-                        _pycs("O"), pSobj);
-                if ( retVal == nil )
-                {
-    #ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_OnBeginAgeLoad] = nil;
-    #endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
-                    ReportError();
-                }
-                Py_XDECREF(retVal);
-                Py_DECREF(pSobj);
-                plProfile_EndTiming(PythonUpdate);
-                // display any output (NOTE: this would be disabled in production)
-                DisplayPythonOutput();
-                // we handled this message (I think)
-                return true;
-            }
-        }
-    }
-    if (plInitialAgeStateLoadedMsg::ConvertNoRef(msg))// initial server update complete message
-    {
-        // make sure there is a valid python instance
-        if ( fInstance )
-        {
-            // set the isInitialStateLoaded to that it is loaded
-            PyObject* pInitialState = PyInt_FromLong(1);
-            PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState);
-            Py_DECREF(pInitialState);
-        }
-        if (fPyFunctionInstances[kfunc_OnServerInitComplete])
-        {
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnServerInitComplete],
-                    (char*)fFunctionNames[kfunc_OnServerInitComplete],
-                    nil);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                    // for some reason this function didn't, remember that and not call it again
-                    fPyFunctionInstances[kfunc_OnServerInitComplete] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
-                    ReportError();
-            }
-            Py_XDECREF(retVal);
 
+    if (plPlayerPageMsg::ConvertNoRef(msg)) {
+        if (fPyFunctionInstances[kfunc_AvatarPage]) {
+            plPlayerPageMsg* ppMsg = plPlayerPageMsg::ConvertNoRef(msg);
+            if (ppMsg) {
+                pyObjectRef pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
+                plSynchEnabler ps(true);    // enable dirty state tracking during shutdown
+
+                plProfile_BeginTiming(PythonUpdate);
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AvatarPage],
+                                                         const_cast<char*>(fFunctionNames[kfunc_AvatarPage]),
+                                                         _pycs("Oli"), pSobj.Get(), !ppMsg->fUnload,
+                                                         ppMsg->fLastOut);
+                if (!retVal)
+                    ReportError();
+                plProfile_EndTiming(PythonUpdate);
+                DisplayPythonOutput();
+                return true;
+            }
+        }
+    }
+
+    if (plAgeBeginLoadingMsg::ConvertNoRef(msg)) {
+        if (fPyFunctionInstances[kfunc_OnBeginAgeLoad]) {
+            plAgeBeginLoadingMsg* ppMsg = plAgeBeginLoadingMsg::ConvertNoRef(msg);
+            if (ppMsg) {
+                pyObjectRef pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
+                plSynchEnabler ps(true);    // enable dirty state tracking during shutdown  
+
+                plProfile_BeginTiming(PythonUpdate);
+                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBeginAgeLoad],
+                                                         const_cast<char*>(fFunctionNames[kfunc_OnBeginAgeLoad]),
+                                                         _pycs("O"), pSobj.Get());
+                if (!retVal)
+                    ReportError();
+                plProfile_EndTiming(PythonUpdate);
+                DisplayPythonOutput();
+                return true;
+            }
+        }
+    }
+
+    // initial server update complete message
+    if (plInitialAgeStateLoadedMsg::ConvertNoRef(msg))
+    {
+        if ( fInstance ) {
+            // set the isInitialStateLoaded to that it is loaded
+            pyObjectRef pInitialState = PyInt_FromLong(1);
+            PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState.Get());
+        }
+        if (fPyFunctionInstances[kfunc_OnServerInitComplete]) {
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnServerInitComplete]),
+                                                     nullptr);
+            if (!retVal)
+                ReportError();
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
-    // are they looking for an plSDLNotificationMsg message?
-    if (fPyFunctionInstances[kfunc_SDLNotify])
-    {
-        // yes, so was there actually a plSDLNotificationMsg?
+    // are they looking for a plSDLNotificationMsg message?
+    if (fPyFunctionInstances[kfunc_SDLNotify]) {
         plSDLNotificationMsg* sn = plSDLNotificationMsg::ConvertNoRef(msg);
-        if (sn)
-        {
-            ST::string tag = sn->fHintString;
-            // yes... then call it
+        if (sn) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_SDLNotify],
-                    const_cast<char*>(fFunctionNames[kfunc_SDLNotify]),
-                    _pycs("ssls"), sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
-                    sn->fPlayerID, tag.c_str());
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_SDLNotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_SDLNotify],
+                                                     const_cast<char*>(fFunctionNames[kfunc_SDLNotify]),
+                                                     _pycs("ssls"), sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
+                                                     sn->fPlayerID, sn->fHintString.c_str());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
-    // are they looking for an plNetOwnershipMsg message?
-    if (fPyFunctionInstances[kfunc_OwnershipNotify])
-    {
-        // yes, so was there actually a plNetOwnershipMsg?
+
+    // are they looking for a plNetOwnershipMsg message?
+    if (fPyFunctionInstances[kfunc_OwnershipNotify]) {
         plNetOwnershipMsg* nom = plNetOwnershipMsg::ConvertNoRef(msg);
-        if (nom)
-        {
-            // yes... then call it
+        if (nom) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OwnershipNotify],
-                    (char*)fFunctionNames[kfunc_OwnershipNotify],
-                    nil);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OwnershipNotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OwnershipNotify],
+                                                     (char*)fFunctionNames[kfunc_OwnershipNotify],
+                                                     nullptr);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
-    // are they looking for an pfMarkerMsg message?
-    if (fPyFunctionInstances[kfunc_OnMarkerMsg])
-    {
+
+    // are they looking for a pfMarkerMsg message?
+    if (fPyFunctionInstances[kfunc_OnMarkerMsg]) {
         pfMarkerMsg* markermsg = pfMarkerMsg::ConvertNoRef(msg);
-        if (markermsg)
-        {
-            // yes... then call it
-            plProfile_BeginTiming(PythonUpdate);
-            // Default to an empty tuple.
-            PyObject* ptuple = PyTuple_New(0);
-            switch ( markermsg->fType )
-            {
+        if (markermsg) {
+            pyObjectRef ptuple;
+            switch (markermsg->fType) {
                 case pfMarkerMsg::kMarkerCaptured:
                     // Sent when we collide with a marker
-                    Py_DECREF(ptuple);
                     ptuple = PyTuple_New(1);
-                    PyTuple_SetItem(ptuple, 0, PyLong_FromUnsignedLong((long)markermsg->fMarkerID));
+                    PyTuple_SET_ITEM(ptuple.Get(), 0, PyLong_FromUnsignedLong(markermsg->fMarkerID));
+                    break;
+
+                default:
+                    ptuple = PyTuple_New(0);
                     break;
             }
 
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnMarkerMsg],
-                    const_cast<char*>(fFunctionNames[kfunc_OnMarkerMsg]),
-                    _pycs("lO"), (uint32_t)markermsg->fType, ptuple);
-            if (retVal == nil)
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnMarkerMsg] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMarkerMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnMarkerMsg]),
+                                                     _pycs("lO"), (uint32_t)markermsg->fType, ptuple.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(ptuple);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
 #ifndef PLASMA_EXTERNAL_RELEASE
-    // are they looking for an pfDebugTriggerMsg message?
-    if (fPyFunctionInstances[kfunc_OnBackdoorMsg])
-    {
-        // yes, so was there actually a plNetOwnershipMsg?
+    // are they looking for a pfBackdoorMsg message?
+    if (fPyFunctionInstances[kfunc_OnBackdoorMsg]) {
         pfBackdoorMsg* dt = pfBackdoorMsg::ConvertNoRef(msg);
-        if (dt)
-        {
-            // yes... then call it
+        if (dt) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnBackdoorMsg],
-                    const_cast<char*>(fFunctionNames[kfunc_OnBackdoorMsg]),
-                    _pycs("ss"), dt->GetTarget().c_str(), dt->GetString().c_str());
-            if ( retVal == nil )
-            {
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBackdoorMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnBackdoorMsg]),
+                                                     _pycs("ss"), dt->GetTarget().c_str(), dt->GetString().c_str());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 #endif  //PLASMA_EXTERNAL_RELEASE
 
     // are they looking for a plLOSHitMsg message?
-    if (fPyFunctionInstances[kfunc_OnLOSNotify])
-    {
-        // yes, so was there actually a plLOSHitMsg?
+    if (fPyFunctionInstances[kfunc_OnLOSNotify]) {
         plLOSHitMsg *pLOSMsg = plLOSHitMsg::ConvertNoRef( msg );
-        if (pLOSMsg)
-        {
-            // yes... then call it (self,ID,noHitFlag,sceneobject,hitPoint,distance)
-            plProfile_BeginTiming(PythonUpdate);
-            PyObject* scobj;
-            PyObject* hitpoint;
-            if ( pLOSMsg->fObj && plSceneObject::ConvertNoRef( pLOSMsg->fObj->ObjectIsLoaded()) )
-            {
+        if (pLOSMsg) {
+            pyObjectRef scobj;
+            pyObjectRef hitpoint;
+            if (pLOSMsg->fObj && plSceneObject::ConvertNoRef(pLOSMsg->fObj->ObjectIsLoaded())) {
                 scobj = pySceneObject::New(pLOSMsg->fObj);
                 hitpoint = pyPoint3::New(pLOSMsg->fHitPoint);
+            } else {
+                scobj.SetPyNone();
+                hitpoint.SetPyNone();
             }
-            else
-            {
-                // otherwise return a None object for the avatarKey
-                Py_INCREF(Py_None);
-                scobj = Py_None;
-                Py_INCREF(Py_None);
-                hitpoint = Py_None;
-            }
-                    
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnLOSNotify],
-                    const_cast<char*>(fFunctionNames[kfunc_OnLOSNotify]),
-                    _pycs("llOOf"), pLOSMsg->fRequestID, pLOSMsg->fNoHit,
-                    scobj, hitpoint, pLOSMsg->fDistance);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnLOSNotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnLOSNotify],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnLOSNotify]),
+                                                     _pycs("llOOf"), pLOSMsg->fRequestID, pLOSMsg->fNoHit,
+                                                     scobj.Get(), hitpoint.Get(), pLOSMsg->fDistance);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(scobj);
-            Py_DECREF(hitpoint);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for a plAvatarBehaviorNotifyMsg message?
-    if (fPyFunctionInstances[kfunc_OnBehaviorNotify])
-    {
+    if (fPyFunctionInstances[kfunc_OnBehaviorNotify]) {
         // yes, so was there actually a plAvatarBehaviorNotifyMsg?
-        plAvatarBehaviorNotifyMsg *behNotifymsg = plAvatarBehaviorNotifyMsg::ConvertNoRef(msg);
-        if (behNotifymsg)
-        {
-            // yes... then call it
-            plProfile_BeginTiming(PythonUpdate);
+        plAvatarBehaviorNotifyMsg* behNotifymsg = plAvatarBehaviorNotifyMsg::ConvertNoRef(msg);
+        if (behNotifymsg) {
             // the parent of the sender should be the avatar that did the behavior
-            PyObject* pSobj;
-                
+            pyObjectRef pSobj;
+
             plModifier* avmod = plModifier::ConvertNoRef(behNotifymsg->GetSender()->ObjectIsLoaded());
-            if ( avmod && avmod->GetNumTargets() > 0 )
-            {
+            if (avmod && avmod->GetNumTargets())
                 pSobj = pySceneObject::New(avmod->GetTarget(0)->GetKey(), fSelfKey);
-            }
             else
-            {
-                // otherwise return a None object for the avatarKey
-                Py_INCREF(Py_None);
-                pSobj = Py_None;
-            }
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnBehaviorNotify],
-                    const_cast<char*>(fFunctionNames[kfunc_OnBehaviorNotify]),
-                    _pycs("lOl"), behNotifymsg->fType, pSobj,
-                    behNotifymsg->state);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnBehaviorNotify] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+                pSobj.SetPyNone();
+
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBehaviorNotify],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnBehaviorNotify]),
+                                                     _pycs("lOl"), behNotifymsg->fType, pSobj.Get(),
+                                                     behNotifymsg->state);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(pSobj);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for a pfMovieEventMsg message?
-    if (fPyFunctionInstances[kfunc_OnMovieEvent])
-    {
-        // yes, so was there actually a pfMovieEventMsg?
-        pfMovieEventMsg *moviemsg = pfMovieEventMsg::ConvertNoRef(msg);
-        if (moviemsg)
-        {
-            // yes... then call it
+    if (fPyFunctionInstances[kfunc_OnMovieEvent]) {
+        pfMovieEventMsg* moviemsg = pfMovieEventMsg::ConvertNoRef(msg);
+        if (moviemsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnMovieEvent],
-                    const_cast<char*>(fFunctionNames[kfunc_OnMovieEvent]),
-                    _pycs("si"), moviemsg->fMovieName.AsString().c_str(), (uint32_t)moviemsg->fReason);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnMovieEvent] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMovieEvent],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnMovieEvent]),
+                                                     _pycs("si"), moviemsg->fMovieName.AsString().c_str(),
+                                                     (uint32_t)moviemsg->fReason);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
     // are they looking for a plCaptureRenderMsg message?
-    if (fPyFunctionInstances[kfunc_OnScreenCaptureDone])
-    {
-        // yes, so was there actually a pfMovieEventMsg?
+    if (fPyFunctionInstances[kfunc_OnScreenCaptureDone]) {
         plCaptureRenderMsg *capturemsg = plCaptureRenderMsg::ConvertNoRef(msg);
-        if (capturemsg)
-        {
-            // yes... then call it
-            plProfile_BeginTiming(PythonUpdate);
-            PyObject* pSobj;
-                
-            if ( capturemsg->GetMipmap() )
-            {
+        if (capturemsg) {
+            pyObjectRef pSobj;
+            if (capturemsg->GetMipmap())
                 pSobj = pyImage::New(capturemsg->GetMipmap());
-            }
             else
-            {
-                // otherwise return a None object for the avatarKey
-                Py_INCREF(Py_None);
-                pSobj = Py_None;
-            }
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnScreenCaptureDone],
-                    const_cast<char*>(fFunctionNames[kfunc_OnScreenCaptureDone]),
-                    _pycs("O"), pSobj);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnScreenCaptureDone] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+                pSobj.SetPyNone();
+
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnScreenCaptureDone],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnScreenCaptureDone]),
+                                                     _pycs("O"), pSobj.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(pSobj);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-            // we handled this message (I think)
             return true;
         }
     }
 
-    if (fPyFunctionInstances[kfunc_OnClimbBlockerEvent])
-    {
+    if (fPyFunctionInstances[kfunc_OnClimbBlockerEvent]) {
         plClimbEventMsg* pEvent = plClimbEventMsg::ConvertNoRef(msg);
-        if (pEvent)
-        {
-            PyObject* pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
-            
+        if (pEvent) {
+            pyObjectRef pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
+
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
-                    const_cast<char*>(fFunctionNames[kfunc_OnClimbBlockerEvent]),
-                    _pycs("O"), pSobj);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnClimbBlockerEvent] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnClimbBlockerEvent]),
+                                                     _pycs("O"), pSobj.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-            Py_DECREF(pSobj);
+            plProfile_EndTiming(PythonUpdate);
+            DisplayPythonOutput();
             return true;
         }
     }
-    if (fPyFunctionInstances[kfunc_OnAvatarSpawn])
-    {
+
+    if (fPyFunctionInstances[kfunc_OnAvatarSpawn]) {
         plAvatarSpawnNotifyMsg* pSpawn = plAvatarSpawnNotifyMsg::ConvertNoRef(msg);
-        if (pSpawn)
-        {
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnAvatarSpawn],
-                    const_cast<char*>(fFunctionNames[kfunc_OnAvatarSpawn]),
-                    _pycs("l"), 1);
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnAvatarSpawn] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+        if (pSpawn) {
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAvatarSpawn],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnAvatarSpawn]),
+                                                     _pycs("l"), 1);
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
+            plProfile_EndTiming(PythonUpdate);
+            DisplayPythonOutput();
             return true;
         }
     }
     
-    if (fPyFunctionInstances[kfunc_OnAccountUpdate])
-    {
+    if (fPyFunctionInstances[kfunc_OnAccountUpdate]) {
         plAccountUpdateMsg* pUpdateMsg = plAccountUpdateMsg::ConvertNoRef(msg);
-        if (pUpdateMsg)
-        {
+        if (pUpdateMsg) {
             plProfile_BeginTiming(PythonUpdate);
-            PyObject* retVal = PyObject_CallMethod(
-                    fPyFunctionInstances[kfunc_OnAccountUpdate],
-                    const_cast<char*>(fFunctionNames[kfunc_OnAccountUpdate]),
-                    _pycs("iii"), (int)pUpdateMsg->GetUpdateType(),
-                    (int)pUpdateMsg->GetResult(),
-                    (int)pUpdateMsg->GetPlayerInt()
-            );
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnAccountUpdate] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAccountUpdate],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnAccountUpdate]),
+                                                     _pycs("iii"), (int)pUpdateMsg->GetUpdateType(),
+                                                     (int)pUpdateMsg->GetResult(),
+                                                     (int)pUpdateMsg->GetPlayerInt());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
             plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
             DisplayPythonOutput();
-
             return true;
         }
     }
 
-    if (fPyFunctionInstances[kfunc_gotPublicAgeList])
-    {
+    if (fPyFunctionInstances[kfunc_gotPublicAgeList]) {
         plNetCommPublicAgeListMsg * pPubAgeMsg = plNetCommPublicAgeListMsg::ConvertNoRef(msg);
-        if (pPubAgeMsg)
-        {
-            plProfile_BeginTiming(PythonUpdate);
-            PyObject* pyEL = PyList_New(pPubAgeMsg->ages.Count());
+        if (pPubAgeMsg) {
+            // We would prefer to use the immutable tuple here, but sometimes the public age list
+            // will only have one age in it. Python will "helpfully" unpack this tuple for us as
+            // the method's arguments. For now, we will fall back to a list.
+            pyObjectRef pyEL = PyList_New(pPubAgeMsg->ages.Count());
             for (unsigned i = 0; i<pPubAgeMsg->ages.Count(); ++i) {
                 plAgeInfoStruct ageInfo;
                 ageInfo.CopyFrom(pPubAgeMsg->ages[i]);
                 unsigned nPlayers = pPubAgeMsg->ages[i].currentPopulation;
                 unsigned nOwners = pPubAgeMsg->ages[i].population;
-                
-                PyObject* t = PyTuple_New(3);
-                PyTuple_SetItem(t, 0, pyAgeInfoStruct::New(&ageInfo));
-                PyTuple_SetItem(t, 1, PyLong_FromUnsignedLong(nPlayers));
-                PyTuple_SetItem(t, 2, PyLong_FromUnsignedLong(nOwners));
-                PyList_SetItem(pyEL, i, t); // steals the ref
-            }
-            
-            PyObject* retVal = PyObject_CallMethod(
-                fPyFunctionInstances[kfunc_gotPublicAgeList],
-                const_cast<char*>(fFunctionNames[kfunc_gotPublicAgeList]),
-                _pycs("O"),
-                pyEL
-            );
-            if ( retVal == nil )
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_gotPublicAgeList] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
-                ReportError();
-            }
-            Py_XDECREF(retVal);
-            plProfile_EndTiming(PythonUpdate);
-            // display any output (NOTE: this would be disabled in production)
-            DisplayPythonOutput();
 
+                PyObject* t = PyTuple_New(3);
+                PyTuple_SET_ITEM(t, 0, pyAgeInfoStruct::New(&ageInfo));
+                PyTuple_SET_ITEM(t, 1, PyLong_FromUnsignedLong(nPlayers));
+                PyTuple_SET_ITEM(t, 2, PyLong_FromUnsignedLong(nOwners));
+                PyList_SET_ITEM(pyEL.Get(), i, t);
+            }
+
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_gotPublicAgeList],
+                                                     const_cast<char*>(fFunctionNames[kfunc_gotPublicAgeList]),
+                                                     _pycs("O"), pyEL.Get());
+            if (!retVal)
+                ReportError();
+            plProfile_EndTiming(PythonUpdate);
+            DisplayPythonOutput();
             return true;
         }
     }
 
-    if (fPyFunctionInstances[kfunc_OnAIMsg])
-    {
+    if (fPyFunctionInstances[kfunc_OnAIMsg]) {
         plAIMsg* aiMsg = plAIMsg::ConvertNoRef(msg);
-        if (aiMsg)
-        {
-            plProfile_BeginTiming(PythonUpdate);
-
+        if (aiMsg) {
             // grab the sender (the armature mod that has our brain)
             plArmatureMod* armMod = plArmatureMod::ConvertNoRef(aiMsg->GetSender()->ObjectIsLoaded());
-            PyObject* brainObj = NULL;
-            if (armMod)
-            {
+            pyObjectRef brainObj;
+            if (armMod) {
                 plArmatureBrain* brain = armMod->FindBrainByClass(plAvBrainCritter::Index());
                 plAvBrainCritter* critterBrain = plAvBrainCritter::ConvertNoRef(brain);
                 if (critterBrain)
                     brainObj = pyCritterBrain::New(critterBrain);
             }
             if (!brainObj)
-            {
-                Py_INCREF(Py_None);
-                brainObj = Py_None;
-            }
+                brainObj.SetPyNone();
 
             // set up the msg type and any args, based on the message we got
             int msgType = plAIMsg::kAIMsg_Unknown;
-            PyObject* args = NULL;
+            pyObjectRef args;
             plAIBrainCreatedMsg* brainCreatedMsg = plAIBrainCreatedMsg::ConvertNoRef(aiMsg);
             if (brainCreatedMsg)
                 msgType = plAIMsg::kAIMsg_BrainCreated;
 
             plAIArrivedAtGoalMsg* arrivedMsg = plAIArrivedAtGoalMsg::ConvertNoRef(aiMsg);
-            if (arrivedMsg)
-            {
+            if (arrivedMsg) {
                 msgType = plAIMsg::kAIMsg_ArrivedAtGoal;
                 args = PyTuple_New(1);
-                PyTuple_SetItem(args, 0, pyPoint3::New(arrivedMsg->Goal()));
+                PyTuple_SetItem(args.Get(), 0, pyPoint3::New(arrivedMsg->Goal()));
             }
 
             // if no args were set, simply set to none
             if (!args)
-            {
-                Py_INCREF(Py_None);
-                args = Py_None;
-            }
+                args.SetPyNone();
 
-            // call the function with the above arguments
-            PyObject* retVal = PyObject_CallMethod(
-                fPyFunctionInstances[kfunc_OnAIMsg],
-                const_cast<char*>(fFunctionNames[kfunc_OnAIMsg]),
-                _pycs("OisO"),
-                brainObj, msgType, aiMsg->BrainUserString().c_str(), args
-            );
-            Py_DECREF(brainObj);
-            Py_DECREF(args);
-            if (retVal == nil)
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnAIMsg] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            plProfile_BeginTiming(PythonUpdate);
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAIMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnAIMsg]),
+                                                     _pycs("OisO"), brainObj.Get(), msgType,
+                                                     aiMsg->BrainUserString().c_str(), args.Get());
+            if (!retVal)
                 ReportError();
-            }
-            Py_XDECREF(retVal);
-
             plProfile_EndTiming(PythonUpdate);
-            // display any output
             DisplayPythonOutput();
-
             return true;
         }
     }
 
-    if (fPyFunctionInstances[kfunc_OnGameScoreMsg])
-    {
+    if (fPyFunctionInstances[kfunc_OnGameScoreMsg]) {
         pfGameScoreMsg* pScoreMsg = pfGameScoreMsg::ConvertNoRef(msg);
-        if (pScoreMsg)
-        {
+        if (pScoreMsg) {
+            pyObjectRef pyMsg = pyGameScoreMsg::CreateFinal(pScoreMsg);
+
             plProfile_BeginTiming(PythonUpdate);
-
-            // Creates the final ptGameScoreMsg and ships it off to OnGameScoreMsg
-            PyObject* pyMsg = pyGameScoreMsg::CreateFinal(pScoreMsg);
-            PyObject* retVal = PyObject_CallMethod(
-                fPyFunctionInstances[kfunc_OnGameScoreMsg],
-                const_cast<char*>(fFunctionNames[kfunc_OnGameScoreMsg]),
-                _pycs("O"), pyMsg
-            );
-            Py_DECREF(pyMsg);
-
-            if (retVal == nil)
-            {
-#ifndef PLASMA_EXTERNAL_RELEASE
-                // for some reason this function didn't, remember that and not call it again
-                fPyFunctionInstances[kfunc_OnGameScoreMsg] = nil;
-#endif  //PLASMA_EXTERNAL_RELEASE
-                // if there was an error make sure that the stderr gets flushed so it can be seen
+            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnGameScoreMsg],
+                                                     const_cast<char*>(fFunctionNames[kfunc_OnGameScoreMsg]),
+                                                     _pycs("O"), pyMsg.Get());
+            if (!retVal)
                 ReportError();
-            }
             plProfile_EndTiming(PythonUpdate);
+            DisplayPythonOutput();
             return true;
         }
     }
