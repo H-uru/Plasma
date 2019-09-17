@@ -43,7 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define HeadSpinHDefined
 
 // Ensure these get set consistently regardless of what module includes it
-#include "hsCompilerSpecific.h"
+#include "hsConfig.h"
 
 #if defined(_DEBUG)
 #   define HS_DEBUGGING

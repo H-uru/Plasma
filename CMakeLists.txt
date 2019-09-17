@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.5.1)
 project(Plasma)
 
+# Require C++14 (Note: VC++ 2013 will ignore this)
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
 include(FeatureSummary)
 
 if(POLICY CMP0054)
@@ -283,6 +288,8 @@ endif()
 # Configure compile-time compiler-specific flags and other config files
 include(cmake/CompilerChecks.cmake)
 include(cmake/Config.cmake)
+
+configure_file("${PROJECT_SOURCE_DIR}/cmake/hsConfig.h.cmake" "${PROJECT_BINARY_DIR}/hsConfig.h")
 include_directories(${PROJECT_BINARY_DIR})
 
 if(PLASMA_BUILD_TOOLS)
