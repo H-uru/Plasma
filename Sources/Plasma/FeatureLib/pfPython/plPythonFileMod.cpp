@@ -245,14 +245,19 @@ public:
 
 class pfPythonKeyCatcher : public plDefaultKeyCatcher
 {
-    plPythonFileMod *fMod;
+    plPythonFileMod* fMod;
 
     public:
-        pfPythonKeyCatcher( plPythonFileMod *mod ) : fMod( mod ) {}
-        
-        virtual void    HandleKeyEvent( plKeyEventMsg *event )
+        pfPythonKeyCatcher(plPythonFileMod *mod )
+            : fMod(mod)
+        { }
+
+        virtual void HandleKeyEvent(plKeyEventMsg* msg)
         {
-            fMod->HandleDiscardedKey( event );
+            fMod->ICallScriptMethod(plPythonFileMod::kfunc_OnDefaultKeyCaught,
+                                    msg->GetKeyChar(), msg->GetKeyDown(),
+                                    msg->GetRepeat(), msg->GetShiftKeyDown(),
+                                    msg->GetCtrlKeyDown(), (int)msg->GetKeyCode());
         }
 };
 
@@ -287,74 +292,52 @@ plPythonFileMod::plPythonFileMod()
 
 plPythonFileMod::~plPythonFileMod()
 {
-    if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
-    {
+    if (!fAtConvertTime) {
         for (size_t i = 0; fFunctionNames[i] != nullptr; ++i)
             Py_CLEAR(fPyFunctionInstances[i]);
 
         // remove our reference to the instance (but only if we made one)
-        if(fInstance)
-        {
-            if ( fInstance->ob_refcnt > 1)
+        if (fInstance) {
+            if (fInstance->ob_refcnt > 1)
                 Py_DECREF(fInstance);
+
             //  then have the glue delete the instance of class
-            PyObject* delInst = PythonInterface::GetModuleItem("glue_delInst",fModule);
-            if ( delInst!=nil && PyCallable_Check(delInst) )
-            {
-                PyObject* retVal = PyObject_CallFunction(delInst,nil);
-                if ( retVal == nil )
-                {
-                    // if there was an error make sure that the stderr gets flushed so it can be seen
+            PyObject* delInst = PythonInterface::GetModuleItem("glue_delInst", fModule);
+            if (delInst && PyCallable_Check(delInst)) {
+                pyObjectRef retVal = PyObject_CallFunction(delInst, nullptr);
+                if (!retVal)
                     ReportError();
-                }
-                Py_XDECREF(retVal);
-                // display any output
                 DisplayPythonOutput();
             }
         }
-        fInstance = nil;
+        fInstance = nullptr;
     }
 
     // If we have a key catcher, get rid of it
     delete fKeyCatcher;
-    fKeyCatcher = nil;
 
     // if we created a Vault callback, undo it and get rid of it
-    if (fVaultCallback)
-    {
+    if (fVaultCallback) {
         // Set the callback for the vault thingy
         VaultUnregisterCallback(fVaultCallback);
         delete fVaultCallback;
-        fVaultCallback = nil;
     }
 
-    if (fSelfKey)
-    {
-        Py_DECREF(fSelfKey);
-        fSelfKey = nil;
-    }
+    Py_CLEAR(fSelfKey);
 
     // then get rid of this module
-    //  NOTE: fModule shouldn't be made in the plugin, only at runtime
-    if ( !fModuleName.empty() && fModule )
-    {
+    // NOTE: fModule shouldn't be made in the plugin, only at runtime
+    if (!fModuleName.empty() && fModule) {
         //_PyModule_Clear(fModule);
-        PyObject *m;
-        PyObject *modules = PyImport_GetModuleDict();
-        if( modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m))
-        {
-            hsStatusMessageF("Module %s removed from python dictionary",fModuleName.c_str());
+        PyObject* m;
+        PyObject* modules = PyImport_GetModuleDict();
+        if (modules && (m = PyDict_GetItemString(modules, fModuleName.c_str())) && PyModule_Check(m)) {
+            hsStatusMessageF("Module %s removed from python dictionary", fModuleName.c_str());
             PyDict_DelItemString(modules, fModuleName.c_str());
-        }
-        else
-        {
+        } else {
             hsStatusMessageF("Module %s not found in python dictionary. Already removed?",fModuleName.c_str());
         }
-        // the above code should have unloaded the module from python, so it will delete itself, therefore
-        // we need to set our pointer to nil to make sure we don't try to use it
-        fModule = nil;
     }
-    fModuleName = ST::null;
 }
 
 template<typename T>
@@ -662,18 +645,12 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                                     isNamedAttr = PyInt_AsLong(retvalue.Get());
                                 // is it a NamedActivator
                                 if (isNamedAttr == 1 || isNamedAttr == 2) {
-                                    if (plAgeLoader::GetInstance()->IsLoadingAge()) {
-                                        NamedComponent comp;
-                                        comp.isActivator = (isNamedAttr == 1);
-                                        comp.id = parameter.fID;
-                                        comp.name = parameter.fString;
-                                        fNamedCompQueue.Append(comp);
-                                    } else {
-                                        if (isNamedAttr == 1)
-                                            IFindActivatorAndAdd(parameter.fString, parameter.fID);
-                                        else
-                                            IFindResponderAndAdd(parameter.fString, parameter.fID);
-                                    }
+                                    if (plAgeLoader::GetInstance()->IsLoadingAge())
+                                        fNamedCompQueue.emplace_back(parameter.fString, parameter.fID, (isNamedAttr == 1));
+                                    else if (isNamedAttr == 1)
+                                        IFindActivatorAndAdd(parameter.fString, parameter.fID);
+                                    else
+                                        IFindResponderAndAdd(parameter.fString, parameter.fID);
                                 }
                             }
                             // if it wasn't a named string then must be normal string type
@@ -720,7 +697,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             }
 
             // check if we need to register named activators or responders
-            if (fNamedCompQueue.Count() > 0)
+            if (!fNamedCompQueue.empty())
                 plgDispatch::Dispatch()->RegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
 
             //  - find functions in class they've defined.
@@ -821,12 +798,8 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             // to the already existing SceneObject. We need to get the instance and add this new
             // target's key to the pySceneObject.
             if (fInstance) {
-                PyObject* dict = PyModule_GetDict(fModule);
-
-                pyObjectRef pkeyObj = pyKey::New(sobj->GetKey());
                 pyObjectRef pSceneObject = PyObject_GetAttrString(fInstance, "sceneobject");
-                pyObjectRef retVal = PyObject_CallMethod(pSceneObject.Get(), _pycs("addKey"),
-                                                         _pycs("O"), pkeyObj.Get());
+                pySceneObject::ConvertFrom(pSceneObject.Get())->addObjKey(sobj->GetKey());
             }
         }
     }
@@ -850,22 +823,6 @@ void plPythonFileMod::RemoveTarget(plSceneObject* so)
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Function   : HandleDiscardedKey
-//  PARAMETERS : msg - the key event message that was discarded
-//
-//  PURPOSE    : API for processing discarded keys as the deafult key catcher
-//
-
-void    plPythonFileMod::HandleDiscardedKey(plKeyEventMsg* msg)
-{
-    ICallScriptMethod(kfunc_OnDefaultKeyCaught, msg->GetKeyChar(), msg->GetKeyDown(),
-                      msg->GetRepeat(), msg->GetShiftKeyDown(), msg->GetCtrlKeyDown(),
-                      (int)msg->GetKeyCode());
-}
-
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //  Function   : IMakeModuleName
 //  PARAMETERS : sobj  - object to add as our target
 //
@@ -873,12 +830,12 @@ void    plPythonFileMod::HandleDiscardedKey(plKeyEventMsg* msg)
 //
 // NOTE: This modifier wasn't intended to have multiple targets
 //
-ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
+ST::string plPythonFileMod::IMakeModuleName(const plSceneObject* sobj)
 {
     // This strips underscores out of module names so python won't truncate them... -S
 
-    plKey pKey = GetKey();
-    plKey sKey = sobj->GetKey();
+    const plKey& pKey = GetKey();
+    const plKey& sKey = sobj->GetKey();
 
     ST::string soName = sKey->GetName().replace("_", "");
     ST::string pmName = pKey->GetName().replace("_", "");
@@ -887,9 +844,8 @@ ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     name << soName << pmName;
 
     // check to see if we are attaching to a clone?
-    plKeyImp* pKeyImp = (plKeyImp*)(sKey);
-    if (pKeyImp->GetCloneOwner())
-    {
+    const plKeyImp* pKeyImp = (plKeyImp*)(sKey);
+    if (pKeyImp->GetCloneOwner()) {
         // we have an owner... so we must be a clone.
         // add the cloneID to the end of the module name
         // and set the fIAmAClone flag
@@ -899,8 +855,7 @@ ST::string plPythonFileMod::IMakeModuleName(plSceneObject* sobj)
     }
 
     // make sure that the actual modulue will be uniqie
-    if ( !PythonInterface::IsModuleNameUnique(name.to_string()))
-    {
+    if (!PythonInterface::IsModuleNameUnique(name.to_string())) {
         // if not unique then add the sequence number to the end of the modulename
         uint32_t seqID = pKeyImp->GetUoid().GetLocation().GetSequenceNumber();
         name << seqID;
@@ -943,22 +898,17 @@ void plPythonFileMod::ISetKeyValue(const plKey& key, int32_t id)
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindResponderAndAdd(const ST::string &responderName, int32_t id)
+void plPythonFileMod::IFindResponderAndAdd(const ST::string& responderName, int32_t id)
 {
-    if ( !responderName.empty() )
-    {
+    if (!responderName.empty()) {
         std::vector<plKey> keylist;
-        const plLocation &loc = GetKey()->GetUoid().GetLocation();
-        plKeyFinder::Instance().ReallyStupidResponderSearch(responderName,keylist,loc); // use the really stupid search to find the responder
-        // the keylist will be filled with all the keys that correspond to that responder
-        int list_size = keylist.size();
-        int i;
-        for ( i=0 ; i<list_size; i++ )
-        {
+        const plLocation& loc = GetKey()->GetUoid().GetLocation();
+        plKeyFinder::Instance().ReallyStupidResponderSearch(responderName, keylist, loc);
+        for (const auto& key : keylist) {
             plPythonParameter parm(id);
-            parm.SetToResponder(keylist[i]);
+            parm.SetToResponder(key);
             AddParameter(parm);
-            ISetKeyValue(keylist[i], id);
+            ISetKeyValue(key, id);
         }
     }
 }
@@ -971,46 +921,28 @@ void plPythonFileMod::IFindResponderAndAdd(const ST::string &responderName, int3
 //  PURPOSE    : find a responder by name in all age and page locations
 //             : and add to the Parameter list
 //
-void plPythonFileMod::IFindActivatorAndAdd(const ST::string &activatorName, int32_t id)
+void plPythonFileMod::IFindActivatorAndAdd(const ST::string& activatorName, int32_t id)
 {
-    if ( !activatorName.empty() )
-    {
+    if (!activatorName.empty()) {
         std::vector<plKey> keylist;
-        const plLocation &loc = GetKey()->GetUoid().GetLocation();
-        plKeyFinder::Instance().ReallyStupidActivatorSearch(activatorName,keylist, loc); // use the really stupid search to find the responder
-        // the keylist will be filled with all the keys that correspond to that responder
-        int list_size = keylist.size();
-        // create the Python object that is the list, starts as empty
-        int i;
-        for ( i=0 ; i<list_size; i++ )
-        {
+        const plLocation& loc = GetKey()->GetUoid().GetLocation();
+        plKeyFinder::Instance().ReallyStupidActivatorSearch(activatorName,keylist, loc);
+
+        for (const auto& key : keylist) {
             plPythonParameter parm(id);
-            parm.SetToActivator(keylist[i]);
+            parm.SetToActivator(key);
             AddParameter(parm);
-            ISetKeyValue(keylist[i], id);
+            ISetKeyValue(key, id);
 
             // need to add ourselves as a receiver to their list
-            // first see if it is an logicMod, then add to their receiver list
-            plLogicModifier *logic = plLogicModifier::ConvertNoRef(keylist[i]->ObjectIsLoaded());
-            if (logic)
-            {
-                logic->AddNotifyReceiver(this->GetKey());
-            }
-            else  // else might be a python file key
-            {
-                // next check to see if it is another PythonFileMod, and add to their notify list
-                plPythonFileMod *pymod = plPythonFileMod::ConvertNoRef(keylist[i]->ObjectIsLoaded());
-                if (pymod)
-                {
-                    pymod->AddToNotifyList(this->GetKey());
-                }
-                else  // else maybe its just not loaded yet
-                {
-                    // setup a ref notify when it does get loaded
-                    hsgResMgr::ResMgr()->AddViaNotify(keylist[i],
-                                                    new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
-                                                    plRefFlags::kPassiveRef);
-                }
+            if (plLogicModifier* logic = plLogicModifier::ConvertNoRef(key->ObjectIsLoaded())) {
+                logic->AddNotifyReceiver(GetKey());
+            } else if (plPythonFileMod* pymod = plPythonFileMod::ConvertNoRef(key->ObjectIsLoaded())) {
+                pymod->AddToNotifyList(GetKey());
+            } else {
+                hsgResMgr::ResMgr()->AddViaNotify(key,
+                                                  new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, kAddNotify, 0),
+                                                  plRefFlags::kPassiveRef);
             }
         }
     }
@@ -1051,54 +983,35 @@ bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
 //
 bool plPythonFileMod::MsgReceive(plMessage* msg)
 {
-    // is it a ref message
     plGenRefMsg* genRefMsg = plGenRefMsg::ConvertNoRef(msg);
-    if (genRefMsg)
-    {
+    if (genRefMsg) {
         // is it a ref for a named activator that we need to add to notify?
-        if ((genRefMsg->GetContext() & plRefMsg::kOnCreate) && genRefMsg->fWhich == kAddNotify)
-        {
-            // which kind of activator is this
-            plLogicModifier *logic = plLogicModifier::ConvertNoRef(genRefMsg->GetRef());
-            if (logic)
-            {
-                logic->AddNotifyReceiver(this->GetKey());
-            }
-            else  // else might be a python file key
-            {
-                // next check to see if it is another PythonFileMod, and add to their notify list
-                plPythonFileMod *pymod = plPythonFileMod::ConvertNoRef(genRefMsg->GetRef());
-                if (pymod)
-                {
-                    pymod->AddToNotifyList(this->GetKey());
-                }
+        if ((genRefMsg->GetContext() & plRefMsg::kOnCreate) && genRefMsg->fWhich == kAddNotify) {
+            if (plLogicModifier* logic = plLogicModifier::ConvertNoRef(genRefMsg->GetRef())) {
+                logic->AddNotifyReceiver(GetKey());
+            } else if (plPythonFileMod* pymod = plPythonFileMod::ConvertNoRef(genRefMsg->GetRef())) {
+                pymod->AddToNotifyList(GetKey());
             }
         }
     }
 
     plAgeLoadedMsg* ageLoadedMsg = plAgeLoadedMsg::ConvertNoRef(msg);
-    if (ageLoadedMsg && ageLoadedMsg->fLoaded)
-    {
-        for (int i = 0; i < fNamedCompQueue.Count(); ++i)
-        {
-            NamedComponent comp = fNamedCompQueue[i];
+    if (ageLoadedMsg && ageLoadedMsg->fLoaded) {
+        for (const auto& comp : fNamedCompQueue) {
             if (comp.isActivator)
                 IFindActivatorAndAdd(comp.name, comp.id);
             else
                 IFindResponderAndAdd(comp.name, comp.id);
         }
-
-        fNamedCompQueue.Reset();
-
-        plgDispatch::Dispatch()->UnRegisterForExactType( plAgeLoadedMsg::Index(), GetKey() );
+        fNamedCompQueue.clear();
+        plgDispatch::Dispatch()->UnRegisterForExactType(plAgeLoadedMsg::Index(), GetKey());
     }
 
     // if this is a render message, then we are just trying to get a pointer to the Pipeline
-    plRenderMsg *rMsg = plRenderMsg::ConvertNoRef( msg );
-    if( rMsg != nil )
-    {
+    plRenderMsg* rMsg = plRenderMsg::ConvertNoRef(msg);
+    if (rMsg) {
         fPipe = rMsg->Pipeline();
-        plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), GetKey() );
+        plgDispatch::Dispatch()->UnRegisterForExactType(plRenderMsg::Index(), GetKey());
         return true;
     }
 
@@ -1599,8 +1512,6 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
         if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
             PyObject* player;
-            PyObject* ptPlayerClass = PythonInterface::GetPlasmaItem("ptPlayer");
-            hsAssert(ptPlayerClass, "Could not locate the ptPlayer class.");
             int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
             if (mbrIndex != -1) {
                 plNetTransportMember *mbr = plNetClientMgr::GetInstance()->TransportMgr().GetMember( mbrIndex );
@@ -1859,21 +1770,6 @@ void plPythonFileMod::DisplayPythonOutput()
 
 /////////////////////////////////////////////////////////////////////////////
 //
-//  Function   : SetSourceFile
-//  PARAMETERS : code      - text source code
-//             : filename  - where the source code came from (just say the object name)
-//
-//  PURPOSE    : Sets the source code for this modifier.
-//             : Compile it into a Python code object
-//             : (This is usually called by the component)
-//
-void plPythonFileMod::SetSourceFile(const ST::string& filename)
-{
-    fPythonFile = filename;
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
 //  Function   : getPythonOutput
 //  PARAMETERS : none
 //
@@ -1895,9 +1791,7 @@ int  plPythonFileMod::getPythonOutput(std::string* line)
 void plPythonFileMod::EnableControlKeyEvents()
 {
     // register for keyboard events if needed
-    if ( fPyFunctionInstances[kfunc_OnKeyEvent] != nil )
-    {
-        // register for key events
+    if (fPyFunctionInstances[kfunc_OnKeyEvent]) {
         plCmdIfaceModMsg* pModMsg = new plCmdIfaceModMsg;
         pModMsg->SetBCastFlag(plMessage::kBCastByExactType);
         pModMsg->SetSender(GetKey());
@@ -1906,7 +1800,6 @@ void plPythonFileMod::EnableControlKeyEvents()
     }
 }
 
-    
 /////////////////////////////////////////////////////////////////////////////
 //
 //  Function   : DisableControlKeys
@@ -1928,28 +1821,20 @@ void plPythonFileMod::Read(hsStream* stream, hsResMgr* mgr)
 {
     plMultiModifier::Read(stream, mgr);
 
-    // read in the compile python code (pyc)
+    // read in the name of the python script
     fPythonFile = stream->ReadSafeString();
 
     // then read in the list of receivers that want to be notified
-    int nRcvs = stream->ReadLE32();
-    fReceivers.Reset();
-    int m;
-    for( m=0; m<nRcvs; m++ )
-    {   
-        fReceivers.Append(mgr->ReadKey(stream));
-    }
+    uint32_t nRcvs = stream->ReadLE32();
+    fReceivers.reserve(nRcvs);
+    for (size_t i = 0; i < nRcvs; i++)
+        fReceivers.push_back(mgr->ReadKey(stream));
 
     // then read in the list of parameters
-    int nParms = stream->ReadLE32();
-    fParameters.SetCountAndZero(nParms);
-    int i;
-    for( i=0; i<nParms; i++ )
-    {
-        plPythonParameter parm;
-        parm.Read(stream,mgr);
-        fParameters[i] = parm;
-    }   
+    uint32_t nParms = stream->ReadLE32();
+    fParameters.resize(nParms);
+    for (size_t i = 0; i < nParms; i++)
+        fParameters[i].Read(stream, mgr);
 }
 
 void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
@@ -1959,16 +1844,14 @@ void plPythonFileMod::Write(hsStream* stream, hsResMgr* mgr)
     stream->WriteSafeString(fPythonFile);
 
     // then write out the list of receivers that want to be notified
-    stream->WriteLE32(fReceivers.GetCount());
-    int m;
-    for( m=0; m<fReceivers.GetCount(); m++ )
-        mgr->WriteKey(stream, fReceivers[m]);
+    stream->WriteLE32((uint32_t)fReceivers.size());
+    for (size_t i = 0; i < fReceivers.size(); i++)
+        mgr->WriteKey(stream, fReceivers[i]);
 
     // then write out the list of parameters
-    stream->WriteLE32(fParameters.GetCount());
-    int i;
-    for( i=0; i<fParameters.GetCount(); i++ )
-        fParameters[i].Write(stream,mgr);
+    stream->WriteLE32((uint32_t)fParameters.size());
+    for (size_t i = 0; i < fParameters.size(); i++)
+        fParameters[i].Write(stream, mgr);
 }
 
 //// kGlobalNameKonstant /////////////////////////////////////////////////
