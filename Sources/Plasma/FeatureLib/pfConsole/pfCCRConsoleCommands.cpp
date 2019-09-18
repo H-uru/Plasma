@@ -62,8 +62,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 PF_CONSOLE_FILE_DUMMY(CCR)
 //// DO NOT REMOVE!!!!
 
-void PrintStringF(void pfun(const char *),const char * fmt, ...);
-
 
 /////////////////////////////////////////////////////////////////
 //

@@ -191,11 +191,10 @@ PF_CONSOLE_FILE_DUMMY(Net)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString=false);
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, const char** statusStr, bool subString=false);
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, const char** statusStr, bool subString=false);
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                               char* statusStr, bool subString=false);
-void PrintStringF(void pfun(const char *),const char * fmt, ...);
+                              const char** statusStr, bool subString=false);
 
 //////////////////////////////////////////////////////////////////////////////
 //// Network Group Commands //////////////////////////////////////////////////
@@ -503,9 +502,9 @@ PF_CONSOLE_CMD( Net,            // groupName
                "string objName, float freqInSecs", // paramList
                "Instructs the server to only send me updates about this object periodically" )  // helpString
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -532,7 +531,7 @@ PF_CONSOLE_CMD( Net,        // groupName
                "", // paramList
                "returns the current server clock" ) // helpString
 {
-    PrintStringF(PrintString, "Current server time = %s", 
+    pfConsolePrintF(PrintString, "Current server time = {}",
         plNetClientMgr::GetInstance()->GetServerTime().Print());
 }
 
@@ -541,8 +540,8 @@ PF_CONSOLE_CMD( Net,        // groupName
                "", // paramList
                "returns the age of the age" )   // helpString
 {
-    PrintStringF(PrintString, "Current age is %s, elapsed time since birth = %f secs", 
-        NetCommGetAge()->ageDatasetName.c_str(), plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
+    pfConsolePrintF(PrintString, "Current age is {}, elapsed time since birth = {f} secs",
+        NetCommGetAge()->ageDatasetName, plNetClientMgr::GetInstance()->GetCurrentAgeElapsedSeconds());
 }
 
 PF_CONSOLE_CMD( Net, DownloadViaManifest,
@@ -575,7 +574,7 @@ PF_CONSOLE_CMD( Net, GetCCRAwayStatus,
                "", // paramList
                "Find out if CCR's are offline" )    // helpString
 {
-    PrintStringF(PrintString,"The CCR dept is %s", VaultGetCCRStatus() ? "online" : "away");
+    pfConsolePrintF(PrintString, "The CCR dept is {}", VaultGetCCRStatus() ? "online" : "away");
 }
 
 PF_CONSOLE_CMD( Net,            // groupName
@@ -755,7 +754,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmInMyPersonalAge();
-    PrintStringF( PrintString,"You are %sin your personal age", in?"":"not " );
+    pfConsolePrintF(PrintString, "You are {}in your personal age", in ? "" : "not ");
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                InMyNeighborhoodAge,     // fxnName
@@ -763,7 +762,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmInMyNeighborhoodAge();
-    PrintStringF( PrintString,"You are %sin your neighborhood age", in?"":"not " );
+    pfConsolePrintF(PrintString, "You are {}in your neighborhood age", in ? "" : "not ");
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                AmOwnerOfCurrentAge,     // fxnName
@@ -771,7 +770,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmOwnerOfCurrentAge();
-    PrintStringF( PrintString,"You are %san owner of the current age", in?"":"not " );
+    pfConsolePrintF(PrintString,"You are {}an owner of the current age", in ? "" : "not ");
 }
 PF_CONSOLE_CMD( Net_Vault,      // groupName
                AmCzarOfCurrentAge,      // fxnName
@@ -779,7 +778,7 @@ PF_CONSOLE_CMD( Net_Vault,      // groupName
                "" ) // helpString
 {
     bool in = VaultAmCzarOfCurrentAge();
-    PrintStringF( PrintString,"You are %sczar of the current age", in?"":"not " );
+    pfConsolePrintF(PrintString, "You are {}czar of the current age", in ? "" : "not ");
 }
 // REGISTER MT STATION
 PF_CONSOLE_CMD( Net_Vault,
@@ -805,7 +804,7 @@ PF_CONSOLE_CMD( Net_Vault,
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
-    PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
+    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
 }
 
 // UNREGISTER OWNED AGE
@@ -817,7 +816,7 @@ PF_CONSOLE_CMD( Net_Vault,
     plAgeInfoStruct info;
     info.SetAgeFilename( (const char *)params[0] );
     bool success = VaultUnregisterOwnedAgeAndWait(&info);
-    PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
+    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
 }
 
 // REGISTER VISIT AGE
@@ -833,7 +832,7 @@ PF_CONSOLE_CMD( Net_Vault,
     link.GetAgeInfo()->SetAgeInstanceGuid( &guid);
     link.SetSpawnPoint( kDefaultSpawnPoint );
     bool success = VaultRegisterOwnedAgeAndWait(&link);
-    PrintStringF(PrintString, "Operation %s.", success ? "Successful" : "Failed");
+    pfConsolePrintF(PrintString, "Operation {}.", success ? "Successful" : "Failed");
 }
 
 // UNREGISTER VISIT AGE
@@ -849,7 +848,7 @@ PF_CONSOLE_CMD( Net_Vault,
     while (VaultUnregisterVisitAgeAndWait(&info))
         ++count;
         
-    PrintStringF(PrintString, "Operation %s.", count > 0 ? "Successful" : "Failed");
+    pfConsolePrintF(PrintString, "Operation {}.", count > 0 ? "Successful" : "Failed");
 }
 
 #endif
