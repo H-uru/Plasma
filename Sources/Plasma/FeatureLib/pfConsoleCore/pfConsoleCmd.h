@@ -51,6 +51,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBiExpander.h"
 
+#include <string_theory/format>
+
 
 //// pfConsoleCmdGroup Class Definition //////////////////////////////////////
 
@@ -281,5 +283,11 @@ public:
 
 #define PF_CONSOLE_FILE_DUMMY( name ) \
     void _console_##name##_file_dummy() { }
+
+template <typename... Args>
+void pfConsolePrintF(void pfun(const char *), const char *fmt, Args &&...args)
+{
+    pfun(ST::format(fmt, std::forward<Args>(args)...).c_str());
+}
 
 #endif //_pfConsoleCmd_h

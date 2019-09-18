@@ -56,21 +56,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 PF_CONSOLE_FILE_DUMMY(Core)
 //// DO NOT REMOVE!!!!
 
-//
-// utility functions
-//
-//////////////////////////////////////////////////////////////////////////////
-void PrintStringF(void pfun(const char *),const char * fmt, ...)
-{
-    va_list args;
-
-    char buffy[512];
-    va_start(args, fmt);
-    vsnprintf(buffy, arrsize(buffy), fmt, args);
-    va_end(args);
-    pfun(buffy);
-}
-
 
 /*****************************************************************************
 *
@@ -162,8 +147,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
@@ -181,8 +166,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
@@ -215,8 +200,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
@@ -234,8 +219,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
@@ -278,8 +263,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 
@@ -297,8 +282,8 @@ PF_CONSOLE_CMD(
     ST::string base64key = ST::string::from_utf8(params[0]);
     ST_ssize_t base64len = ST::base64_decode(base64key, nullptr, 0);
     if ((kNetDiffieHellmanKeyBits / 8) != base64len) {
-        PrintStringF(PrintString, "Invalid key: should be exactly %u bytes",
-                     kNetDiffieHellmanKeyBits / 8);
+        pfConsolePrintF(PrintString, "Invalid key: should be exactly {} bytes",
+                        kNetDiffieHellmanKeyBits / 8);
         return;
     }
 

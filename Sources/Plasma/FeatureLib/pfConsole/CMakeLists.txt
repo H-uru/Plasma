@@ -9,7 +9,6 @@ include_directories(${PYTHON_INCLUDE_DIR})
 
 set(pfConsole_SOURCES
     pfAvatarConsoleCommands.cpp
-    pfCCRConsoleCommands.cpp
     pfConsole.cpp
     pfConsoleCommands.cpp
     pfConsoleCommandsNet.cpp

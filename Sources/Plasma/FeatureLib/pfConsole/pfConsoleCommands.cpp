@@ -260,29 +260,25 @@ PF_CONSOLE_FILE_DUMMY(Main)
 // utility functions
 //
 //////////////////////////////////////////////////////////////////////////////
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString=false);
-plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                               char* statusStr, bool subString=false);
-void PrintStringF(void pfun(const char *),const char * fmt, ...);
 
 //
 // Find an object from name, type (int), and optionally age.
 // Name can be an alias specified by saying $foo
 //
-plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName, char* statusStr, bool subString)
+plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageName,
+                       const char** statusStr, bool subString = false)
 {
     if (name.empty())
     {
         if (statusStr)
-            sprintf(statusStr, "Object name is nil");
+            *statusStr = "Object name is nil";
         return nil;
     }
     
     if (type<0 || type>=plFactory::GetNumClasses())
     {
         if (statusStr)
-            sprintf(statusStr, "Illegal class type val");
+            *statusStr = "Illegal class type val";
         return nil;
     }
 
@@ -299,7 +295,7 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
             if (key != nil)
             {
                 if (statusStr)
-                    sprintf(statusStr, "Found Object");
+                    *statusStr = "Found Object";
                 return key;
             }
         }
@@ -310,18 +306,18 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
     if (!key)
     {
         if (statusStr)
-            sprintf(statusStr, "Can't find object");
+            *statusStr = "Can't find object";
         return nil;
     }
     
     if (!key->ObjectIsLoaded())
     {
         if (statusStr)
-            sprintf(statusStr, "Object is not loaded");
+            *statusStr = "Object is not loaded";
     }
 
-    if (statusStr)  
-        sprintf(statusStr, "Found Object");
+    if (statusStr)
+        *statusStr = "Found Object";
 
     return key;
 }
@@ -331,14 +327,15 @@ plKey FindObjectByName(const ST::string& name, int type, const ST::string& ageNa
 // Name can be an alias specified by saying $foo.
 // Will load the object if necessary.
 //
-plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, char* statusStr, bool subString)
+plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName,
+                            const char** statusStr, bool subString = false)
 {
     plKey key=FindObjectByName(name, plSceneObject::Index(), ageName, statusStr, subString);
 
     if (!plSceneObject::ConvertNoRef(key ? key->ObjectIsLoaded() : nil))
     {
         if (statusStr)
-            sprintf(statusStr, "Can't find SceneObject");
+            *statusStr = "Can't find SceneObject";
         return nil;
     }
 
@@ -350,12 +347,12 @@ plKey FindSceneObjectByName(const ST::string& name, const ST::string& ageName, c
 // Name can be an alias specified by saying $foo
 //
 plKey FindObjectByNameAndType(const ST::string& name, const char* typeName, const ST::string& ageName,
-                               char* statusStr, bool subString)
+                              const char** statusStr, bool subString = false)
 {
     if (!typeName)
     {
         if (statusStr)
-            sprintf(statusStr, "TypeName is nil");
+            *statusStr = "TypeName is nil";
         return nil;
     }
     
@@ -543,11 +540,7 @@ PF_CONSOLE_CMD(Stats, ListLaps, "", "Prints the names of all the stats with laps
     plProfileManagerFull::Instance().GetLaps(laps);
 
     for (int i = 0; i < laps.size(); i++)
-    {
-        char buf[256];
-        sprintf(buf, "%s - %s", laps[i].group, laps[i].varName);
-        PrintString(buf);
-    }
+        pfConsolePrintF(PrintString, "{} - {}", laps[i].group, laps[i].varName);
 }
 
 PF_CONSOLE_CMD(Stats, SetLapMin, "int min", "Sets the minimum index of which lap will display")
@@ -818,7 +811,7 @@ PF_CONSOLE_CMD( Console, PrintVar, "string name", "Prints the value of a given g
         PrintString( "Variable not found" );
     else
     {
-        PrintStringF( PrintString, "The value of %s is %s", (const char *)params[ 0 ], (const char *)ctx.GetVarValue( idx ) );
+        pfConsolePrintF(PrintString, "The value of {} is {}", (const char *)params[0], (const char *)ctx.GetVarValue(idx));
     }
 }
 
@@ -831,7 +824,7 @@ PF_CONSOLE_CMD( Console, PrintAllVars, "", "Prints the values of all global cons
     PrintString( "Global console variables:" );
     for( i = 0; i < ctx.GetNumVars(); i++ )
     {
-        PrintStringF( PrintString, "  %s: %s", (const char *)ctx.GetVarName( i ), (const char *)ctx.GetVarValue( i ) );
+        pfConsolePrintF(PrintString, "  {}: {}", (const char *)ctx.GetVarName(i), (const char *)ctx.GetVarValue(i));
     }
 }
 
@@ -906,9 +899,9 @@ PF_CONSOLE_CMD( Graphics,           // Group name
 \tonlyProjLights - Turns off runtime non-projected lights\n\
 \tnoFog - Disable all fog" )    // Help string
 {
-    uint32_t      flag;
+    uint32_t    flag;
     bool        on;
-    char        string[ 128 ], name[ 64 ];
+    char        name[ 64 ];
     int         i;
 
     struct 
@@ -976,8 +969,7 @@ PF_CONSOLE_CMD( Graphics,           // Group name
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
 
-    sprintf( string, "%s is now %s", name, on ? "enabled" : "disabled" );
-    PrintString( string );
+    pfConsolePrintF(PrintString, "{} is now {}", name, on ? "enabled" : "disabled");
 }
 
 
@@ -989,7 +981,7 @@ PF_CONSOLE_CMD( Graphics_VisSet, Toggle, "", "Toggle using VisSets" )
     bool turnOn = !plPageTreeMgr::VisMgrEnabled();
     plPageTreeMgr::EnableVisMgr(turnOn);
 
-    PrintStringF( PrintString, "Visibility Sets %s", turnOn ? "Enabled" : "Disabled" );
+    pfConsolePrintF(PrintString, "Visibility Sets {}", turnOn ? "Enabled" : "Disabled");
 }
 
 PF_CONSOLE_CMD( Graphics, BumpNormal, "", "Set bump mapping method to default for your hardware." )
@@ -1099,9 +1091,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagShowShadowBounds);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowShadowBounds, on );
 
-    char    str[ 256 ];
-    sprintf( str, "Shadow bounds now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Shadow bounds now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1112,9 +1102,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet(plPipeDbg::kFlagNoShadowApply);
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagNoShadowApply, on );
 
-    char    str[ 256 ];
-    sprintf( str, "Shadow apply now %s", on ? "disabled" : "enabled" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Shadow apply now {}", on ? "disabled" : "enabled");
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1133,9 +1121,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         size = plShadowMaster::GetGlobalMaxSize();
     }
-    char str[256];
-    sprintf(str, "Max shadowmap size %d", size);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Max shadowmap size {}", size);
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1154,9 +1140,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         dist = plShadowMaster::GetGlobalMaxDist();
     }
-    char str[256];
-    sprintf(str, "Max shadowmap vis dist %f", dist);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Max shadowmap vis dist {f}", dist);
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1175,9 +1159,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         parm = plShadowMaster::GetGlobalShadowQuality();
     }
-    char str[256];
-    sprintf(str, "Shadow quality %f", parm);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Shadow quality {f}", parm);
 }
 
 PF_CONSOLE_CMD( Graphics_Shadow, 
@@ -1190,12 +1172,7 @@ PF_CONSOLE_CMD( Graphics_Shadow,
     {
         blurScale = (float)atof( params[ 0 ] );
     }
-    else
-    {
-    }
-    char str[256];
-    sprintf(str, "Max shadowmap Blur %f", blurScale);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Max shadowmap Blur {f}", blurScale);
 }
 
 //// Graphics.DebugText SubGroup /////////////////////////////////////////////
@@ -1254,9 +1231,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, mfTest, "int mfDbgTest", "Reserved for intern
 
     mfCurrentTest = (int) params[0];
 
-    char    str[ 256 ];
-    sprintf( str, "Current test %d.", mfCurrentTest );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Current test {}.", mfCurrentTest);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -1271,9 +1246,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
     {
         pfConsole::GetPipeline()->SetGamma(g);
 
-//      char    str[ 256 ];
-//      sprintf(str, "Gamma set to %g.", g);
-//      PrintString(str);
+//      pfConsolePrintF(PrintString, "Gamma set to {}.", g);
     }
     else
     {
@@ -1287,9 +1260,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma, "float g, ...", "Set gamma value (g or
 
         pfConsole::GetPipeline()->SetGamma(eR, eG, eB);
 
-//      char    str[ 256 ];
-//      sprintf(str, "Gamma set to (%g, %g, %g).", eR, eG, eB);
-//      PrintString(str);
+//      pfConsolePrintF(PrintString, "Gamma set to ({}, {}, {}).", eR, eG, eB);
     }
 }
 
@@ -1319,9 +1290,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Gamma2, "float g", "Set gamma value (alternat
 
     pfConsole::GetPipeline()->SetGamma(ramp.AcquireArray());
 
-//  char    str[ 256 ];
-//  sprintf(str, "Gamma set to <alt> %g.", g);
-//  PrintString(str);
+//  pfConsolePrintF(PrintString, "Gamma set to <alt> {}.", g);
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -1341,9 +1310,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, MaxCullNodes, "...", "Limit occluder processi
         maxCullNodes = pfConsole::GetPipeline()->GetMaxCullNodes();
     }
 
-    char    str[ 256 ];
-    sprintf( str, "Max Cull Nodes now %d.", maxCullNodes );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Max Cull Nodes now {}.", maxCullNodes);
 }
 
 
@@ -1361,9 +1328,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetYon, "float yon, ...", "Sets the view yon"
     pfConsole::GetPipeline()->SetDepth( hither, (float)params[ 0 ] );
     pfConsole::GetPipeline()->RefreshMatrices();
     
-    char    str[ 256 ];
-    sprintf( str, "Yon set to %4.1f.", (float)params[ 0 ] );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Yon set to {4.1f}.", (float)params[0]);
 }
 
 #ifndef LIMIT_CONSOLE_COMMANDS
@@ -1378,9 +1343,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TweakZBiasScale, "float deltaScale", "Adjusts
     scale += (float)params[ 0 ];
     pfConsole::GetPipeline()->SetZBiasScale( scale );
     
-    char    str[ 256 ];
-    sprintf( str, "Z bias scale now set to %4.2f.", (float)scale );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Z bias scale now set to {4.2f}.", (float)scale);
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the device-dependent scale value for upper-layer z biasing" )
@@ -1389,9 +1352,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, SetZBiasScale, "float scale", "Sets the devic
 
     pfConsole::GetPipeline()->SetZBiasScale( (float)params[ 0 ] );
     
-    char    str[ 256 ];
-    sprintf( str, "Z bias scale now set to %4.2f.", (float)params[ 0 ] );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Z bias scale now set to {4.2f}.", (float)params[0]);
 }
 
 
@@ -1409,9 +1370,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Overwire, "...", "Turn on (off) overlay wire 
 
     pfConsole::GetPipeline()->SetDebugFlag( flag, on );
 
-    char str[256];
-    sprintf( str, "OverlayWire is now %s", on ? "enabled" : "disabled" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "OverlayWire is now {}", on ? "enabled" : "disabled");
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, Overdraw, "bool on", "Turn on (off) overdraw rendering" )
@@ -1468,9 +1427,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, Wireframe, "...", "Toggle or set wireframe vi
     else
         pfConsole::GetPipeline()->RemoveLayerInterface( &wireLayer );
 
-    char    str[ 256 ];
-    sprintf( str, "Wireframe view mode is now %s.", wireOn ? "enabled" : "disabled" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Wireframe view mode is now {}.", wireOn ? "enabled" : "disabled");
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, TwoSided, "...", "Toggle or set force two-sided." )
@@ -1501,9 +1458,7 @@ PF_CONSOLE_CMD( Graphics_Renderer, TwoSided, "...", "Toggle or set force two-sid
     else
         pfConsole::GetPipeline()->RemoveLayerInterface( &twoSideLayer );
 
-    char    str[ 256 ];
-    sprintf( str, "Two-sided mode is now %s.", twoSideOn ? "enabled" : "disabled" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Two-sided mode is now {}.", twoSideOn ? "enabled" : "disabled");
 }
 
 PF_CONSOLE_CMD( Graphics_Renderer, ResetDevice,
@@ -1537,10 +1492,10 @@ PF_CONSOLE_CMD( Graphics_Renderer, GrabCubeMap,
                "string sceneObject, string prefix", 
                "Take cubemap from sceneObject's position and name it prefix_XX.jpg")
 {
-    char str[512];
+    const char *status = "";
     ST::string objName = static_cast<const char *>(params[0]);
-    plKey key = FindSceneObjectByName(objName, "", str);
-    PrintString( str );
+    plKey key = FindSceneObjectByName(objName, "", &status);
+    PrintString(status);
     if( !key )
         return;
     plSceneObject *obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
@@ -1725,9 +1680,7 @@ PF_CONSOLE_CMD( Graphics_Show, Bounds, "", "Toggle object bounds display")
     bool on = !pfConsole::GetPipeline()->IsDebugFlagSet( plPipeDbg::kFlagShowAllBounds );
     pfConsole::GetPipeline()->SetDebugFlag( plPipeDbg::kFlagShowAllBounds, on );
 
-    char    str[ 256 ];
-    sprintf( str, "Bounds now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Bounds now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Sound, "", "Toggle sound fields visible")
@@ -1740,32 +1693,26 @@ PF_CONSOLE_CMD( Graphics_Show, Sound, "", "Toggle sound fields visible")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kAudibleProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Sounds now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Sounds now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, SingleSound,
                 "string sceneObject", "Toggles the proxy fields for a single sound object" )
 {
-    char    str[ 512 ];
-
     ST::string ageName = plAgeLoader::GetInstance()->GetCurrAgeDesc().GetAgeName();
 
-    plKey key = FindSceneObjectByName( ST::string::from_utf8( params[ 0 ] ), ageName, str, true );
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), ageName, nullptr, true);
     plSceneObject *obj = ( key != nil ) ? plSceneObject::ConvertNoRef( key->GetObjectPtr() ) : nil;
     if( !obj )
     {
-        sprintf( str, "Cannot find sceneObject %s", (char *)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "Cannot find sceneObject {}", (char *)params[0]);
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if( ai == nil )
     {
-        sprintf( str, "sceneObject %s has no audio interface", (char *)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", (char *)params[0]);
         return;
     }
     plKey   aiKey = ai->GetKey();
@@ -1780,9 +1727,7 @@ PF_CONSOLE_CMD( Graphics_Show, SingleSound,
     // is, imho, acceptable.
     pfConsole::GetPipeline()->SetDrawableTypeMask( pfConsole::GetPipeline()->GetDrawableTypeMask() | plDrawableSpans::kAudibleProxy );
 
-    char str2[ 256 ];
-    sprintf( str2, "Toggling proxies on sceneObject %s", (char *)params[ 0 ] );
-    PrintString( str2 );
+    pfConsolePrintF(PrintString, "Toggling proxies on sceneObject {}", (char *)params[0]);
 }
 
 PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible")
@@ -1800,9 +1745,7 @@ PF_CONSOLE_CMD( Graphics_Show, SoundOnly, "", "Toggle only sound fields visible"
     {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only sound proxies" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only sound proxies" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion and render (or toggle)")
@@ -1816,9 +1759,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnap, "", "Take snapshot of current occlusion 
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kOccSnapProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Active Occluders now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Active Occluders now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlusion and render (or toggle)")
@@ -1834,9 +1775,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccSnapOnly, "", "Take snapshot of current occlus
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
 
-    char    str[ 256 ];
-    sprintf( str, "Active Occluders now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Active Occluders now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible")
@@ -1850,9 +1789,7 @@ PF_CONSOLE_CMD( Graphics_Show, Occluders, "", "Toggle occluder geometry visible"
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kOccluderProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Occluders now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Occluders now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry visible")
@@ -1870,9 +1807,7 @@ PF_CONSOLE_CMD( Graphics_Show, OccludersOnly, "", "Toggle only occluder geometry
     {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only occluder proxies" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only occluder proxies" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Physicals, "", "Toggle Physical geometry visible")
@@ -1885,9 +1820,7 @@ PF_CONSOLE_CMD( Graphics_Show, Physicals, "", "Toggle Physical geometry visible"
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kPhysicalProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Physicals now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Physicals now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry visible")
@@ -1905,9 +1838,7 @@ PF_CONSOLE_CMD( Graphics_Show, PhysicalsOnly, "", "Toggle only Physical geometry
     {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only physics proxies" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only physics proxies" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
@@ -1921,9 +1852,7 @@ PF_CONSOLE_CMD( Graphics_Show, Normal, "", "Toggle normal geometry visible")
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kNormal);
     }
 
-    char    str[ 256 ];
-    sprintf( str, "Normal geometry now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Normal geometry now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visible")
@@ -1939,9 +1868,7 @@ PF_CONSOLE_CMD( Graphics_Show, NormalOnly, "", "Toggle only normal geometry visi
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
 
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only normal geometry" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only normal geometry" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Lights, "", "Toggle visible proxies for lights")
@@ -1954,9 +1881,7 @@ PF_CONSOLE_CMD( Graphics_Show, Lights, "", "Toggle visible proxies for lights")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kLightProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Lights now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Lights now {}", on ? "visible" : "invisible");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for lights and everything else invisible")
@@ -1974,9 +1899,7 @@ PF_CONSOLE_CMD( Graphics_Show, LightsOnly, "", "Toggle visible proxies for light
     {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only light proxies" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only light proxies" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics_Show, Clicks, "", "Toggle visible proxies for clicks")
@@ -1989,9 +1912,7 @@ PF_CONSOLE_CMD( Graphics_Show, Clicks, "", "Toggle visible proxies for clicks")
     else
         pfConsole::GetPipeline()->SetDrawableTypeMask(pfConsole::GetPipeline()->GetDrawableTypeMask() & ~plDrawableSpans::kCameraProxy);
 
-    char    str[ 256 ];
-    sprintf( str, "Clicks now %s", on ? "visible" : "invisible" );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Clicks now {}", on ? "visible" : "invisible");
 }
 
 
@@ -2010,9 +1931,7 @@ PF_CONSOLE_CMD( Graphics_Show, ClickOnly, "", "Toggle visible proxies for click 
     {
         pfConsole::GetPipeline()->SetDrawableTypeMask(oldMask);
     }
-    char    str[ 256 ];
-    sprintf( str, on ? "Now showing only camera proxies" : "Restoring previous render state" );
-    PrintString( str );
+    PrintString(on ? "Now showing only camera proxies" : "Restoring previous render state");
 }
 
 PF_CONSOLE_CMD( Graphics, ForceSecondMonitor, "bool v", "Run the game on the second monitor" )
@@ -2085,19 +2004,17 @@ PF_CONSOLE_CMD( App,
                 "string obj, string evType, float s, int reps",
                 "string obj, string evType, float s, int reps" )
 {
-
-    char str[256];
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", &status);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        strcat(str, " - Not Found!");
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - Not Found!", status);
         return;
     }
 
     plKey receiver = nil;
-    PrintString(str);
+    PrintString(status);
 
     int i;
     for( i = 0; i < obj->GetNumModifiers(); i++ )
@@ -2110,8 +2027,7 @@ PF_CONSOLE_CMD( App,
     }
     if( !receiver )
     {
-        strcat(str, " - Modifier Not Found!");
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - Modifier Not Found!", status);
         return;
     }
 
@@ -2172,18 +2088,16 @@ PF_CONSOLE_CMD( App,
                 "string obj, string evType, float s, int reps",
                 "string obj, string evType, float s, int reps" )
 {
-
-    char str[256];
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", &status);
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        strcat(str, " - Not Found!");
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - Not Found!", status);
         return;
     }
 
-    PrintString(str);
+    PrintString(status);
 
     plSoundMsg* cmd = new plSoundMsg;
     cmd->SetSender(plClient::GetInstance()->GetKey());
@@ -2227,20 +2141,17 @@ PF_CONSOLE_CMD( App,
                 "string name, ...", // paramList
                 "Enable/Disable/Toggle display of named CamView object" )
 {
-    char str[256];
     ST::string name = ST::string::from_utf8(params[0]);
-    plKey key = FindSceneObjectByName(name, "", str);
+    plKey key = FindSceneObjectByName(name, "", nullptr);
     if( !key )
     {
-        sprintf(str, "%s - Not Found!", name.c_str());
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - Not Found!", name);
         return;
     }
     plSceneObject* obj = plSceneObject::ConvertNoRef(key->GetObjectPtr());
     if( !obj )
     {
-        sprintf(str, "%s - Not Found!", name.c_str());
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - Not Found!", name);
         return;
     }
 
@@ -2252,11 +2163,10 @@ PF_CONSOLE_CMD( App,
     }
     if( i >= obj->GetNumModifiers() )
     {
-        sprintf(str, "%s - No CamView Modifier found!", name.c_str());
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} - No CamView Modifier found!", name);
         return;
     }
-    strcpy(str, name.c_str());
+    ST::string str = name;
 
     plAnimCmdMsg* cmd = new plAnimCmdMsg(nil, obj->GetModifier(i)->GetKey(), nil);
 
@@ -2266,21 +2176,21 @@ PF_CONSOLE_CMD( App,
         if( on )
         {
             cmd->SetCmd(plAnimCmdMsg::kContinue);
-            strcat(str, " - Enabled");
+            str += " - Enabled";
         }
         else
         {
             cmd->SetCmd(plAnimCmdMsg::kStop);
-            strcat(str, " - Disabled");
+            str += " - Disabled";
         }
     }
     else
     {
         cmd->SetCmd(plAnimCmdMsg::kToggleState);
-        strcat(str, " - Toggled");
+        str += " - Toggled";
     }
     plgDispatch::MsgSend(cmd);
-    PrintString(str);
+    PrintString(str.c_str());
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2291,9 +2201,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeClamp( s );
 
-    char str[256];
-    sprintf(str, "Time clamped to %f secs", s);
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Time clamped to {f} secs", s);
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2304,9 +2212,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeSmoothingClamp( s );
 
-    char str[256];
-    sprintf(str, "Time smoothing clamped to %f secs", s);
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Time smoothing clamped to {f} secs", s);
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2318,9 +2224,7 @@ PF_CONSOLE_CMD( App,        // groupName
     s *= 1.e-3f;
     hsTimer::SetFrameTimeInc( s );
 
-    char str[256];
-    sprintf(str, "Frame advancing %f per frame (in frame time)", s * 1.e3f );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Frame advancing {f} per frame (in frame time)", s * 1.e3f );
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2330,9 +2234,7 @@ PF_CONSOLE_CMD( App,        // groupName
 {
     hsTimer::SetRealTime( true );
 
-    char str[256];
-    sprintf(str, "Now running real time");
-    PrintString( str );
+    PrintString("Now running real time");
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2342,9 +2244,7 @@ PF_CONSOLE_CMD( App,        // groupName
 {
     hsTimer::SetRealTime( false );
 
-    char str[256];
-    sprintf(str, "Now running frame time");
-    PrintString( str );
+    PrintString("Now running frame time");
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2355,9 +2255,7 @@ PF_CONSOLE_CMD( App,        // groupName
     float s = params[0];
     hsTimer::SetTimeScale( s );
 
-    char str[256];
-    sprintf(str, "Time scaled to %4.4f percent", s * 100.f );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "Time scaled to {4.4f} percent", s * 100.f);
 }
 
 #include "plInputCore/plSceneInputInterface.h"
@@ -2367,18 +2265,18 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Show object LOS hits" ) // helpString
 {
-    char str[256];
+    const char *str;
     if (plSceneInputInterface::fShowLOS)
     {
         plSceneInputInterface::fShowLOS = false;
-        sprintf(str, "Stop displaying LOS hits");
+        str = "Stop displaying LOS hits";
     }
     else
     {
         plSceneInputInterface::fShowLOS = true;
-        sprintf(str, "Start showing LOS hits");
+        str = "Start showing LOS hits";
     }
-    PrintString( str );
+    PrintString(str);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -2411,9 +2309,7 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Prints the date and time this build was created" )  // helpString
 {
-    char str[256];
-    sprintf(str, "This Plasma 2.0 client built at %s on %s.", pnBuildDates::fBuildTime, pnBuildDates::fBuildDate );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "This Plasma 2.0 client built at {} on {}.", pnBuildDates::fBuildTime, pnBuildDates::fBuildDate);
 }
 
 PF_CONSOLE_CMD( App,        // groupName
@@ -2421,9 +2317,7 @@ PF_CONSOLE_CMD( App,        // groupName
                "", // paramList
                "Prints the date of the branch this code was produced from, or \"Pre-release\" if it is from the main code" )    // helpString
 {
-    char str[256];
-    sprintf(str, "The branch date for this Plasma 2.0 client is: %s.", pnBuildDates::fBranchDate );
-    PrintString( str );
+    pfConsolePrintF(PrintString, "The branch date for this Plasma 2.0 client is: {}.", pnBuildDates::fBranchDate);
 }
 
 PF_CONSOLE_CMD(App,
@@ -2451,8 +2345,7 @@ PF_CONSOLE_CMD(App,
     sprintf(str, "%s.log", age);
 //  hsgResMgr::ResMgr()->VerifyAgeUnloaded(str, age);
 
-    sprintf(str, "Verification of age %s complete", age);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Verification of age {} complete", age);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -2624,11 +2517,11 @@ PF_CONSOLE_CMD( Registry, SetLoggingLevel, "int level", "Sets the logging level 
 
     plResMgrSettings::Get().SetLoggingLevel( (uint8_t)newLevel );
     {
-        char msg[ 128 ];
-        sprintf( msg, "Registry logging set to %s", ( newLevel == 0 ) ? "none" : ( newLevel == 1 ) ? "basic" : 
-                                                        ( newLevel == 2 ) ? "detailed" : ( newLevel == 3 ) ? "object-level" 
-                                                            : "object-read-level" );
-        PrintString( msg );
+        pfConsolePrintF(PrintString, "Registry logging set to {}",
+                        (newLevel == 0) ? "none" :
+                        (newLevel == 1) ? "basic" :
+                        (newLevel == 2) ? "detailed" :
+                        (newLevel == 3) ? "object-level" : "object-read-level");
     }
 }
 
@@ -2646,13 +2539,14 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
     plActiveRefPeekerKey *peeker = (plActiveRefPeekerKey *)(plKeyImp *)obj;
 
     if( peeker->GetUoid().IsClone() )
-        PrintStringF( PrintString, "%d refs on %s, clone %d:%d: loaded=%d", 
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName().c_str(), 
+        pfConsolePrintF(PrintString, "{} refs on {}, clone {}:{}: loaded={}",
+            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
             peeker->GetUoid().GetCloneID(), peeker->GetUoid().GetClonePlayerID(),
             obj->ObjectIsLoaded() ? 1 : 0);
     else
-        PrintStringF( PrintString, "%d refs on %s: loaded=%d", 
-            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName().c_str(), obj->ObjectIsLoaded() ? 1 : 0 );
+        pfConsolePrintF(PrintString, "{} refs on {}: loaded={}",
+            peeker->PeekNumNotifies(), obj->GetUoid().GetObjectName(),
+            obj->ObjectIsLoaded() ? 1 : 0);
 
     if( peeker->PeekNumNotifies() == 0 )
         return;
@@ -2678,8 +2572,9 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
                             limit--;
 
                             const plKey rcvr = msg->GetReceiver( j );
-                            PrintStringF( PrintString, "    %s:%s", plFactory::GetNameOfClass( rcvr->GetUoid().GetClassType() ),
-                                          rcvr->GetUoid().GetObjectName().c_str() );
+                            pfConsolePrintF(PrintString, "    {}:{}",
+                                            plFactory::GetNameOfClass(rcvr->GetUoid().GetClassType()),
+                                            rcvr->GetUoid().GetObjectName());
                         }
                     }
                 }
@@ -2688,14 +2583,14 @@ void    MyHandyPrintFunction( const plKey &obj, void (*PrintString)( const char 
     }
 
     if( count > 0 )
-        PrintStringF( PrintString, "...and %d others", count );
+        pfConsolePrintF(PrintString, "...and {} others", count);
 }
 
 PF_CONSOLE_CMD( Registry, ListRefs, "string keyType, string keyName", "For the given key (referenced by type and name), lists all of "
                "the objects who currently have active refs on it." )
 {
-    char result[ 256 ];
-    plKey obj = FindObjectByNameAndType( ST::string::from_utf8( params[ 1 ] ), params[ 0 ], "", result);
+    const char *result = "";
+    plKey obj = FindObjectByNameAndType(ST::string::from_utf8(params[1]), params[0], "", &result);
     if( obj == nil )
     {
         PrintString( result );
@@ -2870,10 +2765,10 @@ PF_CONSOLE_CMD( Camera,     // groupName
 
 PF_CONSOLE_CMD( Camera, SwitchTo, "string cameraName", "Switch to the named camera")
 {
-    char str[256];
+    const char *status = "";
     ST::string foo = ST::format("{}_", (char*)params[0]);
-    plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", "", str, true);
-    PrintString(str);
+    plKey key = FindObjectByNameAndType(foo, "plCameraModifier1", "", &status, true);
+    PrintString(status);
 
     if (key)
     {
@@ -2997,9 +2892,9 @@ PF_CONSOLE_GROUP( Logic )
 
 static plLogicModBase *FindLogicMod(const ST::string &name)
 {
-    char str[256];
-    plKey key = FindObjectByNameAndType(name, "plLogicModifier", "", str, true);
-    pfConsole::AddLine(str);
+    const char *status = "";
+    plKey key = FindObjectByNameAndType(name, "plLogicModifier", "", &status, true);
+    pfConsole::AddLine(status);
 
     if (key)
         return plLogicModBase::ConvertNoRef(key->GetObjectPtr());
@@ -3094,9 +2989,9 @@ PF_CONSOLE_CMD( Logic, TriggerResponderNum, "int responderNum, ...", "Triggers t
         responderState = params[1];
     }
 
-    char str[256];
-    plKey key = FindObjectByNameAndType(responderNames[responderNum-1], "plResponderModifier", "", str, true);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindObjectByNameAndType(responderNames[responderNum-1], "plResponderModifier", "", &status, true);
+    PrintString(status);
 
     if (key)
         ResponderSendTrigger(key, responderState);
@@ -3110,9 +3005,9 @@ PF_CONSOLE_CMD( Logic, TriggerResponder, "string responderComp, ...", "Triggers 
         return;
     }
     
-    char str[256];
-    plKey key = FindObjectByNameAndType(ST::string::from_utf8(params[0]), "plResponderModifier", "", str, true);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindObjectByNameAndType(ST::string::from_utf8(params[0]), "plResponderModifier", "", &status, true);
+    PrintString(status);
 
     int responderState = -1;
     if (numParams == 2)
@@ -3132,9 +3027,9 @@ PF_CONSOLE_CMD( Logic, FastForwardResponder, "string responderComp, ...", "Fastf
         return;
     }
     
-    char str[256];
-    plKey key = FindObjectByNameAndType(ST::string::from_utf8(params[0]), "plResponderModifier", "", str, true);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindObjectByNameAndType(ST::string::from_utf8(params[0]), "plResponderModifier", "", &status, true);
+    PrintString(status);
 
     int responderState = -1;
     if (numParams == 2)
@@ -3152,11 +3047,7 @@ PF_CONSOLE_CMD(Logic, ListDetectors, "", "Prints the names of the loaded detecto
     plKeyFinder::Instance().GetActivatorNames(activatorNames);
 
     for (int i = 0; i < activatorNames.size(); i++)
-    {
-        char buf[256];
-        sprintf(buf, "%d. %s", i+1, activatorNames[i].c_str());
-        PrintString(buf);
-    }
+        pfConsolePrintF(PrintString, "{}. {}", i+1, activatorNames[i]);
 }
 
 PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded responders to the console")
@@ -3165,11 +3056,7 @@ PF_CONSOLE_CMD(Logic, ListResponders, "", "Prints the names of the loaded respon
     plKeyFinder::Instance().GetResponderNames(responderNames);
 
     for (int i = 0; i < responderNames.size(); i++)
-    {
-        char buf[256];
-        sprintf(buf, "%d. %s", i+1, responderNames[i].c_str());
-        PrintString(buf);
-    }
+        pfConsolePrintF(PrintString, "{}. {}", i+1, responderNames[i]);
 }
 
 #include "plModifier/plResponderModifier.h"
@@ -3307,18 +3194,18 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
 
     plgAudioSys::SetChannelVolume( chan, vol );
 
-    char    msg[ 128 ];
+    ST::string msg;
     switch( chan )
     {
-        case plgAudioSys::kSoundFX:     sprintf( msg, "Setting SoundFX master volume to %4.2f", vol ); break;
-        case plgAudioSys::kBgndMusic:   sprintf( msg, "Setting BgndMusic master volume to %4.2f", vol ); break;
-        case plgAudioSys::kVoice:       sprintf( msg, "Setting Voice master volume to %4.2f", vol ); break;
-        case plgAudioSys::kAmbience:    sprintf( msg, "Setting Ambience master volume to %4.2f", vol ); break;
-        case plgAudioSys::kGUI:         sprintf( msg, "Setting GUI master volume to %4.2f", vol ); break;
-        case plgAudioSys::kNPCVoice:    sprintf( msg, "Setting NPC Voice master volume to %4.2f", vol ); break;
+        case plgAudioSys::kSoundFX:     msg = ST::format("Setting SoundFX master volume to {4.2f}", vol); break;
+        case plgAudioSys::kBgndMusic:   msg = ST::format("Setting BgndMusic master volume to {4.2f}", vol); break;
+        case plgAudioSys::kVoice:       msg = ST::format("Setting Voice master volume to {4.2f}", vol); break;
+        case plgAudioSys::kAmbience:    msg = ST::format("Setting Ambience master volume to {4.2f}", vol); break;
+        case plgAudioSys::kGUI:         msg = ST::format("Setting GUI master volume to {4.2f}", vol); break;
+        case plgAudioSys::kNPCVoice:    msg = ST::format("Setting NPC Voice master volume to {4.2f}", vol); break;
         default: break;
     }
-    PrintString( msg );
+    PrintString(msg.c_str());
 }
 
 PF_CONSOLE_CMD( Audio, Set2D3DBias, "float bias", "Sets the 2D/3D bias when not using hardware acceleration.")
@@ -3489,8 +3376,7 @@ PF_CONSOLE_CMD( Audio, SetTwoStageLOD, "bool on", "Enables or disables two-stage
 PF_CONSOLE_CMD( Audio, SetVolume,
                 "string obj, float vol", "Sets the volume on a given object. 1 is max volume, 0 is silence" )
 {
-    char    str[ 256 ];
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[ 0 ]), "", str);
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[ 0 ]), "", nullptr);
     if( key == nil )
         return;
 
@@ -3515,31 +3401,27 @@ PF_CONSOLE_CMD( Audio, SetVolume,
 PF_CONSOLE_CMD( Audio, IsolateSound,
                 "string soundComponentName", "Mutes all sounds except the given sound. Use Audio.MuteAll false to remove the isolation." )
 {
-    char            str[ 512 ];
     plKey           key;
     plAudioSysMsg   *asMsg;
 
-    key = FindSceneObjectByName( ST::string::from_utf8( params[ 0 ] ), "", str );
+    key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", nullptr);
     if( key == nil )
     {
-        sprintf( str, "Cannot find sound %s", (char *)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "Cannot find sound {}", (char *)params[0]);
         return;
     }
 
     plSceneObject *obj = plSceneObject::ConvertNoRef( key->GetObjectPtr() );
     if( !obj )
     {
-        sprintf( str, "Cannot get sceneObject %s", (char *)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "Cannot get sceneObject {}", (char *)params[0]);
         return;
     }
 
     const plAudioInterface  *ai = obj->GetAudioInterface();
     if( ai == nil )
     {
-        sprintf( str, "sceneObject %s has no audio interface", (char *)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "sceneObject {} has no audio interface", (char *)params[0]);
         return;
     }
 
@@ -3552,9 +3434,7 @@ PF_CONSOLE_CMD( Audio, IsolateSound,
     plgDispatch::MsgSend( asMsg );
 
 
-    char str2[ 256 ];
-    sprintf( str2, "Sounds on sceneObject %s isolated.", (char *)params[ 0 ] );
-    PrintString( str2 );
+    pfConsolePrintF(PrintString, "Sounds on sceneObject {} isolated.", (char *)params[0]);
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -3918,8 +3798,7 @@ PF_CONSOLE_CMD( Nav, UnloadPlayer,  // Group name, Function name
                 "string objName",           // Params
                 "unloads a named player" )  // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", str);
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", nullptr);
     PrintString("UnloadPlayer (console version) is currently broken. Hassle Matt.");
     // plNetClientMgr::UnloadPlayer(key);
 }
@@ -3936,21 +3815,20 @@ PF_CONSOLE_CMD( Nav, MovePlayer,    // Group name, Function name
                 "string playerName, string destPage",           // Params
                 "moves a player from one paging unit to another" )  // Help string
 {
-    char str[256];
-    plKey playerKey = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey playerKey = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if( !playerKey )
         return;
 
-    plKey nodeKey = FindObjectByName(static_cast<const char *>(params[1]), plSceneNode::Index(), "", str);
-    PrintString(str);
+    plKey nodeKey = FindObjectByName(static_cast<const char *>(params[1]), plSceneNode::Index(), "", &status);
+    PrintString(status);
     if( !nodeKey )
         return;
 
     plNodeChangeMsg* msg = new plNodeChangeMsg(nil, playerKey, nodeKey);
     plgDispatch::MsgSend(msg);
-    sprintf(str, "%s moved to %s", (char*)params[0], (char*)params[1]);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "{} moved to {}", (char*)params[0], (char*)params[1]);
 }
 
 PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page from ever being loaded. Useful for debugging." )
@@ -3959,10 +3837,8 @@ PF_CONSOLE_CMD( Nav, ExcludePage, "string pageName", "Excludes the given page fr
         PrintString( "Unable to exclude page--NetClientMgr not loaded" );
     else
     {
-        char    str[ 256 ];
-        sprintf( str, "Page %s excluded from load", (char *)params[ 0 ] );
         plAgeLoader::GetInstance()->AddExcludedPage( (char*)params[ 0 ] );
-        PrintString( str );
+        pfConsolePrintF(PrintString, "Page {} excluded from load", (char *)params[0]);
     }
 }
 
@@ -3986,7 +3862,7 @@ PF_CONSOLE_CMD( Movie,
 
     mov->Send();
 
-    PrintStringF(PrintString, "%s now playing", filename);
+    pfConsolePrintF(PrintString, "{} now playing", filename);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -3998,7 +3874,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kStop);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now stopping", filename);
+    pfConsolePrintF(PrintString, "{} now stopping", filename);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4010,7 +3886,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kPause);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now pausing", filename);
+    pfConsolePrintF(PrintString, "{} now pausing", filename);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4022,7 +3898,7 @@ PF_CONSOLE_CMD( Movie,
     plMovieMsg* mov = new plMovieMsg(filename, plMovieMsg::kResume);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now resuming", filename);
+    pfConsolePrintF(PrintString, "{} now resuming", filename);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4037,7 +3913,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetCenter(x, y);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now at %g,%g", filename, x, y);
+    pfConsolePrintF(PrintString, "{} now at {},{}", filename, x, y);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4052,7 +3928,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetScale(x, y);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now scaled to %g,%g", filename, x, y);
+    pfConsolePrintF(PrintString, "{} now scaled to {},{}", filename, x, y);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4066,7 +3942,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetOpacity(a);
     mov->Send();
 
-    PrintStringF(PrintString, "%s opacity now at %g", filename, a);
+    pfConsolePrintF(PrintString, "{} opacity now at {}", filename, a);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4082,7 +3958,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetColor(r, g, b, 1.f);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now tinted to %g,%g,%g", filename, r, g, b);
+    pfConsolePrintF(PrintString, "{} now tinted to {},{},{}", filename, r, g, b);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4096,7 +3972,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetVolume(v);
     mov->Send();
 
-    PrintStringF(PrintString, "%s volume now at %g", filename, v);
+    pfConsolePrintF(PrintString, "{} volume now at {}", filename, v);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4115,7 +3991,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetFadeInColor(r, g, b, a);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now fading from %g,%g,%g,%g over %g secs", filename, r, g, b, a, secs);
+    pfConsolePrintF(PrintString, "{} now fading from {},{},{},{} over {} secs", filename, r, g, b, a, secs);
 }
 
 PF_CONSOLE_CMD( Movie,
@@ -4134,7 +4010,7 @@ PF_CONSOLE_CMD( Movie,
     mov->SetFadeOutColor(r, g, b, a);
     mov->Send();
 
-    PrintStringF(PrintString, "%s now fading to %g,%g,%g,%g over %g secs", filename, r, g, b, a, secs);
+    pfConsolePrintF(PrintString, "{} now fading to {},{},{},{} over {} secs", filename, r, g, b, a, secs);
 }
 
 
@@ -4156,9 +4032,7 @@ PF_CONSOLE_CMD( Quality,
         q = 3;
     plClient::GetInstance()->SetQuality(q);
 
-    char str[256];
-    sprintf(str, "Quality slider to %d", q);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Quality slider to {}", q);
 }
 
 #include "plSurface/plShaderTable.h"
@@ -4176,9 +4050,7 @@ PF_CONSOLE_CMD( Quality,
     else
         plClient::GetInstance()->SetClampCap(c);
 
-    char str[256];
-    sprintf(str, "Graphics capability clamped to %d", c);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Graphics capability clamped to {}", c);
 }
 
 
@@ -4239,11 +4111,11 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod, int iLay, int iDel, float wgt",
                    "Set the weight for a morphMod" )
 {
-    char str[256];
+    const char *status = "";
     char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_0", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
-    PrintString(str);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -4255,8 +4127,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->SetWeight(iLay, iDel, wgt);
 
-    sprintf(str, "Layer[%d][%d] = %g\n", iLay, iDel, wgt);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, iDel, wgt);
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4264,11 +4135,11 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod",
                    "Activate a morphMod" )
 {
-    char str[256];
+    const char *status = "";
     char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
-    PrintString(str);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -4276,8 +4147,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    sprintf(str, "%s Active\n", name.c_str());
-    PrintString(str);
+    pfConsolePrintF(PrintString, "{} Active\n", name);
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4285,11 +4155,11 @@ PF_CONSOLE_CMD( Access,
                    "string morphMod",
                    "Activate a morphMod" )
 {
-    char str[256];
+    const char *status = "";
     char* preFix = params[0];
     ST::string name = ST::format("{}_plMorphSequence_2", preFix);
-    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", str);
-    PrintString(str);
+    plKey key = FindObjectByName(name, plMorphSequence::Index(), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -4297,8 +4167,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    sprintf(str, "%s Unactive\n", name.c_str());
-    PrintString(str);
+    pfConsolePrintF(PrintString, "{} Unactive\n", name);
 }
 //////////////////
 PF_CONSOLE_CMD( Access,
@@ -4319,9 +4188,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->SetWeight(iLay, iDel, wgt);
     
-    char str[256];
-    sprintf(str, "Layer[%d][%d] = %g\n", iLay, iDel, wgt);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, iDel, wgt);
 }
 
 
@@ -4417,12 +4284,8 @@ PF_CONSOLE_CMD( Access,
     seq->SetWeight(iLay, 0, wgtPlus, meshKey);
     seq->SetWeight(iLay, 1, wgtMinus, meshKey);
 
-    char str[256];
-    sprintf(str, "Layer[%d][%d] = %g\n", iLay, 0, wgtPlus);
-    PrintString(str);
-
-    sprintf(str, "Layer[%d][%d] = %g\n", iLay, 1, wgtMinus);
-    PrintString(str);
+    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, 0, wgtPlus);
+    pfConsolePrintF(PrintString, "Layer[{}][{}] = {}\n", iLay, 1, wgtMinus);
 }
 
 
@@ -4442,7 +4305,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->Activate();
 
-    PrintString(ST::format("{} Active\n", seq->GetKey()->GetName()).c_str());
+    pfConsolePrintF(PrintString, "{} Active\n", seq->GetKey()->GetName());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4459,7 +4322,7 @@ PF_CONSOLE_CMD( Access,
 
     seq->DeActivate();
 
-    PrintString(ST::format("{} Unactive\n", seq->GetKey()->GetName()).c_str());
+    pfConsolePrintF(PrintString, "{} Unactive\n", seq->GetKey()->GetName());
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4481,7 +4344,7 @@ PF_CONSOLE_CMD( Access,
     seq->SetUseSharedMesh(true);
     seq->AddSharedMesh(item->fMeshes[plClothingItem::kLODHigh]);
 
-    PrintString(ST::format("{} on item {}\n", seq->GetKey()->GetName(), (char *)params[0]).c_str());
+    pfConsolePrintF(PrintString, "{} on item {}\n", seq->GetKey()->GetName(), (char *)params[0]);
 }
 
 #include "pfSurface/plFadeOpacityMod.h"
@@ -4495,9 +4358,7 @@ PF_CONSOLE_CMD( Access,
 
     plFadeOpacityMod::SetLOSCheckDisabled(disabled);
 
-    char str[256];
-    sprintf(str, "LOS check now %s", disabled ? "disabled" : "enabled");
-    PrintString(str);
+    pfConsolePrintF(PrintString, "LOS check now {}", disabled ? "disabled" : "enabled");
 }
 
 PF_CONSOLE_CMD( Access,
@@ -4505,9 +4366,9 @@ PF_CONSOLE_CMD( Access,
                    "string obj, float fadeUp, float fadeDown",
                    "Test fading on visibility" )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(ST::string::from_utf8(params[0]), "", &status);
+    PrintString(status);
     if( !key )
         return;
 
@@ -4537,9 +4398,9 @@ PF_CONSOLE_CMD( Access,
                    "string losObj",
                    "Set the los test marker" )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if( !key )
         return;
 
@@ -4551,9 +4412,9 @@ PF_CONSOLE_CMD( Access,
                    "string marker",
                    "Set the Los hack marker" )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
 
     plSceneObject* so = nil;
     if( key )
@@ -4596,9 +4457,7 @@ PF_CONSOLE_CMD( Access,
     plVisHit hit;
     if( plVisLOSMgr::Instance()->Check(from, targ, hit) )
     {
-        char buff[256];
-        sprintf(buff, "(%g, %g, %g)", hit.fPos.fX, hit.fPos.fY, hit.fPos.fZ);
-        PrintString(buff);
+        pfConsolePrintF(PrintString, "({}, {}, {})", hit.fPos.fX, hit.fPos.fY, hit.fPos.fZ);
 
         if( losObj )
         {
@@ -4626,9 +4485,9 @@ PF_CONSOLE_CMD( Access,
                    "string gun, float radius, ...",
                    "Fire shot along gun's z-axis, creating decal of radius <radius>, with optional max-range (def 1000)" )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if( !key )
         return;
 
@@ -4707,16 +4566,16 @@ PF_CONSOLE_CMD( Access,
                "string bull, string psys",
                "Add particle system <psys> to bulletMgr <bull>")
 {
-    char str[256];
-    plKey bullKey = FindObjectByName(static_cast<const char *>(params[0]), plDynaBulletMgr::Index(), "", str, false);
-    PrintString(str);
+    const char *status = "";
+    plKey bullKey = FindObjectByName(static_cast<const char *>(params[0]), plDynaBulletMgr::Index(), "", &status, false);
+    PrintString(status);
     if( !(bullKey && bullKey->GetObjectPtr()) )
     {
         PrintString("bullet not found");
         return;
     }
 
-    plKey sysKey = FindSceneObjectByName(static_cast<const char *>(params[1]), "", str);
+    plKey sysKey = FindSceneObjectByName(static_cast<const char *>(params[1]), "", &status);
     if( !(sysKey && sysKey->GetObjectPtr()) )
     {
         PrintString("Psys not found");
@@ -4794,7 +4653,7 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
 
     using namespace plWaveCmd;
 
-    char buff[256];
+    ST::string msg;
 
     hsPoint3 pos;
     hsVector3 vec;
@@ -4804,120 +4663,120 @@ static void IDisplayWaveVal(PrintFunk PrintString, plWaveSet7* wave, plWaveCmd::
     switch( cmd )
     {
     case kGeoLen:
-        sprintf(buff, "Min/Max Geo Wavelengths = %f/%f", wave->GetGeoMinLength(), wave->GetGeoMaxLength());
+        msg = ST::format("Min/Max Geo Wavelengths = {f}/{f}", wave->GetGeoMinLength(), wave->GetGeoMaxLength());
         break;
     case kGeoChop:
-        sprintf(buff, "Geo Choppiness = %f", FracToPercent(wave->GetGeoChop()));
+        msg = ST::format("Geo Choppiness = {f}", FracToPercent(wave->GetGeoChop()));
         break;
     case kGeoAmp:
-        sprintf(buff, "Geo Wave Amplitude to Length Ratio (%%) = %f", FracToPercent(wave->GetGeoAmpOverLen()));
+        msg = ST::format("Geo Wave Amplitude to Length Ratio (%) = {f}", FracToPercent(wave->GetGeoAmpOverLen()));
         break;
     case kGeoAngle:
-        sprintf(buff, "Geo Spread of waves about Wind Dir = %f degrees", RadToDeg(wave->GetGeoAngleDev()));
+        msg = ST::format("Geo Spread of waves about Wind Dir = {f} degrees", RadToDeg(wave->GetGeoAngleDev()));
         break;
 
     case kTexLen:
-        sprintf(buff, "Min/Max Tex Wavelengths = %f/%f", wave->GetTexMinLength(), wave->GetTexMaxLength());
+        msg = ST::format("Min/Max Tex Wavelengths = {f}/{f}", wave->GetTexMinLength(), wave->GetTexMaxLength());
         break;
     case kTexChop:
-        sprintf(buff, "Tex Choppiness = %f", FracToPercent(wave->GetTexChop()));
+        msg = ST::format("Tex Choppiness = {f}", FracToPercent(wave->GetTexChop()));
         break;
     case kTexAmp:
-        sprintf(buff, "Tex Wave Amplitude to Length Ratio = %f%%", FracToPercent(wave->GetTexAmpOverLen()));
+        msg = ST::format("Tex Wave Amplitude to Length Ratio = {f}%", FracToPercent(wave->GetTexAmpOverLen()));
         break;
     case kTexAngle:
-        sprintf(buff, "Tex Spread of waves about Wind Dir = %f degrees", RadToDeg(wave->GetTexAngleDev()));
+        msg = ST::format("Tex Spread of waves about Wind Dir = {f} degrees", RadToDeg(wave->GetTexAngleDev()));
         break;
     
     case kNoise:
-        sprintf(buff, "Noising texture ripples at %f %%", FracToPercent(wave->GetSpecularNoise()));
+        msg = ST::format("Noising texture ripples at {f} %", FracToPercent(wave->GetSpecularNoise()));
         break;
     
     case kSpecAtten:
-        sprintf(buff, "Ripples fade out from %f to %f feet", wave->GetSpecularStart(), wave->GetSpecularEnd());
+        msg = ST::format("Ripples fade out from {f} to {f} feet", wave->GetSpecularStart(), wave->GetSpecularEnd());
         break;
 
     case kWaterOpacity:
-        sprintf(buff, "WaterOpacity = %f", FracToPercent(wave->GetWaterTint().a));
+        msg = ST::format("WaterOpacity = {f}", FracToPercent(wave->GetWaterTint().a));
         break;
     case kRippleScale:
-        sprintf(buff, "RippleScale = %f", wave->GetRippleScale());
+        msg = ST::format("RippleScale = {f}", wave->GetRippleScale());
         break;
     case kWaterHeight:
-        sprintf(buff, "WaterHeight = %f", wave->GetWaterHeight());
+        msg = ST::format("WaterHeight = {f}", wave->GetWaterHeight());
         break;
     case kEnvRadius:
-        sprintf(buff, "EnvRadius = %f", wave->GetEnvRadius());
+        msg = ST::format("EnvRadius = {f}", wave->GetEnvRadius());
         break;
     case kWaterOffsetOpac:
-        sprintf(buff, "OpacStart = %f", -wave->GetOpacOffset());
+        msg = ST::format("OpacStart = {f}", -wave->GetOpacOffset());
         break;
     case kWaterOffsetRefl:
-        sprintf(buff, "ReflStart = %f", -wave->GetReflOffset());
+        msg = ST::format("ReflStart = {f}", -wave->GetReflOffset());
         break;
     case kWaterOffsetWave:
-        sprintf(buff, "WaveStart = %f", -wave->GetWaveOffset());
+        msg = ST::format("WaveStart = {f}", -wave->GetWaveOffset());
         break;
 
     case kDepthFalloffOpac:
-        sprintf(buff, "OpacEnd = %f", wave->GetOpacFalloff());
+        msg = ST::format("OpacEnd = {f}", wave->GetOpacFalloff());
         break;
     case kDepthFalloffRefl:
-        sprintf(buff, "ReflEnd = %f", wave->GetReflFalloff());
+        msg = ST::format("ReflEnd = {f}", wave->GetReflFalloff());
         break;
     case kDepthFalloffWave:
-        sprintf(buff, "WaveEnd = %f", wave->GetWaveFalloff());
+        msg = ST::format("WaveEnd = {f}", wave->GetWaveFalloff());
         break;
 
     case kWindDir:
         vec = wave->GetWindDir();
-        sprintf(buff, "WindDir (%f, %f)", vec.fX, vec.fY);
+        msg = ST::format("WindDir ({f}, {f})", vec.fX, vec.fY);
         break;
     case kMinAtten:
         vec = wave->GetMinAtten();
-        sprintf(buff, "MinAtten (%f, %f, %f)", vec.fX, vec.fY, vec.fZ);
+        msg = ST::format("MinAtten ({f}, {f}, {f})", vec.fX, vec.fY, vec.fZ);
         break;
     case kMaxAtten:
         vec = wave->GetMaxAtten();
-        sprintf(buff, "MaxAtten (%f, %f, %f)", vec.fX, vec.fY, vec.fZ);
+        msg = ST::format("MaxAtten ({f}, {f}, {f})", vec.fX, vec.fY, vec.fZ);
         break;
 
     case kEnvCenter:
         pos = wave->GetEnvCenter();
-        sprintf(buff, "EnvCenter (%f, %f, %f)", pos.fX, pos.fY, pos.fZ);
+        msg = ST::format("EnvCenter ({f}, {f}, {f})", pos.fX, pos.fY, pos.fZ);
         break;
 
     case kWaterTint:
         col = wave->GetWaterTint();
-        sprintf(buff, "Water tint (%d, %d, %d)", 
+        msg = ST::format("Water tint ({}, {}, {})",
             int(col.r * 255.9f), 
             int(col.g * 255.9f), 
             int(col.b * 255.9f));
         break;
     case kSpecularTint:
         col = wave->GetSpecularTint();
-        sprintf(buff, "Specular tint (%d, %d, %d)", 
+        msg = ST::format("Specular tint ({}, {}, {})",
             int(col.r * 255.9f), 
             int(col.g * 255.9f), 
             int(col.b * 255.9f));
         break;
     case kSpecularMute:
         col = wave->GetSpecularTint();
-        sprintf(buff, "Specular mute %f", FracToPercent(col.a));
+        msg = ST::format("Specular mute {f}", FracToPercent(col.a));
         break;
 
     default:
-        sprintf(buff, "Unknown parameter");
+        msg = "Unknown parameter";
         break;
     }
-    PrintString(buff);
+    PrintString(msg.c_str());
 }
 
 static plWaveSet7* IGetWaveSet(PrintFunk PrintString, const ST::string& name)
 {
-    char str[256];
-    plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), "", str, false);
-    PrintString(str);
+    const char *status = "";
+    plKey waveKey = FindObjectByName(name, plWaveSet7::Index(), "", &status, false);
+    PrintString(status);
     if (!waveKey)
         return nil;
 
@@ -4949,16 +4808,12 @@ static float LimitVal(float val, float lo, float hi, PrintFunk PrintString)
 {
     if( val < lo )
     {
-        char buff[256];
-        sprintf(buff, "%f too low, clamped to %f", val, lo);
-        PrintString(buff);
+        pfConsolePrintF(PrintString, "{f} too low, clamped to {f}", val, lo);
         val = lo;
     }
     else if( val > hi )
     {
-        char buff[256];
-        sprintf(buff, "%f too high, clamped to %f", val, hi);
-        PrintString(buff);
+        pfConsolePrintF(PrintString, "{f} too high, clamped to {f}", val, hi);
         val = hi;
     }
     return val;
@@ -5172,9 +5027,7 @@ PF_CONSOLE_CMD( Wave, Log,  // Group name, Function name
         else
             waveSet->StopLog();
 
-        char buff[256];
-        sprintf(buff, "Logging for %s now %s", name.c_str(), logging ? "on" : "off");
-        PrintString(buff);
+        pfConsolePrintF(PrintString, "Logging for {} now {}", name, logging ? "on" : "off");
     }
 }
 
@@ -5192,9 +5045,7 @@ PF_CONSOLE_CMD( Wave, Graph,    // Group name, Function name
         else
             waveSet->StopGraph();
 
-        char buff[256];
-        sprintf(buff, "Graphing for %s now %s", name.c_str(), graphing ? "on" : "off");
-        PrintString(buff);
+        pfConsolePrintF(PrintString, "Graphing for {} now {}", name, graphing ? "on" : "off");
     }
 }
 
@@ -5396,9 +5247,9 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Drawable,    // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable drawing of a sceneobject" )  // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -5415,9 +5266,9 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Physical,    // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -5434,9 +5285,9 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, PhysicalT,   // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the physical of a sceneobject" ) // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(params[0], nil, str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(params[0], nil, &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -5457,9 +5308,9 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, Audible,     // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable the audible of a sceneobject" )  // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -5476,9 +5327,9 @@ PF_CONSOLE_CMD( SceneObject_SetEnable, All,         // Group name, Function name
                 "string objName, bool on",          // Params none
                 "Enable or disable all fxns of a sceneobject" ) // Help string
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", &status);
+    PrintString(status);
     if (!key)
         return;
 
@@ -5495,59 +5346,55 @@ PF_CONSOLE_CMD( SceneObject, Attach,            // Group name, Function name
                 "string childName, string parentName",          // Params none
                 "Attach child to parent" )  // Help string
 {
-    char str[256];
+    const char *status = "";
 
     ST::string childName = static_cast<const char *>(params[0]);
     ST::string parentName = static_cast<const char *>(params[1]);
 
-    plKey childKey = FindSceneObjectByName(childName, "", str);
+    plKey childKey = FindSceneObjectByName(childName, "", &status);
     if( !childKey )
     {
-        PrintString(str);
+        PrintString(status);
         return;
     }
     plSceneObject* child = plSceneObject::ConvertNoRef(childKey->GetObjectPtr());
     if( !child )
     {
-        sprintf( str, "Child SceneObject not found");
-        PrintString(str);
+        PrintString("Child SceneObject not found");
         return;
     }
 
-    plKey parentKey = FindSceneObjectByName(parentName, "", str);
+    plKey parentKey = FindSceneObjectByName(parentName, "", &status);
     if( !parentKey )
     {
-        PrintString(str);
+        PrintString(status);
         return;
     }
 
     plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRequest, nil);
     plgDispatch::MsgSend(attMsg);
 
-    sprintf(str, "%s now child of %s", childName.c_str(), parentName.c_str());
-    PrintString(str);
-
+    pfConsolePrintF(PrintString, "{} now child of {}", childName, parentName);
 }
 
 PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
                 "string childName",         // Params none
                 "Detach a child from parent (if any)" ) // Help string
 {
-    char str[256];
+    const char *status = "";
 
     ST::string childName = static_cast<const char *>(params[0]);
 
-    plKey childKey = FindSceneObjectByName(childName, "", str);
+    plKey childKey = FindSceneObjectByName(childName, "", &status);
     if( !childKey )
     {
-        PrintString(str);
+        PrintString(status);
         return;
     }
     plSceneObject* child = plSceneObject::ConvertNoRef(childKey->GetObjectPtr());
     if( !child )
     {
-        sprintf( str, "Child SceneObject not found");
-        PrintString(str);
+        PrintString("Child SceneObject not found");
         return;
     }
 
@@ -5560,14 +5407,12 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
         plAttachMsg* attMsg = new plAttachMsg(parentKey, child, plRefMsg::kOnRemove, nil);
         plgDispatch::MsgSend(attMsg);
 
-        sprintf(str, "%s detached from %s", childName.c_str(), parentKey->GetName().c_str());
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} detached from {}", childName, parentKey->GetName());
         return;
     }
     else
     {
-        sprintf(str, "%s not attached to anything", childName.c_str());
-        PrintString(str);
+        pfConsolePrintF(PrintString, "{} not attached to anything", childName);
         return;
     }
 }
@@ -5606,9 +5451,7 @@ PF_CONSOLE_CMD( Physics, GetStepsPerSecond, "", "Prints the number of physics su
 {
     int steps = plSimulationMgr::GetInstance()->GetStepsPerSecond();
 
-    char buffy[256];
-    sprintf(buffy, "Current physics resolution is %d frames per second.", steps);
-    PrintString(buffy);
+    pfConsolePrintF(PrintString, "Current physics resolution is {} frames per second.", steps);
 }
 
 PF_CONSOLE_CMD(Physics, SetMaxDelta, "float maxDelta", "Sets the largest frame-to-frame delta that physics will try to resolve before giving up and freezing.")
@@ -5621,9 +5464,7 @@ PF_CONSOLE_CMD(Physics, GetMaxDelta, "", "Prints the largest frame-to-frame delt
 {
     float oldMaxDelta = plSimulationMgr::GetInstance()->GetMaxDelta();
 
-    char buffy[256];
-    sprintf(buffy, "When (delta > %f), physics is suspended for that frame.", oldMaxDelta);
-    PrintString(buffy);
+    pfConsolePrintF(PrintString, "When (delta > {f}), physics is suspended for that frame.", oldMaxDelta);
 }
 
 PF_CONSOLE_CMD(Physics, SetDeactivateFreq, "float freq", "")
@@ -5827,48 +5668,48 @@ PF_CONSOLE_CMD(Physics, LogSDL, "int level", "Turn logging of physics SDL state 
 #include "plPhysX/plSimulationMgr.h"
 PF_CONSOLE_CMD(Physics, ExtraProfile, "", "Toggle extra simulation profiling")
 {
-    char str[256];
+    const char *str;
     if (plSimulationMgr::fExtraProfile)
     {
         plSimulationMgr::fExtraProfile = false;
-        sprintf(str, "Stop extra profiling");
+        str = "Stop extra profiling";
     }
     else
     {
         plSimulationMgr::fExtraProfile = true;
-        sprintf(str, "Start extra profiling");
+        str = "Start extra profiling";
     }
-    PrintString( str );
+    PrintString(str);
 }
 PF_CONSOLE_CMD(Physics, SubworldOptimization, "", "Toggle subworld optimization")
 {
-    char str[256];
+    const char *str;
     if (plSimulationMgr::fSubworldOptimization)
     {
         plSimulationMgr::fSubworldOptimization = false;
-        sprintf(str, "Stop subworld optimization");
+        str = "Stop subworld optimization";
     }
     else
     {
         plSimulationMgr::fSubworldOptimization = true;
-        sprintf(str, "Start subworld optimization");
+        str = "Start subworld optimization";
     }
-    PrintString( str );
+    PrintString(str);
 }
 PF_CONSOLE_CMD(Physics, ClampingOnStep, "", "Toggle whether to clamp the step size on advance")
 {
-    char str[256];
+    const char *str;
     if (plSimulationMgr::fDoClampingOnStep)
     {
         plSimulationMgr::fDoClampingOnStep = false;
-        sprintf(str, "Stop clamping the step size");
+        str = "Stop clamping the step size";
     }
     else
     {
         plSimulationMgr::fDoClampingOnStep = true;
-        sprintf(str, "Start clamping the step size");
+        str = "Start clamping the step size";
     }
-    PrintString( str );
+    PrintString(str);
 }
 
 PF_CONSOLE_CMD(Physics, 
@@ -5948,14 +5789,14 @@ PF_CONSOLE_CMD( Mouse, Show, nil, "hide mouse cursor")
 /*PF_CONSOLE_CMD( Mouse, SetScale, "float scale", "Sets the mouse scaling factor (sensitivity)" )
 {
     plInputManager::GetInstance()->SetMouseScale( params[ 0 ] );
-    PrintStringF( PrintString, "Mouse scale factor set to %4.2f", params[ 0 ] );
+    pfConsolePrintF(PrintString, "Mouse scale factor set to {4.2f}", params[0]);
 }
 */
 
 PF_CONSOLE_CMD( Mouse, ForceHide, "bool force", "Forces the mouse to be hidden (or doesn't)" )
 {
     plInputInterfaceMgr::GetInstance()->ForceCursorHidden( (bool)params[ 0 ] );
-    PrintStringF( PrintString, "Mouse cursor %s", params[ 0 ] ? "forced to be hidden" : "back to normal" );
+    pfConsolePrintF(PrintString, "Mouse cursor {}", params[0] ? "forced to be hidden" : "back to normal");
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -6009,12 +5850,10 @@ PF_CONSOLE_CMD( Age, GetElapsedDays, "string agedefnfile", "Gets the elapsed day
     plAgeDescription age;
     age.Read(&s);
     
-    char str[256];
     plUnifiedTime current;
     current.SetToUTC();
-    sprintf(str,"ElapsedTime: %f Days",age.GetAgeElapsedDays(current));
+    pfConsolePrintF(PrintString, "ElapsedTime: {f} Days", age.GetAgeElapsedDays(current));
 
-    PrintString(str);
     s.Close();
 }
 
@@ -6030,12 +5869,10 @@ PF_CONSOLE_CMD( Age, GetTimeOfDay, "string agedefnfile", "Gets the elapsed days 
     plAgeDescription age;
     age.Read(&s);
     
-    char str[256];
     plUnifiedTime current;
     current.SetToUTC();
-    sprintf(str,"TimeOfDay: %f percent",age.GetAgeTimeOfDayPercent(current));
+    pfConsolePrintF(PrintString, "TimeOfDay: {f} percent", age.GetAgeTimeOfDayPercent(current));
 
-    PrintString(str);
     s.Close();
 }
 
@@ -6072,9 +5909,9 @@ PF_CONSOLE_GROUP( ParticleSystem ) // Defines a main command group
 
 void UpdateParticleParam(const ST::string &objName, int32_t paramID, float value, void (*PrintString)(const char *))
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(objName, "", str);
-    PrintString(str);
+    const char *status = "";
+    plKey key = FindSceneObjectByName(objName, "", &status);
+    PrintString(status);
     if (key == nil) return;
 
     plSceneObject* so = plSceneObject::ConvertNoRef(key->GetObjectPtr());
@@ -6195,8 +6032,7 @@ PF_CONSOLE_CMD( ParticleSystem,
                "string objName, int numParticles",
                "Creates a system (if necessary) on the avatar, and transfers particles" )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
     if (key == nil) 
         return;
     
@@ -6214,8 +6050,7 @@ PF_CONSOLE_CMD( ParticleSystem,
                "string objName, float timeLeft, float num, bool useAsPercentage",
                "Flag some particles for death." )
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", str);
+    plKey key = FindSceneObjectByName(static_cast<const char *>(params[0]), "", nullptr);
     if (key == nil) 
         return;
     
@@ -6236,8 +6071,7 @@ PF_CONSOLE_SUBGROUP( ParticleSystem, Flock )
 
 static plParticleFlockEffect *FindFlock(const ST::string &objName)
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(objName, "", str);
+    plKey key = FindSceneObjectByName(objName, "", nullptr);
     
     if (key == nil)
         return nil;
@@ -6414,8 +6248,7 @@ PF_CONSOLE_GROUP( Animation ) // Defines a main command group
 
 void SendAnimCmdMsg(const ST::string &objName, plMessage *msg)
 {
-    char str[256];
-    plKey key = FindSceneObjectByName(objName, "", str);
+    plKey key = FindSceneObjectByName(objName, "", nullptr);
     if (key != nil)
     {
         msg->AddReceiver(key);
@@ -6530,9 +6363,7 @@ PF_CONSOLE_CMD( Animation,
     bool enabled = !plCoordinateInterface::GetDelayedTransformsEnabled();
     plCoordinateInterface::SetDelayedTransformsEnabled(enabled);
 
-    char buff[256];
-    sprintf(buff, "Potential delay of transform eval is now %s", (enabled ? "ENABLED" : "DISABLED"));
-    PrintString(buff);
+    pfConsolePrintF(PrintString, "Potential delay of transform eval is now {}", (enabled ? "ENABLED" : "DISABLED"));
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
