@@ -198,66 +198,38 @@ class PythonVaultCallback : public VaultCallback
 {
 protected:
     plPythonFileMod* fPyFileMod;
-    int     fFunctionIdx;
+    plPythonFileMod::func_num fFunctionIdx;
 
 public:
-    PythonVaultCallback(plPythonFileMod* pymod, int fidx)
+    PythonVaultCallback(plPythonFileMod* pymod, plPythonFileMod::func_num fidx)
         : fPyFileMod(pymod), fFunctionIdx(fidx)
     {
     }
 
     void AddedChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
     {
-        // is there an 'OnVaultEvent' defined?
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
-            pyObjectRef ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNodeRef::New(parentNode, childNode));
-
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                                                     _pycs("lO"), pyVault::kVaultNodeRefAdded,
-                                                     ptuple.Get());
-            if (!retVal)
-                fPyFileMod->ReportError();
-            plProfile_EndTiming(PythonUpdate);
-            fPyFileMod->DisplayPythonOutput();
+            PyObject* ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
+            fPyFileMod->ICallScriptMethod(fFunctionIdx, (int)pyVault::kVaultNodeRefAdded, ptuple);
         }
     }
 
     void RemovingChildNode(RelVaultNode* parentNode, RelVaultNode* childNode)
     {
-        // is there an 'OnVaultEvent' defined?
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
-            pyObjectRef ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNodeRef::New(parentNode, childNode));
-
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                                                     _pycs("lO"), pyVault::kVaultRemovingNodeRef,
-                                                     ptuple.Get());
-            if (!retVal)
-                fPyFileMod->ReportError();
-            plProfile_EndTiming(PythonUpdate);
+            PyObject* ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple, 0, pyVaultNodeRef::New(parentNode, childNode));
+            fPyFileMod->ICallScriptMethod(fFunctionIdx, (int)pyVault::kVaultRemovingNodeRef, ptuple);
         }
     }
 
     void ChangedNode(RelVaultNode* changedNode)
     {
-        // is there an 'OnVaultEvent' defined?
         if (fPyFileMod && fPyFileMod->fPyFunctionInstances[fFunctionIdx]) {
-            pyObjectRef ptuple = PyTuple_New(1);
-            PyTuple_SetItem(ptuple.Get(), 0, pyVaultNode::New(changedNode));
-
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFileMod->fPyFunctionInstances[fFunctionIdx],
-                                                     const_cast<char*>(fPyFileMod->fFunctionNames[fFunctionIdx]),
-                                                     _pycs("lO"), pyVault::kVaultNodeSaved,
-                                                     ptuple.Get());
-            if (!retVal)
-                fPyFileMod->ReportError();
-            plProfile_EndTiming(PythonUpdate);
+            PyObject* ptuple = PyTuple_New(1);
+            PyTuple_SetItem(ptuple, 0, pyVaultNode::New(changedNode));
+            fPyFileMod->ICallScriptMethod(fFunctionIdx, (int)pyVault::kVaultNodeSaved, ptuple);
         }
     }
 };
@@ -317,6 +289,9 @@ plPythonFileMod::~plPythonFileMod()
 {
     if ( !fAtConvertTime )      // if this is just an Add that's during a convert, then don't do anymore
     {
+        for (size_t i = 0; fFunctionNames[i] != nullptr; ++i)
+            Py_CLEAR(fPyFunctionInstances[i]);
+
         // remove our reference to the instance (but only if we made one)
         if(fInstance)
         {
@@ -388,6 +363,138 @@ T* plPythonFileMod::IScriptWantsMsg(func_num methodId, plMessage* msg) const
     if (fPyFunctionInstances[methodId])
         return T::ConvertNoRef(msg);
     return nullptr;
+}
+
+/////////////////////////////////////////////////////////////////////////////
+//
+//  Function   : ICallSciptMethod and friends
+//
+//  PURPOSE    : Builds Python argument tuple for method calling.
+//
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, bool value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyBool_FromLong(value ? 1 : 0));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, char value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyString_FromFormat("%c", (int)value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, ControlEventCode value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyLong_FromLong((long)value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const char* value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyString_FromString(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, double value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, float value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyFloat_FromDouble(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int8_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromLong(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int16_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromLong(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, int32_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromLong(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, PyObject* value)
+{
+    PyTuple_SET_ITEM(tuple, idx, value);
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, pyObjectRef& value)
+{
+    PyTuple_SET_ITEM(tuple, idx, value.Release());
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, const ST::string& value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyUnicode_FromSTString(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint8_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromSize_t(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint16_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromSize_t(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, uint32_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyInt_FromSize_t(value));
+}
+
+static inline void IBuildTupleArg(PyObject* tuple, size_t idx, wchar_t value)
+{
+    PyTuple_SET_ITEM(tuple, idx, PyString_FromFormat("%c", (int)value));
+}
+
+template<size_t Size, typename Arg>
+static inline void IBuildTupleArgs(PyObject* tuple, Arg&& arg)
+{
+    IBuildTupleArg(tuple, (Size - 1), std::forward<Arg>(arg));
+}
+
+template<size_t Size, typename Arg0, typename... Args>
+static inline void IBuildTupleArgs(PyObject* tuple, Arg0&& arg0, Args&&... args)
+{
+    IBuildTupleArg(tuple, (Size - (sizeof...(args) + 1)), std::forward<Arg0>(arg0));
+    IBuildTupleArgs<Size>(tuple, std::forward<Args>(args)...);
+}
+
+template<typename... Args>
+void plPythonFileMod::ICallScriptMethod(func_num methodId, Args&&... args)
+{
+    PyObject* callable = fPyFunctionInstances[methodId];
+    if (!callable)
+        return;
+
+    pyObjectRef tuple = PyTuple_New(sizeof...(args));
+    IBuildTupleArgs<sizeof...(args)>(tuple.Get(), std::forward<Args>(args)...);
+
+    plProfile_BeginTiming(PythonUpdate);
+    pyObjectRef retVal = PyObject_CallObject(callable, tuple.Get());
+    plProfile_EndTiming(PythonUpdate);
+    if (!retVal)
+        ReportError();
+    DisplayPythonOutput();
+}
+
+void plPythonFileMod::ICallScriptMethod(func_num methodId)
+{
+    PyObject* callable = fPyFunctionInstances[methodId];
+    if (!callable)
+        return;
+
+    plProfile_BeginTiming(PythonUpdate);
+    pyObjectRef retVal = PyObject_CallObject(callable, nullptr);
+    plProfile_EndTiming(PythonUpdate);
+    if (!retVal)
+        ReportError();
+    DisplayPythonOutput();
 }
 
 #include "plPythonPack.h"
@@ -696,15 +803,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
                 plgDispatch::Dispatch()->RegisterForExactType(plAIBrainCreatedMsg::Index(), GetKey());
 
             // As the last thing... call the OnInit function if they have one
-            if (fPyFunctionInstances[kfunc_Init]){
-                plProfile_BeginTiming(PythonUpdate);
-                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Init],
-                                                         const_cast<char*>(fFunctionNames[kfunc_Init]),
-                                                         nullptr);
-                if (!retVal)
-                    ReportError();
-                plProfile_EndTiming(PythonUpdate);
-            }
+            ICallScriptMethod(kfunc_Init);
 
             // Oversight fix... Sometimes PythonFileMods are loaded after the AgeInitialState is received.
             // We should really let the script know about that via OnServerInitComplete anyway because it's
@@ -712,15 +811,7 @@ void plPythonFileMod::AddTarget(plSceneObject* sobj)
             plNetClientApp* na = plNetClientApp::GetInstance();
             if (!na->GetFlagsBit(plNetClientApp::kLoadingInitialAgeState) && na->GetFlagsBit(plNetClientApp::kPlayingGame)) {
                 plgDispatch::Dispatch()->UnRegisterForExactType(plInitialAgeStateLoadedMsg::Index(), GetKey());
-                if (fPyFunctionInstances[kfunc_OnServerInitComplete]) {
-                    plProfile_BeginTiming(PythonUpdate);
-                    pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
-                                                             const_cast<char*>(fFunctionNames[kfunc_OnServerInitComplete]),
-                                                             nullptr);
-                    if (!retVal)
-                        ReportError();
-                    plProfile_EndTiming(PythonUpdate);
-                }
+                ICallScriptMethod(kfunc_OnServerInitComplete);
             }
 
             // display python output
@@ -767,25 +858,9 @@ void plPythonFileMod::RemoveTarget(plSceneObject* so)
 
 void    plPythonFileMod::HandleDiscardedKey(plKeyEventMsg* msg)
 {
-    if (!fPyFunctionInstances[kfunc_OnDefaultKeyCaught])
-        return;
-
-    plProfile_BeginTiming(PythonUpdate);
-
-    pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[ kfunc_OnDefaultKeyCaught ],
-                                             const_cast<char*>(fFunctionNames[kfunc_OnDefaultKeyCaught]),
-                                             _pycs("ciiiii"),
-                                             msg->GetKeyChar(),
-                                            (int)msg->GetKeyDown(),
-                                            (int)msg->GetRepeat(),
-                                            (int)msg->GetShiftKeyDown(),
-                                            (int)msg->GetCtrlKeyDown(),
-                                            (int)msg->GetKeyCode());
-    if (!retVal)
-        ReportError();
-
-    plProfile_EndTiming(PythonUpdate);
-    DisplayPythonOutput();
+    ICallScriptMethod(kfunc_OnDefaultKeyCaught, msg->GetKeyChar(), msg->GetKeyDown(),
+                      msg->GetRepeat(), msg->GetShiftKeyDown(), msg->GetCtrlKeyDown(),
+                      (int)msg->GetKeyCode());
 }
 
 
@@ -958,29 +1033,10 @@ bool plPythonFileMod::IEval(double secs, float del, uint32_t dirty)
         // if this is the first time at the Eval, then run Python OnFirstUpdate
         if (fIsFirstTimeEval) {
             fIsFirstTimeEval = false;
-            if (fPyFunctionInstances[kfunc_FirstUpdate]) {
-                plProfile_BeginTiming(PythonUpdate);
-                pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_FirstUpdate],
-                                                         (char*)fFunctionNames[kfunc_FirstUpdate],
-                                                         nullptr);
-                if (!retVal)
-                    ReportError();
-                plProfile_EndTiming(PythonUpdate);
-                DisplayPythonOutput();
-            }
+            ICallScriptMethod(kfunc_FirstUpdate);
         }
 
-        // is the Update function defined and working (as far as we know)?
-        if (fPyFunctionInstances[kfunc_Update]) {
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Update],
-                                                     const_cast<char*>(fFunctionNames[kfunc_Update]),
-                                                     _pycs("df"), secs, del);
-            if (!retVal)
-                ReportError();
-            plProfile_EndTiming(PythonUpdate);
-            DisplayPythonOutput();
-        }
+        ICallScriptMethod(kfunc_Update, secs, del);
     }
     return true;
 }
@@ -1052,7 +1108,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         // Cache the whether or not this is a local notification for calls to PtWasLocallyNotified()
         fLocalNotify = !pNtfyMsg->HasBCastFlag(plMessage::kNetNonLocal);
 
-        pyObjectRef levents = PyTuple_New(pNtfyMsg->GetEventCount());
+        PyObject* levents = PyTuple_New(pNtfyMsg->GetEventCount());
         for (int i = 0; i < pNtfyMsg->GetEventCount(); i++) {
             proEventData* pED = pNtfyMsg->GetEventRecord(i);
             switch (pED->fEventType) {
@@ -1065,7 +1121,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fEnter ? 1 : 0));
                         PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fHitter, fSelfKey));
                         PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fHittee, fSelfKey));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
                         
@@ -1077,7 +1133,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kSpawned));
                         PyTuple_SET_ITEM(event, 1, pySceneObject::New(eventData->fSpawner, fSelfKey));
                         PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fSpawnee, fSelfKey));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1102,7 +1158,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                             }
                         }
                         PyTuple_SET_ITEM(event, 5, pyPoint3::New(tolocal));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1114,7 +1170,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kControlKey));
                         PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fControlKey));
                         PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->fDown ? 1 : 0));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1143,7 +1199,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                                 PyTuple_SET_ITEM(event, 3, Py_None);
                                 break;
                         }
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1156,7 +1212,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fFacer, fSelfKey));
                         PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fFacee, fSelfKey));
                         PyTuple_SET_ITEM(event, 4, PyFloat_FromDouble(eventData->dot));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1169,7 +1225,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fEntering ? 1 : 0));
                         PyTuple_SET_ITEM(event, 2, pySceneObject::New(eventData->fContained, fSelfKey));
                         PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fContainer, fSelfKey));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1181,7 +1237,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kActivate));
                         PyTuple_SET_ITEM(event, 1, PyInt_FromLong(eventData->fActive ? 1 : 0));
                         PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->fActivate ? 1 : 0));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1192,7 +1248,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyObject* event = PyTuple_New(2);
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kCallback));
                         PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fEventType));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1203,7 +1259,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyObject* event = PyTuple_New(2);
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kResponderState));
                         PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fState));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
 
@@ -1216,7 +1272,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 1, PyLong_FromLong(eventData->fStage));
                         PyTuple_SET_ITEM(event, 2, PyLong_FromLong(eventData->fEvent));
                         PyTuple_SET_ITEM(event, 3, pySceneObject::New(eventData->fAvatar, fSelfKey));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
                 case proEventData::kOfferLinkingBook:
@@ -1228,7 +1284,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 1, pySceneObject::New(eventData->offerer, fSelfKey));
                         PyTuple_SET_ITEM(event, 2, PyInt_FromLong(eventData->targetAge));
                         PyTuple_SET_ITEM(event, 3, PyInt_FromLong(eventData->offeree));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
                 case proEventData::kBook:
@@ -1239,7 +1295,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                         PyTuple_SET_ITEM(event, 0, PyLong_FromLong((long)proEventData::kBook));
                         PyTuple_SET_ITEM(event, 1, PyLong_FromUnsignedLong(eventData->fEvent));
                         PyTuple_SET_ITEM(event, 2, PyLong_FromUnsignedLong(eventData->fLinkID));
-                        PyTuple_SET_ITEM(levents.Get(), i, event);
+                        PyTuple_SET_ITEM(levents, i, event);
                     }
                     break;
             }
@@ -1269,42 +1325,21 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             }
         }
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_Notify],
-                                                 const_cast<char*>(fFunctionNames[kfunc_Notify]),
-                                                 _pycs("flO"), pNtfyMsg->fState, id, levents.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_Notify, pNtfyMsg->fState, id, levents);
         return true;
     }
 
     // are they looking for a key event message?
     auto pEMsg = IScriptWantsMsg<plControlEventMsg>(kfunc_OnKeyEvent, msg);
     if (pEMsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnKeyEvent],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnKeyEvent]),
-                                                 _pycs("ll"), pEMsg->GetControlCode(),
-                                                 pEMsg->ControlActivated());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnKeyEvent, pEMsg->GetControlCode(), pEMsg->ControlActivated());
         return true;
     }
 
     // are they looking for an Timer message?
     auto pTimerMsg = IScriptWantsMsg<plTimerCallbackMsg>(kfunc_AtTimer, msg);
     if (pTimerMsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AtTimer],
-                                                 const_cast<char*>(fFunctionNames[kfunc_AtTimer]),
-                                                 _pycs("l"), pTimerMsg->fID);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
+        ICallScriptMethod(kfunc_AtTimer, pTimerMsg->fID);
         return true;
     }
 
@@ -1401,31 +1436,15 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pyControl.SetPyNone();
 
         // call their OnGUINotify method
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_GUINotify],
-                                                 const_cast<char*>(fFunctionNames[kfunc_GUINotify]),
-                                                 _pycs("lOl"), id, pyControl.Get(), pGUIMsg->GetEvent());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_GUINotify, id, pyControl, pGUIMsg->GetEvent());
         return true;
     }
 
     // are they looking for an RoomLoadNotify message?
     auto pRLNMsg = IScriptWantsMsg<plRoomLoadNotifyMsg>(kfunc_PageLoad, msg);
     if (pRLNMsg) {
-        pyObjectRef roomname = PyUnicode_FromSTString(pRLNMsg->GetRoom() ?
-                                                     pRLNMsg->GetRoom()->GetName() : ST::null);
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_PageLoad],
-                                                 const_cast<char*>(fFunctionNames[kfunc_PageLoad]),
-                                                 _pycs("lO"), pRLNMsg->GetWhatHappen(), roomname.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_PageLoad, pRLNMsg->GetWhatHappen(),
+                          pRLNMsg->GetRoom() ? pRLNMsg->GetRoom()->GetName() : ST::null);
         return true;
     }
 
@@ -1433,14 +1452,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for an ClothingUpdate message?
     auto pCUMsg = IScriptWantsMsg<plClothingUpdateBCMsg>(kfunc_ClothingUpdate, msg);
     if (pCUMsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_ClothingUpdate],
-                                                 const_cast<char*>(fFunctionNames[kfunc_ClothingUpdate]),
-                                                 nullptr);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_ClothingUpdate);
         return true;
     }
 
@@ -1503,35 +1515,21 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 break;
         }
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_KIMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_KIMsg]),
-                                                 _pycs("lO"), pkimsg->GetCommand(), value.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_KIMsg, pkimsg->GetCommand(), value);
         return true;
     }
 
     // are they looking for an MemberUpdate message?
     auto pmumsg = IScriptWantsMsg<plMemberUpdateMsg>(kfunc_MemberUpdate, msg);
     if (pmumsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_MemberUpdate],
-                                                 const_cast<char*>(fFunctionNames[kfunc_MemberUpdate]),
-                                                 nullptr);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_MemberUpdate);
         return true;
     }
 
     // are they looking for a RemoteAvatar Info message?
     auto pramsg = IScriptWantsMsg<plRemoteAvatarInfoMsg>(kfunc_RemoteAvatarInfo, msg);
     if (pramsg) {
-        pyObjectRef player;
+        PyObject* player = nullptr;
         if (pramsg->GetAvatarKey()) {
             // try to create the pyPlayer for where this message came from
             int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pramsg->GetAvatarKey());
@@ -1542,15 +1540,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         }
         if (!player)
             player = PyInt_FromLong(0);
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RemoteAvatarInfo],
-                                                 const_cast<char*>(fFunctionNames[kfunc_RemoteAvatarInfo]),
-                                                 _pycs("O"), player.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_RemoteAvatarInfo, player);
         return true;
     }
 
@@ -1561,16 +1551,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         const char* textmessage = ccrmsg->GetMessage();
         if (!textmessage)
             textmessage = "";
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnCCRMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnCCRMsg]),
-                                                 _pycs("lsl"), ccrmsg->GetType(), textmessage,
-                                                 ccrmsg->GetCCRPlayerID());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnCCRMsg, (int)ccrmsg->GetType(), textmessage, ccrmsg->GetCCRPlayerID());
         return true;
     }
 
@@ -1608,14 +1589,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                     break;
             }
 
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnVaultNotify],
-                                                        const_cast<char*>(fFunctionNames[kfunc_OnVaultNotify]),
-                                                        _pycs("lO"), vaultNotifyMsg->GetType(), ptuple.Get());
-            if (!retVal)
-                ReportError();
-            plProfile_EndTiming(PythonUpdate);
-            DisplayPythonOutput();
+            ICallScriptMethod(kfunc_OnVaultNotify, vaultNotifyMsg->GetType(), ptuple);
         }
         return true;
     }
@@ -1624,9 +1598,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     pkimsg = IScriptWantsMsg<pfKIMsg>(kfunc_RTChat, msg);
     if (pkimsg && pkimsg->GetCommand() == pfKIMsg::kHACKChatMsg) {
         if (!VaultAmIgnoringPlayer(pkimsg->GetPlayerID())) {
-            pyObjectRef uMessage = PyUnicode_FromSTString(pkimsg->GetString());
-
-            pyObjectRef player;
+            PyObject* player;
             PyObject* ptPlayerClass = PythonInterface::GetPlasmaItem("ptPlayer");
             hsAssert(ptPlayerClass, "Could not locate the ptPlayer class.");
             int mbrIndex = plNetClientMgr::GetInstance()->TransportMgr().FindMember(pkimsg->GetPlayerID());
@@ -1641,50 +1613,23 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 player = pyPlayer::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fromName, pkimsg->GetPlayerID(), 0.0);
             }
 
-            plProfile_BeginTiming(PythonUpdate);
-            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_RTChat],
-                                                        const_cast<char*>(fFunctionNames[kfunc_RTChat]),
-                                                        _pycs("OOl"), player.Get(), uMessage.Get(),
-                                                        pkimsg->GetFlags());
-            if (!retVal)
-                ReportError();
-            plProfile_EndTiming(PythonUpdate);
-            DisplayPythonOutput();
-            return true;
+            ICallScriptMethod(kfunc_RTChat, player, pkimsg->GetString(), pkimsg->GetFlags());
         }
     }
 
     auto ppMsg = IScriptWantsMsg<plPlayerPageMsg>(kfunc_AvatarPage, msg);
     if (ppMsg) {
-        pyObjectRef pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
+        PyObject* pSobj = pySceneObject::New(ppMsg->fPlayer, fSelfKey);
         plSynchEnabler ps(true);    // enable dirty state tracking during shutdown
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_AvatarPage],
-                                                 const_cast<char*>(fFunctionNames[kfunc_AvatarPage]),
-                                                 _pycs("Oli"), pSobj.Get(), !ppMsg->fUnload,
-                                                 ppMsg->fLastOut);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_AvatarPage, pSobj, !ppMsg->fUnload, ppMsg->fLastOut);
         return true;
     }
 
     auto pABLMsg = IScriptWantsMsg<plAgeBeginLoadingMsg>(kfunc_OnBeginAgeLoad, msg);
     if (pABLMsg) {
-        pyObjectRef pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
+        PyObject* pSobj = pySceneObject::New(plNetClientMgr::GetInstance()->GetLocalPlayerKey(), fSelfKey);
         plSynchEnabler ps(true);    // enable dirty state tracking during shutdowny
-
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBeginAgeLoad],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnBeginAgeLoad]),
-                                                 _pycs("O"), pSobj.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnBeginAgeLoad, pSobj);
         return true;
     }
 
@@ -1695,43 +1640,22 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pyObjectRef pInitialState = PyInt_FromLong(1);
             PyObject_SetAttrString(fInstance, "isInitialStateLoaded", pInitialState.Get());
         }
-        if (fPyFunctionInstances[kfunc_OnServerInitComplete]) {
-            pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnServerInitComplete],
-                                                     const_cast<char*>(fFunctionNames[kfunc_OnServerInitComplete]),
-                                                     nullptr);
-            if (!retVal)
-                ReportError();
-            plProfile_EndTiming(PythonUpdate);
-            DisplayPythonOutput();
-            return true;
-        }
+
+        ICallScriptMethod(kfunc_OnServerInitComplete);
+        return true;
     }
 
     auto sn = IScriptWantsMsg<plSDLNotificationMsg>(kfunc_SDLNotify, msg);
     if (sn) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_SDLNotify],
-                                                 const_cast<char*>(fFunctionNames[kfunc_SDLNotify]),
-                                                 _pycs("ssls"), sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
-                                                 sn->fPlayerID, sn->fHintString.c_str());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_SDLNotify, sn->fVar->GetName().c_str(), sn->fSDLName.c_str(),
+                          sn->fPlayerID, sn->fHintString.c_str());
         return true;
     }
 
     // are they looking for a plNetOwnershipMsg message?
     auto nom = IScriptWantsMsg<plNetOwnershipMsg>(kfunc_OwnershipNotify, msg);
     if (nom) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OwnershipNotify],
-                                                 (char*)fFunctionNames[kfunc_OwnershipNotify],
-                                                  nullptr);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OwnershipNotify);
         return true;
     }
 
@@ -1751,14 +1675,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
                 break;
         }
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMarkerMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnMarkerMsg]),
-                                                 _pycs("lO"), (uint32_t)markermsg->fType, ptuple.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnMarkerMsg, (int)markermsg->fType, ptuple);
         return true;
     }
 
@@ -1766,14 +1683,7 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
     // are they looking for a pfBackdoorMsg message?
     auto dt = IScriptWantsMsg<pfBackdoorMsg>(kfunc_OnBackdoorMsg, msg);
     if (dt) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBackdoorMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnBackdoorMsg]),
-                                                 _pycs("ss"), dt->GetTarget().c_str(), dt->GetString().c_str());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnBackdoorMsg, dt->GetTarget().c_str(), dt->GetString().c_str());
         return true;
     }
 #endif  //PLASMA_EXTERNAL_RELEASE
@@ -1791,22 +1701,15 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             hitpoint.SetPyNone();
         }
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnLOSNotify],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnLOSNotify]),
-                                                 _pycs("llOOf"), pLOSMsg->fRequestID, pLOSMsg->fNoHit,
-                                                 scobj.Get(), hitpoint.Get(), pLOSMsg->fDistance);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnLOSNotify, pLOSMsg->fRequestID, pLOSMsg->fNoHit, scobj,
+                          hitpoint, pLOSMsg->fDistance);
         return true;
     }
 
     // are they looking for a plAvatarBehaviorNotifyMsg message?
     auto behNotifymsg = IScriptWantsMsg<plAvatarBehaviorNotifyMsg>(kfunc_OnBehaviorNotify, msg);
     if (behNotifymsg) {
-            // the parent of the sender should be the avatar that did the behavior
+        // the parent of the sender should be the avatar that did the behavior
         pyObjectRef pSobj;
 
         plModifier* avmod = plModifier::ConvertNoRef(behNotifymsg->GetSender()->ObjectIsLoaded());
@@ -1815,30 +1718,15 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         else
             pSobj.SetPyNone();
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnBehaviorNotify],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnBehaviorNotify]),
-                                                 _pycs("lOl"), behNotifymsg->fType, pSobj.Get(),
-                                                 behNotifymsg->state);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnBehaviorNotify, behNotifymsg->fType, pSobj, behNotifymsg->state);
         return true;
     }
 
     // are they looking for a pfMovieEventMsg message?
     auto moviemsg = IScriptWantsMsg<pfMovieEventMsg>(kfunc_OnMovieEvent, msg);
     if (moviemsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnMovieEvent],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnMovieEvent]),
-                                                 _pycs("si"), moviemsg->fMovieName.AsString().c_str(),
-                                                 (uint32_t)moviemsg->fReason);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnMovieEvent, moviemsg->fMovieName.AsString().c_str(),
+                          (int)moviemsg->fReason);
         return true;
     }
 
@@ -1850,67 +1738,33 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             pSobj = pyImage::New(capturemsg->GetMipmap());
         else
             pSobj.SetPyNone();
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnScreenCaptureDone],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnScreenCaptureDone]),
-                                                 _pycs("O"), pSobj.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnScreenCaptureDone, pSobj);
         return true;
     }
 
     auto pEvent = IScriptWantsMsg<plClimbEventMsg>(kfunc_OnClimbBlockerEvent, msg);
     if (pEvent) {
-        pyObjectRef pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnClimbBlockerEvent],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnClimbBlockerEvent]),
-                                                 _pycs("O"), pSobj.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        PyObject* pSobj = pySceneObject::New(pEvent->GetSender(), fSelfKey);
+        ICallScriptMethod(kfunc_OnClimbBlockerEvent, pSobj);
         return true;
     }
 
     auto pSpawn = IScriptWantsMsg<plAvatarSpawnNotifyMsg>(kfunc_OnAvatarSpawn, msg);
     if (pSpawn) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAvatarSpawn],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnAvatarSpawn]),
-                                                 _pycs("l"), 1);
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnAvatarSpawn, true);
         return true;
     }
 
     auto pUpdateMsg = IScriptWantsMsg<plAccountUpdateMsg>(kfunc_OnAccountUpdate, msg);
     if (pUpdateMsg) {
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAccountUpdate],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnAccountUpdate]),
-                                                 _pycs("iii"), (int)pUpdateMsg->GetUpdateType(),
-                                                 (int)pUpdateMsg->GetResult(),
-                                                 (int)pUpdateMsg->GetPlayerInt());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnAccountUpdate, pUpdateMsg->GetUpdateType(), pUpdateMsg->GetResult(),
+                          pUpdateMsg->GetPlayerInt());
         return true;
     }
 
     auto pPubAgeMsg = IScriptWantsMsg<plNetCommPublicAgeListMsg>(kfunc_gotPublicAgeList, msg);
     if (pPubAgeMsg) {
-        // We would prefer to use the immutable tuple here, but sometimes the public age list
-        // will only have one age in it. Python will "helpfully" unpack this tuple for us as
-        // the method's arguments. For now, we will fall back to a list.
-        pyObjectRef pyEL = PyList_New(pPubAgeMsg->ages.Count());
+        PyObject* pyEL = PyTuple_New(pPubAgeMsg->ages.Count());
         for (unsigned i = 0; i < pPubAgeMsg->ages.Count(); ++i) {
             plAgeInfoStruct ageInfo;
             ageInfo.CopyFrom(pPubAgeMsg->ages[i]);
@@ -1921,17 +1775,10 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
             PyTuple_SET_ITEM(t, 0, pyAgeInfoStruct::New(&ageInfo));
             PyTuple_SET_ITEM(t, 1, PyLong_FromUnsignedLong(nPlayers));
             PyTuple_SET_ITEM(t, 2, PyLong_FromUnsignedLong(nOwners));
-            PyList_SET_ITEM(pyEL.Get(), i, t);
+            PyTuple_SET_ITEM(pyEL, i, t);
         }
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_gotPublicAgeList],
-                                                 const_cast<char*>(fFunctionNames[kfunc_gotPublicAgeList]),
-                                                 _pycs("O"), pyEL.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_gotPublicAgeList, pyEL);
         return true;
     }
 
@@ -1966,30 +1813,13 @@ bool plPythonFileMod::MsgReceive(plMessage* msg)
         if (!args)
             args.SetPyNone();
 
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnAIMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnAIMsg]),
-                                                 _pycs("OisO"), brainObj.Get(), msgType,
-                                                 aiMsg->BrainUserString().c_str(), args.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnAIMsg, brainObj, msgType, aiMsg->BrainUserString().c_str(), args);
         return true;
     }
 
     auto pScoreMsg = IScriptWantsMsg<pfGameScoreMsg>(kfunc_OnGameScoreMsg, msg);
     if (pScoreMsg) {
-        pyObjectRef pyMsg = pyGameScoreMsg::CreateFinal(pScoreMsg);
-
-        plProfile_BeginTiming(PythonUpdate);
-        pyObjectRef retVal = PyObject_CallMethod(fPyFunctionInstances[kfunc_OnGameScoreMsg],
-                                                 const_cast<char*>(fFunctionNames[kfunc_OnGameScoreMsg]),
-                                                 _pycs("O"), pyMsg.Get());
-        if (!retVal)
-            ReportError();
-        plProfile_EndTiming(PythonUpdate);
-        DisplayPythonOutput();
+        ICallScriptMethod(kfunc_OnGameScoreMsg, pyGameScoreMsg::CreateFinal(pScoreMsg));
         return true;
     }
 

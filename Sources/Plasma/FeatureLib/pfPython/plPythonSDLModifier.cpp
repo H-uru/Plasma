@@ -313,26 +313,7 @@ void plPythonSDLModifier::ISetCurrentStateFrom(const plStateDataRecord* srcState
     }
 
     // Notify the Python code that we updated the SDL record
-    if (fOwner->fPyFunctionInstances[plPythonFileMod::kfunc_Load] != nil)
-    {
-        PyObject* retVal = PyObject_CallMethod(
-                fOwner->fPyFunctionInstances[plPythonFileMod::kfunc_Load],
-                (char*)fOwner->fFunctionNames[plPythonFileMod::kfunc_Load],
-                nil);
-        if (retVal == nil)
-        {
-#ifndef PLASMA_EXTERNAL_RELEASE
-            // for some reason this function didn't, remember that and not call it again
-            fOwner->fPyFunctionInstances[plPythonFileMod::kfunc_Load] = nil;
-#endif //PLASMA_EXTERNAL_RELEASE
-            // if there was an error make sure that the stderr gets flushed so it can be seen
-            fOwner->ReportError();
-        }
-        Py_XDECREF(retVal);
-    }
-
-    // display any output
-    fOwner->DisplayPythonOutput();
+    fOwner->ICallScriptMethod(plPythonFileMod::kfunc_Load);
 }
 
 void plPythonSDLModifier::IPutCurrentStateIn(plStateDataRecord* dstState)

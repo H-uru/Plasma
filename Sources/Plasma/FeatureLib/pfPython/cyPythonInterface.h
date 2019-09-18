@@ -152,7 +152,7 @@ public:
     static void CheckModuleForFunctions(PyObject* module, char** funcNames, PyObject** funcTable);
 
     //  checks to see if a specific function is defined in this instance of a class
-    //  and will fill out the funcTable with object instances of where the funciton is
+    //  and will fill out the funcTable with pointers to the function objects
     //
     static void CheckInstanceForFunctions(PyObject* instance, const char** funcNames, PyObject** funcTable);
 

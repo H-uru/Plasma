@@ -83,6 +83,13 @@ public:
         return fPyObject;
     }
 
+    PyObject* Release()
+    {
+        PyObject* temp = fPyObject;
+        fPyObject = nullptr;
+        return temp;
+    }
+
     void SetPyNone()
     {
         Py_INCREF(Py_None);

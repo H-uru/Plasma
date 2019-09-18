@@ -65,6 +65,8 @@ typedef struct _object PyObject;
 class plPythonFileMod : public plMultiModifier
 {
 private:
+    friend class PythonVaultCallback;
+
     enum func_num
     {
         kfunc_FirstUpdate = 0,
@@ -108,7 +110,30 @@ private:
     };
 
     template<typename T>
-    T* IScriptWantsMsg(func_num methodId, plMessage* msg);
+    T* IScriptWantsMsg(func_num methodId, plMessage* msg) const;
+
+    /**
+     * \brief Calls a bound method in this Python script.
+     * \detail Calls the bound method in this Python script specified by methodId with the arguments
+     *         provided as variadic template arugments.
+     * \note Calling a method that is not a member of the script instance is a no-op.
+     * \remarks Instance methods are resolved at initialization; therefore, Python metaprogramming
+     *          hacks such as `OnNotify = new_callable` will not actually override the OnNotify
+     *          method called when the plPythonFileMod receives a plNotifyMsg.
+     */
+    template<typename... Args>
+    void ICallScriptMethod(func_num methodId, Args&&... args);
+
+    /**
+     * \brief Calls a bound method in this Python script.
+     * \detail Calls the bound method in this Python script specified by methodId. This overload
+     *         is used when there are no arguments to pass to the method.
+     * \note Calling a method that is not a member of the script instance is a no-op.
+     * \remarks Instance methods are resolved at initialization; therefore, Python metaprogramming
+     *          hacks such as `OnNotify = new_callable` will not actually override the OnNotify
+     *          method called when the plPythonFileMod receives a plNotifyMsg.
+     */
+    void ICallScriptMethod(func_num methodId);
 
 protected:
     friend class plPythonSDLModifier;
