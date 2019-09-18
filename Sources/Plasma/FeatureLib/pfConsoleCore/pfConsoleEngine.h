@@ -121,7 +121,6 @@ class pfConsoleEngine
 
 #define PF_CONSOLE_LINK_ALL() \
     PF_CONSOLE_LINK_FILE(Avatar) \
-    PF_CONSOLE_LINK_FILE(CCR) \
     PF_CONSOLE_LINK_FILE(Core) \
     PF_CONSOLE_LINK_FILE(Game) \
     PF_CONSOLE_LINK_FILE(Main) \
@@ -129,7 +128,6 @@ class pfConsoleEngine
 
 #define PF_CONSOLE_INIT_ALL() \
     PF_CONSOLE_INITIALIZE(Avatar) \
-    PF_CONSOLE_INITIALIZE(CCR) \
     PF_CONSOLE_INITIALIZE(Core) \
     PF_CONSOLE_INITIALIZE(Game) \
     PF_CONSOLE_INITIALIZE(Main) \
