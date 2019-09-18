@@ -62,8 +62,54 @@ class plPipeline;
 
 typedef struct _object PyObject;
 
-class plPythonFileMod   : public plMultiModifier
+class plPythonFileMod : public plMultiModifier
 {
+private:
+    enum func_num
+    {
+        kfunc_FirstUpdate = 0,
+        kfunc_Update,
+        kfunc_Notify,
+        kfunc_AtTimer,
+        kfunc_OnKeyEvent,
+        kfunc_Load,
+        kfunc_Save,
+        kfunc_GUINotify,
+        kfunc_PageLoad,
+        kfunc_ClothingUpdate,
+        kfunc_KIMsg,
+        kfunc_MemberUpdate,
+        kfunc_RemoteAvatarInfo,
+        kfunc_RTChat,
+        kfunc_VaultEvent,
+        kfunc_AvatarPage,
+        kfunc_SDLNotify,
+        kfunc_OwnershipNotify,
+        kfunc_AgeVaultEvent,
+        kfunc_Init,
+        kfunc_OnCCRMsg,
+        kfunc_OnServerInitComplete,
+        kfunc_OnVaultNotify,
+        kfunc_OnDefaultKeyCaught,
+        kfunc_OnMarkerMsg,
+        kfunc_OnBackdoorMsg,
+        kfunc_OnBehaviorNotify,
+        kfunc_OnLOSNotify,
+        kfunc_OnBeginAgeLoad,
+        kfunc_OnMovieEvent,
+        kfunc_OnScreenCaptureDone,
+        kfunc_OnClimbBlockerEvent,
+        kfunc_OnAvatarSpawn,
+        kfunc_OnAccountUpdate,
+        kfunc_gotPublicAgeList,
+        kfunc_OnAIMsg,
+        kfunc_OnGameScoreMsg,
+        kfunc_lastone
+    };
+
+    template<typename T>
+    T* IScriptWantsMsg(func_num methodId, plMessage* msg);
+
 protected:
     friend class plPythonSDLModifier;
 
@@ -157,49 +203,6 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    // this is to keep track of what python functions are available and working,
-    // so there is no need to keep trying and banging our head until its bloody
-    enum func_num
-    {
-        kfunc_FirstUpdate = 0,      // these enums _have_ to match the static names in fEventFunctionNames
-        kfunc_Update,
-        kfunc_Notify,       // OnNotify
-        kfunc_AtTimer,
-        kfunc_OnKeyEvent,
-        kfunc_Load,
-        kfunc_Save,
-        kfunc_GUINotify,
-        kfunc_PageLoad,
-        kfunc_ClothingUpdate,
-        kfunc_KIMsg,
-        kfunc_MemberUpdate,
-        kfunc_RemoteAvatarInfo,
-        kfunc_RTChat,
-        kfunc_VaultEvent,
-        kfunc_AvatarPage,
-        kfunc_SDLNotify,
-        kfunc_OwnershipNotify,
-        kfunc_AgeVaultEvent,
-        kfunc_Init,
-        kfunc_OnCCRMsg,
-        kfunc_OnServerInitComplete,
-        kfunc_OnVaultNotify,
-        kfunc_OnDefaultKeyCaught,
-        kfunc_OnMarkerMsg,
-        kfunc_OnBackdoorMsg,
-        kfunc_OnBehaviorNotify,
-        kfunc_OnLOSNotify,
-        kfunc_OnBeginAgeLoad,
-        kfunc_OnMovieEvent,
-        kfunc_OnScreenCaptureDone,
-        kfunc_OnClimbBlockerEvent,
-        kfunc_OnAvatarSpawn,
-        kfunc_OnAccountUpdate,
-        kfunc_gotPublicAgeList,
-        kfunc_OnAIMsg,
-        kfunc_OnGameScoreMsg,
-        kfunc_lastone
-    };
     // array of matching Python instance where the functions are, if defined
     PyObject* fPyFunctionInstances[kfunc_lastone];
     // array of the names of the standard functions that can be called
