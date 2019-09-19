@@ -159,10 +159,6 @@ def PtCreatePlayer(playerName, avatarShape, invitation):
     """Creates a new player"""
     pass
 
-def PtCreatePlayerW(playerName, avatarShape, invitation):
-    """Unicode version of PtCreatePlayer"""
-    pass
-
 def PtCreatePublicAge(ageInfo, cbObject=None):
     """Create a public instance of the given age.
 cbObject, if supplied should have a member called publicAgeCreated(self,ageInfo)"""
