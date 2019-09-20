@@ -35,6 +35,7 @@ set(plAudio_SOURCES
 set(plAudio_HEADERS
     plAudioCreatable.h
     plAudioSystem.h
+    plAudioSystem_Private.h
     plDSoundBuffer.h
     plEAXEffects.h
     plEAXListenerMod.h

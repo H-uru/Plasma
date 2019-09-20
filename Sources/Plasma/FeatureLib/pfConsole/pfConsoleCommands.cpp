@@ -3126,10 +3126,7 @@ PF_CONSOLE_CMD( Audio, MuteAll, "bool on", "Mute or unmute all sounds")
 
 PF_CONSOLE_CMD( Audio, SetDistanceModel, "int type", "Sets the distance model for all 3d sounds")
 {
-    if(plgAudioSys::Sys())
-    {
-        plgAudioSys::Sys()->SetDistanceModel((int) params[0]);
-    }
+    plgAudioSys::SetDistanceModel((int)params[0]);
 }
 
 PF_CONSOLE_CMD( Audio, LogStreamingUpdates, "bool on", "Logs every buffer fill for streaming sounds")

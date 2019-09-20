@@ -47,27 +47,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #include <memory>
 
-#include "hsTimer.h"
-#include "hsGeometry3.h"
 #include "plgDispatch.h"
 #include "plProfile.h"
-#include "plStatusLog/plStatusLog.h"
+#include "hsTimer.h"
 
-#include "plSound.h"
 #include "plAudioSystem.h"
+#include "plAudioSystem_Private.h"
 #include "plDSoundBuffer.h"
 #include "plEAXEffects.h"
 #include "plEAXListenerMod.h"
+#include "plSound.h"
 #include "plVoiceChat.h"
-
-#include "pnMessage/plAudioSysMsg.h"
-#include "plMessage/plRenderMsg.h"
-#include "pnMessage/plRefMsg.h"
-#include "plMessage/plAgeLoadedMsg.h"
-#include "pnMessage/plTimeMsg.h"
 
 #include "pnKeyedObject/plFixedKey.h"
 #include "pnKeyedObject/plKey.h"
+#include "pnMessage/plAudioSysMsg.h"
+#include "pnMessage/plRefMsg.h"
+#include "pnMessage/plTimeMsg.h"
+
+#include "plMessage/plAgeLoadedMsg.h"
+#include "plMessage/plRenderMsg.h"
+#include "plStatusLog/plStatusLog.h"
 
 static const ST::string s_defaultDeviceMagic = ST_LITERAL("(Default Device)");
 
@@ -164,32 +164,27 @@ class plSoftSoundNode
 int32_t   plAudioSystem::fMaxNumSounds = 16;
 int32_t   plAudioSystem::fNumSoundsSlop = 8;
 
-plAudioSystem::plAudioSystem() :
-fPlaybackDevice(),
-fCaptureFrequency(8000),
-fStartTime(),
-fListenerInit(),
-fSoftRegionSounds(),
-fActiveSofts(),
-fCurrDebugSound(),
-fDebugActiveSoundDisplay(),
-fUsingEAX(),
-fRestartOnDestruct(),
-fWaitingForShutdown(),
-fActive(),
-fDisplayNumBuffers(),
-fStartFade(),
-fFadeLength(FADE_TIME),
-fCaptureDevice(),
-fEAXSupported(),
-fLastUpdateTimeMs()
+plAudioSystem::plAudioSystem()
+    : fPlaybackDevice(),
+      fStartTime(),
+      fListenerInit(),
+      fSoftRegionSounds(),
+      fActiveSofts(),
+      fCurrDebugSound(),
+      fDebugActiveSoundDisplay(),
+      fUsingEAX(),
+      fRestartOnDestruct(),
+      fWaitingForShutdown(),
+      fActive(),
+      fDisplayNumBuffers(),
+      fStartFade(),
+      fFadeLength(FADE_TIME),
+      fCaptureDevice(),
+      fEAXSupported(),
+      fLastUpdateTimeMs()
 {
     fCurrListenerPos.Set( -1.e30, -1.e30, -1.e30 );
     fLastPos.Set(100, 100, 100);
-}
-
-plAudioSystem::~plAudioSystem()
-{
 }
 
 std::vector<ST::string> plAudioSystem::GetPlaybackDevices() const
@@ -900,10 +895,11 @@ bool plAudioSystem::OpenCaptureDevice()
     bool defaultDeviceRequested = (deviceName.empty() || deviceName == s_defaultDeviceMagic);
     if (defaultDeviceRequested)
         plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
-    ALCsizei bufferSize = fCaptureFrequency * sizeof(int16_t) * BUFFER_LEN_SECONDS;
+    uint32_t frequency = plgAudioSys::fCaptureSampleRate;
+    ALCsizei bufferSize = frequency * sizeof(int16_t) * BUFFER_LEN_SECONDS;
 
     if (!defaultDeviceRequested) {
-        fCaptureDevice = alcCaptureOpenDevice(deviceName.c_str(), fCaptureFrequency, AL_FORMAT_MONO16, bufferSize);
+        fCaptureDevice = alcCaptureOpenDevice(deviceName.c_str(), frequency, AL_FORMAT_MONO16, bufferSize);
         if (!fCaptureDevice) {
             plStatusLog::AddLineSF("audio.log", plStatusLog::kRed, "ASYS: ERROR! Failed to open capture device '{}'.", deviceName);
         }
@@ -911,13 +907,24 @@ bool plAudioSystem::OpenCaptureDevice()
 
     if (!fCaptureDevice) {
         plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
-        fCaptureDevice = alcCaptureOpenDevice(nullptr, fCaptureFrequency, AL_FORMAT_MONO16, bufferSize);
+        fCaptureDevice = alcCaptureOpenDevice(nullptr, frequency, AL_FORMAT_MONO16, bufferSize);
         if (!fCaptureDevice) {
             plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! Failed to open default capture device.");
         }
     }
 
     return fCaptureDevice != nullptr;
+}
+
+bool plAudioSystem::RestartCapture()
+{
+    if (IsCapturing()) {
+        if (!EndCapture())
+            return false;
+        return BeginCapture();
+    }
+
+    return true;
 }
 
 bool plAudioSystem::BeginCapture()
@@ -950,19 +957,6 @@ uint32_t plAudioSystem::GetCaptureSampleCount() const
     ALCsizei samples;
     alcGetIntegerv(fCaptureDevice, ALC_CAPTURE_SAMPLES, sizeof(samples), &samples);
     return samples;
-}
-
-bool plAudioSystem::SetCaptureSampleRate(uint32_t sampleRate)
-{
-    if (fCaptureFrequency != sampleRate) {
-        fCaptureFrequency = sampleRate;
-        if (IsCapturing()) {
-            if (!EndCapture())
-                return false;
-            return BeginCapture();
-        }
-    }
-    return true;
 }
 
 bool plAudioSystem::EndCapture()
@@ -1005,6 +999,7 @@ ST::string      plgAudioSys::fPlaybackDeviceName = s_defaultDeviceMagic;
 ST::string      plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
 bool            plgAudioSys::fRestarting = false;
 bool            plgAudioSys::fMutedStateChange = false;
+uint32_t        plgAudioSys::fCaptureSampleRate = FREQUENCY;
 
 void plgAudioSys::Init()
 {
@@ -1051,6 +1046,20 @@ void plgAudioSys::Restart()
         Activate( false );
         fRestarting = true;
     }
+}
+
+bool plgAudioSys::UsingEAX()
+{
+    if (fSys)
+        return fSys->fUsingEAX;
+    return false;
+}
+
+bool plgAudioSys::IsEAXSupported()
+{
+    if (fSys)
+        return fSys->IsEAXSupported();
+    return false;
 }
 
 void plgAudioSys::Shutdown()
@@ -1145,6 +1154,20 @@ void plgAudioSys::UnregisterSoftSound(const plKey& soundKey)
         fSys->UnregisterSoftSound(soundKey);
 }
 
+void plgAudioSys::SetPriorityCutoff(uint8_t cut)
+{
+    fPriorityCutoff = cut;
+    if (fSys)
+        fSys->SetMaxNumberOfActiveSounds();
+}
+
+hsPoint3 plgAudioSys::GetCurrListenerPos()
+{
+    if (fSys)
+        return fSys->fCurrListenerPos;
+    return hsPoint3(0.f, 0.f, 0.f);
+}
+
 void plgAudioSys::SetListenerPos(const hsPoint3& pos)
 {
     if (fSys)
@@ -1163,11 +1186,95 @@ void plgAudioSys::SetListenerOrientation(const hsVector3& view, const hsVector3&
         fSys->SetListenerOrientation(view, up);
 }
 
+void plgAudioSys::ShowNumBuffers(bool b)
+{
+    if (fSys)
+        fSys->fDisplayNumBuffers = b;
+}
+
+void plgAudioSys::SetDistanceModel(int type)
+{
+    if (fSys)
+        fSys->SetDistanceModel(type);
+}
+
 void plgAudioSys::SetCaptureDevice(const ST::string& name)
 {
     fCaptureDeviceName = name;
-    if (fSys && fSys->IsCapturing()) {
-        if (fSys->EndCapture())
-            fSys->BeginCapture();
+    if (fSys)
+        fSys->RestartCapture();
+}
+
+std::vector<ST::string> plgAudioSys::GetPlaybackDevices()
+{
+    if (fSys)
+        return fSys->GetPlaybackDevices();
+    return { s_defaultDeviceMagic };
+}
+
+ST::string plgAudioSys::GetDefaultPlaybackDevice()
+{
+    if (fSys)
+        return fSys->GetDefaultPlaybackDevice();
+    return s_defaultDeviceMagic;
+}
+
+std::vector<ST::string> plgAudioSys::GetCaptureDevices()
+{
+    if (fSys)
+        return fSys->GetCaptureDevices();
+    return { s_defaultDeviceMagic };
+}
+
+ST::string plgAudioSys::GetDefaultCaptureDevice()
+{
+    if (fSys)
+        return fSys->GetDefaultCaptureDevice();
+    return s_defaultDeviceMagic;
+}
+
+bool plgAudioSys::SetCaptureSampleRate(uint32_t frequency)
+{
+    if (fCaptureSampleRate != frequency) {
+        fCaptureSampleRate = frequency;
+        if (fSys)
+            return fSys->RestartCapture();
     }
+
+    return true;
+}
+
+bool plgAudioSys::BeginCapture()
+{
+    if (fSys)
+        return fSys->BeginCapture();
+    return false;
+}
+
+bool plgAudioSys::CaptureSamples(uint32_t samples, int16_t* data)
+{
+    if (fSys)
+        return fSys->CaptureSamples(samples, data);
+    return false;
+}
+
+uint32_t plgAudioSys::GetCaptureSampleCount()
+{
+    if (fSys)
+        return fSys->GetCaptureSampleCount();
+    return 0;
+}
+
+bool plgAudioSys::IsCapturing()
+{
+    if (fSys)
+        return fSys->IsCapturing();
+    return false;
+}
+
+bool plgAudioSys::EndCapture()
+{
+    if (fSys)
+        return fSys->EndCapture();
+    return false;
 }

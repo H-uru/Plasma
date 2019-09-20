@@ -157,7 +157,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
-static plAudioSystem* gAudio = nil;
 
 #ifdef HS_BUILD_FOR_WIN32
 extern ITaskbarList3* gTaskbarList;
@@ -1379,7 +1378,6 @@ bool plClient::StartInit()
     ((plResManager *)hsgResMgr::ResMgr())->VerifyPages();
 
     plgAudioSys::Init();
-    gAudio = plgAudioSys::Sys();
 
     RegisterAs( kClient_KEY );
 

@@ -254,7 +254,7 @@ void plWin32Sound::SetPosition( const hsPoint3 pos )
         // doing this allows us to play mono gui sounds and still hear them, since this attaches the sound to the listener.
         if(fType == kGUISound)
         {
-            hsPoint3 listenerPos = plgAudioSys::Sys()->GetCurrListenerPos();
+            hsPoint3 listenerPos = plgAudioSys::GetCurrListenerPos();
             fDSoundBuffer->SetPosition(listenerPos.fX, listenerPos.fZ, listenerPos.fY);
         }
         else

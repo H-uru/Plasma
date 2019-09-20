@@ -228,9 +228,7 @@ bool pyAudioControl::IsUsingEAXAcceleration() const
 
 bool pyAudioControl::IsEAXSupported() const
 {
-    if (plgAudioSys::Sys())
-        return plgAudioSys::Sys()->IsEAXSupported();
-    return false;
+    return plgAudioSys::IsEAXSupported();
 }
 
 
@@ -363,9 +361,7 @@ ST::string pyAudioControl::GetPlaybackDevice() const
 
 std::vector<ST::string> pyAudioControl::GetPlaybackDevices() const
 {
-    if (plgAudioSys::Sys())
-        return plgAudioSys::Sys()->GetPlaybackDevices();
-    return std::vector<ST::string>();
+    return plgAudioSys::GetPlaybackDevices();
 }
 
 void pyAudioControl::SetCaptureDevice(const ST::string& device)
@@ -380,7 +376,5 @@ ST::string pyAudioControl::GetCaptureDevice() const
 
 std::vector<ST::string> pyAudioControl::GetCaptureDevices() const
 {
-    if (plgAudioSys::Sys())
-        return plgAudioSys::Sys()->GetCaptureDevices();
-    return std::vector<ST::string>();
+    return plgAudioSys::GetCaptureDevices();
 }
