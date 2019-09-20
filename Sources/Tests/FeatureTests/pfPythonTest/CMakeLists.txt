@@ -1,5 +1,6 @@
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(../../../Plasma/CoreLib)
 include_directories(../../../Plasma/NucleusLib)
 include_directories(../../../Plasma/NucleusLib/inc)

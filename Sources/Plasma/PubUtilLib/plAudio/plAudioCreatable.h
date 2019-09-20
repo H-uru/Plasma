@@ -45,8 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plAudioSystem.h"
-
+// Well, so much for "Private"
+#include "plAudioSystem_Private.h"
 REGISTER_CREATABLE( plAudioSystem );
 
 #include "plSound.h"

@@ -102,7 +102,7 @@ void    plEAXListenerMod::IRegister()
     plKey sysKey = hsgResMgr::ResMgr()->FindKey( plUoid( kAudioSystem_KEY ) );
     if( sysKey != nil )
     {
-        plGenRefMsg *refMsg = new plGenRefMsg( sysKey, plRefMsg::kOnCreate, 0, plAudioSystem::kRefEAXRegion );
+        plGenRefMsg *refMsg = new plGenRefMsg( sysKey, plRefMsg::kOnCreate, 0, 0 );
         hsgResMgr::ResMgr()->AddViaNotify( GetKey(), refMsg, plRefFlags::kPassiveRef );
         fRegistered = true;
     }
