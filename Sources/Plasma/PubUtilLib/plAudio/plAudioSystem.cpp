@@ -46,11 +46,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <eax.h>
 #endif
 #include <memory>
+#include <array>
 
 #include "plgDispatch.h"
 #include "plProfile.h"
 #include "hsTimer.h"
 
+#include "plAudioEndpointVolume.h"
 #include "plAudioSystem.h"
 #include "plAudioSystem_Private.h"
 #include "plDSoundBuffer.h"
@@ -69,7 +71,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plMessage/plRenderMsg.h"
 #include "plStatusLog/plStatusLog.h"
 
-static const ST::string s_defaultDeviceMagic = ST_LITERAL("(Default Device)");
+ST::string kDefaultDeviceMagic = ST_LITERAL("(Default Device)");
 
 #define FADE_TIME   3
 #define MAX_NUM_SOURCES 128
@@ -166,6 +168,9 @@ int32_t   plAudioSystem::fNumSoundsSlop = 8;
 
 plAudioSystem::plAudioSystem()
     : fPlaybackDevice(),
+      fContext(),
+      fCaptureDevice(),
+      fCaptureLevel(plAudioEndpointVolume::Create()),
       fStartTime(),
       fListenerInit(),
       fSoftRegionSounds(),
@@ -179,7 +184,6 @@ plAudioSystem::plAudioSystem()
       fDisplayNumBuffers(),
       fStartFade(),
       fFadeLength(FADE_TIME),
-      fCaptureDevice(),
       fEAXSupported(),
       fLastUpdateTimeMs()
 {
@@ -190,7 +194,7 @@ plAudioSystem::plAudioSystem()
 std::vector<ST::string> plAudioSystem::GetPlaybackDevices() const
 {
     std::vector<ST::string> retval;
-    retval.push_back(s_defaultDeviceMagic);
+    retval.push_back(kDefaultDeviceMagic);
 
     const ALchar* devices = nullptr;
     if (alcIsExtensionPresent(nullptr, "ALC_ENUMERATE_ALL_EXT")) {
@@ -232,7 +236,7 @@ ST::string plAudioSystem::GetDefaultPlaybackDevice() const
 std::vector<ST::string> plAudioSystem::GetCaptureDevices() const
 {
     std::vector<ST::string> retval;
-    retval.push_back(s_defaultDeviceMagic);
+    retval.push_back(kDefaultDeviceMagic);
 
     const ALchar* devices = alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
     const ALchar* ptr = devices;
@@ -258,17 +262,18 @@ bool plAudioSystem::Init()
 
     fMaxNumSources = 0;
     plSoundBuffer::Init();
+    fCaptureLevel->SetDevice(plAudioEndpointType::kCapture, plgAudioSys::GetCaptureDeviceFriendly());
 
     // Try to init using the provided device. Otherwise, fall back to the default.
     std::vector<ST::string> devices = GetPlaybackDevices();
     for (const ST::string& device : devices) {
-        if (device != s_defaultDeviceMagic)
+        if (device != kDefaultDeviceMagic)
             plStatusLog::AddLineSF("audio.log", plStatusLog::kGreen, "ASYS: Found device {}", device);
     }
     ST::string deviceName = plgAudioSys::fPlaybackDeviceName;
-    bool defaultDeviceRequested = (deviceName.empty() || deviceName == s_defaultDeviceMagic);
+    bool defaultDeviceRequested = (deviceName.empty() || deviceName == kDefaultDeviceMagic);
     if (defaultDeviceRequested)
-        deviceName = s_defaultDeviceMagic;
+        deviceName = kDefaultDeviceMagic;
 
     plStatusLog::AddLineSF("audio.log", plStatusLog::kBlue, "ASYS: Device '{}' selected", deviceName);
     if (!defaultDeviceRequested) {
@@ -285,7 +290,7 @@ bool plAudioSystem::Init()
     }
 
     if (!fPlaybackDevice) {
-        plgAudioSys::fPlaybackDeviceName = s_defaultDeviceMagic;
+        plgAudioSys::fPlaybackDeviceName = kDefaultDeviceMagic;
         fPlaybackDevice = alcOpenDevice(nullptr);
         if (!fPlaybackDevice) {
             plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! alcOpenDevice failed on default device.");
@@ -892,9 +897,9 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
 bool plAudioSystem::OpenCaptureDevice()
 {
     const ST::string& deviceName = plgAudioSys::fCaptureDeviceName;
-    bool defaultDeviceRequested = (deviceName.empty() || deviceName == s_defaultDeviceMagic);
+    bool defaultDeviceRequested = (deviceName.empty() || deviceName == kDefaultDeviceMagic);
     if (defaultDeviceRequested)
-        plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
+        plgAudioSys::fCaptureDeviceName = kDefaultDeviceMagic;
     uint32_t frequency = plgAudioSys::fCaptureSampleRate;
     ALCsizei bufferSize = frequency * sizeof(int16_t) * BUFFER_LEN_SECONDS;
 
@@ -906,7 +911,7 @@ bool plAudioSystem::OpenCaptureDevice()
     }
 
     if (!fCaptureDevice) {
-        plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
+        plgAudioSys::fCaptureDeviceName = kDefaultDeviceMagic;
         fCaptureDevice = alcCaptureOpenDevice(nullptr, frequency, AL_FORMAT_MONO16, bufferSize);
         if (!fCaptureDevice) {
             plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ASYS: ERROR! Failed to open default capture device.");
@@ -918,6 +923,7 @@ bool plAudioSystem::OpenCaptureDevice()
 
 bool plAudioSystem::RestartCapture()
 {
+    fCaptureLevel->SetDevice(plAudioEndpointType::kCapture, plgAudioSys::GetCaptureDeviceFriendly());
     if (IsCapturing()) {
         if (!EndCapture())
             return false;
@@ -995,8 +1001,8 @@ uint8_t         plgAudioSys::fPriorityCutoff = 9;           // We cut off sounds
 bool            plgAudioSys::fEnableExtendedLogs = false;
 float           plgAudioSys::fGlobalFadeVolume = 1.f;
 bool            plgAudioSys::fLogStreamingUpdates = false;
-ST::string      plgAudioSys::fPlaybackDeviceName = s_defaultDeviceMagic;
-ST::string      plgAudioSys::fCaptureDeviceName = s_defaultDeviceMagic;
+ST::string      plgAudioSys::fPlaybackDeviceName = kDefaultDeviceMagic;
+ST::string      plgAudioSys::fCaptureDeviceName = kDefaultDeviceMagic;
 bool            plgAudioSys::fRestarting = false;
 bool            plgAudioSys::fMutedStateChange = false;
 uint32_t        plgAudioSys::fCaptureSampleRate = FREQUENCY;
@@ -1201,36 +1207,65 @@ void plgAudioSys::SetDistanceModel(int type)
 void plgAudioSys::SetCaptureDevice(const ST::string& name)
 {
     fCaptureDeviceName = name;
-    if (fSys)
+    if (fSys) {
         fSys->RestartCapture();
+    }
+}
+
+ST::string plgAudioSys::GetFriendlyDeviceName(const ST::string& deviceName)
+{
+    // These hardcoded strings represent the device prefixes prepended by the Creative OpenAL SDK
+    // and the OpenAL Soft implementation. It would be nice if they avoided doing this crap, but
+    // beggars can't be choosers, so there you go. If we support any other implementations in
+    // the future, they will likely need to be added here.
+    static std::array<ST::string, 3> defaultNames = { ST_LITERAL("Generic Software"),
+                                                      ST_LITERAL("Generic Hardware"),
+                                                      ST_LITERAL("OpenAL Soft") };
+    for (const auto& it : defaultNames) {
+        if (deviceName == it) {
+            return kDefaultDeviceMagic;
+        }
+    }
+
+    static std::array<ST::string, 3> devicePrefixes = { ST_LITERAL("Generic Software on "),
+                                                        ST_LITERAL("Generic Hardware on "),
+                                                        ST_LITERAL("OpenAL Soft on ") };
+    for (const auto& it : devicePrefixes) {
+        if (deviceName.starts_with(it)) {
+            return deviceName.substr(it.size());
+        }
+    }
+
+    // Failure.
+    return deviceName;
 }
 
 std::vector<ST::string> plgAudioSys::GetPlaybackDevices()
 {
     if (fSys)
         return fSys->GetPlaybackDevices();
-    return { s_defaultDeviceMagic };
+    return { kDefaultDeviceMagic };
 }
 
 ST::string plgAudioSys::GetDefaultPlaybackDevice()
 {
     if (fSys)
         return fSys->GetDefaultPlaybackDevice();
-    return s_defaultDeviceMagic;
+    return kDefaultDeviceMagic;
 }
 
 std::vector<ST::string> plgAudioSys::GetCaptureDevices()
 {
     if (fSys)
         return fSys->GetCaptureDevices();
-    return { s_defaultDeviceMagic };
+    return { kDefaultDeviceMagic };
 }
 
 ST::string plgAudioSys::GetDefaultCaptureDevice()
 {
     if (fSys)
         return fSys->GetDefaultCaptureDevice();
-    return s_defaultDeviceMagic;
+    return kDefaultDeviceMagic;
 }
 
 bool plgAudioSys::SetCaptureSampleRate(uint32_t frequency)
@@ -1276,5 +1311,26 @@ bool plgAudioSys::EndCapture()
 {
     if (fSys)
         return fSys->EndCapture();
+    return false;
+}
+
+bool plgAudioSys::CanChangeCaptureVolume()
+{
+    if (fSys)
+        return fSys->fCaptureLevel->Supported();
+    return false;
+}
+
+float plgAudioSys::GetCaptureVolume()
+{
+    if (fSys)
+        return fSys->fCaptureLevel->GetVolume();
+    return 0.f;
+}
+
+bool plgAudioSys::SetCaptureVolume(float pct)
+{
+    if (fSys)
+        return fSys->fCaptureLevel->SetVolume(pct);
     return false;
 }

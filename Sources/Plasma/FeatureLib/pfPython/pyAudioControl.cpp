@@ -51,7 +51,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plVoiceChat.h"
-#include "plAudio/plWinMicLevel.h"
 
 // Sets the master volume of a given audio channel
 void pyAudioControl::SetSoundFXVolume(float volume)
@@ -252,26 +251,19 @@ bool pyAudioControl::IsMuted() const
 //------------------------
 // Voice Settings
 
-// Sets the microphone volume, in the range of 0 to 1
 bool pyAudioControl::CanSetMicLevel() const
 {
-    return plWinMicLevel::CanSetLevel();
+    return plgAudioSys::CanChangeCaptureVolume();
 }
 
 void pyAudioControl::SetMicLevel(float level)
 {
-    // make sure the volume is within range
-    if( level > 1.f )
-        level = 1.f;
-    else if( level < 0.f )
-        level = 0.f;
-    if( CanSetMicLevel() )
-        plWinMicLevel::SetLevel( level );
+    plgAudioSys::SetCaptureVolume(level);
 }
 
 float pyAudioControl::GetMicLevel() const
 {
-    return plWinMicLevel::GetLevel();
+    return plgAudioSys::GetCaptureVolume();
 }
 
 

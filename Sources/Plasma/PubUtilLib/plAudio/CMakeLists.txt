@@ -16,6 +16,7 @@ if(PLASMA_USE_SPEEX)
 endif()
 
 set(plAudio_SOURCES
+    plAudioEndpointVolume.cpp
     plAudioSystem.cpp
     plDSoundBuffer.cpp
     plEAXEffects.cpp
@@ -28,12 +29,12 @@ set(plAudio_SOURCES
     plWin32Sound.cpp
     plWin32StaticSound.cpp
     plWin32StreamingSound.cpp
-    plWinMicLevel.cpp
     plWin32VideoSound.cpp
 )
 
 set(plAudio_HEADERS
     plAudioCreatable.h
+    plAudioEndpointVolume.h
     plAudioSystem.h
     plAudioSystem_Private.h
     plDSoundBuffer.h
@@ -48,7 +49,6 @@ set(plAudio_HEADERS
     plWin32Sound.h
     plWin32StaticSound.h
     plWin32StreamingSound.h
-    plWinMicLevel.h
     plWin32VideoSound.h
 )
 
