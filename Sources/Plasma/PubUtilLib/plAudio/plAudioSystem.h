@@ -126,6 +126,9 @@ public:
 
     static void SetDistanceModel(int type);
 
+    /** Returns the device name without any OpenAL device name prefixes applied. */
+    static ST::string GetFriendlyDeviceName(const ST::string& deviceName);
+
     static ST::string GetPlaybackDevice() { return fPlaybackDeviceName; }
 
     /**
@@ -159,7 +162,12 @@ public:
     /** Gets the name of the default audio capture device. */
     static ST::string GetDefaultCaptureDevice();
 
+    /** Gets the internal device name of the current audio capture device. */
     static ST::string GetCaptureDevice() { return fCaptureDeviceName; }
+
+    /** Gets the friendly user facing name of the current audio capture device. */
+    static ST::string GetCaptureDeviceFriendly() { return GetFriendlyDeviceName(fCaptureDeviceName); }
+
     static void SetCaptureDevice(const ST::string& name);
 
     static bool SetCaptureSampleRate(uint32_t frequency);
@@ -184,6 +192,21 @@ public:
     static uint32_t GetCaptureSampleCount();
     static bool IsCapturing();
     static bool EndCapture();
+
+    /** Returns if the endpoint's volume can be manipulated. */
+    static bool CanChangeCaptureVolume();
+
+    /**
+     * Gets the volume of this audio endpoint.
+     * This gets the volume of the given audio endpoint as a percentage from 0.0 to 1.0, inclusive.
+     */
+    static float GetCaptureVolume();
+
+    /**
+     * Sets the volume of this audio endpoint.
+     * This sets the volume of the given audio endpoint as a percentage from 0.0 to 1.0, inclusive.
+     */
+    static bool SetCaptureVolume(float pct);
 
 private:
     friend class plAudioSystem;

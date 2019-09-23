@@ -39,42 +39,56 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef _plWinMicLevel_h
-#define _plWinMicLevel_h
 
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plWinMicLevel - Annoying class to deal with the annoying problem of     //
-//                  setting the microphone recording volume in Windows.     //
-//                  Yeah, you'd THINK there'd be some easier way...         //
-//                                                                          //
-//// Notes ///////////////////////////////////////////////////////////////////
-//                                                                          //
-//  5.8.2001 - Created by mcn.                                              //
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
+#ifndef _PLAUDIO_PLAUDIOENDPOINTVOLUME_H
+#define _PLAUDIO_PLAUDIOENDPOINTVOLUME_H
 
+#include "HeadSpin.h"
+#include <string_theory/string>
 
-//// Class Definition ////////////////////////////////////////////////////////
+#include "plAudioSystem.h"
 
-class plWinMicLevel
+enum class plAudioEndpointType
 {
-public:
+    /** Represents an audio capture endpoint such as a microphone or loopback device. */
+    kCapture,
 
-    ~plWinMicLevel();
-    // Gets the microphone volume, range 0-1, -1 if error
-    static float GetLevel();
-
-    // Sets the microphone volume, range 0-1
-    static void     SetLevel( float level );
-
-    // Returns whether we can set the level
-    static bool     CanSetLevel();
-
-protected:
-    plWinMicLevel();    // Protected constructor for IGetInstance. Just to init some stuff
-    static plWinMicLevel    &IGetInstance();
-    void    IShutdown();
+    /** Represents an audio playback endpoint such as a speaker or headphones. */
+    kPlayback,
 };
 
-#endif // _plWinMicLevel_h
+/** Volume controller for any arbitrary audio endpoint. */
+class plAudioEndpointVolume
+{
+public:
+    /**
+     * Gets the volume of this audio endpoint.
+     * This gets the volume of the given audio endpoint as a percentage from 0.0 to 1.0, inclusive.
+     */
+    virtual float GetVolume() const = 0;
+
+    /** Binds to the default audio endpoint. */
+    virtual bool SetDefaultDevice(plAudioEndpointType endpoint) = 0;
+
+    /** Binds to an audio input by name. */
+    virtual bool SetDevice(plAudioEndpointType endpoint, const ST::string& deviceName) = 0;
+
+    /**
+     * Sets the volume of this audio endpoint.
+     * This sets the volume of the given audio endpoint as a percentage from 0.0 to 1.0, inclusive.
+     */
+    virtual bool SetVolume(float pct) = 0;
+
+    /**
+     * Returns if the endpoint's volume can be manipulated.
+     * \remarks A value of "false" can be for many reasons. For example, this operation may not be
+     *          supported on the current platform, no endpoint was selected, an invalid endpoint was
+     *          selected, or the endpoint just doesn't support volume operations.
+     */
+    virtual bool Supported() const = 0;
+
+    /** Creates an instance of the volume controller for the current platform. */
+    static plAudioEndpointVolume* Create();
+};
+
+#endif

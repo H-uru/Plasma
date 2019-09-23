@@ -77,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerOr.h"
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plVoiceChat.h"
-#include "plAudio/plWinMicLevel.h"
 #include "plPipeline/plFogEnvironment.h"
 #include "plPipeline/plPlates.h"
 #include "plPipeline/plDynamicEnvMap.h"
@@ -3429,11 +3428,8 @@ PF_CONSOLE_CMD( Audio, IsolateSound,
 
 PF_CONSOLE_CMD( Audio, SetMicVolume, "float volume", "Sets the microphone volume, in the range of 0 to 1" )
 {
-    if( !plWinMicLevel::CanSetLevel() )
-        PrintString( "Unable to set microphone level" );
-    else
-    {
-        plWinMicLevel::SetLevel( (float)params[ 0 ] );
+    if (!plgAudioSys::SetCaptureVolume((float)params[0])) {
+        PrintString("Unable to set microphone level");
     }
 }
 

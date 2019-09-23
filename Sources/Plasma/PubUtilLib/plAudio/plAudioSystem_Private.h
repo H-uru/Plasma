@@ -50,11 +50,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
 #endif
+#include <memory>
 #include <set>
 
 #include "hsGeometry3.h"
 #include "pnKeyedObject/hsKeyedObject.h"
 
+class plAudioEndpointVolume;
 class plEAXListenerMod;
 class plSoftSoundNode;
 class plStatusLog;
@@ -104,6 +106,7 @@ protected:
     ALCdevice* fPlaybackDevice;
     ALCcontext* fContext;
     ALCdevice* fCaptureDevice;
+    std::unique_ptr<plAudioEndpointVolume> fCaptureLevel;
 
     plSoftSoundNode* fSoftRegionSounds;
     plSoftSoundNode* fActiveSofts;
