@@ -356,6 +356,11 @@ std::vector<ST::string> pyAudioControl::GetPlaybackDevices() const
     return plgAudioSys::GetPlaybackDevices();
 }
 
+ST::string pyAudioControl::GetFriendlyDeviceName(const ST::string& deviceName) const
+{
+    return plgAudioSys::GetFriendlyDeviceName(deviceName);
+}
+
 void pyAudioControl::SetCaptureDevice(const ST::string& device)
 {
     plgAudioSys::SetCaptureDevice(device);

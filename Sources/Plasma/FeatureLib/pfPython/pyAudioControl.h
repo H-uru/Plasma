@@ -113,6 +113,8 @@ public:
 
     std::vector<ST::string> GetPlaybackDevices() const;
 
+    ST::string GetFriendlyDeviceName(const ST::string& deviceName) const;
+
 
     //------------------------
 

@@ -1305,6 +1305,10 @@ class ptAudioControl:
         """Gets the name of all available audio capture devices."""
         pass
 
+    def getFriendlyDeviceName(self, devicename):
+        """Returns the provided device name without any OpenAL prefixes applied."""
+        pass
+
     def getGUIVolume(self):
         """Returns the volume (0.0 to 1.0) for the GUI dialogs."""
         pass
