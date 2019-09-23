@@ -1281,14 +1281,6 @@ class ptAudioControl:
         """Enables or disables voice chat."""
         pass
 
-    def enableVoiceCompression(self,state):
-        """Enables or disables voice compression."""
-        pass
-
-    def enableVoiceNetBroadcast(self,state):
-        """Enables or disables voice over network broadcast."""
-        pass
-
     def enableVoiceRecording(self,state):
         """Enables or disables voice recording."""
         pass
@@ -1371,14 +1363,6 @@ class ptAudioControl:
 
     def isUsingEAXAcceleration(self):
         """Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."""
-        pass
-
-    def isVoiceCompressionEnabled(self):
-        """Is voice compression enabled? Returns 1 if true otherwise returns 0."""
-        pass
-
-    def isVoiceNetBroadcastEnabled(self):
-        """Is voice over net enabled? Returns 1 if true otherwise returns 0."""
         pass
 
     def isVoiceRecordingEnabled(self):

@@ -272,40 +272,6 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isVoiceRecordingEnabled)
     PYTHON_RETURN_BOOL(self->fThis->IsVoiceRecordingEnabled());
 }
 
-PYTHON_METHOD_DEFINITION(ptAudioControl, enableVoiceCompression, args)
-{
-    char stateFlag;
-    if (!PyArg_ParseTuple(args, "b", &stateFlag))
-    {
-        PyErr_SetString(PyExc_TypeError, "enableVoiceCompression expects a boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->EnableVoiceCompression(stateFlag != 0);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isVoiceCompressionEnabled)
-{
-    PYTHON_RETURN_BOOL(self->fThis->IsVoiceCompressionEnabled());
-}
-
-PYTHON_METHOD_DEFINITION(ptAudioControl, enableVoiceNetBroadcast, args)
-{
-    char stateFlag;
-    if (!PyArg_ParseTuple(args, "b", &stateFlag))
-    {
-        PyErr_SetString(PyExc_TypeError, "enableVoiceNetBroadcast expects a boolean");
-        PYTHON_RETURN_ERROR;
-    }
-    self->fThis->EnableVoiceNetBroadcast(stateFlag != 0);
-    PYTHON_RETURN_NONE;
-}
-
-PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, isVoiceNetBroadcastEnabled)
-{
-    PYTHON_RETURN_BOOL(self->fThis->IsVoiceNetBroadcastEnabled());
-}
-
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, showIcons, ShowIcons)
 PYTHON_BASIC_METHOD_DEFINITION(ptAudioControl, hideIcons, HideIcons)
 
@@ -453,10 +419,6 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD_NOARGS(ptAudioControl, getMicLevel, "Returns the microphone recording level (0.0 to 1.0)."),
     PYTHON_METHOD(ptAudioControl, enableVoiceRecording, "Params: state\nEnables or disables voice recording."),
     PYTHON_METHOD_NOARGS(ptAudioControl, isVoiceRecordingEnabled, "Is voice recording enabled? Returns 1 if true otherwise returns 0."),
-    PYTHON_METHOD(ptAudioControl, enableVoiceCompression, "Params: state\nEnables or disables voice compression."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isVoiceCompressionEnabled, "Is voice compression enabled? Returns 1 if true otherwise returns 0."),
-    PYTHON_METHOD(ptAudioControl, enableVoiceNetBroadcast, "Params: state\nEnables or disables voice over network broadcast."),
-    PYTHON_METHOD_NOARGS(ptAudioControl, isVoiceNetBroadcastEnabled, "Is voice over net enabled? Returns 1 if true otherwise returns 0."),
     PYTHON_BASIC_METHOD(ptAudioControl, showIcons, "Shows (enables) the voice recording icons."),
     PYTHON_BASIC_METHOD(ptAudioControl, hideIcons, "Hides (disables) the voice recording icons."),
     PYTHON_METHOD(ptAudioControl, pushToTalk, "Params: state\nEnables or disables 'push-to-talk'."),

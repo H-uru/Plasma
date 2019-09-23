@@ -279,28 +279,6 @@ bool pyAudioControl::IsVoiceRecordingEnabled() const
 }
 
 
-// turn voice compression on and off
-void pyAudioControl::EnableVoiceCompression(bool state)
-{
-}
-
-bool pyAudioControl::IsVoiceCompressionEnabled() const
-{
-    return true;
-}
-
-
-// turn voice-over-net on and off
-void pyAudioControl::EnableVoiceNetBroadcast(bool state)
-{
-    //plWinRecorder::EnableNetVoice(state);
-}
-
-bool pyAudioControl::IsVoiceNetBroadcastEnabled() const
-{
-    return true;
-}
-
 void pyAudioControl::EnableVoiceChat(bool enable)
 {
     plVoicePlayer::Enable(enable);

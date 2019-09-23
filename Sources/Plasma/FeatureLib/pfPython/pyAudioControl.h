@@ -129,14 +129,6 @@ public:
     void EnableVoiceRecording(bool state);
     bool IsVoiceRecordingEnabled() const;
 
-    // turn voice compression on and off
-    void EnableVoiceCompression(bool state);
-    bool IsVoiceCompressionEnabled() const;
-
-    // turn voice-over-net on and off
-    void EnableVoiceNetBroadcast(bool state);
-    bool IsVoiceNetBroadcastEnabled() const;
-
     void EnableVoiceChat(bool enable);
 
     // turn voice recording icons on and off
