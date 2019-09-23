@@ -377,6 +377,16 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevices)
     return tup;
 }
 
+PYTHON_METHOD_DEFINITION(ptAudioControl, getFriendlyDeviceName, args)
+{
+    PyObject* devicename;
+    if (!PyArg_ParseTuple(args, "O", &devicename) || !PyString_CheckEx(devicename)) {
+        PyErr_SetString(PyExc_TypeError, "getFriendlyDeviceName expects a string");
+        PYTHON_RETURN_ERROR;
+    }
+    return PyUnicode_FromSTString(self->fThis->GetFriendlyDeviceName(PyString_AsStringEx(devicename)));
+}
+
 PYTHON_METHOD_DEFINITION(ptAudioControl, setCaptureDevice, args)
 {
     PyObject* devicename;
@@ -436,6 +446,7 @@ PYTHON_START_METHODS_TABLE(ptAudioControl)
     PYTHON_METHOD(ptAudioControl, setPlaybackDevice, "Params: devicename,restart\nSets audio system output device by name, and optionally restarts it"),
     PYTHON_METHOD(ptAudioControl, getPlaybackDevice, "Gets the name for the device being used by the audio system"),
     PYTHON_METHOD_NOARGS(ptAudioControl, getPlaybackDevices, "Gets the names of all available audio playback devices"),
+    PYTHON_METHOD(ptAudioControl, getFriendlyDeviceName, "Params: devicename\nReturns the provided device name without any OpenAL prefixes applied"),
 
     PYTHON_METHOD_NOARGS(ptAudioControl, canSetMicLevel, "Can the microphone level be set? Returns 1 if true otherwise returns 0."),
     PYTHON_METHOD(ptAudioControl, setMicLevel, "Params: level\nSets the microphone recording level (0.0 to 1.0)."),
