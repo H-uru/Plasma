@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define plAutoUIBase_h_inc
 
 #include <vector>
+#include <string>
 
 class ParamBlockDesc2;
 class IParamBlock2;
