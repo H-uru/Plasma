@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define hsGDirect3DTnLEnumerate_h
 #include "HeadSpin.h"
 
+#include "hsWindows.h"
 #include "hsTemplates.h"
 //#include "plMemTrackerOff.h"
 #include <d3d9.h>
@@ -121,7 +122,7 @@ class hsG3DDeviceMode;
 class hsGDirect3DTnLEnumerate
 {
 protected:
-    char    fEnumeErrorStr[128];            // ドライバ、デバイス列挙エラーメッセージ格納バッファ
+    char    fEnumeErrorStr[128];            // 繝峨Λ繧､繝舌√ョ繝舌う繧ｹ蛻玲嫌繧ｨ繝ｩ繝ｼ繝｡繝�繧ｻ繝ｼ繧ｸ譬ｼ邏阪ヰ繝�繝輔ぃ
 
     hsTArray<D3DEnum_DriverInfo>            fDrivers;
 
