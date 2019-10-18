@@ -1,0 +1,31 @@
+name: Linux-CI
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install dependencies
+      run: |
+        sudo apt update
+        sudo apt install cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
+          libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
+          libvorbis-dev qtbase5-dev
+    - name: Build string_theory
+      run: |
+        mkdir -p build_deps && cd build_deps
+        git clone https://github.com/zrax/string_theory
+        mkdir -p string_theory/build && cd string_theory/build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DST_BUILD_TESTS=OFF \
+              -DCMAKE_INSTALL_PREFIX="${GITHUB_WORKSPACE}/build_deps/prefix" ..
+        make -j2 && make install
+    - name: Build Plasma
+      run: |
+        cd ${GITHUB_WORKSPACE}
+        mkdir -p build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/build_deps/prefix" \
+          -DPython_ADDITIONAL_VERSIONS=2.7 -DPLASMA_BUILD_TESTS=ON \
+          -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
+        make -j2
+        make check
