@@ -160,6 +160,14 @@ set_package_properties(Freetype PROPERTIES
     PURPOSE "Required in order to build the plFontConverter tool"
 )
 
+find_package(BZip2)
+set_package_properties(BZip2 PROPERTIES
+    URL "https://www.sourceware.org/bzip2/"
+    DESCRIPTION "Data compression library"
+    TYPE OPTIONAL
+    PURPOSE "Required only if FreeType is built statically against bzip2"
+)
+
 if(WIN32)
     #TODO: Not required if we aren't building the client
     find_package(PhysX REQUIRED)
