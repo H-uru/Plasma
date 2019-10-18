@@ -48,6 +48,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <iparamb2.h>
 #pragma hdrstop
 
+#include <cmath>
+
 #include "Layers/plPlasmaMAXLayer.h"
 #include "plBMSampler.h"
 
@@ -105,8 +107,8 @@ AColor plBMSampler::Sample(ShadeContext& sc, float u,float v)
     BMM_Color_64 c;
     int x,y;
     float fu,fv, intpart;
-    fu = modf(u, &intpart);
-    fv = 1.0f - modf(v, &intpart);
+    fu = std::modf(u, &intpart);
+    fv = 1.0f - std::modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)
@@ -156,8 +158,8 @@ AColor plBMSampler::SampleFilter(ShadeContext& sc, float u,float v, float du, fl
 
     BMM_Color_64 c;
     float fu, fv, intpart;
-    fu = modf(u, &intpart);
-    fv = 1.0f - modf(v, &intpart);
+    fu = std::modf(u, &intpart);
+    fv = 1.0f - std::modf(v, &intpart);
     if (fData.fEnableCrop)
     {
         if (fData.fCropPlacement)
