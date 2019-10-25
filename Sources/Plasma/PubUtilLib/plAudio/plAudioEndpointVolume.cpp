@@ -54,21 +54,6 @@ extern ST::string kDefaultDeviceMagic;
 #include <propsys.h>
 #include <functiondiscoverykeys_devpkey.h>
 
-class hsCOMInit
-{
-public:
-    hsCOMInit()
-    {
-        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-        hsAssert(SUCCEEDED(hr), "COM failed to init???");
-    }
-
-    ~hsCOMInit()
-    {
-        CoUninitialize();
-    }
-} s_COMInit;
-
 class plWinCoreAudioEndpointVolume : public plAudioEndpointVolume
 {
     IMMDevice* fDevice;
