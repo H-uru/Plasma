@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGeometry3.h"
 #include "pyKey.h"
 #include "pyMatrix44.h"
+#include "pyObjectRef.h"
 #pragma hdrstop
 
 #include "cyPythonInterface.h"
@@ -1663,7 +1664,7 @@ int PythonInterface::getOutputAndReset(std::string *output)
     return 0;
 }
 
-void PythonInterface::WriteToLog(const char* text)
+void PythonInterface::WriteToLog(const ST::string& text)
 {
     dbgLog->AddLine(text);
 }
@@ -1844,25 +1845,17 @@ void PythonInterface::CheckModuleForFunctions(PyObject* module, char** funcNames
 //  PARAMETERS : instance    - instance of a class to check
 //
 //  PURPOSE    : checks to see if a specific function is defined in this instance of a class
-//             : and will fill out the funcTable with object instances of where the funciton is
+//             : and will fill out the funcTable with pointers to the function objects
 //
-void PythonInterface::CheckInstanceForFunctions(PyObject* instance, char** funcNames, PyObject** funcTable)
+void PythonInterface::CheckInstanceForFunctions(PyObject* instance, const char** funcNames, PyObject** funcTable)
 {
     // start looking for the functions
-    int i=0;
-    while ( funcNames[i] != nil )
-    {
-        PyObject* func = PyObject_GetAttrString(instance, funcNames[i]);
-        if ( func != NULL )
-        {
-            if ( PyCallable_Check(func)>0 )
-            {
-                // if it is defined then mark the funcTable
-                funcTable[i] = instance;
-            }
-            Py_DECREF(func);
+    for (size_t i = 0; funcNames[i] != nullptr; ++i) {
+        pyObjectRef func = PyObject_GetAttrString(instance, funcNames[i]);
+        if (func && PyCallable_Check(func.Get())) {
+            // if it is defined then mark the funcTable
+            funcTable[i] = func.Release();
         }
-        i++;
     }
 }
 
@@ -1974,15 +1967,14 @@ bool PythonInterface::RunStringInteractive(const char *command, PyObject* module
 //
 //  PURPOSE    : run a python string in a specific module name
 //
-bool PythonInterface::RunString(const char *command, PyObject* module)
+bool PythonInterface::RunString(const char* command, PyObject* module)
 {
     PyObject *d, *v;
     // make sure that we're given a good module... or at least one with an address
-    if ( !module )
-    {
+    if (!module) {
         // if no module was given then use just use the main module
         module = PyImport_AddModule("__main__");
-        if (module == NULL)
+        if (!module)
             return false;
     }
     // get the dictionaries for this module
@@ -1990,8 +1982,7 @@ bool PythonInterface::RunString(const char *command, PyObject* module)
     // run the string
     v = PyRun_String(command, Py_file_input, d, d);
     // check for errors and print them
-    if (v == NULL)
-    {
+    if (!v) {
         // Yikes! errors!
         PyErr_Print();
         return false;

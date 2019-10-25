@@ -60,37 +60,16 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtYesNoDialog, args, "Params: selfkey,dialogMess
             "This dialog _has_ to be answered by the user.\n"
             "And their answer will be returned in a Notify message.")
 {
-    PyObject* keyObj = NULL;
-    PyObject* dialogMsgObj = NULL;
-    if (!PyArg_ParseTuple(args, "OO", &keyObj, &dialogMsgObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string or unicode string");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!pyKey::Check(keyObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string or unicode string");
+    PyObject* keyObj = nullptr;
+    PyObject* text;
+    if (!PyArg_ParseTuple(args, "OO", &keyObj, &text) || !pyKey::Check(keyObj) ||
+        !PyString_CheckEx(text)) {
+        PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    if (PyUnicode_Check(dialogMsgObj))
-    {
-        int len = PyUnicode_GetSize(dialogMsgObj);
-        wchar_t* text = new wchar_t[len + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)dialogMsgObj, text, len);
-        text[len] = L'\0';
-        cyMisc::YesNoDialog(*key, text);
-        delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(dialogMsgObj))
-    {
-        char* text = PyString_AsString(dialogMsgObj);
-        cyMisc::YesNoDialog(*key, text);
-        PYTHON_RETURN_NONE;
-    }
-    PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string or unicode string");
-    PYTHON_RETURN_ERROR;
+    cyMisc::YesNoDialog(*key, PyString_AsStringEx(text));
+    PYTHON_RETURN_NONE
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRateIt, args, "Params: chronicleName,dialogPrompt,onceFlag\nShows a dialog with dialogPrompt and stores user input rating into chronicleName")

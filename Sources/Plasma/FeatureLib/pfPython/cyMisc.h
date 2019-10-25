@@ -514,8 +514,7 @@ public:
     //
     //  RETURNS    : nothing
     //
-    static void YesNoDialog(pyKey& sender, const char* thestring);
-    static void YesNoDialog(pyKey& sender, std::wstring thestring);
+    static void YesNoDialog(pyKey& sender, const ST::string& thestring);
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -912,7 +911,7 @@ public:
     // PURPOSE    : takes the name of an avatar model and a sceneobject key and
     //              spawns the avatar at that point
     //
-    static PyObject* LoadAvatarModel(const char* modelName, pyKey& object, const char* userStr); // returns pyKey
+    static PyObject* LoadAvatarModel(const char* modelName, pyKey& object, const ST::string& userStr); // returns pyKey
     static void UnLoadAvatarModel(pyKey& avatar);
     
     ///////////////////////////////////////////////////////////////////////////////
@@ -943,7 +942,7 @@ public:
     static int GetDesktopColorDepth();
     static PipelineParams *GetDefaultDisplayParams();
 
-    static bool DumpLogs(const std::wstring & folder);
+    static bool DumpLogs(const ST::string& folder);
 
     static bool FileExists(const plFileName & filename);
     static bool CreateDir(const plFileName & directory);

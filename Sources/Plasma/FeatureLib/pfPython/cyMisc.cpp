@@ -1290,7 +1290,7 @@ void cyMisc::SendKIRegisterImagerMsg(const char* imagerName, pyKey& sender)
 //  RETURNS    : nothing
 //
 
-void cyMisc::YesNoDialog(pyKey& sender, const char* thestring)
+void cyMisc::YesNoDialog(pyKey& sender, const ST::string& thestring)
 {
     // create the mesage to send
     pfKIMsg *msg = new pfKIMsg( pfKIMsg::kYesNoDialog );
@@ -1299,13 +1299,6 @@ void cyMisc::YesNoDialog(pyKey& sender, const char* thestring)
     msg->SetString(thestring);
     // send it off
     plgDispatch::MsgSend( msg );
-}
-
-void cyMisc::YesNoDialog(pyKey& sender, std::wstring thestring)
-{
-    char *temp = hsWStringToString(thestring.c_str());
-    YesNoDialog(sender,temp);
-    delete [] temp;
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -2755,7 +2748,7 @@ void cyMisc::FakeLinkToObjectNamed(const ST::string& name)
     plgDispatch::MsgSend(msg);
 }
 
-PyObject* cyMisc::LoadAvatarModel(const char* modelName, pyKey& spawnPoint, const char* userStr)
+PyObject* cyMisc::LoadAvatarModel(const char* modelName, pyKey& spawnPoint, const ST::string& userStr)
 {
     plKey SpawnedKey = plAvatarMgr::GetInstance()->LoadAvatar(modelName, "", false, spawnPoint.getKey(), nil, userStr);
     return pyKey::New(SpawnedKey);
@@ -2841,12 +2834,9 @@ void cyMisc::SetGraphicsOptions(int Width, int Height, int ColorDepth, bool Wind
     //plClient::GetInstance()->ResetDisplayDevice(Width, Height, ColorDepth, Windowed, NumAASamples, MaxAnisotropicSamples);
 }
 
-bool cyMisc::DumpLogs(const std::wstring & folder)
+bool cyMisc::DumpLogs(const ST::string& folder)
 {
-    char* temp = hsWStringToString(folder.c_str());
-    bool retVal = plStatusLogMgr::GetInstance().DumpLogs(temp);
-    delete [] temp;
-    return retVal;
+    return plStatusLogMgr::GetInstance().DumpLogs(folder);
 }
 
 bool cyMisc::FileExists(const plFileName & filename)

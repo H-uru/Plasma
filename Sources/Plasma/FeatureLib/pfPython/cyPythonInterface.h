@@ -126,7 +126,7 @@ public:
     static int getOutputAndReset(std::string* output = nil);
 
     // Writes 'text' to the Python log
-    static void WriteToLog(const char* text);
+    static void WriteToLog(const ST::string& text);
 
     // Writes 'text' to stderr specified in the python interface
     static void WriteToStdErr(const char* text);
@@ -152,9 +152,9 @@ public:
     static void CheckModuleForFunctions(PyObject* module, char** funcNames, PyObject** funcTable);
 
     //  checks to see if a specific function is defined in this instance of a class
-    //  and will fill out the funcTable with object instances of where the funciton is
+    //  and will fill out the funcTable with pointers to the function objects
     //
-    static void CheckInstanceForFunctions(PyObject* instance, char** funcNames, PyObject** funcTable);
+    static void CheckInstanceForFunctions(PyObject* instance, const char** funcNames, PyObject** funcTable);
 
     //  run a python string in a specific module name
     //  PARAMETERS : command       - string of commands to execute in the...

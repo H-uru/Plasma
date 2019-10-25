@@ -120,7 +120,7 @@ public:
 
     uint32_t  GetNumClones();
     plKey   GetCloneByIdx(uint32_t idx);
-    plKey   GetCloneOwner() { return fCloneOwner; }
+    plKey   GetCloneOwner() const { return fCloneOwner; }
 
     void NotifyCreated();
     void ISetupNotify(plRefMsg* msg, plRefFlags::Type flags); // Setup notifcations for reference, don't send anything.
