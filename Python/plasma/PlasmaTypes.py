@@ -172,9 +172,6 @@ def PtGetObjectName(obj):
 # ...to a notify message
 def PtAddEvent(notify,event):
     "Add an event of any type to a ptNotify message object"
-    if type(event) != type([]):
-        print "Unrecognized event record structure"
-        return
     if event[0] == kCollisionEvent:
         notify.addCollisionEvent(event[1],event[2].getKey(),event[3].getKey())
     elif event[0] == kPickedEvent:
@@ -206,9 +203,8 @@ def PtAddEvent(notify,event):
 # add a list of events into a ptNotify message
 def PtAddEvents(notify, events):
     "Add a list of events to a ptNotify message object"
-    if type(events) == type([]):
-        for event in events:
-            PtAddEvent(notify,event)
+    for event in events:
+        PtAddEvent(notify,event)
 
 # find the avatar in event record list
 def PtFindAvatar(events):
