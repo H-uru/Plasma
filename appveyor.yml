@@ -6,7 +6,7 @@ configuration:
 - Release
 clone_depth: 1
 environment:
-  QT_VER: 5.12.4
+  QT_VER: 5.13.2
   matrix:
   - CLIENT_TYPE: Internal
   - CLIENT_TYPE: External
