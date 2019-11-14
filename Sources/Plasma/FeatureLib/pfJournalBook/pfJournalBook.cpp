@@ -1885,8 +1885,10 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             wchar_t* comma = wcschr(option, L',');
-                            if (comma)
+                            if (comma) {
                                 chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
+                                *comma = 0;
+                            }
                             chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
                         } else if (wcsicmp(name, L"glow") == 0) {
                             chunk->fFlags |= pfEsHTMLChunk::kGlowing;
@@ -1895,9 +1897,12 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                             wchar_t* comma = wcschr(option, L',');
                             if (comma) {
                                 wchar_t* comma2 = wcschr(comma + 1, L',');
-                                if (comma2)
+                                if (comma2) {
                                     chunk->fMaxOpacity = wcstof(comma2 + 1, nullptr);
+                                    *comma2 = 0;
+                                }
                                 chunk->fMinOpacity = wcstof(comma + 1, nullptr);
+                                *comma = 0;
                             }
                             chunk->fSFXTime = wcstof(option, nullptr);
                         } else if (wcsicmp( name, L"opacity") == 0) {
@@ -1907,20 +1912,22 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                             chunk->fFlags |= pfEsHTMLChunk::kActAsCB;
                             chunk->fFlags &= ~pfEsHTMLChunk::kGlowing;
 
-                            wchar_t *comma = wcschr(option, L',');
+                            wchar_t* comma = wcschr(option, L',');
                             if (comma) {
-                                wchar_t *comma2 = wcschr(comma + 1, L',');
+                                wchar_t* comma2 = wcschr(comma + 1, L',');
                                 if (comma2) {
                                     if (wcstol(comma2 + 1, nullptr, 0))
                                         chunk->fFlags |= pfEsHTMLChunk::kChecked;
+                                    *comma2 = 0;
                                 }
                                 uint32_t c = IConvertHex(comma + 1);
-                                if (wcslen( comma + 1 ) <= 6)
+                                if (wcslen(comma + 1) <= 6)
                                     c |= 0xff000000;    // Add in full alpha if none specified
                                 chunk->fOffColor.FromARGB32(c);
+                                *comma = 0;
                             }
                             uint32_t c = IConvertHex(option);
-                            if (wcslen( option ) <= 6)
+                            if (wcslen(option) <= 6)
                                 c |= 0xff000000;    // Add in full alpha if none specified
                             chunk->fOnColor.FromARGB32(c);
 
@@ -2100,8 +2107,10 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             wchar_t* comma = wcschr(option, L',');
-                            if (comma)
+                            if (comma) {
                                 chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
+                                *comma = 0;
+                            }
                             chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
                         } else if (wcsicmp(name, L"resize") == 0) {
                             chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
@@ -2141,8 +2150,10 @@ bool    pfJournalBook::ICompileSource(const wchar_t *source, const plLocation &h
                             chunk->fFlags |= pfEsHTMLChunk::kFloating;
 
                             wchar_t* comma = wcschr(option, L',');
-                            if (comma)
+                            if (comma) {
                                 chunk->fAbsoluteY = (uint16_t)wcstoul(comma + 1, nullptr, 0);
+                                *comma = 0;
+                            }
                             chunk->fAbsoluteX = (uint16_t)wcstoul(option, nullptr, 0);
                         } else if (wcsicmp(name, L"resize") == 0) {
                             chunk->fNoResizeImg = (wcsicmp(option, L"no") == 0);
