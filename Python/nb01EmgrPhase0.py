@@ -267,7 +267,7 @@ class nb01EmgrPhase0(ptResponder):
             del self._ageSDL
             self._updateAgeSDL = False
 
-    def _UpdateSimpleStateVar(self, ageSDL, sdlName, value):
+    def _UpdateSimpleStateVar(self, ageSDL, sdlName, value, overwrite=True):
         if isinstance(ageSDL, ptSDLStateDataRecord):
             var = ageSDL.findVar(sdlName)
             if var is None:
@@ -277,6 +277,10 @@ class nb01EmgrPhase0(ptResponder):
             var = ageSDL
         else:
             raise TypeError("ageSDL must be a ptSDLStateDataRecord or a ptSimpleStateVariable")
+
+        if not overwrite and var.isUsed():
+            PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): Skipping update of '{}'".format(sdlName), level=kDebugDumpLevel)
+            return
 
         if var.getType() == PtSDLVarType.kBool:
             var.setBool(value)
@@ -290,7 +294,7 @@ class nb01EmgrPhase0(ptResponder):
         PtDebugPrint("nb01EmgrPhase0._UpdateSimpleStateVar(): '{}' = {}".format(sdlName, value))
         self._updateAgeSDL = True
 
-    def _UpdateVaultSDL(self, sdlVar, value):
+    def _UpdateVaultSDL(self, sdlVar, value, overwrite=True):
         if not self._ageVault:
             self._ageVault = ptAgeVault()
             if not self._ageVault:
@@ -302,22 +306,14 @@ class nb01EmgrPhase0(ptResponder):
                 return
 
         if sdlVar and value:
-            self._UpdateSimpleStateVar(self._ageSDL, sdlVar, value)
+            self._UpdateSimpleStateVar(self._ageSDL, sdlVar, value, overwrite)
 
     def _RandomizeNeighborhood(self):
         """Does initial state scrambling for the Neighborhood.
            This makes all hoods have a slightly different appearance (hopefully)"""
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
         for name, values in self.HoodDecorations.iteritems():
-            var = self._ageSDL.findVar(name)
-            if var is None:
-                PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): '{}' not found!".format(sdlName))
-                return
-
-            # Only randomize if we're at the default
-            if not var.isUsed():
-                theChosenValue = random.choice(values)
-                self._UpdateSimpleStateVar(var, name, theChosenValue)
+            self._UpdateVaultSDL(name, random.choice(values), overwrite=False)
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
 
     def IManageSimplePagingVar(self, VARname):
