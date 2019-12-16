@@ -731,8 +731,8 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                 // For reporting errors
                 char curlError[CURL_ERROR_SIZE];
                 curl_easy_setopt(hCurl, CURLOPT_ERRORBUFFER, curlError);
-                curl_easy_setopt(curl.get(), CURLOPT_FOLLOWLOCATION, 1);
-                curl_easy_setopt(curl.get(), CURLOPT_MAXREDIRS, 5);
+                curl_easy_setopt(hCurl, CURLOPT_FOLLOWLOCATION, 1);
+                curl_easy_setopt(hCurl, CURLOPT_MAXREDIRS, 5);
 
                 while (s_loginDlgRunning) {
                     curl_easy_setopt(hCurl, CURLOPT_URL, statusUrl.c_str());
