@@ -158,13 +158,13 @@ ParamBlockDesc2 gInterestBk
     kInteresting,       _T("interesting"),      TYPE_STRING,        0, 0,   
         end,
     
-    kCamInterestRadius, _T("CamIntersestRadius"),   TYPE_FLOAT,     P_ANIMATABLE, 0,    
+    kCamInterestRadius, _T("CamInterestRadius"),   TYPE_FLOAT,     P_ANIMATABLE, 0,
         p_default, 100.0f,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT, 
         IDC_COMP_INTEREST_EDIT1, IDC_COMP_INTEREST_SPIN1, 1.0f,
         end,
 
-    kCamInterestWeight, _T("CamIntersestWeight"),   TYPE_FLOAT, P_ANIMATABLE, 0,    
+    kCamInterestWeight, _T("CamInterestWeight"),   TYPE_FLOAT, P_ANIMATABLE, 0,
         p_range, 0.0, 1.0,
         p_default, 1.0,
         p_ui,   TYPE_SPINNER,   EDITTYPE_POS_FLOAT,
