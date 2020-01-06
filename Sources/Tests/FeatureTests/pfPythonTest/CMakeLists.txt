@@ -8,6 +8,8 @@ include_directories(../../../Plasma/PubUtilLib/inc)
 include_directories(../../../Plasma/FeatureLib)
 include_directories(../../../Plasma/FeatureLib/inc)
 
+include_directories(${OPENAL_INCLUDE_DIR})
+
 set(pfPythonTest_SOURCES
     test_cyMisc.cpp
     )

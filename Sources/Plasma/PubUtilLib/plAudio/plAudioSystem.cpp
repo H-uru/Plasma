@@ -41,7 +41,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "HeadSpin.h"
 #include <al.h>
-#include <alc.h>
 #include <efx.h>
 #ifdef EAX_SDK_AVAILABLE
 #include <eax.h>
