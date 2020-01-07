@@ -106,14 +106,14 @@ inline void IReadString (T ** buf, uint8_t ** buffer, unsigned * bufsz) {
 
 //============================================================================
 template <typename T>
-inline void IWriteValue (const T & value, ARRAY(uint8_t) * buffer) {
+inline void IWriteValue (const T & value, TArray<uint8_t> * buffer) {
     T * ptr = (T *) buffer->New(sizeof(T));
     *ptr = value;
 }
 
 //============================================================================
 template <typename T>
-inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer) {
+inline void IWriteArray (const T buf[], unsigned elems, TArray<uint8_t> * buffer) {
     unsigned bytes = elems * sizeof(T);
     IWriteValue(bytes, buffer);
     T * dst = (T *) buffer->New(bytes);
@@ -122,7 +122,7 @@ inline void IWriteArray (const T buf[], unsigned elems, ARRAY(uint8_t) * buffer)
 
 //============================================================================
 template <typename T>
-inline void IWriteString (const T str[], ARRAY(uint8_t) * buffer) {
+inline void IWriteString (const T str[], TArray<uint8_t> * buffer) {
     IWriteArray(str, StrLen(str) + 1, buffer);
 }
 
@@ -217,7 +217,7 @@ unsigned NetGameScore::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** 
 }
 
 //============================================================================
-unsigned NetGameScore::Write(ARRAY(uint8_t) * buffer) const {
+unsigned NetGameScore::Write(TArray<uint8_t> * buffer) const {
 
     unsigned pos = buffer->Count();
 
@@ -269,7 +269,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
 }
 
 //============================================================================
-unsigned NetGameRank::Write(ARRAY(uint8_t) * buffer) const {
+unsigned NetGameRank::Write(TArray<uint8_t> * buffer) const {
 
     unsigned pos = buffer->Count();
 
@@ -562,14 +562,14 @@ void NetVaultNode::Read(const uint8_t* buf, size_t size)
 
 //============================================================================
 template<typename T>
-inline void IWrite(ARRAY(uint8_t)* buffer, const T& value)
+inline void IWrite(TArray<uint8_t>* buffer, const T& value)
 {
     uint8_t* ptr = buffer->New(sizeof(T));
     memcpy(ptr, &value, sizeof(T));
 }
 
 template<>
-inline void IWrite<ST::string>(ARRAY(uint8_t)* buffer, const ST::string& value)
+inline void IWrite<ST::string>(TArray<uint8_t>* buffer, const ST::string& value)
 {
     ST::utf16_buffer utf16 = value.to_utf16();
     uint32_t strsz = (utf16.size() + 1) * sizeof(char16_t);
@@ -580,7 +580,7 @@ inline void IWrite<ST::string>(ARRAY(uint8_t)* buffer, const ST::string& value)
 }
 
 template<>
-inline void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNode::Blob& blob)
+inline void IWrite<NetVaultNode::Blob>(TArray<uint8_t>* buffer, const NetVaultNode::Blob& blob)
 {
     IWrite(buffer, static_cast<uint32_t>(blob.size));
 
@@ -590,7 +590,7 @@ inline void IWrite<NetVaultNode::Blob>(ARRAY(uint8_t)* buffer, const NetVaultNod
     }
 }
 
-void NetVaultNode::Write(ARRAY(uint8_t)* buf, uint32_t ioFlags)
+void NetVaultNode::Write(TArray<uint8_t>* buf, uint32_t ioFlags)
 {
     uint64_t flags = fUsedFields;
     if (ioFlags & kDirtyNodeType)

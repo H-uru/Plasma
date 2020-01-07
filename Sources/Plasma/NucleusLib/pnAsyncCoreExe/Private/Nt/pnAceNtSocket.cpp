@@ -839,7 +839,7 @@ static void HardCloseSocket (SOCKET sock) {
 
 //===========================================================================
 static unsigned SocketCloseTimerCallback (void *) {
-    ARRAY(SOCKET) sockets;
+    TArray<SOCKET> sockets;
 
     unsigned sleepMs;
     unsigned currTimeMs = TimeGetMs();

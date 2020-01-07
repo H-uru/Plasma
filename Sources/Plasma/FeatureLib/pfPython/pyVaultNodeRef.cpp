@@ -131,7 +131,7 @@ PyObject * pyVaultNodeRef::GetSaver () {
             saver = VaultGetNode(templateNode);
 
             if (!saver) {
-                ARRAY(unsigned) nodeIds;
+                TArray<unsigned> nodeIds;
                 VaultFindNodesAndWait(templateNode, &nodeIds);
                 if (nodeIds.Count() > 0) {
                     VaultFetchNodesAndWait(nodeIds.Ptr(), nodeIds.Count());

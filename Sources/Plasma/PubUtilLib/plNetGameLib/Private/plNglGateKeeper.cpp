@@ -107,7 +107,7 @@ struct PingRequestTrans : NetGateKeeperTrans {
     void *                                  m_param;
     unsigned                                m_pingAtMs;
     unsigned                                m_replyAtMs;
-    ARRAY(uint8_t)                             m_payload;
+    TArray<uint8_t>                         m_payload;
     
     PingRequestTrans (
         FNetCliGateKeeperPingRequestCallback    callback,

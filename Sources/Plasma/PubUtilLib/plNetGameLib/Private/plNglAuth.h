@@ -262,7 +262,7 @@ struct NetAgeInfo;
 typedef void (*FNetCliAuthGetPublicAgeListCallback)(
     ENetError                   result,
     void *                      param,
-    const ARRAY(NetAgeInfo) &   ages
+    const TArray<NetAgeInfo> &  ages
 );
 void NetCliAuthGetPublicAgeList (
     const ST::string&                   ageName,

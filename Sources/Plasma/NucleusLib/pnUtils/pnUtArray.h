@@ -53,17 +53,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 /****************************************************************************
 *
-*   Macros
-*
-***/
-
-#define  ARRAY(type)      TArray<type>
-#define  ARRAYOBJ(type)   TArray<type>
-#define  FARRAY(type)     TFArray<type>
-#define  FARRAYOBJ(type)  TFArray<type>
-
-/****************************************************************************
-*
 *   CBuffer
 *
 ***/

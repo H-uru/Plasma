@@ -639,7 +639,7 @@ PyObject* pyVault::FindNode( pyVaultNode* templateNode ) const
         return pyVaultNode::New(rvn);
     
     // See if a matching node exists on the server
-    ARRAY(unsigned) nodeIds;
+    TArray<unsigned> nodeIds;
     VaultFindNodesAndWait(templateNode->GetNode(), &nodeIds);
     
     if (nodeIds.Count()) {

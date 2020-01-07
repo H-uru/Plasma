@@ -350,8 +350,8 @@ static void CDECL LogDumpProc (
 static void BuildNodeTree (
     const NetVaultNodeRef   refs[],
     unsigned                refCount,
-    ARRAY(unsigned) *       newNodeIds,
-    ARRAY(unsigned) *       existingNodeIds,
+    TArray<unsigned> *      newNodeIds,
+    TArray<unsigned> *      existingNodeIds,
     bool                    notifyNow = true
 ) {
     for (unsigned i = 0; i < refCount; ++i) {
@@ -428,7 +428,7 @@ static void FetchRefOwners (
     NetVaultNodeRef *           refs,
     unsigned                    refCount
 ) {
-    ARRAY(unsigned) ownerIds;
+    TArray<unsigned> ownerIds;
     {   for (unsigned i = 0; i < refCount; ++i)
             if (unsigned ownerId = refs[i].ownerId)
                 ownerIds.Add(ownerId);
@@ -468,12 +468,12 @@ static void FetchNodesFromRefs (
 
     *fetchCount = 0;
     
-    ARRAY(unsigned) newNodeIds;
-    ARRAY(unsigned) existingNodeIds;
+    TArray<unsigned> newNodeIds;
+    TArray<unsigned> existingNodeIds;
     
     BuildNodeTree(refs, refCount, &newNodeIds, &existingNodeIds);
 
-    ARRAY(unsigned) nodeIds;
+    TArray<unsigned> nodeIds;
     nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
     nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
     QSORT(unsigned, nodeIds.Ptr(), nodeIds.Count(), elem1 < elem2);
@@ -611,12 +611,12 @@ static void VaultNodeAdded (
     NetVaultNodeRef refs[] = {
         { parentId, childId, ownerId }
     };
-    ARRAY(unsigned) newNodeIds;
-    ARRAY(unsigned) existingNodeIds;
+    TArray<unsigned> newNodeIds;
+    TArray<unsigned> existingNodeIds;
     
     BuildNodeTree(refs, arrsize(refs), &newNodeIds, &existingNodeIds, false);
 
-    ARRAY(unsigned) nodeIds;
+    TArray<unsigned> nodeIds;
     nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
     nodeIds.Add(existingNodeIds.Ptr(), existingNodeIds.Count());
     QSORT(unsigned, nodeIds.Ptr(), nodeIds.Count(), elem1 < elem2);
@@ -1125,7 +1125,7 @@ bool RelVaultNode::IsChildOf (unsigned parentId, unsigned maxDepth) {
 }
 
 //============================================================================
-void RelVaultNode::GetRootIds (ARRAY(unsigned) * nodeIds) {
+void RelVaultNode::GetRootIds (TArray<unsigned> * nodeIds) {
     RelVaultNodeLink * link = state->parents.Head();
     if (!link) {
         nodeIds->Add(GetNodeId());
@@ -1144,7 +1144,7 @@ unsigned RelVaultNode::RemoveChildNodes (unsigned maxDepth) {
 
 //============================================================================
 void RelVaultNode::GetChildNodeIds (
-    ARRAY(unsigned) *   nodeIds,
+    TArray<unsigned> *  nodeIds,
     unsigned            maxDepth
 ) {
     if (!maxDepth)
@@ -1158,7 +1158,7 @@ void RelVaultNode::GetChildNodeIds (
 
 //============================================================================
 void RelVaultNode::GetParentNodeIds (
-    ARRAY(unsigned) *   nodeIds,
+    TArray<unsigned> *  nodeIds,
     unsigned            maxDepth
 ) {
     if (!maxDepth)
@@ -1611,8 +1611,8 @@ void VaultAddChildNode (
                 { parentId, childId, ownerId }
             };
 
-            ARRAY(unsigned) newNodeIds;
-            ARRAY(unsigned) existingNodeIds;
+            TArray<unsigned> newNodeIds;
+            TArray<unsigned> existingNodeIds;
 
             BuildNodeTree(refs, arrsize(refs), &newNodeIds, &existingNodeIds);
         
@@ -1965,7 +1965,7 @@ void VaultFindNodes (
 //============================================================================
 namespace _VaultFindNodesAndWait {
     struct _FindNodeParam {
-        ARRAY(unsigned)     nodeIds;
+        TArray<unsigned>    nodeIds;
         ENetError           result;
         bool                complete;
 
@@ -1989,7 +1989,7 @@ namespace _VaultFindNodesAndWait {
 
 void VaultFindNodesAndWait (
     NetVaultNode *          templateNode,
-    ARRAY(unsigned) *       nodeIds
+    TArray<unsigned> *      nodeIds
 ) {
     using namespace _VaultFindNodesAndWait;
 
@@ -2013,7 +2013,7 @@ void VaultFindNodesAndWait (
 //============================================================================
 void VaultLocalFindNodes (
     NetVaultNode *          templateNode,
-    ARRAY(unsigned) *       nodeIds
+    TArray<unsigned> *      nodeIds
 ) {
     for (RelVaultNodeLink * link = s_nodes.Head(); link != nil; link = s_nodes.Next(link)) {
         if (link->node->Matches(templateNode))
@@ -2328,7 +2328,7 @@ bool VaultAddOwnedAgeSpawnPoint (const plUUID& ageInstId, const plSpawnPointInfo
         if (!fldr)
             break;
 
-        ARRAY(unsigned) nodeIds;
+        TArray<unsigned> nodeIds;
         fldr->GetChildNodeIds(&nodeIds, 1);
         
         hsRef<NetVaultNode> templateNode = new NetVaultNode;
@@ -4657,7 +4657,7 @@ void VaultCull (unsigned vaultId) {
         if (link->node->GetNodeType() > plVault::kNodeType_VNodeMgrLow && link->node->GetNodeType() < plVault::kNodeType_VNodeMgrHigh)
             continue;
 
-        ARRAY(unsigned) nodeIds;
+        TArray<unsigned> nodeIds;
         link->node->GetRootIds(&nodeIds);
         bool foundRoot = false;
         for (unsigned i = 0; i < nodeIds.Count(); ++i) {

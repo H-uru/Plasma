@@ -108,7 +108,7 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     VaultPlayerInfoNode access(templateNode);
     access.SetPlayerId(playerID);
 
-    ARRAY(uint32_t) nodeIds;
+    TArray<uint32_t> nodeIds;
     VaultLocalFindNodes(templateNode, &nodeIds);
 
     // So, if we know about this node, we can take it easy. If not, we lazy load it.

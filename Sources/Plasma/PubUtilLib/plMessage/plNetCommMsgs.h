@@ -91,7 +91,7 @@ public:
 
 class plNetCommFileListMsg : public plNetCommReplyMsg {
 public:
-    FARRAY(NetCliAuthFileInfo)  fileInfoArr;
+    TFArray<NetCliAuthFileInfo>  fileInfoArr;
 
     CLASSNAME_REGISTER(plNetCommFileListMsg);
     GETINTERFACE_ANY(plNetCommFileListMsg, plMessage);
@@ -141,7 +141,7 @@ public:
     CLASSNAME_REGISTER(plNetCommPublicAgeListMsg);
     GETINTERFACE_ANY(plNetCommPublicAgeListMsg, plMessage);
     
-    ARRAY(NetAgeInfo)    ages;
+    TArray<NetAgeInfo>    ages;
 };
 
 class plNetCommPublicAgeMsg : public plNetCommReplyMsg {

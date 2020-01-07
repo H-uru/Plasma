@@ -227,7 +227,7 @@ private:
 
     LIST(T)            m_fullList;
     int                m_linkOffset;
-    FARRAYOBJ(LIST(T)) m_slotListArray;
+    TFArray<LIST(T)>   m_slotListArray;
     unsigned           m_slotMask;  // always set to a power of two minus one
     unsigned           m_slotMaxCount;
 

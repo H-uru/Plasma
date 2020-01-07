@@ -105,27 +105,27 @@ struct RelVaultNode : NetVaultNode {
     bool IsParentOf (unsigned nodeId, unsigned maxDepth);
     bool IsChildOf (unsigned nodeId, unsigned maxDepth);
     
-    void GetRootIds (ARRAY(unsigned) * nodeIds);
+    void GetRootIds (TArray<unsigned> * nodeIds);
     
     unsigned RemoveChildNodes (unsigned maxDepth);  // returns # of nodes removed
 
     void GetChildNodeIds (
-        ARRAY(unsigned) *   nodeIds,
+        TArray<unsigned> *  nodeIds,
         unsigned            maxDepth
     );
     void GetParentNodeIds (
-        ARRAY(unsigned) *   nodeIds,
+        TArray<unsigned> *  nodeIds,
         unsigned            maxDepth
     );
     
     void GetMatchingChildNodeIds (
         NetVaultNode *      templateNode,
-        ARRAY(unsigned) *   nodeIds,
+        TArray<unsigned> *  nodeIds,
         unsigned            maxDepth
     );
     void GetMatchingParentNodeIds (
         NetVaultNode *      templateNode,
-        ARRAY(unsigned) *   nodeIds,
+        TArray<unsigned> *  nodeIds,
         unsigned            maxDepth
     );
 
@@ -297,11 +297,11 @@ void VaultFindNodes (
 );
 void VaultFindNodesAndWait (
     NetVaultNode *          templateNode,
-    ARRAY(unsigned) *       nodeIds
+    TArray<unsigned> *      nodeIds
 );
 void VaultLocalFindNodes (
     NetVaultNode *          templateNode,
-    ARRAY(unsigned) *       nodeIds
+    TArray<unsigned> *      nodeIds
 );
 void VaultFetchNodesAndWait (   // Use VaultGetNode to access the fetched nodes
     const unsigned          nodeIds[],
