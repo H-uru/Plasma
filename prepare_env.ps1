@@ -1,4 +1,4 @@
-$devlibs_url = "https://github.com/PlasmaPrefix/releases/download/20200114/devlibs.zip"
+$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/20200114/devlibs.zip"
 
 if (!(Test-Path -PathType Container build)) {
     Write-Host "Creating build folder... " -noNewLine
