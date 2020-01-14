@@ -1,4 +1,4 @@
-$devlibs_url = "http://guildofwriters.org/tools/devlibs.zip"
+$devlibs_url = "https://github.com/PlasmaPrefix/releases/download/20200114/devlibs.zip"
 
 if (!(Test-Path -PathType Container build)) {
     Write-Host "Creating build folder... " -noNewLine
@@ -22,16 +22,16 @@ if (!(Test-Path -PathType Container devlibs)) {
     $shell_app = New-Object -com shell.application
     $zip  = $shell_app.namespace($path + "\devlibs.zip")
     $dest = $shell_app.namespace($path + "\devlibs")
-    $dest.CopyHere($zip.items(), 0x14)
+    $dest.CopyHere($zip.items(), 0x14)      # 0x14 == "Yes to All" | "No progress dialog"
     Write-Host "OK" -foregroundColor Green
 }
 
-if(Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {	
-	Write-Host "Running CMake to configure build system... "
-	cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 12" ..
+if (Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {
+    Write-Host "Running CMake to configure build system... "
+    cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 14" ..
 } else {
-	Write-Host "CMake not found in PATH."
-	Write-Host "Please run the CMake installer and select the option to add CMake to your system PATH."
+    Write-Host "CMake not found in PATH."
+    Write-Host "Please run the CMake installer and select the option to add CMake to your system PATH."
 }
 
 if ($Host.Name -eq "ConsoleHost") {
