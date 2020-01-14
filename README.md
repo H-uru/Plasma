@@ -20,8 +20,8 @@ Library Dependencies
 
 Plasma currently requires the following third-party libraries:
 
-- nVidia PhysX 2.6.4 - http://www.nvidia.com/object/physx_archives.html#SDK
-- Microsoft DirectX SDK - http://www.microsoft.com/downloads/en/details.aspx?familyid=3021d52b-514e-41d3-ad02-438a3ba730ba
+- nVidia PhysX 2.6.4 - https://web.archive.org/web/20170501130625/http://developer.download.nvidia.com/PhysX/2.6.4/PhysX_2.6.4_SDK_Core.exe
+- Microsoft DirectX SDK - https://www.microsoft.com/en-us/download/details.aspx?id=6812
 - Python 2.7 - http://www.python.org/download/releases/2.7/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
