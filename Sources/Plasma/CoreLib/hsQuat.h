@@ -59,9 +59,11 @@ public:
     hsQuat(){}
     hsQuat(float X, float Y, float Z, float W) : 
         fX(X), fY(Y), fZ(Z), fW(W) {}
-    hsQuat(const hsQuat& a) { fX = a.fX; fY = a.fY; fZ = a.fZ; fW = a.fW; } 
+    hsQuat(const hsQuat& a) = default;
     hsQuat(float af[4]) { fX = af[0]; fY = af[1]; fZ = af[2]; fW = af[3]; }
     hsQuat(float rad, const hsVector3* axis);
+
+    hsQuat& operator=(const hsQuat& a) = default;
 
     static hsQuat   QuatFromMatrix44(const hsMatrix44& mat);
     hsQuat& SetFromMatrix44(const hsMatrix44& mat);

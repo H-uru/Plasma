@@ -71,7 +71,7 @@ protected:
     pyNotify(pyKey& selfkey);
 
 public:
-    ~pyNotify();
+    virtual ~pyNotify();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptNotify);

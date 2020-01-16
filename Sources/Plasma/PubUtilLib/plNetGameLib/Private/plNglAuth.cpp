@@ -2972,7 +2972,6 @@ PlayerCreateRequestTrans::PlayerCreateRequestTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    memset(&m_playerInfo, 0, sizeof(m_playerInfo));
 }
 
 //============================================================================

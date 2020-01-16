@@ -130,6 +130,8 @@ struct NetCliAuthPlayerInfo {
     ST::string  avatarShape;
     unsigned    playerFlags;
     unsigned    explorer;
+
+    NetCliAuthPlayerInfo() : playerInt(), playerFlags(), explorer() { }
 };
 
 typedef void (*FNetCliAuthLoginRequestCallback)(

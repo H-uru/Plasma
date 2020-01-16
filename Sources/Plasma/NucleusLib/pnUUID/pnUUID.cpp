@@ -66,6 +66,12 @@ plUUID::plUUID(const plUUID& other)
     CopyFrom(&other);
 }
 
+plUUID& plUUID::operator=(const plUUID& other)
+{
+    CopyFrom(&other);
+    return *this;
+}
+
 void plUUID::Read(hsStream* s)
 {
     s->LogSubStreamPushDesc("plUUID");

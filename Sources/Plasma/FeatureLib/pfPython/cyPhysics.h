@@ -67,6 +67,8 @@ protected:
     cyPhysics(plKey sender=nil,plKey recvr=nil);
 
 public:
+    virtual ~cyPhysics() { }
+
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptPhysics);
     static PyObject *New(PyObject *sender = nil, PyObject *recvr = nil);

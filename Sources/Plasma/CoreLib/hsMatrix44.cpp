@@ -630,16 +630,6 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
 
 ///////////////////////////////////////////////////////
 
-static float GetDeterminant33(const hsMatrix44* mat)
-{
-    return  ((mat->fMap[0][0] * mat->fMap[1][1]) * mat->fMap[2][2]) +
-            ((mat->fMap[0][1] * mat->fMap[1][2]) * mat->fMap[2][0]) +
-            ((mat->fMap[0][2] * mat->fMap[1][0]) * mat->fMap[2][1]) -
-            ((mat->fMap[0][2] * mat->fMap[1][1]) * mat->fMap[2][0]) -
-            ((mat->fMap[0][1] * mat->fMap[1][0]) * mat->fMap[2][2]) -
-            ((mat->fMap[0][0] * mat->fMap[1][2]) * mat->fMap[2][1]);
-}
-
 hsMatrix44* hsMatrix44::GetTranspose(hsMatrix44* transp) const
 {
     for(int i = 0 ; i < 4; i++)

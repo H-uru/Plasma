@@ -356,6 +356,7 @@ void    plDrawableSpans::Optimize( void )
     fOptimized = true;
 }
 
+#ifdef VERT_LOG
 static plStatusLog* IStartLog(const char* name, int numSpans)
 {
     static char buff[256];
@@ -449,6 +450,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         }
     }
 }
+#endif
 
 //// IPackSourceSpans ////////////////////////////////////////////////////////
 //  Takes the array of source spans and converts them to our internal icicle

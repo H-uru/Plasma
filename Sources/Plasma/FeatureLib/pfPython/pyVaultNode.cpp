@@ -81,17 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 
-static void CDECL LogDumpProc (
-    void *              ,
-    const wchar_t       *fmt,
-    ...
-) {
-    va_list args;
-    va_start(args, fmt);
-    LogMsgV(kLogDebug, fmt, args);
-    va_end(args);
-}
-
 pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(PyObject * cbObject)
 : fCbObject( cbObject )
 , fPyNodeRef(nil)

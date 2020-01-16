@@ -1622,6 +1622,8 @@ class plBDFSectParser
     public:
         plBDFSectParser( plFont &myFont, plBDFConvertCallback *callback ) : fFont( myFont ), fCallback( callback ) {}
 
+        virtual ~plBDFSectParser() { }
+
         virtual plBDFSectParser *ParseKeyword( const char *keyword, plLineParser &line )
         {
             return nil;

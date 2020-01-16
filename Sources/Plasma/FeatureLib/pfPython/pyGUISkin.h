@@ -64,6 +64,8 @@ protected:
     pyGUISkin();
 
 public:
+    virtual ~pyGUISkin() { }
+
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptGUISkin);
     PYTHON_CLASS_NEW_DEFINITION;

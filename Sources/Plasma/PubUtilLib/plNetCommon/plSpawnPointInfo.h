@@ -59,9 +59,12 @@ struct plSpawnPointInfo
     ST::string fSpawnPt;       // name of spawn point in dataset
     ST::string fCameraStack;
     plSpawnPointInfo(){}
-    plSpawnPointInfo( const plSpawnPointInfo & other ) { (*this)=other; }
+    plSpawnPointInfo(const plSpawnPointInfo & other) = default;
+    plSpawnPointInfo(plSpawnPointInfo&& other) = default;
     plSpawnPointInfo( const ST::string & title, const ST::string & spawnPt )
         : fTitle( title ), fSpawnPt( spawnPt ) {}
+    plSpawnPointInfo& operator=(const plSpawnPointInfo&) = default;
+    plSpawnPointInfo& operator=(plSpawnPointInfo&&) = default;
     ST::string GetTitle() const { return fTitle; }
     void    SetTitle( const ST::string & v ) { fTitle=v; }
     ST::string GetName() const { return fSpawnPt; }

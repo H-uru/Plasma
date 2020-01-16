@@ -123,8 +123,8 @@ public:
     static char kAgeDescPath[];
 
     plAgeDescription();
-    plAgeDescription( const plFileName &fileNameToReadFrom );
-    plAgeDescription( const plAgeDescription &src )
+    plAgeDescription(const plFileName &fileNameToReadFrom);
+    plAgeDescription(const plAgeDescription &src) : plInitSectionTokenReader()
     {
         IInit();
         CopyFrom( src );

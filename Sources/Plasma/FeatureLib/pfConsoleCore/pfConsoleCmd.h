@@ -155,14 +155,14 @@ class pfConsoleCmdParam
         operator int() const { return IToInt(); }
         operator float() const { return IToFloat(); }
         operator bool() const { return IToBool(); }
-        operator const CharPtr() const { return IToString(); }
+        operator CharPtr() const { return IToString(); }
         operator char() const { return IToChar(); }
 
         uint8_t   GetType( void ) { return fType; }
 
         void    SetInt( int i )         { fValue.i = i; fType = kInt; }
         void    SetFloat( float f )     { fValue.f = f; fType = kFloat; }
-        void    SetBool( bool b )   { fValue.b = b; fType = kBool; }
+        void    SetBool( bool b )       { fValue.b = b; fType = kBool; }
         void    SetString( CharPtr s )  { fValue.s = s; fType = kString; }
         void    SetChar( char c )       { fValue.c = c; fType = kChar; }
         void    SetAny( CharPtr s )     { fValue.s = s; fType = kAny; }

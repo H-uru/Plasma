@@ -334,18 +334,6 @@ static void VaultNodeAddedDownloadCallback(ENetError result, void * param) {
 }
 
 //============================================================================
-static void CDECL LogDumpProc (
-    void *              ,
-    const wchar_t         fmt[],
-    ...
-) {
-    va_list args;
-    va_start(args, fmt);
-    LogMsgV(kLogDebug, fmt, args);
-    va_end(args);
-}
-
-//============================================================================
 // Returns ids of nodes that had to be created (so we can fetch them)
 static void BuildNodeTree (
     const NetVaultNodeRef   refs[],

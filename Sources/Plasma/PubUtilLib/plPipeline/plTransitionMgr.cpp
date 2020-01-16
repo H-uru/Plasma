@@ -317,11 +317,13 @@ bool    plTransitionMgr::MsgReceive( plMessage* msg )
         {
         case plTransitionMsg::kFadeInNoSound:
             fNoSoundFade = true;
+            // fall through
         case plTransitionMsg::kFadeIn:
             IStartFadeIn( effect->GetLengthInSecs(), kTransitionFadeIn );
             break;
         case plTransitionMsg::kFadeOutNoSound:
             fNoSoundFade = true;
+            // fall through
         case plTransitionMsg::kFadeOut:
             IStartFadeOut( effect->GetLengthInSecs(), kTransitionFadeOut );
             break;

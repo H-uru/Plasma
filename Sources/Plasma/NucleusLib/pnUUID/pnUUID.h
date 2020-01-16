@@ -66,6 +66,8 @@ public:
     plUUID(const ST::string& s);
     plUUID(const plUUID& other);
 
+    plUUID& operator=(const plUUID& other);
+
     void     Clear();
     bool     IsNull() const;
     bool     IsSet() const { return !IsNull(); }

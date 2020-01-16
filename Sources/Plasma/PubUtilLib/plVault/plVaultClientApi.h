@@ -65,7 +65,9 @@ class plUUID;
 
 struct VaultCallback {
     struct IVaultCallback * internal;
-    
+
+    virtual ~VaultCallback() { }
+
     virtual void AddedChildNode (
         RelVaultNode *  parent,
         RelVaultNode *  child

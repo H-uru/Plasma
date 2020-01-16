@@ -180,7 +180,7 @@ class plGBufferGroup
         };
 
         plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD = 0);
-        ~plGBufferGroup();
+        virtual ~plGBufferGroup();
 
         uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
         uint8_t   GetNumWeights() const { return (fFormat & kSkinWeightMask) >> 4; }

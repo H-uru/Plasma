@@ -240,22 +240,10 @@ static void UnlinkAndAbandonConn_CS (CliGkConn * conn) {
 }
 
 //============================================================================
-static void SendClientRegisterRequest (CliGkConn * conn) {
-/*    const uintptr_t msg[] = {
-        kCli2GateKeeper_ClientRegisterRequest,
-        BuildId(),
-    };
-
-    conn->Send(msg, arrsize(msg));*/
-}
-
-//============================================================================
 static bool ConnEncrypt (ENetError error, void * param) {
     CliGkConn * conn = (CliGkConn *) param;
         
     if (IS_NET_SUCCESS(error)) {
-
-        //SendClientRegisterRequest(conn);
 
         if (!s_perf[kPingDisabled])
             conn->AutoPing();

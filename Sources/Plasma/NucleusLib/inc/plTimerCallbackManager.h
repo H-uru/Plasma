@@ -53,7 +53,7 @@ class plTimerCallback
 public:
 
     plTimerCallback(double time, plMessage* pMsg);
-    ~plTimerCallback();
+    virtual ~plTimerCallback();
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);

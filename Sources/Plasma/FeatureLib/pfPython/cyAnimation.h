@@ -71,7 +71,7 @@ protected:
 public:
 
     // clean up on the way out
-    ~cyAnimation();
+    virtual ~cyAnimation();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptAnimation);
