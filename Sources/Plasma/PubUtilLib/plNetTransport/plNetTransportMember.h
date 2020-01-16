@@ -91,7 +91,7 @@ public:
     ST::string GetPlayerName() const { return fPlayerName;}
     void SetPlayerID(uint32_t value) { fPlayerID=value;}
     uint32_t GetPlayerID() const { return fPlayerID;}
-    void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&!kIsServer);}
+    void SetIsServer(bool value) { (value)?SetFlags(GetFlags()|kIsServer):SetFlags(GetFlags()&~kIsServer);}
     bool IsServer() const { return (GetFlags()&kIsServer)?true:false;}
 
     bool AddSubscription(int chan);
