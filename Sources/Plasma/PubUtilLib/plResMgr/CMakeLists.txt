@@ -4,8 +4,6 @@ include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
 set(plResMgr_SOURCES
-    plBSDiffBuffer.cpp
-    plDiffBuffer.cpp
     plKeyFinder.cpp
     plLocalization.cpp
     plPageInfo.cpp
@@ -18,8 +16,6 @@ set(plResMgr_SOURCES
 )
 
 set(plResMgr_HEADERS
-    plBSDiffBuffer.h
-    plDiffBuffer.h
     plKeyFinder.h
     plLocalization.h
     plPageInfo.h
