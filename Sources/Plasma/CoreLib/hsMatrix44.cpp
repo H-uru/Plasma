@@ -59,15 +59,15 @@ const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
 /*
     For the rotation:
-         ¦        2     2                                      ¦
-         ¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       ¦
-         ¦                                                     ¦
-         ¦                          2     2                    ¦
-     M = ¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       ¦
-         ¦                                                     ¦
-         ¦                                            2     2  ¦
-         ¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) ¦
-         ¦                                                     ¦
+         Â¦        2     2                                      Â¦
+         Â¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       Â¦
+         Â¦                                                     Â¦
+         Â¦                          2     2                    Â¦
+     M = Â¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       Â¦
+         Â¦                                                     Â¦
+         Â¦                                            2     2  Â¦
+         Â¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) Â¦
+         Â¦                                                     Â¦
 
     The translation is far too complex to discuss here. ;^)
 */
