@@ -66,7 +66,6 @@ class  plWinAudible;
 class  plPlate;
 class  plStatusLog;
 class  plSpeex;
-typedef struct ALCdevice_struct ALCdevice;
 class plVoiceDecoder;
 class plVoiceEncoder;
 

@@ -7,6 +7,7 @@ include_directories("../../PubUtilLib")
 if(PLASMA_PIPELINE STREQUAL "DirectX")
     include_directories(${DirectX_INCLUDE_DIR})
 endif(PLASMA_PIPELINE STREQUAL "DirectX")
+include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plPipeline_SOURCES
     hsG3DDeviceSelector.cpp

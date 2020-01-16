@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "HeadSpin.h"
 #include <string>
+#include <alc.h>
 
 #include "hsTemplates.h"
 #include "hsGeometry3.h"
@@ -58,10 +59,6 @@ class plSoftSoundNode;
 class plgAudioSys;
 class plStatusLog;
 class plEAXListenerMod;
-
-typedef struct ALCdevice_struct ALCdevice;
-typedef struct ALCcontext_struct ALCcontext;
-
 
 class DeviceDescriptor
 {
