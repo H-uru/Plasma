@@ -90,8 +90,8 @@ struct NetMsgChannel : hsRefCnt {
 
     // Message definitions
     uint32_t                m_largestRecv;
-    ARRAY(NetMsgInitSend)   m_sendMsgs;
-    ARRAY(NetMsgInitRecv)   m_recvMsgs;
+    TArray<NetMsgInitSend>  m_sendMsgs;
+    TArray<NetMsgInitRecv>  m_recvMsgs;
 
     // Diffie-Hellman constants
     uint32_t                m_dh_g;

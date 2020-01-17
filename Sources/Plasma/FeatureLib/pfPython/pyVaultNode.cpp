@@ -485,7 +485,7 @@ void pyVaultNode::RemoveAllNodes( void )
     if (!fNode)
         return;
         
-    ARRAY(unsigned) nodeIds;
+    TArray<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
     for (unsigned i = 0; i < nodeIds.Count(); ++i)
         VaultRemoveChildNode(fNode->GetNodeId(), nodeIds[i], nil, nil);
@@ -583,7 +583,7 @@ int pyVaultNode::GetChildNodeCount()
     if (!fNode)
         return 0;
         
-    ARRAY(unsigned) nodeIds;
+    TArray<unsigned> nodeIds;
     fNode->GetChildNodeIds(&nodeIds, 1);
     
     return nodeIds.Count();

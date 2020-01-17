@@ -526,7 +526,7 @@ static void INetCliAuthChangePasswordCallback (
 static void INetCliAuthGetPublicAgeListCallback (
     ENetError                   result,
     void *                      param,
-    const ARRAY(NetAgeInfo) &   ages
+    const TArray<NetAgeInfo> &  ages
 ) {
     NetCommParam * cp = (NetCommParam *) param;
     

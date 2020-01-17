@@ -145,7 +145,7 @@ struct NetCli {
 
     // Message buffers
     uint8_t                    sendBuffer[kAsyncSocketBufferSize];
-    ARRAY(uint8_t)             recvBuffer;
+    TArray<uint8_t>            recvBuffer;
 
     NetCli()
         : sock(nil), protocol((ENetProtocol)0), channel(nil), server(false)

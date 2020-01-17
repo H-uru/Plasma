@@ -67,7 +67,7 @@ struct CliFileConn : hsRefCnt {
     ST::string          name;
     plNetAddress        addr;
     unsigned            seq;
-    ARRAY(uint8_t)      recvBuffer;
+    TArray<uint8_t>     recvBuffer;
     AsyncCancelId       cancelId;
     bool                abandoned;
     unsigned            buildId;
@@ -148,7 +148,7 @@ struct ManifestRequestTrans : NetFileTrans {
     wchar_t                             m_group[MAX_PATH];
     unsigned                            m_buildId;
 
-    ARRAY(NetCliFileManifestEntry)      m_manifest;
+    TArray<NetCliFileManifestEntry>     m_manifest;
     unsigned                            m_numEntriesReceived;
 
     ManifestRequestTrans (

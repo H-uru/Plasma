@@ -859,7 +859,7 @@ void plClothingOutfit::WriteToVault()
     if (!rvn)
         return;
 
-    ARRAY(plStateDataRecord*) SDRs;
+    TArray<plStateDataRecord*> SDRs;
     
     plStateDataRecord clothingSDR(kSDLClothing);
     fAvatar->GetClothingSDLMod()->PutCurrentStateIn(&clothingSDR);
@@ -874,7 +874,7 @@ void plClothingOutfit::WriteToVault()
     WriteToVault(SDRs);
 }
 
-void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
+void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
 {
     // We'll hit this case when the server asks us to save state for NPCs.
     if (fAvatar->GetTarget(0) != plNetClientApp::GetInstance()->GetLocalPlayer())
@@ -884,7 +884,7 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     if (!rvn)
         return;
         
-    ARRAY(plStateDataRecord*)   morphs;
+    TArray<plStateDataRecord*>   morphs;
 
     // Gather morph SDRs    
     hsTArray<const plMorphSequence*> morphsSDRs;
@@ -910,12 +910,12 @@ void plClothingOutfit::WriteToVault(const ARRAY(plStateDataRecord*) & SDRs)
     // Get all existing clothing SDRs
     rvn->GetChildNodes(plVault::kNodeType_SDL, 1, &nodes);    // REF: Find
 
-    const ARRAY(plStateDataRecord*) * arrs[] = {
+    const TArray<plStateDataRecord*> * arrs[] = {
         &SDRs,
         &morphs,
     };
     for (unsigned arrIdx = 0; arrIdx < arrsize(arrs); ++arrIdx) {
-        const ARRAY(plStateDataRecord*) * arr = arrs[arrIdx];
+        const TArray<plStateDataRecord*> * arr = arrs[arrIdx];
         
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary
         for (unsigned i = 0; i < arr->Count(); ++i) {

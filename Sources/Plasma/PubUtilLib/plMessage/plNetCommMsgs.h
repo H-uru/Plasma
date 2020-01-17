@@ -53,6 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnNetBase/pnNbError.h"
 #include "pnNetProtocol/pnNetProtocol.h"
 #include "pnMessage/plMessage.h"
+#include "plNetGameLib/plNetGameLib.h"
 
 class plNetCommReplyMsg : public plMessage {
 public:
@@ -88,10 +89,9 @@ public:
     void Write (hsStream * s, hsResMgr * mgr) { plMessage::IMsgWrite(s, mgr); }
 };
 
-struct NetCliAuthFileInfo;
 class plNetCommFileListMsg : public plNetCommReplyMsg {
 public:
-    FARRAY(NetCliAuthFileInfo)  fileInfoArr;
+    TFArray<NetCliAuthFileInfo>  fileInfoArr;
 
     CLASSNAME_REGISTER(plNetCommFileListMsg);
     GETINTERFACE_ANY(plNetCommFileListMsg, plMessage);
@@ -141,7 +141,7 @@ public:
     CLASSNAME_REGISTER(plNetCommPublicAgeListMsg);
     GETINTERFACE_ANY(plNetCommPublicAgeListMsg, plMessage);
     
-    ARRAY(struct NetAgeInfo)    ages;
+    TArray<NetAgeInfo>    ages;
 };
 
 class plNetCommPublicAgeMsg : public plNetCommReplyMsg {

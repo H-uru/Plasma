@@ -109,7 +109,7 @@ private:
     enum { LINK_OFFSET_UNINIT = 0xdddddddd };
 
     int m_linkOffset;
-    ARRAY(C *) m_array;
+    TArray<C *> m_array;
 
     friend class TBasePriority<C,P>;
 };

@@ -110,7 +110,7 @@ struct PingRequestTrans : NetAuthTrans {
     void *                          m_param;
     unsigned                        m_pingAtMs;
     unsigned                        m_replyAtMs;
-    ARRAY(uint8_t)                     m_payload;
+    TArray<uint8_t>                 m_payload;
     
     PingRequestTrans (
         FNetCliAuthPingRequestCallback  callback,
@@ -432,7 +432,7 @@ struct GetPublicAgeListTrans : NetAuthTrans {
     ST::string                              m_ageName;
 
     // recv
-    ARRAY(NetAgeInfo)                       m_ages;
+    TArray<NetAgeInfo>                      m_ages;
     
     GetPublicAgeListTrans (
         const ST::string&                   ageName,
@@ -534,7 +534,7 @@ struct FileListRequestTrans : NetAuthTrans {
     wchar_t                               m_directory[MAX_PATH];
     wchar_t                               m_ext[MAX_EXT];
 
-    ARRAY(NetCliAuthFileInfo)           m_fileInfoArray;
+    TArray<NetCliAuthFileInfo>          m_fileInfoArray;
 
     FileListRequestTrans (
         FNetCliAuthFileListRequestCallback  callback,
@@ -663,7 +663,7 @@ struct VaultFetchNodeRefsTrans : NetAuthTrans {
     FNetCliAuthVaultNodeRefsFetched m_callback;
     void *                          m_param;
 
-    ARRAY(NetVaultNodeRef)          m_refs;
+    TArray<NetVaultNodeRef>         m_refs;
 
     VaultFetchNodeRefsTrans (
         unsigned                        nodeId,
@@ -750,7 +750,7 @@ struct VaultFetchNodeTrans : NetAuthTrans {
 //============================================================================
 struct VaultFindNodeTrans : NetAuthTrans {
 
-    ARRAY(unsigned)             m_nodeIds;
+    TArray<unsigned>            m_nodeIds;
     FNetCliAuthVaultNodeFind    m_callback;
     void *                      m_param;
     
@@ -803,7 +803,7 @@ struct VaultSaveNodeTrans : NetAuthTrans {
 
     unsigned                            m_nodeId;
     plUUID                              m_revisionId;
-    ARRAY(uint8_t)                      m_buffer;
+    TArray<uint8_t>                     m_buffer;
     FNetCliAuthVaultNodeSaveCallback    m_callback;
     void *                              m_param;
 
@@ -4013,7 +4013,7 @@ bool VaultFindNodeTrans::Send () {
     if (!AcquireConn())
         return false;
         
-    ARRAY(uint8_t) buffer;
+    TArray<uint8_t> buffer;
     m_node->Write(&buffer);
 
     const uintptr_t msg[] = {
@@ -4081,7 +4081,7 @@ bool VaultCreateNodeTrans::Send () {
     if (!AcquireConn())
         return false;
         
-    ARRAY(uint8_t) buffer;
+    TArray<uint8_t> buffer;
     m_templateNode->Write(&buffer, 0);
 
     const uintptr_t msg[] = {
@@ -5732,7 +5732,7 @@ unsigned NetCliAuthVaultNodeSave (
         ioFlags |= NetVaultNode::kDirtyString64_1;
     ioFlags |= NetVaultNode::kDirtyNodeType;
 
-    ARRAY(uint8_t) buffer;
+    TArray<uint8_t> buffer;
     node->Write(&buffer, ioFlags);
 
     VaultSaveNodeTrans * trans = new VaultSaveNodeTrans(

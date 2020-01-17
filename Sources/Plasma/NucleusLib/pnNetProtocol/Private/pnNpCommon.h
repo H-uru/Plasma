@@ -125,7 +125,7 @@ struct NetGameScore {
     int         value;
 
     unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nil);    // returns number of bytes read
-    unsigned Write (ARRAY(uint8_t) * buffer) const;                                // returns number of bytes written
+    unsigned Write (TArray<uint8_t> * buffer) const;                                // returns number of bytes written
 
     void CopyFrom (const NetGameScore & score);
 };
@@ -142,7 +142,7 @@ struct NetGameRank {
     wchar_t       name[kMaxPlayerNameLength];
 
     unsigned Read (const uint8_t inbuffer[], unsigned bufsz, uint8_t** end = nil);    // returns number of bytes read
-    unsigned Write (ARRAY(uint8_t) * buffer) const;                                // returns number of bytes written
+    unsigned Write (TArray<uint8_t> * buffer) const;                                // returns number of bytes written
 
     void CopyFrom (const NetGameRank & fromRank);
 };
@@ -309,7 +309,7 @@ public:
     bool Matches(const NetVaultNode* rhs) const;
 
     void Read(const uint8_t* buf, size_t size);
-    void Write(ARRAY(uint8_t)* buf, uint32_t ioFlags=0);
+    void Write(TArray<uint8_t>* buf, uint32_t ioFlags=0);
 
 protected:
     uint64_t GetFieldFlags() const { return fUsedFields; }

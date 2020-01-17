@@ -114,8 +114,8 @@ void NetMsgCryptServerConnect (
 ***/
 
 class CInputAccumulator {
-    ARRAY(uint8_t) buffer;
-    uint8_t *      curr;
+    TArray<uint8_t> buffer;
+    uint8_t *       curr;
 
 public:
     CInputAccumulator ();
