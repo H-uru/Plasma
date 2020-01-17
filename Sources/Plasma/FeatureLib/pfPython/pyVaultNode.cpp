@@ -625,21 +625,6 @@ PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
     PYTHON_RETURN_NONE;
 }
 
-PyObject * pyVaultNode::GetChildNode (unsigned nodeId) {
-
-    if (!fNode)
-        PYTHON_RETURN_NONE;
-        
-    hsRef<RelVaultNode> templateNode = new RelVaultNode;
-    templateNode->SetNodeId(nodeId);
-    hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1);
-    
-    if (rvn)
-        return pyVaultNode::New(rvn);
-
-    PYTHON_RETURN_NONE;
-}
-
 
 // all the upcasting...
 
