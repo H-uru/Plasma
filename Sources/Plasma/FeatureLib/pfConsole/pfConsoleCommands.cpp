@@ -4804,21 +4804,6 @@ static plWaveSet7* ICheckWaveParams(PrintFunk PrintString, const ST::string& nam
     return waveSet;
 }
 
-static float LimitVal(float val, float lo, float hi, PrintFunk PrintString)
-{
-    if( val < lo )
-    {
-        pfConsolePrintF(PrintString, "{f} too low, clamped to {f}", val, lo);
-        val = lo;
-    }
-    else if( val > hi )
-    {
-        pfConsolePrintF(PrintString, "{f} too high, clamped to {f}", val, hi);
-        val = hi;
-    }
-    return val;
-}
-
 static bool ISendWaveCmd1f(PrintFunk PrintString, pfConsoleCmdParam* params, int numParams, plWaveCmd::Cmd cmd)
 {
     plWaveSet7* wave = ICheckWaveParams(PrintString, ST::string::from_utf8(params[0]), numParams, 2, cmd);

@@ -61,8 +61,9 @@ protected:
 
     pyMoviePlayer(): fSelfKey(nil) {} // only used by python glue, do NOT call
     pyMoviePlayer(const ST::string& movieName, pyKey& selfKey);
+
 public:
-    ~pyMoviePlayer();
+    virtual ~pyMoviePlayer();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptMoviePlayer);

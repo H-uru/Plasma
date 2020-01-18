@@ -129,8 +129,8 @@ public:
     bool operator!=(_Ref *other) const { return fObj != other; }
 
     _Ref &operator*() const { return *fObj; }
-    _Ref *const operator->() const { return fObj; }
-    operator _Ref *const() const { return fObj; }
+    _Ref *operator->() const { return fObj; }
+    operator _Ref *() const { return fObj; }
 
 private:
     _Ref *fObj;

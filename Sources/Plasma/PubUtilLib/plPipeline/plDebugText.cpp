@@ -244,21 +244,17 @@ void    plDebugTextManager::DrawToDevice( plPipeline *pipe )
             else
             {
 
-                /// Draw string only if its in bounds (clip to right edge if necessary)
-                if( node.fX >= 0 && node.fY >= 0 )
+                if (node.fY + fFont->GetFontHeight() < fSHeight)
                 {
-                    if( node.fY + fFont->GetFontHeight() < fSHeight )
+                    if (node.fX + CalcStringWidth(node.fText) < fSWidth)
                     {
-                        if( node.fX + CalcStringWidth( node.fText ) < fSWidth )
-                        {
-                            fFont->DrawString( node.fText, node.fX, node.fY, 
-                                               node.fColor, node.fStyle );
-                        }
-                        else
-                        {
-                            fFont->DrawString( node.fText, node.fX, node.fY, 
-                                               node.fColor, node.fStyle, fSWidth );
-                        }
+                        fFont->DrawString(node.fText, node.fX, node.fY,
+                                          node.fColor, node.fStyle);
+                    }
+                    else
+                    {
+                        fFont->DrawString(node.fText, node.fX, node.fY,
+                                          node.fColor, node.fStyle, fSWidth);
                     }
                 }
             }

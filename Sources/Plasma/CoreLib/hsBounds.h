@@ -257,7 +257,7 @@ public:
 
     hsBounds3Ext(const hsBounds3 &b);
     hsBounds3Ext &operator=(const hsBounds3 &b);
-    hsBounds3Ext(const hsBounds3Ext &pRHS) { Reset(&pRHS); }
+    hsBounds3Ext(const hsBounds3Ext &pRHS) : hsBounds3() { Reset(&pRHS); }
     hsBounds3Ext &operator=(const hsBounds3Ext &pRHS ) 
     {   if (&pRHS != this)  Reset(&pRHS);   return *this; }
 

@@ -95,21 +95,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 PF_CONSOLE_FILE_DUMMY(Game)
 //// DO NOT REMOVE!!!!
 
-//// plDoesFileExist //////////////////////////////////////////////////////////
-//  Utility function to determine whether the given file exists
-
-static bool     plDoesFileExist( const char *path )
-{
-    hsUNIXStream    stream;
-
-
-    if( !stream.Open( path, "rb" ) )
-        return false;
-
-    stream.Close();
-    return true;
-}
-
 //////////////////////////////////////////////////////////////////////////////
 //// Game Group Commands /////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////

@@ -85,7 +85,7 @@ void plFactory::IForceShutdown()
     {
         if( fCreators[i] )
         {
-            hsRefCnt_SafeUnRef(this);
+            UnRef();
             fCreators[i] = nil;
         }
     }

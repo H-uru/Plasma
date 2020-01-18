@@ -62,7 +62,10 @@ protected:
     bool            fNetForce;
 
     cyDraw(plKey sender=nil,const plKey recvr=nil);
+
 public:
+    virtual ~cyDraw() { }
+
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptDraw);
     static PyObject *New(PyObject *sender = NULL, PyObject* recvr = NULL);

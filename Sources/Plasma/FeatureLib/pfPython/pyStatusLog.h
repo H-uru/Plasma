@@ -65,7 +65,7 @@ protected:
     pyStatusLog( plStatusLog* log=nil );
 
 public:
-    ~pyStatusLog();
+    virtual ~pyStatusLog();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptStatusLog);

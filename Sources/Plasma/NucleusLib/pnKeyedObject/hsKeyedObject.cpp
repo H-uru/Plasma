@@ -186,7 +186,7 @@ bool hsKeyedObject::MsgReceive(plMessage* msg)
     if (nuke)
     {
         hsAssert(RefCnt() == 1, "Trying to selfdestruct with bogus refcnt");
-        hsRefCnt_SafeUnRef(this); 
+        UnRef();
 
         return true;
     }

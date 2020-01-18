@@ -1122,7 +1122,7 @@ bool    plDrawableSpans::ITestMatForSpecularity( hsGMaterial *mat )
 
     for( i = 0; i < mat->GetNumLayers(); i++ )
     {
-        if( mat->GetLayer( i )->GetShadeFlags() && hsGMatState::kShadeSpecular )
+        if( mat->GetLayer( i )->GetShadeFlags() & hsGMatState::kShadeSpecular )
             return true;
     }
 

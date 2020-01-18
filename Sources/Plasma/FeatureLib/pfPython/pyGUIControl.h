@@ -68,6 +68,8 @@ protected:
     pyGUIControl(const pyGUIControl& other);
 
 public:
+    virtual ~pyGUIControl() { }
+
     pyGUIControl& operator=(const pyGUIControl& other);
     pyGUIControl& Copy(const pyGUIControl& other);
 

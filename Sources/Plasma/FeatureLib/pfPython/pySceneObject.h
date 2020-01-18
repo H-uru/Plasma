@@ -74,7 +74,7 @@ protected:
     pySceneObject(plKey objkey);
 
 public:
-    ~pySceneObject();
+    virtual ~pySceneObject();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptSceneobject);

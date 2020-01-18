@@ -66,7 +66,7 @@ protected:
     pyStream();
 
 public:
-    ~pyStream();
+    virtual ~pyStream();
 
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptStream);

@@ -273,17 +273,6 @@ PYTHON_METHOD_DEFINITION(ptVaultNode, getNode, args)
     return self->fThis->GetNode2(id);
 }
 
-PYTHON_METHOD_DEFINITION(ptVaultNode, getChildNode, args)
-{
-    unsigned long id;
-    if (!PyArg_ParseTuple(args, "l", &id))
-    {
-        PyErr_SetString(PyExc_TypeError, "getNode expects an unsigned long");
-        PYTHON_RETURN_ERROR;
-    }
-    return self->fThis->GetChildNode(id);
-}
-
 
 PYTHON_METHOD_DEFINITION(ptVaultNode, findNode, args)
 {

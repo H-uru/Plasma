@@ -541,20 +541,6 @@ static void INetCliAuthGetPublicAgeListCallback (
 }
 
 //============================================================================
-static void INetAuthFileListRequestCallback (
-    ENetError                   result,
-    void *                      param,
-    const NetCliAuthFileInfo    infoArr[],
-    unsigned                    infoCount
-) {
-    plNetCommFileListMsg * msg = new plNetCommFileListMsg;
-    msg->result = result;
-    msg->param  = param;
-    msg->fileInfoArr.Set(infoArr, infoCount);
-    msg->Send();
-}
-
-//============================================================================
 static void INetCliGameJoinAgeRequestCallback (
     ENetError       result,
     void *          param
@@ -743,7 +729,6 @@ void NetCommStartup () {
     NetClientSetErrorHandler(IPreInitNetErrorCallback);
 
     // Set startup age info
-    memset(&s_startupAge, 0, sizeof(s_startupAge));
     s_startupAge.ageDatasetName = s_iniStartupAgeName;
 
     s_startupAge.ageInstId = s_iniStartupAgeInstId;

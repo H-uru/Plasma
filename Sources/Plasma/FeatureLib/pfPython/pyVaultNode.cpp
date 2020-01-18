@@ -81,17 +81,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 ///////////////////////////////////////////////////////////////////////////
 
-static void CDECL LogDumpProc (
-    void *              ,
-    const wchar_t       *fmt,
-    ...
-) {
-    va_list args;
-    va_start(args, fmt);
-    LogMsgV(kLogDebug, fmt, args);
-    va_end(args);
-}
-
 pyVaultNode::pyVaultNodeOperationCallback::pyVaultNodeOperationCallback(PyObject * cbObject)
 : fCbObject( cbObject )
 , fPyNodeRef(nil)
@@ -632,21 +621,6 @@ PyObject* pyVaultNode::FindNode( pyVaultNode * templateNode )
     
     if (result)
         return result;
-
-    PYTHON_RETURN_NONE;
-}
-
-PyObject * pyVaultNode::GetChildNode (unsigned nodeId) {
-
-    if (!fNode)
-        PYTHON_RETURN_NONE;
-        
-    hsRef<RelVaultNode> templateNode = new RelVaultNode;
-    templateNode->SetNodeId(nodeId);
-    hsRef<RelVaultNode> rvn = fNode->GetChildNode(templateNode, 1);
-    
-    if (rvn)
-        return pyVaultNode::New(rvn);
 
     PYTHON_RETURN_NONE;
 }

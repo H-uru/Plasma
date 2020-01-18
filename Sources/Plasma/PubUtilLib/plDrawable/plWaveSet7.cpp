@@ -1723,7 +1723,7 @@ void plWaveSet7::IAddBumpBiasLayer(hsGMaterial* mat)
                 | hsGMatState::kShadeNoShade);
             layer->SetClampFlags(0);
             layer->SetMiscFlags(0);
-            layer->SetMiscFlags(i ? 0 : hsGMatState::kMiscRestartPassHere);
+            layer->SetMiscFlags(i ? hsGMatState::hsGMatMiscFlags(0) : hsGMatState::kMiscRestartPassHere);
 
             layer->SetAmbientColor(hsColorRGBA().Set(0.25f, 0.25f, 0.f, 0.f));
             layer->SetRuntimeColor(hsColorRGBA().Set(0.f, 0.f, 0.f, 0.f));

@@ -799,7 +799,7 @@ void plParticleFiller::FillParticlePolys(plPipeline* pipe, plDrawInterface* di)
     // Currently, the di always points to exactly 1 drawable with 1 span index. If
     // that changes, this would just become a loop.
     uint32_t diIndex = di->GetDrawableMeshIndex(0);
-    hsAssert(diIndex >= 0, "Bogus input to fill particles");
+    hsAssert(diIndex != uint32_t(-1), "Bogus input to fill particles");
 
     const plDISpanIndex& diSpans = drawable->GetDISpans(diIndex);
     int i;

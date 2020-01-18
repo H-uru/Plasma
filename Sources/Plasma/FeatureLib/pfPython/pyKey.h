@@ -74,6 +74,8 @@ protected:
 #endif
 
 public:
+    virtual ~pyKey() { }
+
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptKey);
     PYTHON_CLASS_NEW_DEFINITION;

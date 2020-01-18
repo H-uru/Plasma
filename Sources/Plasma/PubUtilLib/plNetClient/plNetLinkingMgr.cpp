@@ -1011,7 +1011,8 @@ uint8_t plNetLinkingMgr::IPreProcessLink(void)
             }
 
             link->SetLinkingRules(plNetCommon::LinkingRules::kOwnedBook);
-            // falls thru to OWNED BOOK case...
+            // falls through
+            // to OWNED BOOK case...
 
         //--------------------------------------------------------------------
         // OWNED BOOK. Look for the book in our AgesIOwn folder

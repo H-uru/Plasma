@@ -59,15 +59,15 @@ const hsMatrix44& hsMatrix44::IdentityMatrix() { return myIdent; }
 
 /*
     For the rotation:
-         ¦        2     2                                      ¦
-         ¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       ¦
-         ¦                                                     ¦
-         ¦                          2     2                    ¦
-     M = ¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       ¦
-         ¦                                                     ¦
-         ¦                                            2     2  ¦
-         ¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) ¦
-         ¦                                                     ¦
+         Â¦        2     2                                      Â¦
+         Â¦ 1 - (2Y  + 2Z )   2XY + 2ZW         2XZ - 2YW       Â¦
+         Â¦                                                     Â¦
+         Â¦                          2     2                    Â¦
+     M = Â¦ 2XY - 2ZW         1 - (2X  + 2Z )   2YZ + 2XW       Â¦
+         Â¦                                                     Â¦
+         Â¦                                            2     2  Â¦
+         Â¦ 2XZ + 2YW         2YZ - 2XW         1 - (2X  + 2Y ) Â¦
+         Â¦                                                     Â¦
 
     The translation is far too complex to discuss here. ;^)
 */
@@ -629,16 +629,6 @@ hsMatrix44& hsMatrix44::MakeCameraUpPreserving(const hsPoint3* from, const hsPoi
 }
 
 ///////////////////////////////////////////////////////
-
-static float GetDeterminant33(const hsMatrix44* mat)
-{
-    return  ((mat->fMap[0][0] * mat->fMap[1][1]) * mat->fMap[2][2]) +
-            ((mat->fMap[0][1] * mat->fMap[1][2]) * mat->fMap[2][0]) +
-            ((mat->fMap[0][2] * mat->fMap[1][0]) * mat->fMap[2][1]) -
-            ((mat->fMap[0][2] * mat->fMap[1][1]) * mat->fMap[2][0]) -
-            ((mat->fMap[0][1] * mat->fMap[1][0]) * mat->fMap[2][2]) -
-            ((mat->fMap[0][0] * mat->fMap[1][2]) * mat->fMap[2][1]);
-}
 
 hsMatrix44* hsMatrix44::GetTranspose(hsMatrix44* transp) const
 {

@@ -104,7 +104,7 @@ class plStringSlicer
                 fString[ fEnd ] = fTempChar;
         }
 
-        operator const CharPtr() const
+        operator CharPtr() const
         {
             return &fString[ fStart ];
         }
