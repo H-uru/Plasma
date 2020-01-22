@@ -696,20 +696,18 @@ class nxusBookMachine(ptModifier):
             respKISlot.run(self.key, events = events) #Insert KI
         elif state:
             for ageFilename in self.publicAges.keys():
-                # don't ask the server about hardcoded ages...
-                # crappy server software (Cyan) might throw away the request, leaving us dead in the water
-                # true for GuildPub-Cartographers
-                try:
-                    hardcoded = kHardcodedInstances[ageFilename]
-                except KeyError:
-                    PtGetPublicAgeList(ageFilename, self)
-                else:
-                    if len(self.publicAges[ageFilename].instances) == 0:
+                # Crummy server software (eg Cyan) might discard requests for hardcoded public ages,
+                # leaving us dead in the water. BUT we would like to get information about that
+                # age from the vault, if possible. Therefore, we ask anyway but don't rely on it.
+                hardcoded = kHardcodedInstances.get(ageFilename)
+                if hardcoded is not None:
+                    ageData = self.publicAges[ageFilename]
+                    if not ageData.instances:
                         ageInfo = ptAgeInfoStruct()
                         ageInfo.setAgeFilename(ageFilename)
                         ageInfo.setAgeInstanceGuid(hardcoded)
-                        instance = AgeInstance((ageInfo, 0, 0))
-                        self.publicAges[ageFilename].instances.append(instance)
+                        ageData.instances.append(AgeInstance((ageInfo, 0, 0)))
+                PtGetPublicAgeList(ageFilename, self)
             PtGetPublicAgeList('Neighborhood', self)
 
             # set up the camera so when the one shot returns it gets set up right (one shot was fighting with python for camera control)
@@ -1313,6 +1311,11 @@ class nxusBookMachine(ptModifier):
                 displayName = "The %s' Pub" % (ageData.guild)
             else:
                 displayName = selectedInfo.getDisplayName()
+
+            # just in case: no display name, use the filename
+            if not displayName:
+                PtDebugPrint("nxusBookMachine.IUpdateCityLinksList(): Empty display name for age '{}'".format(ageData.ageFilename))
+                displayName = ageData.ageFilename
 
             #normal cases: just add link with default link spot
             stringLinkInfo = U"%05d%   04d%   04d" %(0,0,0) #temporary consistency hack. fixme
