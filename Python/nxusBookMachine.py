@@ -397,7 +397,7 @@ class nxusBookMachine(ptModifier):
             if linkVisibleVar is not None:
                 PtDebugPrint("nxusBookMachine.OnServerInitComplete(): Grabbing variable '%s'" % linkVisibleVar)
                 try:
-                    visible = ageSDL[linkVisibleVar]
+                    visible = ageSDL[linkVisibleVar][0]
                     self.publicAges[ageName].linkVisible = visible
                 except (KeyError, IndexError):
                     PtDebugPrint("Unable to get  '%s' from SDL, defaulting to %d" % (linkVisibleVar, self.publicAges[ageName].linkVisible))
