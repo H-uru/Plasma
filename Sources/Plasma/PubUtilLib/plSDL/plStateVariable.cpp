@@ -430,7 +430,7 @@ ST::string plSimpleStateVariable::GetAsString(int idx) const
                 else if (type==plVarDescriptor::kShort)
                     str << fS[i++];
                 else if (type==plVarDescriptor::kByte)
-                    str << fBy[i++];
+                    str << static_cast<unsigned>(fBy[i++]);
                 else if (type==plVarDescriptor::kFloat  || type==plVarDescriptor::kAgeTimeOfDay)
                     str << ST::format("{.3f}", fF[i++]);
                 else if (type==plVarDescriptor::kDouble)
