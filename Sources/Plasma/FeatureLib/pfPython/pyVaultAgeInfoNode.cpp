@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 //////////////////////////////////////////////////////////////////////
 
 #include <Python.h>
+#include <string_theory/string_stream>
 #pragma hdrstop
 
 #include "pyVaultAgeInfoNode.h"
@@ -298,10 +299,21 @@ ST::string pyVaultAgeInfoNode::GetDisplayName() const
 {
     if (fNode) {
         VaultAgeInfoNode access(fNode);
-        if (access.GetAgeSequenceNumber() > 0)
-            return ST::format("{}({}) {}", access.GetAgeUserDefinedName(), access.GetAgeSequenceNumber(), access.GetAgeInstanceName());
-        else
-            return ST::format("{} {}", access.GetAgeUserDefinedName(), access.GetAgeInstanceName());
+        ST::string_stream ss;
+
+        if (access.GetAgeUserDefinedName().empty()) {
+            // Ae'gura(1)
+            ss << access.GetAgeInstanceName();
+            if (access.GetAgeSequenceNumber() > 0)
+                ss << '(' << access.GetAgeSequenceNumber() << ')';
+        } else {
+            // Troll's(1) Neighborhood
+            ss << access.GetAgeUserDefinedName();
+            if (access.GetAgeSequenceNumber() > 0)
+                ss << '(' << access.GetAgeSequenceNumber() << ") ";
+            ss << access.GetAgeInstanceName();
+        }
+        return ss.to_string();
     }
     return ST::null;
 }
