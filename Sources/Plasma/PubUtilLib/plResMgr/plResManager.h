@@ -236,8 +236,9 @@ protected:
 
     typedef std::set<plRegistryPageNode*> PageSet;
     typedef std::map<plLocation, plRegistryPageNode*> PageMap;
-    PageMap fAllPages;      // All the pages, loaded or not
-    PageSet fLoadedPages;   // Just the loaded pages
+    PageMap fAllPages;         // All the pages, loaded or not
+    PageSet fLoadedPages;      // Just the loaded pages
+    PageSet fConflictingPages; // Pages whose sequence numbers conflict
 
     mutable plRegistryPageNode* fLastFoundPage;
 };
