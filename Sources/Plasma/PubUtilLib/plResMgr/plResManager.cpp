@@ -126,16 +126,21 @@ bool plResManager::IInit()
 
     kResMgrLog(1, ILog(1, "Initializing resManager..."));
 
-    if (plResMgrSettings::Get().GetLoadPagesOnInit())
-    {
+    if (plResMgrSettings::Get().GetLoadPagesOnInit()) {
         // We want to go through all the data files in our data path and add new
         // plRegistryPageNodes to the regTree for each
         std::vector<plFileName> prpFiles = plFileSystem::ListDir(fDataPath, "*.prp");
-        for (auto iter = prpFiles.begin(); iter != prpFiles.end(); ++iter)
-        {
+        for (auto iter = prpFiles.begin(); iter != prpFiles.end(); ++iter) {
             plRegistryPageNode* node = new plRegistryPageNode(*iter);
-            plPageInfo pi = node->GetPageInfo();
-            fAllPages[pi.GetLocation()] = node;
+            const plPageInfo& pi = node->GetPageInfo();
+
+            // If a page is already added with this location, add both the already known page
+            // and the newly discovered page to a set of conflicts.
+            auto pageResult = fAllPages.emplace(pi.GetLocation(), node);
+            if (!pageResult.second) {
+                fConflictingPages.insert(pageResult.first->second);
+                fConflictingPages.insert(node);
+            }
         }
     }
 
@@ -1330,25 +1335,11 @@ bool plResManager::VerifyPages()
     }
 
     // Step 2 of verification: make sure no sequence numbers conflict
-    // This isn't possible with a std::map
-    /*PageSet::iterator it = fAllPages.begin();
-    for (; it != fAllPages.end(); it++)
-    {
-        plRegistryPageNode* page = *it;
-
-        PageSet::iterator itUp = it;
-        itUp++;
-        for (; itUp != fAllPages.end(); itUp++)
-        {
-            plRegistryPageNode* upPage = *itUp;
-            if (page->GetPageInfo().GetLocation() == upPage->GetPageInfo().GetLocation())
-            {
-                invalidPages.Append(upPage);
-                fAllPages.erase(itUp);
-                break;
-            }
-        }
-    }*/
+    for (auto badPage : fConflictingPages) {
+        fAllPages.erase(badPage->GetPageInfo().GetLocation());
+        invalidPages.Append(badPage);
+    }
+    fConflictingPages.clear();
 
     // Redo our loaded pages list, since Verify() might force the page's keys to load or unload
     fLoadedPages.clear();
