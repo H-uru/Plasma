@@ -90,13 +90,13 @@ class pfConsoleCmdGroup
         void    AddSubGroup( pfConsoleCmdGroup *group );
 
         void    Link( pfConsoleCmdGroup **prevPtr );
-        void    Unlink( void );
+        void    Unlink();
 
-        pfConsoleCmdGroup   *GetNext( void ) { return fNext; }
-        char                *GetName( void ) { return fName; }
-        pfConsoleCmdGroup   *GetParent( void ) { return fParentGroup; }
+        pfConsoleCmdGroup   *GetNext() { return fNext; }
+        char                *GetName() { return fName; }
+        pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
-        static pfConsoleCmdGroup    *GetBaseGroup( void );
+        static pfConsoleCmdGroup    *GetBaseGroup();
 
         pfConsoleCmd        *FindCommand( const char *name );
         pfConsoleCmd        *FindCommandNoCase( const char *name, uint8_t flags = 0, pfConsoleCmd *start = nil );
@@ -105,13 +105,13 @@ class pfConsoleCmdGroup
         pfConsoleCmdGroup   *FindSubGroup( const char *name );
         pfConsoleCmdGroup   *FindSubGroupNoCase( const char *name, uint8_t flags = 0, pfConsoleCmdGroup *start = nil );
 
-        pfConsoleCmd        *GetFirstCommand( void ) { return fCommands; }
-        pfConsoleCmdGroup   *GetFirstSubGroup( void ) { return fSubGroups; }
+        pfConsoleCmd        *GetFirstCommand() { return fCommands; }
+        pfConsoleCmdGroup   *GetFirstSubGroup() { return fSubGroups; }
 
         int                 IterateCommands(pfConsoleCmdIterator*, int depth=0);
 
         static pfConsoleCmdGroup    *FindSubGroupRecurse( const char *name );
-        static void                 DecBaseCmdGroupRef( void );
+        static void                 DecBaseCmdGroupRef();
 };
 
 //// pfConsoleCmdParam Class Definition //////////////////////////////////////
@@ -133,11 +133,11 @@ class pfConsoleCmdParam
             char    c;
         } fValue;
 
-        const int       &IToInt( void ) const;
-        const float     &IToFloat( void ) const;
-        const bool      &IToBool( void ) const;
-        const CharPtr   &IToString( void ) const;
-        const char      &IToChar( void ) const;
+        const int       &IToInt() const;
+        const float     &IToFloat() const;
+        const bool      &IToBool() const;
+        const CharPtr   &IToString() const;
+        const char      &IToChar() const;
 
     public:
 
@@ -158,7 +158,7 @@ class pfConsoleCmdParam
         operator CharPtr() const { return IToString(); }
         operator char() const { return IToChar(); }
 
-        uint8_t   GetType( void ) { return fType; }
+        uint8_t   GetType() { return fType; }
 
         void    SetInt( int i )         { fValue.i = i; fType = kInt; }
         void    SetFloat( float f )     { fValue.f = f; fType = kFloat; }
@@ -166,7 +166,7 @@ class pfConsoleCmdParam
         void    SetString( CharPtr s )  { fValue.s = s; fType = kString; }
         void    SetChar( char c )       { fValue.c = c; fType = kChar; }
         void    SetAny( CharPtr s )     { fValue.s = s; fType = kAny; }
-        void    SetNone( void )         { fType = kNone; }
+        void    SetNone()         { fType = kNone; }
 };
 
 //// pfConsoleCmd Class Definition ///////////////////////////////////////////
@@ -218,14 +218,14 @@ class pfConsoleCmd
         void    Execute( int32_t numParams, pfConsoleCmdParam *params, void (*PrintFn)( const char * ) = nil );
 
         void    Link( pfConsoleCmd **prevPtr );
-        void    Unlink( void );
+        void    Unlink();
 
-        pfConsoleCmd    *GetNext( void ) { return fNext; }
-        char            *GetName( void ) { return fName; }
-        const char      *GetHelp( void ) { return fHelpString; }
-        const char      *GetSignature( void );
+        pfConsoleCmd    *GetNext() { return fNext; }
+        char            *GetName() { return fName; }
+        const char      *GetHelp() { return fHelpString; }
+        const char      *GetSignature();
 
-        pfConsoleCmdGroup   *GetParent( void ) { return fParentGroup; }
+        pfConsoleCmdGroup   *GetParent() { return fParentGroup; }
 
         uint8_t           GetSigEntry( uint8_t i );
 };

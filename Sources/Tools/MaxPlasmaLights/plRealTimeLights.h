@@ -87,7 +87,7 @@ class plRTOmniLight : public plRTLightBase
 
     protected:
         virtual void    IBuildMeshes( BOOL isNew );
-        virtual bool    IHasAttenuation( void ) { return true; }
+        virtual bool    IHasAttenuation() { return true; }
 };
 
 class plRTOmniLightDesc : public ClassDesc2 
@@ -105,7 +105,7 @@ class plRTOmniLightDesc : public ClassDesc2
 
     static plRTOmniLightDesc    fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 };
 
 
@@ -131,7 +131,7 @@ class plRTSpotLight : public plRTLightBase
         
         virtual Texmap  *GetProjMap();
 
-        virtual BOOL    IsSpot( void )  { return TRUE; }
+        virtual BOOL    IsSpot()  { return TRUE; }
         virtual int     GetProjector() { return fLightPB->GetInt( kUseProjectorBool, 0 ); }
 
         virtual void            InitNodeName( TSTR &s ) { s = _T( "RTSpotLight" ); }
@@ -142,7 +142,7 @@ class plRTSpotLight : public plRTLightBase
 
     protected:
         virtual void    IBuildMeshes( BOOL isNew );
-        virtual bool    IHasAttenuation( void ) { return true; }
+        virtual bool    IHasAttenuation() { return true; }
 };
 
 class plRTSpotLightDesc : public ClassDesc2 
@@ -159,7 +159,7 @@ class plRTSpotLightDesc : public ClassDesc2
 
     static plRTSpotLightDesc    fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 
 };
 
@@ -186,7 +186,7 @@ class plRTDirLight : public plRTLightBase
         virtual void    DrawCone(TimeValue t, GraphicsWindow *gw, float dist);
         virtual void    GetLocalBoundBox( TimeValue t, INode *node, ViewExp *vpt, Box3 &box );
 
-        virtual BOOL IsDir( void )  { return TRUE; }
+        virtual BOOL IsDir()  { return TRUE; }
 
         virtual void            InitNodeName( TSTR &s ) { s = _T( "RTDirLight" ); }
 
@@ -210,7 +210,7 @@ class plRTDirLightDesc : public ClassDesc2
 
     static plRTDirLightDesc     fStaticDesc;
 
-    static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+    static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 
 };
 

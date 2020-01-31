@@ -228,7 +228,7 @@ class plProgressMgr
         virtual void Activate() {}
         virtual void Deactivate() {}
 
-        static plProgressMgr    *IGetManager( void ) { return fManager; }
+        static plProgressMgr    *IGetManager() { return fManager; }
 
     public:
 
@@ -247,9 +247,9 @@ class plProgressMgr
 
         plProgressMgrCallbackProc SetCallbackProc( plProgressMgrCallbackProc proc );
 
-        bool        IsActive( void ) const { return ( fOperations != nil ) ? true : false; }
+        bool        IsActive() const { return ( fOperations != nil ) ? true : false; }
 
-        void    CancelAllOps( void );
+        void    CancelAllOps();
 };
 
 

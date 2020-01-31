@@ -74,7 +74,7 @@ class plFontCache : public hsKeyedObject
 
         static plFontCache     *fInstance;
 
-        void    ILoadCustomFonts( void );
+        void    ILoadCustomFonts();
 
     public:
 
@@ -89,13 +89,13 @@ class plFontCache : public hsKeyedObject
 
         virtual bool    MsgReceive( plMessage* pMsg );
         
-        static plFontCache  &GetInstance( void );
+        static plFontCache  &GetInstance();
 
         plFont  *GetFont( const ST::string &face, uint8_t size, uint32_t fontFlags );
 
 //      HFONT   GetMeAFont( const char *face, int height, int weight, bool italic, uint32_t quality );
 //      void    FreeFont( HFONT font );
-        void    Clear( void );
+        void    Clear();
 
         void    LoadCustomFonts( const plFileName &dir );
 

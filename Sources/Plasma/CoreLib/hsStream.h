@@ -317,7 +317,7 @@ class plReadOnlySubStream: public hsStream
     hsStream    *fBase;
     uint32_t      fOffset, fLength;
 
-    void    IFixPosition( void );
+    void    IFixPosition();
 
 public:
     plReadOnlySubStream(): fBase( nil ), fOffset( 0 ), fLength( 0 ) {}

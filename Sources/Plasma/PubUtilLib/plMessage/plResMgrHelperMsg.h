@@ -85,7 +85,7 @@ public:
         hsAssert( false, "This should never get written" );
     }
 
-    uint8_t   GetCommand( void ) const { return fCommand; }
+    uint8_t   GetCommand() const { return fCommand; }
 };
 
 #endif // _plResMgrHelperMsg_h

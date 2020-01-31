@@ -78,7 +78,7 @@ void pyGUIControlDraggable::StopDragging( bool cancel )
     }
 }
 
-PyObject* pyGUIControlDraggable::GetLastMousePt( void )
+PyObject* pyGUIControlDraggable::GetLastMousePt()
 {
     if ( fGCkey )
     {

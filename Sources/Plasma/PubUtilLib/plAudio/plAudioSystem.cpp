@@ -108,7 +108,7 @@ class plSoftSoundNode
             *prev = this;
         }
 
-        void    Unlink( void )
+        void    Unlink()
         {
             if( fPrev != nil )
             {
@@ -150,7 +150,7 @@ class plSoftSoundNode
             }
         }
 
-        void    BootSourceOff( void )
+        void    BootSourceOff()
         {
             plSound *sound = plSound::ConvertNoRef( fSoundKey->ObjectIsLoaded() );
             if( sound != nil )
@@ -834,7 +834,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
     plProfile_EndTiming(SoundSoftUpdate);
 }
 
-void    plAudioSystem::NextDebugSound( void )
+void    plAudioSystem::NextDebugSound()
 {
     plSoftSoundNode     *node;
 
@@ -1169,7 +1169,7 @@ int plgAudioSys::GetAudioMode()
     }
 }
 
-void plgAudioSys::Restart( void )
+void plgAudioSys::Restart()
 {
     if( fSys )
     {
@@ -1256,7 +1256,7 @@ float    plgAudioSys::GetChannelVolume( ASChannel chan )
     return fChannelVolumes[ chan ];
 }
 
-void    plgAudioSys::NextDebugSound( void )
+void    plgAudioSys::NextDebugSound()
 {
     fSys->NextDebugSound();
 }

@@ -90,9 +90,9 @@ protected:
 
     virtual bool    IEval(double secs, float del, uint32_t dirty);
     void            ISetRef( const plKey &ref, bool binding, int type );
-    void            ICheckAudio( void ) const;
+    void            ICheckAudio() const;
 
-    void            IEnsureVCamValid( void );
+    void            IEnsureVCamValid();
 };
 
 #endif //plWin32Sound_h

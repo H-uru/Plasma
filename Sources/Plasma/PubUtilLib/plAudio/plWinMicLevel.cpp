@@ -73,8 +73,8 @@ DWORD       sVolControlID = 0;
 
 //// Local Static Helpers ////////////////////////////////////////////////////
 
-bool    IGetMuxMicVolumeControl( void );
-bool    IGetBaseMicVolumeControl( void );
+bool    IGetMuxMicVolumeControl();
+bool    IGetBaseMicVolumeControl();
 
 bool    IGetControlValue( DWORD &value );
 bool    ISetControlValue( DWORD value );
@@ -87,7 +87,7 @@ MIXERLINE       *IGetMixerSubLineByType( MIXERCONTROL *mux, DWORD type );
 
 //// The Publics /////////////////////////////////////////////////////////////
 
-float    plWinMicLevel::GetLevel( void )
+float    plWinMicLevel::GetLevel()
 {
     if( !CanSetLevel() )
         return -1;
@@ -115,7 +115,7 @@ void    plWinMicLevel::SetLevel( float level )
 #endif
 }
 
-bool    plWinMicLevel::CanSetLevel( void )
+bool    plWinMicLevel::CanSetLevel()
 {
     // Just to init
     plWinMicLevel   &instance = IGetInstance();
@@ -130,7 +130,7 @@ bool    plWinMicLevel::CanSetLevel( void )
 
 //// Protected Init Stuff ////////////////////////////////////////////////////
 
-plWinMicLevel   &plWinMicLevel::IGetInstance( void )
+plWinMicLevel   &plWinMicLevel::IGetInstance()
 {
     static plWinMicLevel    sInstance;
     return sInstance;
@@ -180,7 +180,7 @@ plWinMicLevel::~plWinMicLevel()
     IShutdown();
 }
 
-void    plWinMicLevel::IShutdown( void )
+void    plWinMicLevel::IShutdown()
 {
 #if HS_BUILD_FOR_WIN32
     if( sMixerHandle != nil )
@@ -197,7 +197,7 @@ void    plWinMicLevel::IShutdown( void )
 //  Note: testing indcates that this works but the direct SRC_MICROPHONE
 //  doesn't, hence we try this one first.
 
-bool    IGetMuxMicVolumeControl( void )
+bool    IGetMuxMicVolumeControl()
 {
     if( sMixerHandle == nil )
         return false;
@@ -239,7 +239,7 @@ bool    IGetMuxMicVolumeControl( void )
 //  Tries to get the volume control of the mic-in line. See 
 //  IGetMuxMicVolumeControl for why we don't do this one first.
 
-bool    IGetBaseMicVolumeControl( void )
+bool    IGetBaseMicVolumeControl()
 {
     if( sMixerHandle == nil )
         return false;

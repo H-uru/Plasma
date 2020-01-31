@@ -145,7 +145,7 @@ plInputInterfaceMgr::~plInputInterfaceMgr()
 #include "plDebugInputInterface.h"
 #include "plTelescopeInputInterface.h"
 
-void    plInputInterfaceMgr::Init( void )
+void    plInputInterfaceMgr::Init()
 {
     RegisterAs( kInputInterfaceMgr_KEY );
 
@@ -174,7 +174,7 @@ void    plInputInterfaceMgr::Init( void )
 
 //// Shutdown ////////////////////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::Shutdown( void )
+void    plInputInterfaceMgr::Shutdown()
 {
     int i;
 
@@ -737,7 +737,7 @@ const plKeyBinding* plInputInterfaceMgr::FindBindingByConsoleCmd( const char *cm
 
 //// InitDefaultKeyMap ///////////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::InitDefaultKeyMap( void )
+void    plInputInterfaceMgr::InitDefaultKeyMap()
 {
     int     i;
 
@@ -749,7 +749,7 @@ void    plInputInterfaceMgr::InitDefaultKeyMap( void )
 
 //// RefreshInterfaceKeyMaps /////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::RefreshInterfaceKeyMaps( void )
+void    plInputInterfaceMgr::RefreshInterfaceKeyMaps()
 {
     int     i;
 
@@ -760,7 +760,7 @@ void    plInputInterfaceMgr::RefreshInterfaceKeyMaps( void )
 
 //// WriteKeyMap /////////////////////////////////////////////////////////////
 
-void    plInputInterfaceMgr::WriteKeyMap( void )
+void    plInputInterfaceMgr::WriteKeyMap()
 {
 #ifdef PLASMA_EXTERNAL_RELEASE
     return;

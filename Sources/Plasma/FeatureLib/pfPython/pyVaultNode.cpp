@@ -190,21 +190,21 @@ bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const
 }
 
 // public getters
-uint32_t  pyVaultNode::GetID( void )
+uint32_t  pyVaultNode::GetID()
 {
     if (fNode)
         return fNode->GetNodeId();
     return 0;
 }
 
-uint32_t  pyVaultNode::GetType( void )
+uint32_t  pyVaultNode::GetType()
 {
     if (fNode)
         return fNode->GetNodeType();
     return 0;
 }
 
-uint32_t  pyVaultNode::GetOwnerNodeID( void )
+uint32_t  pyVaultNode::GetOwnerNodeID()
 {
     hsAssert(false, "eric, port?");
 //  if (fNode)
@@ -212,7 +212,7 @@ uint32_t  pyVaultNode::GetOwnerNodeID( void )
     return 0;
 }
 
-PyObject* pyVaultNode::GetOwnerNode( void )
+PyObject* pyVaultNode::GetOwnerNode()
 {
     hsAssert(false, "eric, port?");
 /*
@@ -227,21 +227,21 @@ PyObject* pyVaultNode::GetOwnerNode( void )
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyVaultNode::GetModifyTime( void )
+uint32_t pyVaultNode::GetModifyTime()
 {
     if (fNode)
         return fNode->GetModifyTime();
     return 0;
 }
 
-uint32_t pyVaultNode::GetCreatorNodeID( void )
+uint32_t pyVaultNode::GetCreatorNodeID()
 {
     if (fNode)
         return fNode->GetCreatorId();
     return 0;
 }
 
-PyObject* pyVaultNode::GetCreatorNode( void )
+PyObject* pyVaultNode::GetCreatorNode()
 {
     PyObject * result = nil;
     if (fNode)
@@ -262,14 +262,14 @@ PyObject* pyVaultNode::GetCreatorNode( void )
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyVaultNode::GetCreateTime( void )
+uint32_t pyVaultNode::GetCreateTime()
 {
     if (fNode)
         return fNode->GetCreateTime();
     return 0;
 }
 
-uint32_t pyVaultNode::GetCreateAgeTime( void )
+uint32_t pyVaultNode::GetCreateAgeTime()
 {
     hsAssert(false, "eric, port?");
 
@@ -284,7 +284,7 @@ ST::string pyVaultNode::GetCreateAgeName() const
     return ST::null;
 }
 
-plUUID pyVaultNode::GetCreateAgeGuid(void) const
+plUUID pyVaultNode::GetCreateAgeGuid() const
 {
     if (fNode) {
         return fNode->GetCreateAgeUuid();
@@ -469,7 +469,7 @@ bool pyVaultNode::RemoveNode( pyVaultNode& pynode, PyObject* cbObject, uint32_t 
 }
 
 // Remove all child nodes
-void pyVaultNode::RemoveAllNodes( void )
+void pyVaultNode::RemoveAllNodes()
 {
     if (!fNode)
         return;

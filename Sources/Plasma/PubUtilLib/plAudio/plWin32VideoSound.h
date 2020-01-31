@@ -56,7 +56,7 @@ public:
     void FillSoundBuffer(void* buffer, size_t size);
 
 protected:
-    void IDerivedActuallyPlay(void);
+    void IDerivedActuallyPlay();
     bool LoadSound(bool is3D);
     void SetStartPos(unsigned bytes);
     float GetActualTimeSec();

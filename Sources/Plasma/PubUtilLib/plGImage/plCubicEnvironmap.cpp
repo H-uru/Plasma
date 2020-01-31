@@ -80,7 +80,7 @@ plCubicEnvironmap::~plCubicEnvironmap()
 //// GetTotalSize /////////////////////////////////////////////////////////////
 //  Get the total size in bytes
 
-uint32_t  plCubicEnvironmap::GetTotalSize( void ) const
+uint32_t  plCubicEnvironmap::GetTotalSize() const
 {
     uint32_t  size, i;
 

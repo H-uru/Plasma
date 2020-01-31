@@ -95,7 +95,7 @@ class plDebugText
 
         ~plDebugText() { ; }
 
-        static plDebugText  &Instance( void ) { return fInstance; }
+        static plDebugText  &Instance() { return fInstance; }
 
         uint32_t CalcStringWidth(const char *string);
         uint32_t CalcStringWidth_TEMP(const ST::string &string) { return CalcStringWidth(string.c_str()); }
@@ -144,13 +144,13 @@ class plDebugText
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
         void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
-        const char     *GetFontFace( void ) { return fFontFace; }
-        uint16_t        GetFontSize( void ) { return fFontSize; }
+        const char     *GetFontFace() { return fFontFace; }
+        uint16_t        GetFontSize() { return fFontSize; }
         uint16_t        GetFontHeight();
 
         void            SetEnable( bool on ) { fEnabled = on; }
-        void            DisablePermanently( void ) { fEnabled = false; fLockEnable = true; }
-        bool            IsEnabled( void ) { return fEnabled; }
+        void            DisablePermanently() { fEnabled = false; fLockEnable = true; }
+        bool            IsEnabled() { return fEnabled; }
 
         void            GetScreenSize( uint32_t *width, uint32_t *height );
 };

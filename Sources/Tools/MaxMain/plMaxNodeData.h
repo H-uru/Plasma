@@ -201,7 +201,7 @@ public:
         return *this; 
     }
     // Ditto
-    void            DeInit( void ) 
+    void            DeInit()
     { 
         fpKey = nil; 
         fpRoomKey = nil;
@@ -405,7 +405,7 @@ public:
 
     plPhysicalProps* GetPhysicalProps()                 { return &fPhysicalProps; }
 
-    hsTArray<int>   *GetAlphaHackLayersCache( void )                        { return fCachedAlphaHackLayerCounts; }
+    hsTArray<int>   *GetAlphaHackLayersCache()                        { return fCachedAlphaHackLayerCounts; }
     void            SetAlphaHackLayersCache( hsTArray<int> *cache )         { fCachedAlphaHackLayerCounts = cache; }
     bool            GetOverrideHighLevelSDL()           { return MaxDatBF.CanBF(MaxDatBF.kOverrideHighLevelSDL); }
     void            SetOverrideHighLevelSDL(bool b)   { MaxDatBF.SetBF(b, MaxDatBF.kOverrideHighLevelSDL); }

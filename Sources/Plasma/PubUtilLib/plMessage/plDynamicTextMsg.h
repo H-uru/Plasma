@@ -119,8 +119,8 @@ public:
 
     // Commands
     void    ClearToColor( hsColorRGBA &c ) { fCmd |= kClear; fClearColor = c; }
-    void    Flush( void ) { fCmd |= kFlush; }
-    void    PurgeImage( void ) { fCmd |= kPurgeImage; }
+    void    Flush() { fCmd |= kFlush; }
+    void    PurgeImage() { fCmd |= kPurgeImage; }
 
     // The following are mutually exclusive commands 'cause they share some parameters
     void    SetTextColor( hsColorRGBA &c, bool blockRGB = false );

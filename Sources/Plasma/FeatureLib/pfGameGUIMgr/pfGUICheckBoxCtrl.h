@@ -67,7 +67,7 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor() const;    // As specified in plInputInterface.h
 
     public:
 
@@ -88,12 +88,12 @@ class pfGUICheckBoxCtrl : public pfGUIControlMod
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
 
         void        SetChecked( bool checked, bool immediate = false );
-        bool        IsChecked( void ) { return fChecked; }
+        bool        IsChecked() { return fChecked; }
 
         void DontPlaySounds() { fPlaySound = false; } // should the checkbox play sounds?
         
-        const hsTArray<plKey>   &GetAnimationKeys( void ) const { return fAnimationKeys; }
-        ST::string              GetAnimationName( void ) const { return fAnimName; }
+        const hsTArray<plKey>   &GetAnimationKeys() const { return fAnimationKeys; }
+        ST::string              GetAnimationName() const { return fAnimName; }
 
         enum SoundEvents
         {

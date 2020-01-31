@@ -113,7 +113,7 @@ class plSceneInputInterface : public plInputInterface
         void    ISetLastClicked( plKey obj, hsPoint3 hitPoint );
         void    IHalfFadeAvatar(bool out);
 
-        bool    IWorldPosMovedSinceLastLOSCheck( void );
+        bool    IWorldPosMovedSinceLastLOSCheck();
         void ClearClickableMap();
         void ISendOfferNotification(plKey& offeree, int ID, bool net);
         void IManageIgnoredAvatars(plKey& offeree, bool add);
@@ -127,9 +127,9 @@ class plSceneInputInterface : public plInputInterface
         static bool     fShowLOS;
 
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool    HasInterestingCursorID( void ) const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
-        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority; }
-        virtual uint32_t  GetCurrentCursorID( void ) const {return fCurrentCursor;}
+        virtual bool    HasInterestingCursorID() const { return ( fCurrentCursor != kNullCursor ) ? true : false; }
+        virtual uint32_t  GetPriorityLevel() const { return kSceneInteractionPriority; }
+        virtual uint32_t  GetCurrentCursorID() const {return fCurrentCursor;}
         uint32_t          SetCurrentCursorID(uint32_t id);
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
         void            RequestAvatarTurnToPointLOS();
@@ -137,12 +137,12 @@ class plSceneInputInterface : public plInputInterface
         virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown( void );
+        virtual void    Shutdown();
         
         virtual void ResetClickableState();
 
-        plKey           GetCurrMousedAvatar( void ) const { if( fCurrClickIsAvatar ) return fCurrentClickable; else return nil; }
-        static plSceneInputInterface *GetInstance( void ) { return fInstance; }     
+        plKey           GetCurrMousedAvatar() const { if( fCurrClickIsAvatar ) return fCurrentClickable; else return nil; }
+        static plSceneInputInterface *GetInstance() { return fInstance; }
 };
 
 

@@ -88,14 +88,14 @@ class plCommonObjLib
         void            AddObject( hsKeyedObject *object );
         bool            RemoveObjectAndKey( plKey &key );
         hsKeyedObject   *FindObject( const ST::string &name, uint16_t classType = (uint16_t)-1 );
-        void            ClearObjectList( void );
+        void            ClearObjectList();
 
         /// THIS IS YOUR VIRTUAL HERE. Override this to define which objects you collect
         virtual bool    IsInteresting( const plKey &objectKey ) { return false; }
 
 
         /// Static functions for use only by the export resManager
-        static uint32_t           GetNumLibs( void );
+        static uint32_t           GetNumLibs();
         static plCommonObjLib   *GetLib( uint32_t idx );
 
 

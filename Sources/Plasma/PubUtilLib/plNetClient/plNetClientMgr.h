@@ -281,7 +281,7 @@ public:
     void SetPingServer(uint8_t serverType) { fPingServerType = serverType; }
     
     // getters
-    uint32_t            GetPlayerID( void ) const;
+    uint32_t            GetPlayerID() const;
     ST::string          GetPlayerName( const plKey avKey=nil ) const;
     ST::string          GetPlayerNameById (unsigned playerId) const;
     unsigned            GetPlayerIdByName(const ST::string & name) const;

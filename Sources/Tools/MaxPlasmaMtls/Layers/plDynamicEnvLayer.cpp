@@ -411,7 +411,7 @@ DWORD plDynamicEnvLayer::GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker
 //  must *ALSO* be unique. Hence why this function is called by
 //  hsMaterialConverter::IMustBeUniqueMaterial().
 
-bool    plDynamicEnvLayer::MustBeUnique( void )
+bool    plDynamicEnvLayer::MustBeUnique()
 {
     if( fBitmapPB->GetINode( kBmpAnchorNode ) == nil )
         return true;

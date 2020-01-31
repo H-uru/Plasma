@@ -73,9 +73,9 @@ public:
     CLASSNAME_REGISTER( plTransitionMsg );
     GETINTERFACE_ANY( plTransitionMsg, plMessageWithCallbacks );
 
-    uint32_t GetEffect( void ) const { return fEffect; }
-    float    GetLengthInSecs( void ) const { return fLengthInSecs; }
-    bool     GetHoldState( void ) const { return fHoldUntilNext; }
+    uint32_t GetEffect() const { return fEffect; }
+    float    GetLengthInSecs() const { return fLengthInSecs; }
+    bool     GetHoldState() const { return fHoldUntilNext; }
 
     virtual void Read(hsStream* s, hsResMgr* mgr) 
     { 

@@ -70,7 +70,7 @@ class plRTProjDirLightDesc : public ClassDesc2
 
         static plRTProjDirLightDesc fStaticDesc;
 
-        static ClassDesc2   *GetDesc( void )        { return &fStaticDesc; }
+        static ClassDesc2   *GetDesc()        { return &fStaticDesc; }
 };
 
 #endif  // _plRTProjDirLightClassDesc_h

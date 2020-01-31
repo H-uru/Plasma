@@ -125,20 +125,20 @@ public:
     bool operator!=(const pyVaultNode &vaultNode) const { return !(vaultNode == *this); }
 
     // public getters
-    uint32_t  GetID( void );
-    virtual uint32_t  GetType( void );
-    uint32_t  GetPermissions( void );
-    uint32_t  GetOwnerNodeID( void );
-    PyObject* GetOwnerNode( void ); // returns pyVaultPlayerInfoNode
-    uint32_t  GetGroupNodeID( void );
-    PyObject* GetGroupNode( void ); // returns pyVaultNode
-    uint32_t GetModifyTime( void );
-    uint32_t GetCreatorNodeID( void );
-    PyObject* GetCreatorNode( void ); // returns pyVaultPlayerInfoNode
-    uint32_t GetCreateTime( void );
-    uint32_t GetCreateAgeTime( void );
+    uint32_t  GetID();
+    virtual uint32_t  GetType();
+    uint32_t  GetPermissions();
+    uint32_t  GetOwnerNodeID();
+    PyObject* GetOwnerNode(); // returns pyVaultPlayerInfoNode
+    uint32_t  GetGroupNodeID();
+    PyObject* GetGroupNode(); // returns pyVaultNode
+    uint32_t GetModifyTime();
+    uint32_t GetCreatorNodeID();
+    PyObject* GetCreatorNode(); // returns pyVaultPlayerInfoNode
+    uint32_t GetCreateTime();
+    uint32_t GetCreateAgeTime();
     ST::string GetCreateAgeName() const;
-    plUUID    GetCreateAgeGuid(void) const;
+    plUUID    GetCreateAgeGuid() const;
     PyObject* GetCreateAgeCoords ();
 
     // public setters
@@ -160,7 +160,7 @@ public:
     // Remove child node
     bool RemoveNode( pyVaultNode& pynode, PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Remove all child nodes
-    void RemoveAllNodes( void );
+    void RemoveAllNodes();
     // Add/Save this node to vault
     void Save( PyObject* cbObject=nil, uint32_t cbContext=0 );
     // Save this node and all child nodes that need saving.
@@ -184,7 +184,7 @@ public:
     virtual int GetChildNodeCount();
 
     // Get the client ID from my Vault client.
-    uint32_t  GetClientID( void );
+    uint32_t  GetClientID();
 
     // all the upcasting stuff...
     PyObject* UpcastToFolderNode(); // returns pyVaultFolderNode

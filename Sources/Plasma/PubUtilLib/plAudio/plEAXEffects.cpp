@@ -88,7 +88,7 @@ static EAXSet           s_EAXSet;
 
 //// GetInstance /////////////////////////////////////////////////////////////
 
-plEAXListener   &plEAXListener::GetInstance( void )
+plEAXListener   &plEAXListener::GetInstance()
 {
     static plEAXListener    instance;
     return instance;
@@ -109,7 +109,7 @@ plEAXListener::~plEAXListener()
 
 //// Init ////////////////////////////////////////////////////////////////////
 
-bool    plEAXListener::Init( void )
+bool    plEAXListener::Init()
 {
 #ifdef EAX_SDK_AVAILABLE
     if( fInited )
@@ -175,7 +175,7 @@ bool    plEAXListener::Init( void )
 
 //// Shutdown ////////////////////////////////////////////////////////////////
 
-void    plEAXListener::Shutdown( void )
+void    plEAXListener::Shutdown()
 {
     if( !fInited )
         return;
@@ -231,7 +231,7 @@ bool plEAXSource::GetSourceEAXProperty(unsigned source, GUID guid, unsigned long
 
 //// IRelease ////////////////////////////////////////////////////////////////
 
-void    plEAXListener::IRelease( void )
+void    plEAXListener::IRelease()
 {
     fInited = false;
 }
@@ -283,7 +283,7 @@ void    plEAXListener::IMuteProperties( EAXREVERBPROPERTIES *props, float percen
 //  Clears the cache settings used to speed up ProcessMods(). Call whenever
 //  the list of mods changed.
 
-void    plEAXListener::ClearProcessCache( void )
+void    plEAXListener::ClearProcessCache()
 {
     fLastBigRegion = nil;
     fLastModCount = -1;
@@ -608,7 +608,7 @@ void    plEAXSourceSettings::IRecalcSofts( uint8_t whichOnes )
 //// Source Soft Settings ////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-void    plEAXSourceSoftSettings::Reset( void )
+void    plEAXSourceSoftSettings::Reset()
 {
     fOcclusion = 0;
     fOcclusionLFRatio = 0.25f;
@@ -663,12 +663,12 @@ void    plEAXSource::Init( plDSoundBuffer *parent )
     SetFrom( &defaultParams, parent->GetSource() );
 }
 
-void    plEAXSource::Release( void )
+void    plEAXSource::Release()
 {
     fInit = false;
 }
 
-bool    plEAXSource::IsValid( void ) const
+bool    plEAXSource::IsValid() const
 {
     return true;
 }

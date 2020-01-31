@@ -82,7 +82,7 @@ class plTransitionMgr : public hsKeyedObject
         void    IStartFadeIn( float lengthInSecs, uint8_t effect = kFadeIn );
         void    IStartFadeOut( float lengthInSecs, uint8_t effect = kFadeOut );
 
-        void    ICreatePlate( void );
+        void    ICreatePlate();
 
         void    IStop( bool aboutToStartAgain = false );
 
@@ -96,7 +96,7 @@ class plTransitionMgr : public hsKeyedObject
         CLASSNAME_REGISTER( plTransitionMgr );
         GETINTERFACE_ANY( plTransitionMgr, hsKeyedObject );
 
-        void    Init( void );
+        void    Init();
 
         virtual bool MsgReceive( plMessage* msg );
 };

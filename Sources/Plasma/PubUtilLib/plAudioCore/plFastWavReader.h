@@ -64,19 +64,19 @@ public:
     plFastWAV( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
     virtual ~plFastWAV();
 
-    virtual plWAVHeader &GetHeader( void );
+    virtual plWAVHeader &GetHeader();
 
     virtual void    Open();
-    virtual void    Close( void );
+    virtual void    Close();
 
-    virtual uint32_t  GetDataSize( void ) { return fDataSize / fChannelAdjust; }
-    virtual float   GetLengthInSecs( void );
+    virtual uint32_t  GetDataSize() { return fDataSize / fChannelAdjust; }
+    virtual float   GetLengthInSecs();
 
     virtual bool    SetPosition( uint32_t numBytes );
     virtual bool    Read( uint32_t numBytes, void *buffer );
-    virtual uint32_t  NumBytesLeft( void );
+    virtual uint32_t  NumBytesLeft();
 
-    virtual bool    IsValid( void ) { return ( fFileHandle != nil ) ? true : false; }
+    virtual bool    IsValid() { return ( fFileHandle != nil ) ? true : false; }
 
 protected:
     enum

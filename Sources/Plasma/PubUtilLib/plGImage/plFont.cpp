@@ -181,7 +181,7 @@ void    plFont::SetRenderWrapping( int16_t x, int16_t y, int16_t width, int16_t 
     SetRenderClipRect( x, y, width, height );
 }
 
-void    plFont::ICalcFontAscent( void )
+void    plFont::ICalcFontAscent()
 {
     uint32_t  i;
 
@@ -1582,28 +1582,28 @@ class plLineParser
 
         ~plLineParser() { }
 
-        const char  *GetKeyword( void )
+        const char  *GetKeyword()
         {
             return IGetNextToken();
         }
 
-        const char  *GetString( void )
+        const char  *GetString()
         {
             IAdvanceToNextToken();
             return IGetNextToken( sQuoteTester );
         }
 
-        const char  *GetKeywordNoDashes( void )
+        const char  *GetKeywordNoDashes()
         {
             return IGetNextToken( sDashTester );
         }
 
-        int32_t       GetInt( void )
+        int32_t       GetInt()
         {
             return atoi( IGetNextToken() );
         }
 
-        float    GetFloat( void )
+        float    GetFloat()
         {
             return (float)atof( IGetNextToken() );
         }
@@ -1678,7 +1678,7 @@ class plBDFCharsParser : public plBDFSectParser
         bool                fDoingData;
         uint32_t              fBytesWide, fBMapStride;
 
-        inline void IReset( void )
+        inline void IReset()
         {
             fBitmap = nil;
             fCharacter = nil;

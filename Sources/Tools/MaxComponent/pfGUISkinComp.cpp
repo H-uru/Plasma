@@ -125,7 +125,7 @@ void    pfGUISkinEditProc::IJustDrawOneRect( int whichElement, IParamBlock2 *pb,
     SetROP2( hDC, rop2 );
 }
 
-void    pfGUISkinEditProc::IRefreshDblBuffer( void )
+void    pfGUISkinEditProc::IRefreshDblBuffer()
 {
     // Image buffer is where we keep our resized image. Dbl buffer is where we draw our bounds
     if( fDblDC == nil )
@@ -174,7 +174,7 @@ void    pfGUISkinEditProc::IRefreshDblBuffer( void )
     }
 }
 
-void    pfGUISkinEditProc::IRefreshImageBuffer( void )
+void    pfGUISkinEditProc::IRefreshImageBuffer()
 {
     IInitDblBuffer();
 
@@ -215,7 +215,7 @@ void    pfGUISkinEditProc::IRefreshImageBuffer( void )
     IRefreshDblBuffer();
 }
 
-void    pfGUISkinEditProc::IInitDblBuffer( void )
+void    pfGUISkinEditProc::IInitDblBuffer()
 {
     if( fDblDC == NULL )
     {
@@ -254,7 +254,7 @@ void    pfGUISkinEditProc::IInitDblBuffer( void )
     }
 }
 
-void    pfGUISkinEditProc::IKillDblBuffer( void )
+void    pfGUISkinEditProc::IKillDblBuffer()
 {
     if( fDblDC != NULL )
     {
@@ -274,7 +274,7 @@ void    pfGUISkinEditProc::IKillDblBuffer( void )
     fDblBitmap = fImageBitmap = nil;
 }
 
-void    pfGUISkinEditProc::ISetScrollRanges( void )
+void    pfGUISkinEditProc::ISetScrollRanges()
 {
     SCROLLINFO  info;
 

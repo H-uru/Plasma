@@ -80,12 +80,12 @@ plFontCache::~plFontCache()
     fInstance = nil;
 }
 
-plFontCache &plFontCache::GetInstance( void )
+plFontCache &plFontCache::GetInstance()
 {
     return *fInstance;
 }
 
-void    plFontCache::Clear( void )
+void    plFontCache::Clear()
 {
 }
 
@@ -146,7 +146,7 @@ void plFontCache::LoadCustomFonts( const plFileName &dir )
     ILoadCustomFonts();
 }
 
-void plFontCache::ILoadCustomFonts( void )
+void plFontCache::ILoadCustomFonts()
 {
     if (!fCustFontDir.IsValid())
         return;

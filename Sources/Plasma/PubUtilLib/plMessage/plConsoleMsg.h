@@ -75,8 +75,8 @@ public:
     CLASSNAME_REGISTER( plConsoleMsg );
     GETINTERFACE_ANY( plConsoleMsg, plMessage );
 
-    uint32_t      GetCmd( void ) const { return fCmd; }
-    const char  *GetString( void ) const { return fString; };
+    uint32_t      GetCmd() const { return fCmd; }
+    const char  *GetString() const { return fString; };
     
     void SetCmd (uint32_t cmd) { fCmd = cmd; }
     void SetString (const char str[]) { free(fString); fString = hsStrcpy(str); }

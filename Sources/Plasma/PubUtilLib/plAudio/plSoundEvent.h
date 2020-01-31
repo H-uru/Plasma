@@ -76,12 +76,12 @@ public:
     void    AddCallback( plEventCallbackMsg *msg );
     bool    RemoveCallback( plEventCallbackMsg *msg );
 
-    uint32_t  GetNumCallbacks( void ) const;
-    int     GetType( void ) const;
+    uint32_t  GetNumCallbacks() const;
+    int     GetType() const;
     void    SetType( Types type );
-    uint32_t  GetTime( void ) const;
+    uint32_t  GetTime() const;
 
-    void    SendCallbacks( void );
+    void    SendCallbacks();
 
     static Types    GetTypeFromCallbackMsg( plEventCallbackMsg *msg );
 

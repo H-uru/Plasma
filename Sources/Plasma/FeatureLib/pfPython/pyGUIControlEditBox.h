@@ -75,13 +75,13 @@ public:
     static bool IsGUIControlEditBox(pyKey& gckey);
 
     virtual void    SetBufferSize( uint32_t size );
-    virtual std::string GetBuffer( void );
-    virtual std::wstring GetBufferW( void );
-    virtual void    ClearBuffer( void );
+    virtual std::string GetBuffer();
+    virtual std::wstring GetBufferW();
+    virtual void    ClearBuffer();
     virtual void    SetText( const char *str );
     virtual void    SetTextW( const wchar_t *str );
-    virtual void    SetCursorToHome(void);
-    virtual void    SetCursorToEnd(void);
+    virtual void    SetCursorToHome();
+    virtual void    SetCursorToEnd();
     virtual void    SetColor(pyColor& forecolor, pyColor& backcolor);
     virtual void    SetSelColor(pyColor& forecolor, pyColor& backcolor);
 

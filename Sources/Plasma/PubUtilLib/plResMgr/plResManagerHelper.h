@@ -115,8 +115,8 @@ class plResManagerHelper : public hsKeyedObject
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        void    Init( void );
-        void    Shutdown( void );
+        void    Init();
+        void    Shutdown();
 
         void    LoadAndHoldPageKeys( plRegistryPageNode *page );
 
@@ -126,7 +126,7 @@ class plResManagerHelper : public hsKeyedObject
         void    SetInShutdown(bool b) { fInShutdown = b; }
         bool    GetInShutdown() const { return fInShutdown; }
 
-        static plResManagerHelper   *GetInstance( void ) { return fInstance; }
+        static plResManagerHelper   *GetInstance() { return fInstance; }
 };
 
 //// Reffer Class ////////////////////////////////////////////////////////////

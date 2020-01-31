@@ -71,7 +71,7 @@ class plGUIDialogComponent : public plComponent
         plKey           fProcReceiver;  // non-nil means to send out notifys as our proc
         bool            fSeqNumValidated;
 
-        virtual pfGUIDialogMod  *IMakeDialog( void );
+        virtual pfGUIDialogMod  *IMakeDialog();
 
     public:
         // I believe booleans should always default to false, hence why this is dontInit instead of init. uint8_t me.
@@ -83,11 +83,11 @@ class plGUIDialogComponent : public plComponent
         bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
         bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg)     { fProcReceiver = nil; return true;}
 
-        pfGUIDialogMod  *GetModifier( void ) { return fDialogMod; }
+        pfGUIDialogMod  *GetModifier() { return fDialogMod; }
 
         // For those too lazy to get it from the modifier
         // ... or can't trust that just because you have a modifier doesn't mean that you have a key :-) :-)
-        plKey           GetModifierKey( void );
+        plKey           GetModifierKey();
 
         // Set this to have the dialog send out notify messages on events. Do it before Convert(). Returns false if it failed.
         bool            SetNotifyReceiver( plKey key );
@@ -125,10 +125,10 @@ class plGUIControlBase : public plComponent
 
         pfGUIDialogMod  *IGetDialogMod( plMaxNode *node );
 
-        virtual pfGUIControlMod *IGetNewControl( void ) = 0;
-        virtual bool            IHasProcRollout( void ) { return true; }
-        virtual bool            INeedsDynamicText( void ) { return false; }
-        virtual bool            ICanHaveProxy( void ) { return false; }
+        virtual pfGUIControlMod *IGetNewControl() = 0;
+        virtual bool            IHasProcRollout() { return true; }
+        virtual bool            INeedsDynamicText() { return false; }
+        virtual bool            ICanHaveProxy() { return false; }
 
         const char              *ISetSoundIndex( ParamID checkBoxID, ParamID sndCompID, uint8_t guiCtrlEvent, plMaxNode *node );
 
@@ -150,7 +150,7 @@ class plGUIControlBase : public plComponent
 
         virtual void    CollectNonDrawables( INodeTab &nonDrawables );
 
-        virtual uint32_t  GetNumMtls( void ) const { return 0; }
+        virtual uint32_t  GetNumMtls() const { return 0; }
         virtual Texmap  *GetMtl( uint32_t idx ) { return nil; }
 
         // Given a maxNode that is really a component, will return a pointer to the GUI control modifier
@@ -195,7 +195,7 @@ class plGUIMenuComponent : public plGUIDialogComponent
 {
     protected:
 
-        virtual pfGUIDialogMod  *IMakeDialog( void );
+        virtual pfGUIDialogMod  *IMakeDialog();
 
         pfGUIPopUpMenu      *fConvertedMenu;
         plKey               fConvertedNode;
@@ -209,7 +209,7 @@ class plGUIMenuComponent : public plGUIDialogComponent
         virtual bool Convert( plMaxNode *node, plErrorMsg *pErrMsg );
         virtual bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-        plKey   GetConvertedMenuKey( void ) const;
+        plKey   GetConvertedMenuKey() const;
 
         enum
         {

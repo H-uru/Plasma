@@ -67,7 +67,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        bool            ICalcAnimTimes( void );
+        bool            ICalcAnimTimes();
 
         const uint32_t  fStopSoundTimer;
 

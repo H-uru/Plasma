@@ -75,8 +75,8 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual void    IUpdate( void );
+        virtual void    IPostSetUpDynTextMap();
+        virtual void    IUpdate();
 
     public:
         enum
@@ -107,16 +107,16 @@ class pfGUIEditBoxMod : public pfGUIControlMod
 
         void    SetBufferSize( uint32_t size );
 
-        std::string GetBuffer( void );
-        std::wstring    GetBufferW( void ) { return fBuffer; }
-        void        ClearBuffer( void );
+        std::string GetBuffer();
+        std::wstring    GetBufferW() { return fBuffer; }
+        void        ClearBuffer();
         void        SetText( const char *str );
         void        SetText( const wchar_t *str );
 
-        void        SetCursorToHome( void );
-        void        SetCursorToEnd( void );
+        void        SetCursorToHome();
+        void        SetCursorToEnd();
 
-        bool        WasEscaped( void ) { bool e = fEscapedFlag; fEscapedFlag = false; return e; }
+        bool        WasEscaped() { bool e = fEscapedFlag; fEscapedFlag = false; return e; }
 
         void        SetSpecialCaptureKeyMode(bool state) { fSpecialCaptureKeyEventMode = state; }
         uint32_t      GetLastKeyCaptured() { return (uint32_t)fSavedKey; }

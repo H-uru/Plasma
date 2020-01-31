@@ -75,19 +75,19 @@ class plDebugInputInterface : public plInputInterface
         virtual ~plDebugInputInterface();
 
         // Always return false, 
-        virtual bool    HasInterestingCursorID( void ) const { return false; }
-        virtual uint32_t  GetPriorityLevel( void ) const { return kDebugCmdPrioity; }
-        virtual void    RestoreDefaultKeyMappings( void );
-        virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
+        virtual bool    HasInterestingCursorID() const { return false; }
+        virtual uint32_t  GetPriorityLevel() const { return kDebugCmdPrioity; }
+        virtual void    RestoreDefaultKeyMappings();
+        virtual uint32_t  GetCurrentCursorID() const { return 0; }
 
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
 
         virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown( void );
+        virtual void    Shutdown();
 
-        static plDebugInputInterface    *GetInstance( void ) { return fInstance; }
+        static plDebugInputInterface    *GetInstance() { return fInstance; }
 };
 
 

@@ -84,12 +84,12 @@ hsRef<RelVaultNode> pyVaultNodeRef::GetChildNode() const
 
 ///////////////////////////////////////////////////////////////////////////
 
-PyObject* pyVaultNodeRef::GetParent ( void )
+PyObject* pyVaultNodeRef::GetParent ()
 {
     return pyVaultNode::New(fParent);
 }
 
-PyObject* pyVaultNodeRef::GetChild( void )
+PyObject* pyVaultNodeRef::GetChild()
 {
     return pyVaultNode::New(fChild);
 }

@@ -145,7 +145,7 @@ void plGBufferGroup::DirtyIndexBuffer(size_t i)
 
 //// TidyUp ///////////////////////////////////////////////////////////////////
 
-void    plGBufferGroup::TidyUp( void )
+void    plGBufferGroup::TidyUp()
 {
 /*  if( fVertBuffStorage.GetCount() == 0 && fNumVerts > 0 )
         return;     // Already tidy'd!
@@ -186,7 +186,7 @@ void plGBufferGroup::PurgeIndexBuffer(uint32_t idx)
 
 //// CleanUp //////////////////////////////////////////////////////////////////
 
-void    plGBufferGroup::CleanUp( void )
+void    plGBufferGroup::CleanUp()
 {
     // Clean up the storage
     for (size_t i = 0; i < fVertBuffSizes.size(); ++i)
@@ -638,7 +638,7 @@ void    plGBufferGroup::DeleteIndicesFromStorage( uint32_t which, uint32_t start
 //// GetNumPrimaryVertsLeft ///////////////////////////////////////////////////
 //  Base on the cells, so we can take instanced cells into account
 
-uint32_t  plGBufferGroup::GetNumPrimaryVertsLeft( void ) const
+uint32_t  plGBufferGroup::GetNumPrimaryVertsLeft() const
 {
     return GetNumVertsLeft( 0 );
 }

@@ -114,7 +114,7 @@ void pyVaultChronicleNode::Chronicle_SetType( uint32_t type )
     chron.SetEntryType(type);
 }
 
-uint32_t pyVaultChronicleNode::Chronicle_GetType( void )
+uint32_t pyVaultChronicleNode::Chronicle_GetType()
 {
     if (!fNode)
         return 0;

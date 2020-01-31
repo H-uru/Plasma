@@ -109,12 +109,12 @@ void    plBitmapCreator::Init( bool save, plErrorMsg *msg )
     fErrorMsg = msg;
 }
 
-void    plBitmapCreator::DeInit( void )
+void    plBitmapCreator::DeInit()
 {
     CleanUpMaps();
 }
 
-void    plBitmapCreator::CleanUpMaps( void )
+void    plBitmapCreator::CleanUpMaps()
 {
     sCommonBitmapLib.ClearObjectList();
 }

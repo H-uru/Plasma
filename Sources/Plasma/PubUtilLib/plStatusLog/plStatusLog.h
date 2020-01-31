@@ -97,7 +97,7 @@ class plStatusLog : public plLog
 
         plStatusLog **fDisplayPointer;      // Inside pfConsole
         
-        void    IUnlink( void );
+        void    IUnlink();
         void    ILink( plStatusLog **back );
 
         bool    IAddLine( const char *line, int32_t count, uint32_t color );
@@ -105,9 +105,9 @@ class plStatusLog : public plLog
         void    IParseFileName(plFileName &fileNoExt, ST::string &ext) const;
         static plStatusLog* IFindLog(const plFileName& filename);
 
-        void    IInit( void );
-        void    IFini( void );
-        bool    IReOpen( void );
+        void    IInit();
+        void    IFini();
+        bool    IReOpen();
 
         plStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags );
 
@@ -210,7 +210,7 @@ class plStatusLog : public plLog
             return log->AddLine(color, format, std::forward<_Args>(args)...);
         }
 
-        void    Clear( void );
+        void    Clear();
 
         // Clear and open a new file.
         void    Bounce( uint32_t flags=0 );
@@ -252,14 +252,14 @@ class plStatusLogMgr
 
         ~plStatusLogMgr();
 
-        static plStatusLogMgr   &GetInstance( void );
+        static plStatusLogMgr   &GetInstance();
 
-        void        Draw( void );
+        void        Draw();
 
         plStatusLog *CreateStatusLog( uint8_t numDisplayLines, const plFileName &filename, uint32_t flags = plStatusLog::kFilledBackground );
         void        ToggleStatusLog( plStatusLog *logToDisplay );
-        void        NextStatusLog( void );
-        void        PrevStatusLog( void );
+        void        NextStatusLog();
+        void        PrevStatusLog();
         void        SetCurrStatusLog( const plFileName &logName );
         plStatusLog *FindLog( const plFileName &filename, bool createIfNotFound = true );
 

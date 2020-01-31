@@ -55,7 +55,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyAgeInfoStruct.h"
 #include "pyAgeLinkStruct.h"
 
-bool pyNetLinkingMgr::IsEnabled( void ) const
+bool pyNetLinkingMgr::IsEnabled() const
 {
     return plNetLinkingMgr::GetInstance()->IsEnabled();
 }

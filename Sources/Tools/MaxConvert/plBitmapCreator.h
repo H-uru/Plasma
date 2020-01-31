@@ -103,8 +103,8 @@ class plBitmapCreator
         plMipmap    *CreateBlankMipmap( uint32_t width, uint32_t height, unsigned config, uint8_t numLevels, const ST::string &keyName, const plLocation &keyLocation );
 
         void    Init( bool save, plErrorMsg *msg );
-        void    DeInit( void );
-        void    CleanUpMaps( void );
+        void    DeInit();
+        void    CleanUpMaps();
 
         ~plBitmapCreator();
 

@@ -346,22 +346,22 @@ class pfJournalDlgProc : public pfGUIDialogProc
         }
 
         // Called on dialog init (i.e. first showing, before OnShow() is called), only ever called once
-        virtual void    OnInit( void )
+        virtual void    OnInit()
         {
         }
 
         // Called before the dialog is shown, always after OnInit()
-        virtual void    OnShow( void )
+        virtual void    OnShow()
         {
         }
 
         // Called before the dialog is hidden
-        virtual void    OnHide( void )
+        virtual void    OnHide()
         {
         }
 
         // Called on the dialog's destructor, before it's unregistered with the game GUI manager
-        virtual void    OnDestroy( void )
+        virtual void    OnDestroy()
         {
         }
 
@@ -1137,14 +1137,14 @@ void pfBookData::EnableEditGUI(bool enable/* =true */)
 //pfJournalBook *pfJournalBook::fInstance = nil;
 std::map<ST::string,pfBookData*> pfJournalBook::fBookGUIs;
 
-void    pfJournalBook::SingletonInit( void )
+void    pfJournalBook::SingletonInit()
 {
     fBookGUIs["BkBook"] = new pfBookData(); // load the default book data object
     hsgResMgr::ResMgr()->NewKey("BkBook",fBookGUIs["BkBook"],pfGameGUIMgr::GetInstance()->GetKey()->GetUoid().GetLocation());
     fBookGUIs["BkBook"]->LoadGUI();
 }
 
-void    pfJournalBook::SingletonShutdown( void )
+void    pfJournalBook::SingletonShutdown()
 {
     std::map<ST::string,pfBookData*>::iterator i = fBookGUIs.begin();
     while (i != fBookGUIs.end())
@@ -1379,7 +1379,7 @@ void    pfJournalBook::IFinishShow( bool startOpened )
 
 //// Hide ////////////////////////////////////////////////////////////////////
 
-void    pfJournalBook::Hide( void )
+void    pfJournalBook::Hide()
 {
     if (fBookGUIs[fCurBookGUI])
     {
@@ -1429,7 +1429,7 @@ void    pfJournalBook::Open( uint32_t startingPage /*= 0 */)
 //// Close ///////////////////////////////////////////////////////////////////
 // Closes the book.
 
-void    pfJournalBook::Close( void )
+void    pfJournalBook::Close()
 {
     // don't allow them to close the book if the book started open
     if( !fBookGUIs[fCurBookGUI]->StartedOpen() && fBookGUIs[fCurBookGUI]->CurrentlyOpen() )
@@ -1442,7 +1442,7 @@ void    pfJournalBook::Close( void )
 //// CloseAndHide ////////////////////////////////////////////////////////////
 // Closes the book, then calls Hide() once it's done closing
 
-void    pfJournalBook::CloseAndHide( void )
+void    pfJournalBook::CloseAndHide()
 {
     // if they start with the book open, then don't allow them to close it
     if( !fBookGUIs[fCurBookGUI]->StartedOpen() && fBookGUIs[fCurBookGUI]->CurrentlyOpen() )
@@ -1508,7 +1508,7 @@ void    pfJournalBook::ITriggerCloseWithNotify( bool closeNotOpen, bool immediat
 //// NextPage ////////////////////////////////////////////////////////////////
 // Advances forward one page
 
-void    pfJournalBook::NextPage( void )
+void    pfJournalBook::NextPage()
 {
     if( (fBookGUIs[fCurBookGUI]->CurrentlyTurning()) || (!fAllowTurning) || (!fAreWeShowing) )
         return;
@@ -1565,7 +1565,7 @@ void    pfJournalBook::NextPage( void )
 //// PreviousPage ////////////////////////////////////////////////////////////
 // Same, only back
 
-void    pfJournalBook::PreviousPage( void )
+void    pfJournalBook::PreviousPage()
 {
     if(( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )||( !fAllowTurning ))
         return;
@@ -1670,7 +1670,7 @@ int32_t   pfJournalBook::IFindCurrVisibleLink( bool rightNotLeft, bool hoverNotU
 
 //// IHandleLeftSideClick ////////////////////////////////////////////////////
 
-void    pfJournalBook::IHandleLeftSideClick( void )
+void    pfJournalBook::IHandleLeftSideClick()
 {
     if( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )
         return;
@@ -1689,7 +1689,7 @@ void    pfJournalBook::IHandleLeftSideClick( void )
     PreviousPage();
 }
 
-void    pfJournalBook::IHandleRightSideClick( void )
+void    pfJournalBook::IHandleRightSideClick()
 {
     if( fBookGUIs[fCurBookGUI]->CurrentlyTurning() )
         return;
@@ -1768,7 +1768,7 @@ void    pfJournalBook::SetEditable(bool editable)
 //// ForceCacheCalculations //////////////////////////////////////////////////
 // Just forces a full calc of the cached info
 
-void    pfJournalBook::ForceCacheCalculations( void )
+void    pfJournalBook::ForceCacheCalculations()
 {
     // Make sure our page starts are up-to-snuff, at least to this point
     IRecalcPageStarts( -1 );
@@ -2327,7 +2327,7 @@ bool    pfJournalBook::IGetNextOption( const wchar_t *&string, wchar_t *name, wc
     return true;
 }
 
-void    pfJournalBook::IFreeSource( void )
+void    pfJournalBook::IFreeSource()
 {
     uint32_t i;
     
@@ -3281,7 +3281,7 @@ void    pfJournalBook::IFindFontProps( uint32_t chunkIdx, ST::string &face, uint
 //// IFindLastAlignment //////////////////////////////////////////////////////
 // Find the last paragraph chunk and thus the last par alignment settings
 
-uint8_t   pfJournalBook::IFindLastAlignment( void ) const
+uint8_t   pfJournalBook::IFindLastAlignment() const
 {
     int32_t idx;
 

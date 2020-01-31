@@ -83,7 +83,7 @@ public:
     void Chronicle_SetValue( const char * text );
     ST::string Chronicle_GetValue() const;
     void Chronicle_SetType( uint32_t type );
-    uint32_t Chronicle_GetType( void );
+    uint32_t Chronicle_GetType();
 };
 
 #endif // _pyVaultChronicleNode_h_

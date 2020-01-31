@@ -191,7 +191,7 @@ class plGeometrySpan
         ~plGeometrySpan();
 
         /// UV stuff
-        uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
+        uint8_t   GetNumUVs() const { return ( fFormat & kUVCountMask ); }
         void    SetNumUVs( uint8_t numUVs ) 
         {
             hsAssert( numUVs < kMaxNumUVChannels, "Invalid UV count to plGeometrySpan" );
@@ -220,7 +220,7 @@ class plGeometrySpan
         void    AddVertexArray( uint32_t count, hsPoint3 *positions, hsVector3 *normals, uint32_t *colors, hsPoint3 *uvws=nil, int uvwsPerVtx=0 );
         void    AddIndexArray( uint32_t count, uint16_t *indices );
 
-        void    EndCreate( void );
+        void    EndCreate();
 
 
         /// Manipulation--currently only used for applying static lighting, which of course needs individual vertices
@@ -235,7 +235,7 @@ class plGeometrySpan
         void    StuffVertex( uint32_t index, hsColorRGBA *color, hsColorRGBA *specColor = nil );
 
         // Clear out the buffers
-        void            ClearBuffers( void );
+        void            ClearBuffers();
 
         // Duplicate this span from a given span
         void            CopyFrom( const plGeometrySpan *source );
@@ -276,7 +276,7 @@ class plGeometrySpan
 
         void        IUnShareData();
         void        IDuplicateUniqueData( const plGeometrySpan *source );
-        void        IClearMembers( void );
+        void        IClearMembers();
 
         // Please don't yell at me. We can't write out the instanceRef pointers, and we can't write
         // out keys because we're not keyed objects, and we can't be keyed objects because we need
@@ -302,7 +302,7 @@ class plGeometrySpan
         // the notes on IGetInstanceGroup().
         static uint32_t   fHighestReadInstanceGroup;
 
-        static uint32_t   IAllocateNewGroupID( void );
+        static uint32_t   IAllocateNewGroupID();
         static void     IClearGroupID( uint32_t groupID );
 
         static hsTArray<plGeometrySpan *>   *IGetInstanceGroup( uint32_t groupID, uint32_t expectedCount );

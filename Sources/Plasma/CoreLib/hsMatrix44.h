@@ -140,7 +140,7 @@ struct hsMatrix44 {
     
     hsPoint3*           MapPoints(long count, hsPoint3 points[]) const;
     
-    bool  IsIdentity(void);
+    bool  IsIdentity();
     void  NotIdentity() { fFlags &= ~kIsIdent; }
 
     bool operator==(const hsMatrix44& ss) const;

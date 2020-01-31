@@ -95,13 +95,13 @@ class pfGUIDynDisplayCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        uint32_t              GetNumMaps( void ) const { return fTextMaps.GetCount(); }
+        uint32_t              GetNumMaps() const { return fTextMaps.GetCount(); }
         plDynamicTextMap    *GetMap( uint32_t i ) const { return fTextMaps[ i ]; }
 
-        uint32_t              GetNumLayers( void ) const { return fLayers.GetCount(); }
+        uint32_t              GetNumLayers() const { return fLayers.GetCount(); }
         plLayerInterface    *GetLayer( uint32_t i ) const { return fLayers[ i ]; }
 
-        uint32_t              GetNumMaterials( void ) const { return fMaterials.GetCount(); }
+        uint32_t              GetNumMaterials() const { return fMaterials.GetCount(); }
         hsGMaterial         *GetMaterial( uint32_t i ) const { return fMaterials[ i ]; }
 
         // Export only

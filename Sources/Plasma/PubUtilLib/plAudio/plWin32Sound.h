@@ -94,7 +94,7 @@ public:
 
     // Selects a channel source from a multi-channel (stereo) file. Ignored if source is mono
     void            SetChannelSelect( ChannelSelect source ) { fChannelSelect = (uint8_t)source; }
-    virtual uint8_t   GetChannelSelect( void ) const { return fChannelSelect; }
+    virtual uint8_t   GetChannelSelect() const { return fChannelSelect; }
     
 protected:
 
@@ -112,16 +112,16 @@ protected:
     hsTArray<plSoundEvent *>    fSoundEvents;
 
     virtual void    ISetActualVolume(float v);
-    virtual void    IActuallyStop( void );
-    virtual bool    IActuallyPlaying( void ) { return fReallyPlaying; }
-    virtual void    IActuallyPlay( void );
-    virtual void    IFreeBuffers( void );
-    virtual bool    IActuallyLoaded( void ) { return ( fDSoundBuffer != nil ) ? true : false; }
+    virtual void    IActuallyStop();
+    virtual bool    IActuallyPlaying() { return fReallyPlaying; }
+    virtual void    IActuallyPlay();
+    virtual void    IFreeBuffers();
+    virtual bool    IActuallyLoaded() { return ( fDSoundBuffer != nil ) ? true : false; }
 
     // Override to make sure the buffer is available before the base class is called
-    virtual void    IRefreshParams( void );
+    virtual void    IRefreshParams();
 
-    virtual void    IDerivedActuallyPlay( void ) = 0;
+    virtual void    IDerivedActuallyPlay() = 0;
 
     virtual void    IAddCallback( plEventCallbackMsg *pMsg );
     virtual void    IRemoveCallback( plEventCallbackMsg *pMsg );

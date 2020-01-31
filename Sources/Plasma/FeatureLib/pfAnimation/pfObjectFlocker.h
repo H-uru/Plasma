@@ -121,7 +121,7 @@ private:
 
 public:
     // constructor
-    pfBasicProximityDatabase(void) {}
+    pfBasicProximityDatabase() {}
 
     // destructor
     virtual ~pfBasicProximityDatabase() {}
@@ -130,7 +130,7 @@ public:
     tokenType *MakeToken(T parentObject) {return new tokenType(parentObject, fGroup);}
 
     // return the number of tokens currently in the database
-    int Size(void) {return fGroup.size();}
+    int Size() {return fGroup.size();}
 };
 
 // A basic vehicle class that handles accelleration, braking, and turning

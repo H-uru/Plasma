@@ -155,7 +155,7 @@ const char * plServerGuid::AsString() const
     return str;
 }
 
-std::string plServerGuid::AsStdString( void ) const
+std::string plServerGuid::AsStdString() const
 {
     std::string str;
     str.resize(kGuidBytes*2+1);

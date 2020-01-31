@@ -89,7 +89,7 @@ void pyGUIControlValue::SetValue( float v )
     }
 }
 
-float pyGUIControlValue::GetMin( void )
+float pyGUIControlValue::GetMin()
 {
     if ( fGCkey )
     {
@@ -101,7 +101,7 @@ float pyGUIControlValue::GetMin( void )
     return 0.0;
 }
 
-float pyGUIControlValue::GetMax( void )
+float pyGUIControlValue::GetMax()
 {
     if ( fGCkey )
     {
@@ -113,7 +113,7 @@ float pyGUIControlValue::GetMax( void )
     return 0.0;
 }
 
-float pyGUIControlValue::GetStep( void )
+float pyGUIControlValue::GetStep()
 {
     if ( fGCkey )
     {

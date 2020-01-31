@@ -92,7 +92,7 @@ public:
     bool HasSlideSound(uint32_t against);
     bool HasImpactSound(uint32_t against);
 
-    uint32_t GetGroup( void ) const { return fGroup; }
+    uint32_t GetGroup() const { return fGroup; }
 
     // Export only
     void    AddImpactSound( uint32_t against, plKey receiver );

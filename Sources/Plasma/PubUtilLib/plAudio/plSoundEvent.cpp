@@ -114,7 +114,7 @@ bool    plSoundEvent::RemoveCallback( plEventCallbackMsg *msg )
     return false;
 }
 
-void    plSoundEvent::SendCallbacks( void )
+void    plSoundEvent::SendCallbacks()
 {
     int         j;
     plSoundMsg  *sMsg;
@@ -165,12 +165,12 @@ void    plSoundEvent::SendCallbacks( void )
     }
 }
 
-uint32_t  plSoundEvent::GetNumCallbacks( void ) const
+uint32_t  plSoundEvent::GetNumCallbacks() const
 {
     return fCallbacks.GetCount();
 }
 
-int plSoundEvent::GetType( void ) const
+int plSoundEvent::GetType() const
 {
     return (int)fType;
 }
@@ -180,7 +180,7 @@ void    plSoundEvent::SetType( Types type )
     fType = type;
 }
 
-uint32_t  plSoundEvent::GetTime( void ) const
+uint32_t  plSoundEvent::GetTime() const
 {
     return fBytePosTime;
 }

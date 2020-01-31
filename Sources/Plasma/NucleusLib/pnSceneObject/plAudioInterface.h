@@ -101,7 +101,7 @@ public:
     // Transform settable only, if you want it get it from the coordinate interface.
     void        SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);
 
-    virtual void    ReleaseData( void );
+    virtual void    ReleaseData();
     void SetSoundFilename(int index, const char *filename, bool isCompressed);
     int GetSoundIndex(const char *keyname);
 };

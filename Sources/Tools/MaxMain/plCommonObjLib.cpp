@@ -94,7 +94,7 @@ class plCommonObjLibList
 
 plCommonObjLibList  *plCommonObjLib::fLibList = nil;
 
-uint32_t  plCommonObjLib::GetNumLibs( void )
+uint32_t  plCommonObjLib::GetNumLibs()
 {
     return ( fLibList != nil ) ? fLibList->fLibs.GetCount() : 0;
 }
@@ -145,7 +145,7 @@ plCommonObjLib::~plCommonObjLib()
 
 //// ClearObjectList /////////////////////////////////////////////////////////
 
-void    plCommonObjLib::ClearObjectList( void )
+void    plCommonObjLib::ClearObjectList()
 {
     int     i;
 

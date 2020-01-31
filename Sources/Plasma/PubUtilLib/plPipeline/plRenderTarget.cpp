@@ -184,7 +184,7 @@ uint32_t  plCubicRenderTarget::Write( hsStream *s )
     return total;
 }
 
-uint32_t  plCubicRenderTarget::GetTotalSize( void ) const
+uint32_t  plCubicRenderTarget::GetTotalSize() const
 {
     uint32_t      size = 0, i;
     

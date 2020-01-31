@@ -145,7 +145,7 @@ void    pfGUIProgressCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::st
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-bool    pfGUIProgressCtrl::ICalcAnimTimes( void )
+bool    pfGUIProgressCtrl::ICalcAnimTimes()
 {
     if( fAnimTimesCalced )
         return true;

@@ -62,7 +62,7 @@ public:
 
     std::vector<ST::string> getResourceNames();
 
-    static plClientResMgr& Instance(void);
+    static plClientResMgr& Instance();
 };
 
 #endif // _plClientResMgr_

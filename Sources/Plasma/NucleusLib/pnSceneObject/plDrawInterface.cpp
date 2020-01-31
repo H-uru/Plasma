@@ -191,7 +191,7 @@ void plDrawInterface::Write(hsStream* s, hsResMgr* mgr)
 //  Called by SceneViewer to release the data for this given object (when
 //  its parent sceneObject is deleted).
 
-void    plDrawInterface::ReleaseData( void )
+void    plDrawInterface::ReleaseData()
 {
     int i;
     for( i = 0; i < fDrawables.GetCount(); i++ )
@@ -372,7 +372,7 @@ void    plDrawInterface::SetUpForParticleSystem( uint32_t maxNumEmitters, uint32
     ISetVisRegions(0);
 }
 
-void    plDrawInterface::ResetParticleSystem( void )
+void    plDrawInterface::ResetParticleSystem()
 {
     hsAssert( fDrawables[0] != nil, "No drawable to use for particle system!" );
     fDrawables[0]->ResetParticleSystem( fDrawableIndices[0] );

@@ -65,8 +65,8 @@ public:
 
     static void Initialize(const plFileName & dataPath);
     static void Shutdown();
-    static pfLocalizationMgr &Instance(void) {return *fInstance;}
-    static bool InstanceValid(void) {return fInstance != nil;}
+    static pfLocalizationMgr &Instance() {return *fInstance;}
+    static bool InstanceValid() {return fInstance != nil;}
 
     // Returns the final localized string, designated by path, and with the arguments properly substituted
     // if you want to use the default argument order, just use %s like you would with printf, BUT, if you

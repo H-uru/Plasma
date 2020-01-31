@@ -115,7 +115,7 @@ void plPostEffectMod::ISetupRenderRequest()
 
     IUpdateRenderRequest();
 }
-void        plPostEffectMod::EnableLightsOnRenderRequest( void )
+void        plPostEffectMod::EnableLightsOnRenderRequest()
 {
     fRenderRequest->SetRenderState( fRenderRequest->GetRenderState() & ~plPipeline::kRenderNoLights );
 }

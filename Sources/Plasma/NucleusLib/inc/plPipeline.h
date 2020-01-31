@@ -183,7 +183,7 @@ public:
 
     // Default fog settings
     virtual void                        SetDefaultFogEnviron( plFogEnvironment *fog ) = 0;
-    virtual const plFogEnvironment      &GetDefaultFogEnviron( void ) const = 0;
+    virtual const plFogEnvironment      &GetDefaultFogEnviron() const = 0;
 
     virtual void                        RegisterLight(plLightInfo* light) = 0;
     virtual void                        UnRegisterLight(plLightInfo* light) = 0;
@@ -222,11 +222,11 @@ public:
     virtual float                       GetClearDepth() const = 0;
     virtual hsGDeviceRef                *MakeRenderTargetRef( plRenderTarget *owner ) = 0;
     virtual void                        PushRenderTarget( plRenderTarget *target ) = 0;
-    virtual plRenderTarget              *PopRenderTarget( void ) = 0;
+    virtual plRenderTarget              *PopRenderTarget() = 0;
 
     virtual bool                        BeginRender() = 0;
     virtual bool                        EndRender() = 0;
-    virtual void                        RenderScreenElements( void ) = 0;
+    virtual void                        RenderScreenElements() = 0;
 
     virtual void                        BeginVisMgr(plVisMgr* visMgr) = 0;
     virtual void                        EndVisMgr(plVisMgr* visMgr) = 0;
@@ -264,9 +264,9 @@ public:
 
     // Drawable type mask
     virtual void                        SetDrawableTypeMask( uint32_t mask ) = 0;
-    virtual uint32_t                    GetDrawableTypeMask( void ) const = 0;
+    virtual uint32_t                    GetDrawableTypeMask() const = 0;
     virtual void                        SetSubDrawableTypeMask( uint32_t mask ) = 0;
-    virtual uint32_t                    GetSubDrawableTypeMask( void ) const = 0;
+    virtual uint32_t                    GetSubDrawableTypeMask() const = 0;
 
     // View state
     virtual hsPoint3                    GetViewPositionWorld() const = 0;
@@ -285,7 +285,7 @@ public:
     virtual void                        SetDepth(float hither, float yon) = 0;
 
     virtual void                        SetZBiasScale( float scale ) = 0;
-    virtual float                       GetZBiasScale( void ) const = 0;
+    virtual float                       GetZBiasScale() const = 0;
 
     virtual const hsMatrix44&           GetWorldToCamera() const = 0;
     virtual const hsMatrix44&           GetCameraToWorld() const = 0;
@@ -299,8 +299,8 @@ public:
     virtual void                        ScreenToWorldPoint( int n, uint32_t stride, int32_t *scrX, int32_t *scrY, 
                                                     float dist, uint32_t strideOut, hsPoint3 *worldOut ) = 0;
 
-    virtual void                        RefreshMatrices( void ) = 0;
-    virtual void                        RefreshScreenMatrices( void ) = 0;
+    virtual void                        RefreshMatrices() = 0;
+    virtual void                        RefreshScreenMatrices() = 0;
 
     // Overrides, always push returns whatever is necessary to restore on pop.
     virtual hsGMaterial*                PushOverrideMaterial(hsGMaterial* mat) = 0;
@@ -334,7 +334,7 @@ public:
     virtual plMipmap*                   ExtractMipMap(plRenderTarget* targ) = 0;
 
     /// Error handling
-    virtual const char                  *GetErrorString( void ) = 0;
+    virtual const char                  *GetErrorString() = 0;
 
     // info about current rendering device
     virtual void GetSupportedDisplayModes(std::vector<plDisplayMode> *res, int ColorDepth = 32 ) = 0;

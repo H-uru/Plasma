@@ -117,7 +117,7 @@ bool plAgePage::SetFromString( const ST::string &stringIn )
     return true;
 }
 
-ST::string plAgePage::GetAsString( void ) const
+ST::string plAgePage::GetAsString() const
 {
     if (fFlags)
         return ST::format("{},{},{}", fName, fSeqSuffix, fFlags);
@@ -188,7 +188,7 @@ void plAgeDescription::SetAgeNameFromPath( const plFileName &path )
     fName = path.GetFileNameNoExt();
 }
 
-void plAgeDescription::IInit( void )
+void plAgeDescription::IInit()
 {
     fName = "";
     fDayLength = 24.0f;
@@ -211,12 +211,12 @@ void    plAgeDescription::AppendPage( const ST::string &name, int seqSuffix, uin
     fPages.Append( plAgePage( name, ( seqSuffix == -1 ) ? fPages.GetCount() : (uint32_t)seqSuffix, flags ) );
 }
 
-void    plAgeDescription::SeekFirstPage( void )
+void    plAgeDescription::SeekFirstPage()
 {
     fPageIterator = 0;
 }
 
-plAgePage   *plAgeDescription::GetNextPage( void )
+plAgePage   *plAgeDescription::GetNextPage()
 {
     plAgePage   *ret = nil;
 
@@ -336,7 +336,7 @@ void plAgeDescription::Write(hsStream* stream) const
 // we only have one section, we can safely use ourselves as the section reader.
 // Later I might just add section readers with function pointers to avoid this need entirely
 
-const char  *plAgeDescription::GetSectionName( void ) const
+const char  *plAgeDescription::GetSectionName() const
 {
     return "AgeInfo";
 }
@@ -468,7 +468,7 @@ const char *plAgeDescription::GetCommonPage( int pageType )
     return fCommonPages[ pageType ];
 }
 
-void    plAgeDescription::AppendCommonPages( void )
+void    plAgeDescription::AppendCommonPages()
 {
     uint32_t startSuffix = 0xffff, i;
 

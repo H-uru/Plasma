@@ -131,7 +131,7 @@ public:
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
-    virtual bool    IsNodeRestricted( void ) { return true; }
+    virtual bool    IsNodeRestricted() { return true; }
     virtual ST::string GetIfaceSegmentName( bool allowNil );
 
 protected:
@@ -161,7 +161,7 @@ public:
 
     plKey GetModKey(plMaxNode *node);
 
-    virtual bool    IsNodeRestricted( void ) { return false; }
+    virtual bool    IsNodeRestricted() { return false; }
     virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
 };
 
@@ -189,7 +189,7 @@ protected:
 
 public:
 
-    int     GetHandledDlgItem( void ) const { return fDlgItem; }
+    int     GetHandledDlgItem() const { return fDlgItem; }
 
     // No node restriction version
     plPlasmaAnimSelectDlgProc( ParamID paramID, int dlgItem, TCHAR *promptTitle, ParamMap2UserDlgProc *chainedDlgProc = nil );

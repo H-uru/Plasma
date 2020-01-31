@@ -136,7 +136,7 @@ void    pfGUIClickMapCtrl::HandleMouseHover( hsPoint3 &mousePt, uint8_t modifier
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIClickMapCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIClickMapCtrl::IGetDesiredCursor() const
 {
     if( fCustomCursor != -1 )
         return (uint32_t)fCustomCursor;

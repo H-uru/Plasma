@@ -74,10 +74,10 @@ class pfGUIMenuItem : public pfGUIButtonMod
         bool            fSkinBuffersUpdated;
 
         virtual void    IGrowDTMDimsToDesiredSize( uint16_t &width, uint16_t &height );
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual void    IUpdate( void );
+        virtual void    IPostSetUpDynTextMap();
+        virtual void    IUpdate();
 
-        void            IUpdateSkinBuffers( void );
+        void            IUpdateSkinBuffers();
         void            IUpdateSingleSkinBuffer( uint16_t y, bool sel );
 
     public:
@@ -118,7 +118,7 @@ class pfGUIMenuItem : public pfGUIButtonMod
 
         void        SetName( const char *name );
         void        SetName( const wchar_t *name );
-        const wchar_t   *GetName( void ) const { return fName; }
+        const wchar_t   *GetName() const { return fName; }
     
         void    GetTextExtents( uint16_t &width, uint16_t &height );
 

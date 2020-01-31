@@ -88,7 +88,7 @@ static void clear_jpegmsg()
 
 //// Instance /////////////////////////////////////////////////////////////////
 
-plJPEG  &plJPEG::Instance( void )
+plJPEG  &plJPEG::Instance()
 {
     clear_jpegmsg();
 
@@ -98,7 +98,7 @@ plJPEG  &plJPEG::Instance( void )
 
 //// GetLastError /////////////////////////////////////////////////////////////
 
-const char  *plJPEG::GetLastError( void )
+const char  *plJPEG::GetLastError()
 {
     return jpegmsg;
 }

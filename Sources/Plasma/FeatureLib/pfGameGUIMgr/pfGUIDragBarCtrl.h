@@ -62,7 +62,7 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor() const;    // As specified in plInputInterface.h
 
     public:
 
@@ -83,7 +83,7 @@ class pfGUIDragBarCtrl : public pfGUIControlMod
         virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers );
 
         virtual void    SetAnchored( bool anchored ) { fAnchored = anchored; }
-        virtual bool    IsAnchored(void) { return fAnchored; }
+        virtual bool    IsAnchored() { return fAnchored; }
 
         virtual void    UpdateBounds( hsMatrix44 *invXformMatrix = nil, bool force = false );
 

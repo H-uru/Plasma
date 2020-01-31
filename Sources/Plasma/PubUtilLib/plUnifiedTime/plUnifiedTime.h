@@ -80,7 +80,7 @@ protected:
 
     struct tm * IGetTime(const time_t * timer) const;
 
-    static int32_t    IGetLocalTimeZoneOffset( void );
+    static int32_t    IGetLocalTimeZoneOffset();
 
 public:
     plUnifiedTime() : fSecs(0),fMicros(0), fMode(kGmt) { }      // set ToEpoch() at start

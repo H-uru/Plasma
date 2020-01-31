@@ -74,9 +74,9 @@ public:
 
     virtual float    GetValue();
     virtual void        SetValue( float v );
-    virtual float    GetMin( void );
-    virtual float    GetMax( void );
-    virtual float    GetStep( void );
+    virtual float    GetMin();
+    virtual float    GetMax();
+    virtual float    GetStep();
     virtual void        SetRange( float min, float max );
     virtual void        SetStep( float step );
 };

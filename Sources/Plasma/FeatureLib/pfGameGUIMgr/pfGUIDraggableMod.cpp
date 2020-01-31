@@ -152,7 +152,7 @@ void    pfGUIDraggableMod::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIDraggableMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIDraggableMod::IGetDesiredCursor() const
 {
     // if we are anchored, then no cursors that say we can move
     if( fDragging )

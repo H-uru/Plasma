@@ -1665,7 +1665,7 @@ void plRTLightBase::SetConeDisplay(int s, int notify)
         NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE);
 }
 
-BOOL plRTLightBase::GetConeDisplay(void)
+BOOL plRTLightBase::GetConeDisplay()
 {
     if(!IsDir())
         return fLightPB->GetInt(kShowConeBool);

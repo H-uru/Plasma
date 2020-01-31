@@ -81,9 +81,9 @@ class plPassAnimDlgProc : public ParamMap2UserDlgProc, public plMtlChangeCallbac
         virtual void SetThing(ReferenceTarget *m);
         virtual void Update(TimeValue t, Interval& valid, IParamMap2* pmap);
 
-        void    SegmentListChanged( void );
+        void    SegmentListChanged();
 
-        static plPassAnimDlgProc    &Get( void );
+        static plPassAnimDlgProc    &Get();
 
     protected:
         // Set all the controls to their stored value

@@ -102,7 +102,7 @@ plStatusLogMgr::~plStatusLogMgr()
     }
 }
 
-plStatusLogMgr  &plStatusLogMgr::GetInstance( void )
+plStatusLogMgr  &plStatusLogMgr::GetInstance()
 {
     static plStatusLogMgr   theManager;
     return theManager;
@@ -110,7 +110,7 @@ plStatusLogMgr  &plStatusLogMgr::GetInstance( void )
 
 //// Draw ////////////////////////////////////////////////////////////////////
 
-void    plStatusLogMgr::Draw( void )
+void    plStatusLogMgr::Draw()
 {
     /// Just draw current plStatusLog
     if( fCurrDisplay != nil && fDrawer != nil )
@@ -168,7 +168,7 @@ void plStatusLogMgr::SetCurrStatusLog(const plFileName& logName)
 
 //// NextStatusLog ///////////////////////////////////////////////////////////
 
-void    plStatusLogMgr::NextStatusLog( void )
+void    plStatusLogMgr::NextStatusLog()
 {
     if( fCurrDisplay == nil )
         fCurrDisplay = fDisplays;
@@ -178,7 +178,7 @@ void    plStatusLogMgr::NextStatusLog( void )
     fLastLogChangeTime = hsTimer::GetSysSeconds();
 }
 
-void    plStatusLogMgr::PrevStatusLog( void )
+void    plStatusLogMgr::PrevStatusLog()
 {
     if( fCurrDisplay == nil )
     {
@@ -314,7 +314,7 @@ void    plStatusLog::IInit()
 
 }
 
-bool plStatusLog::IReOpen( void )
+bool plStatusLog::IReOpen()
 {
     if( fFileHandle != nil )
     {
@@ -361,7 +361,7 @@ bool plStatusLog::IReOpen( void )
     return fFileHandle != nil;
 }
 
-void    plStatusLog::IFini( void )
+void    plStatusLog::IFini()
 {
     int     i;
 
@@ -410,7 +410,7 @@ plStatusLog* plStatusLog::IFindLog(const plFileName& filename)
 
 //// IUnlink /////////////////////////////////////////////////////////////////
 
-void    plStatusLog::IUnlink( void )
+void    plStatusLog::IUnlink()
 {
     hsAssert( fBack, "plStatusLog not in list" );
     if( fNext )
@@ -526,7 +526,7 @@ bool plStatusLog::AddLine( const char *line, uint32_t color )
 
 //// Clear ///////////////////////////////////////////////////////////////////
 
-void    plStatusLog::Clear( void )
+void    plStatusLog::Clear()
 {
     int     i;
 

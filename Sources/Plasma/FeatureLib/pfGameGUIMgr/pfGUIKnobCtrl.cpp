@@ -266,7 +266,7 @@ void    pfGUIKnobCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::string
 //  Loops through and computes the max begin and end for our animations. If
 //  none of them are loaded and we're not already calced, returns false.
 
-bool    pfGUIKnobCtrl::ICalcAnimTimes( void )
+bool    pfGUIKnobCtrl::ICalcAnimTimes()
 {
     if( fAnimTimesCalced )
         return true;
@@ -351,7 +351,7 @@ void    pfGUIKnobCtrl::SetCurrValue( float v )
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIKnobCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIKnobCtrl::IGetDesiredCursor() const
 {
     if( HasFlag( kLeftRightOrientation ) )
     {

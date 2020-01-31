@@ -84,7 +84,7 @@ class plTextureExportLog
         ~plTextureExportLog();
 
         void    AddTexture( plBitmap *texture );
-        void    Write( void );
+        void    Write();
 };
 
 

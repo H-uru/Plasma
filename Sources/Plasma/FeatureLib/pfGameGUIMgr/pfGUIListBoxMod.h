@@ -91,12 +91,12 @@ class pfGUIListBoxMod : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        void    ICalcScrollRange( void );
-        void    ICalcWrapStarts( void );
+        void    ICalcScrollRange();
+        void    ICalcWrapStarts();
 
-        virtual void    IUpdate( void );
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual uint32_t  IGetDesiredCursor( void ) const;
+        virtual void    IUpdate();
+        virtual void    IPostSetUpDynTextMap();
+        virtual uint32_t  IGetDesiredCursor() const;
 
         int32_t   IGetItemFromPoint( hsPoint3 &mousePt );
         void    IFindSelectionRange( int32_t *min, int32_t *max );
@@ -157,19 +157,19 @@ class pfGUIListBoxMod : public pfGUIControlMod
         virtual void PurgeDynaTextMapImage();
 
         // Returns selected element. Only valid for kSingleSelect list boxes
-        int32_t   GetSelection( void ) { return fSingleSelElement; }
+        int32_t   GetSelection() { return fSingleSelElement; }
         void    SetSelection( int32_t item );
         void    RemoveSelection( int32_t item );
         void    AddSelection( int32_t item );
         
-        virtual void    ScrollToBegin( void );
-        virtual void    ScrollToEnd( void );
+        virtual void    ScrollToBegin();
+        virtual void    ScrollToEnd();
         virtual void    SetScrollPos( int32_t pos );
-        virtual int32_t   GetScrollPos( void );
-        virtual int32_t   GetScrollRange( void );
+        virtual int32_t   GetScrollPos();
+        virtual int32_t   GetScrollRange();
 
 
-        void    Refresh( void ) { IUpdate(); }
+        void    Refresh() { IUpdate(); }
 
         virtual void        SetColorScheme( pfGUIColorScheme *newScheme );
 
@@ -178,12 +178,12 @@ class pfGUIListBoxMod : public pfGUIControlMod
         uint16_t  AddElement( pfGUIListElement *el );
         void    RemoveElement( uint16_t index );
         int16_t   FindElement( pfGUIListElement *toCompareTo );
-        void    ClearAllElements( void );
+        void    ClearAllElements();
 
-        void    LockList( void );
-        void    UnlockList( void );
+        void    LockList();
+        void    UnlockList();
 
-        uint16_t              GetNumElements( void );
+        uint16_t              GetNumElements();
         pfGUIListElement    *GetElement( uint16_t idx );
 
         uint16_t  AddString( const ST::string &string );

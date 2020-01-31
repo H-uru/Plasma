@@ -119,7 +119,7 @@ public:
     BITMAPINFO  *GetVPDisplayDIB(TimeValue t, TexHandleMaker& thmaker, Interval &valid, BOOL mono=FALSE, int forceW=0, int forceH=0);
     DWORD       GetActiveTexHandle(TimeValue t, TexHandleMaker& thmaker);
 
-    virtual bool    MustBeUnique( void );
+    virtual bool    MustBeUnique();
 
 protected:
     void IDiscardTexHandle();
@@ -179,7 +179,7 @@ public:
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
         virtual PBBitmap *GetPBBitmap( int index = 0 ) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
-        virtual int     GetNumBitmaps( void ) { return 0; }
+        virtual int     GetNumBitmaps() { return 0; }
 
     protected:
         virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); }

@@ -115,7 +115,7 @@ void pfGUIDialogNotifyProc::HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t
     }
 }
 
-void pfGUIDialogNotifyProc::OnInit( void )
+void pfGUIDialogNotifyProc::OnInit()
 {
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kDialogLoaded );
@@ -123,7 +123,7 @@ void pfGUIDialogNotifyProc::OnInit( void )
         ISendNotify( nil, pfGUINotifyMsg::kDialogLoaded );
 }
 
-void pfGUIDialogNotifyProc::OnShow( void )
+void pfGUIDialogNotifyProc::OnShow()
 {
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
@@ -131,7 +131,7 @@ void pfGUIDialogNotifyProc::OnShow( void )
         ISendNotify( nil, pfGUINotifyMsg::kShowHide );
 }
 
-void pfGUIDialogNotifyProc::OnHide( void )
+void pfGUIDialogNotifyProc::OnHide()
 {
     if ( fDialog )
         ISendNotify( fDialog->GetKey(), pfGUINotifyMsg::kShowHide );
@@ -139,7 +139,7 @@ void pfGUIDialogNotifyProc::OnHide( void )
         ISendNotify( nil, pfGUINotifyMsg::kShowHide );
 }
 
-void pfGUIDialogNotifyProc::OnDestroy( void )
+void pfGUIDialogNotifyProc::OnDestroy()
 {
 }
 

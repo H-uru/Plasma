@@ -657,14 +657,14 @@ PyObject* cyMisc::GetPrevAgeInfo()
 }
 
 // current time in current age
-uint32_t cyMisc::GetAgeTime( void )
+uint32_t cyMisc::GetAgeTime()
 {
     return VaultAgeGetAgeTime();
 }
 
 
 
-time_t cyMisc::GetDniTime(void)
+time_t cyMisc::GetDniTime()
 {
     const plUnifiedTime utime = plNetClientMgr::GetInstance()->GetServerTime();
     if ( utime.GetSecs() != 0)
@@ -673,13 +673,13 @@ time_t cyMisc::GetDniTime(void)
         return 0;
 }
 
-time_t cyMisc::GetServerTime(void)
+time_t cyMisc::GetServerTime()
 {
     const plUnifiedTime utime = plNetClientMgr::GetInstance()->GetServerTime();
     return utime.GetSecs();
 }
 
-float cyMisc::GetAgeTimeOfDayPercent(void)
+float cyMisc::GetAgeTimeOfDayPercent()
 {
     return plNetClientMgr::GetInstance()->GetCurrentAgeTimeOfDayPercent();
 }

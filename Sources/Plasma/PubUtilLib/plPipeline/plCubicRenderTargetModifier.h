@@ -77,7 +77,7 @@ public:
     GETINTERFACE_ANY( plCubicRenderTargetModifier, plModifier);
 
     // Functions related to/required by plModifier
-    virtual int             GetNumTargets( void ) const { return fTarget ? 1 : 0; }
+    virtual int             GetNumTargets() const { return fTarget ? 1 : 0; }
     virtual plSceneObject   *GetTarget( int w ) const { hsAssert(w < GetNumTargets(), "Bad target"); return fTarget; }
     virtual void            AddTarget( plSceneObject* so );
     virtual void            RemoveTarget( plSceneObject* so );

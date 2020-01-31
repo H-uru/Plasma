@@ -78,15 +78,15 @@ class plAgePage
         plAgePage( const plAgePage &src );
         plAgePage();
 
-        ST::string  GetName( void ) const { return fName; }
-        uint32_t    GetSeqSuffix( void ) const { return fSeqSuffix; }
-        uint8_t     GetFlags( void ) const { return fFlags; }
+        ST::string  GetName() const { return fName; }
+        uint32_t    GetSeqSuffix() const { return fSeqSuffix; }
+        uint8_t     GetFlags() const { return fFlags; }
 
         void        SetSeqSuffix( uint32_t s ) { fSeqSuffix = s; }
         void        SetFlags(uint8_t f, bool on=true);
 
         bool        SetFromString( const ST::string &string );
-        ST::string  GetAsString( void ) const;
+        ST::string  GetAsString() const;
 
         plAgePage &operator=( const plAgePage &src );
 };
@@ -113,8 +113,8 @@ private:
     
     static const char* fCommonPages[];
 
-    void    IInit( void );
-    void    IDeInit( void );
+    void    IInit();
+    void    IDeInit();
 
     // Overload for plInitSectionTokenReader
     virtual bool        IParseToken( const char *token, hsStringTokenizer *tokenizer, uint32_t userData );
@@ -136,9 +136,9 @@ public:
     void Write(hsStream* stream) const;
 
     // Overload for plInitSectionTokenReader
-    virtual const char  *GetSectionName( void ) const;
+    virtual const char  *GetSectionName() const;
 
-    ST::string  GetAgeName( void ) const { return fName; }
+    ST::string  GetAgeName() const { return fName; }
     void        SetAgeNameFromPath( const plFileName &path );
     void        SetAgeName(const ST::string& ageName) { fName = ageName; }
 
@@ -147,8 +147,8 @@ public:
     void    RemovePage( const ST::string &page );
     void    AppendPage( const ST::string &name, int seqSuffix = -1, uint8_t flags = 0 );
 
-    void        SeekFirstPage( void );
-    plAgePage   *GetNextPage( void );
+    void        SeekFirstPage();
+    plAgePage   *GetNextPage();
     int         GetNumPages() const { return fPages.GetCount(); }
     plAgePage   *FindPage( const ST::string &name ) const;
     bool FindLocation(const plLocation& loc) const;
@@ -166,9 +166,9 @@ public:
 
     float   GetDayLength() const { return fDayLength; }
 
-    int32_t   GetSequencePrefix( void ) const { return fSeqPrefix; }
-    uint32_t  GetReleaseVersion( void ) const { return fReleaseVersion; }
-    bool    IsGlobalAge( void ) const { return ( fSeqPrefix < 0 ) ? true : false; }
+    int32_t   GetSequencePrefix() const { return fSeqPrefix; }
+    uint32_t  GetReleaseVersion() const { return fReleaseVersion; }
+    bool    IsGlobalAge() const { return ( fSeqPrefix < 0 ) ? true : false; }
 
     // Setters
     bool SetStart(short year, short month, short day, short hour, short minute, short second)
@@ -196,7 +196,7 @@ public:
 
     static const char *GetCommonPage( int pageType );
 
-    void    AppendCommonPages( void );
+    void    AppendCommonPages();
     void    CopyFrom(const plAgeDescription& other);
 
     plAgeDescription &operator=( const plAgeDescription &src )

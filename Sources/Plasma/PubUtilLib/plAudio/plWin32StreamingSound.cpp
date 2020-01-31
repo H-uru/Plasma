@@ -204,7 +204,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
     return plSoundBuffer::kError;
 }
 
-void plWin32StreamingSound::IFreeBuffers( void )
+void plWin32StreamingSound::IFreeBuffers()
 {
     plWin32Sound::IFreeBuffers();
     if( fLoadFromDiskOnDemand && !IsPropertySet( kPropLoadOnlyOnCall ) )
@@ -403,7 +403,7 @@ void plWin32StreamingSound::Update()
     IStreamUpdate();
 }
 
-void plWin32StreamingSound::IDerivedActuallyPlay( void )
+void plWin32StreamingSound::IDerivedActuallyPlay()
 {
     fStopping = false;
     if( !fReallyPlaying )

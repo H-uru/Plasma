@@ -80,7 +80,7 @@ plDTProgressMgr::~plDTProgressMgr()
 {
 }
 
-void    plDTProgressMgr::DeclareThyself( void )
+void    plDTProgressMgr::DeclareThyself()
 {
     static plDTProgressMgr  thyself;
 }

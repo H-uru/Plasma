@@ -54,7 +54,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// Singleton Instance ///////////////////////////////////////////////////////
 
-plClientResMgr& plClientResMgr::Instance(void)
+plClientResMgr& plClientResMgr::Instance()
 {
     static plClientResMgr theInstance;
     return theInstance;

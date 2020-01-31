@@ -91,7 +91,7 @@ pfGUICtrlGenerator::~pfGUICtrlGenerator()
     Shutdown();
 }
 
-void    pfGUICtrlGenerator::Shutdown( void )
+void    pfGUICtrlGenerator::Shutdown()
 {
     int i;
     
@@ -113,7 +113,7 @@ void    pfGUICtrlGenerator::Shutdown( void )
 
 //// Instance ////////////////////////////////////////////////////////////////
 
-pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance( void )
+pfGUICtrlGenerator  &pfGUICtrlGenerator::Instance()
 {
     static pfGUICtrlGenerator       myInstance;
 
@@ -435,7 +435,7 @@ pfGUIDragBarCtrl *pfGUICtrlGenerator::GenerateDragBar( float x, float y, float w
 
 //// IGetDialog //////////////////////////////////////////////////////////////
 
-pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog( void )
+pfGUIDialogMod  *pfGUICtrlGenerator::IGetDialog()
 {
     if( fDynDialogs.GetCount() == 0 )
         IGenerateDialog( "GUIBaseDynamicDlg", 20.f );

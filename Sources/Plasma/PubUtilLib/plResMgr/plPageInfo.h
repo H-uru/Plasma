@@ -69,7 +69,7 @@ protected:
     uint32_t    fChecksum;
     uint32_t    fDataStart, fIndexStart;
 
-    void        IInit( void );
+    void        IInit();
     void        ISetFrom( const plPageInfo &src );
 
 public:
@@ -97,17 +97,17 @@ public:
     void    SetMajorVersion(uint16_t major) { fMajorVersion = major; }
 
     void    SetChecksum( uint32_t c ) { fChecksum = c; }
-    uint32_t  GetChecksum( void ) const { return fChecksum; }
+    uint32_t  GetChecksum() const { return fChecksum; }
 
     void    Read( hsStream *s );
     void    Write( hsStream *s );
 
-    bool    IsValid( void ) const;
+    bool    IsValid() const;
 
-    uint32_t  GetDataStart( void ) const { return fDataStart; }
+    uint32_t  GetDataStart() const { return fDataStart; }
     void    SetDataStart( uint32_t s ) { fDataStart = s; }
 
-    uint32_t  GetIndexStart( void ) const { return fIndexStart; }
+    uint32_t  GetIndexStart() const { return fIndexStart; }
     void    SetIndexStart( uint32_t s ) { fIndexStart = s; }
 };
 #endif // _plPageInfo_h

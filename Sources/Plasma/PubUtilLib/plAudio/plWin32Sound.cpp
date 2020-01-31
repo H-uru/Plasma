@@ -97,7 +97,7 @@ void plWin32Sound::DeActivate()
     IFreeBuffers();
 }
 
-void plWin32Sound::IFreeBuffers( void )
+void plWin32Sound::IFreeBuffers()
 {
     if( fDSoundBuffer != nil )
     {
@@ -116,7 +116,7 @@ void plWin32Sound::Update()
     plSound::Update();
 }
 
-void plWin32Sound::IActuallyPlay( void )
+void plWin32Sound::IActuallyPlay()
 {
     //plSound::Play();
     if (!fDSoundBuffer && plgAudioSys::Active())
@@ -297,7 +297,7 @@ void plWin32Sound::ISetActualVolume(float volume)
 //  The base class will make sure all our params are correct and up-to-date,
 //  but before it does its work, we have to make sure our buffer is ready to
 //  be updated.
-void plWin32Sound::IRefreshParams( void )
+void plWin32Sound::IRefreshParams()
 {
     if (!fDSoundBuffer && plgAudioSys::Active())
         LoadSound( IsPropertySet( kPropIs3DSound ) );

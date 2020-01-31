@@ -213,7 +213,7 @@ public:
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) { return fInitBitmap; }
         virtual PBBitmap *GetPBBitmap( int index = 0 );
-        virtual int     GetNumBitmaps( void ) { return 1; }
+        virtual int     GetNumBitmaps() { return 1; }
 
         // Virtual function called by plBMSampler to get various things while sampling the layer's image
         virtual bool    GetSamplerInfo( plBMSamplerData *samplerData );

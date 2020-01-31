@@ -78,7 +78,7 @@ void pyGUIControlCheckBox::SetChecked( bool checked )
 }
 
 
-bool pyGUIControlCheckBox::IsChecked( void )
+bool pyGUIControlCheckBox::IsChecked()
 {
     if ( fGCkey )
     {

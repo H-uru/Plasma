@@ -155,7 +155,7 @@ public:
     // Network only strange function. Do not emulate or generalize this functionality.
     virtual void SetNetGroup(plNetGroupId netGroup);
 
-    virtual void    ReleaseData( void );
+    virtual void    ReleaseData();
 
     // Force an immediate re-sync of the transforms in the hierarchy this object belongs to,
     // as opposed to waiting for the plTransformMsg to resync.

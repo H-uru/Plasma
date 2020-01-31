@@ -242,7 +242,7 @@ protected:
 
 public:
 
-    int     GetHandledDlgItem( void ) const { return fDlgItem; }
+    int     GetHandledDlgItem() const { return fDlgItem; }
 
     static const Class_ID       kEndClassList; 
 
@@ -1177,7 +1177,7 @@ plGUIDialogComponent::plGUIDialogComponent( bool dontInit )
     fProcReceiver = nil;
 }
 
-pfGUIDialogMod  *plGUIDialogComponent::IMakeDialog( void )
+pfGUIDialogMod  *plGUIDialogComponent::IMakeDialog()
 {
     return new pfGUIDialogMod();
 }
@@ -1404,7 +1404,7 @@ void plGUIDialogComponent::IMakeEveryoneOpaqueRecur(plMaxNode* node)
     }
 }
 
-plKey   plGUIDialogComponent::GetModifierKey( void )
+plKey   plGUIDialogComponent::GetModifierKey()
 {
     if( fDialogMod != nil )
         return fDialogMod->GetKey();
@@ -1877,8 +1877,8 @@ class plGUIButtonComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIButtonMod; }
-    virtual bool            ICanHaveProxy( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIButtonMod; }
+    virtual bool            ICanHaveProxy() { return true; }
 
 public:
     plGUIButtonComponent();
@@ -2219,8 +2219,8 @@ class plGUICheckBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUICheckBoxCtrl; }
-    virtual bool            ICanHaveProxy( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUICheckBoxCtrl; }
+    virtual bool            ICanHaveProxy() { return true; }
 
 public:
     plGUICheckBoxComponent();
@@ -2419,8 +2419,8 @@ class plGUIDraggableComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDraggableMod; }
-    virtual bool            ICanHaveProxy( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDraggableMod; }
+    virtual bool            ICanHaveProxy() { return true; }
 
 public:
     plGUIDraggableComponent();
@@ -2528,8 +2528,8 @@ class plGUIKnobCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIKnobCtrl; }
-    virtual bool            ICanHaveProxy( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIKnobCtrl; }
+    virtual bool            ICanHaveProxy() { return true; }
 
     bool    IGrabAnimationRange( plMaxNode *node, plErrorMsg *pErrMsg, hsMatrix44 &startL2W, hsMatrix44 &endL2W );
 
@@ -2777,8 +2777,8 @@ class plGUIListBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIListBoxMod; }
-    virtual bool            INeedsDynamicText( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIListBoxMod; }
+    virtual bool            INeedsDynamicText() { return true; }
 
 public:
     plGUIListBoxComponent();
@@ -3012,8 +3012,8 @@ class plGUITextBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUITextBoxMod; }
-    virtual bool            INeedsDynamicText( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUITextBoxMod; }
+    virtual bool            INeedsDynamicText() { return true; }
 
 public:
     plGUITextBoxComponent();
@@ -3309,8 +3309,8 @@ class plGUIEditBoxComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIEditBoxMod; }
-    virtual bool            INeedsDynamicText( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIEditBoxMod; }
+    virtual bool            INeedsDynamicText() { return true; }
 
 public:
     plGUIEditBoxComponent();
@@ -3404,7 +3404,7 @@ class plGUIUpDownPairComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIUpDownPairMod; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIUpDownPairMod; }
 
 public:
     plGUIUpDownPairComponent();
@@ -3616,8 +3616,8 @@ class plGUIDragBarComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDragBarCtrl; }
-    virtual bool            ICanHaveProxy( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDragBarCtrl; }
+    virtual bool            ICanHaveProxy() { return true; }
 
 public:
     plGUIDragBarComponent();
@@ -3698,7 +3698,7 @@ class plGUIRadioGroupComponent : public plGUIControlBase
 
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIRadioGroupCtrl; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIRadioGroupCtrl; }
 
 public:
     plGUIRadioGroupComponent();
@@ -3911,8 +3911,8 @@ class plGUIDynDisplayComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIDynDisplayCtrl; }
-    virtual bool            IHasProcRollout( void ) { return false; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIDynDisplayCtrl; }
+    virtual bool            IHasProcRollout() { return false; }
 
 public:
     plGUIDynDisplayComponent();
@@ -4087,8 +4087,8 @@ class plGUIMultiLineEditComp : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIMultiLineEditCtrl; }
-    virtual bool            INeedsDynamicText( void ) { return true; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIMultiLineEditCtrl; }
+    virtual bool            INeedsDynamicText() { return true; }
 
 public:
     plGUIMultiLineEditComp();
@@ -4209,8 +4209,8 @@ class plGUIProgressCtrlComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIProgressCtrl; }
-    virtual bool            ICanHaveProxy( void ) { return false; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIProgressCtrl; }
+    virtual bool            ICanHaveProxy() { return false; }
 
 public:
     plGUIProgressCtrlComponent();
@@ -4471,8 +4471,8 @@ class plGUIClickMapComponent : public plGUIControlBase
 {
 protected:
 
-    virtual pfGUIControlMod *IGetNewControl( void ) { return new pfGUIClickMapCtrl; }
-    virtual bool            ICanHaveProxy( void ) { return false; }
+    virtual pfGUIControlMod *IGetNewControl() { return new pfGUIClickMapCtrl; }
+    virtual bool            ICanHaveProxy() { return false; }
 
 public:
     plGUIClickMapComponent();
@@ -4682,7 +4682,7 @@ BOOL pfGUISkinProc::DlgProc( TimeValue t, IParamMap2 *pmap, HWND hWnd, UINT msg,
     return false;
 }
 
-plKey   plGUISkinComp::GetConvertedSkinKey( void ) const
+plKey   plGUISkinComp::GetConvertedSkinKey() const
 {
     if( fConvertedSkin != nil )
         return fConvertedSkin->GetKey();
@@ -4690,7 +4690,7 @@ plKey   plGUISkinComp::GetConvertedSkinKey( void ) const
     return nil;
 }
 
-uint32_t  plGUISkinComp::GetNumMtls( void ) const
+uint32_t  plGUISkinComp::GetNumMtls() const
 {
     return 1;
 }
@@ -4702,7 +4702,7 @@ Texmap  *plGUISkinComp::GetMtl( uint32_t idx )
 
 //// GetSkinBitmap ///////////////////////////////////////////////////////////
 
-plLayerTex  *plGUISkinComp::GetSkinBitmap( void )
+plLayerTex  *plGUISkinComp::GetSkinBitmap()
 {  
     // If we don't have one, create one
     plLayerTex  *layer = (plLayerTex *)fCompPB->GetTexmap( kRefBitmap, 0 );
@@ -4896,12 +4896,12 @@ plGUIMenuComponent::plGUIMenuComponent() : plGUIDialogComponent( true )
     fClassDesc->MakeAutoParamBlocks(this);
 }
 
-pfGUIDialogMod  *plGUIMenuComponent::IMakeDialog( void )
+pfGUIDialogMod  *plGUIMenuComponent::IMakeDialog()
 {
     return new pfGUIPopUpMenu();
 }
 
-plKey   plGUIMenuComponent::GetConvertedMenuKey( void ) const
+plKey   plGUIMenuComponent::GetConvertedMenuKey() const
 {
     if( fConvertedMenu == nil )
         return nil;

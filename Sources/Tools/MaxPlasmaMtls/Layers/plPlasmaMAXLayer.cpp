@@ -181,7 +181,7 @@ void    plPlasmaMAXLayer::IAddConversionTarget( plLayerInterface *target )
                                         plRefFlags::kPassiveRef );
 }
 
-void    plPlasmaMAXLayer::IClearConversionTargets( void )
+void    plPlasmaMAXLayer::IClearConversionTargets()
 {
     if( fConversionTargets != nil )
     {
@@ -190,7 +190,7 @@ void    plPlasmaMAXLayer::IClearConversionTargets( void )
     }
 }
 
-int     plPlasmaMAXLayer::GetNumConversionTargets( void )
+int     plPlasmaMAXLayer::GetNumConversionTargets()
 {
     if( fConversionTargets == nil )
         return 0;

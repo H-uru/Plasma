@@ -124,7 +124,7 @@ bool    pfGUIUpDownPairMod::IEval( double secs, float del, uint32_t dirty )
     return pfGUIValueCtrl::IEval( secs, del, dirty );
 }
 
-void    pfGUIUpDownPairMod::IUpdate( void )
+void    pfGUIUpDownPairMod::IUpdate()
 {
     if (fEnabled)
     {
@@ -150,7 +150,7 @@ void    pfGUIUpDownPairMod::IUpdate( void )
     }
 }
 
-void    pfGUIUpDownPairMod::Update( void )
+void    pfGUIUpDownPairMod::Update()
 {
     IUpdate();
 }

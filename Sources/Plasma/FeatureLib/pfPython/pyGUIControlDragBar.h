@@ -77,8 +77,8 @@ public:
 
     static bool IsGUIControlDragBar(pyKey& gckey);
 
-    virtual void    Anchor( void );
-    virtual void    Unanchor( void );
+    virtual void    Anchor();
+    virtual void    Unanchor();
     virtual bool    IsAnchored();
 
 };

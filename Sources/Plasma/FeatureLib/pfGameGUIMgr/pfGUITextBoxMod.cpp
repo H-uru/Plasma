@@ -93,7 +93,7 @@ bool    pfGUITextBoxMod::MsgReceive( plMessage *msg )
 
 //// IPostSetUpDynTextMap ////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::IPostSetUpDynTextMap( void )
+void    pfGUITextBoxMod::IPostSetUpDynTextMap()
 {
     pfGUIColorScheme *scheme = GetColorScheme();
 
@@ -105,7 +105,7 @@ void    pfGUITextBoxMod::IPostSetUpDynTextMap( void )
 
 //// IUpdate /////////////////////////////////////////////////////////////////
 
-void    pfGUITextBoxMod::IUpdate( void )
+void    pfGUITextBoxMod::IUpdate()
 {
     if( fDynTextMap == nil || !fDynTextMap->IsValid() )
         return;

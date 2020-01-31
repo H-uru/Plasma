@@ -61,7 +61,7 @@ class plAnimObjInterface
         // If the following function returns true, then it makes sense to restrict
         // the animation conversion to a specific node (i.e. PickTargetNode() makes
         // sense)
-        virtual bool    IsNodeRestricted( void ) = 0;
+        virtual bool    IsNodeRestricted() = 0;
 
         // Allows the user to pick an INode that this animation is applied to
         // (ex. as a material or as a component) and stores it in the given ID
@@ -84,7 +84,7 @@ class plAnimObjInterface
         virtual ST::string  GetIfaceSegmentName( bool allowNil ) = 0;
 
         // This animation would require (depending on the node restriction) a separate material (i.e. material anim)
-        virtual bool        MightRequireSeparateMaterial( void ) { return false; }
+        virtual bool        MightRequireSeparateMaterial() { return false; }
 };
 
 // Strings for above NodeTypes enums

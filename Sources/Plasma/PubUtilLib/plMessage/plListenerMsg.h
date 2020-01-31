@@ -113,9 +113,9 @@ public:
 
     void    Set( const plKey &key, uint8_t type, bool binding );
 
-    plKey       &GetSrcKey( void ) { return fSrcKey; }
-    uint8_t       GetType( void ) const { return fType; }
-    bool        IsBinding( void ) const { return fBinding; }
+    plKey       &GetSrcKey() { return fSrcKey; }
+    uint8_t       GetType() const { return fType; }
+    bool        IsBinding() const { return fBinding; }
 };
 
 #endif // plListenerMsg_inc

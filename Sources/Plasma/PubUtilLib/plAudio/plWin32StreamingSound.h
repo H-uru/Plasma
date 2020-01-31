@@ -86,17 +86,17 @@ protected:
     bool                fPlayWhenStopped;
     unsigned            fStartPos;
 
-    float               IGetTimeAtBufferStart( void ) { return fTimeAtBufferStart; }
+    float               IGetTimeAtBufferStart() { return fTimeAtBufferStart; }
     virtual void        SetStartPos(unsigned bytes);
 
-    virtual void        IDerivedActuallyPlay( void );
+    virtual void        IDerivedActuallyPlay();
     void                IActuallyStop();
     virtual void        ISetActualTime( double t );
     
     virtual void        IAddCallback( plEventCallbackMsg *pMsg );
     virtual void        IRemoveCallback( plEventCallbackMsg *pMsg );
 
-    virtual void        IFreeBuffers( void );
+    virtual void        IFreeBuffers();
     void                IStreamUpdate();
     virtual plSoundBuffer::ELoadReturnVal IPreLoadBuffer( bool playWhenLoaded, bool isIncidental = false  );
 };

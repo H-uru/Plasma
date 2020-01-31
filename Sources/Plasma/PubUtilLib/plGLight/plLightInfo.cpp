@@ -553,7 +553,7 @@ plKey plLightInfo::GetSceneNode() const
 
 //// Link & Unlink ///////////////////////////////////////////////////////
 
-void    plLightInfo::Unlink( void )
+void    plLightInfo::Unlink()
 {
     hsAssert( fPrevDevPtr, "Light info not in list" );
     if( fNextDevPtr )

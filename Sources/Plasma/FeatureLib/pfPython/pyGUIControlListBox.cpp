@@ -435,7 +435,7 @@ bool pyGUIControlListBox::IsGUIControlListBox(pyKey& gckey)
     return false;
 }
 
-int32_t pyGUIControlListBox::GetSelection( void )
+int32_t pyGUIControlListBox::GetSelection()
 {
     if ( fGCkey )
     {
@@ -458,7 +458,7 @@ void pyGUIControlListBox::SetSelection( int32_t item )
     }
 }
 
-void pyGUIControlListBox::Refresh( void )
+void pyGUIControlListBox::Refresh()
 {
     if ( fGCkey )
     {
@@ -480,7 +480,7 @@ void pyGUIControlListBox::RemoveElement( uint16_t index )
     }
 }
 
-void pyGUIControlListBox::ClearAllElements( void )
+void pyGUIControlListBox::ClearAllElements()
 {
     if ( fGCkey )
     {
@@ -491,7 +491,7 @@ void pyGUIControlListBox::ClearAllElements( void )
     }
 }
 
-uint16_t pyGUIControlListBox::GetNumElements( void )
+uint16_t pyGUIControlListBox::GetNumElements()
 {
     if ( fGCkey )
     {
@@ -764,7 +764,7 @@ void    pyGUIControlListBox::SetSwatchEdgeOffset( uint32_t set )
 
 
 
-void pyGUIControlListBox::ScrollToBegin( void )
+void pyGUIControlListBox::ScrollToBegin()
 {
     if ( fGCkey )
     {
@@ -776,7 +776,7 @@ void pyGUIControlListBox::ScrollToBegin( void )
 }
 
 
-void pyGUIControlListBox::ScrollToEnd( void )
+void pyGUIControlListBox::ScrollToEnd()
 {
     if ( fGCkey )
     {
@@ -800,7 +800,7 @@ void pyGUIControlListBox::SetScrollPos( int32_t pos )
 }
 
 
-int32_t pyGUIControlListBox::GetScrollPos( void )
+int32_t pyGUIControlListBox::GetScrollPos()
 {
     if ( fGCkey )
     {
@@ -813,7 +813,7 @@ int32_t pyGUIControlListBox::GetScrollPos( void )
 }
 
 
-int32_t pyGUIControlListBox::GetScrollRange( void )
+int32_t pyGUIControlListBox::GetScrollRange()
 {
     if ( fGCkey )
     {
@@ -826,7 +826,7 @@ int32_t pyGUIControlListBox::GetScrollRange( void )
 }
 
 
-void pyGUIControlListBox::LockList( void )
+void pyGUIControlListBox::LockList()
 {
     if ( fGCkey )
     {
@@ -838,7 +838,7 @@ void pyGUIControlListBox::LockList( void )
 }
 
 
-void pyGUIControlListBox::UnlockList( void )
+void pyGUIControlListBox::UnlockList()
 {
     if ( fGCkey )
     {
@@ -849,7 +849,7 @@ void pyGUIControlListBox::UnlockList( void )
     }
 }
 
-void pyGUIControlListBox::Clickable( void )
+void pyGUIControlListBox::Clickable()
 {
     if ( fGCkey )
     {
@@ -860,7 +860,7 @@ void pyGUIControlListBox::Clickable( void )
     }
 }
 
-void pyGUIControlListBox::Unclickable( void )
+void pyGUIControlListBox::Unclickable()
 {
     if ( fGCkey )
     {
@@ -891,7 +891,7 @@ void    pyGUIControlListBox::AddBranch( const ST::string &name, bool initiallyOp
     }
 }
 
-void    pyGUIControlListBox::CloseBranch( void )
+void    pyGUIControlListBox::CloseBranch()
 {
     if ( fGCkey )
     {

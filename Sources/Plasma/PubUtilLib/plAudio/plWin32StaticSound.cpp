@@ -208,7 +208,7 @@ void plWin32StaticSound::Update()
     }
 }
 
-void plWin32StaticSound::IDerivedActuallyPlay( void )
+void plWin32StaticSound::IDerivedActuallyPlay()
 {
     // Ensure there's a stop notify for us
     if( !fReallyPlaying )

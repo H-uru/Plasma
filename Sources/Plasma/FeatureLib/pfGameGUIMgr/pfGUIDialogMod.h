@@ -123,12 +123,12 @@ class pfGUIDialogMod : public plSingleModifier
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
         void        SetSceneNodeKey( plKey &key ) { fSceneNodeKey = key; }
-        plKey       GetSceneNodeKey( void );
+        plKey       GetSceneNodeKey();
 
         virtual void    SetEnabled( bool e );
-        bool            IsEnabled( void ) { return fEnabled; }
+        bool            IsEnabled() { return fEnabled; }
 
-        const char  *GetName( void ) { return fName; }
+        const char  *GetName() { return fName; }
 
         void        ScreenToWorldPoint( float x, float y, float z, hsPoint3 &outPt );
         hsPoint3    WorldToScreenPoint( const hsPoint3 &inPt );
@@ -139,18 +139,18 @@ class pfGUIDialogMod : public plSingleModifier
         void            UpdateInterestingThings( float mouseX, float mouseY, uint8_t modifiers, bool modalPreset );
 
         void            SetControlOfInterest( pfGUIControlMod *c );
-        pfGUIControlMod *GetControlOfInterest( void ) const { return fControlOfInterest; }
-        uint32_t          GetDesiredCursor( void ) const;
+        pfGUIControlMod *GetControlOfInterest() const { return fControlOfInterest; }
+        uint32_t          GetDesiredCursor() const;
 
-        void        UpdateAspectRatio( void );
-        void        UpdateAllBounds( void );
-        void        RefreshAllControls( void );
+        void        UpdateAspectRatio();
+        void        UpdateAllBounds();
+        void        RefreshAllControls();
 
         void            AddControl( pfGUIControlMod *ctrl );
-        uint32_t          GetNumControls( void ) { return fControls.GetCount(); }
+        uint32_t          GetNumControls() { return fControls.GetCount(); }
         pfGUIControlMod *GetControl( uint32_t idx ) { return fControls[ idx ]; }
 
-        pfGUIColorScheme    *GetColorScheme( void ) const { return fColorScheme; }
+        pfGUIColorScheme    *GetColorScheme() const { return fColorScheme; }
 
         void    LinkToList( pfGUIDialogMod **prevPtr )
         {
@@ -161,7 +161,7 @@ class pfGUIDialogMod : public plSingleModifier
             *prevPtr = this;
         }
 
-        void    Unlink( void )
+        void    Unlink()
         {
             if( fNext )
                 fNext->fPrevPtr = fPrevPtr;
@@ -172,21 +172,21 @@ class pfGUIDialogMod : public plSingleModifier
         }
 
         void            SetFocus( pfGUIControlMod *ctrl );
-        void            Show( void );
-        void            ShowNoReset( void );
-        void            Hide( void );
-        bool            IsVisible( void ) { return IsEnabled(); }
+        void            Show();
+        void            ShowNoReset();
+        void            Hide();
+        bool            IsVisible() { return IsEnabled(); }
 
-        pfGUIControlMod *GetFocus( void ) { return fFocusCtrl; }
+        pfGUIControlMod *GetFocus() { return fFocusCtrl; }
 
-        pfGUIDialogMod  *GetNext( void ) { return fNext; }
-        uint32_t          GetTagID( void ) { return fTagID; }
+        pfGUIDialogMod  *GetNext() { return fNext; }
+        uint32_t          GetTagID() { return fTagID; }
         pfGUIControlMod *GetControlFromTag( uint32_t tagID );
 
         void            SetHandler( pfGUIDialogProc *hdlr );
-        pfGUIDialogProc *GetHandler( void ) const { return fHandler; }
+        pfGUIDialogProc *GetHandler() const { return fHandler; }
 
-        plPostEffectMod *GetRenderMod( void ) const { return fRenderMod; }
+        plPostEffectMod *GetRenderMod() const { return fRenderMod; }
 
         // This sets the handler for the dialog and ALL of its controls
         void            SetHandlerForAll( pfGUIDialogProc *hdlr );
@@ -196,11 +196,11 @@ class pfGUIDialogMod : public plSingleModifier
 
         /// Methods for doing drag & drop of listElements
 
-        void    ClearDragList( void );
+        void    ClearDragList();
         void    AddToDragList( pfGUIListElement *e );
         void    EnterDragMode( pfGUIControlMod *source );
 
-        uint32_t  GetVersion( void ) const { return fVersion; }
+        uint32_t  GetVersion() const { return fVersion; }
 
         // Export only
         void        SetRenderMod( plPostEffectMod *mod ) { fRenderMod = mod; }

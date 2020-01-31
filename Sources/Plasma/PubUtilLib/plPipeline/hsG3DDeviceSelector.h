@@ -104,20 +104,20 @@ public:
     uint32_t GetWidth() const { return fWidth; }
     uint32_t GetHeight() const { return fHeight; }
     uint32_t GetColorDepth() const { return fDepth; }
-    uint8_t  GetNumZStencilDepths( void ) const { return fZStencilDepths.GetCount(); }
+    uint8_t  GetNumZStencilDepths() const { return fZStencilDepths.GetCount(); }
     uint16_t GetZStencilDepth( uint8_t i ) const { return fZStencilDepths[ i ]; }
-    uint8_t  GetNumFSAATypes( void ) const { return fFSAATypes.GetCount(); }
+    uint8_t  GetNumFSAATypes() const { return fFSAATypes.GetCount(); }
     uint8_t  GetFSAAType( uint8_t i ) const { return fFSAATypes[ i ]; }
-    bool     GetCanRenderToCubics( void ) const { return fCanRenderToCubics; }
+    bool     GetCanRenderToCubics() const { return fCanRenderToCubics; }
 
     void SetDiscarded(bool on=true) { if(on) fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }
     void SetWidth(uint32_t w) { fWidth = w; }
     void SetHeight(uint32_t h) { fHeight = h; }
     void SetColorDepth(uint32_t d) { fDepth = d; }
-    void ClearZStencilDepths( void ) { fZStencilDepths.Reset(); }
+    void ClearZStencilDepths() { fZStencilDepths.Reset(); }
     void AddZStencilDepth( uint16_t depth ) { fZStencilDepths.Append( depth ); }
 
-    void    ClearFSAATypes( void ) { fFSAATypes.Reset(); }
+    void    ClearFSAATypes() { fFSAATypes.Reset(); }
     void    AddFSAAType( uint8_t type ) { fFSAATypes.Append( type ); }
 
     void    SetCanRenderToCubics( bool can ) { fCanRenderToCubics = can; }
@@ -202,10 +202,10 @@ public:
     bool    GetCap(uint32_t cap) const { return fCaps.IsBitSet(cap); }
     void    SetCap(uint32_t cap, bool on=true) { fCaps.SetBit(cap, on); }
 
-    float   GetZBiasRating( void ) const { return fZBiasRating; }
+    float   GetZBiasRating() const { return fZBiasRating; }
     void    SetZBiasRating( float rating ) { fZBiasRating = rating; }
 
-    float   GetLODBiasRating( void ) const { return fLODBiasRating; }
+    float   GetLODBiasRating() const { return fLODBiasRating; }
     void    SetLODBiasRating( float rating ) { fLODBiasRating = rating; }
 
     void    GetFogApproxStarts( float &expApprox, float &exp2Approx ) const { expApprox = fFogExpApproxStart;
@@ -213,7 +213,7 @@ public:
     void    SetFogApproxStarts( float exp, float exp2 ) { fFogExpApproxStart = exp; 
                                                                 fFogExp2ApproxStart = exp2; }
 
-    float   GetFogEndBias( void ) const { return fFogEndBias; }
+    float   GetFogEndBias() const { return fFogEndBias; }
     void    SetFogEndBias( float rating ) { fFogEndBias = rating; }
 
     void    GetFogKneeParams( uint8_t type, float &knee, float &kneeVal ) const { knee = fFogKnees[ type ]; kneeVal = fFogKneeVals[ type ]; }
@@ -225,7 +225,7 @@ public:
     uint8_t   GetAASetting() const { return fAASetting; }
     void    SetAASetting( uint8_t s ) { fAASetting = s; }
 
-    uint8_t   GetMaxAnisotropicSamples( void ) const { return fMaxAnisotropicSamples; }
+    uint8_t   GetMaxAnisotropicSamples() const { return fMaxAnisotropicSamples; }
     void    SetMaxAnisotropicSamples( uint8_t num ) { fMaxAnisotropicSamples = num; }
 
     void SetDiscarded(bool on=true) { if(on)fFlags |= kDiscarded; else fFlags &= ~kDiscarded; }

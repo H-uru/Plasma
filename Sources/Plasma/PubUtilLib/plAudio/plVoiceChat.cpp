@@ -470,7 +470,7 @@ void plVoiceSound::SetSampleRate(uint32_t rate)
     }
 }
 
-void plVoiceSound::IDerivedActuallyPlay( void )
+void plVoiceSound::IDerivedActuallyPlay()
 {
     if(!fReallyPlaying) {
         fDSoundBuffer->Play();

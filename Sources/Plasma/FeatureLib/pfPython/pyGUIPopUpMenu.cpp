@@ -232,33 +232,33 @@ void pyGUIPopUpMenu::SetEnabled( bool e )
     menu->SetEnabled(e);
 }
 
-bool pyGUIPopUpMenu::IsEnabled( void )
+bool pyGUIPopUpMenu::IsEnabled()
 {
     kGetMenuPtr( false );
     return menu->IsEnabled();
 }
 
-const char* pyGUIPopUpMenu::GetName( void )
+const char* pyGUIPopUpMenu::GetName()
 {
     kGetMenuPtr( "" );
     return menu->GetName();
 }
 
 
-uint32_t pyGUIPopUpMenu::GetVersion(void)
+uint32_t pyGUIPopUpMenu::GetVersion()
 {
     kGetMenuPtr( 0 );
     return menu->GetVersion();
 }
 
 
-void pyGUIPopUpMenu::Show( void )
+void pyGUIPopUpMenu::Show()
 {
     kGetMenuPtr( ; );
     ( (pfGUIDialogMod *)menu )->Show();
 }
 
-void pyGUIPopUpMenu::Hide( void )
+void pyGUIPopUpMenu::Hide()
 {
     kGetMenuPtr( ; );
     menu->Hide();

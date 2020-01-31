@@ -357,7 +357,7 @@ void    plGraphPlate::SetDataLabels( uint32_t min, uint32_t max )
 
 //// ClearData ///////////////////////////////////////////////////////////////
 
-void    plGraphPlate::ClearData( void )
+void    plGraphPlate::ClearData()
 {
     uint32_t  *bits = (uint32_t *)fMipmap->GetImage(), *ptr;
     int     i;
@@ -733,12 +733,12 @@ void    plPlateManager::DestroyPlate( plPlate *plate )
 
 //// GetPipeWidth/Height /////////////////////////////////////////////////////
 
-uint32_t  plPlateManager::GetPipeWidth( void )
+uint32_t  plPlateManager::GetPipeWidth()
 {
     return fOwner->Width();
 }
 
-uint32_t  plPlateManager::GetPipeHeight( void )
+uint32_t  plPlateManager::GetPipeHeight()
 {
     return fOwner->Height();
 }

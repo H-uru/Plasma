@@ -221,10 +221,10 @@ public:
 
     virtual bool        MsgReceive(plMessage* msg);
 
-    virtual void        Unlink( void );
+    virtual void        Unlink();
     virtual void        Link( plLightInfo **back );
-    virtual plLightInfo *GetNext( void ) { return fNextDevPtr; }
-    virtual bool        IsLinked( void ) { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
+    virtual plLightInfo *GetNext() { return fNextDevPtr; }
+    virtual bool        IsLinked() { return ( fNextDevPtr != nil || fPrevDevPtr != nil ) ? true : false; }
 
     // New shadow
     void                ClearSlaveBits() { fSlaveBits.Clear(); }

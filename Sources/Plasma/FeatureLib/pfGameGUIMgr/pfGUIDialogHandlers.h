@@ -89,16 +89,16 @@ class pfGUIDialogProc : public pfGUICtrlProcObject
         virtual void    DoSomething( pfGUIControlMod *ctrl ) {;}
 
         // Called on dialog init (i.e. first showing, before OnShow() is called), only ever called once
-        virtual void    OnInit( void ) { ; }
+        virtual void    OnInit() { ; }
 
         // Called before the dialog is shown, always after OnInit()
-        virtual void    OnShow( void ) { ; }
+        virtual void    OnShow() { ; }
 
         // Called before the dialog is hidden
-        virtual void    OnHide( void ) { ; }
+        virtual void    OnHide() { ; }
 
         // Called on the dialog's destructor, before it's unregistered with the game GUI manager
-        virtual void    OnDestroy( void ) { ; }
+        virtual void    OnDestroy() { ; }
 
         // Called when the dialog's focused control changes
         virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl ) { ; }

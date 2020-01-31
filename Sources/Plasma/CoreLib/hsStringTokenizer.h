@@ -71,11 +71,11 @@ public:
     void Reset(const char *string, const char *seps);
     void ParseQuotes(bool qAsTok);
 
-    char    *GetRestOfString( void ) const { return fTok; }
+    char    *GetRestOfString() const { return fTok; }
 
     char *fString;
 
-    void    RestoreLastTerminator( void );
+    void    RestoreLastTerminator();
 
 private:
     bool IsSep(char c);
@@ -102,11 +102,11 @@ public:
     void Reset(const wchar_t *string, const wchar_t *seps);
     void ParseQuotes(bool qAsTok);
 
-    wchar_t   *GetRestOfString( void ) const { return fTok; }
+    wchar_t   *GetRestOfString() const { return fTok; }
 
     wchar_t *fString;
 
-    void    RestoreLastTerminator( void );
+    void    RestoreLastTerminator();
 
 private:
     bool IsSep(wchar_t c);

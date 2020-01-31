@@ -52,7 +52,7 @@ Mead, WA   99021
 class plClientLauncher
 {
 public:
-    typedef std::function<class pfPatcher*(void)> CreatePatcherFunc;
+    typedef std::function<class pfPatcher*()> CreatePatcherFunc;
     typedef std::function<void(ENetError, const ST::string&)> ErrorFunc;
     typedef std::function<bool(const plFileName&)> InstallRedistFunc;
     typedef std::function<void(const plFileName&, const ST::string&)> LaunchClientFunc;
@@ -115,7 +115,7 @@ public:
      *  here, then we need to relaunch ourselves so that the game client will look like what the server expects.
      *  \returns True if a self-patch was completed. False if not.
      */
-    bool CompleteSelfPatch(std::function<void(void)> waitProc) const;
+    bool CompleteSelfPatch(std::function<void()> waitProc) const;
 
     /** Start eap's weird network subsystem and the shard status pinger.
      *  \remarks Please note that this will also enqueue the first patch.

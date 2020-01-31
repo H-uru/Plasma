@@ -239,7 +239,7 @@ public:
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) { return fBitmaps[ index ]; }
         virtual PBBitmap *GetPBBitmap( int index = 0 );
-        virtual int     GetNumBitmaps( void ) { return 6; }
+        virtual int     GetNumBitmaps() { return 6; }
 
     protected:
         virtual void ISetMaxBitmap(Bitmap *bitmap, int index = 0) { fBitmaps[ index ] = bitmap; }

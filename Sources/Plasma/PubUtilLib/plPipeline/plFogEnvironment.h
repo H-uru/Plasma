@@ -98,13 +98,13 @@ class plFogEnvironment : public hsKeyedObject
         void    SetColor( hsColorRGBA &color ) { fColor = color; }
 
         // Clear the environment to no fog
-        void    Clear( void ) { fType = kNoFog; }
+        void    Clear() { fType = kNoFog; }
 
         // Gets the type
-        uint8_t   GetType( void ) const { return fType; }
+        uint8_t   GetType() const { return fType; }
 
         // Gets the color
-        hsColorRGBA &GetColor( void ) { return fColor; }
+        hsColorRGBA &GetColor() { return fColor; }
 
         // Gets the parameters. Sets start to 0 if the type is not linear (can be nil)
         void    GetParameters( float *start, float *end, float *density, hsColorRGBA *color ) const;

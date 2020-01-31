@@ -66,7 +66,7 @@ protected:
 
     static uint32_t   fNextKeyID;
 
-    void    IMakeNewKey( void );
+    void    IMakeNewKey();
 
     pyJournalBook(); // used by python glue only, do NOT call
     pyJournalBook( const char *esHTMLSource );
@@ -100,15 +100,15 @@ public:
 
     // Interface functions per book
     virtual void    Show( bool startOpened );
-    virtual void    Hide( void );
+    virtual void    Hide();
     virtual void    Open( uint32_t startingPage );
-    virtual void    Close( void );
-    virtual void    CloseAndHide( void );
+    virtual void    Close();
+    virtual void    CloseAndHide();
 
-    virtual void    NextPage( void );
-    virtual void    PreviousPage( void );
+    virtual void    NextPage();
+    virtual void    PreviousPage();
     virtual void    GoToPage( uint32_t page );
-    virtual uint32_t  GetCurrentPage( void ) const;
+    virtual uint32_t  GetCurrentPage() const;
     virtual void    SetPageMargin( uint32_t margin );
     virtual void    AllowPageTurning( bool allow );
 
@@ -123,7 +123,7 @@ public:
     virtual PyObject *GetMovie( uint8_t index ); // returns cyAnimation
     
     virtual void    SetEditable( bool editable );
-    virtual std::string GetEditableText( void ) const;
+    virtual std::string GetEditableText() const;
     virtual void    SetEditableText( std::string text );
 };
 

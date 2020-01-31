@@ -98,7 +98,7 @@ public:
     void Read(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
     void Write(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
 
-    hsStream* GetStream(void) { return &fStream;}
+    hsStream* GetStream() { return &fStream;}
 };
 
 

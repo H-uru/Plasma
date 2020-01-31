@@ -159,7 +159,7 @@ void    plKeyBinding::SetKey2( const plKeyCombo &newCombo )
     fKey2 = newCombo;
 }
 
-void    plKeyBinding::ClearKeys( void )
+void    plKeyBinding::ClearKeys()
 {
     fKey1 = fKey2 = plKeyCombo::kUnmapped;
 }
@@ -182,7 +182,7 @@ plKeyMap::~plKeyMap()
     ClearAll();
 }
 
-void    plKeyMap::ClearAll( void )
+void    plKeyMap::ClearAll()
 {
     uint32_t  i;
 
@@ -488,7 +488,7 @@ void    plKeyMap::UnmapBinding( ControlEventCode code )
 //// UnmapAllBindings ////////////////////////////////////////////////////////
 //  Unmaps all the bindings, but leaves the code records themselves
 
-void    plKeyMap::UnmapAllBindings( void )
+void    plKeyMap::UnmapAllBindings()
 {
     uint32_t  i;
 

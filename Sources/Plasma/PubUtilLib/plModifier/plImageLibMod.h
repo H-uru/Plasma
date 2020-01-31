@@ -73,7 +73,7 @@ public:
         kRefImage = 0
     };
 
-    uint32_t  GetNumImages( void ) const { return fImages.GetCount(); }
+    uint32_t  GetNumImages() const { return fImages.GetCount(); }
 };
 
 #endif // plImageLibMod_inc

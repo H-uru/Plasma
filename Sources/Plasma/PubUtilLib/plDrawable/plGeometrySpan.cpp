@@ -83,7 +83,7 @@ plGeometrySpan::~plGeometrySpan()
     ClearBuffers();
 }
 
-void    plGeometrySpan::IClearMembers( void )
+void    plGeometrySpan::IClearMembers()
 {
     fVertexData = nil; 
     fIndexData = nil; 
@@ -120,7 +120,7 @@ void    plGeometrySpan::IClearMembers( void )
 
 //// ClearBuffers ////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::ClearBuffers( void )
+void    plGeometrySpan::ClearBuffers()
 {
     // If UserOwned, the actual buffer data belongs to someone else (like a BufferGroup).
     // Just erase our knowledge of it and move on.
@@ -303,7 +303,7 @@ void plGeometrySpan::UnInstance()
 //  Static function that allocates a new groupID by finding an empty slot in
 //  the bitVector, then marking it as used and returning that bit #
 
-uint32_t  plGeometrySpan::IAllocateNewGroupID( void )
+uint32_t  plGeometrySpan::IAllocateNewGroupID()
 {
     uint32_t          id;
 
@@ -882,7 +882,7 @@ void    plGeometrySpan::AddIndexArray( uint32_t count, uint16_t *indices )
 
 //// EndCreate ////////////////////////////////////////////////////////////////
 
-void    plGeometrySpan::EndCreate( void )
+void    plGeometrySpan::EndCreate()
 {
     hsBounds3Ext    bounds;
     uint32_t          i, size;

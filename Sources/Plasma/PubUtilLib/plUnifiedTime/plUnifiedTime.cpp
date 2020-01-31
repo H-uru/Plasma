@@ -1001,7 +1001,7 @@ bool plUnifiedTime::FromString(const char * buf, const char * fmt)
 
 int32_t   plUnifiedTime::fLocalTimeZoneOffset = -1;
 
-int32_t   plUnifiedTime::IGetLocalTimeZoneOffset( void )
+int32_t   plUnifiedTime::IGetLocalTimeZoneOffset()
 {
     static bool     inited = false;
 

@@ -80,7 +80,7 @@ class plDTProgressMgr : public plProgressMgr
 
         virtual void    Draw( plPipeline *p );
 
-        static void     DeclareThyself( void );
+        static void     DeclareThyself();
 };
 
 

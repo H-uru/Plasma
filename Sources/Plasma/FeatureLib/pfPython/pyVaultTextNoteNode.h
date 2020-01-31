@@ -85,10 +85,10 @@ public:
     void Note_SetTextW( const wchar_t * text );
     ST::string Note_GetText() const;
     void Note_SetType( int32_t type );
-    int32_t Note_GetType( void );
+    int32_t Note_GetType();
 
     void Note_SetSubType( int32_t type );
-    int32_t Note_GetSubType( void );
+    int32_t Note_GetSubType();
 
     PyObject * GetDeviceInbox() const; // returns pyVaultFolderNode
     void SetDeviceInbox( const char * devName, PyObject * cb=nil, uint32_t cbContext=0 );

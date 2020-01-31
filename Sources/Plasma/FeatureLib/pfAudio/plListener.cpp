@@ -216,7 +216,7 @@ void    plListener::ISetRef( const plKey &ref, bool binding, int type )
         GetKey()->Release( ref );
 }
 
-void    plListener::IEnsureVCamValid( void )
+void    plListener::IEnsureVCamValid()
 {
     if( fPosRatio == 1.f && fFacingRatio == 1.f && fVelRatio == 1.f )
     {
@@ -241,7 +241,7 @@ void    plListener::IEnsureVCamValid( void )
     }
 }
 
-void    plListener::ICheckAudio( void ) const
+void    plListener::ICheckAudio() const
 {
     if( ( fPosRatio < 1.f || fFacingRatio < 1.f || fVelRatio < 1.f ) && fVCam == nil )
         plgAudioSys::SetMuted( true );

@@ -61,7 +61,7 @@ public:
     plSoundDeswizzler( uint32_t srcLength, uint8_t numChannels, uint32_t sampleSize );
     ~plSoundDeswizzler();
 
-    void    *GetSourceBuffer( void ) const { return fData; }
+    void    *GetSourceBuffer() const { return fData; }
     void    Extract( uint8_t channelSelect, void *destPtr, uint32_t numBytesToProcess = 0 );
 
 protected:

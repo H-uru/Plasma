@@ -117,7 +117,7 @@ void    plTextureExportLog::AddTexture( plBitmap *texture )
     IAddBMapNode( texture->GetTotalSize(), texture );
 }
 
-void    plTextureExportLog::Write( void )
+void    plTextureExportLog::Write()
 {
     plBMapNode      *node;
     hsUNIXStream    *stream = new hsUNIXStream;

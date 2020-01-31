@@ -95,8 +95,8 @@ class pfGUICtrlProcObject
         virtual void    UserCallback( uint32_t userValue ) { ; }
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
-        void    IncRef( void ) { fRefCnt++; }
-        bool    DecRef( void ) { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
+        void    IncRef() { fRefCnt++; }
+        bool    DecRef() { fRefCnt--; return ( fRefCnt > 0 ) ? false : true; }
 };
 
 //// pfGUICtrlProcWriteableObject ////////////////////////////////////////////

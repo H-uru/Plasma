@@ -83,7 +83,7 @@ protected:
     // Some extra handy info for us
     uint8_t               fNumDestChannels, fNumDestBytesPerSample;
 
-    virtual void    IDerivedActuallyPlay( void );
+    virtual void    IDerivedActuallyPlay();
 
     virtual void    IRead( hsStream *s, hsResMgr *mgr );
     virtual void    IWrite( hsStream *s, hsResMgr *mgr );
@@ -92,8 +92,8 @@ protected:
     void            IFillCurrentSound( int16_t newCurrent = -1 );
     
     // Abstracting a few things here for the incidentalMgr
-    virtual void *  IGetDataPointer( void ) const; 
-    virtual uint32_t  IGetDataLength( void ) const;
+    virtual void *  IGetDataPointer() const;
+    virtual uint32_t  IGetDataLength() const;
 };
 
 #endif //plWin32GroupedSound_h
