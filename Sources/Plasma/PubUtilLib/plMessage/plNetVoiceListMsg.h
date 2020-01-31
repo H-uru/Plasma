@@ -67,7 +67,7 @@ public:
                 plMessage(nil, nil, nil), fCmd( cmd )
                 { SetBCastFlag( kBCastByExactType ); }
     
-    ~plNetVoiceListMsg() { ; }
+    ~plNetVoiceListMsg() { }
 
     CLASSNAME_REGISTER( plNetVoiceListMsg );
     GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );

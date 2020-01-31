@@ -101,7 +101,7 @@ public:
     virtual int         GetNumSounds() const = 0;   
     virtual plSound*    GetSound(int i) const = 0;
     virtual int         GetSoundIndex(const char *keyname) const = 0;
-    virtual void        Init(bool isLocal){;}
+    virtual void        Init(bool isLocal) { }
     virtual void        SetVolume(const float volume,int index = -1) = 0;
     virtual void        SetMuted( bool muted, int index = -1 ) = 0;
     virtual void        ToggleMuted( int index = -1 ) = 0;

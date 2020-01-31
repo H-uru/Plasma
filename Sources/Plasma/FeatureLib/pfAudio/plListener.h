@@ -52,8 +52,8 @@ class plListener : public plSingleModifier
 {
 public:
 
-    plListener() :  fVCam(nil), fInitMe(true){;}
-    ~plListener(){;}
+    plListener() :  fVCam(nil), fInitMe(true) { }
+    ~plListener() { }
 
     CLASSNAME_REGISTER( plListener );
     GETINTERFACE_ANY( plListener, plSingleModifier );

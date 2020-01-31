@@ -86,13 +86,13 @@ class pfGUICtrlProcObject
     public:
 
         pfGUICtrlProcObject() { fRefCnt = 0; }
-        virtual ~pfGUICtrlProcObject() { ; }
+        virtual ~pfGUICtrlProcObject() { }
 
         virtual void    DoSomething( pfGUIControlMod *ctrl ) = 0;
 
-        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event ) { ; }
+        virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event ) { }
 
-        virtual void    UserCallback( uint32_t userValue ) { ; }
+        virtual void    UserCallback( uint32_t userValue ) { }
 
         // ONLY THE GUI SYSTEM SHOULD CALL THESE
         void    IncRef() { fRefCnt++; }
@@ -126,8 +126,8 @@ class pfGUICtrlProcWriteableObject : public pfGUICtrlProcObject
         };
 
         pfGUICtrlProcWriteableObject() { fType = kNull; }
-        pfGUICtrlProcWriteableObject( uint32_t type ) : fType( type ) { ; }
-        virtual ~pfGUICtrlProcWriteableObject() { ; }
+        pfGUICtrlProcWriteableObject( uint32_t type ) : fType( type ) { }
+        virtual ~pfGUICtrlProcWriteableObject() { }
 
         virtual void    DoSomething( pfGUIControlMod *ctrl ) = 0;
 

@@ -54,10 +54,10 @@ class plPlayerPageMsg : public plMessage
 protected:
 
 public:
-    plPlayerPageMsg() : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+    plPlayerPageMsg() : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1) { }
     plPlayerPageMsg(const plKey &s, 
                     const plKey &r, 
-                    const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1){;}
+                    const double* t) : fPlayer(nil),fLocallyOriginated(false),fUnload(false),fLastOut(false),fClientID(-1) { }
     
     CLASSNAME_REGISTER(plPlayerPageMsg);
     GETINTERFACE_ANY(plPlayerPageMsg, plMessage);

@@ -55,7 +55,7 @@ public:
     plInterestingModMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){}
-    ~plInterestingModMsg(){;}
+    ~plInterestingModMsg() { }
 
     CLASSNAME_REGISTER( plInterestingModMsg );
     GETINTERFACE_ANY( plInterestingModMsg, plMessage );
@@ -98,7 +98,7 @@ public:
     plInterestingPing(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plInterestingPing(){;}
+    ~plInterestingPing() { }
 
     CLASSNAME_REGISTER( plInterestingPing );
     GETINTERFACE_ANY( plInterestingPing, plMessage );

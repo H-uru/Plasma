@@ -304,8 +304,8 @@ class plPseudoLinkAnimCallbackMsg : public plMessage
 {
 public:
 
-    plPseudoLinkAnimCallbackMsg() {;}
-    ~plPseudoLinkAnimCallbackMsg() {;}
+    plPseudoLinkAnimCallbackMsg() { }
+    ~plPseudoLinkAnimCallbackMsg() { }
 
     CLASSNAME_REGISTER(plPseudoLinkAnimCallbackMsg);
     GETINTERFACE_ANY(plPseudoLinkAnimCallbackMsg, plMessage);

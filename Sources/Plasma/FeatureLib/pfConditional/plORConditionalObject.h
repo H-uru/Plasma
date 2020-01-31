@@ -65,7 +65,7 @@ public:
     virtual bool Satisfied(); 
 
     virtual bool MsgReceive(plMessage* msg);
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset();
 
     virtual void SetLogicMod(plLogicModBase* pMod);

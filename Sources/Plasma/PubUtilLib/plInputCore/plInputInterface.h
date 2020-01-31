@@ -215,7 +215,7 @@ class plInputInterface : public hsRefCnt
         virtual void    ClearKeyMap(); 
         
         // reset clickable state
-        virtual void ResetClickableState() {;}
+        virtual void ResetClickableState() { }
 };
 
 

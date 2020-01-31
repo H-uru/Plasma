@@ -57,14 +57,14 @@ protected:
 public:
     
     plActivatorConditionalObject();
-    ~plActivatorConditionalObject(){;}
+    ~plActivatorConditionalObject() { }
     
     CLASSNAME_REGISTER( plActivatorConditionalObject );
     GETINTERFACE_ANY( plActivatorConditionalObject, plConditionalObject );
     
     virtual bool MsgReceive(plMessage* msg);
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void SetActivatorKey(plKey k);
     void Reset() { SetSatisfied(false); }
 
@@ -77,8 +77,8 @@ class plActivatorActivatorConditionalObject : public plActivatorConditionalObjec
 {
 public:
     
-    plActivatorActivatorConditionalObject(){;}
-    ~plActivatorActivatorConditionalObject(){;}
+    plActivatorActivatorConditionalObject() { }
+    ~plActivatorActivatorConditionalObject() { }
     
     CLASSNAME_REGISTER( plActivatorActivatorConditionalObject );
     GETINTERFACE_ANY( plActivatorActivatorConditionalObject, plActivatorConditionalObject );
@@ -92,8 +92,8 @@ class plVolActivatorConditionalObject : public plActivatorConditionalObject
 {
 public:
     
-    plVolActivatorConditionalObject(){;}
-    ~plVolActivatorConditionalObject(){;}
+    plVolActivatorConditionalObject() { }
+    ~plVolActivatorConditionalObject() { }
     
     CLASSNAME_REGISTER( plVolActivatorConditionalObject );
     GETINTERFACE_ANY( plVolActivatorConditionalObject, plActivatorConditionalObject );

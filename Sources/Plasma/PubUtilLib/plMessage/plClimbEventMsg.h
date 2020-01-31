@@ -49,8 +49,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plClimbEventMsg : public plMessage
 {
 public:
-    plClimbEventMsg(){;}
-    virtual ~plClimbEventMsg(){;}
+    plClimbEventMsg() { }
+    virtual ~plClimbEventMsg() { }
     CLASSNAME_REGISTER(plClimbEventMsg);
     GETINTERFACE_ANY(plClimbEventMsg, plMessage);
     virtual void Read(hsStream* stream, hsResMgr* mgr){plMessage::IMsgRead(stream,mgr);}

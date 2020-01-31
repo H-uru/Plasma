@@ -59,7 +59,7 @@ public:
     plCmdIfaceModMsg() : fInterface(nil), fIndex(0), fControlCode(0){SetBCastFlag(plMessage::kBCastByExactType);}
     plCmdIfaceModMsg(const plKey* s, 
                     const plKey* r, 
-                    const double* t) : fInterface(nil){;}
+                    const double* t) : fInterface(nil) { }
     
     CLASSNAME_REGISTER(plCmdIfaceModMsg);
     GETINTERFACE_ANY(plCmdIfaceModMsg, plMessage);

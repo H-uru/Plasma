@@ -56,7 +56,7 @@ protected:
 public:
     
     plFacingConditionalObject();
-    ~plFacingConditionalObject(){;}
+    ~plFacingConditionalObject() { }
     
     CLASSNAME_REGISTER( plFacingConditionalObject );
     GETINTERFACE_ANY( plFacingConditionalObject, plConditionalObject );
@@ -68,7 +68,7 @@ public:
 
     virtual bool Verify(plMessage* msg);
 
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(true); }
 
     virtual void Read(hsStream* stream, hsResMgr* mgr);

@@ -58,8 +58,8 @@ protected:
     plKey               fProxyKey;
 
 public:
-    plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil){;}
-    virtual ~plDetectorModifier(){;}
+    plDetectorModifier() : fRemoteMod(nil),fProxyKey(nil) { }
+    virtual ~plDetectorModifier() { }
     
 //  virtual bool MsgReceive(plMessage* msg) = 0;
 
@@ -68,7 +68,7 @@ public:
     void AddLogicObj(plKey pKey) { fReceivers.Append(pKey); }
     void SetRemote(plModifier* p) { fRemoteMod = p; }
     plModifier* RemoteMod() { return fRemoteMod; }
-    virtual void SetType(int8_t i) {;}
+    virtual void SetType(int8_t i) { }
     int GetNumReceivers() const { return fReceivers.Count(); }
     plKey GetReceiver(int i) const { return fReceivers[i]; }
     void SetProxyKey(const plKey &k) { fProxyKey = k; }

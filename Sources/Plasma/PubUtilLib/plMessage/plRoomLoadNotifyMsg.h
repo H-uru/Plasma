@@ -74,7 +74,7 @@ public:
                 const plKey &r, 
                 const double* t)
         : plMessage(s, r, t) { IInit(); }
-    virtual ~plRoomLoadNotifyMsg() {;}
+    virtual ~plRoomLoadNotifyMsg() { }
 
     CLASSNAME_REGISTER( plRoomLoadNotifyMsg );
     GETINTERFACE_ANY( plRoomLoadNotifyMsg, plMessage );

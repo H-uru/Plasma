@@ -59,14 +59,14 @@ protected:
 public:
     
     plObjectInBoxConditionalObject();
-    ~plObjectInBoxConditionalObject(){;}
+    ~plObjectInBoxConditionalObject() { }
     
     CLASSNAME_REGISTER( plObjectInBoxConditionalObject );
     GETINTERFACE_ANY( plObjectInBoxConditionalObject, plConditionalObject );
     
     bool MsgReceive(plMessage* msg);
 
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
     virtual bool Satisfied() { return true; }
     virtual bool Verify(plMessage* msg);
@@ -103,7 +103,7 @@ public:
     };
 
     plVolumeSensorConditionalObject();
-    ~plVolumeSensorConditionalObject(){;}
+    ~plVolumeSensorConditionalObject() { }
 
     CLASSNAME_REGISTER(plVolumeSensorConditionalObject);
     GETINTERFACE_ANY(plVolumeSensorConditionalObject, plConditionalObject);

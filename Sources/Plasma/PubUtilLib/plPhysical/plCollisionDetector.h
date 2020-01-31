@@ -77,7 +77,7 @@ public:
 
     plCollisionDetector() : fType(0), fTriggered(false), fBumped(false){ }
     plCollisionDetector(int8_t type) : fType(type), fTriggered(false), fBumped(false) { }
-    virtual ~plCollisionDetector(){;}
+    virtual ~plCollisionDetector() { }
     
     virtual bool MsgReceive(plMessage* msg);
 
@@ -212,7 +212,7 @@ public:
     {
         kSubworld = 0,
     };
-    plSubworldRegionDetector() : fSub(nil), fOnExit(false){;}
+    plSubworldRegionDetector() : fSub(nil), fOnExit(false) { }
     ~plSubworldRegionDetector();
     
     virtual bool MsgReceive(plMessage* msg);

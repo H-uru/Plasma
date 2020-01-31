@@ -93,7 +93,7 @@ class plDebugText
             kStyleBold = 0x02
         };
 
-        ~plDebugText() { ; }
+        ~plDebugText() { }
 
         static plDebugText  &Instance() { return fInstance; }
 
@@ -174,7 +174,7 @@ class   plDebugTextManager
             plDebugTextNode( const char *s, uint32_t c, uint16_t x, uint16_t y, uint8_t style ); 
             plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c ); 
             plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c1, uint32_t c2 );
-            ~plDebugTextNode() {;}
+            ~plDebugTextNode() { }
         };
 
         hsTArray<plDebugTextNode>   fList;

@@ -293,8 +293,8 @@ public:
 class plMtlChangeCallback
 {
     public:
-        virtual void    NoteTrackListChanged() { ; }
-        virtual void    SegmentListChanged() { ; }
+        virtual void    NoteTrackListChanged() { }
+        virtual void    SegmentListChanged() { }
 };
 
 #endif // PL_PASSMTLBASE_H

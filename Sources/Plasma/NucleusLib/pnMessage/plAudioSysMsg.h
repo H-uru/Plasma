@@ -78,7 +78,7 @@ public:
     plAudioSysMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t) : pObj(nil){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plAudioSysMsg(){;}
+    ~plAudioSysMsg() { }
 
     CLASSNAME_REGISTER(plAudioSysMsg);
     GETINTERFACE_ANY(plAudioSysMsg, plMessage);

@@ -57,7 +57,7 @@ public:
     plSpawnRequestMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kBCastByExactType);}
-    ~plSpawnRequestMsg(){;}
+    ~plSpawnRequestMsg() { }
 
     CLASSNAME_REGISTER( plSpawnRequestMsg );
     GETINTERFACE_ANY( plSpawnRequestMsg, plMessage );

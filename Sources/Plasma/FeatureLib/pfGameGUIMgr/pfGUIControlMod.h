@@ -148,7 +148,7 @@ class pfGUIControlMod : public plSingleModifier
         void            ISetDialog( pfGUIDialogMod *mod ) { fDialog = mod; }
         void            IScreenToLocalPt( hsPoint3 &pt );
 
-        virtual void    IUpdate() {;}
+        virtual void    IUpdate() { }
         void            ISetHandler( pfGUICtrlProcObject *h, bool clearInheritFlag = false );
 
         void            IPlaySound( uint8_t guiCtrlEvent, bool loop = false );
@@ -202,11 +202,11 @@ class pfGUIControlMod : public plSingleModifier
         // Return false if you actually DON'T want the mouse clicked at this point (should only be used for non-rectangular region rejection)
         virtual bool    FilterMousePosition( hsPoint3 &mousePt ) { return true; }
 
-        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers ) {;}
-        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers ) {;}
-        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers ) {;}
-        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers ) {;}
-        virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers ) {;}
+        virtual void    HandleMouseDown( hsPoint3 &mousePt, uint8_t modifiers ) { }
+        virtual void    HandleMouseUp( hsPoint3 &mousePt, uint8_t modifiers ) { }
+        virtual void    HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers ) { }
+        virtual void    HandleMouseHover( hsPoint3 &mousePt, uint8_t modifiers ) { }
+        virtual void    HandleMouseDblClick( hsPoint3 &mousePt, uint8_t modifiers ) { }
 
         virtual bool    HandleKeyPress( wchar_t key, uint8_t modifiers );
         virtual bool    HandleKeyEvent( pfGameGUIMgr::EventType event, plKeyDef key, uint8_t modifiers );
@@ -249,7 +249,7 @@ class pfGUIControlMod : public plSingleModifier
         virtual void    UpdateColorScheme() { IPostSetUpDynTextMap(); IUpdate(); }
 
         // should be override by specific GUIcontrol
-        virtual void        PurgeDynaTextMapImage() {;}
+        virtual void        PurgeDynaTextMapImage() { }
 
         // Override from plModifier so we can update our bounds
         virtual void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l);

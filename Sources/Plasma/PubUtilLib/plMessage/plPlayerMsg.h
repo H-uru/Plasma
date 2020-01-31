@@ -62,7 +62,7 @@ public:
     plPlayerMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){ SetBCastFlag(plMessage::kBCastByExactType);    }
-    ~plPlayerMsg(){;}
+    ~plPlayerMsg() { }
 
     CLASSNAME_REGISTER( plPlayerMsg );
     GETINTERFACE_ANY( plPlayerMsg, plMessage ); 

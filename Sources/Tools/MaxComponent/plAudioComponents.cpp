@@ -2551,7 +2551,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual void    UpdateSoundFileSelection() { ; }
+    virtual void    UpdateSoundFileSelection() { }
 
 protected:
 

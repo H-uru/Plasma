@@ -111,7 +111,7 @@ public:
 
     plMaxNodeBase *GetINode();
 
-    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) {;}
+    virtual void AddReceiverKey(plKey key, plMaxNode* node=nil) { }
     virtual plKey GetLogicKey(plMaxNode* node) {return nil;}
 
     // Return true if you want to allow yourself to be unhidden.  This is for components

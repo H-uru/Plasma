@@ -71,7 +71,7 @@ class plTelescopeInputInterface : public plInputInterface
         virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown() {;}
+        virtual void    Shutdown() { }
 
         // Returns the priority of this interface layer, based on the Priorities enum
         virtual uint32_t  GetPriorityLevel() const { return kTelescopeInputPriority; }
