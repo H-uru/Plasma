@@ -84,6 +84,8 @@ struct NlmOp {
     NlmOp (const ENlmOp & op)
     : opcode(op)
     { }
+
+    virtual ~NlmOp() = default;
 };
 
 struct NlmNoOpOp : NlmOp {
