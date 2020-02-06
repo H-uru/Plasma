@@ -102,13 +102,13 @@ class SensorReport : public NxUserTriggerReport
             if (status & NX_TRIGGER_ON_ENTER)
             {
                 if (plSimulationMgr::fExtraProfile)
-                    DetectorLogRed("-->Send Collision %s enter",triggerPhys->GetObjectKey()->GetName().c_str());
+                    plDetectorLog::Red("-->Send Collision {} enter",triggerPhys->GetObjectKey()->GetName());
                 plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
             }
             else if (status & NX_TRIGGER_ON_LEAVE)
             {
                 if (plSimulationMgr::fExtraProfile)
-                    DetectorLogRed("-->Send Collision %s exit",triggerPhys->GetObjectKey()->GetName().c_str());
+                    plDetectorLog::Red("-->Send Collision {} exit",triggerPhys->GetObjectKey()->GetName());
                 plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
             }
         }
@@ -441,9 +441,9 @@ void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
         if (pMsg->fOtherKey == hitter && pMsg->GetReceiver(0) == hitee)
         {
             pMsg->fEntering = enter;
-            DetectorLogRed("DUPLICATE COLLISION: %s hit %s",
-                (hitter ? hitter->GetName().c_str() : "(nil)"),
-                (hitee ? hitee->GetName().c_str() : "(nil)"));
+            plDetectorLog::Red("DUPLICATE COLLISION: {} hit {}",
+                (hitter ? hitter->GetName() : ST_LITERAL("(nil)")),
+                (hitee ? hitee->GetName() : ST_LITERAL("(nil)")));
             return;
         }
     }
@@ -575,8 +575,10 @@ void plSimulationMgr::ISendUpdates()
     for (CollisionVec::iterator it = fCollideMsgs.begin(); it != fCollideMsgs.end(); ++it)
     {
         plCollideMsg* pMsg = *it;
-        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", pMsg->GetReceiver(0)->GetName().c_str(),
-                          pMsg->fOtherKey ? pMsg->fOtherKey->GetName().c_str() : "(nil)" , pMsg->fEntering ? "'enter'" : "'exit'");
+        plDetectorLog::Yellow("Collision: {} was triggered by {}. Sending an {} msg",
+                              pMsg->GetReceiver(0)->GetName(),
+                              pMsg->fOtherKey ? pMsg->fOtherKey->GetName() : ST_LITERAL("(nil)"),
+                              pMsg->fEntering ? "'enter'" : "'exit'");
         plgDispatch::Dispatch()->MsgSend(pMsg);
     }
     fCollideMsgs.clear();

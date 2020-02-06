@@ -3077,7 +3077,7 @@ PF_CONSOLE_CMD(Logic, ResponderNoLog, "string prefix", "Don't log responders tha
 #include "plModifier/plDetectorLog.h"
 PF_CONSOLE_CMD(Logic, WriteDetectorLog, "", "Write detector log to logfile")
 {
-    DetectorDoLogfile();
+    plDetectorLog::Output();
 }
 
 PF_CONSOLE_CMD(Logic,

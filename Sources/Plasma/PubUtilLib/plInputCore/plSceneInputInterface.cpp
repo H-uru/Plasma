@@ -269,9 +269,9 @@ bool    plSceneInputInterface::MsgReceive( plMessage *msg )
                     if (fShowLOS)
                     {
                         if (pLOSMsg->fNoHit)
-                            DetectorLogSpecial("%s: LOS miss", pObj->GetKeyName().c_str());
+                            plDetectorLog::Special("{}: LOS miss", pObj->GetKeyName());
                         else
-                            DetectorLogSpecial("%s: LOS hit", pObj->GetKeyName().c_str());
+                            plDetectorLog::Special("{}: LOS hit", pObj->GetKeyName());
                     }
                     int i;
                     const plInterfaceInfoModifier* pMod = 0;

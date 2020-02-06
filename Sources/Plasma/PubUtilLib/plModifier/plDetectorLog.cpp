@@ -39,52 +39,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+
 #include "plDetectorLog.h"
-#include "plStatusLog/plStatusLog.h"
 
-// Don't bother logging detectors in the external release, since it isn't written to disk
 #ifdef PLASMA_EXTERNAL_RELEASE
-
-void DetectorLog(const char* format, ...) {}
-void DetectorLogSpecial(const char* format, ...) {}
-void DetectorLogRed(const char* format, ...) {}
-void DetectorLogYellow(const char* format, ...) {}
-
+plStatusLog* plDetectorLog::fLog = nullptr;
 #else
+plStatusLog* plDetectorLog::fLog = plStatusLogMgr::GetInstance().CreateStatusLog(
+    20,
+    "Detector.log",
+    plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
+    plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
+#endif
 
-static plStatusLog* gLog =
-plStatusLogMgr::GetInstance().CreateStatusLog(
-                                              20,
-                                              "Detector",
-                                              plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
-                                              plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
-
-
-void DetectorDoLogfile()
+void plDetectorLog::Output()
 {
-    delete gLog;
-    gLog = plStatusLogMgr::GetInstance().CreateStatusLog(20,"Detector.log",plStatusLog::kFilledBackground|plStatusLog::kDeleteForMe|plStatusLog::kAlignToTop);
+#ifndef PLASMA_EXTERNAL_RELEASE
+    delete fLog;
 
+    fLog = plStatusLogMgr::GetInstance().CreateStatusLog(
+        20,
+        "Detector.log",
+        plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop);
+#endif
 }
-
-void DetectorLog(const char* format, ...)
-{
-    // FIXME
-}
-
-void DetectorLogSpecial(const char* format, ...)
-{
-    // FIXME
-}
-
-void DetectorLogRed(const char* format, ...)
-{
-    // FIXME
-}
-
-void DetectorLogYellow(const char* format, ...)
-{
-    // FIXME
-}
-
-#endif // PLASMA_EXTERNAL_RELEASE
