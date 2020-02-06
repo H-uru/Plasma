@@ -170,7 +170,7 @@ bool plWin32StaticSound::LoadSound( bool is3D )
         {
             delete fDSoundBuffer;
             fDSoundBuffer = nil;
-            plStatusLog::AddLineS("audio.log", "Could not play static sound, no voices left %s", GetKeyName().c_str());
+            plStatusLog::AddLineS("audio.log", "Could not play static sound, no voices left {}", GetKeyName());
             return false;
         }
 

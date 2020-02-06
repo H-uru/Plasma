@@ -200,7 +200,7 @@ plSoundBuffer::ELoadReturnVal plWin32StreamingSound::IPreLoadBuffer( bool playWh
         return fDataStream ? plSoundBuffer::kSuccess : plSoundBuffer::kError;
     }
 
-    plStatusLog::AddLineS("audio.log", "EnsureLoadable failed for streaming sound %d", fDataBufferKey->GetName().c_str());
+    plStatusLog::AddLineS("audio.log", "EnsureLoadable failed for streaming sound {}", fDataBufferKey->GetName());
     return plSoundBuffer::kError;
 }
 
@@ -310,7 +310,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         if(fStartPos && fStartPos <= fDataStream->NumBytesLeft())
         {
             fDataStream->SetPosition(fStartPos);
-            plStatusLog::AddLineS("syncaudio.log", "startpos %d", fStartPos);
+            plStatusLog::AddLineS("syncaudio.log", "startpos {}", fStartPos);
         }
 
         // if we get here we are not starting from the beginning of the sound. We still have an audio loaded and need to pick up where we left off
@@ -336,7 +336,7 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
         delete fDSoundBuffer;
         fDSoundBuffer = nil;
 
-        plStatusLog::AddLineS("audio.log", "Could not play streaming sound, no voices left %s", GetKeyName().c_str());
+        plStatusLog::AddLineS("audio.log", "Could not play streaming sound, no voices left {}", GetKeyName());
         return false;
     }
     FreeSoundData();
@@ -347,8 +347,8 @@ bool plWin32StreamingSound::LoadSound( bool is3D )
     ST::string dbg = ST::format("   Streaming {}.", fSrcFilename);
     IPrintDbgMessage(dbg.c_str());
 
-    plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming %4.2f secs of %s",
-                           fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName().c_str() );
+    plStatusLog::AddLineS( "audioTimes.log", 0xffffffff, "Streaming {4.2f} secs of {}",
+                           fDataStream->GetLengthInSecs(), GetKey()->GetUoid().GetObjectName() );
 
     // Get pertinent info
     SetLength( (float)fDataStream->GetLengthInSecs() );
@@ -391,7 +391,7 @@ void plWin32StreamingSound::IStreamUpdate()
 
         if(!fDSoundBuffer->StreamingFillBuffer(fDataStream))
         {
-            plStatusLog::AddLineS("audio.log", "%s Streaming buffer fill failed", GetKeyName().c_str());
+            plStatusLog::AddLineS("audio.log", "{} Streaming buffer fill failed", GetKeyName());
         }
     }
     plProfile_EndTiming( StreamSndShoveTime );

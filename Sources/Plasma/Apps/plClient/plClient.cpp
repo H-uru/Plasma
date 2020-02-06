@@ -578,7 +578,7 @@ bool plClient::MsgReceive(plMessage* msg)
         {
         case plClientRefMsg::kLoadRoom :
             #ifndef PLASMA_EXTERNAL_RELEASE
-            plStatusLog::AddLineS( "pageouts.log", ".. ClientRefMsg received for room %s", pRefMsg->GetRef() != nil ? pRefMsg->GetRef()->GetKey()->GetUoid().GetObjectName().c_str() : "nilref" );
+            plStatusLog::AddLineS( "pageouts.log", ".. ClientRefMsg received for room {}", pRefMsg->GetRef() ? pRefMsg->GetRef()->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("nilref") );
             #endif
 
             // was it that the room was loaded?
@@ -1039,16 +1039,16 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
             if (node)
             {
                 #ifndef PLASMA_EXTERNAL_RELEASE
-                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s loaded; Removing node",
-                                      node->GetKey()->GetUoid().GetObjectName().c_str());
+                plStatusLog::AddLineS("pageouts.log", "SceneNode for {} loaded; Removing node",
+                                      node->GetKey()->GetUoid().GetObjectName());
                 #endif
                 fPageMgr->RemoveNode(node);
             }
             else
             {
                 #ifndef PLASMA_EXTERNAL_RELEASE
-                plStatusLog::AddLineS("pageouts.log", "SceneNode for %s NOT loaded",
-                                      nodeKey->GetUoid().GetObjectName().c_str());
+                plStatusLog::AddLineS("pageouts.log", "SceneNode for {} NOT loaded",
+                                      nodeKey->GetUoid().GetObjectName());
                 #endif
             }
             GetKey()->Release(nodeKey);     // release notify interest in scene node
@@ -1064,8 +1064,8 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
                 fCurrentNode = nil;
 
             #ifndef PLASMA_EXTERNAL_RELEASE
-            plStatusLog::AddLineS("pageouts.log", "Telling netClientMgr about paging out %s",
-                                  nodeKey->GetUoid().GetObjectName().c_str());
+            plStatusLog::AddLineS("pageouts.log", "Telling netClientMgr about paging out {}",
+                                  nodeKey->GetUoid().GetObjectName());
             #endif
 
             if (plNetClientMgr::GetInstance() != nil)
@@ -1081,7 +1081,7 @@ void plClient::IUnloadRooms(const std::vector<plLocation>& locs)
         else
         {
             #ifndef PLASMA_EXTERNAL_RELEASE
-//          plStatusLog::AddLineS("pageouts.log", "++ Can't find node key for paging out room %s, loc 0x%x",
+//          plStatusLog::AddLineS("pageouts.log", "++ Can't find node key for paging out room {}, loc 0x{x}",
 //              pMsg->GetRoomName() != nil ? pMsg->GetRoomName() : "",
 //              loc.GetSequenceNumber());
             #endif

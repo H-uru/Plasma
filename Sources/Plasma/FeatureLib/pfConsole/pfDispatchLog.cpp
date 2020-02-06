@@ -70,7 +70,7 @@ void plDispatchLog::InitInstance()
 
 void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
 {
-    fLog->AddLineF("----- Status bar '%s' %s -----", name, action);
+    fLog->AddLine("----- Status bar '{}' {} -----", name, action);
 
 #ifdef HS_BUILD_FOR_WIN32
     MEMORYSTATUS ms;
@@ -90,11 +90,11 @@ void plDispatchLog::LogStatusBarChange(const char* name, const char* action)
     }
     
     #define ToMB(mem) float(mem) / (1024.f*1024.f)
-    fLog->AddLineF("# Mem stats");
-    fLog->AddLineF("#   Physical: %.1f MB used %.1f MB free", ToMB(ms.dwTotalPhys-ms.dwAvailPhys), ToMB(ms.dwAvailPhys));
-    fLog->AddLineF("#   Virtual:  %.1f MB used %.1f MB free", ToMB(ms.dwTotalVirtual-ms.dwAvailVirtual), ToMB(ms.dwAvailVirtual));
-    fLog->AddLineF("#   Pagefile: %.1f MB used %.1f MB free", ToMB(ms.dwTotalPageFile-ms.dwAvailPageFile), ToMB(ms.dwAvailPageFile));
-    fLog->AddLineF("#   Process:  %.1f MB used", ToMB(processMemUsed));
+    fLog->AddLine("# Mem stats");
+    fLog->AddLine("#   Physical: {.1f} MB used {.1f} MB free", ToMB(ms.dwTotalPhys-ms.dwAvailPhys), ToMB(ms.dwAvailPhys));
+    fLog->AddLine("#   Virtual:  {.1f} MB used {.1f} MB free", ToMB(ms.dwTotalVirtual-ms.dwAvailVirtual), ToMB(ms.dwAvailVirtual));
+    fLog->AddLine("#   Pagefile: {.1f} MB used {.1f} MB free", ToMB(ms.dwTotalPageFile-ms.dwAvailPageFile), ToMB(ms.dwAvailPageFile));
+    fLog->AddLine("#   Process:  {.1f} MB used", ToMB(processMemUsed));
 #endif // HS_BUILD_FOR_WIN32
 }
 
@@ -102,9 +102,9 @@ void plDispatchLog::LogLongReceive(const char* keyname, const char* className, u
 {
     ST::string info;
     if (DumpSpecificMsgInfo(msg, info))
-        fLog->AddLineF("%-30s[%7u](%-20s) took %6.1f ms to receive %s[%s]\n", keyname, clonePlayerID, className, ms, msg->ClassName(), info.c_str());
+        fLog->AddLine("{<30}[{7d}]({<20}) took {6.1f} ms to receive {}[{}]\n", keyname, clonePlayerID, className, ms, msg->ClassName(), info);
     else
-        fLog->AddLineF("%-30s[%7u](%-20s) took %6.1f ms to receive %s\n", keyname, clonePlayerID, className, ms, msg->ClassName());
+        fLog->AddLine("{<30}[{7d}]({<20}) took {6.1f} ms to receive {}\n", keyname, clonePlayerID, className, ms, msg->ClassName());
 }
 
 void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, int32_t indent)
@@ -136,12 +136,12 @@ void plDispatchLog::DumpMsg(plMessage* msg, int numReceivers, int sendTimeMs, in
     memset(indentStr, ' ', indent);
     indentStr[indent] = '\0';
 
-    fLog->AddLineF("%sDispatched (%d) %d ms: time=%d CName=%s, sndr=%s, rcvr(%d)=%s, flags=0x%lx, tstamp=%f\n",
-        indentStr, numReceivers, sendTimeMs,
-        int(sendTime), msg->ClassName(), msg->fSender?msg->fSender->GetName().c_str():"nil",
-        msg->GetNumReceivers(), msg->GetNumReceivers() && msg->GetReceiver(0)
-            ? msg->GetReceiver(0)->GetName().c_str():"nil",
-        msg->fBCastFlags, msg->fTimeStamp);
+    fLog->AddLine("{}Dispatched ({}) {} ms: time={.0f} CName={}, sndr={}, rcvr({})={}, flags=0x{8X}, tstamp={}\n",
+                  indentStr, numReceivers, sendTimeMs, sendTime, msg->ClassName(),
+                  msg->fSender ? msg->fSender->GetName() : ST_LITERAL("nil"),
+                  msg->GetNumReceivers(),
+                  msg->GetNumReceivers() && msg->GetReceiver(0) ? msg->GetReceiver(0)->GetName() : ST_LITERAL("nil"),
+                  msg->fBCastFlags, msg->fTimeStamp);
 
     lastTime=curTime;
 }

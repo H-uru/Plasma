@@ -69,34 +69,22 @@ void DetectorDoLogfile()
 
 void DetectorLog(const char* format, ...)
 {
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(format, args);
-    va_end(args);
+    // FIXME
 }
 
 void DetectorLogSpecial(const char* format, ...)
 {
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kGreen, format, args);
-    va_end(args);
+    // FIXME
 }
 
 void DetectorLogRed(const char* format, ...)
 {
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kRed, format, args);
-    va_end(args);
+    // FIXME
 }
 
 void DetectorLogYellow(const char* format, ...)
 {
-    va_list args;
-    va_start(args, format);
-    gLog->AddLineV(plStatusLog::kYellow, format, args);
-    va_end(args);
+    // FIXME
 }
 
 #endif // PLASMA_EXTERNAL_RELEASE

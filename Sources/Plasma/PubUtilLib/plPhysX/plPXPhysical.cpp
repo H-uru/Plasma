@@ -69,7 +69,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plDrawable/plDrawableGenerator.h"
 #include "plNetClient/plNetClientMgr.h"
 #include "plNetTransport/plNetTransportMember.h"
-#include "plStatusLog/plStatusLog.h"
 #include "plPXConvert.h"
 #include "plPXPhysicalControllerCore.h"
 #include "plPXSubWorld.h"
@@ -86,7 +85,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
     #define SpamMsg(x)
 #endif
               
-#define LogActivate(func) if (fActor->isSleeping()) SimLog("%s activated by %s", GetKeyName().c_str(), func);
+#define LogActivate(func) if (fActor->isSleeping()) SimLog("{} activated by {}", GetKeyName(), func);
 
 plProfile_Extern(MaySendLocation);
 plProfile_Extern(LocationsSent);
@@ -127,7 +126,7 @@ plPXPhysical::plPXPhysical()
 
 plPXPhysical::~plPXPhysical()
 {
-    SpamMsg(plSimulationMgr::Log("Destroying physical %s", GetKeyName().c_str()));
+    SpamMsg(plSimulationMgr::Log("Destroying physical {}", GetKeyName()));
 
     if (fActor)
     {
@@ -232,7 +231,7 @@ bool plPXPhysical::Init()
     case plSimDefs::kProxyBounds:
         if (fRecipe.group == plSimDefs::kGroupDetector)
         {
-            SimLog("Someone using an Exact on a detector region: %s", GetKeyName().c_str());
+            SimLog("Someone using an Exact on a detector region: {}", GetKeyName());
         }
         trimeshShapeDesc.meshData = fRecipe.triMesh;
         trimeshShapeDesc.userData = fRecipe.meshStream;
@@ -284,7 +283,7 @@ bool plPXPhysical::Init()
     else
     {
         if ( GetProperty(plSimulationInterface::kPhysAnim) )
-            SimLog("An animated physical that has no mass: %s", GetKeyName().c_str());
+            SimLog("An animated physical that has no mass: {}", GetKeyName());
     }
 
     actorDesc.userData = this;
@@ -331,7 +330,7 @@ bool plPXPhysical::Init()
         if (!fActor->isSleeping())
         {
             if (plSimulationMgr::fExtraProfile)
-                SimLog("Deactivating %s in SetPositionAndRotationSim", GetKeyName().c_str());
+                SimLog("Deactivating {} in SetPositionAndRotationSim", GetKeyName());
             fActor->putToSleep();
         }
     }
@@ -519,7 +518,7 @@ plPhysical& plPXPhysical::SetProperty(int prop, bool status)
         if (GetKey())
             name = GetKeyName();
         if (plSimulationMgr::fExtraProfile)
-            plSimulationMgr::Log("Warning: Redundant physical property set (property %s, value %s) on %s", propName, status ? "true" : "false", name.c_str());
+            plSimulationMgr::Log("Warning: Redundant physical property set (property {}, value {}) on {}", propName, status ? "true" : "false", name);
     }
 
     switch (prop)
@@ -615,7 +614,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
 
                 if (fCachedLocal2World.GetTranslate().fZ < kMaxNegativeZPos)
                 {
-                    SimLog("Physical %s fell to %.1f (%.1f is the max).  Suppressing.", GetKeyName().c_str(), fCachedLocal2World.GetTranslate().fZ, kMaxNegativeZPos);
+                    SimLog("Physical {} fell to {.1f} ({.1f} is the max).  Suppressing.", GetKeyName(), fCachedLocal2World.GetTranslate().fZ, kMaxNegativeZPos);
                     // Since this has probably been falling for a while, and thus not getting any syncs,
                     // make sure to save it's current pos so we'll know to reset it later
                     DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients);
@@ -753,7 +752,7 @@ void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bo
     else
     {
         if ( !fActor->isDynamic()  && plSimulationMgr::fExtraProfile)
-            SimLog("Setting transform on non-dynamic: %s.", GetKeyName().c_str());
+            SimLog("Setting transform on non-dynamic: {}.", GetKeyName());
     }
 }
 
@@ -992,7 +991,7 @@ NxConvexMesh* plPXPhysical::IReadHull(hsStream* s)
         desc.points = &verts[0];
         desc.flags = NX_CF_COMPUTE_CONVEX | NX_CF_USE_UNCOMPRESSED_NORMALS;
         if (!NxCookConvexMesh(desc, pxs)) {
-            SimLog("Failed to cook hull for '%s'", GetKey()->GetName().c_str());
+            SimLog("Failed to cook hull for '{}'", GetKey()->GetName());
             return nullptr;
         }
 
@@ -1032,7 +1031,7 @@ NxTriangleMesh* plPXPhysical::IReadTriMesh(hsStream* s)
         desc.triangles = &indices[0];
         desc.flags = 0;
         if (!NxCookTriangleMesh(desc, pxs)) {
-            SimLog("Failed to cook trimesh for '%s'", GetKey()->GetName().c_str());
+            SimLog("Failed to cook trimesh for '{}'", GetKey()->GetName());
             return nullptr;
         }
 
@@ -1144,7 +1143,7 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     // we've got right now)
     if (pos && pos->fZ < kMaxNegativeZPos && initialSync)
     {
-        SimLog("Physical %s loaded out of range state.  Forcing initial state to server.", GetKeyName().c_str());
+        SimLog("Physical {} loaded out of range state.  Forcing initial state to server.", GetKeyName());
         DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients);
         return;
     }

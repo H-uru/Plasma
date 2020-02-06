@@ -242,7 +242,7 @@ bool    plWin32GroupedSound::LoadSound( bool is3D )
     if( GetKey() != nil && GetKeyName().contains( "Footstep" ) )
         ;
     else
-        plStatusLog::AddLineS( "audioTimes.log", "%s (%s)", str.c_str(), GetKey() ? GetKeyName().c_str() : "unkeyed" );
+        plStatusLog::AddLineS( "audioTimes.log", "{} ({})", str, GetKey() ? GetKeyName() : ST_LITERAL("unkeyed") );
 
     fTotalBytes = bufferSize;
 

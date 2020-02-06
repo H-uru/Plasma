@@ -69,7 +69,8 @@ bool gDataServerLocal = false;
 /// Logging #define for easier use
 #define kResMgrLog(level, log) if (plResMgrSettings::Get().GetLoggingLevel() >= level) log
 
-static void ILog(uint8_t level, const char* format, ...)
+template<typename... _Args>
+static void ILog(uint8_t level, const char* format, _Args&&... args)
 {
     static plStatusLog* log = plStatusLogMgr::GetInstance().CreateStatusLog
         (
@@ -77,9 +78,6 @@ static void ILog(uint8_t level, const char* format, ...)
         "resources.log",
         plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe
         );
-
-    va_list arguments;
-    va_start(arguments, format);
 
     uint32_t color = 0;
     switch (level)
@@ -90,7 +88,7 @@ static void ILog(uint8_t level, const char* format, ...)
     case 4: color = 0xff8080ff; break;
     }
 
-    log->AddLineV(color, format, arguments);
+    log->AddLine(color, format, std::forward<_Args>(args)...);
 }
 
 plResManager::plResManager():
@@ -319,7 +317,7 @@ bool plResManager::ReadObject(plKeyImp* key)
     // it will just inc/dec the open/close count during its read, and not actually 
     // close the stream, so we don't lose our place, lose our file handle, and thrash.
 
-    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location %s...", key->GetUoid().GetLocation().StringIze().c_str()));
+    kResMgrLog(4, ILog(4, "   ...Opening page data stream for location {}...", key->GetUoid().GetLocation().StringIze()));
     plRegistryPageNode *pageNode = FindPage(key->GetUoid().GetLocation());
     if (!pageNode)
     {
@@ -375,13 +373,13 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     if (pKey->GetStartPos() == uint32_t(-1) || pKey->GetDataLen() == uint32_t(-1))
         return false; // Try to recover from this by just not reading an object
 
-    kResMgrLog(3, ILog(3, "   Reading object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
+    kResMgrLog(3, ILog(3, "   Reading object {}::{}", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
 
     const plUoid& uoid = pKey->GetUoid();
 
     bool isClone = uoid.IsClone();
 
-    kResMgrLog(4, ILog(4, "   ...is%s a clone", isClone ? "" : " not"));
+    kResMgrLog(4, ILog(4, "   ...is{} a clone", isClone ? "" : " not"));
 
     // If we're loading the root object of a clone (the object for the key that
     // was actually cloned), set up the global cloning flags so any child objects
@@ -390,7 +388,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     bool setClone = false;
     if (isClone && fCurCloneID != uoid.GetCloneID())
     {
-        kResMgrLog(4, ILog(4, "   ...fCurCloneID = %d, uoid's cloneID = %d", fCurCloneID, uoid.GetCloneID()));
+        kResMgrLog(4, ILog(4, "   ...fCurCloneID = {}, uoid's cloneID = {}", fCurCloneID, uoid.GetCloneID()));
 
         if (fCurCloneID != 0)
         {
@@ -402,7 +400,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         fCurCloneID = uoid.GetCloneID();
         setClone = true;
 
-        kResMgrLog(4, ILog(4, "   ...now fCurCloneID = %d, fCurClonePlayerID = %d", fCurCloneID, fCurClonePlayerID));
+        kResMgrLog(4, ILog(4, "   ...now fCurCloneID = {}, fCurClonePlayerID = {}", fCurCloneID, fCurClonePlayerID));
     }
 
     // If this is a clone key, try and get the original object to give us a clone
@@ -410,14 +408,14 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
     {
         kResMgrLog(4, ILog(4, "   ...Trying to get shared object..."));
         ko = IGetSharedObject(pKey);
-        kResMgrLog(4, ILog(4, "   ...IGetSharedObject() %s", (ko != nil) ? "succeeded" : "failed"));
+        kResMgrLog(4, ILog(4, "   ...IGetSharedObject() {}", (ko != nil) ? "succeeded" : "failed"));
     }
 
     // If we couldn't share the object, read in a fresh copy
     if (!ko)
     {
         stream->SetPosition(pKey->GetStartPos());
-        kResMgrLog(4, ILog(4, "   ...Reading from position %d bytes...", pKey->GetStartPos()));
+        kResMgrLog(4, ILog(4, "   ...Reading from position {} bytes...", pKey->GetStartPos()));
 
         plCreatable* cre = ReadCreatable(stream);
         hsAssert(cre, "Could not Create Object");
@@ -451,7 +449,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         fCurCloneID = 0;
     }
 
-    kResMgrLog(4, ILog(4, "   ...Read complete for object %s::%s", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName().c_str()));
+    kResMgrLog(4, ILog(4, "   ...Read complete for object {}::{}", plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()), pKey->GetUoid().GetObjectName()));
 
     if (fLogReadTimes)
     {
@@ -459,8 +457,8 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         uint64_t childTime = totalTime - startTotalTime;
         ourTime -= childTime;
 
-        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "%s, %s, %u, %.1f",
-            pKey->GetUoid().GetObjectName().c_str(),
+        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "{}, {}, {}, {.1f}",
+            pKey->GetUoid().GetObjectName(),
             plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()),
             pKey->GetDataLen(),
             hsTimer::GetMilliSeconds<float>(ourTime));
@@ -1036,14 +1034,14 @@ void plResManager::LoadAgeKeys(const ST::string& age)
     HeldAgeKeyMap::const_iterator it = fHeldAgeKeys.find(age);
     if (it != fHeldAgeKeys.end())
     {
-        kResMgrLog(1, ILog(1, "Reffing age keys for age %s", age.c_str()));
+        kResMgrLog(1, ILog(1, "Reffing age keys for age {}", age));
         hsStatusMessageF("*** Reffing age keys for age %s ***\n", age.c_str());
         plResAgeHolder* holder = it->second;
         holder->Ref();
     }
     else
     {
-        kResMgrLog(1, ILog(1, "Loading age keys for age %s", age.c_str()));
+        kResMgrLog(1, ILog(1, "Loading age keys for age {}", age));
         hsStatusMessageF("*** Loading age keys for age %s ***\n", age.c_str());
 
         plResAgeHolder* holder = new plResAgeHolder(age);
@@ -1065,12 +1063,12 @@ void plResManager::DropAgeKeys(const ST::string& age)
         if (holder->RefCnt() == 1)
         {
             // Found it!
-            kResMgrLog(1, ILog(1, "Dropping held age keys for age %s", age.c_str()));
+            kResMgrLog(1, ILog(1, "Dropping held age keys for age {}", age));
             fHeldAgeKeys.erase(it);
         }
         else
         {
-            kResMgrLog(1, ILog(1, "Unreffing age keys for age %s", age.c_str()));
+            kResMgrLog(1, ILog(1, "Unreffing age keys for age {}", age));
         }
 
         holder->UnRef();
@@ -1085,7 +1083,7 @@ void plResManager::IDropAllAgeKeys()
     for (HeldAgeKeyMap::iterator it = fHeldAgeKeys.begin(); it != fHeldAgeKeys.end(); ++it)
     {
         plResAgeHolder* holder = it->second;
-        kResMgrLog(1, ILog(1, "Dropping age keys for age %s", holder->fAge.c_str()));
+        kResMgrLog(1, ILog(1, "Dropping age keys for age {}", holder->fAge));
         while (holder->RefCnt() > 1)
             holder->UnRef();
         holder->UnRef();    // deletes holder
@@ -1141,7 +1139,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
 
     plSynchEnabler ps(false);   // disable dirty tracking while paging in
 
-    kResMgrLog(1, ILog(1, "Paging in room 0x%x...", page.GetSequenceNumber()));
+    kResMgrLog(1, ILog(1, "Paging in room 0x{x}...", page.GetSequenceNumber()));
 
     // Step 0: Find the pageNode
     plRegistryPageNode* pageNode = FindPage(page);
@@ -1152,7 +1150,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
         return;
     }
 
-    kResMgrLog(2, ILog(2, "...Found, page is ID'd as %s>%s", pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str()));
+    kResMgrLog(2, ILog(2, "...Found, page is ID'd as {}>{}", pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage()));
 
     // Step 0.5: Verify the page, just to make sure we really should be loading it
     PageCond cond = pageNode->GetPageCondition();
@@ -1165,7 +1163,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
             condStr = ST_LITERAL("Page Version out of date");
         }
 
-        kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! (%s)", condStr.c_str()));
+        kResMgrLog(1, ILog(1, "...IGNORING pageIn request; verification failed! ({})", condStr));
 
         ST::string msg = ST::format("Data Problem: Age:{}  Page:{}  Error:{}",
             pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(), condStr);
@@ -1225,8 +1223,8 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     {
         readRoomTime = hsTimer::GetTicks() - readRoomTime;
 
-        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "----- Reading page %s>%s took %.1f ms",
-            pageNode->GetPageInfo().GetAge().c_str(), pageNode->GetPageInfo().GetPage().c_str(),
+        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "----- Reading page {}>{} took {.1f} ms",
+            pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(),
             hsTimer::GetMilliSeconds<float>(readRoomTime));
     }
 }
@@ -1245,7 +1243,7 @@ public:
     {
         plFileName ageFile = plFileName::Join(dataPath, ST::format("{}.age", ageName));
         if (!fAgeDesc.ReadFromFile(ageFile))
-            kResMgrLog(3, ILog(3, "PageInAge: Failed to load '%s'", ageFile.AsString().c_str()));
+            kResMgrLog(3, ILog(3, "PageInAge: Failed to load '{}'", ageFile.AsString()));
     }
 
     ~plPageInAgeIter()

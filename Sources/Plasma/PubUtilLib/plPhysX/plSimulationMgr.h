@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <map>
 #include "pnKeyedObject/hsKeyedObject.h"
+#include "plStatusLog/plStatusLog.h"
 #include "hsTemplates.h"
 
 class plPXPhysical;
@@ -80,9 +81,6 @@ public:
     void Resume() { fSuspended = false; }
     bool IsSuspended() { return fSuspended; }
 
-    // Output the given debug text to the simulation log.
-    static void Log(const char* formatStr, ...);
-    static void LogV(const char* formatStr, va_list args);
     static void ClearLog();
 
     // We've detected a collision, which may be grounds for synchronizing the involved
@@ -163,28 +161,33 @@ protected:
 #ifndef PLASMA_EXTERNAL_RELEASE
     void IDrawActiveActorList();
 #endif //PLASMA_EXTERNAL_RELEASE
+
+public:
+    // Output the given debug text to the simulation log.
+    template<typename... _Args>
+    static void Log(const char* formatStr, _Args&&... args)
+    {
+        if (GetInstance() && GetInstance()->fLog) {
+            GetInstance()->fLog->AddLine(formatStr, std::forward<_Args>(args)...);
+        }
+    }
 };
 
 #define SIM_VERBOSE
 
 #ifdef SIM_VERBOSE
-#include <cstdarg>     // only include when we need to call plSimulationMgr::Log
-
-inline void SimLog(const char *str, ...)
+template<typename... _Args>
+inline void SimLog(const char* format, _Args&&... args)
 {
-    va_list args;
-    va_start(args, str);
-    plSimulationMgr::LogV(str, args);
-    va_end(args);
+    plSimulationMgr::Log(format, std::forward<_Args>(args)...);
 }
 
 #else
-
-inline void SimLog(const char *str, ...)
+template<typename... _Args>
+inline void SimLog(const char *str, _Args&&... args)
 {
     // will get stripped out
 }
-
 #endif
 
 #endif

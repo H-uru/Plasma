@@ -383,7 +383,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
     hsStream *xmlStream = plEncryptedStream::OpenEncryptedFile(fileName);
     if (!xmlStream)
     {
-        pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Can't open file stream for %s", fileName.AsString().c_str());
+        pfLocalizationDataMgr::GetLog()->AddLine("ERROR: Can't open file stream for {}", fileName);
         return false;
     }
 
@@ -397,7 +397,7 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
         if (XML_Parse(fParser, Buff, (int)len, done) == XML_STATUS_ERROR)
         {
-            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Parse error at line %d: %S",
+            pfLocalizationDataMgr::GetLog()->AddLine("ERROR: Parse error at line {}: {}",
                 XML_GetCurrentLineNumber(fParser), XML_ErrorString(XML_GetErrorCode(fParser)));
             done = true;
         }
@@ -417,8 +417,8 @@ bool LocalizationXMLFile::Parse(const plFileName& fileName)
 
 void LocalizationXMLFile::AddError(const ST::string& errorText)
 {
-    pfLocalizationDataMgr::GetLog()->AddLineF("ERROR (line %d): %s",
-        XML_GetCurrentLineNumber(fParser), errorText.c_str());
+    pfLocalizationDataMgr::GetLog()->AddLine("ERROR (line {}): {}",
+        XML_GetCurrentLineNumber(fParser), errorText);
     fSkipDepth = fTagStack.size(); // skip this block
     fWeExploded = true;
     return;
@@ -472,8 +472,8 @@ LocalizationXMLFile::element LocalizationDatabase::IMergeElementData(Localizatio
     {
         if (firstElement.find(curTranslation->first) != firstElement.end())
         {
-            pfLocalizationDataMgr::GetLog()->AddLineF("Duplicate %s translation for %s found in file %s. Ignoring second translation.",
-                curTranslation->first.c_str(), path.c_str(), fileName.AsString().c_str());
+            pfLocalizationDataMgr::GetLog()->AddLine("Duplicate {} translation for {} found in file {}. Ignoring second translation.",
+                curTranslation->first, path, fileName);
         }
         else
             firstElement[curTranslation->first] = curTranslation->second;
@@ -573,8 +573,8 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
 
         if (!languageExists)
         {
-            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: The language %s used by %s.%s.%s is not supported. Discarding translation.",
-                curTranslation->first.c_str(), ageName.c_str(), setName.c_str(), elementName.c_str());
+            pfLocalizationDataMgr::GetLog()->AddLine("ERROR: The language {} used by {}.{}.{} is not supported. Discarding translation.",
+                curTranslation->first, ageName, setName, elementName);
             curTranslation = theElement.erase(curTranslation);
         }
         else
@@ -585,8 +585,8 @@ void LocalizationDatabase::IVerifyElement(const ST::string &ageName, const ST::s
     {
         if (theElement.find(languageNames[i]) == theElement.end())
         {
-            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Language %s is missing from the translations in element %s.%s.%s. You'll want to get translations for that!",
-                languageNames[i].c_str(), ageName.c_str(), setName.c_str(), elementName.c_str());
+            pfLocalizationDataMgr::GetLog()->AddLine("WARNING: Language {} is missing from the translations in element {}.{}.{}. You'll want to get translations for that!",
+                languageNames[i], ageName, setName, elementName);
         }
     }
 }
@@ -605,8 +605,8 @@ void LocalizationDatabase::IVerifySet(const ST::string &ageName, const ST::strin
         // Check that we at least have a default language translation for fallback
         if (curElement->second.find(defaultLanguage) == curElement->second.end())
         {
-            pfLocalizationDataMgr::GetLog()->AddLineF("ERROR: Default language %s is missing from the translations in element %s.%s.%s. Deleting element.",
-                defaultLanguage.c_str(), ageName.c_str(), setName.c_str(), curElement->first.c_str());
+            pfLocalizationDataMgr::GetLog()->AddLine("ERROR: Default language {} is missing from the translations in element {}.{}.{}. Deleting element.",
+                defaultLanguage, ageName, setName, curElement->first);
             curElement = theSet.erase(curElement);
         }
         else
@@ -649,10 +649,10 @@ void LocalizationDatabase::Parse(const plFileName & directory)
         LocalizationXMLFile newFile;
         bool retVal = newFile.Parse(*iter);
         if (!retVal)
-            pfLocalizationDataMgr::GetLog()->AddLineF("WARNING: Errors in file %s", iter->GetFileName().c_str());
+            pfLocalizationDataMgr::GetLog()->AddLine("WARNING: Errors in file {}", iter->GetFileName());
 
         fFiles.push_back(newFile);
-        pfLocalizationDataMgr::GetLog()->AddLineF("File %s parsed and added to database", iter->GetFileName().c_str());
+        pfLocalizationDataMgr::GetLog()->AddLine("File {} parsed and added to database", iter->GetFileName());
     }
 
     IMergeData();
@@ -902,7 +902,7 @@ void pfLocalizationDataMgr::IConvertElement(LocElementInfo *elementInfo, const S
         if (numArgs == -1) // just started
             numArgs = argCount;
         else if (argCount != numArgs)
-            fLog->AddLineF("WARNING: Argument number mismatch in element %s for %s", curPath.c_str(), curTranslation->first.c_str());
+            fLog->AddLine("WARNING: Argument number mismatch in element {} for {}", curPath, curTranslation->first);
     }
 
     fLocalizedElements[curPath] = newElement;
@@ -1227,19 +1227,19 @@ void pfLocalizationDataMgr::OutputTreeToLog()
     for (std::vector<ST::string>::iterator i = ages.begin(); i != ages.end(); ++i)
     {
         ST::string age = *i;
-        fLog->AddLineF("\t%s", age.c_str());
+        fLog->AddLine("\t{}", age);
 
         std::vector<ST::string> sets = GetSetList(age);
         for (std::vector<ST::string>::iterator j = sets.begin(); j != sets.end(); ++j)
         {
             ST::string set = (*j);
-            fLog->AddLineF("\t\t%s", set.c_str());
+            fLog->AddLine("\t\t{}", set);
 
             std::vector<ST::string> names = GetElementList(age, set);
             for (std::vector<ST::string>::iterator k = names.begin(); k != names.end(); ++k)
             {
                 ST::string name = (*k);
-                fLog->AddLineF("\t\t\t%s", name.c_str());
+                fLog->AddLine("\t\t\t{}", name);
             }
         }
     }

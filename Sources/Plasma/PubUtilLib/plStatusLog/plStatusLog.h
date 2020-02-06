@@ -61,7 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plFileSystem.h"
 #include "plLoggable.h"
 
-#include <string>
+#include <string_theory/format>
 
 class plPipeline;
 
@@ -103,6 +103,7 @@ class plStatusLog : public plLog
         bool    IAddLine( const char *line, int32_t count, uint32_t color );
         bool    IPrintLineToFile( const char *line, uint32_t count );
         void    IParseFileName(plFileName &fileNoExt, ST::string &ext) const;
+        static plStatusLog* IFindLog(const plFileName& filename);
 
         void    IInit( void );
         void    IFini( void );
@@ -143,7 +144,7 @@ class plStatusLog : public plLog
             kNonFlushedLog      = 0x00008000,   // Do not flush the log after each write
         };
 
-        enum 
+        enum
         {
             kRed    = 0xffff0000,
             kGreen  = 0xff00ff00,
@@ -159,22 +160,55 @@ class plStatusLog : public plLog
 
         ~plStatusLog();
 
-        bool AddLine(const ST::string& line) HS_OVERRIDE;
+        bool AddLine(const char* line, uint32_t color = kWhite);
+        bool AddLine(uint32_t color, const ST::string& line) { return AddLine(line.c_str(), color); }
+        bool AddLine(const ST::string& line) HS_OVERRIDE { return AddLine(line.c_str()); }
 
-        bool    AddLine( const char *line, uint32_t color = kWhite );
+        template<typename... _Args>
+        bool AddLine(const char* format, _Args&&... args)
+        {
+            return AddLine(ST::format(format, std::forward<_Args>(args)...));
+        }
 
-        /// printf-like functions
+        template<typename... _Args>
+        bool AddLine(uint32_t color, const char* format, _Args&&... args)
+        {
+            return AddLine(color, ST::format(format, std::forward<_Args>(args)...));
+        }
 
-        bool    AddLineF( const char *format, ... );
-        bool    AddLineF( uint32_t color, const char *format, ... );
+        static bool AddLineS(const plFileName& filename, const char* line)
+        {
+            plStatusLog* log = IFindLog(filename);
+            if (!log)
+                return false;
+            return log->AddLine(line);
+        }
 
-        bool    AddLineV( const char *format, va_list arguments );
-        bool    AddLineV( uint32_t color, const char *format, va_list arguments );
+        static bool AddLineS(const plFileName& filename, const ST::string& line)
+        {
+            plStatusLog* log = IFindLog(filename);
+            if (!log)
+                return false;
+            return log->AddLine(line);
+        }
 
-        /// Static functions that you give a filename to and it searches for a log based on that
-        /// (or creates one if it isn't available)
-        static bool AddLineS( const plFileName &filename, const char *format, ... );
-        static bool AddLineS( const plFileName &filename, uint32_t color, const char *format, ... );
+        template<typename... _Args>
+        static bool AddLineS(const plFileName& filename, const char* format, _Args&&... args)
+        {
+            plStatusLog* log = IFindLog(filename);
+            if (!log)
+                return false;
+            return log->AddLine(format, std::forward<_Args>(args)...);
+        }
+
+        template<typename... _Args>
+        static bool AddLineS(const plFileName& filename, uint32_t color, const char* format, _Args&&... args)
+        {
+            plStatusLog* log = IFindLog(filename);
+            if (!log)
+                return false;
+            return log->AddLine(color, format, std::forward<_Args>(args)...);
+        }
 
         void    Clear( void );
 

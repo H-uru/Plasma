@@ -184,28 +184,6 @@ void plWaveSet7::StopGraph()
     fStatusGraph = nil;
 }
 
-inline void plWaveSet7::LogF(const char *format, ...) const
-{
-    if( fStatusLog )
-    {
-        va_list args;
-        va_start(args,format);
-        fStatusLog->AddLineV(format, args);
-        va_end(args);
-    }
-}
-
-inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
-{
-    if( fStatusLog )
-    {
-        va_list args;
-        va_start(args,format);
-        fStatusLog->AddLineV(color, format, args);
-        va_end(args);
-    }
-}
-
 inline void plWaveSet7::IRestartLog() const
 {
     if( fStatusLog )
@@ -238,14 +216,6 @@ void plWaveSet7::StartGraph()
 }
 
 void plWaveSet7::StopGraph()
-{
-}
-
-inline void plWaveSet7::LogF(const char *format, ...) const
-{
-}
-
-inline void plWaveSet7::LogF(uint32_t color, const char *format, ...) const
 {
 }
 
@@ -1499,7 +1469,7 @@ void plWaveSet7::IUpdateBumpLayers(float dt)
             fBumpLayers[i]->SetTransform(xfm);
         }
 
-        LogF("%.4d - L%8.4f R(%5.3f, %5.3f)", i, fTexWaves[i].fLen, fTexWaves[i].fRotScale00, fTexWaves[i].fRotScale01);
+        Log("{.4d} - L{8.4f} R({5.3f}, {5.3f})", i, fTexWaves[i].fLen, fTexWaves[i].fRotScale00, fTexWaves[i].fRotScale01);
         GraphLen(fTexWaves[i].fLen);
     }
 }
