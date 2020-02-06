@@ -553,7 +553,7 @@ void CliGkConn::StartAutoReconnect () {
             remainingMs = reconnectStartMs - GetNonZeroTimeMs();
             if ((signed)remainingMs < 0)
                 remainingMs = 0;
-            LogMsg(kLogPerf, L"GateKeeper auto-reconnecting in %u ms", remainingMs);
+            LogMsg(kLogPerf, "GateKeeper auto-reconnecting in {} ms", remainingMs);
         }
         AsyncTimerUpdate(reconnectTimer, remainingMs);
     }

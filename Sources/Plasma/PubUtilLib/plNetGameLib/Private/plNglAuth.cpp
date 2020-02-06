@@ -1652,7 +1652,7 @@ void CliAuConn::StartAutoReconnect () {
             remainingMs = reconnectStartMs - GetNonZeroTimeMs();
             if ((signed)remainingMs < 0)
                 remainingMs = 0;
-            LogMsg(kLogPerf, L"Auth auto-reconnecting in %u ms", remainingMs);
+            LogMsg(kLogPerf, "Auth auto-reconnecting in {} ms", remainingMs);
         }
         AsyncTimerUpdate(reconnectTimer, remainingMs);
     }
@@ -2195,7 +2195,7 @@ static bool Recv_ServerAddr (
         s_active->token = msg.token;
         s_active->addr.SetHost(msg.srvAddr);
 
-        LogMsg(kLogPerf, "SrvAuth addr: %s", s_active->addr.GetHostString().c_str());
+        LogMsg(kLogPerf, "SrvAuth addr: {}", s_active->addr.GetHostString());
     }
 
     return true;

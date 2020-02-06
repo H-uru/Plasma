@@ -377,7 +377,7 @@ static void BuildNodeTree (
             // Add parent to child's parents table
             parentLink = new RelVaultNodeLink(false, 0, parentNode->GetNodeId(), parentNode);
             childNode->state->parents.Add(parentLink);
-            LogMsg(kLogDebug, L"Added relationship: p:%u,c:%u", refs[i].parentId, refs[i].childId);
+            LogMsg(kLogDebug, "Added relationship: p:{},c:{}", refs[i].parentId, refs[i].childId);
         }
         
         if (!isImmediateChild) {
@@ -516,7 +516,7 @@ static void VaultNodeFetched (
     NetVaultNode *      node
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"VaultNodeFetched failed: %u (%s)", result, NetErrorToString(result));
+        LogMsg(kLogDebug, "VaultNodeFetched failed: {} ({})", result, NetErrorToString(result));
         return;
     }
 
@@ -540,7 +540,7 @@ static void ChangedVaultNodeFetched (
     NetVaultNode *      node
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"ChangedVaultNodeFetched failed: %u (%s)", result, NetErrorToString(result));
+        LogMsg(kLogDebug, "ChangedVaultNodeFetched failed: {} ({})", result, NetErrorToString(result));
         return;
     }
 
@@ -559,14 +559,14 @@ static void VaultNodeChanged (
     unsigned        nodeId,
     const plUUID&   revisionId
 ) {
-    LogMsg(kLogDebug, L"Notify: Node changed: %u", nodeId);
+    LogMsg(kLogDebug, "Notify: Node changed: {}", nodeId);
 
     RelVaultNodeLink * link = s_nodes.Find(nodeId);
 
     // We don't have the node, so we don't care that it changed (we actually
     // shouldn't have been notified)
     if (!link) {
-        LogMsg(kLogDebug, L"rcvd change notification for node %u, but node doesn't exist locally.", nodeId);
+        LogMsg(kLogDebug, "rcvd change notification for node {}, but node doesn't exist locally.", nodeId);
         return;
     }
 
@@ -589,7 +589,7 @@ static void VaultNodeAdded (
     unsigned        childId,
     unsigned        ownerId
 ) {
-    LogMsg(kLogDebug, L"Notify: Node added: p:%u,c:%u", parentId, childId);
+    LogMsg(kLogDebug, "Notify: Node added: p:{},c:{}", parentId, childId);
 
     unsigned inboxId = 0;
     if (hsRef<RelVaultNode> rvnInbox = VaultGetPlayerInboxFolder())
@@ -652,7 +652,7 @@ static void VaultNodeRemoved (
     unsigned        parentId,
     unsigned        childId
 ) {
-    LogMsg(kLogDebug, L"Notify: Node removed: p:%u,c:%u", parentId, childId);
+    LogMsg(kLogDebug, "Notify: Node removed: p:{},c:{}", parentId, childId);
     for (;;) {
         // Unlink 'em locally, if we can
         RelVaultNodeLink * parentLink = s_nodes.Find(parentId);
@@ -679,7 +679,7 @@ static void VaultNodeRemoved (
 static void VaultNodeDeleted (
     unsigned        nodeId
 ) {
-    LogMsg(kLogDebug, L"Notify: Node deleted: %u", nodeId);
+    LogMsg(kLogDebug, "Notify: Node deleted: {}", nodeId);
     VaultCull(nodeId);
 }
 
@@ -832,11 +832,11 @@ void VaultDownloadTrans::VaultNodeFetched (
     VaultDownloadTrans * trans = (VaultDownloadTrans *)param;
     if (IS_NET_ERROR(result)) {
         trans->result = result;
-        //LogMsg(kLogError, L"Error fetching node...most likely trying to fetch a nodeid of 0");
+        //LogMsg(kLogError, "Error fetching node...most likely trying to fetch a nodeid of 0");
     }
     
     --trans->nodesLeft;
-//  LogMsg(kLogDebug, L"(Download) %u of %u nodes fetched", trans->nodeCount - trans->nodesLeft, trans->nodeCount);
+//  LogMsg(kLogDebug, "(Download) {} of {} nodes fetched", trans->nodeCount - trans->nodesLeft, trans->nodeCount);
     
     if (trans->progressCallback) {
         trans->progressCallback(
@@ -869,7 +869,7 @@ void VaultDownloadTrans::VaultNodeRefsFetched (
     VaultDownloadTrans * trans = (VaultDownloadTrans *)param;
     
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"VaultNodeRefsFetched failed: %u (%s)", result, NetErrorToString(result));
+        LogMsg(kLogDebug, "VaultNodeRefsFetched failed: {} ({})", result, NetErrorToString(result));
         trans->result       = result;
         trans->nodesLeft    = 0;
     }
@@ -1583,13 +1583,13 @@ void VaultAddChildNode (
         // on bad, possibly harmful vault state.  Not harmful in a national security
         // kinda way, but still harmful.
         if (parentLink->node->IsChildOf(childId, 255)) {
-            LogMsg(kLogDebug, L"Node relationship would be circular: p:%u, c:%u", parentId, childId);
+            LogMsg(kLogDebug, "Node relationship would be circular: p:{}, c:{}", parentId, childId);
             // callback now with error code
             if (callback)
                 callback(kNetErrCircularReference, param);
         }
         else if (childLink->node->IsParentOf(parentId, 255)) {
-            LogMsg(kLogDebug, L"Node relationship would be circular: p:%u, c:%u", parentId, childId);
+            LogMsg(kLogDebug, "Node relationship would be circular: p:{}, c:{}", parentId, childId);
             // callback now with error code
             if (callback)
                 callback(kNetErrCircularReference, param);
@@ -1710,7 +1710,7 @@ void VaultAddChildNodeAndWait (
     }
     
     if (IS_NET_ERROR(param.result))
-        LogMsg(kLogError, L"VaultAddChildNodeAndWait: Failed to add child node: p:%u,c:%u. %s", parentId, childId, NetErrorToString(param.result));
+        LogMsg(kLogError, "VaultAddChildNodeAndWait: Failed to add child node: p:{},c:{}. {}", parentId, childId, NetErrorToString(param.result));
 }
 
 //============================================================================
@@ -1775,12 +1775,12 @@ void VaultPublishNode (
 
     rvn = VaultAgeGetDeviceInbox(deviceName);
     if (!rvn) {
-        LogMsg(kLogDebug, L"Failed to find inbox for device %S, adding it on-the-fly", deviceName.c_str());
+        LogMsg(kLogDebug, "Failed to find inbox for device {}, adding it on-the-fly", deviceName);
         VaultAgeSetDeviceInboxAndWait(deviceName, DEFAULT_DEVICE_INBOX);
 
         rvn = VaultAgeGetDeviceInbox(deviceName);
         if (!rvn) {
-            LogMsg(kLogDebug, L"Failed to add inbox to device %S on-the-fly", deviceName.c_str());
+            LogMsg(kLogDebug, "Failed to add inbox to device {} on-the-fly", deviceName);
             return;
         }
     }
@@ -2485,7 +2485,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesIOwnFolder())
             agesIOwnId = rvn->GetNodeId();
         else {
-            LogMsg(kLogError, L"RegisterOwnedAge: Failed to get player's AgesIOwnFolder");
+            LogMsg(kLogError, "RegisterOwnedAge: Failed to get player's AgesIOwnFolder");
             break;
         }
 
@@ -2515,7 +2515,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, "RegisterOwnedAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
                 break;
             }
                 
@@ -2540,7 +2540,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed create age link node");
+                LogMsg(kLogError, "RegisterOwnedAge: Failed create age link node");
                 break;
             }
                 
@@ -2567,7 +2567,7 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed to download age info vault");
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to download age info vault");
                 break;
             }
         }
@@ -2624,15 +2624,15 @@ bool VaultRegisterOwnedAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param1.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed to add link to player's bookshelf");
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to add link to player's bookshelf");
                 break;
             }
             if (IS_NET_ERROR(param2.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed to add info to link");
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to add info to link");
                 break;
             }
             if (IS_NET_ERROR(param3.result)) {
-                LogMsg(kLogError, L"RegisterOwnedAge: Failed to add playerInfo to ageOwners");
+                LogMsg(kLogError, "RegisterOwnedAge: Failed to add playerInfo to ageOwners");
                 break;
             }
         }
@@ -2844,7 +2844,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesICanVisitFolder())
             agesICanVisitId = rvn->GetNodeId();
         else {
-            LogMsg(kLogError, L"RegisterVisitAge: Failed to get player's AgesICanVisitFolder");
+            LogMsg(kLogError, "RegisterVisitAge: Failed to get player's AgesICanVisitFolder");
             break;
         }
 
@@ -2875,7 +2875,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, "RegisterVisitAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
+                LogMsg(kLogError, "RegisterVisitAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
                 break;
             }
                 
@@ -2900,7 +2900,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed create age link node");
+                LogMsg(kLogError, "RegisterVisitAge: Failed create age link node");
                 break;
             }
                 
@@ -2927,7 +2927,7 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed to download age info vault");
+                LogMsg(kLogError, "RegisterVisitAge: Failed to download age info vault");
                 break;
             }
         }
@@ -2983,15 +2983,15 @@ bool VaultRegisterVisitAgeAndWait (const plAgeLinkStruct * link) {
             }
             
             if (IS_NET_ERROR(param1.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed to add link to folder");
+                LogMsg(kLogError, "RegisterVisitAge: Failed to add link to folder");
                 break;
             }
             if (IS_NET_ERROR(param2.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed to add info to link");
+                LogMsg(kLogError, "RegisterVisitAge: Failed to add info to link");
                 break;
             }
             if (IS_NET_ERROR(param3.result)) {
-                LogMsg(kLogError, L"RegisterVisitAge: Failed to add playerInfo to canVisit folder");
+                LogMsg(kLogError, "RegisterVisitAge: Failed to add playerInfo to canVisit folder");
                 break;
             }
         }
@@ -3135,7 +3135,7 @@ bool VaultUnregisterOwnedAgeAndWait (const plAgeInfoStruct * info) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesIOwnFolder())
             agesIOwnId = rvn->GetNodeId();
         else {
-            LogMsg(kLogError, L"UnregisterOwnedAge: Failed to get player's AgesIOwnFolder");
+            LogMsg(kLogError, "UnregisterOwnedAge: Failed to get player's AgesIOwnFolder");
             break;  // something's wrong with the player vault, it doesn't have a required folder node
         }
 
@@ -3190,7 +3190,7 @@ bool VaultUnregisterVisitAgeAndWait (const plAgeInfoStruct * info) {
         if (hsRef<RelVaultNode> rvn = VaultGetAgesICanVisitFolder())
             agesICanVisitId = rvn->GetNodeId();
         else {
-            LogMsg(kLogError, L"UnregisterOwnedAge: Failed to get player's AgesICanVisitFolder");
+            LogMsg(kLogError, "UnregisterOwnedAge: Failed to get player's AgesICanVisitFolder");
             break;  // something's wrong with the player vault, it doesn't have a required folder node
         }
 
@@ -3957,7 +3957,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
     if (hsRef<RelVaultNode> rvnSubAges = VaultGetAgeSubAgesFolder())
         subAgesId = rvnSubAges->GetNodeId();
     else {
-        LogMsg(kLogError, L"CreateSubAge: Failed to get ages's SubAges folder");
+        LogMsg(kLogError, "CreateSubAge: Failed to get ages's SubAges folder");
         return false;
     }
     
@@ -3980,7 +3980,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, "CreateSubAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
+            LogMsg(kLogError, "CreateSubAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
             return false;
         }
             
@@ -4005,7 +4005,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateSubAge: Failed create age link node");
+            LogMsg(kLogError, "CreateSubAge: Failed create age link node");
             return false;
         }
             
@@ -4032,7 +4032,7 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateSubAge: Failed to download age info vault");
+            LogMsg(kLogError, "CreateSubAge: Failed to download age info vault");
             return false;
         }
     }
@@ -4068,11 +4068,11 @@ bool VaultAgeFindOrCreateSubAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param1.result)) {
-            LogMsg(kLogError, L"CreateSubAge: Failed to add link to ages's subages");
+            LogMsg(kLogError, "CreateSubAge: Failed to add link to ages's subages");
             return false;
         }
         if (IS_NET_ERROR(param2.result)) {
-            LogMsg(kLogError, L"CreateSubAge: Failed to add info to link");
+            LogMsg(kLogError, "CreateSubAge: Failed to add info to link");
             return false;
         }
     }
@@ -4258,7 +4258,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (!rvnAgeInfo) {
-            LogMsg(kLogError, L"CreateChildAge: Failed to get ages's AgeInfo node");
+            LogMsg(kLogError, "CreateChildAge: Failed to get ages's AgeInfo node");
             return false;
         }
 
@@ -4267,7 +4267,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
             childAgesId = rvnChildAges->GetNodeId();
         }       
         else {
-            LogMsg(kLogError, L"CreateChildAge: Failed to get ages's ChildAges folder");
+            LogMsg(kLogError, "CreateChildAge: Failed to get ages's ChildAges folder");
             return false;
         }
         
@@ -4317,7 +4317,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, "CreateChildAge: Failed to init age %s", link->GetAgeInfo()->GetAgeFilename().c_str());
+            LogMsg(kLogError, "CreateChildAge: Failed to init age {}", link->GetAgeInfo()->GetAgeFilename());
             return false;
         }
             
@@ -4342,7 +4342,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateChildAge: Failed create age link node");
+            LogMsg(kLogError, "CreateChildAge: Failed create age link node");
             return false;
         }
             
@@ -4369,7 +4369,7 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param.result)) {
-            LogMsg(kLogError, L"CreateChildAge: Failed to download age info vault");
+            LogMsg(kLogError, "CreateChildAge: Failed to download age info vault");
             return false;
         }
     }
@@ -4405,11 +4405,11 @@ bool VaultAgeFindOrCreateChildAgeLinkAndWait (
         }
         
         if (IS_NET_ERROR(param1.result)) {
-            LogMsg(kLogError, L"CreateChildAge: Failed to add link to ages's subages");
+            LogMsg(kLogError, "CreateChildAge: Failed to add link to ages's subages");
             return false;
         }
         if (IS_NET_ERROR(param2.result)) {
-            LogMsg(kLogError, L"CreateChildAge: Failed to add info to link");
+            LogMsg(kLogError, "CreateChildAge: Failed to add info to link");
             return false;
         }
     }
@@ -4633,7 +4633,7 @@ void VaultDownloadAndWait (
 void VaultCull (unsigned vaultId) {
     // Remove the node from the global table
     if (RelVaultNodeLink * link = s_nodes.Find(vaultId)) {
-        LogMsg(kLogDebug, L"Vault: Culling node %u", link->node->GetNodeId());
+        LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
         link->node->state->UnlinkFromRelatives();
         delete link;
     }
@@ -4656,7 +4656,7 @@ void VaultCull (unsigned vaultId) {
             }
         }
         if (!foundRoot) {
-            LogMsg(kLogDebug, L"Vault: Culling node %u", link->node->GetNodeId());
+            LogMsg(kLogDebug, "Vault: Culling node {}", link->node->GetNodeId());
             link->node->state->UnlinkFromRelatives();
             delete link;
         }

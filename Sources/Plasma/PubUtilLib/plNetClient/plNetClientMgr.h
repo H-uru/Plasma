@@ -374,11 +374,6 @@ public:
     void BeginTask();
     void EndTask();
 
-    bool DebugMsgV(const char* fmt, va_list args) const;
-    bool ErrorMsgV(const char* fmt, va_list args) const; 
-    bool WarningMsgV(const char* fmt, va_list args) const; 
-    bool AppMsgV(const char* fmt, va_list args) const;
-
     bool IsObjectOwner();
     void SetObjectOwner(bool own);
 
