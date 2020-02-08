@@ -132,6 +132,15 @@ public:
     _Ref *operator->() const { return fObj; }
     operator _Ref *() const { return fObj; }
 
+    /** Creates a new object of type _Ref. Use this instead of operator new. */
+    template<typename... _Args>
+    static hsRef<_Ref> New(_Args&&... args)
+    {
+        hsRef<_Ref> obj;
+        obj.fObj = new _Ref(std::forward<_Args>(args)...);
+        return obj;
+    }
+
 private:
     _Ref *fObj;
 };

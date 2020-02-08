@@ -243,21 +243,16 @@ uint32_t pyVaultNode::GetCreatorNodeID()
 
 PyObject* pyVaultNode::GetCreatorNode()
 {
-    PyObject * result = nil;
-    if (fNode)
-    {
-        hsRef<RelVaultNode> templateNode = new RelVaultNode;
-        templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-        VaultPlayerInfoNode plrInfo(templateNode);
+    if (fNode) {
+        RelVaultNode templateNode;
+        templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+        VaultPlayerInfoNode plrInfo(&templateNode);
         plrInfo.SetPlayerId(fNode->GetCreatorId());
         
-        if (hsRef<RelVaultNode> rvn = VaultGetNode(templateNode))
-            result = pyVaultPlayerInfoNode::New(rvn);
+        if (hsRef<RelVaultNode> rvn = VaultGetNode(&templateNode))
+            return pyVaultPlayerInfoNode::New(rvn);
     }
-    
-    if (result)
-        return result;
-        
+
     // just return a None object
     PYTHON_RETURN_NONE;
 }

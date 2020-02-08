@@ -3978,7 +3978,7 @@ bool VaultFetchNodeTrans::Recv (
     const Auth2Cli_VaultNodeFetched & reply = *(const Auth2Cli_VaultNodeFetched *) msg;
     
     if (IS_NET_SUCCESS(reply.result)) {
-        m_node = new NetVaultNode;
+        m_node = hsRef<NetVaultNode>::New();
         m_node->Read(reply.nodeBuffer, reply.nodeBytes);
     }
 
