@@ -3077,7 +3077,7 @@ PF_CONSOLE_CMD(Logic, ResponderNoLog, "string prefix", "Don't log responders tha
 #include "plModifier/plDetectorLog.h"
 PF_CONSOLE_CMD(Logic, WriteDetectorLog, "", "Write detector log to logfile")
 {
-    DetectorDoLogfile();
+    plDetectorLog::Output();
 }
 
 PF_CONSOLE_CMD(Logic,
@@ -3464,7 +3464,7 @@ PF_CONSOLE_CMD( Audio, MCNTest, "int which", "" )
 PF_CONSOLE_CMD( Audio, Mark, "", "" )
 {
     static int markNum = 0;
-    plStatusLog::AddLineS( "threadfun.log", "******* Mark #%d *******", markNum++ );
+    plStatusLog::AddLineS( "threadfun.log", "******* Mark #{} *******", markNum++ );
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -3619,7 +3619,7 @@ PF_CONSOLE_CMD( Listener, XMode, "bool b", "Sets velocity and position to avatar
             set = new plSetListenerMsg( plSetListenerMsg::kVelocity, pKey, true );
             set->Send();
         }
-        plStatusLog::AddLineS("audio.log", "%s, %d, %d, %d", "XMode off", oldPosType, oldFacingType, oldVelType);
+        plStatusLog::AddLineS("audio.log", "XMode off, {}, {}, {}", oldPosType, oldFacingType, oldVelType);
     }
 }
 
@@ -5816,7 +5816,7 @@ PF_CONSOLE_CMD(Age, ShowSDL, "", "Prints the age SDL values")
                 line += ",";
             }
             PrintString(line.c_str());
-            plStatusLog::AddLineS("ShowSDL.log", "%s", line.c_str());
+            plStatusLog::AddLineS("ShowSDL.log", line);
         }
     }   
     

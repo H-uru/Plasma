@@ -221,7 +221,7 @@ void plAudioSystem::IEnumerateDevices()
                 {
                     alcGetIntegerv(device, ALC_MAJOR_VERSION, sizeof(int), &major);
                     alcGetIntegerv(device, ALC_MINOR_VERSION, sizeof(int), &minor);
-                    plStatusLog::AddLineS("audio.log", "%s OpenAL ver: %d.%d", devices, major, minor );
+                    plStatusLog::AddLineS("audio.log", "{} OpenAL ver: {}.{}", devices, major, minor );
 
                     // filter out any devices that aren't openal 1.1 compliant
                     if(major > 1 || (major == 1 && minor >= 1))
@@ -321,14 +321,14 @@ bool    plAudioSystem::Init()
 
         plgAudioSys::SetDeviceName(defaultDev, false);
         fDevice = alcOpenDevice(defaultDev);
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: %s device selected", defaultDev );
+        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: {} device selected", defaultDev );
         deviceName = defaultDev;
     }
     else
     {
         plgAudioSys::SetDeviceName(deviceName, false);
         fDevice = alcOpenDevice(deviceName);
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: %s device selected", deviceName );
+        plStatusLog::AddLineS( "audio.log", plStatusLog::kRed, "ASYS: {} device selected", deviceName );
     }
     if(!fDevice)
     {
@@ -346,10 +346,10 @@ bool    plAudioSystem::Init()
         return false;
     }
 
-    plStatusLog::AddLineS("audio.log", "OpenAL vendor: %s",     alGetString(AL_VENDOR));
-    plStatusLog::AddLineS("audio.log", "OpenAL version: %s",    alGetString(AL_VERSION));
-    plStatusLog::AddLineS("audio.log", "OpenAL renderer: %s",   alGetString(AL_RENDERER));
-    plStatusLog::AddLineS("audio.log", "OpenAL extensions: %s", alGetString(AL_EXTENSIONS));
+    plStatusLog::AddLineS("audio.log", "OpenAL vendor: {}",     alGetString(AL_VENDOR));
+    plStatusLog::AddLineS("audio.log", "OpenAL version: {}",    alGetString(AL_VERSION));
+    plStatusLog::AddLineS("audio.log", "OpenAL renderer: {}",   alGetString(AL_RENDERER));
+    plStatusLog::AddLineS("audio.log", "OpenAL extensions: {}", alGetString(AL_EXTENSIONS));
     plAudioCaps caps = plAudioCapsDetector::Detect();
 
     if(strcmp(deviceName, DEFAULT_AUDIO_DEVICE_NAME))       
@@ -523,7 +523,7 @@ void plAudioSystem::SetMaxNumberOfActiveSounds()
     fMaxNumSounds = maxNumSounds;
     fNumSoundsSlop = fMaxNumSounds / 2;
 
-    plStatusLog::AddLineS( "audio.log", "Max Number of Sounds Set to: %d", fMaxNumSounds);
+    plStatusLog::AddLineS( "audio.log", "Max Number of Sounds Set to: {}", fMaxNumSounds);
 }
 
 void plAudioSystem::SetListenerPos(const hsPoint3 pos)
@@ -759,7 +759,7 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
     fDebugActiveSoundDisplay->Clear();
 
     if(fDisplayNumBuffers)
-        fDebugActiveSoundDisplay->AddLineF(0xffffffff, "Num Buffers: %d", plDSoundBuffer::GetNumBuffers() );
+        fDebugActiveSoundDisplay->AddLine(0xffffffff, "Num Buffers: {}", plDSoundBuffer::GetNumBuffers());
     fDebugActiveSoundDisplay->AddLine("Not streamed", plStatusLog::kGreen);
     fDebugActiveSoundDisplay->AddLine("Disk streamed", plStatusLog::kYellow);
     fDebugActiveSoundDisplay->AddLine("RAM streamed", plStatusLog::kWhite);
@@ -788,26 +788,24 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
         
         if( fUsingEAX && sound->GetEAXSettings().IsEnabled() )
         {
-            fDebugActiveSoundDisplay->AddLineF(
+            fDebugActiveSoundDisplay->AddLine(
                 color, 
-                "%d %1.2f %1.2f (%d occ) %s",
-                sound->GetPriority(), 
-                sortedList->fRank, 
-                sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
-                sound->GetEAXSettings().GetCurrSofts().GetOcclusion(), 
-                sound->GetKeyName().c_str()
-            );
+                "{} {1.2f} {1.2f} ({} occ) {}",
+                sound->GetPriority(),
+                sortedList->fRank,
+                sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0,
+                sound->GetEAXSettings().GetCurrSofts().GetOcclusion(),
+                sound->GetKeyName());
         }
         else 
         {
-            fDebugActiveSoundDisplay->AddLineF(
-                color, 
-                "%d %1.2f %1.2f %s", 
-                sound->GetPriority(), 
-                sortedList->fRank, 
-                sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
-                sound->GetKeyName().c_str()
-            );
+            fDebugActiveSoundDisplay->AddLine(
+                color,
+                "{} {1.2f} {1.2f} {}",
+                sound->GetPriority(),
+                sortedList->fRank,
+                sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0,
+                sound->GetKeyName());
         }
         i++;
     }
@@ -825,13 +823,12 @@ void    plAudioSystem::IUpdateSoftSounds( const hsPoint3 &newPosition )
         // to say shouldn't be playing but we'll let them play for a bit anyway just in case they raise
         // in priority. So only be mean to the sounds outside this slop range
         sound->UpdateSoftVolume( false, ( i < fMaxNumSounds + fNumSoundsSlop ) ? false : true );
-        fDebugActiveSoundDisplay->AddLineF(
+        fDebugActiveSoundDisplay->AddLine(
             0xff808080,
-            "%d %1.2f %s", 
-            sound->GetPriority(), 
-            sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0, 
-            sound->GetKeyName().c_str()
-        );
+            "{} {1.2f} {}",
+            sound->GetPriority(),
+            sound->GetVolume() ? sound->GetVolumeRank() / sound->GetVolume() : 0,
+            sound->GetKeyName());
     }
     
     plProfile_EndTiming(SoundSoftUpdate);
@@ -882,13 +879,13 @@ bool plAudioSystem::MsgReceive(plMessage* msg)
             double currTime = hsTimer::GetSeconds();
             if(fStartFade == 0)
             {
-                plStatusLog::AddLineS("audio.log", "Starting Fade %f", currTime);
+                plStatusLog::AddLineS("audio.log", "Starting Fade {f}", currTime);
             }
             if((currTime - fStartFade) > fFadeLength) 
             {
                 fStartFade = 0;
                 plgDispatch::Dispatch()->UnRegisterForExactType( plTimeMsg::Index(), GetKey() );
-                plStatusLog::AddLineS("audio.log", "Stopping Fade %f", currTime);
+                plStatusLog::AddLineS("audio.log", "Stopping Fade {f}", currTime);
                 plgAudioSys::SetGlobalFadeVolume( 1.0 ); 
             }
             else
@@ -1205,7 +1202,7 @@ void plgAudioSys::Activate(bool b)
         return;
     if( b )
     {
-        plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Attempting audio system init --" );
+        plStatusLog::AddLineS("audio.log", plStatusLog::kBlue, "ASYS: -- Attempting audio system init --");
         if( !fSys->Init() )
         {
             // Cannot init audio system. Don't activate
@@ -1228,7 +1225,7 @@ void plgAudioSys::Activate(bool b)
 
     fSys->SetActive( false );
     
-    plStatusLog::AddLineS( "audio.log", plStatusLog::kBlue, "ASYS: -- Sending deactivate/destroy messages --" );
+    plStatusLog::AddLineS("audio.log", plStatusLog::kBlue, "ASYS: -- Sending deactivate/destroy messages --");
     plgDispatch::MsgSend( new plAudioSysMsg( plAudioSysMsg::kDeActivate ) );
 
     // Send ourselves a shutdown message, so that the deactivates get processed first

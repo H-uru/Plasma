@@ -78,7 +78,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #endif
 #include "plStatusLog/plStatusLog.h"
 
-#define kDebugLog   if( myLog != nil ) myLog->AddLineF(
+#define DebugLog   if (myLog) myLog->AddLine
 
 #ifdef EAX_SDK_AVAILABLE
 static EAXGet           s_EAXGet;
@@ -152,7 +152,7 @@ bool    plEAXListener::Init( void )
     }
     catch (std::exception &e)
     {
-        plStatusLog::AddLineS("audio.log", "Unable to set EAX Property Set (%s), disabling EAX...", e.what());
+        plStatusLog::AddLineS("audio.log", "Unable to set EAX Property Set ({}), disabling EAX...", e.what());
         plgAudioSys::EnableEAX(false);
         return false;
     }
@@ -328,18 +328,18 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
 
     if( modArray.GetCount() != fLastModCount )
     {
-        kDebugLog "Clearing cache..." );
+        DebugLog( "Clearing cache..." );
         ClearProcessCache();    // Code path changed, clear the entire cache
         fLastModCount = modArray.GetCount();
     }
     else
     {
-        kDebugLog "" );
+        DebugLog( "" );
     }
 
     if( modArray.GetCount() > 0 )
     {
-        kDebugLog "%d regions to calc", modArray.GetCount() );
+        DebugLog( "{} regions to calc", modArray.GetCount() );
 
         // Reset and find a new one if applicable
         thisBigRegion = nil;
@@ -350,7 +350,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
         for( i = 0; i < modArray.GetCount(); i++ )
         {
             float strength = modArray[ i ]->GetStrength();
-            kDebugLog "%4.2f - %s", strength, modArray[ i ]->GetKey()->GetUoid().GetObjectName() );
+            DebugLog( "{4.2f} - {}", strength, modArray[ i ]->GetKey()->GetUoid().GetObjectName() );
             if( strength > 0.f )
             {
                 // fLastBigRegion will point to a region iff it's the only region w/ strength > 0
@@ -382,7 +382,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
         if( firstOne )
         {
             // No regions of strength > 0, so just make it quiet
-            kDebugLog "Reverb should be quiet" );
+            DebugLog( "Reverb should be quiet" );
             if( fLastWasEmpty )
                 return;
 
@@ -407,7 +407,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
 
             if( totalStrength < 1.f )
             {
-                kDebugLog "Total strength < 1; muting result" );
+                DebugLog( "Total strength < 1; muting result" );
                 // All of them together is less than full strength, so mute our result
                 IMuteProperties( &finalProps, totalStrength );
             }
@@ -415,7 +415,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
     }
     else
     {
-        kDebugLog "No regions at all; disabling reverb" );
+        DebugLog( "No regions at all; disabling reverb" );
         // No regions whatsoever, so disable listener props entirely
         if( fLastWasEmpty )
             return;
@@ -439,7 +439,7 @@ void    plEAXListener::ProcessMods( hsTArray<plEAXListenerMod *> &modArray )
         oldTime = newTime;      // update time
     }
 //finalProps.flAirAbsorptionHF *= 0.3048f; // Convert to feet
-    //kDebugLog "** Updating property set **" );
+    //DebugLog( "** Updating property set **" );
 
 
     if(!SetGlobalEAXProperty(DSPROPSETID_EAX_ListenerProperties, DSPROPERTY_EAXLISTENER_ALLPARAMETERS, &finalProps, sizeof( finalProps )))

@@ -102,13 +102,13 @@ class SensorReport : public NxUserTriggerReport
             if (status & NX_TRIGGER_ON_ENTER)
             {
                 if (plSimulationMgr::fExtraProfile)
-                    DetectorLogRed("-->Send Collision %s enter",triggerPhys->GetObjectKey()->GetName().c_str());
+                    plDetectorLog::Red("-->Send Collision {} enter",triggerPhys->GetObjectKey()->GetName());
                 plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
             }
             else if (status & NX_TRIGGER_ON_LEAVE)
             {
                 if (plSimulationMgr::fExtraProfile)
-                    DetectorLogRed("-->Send Collision %s exit",triggerPhys->GetObjectKey()->GetName().c_str());
+                    plDetectorLog::Red("-->Send Collision {} exit",triggerPhys->GetObjectKey()->GetName());
                 plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
             }
         }
@@ -174,12 +174,12 @@ class ErrorStream : public NxUserOutputStream
         default:                    errorType = "unknown error";
         }
 
-        plSimulationMgr::Log("%s(%d) : %s: %s", file, line, errorType, message);
+        plSimulationMgr::Log("{}({}) : {}: {}", file, line, errorType, message);
     }
 
     virtual NxAssertResponse reportAssertViolation(const char* message, const char* file, int line)
     {
-        plSimulationMgr::Log("access violation : %s (%s(%d))", message, file, line);
+        plSimulationMgr::Log("access violation : {} ({}({}))", message, file, line);
         hsAssert(0, "PhysX assert, see simulation log for details");
         return NX_AR_CONTINUE;
     }
@@ -295,7 +295,6 @@ bool plSimulationMgr::InitSimulation()
 {
     fSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &gErrorStream);
     if (!fSDK) {
-        fLog->AddLine("Phailed to init PhysX SDK");
         return false; // client will handle this and ask user to install
     }
 
@@ -442,9 +441,9 @@ void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
         if (pMsg->fOtherKey == hitter && pMsg->GetReceiver(0) == hitee)
         {
             pMsg->fEntering = enter;
-            DetectorLogRed("DUPLICATE COLLISION: %s hit %s",
-                (hitter ? hitter->GetName().c_str() : "(nil)"),
-                (hitee ? hitee->GetName().c_str() : "(nil)"));
+            plDetectorLog::Red("DUPLICATE COLLISION: {} hit {}",
+                (hitter ? hitter->GetName() : ST_LITERAL("(nil)")),
+                (hitee ? hitee->GetName() : ST_LITERAL("(nil)")));
             return;
         }
     }
@@ -476,7 +475,7 @@ void plSimulationMgr::Advance(float delSecs)
     else if (fAccumulator > kDefaultMaxDelta)
     {
         if (fExtraProfile)
-            Log("Step clamped from %f to limit of %f", fAccumulator, kDefaultMaxDelta);
+            Log("Step clamped from {f} to limit of {f}", fAccumulator, kDefaultMaxDelta);
         fAccumulator = kDefaultMaxDelta;
     }
 
@@ -576,8 +575,10 @@ void plSimulationMgr::ISendUpdates()
     for (CollisionVec::iterator it = fCollideMsgs.begin(); it != fCollideMsgs.end(); ++it)
     {
         plCollideMsg* pMsg = *it;
-        DetectorLogYellow("Collision: %s was triggered by %s. Sending an %s msg", pMsg->GetReceiver(0)->GetName().c_str(),
-                          pMsg->fOtherKey ? pMsg->fOtherKey->GetName().c_str() : "(nil)" , pMsg->fEntering ? "'enter'" : "'exit'");
+        plDetectorLog::Yellow("Collision: {} was triggered by {}. Sending an {} msg",
+                              pMsg->GetReceiver(0)->GetName(),
+                              pMsg->fOtherKey ? pMsg->fOtherKey->GetName() : ST_LITERAL("(nil)"),
+                              pMsg->fEntering ? "'enter'" : "'exit'");
         plgDispatch::Dispatch()->MsgSend(pMsg);
     }
     fCollideMsgs.clear();
@@ -607,7 +608,7 @@ void plSimulationMgr::ISendUpdates()
                         ST::string physName = physical->GetKeyName();
                         if (!physName.empty())
                         {
-                            plSimulationMgr::Log("Removing physical <%s> because of missing scene node.\n", physName.c_str());
+                            plSimulationMgr::Log("Removing physical <{}> because of missing scene node.\n", physName);
                         }
                     }
 //                  Remove(physical);
@@ -777,33 +778,6 @@ void plSimulationMgr::IProcessSynchs()
         else
         {
             i = fPendingSynchs.erase(i);
-        }
-    }
-}
-
-void plSimulationMgr::Log(const char * fmt, ...)
-{
-    if(gTheInstance)
-    {
-        plStatusLog* log = GetInstance()->fLog;
-        if(log)
-        {
-            va_list args;
-            va_start(args, fmt);
-            log->AddLineV(fmt, args);
-            va_end(args);
-        }
-    }
-}
-
-void plSimulationMgr::LogV(const char* formatStr, va_list args)
-{
-    if(gTheInstance)
-    {
-        plStatusLog * log = GetInstance()->fLog;
-        if(log)
-        {
-            log->AddLineV(formatStr, args);
         }
     }
 }

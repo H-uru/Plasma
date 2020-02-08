@@ -335,7 +335,7 @@ void plVirtualCam1::SetDepth(float h, float y)
     plVirtualCam1::Instance()->fPipe->SetDepth(fHither, fYon);
     plVirtualCam1::Instance()->fPipe->RefreshMatrices();
     #ifdef STATUS_LOG
-    camLog->AddLineF("Hither, Yon changed to %f %f", fHither, fYon);
+    camLog->AddLine("Hither, Yon changed to {f} {f}", fHither, fYon);
     #endif
 }
 
@@ -348,7 +348,7 @@ void plVirtualCam1::Drive()
         PopCamera(fDriveCamera);
 
         #ifdef STATUS_LOG
-        camLog->AddLineF("Camera Drive Mode Disabled");
+        camLog->AddLine("Camera Drive Mode Disabled");
         #endif
     }
     else
@@ -365,7 +365,7 @@ void plVirtualCam1::Drive()
         fCameraDriveInterface->SetEnabled( true );
 
         #ifdef STATUS_LOG
-        camLog->AddLineF("Camera Drive Mode Enabled");
+        camLog->AddLine("Camera Drive Mode Enabled");
         #endif
     }
 }
@@ -407,7 +407,7 @@ void  plVirtualCam1::Reset(bool bRender)
     ClearFlags(kFirstPersonEnabled);
     
     #ifdef STATUS_LOG
-    camLog->AddLineF("Virtual Camera Reset");
+    camLog->AddLine("Virtual Camera Reset");
     #endif
 
 }
@@ -421,7 +421,7 @@ void  plVirtualCam1::ClearStack()
         PushCamera((plCameraModifier1*)pKey->GetObjectPtr());
 
     #ifdef STATUS_LOG
-    camLog->AddLineF("Camera Stack Cleared");
+    camLog->AddLine("Camera Stack Cleared");
     #endif
 
 }
@@ -490,7 +490,7 @@ void plVirtualCam1::SetCutNextTrans()
     SetFlags(kCutNextTrans);
     SetRender(true);
 #ifdef STATUS_LOG
-        camLog->AddLineF("Set Camera to cut on next transition");
+        camLog->AddLine("Set Camera to cut on next transition");
 #endif
 }
 
@@ -500,7 +500,7 @@ void plVirtualCam1::SetRender(bool render)
     if (render)
     {
         #ifdef STATUS_LOG
-        camLog->AddLineF("Virtual Camera Render Updates Enabled");
+        camLog->AddLine("Virtual Camera Render Updates Enabled");
         if (fEffectPlate)
             fEffectPlate->SetVisible(false);
         #endif
@@ -508,7 +508,7 @@ void plVirtualCam1::SetRender(bool render)
     else
     {   
         #ifdef STATUS_LOG
-        camLog->AddLineF("Virtual Camera Render Updates Disabled");
+        camLog->AddLine("Virtual Camera Render Updates Disabled");
         if (fEffectPlate)
             fEffectPlate->SetVisible(true);
         #endif
@@ -544,7 +544,7 @@ void plVirtualCam1::PushThirdPerson()
     if (fThirdPersonCam)
     {
 #ifdef STATUS_LOG
-        camLog->AddLineF("Restore failed, forcing built-in 3rd person camera");
+        camLog->AddLine("Restore failed, forcing built-in 3rd person camera");
 #endif
         ClearStack();
         SetCutNextTrans();
@@ -552,7 +552,7 @@ void plVirtualCam1::PushThirdPerson()
         return;
     }
 #ifdef STATUS_LOG
-        camLog->AddLineF("Restore failed, 3rd person camera not available for switch: attempting to force 1st person");
+        camLog->AddLine("Restore failed, 3rd person camera not available for switch: attempting to force 1st person");
 #endif
     FirstPersonOverride();
 
@@ -900,7 +900,7 @@ void plVirtualCam1::FirstPersonOverride()
         GetCurrentStackCamera()->GetBrain()->SetFlags(plCameraBrain1::kCutPOAOnce);
         fFirstPersonOverride = nil;
 #ifdef STATUS_LOG
-        camLog->AddLineF("Built-In First Person Camera Disabled");
+        camLog->AddLine("Built-In First Person Camera Disabled");
 #endif
         SetFOV(GetCurrentStackCamera()); 
         GetCurrentStackCamera()->Push(!HasFlags(kAvatarWalking));
@@ -936,7 +936,7 @@ void plVirtualCam1::FirstPersonOverride()
         
 
 #ifdef STATUS_LOG
-            camLog->AddLineF("Built-In First Person Camera Enabled");
+            camLog->AddLine("Built-In First Person Camera Enabled");
 #endif
         }
     }
@@ -1163,7 +1163,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 fPythonOverride = nil;
                 SetFlags(kFirstPersonEnabled);
 #ifdef STATUS_LOG
-                camLog->AddLineF("Override Python Camera Disabled");
+                camLog->AddLine("Override Python Camera Disabled");
 #endif
                 if (fFirstPersonOverride)
                 {
@@ -1209,12 +1209,12 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                         }
                         
 #ifdef STATUS_LOG
-                        camLog->AddLineF("Override Python Camera Popped because new one coming in");
+                        camLog->AddLine("Override Python Camera Popped because new one coming in");
 #endif
                     }
                     fPythonOverride = pCamMod;
 #ifdef STATUS_LOG
-                    camLog->AddLineF("Override Python Camera Pushing onto stack");
+                    camLog->AddLine("Override Python Camera Pushing onto stack");
 #endif
                     if (foutLog)
                     {
@@ -1276,7 +1276,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                     SetFlags(kScriptsForced3rd);
                     FirstPersonOverride();
 #ifdef STATUS_LOG
-                    camLog->AddLineF("Forcing 3rd Person from scripts");
+                    camLog->AddLine("Forcing 3rd Person from scripts");
 #endif
                     SetFOV(GetCurrentStackCamera()); 
                 }
@@ -1307,13 +1307,13 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 SetFlags(kResponderForced3rd);
                 FirstPersonOverride();
 #ifdef STATUS_LOG
-                camLog->AddLineF("Forcing 3rd Person from code");
+                camLog->AddLine("Forcing 3rd Person from code");
 #endif
                 SetFOV(GetCurrentStackCamera());
             }
             ClearFlags(kFirstPersonEnabled);
 #ifdef STATUS_LOG
-            camLog->AddLineF("1st person override disabled");
+            camLog->AddLine("1st person override disabled");
 #endif
         }
         else
@@ -1323,7 +1323,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 return true;
             SetFlags(kFirstPersonEnabled);
 #ifdef STATUS_LOG
-            camLog->AddLineF("1st person override enabled");
+            camLog->AddLine("1st person override enabled");
 #endif
 
             if (HasFlags(kResponderForced3rd))
@@ -1331,7 +1331,7 @@ bool plVirtualCam1::MsgReceive(plMessage* msg)
                 FirstPersonOverride();
                 ClearFlags(kResponderForced3rd);
 #ifdef STATUS_LOG
-                camLog->AddLineF("Restoring 1st Person from code");
+                camLog->AddLine("Restoring 1st Person from code");
 #endif
             }
             
@@ -1623,7 +1623,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
-                camLog->AddLineF("Performing stock track transition between %s and %s",fPrevCam->GetKeyName().c_str(), pCam->GetKeyName().c_str());
+                camLog->AddLine("Performing stock track transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
             }
             else
@@ -1636,7 +1636,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
-                camLog->AddLineF("Performing stock cut transition between %s and %s",fPrevCam->GetKeyName().c_str(), pCam->GetKeyName().c_str());
+                camLog->AddLine("Performing stock cut transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName()));
 #endif
             }
         }
@@ -1647,7 +1647,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
             AddCameraToStack(pCam);
             StartTransition(pTrans);
 #ifdef STATUS_LOG
-            camLog->AddLineF("Performing custom transition between %s and %s",fPrevCam->GetKeyName().c_str(), pCam->GetKeyName().c_str());
+            camLog->AddLine("Performing custom transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
 
         }
@@ -1657,7 +1657,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         // just push it on, since we have a python camera present.
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG
-        camLog->AddLineF("No transition between %s and %s, python camera is currently displaying",fPrevCam->GetKeyName().c_str(), pCam->GetKeyName().c_str());
+        camLog->AddLine("No transition between {} and {}, python camera is currently displaying",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
     }
     // make this the default camera if that's what we want...
@@ -1666,7 +1666,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         fCameraStack.clear();
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG   
-        camLog->AddLineF("Camera %s is now the DEFAULT camera for this age", pCam->GetKeyName().c_str());
+        camLog->AddLine("Camera {} is now the DEFAULT camera for this age", pCam->GetKeyName());
 #endif
     }
     SetFOV(GetCurrentStackCamera()); 
@@ -1821,7 +1821,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         }
         
 #ifdef STATUS_LOG
-        camLog->AddLineF("Camera Cut Transition Completed");
+        camLog->AddLine("Camera Cut Transition Completed");
 #endif
         return;
     }
@@ -1837,7 +1837,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
 
 #ifdef STATUS_LOG
     if (fPrevCam->GetKey() && pCam->GetKey())
-        camLog->AddLineF("Starting Camera Transition from %s to %s",fPrevCam->GetKeyName().c_str(), pCam->GetKeyName().c_str());
+        camLog->AddLine("Starting Camera Transition from {} to {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
     
     if ( (fPythonOverride && plCameraBrain1_Avatar::ConvertNoRef(fPythonOverride->GetBrain())) ||
@@ -1889,10 +1889,9 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
             pBrain->SetPOADecel(100);
             pBrain->SetPOAVelocity(200);
 #ifdef STATUS_LOG
-        camLog->AddLineF("Congradulations you triggered the dont-swing-the-POA-more-than-90-degrees override\n");
-        camLog->AddLineF("If you don't like this transition then you need to redesign the cameras involved\n");
+        camLog->AddLine("Congratulations you triggered the don't-swing-the-POA-more-than-90-degrees override");
+        camLog->AddLine("If you don't like this transition then you need to redesign the cameras involved");
 #endif
-            
         }
         else
         {
@@ -1931,7 +1930,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
         delete(pOldBrain);
         fTransitionCamera->SetBrain(nil);
 #ifdef STATUS_LOG
-        camLog->AddLineF("Stopping in-progress camera transition");
+        camLog->AddLine("Stopping in-progress camera transition");
 #endif
     }
     
@@ -2021,7 +2020,7 @@ void plVirtualCam1::FinishTransition()
     
     fTransPos = POS_TRANS_OFF;
 #ifdef STATUS_LOG
-    camLog->AddLineF("Finished Camera Transition");
+    camLog->AddLine("Finished Camera Transition");
 #endif
 
 }
@@ -2033,47 +2032,47 @@ void plVirtualCam1::IHandleCameraStatusLog(plCameraModifier1* pMod, int action)
 
     if (!pMod->GetKey())
         return;
-    camLog->AddLineF("..");
+    camLog->AddLine("..");
     plCameraBrain1* pBrain = pMod->GetBrain();
     switch(action)
     {
     case kPop:
-        camLog->AddLineF("Popped Camera %s from top of stack", pMod->GetKeyName().c_str());
+        camLog->AddLine("Popped Camera {} from top of stack", pMod->GetKeyName());
         break;
     case kBackgroundPop:
-        camLog->AddLineF("Popped Camera %s from background", pMod->GetKeyName().c_str());
+        camLog->AddLine("Popped Camera {} from background", pMod->GetKeyName());
         break;
     case kPush:
-        camLog->AddLineF("Pushed Camera %s", pMod->GetKeyName().c_str());
+        camLog->AddLine("Pushed Camera {}", pMod->GetKeyName());
         break;
     case kReplacement:
-        camLog->AddLineF("Camera %s replacing popped camera", pMod->GetKeyName().c_str());
+        camLog->AddLine("Camera {} replacing popped camera", pMod->GetKeyName());
         break;
     }
     if (pBrain)
     {
         if (plCameraBrain1_Circle::ConvertNoRef(pBrain))
         {   
-            camLog->AddLineF("Brain type Circle");
+            camLog->AddLine("Brain type Circle");
         }
         else
         if (plCameraBrain1_Fixed::ConvertNoRef(pBrain))
         {
-            camLog->AddLineF("Brain type Fixed");
-            camLog->AddLineF("POAOffset %f %f %f", pBrain->GetPOAOffset().fX,pBrain->GetPOAOffset().fY,pBrain->GetPOAOffset().fZ); 
+            camLog->AddLine("Brain type Fixed");
+            camLog->AddLine("POAOffset {f} {f} {f}", pBrain->GetPOAOffset().fX,pBrain->GetPOAOffset().fY,pBrain->GetPOAOffset().fZ); 
         }
         else
         if (plCameraBrain1_FirstPerson::ConvertNoRef(pBrain))
         {
-            camLog->AddLineF("Brain type 1st Person");
+            camLog->AddLine("Brain type 1st Person");
         }
         else
         if (plCameraBrain1_Avatar::ConvertNoRef(pBrain))
         {
-            camLog->AddLineF("Brain type 3rd Person");
+            camLog->AddLine("Brain type 3rd Person");
         }
-        camLog->AddLineF("FOV %f",pMod->GetFOVw());
-        camLog->AddLineF("..");
+        camLog->AddLine("FOV {f}",pMod->GetFOVw());
+        camLog->AddLine("..");
     }
 #endif
 }

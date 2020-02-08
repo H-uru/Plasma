@@ -216,7 +216,7 @@ static void INetBufferCallback (
     }
     plNetMessage * msg = plNetMessage::ConvertNoRef(plFactory::Create(type));
     if (!msg) {
-        LogMsg(kLogError, "NetComm: could not convert plNetMessage to class %u", type);
+        LogMsg(kLogError, "NetComm: could not convert plNetMessage to class {}", type);
         return;
     }
 
@@ -404,7 +404,7 @@ static void INetCliAuthLoginRequestCallback (
         s_account.billingType   = billingType;
         s_players.resize(playerCount);
         for (unsigned i = 0; i < playerCount; ++i) {
-            LogMsg(kLogDebug, L"Player %u: %S explorer: %u", playerInfoArr[i].playerInt, playerInfoArr[i].playerName.c_str(), playerInfoArr[i].explorer);
+            LogMsg(kLogDebug, "Player %{}: {} explorer: {}", playerInfoArr[i].playerInt, playerInfoArr[i].playerName, playerInfoArr[i].explorer);
             s_players[i].playerInt         = playerInfoArr[i].playerInt;
             s_players[i].explorer          = playerInfoArr[i].explorer;
             s_players[i].playerName        = playerInfoArr[i].playerName;
@@ -442,10 +442,10 @@ static void INetCliAuthCreatePlayerRequestCallback (
     const NetCliAuthPlayerInfo &    playerInfo
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Create player failed: %s", NetErrorToString(result));
+        LogMsg(kLogDebug, "Create player failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Created player %S: %u", playerInfo.playerName.c_str(), playerInfo.playerInt);
+        LogMsg(kLogDebug, "Created player {}: {}", playerInfo.playerName, playerInfo.playerInt);
 
         unsigned currPlayer = s_player ? s_player->playerInt : 0;
         s_players.emplace_back(playerInfo.playerInt, playerInfo.playerName,
@@ -474,10 +474,10 @@ static void INetCliAuthDeletePlayerCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Delete player failed: %d %s", playerInt, NetErrorToString(result));
+        LogMsg(kLogDebug, "Delete player failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Player deleted: %d", playerInt);
+        LogMsg(kLogDebug, "Player deleted: {}", playerInt);
 
         uint32_t currPlayer = s_player ? s_player->playerInt : 0;
 
@@ -509,10 +509,10 @@ static void INetCliAuthChangePasswordCallback (
     void *          param
 ) {
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Change password failed: %s", NetErrorToString(result));
+        LogMsg(kLogDebug, "Change password failed: {}", NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Password changed!");
+        LogMsg(kLogDebug, "Password changed!");
     }
 
     plAccountUpdateMsg* updateMsg = new plAccountUpdateMsg(plAccountUpdateMsg::kChangePassword);
@@ -569,9 +569,9 @@ static void INetCliAuthAgeRequestCallback (
 
         LogMsg(
             kLogPerf,
-            L"Connecting to game server %S, ageInstId %S",
-            gameAddrStr.c_str(),
-            ageInstIdStr.c_str()
+            "Connecting to game server {}, ageInstId {}",
+            gameAddrStr,
+            ageInstIdStr
         );
 
         NetCliGameDisconnect();
@@ -600,10 +600,10 @@ static void INetCliAuthUpgradeVisitorRequestCallback (
     uint32_t playerInt = (uint32_t)((uintptr_t)param);
 
     if (IS_NET_ERROR(result)) {
-        LogMsg(kLogDebug, L"Upgrade visitor failed: %d %s", playerInt, NetErrorToString(result));
+        LogMsg(kLogDebug, "Upgrade visitor failed: {} {}", playerInt, NetErrorToString(result));
     }
     else {
-        LogMsg(kLogDebug, L"Upgrade visitor succeeded: %d", playerInt);
+        LogMsg(kLogDebug, "Upgrade visitor succeeded: {}", playerInt);
 
         for (NetCommPlayer& player : s_players) {
             if (player.playerInt == playerInt) {
@@ -723,7 +723,7 @@ void NetCommStartup () {
     s_shutdown = false;
 
     AsyncCoreInitialize();
-    LogMsg(kLogPerf, "Client: %s", plProduct::ProductString().c_str());
+    LogMsg(kLogPerf, "Client: {}", plProduct::ProductString());
 
     NetClientInitialize();
     NetClientSetErrorHandler(IPreInitNetErrorCallback);

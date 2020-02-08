@@ -171,7 +171,7 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
             {
                 if ( Disabled() )
                 {
-                    DetectorLogRed("%s: LogicMod is disabled", GetKeyName().c_str());
+                    plDetectorLog::Red("{}: LogicMod is disabled", GetKeyName());
                 }
                 else
                 {
@@ -180,11 +180,11 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
                         if (!fConditionList[i]->Verify(msg))
                         {
                             if ( plObjectInBoxConditionalObject::ConvertNoRef(fConditionList[i]) )
-                                DetectorLogRed("%s: LogicMod InRegion conditional not met", fConditionList[i]->GetKeyName().c_str());
+                                plDetectorLog::Red("{}: LogicMod InRegion conditional not met", fConditionList[i]->GetKeyName());
                             else if ( plFacingConditionalObject::ConvertNoRef(fConditionList[i]) )
-                                DetectorLogRed("%s: LogicMod Facing conditional not met", fConditionList[i]->GetKeyName().c_str());
+                                plDetectorLog::Red("{}: LogicMod Facing conditional not met", fConditionList[i]->GetKeyName());
                             else
-                                DetectorLogRed("%s: LogicMod <unknown> conditional not met", fConditionList[i]->GetKeyName().c_str());
+                                plDetectorLog::Red("{}: LogicMod <unknown> conditional not met", fConditionList[i]->GetKeyName());
                         }
                     }
                 }

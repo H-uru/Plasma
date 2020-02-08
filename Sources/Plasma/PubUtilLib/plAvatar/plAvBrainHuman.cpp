@@ -163,7 +163,7 @@ bool plAvBrainHuman::Apply(double timeNow, float elapsed)
 #ifndef _DEBUG
     } catch (std::exception &e) {
         plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();
-        log->AddLineF("plAvBrainHuman::Apply - exception caught: %s", e.what());
+        log->AddLine("plAvBrainHuman::Apply - exception caught: {}", e.what());
     } catch (...) {
         // just catch all the crashes on exit...
         plStatusLog *log = plAvatarMgr::GetInstance()->GetLog();

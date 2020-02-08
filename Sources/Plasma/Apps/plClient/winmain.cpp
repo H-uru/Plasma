@@ -465,13 +465,11 @@ static void _StatusMessageProc(const char* msg)
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
-static void DebugMsgF(const char* format, ...)
+template<typename... _Args>
+static void DebugMsg(const char* format, _Args&&... args)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    va_list args;
-    va_start(args, format);
-    s_DebugLog->AddLineV(plStatusLog::kYellow, format, args);
-    va_end(args);
+    s_DebugLog->AddLine(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
@@ -1117,7 +1115,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
 
     // Set up to log errors by using hsDebugMessage
     DebugInit();
-    DebugMsgF("Plasma 2.0.%i.%i - %s", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString().c_str());
+    DebugMsg("Plasma 2.0.{}.{} - {}", PLASMA2_MAJOR_VERSION, PLASMA2_MINOR_VERSION, plProduct::ProductString());
 
     FILE *serverIniFile = plFileSystem::Open(serverIni, "rb");
     if (serverIniFile)

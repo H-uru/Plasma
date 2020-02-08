@@ -57,11 +57,32 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsThread.h"
 #include "hsTimer.h"
 
-// Some log helper defines
-#define PatcherLogGreen(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kGreen, __VA_ARGS__)
-#define PatcherLogRed(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, __VA_ARGS__)
-#define PatcherLogWhite(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kWhite, __VA_ARGS__)
-#define PatcherLogYellow(...) pfPatcher::GetLog()->AddLineF(plStatusLog::kYellow, __VA_ARGS__)
+
+template<typename... _Args>
+static inline void PatcherLogGreen(const char* format, _Args&&... args)
+{
+    pfPatcher::GetLog()->AddLine(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
+}
+
+template<typename... _Args>
+static inline void PatcherLogRed(const char* format, _Args&&... args)
+{
+    pfPatcher::GetLog()->AddLine(plStatusLog::kRed, format, std::forward<_Args>(args)...);
+}
+
+template<typename... _Args>
+static inline void PatcherLogWhite(const char* format, _Args&&... args)
+{
+    pfPatcher::GetLog()->AddLine(plStatusLog::kWhite, format, std::forward<_Args>(args)...);
+}
+
+template<typename... _Args>
+static inline void PatcherLogYellow(const char* format, _Args&&... args)
+{
+    pfPatcher::GetLog()->AddLine(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
+}
+
+// ===================================================
 
 /** Patcher grunt work thread */
 struct pfPatcherWorker : public hsThread
@@ -230,7 +251,7 @@ static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName
     pfPatcherWorker* patcher = static_cast<pfPatcherWorker*>(param);
 
     if (IS_NET_SUCCESS(result)) {
-        PatcherLogGreen("\tDownloaded Legacy File '%s'", filename.AsString().c_str());
+        PatcherLogGreen("\tDownloaded Legacy File '{}'", filename);
         patcher->IssueRequest();
 
         // Now, we pass our RAM-backed file to the game code handlers. In the main client,
@@ -239,7 +260,7 @@ static void IAuthThingDownloadCB(ENetError result, void* param, const plFileName
         writer->Rewind();
         patcher->WhitelistFile(filename, true, writer);
     } else {
-        PatcherLogRed("\tDownloaded Failed: File '%s'", filename.AsString().c_str());
+        PatcherLogRed("\tDownloaded Failed: File '{}'", filename);
         patcher->EndPatch(result, filename.AsString());
     }
 }
@@ -254,7 +275,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
         {
             hsLockGuard(patcher->fRequestMut);
             for (unsigned i = 0; i < infoCount; ++i) {
-                PatcherLogYellow("\tEnqueuing Legacy File '%S'", infoArr[i].filename);
+                PatcherLogYellow("\tEnqueuing Legacy File '{}'", infoArr[i].filename);
 
                 plFileName fn = ST::string::from_wchar(infoArr[i].filename);
                 plFileSystem::CreateDir(fn.StripFileName());
@@ -274,7 +295,7 @@ static void IGotAuthFileList(ENetError result, void* param, const NetCliAuthFile
 
 static void IHandleManifestDownload(pfPatcherWorker* patcher, const wchar_t group[], const NetCliFileManifestEntry manifest[], unsigned entryCount)
 {
-    PatcherLogGreen("\tDownloaded Manifest '%S'", group);
+    PatcherLogGreen("\tDownloaded Manifest '{}'", group);
     {
         hsLockGuard(patcher->fFileMut);
         for (unsigned i = 0; i < entryCount; ++i)
@@ -312,7 +333,7 @@ static void IFileManifestDownloadCB(ENetError result, void* param, const wchar_t
     if (IS_NET_SUCCESS(result))
         IHandleManifestDownload(patcher, group, manifest, entryCount);
     else {
-        PatcherLogRed("\tDownload Failed: Manifest '%S'", group);
+        PatcherLogRed("\tDownload Failed: Manifest '{}'", group);
         patcher->EndPatch(result, ST::string::from_wchar(group));
     }
 }
@@ -324,7 +345,7 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
     stream->Close();
 
     if (IS_NET_SUCCESS(result)) {
-        PatcherLogGreen("\tDownloaded File '%s'", stream->GetFileName().AsString().c_str());
+        PatcherLogGreen("\tDownloaded File '{}'", stream->GetFileName());
         patcher->WhitelistFile(stream->GetFileName(), true);
         if (patcher->fSelfPatch && stream->IsSelfPatch())
             patcher->fSelfPatch(stream->GetFileName());
@@ -332,7 +353,7 @@ static void IFileThingDownloadCB(ENetError result, void* param, const plFileName
             patcher->fRedistUpdateDownloaded(stream->GetFileName());
         patcher->IssueRequest();
     } else {
-        PatcherLogRed("\tDownloaded Failed: File '%s'", stream->GetFileName().AsString().c_str());
+        PatcherLogRed("\tDownloaded Failed: File '{}'", stream->GetFileName());
         stream->Unlink();
         patcher->EndPatch(result, filename.AsString());
     }
@@ -383,7 +404,7 @@ void pfPatcherWorker::EndPatch(ENetError result, const ST::string& msg)
         if (IS_NET_SUCCESS(result))
             PatcherLogWhite("--- Patch Complete ---");
         else {
-            PatcherLogRed("\tNetwork Error: %S", NetErrorToString(result));
+            PatcherLogRed("\tNetwork Error: {}", NetErrorToString(result));
             PatcherLogWhite("--- Patch Killed by Error ---");
         }
     }
@@ -451,7 +472,7 @@ void pfPatcherWorker::Run()
     // Once a file is downloaded, the next request is issued.
     // When there are no files in my deque and no requests in my deque, we exit without errors.
 
-    PatcherLogWhite("--- Patch Started (%i requests) ---", fRequests.size());
+    PatcherLogWhite("--- Patch Started ({} requests) ---", fRequests.size());
     fStarted = true;
     IssueRequest();
 
@@ -500,14 +521,14 @@ void pfPatcherWorker::ProcessFile()
         // It's different... but do we want it?
         if (fFileDownloadDesired) {
             if (!fFileDownloadDesired(clName)) {
-                PatcherLogRed("\tDeclined '%S'", entry.clientName);
+                PatcherLogRed("\tDeclined '{}'", entry.clientName);
                 fQueuedFiles.pop_front();
                 continue;
             }
         }
 
         // If you got here, they're different and we want it.
-        PatcherLogYellow("\tEnqueuing '%S'", entry.downloadName);
+        PatcherLogYellow("\tEnqueuing '{}'", entry.downloadName);
         plFileSystem::CreateDir(plFileName(clName).StripFileName());
 
         // If someone registered for SelfPatch notifications, then we should probably

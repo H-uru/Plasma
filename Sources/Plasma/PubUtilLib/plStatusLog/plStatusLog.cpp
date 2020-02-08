@@ -403,6 +403,11 @@ void plStatusLog::IParseFileName(plFileName& fileNoExt, ST::string& ext) const
     ext = file.GetFileExt();
 }
 
+plStatusLog* plStatusLog::IFindLog(const plFileName& filename)
+{
+    return plStatusLogMgr::GetInstance().FindLog(filename);
+}
+
 //// IUnlink /////////////////////////////////////////////////////////////////
 
 void    plStatusLog::IUnlink( void )
@@ -495,23 +500,6 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine(const ST::string& line)
-{
-    if (fLoggingOff && !fForceLog) {
-        return true;
-    }
-
-    bool ret = true;
-    std::vector<ST::string> lines = line.split('\n');
-
-    for (const ST::string& str : lines)
-    {
-        ret &= IAddLine(str.c_str(), -1, kWhite);
-    }
-
-    return ret;
-}
-
 bool plStatusLog::AddLine( const char *line, uint32_t color )
 {
     char    *c, *str;
@@ -534,76 +522,6 @@ bool plStatusLog::AddLine( const char *line, uint32_t color )
     }
 
     return ret;
-}
-
-//// AddLine printf-style Variations /////////////////////////////////////////
-
-bool plStatusLog::AddLineV( const char *format, va_list arguments )
-{
-    if(fLoggingOff && !fForceLog)
-        return true;
-    return AddLineV( kWhite, format, arguments );
-}
-
-bool plStatusLog::AddLineV( uint32_t color, const char *format, va_list arguments )
-{
-    if(fLoggingOff && !fForceLog)
-        return true;
-    char buffer[2048];
-    vsnprintf(buffer, arrsize(buffer), format, arguments);
-    return AddLine( buffer, color );
-}
-
-bool plStatusLog::AddLineF( const char *format, ... )
-{
-    if(fLoggingOff && !fForceLog)
-        return true;
-    va_list arguments;
-    va_start( arguments, format );
-
-    return AddLineV( kWhite, format, arguments );
-}
-
-bool plStatusLog::AddLineF( uint32_t color, const char *format, ... )
-{
-    if(fLoggingOff && !fForceLog)
-        return true;
-    va_list arguments;
-    va_start( arguments, format );
-
-    return AddLineV( color, format, arguments );
-}
-
-//// AddLine Static Variations ///////////////////////////////////////////////
-
-bool plStatusLog::AddLineS( const plFileName &filename, const char *format, ... )
-{
-    plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
-    if (!log)
-        return false;
-
-    if(fLoggingOff && !log->fForceLog)
-        return true;
-
-    va_list arguments;
-    va_start( arguments, format );
-
-    return log->AddLineV( format, arguments );
-}
-
-bool plStatusLog::AddLineS( const plFileName &filename, uint32_t color, const char *format, ... )
-{
-    plStatusLog *log = plStatusLogMgr::GetInstance().FindLog( filename );
-    if (!log)
-        return false;
-
-    if(fLoggingOff && !log->fForceLog)
-        return true;
-
-    va_list arguments;
-    va_start( arguments, format );
-
-    return log->AddLineV( color, format, arguments );
 }
 
 //// Clear ///////////////////////////////////////////////////////////////////

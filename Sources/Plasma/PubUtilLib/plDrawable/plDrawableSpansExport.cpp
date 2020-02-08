@@ -359,13 +359,11 @@ void    plDrawableSpans::Optimize( void )
 #ifdef VERT_LOG
 static plStatusLog* IStartLog(const char* name, int numSpans)
 {
-    static char buff[256];
-    sprintf(buff, "x%s.log", name);
-
+    ST::string filename = ST::format("x{}.log", name);
     plStatusLog* statusLog = plStatusLogMgr::GetInstance().CreateStatusLog(
-        plStatusLogMgr::kDefaultNumLines, 
-        buff, 
-        plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe );
+        plStatusLogMgr::kDefaultNumLines,
+        filename,
+        plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe);
     return statusLog;
 }
 
@@ -377,6 +375,8 @@ static plStatusLog* IEndLog(plStatusLog* statusLog)
 
 static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* span, plGBufferGroup* group)
 {
+    ST::string owner = geo->fMaxOwner.empty() ? ST_LITERAL("<unknown>") : geo->fMaxOwner;
+    ST::string material = geo->fMaterial->GetKeyName().empty() ? ST_LITERAL("<unknown>") : geo->fMaterial->GetKeyName();
     if( span->fTypeMask & plSpan::kIcicleSpan )
     {
         plIcicle* ice = (plIcicle*)span;
@@ -386,13 +386,12 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
             uint32_t stride = group->GetVertexSize();
             uint32_t ptr = cell->fVtxStart + span->fCellOffset * stride;
 
-            statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d offset)",
-                geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
+            statusLog->AddLine("From obj <{}> mat <{}> size {} bytes grp={} ({} offset)",
+                owner,
+                material,
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
-                ptr
-                );
+                ptr);
 //              span->fVBufferIdx,
 //              span->fCellIdx,
 //              span->fCellOffset,
@@ -404,9 +403,9 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
         }
         else
         {
-            statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d/%d/%d/%d)",
-                geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
+            statusLog->AddLine("Instanced obj <{}> mat <{}> grp={} ({}/{}/{}/{}/{}/{}/{}/{})",
+                owner,
+                material,
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
@@ -415,38 +414,35 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
                 span->fVLength,
                 ice->fIBufferIdx,
                 ice->fIStartIdx,
-                ice->fILength
-                );
+                ice->fILength);
         }
     }
     else
     {
         if( geo->fProps & plGeometrySpan::kFirstInstance )
         {
-            statusLog->AddLineF("From obj <%s> mat <%s> size %d bytes grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
+            statusLog->AddLine("From obj <{}> mat <{}> size {} bytes grp={} ({}/{}/{}/{}/{})",
+                owner,
+                material,
                 geo->GetVertexSize(geo->fFormat) * geo->fNumVerts + sizeof(uint16_t) * geo->fNumIndices,
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
                 span->fCellOffset,
                 span->fVStartIdx,
-                span->fVLength
-                );
+                span->fVLength);
         }
         else
         {
-            statusLog->AddLineF("Instanced obj <%s> mat <%s> grp=%d (%d/%d/%d/%d/%d)",
-                geo->fMaxOwner.c_str("<unknown>"),
-                geo->fMaterial ? geo->fMaterial->GetKeyName().c_str() : "<unknown>",
+            statusLog->AddLine("Instanced obj <{}> mat <{}> grp={} ({}/{}/{}/{}/{})",
+                owner,
+                material,
                 span->fGroupIdx,
                 span->fVBufferIdx,
                 span->fCellIdx,
                 span->fCellOffset,
                 span->fVStartIdx,
-                span->fVLength
-                );
+                span->fVLength);
         }
     }
 }

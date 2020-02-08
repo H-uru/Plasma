@@ -130,21 +130,11 @@ plSound::~plSound()
 
 void plSound::IPrintDbgMessage( const char *msg, bool isError )
 {
-    static plStatusLog  *ourLog = nil;
-
-    // Print to our log file (create it if necessary)
-    if( ourLog == nil )
-    {
-//      ourLog = plStatusLogMgr::GetInstance().CreateStatusLog( 15, 
-//              "audio.log", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop );
-    }
-
+    ST::string keyName = GetKey() ? GetKeyName() : ST_LITERAL("unkeyed");
     if( isError )
-//      ourLog->AddLineF( plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
-        ourLog->AddLineS( "audio.log", plStatusLog::kRed, "ERROR: %s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
+        plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ERROR: {} ({})", msg, keyName);
     else
-//      ourLog->AddLineF( "%s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
-        ourLog->AddLineS( "audio.log", "%s (%s)", msg, GetKey() ? GetKeyName().c_str() : "unkeyed" );
+        plStatusLog::AddLineS("audio.log", "{} ({})", msg, keyName);
 }
 
 ///////////////////////////////////////////////////////////
@@ -585,7 +575,7 @@ void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
         fFadeInParams.fVolStart = fCurrVolume;  // Hopefully, we got to fFadedVolume, but maybe not
         fFadeInParams.fVolEnd = fDesiredVol;
         fCurrFadeParams = &fFadeInParams;
-        plStatusLog::AddLineS("audio.log", "Fading in %s", GetKeyName().c_str());
+        plStatusLog::AddLineS("audio.log", "Fading in {}", GetKeyName());
     }
     else
         fCurrFadeParams = params;
@@ -804,7 +794,7 @@ bool plSound::ILoadDataBuffer( void )
         if(!buffer)
         {
             hsAssert(false, "unable to load sound buffer");
-            plStatusLog::AddLineS("audio.log", "Unable to load sound buffer: %s", GetKeyName().c_str());
+            plStatusLog::AddLineS("audio.log", "Unable to load sound buffer: {}", GetKeyName());
             return false;
         }
         SetLength( buffer->GetDataLengthInSecs() );

@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plStatusLog/plStatusLog.h"
 
 #define MAX_NUM_SOURCES 128
-#define kLogMe if( fLog != nil ) fLog->AddLineF( 
+#define LogMe if( fLog != nil ) fLog->AddLine
 #define MAX_AUDIOCARD_NAME 256
 
 //////////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ plAudioCaps &plAudioCapsDetector::Detect( bool logIt, bool init )
     else
         fLog = nil;
 
-    kLogMe 0xff00ff00, "Starting audio caps detection..." );
+    LogMe(0xff00ff00, "Starting audio caps detection..." );
 
     // find the max number of sources
     ALuint sources[MAX_NUM_SOURCES];
@@ -130,14 +130,14 @@ plAudioCaps &plAudioCapsDetector::Detect( bool logIt, bool init )
         fCaps.fMaxNumSources++;
     }
     alDeleteSources(i, sources); 
-    kLogMe 0xffffffff, "Max Number of sources: %d", i);
-    plStatusLog::AddLineS("audio.log", "Max Number of sources: %d", i);
+    LogMe(0xffffffff, "Max Number of sources: {}", i);
+    plStatusLog::AddLineS("audio.log", "Max Number of sources: {}", i);
 
     // Detect EAX support
-    kLogMe 0xff00ff00, "Attempting to detect EAX support..." );
+    LogMe(0xff00ff00, "Attempting to detect EAX support..." );
     fCaps.fEAXAvailable = IDetectEAX( );
 
-    kLogMe 0xff00ff00, "Audio caps detection COMPLETE." );
+    LogMe(0xff00ff00, "Audio caps detection COMPLETE." );
     delete fLog;
     
     fGotCaps = true; // We've got the device capabilities
@@ -167,22 +167,22 @@ bool    plAudioCapsDetector::IDetectEAX(  )
     {
         if(!alIsExtensionPresent((ALchar *) "EAX4.0Emulated"))      // is an earlier version of eax supported
         {
-            kLogMe 0xff00ff00, "EAX not supported");
+            LogMe(0xff00ff00, "EAX not supported");
             gotSupport = false;
         }
         else
         {
             fCaps.fEAXUnified = true;
-            kLogMe 0xff00ff00, "EAX 4 Emulated supported");
+            LogMe(0xff00ff00, "EAX 4 Emulated supported");
         }
     }
     else
     {
-        kLogMe 0xff00ff00, "EAX 4 available");
-    }   
+        LogMe(0xff00ff00, "EAX 4 available");
+    }
     return gotSupport;
 #else
-    kLogMe 0xff00ff00, "EAX disabled in this build");
+    LogMe(0xff00ff00, "EAX disabled in this build");
     return false;
 #endif
 }

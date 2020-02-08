@@ -546,7 +546,7 @@ bool plAvatarSDLModifier::IPutStageIn(plArmatureMod *avMod, plAnimStage *stage, 
 void plAvatarSDLModifier::IPutBaseAvatarStateIn(plArmatureMod *avMod, plStateDataRecord* dstState)
 {
     if (avMod->GetStealthLevel() > 0)
-        LogMsg(kLogDebug, "plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
+        ::LogMsg(kLogDebug, "plAvatarSDLModifier::IPutBaseAvatarStateIn - Stealth level being set greater than zero");
     dstState->FindVar(kStrInvisibilityLevel)->Set(avMod->GetStealthLevel());
 }
 
@@ -560,7 +560,7 @@ void plAvatarSDLModifier::ISetBaseAvatarStateFrom(plArmatureMod *avMod, const pl
         srcState->FindVar(kStrInvisibilityLevel)->Get(&invisLevel);
 
         if (invisLevel > 0)
-            LogMsg(kLogDebug, "plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
+            ::LogMsg(kLogDebug, "plAvatarSDLModifier::ISetBaseAvatarStateFrom - Stealth level greater than zero");
         plNetClientMgr::GetInstance()->MakeCCRInvisible(avMod->GetTarget(0)->GetKey(), invisLevel);
     }
 }

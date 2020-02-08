@@ -141,7 +141,7 @@ void plPhysicalSDLModifier::ISentState(const plStateDataRecord* sentState)
 
 //      plPhysical* phys = IGetPhysical();
 //      if (!phys->GetBody()->isActive())
-//          IGetLog()->AddLineF("Phys %s sent state because it deactivated", phys->GetKeyName().c_str());
+//          IGetLog()->AddLine("Phys {} sent state because it deactivated", phys->GetKeyName());
     }
 }
 
@@ -238,7 +238,7 @@ void plPhysicalSDLModifier::ILogState(const plStateDataRecord* state, bool useDi
     else
         log << " Rot=None";
 
-    IGetLog()->AddLine(log.to_string().c_str(), color);
+    IGetLog()->AddLine(color, log.to_string());
 }
 
 plStatusLog* plPhysicalSDLModifier::IGetLog()

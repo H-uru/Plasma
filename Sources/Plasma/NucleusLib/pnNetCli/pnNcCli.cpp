@@ -575,7 +575,7 @@ static bool DispatchData (NetCli * cli, void * param) {
         }
 
         // dispatch message to handler function
-        NCCLI_LOG(kLogPerf, L"pnNetCli: Dispatching. msg: %S. cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", cli);
+        NCCLI_LOG(kLogPerf, "pnNetCli: Dispatching. msg: {}. cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", (uintptr_t)cli);
         if (!cli->recvMsg->recv(cli->recvBuffer.Ptr(), cli->recvBuffer.Count(), param))
             goto ERR_DISPATCH_FAILED;
         
@@ -593,19 +593,19 @@ static bool DispatchData (NetCli * cli, void * param) {
 
 // these are used for convenience in setting breakpoints
 NEED_MORE_DATA:
-    NCCLI_LOG(kLogPerf, L"pnNetCli: NEED_MORE_DATA. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
+    NCCLI_LOG(kLogPerf, "pnNetCli: NEED_MORE_DATA. msg: {} ({}). cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, (uintptr_t)cli);
     return true;
 
 ERR_BAD_COUNT:
-    LogMsg(kLogError, L"pnNetCli: ERR_BAD_COUNT. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, "pnNetCli: ERR_BAD_COUNT. msg: {} ({}). cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, (uintptr_t)cli);
     return false;
 
 ERR_NO_HANDLER:
-    LogMsg(kLogError, L"pnNetCli: ERR_NO_HANDLER. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, "pnNetCli: ERR_NO_HANDLER. msg: {} ({}). cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, (uintptr_t)cli);
     return false;
 
 ERR_DISPATCH_FAILED:
-    LogMsg(kLogError, L"pnNetCli: ERR_DISPATCH_FAILED. msg: %S (%u). cli: %p", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, cli);
+    LogMsg(kLogError, "pnNetCli: ERR_DISPATCH_FAILED. msg: {} ({}). cli: {#x}", cli->recvMsg ? cli->recvMsg->msg->name : "(unknown)", msgId, (uintptr_t)cli);
     return false;
 }
 

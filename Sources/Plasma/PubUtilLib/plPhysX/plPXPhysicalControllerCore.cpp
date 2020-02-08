@@ -665,7 +665,7 @@ void plPXPhysicalControllerCore::IInformDetectors(bool entering)
     static const NxU32 kDetectorFlag = 1<<plSimDefs::kGroupDetector;
     static const int kNumShapes = 30;
 
-    DetectorLog("Informing from plPXPhysicalControllerCore::IInformDetectors");
+    plDetectorLog::Log("Informing from plPXPhysicalControllerCore::IInformDetectors");
 
     NxShape* shapes[kNumShapes];
     NxCapsule capsule;
@@ -687,7 +687,7 @@ void plPXPhysicalControllerCore::IInformDetectors(bool entering)
         }
     }
 
-    DetectorLog("Done informing from plPXPhysicalControllerCore::IInformDetectors");
+    plDetectorLog::Log("Done informing from plPXPhysicalControllerCore::IInformDetectors");
 }
 
 void plPXPhysicalControllerCore::ICreateController(const hsPoint3& pos)

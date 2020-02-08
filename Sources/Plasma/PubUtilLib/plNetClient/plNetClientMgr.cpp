@@ -965,7 +965,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     plCCRInvisibleMsg* invisMsg=plCCRInvisibleMsg::ConvertNoRef(msg);
     if (invisMsg)
     {
-        LogMsg(kLogDebug, "plNetClientMgr::MsgReceive - Got plCCRInvisibleMsg");
+        ::LogMsg(kLogDebug, "plNetClientMgr::MsgReceive - Got plCCRInvisibleMsg");
         MakeCCRInvisible(invisMsg->fAvKey, invisMsg->fInvisLevel);
         return true;
     }
@@ -1483,30 +1483,6 @@ void plNetClientMgr::EndTask()
 {
     delete fTaskProgBar;
     fTaskProgBar = nullptr;
-}
-
-bool plNetClientMgr::DebugMsgV(const char* fmt, va_list args) const 
-{
-    LogMsgV(kLogDebug, fmt, args);
-    return true;
-}
-
-bool plNetClientMgr::ErrorMsgV(const char* fmt, va_list args) const 
-{
-    LogMsgV(kLogError, fmt, args);
-    return true;
-}
-
-bool plNetClientMgr::WarningMsgV(const char* fmt, va_list args) const 
-{
-    LogMsgV(kLogError, fmt, args);
-    return true;
-}
-
-bool plNetClientMgr::AppMsgV(const char* fmt, va_list args) const 
-{
-    LogMsgV(kLogPerf, fmt, args);
-    return true;
 }
 
 bool plNetClientMgr::IsObjectOwner()

@@ -291,7 +291,7 @@ bool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
         {
             if (IFindSurfaceByTrigger(sMsg->GetSender()) == -1) // Check that it's not a repeat msg
             {
-                plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - %s", 
+                plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - {}", 
                                       plArmatureEffectsMgr::SurfaceStrings[sMsg->fSurface]);
                 plArmatureEffectFootSurface *surface = new plArmatureEffectFootSurface;
                 surface->fID = sMsg->fSurface;
@@ -305,7 +305,7 @@ bool plArmatureEffectFootSound::HandleTrigger(plMessage* msg)
             if (index != -1)
             {
                 if (index == fSurfaces.GetCount() - 1) // It's the top on the stack
-                    plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - %s", 
+                    plStatusLog::AddLineS("audio.log", "FTSP: Switching to surface - {}", 
                                           plArmatureEffectsMgr::SurfaceStrings[fSurfaces[index - 1]->fID]);
                 delete fSurfaces[index];
                 fSurfaces.Remove(index);

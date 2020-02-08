@@ -180,25 +180,25 @@ public:
     template <typename... _Args>
     bool ErrorMsg(const char* fmt, _Args... args) const
     {
-        return ErrorMsg(ST::format(fmt, args...));
+        return ErrorMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
     bool DebugMsg(const char* fmt, _Args... args) const
     {
-        return DebugMsg(ST::format(fmt, args...));
+        return DebugMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
     bool WarningMsg(const char* fmt, _Args... args) const
     {
-        return WarningMsg(ST::format(fmt, args...));
+        return WarningMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 
     template <typename... _Args>
     bool AppMsg(const char* fmt, _Args... args) const
     {
-        return AppMsg(ST::format(fmt, args...));
+        return AppMsg(ST::format(fmt, std::forward<_Args>(args)...));
     }
 };
 

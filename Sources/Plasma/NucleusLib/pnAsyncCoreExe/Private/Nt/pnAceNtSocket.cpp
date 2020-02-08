@@ -245,7 +245,7 @@ static void SocketStartAsyncRead (NtSock * sock) {
 
 //===========================================================================
 static bool SocketDispatchRead (NtSock * sock) {
-//    LogMsg(kLogPerf, L"Nt sock %p recv %u bytes", sock, sock->opRead.read.bytes);
+//    LogMsg(kLogPerf, "Nt sock {#x} recv {} bytes", (uintptr_t)sock, sock->opRead.read.bytes);
 
     // put "fast case" first -- connType already established
     if (sock->notifyProc)
@@ -318,7 +318,7 @@ static NtOpSocketWrite * SocketQueueAsyncWrite (
             if (sock->connType) {
                 LogMsg(
                     kLogPerf,
-                    "Backlog, c:%u q:%u, i:%u",
+                    "Backlog, c:{} q:{}, i:{}",
                     sock->connType,
                     currTimeMs - firstQueuedWrite->queueTimeMs,
                     currTimeMs - sock->initTimeMs
@@ -559,7 +559,7 @@ static SOCKET ListenSocket(plNetAddress* listenAddr) {
         memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
         if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
             ST::string str = listenAddr->AsString();
-            LogMsg(kLogError, "bind to addr %s failed (err %u)", str.c_str(), WSAGetLastError());
+            LogMsg(kLogError, "bind to addr {} failed (err {})", str, WSAGetLastError());
             break;
         }
 
@@ -641,7 +641,7 @@ static SOCKET ConnectSocket (unsigned localPort, const plNetAddress& addr) {
             addr.sin_addr.S_un.S_addr = INADDR_ANY;
             memset(addr.sin_zero, 0, sizeof(addr.sin_zero));
             if (bind(s, (sockaddr *) &addr, sizeof(addr))) {
-                LogMsg(kLogError, "bind(port %u) failed (%u)", localPort, WSAGetLastError());
+                LogMsg(kLogError, "bind(port {}) failed ({})", localPort, WSAGetLastError());
                 break;
             }
         }
@@ -1104,7 +1104,7 @@ bool INtSocketOpCompleteQueuedSocketWrite (
         );
     }
 
-//    LogMsg(kLogPerf, L"Nt sock %p wrote %u bytes", sock, op->write.bytes);
+//    LogMsg(kLogPerf, "Nt sock {#x} wrote {} bytes", (uintptr_t)sock, op->write.bytes);
     
     if (!writeResult && (GetLastError() != ERROR_IO_PENDING)) {
         op->write.bytesProcessed = 0;
@@ -1256,7 +1256,7 @@ void NtSocketConnectCancel (
 void NtSocketDelete (AsyncSocket conn) {
     NtSock * sock = (NtSock *) conn;
     if (sock->ioType != kNtSocket) {
-        LogMsg(kLogError, "NtSocketDelete %u %p", sock->ioType, sock->notifyProc);
+        LogMsg(kLogError, "NtSocketDelete {} {#x}", sock->ioType, (uintptr_t)sock->notifyProc);
         return;
     }
 
@@ -1329,7 +1329,7 @@ bool NtSocketSend (
     ASSERT(bytes);
     ASSERT(sock->ioType == kNtSocket);
 
-//    LogMsg(kLogPerf, L"Nt sock %p sending %u bytes", sock, bytes);
+//    LogMsg(kLogPerf, "Nt sock {#x} sending {} bytes", (uintptr_t)sock, bytes);
 
     bool result;
     hsLockGuard(sock->critsect);
@@ -1387,7 +1387,7 @@ bool NtSocketWrite (
     ASSERT(bytes);
     ASSERT(sock->ioType == kNtSocket);
 
-//    LogMsg(kLogPerf, L"Nt sock %p writing %u bytes", sock, bytes);
+//    LogMsg(kLogPerf, "Nt sock {#x} writing {} bytes", (uintptr_t)sock, bytes);
 
     bool result;
     hsLockGuard(sock->critsect);
