@@ -54,21 +54,16 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 struct RelVaultNode;
 
-    
 class pyVaultAgeInfoListNode : public pyVaultFolderNode
 {
 protected:
-    // should only be created from C++ side
-    pyVaultAgeInfoListNode(RelVaultNode* nfsNode);
-
     // python-side ctor
-    pyVaultAgeInfoListNode(int n=0);
+    pyVaultAgeInfoListNode();
 public:
     
     // required functions for PyObject interoperability
     PYTHON_CLASS_NEW_FRIEND(ptVaultAgeInfoListNode);
-    static PyObject *New(RelVaultNode* nfsNode);
-    static PyObject *New(int n=0);
+    PYTHON_CLASS_VAULT_NODE_NEW_DEFINITION;
     PYTHON_CLASS_CHECK_DEFINITION; // returns true if the PyObject is a pyVaultAgeInfoListNode object
     PYTHON_CLASS_CONVERT_FROM_DEFINITION(pyVaultAgeInfoListNode); // converts a PyObject to a pyVaultAgeInfoListNode (throws error if not correct type)
 

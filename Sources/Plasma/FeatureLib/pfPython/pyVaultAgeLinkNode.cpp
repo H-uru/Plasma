@@ -58,15 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plNetCommon/plSpawnPointInfo.h"
 
-// should only be created from C++ side
-pyVaultAgeLinkNode::pyVaultAgeLinkNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
 //create from the Python side
-pyVaultAgeLinkNode::pyVaultAgeLinkNode(int n)
-: pyVaultNode(new RelVaultNode)
+pyVaultAgeLinkNode::pyVaultAgeLinkNode()
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_AgeLink);
 }

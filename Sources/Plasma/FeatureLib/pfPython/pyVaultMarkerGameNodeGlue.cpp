@@ -156,19 +156,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultMarkerGameNode, pyVaultNode, "Params: n=0\nPlasma vault age info node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultMarkerGameNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultMarkerGameNode *newObj = (ptVaultMarkerGameNode*)ptVaultMarkerGameNode_type.tp_new(&ptVaultMarkerGameNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultMarkerGameNode::New(int n /* =0 */)
-{
-    ptVaultMarkerGameNode *newObj = (ptVaultMarkerGameNode*)ptVaultMarkerGameNode_type.tp_new(&ptVaultMarkerGameNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultMarkerGameNode, pyVaultMarkerGameNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultMarkerGameNode, pyVaultMarkerGameNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultMarkerGameNode, pyVaultMarkerGameNode)

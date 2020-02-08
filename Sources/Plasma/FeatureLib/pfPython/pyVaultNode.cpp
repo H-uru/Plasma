@@ -157,23 +157,22 @@ hsRef<RelVaultNode> pyVaultNode::pyVaultNodeOperationCallback::GetNode() const {
 }
 
 pyVaultNode::pyVaultNode()
+    : fNode(decltype(fNode)::New())
 {
 }
 
-// should only be created from C++ side
-pyVaultNode::pyVaultNode( RelVaultNode* nfsNode )
-:   fNode(nfsNode)
+pyVaultNode::pyVaultNode(std::nullptr_t)
 {
 }
 
-pyVaultNode::~pyVaultNode() {}
-
+pyVaultNode::~pyVaultNode()
+{
+}
 
 hsRef<RelVaultNode> pyVaultNode::GetNode() const
 {
     return fNode;
 }
-
 
 // override the equals to operator
 bool pyVaultNode::operator==(const pyVaultNode &vaultNode) const

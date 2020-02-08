@@ -173,22 +173,10 @@ PYTHON_START_METHODS_TABLE(ptVaultPlayerInfoListNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-PLASMA_DEFAULT_TYPE_WBASE(ptVaultPlayerInfoListNode, pyVaultFolderNode, "Params: n=0\nPlasma vault player info list node");
+PLASMA_DEFAULT_TYPE_WBASE(ptVaultPlayerInfoListNode, pyVaultFolderNode, "Plasma vault player info list node");
 
 // required functions for PyObject interoperability
-PyObject *pyVaultPlayerInfoListNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultPlayerInfoListNode *newObj = (ptVaultPlayerInfoListNode*)ptVaultPlayerInfoListNode_type.tp_new(&ptVaultPlayerInfoListNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultPlayerInfoListNode::New(int n /* =0 */)
-{
-    ptVaultPlayerInfoListNode *newObj = (ptVaultPlayerInfoListNode*)ptVaultPlayerInfoListNode_type.tp_new(&ptVaultPlayerInfoListNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultPlayerInfoListNode, pyVaultPlayerInfoListNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultPlayerInfoListNode, pyVaultPlayerInfoListNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultPlayerInfoListNode, pyVaultPlayerInfoListNode)

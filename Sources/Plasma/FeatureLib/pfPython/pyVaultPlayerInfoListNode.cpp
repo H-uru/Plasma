@@ -58,15 +58,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "pyVault.h"
 #endif
 
-// should only be created from C++ side
-pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(RelVaultNode* nfsNode)
-: pyVaultFolderNode(nfsNode)
-{
-}
-
 //create from the Python side
-pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode(int n)
-: pyVaultFolderNode(n)
+pyVaultPlayerInfoListNode::pyVaultPlayerInfoListNode()
+    : pyVaultFolderNode()
 {
     fNode->SetNodeType(plVault::kNodeType_PlayerInfoList);
 }

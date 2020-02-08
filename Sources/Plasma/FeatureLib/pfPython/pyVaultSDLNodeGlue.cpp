@@ -124,14 +124,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultSDLNode, pyVaultNode, "Plasma vault SDL node");
 
 // required functions for PyObject interoperability
-PYTHON_CLASS_NEW_IMPL(ptVaultSDLNode, pyVaultSDLNode)
-
-PyObject *pyVaultSDLNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultSDLNode *newObj = (ptVaultSDLNode*)ptVaultSDLNode_type.tp_new(&ptVaultSDLNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultSDLNode, pyVaultSDLNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultSDLNode, pyVaultSDLNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultSDLNode, pyVaultSDLNode)

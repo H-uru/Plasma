@@ -525,13 +525,7 @@ PLASMA_CUSTOM_TYPE(ptVaultNode, "Vault node class");
 PYTHON_EXPOSE_TYPE_DEFINITION(ptVaultNode, pyVaultNode);
 
 // required functions for PyObject interoperability
-PyObject *pyVaultNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultNode *newObj = (ptVaultNode*)ptVaultNode_type.tp_new(&ptVaultNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultNode, pyVaultNode);
 PYTHON_CLASS_CHECK_IMPL(ptVaultNode, pyVaultNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultNode, pyVaultNode)
 

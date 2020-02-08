@@ -53,15 +53,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #   include "pyVault.h"
 #endif
 
-// should only be created from C++ side
-pyVaultChronicleNode::pyVaultChronicleNode(RelVaultNode* nfsNode)
-: pyVaultNode(nfsNode)
-{
-}
-
 //create from the Python side
-pyVaultChronicleNode::pyVaultChronicleNode(int n)
-: pyVaultNode(new RelVaultNode)
+pyVaultChronicleNode::pyVaultChronicleNode()
+    : pyVaultNode()
 {
     fNode->SetNodeType(plVault::kNodeType_Chronicle);
 }

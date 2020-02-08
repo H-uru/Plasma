@@ -291,14 +291,7 @@ PYTHON_END_METHODS_TABLE;
 PLASMA_DEFAULT_TYPE_WBASE(ptVaultTextNoteNode, pyVaultNode, "Plasma vault text note node");
 
 // required functions for PyObject interoperability
-PYTHON_CLASS_NEW_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
-
-PyObject *pyVaultTextNoteNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultTextNoteNode *newObj = (ptVaultTextNoteNode*)ptVaultTextNoteNode_type.tp_new(&ptVaultTextNoteNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultTextNoteNode, pyVaultTextNoteNode)

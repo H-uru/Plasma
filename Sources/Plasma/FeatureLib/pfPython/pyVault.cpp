@@ -114,11 +114,11 @@ PyObject* pyVault::GetPlayerInfo()
         if (hsRef<RelVaultNode> rvnPlrInfo = rvnPlr->GetChildNode(plVault::kNodeType_PlayerInfo, 1))
             result = pyVaultPlayerInfoNode::New(rvnPlrInfo);
     }
-    
+
     // just return an empty node
     if (!result)
-        result = pyVaultPlayerInfoNode::New(nil);
-        
+        result = pyVaultPlayerInfoNode::New();
+
     return result;
 }
 
@@ -177,8 +177,8 @@ PyObject* pyVault::GetAgeJournalsFolder()
     
     // just return an empty node
     if (!result)
-        result = pyVaultFolderNode::New(nil);
-        
+        result = pyVaultFolderNode::New();
+
     return result;
 }
 

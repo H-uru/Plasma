@@ -177,19 +177,7 @@ PLASMA_DEFAULT_TYPE_WBASE(ptVaultFolderNode, pyVaultNode, "Params: n=0\nPlasma v
 PYTHON_EXPOSE_TYPE_DEFINITION(ptVaultFolderNode, pyVaultFolderNode);
 
 // required functions for PyObject interoperability
-PyObject *pyVaultFolderNode::New(RelVaultNode* nfsNode)
-{
-    ptVaultFolderNode *newObj = (ptVaultFolderNode*)ptVaultFolderNode_type.tp_new(&ptVaultFolderNode_type, NULL, NULL);
-    newObj->fThis->fNode = nfsNode;
-    return (PyObject*)newObj;
-}
-
-PyObject *pyVaultFolderNode::New(int n /* =0 */)
-{
-    ptVaultFolderNode *newObj = (ptVaultFolderNode*)ptVaultFolderNode_type.tp_new(&ptVaultFolderNode_type, NULL, NULL);
-    // oddly enough, nothing to do here
-    return (PyObject*)newObj;
-}
+PYTHON_CLASS_VAULT_NODE_NEW_IMPL(ptVaultFolderNode, pyVaultFolderNode);
 
 PYTHON_CLASS_CHECK_IMPL(ptVaultFolderNode, pyVaultFolderNode)
 PYTHON_CLASS_CONVERT_FROM_IMPL(ptVaultFolderNode, pyVaultFolderNode)
