@@ -422,18 +422,18 @@ static void FetchRefOwners (
                 ownerIds.Add(ownerId);
     }
     QSORT(unsigned, ownerIds.Ptr(), ownerIds.Count(), elem1 < elem2);
-    auto templateNode = hsRef<NetVaultNode>::New();
-    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
+    NetVaultNode templateNode;
+    templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
     {   unsigned prevId = 0;
         for (unsigned i = 0; i < ownerIds.Count(); ++i) {
             if (ownerIds[i] != prevId) {
                 prevId = ownerIds[i];
-                VaultPlayerInfoNode access(templateNode);
+                VaultPlayerInfoNode access(&templateNode);
                 access.SetPlayerId(refs[i].ownerId);
-                if (VaultGetNode(templateNode))
+                if (VaultGetNode(&templateNode))
                     continue;
                 NetCliAuthVaultNodeFind(
-                    templateNode,
+                    &templateNode,
                     VaultNodeFound,
                     nil
                 );
@@ -1828,11 +1828,11 @@ void VaultCreateNode (
     void *                      state,
     void *                      param
 ) {
-    auto templateNode = hsRef<NetVaultNode>::New();
-    templateNode->SetNodeType(nodeType);
+    NetVaultNode templateNode;
+    templateNode.SetNodeType(nodeType);
 
     VaultCreateNode(
-        templateNode,
+        &templateNode,
         callback,
         state,
         param
@@ -1892,10 +1892,10 @@ hsRef<RelVaultNode> VaultCreateNodeAndWait (
     plVault::NodeTypes          nodeType,
     ENetError *                 result
 ) {
-    auto templateNode = hsRef<NetVaultNode>::New();
-    templateNode->SetNodeType(nodeType);
+    NetVaultNode templateNode;
+    templateNode.SetNodeType(nodeType);
 
-    return VaultCreateNodeAndWait(templateNode, result);
+    return VaultCreateNodeAndWait(&templateNode, result);
 }
 
 //============================================================================

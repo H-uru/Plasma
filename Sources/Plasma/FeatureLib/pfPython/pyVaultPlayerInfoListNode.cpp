@@ -96,19 +96,19 @@ void pyVaultPlayerInfoListNode::AddPlayer( uint32_t playerID )
     if (HasPlayer(playerID) || !fNode)
         return;
 
-    auto templateNode = hsRef<NetVaultNode>::New();
-    templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
-    VaultPlayerInfoNode access(templateNode);
+    NetVaultNode templateNode;
+    templateNode.SetNodeType(plVault::kNodeType_PlayerInfo);
+    VaultPlayerInfoNode access(&templateNode);
     access.SetPlayerId(playerID);
 
     TArray<uint32_t> nodeIds;
-    VaultLocalFindNodes(templateNode, &nodeIds);
+    VaultLocalFindNodes(&templateNode, &nodeIds);
 
     // So, if we know about this node, we can take it easy. If not, we lazy load it.
     if (nodeIds.Count())
         VaultAddChildNode(fNode->GetNodeId(), nodeIds[0], VaultGetPlayerId(), nullptr, nullptr);
     else
-        VaultFindNodes(templateNode, IAddPlayer_NodesFound, (NetVaultNode *)fNode);
+        VaultFindNodes(&templateNode, IAddPlayer_NodesFound, (NetVaultNode *)fNode);
 }
 
 void pyVaultPlayerInfoListNode::RemovePlayer( uint32_t playerID )
