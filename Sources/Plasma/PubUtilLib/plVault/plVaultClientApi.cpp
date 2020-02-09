@@ -81,14 +81,14 @@ struct RelVaultNodeLink : THashKeyVal<unsigned> {
     hsRef<RelVaultNode>         node;
     unsigned                    ownerId;
     bool                        seen;
-    
+
+    RelVaultNodeLink(bool seen, unsigned ownerId, unsigned nodeId)
+        : THashKeyVal<unsigned>(nodeId), node(hsRef<RelVaultNode>::New()), ownerId(ownerId), seen(seen)
+    { }
+
     RelVaultNodeLink (bool seen, unsigned ownerId, unsigned nodeId, RelVaultNode * node)
-    :   THashKeyVal<unsigned>(nodeId)
-    ,   node(node)
-    ,   ownerId(ownerId)
-    ,   seen(seen)
-    {
-    }
+        : THashKeyVal<unsigned>(nodeId), node(node), ownerId(ownerId), seen(seen)
+    { }
 };
 
 
@@ -347,7 +347,7 @@ static void BuildNodeTree (
         RelVaultNodeLink * parentLink = s_nodes.Find(refs[i].parentId);
         if (!parentLink) {
             newNodeIds->Add(refs[i].parentId);
-            parentLink = new RelVaultNodeLink(false, 0, refs[i].parentId, new RelVaultNode);
+            parentLink = new RelVaultNodeLink(false, 0, refs[i].parentId);
             parentLink->node->SetNodeId_NoDirty(refs[i].parentId);
             s_nodes.Add(parentLink);
         }
@@ -357,7 +357,7 @@ static void BuildNodeTree (
         RelVaultNodeLink * childLink = s_nodes.Find(refs[i].childId);
         if (!childLink) {
             newNodeIds->Add(refs[i].childId);
-            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, refs[i].childId, new RelVaultNode);
+            childLink = new RelVaultNodeLink(refs[i].seen, refs[i].ownerId, refs[i].childId);
             childLink->node->SetNodeId_NoDirty(refs[i].childId);
             s_nodes.Add(childLink);
         }
@@ -422,7 +422,7 @@ static void FetchRefOwners (
                 ownerIds.Add(ownerId);
     }
     QSORT(unsigned, ownerIds.Ptr(), ownerIds.Count(), elem1 < elem2);
-    hsRef<RelVaultNode> templateNode = new RelVaultNode;
+    auto templateNode = hsRef<NetVaultNode>::New();
     templateNode->SetNodeType(plVault::kNodeType_PlayerInfo);
     {   unsigned prevId = 0;
         for (unsigned i = 0; i < ownerIds.Count(); ++i) {
@@ -523,7 +523,7 @@ static void VaultNodeFetched (
     // Add to global node table
     RelVaultNodeLink * link = s_nodes.Find(node->GetNodeId());
     if (!link) {
-        link = new RelVaultNodeLink(false, 0, node->GetNodeId(), new RelVaultNode());
+        link = new RelVaultNodeLink(false, 0, node->GetNodeId());
         link->node->SetNodeId_NoDirty(node->GetNodeId());
         s_nodes.Add(link);
     }
@@ -1570,7 +1570,7 @@ void VaultAddChildNode (
     if (RelVaultNodeLink * parentLink = s_nodes.Find(parentId)) {
         RelVaultNodeLink * childLink = s_nodes.Find(childId);
         if (!childLink) {
-            childLink = new RelVaultNodeLink(false, ownerId, childId, new RelVaultNode);
+            childLink = new RelVaultNodeLink(false, ownerId, childId);
             childLink->node->SetNodeId_NoDirty(childId);
             s_nodes.Add(childLink);
         }
@@ -1828,9 +1828,9 @@ void VaultCreateNode (
     void *                      state,
     void *                      param
 ) {
-    hsRef<RelVaultNode> templateNode = new RelVaultNode;
+    auto templateNode = hsRef<NetVaultNode>::New();
     templateNode->SetNodeType(nodeType);
-    
+
     VaultCreateNode(
         templateNode,
         callback,
@@ -1892,7 +1892,7 @@ hsRef<RelVaultNode> VaultCreateNodeAndWait (
     plVault::NodeTypes          nodeType,
     ENetError *                 result
 ) {
-    hsRef<RelVaultNode> templateNode = new RelVaultNode;
+    auto templateNode = hsRef<NetVaultNode>::New();
     templateNode->SetNodeType(nodeType);
 
     return VaultCreateNodeAndWait(templateNode, result);
@@ -3483,11 +3483,11 @@ void VaultProcessPlayerInbox () {
         }
         {   // Process new unvisit requests
             RelVaultNode::RefList unvisits;
-            hsRef<RelVaultNode> templateNode = new RelVaultNode;
-            templateNode->SetNodeType(plVault::kNodeType_TextNote);
-            VaultTextNoteNode tmpAcc(templateNode);
+            NetVaultNode templateNode;
+            templateNode.SetNodeType(plVault::kNodeType_TextNote);
+            VaultTextNoteNode tmpAcc(&templateNode);
             tmpAcc.SetNoteType(plVault::kNoteType_UnVisit);
-            rvnInbox->GetChildNodes(templateNode, 1, &unvisits);
+            rvnInbox->GetChildNodes(&templateNode, 1, &unvisits);
 
             for (const hsRef<RelVaultNode> &rvnUnVisit : unvisits) {
                 VaultTextNoteNode unvisitAcc(rvnUnVisit);
