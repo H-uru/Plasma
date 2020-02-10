@@ -100,7 +100,17 @@ class plDXTextureRef : public plDXDeviceRef
 
         plDXTextureRef& Set( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed=false, bool renderTarget = false );
 
-        plDXTextureRef( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed=false, bool renderTarget = false );
+        plDXTextureRef()
+            : fD3DTexture(), fFormatType(), fMMLvs(), fMaxWidth(), fMaxHeight(), fNumPix(),
+              fDataSize(), fLevelSizes(), fOwner(), fData()
+        { }
+        plDXTextureRef( D3DFORMAT tp, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed=false, bool renderTarget = false )
+            : fD3DTexture(), fFormatType(), fMMLvs(), fMaxWidth(), fMaxHeight(), fNumPix(),
+              fDataSize(), fLevelSizes(), fOwner(), fData()
+        {
+            Set(tp, ml, mw, mh, np, sz, manSize, lSz, pd, ed, renderTarget);
+        }
+
         virtual ~plDXTextureRef();
 
         void            Link( plDXTextureRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
