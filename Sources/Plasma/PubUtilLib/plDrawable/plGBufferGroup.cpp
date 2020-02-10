@@ -379,7 +379,7 @@ void    plGBufferGroup::Read( hsStream *s )
 
             vData = new uint8_t[size];
             fVertBuffStorage.push_back( vData );
-            plProfile_NewMem(MemBufGrpVertex, temp);
+            plProfile_NewMem(MemBufGrpVertex, size);
 
             coder.Read(s, vData, fFormat, fStride, numVerts);
 
