@@ -24,7 +24,10 @@ add_custom_command(
     COMMAND ${Make_Resource_Command}
     DEPENDS ${external_SOURCES} ${external_SCRIPTS}
 )
-add_custom_target(externalResources DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat)
+add_custom_target(externalResources 
+    SOURCES ${external_SOURCES} ${external_SCRIPTS} 
+    DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat
+)
 
 source_group("Source Files" FILES ${external_SOURCES})
 source_group("Script Files" FILES ${external_SCRIPTS})
