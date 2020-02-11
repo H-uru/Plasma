@@ -206,14 +206,7 @@ plDXTextureRef& plDXTextureRef::Set( D3DFORMAT ft, uint32_t ml, uint32_t mw, uin
     return *this;
 }
 
-//// Constructor & Destructor /////////////////////////////////////////////////
-
-plDXTextureRef::plDXTextureRef( D3DFORMAT ft, uint32_t ml, uint32_t mw, uint32_t mh, uint32_t np, 
-                                uint32_t sz, uint32_t manSize, uint32_t* lSz, void* pd, bool ed, bool renderTarget )
-                                : fD3DTexture(nullptr), fLevelSizes(nullptr), fOwner(nullptr)
-{
-    Set( ft, ml, mw, mh, np, sz, manSize, lSz, pd, ed, renderTarget );
-}
+//// Destructor /////////////////////////////////////////////////
 
 plDXTextureRef::~plDXTextureRef() 
 {
