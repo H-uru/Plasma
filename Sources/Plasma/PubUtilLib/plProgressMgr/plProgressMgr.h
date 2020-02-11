@@ -202,7 +202,7 @@ class plProgressMgr
     private:
 
         static plProgressMgr*    fManager;
-        static ST::string        fImageRotation[];
+        static std::vector<ST::string> fImageRotation;
         static const ST::string  fStaticTextIDs[];
 
     protected:
@@ -235,7 +235,7 @@ class plProgressMgr
         virtual ~plProgressMgr();
 
         static plProgressMgr* GetInstance() { return fManager; }
-        static const ST::string GetLoadingFrameID(int index);
+        static const ST::string GetLoadingFrameID(uint32_t index);
         uint32_t NumLoadingFrames() const;
         static const ST::string GetStaticTextID(StaticText staticTextType);
 

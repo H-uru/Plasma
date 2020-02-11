@@ -60,6 +60,8 @@ public:
 
     plMipmap* getResource(const ST::string& resname);
 
+    std::vector<ST::string> getResourceNames();
+
     static plClientResMgr& Instance(void);
 };
 
