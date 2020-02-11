@@ -310,8 +310,8 @@ ST::string pyVaultAgeInfoNode::GetDisplayName() const
             // Troll's(1) Neighborhood
             ss << access.GetAgeUserDefinedName();
             if (access.GetAgeSequenceNumber() > 0)
-                ss << '(' << access.GetAgeSequenceNumber() << ") ";
-            ss << access.GetAgeInstanceName();
+                ss << '(' << access.GetAgeSequenceNumber() << ')';
+            ss << ' ' << access.GetAgeInstanceName();
         }
         return ss.to_string();
     }
