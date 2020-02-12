@@ -134,3 +134,15 @@ plMipmap* plClientResMgr::getResource(const ST::string& resname)
 
     return resmipmap;
 }
+
+
+std::vector<ST::string> plClientResMgr::getResourceNames()
+{
+    std::vector<ST::string> names;
+    names.reserve(ClientResources.size());
+
+    for (const auto& resource : ClientResources)
+        names.push_back(resource.first);
+
+    return names;
+}
