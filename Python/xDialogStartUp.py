@@ -576,6 +576,9 @@ class xDialogStartUp(ptResponder):
             print "xDialogStartUp.PlayerListNotify: setting gSelectedSlot (%d) to not Interesting" % (gSelectedSlot)
             ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(0)
 
+        # Everyone is an explorer, so disable the button for visiting.
+        btn = ptGUIControlButton(dlgObj.dialog.getControlFromTag(listHotSpot[0])).disable()
+
 ###########################
 def id_comp(elem1, elem2):
     return cmp(elem1[1], elem2[1])
