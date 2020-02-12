@@ -20,11 +20,14 @@ else(PLASMA_EXTERNAL_RELEASE)
 endif(PLASMA_EXTERNAL_RELEASE)
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/resource.dat
+    OUTPUT ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat
     COMMAND ${Make_Resource_Command}
     DEPENDS ${external_SOURCES} ${external_SCRIPTS}
 )
-add_custom_target(externalResources DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/resource.dat)
+add_custom_target(externalResources 
+    SOURCES ${external_SOURCES} ${external_SCRIPTS} 
+    DEPENDS ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/resource.dat
+)
 
 source_group("Source Files" FILES ${external_SOURCES})
 source_group("Script Files" FILES ${external_SCRIPTS})
