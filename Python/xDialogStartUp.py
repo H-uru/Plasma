@@ -158,7 +158,6 @@ k6PlayTxtID         = 608
 
 #====================================
 # Globals
-gIsExplorer         = 0
 gPlayerList         = None
 gSelectedSlot       = 0
 gClickedWrongSlot   = 0
@@ -188,7 +187,6 @@ class xDialogStartUp(ptResponder):
 
     ###########################
     def OnServerInitComplete(self):
-        global gIsExplorer
         global gExp_HotSpot
         global gExp_TxtBox
         global gExp_HiLite
@@ -328,10 +326,7 @@ class xDialogStartUp(ptResponder):
 
                 elif  tagID == k6BackID: ## Back To Player Select ##
                     PtHideDialog("GUIDialog06")
-                    if gIsExplorer:
-                        PtShowDialog("GUIDialog04b")
-                    else:
-                        PtShowDialog("GUIDialog04a")
+                    PtShowDialog("GUIDialog04b")
 
                 elif  tagID == k6PlayID: ## Play ##
                     playerName = ptGUIControlEditBox(GUIDiag6.dialog.getControlFromTag(k6NameID)).getString()  #                 <---
@@ -356,18 +351,12 @@ class xDialogStartUp(ptResponder):
                         errorString = "Error, you must enter a Name."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
-                        if gIsExplorer:
-                            self.ToggleColor(GUIDiag4b, k4bPlayer03)
-                        else:
-                            self.ToggleColor(GUIDiag4a, k4aPlayer03)
+                        self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     elif playerGender == "":
                         errorString = "Error, you must select a gender."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
-                        if gIsExplorer:
-                            self.ToggleColor(GUIDiag4b, k4bPlayer03)
-                        else:
-                            self.ToggleColor(GUIDiag4a, k4aPlayer03)
+                        self.ToggleColor(GUIDiag4b, k4bPlayer03)
                     else:
                         fixedPlayerName = playerName.strip()
                         (fixedPlayerName, whitespacefixedcount) = re.subn("\s{2,}|[\t\n\r\f\v]", " ", fixedPlayerName)
@@ -399,7 +388,6 @@ class xDialogStartUp(ptResponder):
 
     ###########################
     def OnAccountUpdate(self, opType, result, playerInt):
-        global gIsExplorer
         global gExp_HotSpot
         global gExp_TxtBox
         global gVis_TxtBox
@@ -587,6 +575,9 @@ class xDialogStartUp(ptResponder):
         if toggle and gSelectedSlot:
             print "xDialogStartUp.PlayerListNotify: setting gSelectedSlot (%d) to not Interesting" % (gSelectedSlot)
             ptGUIControlButton(dlgObj.dialog.getControlFromTag(gSelectedSlot)).setNotifyOnInteresting(0)
+
+        # Everyone is an explorer, so disable the button for visiting.
+        btn = ptGUIControlButton(dlgObj.dialog.getControlFromTag(listHotSpot[0])).disable()
 
 ###########################
 def id_comp(elem1, elem2):
