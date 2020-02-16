@@ -122,6 +122,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTweak.h"
 #include "plDrawable/plVisLOSMgr.h"
 
+static const ST::string kPersonalLinkAnimName = ST_LITERAL("PersonalLink");
+
 int plArmatureModBase::fMinLOD = 0;     // standard is 3 levels of LOD
 double plArmatureModBase::fLODDistance = 50.0;
 
@@ -1045,7 +1047,7 @@ void plArmatureMod::PersonalLink()
     else
     {
         plAvOneShotLinkTask *task = new plAvOneShotLinkTask;
-        ST::string animName = MakeAnimationName("PersonalLink");
+        ST::string animName = MakeAnimationName(kPersonalLinkAnimName);
         task->SetAnimName(animName);
         task->SetMarkerName(ST_LITERAL("touch"));
         
@@ -1540,9 +1542,9 @@ void plArmatureMod::ILinkToPersonalAge()
     
     link.SetLinkingRules( plNetCommon::LinkingRules::kOriginalBook );
     plLinkToAgeMsg* pMsg = new plLinkToAgeMsg( &link );
-    pMsg->SetLinkInAnimName("PersonalBookEnter");
+    pMsg->SetLinkInAnimName(kPersonalLinkAnimName);
     pMsg->AddReceiver(nc->GetKey());
-    pMsg->Send();   
+    pMsg->Send();
 }
 
 bool plArmatureMod::IEval(double time, float elapsed, uint32_t dirty)
