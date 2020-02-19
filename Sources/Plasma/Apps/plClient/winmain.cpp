@@ -148,7 +148,7 @@ static wchar_t s_patcherExeName[] = L"UruLauncher.exe";
 //============================================================================
 struct LoginDialogParam {
     ENetError   authError;
-    char        username[kMaxAccountNameLength];
+    wchar_t     username[kMaxAccountNameLength];
     ShaDigest   namePassHash;
     bool        remember;
     int         focus;
@@ -635,14 +635,14 @@ static void StoreHash(const ST::string& username, const ST::string& password, Lo
     }
 }
 
-static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
+static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
 {
     ST::string theUser = pLoginParam->username;
     ST::string thePass = password;
 
     HKEY hKey;
     RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
-    RegSetValueEx(hKey, "LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, kMaxAccountNameLength);
+    RegSetValueExW(hKey, L"LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, kMaxAccountNameLength);
     RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
     RegCloseKey(hKey);
 
@@ -668,12 +668,12 @@ static void SaveUserPass(LoginDialogParam *pLoginParam, char *password)
 static void LoadUserPass(LoginDialogParam *pLoginParam)
 {
     HKEY hKey;
-    char accountName[kMaxAccountNameLength];
-    memset(accountName, 0, kMaxAccountNameLength);
+    wchar_t accountName[kMaxAccountNameLength];
+    memset(accountName, 0, sizeof(accountName));
     uint32_t rememberAccount = 0;
     DWORD acctLen = kMaxAccountNameLength, remLen = sizeof(rememberAccount);
     RegOpenKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
-    RegQueryValueEx(hKey, "LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
+    RegQueryValueExW(hKey, L"LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
     RegQueryValueEx(hKey, "RememberPassword", 0, NULL, (LPBYTE) &rememberAccount, &remLen);
     RegCloseKey(hKey);
 
@@ -681,7 +681,7 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     pLoginParam->username[0] = '\0';
 
     if (acctLen > 0)
-        strncpy(pLoginParam->username, accountName, kMaxAccountNameLength);
+        wcsncpy(pLoginParam->username, accountName, kMaxAccountNameLength);
     pLoginParam->remember = (rememberAccount != 0);
     if (pLoginParam->remember && pLoginParam->username[0] != '\0')
     {
@@ -757,7 +757,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
 
             EnableWindow(GetDlgItem(hwndDlg, IDOK), FALSE);
 
-            SetDlgItemText(hwndDlg, IDC_URULOGIN_USERNAME, pLoginParam->username);
+            SetDlgItemTextW(hwndDlg, IDC_URULOGIN_USERNAME, pLoginParam->username);
             CheckDlgButton(hwndDlg, IDC_URULOGIN_REMEMBERPASS, pLoginParam->remember ? BST_CHECKED : BST_UNCHECKED);
             if (pLoginParam->remember)
                 SetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, FAKE_PASS_STRING);
@@ -817,10 +817,10 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
                 bool ok = (LOWORD(wParam) == IDOK);
                 if (ok)
                 {
-                    char password[kMaxPasswordLength];
+                    wchar_t password[kMaxPasswordLength];
 
-                    GetDlgItemText(hwndDlg, IDC_URULOGIN_USERNAME, pLoginParam->username, kMaxAccountNameLength);
-                    GetDlgItemText(hwndDlg, IDC_URULOGIN_PASSWORD, password, kMaxPasswordLength);
+                    GetDlgItemTextW(hwndDlg, IDC_URULOGIN_USERNAME, pLoginParam->username, kMaxAccountNameLength);
+                    GetDlgItemTextW(hwndDlg, IDC_URULOGIN_PASSWORD, password, kMaxPasswordLength);
                     pLoginParam->remember = (IsDlgButtonChecked(hwndDlg, IDC_URULOGIN_REMEMBERPASS) == BST_CHECKED);
 
                     plLocalization::Language new_language = (plLocalization::Language)SendMessage(GetDlgItem(hwndDlg, IDC_LANGUAGE), CB_GETCURSEL, 0, 0L);
