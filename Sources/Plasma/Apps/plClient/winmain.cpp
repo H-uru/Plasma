@@ -642,7 +642,7 @@ static void SaveUserPass(LoginDialogParam* pLoginParam, wchar_t* password)
 
     HKEY hKey;
     RegCreateKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_WRITE, NULL, &hKey, NULL);
-    RegSetValueExW(hKey, L"LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, kMaxAccountNameLength);
+    RegSetValueExW(hKey, L"LastAccountName", NULL, REG_SZ, (LPBYTE) pLoginParam->username, sizeof(pLoginParam->username));
     RegSetValueEx(hKey, "RememberPassword", NULL, REG_DWORD, (LPBYTE) &(pLoginParam->remember), sizeof(LPBYTE));
     RegCloseKey(hKey);
 
@@ -671,19 +671,19 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
     wchar_t accountName[kMaxAccountNameLength];
     memset(accountName, 0, sizeof(accountName));
     uint32_t rememberAccount = 0;
-    DWORD acctLen = kMaxAccountNameLength, remLen = sizeof(rememberAccount);
+    DWORD acctLen = sizeof(accountName), remLen = sizeof(rememberAccount);
     RegOpenKeyEx(HKEY_CURRENT_USER, ST::format("Software\\Cyan, Inc.\\{}\\{}", plProduct::LongName(), GetServerDisplayName()).c_str(), 0, KEY_QUERY_VALUE, &hKey);
     RegQueryValueExW(hKey, L"LastAccountName", 0, NULL, (LPBYTE) &accountName, &acctLen);
     RegQueryValueEx(hKey, "RememberPassword", 0, NULL, (LPBYTE) &rememberAccount, &remLen);
     RegCloseKey(hKey);
 
     pLoginParam->remember = false;
-    pLoginParam->username[0] = '\0';
+    pLoginParam->username[0] = 0;
 
     if (acctLen > 0)
         wcsncpy(pLoginParam->username, accountName, kMaxAccountNameLength);
     pLoginParam->remember = (rememberAccount != 0);
-    if (pLoginParam->remember && pLoginParam->username[0] != '\0')
+    if (pLoginParam->remember && pLoginParam->username[0])
     {
         pfPasswordStore* store = pfPasswordStore::Instance();
         ST::string password = store->GetPassword(pLoginParam->username);
@@ -691,7 +691,7 @@ static void LoadUserPass(LoginDialogParam *pLoginParam)
             StoreHash(pLoginParam->username, password, pLoginParam);
         pLoginParam->focus = IDOK;
     }
-    else if (pLoginParam->username[0] == '\0')
+    else if (!pLoginParam->username[0])
         pLoginParam->focus = IDC_URULOGIN_USERNAME;
     else
         pLoginParam->focus = IDC_URULOGIN_PASSWORD;
@@ -861,14 +861,9 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
             }
             else if (HIWORD(wParam) == EN_CHANGE && LOWORD(wParam) == IDC_URULOGIN_USERNAME)
             {
-                char username[kMaxAccountNameLength];
-                GetDlgItemText(hwndDlg, IDC_URULOGIN_USERNAME, username, kMaxAccountNameLength);
-
-                if (StrLen(username) == 0)
-                    EnableWindow(GetDlgItem(hwndDlg, IDOK), FALSE);
-                else
-                    EnableWindow(GetDlgItem(hwndDlg, IDOK), TRUE);
-
+                wchar_t username[kMaxAccountNameLength];
+                GetDlgItemTextW(hwndDlg, IDC_URULOGIN_USERNAME, username, kMaxAccountNameLength);
+                EnableWindow(GetDlgItem(hwndDlg, IDOK), username[0] != 0);
                 return TRUE;
             }
             else if (HIWORD(wParam) == BN_CLICKED && LOWORD(wParam) == IDC_URULOGIN_NEWACCTLINK)
