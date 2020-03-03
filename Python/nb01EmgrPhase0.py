@@ -133,7 +133,6 @@ class nb01EmgrPhase0(ptResponder):
             }
         }
     }
-    PedestalSDL = []
 
     def __init__(self):
         ptResponder.__init__(self)
@@ -143,6 +142,7 @@ class nb01EmgrPhase0(ptResponder):
         self.version = 7
         PtDebugPrint("__init__nb01EmgrPhase0 v.{}".format(self.version))
 
+        self.PedestalSDL = []
         self._pedestalSDLValues = {}
         self._ageVault = None
         self._updateAgeSDL = False
