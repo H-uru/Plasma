@@ -249,8 +249,8 @@ void    plEAXListener::IFail(  bool major )
 
 void    plEAXListener::IFail( const char *msg, bool major )
 {
-    plStatusLog::AddLineS( "audio.log", plStatusLog::kRed,
-                            "ERROR in plEAXListener: %s", msg );
+    plStatusLog::AddLineSF( "audio.log", plStatusLog::kRed,
+                            "ERROR in plEAXListener: {}", msg );
 
     if( major )
         IRelease();

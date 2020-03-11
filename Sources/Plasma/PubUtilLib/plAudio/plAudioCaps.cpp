@@ -61,6 +61,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #define MAX_NUM_SOURCES 128
 #define LogMe if( fLog != nil ) fLog->AddLine
+#define LogMeF if( fLog != nil ) fLog->AddLineF
 #define MAX_AUDIOCARD_NAME 256
 
 //////////////////////////////////////////////////////////////////////////////
@@ -130,8 +131,8 @@ plAudioCaps &plAudioCapsDetector::Detect( bool logIt, bool init )
         fCaps.fMaxNumSources++;
     }
     alDeleteSources(i, sources); 
-    LogMe(0xffffffff, "Max Number of sources: {}", i);
-    plStatusLog::AddLineS("audio.log", "Max Number of sources: {}", i);
+    LogMeF(0xffffffff, "Max Number of sources: {}", i);
+    plStatusLog::AddLineSF("audio.log", "Max Number of sources: {}", i);
 
     // Detect EAX support
     LogMe(0xff00ff00, "Attempting to detect EAX support..." );

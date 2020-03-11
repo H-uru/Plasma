@@ -253,9 +253,9 @@ void plRandomSoundMod::IPlayNext()
     if (plgAudioSys::AreExtendedLogsEnabled())
     {
         if (fGroups)
-            plStatusLog::AddLineS("audio.log", "{}: Playing sound #{} from group {}", GetTarget(0)->GetKeyName(), fCurrent, fCurrentGroup);
+            plStatusLog::AddLineSF("audio.log", "{}: Playing sound #{} from group {}", GetTarget(0)->GetKeyName(), fCurrent, fCurrentGroup);
         else
-            plStatusLog::AddLineS("audio.log", "{}: Playing sound #{}", GetTarget(0)->GetKeyName(), fCurrent);
+            plStatusLog::AddLineSF("audio.log", "{}: Playing sound #{}", GetTarget(0)->GetKeyName(), fCurrent);
     }
 
     fEndTimes[fCurrent] = hsTimer::GetSysSeconds() + currLen;

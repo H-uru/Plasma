@@ -88,7 +88,7 @@ void plNetTalkList::AddMember(plNetTransportMember* e)
 { 
     if (FindMember(e)==-1)
     {
-        plStatusLog::AddLineS("voice.log", "Adding {} to talk list", e->AsString());
+        plStatusLog::AddLineSF("voice.log", "Adding {} to talk list", e->AsString());
         fMembers.push_back(e);
     }
     fFlags |= kDirty;   
@@ -99,7 +99,7 @@ void plNetTalkList::RemoveMember(plNetTransportMember* e)
     int idx=FindMember(e);
     if (idx!=-1)
     {
-        plStatusLog::AddLineS("voice.log", "Removing {} from talklist", e->AsString());
+        plStatusLog::AddLineSF("voice.log", "Removing {} from talklist", e->AsString());
         fMembers.erase(fMembers.begin()+idx);
     }
     fFlags |= kDirty; 
@@ -122,7 +122,7 @@ void plNetListenList::AddMember(plNetTransportMember* e)
 {
     if (FindMember(e)==-1)
     {
-        plStatusLog::AddLineS("voice.log", "Adding {} to listen list ", e->AsString());
+        plStatusLog::AddLineSF("voice.log", "Adding {} to listen list ", e->AsString());
         fMembers.push_back(e);
     
 #if 0   
@@ -146,7 +146,7 @@ void plNetListenList::RemoveMember(plNetTransportMember* e)
     if (idx!=-1)
     {
         fMembers.erase(fMembers.begin()+idx);
-        plStatusLog::AddLineS("voice.log", "Removing {} from listen list", e->AsString());
+        plStatusLog::AddLineSF("voice.log", "Removing {} from listen list", e->AsString());
 #if 0
         // call the new member's win audible and set talk icon parameters
 

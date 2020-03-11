@@ -61,25 +61,25 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 template<typename... _Args>
 static inline void PatcherLogGreen(const char* format, _Args&&... args)
 {
-    pfPatcher::GetLog()->AddLine(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
+    pfPatcher::GetLog()->AddLineF(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
 }
 
 template<typename... _Args>
 static inline void PatcherLogRed(const char* format, _Args&&... args)
 {
-    pfPatcher::GetLog()->AddLine(plStatusLog::kRed, format, std::forward<_Args>(args)...);
+    pfPatcher::GetLog()->AddLineF(plStatusLog::kRed, format, std::forward<_Args>(args)...);
 }
 
 template<typename... _Args>
 static inline void PatcherLogWhite(const char* format, _Args&&... args)
 {
-    pfPatcher::GetLog()->AddLine(plStatusLog::kWhite, format, std::forward<_Args>(args)...);
+    pfPatcher::GetLog()->AddLineF(plStatusLog::kWhite, format, std::forward<_Args>(args)...);
 }
 
 template<typename... _Args>
 static inline void PatcherLogYellow(const char* format, _Args&&... args)
 {
-    pfPatcher::GetLog()->AddLine(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
+    pfPatcher::GetLog()->AddLineF(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
 }
 
 // ===================================================

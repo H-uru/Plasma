@@ -55,28 +55,28 @@ public:
     static void Log(const char* format, _Args&&... args)
     {
         if (fLog)
-            fLog->AddLine(format, std::forward<_Args>(args)...);
+            fLog->AddLineF(format, std::forward<_Args>(args)...);
     }
 
     template<typename... _Args>
     static void Special(const char* format, _Args&&... args)
     {
         if (fLog)
-            fLog->AddLine(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
+            fLog->AddLineF(plStatusLog::kGreen, format, std::forward<_Args>(args)...);
     }
 
     template<typename... _Args>
     static void Red(const char* format, _Args&&... args)
     {
         if (fLog)
-            fLog->AddLine(plStatusLog::kRed, format, std::forward<_Args>(args)...);
+            fLog->AddLineF(plStatusLog::kRed, format, std::forward<_Args>(args)...);
     }
 
     template<typename... _Args>
     static void Yellow(const char* format, _Args&&... args)
     {
         if (fLog)
-            fLog->AddLine(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
+            fLog->AddLineF(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
     }
 };
 

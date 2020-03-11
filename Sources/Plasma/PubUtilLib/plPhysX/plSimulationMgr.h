@@ -168,7 +168,7 @@ public:
     static void Log(const char* formatStr, _Args&&... args)
     {
         if (GetInstance() && GetInstance()->fLog) {
-            GetInstance()->fLog->AddLine(formatStr, std::forward<_Args>(args)...);
+            GetInstance()->fLog->AddLineF(formatStr, std::forward<_Args>(args)...);
         }
     }
 };

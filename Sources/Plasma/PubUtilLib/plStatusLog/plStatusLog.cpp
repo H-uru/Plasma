@@ -500,7 +500,7 @@ bool plStatusLog::IAddLine( const char *line, int32_t count, uint32_t color )
 
 //// AddLine /////////////////////////////////////////////////////////////////
 
-bool plStatusLog::AddLine( const char *line, uint32_t color )
+bool plStatusLog::AddLine(uint32_t color, const char *line)
 {
     char    *c, *str;
     if(fLoggingOff && !fForceLog)
