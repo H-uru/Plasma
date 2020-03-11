@@ -68,7 +68,7 @@ AgeStartedIn = None
 
 #This identifies the maximum valid value for INT Variables
 #The range is always from 00 to the value specified here
-islmDRCStageStateMaxINT = 02
+islmDRCStageStateMaxINT = 2
 
 
 def OutOfRange(VARname, NewSDLValue, myMaxINT):
