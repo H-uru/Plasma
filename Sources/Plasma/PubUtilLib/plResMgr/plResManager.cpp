@@ -88,7 +88,7 @@ static void ILog(uint8_t level, const char* format, _Args&&... args)
     case 4: color = 0xff8080ff; break;
     }
 
-    log->AddLine(color, format, std::forward<_Args>(args)...);
+    log->AddLineF(color, format, std::forward<_Args>(args)...);
 }
 
 plResManager::plResManager():
@@ -457,7 +457,7 @@ bool plResManager::IReadObject(plKeyImp* pKey, hsStream *stream)
         uint64_t childTime = totalTime - startTotalTime;
         ourTime -= childTime;
 
-        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "{}, {}, {}, {.1f}",
+        plStatusLog::AddLineSF("readtimings.log", plStatusLog::kWhite, "{}, {}, {}, {.1f}",
             pKey->GetUoid().GetObjectName(),
             plFactory::GetNameOfClass(pKey->GetUoid().GetClassType()),
             pKey->GetDataLen(),
@@ -1223,7 +1223,7 @@ void plResManager::PageInRoom(const plLocation& page, uint16_t objClassToRef, pl
     {
         readRoomTime = hsTimer::GetTicks() - readRoomTime;
 
-        plStatusLog::AddLineS("readtimings.log", plStatusLog::kWhite, "----- Reading page {}>{} took {.1f} ms",
+        plStatusLog::AddLineSF("readtimings.log", plStatusLog::kWhite, "----- Reading page {}>{} took {.1f} ms",
             pageNode->GetPageInfo().GetAge(), pageNode->GetPageInfo().GetPage(),
             hsTimer::GetMilliSeconds<float>(readRoomTime));
     }

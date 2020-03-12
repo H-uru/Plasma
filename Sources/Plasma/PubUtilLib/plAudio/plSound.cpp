@@ -132,9 +132,9 @@ void plSound::IPrintDbgMessage( const char *msg, bool isError )
 {
     ST::string keyName = GetKey() ? GetKeyName() : ST_LITERAL("unkeyed");
     if( isError )
-        plStatusLog::AddLineS("audio.log", plStatusLog::kRed, "ERROR: {} ({})", msg, keyName);
+        plStatusLog::AddLineSF("audio.log", plStatusLog::kRed, "ERROR: {} ({})", msg, keyName);
     else
-        plStatusLog::AddLineS("audio.log", "{} ({})", msg, keyName);
+        plStatusLog::AddLineSF("audio.log", "{} ({})", msg, keyName);
 }
 
 ///////////////////////////////////////////////////////////
@@ -575,7 +575,7 @@ void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
         fFadeInParams.fVolStart = fCurrVolume;  // Hopefully, we got to fFadedVolume, but maybe not
         fFadeInParams.fVolEnd = fDesiredVol;
         fCurrFadeParams = &fFadeInParams;
-        plStatusLog::AddLineS("audio.log", "Fading in {}", GetKeyName());
+        plStatusLog::AddLineSF("audio.log", "Fading in {}", GetKeyName());
     }
     else
         fCurrFadeParams = params;
@@ -794,7 +794,7 @@ bool plSound::ILoadDataBuffer( void )
         if(!buffer)
         {
             hsAssert(false, "unable to load sound buffer");
-            plStatusLog::AddLineS("audio.log", "Unable to load sound buffer: {}", GetKeyName());
+            plStatusLog::AddLineSF("audio.log", "Unable to load sound buffer: {}", GetKeyName());
             return false;
         }
         SetLength( buffer->GetDataLengthInSecs() );

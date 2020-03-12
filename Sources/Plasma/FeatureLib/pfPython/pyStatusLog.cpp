@@ -97,7 +97,7 @@ bool pyStatusLog::WriteColor(const ST::string &text, pyColor& color)
                                 ((uint32_t)(color.getRed()*255)<<16) +
                                 ((uint32_t)(color.getGreen()*255)<<8) + 
                                 ((uint32_t)(color.getBlue()*255));
-        fLog->AddLine( text.c_str(), st_color );
+        fLog->AddLine(st_color, text);
         return true;
     }
 

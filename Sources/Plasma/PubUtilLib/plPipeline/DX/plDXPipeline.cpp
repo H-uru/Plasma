@@ -472,13 +472,13 @@ void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, con
         if (add)
         {
             plProfile_NewMem(ManagedMem, size);
-            //plStatusLog::AddLineS("pipeline.log", 0xffff0000, "Adding   MANAGED mem. Size: {10d}, Total: {10d} ID: {}",
+            //plStatusLog::AddLineSF("pipeline.log", 0xffff0000, "Adding   MANAGED mem. Size: {10d}, Total: {10d} ID: {}",
             //                    size, gProfileVarManagedMem.GetValue(), id);
         }
         else
         {
             plProfile_DelMem(ManagedMem, size);
-            //plStatusLog::AddLineS("pipeline.log", 0xffff0000, "Deleting MANAGED mem. Size: {10d}, Total: {10d} ID: {}",
+            //plStatusLog::AddLineSF("pipeline.log", 0xffff0000, "Deleting MANAGED mem. Size: {10d}, Total: {10d} ID: {}",
             //                    size, gProfileVarManagedMem.GetValue(), id);
         }
         break;
@@ -486,13 +486,13 @@ void plDXPipeline::ProfilePoolMem(D3DPOOL poolType, uint32_t size, bool add, con
         if (add)
         {
             plProfile_NewMem(DefaultMem, size);
-            //plStatusLog::AddLineS("pipeline.log", 0xffff0000, "Adding   DEFAULT mem. Size: {10d}, Total: {10d} ID: {}",
+            //plStatusLog::AddLineSF("pipeline.log", 0xffff0000, "Adding   DEFAULT mem. Size: {10d}, Total: {10d} ID: {}",
             //                    size, gProfileVarDefaultMem.GetValue(), id);
         }
         else
         {
             plProfile_DelMem(DefaultMem, size);
-            //plStatusLog::AddLineS("pipeline.log", 0xffff0000, "Deleting DEFAULT mem. Size: {10d}, Total: {10d} ID: {}",
+            //plStatusLog::AddLineSF("pipeline.log", 0xffff0000, "Deleting DEFAULT mem. Size: {10d}, Total: {10d} ID: {}",
             //                    size, gProfileVarDefaultMem.GetValue(), id);
         }
         break;
@@ -7328,7 +7328,7 @@ IDirect3DTexture9   *plDXPipeline::IMakeD3DTexture( plDXTextureRef *ref, D3DFORM
                                           &texPtr, NULL ) ) )
     {
         IGetD3DError();
-        plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to create texture ({}) Owner: {} "
+        plStatusLog::AddLineSF( "pipeline.log", 0xffff0000, "Unable to create texture ({}) Owner: {} "
                                             "Size: {} x {} NumLvls: {} Flags: {x}",
                                             fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("") : ST_LITERAL(""),
                                             ref->fMaxWidth, ref->fMaxHeight, ref->fMMLvs, ref->GetFlags() );
@@ -7351,7 +7351,7 @@ void    plDXPipeline::IFillD3DTexture( plDXTextureRef *ref )
 
     if( pTexDat == nil )
     {
-        plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to fill texture ref (data is nil) Owner: {}",
+        plStatusLog::AddLineSF( "pipeline.log", 0xffff0000, "Unable to fill texture ref (data is nil) Owner: {}",
                                             ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("") : ST_LITERAL("") );
         return;
     }
@@ -7365,7 +7365,7 @@ void    plDXPipeline::IFillD3DTexture( plDXTextureRef *ref )
         if( FAILED( fSettings.fDXError = lpDst->LockRect( i, &lockInfo, nil, 0 ) ) )
         {
             IGetD3DError();
-            plStatusLog::AddLineS( "pipeline.log", 0xffff0000, "Unable to lock texture level {} for filling ({}) Owner: {} "
+            plStatusLog::AddLineSF( "pipeline.log", 0xffff0000, "Unable to lock texture level {} for filling ({}) Owner: {} "
                                                 "Size: {} x {} NumLvls: {} Flags: {x}",
                                                 i, fSettings.fErrorStr, ref->fOwner ? ref->fOwner->GetKey() ? ref->fOwner->GetKey()->GetUoid().GetObjectName() : ST_LITERAL("") : ST_LITERAL(""),
                                                 ref->fMaxWidth, ref->fMaxHeight, ref->fMMLvs, ref->GetFlags() );

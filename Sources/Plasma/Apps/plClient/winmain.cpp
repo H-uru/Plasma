@@ -454,7 +454,7 @@ static plStatusLog* s_DebugLog = nullptr;
 static void _DebugMessageProc(const char* msg)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    s_DebugLog->AddLine(msg, plStatusLog::kRed);
+    s_DebugLog->AddLine(plStatusLog::kRed, msg);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 
@@ -469,7 +469,7 @@ template<typename... _Args>
 static void DebugMsg(const char* format, _Args&&... args)
 {
 #if defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
-    s_DebugLog->AddLine(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
+    s_DebugLog->AddLineF(plStatusLog::kYellow, format, std::forward<_Args>(args)...);
 #endif // defined(HS_DEBUGGING) || !defined(PLASMA_EXTERNAL_RELEASE)
 }
 

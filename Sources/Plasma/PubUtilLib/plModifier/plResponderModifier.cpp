@@ -793,7 +793,6 @@ void plResponderModifier::ILog(uint32_t color, const char* format, ...)
     if (modPos != -1)
         keyName = keyName.left(modPos);
 
-    ST::string logLine = ST::format("{}: {}", keyName, buf);
-    gLog->AddLine(logLine.c_str(), color);
+    gLog->AddLineF(color, "{}: {}", keyName, buf);
 #endif // STATUS_LOG
 }

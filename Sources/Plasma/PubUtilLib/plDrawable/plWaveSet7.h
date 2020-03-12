@@ -486,7 +486,7 @@ protected:
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (fStatusLog)
-            fStatusLog->AddLine(format, std::forward<_Args>(args)...);
+            fStatusLog->AddLineF(format, std::forward<_Args>(args)...);
 #endif
     }
 
@@ -495,7 +495,7 @@ protected:
     {
 #ifndef PLASMA_EXTERNAL_RELEASE
         if (fStatusLog)
-            fStatusLog->AddLine(color, format, std::forward<_Args>(args)...);
+            fStatusLog->AddLineF(color, format, std::forward<_Args>(args)...);
 #endif
     }
 

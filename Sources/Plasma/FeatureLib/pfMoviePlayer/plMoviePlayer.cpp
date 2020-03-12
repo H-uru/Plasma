@@ -197,7 +197,7 @@ bool plMoviePlayer::IOpenMovie()
 {
 #ifdef PLASMA_USE_WEBM
     if (!plFileInfo(fMoviePath).Exists()) {
-        plStatusLog::AddLineS("movie.log", "{}: Tried to play a movie that doesn't exist.", fMoviePath);
+        plStatusLog::AddLineSF("movie.log", "{}: Tried to play a movie that doesn't exist.", fMoviePath);
         return false;
     }
 
@@ -257,7 +257,7 @@ bool plMoviePlayer::ILoadAudio()
 
     // Initialize Opus
     if (strncmp(audio->GetCodecId(), WEBM_CODECID_OPUS, arrsize(WEBM_CODECID_OPUS)) != 0) {
-        plStatusLog::AddLineS("movie.log", "{}: Not an Opus audio track!", fMoviePath);
+        plStatusLog::AddLineSF("movie.log", "{}: Not an Opus audio track!", fMoviePath);
         return false;
     }
     int error;
@@ -347,7 +347,7 @@ bool plMoviePlayer::Start()
     // Initialize VPX
     const mkvparser::VideoTrack* video = static_cast<const mkvparser::VideoTrack*>(fVideoTrack->GetTrack());
     if (strncmp(video->GetCodecId(), WEBM_CODECID_VP9, arrsize(WEBM_CODECID_VP9)) != 0) {
-        plStatusLog::AddLineS("movie.log", "{}: Not a VP9 video track!", fMoviePath);
+        plStatusLog::AddLineSF("movie.log", "{}: Not a VP9 video track!", fMoviePath);
         return false;
     }
     if (VPX* vpx = VPX::Create())

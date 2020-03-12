@@ -1035,7 +1035,7 @@ void cyMisc::PrintToScreen(const char* msg)
             plStatusLog::kDontWriteFile | plStatusLog::kDeleteForMe | plStatusLog::kFilledBackground );
         plStatusLogMgr::GetInstance().ToggleStatusLog(gStatusLog);
     }
-    gStatusLog->AddLine(msg, plStatusLog::kBlue);   
+    gStatusLog->AddLine(plStatusLog::kBlue, msg);
 }
 #endif
 
@@ -2602,19 +2602,19 @@ void cyMisc::DebugPrint(const ST::string& msg, uint32_t level)
 
     switch (level) {
     case kDebugDump:
-        log->AddLine(msg.c_str(), plStatusLog::kGreen);
+        log->AddLine(plStatusLog::kGreen, msg);
         break;
     case kWarningLevel:
-        log->AddLine(msg.c_str(), plStatusLog::kYellow);
+        log->AddLine(plStatusLog::kYellow, msg);
         break;
     case kAssertLevel:
         hsAssert(false, msg.c_str());
         // ... fall thru to the actual log-print
     case kErrorLevel:
-        log->AddLine(msg.c_str(), plStatusLog::kRed);
+        log->AddLine(plStatusLog::kRed, msg);
         break;
     default:
-        log->AddLine(msg.c_str(), plStatusLog::kWhite);
+        log->AddLine(plStatusLog::kWhite, msg);
         break;
     }
 }

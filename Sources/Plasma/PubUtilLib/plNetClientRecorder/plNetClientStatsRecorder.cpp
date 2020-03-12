@@ -93,7 +93,7 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
     if (msg->ClassIndex() == CLASS_INDEX_SCOPED(plNetMsgGameMessage))
     {
         plNetMsgGameMessage* gameMsg = plNetMsgGameMessage::ConvertNoRef(msg);
-        fLog->AddLine("{}{}({})", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
+        fLog->AddLineF("{}{}({})", preText, msg->ClassName(), plFactory::GetNameOfClass(gameMsg->StreamInfo()->GetStreamType()));
 
         if (gameMsg->StreamInfo()->GetStreamType() == CLASS_INDEX_SCOPED(plNotifyMsg))
         {
@@ -120,7 +120,7 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
                 case proEventData::kClickDrag:      eventName = "ClickDrag";        break;
                 }
 
-                fLog->AddLine("\t{}", eventName);
+                fLog->AddLineF("\t{}", eventName);
             }
 
             hsRefCnt_SafeUnRef(notifyMsg);
@@ -133,7 +133,7 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
         int ver;
         if (plStateDataRecord::ReadStreamHeader(&stream, &descName, &ver))
         {
-            fLog->AddLine("{}{}({})", preText, msg->ClassName(), descName);
+            fLog->AddLineF("{}{}({})", preText, msg->ClassName(), descName);
 
             int i;
 
@@ -143,17 +143,17 @@ void plNetClientStatsRecorder::ILogMsg(plNetMessage* msg, const char* preText)
             sdRec.GetDirtyVars(&vars);
             for (i = 0; i < vars.size(); i++)
             {
-                fLog->AddLine("\t{}", vars[i]->GetVarDescriptor()->GetName());
+                fLog->AddLineF("\t{}", vars[i]->GetVarDescriptor()->GetName());
             }
 
             plStateDataRecord::SDVarsList sdVars;
             sdRec.GetDirtySDVars(&sdVars);
             for (i = 0; i < sdVars.size(); i++)
             {
-                fLog->AddLine("\t{}", sdVars[i]->GetSDVarDescriptor()->GetName());
+                fLog->AddLineF("\t{}", sdVars[i]->GetSDVarDescriptor()->GetName());
             }
         }
     }
     else
-        fLog->AddLine("{}{}", preText, msg->ClassName());
+        fLog->AddLineF("{}{}", preText, msg->ClassName());
 }

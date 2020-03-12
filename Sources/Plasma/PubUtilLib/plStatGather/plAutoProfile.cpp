@@ -354,7 +354,7 @@ bool plAutoProfileImp::MsgReceive(plMessage* msg)
                 fAges[fNextAge-1].c_str(),
                 ms);
 
-            plStatusLog::AddLineS("agetimings.log", "Age {} took {.1f} ms",
+            plStatusLog::AddLineSF("agetimings.log", "Age {} took {.1f} ms",
                 fAges[fNextAge-1].c_str(),
                 ms);
         }

@@ -3464,7 +3464,7 @@ PF_CONSOLE_CMD( Audio, MCNTest, "int which", "" )
 PF_CONSOLE_CMD( Audio, Mark, "", "" )
 {
     static int markNum = 0;
-    plStatusLog::AddLineS( "threadfun.log", "******* Mark #{} *******", markNum++ );
+    plStatusLog::AddLineSF( "threadfun.log", "******* Mark #{} *******", markNum++ );
 }
 
 #endif // LIMIT_CONSOLE_COMMANDS
@@ -3619,7 +3619,7 @@ PF_CONSOLE_CMD( Listener, XMode, "bool b", "Sets velocity and position to avatar
             set = new plSetListenerMsg( plSetListenerMsg::kVelocity, pKey, true );
             set->Send();
         }
-        plStatusLog::AddLineS("audio.log", "XMode off, {}, {}, {}", oldPosType, oldFacingType, oldVelType);
+        plStatusLog::AddLineSF("audio.log", "XMode off, {}, {}, {}", oldPosType, oldFacingType, oldVelType);
     }
 }
 
