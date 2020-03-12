@@ -570,17 +570,20 @@ static void VaultNodeChanged (
         return;
     }
 
-    // We are the party responsible for the change, so we already have the
-    // latest version of the node; no need to fetch it.
-    if (link->node->GetRevision() == revisionId)
-        return;
-
-    // We have the node and we weren't the one that changed it, so fetch it.
-    NetCliAuthVaultNodeFetch(
-        nodeId,
-        ChangedVaultNodeFetched,
-        nil
-    );
+    if (link->node->GetRevision() == revisionId) {
+        // We are the party responsible for the change, so we already have the
+        // latest version of the node; no need to fetch it. However, we do need to fire off
+        // the "hey this was saved" callback.
+        for (IVaultCallback * cb = s_callbacks.Head(); cb; cb = s_callbacks.Next(cb))
+            cb->cb->ChangedNode(link->node);
+    } else {
+        // We have the node and we weren't the one that changed it, so fetch it.
+        NetCliAuthVaultNodeFetch(
+            nodeId,
+            ChangedVaultNodeFetched,
+            nullptr
+        );
+    }
 }
 
 //============================================================================
