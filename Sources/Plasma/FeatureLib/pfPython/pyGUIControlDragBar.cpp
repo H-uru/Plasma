@@ -71,7 +71,7 @@ bool pyGUIControlDragBar::IsGUIControlDragBar(pyKey& gckey)
 }
 
 
-void pyGUIControlDragBar::Anchor( void )
+void pyGUIControlDragBar::Anchor()
 {
     if ( fGCkey )
     {
@@ -82,7 +82,7 @@ void pyGUIControlDragBar::Anchor( void )
     }
 }
 
-void pyGUIControlDragBar::Unanchor( void )
+void pyGUIControlDragBar::Unanchor()
 {
     if ( fGCkey )
     {

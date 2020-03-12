@@ -56,7 +56,7 @@ protected:
 public:
     
     plObjectIntersectPlaneConditionalObject();
-    ~plObjectIntersectPlaneConditionalObject(){;}
+    ~plObjectIntersectPlaneConditionalObject() { }
     
     CLASSNAME_REGISTER( plObjectIntersectPlaneConditionalObject );
     GETINTERFACE_ANY( plObjectIntersectPlaneConditionalObject, plConditionalObject );
@@ -66,7 +66,7 @@ public:
     void SetTarget(plKey pKey) { fTarget = pKey; }
     void SetPlane(plKey pKey) { fPlane = pKey; }
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
 
 };

@@ -88,7 +88,7 @@ class plCubicEnvironmap : public plBitmap
 
 
         // Get the total size in bytes
-        virtual uint32_t  GetTotalSize( void ) const;
+        virtual uint32_t  GetTotalSize() const;
 
         virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
         virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }

@@ -69,7 +69,7 @@ class plRTProjPBAccessor : public PBAccessor
         void Set( PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t );
         void Get( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid );
 
-        static plRTProjPBAccessor   *Instance( void ) { return &fAccessor; }
+        static plRTProjPBAccessor   *Instance() { return &fAccessor; }
 
     protected:
 
@@ -119,8 +119,8 @@ class plRTProjDirLight : public plRTLightBase
         plRTProjDirLight();
 
         /// Class ID stuff
-        Class_ID    ClassID( void ) { return RTPDIR_LIGHT_CLASSID; }        
-        SClass_ID   SuperClassID( void ) { return LIGHT_CLASS_ID; }
+        Class_ID    ClassID() { return RTPDIR_LIGHT_CLASSID; }
+        SClass_ID   SuperClassID() { return LIGHT_CLASS_ID; }
 
         ObjLightDesc    *CreateLightDesc( INode *n, BOOL forceShadowBuf = FALSE );
         GenLight        *NewLight( int type ) { return new plRTProjDirLight(); }
@@ -132,7 +132,7 @@ class plRTProjDirLight : public plRTLightBase
         virtual int     DrawConeAndLine( TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
         virtual void    DrawCone( TimeValue t, GraphicsWindow *gw, float dist );
 
-        virtual BOOL            IsDir( void )   { return TRUE; }
+        virtual BOOL            IsDir()   { return TRUE; }
         virtual RefTargetHandle GetReference( int i );
         virtual void            SetReference( int ref, RefTargetHandle rtarg );
         virtual int             NumRefs() { return kNumRefs; }
@@ -151,7 +151,7 @@ class plRTProjDirLight : public plRTLightBase
         virtual void            InitNodeName( TSTR &s ) { s = _T( "RTProjDirLight" ); }
 
         // To get using-light-as-camera-viewport to work
-        virtual int             GetSpotShape( void ) { return RECT_LIGHT; }
+        virtual int             GetSpotShape() { return RECT_LIGHT; }
         virtual float           GetAspect( TimeValue t, Interval &valid = Interval(0,0) );
         virtual float           GetFallsize( TimeValue t, Interval &valid = Interval(0,0) );
         virtual int             Type() { return DIR_LIGHT; }

@@ -109,7 +109,7 @@ plBufferedFileReader::~plBufferedFileReader()
     Close();
 }
 
-void    plBufferedFileReader::Close( void )
+void    plBufferedFileReader::Close()
 {
     //plProfile_DelMem( SndBufferedMem, fBufferSize );
 
@@ -125,14 +125,14 @@ void    plBufferedFileReader::IError( const char *msg )
     Close();
 }
 
-plWAVHeader &plBufferedFileReader::GetHeader( void )
+plWAVHeader &plBufferedFileReader::GetHeader()
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid RAM buffer" );
 
     return fHeader;
 }
 
-float   plBufferedFileReader::GetLengthInSecs( void )
+float   plBufferedFileReader::GetLengthInSecs()
 {
     hsAssert( IsValid(), "GetLengthInSecs() called on an invalid RAM buffer" );
 
@@ -172,7 +172,7 @@ bool    plBufferedFileReader::Read( uint32_t numBytes, void *buffer )
     return valid;
 }
 
-uint32_t  plBufferedFileReader::NumBytesLeft( void )
+uint32_t  plBufferedFileReader::NumBytesLeft()
 {
     hsAssert( IsValid(), "NumBytesLeft() called on an invalid RAM buffer" );
 

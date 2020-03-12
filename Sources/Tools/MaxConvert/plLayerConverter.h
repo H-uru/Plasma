@@ -82,17 +82,17 @@ class plLayerConverter
     public:
 
         ~plLayerConverter();
-        static plLayerConverter &Instance( void );
+        static plLayerConverter &Instance();
 
         void    Init( bool save, plErrorMsg *msg );
-        void    DeInit( void );
+        void    DeInit();
 
         plLayerInterface    *ConvertTexmap( Texmap *texmap, plMaxNode *maxNode,
                                             uint32_t blendFlags, bool preserveUVOffset, bool upperLayer );
         plBitmap *CreateSimpleTexture(const char *fileName, const plLocation &loc, uint32_t clipID = 0, uint32_t texFlags = 0, bool usePNG = false);
         
-        void    MuteWarnings( void );
-        void    UnmuteWarnings( void );
+        void    MuteWarnings();
+        void    UnmuteWarnings();
 
     protected:
 

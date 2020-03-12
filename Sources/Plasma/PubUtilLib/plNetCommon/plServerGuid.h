@@ -77,16 +77,16 @@ public:
     friend bool operator!=( const plServerGuid & X, const plServerGuid & Y );
     friend bool operator<( const plServerGuid & X, const plServerGuid & Y) ;
 
-    const char *    AsString( void ) const; // returns static buffer.
-    std::string     AsStdString( void ) const;
+    const char *    AsString() const; // returns static buffer.
+    std::string     AsStdString() const;
     bool            FromString( const char * s );
 
     hsWide          AsWide() const;
     void            FromWide( const hsWide & v );
 
-    bool            IsSet( void ) const;
+    bool            IsSet() const;
     bool            IsEqualTo( const plServerGuid * other ) const;
-    operator std::string ( void ) const { return AsString();}
+    operator std::string () const { return AsString();}
 
     void            Read( hsStream * s, hsResMgr* mgr=nil );
     void            Write( hsStream * s, hsResMgr* mgr=nil );
@@ -95,8 +95,8 @@ public:
     void            Clear();
 
     static void SetGuidSeed( uint32_t seed );
-    static bool GuidSeedIsSet( void ) { return fGuidSeed!=0;}
-    static plServerGuid GenerateGuid( void );
+    static bool GuidSeedIsSet() { return fGuidSeed!=0;}
+    static plServerGuid GenerateGuid();
 
     CLASSNAME_REGISTER( plServerGuid );
     GETINTERFACE_ANY( plServerGuid, plCreatable );

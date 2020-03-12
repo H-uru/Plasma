@@ -69,7 +69,7 @@ class plAxisInputInterface : public plInputInterface
 
         plAxisAnimModifier  *fOwner;
 
-        virtual ControlEventCode    *IGetOwnedCodeList( void ) const
+        virtual ControlEventCode    *IGetOwnedCodeList() const
         {
             static ControlEventCode codes[] = { END_CONTROLS };
             return codes;
@@ -79,7 +79,7 @@ class plAxisInputInterface : public plInputInterface
 
         plAxisInputInterface( plAxisAnimModifier *owner ) { fOwner = owner; SetEnabled( true ); }
 
-        virtual uint32_t  GetPriorityLevel( void ) const { return kSceneInteractionPriority + 10; }
+        virtual uint32_t  GetPriorityLevel() const { return kSceneInteractionPriority + 10; }
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plMouseEventMsg* pMMsg = plMouseEventMsg::ConvertNoRef( pMsg );
@@ -99,8 +99,8 @@ class plAxisInputInterface : public plInputInterface
             return false;
         }
 
-        virtual uint32_t  GetCurrentCursorID( void ) const { return kCursorGrab; }
-        virtual bool    HasInterestingCursorID( void ) const { return true; }
+        virtual uint32_t  GetCurrentCursorID() const { return kCursorGrab; }
+        virtual bool    HasInterestingCursorID() const { return true; }
 };
 
 plAxisAnimModifier::plAxisAnimModifier() : 

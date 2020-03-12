@@ -54,7 +54,7 @@ public:
     plMatrixUpdateMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kPropagateToModifiers);}
-    ~plMatrixUpdateMsg(){;}
+    ~plMatrixUpdateMsg() { }
 
     CLASSNAME_REGISTER( plMatrixUpdateMsg );
     GETINTERFACE_ANY( plMatrixUpdateMsg, plMessage );

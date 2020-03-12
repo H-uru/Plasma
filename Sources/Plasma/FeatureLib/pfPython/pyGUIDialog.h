@@ -119,17 +119,17 @@ public:
     virtual void    SetEnabled( bool e );
     virtual void    Enable() { SetEnabled(true); }
     virtual void    Disable() { SetEnabled(false); }
-    virtual bool        IsEnabled( void );
-    virtual const char  *GetName( void );
-    virtual uint32_t      GetVersion(void);
+    virtual bool        IsEnabled();
+    virtual const char  *GetName();
+    virtual uint32_t      GetVersion();
 
-    virtual uint32_t      GetNumControls( void );
+    virtual uint32_t      GetNumControls();
     virtual PyObject*   GetControl( uint32_t idx ); // returns pyKey
     virtual void        SetFocus( pyKey& gcKey );
     virtual void        NoFocus( );
-    virtual void        Show( void );
-    virtual void        ShowNoReset( void );
-    virtual void        Hide( void );
+    virtual void        Show();
+    virtual void        ShowNoReset();
+    virtual void        Hide();
     virtual PyObject*   GetControlFromTag( uint32_t tagID );  // returns pyKey
 
     // get color schemes
@@ -145,8 +145,8 @@ public:
     virtual void        SetBackSelColor( float r, float g, float b, float a );
     virtual void        SetFontSize(uint32_t fontsize);
 
-    virtual void        UpdateAllBounds( void );
-    virtual void        RefreshAllControls( void );
+    virtual void        UpdateAllBounds();
+    virtual void        RefreshAllControls();
 };
 
 #endif // _pyGUIDialog_h_

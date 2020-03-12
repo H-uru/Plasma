@@ -4004,7 +4004,7 @@ TriObject* plMaxNode::GetTriObject(bool& deleteIt)
 //  Starting at 0, returns an incrementing index for each maxNode. Useful for 
 //  assigning indices to sound objects attached to the node.
 
-uint32_t  plMaxNode::GetNextSoundIdx( void )
+uint32_t  plMaxNode::GetNextSoundIdx()
 {
     uint32_t  idx = GetSoundIdxCounter();
     SetSoundIdxCounter( idx + 1 );
@@ -4015,7 +4015,7 @@ uint32_t  plMaxNode::GetNextSoundIdx( void )
 //  Fun temp hack function to tell if a maxNode is physical. Useful after
 //  preConvert (checks for a physical on the simInterface)
 
-bool    plMaxNode::IsPhysical( void )
+bool    plMaxNode::IsPhysical()
 {
     if( GetSceneObject() && GetSceneObject()->GetSimulationInterface() && 
         GetSceneObject()->GetSimulationInterface()->GetPhysical() )

@@ -82,24 +82,24 @@ public:
 
     static void AddPlasmaClasses(PyObject *m);
 
-    plUUID          GetAgeGuid(void);
+    plUUID          GetAgeGuid();
 
     PyObject *      GetAgeSDL() const; // returns pySDLStateDataRecord
     void            UpdateAgeSDL( pySDLStateDataRecord & pyrec );
 
     PyObject*       GetAgeInfo(); // returns pyVaultAgeInfoNode
-    PyObject*       GetAgeDevicesFolder( void ); // returns pyVaultFolderNode
-    PyObject*       GetSubAgesFolder( void ); // returns pyVaultFolderNode
-    PyObject*       GetChronicleFolder( void ); // returns pyVaultFolderNode
+    PyObject*       GetAgeDevicesFolder(); // returns pyVaultFolderNode
+    PyObject*       GetSubAgesFolder(); // returns pyVaultFolderNode
+    PyObject*       GetChronicleFolder(); // returns pyVaultFolderNode
     // Age chronicle (not the player chronicle!)
     PyObject*       FindChronicleEntry( const ST::string& entryName ); // returns pyVaultChronicleNode
     void AddChronicleEntry( const ST::string& name, uint32_t type, const ST::string& value );
     // Players who have published to devices in this age
-    PyObject*       GetPeopleIKnowAboutFolder( void ); // returns pyVaultPlayerInfoListNode
+    PyObject*       GetPeopleIKnowAboutFolder(); // returns pyVaultPlayerInfoListNode
     // PERSONAL AGE SPECIFIC
-    PyObject*       GetBookshelfFolder ( void ); // returns pyVaultFolderNode
+    PyObject*       GetBookshelfFolder (); // returns pyVaultFolderNode
     // NEXUS SPECIFIC
-    PyObject*       GetPublicAgesFolder( void ); // returns pyVaultFolderNode
+    PyObject*       GetPublicAgesFolder(); // returns pyVaultFolderNode
     PyObject*       GetSubAgeLink( const pyAgeInfoStruct & info ); // returns pyVaultAgeLinkNode
     // AGE DEVICES. AKA IMAGERS, WHATEVER.
     // Add a new device.

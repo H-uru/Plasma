@@ -204,7 +204,7 @@ public:
 #pragma warning( disable : 4284 )   // disable annoying warnings in release build for non pointer types
 #endif
     // for pointer types, which are allowed to change the object pointed to
-    T operator->(void) { return fValue; }
+    T operator->() { return fValue; }
 #if HS_BUILD_FOR_WIN32
 #pragma warning( pop ) 
 #endif    

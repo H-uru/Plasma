@@ -85,7 +85,7 @@ public:
 
     void    Activate( bool activating );
 
-    float    GetMouseScale( void ) const { return fMouseScale; }
+    float    GetMouseScale() const { return fMouseScale; }
     void        SetMouseScale( float s );
     
     static plKeyDef UntranslateKey(plKeyDef key, bool extended);

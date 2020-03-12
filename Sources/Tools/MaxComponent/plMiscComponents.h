@@ -123,7 +123,7 @@ public:
         kCompressImage,
     };
 
-    int         GetNumBitmaps( void ) const;
+    int         GetNumBitmaps() const;
     plLayerTex  *GetBitmap( int idx );
     int         AppendBitmap( plLayerTex *tex );
     void        RemoveBitmap( int idx );

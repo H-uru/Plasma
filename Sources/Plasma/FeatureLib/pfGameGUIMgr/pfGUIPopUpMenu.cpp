@@ -343,7 +343,7 @@ void    pfGUIPopUpMenu::Show( float x, float y )
     ISeekToOrigin();
 }
 
-void    pfGUIPopUpMenu::ISeekToOrigin( void )
+void    pfGUIPopUpMenu::ISeekToOrigin()
 {
 #if 0
     uint32_t i;
@@ -429,7 +429,7 @@ void    pfGUIPopUpMenu::IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctr
 //// IBuildMenu //////////////////////////////////////////////////////////////
 //  Given the list of menu items, builds our set of dynamic buttons
 
-bool    pfGUIPopUpMenu::IBuildMenu( void )
+bool    pfGUIPopUpMenu::IBuildMenu()
 {
     int     i;
 
@@ -597,7 +597,7 @@ bool    pfGUIPopUpMenu::IBuildMenu( void )
 //// ITearDownMenu ///////////////////////////////////////////////////////////
 //  Destroys all of our dynamic controls representing the menu
 
-void    pfGUIPopUpMenu::ITearDownMenu( void )
+void    pfGUIPopUpMenu::ITearDownMenu()
 {
     int     i;
 
@@ -646,7 +646,7 @@ bool        pfGUIPopUpMenu::HandleMouseEvent( pfGameGUIMgr::EventType event, flo
 //// ClearItems //////////////////////////////////////////////////////////////
 //  Clears the list of template items
 
-void    pfGUIPopUpMenu::ClearItems( void )
+void    pfGUIPopUpMenu::ClearItems()
 {
     int     i;
 
@@ -697,7 +697,7 @@ void    pfGUIPopUpMenu::AddItem( const wchar_t *name, pfGUICtrlProcObject *handl
 //// ICreateDynMaterial //////////////////////////////////////////////////////
 //  Creates the hsGMaterial tree for a single layer with a plDynamicTextMap.
 
-hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial( void )
+hsGMaterial *pfGUIPopUpMenu::ICreateDynMaterial()
 {
     hsColorRGBA     black, white;
 

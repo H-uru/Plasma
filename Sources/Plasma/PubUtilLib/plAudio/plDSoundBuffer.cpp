@@ -118,7 +118,7 @@ void    plDSoundBuffer::IAllocate( uint32_t size, plWAVHeader &bufferDesc, bool 
 
 //// IRelease ////////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::IRelease( void )
+void    plDSoundBuffer::IRelease()
 {
     if( IsPlaying() )
         Stop();
@@ -596,7 +596,7 @@ void plDSoundBuffer::SetMaxDistance( int dist )
 
 //// Play ////////////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::Play( void )
+void    plDSoundBuffer::Play()
 {
     if(!source)
         return;
@@ -630,7 +630,7 @@ void plDSoundBuffer::Pause()
 
 //// Stop ////////////////////////////////////////////////////////////////////
 
-void    plDSoundBuffer::Stop( void )
+void    plDSoundBuffer::Stop()
 {
     if(!source)
         return;
@@ -693,7 +693,7 @@ void plDSoundBuffer::Rewind()
 
 //// IsPlaying ///////////////////////////////////////////////////////////////
 
-bool    plDSoundBuffer::IsPlaying( void )
+bool    plDSoundBuffer::IsPlaying()
 {
     ALint state = AL_STOPPED;
     alGetSourcei(source, AL_SOURCE_STATE, &state);
@@ -703,7 +703,7 @@ bool    plDSoundBuffer::IsPlaying( void )
 
 //// IsEAXAccelerated ////////////////////////////////////////////////////////
 
-bool    plDSoundBuffer::IsEAXAccelerated( void ) const
+bool    plDSoundBuffer::IsEAXAccelerated() const
 {
     return fEAXSource.IsValid();
 }
@@ -729,7 +729,7 @@ uint32_t  plDSoundBuffer::GetBufferBytePos( float timeInSecs ) const
 
 //// GetLengthInBytes ////////////////////////////////////////////////////////
 
-uint32_t  plDSoundBuffer::GetLengthInBytes( void ) const
+uint32_t  plDSoundBuffer::GetLengthInBytes() const
 {
     return fBufferSize;
 }
@@ -743,7 +743,7 @@ void    plDSoundBuffer::SetEAXSettings(  plEAXSourceSettings *settings, bool for
 
 //// GetBlockAlign ///////////////////////////////////////////////////////////
 
-uint8_t   plDSoundBuffer::GetBlockAlign( void ) const
+uint8_t   plDSoundBuffer::GetBlockAlign() const
 {
     return ( fBufferDesc != nil ) ? fBufferDesc->fBlockAlign : 0;
 }

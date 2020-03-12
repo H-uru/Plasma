@@ -2466,7 +2466,7 @@ void pfImageLibComponent::Validate()
         fCompPB->SetCount(kCompressImage, fCompPB->Count(kRefImageList));
 }
 
-int pfImageLibComponent::GetNumBitmaps( void ) const
+int pfImageLibComponent::GetNumBitmaps() const
 {
     return fCompPB->Count( (ParamID)kRefImageList );
 }

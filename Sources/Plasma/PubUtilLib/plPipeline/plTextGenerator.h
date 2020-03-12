@@ -84,7 +84,7 @@ class plTextGenerator : public hsKeyedObject
 #endif
 
         uint32_t      *IAllocateOSSurface( uint16_t width, uint16_t height );
-        void        IDestroyOSSurface( void );
+        void        IDestroyOSSurface();
 
     public:
 
@@ -93,7 +93,7 @@ class plTextGenerator : public hsKeyedObject
         virtual ~plTextGenerator();
 
         void    Attach( plMipmap *host, uint16_t width, uint16_t height );
-        void    Detach( void );
+        void    Detach();
 
         /// Operations to perform on the text block
         
@@ -117,19 +117,19 @@ class plTextGenerator : public hsKeyedObject
         void        FillRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
         void        FrameRect( uint16_t x, uint16_t y, uint16_t width, uint16_t height, hsColorRGBA &color );
 
-        void    FlushToHost( void );
+        void    FlushToHost();
 
-        uint16_t  GetTextWidth( void );
-        uint16_t  GetTextHeight( void );
+        uint16_t  GetTextWidth();
+        uint16_t  GetTextHeight();
 
-        uint16_t  GetWidth( void ) { return fWidth; }
-        uint16_t  GetHeight( void ) { return fHeight; }
+        uint16_t  GetWidth() { return fWidth; }
+        uint16_t  GetHeight() { return fHeight; }
 
         // Since the textGen can actually create a texture bigger than you were expecting,
         // you want to be able to apply a layer texture transform that will compensate. This
         // function will give you that transform. Just feed it into plLayer->SetTransform().
 
-        hsMatrix44  GetLayerTransform( void );
+        hsMatrix44  GetLayerTransform();
 
 
         virtual bool MsgReceive( plMessage *msg );

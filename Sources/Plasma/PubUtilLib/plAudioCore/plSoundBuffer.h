@@ -94,13 +94,13 @@ public:
     virtual void    Read( hsStream *s, hsResMgr *mgr );
     virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-    plWAVHeader &GetHeader( void )              { return fHeader; }
-    uint32_t    GetDataLength( void ) const     { return fDataLength; }
+    plWAVHeader &GetHeader()              { return fHeader; }
+    uint32_t    GetDataLength() const     { return fDataLength; }
     void        SetDataLength(unsigned length)  { fDataLength = length; } 
-    void       *GetData( void ) const           { return fData; }
-    plFileName  GetFileName( void ) const       { return fFileName; }
-    bool        IsValid( void ) const           { return fValid; }
-    float       GetDataLengthInSecs( void ) const;
+    void       *GetData() const           { return fData; }
+    plFileName  GetFileName() const       { return fFileName; }
+    bool        IsValid() const           { return fValid; }
+    float       GetDataLengthInSecs() const;
 
     void                SetFileName( const plFileName &name );
     bool                HasFlag( uint32_t flag ) { return ( fFlags & flag ) ? true : false; }
@@ -110,7 +110,7 @@ public:
     ELoadReturnVal      AsyncLoad( plAudioFileReader::StreamType type, unsigned length = 0 );   
     void                UnLoad( );
 
-    plAudioCore::ChannelSelect  GetReaderSelect( void ) const;
+    plAudioCore::ChannelSelect  GetReaderSelect() const;
 
     
     static void         Init();
@@ -135,7 +135,7 @@ protected:
     
     void            IInitBuffer();
 
-    bool            IGrabHeaderInfo( void );
+    bool            IGrabHeaderInfo();
     void            IAddBuffers( void *base, void *toAdd, uint32_t lengthInBytes, uint8_t bitsPerSample );
     plFileName      IGetFullPath();
 

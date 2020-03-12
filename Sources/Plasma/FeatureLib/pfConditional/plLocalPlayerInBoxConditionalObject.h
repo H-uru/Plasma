@@ -56,7 +56,7 @@ protected:
 public:
     
     plLocalPlayerInBoxConditionalObject();
-    ~plLocalPlayerInBoxConditionalObject(){;}
+    ~plLocalPlayerInBoxConditionalObject() { }
     
     CLASSNAME_REGISTER( plLocalPlayerInBoxConditionalObject );
     GETINTERFACE_ANY( plLocalPlayerInBoxConditionalObject, plConditionalObject );
@@ -65,7 +65,7 @@ public:
 
     void SetBox(plKey pKey) { fBox = pKey; }
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
 
 };

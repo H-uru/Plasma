@@ -104,11 +104,11 @@ public:
 
     virtual bool MsgReceive(plMessage* msg);
 
-    virtual void    ReleaseData( void );
+    virtual void    ReleaseData();
 
     /// Funky particle system functions
     void    SetUpForParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material, hsTArray<plKey>& lights );
-    void    ResetParticleSystem( void );
+    void    ResetParticleSystem();
     void    AssignEmitterToParticleSystem( plParticleEmitter *emitter );
 
     /// EXPORT-ONLY

@@ -74,7 +74,7 @@ plTextFont::~plTextFont()
 
 //// IInitFontTexture /////////////////////////////////////////////////////////
 
-uint16_t  *plTextFont::IInitFontTexture( void )
+uint16_t  *plTextFont::IInitFontTexture()
 {
 #ifdef HS_BUILD_FOR_WIN32
     int     nHeight, x, y, c;
@@ -207,7 +207,7 @@ void    plTextFont::Create( char *face, uint16_t size )
 
 //// IInitObjects /////////////////////////////////////////////////////////////
 
-void    plTextFont::IInitObjects( void )
+void    plTextFont::IInitObjects()
 {
     uint16_t  *data;
 

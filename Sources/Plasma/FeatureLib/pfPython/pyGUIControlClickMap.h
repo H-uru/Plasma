@@ -73,9 +73,9 @@ public:
 
     static bool IsGUIControlClickMap(pyKey& gckey);
 
-    PyObject* GetLastMousePt( void ); // returns pyPoint3
-    PyObject* GetLastMouseUpPt( void ); // returns pyPoint3
-    PyObject* GetLastMouseDragPt( void ); // returns pyPoint3
+    PyObject* GetLastMousePt(); // returns pyPoint3
+    PyObject* GetLastMouseUpPt(); // returns pyPoint3
+    PyObject* GetLastMouseDragPt(); // returns pyPoint3
 
 };
 

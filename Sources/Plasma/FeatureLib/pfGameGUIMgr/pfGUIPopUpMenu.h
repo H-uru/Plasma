@@ -113,14 +113,14 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
         Alignment               fAlignment;
 
 
-        bool        IBuildMenu( void );
-        void        ITearDownMenu( void );
+        bool        IBuildMenu();
+        void        ITearDownMenu();
 
-        hsGMaterial *ICreateDynMaterial( void );
+        hsGMaterial *ICreateDynMaterial();
 
         void        IHandleMenuSomething( uint32_t idx, pfGUIControlMod *ctrl, int32_t extended = -1 );
 
-        void        ISeekToOrigin( void );
+        void        ISeekToOrigin();
 
     public:
 
@@ -159,7 +159,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
 
         void    SetOriginAnchor( plSceneObject *anchor, pfGUIDialogMod *context );
         void    SetAlignment( Alignment a ) { fAlignment = a; }
-        void    ClearItems( void );
+        void    ClearItems();
         void    AddItem( const char *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
         void    AddItem( const wchar_t *name, pfGUICtrlProcObject *handler, pfGUIPopUpMenu *subMenu = nil );
         void    SetSkin( pfGUISkin *skin );
@@ -197,7 +197,7 @@ class pfGUISkin : public hsKeyedObject
             public:
                 uint16_t  fX, fY, fWidth, fHeight;
 
-                void    Empty( void ) { fX = fY = fWidth = fHeight = 0; }
+                void    Empty() { fX = fY = fWidth = fHeight = 0; }
                 void    Read( hsStream *s );
                 void    Write( hsStream *s );
         };
@@ -226,7 +226,7 @@ class pfGUISkin : public hsKeyedObject
         virtual void    Write( hsStream *s, hsResMgr *mgr );
         virtual bool    MsgReceive( plMessage *msg );
 
-        plMipmap        *GetTexture( void ) const { return fTexture; }
+        plMipmap        *GetTexture() const { return fTexture; }
         void            SetTexture( plMipmap *tex );
 
         const pfSRect   &GetElement( uint32_t idx ) const { return fElements[ idx ]; }
@@ -234,8 +234,8 @@ class pfGUISkin : public hsKeyedObject
         void            SetElement( uint32_t idx, uint16_t x, uint16_t y, uint16_t w, uint16_t h );
 
         void            SetMargins( uint16_t item, uint16_t border ) { fItemMargin = item; fBorderMargin = border; }
-        uint16_t          GetItemMargin( void ) const { return fItemMargin; }
-        uint16_t          GetBorderMargin( void ) const { return fBorderMargin; }
+        uint16_t          GetItemMargin() const { return fItemMargin; }
+        uint16_t          GetBorderMargin() const { return fBorderMargin; }
 };
 
 #endif // _pfGUIPopUpMenu_h

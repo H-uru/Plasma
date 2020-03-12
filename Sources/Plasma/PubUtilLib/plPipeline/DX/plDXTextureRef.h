@@ -114,9 +114,9 @@ class plDXTextureRef : public plDXDeviceRef
         virtual ~plDXTextureRef();
 
         void            Link( plDXTextureRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-        plDXTextureRef  *GetNext( void ) { return (plDXTextureRef *)fNext; }
+        plDXTextureRef  *GetNext() { return (plDXTextureRef *)fNext; }
 
-        void    Release( void );
+        void    Release();
 };
 
 class plDXCubeTextureRef : public plDXTextureRef

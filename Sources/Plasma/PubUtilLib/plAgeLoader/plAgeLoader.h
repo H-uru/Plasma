@@ -125,11 +125,11 @@ public:
     void ExecPendingAgeCsvFiles();
 
     // Fun debugging exclude commands (to prevent certain pages from loading)
-    void    ClearPageExcludeList( void );
+    void    ClearPageExcludeList();
     void    AddExcludedPage( const ST::string& pageName, const ST::string& ageName = ST::null );
     bool    IsPageExcluded( const plAgePage *page, const ST::string& ageName = ST::null );
 
-    const plAgeDescription  &GetCurrAgeDesc( void ) const { return fCurAgeDescription; }
+    const plAgeDescription  &GetCurrAgeDesc() const { return fCurAgeDescription; }
 
     // paging
     void FinishedPagingInRoom(plKey* rmKey, int numRms);    // call when finished paging in/out a room      

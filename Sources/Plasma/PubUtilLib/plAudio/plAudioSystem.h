@@ -105,8 +105,8 @@ public:
     virtual bool MsgReceive(plMessage* msg);
     double GetTime();
     
-    void        NextDebugSound( void );
-    hsPoint3    GetCurrListenerPos( void ) const { return fCurrListenerPos; }
+    void        NextDebugSound();
+    hsPoint3    GetCurrListenerPos() const { return fCurrListenerPos; }
 
     int         GetNumAudioDevices();
     const char *GetAudioDeviceName(int index);
@@ -206,12 +206,12 @@ public:
     static bool Active() { return fInit; }
     static void Shutdown();
     static void Activate(bool b);
-    static bool     IsMuted( void ) { return fMuted; }
+    static bool     IsMuted() { return fMuted; }
     static plAudioSystem* Sys() { return fSys; }
-    static void Restart( void );
-    static bool     UsingEAX( void ) { return fSys->fUsingEAX; }
+    static void Restart();
+    static bool     UsingEAX() { return fSys->fUsingEAX; }
 
-    static void NextDebugSound( void );
+    static void NextDebugSound();
 
     static void     SetChannelVolume( ASChannel chan, float vol );
     static float GetChannelVolume( ASChannel chan );
@@ -220,22 +220,22 @@ public:
     static float Get2D3Dbias();
 
     static void     SetGlobalFadeVolume( float vol );
-    static float GetGlobalFadeVolume( void ) { return fGlobalFadeVolume; }
+    static float GetGlobalFadeVolume() { return fGlobalFadeVolume; }
 
     static void     SetDebugFlag( uint32_t flag, bool set = true ) { if( set ) fDebugFlags |= flag; else fDebugFlags &= ~flag; }
     static bool     IsDebugFlagSet( uint32_t flag ) { return fDebugFlags & flag; }
-    static void     ClearDebugFlags( void ) { fDebugFlags = 0; }
+    static void     ClearDebugFlags() { fDebugFlags = 0; }
 
-    static float GetStreamingBufferSize( void ) { return fStreamingBufferSize; }
+    static float GetStreamingBufferSize() { return fStreamingBufferSize; }
     static void     SetStreamingBufferSize( float size ) { fStreamingBufferSize = size; }
 
-    static uint8_t    GetPriorityCutoff( void ) { return fPriorityCutoff; }
+    static uint8_t    GetPriorityCutoff() { return fPriorityCutoff; }
     static void     SetPriorityCutoff( uint8_t cut ) { fPriorityCutoff = cut;  if(fSys) fSys->SetMaxNumberOfActiveSounds(); }
 
-    static bool     AreExtendedLogsEnabled( void ) { return fEnableExtendedLogs; }
+    static bool     AreExtendedLogsEnabled() { return fEnableExtendedLogs; }
     static void     EnableExtendedLogs( bool e ) { fEnableExtendedLogs = e; }
 
-    static float GetStreamFromRAMCutoff( void ) { return fStreamFromRAMCutoff; }
+    static float GetStreamFromRAMCutoff() { return fStreamFromRAMCutoff; }
     static void     SetStreamFromRAMCutoff( float c ) { fStreamFromRAMCutoff = c; }
 
     static void SetListenerPos(const hsPoint3 pos);

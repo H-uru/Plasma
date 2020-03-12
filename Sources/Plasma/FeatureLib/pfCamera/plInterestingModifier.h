@@ -71,7 +71,7 @@ protected:
     
 public:
     plInterestingModifier(){ fType = kTypeInteresting;}
-    virtual ~plInterestingModifier(){;}
+    virtual ~plInterestingModifier() { }
     
     virtual bool MsgReceive(plMessage* msg) {return false;}
 

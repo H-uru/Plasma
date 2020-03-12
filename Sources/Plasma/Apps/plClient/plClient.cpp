@@ -1319,7 +1319,7 @@ void    plClient::IStartProgress( const char *title, float len )
 
 
 //============================================================================
-void    plClient::IStopProgress( void )
+void    plClient::IStopProgress()
 {
     if (fProgressBar)
     {
@@ -1486,7 +1486,7 @@ bool plClient::BeginGame()
 }
 
 //============================================================================
-void    plClient::IPatchGlobalAgeFiles( void )
+void    plClient::IPatchGlobalAgeFiles()
 {
     plgDispatch::Dispatch()->RegisterForExactType(plResPatcherMsg::Index(), GetKey());
 

@@ -149,7 +149,7 @@ plLayerConverter::~plLayerConverter()
 {
 }
 
-plLayerConverter    &plLayerConverter::Instance( void )
+plLayerConverter    &plLayerConverter::Instance()
 {
     hsGuardBegin( "plLayerConverter::Instance" );
 
@@ -168,7 +168,7 @@ void    plLayerConverter::Init( bool save, plErrorMsg *msg )
     fInterface = GetCOREInterface();
 }
 
-void    plLayerConverter::DeInit( void )
+void    plLayerConverter::DeInit()
 {
     int i;
     for( i = 0; i < fConvertedLayers.GetCount(); i++ )
@@ -181,13 +181,13 @@ void    plLayerConverter::DeInit( void )
 
 //// Mute/Unmute Warnings /////////////////////////////////////////////////////
 
-void    plLayerConverter::MuteWarnings( void )
+void    plLayerConverter::MuteWarnings()
 {
     fSavedWarned = fWarned; 
     fWarned |= kWarnedNoBaseTexture | kWarnedUpperTextureMissing; 
 }
 
-void    plLayerConverter::UnmuteWarnings( void )
+void    plLayerConverter::UnmuteWarnings()
 {
     fWarned = fSavedWarned; 
 }

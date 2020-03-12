@@ -78,7 +78,7 @@ public:
 // class plVaultPlayerInfoNode : public plVaultNode
 //
     void    Player_SetPlayerID( uint32_t plyrid );
-    uint32_t  Player_GetPlayerID( void );
+    uint32_t  Player_GetPlayerID();
     void    Player_SetPlayerName(const ST::string& name);
     ST::string Player_GetPlayerName() const;
 
@@ -86,12 +86,12 @@ public:
     void    Player_SetAgeInstanceName(const ST::string& name);
     ST::string Player_GetAgeInstanceName() const;
     void    Player_SetAgeGuid( const char * guidtext);
-    plUUID  Player_GetAgeGuid(void) const;
+    plUUID  Player_GetAgeGuid() const;
     // online status
     void    Player_SetOnline( bool b );
-    bool  Player_IsOnline( void );
+    bool  Player_IsOnline();
 
-    int     Player_GetCCRLevel( void );
+    int     Player_GetCCRLevel();
 };
 
 #endif // _pyVaultPlayerInfoNode_h_

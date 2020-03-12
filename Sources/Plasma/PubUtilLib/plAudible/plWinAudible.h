@@ -106,8 +106,8 @@ public:
     virtual void        SetVolume(const float volume,int index = -1);
     virtual void        SetMuted( bool muted, int index = -1 );
     virtual void        ToggleMuted( int index = -1 );
-    virtual void        SetTalkIcon(int index, uint32_t str){;}
-    virtual void        ClearTalkIcon(){;}
+    virtual void        SetTalkIcon(int index, uint32_t str) { }
+    virtual void        ClearTalkIcon() { }
     void                SetFilename(int index, const char *filename, bool isCompressed);
 
     virtual void        SetFadeIn( const int type, const float length, int index = -1 );

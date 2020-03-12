@@ -63,7 +63,7 @@ bool pyGUIControlRadioGroup::IsGUIControlRadioGroup(pyKey& gckey)
     return false;
 }
 
-int32_t pyGUIControlRadioGroup::GetValue( void )
+int32_t pyGUIControlRadioGroup::GetValue()
 {
     if ( fGCkey )
     {

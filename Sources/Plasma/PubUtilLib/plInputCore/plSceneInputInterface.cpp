@@ -156,7 +156,7 @@ void    plSceneInputInterface::Init( plInputInterfaceMgr *manager )
 
 }
 
-void    plSceneInputInterface::Shutdown( void )
+void    plSceneInputInterface::Shutdown()
 {
     if( fPipe == nil )
         plgDispatch::Dispatch()->UnRegisterForExactType( plRenderMsg::Index(), fManager->GetKey() );
@@ -1196,7 +1196,7 @@ void    plSceneInputInterface::IRequestLOSCheck( float xPos, float yPos, int ID 
         
 //// IWorldPosMovedSinceLastLOSCheck /////////////////////////////////////////
 
-bool    plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck( void )
+bool    plSceneInputInterface::IWorldPosMovedSinceLastLOSCheck()
 {
     if( fPipe == nil )
         return false;

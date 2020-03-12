@@ -121,13 +121,13 @@ class plBaseSoundEmitterComponent : public plComponent
         static plSoundBuffer    *GetSourceBuffer( const plFileName &fileName, plMaxNode *node, uint32_t srcBufferFlags );
         static bool             LookupLatestAsset( const char *waveName, char *retPath, plErrorMsg *errMsg );
 
-        virtual void    UpdateSoundFileSelection( void );
+        virtual void    UpdateSoundFileSelection();
 
         // Loads the given combo box with category selections and sets the ParamID for the category parameter.
         // Returns false if there are no categories to choose for this component
         virtual bool    UpdateCategories( HWND dialogBox, int &categoryID, ParamID &paramID );
 
-        virtual bool    IsLocalOnly( void ) const { return true; }
+        virtual bool    IsLocalOnly() const { return true; }
 
         // Virtuals for handling animated volumes
         virtual bool    AddToAnim( plAGAnim *anim, plMaxNode *node );
@@ -137,7 +137,7 @@ class plBaseSoundEmitterComponent : public plComponent
         void            SetCreateGrouped( plMaxNode *baseNode, int commonSoundIdx );
 
         // Grabs the current sound volume
-        virtual float    GetSoundVolume( void ) const;
+        virtual float    GetSoundVolume() const;
 
     protected:
 #ifdef MAXASS_AVAILABLE
@@ -161,7 +161,7 @@ class plBaseSoundEmitterComponent : public plComponent
             kMergeSourceFormatMismatch
         };
 
-        void    IUpdateAssets( void );
+        void    IUpdateAssets();
 
         static void     IShowError( uint32_t type, const char *errMsg, const char *nodeName, plErrorMsg *pErrMsg );
 
@@ -170,8 +170,8 @@ class plBaseSoundEmitterComponent : public plComponent
 
         bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-        void    IConvertOldVolume( void );
-        float   IGetDigitalVolume( void ) const;        // In scale 0. to 1., not in db
+        void    IConvertOldVolume();
+        float   IGetDigitalVolume() const;        // In scale 0. to 1., not in db
         void    IGrabFadeValues( plSound *sound );
         void    IGrabSoftRegion( plSound *sound, plErrorMsg *pErrMsg );
         void    IGrabEAXParams( plSound *sound, plErrorMsg *pErrMsg );
@@ -182,9 +182,9 @@ class plBaseSoundEmitterComponent : public plComponent
 
         plSoundBuffer   *IProcessSourceBuffer( plMaxNode *maxNode, plErrorMsg *errMsg );
 
-        virtual bool    IAllowStereoFiles( void ) const { return true; }
-        virtual bool    IAllowMonoFiles( void ) const { return true; }
-        virtual bool    IHasWaveformProps( void ) const { return true; }
+        virtual bool    IAllowStereoFiles() const { return true; }
+        virtual bool    IAllowMonoFiles() const { return true; }
+        virtual bool    IHasWaveformProps() const { return true; }
 
         // Returns pointers to arrays defining the names and konstants for the supported categories
         // for this component. Name array should have an extra "" entry at the end. Returns false if none supported

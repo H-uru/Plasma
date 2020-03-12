@@ -63,18 +63,18 @@ public:
 
     ~plWinMicLevel();
     // Gets the microphone volume, range 0-1, -1 if error
-    static float GetLevel( void );
+    static float GetLevel();
 
     // Sets the microphone volume, range 0-1
     static void     SetLevel( float level );
 
     // Returns whether we can set the level
-    static bool     CanSetLevel( void );
+    static bool     CanSetLevel();
 
 protected:
     plWinMicLevel();    // Protected constructor for IGetInstance. Just to init some stuff
-    static plWinMicLevel    &IGetInstance( void );
-    void    IShutdown( void );
+    static plWinMicLevel    &IGetInstance();
+    void    IShutdown();
 };
 
 #endif // _plWinMicLevel_h

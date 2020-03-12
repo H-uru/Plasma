@@ -74,17 +74,17 @@ public:
 
     static bool IsGUIControlMultiLineEdit(pyKey& gckey);
 
-    virtual void    Clickable( void );
-    virtual void    Unclickable( void );
+    virtual void    Clickable();
+    virtual void    Unclickable();
     virtual void    SetScrollPosition( int32_t topLine );
     virtual int32_t GetScrollPosition();
     virtual bool    IsAtEnd();
     virtual void    MoveCursor( int32_t dir );
-    virtual void    ClearBuffer( void );
+    virtual void    ClearBuffer();
     virtual void    SetText( const char *asciiText );
     virtual void    SetTextW( const wchar_t *asciiText );
-    virtual const char* GetText( void );        // returns a python string object
-    virtual const wchar_t* GetTextW( void );
+    virtual const char* GetText();        // returns a python string object
+    virtual const wchar_t* GetTextW();
     virtual void    SetEncodedBuffer( PyObject* buffer_object );
     virtual void    SetEncodedBufferW( PyObject* buffer_object );
     virtual const char* GetEncodedBuffer();
@@ -100,11 +100,11 @@ public:
     virtual void    InsertStringW( const wchar_t *string );
     virtual void    InsertColor( pyColor& color );
     virtual void    InsertStyle( uint8_t fontStyle );
-    virtual void    DeleteChar( void );
+    virtual void    DeleteChar();
 
-    virtual void    Lock( void );
-    virtual void    Unlock( void );
-    virtual bool    IsLocked( void );
+    virtual void    Lock();
+    virtual void    Unlock();
+    virtual bool    IsLocked();
 
     virtual void    EnableScrollControl();
     virtual void    DisableScrollControl();

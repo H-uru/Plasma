@@ -75,7 +75,7 @@ public:
     static bool IsGUIControlCheckBox(pyKey& gckey);
 
     virtual void    SetChecked( bool checked );
-    virtual bool    IsChecked( void );
+    virtual bool    IsChecked();
 
 };
 

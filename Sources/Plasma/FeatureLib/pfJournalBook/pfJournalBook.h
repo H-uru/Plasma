@@ -376,10 +376,10 @@ class pfJournalBook : public hsKeyedObject
         virtual bool    MsgReceive( plMessage *pMsg );
 
         // Init the singleton, for client startup
-        static void SingletonInit( void );
+        static void SingletonInit();
         
         // Shutdown the singleton
-        static void SingletonShutdown( void );
+        static void SingletonShutdown();
         
         // loads a gui
         static void LoadGUI( const ST::string &guiName );
@@ -402,34 +402,34 @@ class pfJournalBook : public hsKeyedObject
 
 
         // Book handles hiding itself once someone clicks away. 
-        void    Hide( void );
+        void    Hide();
 
         // Opens the book, optionally to the given page
         void    Open( uint32_t startingPage = 0 );
 
         // Closes the book.
-        void    Close( void );
+        void    Close();
 
         // Advances forward one page
-        void    NextPage( void );
+        void    NextPage();
 
         // Same, only back
-        void    PreviousPage( void );
+        void    PreviousPage();
 
         // For completeness...
         void    GoToPage( uint32_t pageNumber );
 
         // See below. Just forces a full calc of the cached info
-        void    ForceCacheCalculations( void );
+        void    ForceCacheCalculations();
 
         // Closes the book, then calls Hide() once it's done closing
-        void    CloseAndHide( void );
+        void    CloseAndHide();
 
         // Sets the book size scaling. 1,1 would be full size, 0,0 is the smallest size possible
         void    SetBookSize( float width, float height );
 
         // What page are we on?
-        uint32_t  GetCurrentPage( void ) const { return fCurrentPage; }
+        uint32_t  GetCurrentPage() const { return fCurrentPage; }
 
         // Set the margin (defaults to 16 pixels)
         void    SetPageMargin( uint32_t margin ) { fPageTMargin = fPageLMargin = fPageBMargin = fPageRMargin = margin; }
@@ -519,7 +519,7 @@ class pfJournalBook : public hsKeyedObject
         bool    ICompileSource( const wchar_t *source, const plLocation &hintLoc );
 
         // Frees our source array
-        void    IFreeSource( void );
+        void    IFreeSource();
 
         // Compile helpers
         uint8_t   IGetTagType( const wchar_t *string );
@@ -538,11 +538,11 @@ class pfJournalBook : public hsKeyedObject
         void    IFindFontProps( uint32_t chunkIdx, ST::string &face, uint8_t &size, uint8_t &flags, hsColorRGBA &color, int16_t &spacing );
 
         // Find the last paragraph chunk and thus the last par alignment settings
-        uint8_t   IFindLastAlignment( void ) const;
+        uint8_t   IFindLastAlignment() const;
 
         // Handle clicks on either side of the book
-        void    IHandleLeftSideClick( void );
-        void    IHandleRightSideClick( void );
+        void    IHandleLeftSideClick();
+        void    IHandleRightSideClick();
 
         // Just sends out a notify to our currently set receiver key
         void    ISendNotify( uint32_t type, uint32_t linkID = 0 );

@@ -62,14 +62,14 @@ public:
     plBufferedFileReader( const plFileName &path, plAudioCore::ChannelSelect whichChan = plAudioCore::kAll );
     virtual ~plBufferedFileReader();
 
-    virtual plWAVHeader &GetHeader( void );
-    virtual void    Close( void );
-    virtual uint32_t  GetDataSize( void ) { return fBufferSize; }
-    virtual float   GetLengthInSecs( void );
+    virtual plWAVHeader &GetHeader();
+    virtual void    Close();
+    virtual uint32_t  GetDataSize() { return fBufferSize; }
+    virtual float   GetLengthInSecs();
     virtual bool    SetPosition( uint32_t numBytes );
     virtual bool    Read( uint32_t numBytes, void *buffer );
-    virtual uint32_t  NumBytesLeft( void );
-    virtual bool    IsValid( void ) { return ( fBuffer != nil ) ? true : false; }
+    virtual uint32_t  NumBytesLeft();
+    virtual bool    IsValid() { return ( fBuffer != nil ) ? true : false; }
 
 protected:
     uint32_t        fBufferSize;

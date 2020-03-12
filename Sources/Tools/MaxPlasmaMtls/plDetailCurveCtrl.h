@@ -95,8 +95,8 @@ class plDetailCurveCtrl
         float   fStartPercent, fEndPercent;
         float   fStartOpac, fEndOpac;
 
-        void    IInitDblBuffer( void );
-        void    IRefreshDblBuffer( void );
+        void    IInitDblBuffer();
+        void    IRefreshDblBuffer();
         void    IDrawCurve( HDC hDC, bool clampToInts, int cornerX, int cornerY, SIZE *bgndSize );
 
         float   IXlateDistToValue( float dist, bool clampToInts );
@@ -118,7 +118,7 @@ class plDetailCurveCtrl
 #endif
 
         static void IRegisterCtrl( HINSTANCE instance );
-        static void IUnregisterCtrl( void );
+        static void IUnregisterCtrl();
 
         static LRESULT CALLBACK IWndProc( HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam );
 

@@ -163,7 +163,7 @@ void pyDynamicText::ClearToColor( pyColor& color )
     }
 }
 
-void pyDynamicText::Flush( void )
+void pyDynamicText::Flush()
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -174,7 +174,7 @@ void pyDynamicText::Flush( void )
     }
 }
 
-void pyDynamicText::PurgeImage( void )
+void pyDynamicText::PurgeImage()
 {
     // create message
     plDynamicTextMsg* pMsg = ICreateDTMsg();
@@ -319,7 +319,7 @@ void pyDynamicText::DrawImageClipped( uint16_t x, uint16_t y, pyImage& image, ui
 }
 
 
-uint16_t  pyDynamicText::GetWidth( void )
+uint16_t  pyDynamicText::GetWidth()
 {
     // We better just pick our first key. Note that the ONLY time we should be getting multiple receivers
     // is if the export process ends up creating multiple copies of the material. Now, WHY you'd be wanting
@@ -334,7 +334,7 @@ uint16_t  pyDynamicText::GetWidth( void )
     return (uint16_t)dtMap->GetWidth();
 }
 
-uint16_t  pyDynamicText::GetHeight( void )
+uint16_t  pyDynamicText::GetHeight()
 {
     // We better just pick our first key. Note that the ONLY time we should be getting multiple receivers
     // is if the export process ends up creating multiple copies of the material. Now, WHY you'd be wanting

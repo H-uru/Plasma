@@ -186,7 +186,7 @@ plOGGCodec::~plOGGCodec()
     Close();
 }
 
-void    plOGGCodec::Close( void )
+void    plOGGCodec::Close()
 {
     // plNetClientApp::StaticDebugMsg("Ogg Close, t={f}, start", hsTimer::GetSeconds());
     free(fHeadBuf);
@@ -212,14 +212,14 @@ void    plOGGCodec::IError( const char *msg )
     Close();
 }
 
-plWAVHeader &plOGGCodec::GetHeader( void )
+plWAVHeader &plOGGCodec::GetHeader()
 {
     hsAssert( IsValid(), "GetHeader() called on an invalid OGG file" );
 
     return fFakeHeader;
 }
 
-float   plOGGCodec::GetLengthInSecs( void )
+float   plOGGCodec::GetLengthInSecs()
 {
     hsAssert( IsValid(), "GetLengthInSecs() called on an invalid OGG file" );
 
@@ -343,7 +343,7 @@ bool    plOGGCodec::Read( uint32_t numBytes, void *buffer )
     return true;
 }
 
-uint32_t  plOGGCodec::NumBytesLeft( void )
+uint32_t  plOGGCodec::NumBytesLeft()
 {
     if(!IsValid())
     {

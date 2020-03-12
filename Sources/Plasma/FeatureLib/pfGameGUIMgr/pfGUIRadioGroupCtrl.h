@@ -92,7 +92,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );
 
-        int32_t   GetValue( void ) { return fValue; }
+        int32_t   GetValue() { return fValue; }
         void    SetValue( int32_t value );
 
         virtual void    SetEnabled( bool e );
@@ -102,7 +102,7 @@ class pfGUIRadioGroupCtrl : public pfGUIControlMod
         virtual void    ClearControlsFlag( int flag );
 
         /// Export ONLY
-        void    ClearControlList( void );
+        void    ClearControlList();
         void    AddControl( pfGUICheckBoxCtrl *ctrl );
         void    SetDefaultValue( int32_t value ) { fDefaultValue = value; }
 };

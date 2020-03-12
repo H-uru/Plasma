@@ -763,7 +763,7 @@ void    plReadOnlySubStream::Open( hsStream *base, uint32_t offset, uint32_t len
     IFixPosition();
 }
 
-void    plReadOnlySubStream::IFixPosition( void )
+void    plReadOnlySubStream::IFixPosition()
 {
     fPosition = fBase->GetPosition() - fOffset;
 }

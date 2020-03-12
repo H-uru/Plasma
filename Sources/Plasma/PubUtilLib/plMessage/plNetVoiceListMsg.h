@@ -67,13 +67,13 @@ public:
                 plMessage(nil, nil, nil), fCmd( cmd )
                 { SetBCastFlag( kBCastByExactType ); }
     
-    ~plNetVoiceListMsg() { ; }
+    ~plNetVoiceListMsg() { }
 
     CLASSNAME_REGISTER( plNetVoiceListMsg );
     GETINTERFACE_ANY( plNetVoiceListMsg, plMessage );
 
-    uint32_t      GetCmd( void ) { return fCmd; }
-    hsTArray<uint32_t>* GetClientList( void ) { return &fClientIDs; };
+    uint32_t      GetCmd() { return fCmd; }
+    hsTArray<uint32_t>* GetClientList() { return &fClientIDs; };
     plKey GetRemovedKey() { return fRemoved; }
     void SetRemovedKey(plKey& k) { fRemoved = k; }
     virtual void Read(hsStream* s, hsResMgr* mgr); 

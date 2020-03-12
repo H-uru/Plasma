@@ -164,9 +164,9 @@ public:
     plLightMapComponent* GetLightMapComponent();
     // Starting at 0, returns an incrementing index for each maxNode. Useful for assigning
     // indices to sound objects attached to the node
-    uint32_t  GetNextSoundIdx( void );
+    uint32_t  GetNextSoundIdx();
 
-    bool    IsPhysical( void );
+    bool    IsPhysical();
 
     bool    CanMakeMesh( Object *obj, plErrorMsg *pErrMsg, plConvertSettings *settings );
     plDrawInterface* GetDrawInterface(); // Returns nil if there isn't a sceneobject and a drawinterface.

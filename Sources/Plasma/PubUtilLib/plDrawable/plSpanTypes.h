@@ -204,7 +204,7 @@ class plSpan
 
         virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
-        virtual void    Destroy( void );
+        virtual void    Destroy();
 
         void            SetMinDist(float minDist) { fMinDist = minDist; }
         void            SetMaxDist(float maxDist) { fMaxDist = maxDist; }
@@ -262,7 +262,7 @@ class plIcicle : public plVertexSpan
 
         virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
-        virtual void    Destroy( void );
+        virtual void    Destroy();
 };
 
 //// plParticleSpan Class Definition /////////////////////////////////////////
@@ -290,7 +290,7 @@ class plParticleSpan : public plIcicle
 
         virtual bool    CanMergeInto( plSpan* other );
         virtual void    MergeInto( plSpan* other );
-        virtual void    Destroy( void );
+        virtual void    Destroy();
 };
 
 //// plParticleSet Class Definition //////////////////////////////////////////

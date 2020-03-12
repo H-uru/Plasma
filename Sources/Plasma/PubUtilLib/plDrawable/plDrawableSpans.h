@@ -178,13 +178,13 @@ class plDrawableSpans : public plDrawable
         hsTArray<plGeometrySpan *>  fSourceSpans;
         bool                        fOptimized;
 
-        virtual void    IQuickSpaceTree( void ) const;
+        virtual void    IQuickSpaceTree() const;
 
         // Temp placeholder function. See code for comments.
         void    IUpdateMatrixPaletteBoundsHack( );
 
         void    ICleanupMatrices();
-        void    IRemoveGarbage( void );
+        void    IRemoveGarbage();
         void    IAdjustSortData( plGBufferTriangle *triList, uint32_t count, uint32_t threshhold, int32_t delta );
 
         // The following two functions return true if they create a new span, false if it's just an instance
@@ -210,15 +210,15 @@ class plDrawableSpans : public plDrawable
         void            IMakeSpanSortable( uint32_t index );
 
         /// Bit vector build thingies
-        virtual void            IBuildVectors( void );
+        virtual void            IBuildVectors();
 
         bool                    IBoundsInvalid(const hsBounds3Ext& bnd) const;
 
         /// EXPORT-ONLY FUNCTIONS
         // Packs the span indices
-        void    IPackSourceSpans( void );
+        void    IPackSourceSpans();
         // Sort the spans
-        void    ISortSourceSpans( void );
+        void    ISortSourceSpans();
         // Compare two spans for sorting
         short   ICompareSpans( plGeometrySpan *span1, plGeometrySpan *span2 );
         // Find a buffer group of the given format (returns its index into fGroups)
@@ -229,7 +229,7 @@ class plDrawableSpans : public plDrawable
 
         /// DYNAMIC FUNCTIONS
         plDISpanIndex   *IFindDIIndices( uint32_t &index );
-        void            IRebuildSpanArray( void );
+        void            IRebuildSpanArray();
         plParticleSpan  *ICreateParticleIcicle( hsGMaterial *material, plParticleSet *set );
 
         virtual void    SetKey(plKey k);
@@ -261,7 +261,7 @@ class plDrawableSpans : public plDrawable
         virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, bool on );
         virtual uint32_t GetSubType( uint32_t index ) const; // returns or of all spans with this index (index==-1 is all spans).
 
-        virtual uint32_t  GetType( void ) const { return fType; }
+        virtual uint32_t  GetType() const { return fType; }
         virtual void    SetType( uint32_t type ) { fType = type; }
 
         virtual void SetRenderLevel(const plRenderLevel& l);
@@ -281,8 +281,8 @@ class plDrawableSpans : public plDrawable
 
         virtual const plSpan                *GetSpan( uint32_t index ) const { return fSpans[ index ]; }
         virtual const plSpan                *GetSpan( uint32_t diIndex, uint32_t index ) const { return fSpans[ (*fDIIndices[ diIndex ])[ index ] ]; }
-        virtual uint32_t                     GetNumSpans( void ) const { return fSpans.GetCount(); }
-        virtual const hsTArray<plSpan *>    &GetSpanArray( void ) const { return fSpans; }
+        virtual uint32_t                     GetNumSpans() const { return fSpans.GetCount(); }
+        virtual const hsTArray<plSpan *>    &GetSpanArray() const { return fSpans; }
 
         hsMatrix44* GetMatrixPalette(int baseMatrix) const { return const_cast<hsMatrix44*>(&fLocalToWorlds[baseMatrix]); }
         const hsMatrix44& GetPaletteMatrix(int i) const { return fLocalToWorlds[i]; }
@@ -313,20 +313,20 @@ class plDrawableSpans : public plDrawable
 
         // Lookup a material in the material array
         hsGMaterial     *GetMaterial( uint32_t index ) const { return ( ( index == (uint32_t)-1 ) ? nil : fMaterials[ index ] ); }
-        uint32_t          GetNumMaterials( void ) const { return fMaterials.GetCount(); }
+        uint32_t          GetNumMaterials() const { return fMaterials.GetCount(); }
 
         // Convert intermediate data into export/run-time-ready data
-        virtual void    Optimize( void );
+        virtual void    Optimize();
         // Called by the sceneNode to determine if we match the criteria
         virtual bool    DoIMatch( const plDrawableCriteria& crit );
         // To set the criteria that this ice fits
         void            SetCriteria( const plDrawableCriteria& crit );
 
         // Get a bitVector of the spans that are particle spans
-        virtual hsBitVector const   &GetParticleSpanVector( void ) const;
+        virtual hsBitVector const   &GetParticleSpanVector() const;
 
         // Get a bitVector of the spans that are blending (i.e. numMatrices > 0)
-        virtual hsBitVector const   &GetBlendingSpanVector( void ) const;
+        virtual hsBitVector const   &GetBlendingSpanVector() const;
 
         // Set a single bit in the bitVector of spans that are blending
         virtual void    SetBlendingSpanVectorBit( uint32_t bitNumber, bool on );
@@ -375,7 +375,7 @@ class plDrawableSpans : public plDrawable
         void            SortSpan( uint32_t index, plPipeline *pipe );
         void            SortVisibleSpans(const hsTArray<int16_t>& visList, plPipeline* pipe);
         void            SortVisibleSpansPartial(const hsTArray<int16_t>& visList, plPipeline* pipe);
-        void            CleanUpGarbage( void ) { IRemoveGarbage(); }
+        void            CleanUpGarbage() { IRemoveGarbage(); }
 
         /// Funky particle system functions
         virtual uint32_t  CreateParticleSystem( uint32_t maxNumEmitters, uint32_t maxNumParticles, hsGMaterial *material );

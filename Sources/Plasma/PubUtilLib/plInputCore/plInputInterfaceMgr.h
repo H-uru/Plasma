@@ -123,12 +123,12 @@ class plInputInterfaceMgr : public plSingleModifier
         virtual void    Read( hsStream* s, hsResMgr* mgr );
         virtual void    Write( hsStream* s, hsResMgr* mgr );
 
-        void    Init( void );
-        void    Shutdown( void );
+        void    Init();
+        void    Shutdown();
 
-        void        InitDefaultKeyMap( void );
-        void        WriteKeyMap( void );
-        void        RefreshInterfaceKeyMaps( void );
+        void        InitDefaultKeyMap();
+        void        WriteKeyMap();
+        void        RefreshInterfaceKeyMaps();
 
         void    SetCurrentFocus(plInputInterface *focus);
         void    ReleaseCurrentFocus(plInputInterface *focus);
@@ -148,7 +148,7 @@ class plInputInterfaceMgr : public plSingleModifier
 
         void    ClearAllKeyMaps();
         void    ResetClickableState();
-        static plInputInterfaceMgr  *GetInstance( void ) { return fInstance; }
+        static plInputInterfaceMgr  *GetInstance() { return fInstance; }
 };
 
 //// plCtrlCmd ///////////////////////////////////////////////////////////////
@@ -161,7 +161,7 @@ class plCtrlCmd
         plInputInterface    *fSource;
 
     public:
-        plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) {;}
+        plCtrlCmd( plInputInterface *source ) : fCmd(nil),fPct(1.0f), fSource(source) { }
         ~plCtrlCmd() { delete [] fCmd; }
 
         const char* GetCmdString()          { return fCmd; }
@@ -177,7 +177,7 @@ class plCtrlCmd
         void Read( hsStream* s, hsResMgr* mgr );
         void Write( hsStream* s, hsResMgr* mgr );
 
-        plInputInterface    *GetSource( void ) const { return fSource; }
+        plInputInterface    *GetSource() const { return fSource; }
 };
 
 //// Tiny Virtual Class For The Default Key Processor ////////////////////////

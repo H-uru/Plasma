@@ -103,7 +103,7 @@ class plPlasmaMAXLayer : public Texmap
 
 
         void    IAddConversionTarget( plLayerInterface *target );
-        void    IClearConversionTargets( void );
+        void    IClearConversionTargets();
 
     public:
 
@@ -118,7 +118,7 @@ class plPlasmaMAXLayer : public Texmap
 
         // Some layers must be unique for each node they're applied to (i.e. can't be shared among nodes).
         // This returns true if the layer must be unique.
-        virtual bool MustBeUnique( void ) { return false; }
+        virtual bool MustBeUnique() { return false; }
 
         // These let the material make an informed decision on what to do with
         // the color and alpha values coming out of an EvalColor call. Something
@@ -130,7 +130,7 @@ class plPlasmaMAXLayer : public Texmap
 
 
         // Return the number of conversion targets (only valid after the MakeMesh pass)
-        int     GetNumConversionTargets( void );
+        int     GetNumConversionTargets();
 
         // Get an indexed conversion target
         plLayerInterface    *GetConversionTarget( int index );
@@ -145,7 +145,7 @@ class plPlasmaMAXLayer : public Texmap
         // Pure virtual accessors for the various bitmap related elements
         virtual Bitmap *GetMaxBitmap(int index = 0) = 0;
         virtual PBBitmap *GetPBBitmap( int index = 0 ) = 0;
-        virtual int     GetNumBitmaps( void ) = 0;
+        virtual int     GetNumBitmaps() = 0;
 
         // Makes sure the textures are the latest versions (including getting
         // the latest version from AssetMan)

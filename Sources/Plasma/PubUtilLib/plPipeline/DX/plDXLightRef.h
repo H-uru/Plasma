@@ -76,7 +76,7 @@ class plDXLightRef : public plDXDeviceRef
         IDirect3DDevice9    *fD3DDevice;
 
         void            Link( plDXLightRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-        plDXLightRef    *GetNext( void ) { return (plDXLightRef *)fNext; }
+        plDXLightRef    *GetNext() { return (plDXLightRef *)fNext; }
 
         plDXLightRef()
         {
@@ -88,7 +88,7 @@ class plDXLightRef : public plDXDeviceRef
         }
 
         virtual ~plDXLightRef();
-        void    Release( void );
+        void    Release();
 
         void    UpdateD3DInfo( IDirect3DDevice9 *dev, plDXLightSettings *settings );
 };

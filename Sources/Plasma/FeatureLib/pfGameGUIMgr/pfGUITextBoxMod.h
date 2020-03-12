@@ -65,8 +65,8 @@ class pfGUITextBoxMod : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual void    IUpdate( void );
-        virtual void    IPostSetUpDynTextMap( void );
+        virtual void    IUpdate();
+        virtual void    IPostSetUpDynTextMap();
 
     public:
 

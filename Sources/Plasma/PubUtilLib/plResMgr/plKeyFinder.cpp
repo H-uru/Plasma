@@ -132,7 +132,7 @@ protected:
     ST::string  fAgeName;
 
 public:
-    plKey   GetFoundKey( void ) const { return fFoundKey; }
+    plKey   GetFoundKey() const { return fFoundKey; }
 
     plKeyFinderIter( uint16_t classType, const ST::string &obName, bool substr )
             : fFoundKey( nil ), fClassType( classType ), fObjName( obName ), fSubstr( substr ) { }

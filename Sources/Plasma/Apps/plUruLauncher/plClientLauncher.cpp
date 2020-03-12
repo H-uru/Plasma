@@ -311,7 +311,7 @@ void plClientLauncher::PatchClient()
     patcher->Start();
 }
 
-bool plClientLauncher::CompleteSelfPatch(std::function<void(void)> waitProc) const
+bool plClientLauncher::CompleteSelfPatch(std::function<void()> waitProc) const
 {
     if (hsCheckBits(fFlags, kHaveSelfPatched))
         return false;

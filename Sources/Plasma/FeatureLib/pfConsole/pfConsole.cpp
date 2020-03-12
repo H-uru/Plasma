@@ -137,9 +137,9 @@ class pfConsoleInputInterface : public plInputInterface
             // RestoreDefaultKeyMappings()!!!!
         }
 
-        virtual uint32_t  GetPriorityLevel( void ) const          { return kConsolePriority; }
-        virtual uint32_t  GetCurrentCursorID( void ) const        { return kCursorHidden; }
-        virtual bool    HasInterestingCursorID( void ) const    { return false; }
+        virtual uint32_t  GetPriorityLevel() const          { return kConsolePriority; }
+        virtual uint32_t  GetCurrentCursorID() const        { return kCursorHidden; }
+        virtual bool    HasInterestingCursorID() const    { return false; }
 
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
@@ -156,11 +156,11 @@ class pfConsoleInputInterface : public plInputInterface
             return false;
         }
 
-        virtual void    RefreshKeyMap( void )
+        virtual void    RefreshKeyMap()
         {
         }
 
-        virtual void    RestoreDefaultKeyMappings( void )
+        virtual void    RestoreDefaultKeyMappings()
         {
             if( fControlMap != nil )
             {
@@ -791,7 +791,7 @@ void    pfConsole::IAddParagraph( const char *s, short margin )
 
 //// IClear //////////////////////////////////////////////////////////////////
 
-void    pfConsole::IClear( void )
+void    pfConsole::IClear()
 {
     memset( fDisplayBuffer, 0, kMaxCharsWide * fNumDisplayLines );
 }
@@ -979,7 +979,7 @@ void    pfConsole::Draw( plPipeline *p )
 
 //// IUpdateTooltip //////////////////////////////////////////////////////////
 
-void    pfConsole::IUpdateTooltip( void )
+void    pfConsole::IUpdateTooltip()
 {
     char    tmpStr[ kWorkingLineSize ];
     char    *c;
@@ -997,7 +997,7 @@ void    pfConsole::IUpdateTooltip( void )
 
 //// IPrintSomeHelp //////////////////////////////////////////////////////////
 
-void    pfConsole::IPrintSomeHelp( void )
+void    pfConsole::IPrintSomeHelp()
 {
     char    msg1[] = "The console contains commands arranged under groups and subgroups. \
 To use a command, you type the group name plus the command, such as 'Console.Clear' or \

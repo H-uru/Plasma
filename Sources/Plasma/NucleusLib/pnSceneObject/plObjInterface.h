@@ -112,7 +112,7 @@ public:
     virtual void Read(hsStream* stream, hsResMgr* mgr);
     virtual void Write(hsStream* stream, hsResMgr* mgr);
 
-    virtual void    ReleaseData( void ) { }
+    virtual void    ReleaseData() { }
 };
 
 

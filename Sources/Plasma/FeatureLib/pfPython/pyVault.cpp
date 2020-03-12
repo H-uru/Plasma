@@ -189,7 +189,7 @@ PyObject* pyVault::GetAgeJournalsFolder()
 
 // finds the stats for the players vault
 // ...such as how many pictures, notes and markers they have
-PyObject* pyVault::GetKIUsage(void)
+PyObject* pyVault::GetKIUsage()
 {
     uint32_t pictures = 0;
     uint32_t notes = 0;

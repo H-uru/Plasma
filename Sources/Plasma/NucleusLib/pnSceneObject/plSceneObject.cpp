@@ -178,7 +178,7 @@ void plSceneObject::Write(hsStream* stream, hsResMgr* mgr)
 //  Called by SceneViewer to release the data for this sceneObject (really
 //  just a switchboard).
 
-void    plSceneObject::ReleaseData( void )
+void    plSceneObject::ReleaseData()
 {
     if( fDrawInterface )
         fDrawInterface->ReleaseData();

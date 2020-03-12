@@ -151,14 +151,14 @@ plPassMtlBase::~plPassMtlBase()
     }
 }
 
-void    plPassMtlBase::Reset( void ) 
+void    plPassMtlBase::Reset()
 {
     fIValid.SetEmpty();
 }
 
 //// Stealth Accessors ///////////////////////////////////////////////////////
 
-int     plPassMtlBase::GetNumStealths( void )
+int     plPassMtlBase::GetNumStealths()
 {
     return IGetNumStealths( true );
 }
@@ -265,7 +265,7 @@ void    plPassMtlBase::UnregisterChangeCallback( plMtlChangeCallback *callback )
 //  Updates the list of stealth nodes in the anim paramBlock to match our
 //  list of anim segments.
 
-void    plPassMtlBase::IUpdateAnimNodes( void )
+void    plPassMtlBase::IUpdateAnimNodes()
 {
     // Our beautiful hack, to make sure we don't update until we actually are loaded
     if( fLoading )
@@ -327,7 +327,7 @@ void    plPassMtlBase::IUpdateAnimNodes( void )
 //// NameChanged /////////////////////////////////////////////////////////////
 //  Notify from NTWatcher so we can update the names of our stealth nodes
 
-void    plPassMtlBase::NameChanged( void )
+void    plPassMtlBase::NameChanged()
 {
     for( int idx = 0; idx < fAnimPB->Count( (ParamID)kPBAnimStealthNodes ); idx++ )
     {
@@ -340,7 +340,7 @@ void    plPassMtlBase::NameChanged( void )
 //// NoteTrackAdded/Removed //////////////////////////////////////////////////
 //  Notifies from NTWatcher so we can update our list of stealths
 
-void    plPassMtlBase::NoteTrackAdded( void )
+void    plPassMtlBase::NoteTrackAdded()
 {
     int     i;
 
@@ -362,7 +362,7 @@ void    plPassMtlBase::NoteTrackAdded( void )
     IUpdateAnimNodes();
 }
 
-void    plPassMtlBase::NoteTrackRemoved( void )
+void    plPassMtlBase::NoteTrackRemoved()
 {
     int         i;
     hsBitVector stillThere;
@@ -496,7 +496,7 @@ RefResult plPassMtlBase::NotifyRefChanged( Interval changeInt, RefTargetHandle h
 //        callbacks don't work because they're called right after our object
 //        is loaded but not necessarily before the notetracks are attached)
 
-void    plPassMtlBase::PostLoadAnimPBFixup( void )
+void    plPassMtlBase::PostLoadAnimPBFixup()
 {
     SetLoadingFlag( false );
 

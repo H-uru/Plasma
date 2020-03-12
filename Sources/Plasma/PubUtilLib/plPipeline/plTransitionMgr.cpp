@@ -87,7 +87,7 @@ plTransitionMgr::plTransitionMgr()
     fPlaying = false;
 }
 
-void    plTransitionMgr::Init( void )
+void    plTransitionMgr::Init()
 {
     ICreatePlate();
     plgDispatch::Dispatch()->RegisterForExactType( plTransitionMsg::Index(), GetKey() );
@@ -114,7 +114,7 @@ plTransitionMgr::~plTransitionMgr()
 
 //// ICreatePlate ////////////////////////////////////////////////////////////
 
-void    plTransitionMgr::ICreatePlate( void )
+void    plTransitionMgr::ICreatePlate()
 {
     int     x, y;
 

@@ -65,7 +65,7 @@ public:
         const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>()) { return IWrite(sourceData, outStream, textFields); }
     bool WriteToFile(const plFileName& fileName, plMipmap* sourceData, const std::multimap<ST::string, ST::string>& textFields = std::multimap<ST::string, ST::string>());
 
-    static plPNG& Instance(void);
+    static plPNG& Instance();
 };
 
 #endif // _plPNG_h

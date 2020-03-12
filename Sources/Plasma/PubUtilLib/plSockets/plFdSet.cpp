@@ -47,7 +47,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <sys/time.h>
 #endif
 
-plFdSet::plFdSet(void)
+plFdSet::plFdSet()
 {
     ZeroFds();
 }
@@ -164,7 +164,7 @@ int plFdSet::WaitForError(bool shouldZeroFds, unsigned long timeoutMillis)
 }
 
 
-void plFdSet::ZeroFds(void)
+void plFdSet::ZeroFds()
 {
     fMaxFd = 0;
     FD_ZERO(&fFds);

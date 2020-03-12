@@ -819,7 +819,7 @@ hsPoint3*  hsMatrix44::MapPoints(long count, hsPoint3 points[]) const
     return points;
 }
 
-bool hsMatrix44::IsIdentity(void)
+bool hsMatrix44::IsIdentity()
 {
     bool retVal = true;
     int i, j;

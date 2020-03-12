@@ -455,7 +455,7 @@ bool plSceneNode::MsgReceive(plMessage* msg)
 //// ICleanUp ////////////////////////////////////////////////////////////////
 //  Export only: Clean up the scene node (i.e. make sure drawables optimize)
 
-void    plSceneNode::ICleanUp( void )
+void    plSceneNode::ICleanUp()
 {
     /// Go find drawables to delete
     for (auto draw : fDrawPool)
@@ -497,7 +497,7 @@ plDrawable  *plSceneNode::GetMatchingDrawable( const plDrawableCriteria& crit )
 //  Loops through all the drawables and calls Optimize on each one. For the
 //  export side, to be called right before writing the drawables to disk.
 
-void    plSceneNode::OptimizeDrawables( void )
+void    plSceneNode::OptimizeDrawables()
 {
     for (auto draw : fDrawPool)
         draw->Optimize();

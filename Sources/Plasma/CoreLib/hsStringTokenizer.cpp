@@ -122,7 +122,7 @@ bool  hsStringTokenizer::Next( char *token, uint32_t maxTokLen )
 }
 
 // Restores the last character replaced to generate a terminator
-void    hsStringTokenizer::RestoreLastTerminator( void )
+void    hsStringTokenizer::RestoreLastTerminator()
 {
     if( fLastTerminator != nil )
     {
@@ -247,7 +247,7 @@ bool  hsWStringTokenizer::Next( wchar_t *token, uint32_t maxTokLen )
 }
 
 // Restores the last character replaced to generate a terminator
-void    hsWStringTokenizer::RestoreLastTerminator( void )
+void    hsWStringTokenizer::RestoreLastTerminator()
 {
     if( fLastTerminator != nil )
     {

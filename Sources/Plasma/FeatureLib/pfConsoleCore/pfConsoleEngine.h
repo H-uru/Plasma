@@ -98,10 +98,10 @@ class pfConsoleEngine
         bool    ExecuteFile( const plFileName &fileName );
 
         // Get the last reported error
-        const char  *GetErrorMsg( void ) { return fErrorMsg; }
+        const char  *GetErrorMsg() { return fErrorMsg; }
 
         // Get the line for which the last reported error was for
-        const char  *GetLastErrorLine( void ) { return fLastErrorLine; }
+        const char  *GetLastErrorLine() { return fLastErrorLine; }
 
         // Does command completion on a partially-complete console line
         bool        FindPartialCmd( char *line, bool findAgain = false, bool perserveParams = false );

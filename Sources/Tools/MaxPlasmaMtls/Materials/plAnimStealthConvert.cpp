@@ -124,7 +124,7 @@ static int GetMatAnimModKey(Mtl* mtl, plMaxNodeBase* node, const ST::string& seg
     return retVal;
 }
 
-SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
+SegmentSpec *plAnimStealthNode::IGetSegmentSpec() const
 {
     if( fCachedSegMap != nil )
     {
@@ -143,7 +143,7 @@ SegmentSpec *plAnimStealthNode::IGetSegmentSpec( void ) const
 }
 
 
-float    plAnimStealthNode::GetSegStart( void ) const
+float    plAnimStealthNode::GetSegStart() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
     if( spec != nil )
@@ -152,7 +152,7 @@ float    plAnimStealthNode::GetSegStart( void ) const
     return 0.f;
 }
 
-float    plAnimStealthNode::GetSegEnd( void ) const
+float    plAnimStealthNode::GetSegEnd() const
 {
     SegmentSpec *spec = IGetSegmentSpec();
     if( spec != nil )

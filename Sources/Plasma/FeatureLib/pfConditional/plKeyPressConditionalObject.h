@@ -56,7 +56,7 @@ protected:
 public:
     
     plKeyPressConditionalObject();
-    ~plKeyPressConditionalObject(){;}
+    ~plKeyPressConditionalObject() { }
     
     CLASSNAME_REGISTER( plKeyPressConditionalObject );
     GETINTERFACE_ANY( plKeyPressConditionalObject, plConditionalObject );
@@ -66,7 +66,7 @@ public:
 
     bool MsgReceive(plMessage* msg);
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
     void SetKeyEvent(const plKeyDef k ) { fKeyEvent = k; }
 

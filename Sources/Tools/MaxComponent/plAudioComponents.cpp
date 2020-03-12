@@ -269,7 +269,7 @@ RefTargetHandle plBaseSoundEmitterComponent::Clone( RemapDir &remap )
     return obj;
 }
 
-void    plBaseSoundEmitterComponent::IConvertOldVolume( void )
+void    plBaseSoundEmitterComponent::IConvertOldVolume()
 {
     int oldVol = fCompPB->GetInt( (ParamID)kOldSoundVolumeSlider, 0 );
     if( oldVol != 4999 )
@@ -292,7 +292,7 @@ void    plBaseSoundEmitterComponent::IConvertOldVolume( void )
     }
 }
 
-float   plBaseSoundEmitterComponent::IGetDigitalVolume( void ) const
+float   plBaseSoundEmitterComponent::IGetDigitalVolume() const
 {
     return (float)pow( 10.f, fCompPB->GetFloat( (ParamID)kSoundVolumeSlider, 0 ) / 20.f );
 }
@@ -390,7 +390,7 @@ jvUniqueId plBaseSoundEmitterComponent::GetSoundAssetID( plBaseSoundEmitterCompo
 }
 #endif
 
-void    plBaseSoundEmitterComponent::IUpdateAssets( void )
+void    plBaseSoundEmitterComponent::IUpdateAssets()
 {
 #ifdef MAXASS_AVAILABLE
     if( fAssetsUpdated )
@@ -569,7 +569,7 @@ void    plBaseSoundEmitterComponent::IGrabSoftRegion( plSound *sound, plErrorMsg
     }
 }
 
-uint32_t  plBaseSoundEmitterComponent::ICalcSourceBufferFlags( void ) const
+uint32_t  plBaseSoundEmitterComponent::ICalcSourceBufferFlags() const
 {
     uint32_t bufferFlags = 0;
 
@@ -736,7 +736,7 @@ plSoundBuffer   *plBaseSoundEmitterComponent::IProcessSourceBuffer( plMaxNode *m
     return srcBuffer;
 }
 
-void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
+void    plBaseSoundEmitterComponent::UpdateSoundFileSelection()
 {
     plSoundBuffer   *baseBuffer = nil;
 
@@ -779,7 +779,7 @@ void    plBaseSoundEmitterComponent::UpdateSoundFileSelection( void )
         delete baseBuffer;
 }
 
-float    plBaseSoundEmitterComponent::GetSoundVolume( void ) const
+float    plBaseSoundEmitterComponent::GetSoundVolume() const
 {
     return IGetDigitalVolume();
 }
@@ -1402,7 +1402,7 @@ class plEAXPropsDlgProc : public plSingleCompSelProc
 
 public:
 
-    void    FlushSwappedPBs( void )
+    void    FlushSwappedPBs()
     {
         if( fLastBlockSwapped != nil )
             ISwapOutOcclusion( fLastBlockSwapped );
@@ -1765,7 +1765,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual bool    IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    virtual bool    IsLocalOnly() const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 
     virtual bool    ConvertGrouped( plMaxNode *baseNode, hsTArray<plBaseSoundEmitterComponent *> &groupArray, plErrorMsg *pErrMsg );
@@ -1774,7 +1774,7 @@ protected:
 
     bool IValidate(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual bool    IAllowStereoFiles( void ) const { return false; }
+    virtual bool    IAllowStereoFiles() const { return false; }
 
     void    ISetParameters( plWin32Sound *destSound, plErrorMsg *pErrMsg );
 
@@ -2376,7 +2376,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual bool    IsLocalOnly( void ) const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
+    virtual bool    IsLocalOnly() const { if( fCompPB->GetInt( (ParamID)kSndIsLocalOnly ) ) return true; else return false; }
 
 protected:
     virtual uint32_t ICalcSourceBufferFlags() const;
@@ -2551,7 +2551,7 @@ public:
     bool PreConvert(plMaxNode *node, plErrorMsg *pErrMsg);
     bool Convert(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    virtual void    UpdateSoundFileSelection( void ) { ; }
+    virtual void    UpdateSoundFileSelection() { }
 
 protected:
 
@@ -2559,7 +2559,7 @@ protected:
 
     virtual bool    IGetCategoryList( char **&catList, int *&catKonstantList );
 
-    virtual bool    IHasWaveformProps( void ) const { return false; }
+    virtual bool    IHasWaveformProps() const { return false; }
 };
 
 //Max desc stuff necessary below.
@@ -2718,7 +2718,7 @@ public:
     bool PreConvert(plMaxNode *pNode, plErrorMsg *errMsg);
     bool Convert(plMaxNode *node, plErrorMsg *errMsg);
 
-    const char *GetCustFileName( void ) const;
+    const char *GetCustFileName() const;
     void        SetCustFile( const char *path );
 };
 
@@ -2993,7 +2993,7 @@ bool plEAXListenerComponent::SetupProperties(plMaxNode *pNode,  plErrorMsg *errM
     return true;
 }
 
-const char *plEAXListenerComponent::GetCustFileName( void ) const
+const char *plEAXListenerComponent::GetCustFileName() const
 {
     return (const char *)fCompPB->GetStr( (ParamID)kRefCustFile );
 }

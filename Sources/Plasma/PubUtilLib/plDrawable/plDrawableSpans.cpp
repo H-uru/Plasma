@@ -1441,7 +1441,7 @@ void    plDrawableSpans::SetCriteria( const plDrawableCriteria& crit )
 //  optimized version may be plugged into the Optimize function at a later
 //  date if this one doesn't perform enough (it does so far).
 
-void    plDrawableSpans::IQuickSpaceTree( void ) const
+void    plDrawableSpans::IQuickSpaceTree() const
 {
     int     i;
 
@@ -2830,7 +2830,7 @@ void    plDrawableSpans::RemoveDISpans( uint32_t index )
 
 //// IRebuildSpanArray ///////////////////////////////////////////////////////
 
-void    plDrawableSpans::IRebuildSpanArray( void )
+void    plDrawableSpans::IRebuildSpanArray()
 {
     uint32_t      j, i;
     plIcicle    *icicle = nil;
@@ -2920,7 +2920,7 @@ void    plDrawableSpans::ICleanupMatrices()
 //// IRemoveGarbage //////////////////////////////////////////////////////////
 //  Cleans out all the unused spans. Oh, joy.
 
-void    plDrawableSpans::IRemoveGarbage( void )
+void    plDrawableSpans::IRemoveGarbage()
 {
     int     groupIdx, ibIdx, i, j, k, count, offset;
 
@@ -3358,7 +3358,7 @@ uint8_t   plDrawableSpans::IFindBufferGroup(uint8_t vtxFormat, uint32_t numVerts
 //// GetParticleSpanVector ///////////////////////////////////////////////////
 //  Get a bitVector of the spans that are particle spans
 
-hsBitVector const   &plDrawableSpans::GetParticleSpanVector( void ) const
+hsBitVector const   &plDrawableSpans::GetParticleSpanVector() const
 {
     return fParticleSpanVector;
 }
@@ -3366,7 +3366,7 @@ hsBitVector const   &plDrawableSpans::GetParticleSpanVector( void ) const
 //// GetBlendingSpanVector ///////////////////////////////////////////////////
 //  Get a bitVector of the spans that are blending (i.e. numMatrices > 0)
 
-hsBitVector const   &plDrawableSpans::GetBlendingSpanVector( void ) const
+hsBitVector const   &plDrawableSpans::GetBlendingSpanVector() const
 {
     /// See the plRenderMsg handler for why we do this
     return fFakeBlendingSpanVector;
@@ -3383,7 +3383,7 @@ void    plDrawableSpans::SetBlendingSpanVectorBit( uint32_t bitNumber, bool on )
 
 //// IBuildVectors ///////////////////////////////////////////////////////////
 
-void    plDrawableSpans::IBuildVectors( void )
+void    plDrawableSpans::IBuildVectors()
 {
     int     i;
     bool    needRenderMsg = false;

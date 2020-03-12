@@ -71,7 +71,7 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
 
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
-        virtual void    IUpdate( void );
+        virtual void    IUpdate();
 
     public:
 
@@ -84,7 +84,7 @@ class pfGUIUpDownPairMod : public pfGUIValueCtrl
 
         virtual bool    MsgReceive( plMessage* pMsg );
 
-        virtual void    Update( void );
+        virtual void    Update();
 
         virtual void Read( hsStream* s, hsResMgr* mgr );
         virtual void Write( hsStream* s, hsResMgr* mgr );

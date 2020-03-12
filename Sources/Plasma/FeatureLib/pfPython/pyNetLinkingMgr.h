@@ -76,7 +76,7 @@ public:
 
 #ifndef BUILDING_PYPLASMA
     // enable/disable linking
-    bool IsEnabled( void ) const;
+    bool IsEnabled() const;
     void SetEnabled( bool b ) const;
 
     // Link to a public instance. PLS will load balance.

@@ -66,7 +66,7 @@ protected:
     IDirect3DStateBlock9 *fTextStateBlock;
 
     virtual void    ICreateTexture( uint16_t *data );
-    virtual void    IInitStateBlocks( void );
+    virtual void    IInitStateBlocks();
     virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array );
     virtual void    IDrawLines( uint32_t count, plFontVertex *array );
 
@@ -77,10 +77,10 @@ public:
     static  void CreateShared(IDirect3DDevice9* device);
     static  void ReleaseShared(IDirect3DDevice9* device);
 
-    virtual void    FlushDraws( void );
-    virtual void    SaveStates( void );
-    virtual void    RestoreStates( void );
-    virtual void    DestroyObjects( void );
+    virtual void    FlushDraws();
+    virtual void    SaveStates();
+    virtual void    RestoreStates();
+    virtual void    DestroyObjects();
 
     static const DWORD kFVF;
 };

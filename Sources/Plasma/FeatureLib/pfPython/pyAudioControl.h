@@ -157,7 +157,7 @@ public:
     // Set the sample rate for recording
     virtual void RecordSampleRate( int32_t sample_rate );
 
-    virtual uint8_t GetPriorityCutoff( void );
+    virtual uint8_t GetPriorityCutoff();
     virtual void  SetPriorityCutoff( uint8_t cut );
 
     // does the device specified support EAX

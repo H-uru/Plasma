@@ -67,7 +67,7 @@ void plGenericType::CopyFrom(const plGenericType& c)
 
 //// Conversion Functions ////////////////////////////////////////////////////
 
-int32_t plGenericType::IToInt( void ) const
+int32_t plGenericType::IToInt() const
 {
     hsAssert( fType == kInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
@@ -79,7 +79,7 @@ int32_t plGenericType::IToInt( void ) const
     return fI;
 }
 
-uint32_t plGenericType::IToUInt( void ) const
+uint32_t plGenericType::IToUInt() const
 {
     hsAssert( fType == kUInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
@@ -91,7 +91,7 @@ uint32_t plGenericType::IToUInt( void ) const
     return fU;
 }
 
-double plGenericType::IToDouble( void ) const
+double plGenericType::IToDouble() const
 {
     hsAssert( fType == kDouble || fType == kAny, "Trying to use a non-float parameter as a Double!" );
 
@@ -103,7 +103,7 @@ double plGenericType::IToDouble( void ) const
     return fD;
 }
 
-float plGenericType::IToFloat( void ) const
+float plGenericType::IToFloat() const
 {
     hsAssert( fType == kFloat || fType == kAny, "Trying to use a non-float parameter as a float!" );
 
@@ -115,7 +115,7 @@ float plGenericType::IToFloat( void ) const
     return fF;
 }
 
-bool plGenericType::IToBool( void ) const
+bool plGenericType::IToBool() const
 {
     hsAssert( fType == kBool || fType == kAny, "Trying to use a non-bool parameter as a bool!" );
 
@@ -127,14 +127,14 @@ bool plGenericType::IToBool( void ) const
     return fB;
 }
 
-ST::string plGenericType::IToString( void ) const
+ST::string plGenericType::IToString() const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 
     return fS;
 }
 
-char plGenericType::IToChar( void ) const
+char plGenericType::IToChar() const
 {
     hsAssert( fType == kChar || fType == kAny, "Trying to use a non-char parameter as a char!" );
 

@@ -83,9 +83,9 @@ class plJPEG
         // Range is 0 (worst) to 100 (best)
         void    SetWriteQuality( uint8_t q ) { fWriteQuality = q; }
 
-        const char  *GetLastError( void );
+        const char  *GetLastError();
 
-        static plJPEG   &Instance( void );
+        static plJPEG   &Instance();
 };
 
 #endif // _plJPEG_h

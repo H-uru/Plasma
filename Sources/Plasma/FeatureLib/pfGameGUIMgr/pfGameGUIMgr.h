@@ -171,9 +171,9 @@ class pfGameGUIMgr : public hsKeyedObject
         bool    IHandleKeyEvt( EventType event, plKeyDef key, uint8_t modifiers );
         bool    IHandleKeyPress( wchar_t key, uint8_t modifiers );
 
-        bool    IModalBlocking( void );
+        bool    IModalBlocking();
 
-        pfGUIDialogMod  *IGetTopModal( void ) const;
+        pfGUIDialogMod  *IGetTopModal() const;
 
     public:
 
@@ -191,7 +191,7 @@ class pfGameGUIMgr : public hsKeyedObject
 
         void        Draw( plPipeline *p );
 
-        bool        Init( void );
+        bool        Init();
 
         virtual bool    MsgReceive( plMessage* pMsg );
 
@@ -217,20 +217,20 @@ class pfGameGUIMgr : public hsKeyedObject
 
         pfGUIPopUpMenu  *FindPopUpMenu( const char *name );
 
-        std::vector<plPostEffectMod*> GetDlgRenderMods( void ) const;
-        bool    IsModalBlocking( void ) {return IModalBlocking();}
+        std::vector<plPostEffectMod*> GetDlgRenderMods() const;
+        bool    IsModalBlocking() {return IModalBlocking();}
 
         // Tag ID stuff
         pfGUIDialogMod  *GetDialogFromTag( uint32_t tagID );
         pfGUIControlMod *GetControlFromTag( pfGUIDialogMod *dlg, uint32_t tagID );
 
-        static uint32_t       GetNumTags( void );
+        static uint32_t       GetNumTags();
         static pfGUITag     *GetTag( uint32_t tagIndex );
-        static uint32_t       GetHighestTag( void );
+        static uint32_t       GetHighestTag();
         void SetAspectRatio(float aspectratio);
         float GetAspectRatio() { return fAspectRatio; }
  
-        static pfGameGUIMgr *GetInstance( void ) { return fInstance; }
+        static pfGameGUIMgr *GetInstance() { return fInstance; }
 };
 
 #endif //_pfGameGUIMgr_h

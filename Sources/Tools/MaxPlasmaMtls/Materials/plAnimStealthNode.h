@@ -84,7 +84,7 @@ protected:
     bool            fPreppedForConvert;
     SegmentMap      *fCachedSegMap;
 
-    SegmentSpec     *IGetSegmentSpec( void ) const;
+    SegmentSpec     *IGetSegmentSpec() const;
 
 public:
 
@@ -120,8 +120,8 @@ public:
     virtual ~plAnimStealthNode();
     void DeleteThis() { delete this; }
 
-    INode           *GetINode( void );
-    plPassMtlBase   *GetParentMtl( void );
+    INode           *GetINode();
+    plPassMtlBase   *GetParentMtl();
     void            SetParentMtl( plPassMtlBase *parent );
     void            SetNodeName( const char *parentName );
 
@@ -129,16 +129,16 @@ public:
     bool    CreateAndEmbedDlg( IParamMap2 *parentMap, IMtlParams *parentParams, HWND frameCtrl = nil );
 
     // Release said dialog
-    void    ReleaseDlg( void );
+    void    ReleaseDlg();
 
     // Switch underlying objects in the dialog (to avoid unnecessary deletion/recreations)
     void    SwitchDlg( plAnimStealthNode *toSwitchTo );
 
     // Get the actual window handle of the currently active dialog displaying us
-    HWND    GetWinDlg( void ) const;
+    HWND    GetWinDlg() const;
 
     // Interesting functions
-    ST::string  GetSegmentName( void ) const;
+    ST::string  GetSegmentName() const;
     void        SetSegment( const char *name ); // nil for "entire animation"
 
     // Conversion from stealth's INode to the actual object
@@ -195,45 +195,45 @@ public:
 
     /// Parameter access
 
-    bool    GetAutoStart( void ) const;
+    bool    GetAutoStart() const;
     void    SetAutoStart( bool b );
 
-    bool        GetLoop( void ) const;
-    ST::string  GetLoopName( void ) const;
+    bool        GetLoop() const;
+    ST::string  GetLoopName() const;
     void        SetLoop( bool b, const ST::string &name );
 
-    uint8_t     GetEaseInType( void ) const;
-    float       GetEaseInLength( void ) const;
-    float       GetEaseInMin( void ) const;
-    float       GetEaseInMax( void ) const;
+    uint8_t     GetEaseInType() const;
+    float       GetEaseInLength() const;
+    float       GetEaseInMin() const;
+    float       GetEaseInMax() const;
     void        SetEaseIn( uint8_t type, float length, float min, float max );
 
-    uint8_t     GetEaseOutType( void ) const;
-    float       GetEaseOutLength( void ) const;
-    float       GetEaseOutMin( void ) const;
-    float       GetEaseOutMax( void ) const;
+    uint8_t     GetEaseOutType() const;
+    float       GetEaseOutLength() const;
+    float       GetEaseOutMin() const;
+    float       GetEaseOutMax() const;
     void        SetEaseOut( uint8_t type, float length, float min, float max );
 
     // Conversion stuff
     void        GetAllStopPoints( hsTArray<float> &out );
-    float       GetSegStart( void ) const;
-    float       GetSegEnd( void ) const;
+    float       GetSegStart() const;
+    float       GetSegEnd() const;
     void        GetLoopPoints( float &start, float &end ) const;
     void        StuffToTimeConvert( plAnimTimeConvert &convert, float maxLength );
 
     // plAnimObjInterface functions
     virtual void    PickTargetNode( IParamBlock2 *destPB, ParamID destParamID, ParamID typeID );
-    virtual bool    IsNodeRestricted( void ) { return true; }
+    virtual bool    IsNodeRestricted() { return true; }
     virtual ST::string GetIfaceSegmentName( bool allowNil );
     virtual bool    GetKeyList( INode *restrictedNode, hsTArray<plKey> &outKeys );
-    virtual bool        MightRequireSeparateMaterial( void ) { return true; }
+    virtual bool        MightRequireSeparateMaterial() { return true; }
 
     // Convert time, called on the setupProps pass for each material applied to a node in the scene
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
     virtual bool    ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
 
     // Returns true if the parent material is applied to any node in the scene, false otherwise
-    bool            IsParentUsedInScene( void );
+    bool            IsParentUsedInScene();
 };
 
 //// Accessor for Parent's ParamBlock ////////////////////////////////////////
@@ -249,7 +249,7 @@ class plStealthNodeAccessor : public PBAccessor
     public:
 
         plStealthNodeAccessor() { }
-        static plStealthNodeAccessor    &GetInstance( void );
+        static plStealthNodeAccessor    &GetInstance();
         
         virtual void    Set( PB2Value &v, ReferenceMaker *owner, ParamID id, int tabIndex, TimeValue t );
         virtual void    TabChanged( tab_changes changeCode, Tab<PB2Value> *tab, ReferenceMaker *owner, 

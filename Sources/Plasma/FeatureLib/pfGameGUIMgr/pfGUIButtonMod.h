@@ -78,7 +78,7 @@ class pfGUIButtonMod : public pfGUIControlMod
 
         virtual bool IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual uint32_t      IGetDesiredCursor( void ) const;    // As specified in plInputInterface.h
+        virtual uint32_t      IGetDesiredCursor() const;    // As specified in plInputInterface.h
 
     public:
 
@@ -125,7 +125,7 @@ class pfGUIButtonMod : public pfGUIControlMod
             kNotifyOnUpAndDown
         };
 
-        void    StartDragging( void );
+        void    StartDragging();
         void    StopDragging( bool cancel );
 
         // Export only

@@ -125,16 +125,16 @@ class plKeyBinding
         plKeyBinding( ControlEventCode code, uint32_t codeFlags, const plKeyCombo &key1, const plKeyCombo &key2, const char *string = nil );
         virtual ~plKeyBinding();
 
-        ControlEventCode    GetCode( void ) const { return fCode; }
-        uint32_t              GetCodeFlags( void ) const { return fCodeFlags; }
-        const plKeyCombo    &GetKey1( void ) const { return fKey1; }
-        const plKeyCombo    &GetKey2( void ) const { return fKey2; }
-        const char          *GetExtendedString( void ) const { return fString; }
+        ControlEventCode    GetCode() const { return fCode; }
+        uint32_t              GetCodeFlags() const { return fCodeFlags; }
+        const plKeyCombo    &GetKey1() const { return fKey1; }
+        const plKeyCombo    &GetKey2() const { return fKey2; }
+        const char          *GetExtendedString() const { return fString; }
         const plKeyCombo    &GetMatchingKey( plKeyDef keyDef ) const;
 
         void    SetKey1( const plKeyCombo &newCombo );
         void    SetKey2( const plKeyCombo &newCombo );
-        void    ClearKeys( void );
+        void    ClearKeys();
         bool    HasUnmappedKey() const;
 };
 
@@ -207,20 +207,20 @@ class plKeyMap : public plInputMap
         void    UnmapBinding( ControlEventCode code );
 
         // Unmaps all the bindings, but leaves the code records themselves
-        void    UnmapAllBindings( void );
+        void    UnmapAllBindings();
 
         // Erases the given code binding. Note: should never really be used, but provided here for completeness
         void    EraseBinding( ControlEventCode code );
 
         // Clears ALL bindings
-        void    ClearAll( void );
+        void    ClearAll();
 
         static const char* GetStringCtrl();
         static const char* GetStringShift();
         static const char* GetStringUnmapped();
 
 
-        uint32_t              GetNumBindings( void ) const { return fBindings.GetCount(); }
+        uint32_t              GetNumBindings() const { return fBindings.GetCount(); }
         const plKeyBinding  &GetBinding( uint32_t i ) const { return *fBindings[ i ]; }
         void                HandleAutoDualBinding( plKeyDef key1, plKeyDef key2 );
 

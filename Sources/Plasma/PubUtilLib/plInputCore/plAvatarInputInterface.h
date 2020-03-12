@@ -227,10 +227,10 @@ class plAvatarInputInterface : public plInputInterface
         void CameraInThirdPerson(bool state);
     
         // Always return true, since the cursor should be representing how we control the avatar
-        virtual bool        HasInterestingCursorID( void ) const { return true; }
-        virtual uint32_t      GetPriorityLevel( void ) const { return kAvatarInputPriority; }
-        virtual uint32_t      GetCurrentCursorID( void ) const { return fCurrentCursor; }
-        virtual float    GetCurrentCursorOpacity( void ) const { return fCursorOpacity; }
+        virtual bool        HasInterestingCursorID() const { return true; }
+        virtual uint32_t      GetPriorityLevel() const { return kAvatarInputPriority; }
+        virtual uint32_t      GetCurrentCursorID() const { return fCurrentCursor; }
+        virtual float    GetCurrentCursorOpacity() const { return fCursorOpacity; }
         const char*         GetInputMapName() { return fInputMap ? fInputMap->GetName() : ""; }
 
         virtual bool        InterpretInputEvent( plInputEventMsg *pMsg );
@@ -239,9 +239,9 @@ class plAvatarInputInterface : public plInputInterface
         virtual bool        MsgReceive( plMessage *msg );
 
         virtual void        Init( plInputInterfaceMgr *manager );
-        virtual void        Shutdown( void );
+        virtual void        Shutdown();
 
-        virtual void        RestoreDefaultKeyMappings( void );
+        virtual void        RestoreDefaultKeyMappings();
         virtual void        ClearKeyMap(); 
         
         // [dis/en]able mouse commands for avatar movement
@@ -260,7 +260,7 @@ class plAvatarInputInterface : public plInputInterface
 
         bool    IsEnterChatModeBound();
 
-        static plAvatarInputInterface   *GetInstance( void ) { return fInstance; }
+        static plAvatarInputInterface   *GetInstance() { return fInstance; }
 };
 
 

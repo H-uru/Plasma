@@ -199,7 +199,7 @@ void    pfGUICheckBoxCtrl::SetAnimationKeys( hsTArray<plKey> &keys, const ST::st
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUICheckBoxCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUICheckBoxCtrl::IGetDesiredCursor() const
 {
     if( fClicking )
         return plInputInterface::kCursorClicked;

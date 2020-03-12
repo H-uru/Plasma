@@ -116,7 +116,7 @@ void pyGUIControlMultiLineEdit::MoveCursor( int32_t dir)
 }
 
 
-void pyGUIControlMultiLineEdit::ClearBuffer( void )
+void pyGUIControlMultiLineEdit::ClearBuffer()
 {
     if ( fGCkey )
     {
@@ -155,7 +155,7 @@ void pyGUIControlMultiLineEdit::SetTextW( const wchar_t *asciiText )
     }
 }
 
-const char* pyGUIControlMultiLineEdit::GetText( void )
+const char* pyGUIControlMultiLineEdit::GetText()
 {
     // up to the caller to free the string... but when?
     if ( fGCkey )
@@ -173,7 +173,7 @@ const char* pyGUIControlMultiLineEdit::GetText( void )
     return nil;
 }
 
-const wchar_t* pyGUIControlMultiLineEdit::GetTextW( void )
+const wchar_t* pyGUIControlMultiLineEdit::GetTextW()
 {
     // up to the caller to free the string... but when?
     if ( fGCkey )
@@ -433,7 +433,7 @@ void pyGUIControlMultiLineEdit::InsertStyle( uint8_t fontStyle )
     }
 }
 
-void pyGUIControlMultiLineEdit::DeleteChar( void )
+void pyGUIControlMultiLineEdit::DeleteChar()
 {
     if ( fGCkey )
     {
@@ -446,7 +446,7 @@ void pyGUIControlMultiLineEdit::DeleteChar( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Lock( void )
+void pyGUIControlMultiLineEdit::Lock()
 {
     if ( fGCkey )
     {
@@ -457,7 +457,7 @@ void pyGUIControlMultiLineEdit::Lock( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Unlock( void )
+void pyGUIControlMultiLineEdit::Unlock()
 {
     if ( fGCkey )
     {
@@ -468,7 +468,7 @@ void pyGUIControlMultiLineEdit::Unlock( void )
     }
 }
 
-bool pyGUIControlMultiLineEdit::IsLocked( void )
+bool pyGUIControlMultiLineEdit::IsLocked()
 {
     if ( fGCkey )
     {
@@ -481,7 +481,7 @@ bool pyGUIControlMultiLineEdit::IsLocked( void )
     return false;
 }
 
-void pyGUIControlMultiLineEdit::Clickable( void )
+void pyGUIControlMultiLineEdit::Clickable()
 {
     if ( fGCkey )
     {
@@ -492,7 +492,7 @@ void pyGUIControlMultiLineEdit::Clickable( void )
     }
 }
 
-void pyGUIControlMultiLineEdit::Unclickable( void )
+void pyGUIControlMultiLineEdit::Unclickable()
 {
     if ( fGCkey )
     {

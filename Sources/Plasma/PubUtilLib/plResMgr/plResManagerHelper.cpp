@@ -113,7 +113,7 @@ plResManagerHelper::~plResManagerHelper()
 
 //// Shutdown ////////////////////////////////////////////////////////////////
 
-void    plResManagerHelper::Shutdown( void )
+void    plResManagerHelper::Shutdown()
 {
     EnableDebugScreen( false );
     UnRegisterAs( kResManagerHelper_KEY );
@@ -121,7 +121,7 @@ void    plResManagerHelper::Shutdown( void )
 
 //// Init ////////////////////////////////////////////////////////////////////
 
-void    plResManagerHelper::Init( void )
+void    plResManagerHelper::Init()
 {
     RegisterAs( kResManagerHelper_KEY );
 }
@@ -209,7 +209,7 @@ class plResMgrDebugInterface : public plInputInterface
     protected:
         plResManagerHelper  * const fParent;
 
-        virtual ControlEventCode    *IGetOwnedCodeList( void ) const
+        virtual ControlEventCode    *IGetOwnedCodeList() const
         {
             static ControlEventCode codes[] = { END_CONTROLS };
             return codes;
@@ -219,7 +219,7 @@ class plResMgrDebugInterface : public plInputInterface
 
         plResMgrDebugInterface( plResManagerHelper * const mgr ) : fParent( mgr ) { SetEnabled( true ); }
 
-        virtual uint32_t  GetPriorityLevel( void ) const { return kGUISystemPriority + 10; }
+        virtual uint32_t  GetPriorityLevel() const { return kGUISystemPriority + 10; }
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg )
         {
             plKeyEventMsg *pKeyMsg = plKeyEventMsg::ConvertNoRef( pMsg );
@@ -273,8 +273,8 @@ class plResMgrDebugInterface : public plInputInterface
             return false;
         }
 
-        virtual uint32_t  GetCurrentCursorID( void ) const { return 0; }
-        virtual bool    HasInterestingCursorID( void ) const { return false; }
+        virtual uint32_t  GetCurrentCursorID() const { return 0; }
+        virtual bool    HasInterestingCursorID() const { return false; }
 };
 
 #endif

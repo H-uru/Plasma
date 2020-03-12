@@ -52,7 +52,7 @@ protected:
     virtual bool IEval(double secs, float del, uint32_t dirty) {return true;}
 
 public:
-    plSpawnModifier(){;}
+    plSpawnModifier() { }
 
     CLASSNAME_REGISTER( plSpawnModifier );
     GETINTERFACE_ANY( plSpawnModifier, plMultiModifier );

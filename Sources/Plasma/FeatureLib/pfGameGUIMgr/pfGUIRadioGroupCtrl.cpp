@@ -260,7 +260,7 @@ void    pfGUIRadioGroupCtrl::ClearControlsFlag( int flag )
 
 //// Export Functions ////////////////////////////////////////////////////////
 
-void    pfGUIRadioGroupCtrl::ClearControlList( void )
+void    pfGUIRadioGroupCtrl::ClearControlList()
 {
     fControls.Reset();
     fValue = -1;

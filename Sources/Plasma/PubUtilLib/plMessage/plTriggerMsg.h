@@ -56,7 +56,7 @@ public:
     plTriggerMsg(const plKey &s, 
                     const plKey &r, 
                     const double* t){SetBCastFlag(plMessage::kBCastByExactType | plMessage::kPropagateToModifiers);}
-    ~plTriggerMsg(){;}
+    ~plTriggerMsg() { }
 
     CLASSNAME_REGISTER( plTriggerMsg );
     GETINTERFACE_ANY( plTriggerMsg, plMessage );

@@ -52,8 +52,8 @@ class plPickingDetector : public plDetectorModifier
 protected:
     
 public:
-    plPickingDetector(){;}
-    virtual ~plPickingDetector(){;}
+    plPickingDetector() { }
+    virtual ~plPickingDetector() { }
     
     virtual bool MsgReceive(plMessage* msg);
 
@@ -67,8 +67,8 @@ class plClickDragDetector : public plDetectorModifier
 protected:
     
 public:
-    plPickingDetector(){;}
-    virtual ~plPickingDetector(){;}
+    plPickingDetector() { }
+    virtual ~plPickingDetector() { }
     
     virtual bool MsgReceive(plMessage* msg);
 

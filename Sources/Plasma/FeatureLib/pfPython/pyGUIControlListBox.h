@@ -83,15 +83,15 @@ public:
 
     // special case control for the listbox
     // ...this allows the listbox to be used without being selectable
-    virtual void    Clickable( void );
-    virtual void    Unclickable( void );
-    virtual int32_t   GetSelection( void );
+    virtual void    Clickable();
+    virtual void    Unclickable();
+    virtual int32_t   GetSelection();
     virtual void    SetSelection( int32_t item );
-    virtual void    Refresh( void );
+    virtual void    Refresh();
     virtual void    SetElement( uint16_t idx, const ST::string& text );
     virtual void    RemoveElement( uint16_t index );
-    virtual void    ClearAllElements( void );
-    virtual uint16_t  GetNumElements( void );
+    virtual void    ClearAllElements();
+    virtual uint16_t  GetNumElements();
     virtual ST::string  GetElement( uint16_t idx );
     virtual int16_t   AddString( const ST::string &string );
     virtual int16_t   AddImage( pyImage& image, bool respectAlpha );
@@ -109,19 +109,19 @@ public:
     virtual void    Add2TextWColor( const char *str1, pyColor& textcolor1,const char *str2, pyColor& textcolor2, uint32_t inheritalpha);
     virtual void    Add2TextWColorW( std::wstring str1, pyColor& textcolor1, std::wstring str2, pyColor& textcolor2, uint32_t inheritalpha);
     virtual int16_t   AddStringInBox( const ST::string &string, uint32_t min_width, uint32_t min_height );
-    virtual void    ScrollToBegin( void );
-    virtual void    ScrollToEnd( void );
+    virtual void    ScrollToBegin();
+    virtual void    ScrollToEnd();
     virtual void    SetScrollPos( int32_t pos );
-    virtual int32_t   GetScrollPos( void );
-    virtual int32_t   GetScrollRange( void );
+    virtual int32_t   GetScrollPos();
+    virtual int32_t   GetScrollRange();
 
-    virtual void    LockList( void );
-    virtual void    UnlockList( void );
+    virtual void    LockList();
+    virtual void    UnlockList();
 
     // To create tree branches, call AddBranch() with a name, then add elements as usual, including new sub-branches
     // via additional AddBranch() calls. Call CloseBranch() to stop writing elements to that branch.
     void            AddBranch( const ST::string &name, bool initiallyOpen );
-    void            CloseBranch( void );
+    void            CloseBranch();
 
     void            RemoveSelection( int32_t item );
     void            AddSelection( int32_t item );

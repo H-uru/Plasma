@@ -348,7 +348,7 @@ void    pfGUIDialogMod::Write( hsStream *s, hsResMgr *mgr )
     mgr->WriteKey( s, fSceneNodeKey );
 }
 
-plKey   pfGUIDialogMod::GetSceneNodeKey( void )
+plKey   pfGUIDialogMod::GetSceneNodeKey()
 {
     if( fSceneNodeKey != nil )
         return fSceneNodeKey;
@@ -612,17 +612,17 @@ void    pfGUIDialogMod::SetFocus( pfGUIControlMod *ctrl )
 
 //// Show/Hide ///////////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::Show( void )
+void    pfGUIDialogMod::Show()
 {
     pfGameGUIMgr::GetInstance()->ShowDialog( this );
 }
 
-void    pfGUIDialogMod::ShowNoReset( void )
+void    pfGUIDialogMod::ShowNoReset()
 {
     pfGameGUIMgr::GetInstance()->ShowDialog( this, false );
 }
 
-void    pfGUIDialogMod::Hide( void )
+void    pfGUIDialogMod::Hide()
 {
     pfGameGUIMgr::GetInstance()->HideDialog( this );
 }
@@ -712,7 +712,7 @@ void    pfGUIDialogMod::SetControlHandler( uint32_t tagID, pfGUIDialogProc *hdlr
 
 //// UpdateAspectRatio ///////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::UpdateAspectRatio( void )
+void    pfGUIDialogMod::UpdateAspectRatio()
 {
     if (fRenderMod)
     {
@@ -725,7 +725,7 @@ void    pfGUIDialogMod::UpdateAspectRatio( void )
 
 //// UpdateAllBounds /////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::UpdateAllBounds( void )
+void    pfGUIDialogMod::UpdateAllBounds()
 {
     int i;
     for( i = 0; i < fControls.GetCount(); i++ )
@@ -737,7 +737,7 @@ void    pfGUIDialogMod::UpdateAllBounds( void )
 
 //// RefreshAllControls //////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::RefreshAllControls( void )
+void    pfGUIDialogMod::RefreshAllControls()
 {
     int i;
     for( i = 0; i < fControls.GetCount(); i++ )
@@ -750,7 +750,7 @@ void    pfGUIDialogMod::RefreshAllControls( void )
 
 //// ClearDragList ///////////////////////////////////////////////////////////
 
-void    pfGUIDialogMod::ClearDragList( void )
+void    pfGUIDialogMod::ClearDragList()
 {
     fDragElements.Reset();
 }
@@ -838,7 +838,7 @@ void    pfGUIDialogMod::IHandleDrag( hsPoint3 &mousePoint, pfGameGUIMgr::EventTy
 
 //// GetDesiredCursor ////////////////////////////////////////////////////////
 
-uint32_t      pfGUIDialogMod::GetDesiredCursor( void ) const
+uint32_t      pfGUIDialogMod::GetDesiredCursor() const
 {
     if( fMousedCtrl != nil ) 
         return fMousedCtrl->IGetDesiredCursor();

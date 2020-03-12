@@ -101,7 +101,7 @@ pfConsoleCmdGroup::~pfConsoleCmdGroup()
 
 //// GetBaseGroup ////////////////////////////////////////////////////////////
 
-pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup( void )
+pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup()
 {
     if( fBaseCmdGroup == nil )
     {
@@ -114,7 +114,7 @@ pfConsoleCmdGroup   *pfConsoleCmdGroup::GetBaseGroup( void )
 
 //// DecBaseCmdGroupRef //////////////////////////////////////////////////////
 
-void    pfConsoleCmdGroup::DecBaseCmdGroupRef( void )
+void    pfConsoleCmdGroup::DecBaseCmdGroupRef()
 {
     fBaseCmdGroupRef--;
     if( fBaseCmdGroupRef == 0 )
@@ -330,7 +330,7 @@ void    pfConsoleCmdGroup::Link( pfConsoleCmdGroup **prevPtr )
     *fPrevPtr = this;
 }
 
-void    pfConsoleCmdGroup::Unlink( void )
+void    pfConsoleCmdGroup::Unlink()
 {
     hsAssert( fNext != nil || fPrevPtr != nil, "Trying to unlink console group that isn't linked!" );
 
@@ -499,7 +499,7 @@ void    pfConsoleCmd::Register(const char *group, const char *name )
 
 //// Unregister //////////////////////////////////////////////////////////////
 
-void    pfConsoleCmd::Unregister( void )
+void    pfConsoleCmd::Unregister()
 {
     Unlink();
     pfConsoleCmdGroup::DecBaseCmdGroupRef();
@@ -526,7 +526,7 @@ void    pfConsoleCmd::Link( pfConsoleCmd **prevPtr )
     *fPrevPtr = this;
 }
 
-void    pfConsoleCmd::Unlink( void )
+void    pfConsoleCmd::Unlink()
 {
     hsAssert( fNext != nil || fPrevPtr != nil, "Trying to unlink console command that isn't linked!" );
 
@@ -562,7 +562,7 @@ uint8_t   pfConsoleCmd::GetSigEntry( uint8_t i )
 //  WARNING: uses a static buffer, so don't rely on the contents if you call
 //  it more than once! (You shouldn't need to, though)
 
-const char  *pfConsoleCmd::GetSignature( void )
+const char  *pfConsoleCmd::GetSignature()
 {
     static char string[256];
     
@@ -594,7 +594,7 @@ const char  *pfConsoleCmd::GetSignature( void )
 
 //// Conversion Functions ////////////////////////////////////////////////////
 
-const int & pfConsoleCmdParam::IToInt( void ) const
+const int & pfConsoleCmdParam::IToInt() const
 {
     hsAssert( fType == kInt || fType == kAny, "Trying to use a non-int parameter as an int!" );
 
@@ -609,7 +609,7 @@ const int & pfConsoleCmdParam::IToInt( void ) const
     return fValue.i;
 }
 
-const float &   pfConsoleCmdParam::IToFloat( void ) const
+const float &   pfConsoleCmdParam::IToFloat() const
 {
     hsAssert( fType == kFloat || fType == kAny, "Trying to use a non-float parameter as a float!" );
 
@@ -624,7 +624,7 @@ const float &   pfConsoleCmdParam::IToFloat( void ) const
     return fValue.f;
 }
 
-const bool &    pfConsoleCmdParam::IToBool( void ) const
+const bool &    pfConsoleCmdParam::IToBool() const
 {
     hsAssert( fType == kBool || fType == kAny, "Trying to use a non-bool parameter as a bool!" );
 
@@ -643,14 +643,14 @@ const bool &    pfConsoleCmdParam::IToBool( void ) const
     return fValue.b;
 }
 
-const pfConsoleCmdParam::CharPtr &  pfConsoleCmdParam::IToString( void ) const
+const pfConsoleCmdParam::CharPtr &  pfConsoleCmdParam::IToString() const
 {
     hsAssert( fType == kString || fType == kAny, "Trying to use a non-string parameter as a string!" );
 
     return fValue.s;
 }
 
-const char &    pfConsoleCmdParam::IToChar( void ) const
+const char &    pfConsoleCmdParam::IToChar() const
 {
     hsAssert( fType == kChar || fType == kAny, "Trying to use a non-char parameter as a char!" );
 

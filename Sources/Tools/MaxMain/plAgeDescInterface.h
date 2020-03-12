@@ -107,7 +107,7 @@ protected:
     static plFileName IGetLocalAgePath();
 
     // Fill out the age tree view
-    void IFillAgeTree( void );
+    void IFillAgeTree();
 
     // Create a new age file and select it in the browser
     void INewAge();
@@ -117,13 +117,13 @@ protected:
     uint32_t  IGetNextFreeSequencePrefix( bool getReservedPrefix );
     uint32_t  IGetFreePageSeqSuffix( HWND pageCombo );
 
-    void    ICheckOutCurrentAge( void );
-    void    ICheckInCurrentAge( void );
-    void    IUndoCheckOutCurrentAge( void );
-    bool    IMakeSureCheckedIn( void );
+    void    ICheckOutCurrentAge();
+    void    ICheckInCurrentAge();
+    void    IUndoCheckOutCurrentAge();
+    bool    IMakeSureCheckedIn();
 
-    plAgeFile* IGetCurrentAge( void );
+    plAgeFile* IGetCurrentAge();
 
-    void    IInvalidateCheckOutIndicator( void );
+    void    IInvalidateCheckOutIndicator();
     void    ICheckSequenceNumber( plAgeDescription &aged );
 };

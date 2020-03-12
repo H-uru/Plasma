@@ -56,9 +56,9 @@ protected:
 public:
     
     
-    plAnimationEventConditionalObject(){;}
+    plAnimationEventConditionalObject() { }
     plAnimationEventConditionalObject(plKey pTargetModifier);
-    ~plAnimationEventConditionalObject(){;}
+    ~plAnimationEventConditionalObject() { }
     
     CLASSNAME_REGISTER( plAnimationEventConditionalObject );
     GETINTERFACE_ANY( plAnimationEventConditionalObject, plConditionalObject );
@@ -68,7 +68,7 @@ public:
 
     bool MsgReceive(plMessage* msg);
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
 
     void SetEvent(const CallbackEvent b, float time = 0.0f);

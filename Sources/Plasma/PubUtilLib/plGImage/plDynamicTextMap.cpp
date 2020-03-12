@@ -152,7 +152,7 @@ void    plDynamicTextMap::Create( uint32_t width, uint32_t height, bool hasAlpha
 
 //// Reset ////////////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::Reset( void )
+void    plDynamicTextMap::Reset()
 {
     IDestroyOSSurface();
 
@@ -174,7 +174,7 @@ void    plDynamicTextMap::Reset( void )
 //// OS-Specific Functions ////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
-bool        plDynamicTextMap::IIsValid( void )
+bool        plDynamicTextMap::IIsValid()
 {
     if( GetImage() == nil && fHasCreateBeenCalled )
     {
@@ -235,7 +235,7 @@ uint32_t* plDynamicTextMap::IAllocateOSSurface( uint16_t width, uint16_t height 
 //// IDestroyOSSurface ////////////////////////////////////////////////////////
 //  Opposite of allocate. DUH!
 
-void    plDynamicTextMap::IDestroyOSSurface( void )
+void    plDynamicTextMap::IDestroyOSSurface()
 {
 #ifdef MEMORY_LEAK_TRACER
     if( fImage != nil )
@@ -772,7 +772,7 @@ void    plDynamicTextMap::DrawClippedImage( uint16_t x, uint16_t y, plMipmap *im
 
 //// FlushToHost //////////////////////////////////////////////////////////////
 
-void    plDynamicTextMap::FlushToHost( void )
+void    plDynamicTextMap::FlushToHost()
 {
     if( !IIsValid() )
         return;
@@ -787,7 +787,7 @@ void    plDynamicTextMap::FlushToHost( void )
 //  you want to be able to apply a layer texture transform that will compensate. This
 //  function will give you that transform. Just feed it into plLayer->SetTransform().
 
-hsMatrix44  plDynamicTextMap::GetLayerTransform( void )
+hsMatrix44  plDynamicTextMap::GetLayerTransform()
 {
     hsMatrix44  xform;
     hsVector3   scale;

@@ -222,7 +222,7 @@ plProgressMgrCallbackProc plProgressMgr::SetCallbackProc( plProgressMgrCallbackP
 
 //// CancelAllOps ////////////////////////////////////////////////////////////
 
-void    plProgressMgr::CancelAllOps( void )
+void    plProgressMgr::CancelAllOps()
 {
     plOperationProgress *op;
 

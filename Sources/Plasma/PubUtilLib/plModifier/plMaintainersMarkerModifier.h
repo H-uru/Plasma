@@ -61,7 +61,7 @@ protected:
 
     int fCalibrated;
 public:
-    plMaintainersMarkerModifier() : fCalibrated(0){;}
+    plMaintainersMarkerModifier() : fCalibrated(0) { }
 
     CLASSNAME_REGISTER( plMaintainersMarkerModifier );
     GETINTERFACE_ANY( plMaintainersMarkerModifier, plMultiModifier );

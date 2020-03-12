@@ -66,7 +66,7 @@ bool plTcpSocket::operator==(const plTcpSocket & rhs)
 }
 
 // Disable Nagle algorithm.
-int plTcpSocket::SetNoDelay(void)
+int plTcpSocket::SetNoDelay()
 {
     int  nodel = 1;
     int ret1;    

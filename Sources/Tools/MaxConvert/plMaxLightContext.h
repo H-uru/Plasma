@@ -115,7 +115,7 @@ public:
     virtual Point3 VectorFrom(const Point3& p, RefFrame ifrom) { return p; }
 };
 
-inline Point3 plMaxLightContext::PObjRelBox(void)
+inline Point3 plMaxLightContext::PObjRelBox()
 {
     Point3 q;
     Point3 p = PObj();

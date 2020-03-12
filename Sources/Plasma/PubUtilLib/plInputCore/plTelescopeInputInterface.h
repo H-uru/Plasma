@@ -64,26 +64,26 @@ class plTelescopeInputInterface : public plInputInterface
         plTelescopeInputInterface();
         virtual ~plTelescopeInputInterface();
 
-        virtual void        RestoreDefaultKeyMappings( void );
+        virtual void        RestoreDefaultKeyMappings();
         
         virtual bool    InterpretInputEvent( plInputEventMsg *pMsg );
 
         virtual bool    MsgReceive( plMessage *msg );
 
         virtual void    Init( plInputInterfaceMgr *manager );
-        virtual void    Shutdown( void ) {;}
+        virtual void    Shutdown() { }
 
         // Returns the priority of this interface layer, based on the Priorities enum
-        virtual uint32_t  GetPriorityLevel( void ) const { return kTelescopeInputPriority; }
+        virtual uint32_t  GetPriorityLevel() const { return kTelescopeInputPriority; }
 
         // Returns the currently active mouse cursor for this layer, as defined in pnMessage/plCursorChangeMsg.h
-        virtual uint32_t      GetCurrentCursorID( void ) const { return kCursorUp; }
+        virtual uint32_t      GetCurrentCursorID() const { return kCursorUp; }
 
         // Returns the current opacity that this layer wants the cursor to be, from 0 (xparent) to 1 (opaque)
-        virtual float    GetCurrentCursorOpacity( void ) const { return 1.f; }
+        virtual float    GetCurrentCursorOpacity() const { return 1.f; }
 
         // Returns true if this layer is wanting to change the mouse, false if it isn't interested
-        virtual bool        HasInterestingCursorID( void ) const { return false; }
+        virtual bool        HasInterestingCursorID() const { return false; }
 };
 
 

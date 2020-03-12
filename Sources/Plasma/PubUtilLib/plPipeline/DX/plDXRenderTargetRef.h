@@ -71,7 +71,7 @@ class plDXRenderTargetRef: public plDXTextureRef
         bool                fReleaseDepth;
 
         void                    Link( plDXRenderTargetRef **back ) { plDXDeviceRef::Link( (plDXDeviceRef **)back ); }
-        plDXRenderTargetRef *GetNext( void ) { return (plDXRenderTargetRef *)fNext; }
+        plDXRenderTargetRef *GetNext() { return (plDXRenderTargetRef *)fNext; }
 
 
         plDXRenderTargetRef( D3DFORMAT tp, uint32_t ml, plRenderTarget *owner, bool releaseDepthOnDelete = true );
@@ -83,7 +83,7 @@ class plDXRenderTargetRef: public plDXTextureRef
         void    SetTexture( IDirect3DTexture9 *surface, IDirect3DSurface9 *depth );
         void    SetTexture( IDirect3DCubeTexture9 *surface, IDirect3DSurface9 *depth );
 
-        IDirect3DSurface9   *GetColorSurface( void ) const
+        IDirect3DSurface9   *GetColorSurface() const
         {
             if( fD3DTexture != nil )
             {
@@ -98,7 +98,7 @@ class plDXRenderTargetRef: public plDXTextureRef
         }
 
         virtual ~plDXRenderTargetRef();
-        void    Release( void );
+        void    Release();
 };
 
 

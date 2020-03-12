@@ -74,7 +74,7 @@ public:
 
     static bool IsGUIControlRadioGroup(pyKey& gckey);
 
-    virtual int32_t   GetValue( void );
+    virtual int32_t   GetValue();
     virtual void    SetValue( int32_t value );
 
 };

@@ -461,7 +461,7 @@ void    plIcicle::Write( hsStream *stream )
 
 //// Destroy /////////////////////////////////////////////////////////////////
 
-void    plIcicle::Destroy( void )
+void    plIcicle::Destroy()
 {
     plSpan::Destroy();
     delete [] fSortData;
@@ -544,7 +544,7 @@ void    plParticleSpan::MergeInto( plSpan *other )
 
 //// Destroy /////////////////////////////////////////////////////////////////
 
-void    plParticleSpan::Destroy( void )
+void    plParticleSpan::Destroy()
 {
     plIcicle::Destroy();
     fSource = nil;

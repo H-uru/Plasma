@@ -60,7 +60,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 uint32_t  pyJournalBook::fNextKeyID = 0;
 
-void    pyJournalBook::IMakeNewKey( void )
+void    pyJournalBook::IMakeNewKey()
 {
     ST::string name = ST::format("pyJournalBook-{}", fNextKeyID++);
     hsgResMgr::ResMgr()->NewKey( name, fBook, plLocation::kGlobalFixedLoc );
@@ -170,7 +170,7 @@ void    pyJournalBook::Show( bool startOpened )
         fBook->Show( startOpened );
 }
 
-void    pyJournalBook::Hide( void )
+void    pyJournalBook::Hide()
 {
     if( fBook != nil )
         fBook->Hide();
@@ -182,25 +182,25 @@ void    pyJournalBook::Open( uint32_t startingPage )
         fBook->Open( startingPage );
 }
 
-void    pyJournalBook::Close( void )
+void    pyJournalBook::Close()
 {
     if( fBook != nil )
         fBook->Close();
 }
 
-void    pyJournalBook::CloseAndHide( void )
+void    pyJournalBook::CloseAndHide()
 {
     if( fBook != nil )
         fBook->CloseAndHide();
 }
 
-void    pyJournalBook::NextPage( void )
+void    pyJournalBook::NextPage()
 {
     if( fBook != nil )
         fBook->NextPage();
 }
 
-void    pyJournalBook::PreviousPage( void )
+void    pyJournalBook::PreviousPage()
 {
     if( fBook != nil )
         fBook->PreviousPage();
@@ -218,7 +218,7 @@ void    pyJournalBook::SetSize( float width, float height )
         fBook->SetBookSize( width, height );
 }
 
-uint32_t  pyJournalBook::GetCurrentPage( void ) const
+uint32_t  pyJournalBook::GetCurrentPage() const
 {
     if( fBook != nil )
         return fBook->GetCurrentPage();
@@ -282,7 +282,7 @@ void    pyJournalBook::SetEditable( bool editable )
         fBook->SetEditable(editable);
 }
 
-std::string pyJournalBook::GetEditableText( void ) const
+std::string pyJournalBook::GetEditableText() const
 {
     if (fBook != nil)
         return fBook->GetEditableText();

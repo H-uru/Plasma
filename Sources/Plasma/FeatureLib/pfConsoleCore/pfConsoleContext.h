@@ -74,9 +74,9 @@ class pfConsoleContext
         pfConsoleContext( const char *name );
         virtual ~pfConsoleContext();
 
-        void    Clear( void );
+        void    Clear();
 
-        uint32_t              GetNumVars( void ) const;
+        uint32_t              GetNumVars() const;
         const char          *GetVarName( uint32_t idx ) const;
         pfConsoleCmdParam   &GetVarValue( uint32_t idx ) const;
 
@@ -101,9 +101,9 @@ class pfConsoleContext
 
         // Decide whether Sets() on nonexistant variables will fail or add a new variable
         void    SetAddWhenNotFound( bool f ) { fAddWhenNotFound = f; }
-        bool    GetAddWhenNotFound( void ) const { return fAddWhenNotFound; }
+        bool    GetAddWhenNotFound() const { return fAddWhenNotFound; }
 
-        static pfConsoleContext &GetRootContext( void );
+        static pfConsoleContext &GetRootContext();
 };
 
 

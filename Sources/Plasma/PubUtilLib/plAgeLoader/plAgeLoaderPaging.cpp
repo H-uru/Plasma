@@ -270,7 +270,7 @@ class plExcludePage
 
 static hsTArray<plExcludePage>  sExcludeList;
 
-void    plAgeLoader::ClearPageExcludeList( void )
+void    plAgeLoader::ClearPageExcludeList()
 {
     sExcludeList.Reset();
 }

@@ -198,7 +198,7 @@ bool    plInitFileReader::Parse( uint32_t userData )
     return true;
 }
 
-void    plInitFileReader::Close( void )
+void    plInitFileReader::Close()
 {
     if( fStream == nil )
         return;

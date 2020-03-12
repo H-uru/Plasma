@@ -93,9 +93,9 @@ class plDebugText
             kStyleBold = 0x02
         };
 
-        ~plDebugText() { ; }
+        ~plDebugText() { }
 
-        static plDebugText  &Instance( void ) { return fInstance; }
+        static plDebugText  &Instance() { return fInstance; }
 
         uint32_t CalcStringWidth(const char *string);
         uint32_t CalcStringWidth_TEMP(const ST::string &string) { return CalcStringWidth(string.c_str()); }
@@ -144,13 +144,13 @@ class plDebugText
         void    SetManager( plDebugTextManager *m ) { fManager = m; }
 
         void            SetFont(const char *face, uint16_t size ) { hsStrncpy( fFontFace, face, sizeof( fFontFace ) ); fFontSize = size; }
-        const char     *GetFontFace( void ) { return fFontFace; }
-        uint16_t        GetFontSize( void ) { return fFontSize; }
+        const char     *GetFontFace() { return fFontFace; }
+        uint16_t        GetFontSize() { return fFontSize; }
         uint16_t        GetFontHeight();
 
         void            SetEnable( bool on ) { fEnabled = on; }
-        void            DisablePermanently( void ) { fEnabled = false; fLockEnable = true; }
-        bool            IsEnabled( void ) { return fEnabled; }
+        void            DisablePermanently() { fEnabled = false; fLockEnable = true; }
+        bool            IsEnabled() { return fEnabled; }
 
         void            GetScreenSize( uint32_t *width, uint32_t *height );
 };
@@ -174,7 +174,7 @@ class   plDebugTextManager
             plDebugTextNode( const char *s, uint32_t c, uint16_t x, uint16_t y, uint8_t style ); 
             plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c ); 
             plDebugTextNode( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom, uint32_t c1, uint32_t c2 );
-            ~plDebugTextNode() {;}
+            ~plDebugTextNode() { }
         };
 
         hsTArray<plDebugTextNode>   fList;

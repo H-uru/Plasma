@@ -557,7 +557,7 @@ public:
     static plSDLMgr* GetInstance();
     plStateDescriptor* FindDescriptor(const ST::string& name, int version, const plSDL::DescriptorList * dl=nil) const;   // version or kLatestVersion
     
-    const plSDL::DescriptorList * GetDescriptors( void ) const { return &fDescriptors;}
+    const plSDL::DescriptorList * GetDescriptors() const { return &fDescriptors;}
 
     void SetSDLDir(const plFileName& s) { fSDLDir=s; }
     plFileName GetSDLDir() const { return fSDLDir; }

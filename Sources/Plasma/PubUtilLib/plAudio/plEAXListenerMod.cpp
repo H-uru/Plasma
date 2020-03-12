@@ -88,7 +88,7 @@ plEAXListenerMod::~plEAXListenerMod()
     delete fListenerProps;
 }
 
-void    plEAXListenerMod::IRegister( void )
+void    plEAXListenerMod::IRegister()
 {
     if( !fGetsMessages )
     {
@@ -108,7 +108,7 @@ void    plEAXListenerMod::IRegister( void )
     }
 }
 
-void    plEAXListenerMod::IUnRegister( void )
+void    plEAXListenerMod::IUnRegister()
 {
     if( !fRegistered || GetKey() == nil )
         return;
@@ -244,7 +244,7 @@ void    plEAXListenerMod::SetFromPreset( uint32_t preset )
 #endif
 }
 
-float   plEAXListenerMod::GetStrength( void )
+float   plEAXListenerMod::GetStrength()
 {
     if( fSoftRegion == nil )
         return 0.f;

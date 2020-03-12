@@ -106,13 +106,13 @@ void    plDebugInputInterface::Init( plInputInterfaceMgr *manager )
     plInputInterface::Init( manager );
 }
 
-void    plDebugInputInterface::Shutdown( void )
+void    plDebugInputInterface::Shutdown()
 {
 }
 
 //// RestoreDefaultKeyMappings ///////////////////////////////////////////////
 
-void    plDebugInputInterface::RestoreDefaultKeyMappings( void )
+void    plDebugInputInterface::RestoreDefaultKeyMappings()
 {
     if( fControlMap == nil )
         return;

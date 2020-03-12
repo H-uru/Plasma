@@ -139,7 +139,7 @@ void plDXTextFont::ReleaseShared(IDirect3DDevice9* device)
 
 //// IInitStateBlocks /////////////////////////////////////////////////////////
 
-void    plDXTextFont::IInitStateBlocks( void )
+void    plDXTextFont::IInitStateBlocks()
 {
 
     for( int i = 0; i < 2; i++ )
@@ -264,7 +264,7 @@ void    plDXTextFont::IDrawLines( uint32_t count, plFontVertex *array )
 //// FlushDraws ///////////////////////////////////////////////////////////////
 //  Flushes out and finishes any drawing left to be done.
 
-void    plDXTextFont::FlushDraws( void )
+void    plDXTextFont::FlushDraws()
 {
     if( !fBuffer )
         return;
@@ -281,7 +281,7 @@ void    plDXTextFont::FlushDraws( void )
 
 //// SaveStates ///////////////////////////////////////////////////////////////
 
-void    plDXTextFont::SaveStates( void )
+void    plDXTextFont::SaveStates()
 {
     if( !fInitialized )
         IInitObjects();
@@ -308,7 +308,7 @@ void    plDXTextFont::SaveStates( void )
 
 //// RestoreStates ////////////////////////////////////////////////////////////
 
-void    plDXTextFont::RestoreStates( void )
+void    plDXTextFont::RestoreStates()
 {
     if (fOldStateBlock)
         fOldStateBlock->Apply();

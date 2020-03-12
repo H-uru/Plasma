@@ -55,14 +55,14 @@ protected:
 public:
     
     plPickedConditionalObject();
-    ~plPickedConditionalObject(){;}
+    ~plPickedConditionalObject() { }
     
     CLASSNAME_REGISTER( plPickedConditionalObject );
     GETINTERFACE_ANY( plPickedConditionalObject, plConditionalObject );
     
     bool MsgReceive(plMessage* msg);
     
-    void Evaluate(){;}
+    void Evaluate() { }
     void Reset() { SetSatisfied(false); }
 
 };

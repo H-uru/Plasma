@@ -50,7 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plVault/plVault.h"
 #include "pyDniCoordinates.h"
 
-PyObject* pyDniInfoSource::GetAgeCoords( void )
+PyObject* pyDniInfoSource::GetAgeCoords()
 {
 #if 0 // this may get retooled for another purpose someday...
     const plDniCoordinateInfo * coords = plNetPlayerVNodeMgr::GetInstance()->GetAgeInfo()->GetAgeCoords();
@@ -61,7 +61,7 @@ PyObject* pyDniInfoSource::GetAgeCoords( void )
     PYTHON_RETURN_NONE;
 }
 
-uint32_t pyDniInfoSource::GetAgeTime( void ) const
+uint32_t pyDniInfoSource::GetAgeTime() const
 {
     hsRef<RelVaultNode> node = VaultGetAgeInfoNode();
     if (!node)
@@ -87,7 +87,7 @@ ST::string pyDniInfoSource::GetAgeName() const
     return ageInfo.GetAgeInstanceName();
 }
 
-plUUID pyDniInfoSource::GetAgeGuid( void ) const
+plUUID pyDniInfoSource::GetAgeGuid() const
 {
     if (hsRef<RelVaultNode> node = VaultGetAgeInfoNode())
     {

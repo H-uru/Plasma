@@ -762,7 +762,7 @@ void plNetLinkingMgr::OfferLinkToPlayer( const plAgeInfoStruct * inInfo, uint32_
 
 ////////////////////////////////////////////////////////////////////
 
-void plNetLinkingMgr::IPostProcessLink( void )
+void plNetLinkingMgr::IPostProcessLink()
 {
     // Grab some useful things...
     plAgeLinkStruct* link = GetAgeLink();
@@ -838,7 +838,7 @@ void plNetLinkingMgr::IPostProcessLink( void )
 
 ////////////////////////////////////////////////////////////////////
 
-uint8_t plNetLinkingMgr::IPreProcessLink(void)
+uint8_t plNetLinkingMgr::IPreProcessLink()
 {
     // Grab some stuff we're gonna use extensively
     plNetClientMgr* nc = plNetClientMgr::GetInstance();

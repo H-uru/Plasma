@@ -63,9 +63,9 @@ public:
 
     bool DeInit(plMaxNode *node, plErrorMsg *pErrMsg);
 
-    plLayerTex  *GetSkinBitmap( void );
+    plLayerTex  *GetSkinBitmap();
 
-    virtual uint32_t  GetNumMtls( void ) const;
+    virtual uint32_t  GetNumMtls() const;
     virtual Texmap  *GetMtl( uint32_t idx );
 
     enum
@@ -89,8 +89,8 @@ public:
         kRefBorderMargin
     };
 
-    pfGUISkin   *GetConvertedSkin( void ) const { return fConvertedSkin; }
-    plKey       GetConvertedSkinKey( void ) const;
+    pfGUISkin   *GetConvertedSkin() const { return fConvertedSkin; }
+    plKey       GetConvertedSkinKey() const;
 
     // Given an INode, gives you a pointer to the GUI component if it actually is one, nil otherwise
     static plGUISkinComp        *GetGUIComp( INode *node );
@@ -127,12 +127,12 @@ class pfGUISkinEditProc
         pfGUISkin::pfSRect  fBackups[ pfGUISkin::kNumElements ];
 
 
-        void    IRefreshDblBuffer( void );
-        void    IRefreshImageBuffer( void );
-        void    IInitDblBuffer( void );
-        void    IKillDblBuffer( void );
+        void    IRefreshDblBuffer();
+        void    IRefreshImageBuffer();
+        void    IInitDblBuffer();
+        void    IKillDblBuffer();
 
-        void    ISetScrollRanges( void );
+        void    ISetScrollRanges();
 
         enum
         {

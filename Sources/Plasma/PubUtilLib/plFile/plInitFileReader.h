@@ -74,7 +74,7 @@ class plInitSectionReader
     public:
 
         // Override this to define what [string] your section starts with
-        virtual const char  *GetSectionName( void ) const = 0;
+        virtual const char  *GetSectionName() const = 0;
 
         // Override this to parse each line in your section. Return false to abort parsing
         virtual bool        ParseLine( const char *line, uint32_t userData ) = 0;
@@ -142,9 +142,9 @@ class plInitFileReader
         bool    Open( const char *fileName );
         bool    Open( hsStream *stream );
         bool    Parse( uint32_t userData = 0 );
-        void    Close( void );
+        void    Close();
 
-        bool    IsOpen( void ) const { return fStream != nil; }
+        bool    IsOpen() const { return fStream != nil; }
 };
 
 #endif //_plInitFileReader_h

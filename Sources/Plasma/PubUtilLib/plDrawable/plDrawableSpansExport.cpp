@@ -301,7 +301,7 @@ uint32_t  plDrawableSpans::AddDISpans( hsTArray<plGeometrySpan *> &spans, uint32
 
 //// Optimize ////////////////////////////////////////////////////////////////
 
-void    plDrawableSpans::Optimize( void )
+void    plDrawableSpans::Optimize()
 {
     int     i;
 
@@ -452,7 +452,7 @@ static void ILogSpan(plStatusLog* statusLog, plGeometrySpan* geo, plVertexSpan* 
 //  Takes the array of source spans and converts them to our internal icicle
 //  spans, vertex buffers and index buffers.
 
-void    plDrawableSpans::IPackSourceSpans( void )
+void    plDrawableSpans::IPackSourceSpans()
 {
     int             i, j;
     hsBounds3Ext    bounds;
@@ -607,7 +607,7 @@ void    plDrawableSpans::IPackSourceSpans( void )
 //  most efficient order possible. Also has to re-order the span lookup
 //  table.
 
-void    plDrawableSpans::ISortSourceSpans( void )
+void    plDrawableSpans::ISortSourceSpans()
 {
     hsTArray<uint32_t>    spanReorderTable, spanInverseTable;
     int                 i, j, idx;

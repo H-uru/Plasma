@@ -103,15 +103,15 @@ class plTextFont
         plDXCharInfo    fCharInfo[ 128 ];
 
 
-        virtual void    IInitObjects( void );
+        virtual void    IInitObjects();
         virtual void    ICreateTexture( uint16_t *data ) = 0;
-        virtual void    IInitStateBlocks( void ) = 0;
+        virtual void    IInitStateBlocks() = 0;
         virtual void    IDrawPrimitive( uint32_t count, plFontVertex *array ) = 0;
         virtual void    IDrawLines( uint32_t count, plFontVertex *array ) = 0;
         
-        uint16_t  *IInitFontTexture( void );
+        uint16_t  *IInitFontTexture();
 
-        void    IUnlink( void )
+        void    IUnlink()
         {
             hsAssert( fPrevPtr, "Font not in list" );
             if( fNext )
@@ -132,14 +132,14 @@ class plTextFont
         void    DrawRect( int left, int top, int right, int bottom, uint32_t hexColor );
         void    Draw3DBorder( int left, int top, int right, int bottom, uint32_t hexColor1, uint32_t hexColor2 );
         uint32_t  CalcStringWidth( const char *string );
-        uint32_t  GetFontSize( void ) { return fSize; }
+        uint32_t  GetFontSize() { return fSize; }
 
         uint16_t  GetFontHeight() { return fFontHeight; }
 
-        virtual void    DestroyObjects( void ) = 0;
-        virtual void    SaveStates( void ) = 0;
-        virtual void    RestoreStates( void ) = 0;
-        virtual void    FlushDraws( void ) = 0;
+        virtual void    DestroyObjects() = 0;
+        virtual void    SaveStates() = 0;
+        virtual void    RestoreStates() = 0;
+        virtual void    FlushDraws() = 0;
 
         void    Link( plTextFont **back )
         {

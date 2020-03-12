@@ -123,12 +123,12 @@ class plDynamicTextMap : public plMipmap
         void            Create( uint32_t width, uint32_t height, bool hasAlpha, uint32_t extraWidth = 0, uint32_t extraHeight = 0, bool premultipliedAlpha = false );
         void            SetNoCreate( uint32_t width, uint32_t height, bool hasAlpha );
 
-        virtual void    Reset( void );
+        virtual void    Reset();
 
         virtual void    Read( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Read( s, mgr ); this->Read( s ); }
         virtual void    Write( hsStream *s, hsResMgr *mgr ) { hsKeyedObject::Write( s, mgr ); this->Write( s ); }
 
-        virtual uint8_t   GetNumLevels( void ) const { return 1; }
+        virtual uint8_t   GetNumLevels() const { return 1; }
 
         void        Colorize() HS_OVERRIDE { }
         plMipmap    *Clone() const HS_OVERRIDE;
@@ -183,31 +183,31 @@ class plDynamicTextMap : public plMipmap
         void    DrawClippedImage( uint16_t x, uint16_t y, plMipmap *image, uint16_t srcClipX, uint16_t srcClipY, 
                                 uint16_t srcClipWidth, uint16_t srcClipHeight, DrawMethods method = kImgNoAlpha );
 
-        void    FlushToHost( void );
+        void    FlushToHost();
 
         bool    MsgReceive( plMessage *msg );
 
-        uint16_t  GetVisibleWidth( void ) { return fVisWidth; }
-        uint16_t  GetVisibleHeight( void ) { return fVisHeight; }
+        uint16_t  GetVisibleWidth() { return fVisWidth; }
+        uint16_t  GetVisibleHeight() { return fVisHeight; }
 
         // Since the dynamic text can actually create a texture bigger than you were expecting,
         // you want to be able to apply a layer texture transform that will compensate. This
         // function will give you that transform. Just feed it into plLayer->SetTransform().
 
-        hsMatrix44  GetLayerTransform( void );
+        hsMatrix44  GetLayerTransform();
 
         void    SetInitBuffer( uint32_t *buffer );
 
         // Gets for font values
-        Justify     GetFontJustify( void ) const { return fJustify; }
-        ST::string  GetFontFace( void ) const { return fFontFace; }
-        uint16_t    GetFontSize( void ) const { return fFontSize; }
-        bool        GetFontAARGB( void ) const { return fFontAntiAliasRGB; }
-        hsColorRGBA GetFontColor( void ) const { return fFontColor; }
-        bool        GetFontBlockRGB( void ) const { return fFontBlockRGB; }
-        int16_t       GetLineSpacing( void ) const { return fLineSpacing; }
+        Justify     GetFontJustify() const { return fJustify; }
+        ST::string  GetFontFace() const { return fFontFace; }
+        uint16_t    GetFontSize() const { return fFontSize; }
+        bool        GetFontAARGB() const { return fFontAntiAliasRGB; }
+        hsColorRGBA GetFontColor() const { return fFontColor; }
+        bool        GetFontBlockRGB() const { return fFontBlockRGB; }
+        int16_t       GetLineSpacing() const { return fLineSpacing; }
 
-        plFont      *GetCurrFont( void ) const { return fCurrFont; }
+        plFont      *GetCurrFont() const { return fCurrFont; }
 
         virtual void    Swap( plDynamicTextMap *other );
 
@@ -215,11 +215,11 @@ class plDynamicTextMap : public plMipmap
 
         //// Protected Members ////
 
-        bool        IIsValid( void );
+        bool        IIsValid();
         void        IClearFromBuffer( uint32_t *clearBuffer );
 
         uint32_t      *IAllocateOSSurface( uint16_t width, uint16_t height );
-        void        IDestroyOSSurface( void );
+        void        IDestroyOSSurface();
 
         void        IPropagateFlags();
 

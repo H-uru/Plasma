@@ -79,7 +79,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 //// pfGUIColorScheme Functions //////////////////////////////////////////////
 
-void    pfGUIColorScheme::IReset( void )
+void    pfGUIColorScheme::IReset()
 {
     fForeColor.Set( 1, 1, 1, 1 );
     fBackColor.Set( 0, 0, 0, 1 );
@@ -177,7 +177,7 @@ bool    pfGUIControlMod::IEval( double secs, float del, uint32_t dirty )
 
 //// GetBounds ///////////////////////////////////////////////////////////////
 
-const hsBounds3 &pfGUIControlMod::GetBounds( void )
+const hsBounds3 &pfGUIControlMod::GetBounds()
 {
     UpdateBounds();
     return fBounds; 
@@ -405,7 +405,7 @@ bool    pfGUIControlMod::PointInBounds( const hsPoint3 &point )
 //  any dynmaic text maps, since we want to use the initial bounds to do so
 //  instead of any currently animated state of the bounds.
 
-void    pfGUIControlMod::CalcInitialBounds( void )
+void    pfGUIControlMod::CalcInitialBounds()
 {
     UpdateBounds( nil, true );
     fInitialBounds = fBounds;
@@ -707,7 +707,7 @@ bool    pfGUIControlMod::ISetUpDynTextMap( plPipeline *pipe )
 
 //// Get/SetColorScheme //////////////////////////////////////////////////////
 
-pfGUIColorScheme    *pfGUIControlMod::GetColorScheme( void ) const
+pfGUIColorScheme    *pfGUIControlMod::GetColorScheme() const
 {
     if( fColorScheme == nil )
         return fDialog->GetColorScheme();
@@ -795,7 +795,7 @@ void    pfGUIControlMod::SetVisible( bool vis )
         fDialog->SetFocus( nil );
 }
 
-void    pfGUIControlMod::Refresh( void )
+void    pfGUIControlMod::Refresh()
 {
     IUpdate();
 }
@@ -930,7 +930,7 @@ void    pfGUIControlMod::ISetHandler( pfGUICtrlProcObject *h, bool clearInheritF
 
 //// DoSomething /////////////////////////////////////////////////////////////
 
-void    pfGUIControlMod::DoSomething( void )
+void    pfGUIControlMod::DoSomething()
 {
     if( fEnabled && fHandler != nil )
         fHandler->DoSomething( this );

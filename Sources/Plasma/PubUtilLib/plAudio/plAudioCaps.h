@@ -60,7 +60,7 @@ public:
 
     plAudioCaps() { Clear(); }
 
-    void    Clear( void )
+    void    Clear()
     {
         fIsAvailable = false;
         fEAXAvailable = false;
@@ -68,9 +68,9 @@ public:
         fMaxNumSources = 0;
     }
 
-    bool    IsAvailable( void ) const { return fIsAvailable; }
-    bool    IsEAXAvailable( void ) const { return fEAXAvailable; }
-    bool    UsingEAXUnified( void ) const { return fEAXUnified; }
+    bool    IsAvailable() const { return fIsAvailable; }
+    bool    IsEAXAvailable() const { return fEAXAvailable; }
+    bool    UsingEAXUnified() const { return fEAXUnified; }
     unsigned GetMaxNumVoices() { return fMaxNumSources; }
 
 protected:

@@ -112,7 +112,7 @@ class plLightTexPBAccessor : public PBAccessor
         void Set( PB2Value& val, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t );
         void Get( PB2Value& v, ReferenceMaker* owner, ParamID id, int tabIndex, TimeValue t, Interval &valid );
 
-        static plLightTexPBAccessor *Instance( void ) { return &fAccessor; }
+        static plLightTexPBAccessor *Instance() { return &fAccessor; }
 
     protected:
 
@@ -134,7 +134,7 @@ protected:
     plLayerTex*  fTex;
 
 
-    virtual bool    IHasAttenuation( void ) { return false; }
+    virtual bool    IHasAttenuation() { return false; }
     virtual void    IBuildMeshes( BOOL isNew ) {}
 
     void    BuildStaticMeshes();
@@ -323,7 +323,7 @@ public:
     virtual ~plRTLightBase();
     void DeleteThis() { delete this; }
 
-    static ParamBlockDesc2  *GetAnimPBDesc( void );
+    static ParamBlockDesc2  *GetAnimPBDesc();
 
     TCHAR* GetObjectName()      { return (TCHAR*)fClassDesc->ClassName(); }
     void GetClassName(TSTR& s)  { s = fClassDesc->ClassName(); }
@@ -357,7 +357,7 @@ public:
     virtual int DrawConeAndLine(TimeValue t, INode* inode, GraphicsWindow *gw, int drawing );
     void GetConePoints(TimeValue t, float aspect, float angle, float dist, Point3 *q);
     virtual void DrawCone(TimeValue t, GraphicsWindow *gw, float dist);
-    int GetSpotShape(void){ return 0; }
+    int GetSpotShape(){ return 0; }
     void SetExtendedDisplay(int flags){ extDispFlags = flags; }
     void BoxCircle(TimeValue t, float r, float d, Box3& box, int extraPt, Matrix3 *tm);
     void BoxDirPoints(TimeValue t, float angle, float dist, Box3 &box, Matrix3 *tm);
@@ -411,13 +411,13 @@ public:
     //
     //
 
-    virtual BOOL IsSpot( void ) { return FALSE; }
-    virtual BOOL IsDir( void )  { return FALSE; }
+    virtual BOOL IsSpot() { return FALSE; }
+    virtual BOOL IsDir()  { return FALSE; }
 
     RefResult EvalLightState(TimeValue time, Interval& valid, LightState *ls);
     ObjLightDesc *CreateLightDesc(INode *n, BOOL forceShadowBuffer=FALSE);
     void SetUseLight(int onOff) { fLightPB->SetValue(kLightOn, 0, onOff); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
-    BOOL GetUseLight(void) { BOOL v; fLightPB->GetValue(kLightOn, 0, v, FOREVER); return v; }
+    BOOL GetUseLight() { BOOL v; fLightPB->GetValue(kLightOn, 0, v, FOREVER); return v; }
     void SetHotspot(TimeValue time, float f); 
     float GetHotspot(TimeValue t, Interval& valid = Interval(0,0));
     void SetFallsize(TimeValue time, float f); 
@@ -430,7 +430,7 @@ public:
     float GetTDist(TimeValue t, Interval& valid = Interval(0,0));
 
     void SetConeDisplay(int s, int notify=TRUE);
-    BOOL GetConeDisplay(void);
+    BOOL GetConeDisplay();
 
     void SetRGBColor(TimeValue t, Point3& rgb); //fLightPB->SetValue(kRGB, t, rgb); NotifyDependents(FOREVER, PART_ALL, REFMSG_CHANGE);}
     Point3 GetRGBColor(TimeValue t, Interval &valid = Interval(0,0)); //return fLightPB->GetPoint3(kRGB, t); }        
@@ -439,13 +439,13 @@ public:
     void SetAspect(TimeValue t, float f) {}
     float GetAspect(TimeValue t, Interval& valid = Interval(0,0)) { return 0.0; }    
     void SetUseAtten(int s){ fLightPB->SetValue(kUseAttenuationBool, 0, s); NotifyDependents(FOREVER, PART_OBJ, REFMSG_CHANGE); }
-    BOOL GetUseAtten(void) {return fLightPB->GetInt(kUseAttenuationBool, 0);}
+    BOOL GetUseAtten() {return fLightPB->GetInt(kUseAttenuationBool, 0);}
     void SetUseAttenNear(int s) {  }
-    BOOL GetUseAttenNear(void) {return false;}
+    BOOL GetUseAttenNear() {return false;}
     void SetAttenDisplay(int s){  }
-    BOOL GetAttenDisplay(void) {return fLightPB->GetInt(kUseAttenuationBool, 0);}      
+    BOOL GetAttenDisplay() {return fLightPB->GetInt(kUseAttenuationBool, 0);}
     void SetAttenDisplayNear(int s){ }
-    BOOL GetAttenDisplayNear(void){return false;}      
+    BOOL GetAttenDisplayNear(){return false;}
     void Enable(int enab) { fLightPB->SetValue(kLightOn, 0, enab); }
     void SetMapBias(TimeValue t, float f) {}
     float GetMapBias(TimeValue t, Interval& valid = Interval(0,0)){return 0.0f;}

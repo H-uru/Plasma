@@ -69,7 +69,7 @@ public:
 protected:
     bool            fRegisteredOnThread;
 
-    virtual void    IDerivedActuallyPlay( void );
+    virtual void    IDerivedActuallyPlay();
     virtual void    ISetActualTime( double t );
     virtual float   GetActualTimeSec();
 

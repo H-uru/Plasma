@@ -70,7 +70,7 @@ void PrintVersion()
 
 //// PrintHelp ///////////////////////////////////////////////////////////////
 
-int PrintHelp( void )
+int PrintHelp()
 {
     puts("");
     PrintVersion();

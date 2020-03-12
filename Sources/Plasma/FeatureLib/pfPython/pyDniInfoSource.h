@@ -65,13 +65,13 @@ public:
     static void AddPlasmaClasses(PyObject *m);
 
     // current coords of the player in current age as a pyDniCoordinates
-    PyObject* GetAgeCoords( void ); // returns pyDniCoordinates
+    PyObject* GetAgeCoords(); // returns pyDniCoordinates
     // current time in current age (tbd)
-    uint32_t          GetAgeTime( void ) const;
+    uint32_t          GetAgeTime() const;
     // name of current age
     ST::string    GetAgeName() const;
     // unique identifier for this age instance
-    plUUID          GetAgeGuid(void) const;
+    plUUID          GetAgeGuid() const;
 };
 
 

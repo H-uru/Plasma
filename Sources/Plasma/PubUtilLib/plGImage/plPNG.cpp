@@ -69,7 +69,7 @@ void pngWriteDelegate(png_structp png_ptr, png_bytep png_data, png_size_t length
 
 //// Singleton Instance ///////////////////////////////////////////////////////
 
-plPNG& plPNG::Instance(void)
+plPNG& plPNG::Instance()
 {
     static plPNG theInstance;
     return theInstance;

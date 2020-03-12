@@ -965,23 +965,23 @@ bool    CWaveFile::OpenForWriting( const char *path, plWAVHeader &header )
     return false;
 }
 
-plWAVHeader &CWaveFile::GetHeader( void )
+plWAVHeader &CWaveFile::GetHeader()
 {
     return fHeader;
 }
 
-void    CWaveFile::Close( void )
+void    CWaveFile::Close()
 {
     IClose();
 }
 
-uint32_t  CWaveFile::GetDataSize( void )
+uint32_t  CWaveFile::GetDataSize()
 {
     hsAssert( false, "Unsupported" );
     return 0;
 }
 
-float   CWaveFile::GetLengthInSecs( void )
+float   CWaveFile::GetLengthInSecs()
 {
     hsAssert( false, "Unsupported" );
     return 0.f;
@@ -999,7 +999,7 @@ bool    CWaveFile::Read( uint32_t numBytes, void *buffer )
     return false;
 }
 
-uint32_t  CWaveFile::NumBytesLeft( void )
+uint32_t  CWaveFile::NumBytesLeft()
 {
     hsAssert( false, "Unsupported" );
     return 0;
@@ -1012,7 +1012,7 @@ uint32_t  CWaveFile::Write( uint32_t bytes, void *buffer )
     return (uint32_t)written;
 }
 
-bool    CWaveFile::IsValid( void )
+bool    CWaveFile::IsValid()
 {
     return true;
 }

@@ -151,7 +151,7 @@ public:
 class plCameraBaseComponent : public plComponent
 {
 public:
-    plCameraBaseComponent(){;}
+    plCameraBaseComponent(){ }
 
     virtual bool SetupProperties(plMaxNode* pNode, plErrorMsg* pErrMsg);
     virtual bool PreConvert(plMaxNode* pNode, plErrorMsg* pErrMsg);

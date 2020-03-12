@@ -58,7 +58,7 @@ class plClipboard
         bool IsTextInClipboard();
         ST::string GetClipboardText();
         void SetClipboardText(const ST::string& text);
-        static plClipboard& GetInstance( void );
+        static plClipboard& GetInstance();
 };
 
 #endif // _Clipboard_h

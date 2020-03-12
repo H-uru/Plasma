@@ -135,7 +135,7 @@ void    pfGUIButtonMod::StopDragging( bool cancel )
     fDialog->SetControlOfInterest( this );
 }
 
-void    pfGUIButtonMod::StartDragging( void )
+void    pfGUIButtonMod::StartDragging()
 {
     fOrigReportedDrag = fDraggable->HasFlag( pfGUIDraggableMod::kReportDragging );
     fDraggable->SetFlag( pfGUIDraggableMod::kReportDragging );
@@ -373,7 +373,7 @@ void    pfGUIButtonMod::SetMouseOverAnimKeys( hsTArray<plKey> &keys, const ST::s
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIButtonMod::IGetDesiredCursor( void ) const
+uint32_t      pfGUIButtonMod::IGetDesiredCursor() const
 {
     if( fHandler == nil )
         return 0;

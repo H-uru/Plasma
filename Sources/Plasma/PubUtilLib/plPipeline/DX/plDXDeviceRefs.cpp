@@ -95,7 +95,7 @@ plDXDeviceRef::~plDXDeviceRef()
         Unlink();
 }
 
-void    plDXDeviceRef::Unlink( void )
+void    plDXDeviceRef::Unlink()
 {
     hsAssert( fBack, "plDXDeviceRef not in list" );
     if( fNext )
@@ -136,7 +136,7 @@ plDXIndexBufferRef::~plDXIndexBufferRef()
 
 //// Releases /////////////////////////////////////////////////////////////////
 
-void    plDXVertexBufferRef::Release( void )
+void    plDXVertexBufferRef::Release()
 {
     if( fD3DBuffer != nil )
     {
@@ -154,7 +154,7 @@ void    plDXVertexBufferRef::Release( void )
     SetDirty( true );
 }
 
-void    plDXIndexBufferRef::Release( void )
+void    plDXIndexBufferRef::Release()
 {
     if( fD3DBuffer != nil )
     {
@@ -217,7 +217,7 @@ plDXTextureRef::~plDXTextureRef()
 
 //// Release //////////////////////////////////////////////////////////////////
 
-void    plDXTextureRef::Release( void )
+void    plDXTextureRef::Release()
 {
     plProfile_DelMem(MemTexture, fDataSize + sizeof(plDXTextureRef));
     plProfile_Extern(ManagedMem);
@@ -326,7 +326,7 @@ plDXLightRef::~plDXLightRef()
 
 //// Release //////////////////////////////////////////////////////////////////
 
-void    plDXLightRef::Release( void )
+void    plDXLightRef::Release()
 {
     // Ensure that this light is disabled
     if( fD3DDevice )
@@ -469,7 +469,7 @@ plDXRenderTargetRef::~plDXRenderTargetRef()
 
 //// Release //////////////////////////////////////////////////////////////////
 
-void    plDXRenderTargetRef::Release( void )
+void    plDXRenderTargetRef::Release()
 {
     int                     i;
     plCubicRenderTarget     *cubic;

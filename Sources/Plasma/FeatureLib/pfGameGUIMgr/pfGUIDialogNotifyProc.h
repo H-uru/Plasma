@@ -71,10 +71,10 @@ class pfGUIDialogNotifyProc : public pfGUIDialogProc
 
         virtual void    DoSomething( pfGUIControlMod *ctrl );
         virtual void    HandleExtendedEvent( pfGUIControlMod *ctrl, uint32_t event );
-        virtual void    OnInit( void );
-        virtual void    OnShow( void );
-        virtual void    OnHide( void );
-        virtual void    OnDestroy( void );
+        virtual void    OnInit();
+        virtual void    OnShow();
+        virtual void    OnHide();
+        virtual void    OnDestroy();
         virtual void    OnCtrlFocusChange( pfGUIControlMod *oldCtrl, pfGUIControlMod *newCtrl );
         virtual void    OnControlEvent( ControlEvt event );
         virtual void    OnInterestingEvent( pfGUIControlMod *ctrl );

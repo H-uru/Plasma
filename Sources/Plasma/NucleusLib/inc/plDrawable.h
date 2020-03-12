@@ -158,7 +158,7 @@ public:
     virtual plDrawable& SetSubType( uint32_t index, plSubDrawableType t, bool on ) = 0;
     virtual uint32_t GetSubType( uint32_t index ) const = 0; // returns or of all spans with this index (index==-1 is all spans).
 
-    virtual uint32_t  GetType( void ) const = 0;
+    virtual uint32_t  GetType() const = 0;
     virtual void    SetType( uint32_t type ) = 0;
 
     virtual void SetRenderLevel(const plRenderLevel& l) = 0;
@@ -196,7 +196,7 @@ public:
     virtual bool    DoIMatch( const plDrawableCriteria& crit ) = 0;
 
     // Take the list of triMeshes and convert them to buffers, building a list of spans for each
-    virtual void    Optimize( void ) = 0;
+    virtual void    Optimize() = 0;
 };
 
 #endif // plDrawable_inc

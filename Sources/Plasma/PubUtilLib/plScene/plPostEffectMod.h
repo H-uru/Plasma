@@ -136,7 +136,7 @@ public:
     void        SetWorldToCamera( hsMatrix44 &w2c, hsMatrix44 &c2w );
 
     // Very bad
-    void        EnableLightsOnRenderRequest( void );
+    void        EnableLightsOnRenderRequest();
 };
 
 #endif // plPostEffectMod_inc

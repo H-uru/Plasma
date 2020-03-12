@@ -182,7 +182,7 @@ class plGBufferGroup
         plGBufferGroup(uint8_t format, bool vertsVolatile, bool idxVolatile, int LOD = 0);
         virtual ~plGBufferGroup();
 
-        uint8_t   GetNumUVs( void ) const { return ( fFormat & kUVCountMask ); }
+        uint8_t   GetNumUVs() const { return ( fFormat & kUVCountMask ); }
         uint8_t   GetNumWeights() const { return (fFormat & kSkinWeightMask) >> 4; }
 
         static uint8_t    CalcNumUVs( uint8_t format ) { return ( format & kUVCountMask ); }
@@ -192,13 +192,13 @@ class plGBufferGroup
         void    DirtyIndexBuffer(size_t i);
         bool    VertexReady(size_t i) const { return (i < fVertexBufferRefs.size()) && fVertexBufferRefs[i]; }
         bool    IndexReady(size_t i) const { return  (i < fIndexBufferRefs.size()) && fIndexBufferRefs[i]; }
-        uint8_t   GetVertexSize( void ) const { return fStride; }
-        uint8_t   GetVertexLiteStride( void ) const { return fLiteStride; }
-        uint8_t   GetVertexFormat( void ) const { return fFormat; }
-        uint32_t  GetMemUsage( void ) const { return ( fNumVerts * GetVertexSize() ) + ( fNumIndices * sizeof( uint16_t ) ); }
-        uint32_t  GetNumVerts( void ) const { return fNumVerts; }
-        uint32_t  GetNumIndices( void ) const { return fNumIndices; }
-        uint32_t  GetNumPrimaryVertsLeft( void ) const;
+        uint8_t   GetVertexSize() const { return fStride; }
+        uint8_t   GetVertexLiteStride() const { return fLiteStride; }
+        uint8_t   GetVertexFormat() const { return fFormat; }
+        uint32_t  GetMemUsage() const { return ( fNumVerts * GetVertexSize() ) + ( fNumIndices * sizeof( uint16_t ) ); }
+        uint32_t  GetNumVerts() const { return fNumVerts; }
+        uint32_t  GetNumIndices() const { return fNumIndices; }
+        uint32_t  GetNumPrimaryVertsLeft() const;
         uint32_t  GetNumVertsLeft( uint32_t idx ) const;
 
         uint32_t  GetVertBufferSize(uint32_t idx) const { return fVertBuffSizes[idx]; }
@@ -231,8 +231,8 @@ class plGBufferGroup
         void    SetIndexBufferEnd(uint32_t idx, uint32_t e) { fIdxBuffEnds[idx] = e; }
         ///////////////////////////////////////////////////////////////////////////////
 
-        uint32_t  GetNumVertexBuffers( void ) const { return fVertBuffStorage.size(); }
-        uint32_t  GetNumIndexBuffers( void ) const { return fIdxBuffStorage.size(); }
+        uint32_t  GetNumVertexBuffers() const { return fVertBuffStorage.size(); }
+        uint32_t  GetNumIndexBuffers() const { return fIdxBuffStorage.size(); }
 
         uint8_t           *GetVertBufferData( uint32_t idx ) { return fVertBuffStorage[ idx ]; }
         uint16_t          *GetIndexBufferData( uint32_t idx ) { return fIdxBuffStorage[ idx ]; }
@@ -259,10 +259,10 @@ class plGBufferGroup
         uint32_t      Format() const { return fFormat; }
 
         // Take temp accumulators and actually build buffer data from them
-        void    TidyUp( void );
+        void    TidyUp();
 
         // Delete the buffer data storage
-        void    CleanUp( void );
+        void    CleanUp();
 
         // Take buffer data and convert it to device-specific buffers
         void    PrepForRendering( plPipeline *pipe, bool adjustForNvidiaLighting );

@@ -46,7 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 class plSillyLightKonstants
 {
 public:
-    static float  GetFarPowerKonst( void )
+    static float  GetFarPowerKonst()
     {
         // arbitrary const, make light drop to 1/kFarPower at attenEnd. 15 just looked good to me. mf
         // Done as a function so we don't have to worry about a separate .cpp file

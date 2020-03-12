@@ -151,7 +151,7 @@ void    pfGUIDragBarCtrl::HandleMouseDrag( hsPoint3 &mousePt, uint8_t modifiers 
 
 //// IGetDesiredCursor ///////////////////////////////////////////////////////
 
-uint32_t      pfGUIDragBarCtrl::IGetDesiredCursor( void ) const
+uint32_t      pfGUIDragBarCtrl::IGetDesiredCursor() const
 {
     // if we are anchored, then no cursors that say we can move
     if ( fAnchored )

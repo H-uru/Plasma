@@ -177,7 +177,7 @@ public:
     // set an age's public status, also works for non-owners
     bool SetAgePublic( const pyVaultAgeInfoNode * ageInfoNode, bool makePublic );
 
-    PyObject* GetGlobalInbox( void ); // returns pyVaultFolderNode
+    PyObject* GetGlobalInbox(); // returns pyVaultFolderNode
 
     // find matching node
     PyObject* FindNode( pyVaultNode* templateNode ) const; // returns pyVaultNode

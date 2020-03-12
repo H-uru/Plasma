@@ -163,7 +163,7 @@ class plMAXVertexAccumulator
         void        StuffMyData( plMaxNode* node, plGeometrySpan *span, Mesh* mesh, ISkinContextData* skinData );
 
         int         GetVertexCount();
-        uint32_t      GetIndexCount( void ) { return fIndices.GetCount(); }
+        uint32_t      GetIndexCount() { return fIndices.GetCount(); }
 };
 
 class plMAXVertNormal
@@ -178,7 +178,7 @@ class plMAXVertNormal
         plMAXVertNormal() { fSmGroup = 0; fNext = nil; fInited = false; fNormal = Point3( 0, 0, 0 ); }
         plMAXVertNormal( Point3 &n, DWORD s ) { fNext = nil; fInited = true; fNormal = n; fSmGroup = s; }
         ~plMAXVertNormal() { /*delete fNext; */}
-        void    DestroyChain( void ) { if( fNext != nil ) fNext->DestroyChain(); delete fNext; fNext = nil; }
+        void    DestroyChain() { if( fNext != nil ) fNext->DestroyChain(); delete fNext; fNext = nil; }
 
         // Adding normalization of input n. Input is usually just crossproduct of face edges. Non-normalized,
         // large faces will overwhelm small faces on summation, which is the opposite of what we want, since
@@ -217,7 +217,7 @@ class plMAXVertNormal
             return pt;
         }
 
-        void    Normalize( void )
+        void    Normalize()
         {
             plMAXVertNormal *ptr = fNext, *prev = this;
 

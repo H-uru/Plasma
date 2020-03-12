@@ -79,7 +79,7 @@ protected:
     bool                            fStealthsChanged;
     hsTArray<plMtlChangeCallback *> fChangeCallbacks;
 
-    void                IUpdateAnimNodes( void );
+    void                IUpdateAnimNodes();
     plAnimStealthNode   *IFindStealth( const ST::string &animName );
     plAnimStealthNode   *IVerifyStealthPresent( const ST::string &animName );
 
@@ -110,21 +110,21 @@ public:
         kRefNotetracks  = 4 // MUST BE THE LAST REF ID SPECIFIED
     };
     void    SetLoadingFlag( bool f ) { fLoading = f; }
-    void    PostLoadAnimPBFixup( void );
+    void    PostLoadAnimPBFixup();
 
     void    RegisterChangeCallback( plMtlChangeCallback *callback );
     void    UnregisterChangeCallback( plMtlChangeCallback *callback );
 
     // Change notifys from our ntWatcher
-    virtual void    NoteTrackAdded( void );
-    virtual void    NoteTrackRemoved( void );
-    virtual void    NameChanged( void );
+    virtual void    NoteTrackAdded();
+    virtual void    NoteTrackRemoved();
+    virtual void    NameChanged();
 
     // Loading/Saving
     IOResult Load(ILoad *iload);
     IOResult Save(ISave *isave);
 
-    virtual void    Reset( void );
+    virtual void    Reset();
 
     int                     NumRefs();
     virtual RefTargetHandle GetReference( int i );
@@ -135,7 +135,7 @@ public:
     virtual bool    SetupProperties( plMaxNode *node, plErrorMsg *pErrMsg );
     virtual bool    ConvertDeInit( plMaxNode *node, plErrorMsg *pErrMsg );
 
-    int                 GetNumStealths( void );
+    int                 GetNumStealths();
     plAnimStealthNode   *GetStealth( int index );
 
     // Static convert to our plPassMtlBase type, if possible
@@ -293,8 +293,8 @@ public:
 class plMtlChangeCallback
 {
     public:
-        virtual void    NoteTrackListChanged( void ) { ; }
-        virtual void    SegmentListChanged( void ) { ; }
+        virtual void    NoteTrackListChanged() { }
+        virtual void    SegmentListChanged() { }
 };
 
 #endif // PL_PASSMTLBASE_H

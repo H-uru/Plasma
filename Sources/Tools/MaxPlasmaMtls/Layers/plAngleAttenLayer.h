@@ -168,7 +168,7 @@ public:
     // Pure virtual accessors for the various bitmap related elements
     virtual Bitmap *GetMaxBitmap(int index = 0) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
     virtual PBBitmap *GetPBBitmap( int index = 0 ) { hsAssert( false, "Function call not valid on this type of layer." ); return nil; }
-    virtual int     GetNumBitmaps( void ) { return 0; }
+    virtual int     GetNumBitmaps() { return 0; }
 
     // Some specific to processing this layer type into runtime materials.
     virtual Box3 GetFade();

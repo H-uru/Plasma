@@ -53,7 +53,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 pfConsoleContext    pfConsoleContext::fRootContext( "global" );
 
-pfConsoleContext    &pfConsoleContext::GetRootContext( void )
+pfConsoleContext    &pfConsoleContext::GetRootContext()
 {
     return fRootContext;
 }
@@ -74,7 +74,7 @@ pfConsoleContext::~pfConsoleContext()
 
 //// Clear ///////////////////////////////////////////////////////////////////
 
-void    pfConsoleContext::Clear( void )
+void    pfConsoleContext::Clear()
 {
     int32_t       idx;
 
@@ -85,7 +85,7 @@ void    pfConsoleContext::Clear( void )
 
 //// Getters /////////////////////////////////////////////////////////////////
 
-uint32_t  pfConsoleContext::GetNumVars( void ) const
+uint32_t  pfConsoleContext::GetNumVars() const
 {
     hsAssert( fVarValues.GetCount() == fVarNames.GetCount(), "Mismatch in console var context arrays" );
     return fVarValues.GetCount();

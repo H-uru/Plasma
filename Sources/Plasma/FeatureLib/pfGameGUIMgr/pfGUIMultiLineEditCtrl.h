@@ -113,8 +113,8 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         virtual bool    IEval( double secs, float del, uint32_t dirty ); // called only by owner object's Eval()
 
-        virtual void    IPostSetUpDynTextMap( void );
-        virtual void    IUpdate( void );
+        virtual void    IPostSetUpDynTextMap();
+        virtual void    IUpdate();
         void            IUpdate( int32_t startLine, int32_t endLine );
 
         friend class pfMLScrollProc;
@@ -155,7 +155,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         bool    IStoreLineStart( uint32_t line, int32_t start );
         void    IOffsetLineStarts( uint32_t position, int32_t offset, bool offsetSelectionEnd = false );
         int32_t   IPointToPosition( int16_t x, int16_t y, bool searchOutsideBounds = false );
-        int32_t   ICalcNumVisibleLines( void ) const;
+        int32_t   ICalcNumVisibleLines() const;
 
         void    IReadColorCode( int32_t &pos, hsColorRGBA &color ) const;
         void    IReadStyleCode( int32_t &pos, uint8_t &fontStyle ) const;
@@ -171,7 +171,7 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    IActuallyInsertColor( int32_t pos, hsColorRGBA &color );
         void    IActuallyInsertStyle( int32_t pos, uint8_t style );
 
-        void    IUpdateScrollRange( void );
+        void    IUpdateScrollRange();
 
         wchar_t *ICopyRange( int32_t start, int32_t end ) const;
 
@@ -232,14 +232,14 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
         void    InsertString( const wchar_t *string );
         void    InsertColor( hsColorRGBA &color );
         void    InsertStyle( uint8_t fontStyle );
-        void    DeleteChar( void );
-        void    ClearBuffer( void );
+        void    DeleteChar();
+        void    ClearBuffer();
         void    SetBuffer( const char *asciiText );
         void    SetBuffer( const wchar_t *asciiText );
         void    SetBuffer( const uint8_t *codedText, uint32_t length );
         void    SetBuffer( const uint16_t *codedText, uint32_t length );
-        char    *GetNonCodedBuffer( void ) const;
-        wchar_t *GetNonCodedBufferW( void ) const;
+        char    *GetNonCodedBuffer() const;
+        wchar_t *GetNonCodedBufferW() const;
         uint8_t   *GetCodedBuffer( uint32_t &length ) const;
         uint16_t  *GetCodedBufferW( uint32_t &length ) const;
         uint32_t  GetBufferSize();
@@ -249,9 +249,9 @@ class pfGUIMultiLineEditCtrl : public pfGUIControlMod
 
         void    GetThisKeyPressed( char &key, uint8_t &modifiers ) const { key = (char)fLastKeyPressed; modifiers = fLastKeyModifiers; }
 
-        void    Lock( void );
-        void    Unlock( void );
-        bool    IsLocked( void ) const { return ( fLockCount > 0 ) ? true : false; }
+        void    Lock();
+        void    Unlock();
+        bool    IsLocked() const { return ( fLockCount > 0 ) ? true : false; }
         
         void    SetScrollEnable( bool state );
 

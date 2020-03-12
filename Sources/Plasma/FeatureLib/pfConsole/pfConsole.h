@@ -123,14 +123,14 @@ class pfConsole : public hsKeyedObject
 
         void    IAddLine( const char *string, short leftMargin = 0 );
         void    IAddParagraph( const char *string, short margin = 0 );
-        void    IClear( void );
+        void    IClear();
 
         void    ISetMode( uint8_t mode );
         void    IEnableFX( bool e ) { fFXEnabled = e; }
-        bool    IFXEnabled( void ) { return fFXEnabled; }
+        bool    IFXEnabled() { return fFXEnabled; }
 
-        void    IPrintSomeHelp( void );
-        void    IUpdateTooltip( void );
+        void    IPrintSomeHelp();
+        void    IUpdateTooltip();
 
     public:
 
@@ -149,16 +149,16 @@ class pfConsole : public hsKeyedObject
 
         static void AddLine( const char *string ) { fTheConsole->IAddParagraph( string ); }
         static void AddLineF(const char * fmt, ...);
-        static void Clear( void ) { fTheConsole->IClear(); }
-        static void Hide( void ) { fTheConsole->ISetMode(kModeHidden); }
+        static void Clear() { fTheConsole->IClear(); }
+        static void Hide() { fTheConsole->ISetMode(kModeHidden); }
 
         static void EnableEffects( bool enable ) { fTheConsole->IEnableFX( enable ); }
-        static bool AreEffectsEnabled( void ) { return fTheConsole->IFXEnabled(); }
+        static bool AreEffectsEnabled() { return fTheConsole->IFXEnabled(); }
         static void SetTextColor( uint32_t color ) { fConsoleTextColor = color; }
         static uint32_t GetTextColor() { return fConsoleTextColor; }
 
         static void         SetPipeline( plPipeline *pipe ) { fPipeline = pipe; }
-        static plPipeline   *GetPipeline( void ) { return fPipeline; }
+        static plPipeline   *GetPipeline() { return fPipeline; }
         
         static void RunCommandAsync (const char cmd[]);
 };

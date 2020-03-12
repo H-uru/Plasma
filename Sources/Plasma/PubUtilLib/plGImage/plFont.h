@@ -75,7 +75,7 @@ class plBDFConvertCallback
 {
     public:
         virtual void    NumChars( uint16_t chars ) {}
-        virtual void    CharDone( void ) {}
+        virtual void    CharDone() {}
 };
 
 //// Class Definition /////////////////////////////////////////////////////////
@@ -220,7 +220,7 @@ class plFont : public hsKeyedObject
         plRenderInfo    fRenderInfo;
 
         void    IClear( bool onConstruct = false );
-        void    ICalcFontAscent( void );
+        void    ICalcFontAscent();
 
         uint8_t   *IGetFreeCharData( uint32_t &newOffset );
 
@@ -254,17 +254,17 @@ class plFont : public hsKeyedObject
         virtual void    Read( hsStream *s, hsResMgr *mgr );
         virtual void    Write( hsStream *s, hsResMgr *mgr );
 
-        ST::string  GetFace( void ) const { return fFace; }
-        uint8_t     GetSize( void ) const { return fSize; }
-        uint16_t    GetFirstChar( void ) const { return fFirstChar; }
-        uint16_t    GetNumChars( void ) const { return fCharacters.GetCount(); }
-        uint32_t    GetFlags( void ) const { return fFlags; }
-        float       GetDescent( void ) const { return (float)fFontDescent; }
-        float       GetAscent( void ) const { return (float)fFontAscent; }
+        ST::string  GetFace() const { return fFace; }
+        uint8_t     GetSize() const { return fSize; }
+        uint16_t    GetFirstChar() const { return fFirstChar; }
+        uint16_t    GetNumChars() const { return fCharacters.GetCount(); }
+        uint32_t    GetFlags() const { return fFlags; }
+        float       GetDescent() const { return (float)fFontDescent; }
+        float       GetAscent() const { return (float)fFontAscent; }
 
-        uint32_t      GetBitmapWidth( void ) const { return fWidth; }
-        uint32_t      GetBitmapHeight( void ) const { return fHeight; }
-        uint8_t       GetBitmapBPP( void ) const { return fBPP; }
+        uint32_t      GetBitmapWidth() const { return fWidth; }
+        uint32_t      GetBitmapHeight() const { return fHeight; }
+        uint8_t       GetBitmapBPP() const { return fBPP; }
 
         void    SetFace( const ST::string &face ) { fFace = face; }
         void    SetSize( uint8_t size ) { fSize = size; }

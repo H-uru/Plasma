@@ -94,7 +94,7 @@ class plPlate
 
         void    ILink( plPlate **back );
 
-        void    IUnlink( void )
+        void    IUnlink()
         {
             hsAssert( fPrevPtr, "Plate not in list" );
             if( fNext )
@@ -123,18 +123,18 @@ class plPlate
         void    SetTexture(plBitmap *texture); // Creates a new single layer material to use the texture.
         void    SetTitle( const char *title ) { if( title != nil ) strncpy( fTitle, title, sizeof( fTitle ) ); else fTitle[ 0 ] = 0; }
 
-        hsGMaterial     *GetMaterial( void ) { return fMaterial; }
-        hsMatrix44      &GetTransform( void ) { return fXformMatrix; }
-        const char      *GetTitle( void ) { return fTitle; }
-        uint32_t          GetFlags( void ) { return fFlags; }
-        const plMipmap  *GetMipmap( void ) { return fMipmap; }
+        hsGMaterial     *GetMaterial() { return fMaterial; }
+        hsMatrix44      &GetTransform() { return fXformMatrix; }
+        const char      *GetTitle() { return fTitle; }
+        uint32_t          GetFlags() { return fFlags; }
+        const plMipmap  *GetMipmap() { return fMipmap; }
 
         void    SetVisible( bool vis ) { if( vis ) fFlags |= kFlagVisible; else fFlags &= ~kFlagVisible; }
-        bool    IsVisible( void );
+        bool    IsVisible();
 
         void    SetOpacity( float opacity = 1.f );
 
-        plPlate *GetNext( void ) { return fNext; }
+        plPlate *GetNext() { return fNext; }
 
 
         /// Helper functions
@@ -173,7 +173,7 @@ class plGraphPlate : public plPlate
         void    SetDataLabels( uint32_t min, uint32_t max );
         void    SetLabelText(const char *text1, const char *text2 = nil, const char *text3 = nil, const char *text4 = nil );
         void    SetLabelText( const std::vector<std::string> & text );
-        void    ClearData( void );
+        void    ClearData();
 
         void    AddData( int32_t value, int32_t value2 = -1, int32_t value3 = -1, int32_t value4 = -1 );
         void    AddData( std::vector<int32_t> values );
@@ -224,8 +224,8 @@ class plPlateManager
 
         virtual ~plPlateManager();
         
-        static plPlateManager   &Instance( void ) { return *fInstance; }
-        static bool InstanceValid( void ) { return fInstance != nil; }
+        static plPlateManager   &Instance() { return *fInstance; }
+        static bool InstanceValid() { return fInstance != nil; }
 
         void        CreatePlate( plPlate **handle );
         void        CreatePlate( plPlate **handle, float width, float height );
@@ -238,11 +238,11 @@ class plPlateManager
         void        SetPlateScreenPos( plPlate *plate, uint32_t x, uint32_t y );
         void        SetPlatePixelSize( plPlate *plate, uint32_t pWidth, uint32_t pHeight );
 
-        uint32_t      GetPipeWidth( void );
-        uint32_t      GetPipeHeight( void );
+        uint32_t      GetPipeWidth();
+        uint32_t      GetPipeHeight();
         void        DrawToDevice( plPipeline *pipe );
 
-        bool        IsValid( void ) { return fCreatedSucessfully; }
+        bool        IsValid() { return fCreatedSucessfully; }
 };
 
 // Sets the hInstance that we load our resources from.  A SceneViewer hack.

@@ -367,7 +367,7 @@ void pyAudioControl::RecordSampleRate( int32_t sample_rate )
 {
 }
 
-uint8_t pyAudioControl::GetPriorityCutoff( void )
+uint8_t pyAudioControl::GetPriorityCutoff()
 {
     return plgAudioSys::GetPriorityCutoff();
 }
