@@ -1123,6 +1123,23 @@ class xKI(ptModifier):
         elif ID == kTimers.JalakBtnDelay:
             self.SetJalakGUIButtons(1)
 
+        # Flash the scroll down arrow.
+        elif ID == kTimers.IncomingChatFlash:
+            if self.KILevel < kNormalKI:
+                mKIdialog = KIMicro.dialog
+            else:
+                mKIdialog = KIMini.dialog
+            if self.chatMgr.incomingChatFlashState > 0:
+                btn = ptGUIControlButton(mKIdialog.getControlFromTag(kGUI.miniChatScrollDown))
+                if self.chatMgr.incomingChatFlashState & 1:
+                    btn.hide()
+                else:
+                    btn.show()
+                self.chatMgr.incomingChatFlashState -= 1
+                PtAtTimeCallback(self.key, 0.15, kTimers.IncomingChatFlash)
+            else:
+                mKIdialog.refreshAllControls()
+
     ## Called by Plasma when a screen capture is done.
     # This gets called once the screen capture is performed and ready to be
     # processed by the KI.

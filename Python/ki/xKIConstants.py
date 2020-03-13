@@ -634,3 +634,4 @@ class kTimers:
     DumpLogs = 6
     LightStop = 7
     JalakBtnDelay = 8
+    IncomingChatFlash = 9
