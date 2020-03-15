@@ -127,7 +127,7 @@ respSolutionCam = ptAttribResponder(59,"resp:Solution Cam")
 OnlyOneOwner = ptAttribSceneobject(60,"OnlyOneOwner") #ensures that after a oneshots, only one client toggles the SDL values
 
 #globals
-Resetting = false
+Resetting = False
 PullsInProgress = 0
 PillarRoomSolvedCheck = 0
 
@@ -259,14 +259,14 @@ class kdshPillarRoom(ptResponder):
                 print "Can't reset now. PullsInProgress = ", PullsInProgress
                 return
             
-            safetoreset = true
+            safetoreset = True
             for pillarcheck in [6,7,8,9]: #using 6-9 because those ID numbers correspond with the callbacks after the "pull lever" oneshot, as if the lever was pulled
                 
                 if (self.PillarIsSafeToMove(pillarcheck)):
                     pass
                 else:
                     print "kdshPillar.OnNotify: A reset button was pushed, but Pillar", pillarcheck-4, "can't reset now."
-                    safetoreset = false
+                    safetoreset = False
                     
             if safetoreset:
                 print "kdshShadowPath Reset Button Pushed."
@@ -422,10 +422,10 @@ class kdshPillarRoom(ptResponder):
 
         if ageSDL["PillarsOccupied"][0]:
             print "PillarIsSafeToMove: Can't do that now. Someone is on a pillar."
-            return false
+            return False
         else:
             #~ print "PillarIsSafeToMove: Pillar",id-5,"is OK to move now."
-            return true
+            return True
 
     def RaiseAPillar(self,id):
         ageSDL = PtGetAgeSDL()        

@@ -93,6 +93,6 @@ class xBugsGoAway(ptResponder):
         if (self.bugCount != 0):
             PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
             PtKillParticles(10.0,1,avatar.getKey())
-            PtSetLightAnimStart(avatar.getKey(),bugLightObjectName,false)
+            PtSetLightAnimStart(avatar.getKey(),bugLightObjectName,False)
             print "xBugsGoAway.OnServerInitComplete() - Killing all bugs"
             self.ISaveBugCount(0)

@@ -71,7 +71,7 @@ objOpenClosetBlockers = ptAttribSceneobjectList(9,"Door Blockers")
 # ---------
 
 kSDLClosetClosed = "psnlClosetClosed"
-boolAmOwner = false
+boolAmOwner = False
 
 AgeStartedIn = None
 
@@ -110,7 +110,7 @@ class psnlMyCloset(ptModifier):
             # if we come from logging in, we link in at the dock and won't see the animation anyway
             vault = ptVault()
             if vault.amOwnerOfCurrentAge():
-                boolAmOwner = true
+                boolAmOwner = True
                 PtDebugPrint("psnlCloset.OnServerInitComplete():\tWelcome Home!")
                 try:
                     closetClosed = ageSDL[kSDLClosetClosed][0]
@@ -133,7 +133,7 @@ class psnlMyCloset(ptModifier):
                     closetClosed = ageSDL[kSDLClosetClosed][0]
                 except:
                     PtDebugPrint("psnlCloset.OnServerInitComplete():\tERROR reading SDL from vault, defaulting closed")
-                    closetClosed = true
+                    closetClosed = True
                 if not closetClosed: # assume closet is in use by owner
                     self.IOpenCloset(1) # fastforward the closet open
                 else: # either closet is closed, or I'm alone...if I'm alone we want to force it closed anyway so...
@@ -158,7 +158,7 @@ class psnlMyCloset(ptModifier):
             ageSDL[kSDLClosetClosed] = (1,)
         actClosetOpen.enable()
         for obj in objOpenClosetBlockers.value:
-            obj.physics.suppress(true)
+            obj.physics.suppress(True)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         # the closet doesn't really need to respond to SDL events...but in case I change my mind...
@@ -180,7 +180,7 @@ class psnlMyCloset(ptModifier):
         # closet has finished opening, handle the setup, and link out (if we were locally notified)
         elif id==respClosetOpen.id and state:
             for obj in objOpenClosetBlockers.value:
-                obj.physics.suppress(false)
+                obj.physics.suppress(False)
             if PtWasLocallyNotified(self.key):
                 self.ILinkToACA() # link to the ACA
     
@@ -195,7 +195,7 @@ class psnlMyCloset(ptModifier):
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "exit closet"
         if controlKey == PlasmaControlKeys.kKeyExitMode:
-            self.IExitCloset(false)
+            self.IExitCloset(False)
             return
 
     def ILinkToACA(self):

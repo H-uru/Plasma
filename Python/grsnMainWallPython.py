@@ -64,7 +64,7 @@ southBlocker = ptAttribSceneobjectList(4,"South Wall Blockers",byObject=1)
 NorthBlockers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
 SouthBlockers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
 
-ReceiveInit = false
+ReceiveInit = False
 """
 NorthState = ptClimbingWallMsgState.kWaiting
 SouthState = ptClimbingWallMsgState.kWaiting
@@ -109,10 +109,10 @@ class grsnMainWallPython(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = true
+        solo = True
         if len(PtGetPlayerList()):
-            solo = false
-            ReceiveInit = true
+            solo = False
+            ReceiveInit = True
             return
         else:
             print"solo in climbing wall"
@@ -139,11 +139,11 @@ class grsnMainWallPython(ptResponder):
         global NorthState
         
         print"grsnMainClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == false):
+        if (ReceiveInit == False):
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = false
+            ReceiveInit = False
             print "finished receiving total game state"
             # update lights display 
             if (SouthState == ptClimbingWallMsgState.kSouthWin or \
@@ -169,7 +169,7 @@ class grsnMainWallPython(ptResponder):
             print "begin receiving total game state"
         
         elif (type == ptClimbingWallMsgType.kAddBlocker and state > 0):
-            self.SetWallIndex(state,true,value)
+            self.SetWallIndex(state,True,value)
                         
         
     def OnClimbingWallEvent(self,type,state,value):
@@ -219,11 +219,11 @@ class grsnMainWallPython(ptResponder):
                     i = i + 1
 
         elif (type == ptClimbingWallMsgType.kAddBlocker):
-            self.SetWallIndex(state,true,value)
+            self.SetWallIndex(state,True,value)
             
         
         elif (type == ptClimbingWallMsgType.kRemoveBlocker):
-            self.SetWallIndex(state,false,value)
+            self.SetWallIndex(state,False,value)
     
     def SetWallIndex(self,index,value,north):
         global SouthBlockers

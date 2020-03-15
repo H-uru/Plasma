@@ -220,16 +220,16 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
                 self.sceneobject.draw.enable()
-                self.sceneobject.physics.suppress(false)
+                self.sceneobject.physics.suppress(False)
             else:
                 if HideCleftPole:
                     PtDebugPrint("psnlYeeshaPageChanges.EnableDisable():\tFissure is open and Totem yeesha page is set 'off', so we gotta get rid of the Cleft pole for now")
                     self.sceneobject.draw.disable()
-                    self.sceneobject.physics.suppress(true)
+                    self.sceneobject.physics.suppress(True)
                 else:
                     #PtDebugPrint("psnlYeeshaPageChanges: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
                     self.sceneobject.draw.enable()
-                    self.sceneobject.physics.suppress(false)
+                    self.sceneobject.physics.suppress(False)
             
             respAudioStart.run(self.key,avatar=None,fastforward=0)
             respEnable.run(self.key,avatar=None,fastforward=0)
@@ -237,7 +237,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             if PageNumber.value == 10:
                 PtDebugPrint("psnlYeeshaPageChanges: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
             self.sceneobject.draw.disable()
-            self.sceneobject.physics.suppress(true)
+            self.sceneobject.physics.suppress(True)
 
             respAudioStop.run(self.key,avatar=None,fastforward=0)
             respDisable.run(self.key,avatar=None,fastforward=1)

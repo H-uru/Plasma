@@ -45,7 +45,7 @@ Module: ercaLadderHatch.py
 Age: Ercana
 Date: December 2003
 Author: Chris Doyle
-toggles an age sdl bool only if another age sdl bool is true
+toggles an age sdl bool only if another age sdl bool is True
 """
 
 from Plasma import *
@@ -72,7 +72,7 @@ RespHatchLocked   = ptAttribResponder(7, "resp: hatch locked - only at top")
 
 boolHatch = 0
 boolEmpty = 0
-iamclimber = false
+iamclimber = False
 LocalAvatar = None
 
 
@@ -140,7 +140,7 @@ class ercaLadderHatch(ptResponder):
                 if boolHatch:
                     MltStgLddr.run(LocalAvatar)
                     #RespHatchOps.run(self.key,state='openabove')
-                    iamclimber = true
+                    iamclimber = True
                     return
                 else:
                     RespHatchLocked.run(self.key,avatar=LocalAvatar)
@@ -194,11 +194,11 @@ class ercaLadderHatch(ptResponder):
                             elif stageNum == 6:
                                 print "Got through hatch: finishing & removing brain."
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
-                                iamclimber = false
+                                iamclimber = False
                                 #ActStart.enable()
                             elif stageNum == 3:
                                 print "done with bottom"
-                                iamclimber = false
+                                iamclimber = False
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
 
         if (id == RespHatchLocked.id):
@@ -239,5 +239,5 @@ class ercaLadderHatch(ptResponder):
             print "Going down.  Hatch is unlocked; Sending gotoStage(5)"
             MltStgLddr.gotoStage(LocalAvatar,5,dirFlag=1,isForward=1,setTimeFlag=1,newTime=0.0)
             #RespHatchOps.run(self.key,state='openbelow')
-            iamclimber = false
+            iamclimber = False
 

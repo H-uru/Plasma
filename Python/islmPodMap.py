@@ -138,7 +138,7 @@ class islmPodMap(ptResponder):
             PtShowDialog(Vignette.value)
             print "dialog: %s goes up" % Vignette.value
         # get control key events
-        PtGetControlEvents(true,self.key)
+        PtGetControlEvents(True,self.key)
 
     ###########################
     def IQuitDialog(self):
@@ -152,6 +152,6 @@ class islmPodMap(ptResponder):
         else:
             print "WTH!!!"
         #disable the Control key events
-        PtGetControlEvents(false,self.key)
+        PtGetControlEvents(False,self.key)
 
 

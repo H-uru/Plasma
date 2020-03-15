@@ -181,7 +181,7 @@ class xChatChannelRegion(ptResponder):
         memberList = []
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
-        localIncluded = false
+        localIncluded = False
         for count in [0,1,2,3,4,5,6,7]:
             if not self.SDL["intSDLChatMembers"][count] == -1:
                 memberID = self.SDL["intSDLChatMembers"][count]
@@ -190,7 +190,7 @@ class xChatChannelRegion(ptResponder):
                 memberList.append( ptPlayer( memberName, memberID ) )
                 PtDebugPrint("xChatChannel: added %s   id # %d  to listen list" % (memberName,memberID),level=kDebugDumpLevel)
                 if memberID == localID:
-                    localIncluded = true
+                    localIncluded = True
         if localIncluded:
             PtSendPrivateChatList(memberList)
             PtDebugPrint("xChatChannel.OnNotify:\tadding you to private chat channel %d" % (numID.value),level=kDebugDumpLevel)
@@ -203,12 +203,12 @@ class xChatChannelRegion(ptResponder):
         global AreWeInRoom
         localPlayer = PtGetLocalPlayer()
         localID = localPlayer.getPlayerID()
-        localIncluded = false
+        localIncluded = False
         for count in [0,1,2,3,4,5,6,7]:
             if self.SDL["intSDLChatMembers"][count] != -1:
                 memberID = self.SDL["intSDLChatMembers"][count]
                 if memberID == localID:
-                    localIncluded = true
+                    localIncluded = True
         if localIncluded:
             PtClearPrivateChatList(PtGetLocalAvatar().getKey())
             PtDebugPrint("xChatChannel.OnNotify:\tremoving ourselves from private chat channel %d" % (numID.value),level=kDebugDumpLevel)

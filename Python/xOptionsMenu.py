@@ -425,7 +425,7 @@ kOptionFadeInSeconds = 0.5
 gOriginalAmbientVolume = 1.0
 gOriginalSFXVolume = 1.0
 gOriginalMusicVolume = 1.0
-gFirstReltoVisit = true
+gFirstReltoVisit = True
 
 gMouseSensitivity = "150"
 gSmoothCam = "0"
@@ -444,7 +444,7 @@ class xOptionsMenu(ptModifier):
         self.version = MaxVersionNumber
         PtDebugPrint("__xOptionsMenu: Max version %d - minor version %d" % (MaxVersionNumber,MinorVersionNumber))
         
-        self.restartWarn = false
+        self.restartWarn = False
         self.goingToCalibration = 0
 
     def OnFirstUpdate(self):
@@ -501,7 +501,7 @@ class xOptionsMenu(ptModifier):
         global gFirstReltoVisit
 
         if room in {u"Personal_psnlMYSTII", u"Personal_District_psnlMYSTII"} and gFirstReltoVisit:
-            gFirstReltoVisit = false
+            gFirstReltoVisit = False
 
             vault = ptVault()
             if type(vault) != type(None):
@@ -525,7 +525,7 @@ class xOptionsMenu(ptModifier):
 
         if id == -1:
             print "Options Menu got notify, resetting First Visit status"
-            gFirstReltoVisit = true
+            gFirstReltoVisit = True
             return
 
         # is it a notification from the scene input interface or PlayerBook?
@@ -1331,7 +1331,7 @@ class xOptionsMenu(ptModifier):
                             #Disable EAX checkbox
                             EAXcheckbox.disable()
                             respDisableItems.run(self.key, state="disableEAX")
-                            EAXcheckbox.setChecked(false)
+                            EAXcheckbox.setChecked(False)
                             ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
                         else:
                             print "Enabling EAX checkbox"
@@ -1670,7 +1670,7 @@ class xOptionsMenu(ptModifier):
 
         EAXcheckbox = ptGUIControlCheckBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeCBID03))
 
-        xIniAudio.SetAudioMode( true, audio.getDeviceName(), EAXcheckbox.isChecked() )
+        xIniAudio.SetAudioMode( True, audio.getDeviceName(), EAXcheckbox.isChecked() )
         #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), EAXcheckbox.isChecked() )
         #xIniAudio.SetAudioMode( audio.isEnabled(), audio.getDeviceName(), audio.isUsingEAXAcceleration() )
         #xIniAudio.SetMicLevel( audio.getMicLevel() )
@@ -1722,7 +1722,7 @@ class xOptionsMenu(ptModifier):
                     if not audio.supportsEAX(audio.getDeviceName()):
                         EAXcheckbox.disable()
                         respDisableItems.run(self.key, state="disableEAX")
-                        EAXcheckbox.setChecked(false)
+                        EAXcheckbox.setChecked(False)
                         ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
 
                     audioField.setValue(num/numAudioDevices)
@@ -1732,7 +1732,7 @@ class xOptionsMenu(ptModifier):
         else:
             EAXcheckbox.disable()
             respDisableItems.run(self.key, state="disableEAX")
-            EAXcheckbox.setChecked(false)
+            EAXcheckbox.setChecked(False)
             ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeEAXTextID)).setForeColor(ptColor(0.839, 0.785, 0.695, 1))
             audioField.disable()
             audioModeCtrlTextBox = ptGUIControlTextBox(AudioSettingsDlg.dialog.getControlFromTag(kAudioModeTextID))

@@ -90,9 +90,9 @@ class philBookshelf(ptModifier):
 
 
     def OnNotify(self,state,id,events):
-        boolLinkerIsMe = false
+        boolLinkerIsMe = False
         if PtWasLocallyNotified(self.key):
-            boolLinkerIsMe = true
+            boolLinkerIsMe = True
         print ('philBookshelf.OnNotify(): state = %d, id = %d, me = %s' % (state, id, boolLinkerIsMe))
         
         if id == actBookshelfExit.id:
@@ -163,7 +163,7 @@ class philBookshelf(ptModifier):
                         respShelveBook.run(self.key)
     
 
-    def IDisengageShelf(self, boolLinkerIsMe = false):
+    def IDisengageShelf(self, boolLinkerIsMe = False):
         print ('philBookshelf.IDisengageShelf(): me = %s' % boolLinkerIsMe)
         actBookshelfExit.disable()
         # fastforward removed because it disables netPropagate
@@ -177,19 +177,19 @@ class philBookshelf(ptModifier):
             virtCam = ptCamera()
             virtCam.save(HutCamera.sceneobject.getKey())
             PtEnableMovementKeys()
-            PtGetControlEvents(false,self.key)
+            PtGetControlEvents(False,self.key)
             PtSendKIMessage(kEnableKIandBB,0)
 
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
         if controlKey == PlasmaControlKeys.kKeyExitMode or controlKey == PlasmaControlKeys.kKeyMoveBackward:
-            self.IDisengageShelf(true)
+            self.IDisengageShelf(True)
 
 
     def OnTimer(self, id):
         if id == 1:
-            PtGetControlEvents(true,self.key)
+            PtGetControlEvents(True,self.key)
             actBookshelfExit.enable()
 
 

@@ -81,7 +81,7 @@ respBackofCave = ptAttribResponder(9, "Resp: link to Cleft")
 AllCloths = "abcdefghij"
 
 GateInUse = 0
-GateCurrentlyClosed = true
+GateCurrentlyClosed = True
 
 AgeStartedIn = None
 
@@ -136,7 +136,7 @@ class kemoJourneyClothGate(ptResponder):
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
                 except:
                     PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
-                    GateCurrentlyClosed = false
+                    GateCurrentlyClosed = False
                 
                 print "OnNotify: GateCurrentlyClosed = " , GateCurrentlyClosed
                 if not GateCurrentlyClosed:
@@ -241,16 +241,16 @@ class kemoJourneyClothGate(ptResponder):
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
             except:
                 PtDebugPrint("kemoJourneyClothGate.OnServerInitComplete():\tERROR reading age SDL")
-                GateCurrentlyClosed = false
+                GateCurrentlyClosed = False
     
             print "ToggleSDL: GateCurrentlyClosed = ", GateCurrentlyClosed
     
             # Toggle the sdl value
             if GateCurrentlyClosed:
-                GateCurrentlyClosed = false
+                GateCurrentlyClosed = False
                 ageSDL.setTagString(stringVarName.value,hint)
             else:
-                GateCurrentlyClosed = true
+                GateCurrentlyClosed = True
                 ageSDL.setTagString(stringVarName.value,hint)
             ageSDL[stringVarName.value] = (GateCurrentlyClosed,)
             PtDebugPrint("kemoJourneyClothGate.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value,GateCurrentlyClosed) )

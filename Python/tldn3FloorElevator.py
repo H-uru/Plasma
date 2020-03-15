@@ -129,8 +129,8 @@ class tldn3FloorElevator(ptResponder):
             elevCurrFloor = ageSDL[kStringAgeSDLElvCurrFloor][0]
             elevIdle = ageSDL[kStringAgeSDLElvIdle][0]
         except:
-            elevPwrOn = false
-            elevLocked = true
+            elevPwrOn = False
+            elevLocked = True
             elevCurrFloor = 2
             elevIdle = 1
             PtDebugPrint("tldn3FloorElevator.OnServerInitComplete():\tERROR: age sdl read failed, defaulting:")
@@ -146,11 +146,11 @@ class tldn3FloorElevator(ptResponder):
                 elevIdle = 1
             PtDebugPrint("\tplacing elevator at floor %s"%elevCurrFloor)
             if elevCurrFloor == 1:
-                resp2to1.run(self.key,fastforward=true)
+                resp2to1.run(self.key,fastforward=True)
             elif elevCurrFloor == 2:
-                resp1to2.run(self.key,fastforward=true)
+                resp1to2.run(self.key,fastforward=True)
             else:
-                resp2to3.run(self.key,fastforward=true)
+                resp2to3.run(self.key,fastforward=True)
 
         # init elevator 'doors'
         xrgnDoor1.clearNow(self.key)

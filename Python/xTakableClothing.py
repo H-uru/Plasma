@@ -106,8 +106,8 @@ class xTakableClothing(ptModifier):
         global baseFClothing
         global baseMClothing
         AgeStartedIn = PtGetAgeName()
-        self.useChance = true
-        self.shown = false
+        self.useChance = True
+        self.shown = False
         if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
         if not (type(stringFClothingName.value) == type("") and stringFClothingName.value != ""):
@@ -116,7 +116,7 @@ class xTakableClothing(ptModifier):
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing male clothing name on %s" % self.sceneobject.getName())
         if not (type(stringChanceSDLName.value) == type("") and stringChanceSDLName.value != ""):
             PtDebugPrint("DEBUG: xTakableClothing.OnFirstUpdate(): Chance SDL var name is empty, so we will not use chance rolls for showing %s" % self.sceneobject.getName())
-            self.useChance = false
+            self.useChance = False
         allFClothing = stringFClothingName.value.split(";")
         for i in range(len(allFClothing)):
             allFClothing[i] = allFClothing[i].strip()
@@ -141,7 +141,7 @@ class xTakableClothing(ptModifier):
                     ageSDL.setNotify(self.key,stringVarName.value,0.0)
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                         PtAtTimeCallback(self.key, 1, kEnableClothingTimer) # we will handle the clickables in a second, since handling them now doesn't work
-                        self.shown = true
+                        self.shown = True
                     else:
                         PtAtTimeCallback(self.key, 1, kDisableClothingTimer)
                 except:
@@ -160,7 +160,7 @@ class xTakableClothing(ptModifier):
                     PtAtTimeCallback(self.key, 1.5, kRollDiceTimer) # make sure this fires after our initial hide/show code runs
                 except:
                     PtDebugPrint("ERROR: xTakableClothing.OnServerInitComplete():\tERROR missing SDL var %s so we will not use chance rolls on %s" % (stringChanceSDLName.value,self.sceneobject.getName()))
-                    self.useChance = false
+                    self.useChance = False
                     self.chanceAppearing = 0
             else:
                 self.chanceAppearing = 0

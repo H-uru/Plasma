@@ -123,12 +123,12 @@ class xGZMarker(ptMultiModifier):
     def EnableObject(self):
         PtDebugPrint("DEBUG: xGZMarker.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName(),level=kDebugDumpLevel)
         self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
+        self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
         PtDebugPrint("DEBUG: xGZMarker.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName(),level=kDebugDumpLevel)
         self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+        self.sceneobject.physics.suppress(True)
 
     def OnNotify(self,state,id,events):
         "Notify from region sensor or from the KI"

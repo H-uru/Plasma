@@ -366,7 +366,7 @@ class islmMemorialImager(ptModifier):
     def setMarquee(self, ImagerMap, x):
 
         ImagerMap.textmap.clearToColor(ptColor(0,0,0,0))  
-        ImagerMap.textmap.setTextColor(kFontColor, true)
+        ImagerMap.textmap.setTextColor(kFontColor, True)
         ImagerMap.textmap.setFont(kTextFontFace,kTextFontSize)
         ImagerMap.textmap.setJustify(PtJustify.kLeftJustify)  
         ImagerMap.textmap.setLineSpacing(0)

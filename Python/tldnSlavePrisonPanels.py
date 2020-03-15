@@ -65,7 +65,7 @@ stringVarName = ptAttribString(4,"Age SDL Var Name")
 # globals
 # ---------
 
-boolCurrentValue = false
+boolCurrentValue = False
 AgeStartedIn = None
 
 class tldnSlavePrisonPanels(ptResponder):

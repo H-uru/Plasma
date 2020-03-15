@@ -125,15 +125,15 @@ kUp = 1
 kCameraReturn = 99
 
 AgeStartedIn = None
-generatorPrimed = false
-scaleEngaged = false
+generatorPrimed = False
+scaleEngaged = False
 weightDirection = kDown
-weightNearUpEnd = false
-weightNearDownEnd = false
-weightSoundLoopingDown = false
-gearStopping = false
-gearStartingDown = false
-weightEngageDisabled = false
+weightNearUpEnd = False
+weightNearDownEnd = False
+weightSoundLoopingDown = False
+gearStopping = False
+gearStartingDown = False
+weightEngageDisabled = False
 
 TimerID = xEnum.Enum("UpElevatorSwitch, DownElevatorSwitch")
 
@@ -161,7 +161,7 @@ class grsnPowerOn(ptResponder):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
 
-        initResponder.run(self.key,fastforward=true)
+        initResponder.run(self.key,fastforward=True)
         flashingLightsResponder.run(self.key,state='Off')
 
 
@@ -197,60 +197,60 @@ class grsnPowerOn(ptResponder):
             #ageSDL[gearBrake01SDL.value] = (1,)
             #ageSDL[gearBrake02SDL.value] = (1,)
         
-            initResponder.run(self.key,avatar=PtGetLocalAvatar(),fastforward=true)
+            initResponder.run(self.key,avatar=PtGetLocalAvatar(),fastforward=True)
         
             # get initial SDL state
-            gearOn = false
+            gearOn = False
             try:
                 gearOn = ageSDL[gearSwitchSDL.value][0]
                 print"server says gear on ",gearOn
             except:
-                gearOn = false
+                gearOn = False
                 print"failed to retrieve gear on state from server"
                 
-            upElevOn = false
+            upElevOn = False
             try:
                 upElevOn = ageSDL[upElevSwitchSDL.value][0]
                 print"server says up elevator on ",upElevOn
             except:
-                upElevOn = false
+                upElevOn = False
                 print"failed to retrieve elevator switch state from server"
                 
-            dnElevOn = false
+            dnElevOn = False
             try:
                 dnElevOn = ageSDL[dnElevSwitchSDL.value][0]
                 print"server says down elevator on ",dnElevOn
             except:
-                dnElevOn = false
+                dnElevOn = False
                 print"failed to retrieve elevator switch state from server"
                 
             if (gearOn):
                 ageSDL[mainSwitchSDL.value] = (1,)
                 ageSDL[gearBrake01SDL.value] = (0,)
                 ageSDL[gearBrake02SDL.value] = (0,)
-                weightEngageDisabled = true
-                mainSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
-                mainPowerOnResponder.run(self.key,avatar=PtGetLocalAvatar(),fastforward=true)
-                flashingLightsResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=true)
-                switchGlowResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearGlowResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearRoomDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
-                firstFloorDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
-                secondFloorDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearBrake01Resp.run(self.key,state='Unlock',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearBrake02Resp.run(self.key,state='Unlock',avatar=PtGetLocalAvatar(),fastforward=true)
+                weightEngageDisabled = True
+                mainSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
+                mainPowerOnResponder.run(self.key,avatar=PtGetLocalAvatar(),fastforward=True)
+                flashingLightsResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=True)
+                switchGlowResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearGlowResponder.run(self.key,state='On',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearRoomDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
+                firstFloorDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
+                secondFloorDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearBrake01Resp.run(self.key,state='Unlock',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearBrake02Resp.run(self.key,state='Unlock',avatar=PtGetLocalAvatar(),fastforward=True)
                 gearLoopSound.run(self.key,avatar=PtGetLocalAvatar())
                 
                 if (upElevOn):
-                    upElevSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
+                    upElevSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
                 else:
-                    upElevSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
+                    upElevSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
                     
                 if (dnElevOn):
-                    dnElevSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=true)
+                    dnElevSwitchResp.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar(),fastforward=True)
                 else:
-                    dnElevSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
+                    dnElevSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
                     
             else: #main off
                 print"main off"
@@ -260,16 +260,16 @@ class grsnPowerOn(ptResponder):
                 ageSDL[dnElevSwitchSDL.value] = (0,)
                 ageSDL[gearBrake01SDL.value] = (1,)
                 ageSDL[gearBrake02SDL.value] = (1,)
-                mainSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
-                flashingLightsResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=true)
-                switchGlowResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearGlowResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearBrake01Resp.run(self.key,state='AutoReturn',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearBrake02Resp.run(self.key,state='AutoReturn',avatar=PtGetLocalAvatar(),fastforward=true)
-                gearRoomDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
-                firstFloorDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
-                secondFloorDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=true)
+                mainSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearSwitchResp.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
+                flashingLightsResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=True)
+                switchGlowResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearGlowResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearBrake01Resp.run(self.key,state='AutoReturn',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearBrake02Resp.run(self.key,state='AutoReturn',avatar=PtGetLocalAvatar(),fastforward=True)
+                gearRoomDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
+                firstFloorDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
+                secondFloorDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar(),fastforward=True)
                     
                 
             
@@ -300,53 +300,53 @@ class grsnPowerOn(ptResponder):
         print"id ",id
         ageSDL = PtGetAgeSDL()
 
-        mainOn = false
+        mainOn = False
         try:
             mainOn = ageSDL[mainSwitchSDL.value][0]
         except:
-            mainOn = false
+            mainOn = False
             
-        gearOn = false
+        gearOn = False
         try:
             gearOn = ageSDL[gearSwitchSDL.value][0]
         except:
-            gearOn = false
+            gearOn = False
             
-        upElevOn = false
+        upElevOn = False
         try:
             upElevOn = ageSDL[upElevSwitchSDL.value][0]
         except:
-            upElevOn = false
+            upElevOn = False
             
-        dnElevOn = false
+        dnElevOn = False
         try:
             dnElevOn = ageSDL[dnElevSwitchSDL.value][0]
         except:
-            dnElevOn = false
+            dnElevOn = False
         
-        brake01On = false
+        brake01On = False
         try:
             brake01On = ageSDL[gearBrake01SDL.value][0]
         except:
-            brake01On = false
+            brake01On = False
                 
-        brake02On = false
+        brake02On = False
         try:
             brake02On = ageSDL[gearBrake02SDL.value][0]
         except:
-            brake02On = false
+            brake02On = False
                 
         triggerer = PtFindAvatar(events)
         
         
         if (id == weightTrigger.id):
-            scaleEngaged = true
+            scaleEngaged = True
             print"weight activator"
             if (gearOn):
                 print"gear on"
                 import xSndLogTracks
                 xSndLogTracks.LogTrack("15","27")
-                weightEngageDisabled = true
+                weightEngageDisabled = True
                 return
             print"set weight forward"
             reverser.run(self.key,state='Forward',avatar=triggerer)
@@ -355,11 +355,11 @@ class grsnPowerOn(ptResponder):
             if (weightNearDownEnd):
                 print"weight sound looping down"
                 weightStartSoundResp.run(self.key,state='Loop',avatar=triggerer)
-                weightNearDownEnd = false
-                weightSoundLoopingDown = true
+                weightNearDownEnd = False
+                weightSoundLoopingDown = True
                 
-            if (generatorPrimed == false):
-                generatorPrimed = true
+            if (generatorPrimed == False):
+                generatorPrimed = True
                 flashingLightsResponder.run(self.key,state='Blink',avatar=PtGetLocalAvatar())
                 print"generator primed"
                 if (mainOn):
@@ -368,9 +368,9 @@ class grsnPowerOn(ptResponder):
         if (id == weightUnTrigger.id and generatorPrimed):
             if (weightEngageDisabled):
                 return
-            scaleEngaged = false
-            if (gearOn == false):
-                generatorPrimed = true
+            scaleEngaged = False
+            if (gearOn == False):
+                generatorPrimed = True
                 flashingLightsResponder.run(self.key,state='Blink',avatar=PtGetLocalAvatar())
                 print"generator primed"
                 if (mainOn):
@@ -381,17 +381,17 @@ class grsnPowerOn(ptResponder):
             weightDirection = kDown
             if (weightNearUpEnd):
                 weightStartSoundResp.run(self.key,state='Loop',avatar=triggerer)
-                weightNearUpEnd = false
+                weightNearUpEnd = False
             return
         
         if (id == weightStartSoundTrigger.id):
             if (weightDirection == kUp):
                 weightStartSoundResp.run(self.key,state='Start',avatar=triggerer)
-                weightSoundLoopingDown = true
+                weightSoundLoopingDown = True
             elif (weightDirection == kDown): 
                 if (weightSoundLoopingDown):
                     print"stop all at bottom"
-                    weightSoundLoopingDown = false
+                    weightSoundLoopingDown = False
                     weightStartSoundResp.run(self.key,state='StopAll',avatar=triggerer)
                 else:
                     print"let weight stop sound play out"
@@ -400,15 +400,15 @@ class grsnPowerOn(ptResponder):
         if (id == weightStopSoundTrigger.id):
             if (weightDirection == kUp):
                 weightStartSoundResp.run(self.key,state='Stop',avatar=triggerer)
-                weightNearUpEnd = true
+                weightNearUpEnd = True
             elif(weightDirection == kDown):
-                weightNearUpEnd = false
+                weightNearUpEnd = False
             return
         
         if (id == weightAtTopTrigger.id):
             if (weightDirection == kDown):
                 weightStartSoundResp.run(self.key,state='Loop',avatar=triggerer)
-                weightNearUpEnd = false
+                weightNearUpEnd = False
             elif(weightDirection == kUp):
                 weightStartSoundResp.run(self.key,state='StopAll',avatar=triggerer)
             return
@@ -416,17 +416,17 @@ class grsnPowerOn(ptResponder):
         if (id == weightStopDownSoundTrigger.id):
             if (weightDirection == kDown):
                 weightStartSoundResp.run(self.key,state='Stop',avatar=triggerer)
-                weightNearDownEnd = true
+                weightNearDownEnd = True
                 print"weight near down end"
             elif (weightDirection == kUp):
-                weightNearDownEnd = false
-                weightSoundLoopingDown = false
+                weightNearDownEnd = False
+                weightSoundLoopingDown = False
             return
         
             #weightLevel=0
-            #if (brake01On == false):
+            #if (brake01On == False):
             #    weightLevel = weightLevel + 1
-            #if (brake02On == false):
+            #if (brake02On == False):
             #    weightLevel = weightLevel + 1
             #if (mainOn):
             #    weightLevel = weightLevel + 1
@@ -447,10 +447,10 @@ class grsnPowerOn(ptResponder):
 #            id == weightMedDown.id or \
 #            id == weightLowestDown.id):
                 print"weight down"
-                weightEngageDisabled = false
+                weightEngageDisabled = False
                 if (scaleEngaged):
                     return
-                generatorPrimed = false
+                generatorPrimed = False
                 if (gearOn):
                     return
                 flashingLightsResponder.run(self.key,state='Off',avatar=PtGetLocalAvatar())
@@ -458,23 +458,23 @@ class grsnPowerOn(ptResponder):
                     ageSDL[mainSwitchSDL.value] = (0,)
                     mainSwitchResp.run(self.key,state='PrimerExpired',avatar=triggerer)
                     switchGlowResponder.run(self.key,state='Off',avatar=triggerer)
-                if (brake01On == false):
+                if (brake01On == False):
                     gearBrake01Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                     ageSDL[gearBrake01SDL.value] = (1,)
-                if (brake02On == false):
+                if (brake02On == False):
                     gearBrake02Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                     ageSDL[gearBrake02SDL.value] = (1,)
                 return
         
         if (id == gearBrake01Resp.id):
             #lock just finished unlocking, check to see that power didn't go off while it was in motion,
-            if (generatorPrimed == false):
+            if (generatorPrimed == False):
                 gearBrake01Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                 ageSDL[gearBrake01SDL.value] = (1,)
         
         if (id == gearBrake02Resp.id):
             #lock just finished unlocking, check to see that power didn't go off while it was in motion,
-            if (generatorPrimed == false):
+            if (generatorPrimed == False):
                 gearBrake02Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                 ageSDL[gearBrake02SDL.value] = (1,)
         
@@ -482,7 +482,7 @@ class grsnPowerOn(ptResponder):
             print"gear stop trigger"
             if (gearStopping):
                 print"gear stop trigger: gear stopped, begin final descent"
-                gearStopping = false
+                gearStopping = False
                 if (gearStartingDown):
                     print"gear stop trigger: gear still in initial descent - do nothing"
                 else:
@@ -492,22 +492,22 @@ class grsnPowerOn(ptResponder):
             if (gearStartingDown):
                 print"main power responder callback - gear finished initial descent" 
                 #gear is finished moving partway down, okay to start second half
-                gearStartingDown = false
-                if (gearStopping == false):
+                gearStartingDown = False
+                if (gearStopping == False):
                     print"main power responder callback - gear also stopped, begin final descent"
                     mainPowerOffResponder.run(self.key,state='GearDown',avatar=PtGetLocalAvatar())
                 else:
                     print"main power responder callback - gear still turning, wait for it to stop"
                 return
-            if (gearStopping == false and gearStartingDown == false):
+            if (gearStopping == False and gearStartingDown == False):
                 print"main power responder callback - reengage locks"
                 #gear is down, reengage the locks
-                if (generatorPrimed == false):
-                    if (brake01On == false):
+                if (generatorPrimed == False):
+                    if (brake01On == False):
                         gearBrake01Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                         ageSDL[gearBrake01SDL.value] = (1,)
                     
-                    if (brake02On == false):
+                    if (brake02On == False):
                         gearBrake02Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                         ageSDL[gearBrake02SDL.value] = (1,)
                 
@@ -537,18 +537,18 @@ class grsnPowerOn(ptResponder):
                     gearGlowResponder.run(self.key,state='Off',avatar=triggerer)
                     switchGlowResponder.run(self.key,state='Off',avatar=triggerer)
                     mainPowerOffResponder.run(self.key,state='GearOff',avatar=triggerer)
-                    gearStopping = true
-                    gearStartingDown = true
+                    gearStopping = True
+                    gearStartingDown = True
                     ageSDL[gearSwitchSDL.value]=(0,)
                     
                 else: # gear not on, but locks may be...
-                    if (brake01On == false):
+                    if (brake01On == False):
                         if (gearStartingDown):
                             return
                         gearBrake01Resp.run(self.key,state='AutoReturn',avatar=triggerer)
                         ageSDL[gearBrake01SDL.value] = (1,)
                     
-                    if (brake02On == false):
+                    if (brake02On == False):
                         if (gearStartingDown):
                             return
                         gearBrake02Resp.run(self.key,state='AutoReturn',avatar=triggerer)
@@ -592,14 +592,14 @@ class grsnPowerOn(ptResponder):
                 mainPowerOnResponder.run(self.key,avatar=triggerer)
                 flashingLightsResponder.run(self.key,state='On',avatar=triggerer)
                 gearGlowResponder.run(self.key,state='On',avatar=triggerer)   
-                if (generatorPrimed == false):
+                if (generatorPrimed == False):
                     #lights went out while firing up
                     switchGlowResponder.run(self.key,state='On',avatar=triggerer)
             else:
                 print"gear switch now off"
                 mainPowerOffResponder.run(self.key,state='GearOff',avatar=triggerer)
-                gearStopping = true
-                gearStartingDown=true
+                gearStopping = True
+                gearStartingDown=True
                 flashingLightsResponder.run(self.key,state='Off',avatar=triggerer)
                 if (mainOn):
                     switchGlowResponder.run(self.key,state='Off',avatar=triggerer)
@@ -629,10 +629,10 @@ class grsnPowerOn(ptResponder):
                     secondFloorDoors.run(self.key,state='TurnOff',avatar=PtGetLocalAvatar())
                  
                 else:
-                    if (generatorPrimed and brake01On == false and brake02On == false):
+                    if (generatorPrimed and brake01On == False and brake02On == False):
                         self.DisableCamera()
                         ageSDL[gearSwitchSDL.value] = (1,)
-                        weightEngageDisabled = true
+                        weightEngageDisabled = True
                         gearSwitchResp.run(self.key,state='TurnOn',avatar=triggerer)
                         gearRoomDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar())
                         firstFloorDoors.run(self.key,state='TurnOn',avatar=PtGetLocalAvatar())
@@ -694,7 +694,7 @@ class grsnPowerOn(ptResponder):
             if (gearOn):
                 gearBrake01Resp.run(self.key,state='Trip',avatar=triggerer)
                 return
-            elif (mainOn == false):
+            elif (mainOn == False):
                 print"main off"
                 gearBrake01Resp.run(self.key,state='Trip',avatar=triggerer)
             else: #main on
@@ -718,7 +718,7 @@ class grsnPowerOn(ptResponder):
             if (gearOn):
                 gearBrake02Resp.run(self.key,state='Trip',avatar=triggerer)
                 return
-            elif (mainOn == false):
+            elif (mainOn == False):
                 print"main off"
                 gearBrake02Resp.run(self.key,state='Trip',avatar=triggerer)
             else: #main on

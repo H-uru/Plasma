@@ -183,7 +183,7 @@ BlockerCountLimit = 0
 SouthCount = 0
 NorthWall = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
 SouthWall = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-ReceiveInit = false
+ReceiveInit = False
 
 class grsnWallPython(ptResponder):
    
@@ -210,19 +210,19 @@ class grsnWallPython(ptResponder):
             while (i < BlockerCountLimit):
                 if (NorthWall[i] == index):
                     print"index found in north list in slot ",i
-                    return true
+                    return True
                 print "north wall [",i,"] = ",NorthWall[i]
                 i = i + 1
         else:
             while (i < BlockerCountLimit):
                 if (SouthWall[i] == index):
                     print"index found in south list in slot ",i
-                    return true
+                    return True
                 print "south wall [",i,"] = ",SouthWall[i]
                 i = i + 1
         
         print"index not found"
-        return false
+        return False
         
     def SetWallIndex(self,index,value,north):
         global NorthWall
@@ -305,8 +305,8 @@ class grsnWallPython(ptResponder):
         
         if (state == ptClimbingWallMsgState.kWaiting):
             #turn everything off
-            self.ResetSouthPanel(false)
-            self.ClearIndices(false)
+            self.ResetSouthPanel(False)
+            self.ClearIndices(False)
             sTubeExclude.clear(self.key)
             sTubeClose.run(self.key,avatar=PtGetLocalAvatar())
             
@@ -314,7 +314,7 @@ class grsnWallPython(ptResponder):
             #set go button to bright
             goBtnSObject.value.runAttachedResponder(kBright)
         elif (state == ptClimbingWallMsgState.kSouthSelect):
-            self.ClearIndices(false)
+            self.ClearIndices(False)
             # make all of the counter lights flash 
             i = 0
             while i<20:
@@ -347,7 +347,7 @@ class grsnWallPython(ptResponder):
             
         elif (state == ptClimbingWallMsgState.kSouthPlayerEntry):
             #disable all panel buttons
-            self.EnableSouthButtons(false)
+            self.EnableSouthButtons(False)
             #run responder to open tube
             if (NorthState == ptClimbingWallMsgState.kNorthPlayerEntry):
                 sTubeOpen.run(self.key,avatar=PtGetLocalAvatar())
@@ -369,8 +369,8 @@ class grsnWallPython(ptResponder):
         print"set N Panel Mode called with state ",state
         if (state == ptClimbingWallMsgState.kWaiting):
             #turn everything off
-            self.ResetNorthPanel(false)
-            self.ClearIndices(true)
+            self.ResetNorthPanel(False)
+            self.ClearIndices(True)
             nTubeExclude.clear(self.key)
             nTubeClose.run(self.key,avatar=PtGetLocalAvatar())
             goBtnNObject.value.runAttachedResponder(kDim)
@@ -378,7 +378,7 @@ class grsnWallPython(ptResponder):
             #set go button to bright
             goBtnNObject.value.runAttachedResponder(kBright)
         elif (state == ptClimbingWallMsgState.kNorthSelect):
-            self.ClearIndices(true)
+            self.ClearIndices(True)
             # make all of the counter lights flash 
             i = 0
             while i<20:
@@ -414,7 +414,7 @@ class grsnWallPython(ptResponder):
             goBtnNObject.value.runAttachedResponder(kRedFlash)
         elif (state == ptClimbingWallMsgState.kNorthPlayerEntry):
             #disable all panel buttons
-            self.EnableNorthButtons(false)
+            self.EnableNorthButtons(False)
             #run responder to open tube
             if (SouthState == ptClimbingWallMsgState.kSouthPlayerEntry):
                 sTubeOpen.run(self.key,avatar=PtGetLocalAvatar())
@@ -464,11 +464,11 @@ class grsnWallPython(ptResponder):
         
         
         print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == false):
+        if (ReceiveInit == False):
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = false
+            ReceiveInit = False
             print "finished receiving total game state"
             # update lights display 
             i = 0
@@ -504,7 +504,7 @@ class grsnWallPython(ptResponder):
             print "begin receiving total game state"
         
         elif (type == ptClimbingWallMsgType.kAddBlocker and state > 0):
-            self.SetWallIndex(state,true,value)
+            self.SetWallIndex(state,True,value)
             if (value):
                 self.ChangeNorthBlocker(state)
             else:
@@ -535,7 +535,7 @@ class grsnWallPython(ptResponder):
                 self.SetSPanelMode(state)
                 
         elif (type == ptClimbingWallMsgType.kAddBlocker):
-            self.SetWallIndex(state,true,value)
+            self.SetWallIndex(state,True,value)
             if (value):
                 self.ChangeNorthBlocker(state)
             else:
@@ -543,7 +543,7 @@ class grsnWallPython(ptResponder):
             
         
         elif (type == ptClimbingWallMsgType.kRemoveBlocker):
-            self.SetWallIndex(state,false,value)
+            self.SetWallIndex(state,False,value)
             if (value):
                 self.ChangeNorthBlocker(state)
             else:
@@ -554,14 +554,14 @@ class grsnWallPython(ptResponder):
             self.UpdateBlockerCountDisplay(state)
         
         elif (type == ptClimbingWallMsgType.kRequestGameState):
-            if (self.IAmMaster() == false):
+            if (self.IAmMaster() == False):
                 return
             msg = ptClimbingWallMsg(self.key)
             msg.createGameState(BlockerCountLimit,SouthState,NorthState)
             i = 0
             while (i < BlockerCountLimit):
-                msg.addBlocker(NorthWall[i],i,true)
-                msg.addBlocker(SouthWall[i],i,false)
+                msg.addBlocker(NorthWall[i],i,True)
+                msg.addBlocker(SouthWall[i],i,False)
                 i = i + 1
             msg.send()            
     
@@ -570,17 +570,17 @@ class grsnWallPython(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = true
+        solo = True
         if len(PtGetPlayerList()):
-            solo = false
-            ReceiveInit = true
+            solo = False
+            ReceiveInit = True
             i = 0
             while i<171:
-                southWall.value[i].physics.suppress(true)
-                northWall.value[i].physics.suppress(true)
+                southWall.value[i].physics.suppress(True)
+                northWall.value[i].physics.suppress(True)
                 i = i + 1
-            sTubeClose.run(self.key,fastforward=true,netForce=0)
-            nTubeClose.run(self.key,fastforward=true,netForce=0)
+            sTubeClose.run(self.key,fastforward=True,netForce=0)
+            nTubeClose.run(self.key,fastforward=True,netForce=0)
             print"requesting game state message from master client"
             msg = ptClimbingWallMsg(self.key)
             msg.init(ptClimbingWallMsgType.kRequestGameState,0,0)
@@ -630,8 +630,8 @@ class grsnWallPython(ptResponder):
         #ageSDL.setIndex("lastChangedIndexS",0,-1)
         #ageSDL.setIndex("lastChangedIndexN",0,-1)
         
-        self.ResetSouthPanel(false)
-        self.ResetNorthPanel(false)
+        self.ResetSouthPanel(False)
+        self.ResetNorthPanel(False)
         sTubeClose.run(self.key)
         nTubeClose.run(self.key)
         
@@ -678,15 +678,15 @@ class grsnWallPython(ptResponder):
         print"found South index ",index
         wallPicked = southWall.value[index]
         animPicked = southLights.value[index]
-        if (self.LookupIndex(index,false)):
+        if (self.LookupIndex(index,False)):
             #turn this guy on
-            wallPicked.physics.suppress(false)
+            wallPicked.physics.suppress(False)
             animPicked.runAttachedResponder(kTeamLightsOn)
             counterPicked = southCountLights.value[SouthCount - 1]
             counterPicked.runAttachedResponder(kTeamLightsOn)
             sPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='blockerOn')
         else:
-            wallPicked.physics.suppress(true)
+            wallPicked.physics.suppress(True)
             animPicked.runAttachedResponder(kTeamLightsOff)
             counterPicked = southCountLights.value[SouthCount]
             counterPicked.runAttachedResponder(kTeamLightsOff)
@@ -700,15 +700,15 @@ class grsnWallPython(ptResponder):
         print"found North index ",index
         wallPicked = northWall.value[index]
         animPicked = northLights.value[index]
-        if (self.LookupIndex(index,true)):
+        if (self.LookupIndex(index,True)):
             #turn this guy on
-            wallPicked.physics.suppress(false)
+            wallPicked.physics.suppress(False)
             animPicked.runAttachedResponder(kTeamLightsOn)
             counterPicked = northCountLights.value[NorthCount - 1]
             counterPicked.runAttachedResponder(kTeamLightsOn)
             nPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='blockerOn')
         else:
-            wallPicked.physics.suppress(true)
+            wallPicked.physics.suppress(True)
             animPicked.runAttachedResponder(kTeamLightsOff)
             counterPicked = northCountLights.value[NorthCount]
             counterPicked.runAttachedResponder(kTeamLightsOff)
@@ -777,7 +777,7 @@ class grsnWallPython(ptResponder):
                 southCountLights.value[i].runAttachedResponder(kTeamLightsOff)
             
             if (enable == 0):
-                southWall.value[i].physics.suppress(true)
+                southWall.value[i].physics.suppress(True)
                 #print"disabled south wall ",i
             i = i + 1
         
@@ -802,7 +802,7 @@ class grsnWallPython(ptResponder):
                 print"enabled north wall - this should not happen  "
             else:
                 #ageSDL.setIndex("northWall",i,0)
-                northWall.value[i].physics.suppress(true)
+                northWall.value[i].physics.suppress(True)
                 #print"disabled north wall ",i
             i = i + 1
         self.ZeroBlockerCount()
@@ -872,7 +872,7 @@ class grsnWallPython(ptResponder):
                 elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     print"multistage complete, warp to wall south room with suit"
                     if (avatar == PtGetLocalAvatar()):
-                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(),true)
+                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(),True)
                         PtSendKIMessage(kDisableEntireYeeshaBook,0)
                     avatar.physics.warpObj(sTeamWarpPt.value.getKey())
                     
@@ -888,7 +888,7 @@ class grsnWallPython(ptResponder):
                 elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     print"multistage complete, warp to wall north room with suit"
                     if (avatar == PtGetLocalAvatar()):
-                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(),true)
+                        PtWearMaintainerSuit(PtGetLocalAvatar().getKey(),True)
                         PtSendKIMessage(kDisableEntireYeeshaBook,0)
                     avatar.physics.warpObj(nTeamWarpPt.value.getKey())
                     
@@ -1053,7 +1053,7 @@ class grsnWallPython(ptResponder):
             print"picked s go button"
             if (southState == ptClimbingWallMsgState.kSouthSit):
                 print"set index to kSouthSelect"
-                self.ClearIndices(false)
+                self.ClearIndices(False)
                 self.ChangeGameState(ptClimbingWallMsgState.kSouthSelect)
                 sPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='main')
                 if (northState == ptClimbingWallMsgState.kWaiting or northState == ptClimbingWallMsgState.kNorthSit or \
@@ -1148,7 +1148,7 @@ class grsnWallPython(ptResponder):
             if (northState == ptClimbingWallMsgState.kNorthSit):
                 print"set index to kNorthSelect"
                 self.ChangeGameState(ptClimbingWallMsgState.kNorthSelect)
-                self.ClearIndices(true)
+                self.ClearIndices(True)
                 #ageSDL.setIndex("nChairState",0,kNorthSelect)
                 nPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='main')
                 if (southState == ptClimbingWallMsgState.kWaiting or southState == ptClimbingWallMsgState.kSouthSit or \
@@ -1197,7 +1197,7 @@ class grsnWallPython(ptResponder):
                     #maxSelections = ageSDL["northCountLimit"][0]
                     maxSelections = BlockerCountLimit
                     #if (ageSDL["northWall"][index]==0):
-                    if (self.LookupIndex(index,true) == 0):
+                    if (self.LookupIndex(index,True) == 0):
                         if (numSelected == maxSelections):
                             print"you've picked all you can"
                             nPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='denied')
@@ -1205,8 +1205,8 @@ class grsnWallPython(ptResponder):
                         #numSelected = numSelected + 1
                         #ageSDL.setIndex("northCount",0,numSelected)
                         #NorthCount = numSelected
-                        #self.SetWallIndex(index,true,true)
-                        self.ChangeBlockerState(true, index, true)
+                        #self.SetWallIndex(index,true,True)
+                        self.ChangeBlockerState(True, index, True)
                     else:
                         numSelected = numSelected - 1
                         if (numSelected == -1):
@@ -1214,8 +1214,8 @@ class grsnWallPython(ptResponder):
                             return
                         #ageSDL.setIndex("northCount",0,numSelected)
                         #NorthCount = numSelected
-                        #self.SetWallIndex(index,false,true)
-                        self.ChangeBlockerState(false,index,true)
+                        #self.SetWallIndex(index,False,True)
+                        self.ChangeBlockerState(False,index,True)
                 else: #you picked one on the south panel
                     if (southState != ptClimbingWallMsgState.kSouthReady):
                         print"no blocker picking for you!"
@@ -1228,7 +1228,7 @@ class grsnWallPython(ptResponder):
                     #maxSelections = ageSDL["southCountLimit"][0]
                     maxSelections = BlockerCountLimit
                     #if (ageSDL["southWall"][index]==0):
-                    if (self.LookupIndex(index,false) == 0):
+                    if (self.LookupIndex(index,False) == 0):
                         if (numSelected == maxSelections):
                             print"you've picked all you can"
                             sPanelSound.run(self.key,avatar=PtGetLocalAvatar(),state='denied')
@@ -1236,8 +1236,8 @@ class grsnWallPython(ptResponder):
                         #numSelected = numSelected + 1
                         #ageSDL.setIndex("southCount",0,numSelected)
                         #SouthCount = numSelected
-                        #self.SetWallIndex(index,true,false)
-                        self.ChangeBlockerState(true,index,false)
+                        #self.SetWallIndex(index,true,False)
+                        self.ChangeBlockerState(True,index,False)
                     else:
                         numSelected = numSelected - 1
                         if (numSelected == -1):
@@ -1245,6 +1245,6 @@ class grsnWallPython(ptResponder):
                             return
                         #ageSDL.setIndex("southCount",0,numSelected)
                         #SouthCount = numSelected
-                        #self.SetWallIndex(index,false,false)
-                        self.ChangeBlockerState(false,index,false)
+                        #self.SetWallIndex(index,False,False)
+                        self.ChangeBlockerState(False,index,False)
 """

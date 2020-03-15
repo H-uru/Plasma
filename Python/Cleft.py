@@ -216,7 +216,7 @@ class Cleft(ptResponder):
         
         if spName == "LinkInPointFissureDrop":
             fissureDrop = 1
-            #avatar.physics.suppress(false)
+            #avatar.physics.suppress(False)
             avatar = 0
             try:
                 avatar = PtGetLocalAvatar()

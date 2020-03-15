@@ -57,7 +57,7 @@ southWall = ptAttribSceneobjectList(2,"South Wall",byObject=1)
 # grsnWallImagerDisplayS
 ##############################################################
 
-ReceiveInit = false
+ReceiveInit = False
 
 ## for team light responders
 kTeamLightsOn = 0
@@ -97,10 +97,10 @@ class grsnWallImagerDisplayS(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = true
+        solo = True
         if len(PtGetPlayerList()):
-            solo = false
-            ReceiveInit = true
+            solo = False
+            ReceiveInit = True
             return
         else:
             print"solo in climbing wall"
@@ -110,11 +110,11 @@ class grsnWallImagerDisplayS(ptResponder):
         global ReceiveInit
         
         print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == false):
+        if (ReceiveInit == False):
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = false
+            ReceiveInit = False
             print "finished receiving total game state"
         
         if (type == ptClimbingWallMsgType.kTotalGameState):
@@ -125,11 +125,11 @@ class grsnWallImagerDisplayS(ptResponder):
 
     def OnClimbingWallEvent(self,type,state,value):
         
-        if (type == ptClimbingWallMsgType.kAddBlocker and value == false):            #display wall settings
+        if (type == ptClimbingWallMsgType.kAddBlocker and value == False):            #display wall settings
             southWall.value[state].runAttachedResponder(kTeamLightsOn)
             print"Imager display S drawing wall index",state
                     
-        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value == false):
+        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value == False):
             southWall.value[state].runAttachedResponder(kTeamLightsOff)
             print"Imager display S clearing wall index",state
         

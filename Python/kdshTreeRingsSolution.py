@@ -209,7 +209,7 @@ Outerbearing = 1
 Middlebearing = 1
 Innerbearing = 1
 
-StillSolved = false
+StillSolved = False
 kPatienceDelayToSolve = 2
 
 class kdshTreeRingsSolution(ptModifier):
@@ -288,7 +288,7 @@ class kdshTreeRingsSolution(ptModifier):
         ageSDL = PtGetAgeSDL()             
         #~ PtDebugPrint("kdshTreeRingsSolution.OnSDLNotify():\t VARname:%s, playerID:%s, tag:%s" % (VARname,playerID,tag))
 
-        StillSolved = false
+        StillSolved = False
         newbearing = ageSDL[VARname][0]
         #~ print "VARname = ", VARname, "newbear = ", newbearing
         
@@ -333,7 +333,7 @@ class kdshTreeRingsSolution(ptModifier):
             MiddleRing03 == 3 and\
             InnerRing03 == 6:
                 print "Tree Ring Puzzle solved. Opening Door."
-                StillSolved = true
+                StillSolved = True
                 PtAtTimeCallback(self.key,kPatienceDelayToSolve,1) # Put in this delay to avoid people "speed clicking" past solution and opening door. 
 
     def OnNotify(self,state,id,events):

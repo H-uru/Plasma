@@ -136,9 +136,9 @@ class tldnPwrTwrPeriscope(ptResponder):
 
 
     def Load(self):
-        solo = true
+        solo = True
         if len(PtGetPlayerList()):
-            solo = false
+            solo = False
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
             if solo:
@@ -173,11 +173,11 @@ class tldnPwrTwrPeriscope(ptResponder):
             # get initial SDL state
             
             # tower raised?
-            boolTwrRaised = false
+            boolTwrRaised = False
             try:
                 pumpCount = ageSDL[kStringAgeSDLPumpCount][0]
                 if pumpCount == 3:
-                    boolTwrRaised = true
+                    boolTwrRaised = True
                 PtDebugPrint("tldnPwrTwrPeriscope.OnServerInitComplete():\tageSDL[%s] = %d, TwrRaised = %d" % (kStringAgeSDLPumpCount,pumpCount,boolTwrRaised) )
             except:
                 PtDebugPrint("tldnPwrTwrPeriscope.OnServerInitComplete():\tERROR: age sdl read failed, defaulting tower lowered")
@@ -187,7 +187,7 @@ class tldnPwrTwrPeriscope(ptResponder):
                 actSun.disable()
                
             # tower aligned?
-            boolPwrMain = false
+            boolPwrMain = False
             try:
                 boolPwrMain = ageSDL[kStringAgeSDLMainPowerOn][0]
                 PtDebugPrint("tldnPwrTwrPeriscope.OnServerInitComplete():\tPwrMain=%d" % (boolPwrMain))
@@ -196,14 +196,14 @@ class tldnPwrTwrPeriscope(ptResponder):
             
             # initialize tower whatnots based on SDL state
             if not boolPwrMain:
-                respPowerOff.run(self.key,fastforward=true)            
+                respPowerOff.run(self.key,fastforward=True)            
             # if PwrOn but tower not raised, correct
             if boolPwrMain and not boolTwrRaised:
                 PtDebugPrint("tldnPwrTwrPeriscope.OnServerInitComplete():\tturning off main power because tower not raised")
                 ageSDL.setTagString(kStringAgeSDLMainPowerOn,"ignore")
                 ageSDL[kStringAgeSDLMainPowerOn] = (0,)
                 boolPwrMain = 0
-                respPowerOff.run(self.key,fastforward=true)
+                respPowerOff.run(self.key,fastforward=True)
                 animScopeLeft.value.stop()
                 animScopeUp.value.stop()
                 scopeSpdUp = 0
@@ -261,10 +261,10 @@ class tldnPwrTwrPeriscope(ptResponder):
                 pumpCount = ageSDL[kStringAgeSDLPumpCount][0]  # tower goes up on 3
                 if pumpCount == 3 and not boolTwrRaised:
                     # tower state changed to raised
-                    boolTwrRaised = true
+                    boolTwrRaised = True
                 elif pumpCount != 3 and boolTwrRaised:
                     # tower state changed to lowered
-                    boolTwrRaised = false
+                    boolTwrRaised = False
                 else:
                     # tower raised/lowered state didn't change
                     return

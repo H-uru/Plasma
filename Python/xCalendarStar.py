@@ -70,7 +70,7 @@ boolFirstUpdate = ptAttribBoolean(5,"Eval On First Update?",0)
 # globals
 # ---------
 
-boolCalStar = false
+boolCalStar = False
 AgeStartedIn = None
 
 

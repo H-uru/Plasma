@@ -144,22 +144,22 @@ class tldnAquarium(ptResponder):
                 tankOpen = ageSDL[kStringAgeSDLAquariumOpen][0]
                 tankLightOn = ageSDL[kStringAgeSDLAquariumLightOn][0]
             except:
-                tankOpen = false
-                tankLightOn = false
+                tankOpen = False
+                tankLightOn = False
                 print "tldnAquarium.OnServerInitComplete(): ERROR: age sdl read failed, defaulting:"
             print "tldnAquarium.OnServerInitComplete(): %s = %d, %s = %d" % (kStringAgeSDLAquariumOpen,tankOpen,kStringAgeSDLAquariumLightOn,tankLightOn)
 
             # init whatnots
             if tankLightOn:
-                respLightOn.run(self.key,fastforward=true)
+                respLightOn.run(self.key,fastforward=True)
             else:
-                respLightOff.run(self.key,fastforward=true)
+                respLightOff.run(self.key,fastforward=True)
 
             if tankOpen:
-                respSheathLower.run(self.key,fastforward=true)
+                respSheathLower.run(self.key,fastforward=True)
                 actBookClick.enable()
             else:
-                respSheathRaise.run(self.key,fastforward=true)
+                respSheathRaise.run(self.key,fastforward=True)
                 actBookClick.disable()
 
     ###########################

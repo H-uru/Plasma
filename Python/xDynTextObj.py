@@ -92,10 +92,10 @@ class xDynTextObj(ptModifier):
         PtDebugPrint("Displaying text in the following rectangle: (%d,%d,%d,%d)" % (marginSize[1],marginSize[0],theMap.getWidth()-marginSize[3],theMap.getHeight()-marginSize[2]))
         PtDebugPrint("Rendering \""+locPath+"\" on the target dynamic text object")
         
-        theMap.netPropagate(false) # we don't want our text appearing on other machines, since we are going to be localized
+        theMap.netPropagate(False) # we don't want our text appearing on other machines, since we are going to be localized
         
         theMap.clearToColor(clearcolor)
-        theMap.setTextColor(color, true)
+        theMap.setTextColor(color, True)
         theMap.setWrapping(wrappingWidth,wrappingHeight)
         theMap.setFont(fontName, fontSize)
         theMap.setJustify(justify)

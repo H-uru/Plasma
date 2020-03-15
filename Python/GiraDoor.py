@@ -75,11 +75,11 @@ class GiraDoor(ptResponder):
         self.ageSDL.setNotify(self.key,"giraDoorOpen",0.0)
         
         # get initial SDL state
-        doorClosed = true
+        doorClosed = True
         try:
             doorOpen = self.ageSDL["giraDoorOpen"][0]
         except:
-            doorOpen = true
+            doorOpen = True
         
         if (doorOpen):
             print"gira door open"

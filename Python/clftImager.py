@@ -334,7 +334,7 @@ class clftImager(ptResponder):
         #reeneable first person
         cam = ptCamera()
         cam.enableFirstPersonOverride()
-        #PtGetControlEvents(false,self.key)
+        #PtGetControlEvents(False,self.key)
         PtDisableControlKeyEvents(self.key)
         PtEnableForwardMovement()
         PtSendKIMessage(kEnableEntireYeeshaBook,0)
@@ -372,7 +372,7 @@ class clftImager(ptResponder):
         if (id == YeeshaSpawner.id): 
             YeeshaName = PtFindAvatar(events)
             YeeshaMultiStage.run(YeeshaName)
-            YeeshaName.physics.suppress(true)
+            YeeshaName.physics.suppress(True)
             YeeshaName.draw.disable()
             PtDebugPrint("clftImager.OnNotify(): YeeshaName = %s" % (YeeshaName))
 
@@ -420,7 +420,7 @@ class clftImager(ptResponder):
             #~ if visionplaying:
                 #~ # how???
                 #~ self.StopVision()
-            #PtGetControlEvents(false,self.key)
+            #PtGetControlEvents(False,self.key)
             PtDisableControlKeyEvents(self.key)
             avatar = PtFindAvatar(events)
             imagerCam.value.popCutsceneCamera(avatar.getKey())
@@ -583,9 +583,9 @@ class clftImager(ptResponder):
         print "clftImager.OpenSolved(): imager list  :", imagerList
         
         if self.AreListsEquiv(solutionList, imagerList):
-            return true
+            return True
         else:
-            return false
+            return False
 
 
     def GetAgeNode(self, age):
@@ -627,11 +627,11 @@ class clftImager(ptResponder):
             # check if all values match up now
             for i in range(4):
                 if list2Copy[i] != list1[i]:
-                    return false
+                    return False
 
-            return true
+            return True
         
-        return false
+        return False
 
     def EndgameSolved(self):
         boolCleftSolved = 0
@@ -642,7 +642,7 @@ class clftImager(ptResponder):
                 boolCleftSolved = 1
 
         if not boolCleftSolved:
-            return false
+            return False
 
         solutionList = []
         currentStateList = []
@@ -665,9 +665,9 @@ class clftImager(ptResponder):
         print "clftImager.EndgameSolved(): currentState list: " + str(currentStateList)
 
         if self.AreListsEquiv(solutionList, currentStateList):
-            return true
+            return True
         else:
-            return false
+            return False
 
 
     def TPOTSolved(self):
@@ -686,9 +686,9 @@ class clftImager(ptResponder):
         print "clftImager.TPOTSolved(): currentState list  :", currentStateList
         
         if self.AreListsEquiv(solutionList, currentStateList):
-            return true
+            return True
         else:
-            return false
+            return False
 
 
     def GetPelletCaveSolution(self):

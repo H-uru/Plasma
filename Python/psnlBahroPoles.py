@@ -276,7 +276,7 @@ class psnlBahroPoles(ptModifier):
         cam.enableFirstPersonOverride()
 
         avatar = PtGetLocalAvatar()
-        avatar.physics.suppress(false)
+        avatar.physics.suppress(False)
 
         
         self.UpdatePoleStates()
@@ -917,7 +917,7 @@ class psnlBahroPoles(ptModifier):
     def FissureLinkRegionHandle(self, avatar):
 
         if PtWasLocallyNotified(self.key):
-            avatar.physics.suppress(true)
+            avatar.physics.suppress(True)
 
             vault = ptVault()
 
@@ -1154,9 +1154,9 @@ class psnlBahroPoles(ptModifier):
             # check if all values match up now
             for i in range(4):
                 if list2Copy[i] != list1[i]:
-                    return false
-            return true
-        return false
+                    return False
+            return True
+        return False
 
 
     def GetAgeNode(self, age):

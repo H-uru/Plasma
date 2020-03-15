@@ -196,7 +196,7 @@ class ahnyPressurePlates(ptModifier):
 
         # is it a clickable book on a pedestal?
         elif id == bookClickable.id and PtFindAvatar(events) == PtGetLocalAvatar() and state:
-            PtToggleAvatarClickability(false)
+            PtToggleAvatarClickability(False)
             bookClickable.disable()
             LocalAvatar = PtFindAvatar(events)
             SeekBehavior.run(LocalAvatar)
@@ -272,7 +272,7 @@ class ahnyPressurePlates(ptModifier):
 
                     elif event[1] == PtBookEventTypes.kNotifyHide:
                         print "ahnyLinkBookGUIPopup:Book: NotifyHide"
-                        PtToggleAvatarClickability(true)
+                        PtToggleAvatarClickability(True)
                         bookClickable.enable()
 
     ###########################
@@ -284,24 +284,24 @@ class ahnyPressurePlates(ptModifier):
             quabs = ageSDL["ahnyQuabs"][0]
             if quabs:
                 print "ahnyPressurePlates: not all quabs kicked off"
-                return false
+                return False
         elif Sphere.value == "Sphere02":
             treeList = list(ageSDL[SDLTrees.value])
             for tree in treeList:
                 if tree:
                     print "ahnyPressurePlates: not all trees knocked over"
-                    return false
+                    return False
 
         for zone in occupantList[1:]:
             if zone:
                 print "ahnyPressurePlates: some zones still occupied"
-                return false
+                return False
 
         if occupantList[0] == 1:
-            return true
+            return True
 
         print "ahnyPressurePlates: book zone still occupied"
-        return false
+        return False
 
     ###########################
     def IShowBook(self):
@@ -332,7 +332,7 @@ class ahnyPressurePlates(ptModifier):
     def HideBook(self, islinking = 0):
         global gLinkingBook
         
-        PtToggleAvatarClickability(true) # enable me as clickable
+        PtToggleAvatarClickability(True) # enable me as clickable
         if gLinkingBook:
             gLinkingBook.hide()
         
