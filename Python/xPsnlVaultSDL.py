@@ -78,7 +78,7 @@ class xPsnlVaultSDL:
 
     def __setitem__(self, sub, val):
 
-        if type(val) == type( () ):
+        if isinstance(val, tuple):
             val = val[0]
         else:
             raise ValueError("Value must be tuple type")
@@ -151,7 +151,7 @@ class xPsnlVaultSDL:
 
         elif vartype == PtSDLVarType.kString32:
             #print "Set string"
-            if type(val) == type(""):
+            if isinstance(val, str):
                 var.setString(val)
             else:
                 var.setString(str(val))

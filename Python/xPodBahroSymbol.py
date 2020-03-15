@@ -91,7 +91,7 @@ class xPodBahroSymbol(ptResponder):
         self.ISetTimers()
         respSFX.run(self.key, state="stop")
 
-        if type(animMasterDayLight.value) != type(None):        
+        if animMasterDayLight.value is not None:        
             timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (DayFrameSize.value / 30.0)
             print "xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed" % (timeIntoMasterAnim, kDayAnimationSpeed)
             animMasterDayLight.animation.skipToTime(timeIntoMasterAnim)

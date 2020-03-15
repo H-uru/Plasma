@@ -166,7 +166,7 @@ class tldnHatchLadderTop(ptModifier):
             for event in events:
                 # multistage callback from stage 2 send when advancing
                 if event[0] == kMultiStageEvent:
-                    if type(ClimbingAvatar) == type(None):
+                    if ClimbingAvatar is None:
                         return
                     if PtFindAvatar(events) == ClimbingAvatar:
                         stageNum = event[1]

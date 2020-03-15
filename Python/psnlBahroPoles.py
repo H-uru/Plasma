@@ -198,7 +198,7 @@ class psnlBahroPoles(ptModifier):
         PtDebugPrint("DEBUG: psnlBahroPoles.OnServerInitComplete():\tEverything ok so far")
 
         ageVault = ptAgeVault()
-        if type(ageVault) != type(None): #is the Vault online?
+        if ageVault is not None: #is the Vault online?
             ageSDL = ageVault.getAgeSDL()
             if ageSDL:
                 try:
@@ -238,7 +238,7 @@ class psnlBahroPoles(ptModifier):
             vault = ptVault()
             if ptVault().amOwnerOfCurrentAge():
                 entry = vault.findChronicleEntry("CleftSolved")
-                if type(entry) != type(None):
+                if entry is not None:
                     if entry.chronicleGetValue() == "yes":
                         boolCleftSolved = 1
                         ageSDL["psnlCleftSolved"] = (1,)
@@ -686,7 +686,7 @@ class psnlBahroPoles(ptModifier):
             #ageSDL = PtGetAgeSDL()
             ageSDL = xPsnlVaultSDL(1)
 
-            if type(ageSDL) != type(None):
+            if ageSDL is not None:
                 sdllist = ageSDL.BatchGet( ["TeledahnPoleState", "GardenPoleState", "GarrisonPoleState", "KadishPoleState"] )
                 self.Poles["Teledahn"]["State"] = sdllist["TeledahnPoleState"]
                 self.Poles["Garden"]["State"] = sdllist["GardenPoleState"]
@@ -723,10 +723,10 @@ class psnlBahroPoles(ptModifier):
         
         vault = ptVault()
 
-        if type(vault) != type(None):
+        if vault is not None:
             chron = vault.findChronicleEntry("JourneyClothProgress")
 
-            if type(chron) != type(None):
+            if chron is not None:
                 ageChronRefList = chron.getChildNodeRefList()
 
                 for ageChron in ageChronRefList:
@@ -903,10 +903,10 @@ class psnlBahroPoles(ptModifier):
     def SetJCProgressComplete(self):
         vault = ptVault()
 
-        if type(vault) != type(None):
+        if vault is not None:
             chron = vault.findChronicleEntry("JourneyClothProgress")
 
-            if type(chron) != type(None):
+            if chron is not None:
                 chron.chronicleSetValue("Z")
                 chron.save()
 
@@ -1106,7 +1106,7 @@ class psnlBahroPoles(ptModifier):
     def CheckBahroCaveSolution(self):
         vault = ptVault()
         entry = vault.findChronicleEntry("BahroCave")
-        if type(entry) == type(None):
+        if entry is None:
             return 0
         else:
             var = self.GetAgeVariable("Teledahn", "SolutionSymbol")
@@ -1129,7 +1129,7 @@ class psnlBahroPoles(ptModifier):
 
         vault = ptVault()
         entry = vault.findChronicleEntry("BahroCave")
-        if type(entry) == type(None):
+        if entry is None:
             #PtDebugPrint("DEBUG: psnlBahroPoles.OnServerInitComplete: Did not find BahroCave chronicle...creating")
             vault.addChronicleEntry("BahroCave",0,"0")
 

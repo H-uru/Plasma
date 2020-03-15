@@ -65,9 +65,9 @@ class psnlBugs(ptResponder):
     
     def ISaveBugCount(self, count):
         vault = ptVault()
-        if type(vault) != type(None):
+        if vault is not None:
             entry = vault.findChronicleEntry(chronicleEntryName)
-            if type(entry) == type(None):
+            if entry is None:
                 # not found... add chronicle
                 vault.addChronicleEntry(chronicleEntryName,0,str(count))
             else:
@@ -76,9 +76,9 @@ class psnlBugs(ptResponder):
     
     def IGetBugCount(self):
         vault = ptVault()
-        if type(vault) != type(None):
+        if vault is not None:
             entry = vault.findChronicleEntry(chronicleEntryName)
-            if type(entry) != type(None):
+            if entry is not None:
                 return int(entry.chronicleGetValue())
         return 0 # no vault or no chronicle var
 

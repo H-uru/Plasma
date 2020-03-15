@@ -168,7 +168,7 @@ class clftYeeshaPage08(ptModifier):
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you.")       
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage8"))
                 vault = ptVault()
-                if type(vault) != type(None): #is the Vault online?    
+                if vault is not None: #is the Vault online?    
                     psnlSDL = vault.getPsnlAgeSDL()
                     if psnlSDL:
                         YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
@@ -187,7 +187,7 @@ class clftYeeshaPage08(ptModifier):
 
     def GotPage(self):
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?    
+        if vault is not None: #is the Vault online?    
             psnlSDL = vault.getPsnlAgeSDL()
             if psnlSDL:
                 YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    

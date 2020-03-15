@@ -75,11 +75,11 @@ class xAgeSDLIntRespList(ptResponder):
         print "__init__xAgeSDLIntRespList v.", self.version
     
     def OnFirstUpdate(self):
-        if type(stringSDLVarName.value) != type("") or stringSDLVarName.value == "":
+        if not isinstance(stringSDLVarName.value, str) or stringSDLVarName.value == "":
             PtDebugPrint("ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
             
-        elif type(stringFormat.value) != type("") or stringFormat.value == "":
+        elif not isinstance(stringFormat.value, str) or stringFormat.value == "":
             PtDebugPrint("ERROR: xAgeSDLIntRespList.OnFirstUpdate():\tERROR: missing responder name format string in max file")
             pass
     

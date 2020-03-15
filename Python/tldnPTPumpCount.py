@@ -95,13 +95,13 @@ class tldnPTPumpCount(ptResponder):
         
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if isinstance(stringVarName.value, str) and stringVarName.value != "":
                 ageSDL.setFlags(stringVarName.value,1,1)
                 ageSDL.sendToClients(stringVarName.value)
             else:
                 PtDebugPrint("ERROR: tldnPTPumpCount.OnFirstUpdate():\tERROR: missing SDL var name in max file")
                 pass
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if isinstance(stringVarName.value, str) and stringVarName.value != "":
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)
                 try:
                     intCurrentValue = ageSDL[stringVarName.value][0]
@@ -122,12 +122,12 @@ class tldnPTPumpCount(ptResponder):
         if not PtWasLocallyNotified(self.key):
             return
         else:
-            if type(actTrigger.value) == type([]) and len(actTrigger.value) > 0:
+            if isinstance(actTrigger.value, list) and len(actTrigger.value) > 0:
                 PtDebugPrint("DEBUG: tldnPTPumpCount.OnNotify():\t local player requesting %s change via %s" % (stringVarName.value,actTrigger.value[0].getName()) )
                 pass
                 
         # error check
-        if type(stringVarName.value) != type("") or stringVarName.value == "":
+        if not isinstance(stringVarName.value, str) or stringVarName.value == "":
             PtDebugPrint("ERROR: tldnPTPumpCount.OnNotify():\tERROR: missing SDL var name")
             return
             

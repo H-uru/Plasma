@@ -100,7 +100,7 @@ class kemoJourneyClothGate(ptResponder):
         global GateCurrentlyClosed
         
         if AgeStartedIn == PtGetAgeName():
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if isinstance(stringVarName.value, str) and stringVarName.value != "":
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setFlags(stringVarName.value,1,1)
                 ageSDL.sendToClients(stringVarName.value)
@@ -108,7 +108,7 @@ class kemoJourneyClothGate(ptResponder):
                 PtDebugPrint("kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
             ageSDL = PtGetAgeSDL()
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if isinstance(stringVarName.value, str) and stringVarName.value != "":
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]
@@ -155,7 +155,7 @@ class kemoJourneyClothGate(ptResponder):
             PtDebugPrint ("You're likely to be eaten by a grue...")
             vault = ptVault()
             entry = vault.findChronicleEntry("JourneyClothProgress")
-            if type(entry) != type(None):
+            if entry is not None:
                 FoundJCs = entry.chronicleGetValue()
                 length = len(FoundJCs)
                 PtDebugPrint ("Are you the one? You've found %s Cloths." % (length))
@@ -192,10 +192,10 @@ class kemoJourneyClothGate(ptResponder):
 
         print "You clicked on the Gate"
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             
             entry = vault.findChronicleEntry("JourneyClothProgress")
-            if type(entry) == type(None): # is this the player's first Journey Cloth?
+            if entry is None: # is this the player's first Journey Cloth?
                 print "No cloths have been found. Get to work!"
             else:
                 FoundJCs = entry.chronicleGetValue()

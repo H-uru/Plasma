@@ -98,7 +98,7 @@ class islmRegisterNexusLink(ptModifier):
             if stationName.value == "Kveer":
                 entryName = "GotLinkToKveerPublic"
                 entry = vault.findChronicleEntry(entryName)
-                if type(entry) != type(None):
+                if entry is not None:
                     entryValue = entry.chronicleGetValue()
                     if entryValue != "yes":
                         entry.chronicleSetValue("yes")
@@ -112,7 +112,7 @@ class islmRegisterNexusLink(ptModifier):
                 # just business-as-usual here
                 self.avatar = 0
                 cityLink = vault.getLinkToCity()
-                if type(cityLink) != type(None):
+                if cityLink is not None:
                     if not cityLink.hasSpawnPoint(linkpointName.value):
                         #Display link added message
                         PtDebugPrint( "Nexus Link added message displayed %s,%s" % (stationName.value,linkpointName.value) )

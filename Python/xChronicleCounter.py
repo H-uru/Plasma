@@ -81,13 +81,13 @@ class xChronicleCounter(ptResponder):
             return
         
         if id == act.id:
-            if type(var.value) == type(None):
+            if var.value is None:
                 PtDebugPrint("xChronicleCounter.py:\t-- ERROR: missing chronicle variable name, can't record --")
                 return
             
             vault = ptVault()
             entry = vault.findChronicleEntry(var.value)
-            if type(entry) == type(None):
+            if entry is None:
                 # not found... add current level chronicle
                 vault.addChronicleEntry(var.value,kChronicleVarType,"%d" %(kInitialValue))
                 PtDebugPrint("xChronicleCounter:\tentered new chronicle counter %s, count is %d" % (var.value,kInitialValue))

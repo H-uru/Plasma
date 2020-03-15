@@ -126,10 +126,10 @@ class xJourneyCloths(ptModifier):
         
         print "You clicked on cloth ", ClothLetter.value
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             
             entry = vault.findChronicleEntry("JourneyClothProgress")
-            if type(entry) == type(None): # is this the player's first Journey Cloth?
+            if entry is None: # is this the player's first Journey Cloth?
                 print "First cloth found."
 
                 print "trying to update JourneyClothProgress to: ", ClothLetter.value

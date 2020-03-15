@@ -158,7 +158,7 @@ class xYeeshaPages(ptModifier):
             PtHideDialog(DialogName)
             
             vault = ptVault()
-            if type(vault) != type(None): #is the Vault online?
+            if vault is not None: #is the Vault online?
                 
                 psnlSDL = vault.getPsnlAgeSDL()
                 if psnlSDL:

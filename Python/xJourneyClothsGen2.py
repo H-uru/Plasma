@@ -121,7 +121,7 @@ class xJourneyClothsGen2(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("JourneyClothProgress")
 
-        if type(entry) == type(None):
+        if entry is None:
             PtDebugPrint("DEBUG: xJourneyClothsGen2.OnFirstUpdate: Did not find JourneyClothProgress chronicle...creating")
             vault.addChronicleEntry("JourneyClothProgress",0,"")
 
@@ -177,7 +177,7 @@ class xJourneyClothsGen2(ptModifier):
             agelink = vault.getOwnedAgeLink(ainfo)
 
             # commenting out, due to Design reversal
-#            if type(agelink) == type(None):
+#            if agelink is None:
 #                PtDebugPrint("DEBUG: xJourneyClothsGen2.OnNotify: I don't have this book yet, so click means nothing")
 #                ClothInUse = 0
 #                Activator.enable()
@@ -204,7 +204,7 @@ class xJourneyClothsGen2(ptModifier):
                     # camera stack is now being saved as a spawn point on the owned age link
                     savepoint = None
 
-                    if type(agelink) != type(None):
+                    if agelink is not None:
                         spawnpoints = agelink.getSpawnPoints()
 
                         for sp in spawnpoints:
@@ -212,7 +212,7 @@ class xJourneyClothsGen2(ptModifier):
                                 savepoint = sp
                                 break
 
-                        if type(savepoint) != type(None):
+                        if savepoint is not None:
                             agelink.removeSpawnPoint(savepoint.getName())
                             
                         savepoint = ptSpawnPointInfo("JCSavePoint", soSpawnpoint.value.getName())
@@ -353,10 +353,10 @@ class xJourneyClothsGen2(ptModifier):
             
             print "You clicked on cloth ", ClothLetter.value
             vault = ptVault()
-            if type(vault) != type(None): #is the Vault online?
+            if vault is not None: #is the Vault online?
                 
                 entry = vault.findChronicleEntry("JourneyClothProgress")
-                if type(entry) == type(None): # is this the player's first Journey Cloth?
+                if entry is None: # is this the player's first Journey Cloth?
                     PtDebugPrint("No JourneyClothProgress chronicle entry found, I'll add it.")
                     PtDebugPrint("You're going to have to press the button again.")
                     vault.addChronicleEntry("JourneyClothProgress",0,"")
@@ -364,7 +364,7 @@ class xJourneyClothsGen2(ptModifier):
                 else:
                     currentAgeChron = self.GetCurrentAgeChronicle(entry)
 
-                    if type(currentAgeChron) == type(None):
+                    if currentAgeChron is None:
                         print "You haven't found a JC in this age before, adding it now"
                         
                         currentAgeChron = self.AddNodeWithCurrentValue(entry)

@@ -161,7 +161,7 @@ class bhroBahroYeeshaCave(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("BahroCave")
 
-        if type(entry) == type(None):
+        if entry is None:
             PtDebugPrint("DEBUG: bhroBahroYeeshaCave.OnFirstUpdate: Did not find BahroCave chronicle...creating")
             vault.addChronicleEntry("BahroCave",0,"0")
 
@@ -432,7 +432,7 @@ class bhroBahroYeeshaCave(ptModifier):
 
 
     def SetState(self, age, state):
-        if type(state) == type(0):
+        if isinstance(state, int):
             #PtDebugPrint("Setting %s state to %d" % (age, state))
             psnlSDL = xPsnlVaultSDL()
 
@@ -542,7 +542,7 @@ class bhroBahroYeeshaCave(ptModifier):
         self.ageDict[age]['PoleCollider'].value.physics.suppress(1)
         if not fforward:
             vault = ptVault()
-            if type(vault) != type(None): #is the Vault online?
+            if vault is not None: #is the Vault online?
                 psnlSDL = vault.getPsnlAgeSDL()
                 if psnlSDL:
                     ypageSDL = psnlSDL.findVar("YeeshaPage25")
@@ -580,7 +580,7 @@ class bhroBahroYeeshaCave(ptModifier):
 
     def PostJCOneShot(self, age):
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             psnlSDL = vault.getPsnlAgeSDL()
             if psnlSDL:
                 ypageSDL = psnlSDL.findVar("YeeshaPage25")
@@ -784,7 +784,7 @@ class bhroBahroYeeshaCave(ptModifier):
         print "bhroBahroYeeshaCave.GetAutoStartLevel()"
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
-        if type(bc) != type(None):
+        if bc is not None:
             val = bc.chronicleGetValue()
             if val == "":
                 return 0
@@ -797,7 +797,7 @@ class bhroBahroYeeshaCave(ptModifier):
     def IncrementAutoStartLevel(self):
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
-        if type(bc) != type(None):
+        if bc is not None:
             val = bc.chronicleGetValue()
             if val == "":
                 val = 0

@@ -87,7 +87,7 @@ class xCalendarStar(ptResponder):
         global boolCalStar
 
         AgeStartedIn = PtGetAgeName()
-        if not (type(sdlCalStar.value) == type("") and sdlCalStar.value != ""):
+        if not (isinstance(sdlCalStar.value, str) and sdlCalStar.value != ""):
             PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
@@ -148,7 +148,7 @@ class xCalendarStar(ptResponder):
 
     def GotPage(self):
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             psnlSDL = xPsnlVaultSDL()
             psnlSDL = vault.getPsnlAgeSDL()
             if psnlSDL:

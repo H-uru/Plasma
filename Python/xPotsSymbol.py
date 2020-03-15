@@ -91,13 +91,13 @@ class xPotsSymbol(ptResponder):
         global listSDL
         
         AgeStartedIn = PtGetAgeName()
-        if not (type(sdlSaveCloth1.value) == type("") and sdlSaveCloth1.value != "")\
-        or not (type(sdlSaveCloth2.value) == type("") and sdlSaveCloth2.value != "")\
-        or not (type(sdlSaveCloth3.value) == type("") and sdlSaveCloth3.value != "")\
-        or not (type(sdlSaveCloth4.value) == type("") and sdlSaveCloth4.value != "")\
-        or not (type(sdlSaveCloth5.value) == type("") and sdlSaveCloth5.value != "")\
-        or not (type(sdlSaveCloth6.value) == type("") and sdlSaveCloth6.value != "")\
-        or not (type(sdlSaveCloth7.value) == type("") and sdlSaveCloth7.value != ""):
+        if not (isinstance(sdlSaveCloth1.value, str) and sdlSaveCloth1.value != "")\
+        or not (isinstance(sdlSaveCloth2.value, str) and sdlSaveCloth2.value != "")\
+        or not (isinstance(sdlSaveCloth3.value, str) and sdlSaveCloth3.value != "")\
+        or not (isinstance(sdlSaveCloth4.value, str) and sdlSaveCloth4.value != "")\
+        or not (isinstance(sdlSaveCloth5.value, str) and sdlSaveCloth5.value != "")\
+        or not (isinstance(sdlSaveCloth6.value, str) and sdlSaveCloth6.value != "")\
+        or not (isinstance(sdlSaveCloth7.value, str) and sdlSaveCloth7.value != ""):
             PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
             pass
 

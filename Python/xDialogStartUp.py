@@ -434,7 +434,7 @@ class xDialogStartUp(ptResponder):
 
             vault = ptVault()
             entry = vault.findChronicleEntry("InitialAvCustomizationsDone")
-            if type(entry) != type(None):
+            if entry is not None:
                 ageInfo.setAgeFilename("Personal")
             else:
                 ageInfo.setAgeFilename("AvatarCustomization")

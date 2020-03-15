@@ -132,15 +132,15 @@ class nb01RegisterNexusLink(ptModifier):
 #            # player should become registered visitor of this hood
 #            
 #            hoodMgr = ptNeighborhoodMgr()
-#            if type(hoodMgr) == type(None):
+#            if hoodMgr is None:
 #                PtDebugPrint("nb01RegisterNexusLink:\thood manager type is None")
 #                return
 #            ageVault = ptAgeVault()
-#            if type(ageVault) == type(None):
+#            if ageVault is None:
 #                PtDebugPrint("nb01RegisterNexusLink:\tage vault type is None")
 #                return
 #            hoodNode = ageVault.getNeighborhood()
-#            if type(hoodNode) == type(None):
+#            if hoodNode is None:
 #                PtDebugPrint("nb01RegisterNexusLink:\thood node type is None")
 #                return
 #            hoodID = hoodNode.getID()
@@ -153,7 +153,7 @@ class nb01RegisterNexusLink(ptModifier):
 #            # player can choose to join or if declines, becomes visitor as well as prosepective member
 #            joinString = "You have been invited to join our neighborhood.  Would you like to become a member?"
 #            ageVault = ptAgeVault()
-#            if type(ageVault) != type(None):
+#            if ageVault is not None:
 #                hoodNode = ageVault.getNeighborhood()
 #                hoodName = hoodNode.hoodGetTitle()
 #                joinString = "You have been invited to join our neighborhood.  Would you like to become a member of %s?" % hoodName

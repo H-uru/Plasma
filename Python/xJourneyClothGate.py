@@ -102,10 +102,10 @@ class xJourneyClothGate(ptResponder):
         global AllCloths
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not (isinstance(stringVarName.value, str) and stringVarName.value != ""):
             PtDebugPrint("ERROR: xJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
-        if type(ClothsComplete.value) != type(None) and ClothsComplete.value != "":
+        if ClothsComplete.value is not None and ClothsComplete.value != "":
             AllCloths = ClothsComplete.value
             PtDebugPrint("DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing Max specified all cloths")
         else:
@@ -118,7 +118,7 @@ class xJourneyClothGate(ptResponder):
         # make sure that we are in the age we think we're in
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if isinstance(stringVarName.value, str) and stringVarName.value != "":
                 ageSDL.setFlags(stringVarName.value,1,1)
                 ageSDL.sendToClients(stringVarName.value)
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)
@@ -146,14 +146,14 @@ class xJourneyClothGate(ptResponder):
         if id == rgnLink.id:
             vault = ptVault()
             FoundJCs = ""
-            if type(vault) != type(None): #is the Vault online?
+            if vault is not None: #is the Vault online?
                 entry = vault.findChronicleEntry("JourneyClothProgress")
-                if type(entry) == type(None):
+                if entry is None:
                     PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
                     pass
                 else:
                     entry = self.GetCurrentAgeChronicle(entry)
-                    if type(entry) == type(None):
+                    if entry is None:
                         PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
                         return
                     FoundJCs = entry.chronicleGetValue()
@@ -227,15 +227,15 @@ class xJourneyClothGate(ptResponder):
 
         print "You clicked on the Gate"
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             
             entry = vault.findChronicleEntry("JourneyClothProgress")
-            if type(entry) == type(None):
+            if entry is None:
                 PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
                 pass
             else:
                 entry = self.GetCurrentAgeChronicle(entry)
-                if type(entry) == type(None):
+                if entry is None:
                     PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
                     return
                 FoundJCs = entry.chronicleGetValue()

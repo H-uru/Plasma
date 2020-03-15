@@ -154,10 +154,10 @@ class grsnPrisonRandomSDLItems(ptResponder):
         vault = ptVault()
                 
 
-        if type(vault) != type(None): #is the Vault online?
+        if vault is not None: #is the Vault online?
             entry = vault.findChronicleEntry("VisitedGrsnPrison")
             
-            if type(entry) == type(None): 
+            if entry is None: 
                 vault.addChronicleEntry("VisitedGrsnPrison",1,"yes")
                 PtDebugPrint ("grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle.")
                 

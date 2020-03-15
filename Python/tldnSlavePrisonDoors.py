@@ -244,7 +244,7 @@ class tldnSlavePrisonDoors(ptResponder):
                     break
             else:
                 # otherwise look at the responder states
-                if type(resp.value) == type([]) and len(resp.value) > 0:
+                if isinstance(resp.value, list) and len(resp.value) > 0:
                     plate = resp.value[0].getSceneObject().getResponderState()
                     # plate == 0 is up (no weight) and plate == 1 is pressed down (has weight)
     
