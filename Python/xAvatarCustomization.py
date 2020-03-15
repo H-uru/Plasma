@@ -1340,7 +1340,7 @@ class xAvatarCustomization(ptModifier):
         # get (or re-get) the closet
         TheCloset = ClothingCloset()
         # start from the top and go down Hair thru Feet (and Accessories)
-        for listboxID in TheCloset.keys():
+        for listboxID in TheCloset.viewkeys():
             # do the primary clothing listbox
             group = TheCloset[listboxID]
             # add the listbox class if we don't have it already
@@ -1372,7 +1372,7 @@ class xAvatarCustomization(ptModifier):
         "Gets whats being worn and sets the dialogs to show what we are wearing"
         # assumes that WornList is already filled out
         global listboxDict
-        for id in TheCloset.keys():
+        for id in TheCloset.viewkeys():
             # tell the listboxes to update themselves
             listboxDict[id].SetWhatWearing()
             listboxDict[id].UpdateScrollArrows()
@@ -2164,17 +2164,17 @@ class ClothingCloset:
         return len(self.clothingGroups)
 
     def keys(self):
-        return self.clothingGroups.keys()
+        return self.clothingGroups.viewkeys()
 
     def findGroup(self,clothing_type):
-        for group in self.clothingGroups.values():
+        for group in self.clothingGroups.viewvalues():
             if group.clothingType == clothing_type:
                 return group
         return None
 
     def findClothingItem(self,finditem):
         "find the clothing item in the closet, return group and index"
-        for group in self.clothingGroups.values():
+        for group in self.clothingGroups.viewvalues():
             # search through the normal clothing
             for idx in range(len(group)):
                 if group[idx].name == finditem.name:
@@ -2187,7 +2187,7 @@ class ClothingCloset:
     
     def getItemByName(self,itemName):
         "return the clothing item with the desired name"
-        for group in self.clothingGroups.values():
+        for group in self.clothingGroups.viewvalues():
             # search through the normal clothing
             for idx in range(len(group)):
                 if group[idx].name == itemName:

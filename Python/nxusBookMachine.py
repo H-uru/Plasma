@@ -695,7 +695,7 @@ class nxusBookMachine(ptModifier):
         if kiLevel < kNormalKI:
             respKISlot.run(self.key, events = events) #Insert KI
         elif state:
-            for ageFilename in self.publicAges.keys():
+            for ageFilename in self.publicAges.viewkeys():
                 # Crummy server software (eg Cyan) might discard requests for hardcoded public ages,
                 # leaving us dead in the water. BUT we would like to get information about that
                 # age from the vault, if possible. Therefore, we ask anyway but don't rely on it.
@@ -1095,12 +1095,12 @@ class nxusBookMachine(ptModifier):
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDEngText)).setString("")
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDFreText)).setString("")
         ptGUIControlTextBox(NexusGUI.dialog.getControlFromTag(kIDGerText)).setString("")
-        for id in kLanguageControls.keys():
+        for id in kLanguageControls.viewkeys():
             ptGUIControlButton(NexusGUI.dialog.getControlFromTag(id)).hide()
 
     def IToggleSortControls(self, enabled):
         active = kSortControlId.get(self.publicHoodSort)
-        for id in kSortControlId.values():
+        for id in kSortControlId.viewvalues():
             control = ptGUIControlButton(NexusGUI.dialog.getControlFromTag(id))
             if enabled and id == active:
                 control.show()

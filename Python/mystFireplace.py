@@ -133,7 +133,7 @@ class mystFireplace(ptModifier):
         #actPanelButtons.disable()
         respFPDoor.run(self.key, state = "close", fastforward = 1)
 
-        #for key,value in actPanelButtons.byObject.items():
+        #for key,value in actPanelButtons.byObject.viewitems():
             #print key
             #p = value.getParentKey()
             #if p:
@@ -171,7 +171,7 @@ class mystFireplace(ptModifier):
                 id = IgnorePanelClick[0]
                 del IgnorePanelClick[0]
                 
-                for rkey,rvalue in actPanelButtons.byObject.items():
+                for rkey,rvalue in actPanelButtons.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
@@ -267,7 +267,7 @@ class mystFireplace(ptModifier):
                     return
                 else:
                     IgnorePanelClick.append(id)
-                    for rkey,rvalue in actPanelButtons.byObject.items():
+                    for rkey,rvalue in actPanelButtons.byObject.viewitems():
                         parent = rvalue.getParentKey()
                         if parent:
                             pname = parent.getName()
@@ -284,7 +284,7 @@ class mystFireplace(ptModifier):
 
                 print panelName, bstate
 
-                for rkey,rvalue in respMorphButtons.byObject.items():
+                for rkey,rvalue in respMorphButtons.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
@@ -388,12 +388,12 @@ class mystFireplace(ptModifier):
         global IgnorePanelClick
 
         #respResetPanel.run(self.key, fastforward=1)
-        #for rkey,rvalue in respResetPanel.byObject.items():
+        #for rkey,rvalue in respResetPanel.byObject.viewitems():
         #    respResetPanel.run(self.key,objectName=rkey, fastforward=0)
 
         for but in CheckedButtons:
             id = but[-3:]
-            for rkey,rvalue in respMorphButtons.byObject.items():
+            for rkey,rvalue in respMorphButtons.byObject.viewitems():
                 parent = rvalue.getParentKey()
                 if parent:
                     pname = parent.getName()

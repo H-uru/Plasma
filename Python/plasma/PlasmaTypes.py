@@ -721,7 +721,7 @@ class ptAttribAnimation(ptAttribute):
                 self.animation.setAnimName(value)
                 # then if there are animations by object then set those, too
                 if isinstance(self.byObject,ptByAnimObject):
-                    for anim in self.byObject.values():
+                    for anim in self.byObject.viewvalues():
                         anim.setAnimName(value)
             except AttributeError:
                 self.animation = ptAnimation()

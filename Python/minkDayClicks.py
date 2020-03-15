@@ -117,7 +117,7 @@ class minkDayClicks(ptResponder):
     def OnNotify(self,state,id,events):
         print "minkDayClicks.OnNotify(): state=%s id=%d events=" % (state, id), events
 
-        if id in ClickToResponder.keys() and state and PtFindAvatar(events) == PtGetLocalAvatar():
+        if id in ClickToResponder.viewkeys() and state and PtFindAvatar(events) == PtGetLocalAvatar():
             print "minkDayClicks.OnNotify(): Clicked on %d, running %d" % (id, ClickToResponder[id].id)
             LocalAvatar = PtFindAvatar(events)
             clkCave01.disable()

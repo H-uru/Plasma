@@ -123,7 +123,7 @@ class islmEmgrPhase0(ptResponder):
                 ageSDL.setNotify(self.key,variable,0.0)
                 self.IManageBOOLs(variable, "")
                 
-            for variable in StateVARs.keys():
+            for variable in StateVARs.viewkeys():
                 PtDebugPrint("setting notify on %s" % variable)
                 ageSDL.setNotify(self.key,variable,0.0)
                 StateVARs[variable](variable,ageSDL[variable][0])
@@ -140,7 +140,7 @@ class islmEmgrPhase0(ptResponder):
                 print "islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
                 self.IManageBOOLs(VARname,SDLname)
                 
-            elif VARname in StateVARs.keys():
+            elif VARname in StateVARs.viewkeys():
                 PtDebugPrint("islmEmgrPhas0.OnSDLNotify : %s is a STATE variable" % (VARname))
                 
                 NewSDLValue = ageSDL[VARname][0]

@@ -200,7 +200,7 @@ class nb01EmgrPhase0(ptResponder):
         if VARname in self.SimplePagingVars:
             self.IManageSimplePagingVar(VARname)
 
-        elif VARname in self.SpecialPagingVars.keys():
+        elif VARname in self.SpecialPagingVars.viewkeys():
             NewSDLValue = ageSDL[VARname][0]
             self.SpecialPagingVars[VARname](VARname, NewSDLValue)
 
