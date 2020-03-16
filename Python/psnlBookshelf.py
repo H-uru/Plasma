@@ -670,7 +670,7 @@ class psnlBookshelf(ptModifier):
                         link = self.GetOwnedAgeLink(ptAgeVault(), "city")
                     if link is None:
                         return
-                    if not isinstance(link, type(ptVaultAgeLinkNode())) or link.getLocked():
+                    if not isinstance(link, ptVaultAgeLinkNode) or link.getLocked():
                         # find lock associated with this book
 
                         objLockPicked = objLocks.value[index]
@@ -788,7 +788,7 @@ class psnlBookshelf(ptModifier):
                     self.IUpdateLinks()
                     return                    
 
-            if isinstance(link, type(ptAgeLinkStruct())) or link.getLocked(): #close the clasp
+            if isinstance(link, ptAgeLinkStruct) or link.getLocked(): #close the clasp
                 lockName = objLockPicked.getName()
                 # find the corresponding responder modifier
                 for rkey,rvalue in respCloseLock.byObject.items():
@@ -927,7 +927,7 @@ class psnlBookshelf(ptModifier):
 
                         return
 
-                    if not isinstance(link, type(ptVaultAgeLinkNode())):
+                    if not isinstance(link, ptVaultAgeLinkNode):
                         self.IUpdateLinks()
                         return
                     if link.getLocked():
@@ -1680,7 +1680,7 @@ class psnlBookshelf(ptModifier):
         print "Ilink: SpawnPointTitle = ", SpawnPointTitle, "; SpawnPointName = ", SpawnPointName
         spnpnt = None
         
-        if isinstance(link, type(ptAgeLinkStruct())):
+        if isinstance(link, ptAgeLinkStruct):
             als = link
         else:
             als = link.asAgeLinkStruct()
