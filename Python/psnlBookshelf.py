@@ -751,7 +751,7 @@ class psnlBookshelf(ptModifier):
             if link is None:
                 return
                 
-            if isinstance(link, str) and link == "Ahnonay":
+            if link == "Ahnonay":
                 locked = 0
                 ageVault = ptAgeVault()
                 ageInfoNode = ageVault.getAgeInfo()
@@ -869,7 +869,7 @@ class psnlBookshelf(ptModifier):
                         return
                     lockName = objLockPicked.getName()
                     
-                    if isinstance(link, str) and link == "Ahnonay":
+                    if link == "Ahnonay":
                         ageVault = ptAgeVault()
                         ageInfoNode = ageVault.getAgeInfo()
                         ageInfoChildren = ageInfoNode.getChildNodeRefList()
@@ -1644,7 +1644,7 @@ class psnlBookshelf(ptModifier):
         if link is None:
             print "psnlBookshelf.ILink():\tERROR -- conversion from book to link failed -- aborting"
             return
-        elif isinstance(link, str) and link == "Ahnonay":
+        elif link == "Ahnonay":
             info = ptAgeInfoStruct()
             info.setAgeFilename("Ahnonay")
             info.setAgeInstanceName("Ahnonay")
