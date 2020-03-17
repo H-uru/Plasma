@@ -192,44 +192,40 @@ class kemoJourneyClothGate(ptResponder):
 
         print "You clicked on the Gate"
         vault = ptVault()
-        if vault is not None: #is the Vault online?
             
-            entry = vault.findChronicleEntry("JourneyClothProgress")
-            if entry is None: # is this the player's first Journey Cloth?
-                print "No cloths have been found. Get to work!"
-            else:
-                FoundJCs = entry.chronicleGetValue()
-                length = len(FoundJCs)
-                all = len(AllCloths)
-
-                print "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
-                
-                if length < 0 or length > 11: 
-                    print "xJourneyClothGate: ERROR: Unexpected length value received."
-                    return
-                    
-                if "Z" in FoundJCs:
-                    print "You've been here before, traveller."
-                    PalmGlowStrong.run(self.key)                    
-                    self.ToggleSDL("fromOutside")
-                    return
-
-                for each in FoundJCs:
-                    if each not in AllCloths:
-                        print "Unexpected value among the 10 letters in the Chronicle:", each
-                        return
-
-                if length < all:
-                    print "There are more Cloths out there. Get to work."
-                    PalmGlowWeak.run(self.key)
-                 
-                elif length == all:
-                    print "All expected Cloths were found. Opening Door."
-                    PalmGlowStrong.run(self.key)
-                    self.ToggleSDL("fromOutside")
-           
+        entry = vault.findChronicleEntry("JourneyClothProgress")
+        if entry is None: # is this the player's first Journey Cloth?
+            print "No cloths have been found. Get to work!"
         else:
-            PtDebugPrint("kemoJourneyClothGate: Error trying to access the Vault. Can't access JourneyClothProgress chronicle." )
+            FoundJCs = entry.chronicleGetValue()
+            length = len(FoundJCs)
+            all = len(AllCloths)
+
+            print "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
+            
+            if length < 0 or length > 11: 
+                print "xJourneyClothGate: ERROR: Unexpected length value received."
+                return
+                
+            if "Z" in FoundJCs:
+                print "You've been here before, traveller."
+                PalmGlowStrong.run(self.key)                    
+                self.ToggleSDL("fromOutside")
+                return
+
+            for each in FoundJCs:
+                if each not in AllCloths:
+                    print "Unexpected value among the 10 letters in the Chronicle:", each
+                    return
+
+            if length < all:
+                print "There are more Cloths out there. Get to work."
+                PalmGlowWeak.run(self.key)
+                
+            elif length == all:
+                print "All expected Cloths were found. Opening Door."
+                PalmGlowStrong.run(self.key)
+                self.ToggleSDL("fromOutside")
 
             
     def ToggleSDL(self,hint):

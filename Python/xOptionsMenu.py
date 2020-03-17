@@ -504,11 +504,10 @@ class xOptionsMenu(ptModifier):
             gFirstReltoVisit = false
 
             vault = ptVault()
-            if vault is not None:
-                entry = vault.findChronicleEntry("KeyMap")
-                if entry is None:
-                    # not found... create defaults
-                    self.ISetDefaultKeyMappings()
+            entry = vault.findChronicleEntry("KeyMap")
+            if entry is None:
+                # not found... create defaults
+                self.ISetDefaultKeyMappings()
 
             self.LoadAdvSettings()
             self.LoadKeyMap()
@@ -1743,38 +1742,32 @@ class xOptionsMenu(ptModifier):
         kModuleName = "Personal"
         kChronicleVarType = 0
         vault = ptVault()
-        if vault is not None:
-            entry = vault.findChronicleEntry(chronicleVar)
-            if entry is None:
-                # not found... add current level chronicle
-                vault.addChronicleEntry(chronicleVar,kChronicleVarType,str(value))
-                print "%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar)
-            else:
-                entry.chronicleSetValue(str(value))
-                entry.save()
-                print "%s:\tyour current value for %s is %s" % (kModuleName,chronicleVar,entry.chronicleGetValue())
+        entry = vault.findChronicleEntry(chronicleVar)
+        if entry is None:
+            # not found... add current level chronicle
+            vault.addChronicleEntry(chronicleVar,kChronicleVarType,str(value))
+            print "%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar)
         else:
-            PtDebugPrint("%s:\tERROR trying to access vault -- can't update %s variable in chronicle." % (kModuleName,chronicleVar))
+            entry.chronicleSetValue(str(value))
+            entry.save()
+            print "%s:\tyour current value for %s is %s" % (kModuleName,chronicleVar,entry.chronicleGetValue())
 
     def getChronicleVar(self, chronicleVar):
         kModuleName = "Personal"
         kChronicleVarType = 0
         vault = ptVault()
-        if vault is not None:
-            entry = vault.findChronicleEntry(chronicleVar)
-            print "getChronicleVar.chronicleVar: " + chronicleVar
-            #print "getChronicleVar.Entry: " , entry
-            if entry is None:
-                # not found... add current level chronicle
-                #vault.addChronicleEntry(chronicleVar,kChronicleVarType,"%d" %(0))
-                #PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar))
-                return None
-            else:
-                value = entry.chronicleGetValue()
-                print "getChronicleVar(): " + chronicleVar + " = " + value
-                return value
+        entry = vault.findChronicleEntry(chronicleVar)
+        print "getChronicleVar.chronicleVar: " + chronicleVar
+        #print "getChronicleVar.Entry: " , entry
+        if entry is None:
+            # not found... add current level chronicle
+            #vault.addChronicleEntry(chronicleVar,kChronicleVarType,"%d" %(0))
+            #PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,chronicleVar))
+            return None
         else:
-            PtDebugPrint("%s:\tERROR trying to access vault -- can't retrieve %s variable in chronicle." % (kModuleName,kChronicleVarName))
+            value = entry.chronicleGetValue()
+            print "getChronicleVar(): " + chronicleVar + " = " + value
+            return value
         
     def IRefreshHelpSettings(self):
         clickToTurn = ptGUIControlRadioGroup(NavigationDlg.dialog.getControlFromTag(kNormNoviceRGID))

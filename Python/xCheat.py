@@ -51,64 +51,55 @@ def ListYeeshaPages(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if vault is not None: #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if psnlSDL:
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                FoundValue = psnlSDL.findVar(sdlvar)
-                print "%s is %d" % (sdlvar, FoundValue.getInt())
-        else:
-            print "Could not find personal age SDL"
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            FoundValue = psnlSDL.findVar(sdlvar)
+            print "%s is %d" % (sdlvar, FoundValue.getInt())
     else:
-        print "Could not find vault"
+        print "Could not find personal age SDL"
 
 
 def GetAllYeeshaPages(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if vault is not None: #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if psnlSDL:
-            if args == "0":
-                newval = 0
-                print "xCheat.GetYeeshaPage(): removing all Yeesha pages..."
-            else:
-                newval = 1
-                print "xCheat.GetYeeshaPage(): adding all Yeesha pages..."
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                FoundValue = psnlSDL.findVar(sdlvar)
-                FoundValue.setInt(newval)
-            vault.updatePsnlAgeSDL(psnlSDL)
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        if args == "0":
+            newval = 0
+            print "xCheat.GetYeeshaPage(): removing all Yeesha pages..."
         else:
-            print "Could not find personal age SDL"
+            newval = 1
+            print "xCheat.GetYeeshaPage(): adding all Yeesha pages..."
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            FoundValue = psnlSDL.findVar(sdlvar)
+            FoundValue.setInt(newval)
+        vault.updatePsnlAgeSDL(psnlSDL)
     else:
-        print "Could not find vault"
+        print "Could not find personal age SDL"
 
 
 def GetYeeshaPage(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if vault is not None: #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if args == None or args == "":
-            print "xCheat.GetYeeshaPage(): ERROR.  Must provide a Yeesha Page number."
-            return
-        thispage = "YeeshaPage" + args
-        if psnlSDL:
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                if sdlvar == thispage:
-                    FoundValue = psnlSDL.findVar(sdlvar)
-                    FoundValue.setInt(1)
-                    vault.updatePsnlAgeSDL(psnlSDL)
-                    print "xCheat.GetYeeshaPage(): Done. Have added: ",sdlvar
-                    return
-            print "xCheat.GetYeeshaPage(): ERROR.  Could not find Yeesha page: ",thispage
-        else:
-            print "xCheat.GetYeeshaPage(): ERROR.  Could not find personal age SDL"
+    psnlSDL = vault.getPsnlAgeSDL()
+    if not args:
+        print "xCheat.GetYeeshaPage(): ERROR.  Must provide a Yeesha Page number."
+        return
+    thispage = "YeeshaPage" + args
+    if psnlSDL:
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            if sdlvar == thispage:
+                FoundValue = psnlSDL.findVar(sdlvar)
+                FoundValue.setInt(1)
+                vault.updatePsnlAgeSDL(psnlSDL)
+                print "xCheat.GetYeeshaPage(): Done. Have added: ",sdlvar
+                return
+        print "xCheat.GetYeeshaPage(): ERROR.  Could not find Yeesha page: ",thispage
     else:
-        print "xCheat.GetYeeshaPage(): ERROR.  Could not find vault"
+        print "xCheat.GetYeeshaPage(): ERROR.  Could not find personal age SDL"
 
 
 def GetAgeJourneyCloths(args):

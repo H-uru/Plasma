@@ -146,17 +146,16 @@ class xJourneyClothGate(ptResponder):
         if id == rgnLink.id:
             vault = ptVault()
             FoundJCs = ""
-            if vault is not None: #is the Vault online?
-                entry = vault.findChronicleEntry("JourneyClothProgress")
+            entry = vault.findChronicleEntry("JourneyClothProgress")
+            if entry is None:
+                PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
+                pass
+            else:
+                entry = self.GetCurrentAgeChronicle(entry)
                 if entry is None:
-                    PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
-                    pass
-                else:
-                    entry = self.GetCurrentAgeChronicle(entry)
-                    if entry is None:
-                        PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
-                        return
-                    FoundJCs = entry.chronicleGetValue()
+                    PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
+                    return
+                FoundJCs = entry.chronicleGetValue()
                     
 
             length = len(FoundJCs)
@@ -227,43 +226,39 @@ class xJourneyClothGate(ptResponder):
 
         print "You clicked on the Gate"
         vault = ptVault()
-        if vault is not None: #is the Vault online?
             
-            entry = vault.findChronicleEntry("JourneyClothProgress")
-            if entry is None:
-                PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
-                pass
-            else:
-                entry = self.GetCurrentAgeChronicle(entry)
-                if entry is None:
-                    PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
-                    return
-                FoundJCs = entry.chronicleGetValue()
-                length = len(FoundJCs)
-                all = len(AllCloths)
-
-                print "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
-                
-                if length < 0 or length > all: 
-                    print "xJourneyClothGate: ERROR: Unexpected length value received."
-                    return
-                    
-                for each in FoundJCs:
-                    if each not in AllCloths:
-                        print "Unexpected value in the Chronicle:", each
-                        return
-
-                if length < all:
-                    print "There are more Cloths out there. Get to work."
-                    PalmGlowWeak.run(self.key)
-                 
-                elif length == all:
-                    print "All expected Cloths were found. Opening Door."
-                    PalmGlowStrong.run(self.key)
-                    self.ToggleSDL("fromOutside")
-           
+        entry = vault.findChronicleEntry("JourneyClothProgress")
+        if entry is None:
+            PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: No JourneyClothProgress chronicle")
+            pass
         else:
-            PtDebugPrint("ERROR: xJourneyClothGate.OnNotify: Error trying to access the Vault. Can't access JourneyClothProgress chronicle." )
+            entry = self.GetCurrentAgeChronicle(entry)
+            if entry is None:
+                PtDebugPrint("DEBUG: xJourneyClothGate.OnNotify: Sorry, couldn't find journey cloth chronicle for this age")
+                return
+            FoundJCs = entry.chronicleGetValue()
+            length = len(FoundJCs)
+            all = len(AllCloths)
+
+            print "You've found the following %d Journey Cloths: %s" % (length, FoundJCs)
+            
+            if length < 0 or length > all: 
+                print "xJourneyClothGate: ERROR: Unexpected length value received."
+                return
+                
+            for each in FoundJCs:
+                if each not in AllCloths:
+                    print "Unexpected value in the Chronicle:", each
+                    return
+
+            if length < all:
+                print "There are more Cloths out there. Get to work."
+                PalmGlowWeak.run(self.key)
+                
+            elif length == all:
+                print "All expected Cloths were found. Opening Door."
+                PalmGlowStrong.run(self.key)
+                self.ToggleSDL("fromOutside")
 
     def GetCurrentAgeChronicle(self, chron):
         ageChronRefList = chron.getChildNodeRefList()

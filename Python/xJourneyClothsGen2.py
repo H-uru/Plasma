@@ -353,42 +353,41 @@ class xJourneyClothsGen2(ptModifier):
             
             print "You clicked on cloth ", ClothLetter.value
             vault = ptVault()
-            if vault is not None: #is the Vault online?
                 
-                entry = vault.findChronicleEntry("JourneyClothProgress")
-                if entry is None: # is this the player's first Journey Cloth?
-                    PtDebugPrint("No JourneyClothProgress chronicle entry found, I'll add it.")
-                    PtDebugPrint("You're going to have to press the button again.")
-                    vault.addChronicleEntry("JourneyClothProgress",0,"")
-                
+            entry = vault.findChronicleEntry("JourneyClothProgress")
+            if entry is None: # is this the player's first Journey Cloth?
+                PtDebugPrint("No JourneyClothProgress chronicle entry found, I'll add it.")
+                PtDebugPrint("You're going to have to press the button again.")
+                vault.addChronicleEntry("JourneyClothProgress",0,"")
+            
+            else:
+                currentAgeChron = self.GetCurrentAgeChronicle(entry)
+
+                if currentAgeChron is None:
+                    print "You haven't found a JC in this age before, adding it now"
+                    
+                    currentAgeChron = self.AddNodeWithCurrentValue(entry)
+                    FoundJCs = ClothLetter.value
+                    self.RandomBahroSounds()
                 else:
-                    currentAgeChron = self.GetCurrentAgeChronicle(entry)
-
-                    if currentAgeChron is None:
-                        print "You haven't found a JC in this age before, adding it now"
+                    FoundJCs = currentAgeChron.chronicleGetValue()
+                    print "previously found JCs: ", FoundJCs
+                    if ClothLetter.value in FoundJCs:
+                        print "You've already found this cloth."
                         
-                        currentAgeChron = self.AddNodeWithCurrentValue(entry)
-                        FoundJCs = ClothLetter.value
-                        self.RandomBahroSounds()
                     else:
-                        FoundJCs = currentAgeChron.chronicleGetValue()
-                        print "previously found JCs: ", FoundJCs
-                        if ClothLetter.value in FoundJCs:
-                            print "You've already found this cloth."
-                            
-                        else:
-                            print "This is a new cloth to you"
-                            
-                            FoundJCs = FoundJCs + ClothLetter.value
-                            print "trying to update JourneyClothProgress to ", FoundJCs
+                        print "This is a new cloth to you"
+                        
+                        FoundJCs = FoundJCs + ClothLetter.value
+                        print "trying to update JourneyClothProgress to ", FoundJCs
 
-                            currentAgeChron.chronicleSetValue("%s" % (FoundJCs)) 
-                            currentAgeChron.save() 
-                            
-                            self.RandomBahroSounds()
-                
-                    length = len(FoundJCs)
-                    self.IPlayHandAnim(length)
+                        currentAgeChron.chronicleSetValue("%s" % (FoundJCs)) 
+                        currentAgeChron.save() 
+                        
+                        self.RandomBahroSounds()
+            
+                length = len(FoundJCs)
+                self.IPlayHandAnim(length)
             
 ##        elif id == TimerID.FadeOut:
 ##            PtFadeLocalAvatar(0)

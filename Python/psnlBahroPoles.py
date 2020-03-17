@@ -723,19 +723,18 @@ class psnlBahroPoles(ptModifier):
         
         vault = ptVault()
 
-        if vault is not None:
-            chron = vault.findChronicleEntry("JourneyClothProgress")
+        chron = vault.findChronicleEntry("JourneyClothProgress")
 
-            if chron is not None:
-                ageChronRefList = chron.getChildNodeRefList()
+        if chron is not None:
+            ageChronRefList = chron.getChildNodeRefList()
 
-                for ageChron in ageChronRefList:
-                    ageChild = ageChron.getChild()
+            for ageChron in ageChronRefList:
+                ageChild = ageChron.getChild()
 
-                    ageChild = ageChild.upcastToChronicleNode()
+                ageChild = ageChild.upcastToChronicleNode()
 
-                    if ageChild.chronicleGetName() == age:
-                        return len(ageChild.chronicleGetValue() )
+                if ageChild.chronicleGetName() == age:
+                    return len(ageChild.chronicleGetValue() )
 
         return 0
 
@@ -903,12 +902,11 @@ class psnlBahroPoles(ptModifier):
     def SetJCProgressComplete(self):
         vault = ptVault()
 
-        if vault is not None:
-            chron = vault.findChronicleEntry("JourneyClothProgress")
+        chron = vault.findChronicleEntry("JourneyClothProgress")
 
-            if chron is not None:
-                chron.chronicleSetValue("Z")
-                chron.save()
+        if chron is not None:
+            chron.chronicleSetValue("Z")
+            chron.save()
 
         #sdl = xPsnlVaultSDL(1)
         #sdl["CleftVisited"] = (1,)

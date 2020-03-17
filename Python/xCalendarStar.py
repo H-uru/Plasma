@@ -148,17 +148,16 @@ class xCalendarStar(ptResponder):
 
     def GotPage(self):
         vault = ptVault()
-        if vault is not None: #is the Vault online?
-            psnlSDL = xPsnlVaultSDL()
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                ypageSDL = psnlSDL.findVar("YeeshaPage20")
-                if ypageSDL:
-                    size, state = divmod(ypageSDL.getInt(), 10)
-                    print "YeeshaPage20 = ",state
-                    if state:
-                        return 1
-            return 0
+        psnlSDL = xPsnlVaultSDL()
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            ypageSDL = psnlSDL.findVar("YeeshaPage20")
+            if ypageSDL:
+                size, state = divmod(ypageSDL.getInt(), 10)
+                print "YeeshaPage20 = ",state
+                if state:
+                    return 1
+        return 0
 
 
 #    def OnSDLNotify(self,VARname,SDLname,playerID,tag):
