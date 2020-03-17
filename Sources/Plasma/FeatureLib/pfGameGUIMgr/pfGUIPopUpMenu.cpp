@@ -242,7 +242,7 @@ void    pfGUIPopUpMenu::Read( hsStream *s, hsResMgr *mgr )
     fMargin = s->ReadLE16();
 
     uint32_t i, count = s->ReadLE32();
-    fMenuItems.SetCountAndZero( count );
+    fMenuItems.SetCount( count );
     for( i = 0; i < count; i++ )
     {
         char readTemp[ 256 ];
