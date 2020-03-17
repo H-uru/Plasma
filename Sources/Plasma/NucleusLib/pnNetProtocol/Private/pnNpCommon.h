@@ -316,6 +316,7 @@ protected:
 
 public:
     bool IsDirty() const { return fDirtyFields != 0; }
+    bool IsUsed() const { return fUsedFields != 0; }
 
     plUUID GetRevision() const { return fRevision; }
     void GenerateRevision() { fRevision = plUUID::Generate(); }
