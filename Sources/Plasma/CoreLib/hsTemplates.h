@@ -668,6 +668,9 @@ template <class T> void hsTArray<T>::Swap( hsTArray<T>& src )
 
 template <class T> void hsTArray<T>::SetCountAndZero(int count)
 {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "Cannot use SetCountAndZero on non-trivially copyable types");
+
     if( fTotalCount <= count )
     {
         int n = fTotalCount;
@@ -681,6 +684,9 @@ template <class T> void hsTArray<T>::SetCountAndZero(int count)
 
 template <class T> void hsTArray<T>::ExpandAndZero(int count)
 {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "Cannot use ExpandAndZero on non-trivially copyable types");
+
     if( fTotalCount <= count )
     {
         int n = fTotalCount;
@@ -1041,6 +1047,9 @@ template <class T> void hsLargeArray<T>::Swap( hsLargeArray<T>& src )
 
 template <class T> void hsLargeArray<T>::SetCountAndZero(int count)
 {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "Cannot use SetCountAndZero on non-trivially copyable types");
+
     if( fTotalCount <= count )
     {
         int n = fTotalCount;
@@ -1052,6 +1061,9 @@ template <class T> void hsLargeArray<T>::SetCountAndZero(int count)
 
 template <class T> void hsLargeArray<T>::ExpandAndZero(int count)
 {
+    static_assert(std::is_trivially_copyable<T>::value,
+                  "Cannot use ExpandAndZero on non-trivially copyable types");
+
     if( fTotalCount <= count )
     {
         int n = fTotalCount;

@@ -95,7 +95,7 @@ class pfGUIPopUpMenu : public pfGUIDialogMod
                 pfGUIPopUpMenu      *fSubMenu;
                 float               fYOffsetToNext;     // Filled in by IBuildMenu()
 
-                pfMenuItem& operator=(const int zero) { fName = L""; fHandler = nil; fSubMenu = nil; fYOffsetToNext = 0; return *this; }
+                pfMenuItem() : fHandler(), fSubMenu(), fYOffsetToNext() { }
         };
 
         // Array of info to rebuild our menu from. Note that this is ONLY used when rebuilding
