@@ -89,22 +89,16 @@ class xPotsSymbol(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         global listSDL
-        
-        AgeStartedIn = PtGetAgeName()
-        if not sdlSaveCloth1.value\
-        or not sdlSaveCloth2.value\
-        or not sdlSaveCloth3.value\
-        or not sdlSaveCloth4.value\
-        or not sdlSaveCloth5.value\
-        or not sdlSaveCloth6.value\
-        or not sdlSaveCloth7.value:
-            PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
-            pass
 
-        listSDL = [sdlSaveCloth1.value,sdlSaveCloth2.value,sdlSaveCloth3.value,\
-                   sdlSaveCloth4.value,sdlSaveCloth5.value,sdlSaveCloth6.value,\
+        AgeStartedIn = PtGetAgeName()
+        listSDL = [sdlSaveCloth1.value, sdlSaveCloth2.value, sdlSaveCloth3.value,
+                   sdlSaveCloth4.value, sdlSaveCloth5.value, sdlSaveCloth6.value,
                    sdlSaveCloth7.value]
-        print "xPotsSymbol.OnFirstUpdate(): listSDL = ",listSDL
+
+        if not all(listSDL):
+            PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
+
+        print "xPotsSymbol.OnFirstUpdate(): listSDL = ", listSDL
 
         if boolFirstUpdate.value:
             self.Initialize()
