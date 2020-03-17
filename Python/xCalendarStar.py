@@ -87,7 +87,7 @@ class xCalendarStar(ptResponder):
         global boolCalStar
 
         AgeStartedIn = PtGetAgeName()
-        if not (isinstance(sdlCalStar.value, str) and sdlCalStar.value != ""):
+        if not sdlCalStar.value:
             PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 

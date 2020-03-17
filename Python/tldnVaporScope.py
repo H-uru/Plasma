@@ -166,7 +166,7 @@ class tldnVaporScope(ptModifier):
             
     def __del__(self):
         "unload the dialog that we loaded"
-        if Vignette.value is not None and Vignette.value != "":
+        if Vignette.value:
             PtUnloadDialog(Vignette.value)
 
     def OnNotify(self,state,id,events):
@@ -289,7 +289,7 @@ class tldnVaporScope(ptModifier):
                         PtRequestLOSScreen(self.key,42,0.5,0.5,10000,PtLOSObjectType.kShootable,PtLOSReportType.kReportHitOrMiss)
                         gThrottleShooting = 1
                         try:
-                            if Vignette.value is not None and Vignette.value != "":
+                            if Vignette.value:
                                 scopeDlg = PtGetDialogFromString(Vignette.value)
                                 if scopeDlg:
                                     try:
@@ -374,7 +374,7 @@ class tldnVaporScope(ptModifier):
         virtCam = ptCamera()
         virtCam.save(Camera.sceneobject.getKey())
         # show the cockpit
-        if Vignette.value is not None and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key, "Teledahn")
             if ( PtIsDialogLoaded(Vignette.value) ):
                 PtShowDialog(Vignette.value)
@@ -416,7 +416,7 @@ class tldnVaporScope(ptModifier):
             # we can not let firing happen... again
             gThrottleShooting = 0
             try:
-                if Vignette.value is not None and Vignette.value != "":
+                if Vignette.value:
                     scopeDlg = PtGetDialogFromString(Vignette.value)
                     if scopeDlg:
                         try:

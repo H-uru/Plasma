@@ -77,7 +77,7 @@ class islmRandomBahroScream(ptModifier):
         global ScreamChanceVar
         
         if AgeStartedIn == PtGetAgeName():
-            if isinstance(strChanceVar.value, str) and len(strChanceVar.value) > 0:
+            if strChanceVar.value:
                 ScreamChanceVar = strChanceVar.value
             
             PtAtTimeCallback(self.key, 60, TimerID.TurnOn)

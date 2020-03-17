@@ -73,13 +73,13 @@ class xRandomBoolChange(ptModifier):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not(isinstance(strVarName.value, str) and strVarName.value != ""):
+        if not strVarName.value:
             PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-        if not(isinstance(strEnabledVar.value, str) and strEnabledVar.value != ""):
+        if not strEnabledVar.value:
             PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLEnabledVar var name on %s" % self.sceneobject.getName())
-        if not(isinstance(strChanceVar.value, str) and strChanceVar.value != ""):
+        if not strChanceVar.value:
             PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLChanceVar var name on %s" % self.sceneobject.getName())
-        if not(isinstance(strProximityVar.value, str) and strProximityVar.value != ""):
+        if not strProximityVar.value:
             PtDebugPrint("ERROR: xRandomBoolChange.OnFirstUpdate():\tERROR: missing SDLProximityVar var name on %s" % self.sceneobject.getName())
 
     def OnServerInitComplete(self):

@@ -202,7 +202,7 @@ class ercaOvenScope(ptModifier):
         byteAmount = ageSDL[amountSDL][0]
         byteTemp = ageSDL[tempSDL][0]
 
-        if Vignette.value is not None and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key)
 
 
@@ -561,7 +561,7 @@ class ercaOvenScope(ptModifier):
             WasPowered = 0
             virtCam.save(CameraBad.sceneobject.getKey())
             # show the cockpit
-            if VignetteBad.value is not None and VignetteBad.value != "":
+            if VignetteBad.value:
                 PtLoadDialog(VignetteBad.value,self.key)
                 if ( PtIsDialogLoaded(VignetteBad.value) ):
                     PtShowDialog(VignetteBad.value)
@@ -585,7 +585,7 @@ class ercaOvenScope(ptModifier):
         # exit every thing
         
         if WasPowered:
-            if Vignette.value is not None and Vignette.value != "":
+            if Vignette.value:
                 PtHideDialog(Vignette.value)
             virtCam = ptCamera()
             virtCam.restore(Camera.sceneobject.getKey())
@@ -593,7 +593,7 @@ class ercaOvenScope(ptModifier):
             RespSfxTimerWheel.run(self.key,state="off")
             tempWheel.setValue(0)
         else:
-            if VignetteBad.value is not None and VignetteBad.value != "":
+            if VignetteBad.value:
                 PtHideDialog(VignetteBad.value)
             virtCam = ptCamera()
             virtCam.restore(CameraBad.sceneobject.getKey())

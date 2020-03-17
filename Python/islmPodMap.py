@@ -145,7 +145,7 @@ class islmPodMap(ptResponder):
         "Disengage and exit"
         global LocalAvatar
         # exit every thing
-        if Vignette.value is not None and Vignette.value != "":
+        if Vignette.value:
             PtSendKIMessage(kEnableKIandBB,0)
             PtHideDialog(Vignette.value)
             print "Dialog: %s goes down" % Vignette.value

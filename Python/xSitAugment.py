@@ -139,7 +139,7 @@ class xSitAugment(ptModifier):
         "Disengage and exit"
         global LocalAvatar
         # exit every thing
-        if Vignette.value is not None and Vignette.value != "":
+        if Vignette.value:
             PtHideDialog(Vignette.value)
             print "Dialog: %s goes down" % Vignette.value
         else:

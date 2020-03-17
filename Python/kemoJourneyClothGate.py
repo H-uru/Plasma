@@ -100,7 +100,7 @@ class kemoJourneyClothGate(ptResponder):
         global GateCurrentlyClosed
         
         if AgeStartedIn == PtGetAgeName():
-            if isinstance(stringVarName.value, str) and stringVarName.value != "":
+            if stringVarName.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setFlags(stringVarName.value,1,1)
                 ageSDL.sendToClients(stringVarName.value)
@@ -108,7 +108,7 @@ class kemoJourneyClothGate(ptResponder):
                 PtDebugPrint("kemoJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
             ageSDL = PtGetAgeSDL()
-            if isinstance(stringVarName.value, str) and stringVarName.value != "":
+            if stringVarName.value:
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)
                 try:
                     GateCurrentlyClosed = ageSDL[stringVarName.value][0]

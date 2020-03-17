@@ -72,7 +72,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
 
 
     def OnServerInitComplete(self):
-        if isinstance(stringVarName.value, str) and stringVarName.value != "":
+        if stringVarName.value:
             ageSDL = PtGetAgeSDL()
             ageSDL.setFlags(stringVarName.value,1,1)
             ageSDL.sendToClients(stringVarName.value)
@@ -89,7 +89,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
         
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if isinstance(stringVarName.value, str) and stringVarName.value != "":
+            if stringVarName.value:
                 #PtDebugPrint("Setting notify on %s..." % stringVarName.value)
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)
                 try:
@@ -137,7 +137,7 @@ class ercaSDLIntShowHide(ptMultiModifier):
         self.sceneobject.physics.suppress(true)
 
     def OnBackdoorMsg(self, target, param):
-        if stringVarName.value is not None and stringVarName.value != "":
+        if stringVarName.value:
             if target == stringVarName.value:
                 if param.lower() in self.enabledStateList:
                     self.DisableObject()

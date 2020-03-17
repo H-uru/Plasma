@@ -84,7 +84,7 @@ class tldnSlavePrisonPanels(ptResponder):
     def OnServerInitComplete(self):
         global boolCurrentValue
         ageSDL = PtGetAgeSDL()
-        if isinstance(stringVarName.value, str) and stringVarName.value != "":
+        if stringVarName.value:
             ageSDL = PtGetAgeSDL()
             ageSDL.setFlags(stringVarName.value,1,1)
             ageSDL.sendToClients(stringVarName.value)

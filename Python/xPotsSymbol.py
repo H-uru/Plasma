@@ -91,13 +91,13 @@ class xPotsSymbol(ptResponder):
         global listSDL
         
         AgeStartedIn = PtGetAgeName()
-        if not (isinstance(sdlSaveCloth1.value, str) and sdlSaveCloth1.value != "")\
-        or not (isinstance(sdlSaveCloth2.value, str) and sdlSaveCloth2.value != "")\
-        or not (isinstance(sdlSaveCloth3.value, str) and sdlSaveCloth3.value != "")\
-        or not (isinstance(sdlSaveCloth4.value, str) and sdlSaveCloth4.value != "")\
-        or not (isinstance(sdlSaveCloth5.value, str) and sdlSaveCloth5.value != "")\
-        or not (isinstance(sdlSaveCloth6.value, str) and sdlSaveCloth6.value != "")\
-        or not (isinstance(sdlSaveCloth7.value, str) and sdlSaveCloth7.value != ""):
+        if not sdlSaveCloth1.value\
+        or not sdlSaveCloth2.value\
+        or not sdlSaveCloth3.value\
+        or not sdlSaveCloth4.value\
+        or not sdlSaveCloth5.value\
+        or not sdlSaveCloth6.value\
+        or not sdlSaveCloth7.value:
             PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
             pass
 

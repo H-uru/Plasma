@@ -108,13 +108,13 @@ class xTakableClothing(ptModifier):
         AgeStartedIn = PtGetAgeName()
         self.useChance = true
         self.shown = false
-        if not (isinstance(stringVarName.value, str) and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-        if not (isinstance(stringFClothingName.value, str) and stringFClothingName.value != ""):
+        if not stringFClothingName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing female clothing name on %s" % self.sceneobject.getName())
-        if not (isinstance(stringMClothingName.value, str) and stringMClothingName.value != ""):
+        if not stringMClothingName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing male clothing name on %s" % self.sceneobject.getName())
-        if not (isinstance(stringChanceSDLName.value, str) and stringChanceSDLName.value != ""):
+        if not stringChanceSDLName.value:
             PtDebugPrint("DEBUG: xTakableClothing.OnFirstUpdate(): Chance SDL var name is empty, so we will not use chance rolls for showing %s" % self.sceneobject.getName())
             self.useChance = false
         allFClothing = stringFClothingName.value.split(";")
@@ -136,7 +136,7 @@ class xTakableClothing(ptModifier):
     def Initialize(self):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if isinstance(stringVarName.value, str) and stringVarName.value != "":
+            if stringVarName.value:
                 try:
                     ageSDL.setNotify(self.key,stringVarName.value,0.0)
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):

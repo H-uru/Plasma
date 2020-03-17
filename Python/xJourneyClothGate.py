@@ -102,10 +102,10 @@ class xJourneyClothGate(ptResponder):
         global AllCloths
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        if not (isinstance(stringVarName.value, str) and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xJourneyClothGate.OnFirstUpdate():\tERROR: missing SDL var name")
 
-        if ClothsComplete.value is not None and ClothsComplete.value != "":
+        if ClothsComplete.value:
             AllCloths = ClothsComplete.value
             PtDebugPrint("DEBUG: xJourneyClothGate.OnFirstUpdate:\tUsing Max specified all cloths")
         else:
@@ -118,7 +118,7 @@ class xJourneyClothGate(ptResponder):
         # make sure that we are in the age we think we're in
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if isinstance(stringVarName.value, str) and stringVarName.value != "":
+            if stringVarName.value:
                 ageSDL.setFlags(stringVarName.value,1,1)
                 ageSDL.sendToClients(stringVarName.value)
                 ageSDL.setNotify(self.key,stringVarName.value,0.0)

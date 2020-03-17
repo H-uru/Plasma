@@ -126,7 +126,7 @@ class xSimpleImager(ptModifier):
                 if node:
                     PtDebugPrint("\tAdded device: %s"%(ImagerName.value),level=kDebugDumpLevel)
                     name = ""
-                    if isinstance(ImagerInboxVariable.value, str) and ImagerInboxVariable.value != "":
+                    if ImagerInboxVariable.value:
                         ageSDL = PtGetAgeSDL()
                         tempValue = ageSDL[ImagerInboxVariable.value]
                         if (len(tempValue) >= 1):
@@ -172,7 +172,7 @@ class xSimpleImager(ptModifier):
             PtDebugPrint("xSimpleImager:ERROR! simpleImager[%s]: ImagerObject not specified!" % (ImagerName.value),level=kErrorLevel)
             return
         # initialize age devices
-        if isinstance(ImagerName.value, str) and ImagerName.value != "":
+        if ImagerName.value:
             ageVault = ptAgeVault()
             # will only add if not already there.
             ageVault.addDevice(ImagerName.value, self, kAddingDevice)
@@ -181,7 +181,7 @@ class xSimpleImager(ptModifier):
     
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
-            if isinstance(ImagerInboxVariable.value, str) and ImagerInboxVariable.value:
+            if ImagerInboxVariable.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setNotify(self.key,ImagerInboxVariable.value,0.0)
                 ageVault = ptAgeVault()

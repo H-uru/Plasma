@@ -68,7 +68,7 @@ class xAgeSDLBoolSet(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not(isinstance(stringVarName.value, str) and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLBoolSet.OnFirstUpdate():\tERROR: missing SDL var name in max file")
     
     def OnServerInitComplete(self):
@@ -83,12 +83,12 @@ class xAgeSDLBoolSet(ptResponder):
         if not PtWasLocallyNotified(self.key):
             return
         else:
-            if isinstance(actTrigger.value, list) and len(actTrigger.value) > 0:
+            if actTrigger.value:
                 PtDebugPrint("DEBUG: xAgeSDLBoolSet.OnNotify():\t local player requesting %s change via %s" % (stringVarName.value,actTrigger.value[0].getName()) )
                 pass
                 
         # error check
-        if not isinstance(stringVarName.value, str) or stringVarName.value == "":
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLBoolSet.OnNotify():\tERROR: missing SDL var name")
             return
             

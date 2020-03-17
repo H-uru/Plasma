@@ -71,7 +71,7 @@ class xAgeSDLIntStartStopResp(ptResponder):
         print "__init__xAgeSDLIntStartStopResp v.", version
     
     def OnFirstUpdate(self):
-        if not (isinstance(stringSDLVarName.value, str) and stringSDLVarName.value != ""):
+        if not stringSDLVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntStartStopResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
     

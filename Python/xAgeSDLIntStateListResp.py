@@ -126,7 +126,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         print "__init__xAgeSDLIntStateListResp v", version
     
     def OnFirstUpdate(self):
-        if not (isinstance(strSDLVarName.value, str) and strSDLVarName.value != ""):
+        if not strSDLVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
         if boolFirstUpdate.value:

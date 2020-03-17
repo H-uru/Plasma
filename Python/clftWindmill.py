@@ -99,14 +99,14 @@ class clftWindmill(ptResponder):
         global windmillUnstuck
         global boolTomahnaActive
         
-        if isinstance(stringSDLVarLocked.value, str) and stringSDLVarLocked.value != "":
+        if stringSDLVarLocked.value:
             self.ageSDL = PtGetAgeSDL()
             self.ageSDL.setFlags(stringSDLVarLocked.value,1,1)
             self.ageSDL.sendToClients(stringSDLVarLocked.value)
         else:
             PtDebugPrint("clftWindmill.OnFirstUpdate():\tERROR: missing SDL var locked in max file")
 
-        if isinstance(stringSDLVarRunning.value, str) and stringSDLVarRunning.value != "":
+        if stringSDLVarRunning.value:
             self.ageSDL = PtGetAgeSDL()
             self.ageSDL.setFlags(stringSDLVarRunning.value,1,1)
             self.ageSDL.sendToClients(stringSDLVarRunning.value)
@@ -116,7 +116,7 @@ class clftWindmill(ptResponder):
         respLightsOnOff.run(self.key,state='Off')
         respImagerButtonLight.run(self.key,state='Off')
 
-        if isinstance(stringSDLVarUnstuck.value, str) and stringSDLVarUnstuck.value != "":
+        if stringSDLVarUnstuck.value:
             self.ageSDL = PtGetAgeSDL()
             self.ageSDL.setFlags(stringSDLVarUnstuck.value,1,1)
             self.ageSDL.sendToClients(stringSDLVarUnstuck.value)

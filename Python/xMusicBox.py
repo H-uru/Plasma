@@ -122,7 +122,7 @@ class xMusicBox(ptModifier):
         SoundObjIndex = soSoundObj.value.getSoundIndex(strSoundObj.value)
         PtDebugPrint("xMusicBox.OnServerInitComplete: using sound object index:" + str(SoundObjIndex))
 
-        if isinstance(sdlCurrentSongVar.value, str) and len(sdlCurrentSongVar.value) > 0:
+        if sdlCurrentSongVar.value:
             ageSDL = PtGetAgeSDL()
             filename = ageSDL[sdlCurrentSongVar.value][0]
 
@@ -166,7 +166,7 @@ class xMusicBox(ptModifier):
             localClient = PtGetLocalClientID()
 
             islocalavatar = (playerid == localClient)
-            sdlvarisvalid = (isinstance(sdlCurrentSongVar.value, str) and len(sdlCurrentSongVar.value) > 0)
+            sdlvarisvalid = sdlCurrentSongVar.value
 
             if islocalavatar and sdlvarisvalid:
                 print "Setting cur song var to: ", currentSong

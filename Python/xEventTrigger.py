@@ -71,7 +71,7 @@ class xEventTrigger(ptResponder):
         AgeStartedIn = PtGetAgeName()
     
     def OnServerInitComplete(self):
-        if isinstance(EventName.value, str) and EventName.value != "":
+        if EventName.value:
             ageSDL = PtGetAgeSDL()
             ageSDL.setNotify(self.key,EventName.value,0.0)
         
@@ -84,7 +84,7 @@ class xEventTrigger(ptResponder):
                 if ageSDL[EventName.value][0]:
                     #~ PtDebugPrint("Event %s is true!" % (VARname))
                     # are we paging things in?
-                    if isinstance(PageNames.value, str) and PageNames.value != "":
+                    if PageNames.value:
                         names = string.split(PageNames.value,",")
                         for name in names:
                             PtPageInNode(name)
@@ -93,7 +93,7 @@ class xEventTrigger(ptResponder):
                 else:
                     #~ PtDebugPrint("Event %s is false!" % (VARname))
                     # are we paging things in?
-                    if isinstance(PageNames.value, str) and PageNames.value != "":
+                    if PageNames.value:
                         names = string.split(PageNames.value,",")
                         for name in names:
                             PtPageOutNode(name)

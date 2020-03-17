@@ -75,9 +75,9 @@ class xAgeSDLBoolToggleDependent(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not (isinstance(stringVarEnabler.value, str) and stringVarEnabler.value != ""):
+        if not stringVarEnabler.value:
             PtDebugPrint("ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLEnabler var name")
-        if not (isinstance(stringVarTarget.value, str) and stringVarTarget.value != ""):
+        if not stringVarTarget.value:
             PtDebugPrint("ERROR: xAgeSDLBoolToggleDependent.OnFirstUpdate():\tERROR: missing SDLTarget var name")
 
     def OnServerInitComplete(self):
