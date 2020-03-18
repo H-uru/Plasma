@@ -57,49 +57,52 @@ PYTHON_NO_INIT_DEFINITION(ptVaultNode)
 
 PYTHON_RICH_COMPARE_DEFINITION(ptVaultNode, obj1, obj2, compareType)
 {
-    if ((obj1 == Py_None) || (obj2 == Py_None))
-    {
-        bool isEqual = (obj1 == obj2);
-
-        if (compareType == Py_EQ)
-        {
-            if (isEqual)
-                PYTHON_RCOMPARE_TRUE;
-            else
-                PYTHON_RCOMPARE_FALSE;
-        }
-        else if (compareType == Py_NE)
-        {
-            if (isEqual)
-                PYTHON_RCOMPARE_FALSE;
-            else
-                PYTHON_RCOMPARE_TRUE;
-        }
-        PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptVaultNode object");
-        PYTHON_RCOMPARE_ERROR;
+    // Only allow == or !=
+    if (compareType != Py_EQ && compareType != Py_NE) {
+        PyErr_SetString(PyExc_TypeError, "ptVaultNode comparison not supported");
+        return nullptr;
     }
 
-    if (!pyVaultNode::Check(obj1) || !pyVaultNode::Check(obj2))
-    {
-        PyErr_SetString(PyExc_NotImplementedError, "cannot compare ptVaultNode objects to non-ptVaultNode objects");
-        PYTHON_RCOMPARE_ERROR;
+    if ((obj1 == Py_None) || (obj2 == Py_None)) {
+        if (compareType == Py_EQ) {
+            PYTHON_RETURN_BOOL(obj1 == obj2);
+        } else if (compareType == Py_NE) {
+            PYTHON_RETURN_BOOL(obj1 != obj2);
+        }
     }
-    pyVaultNode *vnObj1 = pyVaultNode::ConvertFrom(obj1);
-    pyVaultNode *vnObj2 = pyVaultNode::ConvertFrom(obj2);
-    if (compareType == Py_EQ)
-    {
-        if ((*vnObj1) == (*vnObj2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
+
+    // Truth testing
+    if ((pyVaultNode::Check(obj1) || PyBool_Check(obj1)) && (pyVaultNode::Check(obj2) || PyBool_Check(obj2))) {
+        pyVaultNode* node = pyVaultNode::Check(obj1) ? pyVaultNode::ConvertFrom(obj1) :
+                                                       pyVaultNode::ConvertFrom(obj2);
+        bool value = node->fNode->IsUsed();
+        bool cmp = PyBool_Check(obj1) ? PyInt_AsLong(obj1) != 0 : PyInt_AsLong(obj2);
+        if (compareType == Py_EQ) {
+            PYTHON_RETURN_BOOL(value == cmp);
+        } else if (compareType == Py_NE) {
+            PYTHON_RETURN_BOOL(value != cmp);
+        }
     }
-    else if (compareType == Py_NE)
-    {
-        if ((*vnObj1) != (*vnObj2))
-            PYTHON_RCOMPARE_TRUE;
-        PYTHON_RCOMPARE_FALSE;
+
+    // Vault nodes can only be equal to vault nodes
+    if (!pyVaultNode::Check(obj1) || !pyVaultNode::Check(obj2)) {
+        if (compareType == Py_EQ) {
+            Py_RETURN_FALSE;
+        } else if (compareType == Py_NE) {
+            Py_RETURN_TRUE;
+        }
     }
-    PyErr_SetString(PyExc_NotImplementedError, "invalid comparison for a ptVaultNode object");
-    PYTHON_RCOMPARE_ERROR;
+
+    pyVaultNode* vnObj1 = pyVaultNode::ConvertFrom(obj1);
+    pyVaultNode* vnObj2 = pyVaultNode::ConvertFrom(obj2);
+    if (compareType == Py_EQ) {
+        PYTHON_RETURN_BOOL((*vnObj1) == (*vnObj2));
+    } else if (compareType == Py_NE) {
+        PYTHON_RETURN_BOOL((*vnObj1) != (*vnObj2));
+    }
+
+    // Should never happen.
+    PYTHON_RETURN_NOT_IMPLEMENTED;
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getID)
