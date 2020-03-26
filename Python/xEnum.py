@@ -64,11 +64,11 @@ class Enum:
             else:
                 x = x[0].strip()
                 
-            if type(x) == types.TupleType:
+            if isinstance(x, tuple):
                 x, i = x
-            if type(x) != types.StringType:
+            if not isinstance(x, str):
                 raise EnumException("enum name is not a string: " + x)
-            if type(i) != types.IntType:
+            if not isinstance(i, int):
                 raise EnumException("enum value is not an integer: " + i)
             if x in uniqueNames:
                 raise EnumException("enum name is not unique: " + x)

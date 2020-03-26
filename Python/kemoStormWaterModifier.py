@@ -123,10 +123,10 @@ class kemoStormWaterModifier(ptModifier):
 
                     startval = getattr(theWater.waveset, "get" + x[3:])()
 
-                    if type(p) == type(ptColor().red()):
+                    if ifisinstance(p, ptColor):
                         print "\tstartval = " + str( (startval.getRed(), startval.getGreen(), startval.getBlue()) )
                         print "\tsetting to " + str( (p.getRed(), p.getGreen(), p.getBlue()) )
-                    elif type(p) == type(ptPoint3()) or type(p) == type(ptVector3()):
+                    elif isinstance(p, (ptPoint3, ptVector3)):
                         print "\tstartval = " + str( (startval.getX(), startval.getY(), startval.getZ()) )
                         print "\tsetting to " + str( (p.getX(), p.getY(), p.getZ()) )
                     else:
@@ -137,9 +137,9 @@ class kemoStormWaterModifier(ptModifier):
 
                     endval = getattr(theWater.waveset, "get" + x[3:])()
 
-                    if type(p) == type(ptColor().red()):
+                    if ifisinstance(p, ptColor):
                         print "\tendval = " + str( (endval.getRed(), endval.getGreen(), endval.getBlue()) )
-                    elif type(p) == type(ptPoint3()) or type(p) == type(ptVector3()):
+                    elif isinstance(p, (ptPoint3, ptVector3)):
                         print "\tendval = " + str( (endval.getX(), endval.getY(), endval.getZ()) )
                     else:
                         print "\tendval = " + str(endval)

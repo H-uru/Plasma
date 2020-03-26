@@ -67,13 +67,13 @@ from PlasmaTypes import *
 class ptAttribStateResponder(ptAttribResponder):
     def run(self,key,state=None,events=None,avatar=None,objectName=None,netForce=0,netPropagate=1,fastforward=0):
         # has the value been set?
-        if type(self.value) != type(None):
+        if self.value is not None:
             nt = ptNotify(key)
             nt.clearReceivers()
             # see if the value is a list or byObject or a single
-            if type(objectName) != type(None) and type(self.byObject) != type(None):
+            if objectName is not None and self.byObject is not None:
                 nt.addReceiver(self.byObject[objectName])
-            elif type(self.value)==type([]):
+            elif isinstance(self.value, list):
                 for resp in self.value:
                     nt.addReceiver(resp)
             else:
@@ -84,15 +84,15 @@ class ptAttribStateResponder(ptAttribResponder):
             if netForce or self.netForce:
                 nt.netForce(1)
             # see if the state is specified
-            if type(state) == type(0) and state >= 0:
+            if isinstance(state, int) and state >= 0:
                 nt.addResponderState(state)
             else:
                 raise ptResponderStateError("State must be a positive integer")
             
             # see if there are events to pass on
-            if type(events) != type(None):
+            if events is not None:
                 PtAddEvents(nt,events)
-            if type(avatar) != type(None):
+            if avatar is not None:
                 nt.addCollisionEvent(1,avatar.getKey(),avatar.getKey())
             if fastforward:
                 nt.setType(PtNotificationType.kResponderFF)
@@ -126,7 +126,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         print "__init__xAgeSDLIntStateListResp v", version
     
     def OnFirstUpdate(self):
-        if not (type(strSDLVarName.value) == type("") and strSDLVarName.value != ""):
+        if not strSDLVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
         if boolFirstUpdate.value:

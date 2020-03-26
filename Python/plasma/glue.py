@@ -71,7 +71,7 @@ def glue_getClass():
     return glue_cl
 def glue_getInst():
     global glue_inst
-    if type(glue_inst) == type(None):
+    if glue_inst is None:
         cl = glue_getClass()
         if cl != None:
             glue_inst = cl()
@@ -81,7 +81,7 @@ def glue_delInst():
     global glue_cl
     global glue_params
     global glue_paramKeys
-    if type(glue_inst) != type(None):
+    if glue_inst is not None:
         del glue_inst
     # remove our references
     glue_cl = None
@@ -100,20 +100,20 @@ def glue_findAndAddAttribs(obj, glue_params):
                 print "%s has id %d which is already defined in %s" % (obj.name, obj.id, glue_params[obj.id].name)
         else:
             glue_params[obj.id] = obj
-    elif type(obj) == type([]):
+    elif isinstance(obj, list):
         for o in obj:
             glue_findAndAddAttribs(o, glue_params)
-    elif type(obj) == type({}):
+    elif isinstance(obj, dict):
         for o in obj.values():
             glue_findAndAddAttribs(o, glue_params)
-    elif type(obj) == type( () ):
+    elif isinstance(obj, tuple):
         for o in obj:
             glue_findAndAddAttribs(o, glue_params)
             
 def glue_getParamDict():
     global glue_params
     global glue_paramKeys
-    if type(glue_params) == type(None):
+    if glue_params is None:
         glue_params = {}
         gd = globals()
         for obj in gd.values():
@@ -149,7 +149,7 @@ def glue_getParam(number):
     pd = glue_getParamDict()
     if pd != None:
         # see if there is a paramKey list
-        if type(glue_paramKeys) == type([]):
+        if isinstance(glue_paramKeys, list):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getdef()
             else:
@@ -174,7 +174,7 @@ def glue_setParam(id,value):
             except AttributeError:
                 if isinstance(pd[id],ptAttributeList):
                     try:
-                        if type(pd[id].value) != type([]):
+                        if not isinstance(pd[id].value, list):
                             pd[id].value = []   # make sure that the value starts as an empty list
                     except AttributeError:
                         pd[id].value = []   # or if value hasn't been defined yet, then do it now
@@ -208,7 +208,7 @@ def glue_getVisInfo(number):
     pd = glue_getParamDict()
     if pd != None:
         # see if there is a paramKey list
-        if type(glue_paramKeys) == type([]):
+        if isinstance(glue_paramKeys, list):
             if number >= 0 and number < len(glue_paramKeys):
                 return pd[glue_paramKeys[number]].getVisInfo()
             else:

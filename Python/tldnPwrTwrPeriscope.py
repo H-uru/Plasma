@@ -118,7 +118,7 @@ class tldnPwrTwrPeriscope(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key, "Teledahn")
         # non-age SDL vars
         self.SDL.setDefault("scopeSpdLeft",(0,))
@@ -549,7 +549,7 @@ class tldnPwrTwrPeriscope(ptResponder):
         virtCam = ptCamera()
         virtCam.save(Camera.sceneobject.getKey())
         # show the cockpit
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key, "Teledahn")
             if ( PtIsDialogLoaded(Vignette.value) ):
                 PtShowDialog(Vignette.value)
@@ -562,7 +562,7 @@ class tldnPwrTwrPeriscope(ptResponder):
         global LocalAvatar
         global boolScopeOperator
         # exit every thing
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtHideDialog(Vignette.value)
         virtCam = ptCamera()
         virtCam.restore(Camera.sceneobject.getKey())

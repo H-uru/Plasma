@@ -99,7 +99,7 @@ class nb01DRCImager(ptModifier):
     #            imagerdevice = device.getChild()
     #            break
         
-    #    if type(imagerdevice) != type(None):
+    #    if imagerdevice is not None:
     #        for node in imagerdevice.getChildNodeRefList():
     #            imagerdevice.removeNode(node.getChild())
     
@@ -124,7 +124,7 @@ class nb01DRCImager(ptModifier):
     
     def SetImage(self,id):
         
-        if type(self.inbox) != type(None):
+        if self.inbox is not None:
             PtDebugPrint("nb01DRCImager.SetImage: inbox %s id = %d" % (self.inbox.folderGetName(),self.inbox.getID()))
             
             if self.number_of_images > 0:
@@ -174,7 +174,7 @@ class nb01DRCImager(ptModifier):
                 
                     folder = self.inbox.getChildNodeRefList()
                     element = folder[self.current_image].getChild()
-                    if type(element) != type(None):
+                    if element is not None:
                         nextID = element.getID()
                     else:
                         nextID = -1

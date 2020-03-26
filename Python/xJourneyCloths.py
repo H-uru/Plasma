@@ -126,43 +126,36 @@ class xJourneyCloths(ptModifier):
         
         print "You clicked on cloth ", ClothLetter.value
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
             
-            entry = vault.findChronicleEntry("JourneyClothProgress")
-            if type(entry) == type(None): # is this the player's first Journey Cloth?
-                print "First cloth found."
+        entry = vault.findChronicleEntry("JourneyClothProgress")
+        if entry is None: # is this the player's first Journey Cloth?
+            print "First cloth found."
 
-                print "trying to update JourneyClothProgress to: ", ClothLetter.value
-                vault = ptVault() 
-                vault.addChronicleEntry("JourneyClothProgress",0,"%s" % (ClothLetter.value))
-                self.IPlayHandAnim(1)
-            
-            else:
-                FoundJCs = entry.chronicleGetValue()
-                print "previously found JCs: ", FoundJCs
-                if ClothLetter.value in FoundJCs:
-                    print "You've already found this cloth."
-
-                    
-                else:
-                    print "This is a new cloth to you"
-                    
-                    FoundJCs = FoundJCs + ClothLetter.value
-                    print "trying to update JourneyClothProgress to ", FoundJCs
-
-                    entry.chronicleSetValue("%s" % (FoundJCs)) 
-                    entry.save() 
-                    
-                    self.RandomBahroSounds()
-            
-                length = len(FoundJCs)
-                self.IPlayHandAnim(length)
-                
-
-                    
-                
+            print "trying to update JourneyClothProgress to: ", ClothLetter.value
+            vault = ptVault() 
+            vault.addChronicleEntry("JourneyClothProgress",0,"%s" % (ClothLetter.value))
+            self.IPlayHandAnim(1)
+        
         else:
-            PtDebugPrint("xJourneyCloths: Error trying to access the Vault. Can't access JourneyClothProgress chronicle." )
+            FoundJCs = entry.chronicleGetValue()
+            print "previously found JCs: ", FoundJCs
+            if ClothLetter.value in FoundJCs:
+                print "You've already found this cloth."
+
+                
+            else:
+                print "This is a new cloth to you"
+                
+                FoundJCs = FoundJCs + ClothLetter.value
+                print "trying to update JourneyClothProgress to ", FoundJCs
+
+                entry.chronicleSetValue("%s" % (FoundJCs)) 
+                entry.save() 
+                
+                self.RandomBahroSounds()
+        
+            length = len(FoundJCs)
+            self.IPlayHandAnim(length)
 
 
     def IPlayHandAnim(self, length):

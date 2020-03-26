@@ -67,14 +67,14 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: psnlVaultSDLBoolShowHide.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
             pass
 
         if boolFirstUpdate.value:
             try:
                 ageSDL = xPsnlVaultSDL(1)
-                if type(stringVarName.value) == type("") and stringVarName.value != "":
+                if stringVarName.value:
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                         self.EnableObject()
                     else:
@@ -89,7 +89,7 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
         if not boolFirstUpdate.value:
             try:
                 ageSDL = xPsnlVaultSDL(1)
-                if type(stringVarName.value) == type("") and stringVarName.value != "":
+                if stringVarName.value:
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
                         self.EnableObject()
                     else:
@@ -132,7 +132,7 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
         self.sceneobject.physics.suppress(true)
 
     def OnBackdoorMsg(self, target, param):
-        if type(stringVarName.value) != type(None) and stringVarName.value != "":
+        if stringVarName.value:
             if target == stringVarName.value:
                 if param.lower() in ("on", "1", "true"):
                     self.EnableObject()

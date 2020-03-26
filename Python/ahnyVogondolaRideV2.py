@@ -169,7 +169,7 @@ actStopVogSoundBackward.setVisInfo(1, ["Vogondola"])
 def DisableVogControls( enabledControlList ):
     disableControlList = [actVogEjectFront, actVogEjectRear, actVogThrottleF, actVogThrottleB, actVogThrottleRevF, actVogThrottleRevB, actVogDirection, actVogDirectionRev]
 
-    if type(enabledControlList) == type( [] ):
+    if isinstance(enabledControlList, list):
         for control in enabledControlList:
             disableControlList.remove(control)
             control.enable()

@@ -592,10 +592,10 @@ class clftImager(ptResponder):
         vault = ptVault()
         
         chron = vault.findChronicleEntry("BahroCave")
-        if type(chron) != type(None):
+        if chron is not None:
             ageChronRefList = chron.getChildNodeRefList()
 
-            if type(ageChronRefList) != type(None):
+            if ageChronRefList is not None:
                 for ageChron in ageChronRefList:
                     ageChild = ageChron.getChild()
 
@@ -637,7 +637,7 @@ class clftImager(ptResponder):
         boolCleftSolved = 0
         vault = ptVault()
         entry = vault.findChronicleEntry("CleftSolved")
-        if type(entry) != type(None):
+        if entry is not None:
             if entry.chronicleGetValue() == "yes":
                 boolCleftSolved = 1
 
@@ -649,7 +649,7 @@ class clftImager(ptResponder):
         
         for age in ["Teledahn", "Garden", "Garrison", "Kadish"]:
             symbol = self.GetAgeSolutionSymbol(age)
-            if type(symbol) == type(""):
+            if isinstance(symbol, str):
                 symbol = int(symbol)
             solutionList.append(symbol)
 
@@ -803,7 +803,7 @@ class clftImager(ptResponder):
         elif PlayFinal == 0 and PlayFull == 1:
             vault = ptVault()
             entry = vault.findChronicleEntry("YeeshaVisionViewed")
-            if type(entry) == type(None):
+            if entry is None:
                 vault.addChronicleEntry("YeeshaVisionViewed", 0, "1")
             else:
                 entry.chronicleSetValue("1")
@@ -894,7 +894,7 @@ class clftImager(ptResponder):
         CityLinks = []
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
-        if type(entryCityLinks) != type(None):
+        if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
             print "valCityLinks = ",valCityLinks
             CityLinks = valCityLinks.split(",")

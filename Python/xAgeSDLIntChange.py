@@ -80,7 +80,7 @@ class xAgeSDLIntChange(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntChange.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
             
@@ -88,7 +88,7 @@ class xAgeSDLIntChange(ptResponder):
         global intCurrentValue
         
         ageSDL = PtGetAgeSDL()
-        if type(stringVarName.value) == type("") and stringVarName.value != "":
+        if stringVarName.value:
             ageSDL.setFlags(stringVarName.value,1,1)
             ageSDL.sendToClients(stringVarName.value)
             ageSDL.setNotify(self.key,stringVarName.value,0.0)
@@ -111,12 +111,12 @@ class xAgeSDLIntChange(ptResponder):
         if not PtWasLocallyNotified(self.key):
             return
         else:
-            if type(actTrigger.value) == type([]) and len(actTrigger.value) > 0:
+            if actTrigger.value:
                 PtDebugPrint("DEBUG: xAgeSDLIntChange.OnNotify():\t local player requesting %s change via %s" % (stringVarName.value,actTrigger.value[0].getName()) )
                 pass
                 
         # error check
-        if type(stringVarName.value) != type("") or stringVarName.value == "":
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntChange.OnNotify():\tERROR: missing SDL var name")
             return
             

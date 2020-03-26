@@ -115,14 +115,14 @@ class clftNpcZandi(ptModifier):
 
         vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")
-        #~ if type(entry) != type(None):
+        #~ if entry is not None:
             #~ FoundJCs = entry.chronicleGetValue()
             #~ if "Z" in FoundJCs:
                 #~ PtPageOutNode("clftZandiVis")
                 #~ print "Zandi seems to have stepped away from the Airstream. Hmmm..."
 
         entry = vault.findChronicleEntry("YeeshaVisionViewed")
-        if type(entry) == type(None):
+        if entry is None:
             vault.addChronicleEntry("YeeshaVisionViewed", 0, "0")
 
         PtAtTimeCallback(self.key, PageTurnInterval, TimerID.TurnPage)
@@ -184,7 +184,7 @@ class clftNpcZandi(ptModifier):
                 print "doing behavior ", id
                 self.DoingBehavior = 1
                 MultiStage01.gotoStage(self.NpcName, id,dirFlag=1,isForward=1)
-            if type(self.ZandiFace) == type(""):
+            if isinstance(self.ZandiFace, str):
                 print "using zandi face anim:", self.ZandiFace
                 self.NpcName.avatar.playSimpleAnimation(self.ZandiFace)
 
@@ -214,7 +214,7 @@ class clftNpcZandi(ptModifier):
         vault = ptVault()
         chron = vault.findChronicleEntry("JourneyClothProgress")
         jcProgress = ""
-        if not type(chron) == type(None):
+        if not chron is None:
             ageChronRefList = chron.getChildNodeRefList()
             for ageChron in ageChronRefList:
                 ageChild = ageChron.getChild()
@@ -258,7 +258,7 @@ class clftNpcZandi(ptModifier):
         print "in haven't seen imager message"
         vault = ptVault()
         entry = vault.findChronicleEntry("YeeshaVisionViewed")
-        if type(entry) == type(None):
+        if entry is None:
             PtDebugPrint("ERROR: clftNpcZandi.HaventSeenImagerMessage: cannot find YeeshaVisionViewed chronicle entry")
             return 1
 
@@ -275,7 +275,7 @@ class clftNpcZandi(ptModifier):
         
         vault = ptVault()
         entry = vault.findChronicleEntry("ZandiWelcome")
-        if type(entry) == type(None):
+        if entry is None:
             if not clicked:
                 vault.addChronicleEntry("ZandiWelcome", 0, "1")
             return 1

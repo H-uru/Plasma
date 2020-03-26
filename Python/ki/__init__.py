@@ -2354,50 +2354,46 @@ class xKI(ptModifier):
 
         pageDefs = ""
         vault = ptVault()
-        if vault is not None:
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                for SDLVar, page in xLinkingBookDefs.xYeeshaPages:
-                    FoundValue = psnlSDL.findVar(SDLVar)
-                    if FoundValue is not None:
-                        PtDebugPrint(u"xKI.GetYeeshaPageDefs(): The previous value of the SDL variable \"{}\" is {}.".format(SDLVar, FoundValue.getInt()), level=kDebugDumpLevel)
-                        state = FoundValue.getInt() % 10
-                        if state != 0:
-                            active = 1
-                            if state == 2 or state == 3:
-                                active = 0
-                            try:
-                                pageDefs += page % (active)
-                            except LookupError:
-                                pageDefs += "<pb><pb>Bogus page {}".format(SDLVar)
-            else:
-                PtDebugPrint(u"xKI.GetYeeshaPageDefs(): Trying to access the Chronicle psnlSDL failed: psnlSDL = \"{}\".".format(psnlSDL), level=kErrorLevel)
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            for SDLVar, page in xLinkingBookDefs.xYeeshaPages:
+                FoundValue = psnlSDL.findVar(SDLVar)
+                if FoundValue is not None:
+                    PtDebugPrint(u"xKI.GetYeeshaPageDefs(): The previous value of the SDL variable \"{}\" is {}.".format(SDLVar, FoundValue.getInt()), level=kDebugDumpLevel)
+                    state = FoundValue.getInt() % 10
+                    if state != 0:
+                        active = 1
+                        if state == 2 or state == 3:
+                            active = 0
+                        try:
+                            pageDefs += page % (active)
+                        except LookupError:
+                            pageDefs += "<pb><pb>Bogus page {}".format(SDLVar)
         else:
-            PtDebugPrint(u"xKI.GetYeeshaPageDefs(): Trying to access the Vault failed, can't access YeeshaPageChanges Chronicle.", level=kErrorLevel)
+            PtDebugPrint(u"xKI.GetYeeshaPageDefs(): Trying to access the Chronicle psnlSDL failed: psnlSDL = \"{}\".".format(psnlSDL), level=kErrorLevel)
         return pageDefs
 
     ## Turns on and off the Yeesha pages' SDL values.
     def ToggleYeeshaPageSDL(self, varName, on):
         vault = ptVault()
-        if vault is not None:
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                ypageSDL = psnlSDL.findVar(varName)
-                if ypageSDL:
-                    size, state = divmod(ypageSDL.getInt(), 10)
-                    value = None
-                    if state == 1 and not on:
-                        value = 3
-                    elif state == 3 and on:
-                        value = 1
-                    elif state == 2 and on:
-                        value = 4
-                    elif state == 4 and not on:
-                        value = 2
-                    if value is not None:
-                        PtDebugPrint(u"xKI.ToggleYeeshaPageSDL(): Setting {} to {}.".format(varName, value), level=kDebugDumpLevel)
-                        ypageSDL.setInt((size * 10) + value)
-                        vault.updatePsnlAgeSDL(psnlSDL)
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            ypageSDL = psnlSDL.findVar(varName)
+            if ypageSDL:
+                size, state = divmod(ypageSDL.getInt(), 10)
+                value = None
+                if state == 1 and not on:
+                    value = 3
+                elif state == 3 and on:
+                    value = 1
+                elif state == 2 and on:
+                    value = 4
+                elif state == 4 and not on:
+                    value = 2
+                if value is not None:
+                    PtDebugPrint(u"xKI.ToggleYeeshaPageSDL(): Setting {} to {}.".format(varName, value), level=kDebugDumpLevel)
+                    ypageSDL.setInt((size * 10) + value)
+                    vault.updatePsnlAgeSDL(psnlSDL)
 
     #~~~~~~~~~~~#
     # Censoring #

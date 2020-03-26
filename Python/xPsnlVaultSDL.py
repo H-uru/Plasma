@@ -78,7 +78,7 @@ class xPsnlVaultSDL:
 
     def __setitem__(self, sub, val):
 
-        if type(val) == type( () ):
+        if isinstance(val, tuple):
             val = val[0]
         else:
             raise ValueError("Value must be tuple type")
@@ -128,17 +128,17 @@ class xPsnlVaultSDL:
         #print "Attempting to set item %s to %s" % (sub, str(val))
 
         if vartype == PtSDLVarType.kInt:
-            if type(val) in (types.IntType, types.LongType):
+            if isintance(val, (int, long)):
                 #print "Set int"
                 var.setInt(val)
 
         elif vartype == PtSDLVarType.kFloat:
-            if type(val) in (types.IntType, types.LongType, types.FloatType):
+            if isinstance(val, (int, long, float)):
                 #print "Set float"
                 var.setFloat(val)
 
         elif vartype == PtSDLVarType.kDouble:
-            if type(val) in (types.IntType, types.LongType, types.FloatType):
+            if isinstance(val, (int, long, float)):
                 #print "Set double"
                 var.setDouble(val)
 
@@ -151,13 +151,13 @@ class xPsnlVaultSDL:
 
         elif vartype == PtSDLVarType.kString32:
             #print "Set string"
-            if type(val) == type(""):
+            if isinstance(val, str):
                 var.setString(val)
             else:
                 var.setString(str(val))
 
         else:
-            if type(val) in (types.IntType, types.LongType):
+            if isinstance(val, (int, long)):
                 #print "Set int"
                 var.setInt(val)
 
