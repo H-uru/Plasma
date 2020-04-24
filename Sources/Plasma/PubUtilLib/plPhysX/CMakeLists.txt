@@ -8,6 +8,7 @@ include_directories(${PHYSX_INCLUDE_DIRS})
 set(plPhysX_SOURCES
     plLOSDispatch.cpp
     plPXConvert.cpp
+    plPXCooking.cpp
     plPXPhysical.cpp
     plPXPhysicalControllerCore.cpp
     plPXSubWorld.cpp
@@ -18,6 +19,7 @@ set(plPhysX_HEADERS
     plLOSDispatch.h
     plPhysXCreatable.h
     plPXConvert.h
+    plPXCooking.h
     plPXPhysical.h
     plPXPhysicalControllerCore.h
     plPXStream.h
