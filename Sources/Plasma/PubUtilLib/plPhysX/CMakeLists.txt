@@ -6,6 +6,7 @@ include_directories("../../PubUtilLib")
 include_directories(${PHYSX_INCLUDE_DIRS})
 
 set(plPhysX_SOURCES
+    plGenericPhysical.cpp
     plLOSDispatch.cpp
     plPXConvert.cpp
     plPXCooking.cpp

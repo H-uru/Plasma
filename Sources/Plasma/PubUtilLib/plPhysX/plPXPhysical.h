@@ -46,6 +46,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsMatrix44.h"
 #include "plPhysical/plSimDefs.h"
 #include "hsBitVector.h"
+#include <memory>
 
 
 class NxActor;
@@ -96,18 +97,20 @@ public:
     hsPoint3 bDimensions;
     hsPoint3 bOffset;
 
-    // For export time only.  The original data used to create the mesh
-    hsVectorStream* meshStream;
+    std::unique_ptr<hsVectorStream> meshStream;
 
-    PhysRecipe()
-        : mass(0.f), friction(0.f), restitution(0.f), bounds(plSimDefs::kBoundsMax),
-          group(plSimDefs::kGroupMax), reportsOn(0), convexMesh(nullptr), triMesh(nullptr),
-          radius(0.f), offset(0.f, 0.f, 0.f), meshStream(nullptr)
-    { }
+    PhysRecipe();
+    ~PhysRecipe();
 };
 
 class plPXPhysical : public plPhysical
 {
+protected:
+    void InitProxy();
+    void IMoveProxy(const hsMatrix44& l2w);
+
+    void InitSDL();
+
 public:
     friend class plSimulationMgr;
 
@@ -124,7 +127,7 @@ public:
     GETINTERFACE_ANY(plPXPhysical, plPhysical);
 
     // Export time and internal use only
-    bool Init();
+    bool InitActor();
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -141,7 +144,7 @@ public:
     virtual plKey GetObjectKey() const { return fObjectKey; }
 
     virtual void SetSceneNode(plKey node);
-    virtual plKey GetSceneNode() const;
+    virtual plKey GetSceneNode() const { return fSceneNode; }
 
     virtual bool GetLinearVelocitySim(hsVector3& vel) const;
     virtual void SetLinearVelocitySim(const hsVector3& vel);
@@ -195,6 +198,9 @@ public:
     const PhysRecipe& GetRecipe() const { return fRecipe; }
 
 protected:
+    void DestroyActor();
+    bool CanSynchPosition(bool isSynchUpdate) const;
+
     class NxConvexMesh* IReadHull(hsStream* s);
     class NxTriangleMesh* IReadTriMesh(hsStream* s);
 
@@ -260,7 +266,7 @@ protected:
     hsVector3   fHitForce;
     hsPoint3    fHitPos;
 
-    plPhysicalProxy* fProxyGen;             // visual proxy for debugging
+    std::unique_ptr<plPhysicalProxy> fProxyGen;             // visual proxy for debugging
 
     static int  fNumberAnimatedPhysicals;
     static int  fNumberAnimatedActivators;
