@@ -89,9 +89,7 @@ class xTelescope(ptModifier):
     def Load(self):
         global boolScopeOperated
 
-        solo = True
-        if len(PtGetPlayerList()):
-            solo = False
+        solo = not PtGetPlayerList()
 
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:

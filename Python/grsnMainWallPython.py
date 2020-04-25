@@ -109,11 +109,8 @@ class grsnMainWallPython(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = True
-        if len(PtGetPlayerList()):
-            solo = False
+        if PtGetPlayerList():
             ReceiveInit = True
-            return
         else:
             print"solo in climbing wall"
     

@@ -90,9 +90,7 @@ class philBookshelf(ptModifier):
 
 
     def OnNotify(self,state,id,events):
-        boolLinkerIsMe = False
-        if PtWasLocallyNotified(self.key):
-            boolLinkerIsMe = True
+        boolLinkerIsMe = PtWasLocallyNotified(self.key)
         print ('philBookshelf.OnNotify(): state = %d, id = %d, me = %s' % (state, id, boolLinkerIsMe))
         
         if id == actBookshelfExit.id:

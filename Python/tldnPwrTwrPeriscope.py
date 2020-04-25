@@ -136,9 +136,7 @@ class tldnPwrTwrPeriscope(ptResponder):
 
 
     def Load(self):
-        solo = True
-        if len(PtGetPlayerList()):
-            solo = False
+        solo = not PtGetPlayerList()
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
             if solo:

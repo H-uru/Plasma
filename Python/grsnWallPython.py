@@ -570,9 +570,8 @@ class grsnWallPython(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = True
-        if len(PtGetPlayerList()):
-            solo = False
+        solo = not PtGetPlayerList()
+        if not solo:
             ReceiveInit = True
             i = 0
             while i<171:
