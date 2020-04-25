@@ -58,9 +58,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static inline hsVector3 GetYAxis(hsMatrix44 &mat) { return hsVector3(mat.fMap[1][0], mat.fMap[1][1], mat.fMap[1][2]); }
 static float AngleRad2d(float x1, float y1, float x3, float y3);
 
-bool CompareMatrices(const hsMatrix44 &matA, const hsMatrix44 &matB, float tolerance);
-
-
 // plPhysicalControllerCore
 plPhysicalControllerCore::plPhysicalControllerCore(plKey OwnerSceneObject, float height, float radius)
     : fOwner(OwnerSceneObject),
@@ -127,7 +124,7 @@ void plPhysicalControllerCore::IApply(float delSecs)
     // Match controller to owner if transform has changed since the last frame
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     const hsMatrix44& l2w = so->GetCoordinateInterface()->GetLocalToWorld();
-    if (!CompareMatrices(fLastGlobalLoc, l2w, 0.0001f))
+    if (!fLastGlobalLoc.Compare(l2w, 0.0001f))
         SetGlobalLoc(l2w);
 
     if (fEnabled)
@@ -198,7 +195,7 @@ void plPhysicalControllerCore::IUpdateNonPhysical(float alpha)
     // Update global location if owner transform hasn't changed.
     plSceneObject* so = plSceneObject::ConvertNoRef(fOwner->ObjectIsLoaded());
     const hsMatrix44& l2w = so->GetCoordinateInterface()->GetLocalToWorld();
-    if (CompareMatrices(fLastGlobalLoc, l2w, 0.0001f))
+    if (fLastGlobalLoc.Compare(l2w, 0.0001f))
     {
         if (fEnabled)
         {

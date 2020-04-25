@@ -455,30 +455,6 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
 
 // ==========================================================================
 
-bool CompareMatrices(const hsMatrix44& matA, const hsMatrix44& matB, float tolerance)
-{
-    return
-        (fabs(matA.fMap[0][0] - matB.fMap[0][0]) < tolerance) &&
-        (fabs(matA.fMap[0][1] - matB.fMap[0][1]) < tolerance) &&
-        (fabs(matA.fMap[0][2] - matB.fMap[0][2]) < tolerance) &&
-        (fabs(matA.fMap[0][3] - matB.fMap[0][3]) < tolerance) &&
-
-        (fabs(matA.fMap[1][0] - matB.fMap[1][0]) < tolerance) &&
-        (fabs(matA.fMap[1][1] - matB.fMap[1][1]) < tolerance) &&
-        (fabs(matA.fMap[1][2] - matB.fMap[1][2]) < tolerance) &&
-        (fabs(matA.fMap[1][3] - matB.fMap[1][3]) < tolerance) &&
-
-        (fabs(matA.fMap[2][0] - matB.fMap[2][0]) < tolerance) &&
-        (fabs(matA.fMap[2][1] - matB.fMap[2][1]) < tolerance) &&
-        (fabs(matA.fMap[2][2] - matB.fMap[2][2]) < tolerance) &&
-        (fabs(matA.fMap[2][3] - matB.fMap[2][3]) < tolerance) &&
-
-        (fabs(matA.fMap[3][0] - matB.fMap[3][0]) < tolerance) &&
-        (fabs(matA.fMap[3][1] - matB.fMap[3][1]) < tolerance) &&
-        (fabs(matA.fMap[3][2] - matB.fMap[3][2]) < tolerance) &&
-        (fabs(matA.fMap[3][3] - matB.fMap[3][3]) < tolerance);
-}
-
 void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
 {
     // Called after the simulation has run....sends new positions to the various scene objects
@@ -491,7 +467,7 @@ void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)
             // we're going to cache the transform before sending so we can recognize if it comes back
             IGetTransformGlobal(fCachedLocal2World);
 
-            if (!CompareMatrices(curl2w, fCachedLocal2World, .0001f)) {
+            if (!curl2w.Compare(fCachedLocal2World, .0001f)) {
                 plProfile_Inc(LocationsSent);
                 plProfile_BeginLap(PhysicsUpdates, GetKeyName().c_str());
 
@@ -520,7 +496,7 @@ void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bo
 {
     //  make sure there is some difference between the matrices...
     // ... but not when a subworld... because the subworld maybe animating and if the object is still then it is actually moving within the subworld
-    if (force || (fWorldKey || !CompareMatrices(l2w, fCachedLocal2World, .0001f))) {
+    if (force || (fWorldKey || !l2w.Compare(fCachedLocal2World, .0001f))) {
         ISetTransformGlobal(l2w);
         plProfile_Inc(SetTransforms);
     }

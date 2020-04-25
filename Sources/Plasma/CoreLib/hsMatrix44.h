@@ -143,6 +143,7 @@ struct hsMatrix44 {
     bool  IsIdentity();
     void  NotIdentity() { fFlags &= ~kIsIdent; }
 
+    bool Compare(const hsMatrix44& rhs, float tolerance) const;
     bool operator==(const hsMatrix44& ss) const;
     bool operator!=(const hsMatrix44& ss) const { return !(ss == *this); }
 

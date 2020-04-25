@@ -880,32 +880,6 @@ bool plMatrixDifferenceApp::CanBlend(plAGApplicator *app)
     return false;
 }
 
-// *** move this somewhere real
-bool CompareMatrices2(const hsMatrix44 &matA, const hsMatrix44 &matB, float tolerance)
-{
-    bool c00 = fabs(matA.fMap[0][0] - matB.fMap[0][0]) < tolerance;
-    bool c01 = fabs(matA.fMap[0][1] - matB.fMap[0][1]) < tolerance;
-    bool c02 = fabs(matA.fMap[0][2] - matB.fMap[0][2]) < tolerance;
-    bool c03 = fabs(matA.fMap[0][3] - matB.fMap[0][3]) < tolerance;
-
-    bool c10 = fabs(matA.fMap[1][0] - matB.fMap[1][0]) < tolerance;
-    bool c11 = fabs(matA.fMap[1][1] - matB.fMap[1][1]) < tolerance;
-    bool c12 = fabs(matA.fMap[1][2] - matB.fMap[1][2]) < tolerance;
-    bool c13 = fabs(matA.fMap[1][3] - matB.fMap[1][3]) < tolerance;
-
-    bool c20 = fabs(matA.fMap[2][0] - matB.fMap[2][0]) < tolerance;
-    bool c21 = fabs(matA.fMap[2][1] - matB.fMap[2][1]) < tolerance;
-    bool c22 = fabs(matA.fMap[2][2] - matB.fMap[2][2]) < tolerance;
-    bool c23 = fabs(matA.fMap[2][3] - matB.fMap[2][3]) < tolerance;
-
-    bool c30 = fabs(matA.fMap[3][0] - matB.fMap[3][0]) < tolerance;
-    bool c31 = fabs(matA.fMap[3][1] - matB.fMap[3][1]) < tolerance;
-    bool c32 = fabs(matA.fMap[3][2] - matB.fMap[3][2]) < tolerance;
-    bool c33 = fabs(matA.fMap[3][3] - matB.fMap[3][3]) < tolerance;
-
-    return c00 && c01 && c02 && c03 && c10 && c11 && c12 && c13 && c20 && c21 && c22 && c23 && c30 && c31 && c32 && c33;
-}
-
 // IAPPLY
 void plMatrixDifferenceApp::IApply(const plAGModifier *mod, double time)
 {
@@ -928,7 +902,7 @@ void plMatrixDifferenceApp::IApply(const plAGModifier *mod, double time)
 
         fNew = false;
     } else {
-        if( ! CompareMatrices2(fLastA2L, A2L, .0001f) && ! CompareMatrices2(fLastL2A, L2A, .0001f))
+        if( !fLastA2L.Compare(A2L, .0001f) && !fLastL2A.Compare(L2A, .0001f))
         {
             plCoordinateInterface *CI = IGetCI(mod);
 
