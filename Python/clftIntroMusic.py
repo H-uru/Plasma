@@ -87,7 +87,7 @@ class clftIntroMusic(ptResponder):
     def OnNotify(self,state,id,events):
         global musicState
         
-        if state == False:
+        if not state:
             return
 
 

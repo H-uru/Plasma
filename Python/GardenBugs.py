@@ -303,7 +303,7 @@ class GardenBugs(ptResponder):
         global numJumps
         global running
         
-        if (state == False):
+        if not state:
             currentBehavior = PtBehaviorTypes.kBehaviorTypeIdle
             if (behavior == PtBehaviorTypes.kBehaviorTypeRun):
                 running = False

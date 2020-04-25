@@ -245,7 +245,7 @@ class tldnWRCCBrain(ptResponder):
                 bucketMode = True
                 ageSDL[kStringAgeSDLBucketLoopMode] = (bucketMode,)
 
-            if bucketMode == True:
+            if bucketMode:
                 respBucketLoopMode.run(self.key, state=kOn, fastforward=True)
             else:
                 respBucketLoopMode.run(self.key, state=kOff, fastforward=True)
@@ -349,7 +349,7 @@ class tldnWRCCBrain(ptResponder):
             ###########
             if VARname == kStringAgeSDLBucketLoopMode:
                 bucketMode = ageSDL[kStringAgeSDLBucketLoopMode][0]
-                if bucketMode == True:
+                if bucketMode:
                     respBucketLoopMode.run(self.key, state=kOn)
                 else:
                     respBucketLoopMode.run(self.key, state=kOff)
@@ -471,7 +471,7 @@ class tldnWRCCBrain(ptResponder):
         if id == actBucketLoopMode.id:
             ageSDL = PtGetAgeSDL()
             bucketMode = ageSDL[kStringAgeSDLBucketLoopMode][0]
-            if bucketMode == True:
+            if bucketMode:
                 ageSDL[kStringAgeSDLBucketLoopMode] = (False,)
             else:
                 ageSDL[kStringAgeSDLBucketLoopMode] = (True,)

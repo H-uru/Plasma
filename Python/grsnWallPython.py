@@ -464,7 +464,7 @@ class grsnWallPython(ptResponder):
         
         
         print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == False):
+        if not ReceiveInit:
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):

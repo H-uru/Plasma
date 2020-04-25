@@ -489,7 +489,7 @@ class GiraSteam(ptResponder):
         entry = False
         if avatar == local:
             for event in events:
-                if (event[0] == kCollisionEvent and event[1] == True):
+                if (event[0] == kCollisionEvent and event[1]):
                     # entered a region
                     entry = True
 

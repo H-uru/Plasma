@@ -129,9 +129,9 @@ class xAgeSDLBoolAndRespond(ptResponder):
         PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
         # does the change change our current state?
-        if boolCurrentState == False and (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
+        if not boolCurrentState and (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
             boolCurrentState = True
-        elif boolCurrentState == True and not (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
+        elif boolCurrentState and not (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
             boolCurrentState = False
         else:
             PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t %s ANDed state didn't change." % (self.sceneobject.getName()))

@@ -106,7 +106,7 @@ class grsnWallImagerDisplayN(ptResponder):
         global ReceiveInit
         
         print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == False):
+        if not ReceiveInit:
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
@@ -121,11 +121,11 @@ class grsnWallImagerDisplayN(ptResponder):
     
     def OnClimbingWallEvent(self,type,state,value):
         
-        if (type == ptClimbingWallMsgType.kAddBlocker and value == True):            #display wall settings
+        if (type == ptClimbingWallMsgType.kAddBlocker and value):            #display wall settings
             northWall.value[state].runAttachedResponder(kTeamLightsOn)
             print"Imager display N drawing n wall index",state
                     
-        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value == True):
+        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value):
             northWall.value[state].runAttachedResponder(kTeamLightsOff)
             print"Imager display N clearing n wall index",state
         

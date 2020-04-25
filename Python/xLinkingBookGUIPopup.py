@@ -149,7 +149,7 @@ class xLinkingBookGUIPopup(ptModifier):
         if id==shareRegion.id:
             if PtWasLocallyNotified(self.key):
                 for event in events:
-                    if (event[0]==kCollisionEvent and event[1] == False): # False being an exit
+                    if (event[0]==kCollisionEvent and not event[1]): # False being an exit
                         PtDebugPrint("xLinkingBookGUIPopup: exited book offer region",level=kDebugDumpLevel)
                         PtClearOfferBookMode()
                         self.HideBook()
