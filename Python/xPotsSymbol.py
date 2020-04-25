@@ -89,22 +89,16 @@ class xPotsSymbol(ptResponder):
     def OnFirstUpdate(self):
         global AgeStartedIn
         global listSDL
-        
-        AgeStartedIn = PtGetAgeName()
-        if not (type(sdlSaveCloth1.value) == type("") and sdlSaveCloth1.value != "")\
-        or not (type(sdlSaveCloth2.value) == type("") and sdlSaveCloth2.value != "")\
-        or not (type(sdlSaveCloth3.value) == type("") and sdlSaveCloth3.value != "")\
-        or not (type(sdlSaveCloth4.value) == type("") and sdlSaveCloth4.value != "")\
-        or not (type(sdlSaveCloth5.value) == type("") and sdlSaveCloth5.value != "")\
-        or not (type(sdlSaveCloth6.value) == type("") and sdlSaveCloth6.value != "")\
-        or not (type(sdlSaveCloth7.value) == type("") and sdlSaveCloth7.value != ""):
-            PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
-            pass
 
-        listSDL = [sdlSaveCloth1.value,sdlSaveCloth2.value,sdlSaveCloth3.value,\
-                   sdlSaveCloth4.value,sdlSaveCloth5.value,sdlSaveCloth6.value,\
+        AgeStartedIn = PtGetAgeName()
+        listSDL = [sdlSaveCloth1.value, sdlSaveCloth2.value, sdlSaveCloth3.value,
+                   sdlSaveCloth4.value, sdlSaveCloth5.value, sdlSaveCloth6.value,
                    sdlSaveCloth7.value]
-        print "xPotsSymbol.OnFirstUpdate(): listSDL = ",listSDL
+
+        if not all(listSDL):
+            PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
+
+        print "xPotsSymbol.OnFirstUpdate(): listSDL = ", listSDL
 
         if boolFirstUpdate.value:
             self.Initialize()

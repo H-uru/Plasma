@@ -178,7 +178,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
         hoodpoints = score.getPoints()
         hoodpelletscore = 0
         deviceInbox = self.IGetDeviceInbox()
-        if type(deviceInbox) != type(None):
+        if deviceInbox is not None:
             items = deviceInbox.getChildNodeRefList()
             for item in items:
                 item = item.getChild()
@@ -204,7 +204,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
 
     def IUpdatePelletScores(self, newplayername, pelletscore):
         deviceInbox = self.IGetDeviceInbox()
-        if type(deviceInbox) != type(None):
+        if deviceInbox is not None:
             pelletscores = None
             items = deviceInbox.getChildNodeRefList()
             for item in items:
@@ -259,7 +259,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
     def ISendNotify(self, receiver, name, value):
         notify = ptNotify(self.key)
         notify.clearReceivers()
-        if type(receiver) == type([]):
+        if isinstance(receiver, list):
             for key in receiver:
                 notify.addReceiver(key)
         else:

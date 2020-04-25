@@ -86,18 +86,18 @@ class Cleft(ptResponder):
 
         vault = ptVault()
         entryCleft = vault.findChronicleEntry("CleftSolved")
-        if type(entryCleft) != type(None):
+        if entryCleft is not None:
             entryCleftValue = entryCleft.chronicleGetValue()
             if entryCleftValue != "yes":
                 loadZandi = 1
                 loadBook = 1
-        elif type(entryCleft) == type(None):
+        elif entryCleft is None:
             loadZandi = 1
             loadBook = 1
 
         vault = ptVault()
         entryTomahna = vault.findChronicleEntry("TomahnaLoad")
-        if type(entryTomahna) != type(None):
+        if entryTomahna is not None:
             entryTomahnaValue = entryTomahna.chronicleGetValue()
             if entryTomahnaValue == "yes":
                 loadTomahna = 1
@@ -151,7 +151,7 @@ class Cleft(ptResponder):
         #~ # test for first time to play the intro movie
         #~ vault = ptVault()
         #~ entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        #~ if type(entry) != type(None):
+        #~ if entry is not None:
             #~ # already played intro sometime in the past... just let 'em play
             #~ PtSendKIMessage(kEnableKIandBB,0)
         #~ else:

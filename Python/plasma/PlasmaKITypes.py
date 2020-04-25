@@ -164,7 +164,7 @@ def PtDetermineKILevel():
     import string
     vault = Plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleKILevel)
-    if type(entry) != type(None):
+    if entry is not None:
         level = string.atoi(entry.chronicleGetValue())
         # make sure it is a valid level
         if level >= kLowestKILevel and level <= kHighestKILevel:
@@ -179,7 +179,7 @@ def PtDetermineCensorLevel():
     import string
     vault = Plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleCensorLevel)
-    if type(entry) != type(None):
+    if entry is not None:
         level = string.atoi(entry.chronicleGetValue())
         return level
     # if couldn't be determine... just assume lowest form
@@ -192,7 +192,7 @@ def PtDetermineKIMarkerLevel():
     import string
     vault = Plasma.ptVault()
     entry = vault.findChronicleEntry(kChronicleKIMarkerLevel)
-    if type(entry) != type(None):
+    if entry is not None:
         level = string.atoi(entry.chronicleGetValue())
         return level
     # if couldn't be determine... just assume lowest form

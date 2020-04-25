@@ -78,7 +78,7 @@ class psnlVaultSDLBoolRespond(ptResponder):
 
     def OnFirstUpdate(self):
         PtDebugPrint("psnlVaultSDLBoolRespond.OnFirstUpdate():\t attached to sceneobject: %s" % self.sceneobject.getName())
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: psnlVaultSDLBoolRespond.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
@@ -92,7 +92,7 @@ class psnlVaultSDLBoolRespond(ptResponder):
     def IFinishInit(self):
         try:
             ageSDL = xPsnlVaultSDL(1)
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if stringVarName.value:
                 if ageSDL[stringVarName.value][0]:
                     PtDebugPrint("DEBUG: psnlVaultSDLBoolRespond.IFinishInit():\tRunning true responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolFFOnInit.value))
                     respBoolTrue.run(self.key,fastforward=boolFFOnInit.value)

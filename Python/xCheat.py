@@ -51,64 +51,55 @@ def ListYeeshaPages(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if type(vault) != type(None): #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if psnlSDL:
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                FoundValue = psnlSDL.findVar(sdlvar)
-                print "%s is %d" % (sdlvar, FoundValue.getInt())
-        else:
-            print "Could not find personal age SDL"
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            FoundValue = psnlSDL.findVar(sdlvar)
+            print "%s is %d" % (sdlvar, FoundValue.getInt())
     else:
-        print "Could not find vault"
+        print "Could not find personal age SDL"
 
 
 def GetAllYeeshaPages(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if type(vault) != type(None): #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if psnlSDL:
-            if args == "0":
-                newval = 0
-                print "xCheat.GetYeeshaPage(): removing all Yeesha pages..."
-            else:
-                newval = 1
-                print "xCheat.GetYeeshaPage(): adding all Yeesha pages..."
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                FoundValue = psnlSDL.findVar(sdlvar)
-                FoundValue.setInt(newval)
-            vault.updatePsnlAgeSDL(psnlSDL)
+    psnlSDL = vault.getPsnlAgeSDL()
+    if psnlSDL:
+        if args == "0":
+            newval = 0
+            print "xCheat.GetYeeshaPage(): removing all Yeesha pages..."
         else:
-            print "Could not find personal age SDL"
+            newval = 1
+            print "xCheat.GetYeeshaPage(): adding all Yeesha pages..."
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            FoundValue = psnlSDL.findVar(sdlvar)
+            FoundValue.setInt(newval)
+        vault.updatePsnlAgeSDL(psnlSDL)
     else:
-        print "Could not find vault"
+        print "Could not find personal age SDL"
 
 
 def GetYeeshaPage(args):
     import Plasma
     import xLinkingBookDefs
     vault = Plasma.ptVault()
-    if type(vault) != type(None): #is the Vault online?
-        psnlSDL = vault.getPsnlAgeSDL()
-        if args == None or args == "":
-            print "xCheat.GetYeeshaPage(): ERROR.  Must provide a Yeesha Page number."
-            return
-        thispage = "YeeshaPage" + args
-        if psnlSDL:
-            for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
-                if sdlvar == thispage:
-                    FoundValue = psnlSDL.findVar(sdlvar)
-                    FoundValue.setInt(1)
-                    vault.updatePsnlAgeSDL(psnlSDL)
-                    print "xCheat.GetYeeshaPage(): Done. Have added: ",sdlvar
-                    return
-            print "xCheat.GetYeeshaPage(): ERROR.  Could not find Yeesha page: ",thispage
-        else:
-            print "xCheat.GetYeeshaPage(): ERROR.  Could not find personal age SDL"
+    psnlSDL = vault.getPsnlAgeSDL()
+    if not args:
+        print "xCheat.GetYeeshaPage(): ERROR.  Must provide a Yeesha Page number."
+        return
+    thispage = "YeeshaPage" + args
+    if psnlSDL:
+        for sdlvar,page in xLinkingBookDefs.xYeeshaPages:
+            if sdlvar == thispage:
+                FoundValue = psnlSDL.findVar(sdlvar)
+                FoundValue.setInt(1)
+                vault.updatePsnlAgeSDL(psnlSDL)
+                print "xCheat.GetYeeshaPage(): Done. Have added: ",sdlvar
+                return
+        print "xCheat.GetYeeshaPage(): ERROR.  Could not find Yeesha page: ",thispage
     else:
-        print "xCheat.GetYeeshaPage(): ERROR.  Could not find vault"
+        print "xCheat.GetYeeshaPage(): ERROR.  Could not find personal age SDL"
 
 
 def GetAgeJourneyCloths(args):
@@ -136,7 +127,7 @@ def GetAgeJourneyCloths(args):
             ageChronNode = ageChild
             break
 
-    if type(ageChronNode) == type(None):
+    if ageChronNode is None:
         newNode = Plasma.ptVaultChronicleNode(0)
         newNode.chronicleSetName(ageName)
         newNode.chronicleSetValue("abcdefg")
@@ -279,7 +270,7 @@ def GZSetGame(args):
     vault = Plasma.ptVault()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue(gameString)
         entry.save()
     else:
@@ -307,7 +298,7 @@ def GZGetMarkers(args):
         vault = Plasma.ptVault()
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
-        if type(entry) != type(None):
+        if entry is not None:
             gameString = entry.chronicleGetValue()
             gargs = gameString.split()
             if len(gargs) == 3:
@@ -329,7 +320,7 @@ def GZGetMarkers(args):
                     # just pick some marker to have gotten
                     # is there a chronicle for the GZ games?
                     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZMarkersAquired)
-                    if type(entry) != type(None):
+                    if entry is not None:
                         markers = entry.chronicleGetValue()
                         for mnum in range(markersToGet):
                             markerIdx = markers.index(PlasmaKITypes.kGZMarkerAvailable)
@@ -373,7 +364,7 @@ def GZGiveMeFullAccess(args):
     resetString = "0 off:off 0:0"
     vault = Plasma.ptVault()
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue(resetString)
 
     # Finally, update the KI display
@@ -397,17 +388,17 @@ def RemoveMarkerTag(args):
     vault = Plasma.ptVault()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleKIMarkerLevel)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue(newlevel)
         entry.save()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZGames)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue("0")
         entry.save()
     # is there a chronicle for the GZ games?
     entry = vault.findChronicleEntry(PlasmaKITypes.kChronicleGZMarkersAquired)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue("")
         entry.save()
     Plasma.PtSendKIMessage(PlasmaKITypes.kGZUpdated,0)
@@ -415,12 +406,12 @@ def RemoveMarkerTag(args):
     MGs = [ 'MG01','MG02','MG03','MG04','MG05','MG06','MG07','MG08','MG09','MG10','MG11','MG12','MG13','MG14']
     for mg in MGs:
         entry = vault.findChronicleEntry(mg)
-        if type(entry) != type(None):
+        if entry is not None:
             entry.chronicleSetValue("")
             entry.save()
    
     entry = vault.findChronicleEntry("CGZPlaying")
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue("")
         entry.save()
     # remove the marker games from the hidden folder--- later
@@ -434,11 +425,11 @@ def CGZKillAll(args):
     MGs = [ 'MG01','MG02','MG03','MG04','MG05','MG06','MG07','MG08','MG09','MG10','MG11','MG12','MG13','MG14']
     for mg in MGs:
         entry = vault.findChronicleEntry(mg)
-        if type(entry) != type(None):
+        if entry is not None:
             entry.chronicleSetValue("")
             entry.save()
     entry = vault.findChronicleEntry("CGZPlaying")
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue("")
         entry.save()
 
@@ -448,12 +439,12 @@ def ShowHiddenFolder(args):
     vault = Plasma.ptVault()
     jfolder = None
     master_agefolder = vault.getAgeJournalsFolder()
-    if type(master_agefolder) != type(None):
+    if master_agefolder is not None:
         agefolderRefs = master_agefolder.getChildNodeRefList()
         for agefolderRef in agefolderRefs:
             agefolder = agefolderRef.getChild()
             agefolder = agefolder.upcastToFolderNode()
-            if type(agefolder) != type(None):
+            if agefolder is not None:
                 # look for the Hidden folder
                 if "Hidden" == agefolder.folderGetName():
                     jfolder = agefolder
@@ -466,7 +457,7 @@ def ShowHiddenFolder(args):
             jnode = jref.getChild()
             jnode = jnode.upcastToMarkerListNode()
             # is it a marker folder list?
-            if type(jnode) != type(None):
+            if jnode is not None:
                 # is it named the right one?
                 print "markerFolder - ",jnode.folderGetName()
     else:
@@ -480,12 +471,12 @@ def RemoveHiddenContent(args):
     vault = Plasma.ptVault()
     jfolder = None
     master_agefolder = vault.getAgeJournalsFolder()
-    if type(master_agefolder) != type(None):
+    if master_agefolder is not None:
         agefolderRefs = master_agefolder.getChildNodeRefList()
         for agefolderRef in agefolderRefs:
             agefolder = agefolderRef.getChild()
             agefolder = agefolder.upcastToFolderNode()
-            if type(agefolder) != type(None):
+            if agefolder is not None:
                 # look for the Hidden folder
                 if "Hidden" == agefolder.folderGetName():
                     jfolder = agefolder
@@ -523,7 +514,7 @@ def _DumpEm(f,markerfolder,mfNumber):
     for markerRef in markerRefs:
         marker = markerRef.getChild()
         marker = marker.upcastToMarkerNode()
-        if type(marker) != type(None):
+        if marker is not None:
             f.write('    [ "%s", ' % (marker.markerGetText()))
             pos = marker.markerGetPosition()
             f.write("%g, %g, %g, " % (pos.getX(),pos.getY(),(pos.getZ())))
@@ -554,12 +545,12 @@ def DumpMarkers(args):
     vault = Plasma.ptVault()
     jfolder = None
     master_agefolder = vault.getAgeJournalsFolder()
-    if type(master_agefolder) != type(None):
+    if master_agefolder is not None:
         agefolderRefs = master_agefolder.getChildNodeRefList()
         for agefolderRef in agefolderRefs:
             agefolder = agefolderRef.getChild()
             agefolder = agefolder.upcastToFolderNode()
-            if type(agefolder) != type(None):
+            if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
                 if argresidual.startswith(agefolder.folderGetName()):
                     jfolder = agefolder
@@ -574,7 +565,7 @@ def DumpMarkers(args):
             for jfolderRef in jfolderRefs:
                 jentry = jfolderRef.getChild()
                 jentry = jentry.upcastToMarkerListNode()
-                if type(jentry) != type(None):
+                if jentry is not None:
                     # see if we are looking for a particular markerfolder
                     if len(argresidual) > 0 and argresidual == jentry.getFolderName():
                         # only dump the one
@@ -621,12 +612,12 @@ def ImportGames(args):
     vault = Plasma.ptVault()
     jfolder = None
     master_agefolder = vault.getAgeJournalsFolder()
-    if type(master_agefolder) != type(None):
+    if master_agefolder is not None:
         agefolderRefs = master_agefolder.getChildNodeRefList()
         for agefolderRef in agefolderRefs:
             agefolder = agefolderRef.getChild()
             agefolder = agefolder.upcastToFolderNode()
-            if type(agefolder) != type(None):
+            if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
                 if argresidual.startswith(agefolder.folderGetName()):
                     jfolder = agefolder
@@ -665,12 +656,12 @@ def ImportMarkers(args):
     vault = Plasma.ptVault()
     jfolder = None
     master_agefolder = vault.getAgeJournalsFolder()
-    if type(master_agefolder) != type(None):
+    if master_agefolder is not None:
         agefolderRefs = master_agefolder.getChildNodeRefList()
         for agefolderRef in agefolderRefs:
             agefolder = agefolderRef.getChild()
             agefolder = agefolder.upcastToFolderNode()
-            if type(agefolder) != type(None):
+            if agefolder is not None:
                 # might be a foldername with spaces! so see if it starts with the name
                 if argresidual.startswith(agefolder.folderGetName()):
                     jfolder = agefolder
@@ -685,7 +676,7 @@ def ImportMarkers(args):
                 jnode = jref.getChild()
                 jnode = jnode.upcastToMarkerListNode()
                 # is it a marker folder list?
-                if type(jnode) != type(None):
+                if jnode is not None:
                     # is it named the right one?
                     if jnode.folderGetName() == mg[1]:
                         # yes, add the markers to this game

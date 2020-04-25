@@ -154,28 +154,24 @@ class grsnPrisonRandomSDLItems(ptResponder):
         vault = ptVault()
                 
 
-        if type(vault) != type(None): #is the Vault online?
-            entry = vault.findChronicleEntry("VisitedGrsnPrison")
+        entry = vault.findChronicleEntry("VisitedGrsnPrison")
+        
+        if entry is None: 
+            vault.addChronicleEntry("VisitedGrsnPrison",1,"yes")
+            PtDebugPrint ("grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle.")
             
-            if type(entry) == type(None): 
-                vault.addChronicleEntry("VisitedGrsnPrison",1,"yes")
-                PtDebugPrint ("grsnPrisonRandomItems: This is your first visit to the Prison. Updated Chronicle.")
-                
-            else:
-                PtDebugPrint ("grsnPrisonRandomItems: You've been to the Prison before.")
-                
-                chance = random.random()
-                ageSDL = PtGetAgeSDL()
-                if chance > (1-kChanceOfYP):
-                    ageSDL["grsnYeeshaPage02Vis"] = (1,)
-                    PtDebugPrint ("grsnPrisonRandomItems: A YP is here.")
-                else:
-                    ageSDL["grsnYeeshaPage02Vis"] = (0,)
-                    PtDebugPrint ("grsnPrisonRandomItems: A YP is NOT here.")
-                
-                ageSDL.sendToClients("grsnYeeshaPage02Vis")
-                        
         else:
-            PtDebugPrint("grsnPrisonRandomItems: Error trying to access the Chronicle." )
+            PtDebugPrint ("grsnPrisonRandomItems: You've been to the Prison before.")
+            
+            chance = random.random()
+            ageSDL = PtGetAgeSDL()
+            if chance > (1-kChanceOfYP):
+                ageSDL["grsnYeeshaPage02Vis"] = (1,)
+                PtDebugPrint ("grsnPrisonRandomItems: A YP is here.")
+            else:
+                ageSDL["grsnYeeshaPage02Vis"] = (0,)
+                PtDebugPrint ("grsnPrisonRandomItems: A YP is NOT here.")
+            
+            ageSDL.sendToClients("grsnYeeshaPage02Vis")
 
 

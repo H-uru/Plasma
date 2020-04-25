@@ -94,7 +94,7 @@ class clftGetPersonalBook(ptResponder):
         pass
         #~ vault = ptVault()
         #~ entry = vault.findChronicleEntry("JourneyClothProgress")
-        #~ if type(entry) != type(None):
+        #~ if entry is not None:
             #~ FoundJCs = entry.chronicleGetValue()
             #~ if "Z" in FoundJCs:
                 #~ PtPageOutNode("clftYeeshaBookVis")
@@ -245,7 +245,7 @@ class clftGetPersonalBook(ptResponder):
             gDemoMovie.playPaused()
         elif id == kTrailerFadeInID:
             PtDebugPrint("xLiveTrailer - roll the movie",level=kDebugDumpLevel)
-            if type(gDemoMovie) != type(None):
+            if gDemoMovie is not None:
                 gDemoMovie.resume()
         elif id == kTrailerDoneID:
             print "Quitting demo now..."

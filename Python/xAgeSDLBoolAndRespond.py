@@ -78,9 +78,9 @@ class xAgeSDLBoolAndRespond(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not(type(stringVar1Name.value) == type("") and stringVar1Name.value != ""):
+        if not stringVar1Name.value:
             PtDebugPrint("ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var1 name in max file")
-        if not(type(stringVar2Name.value) == type("") and stringVar2Name.value != ""):
+        if not stringVar2Name.value:
             PtDebugPrint("ERROR: xAgeSDLBoolAndRespond.OnFirstUpdate():\tERROR: missing SDL var2 name in max file")
 
     def OnServerInitComplete(self):

@@ -91,7 +91,7 @@ class Personal(ptResponder):
         # test for first time to play the intro movie
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        if type(entry) != type(None):
+        if entry is not None:
             # already played intro sometime in the past... just let 'em play
             # enable twice because if we came from the ACA (closet->ACA->personal) it was disabled twice
             PtSendKIMessage(kEnableKIandBB,0)
@@ -132,9 +132,9 @@ class Personal(ptResponder):
         #~ kChronicleVarName = "LinksIntoPersonalAge"
         #~ kChronicleVarType = 0
         #~ vault = ptVault()
-        #~ if type(vault) != type(None):
+        #~ if vault is not None:
             #~ entry = vault.findChronicleEntry(kChronicleVarName)
-            #~ if type(entry) == type(None):
+            #~ if entry is None:
                 #~ # not found... add current level chronicle
                 #~ vault.addChronicleEntry(kChronicleVarName,kChronicleVarType,"%d" %(1))
                 #~ PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,kChronicleVarName))

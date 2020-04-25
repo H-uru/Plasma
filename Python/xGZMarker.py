@@ -103,7 +103,7 @@ class xGZMarker(ptMultiModifier):
         vault = ptVault()
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
-        if type(entry) != type(None):
+        if entry is not None:
             markers = entry.chronicleGetValue()
             markerIdx = aGZSerialNumber.value - 1
             if markerIdx >= 0 and markerIdx < len(markers):

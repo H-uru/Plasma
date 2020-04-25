@@ -156,7 +156,7 @@ class PelletBahroCave(ptResponder):
             lowerCave = 0
             vault = ptVault()
             entry = vault.findChronicleEntry("GotPellet")
-            if type(entry) != type(None):
+            if entry is not None:
                 entryValue = entry.chronicleGetValue()
                 gotPellet = string.atoi(entryValue)
                 if gotPellet != 0:

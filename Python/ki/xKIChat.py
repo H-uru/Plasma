@@ -79,11 +79,12 @@ class xKIChat(object):
         self.privateChatChannel = 0
         self.toReplyToLastPrivatePlayerID = None
 
-        # Fading globals.
+        # Fading & blinking globals.
         self.currentFadeTick = 0
         self.fadeEnableFlag = True
         self.fadeMode = kChat.FadeNotActive
         self.ticksOnFull = 30
+        self.incomingChatFlashState = 0
 
         # Set the properties from the KI.
         self.key = None  # Plasma has to be initialized for this.
@@ -576,10 +577,6 @@ class xKIChat(object):
         chatArea.insertStringW(chatMessageFormatted)
         chatArea.moveCursor(PtGUIMultiLineDirection.kBufferEnd)
 
-        # Scroll the chat by the number of new lines.
-        if not wasAtEnd:
-            chatArea.setScrollPosition(savedPosition)
-
         # Write to the log file.
         if self.chatLogFile is not None and self.chatLogFile.isOpen():
             self.chatLogFile.write(chatHeaderFormatted[0:] + chatMessageFormatted)
@@ -589,6 +586,15 @@ class xKIChat(object):
             while chatArea.getBufferSize() > kChat.MaxChatSize and chatArea.getBufferSize() > 0:
                 PtDebugPrint(u"xKIChat.AddChatLine(): Max chat buffer size reached. Removing top line.", level=kDebugDumpLevel)
                 chatArea.deleteLinesFromTop(1)
+                if savedPosition > 0:
+                    # this is only accurate if the deleted line only occupied one line in the control (wasn't soft-wrapped), but that tends to be the usual case
+                    savedPosition -= 1
+        if not wasAtEnd:
+            # scroll back to where we were
+            chatArea.setScrollPosition(savedPosition)
+            # flash the down arrow to indicate that new chat has come in
+            self.incomingChatFlashState = 3
+            PtAtTimeCallback(self.key, 0.0, kTimers.IncomingChatFlash)
         chatArea.endUpdate()
 
         # Copy all the data to the miniKI if the user upgrades it.

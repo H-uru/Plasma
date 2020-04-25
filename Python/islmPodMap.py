@@ -81,7 +81,7 @@ class islmPodMap(ptResponder):
     def IGetAgeFilename(self):
         "returns the .age file name of the age"
         ageInfo = PtGetAgeInfo()
-        if type(ageInfo) != type(None):
+        if ageInfo is not None:
             return ageInfo.getAgeFilename()
         else:
             return "GUI" # use default GUI age if we can't find the age name for some reason
@@ -145,7 +145,7 @@ class islmPodMap(ptResponder):
         "Disengage and exit"
         global LocalAvatar
         # exit every thing
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtSendKIMessage(kEnableKIandBB,0)
             PtHideDialog(Vignette.value)
             print "Dialog: %s goes down" % Vignette.value

@@ -185,7 +185,7 @@ class xSaveCloth(ptModifier):
                     ainfo.setAgeFilename(PtGetAgeName())
                     agelink = vault.getOwnedAgeLink(ainfo)
 
-                    if type(agelink) != type(None):
+                    if agelink is not None:
                         spawnpoints = agelink.getSpawnPoints()
 
                         for sp in spawnpoints:
@@ -193,7 +193,7 @@ class xSaveCloth(ptModifier):
                                 savepoint = sp
                                 break
 
-                        if type(savepoint) != type(None):
+                        if savepoint is not None:
                             agelink.removeSpawnPoint(savepoint.getName())
                             
                         savepoint = ptSpawnPointInfo("SCSavePoint", soSpawnpoint.value.getName())

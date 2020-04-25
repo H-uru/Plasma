@@ -93,7 +93,7 @@ class xChatChannelRegion(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             self.SDL.setDefault("intSDLChatMembers",(-1,-1,-1,-1,-1,-1,-1,-1))
-            if type(doorVarName.value) == type("") and doorVarName.value != "":
+            if doorVarName.value:
                 ageSDL.setNotify(self.key,doorVarName.value,0.0)
 
     def OnFirstUpdate(self):

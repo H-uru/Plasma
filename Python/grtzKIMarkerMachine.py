@@ -120,7 +120,7 @@ def ResetMarkerGame():
 
     # First, reset the KI Marker Level
     entry = vault.findChronicleEntry(kChronicleKIMarkerLevel)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue("0")
         entry.save()
 
@@ -130,7 +130,7 @@ def ResetMarkerGame():
     # Now reset the chronicle display settings
     resetString = "0 off:off 0:0"
     entry = vault.findChronicleEntry(kChronicleGZGames)
-    if type(entry) != type(None):
+    if entry is not None:
         entry.chronicleSetValue(resetString)
 
     #Who knows what state we were in so we'll reset the CGZs as well!!!
@@ -149,7 +149,7 @@ def UpdateGZMarkers(markerStatus):
 
     vault = ptVault()
     entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
-    if type(entry) != type(None):
+    if entry is not None:
         markers = entry.chronicleGetValue()
         resetValue = markerStatus * len(markers)
         entry.chronicleSetValue(resetValue)
@@ -227,7 +227,7 @@ class grtzKIMarkerMachine(ptModifier):
                     #Since we're turning on for the first time, we'll enable each marker
                     vault = ptVault()
                     entry = vault.findChronicleEntry(kChronicleGZMarkersAquired)
-                    if type(entry) == type(None):
+                    if entry is None:
                         # if there is none, then just add another entry - start off as active
                         markers = kGZMarkerAvailable * kNumGZMarkers
                         vault.addChronicleEntry(kChronicleGZMarkersAquired,kChronicleGZMarkersAquiredType,markers)
@@ -277,7 +277,7 @@ class grtzKIMarkerMachine(ptModifier):
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(kChronicleGZGames)
         error = 0
-        if type(entry) != type(None):
+        if entry is not None:
             markerGameString = entry.chronicleGetValue()
             args = markerGameString.split()
             
@@ -339,7 +339,7 @@ class grtzKIMarkerMachine(ptModifier):
         # is there a chronicle for the GZ games?
         entry = vault.findChronicleEntry(kChronicleGZGames)
         upstring = "%d %s:%s %d:%d" % (gGZPlaying,gMarkerGottenColor,gMarkerToGetColor,gMarkerGottenNumber,gMarkerToGetNumber)
-        if type(entry) != type(None):
+        if entry is not None:
             entry.chronicleSetValue(upstring)
             entry.save()
         else:
@@ -409,7 +409,7 @@ class grtzKIMarkerMachine(ptModifier):
                 vault = ptVault()
                 # is there a chronicle for the GZ games?
                 entry = vault.findChronicleEntry(kChronicleGZGames)
-                if type(entry) != type(None):
+                if entry is not None:
                     entry.chronicleSetValue("0")
                     entry.save()
                 # they've made it to the next level
@@ -461,7 +461,7 @@ class grtzKIMarkerMachine(ptModifier):
         for content in contents:
             link = content.getChild()
             link = link.upcastToAgeLinkNode()
-            if type(link) != type(None):
+            if link is not None:
                 info = link.getAgeInfo()
             if not info: continue
             ageName = info.getAgeFilename()
@@ -471,7 +471,7 @@ class grtzKIMarkerMachine(ptModifier):
     
     def IGetHoodInfoNode(self):
         link = self.IGetHoodLinkNode()
-        if type(link) == type(None):
+        if link is None:
             return None
         info = link.getAgeInfo()
         return info
@@ -525,7 +525,7 @@ class grtzKIMarkerMachine(ptModifier):
         CityLinks = []
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
-        if type(entryCityLinks) != type(None):
+        if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
             print "valCityLinks = ",valCityLinks
             CityLinks = valCityLinks.split(",")

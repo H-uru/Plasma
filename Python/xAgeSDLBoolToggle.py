@@ -73,7 +73,7 @@ class xAgeSDLBoolToggle(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnFirstUpdate():\tERROR: missing SDL var name")
 
     def OnServerInitComplete(self):
@@ -82,7 +82,7 @@ class xAgeSDLBoolToggle(ptResponder):
         ageSDL = PtGetAgeSDL()
         ageSDL.setFlags(stringVarName.value,1,1)
         ageSDL.sendToClients(stringVarName.value)
-        if type(stringVarName.value) == type("") and stringVarName.value != "":
+        if stringVarName.value:
             ageSDL.setNotify(self.key,stringVarName.value,0.0)
             try:
                 boolCurrentValue = ageSDL[stringVarName.value][0]
@@ -97,13 +97,13 @@ class xAgeSDLBoolToggle(ptResponder):
 
         # is this notify something I should act on?
         if id == actTrigger.id and state and PtFindAvatar(events) == PtGetLocalAvatar():
-            if type(actTrigger.value) == type([]) and len(actTrigger.value) > 0:
+            if actTrigger.value:
                 PtDebugPrint("DEBUG: xAgeSDLBoolToggle.OnNotify():\t local player requesting %s change via %s" % (stringVarName.value,actTrigger.value[0].getName()) )
         else:
             return
                 
         # error check
-        if type(stringVarName.value) != type("") or stringVarName.value == "":
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLBoolToggle.OnNotify():\tERROR: missing SDL var name")
             return
             

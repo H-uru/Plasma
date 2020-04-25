@@ -54,7 +54,7 @@ _series_length = 0
 _lastvalue = None
 
 def seed(var = 0):
-    if type(var) == type(1):
+    if isinstance(var, int):
         random.seed(var)
     else:
         random.seed()
@@ -66,7 +66,7 @@ def randint(start, stop):
     
     newInt = random.randint(start, stop)
 
-    if type(_lastvalue) != type(None) and newInt == _lastvalue:
+    if _lastvalue is not None and newInt == _lastvalue:
         if _series_length >= _MAX_SERIES:
             iter = 0
             while newInt == _lastvalue and iter < _MAX_ITERATIONS:
@@ -87,11 +87,11 @@ def randint(start, stop):
 def setmaxseries(var = 2):
     global _MAX_SERIES
     
-    if type(var) == type(1):
+    if isinstance(var, int):
         _MAX_SERIES = var
 
 def shuffle(theList):
-    if type(theList) == type([]):
+    if isinstance(theList, list):
         n = len(theList)
         nmo = n - 1
         numIter = int(n * math.log(n))
@@ -108,7 +108,7 @@ def shuffle(theList):
 
 class xRandom:
     def __init__(self, seed = 0, maxseries = 2):
-        if type(maxseries) == type(1):
+        if isinstance(maxseries, int):
             self._MAX_SERIES = maxseries
         else:
             self._MAX_SERIES = 2
@@ -124,7 +124,7 @@ class xRandom:
     def randint(self, start, stop):
         newInt = random.randint(start, stop)
 
-        if type(_lastvalue) != type(None) and newInt == self._lastvalue:
+        if _lastvalue is not None and newInt == self._lastvalue:
             if self._series_length >= self._MAX_SERIES:
                 while newInt == _lastvalue:
                     newInt = random.randint(start, stop)
@@ -139,7 +139,7 @@ class xRandom:
         return _lastvalue
 
     def setmaxseries(self, var = 2):
-        if type(var) == type(1):
+        if isinstance(var, int):
             self._MAX_SERIES = var
 
     def setrange(self, rmin, rmax):
@@ -147,7 +147,7 @@ class xRandom:
 
     def getUniqueInt(self):
         numTries = 0
-        if type(self._range) == type( (0,) ):
+        if isinstance(self._range, tuple):
             newInt = random.randint(self._range[0], self._range[1])
             numTries += 1
 

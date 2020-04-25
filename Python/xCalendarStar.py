@@ -87,7 +87,7 @@ class xCalendarStar(ptResponder):
         global boolCalStar
 
         AgeStartedIn = PtGetAgeName()
-        if not (type(sdlCalStar.value) == type("") and sdlCalStar.value != ""):
+        if not sdlCalStar.value:
             PtDebugPrint("ERROR: xCalendarStar.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
 
@@ -148,17 +148,16 @@ class xCalendarStar(ptResponder):
 
     def GotPage(self):
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
-            psnlSDL = xPsnlVaultSDL()
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                ypageSDL = psnlSDL.findVar("YeeshaPage20")
-                if ypageSDL:
-                    size, state = divmod(ypageSDL.getInt(), 10)
-                    print "YeeshaPage20 = ",state
-                    if state:
-                        return 1
-            return 0
+        psnlSDL = xPsnlVaultSDL()
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            ypageSDL = psnlSDL.findVar("YeeshaPage20")
+            if ypageSDL:
+                size, state = divmod(ypageSDL.getInt(), 10)
+                print "YeeshaPage20 = ",state
+                if state:
+                    return 1
+        return 0
 
 
 #    def OnSDLNotify(self,VARname,SDLname,playerID,tag):

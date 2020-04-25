@@ -93,13 +93,13 @@ class ercaCallCar(ptResponder):
         
         if AgeStartedIn == PtGetAgeName():
             
-            if type(SDLCarPos.value) == type("") and SDLCarPos.value != "":
+            if SDLCarPos.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setFlags(SDLCarPos.value,1,1)
                 ageSDL.sendToClients(SDLCarPos.value)
             else:
                 PtDebugPrint("ERROR: ercaCallCar.OnFirstUpdate():\tERROR: missing SDL var name")
-            if type(SDLCarLev.value) == type("") and SDLCarLev.value != "":
+            if SDLCarLev.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setFlags(SDLCarLev.value,1,1)
                 ageSDL.sendToClients(SDLCarLev.value)

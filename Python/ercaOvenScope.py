@@ -202,7 +202,7 @@ class ercaOvenScope(ptModifier):
         byteAmount = ageSDL[amountSDL][0]
         byteTemp = ageSDL[tempSDL][0]
 
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key)
 
 
@@ -452,7 +452,7 @@ class ercaOvenScope(ptModifier):
                     bakeBtn.enable()
 
         elif event == kValueChanged:
-            if type(control) != type(None):
+            if control is not None:
                 knobID = control.getTagID()
                 if knobID == kTimeSlider:
                     newVal = int(round(timeSlider.getValue()))
@@ -468,7 +468,7 @@ class ercaOvenScope(ptModifier):
                         ageSDL[tempSDL] = (newVal,)
         
         elif event == kAction:
-            if type(control) != type(None):
+            if control is not None:
                 btnID = control.getTagID()
                 if btnID == kBakeBtn:
                     if isinstance(control,ptGUIControlButton) and control.isButtonDown():
@@ -561,7 +561,7 @@ class ercaOvenScope(ptModifier):
             WasPowered = 0
             virtCam.save(CameraBad.sceneobject.getKey())
             # show the cockpit
-            if type(VignetteBad.value) != type(None) and VignetteBad.value != "":
+            if VignetteBad.value:
                 PtLoadDialog(VignetteBad.value,self.key)
                 if ( PtIsDialogLoaded(VignetteBad.value) ):
                     PtShowDialog(VignetteBad.value)
@@ -585,7 +585,7 @@ class ercaOvenScope(ptModifier):
         # exit every thing
         
         if WasPowered:
-            if type(Vignette.value) != type(None) and Vignette.value != "":
+            if Vignette.value:
                 PtHideDialog(Vignette.value)
             virtCam = ptCamera()
             virtCam.restore(Camera.sceneobject.getKey())
@@ -593,7 +593,7 @@ class ercaOvenScope(ptModifier):
             RespSfxTimerWheel.run(self.key,state="off")
             tempWheel.setValue(0)
         else:
-            if type(VignetteBad.value) != type(None) and VignetteBad.value != "":
+            if VignetteBad.value:
                 PtHideDialog(VignetteBad.value)
             virtCam = ptCamera()
             virtCam.restore(CameraBad.sceneobject.getKey())

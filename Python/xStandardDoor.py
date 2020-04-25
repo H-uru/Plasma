@@ -112,7 +112,7 @@ class xStandardDoor(ptResponder):
         # get the age we started in
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        if not (type(stringSDLVarClosed.value) == type("") and stringSDLVarClosed.value != ""):
+        if not stringSDLVarClosed.value:
             PtDebugPrint("xStandardDoor.OnFirstUpdate():\tERROR: missing SDL var name in max file")
 
     def OnServerInitComplete(self):

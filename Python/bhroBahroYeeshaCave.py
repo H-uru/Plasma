@@ -161,7 +161,7 @@ class bhroBahroYeeshaCave(ptModifier):
         vault = ptVault()
         entry = vault.findChronicleEntry("BahroCave")
 
-        if type(entry) == type(None):
+        if entry is None:
             PtDebugPrint("DEBUG: bhroBahroYeeshaCave.OnFirstUpdate: Did not find BahroCave chronicle...creating")
             vault.addChronicleEntry("BahroCave",0,"0")
 
@@ -432,7 +432,7 @@ class bhroBahroYeeshaCave(ptModifier):
 
 
     def SetState(self, age, state):
-        if type(state) == type(0):
+        if isinstance(state, int):
             #PtDebugPrint("Setting %s state to %d" % (age, state))
             psnlSDL = xPsnlVaultSDL()
 
@@ -542,16 +542,15 @@ class bhroBahroYeeshaCave(ptModifier):
         self.ageDict[age]['PoleCollider'].value.physics.suppress(1)
         if not fforward:
             vault = ptVault()
-            if type(vault) != type(None): #is the Vault online?
-                psnlSDL = vault.getPsnlAgeSDL()
-                if psnlSDL:
-                    ypageSDL = psnlSDL.findVar("YeeshaPage25")
-                    if ypageSDL:
-                        size, state = divmod(ypageSDL.getInt(), 10)
-                        print "YeeshaPage25 = ",state
-                        if state == 1:
-                            print "bhroBahroYeeshaCave.DisablePole():  sending the pole and YeeshaPage25 is on!  will do the age's wedge..."
-                            self.DoWedge()
+            psnlSDL = vault.getPsnlAgeSDL()
+            if psnlSDL:
+                ypageSDL = psnlSDL.findVar("YeeshaPage25")
+                if ypageSDL:
+                    size, state = divmod(ypageSDL.getInt(), 10)
+                    print "YeeshaPage25 = ",state
+                    if state == 1:
+                        print "bhroBahroYeeshaCave.DisablePole():  sending the pole and YeeshaPage25 is on!  will do the age's wedge..."
+                        self.DoWedge()
 
 
     def EnablePole(self, age, fforward = 0):
@@ -580,18 +579,17 @@ class bhroBahroYeeshaCave(ptModifier):
 
     def PostJCOneShot(self, age):
         vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                ypageSDL = psnlSDL.findVar("YeeshaPage25")
-                if ypageSDL:
-                    size, state = divmod(ypageSDL.getInt(), 10)
-                    print "YeeshaPage25 = ",state
-                    if state != 1:
-                        print "bhroBahroYeeshaCave.PostJCOneShot():  can't send pole to Relto, YeeshaPage25 is off!  Returning the pole..."
-                        self.ageDict[age]['JCClickable'].disable()
-                        self.ageDict[age]['PoleRemove'].run(self.key, state="Reject")
-                        return
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            ypageSDL = psnlSDL.findVar("YeeshaPage25")
+            if ypageSDL:
+                size, state = divmod(ypageSDL.getInt(), 10)
+                print "YeeshaPage25 = ",state
+                if state != 1:
+                    print "bhroBahroYeeshaCave.PostJCOneShot():  can't send pole to Relto, YeeshaPage25 is off!  Returning the pole..."
+                    self.ageDict[age]['JCClickable'].disable()
+                    self.ageDict[age]['PoleRemove'].run(self.key, state="Reject")
+                    return
                     
         self.UpdatePoleStates()
 
@@ -784,7 +782,7 @@ class bhroBahroYeeshaCave(ptModifier):
         print "bhroBahroYeeshaCave.GetAutoStartLevel()"
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
-        if type(bc) != type(None):
+        if bc is not None:
             val = bc.chronicleGetValue()
             if val == "":
                 return 0
@@ -797,7 +795,7 @@ class bhroBahroYeeshaCave(ptModifier):
     def IncrementAutoStartLevel(self):
         vault = ptVault()
         bc = vault.findChronicleEntry("BahroCave")
-        if type(bc) != type(None):
+        if bc is not None:
             val = bc.chronicleGetValue()
             if val == "":
                 val = 0

@@ -325,7 +325,7 @@ class nglnUrwinBrain(ptResponder):
         print "nglnUrwinBrain: Generated a valid spawn time: %d" % (firstTime)
         spawnTimes = [firstTime]
 
-        while type(spawnTimes[-1]) == type(long(1)):
+        while isinstance(spawnTimes[-1], long):
             randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
@@ -387,7 +387,7 @@ class nglnUrwinBrain(ptResponder):
                     kFirstMorningSpawn = 445
                     self.InitNewSDLVars()
 
-                elif type(param) == type(""):
+                elif isinstance(param, str):
                     newTimes = param.split(";")
                     kMinimumTimeBetweenSpawns = int(newTimes[0])
                     kMaximumTimeBetweenSpawns = int(newTimes[1])

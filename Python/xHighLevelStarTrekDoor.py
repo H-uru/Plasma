@@ -86,7 +86,7 @@ class xHighLevelStarTrekDoor(ptModifier):
         ageSDL.setNotify(self.key,strDoorEnabledVar.value,0.0)
         ageSDL.setNotify(self.key,strDoorClosedVar.value,0.0)
 
-        if type(strDoorEnabledVar.value) == type("") and strDoorEnabledVar.value != "":
+        if strDoorEnabledVar.value:
             try:
                 self.DoorEnabled = ageSDL[strDoorEnabledVar.value][0]
             except:

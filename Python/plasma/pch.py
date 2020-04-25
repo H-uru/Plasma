@@ -110,9 +110,9 @@ def selmod(idx=None):
     "select a module from the list"
     global __pmods
     global __sel
-    if type(idx) == type(None):
+    if idx is None:
         idx = __sel
-    elif type(idx) == type(""):
+    elif isinstance(idx, str):
         # its a string, then find it by module name
         i = 0
         for mod in __pmods:
@@ -164,7 +164,7 @@ def selattrib(id=None):
     global __pmods
     global __sel
     global __selattr
-    if type(id) == type(None):
+    if id is None:
         id = __selattr
     for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
@@ -183,7 +183,7 @@ def setattrib(value):
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptAttribute):
             if __selattr == ist.id:
-                if type(ist.value) == type(None) or type(ist.value) == type(value):
+                if ist.value is None or isinstance(ist.value, type(value)):
                     # see if there is a __setvalue__ method
                     try:
                         ist.__setvalue__(value)
@@ -205,7 +205,7 @@ def showglobals():
         if not hasattr(Plasma,name) and not hasattr(PlasmaTypes,name):
             if not isinstance(ist,PlasmaTypes.ptAttribute) and not isinstance(ist,PlasmaTypes.ptModifier):
                 if name[:2] != '__' and name[:4] != 'glue':
-                    if type(ist) != type(sys) and type(ist) != type(PlasmaTypes.ptAttribute):
+                    if not isinstance(ist, type(sys)) and not isinstance(ist, type(PlasmaTypes.ptAttribute)):
                         print "  %s =" % (name),ist
 def setglobal(name,value):
     "set a global variable to a value with in the selected module"

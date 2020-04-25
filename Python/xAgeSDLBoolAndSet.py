@@ -68,11 +68,11 @@ class xAgeSDLBoolAndSet(ptResponder):
         self.version = 1
 
     def OnFirstUpdate(self):
-        if not (type(stringOpA.value) == type("") and stringOpA.value != ""):
+        if not stringOpA.value:
             PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpA var name in max file")
-        if not (type(stringOpB.value) == type("") and stringOpB.value != ""):
+        if not stringOpB.value:
             PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLOpB var name in max file")
-        if not (type(stringResult.value) == type("") and stringResult.value != ""):
+        if not stringResult.value:
             PtDebugPrint("ERROR: xAgeSDLBoolAndSet.OnFirstUpdate():\tERROR: missing SDLResult var name in max file")
             
     def OnServerInitComplete(self):

@@ -126,7 +126,7 @@ class xSimpleImager(ptModifier):
                 if node:
                     PtDebugPrint("\tAdded device: %s"%(ImagerName.value),level=kDebugDumpLevel)
                     name = ""
-                    if type(ImagerInboxVariable.value) == type("") and ImagerInboxVariable.value != "":
+                    if ImagerInboxVariable.value:
                         ageSDL = PtGetAgeSDL()
                         tempValue = ageSDL[ImagerInboxVariable.value]
                         if (len(tempValue) >= 1):
@@ -165,14 +165,14 @@ class xSimpleImager(ptModifier):
 ###==== Cheat
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
-        if type(ImagerMap.textmap) == type(None):
+        if ImagerMap.textmap is None:
             PtDebugPrint("xSimpleImager:ERROR! simpleImager[%s]: Dynamic textmap is broken!" % (ImagerName.value),level=kErrorLevel)
             return
-        if type(ImagerObject.sceneobject) == type(None):
+        if ImagerObject.sceneobject is None:
             PtDebugPrint("xSimpleImager:ERROR! simpleImager[%s]: ImagerObject not specified!" % (ImagerName.value),level=kErrorLevel)
             return
         # initialize age devices
-        if type(ImagerName.value) == type("") and ImagerName.value != "":
+        if ImagerName.value:
             ageVault = ptAgeVault()
             # will only add if not already there.
             ageVault.addDevice(ImagerName.value, self, kAddingDevice)
@@ -181,7 +181,7 @@ class xSimpleImager(ptModifier):
     
     def OnServerInitComplete(self):
         if AgeStartedIn == PtGetAgeName():
-            if type(ImagerInboxVariable.value) == type("") and ImagerInboxVariable.value:
+            if ImagerInboxVariable.value:
                 ageSDL = PtGetAgeSDL()
                 ageSDL.setNotify(self.key,ImagerInboxVariable.value,0.0)
                 ageVault = ptAgeVault()
@@ -207,7 +207,7 @@ class xSimpleImager(ptModifier):
         theCensorLevel = xCensor.xRatedPG
         vault = ptVault()
         entry = vault.findChronicleEntry(kChronicleCensorLevel)
-        if type(entry) == type(None):
+        if entry is None:
             # not found... add current level chronicle
             vault.addChronicleEntry(kChronicleCensorLevel,kChronicleCensorLevelType,"%d" % (theCensorLevel))
         else:
@@ -338,7 +338,7 @@ class xSimpleImager(ptModifier):
         global CurrentContentIdx
         ageVault = ptAgeVault()
         folder = ageVault.getDeviceInbox(ImagerName.value)
-        if type(folder) != type(None):
+        if folder is not None:
             prevsize = len(ImagerContents)
             ImagerContents = folder.getChildNodeRefList()
             # check to make sure we are not over budget... but only on the master
@@ -360,9 +360,9 @@ class xSimpleImager(ptModifier):
     def IRefreshImagerContent(self,updated_content):
         "Refresh a content of the Imager (if being displayed)"
         global CurrentDisplayedElementID
-        if type(updated_content) != type(None):
+        if updated_content is not None:
             updated_element = updated_content.getChild()
-            if type(updated_element) != type(None):
+            if updated_element is not None:
                 if updated_element.getID() == CurrentDisplayedElementID:
                     self.IShowCurrentContent()
                 else:
@@ -372,17 +372,17 @@ class xSimpleImager(ptModifier):
     def IRefreshImagerElement(self,updated_element):
         "Refresh an element of the Imager (if being displayed)"
         global CurrentDisplayedElementID
-        if type(updated_element) != type(None):
+        if updated_element is not None:
             if updated_element.getID() == CurrentDisplayedElementID:
                 self.IShowCurrentContent()
             else:
                 ageVault = ptAgeVault()
                 folder = ageVault.getDeviceInbox(ImagerName.value)
-                if type(folder) != type(None):
+                if folder is not None:
                     frefs = folder.getChildNodeRefList()
                     for ref in frefs:
                         elem = ref.getChild()
-                        if type(elem) != type(None) and elem.getID() == updated_element.getID():
+                        if elem is not None and elem.getID() == updated_element.getID():
                             if not ref.beenSeen():
                                 self.IChangeCurrentContent(updated_element.getID())
                                 return
@@ -395,10 +395,10 @@ class xSimpleImager(ptModifier):
         # only the owner of the imager changes the images
         if ImagerObject.sceneobject.isLocallyOwned():
             nextID = -1
-            if type(next) == type(None):
+            if next is None:
                 try:
                     element = ImagerContents[CurrentContentIdx].getChild()
-                    if type(element) != type(None):
+                    if element is not None:
                         nextID = element.getID()
                 except LookupError:
                     pass
@@ -424,11 +424,11 @@ class xSimpleImager(ptModifier):
         if CurrentDisplayedElementID != -1:
             ageVault = ptAgeVault()
             folder = ageVault.getDeviceInbox(ImagerName.value)
-            if type(folder) != type(None):
+            if folder is not None:
                 fcontents = folder.getChildNodeRefList()
                 for content in fcontents:
                     element = content.getChild()
-                    if type(element) != type(None) and element.getID() == CurrentDisplayedElementID:
+                    if element is not None and element.getID() == CurrentDisplayedElementID:
                         # set that we've seen this... at least once
                         content.setSeen()
                         elemType = element.getType()

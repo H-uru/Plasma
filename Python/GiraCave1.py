@@ -65,7 +65,7 @@ class GiraCave1(ptResponder):
         self.version = 1
 
     def OnServerInitComplete(self):
-        if type(sdlSolved.value) == type("") and sdlSolved.value != "":
+        if sdlSolved.value:
             self.ageSDL = PtGetAgeSDL()
             self.ageSDL.setFlags(sdlSolved.value,1,1)
             self.ageSDL.sendToClients(sdlSolved.value)
