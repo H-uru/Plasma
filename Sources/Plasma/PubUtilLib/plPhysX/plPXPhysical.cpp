@@ -496,7 +496,7 @@ void plPXPhysical::SetAngularVelocitySim(const hsVector3& vel)
 
 // ==========================================================================
 
-NxConvexMesh* plPXPhysical::IReadHull(hsStream* s)
+NxConvexMesh* plPXPhysical::ICookHull(hsStream* s)
 {
     std::vector<uint32_t> tris;
     std::vector<hsPoint3> verts;
@@ -529,7 +529,7 @@ NxConvexMesh* plPXPhysical::IReadHull(hsStream* s)
     return plSimulationMgr::GetInstance()->GetSDK()->createConvexMesh(pxs);
 }
 
-NxTriangleMesh* plPXPhysical::IReadTriMesh(hsStream* s)
+NxTriangleMesh* plPXPhysical::ICookTriMesh(hsStream* s)
 {
     std::vector<uint32_t> tris;
     std::vector<hsPoint3> verts;

@@ -75,6 +75,17 @@ public:
 
     /** Uncooks a PhysX 2.6 triangle mesh. */
     static void ReadTriMesh26(hsStream* s, std::vector<uint32_t>& tris, std::vector<hsPoint3>& verts);
+
+    /** Writes an uncooked convex hull. */
+    static void WriteConvexHull(hsStream* s, uint32_t nverts, const hsPoint3* const verts);
+
+    /** Writes an uncooked triangle mesh. */
+    static void WriteTriMesh(hsStream* s, uint32_t nfaces, const uint32_t* const tris,
+                             uint32_t nverts, const hsPoint3* const verts);
+
+    /** Writes an uncooked triangle mesh. */
+    static void WriteTriMesh(hsStream* s, uint32_t nfaces, const uint16_t* const tris,
+                             uint32_t nverts, const hsPoint3* const verts);
 };
 
 #endif

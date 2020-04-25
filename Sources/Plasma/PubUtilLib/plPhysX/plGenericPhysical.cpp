@@ -352,9 +352,9 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
         fRecipe.bDimensions.Read(stream);
         fRecipe.bOffset.Read(stream);
     } else if (fRecipe.bounds == plSimDefs::kHullBounds) {
-        fRecipe.convexMesh = IReadHull(stream);
+        fRecipe.convexMesh = ICookHull(stream);
     } else {
-        fRecipe.triMesh = IReadTriMesh(stream);
+        fRecipe.triMesh = ICookTriMesh(stream);
     }
 
     // If we do not have a world, specified, we go ahead and init into the main world...

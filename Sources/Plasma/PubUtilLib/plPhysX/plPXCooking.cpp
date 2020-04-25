@@ -286,3 +286,39 @@ void plPXCooking::ReadTriMesh26(hsStream* s, std::vector<uint32_t>& tris, std::v
     if (s->ReadLE32())
         s->Skip(nxNumTris);
 }
+
+// ==========================================================================
+
+void plPXCooking::WriteConvexHull(hsStream* s, uint32_t nverts, const hsPoint3* const verts)
+{
+    s->Write(4, "HSP\x01");
+    s->WriteLE32((uint32_t)nverts);
+    for (size_t i = 0; i < nverts; ++i)
+        verts[i].Write(s);
+}
+
+// ==========================================================================
+
+void plPXCooking::WriteTriMesh(hsStream* s, uint32_t nfaces, const uint32_t* const tris,
+                               uint32_t nverts, const hsPoint3* const verts)
+{
+    s->Write(4, "HSP\x01");
+    s->WriteLE32(nverts);
+    for (size_t i = 0; i < nverts; ++i)
+        verts[i].Write(s);
+    s->WriteLE32(nfaces);
+    for (size_t i = 0; i < nfaces * 3; tris)
+        s->WriteLE32(tris[i]);
+}
+
+void plPXCooking::WriteTriMesh(hsStream* s, uint32_t nfaces, const uint16_t* const tris,
+                               uint32_t nverts, const hsPoint3* const verts)
+{
+    s->Write(4, "HSP\x01");
+    s->WriteLE32(nverts);
+    for (size_t i = 0; i < nverts; ++i)
+        verts[i].Write(s);
+    s->WriteLE32(nfaces);
+    for (size_t i = 0; i < nfaces * 3; tris)
+        s->WriteLE32(tris[i]);
+}

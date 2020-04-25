@@ -128,6 +128,8 @@ public:
 
     // Export time and internal use only
     bool InitActor();
+    class NxConvexMesh* ICookHull(hsStream* s);
+    class NxTriangleMesh* ICookTriMesh(hsStream* s);
 
     virtual void Read(hsStream* s, hsResMgr* mgr);
     virtual void Write(hsStream* s, hsResMgr* mgr);
@@ -200,9 +202,6 @@ public:
 protected:
     void DestroyActor();
     bool CanSynchPosition(bool isSynchUpdate) const;
-
-    class NxConvexMesh* IReadHull(hsStream* s);
-    class NxTriangleMesh* IReadTriMesh(hsStream* s);
 
     void IGetPositionSim(hsPoint3& pos) const;
     void IGetRotationSim(hsQuat& rot) const;
