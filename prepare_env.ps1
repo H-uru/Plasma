@@ -1,4 +1,4 @@
-$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/20200114/devlibs.zip"
+$devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip"
 
 if (!(Test-Path -PathType Container build)) {
     Write-Host "Creating build folder... " -noNewLine
@@ -28,7 +28,7 @@ if (!(Test-Path -PathType Container devlibs)) {
 
 if (Get-ChildItem Env:PATH | Where-Object {$_.Value -match "CMake"}) {
     Write-Host "Running CMake to configure build system... "
-    cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 14" ..
+    cmake -DCMAKE_INSTALL_PREFIX=devlibs -DPLASMA_BUILD_TOOLS=OFF -DPLASMA_BUILD_RESOURCE_DAT=OFF -G "Visual Studio 15 2017" ..
 } else {
     Write-Host "CMake not found in PATH."
     Write-Host "Please run the CMake installer and select the option to add CMake to your system PATH."

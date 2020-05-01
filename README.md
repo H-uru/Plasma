@@ -53,7 +53,7 @@ be expected to change.
 
 PhysX and DirectX SDK will need to be acquired through the above links.
 All other required libraries are available as precompiled binaries and
-associated files in the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/20200114/devlibs.zip)
+associated files in the [development libraries bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip)
 or can be built using their individual build instructions.
 
 
@@ -61,7 +61,7 @@ Compiling Instructions
 ----------------------
 
 Currently, compilation only targets Windows systems and requires Visual Studio
-2015 (including Visual Studio 2015 Community).
+2017 (including Visual Studio 2017 Community).
 
 **Quick-start instructions:**
 
@@ -80,10 +80,10 @@ Currently, compilation only targets Windows systems and requires Visual Studio
 3. Set the *Where to build the binaries* option to a subfolder of the
    aforementioned location called *build*.
 4. Check the **Grouped** and **Advanced** options.
-5. Press **Configure**. Select *Visual Studio 14* as the generator.
+5. Press **Configure**. Select *Visual Studio 15 2017* as the generator.
 6. Set the *CMAKE_INSTALL_PREFIX* option under CMAKE to the *cwe-prefix* folder
    that you extracted from the [development libraries
-   bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/20200114/devlibs.zip).
+   bundle](https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip).
 7. Press **Configure** again.
 8. Press **Generate**. You will now have a Visual Studio solution file (.sln)
    in the folder that you specified to build the binaries in.
