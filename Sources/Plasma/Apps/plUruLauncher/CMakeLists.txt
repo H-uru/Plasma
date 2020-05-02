@@ -68,6 +68,7 @@ if(WIN32)
     target_link_libraries(plUruLauncher rpcrt4)
     target_link_libraries(plUruLauncher comctl32)
     target_link_libraries(plUruLauncher crypt32)
+    target_link_libraries(plUruLauncher wldap32)
 endif()
 
 source_group("Source Files" FILES ${plUruLauncher_SOURCES})
