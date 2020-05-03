@@ -875,7 +875,7 @@ class tldnBucketBrain(ptResponder):
             #Tye: note this is something that can be refactored....
             avaKey = PtGetAvatarKeyFromClientID(avaIDAtDump)
             avaObj = avaKey.getSceneObject()
-            if type(avaObj) == type(None):
+            if avaObj is None:
                 return
 
             avaObj.physics.enable(1)

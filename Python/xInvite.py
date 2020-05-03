@@ -90,9 +90,9 @@ def CreateInvitation(params=None):
     "create an invitation"
     PtDebugPrint("xInvite: create invitation",level=kDebugDumpLevel)
     passkey = params
-    if type(passkey) == type(""):
+    if isinstance(passkey, str):
         invites = ptVault().getInviteFolder()
-        if type(invites) != type(None):
+        if invites is not None:
             if invites.getChildNodeCount() <= gMaxInviteCount:
                 # create the note
                 note = ptVaultTextNoteNode(PtVaultNodePermissionFlags.kDefaultPermissions)
@@ -121,7 +121,7 @@ def ShowInvitations(params=None):
     PtDebugPrint("xInvite: show invitations",level=kDebugDumpLevel)
     passkeys = ""
     invites = ptVault().getInviteFolder()
-    if type(invites) != type(None):
+    if invites is not None:
         l = invites.getChildNodeRefList()
         i = 0;
         for ref in l:
@@ -129,7 +129,7 @@ def ShowInvitations(params=None):
                 passkeys += ", "
             child = ref.getChild()
             child = child.upcastToTextNoteNode()
-            if type(child) != type(None):
+            if child is not None:
                 passkeys += child.noteGetTitle()
             else:
                 PtDebugPrint("xInvite: Couldn't cast list item to note",level=kErrorLevel)
@@ -143,15 +143,15 @@ def DeleteInvitation(params=None):
     "delete invitation"
     PtDebugPrint("xInvite: delete invitation",level=kDebugDumpLevel)
     passkey = params
-    if type(passkey) == type(""):
+    if isinstance(passkey, str):
         invites = ptVault().getInviteFolder()
-        if type(invites) != type(None):
+        if invites is not None:
             l = invites.getChildNodeRefList()
             removed = 0
             for ref in l:
                 child = ref.getChild()
                 child = child.upcastToTextNoteNode()
-                if type(child) != type(None):
+                if child is not None:
                     if passkey == child.noteGetTitle():
                         try:
                             invites.removeNode(child)

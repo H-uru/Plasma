@@ -74,7 +74,7 @@ class xAgeSDLVarSet(ptResponder):
         print "__init__xAgeSDLVarSet v.", version
     
     def OnFirstUpdate(self):
-        if not (type(stringSDLVarName.value) == type("") and stringSDLVarName.value != ""):
+        if not stringSDLVarName.value:
             PtDebugPrint("ERROR: xAgeSDLVarSet.OnFirstUpdate():\tERROR: missing SDL var name in max file")
             pass
     
@@ -114,7 +114,7 @@ class xAgeSDLVarSet(ptResponder):
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)
         if  self.enabledStateDict.has_key(int(SDLvalue)):
             ageSDL[stringSDLVarToSet.value] = (self.enabledStateDict[int(SDLvalue)],)
-            if type(stringSDLVarToSet) != type(None) and stringSDLVarToSet.value != "":
+            if stringSDLVarToSet:
                 ageSDL.setTagString(stringSDLVarToSet.value,stringTag.value)
             PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\t%s setting %s to %d" % (stringSDLVarName.value, stringSDLVarToSet.value, self.enabledStateDict[int(SDLvalue)]))
         
@@ -135,7 +135,7 @@ class xAgeSDLVarSet(ptResponder):
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)
         if  self.enabledStateDict.has_key(int(SDLvalue)):
             ageSDL[stringSDLVarToSet.value] = (self.enabledStateDict[int(SDLvalue)],)
-            if type(stringSDLVarToSet) != type(None) and stringSDLVarToSet.value != "":
+            if stringSDLVarToSet:
                 ageSDL.setTagString(stringSDLVarToSet.value,stringTag.value)
             PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\t%s setting %s to %d, tag string: %s" % (stringSDLVarName.value, stringSDLVarToSet.value, self.enabledStateDict[int(SDLvalue)], stringTag.value))
         

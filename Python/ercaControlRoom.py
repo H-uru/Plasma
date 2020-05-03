@@ -579,9 +579,9 @@ class ercaControlRoom(ptResponder):
     def ExecCode(self, code):
         try:
             chunks = code.split(';')
-            ecRgn = int(chunks[1])
-            ecstate = int(chunks[2])
-            ecPlayerID = int(chunks[3])
-            self.UpdateTunnelRgn(ecRgn,ecState,ecplayerID)
+            ecRgn = int(chunks[0])
+            ecState = int(chunks[1])
+            ecPlayerID = int(chunks[2])
+            self.UpdateTunnelRgn(ecRgn,ecState,ecPlayerID)
         except:
             print "ercaControlRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)

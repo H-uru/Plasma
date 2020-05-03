@@ -158,43 +158,39 @@ class xYeeshaPages(ptModifier):
             PtHideDialog(DialogName)
             
             vault = ptVault()
-            if type(vault) != type(None): #is the Vault online?
                 
-                psnlSDL = vault.getPsnlAgeSDL()
-                if psnlSDL:
-                    YeeshaPageVar = psnlSDL.findVar("YeeshaPage" + str(PageNumber.value))
+            psnlSDL = vault.getPsnlAgeSDL()
+            if psnlSDL:
+                YeeshaPageVar = psnlSDL.findVar("YeeshaPage" + str(PageNumber.value))
+                
+                PtDebugPrint ("xYeeshaPages.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(PageNumber.value), YeeshaPageVar.getInt()))
+
+                if YeeshaPageVar.getInt() != 0: 
+                    PtDebugPrint ("xYeeshaPages.py: You've already found Yeesha Page #%s. Move along. Move along." % (PageNumber.value))
+                    return
                     
-                    PtDebugPrint ("xYeeshaPages.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(PageNumber.value), YeeshaPageVar.getInt()))
-    
-                    if YeeshaPageVar.getInt() != 0: 
-                        PtDebugPrint ("xYeeshaPages.py: You've already found Yeesha Page #%s. Move along. Move along." % (PageNumber.value))
-                        return
-                        
-                    else:
-                        PtDebugPrint ("xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value))
-                        
-                        PtDebugPrint ("xYeeshaPages.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage" + str(PageNumber.value)))
-                        YeeshaPageVar.setInt(4)
-                        vault.updatePsnlAgeSDL (psnlSDL)
-
-                        PtSendKIMessageInt(kStartBookAlert,0)
-
-                        if (PageNumber.value) == 25:
-                            #Cleft is done, set SDL to start link back to Relto
-                            actClickableBook.disableActivator()
-                            PtSendKIMessage(kDisableKIandBB,0)
-                            ageSDL = PtGetAgeSDL()
-                            ageSDL["clftIsCleftDone"] = (1,)
-                            vault = ptVault()
-                            vault.addChronicleEntry("CleftSolved",1,"yes")
-                            PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
-                            #PtAtTimeCallback(self.key,kWaitFadeoutSecs,kStartFadeoutID)
-
                 else:
-                    PtDebugPrint("xYeeshaPages: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % ( psnlSDL))
+                    PtDebugPrint ("xYeeshaPages.py: Yeesha Page #%s is new to you." % (PageNumber.value))
                     
+                    PtDebugPrint ("xYeeshaPages.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage" + str(PageNumber.value)))
+                    YeeshaPageVar.setInt(4)
+                    vault.updatePsnlAgeSDL (psnlSDL)
+
+                    PtSendKIMessageInt(kStartBookAlert,0)
+
+                    if (PageNumber.value) == 25:
+                        #Cleft is done, set SDL to start link back to Relto
+                        actClickableBook.disableActivator()
+                        PtSendKIMessage(kDisableKIandBB,0)
+                        ageSDL = PtGetAgeSDL()
+                        ageSDL["clftIsCleftDone"] = (1,)
+                        vault = ptVault()
+                        vault.addChronicleEntry("CleftSolved",1,"yes")
+                        PtDebugPrint("Chronicle updated with variable 'CleftSolved'.",level=kDebugDumpLevel)
+                        #PtAtTimeCallback(self.key,kWaitFadeoutSecs,kStartFadeoutID)
+
             else:
-                PtDebugPrint("xYeeshaPages: Error trying to access the Vault. Can't access YeeshaPageChanges chronicle." )
+                PtDebugPrint("xYeeshaPages: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % ( psnlSDL))
 
         elif event == 2 and btnID == kYeeshaPageCancel:
             PtHideDialog(DialogName)

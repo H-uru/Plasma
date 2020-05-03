@@ -181,7 +181,7 @@ class dsntKILightMachine(ptModifier):
     def SetKILightChron(self,remaining):
         vault = ptVault()
         entry = vault.findChronicleEntry("KILightStop")
-        if type(entry) != type(None):
+        if entry is not None:
             entryValue = entry.chronicleGetValue()
             oldVal = string.atoi(entryValue)
             if remaining == oldVal:

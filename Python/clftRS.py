@@ -120,7 +120,7 @@ class clftRS(ptModifier):
         virtCam = ptCamera()
         virtCam.save(Camera.sceneobject.getKey())
         # show the cockpit
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtLoadDialog(Vignette.value,self.key)
             if ( PtIsDialogLoaded(Vignette.value) ):
                 PtShowDialog(Vignette.value)
@@ -134,7 +134,7 @@ class clftRS(ptModifier):
 
         Telescope.popTelescope()
         # exit every thing
-        if type(Vignette.value) != type(None) and Vignette.value != "":
+        if Vignette.value:
             PtHideDialog(Vignette.value)
         virtCam = ptCamera()
         virtCam.restore(Camera.sceneobject.getKey())

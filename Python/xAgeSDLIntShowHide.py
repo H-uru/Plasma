@@ -67,7 +67,7 @@ class xAgeSDLIntShowHide(ptMultiModifier):
         self.enabledStateList = []
 
     def OnFirstUpdate(self):
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnFirstUpdate():\tERROR: missing SDL var name")
             pass
         
@@ -80,7 +80,7 @@ class xAgeSDLIntShowHide(ptMultiModifier):
     
     def Initialize(self):
         ageSDL = PtGetAgeSDL()
-        if type(stringVarName.value) == type("") and stringVarName.value != "":
+        if stringVarName.value:
             ageSDL.setFlags(stringVarName.value,1,1)
             ageSDL.sendToClients(stringVarName.value)
             try:
@@ -147,7 +147,7 @@ class xAgeSDLIntShowHide(ptMultiModifier):
         self.sceneobject.physics.suppress(true)
 
     def OnBackdoorMsg(self, target, param):
-        if type(stringVarName.value) != type(None) and stringVarName.value != "":
+        if stringVarName.value:
             if target == stringVarName.value:
                 if int(param) in self.enabledStateList:
                     self.EnableObject()

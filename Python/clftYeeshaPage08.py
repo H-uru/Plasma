@@ -167,16 +167,15 @@ class clftYeeshaPage08(ptModifier):
             else:
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Yeesha Page #8 is new to you.")       
                 PtDebugPrint ("DEBUG: clftYeeshaPage08.py: Trying to update the value of the SDL variable %s to 1" % ("YeeshaPage8"))
-                vault = ptVault()
-                if type(vault) != type(None): #is the Vault online?    
-                    psnlSDL = vault.getPsnlAgeSDL()
-                    if psnlSDL:
-                        YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
-                        YeeshaPageVar.setInt(1)
-                        vault.updatePsnlAgeSDL (psnlSDL)
-                        mydialog = PtGetDialogFromString(DialogName)
-                        ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
-                        PtSendKIMessageInt(kStartBookAlert,0)
+                vault = ptVault()  
+                psnlSDL = vault.getPsnlAgeSDL()
+                if psnlSDL:
+                    YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
+                    YeeshaPageVar.setInt(1)
+                    vault.updatePsnlAgeSDL (psnlSDL)
+                    mydialog = PtGetDialogFromString(DialogName)
+                    ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage08)).disable()
+                    PtSendKIMessageInt(kStartBookAlert,0)
 
         elif event == kAction and btnID == kYeeshaPageCancel:
             RespClose.run(self.key)
@@ -186,22 +185,18 @@ class clftYeeshaPage08(ptModifier):
 
 
     def GotPage(self):
-        vault = ptVault()
-        if type(vault) != type(None): #is the Vault online?    
-            psnlSDL = vault.getPsnlAgeSDL()
-            if psnlSDL:
-                YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
-                PtDebugPrint ("DEBUG: clftYeeshaPage08.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage8", YeeshaPageVar.getInt()))
-                if YeeshaPageVar.getInt() != 0: 
-                    PtDebugPrint ("DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along.")
-                    return 1
-                else:
-                    return 0
+        vault = ptVault()  
+        psnlSDL = vault.getPsnlAgeSDL()
+        if psnlSDL:
+            YeeshaPageVar = psnlSDL.findVar("YeeshaPage8")    
+            PtDebugPrint ("DEBUG: clftYeeshaPage08.py: The previous value of the SDL variable %s is %s" % ("YeeshaPage8", YeeshaPageVar.getInt()))
+            if YeeshaPageVar.getInt() != 0: 
+                PtDebugPrint ("DEBUG: clftYeeshaPage08.py: You've already found Yeesha Page #8. Move along. Move along.")
+                return 1
             else:
-                PtDebugPrint("ERROR: clftYeeshaPage08: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % ( psnlSDL))
                 return 0
         else:
-            PtDebugPrint("ERROR: clftYeeshaPage08: Error trying to access the Vault. Can't access YeeshaPageChanges chronicle." )
+            PtDebugPrint("ERROR: clftYeeshaPage08: Error trying to access the Chronicle psnlSDL. psnlSDL = %s" % ( psnlSDL))
             return 0
 
 

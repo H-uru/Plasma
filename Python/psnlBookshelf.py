@@ -288,7 +288,7 @@ class psnlBookshelf(ptModifier):
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         if VARname == "ShelfAUserID":
             ageSDL = PtGetAgeSDL()
-            if type(ageSDL) != type(None):
+            if ageSDL is not None:
                 if ageSDL["ShelfAUserID"][0] == -1:
                     actBookshelf.enable()
 
@@ -373,7 +373,7 @@ class psnlBookshelf(ptModifier):
             for event in events:
                 if event[0] == kVariableEvent:
                     print "psnlBookshelf: Received a message from the Book GUI: ", event[1]
-                    if event[1] == "IShelveBook" and type(objBookPicked) != type(None):
+                    if event[1] == "IShelveBook" and objBookPicked is not None:
                         self.IShelveBook()
                         
                     if event[1].split(",")[0] == "ILink": # parse the spawn point info off the entire note (which comes through as "ILink, SpawnPointName,SpawnPointTitle")
@@ -590,7 +590,7 @@ class psnlBookshelf(ptModifier):
                         lockName = objLock.getName()
 
                         # show as locked if both are locked, or one is locked and the other doesn't exist
-                        if ( type(citylinklocked) == type(None) or citylinklocked) and ( type(bcolinklocked) == type(None) or bcolinklocked):
+                        if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                             # find lock associated with this book
                             objLockPicked = objLocks.value[index]
                             lockName = objLockPicked.getName()
@@ -668,9 +668,9 @@ class psnlBookshelf(ptModifier):
                     # Do not use the age link node of a Hood child age for the city book clasp!
                     if IsChildLink:
                         link = self.GetOwnedAgeLink(ptAgeVault(), "city")
-                    if type(link) == type(None):
+                    if link is None:
                         return
-                    if type(link) != type(ptVaultAgeLinkNode()) or link.getLocked():
+                    if not isinstance(link, ptVaultAgeLinkNode) or link.getLocked():
                         # find lock associated with this book
 
                         objLockPicked = objLocks.value[index]
@@ -697,7 +697,7 @@ class psnlBookshelf(ptModifier):
             actBookshelfExit.disable()
             return
         
-        if id==respPresentBook.id and type(objBookPicked) != type(None):
+        if id==respPresentBook.id and objBookPicked is not None:
             # book is finished presenting - now link
             if boolLinkerIsMe:
                 #~ self.ILink()
@@ -728,7 +728,7 @@ class psnlBookshelf(ptModifier):
                 lockName = objLock.getName()
 
                 # show as locked if both are locked, or one is locked and the other doesn't exist
-                if ( type(citylinklocked) == type(None) or citylinklocked) and ( type(bcolinklocked) == type(None) or bcolinklocked):
+                if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                     lockName = objLockPicked.getName()
                     # find the corresponding responder modifier
                     for rkey,rvalue in respCloseLock.byObject.viewitems():
@@ -748,10 +748,10 @@ class psnlBookshelf(ptModifier):
             # Do not use the age link node of a Hood child age for the city book clasp!
             if IsChildLink:
                 link = self.GetOwnedAgeLink(ptAgeVault(), "city")
-            if type(link) == type(None):
+            if link is None:
                 return
                 
-            if type(link) == type("") and link == "Ahnonay":
+            if link == "Ahnonay":
                 locked = 0
                 ageVault = ptAgeVault()
                 ageInfoNode = ageVault.getAgeInfo()
@@ -788,7 +788,7 @@ class psnlBookshelf(ptModifier):
                     self.IUpdateLinks()
                     return                    
 
-            if type(link) == type(ptAgeLinkStruct()) or link.getLocked(): #close the clasp
+            if isinstance(link, ptAgeLinkStruct) or link.getLocked(): #close the clasp
                 lockName = objLockPicked.getName()
                 # find the corresponding responder modifier
                 for rkey,rvalue in respCloseLock.byObject.viewitems():
@@ -834,7 +834,7 @@ class psnlBookshelf(ptModifier):
                         citylinklocked = citylink and citylink.getLocked()
                         bcolinklocked = bcolink and bcolink.getLocked()
 
-                        if ( type(citylinklocked) == type(None) or citylinklocked) and ( type(bcolinklocked) == type(None) or bcolinklocked):
+                        if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                             for rkey,rvalue in respOpenLock.byObject.viewitems():
                                 parent = rvalue.getParentKey()
                                 if parent:
@@ -865,11 +865,11 @@ class psnlBookshelf(ptModifier):
                     # Do not use the age link node of a Hood child age for the city book clasp!
                     if IsChildLink:
                         link = self.GetOwnedAgeLink(ptAgeVault(), "city")
-                    if type(link) == type(None):
+                    if link is None:
                         return
                     lockName = objLockPicked.getName()
                     
-                    if type(link) == type("") and link == "Ahnonay":
+                    if link == "Ahnonay":
                         ageVault = ptAgeVault()
                         ageInfoNode = ageVault.getAgeInfo()
                         ageInfoChildren = ageInfoNode.getChildNodeRefList()
@@ -927,7 +927,7 @@ class psnlBookshelf(ptModifier):
 
                         return
 
-                    if type(link) != type(ptVaultAgeLinkNode()):
+                    if not isinstance(link, ptVaultAgeLinkNode):
                         self.IUpdateLinks()
                         return
                     if link.getLocked():
@@ -1146,7 +1146,7 @@ class psnlBookshelf(ptModifier):
                     break
         print "psnlBookshelf.IGetLinkFromBook(): after city lookup, ageName = ",ageName        	        
 
-        if type(ageName) == type(None):
+        if ageName is None:
             print "psnlBookshelf.IGetLinkFromBook():\tERROR -- conversion from book to link element failed"
             return None
 
@@ -1238,7 +1238,7 @@ class psnlBookshelf(ptModifier):
             lockName = objLock.getName()
 
             # show as locked if both are locked, or one is locked and the other doesn't exist
-            if ( type(citylinklocked) == type(None) or citylinklocked) and ( type(bcolinklocked) == type(None) or bcolinklocked):
+            if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                 print "psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName
                 for rkey,rvalue in respCloseLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
@@ -1435,7 +1435,7 @@ class psnlBookshelf(ptModifier):
         
         ageVault = ptAgeVault()
         PAL = ageVault.getAgesIOwnFolder()
-        if type(PAL) != type(None):
+        if PAL is not None:
             contents = PAL.getChildNodeRefList()
 
             for content in contents:
@@ -1641,10 +1641,10 @@ class psnlBookshelf(ptModifier):
         global SpawnPointTitle
         
         link = self.IGetLinkFromBook(SpawnPointTitle)
-        if type(link) == type(None):
+        if link is None:
             print "psnlBookshelf.ILink():\tERROR -- conversion from book to link failed -- aborting"
             return
-        elif type(link) == type("") and link == "Ahnonay":
+        elif link == "Ahnonay":
             info = ptAgeInfoStruct()
             info.setAgeFilename("Ahnonay")
             info.setAgeInstanceName("Ahnonay")
@@ -1680,7 +1680,7 @@ class psnlBookshelf(ptModifier):
         print "Ilink: SpawnPointTitle = ", SpawnPointTitle, "; SpawnPointName = ", SpawnPointName
         spnpnt = None
         
-        if type(link) == type(ptAgeLinkStruct()):
+        if isinstance(link, ptAgeLinkStruct):
             als = link
         else:
             als = link.asAgeLinkStruct()
@@ -1831,7 +1831,7 @@ class psnlBookshelf(ptModifier):
         for content in contents:
             link = content.getChild()
             link = link.upcastToAgeLinkNode()
-            if type(link) != type(None):
+            if link is not None:
                 info = link.getAgeInfo()
             if not info:
                 continue
@@ -1843,7 +1843,7 @@ class psnlBookshelf(ptModifier):
 
     def IGetHoodInfoNode(self):
         link = self.IGetHoodLinkNode()
-        if type(link) == type(None):
+        if link is None:
             return None
         info = link.getAgeInfo()
         return info
@@ -1853,7 +1853,7 @@ class psnlBookshelf(ptModifier):
         hoodInfo = self.IGetHoodInfoNode()
         if hoodInfo:
             childAgeFolder = hoodInfo.getChildAgesFolder()
-            if type(childAgeFolder) != type(None):
+            if childAgeFolder is not None:
                 contents = childAgeFolder.getChildNodeRefList()
                 #childAgeLinkNodes = []
                 #GZLinkNode = None
@@ -1893,7 +1893,7 @@ class psnlBookshelf(ptModifier):
         CityLinks = []
         vault = ptVault()
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
-        if type(entryCityLinks) != type(None):
+        if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
             print "valCityLinks = ",valCityLinks
             CityLinks = valCityLinks.split(",")
@@ -1913,7 +1913,7 @@ class psnlBookshelf(ptModifier):
             print "age = ",age
             print "agelink = ",agelink
 
-            if type(agelink) != type(None):
+            if agelink is not None:
                 spawnPoints = agelink.getSpawnPoints()
 
                 for sp in spawnPoints:
@@ -1930,7 +1930,7 @@ class psnlBookshelf(ptModifier):
         print "age = the city"
         print "agelink = ",agelink
 
-        if type(agelink) != type(None):
+        if agelink is not None:
             spawnPoints = agelink.getSpawnPoints()
 
             for sp in spawnPoints:
@@ -1948,7 +1948,7 @@ class psnlBookshelf(ptModifier):
 
     def GetOwnedAgeLink(self, vault, age):
         PAL = vault.getAgesIOwnFolder()
-        if type(PAL) != type(None):
+        if PAL is not None:
             contents = PAL.getChildNodeRefList()
             for content in contents:
                 link = content.getChild().upcastToAgeLinkNode()

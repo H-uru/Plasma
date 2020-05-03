@@ -101,7 +101,7 @@ class xJournalBookGUIPopup(ptModifier):
         if id == actClickableBook.id:
             if PtWasLocallyNotified(self.key) and state:
                 PtToggleAvatarClickability(false)
-                if type(SeekBehavior.value) != type(None): #remember, smart seek before GUI is optional. 
+                if SeekBehavior.value is not None: #remember, smart seek before GUI is optional. 
                     PtDebugPrint("xJournalBookGUIPopup: Smart seek used",level=kDebugDumpLevel)
                     LocalAvatar = PtFindAvatar(events)
                     SeekBehavior.run(LocalAvatar)

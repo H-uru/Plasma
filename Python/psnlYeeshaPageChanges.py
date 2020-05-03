@@ -131,7 +131,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
         CurrentPage = 0
         
         AgeVault = ptAgeVault()
-        if type(AgeVault) != type(None): #is the Vault online?
+        if AgeVault is not None: #is the Vault online?
 
             self.ageSDL = AgeVault.getAgeSDL()
             if self.ageSDL:
@@ -175,7 +175,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                             try:
                                 ageSDL = xPsnlVaultSDL(1)
 
-                                if type(ageSDL) != type(None):
+                                if ageSDL is not None:
                                     sdllist = ageSDL.BatchGet( ["TeledahnPoleState", "GardenPoleState", "GarrisonPoleState", "KadishPoleState"] )
                                     pole1 = sdllist["TeledahnPoleState"]
                                     pole2 = sdllist["GardenPoleState"]
@@ -206,7 +206,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     for thispage in range(1,TotalPossibleYeeshaPages+1):
                         FoundValue = self.ageSDL.findVar("YeeshaPage" + str(thispage))
                         PtDebugPrint ("\t The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(thispage), FoundValue.getInt()))
-                        if type(FoundValue) != type(None) and FoundValue.getInt() != 0: 
+                        if FoundValue is not None and FoundValue.getInt() != 0: 
                             PtDebugPrint ("psnlYeeshaPageChanges: You have found Yeesha Page # %s." % (thispage))
                             
             else:

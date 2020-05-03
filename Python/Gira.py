@@ -62,9 +62,9 @@ class Gira(ptResponder):
         #~ kChronicleVarName = "LinksIntoGarden"
         #~ kChronicleVarType = 0
         #~ vault = ptVault()
-        #~ if type(vault) != type(None):
+        #~ if vault is not None:
             #~ entry = vault.findChronicleEntry(kChronicleVarName)
-            #~ if type(entry) == type(None):
+            #~ if entry is None:
                 #~ # not found... add current level chronicle
                 #~ vault.addChronicleEntry(kChronicleVarName,kChronicleVarType,"%d" %(1))
                 #~ PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,kChronicleVarName))

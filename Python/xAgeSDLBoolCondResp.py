@@ -71,7 +71,7 @@ class xAgeSDLBoolCondResp(ptResponder):
         self.initFinished = 0
 
     def OnFirstUpdate(self):
-        if type(strSDLVar.value) != type("") or strSDLVar.value == "":
+        if not strSDLVar.value:
             PtDebugPrint("ERROR: xAgeSDLBoolCondResp.OnFirstUpdate():\tCannot bind to SDL variable, invalid string")
             self.invalidVarName = 1
         else:

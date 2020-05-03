@@ -396,7 +396,7 @@ class xOpeningSequence(ptModifier):
         # 1) set chronicle variable to say they've complete intro
         vault = ptVault()
         entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        if type(entry) != type(None):
+        if entry is not None:
             entry.chronicleSetValue("yes")
             entry.save()
         else:

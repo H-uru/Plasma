@@ -154,7 +154,7 @@ class ercaPelletRoom(ptResponder):
 
         vault = ptVault()
         entry = vault.findChronicleEntry("GotPellet")
-        if type(entry) != type(None):
+        if entry is not None:
             entryValue = entry.chronicleGetValue()
             oldGotPellet = string.atoi(entryValue)
             if oldGotPellet != 0:
@@ -550,7 +550,7 @@ class ercaPelletRoom(ptResponder):
             
             vault = ptVault()
             entry = vault.findChronicleEntry("GotPellet")
-            if type(entry) != type(None):
+            if entry is not None:
                 entry.chronicleSetValue("%d" % (Recipe))
                 entry.save()
                 PtDebugPrint("Chronicle entry GotPellet already added, setting to Recipe value of %d" % (Recipe))
@@ -767,7 +767,7 @@ class ercaPelletRoom(ptResponder):
         caveLink.setAgeInfo(caveInfo)
         caveInfo = caveLink.getAgeInfo()
         caveInstance = caveInfo
-        if type(caveInstance) == type(None):
+        if caveInstance is None:
             PtDebugPrint("pellet cave instance is none, aborting link")
             return;
         info = ptAgeInfoStruct()

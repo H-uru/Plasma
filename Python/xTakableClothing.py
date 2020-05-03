@@ -108,13 +108,13 @@ class xTakableClothing(ptModifier):
         AgeStartedIn = PtGetAgeName()
         self.useChance = true
         self.shown = false
-        if not (type(stringVarName.value) == type("") and stringVarName.value != ""):
+        if not stringVarName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing SDL var name on %s" % self.sceneobject.getName())
-        if not (type(stringFClothingName.value) == type("") and stringFClothingName.value != ""):
+        if not stringFClothingName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing female clothing name on %s" % self.sceneobject.getName())
-        if not (type(stringMClothingName.value) == type("") and stringMClothingName.value != ""):
+        if not stringMClothingName.value:
             PtDebugPrint("ERROR: xTakableClothing.OnFirstUpdate():\tERROR: missing male clothing name on %s" % self.sceneobject.getName())
-        if not (type(stringChanceSDLName.value) == type("") and stringChanceSDLName.value != ""):
+        if not stringChanceSDLName.value:
             PtDebugPrint("DEBUG: xTakableClothing.OnFirstUpdate(): Chance SDL var name is empty, so we will not use chance rolls for showing %s" % self.sceneobject.getName())
             self.useChance = false
         allFClothing = stringFClothingName.value.split(";")
@@ -136,7 +136,7 @@ class xTakableClothing(ptModifier):
     def Initialize(self):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
-            if type(stringVarName.value) == type("") and stringVarName.value != "":
+            if stringVarName.value:
                 try:
                     ageSDL.setNotify(self.key,stringVarName.value,0.0)
                     if not (ageSDL[stringVarName.value][0] ^ boolShowOnTrue.value):
@@ -290,7 +290,7 @@ class xTakableClothing(ptModifier):
                 if childNode != type(None):
                     print "xTakableClothing: Child Node Node ID"
                     SDLNode = childNode.upcastToSDLNode()
-                    if type(SDLNode) != type(None):
+                    if SDLNode is not None:
                         rec = SDLNode.getStateDataRecord()
                         print "xTakableClothing: getStateDataRecord().getName(): " + str(rec.getName())
                         SDLVarList = rec.getVarList()
@@ -389,7 +389,7 @@ class xTakableClothing(ptModifier):
                     avatar.avatar.tintClothingItem(name,color1,0)
                     avatar.avatar.tintClothingItemLayer(name,color2,2,1)
                     matchingItem = avatar.avatar.getMatchingClothingItem(name)
-                    if type(matchingItem) == type([]):
+                    if isinstance(matchingItem, list):
                         avatar.avatar.wearClothingItem(matchingItem[0],0)
                         avatar.avatar.tintClothingItem(matchingItem[0],color1,0)
 
