@@ -1990,7 +1990,7 @@ void plDrawableSpans::SortVisibleSpans(const hsTArray<int16_t>& visList, plPipel
 #endif // MF_CHUNKSORT
 }
 
-struct buffTriCmpBackToFront : public std::binary_function<plGBufferTriangle, plGBufferTriangle, bool>
+struct buffTriCmpBackToFront
 {
     hsPoint3 fViewPos;
     buffTriCmpBackToFront(const hsPoint3& p) : fViewPos(p) {}
@@ -2001,7 +2001,7 @@ struct buffTriCmpBackToFront : public std::binary_function<plGBufferTriangle, pl
     }
 };
 
-struct buffTriCmpFrontToBack : public std::binary_function<plGBufferTriangle, plGBufferTriangle, bool>
+struct buffTriCmpFrontToBack
 {
     hsPoint3 fViewPos;
     buffTriCmpFrontToBack(const hsPoint3& p) : fViewPos(p) {}

@@ -2075,8 +2075,6 @@ bool plMaxNode::ConvertToOccluder(plErrorMsg* pErrMsg, bool twoSided, bool isHol
     plLocation nodeLoc = GetLocation();
 
     bool moving = IsMovable();
-    if( moving )
-        moving++;
 
     Matrix3 tmp(true);
 

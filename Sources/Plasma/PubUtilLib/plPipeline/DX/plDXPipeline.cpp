@@ -2388,7 +2388,7 @@ struct plSortFace
     float    fDist;
 };
 
-struct plCompSortFace : public std::binary_function<plSortFace, plSortFace, bool>
+struct plCompSortFace
 {
     bool operator()( const plSortFace& lhs, const plSortFace& rhs) const
     {
