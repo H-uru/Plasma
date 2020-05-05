@@ -104,7 +104,7 @@ def glue_findAndAddAttribs(obj, glue_params):
         for o in obj:
             glue_findAndAddAttribs(o, glue_params)
     elif isinstance(obj, dict):
-        for o in obj.values():
+        for o in obj.viewvalues():
             glue_findAndAddAttribs(o, glue_params)
     elif isinstance(obj, tuple):
         for o in obj:
@@ -116,7 +116,7 @@ def glue_getParamDict():
     if glue_params is None:
         glue_params = {}
         gd = globals()
-        for obj in gd.values():
+        for obj in gd.viewvalues():
             glue_findAndAddAttribs(obj, glue_params)
         # rebuild the parameter sorted key list
         glue_paramKeys = glue_params.keys()

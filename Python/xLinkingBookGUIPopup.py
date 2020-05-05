@@ -577,10 +577,10 @@ class xLinkingBookGUIPopup(ptModifier):
                         sharable, width, height, stampdef, gui = (0, 1.0, 1.0, xLinkingBookDefs.NoDRCStamp, "BkBook")
                         bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + params + xLinkingBookDefs.LinkEnd
 
-                if 'NotPossible' in SpawnPointTitle_Dict.values():
+                if 'NotPossible' in SpawnPointTitle_Dict.viewvalues():
                    bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelBlackVoid' + xLinkingBookDefs.LinkEndNoLink
                    sharable = 0
-                if 'DisabledDesert' in SpawnPointTitle_Dict.values():
+                if 'DisabledDesert' in SpawnPointTitle_Dict.viewvalues():
                    bookdef = xLinkingBookDefs.BookStart1 + xLinkingBookDefs.DRCStampHolder + xLinkingBookDefs.NoShare + xLinkingBookDefs.LinkStart + 'xLinkPanelCleftDesertDisabled' + xLinkingBookDefs.LinkEndNoLink
                    sharable = 0
                 
@@ -591,7 +591,7 @@ class xLinkingBookGUIPopup(ptModifier):
                 return
 
             # bookmark link
-            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict.keys():
+            if fromBookshelf and xLinkingBookDefs.kBookMarkID in SpawnPointTitle_Dict.viewkeys():
                 if SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'JCSavePoint':
                     bookmark = xLinkingBookDefs.JCBookMark
                 elif SpawnPointTitle_Dict[xLinkingBookDefs.kBookMarkID] == 'SCSavePoint':
@@ -615,7 +615,7 @@ class xLinkingBookGUIPopup(ptModifier):
             # build the rest of the pages into the book
             #linkID = xLinkingBookDefs.kFirstLinkPanelID + 1
             if agePanel != "CleftWithTomahna":
-                for linkID in SpawnPointTitle_Dict.keys():
+                for linkID in SpawnPointTitle_Dict.viewkeys():
                     if linkID == xLinkingBookDefs.kFirstLinkPanelID or linkID == xLinkingBookDefs.kBookMarkID:
                         continue
                     try:
@@ -745,7 +745,7 @@ class xLinkingBookGUIPopup(ptModifier):
                     SpawnPointName_Dict[x] = sp.getName()
                 x += 1
 
-        if CurrentPage > len(SpawnPointName_Dict.keys()):
+        if CurrentPage > len(SpawnPointName_Dict.viewkeys()):
             CurrentPage = 1
 
 
@@ -908,7 +908,7 @@ class xLinkingBookGUIPopup(ptModifier):
                 SpawnPointName_Dict[xLinkingBookDefs.kFirstLinkPanelID] = "NotPossible"
                 SpawnPointTitle_Dict[xLinkingBookDefs.kFirstLinkPanelID] = "NotPossible"
 
-        if CurrentPage > len(SpawnPointName_Dict.keys()):
+        if CurrentPage > len(SpawnPointName_Dict.viewkeys()):
             CurrentPage = 1
 
     def HideBook(self, islinking = 0):

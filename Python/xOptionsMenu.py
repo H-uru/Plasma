@@ -724,7 +724,7 @@ class xOptionsMenu(ptModifier):
                 kmID = control.getTagID()
                 if kmID == kKMOkBtn:
                     KeyMapDlg.dialog.hide()
-                elif kmID in gKM1ControlCodesRow1.keys():
+                elif kmID in gKM1ControlCodesRow1.viewkeys():
                     NewKeyMapString = ""
                     # get the new keys and bind
                     km = ptKeyMap()
@@ -759,7 +759,7 @@ class xOptionsMenu(ptModifier):
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # need to re-set the ini file, in case something got unmapped
                     #self.IMatchIniToGame()
-                elif kmID in gKM1ControlCodesRow2.keys():
+                elif kmID in gKM1ControlCodesRow2.viewkeys():
                     NewKeyMapString = ""
                     # get the new keys and bind
                     km = ptKeyMap()
@@ -1605,14 +1605,14 @@ class xOptionsMenu(ptModifier):
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoAntiAliasingSliderTag))
         aaVal = int(videoField.getValue())
         antialias = 0
-        for key in kVideoAntiAliasing.keys():
+        for key in kVideoAntiAliasing.viewkeys():
             if kVideoAntiAliasing[key] == aaVal:
                 antialias = int(key)
         
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoFilteringSliderTag))
         afVal = int(videoField.getValue())
         aniso = 0
-        for key in kVideoAnisoFiltering.keys():
+        for key in kVideoAnisoFiltering.viewkeys():
             if kVideoAnisoFiltering[key] == afVal:
                 aniso = int(key)
                 break
@@ -1896,7 +1896,7 @@ class xOptionsMenu(ptModifier):
 
     def IShowMappedKeys(self,dlg,mapRow1,mapRow2):
         km = ptKeyMap()
-        for cID in mapRow1.keys():
+        for cID in mapRow1.viewkeys():
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
@@ -1914,7 +1914,7 @@ class xOptionsMenu(ptModifier):
                 # if the first key is disabled, then the entire line should be! which is 100 less then the first field tag ID
                 ftext = ptGUIControlTextBox(dlg.getControlFromTag(cID-100))
                 ftext.hide()
-        for cID in mapRow2.keys():
+        for cID in mapRow2.viewkeys():
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
