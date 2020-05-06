@@ -180,12 +180,12 @@ class GiraSteam(ptResponder):
         
         for x in range(6):
             var = "giraSteamvent0" + str(x + 1) + "Open"
-            print "GiraSteam.OnServerInitComplete():\tsetting up for SDL var: ",var
+            print("GiraSteam.OnServerInitComplete():\tsetting up for SDL var: ",var)
             ageSDL.setFlags(var, 1, 1)
             ageSDL.sendToClients(var)
         
         open = ageSDL["giraSteamvent01Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 1 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 1 open = ",open)
         if (open):
             fumerol1Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol1BlastResp, avatar)
@@ -194,7 +194,7 @@ class GiraSteam(ptResponder):
             self.SetRumble(fumerol1Resp, avatar)
         
         open = ageSDL["giraSteamvent02Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 2 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 2 open = ",open)
         if (open):
             fumerol2Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol2BlastResp, avatar)
@@ -203,7 +203,7 @@ class GiraSteam(ptResponder):
             self.SetRumble(fumerol2Resp, avatar)
         
         open = ageSDL["giraSteamvent03Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 3 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 3 open = ",open)
         if (open):
             fumerol3Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol3BlastResp, avatar)
@@ -212,7 +212,7 @@ class GiraSteam(ptResponder):
             self.SetRumble(fumerol3Resp, avatar)
         
         open = ageSDL["giraSteamvent04Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 4 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 4 open = ",open)
         if (open):
             fumerol4Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol4BlastResp, avatar)
@@ -221,7 +221,7 @@ class GiraSteam(ptResponder):
             self.SetRumble(fumerol4Resp, avatar)
         
         open = ageSDL["giraSteamvent05Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 5 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 5 open = ",open)
         if (open):
             fumerol5Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol5BlastResp, avatar)
@@ -230,7 +230,7 @@ class GiraSteam(ptResponder):
             self.SetRumble(fumerol5Resp, avatar)
         
         open = ageSDL["giraSteamvent06Open"][0]
-        print "GiraSteam.OnServerInitComplete():\tfumerol 6 open = ",open
+        print("GiraSteam.OnServerInitComplete():\tfumerol 6 open = ",open)
         if (open):
             fumerol6Resp.run(self.key,state='Opening',avatar=avatar,fastforward=True)
             self.SetSteam(fumerol6BlastResp, avatar)
@@ -241,8 +241,8 @@ class GiraSteam(ptResponder):
         
     def SetRumble(self,resp, theavatar):
         numClosed = self.GetNumClosed()
-        print "GiraSteam.SetRumble():\tnumClosed = ",numClosed
-        print "GiraSteam.SetRumble():\tresponder = ",resp.id
+        print("GiraSteam.SetRumble():\tnumClosed = ",numClosed)
+        print("GiraSteam.SetRumble():\tresponder = ",resp.id)
         if (numClosed == 1):
             resp.run(self.key,state='MuffledBlastOnly',avatar=theavatar)
         elif (numClosed == 2):
@@ -279,8 +279,8 @@ class GiraSteam(ptResponder):
         
     def SetSteam(self,resp, theavatar):
         numClosed = self.GetNumClosed()
-        print "GiraSteam.SetSteam():\tnumClosed = ",numClosed
-        print "GiraSteam.SetSteam():\tresponder = ",resp.id
+        print("GiraSteam.SetSteam():\tnumClosed = ",numClosed)
+        print("GiraSteam.SetSteam():\tresponder = ",resp.id)
 
         if (numClosed == 0):
             ##print"running steam blast 2"
@@ -317,8 +317,8 @@ class GiraSteam(ptResponder):
     
     def JumpAvatar(self,resp, theavatar):
         numClosed=self.GetNumClosed()
-        print "GiraSteam.JumpAvatar():\tnumClosed = ",numClosed
-        print "GiraSteam.JumpAvatar():\tresponder = ",resp.id
+        print("GiraSteam.JumpAvatar():\tnumClosed = ",numClosed)
+        print("GiraSteam.JumpAvatar():\tresponder = ",resp.id)
         if (numClosed == 0):
             ##print"blast level 2"
             resp.run(self.key,state='Level1',avatar=theavatar)
@@ -364,7 +364,7 @@ class GiraSteam(ptResponder):
         pass
         
     def OnTimer(self,id):
-        print "GiraSteam.OnTimer():\tid = ",id
+        print("GiraSteam.OnTimer():\tid = ",id)
         global onFumerol1
         global onFumerol2
         global onFumerol3
@@ -602,7 +602,7 @@ class GiraSteam(ptResponder):
         elif (id == fumerol5Act.id and state):
             fumerol5Act.disable()
             open = ageSDL["giraSteamvent05Open"][0]
-            print "GiraSteam.OnNotify():\tNotify from fumerol05Act; open = %d" % (open)
+            print("GiraSteam.OnNotify():\tNotify from fumerol05Act; open = %d" % (open))
             if (open):
                 ageSDL["giraSteamvent05Open"] = (0,)
                 fumerol5Resp.run(self.key,state='Closing',avatar=avatar)
@@ -616,7 +616,7 @@ class GiraSteam(ptResponder):
         elif (id == fumerol6Act.id and state):
             fumerol6Act.disable()
             open = ageSDL["giraSteamvent06Open"][0]
-            print "GiraSteam.OnNotify():\tNotify from fumerol06Act; open = %d" % (open)
+            print("GiraSteam.OnNotify():\tNotify from fumerol06Act; open = %d" % (open))
             if (open):
                 ageSDL["giraSteamvent06Open"] = (0,)
                 fumerol6Resp.run(self.key,state='Closing',avatar=avatar)
@@ -644,11 +644,11 @@ class GiraSteam(ptResponder):
             inFumerol4 = entry
         
         elif (id == fumerol5Det.id):
-            print "5 entry ",entry
+            print("5 entry ",entry)
             inFumerol5 = entry
         
         elif (id == fumerol6Det.id):
-            print "6 entry ",entry
+            print("6 entry ",entry)
             inFumerol6 = entry
         
         elif (id == rockJumpBeh.id):
@@ -712,7 +712,7 @@ class GiraSteam(ptResponder):
               id == fumerol05SteamTrig05.id or id == fumerol05SteamTrig06.id) and state):
             self.PlayBlastSfx(fumerol05SteamSfx, avatar)
             if id == fumerol05SteamTrig01.id:
-                print "notify from fumerol05SteamTrig01; inFumerol5 = ",inFumerol5
+                print("notify from fumerol05SteamTrig01; inFumerol5 = ",inFumerol5)
             if (inFumerol5):
                 #inFumerol5 = False
                 self.JumpAvatar(fumerol05JumpResp, avatar)
@@ -722,7 +722,7 @@ class GiraSteam(ptResponder):
               id == fumerol06SteamTrig05.id or id == fumerol06SteamTrig06.id) and state):
             self.PlayBlastSfx(fumerol06SteamSfx, avatar)
             if id == fumerol06SteamTrig01.id:
-                print "notify from fumerol06SteamTrig01; inFumerol6 = ",inFumerol6
+                print("notify from fumerol06SteamTrig01; inFumerol6 = ",inFumerol6)
             if (inFumerol6):
                 #inFumerol6=False
                 if (numClosed < 5):

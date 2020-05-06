@@ -98,7 +98,7 @@ class ahnyIslandHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL"
+            print("ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL")
             ageSDL[SDLWaterCurrent.value] = (0,)
             ageSDL[SDLHutDoor.value] = (0,)
 
@@ -116,14 +116,14 @@ class ahnyIslandHut(ptResponder):
 
         if boolCurrent:
             RespCurrentChange.run(self.key,state='on',fastforward=1)
-            print "OnInit, will now enable current"
+            print("OnInit, will now enable current")
             WaterCurrent1.current.enable()
             WaterCurrent2.current.enable()
             WaterCurrent3.current.enable()
             WaterCurrent4.current.enable()
         else:
             RespCurrentChange.run(self.key,state='off',fastforward=1)
-            print "OnInit, will now disable current"
+            print("OnInit, will now disable current")
             WaterCurrent1.current.disable()
             WaterCurrent2.current.disable()
             WaterCurrent3.current.disable()
@@ -198,13 +198,13 @@ class ahnyIslandHut(ptResponder):
 
         elif id == RespCurrentChange.id:
             if boolCurrent:
-                print "will now enable current"
+                print("will now enable current")
                 WaterCurrent1.current.enable()
                 WaterCurrent2.current.enable()
                 WaterCurrent3.current.enable()
                 WaterCurrent4.current.enable()
             else:
-                print "will now disable current"
+                print("will now disable current")
                 WaterCurrent1.current.disable()
                 WaterCurrent2.current.disable()
                 WaterCurrent3.current.disable()

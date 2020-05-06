@@ -228,7 +228,7 @@ class clftImager(ptResponder):
             try:
                 avatar = PtGetLocalAvatar()
             except:
-                print"failed to get local avatar"
+                print("failed to get local avatar")
                 return
             avatar.avatar.registerForBehaviorNotify(self.key)
             cam = ptCamera()
@@ -319,7 +319,7 @@ class clftImager(ptResponder):
 
     def IQuitImager(self):
         global PuzzleView
-        print "disengage and exit the imager puzzle"
+        print("disengage and exit the imager puzzle")
         avatar = PtGetLocalAvatar()
         imagerCam.value.popCutsceneCamera(avatar.getKey())
         #imagerBtn.enableActivator()
@@ -365,7 +365,7 @@ class clftImager(ptResponder):
                 return
             avatar=PtFindAvatar(events)
             avatar.draw.enable()
-            print"force avatar visible"
+            print("force avatar visible")
             return
             
         # Causes Yeesha to be spawned out of sight before imager is activated
@@ -379,7 +379,7 @@ class clftImager(ptResponder):
         # switch to imager close-up camera
 
         if (id == imagerBtn.id and state):
-            print"switch to imager close up"
+            print("switch to imager close up")
             imagerBtn.disableActivator()
             ImagerBtnInvisible.run(self.key)
             #~ if visionplaying:
@@ -411,7 +411,7 @@ class clftImager(ptResponder):
 
         # trigger the imager to run, reset clickables
         if (id == imagerBrokenBtn.id and state):
-            print "trigger imager"
+            print("trigger imager")
             imagerBrokenBtn.disableActivator()
             imagerLockN.disableActivator()
             imagerLockS.disableActivator()
@@ -435,20 +435,20 @@ class clftImager(ptResponder):
             if (self.EndgameSolved()):
                 PlayFull = 0
                 PlayFinal = 1
-                print "play final speech"
+                print("play final speech")
             elif (self.OpeningSolved()):
                 PlayFull = 1
                 PlayFinal = 0
-                print "play full opening speech"
+                print("play full opening speech")
             elif (self.TPOTSolved()):
                 PlayFull = 0
                 PlayFinal = 0
                 PlayTPOT = 1
-                print "play TPOT speech"
+                print("play TPOT speech")
             else:
                 PlayFull = 0
                 PlayFinal = 0
-                print "play partial opening speech"
+                print("play partial opening speech")
 
             #PtAtTimeCallback(self.key,2,imagerBtn.id)
                 
@@ -458,7 +458,7 @@ class clftImager(ptResponder):
                     return
 
         if (id == ImagerOneshot.id):
-            print"avatar oneshot callback"
+            print("avatar oneshot callback")
             PuzzleView = 0
             PtEnableForwardMovement()
             PtSendKIMessage(kEnableEntireYeeshaBook,0)
@@ -473,21 +473,21 @@ class clftImager(ptResponder):
                             #~ imagerLockS.disableActivator()
                             #~ imagerLockW.disableActivator()
                             #~ imagerLockE.disableActivator()
-                            print "Now, killing vision"
+                            print("Now, killing vision")
                             speechKilled = 1
                             self.StopVision()
                         elif visionplaying == 0:
                             self.StartVision()
                             if PlayFinal == 1:
-                                print "nothing"
+                                print("nothing")
                                 # this timer value is approximate right now
                                 #PtAtTimeCallback(self.key, 204.2, kFinished)
                             elif PlayFinal == 0 and PlayFull == 0 and PlayTPOT == 0:
                                 stopvision = random.randint(minstoptime, maxstoptime)
-                                print "\tImager will autoshut off in %d seconds" % (stopvision)
+                                print("\tImager will autoshut off in %d seconds" % (stopvision))
                                 PtAtTimeCallback(self.key, stopvision, kVision)
                             elif PlayFull == 1:
-                                print "nothing"
+                                print("nothing")
                                 # The full audio of the Yeesha Vision plays for 137 seconds. This ensures turning it off after completion.
                                 #PtAtTimeCallback(self.key, 141.6, kVision)
             else:
@@ -503,10 +503,10 @@ class clftImager(ptResponder):
                 clothingName = "02_MTorso09_01"
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
-                print "adding Yeesha reward clothing %s to wardrobe" % (clothingName)
+                print("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:
-                print "player already has Yeesha reward clothing, doing nothing"
+                print("player already has Yeesha reward clothing, doing nothing")
 
         if (id == StopIntroVisEvent.id and state):
             speechKilled = 0
@@ -530,10 +530,10 @@ class clftImager(ptResponder):
                 self.ageSDL.setTagString(SDLVarOfficeDoor,xtraInfo)
                 self.ageSDL[SDLVarOfficeDoor] = (1,)
             else:
-                print "what's wrong with the door?"
+                print("what's wrong with the door?")
 
         if (id == YeeshaSceneTimerDone.id and state and PlayScene == 1):
-            print "clftImager.OnNotify(): Yeesha timer is done.  Getting rid of Yeesha and setting SDL."
+            print("clftImager.OnNotify(): Yeesha timer is done.  Getting rid of Yeesha and setting SDL.")
             self.ageSDL = PtGetAgeSDL()
             YeeshaName.draw.disable()
             YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
@@ -561,13 +561,13 @@ class clftImager(ptResponder):
         PtDebugPrint("clftImager.SceneYeesha(): PlayScene = %d" % (PlayScene))
 
         if PlayScene == 1:
-            print "clftImager: Playing scene now..."
+            print("clftImager: Playing scene now...")
             YeeshaName.draw.enable()
             YeeshaName.physics.warpObj(YeeshaWarpVis3.value.getKey())
             YeeshaMultiStage.gotoStage(YeeshaName, 3,dirFlag=1,isForward=1)
             YeeshaSpeech3.run(self.key,avatar=PtGetLocalAvatar())
         else:
-            print "clftImager: Nope, not playing scene."
+            print("clftImager: Nope, not playing scene.")
 
 
     def OpeningSolved(self):
@@ -579,8 +579,8 @@ class clftImager(ptResponder):
         imagerList.append(imagerRespS.state_list.index(imagerRespS.getState()))
         imagerList.append(imagerRespW.state_list.index(imagerRespW.getState()))
 
-        print "clftImager.OpenSolved(): solution list:", solutionList
-        print "clftImager.OpenSolved(): imager list  :", imagerList
+        print("clftImager.OpenSolved(): solution list:", solutionList)
+        print("clftImager.OpenSolved(): imager list  :", imagerList)
         
         if self.AreListsEquiv(solutionList, imagerList):
             return True
@@ -661,8 +661,8 @@ class clftImager(ptResponder):
         for x in range(4):
             currentStateList[x] = (currentStateList[x]+6)%7
 
-        print "clftImager.EndgameSolved(): solution list: " + str(solutionList)
-        print "clftImager.EndgameSolved(): currentState list: " + str(currentStateList)
+        print("clftImager.EndgameSolved(): solution list: " + str(solutionList))
+        print("clftImager.EndgameSolved(): currentState list: " + str(currentStateList))
 
         if self.AreListsEquiv(solutionList, currentStateList):
             return True
@@ -682,8 +682,8 @@ class clftImager(ptResponder):
         for x in range(4):
             currentStateList[x] = (currentStateList[x]+6)%7
 
-        print "clftImager.TPOTSolved(): solution list:", solutionList
-        print "clftImager.TPOTSolved(): currentState list  :", currentStateList
+        print("clftImager.TPOTSolved(): solution list:", solutionList)
+        print("clftImager.TPOTSolved(): currentState list  :", currentStateList)
         
         if self.AreListsEquiv(solutionList, currentStateList):
             return True
@@ -717,7 +717,7 @@ class clftImager(ptResponder):
                             chronSolutions = []
                             for sol in chronString:
                                 chronSolutions.append(string.atoi(sol))
-                            print "found pellet cave solution: ",chronSolutions
+                            print("found pellet cave solution: ",chronSolutions)
                             return chronSolutions
 
 
@@ -729,7 +729,7 @@ class clftImager(ptResponder):
         global speechKilled
         
         if visionplaying == 1 and id == kVision: 
-            print "\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision."
+            print("\nclftImager.Ontimer:Got kVision timer callback. Automatically stopping vision.")
             self.StopVision()
             imagerBrokenBtn.disableActivator()
             imagerLockN.disableActivator()
@@ -746,7 +746,7 @@ class clftImager(ptResponder):
             #~ imagerLockW.disableActivator()
             #~ imagerLockE.disableActivator()
         elif id == imagerBrokenBtn.id:
-            print "\nclftImager.Ontimer:Got timer callback. Setting up Imager button...."
+            print("\nclftImager.Ontimer:Got timer callback. Setting up Imager button....")
             imagerBtn.disableActivator()
             ImagerBtnInvisible.run(self.key)
             imagerBrokenBtn.enableActivator()
@@ -757,7 +757,7 @@ class clftImager(ptResponder):
             PtSendKIMessage(kDisableEntireYeeshaBook,0)
             PtDisableForwardMovement()
         elif id == imagerBtn.id:
-            print "\nclftImager.Ontimer:Got timer callback. Setting up Imager dummy...."
+            print("\nclftImager.Ontimer:Got timer callback. Setting up Imager dummy....")
             imagerBrokenBtn.disableActivator()
             imagerLockN.disableActivator()
             imagerLockS.disableActivator()
@@ -784,7 +784,7 @@ class clftImager(ptResponder):
         global YeeshaName
         global VisionID
         
-        print "clftImager.StartVision: Playing Yeesha vision."
+        print("clftImager.StartVision: Playing Yeesha vision.")
         
         YeeshaName.draw.enable()
         
@@ -837,7 +837,7 @@ class clftImager(ptResponder):
         global PuzzleView
         global VisionID
         
-        print "clftImager.StopVision: Stopping Yeesha vision."
+        print("clftImager.StopVision: Stopping Yeesha vision.")
         
         YeeshaName.draw.disable()
         YeeshaName.physics.warpObj(YeeshaWarpHid.value.getKey())
@@ -847,7 +847,7 @@ class clftImager(ptResponder):
             YeeshaMultiStage.gotoStage(YeeshaName, 0,dirFlag=1,isForward=1)
             #respBookAnim.run(self.key,state="off")
             visionplaying = 0
-            print "TRYING TO KILL FINAL VISION"
+            print("TRYING TO KILL FINAL VISION")
             if speechKilled == 1:
                 YeeshaSpeech2.run(self.key,state="on",fastforward=1)
                 KillFinalVisMusic.run(self.key)
@@ -877,9 +877,9 @@ class clftImager(ptResponder):
                 speechKilled = 0
             respPlayTPOTSpeech.run(self.key,state="off")
         else:
-            print "clftImager.StopVision: Don't know which vision to kill!"
+            print("clftImager.StopVision: Don't know which vision to kill!")
 
-        print "PuzzleView = %s" % (PuzzleView)
+        print("PuzzleView = %s" % (PuzzleView))
         
         avatar = PtGetLocalAvatar()
         if PuzzleView:
@@ -896,28 +896,28 @@ class clftImager(ptResponder):
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
-            print "valCityLinks = ",valCityLinks
+            print("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
-            print "CityLinks = ",CityLinks
+            print("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
-                print "xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel
+                print("xLinkingBookGUIPopup.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
-                print "xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",CityLinks
+                print("xLinkingBookGUIPopup.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:
-                print "xLinkingBookGUIPopup.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel
+                print("xLinkingBookGUIPopup.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel)
         else:
             vault.addChronicleEntry("CityBookLinks",0,agePanel)
-            print "xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel
+            print("xLinkingBookGUIPopup.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel)
         
         psnlSDL = xPsnlVaultSDL()
         GotBook = psnlSDL["psnlGotCityBook"][0]
         if not GotBook:
             psnlSDL["psnlGotCityBook"] = (1,)
-            print "xLinkingBookGUIPopup.IDoCityLinksChron():  setting SDL for city book to 1"
+            print("xLinkingBookGUIPopup.IDoCityLinksChron():  setting SDL for city book to 1")
 
 
     def OnBackdoorMsg(self, target, param):

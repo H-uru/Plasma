@@ -83,12 +83,12 @@ class Enum:
 
 
     def __getattr__(self, attr):
-        if not self.lookup.has_key(attr):
+        if attr not in self.lookup:
             raise AttributeError
         return self.lookup[attr]
 
     def __getitem__(self, sub):
-        if not self.lookup.has_key(sub):
+        if sub not in self.lookup:
             raise AttributeError
         return self.lookup[sub]
 
@@ -106,9 +106,9 @@ class Enum:
 if __name__ == "__main__":
     animal = Enum("Cow, Pig, Dog = 5, Cat, Lizard")
 
-    print animal.Cow
-    print animal["Cow"]
-    print animal.Pig
-    print animal.Dog
-    print animal.Cat
-    print animal.Lizard
+    print(animal.Cow)
+    print(animal["Cow"])
+    print(animal.Pig)
+    print(animal.Dog)
+    print(animal.Cat)
+    print(animal.Lizard)

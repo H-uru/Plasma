@@ -122,11 +122,11 @@ class Cleft(ptResponder):
             pages += ["ZandiJC04aFace","ZandiJC04bFace","ZandiJC05aFace","ZandiJC05bFace","ZandiJC06aFace","ZandiJC06bFace"]
             pages += ["ZandiJC07aFace","ZandiJC07bFace"]
         else:
-            print "Zandi seems to have stepped away from the Airstream. Hmmm..."
+            print("Zandi seems to have stepped away from the Airstream. Hmmm...")
         if loadBook:
             pages += ["clftYeeshaBookVis","FemaleGetPersonalBook","MaleGetPersonalBook"]
         else:
-            print "Zandi seems to have stepped away from the Airstream. Hmmm..."
+            print("Zandi seems to have stepped away from the Airstream. Hmmm...")
 
         # Put in all the common pages
         pages += ["BookRoom","clftAtrusNote"]
@@ -221,7 +221,7 @@ class Cleft(ptResponder):
             try:
                 avatar = PtGetLocalAvatar()
             except:
-                print"failed to get local avatar"
+                print("failed to get local avatar")
                 return
             avatar.avatar.registerForBehaviorNotify(self.key)
             cam = ptCamera()
@@ -258,7 +258,7 @@ class Cleft(ptResponder):
         global fissureDrop
 
         if (id == respFissureDropMain.id):
-            print "FISSUREDROP.OnNotify:  respFissureDropMain.id callback"
+            print("FISSUREDROP.OnNotify:  respFissureDropMain.id callback")
             if fissureDrop:
                 cam = ptCamera()
                 cam.enableFirstPersonOverride()
@@ -274,7 +274,7 @@ class Cleft(ptResponder):
    
         #PtDebugPrint("Cleft.OnBehaviorNotify(): %d" % (type))
         if type == PtBehaviorTypes.kBehaviorTypeLinkIn and not state:
-            print "FISSUREDROP.OnBehaviorNotify: fissureDrop = %d" % (fissureDrop)
+            print("FISSUREDROP.OnBehaviorNotify: fissureDrop = %d" % (fissureDrop))
             if fissureDrop:
                 PtDebugPrint("Cleft.OnBehaviorNotify(): will run respFissureDropMain now.")
                 respFissureDropMain.run(self.key,avatar=PtGetLocalAvatar())

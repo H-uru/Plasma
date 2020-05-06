@@ -75,7 +75,7 @@ class grsnTrnCtrBridgeSafety(ptResponder):
         if (id == triggerRgn1.id):
             for event in events:
                 if (event[0]==1):
-                    print "in region 1 ",event[1]
+                    print("in region 1 ",event[1])
                     inRegion1 = event[1]
                     return
         
@@ -83,7 +83,7 @@ class grsnTrnCtrBridgeSafety(ptResponder):
             if (inRegion1):
                 for event in events:
                     if (event[0]==1 and event[1]==1):
-                        print"in both regions - warp up"
+                        print("in both regions - warp up")
                         PtGetLocalAvatar().physics.warpObj(arrivePt.value.getKey())
                         return
  

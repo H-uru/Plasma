@@ -92,7 +92,7 @@ class ahnyKadishHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL"
+            print("ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
             ageSDL[SDLWindows.value] = (0,)
             #ageSDL[SDLDniTimer.value] = (0,)
 
@@ -103,10 +103,10 @@ class ahnyKadishHut(ptResponder):
         boolWindows = ageSDL[SDLWindows.value][0]
         
         if boolWindows:
-            print "ahnyKadishHut.OnServerInitComplete(): Windows are open"
+            print("ahnyKadishHut.OnServerInitComplete(): Windows are open")
             RespWindows.run(self.key,state="open",fastforward=1)
         else:
-            print "ahnyKadishHut.OnServerInitComplete(): Windows are closed"
+            print("ahnyKadishHut.OnServerInitComplete(): Windows are closed")
             RespWindows.run(self.key,state="close",fastforward=1)
 
         #ageSDL.setFlags(SDLDniTimer.value,1,1)
@@ -142,10 +142,10 @@ class ahnyKadishHut(ptResponder):
             ageSDL = PtGetAgeSDL()
             boolWindows = ageSDL[SDLWindows.value][0]
             if boolWindows:
-                print "ahnyKadishHut.OnSDLNotify(): Windows will now open"
+                print("ahnyKadishHut.OnSDLNotify(): Windows will now open")
                 RespWindows.run(self.key,state="open")
             else:
-                print "ahnyKadishHut.OnSDLNotify(): Windows will now close"
+                print("ahnyKadishHut.OnSDLNotify(): Windows will now close")
                 RespWindows.run(self.key,state="close")
 
         #if VARname == SDLDniTimer.value:

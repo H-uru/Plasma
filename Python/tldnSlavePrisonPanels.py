@@ -75,7 +75,7 @@ class tldnSlavePrisonPanels(ptResponder):
         self.id = 5238
         version = 2
         self.version = version
-        print "__init__tldnSlavePrisonPanels v. ", version,".1"
+        print("__init__tldnSlavePrisonPanels v. ", version,".1")
         
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -131,11 +131,11 @@ class tldnSlavePrisonPanels(ptResponder):
                 respLeverDown.run(self.key,events=events)
         
         elif id == respLeverUp.id and self.sceneobject.isLocallyOwned():
-            print "tldnSlavePrisonPanels: Lever now completely up. Updating SDL", stringVarName.value, " to 0"
+            print("tldnSlavePrisonPanels: Lever now completely up. Updating SDL", stringVarName.value, " to 0")
             ageSDL[stringVarName.value] = (0,)
             
         elif id == respLeverDown.id and self.sceneobject.isLocallyOwned():
-            print "tldnSlavePrisonPanels: Lever now completely down. Updating SDL", stringVarName.value," to 1"
+            print("tldnSlavePrisonPanels: Lever now completely down. Updating SDL", stringVarName.value," to 1")
             ageSDL[stringVarName.value] = (1,)
   
   

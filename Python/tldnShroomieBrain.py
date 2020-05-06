@@ -112,14 +112,14 @@ class tldnShroomieBrain(ptResponder):
         self.id = 5237
         version = 3
         self.version = version
-        print "__init__tldnShroomieBrain v.", version,".2"
+        print("__init__tldnShroomieBrain v.", version,".2")
         random.seed()
 
     def OnServerInitComplete(self):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "tldnShroomieBrain:\tERROR---Cannot find the Teledahn Age SDL"
+            print("tldnShroomieBrain:\tERROR---Cannot find the Teledahn Age SDL")
             ageSDL["ShroomieTotalTimesSeen"] = (0, ) 
             ageSDL["ShroomieTimeLastSeen"] = (0, ) 
 
@@ -132,12 +132,12 @@ class tldnShroomieBrain(ptResponder):
         ShroomieTotalTimesSeen = ageSDL["ShroomieTotalTimesSeen"][0]
         ShroomieTimeLastSeen = ageSDL["ShroomieTimeLastSeen"][0]
         
-        print "tldnShroomieBrain: When I got here:"
-        print "\tShroomie has been seen", ShroomieTotalTimesSeen," times."
+        print("tldnShroomieBrain: When I got here:")
+        print("\tShroomie has been seen", ShroomieTotalTimesSeen," times.")
         
         if ShroomieTotalTimesSeen:            
             CurrentTime = PtGetDniTime()            
-            print "\tShroomie was last seen ", (CurrentTime - ShroomieTimeLastSeen)," seconds ago."
+            print("\tShroomie was last seen ", (CurrentTime - ShroomieTimeLastSeen)," seconds ago.")
             
     def OnNotify(self,state,id,events):
         ageSDL = PtGetAgeSDL()
@@ -177,14 +177,14 @@ class tldnShroomieBrain(ptResponder):
         
         ShroomieTimeLastSeen = ageSDL["ShroomieTimeLastSeen"][0]
 
-        print "tldnShroomieBrain: Shroomie was last seen", CurrentTime - ShroomieTimeLastSeen," seconds ago."
+        print("tldnShroomieBrain: Shroomie was last seen", CurrentTime - ShroomieTimeLastSeen," seconds ago.")
 
         if (CurrentTime - ShroomieTimeLastSeen) > 240:
-            print "\tShroomie CAN be seen."
+            print("\tShroomie CAN be seen.")
             return True
             
         else:
-            print "\tShroomie CAN'T be seen."
+            print("\tShroomie CAN'T be seen.")
             return False
             
 
@@ -194,10 +194,10 @@ class tldnShroomieBrain(ptResponder):
         #~ print "randnum = ",randnum,"probability = ", probability*100
         
         if randnum < (probability*100):
-            print "\t Shroomie WILL be seen."
+            print("\t Shroomie WILL be seen.")
             return True
         else:
-            print "\tShroomie WON'T be seen."
+            print("\tShroomie WON'T be seen.")
             
     def ShroomieSurfaces(self,spawn):
         ageSDL = PtGetAgeSDL()
@@ -210,11 +210,11 @@ class tldnShroomieBrain(ptResponder):
             whichbehavior = random.randint(1,4)
             
             if tldnMainPowerOn:
-                print "tldnShroomieBrain: The Power Tower noise has scared Shroomie. He'll come, but not very close."
+                print("tldnShroomieBrain: The Power Tower noise has scared Shroomie. He'll come, but not very close.")
                 NearOrFar = "Far"
                 
             else:                 #Determine how far out Shroomie will be seen. Added 12/12/2004
-                print "tldnShroomieBrain: The Power Tower is down, so Shroomie isn't scared by the noise."
+                print("tldnShroomieBrain: The Power Tower is down, so Shroomie isn't scared by the noise.")
 
                 howclose = random.randint(1,100)
                 if howclose == 1:
@@ -229,7 +229,7 @@ class tldnShroomieBrain(ptResponder):
             whichbehavior = random.randint(2,4)
             NearOrFar = "Far"
             
-        print "tldnShroomieBrain: whichbehavior = ",whichbehavior," NearOrFar = ",NearOrFar
+        print("tldnShroomieBrain: whichbehavior = ",whichbehavior," NearOrFar = ",NearOrFar)
 
 
         whichspawnpoint = random.randint(1,5)
@@ -241,13 +241,13 @@ class tldnShroomieBrain(ptResponder):
             code = "target = SpawnMid0" + str(whichspawnpoint) + ".sceneobject.getKey()"            
         elif NearOrFar == "Far":
             code = "target = SpawnFar0" + str(whichspawnpoint) + ".sceneobject.getKey()"
-        print "target code:", code
-        exec code
+        print("target code:", code)
+        exec(code)
         ShroomieMaster.sceneobject.physics.warpObj(target)
         
         code = "respTrick0" + str(whichbehavior) + ".run(self.key)"
         #~ print "code = ", code
-        exec code
+        exec(code)
 
 
         CurrentTime = PtGetDniTime()
@@ -256,4 +256,4 @@ class tldnShroomieBrain(ptResponder):
         ShroomieTotalTimesSeen = ageSDL["ShroomieTotalTimesSeen"][0]
         ShroomieTotalTimesSeen = ShroomieTotalTimesSeen + 1
         ageSDL["ShroomieTotalTimesSeen"] = (ShroomieTotalTimesSeen,)
-        print "tldnShroomieBrain: Shroomie has been seen", ShroomieTotalTimesSeen,"times."
+        print("tldnShroomieBrain: Shroomie has been seen", ShroomieTotalTimesSeen,"times.")

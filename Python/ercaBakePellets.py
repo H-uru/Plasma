@@ -154,7 +154,7 @@ class ercaBakePellets(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ercaBakePellet.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL"
+            print("ercaBakePellet.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL")
             if self.sceneobject.isLocallyOwned():
                 ageSDL[SDLFinishTime.value] = (0,)
                 ageSDL[SDLPellet1.value] = (0,)
@@ -218,11 +218,11 @@ class ercaBakePellets(ptResponder):
             byteFinishTime = ageSDL[SDLFinishTime.value][0]
             PtDebugPrint("ercaBakePellets:OnSDLNotify:  SDL for ercaBakeFinishTime is now %d" % (byteFinishTime))
             if byteFinishTime == 1:
-                print "ONLY CALL GetRecipe ONCE"
+                print("ONLY CALL GetRecipe ONCE")
                 fastforward = 0
                 self.IGetRecipe(fastforward)
             elif byteFinishTime == 0:
-                print "BYTEFINISHTIME set to O"
+                print("BYTEFINISHTIME set to O")
                 if Oven1On:
                     RespOven1.run(self.key,state="off")
                     Oven1On = 0
@@ -320,16 +320,16 @@ class ercaBakePellets(ptResponder):
         
         ovenStartList = [Oven1Start,Oven2Start,Oven3Start,Oven4Start]
         
-        print "IGetRecipe.Oven1Start = ",Oven1Start
-        print "IGetRecipe.Oven2Start = ",Oven2Start
-        print "IGetRecipe.Oven3Start = ",Oven3Start
-        print "IGetRecipe.Oven4Start = ",Oven4Start
+        print("IGetRecipe.Oven1Start = ",Oven1Start)
+        print("IGetRecipe.Oven2Start = ",Oven2Start)
+        print("IGetRecipe.Oven3Start = ",Oven3Start)
+        print("IGetRecipe.Oven4Start = ",Oven4Start)
         
         self.IUpdateOvens(fastforward)
 
 
     def IUpdateOvens(self,fastforward):
-        print "ercaBakePellets.IUpdateOvens()"
+        print("ercaBakePellets.IUpdateOvens()")
         global ovenStartList
         global Oven1On
         global Oven2On
@@ -344,7 +344,7 @@ class ercaBakePellets(ptResponder):
                     #~ PtDebugPrint("%s start baking." % (start))
             if fastforward == 0:
                 if boolPelletMachine and ((CurTime+7) >= byteFinishTime) and self.sceneobject.isLocallyOwned():
-                    print "7 seconds or less until baking is done, and the machine is open, so CLOSING..."
+                    print("7 seconds or less until baking is done, and the machine is open, so CLOSING...")
                     ageSDL[SDLPellet1.value] = (0,)
                     ageSDL[SDLPellet2.value] = (0,)
                     ageSDL[SDLPellet3.value] = (0,)
@@ -352,36 +352,36 @@ class ercaBakePellets(ptResponder):
                     ageSDL[SDLPellet5.value] = (0,)
                     ageSDL["ercaPelletMachine"] = (0,)
                 if CurTime == Oven1Start:
-                    print "Start Oven1 bake"
+                    print("Start Oven1 bake")
                     RespOven1.run(self.key,state="on",fastforward=fastforward)
                     Oven1On = 1
                 if CurTime == Oven2Start:
-                    print "Start Oven2 bake"
+                    print("Start Oven2 bake")
                     RespOven2.run(self.key,state="on",fastforward=fastforward)
                     Oven2On = 1
                 if CurTime == Oven3Start:
-                    print "Start Oven3 bake"
+                    print("Start Oven3 bake")
                     RespOven3.run(self.key,state="on",fastforward=fastforward)
                     Oven3On = 1
                 if CurTime == Oven4Start:
-                    print "Start Oven4 bake"
+                    print("Start Oven4 bake")
                     RespOven4.run(self.key,state="on",fastforward=fastforward)
                     Oven4On = 1
             else:
                 if CurTime > Oven1Start:
-                    print "Start Oven1 bake"
+                    print("Start Oven1 bake")
                     RespOven1.run(self.key,state="on",fastforward=fastforward)
                     Oven1On = 1
                 if CurTime > Oven2Start:
-                    print "Start Oven2 bake"
+                    print("Start Oven2 bake")
                     RespOven2.run(self.key,state="on",fastforward=fastforward)
                     Oven2On = 1
                 if CurTime > Oven3Start:
-                    print "Start Oven3 bake"
+                    print("Start Oven3 bake")
                     RespOven3.run(self.key,state="on",fastforward=fastforward)
                     Oven3On = 1
                 if CurTime > Oven4Start:
-                    print "Start Oven4 bake"
+                    print("Start Oven4 bake")
                     RespOven4.run(self.key,state="on",fastforward=fastforward)
                     Oven4On = 1
                 
@@ -400,10 +400,10 @@ class ercaBakePellets(ptResponder):
                 fastforward = 0
                 self.IUpdateOvens(fastforward)
             else:
-                print "OnTimer callback, but baking was either finished or cancelled.  Doing nothing."
+                print("OnTimer callback, but baking was either finished or cancelled.  Doing nothing.")
         elif id == 2:
             if self.sceneobject.isLocallyOwned():
-                print "Timer done, Pellets now created with Recipe of: ",Recipe
+                print("Timer done, Pellets now created with Recipe of: ",Recipe)
                 ageSDL[SDLPellet1.value] = (RecipeSDL,)
                 ageSDL[SDLPellet2.value] = (RecipeSDL,)
                 ageSDL[SDLPellet3.value] = (RecipeSDL,)
@@ -413,7 +413,7 @@ class ercaBakePellets(ptResponder):
 
     def IDoFormula(self,backdoor=0):
         if not backdoor:
-            print "Baking done.  IDoFormula called."
+            print("Baking done.  IDoFormula called.")
         global time1
         global time2
         global time3
@@ -524,25 +524,25 @@ class ercaBakePellets(ptResponder):
         z = z1 + z2 + z3 + z4
         
         if backdoor:
-            print "time1_val = ",time1_val
-            print "amt1_val = ",amt1_val
-            print "temp1_val = ",temp1_val,"\n"
-            print "time2_val = ",time2_val
-            print "amt2_val = ",amt2_val
-            print "temp2_val = ",temp2_val,"\n"
-            print "time3_val = ",time3_val
-            print "amt3_val = ",amt3_val
-            print "temp3_val = ",temp3_val,"\n"
-            print "time4_val = ",time4_val
-            print "amt4_val = ",amt4_val
-            print "temp4_val = ",temp4_val,"\n"
-            print "z1 = ",z1
-            print "z2 = ",z2
-            print "z3 = ",z3
-            print "z4 = ",z4
-            print "z = ",z,"\n"
+            print("time1_val = ",time1_val)
+            print("amt1_val = ",amt1_val)
+            print("temp1_val = ",temp1_val,"\n")
+            print("time2_val = ",time2_val)
+            print("amt2_val = ",amt2_val)
+            print("temp2_val = ",temp2_val,"\n")
+            print("time3_val = ",time3_val)
+            print("amt3_val = ",amt3_val)
+            print("temp3_val = ",temp3_val,"\n")
+            print("time4_val = ",time4_val)
+            print("amt4_val = ",amt4_val)
+            print("temp4_val = ",temp4_val,"\n")
+            print("z1 = ",z1)
+            print("z2 = ",z2)
+            print("z3 = ",z3)
+            print("z4 = ",z4)
+            print("z = ",z,"\n")
             recipetest = int(round(100 * z))
-            print "recipe test = ",recipetest
+            print("recipe test = ",recipetest)
             return
 
         Recipe = int(round(100 * z))
@@ -550,14 +550,14 @@ class ercaBakePellets(ptResponder):
 #        if Recipe == 0:
 #            Recipe = 1
             
-        print "Pellet recipe = ",Recipe
+        print("Pellet recipe = ",Recipe)
         
         RecipeSDL = Recipe + 300
         
         if RecipeSDL < 1:
             RecipeSDL = 1
         
-        print "Recipe SDL converted to ",RecipeSDL
+        print("Recipe SDL converted to ",RecipeSDL)
         
         if self.sceneobject.isLocallyOwned():
             ageSDL[SDLFinishTime.value] = (0,)
@@ -592,7 +592,7 @@ class ercaBakePellets(ptResponder):
             temp2 = ageSDL[TempSDLs[1]][0]
             temp3 = ageSDL[TempSDLs[2]][0]
             temp4 = ageSDL[TempSDLs[3]][0]
-            print "RECIPE TEST:\n"
+            print("RECIPE TEST:\n")
             PtDebugPrint("oven1 = %d, %d, %d" % (time1,amt1,temp1))
             PtDebugPrint("oven2 = %d, %d, %d" % (time2,amt2,temp2))
             PtDebugPrint("oven3 = %d, %d, %d" % (time3,amt3,temp3))

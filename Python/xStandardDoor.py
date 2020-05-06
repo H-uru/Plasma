@@ -104,11 +104,11 @@ class xStandardDoor(ptResponder):
         
         version = 6
         self.version = version
-        print "__init__xStandardDoor v.", version
+        print("__init__xStandardDoor v.", version)
         self.DoorStack = []
 
     def OnFirstUpdate(self):
-        print "xStandardDoor: Located in age %s, Max Object %s" % (str(PtGetAgeName()),str(self.sceneobject.getName()))
+        print("xStandardDoor: Located in age %s, Max Object %s" % (str(PtGetAgeName()),str(self.sceneobject.getName())))
         # get the age we started in
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
@@ -266,7 +266,7 @@ class xStandardDoor(ptResponder):
                         OkTags = ["fromOutside", "fromInside", "fromAuto", "fastforward"]
                         if tag in OkTags:
                             self.SendNote('%s;%d;%d;true' % (tag, playerID, fastforward), playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tClosing ', tag 
+                            print('xStandardDoor.OnSDLNotify():\tClosing ', tag) 
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag)) # ok if from vaultmanager
                             fastforward = 1
@@ -277,7 +277,7 @@ class xStandardDoor(ptResponder):
                             else:
                                 PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING: door set to neither manual close nor auto close, can't close")
                     except:
-                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag)
+                        print("xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag))
                     if fastforward: # reenable clickables and xregion state via responder won't happen so do it manually
                         if boolEnableOK:
                             actExterior.enable()
@@ -289,13 +289,13 @@ class xStandardDoor(ptResponder):
                         OkTags = ["fromOutside", "fromInside"]
                         if tag in OkTags:
                             self.SendNote('%s;%d;%d;false' % (tag, playerID, fastforward), playerID)
-                            print 'xStandardDoor.OnSDLNotify():\tOpening ', tag
+                            print('xStandardDoor.OnSDLNotify():\tOpening ', tag)
                         else:
                             PtDebugPrint("xStandardDoor.OnSDLNotify():\tWARNING missing or invalid hint string:%s" % (tag))
                             fastforward = 1
                             respOpenExt.run(self.key,fastforward=fastforward)
                     except:
-                        print "xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag)
+                        print("xStandardDoor.OnSDLNotify():\tERROR processing sdl var %s hint string: %s" % (VARname,tag))
                         fastforward = 1
                         respOpenExt.run(self.key,fastforward=fastforward)
                     if fastforward: # reenable clickables and xregion state via responder won't happen so do it manually
@@ -305,16 +305,16 @@ class xStandardDoor(ptResponder):
                         xrgnDoorBlocker.releaseNow(self.key)                    
 
     def OnNotify(self,state,id,events):
-        print "xStandardDoor: ID notified:", id
+        print("xStandardDoor: ID notified:", id)
         
         if id == -1:
             self.DoorStack.append(events[0][1])
-            print "xStandardDoor: New list is: %s" % (str(self.DoorStack))
+            print("xStandardDoor: New list is: %s" % (str(self.DoorStack)))
 
             if len(self.DoorStack) == 1:
-                print "xStandardDoor: List is only one command long, so I'm playing it"
+                print("xStandardDoor: List is only one command long, so I'm playing it")
                 code = self.DoorStack[0]
-                print "xStandardDoor: Playing command: %s" % (code)
+                print("xStandardDoor: Playing command: %s" % (code))
                 self.ExecCode(code)
                 return
 
@@ -331,7 +331,7 @@ class xStandardDoor(ptResponder):
                 actInterior.enable()
 
     def SendNote(self, ExtraInfo, avatar):
-        print "xStandardDoor: Avatar who did this:", avatar
+        print("xStandardDoor: Avatar who did this:", avatar)
         if avatar == 0:
             notify = ptNotify(self.key)
             notify.clearReceivers()
@@ -355,11 +355,11 @@ class xStandardDoor(ptResponder):
     def UpdateRespStack (self):
         #Updates the Responder List
         old = self.DoorStack.pop(0)
-        print "xStandardDoor: Getting rid of Resp: %s" % (old)
+        print("xStandardDoor: Getting rid of Resp: %s" % (old))
         if len(self.DoorStack):            
-            print "xStandardDoor: There's at lest one more Resp to play."
+            print("xStandardDoor: There's at lest one more Resp to play.")
             code = self.DoorStack[0]            
-            print "Playing command: %s" % (code)
+            print("Playing command: %s" % (code))
             self.ExecCode(code)
 
     def ExecCode (self, code):
@@ -379,7 +379,7 @@ class xStandardDoor(ptResponder):
                 elif tag == "fastforward":
                     respCloseExt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=1,netPropagate=0)
                 else:
-                    print "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
+                    print("xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag))
                     self.DoorStack.pop(0)
             else:
                 if tag == "fromOutside":
@@ -387,8 +387,8 @@ class xStandardDoor(ptResponder):
                 elif tag == "fromInside" or playerId == 0:
                     respOpenInt.run(self.key,avatar=ptSceneobject(PtGetAvatarKeyFromClientID(playerId),self.key),fastforward=fastForward,netPropagate=0)
                 else:
-                    print "xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag)
+                    print("xStandardDoor.ExecCode(): ERROR! Invalid tag '%s'." % (tag))
                     self.DoorStack.pop(0)
         except:
-            print "xStandardDoor.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            print("xStandardDoor.ExecCode(): ERROR! Invalid code '%s'." % (code))
             self.DoorStack.pop(0)

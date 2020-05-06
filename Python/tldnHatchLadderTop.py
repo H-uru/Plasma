@@ -140,15 +140,15 @@ class tldnHatchLadderTop(ptModifier):
         global HatchState
         global cabinDrained
 
-        print " "
-        print "-------------------------------------------------------------------------------------------"
-        print " "
-        print "tldnHatchLadderTop:OnNotify  state=%d id=%d events=" % (state,id),events
+        print(" ")
+        print("-------------------------------------------------------------------------------------------")
+        print(" ")
+        print("tldnHatchLadderTop:OnNotify  state=%d id=%d events=" % (state,id),events)
 
         if id == ActStart.id and state:
             ClimbingAvatar = PtFindAvatar(events)
             if ClimbingAvatar == PtGetLocalAvatar() and PtWasLocallyNotified(self.key):
-                print "Starting climb behavior"
+                print("Starting climb behavior")
                 Climber.run(ClimbingAvatar)
             return
 
@@ -170,35 +170,35 @@ class tldnHatchLadderTop(ptModifier):
                         return
                     if PtFindAvatar(events) == ClimbingAvatar:
                         stageNum = event[1]
-                        print "tldnHatchLadderTop: message from multistage %i" % stageNum
+                        print("tldnHatchLadderTop: message from multistage %i" % stageNum)
                         if event[2] == kRegressPrevStage and (stageNum == 2 or stageNum == 6):
-                            print "tldnHatchLadderTop: Got stage Regress callback from stage %d" % stageNum
+                            print("tldnHatchLadderTop: Got stage Regress callback from stage %d" % stageNum)
                             self.INegotiateHatch()
                         elif event[2] == kAdvanceNextStage:
                             if stageNum == 1:
-                                print "tldnHatchLadderTop: checking drained"
+                                print("tldnHatchLadderTop: checking drained")
                                 if not cabinDrained:
                                     Climber.gotoStage(ClimbingAvatar, 6, 0, 0);                            
-                                    print "tldnHatchLadderTop: water not drained"
+                                    print("tldnHatchLadderTop: water not drained")
                             if stageNum == 4:
                                 if not cabinDrained:
                                     Climber.gotoStage(ClimbingAvatar, 6, dirFlag=1, isForward=1)
                                 else:
                                     Climber.gotoStage(ClimbingAvatar, 2, dirFlag=1, isForward=1)
-                                print "tldnHatchLadderTop: now stage 2/6 again"
+                                print("tldnHatchLadderTop: now stage 2/6 again")
                             elif stageNum == 5:
-                                print "tldnHatchLadderTop: Got through hatch: finishing & removing brain."
+                                print("tldnHatchLadderTop: Got through hatch: finishing & removing brain.")
                                 Climber.gotoStage(ClimbingAvatar, -1)
                                 #ActStart.enable()
                             elif stageNum == 3:
-                                print "tldnHatchLadderTop: done with bottom"
+                                print("tldnHatchLadderTop: done with bottom")
                                 Climber.gotoStage(ClimbingAvatar, -1)
 
     def INegotiateHatch(self):
         global hatchOpen
         global hatchLocked
         
-        print "tldnHatchLadderTop: Negotiating hatch"
+        print("tldnHatchLadderTop: Negotiating hatch")
         if hatchOpen:
             self.IHatchOpen()
         else:
@@ -210,7 +210,7 @@ class tldnHatchLadderTop(ptModifier):
     def IHatchLocked(self):
         global ClimbingAvatar
 
-        print "tldnHatchLadderTop: Hatch is locked; Sending gotoStage(4)"
+        print("tldnHatchLadderTop: Hatch is locked; Sending gotoStage(4)")
         Climber.gotoStage(ClimbingAvatar, 4, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
         respHatchOps.run(self.key,state='lockedbelow')
 
@@ -218,7 +218,7 @@ class tldnHatchLadderTop(ptModifier):
         global ClimbingAvatar
         global hatchOpen
         
-        print "tldnHatchLadderTop: Hatch is unlocked; Sending gotoStage(5)"
+        print("tldnHatchLadderTop: Hatch is unlocked; Sending gotoStage(5)")
         Climber.gotoStage(ClimbingAvatar, 5, dirFlag=1, isForward=1, setTimeFlag=1, newTime=0.0)
         respHatchOps.run(self.key,state='openbelow')        
         hatchOpen = 1
@@ -229,5 +229,5 @@ class tldnHatchLadderTop(ptModifier):
     def IHatchOpen(self):
         global ClimbingAvatar
 
-        print "tldnHatchLadderTop: Hatch is open; Sending gotoStage(1)"
+        print("tldnHatchLadderTop: Hatch is open; Sending gotoStage(1)")
         Climber.gotoStage(ClimbingAvatar, 1, setTimeFlag=1, newTime=1.2)

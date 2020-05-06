@@ -85,7 +85,7 @@ class xFogDistTweener(ptMultiModifier):
         self.id = 5347
         version = 1
         self.version = version
-        print "__init__xFogDistTweener v.", version        
+        print("__init__xFogDistTweener v.", version)        
 
         self.PointA_RGBList = []
         self.PointB_RGBList = []
@@ -102,8 +102,8 @@ class xFogDistTweener(ptMultiModifier):
         self.PointB_RGBList[1] = float(self.PointB_RGBList[1])
         self.PointB_RGBList[2] = float(self.PointB_RGBList[2])
 
-        print "xFogDistTweener.OnFirstUpdate: PointA_RGB=(%s,%s,%s), PointB_RGB=(%s,%s,%s)" % (self.PointA_RGBList[0], self.PointA_RGBList[1], self.PointA_RGBList[2], self.PointB_RGBList[0], self.PointB_RGBList[1], self.PointB_RGBList[2])
-        print "xFogDistTweener.OnFirstUpdate: PointA_SED=(%s,%s,%s), PointB_SED=(%s,%s,%s)" % (PointA_Start.value, PointA_End.value, PointA_Density.value, PointB_Start.value, PointB_End.value, PointB_Density.value)
+        print("xFogDistTweener.OnFirstUpdate: PointA_RGB=(%s,%s,%s), PointB_RGB=(%s,%s,%s)" % (self.PointA_RGBList[0], self.PointA_RGBList[1], self.PointA_RGBList[2], self.PointB_RGBList[0], self.PointB_RGBList[1], self.PointB_RGBList[2]))
+        print("xFogDistTweener.OnFirstUpdate: PointA_SED=(%s,%s,%s), PointB_SED=(%s,%s,%s)" % (PointA_Start.value, PointA_End.value, PointA_Density.value, PointB_Start.value, PointB_End.value, PointB_Density.value))
         
         if not OnlyInRegion.value:
             PtAtTimeCallback(self.key, 0, 1)
@@ -112,17 +112,17 @@ class xFogDistTweener(ptMultiModifier):
     def OnNotify(self,state,id,events):
         global Enabled
 
-        print "xFogDistTweener.OnNotify: state=%s id=%d events=" % (state, id), events
+        print("xFogDistTweener.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == Region.id and OnlyInRegion.value and PtFindAvatar(events) == PtGetLocalAvatar():
-            print "xFogDistTweener.OnNotify: Region with fog settings triggered"
+            print("xFogDistTweener.OnNotify: Region with fog settings triggered")
             if events[0][1] == 1:
-                print "xFogDistTweener.OnNotify: Entered"
+                print("xFogDistTweener.OnNotify: Entered")
                 Enabled = 1
                 PtAtTimeCallback(self.key, 0, 1)
 
             elif events[0][1] == 0:
-                print "xFogDistTweener.OnNotify: Exited"
+                print("xFogDistTweener.OnNotify: Exited")
                 PtClearTimerCallbacks(self.key)
                 Enabled = 0
 
@@ -180,7 +180,7 @@ class xFogDistTweener(ptMultiModifier):
             PtFogSetDefExp2(NewE, NewD)
 
         else:
-            print "xFogDistTweener.UpdateFog: What type of Fog?"
+            print("xFogDistTweener.UpdateFog: What type of Fog?")
 
     ###########################
     def CalculateDistanceBetweenPoints(self):
@@ -214,7 +214,7 @@ class xFogDistTweener(ptMultiModifier):
             Temp_Avatar = ptPoint3(0,0,AvatarPos.getZ())
 
         else:
-            print "xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Dimension Specified!"
+            print("xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Dimension Specified!")
 
 
         if FogStyle.value == "Linear":
@@ -257,7 +257,7 @@ class xFogDistTweener(ptMultiModifier):
             Distance = Temp_A.distance(Temp_Avatar)
 
         else:
-            print "xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Fog Style Specified!"
+            print("xFogDistTweener.CalculateDistanceBetweenPoints: Danger! No Fog Style Specified!")
             Distance = 0
 
         totalDist = Temp_A.distance(Temp_B)

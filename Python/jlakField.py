@@ -197,33 +197,33 @@ class jlakField(ptResponder):
         else:
             boolGUILock = ageSDL[sdlGUILock][0]
 
-        print "jlakField.OnServerInitComplete():  byteStartPt = ",byteStartPt
-        print "jlakField.OnServerInitComplete():  boolWall = ",boolWall
-        print "jlakField.OnServerInitComplete():  byteSphere = ",byteSphere
-        print "jlakField.OnServerInitComplete():  byteLilBox = ",byteLilBox
-        print "jlakField.OnServerInitComplete():  byteBigBox = ",byteBigBox
-        print "jlakField.OnServerInitComplete():  byteRamp = ",byteRamp
-        print "jlakField.OnServerInitComplete():  byteRect = ",byteRect
-        print "jlakField.OnServerInitComplete():  boolGUILock = ",boolGUILock
+        print("jlakField.OnServerInitComplete():  byteStartPt = ",byteStartPt)
+        print("jlakField.OnServerInitComplete():  boolWall = ",boolWall)
+        print("jlakField.OnServerInitComplete():  byteSphere = ",byteSphere)
+        print("jlakField.OnServerInitComplete():  byteLilBox = ",byteLilBox)
+        print("jlakField.OnServerInitComplete():  byteBigBox = ",byteBigBox)
+        print("jlakField.OnServerInitComplete():  byteRamp = ",byteRamp)
+        print("jlakField.OnServerInitComplete():  byteRect = ",byteRect)
+        print("jlakField.OnServerInitComplete():  boolGUILock = ",boolGUILock)
         for sdl in sdlColumns:
             ageSDL.setFlags(sdl,1,1)
             ageSDL.sendToClients(sdl)
             ageSDL.setNotify(self.key,sdl,0.0)
             val = ageSDL[sdl][0]
             byteColumns.append(val)
-        print "jlakField.OnServerInitComplete():  byteColumns = ",byteColumns
+        print("jlakField.OnServerInitComplete():  byteColumns = ",byteColumns)
 
         kZeroed = ptVector3(0,0,0)
         
         for objCol in objColumns.value:
             obj = objCol.getName()
             listObjCols.append(obj)
-        print "listObjCols = ",listObjCols
+        print("listObjCols = ",listObjCols)
 
         if len(clkColumnUp.value) != len(listObjCols):
-            print "error!  not enough up clickables"
+            print("error!  not enough up clickables")
         elif len(clkColumnDn.value) != len(listObjCols):
-            print "error!  not enough down clickables"
+            print("error!  not enough down clickables")
         
         for resp in respSfxColumn.value:
             aResp = resp.getName()
@@ -236,7 +236,7 @@ class jlakField(ptResponder):
         #print "listWarpPlayers = ",listWarpPlayers
 
         if not len(PtGetPlayerList()):
-            print "jlakField.OnServerInitComplete(): on link-in, am only player here.  Will reset player start point"
+            print("jlakField.OnServerInitComplete(): on link-in, am only player here.  Will reset player start point")
             newPoint = byteStartPt
             while newPoint == byteStartPt:
                 newPoint = xRandom.randint(0,len(listWarpPlayers)-1)
@@ -253,14 +253,14 @@ class jlakField(ptResponder):
             if byteRect == len(objRects.value):
                 self.WarpWidgetsHome(4)
         elif len(PtGetPlayerList()) == 1:
-            print "jlakField.OnServerInitComplete(): on link-in, 1 player already here.  Will warp 2 points away (across from previous point)"
+            print("jlakField.OnServerInitComplete(): on link-in, 1 player already here.  Will warp 2 points away (across from previous point)")
             byteStartPt = byteStartPt+2
             if byteStartPt == 4:
                 byteStartPt = 0
             elif byteStartPt >= 5:      # greater than 5 shouldn't be possible, but as a safety...
                 byteStartPt = 1
         else:
-            print "jlakField.OnServerInitComplete(): on link-in, 2 or more players already here.  Will warp to next point"
+            print("jlakField.OnServerInitComplete(): on link-in, 2 or more players already here.  Will warp to next point")
             if byteStartPt == 0:
                 byteStartPt = 2
             elif byteStartPt == 1:
@@ -269,7 +269,7 @@ class jlakField(ptResponder):
                 byteStartPt = 3
             elif byteStartPt == 3:
                 byteStartPt = 1
-        print "jlakField.OnServerInitComplete(): player start point = ",byteStartPt
+        print("jlakField.OnServerInitComplete(): player start point = ",byteStartPt)
         
         onInit = 1
         i = 0
@@ -296,7 +296,7 @@ class jlakField(ptResponder):
             self.DoWallSensors(0)
         
         if PtGetLocalKILevel() < 2:
-            print "jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable"
+            print("jlakField.OnServerInitComplete(): KI level too low, columns will not be clickable")
             for up in clkColumnUp.value:
                 up.disable()
             for dn in clkColumnDn.value:
@@ -319,10 +319,10 @@ class jlakField(ptResponder):
         
         if VARname == sdlStartPt:
             byteStartPt = ageSDL[sdlStartPt][0]
-            print "jlakField.OnSDLNotify(): byteStartPt = ",byteStartPt
+            print("jlakField.OnSDLNotify(): byteStartPt = ",byteStartPt)
         if VARname == sdlWall:
             boolWall = ageSDL[sdlWall][0]
-            print "jlakField.OnSDLNotify(): boolWall = ",boolWall
+            print("jlakField.OnSDLNotify(): boolWall = ",boolWall)
             if boolWall:
                 respWallToggle.run(self.key,state="on",fastforward=0,netPropagate=0)
                 self.DoWallSensors(1)
@@ -342,7 +342,7 @@ class jlakField(ptResponder):
             clkColumnDn.value[id].disable()
             animColumn.byObject[col].playToTime(newPos)
             byteColumns[id] = newPos
-            print "jlakField.OnSDLNotify(): byteColumns[%d] = %d" % (id,newPos)
+            print("jlakField.OnSDLNotify(): byteColumns[%d] = %d" % (id,newPos))
             if newPos > oldPos:
                 dir = "up"
             else:
@@ -352,7 +352,7 @@ class jlakField(ptResponder):
             PtAtTimeCallback(self.key,diffPos,id)
         if VARname == sdlGUILock:
             boolGUILock = ageSDL[sdlGUILock][0]
-            print "jlakField.OnSDLNotify(): boolGUILock = ",boolGUILock
+            print("jlakField.OnSDLNotify(): boolGUILock = ",boolGUILock)
         if VARname == sdlSphere:
             byteSphere = ageSDL[sdlSphere][0]
             if byteSphere == len(objSpheres.value):
@@ -366,8 +366,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                print "jlakField.OnSDLNotify(): dropping: ",widgetName
-            print "jlakField.OnSDLNotify(): byteSphere = ",byteSphere
+                print("jlakField.OnSDLNotify(): dropping: ",widgetName)
+            print("jlakField.OnSDLNotify(): byteSphere = ",byteSphere)
         if VARname == sdlLilBox:
             byteLilBox = ageSDL[sdlLilBox][0]
             if byteLilBox == len(objLilBoxes.value):
@@ -381,8 +381,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                print "jlakField.OnSDLNotify(): dropping: ",widgetName
-            print "jlakField.OnSDLNotify(): byteLilBox = ",byteLilBox
+                print("jlakField.OnSDLNotify(): dropping: ",widgetName)
+            print("jlakField.OnSDLNotify(): byteLilBox = ",byteLilBox)
         if VARname == sdlBigBox:
             byteBigBox = ageSDL[sdlBigBox][0]
             if byteBigBox == len(objBigBoxes.value):
@@ -395,9 +395,9 @@ class jlakField(ptResponder):
                 warpPt = warpWidgets
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
-                print "jlakField.OnSDLNotify(): dropping: ",widgetName
+                print("jlakField.OnSDLNotify(): dropping: ",widgetName)
                 respCreateWidgetSFX.run(self.key)
-            print "jlakField.OnSDLNotify(): byteBigBox = ",byteBigBox
+            print("jlakField.OnSDLNotify(): byteBigBox = ",byteBigBox)
         if VARname == sdlRamp:
             byteRamp = ageSDL[sdlRamp][0]
             if byteRamp == len(objRamps.value):
@@ -411,8 +411,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                print "jlakField.OnSDLNotify(): dropping: ",widgetName                
-            print "jlakField.OnSDLNotify(): byteRamp = ",byteRamp
+                print("jlakField.OnSDLNotify(): dropping: ",widgetName)                
+            print("jlakField.OnSDLNotify(): byteRamp = ",byteRamp)
         if VARname == sdlRect:
             byteRect = ageSDL[sdlRect][0]
             if byteRect == len(objRects.value):
@@ -426,8 +426,8 @@ class jlakField(ptResponder):
                 widget.physics.enable(1)
                 widget.physics.warpObj(warpPt)
                 respCreateWidgetSFX.run(self.key)
-                print "jlakField.OnSDLNotify(): dropping: ",widgetName
-            print "jlakField.OnSDLNotify(): byteRect = ",byteRect
+                print("jlakField.OnSDLNotify(): dropping: ",widgetName)
+            print("jlakField.OnSDLNotify(): byteRect = ",byteRect)
 
 
     def OnNotify(self,state,id,events):
@@ -441,7 +441,7 @@ class jlakField(ptResponder):
                 if event[0] == kPickedEvent:
                     xEvent = event[3]
                     theClk = xEvent.getName()
-                    print "jlakField.OnNotify(): pressed: ",theClk
+                    print("jlakField.OnNotify(): pressed: ",theClk)
                     if id == clkColumnUp.id:
                         direction = 1
                         numClk = string.atoi(theClk[6:])
@@ -466,14 +466,14 @@ class jlakField(ptResponder):
                 if events[0][3] > 0: #We'll only enable bulk SFX if we've got a good reason to!
                     self.bulkMove = 1 #Disable individual Pillar SFX
                     if self.sceneobject.isLocallyOwned() and not boolGUILock:
-                        print "jlakField.OnNotify(): bulk-move requested, will ignore GUI bulk-move buttons until done"
+                        print("jlakField.OnNotify(): bulk-move requested, will ignore GUI bulk-move buttons until done")
                         ageSDL[sdlGUILock] = (1,)
                     respBulkMoveSFX.run(self.key, state='on', netPropagate=0)
                     PtAtTimeCallback(self.key,events[0][3],kSFXCompleteID)
             else:
-                print "incoming event: %s" % (events[0][1])
+                print("incoming event: %s" % (events[0][1]))
                 code = events[0][1]
-                print "playing command: %s" % (code)
+                print("playing command: %s" % (code))
                 self.ExecCode(code)
 
 
@@ -494,7 +494,7 @@ class jlakField(ptResponder):
             if oldPos < kMaxPos:
                 newPos = oldPos + 1
             else:
-                print "but already at max"
+                print("but already at max")
                 return
         else:
             op = "down"
@@ -502,7 +502,7 @@ class jlakField(ptResponder):
             if oldPos > kMinPos:
                 newPos = oldPos - 1
             else:
-                print "but already at min"
+                print("but already at min")
                 return
 
         PendingCol = id
@@ -512,9 +512,9 @@ class jlakField(ptResponder):
 
 
     def AutoColumns(self,mode,preset=None):
-        print "jlakField.AutoColumns(): requested all columns move using mode: ",mode
+        print("jlakField.AutoColumns(): requested all columns move using mode: ",mode)
         if boolGUILock:
-            print "jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!"
+            print("jlakField.AutoColumns():  but a previous move is currently in-progress... so it's DENIED!")
             return
         anythingMoved = 0
         if mode == 0:           #lowest
@@ -534,10 +534,10 @@ class jlakField(ptResponder):
         elif mode == 5:
             # experimental 'preset' mode
             if preset == None:
-                print "no preset, ignoring"
+                print("no preset, ignoring")
                 return
             else:
-                print "running preset..."
+                print("running preset...")
                 pass
 
         #Tye's Note: had to make this code work in two phases for SFX.
@@ -606,7 +606,7 @@ class jlakField(ptResponder):
         col = listObjCols[id]
         #animColumn.byObject[col].speed(spd)    #ensure animation plays at normal speed
         if onInit:
-            print "jlakField.MoveColumn(): on init, fastforwarding column ",id," from position ",oldPos," to ",pos
+            print("jlakField.MoveColumn(): on init, fastforwarding column ",id," from position ",oldPos," to ",pos)
             animColumn.byObject[col].skipToTime(pos)
         else:
             ageSDL[sdlColumns[id]] = (pos,)
@@ -673,7 +673,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpSpheres.value[a].getKey()
                 widget.physics.warpObj(warpPt)
-                print "jlakField.WarpWidgetsHome(): resetting: ",widgetName
+                print("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
                 a += 1
         elif widgetType == 1:
             b = 0
@@ -683,7 +683,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpLilBoxes.value[b].getKey()
                 widget.physics.warpObj(warpPt)
-                print "jlakField.WarpWidgetsHome(): resetting: ",widgetName
+                print("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
                 b += 1
         elif widgetType == 2:
             c = 0
@@ -693,7 +693,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpBigBoxes.value[c].getKey()
                 widget.physics.warpObj(warpPt)
-                print "jlakField.WarpWidgetsHome(): resetting: ",widgetName
+                print("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
                 c += 1
         elif widgetType == 3:
             d = 0
@@ -703,7 +703,7 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpRamps.value[d].getKey()
                 widget.physics.warpObj(warpPt)
-                print "jlakField.WarpWidgetsHome(): resetting: ",widgetName
+                print("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
                 d += 1
         elif widgetType == 4:
             e = 0
@@ -713,12 +713,12 @@ class jlakField(ptResponder):
                 widgetName = widget.getName()
                 warpPt = warpRects.value[e].getKey()
                 widget.physics.warpObj(warpPt)
-                print "jlakField.WarpWidgetsHome(): resetting: ",widgetName
+                print("jlakField.WarpWidgetsHome(): resetting: ",widgetName)
                 e += 1
 
 
     def ToggleWall(self):
-        print "jlakField.ToggleWall()"
+        print("jlakField.ToggleWall()")
         ageSDL = PtGetAgeSDL()
         if boolWall:
             ageSDL[sdlWall] = (0,)
@@ -727,7 +727,7 @@ class jlakField(ptResponder):
 
 
     def DoWallSensors(self,state):
-        print "jlakField.DoWallSensors()"
+        print("jlakField.DoWallSensors()")
         for rgn in rgnWallSensors.value:
             if state:
                 #print "jlakField.DoWallSensors(): ",rgn.getName()," enabled"
@@ -755,7 +755,7 @@ class jlakField(ptResponder):
                 PendingPos = -1
                 PendingDir = ""
             else:
-                print "timer callback to do pending column move, but vars are bad...?"
+                print("timer callback to do pending column move, but vars are bad...?")
         elif id == kEmoteTimerID:
             PtForceCursorShown()
         elif id == kSFXCompleteID:
@@ -765,11 +765,11 @@ class jlakField(ptResponder):
 
     def SaveColumns(self,fName):
         fWrite = file(fName,'w')
-        print "jlakField.SaveColumns(): writing to presets file '%s'" % (fName)
+        print("jlakField.SaveColumns(): writing to presets file '%s'" % (fName))
         i = 0
         for pos in byteColumns:
             fWrite.write(str(pos)+"\n")
-            print "jlakField.SaveColumns():  column: %d at position: %d" % (i,pos)
+            print("jlakField.SaveColumns():  column: %d at position: %d" % (i,pos))
             i += 1
         fWrite.close()
 
@@ -778,7 +778,7 @@ class jlakField(ptResponder):
         try:
             fRead = file(fName,'r')
         except:
-            print "jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName)
+            print("jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName))
             #templist = [PtGetLocalPlayer()]
             #PtSendRTChat(PtGetLocalPlayer(),templist,"doh!",1)
             return
@@ -787,27 +787,27 @@ class jlakField(ptResponder):
         for line in fRead:
             pos = string.atoi(line)
             if pos < 0 or pos > 19:
-                print "jlakField.LoadColumns():  ERROR!  Column %d has an invalid position of %d, must be an integer between 0 and 19.  Load canceled." % (i,pos)
+                print("jlakField.LoadColumns():  ERROR!  Column %d has an invalid position of %d, must be an integer between 0 and 19.  Load canceled." % (i,pos))
                 fRead.close()
                 return
             else:
                 preset.append(pos)
             i += 1
         if len(preset) != 25:
-            print "jlakField.LoadColumns():  ERROR!  File contains %d positions, must contain positions for 25 columns, only.  Load canceled." % (len(preset))
+            print("jlakField.LoadColumns():  ERROR!  File contains %d positions, must contain positions for 25 columns, only.  Load canceled." % (len(preset)))
         else:
-            print "jlakField.LoadColumns(): reading preset file '%s'" % (fName)
-            print "this preset's columns = ",preset
+            print("jlakField.LoadColumns(): reading preset file '%s'" % (fName))
+            print("this preset's columns = ",preset)
             self.AutoColumns(5,preset)    	
         fRead.close()
 
 
     def OnBackdoorMsg(self, target, param):
-        print "jlakField.OnBackdoorMsg()"
+        print("jlakField.OnBackdoorMsg()")
         if target == "height":
             param = string.atoi(param)
             if param < kMinPos or param > kMaxPos:
-                print "invalid height parameter, must be a # between ",kMinPos," and ",kMaxPos
+                print("invalid height parameter, must be a # between ",kMinPos," and ",kMaxPos)
                 return
             newPos = param
             anythingMoved = 0
@@ -824,7 +824,7 @@ class jlakField(ptResponder):
             if param == "widgets":
                 self.ResetWidgets()
             else:
-                print "invalid reset parameter, can only use 'widgets' for now"
+                print("invalid reset parameter, can only use 'widgets' for now")
 
     def ExecCode(self, code):
         try:
@@ -854,11 +854,11 @@ class jlakField(ptResponder):
             elif btnID == kJalakDestroyBtn:
                 self.ResetWidgets()
             else:
-                print "jlakField.ExecCode(): ERROR! Invalid btnID %d." % (btnID)
+                print("jlakField.ExecCode(): ERROR! Invalid btnID %d." % (btnID))
         except:
             cmd = code.split(';',1)
             if len(cmd) != 2:
-                print "jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code)
+                print("jlakField.ExecCode(): ERROR! Malformed Command '%s'." % (code))
                 return
             
             if cmd[0] == "SaveColumns":
@@ -866,7 +866,7 @@ class jlakField(ptResponder):
             elif cmd[0] == "LoadColumns":
                 self.LoadColumns(cmd[1])
             else:
-                print "jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code)
+                print("jlakField.ExecCode(): ERROR! Invalid code '%s'." % (code))
 
 #ColumnPos  AnimStart
 #   19      570

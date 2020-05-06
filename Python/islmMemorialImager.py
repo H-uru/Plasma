@@ -98,7 +98,7 @@ class islmMemorialImager(ptModifier):
         Instance = self
         self.id = 5105
         self.version = 1
-        print "islmMemorialImager: init  version=%d.%d"%(self.version,3)
+        print("islmMemorialImager: init  version=%d.%d"%(self.version,3))
     ############################
     def OnServerInitComplete(self):
         
@@ -347,7 +347,7 @@ class islmMemorialImager(ptModifier):
             i = i - 1
             
             if not len(testmessage):
-                print "islmMemorialImager: Message Length = 0"
+                print("islmMemorialImager: Message Length = 0")
                 kMessage = ""
                 return
             testmessage = testmessage[0:len(testmessage) - 1]

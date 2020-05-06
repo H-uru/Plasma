@@ -101,15 +101,15 @@ class ahnyKadishDoor(ptResponder):
         for button in ActButtons.value:
             tempName = button.getName()
             btnList.append(tempName)
-        print "btnList = ",btnList
+        print("btnList = ",btnList)
         for resp in RespButtons.value:
             tempResp = resp.getName()
             respList.append(tempResp)
-        print "respList = ",respList
+        print("respList = ",respList)
         for obj in ObjButtons.value:
             tempObj = obj.getName()
             objList.append(tempObj)
-        print "objList = ",objList
+        print("objList = ",objList)
 
         PtAtTimeCallback(self.key, 0, 1)
 
@@ -120,7 +120,7 @@ class ahnyKadishDoor(ptResponder):
         if VARname == SDLDoor.value:
             boolDoor = ageSDL[SDLDoor.value][0]
             if boolDoor:
-                print "open too"
+                print("open too")
                 RespDoor.run(self.key,state="open")
             else:
                 RespDoor.run(self.key,state="close")
@@ -134,7 +134,7 @@ class ahnyKadishDoor(ptResponder):
         if id == ActConsole.id and state:
             actingAvatar = PtFindAvatar(events)
             if actingAvatar == PtGetLocalAvatar():
-                print"switch to console close up"
+                print("switch to console close up")
                 ActConsole.disableActivator()
                 PtEnableControlKeyEvents(self.key)
                 MltStgSeek.run(actingAvatar)
@@ -158,7 +158,7 @@ class ahnyKadishDoor(ptResponder):
         if id == ActButtons.id and state:
             i = 0
             for btn in ActButtons.value:
-                print "ahnyKadishDoor.OnNotify: disabling 8 button clickables"
+                print("ahnyKadishDoor.OnNotify: disabling 8 button clickables")
                 ActButtons.value[i].disable()
                 i += 1
             for event in events:
@@ -173,7 +173,7 @@ class ahnyKadishDoor(ptResponder):
                         else:
                             i += 1
                     
-                    print "btnNum =",btnNum+1
+                    print("btnNum =",btnNum+1)
                     RespButtons.run(self.key,objectName=respList[btnNum])
         
         if id == RespButtons.id and actingAvatar == PtGetLocalAvatar():
@@ -181,7 +181,7 @@ class ahnyKadishDoor(ptResponder):
 
 
     def ICheckButtons(self):
-        print "ahnyKadishDoor.ICheckButtons"
+        print("ahnyKadishDoor.ICheckButtons")
         global currentList
         
         ageSDL = PtGetAgeSDL()
@@ -191,11 +191,11 @@ class ahnyKadishDoor(ptResponder):
         while len(currentList) > len(solutionList):
             del currentList[0]
         
-        print "solution list: " + str(solutionList)
-        print "current list: " + str(currentList)
+        print("solution list: " + str(solutionList))
+        print("current list: " + str(currentList))
         
         if self.AreListsEquiv(solutionList, currentList):
-            print "Open!"
+            print("Open!")
             self.IExitConsole()
             ageSDL[SDLDoor.value] = (1,)
             #RespDoor.run(self.key,state="open")
@@ -237,7 +237,7 @@ class ahnyKadishDoor(ptResponder):
 
 
     def IExitConsole(self):
-        print "disengage and exit the console"
+        print("disengage and exit the console")
         i = 0
         for btn in ActButtons.value:
             #print "ahnyKadishDoor.IExitConsole: disabling 8 button clickables"
@@ -266,7 +266,7 @@ class ahnyKadishDoor(ptResponder):
             try:
                 ageSDL = PtGetAgeSDL()
             except:
-                print "ahnyKadishDoor.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL"
+                print("ahnyKadishDoor.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
                 ageSDL[SDLDoor.value] = (0,)
             boolDoor = ageSDL[SDLDoor.value][0]
             if boolDoor:
@@ -277,12 +277,12 @@ class ahnyKadishDoor(ptResponder):
         elif id == 2:
             i = 0
             for btn in ActButtons.value:
-                print "ahnyKadishDoor.onTimer: reenabling 8 button clickables"
+                print("ahnyKadishDoor.onTimer: reenabling 8 button clickables")
                 ActButtons.value[i].enable()
                 i += 1
         
         elif id == 3:
-            print "ahnyKadishDoor.onTimer: reenabling the console's clickable"
+            print("ahnyKadishDoor.onTimer: reenabling the console's clickable")
             ActConsole.enableActivator()
 
 

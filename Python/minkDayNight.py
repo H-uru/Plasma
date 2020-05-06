@@ -67,7 +67,7 @@ class minkDayNight(ptResponder):
         self.id = 5258
         version = 1
         self.version = version
-        print "__init__minkDayNight v.", version,".0"
+        print("__init__minkDayNight v.", version,".0")
 
     ###########################
     def OnServerInitComplete(self):
@@ -76,7 +76,7 @@ class minkDayNight(ptResponder):
             ageSDL = PtGetAgeSDL()
             ageSDL["minkIsDayTime"][0]
         except:
-            print "minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL"
+            print("minkDayNight.OnServerInitComplete(): ERROR --- Cannot find Minkata age SDL")
             ageSDL["minkIsDayTime"] = (1,)
 
         ageSDL.setFlags("minkIsDayTime", 1, 1)
@@ -87,19 +87,19 @@ class minkDayNight(ptResponder):
             ageSDL["minkIsDayTime"] = (1,)
 
         if ageSDL["minkIsDayTime"][0]:
-            print "minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page"
+            print("minkDayNight.OnServerInitComplete(): It's Day Time, Loading Day Page")
             PtPageInNode("minkExteriorDay")
         else:
-            print "minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page"
+            print("minkDayNight.OnServerInitComplete(): It's Night Time, Loading Night Page")
             PtPageInNode("minkExteriorNight")
         
     ###########################
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
-        print "minkDayNight.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID)
+        print("minkDayNight.OnSDLNotify(): VARname:%s, SDLname:%s, tag:%s, value:%s, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID))
 
         if VARname == "minkIsDayTime" and not HackIt:
-            print "minkDayNight.OnSDLNotify(): SDL Updated, Fading Screen"
+            print("minkDayNight.OnSDLNotify(): SDL Updated, Fading Screen")
             PtDisableMovementKeys()
             PtSendKIMessage(kDisableKIandBB,0)
             PtFadeOut(1.5, 1)
@@ -111,14 +111,14 @@ class minkDayNight(ptResponder):
         if id == 1:
             ageSDL = PtGetAgeSDL()
             if ageSDL["minkIsDayTime"][0]:
-                print "minkDayNight.OnTimer(): Paging in Day Page"
+                print("minkDayNight.OnTimer(): Paging in Day Page")
                 PtPageInNode("minkExteriorDay")
             else:
-                print "minkDayNight.OnTimer(): Paging in Night Page"
+                print("minkDayNight.OnTimer(): Paging in Night Page")
                 PtPageInNode("minkExteriorNight")
 
         elif id == 2:
-            print "minkDayNight.OnTimer(): Finished faux link, Re-enable controls"
+            print("minkDayNight.OnTimer(): Finished faux link, Re-enable controls")
             PtEnableMovementKeys()
             PtSendKIMessage(kEnableKIandBB,0)
 
@@ -136,19 +136,19 @@ class minkDayNight(ptResponder):
                 if HackIt:
                     HackIt = 0
                     return
-                print "minkDayNight.OnPageLoad(): Day Page loaded, unloading Night"
+                print("minkDayNight.OnPageLoad(): Day Page loaded, unloading Night")
                 PtPageOutNode("minkExteriorNight")
             elif who in {u"Minkata_District_minkExteriorNight", u"Minkata_minkExteriorNight"}:
                 if HackIt:
                     HackIt = 0
                     return
-                print "minkDayNight.OnPageLoad(): Night Page loaded, unloading Day"
+                print("minkDayNight.OnPageLoad(): Night Page loaded, unloading Day")
                 PtPageOutNode("minkExteriorDay")
                 
         elif what == kUnloaded:
             if who in {u"Minkata_District_minkExteriorDay", u"Minkata_District_minkExteriorNight",
                        u"Minkata_minkExteriorDay", u"Minkata_minkExteriorNight"}:
-                print "minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in"
+                print("minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in")
                 PtFadeIn(1.5, 1)
                 respExcludeRegion.run(self.key, state="Release")
                 PtAtTimeCallback(self.key, 2, 2)

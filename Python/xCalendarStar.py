@@ -129,21 +129,21 @@ class xCalendarStar(ptResponder):
             PtDebugPrint("DEBUG: xCalendarStar.OnNotify():\t local player requesting %s change via %s" % (sdlCalStar.value,rgnCalStar.value[0].getName()) )
 
         if not self.GotPage():
-            print "xCalendarStar.OnNotify(): do NOT have YeeshaPage20 (the Calendar Pinnacle) yet"
+            print("xCalendarStar.OnNotify(): do NOT have YeeshaPage20 (the Calendar Pinnacle) yet")
             return            
         else:
-            print "xCalendarStar.OnNotify():  have YeeshaPage20 (the Calendar Pinnacle)"
+            print("xCalendarStar.OnNotify():  have YeeshaPage20 (the Calendar Pinnacle)")
 
             if AgeStartedIn == PtGetAgeName():
                 psnlSDL = xPsnlVaultSDL()
             if not boolCalStar:
-                print "xCalendarStar.OnNotify(): getting star's stone: ",sdlCalStar.value
+                print("xCalendarStar.OnNotify(): getting star's stone: ",sdlCalStar.value)
                 psnlSDL[sdlCalStar.value] = (1,)
                 respCalStar.run(self.key)
                 boolCalStar = 1
                 PtSendKIMessageInt(kStartBookAlert,0)
             else:
-                print "xCalendarStar.OnNotify(): already have the stone: ",sdlCalStar.value
+                print("xCalendarStar.OnNotify(): already have the stone: ",sdlCalStar.value)
 
 
     def GotPage(self):
@@ -154,7 +154,7 @@ class xCalendarStar(ptResponder):
             ypageSDL = psnlSDL.findVar("YeeshaPage20")
             if ypageSDL:
                 size, state = divmod(ypageSDL.getInt(), 10)
-                print "YeeshaPage20 = ",state
+                print("YeeshaPage20 = ",state)
                 if state:
                     return 1
         return 0

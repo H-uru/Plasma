@@ -115,7 +115,7 @@ class kdshShadowPath(ptResponder):
 
         version = 10
         self.version = version
-        print "__init__kdshShadowPath v.", version,".2"
+        print("__init__kdshShadowPath v.", version,".2")
         
 
     def OnServerInitComplete(self):
@@ -149,31 +149,31 @@ class kdshShadowPath(ptResponder):
 
 
 
-        print "kdshShadowPath: When I got here:"
+        print("kdshShadowPath: When I got here:")
         # initialize pillar whatnots based on SDL state
         
         for light in [1,2,3,4,5]:
             
             lightstate = ageSDL["ShadowPathLight0" + str(light)][0]  
-            print "\t ShadowPathLight0%s = %s " % (light, lightstate)
+            print("\t ShadowPathLight0%s = %s " % (light, lightstate))
             
             if lightstate == 1:
                 
                 code = "respSwitch0" + str(light) + ".run(self.key,fastforward=1)"
-                exec code
+                exec(code)
                
-                print "\t\tTurning on light #", light
+                print("\t\tTurning on light #", light)
         
         solved = ageSDL["ShadowPathSolved"][0]
         if solved:
-            print "\tThe Shadow Path was already solved. Revealing stairs."
+            print("\tThe Shadow Path was already solved. Revealing stairs.")
             RevealStairs.run(self.key,fastforward=1)
                 
 
     def Load(self):
         count = 1
         while count < 5:
-            print "kdshShadowPath.Load(): ageSDL[ShadowPathLight0",count,"]=%d" % (ageSDL["ShadowPathLight0" + str(count)][0])
+            print("kdshShadowPath.Load(): ageSDL[ShadowPathLight0",count,"]=%d" % (ageSDL["ShadowPathLight0" + str(count)][0]))
             count = count + 1
 
     def OnNotify(self,state,id,events):
@@ -185,24 +185,24 @@ class kdshShadowPath(ptResponder):
         global gameStarted
         ageSDL = PtGetAgeSDL()
 
-        print "kdshShadowPath:OnNotify  state=%f id=%d events=" % (state,id),events
+        print("kdshShadowPath:OnNotify  state=%f id=%d events=" % (state,id),events)
 
 
         if id == FloorZone.id:
             if events[0][1] == 1:
-                print "kdshShadowPath.OnNotify: More than one person on the floor!"
+                print("kdshShadowPath.OnNotify: More than one person on the floor!")
                 regZoneStart.disable()
                 gameStarted = 0
             elif events[0][1] == 0:
-                print "kdshShadowPath.OnNotify: Only one person on the floor!"
+                print("kdshShadowPath.OnNotify: Only one person on the floor!")
                 regZoneStart.enable()
 
         elif id == regZoneReset.id:
             if events[0][1] == 1:
-                print "kdshShadowPath.OnNotify: Someone in the stairwell, reset disabled."
+                print("kdshShadowPath.OnNotify: Someone in the stairwell, reset disabled.")
                 actResetBtn.disable()
             elif events[0][1] == 0:
-                print "kdshShadowPath.OnNotify: No one's in the stairwell, reset enabled."
+                print("kdshShadowPath.OnNotify: No one's in the stairwell, reset enabled.")
                 actResetBtn.enable()
 
         elif id in [1,2,3,4,5]: #true if one of the five switches clicked
@@ -214,9 +214,9 @@ class kdshShadowPath(ptResponder):
                 lightClickedByAvatar = None
                 return
 
-            print "Light ", id, " clicked."
+            print("Light ", id, " clicked.")
             code = 'respBtnPush0' + str(id) + '.run(self.key,events=events)'
-            exec code
+            exec(code)
 
         elif id in [26,27,28,29,30]: 
             if lightClickedByAvatar != localAvatar:  #Make sure we don't have any rogue avatars reporting...
@@ -225,7 +225,7 @@ class kdshShadowPath(ptResponder):
 
             lightClickedByAvatar = None  #Reset avatar reporting
 
-            print "Light ", id-25, " actually touched by avatar."
+            print("Light ", id-25, " actually touched by avatar.")
             oldstate = ageSDL["ShadowPathLight0" + str(id-25)][0] 
             newstate = abs(oldstate-1) # toggle value of switch state
             ageSDL["ShadowPathLight0" + str(id-25)] = (newstate, ) # write new state value to SDL            
@@ -233,21 +233,21 @@ class kdshShadowPath(ptResponder):
 
         elif id in [regZone01.id,regZone02.id,regZone03.id,regZone04.id,regZone05.id,regZone06.id,regZone07.id,regZone08.id,regZone09.id]:
             if gameStarted:
-                print "Triggered Bad Region!"
+                print("Triggered Bad Region!")
                 gameStarted = 0
 
         elif id == regZoneStart.id:
-            print "Triggered Start Region!"
+            print("Triggered Start Region!")
             gameStarted = 1
 
         elif id == regZoneFinish.id:
             if gameStarted:
                 gameStarted = 0
-                print "kdshShadowPath: Puzzle solved."
+                print("kdshShadowPath: Puzzle solved.")
                 ageSDL["ShadowPathSolved"] = (1, ) # write new state value to SDL     
 
         elif state and id == actResetBtn.id:
-            print "kdshShadowPath Reset Button clicked."
+            print("kdshShadowPath Reset Button clicked.")
             resetBtnByAvatar = PtFindAvatar(events)
             respResetBtn.run(self.key,events=events)
             
@@ -256,7 +256,7 @@ class kdshShadowPath(ptResponder):
                 resetBtnByAvatar = None
                 return
 
-            print "kdshShadowPath Reset Button Pushed. Puzzle resetting."
+            print("kdshShadowPath Reset Button Pushed. Puzzle resetting.")
             resetBtnByAvatar = None
             
             #turn off the lights
@@ -264,10 +264,10 @@ class kdshShadowPath(ptResponder):
                 lightstate = ageSDL["ShadowPathLight0" + str(light)][0]  
                 if lightstate == 1:
                     code = 'ageSDL["ShadowPathLight0' + str(light) + '"] = (0,)'
-                    print "resetcode = ", code
-                    exec code
+                    print("resetcode = ", code)
+                    exec(code)
                         
-                    print "\tTurning off light #", light
+                    print("\tTurning off light #", light)
                     
             #...and close the floor
             ageSDL["ShadowPathSolved"] = (0,)
@@ -278,10 +278,10 @@ class kdshShadowPath(ptResponder):
         
         if VARname == "ShadowPathSolved":
             if ageSDL["ShadowPathSolved"][0] == 1:
-                print "kdshShadowPath: Opening floor"
+                print("kdshShadowPath: Opening floor")
                 RevealStairs.run(self.key)
             else:
-                print "kdshShadowPath: Closing floor"
+                print("kdshShadowPath: Closing floor")
                 ConcealStairs.run(self.key)
                 
         elif VARname[:15] == "ShadowPathLight":
@@ -292,19 +292,19 @@ class kdshShadowPath(ptResponder):
             newstate = ageSDL["ShadowPathLight0" + str(light)][0] 
 
             if newstate == 0: # true if that switch is now off
-                print "kdshShadowPath.OnSDLNotify: Light", light," was on. Turning it off."
+                print("kdshShadowPath.OnSDLNotify: Light", light," was on. Turning it off.")
                 code = "respSwitch0" + str(light) + ".run(self.key, state='off')"
                 #~ print "off code = ", code
-                exec code
+                exec(code)
                 
             elif newstate == 1: # true if that switch is now on
-                print "kdshShadowPath.OnSDLNotify: Light", light," was off. Turning it on."
+                print("kdshShadowPath.OnSDLNotify: Light", light," was off. Turning it on.")
                 code = "respSwitch0" + str(light) + ".run(self.key, state='on')"
                 #~ print "On code = ", code
-                exec code
+                exec(code)
 
             else: 
-                print "Error. Not sure what the light thought it was."
+                print("Error. Not sure what the light thought it was.")
 
 '''
     def BatonPassCheck(self,id,events,ageSDL):

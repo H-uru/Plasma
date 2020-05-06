@@ -51,7 +51,7 @@ import xLocTools
 from xPsnlVaultSDL import *
 
 # xKI sub-modules.
-from xKIConstants import *
+from .xKIConstants import *
 
 
 ## Helper class for autocompletion in the KI.

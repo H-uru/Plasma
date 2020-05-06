@@ -67,7 +67,7 @@ class islmRandomBahroScream(ptModifier):
         self.id = 5320
         
         self.version = 2
-        print "__init__islmRandomBahroScream v.", self.version
+        print("__init__islmRandomBahroScream v.", self.version)
 
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -89,12 +89,12 @@ class islmRandomBahroScream(ptModifier):
             try:
                 chanceval = ageSDL[ScreamChanceVar][0]
                 cur_chance = xRandom.randint(0, 100)
-                print "RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance)
+                print("RandomBahroScream: Chance val - %d, Cur Chance - %d" % (chanceval, cur_chance))
                 if cur_chance <= chanceval:
                     # turn on
-                    print "RandomBahroScream: turning on"
+                    print("RandomBahroScream: turning on")
                     respScream.run(self.key)
             except:
-                print "RandomBahroScream: could not find SDL for %s in %s" % (ScreamChanceVar,AgeStartedIn)
+                print("RandomBahroScream: could not find SDL for %s in %s" % (ScreamChanceVar,AgeStartedIn))
             PtAtTimeCallback(self.key, 600, TimerID.TurnOn)
         

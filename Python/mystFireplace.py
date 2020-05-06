@@ -105,7 +105,7 @@ class mystFireplace(ptModifier):
         self.id = 5335
 
         self.version = 3
-        print "__init__MystFireplace v.", self.version
+        print("__init__MystFireplace v.", self.version)
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -144,7 +144,7 @@ class mystFireplace(ptModifier):
     def OnNotify(self,state,id,events):
         global IgnorePanelClick
         
-        print "onnotify: id -", id
+        print("onnotify: id -", id)
 
         if id == actButton.id and state:
             #actPanelButtons.disable()
@@ -282,7 +282,7 @@ class mystFireplace(ptModifier):
                     bstate = "press"
                     CheckedButtons.append(id)
 
-                print panelName, bstate
+                print(panelName, bstate)
 
                 for rkey,rvalue in respMorphButtons.byObject.viewitems():
                     parent = rvalue.getParentKey()
@@ -378,8 +378,8 @@ class mystFireplace(ptModifier):
         CheckedButtons.sort()
         solution.sort()
 
-        print "CheckedButtons:", CheckedButtons
-        print "solution      :", solution
+        print("CheckedButtons:", CheckedButtons)
+        print("solution      :", solution)
 
         return CheckedButtons == solution
 

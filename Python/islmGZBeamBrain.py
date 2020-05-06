@@ -71,7 +71,7 @@ class islmGZBeamBrain(ptResponder):
 
         version = 2
         self.version = version
-        print "__init__islmGZBeamBrain v.", version,".3"
+        print("__init__islmGZBeamBrain v.", version,".3")
 
 
     def OnServerInitComplete(self):
@@ -84,25 +84,25 @@ class islmGZBeamBrain(ptResponder):
             ageSDL.setNotify(self.key,"islmGZBeamVis",0.0)
             boolGZBeamVis = ageSDL["islmGZBeamVis"][0]
         except:
-            print "islmGZBeamBrain.OnServerInitComplete:  ERROR!  Can't find the boolGZBeamVis sdl, doing nothing."
+            print("islmGZBeamBrain.OnServerInitComplete:  ERROR!  Can't find the boolGZBeamVis sdl, doing nothing.")
             return
 
         if boolGZBeamVis:
-            print "islmGZBeamBrain.OnServerInitComplete: The Great Zero beam IS active."
+            print("islmGZBeamBrain.OnServerInitComplete: The Great Zero beam IS active.")
             self.TurnBeamOn()
         else:
-            print "islmGZBeamBrain.OnServerInitComplete: The Great Zero beam is NOT active."
+            print("islmGZBeamBrain.OnServerInitComplete: The Great Zero beam is NOT active.")
             self.TurnBeamOff()
 
     
     def TurnBeamOn(self):
-        print "islmGZBeamBrain.RotateBeam: Trying to turn the beam ON."
+        print("islmGZBeamBrain.RotateBeam: Trying to turn the beam ON.")
         Beamlight.sceneobject.draw.enable()
         respRotateBeam.run(self.key)
 
 
     def TurnBeamOff(self):
-        print "islmGZBeamBrain.RotateBeam: Trying to turn the beam OFF."
+        print("islmGZBeamBrain.RotateBeam: Trying to turn the beam OFF.")
         Beamlight.sceneobject.draw.disable()
         #~ respRotateBeam.animation.stop()
 
@@ -123,7 +123,7 @@ class islmGZBeamBrain(ptResponder):
             
                     
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
-        print "islmGZBeamBrain.OnSDLNotify(): VARname = ", VARname
+        print("islmGZBeamBrain.OnSDLNotify(): VARname = ", VARname)
         global boolGZBeamVis
 
         if VARname == "islmGZBeamVis":

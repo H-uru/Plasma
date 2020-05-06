@@ -134,15 +134,15 @@ class tldnHatchLadderBottom(ptModifier):
                 if PtFindAvatar(events) == LocalAvatar:
                     if event[2] == kAdvanceNextStage:
                         stageNum = event[1]
-                        print "Got stage advance callback from stage %d" % stageNum
+                        print("Got stage advance callback from stage %d" % stageNum)
                         if stageNum == 1:
-                            print "In stage 2, negotiating hatch."
+                            print("In stage 2, negotiating hatch.")
                             self.INegotiateHatch();
                         elif stageNum == 2:
                             # after the "it's locked" anim, return to the climb...
                             Climber.gotoStage(LocalAvatar, 1,0,0)
                         elif stageNum == 2 or stageNum == 3 or stageNum == 5:
-                            print "Got through hatch: finishing & removing brain."
+                            print("Got through hatch: finishing & removing brain.")
                             Climber.gotoStage(LocalAvatar, -1)
     
     def INegotiateHatch(self):
@@ -150,7 +150,7 @@ class tldnHatchLadderBottom(ptModifier):
         global hatchOpen
         global hatchLocked
         
-        print "Negotiating hatch"
+        print("Negotiating hatch")
         if hatchOpen:
             self.IHatchOpen()
         else:
@@ -162,14 +162,14 @@ class tldnHatchLadderBottom(ptModifier):
     def IHatchLocked(self):
         "Hatch is locked; show the frustrated animation and return to previous stage"
         global LocalAvatar
-        print "Hatch is locked; Sending gotoStage(2)"
+        print("Hatch is locked; Sending gotoStage(2)")
         respHatchOps.run(self.key,state='lockedbelow')
         Climber.gotoStage(LocalAvatar,2,0,1)
 
     def IHatchUnlocked(self):
         "Hatch is unlocked; open it and pass through."
         global LocalAvatar
-        print "Hatch is unlocked; Sending gotoStage(3)"
+        print("Hatch is unlocked; Sending gotoStage(3)")
         respHatchOps.run(self.key,state='openbelow')
         Climber.gotoStage(LocalAvatar,3,0,0)
         hatchOpen = 1
@@ -180,5 +180,5 @@ class tldnHatchLadderBottom(ptModifier):
     def IHatchOpen(self):
         "Hatch is open; just climb through."
         global LocalAvatar
-        print "Hatch is open; Sending gotoStage(4)"
+        print("Hatch is open; Sending gotoStage(4)")
         Climber.gotoStage(LocalAvatar,4,0,0)

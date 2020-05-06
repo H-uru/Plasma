@@ -75,11 +75,11 @@ class xStateToggler(ptResponder):
     # hack - remove when clickable state manipulation via responder is persistentified
     def Load(self):
         if self.SDL["enabled"][0]:
-            print "LOAD: enabling clickables"
+            print("LOAD: enabling clickables")
             actClick1.enable()
             actClick2.enable()
         else:
-            print "LOAD: disabling clickables"
+            print("LOAD: disabling clickables")
             actClick1.disable()
             actClick2.disable()
 
@@ -109,14 +109,14 @@ class xStateToggler(ptResponder):
             return
             
         if varState:
-            print "xStateToggler:%s running state true responder" % stringName.value
+            print("xStateToggler:%s running state true responder" % stringName.value)
             respTrue.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.enable()
             actClick2.enable()
             self.SDL["enabled"]=(1,)
         else:
-            print "xStateToggler:%s running state false responder" % stringName.value
+            print("xStateToggler:%s running state false responder" % stringName.value)
             respFalse.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.disable()

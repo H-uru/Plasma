@@ -87,7 +87,7 @@ class xDialogToggle(ptModifier):
         
         version = 1
         self.version = version
-        print "__init__xDialogToggle v.", version
+        print("__init__xDialogToggle v.", version)
     
     def IGetAgeFilename(self):
         "returns the .age file name of the age"
@@ -137,7 +137,7 @@ class xDialogToggle(ptModifier):
         PtLoadDialog(Vignette.value,self.key,self.IGetAgeFilename())
         if ( PtIsDialogLoaded(Vignette.value) ):
             PtShowDialog(Vignette.value)
-            print "dialog: %s goes up" % Vignette.value
+            print("dialog: %s goes up" % Vignette.value)
         # get control key events
         PtGetControlEvents(True,self.key)
 
@@ -147,9 +147,9 @@ class xDialogToggle(ptModifier):
         # exit every thing
         if Vignette.value:
             PtHideDialog(Vignette.value)
-            print "Dialog: %s goes down" % Vignette.value
+            print("Dialog: %s goes down" % Vignette.value)
         else:
-            print "WTH!!!"
+            print("WTH!!!")
         #disable the Control key events
         PtGetControlEvents(False,self.key)
         # re-enable the dialog for someone else to use

@@ -62,7 +62,7 @@ class stupStartUp(ptResponder):
         ptResponder.__init__(self)
         self.id = 5339
         self.version = 1
-        print "stupStartUp: init  version = %d" % self.version
+        print("stupStartUp: init  version = %d" % self.version)
 
     ###########################
     def OnFirstUpdate(self):

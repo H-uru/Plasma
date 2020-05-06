@@ -78,7 +78,7 @@ class clftYeeshaPageImager(ptModifier):
         
         version = 5
         self.version = version
-        print "__init__clftYeeshaPageImager v.", version
+        print("__init__clftYeeshaPageImager v.", version)
         self.ImagerUsable = 1
         random.seed()
 
@@ -103,7 +103,7 @@ class clftYeeshaPageImager(ptModifier):
             ageSDL = PtGetAgeSDL()
             ageSDL.setNotify(self.key,"clftYeeshaPage08Vis",0.0)
             self.ImagerUsable = ageSDL["clftYeeshaPage08Vis"][0]
-            print "ServerInitComplete: ImagerUsable: %d" % self.ImagerUsable
+            print("ServerInitComplete: ImagerUsable: %d" % self.ImagerUsable)
 
             ageSDL.setNotify(self.key, "clftAgeSDLWindmillRunning", 0.0)
 
@@ -130,7 +130,7 @@ class clftYeeshaPageImager(ptModifier):
 
 
     def OnSDLNotify(self,VARname,SDLname,PlayerID,tag):
-        print "clftYeeshaPageImager.OnSDLNotify():  var = ",VARname
+        print("clftYeeshaPageImager.OnSDLNotify():  var = ",VARname)
         global inTomahna
         
         if AgeStartedIn == PtGetAgeName():
@@ -159,13 +159,13 @@ class clftYeeshaPageImager(ptModifier):
         if not state:
             return
 
-        print "clftYeeshaPageImager.OnNotify()"
-        print "ImagerUsable: %d" % self.ImagerUsable
+        print("clftYeeshaPageImager.OnNotify()")
+        print("ImagerUsable: %d" % self.ImagerUsable)
         
         for event in events:
             #~ print "YP events: ", event
             if event[0]==2 and event[1]==1 and id == ActImager.id: # play avatar oneshot, regardless of whether button is going on or off
-                print "clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ", PlayFull
+                print("clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ", PlayFull)
                 if PtWasLocallyNotified(self.key):
                     #AvatarOneshot.run(self.key,events=events)
                     AvatarOneshot.run(self.key,avatar=PtGetLocalAvatar())
@@ -173,7 +173,7 @@ class clftYeeshaPageImager(ptModifier):
             elif event[0]==8 and event[1]==1: # A "Notify triggerer" command was received from one of several responders. The id distinguishes which it is
                 if not self.ImagerUsable:
                     # imager not usable and event is something other than the oneshot
-                    print "clftYeeshaPageImager.OnNotify(): imager should be not working right now"
+                    print("clftYeeshaPageImager.OnNotify(): imager should be not working right now")
                     ActImager.enable()
                     return
 
@@ -202,7 +202,7 @@ class clftYeeshaPageImager(ptModifier):
         global visionplaying
         global PlayFull
         
-        print "clftYeeshaPageImager: Turning on YP Imager"
+        print("clftYeeshaPageImager: Turning on YP Imager")
 
         # disable imager clickable so it can't be turned off while opening
         ActImager.disable()
@@ -216,7 +216,7 @@ class clftYeeshaPageImager(ptModifier):
         
     def CloseImager(self,ff=0):
         global visionplaying
-        print "clftYeeshaPageImager: Turning off YP Imager"
+        print("clftYeeshaPageImager: Turning off YP Imager")
 
         # disable imager clickable so it can't be turned off while closing
         ActImager.disable()

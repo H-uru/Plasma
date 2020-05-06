@@ -69,7 +69,7 @@ class grsnNexusBookMachine(ptResponder):
 
     def __init__(self):
         ptResponder.__init__(self)
-        print"book machine init"
+        print("book machine init")
         self.id = 53624
         self.version = 2
 
@@ -98,7 +98,7 @@ class grsnNexusBookMachine(ptResponder):
         global waitingOnYBook 
         global yellowLink
         
-        print"id ",id
+        print("id ",id)
         
         avatar=PtFindAvatar(events)
         local = PtGetLocalAvatar()
@@ -107,10 +107,10 @@ class grsnNexusBookMachine(ptResponder):
             return
         
         if (id == fakeLinkBehavior.id):
-            print"notified of link behavior, yellow book ",yellowLink
+            print("notified of link behavior, yellow book ",yellowLink)
             for event in events:
                 if (event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage):
-                    print"started touching book, set warp out timer"
+                    print("started touching book, set warp out timer")
                     PtAtTimeCallback(self.key ,1.0 ,0)
                     return
         
@@ -118,22 +118,22 @@ class grsnNexusBookMachine(ptResponder):
             return
 
         if (id == bookPurpleInPos.id):
-            print"Purple book aligned"
+            print("Purple book aligned")
             bookPurpleOutResponder.run(self.key)
             
         if (id == bookYellowInPos.id):
-            print"Yellow book aligned"
+            print("Yellow book aligned")
             bookYellowOutResponder.run(self.key)
             
         if (id == entryTrigger.id):
             PtWearMaintainerSuit(avatar.getKey(),False)
             
         if (id == bookPurpleClickable.id):
-            print"touched purple team room book"
+            print("touched purple team room book")
             yellowLink = False           
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
             
         if (id == bookYellowClickable.id):
-            print"touched yellow team room book"
+            print("touched yellow team room book")
             yellowLink = True
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)

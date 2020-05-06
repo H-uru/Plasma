@@ -222,7 +222,7 @@ class clftGetPersonalBook(ptResponder):
                 # just continue processing
             except:
                 PtDebugPrint("xLiveTrailer - no intro movie!!!",level=kDebugDumpLevel)
-                print "Quitting demo now..."
+                print("Quitting demo now...")
                 PtConsole("App.Quit")
             PtDebugPrint("xLiveTrailer - start showing movie",level=kDebugDumpLevel)
             PtShowDialog("IntroBahroBgGUI")
@@ -248,7 +248,7 @@ class clftGetPersonalBook(ptResponder):
             if gDemoMovie is not None:
                 gDemoMovie.resume()
         elif id == kTrailerDoneID:
-            print "Quitting demo now..."
+            print("Quitting demo now...")
             PtConsole("App.Quit")
 
     def OnMovieEvent(self,movieName,reason):

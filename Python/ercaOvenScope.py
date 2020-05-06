@@ -432,8 +432,8 @@ class ercaOvenScope(ptModifier):
                 PtDebugPrint("ercaOvenScope:OnGUINotify:  SDL %s is %d" % (amountSDL,byteAmount))
                 PtDebugPrint("ercaOvenScope:OnGUINotify:  SDL %s is %d" % (tempSDL,byteTemp))
                 if IsBaking != 0:
-                    print "OnGUINotfiy.ShowHide: will now set timerWheel to: ",byteTime
-                    print "OInGUINotfiy.ShowHide: will now set tempWheel to: ",byteTemp
+                    print("OnGUINotfiy.ShowHide: will now set timerWheel to: ",byteTime)
+                    print("OInGUINotfiy.ShowHide: will now set tempWheel to: ",byteTemp)
                     if setTempWheel:
                         tempWheel.setValue(byteTemp)
                     self.IDoTimerWheel()
@@ -626,7 +626,7 @@ class ercaOvenScope(ptModifier):
 
 
     def IDoTimerWheel(self):
-        print "in IDoTimerWheel."
+        print("in IDoTimerWheel.")
         global byteTime
         global IsBaking
         global timerWheel
@@ -637,7 +637,7 @@ class ercaOvenScope(ptModifier):
         
         if not IsBaking:
             return
-        print "ercaOvenScope:IDoTimerWheel: IsBaking is true"
+        print("ercaOvenScope:IDoTimerWheel: IsBaking is true")
         StartTime = (IsBaking - (byteTime * kTimeScale))
         FinishTime = IsBaking
         CurTime = PtGetDniTime()
@@ -652,7 +652,7 @@ class ercaOvenScope(ptModifier):
             if PreHeat < CurTime:
                 #print "PostHeat = ",PostHeat
                 if PostHeat < CurTime:
-                    print "setTempWheel =",setTempWheel
+                    print("setTempWheel =",setTempWheel)
                     if not setTempWheel:
                         tempWheel.setValue(byteTemp)
                         setTempWheel = 1
@@ -660,8 +660,8 @@ class ercaOvenScope(ptModifier):
                     if not setTempWheel:
                         tempPercent = byteTemp * .01
                         tempWheel.animateToPercent(tempPercent)
-                        print "animating Temp Wheel, byteTemp = ",byteTemp
-                        print "animating Temp Wheel, tempPercent = ",tempPercent
+                        print("animating Temp Wheel, byteTemp = ",byteTemp)
+                        print("animating Temp Wheel, tempPercent = ",tempPercent)
                         setTempWheel = 1
             #print "StartTime = ",StartTime
             if StartTime < CurTime:

@@ -265,14 +265,14 @@ class ercaBakeryElev(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         if (id == ActElevBtn.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActElevBtn callback"
+            print("ActElevBtn callback")
             ageSDL[SDLElevBusy.value] = (1,)
 
         if (id == RespElevClk.id):
-            print "RespElevClk callback"
+            print("RespElevClk callback")
             if boolElevPos:
                 if self.sceneobject.isLocallyOwned():
-                    print "owner"
+                    print("owner")
                     ageSDL[SDLElevPos.value] = (0,)
                 else:
                     pass
@@ -282,13 +282,13 @@ class ercaBakeryElev(ptResponder):
                     RespElevOps.run(self.key,state="jam")
                 else:
                     if self.sceneobject.isLocallyOwned():
-                        print "owner"
+                        print("owner")
                         ageSDL[SDLElevPos.value] = (1,)
 
         if (id == RespElevOps.id):
-            print "RespElevOps callback"
+            print("RespElevOps callback")
             if self.sceneobject.isLocallyOwned():
-                print "owner"
+                print("owner")
                 ageSDL[SDLElevBusy.value] = (0,)
             if boolPwr:
                 RespElevPwr.run(self.key,state="on")
@@ -304,10 +304,10 @@ class ercaBakeryElev(ptResponder):
                 RespBkryPwrOn.run(self.key,avatar=objAvatar)
         
         if (id == RespBkryPwrOff.id) and self.sceneobject.isLocallyOwned():
-            print "owner"
+            print("owner")
             ageSDL[SDLPower.value] = (0,)
         
         if (id == RespBkryPwrOn.id) and self.sceneobject.isLocallyOwned():
-            print "owner"    
+            print("owner")    
             ageSDL[SDLPower.value] = (1,)
 

@@ -141,14 +141,14 @@ class kdshPillarRoom(ptResponder):
         
         version = 19
         self.version = version 
-        print "__init__kdshPillarRoom v.", version,".1"
+        print("__init__kdshPillarRoom v.", version,".1")
 
     def OnServerInitComplete(self):
         global PillarRoomSolvedCheck
 
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            print "kdshPillarRoom.OnFirstUpdate():\tERROR---missing SDL (%s)" 
+            print("kdshPillarRoom.OnFirstUpdate():\tERROR---missing SDL (%s)") 
             return
             
         ageSDL.sendToClients("pheight01")
@@ -180,13 +180,13 @@ class kdshPillarRoom(ptResponder):
         ageSDL.setNotify(self.key,"PillarRoomSolved",0.0)
         ageSDL.setNotify(self.key,"PillarsResetting",0.0)
         
-        print "kdshPillarRoom: When I got here:"
+        print("kdshPillarRoom: When I got here:")
         # initialize pillar whatnots based on SDL state
         pillar = 1
         for pillar in [1,2,3,4]:
             
             currentheight = ageSDL["pheight0" + str(pillar)][0]  
-            print "\t pheight0%s = %s " % (pillar, currentheight)
+            print("\t pheight0%s = %s " % (pillar, currentheight))
             
             if currentheight > 0:
                 
@@ -196,14 +196,14 @@ class kdshPillarRoom(ptResponder):
                 #~ print "\t\tUpdating ladderboxes because of pillar #", pillar, " initial state"
                 self.EnableAppropriateLadders(pillar)
 
-        print "\t budget = ", ageSDL["budget"][0]
+        print("\t budget = ", ageSDL["budget"][0])
         CounterAnim.animation.skipToTime((8 - ageSDL["budget"][0]) * 10)
         if ageSDL["pheight01"][0] == 1 and ageSDL["pheight02"][0] == 4 and ageSDL["pheight03"][0] == 1 and ageSDL["pheight04"][0] == 2 and ageSDL["PillarRoomSolved"][0] != 1: # true if puzzle correct
             #hopefully, this will make sure that the solution is set to solved in case they weren't
             PillarRoomSolvedCheck = 1
             ageSDL["PillarRoomSolved"] = (1,)
 
-        print "\t PillarRoomSolved = ", ageSDL["PillarRoomSolved"][0]
+        print("\t PillarRoomSolved = ", ageSDL["PillarRoomSolved"][0])
         if ageSDL["PillarRoomSolved"][0] == 1:
             SolutionResp.run(self.key, fastforward=1)
 
@@ -220,21 +220,21 @@ class kdshPillarRoom(ptResponder):
 
         if id in [1,2,3,4,5]: # One of the four levers or the reset ring were clicked by a player
             code = "respLever0" + str(id) + ".run(self.key, events=events)"
-            exec code
+            exec(code)
             return
 
         elif id in [6,7,8,9] and OnlyOneOwner.sceneobject.isLocallyOwned(): # One of the four levers actually pulled by an avatar
             if Resetting:
-                print "Lever pull ignored because the puzzle is still resetting."
+                print("Lever pull ignored because the puzzle is still resetting.")
                 return
             
             if (self.PillarIsSafeToMove(id)): #check to see if a climber is in the way of this pillar being rased
                 
                 if ageSDL["budget"][0] == 0: # true if 8 "raises" have already happened
-                    print "Counterweight expired.\n"
+                    print("Counterweight expired.\n")
     
                 elif ageSDL["pheight0" + str(id-5)][0] == 4: # True if that particular pillar has already been raised 4 times
-                    print "Pillar0%d is already at maximum height." % (id-5)
+                    print("Pillar0%d is already at maximum height." % (id-5))
     
                 else:                 
                     newheight = ageSDL["pheight0" + str(id-5)][0] + 1
@@ -243,7 +243,7 @@ class kdshPillarRoom(ptResponder):
     
                     newbudget = ageSDL["budget"][0] - 1
                     ageSDL["budget"] = (newbudget, )
-                    print "%d pulls left" % (newbudget)
+                    print("%d pulls left" % (newbudget))
             else:
                 RedLight.run(self.key)
             return
@@ -256,7 +256,7 @@ class kdshPillarRoom(ptResponder):
                 return
             
             if PullsInProgress > 0:
-                print "Can't reset now. PullsInProgress = ", PullsInProgress
+                print("Can't reset now. PullsInProgress = ", PullsInProgress)
                 return
             
             safetoreset = True
@@ -265,11 +265,11 @@ class kdshPillarRoom(ptResponder):
                 if (self.PillarIsSafeToMove(pillarcheck)):
                     pass
                 else:
-                    print "kdshPillar.OnNotify: A reset button was pushed, but Pillar", pillarcheck-4, "can't reset now."
+                    print("kdshPillar.OnNotify: A reset button was pushed, but Pillar", pillarcheck-4, "can't reset now.")
                     safetoreset = False
                     
             if safetoreset:
-                print "kdshShadowPath Reset Button Pushed."
+                print("kdshShadowPath Reset Button Pushed.")
                 self.ResetPuzzle()
             return
 
@@ -277,30 +277,30 @@ class kdshPillarRoom(ptResponder):
             return
 
         elif id >= 18 and id <=28 and PtWasLocallyNotified(self.key):
-            print "Ladderbox %s entered." % ( id- 17)
+            print("Ladderbox %s entered." % ( id- 17))
             
             LocalAvatar = PtFindAvatar(events)
 
             code = "MultiStage" + str(id-17) + ".run(LocalAvatar)"
             #~ print "code = ", code
-            exec code 
+            exec(code) 
             
             return
         
         elif id == SolutionLadderBtm.id and PtWasLocallyNotified(self.key):
-            print "Solution Ladder mounted from bottom."
+            print("Solution Ladder mounted from bottom.")
             LocalAvatar = PtFindAvatar(events)
             MultiSolutionBtm.run(LocalAvatar)
             return
             
         elif id == SolutionLadderTop.id and PtWasLocallyNotified(self.key):
-            print "Solution Ladder mounted from top."            
+            print("Solution Ladder mounted from top.")            
             LocalAvatar = PtFindAvatar(events)            
             MultiSolutionTop.run(LocalAvatar)
             return
 
         elif id == actResetBtn.id:
-            print "kdshPillarRoom Reset Button clicked."
+            print("kdshPillarRoom Reset Button clicked.")
             LocalAvatar = PtFindAvatar(events)
             respResetBtn.run(self.key,events=events)
             return
@@ -338,14 +338,14 @@ class kdshPillarRoom(ptResponder):
         
         elif VARname == "PillarsResetting":
             Resetting = ageSDL["PillarsResetting"][0]
-            print "kdshPillarRoom.OnSDLNotify: Resetting =",Resetting
+            print("kdshPillarRoom.OnSDLNotify: Resetting =",Resetting)
             
             if Resetting:
                 
                 #this loop disables all ladder boxes, so the ladders can't be climbed.                
                 for count in range(1,12): 
                     code = "Ladderbox" + str(count) + ".disable()"
-                    exec code
+                    exec(code)
                     
                 #determine the height of the highest pillar so we can reset them at the same speed as the pillars reset
                 highest = 0
@@ -355,13 +355,13 @@ class kdshPillarRoom(ptResponder):
                     sumofpulls=sumofpulls + thisheight
                     if thisheight > highest:
                         highest = thisheight
-                print "The highest pillar when you reset was ", highest," notches high."
+                print("The highest pillar when you reset was ", highest," notches high.")
                 
                 if highest != 0:
                     PtAtTimeCallback(self.key,5*highest,6) #disable everything until all the pillars are down
         
                     code = "respSfxResetFromHeight" + str(highest) + ".run(self.key)"
-                    exec code
+                    exec(code)
 
                 # if the counterweights have been lowered at all, this loop resets them
                 if ageSDL["budget"][0] != 8: 
@@ -388,7 +388,7 @@ class kdshPillarRoom(ptResponder):
                         
                         
                     ageSDL["pheight0" + str(count)] = (0,)                
-                    print "Pillar0%d height is now: %d" % (count, ageSDL["pheight0" +str(count)][0])                
+                    print("Pillar0%d height is now: %d" % (count, ageSDL["pheight0" +str(count)][0]))                
      
                     
             return
@@ -415,13 +415,13 @@ class kdshPillarRoom(ptResponder):
             ageSDL["PillarsOccupied"] = (0,)
             ageSDL["PillarsResetting"] = (0,)
         else:
-            print "kdshPillar.Load: I'm not alone in Kadish. Leaving Ladder SDLs as they previously were."
+            print("kdshPillar.Load: I'm not alone in Kadish. Leaving Ladder SDLs as they previously were.")
 
     def PillarIsSafeToMove(self,id):
         ageSDL = PtGetAgeSDL() 
 
         if ageSDL["PillarsOccupied"][0]:
-            print "PillarIsSafeToMove: Can't do that now. Someone is on a pillar."
+            print("PillarIsSafeToMove: Can't do that now. Someone is on a pillar.")
             return False
         else:
             #~ print "PillarIsSafeToMove: Pillar",id-5,"is OK to move now."
@@ -441,10 +441,10 @@ class kdshPillarRoom(ptResponder):
         
         #play the sound effect for that pillar
         code = "respSfxRaisePillar0" + str(id) + ".run(self.key)"
-        exec code
+        exec(code)
         
-        print "\n##"
-        print "Pillar0%d height is now: %d" % (id, ageSDL["pheight0" + str(id)][0])
+        print("\n##")
+        print("Pillar0%d height is now: %d" % (id, ageSDL["pheight0" + str(id)][0]))
 
     def LowerCounterweight(self):
         global PullsInProgress
@@ -464,15 +464,15 @@ class kdshPillarRoom(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         if ageSDL["pheight01"][0] == 1 and ageSDL["pheight02"][0] == 4 and ageSDL["pheight03"][0] == 1 and ageSDL["pheight04"][0] == 2: # true if puzzle correct
-            print "kdshPillarRoom: Puzzle solved. \n"
+            print("kdshPillarRoom: Puzzle solved. \n")
             PtAtTimeCallback(self.key,10,5)  # 10 second delay before lowering solution rings
 
             #run the solution cam, but only for the person who pulled the final lever
             avatar = PtGetLocalAvatar()   
             myID = PtGetClientIDFromAvatarKey(avatar.getKey())
-            print "kdshPillarRoom.CheckSolution: pullerID=", pullerID,"myID=",myID
+            print("kdshPillarRoom.CheckSolution: pullerID=", pullerID,"myID=",myID)
             if myID == pullerID:
-                print "\tI pulled the final lever. Playing solution cam."
+                print("\tI pulled the final lever. Playing solution cam.")
                 
                 # Disable First Person Camera
                 cam = ptCamera()
@@ -482,20 +482,20 @@ class kdshPillarRoom(ptResponder):
                 respSolutionCam.run(self.key)
                 
             else:
-                print "\tI did not pull the final lever."
+                print("\tI did not pull the final lever.")
  
             
     def ResetPuzzle(self):
         ageSDL = PtGetAgeSDL()
         budget = ageSDL["budget"][0]
-        print "kdshPillarRoom.ResetPuzzle: budget = ", budget
+        print("kdshPillarRoom.ResetPuzzle: budget = ", budget)
         if budget != 8:
             
             ageSDL["PillarsResetting"] = (1,)
             ageSDL["PillarRoomSolved"] = (0,)
-            print "\tAt least one pillar has been raised. Resetting Pillar puzzle"
+            print("\tAt least one pillar has been raised. Resetting Pillar puzzle")
         else: 
-            print "Each of the four pillars was already down. Won't reset."
+            print("Each of the four pillars was already down. Won't reset.")
             return
 
     def OnTimer(self,id):
@@ -533,7 +533,7 @@ class kdshPillarRoom(ptResponder):
 
         for each in ladderstodisable:
             code = "Ladderbox" +str(each) + ".disable()"
-            exec code
+            exec(code)
             #~ print "Immediately disabling ladderbox", each
 
     def EnableAppropriateLadders(self,id): # when pillar is done raising, enable appropriate ladder boxes with new lengths
@@ -551,45 +551,45 @@ class kdshPillarRoom(ptResponder):
                     #~ print "Ascending Ladder box #%d is now disabled, since the ladder doesn't reach down that far" % (id * 2 - 1)
                     # do something to ladder box (id * 2 - 1)
                     code = "Ladderbox" + str(id * 2 - 1) + ".disable()"
-                    exec code                    
+                    exec(code)                    
                     
                     #~ print "Descending Ladder box #%d is now enabled, but only to %d rungs, and then you hang." % (id + 7, (6*(5-id) - 4)) # 
                     # do something to ladder box (id * 2)
                     code = "Ladderbox" + str(id * 2) + ".disable()"
-                    exec code                    
+                    exec(code)                    
                     #do something to ladderbox (id + 7)
                     code = "Ladderbox" + str(id + 7) + ".enable()"
-                    exec code                    
+                    exec(code)                    
                     
                 else: # Now progression from the previous pillar can happen
                     #~ print "Ascending Ladder box #%d enabled with %d rungs." % (id * 2 - 1, 6 * difference01 - 4)
                     # do something to ladder box (id * 2 - 1)
                     code = "Ladderbox" + str(id * 2 - 1) + ".enable()"
-                    exec code
+                    exec(code)
                     code = "MultiStage" + str(id * 2 - 1) + ".setLoopCount(1," + str( 6 * difference01 - 4) + ")"
-                    exec code
+                    exec(code)
 
 
 
                     #~ print "Descending Ladder box #%d enabled with %d rungs." % (id * 2, 6 * difference01 - 4)
                     # do something to ladder box (id * 2)
                     code = "Ladderbox" + str(id * 2) + ".enable()"
-                    exec code
+                    exec(code)
                     code = "MultiStage" + str(id * 2) + ".setLoopCount(1," + str(6 * difference01 - 4) + ")"
-                    exec code
+                    exec(code)
                     
                     #disable the "hang" ladder box
                     code = "Ladderbox" + str(id + 7) + ".disable()"
-                    exec code
+                    exec(code)
 
                     
                     
             else:
                 #~ print "\nPillar0%d is level with or below the proceeding pillar." % (id)
                 code = "Ladderbox" + str(id * 2 - 1) + ".disable()"
-                exec code
+                exec(code)
                 code = "Ladderbox" + str(id * 2) + ".disable()"
-                exec code
+                exec(code)
                 
 
         else: # special condition for pillar01
@@ -621,15 +621,15 @@ class kdshPillarRoom(ptResponder):
                     #~ print "Ascending Ladder box #%d is now disabled, since the ladder doesn't reach down that far" % (id * 2 + 1)
                     #do something to ladder box (id * 2 + 1)
                     code = "Ladderbox" + str(id * 2 + 1) + ".disable()"
-                    exec code
+                    exec(code)
                     
                     #~ print "Descending Ladder box #%d is enabled, but only down %d rungs, and then you hang." % (id + 8, (6 *(4-id) - 4)) # "4 - id" here same as "(5 - (id+1))"
                     # do something to ladder box (id * 2 + 2)
                     code = "Ladderbox" + str(id * 2 + 2) + ".disable()"
-                    exec code
+                    exec(code)
                     #do something to ladderbox (id + 8)
                     code = "Ladderbox" + str(id + 8) + ".enable()"
-                    exec code                    
+                    exec(code)                    
 
 
                     
@@ -637,21 +637,21 @@ class kdshPillarRoom(ptResponder):
                     #~ print "Ascending Ladder box #%d enabled with %d rungs." % (id * 2 + 1, 6 * difference02 - 4)
                     # do something to ladder box (id * 2 + 1)
                     code = "Ladderbox" + str(id * 2 + 1) + ".enable()"
-                    exec code
+                    exec(code)
                     code = "MultiStage" + str(id * 2 + 1) + ".setLoopCount(1," + str( 6 * difference02 - 4) + ")"
-                    exec code                    
+                    exec(code)                    
                     
                     
                     #~ print "Descending Ladder box #%d enabled with %d rungs." % (id * 2 + 2, 6 * difference02 -4)
                     # do something to ladder box (id * 2 + 2)
                     code = "Ladderbox" + str(id * 2 + 2) + ".enable()"
-                    exec code
+                    exec(code)
                     code = "MultiStage" + str(id * 2 + 2) + ".setLoopCount(1," + str(6 * difference02 - 4) + ")"
-                    exec code
+                    exec(code)
                     
                     #disable the "hang" ladder box
                     code = "Ladderbox" + str(id + 8) + ".disable()"
-                    exec code
+                    exec(code)
 
             else:
                 #~ print "\nPillar0%d is level with or above the following pillar" % (id)
@@ -659,4 +659,4 @@ class kdshPillarRoom(ptResponder):
                 
         else: #special condition for pillar04
             if ageSDL["pheight04"][0] == 4:
-                print "Pillar04 has reached the red herring door"
+                print("Pillar04 has reached the red herring door")

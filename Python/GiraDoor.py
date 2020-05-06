@@ -82,10 +82,10 @@ class GiraDoor(ptResponder):
             doorOpen = True
         
         if (doorOpen):
-            print"gira door open"
+            print("gira door open")
             doorOpenInitResp.run(self.key,avatar = PtGetLocalAvatar())
         else:
-            print"gira door closed"
+            print("gira door closed")
             
     #def OnSDLNotify(self,VARname,SDLname,playerID,tag):
     def OnNotify(self, state, id, events):

@@ -73,7 +73,7 @@ class xPoweredStarTrekDoor(ptModifier):
         
         version = 1
         self.version = version
-        print "__init__xPoweredStarTrekDoor v.", version
+        print("__init__xPoweredStarTrekDoor v.", version)
 
     def OnServerInitComplete(self):
         if self.SDL == None:
@@ -86,12 +86,12 @@ class xPoweredStarTrekDoor(ptModifier):
         global doorCued
         global doorMoving
         global doorState
-        print "DoorMoving = ", doorMoving
+        print("DoorMoving = ", doorMoving)
         
         if state and id==actPower.id:
-            print "message from GearActivated"
+            print("message from GearActivated")
             for event in events:
-                print event
+                print(event)
                 if event[0] == 4:
                     if event[3] == 1: # power on
                         self.SDL["haspower"] = (1,)
@@ -100,7 +100,7 @@ class xPoweredStarTrekDoor(ptModifier):
                     self.SDL["haspower"] = (0,)
                 
                 else: #unexpected value 
-                    print "xPoweredStarTrekDoor.OnNotify:\t'%s' ERROR---got bogus msg - power = %d" % (Activate.value,self.SDL["enabled"][0])
+                    print("xPoweredStarTrekDoor.OnNotify:\t'%s' ERROR---got bogus msg - power = %d" % (Activate.value,self.SDL["enabled"][0]))
                     return
                     
 #                print "xPoweredStarTrekDoor.OnNotify:\t'%s' got msg - power = %d" % (actPower.value,self.SDL["enabled"][0])
@@ -121,13 +121,13 @@ class xPoweredStarTrekDoor(ptModifier):
             
             if not doorMoving:
                 self.doorAction()
-                print "door played"
+                print("door played")
             else: # got a command, but door is busy so cue it
                 doorCued=1
-                print "door cued"
+                print("door cued")
         elif state and id == respDoor.id:
             # Callback from door finishing movement
-            print "callbackfromdoor"
+            print("callbackfromdoor")
             doorMoving=0
             if doorCued:
                 doorCued=0
@@ -140,7 +140,7 @@ class xPoweredStarTrekDoor(ptModifier):
             doorMoving=1
             doorHistory=doorState
             respDoor.run(self.key,state=doorState)
-            print "Door Begin %s" % doorState
+            print("Door Begin %s" % doorState)
 
 
 

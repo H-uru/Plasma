@@ -111,7 +111,7 @@ class xYeeshaPages(ptModifier):
         self.id = 5225
         version = 6
         self.version = version
-        print "__init__xYeeshaPages v.", version
+        print("__init__xYeeshaPages v.", version)
 
 
     def OnFirstUpdate(self):
@@ -153,7 +153,7 @@ class xYeeshaPages(ptModifier):
             btnID = control.getTagID()
 
         if event == 2 and btnID in YeeshaPageIDList:
-            print "xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value
+            print("xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value)
 #            PtUnloadDialog(DialogName)
             PtHideDialog(DialogName)
             
@@ -280,7 +280,7 @@ class xYeeshaPages(ptModifier):
 
 
         else:
-            print "xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ",PageNumber.value
+            print("xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ",PageNumber.value)
         return
 
 #

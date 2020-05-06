@@ -113,7 +113,7 @@ class tldnPwrTwrPeriscope(ptResponder):
         self.id = 5003
         version = 4
         self.version = version
-        print "tldnPwrTwrPerscope v.",version,".3"
+        print("tldnPwrTwrPerscope v.",version,".3")
 
     def OnFirstUpdate(self):
         global AgeStartedIn

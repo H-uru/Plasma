@@ -76,9 +76,9 @@ class grsnPageMaster(ptResponder):
     
         if parentname == "Neighborhood":
             IsPublic = 1
-            print "grsnPageMaster.__init__(): Garrison version = public"
+            print("grsnPageMaster.__init__(): Garrison version = public")
         else:
-            print "grsnPageMaster.__init__(): Garrison version = Yeesha"
+            print("grsnPageMaster.__init__(): Garrison version = Yeesha")
 
         pages = []
 

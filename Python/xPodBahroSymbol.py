@@ -83,7 +83,7 @@ class xPodBahroSymbol(ptResponder):
         self.id = 5240
         version = 1
         self.version = version
-        print "__init__xPodBahroSymbol v.", version,".0"
+        print("__init__xPodBahroSymbol v.", version,".0")
         random.seed()
 
     ###########################
@@ -93,21 +93,21 @@ class xPodBahroSymbol(ptResponder):
 
         if animMasterDayLight.value is not None:        
             timeIntoMasterAnim = PtGetAgeTimeOfDayPercent() * (DayFrameSize.value / 30.0)
-            print "xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed" % (timeIntoMasterAnim, kDayAnimationSpeed)
+            print("xPodBahroSymbol.OnServerInitComplete: Master anim is skipping to %f seconds and playing at %f speed" % (timeIntoMasterAnim, kDayAnimationSpeed))
             animMasterDayLight.animation.skipToTime(timeIntoMasterAnim)
             animMasterDayLight.animation.speed(kDayAnimationSpeed)
             animMasterDayLight.animation.resume()
 
     ###########################
     def OnNotify(self,state,id,events):
-        print "xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state,id),events
+        print("xPodBahroSymbol.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
         if id == respBahroSymbol.id:
             PtAtTimeCallback(self.key, 32, 3)
 
     ###########################
     def OnTimer(self,TimerID):
-        print "xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID)
+        print("xPodBahroSymbol.OnTimer: callback id=%d" % (TimerID))
         if self.sceneobject.isLocallyOwned():
             if TimerID == 1:
                 respBahroSymbol.run(self.key, state="beginning")
@@ -126,20 +126,20 @@ class xPodBahroSymbol(ptResponder):
         if timeWhenSymbolAppearsToday > PtGetDniTime():
             timeTillSymbolAppears = timeWhenSymbolAppearsToday - PtGetDniTime()
             PtAtTimeCallback(self.key, timeTillSymbolAppears, 1)
-            print "xGlobalDoor.key: %d%s" % (random.randint(0,100), hex(int(timeTillSymbolAppears + 1234)))
+            print("xGlobalDoor.key: %d%s" % (random.randint(0,100), hex(int(timeTillSymbolAppears + 1234))))
         else:
-            print "xPodBahroSymbol: You missed the symbol for today."
+            print("xPodBahroSymbol: You missed the symbol for today.")
 
         timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         timeLeftToday += 1 # because we want it to go off right AFTER the day flips
         PtAtTimeCallback(self.key, timeLeftToday, 2)
-        print "xPodBahroSymbol: Tomorrow starts in %d seconds" % (timeLeftToday)
+        print("xPodBahroSymbol: Tomorrow starts in %d seconds" % (timeLeftToday))
 
     ###########################
     def OnBackdoorMsg(self, target, param):
         if target == "bahro":
             if self.sceneobject.isLocallyOwned():
-                print "xPodBahroSymbol.OnBackdoorMsg: Work!"
+                print("xPodBahroSymbol.OnBackdoorMsg: Work!")
                 if param == "appear":
                     PtAtTimeCallback(self.key, 1, 1)
 

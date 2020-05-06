@@ -67,7 +67,7 @@ class tldnShooterTrap(ptResponder):
         
         version = 2
         self.version = version
-        print "__init__tldnShooterTrap v.", version
+        print("__init__tldnShooterTrap v.", version)
         
     def OnNotify(self,state,id,events):
         if state:

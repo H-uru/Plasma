@@ -67,7 +67,7 @@ class ahnySaveCloth(ptModifier):
         ptModifier.__init__(self)
         self.id = 5424
         self.version = 1
-        print "DEBUG: ahnySaveCloth.__init__: v.", self.version
+        print("DEBUG: ahnySaveCloth.__init__: v.", self.version)
 
     def OnFirstUpdate(self):
         global sdlSC
@@ -112,17 +112,17 @@ class ahnySaveCloth(ptModifier):
 
             if spTitle == "SCSavePoint":
                 if spName == "SaveClothPoint7" or spName == "SaveClothPoint8":
-                    print "linking to hub or hut"
+                    print("linking to hub or hut")
                     whereAmI = 4
                 else:
                     offset = str(ageSDL["ahnyCurrentOffset"][0])
-                    print "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
+                    print("Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset))
                     whereAmI = (int(sphere) - int(offset)) % 4
                     if whereAmI == 0:
                         whereAmI = 4
             else:
                 whereAmI = sphere
-            print "ahnySaveCloth.OnServerInitComplete(): I am age owner in %d" % (whereAmI)
+            print("ahnySaveCloth.OnServerInitComplete(): I am age owner in %d" % (whereAmI))
 
         # SaveCloth SDL stuff, for use with POTS symbols
         sdlSC = "ahnyGotSaveCloth" + clothID.value
@@ -132,9 +132,9 @@ class ahnySaveCloth(ptModifier):
             ageSDL.sendToClients(sdlSC)
             ageSDL.setNotify(self.key,sdlSC,0.0)
             gotSC = ageSDL[sdlSC][0]
-            print "ahnySaveCloth.OnServerInitComplete():\t found sdl: ",sdlSC,", which = ",gotSC
+            print("ahnySaveCloth.OnServerInitComplete():\t found sdl: ",sdlSC,", which = ",gotSC)
         except:
-            print "ERROR.  Couldn't find sdl: ",sdlSC,", defaulting to 0"
+            print("ERROR.  Couldn't find sdl: ",sdlSC,", defaulting to 0")
 
         ageSDL.setFlags("ahnyCurrentSphere",1,1)
         ageSDL.sendToClients("ahnyCurrentSphere")
@@ -159,7 +159,7 @@ class ahnySaveCloth(ptModifier):
         global whereAmI
         global link
 
-        print "DEBUG: ahnySaveCloth::onNotify, id ",id
+        print("DEBUG: ahnySaveCloth::onNotify, id ",id)
 
         if not state:
             return
@@ -175,13 +175,13 @@ class ahnySaveCloth(ptModifier):
             guid = ageinfo.getAgeInstanceGuid()
 
             if guid == link:
-                print "I'm the age owner, setting spawnpoint"
+                print("I'm the age owner, setting spawnpoint")
                 #Activator.enable()
                 
                 ageSDL = PtGetAgeSDL()
                 sphere = ageSDL["ahnyCurrentSphere"][0]
                 offset = (sphere - whereAmI) % 4
-                print "ahnySaveCloth.OnNotify: Offset = %d" % (offset)
+                print("ahnySaveCloth.OnNotify: Offset = %d" % (offset))
                 ageSDL["ahnyCurrentOffset"] = (offset,)
 
                 agevault = ptAgeVault()
@@ -208,18 +208,18 @@ class ahnySaveCloth(ptModifier):
                                 if chron and chron.getName() == "AhnonaySpawnPoints":
                                     spawn = chron.getValue().split(";")
                                     newSpawn = "%s;SCSavePoint,SaveClothPoint%s" % (spawn[0],clothID.value)
-                                    print newSpawn
+                                    print(newSpawn)
                                     chron.setValue(newSpawn) 
                                     if not gotSC:
                                         ageSDL = PtGetAgeSDL()
                                         ageSDL[sdlSC] = (1,)
                                     return
 
-                print "ahnySaveCloth.OnNotify(): ERROR: couldn't find chron node"
+                print("ahnySaveCloth.OnNotify(): ERROR: couldn't find chron node")
 
 
             else:
-                print "I'm not the age owner, so I don't do anything."
+                print("I'm not the age owner, so I don't do anything.")
 
 
 

@@ -75,7 +75,7 @@ class islmPodMap(ptResponder):
         ptResponder.__init__(self)
         self.id = 221
         self.version = 1
-        print "islmPodMap: init  version = %d" % self.version
+        print("islmPodMap: init  version = %d" % self.version)
 
     ###########################
     def IGetAgeFilename(self):
@@ -136,7 +136,7 @@ class islmPodMap(ptResponder):
             PtSendKIMessage(kDisableKIandBB,0)
             respZoom.run(self.key, state="out", netForce=0, netPropagate=0)
             PtShowDialog(Vignette.value)
-            print "dialog: %s goes up" % Vignette.value
+            print("dialog: %s goes up" % Vignette.value)
         # get control key events
         PtGetControlEvents(True,self.key)
 
@@ -148,9 +148,9 @@ class islmPodMap(ptResponder):
         if Vignette.value:
             PtSendKIMessage(kEnableKIandBB,0)
             PtHideDialog(Vignette.value)
-            print "Dialog: %s goes down" % Vignette.value
+            print("Dialog: %s goes down" % Vignette.value)
         else:
-            print "WTH!!!"
+            print("WTH!!!")
         #disable the Control key events
         PtGetControlEvents(False,self.key)
 

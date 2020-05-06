@@ -320,7 +320,7 @@ class nxusBookMachine(ptModifier):
         self.id = 5017
         version = 5
         self.version = version
-        print "__init__nxusBookMachine v.", version
+        print("__init__nxusBookMachine v.", version)
         random.seed()
 
         self.guiState = kGUIDeactivated
@@ -443,10 +443,10 @@ class nxusBookMachine(ptModifier):
         if entry is not None:
             entryValue = entry.chronicleGetValue()
             if entryValue == "yes":
-                print "nxusBookMachine.OnServerInitComplete(): chron says you have the link to public Kveer, woo hoo"
+                print("nxusBookMachine.OnServerInitComplete(): chron says you have the link to public Kveer, woo hoo")
                 self.publicAges['Kveer'].linkVisible = True
         else:
-            print "nxusBookMachine.OnServerInitComplete(): chron says no link to public Kveer yet, so sorry"
+            print("nxusBookMachine.OnServerInitComplete(): chron says no link to public Kveer yet, so sorry")
 
 
     def __del__(self):
@@ -691,7 +691,7 @@ class nxusBookMachine(ptModifier):
 
     def IOnActKISlot(self, state, events): #click on KI Slot
         kiLevel = PtDetermineKILevel()
-        print "nxusBookMachine.OnNotify:\tplayer ki level is %d" % kiLevel
+        print("nxusBookMachine.OnNotify:\tplayer ki level is %d" % kiLevel)
         if kiLevel < kNormalKI:
             respKISlot.run(self.key, events = events) #Insert KI
         elif state:
@@ -1577,7 +1577,7 @@ class nxusBookMachine(ptModifier):
 
     #TODO: Not revised. I'm not sure about this stuff... Is it needed?
     def DoErcanaAndAhnonayStuff(self, panel):
-        print "nxusBookMachine.DoErcanaAndAhnonayStuff(): this age panel = ", panel
+        print("nxusBookMachine.DoErcanaAndAhnonayStuff(): this age panel = ", panel)
         if panel == "Ercana":
             ageFileName = "Ercana"
             ageInstanceName = "Er'cana"
@@ -1588,7 +1588,7 @@ class nxusBookMachine(ptModifier):
 
 
     def FindOrCreateGUIDChron(self, ageFileName):
-        print "FindOrCreateGUIDChron for: ", ageFileName
+        print("FindOrCreateGUIDChron for: ", ageFileName)
         GUIDChronFound = 0
         ageDataFolder = None
 
@@ -1610,7 +1610,7 @@ class nxusBookMachine(ptModifier):
                         chron = ageDataChild.upcastToChronicleNode()
                         if chron and chron.getName() == "PelletCaveGUID":
                             GUIDChronFound = 1
-                            print "found pellet cave GUID: ", chron.getValue()
+                            print("found pellet cave GUID: ", chron.getValue())
                             return
 
         pelletCaveGUID = ""
@@ -1620,24 +1620,24 @@ class nxusBookMachine(ptModifier):
         if ageLinkNode:
             ageInfoNode = ageLinkNode.getAgeInfo()
             pelletCaveGUID = ageInfoNode.getAgeInstanceGuid()
-            print "found pelletCaveGUID age chron, = ", pelletCaveGUID
+            print("found pelletCaveGUID age chron, = ", pelletCaveGUID)
 
         if not ageDataFolder:
-            print "no ageDataFolder..."
+            print("no ageDataFolder...")
             ageStruct = ptAgeInfoStruct()
             ageStruct.setAgeFilename(ageFileName)
             ageLinkNode = vault.getOwnedAgeLink(ageStruct)
             if ageLinkNode:
-                print "got ageLinkNode, created AgeData folder"
+                print("got ageLinkNode, created AgeData folder")
                 ageInfoNode = ageLinkNode.getAgeInfo()
                 ageDataFolder = ptVaultFolderNode(0)
                 ageDataFolder.folderSetName("AgeData")
                 ageInfoNode.addNode(ageDataFolder)
 
         if not GUIDChronFound:
-            print "creating PelletCave GUID chron"
+            print("creating PelletCave GUID chron")
             newNode = ptVaultChronicleNode(0)
             newNode.chronicleSetName("PelletCaveGUID")
             newNode.chronicleSetValue(pelletCaveGUID)
             ageDataFolder.addNode(newNode)
-            print "created pelletCaveGUID age chron, = ", pelletCaveGUID
+            print("created pelletCaveGUID age chron, = ", pelletCaveGUID)

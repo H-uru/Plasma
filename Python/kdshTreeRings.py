@@ -94,7 +94,7 @@ class kdshTreeRings(ptModifier):
         
         version = 13
         self.version = version
-        print "__init__kdshTreeRings v.", version,".1"
+        print("__init__kdshTreeRings v.", version,".1")
 
     def OnFirstUpdate(self):
         PtLoadDialog("kdshScope0" + str(ScopeNumber.value), self.key, "Kadish")       
@@ -158,24 +158,24 @@ class kdshTreeRings(ptModifier):
         MiddleRing = ageSDL["MiddleRing0" + str(ScopeNumber.value)][0]
         InnerRing = ageSDL["InnerRing0" + str(ScopeNumber.value)][0]
         
-        print "Current %s Ring settings:" % (ScopeNumber.value)
-        print "/tOuterRing: ", OuterRing
-        print "/tMiddleRing: ", MiddleRing
-        print "/tInnerRing: ", InnerRing
+        print("Current %s Ring settings:" % (ScopeNumber.value))
+        print("/tOuterRing: ", OuterRing)
+        print("/tMiddleRing: ", MiddleRing)
+        print("/tInnerRing: ", InnerRing)
 
         solo = not PtGetPlayerList()
 
         boolOperated = ageSDL["boolOperatedScope0" + str(ScopeNumber.value)][0]
         if boolOperated:
             if solo:
-                print "kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated
+                print("kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
                 boolOperated = 0
                 ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
                 ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
                 Activate.enable()
             else:
                 Activate.disable()
-                print "kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated
+                print("kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated)
         #START-->multiplayer fix
         ageSDL.sendToClients(('boolOperatedScope0' + str(ScopeNumber.value)))
         ageSDL.setFlags(('boolOperatedScope0' + str(ScopeNumber.value)), 1, 1)
@@ -208,7 +208,7 @@ class kdshTreeRings(ptModifier):
             Activate.enable()
             ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
             ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
-            print "kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope."
+            print("kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope.")
         else:
             return
             
@@ -231,7 +231,7 @@ class kdshTreeRings(ptModifier):
             respResetBtn.run(self.key,state='Reset',events=events)
             
         elif id == respResetBtn.id and OnlyOneOwner.sceneobject.isLocallyOwned():
-            print "kdshTreeRing Reset Button Pushed. Puzzle resetting."
+            print("kdshTreeRing Reset Button Pushed. Puzzle resetting.")
             
             #close the door
             ageSDL.setTagString("TreeRingDoorClosed","fromInside")
@@ -265,11 +265,11 @@ class kdshTreeRings(ptModifier):
         
         if event == kDialogLoaded:
             return
-            print "GUI Notify id=%d, event=%d control=" % (id,event),control
+            print("GUI Notify id=%d, event=%d control=" % (id,event),control)
             # if the dialog was just loaded then show it
             #~ control.show()
             PtShowDialog("kdshScope0" + str(ScopeNumber.value))
-            print "kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value))
+            print("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
             
         btnID = 0
 
@@ -328,7 +328,7 @@ class kdshTreeRings(ptModifier):
         ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (1,)
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (avID,)
-        print "kdshTreeRings.OnNotify:\twrote SDL - scope operator id = ", avID
+        print("kdshTreeRings.OnNotify:\twrote SDL - scope operator id = ", avID)
        # start the behavior
         Behavior.run(LocalAvatar)
         

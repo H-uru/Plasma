@@ -85,11 +85,11 @@ class psnlBugs(ptResponder):
         try:
             avatar = PtGetLocalAvatar()
         except:
-            print"failed to get local avatar"
+            print("failed to get local avatar")
             return
         
         self.bugCount = self.IGetBugCount()
-        print"psnl Bugs: ", self.bugCount
+        print("psnl Bugs: ", self.bugCount)
 
         thisAge = PtGetAgeName()
         #print "psnlBugs.OnServerInitComplete(): thisAge = ",thisAge
@@ -98,7 +98,7 @@ class psnlBugs(ptResponder):
             PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
             PtKillParticles(10.0,1,avatar.getKey())
             PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
-            print "kill all bugs in age: ",thisAge
+            print("kill all bugs in age: ",thisAge)
             self.ISaveBugCount(0)
         
         if thisAge != "Personal":
@@ -111,12 +111,12 @@ class psnlBugs(ptResponder):
         sdl = PtGetAgeSDL()
         bugState = sdl["psnlBugsVis"]
         if rainState == 1 or (rainState == 4 and len(PtGetPlayerList()) == 0) or (rainState == 3 and len(PtGetPlayerList()) > 0):
-            print "turning off bugs"
+            print("turning off bugs")
             if bugState != 0:
                 sdl["psnlBugsVis"] = (0,)
         else:
             if self.bugCount > 0:
-                print "turning on bugs"
+                print("turning on bugs")
                 if bugState != 1:
                     sdl["psnlBugsVis"] = (1,)
 

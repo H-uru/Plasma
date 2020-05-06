@@ -154,11 +154,11 @@ class ahnyLinkBookGUIPopup(ptModifier):
 
         # is it the seek behavior because we clicked on a book ourself?    
         elif id == SeekBehavior.id and PtFindAvatar(events) == PtGetLocalAvatar():
-            print events
+            print(events)
             for event in events:
                 if event[0] == kMultiStageEvent and event[2] == kEnterStage: # Smart seek completed. Exit multistage, and show GUI.
                     SeekBehavior.gotoStage(LocalAvatar, -1) 
-                    print "ahnyLinkBookGUIPopup: attempting to draw link panel gui"
+                    print("ahnyLinkBookGUIPopup: attempting to draw link panel gui")
                     self.IShowBookNoTreasure()
                     OfferedBookMode = False
                     BookOfferer = None
@@ -167,10 +167,10 @@ class ahnyLinkBookGUIPopup(ptModifier):
             for event in events:
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    print "ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2])
+                    print("ahnyLinkBookGUIPopup: BookNotify  event=%d, id=%d" % (event[1],event[2]))
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
-                            print "ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2])
+                            print("ahnyLinkBookGUIPopup:Book: hit linking panel %s" % (event[2]))
                             self.HideBook(1)
                             respLinkSphere01.run(self.key,avatar=PtGetLocalAvatar(),netPropagate=0)
                             
@@ -274,7 +274,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
             else:
                 return
 
-            print bookdef
+            print(bookdef)
             PtSendKIMessage(kDisableKIandBB,0)
             gLinkingBook = ptBook(bookdef,self.key)
             gLinkingBook.setSize( width, height )
@@ -282,7 +282,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
             gLinkingBook.show(1)
 
         except LookupError:
-            print "ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel"
+            print("ahnyLinkBookGUIPopup: could not find age Ahnonay's linking panel")
 
         '''
         showOpen = 0
@@ -384,7 +384,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
         global gLinkingBook
         global kGrsnTeamBook
         if id == kGrsnTeamBook:
-            print "\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book."
+            print("\nahnyLinkBookGUIPopup.OnTimer:Got timer callback. Removing popup for a grsn team book.")
             gLinkingBook.hide()
 
     def GetCurrentSphere(self):

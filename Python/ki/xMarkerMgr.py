@@ -46,8 +46,8 @@ from PlasmaConstants import *
 from PlasmaKITypes import *
 from PlasmaTypes import *
 
-from xMarkerBrainQuest import *
-from xMarkerGameBrain import *
+from .xMarkerBrainQuest import *
+from .xMarkerGameBrain import *
 
 class MarkerGameManager(object):
     def __init__(self):

@@ -94,7 +94,7 @@ class clftEndingCredits(ptResponder):
         self.id = 8802
         version = 5
         self.version = version
-        print "__init__ clftEndingCredits v. ",version,".1"
+        print("__init__ clftEndingCredits v. ",version,".1")
         
 
     def OnServerInitComplete(self):
@@ -110,10 +110,10 @@ class clftEndingCredits(ptResponder):
         
         SDLVarSceneBahro = "clftSceneBahroUnseen"
         if VARname == SDLVarSceneBahro:
-            print "OnSDL launched the credits."
+            print("OnSDL launched the credits.")
             boolSceneBahro = ageSDL[SDLVarSceneBahro][0]
             if boolSceneBahro == 0:
-                print "clftEndingCredits.OnSDLNotify(): we're no longer showing the credits here"
+                print("clftEndingCredits.OnSDLNotify(): we're no longer showing the credits here")
                 cam = ptCamera()
                 cam.enableFirstPersonOverride()
                 PtEnableMovementKeys()
@@ -133,7 +133,7 @@ class clftEndingCredits(ptResponder):
 #                PtDisableMovementKeys()
 #                PtAtTimeCallback(self.key,kDelayFadeSeconds,kFadeOutToCreditsID)
             else:
-                print "No credits."
+                print("No credits.")
         
         pass
 
@@ -144,10 +144,10 @@ class clftEndingCredits(ptResponder):
         if (id == RgnSnsrSndLogTracks.id and state):
             import xSndLogTracks
             if xSndLogTracks.IsLogMode():
-                print "Start of Egg!!! Enable Riven scope clickable"
+                print("Start of Egg!!! Enable Riven scope clickable")
                 ClkSndLogTracks.enable()
             else:
-                print "not this time"
+                print("not this time")
                 ClkSndLogTracks.disable()
                 
         if (id == ClkSndLogTracks.id and state):
@@ -156,7 +156,7 @@ class clftEndingCredits(ptResponder):
 
 
         if AlreadyClosed:
-            print "failed AlreadyClosed check"
+            print("failed AlreadyClosed check")
             return
     
         for event in events:
@@ -164,7 +164,7 @@ class clftEndingCredits(ptResponder):
                 if event[1] == PtBookEventTypes.kNotifyHide:
                     AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds,1)
-                    print "clftEndingCredits.OnNotify(): Book hidden. FadeOut over", kFadeOutToGameSeconds," seconds"  
+                    print("clftEndingCredits.OnNotify(): Book hidden. FadeOut over", kFadeOutToGameSeconds," seconds")  
                     
                     #The book is already hidden, so just go ahead and fade back in on the game
                     PtAtTimeCallback(self.key,kFadeOutToGameSeconds,kFadeOutToGameID)
@@ -172,7 +172,7 @@ class clftEndingCredits(ptResponder):
                 elif event[1] == PtBookEventTypes.kNotifyClose:
                     AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds,1)
-                    print "clftEndingCredits.OnNotify(): Book closed. FadeOut over", kFadeOutToGameSeconds," seconds"                    
+                    print("clftEndingCredits.OnNotify(): Book closed. FadeOut over", kFadeOutToGameSeconds," seconds")                    
                     
                     #We have to hide the book first before we fade back in on the game
                     PtAtTimeCallback(self.key,kFadeOutToGameSeconds+1,kHideBookID)
@@ -181,7 +181,7 @@ class clftEndingCredits(ptResponder):
     def OnTimer(self,id):
         
         global gJournalBook        
-        print "clftEndingCredits.OnTimer(): Callback from id:",id
+        print("clftEndingCredits.OnTimer(): Callback from id:",id)
         if id == kFadeOutToCreditsID: # 1
             self.IFadeOutToCredits()
         elif id == kShowCreditsID: # 2 
@@ -191,13 +191,13 @@ class clftEndingCredits(ptResponder):
         elif id == kFadeOutToGameID: # 4
             self.IFadeOutToGame()
         elif id == kHideBookID: # 5
-            print "clftEndingCredits.OnTimer(): The credits book is now hidden"
+            print("clftEndingCredits.OnTimer(): The credits book is now hidden")
             gJournalBook.hide()            
             PtAtTimeCallback(self.key,kFadeOutToGameSeconds,kFadeOutToGameID)
 
         elif id == kFadeInToGameID: # 6
             PtFadeIn(kFadeInToGameSeconds,1)
-            print "clftEndingCredits.OnTimer(): FadeIn over", kFadeInToGameSeconds," seconds"
+            print("clftEndingCredits.OnTimer(): FadeIn over", kFadeInToGameSeconds," seconds")
             cam = ptCamera()
             cam.enableFirstPersonOverride()
             PtEnableMovementKeys()
@@ -206,7 +206,7 @@ class clftEndingCredits(ptResponder):
 
     def IFadeOutToCredits(self):
         PtFadeOut(kFadeOutToCreditsSeconds,1)
-        print "clftEndingCredits.IFadeOutToCredits(): FadeOut over", kFadeOutToCreditsSeconds," seconds."
+        print("clftEndingCredits.IFadeOutToCredits(): FadeOut over", kFadeOutToCreditsSeconds," seconds.")
         PtAtTimeCallback(self.key,4,kShowCreditsID)
 
 
@@ -214,7 +214,7 @@ class clftEndingCredits(ptResponder):
         global gJournalBook
         global AlreadyClosed
         
-        print "clftEndingCredits.IShowCredits(): Showing Journal now."
+        print("clftEndingCredits.IShowCredits(): Showing Journal now.")
         gJournalBook.show(0)
         AlreadyClosed = False
         PtAtTimeCallback(self.key,1,kFadeInToCreditsID)        
@@ -235,7 +235,7 @@ class clftEndingCredits(ptResponder):
         respStartCreditsMusic.run(self.key)
         
         PtFadeIn(kFadeInToCreditsSeconds,1)
-        print "clftEndingCredits.IFadeInToCredits(): FadeIn over", kFadeInToCreditsSeconds," seconds"
+        print("clftEndingCredits.IFadeInToCredits(): FadeIn over", kFadeInToCreditsSeconds," seconds")
 
 
     def IFadeOutToGame(self):

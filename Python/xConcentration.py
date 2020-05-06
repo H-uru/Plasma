@@ -86,7 +86,7 @@ class xConcentration(ptModifier):
         
         version = 1
         self.version = version
-        print "__init__xConcentration v.", version
+        print("__init__xConcentration v.", version)
         
     def OnServerInitComplete(self):
         global puz
@@ -95,19 +95,19 @@ class xConcentration(ptModifier):
         #puztuple=("xx",)
         #print puztuple[0]
         #puz = list(puztuple)
-        print puztuple[0], "Existing Value!"
+        print(puztuple[0], "Existing Value!")
         if puztuple[0] != puzname.value:
             puz = list(puztuple)
             puz=BuildPuzList()
             puz[0] = puzname.value
-            print puz[0],"firstupdate"
+            print(puz[0],"firstupdate")
             self.SDL["puz"] = tuple(puz) # writes it
 
         dtext.textmap.clearToColor(ptColor(0,0,0,0))
 
         
     def Load(self):
-        print "load XXXXXXXX"
+        print("load XXXXXXXX")
         global puz
         puz = self.SDL["puz"][1032]
         #if not puz[0]: #thing is empty, else we already have a list.
@@ -144,11 +144,11 @@ class xConcentration(ptModifier):
                         xSquare = round(xSquarepicked+.5)
                         ySquare = round(ySquarepicked+.5)
                             
-                        print TruePickx,"Truepickx=xSquarepicked",xSquarepicked,"Rounded:",xSquare
-                        print TruePicky,"Truepicky=ySquarepicked",ySquarepicked,"Rounded:",ySquare
+                        print(TruePickx,"Truepickx=xSquarepicked",xSquarepicked,"Rounded:",xSquare)
+                        print(TruePicky,"Truepicky=ySquarepicked",ySquarepicked,"Rounded:",ySquare)
                                             
                         pick = (int(ySquare-1) * matrix.value) + int(xSquare) #pick is the array location                     
-                        print "Pick=",whichpick," Square:",pick,"value=",puz[pick] 
+                        print("Pick=",whichpick," Square:",pick,"value=",puz[pick]) 
 
                         #Now do something with the pick
                         texX = 512
@@ -167,11 +167,11 @@ class xConcentration(ptModifier):
                         getFromX = texXBox * (imageSquareX)
                         getFromY = texYBox * (imageSquareY)
                         
-                        print imageSquareX,"GETFROM",imageSquareY
+                        print(imageSquareX,"GETFROM",imageSquareY)
                         
                         if puz[pick] == pick: # solved spot already
                             #play moot graphic.
-                            print "skippingpick"
+                            print("skippingpick")
                             pass
                         elif whichpick == 0 : #first selection
                             pick1 = pick
@@ -188,9 +188,9 @@ class xConcentration(ptModifier):
                                 puz[pick1] = puz[pick] 
                                 puz[pick] = pick # swap numbers
                                 self.SDL["puz"] = tuple(puz) # writes it
-                                print "MATCH:"
-                                print "Square:",pick1,"value=",puz[pick1]
-                                print "Square:",pick,"value=",puz[pick]
+                                print("MATCH:")
+                                print("Square:",pick1,"value=",puz[pick1])
+                                print("Square:",pick,"value=",puz[pick])
                                 dtext.textmap.clearToColor(black)
                             else:
                                 pass
@@ -209,7 +209,7 @@ def BuildPuzList():
     for x in range(1033): # fills the list with a number coinciding with its position
         p.append(x)
 
-    print "start list"    
+    print("start list")    
     for x in range(1,1032): # fill numbers
         p[x] = x
     for x in range(1,1032): # scrambles those numbers
@@ -217,7 +217,7 @@ def BuildPuzList():
         z=p[x]
         p[x] = p[y]
         p[y] = z
-        print x,",",p[x]
+        print(x,",",p[x])
 
     for x in range(1,1032): # makes sure there were no "put backs"
         if p[x] == x:
@@ -225,7 +225,7 @@ def BuildPuzList():
             z=p[x]
             p[x] = y
             p[y] = z
-            print x,",,,",p[x]
-    print "end list"
+            print(x,",,,",p[x])
+    print("end list")
     return p
         
