@@ -56,7 +56,7 @@ northWall = ptAttribSceneobjectList(1,"North Wall",byObject=1)
 ##############################################################
 # grsnWallImagerDisplayN
 ##############################################################
-ReceiveInit = false
+ReceiveInit = False
 
 ## for team light responders
 kTeamLightsOn = 0
@@ -96,11 +96,8 @@ class grsnWallImagerDisplayN(ptResponder):
         global ReceiveInit
         
         PtDebugPrint("grsnWallPython::OnServerInitComplete")        
-        solo = true
-        if len(PtGetPlayerList()):
-            solo = false
-            ReceiveInit = true
-            return
+        if PtGetPlayerList():
+            ReceiveInit = True
         else:
             print"solo in climbing wall"
             
@@ -109,11 +106,11 @@ class grsnWallImagerDisplayN(ptResponder):
         global ReceiveInit
         
         print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
-        if (ReceiveInit == false):
+        if not ReceiveInit:
             print"failed to receive init"
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
-            ReceiveInit = false
+            ReceiveInit = False
             print "finished receiving total game state"
         
         if (type == ptClimbingWallMsgType.kTotalGameState):
@@ -124,11 +121,11 @@ class grsnWallImagerDisplayN(ptResponder):
     
     def OnClimbingWallEvent(self,type,state,value):
         
-        if (type == ptClimbingWallMsgType.kAddBlocker and value == true):            #display wall settings
+        if (type == ptClimbingWallMsgType.kAddBlocker and value):            #display wall settings
             northWall.value[state].runAttachedResponder(kTeamLightsOn)
             print"Imager display N drawing n wall index",state
                     
-        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value == true):
+        elif (type == ptClimbingWallMsgType.kRemoveBlocker and value):
             northWall.value[state].runAttachedResponder(kTeamLightsOff)
             print"Imager display N clearing n wall index",state
         

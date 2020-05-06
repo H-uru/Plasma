@@ -100,9 +100,9 @@ linkLibrary = ["Neighborhood","Nexus","city","Link03","Link04","Cleft","Garrison
 
 objBookPicked = None
 objLockPicked = None
-boolLinkerIsMe = false
-boolPresentAfterLockOpen = false
-boolShelfBusy = false
+boolLinkerIsMe = False
+boolPresentAfterLockOpen = False
+boolShelfBusy = False
 SpawnPointName = None
 SpawnPointTitle = None
 LocalAvatar = None
@@ -148,7 +148,7 @@ class psnlBookshelf(ptModifier):
         #make all books invisible (tagged unclickable by default) then IUpdate to draw/enable appropriate books
         for book in objLibrary.value:
             book.draw.disable()
-        boolShelfBusy = false
+        boolShelfBusy = False
 
         # this section moved to OnServerInitComplete
         #####
@@ -198,9 +198,7 @@ class psnlBookshelf(ptModifier):
             actLock.disable()
             actTray.disable()
 
-        solo = true
-        if len(PtGetPlayerList()):
-            solo = false
+        solo = not PtGetPlayerList()
 
         self.IUpdateLinks()
 
@@ -395,7 +393,7 @@ class psnlBookshelf(ptModifier):
 
                             # don't re-eable the movement keys when we are linking out...
                             ##PtEnableMovementKeys()
-                            PtGetControlEvents(false,self.key)                            
+                            PtGetControlEvents(False,self.key)                            
                             
                             SpawnPointName = event[1].split(",")[1]
                             SpawnPointTitle = event[1].split(",")[2]
@@ -503,7 +501,7 @@ class psnlBookshelf(ptModifier):
                                         break
                             objBookPicked = None
                             return
-                boolShelfBusy = false
+                boolShelfBusy = False
                 self.IUpdateLinks()
 
 
@@ -548,7 +546,7 @@ class psnlBookshelf(ptModifier):
                     
         if id==actBook.id:
             if PtWasLocallyNotified(self.key):
-                boolLinkerIsMe = true
+                boolLinkerIsMe = True
 
             ageSDL = PtGetAgeSDL()
             CurrentUser = ageSDL["ShelfAUserID"][0]
@@ -559,7 +557,7 @@ class psnlBookshelf(ptModifier):
             #    PtDebugPrint("DEBUG: psnlBookshelf.OnNotify: actBook notify, I'm not current user so I can't click books")
             #    return
             
-            boolShelfBusy = true
+            boolShelfBusy = True
             
             actTray.disable()
             actBook.disable()
@@ -601,7 +599,7 @@ class psnlBookshelf(ptModifier):
                                     if lockName == parent.getName():
                                         respOpenLock.run(self.key,objectName=rkey)
                                         break
-                            boolPresentAfterLockOpen = true
+                            boolPresentAfterLockOpen = True
                             break
                         else:
                             bookName = objBookPicked.getName()
@@ -648,7 +646,7 @@ class psnlBookshelf(ptModifier):
                                     if lockName == parent.getName():
                                         respOpenLock.run(self.key,objectName=rkey)
                                         break
-                            boolPresentAfterLockOpen = true
+                            boolPresentAfterLockOpen = True
                             break
                         else:
                             bookName = objBookPicked.getName()
@@ -682,7 +680,7 @@ class psnlBookshelf(ptModifier):
                                 if lockName == parent.getName():
                                     respOpenLock.run(self.key,objectName=rkey)
                                     break
-                        boolPresentAfterLockOpen = true
+                        boolPresentAfterLockOpen = True
                         break
                     else:
                         bookName = objBookPicked.getName()
@@ -741,7 +739,7 @@ class psnlBookshelf(ptModifier):
 
                 #~ elif not boolLinkerIsMe:
                 else:
-                    boolShelfBusy = false
+                    boolShelfBusy = False
                     self.IUpdateLinks()
                 return
             link = self.IGetLinkFromBook()
@@ -784,7 +782,7 @@ class psnlBookshelf(ptModifier):
                                 objLockPicked = None
                                 return
                 else:
-                    boolShelfBusy = false
+                    boolShelfBusy = False
                     self.IUpdateLinks()
                     return                    
 
@@ -801,12 +799,12 @@ class psnlBookshelf(ptModifier):
 
             #~ elif not boolLinkerIsMe:
             else:
-                boolShelfBusy = false
+                boolShelfBusy = False
                 self.IUpdateLinks()
             return
 
         if id==actLock.id:
-            boolShelfBusy = true
+            boolShelfBusy = True
             
             actTray.disable()
             actBook.disable()
@@ -965,15 +963,15 @@ class psnlBookshelf(ptModifier):
                         if bookName == parent.getName():
                             respPresentBook.run(self.key,objectName=rkey)
                             break
-                boolPresentAfterLockOpen = false
+                boolPresentAfterLockOpen = False
             else:
-                boolShelfBusy=false
+                boolShelfBusy=False
                 self.IUpdateLinks()
             return
         
         if id==respCloseLock.id:
             #~ if not boolLinkerIsMe:
-            boolShelfBusy = false
+            boolShelfBusy = False
             self.IUpdateLinks() # after someone links, need to run this to reenable clickables
             return
 
@@ -983,7 +981,7 @@ class psnlBookshelf(ptModifier):
 #
 #
         if id==actTray.id:
-            boolShelfBusy = true
+            boolShelfBusy = True
             actTray.disable()
             actBook.disable()
             actLock.disable()
@@ -1120,7 +1118,7 @@ class psnlBookshelf(ptModifier):
 ##                            break
 
         if id==respReturnTray.id or id==respDeleteBook.id:
-            boolShelfBusy = false
+            boolShelfBusy = False
             self.IUpdateLinks() 
             return
 
@@ -1806,7 +1804,7 @@ class psnlBookshelf(ptModifier):
                 virtCam.save(HutCamera.sceneobject.getKey())
                 PtEnableMovementKeys()
                 actBookshelfExit.disable()
-                PtGetControlEvents(false,self.key)
+                PtGetControlEvents(False,self.key)
 
                 if miniKIrestore:
                     miniKIrestore = 0
@@ -1820,7 +1818,7 @@ class psnlBookshelf(ptModifier):
 
     def OnTimer(self, id):
         if id == 1:
-            PtGetControlEvents(true,self.key)
+            PtGetControlEvents(True,self.key)
             actBookshelfExit.enable()
 
 

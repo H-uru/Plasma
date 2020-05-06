@@ -437,23 +437,23 @@ def DateInRange(date,range):
     #dateStr = "%d/%d/%d" % (dateMonth,dateDay,dateYear)
     #rangeStr = "%d-%d/%d-%d/%d-%d" % (rangeMonthMin,rangeMonthMax,rangeDayMin,rangeDayMax,rangeYearMin,rangeYearMax)
     #PtDebugPrint("DateInRange(): Checking to see if the date " + dateStr + " is in the date range " + rangeStr)
-    inRange = true
+    inRange = True
     if not (rangeYearMin == 0 or rangeYearMax == 0): # year of 0 means any year
         if (dateYear < rangeYearMin) or (dateYear > rangeYearMax):
-            inRange = false
+            inRange = False
     if not (rangeMonthMin == 0 or rangeMonthMax == 0): # month of 0 means any month
         if (dateMonth < rangeMonthMin) or (dateMonth > rangeMonthMax):
-            inRange = false
+            inRange = False
     if not (rangeDayMin == 0 or rangeDayMax == 0): # year of 0 means any year
         if (dateDay < rangeDayMin) or (dateDay > rangeDayMax):
-            inRange = false
+            inRange = False
     return inRange
 
 def CanShowSeasonal(clothingItem):
     "returns true if the item can be shown, this checks seasonal only"
     if clothingItem.seasonal:
         if ItemInWardrobe(clothingItem):
-            return true # it's in our closet, so we can show this
+            return True # it's in our closet, so we can show this
         showTime = clothingItem.seasonTime
         if PtIsInternalRelease():
             curTime = time.localtime(time.time()) # use the client's clock if we're an internal build
@@ -462,9 +462,9 @@ def CanShowSeasonal(clothingItem):
         #PtDebugPrint("CanShowSeasonal(): Checking if we can show " + clothingItem.name)
         for timeRange in showTime: # there may be multiple times listed
             if DateInRange(curTime,timeRange):
-                return true
-        return false
-    return true # as far as we know, the item can be shown
+                return True
+        return False
+    return True # as far as we know, the item can be shown
 
 def CanShowClothingItem(clothingItem):
     "returns true if this item is elegable for showing"
@@ -474,7 +474,7 @@ def CanShowClothingItem(clothingItem):
         if (clothingItem.nonStandardItem and ItemInWardrobe(clothingItem)) or not clothingItem.nonStandardItem:
             if (PtIsSinglePlayerMode() and clothingItem.singlePlayer) or not PtIsSinglePlayerMode():
                 if CanShowSeasonal(clothingItem):
-                    return true
+                    return True
                 else:
                     PtDebugPrint("CanShowClothingItem(): Hiding item "+clothingItem.name+" because it is seasonal")
             else:
@@ -483,7 +483,7 @@ def CanShowClothingItem(clothingItem):
             PtDebugPrint("CanShowClothingItem(): Hiding item "+clothingItem.name+" because it is optional and isn't in your closet")
     else:
         PtDebugPrint("CanShowClothingItem(): Hiding item "+clothingItem.name+" because it is an internal-only option")
-    return false
+    return False
 
 def ItemInWardrobe(clothingItem):
     avatar = PtGetLocalAvatar()
@@ -861,7 +861,7 @@ class xAvatarCustomization(ptModifier):
                             # enable the zoom button
                             zoomBtn.show()
                             # zoom in on face automatically
-                            zoomBtn.setChecked(true)
+                            zoomBtn.setChecked(True)
                             ZoomCamera.sceneobject.pushCutsceneCamera(1,PtGetLocalAvatar().getKey())
                             panelRG.hide()
                             self.SetupCamera()

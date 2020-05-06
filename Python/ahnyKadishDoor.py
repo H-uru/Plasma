@@ -222,11 +222,11 @@ class ahnyKadishDoor(ptResponder):
             # check if all values match up now
             for i in range(solutionNum):
                 if list2Copy[i] != list1[i]:
-                    return false
+                    return False
 
-            return true
+            return True
         
-        return false
+        return False
 
 
     def OnControlKeyEvent(self,controlKey,activeFlag):

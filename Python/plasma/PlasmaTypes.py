@@ -50,8 +50,6 @@ from PlasmaConstants import *
 ####################################
 # Utility functions
 ####################################
-false=0
-true=1
 
 # OnNotify Event enums
 kCollisionEvent=PtEventType.kCollision       # [1]=enter flag, [2]=hitter(probably avatar), [3]=hittee

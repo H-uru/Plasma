@@ -89,7 +89,7 @@ OnlyOneOwner = ptAttribSceneobject(25,"OnlyOneOwner") #ensures that after a ones
 # globals
 LocalAvatar = None
 
-VCPboolOperated = false
+VCPboolOperated = False
 VCPVCPOperatorID = -1
 
 ButtonsPushed=0
@@ -178,9 +178,7 @@ class kdshVault(ptResponder):
         global ButtonsPushed
         ageSDL = PtGetAgeSDL()     
         
-        solo = true
-        if len(PtGetPlayerList()):
-            solo = false
+        solo = not PtGetPlayerList()
 
         VCPboolOperated = ageSDL["VCPboolOperated"][0]
         if VCPboolOperated:
@@ -261,7 +259,7 @@ class kdshVault(ptResponder):
             virtCam = ptCamera()
             virtCam.save(VCPCamera.sceneobject.getKey())            
 
-            PtGetControlEvents(true,self.key)
+            PtGetControlEvents(True,self.key)
             #~ PtDisableMovementKeys()
 
             #~ PtFadeLocalAvatar(1)
@@ -340,7 +338,7 @@ class kdshVault(ptResponder):
         # Enable forward movement
         PtEnableForwardMovement()
 
-        PtGetControlEvents(false,self.key)
+        PtGetControlEvents(False,self.key)
         
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()

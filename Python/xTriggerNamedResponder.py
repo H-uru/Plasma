@@ -70,7 +70,7 @@ class xTriggerNamedResponder(ptResponder):
         PtDebugPrint("__init__xTriggerNamedResponder v. %d" % self.version)
 
     def OnNotify(self,state,id,events):
-        if state != true:
+        if not state:
             return
 
         if id == act.id:

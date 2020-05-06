@@ -129,9 +129,7 @@ class tldnVaporScope(ptModifier):
 
     def Load(self):
         global boolScopeOperated
-        solo = true
-        if len(PtGetPlayerList()):
-            solo = false
+        solo = not PtGetPlayerList()
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
             if solo:

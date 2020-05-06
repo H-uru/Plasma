@@ -69,7 +69,7 @@ kCheckForBugs = 99
 kRainStarting = 999
 numJumps = 0
 localInTunnel = 0
-running = false
+running = False
 chronicleEntryName = "BugsOnAvatar"
 bugLightObjectName = "RTOmni-BugLightTest"
 
@@ -117,10 +117,10 @@ class GardenBugs(ptResponder):
         PtKillParticles(0,1,avatar.getKey())
         
         if (self.bugCount > 0):
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, true)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, True)
             print"GardenBugs.OnFirstUpdate():\tTurning lights on at start"
         else:
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
             print"GardenBugs.OnFirstUpdate():\tTurning lights off at start"
         
         # this will add the bugs back that we have
@@ -170,7 +170,7 @@ class GardenBugs(ptResponder):
                 return
             PtSetParticleDissentPoint(0,0,100,avatar.getKey())
             PtKillParticles(3.0,1,avatar.getKey())
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
             self.bugCount = 0
             self.ISaveBugCount(self.bugCount)
             return
@@ -178,7 +178,7 @@ class GardenBugs(ptResponder):
 
         if (self.bugCount > 0):
             if (id == kCheckForBugs):
-                PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, true)
+                PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, True)
                 PtSetParticleOffset(0,0,4.5, avatar.getKey())
                 
             if (id == PtBehaviorTypes.kBehaviorTypeRun):
@@ -190,7 +190,7 @@ class GardenBugs(ptResponder):
                     self.ISaveBugCount(self.bugCount)
 
         elif (self.bugCount == 0):            
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
             PtSetParticleOffset(0,0,4.5, avatar.getKey())
             self.bugCount = 0
             self.ISaveBugCount(self.bugCount)
@@ -222,7 +222,7 @@ class GardenBugs(ptResponder):
                 print "gardenBugs.OnNotify()-->\tcan't add bugs as we're still running"
                 return
             if PtLocalAvatarRunKeyDown() and PtLocalAvatarIsMoving():
-                print "gardenBugs.OnNotify()-->\tcan't add bugs as we're still running (but our running flag is false?)"
+                print "gardenBugs.OnNotify()-->\tcan't add bugs as we're still running (but our running flag is False?)"
                 return
 
             print "gardenBugs.OnNotify()-->\ttansferring Bugs!"
@@ -249,7 +249,7 @@ class GardenBugs(ptResponder):
         if (id == bharoCave.id and self.bugCount > 0):
             PtSetParticleDissentPoint(0,0,100,avatar.getKey())
             PtKillParticles(3.0,1,avatar.getKey())
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
             print"gardenBugs.OnNotify()-->\tbharo cave too scary for bugs!"
             self.bugCount = 0
             self.ISaveBugCount(self.bugCount)
@@ -260,18 +260,18 @@ class GardenBugs(ptResponder):
         if (id == tunnel1.id) or (id == tunnel2.id) or (id == tunnel3.id) or (id == gazebo1.id) or (id == gazebo2.id):
             for event in events:
                 if event[0]==1 and event[1]==1:
-                    localInTunnel = true
+                    localInTunnel = True
                     print "gardenBugs.OnNotify()-->\tlocal in tunnel"
                     return
                 elif event[0]==1 and event[1]==0:
-                    localInTunnel = false
+                    localInTunnel = False
                     print "gardenBugs.OnNotify()-->\tlocal exit tunnel"
                     self.ageSDL = PtGetAgeSDL()
                     rain = self.ageSDL[raining.value][0]
                     if (rain):
                         PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
                         PtKillParticles(3.0,1,avatar.getKey())
-                        PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+                        PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
                         self.bugCount = 0
                         self.ISaveBugCount(self.bugCount)
                     return
@@ -303,17 +303,17 @@ class GardenBugs(ptResponder):
         global numJumps
         global running
         
-        if (state == false):
+        if not state:
             currentBehavior = PtBehaviorTypes.kBehaviorTypeIdle
             if (behavior == PtBehaviorTypes.kBehaviorTypeRun):
-                running = false
+                running = False
                 if PtLocalAvatarRunKeyDown() and PtLocalAvatarIsMoving():
                     print "gardenBugs.OnBehaviorNotify()-->\tWARN: Running behavior turned off, but avatar still reports run and movement keys are held down"
             return
         else:
             currentBehavior = behavior
             if (behavior == PtBehaviorTypes.kBehaviorTypeRun):
-                running = true
+                running = True
             
         
         avatar = PtGetLocalAvatar()
@@ -325,7 +325,7 @@ class GardenBugs(ptResponder):
                     numJumps = 1
                     if (self.bugCount == 1):
                         PtKillParticles(3.0,1,avatar.getKey())
-                        PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+                        PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
                         self.bugCount = 0
                     else:
                         PtKillParticles(3.0,0.5,avatar.getKey())
@@ -333,7 +333,7 @@ class GardenBugs(ptResponder):
                     self.ISaveBugCount(self.bugCount)
                 else:
                     PtKillParticles(3.0,1,avatar.getKey())
-                    PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+                    PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
                     self.bugCount = 0
                     self.ISaveBugCount(self.bugCount)
                     return
@@ -342,7 +342,7 @@ class GardenBugs(ptResponder):
                 print "gardenBugs.BehaviorNotify()-->\tkill all bugs"
                 PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
                 PtKillParticles(3.0,1,avatar.getKey())
-                PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+                PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
                 self.bugCount = 0
                 self.ISaveBugCount(self.bugCount)
                 return

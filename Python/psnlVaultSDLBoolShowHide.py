@@ -45,7 +45,7 @@ Module: psnlVaultSDLBoolShowHide
 Age: global
 Date: August 2007
 Author: Adam Van Ornum (based on xAgeSDLBoolShowHide)
-Detects Psnl Vault SDL bool type variable change and shows (on true) or hides (on false) the object it's attached to
+Detects Psnl Vault SDL bool type variable change and shows (on True) or hides (on false) the object it's attached to
 Use only in the Personal age
 """
 
@@ -124,12 +124,12 @@ class psnlVaultSDLBoolShowHide(ptMultiModifier):
     def EnableObject(self):
         PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
+        self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
         PtDebugPrint("DEBUG: psnlVaultSDLBoolShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+        self.sceneobject.physics.suppress(True)
 
     def OnBackdoorMsg(self, target, param):
         if stringVarName.value:

@@ -86,14 +86,14 @@ respLinkSphere04 = ptAttribResponder(14,"sphere 04 resp")
 
 # globals
 LocalAvatar = None
-OfferedBookMode = false
+OfferedBookMode = False
 BookOfferer = None
 stringAgeRequested = None
 PageID_List  = []
 SpawnPointName_Dict = {}
 SpawnPointTitle_Dict = {}
 
-OffereeWalking = false
+OffereeWalking = False
 ClosedBookToShare = 0
 
 BookNumber = 0 # which book it is on the shelf. The Neighborhood book currently is 0. The Teledahn Book is currently 2.
@@ -145,11 +145,11 @@ class ahnyLinkBookGUIPopup(ptModifier):
         # is it a clickable book on a pedestal?
         if id == actClickableBook.id and PtFindAvatar(events) == PtGetLocalAvatar():
             actClickableBook.disable()
-            PtToggleAvatarClickability(false)
+            PtToggleAvatarClickability(False)
             LocalAvatar = PtFindAvatar(events)
             SeekBehavior.run(LocalAvatar)
             #self.IShowBookNoTreasure()
-            OfferedBookMode = false
+            OfferedBookMode = False
             BookOfferer = None
 
         # is it the seek behavior because we clicked on a book ourself?    
@@ -160,7 +160,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
                     SeekBehavior.gotoStage(LocalAvatar, -1) 
                     print "ahnyLinkBookGUIPopup: attempting to draw link panel gui"
                     self.IShowBookNoTreasure()
-                    OfferedBookMode = false
+                    OfferedBookMode = False
                     BookOfferer = None
         
         else:
@@ -240,12 +240,12 @@ class ahnyLinkBookGUIPopup(ptModifier):
                     elif event[1] == PtBookEventTypes.kNotifyHide:
                         PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
                         if not ClosedBookToShare:
-                            PtToggleAvatarClickability(true)
+                            PtToggleAvatarClickability(True)
                             if (OfferedBookMode and BookOfferer):
                                 avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                                 PtNotifyOffererLinkRejected(avID)
                                 PtDebugPrint("ahnyLinkBookGUIPopup: rejected link, notifying offerer as such",level=kDebugDumpLevel)
-                                OfferedBookMode = false
+                                OfferedBookMode = False
                                 BookOfferer = None
         
                         if not NoReenableBook:
@@ -343,7 +343,7 @@ class ahnyLinkBookGUIPopup(ptModifier):
         else:
             NoReenableBook = 0
         
-        PtToggleAvatarClickability(true) # enable me as clickable
+        PtToggleAvatarClickability(True) # enable me as clickable
         if gLinkingBook:
             gLinkingBook.hide()
         

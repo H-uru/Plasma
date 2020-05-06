@@ -100,7 +100,7 @@ regZoneReset = ptAttribActivator(34, "Stair Zone Reset")
 
 # define globals
 baton = 0
-TwoOnFloor = false
+TwoOnFloor = False
 lightClickedByAvatar = None  #the avatar who clicked on a light
 resetBtnByAvatar = None  #the avatar who clicked on the reset button
 localAvatar = None      #The Local Avatar

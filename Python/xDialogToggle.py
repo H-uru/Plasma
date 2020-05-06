@@ -139,7 +139,7 @@ class xDialogToggle(ptModifier):
             PtShowDialog(Vignette.value)
             print "dialog: %s goes up" % Vignette.value
         # get control key events
-        PtGetControlEvents(true,self.key)
+        PtGetControlEvents(True,self.key)
 
     def IQuitDialog(self):
         "Disengage and exit"
@@ -151,6 +151,6 @@ class xDialogToggle(ptModifier):
         else:
             print "WTH!!!"
         #disable the Control key events
-        PtGetControlEvents(false,self.key)
+        PtGetControlEvents(False,self.key)
         # re-enable the dialog for someone else to use
         Activate.enable()

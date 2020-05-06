@@ -100,7 +100,7 @@ class xJournalBookGUIPopup(ptModifier):
         # is it a clickable book on a pedestal?
         if id == actClickableBook.id:
             if PtWasLocallyNotified(self.key) and state:
-                PtToggleAvatarClickability(false)
+                PtToggleAvatarClickability(False)
                 if SeekBehavior.value is not None: #remember, smart seek before GUI is optional. 
                     PtDebugPrint("xJournalBookGUIPopup: Smart seek used",level=kDebugDumpLevel)
                     LocalAvatar = PtFindAvatar(events)
@@ -133,7 +133,7 @@ class xJournalBookGUIPopup(ptModifier):
                         # re-enable KI
                         PtSendKIMessage(kEnableKIandBB,0)
                         # re-enable our avatar
-                        PtToggleAvatarClickability(true)
+                        PtToggleAvatarClickability(True)
                     elif event[1] == PtBookEventTypes.kNotifyNextPage:
                         PtDebugPrint("xJournalBookGUIPopup:Book: NotifyNextPage",level=kDebugDumpLevel)
                     elif event[1] == PtBookEventTypes.kNotifyPreviousPage:

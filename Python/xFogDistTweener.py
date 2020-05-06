@@ -71,7 +71,7 @@ PointB_Start    = ptAttribInt(12, "Point B: Start Dist", 0, (-10000,1000000))
 PointB_End      = ptAttribInt(13, "Point B: End Dist", 0, (-10000,1000000))
 PointB_Density  = ptAttribInt(14, "Point B: Density", 0, (0,10))
 
-OnlyInRegion    = ptAttribBoolean(15, "Only Operate In Region?", default=false)
+OnlyInRegion    = ptAttribBoolean(15, "Only Operate In Region?", default=False)
 Region          = ptAttribActivator(16, "Region Sensor")
 
 # define global variables

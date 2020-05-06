@@ -83,7 +83,7 @@ respLink = ptAttribResponder(11, "Resp: Link out")
 # ---------
 
 GateInUse = 0
-GateCurrentlyClosed = true
+GateCurrentlyClosed = True
 PersonInRegion = 0
 AgeStartedIn = None
 AllCloths = ""
@@ -170,7 +170,7 @@ class xJourneyClothGate(ptResponder):
         
         if id == actTrigger.id:
             
-            GateCurrentlyClosed = false    # assume that the gate is closed
+            GateCurrentlyClosed = False    # assume that the gate is closed
             if AgeStartedIn == PtGetAgeName():
                 ageSDL = PtGetAgeSDL()
                 try:
@@ -282,17 +282,17 @@ class xJourneyClothGate(ptResponder):
                 GateCurrentlyClosed = ageSDL[stringVarName.value][0]
             except:
                 PtDebugPrint("ERROR: xJourneyClothGate.ToggleSDL():\tERROR reading age SDL")
-                GateCurrentlyClosed = false
+                GateCurrentlyClosed = False
     
             print "ToggleSDL: GateCurrentlyClosed = ", GateCurrentlyClosed
     
     
             # Toggle the sdl value
             if GateCurrentlyClosed:
-                GateCurrentlyClosed = false
+                GateCurrentlyClosed = False
                 ageSDL.setTagString(stringVarName.value,hint)
             else:
-                GateCurrentlyClosed = true
+                GateCurrentlyClosed = True
                 ageSDL.setTagString(stringVarName.value,hint)
             ageSDL[stringVarName.value] = (GateCurrentlyClosed,)
             PtDebugPrint("xJourneyClothGate.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value,GateCurrentlyClosed) )

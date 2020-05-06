@@ -82,9 +82,9 @@ class bhroStarfieldOrCavern(ptMultiModifier):
 
     def EnableObject(self):
         self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
+        self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
         self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+        self.sceneobject.physics.suppress(True)
         self.sceneobject.particle.setParticlesPerSecond(0)

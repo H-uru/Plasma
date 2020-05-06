@@ -90,13 +90,13 @@ class xStateToggler(ptResponder):
         #print "ID:",id,"EVENTS:",events
         
         if id==actStateChange.id:
-            boolVariableEvent = false
+            boolVariableEvent = False
             for event in events:
                 if event[0] == kVariableEvent:
                     varName = event[1]
                     varState = event[3]
                     #print "xStateToggler got message name:", varName, " state:", varState
-                    boolVariableEvent = true
+                    boolVariableEvent = True
                     break
             if not boolVariableEvent:
                 return

@@ -169,7 +169,7 @@ class kdshGlowInTheDark(ptResponder):
                 print "\t Someone else was already in this Kadish instance. Depending on Overriding HighSDL component to synch elevator."
         else:
             print "\t The puzzle has not been solved. Putting elevator at the top."
-            respElevUp.run(self.key, fastforward=true)
+            respElevUp.run(self.key, fastforward=True)
 
 
 

@@ -89,7 +89,7 @@ class stupStartUp(ptResponder):
             PtSetActivePlayer(0)
 
         avatar = PtGetLocalAvatar()
-        avatar.physics.suppress(true)
+        avatar.physics.suppress(True)
 
         cam = ptCamera()
         cam.undoFirstPerson()

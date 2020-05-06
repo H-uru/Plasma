@@ -61,9 +61,9 @@ resetResponder = ptAttribResponder(11,"reset floor",netForce=1)
 entryTrigger = ptAttribActivator(12,"entry trigger region",netForce=0)
 fakeLinkBehavior = ptAttribBehavior(13,"link out behavior",netForce=0)
 
-waitingOnPBook = false
-waitingOnYBook = false
-yellowLink = false
+waitingOnPBook = False
+waitingOnYBook = False
+yellowLink = False
 
 class grsnNexusBookMachine(ptResponder):
 
@@ -126,14 +126,14 @@ class grsnNexusBookMachine(ptResponder):
             bookYellowOutResponder.run(self.key)
             
         if (id == entryTrigger.id):
-            PtWearMaintainerSuit(avatar.getKey(),false)
+            PtWearMaintainerSuit(avatar.getKey(),False)
             
         if (id == bookPurpleClickable.id):
             print"touched purple team room book"
-            yellowLink = false           
+            yellowLink = False           
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)
             
         if (id == bookYellowClickable.id):
             print"touched yellow team room book"
-            yellowLink = true
+            yellowLink = True
             avatar.avatar.runBehaviorSetNotify(fakeLinkBehavior.value,self.key,fakeLinkBehavior.netForce)

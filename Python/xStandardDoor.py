@@ -85,14 +85,14 @@ boolForceOpen = ptAttribBoolean(24,"Force Open if Age Empty")
 # if I enter an age by myself and a door that should've auto-closed is open...just close it and correct the state
 boolForceClose = ptAttribBoolean(25,"Force Close if Age Empty")
 
-boolOwnedDoor = ptAttribBoolean(26,"Only Owners Can Use",default=false)
+boolOwnedDoor = ptAttribBoolean(26,"Only Owners Can Use",default=False)
 
 stringSDLVarEnabled = ptAttribString(27,"SDL Bool Enabled (Optional)") # for lockable or powerable doors etc.
 
 # ---------
 # globals
 # ---------
-boolEnableOK = true # false if it's owned door and I'm not an owner, true otherwise -- set in OnServerInitComplete
+boolEnableOK = True # False if it's owned door and I'm not an owner, true otherwise -- set in OnServerInitComplete
 AgeStartedIn = None
 
 class xStandardDoor(ptResponder):
@@ -132,7 +132,7 @@ class xStandardDoor(ptResponder):
             try:
                 doorClosed = ageSDL[stringSDLVarClosed.value][0]
             except:
-                doorClosed = true
+                doorClosed = True
                 PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door closed value")
             PtDebugPrint("xStandardDoor.OnServerInitComplete():\tageSDL[%s] = %d" % (stringSDLVarClosed.value,doorClosed) )
             
@@ -140,9 +140,9 @@ class xStandardDoor(ptResponder):
                 if stringSDLVarEnabled.value != "":
                     doorEnabled = ageSDL[stringSDLVarEnabled.value][0]
                 else:
-                    doorEnabled = true
+                    doorEnabled = True
             except:
-                doorEnabled = true
+                doorEnabled = True
                 PtDebugPrint("xStandardDoor.OnServerInitComplete():\tERROR: age sdl read failed, defaulting door enabled")
     
             # correct SDL state if necessary
@@ -160,17 +160,17 @@ class xStandardDoor(ptResponder):
     
             # initialize door whatnots based on SDL state
             if not boolOwnedDoor.value:
-                boolEnableOK = true
+                boolEnableOK = True
             else:
                 vault = ptVault()
                 if vault.amOwnerOfCurrentAge():
                     PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWelcome Home!")
-                    boolEnableOK = true
+                    boolEnableOK = True
                 else:
                     PtDebugPrint("xStandardDoor.OnServerInitComplete():\tWelcome Visitor.")
-                    boolEnableOK = false
+                    boolEnableOK = False
             if not doorEnabled:
-                boolEnableOK = false
+                boolEnableOK = False
     
             if not doorClosed:
                 xrgnDoorBlocker.releaseNow(self.key)
@@ -218,14 +218,14 @@ class xStandardDoor(ptResponder):
     
                 if not doorEnabled:
                     PtDebugPrint("xStandardDoor.OnSDLNotify():\tDoor Disabled")
-                    boolEnableOK = false
+                    boolEnableOK = False
                     actExterior.disable()
                     actInterior.disable()
                     return
                     
                 if not boolOwnedDoor.value:
                     PtDebugPrint("xStandardDoor.OnSDLNotify():\tDoor Enabled")
-                    boolEnableOK = true
+                    boolEnableOK = True
                     actExterior.enable()
                     actInterior.enable()
                     return
@@ -233,7 +233,7 @@ class xStandardDoor(ptResponder):
                     vault = ptVault()
                     if vault.amOwnerOfCurrentAge():
                         PtDebugPrint("xStandardDoor.OnSDLNotify():\tOwners-Only Door Enabled")
-                        boolEnableOK = true
+                        boolEnableOK = True
                         actExterior.enable()
                         actInterior.enable()
                         return
@@ -284,7 +284,7 @@ class xStandardDoor(ptResponder):
                             actInterior.enable()
                         xrgnDoorBlocker.clearNow(self.key)                    
                 else:
-                    # doorClosed changed to false (open the door)
+                    # doorClosed changed to False (open the door)
                     try:
                         OkTags = ["fromOutside", "fromInside"]
                         if tag in OkTags:

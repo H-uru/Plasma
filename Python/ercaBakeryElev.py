@@ -45,7 +45,7 @@ Module: ercaBakeryElev.py
 Age: Ercana
 Date: December 2003
 Author: Chris Doyle
-toggles an age sdl bool only if another age sdl bool is true
+toggles an age sdl bool only if another age sdl bool is True
 """
 
 from Plasma import *

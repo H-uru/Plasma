@@ -235,7 +235,7 @@ class dsntKILightMachine(ptModifier):
                         print "dsntKILightMachine.DoKILight(): light is shut off, updating chron if it needs it"
                         self.SetKILightChron(remaining)
                         lightOn = 0
-                        PtSetLightAnimStart(avatarKey, KILightObjectName, false)
+                        PtSetLightAnimStart(avatarKey, KILightObjectName, False)
                 elif resp.getName() == kKILightShortSFXRespName and remaining == kLightTimeShort:
                     PtDebugPrint("dsntKILightMachine.DoKILight():\tRunning short KI Light SFX")
                     sndResp = ptAttribResponder(43)

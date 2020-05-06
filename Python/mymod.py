@@ -118,10 +118,10 @@ class mymod(ptModifier):
                 door.run(self.key,state='open')
                 theobject = object.value
                 self.svMyNumber += 1
-                openb.value = false
+                openb.value = False
             else:
                 door.run(self.key,state='close')
-                openb.value = true
+                openb.value = True
             # get the avatar to create a myHelper class
             # find avatar
             for event in events:

@@ -102,11 +102,11 @@ class ercaSDLIntShowHide(ptMultiModifier):
                     if SDLvalue in self.enabledStateList:
                         PtDebugPrint("DEBUG: ercaSDLIntShowHide.OnServerInitComplete: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
                         self.sceneobject.draw.disable()
-                        self.sceneobject.physics.suppress(true)
+                        self.sceneobject.physics.suppress(True)
                     else:
                         PtDebugPrint("DEBUG: ercaSDLIntShowHide.OnServerInitComplete: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
                         self.sceneobject.draw.enable()
-                        self.sceneobject.physics.suppress(false)
+                        self.sceneobject.physics.suppress(False)
                 except:
                     PtDebugPrint("ERROR: ercaSDLIntShowHide.OnServerInitComplete():\tERROR enabling/disabling object %s" % self.sceneobject.getName())
                     pass
@@ -129,12 +129,12 @@ class ercaSDLIntShowHide(ptMultiModifier):
     def EnableObject(self):
         PtDebugPrint("DEBUG: ercaSDLIntShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
+        self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
         PtDebugPrint("DEBUG: ercaSDLIntShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+        self.sceneobject.physics.suppress(True)
 
     def OnBackdoorMsg(self, target, param):
         if stringVarName.value:

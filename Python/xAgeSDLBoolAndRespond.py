@@ -46,7 +46,7 @@ Age: global
 Date: April 2003
 Author: Bill Slease
 Detects changes of 2 age SDL bools, ANDs them and runs
-one of two responders depending on true/false
+one of two responders depending on True/false
 """
 
 from Plasma import *
@@ -68,7 +68,7 @@ boolDefault = ptAttribBoolean(7,"Default setting",0)
 # ---------
 # globals
 # ---------
-boolCurrentState = false
+boolCurrentState = False
 
 class xAgeSDLBoolAndRespond(ptResponder):
 
@@ -93,11 +93,11 @@ class xAgeSDLBoolAndRespond(ptResponder):
             if ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]:
                 PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnServerInitComplete:\tRunning true responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolFFOnInit.value))
                 respBoolTrue.run(self.key,fastforward=boolFFOnInit.value)
-                boolCurrentState = true
+                boolCurrentState = True
             else:
                 PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnServerInitComplete:\tRunning false responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolFFOnInit.value))
                 respBoolFalse.run(self.key,fastforward=boolFFOnInit.value)
-                boolCurrentState = false
+                boolCurrentState = False
         except:
             self.runDefault()
 
@@ -105,10 +105,10 @@ class xAgeSDLBoolAndRespond(ptResponder):
         PtDebugPrint("xAgeSDLBoolAndRespond: running internal default")
         if boolDefault.value:
             respBoolTrue.run(self.key,fastforward=boolFFOnInit.value)
-            boolCurrentState = true
+            boolCurrentState = True
         else:
             respBoolFalse.run(self.key,fastforward=boolFFOnInit.value)
-            boolCurrentState = false
+            boolCurrentState = False
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         global boolCurrentState
@@ -129,10 +129,10 @@ class xAgeSDLBoolAndRespond(ptResponder):
         PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\tnotification from playerID: %d" % (playerID))
 
         # does the change change our current state?
-        if boolCurrentState == false and (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
-            boolCurrentState = true
-        elif boolCurrentState == true and not (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
-            boolCurrentState = false
+        if not boolCurrentState and (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
+            boolCurrentState = True
+        elif boolCurrentState and not (ageSDL[stringVar1Name.value][0] and ageSDL[stringVar2Name.value][0]):
+            boolCurrentState = False
         else:
             PtDebugPrint("DEBUG: xAgeSDLBoolAndRespond.OnSDLNotify():\t %s ANDed state didn't change." % (self.sceneobject.getName()))
             return

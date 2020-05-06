@@ -45,7 +45,7 @@ Module: xAgeSDLBoolToggleDependent
 Age: global
 Date: April 2003
 Author: Bill Slease
-toggles an age sdl bool only if another age sdl bool is true
+toggles an age sdl bool only if another age sdl bool is True
 """
 
 from Plasma import *
@@ -65,7 +65,7 @@ stringInfo = ptAttribString(4,"Extra info to pass along") # string passed as hin
 # globals
 # ---------
 
-boolCurrentValue = false
+boolCurrentValue = False
 
 class xAgeSDLBoolToggleDependent(ptResponder):
 
@@ -111,10 +111,10 @@ class xAgeSDLBoolToggleDependent(ptResponder):
         if not ageSDL[stringVarEnabler.value][0]:
             return
         if boolCurrentValue:
-            boolCurrentValue = false
+            boolCurrentValue = False
             ageSDL.setTagString(stringVarTarget.value,stringInfo.value)
         else:
-            boolCurrentValue = true
+            boolCurrentValue = True
             ageSDL.setTagString(stringVarTarget.value,stringInfo.value)
         ageSDL[stringVarTarget.value] = (boolCurrentValue,)
         PtDebugPrint("DEBUG: xAgeSDLBoolToggleDependent.OnNotify():\tset age SDL var %s to %d" % (stringVarTarget.value,boolCurrentValue) )

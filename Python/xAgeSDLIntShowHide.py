@@ -102,11 +102,11 @@ class xAgeSDLIntShowHide(ptMultiModifier):
                 if  SDLvalue in self.enabledStateList:
                     PtDebugPrint("DEBUG: xAgeSDLIntShowHide.OnServerInitComplete: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
                     self.sceneobject.draw.enable()
-                    self.sceneobject.physics.suppress(false)
+                    self.sceneobject.physics.suppress(False)
                 else:
                     PtDebugPrint("DEBUG: xAgeSDLIntShowHide.OnServerInitComplete: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
                     self.sceneobject.draw.disable()
-                    self.sceneobject.physics.suppress(true)
+                    self.sceneobject.physics.suppress(True)
             except:
                 PtDebugPrint("ERROR: xAgeSDLIntShowHide.OnServerInitComplete():\tERROR enabling/disabling object %s" % self.sceneobject.getName())
                 self.runDefault()
@@ -119,11 +119,11 @@ class xAgeSDLIntShowHide(ptMultiModifier):
         if  intDefault.value in self.enabledStateList:
             PtDebugPrint("DEBUG: xAgeSDLIntShowHide.OnServerInitComplete: Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
             self.sceneobject.draw.enable()
-            self.sceneobject.physics.suppress(false)
+            self.sceneobject.physics.suppress(False)
         else:
             PtDebugPrint("DEBUG: xAgeSDLIntShowHide.OnServerInitComplete: Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
             self.sceneobject.draw.disable()
-            self.sceneobject.physics.suppress(true)
+            self.sceneobject.physics.suppress(True)
 
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):        
         if VARname != stringVarName.value:
@@ -139,12 +139,12 @@ class xAgeSDLIntShowHide(ptMultiModifier):
     def EnableObject(self):
         PtDebugPrint("DEBUG: xAgeSDLIntShowHide.EnableObject:  Attempting to enable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.enable()
-        self.sceneobject.physics.suppress(false)
+        self.sceneobject.physics.suppress(False)
 
     def DisableObject(self):
         PtDebugPrint("DEBUG: xAgeSDLIntShowHide.DisableObject:  Attempting to disable drawing and collision on %s..." % self.sceneobject.getName())
         self.sceneobject.draw.disable()
-        self.sceneobject.physics.suppress(true)
+        self.sceneobject.physics.suppress(True)
 
     def OnBackdoorMsg(self, target, param):
         if stringVarName.value:

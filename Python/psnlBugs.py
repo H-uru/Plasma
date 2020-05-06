@@ -97,7 +97,7 @@ class psnlBugs(ptResponder):
         if (self.bugCount != 0):
             PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
             PtKillParticles(10.0,1,avatar.getKey())
-            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)
+            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
             print "kill all bugs in age: ",thisAge
             self.ISaveBugCount(0)
         
@@ -127,6 +127,6 @@ class psnlBugs(ptResponder):
 ##        if (self.bugCount > 0):
 ##            PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
 ##            PtKillParticles(10.0,1,avatar.getKey())
-##            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, false)     
+##            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)     
 ##            print "kill all bugs in psnl age"
 ##            self.ISaveBugCount(0)

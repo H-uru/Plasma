@@ -69,7 +69,7 @@ RespSndLogTracks = ptAttribResponder(6,"Resp: SndLogTracks scope")
 gJournalBook = None
 gOriginalAmbientVolume = 1.0
 gOriginalSFXVolume = 1.0
-AlreadyClosed = false
+AlreadyClosed = False
 
 #timer IDs
 kFadeOutToCreditsID = 1
@@ -162,7 +162,7 @@ class clftEndingCredits(ptResponder):
         for event in events:
             if event[0] == PtEventType.kBook:
                 if event[1] == PtBookEventTypes.kNotifyHide:
-                    AlreadyClosed = true
+                    AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds,1)
                     print "clftEndingCredits.OnNotify(): Book hidden. FadeOut over", kFadeOutToGameSeconds," seconds"  
                     
@@ -170,7 +170,7 @@ class clftEndingCredits(ptResponder):
                     PtAtTimeCallback(self.key,kFadeOutToGameSeconds,kFadeOutToGameID)
 
                 elif event[1] == PtBookEventTypes.kNotifyClose:
-                    AlreadyClosed = true
+                    AlreadyClosed = True
                     PtFadeOut(kFadeOutToGameSeconds,1)
                     print "clftEndingCredits.OnNotify(): Book closed. FadeOut over", kFadeOutToGameSeconds," seconds"                    
                     
@@ -216,7 +216,7 @@ class clftEndingCredits(ptResponder):
         
         print "clftEndingCredits.IShowCredits(): Showing Journal now."
         gJournalBook.show(0)
-        AlreadyClosed = false
+        AlreadyClosed = False
         PtAtTimeCallback(self.key,1,kFadeInToCreditsID)        
 
 

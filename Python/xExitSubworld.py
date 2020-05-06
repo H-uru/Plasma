@@ -54,7 +54,7 @@ safetyRgn = ptAttribActivator(2,"safety region")
 
 #globals
 
-inSafetyRegion = false
+inSafetyRegion = False
 
 
 class xExitSubworld(ptResponder):
@@ -80,7 +80,7 @@ class xExitSubworld(ptResponder):
         for event in events:
             if (event[0] == kCollisionEvent):
                 entry = event[1]  # are we entering or exiting?
-                if (id == exitRgn.id and inSafetyRegion == false and entry == 0):
+                if (id == exitRgn.id and not inSafetyRegion and not entry):
                     avatar.avatar.exitSubWorld()
                     return
                 elif (id == safetyRgn.id):

@@ -109,9 +109,9 @@ class nb01Easel(ptModifier):
         hoodName = xLocTools.LocalizeAgeName(hoodName)
         text = PtGetLocalizedString("Neighborhood.Messages.Welcome", [hoodName])
         
-        dyna_map.textmap.netPropagate(false) # we don't want our text appearing on other machines, since we are going to be localized
+        dyna_map.textmap.netPropagate(False) # we don't want our text appearing on other machines, since we are going to be localized
         dyna_map.textmap.clearToColor(clearcolor)
-        dyna_map.textmap.setTextColor(fontcolor,true)
+        dyna_map.textmap.setTextColor(fontcolor,True)
         dyna_map.textmap.setWrapping(dyna_map.textmap.getWidth(),dyna_map.textmap.getHeight())
         dyna_map.textmap.setFont(dyna_fontname.value, dyna_fontsize.value)
         dyna_map.textmap.setJustify(PtJustify.kCenter)

@@ -63,7 +63,7 @@ stringInfo = ptAttribString(5,"Extra info to pass along") # string passed as hin
 # globals
 # ---------
 
-boolCurrentValue = false
+boolCurrentValue = False
 
 class xAgeSDLBoolToggle(ptResponder):
 
@@ -110,10 +110,10 @@ class xAgeSDLBoolToggle(ptResponder):
         ageSDL = PtGetAgeSDL()
         # Toggle the sdl value
         if boolCurrentValue:
-            boolCurrentValue = false
+            boolCurrentValue = False
             ageSDL.setTagString(stringVarName.value,stringInfo.value)
         else:
-            boolCurrentValue = true
+            boolCurrentValue = True
             ageSDL.setTagString(stringVarName.value,stringInfo.value)
         ageSDL[stringVarName.value] = (boolCurrentValue,)
         PtDebugPrint("DEBUG: xAgeSDLBoolToggle.OnNotify():\tset age SDL var %s to %d" % (stringVarName.value,boolCurrentValue) )

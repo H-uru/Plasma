@@ -54,7 +54,7 @@ arrivePt     = ptAttribSceneobject(1,"warp point")
 triggerRgn1 = ptAttribActivator(2,"upper box")
 triggerRgn2 = ptAttribActivator(3,"lower box")
 
-inRegion1 = false
+inRegion1 = False
 
 
 class grsnTrnCtrBridgeSafety(ptResponder):

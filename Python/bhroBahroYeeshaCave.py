@@ -495,11 +495,11 @@ class bhroBahroYeeshaCave(ptModifier):
             # check if all values match up now
             for i in range(4):
                 if list2Copy[i] != list1[i]:
-                    return false
+                    return False
 
-            return true
+            return True
         
-        return false
+        return False
 
 
     def CheckForSolution(self):

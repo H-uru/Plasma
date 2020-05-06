@@ -84,14 +84,14 @@ ForceThirdPerson = ptAttribBoolean(11, "Force 3rd person", default = 0)
 
 
 # globals
-OfferedBookMode = false
+OfferedBookMode = False
 BookOfferer = None
 stringAgeRequested = None
 PageID_List  = []
 SpawnPointName_Dict = {}
 SpawnPointTitle_Dict = {}
 
-OffereeWalking = false
+OffereeWalking = False
 ClosedBookToShare = 0
 
 BookNumber = 0 # which book it is on the shelf. The Neighborhood book currently is 0. The Teledahn Book is currently 2.
@@ -149,7 +149,7 @@ class xLinkingBookGUIPopup(ptModifier):
         if id==shareRegion.id:
             if PtWasLocallyNotified(self.key):
                 for event in events:
-                    if (event[0]==kCollisionEvent and event[1] == false): # false being an exit
+                    if (event[0]==kCollisionEvent and not event[1]): # False being an exit
                         PtDebugPrint("xLinkingBookGUIPopup: exited book offer region",level=kDebugDumpLevel)
                         PtClearOfferBookMode()
                         self.HideBook()
@@ -164,13 +164,13 @@ class xLinkingBookGUIPopup(ptModifier):
                 PtDebugPrint("xLinkingBookGUIPopup: event[2]=",event[2],level=kDebugDumpLevel)
                 
                 if event[0] == kMultiStageEvent and event[2] == kEnterStage and OffereeWalking: # Smart seek completed. Exit multistage, and show GUI.
-                    OffereeWalking = false
+                    OffereeWalking = False
                     PtDebugPrint("xLinkingBookGUIPopup: accepted link, notifying offerer of such",level=kDebugDumpLevel)
-                    OfferedBookMode = false
+                    OfferedBookMode = False
                     avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                     PtNotifyOffererLinkCompleted(avID) 
                     BookOfferer = None
-                    PtToggleAvatarClickability(true)
+                    PtToggleAvatarClickability(True)
                     return
 
         # is it the bookshelf in the personal age?    
@@ -197,21 +197,21 @@ class xLinkingBookGUIPopup(ptModifier):
                         idRequestor = event[3]
                         PtDebugPrint("xLinkingBookGUI.OnNotify():\tpsnlBookshelf user id %d selected book %s from the shelf" % (idRequestor, stringAgeRequested),level=kDebugDumpLevel)
                         self.IShowBookTreasure()
-                        OfferedBookMode = false
+                        OfferedBookMode = False
                         BookOfferer = None
 
         # is it a clickable book on a pedestal?
         elif id == actClickableBook.id:
             if PtWasLocallyNotified(self.key) and state:
                 actClickableBook.disable()
-                PtToggleAvatarClickability(false)
+                PtToggleAvatarClickability(False)
                 if SeekBehavior.value is not None: #remember, smart seek before GUI is optional. 
                     PtDebugPrint("xLinkingBookGUIPopup: Smart seek used",level=kDebugDumpLevel)
                     reportingAvatar = PtFindAvatar(events)
                     SeekBehavior.run(reportingAvatar)
                     return
                 self.IShowBookNoTreasure()
-                OfferedBookMode = false
+                OfferedBookMode = False
                 BookOfferer = None
                 return
             elif not PtWasLocallyNotified(self.key) and state:
@@ -236,7 +236,7 @@ class xLinkingBookGUIPopup(ptModifier):
                     if reportingClient == localClient:
                         PtDebugPrint("xLinkingBookGUIPopup: attempting to draw link panel gui",level=kDebugDumpLevel)
                         self.IShowBookNoTreasure()
-                        OfferedBookMode = false
+                        OfferedBookMode = False
                         BookOfferer = None
 
         elif id == respLinkResponder.id:
@@ -264,7 +264,7 @@ class xLinkingBookGUIPopup(ptModifier):
                     if (event[2] == -999): # if the offerer is recinding the book offer, hide the panel, or...
                         if (OffereeWalking): # too late, they already accepted
                             return
-                        OfferedBookMode = false
+                        OfferedBookMode = False
                         BookOfferer = None
                         self.HideBook()
                         return
@@ -273,13 +273,13 @@ class xLinkingBookGUIPopup(ptModifier):
                         PtDebugPrint("xLinkingBookGUIPopup: offered book by %s" % (BookOfferer.getName()),level=kDebugDumpLevel)
                         avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                         if ptVault().getIgnoreListFolder().playerlistHasPlayer(avID):
-                            OfferedBookMode = false
+                            OfferedBookMode = False
                             PtNotifyOffererLinkRejected(avID) 
                             BookOfferer = None
                             return
                         else:
-                            OfferedBookMode = true
-                    PtToggleAvatarClickability(false)
+                            OfferedBookMode = True
+                    PtToggleAvatarClickability(False)
                     self.IShowBookNoTreasure()
                     return
 
@@ -312,7 +312,7 @@ class xLinkingBookGUIPopup(ptModifier):
                                 avatar=PtGetLocalAvatar()
                                 avatar.avatar.setReplyKey(self.key)
                                 shareBookSeek.run(avatar)
-                                OffereeWalking = true
+                                OffereeWalking = True
                                 avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                                 PtNotifyOffererLinkAccepted(avID)
                                 ClosedBookToShare = 1
@@ -371,12 +371,12 @@ class xLinkingBookGUIPopup(ptModifier):
                         PtDebugPrint("xLinkingBookGUIPopup:Book: NotifyHide",level=kDebugDumpLevel)
                         PtSendKIMessage(kEnableKIandBB,0)
                         if not ClosedBookToShare:
-                            PtToggleAvatarClickability(true)
+                            PtToggleAvatarClickability(True)
                             if (OfferedBookMode and BookOfferer):
                                 avID = PtGetClientIDFromAvatarKey(BookOfferer.getKey())
                                 PtNotifyOffererLinkRejected(avID)
                                 PtDebugPrint("xLinkingBookGUIPopup: rejected link, notifying offerer as such",level=kDebugDumpLevel)
-                                OfferedBookMode = false
+                                OfferedBookMode = False
                                 BookOfferer = None
 
                         if ForceThirdPerson.value:
@@ -872,12 +872,12 @@ class xLinkingBookGUIPopup(ptModifier):
         SpawnPointTitle_Dict = {}
         PtDebugPrint ("xLinkingBookGUI.BuildTreasureLinks():The %s book has the following %s pages: " % (ageRequested, len(spawnPoints)))
         # assume that we didn't find the original link
-        HasFoundOriginalBook = false
+        HasFoundOriginalBook = False
         # Step 2: Determine what other links they have to this age.
         for spawnPoint in spawnPoints:
             #toss this is it's the "default" link. We've already processed that in step #1 above
             if spawnPoint.getTitle() == "Default": 
-                HasFoundOriginalBook = true
+                HasFoundOriginalBook = True
                 PtDebugPrint("\tPage #1: You've found the original book. The first panel shows %s" % (ageRequested),level=kDebugDumpLevel)
                 # goes in the front of the list
                 SpawnPointName_Dict[xLinkingBookDefs.kFirstLinkPanelID] = "LinkInPointDefault"
@@ -920,7 +920,7 @@ class xLinkingBookGUIPopup(ptModifier):
         else:
             NoReenableBook = 0
         
-        PtToggleAvatarClickability(true) # enable me as clickable
+        PtToggleAvatarClickability(True) # enable me as clickable
         if gLinkingBook:
             gLinkingBook.hide()
         

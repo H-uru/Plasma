@@ -181,11 +181,11 @@ class tldnShroomieBrain(ptResponder):
 
         if (CurrentTime - ShroomieTimeLastSeen) > 240:
             print "\tShroomie CAN be seen."
-            return true
+            return True
             
         else:
             print "\tShroomie CAN'T be seen."
-            return false
+            return False
             
 
     def WillShroomieBeSeen(self,probability):
@@ -195,7 +195,7 @@ class tldnShroomieBrain(ptResponder):
         
         if randnum < (probability*100):
             print "\t Shroomie WILL be seen."
-            return true
+            return True
         else:
             print "\tShroomie WON'T be seen."
             
