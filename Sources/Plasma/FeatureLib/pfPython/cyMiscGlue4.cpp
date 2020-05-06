@@ -402,37 +402,69 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtDebugAssert, args, "Params: cond, msg\nDebug o
     PYTHON_RETURN_NONE;
 }
 
-PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, **kwargs\nPrints msgs to the Python log given the message's level")
+PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs, level, sep, end\n"
+                                     "Prints msgs to the Python log given the message's level, "
+                                     "optionally separated and terminated by the given strings")
 {
     uint32_t  level = cyMisc::kErrorLevel;
+    ST::string sep = ST_LITERAL(" ");
+    ST::string end = ST_LITERAL("\n");
 
     do {
-        // Grabbin' levelz
         if (kwargs && PyDict_Check(kwargs)) {
-            PyObject* value = PyDict_GetItem(kwargs, PyString_FromString("level"));
+            PyObject* value = PyDict_GetItemString(kwargs, "level");
             if (value) {
                 if (PyInt_Check(value))
                     level = PyInt_AsLong(value);
                 else
                     break;
             }
+
+            value = PyDict_GetItemString(kwargs, "sep");
+            if (value) {
+                if (PyString_CheckEx(value))
+                    sep = PyString_AsStringEx(value);
+                else
+                    break;
+            }
+
+            value = PyDict_GetItemString(kwargs, "end");
+            if (value) {
+                if (PyString_CheckEx(value))
+                    end = PyString_AsStringEx(value);
+                else
+                    break;
+            }
         }
 
+        ST::string_stream ss;
         for (size_t i = 0; i < PySequence_Fast_GET_SIZE(args); ++i) {
             PyObject* theMsg = PySequence_Fast_GET_ITEM(args, i);
-            if (!PyString_CheckEx(theMsg))
-                theMsg = PyObject_Repr(theMsg);
-
-            if (theMsg)
-                cyMisc::DebugPrint(PyString_AsStringEx(theMsg), level);
+            if (PyString_CheckEx(theMsg))
+                Py_XINCREF(theMsg);
             else
-                break;
+                theMsg = PyObject_Str(theMsg);
+
+            if (i != 0)
+                ss << sep;
+            if (theMsg) {
+                ss << PyString_AsStringEx(theMsg);
+                Py_DECREF(theMsg);
+            } else {
+                PyErr_Format(PyExc_RuntimeError, "Failed to `str()` argument index %n", i);
+                PYTHON_RETURN_ERROR;
+            }
         }
+        ss << end;
+        cyMisc::DebugPrint(ss.to_string(), level);
         PYTHON_RETURN_NONE;
     } while (false);
 
     // fell through to the type error case
-    PyErr_SetString(PyExc_TypeError, "PtDebugPrint expects a sequence of strings and an optional int");
+    PyErr_SetString(PyExc_TypeError, "PtDebugPrint expects a sequence of objects, "
+                                     "an integer explicitly keyed `level`, "
+                                     "an object explicitly keyed `sep`, "
+                                     "and an object explicitly keyed `end`");
     PYTHON_RETURN_ERROR;
 }
 
