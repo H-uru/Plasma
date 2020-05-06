@@ -196,7 +196,7 @@ def PtAddEvent(notify,event):
     elif event[0] == kResponderStateEvent:
         notify.addResponderState(event[1])
     else:
-        print("Unrecognized event type %d" % (event[0]))
+        PtDebugPrint("Unrecognized event type %d" % (event[0]))
         
 # add a list of events into a ptNotify message
 def PtAddEvents(notify, events):

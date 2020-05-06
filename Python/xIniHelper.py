@@ -131,7 +131,7 @@ class iniFile:
                     self.entries.append(iniEntry(l))
                 f.close()
             except:
-                print("[INI processing] Error while reading %s" % (filename))
+                PtDebugPrint("[INI processing] Error while reading %s" % (filename))
 
     def __repr__(self):
         line = ""

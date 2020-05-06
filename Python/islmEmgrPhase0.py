@@ -108,7 +108,7 @@ class islmEmgrPhase0(ptResponder):
         
         version = 2
         self.version = version
-        print("__init__islmEmgrPhase0 v.", version)
+        PtDebugPrint("__init__islmEmgrPhase0 v.", version)
 
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -119,7 +119,7 @@ class islmEmgrPhase0(ptResponder):
             ageSDL = PtGetAgeSDL()
             
             for variable in BooleanVARs:
-                print("tying together", variable)
+                PtDebugPrint("tying together", variable)
                 ageSDL.setNotify(self.key,variable,0.0)
                 self.IManageBOOLs(variable, "")
                 
@@ -137,7 +137,7 @@ class islmEmgrPhase0(ptResponder):
             PtDebugPrint("islmEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
             
             if VARname in BooleanVARs:
-                print("islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
+                PtDebugPrint("islmEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
                 self.IManageBOOLs(VARname,SDLname)
                 
             elif VARname in StateVARs.viewkeys():
@@ -159,7 +159,7 @@ class islmEmgrPhase0(ptResponder):
                 PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tPaging in room ", VARname)
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  #are we paging things out?
-                print("variable = ", VARname)
+                PtDebugPrint("variable = ", VARname)
                 PtDebugPrint("islmEmgrPhase0.OnSDLNotify:\tPaging out room ", VARname)
                 PtPageOutNode(VARname)
             else:

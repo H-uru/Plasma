@@ -280,19 +280,19 @@ class xTakableClothing(ptModifier):
     
     def IRemoveOtherGuildShirt (self):
         playerCNode = ptVault().getAvatarClosetFolder()
-        print("xTakableClothing: getAvatarClosetFolder Type = " + str(playerCNode.getType()))
-        print("xTakableClothing: getAvatarClosetFolder Child Node Count = " + str(playerCNode.getChildNodeCount()))
+        PtDebugPrint("xTakableClothing: getAvatarClosetFolder Type = " + str(playerCNode.getType()))
+        PtDebugPrint("xTakableClothing: getAvatarClosetFolder Child Node Count = " + str(playerCNode.getChildNodeCount()))
         if playerCNode.getChildNodeCount() > 0:
             playerCNodeList = playerCNode.getChildNodeRefList()
             for folderChild in playerCNodeList:
                 PtDebugPrint("xTakableClothing: looking at child node " + str(folderChild),level=kDebugDumpLevel)
                 childNode = folderChild.getChild()
                 if childNode != type(None):
-                    print("xTakableClothing: Child Node Node ID")
+                    PtDebugPrint("xTakableClothing: Child Node Node ID")
                     SDLNode = childNode.upcastToSDLNode()
                     if SDLNode is not None:
                         rec = SDLNode.getStateDataRecord()
-                        print("xTakableClothing: getStateDataRecord().getName(): " + str(rec.getName()))
+                        PtDebugPrint("xTakableClothing: getStateDataRecord().getName(): " + str(rec.getName()))
                         SDLVarList = rec.getVarList()
                         for var in SDLVarList:
                             varnode = rec.findVar(var)
@@ -300,13 +300,13 @@ class xTakableClothing(ptModifier):
                                 if varnode.getType() == 4:
                                     varKey = varnode.getKey()
                                     varName = varKey.getName()
-                                    print("xTakableClothing: VarNode.getName(): ", varName)
+                                    PtDebugPrint("xTakableClothing: VarNode.getName(): ", varName)
                                     if varName.find('Torso_GuildBlue') != -1 or varName.find('Torso_GuildGreen') != -1 or varName.find('Torso_GuildRed') != -1 or varName.find('Torso_GuildYellow') != -1 or varName.find('Torso_GuildWhite') !=  -1:
-                                        print("xTakableClothing: Found Other Guild Shirt. Deleting Old Guild Shirt.")
+                                        PtDebugPrint("xTakableClothing: Found Other Guild Shirt. Deleting Old Guild Shirt.")
                                         if playerCNode.removeNode(childNode):
-                                            print("xTakableClothing: Delete was a success.")
+                                            PtDebugPrint("xTakableClothing: Delete was a success.")
                                         else:
-                                            print("xTakableClothing: Delete failed.")
+                                            PtDebugPrint("xTakableClothing: Delete failed.")
                                         return
 
     def IRemoveWornSet(self,setName):
@@ -366,7 +366,7 @@ class xTakableClothing(ptModifier):
                     self.IRemoveOtherGuildShirt()
                     psnlSDL = xPsnlVaultSDL()
                     psnlSDL["guildAlliance"] = (guildSDLValues[base],)
-                    print("xTakableClothing: Guild set to:", guildSDLValues[base])
+                    PtDebugPrint("xTakableClothing: Guild set to:", guildSDLValues[base])
                 avatar.avatar.addWardrobeClothingItem(base,ptColor().white(),ptColor().white())
                 acclist = avatar.avatar.getClosetClothingList(kAccessoryClothingItem)
                 accnamelist = []

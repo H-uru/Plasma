@@ -129,7 +129,7 @@ class grtzGZMaster(ptResponder):
   
         if id == respGZActive.id:
             pass
-            #print "grtzGZMaster:OnNotify(): got callback from resp"
+            #PtDebugPrint("grtzGZMaster:OnNotify(): got callback from resp")
             #PtEnableMovementKeys()
             #PtSendKIMessage(kEnableKIandBB,0)
 

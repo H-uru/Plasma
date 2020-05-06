@@ -138,7 +138,7 @@ class tldnWRCCBrain(ptResponder):
             self.SDL["OperatorID"] = (-1,)
             self.SDL["boolOperated"] = (0,)
             #respWRCCMaster.run(self.key,state='off')
-            print("tldnWRCCBrain.AvatarPage(): WRCC operator paged out, reenabled WRCC.")
+            PtDebugPrint("tldnWRCCBrain.AvatarPage(): WRCC operator paged out, reenabled WRCC.")
         else:
             return
 
@@ -151,7 +151,7 @@ class tldnWRCCBrain(ptResponder):
         boolOperated = self.SDL["boolOperated"][0]
         if boolOperated:
             if solo:
-                print("tldnWRCCBrain.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
+                PtDebugPrint("tldnWRCCBrain.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
                 boolOperated = 0
                 self.SDL["boolOperated"] = (0,)
                 self.SDL["OperatorID"] = (-1,)
@@ -159,7 +159,7 @@ class tldnWRCCBrain(ptResponder):
                 #respWRCCMaster.run(self.key,state='off')
             else:
                 actSitClickable.disable()
-                print("tldnWRCCBrain.Load():\tboolOperated=%d, disabling WRCC clickable" % boolOperated)
+                PtDebugPrint("tldnWRCCBrain.Load():\tboolOperated=%d, disabling WRCC clickable" % boolOperated)
 
 
     def OnServerInitComplete(self):
@@ -367,32 +367,32 @@ class tldnWRCCBrain(ptResponder):
         for event in events: #this detects the untrigger of the sitting component
             if event[0]==6 and event[1]==1 and id== actSitComponent.id:
                 if state==0: #true as player stands up
-                    print("tldnWRCCBrain.OnNotify():\tWRCC unoccupied, re-enabling WRCC sit clickable.")
+                    PtDebugPrint("tldnWRCCBrain.OnNotify():\tWRCC unoccupied, re-enabling WRCC sit clickable.")
                     actSitClickable.enable()
                     self.SDL["boolOperated"] = (0,)
                     self.SDL["OperatorID"] = (-1,)
                     
                     if PtWasLocallyNotified(self.key):
                         PtEnableMouseMovement()
-                        print("tldnWRCCBrain.OnNotify():\tI'm the one who stood up, will hide panel's clickables")
+                        PtDebugPrint("tldnWRCCBrain.OnNotify():\tI'm the one who stood up, will hide panel's clickables")
                         respWRCCMaster.run(self.key,state='on')
 
         if not state: # notification is from some kind of untrigger
             return
 
         if id==actSitClickable.id:
-            print("tldnWRCCBrain.OnNotify():\tWRCC occupied, disabling WRCC sit clickable.")
+            PtDebugPrint("tldnWRCCBrain.OnNotify():\tWRCC occupied, disabling WRCC sit clickable.")
             actSitClickable.disable()
             self.SDL["boolOperated"] = (1,)
                     
             LocalAvatar = PtFindAvatar(events)
             avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
             self.SDL["OperatorID"] = (avID,)
-            print("tldnWRCCBrain.OnNotify:\twrote SDL - scope operator id = ", avID) 
+            PtDebugPrint("tldnWRCCBrain.OnNotify:\twrote SDL - scope operator id = ", avID) 
             
             if PtWasLocallyNotified(self.key):
                 PtDisableMouseMovement()
-                print("tldnWRCCBrain.OnNotify():\tI'm the one who sat down, will show panel's clickables")
+                PtDebugPrint("tldnWRCCBrain.OnNotify():\tI'm the one who sat down, will show panel's clickables")
                 respWRCCMaster.run(self.key,state='off')
         
         if id==actDrainLvr.id:
@@ -400,15 +400,15 @@ class tldnWRCCBrain(ptResponder):
                 ageSDL = PtGetAgeSDL()
                 if pwrOn and hatchLocked and not cabinDrained:
                     respDrainLvr.run(self.key,state='drain')
-                    print("tldnWRCCBrain.OnNotify:\tDraining under-cabin.")
+                    PtDebugPrint("tldnWRCCBrain.OnNotify:\tDraining under-cabin.")
                     ageSDL.setTagString(kStringAgeSDLCabinDrained,"ignore") # ignore so we don't set global cabinDrained yet...see respCabinDrain callback below
                     ageSDL[kStringAgeSDLCabinDrained] = (1,) # set this now so folks coming in will just see it drained
                 elif pwrOn and hatchLocked and cabinDrained:
                     respDrainLvr.run(self.key,state='pull')
-                    print("tldnWRCCBrain.OnNotify:\tUnder-cabin already empty.")
+                    PtDebugPrint("tldnWRCCBrain.OnNotify:\tUnder-cabin already empty.")
                 else:
                     respDrainLvr.run(self.key,state='off')
-                    print("tldnWRCCBrain.OnNotify:\tCan't operate drain -- pwrOn=%d hatchLocked=%d." % (pwrOn,hatchLocked))
+                    PtDebugPrint("tldnWRCCBrain.OnNotify:\tCan't operate drain -- pwrOn=%d hatchLocked=%d." % (pwrOn,hatchLocked))
             return
 
         if id==respDrainLvr.id:
@@ -439,10 +439,10 @@ class tldnWRCCBrain(ptResponder):
                         ageSDL[kStringAgeSDLHatchLocked] = (1,)
                 elif hatchLocked:
                     respLockSwitch.run(self.key,state='unlockfail')
-                    print("tldnWRCCBrain.OnNotify:\tCan't unlock hatch -- pwrOn=%d hatchOpen=%d cabinDraining=%d." % (pwrOn,hatchOpen,cabinDraining))
+                    PtDebugPrint("tldnWRCCBrain.OnNotify:\tCan't unlock hatch -- pwrOn=%d hatchOpen=%d cabinDraining=%d." % (pwrOn,hatchOpen,cabinDraining))
                 else:
                     respLockSwitch.run(self.key,state='lockfail')
-                    print("tldnWRCCBrain.OnNotify:\tCan't lock hatch -- pwrOn=%d hatchOpen=%d cabinDraining=%d." % (pwrOn,hatchOpen,cabinDraining))
+                    PtDebugPrint("tldnWRCCBrain.OnNotify:\tCan't lock hatch -- pwrOn=%d hatchOpen=%d cabinDraining=%d." % (pwrOn,hatchOpen,cabinDraining))
             return
 
         if id==actOpenHatchAbv.id:

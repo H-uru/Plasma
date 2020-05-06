@@ -112,20 +112,20 @@ class grsnMainWallPython(ptResponder):
         if PtGetPlayerList():
             ReceiveInit = True
         else:
-            print"solo in climbing wall"
+            PtDebugPrint("solo in climbing wall")
     
     def OnClimbingBlockerEvent(self,blocker):
         
-        print"looking for blocker named ",blocker.getName()
+        PtDebugPrint("looking for blocker named ",blocker.getName())
         i = 0
         while i < 171:
             if (northBlocker.value[i] == blocker):
                 northWall.value[i].runAttachedResponder(kTeamLightsBlink)
-                print"found matching texture named ",northWall.value[i].getName()
+                PtDebugPrint("found matching texture named ",northWall.value[i].getName())
                 return
             elif (southBlocker.value[i] == blocker):
                 southWall.value[i].runAttachedResponder(kTeamLightsBlink)
-                print"found matching texture named ",southWall.value[i].getName()
+                PtDebugPrint("found matching texture named ",southWall.value[i].getName())
                 return
             i = i + 1
         
@@ -135,13 +135,13 @@ class grsnMainWallPython(ptResponder):
         global SouthState
         global NorthState
         
-        print"grsnMainClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
+        PtDebugPrint("grsnMainClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value)
         if not ReceiveInit:
-            print"failed to receive init"
+            PtDebugPrint("failed to receive init")
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
             ReceiveInit = False
-            print "finished receiving total game state"
+            PtDebugPrint("finished receiving total game state")
             # update lights display 
             if (SouthState == ptClimbingWallMsgState.kSouthWin or \
                 NorthState == ptClimbingWallMsgState.kNorthWin or \
@@ -153,17 +153,17 @@ class grsnMainWallPython(ptResponder):
                     value = SouthBlockers[i] 
                     if (value > -1):
                         southWall.value[value].runAttachedResponder(kTeamLightsOn)
-                        print"drawing s wall index",value
+                        PtDebugPrint("drawing s wall index",value)
                     value = NorthBlockers[i] 
                     if (value >  -1):
                         northWall.value[value].runAttachedResponder(kTeamLightsOn)
-                        print"drawing n wall index",value
+                        PtDebugPrint("drawing n wall index",value)
                     i = i + 1
         
         if (type == ptClimbingWallMsgType.kTotalGameState):
             SouthState = state
             NorthState = value
-            print "begin receiving total game state"
+            PtDebugPrint("begin receiving total game state")
         
         elif (type == ptClimbingWallMsgType.kAddBlocker and state > 0):
             self.SetWallIndex(state,True,value)
@@ -175,7 +175,7 @@ class grsnMainWallPython(ptResponder):
         global NorthBlockers
         global SouthBlockers
         
-        print"grsnMainClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
+        PtDebugPrint("grsnMainClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value)
         
         if (type == ptClimbingWallMsgType.kNewState):
             if (value == 1):
@@ -192,11 +192,11 @@ class grsnMainWallPython(ptResponder):
                     value = SouthBlockers[i] 
                     if (value > -1):
                         southWall.value[value].runAttachedResponder(kTeamLightsOn)
-                        print"drawing s wall index",value
+                        PtDebugPrint("drawing s wall index",value)
                     value = NorthBlockers[i] 
                     if (value >  -1):
                         northWall.value[value].runAttachedResponder(kTeamLightsOn)
-                        print"drawing n wall index",value
+                        PtDebugPrint("drawing n wall index",value)
                     i = i + 1
             elif (state == ptClimbingWallMsgState.kSouthSelect):
                 #clear wall settings
@@ -232,35 +232,35 @@ class grsnMainWallPython(ptResponder):
                 while (NorthBlockers[i] >= 0):
                     i = i + 1
                     if (i == 20):
-                        print"yikes - somehow overran the array!"
+                        PtDebugPrint("yikes - somehow overran the array!")
                         return
                 NorthBlockers[i] = index
-                print"set north wall index ",index," in slot ",i," to true"
+                PtDebugPrint("set north wall index ",index," in slot ",i," to true")
             else:
                 while (SouthBlockers[i] >= 0):
                     i = i + 1
                     if (i == 20):
-                        print"yikes - somehow overran the array!"
+                        PtDebugPrint("yikes - somehow overran the array!")
                         return
                 SouthBlockers[i] = index
-                print"set south wall index ",index," in slot ",i," to true"
+                PtDebugPrint("set south wall index ",index," in slot ",i," to true")
         else:
             if (north):
                 while (NorthBlockers[i] != index):
                     i = i + 1
                     if (i == 20):
-                        print"this should not get hit - looked for non-existent NorthWall entry!"
+                        PtDebugPrint("this should not get hit - looked for non-existent NorthWall entry!")
                         return
                 NorthBlockers[i] = -1
-                print"removed index ",index," from list slot ",i
+                PtDebugPrint("removed index ",index," from list slot ",i)
             else:
                 while (SouthBlockers[i] != index):
                     i = i + 1
                     if (i == 20):
-                        print"this should not get hit - looked for non-existent SouthWall entry!"
+                        PtDebugPrint("this should not get hit - looked for non-existent SouthWall entry!")
                         return
                 SouthBlockers[i] = -1
-                print"removed index ",index," from list slot ",i
+                PtDebugPrint("removed index ",index," from list slot ",i)
     
         
 

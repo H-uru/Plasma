@@ -113,7 +113,7 @@ class tldnPwrTwrPeriscope(ptResponder):
         self.id = 5003
         version = 4
         self.version = version
-        print("tldnPwrTwrPerscope v.",version,".3")
+        PtDebugPrint("tldnPwrTwrPerscope v.",version,".3")
 
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -378,8 +378,8 @@ class tldnPwrTwrPeriscope(ptResponder):
         # Toggle Main Power via Sun #
         #############################
         if id==actSun.id and boolTwrRaised:
-            #print "PERISCOPE: detected sun. state=%d, events to follow" % state
-            #print events
+            #PtDebugPrint("PERISCOPE: detected sun. state=%d, events to follow" % state)
+            #PtDebugPrint(events)
             if AgeStartedIn == PtGetAgeName():
                 ageSDL = PtGetAgeSDL()
                 for event in events:
@@ -446,12 +446,12 @@ class tldnPwrTwrPeriscope(ptResponder):
         if isinstance(control,ptGUIControlButton):
             btnID = control.getTagID()
         else:
-            #print "SCOPE GUI: non-button notification"
+            #PtDebugPrint("SCOPE GUI: non-button notification")
             return
 
-        #print "tldnPwrTwrPeriscope.OnGUINotify():\tbefore click...left=%f,up=%f,top=%d,btm=%d" % (scopeSpdLeft,scopeSpdUp,boolScopeAtTop,boolScopeAtBtm)
+        #PtDebugPrint("tldnPwrTwrPeriscope.OnGUINotify():\tbefore click...left=%f,up=%f,top=%d,btm=%d" % (scopeSpdLeft,scopeSpdUp,boolScopeAtTop,boolScopeAtBtm))
 
-        #print "SCOPE GUI: got a button id = %d" % btnID
+        #PtDebugPrint("SCOPE GUI: got a button id = %d" % btnID)
         if btnID == kGUILeftBtn:
             if scopeSpdLeft == scopeSpdLeftMax:
                 return
@@ -521,7 +521,7 @@ class tldnPwrTwrPeriscope(ptResponder):
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
-        #print "Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag)
+        #PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag))
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitTelescope()
         elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:

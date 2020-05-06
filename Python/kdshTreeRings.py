@@ -94,16 +94,16 @@ class kdshTreeRings(ptModifier):
         
         version = 13
         self.version = version
-        print("__init__kdshTreeRings v.", version,".1")
+        PtDebugPrint("__init__kdshTreeRings v.", version,".1")
 
     def OnFirstUpdate(self):
         PtLoadDialog("kdshScope0" + str(ScopeNumber.value), self.key, "Kadish")       
-        #~ print "kdshTreeRings: Loading dialog ", ("kdshScope0" + str(ScopeNumber.value))              
+        #~ PtDebugPrint("kdshTreeRings: Loading dialog ", ("kdshScope0" + str(ScopeNumber.value)))
     """  ###Commented this out because it was never available anyway (note the 2nd defn)!!!
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
         if ageSDL == None:
-            print "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
+            PtDebugPrint("kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
       
         if ScopeNumber.value == 1:
             ageSDL.sendToClients("boolOperatedScope01")
@@ -158,24 +158,24 @@ class kdshTreeRings(ptModifier):
         MiddleRing = ageSDL["MiddleRing0" + str(ScopeNumber.value)][0]
         InnerRing = ageSDL["InnerRing0" + str(ScopeNumber.value)][0]
         
-        print("Current %s Ring settings:" % (ScopeNumber.value))
-        print("/tOuterRing: ", OuterRing)
-        print("/tMiddleRing: ", MiddleRing)
-        print("/tInnerRing: ", InnerRing)
+        PtDebugPrint("Current %s Ring settings:" % (ScopeNumber.value))
+        PtDebugPrint("/tOuterRing: ", OuterRing)
+        PtDebugPrint("/tMiddleRing: ", MiddleRing)
+        PtDebugPrint("/tInnerRing: ", InnerRing)
 
         solo = not PtGetPlayerList()
 
         boolOperated = ageSDL["boolOperatedScope0" + str(ScopeNumber.value)][0]
         if boolOperated:
             if solo:
-                print("kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
+                PtDebugPrint("kdshTreeRings.Load():\tboolOperated=%d but no one else here...correcting" % boolOperated)
                 boolOperated = 0
                 ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
                 ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
                 Activate.enable()
             else:
                 Activate.disable()
-                print("kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated)
+                PtDebugPrint("kdshTreeRings.Load():\tboolOperated=%d, disabling telescope clickable" % boolOperated)
         #START-->multiplayer fix
         ageSDL.sendToClients(('boolOperatedScope0' + str(ScopeNumber.value)))
         ageSDL.setFlags(('boolOperatedScope0' + str(ScopeNumber.value)), 1, 1)
@@ -208,7 +208,7 @@ class kdshTreeRings(ptModifier):
             Activate.enable()
             ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (-1,)
             ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (0,)
-            print("kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope.")
+            PtDebugPrint("kdshTreeRings.AvatarPage(): telescope operator paged out, reenabled telescope.")
         else:
             return
             
@@ -221,7 +221,7 @@ class kdshTreeRings(ptModifier):
         global LocalAvatar
         global boolScopeOperator
         ageSDL = PtGetAgeSDL()                   
-        #~ print "kdshTreeRings:OnNotify  state=%f id=%d events=" % (state,id),events
+        #~ PtDebugPrint("kdshTreeRings:OnNotify  state=%f id=%d events=" % (state,id),events)
         
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
@@ -231,7 +231,7 @@ class kdshTreeRings(ptModifier):
             respResetBtn.run(self.key,state='Reset',events=events)
             
         elif id == respResetBtn.id and OnlyOneOwner.sceneobject.isLocallyOwned():
-            print("kdshTreeRing Reset Button Pushed. Puzzle resetting.")
+            PtDebugPrint("kdshTreeRing Reset Button Pushed. Puzzle resetting.")
             
             #close the door
             ageSDL.setTagString("TreeRingDoorClosed","fromInside")
@@ -258,18 +258,18 @@ class kdshTreeRings(ptModifier):
         global OuterRing01
         ageSDL = PtGetAgeSDL()   
         
-        #~ print "kdshTreeRings: GUI Notify id=%d, event=%d control=" % (id,event),control
+        #~ PtDebugPrint("kdshTreeRings: GUI Notify id=%d, event=%d control=" % (id,event),control)
         
         #~ if event == kExitMode:
             #~ self.IQuitTelescope()            
         
         if event == kDialogLoaded:
             return
-            print("GUI Notify id=%d, event=%d control=" % (id,event),control)
+            PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
             # if the dialog was just loaded then show it
             #~ control.show()
             PtShowDialog("kdshScope0" + str(ScopeNumber.value))
-            print("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
+            PtDebugPrint("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
             
         btnID = 0
 
@@ -328,7 +328,7 @@ class kdshTreeRings(ptModifier):
         ageSDL["boolOperatedScope0" + str(ScopeNumber.value)] = (1,)
         avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
         ageSDL["OperatorIDScope0" + str(ScopeNumber.value)] = (avID,)
-        print("kdshTreeRings.OnNotify:\twrote SDL - scope operator id = ", avID)
+        PtDebugPrint("kdshTreeRings.OnNotify:\twrote SDL - scope operator id = ", avID)
        # start the behavior
         Behavior.run(LocalAvatar)
         
@@ -361,7 +361,7 @@ class kdshTreeRings(ptModifier):
         
         # show the cockpit
         PtShowDialog("kdshScope0" + str(ScopeNumber.value))
-        #~ print "kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value))
+        #~ PtDebugPrint("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
 
 
     def IQuitTelescope(self):

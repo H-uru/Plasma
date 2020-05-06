@@ -73,7 +73,7 @@ class xPsnlVaultSDL:
             
             return (retval,)
         #except:
-        #    print "ERROR:xPsnlVaultSDL.__getitem__:\tError getting sdl & var"
+        #    PtDebugPrint("ERROR:xPsnlVaultSDL.__getitem__:\tError getting sdl & var")
         #    return None
 
     def __setitem__(self, sub, val):
@@ -98,7 +98,7 @@ class xPsnlVaultSDL:
                 self.vault.updatePsnlAgeSDL(sdl)
 
         #except:
-        #    print "ERROR:xPsnlVaultSDL.__setitem__:\tError getting sdl & var"
+        #    PtDebugPrint("ERROR:xPsnlVaultSDL.__setitem__:\tError getting sdl & var")
 
     def IGetVar(self, var):
         vartype = var.getType()
@@ -125,32 +125,32 @@ class xPsnlVaultSDL:
 
     def ISetVar(self, var, val):
         vartype = var.getType()
-        #print "Attempting to set item %s to %s" % (sub, str(val))
+        #PtDebugPrint("Attempting to set item %s to %s" % (sub, str(val)))
 
         if vartype == PtSDLVarType.kInt:
             if isintance(val, (int, long)):
-                #print "Set int"
+                #PtDebugPrint("Set int")
                 var.setInt(val)
 
         elif vartype == PtSDLVarType.kFloat:
             if isinstance(val, (int, long, float)):
-                #print "Set float"
+                #PtDebugPrint("Set float")
                 var.setFloat(val)
 
         elif vartype == PtSDLVarType.kDouble:
             if isinstance(val, (int, long, float)):
-                #print "Set double"
+                #PtDebugPrint("Set double")
                 var.setDouble(val)
 
         elif vartype == PtSDLVarType.kBool:
-            #print "Set bool"
+            #PtDebugPrint("Set bool")
             if val:
                 var.setBool(1)
             else:
                 var.setBool(0)
 
         elif vartype == PtSDLVarType.kString32:
-            #print "Set string"
+            #PtDebugPrint("Set string")
             if isinstance(val, str):
                 var.setString(val)
             else:
@@ -158,7 +158,7 @@ class xPsnlVaultSDL:
 
         else:
             if isinstance(val, (int, long)):
-                #print "Set int"
+                #PtDebugPrint("Set int")
                 var.setInt(val)
 
     def BatchGet(self, vars):
@@ -175,7 +175,7 @@ class xPsnlVaultSDL:
 
             return retval
         #except:
-        #    print "ERROR:xPsnlVaultSDL.BatchGet:  problem doing a batch get"
+        #    PtDebugPrint("ERROR:xPsnlVaultSDL.BatchGet:  problem doing a batch get")
 
     def BatchSet(self, vars):
         if 1:#try:
@@ -195,4 +195,4 @@ class xPsnlVaultSDL:
                 self.vault.updatePsnlAgeSDL(sdl)
 
         #except:
-        #    print "ERROR:xPsnlVaultSDL.BatchSet:  problem doing a batch set"
+        #    PtDebugPrint("ERROR:xPsnlVaultSDL.BatchSet:  problem doing a batch set")

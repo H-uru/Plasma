@@ -91,23 +91,23 @@ class clftIntroMusic(ptResponder):
             return
 
 
-        #print "clftIntroMusic: We've got notification from ID #:%s" %id 
+        #PtDebugPrint("clftIntroMusic: We've got notification from ID #:%s" %id)
 
         #-----Activators-----
         startMusicActIDs = (actStartMusic01.id, actStartMusic02.id, actStartMusic03.id)
         if id in startMusicActIDs:
             if musicState == kOff:
-                print("clftIntroMusic: ---Starting Music---")
+                PtDebugPrint("clftIntroMusic: ---Starting Music---")
                 musicState = kInitialPlay
                 respStartMusic.run(self.key)
             return
         
         elif id == actStopMusic.id:
             if musicState == kInitialPlay:
-                print("clftIntroMusic: ###Stopping Music###")
+                PtDebugPrint("clftIntroMusic: ###Stopping Music###")
                 respStopInitialMusic.run(self.key)
             elif musicState == kRandomPlay:
-                print("clftIntroMusic: ###Stopping Music###")
+                PtDebugPrint("clftIntroMusic: ###Stopping Music###")
                 respStopRandomMusic.run(self.key)
             musicState = kOff
             return
@@ -115,7 +115,7 @@ class clftIntroMusic(ptResponder):
         #-----Responders-----
         elif id == respStartMusic.id:
             if musicState == kInitialPlay:
-                print("clftIntroMusic: ___Randomly Starting Music___")
+                PtDebugPrint("clftIntroMusic: ___Randomly Starting Music___")
                 musicState = kRandomPlay
                 respStartRandomMusic.run(self.key)
             return

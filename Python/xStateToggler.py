@@ -75,19 +75,19 @@ class xStateToggler(ptResponder):
     # hack - remove when clickable state manipulation via responder is persistentified
     def Load(self):
         if self.SDL["enabled"][0]:
-            print("LOAD: enabling clickables")
+            PtDebugPrint("LOAD: enabling clickables")
             actClick1.enable()
             actClick2.enable()
         else:
-            print("LOAD: disabling clickables")
+            PtDebugPrint("LOAD: disabling clickables")
             actClick1.disable()
             actClick2.disable()
 
     def OnNotify(self,state,id,events):
         if not state:
             return
-        #print "xStateToggler:%s got a message!" % stringName.value
-        #print "ID:",id,"EVENTS:",events
+        #PtDebugPrint("xStateToggler:%s got a message!" % stringName.value)
+        #PtDebugPrint("ID:",id,"EVENTS:",events)
         
         if id==actStateChange.id:
             boolVariableEvent = False
@@ -95,7 +95,7 @@ class xStateToggler(ptResponder):
                 if event[0] == kVariableEvent:
                     varName = event[1]
                     varState = event[3]
-                    #print "xStateToggler got message name:", varName, " state:", varState
+                    #PtDebugPrint("xStateToggler got message name:", varName, " state:", varState)
                     boolVariableEvent = True
                     break
             if not boolVariableEvent:
@@ -109,14 +109,14 @@ class xStateToggler(ptResponder):
             return
             
         if varState:
-            print("xStateToggler:%s running state true responder" % stringName.value)
+            PtDebugPrint("xStateToggler:%s running state true responder" % stringName.value)
             respTrue.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.enable()
             actClick2.enable()
             self.SDL["enabled"]=(1,)
         else:
-            print("xStateToggler:%s running state false responder" % stringName.value)
+            PtDebugPrint("xStateToggler:%s running state false responder" % stringName.value)
             respFalse.run(self.key)
             # hack - remove when clickable state manipulation via responder is persistentified
             actClick1.disable()

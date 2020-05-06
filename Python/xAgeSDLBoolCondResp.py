@@ -84,7 +84,7 @@ class xAgeSDLBoolCondResp(ptResponder):
             return
 
         ageSDL = PtGetAgeSDL()
-        #print "DEBUG: xAgeSDLBoolCondResp.OnServerInitComplete()\tRegistered var is: %s = %s" % (strSDLVar.value, ageSDL[strSDLVar.value][0])
+        #PtDebugPrint("DEBUG: xAgeSDLBoolCondResp.OnServerInitComplete()\tRegistered var is: %s = %s" % (strSDLVar.value, ageSDL[strSDLVar.value][0]))
         if ageSDL[strSDLVar.value][0] == boolOnTrue.value:
             respResponder.run(self.key, fastforward=boolInitFF.value)
             PtDebugPrint("DEBUG: xAgeSDLBoolCondResp.OnServerInitComplete():\tRunning responder on %s, fastforward=%d" % (self.sceneobject.getName(), boolInitFF.value))

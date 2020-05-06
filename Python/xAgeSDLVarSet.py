@@ -71,7 +71,7 @@ class xAgeSDLVarSet(ptResponder):
         version = 2
         self.version = version
         self.enabledStateDict = {}
-        print("__init__xAgeSDLVarSet v.", version)
+        PtDebugPrint("__init__xAgeSDLVarSet v.", version)
     
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:

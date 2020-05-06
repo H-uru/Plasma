@@ -82,7 +82,7 @@ class tldnEmgrPhase0(ptResponder):
 
         version = 3
         self.version = version
-        print("__init__tldnEmgrPhase0 v.", version)
+        PtDebugPrint("__init__tldnEmgrPhase0 v.", version)
 
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -92,12 +92,12 @@ class tldnEmgrPhase0(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             for variable in BooleanVARs:
-                #~ print "Tying together BOOL variable", variable
+                #~ PtDebugPrint("Tying together BOOL variable", variable)
                 ageSDL.setNotify(self.key,variable,0.0)
                 self.IManageBOOLs(variable, "")
                 
             for variable in StateVARs:
-                #~ print "Tying together INT", variable
+                #~ PtDebugPrint("Tying together INT", variable)
                 ageSDL.setNotify(self.key,variable,0.0)   
                 StateVARs[variable](variable, ageSDL[variable][0])
        
@@ -110,7 +110,7 @@ class tldnEmgrPhase0(ptResponder):
             PtDebugPrint("tldnEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
             
             if VARname in BooleanVARs:
-                print("tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
+                PtDebugPrint("tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
                 self.IManageBOOLs(VARname,SDLname)
     
             elif VARname in StateVARs.viewkeys():
@@ -131,7 +131,7 @@ class tldnEmgrPhase0(ptResponder):
                 PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging in room %s" % (VARname))
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  #are we paging things out?
-                print("variable = ", VARname)
+                PtDebugPrint("variable = ", VARname)
                 PtDebugPrint("tldnEmgrPhase0.OnSDLNotify:\tPaging out room %s" % (VARname))
                 PtPageOutNode(VARname)
             else:

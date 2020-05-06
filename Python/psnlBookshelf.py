@@ -128,7 +128,7 @@ class psnlBookshelf(ptModifier):
 
         version = 10
         self.version = version
-        print("__init__psnlBookshelf v.", version)
+        PtDebugPrint("__init__psnlBookshelf v.", version)
 
 
     def OnFirstUpdate(self):
@@ -218,9 +218,9 @@ class psnlBookshelf(ptModifier):
             ShelfABoolOperated = ageSDL["ShelfABoolOperated"][0]
             if not solo and ShelfABoolOperated:
                 actBookshelf.disable()
-                print("psnlBookshelf.Load():\tShelfABoolOperated=%d, disabling shelf clickable" % ShelfABoolOperated)
+                PtDebugPrint("psnlBookshelf.Load():\tShelfABoolOperated=%d, disabling shelf clickable" % ShelfABoolOperated)
             else:
-                print("psnlBookshelf.Load():\tShelfABoolOperated=%d but no one else here...correcting" % ShelfABoolOperated)
+                PtDebugPrint("psnlBookshelf.Load():\tShelfABoolOperated=%d but no one else here...correcting" % ShelfABoolOperated)
                 self.IResetShelf()
 
         self.initComplete = 1
@@ -239,7 +239,7 @@ class psnlBookshelf(ptModifier):
             try:
                 ageSDL = PtGetAgeSDL()
                 if avID == ageSDL["ShelfAUserID"][0]:
-                    print("psnlBookshelf.AvatarPage(): Bookshelf A operator paged out, reenabled Bookshelf.")
+                    PtDebugPrint("psnlBookshelf.AvatarPage(): Bookshelf A operator paged out, reenabled Bookshelf.")
                     self.IResetShelf()            
                 else:
                     return
@@ -251,33 +251,33 @@ class psnlBookshelf(ptModifier):
     def OnAgeVaultEvent(self,event,tupdata):
         PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t:OnAgeKIEvent recvd. Event=%d and data= " % (event),tupdata)
         if event == PtVaultCallbackTypes.kVaultConnected:
-            print("psnlBookshelf: kVaultConnected event")
+            PtDebugPrint("psnlBookshelf: kVaultConnected event")
             # tupdata is ()
             #~ pass
         elif event == PtVaultCallbackTypes.kVaultNodeSaved:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()))
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()))
             # tupdata is ( ptVaultNode )
             #~ pass
         elif event == PtVaultCallbackTypes.kVaultNodeRefAdded:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefAdded event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefAdded event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
             if self.initComplete:
                 self.IUpdateLinks()
                 self.IUpdateLocksAndTrays()
         elif event == PtVaultCallbackTypes.kVaultRemovingNodeRef:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
             #~ pass
         elif event == PtVaultCallbackTypes.kVaultNodeRefRemoved:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefRemoved event (childID,parentID) ",tupdata) 
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefRemoved event (childID,parentID) ",tupdata) 
             # tupdata is ( childID, parentID )
             #~ pass
         elif event == PtVaultCallbackTypes.kVaultNodeInitialized:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeInitialized event (id=%d,type=%d)", (tupdata[0].getID(),tupdata[0].getType()))
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeInitialized event (id=%d,type=%d)", (tupdata[0].getID(),tupdata[0].getType()))
             # tupdata is ( ptVaultNode )
             #~ pass
         elif event == PtVaultCallbackTypes.kVaultOperationFailed:
-            print("psnlBookshelf.OnAgeVaultEvent()\t: kVaultOperationFailed event  (operation,resultCode) ",tupdata)
+            PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultOperationFailed event  (operation,resultCode) ",tupdata)
             #tupdata is ( operation, resultCode )
             #~ pass
         else:
@@ -304,7 +304,7 @@ class psnlBookshelf(ptModifier):
         global boolShelfInUse
         global stupidHackForLock
         
-        #~ print "state:",state," id:",id," events:",events
+        #~ PtDebugPrint("state:",state," id:",id," events:",events)
 
         if id == actBookshelfExit.id:
             self.IDisengageShelf()
@@ -317,7 +317,7 @@ class psnlBookshelf(ptModifier):
                 if event[0] == kMultiStageEvent and event[1] == 0: # Smart seek completed. Exit multistage, and show GUI.
                     LocalAvatar = PtFindAvatar(events)
                     SeekBehavior.gotoStage(LocalAvatar, -1) 
-                    print("psnlBookshelf.OnNotify():\tengaging bookshelf")
+                    PtDebugPrint("psnlBookshelf.OnNotify():\tengaging bookshelf")
 
                     #PtFadeLocalAvatar(1)
                     LocalAvatar.draw.disable()
@@ -338,12 +338,12 @@ class psnlBookshelf(ptModifier):
 ##        if id == actDisengageShelf.id:
 ##            theavatar = PtFindAvatar(events)
 ##            AvatarWhoWalkedAway = PtGetClientIDFromAvatarKey(theavatar.getKey())
-##            #~ print "psnlBookshelf.OnNotify: Avatar %s walked away from the shelf." % (AvatarWhoWalkedAway)
+##            #~ PtDebugPrint("psnlBookshelf.OnNotify: Avatar %s walked away from the shelf." % (AvatarWhoWalkedAway))
 ##
 ##            if AgeStartedIn == PtGetAgeName():
 ##                ageSDL = PtGetAgeSDL()
 ##                CurrentBookshelfUser = ageSDL["ShelfAUserID"][0]
-##                #~ print "psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser)
+##                #~ PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
 ##    
 ##                if AvatarWhoWalkedAway == CurrentBookshelfUser:
 ##                    PtDebugPrint ("psnlBookshelf.OnNotify: Player %s is done with the bookshelf." % (CurrentBookshelfUser))
@@ -352,10 +352,10 @@ class psnlBookshelf(ptModifier):
 ##                    avatar = PtGetLocalAvatar()   
 ##                    myID = PtGetClientIDFromAvatarKey(avatar.getKey())
 ##        
-##                    #~ print "I think my ID is: ", myID
+##                    #~ PtDebugPrint("I think my ID is: ", myID)
 ##        
 ##                    if myID == AvatarWhoWalkedAway:
-##                        print "I was the Shelf User, and I'm done with the Shelf now."
+##                        PtDebugPrint("I was the Shelf User, and I'm done with the Shelf now.")
 ##        
 ##                        PtFadeLocalAvatar(0)
 ##                        #reeneable first person
@@ -370,7 +370,7 @@ class psnlBookshelf(ptModifier):
             
             for event in events:
                 if event[0] == kVariableEvent:
-                    print("psnlBookshelf: Received a message from the Book GUI: ", event[1])
+                    PtDebugPrint("psnlBookshelf: Received a message from the Book GUI: ", event[1])
                     if event[1] == "IShelveBook" and objBookPicked is not None:
                         self.IShelveBook()
                         
@@ -398,7 +398,7 @@ class psnlBookshelf(ptModifier):
                             SpawnPointName = event[1].split(",")[1]
                             SpawnPointTitle = event[1].split(",")[2]
                             
-                            print("psnlBookshelf: SpawnPointName = ", SpawnPointName," SpawnPointTitle = ", SpawnPointTitle)
+                            PtDebugPrint("psnlBookshelf: SpawnPointName = ", SpawnPointName," SpawnPointTitle = ", SpawnPointTitle)
 
                             self.IResetShelf()
                             self.SendNote(0)
@@ -412,12 +412,12 @@ class psnlBookshelf(ptModifier):
  
         if id == (-1):
             if events[0][1] == 'BookShelfBusy':
-                print("psnlBookShelf: Notified about bookshelf use.")
+                PtDebugPrint("psnlBookShelf: Notified about bookshelf use.")
                 boolShelfInUse = events[0][3]
             else:
                 for event in events:
                     if event[0] == kVariableEvent:
-                        print(event[1], event[3])
+                        PtDebugPrint(event[1], event[3])
                         if event[1] == "YesNo" and event[3] == 1:
                             link = self.IGetLinkFromBook()
                             
@@ -460,7 +460,7 @@ class psnlBookshelf(ptModifier):
                                     info = link.getAgeInfo()
                                     if info and info.getAgeFilename() == "AhnonayCathedral":
                                         # found our link
-                                        print("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
+                                        PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
                                         link.setVolatile(True)
                                         link.save()
 
@@ -474,7 +474,7 @@ class psnlBookshelf(ptModifier):
                                                 BookNumber = linkLibrary.index(bookAge)
                                                 ageSDL = PtGetAgeSDL()                                    
                                                 ageSDL.setIndex("CurrentPage",BookNumber,1)
-                                                print("Setting CurrentPage var of book %s to 1" % BookNumber)
+                                                PtDebugPrint("Setting CurrentPage var of book %s to 1" % BookNumber)
                                                 break
                                 objBookPicked = None
                                 return
@@ -497,7 +497,7 @@ class psnlBookshelf(ptModifier):
                                         BookNumber = linkLibrary.index(bookAge)
                                         ageSDL = PtGetAgeSDL()                                    
                                         ageSDL.setIndex("CurrentPage",BookNumber,1)
-                                        print("Setting CurrentPage var of book %s to 1" % BookNumber)
+                                        PtDebugPrint("Setting CurrentPage var of book %s to 1" % BookNumber)
                                         break
                             objBookPicked = None
                             return
@@ -512,8 +512,8 @@ class psnlBookshelf(ptModifier):
         if id==actBookshelf.id:
             if PtFindAvatar(events) == PtGetLocalAvatar() and PtWasLocallyNotified(self.key) and not boolShelfInUse:
                 actBookshelf.disable() # want the Shelf clickable to be disabled for all clients
-                print("psnlBookshelf: disabling clickable")
-                print("psnlBookshelf: Firing clickable responder")
+                PtDebugPrint("psnlBookshelf: disabling clickable")
+                PtDebugPrint("psnlBookshelf: Firing clickable responder")
                 respRaiseShelfClickable.run(self.key,netPropagate=0)
                 self.SendNote(1)
                 self.IUpdateLinks()
@@ -536,7 +536,7 @@ class psnlBookshelf(ptModifier):
                                 avID = PtGetClientIDFromAvatarKey(LocalAvatar.getKey())
                                 ageSDL["ShelfAUserID"] = (avID,)
                                 ShelfAUserID = avID
-                                print("psnlBookshelf.OnNotify:\twrote SDL - Bookshelf A user id = ", avID)
+                                PtDebugPrint("psnlBookshelf.OnNotify:\twrote SDL - Bookshelf A user id = ", avID)
                                 PtDisableMovementKeys()
                             #self.IUpdateLinks()
                             #PtShowDialog(kPALDialogName)
@@ -568,11 +568,11 @@ class psnlBookshelf(ptModifier):
                 if event[0]==kPickedEvent:
                     objBookPicked = event[3]
                     bookName = objBookPicked.getName()
-                    print("psnlBookshelf.OnNotify():\tplayer picked book named ", bookName)
+                    PtDebugPrint("psnlBookshelf.OnNotify():\tplayer picked book named ", bookName)
                     try:
                         index = objLibrary.value.index(objBookPicked)
                     except:
-                        print("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
+                        PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
                         return
 
                     if self.IGetAgeFromBook() == "city" and PtIsSinglePlayerMode():
@@ -773,7 +773,7 @@ class psnlBookshelf(ptModifier):
 
                 if locked:
                     lockName = objLockPicked.getName()
-                    print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
+                    PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
                     for rkey,rvalue in respCloseLock.byObject.viewitems():
                         parent = rvalue.getParentKey()
                         if parent:
@@ -818,7 +818,7 @@ class psnlBookshelf(ptModifier):
                     try:
                         index = objLocks.value.index(objLockPicked)
                     except:
-                        print("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objLockPicked, " in objLocks")
+                        PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objLockPicked, " in objLocks")
                         return
                     objBookPicked = objLibrary.value[index]
                     lockName = objLockPicked.getName()
@@ -888,7 +888,7 @@ class psnlBookshelf(ptModifier):
                             if stupidHackForLock != None:
                                 locked = stupidHackForLock
 
-                        print(locked)
+                        PtDebugPrint(locked)
                         if locked:
                             # find the corresponding open clasp responder modifier
                             for rkey,rvalue in respOpenLock.byObject.viewitems():
@@ -902,7 +902,7 @@ class psnlBookshelf(ptModifier):
                                 chron = ageDataChild.upcastToChronicleNode()
                                 if chron and chron.getName() == "AhnonayLocked":
                                     if ( vault.inMyPersonalAge() ):
-                                        print("setting lock to 0")
+                                        PtDebugPrint("setting lock to 0")
                                         chron.setValue("0")
                         else:
                             # find the corresponding close clasp responder modifier
@@ -917,7 +917,7 @@ class psnlBookshelf(ptModifier):
                                 chron = ageDataChild.upcastToChronicleNode()
                                 if chron and chron.getName() == "AhnonayLocked":
                                     if ( vault.inMyPersonalAge() ):
-                                        print("setting lock to 1")
+                                        PtDebugPrint("setting lock to 1")
                                         chron.setValue("1")
 
                         if not vault.inMyPersonalAge():
@@ -997,7 +997,7 @@ class psnlBookshelf(ptModifier):
             try:
                 index = objTrays.value.index(objTrayPicked)
             except:
-                print("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objTrayPicked, " in objTrays")
+                PtDebugPrint("psnlBookshelf.OnNotify():\tERROR -- couldn't find ", objTrayPicked, " in objTrays")
                 return
 
             objBookPicked = objLibrary.value[index]
@@ -1055,7 +1055,7 @@ class psnlBookshelf(ptModifier):
                         info = link.getAgeInfo()
                         if info and info.getAgeFilename() == "AhnonayCathedral":
                             # found our link
-                            print("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
+                            PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
                             link.setVolatile(False)
                             link.save()
 
@@ -1133,7 +1133,7 @@ class psnlBookshelf(ptModifier):
 
         
         ageName = self.IGetAgeFromBook()
-        print("psnlBookshelf.IGetLinkFromBook(): before city lookup, ageName = ",ageName)
+        PtDebugPrint("psnlBookshelf.IGetLinkFromBook(): before city lookup, ageName = ",ageName)
 
         isCityLink = 0
         if ageName == "city":
@@ -1142,14 +1142,14 @@ class psnlBookshelf(ptModifier):
                 if spTitle in splist:
                     ageName = age
                     break
-        print("psnlBookshelf.IGetLinkFromBook(): after city lookup, ageName = ",ageName)        	        
+        PtDebugPrint("psnlBookshelf.IGetLinkFromBook(): after city lookup, ageName = ",ageName)        	        
 
         if ageName is None:
-            print("psnlBookshelf.IGetLinkFromBook():\tERROR -- conversion from book to link element failed")
+            PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tERROR -- conversion from book to link element failed")
             return None
 
         if ageName == "Ahnonay":
-            print("psnlBookshelf.IGetLinkFromBook(): Going to Ahnonay... special case.")
+            PtDebugPrint("psnlBookshelf.IGetLinkFromBook(): Going to Ahnonay... special case.")
             return "Ahnonay"
 
         hoodInfo = self.IGetHoodInfoNode()
@@ -1168,7 +1168,7 @@ class psnlBookshelf(ptModifier):
                         continue
                     else:
                         # found our link
-                        print("psnlBookshelf.IGetLinkFromBook():\tfound Child link ", info.getAgeFilename())
+                        PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Child link ", info.getAgeFilename())
                         IsChildLink = 1
                         return link
 
@@ -1195,14 +1195,14 @@ class psnlBookshelf(ptModifier):
             info = link.getAgeInfo()
             if info and info.getAgeFilename() == ageName:
                 # found our link
-                print("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
+                PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tfound Owned link", info.getAgeFilename())
                 IsChildLink = 0
                 return link
 
-        print("psnlBookshelf.IGetLinkFromBook():\tERROR -- couldn't find link to", ageName)
-        print("info = ",info)
-        print("info.getAgeFilename() = ",info.getAgeFilename())
-        print("spTitle = ",spTitle)
+        PtDebugPrint("psnlBookshelf.IGetLinkFromBook():\tERROR -- couldn't find link to", ageName)
+        PtDebugPrint("info = ",info)
+        PtDebugPrint("info.getAgeFilename() = ",info.getAgeFilename())
+        PtDebugPrint("spTitle = ",spTitle)
         return None
     
     def SendNote(self, bool):
@@ -1237,14 +1237,14 @@ class psnlBookshelf(ptModifier):
 
             # show as locked if both are locked, or one is locked and the other doesn't exist
             if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName)
                 for rkey,rvalue in respCloseLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to unlocked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to unlocked: ",lockName)
                 for rkey,rvalue in respOpenLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
@@ -1261,7 +1261,7 @@ class psnlBookshelf(ptModifier):
             try:
                 index = linkLibrary.index(ageName)    
             except:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to:", ageName, "...skipping to next")
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to:", ageName, "...skipping to next")
                 continue
 
             if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.viewkeys()):
@@ -1279,14 +1279,14 @@ class psnlBookshelf(ptModifier):
             objLock = objLocks.value[index]
             lockName = objLock.getName()
             if link.getLocked():
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
                 for rkey,rvalue in respCloseLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
                 for rkey,rvalue in respOpenLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
@@ -1297,16 +1297,16 @@ class psnlBookshelf(ptModifier):
             objBook = objLibrary.value[index]
             bookName = objBook.getName()
             if link.getVolatile():
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
                 for rkey,rvalue in respDeleteBook.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
-                        #~ print trayName,"==",rkey#[:len(trayName)]
+                        #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
                         if bookName == parent.getName():
                             respDeleteBook.run(self.key,objectName=rkey,fastforward=1)
-                            #~ print "got here"
+                            #~ PtDebugPrint("got here")
             else:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
                 for rkey,rvalue in respReturnTray.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
@@ -1340,20 +1340,20 @@ class psnlBookshelf(ptModifier):
             try:
                 index = linkLibrary.index("Ahnonay")    
             except:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to: Ahnonay... skipping to next")
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to: Ahnonay... skipping to next")
                 return
 
             objLock = objLocks.value[index]
             lockName = objLock.getName()
             if int(locked):
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
                 for rkey,rvalue in respCloseLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
                 for rkey,rvalue in respOpenLock.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
@@ -1364,16 +1364,16 @@ class psnlBookshelf(ptModifier):
             objBook = objLibrary.value[index]
             bookName = objBook.getName()
             if int(volatile):
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
                 for rkey,rvalue in respDeleteBook.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
-                        #~ print trayName,"==",rkey#[:len(trayName)]
+                        #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
                         if bookName == parent.getName():
                             respDeleteBook.run(self.key,objectName=rkey,fastforward=1)
-                            #~ print "got here"
+                            #~ PtDebugPrint("got here")
             else:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
                 for rkey,rvalue in respReturnTray.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
@@ -1452,13 +1452,13 @@ class psnlBookshelf(ptModifier):
 #                    parentinfo = parent.getAgeInfo()
 #                    parentname = parentinfo.getAgeFilename()
 #                    if parentname == "Neighborhood":
-#                        print "psnlBookshelf.IUpdateLinks(): link found for public Garrison, ignoring..."
+#                        PtDebugPrint("psnlBookshelf.IUpdateLinks(): link found for public Garrison, ignoring...")
 #                        continue
                 
                 try:
                     index = linkLibrary.index(ageName)    
                 except:
-                    print("psnlBookshelf.IUpdateLinks():\tno matching book for KI's link to:", ageName, "...skipping to next")
+                    PtDebugPrint("psnlBookshelf.IUpdateLinks():\tno matching book for KI's link to:", ageName, "...skipping to next")
                     continue
     
                 if ageName == "Cleft":
@@ -1476,14 +1476,14 @@ class psnlBookshelf(ptModifier):
                     return
 
                 # find and enable the corresponding clickable modifier for the book
-                print("psnlBookshelf.IUpdateLinks():\tageName: ",ageName," boolInMyAge: ",boolInMyAge," getLocked(): ",link.getLocked()," getVolatile(): ",link.getVolatile())
+                PtDebugPrint("psnlBookshelf.IUpdateLinks():\tageName: ",ageName," boolInMyAge: ",boolInMyAge," getLocked(): ",link.getLocked()," getVolatile(): ",link.getVolatile())
                 if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName == "Cleft")):
                     bookName = objBook.getName()
                     for key,value in actBook.byObject.viewitems():
                         parent = value.getParentKey()
                         if parent:
                             if bookName == parent.getName():
-                                print("%s book: DISABLED" % (bookName))
+                                PtDebugPrint("%s book: DISABLED" % (bookName))
                                 actBook.disable(objectName=key)
                                 break
                     if (not boolInMyAge) and (link.getLocked() or ageName == "Cleft"):
@@ -1496,7 +1496,7 @@ class psnlBookshelf(ptModifier):
                         parent = value.getParentKey()
                         if parent:
                             if bookName == parent.getName():
-                                print("%s book: ENABLED" % (bookName))
+                                PtDebugPrint("%s book: ENABLED" % (bookName))
                                 actBook.enable(objectName=key)
                                 break
     
@@ -1527,7 +1527,7 @@ class psnlBookshelf(ptModifier):
                                 break
                     
         else:
-            print("psnlBookshelf: The PAL folder is missing")
+            PtDebugPrint("psnlBookshelf: The PAL folder is missing")
 
 
         ## Ahnonay Hackage!
@@ -1559,7 +1559,7 @@ class psnlBookshelf(ptModifier):
             try:
                 index = linkLibrary.index("Ahnonay")    
             except:
-                print("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to: Ahnonay... skipping to next")
+                PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to: Ahnonay... skipping to next")
                 return
 
             # show the book
@@ -1581,7 +1581,7 @@ class psnlBookshelf(ptModifier):
                     parent = value.getParentKey()
                     if parent:
                         if bookName == parent.getName():
-                            print("%s book: DISABLED" % (bookName))
+                            PtDebugPrint("%s book: DISABLED" % (bookName))
                             actBook.disable(objectName=key)
                             break
                 if (not boolInMyAge) and int(locked):
@@ -1594,7 +1594,7 @@ class psnlBookshelf(ptModifier):
                     parent = value.getParentKey()
                     if parent:
                         if bookName == parent.getName():
-                            print("%s book: ENABLED" % (bookName))
+                            PtDebugPrint("%s book: ENABLED" % (bookName))
                             actBook.enable(objectName=key)
                             break
 
@@ -1640,7 +1640,7 @@ class psnlBookshelf(ptModifier):
         
         link = self.IGetLinkFromBook(SpawnPointTitle)
         if link is None:
-            print("psnlBookshelf.ILink():\tERROR -- conversion from book to link failed -- aborting")
+            PtDebugPrint("psnlBookshelf.ILink():\tERROR -- conversion from book to link failed -- aborting")
             return
         elif link == "Ahnonay":
             info = ptAgeInfoStruct()
@@ -1661,7 +1661,7 @@ class psnlBookshelf(ptModifier):
                         chron = ageDataChild.upcastToChronicleNode()
                         if chron and chron.getName() == "AhnonayLink":
                             guid = chron.getValue()
-                            print(guid)
+                            PtDebugPrint(guid)
                             break
                     break
             info.setAgeInstanceGuid(guid)
@@ -1673,9 +1673,9 @@ class psnlBookshelf(ptModifier):
         ageName = info.getAgeFilename()
 
         # do the link
-        print("psnlBookshelf.ILink():\tattempting link to %s(%s)" % (info.getAgeFilename(),info.getAgeInstanceName()))
+        PtDebugPrint("psnlBookshelf.ILink():\tattempting link to %s(%s)" % (info.getAgeFilename(),info.getAgeInstanceName()))
 
-        print("Ilink: SpawnPointTitle = ", SpawnPointTitle, "; SpawnPointName = ", SpawnPointName)
+        PtDebugPrint("Ilink: SpawnPointTitle = ", SpawnPointTitle, "; SpawnPointName = ", SpawnPointName)
         spnpnt = None
         
         if isinstance(link, ptAgeLinkStruct):
@@ -1686,9 +1686,9 @@ class psnlBookshelf(ptModifier):
             spawnPoints = link.getSpawnPoints()
             for sp in spawnPoints:
                 if (sp.getTitle() == SpawnPointTitle and sp.getName() == SpawnPointName) or self.CheckForCityBookSpawnPoint(ageName, SpawnPointTitle):
-                    print("found spawn point: %s, %s" % (sp.getTitle(), sp.getName()))
+                    PtDebugPrint("found spawn point: %s, %s" % (sp.getTitle(), sp.getName()))
                     if sp.getName() == "BigRoomLinkInPoint":
-                        print("oops, found spawnpt for GZ BigRoom, we don't want to link there via city book, so we'll ignore it")
+                        PtDebugPrint("oops, found spawnpt for GZ BigRoom, we don't want to link there via city book, so we'll ignore it")
                         break
                     spnpnt = sp
                     break
@@ -1696,8 +1696,8 @@ class psnlBookshelf(ptModifier):
         if not spnpnt:
             spnpnt = ptSpawnPointInfo(SpawnPointTitle, SpawnPointName)
             
-        print("spnpnt.getTitle() = ",spnpnt.getTitle())
-        print("spnpnt.getName() = ",spnpnt.getName())
+        PtDebugPrint("spnpnt.getTitle() = ",spnpnt.getTitle())
+        PtDebugPrint("spnpnt.getName() = ",spnpnt.getName())
         
         als.setSpawnPoint(spnpnt)
 
@@ -1709,11 +1709,11 @@ class psnlBookshelf(ptModifier):
             if ageName == "Ahnonay":
                 als.setLinkingRules( PtLinkingRules.kBasicLink )
             elif IsChildLink:
-                print("psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName)
+                PtDebugPrint("psnlBookshelf.ILink(): using kChildAgeBook rules for link to: ",ageName)
                 als.setLinkingRules( PtLinkingRules.kChildAgeBook )
                 als.setParentAgeFilename("Neighborhood")
             else:
-                print("psnlBookshelf.ILink(): using kOwnedBook rules for link to: ",ageName)
+                PtDebugPrint("psnlBookshelf.ILink(): using kOwnedBook rules for link to: ",ageName)
                 als.setLinkingRules( PtLinkingRules.kOwnedBook )
         # Otherwise, always use kOriginalBook rules.
         #   The engine will handle whether player becomes co-owner or not.
@@ -1727,7 +1727,7 @@ class psnlBookshelf(ptModifier):
 
         linkMgr = ptNetLinkingMgr()         
         linkMgr.linkToAge(als)
-        print("ILink Done")
+        PtDebugPrint("ILink Done")
 
 
     def IShelveBook(self):
@@ -1753,9 +1753,9 @@ class psnlBookshelf(ptModifier):
         try:
             index = objLibrary.value.index(objBookPicked)
         except:
-            print("psnlBookshelf.IUpdateLinks():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
+            PtDebugPrint("psnlBookshelf.IUpdateLinks():\tERROR -- couldn't find ", objBookPicked, " in objLibrary")
             return None            
-        print("psnlBookshelf.IGetAgeFromBook():\tpicked book goes to ", linkLibrary[index])
+        PtDebugPrint("psnlBookshelf.IGetAgeFromBook():\tpicked book goes to ", linkLibrary[index])
         return linkLibrary[index]
 
 
@@ -1781,7 +1781,7 @@ class psnlBookshelf(ptModifier):
         if AgeStartedIn == PtGetAgeName() and not self.UsingBook:
             ageSDL = PtGetAgeSDL()
             CurrentBookshelfUser = ageSDL["ShelfAUserID"][0]
-            #~ print "psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser)
+            #~ PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
     
             PtDebugPrint ("psnlBookshelf.OnNotify: Player %s is done with the bookshelf." % (CurrentBookshelfUser))
             self.IResetShelf()             
@@ -1789,10 +1789,10 @@ class psnlBookshelf(ptModifier):
             avatar = PtGetLocalAvatar()   
             myID = PtGetClientIDFromAvatarKey(avatar.getKey())
         
-            #~ print "I think my ID is: ", myID
+            #~ PtDebugPrint("I think my ID is: ", myID)
         
             if myID == CurrentBookshelfUser:
-                print("I was the Shelf User, and I'm done with the Shelf now.")
+                PtDebugPrint("I was the Shelf User, and I'm done with the Shelf now.")
     
                 #PtFadeLocalAvatar(0)
                 avatar.draw.enable()
@@ -1864,7 +1864,7 @@ class psnlBookshelf(ptModifier):
                     if not info:
                         continue
                     ageName = info.getAgeFilename()
-                    #print "name = ",name
+                    #PtDebugPrint("name = ",name)
                     if ageName == age:
                         return link
         return None    
@@ -1882,10 +1882,10 @@ class psnlBookshelf(ptModifier):
             ageSDL = PtGetAgeSDL()
             GotBook = ageSDL["psnlGotCityBook"][0]
             if GotBook:
-                print("psnlBookshelf.HasCityBook(): owner has the city book")
+                PtDebugPrint("psnlBookshelf.HasCityBook(): owner has the city book")
                 return 1
             else:
-                print("psnlBookshelf.HasCityBook(): owner does NOT have city book")
+                PtDebugPrint("psnlBookshelf.HasCityBook(): owner does NOT have city book")
                 return 0
 
         CityLinks = []
@@ -1893,14 +1893,14 @@ class psnlBookshelf(ptModifier):
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
-            print("valCityLinks = ",valCityLinks)
+            PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
-            print("CityLinks = ",CityLinks)
+            PtDebugPrint("CityLinks = ",CityLinks)
             for tmpLink in CityLinks:
                 if tmpLink in xLinkingBookDefs.CityBookLinks:
                     return 1
         else:
-            print("can't find CityBookLinks chron entry")
+            PtDebugPrint("can't find CityBookLinks chron entry")
         return 0
 
         vault = ptAgeVault()
@@ -1908,39 +1908,39 @@ class psnlBookshelf(ptModifier):
         for age, splist in CityBookAges.viewitems():
             #agelink = self.GetOwnedAgeLink(vault, age)
             agelink = self.IGetHoodChildLink(age)
-            print("age = ",age)
-            print("agelink = ",agelink)
+            PtDebugPrint("age = ",age)
+            PtDebugPrint("agelink = ",agelink)
 
             if agelink is not None:
                 spawnPoints = agelink.getSpawnPoints()
 
                 for sp in spawnPoints:
-                    print("sp = ",sp)
-                    print("sp.getTitle = ",sp.getTitle())
-                    print("sp.getName = ",sp.getName())
+                    PtDebugPrint("sp = ",sp)
+                    PtDebugPrint("sp.getTitle = ",sp.getTitle())
+                    PtDebugPrint("sp.getName = ",sp.getName())
                     if sp.getTitle() in splist:
-                        print("found a city book link:", age, sp.getTitle())
+                        PtDebugPrint("found a city book link:", age, sp.getTitle())
                         return 1
 
         # look for a city treasure link, but it's a Hood childage now
         #agelink = self.GetOwnedAgeLink(vault, "city")
         agelink = self.IGetHoodChildLink(age)
-        print("age = the city")
-        print("agelink = ",agelink)
+        PtDebugPrint("age = the city")
+        PtDebugPrint("agelink = ",agelink)
 
         if agelink is not None:
             spawnPoints = agelink.getSpawnPoints()
 
             for sp in spawnPoints:
-                print("sp = ",sp)
-                print("sp.getTitle = ",sp.getTitle())
-                print("sp.getName = ",sp.getName())
+                PtDebugPrint("sp = ",sp)
+                PtDebugPrint("sp.getTitle = ",sp.getTitle())
+                PtDebugPrint("sp.getName = ",sp.getName())
                 if sp.getTitle() in xLinkingBookDefs.CityBookLinks:
-                    print("found a city book link: city", sp.getTitle())
+                    PtDebugPrint("found a city book link: city", sp.getTitle())
                     return 1
 
         # no BCO or city treasure link
-        print("found no city book links")
+        PtDebugPrint("found no city book links")
         return 0
 
 
@@ -1954,7 +1954,7 @@ class psnlBookshelf(ptModifier):
                 if not info:
                     continue
                 ageName = info.getAgeFilename()
-                print("found %s, looking for %s" % (ageName, age))
+                PtDebugPrint("found %s, looking for %s" % (ageName, age))
                 if ageName == age:
                     return link
 

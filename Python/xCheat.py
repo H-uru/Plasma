@@ -704,7 +704,7 @@ def GetChildInfo(args):
     if parent == None:
         agename = ageinfo.getAgeFilename()
         print("not a child age.  age = ",agename)
-        #print "with linking rules: ",agerules
+        #print("with linking rules: ",agerules)
         return
     parentinfo = parent.getAgeInfo()
     parentname = parentinfo.getAgeFilename()
@@ -718,7 +718,7 @@ def GetChildInfo(args):
             print("child of hood:  different")
     else:
         print("child of hood:  no")
-    #print "linking rules: ",agerules
+    #print("linking rules: ",agerules)
 
 
 def GetSDL(varName):

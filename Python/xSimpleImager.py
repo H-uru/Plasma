@@ -264,7 +264,7 @@ class xSimpleImager(ptModifier):
             self.IRefreshImagerFolder()
             self.IRefreshImagerContent(tupdata[0])
         elif event == PtVaultCallbackTypes.kVaultRemovingNodeRef:
-            #~ print "xSimpleImager: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID())
+            #~ PtDebugPrint("xSimpleImager: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
             self.IRefreshImagerFolder()
 
@@ -354,7 +354,7 @@ class xSimpleImager(ptModifier):
                 self.IChangeCurrentContent()
         else:
             # there is no folders
-            #~ print "simpleImager: folder(%s) had nothing in it!" % (ImagerName.value)
+            #~ PtDebugPrint("simpleImager: folder(%s) had nothing in it!" % (ImagerName.value))
             ImagerContents = []
 
     def IRefreshImagerContent(self,updated_content):
@@ -414,7 +414,7 @@ class xSimpleImager(ptModifier):
             selfnotify.addVarNumber(sname,1.0)
             selfnotify.send()
         else:
-            #~ print "Not owner of Imager"
+            #~ PtDebugPrint("Not owner of Imager")
             pass
 
     def IShowCurrentContent(self):

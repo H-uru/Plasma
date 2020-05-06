@@ -82,15 +82,15 @@ class xBugsGoAway(ptResponder):
         try:
             avatar = PtGetLocalAvatar()
         except:
-            print("xBugsGoAway.OnServerInitComplete() - failed to get local avatar")
+            PtDebugPrint("xBugsGoAway.OnServerInitComplete() - failed to get local avatar")
             return
         
         self.bugCount = self.IGetBugCount()
-        print("xBugsGoAway.OnServerInitComplete() - Linking in with "+str(self.bugCount)+" bugs")
+        PtDebugPrint("xBugsGoAway.OnServerInitComplete() - Linking in with "+str(self.bugCount)+" bugs")
 
         if (self.bugCount != 0):
             PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
             PtKillParticles(10.0,1,avatar.getKey())
             PtSetLightAnimStart(avatar.getKey(),bugLightObjectName,False)
-            print("xBugsGoAway.OnServerInitComplete() - Killing all bugs")
+            PtDebugPrint("xBugsGoAway.OnServerInitComplete() - Killing all bugs")
             self.ISaveBugCount(0)

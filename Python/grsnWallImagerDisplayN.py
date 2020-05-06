@@ -99,22 +99,22 @@ class grsnWallImagerDisplayN(ptResponder):
         if PtGetPlayerList():
             ReceiveInit = True
         else:
-            print"solo in climbing wall"
+            PtDebugPrint("solo in climbing wall")
             
         
     def OnClimbingWallInit(self,type,state,value):
         global ReceiveInit
         
-        print"grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value
+        PtDebugPrint("grsnClimbingWall::OnClimbingWallInit type ",type," state ",state," value ",value)
         if not ReceiveInit:
-            print"failed to receive init"
+            PtDebugPrint("failed to receive init")
             return
         if (type == ptClimbingWallMsgType.kEndGameState):
             ReceiveInit = False
-            print "finished receiving total game state"
+            PtDebugPrint("finished receiving total game state")
         
         if (type == ptClimbingWallMsgType.kTotalGameState):
-            print "begin receiving total game state"
+            PtDebugPrint("begin receiving total game state")
         
         elif (type == ptClimbingWallMsgType.kAddBlocker and state > 0 and value):
             northWall.value[state].runAttachedResponder(kTeamLightsOn)
@@ -123,11 +123,11 @@ class grsnWallImagerDisplayN(ptResponder):
         
         if (type == ptClimbingWallMsgType.kAddBlocker and value):            #display wall settings
             northWall.value[state].runAttachedResponder(kTeamLightsOn)
-            print"Imager display N drawing n wall index",state
+            PtDebugPrint("Imager display N drawing n wall index",state)
                     
         elif (type == ptClimbingWallMsgType.kRemoveBlocker and value):
             northWall.value[state].runAttachedResponder(kTeamLightsOff)
-            print"Imager display N clearing n wall index",state
+            PtDebugPrint("Imager display N clearing n wall index",state)
         
         elif (type == ptClimbingWallMsgType.kNewState):
             if (state == ptClimbingWallMsgState.kSouthSit or state == ptClimbingWallMsgState.kNorthSit ):
