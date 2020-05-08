@@ -44,9 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 
-# for save/load
-import cPickle
-
 ##############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
 ##############################################################
