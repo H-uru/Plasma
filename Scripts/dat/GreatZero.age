@@ -1,0 +1,11 @@
+StartDateTime=0946713600
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=39
+ReleaseVersion=0
+Page=CathedralVIEW,4
+Page=GreatZero,1
+Page=GreatZeroInterior,2
+Page=LinkInRoom,3
+Page=MarkerGameGUI,5

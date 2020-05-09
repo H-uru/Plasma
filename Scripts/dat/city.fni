@@ -1,0 +1,8 @@
+
+Graphics.Renderer.Setyon 100000 
+Graphics.Renderer.Fog.SetDefLinear -1500 20000 1
+Graphics.Renderer.Fog.SetDefColor .4 .3 .1
+Graphics.Renderer.SetClearColor .4 .3 .1
+
+
+

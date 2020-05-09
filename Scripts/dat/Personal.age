@@ -1,0 +1,11 @@
+StartDateTime=0000000000
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=13
+ReleaseVersion=0
+Page=FemaleOffBalance,5
+Page=MaleOffBalance,4
+Page=psnlCustomizers,2
+Page=psnlMYSTII,1
+Page=trailerCamPage,3

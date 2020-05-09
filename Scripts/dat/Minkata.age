@@ -1,0 +1,13 @@
+StartDateTime=0946713600
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=42
+ReleaseVersion=0
+Page=minkCameras,4
+Page=minkDayLinkSounds,5
+Page=minkDistCraterPhysicals,3
+Page=minkExcludeRegions,7
+Page=minkExteriorDay,1,1
+Page=minkExteriorNight,2,1
+Page=minkNightLinkSounds,6
