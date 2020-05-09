@@ -62,7 +62,7 @@ class xDisableFirstPersonCam(ptResponder):
         self.id = 5220
 
         self.version = 1
-        print "__init__xDisableFirstPersonCam v.", self.version
+        PtDebugPrint("__init__xDisableFirstPersonCam v.", self.version)
 
     def OnFirstUpdate(self):
         pass
@@ -75,13 +75,13 @@ class xDisableFirstPersonCam(ptResponder):
         if id == sitnode.id:
             for event in events:
                 if event[0] == 1 and event[1] == 1: # entering the no FPC region
-                    print "FP Disabled."
+                    PtDebugPrint("FP Disabled.")
                     cam = ptCamera()
                     cam.undoFirstPerson()
                     cam.disableFirstPersonOverride()
 
 
                 elif event[0] == 1 and event[1] == 0: # exiting the no FPC region
-                    print "FP Enabled."
+                    PtDebugPrint("FP Enabled.")
                     cam = ptCamera()
                     cam.enableFirstPersonOverride()

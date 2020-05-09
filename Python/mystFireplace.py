@@ -105,7 +105,7 @@ class mystFireplace(ptModifier):
         self.id = 5335
 
         self.version = 3
-        print "__init__MystFireplace v.", self.version
+        PtDebugPrint("__init__MystFireplace v.", self.version)
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -134,17 +134,17 @@ class mystFireplace(ptModifier):
         respFPDoor.run(self.key, state = "close", fastforward = 1)
 
         #for key,value in actPanelButtons.byObject.viewitems():
-            #print key
+            #PtDebugPrint(key)
             #p = value.getParentKey()
             #if p:
-                #print "\t", p.getName()
+                #PtDebugPrint("\t", p.getName())
             #actPanelButtons.enable(objectName=key)
 
             
     def OnNotify(self,state,id,events):
         global IgnorePanelClick
         
-        print "onnotify: id -", id
+        PtDebugPrint("onnotify: id -", id)
 
         if id == actButton.id and state:
             #actPanelButtons.disable()
@@ -282,14 +282,14 @@ class mystFireplace(ptModifier):
                     bstate = "press"
                     CheckedButtons.append(id)
 
-                print panelName, bstate
+                PtDebugPrint(panelName, bstate)
 
                 for rkey,rvalue in respMorphButtons.byObject.viewitems():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
                         #pnum = 8*(int(pname[-2:]) - 1) + (ord(pname[-3]) - ord("A"))
-                        #print id, pnum
+                        #PtDebugPrint(id, pnum)
                         #if panelName == parent.getName():
                         if id == pname[-3:]:
                             respMorphButtons.run(self.key,objectName=rkey, state = bstate)
@@ -378,8 +378,8 @@ class mystFireplace(ptModifier):
         CheckedButtons.sort()
         solution.sort()
 
-        print "CheckedButtons:", CheckedButtons
-        print "solution      :", solution
+        PtDebugPrint("CheckedButtons:", CheckedButtons)
+        PtDebugPrint("solution      :", solution)
 
         return CheckedButtons == solution
 

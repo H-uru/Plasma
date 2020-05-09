@@ -75,11 +75,11 @@ def ConstructFilenameAndPath():
             localNameAndPath = U"init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                print U"xIniDisplay::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + U"\" file"
+                PtDebugPrint(U"xIniDisplay::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + U"\" file")
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + U"/" + gFilename
-        print U"xIniDisplay::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + U"\" file"
+        PtDebugPrint(U"xIniDisplay::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + U"\" file")
 
 def WriteIni():
     global gIniFile

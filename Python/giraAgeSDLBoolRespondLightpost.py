@@ -83,7 +83,7 @@ class giraAgeSDLBoolRespondLightpost(ptResponder):
         ageSDL.setNotify(self.key,stringVarSolved.value,0.0)
         solved = ageSDL[stringVarSolved.value][0]
         if (solved):
-            print "solved ",stringVarSolved.value
+            PtDebugPrint("solved ",stringVarSolved.value)
         else:
             return
         if (ageSDL[stringVarName.value][0]):
@@ -105,7 +105,7 @@ class giraAgeSDLBoolRespondLightpost(ptResponder):
         solved = ageSDL[stringVarSolved.value][0]
         if not solved:
             return
-        print "cave puzzle solved ",stringVarSolved.value
+        PtDebugPrint("cave puzzle solved ",stringVarSolved.value)
         # is state change from player or vault manager?
         if playerID: # non-zero means it's a player
             objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID),self.key)

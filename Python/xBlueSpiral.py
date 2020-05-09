@@ -117,7 +117,7 @@ class xBlueSpiral(ptResponder, object):
         self._spinning = False
         self._doorOpen = False
         random.seed()
-        print "xBlueSpiral: init  version = %d" % self.version
+        PtDebugPrint("xBlueSpiral: init  version = %d" % self.version)
         random.seed()
 
     def _clothmap_get(self):
@@ -290,9 +290,9 @@ class xBlueSpiral(ptResponder, object):
             for i in xrange(len(copy)):
                 copy[i] = self.clothmap[copy[i]] + 1
             # For you l337 haxxors out there...
-            print "--- Blue Spiral Solution IDs ---"
-            print repr(copy)
-            print "--------------------------------"
+            PtDebugPrint("--- Blue Spiral Solution IDs ---")
+            PtDebugPrint(repr(copy))
+            PtDebugPrint("--------------------------------")
             PtAtTimeCallback(self.key, 2, kUpdateDoorDisplay)
             return
 

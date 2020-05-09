@@ -206,7 +206,7 @@ class tldnBucketBrain(ptResponder):
             # loading cause I just joined age and there's no one else here so...clear out any phantom riders
             PtDebugPrint("tldnBucketBrain.OnServerInitComplete():\tRe-initializing age as I'm the only one here!",level=kDebugDumpLevel)
             ageSDL[kStringAgeSDLRiders] = (-1,-1,-1,-1)
-            print "Tye: Resetting avatar at entry!"
+            PtDebugPrint("Tye: Resetting avatar at entry!")
             avaIDAtEntry = -1
 
             #If we're creating a brand new age we need to intialize this variable.  Since it's not done by default,
@@ -268,7 +268,7 @@ class tldnBucketBrain(ptResponder):
             #Now we can setup the activators as necessary....
             if bucketAtEntry  < 0:
                 #The bucket is not at the entry point!
-                print "Tye: Resetting avatar at entry!"
+                PtDebugPrint("Tye: Resetting avatar at entry!")
                 avaIDAtEntry = -1
 
                 #Normally we'd disable the enter activators, but for safety's sake, we disabled them earlier
@@ -277,7 +277,7 @@ class tldnBucketBrain(ptResponder):
             elif riders[bucketAtEntry] < 0:  
                 #The bucket is empty and ready to accept a rider.
                 avaIDAtEntry = -1
-                print "Tye: Resetting avatar at entry!"
+                PtDebugPrint("Tye: Resetting avatar at entry!")
                 
                 #Enable the enter activators
                 PtDebugPrint("tldnBucketBrain.OnServerInit():\tEnabling the bucket enter activators!",level=kDebugDumpLevel)
@@ -386,7 +386,7 @@ class tldnBucketBrain(ptResponder):
         for rider in riders:
             if rider == avaID:
                 avaIDAtEntry = -1
-                print "Tye: Resetting avatar at entry!"
+                PtDebugPrint("Tye: Resetting avatar at entry!")
                 PtDebugPrint("tldnBucketBrain.AvatarPage():\tbucket rider left age, pruning bucket rider list",level=kDebugDumpLevel)
                 rider = -1
 

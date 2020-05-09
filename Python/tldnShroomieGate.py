@@ -65,11 +65,11 @@ class tldnShroomieGate(ptResponder):
         
         version = 1
         self.version = version
-        print "__init__tldnShroomieGate v.", version
+        PtDebugPrint("__init__tldnShroomieGate v.", version)
         
     def OnNotify(self,state,id,events):
         if id == clkLever.id and state:
-            print "tldnShroomieGate:\t---Someone Pulled the Lever"
+            PtDebugPrint("tldnShroomieGate:\t---Someone Pulled the Lever")
             respLeverPull.run(self.key,avatar=PtFindAvatar(events))
 
         elif id == respLeverPull.id:
@@ -78,10 +78,10 @@ class tldnShroomieGate(ptResponder):
             if ageSDL["tldnShroomieGatePowerOn"][0] and self.sceneobject.isLocallyOwned():                
                 if ageSDL["tldnShroomieGateUp"][0]:
                     respGateDown.run(self.key)
-                    print "tldnShroomieGate:\t---Shroomie Gate Going Down"
+                    PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Down")
                 else:
                     respGateUp.run(self.key)
-                    print "tldnShroomieGate:\t---Shroomie Gate Going Up"
+                    PtDebugPrint("tldnShroomieGate:\t---Shroomie Gate Going Up")
             ageSDL["tldnShroomieGateUp"] = (not ageSDL["tldnShroomieGateUp"][0],)
                             
         
@@ -89,15 +89,15 @@ class tldnShroomieGate(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "tldnShroomieGate:\tERROR---Cannot find the Teledahn Age SDL"
+            PtDebugPrint("tldnShroomieGate:\tERROR---Cannot find the Teledahn Age SDL")
 
         ageSDL.sendToClients("tldnShroomieGateUp")
         ageSDL.setFlags("tldnShroomieGateUp", 1, 1)
         ageSDL.setNotify(self.key, "tldnShroomieGateUp", 0.0)
         
         if ageSDL["tldnShroomieGateUp"][0]:
-            print "tldnShroomieGate:\tInit---Shroomie Gate Up"
+            PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Up")
             respGateUp.run(self.key,fastforward=1)
         else:
-            print "tldnShroomieGate:\tInit---Shroomie Gate Down"
+            PtDebugPrint("tldnShroomieGate:\tInit---Shroomie Gate Down")
             respGateDown.run(self.key,fastforward=1)

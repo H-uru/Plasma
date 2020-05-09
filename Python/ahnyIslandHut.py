@@ -98,7 +98,7 @@ class ahnyIslandHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL"
+            PtDebugPrint("ahnySphere1MaintBtn.OnServerInitComplete():\tERROR---Cannot find the Ahnonay Age SDL")
             ageSDL[SDLWaterCurrent.value] = (0,)
             ageSDL[SDLHutDoor.value] = (0,)
 
@@ -116,14 +116,14 @@ class ahnyIslandHut(ptResponder):
 
         if boolCurrent:
             RespCurrentChange.run(self.key,state='on',fastforward=1)
-            print "OnInit, will now enable current"
+            PtDebugPrint("OnInit, will now enable current")
             WaterCurrent1.current.enable()
             WaterCurrent2.current.enable()
             WaterCurrent3.current.enable()
             WaterCurrent4.current.enable()
         else:
             RespCurrentChange.run(self.key,state='off',fastforward=1)
-            print "OnInit, will now disable current"
+            PtDebugPrint("OnInit, will now disable current")
             WaterCurrent1.current.disable()
             WaterCurrent2.current.disable()
             WaterCurrent3.current.disable()
@@ -162,7 +162,7 @@ class ahnyIslandHut(ptResponder):
         global actingAvatarDoor
         ageSDL = PtGetAgeSDL()
         
-        #~ print"anhySphere1MaintBtn::OnNotify id ",id," state ",state
+        #~ PtDebugPrint("anhySphere1MaintBtn::OnNotify id ",id," state ",state)
         #~ if (state == 0):
             #~ return
 
@@ -198,13 +198,13 @@ class ahnyIslandHut(ptResponder):
 
         elif id == RespCurrentChange.id:
             if boolCurrent:
-                print "will now enable current"
+                PtDebugPrint("will now enable current")
                 WaterCurrent1.current.enable()
                 WaterCurrent2.current.enable()
                 WaterCurrent3.current.enable()
                 WaterCurrent4.current.enable()
             else:
-                print "will now disable current"
+                PtDebugPrint("will now disable current")
                 WaterCurrent1.current.disable()
                 WaterCurrent2.current.disable()
                 WaterCurrent3.current.disable()

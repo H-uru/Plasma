@@ -71,12 +71,12 @@ def LogTrack(currentState,nextState):
                 entry.chronicleSetValue(nextState)
                 entry.save()
                 updated = 1
-                print "updated to %s" % (nextState)
+                PtDebugPrint("updated to %s" % (nextState))
             else:
-                print "no track"
+                PtDebugPrint("no track")
         if not updated:
             # ha, ha ...start over
-            print "not updated"
+            PtDebugPrint("not updated")
 #            entry.chronicleSetValue("15")
 #            entry.save()
     return updated
@@ -118,9 +118,9 @@ def WhatIsLog():
     vault = ptVault()
     entry = vault.findChronicleEntry(kLogTrackVarname)
     if entry is not None:
-        print entry.chronicleGetValue()
+        PtDebugPrint(entry.chronicleGetValue())
     else:
-        print "not initialized"
+        PtDebugPrint("not initialized")
 
 def GetTrack():
     avatar = PtGetLocalAvatar()

@@ -82,7 +82,7 @@ class AhnyVogondolaRide(ptResponder):
         if (id == click.id and state):
             avatar = PtFindAvatar(events)
             climb.run(avatar)
-            print"clicked on chair"
+            PtDebugPrint("clicked on chair")
             return
         
         if (id == hutChairClickable.id and state):
@@ -90,20 +90,20 @@ class AhnyVogondolaRide(ptResponder):
             theAvatar.physics.warpObj(dummy.value.getKey())
             PtAttachObject(theAvatar.getKey(),dummy.value.getKey())
             theAvatar.avatar.enterSubWorld(subworld.value)
-            print"pinned avatar"
+            PtDebugPrint("pinned avatar")
             beginHutRide.run(self.key,avatar=theAvatar)
         
         if (id == climb.id):
             for event in events:
                 if event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kEnterStage:
                     lower.run(self.key,avatar=PtGetLocalAvatar())
-                    print"finished smart-seek"
+                    PtDebugPrint("finished smart-seek")
                 elif event[0] == kMultiStageEvent and event[1] == 0 and event[2] == kAdvanceNextStage:
                     theAvatar=PtGetLocalAvatar()
                     theAvatar.physics.warpObj(dummy.value.getKey())
                     PtAttachObject(theAvatar.getKey(),dummy.value.getKey())
                     theAvatar.avatar.enterSubWorld(subworld.value)
-                    print"pinned avatar"
+                    PtDebugPrint("pinned avatar")
                     ride.run(self.key,avatar=theAvatar)
         
         if (id == eject1.id and state):
@@ -117,14 +117,14 @@ class AhnyVogondolaRide(ptResponder):
             PtDetachObject(theAvatar.getKey(),dummy.value.getKey())
             theAvatar.avatar.exitSubWorld()
             theAvatar.physics.warpObj(ejectPt1.value.getKey())
-            print"ejecting at the hub"
+            PtDebugPrint("ejecting at the hub")
             
         if (id == ejectResp2.id and state):
             theAvatar=PtGetLocalAvatar()
             PtDetachObject(theAvatar.getKey(),dummy.value.getKey())
             theAvatar.avatar.exitSubWorld()
             theAvatar.physics.warpObj(ejectPt2.value.getKey())
-            print"ejecting at the hut"        
+            PtDebugPrint("ejecting at the hut")        
         
         
              

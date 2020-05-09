@@ -106,7 +106,7 @@ class payiUrwinBrain(ptResponder):
         self.id = 5253
         version = 1
         self.version = version
-        print "__init__payiUrwinBrain v.", version,".0"
+        PtDebugPrint("__init__payiUrwinBrain v.", version,".0")
 
     ############################
     def OnFirstUpdate(self):
@@ -117,7 +117,7 @@ class payiUrwinBrain(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "payiUrwinBrain:\tERROR---Cannot find the Payiferen Age SDL"
+            PtDebugPrint("payiUrwinBrain:\tERROR---Cannot find the Payiferen Age SDL")
             self.InitNewSDLVars()
 
         ageSDL.sendToClients("UrwinLastUpdated")
@@ -136,10 +136,10 @@ class payiUrwinBrain(ptResponder):
         lastDay = int(ageSDL["UrwinLastUpdated"][0] / kDayLengthInSeconds)
 
         if (thisDay - lastDay) > 0:
-            print "payiUrwinBrain: It's been at least a day since the last update, running new numbers now."
+            PtDebugPrint("payiUrwinBrain: It's been at least a day since the last update, running new numbers now.")
             self.InitNewSDLVars()
         else:
-            print "payiUrwinBrain: It's been less than a day since the last update, doing nothing"
+            PtDebugPrint("payiUrwinBrain: It's been less than a day since the last update, doing nothing")
             self.SetUrwinTimers()
 
         if not len(PtGetPlayerList()):
@@ -162,58 +162,58 @@ class payiUrwinBrain(ptResponder):
         global stackList
 
         ageSDL = PtGetAgeSDL()
-        print "payiUrwinBrain.OnNotify:  state=%f id=%d owned=%s prowl=%s events=" % (state,id,str(self.sceneobject.isLocallyOwned()),str(ageSDL["UrwinOnTheProwl"][0])),events
+        PtDebugPrint("payiUrwinBrain.OnNotify:  state=%f id=%d owned=%s prowl=%s events=" % (state,id,str(self.sceneobject.isLocallyOwned()),str(ageSDL["UrwinOnTheProwl"][0])),events)
 
         if id == (-1):
-            print "Need to store event: %s" % (events[0][1])
+            PtDebugPrint("Need to store event: %s" % (events[0][1]))
             stackList.append(events[0][1])
-            print "New list is: %s" % (str(stackList))
+            PtDebugPrint("New list is: %s" % (str(stackList)))
             if len(stackList) == 1:
-                print "List is only one command long, so I'm playing it"
+                PtDebugPrint("List is only one command long, so I'm playing it")
                 code = stackList[0]
-                print "Playing command: %s" % (code)
+                PtDebugPrint("Playing command: %s" % (code))
                 self.ExecCode(code)
 
         elif state and self.sceneobject.isLocallyOwned() and ageSDL["UrwinOnTheProwl"][0]:
             if id == respUrwinSfx.id:
-                print "Callback was from Appearance SFX, and I own the age, so start walking"
+                PtDebugPrint("Callback was from Appearance SFX, and I own the age, so start walking")
                 self.StartToWalk()
 
             else:
-                print "Callback was from responder, and I own the age, so Logic Time"
+                PtDebugPrint("Callback was from responder, and I own the age, so Logic Time")
                 old = stackList.pop(0)
-                print "Popping off: %s" % (old)
+                PtDebugPrint("Popping off: %s" % (old))
                 boolBatteryChargedAndOn = ageSDL["payiPodLights"][0]
                 
                 if id == respUrwin_Walk_Loop01.id or id == respUrwin_Walk_Loop02.id or id == respUrwin_WalkSniff_ToWalk.id or id == respUrwin_Idle_ToWalk.id:
                     UrwinMasterAnim.animation.resume()
                     if StepsToTake == 0:
                         StepsToTake = random.randint(minsteps, maxsteps)
-                        print "We should have steps, so Urwin has decided to take %d steps." % (StepsToTake)
+                        PtDebugPrint("We should have steps, so Urwin has decided to take %d steps." % (StepsToTake))
                     
                     StepsToTake = StepsToTake - 1
                     if StepsToTake:
                         if random.randint(0,9): # 90% chance of continuing walk loop
-                            print "Urwin will take %d more steps..." % (StepsToTake)
+                            PtDebugPrint("Urwin will take %d more steps..." % (StepsToTake))
                             if random.randint(0,2):
-                                print "Urwin walks one way."
+                                PtDebugPrint("Urwin walks one way.")
                                 self.SendNote("respUrwin_Walk_Loop01")
                                 if boolBatteryChargedAndOn:
                                     respUrwinSfx.run(self.key, state="Walk01")
                             else:
-                                print "Urwin walks the other way."
+                                PtDebugPrint("Urwin walks the other way.")
                                 self.SendNote("respUrwin_Walk_Loop02")
                                 if boolBatteryChargedAndOn:
                                     respUrwinSfx.run(self.key, state="Walk02")
 
                         else: # 10% to Sniff
-                            print "Urwin smells something..."
+                            PtDebugPrint("Urwin smells something...")
                             self.SendNote("respUrwin_Walk_ToWalkSniff")
                             if boolBatteryChargedAndOn:
                                 respUrwinSfx.run(self.key, state="Walk2Sniff")
 
                     else:
-                        print "Urwin is tired and stops walking"
+                        PtDebugPrint("Urwin is tired and stops walking")
                         self.SendNote("respUrwin_Walk_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Walk2Idle")
@@ -222,19 +222,19 @@ class payiUrwinBrain(ptResponder):
                     UrwinMasterAnim.animation.resume()
                     pct = random.randint(0,2)
                     if pct == 2:
-                        print "Urwin smells something good!"
+                        PtDebugPrint("Urwin smells something good!")
                         self.SendNote("respUrwin_WalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff")
 
                     elif pct == 1:
-                        print "Urwin found food!"
+                        PtDebugPrint("Urwin found food!")
                         self.SendNote("respUrwin_WalkSniff_ToEat")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff2Eat")
 
                     else:
-                        print "Urwin says nevermind, back to walking."
+                        PtDebugPrint("Urwin says nevermind, back to walking.")
                         self.SendNote("respUrwin_WalkSniff_ToWalk")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Sniff2Walk")
@@ -243,19 +243,19 @@ class payiUrwinBrain(ptResponder):
                     UrwinMasterAnim.animation.stop()
                     pct = random.randint(0,2)
                     if pct == 2:
-                        print "Urwin lost interest in the food."
+                        PtDebugPrint("Urwin lost interest in the food.")
                         self.SendNote("respUrwin_Eat_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Idle")
 
                     elif pct == 1:
-                        print "Urwin is still searching for the food."
+                        PtDebugPrint("Urwin is still searching for the food.")
                         self.SendNote("respUrwin_Eat_ToWalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Sniff")
 
                     else:
-                        print "Urwin scoops up the food!"
+                        PtDebugPrint("Urwin scoops up the food!")
                         self.SendNote("respUrwin_Eat_Scoop")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Scoop")
@@ -263,31 +263,31 @@ class payiUrwinBrain(ptResponder):
                 elif id == respUrwin_Eat_Scoop.id or id == respUrwin_Eat_Shake.id or id == respUrwin_Eat_Swallow.id:
                     pct = random.randint(0,4)
                     if pct == 4:
-                        print "Urwin scoops up the food!"
+                        PtDebugPrint("Urwin scoops up the food!")
                         self.SendNote("respUrwin_Eat_Scoop")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Scoop")
 
                     elif pct == 3:
-                        print "Urwin shakes the food!"
+                        PtDebugPrint("Urwin shakes the food!")
                         self.SendNote("respUrwin_Eat_Shake")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Shake")
 
                     elif pct == 2:
-                        print "Urwin swallows the food!"
+                        PtDebugPrint("Urwin swallows the food!")
                         self.SendNote("respUrwin_Eat_Swallow")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Swallow")
 
                     elif pct == 1:
-                        print "Urwin lost interest in the food."
+                        PtDebugPrint("Urwin lost interest in the food.")
                         self.SendNote("respUrwin_Eat_ToIdle")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Idle")
 
                     else:
-                        print "Urwin is still searching for the food."
+                        PtDebugPrint("Urwin is still searching for the food.")
                         self.SendNote("respUrwin_Eat_ToWalkSniff")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Eat2Sniff")
@@ -296,37 +296,37 @@ class payiUrwinBrain(ptResponder):
                     UrwinMasterAnim.animation.stop()
                     pct = random.randint(0,4)
                     if pct == 4:
-                        print "Urwin idles one way."
+                        PtDebugPrint("Urwin idles one way.")
                         self.SendNote("respUrwin_Idle_01")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle01")
 
                     elif pct == 3:
-                        print "Urwin idles the other way."
+                        PtDebugPrint("Urwin idles the other way.")
                         self.SendNote("respUrwin_Idle_02")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle02")
 
                     elif pct == 2:
-                        print "Urwin calls home!"
+                        PtDebugPrint("Urwin calls home!")
                         self.SendNote("respUrwin_Idle_Vocalize")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Vocalize")
 
                     elif pct == 1:
-                        print "Urwin gets hungry."
+                        PtDebugPrint("Urwin gets hungry.")
                         self.SendNote("respUrwin_Idle_ToEat")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle2Eat")
 
                     else:
-                        print "Urwin is done resting, back to walking."
+                        PtDebugPrint("Urwin is done resting, back to walking.")
                         self.SendNote("respUrwin_Idle_ToWalk")
                         if boolBatteryChargedAndOn:
                             respUrwinSfx.run(self.key, state="Idle2Walk")
 
                 elif id == actUrwinPathEnd.id:
-                    print "End of the line, Urwin!"
+                    PtDebugPrint("End of the line, Urwin!")
                     UrwinMasterAnim.animation.stop()
                     UrwinMasterAnim.animation.skipToTime(0)
                     ageSDL["UrwinOnTheProwl"] = (0,)
@@ -334,17 +334,17 @@ class payiUrwinBrain(ptResponder):
                         respUrwinSfx.run(self.key, state="disappear")
 
         elif id in range(3,21) and not self.sceneobject.isLocallyOwned():
-            print "Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list"
+            PtDebugPrint("Callback was from responder, and I DON'T own the age, so I'll try playing the next item in list")
             old = stackList.pop(0)
-            print "Popping off: %s" % (old)
+            PtDebugPrint("Popping off: %s" % (old))
             if len(stackList):
-                print "List has at least one item ready to play"
+                PtDebugPrint("List has at least one item ready to play")
                 code = stackList[0]
-                print "Playing command: %s" % (code)
+                PtDebugPrint("Playing command: %s" % (code))
                 self.ExecCode(code)
 
         else:
-            print "Callback from something else?"
+            PtDebugPrint("Callback from something else?")
 
     ############################
     def StartToWalk(self):
@@ -354,7 +354,7 @@ class payiUrwinBrain(ptResponder):
         boolBatteryChargedAndOn = ageSDL["payiPodLights"][0]
 
         StepsToTake = random.randint(minsteps, maxsteps)
-        print "Urwin has decided to take %d steps." % (StepsToTake)
+        PtDebugPrint("Urwin has decided to take %d steps." % (StepsToTake))
 
         if random.randint(0,1):
             self.SendNote("respUrwin_Walk_Loop01")
@@ -374,7 +374,7 @@ class payiUrwinBrain(ptResponder):
         boolBatteryChargedAndOn = ageSDL["payiPodLights"][0]
         if self.sceneobject.isLocallyOwned():
             if TimerID == 1:
-                print "UrwinBrain.OnTimer: Time for the Urwin to return."
+                PtDebugPrint("UrwinBrain.OnTimer: Time for the Urwin to return.")
                 ageSDL["UrwinOnTheProwl"] = (1,)
 
                 if random.randint(0,1):
@@ -387,7 +387,7 @@ class payiUrwinBrain(ptResponder):
                 else:
                     self.StartToWalk()
             elif TimerID == 2:
-                print "UrwinBrain.OnTimer: New day, let's renew the timers."
+                PtDebugPrint("UrwinBrain.OnTimer: New day, let's renew the timers.")
                 self.InitNewSDLVars()
             elif TimerID == 3:
                 UrwinMasterAnim.animation.stop()
@@ -419,7 +419,7 @@ class payiUrwinBrain(ptResponder):
 
         beginningOfToday = PtGetDniTime() - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
         endOfToday = int(kDayLengthInSeconds / 2) + beginningOfToday
-        #print "Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday)
+        #PtDebugPrint("Dawn: %d  Dusk: %d" % (beginningOfToday, endOfToday))
 
         # We need a random times in the first 5 hours of the day
         # which is in the first 44.5 percent of the day. So we're
@@ -427,20 +427,20 @@ class payiUrwinBrain(ptResponder):
         # something roughly in that timeframe.
         randnum = float(random.randint(0,kFirstMorningSpawn))
         firstTime = int((randnum / 1000.0) * kDayLengthInSeconds) + beginningOfToday
-        print "payiUrwinBrain: Generated a valid spawn time: %d" % (firstTime)
+        PtDebugPrint("payiUrwinBrain: Generated a valid spawn time: %d" % (firstTime))
         spawnTimes = [firstTime]
 
         while isinstance(spawnTimes[-1], long):
             randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:
-                print "payiUrwinBrain: Generated a valid spawn time: %d" % (newTime)
+                PtDebugPrint("payiUrwinBrain: Generated a valid spawn time: %d" % (newTime))
                 spawnTimes.append(newTime)
             else:
-                print "payiUrwinBrain: Generated a spawn time after dusk, exiting loop: %d" % (newTime)
+                PtDebugPrint("payiUrwinBrain: Generated a spawn time after dusk, exiting loop: %d" % (newTime))
                 break
         else:
-            print "payiUrwinBrain:ERROR---Tried to add a spawn time that's not a number: " , spawnTimes
+            PtDebugPrint("payiUrwinBrain:ERROR---Tried to add a spawn time that's not a number: " , spawnTimes)
             spawnTimes = [0]
 
         while len(spawnTimes) < 20:
@@ -456,18 +456,18 @@ class payiUrwinBrain(ptResponder):
             for timer in ageSDL["UrwinSpawnTimes"]:
                 if timer:
                     timeTillSpawn = timer - PtGetDniTime()
-                    print "timer: %d    time: %d    timeTillSpawn: %d" % (timer,PtGetDniTime(),timeTillSpawn)
+                    PtDebugPrint("timer: %d    time: %d    timeTillSpawn: %d" % (timer,PtGetDniTime(),timeTillSpawn))
                     if timeTillSpawn > 0:
-                        print "payiUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn)
+                        PtDebugPrint("payiUrwinBrain: Setting timer for %d seconds" % (timeTillSpawn))
                         PtAtTimeCallback(self.key, timeTillSpawn, 1)
 
             # precision error FTW!
             timeLeftToday = kDayLengthInSeconds - int(PtGetAgeTimeOfDayPercent() * kDayLengthInSeconds)
             timeLeftToday += 1 # because we want it to go off right AFTER the day flips
-            print "payiUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday)
+            PtDebugPrint("payiUrwinBrain: Setting EndOfDay timer for %d seconds" % (timeLeftToday))
             PtAtTimeCallback(self.key, timeLeftToday, 2)
         else:
-            print "payiUrwinBrain: Timer array was empty!"
+            PtDebugPrint("payiUrwinBrain: Timer array was empty!")
 
     ###########################
     def OnBackdoorMsg(self, target, param):
@@ -478,7 +478,7 @@ class payiUrwinBrain(ptResponder):
         ageSDL = PtGetAgeSDL()
         if target == "urwin":
             if self.sceneobject.isLocallyOwned():
-                print "payiUrwinBrain.OnBackdoorMsg: Backdoor!"
+                PtDebugPrint("payiUrwinBrain.OnBackdoorMsg: Backdoor!")
                 if param == "walk":
                     ageSDL["UrwinOnTheProwl"] = (1,)                    
                     if ageSDL["payiPodLights"][0]:
@@ -521,7 +521,7 @@ class payiUrwinBrain(ptResponder):
                     elif ecAction == "ToWalk":
                         respUrwin_Idle_ToWalk.run(self.key)
                     else:            
-                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction))
                         stackList.pop(0)
                 elif ecState == "Walk":
                     if ecAction == "Loop01":
@@ -533,7 +533,7 @@ class payiUrwinBrain(ptResponder):
                     elif ecAction == "ToIdle":
                         respUrwin_Walk_ToIdle.run(self.key)
                     else:            
-                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction))
                         stackList.pop(0)
                 elif ecState == "WalkSniff":
                     if ecAction == "ToEat":
@@ -554,14 +554,14 @@ class payiUrwinBrain(ptResponder):
                     elif ecAction == "Swallow":
                         respUrwin_Eat_Swallow.run(self.key)
                     else:            
-                        print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction)
+                        PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid ecAction '%s'." % (ecAction))
                         stackList.pop(0)
                 else:            
-                    print "payiUrwinBrain.ExecCode(): ERROR! Invalid ecState '%s'." % (ecState)
+                    PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid ecState '%s'." % (ecState))
                     stackList.pop(0)
             else:            
-                print "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+                PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
                 stackList.pop(0)
         except:
-            print "payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            PtDebugPrint("payiUrwinBrain.ExecCode(): ERROR! Invalid code '%s'." % (code))
             stackList.pop(0)

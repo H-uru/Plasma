@@ -73,7 +73,7 @@ class nb01RegisterNexusLink(ptModifier):
         self.id = 5020
         version = 1
         self.version = version
-        print "__init__nb01RegisterNexusLink v.", version
+        PtDebugPrint("__init__nb01RegisterNexusLink v.", version)
         
     def OnNotify(self,state,id,events):
         global boolClickerIsMe
@@ -110,7 +110,7 @@ class nb01RegisterNexusLink(ptModifier):
             boolClickerIsMe = False # done with this var, reset it
             
             kiLevel = PtDetermineKILevel()
-            print "nb01RegisterNexusLink.OnNotify:\tplayer ki level is",kiLevel
+            PtDebugPrint("nb01RegisterNexusLink.OnNotify:\tplayer ki level is",kiLevel)
 
             # case 1:  player has no KI
             # ki slot doesn't respond, just return

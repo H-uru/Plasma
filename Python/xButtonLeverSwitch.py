@@ -65,7 +65,7 @@ class xButtonLeverSwitch(ptResponder):
         
         version = 1
         self.version = version
-        print "__init__xButtonLeverSwitch v.", version
+        PtDebugPrint("__init__xButtonLeverSwitch v.", version)
         
     def OnNotify(self,state,id,events):
 	
@@ -73,11 +73,11 @@ class xButtonLeverSwitch(ptResponder):
 		if id==act.id:
 			resp.run(self.key,events=events)
 		elif id==resp.id:
-			print "xButtonLeverSwitch.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated." % varstring.value
+			PtDebugPrint("xButtonLeverSwitch.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated." % varstring.value)
 	                note = ptNotify(self.key)
 	                note.setActivate(1.0)
 	                note.addVarNumber(varstring.value,1.0)
 	                note.send()
 	        else:
-			print "xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source."
+			PtDebugPrint("xButtonLeverSwitch.OnNotify:\tERROR: unanticipated message source.")
 			return

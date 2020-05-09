@@ -83,7 +83,7 @@ class grsnPrisonRandomSDLItems(ptResponder):
 
         version = 2
         self.version = version
-        print "__init__grsnPrisonRandomItems v.", version
+        PtDebugPrint("__init__grsnPrisonRandomItems v.", version)
         random.seed()
 
     def OnServerInitComplete(self):

@@ -80,11 +80,11 @@ def ConstructFilenameAndPath():
             localNameAndPath = U"init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                print U"xIniAudio::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + U"\" file"
+                PtDebugPrint(U"xIniAudio::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + U"\" file")
                 return
         # otherwise, use the standard init path
         gFilenameAndPath = PtGetInitPath() + U"/" + gFilename
-        print U"xIniAudio::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + U"\" file"
+        PtDebugPrint(U"xIniAudio::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + U"\" file")
 
 def WriteIni():
     global gIniFile
@@ -322,7 +322,7 @@ def SetAudioMode(init, device, eax):
         else:
             gIniFile.addEntry("Audio.Initialize " + val)
 
-        print device
+        PtDebugPrint(device)
         if entryDev:
             entryDev.setValue(0, "\"" + device + "\"")
         else:

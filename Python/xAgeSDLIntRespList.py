@@ -72,7 +72,7 @@ class xAgeSDLIntRespList(ptResponder):
         ptModifier.__init__(self)
         self.id = 5307
         self.version = 2
-        print "__init__xAgeSDLIntRespList v.", self.version
+        PtDebugPrint("__init__xAgeSDLIntRespList v.", self.version)
     
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:

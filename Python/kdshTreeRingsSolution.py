@@ -220,12 +220,12 @@ class kdshTreeRingsSolution(ptModifier):
         
         version = 6
         self.version = version
-        print "__init__kdshTreeRingsSolution v.", version,".2"
+        PtDebugPrint("__init__kdshTreeRingsSolution v.", version,".2")
 
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()        
         if ageSDL == None:
-            print "kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
+            PtDebugPrint("kdshTreeRingsResp.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
 
         ageSDL.setNotify(self.key,"OuterRing01",0.0)
         ageSDL.setNotify(self.key,"MiddleRing01",0.0)
@@ -254,33 +254,33 @@ class kdshTreeRingsSolution(ptModifier):
         MiddleRing03 = ageSDL["MiddleRing03"][0]
         InnerRing03 = ageSDL["InnerRing03"][0]
 
-        print "kdshTreeRingSolution: When I got here:"
-        #~ print "\tOuterRing01=",OuterRing01
-        #~ print "\tMiddleRing01=",MiddleRing01
-        #~ print "\tInnerRing01=",InnerRing01
-        #~ print "\tOuterRing02=",OuterRing02
-        #~ print "\tMiddleRing02=",MiddleRing02
-        #~ print "\tInnerRing02=",InnerRing02
-        #~ print "\tOuterRing03=",OuterRing03
-        #~ print "\tMiddleRing03=",MiddleRing03
-        #~ print "\tInnerRing03=",InnerRing03
+        PtDebugPrint("kdshTreeRingSolution: When I got here:")
+        #~ PtDebugPrint("\tOuterRing01=",OuterRing01)
+        #~ PtDebugPrint("\tMiddleRing01=",MiddleRing01)
+        #~ PtDebugPrint("\tInnerRing01=",InnerRing01)
+        #~ PtDebugPrint("\tOuterRing02=",OuterRing02)
+        #~ PtDebugPrint("\tMiddleRing02=",MiddleRing02)
+        #~ PtDebugPrint("\tInnerRing02=",InnerRing02)
+        #~ PtDebugPrint("\tOuterRing03=",OuterRing03)
+        #~ PtDebugPrint("\tMiddleRing03=",MiddleRing03)
+        #~ PtDebugPrint("\tInnerRing03=",InnerRing03)
 
         for i in ["Outer", "Middle", "Inner"]:
             for j in ["1","2","3"]:
                 
                 ffcode1 = "InitState = "+i + "Ring0" +j
-                #~ print "ffcode1 = ", ffcode1
+                #~ PtDebugPrint("ffcode1 = ", ffcode1)
                 
-                exec ffcode1
-                #~ print "InitState = ", InitState
+                exec(ffcode1)
+                #~ PtDebugPrint("InitState = ", InitState)
                 
                 ffcode2 = i + "Ring0" + j + "_0" + str(InitState) + ".animation.skipToEnd()"
-                #~ print "ffcode2 = ", ffcode2
+                #~ PtDebugPrint("ffcode2 = ", ffcode2)
                 
-                exec ffcode2
+                exec(ffcode2)
             
-                #~ print "Fastforwarding: Set = ",j," Ring = ",i," Position = ",InitState
-                print "\t",i,"Ring0",j," = ", InitState
+                #~ PtDebugPrint("Fastforwarding: Set = ",j," Ring = ",i," Position = ",InitState)
+                PtDebugPrint("\t",i,"Ring0",j," = ", InitState)
 
         
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
@@ -290,19 +290,19 @@ class kdshTreeRingsSolution(ptModifier):
 
         StillSolved = False
         newbearing = ageSDL[VARname][0]
-        #~ print "VARname = ", VARname, "newbear = ", newbearing
+        #~ PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
         
         code = VARname + "_0" + str(newbearing) + ".animation.play()"
-        #~ print "code = ", code
-        exec code # this runs the animation on the actual ring in the garden
+        #~ PtDebugPrint("code = ", code)
+        exec(code) # this runs the animation on the actual ring in the garden
         
         if "3" in VARname: 
-            #~ print "TRS: Nothing to ff. VARname = ", VARname
+            #~ PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
             pass
         else:
             GUIcode = "GUI" + string.join(string.split(VARname, "Ring"), "") + "_0" + str(newbearing) + ".animation.play()"
-            #~ print "GUIcode = ", GUIcode
-            exec GUIcode # this runs the animation on the "fake" ring in front of the GUI
+            #~ PtDebugPrint("GUIcode = ", GUIcode)
+            exec(GUIcode) # this runs the animation on the "fake" ring in front of the GUI
 
 ###
 #Check to see if the Puzzle has been solved
@@ -318,10 +318,10 @@ class kdshTreeRingsSolution(ptModifier):
         MiddleRing03 = ageSDL["MiddleRing03"][0]
         InnerRing03 = ageSDL["InnerRing03"][0]
             
-        print "Current Scope Positions [Outer, Middle, Inner]:"
-        print "\tRing #1: [", OuterRing01 ,", ",MiddleRing01,", ",InnerRing01," ]"
-        print "\tRing #2: [", OuterRing02 ,", ",MiddleRing02,", ",InnerRing02," ]"
-        print "\tRing #3: [", OuterRing03 ,", ",MiddleRing03,", ",InnerRing03," ]"
+        PtDebugPrint("Current Scope Positions [Outer, Middle, Inner]:")
+        PtDebugPrint("\tRing #1: [", OuterRing01 ,", ",MiddleRing01,", ",InnerRing01," ]")
+        PtDebugPrint("\tRing #2: [", OuterRing02 ,", ",MiddleRing02,", ",InnerRing02," ]")
+        PtDebugPrint("\tRing #3: [", OuterRing03 ,", ",MiddleRing03,", ",InnerRing03," ]")
         
         if OuterRing01 ==   5 and\
             MiddleRing01 == 6 and\
@@ -332,7 +332,7 @@ class kdshTreeRingsSolution(ptModifier):
             OuterRing03 == 4 and\
             MiddleRing03 == 3 and\
             InnerRing03 == 6:
-                print "Tree Ring Puzzle solved. Opening Door."
+                PtDebugPrint("Tree Ring Puzzle solved. Opening Door.")
                 StillSolved = True
                 PtAtTimeCallback(self.key,kPatienceDelayToSolve,1) # Put in this delay to avoid people "speed clicking" past solution and opening door. 
 
@@ -344,43 +344,43 @@ class kdshTreeRingsSolution(ptModifier):
         
         
         if id == actScope2.id:
-            #~ print "kdshTreeRingsSolution: Scope #2 occupied. Fast forwarding Scope 1 Rings in GUI"
+            #~ PtDebugPrint("kdshTreeRingsSolution: Scope #2 occupied. Fast forwarding Scope 1 Rings in GUI")
             ScopeNumber = 2
         elif id == actScope3.id:
-            #~ print "kdshTreeRingsSolution: Scope #3 occupied. Fast forwarding Scope 2 Rings in GUI"
+            #~ PtDebugPrint("kdshTreeRingsSolution: Scope #3 occupied. Fast forwarding Scope 2 Rings in GUI")
             ScopeNumber = 3
         else:
-            print "ERROR: Not sure who the notify came from."
-            print "id = ", id
+            PtDebugPrint("ERROR: Not sure who the notify came from.")
+            PtDebugPrint("id = ", id)
             return
             
         ageSDL = PtGetAgeSDL()        
         if ageSDL == None:
-            print "kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value
+            PtDebugPrint("kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
 
         Outerbearing = ageSDL["OuterRing0" + str(ScopeNumber-1)][0]
         Middlebearing = ageSDL["MiddleRing0" + str(ScopeNumber-1)][0]
         Innerbearing = ageSDL["InnerRing0" + str(ScopeNumber-1)][0]
 
-        #~ print "Outerbearing = ", Outerbearing
-        #~ print "Middlebearing = ", Middlebearing
-        #~ print "Innerbearing = ", Innerbearing
+        #~ PtDebugPrint("Outerbearing = ", Outerbearing)
+        #~ PtDebugPrint("Middlebearing = ", Middlebearing)
+        #~ PtDebugPrint("Innerbearing = ", Innerbearing)
         
 
         GUIcode = "GUIOuter0" + str(ScopeNumber-1) + "_0" + str(Outerbearing) + ".animation.skipToEnd()"
-        #~ print "FF Outer code = ", GUIcode
-        exec GUIcode 
+        #~ PtDebugPrint("FF Outer code = ", GUIcode)
+        exec(GUIcode) 
 
         GUIcode = "GUIMiddle0" + str(ScopeNumber-1) + "_0" + str(Middlebearing) + ".animation.skipToEnd()"
-        #~ print "FF Middle code = ", GUIcode
-        exec GUIcode 
+        #~ PtDebugPrint("FF Middle code = ", GUIcode)
+        exec(GUIcode) 
 
         GUIcode = "GUIInner0" + str(ScopeNumber-1) + "_0" + str(Innerbearing) + ".animation.skipToEnd()"
-        #~ print "FF Inner code = ", GUIcode
-        exec GUIcode 
+        #~ PtDebugPrint("FF Inner code = ", GUIcode)
+        exec(GUIcode) 
         
         #~ GUIcode = "GUI" + string.join(string.split(VARname, "Ring"), "") + "_0" + str(newbearing) + ".animation.play()"
-        #~ print "GUIcode = ", GUIcode
+        #~ PtDebugPrint("GUIcode = ", GUIcode)
         #~ exec GUIcode # this runs the animation on the "fake" ring in front of the GUI        
         
         
@@ -393,5 +393,5 @@ class kdshTreeRingsSolution(ptModifier):
                 ageSDL.setTagString("TreeRingDoorClosed","fromOutside")                
                 ageSDL["TreeRingDoorClosed"] = (0,)
             else:
-                print "Patience, grasshopper."
+                PtDebugPrint("Patience, grasshopper.")
             

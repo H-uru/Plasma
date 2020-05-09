@@ -135,7 +135,7 @@ class ercaPelletRoom(ptResponder):
 
 
     def OnServerInitComplete(self):
-        print "ercaPelletRoom.OnServerInitComplete()"
+        PtDebugPrint("ercaPelletRoom.OnServerInitComplete()")
         global Pellet1
         global Pellet2
         global Pellet3
@@ -189,7 +189,7 @@ class ercaPelletRoom(ptResponder):
             ageSDL.sendToClients(SDLFlush.value)
             ageSDL.setNotify(self.key,SDLFlush.value,0.0)
         except:
-            print "ercaPelletRoom.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL"
+            PtDebugPrint("ercaPelletRoom.OnServerInitComplete():\tERROR---Cannot find the Ercana Age SDL")
             ageSDL[SDLPellet1.value] = (0,)
             ageSDL[SDLPellet2.value] = (0,)
             ageSDL[SDLPellet3.value] = (0,)
@@ -200,15 +200,15 @@ class ercaPelletRoom(ptResponder):
             ageSDL[SDLFlush.value] = (0,)
 
         boolMachine = ageSDL[SDLMachine.value][0]
-        print "boolMachine = ",boolMachine
+        PtDebugPrint("boolMachine = ",boolMachine)
         byteChamber = ageSDL[SDLChamber.value][0]
-        print "byteChamber = ",byteChamber
+        PtDebugPrint("byteChamber = ",byteChamber)
         boolFlush = ageSDL[SDLFlush.value][0]
         if not boolMachine and byteChamber:
-            print "machine is closed, but chamber = ",byteChamber,". Resetting chamber to 0"
+            PtDebugPrint("machine is closed, but chamber = ",byteChamber,". Resetting chamber to 0")
             ageSDL[SDLChamber.value] = (0,)
             byteChamber = 0
-            print "corrected chamber = ",byteChamber
+            PtDebugPrint("corrected chamber = ",byteChamber)
         
         Pellet1 = ageSDL[SDLPellet1.value][0]
         if not Pellet1 or (Pellet1 and byteChamber == 1):
@@ -216,7 +216,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet1:
                 Pellet1 = 0
                 ageSDL[SDLPellet1.value] = (0,)
-                print "must've left age before pellet1 dropped and no other players were there, correcting..."
+                PtDebugPrint("must've left age before pellet1 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet2 = ageSDL[SDLPellet2.value][0]
         if not Pellet2 or (Pellet2 and byteChamber == 2):
@@ -224,7 +224,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet2:
                 Pellet2 = 0
                 ageSDL[SDLPellet2.value] = (0,)
-                print "must've left age before pellet2 dropped and no other players were there, correcting..."
+                PtDebugPrint("must've left age before pellet2 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet3 = ageSDL[SDLPellet3.value][0]
         if not Pellet3 or (Pellet3 and byteChamber == 3):
@@ -232,7 +232,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet3:
                 Pellet3 = 0
                 ageSDL[SDLPellet3.value] = (0,)
-                print "must've left age before pellet3 dropped and no other players were there, correcting..."
+                PtDebugPrint("must've left age before pellet3 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet4 = ageSDL[SDLPellet4.value][0]
         if not Pellet4 or (Pellet4 and byteChamber == 4):
@@ -240,7 +240,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet4:
                 Pellet4 = 0
                 ageSDL[SDLPellet4.value] = (0,)
-                print "must've left age before pellet4 dropped and no other players were there, correcting..."
+                PtDebugPrint("must've left age before pellet4 dropped and no other players were there, correcting...")
                 InitCorrection = 1
         Pellet5 = ageSDL[SDLPellet5.value][0]
         if not Pellet5 or (Pellet5 and byteChamber == 5):
@@ -248,7 +248,7 @@ class ercaPelletRoom(ptResponder):
             if Pellet5:
                 Pellet5 = 0
                 ageSDL[SDLPellet5.value] = (0,)
-                print "must've left age before pellet5 dropped and no other players were there, correcting..."
+                PtDebugPrint("must've left age before pellet5 dropped and no other players were there, correcting...")
                 InitCorrection = 1
 
         pelletList = [Pellet1,Pellet2,Pellet3,Pellet4,Pellet5]
@@ -256,7 +256,7 @@ class ercaPelletRoom(ptResponder):
             if pellet > 0:
                 PelletReady = 1
                 break
-        print "PelletReady = ",PelletReady
+        PtDebugPrint("PelletReady = ",PelletReady)
         
         if PelletReady:
             if boolMachine:
@@ -282,7 +282,7 @@ class ercaPelletRoom(ptResponder):
             RespMachineEnable.run(self.key,state="Disable",fastforward=1)
             MayFlush = 0
             if boolMachine:
-                print "We shouldn't get here.  Just in case some states got hosed."
+                PtDebugPrint("We shouldn't get here.  Just in case some states got hosed.")
                 RespMachineMode.run(self.key,state="Close",fastforward=1)
                 if not len(PtGetPlayerList()):
                     ageSDL[SDLMachine.value] = (0,)
@@ -341,7 +341,7 @@ class ercaPelletRoom(ptResponder):
             if boolMachine:
                 RespShowAllPellets.run(self.key)
                 objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID),self.key)
-                print "Got boolMachine SDL = 1 notify, will now run RespUseMachine"
+                PtDebugPrint("Got boolMachine SDL = 1 notify, will now run RespUseMachine")
                 RespUseMachine.run(self.key,avatar=objAvatar)
             else:
                 MayFlush = 0
@@ -362,14 +362,14 @@ class ercaPelletRoom(ptResponder):
             PtDebugPrint("ercaPelletRoom:OnSDLNotify:  SDL for flush lever is now %d" % (boolFlush))
             if boolFlush:
                 objAvatar = ptSceneobject(PtGetAvatarKeyFromClientID(playerID),self.key)
-                print "Got boolFlush SDL = 1 notify, will now run RespFlushOneShot"
+                PtDebugPrint("Got boolFlush SDL = 1 notify, will now run RespFlushOneShot")
                 RespFlushOneShot.run(self.key,avatar=objAvatar)
             else:
                 pass
         
         if pelletUpdate:
             pelletList = [Pellet1,Pellet2,Pellet3,Pellet4,Pellet5]
-            print "ercaPelletRoom:OnSDLNotify(): pelletList = ",pelletList
+            PtDebugPrint("ercaPelletRoom:OnSDLNotify(): pelletList = ",pelletList)
             testVal = 0
             for pellet in pelletList:
                 if pellet > 0:
@@ -407,38 +407,38 @@ class ercaPelletRoom(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         if (id == ActUseMachine.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActUseMachine callback"
+            PtDebugPrint("ActUseMachine callback")
             #RespUseMachineOneShot.run(self.key,avatar=PtFindAvatar(events))
             ageSDL[SDLMachine.value] = (1,)
         
         elif (id == RespUseMachine.id):
-            print "Got notify from RespUseMachine, will now open machine"
+            PtDebugPrint("Got notify from RespUseMachine, will now open machine")
             RespMachineEnable.run(self.key,state="IfOpening")
             RespMachineMode.run(self.key,state="Open")
         
         elif (id == RespMachineMode.id):
-            print "ercaPelletRoom.OnNotify:  Machine has closed."
+            PtDebugPrint("ercaPelletRoom.OnNotify:  Machine has closed.")
             if not PelletReady:
                 RespMachineEnable.run(self.key,state="Disable")
             if byteChamber:
                 ageSDL[SDLChamber.value] = (0,)
         
         elif (id == RespMachineEnable.id):
-            print "RespMachineEnable callback"
+            PtDebugPrint("RespMachineEnable callback")
             MayFlush = 1
-            print "set MayFlush = ",MayFlush
+            PtDebugPrint("set MayFlush = ",MayFlush)
         
         elif (id == ActSpitPellet.id and state and LocalAvatar == PtFindAvatar(events)):
             if TakePellet:
-                print "TakePellet is still active, must wait a few seconds before allowing another pellet to be spit out"
+                PtDebugPrint("TakePellet is still active, must wait a few seconds before allowing another pellet to be spit out")
                 RespUseSpitBtn.run(self.key,avatar=LocalAvatar,state="deny")
                 return
-            print "ActSpitPellet callback"
+            PtDebugPrint("ActSpitPellet callback")
             #ISpit = 1
             ActSpitPellet.disableActivator()
             MayFlush = 0
             if byteChamber == 5:
-                print "Trying to spit pellet, but we're on Chamber5.  This shouldn't be possible.  Closing machine..."
+                PtDebugPrint("Trying to spit pellet, but we're on Chamber5.  This shouldn't be possible.  Closing machine...")
                 ageSDL[SDLMachine.value] = (0,)
                 ageSDL[SDLChamber.value] = (0,)
                 ageSDL[SDLPellet1.value] = (0,)
@@ -452,7 +452,7 @@ class ercaPelletRoom(ptResponder):
             ageSDL[SDLChamber.value] = (newVal,)
         
         elif (id == RespUseSpitBtn.id):
-            print "RespUseSpitBtn callback"
+            PtDebugPrint("RespUseSpitBtn callback")
             if byteChamber == 1:
                 RespRotateChamber.run(self.key,state="Chamber1")
             elif byteChamber == 2:
@@ -465,7 +465,7 @@ class ercaPelletRoom(ptResponder):
                 RespRotateChamber.run(self.key,state="Chamber5")
         
         elif (id == RespRotateChamber.id):
-            print "RespRotateChamber callback"
+            PtDebugPrint("RespRotateChamber callback")
             if byteChamber == 1:
                 RespSpitPellet.run(self.key,state="Chamber1")
             elif byteChamber == 2:
@@ -480,7 +480,7 @@ class ercaPelletRoom(ptResponder):
         elif (id == RespSpitPellet.id):
 #            if not ISpit:
 #                return
-            print "RespSpitPellet callback"
+            PtDebugPrint("RespSpitPellet callback")
             #TakePellet = 0
             self.SendNote('0')
             #ActTakePellet.enableActivator()
@@ -488,7 +488,7 @@ class ercaPelletRoom(ptResponder):
             #ISpit = 0
         
         elif (id == ActTakePellet.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActTakePellet callback"
+            PtDebugPrint("ActTakePellet callback")
             #ActTakePellet.disableActivator()
             #TakePellet = 1
             self.SendNote('1')
@@ -502,14 +502,14 @@ class ercaPelletRoom(ptResponder):
 
         elif (id == RespTouchPellet.id):
             if Toucher:
-                print "RespTouchPellet callback for Untouch, will now try to kill multistage"
+                PtDebugPrint("RespTouchPellet callback for Untouch, will now try to kill multistage")
                 MltStgLinkPellet.gotoStage(Toucher, -1)
                 cam = ptCamera()
                 cam.enableFirstPersonOverride()
                 Toucher = None
         
         elif (id == ActPelletToSilo.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActPelletToSilo callback"
+            PtDebugPrint("ActPelletToSilo callback")
             iLink = 1
             #TakePellet = 2
             self.SendNote('2')
@@ -517,7 +517,7 @@ class ercaPelletRoom(ptResponder):
             PtAtTimeCallback(self.key,0.6,3)
         
         elif (id == ActPelletToCave.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActPelletToCave callback"
+            PtDebugPrint("ActPelletToCave callback")
             iLink = 1
             #TakePellet = 2
             self.SendNote('2')
@@ -528,7 +528,7 @@ class ercaPelletRoom(ptResponder):
             if not iLink:
                 return
             iLink = 0
-            print "RespLinkPellet callback"
+            PtDebugPrint("RespLinkPellet callback")
             Recipe = 0
             if byteChamber == 1:
                 Recipe = Pellet1
@@ -564,7 +564,7 @@ class ercaPelletRoom(ptResponder):
 
 
         elif (id == RespDropPellet.id):
-            print "RespDropPellet callback"
+            PtDebugPrint("RespDropPellet callback")
             #WaitHack = 1
             #PtAtTimeCallback(self.key,5,6)
             #ActSpitPellet.enableActivator()
@@ -588,19 +588,19 @@ class ercaPelletRoom(ptResponder):
                     LastPellet = 0
         
         elif (id == ActFlushLever.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActFlushLever callback"
+            PtDebugPrint("ActFlushLever callback")
             ageSDL[SDLFlush.value] = (1,)
         
         elif (id == RespFlushOneShot.id):
-            print "RespFlushOneShot callback"
-            print "MayFlush = ",MayFlush
+            PtDebugPrint("RespFlushOneShot callback")
+            PtDebugPrint("MayFlush = ",MayFlush)
             RespFlushLever.run(self.key)
             if MayFlush:
                 ActSpitPellet.disableActivator()
         
         elif (id == RespFlushLever.id):
-            print "RespFlushLever callback"
-            print "MayFlush = ",MayFlush
+            PtDebugPrint("RespFlushLever callback")
+            PtDebugPrint("MayFlush = ",MayFlush)
             if MayFlush:
                 #MayFlush = 0
                 self.IFlushPellets()
@@ -609,7 +609,7 @@ class ercaPelletRoom(ptResponder):
                     ageSDL[SDLFlush.value] = (0,)
         
         elif (id == RespFlushAPellet.id):
-            print "RespFlushAPellet callback"
+            PtDebugPrint("RespFlushAPellet callback")
             if self.sceneobject.isLocallyOwned():
                 ageSDL[SDLPellet1.value] = (0,)
                 ageSDL[SDLPellet2.value] = (0,)
@@ -619,9 +619,9 @@ class ercaPelletRoom(ptResponder):
                 ageSDL[SDLMachine.value] = (0,)
         	
         elif id == (-1):
-            #print "incoming event: %s" % (events[0][1])
+            #PtDebugPrint("incoming event: %s" % (events[0][1]))
             code = events[0][1]
-            #print "playing command: %s" % (code)
+            #PtDebugPrint("playing command: %s" % (code))
             self.ExecCode(code)  
 
 
@@ -630,7 +630,7 @@ class ercaPelletRoom(ptResponder):
         global Toucher
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             if TakePellet == 1:
-                print "ercaPelletRoom.OnControlKeyEvent(): hit exit key"
+                PtDebugPrint("ercaPelletRoom.OnControlKeyEvent(): hit exit key")
                 #TakePellet = 0
                 self.SendNote('0')
                 #ActTakePellet.enableActivator()
@@ -639,7 +639,7 @@ class ercaPelletRoom(ptResponder):
                 PtAtTimeCallback(self.key,0.8,5)
         elif controlKey == PlasmaControlKeys.kKeyMoveBackward or controlKey == PlasmaControlKeys.kKeyRotateLeft or controlKey == PlasmaControlKeys.kKeyRotateRight:
             if TakePellet == 1:
-                print "ercaPelletRoom.OnControlKeyEvent(): hit movement key"
+                PtDebugPrint("ercaPelletRoom.OnControlKeyEvent(): hit movement key")
                 #TakePellet = 0
                 self.SendNote('0')
                 #ActTakePellet.enableActivator()
@@ -649,7 +649,7 @@ class ercaPelletRoom(ptResponder):
 
 
     def OnTimer(self,id):
-        print "ercaPelletRoom.OnTimer():  id = ",id
+        PtDebugPrint("ercaPelletRoom.OnTimer():  id = ",id)
         global byteChamber
         global TakePellet
         global Toucher
@@ -660,7 +660,7 @@ class ercaPelletRoom(ptResponder):
         if id == 1:
             if TakePellet == 2:
                 RespDropPellet.run(self.key,state="taken")
-                #print "taken"
+                #PtDebugPrint("taken")
                 #TakePellet = 0
                 #self.SendNote('0')
                 PtAtTimeCallback(self.key,10,6)
@@ -670,12 +670,12 @@ class ercaPelletRoom(ptResponder):
                 if TakePellet == 1:
                     #TakePellet = 0
                     self.SendNote('0')
-                    print "onTimer, TakePellet = 1"
+                    PtDebugPrint("onTimer, TakePellet = 1")
                     if Toucher:
                         MltStgLinkPellet.gotoStage(Toucher, 0,newTime=1.2,dirFlag=1,isForward=0)
                     PtAtTimeCallback(self.key,0.8,5)
         elif id == 2:
-            print "OnTimer.Is taking a pellet reseting it's SDL to O???"
+            PtDebugPrint("OnTimer.Is taking a pellet reseting it's SDL to O???")
             ActSpitPellet.enableActivator()
         elif id == 3:
             RespLinkPellet.run(self.key,avatar=Toucher,state="CitySilo")
@@ -688,7 +688,7 @@ class ercaPelletRoom(ptResponder):
 
 
     def IFlushPellets(self):
-        print "in IFlushPellets."
+        PtDebugPrint("in IFlushPellets.")
         global Pellet1
         global Pellet2
         global Pellet3
@@ -721,7 +721,7 @@ class ercaPelletRoom(ptResponder):
 
     def UpdateTakePellet(self,tp):
         global TakePellet
-        print "ercaPelletRoom.UpdateTakePellet(): tp = ",tp
+        PtDebugPrint("ercaPelletRoom.UpdateTakePellet(): tp = ",tp)
         TakePellet = tp
 
 
@@ -751,14 +751,14 @@ class ercaPelletRoom(ptResponder):
                     ageDataChild = ageDataChildRef.getChild()
                     chron = ageDataChild.upcastToChronicleNode()
                     if chron and chron.getName() == "PelletCaveGUID":
-                        print "Found pellet cave guid - ", chron.getValue()
+                        PtDebugPrint("Found pellet cave guid - ", chron.getValue())
                         return chron.getValue()
                     return ""
 
 
     def LinkToPelletCave(self,spawnPt):
         pelletCaveGUID = str(self.OnClickToLinkToPelletCaveFromErcana())
-        print "pelletCaveGUID = ",pelletCaveGUID
+        PtDebugPrint("pelletCaveGUID = ",pelletCaveGUID)
         caveInfo = ptAgeInfoStruct()
         caveInfo.setAgeFilename("PelletBahroCave")
         caveInfo.setAgeInstanceName("PelletBahroCave")
@@ -778,7 +778,7 @@ class ercaPelletRoom(ptResponder):
         als.setAgeInfo(info)
         als.setSpawnPoint(spawnPoint)
         als.setLinkingRules(PtLinkingRules.kBasicLink)
-        print "-- linking to pellet cave --"
+        PtDebugPrint("-- linking to pellet cave --")
         linkMgr = ptNetLinkingMgr()
         #linkMgr.linkToAge(als)
         linkMgr.linkToAge(als,"TouchPellet")
@@ -790,4 +790,4 @@ class ercaPelletRoom(ptResponder):
             if takePellet >= 0 and takePellet <= 2:
                 self.UpdateTakePellet(takePellet);
         except:
-            print "ercaPelletRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            PtDebugPrint("ercaPelletRoom.ExecCode(): ERROR! Invalid code '%s'." % (code))

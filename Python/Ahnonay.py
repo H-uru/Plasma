@@ -100,46 +100,46 @@ class Ahnonay(ptResponder):
                         chron = ageDataChild.upcastToChronicleNode()
                         if chron and chron.getName() == "AhnonayLink":
                             linkid = chron
-                            print "Ahnonay.OnServerInitComplete(): Link Chron already exists: %s" % (linkid.getValue())
+                            PtDebugPrint("Ahnonay.OnServerInitComplete(): Link Chron already exists: %s" % (linkid.getValue()))
                         elif chron and chron.getName() == "AhnonayLocked":
                             locked = chron
-                            print "Ahnonay.OnServerInitComplete(): Locked Chron already exists: %s" % (locked.getValue())
+                            PtDebugPrint("Ahnonay.OnServerInitComplete(): Locked Chron already exists: %s" % (locked.getValue()))
                         elif chron and chron.getName() == "AhnonayVolatile":
                             volatile = chron
-                            print "Ahnonay.OnServerInitComplete(): Volatile Chron already exists: %s" % (volatile.getValue())
+                            PtDebugPrint("Ahnonay.OnServerInitComplete(): Volatile Chron already exists: %s" % (volatile.getValue()))
                         elif chron and chron.getName() == "AhnonaySpawnPoints":
                             spawn = chron
-                            print "Ahnonay.OnServerInitComplete(): Spawn Chron already exists: %s" % (spawn.getValue())
+                            PtDebugPrint("Ahnonay.OnServerInitComplete(): Spawn Chron already exists: %s" % (spawn.getValue()))
                         elif chron and chron.getName() == "AhnonayOwner":
                             owner = chron
                     break
 
         if owner == None:
-            print "I am not the age owner, and I don't have my own Ahnonay"
+            PtDebugPrint("I am not the age owner, and I don't have my own Ahnonay")
         elif owner.getValue() == myID:
             if linkid == None:
-                print "Ahnonay.OnServerInitComplete(): Link Chron not found, creating"
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Link Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayLink")
                 newNode.chronicleSetValue(guid)
                 ageDataFolder.addNode(newNode)
 
             if locked == None:
-                print "Ahnonay.OnServerInitComplete(): Locked Chron not found, creating"
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Locked Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayLocked")
                 newNode.chronicleSetValue("1")
                 ageDataFolder.addNode(newNode)
 
             if volatile == None:
-                print "Ahnonay.OnServerInitComplete(): Volatile Chron not found, creating"
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Volatile Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonayVolatile")
                 newNode.chronicleSetValue("0")
                 ageDataFolder.addNode(newNode)
 
             if spawn == None:
-                print "Ahnonay.OnServerInitComplete(): Spawn Chron not found, creating"
+                PtDebugPrint("Ahnonay.OnServerInitComplete(): Spawn Chron not found, creating")
                 newNode = ptVaultChronicleNode(0)
                 newNode.chronicleSetName("AhnonaySpawnPoints")
                 newNode.chronicleSetValue("Default,LinkInPointDefault")
@@ -147,13 +147,13 @@ class Ahnonay(ptResponder):
 
             if volatile and linkid:
                 if volatile.getValue() == "1" and guid != linkid.getValue():
-                    print "Ahnonay.OnServerInitComplete(): In a new instance of Ahnonay so setting new vars"
+                    PtDebugPrint("Ahnonay.OnServerInitComplete(): In a new instance of Ahnonay so setting new vars")
                     linkid.setValue(guid)
                     locked.setValue("1")
                     volatile.setValue("0")
                     spawn.setValue("Default,LinkInPointDefault")
         else:
-            print "I am not the age owner, but I do have my own Ahnonay"
+            PtDebugPrint("I am not the age owner, but I do have my own Ahnonay")
 
 
         ageSDL = PtGetAgeSDL()
@@ -172,11 +172,11 @@ class Ahnonay(ptResponder):
 
         if spTitle == "SCSavePoint":
             if spName == "SaveClothPoint7" or spName == "SaveClothPoint8":
-                print "linking to hub or hut"
+                PtDebugPrint("linking to hub or hut")
                 newSphere = 4
             else:
                 offset = str(ageSDL["ahnyCurrentOffset"][0])
-                print "Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset)
+                PtDebugPrint("Ahnonay.OnPageLoad(): Sphere0%s loaded with offset:%s" % (sphere, offset))
                 newSphere = (int(sphere) - int(offset)) % 4
                 if newSphere == 0:
                     newSphere = 4
@@ -221,7 +221,7 @@ class Ahnonay(ptResponder):
 
                 if spTitle == "SCSavePoint":
                     if spName == "SaveClothPoint7" or spName == "SaveClothPoint8":
-                        print "linking to hub or hut"
+                        PtDebugPrint("linking to hub or hut")
                         newSphere = 4
                     else:
                         newSphere = (int(sphere) - int(offset)) % 4

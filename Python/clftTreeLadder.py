@@ -70,7 +70,7 @@ class clftTreeLadder(ptModifier):
         
         version = 4
         self.version = version
-        print "__init__clftTreeLadder v.", version
+        PtDebugPrint("__init__clftTreeLadder v.", version)
 
     def OnFirstUpdate(self):
         pass
@@ -86,10 +86,10 @@ class clftTreeLadder(ptModifier):
             
             elif event[0] == 10 and event[1] == 1 and (direction.value) == "up": # going up
                 audioresponder.run(self.key)
-                print "Playing sfx for climbing out of the tree"
+                PtDebugPrint("Playing sfx for climbing out of the tree")
 
             elif event[0] == 10 and event[1] == 0 and (direction.value) == "down": # going down
                 audioresponder.run(self.key)
-                print "Playing sfx for climbing into the tree"
+                PtDebugPrint("Playing sfx for climbing into the tree")
 
 

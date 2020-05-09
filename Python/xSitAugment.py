@@ -80,7 +80,7 @@ class xSitAugment(ptModifier):
         
         version = 1
         self.version = version
-        print "__init__xSitAugment v.", version
+        PtDebugPrint("__init__xSitAugment v.", version)
 
     def OnFirstUpdate(self):
         pass
@@ -110,7 +110,7 @@ class xSitAugment(ptModifier):
 ### below is scrap 
     def OnGUINotify(self,id,control,event):
         "Notifications from the vignette"
-        print "GUI Notify id=%d, event=%d control=" % (id,event),control
+        PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
         if control.getTagID() == kExit: #off
             self.IQuitDialog()
         #elif event == kDialogLoaded:
@@ -120,7 +120,7 @@ class xSitAugment(ptModifier):
 
     def OnControlKeyEvent(self,controlKey,activeFlag):
         "Control key events... anything we're interested in?"
-        print "Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag)
+        PtDebugPrint("Got controlKey event %d and its activeFlage is %d" % (controlKey,activeFlag))
         if controlKey == PlasmaControlKeys.kKeyExitMode:
             self.IQuitDialog()
 
@@ -131,7 +131,7 @@ class xSitAugment(ptModifier):
         PtLoadDialog(Vignette.value,self.key)
         if ( PtIsDialogLoaded(Vignette.value) ):
             PtShowDialog(Vignette.value)
-            print "dialog: %s goes up" % Vignette.value
+            PtDebugPrint("dialog: %s goes up" % Vignette.value)
         # get control key events
         PtEnableControlKeyEvents(self.key)
 
@@ -141,9 +141,9 @@ class xSitAugment(ptModifier):
         # exit every thing
         if Vignette.value:
             PtHideDialog(Vignette.value)
-            print "Dialog: %s goes down" % Vignette.value
+            PtDebugPrint("Dialog: %s goes down" % Vignette.value)
         else:
-            print "WTH!!!"
+            PtDebugPrint("WTH!!!")
         #disable the Control key events
         PtDisableControlKeyEvents(self.key)
         # re-enable the dialog for someone else to use

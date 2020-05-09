@@ -63,11 +63,11 @@ class xClearAge(ptResponder):
         
         version = 1
         self.version = version
-        print "__init__xClearAge v.", version
+        PtDebugPrint("__init__xClearAge v.", version)
         
     def OnNotify(self,state,id,events):
         if state:
             PtConsole("Net.ClearAgeInstanceGuid %s" % string.value)
-            print "Clearing %s" % string.value
+            PtDebugPrint("Clearing %s" % string.value)
             
 #-------------

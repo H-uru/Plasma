@@ -185,7 +185,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                                         val = ageSDL["CleftVisited"][0]
                                         if not val:
                                             HideCleftPole = 1
-                                            print "psnlYeeshaPageChanges.OnServerInitComplete():\t Fissure is open, so setting HideCleftPole = ",HideCleftPole
+                                            PtDebugPrint("psnlYeeshaPageChanges.OnServerInitComplete():\t Fissure is open, so setting HideCleftPole = ",HideCleftPole)
                                 else:
                                     PtDebugPrint("ERROR: psnlYeeshaPageChanges.OnServerInitComplete():\tProblem trying to access age SDLs for Bahro poles")
                                     pass
@@ -202,7 +202,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
                     
                 #There is only one object in Yeesha Page 5 with a value of 0, so I'm temporarily nestling my print statement here...
                 if PageNumber.value == 5 and stringShowStates.value == "0":
-                    print "psnlYeeshaPageChanges: You've found the following Yeesha Pages:"
+                    PtDebugPrint("psnlYeeshaPageChanges: You've found the following Yeesha Pages:")
                     for thispage in range(1,TotalPossibleYeeshaPages+1):
                         FoundValue = self.ageSDL.findVar("YeeshaPage" + str(thispage))
                         PtDebugPrint ("\t The previous value of the SDL variable %s is %s" % ("YeeshaPage" + str(thispage), FoundValue.getInt()))
@@ -269,16 +269,16 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
 
     def UpdateState(self, state, size, SDLVar, AgeVault, sizechanged):
-        #~ print "No one else is here. Affecting any YP changes you've queued."
+        #~ PtDebugPrint("No one else is here. Affecting any YP changes you've queued.")
         if state == 3:
             state = 2
-            print "psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 3 to 2." % ("YeeshaPage" + str(PageNumber.value))
+            PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 3 to 2." % ("YeeshaPage" + str(PageNumber.value)))
             SDLVar.setInt( (size * 10) + state)
             AgeVault.updateAgeSDL(self.ageSDL) 
             
         elif state == 4 or state > 4:
             state = 1
-            print "psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 4 to 1." % ("YeeshaPage" + str(PageNumber.value))
+            PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 4 to 1." % ("YeeshaPage" + str(PageNumber.value)))
             SDLVar.setInt( (size * 10) + state)
             AgeVault.updateAgeSDL(self.ageSDL)
         elif sizechanged:

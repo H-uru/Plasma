@@ -108,7 +108,7 @@ class kdshVault(ptResponder):
         
         version = 6
         self.version = version
-        print "__init__kdshVault v. ", version,".2"
+        PtDebugPrint("__init__kdshVault v. ", version,".2")
 
     def OnServerInitComplete(self):
         global ButtonsPushed
@@ -130,44 +130,44 @@ class kdshVault(ptResponder):
         
         ButtonsPushed = ageSDL["ButtonsPushed"][0]
 
-        print "kdshVault: When I got here:"
-        print "\t ButtonsPushed = ", ButtonsPushed
+        PtDebugPrint("kdshVault: When I got here:")
+        PtDebugPrint("\t ButtonsPushed = ", ButtonsPushed)
         
         ButtonsPushed = str(ButtonsPushed)
         
         if len(ButtonsPushed) >= 6:
-            print "All 6 buttons were already pushed. Resetting."
+            PtDebugPrint("All 6 buttons were already pushed. Resetting.")
             respResetButtons.run(self.key)
             ageSDL["ButtonsPushed"] = (0,)
             
             return
         
         if "1" in ButtonsPushed:
-            print "fast forwarding button 1"
+            PtDebugPrint("fast forwarding button 1")
             respButton1.run(self.key, fastforward=1)
             actButton1.disable()
         if "2" in ButtonsPushed:
-            print "fast forwarding button 2"
+            PtDebugPrint("fast forwarding button 2")
             respButton2.run(self.key, fastforward=1)
             actButton2.disable()          
         if "3" in ButtonsPushed:
-            print "fast forwarding button 3"
+            PtDebugPrint("fast forwarding button 3")
             respButton3.run(self.key, fastforward=1)
             actButton3.disable()
         if "4" in ButtonsPushed:
-            print "fast forwarding button 4"
+            PtDebugPrint("fast forwarding button 4")
             respButton4.run(self.key, fastforward=1)
             actButton4.disable()            
         if "5" in ButtonsPushed:
-            print "fast forwarding button 5"
+            PtDebugPrint("fast forwarding button 5")
             respButton5.run(self.key, fastforward=1)
             actButton5.disable()            
         if "6" in ButtonsPushed:
-            print "fast forwarding button 6"
+            PtDebugPrint("fast forwarding button 6")
             respButton6.run(self.key, fastforward=1)
             actButton6.disable()
         if "0" in ButtonsPushed:
-            print "No buttons have been pushed."
+            PtDebugPrint("No buttons have been pushed.")
             #~ string.join(string.split(ButtonsPushed, "0"), "")
             ageSDL["ButtonsPushed"] = (0,)
             
@@ -183,14 +183,14 @@ class kdshVault(ptResponder):
         VCPboolOperated = ageSDL["VCPboolOperated"][0]
         if VCPboolOperated:
             if solo:
-                print "kdshVault.Load():\tVCPboolOperated=%d but no one else here...correcting" % VCPboolOperated
+                PtDebugPrint("kdshVault.Load():\tVCPboolOperated=%d but no one else here...correcting" % VCPboolOperated)
                 VCPboolOperated = 0
                 ageSDL["VCPboolOperated"] = (0,)
                 ageSDL["VCPOperatorID"] = (-1,)
                 Activate.enable()
             else:
                 Activate.disable()
-                print "kdshVault.Load():\tVCPboolOperated=%d, disabling Vault Control Panel clickable" % VCPboolOperated
+                PtDebugPrint("kdshVault.Load():\tVCPboolOperated=%d, disabling Vault Control Panel clickable" % VCPboolOperated)
 
     def AvatarPage(self, avObj, pageIn, lastOut):
         "reset scope accessibility if scope user quits or crashes"
@@ -207,7 +207,7 @@ class kdshVault(ptResponder):
             ageSDL["VCPOperatorID"] = (-1,)
             ageSDL["VCPboolOperated"] = (0,)
             LowerVCPClickable.run(self.key)
-            print "kdshVault.AvatarPage(): Vault Control Panel operator paged out, reenabled VCP clickable."
+            PtDebugPrint("kdshVault.AvatarPage(): Vault Control Panel operator paged out, reenabled VCP clickable.")
         else:
             return
             
@@ -222,13 +222,13 @@ class kdshVault(ptResponder):
         
         ageSDL = PtGetAgeSDL()             
         
-        #~ print "kdshVault:OnNotify  state=%f id=%d events=" % (state,id),events
+        #~ PtDebugPrint("kdshVault:OnNotify  state=%f id=%d events=" % (state,id),events)
 
         #Hacked this in to work with the UruLive changes
         avatar = PtFindAvatar(events)
         
         if state and id == Activate.id and avatar == PtGetLocalAvatar():
-            print "kdshVault: I'm engaging VCP."
+            PtDebugPrint("kdshVault: I'm engaging VCP.")
 
             # Disable First Person Camera
             cam = ptCamera()
@@ -248,7 +248,7 @@ class kdshVault(ptResponder):
 
 
         elif id == Behavior.id and avatar == PtGetLocalAvatar(): # Smart seek done
-            #~ print "Done with smart seek"
+            #~ PtDebugPrint("Done with smart seek")
             LocalAvatar = avatar
             Behavior.gotoStage(LocalAvatar, -1)
             
@@ -269,20 +269,20 @@ class kdshVault(ptResponder):
 
         elif state and id in [1,2,3,4,5,6] and avatar == PtGetLocalAvatar():
             if VaultDoorMoving:
-                print "Button has no effect. The Vault Door is already moving."
+                PtDebugPrint("Button has no effect. The Vault Door is already moving.")
                 return            
             
-            print "\tkdshVault.OnNotify: Button #%d pushed" % (id)
+            PtDebugPrint("\tkdshVault.OnNotify: Button #%d pushed" % (id))
             
 
             #append the pushed button to the list of those already clicked            
             ButtonsPushed = ageSDL["ButtonsPushed"][0]
             ButtonsPushed = str(ButtonsPushed)
-            print "kdshVault.OnNotify: Before, ButtonsPushed was ", ButtonsPushed
+            PtDebugPrint("kdshVault.OnNotify: Before, ButtonsPushed was ", ButtonsPushed)
 
             
             ButtonsPushed = string.atoi(ButtonsPushed + (str(id)))
-            print "kdshVault.OnNotify: Now, ButtonsPushed = ", ButtonsPushed
+            PtDebugPrint("kdshVault.OnNotify: Now, ButtonsPushed = ", ButtonsPushed)
             
             #update the ageSDL value for that button            
             ageSDL["ButtonsPushed"] = (ButtonsPushed,)
@@ -292,28 +292,28 @@ class kdshVault(ptResponder):
                 #~ self.CheckSolution()
 
         elif state and id == actResetBtn.id:
-            #~ print "kdshVault.OnNotify: Reset Button clicked."
+            #~ PtDebugPrint("kdshVault.OnNotify: Reset Button clicked.")
             LocalAvatar = PtFindAvatar(events)
             respResetBtn.run(self.key,events=events)
             
         elif id == respResetBtn.id and OnlyOneOwner.sceneobject.isLocallyOwned():
             if VaultDoorMoving:
-                print "Button has no effect. The Vault Door is already moving."
+                PtDebugPrint("Button has no effect. The Vault Door is already moving.")
                 return
                 
-            print "kdshVault.OnNotify: Reset Button Pushed. Toggling Vault Door state."
+            PtDebugPrint("kdshVault.OnNotify: Reset Button Pushed. Toggling Vault Door state.")
             
             vaultclosed = ageSDL["VaultClosed"][0]
             if vaultclosed == 1:
                 #Open the door
-                print "\t trying to open the Vault."
+                PtDebugPrint("\t trying to open the Vault.")
                 
                 ageSDL.setTagString("VaultClosed","fromOutside")                
                 ageSDL["VaultClosed"] = (0,)                
                 
             elif vaultclosed == 0:
                 #Close the door
-                print "\t trying to close the Vault."
+                PtDebugPrint("\t trying to close the Vault.")
                 ageSDL.setTagString("VaultClosed","fromInside")                
                 ageSDL["VaultClosed"] = (1,)
             
@@ -343,7 +343,7 @@ class kdshVault(ptResponder):
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
 
-        print "kdshVault.OnSDLNotify:\tVARname=",VARname," value=",ageSDL[VARname][0]
+        PtDebugPrint("kdshVault.OnSDLNotify:\tVARname=",VARname," value=",ageSDL[VARname][0])
             
         
         if VARname == "ButtonsPushed":
@@ -355,18 +355,18 @@ class kdshVault(ptResponder):
             
             ButtonsPushed = str(ButtonsPushed)
             lastbuttonpushed = ButtonsPushed[-1:]
-            print "kdshVault.OnSDLNotify: new ButtonsPushed = ", ButtonsPushed
-            #~ print "kdshVault.OnSDLNotify: lastbuttonpushed = ", lastbuttonpushed
+            PtDebugPrint("kdshVault.OnSDLNotify: new ButtonsPushed = ", ButtonsPushed)
+            #~ PtDebugPrint("kdshVault.OnSDLNotify: lastbuttonpushed = ", lastbuttonpushed)
             
             #run the animation on the button itself
             code = "respButton" + str(lastbuttonpushed) + ".run(self.key)"
-            #~ print "code = ", code
-            exec code
+            #~ PtDebugPrint("code = ", code)
+            exec(code)
         
             #disable the clickable for that button
             code = "actButton" + str(lastbuttonpushed) + ".disable()"
-            #~ print "code = ", code
-            exec code
+            #~ PtDebugPrint("code = ", code)
+            exec(code)
         
     def OnTimer(self,id):
         global VaultDoorMoving
@@ -374,9 +374,9 @@ class kdshVault(ptResponder):
         ageSDL = PtGetAgeSDL()     
         if id==1:
             ButtonsPushed = ageSDL["ButtonsPushed"][0]
-            print "kdshVault: Check solution. ButtonsPushed = ", ButtonsPushed
+            PtDebugPrint("kdshVault: Check solution. ButtonsPushed = ", ButtonsPushed)
             if ButtonsPushed == 152346:
-                print "kdshVault: Puzzle solved. Opening door."
+                PtDebugPrint("kdshVault: Puzzle solved. Opening door.")
 
                 ageSDL.setTagString("VaultClosed","fromOutside")                
                 ageSDL["VaultClosed"] = (0,)
@@ -392,7 +392,7 @@ class kdshVault(ptResponder):
             PtFadeLocalAvatar(1)
         
         elif id == 3:
-            print "kdshVault: The Vault door has stopped moving."
+            PtDebugPrint("kdshVault: The Vault door has stopped moving.")
             VaultDoorMoving=0
 
             

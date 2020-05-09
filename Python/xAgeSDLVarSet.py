@@ -71,7 +71,7 @@ class xAgeSDLVarSet(ptResponder):
         version = 2
         self.version = version
         self.enabledStateDict = {}
-        print "__init__xAgeSDLVarSet v.", version
+        PtDebugPrint("__init__xAgeSDLVarSet v.", version)
     
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:
@@ -112,7 +112,7 @@ class xAgeSDLVarSet(ptResponder):
         PtDebugPrint("DEBUG: xAgeSDLVarSet.OnServerInitComplete:\tCurrent SDL value = %d" % SDLvalue)
         
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)
-        if  self.enabledStateDict.has_key(int(SDLvalue)):
+        if  int(SDLvalue) in self.enabledStateDict:
             ageSDL[stringSDLVarToSet.value] = (self.enabledStateDict[int(SDLvalue)],)
             if stringSDLVarToSet:
                 ageSDL.setTagString(stringSDLVarToSet.value,stringTag.value)
@@ -133,7 +133,7 @@ class xAgeSDLVarSet(ptResponder):
         SDLvalue = ageSDL[stringSDLVarName.value][0]
         
         # Check if the current SDL value represents a state in the dictionary and set the other SDL value to the value in the dictionary (yay for values!)
-        if  self.enabledStateDict.has_key(int(SDLvalue)):
+        if  int(SDLvalue) in self.enabledStateDict:
             ageSDL[stringSDLVarToSet.value] = (self.enabledStateDict[int(SDLvalue)],)
             if stringSDLVarToSet:
                 ageSDL.setTagString(stringSDLVarToSet.value,stringTag.value)

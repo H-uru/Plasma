@@ -59,7 +59,7 @@ class xSaveScreenCapture(ptModifier):
         ptModifier.__init__(self)
         self.id = 5319
         self.version = 1
-        print "__init__xSaveScreenCapture v.", self.version
+        PtDebugPrint("__init__xSaveScreenCapture v.", self.version)
 
     def OnScreenCaptureDone(self,image):
         if strFileName.value:

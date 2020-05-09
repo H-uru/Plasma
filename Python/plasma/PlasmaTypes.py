@@ -196,7 +196,7 @@ def PtAddEvent(notify,event):
     elif event[0] == kResponderStateEvent:
         notify.addResponderState(event[1])
     else:
-        print "Unrecognized event type %d" % (event[0])
+        PtDebugPrint("Unrecognized event type %d" % (event[0]))
         
 # add a list of events into a ptNotify message
 def PtAddEvents(notify, events):
@@ -489,16 +489,16 @@ class ptAttribResponder(ptAttributeKeyList):
                 nt.netForce(1)
             # see if the state is specified
             if isinstance(state, int):
-                raise ptResponderStateError,"Specifying state as a number is no longer supported"
+                raise ptResponderStateError("Specifying state as a number is no longer supported")
             elif isinstance(state, str):
                 if self.state_list is not None:
                     try:
                         idx = self.state_list.index(state)
                         nt.addResponderState(idx)
                     except ValueError:
-                        raise ptResponderStateError, "There is no state called '%s'"%(state)
+                        raise ptResponderStateError("There is no state called '%s'"%(state))
                 else:
-                    raise ptResponderStateError,"There is no state list provided"
+                    raise ptResponderStateError("There is no state list provided")
             # see if there are events to pass on
             if events is not None:
                 PtAddEvents(nt,events)
@@ -532,16 +532,16 @@ class ptAttribResponder(ptAttributeKeyList):
                 nt.netForce(1)
             # see if the state is specified
             if isinstance(state, int):
-                raise ptResponderStateError,"Specifying state as a number is no longer supported"
+                raise ptResponderStateError("Specifying state as a number is no longer supported")
             elif isinstance(state, str):
                 if self.state_list is not None:
                     try:
                         idx = self.state_list.index(state)
                         nt.addResponderState(idx)
                     except ValueError:
-                        raise ptResponderStateError, "There is no state called '%s'"%(state)
+                        raise ptResponderStateError("There is no state called '%s'"%(state))
                 else:
-                    raise ptResponderStateError,"There is no state list provided"
+                    raise ptResponderStateError("There is no state list provided")
             # see if there are events to pass on
             nt.setType(PtNotificationType.kResponderChangeState)
             nt.setActivate(1.0)

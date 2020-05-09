@@ -63,7 +63,7 @@ class xAgeSDLIntActEnabler(ptResponder):
         version = 1
         self.version = version
         self.enabledStateList = []
-        print "__init__xAgeSDLIntActEnabler v.", version
+        PtDebugPrint("__init__xAgeSDLIntActEnabler v.", version)
     
     def OnFirstUpdate(self):
         if not stringSDLVarName.value:

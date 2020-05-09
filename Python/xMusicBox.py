@@ -169,7 +169,7 @@ class xMusicBox(ptModifier):
             sdlvarisvalid = sdlCurrentSongVar.value
 
             if islocalavatar and sdlvarisvalid:
-                print "Setting cur song var to: ", currentSong
+                PtDebugPrint("Setting cur song var to: ", currentSong)
                 ageSDL = PtGetAgeSDL()
                 ageSDL[sdlCurrentSongVar.value] = currentSong
                 

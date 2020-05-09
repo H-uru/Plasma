@@ -80,7 +80,7 @@ class xEventTrigger(ptResponder):
             ageSDL = PtGetAgeSDL()
             PtDebugPrint("xEventTrigger: SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
             if VARname == EventName.value:
-                print "xEventTrigger: value is %f" % ageSDL[EventName.value]
+                PtDebugPrint("xEventTrigger: value is %f" % ageSDL[EventName.value])
                 if ageSDL[EventName.value][0]:
                     #~ PtDebugPrint("Event %s is true!" % (VARname))
                     # are we paging things in?

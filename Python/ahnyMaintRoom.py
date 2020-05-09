@@ -85,7 +85,7 @@ class ahnyMaintRoom(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ahnyMaintRoom.OnTimer():\tERROR---Cannot find the Ahnonay Age SDL"
+            PtDebugPrint("ahnyMaintRoom.OnTimer():\tERROR---Cannot find the Ahnonay Age SDL")
         
         ageSDL.setFlags("ahnyHubDoor",1,1)
         ageSDL.sendToClients("ahnyHubDoor")
@@ -117,7 +117,7 @@ class ahnyMaintRoom(ptResponder):
             RespAdvanceUse.run(self.key,state="down0",fastforward=1)
         else:
             if SphereNum.value != 1 and SphereNum.value != 2 and SphereNum.value != 3:
-                print "ahnyMaintRoom.OnServerInitComplete():\tERROR---Invalid sphere# set in component.  Disabling clickable."
+                PtDebugPrint("ahnyMaintRoom.OnServerInitComplete():\tERROR---Invalid sphere# set in component.  Disabling clickable.")
                 ActAdvanceSwitch.disableActivator()
         
         self.SphereDifference()
@@ -129,16 +129,16 @@ class ahnyMaintRoom(ptResponder):
             if actingAvatar == PtGetLocalAvatar():
                 ageSDL = PtGetAgeSDL()
                 ageSDL["ahnyCurrentSphere"] = (SphereNum.value,)
-                print "advanced from sphere %d with maintainence button" % (ageSDL["ahnyCurrentSphere"][0])
-                print "sphere %d will now be the active sphere" % (SphereNum.value)
+                PtDebugPrint("advanced from sphere %d with maintainence button" % (ageSDL["ahnyCurrentSphere"][0]))
+                PtDebugPrint("sphere %d will now be the active sphere" % (SphereNum.value))
                 if SphereNum.value == 4:
                     ageSDL["ahnyImagerSphere"] = (SphereNum.value,)
                     boolHubDoor = ageSDL["ahnyHubDoor"][0]
                     if boolHubDoor and ageSDL["ahnyCurrentSphere"][0] != 4:
-                        print "ahnyMaintRoom.OnSDLNotify(): Door is open and we're not going to Sphere 4, so close it."
+                        PtDebugPrint("ahnyMaintRoom.OnSDLNotify(): Door is open and we're not going to Sphere 4, so close it.")
                         ageSDL["ahnyHubDoor"] = (0,)
                     elif not boolHubDoor and ageSDL["ahnyCurrentSphere"][0] == 4:
-                        print "ahnyMaintRoom.OnSDLNotify(): Door is not open and we're going to Sphere 4, so open it."
+                        PtDebugPrint("ahnyMaintRoom.OnSDLNotify(): Door is not open and we're going to Sphere 4, so open it.")
         
         elif id == 2:
             ActAdvanceSwitch.enableActivator()
@@ -160,10 +160,10 @@ class ahnyMaintRoom(ptResponder):
             elif VARname == "ahnyCurrentSphere":
                 boolHubDoor = ageSDL["ahnyHubDoor"][0]
                 if boolHubDoor and ageSDL["ahnyCurrentSphere"][0] != 4:
-                    print "ahnyMaintRoom.OnSDLNotify(): Door is open and we're not going to Sphere 4, so close it."
+                    PtDebugPrint("ahnyMaintRoom.OnSDLNotify(): Door is open and we're not going to Sphere 4, so close it.")
                     ageSDL["ahnyHubDoor"] = (0,)
                 elif not boolHubDoor and ageSDL["ahnyCurrentSphere"][0] == 4:
-                    print "ahnyMaintRoom.OnSDLNotify(): Door is not open and we're going to Sphere 4, so open it."
+                    PtDebugPrint("ahnyMaintRoom.OnSDLNotify(): Door is not open and we're going to Sphere 4, so open it.")
                     PtAtTimeCallback(self.key,7,2)
         
         if VARname == "ahnyCurrentSphere":
@@ -198,7 +198,7 @@ class ahnyMaintRoom(ptResponder):
                     RespAdvanceUse.run(self.key,state="down3")
                     PtAtTimeCallback(self.key,21,1)
                 else:
-                    print "ahnyMaintRoom.py: ERROR.  Sphere advancement# not possible??"
+                    PtDebugPrint("ahnyMaintRoom.py: ERROR.  Sphere advancement# not possible??")
 
     def SphereDifference(self):
         global diffsphere
@@ -207,5 +207,5 @@ class ahnyMaintRoom(ptResponder):
         activeSphere = ageSDL["ahnyCurrentSphere"][0]
         currentSphere = SphereNum.value
         diffsphere = (activeSphere - currentSphere) % 4
-        print "ahnyMaintRoom.SphereDifference(): Setting sphere difference for Maint Room switch to %d" % (diffsphere)
+        PtDebugPrint("ahnyMaintRoom.SphereDifference(): Setting sphere difference for Maint Room switch to %d" % (diffsphere))
         

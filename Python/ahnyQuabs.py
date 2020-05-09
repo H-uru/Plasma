@@ -71,7 +71,7 @@ class ahnyQuabs(ptModifier, object):
         self.version = 2
         self.brains = []
         random.seed()
-        print "__init__ahnyQuabs v%d " % (self.version)
+        PtDebugPrint("__init__ahnyQuabs v%d " % (self.version))
 
     def _last_update_get(self):
         ageSDL = PtGetAgeSDL()

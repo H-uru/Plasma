@@ -92,7 +92,7 @@ class ahnyKadishHut(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL"
+            PtDebugPrint("ahnyKadishHut.OnServerInitComplete():\tERROR---Cannot find AhnySphere04 age SDL")
             ageSDL[SDLWindows.value] = (0,)
             #ageSDL[SDLDniTimer.value] = (0,)
 
@@ -103,10 +103,10 @@ class ahnyKadishHut(ptResponder):
         boolWindows = ageSDL[SDLWindows.value][0]
         
         if boolWindows:
-            print "ahnyKadishHut.OnServerInitComplete(): Windows are open"
+            PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Windows are open")
             RespWindows.run(self.key,state="open",fastforward=1)
         else:
-            print "ahnyKadishHut.OnServerInitComplete(): Windows are closed"
+            PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Windows are closed")
             RespWindows.run(self.key,state="close",fastforward=1)
 
         #ageSDL.setFlags(SDLDniTimer.value,1,1)
@@ -115,17 +115,17 @@ class ahnyKadishHut(ptResponder):
         #EndTime =  ageSDL[SDLDniTimer.value][0]
         #InitTime = PtGetDniTime()
         #if InitTime < EndTime:
-        #    print "ahnyKadishHut.OnServerInitComplete(): Timer is on"
+        #    PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Timer is on")
         #    RespDniTimer.run(self.key,state="on")
         #    dniSecsLeft = (EndTime - InitTime)
         #    dniSecsElapsed = (kTimeWarp - dniSecsLeft)
         #    #realSecsElapsed = (dniSecsElapsed * 1.3928573888441378)
-        #    print "dniSecsElapsed = ",dniSecsElapsed
+        #    PtDebugPrint("dniSecsElapsed = ",dniSecsElapsed)
         #    MatAnimDniTimer.animation.skipToTime(dniSecsElapsed)
         #    MatAnimDniTimer.animation.resume()
         #    PtAtTimeCallback(self.key,1,2)
         #else:
-        #    print "ahnyKadishHut.OnServerInitComplete(): Timer is off"
+        #    PtDebugPrint("ahnyKadishHut.OnServerInitComplete(): Timer is off")
         #    RespDniTimer.run(self.key,state="off")
         #if id == 2:
         #    CurTime = PtGetDniTime()
@@ -142,22 +142,22 @@ class ahnyKadishHut(ptResponder):
             ageSDL = PtGetAgeSDL()
             boolWindows = ageSDL[SDLWindows.value][0]
             if boolWindows:
-                print "ahnyKadishHut.OnSDLNotify(): Windows will now open"
+                PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Windows will now open")
                 RespWindows.run(self.key,state="open")
             else:
-                print "ahnyKadishHut.OnSDLNotify(): Windows will now close"
+                PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Windows will now close")
                 RespWindows.run(self.key,state="close")
 
         #if VARname == SDLDniTimer.value:
         #    EndTime = ageSDL[SDLDniTimer.value][0]
         #    if EndTime:
-        #        print "ahnyKadishHut.OnSDLNotify(): Timer is now on"
+        #        PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Timer is now on")
         #        RespDniTimer.run(self.key,state="on")
         #        MatAnimDniTimer.animation.skipToTime(0)
         #        MatAnimDniTimer.animation.play()
         #        PtAtTimeCallback(self.key,1,2)
         #    else:
-        #        print "ahnyKadishHut.OnSDLNotify(): Timer is now off"
+        #        PtDebugPrint("ahnyKadishHut.OnSDLNotify(): Timer is now off")
         #        RespDniTimer.run(self.key,state="off")
         #        MatAnimDniTimer.animation.stop()
 

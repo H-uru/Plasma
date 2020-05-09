@@ -74,7 +74,7 @@ class bhroBahroPod(ptResponder):
         ptResponder.__init__(self)
         self.id = 8814
         self.version = 1
-        print "bhroBahroPod: init  version = %d" % self.version
+        PtDebugPrint("bhroBahroPod: init  version = %d" % self.version)
 
     ###########################
     def __del__(self):
@@ -91,7 +91,7 @@ class bhroBahroPod(ptResponder):
     def OnServerInitComplete(self):
         # if the age is not the one that I'm from then run the responder to make it back off
         ageFrom = PtGetPrevAgeName()
-        print "bhroBahroPod.OnServerInitComplete: Came from %s, running opposite responder state" % (ageFrom)
+        PtDebugPrint("bhroBahroPod.OnServerInitComplete: Came from %s, running opposite responder state" % (ageFrom))
         if ageFrom == "Negilahn":
             respWedges.run(self.key, state="Dereno", fastforward=1)
             respWedges.run(self.key, state="Payiferen", fastforward=1)
@@ -113,61 +113,61 @@ class bhroBahroPod(ptResponder):
             respWedges.run(self.key, state="Payiferen", fastforward=1)
 
         psnlSDL = xPsnlVaultSDL()
-        print psnlSDL["psnlBahroWedge07"][0]
-        print psnlSDL["psnlBahroWedge08"][0]
-        print psnlSDL["psnlBahroWedge09"][0]
-        print psnlSDL["psnlBahroWedge10"][0]
+        PtDebugPrint(psnlSDL["psnlBahroWedge07"][0])
+        PtDebugPrint(psnlSDL["psnlBahroWedge08"][0])
+        PtDebugPrint(psnlSDL["psnlBahroWedge09"][0])
+        PtDebugPrint(psnlSDL["psnlBahroWedge10"][0])
 
         if psnlSDL["psnlBahroWedge07"][0]:
-            print "bhroBahroPod.OnServerInitComplete: You have the Negilahn wedge, no need to display it."
+            PtDebugPrint("bhroBahroPod.OnServerInitComplete: You have the Negilahn wedge, no need to display it.")
             respNegilahnRing.run(self.key, fastforward=1)
         if psnlSDL["psnlBahroWedge08"][0]:
-            print "bhroBahroPod.OnServerInitComplete: You have the Dereno wedge, no need to display it."
+            PtDebugPrint("bhroBahroPod.OnServerInitComplete: You have the Dereno wedge, no need to display it.")
             respDerenoRing.run(self.key, fastforward=1)
         if psnlSDL["psnlBahroWedge09"][0]:
-            print "bhroBahroPod.OnServerInitComplete: You have the Payiferen wedge, no need to display it."
+            PtDebugPrint("bhroBahroPod.OnServerInitComplete: You have the Payiferen wedge, no need to display it.")
             respPayiferenRing.run(self.key, fastforward=1)
         if psnlSDL["psnlBahroWedge10"][0]:
-            print "bhroBahroPod.OnServerInitComplete: You have the Tetsonot wedge, no need to display it."
+            PtDebugPrint("bhroBahroPod.OnServerInitComplete: You have the Tetsonot wedge, no need to display it.")
             respTetsonotRing.run(self.key, fastforward=1)
 
     ###########################
     def OnNotify(self,state,id,events):
-        #print "bhroBahroPod.OnNotify: state=%s id=%d events=" % (state, id), events
+        #PtDebugPrint("bhroBahroPod.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == clkNegilahn.id and not state:
-            print "bhroBahroPod.OnNotify: clicked Negilahn Spiral"
+            PtDebugPrint("bhroBahroPod.OnNotify: clicked Negilahn Spiral")
             respNegilahnRing.run(self.key, avatar=PtFindAvatar(events))
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge07"][0]
             if not sdlVal:
-                print "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge07 to On"
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge07 to On")
                 psnlSDL["psnlBahroWedge07"] = (1,)
 
         elif id == clkDereno.id and not state:
-            print "bhroBahroPod.OnNotify: clicked Dereno Spiral"
+            PtDebugPrint("bhroBahroPod.OnNotify: clicked Dereno Spiral")
             respDerenoRing.run(self.key, avatar=PtFindAvatar(events))
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge08"][0]
             if not sdlVal:
-                print "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge08 to On"
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge08 to On")
                 psnlSDL["psnlBahroWedge08"] = (1,)
 
         elif id == clkPayiferen.id and not state:
-            print "bhroBahroPod.OnNotify: clicked Payiferen Spiral"
+            PtDebugPrint("bhroBahroPod.OnNotify: clicked Payiferen Spiral")
             respPayiferenRing.run(self.key, avatar=PtFindAvatar(events))
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge09"][0]
             if not sdlVal:
-                print "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge09 to On"
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge09 to On")
                 psnlSDL["psnlBahroWedge09"] = (1,)
 
         elif id == clkTetsonot.id and not state:
-            print "bhroBahroPod.OnNotify: clicked Tetsonot Spiral"
+            PtDebugPrint("bhroBahroPod.OnNotify: clicked Tetsonot Spiral")
             respTetsonotRing.run(self.key, avatar=PtFindAvatar(events))
             psnlSDL = xPsnlVaultSDL()
             sdlVal = psnlSDL["psnlBahroWedge10"][0]
             if not sdlVal:
-                print "bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge10 to On"
+                PtDebugPrint("bhroBahroPod.OnNotify:  Turning wedge SDL of psnlBahroWedge10 to On")
                 psnlSDL["psnlBahroWedge10"] = (1,)
 

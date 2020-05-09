@@ -185,7 +185,7 @@ class tldnSlavePrisonDoors(ptResponder):
         # make sure its one of the activators we know about
         if id in activatorToResp:
             for event in events:
-                print "event = ", event
+                PtDebugPrint("event = ", event)
             # evaluate plates to paddles and set doors accordingly
             self.IEvalPlateAndPaddles(activator=id)
             ageSDL = PtGetAgeSDL()
@@ -281,7 +281,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 respOuterDoor.run(self.key,state="down",fastforward=fastforward)
         
             ageSDL["tldnSlaveCaveSecretDoorOpen"] = (1,)
-            print "tldnSlavePrisonDoors: The exp1 secret panel should now be open."
+            PtDebugPrint("tldnSlavePrisonDoors: The exp1 secret panel should now be open.")
         
         else:
             # raise the outer doors and shut the inner doors
@@ -294,7 +294,7 @@ class tldnSlavePrisonDoors(ptResponder):
                 respOuterDoor.run(self.key,state="up",fastforward=fastforward)
 
             ageSDL["tldnSlaveCaveSecretDoorOpen"] = (0,)
-            print "tldnSlavePrisonDoors: The exp1 secret panel should now be closed."
+            PtDebugPrint("tldnSlavePrisonDoors: The exp1 secret panel should now be closed.")
 
 
     def OnBackdoorMsg(self, target, param):

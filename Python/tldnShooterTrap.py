@@ -67,7 +67,7 @@ class tldnShooterTrap(ptResponder):
         
         version = 2
         self.version = version
-        print "__init__tldnShooterTrap v.", version
+        PtDebugPrint("__init__tldnShooterTrap v.", version)
         
     def OnNotify(self,state,id,events):
         if state:
@@ -76,4 +76,4 @@ class tldnShooterTrap(ptResponder):
                 #intSporeCount.value = intSporeCount.value - 1
             else:
                 respEmpty.run(self.key,events=events)
-            #print "tldnShooterTrap.OnNotify intSporeCount=%d" % intSporeCount.value
+            #PtDebugPrint("tldnShooterTrap.OnNotify intSporeCount=%d" % intSporeCount.value)

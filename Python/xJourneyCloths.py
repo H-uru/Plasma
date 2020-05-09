@@ -99,7 +99,7 @@ class xJourneyCloths(ptModifier):
         self.id = 5226
         version = 7
         self.version = version
-        print "__init__xJourneyCloths v.", version
+        PtDebugPrint("__init__xJourneyCloths v.", version)
         random.seed()
 
     def OnNotify(self,state,id,events):
@@ -116,38 +116,38 @@ class xJourneyCloths(ptModifier):
             OneShotResp.run(self.key, events=events) # run the oneshot
             return
         
-        print "###"
+        PtDebugPrint("###")
         # every client sets the following timer locally
         PtAtTimeCallback(self.key,11,1) 
 
         if not PtWasLocallyNotified(self.key):
-            print "Somebody touched JourneyCloth", ClothLetter.value
+            PtDebugPrint("Somebody touched JourneyCloth", ClothLetter.value)
             return
         
-        print "You clicked on cloth ", ClothLetter.value
+        PtDebugPrint("You clicked on cloth ", ClothLetter.value)
         vault = ptVault()
             
         entry = vault.findChronicleEntry("JourneyClothProgress")
         if entry is None: # is this the player's first Journey Cloth?
-            print "First cloth found."
+            PtDebugPrint("First cloth found.")
 
-            print "trying to update JourneyClothProgress to: ", ClothLetter.value
+            PtDebugPrint("trying to update JourneyClothProgress to: ", ClothLetter.value)
             vault = ptVault() 
             vault.addChronicleEntry("JourneyClothProgress",0,"%s" % (ClothLetter.value))
             self.IPlayHandAnim(1)
         
         else:
             FoundJCs = entry.chronicleGetValue()
-            print "previously found JCs: ", FoundJCs
+            PtDebugPrint("previously found JCs: ", FoundJCs)
             if ClothLetter.value in FoundJCs:
-                print "You've already found this cloth."
+                PtDebugPrint("You've already found this cloth.")
 
                 
             else:
-                print "This is a new cloth to you"
+                PtDebugPrint("This is a new cloth to you")
                 
                 FoundJCs = FoundJCs + ClothLetter.value
-                print "trying to update JourneyClothProgress to ", FoundJCs
+                PtDebugPrint("trying to update JourneyClothProgress to ", FoundJCs)
 
                 entry.chronicleSetValue("%s" % (FoundJCs)) 
                 entry.save() 
@@ -166,7 +166,7 @@ class xJourneyCloths(ptModifier):
         PtDebugPrint ("You've found %s JourneyCloths" % (length))
 
         if length < 0 or length > 11:
-            print "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
         
         if length == 1:
             HandAnim01.run(self.key)
@@ -202,11 +202,11 @@ class xJourneyCloths(ptModifier):
             HandAnim10.run(self.key)
 
         else: 
-            print "xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow."
+            PtDebugPrint("xJourneyCloths.HandGlow: ERROR: Unexpected length value received. No hand glow.")
             
     def RandomBahroSounds(self):
         whichsound = random.randint(1, 4)
-        print "whichsound = ", whichsound
+        PtDebugPrint("whichsound = ", whichsound)
         
         if whichsound == 1:
             PlayBahro01.run(self.key)
@@ -224,7 +224,7 @@ class xJourneyCloths(ptModifier):
         
         if wingflap > 1:
             whichflap = random.randint(1, 4)
-            print "whichflap = ", whichflap
+            PtDebugPrint("whichflap = ", whichflap)
             
             if whichflap == 1:
                 BahroWing01.run(self.key)
@@ -239,7 +239,7 @@ class xJourneyCloths(ptModifier):
                 BahroWing04.run(self.key)
                 
         else: 
-            print "no wingflap is heard."
+            PtDebugPrint("no wingflap is heard.")
             
     def OnTimer(self,id):
         global ClothInUse

@@ -117,7 +117,7 @@ class ErcanaCitySilo(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "ErcanaCitySilo.OnServerInitComplete():\tERROR---Cannot find the ErcanaCitySilo Age SDL"
+            PtDebugPrint("ErcanaCitySilo.OnServerInitComplete():\tERROR---Cannot find the ErcanaCitySilo Age SDL")
             ageSDL[SDLGotPellet.value] = (0,)
         
         ageSDL.setNotify(self.key,SDLGotPellet.value,0.0)
@@ -141,17 +141,17 @@ class ErcanaCitySilo(ptResponder):
                 cam.undoFirstPerson()
         elif type == PtBehaviorTypes.kBehaviorTypeLinkIn and not state:
             if self._gotTurd:
-                print "ErcanaCitySilo.OnBehaviorNotify: Will now call IDoMeter."
+                PtDebugPrint("ErcanaCitySilo.OnBehaviorNotify: Will now call IDoMeter.")
                 self.IDoMeter()
             else:
-                print "Says we don't have a turd.  Shouldn't be possible, I'm in OnBehaviorNotify."
+                PtDebugPrint("Says we don't have a turd.  Shouldn't be possible, I'm in OnBehaviorNotify.")
             avatar = PtGetLocalAvatar()
             avatar.avatar.unRegisterForBehaviorNotify(self.key)
 
 
     def IDoMeter(self):
         levelMeter = self.IEvalPellet()
-        print "ErcanaCitySilo.IDoMeter():  pellet is level: ",levelMeter
+        PtDebugPrint("ErcanaCitySilo.IDoMeter():  pellet is level: ",levelMeter)
         if levelMeter == 1.0:
             RespScanMeter.run(self.key,state="Level1")
             PtAtTimeCallback(self.key,6.3,2)
@@ -243,8 +243,8 @@ class ErcanaCitySilo(ptResponder):
             self._lakePoints = self._pellet
         self._kiPoints = int(round(self._kiPoints * ((xRandom.randint(1,25) / 100.0) + 4.75)))
         self._lakePoints = int(round(self._lakePoints))
-        print "ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!" % (self._kiPoints)
-        print "ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints)
+        PtDebugPrint("ErcanaCitySilo.IDoScores():  this pellet drop is worth %d KI points!" % (self._kiPoints))
+        PtDebugPrint("ErcanaCitySilo.IDoScores():  and %d lake points!" % (self._lakePoints))
 
         #  Try to find the needed scores...
         #  The magic will happen in OnGameScoreMsg()
@@ -255,7 +255,7 @@ class ErcanaCitySilo(ptResponder):
 
     def OnNotify(self,state,id,events):
         if (id == RespScanMeter.id and self._gotTurd):
-            print "ErcanaCitySilo.OnNotify: Received callback from RespScanMeter, will now call IDropPellet."
+            PtDebugPrint("ErcanaCitySilo.OnNotify: Received callback from RespScanMeter, will now call IDropPellet.")
             self.IDropPellet()
 
         elif (id == RespDropPellet.id and self._gotTurd):
@@ -304,57 +304,57 @@ class ErcanaCitySilo(ptResponder):
 
     def IPlayPellet(self,level):
         if level > 0.0:
-            print "ErcanaCitySilo.IPlayPellet(): and the pellet anim is..."
+            PtDebugPrint("ErcanaCitySilo.IPlayPellet(): and the pellet anim is...")
             if level == 1.0:
-                print "steam & bubbles - HIGH"
+                PtDebugPrint("steam & bubbles - HIGH")
                 RespPlaySteam.run(self.key,state="Hi")
                 RespPlayBubbles.run(self.key,state="Hi")
             elif level == 2.0:
-                print "steam & bubbles - MEDIUM"
+                PtDebugPrint("steam & bubbles - MEDIUM")
                 RespPlaySteam.run(self.key,state="Med")
                 RespPlayBubbles.run(self.key,state="Med")
             elif level == 3.1:
-                print "steam & bubbles - LOW"
+                PtDebugPrint("steam & bubbles - LOW")
                 RespPlaySteam.run(self.key,state="Low")
                 RespPlayBubbles.run(self.key,state="Low")
             elif level == 3.2:
-                print "dud"
+                PtDebugPrint("dud")
                 RespPlayDud.run(self.key)
             elif level == 4.0:
-                print "orange glow - LOW"
+                PtDebugPrint("orange glow - LOW")
                 RespPlayOrangeGlow.run(self.key,state="Low")
             elif level == 5.0:
-                print "orange glow - MEDIUM"
+                PtDebugPrint("orange glow - MEDIUM")
                 RespPlayOrangeGlow.run(self.key,state="Med")
             elif level == 6.0:
-                print "orange glow - HIGH"
+                PtDebugPrint("orange glow - HIGH")
                 RespPlayOrangeGlow.run(self.key,state="Hi")
             elif level == 7.0:
-                print "white glow"
+                PtDebugPrint("white glow")
                 RespPlayWhiteGlow.run(self.key)
             elif level == 8.0:
-                print "explosion - LOW"
+                PtDebugPrint("explosion - LOW")
                 RespPlayBoom.run(self.key,state="Low")
             elif level == 9.0:
-                print "explosion - MEDIUM"
+                PtDebugPrint("explosion - MEDIUM")
                 RespPlayBoom.run(self.key,state="Med")
             elif level == 10.0:
-                print "explosion - HIGH"
+                PtDebugPrint("explosion - HIGH")
                 RespPlayBoom.run(self.key,state="Hi")
         else:
-            print "ErcanaCitySilo.IPlayPellet():  ERROR.  Level must be greater than 0"
+            PtDebugPrint("ErcanaCitySilo.IPlayPellet():  ERROR.  Level must be greater than 0")
 
 
     def OnBackdoorMsg(self,target,param):
         if target == "pelletfx":
             param = float(param)
-            #print "param = ",param
+            #PtDebugPrint("param = ",param)
             if param > 0.0 and param <= 10.0:
                 if param == 3.0:
-                    print "can't use 3.0, must be either 3.1 or 3.2"
+                    PtDebugPrint("can't use 3.0, must be either 3.1 or 3.2")
                     return
                 else:
                     self.IPlayPellet(param)
             else:
-                print "must be between 0.0 and 10.0"
+                PtDebugPrint("must be between 0.0 and 10.0")
 

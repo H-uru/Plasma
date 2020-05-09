@@ -1013,7 +1013,7 @@ class xAvatarCustomization(ptModifier):
                             else:
                                 PtChangeAvatar("Female")
                     elif btnID == kAvatarCameraID:
-                        print "ACA: Taking a picture!"
+                        PtDebugPrint("ACA: Taking a picture!")
                         picCam = ptCamera()
                         picCam.setAspectRatio(1)
                         AvCustGUI.dialog.hide()
@@ -1049,10 +1049,10 @@ class xAvatarCustomization(ptModifier):
         avatar = PtGetLocalAvatar()
         currentgender = avatar.avatar.getAvatarClothingGroup()
         if currentgender == 1:
-            print "Female Screenshot"
+            PtDebugPrint("Female Screenshot")
             TestMap.textmap.drawImageClipped(0, 0, image, 55, 250, 512, 512, 0)
         else:
-            print "Male Screenshot"
+            PtDebugPrint("Male Screenshot")
             TestMap.textmap.drawImageClipped(0, 0, image, 55, 80, 512, 512, 0)
         TestMap.textmap.flush()
         PtAtTimeCallback(self.key, 0, 999)
@@ -1230,10 +1230,10 @@ class xAvatarCustomization(ptModifier):
                 clothingName = "02_MTorso09_01"
             clothingList = avatar.avatar.getWardrobeClothingList()
             if clothingName not in clothingList:
-                print "adding Yeesha reward clothing %s to wardrobe" % (clothingName)
+                PtDebugPrint("adding Yeesha reward clothing %s to wardrobe" % (clothingName))
                 avatar.avatar.addWardrobeClothingItem(clothingName,ptColor().white(),ptColor().black())
             else:
-                print "player already has Yeesha reward clothing, doing nothing"
+                PtDebugPrint("player already has Yeesha reward clothing, doing nothing")
             folder = vault.getChronicleFolder()
             if folder is not None:
                 folder.removeNode(entry)
@@ -1290,10 +1290,10 @@ class xAvatarCustomization(ptModifier):
             newImage = TestMap.textmap.getImage()
             basePath = PtGetUserPath() + U"\\Avatars\\"
             if not PtCreateDir(basePath):
-                print U"xAvatarCustomization::OnTimer(): Unable to create \"" + basePath + "\" directory. Avatar pic is NOT saved."
+                PtDebugPrint(U"xAvatarCustomization::OnTimer(): Unable to create \"" + basePath + "\" directory. Avatar pic is NOT saved.")
                 return
             filename = basePath + unicode(PtGetLocalPlayer().getPlayerID()) + U".jpg"
-            print U"xAvatarCustomization::OnTimer(): Saving avatar pic to \"" + filename + U"\""
+            PtDebugPrint(U"xAvatarCustomization::OnTimer(): Saving avatar pic to \"" + filename + U"\"")
             newImage.saveAsJPEG(filename, 90)
 
     def IUpdateAllControls(self):

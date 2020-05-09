@@ -68,11 +68,11 @@ class xButtonLeverSwitchPowered(ptResponder):
         
         version = 1
         self.version = version
-        print "__init__xButtonLeverSwitchPowered v.", version
+        PtDebugPrint("__init__xButtonLeverSwitchPowered v.", version)
 
     def OnServerInitComplete(self):
         if self.SDL == None:
-            print "xButtonLeverSwitchPowered.OnServerInitComplete():\tERROR---missing SDL (%s)" % varstring.value
+            PtDebugPrint("xButtonLeverSwitchPowered.OnServerInitComplete():\tERROR---missing SDL (%s)" % varstring.value)
             return
         if enabled.value:
             self.SDL.setDefault("enabled",(1,)) # local only: set default lever position, Load() will correct if necessary
@@ -91,21 +91,21 @@ class xButtonLeverSwitchPowered(ptResponder):
                                     elif event[3] == 0:
                                         self.SDL["enabled"] = (0,)
                                     else:
-                                        print "xButtonLeverSwitchPowered.OnNotify:\t'%s' ERROR---got bogus msg - power = %d" % (varstring.value,self.SDL["enabled"][0])
+                                        PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' ERROR---got bogus msg - power = %d" % (varstring.value,self.SDL["enabled"][0]))
                                         return
-                                    print "xButtonLeverSwitchPowered.OnNotify:\t'%s' got msg - power = %d" % (varstring.value,self.SDL["enabled"][0])
+                                    PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' got msg - power = %d" % (varstring.value,self.SDL["enabled"][0]))
 
                 if id==actClick.id:
                         if self.SDL["enabled"][0]:
                                 respOn.run(self.key,events=events)
-                                print "xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (powered)" % varstring.value
+                                PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (powered)" % varstring.value)
                         else:
                                 respOff.run(self.key,events=events)
-                                print "xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (not powered)" % varstring.value
+                                PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\t'%s' activated (not powered)" % varstring.value)
                         return
                         
                 if id==respOn.id:
-                        print "xButtonLeverSwitchPowered.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated." % varstring.value
+                        PtDebugPrint("xButtonLeverSwitchPowered.OnNotify:\tsending msg '%s' clicked, pulled or otherwise activated." % varstring.value)
                         note = ptNotify(self.key)
                         note.setActivate(1.0)
                         note.addVarNumber(varstring.value,1.0)

@@ -70,7 +70,7 @@ class kemoEmgrPhase0(ptResponder):
 
         version = 1
         self.version = version
-        print "__init__kemoEmgrPhase0 v.", version
+        PtDebugPrint("__init__kemoEmgrPhase0 v.", version)
 
     def OnFirstUpdate(self):
         global AgeStartedIn
@@ -80,7 +80,7 @@ class kemoEmgrPhase0(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             for variable in BooleanVARs:
-                print "tying together", variable
+                PtDebugPrint("tying together", variable)
                 ageSDL.setNotify(self.key,variable,0.0)
                 self.IManageBOOLs(variable, "")
        
@@ -92,7 +92,7 @@ class kemoEmgrPhase0(ptResponder):
         PtDebugPrint("kemoEmgrPhase0.SDLNotify - name = %s, SDLname = %s" % (VARname,SDLname))
         
         if VARname in BooleanVARs:
-            print "kemoEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname)
+            PtDebugPrint("kemoEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
             self.IManageBOOLs(VARname,SDLname)
             
         else:
@@ -107,7 +107,7 @@ class kemoEmgrPhase0(ptResponder):
                 PtDebugPrint("kemoEmgrPhase0.OnSDLNotify:\tPaging in room ", VARname)
                 PtPageInNode(VARname)
             elif ageSDL[VARname][0] == 0:  #are we paging things out?
-                print "variable = ", VARname
+                PtDebugPrint("variable = ", VARname)
                 PtDebugPrint("kemoEmgrPhase0.OnSDLNotify:\tPaging out room ", VARname)
                 PtPageOutNode(VARname)
             else:

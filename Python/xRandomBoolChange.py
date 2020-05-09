@@ -118,28 +118,28 @@ class xRandomBoolChange(ptModifier):
             PtDebugPrint("ERROR: xRandomBoolChange.OnServerInitComplete():\tERROR accessing nearby ageSDL on %s. Using default." % self.sceneobject.getName())
             nearby = 0
 
-        print "RandomBoolChange script on object " + self.sceneobject.getName()
-        print "Visible:" + str(visible)
-        print "Enabled:" + str(enabled)
-        print "Chance :" + str(chance)
-        print "Nearby :" + str(nearby)
+        PtDebugPrint("RandomBoolChange script on object " + self.sceneobject.getName())
+        PtDebugPrint("Visible:" + str(visible))
+        PtDebugPrint("Enabled:" + str(enabled))
+        PtDebugPrint("Chance :" + str(chance))
+        PtDebugPrint("Nearby :" + str(nearby))
 
         # check if the object is enabled
         if enabled:
             if not nearby:
                 rint = xRandom.randint(0, 100)
-                print "Random int:" + str(rint)
+                PtDebugPrint("Random int:" + str(rint))
                 if rint <= chance:
                     # we passed so take appropriate action
                     if visible:
-                        print "Passed!  Setting variable to 0"
+                        PtDebugPrint("Passed!  Setting variable to 0")
                         ageSDL[strVarName.value] = (0,)
                     else:
-                        print "Passed!  Setting variable to 1"
+                        PtDebugPrint("Passed!  Setting variable to 1")
                         ageSDL[strVarName.value] = (1,)
         else:
             if visible:
-                print "Object not enabled, turning off"
+                PtDebugPrint("Object not enabled, turning off")
                 ageSDL[strVarName.value] = (0,)
 
     def OnNotify(self,state,id,events):
@@ -150,14 +150,14 @@ class xRandomBoolChange(ptModifier):
                     currentlyOccupied = sdl[strProximityVar.value][0]
 
                     if event[1]:  # someone entered
-                        print "Someone entered the bahro stone region"
+                        PtDebugPrint("Someone entered the bahro stone region")
                         if not currentlyOccupied:
-                            print "Region var is set to unoccupied so setting to occupied"
+                            PtDebugPrint("Region var is set to unoccupied so setting to occupied")
                             sdl[strProximityVar.value] = (1,)
                     else:         # everyone exited
-                        print "No one is in the bahro stone region"
+                        PtDebugPrint("No one is in the bahro stone region")
                         if currentlyOccupied:
-                            print "Region var is set to occupied so setting to unoccupied"
+                            PtDebugPrint("Region var is set to occupied so setting to unoccupied")
                             sdl[strProximityVar.value] = (0,)
                     break
 
@@ -165,14 +165,14 @@ class xRandomBoolChange(ptModifier):
         if VARname == strEnabledVar.value:
             if soOwned.sceneobject.isLocallyOwned():
                 sdl = PtGetAgeSDL()
-                print "Enabled var changed to: " + str(sdl[strEnabledVar.value][0])
+                PtDebugPrint("Enabled var changed to: " + str(sdl[strEnabledVar.value][0]))
                 if not sdl[strEnabledVar.value][0]:
-                    print "Enabled var is no longer enabled"
+                    PtDebugPrint("Enabled var is no longer enabled")
                     if boolEnable.value:
                         if sdl[strVarName.value][0]:
-                            print "Setting var to disabled"
+                            PtDebugPrint("Setting var to disabled")
                             sdl[strVarName.value] = (0,)
                     else:
                         if not sdl[strVarName.value][0]:
-                            print "Setting var to enabled"
+                            PtDebugPrint("Setting var to enabled")
                             sdl[strVarName.value] = (1,)

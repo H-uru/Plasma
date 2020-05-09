@@ -56,9 +56,9 @@ import xCensor
 import xLocTools
 
 # xKI sub-modules.
-import xKIExtChatCommands
-from xKIConstants import *
-from xKIHelpers import *
+from . import xKIExtChatCommands
+from .xKIConstants import *
+from .xKIHelpers import *
 
 
 ## A class to process all the RT Chat functions of the KI.

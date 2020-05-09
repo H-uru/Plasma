@@ -232,10 +232,10 @@ class ercaControlRoom(ptResponder):
 #            if not self.sceneobject.isLocallyOwned():
 #                return
             if byteMixBtnNew > 0 and self.sceneobject.isLocallyOwned():
-                print "setting SDLMixBtn to 0"
+                PtDebugPrint("setting SDLMixBtn to 0")
                 ageSDL[SDLMixBtn.value] = (0,)
             elif byteOvenBtnNew > 0 and self.sceneobject.isLocallyOwned():
-                print "setting SDLOvenBtn to 0"
+                PtDebugPrint("setting SDLOvenBtn to 0")
                 ageSDL[SDLOvenBtn.value] = (0,)
             self.ImgrView(byteImgrOld,"exit")
             PtDebugPrint("DEBUG: ercaControlRoom.OnSDLNotify():\t%s = %d" % (SDLImgrView.value,byteImgrNew) )
@@ -300,7 +300,7 @@ class ercaControlRoom(ptResponder):
         ageSDL = PtGetAgeSDL()
         
         if (id == ActScrollLeft.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActScrollLeft callback"
+            PtDebugPrint("ActScrollLeft callback")
             if byteImgrNew > 0:
                 #scrollDir = 0
                 tempVal = byteImgrNew - 1
@@ -309,7 +309,7 @@ class ercaControlRoom(ptResponder):
                 PtDebugPrint("DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the left.")
 
         elif (id == ActScrollRight.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "ActScrollRight callback"
+            PtDebugPrint("ActScrollRight callback")
             if byteImgrNew < 3:
                 #scrollDir = 1
                 tempVal = byteImgrNew + 1
@@ -318,11 +318,11 @@ class ercaControlRoom(ptResponder):
                 PtDebugPrint("DEBUG: ercaControlRoom.OnNotify():\tCan't scroll any further to the right.")
         
         elif (id == RespScrollLeft.id) or (id == RespScrollRight.id):
-            print "RespScrollX callback"
+            PtDebugPrint("RespScrollX callback")
             self.ImgrView(byteImgrNew,"enter")
         
         elif (id == RespImgrView0.id) or (id == RespImgrView1.id) or (id == RespImgrView2.id) or (id == RespImgrView3.id):
-            print "RespImgrView# callback"
+            PtDebugPrint("RespImgrView# callback")
             if (id == RespImgrView0.id):
                 RespScrollBtnRt.run(self.key,state="on")
             elif (id == RespImgrView1.id):
@@ -383,7 +383,7 @@ class ercaControlRoom(ptResponder):
             RespOvenIcons.run(self.key,state="on")
 
         elif (id == ActBladesBtn.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "mixer blades btn clicked"
+            PtDebugPrint("mixer blades btn clicked")
             if byteMixBtnNew != 0:
                 blade = bladesSDLs[byteMixBtnNew - 1]
                 if ageSDL[blade][0] == 0:
@@ -401,7 +401,7 @@ class ercaControlRoom(ptResponder):
                 return
 
         elif (id == ActHatchBtn.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "mixer hatch btn clicked"
+            PtDebugPrint("mixer hatch btn clicked")
             if byteMixBtnNew != 0:
                 hatchNum = byteMixBtnNew - 1
                 hatch = hatchSDLs[hatchNum]
@@ -423,25 +423,25 @@ class ercaControlRoom(ptResponder):
                 return
         
         elif (id == ActValveBtn.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "mixer valve btn clicked"
+            PtDebugPrint("mixer valve btn clicked")
             if byteMixBtnNew != 0:
                 valveNum = byteMixBtnNew - 1
                 valve = valveSDLs[valveNum]
                 if valve == "ercaPool1Valve":
                     PtDebugPrint("Tried to operate pool 1 valve, but it's stuck; request denied!")
                     return
-                #print "valveNum = ",valveNum
+                #PtDebugPrint("valveNum = ",valveNum)
                 tunnel = TunnelsOccupied[valveNum]
-                #print "tunnel = ",tunnel
+                #PtDebugPrint("tunnel = ",tunnel)
                 if tunnel != []:
                     PtDebugPrint("tried to operate valve %d, but the tunnel is occupied; denied!" % (valveNum))
-                    print "players in this tunnel:"
+                    PtDebugPrint("players in this tunnel:")
                     for player in tunnel:
-                        print player
+                        PtDebugPrint(player)
                     RespWarningLight.run(self.key)
                     return
                 else:
-                    print "that tunnel is clear of players, proceeding..."
+                    PtDebugPrint("that tunnel is clear of players, proceeding...")
                 if ageSDL[valve][0] == 0:
                     ageSDL[valve] = (1,)
                     PtDebugPrint("now setting SDL for %s to %d" % (valve,1))
@@ -457,7 +457,7 @@ class ercaControlRoom(ptResponder):
                 return
 
         elif (id == ActOvenPwrBtn.id and state and LocalAvatar == PtFindAvatar(events)):
-            print "oven-scope power btn clicked"
+            PtDebugPrint("oven-scope power btn clicked")
             if byteOvenBtnNew != 0:
                 oven = ovenSDLs[byteOvenBtnNew - 1]
                 if (ageSDL["ercaBakeryElevPos"][0] != 0) or byteAmBaking:
@@ -474,7 +474,7 @@ class ercaControlRoom(ptResponder):
                 return
         
         elif id == RgnTunnel1.id or id == RgnTunnel2.id or id == RgnTunnel3.id or id == RgnTunnel4.id:
-            #print "callback from rgn tunnel ID: ",id
+            #PtDebugPrint("callback from rgn tunnel ID: ",id)
             for event in events:
                 if event[0] == kCollisionEvent:
                     try:
@@ -482,14 +482,14 @@ class ercaControlRoom(ptResponder):
                             playerID = PtGetLocalPlayer().getPlayerID()
                             if event[1] == 1:
                                 state = 1
-                                #print "enter tunnel ",id
+                                #PtDebugPrint("enter tunnel ",id)
                             else:
-                                #print "exit tunnel ",id
+                                #PtDebugPrint("exit tunnel ",id)
                                 state = 0
                         else:
                             return
                     except NameError:
-                        print "no more local avatar to see if in region"
+                        PtDebugPrint("no more local avatar to see if in region")
                         return
             rgn = 0
             for rgnID in RgnTunnelIDs:
@@ -498,20 +498,20 @@ class ercaControlRoom(ptResponder):
                 else:
                     rgn += 1
 #            if state:
-#                print "playerID: %d has ENTERED tunnel: %d" % (playerID,rgn)
+#                PtDebugPrint("playerID: %d has ENTERED tunnel: %d" % (playerID,rgn))
 #            else:
-#                print "playerID: %d has EXITED tunnel: %d" % (playerID,rgn)
+#                PtDebugPrint("playerID: %d has EXITED tunnel: %d" % (playerID,rgn))
             self.SendNote('%d;%d;%d' % (rgn,state,playerID))
 
         elif id == (-1):
-            #print "incoming event: %s" % (events[0][1])
+            #PtDebugPrint("incoming event: %s" % (events[0][1]))
             code = events[0][1]
-            #print "playing command: %s" % (code)
+            #PtDebugPrint("playing command: %s" % (code))
             self.ExecCode(code)
 
 
     def UpdateTunnelRgn(self,rgn,state,playerID):
-        #print "ercaControlRoom.UpdateTunnelRgn(): rgn = %d, state = %d, playerID = %d" % (rgn,state,playerID)
+        #PtDebugPrint("ercaControlRoom.UpdateTunnelRgn(): rgn = %d, state = %d, playerID = %d" % (rgn,state,playerID))
         global TunnelsOccupied
         if state:
             if playerID not in TunnelsOccupied[rgn]:
@@ -519,7 +519,7 @@ class ercaControlRoom(ptResponder):
         else:
             if playerID in TunnelsOccupied[rgn]:
                 TunnelsOccupied[rgn].remove(playerID)
-        print "TunnelsOccupied = ",TunnelsOccupied
+        PtDebugPrint("TunnelsOccupied = ",TunnelsOccupied)
 
 
     def ImgrView(self,view,mode,ff=0):
@@ -584,4 +584,4 @@ class ercaControlRoom(ptResponder):
             ecPlayerID = int(chunks[2])
             self.UpdateTunnelRgn(ecRgn,ecState,ecPlayerID)
         except:
-            print "ercaControlRoom.ExecCode(): ERROR! Invalid code '%s'." % (code)
+            PtDebugPrint("ercaControlRoom.ExecCode(): ERROR! Invalid code '%s'." % (code))

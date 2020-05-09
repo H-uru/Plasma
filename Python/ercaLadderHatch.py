@@ -161,43 +161,43 @@ class ercaLadderHatch(ptResponder):
                     if (StrDirection.value) == "up":
                         if event[2] == kAdvanceNextStage:
                             stageNum = event[1]
-                            print "Going up.  Got stage advance callback from stage %d" % stageNum
+                            PtDebugPrint("Going up.  Got stage advance callback from stage %d" % stageNum)
                             if stageNum == 1:
-                                print "In stage 2, negotiating hatch."
+                                PtDebugPrint("In stage 2, negotiating hatch.")
                                 self.INegotiateHatch();
                             elif stageNum == 2:
                                 # after the "it's locked" anim, return to the climb...
                                 MltStgLddr.gotoStage(LocalAvatar, 1,0,0)
                             elif stageNum == 2 or stageNum == 3 or stageNum == 5:
-                                print "Got through hatch: finishing & removing brain."
+                                PtDebugPrint("Got through hatch: finishing & removing brain.")
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
                                 
                     elif (StrDirection.value) == "down":
                         stageNum = event[1]
-                        print "Going down.  Message from multistage %i" % stageNum
+                        PtDebugPrint("Going down.  Message from multistage %i" % stageNum)
                         if event[2] == kRegressPrevStage: # and stageNum == 2:
-                            print "Got stage Regress callback from stage %d" % stageNum
+                            PtDebugPrint("Got stage Regress callback from stage %d" % stageNum)
                             self.INegotiateHatch()
                         elif event[2] == kAdvanceNextStage:
                             if stageNum == 1: # finished getting on, now find out if water is up
-                                print "checking drained"
+                                PtDebugPrint("checking drained")
                                 if boolEmpty == 0:
                                     MltStgLddr.gotoStage(LocalAvatar, 7,0,0);                            
-                                    print "water not drained"
+                                    PtDebugPrint("water not drained")
                             if stageNum == 4:
                                 if boolEmpty == 0:
                                     MltStgLddr.gotoStage(LocalAvatar, 7,dirFlag=1,isForward=1)
                                     # after the "it's locked" anim, return to the climb...
                                 else:
                                     MltStgLddr.gotoStage(LocalAvatar, 2,dirFlag=1,isForward=1)
-                                print "now stage 3/7 again"
+                                PtDebugPrint("now stage 3/7 again")
                             elif stageNum == 6:
-                                print "Got through hatch: finishing & removing brain."
+                                PtDebugPrint("Got through hatch: finishing & removing brain.")
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
                                 iamclimber = False
                                 #ActStart.enable()
                             elif stageNum == 3:
-                                print "done with bottom"
+                                PtDebugPrint("done with bottom")
                                 iamclimber = False
                                 MltStgLddr.gotoStage(LocalAvatar, -1)
 
@@ -207,7 +207,7 @@ class ercaLadderHatch(ptResponder):
 
     def INegotiateHatch(self):
         global boolHatch
-        print "Negotiating hatch"
+        PtDebugPrint("Negotiating hatch")
         if boolHatch == 0:
             self.IHatchLocked()
         else:
@@ -218,11 +218,11 @@ class ercaLadderHatch(ptResponder):
         "Hatch is locked; show the frustrated animation and return to previous stage"
         global LocalAvatar
         if (StrDirection.value) == "up":
-            print "Going up.  Hatch is locked; Sending gotoStage(2)"
+            PtDebugPrint("Going up.  Hatch is locked; Sending gotoStage(2)")
             RespHatchOps.run(self.key,state='lockedbelow')
             MltStgLddr.gotoStage(LocalAvatar,2,0,1)
         elif (StrDirection.value) == "down":
-            print "Going down.  Hatch is locked; Sending gotoStage(4)"
+            PtDebugPrint("Going down.  Hatch is locked; Sending gotoStage(4)")
             MltStgLddr.gotoStage(LocalAvatar,4,dirFlag=1,isForward=1,setTimeFlag=1,newTime=0.0)
             RespHatchOps.run(self.key,state='lockedbelow')
 
@@ -232,11 +232,11 @@ class ercaLadderHatch(ptResponder):
         global LocalAvatar
         global iamclimber
         if (StrDirection.value) == "up":
-            print "Going up.  Hatch is unlocked; Sending gotoStage(3)"
+            PtDebugPrint("Going up.  Hatch is unlocked; Sending gotoStage(3)")
             #RespHatchOps.run(self.key,state='openbelow')
             MltStgLddr.gotoStage(LocalAvatar,4,0,0)
         elif (StrDirection.value) == "down":
-            print "Going down.  Hatch is unlocked; Sending gotoStage(5)"
+            PtDebugPrint("Going down.  Hatch is unlocked; Sending gotoStage(5)")
             MltStgLddr.gotoStage(LocalAvatar,5,dirFlag=1,isForward=1,setTimeFlag=1,newTime=0.0)
             #RespHatchOps.run(self.key,state='openbelow')
             iamclimber = False

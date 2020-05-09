@@ -72,8 +72,8 @@ class SpyRoom(ptResponder):
         # i know this isn't bevin but this is just in case they haven't gone to bevin yet
         entry = vault.findChronicleEntry("sjBevinVisted")
         if not entry:
-            print "spyroom: did not find the chron var"
+            PtDebugPrint("spyroom: did not find the chron var")
             vault.addChronicleEntry("sjBevinVisted", 0, str(int( time.time() )) )
         else:
-            print "spyroom: found the chron var"
+            PtDebugPrint("spyroom: found the chron var")
 

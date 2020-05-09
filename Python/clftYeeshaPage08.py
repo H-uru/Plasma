@@ -103,7 +103,7 @@ class clftYeeshaPage08(ptModifier):
         ptModifier.__init__(self)
         self.id = 5312
         self.version = 1
-        print "__init__clftYeeshaPage08 v.", self.version
+        PtDebugPrint("__init__clftYeeshaPage08 v.", self.version)
 
 
     def OnFirstUpdate(self):

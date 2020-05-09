@@ -72,13 +72,13 @@ from xPsnlVaultSDL import *
 from jlakConstants import *
 
 # xKI sub-modules.
-import xKIExtChatCommands
-import xKIChat
-from xKIConstants import *
-from xKIHelpers import *
+from . import xKIExtChatCommands
+from . import xKIChat
+from .xKIConstants import *
+from .xKIHelpers import *
 
 # Marker Game thingies
-import xMarkerMgr
+from . import xMarkerMgr
 
 # Define the attributes that will be entered in Max.
 KIBlackbar = ptAttribGUIDialog(1, "The Blackbar dialog")

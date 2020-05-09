@@ -202,7 +202,7 @@ class grtzKIMarkerMachine(ptModifier):
                 markerKILevel = PtDetermineKIMarkerLevel()
 
                 if markerKILevel > kKIMarkerFirstLevel:
-                    print "Making Sure Nexus Link Exists."
+                    PtDebugPrint("Making Sure Nexus Link Exists.")
                     self.IUpdateNexusLink()
 
                 #Don't try and get the game if we've got a normal KI marker level (i.e. finished with first two marker games)
@@ -488,16 +488,16 @@ class grtzKIMarkerMachine(ptModifier):
                 for SpawnPoint in GZSpawnPoints:
                     title = SpawnPoint.getTitle().lower()
                     name = SpawnPoint.getName().lower()
-                    #print "Title: %s\nName: %s" % (title,name)
+                    #PtDebugPrint("Title: %s\nName: %s" % (title,name))
                     if title == "great zero" and name == "bigroomlinkinpoint":
-                        print "grtzKIMarkerMachine: Nexus link already exists."
+                        PtDebugPrint("grtzKIMarkerMachine: Nexus link already exists.")
                         return
                 #self.IDoCityLinksChron("BigRoomLinkInPoint")   # this will be used if we want to add this to the city book
                 outerRoomSP = ptSpawnPointInfo("Great Zero","BigRoomLinkInPoint")
-                #print "NewSpawnPointInfo\nName: %s\nTitle: %s" % (outerRoomSP.getName(), outerRoomSP.getTitle())
+                #PtDebugPrint("NewSpawnPointInfo\nName: %s\nTitle: %s" % (outerRoomSP.getName(), outerRoomSP.getTitle()))
                 link.addSpawnPoint(outerRoomSP)
                 link.save()
-                print "grtzKIMarkerMachine: Nexus link added."
+                PtDebugPrint("grtzKIMarkerMachine: Nexus link added.")
                 PtSendKIMessage(kKILocalChatStatusMsg,PtGetLocalizedString("KI.Messages.NexusLinkAdded"))
                 PtDebugPrint("grtzKIMarkerMachine - setting new spawn point for GZ",level=kDebugDumpLevel)
                 return
@@ -527,25 +527,25 @@ class grtzKIMarkerMachine(ptModifier):
         entryCityLinks = vault.findChronicleEntry("CityBookLinks")
         if entryCityLinks is not None:
             valCityLinks = entryCityLinks.chronicleGetValue()
-            print "valCityLinks = ",valCityLinks
+            PtDebugPrint("valCityLinks = ",valCityLinks)
             CityLinks = valCityLinks.split(",")
-            print "CityLinks = ",CityLinks
+            PtDebugPrint("CityLinks = ",CityLinks)
             if agePanel not in CityLinks:
                 NewLinks = valCityLinks + "," + agePanel
                 entryCityLinks.chronicleSetValue(NewLinks)
                 entryCityLinks.save()
-                print "grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel
+                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  setting citylinks chron entry to include: ",agePanel)
                 valCityLinks = entryCityLinks.chronicleGetValue()
                 CityLinks = valCityLinks.split(",")
-                print "grtzKIMarkerMachine.IDoCityLinksChron():  citylinks now = ",CityLinks
+                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  citylinks now = ",CityLinks)
             else:
-                print "grtzKIMarkerMachine.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel
+                PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  do nothing, citylinks chron already contains: ",agePanel)
         else:
             vault.addChronicleEntry("CityBookLinks",0,agePanel)
-            print "grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel
+            PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  creating citylinks chron entry and adding: ",agePanel)
         
         psnlSDL = xPsnlVaultSDL()
         GotBook = psnlSDL["psnlGotCityBook"][0]
         if not GotBook:
             psnlSDL["psnlGotCityBook"] = (1,)
-            print "grtzKIMarkerMachine.IDoCityLinksChron():  setting SDL for city book to 1"
+            PtDebugPrint("grtzKIMarkerMachine.IDoCityLinksChron():  setting SDL for city book to 1")

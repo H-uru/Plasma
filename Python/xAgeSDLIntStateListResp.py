@@ -123,7 +123,7 @@ class xAgeSDLIntStateListResp(ptResponder):
         version = 1
         self.version = version
         self.enabledStateList = []
-        print "__init__xAgeSDLIntStateListResp v", version
+        PtDebugPrint("__init__xAgeSDLIntStateListResp v", version)
     
     def OnFirstUpdate(self):
         if not strSDLVarName.value:
@@ -160,7 +160,7 @@ class xAgeSDLIntStateListResp(ptResponder):
             PtDebugPrint("ERROR: xAgeSDLIntStateListResp.OnServerInitComplete():\tPlease enter states in the format: (val,stateNum)(val,stateNum)")
             """
             import sys
-            print "ERROR: Caught Exception: ", sys.exc_type, " --> ", sys.exc_value
+            PtDebugPrint("ERROR: Caught Exception: ", sys.exc_type, " --> ", sys.exc_value)
             """
             return
 
@@ -198,7 +198,7 @@ class xAgeSDLIntStateListResp(ptResponder):
 
 
     def UpdateState(self, SDLval, avatar, fastforward):
-        if  self.dictStates.has_key(SDLval):  #Run the responder only if we have the state
+        if  SDLval in self.dictStates:  #Run the responder only if we have the state
             PtDebugPrint("DEBUG: xAgeSDLIntStateListResp.OnSDLNotify: running state responder: %s" % self.dictStates[SDLval])
             respEnterState.run(self.key,state=self.dictStates[SDLval], avatar=avatar, fastforward=fastforward)
         else:

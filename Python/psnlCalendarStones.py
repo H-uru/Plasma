@@ -124,10 +124,10 @@ class psnlCalendarStones(ptResponder):
                     PtDebugPrint("psnlCalendarStones.OnServerInitComplete():\tERROR reading age SDLVar for YeeshaPage20. Assuming value = 0")
                     CurrentValue = 0
                 if CurrentValue in [0, 2, 4]:
-                    print "psnlCalendarStones.OnServerInitComplete():  don't have YeeshaPage20 on, no FIRE for you!"
+                    PtDebugPrint("psnlCalendarStones.OnServerInitComplete():  don't have YeeshaPage20 on, no FIRE for you!")
                     respCalStoneFire.run(self.key,state="off",fastforward=1)
                 else:
-                    print "psnlCalendarStones.OnServerInitComplete():  have all 12 calendar stones AND YeeshaPage20 is on, will give you FIRE!"
+                    PtDebugPrint("psnlCalendarStones.OnServerInitComplete():  have all 12 calendar stones AND YeeshaPage20 is on, will give you FIRE!")
                     fireworks = 1
                     respCalStoneFire.run(self.key,state="on",fastforward=1)
                     if not self.sceneobject.isLocallyOwned():
@@ -137,7 +137,7 @@ class psnlCalendarStones(ptResponder):
                         self.DoFireworks(3,1)
                         self.DoFireworks(5,1)
         else:
-            print "psnlCalendarStones.OnServerInitComplete():  don't have all 12 calendar stones, no FIRE for you!"
+            PtDebugPrint("psnlCalendarStones.OnServerInitComplete():  don't have all 12 calendar stones, no FIRE for you!")
             respCalStoneFire.run(self.key,state="off",fastforward=1)
 
 
@@ -152,29 +152,29 @@ class psnlCalendarStones(ptResponder):
             return
         if id == 1:
             respFireworksLaunch1.run(self.key)
-            #print "launch rocket 1"
+            #PtDebugPrint("launch rocket 1")
             self.DoFireworks(1,2)
         elif id == 2:
             respFireworksExplode1.run(self.key)
-            #print "explode rocket 1"
+            #PtDebugPrint("explode rocket 1")
             if not fireworksTestMode:
                 self.DoFireworks(1,1)
         elif id == 3:
             respFireworksLaunch2.run(self.key)
-            #print "launch rocket 2"
+            #PtDebugPrint("launch rocket 2")
             self.DoFireworks(3,2)
         elif id == 4:
             respFireworksExplode2.run(self.key)
-            #print "explode rocket 2"
+            #PtDebugPrint("explode rocket 2")
             if not fireworksTestMode:
                 self.DoFireworks(3,1)
         elif id == 5:
             respFireworksLaunch3.run(self.key)
-            #print "launch rocket 3"
+            #PtDebugPrint("launch rocket 3")
             self.DoFireworks(5,2)
         elif id == 6:
             respFireworksExplode3.run(self.key)
-            #print "explode rocket 3"
+            #PtDebugPrint("explode rocket 3")
             if not fireworksTestMode:
                 self.DoFireworks(5,1)
 
@@ -203,25 +203,25 @@ class psnlCalendarStones(ptResponder):
         timer = float(param)
         if target == "fireworks1":
             respFireworksLaunch1.run(self.key)
-            print "launch rocket 1"
+            PtDebugPrint("launch rocket 1")
             PtAtTimeCallback(self.key,timer,2)
         elif target == "fireworks2":
             respFireworksLaunch2.run(self.key)
-            print "launch rocket 2"
+            PtDebugPrint("launch rocket 2")
             PtAtTimeCallback(self.key,timer,4)
         elif target == "fireworks3":
             respFireworksLaunch3.run(self.key)
-            print "launch rocket 3"
+            PtDebugPrint("launch rocket 3")
             PtAtTimeCallback(self.key,timer,6)
         elif target == "fireworksall":
             respFireworksLaunch1.run(self.key)
-            print "launch rocket 1"
+            PtDebugPrint("launch rocket 1")
             PtAtTimeCallback(self.key,timer,2)
             respFireworksLaunch2.run(self.key)
-            print "launch rocket 2"
+            PtDebugPrint("launch rocket 2")
             PtAtTimeCallback(self.key,timer,4)
             respFireworksLaunch3.run(self.key)
-            print "launch rocket 3"
+            PtDebugPrint("launch rocket 3")
             PtAtTimeCallback(self.key,timer,6)
 
 

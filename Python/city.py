@@ -85,9 +85,9 @@ class city(ptResponder):
     
         if parentname == "Neighborhood":
             IsPublic = 1
-            print "city.__init__(): city version = public"
+            PtDebugPrint("city.__init__(): city version = public")
         else:
-            print "city.__init__(): city version = Yeesha"
+            PtDebugPrint("city.__init__(): city version = Yeesha")
         
         if not IsPublic:
             pass
@@ -103,15 +103,15 @@ class city(ptResponder):
             spTitle = "title unknown"
             spName = "spawn point unknown"
 
-        print "city.__init__(): spTitle = ",spTitle
-        print "city.__init__(): spName = ",spName
+        PtDebugPrint("city.__init__(): spTitle = ",spTitle)
+        PtDebugPrint("city.__init__(): spName = ",spName)
 
         ## NOT USING THIS FOR NOW - MAY NEED TO LOAD IN SPECIFIC PAGE(S) FOR FUTURE CITY AREAS...
 #        if spTitle == "KadishGallery":
-#            print "city.__init__(): we're linking into KadishGallery, only that page will be loaded"
+#            PtDebugPrint("city.__init__(): we're linking into KadishGallery, only that page will be loaded")
 #            IsKadishGallery = 1
 #        else:
-#            print "city.__init__(): we're NOT linking into KadishGallery, will load the entire city"
+#            PtDebugPrint("city.__init__(): we're NOT linking into KadishGallery, will load the entire city")
         
         pages = []
 
@@ -152,7 +152,7 @@ class city(ptResponder):
                     self.ILoadS1FinaleBahro(n,1)
                 n += 1
         except:
-            print "ERROR!  Couldn't find all Bahro sdl, leaving default = 0"
+            PtDebugPrint("ERROR!  Couldn't find all Bahro sdl, leaving default = 0")
 
 #        ageSDL = PtGetAgeSDL()
 #        
@@ -188,7 +188,7 @@ class city(ptResponder):
 
 
     def ILoadS1FinaleBahro(self,bahro,state):
-        print "city.ILoadS1FinaleBahro(): bahro = %d, load = %d" % (bahro,state)
+        PtDebugPrint("city.ILoadS1FinaleBahro(): bahro = %d, load = %d" % (bahro,state))
 #        if not self.sceneobject.isLocallyOwned():
 #            return
         if state:

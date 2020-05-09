@@ -98,7 +98,7 @@ class islmMemorialImager(ptModifier):
         Instance = self
         self.id = 5105
         self.version = 1
-        print "islmMemorialImager: init  version=%d.%d"%(self.version,3)
+        PtDebugPrint("islmMemorialImager: init  version=%d.%d"%(self.version,3))
     ############################
     def OnServerInitComplete(self):
         
@@ -131,7 +131,7 @@ class islmMemorialImager(ptModifier):
         kIncAmount = IncAmount.value
 
         kFontColor = FontColor.value.split(",")
-        #print "islmMemorialImager: Font Color: R:%s,G:%s,B:%s,A:%s" % (float(kFontColor[0]),float(kFontColor[1]),float(kFontColor[2]),float(kFontColor[3]))
+        #PtDebugPrint("islmMemorialImager: Font Color: R:%s,G:%s,B:%s,A:%s" % (float(kFontColor[0]),float(kFontColor[1]),float(kFontColor[2]),float(kFontColor[3])))
         kFontColor = ptColor(red=float(kFontColor[0]),green=float(kFontColor[1]),blue=float(kFontColor[2]),alpha=float(kFontColor[3]))
         self.UpdateMarqueeMessage()
         kLastUpdate = PtGetDniTime()
@@ -155,7 +155,7 @@ class islmMemorialImager(ptModifier):
     ############################
     def UpdateMarquee(self, ImagerMap, x):
         imagertext = CurrentMessage[x]
-        #print "islmMemorialImager: kTextXPos:%s \t kTextYStart:%s \n imagertext:%s" % (str(kTextXPos[x]),str(kTextYStart),str(imagertext)) 
+        #PtDebugPrint("islmMemorialImager: kTextXPos:%s \t kTextYStart:%s \n imagertext:%s" % (str(kTextXPos[x]),str(kTextYStart),str(imagertext)))
         ImagerMap.textmap.clearToColor(ptColor(0,0,0,0))
         ImagerMap.textmap.drawText(kTextXPos[x],kTextYStart,imagertext)
         ImagerMap.textmap.flush()
@@ -168,14 +168,14 @@ class islmMemorialImager(ptModifier):
         global kNextChar
         global kFirstChar
         global kLastUpdate
-        #print "islmMemorialImager: PtGetDniTime: " + str(PtGetDniTime()) + "kLastUpdate: " + str(kLastUpdate) 
+        #PtDebugPrint("islmMemorialImager: PtGetDniTime: " + str(PtGetDniTime()) + "kLastUpdate: " + str(kLastUpdate))
         movedSince = int(((long(PtGetDniTime()) - long(kLastUpdate)) / kUpdateTime) * kIncAmount)
-        #print "islmMemorialImager: Distance to move:" , movedSince
+        #PtDebugPrint("islmMemorialImager: Distance to move:" , movedSince)
         kLastUpdate = PtGetDniTime()
         for x in range(4):
-            #print "islmMemorialImager: Imager%d \n kcursorstart:%d \t kcursorend:%d" % (x,kCursorStart[x],kCursorEnd[x])
+            #PtDebugPrint("islmMemorialImager: Imager%d \n kcursorstart:%d \t kcursorend:%d" % (x,kCursorStart[x],kCursorEnd[x]))
             self.UpdateMarqueeOffset(x,movedSince)
-            #print "islmMemorialImager: kTextXPos[%d]: %d" % (x, kTextXPos[x])
+            #PtDebugPrint("islmMemorialImager: kTextXPos[%d]: %d" % (x, kTextXPos[x]))
             self.UpdateStartCursor(x,imgMessage)
             self.UpdateEndCursor(x,imgMessage)
             
@@ -210,7 +210,7 @@ class islmMemorialImager(ptModifier):
             (kTextWidth[x],z) = ImagerMap1.textmap.calcTextExtents(CurrentMessage[x])
             if (((kTextXPos[x] - kTextXStart) + kTextWidth[x]) + kNextChar[x]) > ImagerMap1.textmap.getWidth(): break
             
-            #print "islmMemorialImager: Value of offset plus the nextChar width", ((kTextXPos[x] - kTextXStart[x]) + kTextWidth[x])
+            #PtDebugPrint("islmMemorialImager: Value of offset plus the nextChar width", ((kTextXPos[x] - kTextXStart[x]) + kTextWidth[x]))
             if kCursorEnd[x] > len(imgMessage) - 1:
                 kCursorEnd[x] = 0
             else:
@@ -236,7 +236,7 @@ class islmMemorialImager(ptModifier):
             kNewChar = 1
         else:
             kTextXPos[x] = kTextXPos[x] - movedSince
-        #print "islmMemorialImager: Updating Offset to:",kTextXPos[x]
+        #PtDebugPrint("islmMemorialImager: Updating Offset to:",kTextXPos[x])
     ############################
     def UpdateMarqueeMessage(self):
         global kMessage
@@ -263,7 +263,7 @@ class islmMemorialImager(ptModifier):
                                 if textNode.getText() == "":
                                     if kMessage == "":
                                         self.setTimerCallback(30)
-                                    #print "islmMemorialImager: No message was found."
+                                    #PtDebugPrint("islmMemorialImager: No message was found.")
                                 
                                 elif kMessage != textNode.getText():
                                     oldmessage = kMessage
@@ -279,14 +279,14 @@ class islmMemorialImager(ptModifier):
                                 PtDebugPrint("islmMemorialImager: Marquee contents are '%s'" % (kMessage),level=kDebugDumpLevel)
                                 return
         self.setTimerCallback(30)
-        #print "islmMemorialImager: Message Node not found."
+        #PtDebugPrint("islmMemorialImager: Message Node not found.")
         
-        #print "islmMemorialImager: Message Updated"
-        #print "islmMemorialImager: Message Length:", len(kMessage)
+        #PtDebugPrint("islmMemorialImager: Message Updated")
+        #PtDebugPrint("islmMemorialImager: Message Length:", len(kMessage))
     ############################
     
     #def SetMemorialSDL(self):
-    #    #print "islmMemorialImager: Updating SDL with the new time value."
+    #    #PtDebugPrint("islmMemorialImager: Updating SDL with the new time value.")
     #    ageSDL = PtGetAgeSDL()
     #    ageSDL["MemorialImagerStartTime"] = (PtGetDniTime(),)
     
@@ -297,14 +297,14 @@ class islmMemorialImager(ptModifier):
 #        if kMessage == "":
 #            self.UpdateMarqueeMessage()
 #            return
-#        #print "islmMemorialImager: Synching my imager to the age owners."
+#        #PtDebugPrint("islmMemorialImager: Synching my imager to the age owners.")
 #        ageSDL = PtGetAgeSDL()
 #        updatetime = long(PtGetDniTime()) - long(ageSDL["MemorialImagerStartTime"][0])
 #        movedsince = int((updatetime / kUpdateTime) * kIncAmount)
-#        #print "islmMemorialImager: UpdateTime: " + str(updatetime) + " \t MovedSince: " + str(movedsince)
+#        #PtDebugPrint("islmMemorialImager: UpdateTime: " + str(updatetime) + " \t MovedSince: " + str(movedsince))
 #        textWidth = 0
 #        cursor = len(kMessage)
-#        #print "islmMemorialImager: Cursor: ", cursor
+#        #PtDebugPrint("islmMemorialImager: Cursor: ", cursor)
 #        for i in range(len(kMessage)):
 #            (textWidth,z) = ImagerMap1.textmap.calcTextExtents(kMessage[0:cursor])
 #            if textWidth < movedsince: break
@@ -347,7 +347,7 @@ class islmMemorialImager(ptModifier):
             i = i - 1
             
             if not len(testmessage):
-                print "islmMemorialImager: Message Length = 0"
+                PtDebugPrint("islmMemorialImager: Message Length = 0")
                 kMessage = ""
                 return
             testmessage = testmessage[0:len(testmessage) - 1]

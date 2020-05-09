@@ -85,20 +85,20 @@ class psnlBugs(ptResponder):
         try:
             avatar = PtGetLocalAvatar()
         except:
-            print"failed to get local avatar"
+            PtDebugPrint("failed to get local avatar")
             return
         
         self.bugCount = self.IGetBugCount()
-        print"psnl Bugs: ", self.bugCount
+        PtDebugPrint("psnl Bugs: ", self.bugCount)
 
         thisAge = PtGetAgeName()
-        #print "psnlBugs.OnServerInitComplete(): thisAge = ",thisAge
+        #PtDebugPrint("psnlBugs.OnServerInitComplete(): thisAge = ",thisAge)
 
         if (self.bugCount != 0):
             PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
             PtKillParticles(10.0,1,avatar.getKey())
             PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)
-            print "kill all bugs in age: ",thisAge
+            PtDebugPrint("kill all bugs in age: ",thisAge)
             self.ISaveBugCount(0)
         
         if thisAge != "Personal":
@@ -111,22 +111,22 @@ class psnlBugs(ptResponder):
         sdl = PtGetAgeSDL()
         bugState = sdl["psnlBugsVis"]
         if rainState == 1 or (rainState == 4 and len(PtGetPlayerList()) == 0) or (rainState == 3 and len(PtGetPlayerList()) > 0):
-            print "turning off bugs"
+            PtDebugPrint("turning off bugs")
             if bugState != 0:
                 sdl["psnlBugsVis"] = (0,)
         else:
             if self.bugCount > 0:
-                print "turning on bugs"
+                PtDebugPrint("turning on bugs")
                 if bugState != 1:
                     sdl["psnlBugsVis"] = (1,)
 
 ##    def AvatarPage(self, avatar, pageIn, lastOut):
-##        print "in avatar page"
+##        PtDebugPrint("in avatar page")
 ##        self.bugCount = PtGetNumParticles(avatar.getKey())
-##        print "number of bugs:", self.bugCount
+##        PtDebugPrint("number of bugs:", self.bugCount)
 ##        if (self.bugCount > 0):
 ##            PtSetParticleDissentPoint(0,0,10000,avatar.getKey())
 ##            PtKillParticles(10.0,1,avatar.getKey())
 ##            PtSetLightAnimStart(avatar.getKey(), bugLightObjectName, False)     
-##            print "kill all bugs in psnl age"
+##            PtDebugPrint("kill all bugs in psnl age")
 ##            self.ISaveBugCount(0)

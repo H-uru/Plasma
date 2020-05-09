@@ -59,7 +59,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
         self.id = 5262
 
         self.version = 2
-        print "__init__nb01UpdateHoodInfoImager v.", self.version
+        PtDebugPrint("__init__nb01UpdateHoodInfoImager v.", self.version)
 
     def IGetDeviceInbox(self):
         deviceNode = None
@@ -171,7 +171,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
                 score = msg.getScores()[0]
                 if msg.getName() == "PelletDrop":
                     self.IUpdateHoodPelletScore(score)
-            except Exception, detail:
+            except Exception as detail:
                 PtDebugPrint("nb01UpdateHoodInfoImager.OnGameScoreMsg(): " + detail)
 
     def IUpdateHoodPelletScore(self, score):
@@ -249,10 +249,10 @@ class nb01UpdateHoodInfoImager(ptResponder):
 
             if pelletscores and pelletscores.getID() > 0:
                 sname = "Update=%d" % (pelletscores.getID())
-                print "Sending notify to update node: ", pelletscores.getID()
+                PtDebugPrint("Sending notify to update node: ", pelletscores.getID())
                 self.ISendNotify(HoodInfoImagerScript.value, sname, 1.0)
             else:
-                print "Not sending notify because we don't have a valid pelletscore node"
+                PtDebugPrint("Not sending notify because we don't have a valid pelletscore node")
 
             self.IUpdateHoodImager()
 
@@ -271,7 +271,7 @@ class nb01UpdateHoodInfoImager(ptResponder):
         notify.send()
 
     def OnServerInitComplete(self):
-        print "nb01UpdateHoodInfoImager.OnServerInitComplete()"
+        PtDebugPrint("nb01UpdateHoodInfoImager.OnServerInitComplete()")
 
         try:
             AmCCR = ptCCRMgr().getLevel()
@@ -284,19 +284,19 @@ class nb01UpdateHoodInfoImager(ptResponder):
             sname = "Join=%s" % (PtGetLocalPlayer().getPlayerName())
             self.ISendNotify(self.key, sname, 1.0)
 
-            print "nb01UpdateHoodInfoImager.OnServerInitComplete: Sent player join update notify"
+            PtDebugPrint("nb01UpdateHoodInfoImager.OnServerInitComplete: Sent player join update notify")
 
     def OnNotify(self,state,id,events):
         for event in events:
             if event[0] == kVariableEvent:
                 if self.sceneobject.isLocallyOwned():
-                    print "nb01UpdateHoodInfoImager.OnNotify: I am owner so I'll update the imager"
+                    PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: I am owner so I'll update the imager")
                     if event[1][:5] == "Join=":
                         playername = event[1][5:]
                         self.IUpdatePlayerList(playername)
-                        print "nb01UpdateHoodInfoImager.OnNotify: Updated player list"
+                        PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: Updated player list")
                     elif event[1][:6] == "Score=":
                         playername = event[1][6:]
                         score = int(event[3])
                         self.IUpdatePelletScores(playername, score)
-                        print "nb01UpdateHoodInfoImager.OnNotify: Updated pellet scores"
+                        PtDebugPrint("nb01UpdateHoodInfoImager.OnNotify: Updated pellet scores")

@@ -173,6 +173,6 @@ def DeleteInvitation(params=None):
 
 def MeChat(params=None):
     if (params == None):
-        print 'xChatExtend:MeCmd: If you have nothing to say, why say anything at all?'
+        PtDebugPrint('xChatExtend:MeCmd: If you have nothing to say, why say anything at all?')
         return 
     PtSendKIMessage(kKIChatStatusMsg, ('%s %s' % (PtGetLocalPlayer().getPlayerName(), params)))

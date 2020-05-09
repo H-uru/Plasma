@@ -46,8 +46,8 @@ from PlasmaKITypes import *
 from PlasmaTypes import *
 
 import grtzMarkerGames
-from xMarkerGameBrain import *
-from xMarkerBrainUser import *
+from .xMarkerGameBrain import *
+from .xMarkerBrainUser import *
 
 class QuestMarkerBrain(object):
     def CaptureAllMarkers(self):

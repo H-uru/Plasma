@@ -72,7 +72,7 @@ class xStarTrekDoor(ptModifier):
         
         version = 2
         self.version = version
-        print "__init__xStarTrekDoor v.", version
+        PtDebugPrint("__init__xStarTrekDoor v.", version)
 
     def OnFirstUpdate(self):
         pass
@@ -82,7 +82,7 @@ class xStarTrekDoor(ptModifier):
         global doorCued
         global doorMoving
         global doorState
-        print doorMoving
+        PtDebugPrint(doorMoving)
         if state and id == Activate.id: # and PtWasLocallyNotified(self.key): # region is activated.
 
             for event in events:
@@ -94,13 +94,13 @@ class xStarTrekDoor(ptModifier):
             
             if not doorMoving:
                 self.doorAction()
-                print "door played"
+                PtDebugPrint("door played")
             else: # got a command, but door is busy so cue it
                 doorCued=1
-                print "door cued"
+                PtDebugPrint("door cued")
         elif state and id == respDoor.id:
             # Callback from door finishing movement
-            print "callbackfromdoor"
+            PtDebugPrint("callbackfromdoor")
             doorMoving=0
             if doorCued:
                 doorCued=0
@@ -113,7 +113,7 @@ class xStarTrekDoor(ptModifier):
             doorMoving=1
             doorHistory=doorState
             respDoor.run(self.key,state=doorState)
-            print "Door Begin %s" % doorState
+            PtDebugPrint("Door Begin %s" % doorState)
 
 
 

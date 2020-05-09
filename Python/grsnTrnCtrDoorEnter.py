@@ -73,25 +73,25 @@ class grsnTrnCtrDoorEnter(ptResponder):
         if (id == triggerRgn1.id):
             if (PtFindAvatar(events) != PtGetLocalAvatar()):
                 return
-            print" must have ki"
+            PtDebugPrint(" must have ki")
             kiLevel = PtGetLocalKILevel()
             if (kiLevel < 2):
                 return
             for event in events:
                 if (event[0]==1 and event[1]==1):
                     avatarEntering = PtFindAvatar(events)
-                    print"entered the region, disable this one and the other door's triggers"
+                    PtDebugPrint("entered the region, disable this one and the other door's triggers")
                     triggerRgn1.disable()
                     triggerRgn2.disable()
                     if (avatarEntering == PtGetLocalAvatar()):
-                        print"stop this avatar"
+                        PtDebugPrint("stop this avatar")
                         PtDisableMovementKeys()
-                        print"take away first person"
+                        PtDebugPrint("take away first person")
                         cam = ptCamera()
                         cam.disableFirstPersonOverride()
                         cam.undoFirstPerson()
                         PtSendKIMessage(kDisableEntireYeeshaBook,0)
-                    print"open the door"
+                    PtDebugPrint("open the door")
                     door1OpenResponder.run(self.key,avatar=avatarEntering)
                     return
         
@@ -99,7 +99,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             if (avatarEntering != PtGetLocalAvatar()):
                 return
             
-            print" door is open, walk in"
+            PtDebugPrint(" door is open, walk in")
             avatarEntering.avatar.runBehaviorSetNotify(behaviorWalkIn.value,self.key,behaviorWalkIn.netForce)
             return
         
@@ -109,7 +109,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             
             for event in events:
                 if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage: 
-                    print" Smart seek completed. Exit multistage, close exterior door"
+                    PtDebugPrint(" Smart seek completed. Exit multistage, close exterior door")
                     behaviorWalkIn.gotoStage(avatarEntering,-1)
                     door1CloseResponder.run(self.key,avatar=avatarEntering)
                     return
@@ -118,7 +118,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             if (avatarEntering != PtGetLocalAvatar()):
                 return
             
-            print"door closed, teleport and open other door"
+            PtDebugPrint("door closed, teleport and open other door")
             if (avatarEntering == PtGetLocalAvatar()):
                 camera.value.pushCameraCut(avatarEntering.getKey())
             avatarEntering.avatar.exitSubWorld()
@@ -130,7 +130,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             if (avatarEntering != PtGetLocalAvatar()):
                 return
             
-            print"interior door open, walk out"
+            PtDebugPrint("interior door open, walk out")
             avatarEntering.avatar.runBehaviorSetNotify(behaviorWalkOut.value,self.key,behaviorWalkOut.netForce)
             return
             
@@ -140,7 +140,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             
             for event in events:
                 if event[0] == kMultiStageEvent and event[2] == kAdvanceNextStage: 
-                    print" Smart seek completed. Exit multistage, close interior door"
+                    PtDebugPrint(" Smart seek completed. Exit multistage, close interior door")
                     door2CloseResponder.run(self.key,avatar=avatarEntering)
                     behaviorWalkOut.gotoStage(avatarEntering,-1)
                     return
@@ -149,7 +149,7 @@ class grsnTrnCtrDoorEnter(ptResponder):
             if (avatarEntering != PtGetLocalAvatar()):
                 return
             
-            print" process complete, re-enable detectors and free avatar "
+            PtDebugPrint(" process complete, re-enable detectors and free avatar ")
             triggerRgn1.enable()
             triggerRgn2.enable()
             if (avatarEntering == PtGetLocalAvatar()):

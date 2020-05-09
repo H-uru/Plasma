@@ -111,7 +111,7 @@ class xYeeshaPages(ptModifier):
         self.id = 5225
         version = 6
         self.version = version
-        print "__init__xYeeshaPages v.", version
+        PtDebugPrint("__init__xYeeshaPages v.", version)
 
 
     def OnFirstUpdate(self):
@@ -153,7 +153,7 @@ class xYeeshaPages(ptModifier):
             btnID = control.getTagID()
 
         if event == 2 and btnID in YeeshaPageIDList:
-            print "xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value
+            PtDebugPrint("xYeeshaPages.OnGUINotify():\tPicked up page number: ", PageNumber.value)
 #            PtUnloadDialog(DialogName)
             PtHideDialog(DialogName)
             
@@ -202,7 +202,7 @@ class xYeeshaPages(ptModifier):
         mydialog = PtGetDialogFromString(DialogName)
 
         #first hide them all
-#        print "PageNumber = ", PageNumber.value
+#        PtDebugPrint("PageNumber = ", PageNumber.value)
         ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage01)).hide()
         ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage02)).hide()
         ptGUIControlButton(mydialog.getControlFromTag(kYeeshaPage03)).hide() 
@@ -280,14 +280,14 @@ class xYeeshaPages(ptModifier):
 
 
         else:
-            print "xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ",PageNumber.value
+            PtDebugPrint("xYeeshaPages.IDrawLinkPanel():\tERROR: couldn't find page named ",PageNumber.value)
         return
 
 #
 #    def OnTimer(self,id):
 #        if id == kStartFadeoutID:
 #            PtFadeOut(kFadeOutSecs,1)
-#            print "\txYeeshaPages.OnTimer(): Linking the player from Cleft to Relto.  FadeOut over", kFadeOutSecs," seconds."
+#            PtDebugPrint("\txYeeshaPages.OnTimer(): Linking the player from Cleft to Relto.  FadeOut over", kFadeOutSecs," seconds.")
 #            PtAtTimeCallback(self.key,kReltoLinkSecs,kReltoLinkID)
 #        elif id == kReltoLinkID:  
 #            #link back to Relto now

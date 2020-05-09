@@ -84,7 +84,7 @@ class xExitSubworld(ptResponder):
                     avatar.avatar.exitSubWorld()
                     return
                 elif (id == safetyRgn.id):
-                    print "in safety region = ",entry
+                    PtDebugPrint("in safety region = ",entry)
                     inSafetyRegion  = entry
                     return
         

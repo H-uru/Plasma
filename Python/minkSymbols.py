@@ -89,7 +89,7 @@ class minkSymbols(ptResponder):
         self.id = 5260
         version = 1
         self.version = version
-        print "__init__minkSymbols v.", version,".0"
+        PtDebugPrint("__init__minkSymbols v.", version,".0")
 
     ###########################
     def OnFirstUpdate(self):
@@ -97,7 +97,7 @@ class minkSymbols(ptResponder):
         try:
             ageSDL = PtGetAgeSDL()
         except:
-            print "minkSymbols.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): ERROR --- Cannot find Minkata age SDL")
 
         ageSDL.setFlags("minkSymbolPart01", 1, 1)
         ageSDL.setFlags("minkSymbolPart02", 1, 1)
@@ -148,66 +148,66 @@ class minkSymbols(ptResponder):
         ageSDL.setNotify(self.key, "minkSymbolTouch05", 0.0)
 
         if ageSDL["minkSymbolPart01"][0] or not ageSDL["minkSymbolShow01"][0]:
-            print "minkSymbols.OnFirstUpdate(): You already found piece 1"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 1")
             respDisableCave01.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolPart02"][0] or not ageSDL["minkSymbolShow02"][0]:
-            print "minkSymbols.OnFirstUpdate(): You already found piece 2"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 2")
             respDisableCave02.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolPart03"][0] or not ageSDL["minkSymbolShow03"][0]:
-            print "minkSymbols.OnFirstUpdate(): You already found piece 3"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 3")
             respDisableCave03.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolPart04"][0] or not ageSDL["minkSymbolShow04"][0]:
-            print "minkSymbols.OnFirstUpdate(): You already found piece 4"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 4")
             respDisableCave04.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolPart05"][0] or not ageSDL["minkSymbolShow05"][0]:
-            print "minkSymbols.OnFirstUpdate(): You already found piece 5"
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): You already found piece 5")
             respDisableCave05.run(self.key, netPropagate=0)
 
 
         #If someone links in and someone else already activated the symbol, we need to try syncing them
         if ageSDL["minkSymbolTouch01"][0]:
-            print "minkSymbols.OnFirstUpdate(): Piece 1 was touched this session."
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 1 was touched this session.")
             respCave01.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch02"][0]:
-            print "minkSymbols.OnFirstUpdate(): Piece 2 was touched this session."
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 2 was touched this session.")
             respCave02.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch03"][0]:
-            print "minkSymbols.OnFirstUpdate(): Piece 3 was touched this session."
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 3 was touched this session.")
             respCave03.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch04"][0]:
-            print "minkSymbols.OnFirstUpdate(): Piece 4 was touched this session."
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 4 was touched this session.")
             respCave04.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
         if ageSDL["minkSymbolTouch05"][0]:
-            print "minkSymbols.OnFirstUpdate(): Piece 5 was touched this session."
+            PtDebugPrint("minkSymbols.OnFirstUpdate(): Piece 5 was touched this session.")
             respCave05.run(self.key, fastforward=1, netPropagate=0)
             respMusic.run(self.key, netPropagate=0)
 
     ###########################
     def OnNotify(self,state,id,events):
-        print "minkSymbols.OnNotify(): state=%s id=%d events=" % (state, id), events
+        PtDebugPrint("minkSymbols.OnNotify(): state=%s id=%d events=" % (state, id), events)
 
         if id in RegionToResponder.viewkeys():
-            print "minkSymbols.OnNotify(): Region %d triggered" % (id)
+            PtDebugPrint("minkSymbols.OnNotify(): Region %d triggered" % (id))
             code = "regCave0" + str(id) + ".disable()"
-            exec code
+            exec(code)
 
             ageSDL = PtGetAgeSDL()
             code = "ageSDL[\"minkSymbolPart0" + str(id) + "\"] = (1,)"
-            exec code
+            exec(code)
 
             code = "ageSDL[\"minkSymbolTouch0" + str(id) + "\"] = (1,)"
-            exec code
+            exec(code)
 
             RegionToResponder[id].run(self.key)

@@ -81,7 +81,7 @@ class AhnonayCathedral(ptResponder):
                             owner = chron
                     break
         if owner == None and vault.amOwnerOfCurrentAge():
-            print "I own this Cathedral, but I haven't set myself as Ahnonay owner yet."
+            PtDebugPrint("I own this Cathedral, but I haven't set myself as Ahnonay owner yet.")
             newNode = ptVaultChronicleNode(0)
             newNode.chronicleSetName("AhnonayOwner")
             newNode.chronicleSetValue(str(PtGetClientIDFromAvatarKey(PtGetLocalAvatar().getKey())))

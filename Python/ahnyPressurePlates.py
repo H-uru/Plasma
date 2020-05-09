@@ -82,7 +82,7 @@ class ahnyPressurePlates(ptModifier):
         self.id = 5947
         version = 1
         self.version = version
-        print "__init__ahnyPressurePlates v%d " % (version)
+        PtDebugPrint("__init__ahnyPressurePlates v%d " % (version))
 
     ###########################
     def OnFirstUpdate(self):
@@ -94,7 +94,7 @@ class ahnyPressurePlates(ptModifier):
             ageSDL = PtGetAgeSDL()
             ageSDL[SDLOccupied.value][0]
         except:
-            print "ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL"
+            PtDebugPrint("ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL")
             ageSDL[SDLOccupied.value] = (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
 
         ageSDL.setFlags("ahnyCurrentSphere",1,1)
@@ -127,7 +127,7 @@ class ahnyPressurePlates(ptModifier):
             try:
                 ageSDL[SDLTrees.value][0]
             except:
-                print "ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL"
+                PtDebugPrint("ahnyPressurePlates.OnFirstUpdate(): ERROR --- Cannot find the Ahnonay Age SDL")
                 ageSDL[SDLTrees.value] = (1,1,1,1,1,1,1,1,1,1,1,1,1,1,1)
 
             ageSDL.setFlags(SDLTrees.value,1,1)
@@ -149,7 +149,7 @@ class ahnyPressurePlates(ptModifier):
     ###########################
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         if VARname == "ahnyCurrentSphere" and respSphereRotate.value != []:
-            print "ahnyPressurePlates.OnSDLNotify(): playing audio SFX"
+            PtDebugPrint("ahnyPressurePlates.OnSDLNotify(): playing audio SFX")
             respSphereRotate.run(self.key)
 
     ###########################
@@ -158,7 +158,7 @@ class ahnyPressurePlates(ptModifier):
         global objZoneList
         global LocalAvatar
         
-        #print "ahnyPressurePlates.OnNotify: state=%s id=%d events=" % (state, id), events
+        #PtDebugPrint("ahnyPressurePlates.OnNotify: state=%s id=%d events=" % (state, id), events)
 
         if id == zones.id:
             for event in events:
@@ -172,13 +172,13 @@ class ahnyPressurePlates(ptModifier):
                             ageSDL = PtGetAgeSDL()
                             index = objZoneList.index(zoneName)
                             occupiedZones = list(ageSDL[SDLOccupied.value])
-                            #print "Zone: %s Index: %d Occupied: %s" % (zoneName,index,str(occupiedZones))
+                            #PtDebugPrint("Zone: %s Index: %d Occupied: %s" % (zoneName,index,str(occupiedZones)))
                             if event[1] == 1: #We are entering
                                 if occupiedZones[index] != 255: #avoid overflow
                                     occupiedZones[index]= occupiedZones[index] + 1
                                 if respLightList != [] and occupiedZones[index]==1: # if we are now equal to one run the responder 
                                     respClockLights.run(self.key, state='on', objectName=respLightList[index], netForce=1 )
-                                print "%s - enter %s" % (str(occupiedZones), str(index))
+                                PtDebugPrint("%s - enter %s" % (str(occupiedZones), str(index)))
                             else: #this should be exiting
                                 if occupiedZones[index] != 0: #only subtract if we are not zero don't want to overflow
                                     occupiedZones[index] = occupiedZones[index] -1
@@ -190,9 +190,9 @@ class ahnyPressurePlates(ptModifier):
 
                                     if (respLightList != []) and (occupiedZones[index] == 0):# 
                                         respClockLights.run(self.key, state='off', objectName=respLightList[index] , netForce=1)
-                                print "%s - exit %s" % (str(occupiedZones), str(index))
+                                PtDebugPrint("%s - exit %s" % (str(occupiedZones), str(index)))
                             ageSDL[SDLOccupied.value] = tuple(occupiedZones)
-                            #print "Occupied: %s" % (str(occupiedZones))
+                            #PtDebugPrint("Occupied: %s" % (str(occupiedZones)))
 
         # is it a clickable book on a pedestal?
         elif id == bookClickable.id and PtFindAvatar(events) == PtGetLocalAvatar() and state:
@@ -212,16 +212,16 @@ class ahnyPressurePlates(ptModifier):
             for event in events:
                 # is it from the OpenBook? (we only have one book to worry about)
                 if event[0] == PtEventType.kBook:
-                    print "ahnyPressurePlates: BookNotify  event=%d, id=%d" % (event[1],event[2])
+                    PtDebugPrint("ahnyPressurePlates: BookNotify  event=%d, id=%d" % (event[1],event[2]))
                     if event[1] == PtBookEventTypes.kNotifyImageLink:
                         if event[2] >= xLinkingBookDefs.kFirstLinkPanelID or event[2] == xLinkingBookDefs.kBookMarkID:
-                            print "ahnyPressurePlates:Book: hit linking panel %s" % (event[2])
+                            PtDebugPrint("ahnyPressurePlates:Book: hit linking panel %s" % (event[2]))
                             self.HideBook(1)
 
                             ageSDL = PtGetAgeSDL()
-                            print ageSDL[SDLOccupied.value]
+                            PtDebugPrint(ageSDL[SDLOccupied.value])
                             if self.RegionsEmpty():
-                                print "Sphere rotating"
+                                PtDebugPrint("Sphere rotating")
                                 ageSDL = PtGetAgeSDL()
                                 currentSphere = ageSDL["ahnyCurrentSphere"][0]
                                 if currentSphere == 3 or currentSphere == 4:
@@ -229,7 +229,7 @@ class ahnyPressurePlates(ptModifier):
                                 else:
                                     ageSDL["ahnyCurrentSphere"] = ((currentSphere + 1),)
                             else:
-                                print "Sphere staying put"
+                                PtDebugPrint("Sphere staying put")
 
                             respLinkResponder.run(self.key, avatar=PtGetLocalAvatar(),netPropagate=0)
 
@@ -259,19 +259,19 @@ class ahnyPressurePlates(ptModifier):
                                     elif (sphere.value == "4"):
                                         currentSphere.setInt(1,0)
                                     else:
-                                        print"missing sphere identifier string!"
+                                        PtDebugPrint("missing sphere identifier string!")
                                     ahnySDL.setStateDataRecord(ahnyRecord)
                                     ahnySDL.save()
-                                    print"advanced from sphere ",sphere.value
+                                    PtDebugPrint("advanced from sphere ",sphere.value)
                                     return
                             '''
         
                     elif event[1] == PtBookEventTypes.kNotifyShow:
-                        print "ahnyLinkBookGUIPopup:Book: NotifyShow"
+                        PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyShow")
                         PtSendKIMessage(kEnableKIandBB,0)
 
                     elif event[1] == PtBookEventTypes.kNotifyHide:
-                        print "ahnyLinkBookGUIPopup:Book: NotifyHide"
+                        PtDebugPrint("ahnyLinkBookGUIPopup:Book: NotifyHide")
                         PtToggleAvatarClickability(True)
                         bookClickable.enable()
 
@@ -283,24 +283,24 @@ class ahnyPressurePlates(ptModifier):
         if Sphere.value == "Sphere01":
             quabs = ageSDL["ahnyQuabs"][0]
             if quabs:
-                print "ahnyPressurePlates: not all quabs kicked off"
+                PtDebugPrint("ahnyPressurePlates: not all quabs kicked off")
                 return False
         elif Sphere.value == "Sphere02":
             treeList = list(ageSDL[SDLTrees.value])
             for tree in treeList:
                 if tree:
-                    print "ahnyPressurePlates: not all trees knocked over"
+                    PtDebugPrint("ahnyPressurePlates: not all trees knocked over")
                     return False
 
         for zone in occupantList[1:]:
             if zone:
-                print "ahnyPressurePlates: some zones still occupied"
+                PtDebugPrint("ahnyPressurePlates: some zones still occupied")
                 return False
 
         if occupantList[0] == 1:
             return True
 
-        print "ahnyPressurePlates: book zone still occupied"
+        PtDebugPrint("ahnyPressurePlates: book zone still occupied")
         return False
 
     ###########################
@@ -326,7 +326,7 @@ class ahnyPressurePlates(ptModifier):
             gLinkingBook.show(1)
 
         except LookupError:
-            print "ahnyLinkBookGUIPopup: could not find age AhnonayCathedral's linking panel"
+            PtDebugPrint("ahnyLinkBookGUIPopup: could not find age AhnonayCathedral's linking panel")
 
     ###########################
     def HideBook(self, islinking = 0):

@@ -83,7 +83,7 @@ class xPotsSymbol(ptResponder):
         ptResponder.__init__(self)
         self.id = 230
         self.version = 1
-        print "xPotsSymbol.__init__: v.", self.version
+        PtDebugPrint("xPotsSymbol.__init__: v.", self.version)
 
 
     def OnFirstUpdate(self):
@@ -98,7 +98,7 @@ class xPotsSymbol(ptResponder):
         if not all(listSDL):
             PtDebugPrint("ERROR: xPotsSymbol.OnFirstUpdate():\tERROR: missing a SDL var name")
 
-        print "xPotsSymbol.OnFirstUpdate(): listSDL = ", listSDL
+        PtDebugPrint("xPotsSymbol.OnFirstUpdate(): listSDL = ", listSDL)
 
         if boolFirstUpdate.value:
             self.Initialize()
@@ -112,7 +112,7 @@ class xPotsSymbol(ptResponder):
             try:
                 ageSDL = PtGetAgeSDL()
                 for sc in listSDL:
-                    print "xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d" % (sc,ageSDL[sc][0])
+                    PtDebugPrint("xPotsSymbol.OnServerInitComplete():\t sdl: %s = %d" % (sc,ageSDL[sc][0]))
                     ageSDL.setFlags(sc,1,1)
                     ageSDL.sendToClients(sc)
                     ageSDL.setNotify(self.key,sc,0.0)
@@ -138,12 +138,12 @@ class xPotsSymbol(ptResponder):
         for sc in listSDL:
             if ageSDL[sc][0] == 1:
                 tallySC += 1
-        print "xPotsSymbol.IUpdateIcon(): total # of SaveCloths hit = ",tallySC
+        PtDebugPrint("xPotsSymbol.IUpdateIcon(): total # of SaveCloths hit = ",tallySC)
         if tallySC > 0:
             respIconStages.run(self.key,state=iconStates[tallySC-1],fastforward=ff)
-            print "turning on POTS icon stage: ",iconStates[tallySC-1]
+            PtDebugPrint("turning on POTS icon stage: ",iconStates[tallySC-1])
             if tallySC == len(listSDL):
-                print "POTS icon is completed, will enable link to POTS cave"
+                PtDebugPrint("POTS icon is completed, will enable link to POTS cave")
                 rgnIconLinker.enable()
 
 

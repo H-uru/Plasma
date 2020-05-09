@@ -67,16 +67,16 @@ class x2wayLever(ptResponder):
         
         version = 1
         self.version = version
-        print "__init__x2wayLever v.", version
+        PtDebugPrint("__init__x2wayLever v.", version)
 
     def OnFirstUpdate(self):
         if self.SDL == None:
-            print "x2wayLever.OnFirstUpdate():\tERROR---missing SDL (%s)" % varstring.value
+            PtDebugPrint("x2wayLever.OnFirstUpdate():\tERROR---missing SDL (%s)" % varstring.value)
             return
 
         self.SDL.setDefault("LvrPos",(0,)) # local only: set default lever position, Load() will correct if necessary
         actTo1.disable() # set default activator state, Load() will correct if necessary
-        #print "x2wayLever.OnFirstUpdate():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value)
+        #PtDebugPrint("x2wayLever.OnFirstUpdate():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value))
     
     #Load() gets called after OnFirstUpdate IF anyone has updated the server's SDL (SDL.setDefault above is local only)
     def Load(self):
@@ -87,7 +87,7 @@ class x2wayLever(ptResponder):
         else:               # lever in position no.2
             actTo1.enable()
             actTo2.disable()
-        print "x2wayLever.Load():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value)
+        PtDebugPrint("x2wayLever.Load():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value))
         
     def OnNotify(self,state,id,events):
     
@@ -103,12 +103,12 @@ class x2wayLever(ptResponder):
             elif id==respTo2.id or id==respTo1.id:
                 leverPos = -(leverPos-1)
                 self.SDL["LvrPos"] = (leverPos,)
-                print "x2wayLever.OnNotify:\tsending notify: '%s' moving to position %d" % (varstring.value,leverPos+1)
+                PtDebugPrint("x2wayLever.OnNotify:\tsending notify: '%s' moving to position %d" % (varstring.value,leverPos+1))
                 note = ptNotify(self.key)
                 note.setActivate(1.0)
                 note.addVarNumber(varstring.value,leverPos)
                 note.send()
-                print "x2wayLever.OnNotify():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value)
+                PtDebugPrint("x2wayLever.OnNotify():\tself.SDL[LvrPos]=%d (%s)" % (self.SDL["LvrPos"][0],varstring.value))
             else:
-                print "x2wayLever.OnNotify:\tERROR: unanticipated message source."
+                PtDebugPrint("x2wayLever.OnNotify:\tERROR: unanticipated message source.")
             return

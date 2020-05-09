@@ -76,7 +76,7 @@ class philBookshelf(ptModifier):
         self.id = 5327
         self.version = 1
         minor = 1
-        print ('__init__philBookshelf v. %d.%d' % (self.version, minor))
+        PtDebugPrint(('__init__philBookshelf v. %d.%d' % (self.version, minor)))
 
 
 
@@ -91,7 +91,7 @@ class philBookshelf(ptModifier):
 
     def OnNotify(self,state,id,events):
         boolLinkerIsMe = PtWasLocallyNotified(self.key)
-        print ('philBookshelf.OnNotify(): state = %d, id = %d, me = %s' % (state, id, boolLinkerIsMe))
+        PtDebugPrint(('philBookshelf.OnNotify(): state = %d, id = %d, me = %s' % (state, id, boolLinkerIsMe)))
         
         if id == actBookshelfExit.id:
             self.IDisengageShelf(boolLinkerIsMe)
@@ -102,7 +102,7 @@ class philBookshelf(ptModifier):
                 avatar = PtFindAvatar(events)
                 if event[0] == kMultiStageEvent and event[1] == 0 and LocalAvatar == avatar: # Smart seek completed. Exit multistage, and show GUI.
                     SeekBehavior.gotoStage(avatar, -1) 
-                    print "philBookshelf.OnNotify():\tengaging bookshelf"
+                    PtDebugPrint("philBookshelf.OnNotify():\tengaging bookshelf")
                     avatar.draw.disable()
                     # set camera to Shelf Camera
                     virtCam = ptCamera()
@@ -162,7 +162,7 @@ class philBookshelf(ptModifier):
     
 
     def IDisengageShelf(self, boolLinkerIsMe = False):
-        print ('philBookshelf.IDisengageShelf(): me = %s' % boolLinkerIsMe)
+        PtDebugPrint(('philBookshelf.IDisengageShelf(): me = %s' % boolLinkerIsMe))
         actBookshelfExit.disable()
         # fastforward removed because it disables netPropagate
         respMoveShelf.run(self.key, state = "lower")
