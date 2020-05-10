@@ -1,0 +1,11 @@
+StartDateTime=0946713600
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=34
+ReleaseVersion=0
+Page=BlueSpiralCave,2,1
+Page=MINKcave,4,1
+Page=PODcave,3,1
+Page=POTScave,1,1
+Page=TheSpecialPage,5

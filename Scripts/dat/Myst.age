@@ -1,0 +1,15 @@
+StartDateTime=0946713600
+DayLength=24.000000
+MaxCapacity=10
+LingerTime=180
+SequencePrefix=28
+ReleaseVersion=0
+Page=FemaleFireplaceButton,8
+Page=FemaleFireplaceClimbIn,4
+Page=FemaleFireplaceClimbOut,2
+Page=Fireplace,1
+Page=MaleFireplaceButton,7
+Page=MaleFireplaceClimbIn,5
+Page=MaleFireplaceClimbOut,3
+Page=mystEggRecipeGUI,6
+Page=Pelican,9
