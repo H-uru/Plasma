@@ -13,9 +13,6 @@ For a project roadmap, see https://github.com/H-uru/Plasma/wiki/Roadmap
 Related Projects
 ----------------
 
-- [moul-scripts](https://github.com/H-uru/moul-scripts) - An updated repository
-  of game scripts containing bug-fixes and compatible with modern python
-  interpreters for use with Plasma.
 - [dirtsand](https://github.com/H-uru/dirtsand) - An open-source
   Plasma-compatible server project.
 
@@ -95,14 +92,12 @@ Running Instructions
 --------------------
 
 To run the Internal Client for testing with MOULa content, you will need the a
-fully-patched installation of MOULa provided by Cyan Worlds. In addition, you
-will need to download or clone the files available on the
-[moul-scripts repository](https://github.com/H-uru/moul-scripts).
+fully-patched installation of MOULa provided by Cyan Worlds.
 
 1. Copy the **files from your existing MOULa installation** to a new folder, or
    install fresh if you do not already have it installed. This folder will be
    referred to as *MOUL-OS* for the remainder of these instructions.
-2. Copy the **Python and SDL** folders from moul-scripts into the *MOUL-OS*
+2. Copy the **Python and SDL** folders from Scripts into the *MOUL-OS*
    folder, as well as the **files in dat** into the existing dat folder.
 3. Copy the example_server.ini file from the root of the Plasma repository into
    your *MOUL-OS* folder, and rename it as **server.ini**. If you are running
