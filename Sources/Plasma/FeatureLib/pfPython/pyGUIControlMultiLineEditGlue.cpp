@@ -139,17 +139,10 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setStringW, args)
     {
         int strLen = PyUnicode_GetSize(textObj);
         wchar_t* temp = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
+        PyUnicode_AsWideChar(textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->SetTextW(temp);
         delete [] temp;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* temp = PyString_AsString(textObj);
-        self->fThis->SetText(temp);
         PYTHON_RETURN_NONE;
     }
     else
@@ -161,7 +154,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setStringW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getString)
 {
-    return PyString_FromString(self->fThis->GetText());
+    return PyUnicode_FromString(self->fThis->GetText());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getStringW)
@@ -197,7 +190,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, setEncodedBufferW, args)
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlMultiLineEdit, getEncodedBuffer)
 {
     const char* buffer = self->fThis->GetEncodedBuffer();
-    PyObject* retVal = PyString_FromString(buffer);
+    PyObject* retVal = PyUnicode_FromString(buffer);
     delete [] buffer;
     return retVal;
 }
@@ -245,22 +238,10 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertCharW, args)
         }
 
         wchar_t* temp = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
+        PyUnicode_AsWideChar(textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->InsertCharW(temp[0]);
         delete [] temp;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* temp = PyString_AsString(textObj);
-        if (strlen(temp) != 1)
-        {
-            PyErr_SetString(PyExc_TypeError, "insertCharW expects a single unicode character");
-            PYTHON_RETURN_ERROR;
-        }
-        self->fThis->InsertChar(temp[0]);
         PYTHON_RETURN_NONE;
     }
     else
@@ -294,17 +275,10 @@ PYTHON_METHOD_DEFINITION(ptGUIControlMultiLineEdit, insertStringW, args)
     {
         int strLen = PyUnicode_GetSize(textObj);
         wchar_t* temp = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, temp, strLen);
+        PyUnicode_AsWideChar(textObj, temp, strLen);
         temp[strLen] = L'\0';
         self->fThis->InsertStringW(temp);
         delete [] temp;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* temp = PyString_AsString(textObj);
-        self->fThis->InsertString(temp);
         PYTHON_RETURN_NONE;
     }
     else

@@ -106,7 +106,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNumParticles, args, "Params: key\nKey is th
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    return PyInt_FromLong(cyMisc::GetNumParticles(*key));
+    return PyLong_FromLong(cyMisc::GetNumParticles(*key));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleOffset, args, "Params: x,y,z,particlesys\nSets the particlesys particle system's offset")
@@ -131,9 +131,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetParticleOffset, args, "Params: x,y,z,partic
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a\n Key is the key of scene object host to light. Name is the name of the light to manipulate")
 {
     PyObject* keyObj = NULL;
-    PyObject* nameObj = NULL;
+    ST::string name;
     float r,g,b,a;
-    if (!PyArg_ParseTuple(args, "OOffff", &keyObj, &nameObj, &r, &g, &b, &a))
+    if (!PyArg_ParseTuple(args, "OO&ffff", &keyObj, PyUnicode_STStringConverter, &name, &r, &g, &b, &a))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetLightValue expects a ptKey, a string, and four floats");
         PYTHON_RETURN_ERROR;
@@ -144,16 +144,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    ST::string name;
-    if (PyString_CheckEx(nameObj))
-    {
-        name = PyString_AsStringEx(nameObj);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtSetLightValue expects a ptKey, a string, and four floats");
-        PYTHON_RETURN_ERROR;
-    }
     cyMisc::SetLightColorValue(*key, name, r, g, b, a);
     PYTHON_RETURN_NONE;
 }
@@ -161,9 +151,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightValue, args, "Params: key,name,r,g,b,a
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,start\n Key is the key of scene object host to light, start is a bool. Name is the name of the light to manipulate")
 {
     PyObject* keyObj = NULL;
-    PyObject* nameObj = NULL;
+    ST::string name;
     char start;
-    if (!PyArg_ParseTuple(args, "OOb", &keyObj, &nameObj, &start))
+    if (!PyArg_ParseTuple(args, "OOb", &keyObj, PyUnicode_STStringConverter, &name, &start))
     {
         PyErr_SetString(PyExc_TypeError, "PtSetLightAnimStart expects a ptKey, a string, and a boolean");
         PYTHON_RETURN_ERROR;
@@ -174,16 +164,6 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetLightAnimStart, args, "Params: key,name,sta
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    ST::string name;
-    if (PyString_CheckEx(nameObj))
-    {
-        name = PyString_AsStringEx(nameObj);
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtSetLightAnimStart expects a ptKey, a string, and a boolean");
-        PYTHON_RETURN_ERROR;
-    }
     cyMisc::SetLightAnimationOn(*key, name, start != 0);
     PYTHON_RETURN_NONE;
 }
@@ -310,7 +290,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetClearColor, args, "Params: red,green,blue\n
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalKILevel, "returns local player's ki level")
 {
-    return PyInt_FromLong(cyMisc::GetKILevel());
+    return PyLong_FromLong(cyMisc::GetKILevel());
 }
 
 PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearCameraStack, cyMisc::ClearCameraStack, "clears all cameras")
@@ -323,12 +303,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetCameraNumber, args, "Params: x\nReturns cam
         PyErr_SetString(PyExc_TypeError, "PtGetCameraNumber expects an int");
         PYTHON_RETURN_ERROR;
     }
-    return PyString_FromSTString(cyMisc::GetCameraNumber(x));
+    return PyUnicode_FromSTString(cyMisc::GetCameraNumber(x));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumCameras, "returns camera stack size")
 {
-    return PyInt_FromLong(cyMisc::GetNumCameras());
+    return PyLong_FromLong(cyMisc::GetNumCameras());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtRebuildCameraStack, args, "Params: name,ageName\nPush camera with this name on the stack")
@@ -414,24 +394,24 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs,
         if (kwargs && PyDict_Check(kwargs)) {
             PyObject* value = PyDict_GetItemString(kwargs, "level");
             if (value) {
-                if (PyInt_Check(value))
-                    level = PyInt_AsLong(value);
+                if (PyLong_Check(value))
+                    level = PyLong_AsLong(value);
                 else
                     break;
             }
 
             value = PyDict_GetItemString(kwargs, "sep");
             if (value) {
-                if (PyString_CheckEx(value))
-                    sep = PyString_AsStringEx(value);
+                if (PyUnicode_Check(value))
+                    sep = PyUnicode_AsSTString(value);
                 else
                     break;
             }
 
             value = PyDict_GetItemString(kwargs, "end");
             if (value) {
-                if (PyString_CheckEx(value))
-                    end = PyString_AsStringEx(value);
+                if (PyUnicode_Check(value))
+                    end = PyUnicode_AsSTString(value);
                 else
                     break;
             }
@@ -440,7 +420,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs,
         ST::string_stream ss;
         for (size_t i = 0; i < PySequence_Fast_GET_SIZE(args); ++i) {
             PyObject* theMsg = PySequence_Fast_GET_ITEM(args, i);
-            if (PyString_CheckEx(theMsg))
+            if (PyUnicode_Check(theMsg))
                 Py_XINCREF(theMsg);
             else
                 theMsg = PyObject_Str(theMsg);
@@ -448,7 +428,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_WKEY(PtDebugPrint, args, kwargs, "Params: *msgs,
             if (i != 0)
                 ss << sep;
             if (theMsg) {
-                ss << PyString_AsStringEx(theMsg);
+                ss << PyUnicode_AsSTString(theMsg);
                 Py_DECREF(theMsg);
             } else {
                 PyErr_Format(PyExc_RuntimeError, "Failed to `str()` argument index %n", i);
@@ -639,8 +619,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetSupportedDisplayModes, "Returns a li
     for (std::vector<plDisplayMode>::iterator curArg = res.begin(); curArg != res.end(); ++curArg)
     {
         PyObject* tup = PyTuple_New(2);
-        PyTuple_SetItem(tup, 0, PyInt_FromLong((long)(*curArg).Width));
-        PyTuple_SetItem(tup, 1, PyInt_FromLong((long)(*curArg).Height));
+        PyTuple_SetItem(tup, 0, PyLong_FromLong((long)(*curArg).Width));
+        PyTuple_SetItem(tup, 1, PyLong_FromLong((long)(*curArg).Height));
 
         PyList_Append(retVal, tup);
     }
@@ -648,33 +628,33 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetSupportedDisplayModes, "Returns a li
 }
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDesktopWidth, "Returns desktop width")
 {
-    return PyInt_FromLong((long)cyMisc::GetDesktopWidth());
+    return PyLong_FromLong((long)cyMisc::GetDesktopWidth());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDesktopHeight, "Returns desktop height")
 {
-    return PyInt_FromLong((long)cyMisc::GetDesktopHeight());
+    return PyLong_FromLong((long)cyMisc::GetDesktopHeight());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDesktopColorDepth, "Returns desktop ColorDepth")
 {
-    return PyInt_FromLong((long)cyMisc::GetDesktopColorDepth());
+    return PyLong_FromLong((long)cyMisc::GetDesktopColorDepth());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetDefaultDisplayParams, "Returns the default resolution and display settings")
 {
     PipelineParams *pp = cyMisc::GetDefaultDisplayParams();
     PyObject* tup = PyTuple_New(10);
-    PyTuple_SetItem(tup, 0, PyInt_FromLong((long)pp->Width));
-    PyTuple_SetItem(tup, 1, PyInt_FromLong((long)pp->Height));
-    PyTuple_SetItem(tup, 2, PyInt_FromLong((long)pp->Windowed));
-    PyTuple_SetItem(tup, 3, PyInt_FromLong((long)pp->ColorDepth));
-    PyTuple_SetItem(tup, 4, PyInt_FromLong((long)pp->AntiAliasingAmount));
-    PyTuple_SetItem(tup, 5, PyInt_FromLong((long)pp->AnisotropicLevel));
-    PyTuple_SetItem(tup, 6, PyInt_FromLong((long)pp->TextureQuality));
-    PyTuple_SetItem(tup, 7, PyInt_FromLong((long)pp->VideoQuality));
-    PyTuple_SetItem(tup, 8, PyInt_FromLong((long)pp->Shadows));
-    PyTuple_SetItem(tup, 9, PyInt_FromLong((long)pp->PlanarReflections));
+    PyTuple_SetItem(tup, 0, PyLong_FromLong((long)pp->Width));
+    PyTuple_SetItem(tup, 1, PyLong_FromLong((long)pp->Height));
+    PyTuple_SetItem(tup, 2, PyLong_FromLong((long)pp->Windowed));
+    PyTuple_SetItem(tup, 3, PyLong_FromLong((long)pp->ColorDepth));
+    PyTuple_SetItem(tup, 4, PyLong_FromLong((long)pp->AntiAliasingAmount));
+    PyTuple_SetItem(tup, 5, PyLong_FromLong((long)pp->AnisotropicLevel));
+    PyTuple_SetItem(tup, 6, PyLong_FromLong((long)pp->TextureQuality));
+    PyTuple_SetItem(tup, 7, PyLong_FromLong((long)pp->VideoQuality));
+    PyTuple_SetItem(tup, 8, PyLong_FromLong((long)pp->Shadows));
+    PyTuple_SetItem(tup, 9, PyLong_FromLong((long)pp->PlanarReflections));
     return tup;
 }
 
@@ -713,18 +693,14 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSetBehaviorNetFlags, args, "Params: behKey, ne
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendFriendInvite, args, "Params: emailAddress, toName = \"Friend\"\nSends an email with invite code")
 {
-    char* emailIn = nullptr;
-    char* nameIn = nullptr;
-    if (!PyArg_ParseTuple(args, "es|es", "utf8", &emailIn, "utf8", &nameIn))
+    ST::string email;
+    ST::string name = ST_LITERAL("Friend");
+    if (!PyArg_ParseTuple(args, "O&|O&", PyUnicode_STStringConverter, &email,
+                          PyUnicode_STStringConverter, &name))
     {
         PyErr_SetString(PyExc_TypeError, "PtSendFriendInvite expects a string and optionally another string");
         PYTHON_RETURN_ERROR;
     }
-
-    ST::string email = emailIn;
-    ST::string name = nameIn ? nameIn : ST_LITERAL("Friend");
-    PyMem_Free(emailIn);
-    PyMem_Free(nameIn);
 
     if (email.size() >= kMaxEmailAddressLength)
     {

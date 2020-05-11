@@ -50,30 +50,30 @@ protected:
 
     bool IQueryPythonFile(const char *fileName);
 
-    void IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddString(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddSceneObj(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddSceneObjList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddActivator(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddActivatorList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddDynamicText(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddGUIDialog(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddExcludeRegion(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddAnimation(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddBehavior(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddMaterial(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddGUIPopUpMenu(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddWaterComponent(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddSwimCurrentInterface(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddDropDownList(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddClusterComponent(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, char *paramName, int id, int vid, std::vector<std::string>* vstates);
-    void IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, std::string paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddBool(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddInt(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddFloat(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddString(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddSceneObj(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddSceneObjList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddActivator(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddActivatorList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddResponder(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddResponderList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddDynamicText(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddGUIDialog(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddExcludeRegion(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddBehavior(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddMaterial(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddGUIPopUpMenu(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddGUISkin(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddWaterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddSwimCurrentInterface(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddDropDownList(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddClusterComponent(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddMaterialAnimation(plAutoUIBlock *autoUI, PyObject *tuple, const char *paramName, int id, int vid, std::vector<std::string>* vstates);
+    void IAddGrassComponent(plAutoUIBlock *autoUI, PyObject *objTuple, const char* paramName, int id, int vid, std::vector<std::string>* vstates);
 
 public:
     static plPythonMgr& Instance();

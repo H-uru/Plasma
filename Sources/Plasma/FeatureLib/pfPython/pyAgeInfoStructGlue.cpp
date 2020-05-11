@@ -115,7 +115,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, copyFrom, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeFilename)
 {
-    return PyString_FromSTString(self->fThis->GetAgeFilename());
+    return PyUnicode_FromSTString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
@@ -132,7 +132,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeInstanceName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeInstanceName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
@@ -149,7 +149,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeUserDefinedName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeUserDefinedName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
@@ -166,7 +166,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeDescription)
 {
-    return PyString_FromSTString(self->fThis->GetAgeDescription());
+    return PyUnicode_FromSTString(self->fThis->GetAgeDescription());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
@@ -183,7 +183,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeDescription, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeInstanceGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceGuid());
+    return PyUnicode_FromString(self->fThis->GetAgeInstanceGuid());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceGuid, args)
@@ -200,7 +200,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeInstanceGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeSequenceNumber)
 {
-    return PyInt_FromLong(self->fThis->GetAgeSequenceNumber());
+    return PyLong_FromLong(self->fThis->GetAgeSequenceNumber());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeSequenceNumber, args)
@@ -217,7 +217,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeSequenceNumber, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getAgeLanguage)
 {
-    return PyInt_FromLong(self->fThis->GetAgeLanguage());
+    return PyLong_FromLong(self->fThis->GetAgeLanguage());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeLanguage, args)
@@ -234,7 +234,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStruct, setAgeLanguage, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStruct, getDisplayName)
 {
-    return PyString_FromSTString(self->fThis->GetDisplayName());
+    return PyUnicode_FromSTString(self->fThis->GetDisplayName());
 }
 
 PYTHON_START_METHODS_TABLE(ptAgeInfoStruct)
@@ -257,11 +257,12 @@ PYTHON_START_METHODS_TABLE(ptAgeInfoStruct)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptAgeInfoStruct_COMPARE         PYTHON_NO_COMPARE
 #define ptAgeInfoStruct_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptAgeInfoStruct_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptAgeInfoStruct_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptAgeInfoStruct_STR             PYTHON_NO_STR
+#define ptAgeInfoStruct_GETATTRO        PYTHON_NO_GETATTRO
+#define ptAgeInfoStruct_SETATTRO        PYTHON_NO_SETATTRO
 #define ptAgeInfoStruct_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptAgeInfoStruct)
 #define ptAgeInfoStruct_GETSET          PYTHON_NO_GETSET
 #define ptAgeInfoStruct_BASE            PYTHON_NO_BASE
@@ -325,7 +326,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, copyFrom, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeFilename)
 {
-    return PyString_FromSTString(self->fThis->GetAgeFilename());
+    return PyUnicode_FromSTString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
@@ -342,7 +343,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeInstanceName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeInstanceName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
@@ -359,7 +360,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeUserDefinedName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeUserDefinedName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)
@@ -376,7 +377,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeInstanceGuid)
 {
-    return PyString_FromString(self->fThis->GetAgeInstanceGuid());
+    return PyUnicode_FromString(self->fThis->GetAgeInstanceGuid());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceGuid, args)
@@ -393,7 +394,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeInstanceGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getAgeSequenceNumber)
 {
-    return PyInt_FromLong(self->fThis->GetAgeSequenceNumber());
+    return PyLong_FromLong(self->fThis->GetAgeSequenceNumber());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeSequenceNumber, args)
@@ -410,7 +411,7 @@ PYTHON_METHOD_DEFINITION(ptAgeInfoStructRef, setAgeSequenceNumber, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeInfoStructRef, getDisplayName)
 {
-    return PyString_FromSTString(self->fThis->GetDisplayName());
+    return PyUnicode_FromSTString(self->fThis->GetDisplayName());
 }
 
 PYTHON_START_METHODS_TABLE(ptAgeInfoStructRef)

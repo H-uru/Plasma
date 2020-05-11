@@ -60,7 +60,7 @@ PYTHON_INIT_DEFINITION(ptVaultSDLNode, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultSDLNode, getIdent)
 {
-    return PyInt_FromLong(self->fThis->GetIdent());
+    return PyLong_FromLong(self->fThis->GetIdent());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultSDLNode, setIdent, args)

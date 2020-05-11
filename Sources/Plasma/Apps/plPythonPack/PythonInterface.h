@@ -56,8 +56,6 @@ namespace PythonInterface
 
     PyObject* CompileString(const char *command, const plFileName& filename);
     bool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
-    void getOutputAndReset(ST::string& outmsg);
-    void getErrorAndReset(ST::string& errmsg);
     PyObject* CreateModule(const char* module);
     bool RunPYC(PyObject* code, PyObject* module);
     PyObject* GetModuleItem(const char* item, PyObject* module);

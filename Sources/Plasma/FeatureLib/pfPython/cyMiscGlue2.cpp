@@ -61,14 +61,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtYesNoDialog, args, "Params: selfkey,dialogMess
             "And their answer will be returned in a Notify message.")
 {
     PyObject* keyObj = nullptr;
-    PyObject* text;
-    if (!PyArg_ParseTuple(args, "OO", &keyObj, &text) || !pyKey::Check(keyObj) ||
-        !PyString_CheckEx(text)) {
+    ST::string text;
+    if (!PyArg_ParseTuple(args, "OO&", &keyObj, PyUnicode_STStringConverter, &text) || !pyKey::Check(keyObj)) {
         PyErr_SetString(PyExc_TypeError, "PtYesNoDialog expects a ptKey and a string");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    cyMisc::YesNoDialog(*key, PyString_AsStringEx(text));
+    cyMisc::YesNoDialog(*key, text);
     PYTHON_RETURN_NONE
 }
 
@@ -173,9 +172,9 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         PYTHON_RETURN_ERROR;
     }
     std::vector<std::string> nodeNames;
-    if (PyString_Check(nodeNameObj))
+    if (PyUnicode_Check(nodeNameObj))
     {
-        nodeNames.push_back(PyString_AsString(nodeNameObj));
+        nodeNames.emplace_back(PyUnicode_AsUTF8(nodeNameObj));
     }
     else if (PyList_Check(nodeNameObj))
     {
@@ -183,12 +182,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtPageInNode, args, "Params: nodeName, netForce=
         for (int i = 0; i < num; i++)
         {
             PyObject* listItem = PyList_GetItem(nodeNameObj, i);
-            if (!PyString_Check(listItem))
+            if (!PyUnicode_Check(listItem))
             {
                 PyErr_SetString(PyExc_TypeError, "PtPageInNode expects a string or list of strings, and optionally a string");
                 PYTHON_RETURN_ERROR;
             }
-            nodeNames.push_back(PyString_AsString(listItem));
+            nodeNames.emplace_back(PyUnicode_AsUTF8(listItem));
         }
     }
     else

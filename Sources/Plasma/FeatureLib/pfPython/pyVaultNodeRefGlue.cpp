@@ -110,12 +110,13 @@ PYTHON_START_METHODS_TABLE(ptVaultNodeRef)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptVaultNodeRef_COMPARE          PYTHON_NO_COMPARE
 #define ptVaultNodeRef_AS_NUMBER        PYTHON_NO_AS_NUMBER
 #define ptVaultNodeRef_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptVaultNodeRef_AS_MAPPING       PYTHON_NO_AS_MAPPING
 #define ptVaultNodeRef_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
 #define ptVaultNodeRef_STR              PYTHON_NO_STR
+#define ptVaultNodeRef_GETATTRO         PYTHON_NO_GETATTRO
+#define ptVaultNodeRef_SETATTRO         PYTHON_NO_SETATTRO
 #define ptVaultNodeRef_GETSET           PYTHON_NO_GETSET
 #define ptVaultNodeRef_BASE             PYTHON_NO_BASE
 PLASMA_CUSTOM_TYPE(ptVaultNodeRef, "Vault node relationship pseudo class");

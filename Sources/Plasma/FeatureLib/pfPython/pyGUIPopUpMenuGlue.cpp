@@ -82,10 +82,10 @@ PYTHON_INIT_DEFINITION(ptGUIPopUpMenu, args, keywords)
         self->fThis->setup(key->getKey());
         PYTHON_RETURN_INIT_OK;
     }
-    else if (PyString_Check(arg1))
+    else if (PyUnicode_Check(arg1))
     {
         // arg list 2 or 3
-        char* name = PyString_AsString(arg1);
+        const char* name = PyUnicode_AsUTF8(arg1);
         if (PyFloat_Check(arg2))
         {
             // arg list 2
@@ -194,7 +194,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyUnicode_FromString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIPopUpMenu, getVersion)
@@ -388,11 +388,12 @@ PYTHON_START_METHODS_TABLE(ptGUIPopUpMenu)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIPopUpMenu_COMPARE      PYTHON_NO_COMPARE
 #define ptGUIPopUpMenu_AS_NUMBER    PYTHON_NO_AS_NUMBER
 #define ptGUIPopUpMenu_AS_SEQUENCE  PYTHON_NO_AS_SEQUENCE
 #define ptGUIPopUpMenu_AS_MAPPING   PYTHON_NO_AS_MAPPING
 #define ptGUIPopUpMenu_STR          PYTHON_NO_STR
+#define ptGUIPopUpMenu_GETATTRO     PYTHON_NO_GETATTRO
+#define ptGUIPopUpMenu_SETATTRO     PYTHON_NO_SETATTRO
 #define ptGUIPopUpMenu_RICH_COMPARE PYTHON_DEFAULT_RICH_COMPARE(ptGUIPopUpMenu)
 #define ptGUIPopUpMenu_GETSET       PYTHON_NO_GETSET
 #define ptGUIPopUpMenu_BASE         PYTHON_NO_BASE

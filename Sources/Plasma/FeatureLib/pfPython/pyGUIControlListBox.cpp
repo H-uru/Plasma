@@ -945,7 +945,7 @@ PyObject*   pyGUIControlListBox::GetSelectionList()
                 pfGUIListElement* element = plbmod->GetElement(i);
                 if ( element->IsSelected() )
                 {
-                    PyObject* element = PyInt_FromLong(i);
+                    PyObject* element = PyLong_FromLong(i);
                     PyList_Append(pySL, element);
                     Py_XDECREF(element);
                 }
@@ -978,8 +978,8 @@ PyObject*   pyGUIControlListBox::GetBranchList()
                         pfGUIListTreeRoot* elroot = (pfGUIListTreeRoot*)element;
                         uint16_t showing = elroot->IsShowingChildren();
                         PyObject* element = PyTuple_New(2);
-                        PyTuple_SetItem(element, 0, PyInt_FromLong(i));
-                        PyTuple_SetItem(element, 1, PyInt_FromLong(showing));
+                        PyTuple_SetItem(element, 0, PyLong_FromLong(i));
+                        PyTuple_SetItem(element, 1, PyLong_FromLong(showing));
                         PyList_Append(pySL, element);
                         Py_XDECREF(element);
                     }

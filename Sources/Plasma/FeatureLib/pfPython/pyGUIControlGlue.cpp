@@ -248,7 +248,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontSize)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControl, getFontFlags)
 {
-    return PyInt_FromLong(self->fThis->GetFontFlags());
+    return PyLong_FromLong(self->fThis->GetFontFlags());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControl, setFontFlags, args)
@@ -358,11 +358,12 @@ PYTHON_START_METHODS_TABLE(ptGUIControl)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIControl_COMPARE        PYTHON_NO_COMPARE
 #define ptGUIControl_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptGUIControl_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptGUIControl_AS_MAPPING     PYTHON_NO_AS_MAPPING
 #define ptGUIControl_STR            PYTHON_NO_STR
+#define ptGUIControl_GETATTRO       PYTHON_NO_GETATTRO
+#define ptGUIControl_SETATTRO       PYTHON_NO_SETATTRO
 #define ptGUIControl_RICH_COMPARE   PYTHON_DEFAULT_RICH_COMPARE(ptGUIControl)
 #define ptGUIControl_GETSET         PYTHON_NO_GETSET
 #define ptGUIControl_BASE           PYTHON_NO_BASE

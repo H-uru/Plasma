@@ -76,7 +76,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptVaultNode, obj1, obj2, compareType)
         pyVaultNode* node = pyVaultNode::Check(obj1) ? pyVaultNode::ConvertFrom(obj1) :
                                                        pyVaultNode::ConvertFrom(obj2);
         bool value = node->fNode->IsUsed();
-        bool cmp = PyBool_Check(obj1) ? PyInt_AsLong(obj1) != 0 : PyInt_AsLong(obj2);
+        bool cmp = PyBool_Check(obj1) ? PyLong_AsLong(obj1) != 0 : PyLong_AsLong(obj2);
         if (compareType == Py_EQ) {
             PYTHON_RETURN_BOOL(value == cmp);
         } else if (compareType == Py_NE) {
@@ -152,12 +152,12 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeTime)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeName)
 {
-    return PyString_FromSTString(self->fThis->GetCreateAgeName());
+    return PyUnicode_FromSTString(self->fThis->GetCreateAgeName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeGuid)
 {
-    return PyString_FromSTString(self->fThis->GetCreateAgeGuid().AsString());
+    return PyUnicode_FromSTString(self->fThis->GetCreateAgeGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getCreateAgeCoords)
@@ -172,7 +172,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getChildNodeRefList)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getChildNodeCount)
 {
-    return PyInt_FromLong(self->fThis->GetChildNodeCount());
+    return PyLong_FromLong(self->fThis->GetChildNodeCount());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultNode, getClientID)
@@ -518,11 +518,12 @@ PYTHON_START_METHODS_TABLE(ptVaultNode)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptVaultNode_COMPARE         PYTHON_NO_COMPARE
 #define ptVaultNode_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptVaultNode_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptVaultNode_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptVaultNode_STR             PYTHON_NO_STR
+#define ptVaultNode_GETATTRO        PYTHON_NO_GETATTRO
+#define ptVaultNode_SETATTRO        PYTHON_NO_SETATTRO
 #define ptVaultNode_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptVaultNode)
 #define ptVaultNode_GETSET          PYTHON_NO_GETSET
 #define ptVaultNode_BASE            PYTHON_NO_BASE
