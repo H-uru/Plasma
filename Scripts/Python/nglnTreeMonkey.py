@@ -234,7 +234,7 @@ class nglnTreeMonkey(ptResponder):
         PtDebugPrint("nglnTreeMonkey: Generated a valid spawn time: %d" % (firstTime))
         spawnTimes = [firstTime]
 
-        while isinstance(spawnTimes[-1], long):
+        while isinstance(spawnTimes[-1], int):
             randnum = random.randint(kMinimumTimeBetweenSpawns, kMaximumTimeBetweenSpawns)
             newTime = spawnTimes[-1] + randnum
             if newTime < endOfToday:

@@ -171,7 +171,7 @@ class mystFireplace(ptModifier):
                 id = IgnorePanelClick[0]
                 del IgnorePanelClick[0]
                 
-                for rkey,rvalue in actPanelButtons.byObject.viewitems():
+                for rkey,rvalue in actPanelButtons.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
@@ -267,7 +267,7 @@ class mystFireplace(ptModifier):
                     return
                 else:
                     IgnorePanelClick.append(id)
-                    for rkey,rvalue in actPanelButtons.byObject.viewitems():
+                    for rkey,rvalue in actPanelButtons.byObject.items():
                         parent = rvalue.getParentKey()
                         if parent:
                             pname = parent.getName()
@@ -284,7 +284,7 @@ class mystFireplace(ptModifier):
 
                 PtDebugPrint(panelName, bstate)
 
-                for rkey,rvalue in respMorphButtons.byObject.viewitems():
+                for rkey,rvalue in respMorphButtons.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         pname = parent.getName()
@@ -393,7 +393,7 @@ class mystFireplace(ptModifier):
 
         for but in CheckedButtons:
             id = but[-3:]
-            for rkey,rvalue in respMorphButtons.byObject.viewitems():
+            for rkey,rvalue in respMorphButtons.byObject.items():
                 parent = rvalue.getParentKey()
                 if parent:
                     pname = parent.getName()

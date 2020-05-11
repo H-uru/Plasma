@@ -120,7 +120,7 @@ class ahnyQuabs(ptModifier, object):
             # On quab spawning...
             # We will load the avatar clones manually if we are the first one in.
             # We will obtain the ptCritterBrains in an OnAIMsg callback.
-            for i in xrange(self.quabs):
+            for i in range(self.quabs):
                 PtLoadAvatarModel(kQuabAvatarName, qSpawns[i].getKey(), "Quab %i" % i)
 
     def OnAIMsg(self, brain, msgType, userStr, args):

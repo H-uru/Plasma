@@ -211,7 +211,7 @@ class xBlueSpiral(ptResponder, object):
             if self.running:
                 PtDebugPrint("xBlueSpiral.OnServerInitComplete():\t... they were playing", level=kDebugDumpLevel)
                 clkBSDoor.disableActivator()
-            for i in xrange(self.hits):
+            for i in range(self.hits):
                 respBSTicMarks.run(self.key, state=str(i + 1), fastforward=1)
             if self.hits == kNumCloths:
                 PtDebugPrint("xBlueSpiral.OnServerInitComplete():\t... the door was open", level=kDebugDumpLevel)
@@ -287,7 +287,7 @@ class xBlueSpiral(ptResponder, object):
             # Translate the instance cloth IDs to script cloth IDs
             # The BS door shows script cloth ID + 1
             copy = list(self.solution)
-            for i in xrange(len(copy)):
+            for i in range(len(copy)):
                 copy[i] = self.clothmap[copy[i]] + 1
             # For you l337 haxxors out there...
             PtDebugPrint("--- Blue Spiral Solution IDs ---")

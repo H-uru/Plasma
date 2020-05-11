@@ -203,7 +203,7 @@ class Ahnonay(ptResponder):
     ###########################
     def OnPageLoad(self,what,who):
         global spherePages
-        PtDebugPrint(u"Ahnonay.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
+        PtDebugPrint("Ahnonay.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
 
         if what == kLoaded:
             if who in spherePages: 

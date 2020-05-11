@@ -198,7 +198,7 @@ class minkSymbols(ptResponder):
     def OnNotify(self,state,id,events):
         PtDebugPrint("minkSymbols.OnNotify(): state=%s id=%d events=" % (state, id), events)
 
-        if id in RegionToResponder.viewkeys():
+        if id in RegionToResponder.keys():
             PtDebugPrint("minkSymbols.OnNotify(): Region %d triggered" % (id))
             globals()["regCave0{}".format(id)].disable()
 
