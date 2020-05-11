@@ -513,9 +513,9 @@ class nb01RPSGame(ptResponder, object):
                 scores[seat] += ROUND_SCORES[my_selection][their_selection]
 
         # The highest scores are winners -- if it's over 0
-        high_score = max(scores.itervalues())
+        high_score = max(scores.values())
         if high_score > 0:
-            winners = [seat for seat, score in scores.viewitems() if score == high_score]
+            winners = [seat for seat, score in scores.items() if score == high_score]
             game_winners = []
         else:
             winners, game_winners = [], []
@@ -579,7 +579,7 @@ class nb01RPSGame(ptResponder, object):
             self.SDL.setIndex(SDL_SCISSORS, seat, 0)
             self.SDL.setIndex(SDL_CUR_SELECTION, seat, 0)
 
-        for i in xrange(SEL_NUM):
+        for i in range(SEL_NUM):
             self._ToggleScoreLight(seat, i, 0, off=True)
             self._ToggleScoreLight(seat, i, 1, off=True)
 
@@ -587,10 +587,10 @@ class nb01RPSGame(ptResponder, object):
             self._ChangeButtonState(seat, enable=False)
 
     def _FFwdLights(self, sdlvar, rps):
-        for i in xrange(NUM_SEATS):
+        for i in range(NUM_SEATS):
             if self.SDL[sdlvar]:
                 count = min(self.SDL[sdlvar][i], 2)
-                for j in xrange(count):
+                for j in range(count):
                     self._ToggleScoreLight(i, rps, j, ff=True)
 
     def _OnGameOver(self, **kwargs):
@@ -753,7 +753,7 @@ class nb01RPSGame(ptResponder, object):
         PtDebugPrint("nb01RPSGame._UpdateScoreLights():\tOld: {}, New: {}".format(old_score, new_score), level=kWarningLevel)
         start = 0 if win else min(2, old_score)
         end = min(2, new_score)
-        for i in xrange(start, end):
+        for i in range(start, end):
             self._ToggleScoreLight(seat, selection, i, win=win)
 
         state = "win" if win else "on"
@@ -891,15 +891,15 @@ class nb01RPSGame(ptResponder, object):
            optional suffix.
         """
         temp = [None] * 5
-        for i in xrange(len(temp)):
+        for i in range(len(temp)):
             temp[i] = globals()["{}{}{}".format(prefix, i, suffix)]
         return tuple(temp)
 
     def _MakeShutterAnimTuple(self, anim):
         temp = [None] * 5
-        for i in xrange(len(temp)):
+        for i in range(len(temp)):
             seat_shutters = [None] * 3
-            for j in xrange(len(seat_shutters)):
+            for j in range(len(seat_shutters)):
                 name = "buttonshutter{0}{1}".format(i+1, j+1)
                 seat_shutters[j] = anim.byObject[name]
             temp[i] = tuple(seat_shutters)
@@ -907,12 +907,12 @@ class nb01RPSGame(ptResponder, object):
 
     def _MakeLightAnimTuple(self, anim):
         temp = []
-        for i in xrange(NUM_SEATS):
+        for i in range(NUM_SEATS):
             seat_categories = []
             cat_names = ('B', 'G', 'R')
-            for j in xrange(SEL_NUM - 1):
+            for j in range(SEL_NUM - 1):
                 category = []
-                for k in xrange(2):
+                for k in range(2):
                     light = (i + 1) * 10 + k + 1
                     name = "GTdummy{}Glare{}".format(cat_names[j], light)
                     category.append(anim.byObject[name])
@@ -961,12 +961,12 @@ class nb01RPSGame(ptResponder, object):
         notify.netForce(True)
         notify.netPropagate(True)
         notify.setActivate(True)
-        for key, value in contents.iteritems():
+        for key, value in contents.items():
             notify.addVarNumber(key, value)
         notify.send() # whoosh... off it goes
 
     def _WasAttribs(self, id, attribs):
-        for i in xrange(len(attribs)):
+        for i in range(len(attribs)):
             if attribs[i].id == id:
                 return i
         return -1

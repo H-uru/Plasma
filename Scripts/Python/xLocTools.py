@@ -70,7 +70,7 @@ def FolderIDToFolderName(folderid):
     try:
         return xFolderIDToFolderName[folderid]
     except LookupError:
-        return U"?UNKNOWN?"
+        return "?UNKNOWN?"
 
 def MemberStatusString():
     "returns a string of what type of neighborhood member this person is"
@@ -105,7 +105,7 @@ xTranslatedAgeNames = {
 def SafeEncode(text):
     try:
         #convert 8bit ascii to 16bit unicode characters 
-        encodedText = unicode(text)
+        encodedText = str(text)
     except:          #exception called if the incomming string is already in unicode!
         encodedText=text
     return encodedText
@@ -120,15 +120,15 @@ def LocalizeAgeName(displayName):
         try:
             sdl = xPsnlVaultSDL()
             if sdl["TeledahnPoleState"][0] > 5 or sdl["KadishPoleState"][0] > 5 or sdl["GardenPoleState"][0] > 5 or sdl["GarrisonPoleState"][0] > 5:
-                localizedName = U"D'ni-Rudenna"
+                localizedName = "D'ni-Rudenna"
             else:
-                localizedName = U"???"
+                localizedName = "???"
         except:
-            localizedName = U"???" # default to unknown if we can't access the SDL for some reason
+            localizedName = "???" # default to unknown if we can't access the SDL for some reason
     elif localizedName == "Ae'gura":
-        localizedName = U"D'ni-Ae'gura"
+        localizedName = "D'ni-Ae'gura"
     elif localizedName == "GreatZero":
-        localizedName = U"D'ni-Rezeero"
+        localizedName = "D'ni-Rezeero"
     elif not localizedName.startswith("D'ni"):
         # D'ni names are not localized, so if they don't start with D'ni, then they will be localized
         # check if this is a neighborhood name

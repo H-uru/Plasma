@@ -849,7 +849,7 @@ class psnlBahroPoles(ptModifier):
         state8 = 0
         state7 = 0
 
-        for var in self.Poles.viewkeys():
+        for var in self.Poles.keys():
             val = self.Poles[var]["State"]
             PtDebugPrint(val)
 

@@ -104,7 +104,7 @@ def glue_findAndAddAttribs(obj, glue_params):
         for o in obj:
             glue_findAndAddAttribs(o, glue_params)
     elif isinstance(obj, dict):
-        for o in obj.viewvalues():
+        for o in obj.values():
             glue_findAndAddAttribs(o, glue_params)
     elif isinstance(obj, tuple):
         for o in obj:
@@ -116,10 +116,10 @@ def glue_getParamDict():
     if glue_params is None:
         glue_params = {}
         gd = globals()
-        for obj in gd.viewvalues():
+        for obj in gd.values():
             glue_findAndAddAttribs(obj, glue_params)
         # rebuild the parameter sorted key list
-        glue_paramKeys = glue_params.keys()
+        glue_paramKeys = list(glue_params.keys())
         glue_paramKeys.sort()
         glue_paramKeys.reverse()    # reserve the order because PlasmaMax will ask for them in reverse order
     return glue_params
@@ -155,7 +155,7 @@ def glue_getParam(number):
             else:
                 PtDebugPrint("glue_getParam: Error! %d out of range of attribute list" % (number))
         else:
-            pl = pd.values()
+            pl = list(pd.values())
             if number >= 0 and number < len(pl):
                 return pl[number].getdef()
             else:
@@ -214,7 +214,7 @@ def glue_getVisInfo(number):
             else:
                 PtDebugPrint("glue_getVisInfo: Error! %d out of range of attribute list" % (number))
         else:
-            pl = pd.values()
+            pl = list(pd.values())
             if number >= 0 and number < len(pl):
                 return pl[number].getVisInfo()
             else:

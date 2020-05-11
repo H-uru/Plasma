@@ -240,7 +240,7 @@ class grtzMarkerScopeGUI(ptModifier):
     def OnServerInitComplete(self):
         numGames = len(grtzMarkerGames.mgs)
         self._scores = [-1] * numGames
-        for i in xrange(numGames):
+        for i in range(numGames):
             ptGameScore.findPlayerScores(kGameScore.format(i), self.key)
         self._scopes = (aScope1Act.id, aScope2Act.id, aScope3Act.id, aScope4Act.id)
 
@@ -323,7 +323,7 @@ class grtzMarkerScopeGUI(ptModifier):
     def _UpdateGUI(self, mission=-1, quitting=False, score=None, star=None):
         # If mission is -1, this is a total update
         if mission == -1:
-            for i in xrange(len(grtzMarkerGames.mgs)):
+            for i in range(len(grtzMarkerGames.mgs)):
                 self._UpdateGUI(i)
             return
 
@@ -345,19 +345,19 @@ class grtzMarkerScopeGUI(ptModifier):
             if span == -1:
                 msg = PtGetLocalizedString("KI.MarkerGame.pendingActionLoading")
             else:
-                msg = u"--:--:--"
+                msg = "--:--:--"
         else:
             st = time.gmtime(span)
             if st.tm_yday > 1:
                 # days, hours, minutes, seconds -- you really suck at this
                 # if you go over a year, you really suck
-                msg = u"{:02d}:{:02d}:{:02d}:{:02d}".format(st.tm_yday, st.tm_hour, st.tm_min, st.tm_sec)
+                msg = "{:02d}:{:02d}:{:02d}:{:02d}".format(st.tm_yday, st.tm_hour, st.tm_min, st.tm_sec)
             else:
                 # hours, minutes, seconds
-                msg = u"{:02d}:{:02d}:{:02d}".format(st.tm_hour, st.tm_min, st.tm_sec)
+                msg = "{:02d}:{:02d}:{:02d}".format(st.tm_hour, st.tm_min, st.tm_sec)
 
         if star:
-            msg = u"** {}".format(msg)
+            msg = "** {}".format(msg)
 
         # Now do the deed
         fieldID = (mission * 10) + kMarkerGameFieldStart

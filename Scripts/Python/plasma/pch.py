@@ -86,7 +86,7 @@ def getmods():
     global __pmods,__sel
     __pmods = []  # wipe the module list clean
     print("Plasma modules:")
-    for modname in sys.modules.viewkeys():
+    for modname in sys.modules.keys():
         mod = sys.modules[modname]
         if hasattr(mod,"glue_inst"):
             if __sel == len(__pmods):
@@ -152,7 +152,7 @@ def showattribs():
     global __sel
     global __selattr
     print("Attributes in %s:" % (__pmods[__sel][0][:-13]))
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptAttribute):
             if __selattr == ist.id:
@@ -166,7 +166,7 @@ def selattrib(id=None):
     global __selattr
     if id is None:
         id = __selattr
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptAttribute):
             if id == ist.id:
@@ -179,7 +179,7 @@ def setattrib(value):
     global __pmods
     global __sel
     global __selattr
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptAttribute):
             if __selattr == ist.id:
@@ -199,7 +199,7 @@ def showglobals():
     global __pmods
     global __sel
     print("Globals:")
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         # make sure that its not something we already know about
         if not hasattr(Plasma,name) and not hasattr(PlasmaTypes,name):
@@ -226,7 +226,7 @@ def showinst():
     "show details of the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptModifier):
             print("Instance of %s in module %s:" % (ist.__class__.__name__,__pmods[__sel][1].__name__[:-13]))
@@ -237,7 +237,7 @@ def getinst():
     "gets the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptModifier):
             return ist
@@ -245,14 +245,14 @@ def showvars(instance):
     "shows the variables of the instance"
     print("  Variables:")
     if len(instance.__dict__) > 0:
-        for vname in instance.__dict__.viewkeys():
+        for vname in instance.__dict__.keys():
             print("    %s =" % (vname),instance.__dict__[vname])
     else:
         print("    (none)")
 def showmethods(instance):
     "shows the methods of the instance"
     print("  Methods:")
-    for mname in instance.__class__.__dict__.viewkeys():
+    for mname in instance.__class__.__dict__.keys():
         mist = instance.__class__.__dict__[mname]
         # is it a function... see if it has code
         if hasattr(mist,'func_code'):
@@ -285,7 +285,7 @@ def setvar(vname,value):
     "set a variable within the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptModifier):
             # first see if there is already a glabal by that name
@@ -297,7 +297,7 @@ def getvar(vname):
     "get the variable in the instance of the ptModifier class in the selected module"
     global __pmods
     global __sel
-    for name in __pmods[__sel][1].__dict__.viewkeys():
+    for name in __pmods[__sel][1].__dict__.keys():
         ist = __pmods[__sel][1].__dict__[name]
         if isinstance(ist,PlasmaTypes.ptModifier):
             return ist.__dict__[vname]

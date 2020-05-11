@@ -200,7 +200,7 @@ class nb01EmgrPhase0(ptResponder):
         if VARname in self.SimplePagingVars:
             self.IManageSimplePagingVar(VARname)
 
-        elif VARname in self.SpecialPagingVars.viewkeys():
+        elif VARname in self.SpecialPagingVars.keys():
             NewSDLValue = ageSDL[VARname][0]
             self.SpecialPagingVars[VARname](VARname, NewSDLValue)
 
@@ -312,7 +312,7 @@ class nb01EmgrPhase0(ptResponder):
         """Does initial state scrambling for the Neighborhood.
            This makes all hoods have a slightly different appearance (hopefully)"""
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---Attempting to Randomize SDL---")
-        for name, values in self.HoodDecorations.iteritems():
+        for name, values in self.HoodDecorations.items():
             self._UpdateVaultSDL(name, random.choice(values), overwrite=False)
         PtDebugPrint("nb01EmgrPhase0._RandomizeNeighborhood(): ---SDL Randomized!---")
 

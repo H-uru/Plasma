@@ -129,16 +129,16 @@ class minkDayNight(ptResponder):
     ###########################
     def OnPageLoad(self,what,who):
         global HackIt
-        PtDebugPrint(u"minkDayNight.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
+        PtDebugPrint("minkDayNight.OnPageLoad(): what={} who={}".format(what, who), level=kDebugDumpLevel)
 
         if what == kLoaded:
-            if who in {u"Minkata_District_minkExteriorDay", u"Minkata_minkExteriorDay"}:
+            if who in {"Minkata_District_minkExteriorDay", "Minkata_minkExteriorDay"}:
                 if HackIt:
                     HackIt = 0
                     return
                 PtDebugPrint("minkDayNight.OnPageLoad(): Day Page loaded, unloading Night")
                 PtPageOutNode("minkExteriorNight")
-            elif who in {u"Minkata_District_minkExteriorNight", u"Minkata_minkExteriorNight"}:
+            elif who in {"Minkata_District_minkExteriorNight", "Minkata_minkExteriorNight"}:
                 if HackIt:
                     HackIt = 0
                     return
@@ -146,8 +146,8 @@ class minkDayNight(ptResponder):
                 PtPageOutNode("minkExteriorDay")
                 
         elif what == kUnloaded:
-            if who in {u"Minkata_District_minkExteriorDay", u"Minkata_District_minkExteriorNight",
-                       u"Minkata_minkExteriorDay", u"Minkata_minkExteriorNight"}:
+            if who in {"Minkata_District_minkExteriorDay", "Minkata_District_minkExteriorNight",
+                       "Minkata_minkExteriorDay", "Minkata_minkExteriorNight"}:
                 PtDebugPrint("minkDayNight.OnPageLoad(): Page unloaded, Fading screen back in")
                 PtFadeIn(1.5, 1)
                 respExcludeRegion.run(self.key, state="Release")

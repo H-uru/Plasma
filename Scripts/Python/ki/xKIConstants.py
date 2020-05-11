@@ -559,8 +559,8 @@ class kGames:
 
 ## Constants for the KI images.
 class kImages:
-    Directory = U"KIimages"
-    FileNameTemplate = U"KIimage"
+    Directory = "KIimages"
+    FileNameTemplate = "KIimage"
 
 ## Constants for the KI.
 class kKI:

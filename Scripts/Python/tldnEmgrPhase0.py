@@ -112,7 +112,7 @@ class tldnEmgrPhase0(ptResponder):
                 PtDebugPrint("tldnEmgrPhase0.OnSDLNotify : %s is a BOOLEAN Variable" % (VARname))
                 self.IManageBOOLs(VARname,SDLname)
     
-            elif VARname in StateVARs.viewkeys():
+            elif VARname in StateVARs.keys():
                 ageSDL = PtGetAgeSDL()
                 NewSDLValue = ageSDL[VARname][0] 
                 

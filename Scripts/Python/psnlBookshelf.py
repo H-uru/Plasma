@@ -466,7 +466,7 @@ class psnlBookshelf(ptModifier):
 
                                 #bookName = objBookPicked.getName()
                                 for bookName in ["ShelfA_book17","ShelfA_book18"]:
-                                    for rkey,rvalue in respDeleteBook.byObject.viewitems():
+                                    for rkey,rvalue in respDeleteBook.byObject.items():
                                         parent = rvalue.getParentKey()
                                         if parent:
                                             if bookName == parent.getName():
@@ -489,7 +489,7 @@ class psnlBookshelf(ptModifier):
                             note.addVarNumber("Volatile" + bookAge, 1)
                             note.send()
                             bookName = objBookPicked.getName()
-                            for rkey,rvalue in respDeleteBook.byObject.viewitems():
+                            for rkey,rvalue in respDeleteBook.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if bookName == parent.getName():
@@ -593,7 +593,7 @@ class psnlBookshelf(ptModifier):
                             objLockPicked = objLocks.value[index]
                             lockName = objLockPicked.getName()
                             # find the corresponding lock open responder modifier
-                            for rkey,rvalue in respOpenLock.byObject.viewitems():
+                            for rkey,rvalue in respOpenLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -604,7 +604,7 @@ class psnlBookshelf(ptModifier):
                         else:
                             bookName = objBookPicked.getName()
                             # find the corresponding responder modifier and present the book to the player
-                            for rkey,rvalue in respPresentBook.byObject.viewitems():
+                            for rkey,rvalue in respPresentBook.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if bookName == parent.getName():
@@ -640,7 +640,7 @@ class psnlBookshelf(ptModifier):
                             objLockPicked = objLocks.value[index]
                             lockName = objLockPicked.getName()
                             # find the corresponding lock open responder modifier
-                            for rkey,rvalue in respOpenLock.byObject.viewitems():
+                            for rkey,rvalue in respOpenLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -651,7 +651,7 @@ class psnlBookshelf(ptModifier):
                         else:
                             bookName = objBookPicked.getName()
                             # find the corresponding responder modifier and present the book to the player
-                            for rkey,rvalue in respPresentBook.byObject.viewitems():
+                            for rkey,rvalue in respPresentBook.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if bookName == parent.getName():
@@ -674,7 +674,7 @@ class psnlBookshelf(ptModifier):
                         objLockPicked = objLocks.value[index]
                         lockName = objLockPicked.getName()
                         # find the corresponding lock open responder modifier
-                        for rkey,rvalue in respOpenLock.byObject.viewitems():
+                        for rkey,rvalue in respOpenLock.byObject.items():
                             parent = rvalue.getParentKey()
                             if parent:
                                 if lockName == parent.getName():
@@ -685,7 +685,7 @@ class psnlBookshelf(ptModifier):
                     else:
                         bookName = objBookPicked.getName()
                         # find the corresponding responder modifier and present the book to the player
-                        for rkey,rvalue in respPresentBook.byObject.viewitems():
+                        for rkey,rvalue in respPresentBook.byObject.items():
                             parent = rvalue.getParentKey()
                             if parent:
                                 if bookName == parent.getName():
@@ -729,7 +729,7 @@ class psnlBookshelf(ptModifier):
                 if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                     lockName = objLockPicked.getName()
                     # find the corresponding responder modifier
-                    for rkey,rvalue in respCloseLock.byObject.viewitems():
+                    for rkey,rvalue in respCloseLock.byObject.items():
                         parent = rvalue.getParentKey()
                         if parent:
                             if lockName == parent.getName():
@@ -774,7 +774,7 @@ class psnlBookshelf(ptModifier):
                 if locked:
                     lockName = objLockPicked.getName()
                     PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
-                    for rkey,rvalue in respCloseLock.byObject.viewitems():
+                    for rkey,rvalue in respCloseLock.byObject.items():
                         parent = rvalue.getParentKey()
                         if parent:
                             if lockName == parent.getName():
@@ -789,7 +789,7 @@ class psnlBookshelf(ptModifier):
             if isinstance(link, ptAgeLinkStruct) or link.getLocked(): #close the clasp
                 lockName = objLockPicked.getName()
                 # find the corresponding responder modifier
-                for rkey,rvalue in respCloseLock.byObject.viewitems():
+                for rkey,rvalue in respCloseLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
@@ -833,7 +833,7 @@ class psnlBookshelf(ptModifier):
                         bcolinklocked = bcolink and bcolink.getLocked()
 
                         if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
-                            for rkey,rvalue in respOpenLock.byObject.viewitems():
+                            for rkey,rvalue in respOpenLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -843,7 +843,7 @@ class psnlBookshelf(ptModifier):
                             citylink and citylink.setLocked(0)
                             bcolink and bcolink.setLocked(0)
                         else:
-                            for rkey,rvalue in respCloseLock.byObject.viewitems():
+                            for rkey,rvalue in respCloseLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -891,7 +891,7 @@ class psnlBookshelf(ptModifier):
                         PtDebugPrint(locked)
                         if locked:
                             # find the corresponding open clasp responder modifier
-                            for rkey,rvalue in respOpenLock.byObject.viewitems():
+                            for rkey,rvalue in respOpenLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -906,7 +906,7 @@ class psnlBookshelf(ptModifier):
                                         chron.setValue("0")
                         else:
                             # find the corresponding close clasp responder modifier
-                            for rkey,rvalue in respCloseLock.byObject.viewitems():
+                            for rkey,rvalue in respCloseLock.byObject.items():
                                 parent = rvalue.getParentKey()
                                 if parent:
                                     if lockName == parent.getName():
@@ -930,7 +930,7 @@ class psnlBookshelf(ptModifier):
                         return
                     if link.getLocked():
                         # find the corresponding open clasp responder modifier
-                        for rkey,rvalue in respOpenLock.byObject.viewitems():
+                        for rkey,rvalue in respOpenLock.byObject.items():
                             parent = rvalue.getParentKey()
                             if parent:
                                 if lockName == parent.getName():
@@ -941,7 +941,7 @@ class psnlBookshelf(ptModifier):
                             link.save()
                     else:
                         # find the corresponding close clasp responder modifier
-                        for rkey,rvalue in respCloseLock.byObject.viewitems():
+                        for rkey,rvalue in respCloseLock.byObject.items():
                             parent = rvalue.getParentKey()
                             if parent:
                                 if lockName == parent.getName():
@@ -957,7 +957,7 @@ class psnlBookshelf(ptModifier):
             if boolPresentAfterLockOpen:
                 bookName = objBookPicked.getName()
                 # find the corresponding responder modifier and present the book to the player
-                for rkey,rvalue in respPresentBook.byObject.viewitems():
+                for rkey,rvalue in respPresentBook.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1061,7 +1061,7 @@ class psnlBookshelf(ptModifier):
 
                     #bookName = objBookPicked.getName()
                     for bookName in ["ShelfA_book17","ShelfA_book18"]:
-                        for rkey,rvalue in respReturnTray.byObject.viewitems():
+                        for rkey,rvalue in respReturnTray.byObject.items():
                             parent = rvalue.getParentKey()
                             if parent:
                                 if bookName == parent.getName():
@@ -1085,7 +1085,7 @@ class psnlBookshelf(ptModifier):
                 note.send()
 
                 bookName = objBookPicked.getName()
-                for rkey,rvalue in respReturnTray.byObject.viewitems():
+                for rkey,rvalue in respReturnTray.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1138,7 +1138,7 @@ class psnlBookshelf(ptModifier):
         isCityLink = 0
         if ageName == "city":
             isCityLink = 1
-            for age, splist in CityBookAges.viewitems():
+            for age, splist in CityBookAges.items():
                 if spTitle in splist:
                     ageName = age
                     break
@@ -1238,14 +1238,14 @@ class psnlBookshelf(ptModifier):
             # show as locked if both are locked, or one is locked and the other doesn't exist
             if ( citylinklocked is None or citylinklocked) and ( bcolinklocked is None or bcolinklocked):
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to locked: ",lockName)
-                for rkey,rvalue in respCloseLock.byObject.viewitems():
+                for rkey,rvalue in respCloseLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting city book clasp to unlocked: ",lockName)
-                for rkey,rvalue in respOpenLock.byObject.viewitems():
+                for rkey,rvalue in respOpenLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
@@ -1264,7 +1264,7 @@ class psnlBookshelf(ptModifier):
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tno matching book for KI's link to:", ageName, "...skipping to next")
                 continue
 
-            if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.viewkeys()):
+            if ((ageName == "city" or ageName == "BaronCityOffice") and PtIsSinglePlayerMode()) or (ageName in CityBookAges.keys()):
                 continue
 
             if ageName == "Cleft":
@@ -1280,14 +1280,14 @@ class psnlBookshelf(ptModifier):
             lockName = objLock.getName()
             if link.getLocked():
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
-                for rkey,rvalue in respCloseLock.byObject.viewitems():
+                for rkey,rvalue in respCloseLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
-                for rkey,rvalue in respOpenLock.byObject.viewitems():
+                for rkey,rvalue in respOpenLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
@@ -1298,7 +1298,7 @@ class psnlBookshelf(ptModifier):
             bookName = objBook.getName()
             if link.getVolatile():
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
-                for rkey,rvalue in respDeleteBook.byObject.viewitems():
+                for rkey,rvalue in respDeleteBook.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
@@ -1307,7 +1307,7 @@ class psnlBookshelf(ptModifier):
                             #~ PtDebugPrint("got here")
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
-                for rkey,rvalue in respReturnTray.byObject.viewitems():
+                for rkey,rvalue in respReturnTray.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1347,14 +1347,14 @@ class psnlBookshelf(ptModifier):
             lockName = objLock.getName()
             if int(locked):
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to locked: ",lockName)
-                for rkey,rvalue in respCloseLock.byObject.viewitems():
+                for rkey,rvalue in respCloseLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             respCloseLock.run(self.key,objectName=rkey,fastforward=1)
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting clasp to unlocked: ",lockName)
-                for rkey,rvalue in respOpenLock.byObject.viewitems():
+                for rkey,rvalue in respOpenLock.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if lockName == parent.getName():
@@ -1365,7 +1365,7 @@ class psnlBookshelf(ptModifier):
             bookName = objBook.getName()
             if int(volatile):
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to VOLATILE: ",bookName)
-                for rkey,rvalue in respDeleteBook.byObject.viewitems():
+                for rkey,rvalue in respDeleteBook.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
@@ -1374,7 +1374,7 @@ class psnlBookshelf(ptModifier):
                             #~ PtDebugPrint("got here")
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
-                for rkey,rvalue in respReturnTray.byObject.viewitems():
+                for rkey,rvalue in respReturnTray.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1411,7 +1411,7 @@ class psnlBookshelf(ptModifier):
             objBook.draw.enable()
 
             bookName = objBook.getName()
-            for key,value in actBook.byObject.viewitems():
+            for key,value in actBook.byObject.items():
                 parent = value.getParentKey()
                 if parent:
                     if bookName == parent.getName():
@@ -1424,7 +1424,7 @@ class psnlBookshelf(ptModifier):
             objLock = objLocks.value[index]
             lockName = objLock.getName()
             if ( boolInMyAge ):
-                for key,value in actLock.byObject.viewitems():
+                for key,value in actLock.byObject.items():
                     parent = value.getParentKey()
                     if parent:
                         if lockName == parent.getName():
@@ -1444,7 +1444,7 @@ class psnlBookshelf(ptModifier):
                     continue
                 ageName = info.getAgeFilename()
 
-                if (ageName == "city" or ageName == "BaronCityOffice") or (ageName in CityBookAges.viewkeys()):
+                if (ageName == "city" or ageName == "BaronCityOffice") or (ageName in CityBookAges.keys()):
                     continue
             
 #                if (ageName == "Garrison"):
@@ -1479,7 +1479,7 @@ class psnlBookshelf(ptModifier):
                 PtDebugPrint("psnlBookshelf.IUpdateLinks():\tageName: ",ageName," boolInMyAge: ",boolInMyAge," getLocked(): ",link.getLocked()," getVolatile(): ",link.getVolatile())
                 if link.getVolatile() or ((not boolInMyAge) and (link.getLocked() or ageName == "Cleft")):
                     bookName = objBook.getName()
-                    for key,value in actBook.byObject.viewitems():
+                    for key,value in actBook.byObject.items():
                         parent = value.getParentKey()
                         if parent:
                             if bookName == parent.getName():
@@ -1492,7 +1492,7 @@ class psnlBookshelf(ptModifier):
                 
                 if not link.getVolatile():
                     bookName = objBook.getName()
-                    for key,value in actBook.byObject.viewitems():
+                    for key,value in actBook.byObject.items():
                         parent = value.getParentKey()
                         if parent:
                             if bookName == parent.getName():
@@ -1512,14 +1512,14 @@ class psnlBookshelf(ptModifier):
                         continue
                 
 
-                    for key,value in actLock.byObject.viewitems():
+                    for key,value in actLock.byObject.items():
                         parent = value.getParentKey()
                         if parent:
                             if lockName == parent.getName():
                                 actLock.enable(objectName=key)
                                 break
                     
-                    for key,value in actTray.byObject.viewitems():
+                    for key,value in actTray.byObject.items():
                         parent = value.getParentKey()
                         if parent:
                             if trayName == parent.getName():
@@ -1577,7 +1577,7 @@ class psnlBookshelf(ptModifier):
             # find and enable the corresponding clickable modifier for the book
             if int(volatile) or ((not boolInMyAge) and locked):
                 bookName = objBook.getName()
-                for key,value in actBook.byObject.viewitems():
+                for key,value in actBook.byObject.items():
                     parent = value.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1590,7 +1590,7 @@ class psnlBookshelf(ptModifier):
 
             if not int(volatile):
                 bookName = objBook.getName()
-                for key,value in actBook.byObject.viewitems():
+                for key,value in actBook.byObject.items():
                     parent = value.getParentKey()
                     if parent:
                         if bookName == parent.getName():
@@ -1610,14 +1610,14 @@ class psnlBookshelf(ptModifier):
                     return
             
 
-                for key,value in actLock.byObject.viewitems():
+                for key,value in actLock.byObject.items():
                     parent = value.getParentKey()
                     if parent:
                         if lockName == parent.getName():
                             actLock.enable(objectName=key)
                             break
                 
-                for key,value in actTray.byObject.viewitems():
+                for key,value in actTray.byObject.items():
                     parent = value.getParentKey()
                     if parent:
                         if trayName == parent.getName():
@@ -1627,7 +1627,7 @@ class psnlBookshelf(ptModifier):
     def CheckForCityBookSpawnPoint(self, agefilename, sptitle):
         global CityBookAges
         
-        if agefilename in CityBookAges.viewkeys():
+        if agefilename in CityBookAges.keys():
             splist = CityBookAges[agefilename]
             if sptitle in splist:
                 return 1
@@ -1734,7 +1734,7 @@ class psnlBookshelf(ptModifier):
         "returns a picked book to the shelf"
         global objBookPicked
         bookName = objBookPicked.getName()
-        for rkey,rvalue in respShelveBook.byObject.viewitems():
+        for rkey,rvalue in respShelveBook.byObject.items():
             parent = rvalue.getParentKey()
             if parent:
                 if bookName == parent.getName():
@@ -1905,7 +1905,7 @@ class psnlBookshelf(ptModifier):
 
         vault = ptAgeVault()
         # look for city book age links
-        for age, splist in CityBookAges.viewitems():
+        for age, splist in CityBookAges.items():
             #agelink = self.GetOwnedAgeLink(vault, age)
             agelink = self.IGetHoodChildLink(age)
             PtDebugPrint("age = ",age)

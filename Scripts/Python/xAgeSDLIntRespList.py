@@ -96,7 +96,7 @@ class xAgeSDLIntRespList(ptResponder):
         respName = (stringFormat.value % SDLvalue)
 
         if 0 <= SDLvalue <= intMaxState.value:
-            for key in respList.byObject.viewkeys():
+            for key in respList.byObject.keys():
                 #match = regexp.search(key)
                 if key == respName:#match:
                     PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnServerInitComplete:\tRunning responder - %s" % (stringFormat.value % SDLvalue))
@@ -129,7 +129,7 @@ class xAgeSDLIntRespList(ptResponder):
         respName = (stringFormat.value % SDLvalue)
 
         if 0 <= SDLvalue <= intMaxState.value:
-            for key in respList.byObject.viewkeys():
+            for key in respList.byObject.keys():
                 #match = regexp.search(key)
                 if key == respName:#match:
                     PtDebugPrint("DEBUG: xAgeSDLIntRespList.OnSDLNotify:\tRunning responder - %s" % (stringFormat.value % SDLvalue))
