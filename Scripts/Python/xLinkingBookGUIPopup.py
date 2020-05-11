@@ -990,7 +990,7 @@ class xLinkingBookGUIPopup(ptModifier):
 
 
     def DoErcanaAndAhnonayStuff(self):
-    	agePanel = TargetAge.value
+        agePanel = TargetAge.value
         if agePanel == "Ercana" or agePanel == "AhnonayCathedral" or agePanel == "Ahnonay":
             if agePanel == "Ercana":
                 ageFileName = "Ercana"
