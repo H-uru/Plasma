@@ -503,7 +503,7 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtClearOfferBookMode, cyMisc::DisableOffer
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalClientID, "Returns our local client ID number")
 {
-    return PyInt_FromLong(cyMisc::GetLocalClientID());
+    return PyLong_FromLong(cyMisc::GetLocalClientID());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtIsCCRAway, "Returns current status of CCR dept")
@@ -589,7 +589,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetControlEvents, args, "Params: on, key\nRegi
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLanguage, "Returns the current language as a PtLanguage enum")
 {
-    return PyInt_FromLong(cyMisc::GetLanguage());
+    return PyLong_FromLong(cyMisc::GetLanguage());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtUsingUnicode, "Returns true if the current language is a unicode language (like Japanese)")
@@ -638,42 +638,26 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtWearDefaultClothingType, args, "Params: key,ty
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtFileExists, args, "Params: filename\nReturns true if the specified file exists")
 {
-    PyObject* filenameObj;
-    if (!PyArg_ParseTuple(args, "O", &filenameObj))
+    plFileName filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &filename))
     {
-        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a string");
+        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a pathlike object or string");
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyString_CheckEx(filenameObj))
-    {
-        PYTHON_RETURN_BOOL(cyMisc::FileExists(PyString_AsStringEx(filenameObj)));
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtFileExists expects a string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(cyMisc::FileExists(filename));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCreateDir, args, "Params: directory\nCreates the directory and all parent folders. Returns false on failure")
 {
-    PyObject* directoryObj;
-    if (!PyArg_ParseTuple(args, "O", &directoryObj))
+    plFileName directory;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &directory))
     {
-        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a string");
+        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a pathlike object or string");
         PYTHON_RETURN_ERROR;
     }
 
-    if (PyString_CheckEx(directoryObj))
-    {
-        PYTHON_RETURN_BOOL(cyMisc::CreateDir(PyString_AsStringEx(directoryObj)));
-    }
-    else
-    {
-        PyErr_SetString(PyExc_TypeError, "PtCreateDir expects a string");
-        PYTHON_RETURN_ERROR;
-    }
+    PYTHON_RETURN_BOOL(cyMisc::CreateDir(directory));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetUserPath, "Returns the unicode path to the client's root user directory. Do NOT convert to a standard string.")

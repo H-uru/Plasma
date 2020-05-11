@@ -63,7 +63,7 @@ set_package_properties(OpenSSL PROPERTIES
     TYPE REQUIRED
 )
 
-set(Python_ADDITIONAL_VERSIONS 2.7)
+set(Python_ADDITIONAL_VERSIONS 3.7)
 find_package(PythonLibs REQUIRED)
 set_package_properties(PythonLibs PROPERTIES
     URL "http://www.python.org"

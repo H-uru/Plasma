@@ -135,7 +135,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, isEnabled)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getName)
 {
-    return PyString_FromString(self->fThis->GetName());
+    return PyUnicode_FromString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIDialog, getVersion)
@@ -313,11 +313,12 @@ PYTHON_START_METHODS_TABLE(ptGUIDialog)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptGUIDialog_COMPARE         PYTHON_NO_COMPARE
 #define ptGUIDialog_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptGUIDialog_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptGUIDialog_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptGUIDialog_STR             PYTHON_NO_STR
+#define ptGUIDialog_GETATTRO        PYTHON_NO_GETATTRO
+#define ptGUIDialog_SETATTRO        PYTHON_NO_SETATTRO
 #define ptGUIDialog_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptGUIDialog)
 #define ptGUIDialog_GETSET          PYTHON_NO_GETSET
 #define ptGUIDialog_BASE            PYTHON_NO_BASE

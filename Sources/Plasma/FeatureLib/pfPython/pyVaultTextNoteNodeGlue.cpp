@@ -71,7 +71,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetTitle)
 {
-    return PyString_FromSTString(self->fThis->Note_GetTitle());
+    return PyUnicode_FromSTString(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetText, args)
@@ -88,7 +88,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetText, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, noteGetText)
 {
-    return PyString_FromSTString(self->fThis->Note_GetText());
+    return PyUnicode_FromSTString(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, noteSetType, args)
@@ -149,17 +149,10 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
     {
         int strLen = PyUnicode_GetSize(textObj);
         wchar_t* title = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, title, strLen);
+        PyUnicode_AsWideChar(textObj, title, strLen);
         title[strLen] = L'\0';
         self->fThis->Note_SetTitleW(title);
         delete [] title;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* title = PyString_AsString(textObj);
-        self->fThis->Note_SetTitle(title);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTitleW expects a unicode string");
@@ -168,7 +161,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTitleW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitle)
 {
-    return PyString_FromSTString(self->fThis->Note_GetTitle());
+    return PyUnicode_FromSTString(self->fThis->Note_GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTitleW)
@@ -200,17 +193,10 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
     {
         int strLen = PyUnicode_GetSize(textObj);
         wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
+        PyUnicode_AsWideChar(textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->Note_SetTextW(text);
         delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(textObj);
-        self->fThis->Note_SetText(text);
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "setTextW expects a unicode string");
@@ -219,7 +205,7 @@ PYTHON_METHOD_DEFINITION(ptVaultTextNoteNode, setTextW, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getText)
 {
-    return PyString_FromSTString(self->fThis->Note_GetText());
+    return PyUnicode_FromSTString(self->fThis->Note_GetText());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultTextNoteNode, getTextW)

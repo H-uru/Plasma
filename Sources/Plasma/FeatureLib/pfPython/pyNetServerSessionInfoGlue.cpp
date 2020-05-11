@@ -143,27 +143,27 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, hasServerGuid)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, getServerName)
 {
-    return PyString_FromSTString(self->fThis->GetServerName());
+    return PyUnicode_FromSTString(self->fThis->GetServerName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, getServerType)
 {
-    return PyInt_FromLong(self->fThis->GetServerType());
+    return PyLong_FromLong(self->fThis->GetServerType());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, getServerAddr)
 {
-    return PyString_FromSTString(self->fThis->GetServerAddr());
+    return PyUnicode_FromSTString(self->fThis->GetServerAddr());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, getServerPort)
 {
-    return PyInt_FromLong(self->fThis->GetServerPort());
+    return PyLong_FromLong(self->fThis->GetServerPort());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfo, getServerGuid)
 {
-    return PyString_FromString(self->fThis->GetServerGuid());
+    return PyUnicode_FromString(self->fThis->GetServerGuid());
 }
 
 PYTHON_START_METHODS_TABLE(ptNetServerSessionInfo)
@@ -306,27 +306,27 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, hasServerGuid)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, getServerName)
 {
-    return PyString_FromSTString(self->fThis->GetServerName());
+    return PyUnicode_FromSTString(self->fThis->GetServerName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, getServerType)
 {
-    return PyInt_FromLong(self->fThis->GetServerType());
+    return PyLong_FromLong(self->fThis->GetServerType());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, getServerAddr)
 {
-    return PyString_FromSTString(self->fThis->GetServerAddr());
+    return PyUnicode_FromSTString(self->fThis->GetServerAddr());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, getServerPort)
 {
-    return PyInt_FromLong(self->fThis->GetServerPort());
+    return PyLong_FromLong(self->fThis->GetServerPort());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptNetServerSessionInfoRef, getServerGuid)
 {
-    return PyString_FromString(self->fThis->GetServerGuid());
+    return PyUnicode_FromString(self->fThis->GetServerGuid());
 }
 
 PYTHON_START_METHODS_TABLE(ptNetServerSessionInfoRef)

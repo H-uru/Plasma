@@ -18,6 +18,7 @@ set(pfPython_SOURCES
     cyParticleSys.cpp
     cyPhysics.cpp
     cyPythonInterface.cpp
+    cyPythonModule451.cpp
     plPythonFileMod.cpp
     plPythonPack.cpp
     plPythonSDLModifier.cpp

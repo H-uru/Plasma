@@ -70,8 +70,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(redObj))
             red = (float)PyFloat_AsDouble(redObj);
-        else if (PyInt_Check(redObj))
-            red = (float)PyInt_AsLong(redObj);
+        else if (PyLong_Check(redObj))
+            red = (float)PyLong_AsLong(redObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -82,8 +82,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(greenObj))
             green = (float)PyFloat_AsDouble(greenObj);
-        else if (PyInt_Check(greenObj))
-            green = (float)PyInt_AsLong(greenObj);
+        else if (PyLong_Check(greenObj))
+            green = (float)PyLong_AsLong(greenObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -94,8 +94,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(blueObj))
             blue = (float)PyFloat_AsDouble(blueObj);
-        else if (PyInt_Check(blueObj))
-            blue = (float)PyInt_AsLong(blueObj);
+        else if (PyLong_Check(blueObj))
+            blue = (float)PyLong_AsLong(blueObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -106,8 +106,8 @@ PYTHON_INIT_DEFINITION(ptColor, args, keywords)
     {
         if (PyFloat_Check(alphaObj))
             alpha = (float)PyFloat_AsDouble(alphaObj);
-        else if (PyInt_Check(alphaObj))
-            alpha = (float)PyInt_AsLong(alphaObj);
+        else if (PyLong_Check(alphaObj))
+            alpha = (float)PyLong_AsLong(alphaObj);
         else
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects four optional floats");
@@ -270,11 +270,12 @@ PYTHON_START_METHODS_TABLE(ptColor)
 PYTHON_END_METHODS_TABLE;
 
 // Type structure definition
-#define ptColor_COMPARE         PYTHON_NO_COMPARE
 #define ptColor_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptColor_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptColor_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptColor_STR             PYTHON_NO_STR
+#define ptColor_GETATTRO        PYTHON_NO_GETATTRO
+#define ptColor_SETATTRO        PYTHON_NO_SETATTRO
 #define ptColor_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptColor)
 #define ptColor_GETSET          PYTHON_NO_GETSET
 #define ptColor_BASE            PYTHON_NO_BASE

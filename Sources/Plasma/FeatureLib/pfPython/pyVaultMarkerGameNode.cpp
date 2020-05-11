@@ -112,7 +112,7 @@ PyObject* pyVaultMarkerGameNode::GetMarkers() const
     PyObject* list = PyList_New(collector.size());
     for (size_t i = 0; i < collector.size(); ++i) {
         PyObject* marker_tup = PyTuple_New(4);
-        PyTuple_SET_ITEM(marker_tup, 0, PyInt_FromLong(collector[i].id));
+        PyTuple_SET_ITEM(marker_tup, 0, PyLong_FromLong(collector[i].id));
         PyTuple_SET_ITEM(marker_tup, 1, PyUnicode_FromSTString(collector[i].age));
         PyTuple_SET_ITEM(marker_tup, 2, pyPoint3::New(collector[i].pos));
         PyTuple_SET_ITEM(marker_tup, 3, PyUnicode_FromSTString(collector[i].description));

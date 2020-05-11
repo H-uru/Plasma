@@ -87,7 +87,7 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringSize, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getString)
 {
-    return PyString_FromString(self->fThis->GetBuffer().c_str());
+    return PyUnicode_FromStdString(self->fThis->GetBuffer());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getStringW)
@@ -122,17 +122,10 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setStringW, args)
     {
         int strLen = PyUnicode_GetSize(textObj);
         wchar_t* text = new wchar_t[strLen + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)textObj, text, strLen);
+        PyUnicode_AsWideChar(textObj, text, strLen);
         text[strLen] = L'\0';
         self->fThis->SetTextW(text);
         delete [] text;
-        PYTHON_RETURN_NONE;
-    }
-    else if (PyString_Check(textObj))
-    {
-        // we'll allow this, just in case something goes weird
-        char* text = PyString_AsString(textObj);
-        self->fThis->SetText(text);
         PYTHON_RETURN_NONE;
     }
     else
@@ -204,12 +197,12 @@ PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setSpecialCaptureKeyMode, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getLastKeyCaptured)
 {
-    return PyInt_FromLong(self->fThis->GetLastKeyCaptured());
+    return PyLong_FromLong(self->fThis->GetLastKeyCaptured());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGUIControlEditBox, getLastModifiersCaptured)
 {
-    return PyInt_FromLong(self->fThis->GetLastModifiersCaptured());
+    return PyLong_FromLong(self->fThis->GetLastModifiersCaptured());
 }
 
 PYTHON_METHOD_DEFINITION(ptGUIControlEditBox, setLastKeyCapture, args)

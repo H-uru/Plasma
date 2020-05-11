@@ -128,7 +128,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         {
             // set the name of the file (in the global dictionary of the module)
             PyObject* dict = PyModule_GetDict(fModule);
-            PyObject* pfilename = PyString_FromString(fileName.AsString().c_str());
+            PyObject* pfilename = PyUnicode_FromString(fileName.AsString().c_str());
             PyDict_SetItemString(dict, "glue_name", pfilename);
 
             // next we need to:
@@ -138,7 +138,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
             if ( getID!=nil && PyCallable_Check(getID) )
             {
                 PyObject* id = PyObject_CallFunction(getID,nil);
-                if ( id && PyInt_Check(id) )
+                if ( id && PyLong_Check(id) )
                     foundID = true;
             }
             if ( foundID == false )     // then there was an error or no ID or somethin'
@@ -169,14 +169,6 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         else
         {
             ST::printf(stderr, "......blast! Error during run-code in {}!\n", fileName);
-
-            ST::string msg;
-            PythonInterface::getOutputAndReset(msg);
-            if (!msg.empty())
-                ST::printf(out, "{}\n", msg);
-            PythonInterface::getErrorAndReset(msg);
-            if (!msg.empty())
-                ST::printf(stderr, "{}\n", msg);
         }
     }
 
@@ -189,15 +181,6 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 
         ST::printf(out, "\n");
 
-        // print any message after each module
-        ST::string msg;
-        PythonInterface::getOutputAndReset(msg);
-        if (!msg.empty())
-            ST::printf(out, "{}\n", msg);
-        PythonInterface::getErrorAndReset(msg);
-        if (!msg.empty())
-            ST::printf(stderr, "{}\n", msg);
-
         s->WriteLE32(size);
         s->Write(size, pycode);
     }
@@ -208,14 +191,6 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 
         PyErr_Print();
         PyErr_Clear();
-
-        ST::string msg;
-        PythonInterface::getOutputAndReset(msg);
-        if (!msg.empty())
-            ST::printf(out, "{}\n", msg);
-        PythonInterface::getErrorAndReset(msg);
-        if (!msg.empty())
-            ST::printf(stderr, "{}\n", msg);
     }
 
     delete [] code;

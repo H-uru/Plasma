@@ -93,7 +93,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptGameScoreListMsg, getName)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScoreListMsg, getOwnerID)
 {
-    return PyInt_FromLong(self->fThis->GetOwnerID());
+    return PyLong_FromLong(self->fThis->GetOwnerID());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptGameScoreListMsg, getScores)

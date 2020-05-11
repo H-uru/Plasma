@@ -49,11 +49,13 @@ typedef struct _typeobject PyTypeObject;
 typedef struct PyMethodDef PyMethodDef;
 
 // Useful string functions
-ST::string PyString_AsStringEx(PyObject* obj);
-bool PyString_CheckEx(PyObject* obj);
+ST::string PyUnicode_AsSTString(PyObject* obj);
+int PyUnicode_STStringConverter(PyObject* obj, void* str);
+int PyUnicode_PlFileNameDecoder(PyObject* obj, void* str);
 
 PyObject* PyUnicode_FromSTString(const ST::string& str);
-#define PyString_FromSTString(x) PyString_FromStringAndSize((x).c_str(), (x).size())
+#define PyUnicode_FromSTString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
+#define PyUnicode_FromStdString(x) PyUnicode_FromStringAndSize((x).c_str(), (x).size())
 
 // Python 2.7 uses non-const "char *" in many places where a string literal
 // should be accepted.  This makes many compilers unhappy.
@@ -73,7 +75,7 @@ struct pythonClassName \
 { \
     PyObject_HEAD \
     glueClassName *fThis; \
-}
+};
 
 // This makes sure that our python new function can access our constructors
 #define PYTHON_CLASS_NEW_FRIEND(pythonClassName) friend PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *args, PyObject *keywords)
@@ -149,7 +151,7 @@ PyObject *pythonClassName##_new(PyTypeObject *type, PyObject *, PyObject *) \
 void pythonClassName##_dealloc(pythonClassName *self) \
 { \
     delete self->fThis; \
-    self->ob_type->tp_free((PyObject*)self); \
+    Py_TYPE(self)->tp_free((PyObject*)self); \
 }
 
 #define PYTHON_DEFAULT_DEALLOC(pythonClassName) (destructor)pythonClassName##_dealloc
@@ -177,7 +179,6 @@ int pythonClassName##___init__(pythonClassName *self, PyObject *args, PyObject *
 // most glue classes can get away with this default structure
 #define PLASMA_DEFAULT_TYPE(pythonClassName, docString) \
 PYTHON_TYPE_START(pythonClassName) \
-    0,                                  /* ob_size */ \
     "Plasma." #pythonClassName,         /* tp_name */ \
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
@@ -185,7 +186,7 @@ PYTHON_TYPE_START(pythonClassName) \
     0,                                  /* tp_print */ \
     0,                                  /* tp_getattr */ \
     0,                                  /* tp_setattr */ \
-    0,                                  /* tp_compare */ \
+    0,                                  /* tp_as_async */ \
     0,                                  /* tp_repr */ \
     0,                                  /* tp_as_number */ \
     0,                                  /* tp_as_sequence */ \
@@ -215,11 +216,19 @@ PYTHON_TYPE_START(pythonClassName) \
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
     0,                                  /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    0, /* tp_free */ \
+    0, /* tp_is_gc */ \
+    0, /* tp_bases */ \
+    0, /* tp_mro */ \
+    0, /* tp_cache */ \
+    0, /* tp_subclasses */ \
+    0, /* tp_weaklist */ \
+    0, /* tp_del */ \
+    0, /* tp_version_tag */ \
+    0, /* tp_finalize */ \
 PYTHON_TYPE_END
 
-// default compare/rich compare function name
-#define PYTHON_DEFAULT_COMPARE(pythonClassName) pythonClassName##_compare
-#define PYTHON_NO_COMPARE 0
+// default rich compare function name
 #define PYTHON_DEFAULT_RICH_COMPARE(pythonClassName) pythonClassName##_richCompare
 #define PYTHON_NO_RICH_COMPARE 0
 
@@ -235,6 +244,12 @@ PYTHON_TYPE_END
 #define PYTHON_DEFAULT_STR(pythonClassName) (reprfunc)pythonClassName##_str
 #define PYTHON_NO_STR 0
 
+// get/set attro
+#define PYTHON_DEFAULT_GETATTRO PyObject_GenericGetAttr
+#define PYTHON_NO_GETATTRO 0
+#define PYTHON_DEFAULT_SETATTRO PyObject_GenericSetAttr
+#define PYTHON_NO_SETATTRO 0
+
 // get/set table default name
 #define PYTHON_DEFAULT_GETSET(pythonClassName) pythonClassName##_getseters
 #define PYTHON_NO_GETSET 0
@@ -246,7 +261,6 @@ PYTHON_TYPE_END
 // for glue functions that need custom stuff, you need to define the macros yourself
 #define PLASMA_CUSTOM_TYPE(pythonClassName, docString) \
     PYTHON_TYPE_START(pythonClassName) \
-    0,                                  /* ob_size */ \
     "Plasma." #pythonClassName,         /* tp_name */ \
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
@@ -254,7 +268,7 @@ PYTHON_TYPE_END
     0,                                  /* tp_print */ \
     0,                                  /* tp_getattr */ \
     0,                                  /* tp_setattr */ \
-    pythonClassName##_COMPARE,          /* tp_compare */ \
+    0,                                  /* tp_as_async */ \
     0,                                  /* tp_repr */ \
     pythonClassName##_AS_NUMBER,        /* tp_as_number */ \
     pythonClassName##_AS_SEQUENCE,      /* tp_as_sequence */ \
@@ -262,8 +276,8 @@ PYTHON_TYPE_END
     0,                                  /* tp_hash */ \
     0,                                  /* tp_call */ \
     pythonClassName##_STR,              /* tp_str */ \
-    0,                                  /* tp_getattro */ \
-    0,                                  /* tp_setattro */ \
+    pythonClassName##_GETATTRO,         /* tp_getattro */ \
+    pythonClassName##_SETATTRO,         /* tp_setattro */ \
     0,                                  /* tp_as_buffer */ \
     Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,   /* tp_flags */ \
     docString,                          /* tp_doc */ \
@@ -284,12 +298,21 @@ PYTHON_TYPE_END
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
     0,                                  /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    0, /* tp_free */ \
+    0, /* tp_is_gc */ \
+    0, /* tp_bases */ \
+    0, /* tp_mro */ \
+    0, /* tp_cache */ \
+    0, /* tp_subclasses */ \
+    0, /* tp_weaklist */ \
+    0, /* tp_del */ \
+    0, /* tp_version_tag */ \
+    0, /* tp_finalize */ \
 PYTHON_TYPE_END
 
 // for conviencence when we just need a base class
 #define PLASMA_DEFAULT_TYPE_WBASE(pythonClassName, glueBaseClass, docString) \
 PYTHON_TYPE_START(pythonClassName) \
-    0,                                  /* ob_size */ \
     "Plasma." #pythonClassName,         /* tp_name */ \
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
@@ -327,6 +350,16 @@ PYTHON_TYPE_START(pythonClassName) \
     PYTHON_DEFAULT_INIT(pythonClassName),   /* tp_init */ \
     0,                                  /* tp_alloc */ \
     PYTHON_DEFAULT_NEW(pythonClassName),/* tp_new */ \
+    0, /* tp_free */ \
+    0, /* tp_is_gc */ \
+    0, /* tp_bases */ \
+    0, /* tp_mro */ \
+    0, /* tp_cache */ \
+    0, /* tp_subclasses */ \
+    0, /* tp_weaklist */ \
+    0, /* tp_del */ \
+    0, /* tp_version_tag */ \
+    0, /* tp_finalize */ \
 PYTHON_TYPE_END
 
 // small macros so that the type object can be accessed outside the glue file (for subclassing)
@@ -385,9 +418,9 @@ static PyObject *pythonClassName##_##methodName(pythonClassName *self) \
 #define PYTHON_RETURN_BOOL(testValue) \
 { \
     if (testValue) \
-        return PyInt_FromLong((long)1); \
+        return PyLong_FromLong((long)1); \
     else \
-        return PyInt_FromLong((long)0); \
+        return PyLong_FromLong((long)0); \
 }
 #define PYTHON_RETURN_NOT_IMPLEMENTED {Py_INCREF(Py_NotImplemented); return Py_NotImplemented;}
 
@@ -476,17 +509,11 @@ int pythonClassName##_set##attribName(PyObject *self, PyObject *value, void *clo
 // Compare/Rich compare functions
 /////////////////////////////////////////////////////////////////////
 
-// compare
-#define PYTHON_COMPARE_DEFINITION(pythonClassName, obj1, obj2) int pythonClassName##_compare(PyObject *obj1, PyObject *obj2)
-#define PYTHON_COMPARE_LESS_THAN return -1
-#define PYTHON_COMPARE_GREATER_THAN return 1
-#define PYTHON_COMPARE_EQUAL return 0
-
 // rich compare
 #define PYTHON_RICH_COMPARE_DEFINITION(pythonClassName, obj1, obj2, compareType) PyObject *pythonClassName##_richCompare(PyObject *obj1, PyObject *obj2, int compareType)
-#define PYTHON_RCOMPARE_TRUE return PyInt_FromLong((long)1)
-#define PYTHON_RCOMPARE_FALSE return PyInt_FromLong((long)0)
-#define PYTHON_RCOMPARE_ERROR return PyInt_FromLong((long)-1)
+#define PYTHON_RCOMPARE_TRUE return PyLong_FromLong((long)1)
+#define PYTHON_RCOMPARE_FALSE return PyLong_FromLong((long)0)
+#define PYTHON_RCOMPARE_ERROR return PyLong_FromLong((long)-1)
 
 /////////////////////////////////////////////////////////////////////
 // str functions

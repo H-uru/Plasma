@@ -313,12 +313,12 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, drawImageClipped, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getWidth)
 {
-    return PyInt_FromLong(self->fThis->GetWidth());
+    return PyLong_FromLong(self->fThis->GetWidth());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDynamicMap, getHeight)
 {
-    return PyInt_FromLong(self->fThis->GetHeight());
+    return PyLong_FromLong(self->fThis->GetHeight());
 }
 
 PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
@@ -333,8 +333,8 @@ PYTHON_METHOD_DEFINITION(ptDynamicMap, calcTextExtents, args)
     uint16_t height, width;
     self->fThis->CalcTextExtents(text, width, height);
     PyObject* retVal = PyTuple_New(2);
-    PyTuple_SetItem(retVal, 0, PyInt_FromLong(width));
-    PyTuple_SetItem(retVal, 1, PyInt_FromLong(height));
+    PyTuple_SetItem(retVal, 0, PyLong_FromLong(width));
+    PyTuple_SetItem(retVal, 1, PyLong_FromLong(height));
     return retVal;
 }
 

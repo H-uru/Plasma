@@ -97,7 +97,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getParentAgeLink)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeFilename)
 {
-    return PyString_FromSTString(self->fThis->GetAgeFilename());
+    return PyUnicode_FromSTString(self->fThis->GetAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeFilename, args)
@@ -114,7 +114,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeInstanceName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceName, args)
@@ -131,7 +131,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeUserDefinedName)
 {
-    return PyString_FromSTString(self->fThis->GetAgeUserDefinedName());
+    return PyUnicode_FromSTString(self->fThis->GetAgeUserDefinedName());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeUserDefinedName, args)
@@ -148,7 +148,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeUserDefinedName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeInstanceGuid)
 {
-    return PyString_FromSTString(self->fThis->GetAgeInstanceGuid().AsString());
+    return PyUnicode_FromSTString(self->fThis->GetAgeInstanceGuid().AsString());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)
@@ -165,7 +165,7 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeInstanceGuid, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getAgeDescription)
 {
-    return PyString_FromSTString(self->fThis->GetAgeDescription());
+    return PyUnicode_FromSTString(self->fThis->GetAgeDescription());
 }
 
 PYTHON_METHOD_DEFINITION(ptVaultAgeInfoNode, setAgeDescription, args)
@@ -243,7 +243,7 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, isPublic)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, getDisplayName)
 {
-    return PyString_FromSTString(self->fThis->GetDisplayName());
+    return PyUnicode_FromSTString(self->fThis->GetDisplayName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptVaultAgeInfoNode, asAgeInfoStruct)

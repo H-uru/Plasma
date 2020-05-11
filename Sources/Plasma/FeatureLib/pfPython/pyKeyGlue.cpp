@@ -104,7 +104,7 @@ PYTHON_METHOD_DEFINITION(ptKey, netForce, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptKey, getName)
 {
-    return PyString_FromSTString(self->fThis->getName());
+    return PyUnicode_FromSTString(self->fThis->getName());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptKey, enable, Enable)
@@ -147,11 +147,12 @@ PYTHON_START_METHODS_TABLE(ptKey)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptKey_COMPARE       PYTHON_NO_COMPARE
 #define ptKey_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptKey_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptKey_AS_MAPPING    PYTHON_NO_AS_MAPPING
 #define ptKey_STR           PYTHON_NO_STR
+#define ptKey_GETATTRO      PYTHON_NO_GETATTRO
+#define ptKey_SETATTRO      PYTHON_NO_SETATTRO
 #define ptKey_RICH_COMPARE  PYTHON_DEFAULT_RICH_COMPARE(ptKey)
 #define ptKey_GETSET        PYTHON_NO_GETSET
 #define ptKey_BASE          PYTHON_NO_BASE

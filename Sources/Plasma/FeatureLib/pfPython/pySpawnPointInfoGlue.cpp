@@ -78,7 +78,7 @@ PYTHON_INIT_DEFINITION(ptSpawnPointInfo, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
@@ -95,7 +95,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getName)
 {
-    return PyString_FromString(self->fThis->GetName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
@@ -112,7 +112,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfo, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetCameraStack());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfo, setCameraStack, args)
@@ -191,7 +191,7 @@ PYTHON_NO_INIT_DEFINITION(ptSpawnPointInfoRef)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getTitle)
 {
-    return PyString_FromString(self->fThis->GetTitle().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetTitle());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
@@ -208,7 +208,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setTitle, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getName)
 {
-    return PyString_FromString(self->fThis->GetName().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetName());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
@@ -225,7 +225,7 @@ PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setName, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptSpawnPointInfoRef, getCameraStack)
 {
-    return PyString_FromString(self->fThis->GetCameraStack().c_str());
+    return PyUnicode_FromSTString(self->fThis->GetCameraStack());
 }
 
 PYTHON_METHOD_DEFINITION(ptSpawnPointInfoRef, setCameraStack, args)

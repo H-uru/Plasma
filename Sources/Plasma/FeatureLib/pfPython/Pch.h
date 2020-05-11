@@ -62,6 +62,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <string_theory/string>
 #include <string_theory/string_stream>
+#include <string_theory/format>
 
 // Python Library Includes
 #include <Python.h>
