@@ -53,7 +53,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
-import string
 
 import xCensor
 
@@ -211,7 +210,7 @@ class xSimpleImager(ptModifier):
             # not found... add current level chronicle
             vault.addChronicleEntry(kChronicleCensorLevel,kChronicleCensorLevelType,"%d" % (theCensorLevel))
         else:
-            theCensorLevel = string.atoi(entry.chronicleGetValue())
+            theCensorLevel = int(entry.chronicleGetValue())
         PtDebugPrint("xSimpleImager: the censor level is %d" % (theCensorLevel),level=kWarningLevel)
 
     def OnTimer(self,id):
@@ -311,12 +310,12 @@ class xSimpleImager(ptModifier):
             for event in events:
                 if event[0] == kVariableEvent:
                     if event[1][:7] == "dispID=":
-                        newID = string.atoi(event[1][7:])
+                        newID = int(event[1][7:])
                         if newID != CurrentDisplayedElementID:
                             CurrentDisplayedElementID = newID
                             self.IShowCurrentContent()
                     elif event[1][:7] == "Update=":
-                        newID = string.atoi(event[1][7:])
+                        newID = int(event[1][7:])
                         if not self.sceneobject.isLocallyOwned():
                             PtForceVaultNodeUpdate(newID)
                             self.IShowCurrentContent()

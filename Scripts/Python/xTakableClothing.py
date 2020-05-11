@@ -55,7 +55,6 @@ from PlasmaVaultConstants import *
 from xPsnlVaultSDL import *
 import xACAItems
 import xRandom
-import string
 
 stringVarName = ptAttribString(1,"Show/hide age SDL var name")
 boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)
@@ -445,7 +444,7 @@ class ClothingItem:
                 for part in parts:
                     parm = part.split('=')
                     try:
-                        ls = string.lower(parm[0].strip())
+                        ls = parm[0].strip().lower()
                     except LookupError:
                         ls = ""
                     try:
@@ -454,7 +453,7 @@ class ClothingItem:
                         rs = ""
                     if ls == "clothingtype":
                         # change clothing group name into clothingtype
-                        rs = string.lower(rs)
+                        rs = rs.lower()
                         if rs == "pants":
                             self.groupwith = kPantsClothingItem
                         elif rs == "shirt":

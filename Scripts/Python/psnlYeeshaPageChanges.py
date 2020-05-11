@@ -53,7 +53,6 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xPsnlVaultSDL import *
-import string
 
 PageNumber = ptAttribInt(1, "Yeesha Page Number")
 stringShowStates = ptAttribString(2,"States in which shown")

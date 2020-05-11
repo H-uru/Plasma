@@ -51,7 +51,6 @@ from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from xPsnlVaultSDL import *
-import string
 import time
 
 
@@ -128,7 +127,7 @@ class PelletBahroCave(ptResponder):
         try:
             chronString = chronString.split(",")
             for sol in chronString:
-                chronSolutions.append(string.atoi(sol))
+                chronSolutions.append(int(sol))
             PtDebugPrint("found pellet cave solution: ",chronSolutions)
             PtDebugPrint("current sdl values for solution = ",sdlSolutions)
             if self.sceneobject.isLocallyOwned():
@@ -158,7 +157,7 @@ class PelletBahroCave(ptResponder):
             entry = vault.findChronicleEntry("GotPellet")
             if entry is not None:
                 entryValue = entry.chronicleGetValue()
-                gotPellet = string.atoi(entryValue)
+                gotPellet = int(entryValue)
                 if gotPellet != 0:
                     entry.chronicleSetValue("%d" % (0))
                     entry.save()

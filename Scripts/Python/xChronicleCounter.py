@@ -49,7 +49,6 @@ simple incremental counter stored in player's chronicle
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # define the attributes that will be entered in max
 act = ptAttribActivator(1, "activator")
@@ -92,7 +91,7 @@ class xChronicleCounter(ptResponder):
                 vault.addChronicleEntry(var.value,kChronicleVarType,"%d" %(kInitialValue))
                 PtDebugPrint("xChronicleCounter:\tentered new chronicle counter %s, count is %d" % (var.value,kInitialValue))
             else:
-                count = string.atoi(entry.chronicleGetValue())
+                count = int(entry.chronicleGetValue())
                 count = count + 1
                 entry.chronicleSetValue("%d" % (count))
                 entry.save()

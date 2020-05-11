@@ -49,7 +49,6 @@ Operates the Pillar Room puzzle.
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 
 # define the attributes that will be entered in 3dsMAX
@@ -394,7 +393,7 @@ class kdshPillarRoom(ptResponder):
             return
         
         elif not Resetting: # Any other SDL VARname that would come through would have to do with raising a pillar.
-            id = string.atoi(VARname[-1:])
+            id = int(VARname[-1:])
                 
             newpheight = ageSDL["pheight0" + str(id)][0]
             if newpheight == 0: # if height is now 0, don't move it with RaiseAPillar, because ResetPuzzle has already taken care of it

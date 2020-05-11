@@ -52,7 +52,6 @@ from PlasmaTypes import *
 from PlasmaConstants import *
 from PlasmaKITypes import *
 from xPsnlVaultSDL import *
-import string
 import time
 import xRandom
 
@@ -102,7 +101,7 @@ class ErcanaCitySilo(ptResponder):
         entry = vault.findChronicleEntry("GotPellet")
         if entry is not None:
             entryValue = entry.chronicleGetValue()
-            gotPellet = string.atoi(entryValue)
+            gotPellet = int(entryValue)
             if gotPellet != 0:
                 self._gotTurd = True
                 entry.chronicleSetValue("0")

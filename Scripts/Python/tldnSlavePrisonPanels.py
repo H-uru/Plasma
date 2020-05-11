@@ -49,7 +49,6 @@ Author: Doug McBride
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # ---------
 # max wiring

@@ -50,7 +50,6 @@ toggles an age sdl bool only if another age sdl bool is True
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 #import PlasmaControlKeys
 
 # ---------

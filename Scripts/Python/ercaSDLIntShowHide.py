@@ -51,7 +51,6 @@ Enter in the states you wish the item to be *INvisible* in as a comma separated 
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 stringVarName = ptAttribString(1,"Age SDL Var Name")
 stringShowStates = ptAttribString(2,"States in which hidden")

@@ -50,7 +50,6 @@ wiring for items inside Kadish's hut
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 #import time
 
 

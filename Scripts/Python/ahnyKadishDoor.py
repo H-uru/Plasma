@@ -51,7 +51,6 @@ wiring for Kadish's engineer hut door
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 import copy
 import time
 import PlasmaControlKeys

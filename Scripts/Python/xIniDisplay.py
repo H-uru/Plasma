@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains the routines to read and write the Graphics.ini file
 """
 
-import string
 import xIniHelper
 from Plasma import *
 

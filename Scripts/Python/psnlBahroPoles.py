@@ -55,7 +55,6 @@ import xEnum
 import xRandom
 import copy
 from xPsnlVaultSDL import *
-import string
 
 
 # Max attributes
@@ -1207,7 +1206,7 @@ class psnlBahroPoles(ptModifier):
                             chronString = chronString.split(",")
                             pelletSolution = []
                             for sol in chronString:
-                                pelletSolution.append(string.atoi(sol))
+                                pelletSolution.append(int(sol))
                             PtDebugPrint("found pellet cave solution: ", chron.getValue())
                             break
                     break
@@ -1261,7 +1260,7 @@ class psnlBahroPoles(ptModifier):
         agelist = ["Teledahn", "Garden", "Garrison", "Kadish"]
         solution = []
         for age in agelist:
-            ageSol = string.atoi(self.GetAgeVariable(age, "SolutionSymbol"))
+            ageSol = int(self.GetAgeVariable(age, "SolutionSymbol"))
             solution.append(ageSol)
         return solution
 

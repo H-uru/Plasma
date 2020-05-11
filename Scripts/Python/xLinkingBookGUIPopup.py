@@ -62,7 +62,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaNetConstants import *
-import string
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 import time
@@ -188,7 +187,7 @@ class xLinkingBookGUIPopup(ptModifier):
                         TargetAge.value = stringAgeRequested  #Save this for later identification (i.e. visitor age checking)
                         
                         try:
-                            BookNumber = string.atoi(event[1].split(",")[1])
+                            BookNumber = int(event[1].split(",")[1])
                             CurrentPage = ageSDL["CurrentPage"][BookNumber]
                             PtDebugPrint("xLinkingBookGUIPopup: The book was previously bookmarked on page #%d" % (CurrentPage),level=kDebugDumpLevel)
                         except:

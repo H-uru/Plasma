@@ -49,7 +49,6 @@ stuff for the calendar stones from the Yeesha page
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 import xRandom
 
 

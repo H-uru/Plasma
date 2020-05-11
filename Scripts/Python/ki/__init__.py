@@ -53,7 +53,6 @@ from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 
 import time
-import string
 import xCensor
 import xLinkingBookDefs
 import xBookGUIs
@@ -61,6 +60,7 @@ import re    # Used for CoD Fix.
 import os    # Used for saving pictures locally.
 import glob  # Used for saving pictures locally.
 import math
+import functools
 
 import xLocTools
 import xEnum
@@ -4202,7 +4202,7 @@ class xKI(ptModifier):
                 if isinstance(self.BKContentList[0], ptPlayer):
                     # Sort the list of Age players.
                     try:
-                        self.BKContentList.sort(lambda a, b: cmp(a.getPlayerName().lower(), b.getPlayerName().lower()))
+                        self.BKContentList.sort(key=lambda x: x.getPlayerName().lower())
                     except:
                         PtDebugPrint(u"xKI.BigKIProcessContentList(): Unable to sort Age players, but don't break the list.", level=kErrorLevel)
 
@@ -4217,7 +4217,7 @@ class xKI(ptModifier):
                             removeList.insert(0, idx)
                 else:
                     # Sort the list of players, online first.
-                    self.BKContentList.sort(CMPplayerOnline)
+                    self.BKContentList.sort(key=functools.cmp_to_key(CMPplayerOnline))
                     # Remove all the unnamed players and ignored people.
                     for idx in range(len(self.BKContentList)):
                         ref = self.BKContentList[idx]
@@ -4278,7 +4278,7 @@ class xKI(ptModifier):
             gInbox = vault.getGlobalInbox()
             if gInbox is not None:
                 self.BKContentList = gInbox.getChildNodeRefList() + self.BKContentList
-                self.BKContentList.sort(CMPNodeDate)
+                self.BKContentList.sort(key=functools.cmp_to_key(CMPNodeDate))
 
         removeList = []
         for contentidx in range(len(self.BKContentList)):
@@ -4340,7 +4340,7 @@ class xKI(ptModifier):
                             contentFrom.setString(GetAgeName())
                             contentFrom.show()
                             # Find the button to enable it.
-                            lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) / 10) + kGUI.BKIListModeCreateBtn))
+                            lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) // 10) + kGUI.BKIListModeCreateBtn))
                             lmButton.show()
                             ID += 10
                             if ID > kGUI.BKILMOffsetLineLast:
@@ -4447,7 +4447,7 @@ class xKI(ptModifier):
                                             contentFrom.setString("  ")
                                             contentFrom.hide()
                                 # Find the button to enable it.
-                                lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) / 10) + kGUI.BKIListModeCreateBtn))
+                                lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((ID - 100) // 10) + kGUI.BKIListModeCreateBtn))
                                 lmButton.show()
                                 ID += 10
                                 if ID > kGUI.BKILMOffsetLineLast:
@@ -4484,7 +4484,7 @@ class xKI(ptModifier):
                 fromField = ptGUIControlTextBox(KIListModeDialog.dialog.getControlFromTag(tagID + kGUI.BKILMFromOffset))
                 fromField.hide()
                 # Find the button to disable it.
-                lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((tagID - 100) / 10) + kGUI.BKIListModeCreateBtn))
+                lmButton = ptGUIControlButton(KIListModeDialog.dialog.getControlFromTag(((tagID - 100) // 10) + kGUI.BKIListModeCreateBtn))
                 lmButton.hide()
 
     #~~~~~~~~~~~~~~~~~~~~~~~#

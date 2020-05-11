@@ -48,7 +48,6 @@ Date: March 2003
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 #=============================================================
 # define the attributes that will be entered in max
@@ -196,7 +195,7 @@ class nb01DRCImager(ptModifier):
         for event in events:
             if event[0] == kVariableEvent:
                 if event[1][:7] == "dispID=":
-                    newID = string.atoi(event[1][7:])
+                    newID = int(event[1][7:])
                     if newID != self.current_image:
                         self.SetImage(newID)
     

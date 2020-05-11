@@ -50,7 +50,6 @@ increments, decrements or sets an age SDL integer with options for min value, ma
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # ---------
 # max wiring

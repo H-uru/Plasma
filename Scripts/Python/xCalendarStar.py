@@ -51,7 +51,6 @@ wiring for calendar stars which appear in various ages (aka "blue sparky")
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 from xPsnlVaultSDL import *
 
 

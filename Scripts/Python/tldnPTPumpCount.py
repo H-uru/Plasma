@@ -53,7 +53,6 @@ only be seen by the person who primed the pump for the third time.
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # ---------
 # max wiring

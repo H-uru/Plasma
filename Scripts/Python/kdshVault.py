@@ -50,7 +50,6 @@ Operates the Vault puzzle.
 from Plasma import *
 from PlasmaTypes import *
 import PlasmaControlKeys
-import string
 
 # VCP = Vault Control Panel
 
@@ -168,9 +167,8 @@ class kdshVault(ptResponder):
             actButton6.disable()
         if "0" in ButtonsPushed:
             PtDebugPrint("No buttons have been pushed.")
-            #~ string.join(string.split(ButtonsPushed, "0"), "")
+            #~ "".join(ButtonsPushed.split("0"))
             ageSDL["ButtonsPushed"] = (0,)
-            
 
 
     def Load(self):
@@ -281,7 +279,7 @@ class kdshVault(ptResponder):
             PtDebugPrint("kdshVault.OnNotify: Before, ButtonsPushed was ", ButtonsPushed)
 
             
-            ButtonsPushed = string.atoi(ButtonsPushed + (str(id)))
+            ButtonsPushed = int(ButtonsPushed + (str(id)))
             PtDebugPrint("kdshVault.OnNotify: Now, ButtonsPushed = ", ButtonsPushed)
             
             #update the ageSDL value for that button            

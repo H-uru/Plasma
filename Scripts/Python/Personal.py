@@ -50,7 +50,6 @@ event manager hooks for the personal age
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 
 
 kEmptyGuid = '0000000000000000'
@@ -139,8 +138,7 @@ class Personal(ptResponder):
                 #~ vault.addChronicleEntry(kChronicleVarName,kChronicleVarType,"%d" %(1))
                 #~ PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,kChronicleVarName))
             #~ else:
-                #~ import string
-                #~ count = string.atoi(entry.chronicleGetValue())
+                #~ count = int(entry.chronicleGetValue())
                 #~ count = count + 1
                 #~ entry.chronicleSetValue("%d" % (count))
                 #~ entry.save()

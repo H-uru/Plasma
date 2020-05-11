@@ -517,7 +517,7 @@ class xDialogStartUp(ptResponder):
 
         gPlayerList = PtGetAccountPlayerList()
         ExplorerList = gPlayerList[1:]
-        ExplorerList.sort(id_comp)
+        ExplorerList.sort(key=lambda x: x[1])
         if len(ExplorerList) > 1:
             del gPlayerList[1:]
             for Explorer in ExplorerList:
@@ -578,7 +578,3 @@ class xDialogStartUp(ptResponder):
 
         # Everyone is an explorer, so disable the button for visiting.
         btn = ptGUIControlButton(dlgObj.dialog.getControlFromTag(listHotSpot[0])).disable()
-
-###########################
-def id_comp(elem1, elem2):
-    return cmp(elem1[1], elem2[1])

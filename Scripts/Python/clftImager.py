@@ -55,7 +55,6 @@ import random
 import time
 import copy
 import PlasmaControlKeys
-import string
 from xPsnlVaultSDL import *
 
 
@@ -716,7 +715,7 @@ class clftImager(ptResponder):
                             chronString = chronString.split(",")
                             chronSolutions = []
                             for sol in chronString:
-                                chronSolutions.append(string.atoi(sol))
+                                chronSolutions.append(int(sol))
                             PtDebugPrint("found pellet cave solution: ",chronSolutions)
                             return chronSolutions
 

@@ -49,7 +49,6 @@ Event Manager interface for Garrison Phase 0 content
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 #globals
 variable = None

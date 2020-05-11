@@ -50,7 +50,6 @@ all-powerful script for all things Harvester
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 import time
 
 # ---------
