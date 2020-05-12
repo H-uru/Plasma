@@ -159,7 +159,6 @@ target_link_libraries(plClient pnTimer)
 target_link_libraries(plClient pnUtils)
 target_link_libraries(plClient pnUUID)
 
-target_link_libraries(plClient ${PYTHON_LIBRARIES})
 target_link_libraries(plClient ${OPENAL_LIBRARY})
 target_link_libraries(plClient ${OPENSSL_LIBRARIES})
 target_link_libraries(plClient ${EXPAT_LIBRARY})

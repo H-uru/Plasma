@@ -266,6 +266,7 @@ set(pfPython_GLUE
 
 use_precompiled_header(Pch.h Pch.cpp pfPython_HEADERS pfPython_SOURCES)
 add_library(pfPython STATIC ${pfPython_SOURCES} ${pfPython_HEADERS} ${pfPython_GLUE})
+target_link_libraries(pfPython Python3::Python)
 
 source_group("Source Files" FILES ${pfPython_SOURCES})
 source_group("Header Files" FILES ${pfPython_HEADERS})
