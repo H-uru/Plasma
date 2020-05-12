@@ -259,7 +259,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
             #sizes = timeDelta / (dayLength * 30)
 
             # grows every day
-            sizes = timeDelta / (dayLength * 15)
+            sizes = timeDelta // (dayLength * 15)
 
         if sizes > 0:
             sdl["YP10LastTreeGrowth"] = (currentTime,)

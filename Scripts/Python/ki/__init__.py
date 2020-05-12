@@ -2483,9 +2483,9 @@ class xKI(ptModifier):
 
         size = self.GetFontSize()
         if new == 1:
-            fontRange = list(range(len(kChat.FontSizeList) - 1))
+            fontRange = range(len(kChat.FontSizeList) - 1)
         elif new == -1:
-            fontRange = list(range(len(kChat.FontSizeList) - 1, 0, -1))
+            fontRange = range(len(kChat.FontSizeList) - 1, 0, -1)
         for i in fontRange:
             if size <= kChat.FontSizeList[i] and new == 1:
                 size = kChat.FontSizeList[i + 1]
@@ -3178,8 +3178,8 @@ class xKI(ptModifier):
                 makepublicTB.setString(" ")
                 status.setStringW(PtGetLocalizedString("KI.Neighborhood.AgeOwnedStatus", [str(numowners), str(osess), str(numvisitors), str(vsess)]))
                 descript = ptGUIControlMultiLineEdit(KIAgeOwnerExpanded.dialog.getControlFromTag(kGUI.BKAgeOwnerDescription))
-                encoded = buffer(myAge.getAgeDescription())
-                descript.setEncodedBuffer(encoded)
+                encoded = myAge.getAgeDescription()
+                descript.setStringW(encoded)
 
     #~~~~~~~~#
     # miniKI #
@@ -4537,8 +4537,8 @@ class xKI(ptModifier):
             jrnTitle.setString(xCensor.xCensor(element.noteGetTitle(), self.censorLevel))
             jrnTitle.show()
         if not self.BKInEditMode or self.BKEditField != kGUI.BKEditFieldJRNNote:
-            encoded = buffer(xCensor.xCensor(element.noteGetText(), self.censorLevel))
-            jrnNote.setEncodedBuffer(encoded)
+            text = xCensor.xCensor(element.noteGetText(), self.censorLevel)
+            jrnNote.setStringW(text)
             jrnNote.show()
         self.BigKISetSeen(self.BKCurrentContent)
         # If it came from someone else, add them to the SendTo field.
@@ -6252,8 +6252,8 @@ class xKI(ptModifier):
                     myAge = self.BKConfigFolderDict[self.BKConfigListOrder[self.BKFolderSelected]]
                     if myAge is not None:
                         PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Age description updated for {}.".format(myAge.getDisplayName()), level=kDebugDumpLevel)
-                        buff = descript.getEncodedBuffer()
-                        myAge.setAgeDescription(str(buff))
+                        buff = descript.getString()
+                        myAge.setAgeDescription(buff)
                         myAge.save()
                     else:
                         PtDebugPrint("xKI.ProcessNotifyAgeOwnerExpanded(): Neighborhood is None while trying to update description.", level=kDebugDumpLevel)

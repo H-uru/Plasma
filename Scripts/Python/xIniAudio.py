@@ -323,9 +323,9 @@ def SetAudioMode(init, device, eax):
 
         PtDebugPrint(device)
         if entryDev:
-            entryDev.setValue(0, "\"" + device.encode("utf-8") + "\"")
+            entryDev.setValue(0, f'"{device}"')
         else:
-            gIniFile.addEntry("Audio.SetDeviceName \"" + device.encode("utf-8") + "\"")
+            gIniFile.addEntry(f'Audio.SetDeviceName "{device}"')
 
         if eax:
             val = kBeTrue
