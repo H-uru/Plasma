@@ -50,13 +50,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 ST::string PyUnicode_AsSTString(PyObject* obj)
 {
     if (PyUnicode_Check(obj)) {
-#if (Py_UNICODE_SIZE == 2)
-        return ST::string::from_utf16(reinterpret_cast<const char16_t *>(PyUnicode_AsUnicode(obj)));
-#elif (Py_UNICODE_SIZE == 4)
-        return ST::string::from_utf32(reinterpret_cast<const char32_t *>(PyUnicode_AsUnicode(obj)));
-#else
-#       error "Py_UNICODE is an unexpected size"
-#endif
+        Py_ssize_t size;
+        const char* str = PyUnicode_AsUTF8AndSize(obj, &size);
+        if (str)
+            return ST::string::from_utf8(str, size, ST::assume_valid);
     }
 
     return ST::null;
