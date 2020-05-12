@@ -908,7 +908,7 @@ class CommandsProcessor:
                                     return args
                             else:
                                 retDisp = command()
-                            if isinstance(retDisp, str) or isinstance(retDisp, str):
+                            if isinstance(retDisp, str):
                                 self.chatMgr.DisplayStatusMessage(retDisp)
                             elif isinstance(retDisp, tuple):
                                 if retDisp[0]:
@@ -932,8 +932,7 @@ class CommandsProcessor:
         if not params:
             return 0
         try:
-            pID = int(int(params))
-            return pID
+            return int(params)
         except ValueError:
             for player in self.chatMgr.BKPlayerList:
                 if isinstance(player, ptPlayer):

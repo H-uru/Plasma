@@ -260,15 +260,6 @@ kGUIActivated = 2
 
 kChronicleVarType = 0
 
-def Uni(string):
-    "Converts a string to unicode, using latin-1 encoding if necessary"
-    try:
-        retVal = str(string)
-        return retVal
-    except UnicodeDecodeError:
-        retVal = str(string, "latin-1")
-        return retVal
-
 class AgeInstance():
     def __init__(self, ageData):
         self.ageInfo = ageData[0]
@@ -284,7 +275,7 @@ class AgeData():
 
 class LinkListEntry():
     def __init__(self, displayName, displayInfo, description = "", canDelete = False, isEnabled = True):
-        self.untranslatedName = Uni(displayName)
+        self.untranslatedName = displayName
         self.displayName = xLocTools.LocalizeAgeName(displayName)
         self.displayInfo = displayInfo
         self.description = description
@@ -1472,7 +1463,7 @@ class nxusBookMachine(ptModifier):
 
         displayName = info.getDisplayName()
 
-        description = Uni(info.getAgeDescription())
+        description = info.getAgeDescription()
         infoTxt = self.IFormatGZCreateCoords(hoodLink)
         self.IShowEnableButton(kIDBtnNeighborhoodPublic)
         self.IShowEnableButton(kIDBtnNeighborhoodSelect)
