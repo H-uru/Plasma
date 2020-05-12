@@ -18,15 +18,15 @@ if(MOVIE_AVAILABLE)
 endif()
 
 # Test for Python Interpreter, which will be used for extra build scripts if available
-find_package(PythonInterp)
-set_package_properties(PythonInterp PROPERTIES
+find_package(Python2)
+set_package_properties(Python2 PROPERTIES
     URL "http://www.python.org"
     DESCRIPTION "Python Scripting language interpreter"
     TYPE OPTIONAL
     PURPOSE "Used to (re-)build some client resource files"
 )
 
-if(PYTHONINTERP_FOUND)
+if(Python2_Interpreter_FOUND)
     include(FindPythonModule)
     # Test for Python modules needed to build resource.dat
     find_python_module(rsvg)
