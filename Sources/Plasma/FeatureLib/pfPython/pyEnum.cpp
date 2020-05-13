@@ -372,7 +372,7 @@ PYTHON_TYPE_START(EnumValue)
     sizeof(EnumValue),                  /* tp_basicsize */
     0,                                  /* tp_itemsize */
     (destructor)EnumValue_dealloc,      /* tp_dealloc */
-    EnumValue_print,                    /* tp_print */
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(EnumValue_print),
     0,                                  /* tp_getattr */
     0,                                  /* tp_setattr */
     0,                                  /* tp_as_async */
@@ -416,6 +416,7 @@ PYTHON_TYPE_START(EnumValue)
     0,                                  /* tp_del */
     0,                                  /* tp_version_tag */
     0,                                  /* tp_finalize */
+    PYTHON_TP_VECTORCALL_PRINT(EnumValue_print)
 PYTHON_TYPE_END;
 
 bool IsEnumValue(PyObject *obj)
@@ -582,7 +583,7 @@ PYTHON_TYPE_START(Enum)
     sizeof(Enum),                       /* tp_basicsize */
     0,                                  /* tp_itemsize */
     (destructor)Enum_dealloc,           /* tp_dealloc */
-    0,                                  /* tp_print */
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(0),
     0,                                  /* tp_getattr */
     0,                                  /* tp_setattr */
     0,                                  /* tp_compare */
@@ -627,6 +628,7 @@ PYTHON_TYPE_START(Enum)
     0,                                  /* tp_del */
     0,                                  /* tp_version_tag */
     0,                                  /* tp_finalize */
+    PYTHON_TP_VECTORCALL_PRINT(0)
 PYTHON_TYPE_END;
 
 // creates and sets up the enum base class

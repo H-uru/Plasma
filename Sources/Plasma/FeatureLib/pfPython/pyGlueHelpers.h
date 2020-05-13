@@ -176,6 +176,15 @@ int pythonClassName##___init__(pythonClassName *self, PyObject *args, PyObject *
 // message table default name
 #define PYTHON_DEFAULT_METHODS_TABLE(pythonClassName) pythonClassName##_methods
 
+// tp_print moved to the end, and two new vectorcall fields inserted in Python 3.8...
+#if (PY_MAJOR_VERSION >= 4) || ((PY_MAJOR_VERSION == 3) && (PY_MINOR_VERSION >= 8))
+#   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(tp_print) 0
+#   define PYTHON_TP_VECTORCALL_PRINT(tp_print) 0, tp_print,
+#else
+#   define PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(tp_print) tp_print
+#   define PYTHON_TP_VECTORCALL_PRINT(tp_print)
+#endif
+
 // most glue classes can get away with this default structure
 #define PLASMA_DEFAULT_TYPE(pythonClassName, docString) \
 PYTHON_TYPE_START(pythonClassName) \
@@ -183,7 +192,7 @@ PYTHON_TYPE_START(pythonClassName) \
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
-    0,                                  /* tp_print */ \
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(0), \
     0,                                  /* tp_getattr */ \
     0,                                  /* tp_setattr */ \
     0,                                  /* tp_as_async */ \
@@ -226,6 +235,7 @@ PYTHON_TYPE_START(pythonClassName) \
     0, /* tp_del */ \
     0, /* tp_version_tag */ \
     0, /* tp_finalize */ \
+    PYTHON_TP_VECTORCALL_PRINT(0) \
 PYTHON_TYPE_END
 
 // default rich compare function name
@@ -265,7 +275,7 @@ PYTHON_TYPE_END
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
-    0,                                  /* tp_print */ \
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(0), \
     0,                                  /* tp_getattr */ \
     0,                                  /* tp_setattr */ \
     0,                                  /* tp_as_async */ \
@@ -308,6 +318,7 @@ PYTHON_TYPE_END
     0, /* tp_del */ \
     0, /* tp_version_tag */ \
     0, /* tp_finalize */ \
+    PYTHON_TP_VECTORCALL_PRINT(0) \
 PYTHON_TYPE_END
 
 // for conviencence when we just need a base class
@@ -317,7 +328,7 @@ PYTHON_TYPE_START(pythonClassName) \
     sizeof(pythonClassName),            /* tp_basicsize */ \
     0,                                  /* tp_itemsize */ \
     PYTHON_DEFAULT_DEALLOC(pythonClassName),    /* tp_dealloc */ \
-    0,                                  /* tp_print */ \
+    PYTHON_TP_PRINT_OR_VECTORCALL_OFFSET(0), \
     0,                                  /* tp_getattr */ \
     0,                                  /* tp_setattr */ \
     0,                                  /* tp_compare */ \
@@ -360,6 +371,7 @@ PYTHON_TYPE_START(pythonClassName) \
     0, /* tp_del */ \
     0, /* tp_version_tag */ \
     0, /* tp_finalize */ \
+    PYTHON_TP_VECTORCALL_PRINT(0) \
 PYTHON_TYPE_END
 
 // small macros so that the type object can be accessed outside the glue file (for subclassing)
