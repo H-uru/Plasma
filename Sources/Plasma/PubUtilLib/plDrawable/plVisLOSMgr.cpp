@@ -114,7 +114,7 @@ bool plVisLOSMgr::ICheckSpaceTreeRecur(plSpaceTree* space, int which, hsTArray<p
     return false;
 }
 
-struct plCompSpaceHit : public std::binary_function<plSpaceHit, plSpaceHit, bool>
+struct plCompSpaceHit
 {
     bool operator()( const plSpaceHit& lhs, const plSpaceHit& rhs) const
     {
