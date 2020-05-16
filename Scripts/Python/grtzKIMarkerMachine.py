@@ -53,7 +53,6 @@ MinorVersionNumber = 4
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 import xLinkingBookDefs
 from xPsnlVaultSDL import *
 
@@ -283,7 +282,7 @@ class grtzKIMarkerMachine(ptModifier):
             
             if len(args) == 3:
                 try:
-                    gGZPlaying = string.atoi(args[0])
+                    gGZPlaying = int(args[0])
                     colors = args[1].split(':')
                     outof = args[2].split(':')
                     if len(colors) != 2 or len(outof) != 2:
@@ -291,8 +290,8 @@ class grtzKIMarkerMachine(ptModifier):
 
                     gMarkerGottenColor = colors[0]
                     gMarkerToGetColor = colors[1]
-                    gMarkerGottenNumber = string.atoi(outof[0])
-                    gMarkerToGetNumber = string.atoi(outof[1])
+                    gMarkerGottenNumber = int(outof[0])
+                    gMarkerToGetNumber = int(outof[1])
                     return
                 except:
                     PtDebugPrint("grtzKIMarkerMachine - error trying to read GZGames Chronicle",level=kErrorLevel)

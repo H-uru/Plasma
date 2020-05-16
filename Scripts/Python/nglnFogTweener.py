@@ -50,7 +50,6 @@ Animates the Fog RGB and Density troughout the Negilahn Day cycle
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 stringVarName = ptAttribString(1,"Battery Updated SDL")
 
@@ -165,45 +164,45 @@ class nglnFogTweener(ptMultiModifier):
         ageSDL.sendToClients(stringVarName.value)
         
         self.SunriseRGBList = SunriseRGB.value.split(",")
-        SunriseR = string.atof(self.SunriseRGBList[0])
-        SunriseG = string.atof(self.SunriseRGBList[1])
-        SunriseB = string.atof(self.SunriseRGBList[2])
+        SunriseR = float(self.SunriseRGBList[0])
+        SunriseG = float(self.SunriseRGBList[1])
+        SunriseB = float(self.SunriseRGBList[2])
         
         self.SunriseDensityList = SunriseDensity.value.split(",")
-        SunriseS = string.atof(self.SunriseDensityList[0])
-        SunriseE = string.atof(self.SunriseDensityList[1])
-        SunriseD = string.atof(self.SunriseDensityList[2])
+        SunriseS = float(self.SunriseDensityList[0])
+        SunriseE = float(self.SunriseDensityList[1])
+        SunriseD = float(self.SunriseDensityList[2])
 
         self.NoonRGBList = NoonRGB.value.split(",")
-        NoonR = string.atof(self.NoonRGBList[0])
-        NoonG = string.atof(self.NoonRGBList[1])
-        NoonB = string.atof(self.NoonRGBList[2])
+        NoonR = float(self.NoonRGBList[0])
+        NoonG = float(self.NoonRGBList[1])
+        NoonB = float(self.NoonRGBList[2])
 
         self.NoonDensityList = NoonDensity.value.split(",")
-        NoonS = string.atof(self.NoonDensityList[0])
-        NoonE = string.atof(self.NoonDensityList[1])
-        NoonD = string.atof(self.NoonDensityList[2])
+        NoonS = float(self.NoonDensityList[0])
+        NoonE = float(self.NoonDensityList[1])
+        NoonD = float(self.NoonDensityList[2])
 
         self.SunsetRGBList = SunsetRGB.value.split(",")
-        SunsetR = string.atof(self.SunsetRGBList[0])
-        SunsetG = string.atof(self.SunsetRGBList[1])
-        SunsetB = string.atof(self.SunsetRGBList[2])
+        SunsetR = float(self.SunsetRGBList[0])
+        SunsetG = float(self.SunsetRGBList[1])
+        SunsetB = float(self.SunsetRGBList[2])
 
         self.SunsetDensityList = SunsetDensity.value.split(",")
-        SunsetS = string.atof(self.SunsetDensityList[0])
-        SunsetE = string.atof(self.SunsetDensityList[1])
-        SunsetD = string.atof(self.SunsetDensityList[2])
+        SunsetS = float(self.SunsetDensityList[0])
+        SunsetE = float(self.SunsetDensityList[1])
+        SunsetD = float(self.SunsetDensityList[2])
 
 
         self.MidnightRGBList = MidnightRGB.value.split(",")
-        MidnightR = string.atof(self.MidnightRGBList[0])
-        MidnightG = string.atof(self.MidnightRGBList[1])
-        MidnightB = string.atof(self.MidnightRGBList[2])
+        MidnightR = float(self.MidnightRGBList[0])
+        MidnightG = float(self.MidnightRGBList[1])
+        MidnightB = float(self.MidnightRGBList[2])
         
         self.MidnightDensityList = MidnightDensity.value.split(",")
-        MidnightS = string.atof(self.MidnightDensityList[0])
-        MidnightE = string.atof(self.MidnightDensityList[1])
-        MidnightD = string.atof(self.MidnightDensityList[2])        
+        MidnightS = float(self.MidnightDensityList[0])
+        MidnightE = float(self.MidnightDensityList[1])
+        MidnightD = float(self.MidnightDensityList[2])
         
         PtDebugPrint("nglnFogTweener.OnFirstUpdate: SunriseRGB=(%s,%s,%s), NoonRGB=(%s,%s,%s), SunsetRGB=(%s,%s,%s), MidnightRGB=(%s,%s,%s) " % (SunriseR, SunriseG, SunriseB, NoonR, NoonG, NoonB, SunsetR, SunsetG, SunsetB, MidnightR, MidnightG, MidnightB))
         PtDebugPrint("nglnFogTweener.OnFirstUpdate: SunriseDensity=(%s,%s,%s), NoonDensity=(%s,%s,%s), SunsetDensity=(%s,%s,%s), MidnightDensity=(%s,%s,%s) " % (SunriseS, SunriseE, SunriseD, NoonS, NoonE, NoonD, SunsetS, SunsetE, SunsetD, MidnightS, MidnightE, MidnightD))

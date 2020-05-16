@@ -54,7 +54,6 @@ from PlasmaKITypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from colorsys import *
-import string
 import PlasmaControlKeys
 import time
 import os   #used for saving pictures locally
@@ -1117,12 +1116,12 @@ class xAvatarCustomization(ptModifier):
             color2 = []
             for i in range(numClothingItems):
                 line = saveFile.readline()
-                items = string.split(line)
+                items = line.split()
                 clothingList.append(items[0])
                 color1.append(ptColor(float(items[1]),float(items[2]),float(items[3])))
                 color2.append(ptColor(float(items[4]),float(items[5]),float(items[6])))
             line = saveFile.readline()
-            items = string.split(line)
+            items = line.split()
             skinColor = ptColor(float(items[0]),float(items[1]),float(items[2]))
             numMorphs = int(saveFile.readline())
             geomMorphs = []
@@ -1834,7 +1833,7 @@ class ClothingItem:
                 for part in parts:
                     parm = part.split('=')
                     try:
-                        ls = string.lower(parm[0].strip())
+                        ls = parm[0].strip().lower()
                     except LookupError:
                         ls = ""
                     try:
@@ -1859,16 +1858,16 @@ class ClothingItem:
                         except KeyError:
                             self.colorlabel2 = U"*"+unicode(rs)+U"*"
                     elif ls == "saturationlayer1":
-                        self.tintSaturation1 = string.atof(rs)
+                        self.tintSaturation1 = float(rs)
                     elif ls == "saturationlayer2":
-                        self.tintSaturation2 = string.atof(rs)
+                        self.tintSaturation2 = float(rs)
                     elif ls == "valuelayer1":
-                        self.tintValue1 = string.atof(rs)
+                        self.tintValue1 = float(rs)
                     elif ls == "valuelayer2":
-                        self.tintValue2 = string.atof(rs)
+                        self.tintValue2 = float(rs)
                     elif ls == "clothingtype":
                         # change clothing group name into clothingtype
-                        rs = string.lower(rs)
+                        rs = rs.lower()
                         if rs == "pants":
                             self.groupwith = kPantsClothingItem
                         elif rs == "shirt":
@@ -1888,7 +1887,7 @@ class ClothingItem:
                     elif ls == "accessory":
                         self.accessoryType = 0
                     elif ls == "incloset":
-                        rs = string.lower(rs)
+                        rs = rs.lower()
                         if rs == "yes":
                             self.inCloset = 1
                         elif rs == "no":
@@ -1896,7 +1895,7 @@ class ClothingItem:
                         else:
                             PtDebugPrint("AvaCusta: Unknown inCloset type of %s on clothing item %s" % (rs,self.name))
                     elif ls == "inclosetcolor1":
-                        rs = string.lower(rs)
+                        rs = rs.lower()
                         if rs == "yes":
                             self.inClosetColor1 = 1
                         elif rs == "no":
@@ -1904,7 +1903,7 @@ class ClothingItem:
                         else:
                             PtDebugPrint("AvaCusta: Unknown inClosetColor1 type of %s on clothing item %s" % (rs,self.name))
                     elif ls == "inclosetcolor2":
-                        rs = string.lower(rs)
+                        rs = rs.lower()
                         if rs == "yes":
                             self.inClosetColor2 = 1
                         elif rs == "no":

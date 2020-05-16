@@ -53,7 +53,6 @@ Handles the link out to the Cleft at the back of the cave
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 

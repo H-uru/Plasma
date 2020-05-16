@@ -54,7 +54,6 @@ from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaNetConstants import *
 import PlasmaControlKeys
-import string
 
 # ---------
 # max wiring

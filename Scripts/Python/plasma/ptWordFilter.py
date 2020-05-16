@@ -75,7 +75,7 @@ class ExactMatchListFilter(LanguageFilter):
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute
-                        rating = self.wordlist[string.lower(sentence[startidx:endidx])]
+                        rating = self.wordlist[sentence[startidx:endidx].lower()]
                     except LookupError:
                         # couldn't find word
                         rating = None
@@ -86,7 +86,7 @@ class ExactMatchListFilter(LanguageFilter):
         if startidx < len(sentence):
             try:
                 # find and get rating and substitute
-                rating = self.wordlist[string.lower(sentence[startidx:])]
+                rating = self.wordlist[sentence[startidx:].lower()]
             except LookupError:
                 # couldn't find word
                 rating = None
@@ -105,7 +105,7 @@ class ExactMatchListFilter(LanguageFilter):
                 if startidx != endidx:
                     try:
                         # find and get rating and substitute
-                        rating = self.wordlist[string.lower(sentence[startidx:endidx])]
+                        rating = self.wordlist[sentence[startidx:endidx].lower()]
                     except LookupError:
                         # couldn't find word
                         rating = None
@@ -121,7 +121,7 @@ class ExactMatchListFilter(LanguageFilter):
             # Special after loop processing!
             try:
                 # find and get rating and substitute
-                rating = self.wordlist[string.lower(sentence[startidx:])]
+                rating = self.wordlist[sentence[startidx:].lower()]
             except LookupError:
                 # couldn't find word
                 rating = None

@@ -52,7 +52,6 @@ Sets SDL, which is being listened to by xStandardDoor, and handles the door open
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 from xEnum import *

@@ -70,8 +70,7 @@ class Kadish(ptResponder):
                 #~ vault.addChronicleEntry(kChronicleVarName,kChronicleVarType,"%d" %(1))
                 #~ PtDebugPrint("%s:\tentered new chronicle counter %s" % (kModuleName,kChronicleVarName))
             #~ else:
-                #~ import string
-                #~ count = string.atoi(entry.chronicleGetValue())
+                #~ count = int(entry.chronicleGetValue())
                 #~ count = count + 1
                 #~ entry.chronicleSetValue("%d" % (count))
                 #~ entry.save()

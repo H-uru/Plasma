@@ -49,7 +49,6 @@ Author: Tye Hooley
 
 from Plasma import *
 from PlasmaTypes import *
-#import string
 
 # ---------
 # max wiring

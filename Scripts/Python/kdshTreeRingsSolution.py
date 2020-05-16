@@ -53,7 +53,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
-import string
 
 # If there were another way to have done this, believe me, I would have. 
 # In the mean time, the following 122 items are dedicated to the memory of Pete Gage
@@ -300,9 +299,9 @@ class kdshTreeRingsSolution(ptModifier):
             #~ PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
             pass
         else:
-            GUIcode = "GUI" + string.join(string.split(VARname, "Ring"), "") + "_0" + str(newbearing) + ".animation.play()"
-            #~ PtDebugPrint("GUIcode = ", GUIcode)
-            exec(GUIcode) # this runs the animation on the "fake" ring in front of the GUI
+            # this runs the animation on the "fake" ring in front of the GUI
+            animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
+            globals()[animname].animation.play()
 
 ###
 #Check to see if the Puzzle has been solved
@@ -379,11 +378,9 @@ class kdshTreeRingsSolution(ptModifier):
         #~ PtDebugPrint("FF Inner code = ", GUIcode)
         exec(GUIcode) 
         
-        #~ GUIcode = "GUI" + string.join(string.split(VARname, "Ring"), "") + "_0" + str(newbearing) + ".animation.play()"
-        #~ PtDebugPrint("GUIcode = ", GUIcode)
-        #~ exec GUIcode # this runs the animation on the "fake" ring in front of the GUI        
-        
-        
+        # this runs the animation on the "fake" ring in front of the GUI
+        #~ animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
+        #~ globals()[animname].animation.play()
 
     def OnTimer(self,timer):
         global StillSolved

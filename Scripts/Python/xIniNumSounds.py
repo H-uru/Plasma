@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains the routines to read and write the Audio.ini file
 """
 
-import string
 import xIniHelper
 
 
@@ -86,5 +85,5 @@ def GetSoundPriority():
         if entry:
             value = entry.getValue(0)
             if value:
-                return string.atoi(value)
+                return int(value)
         return 0

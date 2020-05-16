@@ -53,7 +53,6 @@ MinorVersionNumber = 1
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 
 aStringVarName = ptAttribString(1,"Age SDL Vis Name")
 aGZSerialNumber = ptAttribInt(2,"GZ a unique serial number (1 thru n)")

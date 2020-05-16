@@ -289,9 +289,8 @@ def ResetGZGame(args):
 def GZGetMarkers(args):
     import Plasma
     import PlasmaKITypes
-    import string
     try:
-        markersToGet = string.atoi(args)
+        markersToGet = int(args)
     except ValueError:
         markersToGet = 0
     if markersToGet:
@@ -303,13 +302,13 @@ def GZGetMarkers(args):
             gargs = gameString.split()
             if len(gargs) == 3:
                 try:
-                    markerGame = string.atoi(gargs[0])
+                    markerGame = int(gargs[0])
                     colors = gargs[1].split(':')
                     markerGottenColor = colors[0]
                     markerToGetColor = colors[1]
                     outof = gargs[2].split(':')
-                    markerGottenNumber = string.atoi(outof[0])
-                    markerToGetNumber = string.atoi(outof[1])
+                    markerGottenNumber = int(outof[0])
+                    markerToGetNumber = int(outof[1])
                     newgotten = markerGottenNumber + markersToGet
                     if newgotten > markerToGetNumber:
                         newgotten = markerToGetNumber
@@ -833,7 +832,6 @@ def SetSDL(varNameAndVal):
 
 def InstaPellets(args):
     import Plasma
-    import string
     ageName = Plasma.PtGetAgeName()
     if ageName == "Ercana":
         sdl = Plasma.PtGetAgeSDL()
@@ -844,7 +842,7 @@ def InstaPellets(args):
             if PelletsPresent:
                 print("xCheat.InstantPellets: ERROR.  Must flush current pellets before using this cheat.")
             else:
-                iarg = string.atoi(args)
+                iarg = int(args)
                 if iarg == 0:
                     iarg = 1
                 recipeSDL = (iarg + 300)

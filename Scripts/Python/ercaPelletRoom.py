@@ -52,7 +52,6 @@ wiring for the Ercana pellet room, including the pellet dispensing machine and l
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 import PlasmaControlKeys
 import xEnum
 from math import *
@@ -156,7 +155,7 @@ class ercaPelletRoom(ptResponder):
         entry = vault.findChronicleEntry("GotPellet")
         if entry is not None:
             entryValue = entry.chronicleGetValue()
-            oldGotPellet = string.atoi(entryValue)
+            oldGotPellet = int(entryValue)
             if oldGotPellet != 0:
                 entry.chronicleSetValue("%d" % (0))
                 entry.save()

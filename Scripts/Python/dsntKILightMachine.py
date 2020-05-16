@@ -48,7 +48,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-import string
 
 
 #=============================================================
@@ -183,7 +182,7 @@ class dsntKILightMachine(ptModifier):
         entry = vault.findChronicleEntry("KILightStop")
         if entry is not None:
             entryValue = entry.chronicleGetValue()
-            oldVal = string.atoi(entryValue)
+            oldVal = int(entryValue)
             if remaining == oldVal:
                 return
             PtDebugPrint("set KI light chron to: ",remaining)

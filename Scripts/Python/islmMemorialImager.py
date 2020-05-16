@@ -49,7 +49,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 from PlasmaVaultConstants import *
-import string
 
 #=============================================================
 # define the attributes that will be entered in max

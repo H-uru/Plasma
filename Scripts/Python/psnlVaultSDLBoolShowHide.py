@@ -52,7 +52,6 @@ Use only in the Personal age
 from Plasma import *
 from PlasmaTypes import *
 from xPsnlVaultSDL import *
-import string
 
 stringVarName = ptAttribString(1,"Psnl SDL Var Name")
 boolShowOnTrue = ptAttribBoolean(2,"Show on true",1)

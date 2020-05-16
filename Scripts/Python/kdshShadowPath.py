@@ -49,7 +49,6 @@ Operates the Shadow Path puzzle.
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # define the attributes that will be entered in 3dsMAX
 actSwitch01 = ptAttribActivator(1, "Actvr: Switch 01") # Switches are numbered left to right in a counterclockwise fashion
@@ -285,7 +284,7 @@ class kdshShadowPath(ptResponder):
                 ConcealStairs.run(self.key)
                 
         elif VARname[:15] == "ShadowPathLight":
-            light = string.atoi(VARname[-2:]) #get the last two digits, which is the light number
+            light = int(VARname[-2:]) #get the last two digits, which is the light number
                 
             #~ PtDebugPrint("OnSDLNotify: Light ", light," SDL updated.")
                 

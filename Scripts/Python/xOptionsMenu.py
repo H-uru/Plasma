@@ -1825,7 +1825,6 @@ class xOptionsMenu(ptModifier):
         global gWalkAndPan
         global gStayInFirstPerson
         global gClickToTurn
-        import string
 
         AdvSettingsString = self.getChronicleVar("AdvSettings")
         AdvSettingsArray = []
@@ -1837,33 +1836,33 @@ class xOptionsMenu(ptModifier):
         else:
             AdvSettingsArray = AdvSettingsString.split()
 
-        value = string.atoi(AdvSettingsArray[0])
+        value = int(AdvSettingsArray[0])
         PtSetMouseTurnSensitivity(float(value))
         gMouseSensitivity = AdvSettingsArray[0]
 
-        value = string.atoi(AdvSettingsArray[1])
+        value = int(AdvSettingsArray[1])
         cam = ptCamera()
         cam.setSmootherCam(value)
         gSmoothCam = AdvSettingsArray[1]
 
-        value = string.atoi(AdvSettingsArray[2])
+        value = int(AdvSettingsArray[2])
         gMouseInvert = AdvSettingsArray[2]
         if value:
             PtSetMouseInverted()
         else:
             PtSetMouseUninverted()
 
-        value = string.atoi(AdvSettingsArray[3])
+        value = int(AdvSettingsArray[3])
         cam = ptCamera()
         cam.setWalkAndVerticalPan(value)
         gWalkAndPan = AdvSettingsArray[3]
 
-        value = string.atoi(AdvSettingsArray[4])
+        value = int(AdvSettingsArray[4])
         cam = ptCamera()
         cam.setStayInFirstPerson(value)
         gStayInFirstPerson = AdvSettingsArray[4]
 
-        value = string.atoi(AdvSettingsArray[5])
+        value = int(AdvSettingsArray[5])
         PtSetClickToTurn(value)
         gClickToTurn = AdvSettingsArray[5]
 

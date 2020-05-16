@@ -51,7 +51,6 @@ one of two responders depending on new state
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # ---------
 # max wiring

@@ -53,7 +53,6 @@ Use only in the Personal age
 from Plasma import *
 from PlasmaTypes import *
 from xPsnlVaultSDL import *
-import string
 
 # ---------
 # max wiring

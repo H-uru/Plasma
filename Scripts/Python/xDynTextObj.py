@@ -49,7 +49,6 @@ A helper file for automatic rendering of localized text on dynamic text objects
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 import xDynTextDefs
 

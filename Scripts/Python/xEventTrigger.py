@@ -49,7 +49,6 @@ Author: Mark DeForest
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 EventName = ptAttribString(1,"Event name")
 PageNames = ptAttribString(2,"Page node name(s) - comma separated")
@@ -85,7 +84,7 @@ class xEventTrigger(ptResponder):
                     #~ PtDebugPrint("Event %s is true!" % (VARname))
                     # are we paging things in?
                     if PageNames.value:
-                        names = string.split(PageNames.value,",")
+                        names = PageNames.value.split(",")
                         for name in names:
                             PtPageInNode(name)
                     if Responder.value is not None:
@@ -94,7 +93,7 @@ class xEventTrigger(ptResponder):
                     #~ PtDebugPrint("Event %s is false!" % (VARname))
                     # are we paging things in?
                     if PageNames.value:
-                        names = string.split(PageNames.value,",")
+                        names = PageNames.value.split(",")
                         for name in names:
                             PtPageOutNode(name)
                     if RunFalse.value and Responder.value is not None:

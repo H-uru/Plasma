@@ -50,7 +50,6 @@ wiring for Jalak playing field, the REAL version
 from Plasma import *
 from PlasmaTypes import *
 import xRandom
-import string
 
 
 # Shared xKI/jlakField constants
@@ -444,10 +443,10 @@ class jlakField(ptResponder):
                     PtDebugPrint("jlakField.OnNotify(): pressed: ",theClk)
                     if id == clkColumnUp.id:
                         direction = 1
-                        numClk = string.atoi(theClk[6:])
+                        numClk = int(theClk[6:])
                     else:
                         direction = 0
-                        numClk = string.atoi(theClk[6:])
+                        numClk = int(theClk[6:])
                     #PtDebugPrint("numClk = ",numClk)
                     self.CalcPos(numClk,direction)
 
@@ -785,7 +784,7 @@ class jlakField(ptResponder):
         preset = []
         i = 0
         for line in fRead:
-            pos = string.atoi(line)
+            pos = int(line)
             if pos < 0 or pos > 19:
                 PtDebugPrint("jlakField.LoadColumns():  ERROR!  Column %d has an invalid position of %d, must be an integer between 0 and 19.  Load canceled." % (i,pos))
                 fRead.close()
@@ -805,7 +804,7 @@ class jlakField(ptResponder):
     def OnBackdoorMsg(self, target, param):
         PtDebugPrint("jlakField.OnBackdoorMsg()")
         if target == "height":
-            param = string.atoi(param)
+            param = int(param)
             if param < kMinPos or param > kMaxPos:
                 PtDebugPrint("invalid height parameter, must be a # between ",kMinPos," and ",kMaxPos)
                 return

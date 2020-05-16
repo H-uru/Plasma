@@ -44,7 +44,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 This module contains the routines to read and write the Volume.ini file
 """
 
-import string
 import xIniHelper
 from PlasmaConstants import *
 from Plasma import *
@@ -116,7 +115,7 @@ def GetSoundFXVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetMusicVolume(volume):
@@ -134,7 +133,7 @@ def GetMusicVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetVoiceVolume(volume):
@@ -152,7 +151,7 @@ def GetVoiceVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetAmbienceVolume(volume):
@@ -170,7 +169,7 @@ def GetAmbienceVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetGUIVolume(volume):
@@ -188,7 +187,7 @@ def GetGUIVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetNPCVoiceVolume(volume):
@@ -206,7 +205,7 @@ def GetNPCVoiceVolume(volume):
         if entry:
             value = entry.getValue(1)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetMicLevel(level):
@@ -224,7 +223,7 @@ def GetMicLevel(level):
         if entry:
             value = entry.getValue(0)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetVoiceRecording(level):
@@ -242,7 +241,7 @@ def GetVoiceRecording(level):
         if entry:
             value = entry.getValue(0)
             if value:
-                return string.atof(value)
+                return float(value)
         return 0.0
 
 def SetSoundPriority(priority):
@@ -260,7 +259,7 @@ def GetSoundPriority():
         if entry:
             value = entry.getValue(0)
             if value:
-                return string.atoi(value)
+                return int(value)
         return 0
 
 def SetMute(mute):
@@ -278,7 +277,7 @@ def GetMute():
         if entry:
             value = entry.getValue(0)
             if value:
-                return string.atoi(value)
+                return int(value)
         return 0
 
 def GetAudioMode():

@@ -51,7 +51,6 @@ wiring for the Ercana Control Room
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 
 # ---------
 # max wiring

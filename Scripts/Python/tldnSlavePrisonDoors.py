@@ -50,7 +50,6 @@ This is the brain for the prison/pressure plate puzzle
 
 from Plasma import *
 from PlasmaTypes import *
-import string
 import xSndLogTracks
 
 # ---------

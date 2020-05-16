@@ -53,7 +53,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
-import string
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Activator for VaporScope",netForce=1)
@@ -321,7 +320,7 @@ class tldnVaporScope(ptModifier):
                 PtDebugPrint("tldnVaporScope:LOSNotify:  ...python mod list:",level=kDebugDumpLevel)
                 for pm in pmlist:
                     PtDebugPrint("       %s" % (pm.getName()),level=kDebugDumpLevel)
-                    if string.lower(pm.getName()).startswith("vaporminerhitme"):
+                    if pm.getName().lower().startswith("vaporminerhitme"):
                         PtDebugPrint("tldnVaporScope:LOS: VaporMiner HIT!",level=kDebugDumpLevel)
                         notify = ptNotify(self.key)
                         notify.clearReceivers()
@@ -336,7 +335,7 @@ class tldnVaporScope(ptModifier):
                 PtDebugPrint("tldnVaporScope:LOSNotify:  ...responder list:",level=kDebugDumpLevel)
                 for resp in resplist:
                     PtDebugPrint("       %s" % (resp.getName()),level=kDebugDumpLevel)
-                    if string.lower(resp.getName()).startswith("vaporminerhitme"):
+                    if resp.getName().lower().startswith("vaporminerhitme"):
                         PtDebugPrint("tldnVaporScope:LOS: VaporMiner HIT!",level=kDebugDumpLevel)
                         atResp = ptAttribResponder(42)
                         atResp.__setvalue__(resp)
