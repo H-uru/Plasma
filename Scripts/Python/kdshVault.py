@@ -357,15 +357,11 @@ class kdshVault(ptResponder):
             #~ PtDebugPrint("kdshVault.OnSDLNotify: lastbuttonpushed = ", lastbuttonpushed)
             
             #run the animation on the button itself
-            code = "respButton" + str(lastbuttonpushed) + ".run(self.key)"
-            #~ PtDebugPrint("code = ", code)
-            exec(code)
-        
+            globals()["respButton{}".format(lastbuttonpushed)].run(self.key)
+
             #disable the clickable for that button
-            code = "actButton" + str(lastbuttonpushed) + ".disable()"
-            #~ PtDebugPrint("code = ", code)
-            exec(code)
-        
+            globals()["actButton{}".format(lastbuttonpushed)].disable()
+
     def OnTimer(self,id):
         global VaultDoorMoving
 

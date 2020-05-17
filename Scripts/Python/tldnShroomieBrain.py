@@ -234,21 +234,9 @@ class tldnShroomieBrain(ptResponder):
 
         whichspawnpoint = random.randint(1,5)
 
-
-        if NearOrFar == "Near":
-            code = "target = SpawnNear0" + str(whichspawnpoint) + ".sceneobject.getKey()"        
-        elif NearOrFar == "Mid":
-            code = "target = SpawnMid0" + str(whichspawnpoint) + ".sceneobject.getKey()"            
-        elif NearOrFar == "Far":
-            code = "target = SpawnFar0" + str(whichspawnpoint) + ".sceneobject.getKey()"
-        PtDebugPrint("target code:", code)
-        exec(code)
-        ShroomieMaster.sceneobject.physics.warpObj(target)
-        
-        code = "respTrick0" + str(whichbehavior) + ".run(self.key)"
-        #~ PtDebugPrint("code = ", code)
-        exec(code)
-
+        target = globals()["Spawn{NearOrFar}0{SpawnPoint}".format(NearOrFar=NearOrFar, SpawnPoint=whichspawnpoint)]
+        ShroomieMaster.sceneobject.physics.warpObj(target.sceneobject.getKey())
+        globals()["respTrick0{}".format(whichbehavior)].run(self.key)
 
         CurrentTime = PtGetDniTime()
         ageSDL["ShroomieTimeLastSeen"] = (CurrentTime,)

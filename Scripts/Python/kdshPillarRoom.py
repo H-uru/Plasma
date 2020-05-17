@@ -218,8 +218,7 @@ class kdshPillarRoom(ptResponder):
         #~ PtDebugPrint("kdshPilllarRoom:OnNotify  state=%f id=%d events=" % (state,id),events)
 
         if id in [1,2,3,4,5]: # One of the four levers or the reset ring were clicked by a player
-            code = "respLever0" + str(id) + ".run(self.key, events=events)"
-            exec(code)
+            globals()["respLever0{}".format(id)].run(self.key, events=events)
             return
 
         elif id in [6,7,8,9] and OnlyOneOwner.sceneobject.isLocallyOwned(): # One of the four levers actually pulled by an avatar
@@ -276,13 +275,12 @@ class kdshPillarRoom(ptResponder):
             return
 
         elif id >= 18 and id <=28 and PtWasLocallyNotified(self.key):
-            PtDebugPrint("Ladderbox %s entered." % ( id- 17))
+            ladderbox = id - 17
+            PtDebugPrint("Ladderbox %s entered." % ladderbox)
             
             LocalAvatar = PtFindAvatar(events)
 
-            code = "MultiStage" + str(id-17) + ".run(LocalAvatar)"
-            #~ PtDebugPrint("code = ", code)
-            exec(code) 
+            globals()["MultiStage{}".format(ladderbox)].run(LocalAvatar)
             
             return
         
@@ -343,8 +341,7 @@ class kdshPillarRoom(ptResponder):
                 
                 #this loop disables all ladder boxes, so the ladders can't be climbed.                
                 for count in range(1,12): 
-                    code = "Ladderbox" + str(count) + ".disable()"
-                    exec(code)
+                    globals()["Ladderbox{}".format(count)].disable()
                     
                 #determine the height of the highest pillar so we can reset them at the same speed as the pillars reset
                 highest = 0
@@ -358,9 +355,7 @@ class kdshPillarRoom(ptResponder):
                 
                 if highest != 0:
                     PtAtTimeCallback(self.key,5*highest,6) #disable everything until all the pillars are down
-        
-                    code = "respSfxResetFromHeight" + str(highest) + ".run(self.key)"
-                    exec(code)
+                    globals()["respSfxResetFromHeight{}".format(highest)].run(self.key)
 
                 # if the counterweights have been lowered at all, this loop resets them
                 if ageSDL["budget"][0] != 8: 
@@ -439,8 +434,7 @@ class kdshPillarRoom(ptResponder):
         #~ PillarCamBlocker.byObject["pillar0" + str(id) + "Collision"].playRange(rangestart, rangeend)
         
         #play the sound effect for that pillar
-        code = "respSfxRaisePillar0" + str(id) + ".run(self.key)"
-        exec(code)
+        globals()["respSfxRaisePillar0{}".format(id)].run(self.key)
         
         PtDebugPrint("\n##")
         PtDebugPrint("Pillar0%d height is now: %d" % (id, ageSDL["pheight0" + str(id)][0]))
@@ -531,13 +525,22 @@ class kdshPillarRoom(ptResponder):
         #~ PtDebugPrint(" ladderstodisable = ", ladderstodisable)
 
         for each in ladderstodisable:
-            code = "Ladderbox" +str(each) + ".disable()"
-            exec(code)
+            globals()["Ladderbox{}".format(each)].disable()
             #~ PtDebugPrint("Immediately disabling ladderbox", each)
 
     def EnableAppropriateLadders(self,id): # when pillar is done raising, enable appropriate ladder boxes with new lengths
         ageSDL = PtGetAgeSDL()
-        
+
+        def _ConfigLadder(ladderId, enable, deltaH=None):
+            ladderbox = globals()["Ladderbox{}".format(ladderId)]
+            if enable:
+                ladderbox.enable()
+            else:
+                ladderbox.disable()
+            if enable and deltaH is not None:
+                multistage = globals()["MultiStage{}".format(ladderId)]
+                multistage.setLoopCount(1, 6 * deltaH - 4)
+
         # Manage the 2 ladder boxes related to the ladder ON this pillar (connecting this pillar with the PREVIOUS one)
         if id != 1: # true unless the first pillar was raised; Pillar #1 has no proceeding pillar
             difference01 = ageSDL["pheight0" + str(id)][0] - ageSDL["pheight0" + str(id-1)][0] # calculates difference between this and proceeding pillar
@@ -546,50 +549,14 @@ class kdshPillarRoom(ptResponder):
             
             if difference01 >= 1: # true if this pillar is higher than proceeding pillar
                 #~ PtDebugPrint("\nPillar0%d is %d notches higher than the proceeding pillar" % (id, difference01))
-                if difference01 > tolerance01: # true if the ladder on this pillar is out of reach from the proceeding pillar
-                    #~ PtDebugPrint("Ascending Ladder box #%d is now disabled, since the ladder doesn't reach down that far" % (id * 2 - 1))
-                    # do something to ladder box (id * 2 - 1)
-                    code = "Ladderbox" + str(id * 2 - 1) + ".disable()"
-                    exec(code)                    
-                    
-                    #~ PtDebugPrint("Descending Ladder box #%d is now enabled, but only to %d rungs, and then you hang." % (id + 7, (6*(5-id) - 4)) #)
-                    # do something to ladder box (id * 2)
-                    code = "Ladderbox" + str(id * 2) + ".disable()"
-                    exec(code)                    
-                    #do something to ladderbox (id + 7)
-                    code = "Ladderbox" + str(id + 7) + ".enable()"
-                    exec(code)                    
-                    
-                else: # Now progression from the previous pillar can happen
-                    #~ PtDebugPrint("Ascending Ladder box #%d enabled with %d rungs." % (id * 2 - 1, 6 * difference01 - 4))
-                    # do something to ladder box (id * 2 - 1)
-                    code = "Ladderbox" + str(id * 2 - 1) + ".enable()"
-                    exec(code)
-                    code = "MultiStage" + str(id * 2 - 1) + ".setLoopCount(1," + str( 6 * difference01 - 4) + ")"
-                    exec(code)
-
-
-
-                    #~ PtDebugPrint("Descending Ladder box #%d enabled with %d rungs." % (id * 2, 6 * difference01 - 4))
-                    # do something to ladder box (id * 2)
-                    code = "Ladderbox" + str(id * 2) + ".enable()"
-                    exec(code)
-                    code = "MultiStage" + str(id * 2) + ".setLoopCount(1," + str(6 * difference01 - 4) + ")"
-                    exec(code)
-                    
-                    #disable the "hang" ladder box
-                    code = "Ladderbox" + str(id + 7) + ".disable()"
-                    exec(code)
-
-                    
-                    
+                # False if the ladder on this pillar is out of reach from the proceeding pillar
+                canReach = difference01 <= tolerance01
+                _ConfigLadder(id * 2 - 1, enable=canReach, deltaH=difference01)
+                _ConfigLadder(id * 2, enable=canReach, deltaH=difference01)
+                _ConfigLadder(id + 7, enable=not canReach)
             else:
-                #~ PtDebugPrint("\nPillar0%d is level with or below the proceeding pillar." % (id))
-                code = "Ladderbox" + str(id * 2 - 1) + ".disable()"
-                exec(code)
-                code = "Ladderbox" + str(id * 2) + ".disable()"
-                exec(code)
-                
+                _ConfigLadder(id * 2 - 1, enable=False)
+                _ConfigLadder(id * 2, enable=False)
 
         else: # special condition for pillar01
             # do something to ladder box 1            
@@ -616,42 +583,11 @@ class kdshPillarRoom(ptResponder):
  
             if difference02 >= 1:
                 #~ PtDebugPrint("\nPillar0%d is %d notches lower than the following pillar" % (id, difference02))
-                if difference02 > tolerance02: # true if the next pillar's ladder is out of reach from this pillar
-                    #~ PtDebugPrint("Ascending Ladder box #%d is now disabled, since the ladder doesn't reach down that far" % (id * 2 + 1))
-                    #do something to ladder box (id * 2 + 1)
-                    code = "Ladderbox" + str(id * 2 + 1) + ".disable()"
-                    exec(code)
-                    
-                    #~ PtDebugPrint("Descending Ladder box #%d is enabled, but only down %d rungs, and then you hang." % (id + 8, (6 *(4-id) - 4)) # "4 - id" here same as "(5 - (id+1))")
-                    # do something to ladder box (id * 2 + 2)
-                    code = "Ladderbox" + str(id * 2 + 2) + ".disable()"
-                    exec(code)
-                    #do something to ladderbox (id + 8)
-                    code = "Ladderbox" + str(id + 8) + ".enable()"
-                    exec(code)                    
-
-
-                    
-                else: # Now progression to the following pillar can happen
-                    #~ PtDebugPrint("Ascending Ladder box #%d enabled with %d rungs." % (id * 2 + 1, 6 * difference02 - 4))
-                    # do something to ladder box (id * 2 + 1)
-                    code = "Ladderbox" + str(id * 2 + 1) + ".enable()"
-                    exec(code)
-                    code = "MultiStage" + str(id * 2 + 1) + ".setLoopCount(1," + str( 6 * difference02 - 4) + ")"
-                    exec(code)                    
-                    
-                    
-                    #~ PtDebugPrint("Descending Ladder box #%d enabled with %d rungs." % (id * 2 + 2, 6 * difference02 -4))
-                    # do something to ladder box (id * 2 + 2)
-                    code = "Ladderbox" + str(id * 2 + 2) + ".enable()"
-                    exec(code)
-                    code = "MultiStage" + str(id * 2 + 2) + ".setLoopCount(1," + str(6 * difference02 - 4) + ")"
-                    exec(code)
-                    
-                    #disable the "hang" ladder box
-                    code = "Ladderbox" + str(id + 8) + ".disable()"
-                    exec(code)
-
+                # False if the next pillar's ladder is out of reach from this pillar
+                canReach = difference02 <= tolerance02
+                _ConfigLadder(id * 2 + 1, enable=canReach, deltaH=difference02)
+                _ConfigLadder(id * 2 + 2, enable=canReach, deltaH=difference02)
+                _ConfigLadder(id + 8, enable=not canReach)
             else:
                 #~ PtDebugPrint("\nPillar0%d is level with or above the following pillar" % (id))
                 pass

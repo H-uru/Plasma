@@ -136,5 +136,4 @@ class minkDayClicks(ptResponder):
             if id != behRespCage.id:
                 num = ResponderId.index(id) + 1
                 PtDebugPrint("minkDayClicks.OnNotify(): Should show %d" % (num))
-                code = "ageSDL[\"minkSymbolShow0%d\"] = (1,)" % (num)
-                exec(code)
+                ageSDL["minkSymbolShow0%d" % num] = (1,)

@@ -241,45 +241,15 @@ class kdshTreeRingsSolution(ptModifier):
         self.InitRings()
 
     def InitRings(self):
-        ageSDL = PtGetAgeSDL()        
-        
-        OuterRing01 = ageSDL["OuterRing01"][0]
-        MiddleRing01 = ageSDL["MiddleRing01"][0]
-        InnerRing01 = ageSDL["InnerRing01"][0]
-        OuterRing02 = ageSDL["OuterRing02"][0]
-        MiddleRing02 = ageSDL["MiddleRing02"][0]
-        InnerRing02 = ageSDL["InnerRing02"][0]
-        OuterRing03 = ageSDL["OuterRing03"][0]
-        MiddleRing03 = ageSDL["MiddleRing03"][0]
-        InnerRing03 = ageSDL["InnerRing03"][0]
+        PtDebugPrint("kdshTreeRingSolution: When I got here:", level=kWarningLevel)
 
-        PtDebugPrint("kdshTreeRingSolution: When I got here:")
-        #~ PtDebugPrint("\tOuterRing01=",OuterRing01)
-        #~ PtDebugPrint("\tMiddleRing01=",MiddleRing01)
-        #~ PtDebugPrint("\tInnerRing01=",InnerRing01)
-        #~ PtDebugPrint("\tOuterRing02=",OuterRing02)
-        #~ PtDebugPrint("\tMiddleRing02=",MiddleRing02)
-        #~ PtDebugPrint("\tInnerRing02=",InnerRing02)
-        #~ PtDebugPrint("\tOuterRing03=",OuterRing03)
-        #~ PtDebugPrint("\tMiddleRing03=",MiddleRing03)
-        #~ PtDebugPrint("\tInnerRing03=",InnerRing03)
-
-        for i in ["Outer", "Middle", "Inner"]:
-            for j in ["1","2","3"]:
-                
-                ffcode1 = "InitState = "+i + "Ring0" +j
-                #~ PtDebugPrint("ffcode1 = ", ffcode1)
-                
-                exec(ffcode1)
-                #~ PtDebugPrint("InitState = ", InitState)
-                
-                ffcode2 = i + "Ring0" + j + "_0" + str(InitState) + ".animation.skipToEnd()"
-                #~ PtDebugPrint("ffcode2 = ", ffcode2)
-                
-                exec(ffcode2)
-            
-                #~ PtDebugPrint("Fastforwarding: Set = ",j," Ring = ",i," Position = ",InitState)
-                PtDebugPrint("\t",i,"Ring0",j," = ", InitState)
+        ageSDL = PtGetAgeSDL()
+        for i in ("Outer", "Middle", "Inner"):
+            for j in ("1", "2", "3"):
+                ring = "{location}Ring0{idx}".format(location=i, idx=j)
+                ring_attrib = "{ring}_0{bearing}".format(ring=ring, bearing=ageSDL[ring][0])
+                globals()[ring_attrib].animation.skipToEnd()
+                PtDebugPrint("\t{} = {}".format(ring, ageSDL[ring][0]), level=kWarningLevel)
 
         
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
@@ -290,10 +260,7 @@ class kdshTreeRingsSolution(ptModifier):
         StillSolved = False
         newbearing = ageSDL[VARname][0]
         #~ PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
-        
-        code = VARname + "_0" + str(newbearing) + ".animation.play()"
-        #~ PtDebugPrint("code = ", code)
-        exec(code) # this runs the animation on the actual ring in the garden
+        globals()["{id}_0{bearing}".format(id=VARname, bearing=newbearing)].animation.play()
         
         if "3" in VARname: 
             #~ PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
@@ -357,27 +324,13 @@ class kdshTreeRingsSolution(ptModifier):
         if ageSDL == None:
             PtDebugPrint("kdshTreeRings.OnFirstUpdate():\tERROR---missing age SDL (%s)" % varstring.value)
 
-        Outerbearing = ageSDL["OuterRing0" + str(ScopeNumber-1)][0]
-        Middlebearing = ageSDL["MiddleRing0" + str(ScopeNumber-1)][0]
-        Innerbearing = ageSDL["InnerRing0" + str(ScopeNumber-1)][0]
+        for bearing in ("Outer", "Middle", "Inner"):
+            sdl_var = "{location}Ring0{idx}".format(location=bearing, idx=ScopeNumber-1)
+            attrib_name = "GUI{location}0{idx}_0{newbearing}".format(location=bearing,
+                                                                     idx=ScopeNumber-1,
+                                                                     newbearing=ageSDL[sdl_var][0])
+            globals()[attrib_name].animation.skipToEnd()
 
-        #~ PtDebugPrint("Outerbearing = ", Outerbearing)
-        #~ PtDebugPrint("Middlebearing = ", Middlebearing)
-        #~ PtDebugPrint("Innerbearing = ", Innerbearing)
-        
-
-        GUIcode = "GUIOuter0" + str(ScopeNumber-1) + "_0" + str(Outerbearing) + ".animation.skipToEnd()"
-        #~ PtDebugPrint("FF Outer code = ", GUIcode)
-        exec(GUIcode) 
-
-        GUIcode = "GUIMiddle0" + str(ScopeNumber-1) + "_0" + str(Middlebearing) + ".animation.skipToEnd()"
-        #~ PtDebugPrint("FF Middle code = ", GUIcode)
-        exec(GUIcode) 
-
-        GUIcode = "GUIInner0" + str(ScopeNumber-1) + "_0" + str(Innerbearing) + ".animation.skipToEnd()"
-        #~ PtDebugPrint("FF Inner code = ", GUIcode)
-        exec(GUIcode) 
-        
         # this runs the animation on the "fake" ring in front of the GUI
         #~ animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
         #~ globals()[animname].animation.play()
