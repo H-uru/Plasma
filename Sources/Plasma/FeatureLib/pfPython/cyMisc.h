@@ -167,7 +167,7 @@ public:
     //
     //  PURPOSE    : Execute a console command from a python script
     //
-    static void TimerCallback(pyKey& selfkey, float time, uint32_t id);
+    static void TimerCallback(pyKey& selfkey, float time, int32_t id);
 
     /////////////////////////////////////////////////////////////////////////////
     //

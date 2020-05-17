@@ -68,7 +68,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plTimerCallbackManager.h"
 #include "plMessage/plTimerCallbackMsg.h"
 
-const unsigned kAbortTimer = 1;
+const int kAbortTimer = 1;
 const float kAbortTimerDuration = 15; // 15 seconds
 
 /////////////////////////////////////////////////////////////////////////////////////////

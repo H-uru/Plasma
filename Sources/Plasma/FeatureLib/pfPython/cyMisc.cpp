@@ -294,7 +294,7 @@ void cyMisc::PopUpConsole(const char* command)
 //
 //  PURPOSE    : Execute a console command from a python script
 //
-void cyMisc::TimerCallback(pyKey& selfkey, float time, uint32_t id)
+void cyMisc::TimerCallback(pyKey& selfkey, float time, int32_t id)
 {
     // setup the message to come back to whoever the pyKey is pointing to
     plTimerCallbackMsg* pTimerMsg = new plTimerCallbackMsg(selfkey.getKey(),id);

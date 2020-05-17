@@ -167,9 +167,9 @@ bool plResponderModifier::MsgReceive(plMessage* msg)
     plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(msg);
     if (pEventMsg || timerMsg)
     {
-        uint32_t waitID = pEventMsg ? pEventMsg->fUser : timerMsg->fID;
+        int32_t waitID = pEventMsg ? pEventMsg->fUser : timerMsg->fID;
 
-        if (waitID != -1)
+        if (waitID >= 0)
         {
             // Flag that this callback completed and try sending in case any commands were waiting on this
             fCompletedEvents.SetBit(waitID);
