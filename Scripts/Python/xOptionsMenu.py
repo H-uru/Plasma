@@ -54,6 +54,7 @@ This is the python handler for the Options Menu
 MaxVersionNumber = 8
 MinorVersionNumber = 4
 
+import functools
 import os
 
 from Plasma import *
@@ -1653,7 +1654,7 @@ class xOptionsMenu(ptModifier):
             if windowed and (i[0] >= PtGetDesktopWidth() and i[1] >= PtGetDesktopHeight()):
                 continue
             vidResList.append("%ix%i" % (i[0], i[1]))
-        vidResList.sort(res_comp)
+        vidResList.sort(key=functools.cmp_to_key(res_comp))
         return vidResList
 
     def WriteAudioControls(self):
@@ -1953,8 +1954,11 @@ def res_comp(elem1, elem2):
     elem2w = int(elem2[:elem2.find("x")])
     elem2h = int(elem2[elem2.find("x") + 1:])
 
-    result = cmp(elem1w, elem2w)
+    # cmp is gone in Python 3
+    _cmp = lambda a, b: (a > b) - (a < b)
+
+    result = _cmp(elem1w, elem2w)
     if result == 0:
-        return cmp(elem1h, elem2h)
+        return _cmp(elem1h, elem2h)
     else:
         return result
