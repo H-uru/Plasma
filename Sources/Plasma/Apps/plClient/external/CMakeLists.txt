@@ -1,7 +1,8 @@
 set(external_SCRIPTS
+    create_resource_dat.py
     makeres.py
-	render_svg.py
-	create_resource_dat.py
+    render_svg.py
+    scalergba.py
 )
 
 set(external_SOURCES
