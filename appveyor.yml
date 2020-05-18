@@ -43,9 +43,7 @@ install:
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing Python modules... " -noNewLine
-        Invoke-WebRequest "http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.24/pygtk-all-in-one-2.24.2.win32-py2.7.msi" -OutFile pygtk-all-in-one-2.24.2.win32-py2.7.msi
-        Start-Process msiexec -ArgumentList "/i pygtk-all-in-one-2.24.2.win32-py2.7.msi TRANSFORMS=devlibs\EnableRSVG.mst TARGETDIR=C:\Python27 /qn /norestart" -wait
-        C:\Python27\python.exe -m pip install -q Pillow 2> $null
+        C:\Python27\python.exe -m pip install -q Pillow CairoSVG==1.0.22 2> $null
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing library dependencies... "

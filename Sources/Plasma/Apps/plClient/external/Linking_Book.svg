@@ -103,8 +103,7 @@
      inkscape:groupmode="layer"
      id="circles"
      inkscape:label="Circles"
-     style="display:inline"
-     transform="translate(0,125.47572)">
+     style="display:inline">
     <path
        sodipodi:type="arc"
        style="fill:none;stroke:none"
@@ -116,8 +115,8 @@
        d="m 1175.8176,463.44324 c 0,325.25095 -263.21571,588.91896 -587.90879,588.91896 C 263.21574,1052.3622 0,788.69419 0,463.44324 0,138.19228 263.21574,-125.47571 587.90881,-125.47571 c 324.69308,0 587.90879,263.66799 587.90879,588.91895 z"
        transform="matrix(0.8793304,0,0,0.8793304,70.94272,55.923509)" />
     <g
-       id="g3224"
-       transform="translate(-0.03253824,-0.03474644)"
+       id="circlesGroup"
+       transform="translate(0,125.47572)"
        inkscape:export-xdpi="19.561266"
        inkscape:export-ydpi="19.561266"
        style="fill:#352f42;fill-opacity:1">
