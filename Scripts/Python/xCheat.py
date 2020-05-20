@@ -622,9 +622,8 @@ def ImportGames(args):
                     jfolder = agefolder
                     argresidual = argresidual[len(agefolder.folderGetName())+1:]
     if jfolder:
-        exec("import %s" % (filename))
-        exec("mgs = %s.mgs" % (filename))
-        for mg in mgs:
+        from importlib import import_module
+        for mg in import_module(filename).mgs:
             nMarkerFolder = Plasma.ptVaultMarkerListNode(PlasmaVaultConstants.PtVaultNodePermissionFlags.kDefaultPermissions)
             nMarkerFolder.folderSetName(mg[1])
             nMarkerFolder.setOwnerID(mg[0][0])
@@ -666,9 +665,8 @@ def ImportMarkers(args):
                     jfolder = agefolder
                     argresidual = argresidual[len(agefolder.folderGetName())+1:]
     if jfolder:
-        exec("import %s" % (filename))
-        exec("mgs = %s.mgs" % (filename))
-        for mg in mgs:
+        from importlib import import_module
+        for mg in import_module(filename).mgs:
             # need to try to find the game to stick these in
             jfolderRefs = jfolder.getChildNodeRefList()
             for jref in jfolderRefs:
