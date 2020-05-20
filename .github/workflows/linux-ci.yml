@@ -12,6 +12,7 @@ jobs:
         sudo apt install cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
           libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
           libvorbis-dev qtbase5-dev
+        sudo pip install -r ${GITHUB_WORKSPACE}/requirements.txt
     - name: Build string_theory
       run: |
         mkdir -p build_deps && cd build_deps

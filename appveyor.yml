@@ -43,7 +43,7 @@ install:
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing Python modules... " -noNewLine
-        C:\Python27\python.exe -m pip install -q Pillow CairoSVG==1.0.22 2> $null
+        C:\Python27\python.exe -m pip install -r ../requirements.txt 2> $null
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing library dependencies... "
