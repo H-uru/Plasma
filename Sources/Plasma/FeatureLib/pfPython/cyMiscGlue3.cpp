@@ -142,15 +142,15 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtAtTimeCallback, args, "Params: selfkey,time,id
 {
     PyObject* keyObj = NULL;
     float time;
-    unsigned long id;
-    if (!PyArg_ParseTuple(args, "Ofl", &keyObj, &time, &id))
+    int id;
+    if (!PyArg_ParseTuple(args, "Ofi", &keyObj, &time, &id))
     {
-        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an int");
         PYTHON_RETURN_ERROR;
     }
     if (!pyKey::Check(keyObj))
     {
-        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an unsigned long");
+        PyErr_SetString(PyExc_TypeError, "PtAtTimeCallback expects a ptKey, a float, and an int");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);

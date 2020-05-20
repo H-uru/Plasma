@@ -1231,7 +1231,7 @@ plMessage *plResponderCmdDelay::CreateMsg(plMaxNode* node, plErrorMsg *pErrMsg, 
 
     plTimerCallbackMsg *msg = new plTimerCallbackMsg;
     msg->fTime = time;
-    msg->fID = uint32_t(-1);
+    msg->fID = -1;
 
     return msg;
 }
@@ -1241,7 +1241,7 @@ void plResponderCmdDelay::CreateWait(plMaxNode* node, plErrorMsg* pErrMsg, IPara
     plTimerCallbackMsg *timerMsg = plTimerCallbackMsg::ConvertNoRef(waitInfo.msg);
     hsAssert(timerMsg, "Somebody is crazy");
 
-    if (timerMsg->fID != uint32_t(-1))
+    if (timerMsg->fID >= 0)
     {
         pErrMsg->Set(true,
                     "Responder Delay",

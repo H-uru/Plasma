@@ -69,7 +69,7 @@ class pfGUIProgressCtrl : public pfGUIValueCtrl
 
         bool            ICalcAnimTimes();
 
-        const uint32_t  fStopSoundTimer;
+        const int32_t  fStopSoundTimer;
 
     public:
 
