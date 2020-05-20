@@ -59,13 +59,6 @@ set_package_properties(OpenSSL PROPERTIES
     TYPE REQUIRED
 )
 
-find_package(OpenAL REQUIRED)
-set_package_properties(OpenAL PROPERTIES
-    URL "http://www.openal.org/"
-    DESCRIPTION "3D audio and EAX library"
-    TYPE REQUIRED
-)
-
 set(Python_ADDITIONAL_VERSIONS 2.7)
 find_package(PythonLibs REQUIRED)
 set_package_properties(PythonLibs PROPERTIES

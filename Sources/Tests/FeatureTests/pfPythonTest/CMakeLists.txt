@@ -1,6 +1,5 @@
 include_directories(${GTEST_INCLUDE_DIR})
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
-include_directories(${OPENAL_INCLUDE_DIR})
 include_directories(../../../Plasma/CoreLib)
 include_directories(../../../Plasma/NucleusLib)
 include_directories(../../../Plasma/NucleusLib/inc)
@@ -96,8 +95,6 @@ target_link_libraries(test_pfPython pnUtils)
 target_link_libraries(test_pfPython pnUUID)
 
 target_link_libraries(test_pfPython ${PYTHON_LIBRARIES})
-
-target_link_libraries(test_pfPython ${OPENAL_LIBRARY})
 target_link_libraries(test_pfPython ${OPENSSL_LIBRARIES})
 target_link_libraries(test_pfPython ${EXPAT_LIBRARY})
 target_link_libraries(test_pfPython ${JPEG_LIBRARY})
