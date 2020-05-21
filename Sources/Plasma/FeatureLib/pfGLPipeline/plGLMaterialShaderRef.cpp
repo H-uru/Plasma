@@ -50,6 +50,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "HeadSpin.h"
 #include "hsBitVector.h"
 
+#include "hsGMatState.inl"
 #include "plPipeline.h"
 #include "plPipeDebugFlags.h"
 
@@ -225,16 +226,18 @@ void plGLMaterialShaderRef::ICompile()
 #endif
 
     fRef = glCreateProgram();
-    LOG_GL_ERROR_CHECK("Create Program failed")
+    LOG_GL_ERROR_CHECK("Create Program failed");
+
+    if (epoxy_gl_version() >= 43) {
+        const char* name = ST::format("hsGMaterial::{}", fMaterial->GetKeyName()).c_str();
+        glObjectLabel(GL_PROGRAM, fRef, strlen(name), name);
+    }
 
     glAttachShader(fRef, fVertShaderRef);
     LOG_GL_ERROR_CHECK("Attach Vertex Shader failed")
 
     glAttachShader(fRef, fFragShaderRef);
     LOG_GL_ERROR_CHECK("Attach Fragment Shader failed")
-
-    glLinkProgram(fRef);
-    LOG_GL_ERROR_CHECK("Link Program failed")
 }
 
 
@@ -275,10 +278,27 @@ void plGLMaterialShaderRef::ISetupShaderContexts()
 
 void plGLMaterialShaderRef::ISetShaderVariableLocs()
 {
-    // Store the attribute locations for later
-    aVtxPosition  = glGetAttribLocation(fRef, "aVtxPosition");
-    aVtxNormal    = glGetAttribLocation(fRef, "aVtxNormal");
-    aVtxColor     = glGetAttribLocation(fRef, "aVtxColor");
+    // Assign and bind the attribute locations for later
+    glBindAttribLocation(fRef, kVtxPosition, "aVtxPosition");
+    glBindAttribLocation(fRef, kVtxNormal, "aVtxNormal");
+    glBindAttribLocation(fRef, kVtxColor, "aVtxColor");
+
+    glBindAttribLocation(fRef, kVtxUVWSrc0,  "aVtxUVWSrc0");
+    glBindAttribLocation(fRef, kVtxUVWSrc1,  "aVtxUVWSrc1");
+    glBindAttribLocation(fRef, kVtxUVWSrc2,  "aVtxUVWSrc2");
+    glBindAttribLocation(fRef, kVtxUVWSrc3,  "aVtxUVWSrc3");
+    glBindAttribLocation(fRef, kVtxUVWSrc4,  "aVtxUVWSrc4");
+    glBindAttribLocation(fRef, kVtxUVWSrc5,  "aVtxUVWSrc5");
+    glBindAttribLocation(fRef, kVtxUVWSrc6,  "aVtxUVWSrc6");
+    glBindAttribLocation(fRef, kVtxUVWSrc7,  "aVtxUVWSrc7");
+    glBindAttribLocation(fRef, kVtxUVWSrc8,  "aVtxUVWSrc8");
+    glBindAttribLocation(fRef, kVtxUVWSrc9,  "aVtxUVWSrc9");
+    glBindAttribLocation(fRef, kVtxUVWSrc10, "aVtxUVWSrc10");
+    glBindAttribLocation(fRef, kVtxUVWSrc11, "aVtxUVWSrc11");
+    glBindAttribLocation(fRef, kVtxUVWSrc12, "aVtxUVWSrc12");
+
+    glLinkProgram(fRef);
+    LOG_GL_ERROR_CHECK("Program Link failed");
 
     uPassNumber       = glGetUniformLocation(fRef, "uPassNumber");
     uAlphaThreshold   = glGetUniformLocation(fRef, "uAlphaThreshold");
@@ -293,12 +313,6 @@ void plGLMaterialShaderRef::ISetShaderVariableLocs()
     uMatEmissiveSrc = glGetUniformLocation(fRef, "uEmissiveSrc");
     uMatSpecularCol = glGetUniformLocation(fRef, "uSpecularCol");
     uMatSpecularSrc = glGetUniformLocation(fRef, "uSpecularSrc");
-
-    aVtxUVWSrc.assign(16, -1);
-    for (size_t i = 0; i < 16; i++) {
-        ST::string name = ST::format("aVtxUVWSrc{}", i);
-        aVtxUVWSrc[i] = glGetAttribLocation(fRef, name.c_str());
-    }
 
     size_t layerCount = fMaterial->GetNumLayers();
 
@@ -410,6 +424,14 @@ void plGLMaterialShaderRef::ILoopOverLayers()
 }
 
 
+const hsGMatState plGLMaterialShaderRef::ICompositeLayerState(plLayerInterface* layer)
+{
+    hsGMatState state;
+    state.Composite(layer->GetState(), fPipeline->GetMaterialOverride(true), fPipeline->GetMaterialOverride(false));
+    return state;
+}
+
+
 uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<plShaderFunction> vfn, std::shared_ptr<plShaderFunction> ffn)
 {
     if (!fMaterial || layer >= fMaterial->GetNumLayers() || !fMaterial->GetLayer(layer))
@@ -432,7 +454,9 @@ uint32_t plGLMaterialShaderRef::IHandleMaterial(uint32_t layer, std::shared_ptr<
 
     //currLay = IPushOverAllLayer(currLay);
 
-    hsGMatState state = currLay->GetState();
+    hsGMatState state = ICompositeLayerState(currLay);
+
+    // Stuff about ZInc
 
     if (fPipeline->IsDebugFlagSet(plPipeDbg::kFlagDisableSpecular))
         state.fShadeFlags &= ~hsGMatState::kShadeSpecular;
@@ -695,13 +719,15 @@ std::shared_ptr<plTempVariableNode> plGLMaterialShaderRef::ICalcLighting(std::sh
 
 std::shared_ptr<plTempVariableNode> plGLMaterialShaderRef::IBuildBaseAlpha(plLayerInterface* layer, std::shared_ptr<plShaderFunction> fn)
 {
+    hsGMatState state = ICompositeLayerState(layer);
+
     // This will have been declared by ICalcLighting
     std::shared_ptr<plShaderNode> diffuse = CONSTANT("MDiffuse");
 
     // Local variable to store the starting alpha value
     std::shared_ptr<plTempVariableNode> base = std::make_shared<plTempVariableNode>("baseAlpha", "float");
 
-    if (layer->GetBlendFlags() & hsGMatState::kBlendInvertVtxAlpha) {
+    if (state.fBlendFlags & hsGMatState::kBlendInvertVtxAlpha) {
         // base = 1.0 - vVtxColor.a
         fn->PushOp(ASSIGN(base, CALL("invAlpha", PROP(diffuse, "a"))));
     } else {
@@ -716,8 +742,9 @@ std::shared_ptr<plTempVariableNode> plGLMaterialShaderRef::IBuildBaseAlpha(plLay
 void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface* layer, ShaderBuilder* sb)
 {
     std::shared_ptr<plVariableNode> matrix;
+    hsGMatState state = ICompositeLayerState(layer);
 
-    if (layer->GetMiscFlags() & (hsGMatState::kMiscUseReflectionXform | hsGMatState::kMiscUseRefractionXform)) {
+    if (state.fMiscFlags & (hsGMatState::kMiscUseReflectionXform | hsGMatState::kMiscUseRefractionXform)) {
         std::shared_ptr<plUniformNode> mC2W = IFindVariable<plUniformNode>("uMatrixC2W", "mat4");
 
         ST::string matName = ST::format("LayerMat{}", idx);
@@ -752,7 +779,7 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
         sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "1"), "2"), SUBVAL(SUBVAL(matrix, "2"), "2")));
         sb->fFunction->PushOp(ASSIGN(SUBVAL(SUBVAL(matrix, "2"), "2"), temp));
 
-        if (layer->GetMiscFlags() & hsGMatState::kMiscUseRefractionXform) {
+        if (state.fMiscFlags & hsGMatState::kMiscUseRefractionXform) {
             // Same as reflection, but then matrix = matrix * scaleMatNegateZ.
 
             // mat[0][2] = -mat[0][2];
@@ -766,11 +793,11 @@ void plGLMaterialShaderRef::IBuildLayerTransform(uint32_t idx, plLayerInterface*
         }
 
 #if 0
-    } else if (layer->GetMiscFlags() & hsGMatState::kMiscCam2Screen) {
-    } else if (layer->GetMiscFlags() & hsGMatState::kMiscProjection) {
+    } else if (state.fMiscFlags & hsGMatState::kMiscCam2Screen) {
+    } else if (state.fMiscFlags & hsGMatState::kMiscProjection) {
         ST::string matName = ST::format("uLayerMat{}", idx);
         std::shared_ptr<plUniformNode> layMat = IFindVariable<plUniformNode>(matName, "mat4");
-    } else if (layer->GetMiscFlags() & hsGMatState::kMiscBumpChans) {
+    } else if (state.fMiscFlags & hsGMatState::kMiscBumpChans) {
 #endif
     } else {
         ST::string matName = ST::format("uLayerMat{}", idx);
@@ -856,6 +883,8 @@ void plGLMaterialShaderRef::IBuildLayerTexture(uint32_t idx, plLayerInterface* l
 
 void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuilder* sb)
 {
+    hsGMatState state = ICompositeLayerState(layer);
+
     if (!sb->fCurrImage) {
         hsStatusMessage("Got a layer with no image");
         sb->fCurrColor = sb->fPrevColor;
@@ -872,7 +901,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
     std::shared_ptr<plTempVariableNode> alpha = std::make_shared<plTempVariableNode>(alphaName, "float");
 
     std::shared_ptr<plShaderNode> texCol;
-    if (layer->GetBlendFlags() & hsGMatState::kBlendInvertColor) {
+    if (state.fBlendFlags & hsGMatState::kBlendInvertColor) {
         // color = 1.0 - texture.rgb
         texCol = CALL("invColor", PROP(sb->fCurrImage, "rgb"));
     } else {
@@ -883,7 +912,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
 
     if (sb->fIteration == 0) {
         // Leave fCurrColor null if we are blending without texture color
-        if (layer->GetBlendFlags() & hsGMatState::kBlendNoTexColor) {
+        if (state.fBlendFlags & hsGMatState::kBlendNoTexColor) {
             sb->fCurrColor = sb->fPrevColor;
         } else {
             sb->fFunction->PushOp(ASSIGN(col, texCol));
@@ -891,7 +920,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
         }
 
         std::shared_ptr<plShaderNode> alphaVal;
-        if (layer->GetBlendFlags() & hsGMatState::kBlendInvertAlpha) {
+        if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
             // 1.0 - texture.a
             alphaVal = CALL("invAlpha", PROP(sb->fCurrImage, "a"));
         } else {
@@ -900,12 +929,12 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
         }
 
 
-        if (layer->GetBlendFlags() & hsGMatState::kBlendNoVtxAlpha || !sb->fPrevAlpha) {
+        if (state.fBlendFlags & hsGMatState::kBlendNoVtxAlpha || !sb->fPrevAlpha) {
             // Only use texture alpha
             sb->fFunction->PushOp(ASSIGN(alpha, alphaVal));
 
             sb->fCurrAlpha = alpha;
-        } else if (layer->GetBlendFlags() & hsGMatState::kBlendNoTexAlpha) {
+        } else if (state.fBlendFlags & hsGMatState::kBlendNoTexAlpha) {
             // Only use vertex alpha (prev alpha)
             sb->fCurrAlpha = sb->fPrevAlpha;
         } else {
@@ -914,7 +943,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
             sb->fCurrAlpha = alpha;
         }
     } else {
-        switch (layer->GetBlendFlags() & hsGMatState::kBlendMask)
+        switch (state.fBlendFlags & hsGMatState::kBlendMask)
         {
 
             case hsGMatState::kBlendAddColorTimesAlpha:
@@ -923,11 +952,11 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
 
             case hsGMatState::kBlendAlpha:
             {
-                if (layer->GetBlendFlags() & hsGMatState::kBlendNoTexColor) {
+                if (state.fBlendFlags & hsGMatState::kBlendNoTexColor) {
                     // color = prev
                     sb->fCurrColor = sb->fPrevColor;
                 } else {
-                    if (layer->GetBlendFlags() & hsGMatState::kBlendInvertAlpha) {
+                    if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
                         // color = texture.rgb + (texture.a * prev)
                         sb->fFunction->PushOp(ASSIGN(col, ADD(texCol, MUL(PROP(sb->fCurrImage, "a"), sb->fPrevColor, true))));
                         sb->fCurrColor = col;
@@ -940,7 +969,7 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
 
 
                 std::shared_ptr<plShaderNode> alphaVal;
-                if (layer->GetBlendFlags() & hsGMatState::kBlendInvertAlpha) {
+                if (state.fBlendFlags & hsGMatState::kBlendInvertAlpha) {
                     // 1.0 - texture.a
                     alphaVal = CALL("invAlpha", PROP(sb->fCurrImage, "a"));
                 } else {
@@ -948,11 +977,11 @@ void plGLMaterialShaderRef::IBuildLayerBlend(plLayerInterface* layer, ShaderBuil
                     alphaVal = PROP(sb->fCurrImage, "a");
                 }
 
-                if (layer->GetBlendFlags() & hsGMatState::kBlendAlphaAdd) {
+                if (state.fBlendFlags & hsGMatState::kBlendAlphaAdd) {
                     // alpha = alphaVal + prev
                     sb->fFunction->PushOp(ASSIGN(alpha, ADD(alphaVal, sb->fPrevAlpha)));
                     sb->fCurrAlpha = alpha;
-                } else if (layer->GetBlendFlags() & hsGMatState::kBlendAlphaMult) {
+                } else if (state.fBlendFlags & hsGMatState::kBlendAlphaMult) {
                     // alpha = alphaVal * prev
                     sb->fFunction->PushOp(ASSIGN(alpha, MUL(alphaVal, sb->fPrevAlpha)));
                     sb->fCurrAlpha = alpha;

@@ -48,6 +48,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 class plIcicle;
 class plGLMaterialShaderRef;
+class plPlate;
 
 class plGLEnumerate
 {
@@ -117,6 +118,7 @@ protected:
     void IEnableLight(size_t i, plLightInfo* light);
     void IDisableLight(size_t i);
     void IScaleLight(size_t i, float scale);
+    void IDrawPlate(plPlate* plate);
 
 private:
     static plGLEnumerate enumerator;

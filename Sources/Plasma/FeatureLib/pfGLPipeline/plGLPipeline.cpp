@@ -56,10 +56,12 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plGLPipeline.h"
 #include "plGLPlateManager.h"
 
+#include "hsGMatState.inl"
 #include "plPipeDebugFlags.h"
 #include "plProfile.h"
 #include "plGLight/plLightInfo.h"
 #include "plPipeline/hsWinRef.h"
+#include "plPipeline/plDebugText.h"
 #include "plStatusLog/plStatusLog.h"
 
 #ifdef HS_SIMD_INCLUDE
@@ -85,6 +87,9 @@ plProfile_Extern(CheckDyn);
 plProfile_Extern(CheckStat);
 plProfile_Extern(RenderBuff);
 plProfile_Extern(RenderPrim);
+plProfile_Extern(PlateMgr);
+plProfile_Extern(DebugText);
+plProfile_Extern(Reset);
 
 // Adding a nil RenderPrim for turning off drawing
 static plRenderNilFunc sRenderNil;
@@ -124,6 +129,9 @@ plGLPipeline::plGLPipeline(hsDisplayHndl display, hsWindowHndl window, const hsG
 
 plGLPipeline::~plGLPipeline()
 {
+    if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr))
+        pm->IReleaseGeometry();
+
     fDevice.Shutdown();
 }
 
@@ -334,7 +342,39 @@ bool plGLPipeline::EndRender()
 }
 
 void plGLPipeline::RenderScreenElements()
-{}
+{
+    bool reset = false;
+
+    if (fView.HasCullProxy())
+        Draw(fView.GetCullProxy());
+
+    hsGMatState tHack = PushMaterialOverride(hsGMatState::kMisc, hsGMatState::kMiscWireFrame, false);
+    hsGMatState ambHack = PushMaterialOverride(hsGMatState::kShade, hsGMatState::kShadeWhite, true);
+
+    plProfile_BeginTiming(PlateMgr);
+    // Plates
+    if (fPlateMgr) {
+        fPlateMgr->DrawToDevice(this);
+        reset = true;
+    }
+    plProfile_EndTiming(PlateMgr);
+
+    PopMaterialOverride(ambHack, true);
+    PopMaterialOverride(tHack, false);
+
+    plProfile_BeginTiming(DebugText);
+    /// Debug text
+    if (fDebugTextMgr && plDebugText::Instance().IsEnabled()) {
+        fDebugTextMgr->DrawToDevice(this);
+        reset = true;
+    }
+    plProfile_EndTiming(DebugText);
+
+    plProfile_BeginTiming(Reset);
+    if (reset)
+        fView.fXformResetFlags = fView.kResetAll; // Text destroys view transforms
+    plProfile_EndTiming(Reset);
+}
 
 bool plGLPipeline::IsFullScreen() const
 {
@@ -345,7 +385,12 @@ void plGLPipeline::Resize(uint32_t width, uint32_t height)
 {}
 
 void plGLPipeline::LoadResources()
-{}
+{
+    if (plGLPlateManager* pm = static_cast<plGLPlateManager*>(fPlateMgr)) {
+        pm->IReleaseGeometry();
+        pm->ICreateGeometry();
+    }
+}
 
 bool plGLPipeline::SetGamma(float eR, float eG, float eB)
 {
@@ -567,27 +612,19 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
     /* Vertex Buffer stuff */
     glBindBuffer(GL_ARRAY_BUFFER, vRef->fRef);
 
-    if (mRef->aVtxPosition != -1) {
-        glEnableVertexAttribArray(mRef->aVtxPosition);
-        glVertexAttribPointer(mRef->aVtxPosition, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
-    }
+    glEnableVertexAttribArray(kVtxPosition);
+    glVertexAttribPointer(kVtxPosition, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, 0);
 
-    if (mRef->aVtxNormal != -1) {
-        glEnableVertexAttribArray(mRef->aVtxNormal);
-        glVertexAttribPointer(mRef->aVtxNormal, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
-    }
+    glEnableVertexAttribArray(kVtxNormal);
+    glVertexAttribPointer(kVtxNormal, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)(sizeof(float) * 3));
 
-    if (mRef->aVtxColor != -1) {
-        glEnableVertexAttribArray(mRef->aVtxColor);
-        glVertexAttribPointer(mRef->aVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
-    }
+    glEnableVertexAttribArray(kVtxColor);
+    glVertexAttribPointer(kVtxColor, 4, GL_UNSIGNED_BYTE, GL_TRUE, vRef->fVertexSize, (void*)(sizeof(float) * 3 * 2));
 
     int numUVs = vRef->fOwner->GetNumUVs();
     for (int i = 0; i < numUVs; i++) {
-        if (mRef->aVtxUVWSrc[i] != -1) {
-            glEnableVertexAttribArray(mRef->aVtxUVWSrc[i]);
-            glVertexAttribPointer(mRef->aVtxUVWSrc[i], 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
-        }
+        glEnableVertexAttribArray(kVtxUVWSrc0 + i);
+        glVertexAttribPointer(kVtxUVWSrc0 + i, 3, GL_FLOAT, GL_FALSE, vRef->fVertexSize, (void*)((sizeof(float) * 3 * 2) + (sizeof(uint32_t) * 2) + (sizeof(float) * 3 * i)));
     }
 
     LOG_GL_ERROR_CHECK("Vertex Attributes failed")
@@ -611,21 +648,21 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
 
         ICalcLighting(mRef, lay, &span);
 
-        hsGMatState s = lay->GetState();
+        hsGMatState s;
+        s.Composite(lay->GetState(), fMatOverOn, fMatOverOff);
+
         IHandleZMode(s);
         IHandleBlendMode(s);
 
-        if (lay->GetBlendFlags() & (hsGMatState::kBlendTest |
-                                    hsGMatState::kBlendAlpha |
-                                    hsGMatState::kBlendAddColorTimesAlpha)
-            && !(lay->GetBlendFlags() & hsGMatState::kBlendAlphaAlways))
+        if (s.fBlendFlags & (hsGMatState::kBlendTest | hsGMatState::kBlendAlpha | hsGMatState::kBlendAddColorTimesAlpha) &&
+            !(s.fBlendFlags & hsGMatState::kBlendAlphaAlways))
         {
             // AlphaTestHigh is used for reducing sort artifacts on textures that
             // are mostly opaque or transparent, but have regions of translucency
             // in transition. Like a texture for a bush billboard. It lets there be
             // some transparency falloff, but quit drawing before it gets so
             // transparent that draw order problems (halos) become apparent.
-            if (lay->GetBlendFlags() & hsGMatState::kBlendAlphaTestHigh)
+            if (s.fBlendFlags & hsGMatState::kBlendAlphaTestHigh)
                 glUniform1f(mRef->uAlphaThreshold, 40.f/255.f);
             else
                 glUniform1f(mRef->uAlphaThreshold, 1.f/255.f);
@@ -633,7 +670,7 @@ void plGLPipeline::IRenderBufferSpan(const plIcicle& span,
             glUniform1f(mRef->uAlphaThreshold, 0.f);
         }
 
-        if (lay->GetMiscFlags() & hsGMatState::kMiscTwoSided) {
+        if (s.fMiscFlags & hsGMatState::kMiscTwoSided) {
             glDisable(GL_CULL_FACE);
         } else {
             glEnable(GL_CULL_FACE);
@@ -798,7 +835,9 @@ void plGLPipeline::ICalcLighting(plGLMaterialShaderRef* mRef, const plLayerInter
         return;
     }
 
-    hsGMatState state = currLayer->GetState();
+    hsGMatState state;
+    state.Composite(currLayer->GetState(), fMatOverOn, fMatOverOff);
+
     uint32_t mode = (currSpan != nullptr) ? (currSpan->fProps & plSpan::kLiteMask) : plSpan::kLiteMaterial;
 
     if (state.fMiscFlags & hsGMatState::kMiscBumpChans) {
@@ -1028,4 +1067,75 @@ void plGLPipeline::IScaleLight(size_t i, float scale)
 {
     GLuint uniform = glGetUniformLocation(fDevice.fCurrentProgram, ST::format("uLampSources[{}].scale", i).c_str());
     if (uniform != -1) glUniform1f(uniform, scale);
+}
+
+void plGLPipeline::IDrawPlate(plPlate* plate)
+{
+    hsGMaterial* material = plate->GetMaterial();
+
+    // To override the transform done by the z-bias
+    static float projMat[16] = {
+         1.0f,  0.0f,  0.0f,  0.0f,
+         0.0f, -1.0f,  0.0f,  0.0f,
+         0.0f,  0.0f,  2.0f, -2.0f,
+         0.0f,  0.0f,  1.0f,  0.0f
+    };
+
+    /// Set up the transform directly
+    fDevice.SetLocalToWorldMatrix(plate->GetTransform());
+
+    //IPushPiggyBacks(material);
+
+    // First, do we have a device ref at this index?
+    plGLMaterialShaderRef* mRef = (plGLMaterialShaderRef*)material->GetDeviceRef();
+
+    if (mRef == nullptr) {
+        mRef = new plGLMaterialShaderRef(material, this);
+        material->SetDeviceRef(mRef);
+    }
+
+    if (!mRef->IsLinked())
+        mRef->Link(&fMatRefList);
+
+    glUseProgram(mRef->fRef);
+    fDevice.fCurrentProgram = mRef->fRef;
+
+    mRef->SetupTextureRefs();
+
+    /* Push the matrices into the GLSL shader now */
+    GLint uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixProj");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, projMat);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2C");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2C);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixC2W");
+    if (uniform != -1)
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixC2W);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixL2W");
+    glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixL2W);
+
+    uniform = glGetUniformLocation(fDevice.fCurrentProgram, "uMatrixW2L");
+    if (uniform != -1)
+        glUniformMatrix4fv(uniform, 1, GL_TRUE, fDevice.fMatrixW2L);
+
+    glUniform4f(mRef->uGlobalAmbient,  1.0, 1.0, 1.0, 1.0);
+
+    glUniform4f(mRef->uMatAmbientCol,  1.0, 1.0, 1.0, 1.0);
+    glUniform4f(mRef->uMatDiffuseCol,  1.0, 1.0, 1.0, 1.0);
+    glUniform4f(mRef->uMatEmissiveCol, 1.0, 1.0, 1.0, 1.0);
+    glUniform4f(mRef->uMatSpecularCol, 1.0, 1.0, 1.0, 1.0);
+
+    glUniform1f(mRef->uMatAmbientSrc,  1.0);
+    glUniform1f(mRef->uMatDiffuseSrc,  1.0);
+    glUniform1f(mRef->uMatEmissiveSrc, 1.0);
+    glUniform1f(mRef->uMatSpecularSrc, 1.0);
+
+    // And this to override cullmode set based on material 2-sidedness.
+    //glDisable(GL_CULL_FACE);
+
+    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * 0));
+
+    //IPopPiggyBacks();
 }

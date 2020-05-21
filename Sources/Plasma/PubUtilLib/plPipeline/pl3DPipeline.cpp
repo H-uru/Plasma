@@ -45,6 +45,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 plProfile_CreateTimer("RenderScene",            "PipeT", RenderScene);
 plProfile_CreateTimer("VisEval",                "PipeT", VisEval);
 plProfile_CreateTimer("VisSelect",              "PipeT", VisSelect);
+plProfile_CreateTimer("PlateMgr",               "PipeT", PlateMgr);
+plProfile_CreateTimer("DebugText",              "PipeT", DebugText);
+plProfile_CreateTimer("Reset",                  "PipeT", Reset);
 
 plProfile_CreateTimer("RenderSpan",             "PipeT", RenderSpan);
 plProfile_CreateTimer("  MergeCheck",           "PipeT", MergeCheck);
