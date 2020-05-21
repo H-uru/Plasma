@@ -77,7 +77,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plSurface/plLayerOr.h"
 #include "plAudio/plAudioSystem.h"
 #include "plAudio/plVoiceChat.h"
-#include "plAudio/plWinMicLevel.h"
 #include "plPipeline/plFogEnvironment.h"
 #include "plPipeline/plPlates.h"
 #include "plPipeline/plDynamicEnvMap.h"
@@ -3102,12 +3101,6 @@ PF_CONSOLE_CMD( Audio, Enable, "bool on", "Switch DirectX Audio on or off at run
     plgAudioSys::Activate( on );
 }
 
-PF_CONSOLE_CMD( Audio, UseHardware, "bool on", "Enable audio hardware acceleration")
-{
-    bool on = params[0];
-    plgAudioSys::SetUseHardware( on );
-}
-
 PF_CONSOLE_CMD( Audio, UseEAX, "bool on", "Enable EAX sound acceleration (requires hardware acceleration)")
 {
     bool on = params[0];
@@ -3132,10 +3125,7 @@ PF_CONSOLE_CMD( Audio, MuteAll, "bool on", "Mute or unmute all sounds")
 
 PF_CONSOLE_CMD( Audio, SetDistanceModel, "int type", "Sets the distance model for all 3d sounds")
 {
-    if(plgAudioSys::Sys())
-    {
-        plgAudioSys::Sys()->SetDistanceModel((int) params[0]);
-    }
+    plgAudioSys::SetDistanceModel((int)params[0]);
 }
 
 PF_CONSOLE_CMD( Audio, LogStreamingUpdates, "bool on", "Logs every buffer fill for streaming sounds")
@@ -3208,14 +3198,6 @@ Valid channels are: SoundFX, BgndMusic, Voice, GUI, NPCVoice and Ambience.")
     PrintString(msg.c_str());
 }
 
-PF_CONSOLE_CMD( Audio, Set2D3DBias, "float bias", "Sets the 2D/3D bias when not using hardware acceleration.")
-{
-
-    float    bias = (float)(float)params[ 0 ];
-    plgAudioSys::Set2D3DBias( bias );
-
-}
-
 PF_CONSOLE_CMD( Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Direct sounds buffers in use")
 {
     plgAudioSys::ShowNumBuffers((bool)params[0]);
@@ -3223,7 +3205,12 @@ PF_CONSOLE_CMD( Audio, ShowNumActiveBuffers, "bool b", "Shows the number of Dire
 
 PF_CONSOLE_CMD( Audio, SetDeviceName, "string deviceName", "Meant for plClient init only")
 {
-    plgAudioSys::SetDeviceName(params[0]);      // this will set the name of the audio system device without actually reseting it
+    plgAudioSys::SetPlaybackDevice(ST::string::from_utf8(params[0]));
+}
+
+PF_CONSOLE_CMD(Audio, SetCaptureDeviceName, "string deviceName", "Sets the audio capture device name")
+{
+    plgAudioSys::SetCaptureDevice(ST::string::from_utf8(params[0]));
 }
 
 PF_CONSOLE_CMD( Audio,      // groupName
@@ -3441,11 +3428,8 @@ PF_CONSOLE_CMD( Audio, IsolateSound,
 
 PF_CONSOLE_CMD( Audio, SetMicVolume, "float volume", "Sets the microphone volume, in the range of 0 to 1" )
 {
-    if( !plWinMicLevel::CanSetLevel() )
-        PrintString( "Unable to set microphone level" );
-    else
-    {
-        plWinMicLevel::SetLevel( (float)params[ 0 ] );
+    if (!plgAudioSys::SetCaptureVolume((float)params[0])) {
+        PrintString("Unable to set microphone level");
     }
 }
 

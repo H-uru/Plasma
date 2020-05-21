@@ -35,6 +35,7 @@ set(CoreLib_SOURCES
     plLoadMask.cpp
     plProduct.cpp
     plViewTransform.cpp
+    hsWindows.cpp
 )
 
 if(WIN32 AND NOT CYGWIN)

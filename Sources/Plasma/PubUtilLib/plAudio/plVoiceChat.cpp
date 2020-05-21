@@ -206,10 +206,10 @@ void plVoiceRecorder::SetMicOpen(bool b)
 {
     if (fRecording) {
         if (b) {
-            plgAudioSys::Sys()->BeginCapture();
+            plgAudioSys::BeginCapture();
             fCaptureOpenSecs = hsTimer::GetSeconds<float>();
         } else {
-            plgAudioSys::Sys()->EndCapture();
+            plgAudioSys::EndCapture();
             if (fGraph)
                 fGraph->SetTitle("Voice Recorder");
         }
@@ -266,14 +266,14 @@ void plVoiceRecorder::Update(double time)
     int EncoderFrameSize = FREQUENCY / AUDIO_FPS;
     if (encoder) {
         // this is a no-op if there was no change
-        plgAudioSys::Sys()->SetCaptureSampleRate(encoder->GetSampleRate());
+        plgAudioSys::SetCaptureSampleRate(encoder->GetSampleRate());
 
         EncoderFrameSize = encoder->GetFrameSize();
         if (EncoderFrameSize == -1)
             return;
     }
 
-    uint32_t samples = plgAudioSys::Sys()->GetCaptureSampleCount();
+    uint32_t samples = plgAudioSys::GetCaptureSampleCount();
     uint32_t bytesSent = 0;
     if (samples > 0) {
         if (samples >= EncoderFrameSize) {
@@ -287,7 +287,7 @@ void plVoiceRecorder::Update(double time)
 
             // convert to correct units:
             auto buffer = std::make_unique<int16_t[]>(totalSamples);
-            plgAudioSys::Sys()->CaptureSamples(totalSamples, buffer.get());
+            plgAudioSys::CaptureSamples(totalSamples, buffer.get());
 
             if (!encoder) {
                 plNetMsgVoice pMsg;

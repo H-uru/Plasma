@@ -6,7 +6,6 @@ include_directories("../../PubUtilLib")
 if(WIN32)
     include_directories(${DirectX_INCLUDE_DIR})
 endif(WIN32)
-include_directories(${OPENAL_INCLUDE_DIR})
 
 set(plInputCore_SOURCES
     plAvatarInputInterface.cpp

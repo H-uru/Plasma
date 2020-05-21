@@ -39,61 +39,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-//////////////////////////////////////////////////////////////////////////////
-//                                                                          //
-//  plAudioCaps - Utility class to query and detect available audio options.//
-//                                                                          //
-//////////////////////////////////////////////////////////////////////////////
 
-#ifndef _plAudioCaps_h
-#define _plAudioCaps_h
+#ifdef HS_BUILD_FOR_WIN32
 
-#include "HeadSpin.h"
-#include "hsTemplates.h"
+#include "hsWindows.h"
 
-class plAudioCapsDetector;
-class plStatusLog;
-
-class plAudioCaps
+class hsCOMInit
 {
 public:
-
-    plAudioCaps() { Clear(); }
-
-    void    Clear()
+    hsCOMInit()
     {
-        fIsAvailable = false;
-        fEAXAvailable = false;
-        fEAXUnified = false;
-        fMaxNumSources = 0;
+        HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+        hsAssert(SUCCEEDED(hr), "COM failed to init???");
     }
 
-    bool    IsAvailable() const { return fIsAvailable; }
-    bool    IsEAXAvailable() const { return fEAXAvailable; }
-    bool    UsingEAXUnified() const { return fEAXUnified; }
-    unsigned GetMaxNumVoices() { return fMaxNumSources; }
+    ~hsCOMInit()
+    {
+        CoUninitialize();
+    }
+} s_COMInit;
 
-protected:
-    friend class plAudioCapsDetector;
+// =============================================================================
 
-    bool    fIsAvailable, fEAXAvailable, fEAXUnified;
-    unsigned fMaxNumSources;
-};
+static RTL_OSVERSIONINFOEXW s_WinVer;
 
-class plAudioCapsDetector
+const RTL_OSVERSIONINFOEXW& hsGetWindowsVersion()
 {
-public:
-    plAudioCapsDetector();
-    virtual ~plAudioCapsDetector();
+    static bool done = false;
+    if (!done) {
+        memset(&s_WinVer, 0, sizeof(RTL_OSVERSIONINFOEXW));
+        HMODULE ntdll = LoadLibraryW(L"ntdll.dll");
+        hsAssert(ntdll, "Failed to LoadLibrary on ntdll???");
 
-    static plAudioCaps &Detect( bool log = false, bool init = false );
+        if (ntdll) {
+            s_WinVer.dwOSVersionInfoSize = sizeof(RTL_OSVERSIONINFOEXW);
+            typedef LONG(WINAPI* RtlGetVersionPtr)(RTL_OSVERSIONINFOEXW*);
+            RtlGetVersionPtr getVersion = (RtlGetVersionPtr)GetProcAddress(ntdll, "RtlGetVersion");
+            hsAssert(getVersion, "Could not find RtlGetVersion in ntdll");
+            if (getVersion) {
+                getVersion(&s_WinVer);
+                done = true;
+            }
+        }
+        FreeLibrary(ntdll);
+    }
+    return s_WinVer;
+}
 
-protected:
-    static plStatusLog  *fLog;
-    static plAudioCaps  fCaps;
-    static bool         fGotCaps;
-    
-    static bool     IDetectEAX( );
-};
-
-#endif //_plAudioCaps_h
+#endif

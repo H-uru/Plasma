@@ -4,8 +4,6 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
-include_directories(${OPENAL_INCLUDE_DIR})
-
 set(plAvatar_SOURCES
     plAnimStage.cpp
     plArmatureEffects.cpp

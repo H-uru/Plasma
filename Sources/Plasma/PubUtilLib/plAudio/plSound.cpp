@@ -549,15 +549,10 @@ void plSound::Update()
 float plSound::IGetChannelVolume() const
 {
     float channelVol = plgAudioSys::GetChannelVolume( (plgAudioSys::ASChannel)fType );
-
-    // if not using hardware acceleration then apply 2D/3D bias to non 3D sounds
-    if( !plgAudioSys::Hardware() && !IsPropertySet( kPropIs3DSound ) )
-        channelVol *= plgAudioSys::Get2D3Dbias();
-
-    if( IsPropertySet( kPropDontFade ) )
+    if (IsPropertySet(kPropDontFade))
         return channelVol;
-    
-    return channelVol * plgAudioSys::GetGlobalFadeVolume();
+    else
+        return channelVol * plgAudioSys::GetGlobalFadeVolume();
 }
 
 void plSound::IStartFade( plFadeParams *params, float offsetIntoFade )
@@ -995,7 +990,7 @@ float plSound::GetVolumeRank()
     {
         float minDistSquared = (float)( GetMin() * GetMin() );
         float maxDistSquared = (float) (GetMax() * GetMax());
-        hsPoint3 listenerPos = plgAudioSys::Sys()->GetCurrListenerPos();
+        hsPoint3 listenerPos = plgAudioSys::GetCurrListenerPos();
         if( fDistToListenerSquared > minDistSquared )
         {
             float diff = maxDistSquared - minDistSquared;
@@ -1015,7 +1010,7 @@ bool plSound::IWillBeAbleToPlay()
     if( fSoftVolume == 0.f )
         return false;
 
-    return IsWithinRange( plgAudioSys::Sys()->GetCurrListenerPos(), nil );
+    return IsWithinRange( plgAudioSys::GetCurrListenerPos(), nil );
 }
 
 /////////////////////////////////////////////////////////////////////////

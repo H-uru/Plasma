@@ -1281,14 +1281,6 @@ class ptAudioControl:
         """Enables or disables voice chat."""
         pass
 
-    def enableVoiceCompression(self,state):
-        """Enables or disables voice compression."""
-        pass
-
-    def enableVoiceNetBroadcast(self,state):
-        """Enables or disables voice over network broadcast."""
-        pass
-
     def enableVoiceRecording(self,state):
         """Enables or disables voice recording."""
         pass
@@ -1297,12 +1289,16 @@ class ptAudioControl:
         """Returns the volume (0.0 to 1.0) for the Ambiance."""
         pass
 
-    def getAudioDeviceName(self,index):
-        """Gets the name of audio device for the given index"""
+    def getCaptureDevice(self):
+        """Gets the name for the capture device being used by the audio system."""
         pass
 
-    def getDeviceName(self):
-        """Gets the name for the device being used by the audio system"""
+    def getCaptureDevices(self):
+        """Gets the name of all available audio capture devices."""
+        pass
+
+    def getFriendlyDeviceName(self, devicename):
+        """Returns the provided device name without any OpenAL prefixes applied."""
         pass
 
     def getGUIVolume(self):
@@ -1317,10 +1313,6 @@ class ptAudioControl:
         """Returns the microphone recording level (0.0 to 1.0)."""
         pass
 
-    def getMode(self):
-        """Gets the audio system mode"""
-        pass
-
     def getMusicVolume(self):
         """Returns the volume (0.0 to 1.0) for the Music."""
         pass
@@ -1331,6 +1323,14 @@ class ptAudioControl:
 
     def getNumAudioDevices(self):
         """Returns the number of available audio devices."""
+        pass
+
+    def getPlaybackDevice(self):
+        """Gets the name for the device being used by the audio system."""
+        pass
+
+    def getPlaybackDevices(self):
+        """Gets the names of all available audio playback devices."""
         pass
 
     def getPriorityCutoff(self):
@@ -1349,12 +1349,12 @@ class ptAudioControl:
         """Hides (disables) the voice recording icons."""
         pass
 
-    def isEnabled(self):
-        """Is the audio enabled? Returns 1 if true otherwise returns 0."""
+    def isEAXSupported(self):
+        """Returns true or false based on whether or not a the device specified supports EAX"""
         pass
 
-    def isHardwareAccelerated(self):
-        """Is audio hardware acceleration enabled? Returns 1 if true otherwise returns 0."""
+    def isEnabled(self):
+        """Is the audio enabled? Returns 1 if true otherwise returns 0."""
         pass
 
     def isMuted(self):
@@ -1363,14 +1363,6 @@ class ptAudioControl:
 
     def isUsingEAXAcceleration(self):
         """Is EAX sound acceleration enabled? Returns 1 if true otherwise returns 0."""
-        pass
-
-    def isVoiceCompressionEnabled(self):
-        """Is voice compression enabled? Returns 1 if true otherwise returns 0."""
-        pass
-
-    def isVoiceNetBroadcastEnabled(self):
-        """Is voice over net enabled? Returns 1 if true otherwise returns 0."""
         pass
 
     def isVoiceRecordingEnabled(self):
@@ -1385,21 +1377,13 @@ class ptAudioControl:
         """Enables or disables 'push-to-talk'."""
         pass
 
-    def recordFrame(self,size):
-        """Sets the voice packet frame size."""
-        pass
-
-    def recordSampleRate(self,sampleRate):
-        """Sets the recording sample rate."""
-        pass
-
     def setAmbienceVolume(self,volume):
         """Sets the Ambience volume (0.0 to 1.0) for the game.
 This only sets the volume for this game session."""
         pass
 
-    def setDeviceName(self,devicename,restart):
-        """Sets the device name for the audio system, and optionally restarts it"""
+    def setCaptureDevice(self, devicename):
+        """Sets the audio capture device by name."""
         pass
 
     def setGUIVolume(self,volume):
@@ -1415,10 +1399,6 @@ This only sets the volume for this game session."""
         """Sets the microphone recording level (0.0 to 1.0)."""
         pass
 
-    def setMode(self,mode):
-        """Sets the audio system mode"""
-        pass
-
     def setMusicVolume(self,volume):
         """Sets the Music volume (0.0 to 1.0) for the game.
 This only sets the volume for this game session."""
@@ -1427,6 +1407,10 @@ This only sets the volume for this game session."""
     def setNPCVoiceVolume(self,volume):
         """Sets the NPC's voice volume (0.0 to 1.0) for the game.
 This only sets the volume for this game session."""
+        pass
+
+    def setPlaybackDevice(self,devicename,restart):
+        """Sets audio system output device by name, and optionally restarts it"""
         pass
 
     def setPriorityCutoff(self,priority):
@@ -1456,20 +1440,12 @@ This only sets the volume for this game session."""
         """Sets the squelch level."""
         pass
 
-    def supportsEAX(self):
-        """Returns true or false based on whether or not a the device specified supports EAX"""
-        pass
-
     def unmuteAll(self):
         """Unmutes all sounds."""
         pass
 
     def useEAXAcceleration(self,state):
         """Enables or disables EAX sound acceleration (requires hardware acceleration)."""
-        pass
-
-    def useHardwareAcceleration(self,state):
-        """Enables or disables audio hardware acceleration."""
         pass
 
 class ptAvatar:

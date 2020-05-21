@@ -27,7 +27,7 @@ Plasma currently requires the following third-party libraries:
 - Python 2.7 - http://www.python.org/download/releases/2.7/
 - libOgg and libVorbis - http://www.xiph.org/downloads/
 - OpenSSL - http://www.slproweb.com/products/Win32OpenSSL.html
-- OpenAL - http://www.openal.org/
+- OpenAL Soft - https://openal-soft.org/
 - eXpat - http://expat.sourceforge.net/
 - libJPEG - http://libjpeg-turbo.virtualgl.org/
 - libPNG - http://www.libpng.org/

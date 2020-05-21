@@ -3,10 +3,41 @@ include_directories("../../NucleusLib/inc")
 include_directories("../../NucleusLib")
 include_directories("../../PubUtilLib")
 
+# Skip CMake's built in FindOpenAL module and use OpenAL-Soft's config instead, if possible
+find_package(OpenAL CONFIG QUIET)
+if(NOT TARGET OpenAL::OpenAL)
+    message(DEBUG "OpenAL CMake Config not found, using FindOpenAL module.")
+    find_package(OpenAL REQUIRED)
+    add_library(OpenAL::OpenAL STATIC IMPORTED)
+    set_target_properties(OpenAL::OpenAL PROPERTIES
+                          INTERFACE_INCLUDE_DIRECTORIES ${OPENAL_INCLUDE_DIR}
+                          IMPORTED_LOCATION ${OPENAL_LIBRARY}
+    )
+    if(WIN32)
+        set_target_properties(OpenAL::OpenAL PROPERTIES
+                              INTERFACE_LINK_LIBRARIES WinMM
+        )
+    endif()
+else()
+    # Ensure the default RelWithDebInfo and MinSizeRel configs use the Release library with Visual C++.
+    # Otherwise, compile-time assertions occur due to iterator debug level
+    if(MSVC)
+        set_target_properties(OpenAL::OpenAL PROPERTIES
+                              MAP_IMPORTED_CONFIG_MINSIZEREL Release
+                              MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+        )
+    endif()
+endif()
+
+set_package_properties(OpenAL PROPERTIES
+    URL "https://openal-soft.org/"
+    DESCRIPTION "3D audio and EAX library"
+    TYPE REQUIRED
+)
+
 if(WIN32)
     include_directories(${DirectX_INCLUDE_DIR})
 endif(WIN32)
-include_directories(${OPENAL_INCLUDE_DIR})
 
 if(PLASMA_USE_OPUS)
     include_directories(${Opus_INCLUDE_DIR})
@@ -16,7 +47,7 @@ if(PLASMA_USE_SPEEX)
 endif()
 
 set(plAudio_SOURCES
-    plAudioCaps.cpp
+    plAudioEndpointVolume.cpp
     plAudioSystem.cpp
     plDSoundBuffer.cpp
     plEAXEffects.cpp
@@ -29,14 +60,14 @@ set(plAudio_SOURCES
     plWin32Sound.cpp
     plWin32StaticSound.cpp
     plWin32StreamingSound.cpp
-    plWinMicLevel.cpp
     plWin32VideoSound.cpp
 )
 
 set(plAudio_HEADERS
-    plAudioCaps.h
     plAudioCreatable.h
+    plAudioEndpointVolume.h
     plAudioSystem.h
+    plAudioSystem_Private.h
     plDSoundBuffer.h
     plEAXEffects.h
     plEAXListenerMod.h
@@ -49,11 +80,11 @@ set(plAudio_HEADERS
     plWin32Sound.h
     plWin32StaticSound.h
     plWin32StreamingSound.h
-    plWinMicLevel.h
     plWin32VideoSound.h
 )
 
 add_library(plAudio STATIC ${plAudio_SOURCES} ${plAudio_HEADERS})
+target_link_libraries(plAudio OpenAL::OpenAL)
 
 source_group("Source Files" FILES ${plAudio_SOURCES})
 source_group("Header Files" FILES ${plAudio_HEADERS})

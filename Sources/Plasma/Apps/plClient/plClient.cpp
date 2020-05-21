@@ -84,7 +84,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plScene/plVisMgr.h"
 
 #include "plAudio/plAudioSystem.h"
-#include "plAudio/plAudioCaps.h"
 
 #include "plStatGather/plProfileManagerFull.h"
 
@@ -158,7 +157,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 static plDispatchBase* gDisp = nil;
 static plTimerCallbackManager* gTimerMgr = nil;
-static plAudioSystem* gAudio = nil;
 
 #ifdef HS_BUILD_FOR_WIN32
 extern ITaskbarList3* gTaskbarList;
@@ -1380,7 +1378,6 @@ bool plClient::StartInit()
     ((plResManager *)hsgResMgr::ResMgr())->VerifyPages();
 
     plgAudioSys::Init();
-    gAudio = plgAudioSys::Sys();
 
     RegisterAs( kClient_KEY );
 
@@ -2122,20 +2119,11 @@ void plClient::IDetectAudioVideoSettings()
 #endif
 
     //check to see if audio.ini exists
-    if (s.Open(audioIniFile))
-    {
+    if (s.Open(audioIniFile)) {
         s.Close();
-    }
-    else
-    {
+    } else {
         stream = plEncryptedStream::OpenEncryptedFileWrite(audioIniFile);
-
-        plAudioCaps caps = plAudioCapsDetector::Detect(false, true);
-
-        char deviceName[256];
-        sprintf(deviceName, "\"%s\"", DEFAULT_AUDIO_DEVICE_NAME);
-
-        WriteBool(stream, "Audio.Initialize",  caps.IsAvailable());
+        WriteBool(stream, "Audio.Initialize",  true);
         WriteBool(stream, "Audio.UseEAX", false);
         WriteInt(stream, "Audio.SetPriorityCutoff", 6);
         WriteInt(stream, "Audio.MuteAll", false);
@@ -2144,21 +2132,15 @@ void plClient::IDetectAudioVideoSettings()
         WriteInt(stream, "Audio.SetChannelVolume Ambience", 1);
         WriteInt(stream, "Audio.SetChannelVolume NPCVoice", 1);
         WriteInt(stream, "Audio.EnableVoiceRecording", 1);
-        WriteString(stream, "Audio.SetDeviceName", deviceName );
         stream->Close();
         delete stream;
-        stream = nil;
     }
-    
+
     // check to see if graphics.ini exists
     if (s.Open(graphicsIniFile))
-    {
         s.Close();
-    }
     else
-    {
         IWriteDefaultGraphicsSettings(graphicsIniFile);
-    }
 }
 
 void plClient::IWriteDefaultGraphicsSettings(const plFileName& destFile)
