@@ -1,0 +1,4 @@
+# - Python Module Requirements
+
+# Required for building plClient's resource.dat assets
+-r ./Sources/Plasma/Apps/plClient/external/requirements.txt

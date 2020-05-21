@@ -52,10 +52,9 @@ from optparse import OptionParser
 import scalergba
 
 try:
-	import rsvg
-	import cairo
+	import cairosvg
 except ImportError as e:
-	print("Rendering SVG resources requires PyGTK.  Exiting...")
+	print("Rendering SVG resources requires CairoSVG.  Exiting...")
 	exit(1)
 
 cursorList = {
@@ -116,6 +115,10 @@ def shift_all_layers(layers, shiftx, shifty):
 	for layer in layers:
 		layers[layer].setAttribute("transform", "translate(%g,%g)" % (shiftx, shifty))
 
+def rotate_layer(layer, angle, offX, offY):
+	# note: this assumes that this layer starts out with no transform of their own
+	layer.setAttribute("transform", "rotate(%g %g %g)" % (angle, offX, offY))
+
 def get_layers_from_svg(svgData):
 	inkscapeNS = "http://www.inkscape.org/namespaces/inkscape"
 	layers = {}
@@ -134,27 +137,17 @@ def render_cursors(inpath, outpath):
 		layers = get_layers_from_svg(cursorSVG)
 		svgwidth = float(cursorSVG.documentElement.getAttribute("width"))
 		svgheight = float(cursorSVG.documentElement.getAttribute("height"))
-		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, int(math.ceil(scalefactor*svgwidth)), int(math.ceil(scalefactor*svgheight)))
 
 		for cursor in cursorList:
-			ctx = cairo.Context(surface)
-			ctx.save()
-			ctx.set_operator(cairo.OPERATOR_CLEAR)
-			ctx.paint()
-			ctx.restore()
-
 			enabledlayers = cursorList[cursor]
 			enabledlayers = enabledlayers + [l + "Shadow" for l in enabledlayers]
 			enable_only_layers(enabledlayers, layers)
 
 			shift_all_layers(layers, *cursorOffsetList.get(cursor, [0, 0]))
 
-			svg = rsvg.Handle(data=cursorSVG.toxml())
-			ctx.scale(scalefactor, scalefactor)
-			svg.render_cairo(ctx)
-
 			outfile = os.path.join(outpath, cursor + ".png")
-			surface.write_to_png(outfile)
+			cairosvg.svg2png(bytestring=cursorSVG.toxml().encode('utf-8'), write_to=outfile, 
+				parent_width=svgwidth, parent_height=svgheight, scale=scalefactor)
 			scalergba.scale(outfile, outfile, scalefactor)
 
 def render_loading_books(inpath, outpath):
@@ -162,76 +155,44 @@ def render_loading_books(inpath, outpath):
 	with open(os.path.join(inpath,"Linking_Book.svg"), "r") as svgFile:
 		bookSVG = parse(svgFile)
 		layers = get_layers_from_svg(bookSVG)
-		ratioW = resSize["width"] / float(bookSVG.documentElement.getAttribute("width"))
-		ratioH = resSize["height"] / float(bookSVG.documentElement.getAttribute("height"))
-		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, resSize["width"], resSize["height"])
+		cX = float(bookSVG.documentElement.getAttribute("width")) / 2
+		cY = float(bookSVG.documentElement.getAttribute("height")) / 2
 
 		for angle in range(0, 18):
-			ctx = cairo.Context(surface)
+			# Draw Book, Black Background, and rotating Circles
+			enable_only_layers(["background", "book", "circles"],layers)
 
-			# Draw Book and Black Background
-			enable_only_layers(["background", "book"],layers)
-			svg = rsvg.Handle(data=bookSVG.toxml())
-			ctx.save()
-			ctx.scale(ratioW, ratioH)
-			svg.render_cairo(ctx)
-			ctx.restore()
+			# Rotate Circles at appropriate angle
+			rotate_layer(layers["circles"], angle*5, cX, cY)
 
-			# Draw Circles at appropriate angle
-			enable_only_layers(["circles"],layers)
-			svg = rsvg.Handle(data=bookSVG.toxml())
-			ctx.translate(resSize["height"] / 2, resSize["width"] / 2)
-			ctx.rotate(math.radians(angle*(5)))
-			ctx.translate(-resSize["width"] / 2, -resSize["height"] / 2)
-			ctx.scale(ratioW, ratioH)
-			svg.render_cairo(ctx)
-
-			surface.write_to_png(os.path.join(outpath, "xLoading_Linking.{0:02}.png".format(angle)))
+			cairosvg.svg2png(bytestring=bookSVG.toxml().encode('utf-8'),
+				write_to=os.path.join(outpath, "xLoading_Linking.{0:02}.png".format(angle)), 
+				parent_width=resSize["width"], parent_height=resSize["height"])
 
 def render_loading_text(inpath, outpath):
 	resSize = {"width":192, "height":41}
 	with open(os.path.join(inpath,"Loading_Text_rasterfont.svg"), "r") as svgFile:
 		textSVG = parse(svgFile)
 		layers = get_layers_from_svg(textSVG)
-		ratioW = resSize["width"] / float(textSVG.documentElement.getAttribute("width"))
-		ratioH = resSize["height"] / float(textSVG.documentElement.getAttribute("height"))
-		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, resSize["width"], resSize["height"])
 
 		for textEntry in textList:
-			ctx = cairo.Context(surface)
-			ctx.save()
-			ctx.set_operator(cairo.OPERATOR_CLEAR)
-			ctx.paint()
-			ctx.restore()
 			enable_only_layers(textList[textEntry], layers)
-			svg = rsvg.Handle(data=textSVG.toxml())
-			ctx.scale(ratioW, ratioH)
-			svg.render_cairo(ctx)
-			surface.write_to_png(os.path.join(outpath, textEntry + ".png"))
+			cairosvg.svg2png(bytestring=textSVG.toxml().encode('utf-8'),
+				write_to=os.path.join(outpath, textEntry + ".png"), 
+				parent_width=resSize["width"], parent_height=resSize["height"])
 
 def render_voice_icons(inpath, outpath):
 	resSize = {"width":32, "height":32}
 	with open(os.path.join(inpath,"Voice_Chat.svg"), "r") as svgFile:
 		uiSVG = parse(svgFile)
 		layers = get_layers_from_svg(uiSVG)
-		ratioW = resSize["width"] / float(uiSVG.documentElement.getAttribute("width"))
-		ratioH = resSize["height"] / float(uiSVG.documentElement.getAttribute("height"))
-		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, resSize["width"], resSize["height"])
 
 		for voiceUI in voiceList:
-			ctx = cairo.Context(surface)
-			ctx.save()
-			ctx.set_operator(cairo.OPERATOR_CLEAR)
-			ctx.paint()
-			ctx.restore()
-
 			enable_only_layers(voiceList[voiceUI], layers)
 
-			svg = rsvg.Handle(data=uiSVG.toxml())
-			ctx.scale(ratioW, ratioH)
-			svg.render_cairo(ctx)
-
-			surface.write_to_png(os.path.join(outpath, voiceUI + ".png"))
+			cairosvg.svg2png(bytestring=uiSVG.toxml().encode('utf-8'),
+				write_to=os.path.join(outpath, voiceUI + ".png"), 
+				parent_width=resSize["width"], parent_height=resSize["height"])
 
 if __name__ == '__main__':
 	parser = OptionParser(usage="usage: %prog [options]")
