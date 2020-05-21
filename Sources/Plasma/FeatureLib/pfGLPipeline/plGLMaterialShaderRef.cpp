@@ -118,6 +118,8 @@ void plGLMaterialShaderRef::SetupTextureRefs()
         if (!texRef->fRef)
             continue;
 
+        fPipeline->CheckTextureRef(layer);
+
         LOG_GL_ERROR_CHECK("PRE-Active Texture failed")
 
         glActiveTexture(GL_TEXTURE0 + numTextures);
