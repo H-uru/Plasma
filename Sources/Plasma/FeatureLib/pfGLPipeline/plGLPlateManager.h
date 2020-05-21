@@ -43,6 +43,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #ifndef _plGLPlateManager_inc_
 #define _plGLPlateManager_inc_
 
+#include "plGLDeviceRef.h"
+
+#include "hsGeometry3.h"
 #include "plPipeline/plPlates.h"
 
 class plGLPipeline;
@@ -56,7 +59,27 @@ public:
     virtual ~plGLPlateManager();
 
 protected:
+    struct plPlateVertex
+    {
+        hsPoint3 fPoint;
+        hsVector3 fNormal;
+        uint32_t fColor;
+        hsPoint3 fUV;
+    };
+
+    struct plPlateBuffers
+    {
+        GLuint VRef;
+        GLuint IRef;
+        GLuint ARef;
+    };
+
+    plPlateBuffers fBuffers;
+
     plGLPlateManager(plGLPipeline* pipe);
+
+    void ICreateGeometry();
+    void IReleaseGeometry();
 
     void IDrawToDevice(plPipeline* pipe) override;
 };
