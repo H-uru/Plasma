@@ -128,7 +128,7 @@ class xPsnlVaultSDL:
         #PtDebugPrint("Attempting to set item %s to %s" % (sub, str(val)))
 
         if vartype == PtSDLVarType.kInt:
-            if isintance(val, (int, long)):
+            if isinstance(val, (int, long)):
                 #PtDebugPrint("Set int")
                 var.setInt(val)
 
