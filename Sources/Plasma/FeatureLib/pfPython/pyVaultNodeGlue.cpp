@@ -63,20 +63,14 @@ PYTHON_RICH_COMPARE_DEFINITION(ptVaultNode, obj1, obj2, compareType)
         return nullptr;
     }
 
-    if ((obj1 == Py_None) || (obj2 == Py_None)) {
-        if (compareType == Py_EQ) {
-            PYTHON_RETURN_BOOL(obj1 == obj2);
-        } else if (compareType == Py_NE) {
-            PYTHON_RETURN_BOOL(obj1 != obj2);
-        }
-    }
+    // tp_richcompare documentation indicates obj1 should ALWAYS be an instance of this type.
+    hsAssert(pyVaultNode::Check(obj1), "left hand of richcompare is not a ptVaultNode????");
 
     // Truth testing
-    if ((pyVaultNode::Check(obj1) || PyBool_Check(obj1)) && (pyVaultNode::Check(obj2) || PyBool_Check(obj2))) {
-        pyVaultNode* node = pyVaultNode::Check(obj1) ? pyVaultNode::ConvertFrom(obj1) :
-                                                       pyVaultNode::ConvertFrom(obj2);
+    if (PyBool_Check(obj2)) {
+        pyVaultNode* node = pyVaultNode::ConvertFrom(obj1);
         bool value = node->fNode->IsUsed();
-        bool cmp = PyBool_Check(obj1) ? PyInt_AsLong(obj1) != 0 : PyInt_AsLong(obj2);
+        bool cmp = PyInt_AsLong(obj2);
         if (compareType == Py_EQ) {
             PYTHON_RETURN_BOOL(value == cmp);
         } else if (compareType == Py_NE) {
@@ -85,7 +79,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptVaultNode, obj1, obj2, compareType)
     }
 
     // Vault nodes can only be equal to vault nodes
-    if (!pyVaultNode::Check(obj1) || !pyVaultNode::Check(obj2)) {
+    if (!pyVaultNode::Check(obj2)) {
         if (compareType == Py_EQ) {
             Py_RETURN_FALSE;
         } else if (compareType == Py_NE) {
