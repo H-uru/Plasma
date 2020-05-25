@@ -86,6 +86,3 @@ before_package:
       ls
     }
 test: off
-artifacts:
-- path: build\bin
-  name: Plasma-$(APPVEYOR_BUILD_VERSION)-$(CLIENT_TYPE)-$(CONFIGURATION)
