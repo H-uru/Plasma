@@ -198,19 +198,16 @@ class SeparatorFolder:
 ## Helper function to prioritize online players in lists.
 def CMPplayerOnline(playerA, playerB):
 
-    elPlayerA = playerA.getChild()
-    elPlayerB = playerB.getChild()
+    elPlayerA = playerA.getChild().upcastToPlayerInfoNode()
+    elPlayerB = playerB.getChild().upcastToPlayerInfoNode()
     if elPlayerA and elPlayerB:
-        if elPlayerA.getType() == PtVaultNodeTypes.kPlayerInfoNode and elPlayerB.getType() == PtVaultNodeTypes.kPlayerInfoNode:
-            elPlayerA = elPlayerA.upcastToPlayerInfoNode()
-            elPlayerB = elPlayerB.upcastToPlayerInfoNode()
-            if elPlayerA.playerIsOnline() and elPlayerB.playerIsOnline():
-                return cmp(elPlayerA.playerGetName().lower(), elPlayerB.playerGetName().lower())
-            if elPlayerA.playerIsOnline():
-                return -1
-            if elPlayerB.playerIsOnline():
-                return 1
-            return cmp(elPlayerA.playerGetName().lower(), elPlayerB.playerGetName().lower())
+        online = (elPlayerA.playerIsOnline(), elPlayerB.playerIsOnline())
+        if all(online) or not any(online):
+            playerAname = elPlayerA.playerGetName().lower()
+            playerBname = elPlayerB.playerGetName().lower()
+            return (playerAname > playerBname) - (playerAname < playerBname)
+        else:
+            return -1 if online[0] else 1
     return 0
 
 
