@@ -42,7 +42,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #ifdef HS_BUILD_FOR_WIN32
 
+#include "HeadSpin.h"
 #include "hsWindows.h"
+#include <combaseapi.h>
 
 class hsCOMInit
 {
