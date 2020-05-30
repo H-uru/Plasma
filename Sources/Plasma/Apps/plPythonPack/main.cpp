@@ -49,9 +49,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <string>
 #include <algorithm>
 #include <string_theory/stdio>
+#include <unordered_set>
 
 static const char* kPackFileName = "python.pak";
 static const char* kModuleFile = "__init__.py";
+
+/** Directories that should not generate their own .pak file. */
+static const std::unordered_set<ST::string, ST::hash_i, ST::equal_i> s_ignoreSubdirs{
+    ST_LITERAL("plasma"),
+    ST_LITERAL("system"),
+    ST_LITERAL("__pycache__"),
+};
 
 #if HS_BUILD_FOR_WIN32
     #define NULL_DEVICE "NUL:"
@@ -216,7 +224,7 @@ void FindSubDirs(std::vector<plFileName> &dirnames, const plFileName &path)
     std::vector<plFileName> subdirs = plFileSystem::ListSubdirs(path);
     for (auto iter = subdirs.begin(); iter != subdirs.end(); ++iter) {
         ST::string name = iter->GetFileName();
-        if (name.compare_i("system") != 0 && name.compare_i("plasma") != 0)
+        if (s_ignoreSubdirs.find(name) == s_ignoreSubdirs.end())
             dirnames.push_back(name);
     }
 }
