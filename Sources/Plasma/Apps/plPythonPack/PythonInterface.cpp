@@ -43,7 +43,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include <compile.h>
 #include <eval.h>
+#include <cpython/initconfig.h>
 #include <marshal.h>
+#include <pylifecycle.h>
+
+
 #include "plFileSystem.h"
 
 #include <string_theory/stdio>
@@ -52,73 +56,50 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 static PyObject* stdOut;    // python object of the stdout file
 static PyObject* stdErr;    // python object of the stderr file
 
-void PythonInterface::initPython(const plFileName& rootDir, FILE* outstream, FILE* errstream)
+static inline void IAddWideString(PyWideStringList& list, const plFileName& filename)
 {
-    // if haven't been initialized then do it
-    if (Py_IsInitialized() == 0)
-    {
-        // initialize the Python stuff
-        // let Python do some intialization...
-        Py_SetProgramName(L"plasma");
-        Py_NoSiteFlag = 1;
-        Py_NoUserSiteDirectory = 1;
-        Py_IgnoreEnvironmentFlag = 1;
-        Py_Initialize();
-
-        // if we need the builtins then find the builtin module
-        PyObject* sysmod = PyImport_ImportModule("sys");
-        // then add the builtin dictionary to our module's dictionary
-        if (sysmod != NULL)
-        {
-            // get the sys's dictionary to find the stdout and stderr
-            PyObject* sys_dict = PyModule_GetDict(sysmod);
-            if (sys_dict != nullptr && stdOut != nullptr) {
-                PyDict_SetItemString(sys_dict, "stdout", stdOut);
-            }
-            if (sys_dict != nullptr && stdErr != nullptr) {
-                PyDict_SetItemString(sys_dict, "stderr", stdErr);
-            }
-            // NOTE: we will reset the path to not include paths
-            // ...that Python may have found in the registry
-            PyObject* path_list = PyList_New(0);
-            ST::printf(outstream, "Setting up include dirs:\n");
-
-            ST::printf(outstream, "{}\n", rootDir);
-            PyObject* more_path = PyUnicode_FromString(rootDir.AsString().c_str());
-            PyList_Append(path_list, more_path);
-
-            // make sure that our plasma libraries are gotten before the system ones
-            plFileName temp = plFileName::Join(rootDir, "plasma");
-            ST::printf(outstream, "{}\n", temp);
-            PyObject* more_path3 = PyUnicode_FromString(temp.AsString().c_str());
-            PyList_Append(path_list, more_path3);
-
-            temp = plFileName::Join(rootDir, "system");
-            ST::printf(outstream, "{}\n\n", temp);
-            PyObject* more_path2 = PyUnicode_FromString(temp.AsString().c_str());
-            PyList_Append(path_list, more_path2);
-
-            // set the path to be this one
-            PyDict_SetItemString(sys_dict, "path", path_list);
-
-            Py_DECREF(sysmod);
-        }
-    }
+    PyWideStringList_Append(&list, filename.AsString().to_wchar().data());
 }
 
-void PythonInterface::addPythonPath(const plFileName& path, FILE* outstream)
+void PythonInterface::initPython(const plFileName& rootDir, const std::vector<plFileName>& extraDirs,
+                                 FILE* outstream, FILE* errstream)
 {
-    PyObject* sysmod = PyImport_ImportModule("sys");
-    if (sysmod != NULL)
-    {
-        PyObject* sys_dict = PyModule_GetDict(sysmod);
-        PyObject* path_list = PyDict_GetItemString(sys_dict, "path");
+    // if haven't been initialized then do it
+    if (Py_IsInitialized() == 0) {
+        PyPreConfig preConfig;
+        PyPreConfig_InitIsolatedConfig(&preConfig);
+        PyStatus status = Py_PreInitialize(&preConfig);
+        if (PyStatus_Exception(status)) {
+            ST::printf(stderr, "Python {} pre-init failed: {}", PY_VERSION, status.err_msg);
+            return;
+        }
 
-        ST::printf(outstream, "Adding path {}\n", path);
-        PyObject* more_path = PyUnicode_FromString(path.AsString().c_str());
-        PyList_Append(path_list, more_path);
+        PyConfig config;
+        PyConfig_InitIsolatedConfig(&config);
+        config.optimization_level = 2;
+        config.write_bytecode = 0;
+        config.user_site_directory = 0;
+        config.program_name = L"plasma";
 
-        Py_DECREF(sysmod);
+        // Explicit module search paths so no build-env specific stuff gets in.
+        IAddWideString(config.module_search_paths, rootDir);
+        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "plasma"));
+        IAddWideString(config.module_search_paths, plFileName::Join(rootDir, "system"));
+        for (const auto& dir : extraDirs)
+            IAddWideString(config.module_search_paths, plFileName::Join(rootDir, dir));
+        config.module_search_paths_set = 1;
+
+        // initialize the Python stuff
+        status = Py_InitializeFromConfig(&config);
+        if (PyStatus_Exception(status)) {
+            ST::printf(stderr, "Python {} init failed: {}", PY_VERSION, status.err_msg);
+            return;
+        }
+
+        if (stdOut)
+            PySys_SetObject("stdout", stdOut);
+        if (stdErr)
+            PySys_SetObject("stderr", stdErr);
     }
 }
 
@@ -152,7 +133,7 @@ PyObject* PythonInterface::CompileString(const char *command, const plFileName& 
 //
 //  PURPOSE    : marshals an object into a char string
 //
-bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
+bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, Py_ssize_t* size)
 {
     PyObject *s;        // the python string object where the marsalled object wil go
     // convert object to a marshalled string python object
@@ -162,50 +143,20 @@ bool PythonInterface::DumpObject(PyObject* pyobj, char** pickle, int32_t* size)
     {
         // yes, then get the size and the string address
         *size = PyBytes_Size(s);
-        *pickle =  PyBytes_AsString(s);
+        *pickle = new char[*size];
+        memcpy(*pickle, PyBytes_AS_STRING(s), *size);
+        Py_DECREF(s);
         return true;
     }
     else  // otherwise, there was an error
     {
+        *pickle = nullptr;
+        *size = 0;
+
         // Yikes! errors!
         PyErr_Print();  // FUTURE: we may have to get the string to display in max...later
         return false;
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//  Function   : CreateModule
-//  PARAMETERS : module    - module name to create
-//
-//  PURPOSE    : create a new module with built-ins
-//
-PyObject* PythonInterface::CreateModule(const char* module)
-{
-    PyObject *m, *d;
-// first we must get rid of any old modules of the same name, we'll replace it
-    PyObject *modules = PyImport_GetModuleDict();
-    if ((m = PyDict_GetItemString(modules, module)) != NULL && PyModule_Check(m))
-        // clear it
-        _PyModule_Clear(m);
-
-// create the module
-    m = PyImport_AddModule(module);
-    if (m == NULL)
-        return nil;
-    d = PyModule_GetDict(m);
-// add in the built-ins
-    // first make sure that we don't already have the builtins
-    if (PyDict_GetItemString(d, "__builtins__") == NULL)
-    {
-        // if we need the builtins then find the builtin module
-        PyObject *bimod = PyImport_ImportModule("builtins");
-        // then add the builtin dicitionary to our module's dictionary
-        if (bimod == NULL || PyDict_SetItemString(d, "__builtins__", bimod) != 0)
-            return nil;
-        Py_DECREF(bimod);
-    }
-    return m;
 }
 
 /////////////////////////////////////////////////////////////////////////////

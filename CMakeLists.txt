@@ -63,7 +63,7 @@ set_package_properties(OpenSSL PROPERTIES
     TYPE REQUIRED
 )
 
-find_package(Python3 REQUIRED Interpreter Development)
+find_package(Python3 3.8 REQUIRED Interpreter Development)
 set_package_properties(Python3 PROPERTIES
     URL "http://www.python.org"
     DESCRIPTION "Python Scripting language C bindings"

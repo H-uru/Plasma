@@ -311,7 +311,7 @@ PYTHON_START_AS_NUMBER_TABLE(EnumValue)
     0,                          /* nb_true_divide */
     0,                          /* nb_inplace_floor_divide */
     0,                          /* nb_inplace_true_divide */
-    0,                          /* nb_index */
+    (unaryfunc)EnumValue_long,  /* nb_index */
     0,                          /* nb_matrix_multiply */
     0,                          /* nb_inplace_matrix_multiply */
 PYTHON_END_AS_NUMBER_TABLE;

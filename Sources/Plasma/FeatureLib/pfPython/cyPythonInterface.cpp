@@ -55,6 +55,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyObjectRef.h"
 #pragma hdrstop
 
+// CPython specific init stuff
+#include <cpython/initconfig.h>
+#include <pylifecycle.h>
+
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"
 
@@ -893,12 +897,6 @@ PyObject* PythonInterface::initPlasmaModule()
         getOutputAndReset();
     }
 
-    AddPep451Classes();
-    if (PyErr_Occurred()) {
-        dbgLog->AddLine("Python error while adding classes to Plasma:\n");
-        getOutputAndReset();
-    }
-
     return plasmaMod;
 }
 
@@ -966,149 +964,131 @@ PyObject* PythonInterface::initPlasmaVaultConstantsModule()
     return plasmaVaultConstantsMod;
 }
 
+template<typename _ConfigT, PyStatus(*_FuncT)(const _ConfigT*)>
+static bool ICheckedInit(const _ConfigT& config, plStatusLog* dbgLog, const char* errmsg)
+{
+    PyStatus status = _FuncT(&config);
+    if (PyStatus_Exception(status)) {
+        dbgLog->AddLineF(plStatusLog::kRed, "Python {} {}!", PY_VERSION, errmsg);
+        if (status.func)
+            dbgLog->AddLineF(plStatusLog::kRed, "{}: {}", status.func, status.err_msg);
+        else
+            dbgLog->AddLine(plStatusLog::kRed, status.err_msg);
+        return false;
+    }
+    return true;
+}
+
 void PythonInterface::initPython()
 {
     // if haven't been initialized then do it
-    if ( FirstTimeInit && Py_IsInitialized() == 0 )
-    {
-        FirstTimeInit = false;
-        // initialize the Python stuff
-        PyImport_AppendInittab(s_PlasmaModuleDef.m_name, initPlasmaModule);
-        PyImport_AppendInittab(s_PlasmaConstantsModuleDef.m_name, initPlasmaConstantsModule);
-        PyImport_AppendInittab(s_PlasmaNetConstantsModuleDef.m_name, initPlasmaNetConstantsModule);
-        PyImport_AppendInittab(s_PlasmaVaultConstantsModuleDef.m_name, initPlasmaVaultConstantsModule);
+    if (!FirstTimeInit || Py_IsInitialized())
+        return;
 
-        // let Python do some initialization...
-        Py_SetProgramName(L"plasma");
-        Py_NoSiteFlag = 1;
-        Py_NoUserSiteDirectory = 1;
-        Py_IgnoreEnvironmentFlag = 1;
-#ifdef PLASMA_EXTERNAL_RELEASE
-        Py_IsolatedFlag = 1;
+    if (!dbgLog) {
+        dbgLog = plStatusLogMgr::GetInstance().CreateStatusLog(30, "Python.log", 
+                                                               plStatusLog::kFilledBackground |
+                                                               plStatusLog::kAlignToTop |
+                                                               plStatusLog::kTimestamp);
+    }
+
+    FirstTimeInit = false;
+
+    // Lazy-init most Plasma Python modules at import time.
+    PyImport_AppendInittab(s_PlasmaModuleDef.m_name, initPlasmaModule);
+    PyImport_AppendInittab(s_PlasmaConstantsModuleDef.m_name, initPlasmaConstantsModule);
+    PyImport_AppendInittab(s_PlasmaNetConstantsModuleDef.m_name, initPlasmaNetConstantsModule);
+    PyImport_AppendInittab(s_PlasmaVaultConstantsModuleDef.m_name, initPlasmaVaultConstantsModule);
+
+    // In Python 2, we could rely on a single PEP 302 hook class installed into sys.path_hooks to
+    // handle importing modules from python.pak -- this could be initialized after Python. In Python 3,
+    // however, the initialization process imports the encodings module and dies if it is not available.
+    // This module is written in Python code and found in python.pak, but the python.pak import machinery
+    // is not available. If you have Python 3.(whatever) installed locally and are using a DLL, it
+    // works. If you violate either of those cases, plClient silently exits (if you're not watching
+    // stderr). To fix this, will use the provisional core/main init split introduced in Python 3.8
+    // and described in PEPs 432 and 587 to init the "core" (much like _freeze_importlib) and install
+    // our PEP 451 import machinery. Then, we'll do the whole main init thingo.
+    PyPreConfig preConfig;
+    PyPreConfig_InitIsolatedConfig(&preConfig);
+    if (!ICheckedInit<PyPreConfig, Py_PreInitialize>(preConfig, dbgLog, "Pre-init failed!"))
+        return;
+
+    PyConfig config;
+    PyConfig_InitIsolatedConfig(&config);
+    config.site_import = 0;
+    config.program_name = L"plasma";
+    config._init_main = 0;
+
+    // Allow importing from the local python directory if and only if this is an internal client.
+#ifndef PLASMA_EXTERNAL_RELEASE
+    PyWideStringList_Append(&config.module_search_paths, L"./python");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/plasma");
+    PyWideStringList_Append(&config.module_search_paths, L"./python/system");
+    config.module_search_paths_set = 1;
 #endif
-        Py_Initialize();
+
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig>(config, dbgLog, "Core init failed!"))
+        return;
+
+    // We now have enough Python to insert our PEP 451 import machinery.
+    initPyPackHook();
+
+    // Now, init the interpreter.
+    config._init_main = 1;
+    if (!ICheckedInit<PyConfig, Py_InitializeFromConfig>(config, dbgLog, "Main init failed!"))
+        return;
+
+    // Woo, we now have a functional Python 3 interpreter...
+    dbgLog->AddLineF("Python {} interpreter is now alive!", PY_VERSION);
 
 #if defined(HAVE_CYPYTHONIDE) && !defined(PLASMA_EXTERNAL_RELEASE)
-        if (usePythonDebugger)
-        {
-            debugServer.SetCallbackClass(&debServerCallback);
-            debugServer.Init();
-            PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, NULL);
-        }
+    if (usePythonDebugger)
+    {
+        debugServer.SetCallbackClass(&debServerCallback);
+        debugServer.Init();
+        PyEval_SetTrace((Py_tracefunc)PythonTraceCallback, NULL);
+    }
 #endif
 
-        if (!dbgLog)
-        {
-            dbgLog = plStatusLogMgr::GetInstance().CreateStatusLog( 30, "Python.log", 
-                plStatusLog::kFilledBackground | plStatusLog::kAlignToTop | plStatusLog::kTimestamp );
-        }
+    // create the output redirector for the stdout and stderr file
+    stdOut = pyOutputRedirector::New();
+    stdErr = pyErrorRedirector::New();
 
-        // create the output redirector for the stdout and stderr file
-        stdOut = pyOutputRedirector::New();
-        stdErr = pyErrorRedirector::New();
+    if (stdOut) {
+        if (PySys_SetObject("stdout", stdOut) != 0)
+            dbgLog->AddLine(plStatusLog::kRed,  "Could not redirect stdout, Python output may not appear in the log");
+    } else {
+        dbgLog->AddLine(plStatusLog::kRed, "Could not create python redirector, Python output will not appear in the log");
+    }
 
-        // if we need the builtins then find the builtin module
-        PyObject* sysmod = PyImport_ImportModule("sys");
-        // then add the builtin dictionary to our module's dictionary
-        // get the sys's dictionary to find the stdout and stderr
-        PyObject* sys_dict = PyModule_GetDict(sysmod);
-        Py_INCREF(sys_dict);
-        if (stdOut != nil)
-        {
-            if (PyDict_SetItemString(sys_dict,"stdout", stdOut))
-                dbgLog->AddLine("Could not redirect stdout, Python output may not appear in the log\n");
-        }
-        else
-            dbgLog->AddLine("Could not create python redirector, Python output will not appear in the log\n");
-        
-        if (stdErr != nil)
-        {
-            if (!PyDict_SetItemString(sys_dict,"stderr", stdErr))
-            {
-                bool dontLog = false;
+    if (stdErr) {
+        if (PySys_SetObject("stderr", stdErr) == 0) {
+            bool dontLog = false;
 
-                // Find the excepthook
-                PyObject* stdErrExceptHook = PyObject_GetAttrString(stdErr, "excepthook");
-                if (stdErrExceptHook)
-                {
-                    if (!PyCallable_Check(stdErrExceptHook) || PyDict_SetItemString(sys_dict,"excepthook", stdErrExceptHook))
-                    {
-                        dbgLog->AddLine("Could not redirect excepthook, Python error output will not get to the log server\n");
-                        dontLog = true;
-                    }
-                    Py_DECREF(stdErrExceptHook);
-                }
-                else
-                {
-                    dbgLog->AddLine("Could not find stdErr excepthook, Python error output will not get to the log server\n");
+            // Find the excepthook
+            pyObjectRef stdErrExceptHook = PyObject_GetAttrString(stdErr, "excepthook");
+            if (stdErrExceptHook) {
+                if (!PyCallable_Check(stdErrExceptHook.Get()) || PySys_SetObject("excepthook", stdErrExceptHook.Get()) != 0) {
+                    dbgLog->AddLine(plStatusLog::kRed, "Could not redirect excepthook, Python error output will not get to the log server");
                     dontLog = true;
                 }
-
-                if (dontLog)
-                {
-                    if (pyErrorRedirector::Check(stdErr))
-                    {
-                        pyErrorRedirector* redir = pyErrorRedirector::ConvertFrom(stdErr);
-                        redir->SetLogging(false);
-                    }
-                }
+            } else {
+                dbgLog->AddLine(plStatusLog::kRed, "Could not find stdErr excepthook, Python error output will not get to the log server");
+                dontLog = true;
             }
-            else
-            {
-                dbgLog->AddLine("Could not redirect stderr, Python error output may not appear in the log or on the log server\n");
+
+            if (dontLog && pyErrorRedirector::Check(stdErr)) {
+                pyErrorRedirector* redir = pyErrorRedirector::ConvertFrom(stdErr);
+                redir->SetLogging(false);
             }
+        } else {
+            dbgLog->AddLine(plStatusLog::kRed, "Could not redirect stderr, Python error output may not appear in the log or on the log server");
         }
-        else
-        {
-            dbgLog->AddLine("Could not create python redirector, Python error output will not appear in the log\n");
-        }
-
-        // NOTE: we will reset the path to not include paths
-        // that Python may have found in the registry
-        PyObject* path_list = PyList_New(3);
-        if (PyList_SetItem(path_list, 0, PyUnicode_FromString(".\\python")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-        // make sure that our plasma libraries are gotten before the system ones
-        if (PyList_SetItem(path_list, 1, PyUnicode_FromString(".\\python\\plasma")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-        if (PyList_SetItem(path_list, 2, PyUnicode_FromString(".\\python\\system")))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while creating python path:\n");
-            getOutputAndReset();
-            return;
-        }
-
-        // set the path to be this one
-        if (PyDict_SetItemString(sys_dict,"path",path_list))
-        {
-            Py_DECREF(sys_dict);
-            Py_DECREF(path_list);
-            dbgLog->AddLine("Error while setting python path:\n");
-            getOutputAndReset();
-            return;
-        }
-
-        Py_DECREF(path_list);
-
-        // PEP451
-        initPyPackHook();
-
-        Py_DECREF(sys_dict);
+    } else {
+        dbgLog->AddLine(plStatusLog::kRed, "Could not create python redirector, Python error output will not appear in the log");
     }
+
     initialized++;
 }
 

@@ -107,7 +107,6 @@ public:
     // Initialize the Plasma module
     static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
     static void AddPlasmaClasses();
-    static void AddPep451Classes();
 
     // Initialize the PlasmaConstants module
     static void AddPlasmaConstantsClasses();

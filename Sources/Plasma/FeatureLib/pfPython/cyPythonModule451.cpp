@@ -50,6 +50,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "cyPythonInterface.h"
 #include "plPythonPack.h"
 
+#include "plStatusLog/plStatusLog.h"
+
 // ==========================================================================
 
 struct pyModulePackFinder
@@ -302,23 +304,31 @@ PYTHON_CLASS_NEW_IMPL(ptModulePackLoader, pyModulePackLoader);
 
 // ==========================================================================
 
-void PythonInterface::AddPep451Classes()
-{
-    PYTHON_CLASS_IMPORT_START(plasmaMod);
-    PYTHON_CLASS_IMPORT(plasmaMod, ptModulePackFinder);
-    PYTHON_CLASS_IMPORT(plasmaMod, ptModulePackSpec);
-    PYTHON_CLASS_IMPORT(plasmaMod, ptModulePackLoader);
-    PYTHON_CLASS_IMPORT_END(plasmaMod);
-}
-
 void PythonInterface::initPyPackHook()
 {
-    // At this point, the Plasma module has never been imported. Therefore, any attempt to use
-    // its classes will explode with null references. Import the module first.
-    pyObjectRef mod = PyImport_ImportModule("Plasma");
+#ifdef HS_DEBUGGING
+    dbgLog->AddLine(plStatusLog::kGreen, "Creating PEP 451 module...");
+#endif
+
+    // note: steals ref
+    PyObject* mod = PyImport_AddModule("_PlasmaImport");
+    if (!mod) {
+        dbgLog->AddLine(plStatusLog::kRed, "Failed to create _PlasmaImport module!");
+        return;
+    }
+
+    PYTHON_CLASS_IMPORT_START(mod);
+    PYTHON_CLASS_IMPORT(mod, ptModulePackFinder);
+    PYTHON_CLASS_IMPORT(mod, ptModulePackSpec);
+    PYTHON_CLASS_IMPORT(mod, ptModulePackLoader);
+    PYTHON_CLASS_IMPORT_END(mod);
+
+#ifdef HS_DEBUGGING
+    dbgLog->AddLine(plStatusLog::kGreen, "Installing PEP 451 machinery...");
+#endif
+
     pyObjectRef metaFinder = pyModulePackFinder::New();
     ((ptModulePackFinder*)metaFinder.Get())->fThis->fLoader = pyModulePackLoader::New();
-
     PyObject* finders = PySys_GetObject("meta_path");
     hsAssert(finders, "Failed to access sys.meta_path");
     hsAssert(PyList_Check(finders), "sys.meta_path finders is not a list");

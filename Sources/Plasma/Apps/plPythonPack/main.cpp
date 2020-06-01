@@ -123,14 +123,13 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
 
     // import the module first, to make packages work correctly
-    PyImport_ImportModule(fileName.AsString().c_str());
+    PyObject* fModule = PyImport_ImportModule(fileName.AsString().c_str());
+    if (!fModule)
+        ST::printf(stderr, "......import failed ");
+
     PyObject* pythonCode = PythonInterface::CompileString(code, fileName);
     if (pythonCode)
     {
-        // We need to find out if this is a PythonFile module.
-        // Create a module name (with the '.' as an 'x')
-        // and create a python file name that is without the ".py"
-        PyObject* fModule = PythonInterface::CreateModule(fileName.AsString().c_str());
         // run the code
         if (PythonInterface::RunPYC(pythonCode, fModule) )
         {
@@ -138,6 +137,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
             PyObject* dict = PyModule_GetDict(fModule);
             PyObject* pfilename = PyUnicode_FromString(fileName.AsString().c_str());
             PyDict_SetItemString(dict, "glue_name", pfilename);
+            Py_DECREF(pfilename);
 
             // next we need to:
             //  - create instance of class
@@ -177,13 +177,14 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
         else
         {
             ST::printf(stderr, "......blast! Error during run-code in {}!\n", fileName);
+            PyErr_Print();
         }
     }
 
     // make sure that we have code to save
     if (pythonCode)
     {
-        int32_t size;
+        Py_ssize_t size;
         char* pycode;
         PythonInterface::DumpObject(pythonCode,&pycode,&size);
 
@@ -191,6 +192,7 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
 
         s->WriteLE32(size);
         s->Write(size, pycode);
+        delete[] pycode;
     }
     else
     {
@@ -202,6 +204,8 @@ void WritePythonFile(const plFileName &fileName, const plFileName &path, hsStrea
     }
 
     delete [] code;
+    Py_XDECREF(pythonCode);
+    Py_XDECREF(fModule);
 
     pyStream.Close();
     glueStream.Close();
@@ -300,14 +304,7 @@ void PackDirectory(const plFileName& dir, const plFileName& rootPath, const plFi
         s.WriteLE32(0);
     }
 
-    PythonInterface::initPython(rootPath, out, stderr);
-
-    for (i = 0; i < extraDirs.size(); i++)
-        PythonInterface::addPythonPath(plFileName::Join(rootPath, extraDirs[i]), out);
-    ST::printf(out, "\n");
-
-    // set to maximum optimization (includes removing __doc__ strings)
-    Py_OptimizeFlag = 2;
+    PythonInterface::initPython(rootPath, extraDirs, out, stderr);
 
     std::vector<uint32_t> filePositions;
     filePositions.resize(fileNames.size());
