@@ -114,7 +114,7 @@ static void LookupProcess (Lookup * lookup, unsigned error) {
     }
 
     if (host.h_name && host.h_name[0])
-        strncpy(lookup->name, host.h_name, arrsize(lookup->name));
+        strncpy(lookup->name, host.h_name, std::size(lookup->name));
 
     if (lookup->lookupProc)
         lookup->lookupProc(lookup->param, lookup->name, count, addrs);
@@ -290,7 +290,7 @@ void AsyncAddressLookupName (
     lookup->lookupProc      = lookupProc;
     lookup->port            = port;
     lookup->param           = param;
-    strncpy(lookup->name, name, arrsize(lookup->name));
+    strncpy(lookup->name, name, std::size(lookup->name));
 
     hsLockGuard(s_critsect);
 
@@ -335,7 +335,7 @@ void AsyncAddressLookupAddr (
     lookup->param           = param;
 
     ST::string str = address.GetHostString();
-    strncpy(lookup->name, str.c_str(), arrsize(lookup->name));
+    strncpy(lookup->name, str.c_str(), std::size(lookup->name));
 
     {
         hsLockGuard(s_critsect);

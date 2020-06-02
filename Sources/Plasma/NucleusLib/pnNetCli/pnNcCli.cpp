@@ -219,7 +219,7 @@ static void PutBufferOnWire (NetCli * cli, void * data, unsigned bytes) {
 //============================================================================
 static void FlushSendBuffer (NetCli * cli) {
     const unsigned bytes = cli->sendCurr - cli->sendBuffer;
-    ASSERT(bytes <= arrsize(cli->sendBuffer));
+    ASSERT(bytes <= std::size(cli->sendBuffer));
     PutBufferOnWire(cli, cli->sendBuffer, bytes);
     cli->sendCurr = cli->sendBuffer;
 }
@@ -232,7 +232,7 @@ static void AddToSendBuffer (
 ) {
     uint8_t const * src = (uint8_t const *) data;
 
-    if (bytes > arrsize(cli->sendBuffer)) {
+    if (bytes > std::size(cli->sendBuffer)) {
         // Let the OS fragment oversize buffers
         FlushSendBuffer(cli);
         void * heap = malloc(bytes);
@@ -244,7 +244,7 @@ static void AddToSendBuffer (
         for (;;) {
             // calculate the space left in the output buffer and use it
             // to determine the maximum number of bytes that will fit
-            unsigned const left = &cli->sendBuffer[arrsize(cli->sendBuffer)] - cli->sendCurr;
+            unsigned const left = &cli->sendBuffer[std::size(cli->sendBuffer)] - cli->sendCurr;
             unsigned const copy = std::min(bytes, left);
 
             // copy the data into the buffer

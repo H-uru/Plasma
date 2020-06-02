@@ -303,7 +303,7 @@ void AttachLinkMtlAnims(plMaxNode *node, hsGMaterial *mat)
         plLayerLinkAnimation* animLayer;
 
         char suff[10];
-        snprintf(suff, arrsize(suff), "%d", k);
+        snprintf(suff, std::size(suff), "%d", k);
         
         opaCtl = new plLeafController;
         opaCtl->QuickScalarController(numKeys, times, values, sizeof(float));
@@ -4858,7 +4858,7 @@ void hsMaterialConverter::IPrintDoneMat(hsStream* stream, const char* prefix, Do
     stream->WriteString(prefix);
 
     char buff[512];
-    snprintf(buff, arrsize(buff), "%s\n",
+    snprintf(buff, std::size(buff), "%s\n",
              doneMat->fMaxMaterial ? (const char *)doneMat->fMaxMaterial->GetName()
                                    : "BLANK");
     stream->WriteString(buff);

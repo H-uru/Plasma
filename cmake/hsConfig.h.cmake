@@ -46,8 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 /* Compiler settings */
 #cmakedefine HAVE_CPUID
 
-#cmakedefine HAVE_CONSTEXPR
-
 /* External library usage */
 #cmakedefine PLASMA_USE_SPEEX
 #cmakedefine PLASMA_USE_OPUS

@@ -69,8 +69,8 @@ public:
         : type(_type), yes(_yes)
     {
         if (_str) {
-            strncpy(str, _str, arrsize(str));
-            str[arrsize(str)-1] = 0;
+            strncpy(str, _str, std::size(str));
+            str[std::size(str)-1] = 0;
         } else {
             memset(str, 0, sizeof(str));
         }

@@ -259,7 +259,7 @@ unsigned NetGameRank::Read(const uint8_t inbuffer[], unsigned bufsz, uint8_t** e
     IReadValue(&score, &buffer, &bufsz);
     IReadString(&tempstr, &buffer, &bufsz);
 
-    StrCopy(name, tempstr, arrsize(name));
+    StrCopy(name, tempstr, std::size(name));
     free(tempstr);
 
     if (end)
@@ -284,7 +284,7 @@ unsigned NetGameRank::Write(TArray<uint8_t> * buffer) const {
 void NetGameRank::CopyFrom(const NetGameRank & fromRank) {
     rank        = fromRank.rank;
     score       = fromRank.score;
-    StrCopy(name, fromRank.name, arrsize(name));
+    StrCopy(name, fromRank.name, std::size(name));
 }
 
 /*****************************************************************************

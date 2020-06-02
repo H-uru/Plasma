@@ -52,7 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 plStreamSource::plStreamSource()
 {
-    memset(fServerKey, 0, arrsize(fServerKey));
+    memset(fServerKey, 0, std::size(fServerKey));
 }
 
 void plStreamSource::ICleanup()

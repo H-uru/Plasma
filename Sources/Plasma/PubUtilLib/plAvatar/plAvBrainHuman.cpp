@@ -1383,7 +1383,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
                           bool netPropagate, bool autoExit, plAGAnim::BodyUsage bodyUsage, plAvBrainGeneric::BrainType type /* = kGeneric */)
 {
     const char* names[3] = {enterAnim, idleAnim, exitAnim};
-    if (!CanPushGenericBrain(avatar, names, arrsize(names), type))
+    if (!CanPushGenericBrain(avatar, names, std::size(names), type))
         return false;
 
     // if autoExit is true, then we will immediately exit the idle loop when the user hits a move
@@ -1426,7 +1426,7 @@ bool PushSimpleMultiStage(plArmatureMod *avatar, const char *enterAnim, const ch
 bool PushRepeatEmote(plArmatureMod* avatar, const ST::string& anim)
 {
     const char* names[1] = { anim.c_str() };
-    if (!CanPushGenericBrain(avatar, names, arrsize(names), plAvBrainGeneric::kGeneric))
+    if (!CanPushGenericBrain(avatar, names, std::size(names), plAvBrainGeneric::kGeneric))
         return false;
 
      plAnimStageVec* v = new plAnimStageVec;

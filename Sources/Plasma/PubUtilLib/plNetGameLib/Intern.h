@@ -273,7 +273,7 @@ static const char * s_transTypes[] = {
     "GkAuthSrvIpAddress",
 
 };
-static_assert(arrsize(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
+static_assert(std::size(s_transTypes) == kNumTransTypes, "Ngl Trans array and enum differ in size");
 
 static std::atomic<long> s_perfTransCount[kNumTransTypes];
 

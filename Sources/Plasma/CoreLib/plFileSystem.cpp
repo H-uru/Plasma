@@ -268,7 +268,7 @@ FILE *plFileSystem::Open(const plFileName &filename, const char *mode)
 #if HS_BUILD_FOR_WIN32
     wchar_t wmode[8];
     size_t mlen = strlen(mode);
-    hsAssert(mlen < arrsize(wmode), "Mode string too long");
+    hsAssert(mlen < std::size(wmode), "Mode string too long");
 
     // Quick and dirty, because mode should only ever be ANSI chars
     for (size_t i = 0; i < mlen; ++i) {
@@ -322,7 +322,7 @@ bool plFileSystem::Copy(const plFileName &from, const plFileName &to)
     size_t count;
     uint8_t buffer[4096];
     while (!feof(ffrom.get())) {
-        count = fread(buffer, sizeof(uint8_t), arrsize(buffer), ffrom.get());
+        count = fread(buffer, sizeof(uint8_t), std::size(buffer), ffrom.get());
         if (ferror(ffrom.get()))
             return false;
         fwrite(buffer, sizeof(uint8_t), count, fto.get());
@@ -546,7 +546,7 @@ ST::string plFileSystem::ConvertFileSize(uint64_t size)
         return ST::format("{} B", size);
 
     uint64_t last_div = size;
-    for (size_t i = 0; i < arrsize(labels); ++i) {
+    for (size_t i = 0; i < std::size(labels); ++i) {
         uint64_t my_div = last_div / 1024;
         if (my_div < 1024) {
             float decimal = static_cast<float>(last_div) / 1024.f;
@@ -560,5 +560,5 @@ ST::string plFileSystem::ConvertFileSize(uint64_t size)
     }
 
     // this should never happen
-    return ST::format("{} {}", last_div, labels[arrsize(labels) - 1]);
+    return ST::format("{} {}", last_div, labels[std::size(labels) - 1]);
 }

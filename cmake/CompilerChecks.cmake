@@ -19,7 +19,3 @@ if(HAVE_CPUID)
 else()
     message(STATUS "CPUID header not found -- using software math")
 endif()
-
-# Look for C++11 constexpr support
-try_compile(HAVE_CONSTEXPR ${PROJECT_BINARY_DIR}
-            ${PROJECT_SOURCE_DIR}/cmake/check_constexpr.cpp)

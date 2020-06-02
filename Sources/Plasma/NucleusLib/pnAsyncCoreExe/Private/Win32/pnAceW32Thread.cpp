@@ -264,7 +264,7 @@ void AsyncThreadTaskAdd (
     task->taskList      = taskList;
     task->callback      = callback;
     task->param         = param;
-    StrCopy(task->debugStr, debugStr, arrsize(task->debugStr));     // this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
+    StrCopy(task->debugStr, debugStr, std::size(task->debugStr));     // this will be sent with the deadlock checker email if this thread exceeds time set in plServer.ini
     taskList->Ref("Task");
 
     PostQueuedCompletionStatus(s_taskPort, 0, (DWORD) task, NULL);

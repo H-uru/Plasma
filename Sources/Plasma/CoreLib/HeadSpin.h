@@ -238,24 +238,6 @@ inline double hsSwapEndianDouble(double dvalue)
 
 /****************************************************************************
 *
-*   arrsize
-*   arrsize returns the number of elements in an array variable
-*
-*   Example:
-*
-*   StrPrintf(buffer, arrsize(buffer), "%u", value);
-*
-***/
-#ifdef HAVE_CONSTEXPR
-    template <typename _T, size_t _Sz>
-    constexpr size_t arrsize(_T(&)[_Sz]) { return _Sz; }
-#else
-#   define  arrsize(a)  (sizeof(a) / sizeof((a)[0]))
-#endif
-
-
-/****************************************************************************
-*
 *   IS_POW2
 *
 ***/

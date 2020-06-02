@@ -313,7 +313,7 @@ bool plAudioSystem::Init()
     //       may not see any errors until you actually try to *play* the sources simultaneously.
     ALuint sources[MAX_NUM_SOURCES];
     ALuint i;
-    for (i = 0; i < arrsize(sources); ++i) {
+    for (i = 0; i < std::size(sources); ++i) {
         alGenSources(1, &sources[i]);
         if (alGetError() != AL_NO_ERROR)
             break;

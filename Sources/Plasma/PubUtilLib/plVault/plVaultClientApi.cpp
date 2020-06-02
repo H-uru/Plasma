@@ -605,7 +605,7 @@ static void VaultNodeAdded (
     TArray<unsigned> newNodeIds;
     TArray<unsigned> existingNodeIds;
     
-    BuildNodeTree(refs, arrsize(refs), &newNodeIds, &existingNodeIds, false);
+    BuildNodeTree(refs, std::size(refs), &newNodeIds, &existingNodeIds, false);
 
     TArray<unsigned> nodeIds;
     nodeIds.Add(newNodeIds.Ptr(), newNodeIds.Count());
@@ -1605,7 +1605,7 @@ void VaultAddChildNode (
             TArray<unsigned> newNodeIds;
             TArray<unsigned> existingNodeIds;
 
-            BuildNodeTree(refs, arrsize(refs), &newNodeIds, &existingNodeIds);
+            BuildNodeTree(refs, std::size(refs), &newNodeIds, &existingNodeIds);
         
             if (!childLink->node->GetNodeType() || !parentLink->node->GetNodeType()) {
                 // One or more nodes need to be fetched before the callback is made

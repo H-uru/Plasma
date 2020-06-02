@@ -256,12 +256,12 @@ plAGAnimInstance * plAnimStage::Attach(plArmatureMod *armature, plArmatureBrain 
             fAnimInstance->SetCurrentTime(fLocalTime);
 #ifdef DEBUG_MULTISTAGE
             char sbuf[256];
-            snprintf(sbuf, arrsize(sbuf), "AnimStage::Attach - attaching stage %s", fAnimName.c_str());
+            snprintf(sbuf, std::size(sbuf), "AnimStage::Attach - attaching stage %s", fAnimName.c_str());
             plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
         } else {
             char buf[256];
-            snprintf(buf, arrsize(buf), "Can't find animation <%s> for animation stage. Anything could happen.", fAnimName.c_str());
+            snprintf(buf, std::size(buf), "Can't find animation <%s> for animation stage. Anything could happen.", fAnimName.c_str());
             hsAssert(false, buf);
 #ifdef DEBUG_MULTISTAGE
             plAvatarMgr::GetInstance()->GetLog()->AddLine(buf);
@@ -328,7 +328,7 @@ bool plAnimStage::Detach(plArmatureMod *armature)
 
 #ifdef DEBUG_MULTISTAGE
     char sbuf[256];
-    snprintf(sbuf, arrsize(sbuf), "AnimStage::Detach - detaching stage %s", fAnimName.c_str());
+    snprintf(sbuf, std::size(sbuf), "AnimStage::Detach - detaching stage %s", fAnimName.c_str());
     plAvatarMgr::GetInstance()->GetLog()->AddLine(sbuf);
 #endif
 //  hsStatusMessageF("Detaching plAnimStage <%s>", fAnimName.c_str());

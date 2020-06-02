@@ -1010,7 +1010,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, int nC
         args.push_back(ST::string::from_utf8(__argv[i]));
     }
 
-    plCmdParser cmdParser(s_cmdLineArgs, arrsize(s_cmdLineArgs));
+    plCmdParser cmdParser(s_cmdLineArgs, std::size(s_cmdLineArgs));
     cmdParser.Parse(args);
 
     bool doIntroDialogs = true;

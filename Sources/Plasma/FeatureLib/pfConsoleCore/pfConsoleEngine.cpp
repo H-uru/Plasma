@@ -256,13 +256,13 @@ bool pfConsoleEngine::ExecuteFile(const plFileName &fileName)
         return true;
     }
 
-    for( line = 1; stream->ReadLn( string, arrsize( string ) ); line++ )
+    for (line = 1; stream->ReadLn(string, std::size(string)); line++)
     {
-        strncpy( fLastErrorLine, string, arrsize( fLastErrorLine ) );
+        strncpy(fLastErrorLine, string, std::size(fLastErrorLine));
 
         if( !RunCommand( string, DummyPrintFn ) )
         {
-            snprintf(string, arrsize(string), "Error in console file %s, command line %d: %s",
+            snprintf(string, std::size(string), "Error in console file %s, command line %d: %s",
                      fileName.AsString().c_str(), line, fErrorMsg);
             ISetErrorMsg( string );
             stream->Close();

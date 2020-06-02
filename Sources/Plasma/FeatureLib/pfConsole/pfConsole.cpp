@@ -1028,7 +1028,7 @@ void pfConsole::AddLineF(const char * fmt, ...) {
     char str[1024];
     va_list args;
     va_start(args, fmt);
-    hsVsnprintf(str, arrsize(str), fmt, args);
+    hsVsnprintf(str, std::size(str), fmt, args);
     va_end(args);
     AddLine(str);
 }

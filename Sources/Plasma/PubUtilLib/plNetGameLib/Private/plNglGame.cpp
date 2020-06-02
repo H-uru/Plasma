@@ -434,7 +434,7 @@ void CliGmConn::TimerPing () {
         pingSendTimeMs
     };
 
-    Send(msg, arrsize(msg));
+    Send(msg, std::size(msg));
 }
 
 //============================================================================
@@ -561,7 +561,7 @@ bool JoinAgeRequestTrans::Send () {
                         m_playerInt,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -651,8 +651,8 @@ void GameInitialize () {
     NetMsgProtocolRegister(
         kNetProtocolCli2Game,
         false,
-        s_send, arrsize(s_send),
-        s_recv, arrsize(s_recv),
+        s_send, std::size(s_send),
+        s_recv, std::size(s_recv),
         kGameDhGValue,
         plBigNum(sizeof(kGameDhXData), kGameDhXData),
         plBigNum(sizeof(kGameDhNData), kGameDhNData)
@@ -783,7 +783,7 @@ void NetCliGamePropagateBuffer (
         (uintptr_t) buffer,
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("PropBuffer");
 }

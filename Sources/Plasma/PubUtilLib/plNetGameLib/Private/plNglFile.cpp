@@ -887,7 +887,7 @@ ManifestRequestTrans::ManifestRequestTrans (
 ,   m_buildId(buildId)
 {
     if (group)
-        StrCopy(m_group, group, arrsize(m_group));
+        StrCopy(m_group, group, std::size(m_group));
     else
         m_group[0] = L'\0';
 }
@@ -898,7 +898,7 @@ bool ManifestRequestTrans::Send () {
         return false;
 
     Cli2File_ManifestRequest manifestReq;
-    StrCopy(manifestReq.group, m_group, arrsize(manifestReq.group));
+    StrCopy(manifestReq.group, m_group, std::size(manifestReq.group));
     manifestReq.messageId = kCli2File_ManifestRequest;
     manifestReq.transId = m_transId;
     manifestReq.messageBytes = sizeof(manifestReq);
@@ -1128,7 +1128,7 @@ bool DownloadRequestTrans::Send () {
         return false;
 
     Cli2File_FileDownloadRequest filedownloadReq;
-    StrCopy(filedownloadReq.filename, m_filename.WideString().data(), arrsize(filedownloadReq.filename));
+    StrCopy(filedownloadReq.filename, m_filename.WideString().data(), std::size(filedownloadReq.filename));
     filedownloadReq.messageId = kCli2File_FileDownloadRequest;
     filedownloadReq.transId = m_transId;
     filedownloadReq.messageBytes = sizeof(filedownloadReq);
