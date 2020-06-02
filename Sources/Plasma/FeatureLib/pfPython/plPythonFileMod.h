@@ -238,16 +238,16 @@ public:
     int32_t GetParameterListCount() const { return fParameters.size(); }
     plPythonParameter GetParameterItem(int32_t i) { return fParameters[i]; }
 
-    void AddTarget(plSceneObject* sobj) HS_OVERRIDE;
-    void RemoveTarget(plSceneObject* so) HS_OVERRIDE;
+    void AddTarget(plSceneObject* sobj) override;
+    void RemoveTarget(plSceneObject* so) override;
 
     void EnableControlKeyEvents();
     void DisableControlKeyEvents();
 
-    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
+    bool MsgReceive(plMessage* msg) override;
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
     // array of matching Python instance where the functions are, if defined
     PyObject* fPyFunctionInstances[kfunc_lastone];

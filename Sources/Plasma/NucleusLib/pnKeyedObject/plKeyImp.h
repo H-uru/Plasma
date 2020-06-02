@@ -61,8 +61,8 @@ public:
     plKeyImp(plUoid, uint32_t pos,uint32_t len);
     virtual ~plKeyImp();
 
-    const plUoid&           GetUoid() const HS_OVERRIDE { return fUoid; }
-    ST::string              GetName() const HS_OVERRIDE;
+    const plUoid&           GetUoid() const override { return fUoid; }
+    ST::string              GetName() const override;
 
     virtual hsKeyedObject*  GetObjectPtr();
     virtual hsKeyedObject*  ObjectIsLoaded() const;

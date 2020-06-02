@@ -85,7 +85,7 @@ public:
 
     plShardStatus() : fLastUpdate() { }
 
-    void Run() HS_OVERRIDE;
+    void Run() override;
     void Shutdown();
     void Update();
 };
@@ -168,14 +168,14 @@ public:
         );
     }
 
-    void OnQuit() HS_OVERRIDE
+    void OnQuit() override
     {
         // If we succeeded, then we should launch the game client...
         if (fSuccess)
             fParent->LaunchClient();
     }
 
-    void Run() HS_OVERRIDE
+    void Run() override
     {
         while (!fRedistQueue.empty()) {
             if (fInstallProc(fRedistQueue.back()))
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    void Start() HS_OVERRIDE
+    void Start() override
     {
         if (fRedistQueue.empty())
             OnQuit();

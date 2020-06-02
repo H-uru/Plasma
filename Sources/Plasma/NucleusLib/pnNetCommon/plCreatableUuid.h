@@ -54,10 +54,10 @@ public:
     plCreatableUuid(const plCreatableUuid& other) : plUUID(other) { }
     plCreatableUuid(const plUUID& other) : plUUID(other) { }
 
-    void Read(hsStream* s, hsResMgr*) HS_OVERRIDE {
+    void Read(hsStream* s, hsResMgr*) override {
         plUUID::Read(s);
     }
-    void Write(hsStream* s, hsResMgr*) HS_OVERRIDE {
+    void Write(hsStream* s, hsResMgr*) override {
         plUUID::Write(s);
     }
 };

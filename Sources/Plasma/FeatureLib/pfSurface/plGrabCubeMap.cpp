@@ -66,7 +66,7 @@ public:
     plFileName fFileName;
 
     // This function is called after the render request is processed by the client
-    void Render(plPipeline* pipe, plPageTreeMgr* pageMgr) HS_OVERRIDE
+    void Render(plPipeline* pipe, plPageTreeMgr* pageMgr) override
     {
         if (!fFileName.IsValid())
             return;

@@ -59,7 +59,7 @@ class AlphaNumericValidator : public QValidator
 public:
     AlphaNumericValidator(QObject *parent = nullptr) : QValidator(parent) { }
 
-    State validate(QString &input, int &pos) const HS_OVERRIDE
+    State validate(QString &input, int &pos) const override
     {
         for (int ch = 0; ch < input.size(); ++ch)
         {

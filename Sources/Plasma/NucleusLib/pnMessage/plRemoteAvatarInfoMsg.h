@@ -70,11 +70,11 @@ public:
     plKey GetAvatarKey() { return fAvatar; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fAvatar = mgr->ReadKey(stream);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fAvatar);
     }

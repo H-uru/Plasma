@@ -118,29 +118,29 @@ public:
     CLASSNAME_REGISTER( plDispatch );
     GETINTERFACE_ANY( plDispatch, plCreatable );
 
-    void RegisterForType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE;
-    void RegisterForExactType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE;
+    void RegisterForType(uint16_t hClass, const plKey& receiver) override;
+    void RegisterForExactType(uint16_t hClass, const plKey& receiver) override;
 
-    void UnRegisterForType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE;
-    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE;
+    void UnRegisterForType(uint16_t hClass, const plKey& receiver) override;
+    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) override;
 
-    void UnRegisterAll(const plKey& receiver) HS_OVERRIDE;
+    void UnRegisterAll(const plKey& receiver) override;
 
-    bool MsgSend(plMessage* msg, bool async=false) HS_OVERRIDE;
+    bool MsgSend(plMessage* msg, bool async=false) override;
 
     // Used by other thread to Send Messages, they are handled as soon as
     // Practicable
-    void MsgQueue(plMessage* msg) HS_OVERRIDE;
-    void MsgQueueProcess() HS_OVERRIDE;
+    void MsgQueue(plMessage* msg) override;
+    void MsgQueueProcess() override;
 
     // Turn on or off Queued Messages, if off, uses MsgSend Immediately (for
     // plugins)
-    void MsgQueueOnOff(bool sw) HS_OVERRIDE;
+    void MsgQueueOnOff(bool sw) override;
 
     // On starts deferring msg delivery until buffering is set to off again.
-    bool SetMsgBuffering(bool on) HS_OVERRIDE;
+    bool SetMsgBuffering(bool on) override;
 
-    void BeginShutdown() HS_OVERRIDE;
+    void BeginShutdown() override;
 
     static void SetMsgRecieveCallback(MsgRecieveCallback callback) {
         fMsgRecieveCallback = callback;
@@ -152,17 +152,17 @@ class plNullDispatch : public plDispatch
 {
 public:
 
-    void RegisterForExactType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE {}
-    void RegisterForType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE {}
+    void RegisterForExactType(uint16_t hClass, const plKey& receiver) override {}
+    void RegisterForType(uint16_t hClass, const plKey& receiver) override {}
 
-    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE {}
-    void UnRegisterForType(uint16_t hClass, const plKey& receiver) HS_OVERRIDE {}
+    void UnRegisterForExactType(uint16_t hClass, const plKey& receiver) override {}
+    void UnRegisterForType(uint16_t hClass, const plKey& receiver) override {}
 
-    bool MsgSend(plMessage* msg, bool async=false) HS_OVERRIDE { return true; }
-    void MsgQueue(plMessage* msg) HS_OVERRIDE {}
-    void MsgQueueProcess() HS_OVERRIDE {}
+    bool MsgSend(plMessage* msg, bool async=false) override { return true; }
+    void MsgQueue(plMessage* msg) override {}
+    void MsgQueueProcess() override {}
 
-    void BeginShutdown() HS_OVERRIDE {}
+    void BeginShutdown() override {}
 
 };
 

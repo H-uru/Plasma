@@ -63,10 +63,10 @@ public:
 
     plPipeline* Pipeline() const { return fPipe; }
 
-    void Read(hsStream* s, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* s, hsResMgr* mgr) override {
         plMessage::IMsgRead(s, mgr);
     }
-    void Write(hsStream* s, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* s, hsResMgr* mgr) override {
         plMessage::IMsgWrite(s, mgr);
     }
 };

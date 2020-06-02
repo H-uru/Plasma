@@ -88,7 +88,7 @@ public:
     GETINTERFACE_ANY(plEventCallbackMsg, plMessage);
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fEventTime = stream->ReadLEFloat();
         fEvent = (CallbackEvent)stream->ReadLE16();
@@ -96,7 +96,7 @@ public:
         fRepeats = stream->ReadLE16();
         fUser = stream->ReadLE16();
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLEFloat(fEventTime);
         stream->WriteLE16((int16_t)fEvent);

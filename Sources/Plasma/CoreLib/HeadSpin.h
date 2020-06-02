@@ -127,32 +127,6 @@ typedef int32_t   hsError;
 // Declare a file-unique identifier without caring what its full name is
 #define hsUniqueIdentifier(prefix) hsMacroJoin(prefix, __LINE__)
 
-#if defined(HAVE_GCC_DEPRECATED_ATTR)
-#   define hsDeprecated(message) __attribute__((deprecated(message)))
-#elif defined(HAVE_CXX14_DEPRECATED_ATTR)
-#   define hsDeprecated(message) [[deprecated(message)]]
-#elif defined(_MSC_VER)
-#   define hsDeprecated(message) __declspec(deprecated(message))
-#else
-#   define hsDeprecated(message)
-#endif
-
-#ifdef HAVE_OVERRIDE
-#   define HS_OVERRIDE  override
-#   define HS_FINAL     final
-#else
-#   define HS_OVERRIDE
-#   define HS_FINAL
-#endif
-
-#ifdef HAVE_NOEXCEPT
-#   define HS_NOEXCEPT          noexcept
-#   define HS_NOEXCEPT_IF(cond) noexcept(cond)
-#else
-#   define HS_NOEXCEPT          throw()
-#   define HS_NOEXCEPT_IF(cond)
-#endif
-
 //======================================
 // Endian swap funcitions
 //======================================

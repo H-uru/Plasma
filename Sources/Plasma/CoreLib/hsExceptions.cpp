@@ -2,7 +2,7 @@
 
 #include <cstring>
 
-hsException::hsException(hsErrorEnum error, long param) HS_NOEXCEPT
+hsException::hsException(hsErrorEnum error, long param) noexcept
     : fError(error), fParam(param)
 {
     static const char *kErrorNames[] = {

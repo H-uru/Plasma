@@ -127,8 +127,8 @@ public:
     } fFadeType;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 

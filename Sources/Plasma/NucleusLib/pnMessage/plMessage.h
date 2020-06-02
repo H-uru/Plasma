@@ -115,8 +115,8 @@ public:
     // These must be implemented by all derived message classes (hence pure).
     // Derived classes should call the base-class default read/write implementation, 
     // so the derived Read() should call plMessage::IMsgRead().
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE = 0;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE = 0;
+    void Read(hsStream* stream, hsResMgr* mgr) override = 0;
+    void Write(hsStream* stream, hsResMgr* mgr) override = 0;
 
     const plKey GetSender() const { return fSender; }
     plMessage&  SetSender(const plKey &s) { fSender = s; return *this; }

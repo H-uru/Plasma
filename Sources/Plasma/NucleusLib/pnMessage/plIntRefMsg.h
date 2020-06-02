@@ -75,14 +75,14 @@ public:
     int16_t       fWhich;
 
     // IO - not really applicable to ref msgs, but anyway
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plRefMsg::Read(stream, mgr);
         stream->ReadLE(&fType);
         stream->ReadLE(&fWhich);
         stream->ReadLE(&fIdx);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plRefMsg::Write(stream, mgr);
         stream->WriteLE(fType);
         stream->WriteLE(fWhich);

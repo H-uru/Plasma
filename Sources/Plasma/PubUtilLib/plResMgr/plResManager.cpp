@@ -1254,7 +1254,7 @@ public:
         pMsg1->Send(fDestKey);
     }
 
-    bool EatPage(plRegistryPageNode* page) HS_OVERRIDE
+    bool EatPage(plRegistryPageNode* page) override
     {
         if (page->GetPageInfo().GetAge().compare_i(fAgeName) == 0) {
             if (fAgeDesc.FindPage(page->GetPageInfo().GetPage()))

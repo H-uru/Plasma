@@ -79,11 +79,11 @@ public:
 #endif
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
-    void ReadVersion(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
-    void WriteVersion(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void ReadVersion(hsStream* s, hsResMgr* mgr) override;
+    void WriteVersion(hsStream* s, hsResMgr* mgr) override;
 };
 
 #endif  // plMessageWithCB_inc

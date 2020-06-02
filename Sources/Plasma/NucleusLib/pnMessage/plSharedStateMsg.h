@@ -66,11 +66,11 @@ public:
     plNetSharedState* GetSharedState() { return &fSharedState; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fSharedState.Write(stream);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         fSharedState.Read(stream);
     }

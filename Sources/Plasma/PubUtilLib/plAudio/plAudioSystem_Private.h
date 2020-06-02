@@ -80,7 +80,7 @@ public:
     void SetMaxNumberOfActiveSounds();
     void SetDistanceModel(int i);
 
-    bool MsgReceive(plMessage* msg) HS_OVERRIDE;
+    bool MsgReceive(plMessage* msg) override;
 
     void NextDebugSound(void);
 

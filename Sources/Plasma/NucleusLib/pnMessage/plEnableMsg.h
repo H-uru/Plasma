@@ -86,13 +86,13 @@ public:
     CLASSNAME_REGISTER(plEnableMsg);
     GETINTERFACE_ANY(plEnableMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fCmd.Read(stream);
         fTypes.Read(stream);
     }
 
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         fCmd.Write(stream);
         fTypes.Write(stream);
@@ -104,7 +104,7 @@ public:
         kTypes,
     };
 
-    void ReadVersion(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void ReadVersion(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgReadVersion(stream, mgr);
         hsBitVector contentFlags;
         contentFlags.Read(stream);
@@ -115,7 +115,7 @@ public:
             fTypes.Read(stream);
     }
 
-    void WriteVersion(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void WriteVersion(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWriteVersion(stream, mgr);
         hsBitVector contentFlags;
         contentFlags.SetBit(kCmd);

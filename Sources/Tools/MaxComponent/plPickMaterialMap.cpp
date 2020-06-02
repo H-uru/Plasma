@@ -68,7 +68,7 @@ protected:
     };
 
 public:
-    void Run() HS_OVERRIDE
+    void Run() override
     {
         while (1)
         {

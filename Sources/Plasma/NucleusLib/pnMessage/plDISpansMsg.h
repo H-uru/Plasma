@@ -69,8 +69,8 @@ public:
     CLASSNAME_REGISTER(plDISpansMsg);
     GETINTERFACE_ANY(plDISpansMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {}
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {}
+    void Read(hsStream* stream, hsResMgr* mgr) override {}
+    void Write(hsStream* stream, hsResMgr* mgr) override {}
 };
 
 #endif // plDISpansMsg_inc

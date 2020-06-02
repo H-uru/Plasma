@@ -70,7 +70,7 @@ public:
     bool            fLastOut;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fPlayer = mgr->ReadKey(stream);
         fLocallyOriginated = stream->ReadBool();
@@ -78,7 +78,7 @@ public:
         fUnload = stream->ReadBool();
         fClientID = stream->ReadLE32();
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         mgr->WriteKey(stream, fPlayer);
         stream->WriteBool(fLocallyOriginated);

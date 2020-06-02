@@ -61,10 +61,10 @@ public:
     GETINTERFACE_ANY(plSDLNotificationMsg, plMessage);
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         hsAssert(false, "NA: LocalOnly msg");
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         hsAssert(false, "NA: LocalOnly msg");
     }
 };

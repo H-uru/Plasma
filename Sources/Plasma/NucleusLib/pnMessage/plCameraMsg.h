@@ -120,8 +120,8 @@ public:
     CLASSNAME_REGISTER(plCameraTargetFadeMsg);
     GETINTERFACE_ANY(plCameraTargetFadeMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -219,8 +219,8 @@ public:
     void ClearCmd(int n) { fCmd.ClearBit(n); }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
@@ -253,8 +253,8 @@ public:
     CLASSNAME_REGISTER(plIfaceFadeAvatarMsg);
     GETINTERFACE_ANY(plIfaceFadeAvatarMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 
 };
 
