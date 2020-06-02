@@ -12,7 +12,7 @@ environment:
   - CLIENT_TYPE: External
 install:
 - ps: |
-    $devlibs_url = "https://guildofwriters.org/cwe_nonfree/vs2015-appveyor-min.zip"
+    $physx_sdk = "https://web.archive.org/web/20110806070516if_/http://developer.download.nvidia.com/PhysX/2.6.4/PhysX_2.6.4_SDK_Core.exe"
 
     If ($Env:CLIENT_TYPE -eq "External") {
       $Env:PLASMA_EXTERNAL_RELEASE = "ON"
@@ -29,17 +29,9 @@ install:
     $path = (Get-Location).Path
 
     if (!(Test-Path -PathType Container devlibs)) {
-        Write-Host "Downloading development libraries... " -noNewLine
-        Invoke-WebRequest $devlibs_url -OutFile devlibs.zip
-        Write-Host "OK" -foregroundColor Green
-
-        Write-Host "Extracting development libraries... " -noNewLine
-        New-Item -ItemType directory devlibs | Out-Null
-        $shell_app = New-Object -com shell.application
-        $zip  = $shell_app.namespace($path + "\devlibs.zip")
-        $dest = $shell_app.namespace($path + "\devlibs")
-        $dest.CopyHere($zip.items(), 0x14)
-        $Env:Path = $Env:Path + ";" + $path + "\devlibs\bin"
+        Write-Host "Installing PhysX SDK... " -noNewLine
+        Invoke-WebRequest $physx_sdk -OutFile PhysX_SDK.exe
+        Start-Process -FilePath ".\PhysX_SDK.exe" -ArgumentList "/S /D=C:\PhysX_SDK" -Wait
         Write-Host "OK" -foregroundColor Green
 
         Write-Host "Installing Python modules... " -noNewLine
@@ -57,7 +49,9 @@ install:
         git pull 2> $null
         bootstrap-vcpkg.bat
         vcpkg integrate install
-        vcpkg install curl[sspi] expat freetype libjpeg-turbo libogg libpng libtheora libvorbis libvpx openal-soft opus pcre speex string-theory zlib --triplet x86-windows-static-dyncrt 2> $null
+        vcpkg install curl[sspi] expat freetype libjpeg-turbo libogg libpng `
+          libtheora libvorbis libvpx openal-soft opus pcre speex string-theory `
+          zlib --triplet x86-windows-static-dyncrt 2> $null
         Write-Host "OK" -foregroundColor Green
 
         Set-Location $path
@@ -71,9 +65,12 @@ before_build:
 - ps: |
     Set-Location build
 
-    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=x86-windows-static-dyncrt `
-    -DCMAKE_INSTALL_PREFIX=devlibs -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin -DPHYSX_SDK_PATH=devlibs\PhysX -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
-    -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
+    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake `
+      -DVCPKG_TARGET_TRIPLET=x86-windows-static-dyncrt `
+      -DCMAKE_INSTALL_PREFIX=dist -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin `
+      -DPHYSX_SDK_PATH=C:\PhysX_SDK\SDKs -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
+      -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON `
+      -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
 build:
   project: build/Plasma.sln
   parallel: true
