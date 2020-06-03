@@ -65,8 +65,11 @@ before_build:
 - ps: |
     Set-Location build
 
-    cmake -Wno-dev -DCMAKE_TOOLCHAIN_FILE=C:/tools/vcpkg/scripts/buildsystems/vcpkg.cmake `
-      -DVCPKG_TARGET_TRIPLET=x86-windows-static-dyncrt `
+    $prefix_path = "C:/tools/vcpkg/installed/x86-windows-static-dyncrt"
+    If ($Env:CONFIGURATION -eq "Debug") {
+      $prefix_path = "C:/tools/vcpkg/installed/x86-windows-static-dyncrt/debug;$prefix_path"
+    }
+    cmake -Wno-dev -AWin32 -DCMAKE_PREFIX_PATH=$prefix_path `
       -DCMAKE_INSTALL_PREFIX=dist -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin `
       -DPHYSX_SDK_PATH=C:\PhysX_SDK\SDKs -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
       -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON `
