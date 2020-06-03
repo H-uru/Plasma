@@ -26,38 +26,27 @@ install:
 
     Set-Location build
 
-    $path = (Get-Location).Path
+    Write-Host "Installing PhysX SDK... " -noNewLine
+    Invoke-WebRequest $physx_sdk -OutFile PhysX_SDK.exe
+    Start-Process -FilePath ".\PhysX_SDK.exe" -ArgumentList "/S /D=C:\PhysX_SDK" -Wait
+    Write-Host "OK" -foregroundColor Green
 
-    if (!(Test-Path -PathType Container devlibs)) {
-        Write-Host "Installing PhysX SDK... " -noNewLine
-        Invoke-WebRequest $physx_sdk -OutFile PhysX_SDK.exe
-        Start-Process -FilePath ".\PhysX_SDK.exe" -ArgumentList "/S /D=C:\PhysX_SDK" -Wait
-        Write-Host "OK" -foregroundColor Green
+    Write-Host "Installing Python modules... " -noNewLine
+    C:\Python27\python.exe -m pip install -r ../requirements.txt 2> $null
+    Write-Host "OK" -foregroundColor Green
 
-        Write-Host "Installing Python modules... " -noNewLine
-        C:\Python27\python.exe -m pip install -r ../requirements.txt 2> $null
-        Write-Host "OK" -foregroundColor Green
+    Write-Host "Installing library dependencies... "
+    Set-Location C:\tools\vcpkg
+    # Create our own custom triplet, for static-linking of libraries, but dynamic CRT linkage.
+    Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`n"
+    git pull 2> $null
+    bootstrap-vcpkg.bat
+    vcpkg install curl[sspi] expat freetype libjpeg-turbo libogg libpng `
+      libtheora libvorbis libvpx openal-soft opus pcre speex string-theory `
+      zlib --triplet x86-windows-static-dyncrt 2> $null
+    Write-Host "OK" -foregroundColor Green
 
-        Write-Host "Installing library dependencies... "
-        Set-Location C:\tools\vcpkg
-        # Create our own custom triplet, for static-linking of libraries, but dynamic CRT linkage.
-        If ($Env:CONFIGURATION -eq "Release") {
-          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`nset(VCPKG_BUILD_TYPE release)`n"
-        } Else {
-          Set-Content -Path "triplets/x86-windows-static-dyncrt.cmake" -Value "set(VCPKG_TARGET_ARCHITECTURE x86)`nset(VCPKG_CRT_LINKAGE dynamic)`nset(VCPKG_LIBRARY_LINKAGE static)`n"
-        }
-        git pull 2> $null
-        bootstrap-vcpkg.bat
-        vcpkg integrate install
-        vcpkg install curl[sspi] expat freetype libjpeg-turbo libogg libpng `
-          libtheora libvorbis libvpx openal-soft opus pcre speex string-theory `
-          zlib --triplet x86-windows-static-dyncrt 2> $null
-        Write-Host "OK" -foregroundColor Green
-
-        Set-Location $path
-    }
-
-    Set-Location ..
+    Set-Location $Env:APPVEYOR_BUILD_FOLDER
 
     refreshenv
 cache: C:\tools\vcpkg\installed
@@ -69,7 +58,7 @@ before_build:
     If ($Env:CONFIGURATION -eq "Debug") {
       $prefix_path = "C:/tools/vcpkg/installed/x86-windows-static-dyncrt/debug;$prefix_path"
     }
-    cmake -Wno-dev -AWin32 -DCMAKE_PREFIX_PATH=$prefix_path `
+    cmake -Wno-dev -AWin32 -DCMAKE_PREFIX_PATH="$prefix_path" `
       -DCMAKE_INSTALL_PREFIX=dist -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=bin `
       -DPHYSX_SDK_PATH=C:\PhysX_SDK\SDKs -DQt5_DIR=C:\Qt\$Env:QT_VER\msvc2017\lib\cmake\Qt5 `
       -DPLASMA_EXTERNAL_RELEASE="$Env:PLASMA_EXTERNAL_RELEASE" -DPLASMA_BUILD_TESTS=ON `
