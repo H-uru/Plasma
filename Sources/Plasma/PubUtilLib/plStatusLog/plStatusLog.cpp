@@ -585,32 +585,32 @@ bool plStatusLog::IPrintLineToFile( const char *line, uint32_t count )
         {
             if ( fFlags & kTimestamp )
             {
-                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
+                snprintf(work, std::size(work), "(%s) ", plUnifiedTime(kNow).Format("%m/%d %H:%M:%S").c_str());
                 buf.append(work);
             }
             if ( fFlags & kTimestampGMT )
             {
-                snprintf(work, arrsize(work), "(%s) ", plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC").c_str());
+                snprintf(work, std::size(work), "(%s) ", plUnifiedTime::GetCurrent().Format("%m/%d %H:%M:%S UTC").c_str());
                 buf.append(work);
             }
             if ( fFlags & kTimeInSeconds )
             {
-                snprintf(work, arrsize(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
+                snprintf(work, std::size(work), "(%lu) ", (unsigned long)plUnifiedTime(kNow).GetSecs());
                 buf.append(work);
             }
             if ( fFlags & kTimeAsDouble )
             {
-                snprintf(work, arrsize(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
+                snprintf(work, std::size(work), "(%f) ", plUnifiedTime(kNow).GetSecsDouble());
                 buf.append(work);
             }
             if (fFlags & kRawTimeStamp)
             {
-                snprintf(work, arrsize(work), "[t=%10f] ", hsTimer::GetSeconds());
+                snprintf(work, std::size(work), "[t=%10f] ", hsTimer::GetSeconds());
                 buf.append(work);
             }
             if (fFlags & kThreadID)
             {
-                snprintf(work, arrsize(work), "[t=%lu] ", hsThread::ThisThreadHash());
+                snprintf(work, std::size(work), "[t=%lu] ", hsThread::ThisThreadHash());
                 buf.append(work);
             }
 

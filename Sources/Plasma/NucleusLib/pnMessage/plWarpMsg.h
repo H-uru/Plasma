@@ -90,12 +90,12 @@ public:
     void SetTransform(const hsMatrix44& mat) { fTransform = mat; }
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fTransform.Read(stream);
         stream->ReadLE(&fWarpFlags);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         fTransform.Write(stream);
         stream->WriteLE(fWarpFlags);

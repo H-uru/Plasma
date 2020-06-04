@@ -205,7 +205,7 @@ void AsyncSleep (unsigned sleepMs) {
 
 //============================================================================
 long AsyncPerfGetCounter (unsigned id) {
-    static_assert(arrsize(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
+    static_assert(std::size(s_perf) == kNumAsyncPerfCounters, "Max async counters and array size do not match.");
     ASSERT(id < kNumAsyncPerfCounters);
     return s_perf[id];
 }

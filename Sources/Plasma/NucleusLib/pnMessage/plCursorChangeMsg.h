@@ -85,12 +85,12 @@ public:
 
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fType = stream->ReadLE32();
         fPriority = stream->ReadLE32();
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         stream->WriteLE32(fType);
         stream->WriteLE32(fPriority);

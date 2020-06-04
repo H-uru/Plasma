@@ -45,6 +45,8 @@ Mead, WA   99021
 #include <max.h>
 #pragma hdrstop
 
+#include <iterator>
+
 /** \file This file contains a stub implementation for the ClassDescs left behind by
  *   Cyan's SceneViewer crap. This just keeps new versions of 3ds Max from crashing on
  *   null ClassDescs returned by the GUP. It also silences that "Dll Missing" dialog that
@@ -64,7 +66,7 @@ public:
     plMaxFileDataControl()
     {
         memset(&fCodeBuildTime, 0, sizeof(SYSTEMTIME));
-        memset(&fBranch, 0, arrsize(fBranch));
+        memset(&fBranch, 0, std::size(fBranch));
     }
 
     // Animatable

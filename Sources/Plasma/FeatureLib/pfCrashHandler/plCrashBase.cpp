@@ -52,9 +52,9 @@ plCrashBase::~plCrashBase()
 void plCrashBase::IInit(const char* file)
 {
     char sema[128];
-    snprintf(sema, arrsize(sema), "%s-%s", file, CRASH_NOTIFY_SUFFIX);
+    snprintf(sema, std::size(sema), "%s-%s", file, CRASH_NOTIFY_SUFFIX);
     fCrashed = new hsGlobalSemaphore(0, sema);
 
-    snprintf(sema, arrsize(sema), "%s-%s", file, CRASH_HANDLE_SUFFIX);
+    snprintf(sema, std::size(sema), "%s-%s", file, CRASH_HANDLE_SUFFIX);
     fHandled = new hsGlobalSemaphore(0, sema);
 }

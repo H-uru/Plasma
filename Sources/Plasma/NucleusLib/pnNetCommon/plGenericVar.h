@@ -174,10 +174,10 @@ public:
     CLASSNAME_REGISTER(plCreatableGenericValue);
     GETINTERFACE_ANY(plCreatableGenericValue, plCreatable);
 
-    void Read(hsStream* s, hsResMgr*) HS_OVERRIDE {
+    void Read(hsStream* s, hsResMgr*) override {
         fValue.Read(s);
     }
-    void Write(hsStream* s, hsResMgr*) HS_OVERRIDE {
+    void Write(hsStream* s, hsResMgr*) override {
         fValue.Write(s);
     }
 

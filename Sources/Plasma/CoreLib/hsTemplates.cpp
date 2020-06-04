@@ -122,7 +122,7 @@ void TArrayStats()
 
     hsDlistNode * pNode = hsDlistNode::fpFirst;
     char fnm[512];
-    snprintf(fnm,arrsize(fnm),"Reports\\%s.txt","TArray");
+    snprintf(fnm, std::size(fnm), "Reports\\%s.txt", "TArray");
     FILE * DumpLogFile = fopen( fnm, "w" );
     if (!DumpLogFile) return;
     int i=0;
@@ -176,7 +176,7 @@ void LargeArrayStats()
 
     hsDlistNode * pNode = hsDlistNode::fpFirst;
     char fnm[512];
-    snprintf(fnm,arrsize(fnm),"Reports\\%s.txt","TArray");
+    snprintf(fnm, std::size(fnm), "Reports\\%s.txt", "TArray");
     FILE * DumpLogFile = fopen( fnm, "w" );
     if (!DumpLogFile) return;
     int i=0;

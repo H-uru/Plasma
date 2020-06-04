@@ -169,15 +169,15 @@ protected:
     std::mutex fCritSect;
 
 public:
-    void Run() HS_OVERRIDE;
+    void Run() override;
 
-    void Start() HS_OVERRIDE
+    void Start() override
     {
         fRunning = true;
         hsThread::Start();
     }
 
-    void Stop() HS_OVERRIDE
+    void Stop() override
     {
         fRunning = false;
         fEvent.Signal();

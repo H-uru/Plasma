@@ -1340,7 +1340,7 @@ static void SendClientRegisterRequest (CliAuConn * conn) {
         plProduct::BuildId(),
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 }
 
 //============================================================================
@@ -1725,7 +1725,7 @@ void CliAuConn::TimerPing () {
         reinterpret_cast<uintptr_t>(nullptr)
     };
 
-    Send(msg, arrsize(msg));
+    Send(msg, std::size(msg));
 }
 
 //============================================================================
@@ -2515,7 +2515,7 @@ bool PingRequestTrans::Send () {
         (uintptr_t)  m_payload.Ptr(),
     };
     
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -2579,7 +2579,7 @@ bool AccountExistsRequestTrans::Send () {
                         (uintptr_t)m_accountName
     };
     
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -2685,7 +2685,7 @@ bool LoginRequestTrans::Send () {
         (uintptr_t) s_os,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -2724,7 +2724,7 @@ bool LoginRequestTrans::Recv (
             m_accountFlags  = reply.accountFlags;
             m_billingType   = reply.billingType;
 
-            unsigned memSize = std::min(arrsize(s_encryptionKey), arrsize(reply.encryptionKey));
+            unsigned memSize = std::min(std::size(s_encryptionKey), std::size(reply.encryptionKey));
             memSize *= sizeof(uint32_t);
             memcpy(s_encryptionKey, reply.encryptionKey, memSize);
         }
@@ -2775,7 +2775,7 @@ bool AgeRequestTrans::Send () {
         (uintptr_t) &m_ageInstId,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -2830,7 +2830,7 @@ AccountCreateRequestTrans::AccountCreateRequestTrans (
 ,   m_accountFlags(accountFlags)
 ,   m_billingType(billingType)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
+    StrCopy(m_accountName, accountName, std::size(m_accountName));
 
     CryptHashPassword(
         ST::string::from_wchar(m_accountName),
@@ -2853,7 +2853,7 @@ bool AccountCreateRequestTrans::Send () {
                         m_billingType,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -2900,7 +2900,7 @@ AccountCreateFromKeyRequestTrans::AccountCreateFromKeyRequestTrans (
 ,   m_billingType(billingType)
 ,   m_key(key)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
+    StrCopy(m_accountName, accountName, std::size(m_accountName));
 
     CryptHashPassword(
         ST::string::from_wchar(m_accountName),
@@ -2923,7 +2923,7 @@ bool AccountCreateFromKeyRequestTrans::Send () {
                         m_billingType,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -2991,7 +2991,7 @@ bool PlayerCreateRequestTrans::Send () {
         (uintptr_t)     friendInvite.data(),
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3052,7 +3052,7 @@ bool PlayerDeleteRequestTrans::Send () {
                         m_playerId
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -3106,7 +3106,7 @@ bool UpgradeVisitorRequestTrans::Send () {
                         m_playerId
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -3161,7 +3161,7 @@ bool SetPlayerRequestTrans::Send () {
         m_playerInt,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3220,7 +3220,7 @@ bool AccountChangePasswordRequestTrans::Send () {
         (uintptr_t)  &m_namePassHash,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3276,7 +3276,7 @@ bool GetPublicAgeListTrans::Send () {
         (uintptr_t)     ageName.data(),
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3323,7 +3323,7 @@ AccountSetRolesRequestTrans::AccountSetRolesRequestTrans (
 ,   m_param(param)
 ,   m_accountFlags(accountFlags)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
+    StrCopy(m_accountName, accountName, std::size(m_accountName));
 }
 
 //============================================================================
@@ -3338,7 +3338,7 @@ bool AccountSetRolesRequestTrans::Send () {
                         m_accountFlags,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3380,7 +3380,7 @@ AccountSetBillingTypeRequestTrans::AccountSetBillingTypeRequestTrans (
 ,   m_param(param)
 ,   m_billingType(billingType)
 {
-    StrCopy(m_accountName, accountName, arrsize(m_accountName));
+    StrCopy(m_accountName, accountName, std::size(m_accountName));
 }
 
 //============================================================================
@@ -3395,7 +3395,7 @@ bool AccountSetBillingTypeRequestTrans::Send () {
                         m_billingType,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3449,7 +3449,7 @@ bool AccountActivateRequestTrans::Send () {
         (uintptr_t)  &m_activationKey,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3490,8 +3490,8 @@ FileListRequestTrans::FileListRequestTrans (
 ,   m_callback(callback)
 ,   m_param(param)
 {
-    StrCopy(m_directory, directory, arrsize(m_directory));
-    StrCopy(m_ext, ext, arrsize(m_ext));
+    StrCopy(m_directory, directory, std::size(m_directory));
+    StrCopy(m_ext, ext, std::size(m_ext));
 }
 
 //============================================================================
@@ -3506,7 +3506,7 @@ bool FileListRequestTrans::Send () {
         (uintptr_t) m_ext,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -3542,8 +3542,8 @@ bool FileListRequestTrans::Recv (
 
             // read in the filename
             wchar_t filename[MAX_PATH];
-            StrCopy(filename, curChar, arrsize(filename));
-            filename[arrsize(filename) - 1] = L'\0'; // make sure it's terminated
+            StrCopy(filename, curChar, std::size(filename));
+            filename[std::size(filename) - 1] = L'\0'; // make sure it's terminated
 
             unsigned filenameLen = StrLen(filename);
             curChar += filenameLen; // advance the pointer
@@ -3563,7 +3563,7 @@ bool FileListRequestTrans::Recv (
 
             // save the data in our array
             NetCliAuthFileInfo* info = m_fileInfoArray.New();
-            StrCopy(info->filename, filename, arrsize(info->filename));
+            StrCopy(info->filename, filename, std::size(info->filename));
             info->filesize = size;
 
             // point it at either the second part of the terminator, or the next filename
@@ -3616,7 +3616,7 @@ bool FileDownloadRequestTrans::Send () {
         return false;
 
     wchar_t filename[MAX_PATH];
-    wcsncpy(filename, m_filename.WideString().data(), arrsize(filename));
+    wcsncpy(filename, m_filename.WideString().data(), std::size(filename));
 
     const uintptr_t msg[] = {
         kCli2Auth_FileDownloadRequest,
@@ -3624,7 +3624,7 @@ bool FileDownloadRequestTrans::Send () {
         reinterpret_cast<uintptr_t>(filename),
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -3671,7 +3671,7 @@ bool FileDownloadRequestTrans::Recv (
         kCli2Auth_FileDownloadChunkAck,
         m_transId
     };
-    m_conn->Send(ack, arrsize(ack));
+    m_conn->Send(ack, std::size(ack));
     
     return true;
 }
@@ -3799,7 +3799,7 @@ bool VaultFetchNodeRefsTrans::Send () {
         m_nodeId,
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -3893,7 +3893,7 @@ bool VaultInitAgeTrans::Send () {
                      m_ageLanguage,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -3956,7 +3956,7 @@ bool VaultFetchNodeTrans::Send () {
         m_nodeId,
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4022,7 +4022,7 @@ bool VaultFindNodeTrans::Send () {
         (uintptr_t)  buffer.Ptr(),
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4090,7 +4090,7 @@ bool VaultCreateNodeTrans::Send () {
         (uintptr_t)  buffer.Ptr()
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4157,7 +4157,7 @@ bool VaultSaveNodeTrans::Send () {
         (uintptr_t)  m_buffer.Ptr(),
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4220,7 +4220,7 @@ bool VaultAddNodeTrans::Send () {
                     m_ownerId,
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4280,7 +4280,7 @@ bool VaultRemoveNodeTrans::Send () {
                     m_childId,
     };
             
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -4353,7 +4353,7 @@ bool SetPlayerBanStatusRequestTrans::Send () {
                         m_banned,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4395,7 +4395,7 @@ ChangePlayerNameRequestTrans::ChangePlayerNameRequestTrans (
 ,   m_param(param)
 ,   m_playerId(playerId)
 {
-    StrCopy(m_newName, newName, arrsize(m_newName));
+    StrCopy(m_newName, newName, std::size(m_newName));
 }
 
 //============================================================================
@@ -4410,7 +4410,7 @@ bool ChangePlayerNameRequestTrans::Send () {
         (uintptr_t)  m_newName,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4474,7 +4474,7 @@ bool SendFriendInviteTrans::Send () {
         (uintptr_t)  toName.data(),
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4555,7 +4555,7 @@ bool ScoreCreateTrans::Send () {
            (uintptr_t)  m_value
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4620,7 +4620,7 @@ bool ScoreDeleteTrans::Send () {
                         m_scoreId,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4688,7 +4688,7 @@ bool ScoreGetScoresTrans::Send () {
         (uintptr_t) gameName.data()
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4765,7 +4765,7 @@ bool ScoreAddPointsTrans::Send () {
                         (uintptr_t)m_numPoints,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4827,7 +4827,7 @@ bool ScoreTransferPointsTrans::Send () {
                         (uintptr_t)m_numPoints,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4886,7 +4886,7 @@ bool ScoreSetPointsTrans::Send () {
                         (uintptr_t)m_numPoints,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -4966,7 +4966,7 @@ bool ScoreGetRanksTrans::Send () {
                         m_sortDesc,
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -5055,7 +5055,7 @@ bool ScoreGetHighScoresTrans::Send() {
         (uintptr_t)gameName.data()
     };
 
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
 
     return true;
 }
@@ -5149,8 +5149,8 @@ void AuthInitialize () {
     NetMsgProtocolRegister(
         kNetProtocolCli2Auth,
         false,
-        s_send, arrsize(s_send),
-        s_recv, arrsize(s_recv),
+        s_send, std::size(s_send),
+        s_recv, std::size(s_recv),
         kAuthDhGValue,
         plBigNum(sizeof(kAuthDhXData), kAuthDhXData),
         plBigNum(sizeof(kAuthDhNData), kAuthDhNData)
@@ -5353,9 +5353,9 @@ void NetCliAuthLoginRequest (
     if (accountNamePassHash)
         memcpy(s_accountNamePassHash, *accountNamePassHash, sizeof(ShaDigest));
     if (authToken)
-        StrCopy(s_authToken, authToken, arrsize(s_authToken));
+        StrCopy(s_authToken, authToken, std::size(s_authToken));
     if (os)
-        StrCopy(s_os, os, arrsize(s_os));
+        StrCopy(s_os, os, std::size(s_os));
 
     LoginRequestTrans * trans = new LoginRequestTrans(callback, param);
     NetTransSend(trans);
@@ -5382,7 +5382,7 @@ void NetCliAuthGetEncryptionKey (
     uint32_t    key[],
     size_t      size
 ) {
-    unsigned memSize = std::min(arrsize(s_encryptionKey), size);
+    unsigned memSize = std::min(std::size(s_encryptionKey), size);
     memSize *= sizeof(uint32_t);
     memcpy(key, s_encryptionKey, memSize);
 }
@@ -5494,7 +5494,7 @@ void NetCliAuthSetCCRLevel (
                     ccrLevel,
     };
     
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
     conn->UnRef("SetCCRLevel");
 }
 
@@ -5527,7 +5527,7 @@ void NetCliAuthSetAgePublic (
                     publicOrNot,
     };
     
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("SetAgePublic");
 }
@@ -5818,7 +5818,7 @@ void NetCliAuthVaultSetSeen (
                     seen,
     };
     
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("SetSeen");
 }
@@ -5838,7 +5838,7 @@ void NetCliAuthVaultSendNode (
                     dstPlayerId,
     };
     
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("SendNode");
 }
@@ -5902,7 +5902,7 @@ void NetCliAuthPropagateBuffer (
         (uintptr_t) buffer,
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("PropBuffer");
 
@@ -5919,7 +5919,7 @@ void NetCliAuthLogPythonTraceback (const wchar_t traceback[]) {
        (uintptr_t) traceback
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("LogTraceback");
 }
@@ -5936,7 +5936,7 @@ void NetCliAuthLogStackDump (const wchar_t stackdump[]) {
        (uintptr_t) stackdump
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef("LogStackDump");
 }
@@ -5954,7 +5954,7 @@ void NetCliAuthLogClientDebuggerConnect () {
         nothing
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
 
     conn->UnRef();
 }
@@ -5994,7 +5994,7 @@ void NetCliAuthKickPlayer (
                     playerId
     };
 
-    conn->Send(msg, arrsize(msg));
+    conn->Send(msg, std::size(msg));
     conn->UnRef("KickPlayer");
 }
 

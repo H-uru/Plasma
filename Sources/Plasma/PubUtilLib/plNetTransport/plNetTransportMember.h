@@ -107,7 +107,7 @@ public:
     uint32_t GetTransportFlags() const { return fTransportFlags; }
 
     bool IsPeerToPeer() const { return hsCheckBits(fFlags, kRequestP2P); }
-    ST::string AsString() const HS_OVERRIDE;
+    ST::string AsString() const override;
     bool IsEqualTo(const plNetMember * other) const
     {
         const plNetTransportMember * o = plNetTransportMember::ConvertNoRef(other);

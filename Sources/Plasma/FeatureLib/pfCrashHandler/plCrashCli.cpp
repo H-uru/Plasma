@@ -65,8 +65,8 @@ plCrashCli::plCrashCli()
 {
     char mapname[128];
     char cmdline[128];
-    snprintf(mapname, arrsize(mapname), "Plasma20CrashHandler-%u", GetCurrentProcessId());
-    snprintf(cmdline, arrsize(cmdline), "%s %s", CRASH_HANDLER_EXE, mapname);
+    snprintf(mapname, std::size(mapname), "Plasma20CrashHandler-%u", GetCurrentProcessId());
+    snprintf(cmdline, std::size(cmdline), "%s %s", CRASH_HANDLER_EXE, mapname);
     memset(&fCrashSrv, 0, sizeof(PROCESS_INFORMATION));
 
     // Initialize the semas

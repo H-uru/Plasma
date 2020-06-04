@@ -169,7 +169,7 @@ static void INetErrorCallback (
     case kNetErrKickedByCCR:
         StrPrintf(
             msg->str,
-            arrsize(msg->str),
+            std::size(msg->str),
             "You have been kicked by a CCR."
         );
         break;
@@ -180,7 +180,7 @@ static void INetErrorCallback (
         StrPrintf(
             // buf
             msg->str,
-            arrsize(msg->str),
+            std::size(msg->str),
             // fmt
             "Network error %u, %S.\n"
             "protocol: %S\n"
@@ -732,7 +732,7 @@ void NetCommStartup () {
     s_startupAge.ageDatasetName = s_iniStartupAgeName;
 
     s_startupAge.ageInstId = s_iniStartupAgeInstId;
-    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", arrsize(s_startupAge.spawnPtName));
+    StrCopy(s_startupAge.spawnPtName, "LinkInPointDefault", std::size(s_startupAge.spawnPtName));
 }
 
 //============================================================================
@@ -1008,9 +1008,9 @@ void NetCommSetAuthTokenAndOS (
     wchar_t               os[]
 ) {
     if (authToken)
-        StrCopy(s_iniAuthToken, authToken, arrsize(s_iniAuthToken));
+        StrCopy(s_iniAuthToken, authToken, std::size(s_iniAuthToken));
     if (os)
-        StrCopy(s_iniOS, os, arrsize(s_iniOS));
+        StrCopy(s_iniOS, os, std::size(s_iniOS));
 }
 
 //============================================================================

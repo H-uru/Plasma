@@ -56,8 +56,8 @@ public:
     void SetWindowTitle(const QString &title);
 
 protected:
-    void dragEnterEvent(QDragEnterEvent *event) HS_OVERRIDE;
-    void dropEvent(QDropEvent *event) HS_OVERRIDE;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private slots:
     void OpenFile();

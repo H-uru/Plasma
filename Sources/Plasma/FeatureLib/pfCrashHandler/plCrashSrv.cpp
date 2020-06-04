@@ -109,7 +109,7 @@ void plCrashSrv::HandleCrash()
     // In Win32 land we have to hackily handle the client process exiting, so we'll wait on both
     // the crashed semaphore and the client process...
     HANDLE hack[2] = { fLink->fClientProcess, fCrashed->GetHandle() };
-    DWORD result = WaitForMultipleObjects(arrsize(hack), hack, FALSE, INFINITE);
+    DWORD result = WaitForMultipleObjects(std::size(hack), hack, FALSE, INFINITE);
     hsAssert(result != WAIT_FAILED, "WaitForMultipleObjects failed");
 #else
     fCrashed->Wait();

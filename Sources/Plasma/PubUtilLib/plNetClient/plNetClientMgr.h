@@ -237,7 +237,7 @@ private:
     int ISendGameMessage(plMessage* msg);
     void IDisableNet ();
 
-    void ICreateStatusLog() const HS_OVERRIDE;
+    void ICreateStatusLog() const override;
 
 public:
     plNetClientMgr();
@@ -265,7 +265,7 @@ public:
     void SendApplyAvatarCustomizationsMsg(const plKey msgReceiver, bool netPropagate=true, bool localPropagate=true);
 
     // plLoggable
-    bool Log(const ST::string& str) const HS_OVERRIDE;
+    bool Log(const ST::string& str) const override;
 
     // setters
     void SetIniAuthServer(const char * value)  { fIniAuthServer=value;}

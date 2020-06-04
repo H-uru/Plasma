@@ -85,7 +85,7 @@ public:
 
     plShardStatus() : fLastUpdate() { }
 
-    void Run() HS_OVERRIDE;
+    void Run() override;
     void Shutdown();
     void Update();
 };
@@ -94,8 +94,8 @@ static size_t ICurlCallback(void* buffer, size_t size, size_t nmemb, void* threa
 {
     static char status[256];
 
-    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, arrsize(status)));
-    status[arrsize(status) - 1] = 0;
+    strncpy(status, (const char *)buffer, std::min<size_t>(size * nmemb, std::size(status)));
+    status[std::size(status) - 1] = 0;
     static_cast<plShardStatus*>(thread)->fShardFunc(status);
     return size * nmemb;
 }
@@ -168,14 +168,14 @@ public:
         );
     }
 
-    void OnQuit() HS_OVERRIDE
+    void OnQuit() override
     {
         // If we succeeded, then we should launch the game client...
         if (fSuccess)
             fParent->LaunchClient();
     }
 
-    void Run() HS_OVERRIDE
+    void Run() override
     {
         while (!fRedistQueue.empty()) {
             if (fInstallProc(fRedistQueue.back()))
@@ -188,7 +188,7 @@ public:
         }
     }
 
-    void Start() HS_OVERRIDE
+    void Start() override
     {
         if (fRedistQueue.empty())
             OnQuit();
@@ -463,7 +463,7 @@ void plClientLauncher::ParseArguments()
         args.push_back(ST::string::from_utf8(__argv[i]));
     }
 
-    plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
+    plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
     cmdParser.Parse(args);
 
     // cache 'em

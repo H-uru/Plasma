@@ -41,6 +41,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 
 #include "pnNbProtocol.h"
+#include <iterator>
 
 
 /*****************************************************************************
@@ -76,7 +77,7 @@ const wchar_t * NetProtocolToString (ENetProtocol protocol) {
         { kNetProtocolSrv2Score,    L"kNetProtocolSrv2Score" },
     };
 
-    for (unsigned i = 0; i < arrsize(s_protocols); ++i)
+    for (unsigned i = 0; i < std::size(s_protocols); ++i)
         if (s_protocols[i].protocol == protocol)
             return s_protocols[i].name;
 

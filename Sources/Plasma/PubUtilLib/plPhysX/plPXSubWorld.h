@@ -61,11 +61,11 @@ public:
     CLASSNAME_REGISTER(plPXSubWorld);
     GETINTERFACE_ANY(plPXSubWorld, plObjInterface);
 
-    void Read(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* s, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* s, hsResMgr* mgr) override;
+    void Write(hsStream* s, hsResMgr* mgr) override;
 
-    int32_t GetNumProperties() const HS_OVERRIDE { return 0; }
-    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) HS_OVERRIDE;
+    int32_t GetNumProperties() const override { return 0; }
+    void SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l) override;
 
     const hsVector3& GetGravity() const { return fGravity; }
     hsVector3& GetGravity() { return fGravity; }

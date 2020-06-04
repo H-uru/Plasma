@@ -51,7 +51,7 @@ TEST(plCmdParser, basic_parsing)
         { kCmdArgRequired | kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     bool success = parser.Parse("plCmdParser ~/.plasma/config.dat");
 
     ST::string prog = parser.GetProgramName();
@@ -69,7 +69,7 @@ TEST(plCmdParser, argv_parsing)
         { kCmdArgRequired | kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
 
     const char* args[] = {"plCmdParser", "~/.plasma/config.dat"};
     int argc = 2;
@@ -93,7 +93,7 @@ TEST(plCmdParser, argv_preserving_spaces)
         { kCmdArgRequired | kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
 
     const char* args[] = {"plCmdParser", "~/.plasma/Uru Live/config.dat"};
     int argc = 2;
@@ -117,7 +117,7 @@ TEST(plCmdParser, wchar_argv_parsing)
         { kCmdArgRequired | kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
 
     const wchar_t* args[] = {L"plCmdParser", L"~/.plasma/config.dat"};
     int argc = 2;
@@ -145,7 +145,7 @@ TEST(plCmdParser, flagged_int)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size 5");
 
     int32_t size = parser.GetInt(0);
@@ -159,7 +159,7 @@ TEST(plCmdParser, flagged_int_short)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser -s 5");
 
     int32_t size = parser.GetInt(0);
@@ -173,7 +173,7 @@ TEST(plCmdParser, flagged_int_assign)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size=5");
 
     int32_t size = parser.GetInt(0);
@@ -187,7 +187,7 @@ TEST(plCmdParser, flagged_int_slash)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser /size -5");
 
     int32_t size = parser.GetInt(0);
@@ -201,7 +201,7 @@ TEST(plCmdParser, flagged_int_bystring)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size 5");
 
     int32_t size = parser.GetInt("size");
@@ -216,7 +216,7 @@ TEST(plCmdParser, flagged_uint)
         { kCmdTypeUint, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size 5");
 
     uint32_t size = parser.GetUint(0);
@@ -230,7 +230,7 @@ TEST(plCmdParser, flagged_uint_bystring)
         { kCmdTypeUint, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size 5");
 
     uint32_t size = parser.GetUint("size");
@@ -245,7 +245,7 @@ TEST(plCmdParser, flagged_float)
         { kCmdTypeFloat, "volume", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --volume 0.5");
 
     float vol = parser.GetFloat(0);
@@ -259,7 +259,7 @@ TEST(plCmdParser, flagged_float_bystring)
         { kCmdTypeFloat, "volume", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --volume 0.5");
 
     float vol = parser.GetFloat("volume");
@@ -274,7 +274,7 @@ TEST(plCmdParser, flagged_string)
         { kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --path foo");
 
     ST::string path = parser.GetString(0);
@@ -288,7 +288,7 @@ TEST(plCmdParser, flagged_string_bystring)
         { kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --path foo");
 
     ST::string path = parser.GetString("path");
@@ -303,7 +303,7 @@ TEST(plCmdParser, flagged_bool_default)
         { kCmdTypeBool, "verbose", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --verbose");
 
     bool verbose = parser.GetBool(0);
@@ -317,7 +317,7 @@ TEST(plCmdParser, flagged_bool_true)
         { kCmdTypeBool, "verbose", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --verbose=TRUE");
 
     bool verbose = parser.GetBool(0);
@@ -331,7 +331,7 @@ TEST(plCmdParser, flagged_bool_false)
         { kCmdTypeBool, "verbose", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --verbose=FALSE");
 
     bool verbose = parser.GetBool(0);
@@ -345,7 +345,7 @@ TEST(plCmdParser, flagged_bool_invalid)
         { kCmdTypeBool, "verbose", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --verbose=foo");
 
     bool verbose = parser.GetBool(0);
@@ -360,7 +360,7 @@ TEST(plCmdParser, flagged_bool_bystring)
         { kCmdTypeBool, "verbose", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --verbose");
 
     bool verbose = parser.GetBool("verbose");
@@ -375,7 +375,7 @@ TEST(plCmdParser, optional_unspecified)
         { kCmdTypeInt | kCmdArgOptional, "speed", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser");
 
     bool specified = parser.IsSpecified(0);
@@ -391,7 +391,7 @@ TEST(plCmdParser, optional_specified)
         { kCmdTypeInt | kCmdArgOptional, "speed", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser 1");
 
     bool specified = parser.IsSpecified(0);
@@ -407,7 +407,7 @@ TEST(plCmdParser, optional_specified_bystring)
         { kCmdTypeInt | kCmdArgOptional, "speed", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser 1");
 
     bool specified = parser.IsSpecified("speed");
@@ -424,7 +424,7 @@ TEST(plCmdParser, specified_invalid)
         { kCmdTypeInt | kCmdArgOptional, "speed", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser 1");
 
     bool specified = parser.IsSpecified(1);
@@ -438,7 +438,7 @@ TEST(plCmdParser, specified_invalid_bystring)
         { kCmdTypeInt | kCmdArgOptional, "speed", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser 1");
 
     bool specified = parser.IsSpecified("path");
@@ -453,7 +453,7 @@ TEST(plCmdParser, flagged_weird_id)
         { kCmdTypeInt, "size", 10}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size 5");
 
     int32_t size = parser.GetInt(10);
@@ -468,7 +468,7 @@ TEST(plCmdParser, fake_flag)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     bool success = parser.Parse("plCmdParser --speed 5");
 
     EXPECT_EQ(success, false);
@@ -482,7 +482,7 @@ TEST(plCmdParser, too_many_args)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     bool success = parser.Parse("plCmdParser --size 10 foo");
 
     EXPECT_EQ(success, false);
@@ -496,7 +496,7 @@ TEST(plCmdParser, missing_required)
         { kCmdArgRequired | kCmdTypeString, "path", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     bool success = parser.Parse("plCmdParser");
 
     EXPECT_EQ(success, false);
@@ -510,7 +510,7 @@ TEST(plCmdParser, combined_assign)
         { kCmdTypeInt, "size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser --size5");
 
     int32_t size = parser.GetInt(0);
@@ -525,7 +525,7 @@ TEST(plCmdParser, case_sensitive_nomatch)
         { kCmdTypeInt | kCmdCaseSensitive, "Size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser -s 5");
 
     bool specified = parser.IsSpecified(0);
@@ -539,7 +539,7 @@ TEST(plCmdParser, case_sensitive_match)
         { kCmdTypeInt | kCmdCaseSensitive, "Size", 0}
     };
 
-    plCmdParser parser(cmds, arrsize(cmds));
+    plCmdParser parser(cmds, std::size(cmds));
     parser.Parse("plCmdParser -S 5");
 
     bool specified = parser.IsSpecified(0);

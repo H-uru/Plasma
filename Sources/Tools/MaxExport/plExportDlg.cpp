@@ -340,7 +340,7 @@ void plExportDlgImp::IDoExport()
 
     // Do the export
     wchar_t exportPathTEMP[MAX_PATH];
-    GetDlgItemTextW(fDlg, IDC_CLIENT_PATH, exportPathTEMP, arrsize(exportPathTEMP));
+    GetDlgItemTextW(fDlg, IDC_CLIENT_PATH, exportPathTEMP, std::size(exportPathTEMP));
     plFileName exportPath = plFileName::Join(ST::string::from_wchar(exportPathTEMP), "Export.prd");
 
     // For export time stats

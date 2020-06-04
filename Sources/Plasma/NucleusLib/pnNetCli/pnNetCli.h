@@ -144,8 +144,8 @@ How to create a message sender/receiver:
     s_srvConn = NetMsgProtocolRegister(
         kNetProtocolCliToGame,
         true,
-        s_srvSend, arrsize(s_srvSend),
-        s_srvRecv, arrsize(s_srvRecv)
+        s_srvSend, std::size(s_srvSend),
+        s_srvRecv, std::size(s_srvRecv)
     );
 
 
@@ -163,8 +163,8 @@ How to create a message sender/receiver:
     s_cliConn = NetMsgProtocolRegister(
         kNetProtocolCliToGame,
         false,
-        s_cliSend, arrsize(s_cliSend),
-        s_cliRecv, arrsize(s_cliRecv)
+        s_cliSend, std::size(s_cliSend),
+        s_cliRecv, std::size(s_cliRecv)
     );
 
 
@@ -176,7 +176,7 @@ How to create a message sender/receiver:
             obj->id,
             3, (uintptr_t) &obj->pos,
         };
-        NetCliSend(client, msgMoveObject, arrsize(msgMoveObject));
+        NetCliSend(client, msgMoveObject, std::size(msgMoveObject));
     }
 
     static void SendPlayerJoin (NetCli client, const Player * player) {
@@ -187,7 +187,7 @@ How to create a message sender/receiver:
             player->vault->Count(),
             player->vault->Ptr()
         };
-        NetCliSend(client, msgPlayerJoin, arrsize(msgPlayerJoin));
+        NetCliSend(client, msgPlayerJoin, std::size(msgPlayerJoin));
     };
 
     static void SendPing (NetCli player) {
@@ -195,7 +195,7 @@ How to create a message sender/receiver:
             kMsgPing,
             hsTimer::GetMilliSeconds<uint32_t>(),
         };
-        NetCliSend(player, msgPing, arrsize(msgPing));
+        NetCliSend(player, msgPing, std::size(msgPing));
     }
 
 
@@ -208,7 +208,7 @@ How to create a message sender/receiver:
             kMsgPingReply,
             ping->pingTimeMs,
         };
-        MsgConnSend(from, msgPingReply, arrsize(msgPingReply));
+        MsgConnSend(from, msgPingReply, std::size(msgPingReply));
     }
 
 *
@@ -273,7 +273,7 @@ struct NetCliQueue;
 *
 ***/
 
-#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, arrsize(msgFields) }
+#define NET_MSG(msgId, msgFields)               { #msgId, msgId, msgFields, std::size(msgFields) }
 
 #define NET_MSG_FIELD(type, count, size)        { type, count, size }
 

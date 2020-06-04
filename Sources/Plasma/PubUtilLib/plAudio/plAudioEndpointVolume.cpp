@@ -64,11 +64,11 @@ public:
     plWinCoreAudioEndpointVolume();
     ~plWinCoreAudioEndpointVolume();
 
-    float GetVolume() const HS_OVERRIDE;
-    bool SetDefaultDevice(plAudioEndpointType endpoint) HS_OVERRIDE;
-    bool SetDevice(plAudioEndpointType endpoint, const ST::string& deviceName) HS_OVERRIDE;
-    bool SetVolume(float fct) HS_OVERRIDE;
-    bool Supported() const HS_OVERRIDE;
+    float GetVolume() const override;
+    bool SetDefaultDevice(plAudioEndpointType endpoint) override;
+    bool SetDevice(plAudioEndpointType endpoint, const ST::string& deviceName) override;
+    bool SetVolume(float fct) override;
+    bool Supported() const override;
 };
 
 // =============================================================================
@@ -324,11 +324,11 @@ plAudioEndpointVolume* plAudioEndpointVolume::Create()
 class plNullAudioEndpointVolume : public plAudioEndpointVolume
 {
 public:
-    float GetVolume() const HS_OVERRIDE { return 0.f; }
-    bool SetDefaultDevice(plAudioEndpointType) HS_OVERRIDE { return false; }
-    bool SetDevice(plAudioEndpointType, const ST::string&) HS_OVERRIDE { return false; }
-    bool SetVolume(float) HS_OVERRIDE { return false; }
-    bool Supported() const HS_OVERRIDE { return false; }
+    float GetVolume() const override { return 0.f; }
+    bool SetDefaultDevice(plAudioEndpointType) override { return false; }
+    bool SetDevice(plAudioEndpointType, const ST::string&) override { return false; }
+    bool SetVolume(float) override { return false; }
+    bool Supported() const override { return false; }
 };
 
 plAudioEndpointVolume* plAudioEndpointVolume::Create()

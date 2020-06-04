@@ -383,7 +383,7 @@ int main(int argc, char *argv[])
         args.emplace_back(ST::string::from_utf8(argv[i]));
     }
 
-    plCmdParser cmdParser(cmdLineArgs, arrsize(cmdLineArgs));
+    plCmdParser cmdParser(cmdLineArgs, std::size(cmdLineArgs));
     if (cmdParser.Parse(args)) {
         if (cmdParser.GetBool(kArgHelp1) || cmdParser.GetBool(kArgHelp2)) {
             PrintUsage();

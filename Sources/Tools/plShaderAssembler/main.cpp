@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
         };
 
         nameList = kEnumNames;
-        numNames = arrsize(kEnumNames);
+        numNames = std::size(kEnumNames);
     }
     else
     {

@@ -119,7 +119,7 @@ void * AsyncThreadCreate (
     thread->handle          = nil;
     thread->argument        = argument;
     thread->workTimeMs      = kAsyncTimeInfinite;
-    StrCopy(thread->name, name, arrsize(thread->name));
+    StrCopy(thread->name, name, std::size(thread->name));
     
     // Create thread suspended
     unsigned threadId;

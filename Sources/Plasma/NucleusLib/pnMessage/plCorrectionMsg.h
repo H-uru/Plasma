@@ -68,12 +68,12 @@ public:
     bool fDirtySynch;
 
     // IO
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgRead(stream, mgr);
         fLocalToWorld.Read(stream);
         fWorldToLocal.Read(stream);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         plMessage::IMsgWrite(stream, mgr);
         fLocalToWorld.Write(stream);
         fWorldToLocal.Write(stream);

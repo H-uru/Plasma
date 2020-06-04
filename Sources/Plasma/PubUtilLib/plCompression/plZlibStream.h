@@ -70,9 +70,9 @@ public:
     plZlibStream();
     virtual ~plZlibStream();
 
-    bool     Open(const plFileName& filename, const char* mode) HS_OVERRIDE;
-    bool     Close() HS_OVERRIDE;
-    uint32_t Write(uint32_t byteCount, const void* buffer) HS_OVERRIDE;
+    bool     Open(const plFileName& filename, const char* mode) override;
+    bool     Close() override;
+    uint32_t Write(uint32_t byteCount, const void* buffer) override;
 
     // Since most functions don't check the return value from Write, you can
     // call this after you've passed in all your data to determine if it

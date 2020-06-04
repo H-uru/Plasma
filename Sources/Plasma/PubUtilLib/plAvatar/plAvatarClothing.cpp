@@ -914,7 +914,7 @@ void plClothingOutfit::WriteToVault(const TArray<plStateDataRecord*> & SDRs)
         &SDRs,
         &morphs,
     };
-    for (unsigned arrIdx = 0; arrIdx < arrsize(arrs); ++arrIdx) {
+    for (unsigned arrIdx = 0; arrIdx < std::size(arrs); ++arrIdx) {
         const TArray<plStateDataRecord*> * arr = arrs[arrIdx];
         
         // Write all SDL to to the outfit folder, reusing existing nodes and creating new ones as necessary

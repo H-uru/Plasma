@@ -82,8 +82,8 @@ public:
     plRefMsg& SetContext(uint8_t c) { fContext = c; return *this; }
     uint8_t   GetContext() { return fContext; }
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 
@@ -102,8 +102,8 @@ public:
     int8_t    fType;
     int32_t   fWhich;
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr) override;
+    void Write(hsStream* stream, hsResMgr* mgr) override;
 };
 
 #endif // plRefMsg_inc

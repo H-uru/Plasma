@@ -726,7 +726,7 @@ bool plSecureStream::GetSecureEncryptionKey(const plFileName& filename, uint32_t
     }
 
     // file doesn't exist, use default key
-    unsigned memSize = std::min(size_t(length), arrsize(plSecureStream::kDefaultKey));
+    unsigned memSize = std::min(size_t(length), std::size(plSecureStream::kDefaultKey));
     memSize *= sizeof(uint32_t);
     memcpy(key, plSecureStream::kDefaultKey, memSize);
 

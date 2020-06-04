@@ -62,7 +62,7 @@ public:
         Py_XINCREF(fPyObject);
     }
 
-    pyObjectRef(pyObjectRef&& move) HS_NOEXCEPT
+    pyObjectRef(pyObjectRef&& move) noexcept
         : fPyObject(move.fPyObject)
     {
         move.fPyObject = nullptr;
@@ -113,7 +113,7 @@ public:
         return *this;
     }
 
-    pyObjectRef& operator =(pyObjectRef&& rhs) HS_NOEXCEPT
+    pyObjectRef& operator =(pyObjectRef&& rhs) noexcept
     {
         Py_XDECREF(fPyObject);
         fPyObject = rhs.fPyObject;

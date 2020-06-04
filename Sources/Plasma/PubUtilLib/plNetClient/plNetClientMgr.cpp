@@ -920,7 +920,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     if (plNetCommAuthMsg * authMsg = plNetCommAuthMsg::ConvertNoRef(msg)) {
         if (IS_NET_ERROR(authMsg->result)) {
             char str[256];
-            StrPrintf(str, arrsize(str), "Authentication failed: %S", NetErrorToString(authMsg->result));
+            StrPrintf(str, std::size(str), "Authentication failed: %S", NetErrorToString(authMsg->result));
             QueueDisableNet(true, str);
             return false;   // @@@ TODO: Handle this failure better
         }
@@ -931,7 +931,7 @@ bool plNetClientMgr::MsgReceive( plMessage* msg )
     if (plNetCommActivePlayerMsg * activePlrMsg = plNetCommActivePlayerMsg::ConvertNoRef(msg)) {
         if (IS_NET_ERROR(activePlrMsg->result)) {
             char str[256];
-            StrPrintf(str, arrsize(str), "SetActivePlayer failed: %S", NetErrorToString(activePlrMsg->result));
+            StrPrintf(str, std::size(str), "SetActivePlayer failed: %S", NetErrorToString(activePlrMsg->result));
             QueueDisableNet(true, str);
             return false;   // @@@ TODO: Handle this failure better.
         }

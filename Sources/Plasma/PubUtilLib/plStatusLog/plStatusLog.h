@@ -163,7 +163,7 @@ class plStatusLog : public plLog
         bool AddLine(uint32_t color, const char* line);
         bool AddLine(const char* line) { return AddLine(kWhite, line); }
         bool AddLine(uint32_t color, const ST::string& line) { return AddLine(color, line.c_str()); }
-        bool AddLine(const ST::string& line) HS_OVERRIDE { return AddLine(line.c_str()); }
+        bool AddLine(const ST::string& line) override { return AddLine(line.c_str()); }
 
         template<typename... _Args>
         bool AddLineF(const char* format, _Args&&... args)

@@ -126,7 +126,7 @@ NORETURN void ErrorAssert(int line, const char* file, const char* fmt, ...)
     char msg[1024];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(msg, arrsize(msg), fmt, args);
+    vsnprintf(msg, std::size(msg), fmt, args);
 #if defined(HS_DEBUGGING)
 #if defined(_MSC_VER)
     if (s_GuiAsserts)
@@ -215,7 +215,7 @@ void DebugMsg(const char* fmt, ...)
     char msg[1024];
     va_list args;
     va_start(args, fmt);
-    vsnprintf(msg, arrsize(msg), fmt, args);
+    vsnprintf(msg, std::size(msg), fmt, args);
     fprintf(stderr, "%s\n", msg);
 
 #ifdef _MSC_VER
@@ -254,7 +254,7 @@ void hsStatusMessage(const char* message)
 void hsStatusMessageV(const char * fmt, va_list args)
 {
     char  buffer[2000];
-    vsnprintf(buffer, arrsize(buffer), fmt, args);
+    vsnprintf(buffer, std::size(buffer), fmt, args);
     hsStatusMessage(buffer);
 }
 

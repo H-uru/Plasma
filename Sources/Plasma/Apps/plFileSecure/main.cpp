@@ -77,7 +77,7 @@ void GenerateKey(bool useDefault)
     uint32_t key[4];
     if (useDefault)
     {
-        unsigned memSize = std::min(arrsize(key), arrsize(plSecureStream::kDefaultKey));
+        unsigned memSize = std::min(std::size(key), std::size(plSecureStream::kDefaultKey));
         memSize *= sizeof(uint32_t);
         memcpy(key, plSecureStream::kDefaultKey, memSize);
     }
@@ -103,7 +103,7 @@ void GenerateKey(bool useDefault)
 
     hsUNIXStream out;
     out.Open(plSecureStream::kKeyFilename, "wb");
-    out.Write(sizeof(uint32_t) * arrsize(key), (void*)key);
+    out.Write(sizeof(uint32_t) * std::size(key), (void*)key);
     out.Close();
 }
 
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
     else
     {
         uint32_t key[4];
-        plSecureStream::GetSecureEncryptionKey(plSecureStream::kKeyFilename, key, arrsize(key));
+        plSecureStream::GetSecureEncryptionKey(plSecureStream::kKeyFilename, key, std::size(key));
         SecureFiles(directory, ext, key);
     }
     return 0;

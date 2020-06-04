@@ -626,7 +626,7 @@ void CliGkConn::TimerPing () {
         reinterpret_cast<uintptr_t>(nullptr)
     };
 
-    Send(msg, arrsize(msg));
+    Send(msg, std::size(msg));
 }
 
 //============================================================================
@@ -745,7 +745,7 @@ bool PingRequestTrans::Send () {
         (uintptr_t)  m_payload.Ptr(),
     };
     
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -810,7 +810,7 @@ bool FileSrvIpAddressRequestTrans::Send () {
                         (uintptr_t)(m_isPatcher == true ? 1 : 0)
     };
     
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -868,7 +868,7 @@ bool AuthSrvIpAddressRequestTrans::Send () {
                         m_transId,
     };
     
-    m_conn->Send(msg, arrsize(msg));
+    m_conn->Send(msg, std::size(msg));
     
     return true;
 }
@@ -947,8 +947,8 @@ void GateKeeperInitialize () {
     NetMsgProtocolRegister(
         kNetProtocolCli2GateKeeper,
         false,
-        s_send, arrsize(s_send),
-        s_recv, arrsize(s_recv),
+        s_send, std::size(s_send),
+        s_recv, std::size(s_recv),
         kGateKeeperDhGValue,
         plBigNum(sizeof(kGateKeeperDhXData), kGateKeeperDhXData),
         plBigNum(sizeof(kGateKeeperDhNData), kGateKeeperDhNData)

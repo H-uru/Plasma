@@ -95,8 +95,8 @@ public:
     CLASSNAME_REGISTER(plCreatableStream);
     GETINTERFACE_ANY(plCreatableStream, plCreatable);
 
-    void Read(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
-    void Write(hsStream* stream, hsResMgr* mgr=nullptr) HS_OVERRIDE;
+    void Read(hsStream* stream, hsResMgr* mgr=nullptr) override;
+    void Write(hsStream* stream, hsResMgr* mgr=nullptr) override;
 
     hsStream* GetStream() { return &fStream;}
 };

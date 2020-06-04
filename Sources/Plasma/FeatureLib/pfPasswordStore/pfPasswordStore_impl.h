@@ -56,8 +56,8 @@ private:
 public:
     pfFilePasswordStore();
 
-    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
-    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 
 
@@ -70,8 +70,8 @@ class pfWin32PasswordStore : public pfPasswordStore
 public:
     pfWin32PasswordStore() { }
 
-    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
-    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 #endif //HS_BUILD_FOR_WIN32
 
@@ -84,8 +84,8 @@ class pfUnixPasswordStore : public pfPasswordStore
 public:
     pfUnixPasswordStore() { }
 
-    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
-    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 #endif // HAVE_LIBSECRET
 
@@ -98,8 +98,8 @@ class pfMacPasswordStore : public pfPasswordStore
 public:
     pfMacPasswordStore() { }
 
-    ST::string GetPassword(const ST::string& username) HS_OVERRIDE;
-    bool SetPassword(const ST::string& username, const ST::string& password) HS_OVERRIDE;
+    ST::string GetPassword(const ST::string& username) override;
+    bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
 #endif //HS_BUILD_FOR_OSX
 

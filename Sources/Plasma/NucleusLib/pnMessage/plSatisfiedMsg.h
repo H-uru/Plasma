@@ -54,10 +54,10 @@ public:
     CLASSNAME_REGISTER(plSatisfiedMsg);
     GETINTERFACE_ANY(plSatisfiedMsg, plMessage);
 
-    void Read(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Read(hsStream* stream, hsResMgr* mgr) override {
         IMsgRead(stream, mgr);
     }
-    void Write(hsStream* stream, hsResMgr* mgr) HS_OVERRIDE {
+    void Write(hsStream* stream, hsResMgr* mgr) override {
         IMsgWrite(stream, mgr);
     }
 
