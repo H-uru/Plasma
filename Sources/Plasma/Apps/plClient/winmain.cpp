@@ -380,7 +380,7 @@ void InitNetClientComm()
     NetCommStartup();
 }
 
-BOOL CALLBACK AuthDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK AuthDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     static bool* cancelled = NULL;
 
@@ -405,7 +405,7 @@ BOOL CALLBACK AuthDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lPa
         return FALSE;
 
     case WM_NCHITTEST:
-        SetWindowLongPtr(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
 
     case WM_DESTROY:
@@ -531,7 +531,7 @@ static void AuthFailedStrings (ENetError authError,
 }
 
 
-BOOL CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     switch( uMsg )
     {
@@ -561,14 +561,14 @@ BOOL CALLBACK AuthFailedDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPAR
             return TRUE;
 
         case WM_NCHITTEST:
-            SetWindowLongPtr(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+            SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
             return TRUE;
 
     }
     return FALSE;
 }
 
-BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     switch( uMsg )
     {
@@ -603,7 +603,7 @@ BOOL CALLBACK UruTOSDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         break;
 
     case WM_NCHITTEST:
-        SetWindowLongPtr(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
     }
     return FALSE;
@@ -709,7 +709,7 @@ static size_t CurlCallback(void *buffer, size_t size, size_t nmemb, void *param)
     return size * nmemb;
 }
 
-BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     static LoginDialogParam* pLoginParam;
     static bool showAuthFailed = false;
@@ -796,7 +796,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     
         case WM_NCHITTEST:
         {
-            SetWindowLongPtr(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+            SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
             return TRUE;
         }
     
@@ -895,7 +895,7 @@ BOOL CALLBACK UruLoginDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM
     return FALSE;
 }
 
-BOOL CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     switch (uMsg)
     {
@@ -928,7 +928,7 @@ BOOL CALLBACK SplashDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lP
     return 0;
 }
 
-BOOL CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
+INT_PTR CALLBACK ExceptionDialogProc( HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
     static char *sLastMsg = nil;
 

@@ -117,7 +117,7 @@ static inline void IShowMarquee(bool marquee=true)
     PostMessageW(GetDlgItem(s_dialog, IDC_MARQUEE), PBM_SETMARQUEE, static_cast<WPARAM>(marquee), 0);
 }
 
-BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
+INT_PTR CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     // NT6 Taskbar Majick
     if (uMsg == s_taskbarCreated) {
@@ -144,7 +144,7 @@ BOOL CALLBACK PatcherDialogProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
         s_dialog = nullptr;
         break;
     case WM_NCHITTEST:
-        SetWindowLongW(hwndDlg, DWL_MSGRESULT, (LONG_PTR)HTCAPTION);
+        SetWindowLongPtr(hwndDlg, DWLP_MSGRESULT, (LONG_PTR)HTCAPTION);
         return TRUE;
     case WM_QUIT:
         s_launcher.ShutdownNetCore();
