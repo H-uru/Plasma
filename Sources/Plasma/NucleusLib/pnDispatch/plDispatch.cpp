@@ -299,7 +299,7 @@ void plDispatch::IMsgDispatch()
         {
             fMsgWatch.Remove(watchIdx);
 #if HS_BUILD_FOR_WIN32
-            __asm { int 3 }
+            __debugbreak();
 #endif // HS_BUILD_FOR_WIN32
         }
 #endif // HS_DEBUGGING
