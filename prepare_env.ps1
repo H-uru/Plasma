@@ -1,11 +1,13 @@
+param([string]$builddir='build')
+
 $devlibs_url = "https://github.com/H-uru/PlasmaPrefix/releases/download/2020.05.01/devlibs.zip"
 
-if (!(Test-Path -PathType Container build)) {
-    Write-Host "Creating build folder... " -noNewLine
-    New-Item -ItemType directory build | Out-Null
+if (!(Test-Path -PathType Container $builddir)) {
+    Write-Host "Creating build folder at .\$builddir... " -noNewLine
+    New-Item -ItemType directory $builddir | Out-Null
     Write-Host "OK" -foregroundColor Green
 }
-Set-Location build
+Set-Location $builddir
 $path = (Get-Location).Path
 
 if (!(Test-Path -PathType Container devlibs)) {
