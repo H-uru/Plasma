@@ -46,124 +46,102 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plInterestingPing.h"
-
-REGISTER_CREATABLE( plInterestingModMsg );
-REGISTER_CREATABLE( plInterestingPing );
+REGISTER_CREATABLE(plInterestingModMsg);
+REGISTER_CREATABLE(plInterestingPing);
 
 #include "plLayRefMsg.h"
-
-REGISTER_CREATABLE( plLayRefMsg );
+REGISTER_CREATABLE(plLayRefMsg);
 
 #include "plMatRefMsg.h"
-
-REGISTER_CREATABLE( plMatRefMsg );
+REGISTER_CREATABLE(plMatRefMsg);
 
 #include "plMeshRefMsg.h"
-
-REGISTER_CREATABLE( plMeshRefMsg );
+REGISTER_CREATABLE(plMeshRefMsg);
 
 #include "plLOSRequestMsg.h"
-
-REGISTER_CREATABLE( plLOSRequestMsg );
+REGISTER_CREATABLE(plLOSRequestMsg);
 
 #include "plLOSHitMsg.h"
-
-REGISTER_CREATABLE( plLOSHitMsg );
+REGISTER_CREATABLE(plLOSHitMsg);
 
 #include "plActivatorMsg.h"
-
-REGISTER_CREATABLE( plActivatorMsg );
+REGISTER_CREATABLE(plActivatorMsg);
 
 #include "plCondRefMsg.h"
-
-REGISTER_CREATABLE( plCondRefMsg );
+REGISTER_CREATABLE(plCondRefMsg);
 
 #include "plAnimCmdMsg.h"
-
-REGISTER_CREATABLE( plAnimCmdMsg );
-REGISTER_CREATABLE( plAGCmdMsg );
-REGISTER_CREATABLE( plAGInstanceCallbackMsg );
-REGISTER_CREATABLE( plAGDetachCallbackMsg );
+REGISTER_CREATABLE(plAnimCmdMsg);
+REGISTER_CREATABLE(plAGCmdMsg);
+REGISTER_CREATABLE(plAGInstanceCallbackMsg);
+REGISTER_CREATABLE(plAGDetachCallbackMsg);
 
 #include "plParticleUpdateMsg.h"
-
-REGISTER_CREATABLE( plParticleUpdateMsg );
-REGISTER_CREATABLE( plParticleTransferMsg );
-REGISTER_CREATABLE( plParticleKillMsg );
-REGISTER_CREATABLE( plParticleFlockMsg );
+REGISTER_CREATABLE(plParticleUpdateMsg);
+REGISTER_CREATABLE(plParticleTransferMsg);
+REGISTER_CREATABLE(plParticleKillMsg);
+REGISTER_CREATABLE(plParticleFlockMsg);
 
 #include "plInputEventMsg.h"
-
-REGISTER_CREATABLE( plInputEventMsg );
-REGISTER_CREATABLE( plControlEventMsg );
-REGISTER_CREATABLE( plKeyEventMsg );
-REGISTER_CREATABLE( plDebugKeyEventMsg );
-REGISTER_CREATABLE( plMouseEventMsg );
-REGISTER_CREATABLE( plIMouseXEventMsg );
-REGISTER_CREATABLE( plIMouseYEventMsg );
-REGISTER_CREATABLE( plIMouseBEventMsg );
-REGISTER_CREATABLE( plAvatarInputStateMsg );
+REGISTER_CREATABLE(plInputEventMsg);
+REGISTER_CREATABLE(plControlEventMsg);
+REGISTER_CREATABLE(plKeyEventMsg);
+REGISTER_CREATABLE(plDebugKeyEventMsg);
+REGISTER_CREATABLE(plMouseEventMsg);
+REGISTER_CREATABLE(plIMouseXEventMsg);
+REGISTER_CREATABLE(plIMouseYEventMsg);
+REGISTER_CREATABLE(plIMouseBEventMsg);
+REGISTER_CREATABLE(plAvatarInputStateMsg);
 
 #include "plPickedMsg.h"
-
-REGISTER_CREATABLE( plPickedMsg );
+REGISTER_CREATABLE(plPickedMsg);
 
 #include "plCollideMsg.h"
-
-REGISTER_CREATABLE( plCollideMsg );
+REGISTER_CREATABLE(plCollideMsg);
 
 #include "plMatrixUpdateMsg.h"
-
-REGISTER_CREATABLE( plMatrixUpdateMsg );
+REGISTER_CREATABLE(plMatrixUpdateMsg);
 
 #include "plRenderMsg.h"
-
-REGISTER_CREATABLE( plRenderMsg );
-REGISTER_CREATABLE( plPreResourceMsg );
+REGISTER_CREATABLE(plRenderMsg);
+REGISTER_CREATABLE(plPreResourceMsg);
 
 #include "plTimerCallbackMsg.h"
-
-REGISTER_CREATABLE( plTimerCallbackMsg );
+REGISTER_CREATABLE(plTimerCallbackMsg);
 
 #include "plSpawnModMsg.h"
-
-REGISTER_CREATABLE( plSpawnModMsg );
+REGISTER_CREATABLE(plSpawnModMsg);
 
 #include "plSpawnRequestMsg.h"
-
-REGISTER_CREATABLE( plSpawnRequestMsg );
+REGISTER_CREATABLE(plSpawnRequestMsg);
 
 #include "plNodeCleanupMsg.h"
-
-REGISTER_CREATABLE( plNodeCleanupMsg );
+REGISTER_CREATABLE(plNodeCleanupMsg);
 
 #include "plDeviceRecreateMsg.h"
-
-REGISTER_CREATABLE( plDeviceRecreateMsg );
+REGISTER_CREATABLE(plDeviceRecreateMsg);
 
 #include "plLightRefMsg.h"
-
-REGISTER_CREATABLE( plLightRefMsg );
+REGISTER_CREATABLE(plLightRefMsg);
 
 #include "plSimStateMsg.h"
-
-// REGISTER_CREATABLE( plSimStateMsg );
-// REGISTER_CREATABLE( plFreezeMsg );
-// REGISTER_CREATABLE( plEventGroupMsg );
-// REGISTER_CREATABLE( plEventGroupEnableMsg );
-// REGISTER_CREATABLE( plSuspendEventMsg );
-REGISTER_CREATABLE( plSubWorldMsg );
+// REGISTER_CREATABLE(plSimStateMsg);
+// REGISTER_CREATABLE(plFreezeMsg);
+// REGISTER_CREATABLE(plEventGroupMsg);
+// REGISTER_CREATABLE(plEventGroupEnableMsg);
+// REGISTER_CREATABLE(plSuspendEventMsg);
+REGISTER_CREATABLE(plSubWorldMsg);
 
 #include "plLinearVelocityMsg.h"
-REGISTER_CREATABLE( plLinearVelocityMsg );
+REGISTER_CREATABLE(plLinearVelocityMsg);
 
 #include "plAngularVelocityMsg.h"
-REGISTER_CREATABLE( plAngularVelocityMsg );
+REGISTER_CREATABLE(plAngularVelocityMsg);
 
 #include "plRenderRequestMsg.h"
 
-REGISTER_CREATABLE( plRenderRequestMsg );
-REGISTER_CREATABLE( plRenderRequestAck );
+REGISTER_CREATABLE(plRenderRequestMsg);
+REGISTER_CREATABLE(plRenderRequestAck);
 
 #include "plLinkToAgeMsg.h"
 REGISTER_CREATABLE(plLinkToAgeMsg);
@@ -198,33 +176,33 @@ REGISTER_CREATABLE(plResponderMsg);
 REGISTER_CREATABLE(plOneShotMsg);
 
 #include "plTriggerMsg.h"
-REGISTER_CREATABLE( plTriggerMsg );
+REGISTER_CREATABLE(plTriggerMsg);
 
 #ifndef NO_AV_MSGS
 #include "plAvatarMsg.h"
-REGISTER_CREATABLE( plAvatarMsg );
-REGISTER_CREATABLE( plArmatureUpdateMsg );
-REGISTER_CREATABLE( plAvatarSetTypeMsg );
-REGISTER_CREATABLE( plAvTaskMsg );
-REGISTER_CREATABLE( plAvSeekMsg );
-REGISTER_CREATABLE( plAvOneShotMsg );
-REGISTER_CREATABLE( plAvBrainGenericMsg );
+REGISTER_CREATABLE(plAvatarMsg);
+REGISTER_CREATABLE(plArmatureUpdateMsg);
+REGISTER_CREATABLE(plAvatarSetTypeMsg);
+REGISTER_CREATABLE(plAvTaskMsg);
+REGISTER_CREATABLE(plAvSeekMsg);
+REGISTER_CREATABLE(plAvOneShotMsg);
+REGISTER_CREATABLE(plAvBrainGenericMsg);
 
 #ifndef SERVER
-REGISTER_CREATABLE( plAvPushBrainMsg );
-REGISTER_CREATABLE( plAvPopBrainMsg );
+REGISTER_CREATABLE(plAvPushBrainMsg);
+REGISTER_CREATABLE(plAvPopBrainMsg);
 #endif // ndef SERVER
 
-REGISTER_CREATABLE( plAvatarStealthModeMsg );
-REGISTER_CREATABLE( plAvatarBehaviorNotifyMsg );
-REGISTER_CREATABLE( plAvatarOpacityCallbackMsg );
-REGISTER_CREATABLE( plAvTaskSeekDoneMsg );
-REGISTER_CREATABLE( plAvatarSpawnNotifyMsg );
-REGISTER_CREATABLE( plAvatarPhysicsEnableCallbackMsg );
+REGISTER_CREATABLE(plAvatarStealthModeMsg);
+REGISTER_CREATABLE(plAvatarBehaviorNotifyMsg);
+REGISTER_CREATABLE(plAvatarOpacityCallbackMsg);
+REGISTER_CREATABLE(plAvTaskSeekDoneMsg);
+REGISTER_CREATABLE(plAvatarSpawnNotifyMsg);
+REGISTER_CREATABLE(plAvatarPhysicsEnableCallbackMsg);
 #endif // ndef NO_AV_MSGS
 
 #include "plMultistageMsg.h"
-REGISTER_CREATABLE( plMultistageModMsg );
+REGISTER_CREATABLE(plMultistageModMsg);
 
 #include "plExcludeRegionMsg.h"
 REGISTER_CREATABLE(plExcludeRegionMsg);
@@ -364,6 +342,4 @@ REGISTER_CREATABLE(plAvCoopMsg);
 #endif // ndef SERVER
 #endif // ndef NO_AV_MSGS
 
-
 #endif // plMessageCreatable_inc
-

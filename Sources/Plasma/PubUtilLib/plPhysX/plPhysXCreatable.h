@@ -45,7 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plPXPhysical.h"
-
 REGISTER_CREATABLE(plPXPhysical);
 
 #include "plPXSubWorld.h"
@@ -60,15 +59,13 @@ REGISTER_CREATABLE(plPXSubWorld);
 //REGISTER_CREATABLE(plStrongSpringConstraintMod);
 //REGISTER_CREATABLE(plWheelConstraintMod);
 
-
 #include "plLOSDispatch.h"
-REGISTER_CREATABLE( plLOSDispatch );
+REGISTER_CREATABLE(plLOSDispatch);
 
 #include "plSimulationMgr.h"
-REGISTER_CREATABLE( plSimulationMgr );
+REGISTER_CREATABLE(plSimulationMgr);
 
 //#include "plVehicleModifier.h"
 //REGISTER_CREATABLE(plVehicleModifier);
-
 
 #endif // plPhysXCreatable_inc

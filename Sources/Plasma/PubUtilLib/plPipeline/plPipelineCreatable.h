@@ -58,27 +58,22 @@ REGISTER_NONCREATABLE(pl3DPipeline);
 #endif
 
 #include "plFogEnvironment.h"
-
-REGISTER_CREATABLE( plFogEnvironment );
+REGISTER_CREATABLE(plFogEnvironment);
 
 #include "plRenderTarget.h"
-
-REGISTER_CREATABLE( plRenderTarget );
+REGISTER_CREATABLE(plRenderTarget);
 
 #include "plCubicRenderTarget.h"
-
-REGISTER_CREATABLE( plCubicRenderTarget );
+REGISTER_CREATABLE(plCubicRenderTarget);
 
 #include "plCubicRenderTargetModifier.h"
-
-REGISTER_CREATABLE( plCubicRenderTargetModifier );
+REGISTER_CREATABLE(plCubicRenderTargetModifier);
 
 #include "plTransitionMgr.h"
-
-REGISTER_CREATABLE( plTransitionMgr );
+REGISTER_CREATABLE(plTransitionMgr);
 
 #include "plDynamicEnvMap.h"
-REGISTER_CREATABLE( plDynamicEnvMap );
-REGISTER_CREATABLE( plDynamicCamMap );
+REGISTER_CREATABLE(plDynamicEnvMap);
+REGISTER_CREATABLE(plDynamicCamMap);
 
 #endif // plPipelineCreatable_inc

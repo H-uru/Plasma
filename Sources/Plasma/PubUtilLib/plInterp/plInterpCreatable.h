@@ -46,24 +46,20 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plController.h"
-
-REGISTER_NONCREATABLE( plController );
-REGISTER_CREATABLE( plLeafController );
-REGISTER_CREATABLE( plCompoundController );
+REGISTER_NONCREATABLE(plController);
+REGISTER_CREATABLE(plLeafController);
+REGISTER_CREATABLE(plCompoundController);
 
 #include "plAnimTimeConvert.h"
-
-REGISTER_CREATABLE( plAnimTimeConvert );
-REGISTER_NONCREATABLE( plATCEaseCurve );
-REGISTER_CREATABLE( plConstAccelEaseCurve );
-REGISTER_CREATABLE( plSplineEaseCurve );
+REGISTER_CREATABLE(plAnimTimeConvert);
+REGISTER_NONCREATABLE(plATCEaseCurve);
+REGISTER_CREATABLE(plConstAccelEaseCurve);
+REGISTER_CREATABLE(plSplineEaseCurve);
 
 #include "plAnimPath.h"
-
-REGISTER_CREATABLE( plAnimPath );
+REGISTER_CREATABLE(plAnimPath);
 
 #include "plModulator.h"
-
-REGISTER_CREATABLE( plModulator );
+REGISTER_CREATABLE(plModulator);
 
 #endif // plInterpCreatable_inc

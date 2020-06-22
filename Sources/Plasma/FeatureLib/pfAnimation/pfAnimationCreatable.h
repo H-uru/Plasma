@@ -46,43 +46,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plViewFaceModifier.h"
-
-REGISTER_CREATABLE( plViewFaceModifier );
+REGISTER_CREATABLE(plViewFaceModifier);
 
 #include "plLineFollowMod.h"
-
-REGISTER_CREATABLE( plLineFollowMod );
-REGISTER_CREATABLE( plRailCameraMod );
+REGISTER_CREATABLE(plLineFollowMod);
+REGISTER_CREATABLE(plRailCameraMod);
 
 #include "plLightModifier.h"
-
-REGISTER_CREATABLE( plLightModifier );
-REGISTER_CREATABLE( plOmniModifier );
-REGISTER_CREATABLE( plSpotModifier );
-REGISTER_CREATABLE( plLtdDirModifier );
+REGISTER_CREATABLE(plLightModifier);
+REGISTER_CREATABLE(plOmniModifier);
+REGISTER_CREATABLE(plSpotModifier);
+REGISTER_CREATABLE(plLtdDirModifier);
 
 #include "plRandomCommandMod.h"
-
-REGISTER_NONCREATABLE( plRandomCommandMod );
+REGISTER_NONCREATABLE(plRandomCommandMod);
 
 #include "plFollowMod.h"
-
-REGISTER_CREATABLE( plFollowMod );
+REGISTER_CREATABLE(plFollowMod);
 
 #include "plBlower.h"
-
-REGISTER_CREATABLE( plBlower );
+REGISTER_CREATABLE(plBlower);
 
 #include "plFilterCoordInterface.h"
-
-REGISTER_CREATABLE( plFilterCoordInterface );
+REGISTER_CREATABLE(plFilterCoordInterface);
 
 #include "plStereizer.h"
-
-REGISTER_CREATABLE( plStereizer );
+REGISTER_CREATABLE(plStereizer);
 
 #include "pfObjectFlocker.h"
-
-REGISTER_CREATABLE( pfObjectFlocker );
+REGISTER_CREATABLE(pfObjectFlocker);
 
 #endif // pfAnimationCreatable_inc

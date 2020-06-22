@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plSoundBuffer.h"
-
-REGISTER_CREATABLE( plSoundBuffer );
+REGISTER_CREATABLE(plSoundBuffer);
 
 #endif // plAudioCoreCreatable_inc

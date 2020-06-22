@@ -46,54 +46,40 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plVolumeIsect.h"
-
-REGISTER_NONCREATABLE( plVolumeIsect );
-
-REGISTER_CREATABLE( plSphereIsect );
-REGISTER_CREATABLE( plConeIsect );
-REGISTER_CREATABLE( plCylinderIsect );
-REGISTER_CREATABLE( plParallelIsect );
-REGISTER_CREATABLE( plConvexIsect );
-
-REGISTER_CREATABLE( plBoundsIsect );
-
-REGISTER_NONCREATABLE( plComplexIsect );
-
-REGISTER_CREATABLE( plUnionIsect );
-REGISTER_CREATABLE( plIntersectionIsect );
+REGISTER_NONCREATABLE(plVolumeIsect);
+REGISTER_CREATABLE(plSphereIsect);
+REGISTER_CREATABLE(plConeIsect);
+REGISTER_CREATABLE(plCylinderIsect);
+REGISTER_CREATABLE(plParallelIsect);
+REGISTER_CREATABLE(plConvexIsect);
+REGISTER_CREATABLE(plBoundsIsect);
+REGISTER_NONCREATABLE(plComplexIsect);
+REGISTER_CREATABLE(plUnionIsect);
+REGISTER_CREATABLE(plIntersectionIsect);
 
 #include "plRegionBase.h"
-
-REGISTER_NONCREATABLE( plRegionBase );
+REGISTER_NONCREATABLE(plRegionBase);
 
 #include "plSoftVolume.h"
-
-REGISTER_NONCREATABLE( plSoftVolume );
+REGISTER_NONCREATABLE(plSoftVolume);
 
 #include "plSoftVolumeTypes.h"
-
-REGISTER_CREATABLE( plSoftVolumeSimple );
-
-REGISTER_NONCREATABLE( plSoftVolumeComplex );
-
-REGISTER_CREATABLE( plSoftVolumeUnion );
-REGISTER_CREATABLE( plSoftVolumeIntersect );
-REGISTER_CREATABLE( plSoftVolumeInvert );
+REGISTER_CREATABLE(plSoftVolumeSimple);
+REGISTER_NONCREATABLE(plSoftVolumeComplex);
+REGISTER_CREATABLE(plSoftVolumeUnion);
+REGISTER_CREATABLE(plSoftVolumeIntersect);
+REGISTER_CREATABLE(plSoftVolumeInvert);
 
 #include "plHardRegion.h"
-
-REGISTER_NONCREATABLE( plHardRegion );
+REGISTER_NONCREATABLE(plHardRegion);
 
 #include "plHardRegionPlanes.h"
-
-REGISTER_CREATABLE( plHardRegionPlanes );
+REGISTER_CREATABLE(plHardRegionPlanes);
 
 #include "plHardRegionTypes.h"
-
-REGISTER_NONCREATABLE( plHardRegionComplex );
-
-REGISTER_CREATABLE( plHardRegionUnion );
-REGISTER_CREATABLE( plHardRegionIntersect );
-REGISTER_CREATABLE( plHardRegionInvert );
+REGISTER_NONCREATABLE(plHardRegionComplex);
+REGISTER_CREATABLE(plHardRegionUnion);
+REGISTER_CREATABLE(plHardRegionIntersect);
+REGISTER_CREATABLE(plHardRegionInvert);
 
 #endif // plIntersectCreatable_inc

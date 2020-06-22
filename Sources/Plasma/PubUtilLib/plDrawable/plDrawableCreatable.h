@@ -46,93 +46,71 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plDrawableSpans.h"
-
-REGISTER_CREATABLE( plDrawableSpans );
+REGISTER_CREATABLE(plDrawableSpans);
 
 #include "plSpaceTree.h"
-
-REGISTER_CREATABLE( plSpaceTree );
+REGISTER_CREATABLE(plSpaceTree);
 
 #include "plSharedMesh.h"
-
-REGISTER_CREATABLE( plSharedMesh );
-REGISTER_CREATABLE( plSharedMeshBCMsg );
+REGISTER_CREATABLE(plSharedMesh);
+REGISTER_CREATABLE(plSharedMeshBCMsg);
 
 #include "plInstanceDrawInterface.h"
-
-REGISTER_CREATABLE( plInstanceDrawInterface );
+REGISTER_CREATABLE(plInstanceDrawInterface);
 
 #include "plDynaDecalMgr.h"
-
-REGISTER_NONCREATABLE( plDynaDecalMgr );
+REGISTER_NONCREATABLE(plDynaDecalMgr);
 
 #include "plDynaFootMgr.h"
-
-REGISTER_CREATABLE( plDynaFootMgr );
+REGISTER_CREATABLE(plDynaFootMgr);
 
 #include "plDynaRippleMgr.h"
-
-REGISTER_CREATABLE( plDynaRippleMgr );
+REGISTER_CREATABLE(plDynaRippleMgr);
 
 #include "plDynaBulletMgr.h"
-
-REGISTER_CREATABLE( plDynaBulletMgr );
+REGISTER_CREATABLE(plDynaBulletMgr);
 
 #include "plDynaPuddleMgr.h"
-
-REGISTER_CREATABLE( plDynaPuddleMgr );
+REGISTER_CREATABLE(plDynaPuddleMgr);
 
 #include "plDynaTorpedoMgr.h"
-
-REGISTER_CREATABLE( plDynaTorpedoMgr );
+REGISTER_CREATABLE(plDynaTorpedoMgr);
 
 #include "plDynaTorpedoVSMgr.h"
-
-REGISTER_CREATABLE( plDynaTorpedoVSMgr );
+REGISTER_CREATABLE(plDynaTorpedoVSMgr);
 
 #include "plDynaWakeMgr.h"
-
-REGISTER_CREATABLE( plDynaWakeMgr );
+REGISTER_CREATABLE(plDynaWakeMgr);
 
 #include "plCutter.h"
-
-REGISTER_CREATABLE( plCutter );
+REGISTER_CREATABLE(plCutter);
 
 #include "plPrintShape.h"
-
-REGISTER_CREATABLE( plPrintShape );
+REGISTER_CREATABLE(plPrintShape);
 
 #include "plActivePrintShape.h"
-
-REGISTER_CREATABLE( plActivePrintShape );
+REGISTER_CREATABLE(plActivePrintShape);
 
 #include "plWaveSetBase.h"
-
-REGISTER_NONCREATABLE( plWaveSetBase );
+REGISTER_NONCREATABLE(plWaveSetBase);
 
 #include "plWaveSet7.h"
-
-REGISTER_CREATABLE( plWaveSet7 );
+REGISTER_CREATABLE(plWaveSet7);
 
 #include "plMorphSequence.h"
-
-REGISTER_CREATABLE( plMorphSequence );
-REGISTER_CREATABLE( plMorphDataSet );
+REGISTER_CREATABLE(plMorphSequence);
+REGISTER_CREATABLE(plMorphDataSet);
 
 #include "plMorphSequenceSDLMod.h"
-
-REGISTER_CREATABLE( plMorphSequenceSDLMod );
+REGISTER_CREATABLE(plMorphSequenceSDLMod);
 
 #include "plMorphDelta.h"
-
-REGISTER_CREATABLE( plMorphDelta );
+REGISTER_CREATABLE(plMorphDelta);
 
 #include "plDynaRippleVSMgr.h"
-
-REGISTER_CREATABLE( plDynaRippleVSMgr );
+REGISTER_CREATABLE(plDynaRippleVSMgr);
 
 #include "plClusterGroup.h"
-
-REGISTER_CREATABLE( plClusterGroup );
+REGISTER_CREATABLE(plClusterGroup);
 
 #endif // plDrawableCreatable_inc
