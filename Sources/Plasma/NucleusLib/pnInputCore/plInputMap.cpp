@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// plInputDevice.cpp
+// plInputMap.cpp
 #include <string>
 
 #include "plInputMap.h"
@@ -728,6 +728,7 @@ void plKeyMap::ICheckAndBindDupe(plKeyDef origKey, plKeyDef dupeKey)
 
 Win32keyConvert plKeyMap::fKeyConversionEnglish[] =
 { 
+#ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    "F1"}, 
     { VK_F2,    "F2"}, 
     { VK_F3,    "F3"}, 
@@ -786,12 +787,14 @@ Win32keyConvert plKeyMap::fKeyConversionEnglish[] =
     { VK_OEM_5,     "Backslash"},   
     { VK_OEM_6,     "RightBracket"},
     { VK_OEM_7,     "Quote"},
+#endif
                 
     { 0xffffffff,   "Unused"},
 };
 
 Win32keyConvert  plKeyMap::fKeyConversionFrench[] =
 {
+#ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    "F1"}, 
     { VK_F2,    "F2"}, 
     { VK_F3,    "F3"}, 
@@ -850,12 +853,14 @@ Win32keyConvert  plKeyMap::fKeyConversionFrench[] =
     { VK_OEM_5,     "BarreInverse"},    
     { VK_OEM_6,     "ParenthèseD"},
     { VK_OEM_7,     "Guillemet"},
+#endif
                 
     { 0xffffffff,   "Unused"},
 };
 
 Win32keyConvert  plKeyMap::fKeyConversionGerman[] =
 {
+#ifdef HS_BUILD_FOR_WIN32
     { VK_F1,    "F1"}, 
     { VK_F2,    "F2"}, 
     { VK_F3,    "F3"}, 
@@ -914,6 +919,7 @@ Win32keyConvert  plKeyMap::fKeyConversionGerman[] =
     { VK_OEM_5,     "Backslash"},   
     { VK_OEM_6,     "Akzent"},
     { VK_OEM_7,     "Ä"},
+#endif
                 
     { 0xffffffff,   "Unused"},
 };

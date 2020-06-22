@@ -39,66 +39,66 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-#ifndef plOSMsg_inc
-#define plOSMsg_inc
+// plDInputManager.h
 
+#ifndef PL_DINPUT_MANAGER_H
+#define PL_DINPUT_MANAGER_H
 
+#include "HeadSpin.h"
+#include "hsTemplates.h"
+#include "hsWindows.h"
 
-//
-// This enum wraps all of the OS messages
-// that we care about for this particular
-// platform - add as necessary...
-//
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
 
-// for Win32:
-#ifdef HS_BUILD_FOR_WIN32
+class plDInputDevice;
+class plMessage;
 
-#include "hsWindows.h" // FIXME: This gives me a sad
-
-enum plOSMsg
+struct plDIDevice
 {
-    KEYDOWN         = WM_KEYDOWN,
-    KEYUP           = WM_KEYUP,
-    MOUSEMOVE       = WM_MOUSEMOVE,
-    L_BUTTONDN      = WM_LBUTTONDOWN,
-    L_BUTTONUP      = WM_LBUTTONUP,
-    R_BUTTONDN      = WM_RBUTTONDOWN,
-    R_BUTTONUP      = WM_RBUTTONUP,
-    MOUSEWHEEL      = 0x020A,
-    L_BUTTONDBLCLK  = WM_LBUTTONDBLCLK,
-    R_BUTTONDBLCLK  = WM_RBUTTONDBLCLK,
-    SYSKEYDOWN      = WM_SYSKEYDOWN,
-    SYSKEYUP        = WM_SYSKEYUP,
-    M_BUTTONDN      = WM_MBUTTONDOWN,
-    M_BUTTONUP      = WM_MBUTTONUP,
-    CHAR_MSG        = WM_CHAR,
+    plDIDevice() : fDevice(nil), fCaps(nil) { }
+    plDIDevice(IDirectInputDevice8* _device) : fCaps(nil) { fDevice = _device;}
+    IDirectInputDevice8*    fDevice;
+    DIDEVCAPS*              fCaps;
 };
 
-#else
-
-enum plOSMsg { };
-
-#endif
-
-
-//
-// generic structure that we can use to describe
-// the state of the mouse on any platform.
-//
-//
-
-struct plMouseState
+struct plDInput
 {
-    enum
-    {
-        kLeftButton     =   0x0001,
-        kRightButton    =   0x0002,
-        kMiddleButton   =   0x0004, 
-    };
-    float   fX;
-    float   fY;
-    uint32_t  fButtonState;
+    plDInput() :
+    fDInput(nil),
+    fActionFormat(nil)
+    { }
+    IDirectInput8*          fDInput; 
+    hsTArray<plDIDevice*>   fSticks;
+    DIACTIONFORMAT*         fActionFormat;
 };
 
+class plDInputMgr
+{
+public:
+    plDInputMgr();
+    ~plDInputMgr();
 
-#endif // plOSMsg 
+    void Init(HINSTANCE hInst, HWND hWnd);
+    void Update();
+    void AddDevice(IDirectInputDevice8* device);
+    void ConfigureDevice();
+    virtual bool MsgReceive(plMessage* msg);
+
+    // dinput callback functions
+    static int __stdcall EnumGamepadCallback(const DIDEVICEINSTANCE* device, void* pRef);
+// I should be using these but they don't work...
+//  static int __stdcall SetAxisRange(const DIDEVICEOBJECTINSTANCE* obj, void* pRef);
+//  static int __stdcall EnumSuitableDevices(const struct DIDEVICEINSTANCEA* devInst, struct IDirectInputDevice8* dev, unsigned long why, unsigned long devRemaining, void* pRef);
+
+protected:
+    plDInput*                   fDI;
+    hsTArray<plDInputDevice*>   fInputDevice;
+    static DIACTION             fActionMap[];
+    HWND                        fhWnd;
+};
+
+// {049DE53E-23A2-4d43-BF68-36AC1B57E357}
+static const GUID PL_ACTION_GUID = { 0x49de53e, 0x23a2, 0x4d43, { 0xbf, 0x68, 0x36, 0xac, 0x1b, 0x57, 0xe3, 0x57 } };
+
+#endif // PL_DINPUT_MANAGER_H

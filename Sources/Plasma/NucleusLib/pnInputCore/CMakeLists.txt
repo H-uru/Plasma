@@ -8,7 +8,6 @@ set(pnInputCore_HEADERS
     plInputMap.h
     plKeyDef.h
     plKeyMap.h
-    plOSMsg.h
 )
 
 set(pnInputCore_SOURCES

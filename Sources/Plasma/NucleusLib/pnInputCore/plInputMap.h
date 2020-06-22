@@ -39,7 +39,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
-// plInputDevice.h
+// plInputMap.h
 
 #ifndef PL_INPUT_MAP_H
 #define PL_INPUT_MAP_H
