@@ -45,31 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plVolumeIsect.h"
-REGISTER_NONCREATABLE(plVolumeIsect);
-REGISTER_CREATABLE(plSphereIsect);
-REGISTER_CREATABLE(plConeIsect);
-REGISTER_CREATABLE(plCylinderIsect);
-REGISTER_CREATABLE(plParallelIsect);
-REGISTER_CREATABLE(plConvexIsect);
-REGISTER_CREATABLE(plBoundsIsect);
-REGISTER_NONCREATABLE(plComplexIsect);
-REGISTER_CREATABLE(plUnionIsect);
-REGISTER_CREATABLE(plIntersectionIsect);
-
-#include "plRegionBase.h"
-REGISTER_NONCREATABLE(plRegionBase);
-
-#include "plSoftVolume.h"
-REGISTER_NONCREATABLE(plSoftVolume);
-
-#include "plSoftVolumeTypes.h"
-REGISTER_CREATABLE(plSoftVolumeSimple);
-REGISTER_NONCREATABLE(plSoftVolumeComplex);
-REGISTER_CREATABLE(plSoftVolumeUnion);
-REGISTER_CREATABLE(plSoftVolumeIntersect);
-REGISTER_CREATABLE(plSoftVolumeInvert);
-
 #include "plHardRegion.h"
 REGISTER_NONCREATABLE(plHardRegion);
 
@@ -78,8 +53,33 @@ REGISTER_CREATABLE(plHardRegionPlanes);
 
 #include "plHardRegionTypes.h"
 REGISTER_NONCREATABLE(plHardRegionComplex);
-REGISTER_CREATABLE(plHardRegionUnion);
 REGISTER_CREATABLE(plHardRegionIntersect);
 REGISTER_CREATABLE(plHardRegionInvert);
+REGISTER_CREATABLE(plHardRegionUnion);
+
+#include "plRegionBase.h"
+REGISTER_NONCREATABLE(plRegionBase);
+
+#include "plSoftVolume.h"
+REGISTER_NONCREATABLE(plSoftVolume);
+
+#include "plSoftVolumeTypes.h"
+REGISTER_NONCREATABLE(plSoftVolumeComplex);
+REGISTER_CREATABLE(plSoftVolumeIntersect);
+REGISTER_CREATABLE(plSoftVolumeInvert);
+REGISTER_CREATABLE(plSoftVolumeSimple);
+REGISTER_CREATABLE(plSoftVolumeUnion);
+
+#include "plVolumeIsect.h"
+REGISTER_CREATABLE(plBoundsIsect);
+REGISTER_NONCREATABLE(plComplexIsect);
+REGISTER_CREATABLE(plConeIsect);
+REGISTER_CREATABLE(plConvexIsect);
+REGISTER_CREATABLE(plCylinderIsect);
+REGISTER_CREATABLE(plIntersectionIsect);
+REGISTER_CREATABLE(plParallelIsect);
+REGISTER_CREATABLE(plSphereIsect);
+REGISTER_CREATABLE(plUnionIsect);
+REGISTER_NONCREATABLE(plVolumeIsect);
 
 #endif // plIntersectCreatable_inc

@@ -47,11 +47,11 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plCameraBrain.h"
 REGISTER_CREATABLE(plCameraBrain1);
-REGISTER_CREATABLE(plCameraBrain1_Drive);
 REGISTER_CREATABLE(plCameraBrain1_Avatar);
+REGISTER_CREATABLE(plCameraBrain1_Circle);
+REGISTER_CREATABLE(plCameraBrain1_Drive);
 REGISTER_CREATABLE(plCameraBrain1_FirstPerson);
 REGISTER_CREATABLE(plCameraBrain1_Fixed);
-REGISTER_CREATABLE(plCameraBrain1_Circle);
 
 #include "plCameraModifier.h"
 REGISTER_CREATABLE(plCameraModifier1);

@@ -45,6 +45,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "plAnimation/plAGChannel.h"
 #include "plAnimation/plAGApplicator.h"
 
+class plParticleGenerator;
 class plParticleSystem;
 
 class plParticleApplicator : public plAGApplicator

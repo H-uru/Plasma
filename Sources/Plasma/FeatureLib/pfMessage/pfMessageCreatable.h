@@ -61,6 +61,18 @@ REGISTER_CREATABLE(plAvEnableMsg);
 #endif
 
 
+#include "plArmatureEffectMsg.h"
+REGISTER_CREATABLE(plArmatureEffectMsg);
+REGISTER_CREATABLE(plArmatureEffectStateMsg);
+
+#include "pfBackdoorMsg.h"
+REGISTER_CREATABLE(pfBackdoorMsg);
+
+#include "plClothingMsg.h"
+REGISTER_CREATABLE(plClothingMsg);
+REGISTER_CREATABLE(plElementRefMsg);
+REGISTER_CREATABLE(plClothingUpdateBCMsg);
+
 #include "pfGameGUIMsg.h"
 REGISTER_CREATABLE(pfGameGUIMsg);
 
@@ -73,23 +85,11 @@ REGISTER_CREATABLE(pfGameScoreUpdateMsg);
 #include "pfGUINotifyMsg.h"
 REGISTER_CREATABLE(pfGUINotifyMsg);
 
-#include "plClothingMsg.h"
-REGISTER_CREATABLE(plClothingMsg);
-REGISTER_CREATABLE(plElementRefMsg);
-REGISTER_CREATABLE(plClothingUpdateBCMsg);
-
-#include "plArmatureEffectMsg.h"
-REGISTER_CREATABLE(plArmatureEffectMsg);
-REGISTER_CREATABLE(plArmatureEffectStateMsg);
-
 #include "pfKIMsg.h"
 REGISTER_CREATABLE(pfKIMsg);
 
 #include "pfMarkerMsg.h"
 REGISTER_CREATABLE(pfMarkerMsg);
-
-#include "pfBackdoorMsg.h"
-REGISTER_CREATABLE(pfBackdoorMsg);
 
 #include "pfMovieEventMsg.h"
 REGISTER_CREATABLE(pfMovieEventMsg);

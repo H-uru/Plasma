@@ -45,74 +45,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plSeekPointMod.h"
-REGISTER_CREATABLE(plSeekPointMod);
-
-#include "plOneShotMod.h"
-REGISTER_CREATABLE(plOneShotMod);
-
-#include "plMultistageBehMod.h"
-REGISTER_CREATABLE(plMultistageBehMod);
-
-#include "plArmatureMod.h"
-REGISTER_CREATABLE(plArmatureModBase);
-REGISTER_CREATABLE(plArmatureMod);
-REGISTER_CREATABLE(plArmatureLODMod);
-
-#include "plArmatureEffects.h"
-REGISTER_CREATABLE(plArmatureEffectsMgr);
-REGISTER_NONCREATABLE(plArmatureEffect);
-REGISTER_CREATABLE(plArmatureEffectFootSound);
-
-#include "plAvBrain.h"
-REGISTER_NONCREATABLE(plArmatureBrain);
-
-#include "plAvBrainHuman.h"
-REGISTER_CREATABLE(plAvBrainHuman);
-
-#include "plAvBrainDrive.h"
-REGISTER_CREATABLE(plAvBrainDrive);
-
-#include "plAvLadderModifier.h"
-REGISTER_CREATABLE(plAvLadderMod);
-
-#include "plAvatarClothing.h"
-REGISTER_CREATABLE(plClothingItem);
-REGISTER_CREATABLE(plClothingOutfit);
-REGISTER_CREATABLE(plClothingBase);
-REGISTER_CREATABLE(plClothingMgr);
-
-#include "plAvBrainGeneric.h"
-REGISTER_CREATABLE(plAvBrainGeneric);
-
-#include "plAvatarTasks.h"
-REGISTER_NONCREATABLE(plAvTask);
-REGISTER_CREATABLE(plAvAnimTask);
-REGISTER_CREATABLE(plAvSeekTask)
-REGISTER_CREATABLE(plAvOneShotTask);
-REGISTER_CREATABLE(plAvOneShotLinkTask);
-
 #include "plAnimStage.h"
 REGISTER_CREATABLE(plAnimStage);
 
-#include "plAvTaskSeek.h"
-REGISTER_CREATABLE(plAvTaskSeek);
+#include "plArmatureEffects.h"
+REGISTER_NONCREATABLE(plArmatureEffect);
+REGISTER_CREATABLE(plArmatureEffectFootSound);
+REGISTER_CREATABLE(plArmatureEffectsMgr);
+
+#include "plArmatureMod.h"
+REGISTER_CREATABLE(plArmatureLODMod);
+REGISTER_CREATABLE(plArmatureModBase);
+REGISTER_CREATABLE(plArmatureMod);
+
+#include "plAvatarClothing.h"
+REGISTER_CREATABLE(plClothingBase);
+REGISTER_CREATABLE(plClothingItem);
+REGISTER_CREATABLE(plClothingMgr);
+REGISTER_CREATABLE(plClothingOutfit);
+
+#include "plAvatarMgr.h"
+REGISTER_NONCREATABLE(plAvatarMgr);
 
 #include "plAvatarSDLModifier.h"
 REGISTER_CREATABLE(plAvatarSDLModifier);
 REGISTER_CREATABLE(plAvatarPhysicalSDLModifier);
 
-#include "plClothingSDLModifier.h"
-REGISTER_CREATABLE(plClothingSDLModifier);
+#include "plAvatarTasks.h"
+REGISTER_NONCREATABLE(plAvTask);
+REGISTER_CREATABLE(plAvAnimTask);
+REGISTER_CREATABLE(plAvOneShotTask);
+REGISTER_CREATABLE(plAvOneShotLinkTask);
+REGISTER_CREATABLE(plAvSeekTask)
 
-#include "plAvatarMgr.h"
-REGISTER_NONCREATABLE(plAvatarMgr);
-
-#include "plNPCSpawnMod.h"
-REGISTER_CREATABLE(plNPCSpawnMod);
-
-#include "plAvBrainSwim.h"
-REGISTER_CREATABLE(plAvBrainSwim);
+#include "plAvBrain.h"
+REGISTER_NONCREATABLE(plArmatureBrain);
 
 #include "plAvBrainClimb.h"
 REGISTER_CREATABLE(plAvBrainClimb);
@@ -120,11 +87,50 @@ REGISTER_CREATABLE(plAvBrainClimb);
 #include "plAvBrainCoop.h"
 REGISTER_CREATABLE(plAvBrainCoop);
 
-#include "plCoopCoordinator.h"
-REGISTER_CREATABLE(plCoopCoordinator);
+#include "plAvBrainCritter.h"
+REGISTER_CREATABLE(plAvBrainCritter);
+
+#include "plAvBrainDrive.h"
+REGISTER_CREATABLE(plAvBrainDrive);
+
+#include "plAvBrainGeneric.h"
+REGISTER_CREATABLE(plAvBrainGeneric);
+
+#include "plAvBrainHuman.h"
+REGISTER_CREATABLE(plAvBrainHuman);
+
+#include "plAvBrainRideAnimatedPhysical.h"
+REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical)
+
+#include "plAvBrainSwim.h"
+REGISTER_CREATABLE(plAvBrainSwim);
+
+#include "plAvLadderModifier.h"
+REGISTER_CREATABLE(plAvLadderMod);
 
 #include "plAvTaskBrain.h"
 REGISTER_CREATABLE(plAvTaskBrain);
+
+#include "plAvTaskSeek.h"
+REGISTER_CREATABLE(plAvTaskSeek);
+
+#include "plClothingSDLModifier.h"
+REGISTER_CREATABLE(plClothingSDLModifier);
+
+#include "plCoopCoordinator.h"
+REGISTER_CREATABLE(plCoopCoordinator);
+
+#include "plMultistageBehMod.h"
+REGISTER_CREATABLE(plMultistageBehMod);
+
+#include "plNPCSpawnMod.h"
+REGISTER_CREATABLE(plNPCSpawnMod);
+
+#include "plOneShotMod.h"
+REGISTER_CREATABLE(plOneShotMod);
+
+#include "plSeekPointMod.h"
+REGISTER_CREATABLE(plSeekPointMod);
 
 #include "plSittingModifier.h"
 REGISTER_CREATABLE(plSittingModifier);
@@ -133,11 +139,5 @@ REGISTER_CREATABLE(plSittingModifier);
 REGISTER_CREATABLE(plSwimRegionInterface);
 REGISTER_CREATABLE(plSwimCircularCurrentRegion);
 REGISTER_CREATABLE(plSwimStraightCurrentRegion);
-
-#include "plAvBrainCritter.h"
-REGISTER_CREATABLE(plAvBrainCritter);
-
-#include "plAvBrainRideAnimatedPhysical.h"
-REGISTER_CREATABLE(plAvBrainRideAnimatedPhysical)
 
 #endif // plAvatarCreatable_inc

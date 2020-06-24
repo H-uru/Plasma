@@ -48,10 +48,10 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "hsKeyedObject.h"
 REGISTER_CREATABLE(hsKeyedObject);
 
-#include "plReceiver.h"
-REGISTER_NONCREATABLE(plReceiver);
-
 #include "plMsgForwarder.h"
 REGISTER_CREATABLE(plMsgForwarder);
+
+#include "plReceiver.h"
+REGISTER_NONCREATABLE(plReceiver);
 
 #endif // pnKeyedObject_inc

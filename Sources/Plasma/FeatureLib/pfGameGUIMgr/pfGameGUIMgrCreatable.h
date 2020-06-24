@@ -48,62 +48,62 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pfGameGUIMgr.h"
 REGISTER_CREATABLE(pfGameGUIMgr);
 
-#include "pfGUIDialogMod.h"
-REGISTER_CREATABLE(pfGUIDialogMod);
+#include "pfGUIButtonMod.h"
+REGISTER_CREATABLE(pfGUIButtonMod);
+
+#include "pfGUICheckBoxCtrl.h"
+REGISTER_CREATABLE(pfGUICheckBoxCtrl);
+
+#include "pfGUIClickMapCtrl.h"
+REGISTER_CREATABLE(pfGUIClickMapCtrl);
 
 #include "pfGUIControlMod.h"
 REGISTER_NONCREATABLE(pfGUIControlMod);
 
-#include "pfGUIButtonMod.h"
-REGISTER_CREATABLE(pfGUIButtonMod);
+#include "pfGUIDialogMod.h"
+REGISTER_CREATABLE(pfGUIDialogMod);
+
+#include "pfGUIDragBarCtrl.h"
+REGISTER_CREATABLE(pfGUIDragBarCtrl);
 
 #include "pfGUIDraggableMod.h"
 REGISTER_CREATABLE(pfGUIDraggableMod);
 
-#include "pfGUIListBoxMod.h"
-REGISTER_CREATABLE(pfGUIListBoxMod);
-
-#include "pfGUITextBoxMod.h"
-REGISTER_CREATABLE(pfGUITextBoxMod);
+#include "pfGUIDynDisplayCtrl.h"
+REGISTER_CREATABLE(pfGUIDynDisplayCtrl);
 
 #include "pfGUIEditBoxMod.h"
 REGISTER_CREATABLE(pfGUIEditBoxMod);
+
+#include "pfGUIKnobCtrl.h"
+REGISTER_CREATABLE(pfGUIKnobCtrl);
+
+#include "pfGUIListBoxMod.h"
+REGISTER_CREATABLE(pfGUIListBoxMod);
+
+#include "pfGUIMenuItem.h"
+REGISTER_CREATABLE(pfGUIMenuItem);
+
+#include "pfGUIMultiLineEditCtrl.h"
+REGISTER_CREATABLE(pfGUIMultiLineEditCtrl);
+
+#include "pfGUIPopUpMenu.h"
+REGISTER_CREATABLE(pfGUIPopUpMenu);
+REGISTER_CREATABLE(pfGUISkin);
+
+#include "pfGUIProgressCtrl.h"
+REGISTER_CREATABLE(pfGUIProgressCtrl);
+
+#include "pfGUIRadioGroupCtrl.h"
+REGISTER_CREATABLE(pfGUIRadioGroupCtrl);
+
+#include "pfGUITextBoxMod.h"
+REGISTER_CREATABLE(pfGUITextBoxMod);
 
 #include "pfGUIUpDownPairMod.h"
 REGISTER_CREATABLE(pfGUIUpDownPairMod);
 
 #include "pfGUIValueCtrl.h"
 REGISTER_NONCREATABLE(pfGUIValueCtrl);
-
-#include "pfGUIKnobCtrl.h"
-REGISTER_CREATABLE(pfGUIKnobCtrl);
-
-#include "pfGUIDragBarCtrl.h"
-REGISTER_CREATABLE(pfGUIDragBarCtrl);
-
-#include "pfGUICheckBoxCtrl.h"
-REGISTER_CREATABLE(pfGUICheckBoxCtrl);
-
-#include "pfGUIRadioGroupCtrl.h"
-REGISTER_CREATABLE(pfGUIRadioGroupCtrl);
-
-#include "pfGUIDynDisplayCtrl.h"
-REGISTER_CREATABLE(pfGUIDynDisplayCtrl);
-
-#include "pfGUIMultiLineEditCtrl.h"
-REGISTER_CREATABLE(pfGUIMultiLineEditCtrl);
-
-#include "pfGUIProgressCtrl.h"
-REGISTER_CREATABLE(pfGUIProgressCtrl);
-
-#include "pfGUIClickMapCtrl.h"
-REGISTER_CREATABLE(pfGUIClickMapCtrl);
-
-#include "pfGUIPopUpMenu.h"
-REGISTER_CREATABLE(pfGUIPopUpMenu);
-
-#include "pfGUIMenuItem.h"
-REGISTER_CREATABLE(pfGUIMenuItem);
-REGISTER_CREATABLE(pfGUISkin);
 
 #endif // _pfGameGUIMgrCreatable_inc

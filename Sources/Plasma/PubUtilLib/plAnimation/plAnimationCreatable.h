@@ -51,11 +51,17 @@ REGISTER_CREATABLE(plATCAnim);
 REGISTER_CREATABLE(plEmoteAnim);
 REGISTER_CREATABLE(plAgeGlobalAnim);
 
+#include "plAGApplicator.h"
+REGISTER_NONCREATABLE(plAGApplicator);
+
 #include "plAGChannel.h"
 REGISTER_NONCREATABLE(plAGChannel);
 
-#include "plAGApplicator.h"
-REGISTER_NONCREATABLE(plAGApplicator);
+#include "plAGMasterMod.h"
+REGISTER_CREATABLE(plAGMasterMod);
+
+#include "plAGModifier.h"
+REGISTER_CREATABLE(plAGModifier);
 
 #include "plMatrixChannel.h"
 REGISTER_CREATABLE(plMatrixChannel);
@@ -103,11 +109,5 @@ REGISTER_CREATABLE(plScalarSDLChannel);
 REGISTER_CREATABLE(plOmniApplicator);
 REGISTER_CREATABLE(plOmniSqApplicator);
 REGISTER_CREATABLE(plOmniCutoffApplicator);
-
-#include "plAGModifier.h"
-REGISTER_CREATABLE(plAGModifier);
-
-#include "plAGMasterMod.h"
-REGISTER_CREATABLE(plAGMasterMod);
 
 #endif // plAnimationCreatable_inc
