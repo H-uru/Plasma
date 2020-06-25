@@ -54,8 +54,8 @@ pfPasswordStore* pfPasswordStore::Instance()
     if (store == nullptr) {
 #if defined(HS_BUILD_FOR_WIN32)
         store = new pfWin32PasswordStore();
-#elif defined(HS_BUILD_FOR_OSX)
-        store = new pfMacPasswordStore();
+#elif defined(HS_BUILD_FOR_APPLE)
+        store = new pfApplePasswordStore();
 #elif defined(HAVE_LIBSECRET)
         store = new pfUnixPasswordStore();
 #else

@@ -28,7 +28,7 @@ endif(HAVE_LIBSECRET)
 
 if(APPLE)
     set(pfPasswordStore_SOURCES ${pfPasswordStore_SOURCES}
-        pfPasswordStore_Mac.cpp
+        pfPasswordStore_Apple.cpp
     )
 endif(APPLE)
 
