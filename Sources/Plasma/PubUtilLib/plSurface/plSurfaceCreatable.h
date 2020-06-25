@@ -46,43 +46,34 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "hsGMaterial.h"
-
-REGISTER_CREATABLE( hsGMaterial );
-
-#include "plLayerInterface.h"
-
-REGISTER_NONCREATABLE( plLayerInterface );
-
-#include "plLayer.h"
-
-REGISTER_CREATABLE( plLayer );
-
-#include "plLayerAnimation.h"
-
-REGISTER_CREATABLE( plLayerAnimation );
-REGISTER_CREATABLE( plLayerLinkAnimation );
-REGISTER_NONCREATABLE( plLayerAnimationBase );
-REGISTER_CREATABLE( plLayerSDLAnimation );
-
-#include "plLayerDepth.h"
-
-REGISTER_CREATABLE( plLayerDepth );
-
-#include "plLayerOr.h"
-
-REGISTER_CREATABLE( plLayerOr );
-
-#include "plLayerShadowBase.h"
-
-REGISTER_CREATABLE( plLayerShadowBase );
-REGISTER_CREATABLE( plLayerLightBase );
-
-#include "plShader.h"
-
-REGISTER_CREATABLE( plShader );
+REGISTER_CREATABLE(hsGMaterial);
 
 #include "plGrassShaderMod.h"
+REGISTER_CREATABLE(plGrassShaderMod);
 
-REGISTER_CREATABLE( plGrassShaderMod );
+#include "plLayer.h"
+REGISTER_CREATABLE(plLayer);
+
+#include "plLayerAnimation.h"
+REGISTER_CREATABLE(plLayerAnimation);
+REGISTER_NONCREATABLE(plLayerAnimationBase);
+REGISTER_CREATABLE(plLayerLinkAnimation);
+REGISTER_CREATABLE(plLayerSDLAnimation);
+
+#include "plLayerDepth.h"
+REGISTER_CREATABLE(plLayerDepth);
+
+#include "plLayerInterface.h"
+REGISTER_NONCREATABLE(plLayerInterface);
+
+#include "plLayerOr.h"
+REGISTER_CREATABLE(plLayerOr);
+
+#include "plLayerShadowBase.h"
+REGISTER_CREATABLE(plLayerLightBase);
+REGISTER_CREATABLE(plLayerShadowBase);
+
+#include "plShader.h"
+REGISTER_CREATABLE(plShader);
 
 #endif // plSurfaceCreatable_inc

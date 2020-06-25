@@ -45,29 +45,22 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plObjInterface.h"
-
-REGISTER_NONCREATABLE( plObjInterface );
-
 #include "plAudioInterface.h"
-
-REGISTER_CREATABLE( plAudioInterface );
+REGISTER_CREATABLE(plAudioInterface);
 
 #include "plCoordinateInterface.h"
-
-REGISTER_CREATABLE( plCoordinateInterface );
+REGISTER_CREATABLE(plCoordinateInterface);
 
 #include "plDrawInterface.h"
+REGISTER_CREATABLE(plDrawInterface);
 
-REGISTER_CREATABLE( plDrawInterface );
-
-#include "plSimulationInterface.h"
-
-REGISTER_CREATABLE( plSimulationInterface );
+#include "plObjInterface.h"
+REGISTER_NONCREATABLE(plObjInterface);
 
 #include "plSceneObject.h"
+REGISTER_CREATABLE(plSceneObject);
 
-REGISTER_CREATABLE( plSceneObject );
-
+#include "plSimulationInterface.h"
+REGISTER_CREATABLE(plSimulationInterface);
 
 #endif // plSceneObjectCreatable_inc

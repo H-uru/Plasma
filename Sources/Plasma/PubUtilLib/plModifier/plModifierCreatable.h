@@ -45,67 +45,63 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plSpawnModifier.h"
+#include "plAGMasterSDLModifier.h"
+REGISTER_CREATABLE(plAGMasterSDLModifier);
 
-REGISTER_CREATABLE( plSpawnModifier );
+#include "plAnimEventModifier.h"
+REGISTER_CREATABLE(plAnimEventModifier);
 
-#include "plLogicModifier.h"
-
-REGISTER_CREATABLE( plLogicModifier );
-
-#include "plResponderModifier.h"
-
-REGISTER_CREATABLE( plResponderModifier );
-REGISTER_CREATABLE( plResponderEnableMsg );
+#include "plAnimTimeConvertSDLModifier.h"
+REGISTER_NONCREATABLE(plAnimTimeConvertSDLModifier);
 
 #include "plAxisAnimModifier.h"
+REGISTER_CREATABLE(plAxisAnimModifier);
 
-REGISTER_CREATABLE( plAxisAnimModifier );
+#include "plCloneSpawnModifier.h"
+REGISTER_CREATABLE(plCloneSpawnModifier);
+
+#include "plDecalEnableMod.h"
+REGISTER_CREATABLE(plDecalEnableMod);
 
 #include "plExcludeRegionModifier.h"
 REGISTER_CREATABLE(plExcludeRegionModifier);
 REGISTER_CREATABLE(plExcludeRegionSDLModifier);
 
-#include "plSimpleModifier.h"
-REGISTER_NONCREATABLE(plSimpleModifier);
-
-#include "plCloneSpawnModifier.h"
-REGISTER_CREATABLE(plCloneSpawnModifier);
-
-#include "plAnimEventModifier.h"
-REGISTER_CREATABLE(plAnimEventModifier);
-
-#include "plInterfaceInfoModifier.h"
-REGISTER_CREATABLE(plInterfaceInfoModifier);
-
-#include "plSDLModifier.h"
-REGISTER_NONCREATABLE(plSDLModifier);
-
-#include "plLayerSDLModifier.h"
-REGISTER_CREATABLE(plLayerSDLModifier);
-
-#include "plAnimTimeConvertSDLModifier.h"
-REGISTER_NONCREATABLE(plAnimTimeConvertSDLModifier);
-
-#include "plAGMasterSDLModifier.h"
-REGISTER_CREATABLE( plAGMasterSDLModifier );
-
-#include "plResponderSDLModifier.h"
-REGISTER_CREATABLE(plResponderSDLModifier);
-
-#include "plSoundSDLModifier.h"
-REGISTER_CREATABLE(plSoundSDLModifier);
-
-#include "plDecalEnableMod.h"
-REGISTER_CREATABLE(plDecalEnableMod);
-
-#include "plMaintainersMarkerModifier.h"
-REGISTER_CREATABLE(plMaintainersMarkerModifier);
+#include "plGameMarkerModifier.h"
+REGISTER_CREATABLE(plGameMarkerModifier);
 
 #include "plImageLibMod.h"
 REGISTER_CREATABLE(plImageLibMod);
 
-#include "plGameMarkerModifier.h"
-REGISTER_CREATABLE(plGameMarkerModifier);
+#include "plInterfaceInfoModifier.h"
+REGISTER_CREATABLE(plInterfaceInfoModifier);
+
+#include "plLayerSDLModifier.h"
+REGISTER_CREATABLE(plLayerSDLModifier);
+
+#include "plLogicModifier.h"
+REGISTER_CREATABLE(plLogicModifier);
+
+#include "plMaintainersMarkerModifier.h"
+REGISTER_CREATABLE(plMaintainersMarkerModifier);
+
+#include "plResponderModifier.h"
+REGISTER_CREATABLE(plResponderEnableMsg);
+REGISTER_CREATABLE(plResponderModifier);
+
+#include "plResponderSDLModifier.h"
+REGISTER_CREATABLE(plResponderSDLModifier);
+
+#include "plSimpleModifier.h"
+REGISTER_NONCREATABLE(plSimpleModifier);
+
+#include "plSpawnModifier.h"
+REGISTER_CREATABLE(plSpawnModifier);
+
+#include "plSDLModifier.h"
+REGISTER_NONCREATABLE(plSDLModifier);
+
+#include "plSoundSDLModifier.h"
+REGISTER_CREATABLE(plSoundSDLModifier);
 
 #endif // plModifierCreatable_inc

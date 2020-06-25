@@ -45,30 +45,27 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plDetectorModifier.h"
-
-REGISTER_NONCREATABLE( plDetectorModifier );
-
-#include "plPickingDetector.h"
-
-REGISTER_CREATABLE( plPickingDetector );
-
 #include "plCollisionDetector.h"
+REGISTER_CREATABLE(plCameraRegionDetector);
+REGISTER_CREATABLE(plCollisionDetector);
+REGISTER_CREATABLE(plObjectInVolumeDetector);
+REGISTER_CREATABLE(plObjectInVolumeAndFacingDetector);
+REGISTER_CREATABLE(plPanicLinkRegion);
+REGISTER_CREATABLE(plRidingAnimatedPhysicalDetector);
+REGISTER_CREATABLE(plSimpleRegionSensor);
+REGISTER_CREATABLE(plSubworldRegionDetector);
+REGISTER_CREATABLE(plSwimDetector);
 
-REGISTER_CREATABLE( plCollisionDetector );
-REGISTER_CREATABLE( plCameraRegionDetector );
-REGISTER_CREATABLE( plObjectInVolumeDetector );
-REGISTER_CREATABLE( plObjectInVolumeAndFacingDetector );
-REGISTER_CREATABLE( plSubworldRegionDetector );
-REGISTER_CREATABLE( plPanicLinkRegion );
-REGISTER_CREATABLE( plSimpleRegionSensor );
-REGISTER_CREATABLE( plSwimDetector );
-REGISTER_CREATABLE( plRidingAnimatedPhysicalDetector );
+#include "plDetectorModifier.h"
+REGISTER_NONCREATABLE(plDetectorModifier);
 
 #include "plPhysicalSDLModifier.h"
-REGISTER_CREATABLE( plPhysicalSDLModifier );
+REGISTER_CREATABLE(plPhysicalSDLModifier);
 
 #include "plPhysicalSndGroup.h"
 REGISTER_CREATABLE(plPhysicalSndGroup);
+
+#include "plPickingDetector.h"
+REGISTER_CREATABLE(plPickingDetector);
 
 #endif // plPhysicalCreatable_inc

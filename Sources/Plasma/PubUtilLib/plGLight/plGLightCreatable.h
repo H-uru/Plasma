@@ -45,32 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#include "plLightInfo.h"
+#include "plDirectShadowMaster.h"
+REGISTER_CREATABLE(plDirectShadowMaster);
 
-REGISTER_NONCREATABLE( plLightInfo );
-REGISTER_CREATABLE( plDirectionalLightInfo );
-REGISTER_CREATABLE( plLimitedDirLightInfo );
-REGISTER_CREATABLE( plOmniLightInfo );
-REGISTER_CREATABLE( plSpotLightInfo );
+#include "plLightInfo.h"
+REGISTER_NONCREATABLE(plLightInfo);
+REGISTER_CREATABLE(plDirectionalLightInfo);
+REGISTER_CREATABLE(plLimitedDirLightInfo);
+REGISTER_CREATABLE(plOmniLightInfo);
+REGISTER_CREATABLE(plSpotLightInfo);
 
 #include "plLightSpace.h"
-
-REGISTER_CREATABLE( plLightSpace );
-
-#include "plShadowMaster.h"
-
-REGISTER_NONCREATABLE( plShadowMaster );
+REGISTER_CREATABLE(plLightSpace);
 
 #include "plPointShadowMaster.h"
-
-REGISTER_CREATABLE( plPointShadowMaster );
-
-#include "plDirectShadowMaster.h"
-
-REGISTER_CREATABLE( plDirectShadowMaster );
+REGISTER_CREATABLE(plPointShadowMaster);
 
 #include "plShadowCaster.h"
+REGISTER_CREATABLE(plShadowCaster);
 
-REGISTER_CREATABLE( plShadowCaster );
+#include "plShadowMaster.h"
+REGISTER_NONCREATABLE(plShadowMaster);
 
 #endif // plGLightCreatable_inc

@@ -46,48 +46,64 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "pfGameGUIMgr.h"
+REGISTER_CREATABLE(pfGameGUIMgr);
 
-REGISTER_CREATABLE( pfGameGUIMgr );
+#include "pfGUIButtonMod.h"
+REGISTER_CREATABLE(pfGUIButtonMod);
+
+#include "pfGUICheckBoxCtrl.h"
+REGISTER_CREATABLE(pfGUICheckBoxCtrl);
+
+#include "pfGUIClickMapCtrl.h"
+REGISTER_CREATABLE(pfGUIClickMapCtrl);
+
+#include "pfGUIControlMod.h"
+REGISTER_NONCREATABLE(pfGUIControlMod);
 
 #include "pfGUIDialogMod.h"
-#include "pfGUIControlMod.h"
-#include "pfGUIButtonMod.h"
-#include "pfGUIDraggableMod.h"
-#include "pfGUIListBoxMod.h"
-#include "pfGUITextBoxMod.h"
-#include "pfGUIEditBoxMod.h"
-#include "pfGUIUpDownPairMod.h"
-#include "pfGUIValueCtrl.h"
-#include "pfGUIKnobCtrl.h"
-#include "pfGUIDragBarCtrl.h"
-#include "pfGUICheckBoxCtrl.h"
-#include "pfGUIRadioGroupCtrl.h"
-#include "pfGUIDynDisplayCtrl.h"
-#include "pfGUIMultiLineEditCtrl.h"
-#include "pfGUIProgressCtrl.h"
-#include "pfGUIClickMapCtrl.h"
-#include "pfGUIPopUpMenu.h"
-#include "pfGUIMenuItem.h"
+REGISTER_CREATABLE(pfGUIDialogMod);
 
-REGISTER_CREATABLE( pfGUIDialogMod );
-REGISTER_NONCREATABLE( pfGUIControlMod );
-REGISTER_CREATABLE( pfGUIButtonMod );
-REGISTER_CREATABLE( pfGUIDraggableMod );
-REGISTER_CREATABLE( pfGUIListBoxMod );
-REGISTER_CREATABLE( pfGUITextBoxMod );
-REGISTER_CREATABLE( pfGUIEditBoxMod );
-REGISTER_NONCREATABLE( pfGUIValueCtrl );
-REGISTER_CREATABLE( pfGUIUpDownPairMod );
-REGISTER_CREATABLE( pfGUIKnobCtrl );
-REGISTER_CREATABLE( pfGUIDragBarCtrl );
-REGISTER_CREATABLE( pfGUICheckBoxCtrl );
-REGISTER_CREATABLE( pfGUIRadioGroupCtrl );
-REGISTER_CREATABLE( pfGUIDynDisplayCtrl );
-REGISTER_CREATABLE( pfGUIMultiLineEditCtrl );
-REGISTER_CREATABLE( pfGUIProgressCtrl );
-REGISTER_CREATABLE( pfGUIClickMapCtrl );
-REGISTER_CREATABLE( pfGUIPopUpMenu );
-REGISTER_CREATABLE( pfGUIMenuItem );
-REGISTER_CREATABLE( pfGUISkin );
+#include "pfGUIDragBarCtrl.h"
+REGISTER_CREATABLE(pfGUIDragBarCtrl);
+
+#include "pfGUIDraggableMod.h"
+REGISTER_CREATABLE(pfGUIDraggableMod);
+
+#include "pfGUIDynDisplayCtrl.h"
+REGISTER_CREATABLE(pfGUIDynDisplayCtrl);
+
+#include "pfGUIEditBoxMod.h"
+REGISTER_CREATABLE(pfGUIEditBoxMod);
+
+#include "pfGUIKnobCtrl.h"
+REGISTER_CREATABLE(pfGUIKnobCtrl);
+
+#include "pfGUIListBoxMod.h"
+REGISTER_CREATABLE(pfGUIListBoxMod);
+
+#include "pfGUIMenuItem.h"
+REGISTER_CREATABLE(pfGUIMenuItem);
+
+#include "pfGUIMultiLineEditCtrl.h"
+REGISTER_CREATABLE(pfGUIMultiLineEditCtrl);
+
+#include "pfGUIPopUpMenu.h"
+REGISTER_CREATABLE(pfGUIPopUpMenu);
+REGISTER_CREATABLE(pfGUISkin);
+
+#include "pfGUIProgressCtrl.h"
+REGISTER_CREATABLE(pfGUIProgressCtrl);
+
+#include "pfGUIRadioGroupCtrl.h"
+REGISTER_CREATABLE(pfGUIRadioGroupCtrl);
+
+#include "pfGUITextBoxMod.h"
+REGISTER_CREATABLE(pfGUITextBoxMod);
+
+#include "pfGUIUpDownPairMod.h"
+REGISTER_CREATABLE(pfGUIUpDownPairMod);
+
+#include "pfGUIValueCtrl.h"
+REGISTER_NONCREATABLE(pfGUIValueCtrl);
 
 #endif // _pfGameGUIMgrCreatable_inc

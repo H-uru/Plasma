@@ -44,23 +44,24 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
-#ifndef SERVER
-#include "plNetMember.h"
-REGISTER_NONCREATABLE( plNetMember );
-#endif // SERVER
+#include "plClientGuid.h"
+REGISTER_CREATABLE(plClientGuid);
 
 #include "plNetCommonHelpers.h"
+REGISTER_CREATABLE(plCreatableListHelper);
 #ifndef SERVER
-REGISTER_CREATABLE( plNetCoreStatsSummary );
+    REGISTER_CREATABLE(plNetCoreStatsSummary);
 #endif // SERVER
-REGISTER_CREATABLE( plCreatableListHelper );
 
-#include "plClientGuid.h"
-REGISTER_CREATABLE( plClientGuid );
+#ifndef SERVER
+    #include "plNetMember.h"
+    REGISTER_NONCREATABLE(plNetMember);
+#endif // SERVER
+
 #include "plNetServerSessionInfo.h"
-REGISTER_CREATABLE( plNetServerSessionInfo );
-REGISTER_CREATABLE( plAgeInfoStruct );
-REGISTER_CREATABLE( plAgeLinkStruct );
+REGISTER_CREATABLE(plAgeInfoStruct);
+REGISTER_CREATABLE(plAgeLinkStruct);
+REGISTER_CREATABLE(plNetServerSessionInfo);
 
 #endif // plNetCommonCreatable_inc
 

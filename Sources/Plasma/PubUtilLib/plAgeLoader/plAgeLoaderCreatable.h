@@ -45,6 +45,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "plAgeLoader.h"
-REGISTER_CREATABLE( plAgeLoader);
+REGISTER_CREATABLE(plAgeLoader);
 
 #endif      // plAgeLoaderCreatable_inc

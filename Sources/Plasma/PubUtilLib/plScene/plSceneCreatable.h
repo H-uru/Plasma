@@ -45,33 +45,26 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreatable.h"
 
-#include "plSceneNode.h"
-
-REGISTER_CREATABLE( plSceneNode );
-
 #include "plOccluder.h"
-
-REGISTER_CREATABLE( plOccluder );
-REGISTER_CREATABLE( plMobileOccluder );
+REGISTER_CREATABLE(plMobileOccluder);
+REGISTER_CREATABLE(plOccluder);
 
 #include "plPostEffectMod.h"
-
-REGISTER_CREATABLE( plPostEffectMod );
-
-#include "plVisMgr.h"
-
-REGISTER_CREATABLE( plVisMgr );
-
-#include "plVisRegion.h"
-
-REGISTER_CREATABLE( plVisRegion );
+REGISTER_CREATABLE(plPostEffectMod);
 
 #include "plRelevanceMgr.h"
-
-REGISTER_CREATABLE( plRelevanceMgr );
+REGISTER_CREATABLE(plRelevanceMgr);
 
 #include "plRelevanceRegion.h"
+REGISTER_CREATABLE(plRelevanceRegion);
 
-REGISTER_CREATABLE( plRelevanceRegion );
+#include "plSceneNode.h"
+REGISTER_CREATABLE(plSceneNode);
+
+#include "plVisMgr.h"
+REGISTER_CREATABLE(plVisMgr);
+
+#include "plVisRegion.h"
+REGISTER_CREATABLE(plVisRegion);
 
 #endif // plSceneCreatable_inc

@@ -46,7 +46,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pnFactory/plCreator.h"
 
 #include "pfConsole.h"
-
-REGISTER_CREATABLE( pfConsole );
+REGISTER_CREATABLE(pfConsole);
 
 #endif // pfConsoleCreatable_inc

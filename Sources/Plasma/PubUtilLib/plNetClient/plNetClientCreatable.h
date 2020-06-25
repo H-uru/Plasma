@@ -44,14 +44,13 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "pnFactory/plCreator.h"
 
+#include "plLinkEffectsMgr.h"
+REGISTER_CREATABLE(plLinkEffectsMgr);
+
 #include "plNetClientMgr.h"
-REGISTER_CREATABLE( plNetClientMgr );
+REGISTER_CREATABLE(plNetClientMgr);
 
 #include "plNetTransport/plNetTransportMember.h"
-REGISTER_CREATABLE( plNetTransportMember );
-
-#include "plLinkEffectsMgr.h"
-REGISTER_CREATABLE( plLinkEffectsMgr );
-
+REGISTER_CREATABLE(plNetTransportMember);
 
 #endif // plNetClientCreatable_inc

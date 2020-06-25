@@ -47,63 +47,51 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #if 0
 #include "plTriggerMsg.h"
-
-REGISTER_CREATABLE( plTriggerMsg );
+REGISTER_CREATABLE(plTriggerMsg);
 
 #include "plPlayerMsg.h"
-
-REGISTER_CREATABLE( plPlayerMsg );
+REGISTER_CREATABLE(plPlayerMsg);
 
 #include "plAvatarMsg.h"
-
-REGISTER_CREATABLE( plAvatarMsg );
-REGISTER_NONCREATABLE( plAvTaskMsg );
-REGISTER_CREATABLE( plAvSeekMsg );
-REGISTER_CREATABLE( plAvOneShotMsg );
-REGISTER_CREATABLE( plAvEnableMsg );
+REGISTER_CREATABLE(plAvatarMsg);
+REGISTER_NONCREATABLE(plAvTaskMsg);
+REGISTER_CREATABLE(plAvSeekMsg);
+REGISTER_CREATABLE(plAvOneShotMsg);
+REGISTER_CREATABLE(plAvEnableMsg);
 #endif
 
 
-#include "pfGameGUIMsg.h"
-
-REGISTER_CREATABLE( pfGameGUIMsg );
-
-#include "pfGameScoreMsg.h"
-
-REGISTER_NONCREATABLE( pfGameScoreMsg );
-REGISTER_CREATABLE( pfGameScoreListMsg );
-REGISTER_CREATABLE( pfGameScoreTransferMsg );
-REGISTER_CREATABLE( pfGameScoreUpdateMsg );
-
-#include "pfGUINotifyMsg.h"
-
-REGISTER_CREATABLE( pfGUINotifyMsg );
-
-#include "plClothingMsg.h"
-
-REGISTER_CREATABLE( plClothingMsg );
-REGISTER_CREATABLE( plElementRefMsg );
-REGISTER_CREATABLE( plClothingUpdateBCMsg );
-
 #include "plArmatureEffectMsg.h"
-
-REGISTER_CREATABLE( plArmatureEffectMsg );
-REGISTER_CREATABLE( plArmatureEffectStateMsg );
-
-#include "pfKIMsg.h"
-
-REGISTER_CREATABLE( pfKIMsg );
-
-#include "pfMarkerMsg.h"
-
-REGISTER_CREATABLE(pfMarkerMsg);
+REGISTER_CREATABLE(plArmatureEffectMsg);
+REGISTER_CREATABLE(plArmatureEffectStateMsg);
 
 #include "pfBackdoorMsg.h"
-
 REGISTER_CREATABLE(pfBackdoorMsg);
 
-#include "pfMovieEventMsg.h"
+#include "plClothingMsg.h"
+REGISTER_CREATABLE(plClothingMsg);
+REGISTER_CREATABLE(plElementRefMsg);
+REGISTER_CREATABLE(plClothingUpdateBCMsg);
 
+#include "pfGameGUIMsg.h"
+REGISTER_CREATABLE(pfGameGUIMsg);
+
+#include "pfGameScoreMsg.h"
+REGISTER_NONCREATABLE(pfGameScoreMsg);
+REGISTER_CREATABLE(pfGameScoreListMsg);
+REGISTER_CREATABLE(pfGameScoreTransferMsg);
+REGISTER_CREATABLE(pfGameScoreUpdateMsg);
+
+#include "pfGUINotifyMsg.h"
+REGISTER_CREATABLE(pfGUINotifyMsg);
+
+#include "pfKIMsg.h"
+REGISTER_CREATABLE(pfKIMsg);
+
+#include "pfMarkerMsg.h"
+REGISTER_CREATABLE(pfMarkerMsg);
+
+#include "pfMovieEventMsg.h"
 REGISTER_CREATABLE(pfMovieEventMsg);
 
 #endif //pfMessageCreatable_inc
