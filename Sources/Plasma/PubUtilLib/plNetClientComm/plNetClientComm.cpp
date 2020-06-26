@@ -66,7 +66,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "hsResMgr.h"
 
-#ifdef HS_BUILD_FOR_OSX
+#ifdef HS_BUILD_FOR_MACOS
 #include <malloc/malloc.h>
 #else
 #include <malloc.h>

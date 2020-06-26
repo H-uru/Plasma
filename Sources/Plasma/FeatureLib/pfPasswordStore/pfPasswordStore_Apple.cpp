@@ -49,9 +49,9 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Security/Security.h>
 
 /*****************************************************************************
- ** pfMacPasswordStore                                                      **
+ ** pfApplePasswordStore                                                    **
  *****************************************************************************/
-ST::string pfMacPasswordStore::GetPassword(const ST::string& username)
+ST::string pfApplePasswordStore::GetPassword(const ST::string& username)
 {
     ST::string service = GetServerDisplayName();
 
@@ -77,7 +77,7 @@ ST::string pfMacPasswordStore::GetPassword(const ST::string& username)
     return ret;
 }
 
-bool pfMacPasswordStore::SetPassword(const ST::string& username, const ST::string& password)
+bool pfApplePasswordStore::SetPassword(const ST::string& username, const ST::string& password)
 {
     ST::string service = GetServerDisplayName();
 

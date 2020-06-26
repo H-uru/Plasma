@@ -31,9 +31,13 @@ if(UNIX)
     add_definitions(-DHS_BUILD_FOR_UNIX)
 endif(UNIX)
 
-if(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    add_definitions(-DHS_BUILD_FOR_OSX)
-endif(APPLE AND ${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+if(APPLE)
+    add_definitions(-DHS_BUILD_FOR_APPLE)
+
+    if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+        add_definitions(-DHS_BUILD_FOR_MACOS)
+    endif(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+endif(APPLE)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     add_definitions(-DHS_BUILD_FOR_LINUX)

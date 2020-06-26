@@ -89,18 +89,18 @@ public:
 };
 #endif // HAVE_LIBSECRET
 
-#ifdef HS_BUILD_FOR_OSX
+#ifdef HS_BUILD_FOR_APPLE
 /**
- * An OSX Keychain password storage mechanism.
+ * An Apple Keychain password storage mechanism.
  */
-class pfMacPasswordStore : public pfPasswordStore
+class pfApplePasswordStore : public pfPasswordStore
 {
 public:
-    pfMacPasswordStore() { }
+    pfApplePasswordStore() { }
 
     ST::string GetPassword(const ST::string& username) override;
     bool SetPassword(const ST::string& username, const ST::string& password) override;
 };
-#endif //HS_BUILD_FOR_OSX
+#endif //HS_BUILD_FOR_APPLE
 
 #endif //pfPasswordStore_impl_inc
