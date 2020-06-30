@@ -120,6 +120,7 @@ class pfConsoleEngine
     _console_##name##_file_dummy();
 
 #define PF_CONSOLE_LINK_ALL() \
+    PF_CONSOLE_LINK_FILE(Audio) \
     PF_CONSOLE_LINK_FILE(Avatar) \
     PF_CONSOLE_LINK_FILE(Core) \
     PF_CONSOLE_LINK_FILE(Game) \
@@ -127,6 +128,7 @@ class pfConsoleEngine
     PF_CONSOLE_LINK_FILE(Net)
 
 #define PF_CONSOLE_INIT_ALL() \
+    PF_CONSOLE_INITIALIZE(Audio) \
     PF_CONSOLE_INITIALIZE(Avatar) \
     PF_CONSOLE_INITIALIZE(Core) \
     PF_CONSOLE_INITIALIZE(Game) \
