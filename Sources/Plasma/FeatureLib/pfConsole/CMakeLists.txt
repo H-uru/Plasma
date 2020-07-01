@@ -7,6 +7,7 @@ include_directories(../../PubUtilLib)
 include_directories(${PYTHON_INCLUDE_DIR})
 
 set(pfConsole_SOURCES
+    pfAudioConsoleCommands.cpp
     pfAvatarConsoleCommands.cpp
     pfConsole.cpp
     pfConsoleCommands.cpp
