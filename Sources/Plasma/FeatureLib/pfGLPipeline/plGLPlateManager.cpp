@@ -209,8 +209,15 @@ void plGLPlateManager::IDrawToDevice(plPipeline* pipe)
 
     glPipe->fDevice.SetWorldToCameraMatrix(hsMatrix44::IdentityMatrix());
 
+    GLboolean cull = glIsEnabled(GL_CULL_FACE);
+    if (cull)
+        glDisable(GL_CULL_FACE);
+
     for (plate = fPlates; plate != nullptr; plate = plate->GetNext()) {
         if (plate->IsVisible())
             glPipe->IDrawPlate(plate);
     }
+
+    if (cull)
+        glEnable(GL_CULL_FACE);
 }

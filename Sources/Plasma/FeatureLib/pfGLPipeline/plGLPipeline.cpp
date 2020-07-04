@@ -1131,10 +1131,5 @@ void plGLPipeline::IDrawPlate(plPlate* plate)
     glUniform1f(mRef->uMatEmissiveSrc, 1.0);
     glUniform1f(mRef->uMatSpecularSrc, 1.0);
 
-    // And this to override cullmode set based on material 2-sidedness.
-    //glDisable(GL_CULL_FACE);
-
-    glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * 0));
-
-    //IPopPiggyBacks();
+    glDrawElements(GL_TRIANGLE_STRIP, 6, GL_UNSIGNED_SHORT, (GLvoid*)(sizeof(uint16_t) * 0));
 }

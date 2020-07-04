@@ -759,6 +759,8 @@ void plGLDevice::MakeTextureRef(TextureRef* tRef, plLayerInterface* layer, plMip
         glTexParameteri(tRef->fMapping, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
 
+    tRef->SetDirty(false);
+
     LOG_GL_ERROR_CHECK(ST::format("Mipmap Texture \"{}\" failed", img->GetKeyName()));
 }
 
@@ -795,6 +797,8 @@ void plGLDevice::MakeCubicTextureRef(TextureRef* tRef, plLayerInterface* layer, 
     } else {
         glTexParameteri(tRef->fMapping, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     }
+
+    tRef->SetDirty(false);
 
     LOG_GL_ERROR_CHECK(ST::format("Cubic Environ Texture \"{}\" failed", img->GetKeyName()));
 }
