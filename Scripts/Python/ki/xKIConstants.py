@@ -98,6 +98,11 @@ kEasterEggs = {
                "Cleft" : {"see" : "You see sand for as far as the eye can see. Gonna need a vehicle of some sort.",
                           "exits" : "... well, I don't know. Maybe you can ask the old man (if he ever stops listening to that music!).",
                           "people" : "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"},
+               "GoMePubNew" : {"see" : "You are in a festively yet dimly lit Pub. The echoes of Messenger work and play echo along the walls of the massive main chamber.",
+                               "exits" : "... wait, where ARE the exits? Who built this place anyway?",
+                               "people" : "You see many people...unless you are here by yourself...in which case, you don't."},
+               "ChisoPreniv" : {"see" : "All around you are bookshelves upon bookshelves but not a book to read. To the south is a large set of windows that reveal a vast landscape that you'll never be able to access.",
+                                "exits" : " ... I guess in this library, the only exit is through the window, but let's not do that"},
 }
 
 ## Constants for Age display names.
@@ -113,14 +118,14 @@ class kAges:
                "EderTsogal" : "Eder Tsogal",
                "Er'canaCitySilo" : "D'ni-Ashem'en",
                "ErcanaCitySilo" : "D'ni-Ashem'en",
-               "GreatTreePub" : "The Watcher's Pub",
+               "GreatTreePub" : "D'ni-Watcher's Pub",
                "Great Zero" : "D'ni-Rezeero",
                "GreatZero" : "D'ni-Rezeero",
-               "GuildPub-Cartographers" : "The Cartographers' Pub",
-               "GuildPub-Greeters" : "The Greeters' Pub",
-               "GuildPub-Maintainers" : "The Maintainers' Pub",
-               "GuildPub-Messengers" : "The Messengers' Pub",
-               "GuildPub-Writers" : "The Writers' Pub",
+               "GuildPub-Cartographers" : "D'ni-Cartographers' Pub",
+               "GuildPub-Greeters" : "D'ni-Greeters' Pub",
+               "GuildPub-Maintainers" : "D'ni-Maintainers' Pub",
+               "GuildPub-Messengers" : "D'ni-Messengers' Pub",
+               "GuildPub-Writers" : "D'ni-Writers' Pub",
                "Kirel" : "D'ni-Kirel",
                "K'veer" : "D'ni-K'veer",
                "Kveer" : "D'ni-K'veer",
@@ -130,9 +135,14 @@ class kAges:
                "Shaft" : "D'ni-Tiwah",
                "Spy Room" : "D'ni-Ae'gura",
                "spyroom" : "D'ni-Ae'gura",
+##             Fan Ages
                "Trebivdil" : "Tre'bivdil",
                "trebivdil" : "Tre'bivdil",
-               "vothol" : "Vothol Gallery"}
+               "vothol" : "D'ni-Vothol Gallery",
+               "FehnirHouse" : "D'ni-Fehnir's House",
+               "GoMePubNew" : "D'ni-Messengers' Pub - Ae'gura",
+               "ChisoPreniv" : "Chiso Preniv",
+               "VeeTsah" : "Veelay Tsahvahn"}
     Hide = {"BahroCave", "PelletBahroCave", "Pellet Cave", "LiveBahroCave", "LiveBahroCaves"}
     NoInvite = {"Personal", "Nexus", "Cleft", "AvatarCustomization", "city",
                 "BahroCave", "LiveBahroCave", "LiveBahroCaves", 

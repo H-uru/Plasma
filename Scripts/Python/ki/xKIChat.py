@@ -1266,6 +1266,30 @@ class CommandsProcessor:
                 self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
             else:
                 self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Duck\" feather.", 0)
+        elif currentAge == "GoMePubNew":
+            if self.chatMgr.gFeather == 13:
+                self.chatMgr.AddChatLine(None, "You search... and find a \"Yellow\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 13:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Rukh\" feather.", 0)
+        elif currentAge == "ChisoPreniv":
+            if self.chatMgr.gFeather == 14:
+                self.chatMgr.AddChatLine(None, "You search... and find a \"Raven\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 14:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Yellow\" feather.", 0)
+        elif currentAge == "VeeTsah":
+            if self.chatMgr.gFeather == 15:
+                self.chatMgr.AddChatLine(None, "You search... and find a \"Dove\" feather and put it in your pocket.", 0)
+                self.chatMgr.gFeather += 1
+            elif self.chatMgr.gFeather > 15:
+                self.chatMgr.AddChatLine(None, "You search... but find no other feathers.", 0)
+            else:
+                self.chatMgr.AddChatLine(None, "You search... but then suddenly stop when you realize that you are missing the \"Raven\" feather.", 0)
         else:
             self.chatMgr.AddChatLine(None, "There are no feathers here.", 0)
             return
@@ -1300,6 +1324,12 @@ class CommandsProcessor:
                     pOut += " and a \"Duck\" feather"
                 if self.chatMgr.gFeather > 12:
                     pOut += " and a large \"Rukh\" feather (sticking out of your pocket)"
+                if self.chatMgr.gFeather > 13:
+                    pOut += " and a \"Yellow\" feather"
+                if self.chatMgr.gFeather > 14:
+                    pOut += " and a \"Raven\" feather"
+                if self.chatMgr.gFeather > 15:
+                    pOut += " and a \"Dove\" feather"
                 pOut += "."
                 self.chatMgr.AddChatLine(None, pOut, 0)
         else:
