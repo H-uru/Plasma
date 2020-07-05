@@ -88,6 +88,8 @@ public:
     void        SetMouseScale( float s );
     
     static plKeyDef UntranslateKey(plKeyDef key, bool extended);
+
+    void HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c = 0);
     
 protected:
     

@@ -223,6 +223,14 @@ plKeyDef plInputManager::UntranslateKey(plKeyDef key, bool extended)
     return key;
 }
 
+void plInputManager::HandleKeyEvent(plKeyDef key, bool bKeyDown, bool bKeyRepeat, wchar_t c)
+{
+    for (size_t i=0; i<fInputDevices.Count(); i++)
+    {
+        fInputDevices[i]->HandleKeyEvent(key, bKeyDown, bKeyRepeat, c);
+    }
+}
+
 #if HS_BUILD_FOR_WIN32
 /** Determines if we need to hackily flush cursor updates
  *  \remarks Normally, we would just call SetCursorPos directly. However, in Windows 10's
@@ -260,8 +268,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             bool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             bool down = !(Lparam >> 31);
 
-            for (int i=0; i<fInputDevices.Count(); i++)
-                fInputDevices[i]->HandleKeyEvent( UntranslateKey((plKeyDef)Wparam, bExtended), down, down & bRepeat );
+            HandleKeyEvent( UntranslateKey((plKeyDef)Wparam, bExtended), down, down & bRepeat );
         }
         break;
     case WM_CHAR:
@@ -280,8 +287,7 @@ void plInputManager::HandleWin32ControlEvent(UINT message, WPARAM Wparam, LPARAM
             bool bRepeat = ((Lparam >> 29) & 0xf) != 0;
             bool down = !(Lparam >> 31);
  
-            for (int i=0; i<fInputDevices.Count(); i++)
-                fInputDevices[i]->HandleKeyEvent( (plKeyDef)vkey, down, bRepeat, ch );
+            HandleKeyEvent( (plKeyDef)vkey, down, bRepeat, ch );
         }
         break;
     case WM_MOUSEWHEEL:
