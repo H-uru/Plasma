@@ -335,7 +335,7 @@ void plVirtualCam1::SetDepth(float h, float y)
     plVirtualCam1::Instance()->fPipe->SetDepth(fHither, fYon);
     plVirtualCam1::Instance()->fPipe->RefreshMatrices();
     #ifdef STATUS_LOG
-    camLog->AddLine("Hither, Yon changed to {f} {f}", fHither, fYon);
+    camLog->AddLineF("Hither, Yon changed to {f} {f}", fHither, fYon);
     #endif
 }
 
@@ -1623,7 +1623,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
-                camLog->AddLine("Performing stock track transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
+                camLog->AddLineF("Performing stock track transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
             }
             else
@@ -1636,7 +1636,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
                 StartTransition(pTrans);
                 delete(pTrans);
 #ifdef STATUS_LOG
-                camLog->AddLine("Performing stock cut transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName()));
+                camLog->AddLineF("Performing stock cut transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
             }
         }
@@ -1647,7 +1647,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
             AddCameraToStack(pCam);
             StartTransition(pTrans);
 #ifdef STATUS_LOG
-            camLog->AddLine("Performing custom transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
+            camLog->AddLineF("Performing custom transition between {} and {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
 
         }
@@ -1657,7 +1657,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         // just push it on, since we have a python camera present.
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG
-        camLog->AddLine("No transition between {} and {}, python camera is currently displaying",fPrevCam->GetKeyName(), pCam->GetKeyName());
+        camLog->AddLineF("No transition between {} and {}, python camera is currently displaying",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
     }
     // make this the default camera if that's what we want...
@@ -1666,7 +1666,7 @@ void plVirtualCam1::PushCamera(plCameraModifier1* pCam, bool bDefault)
         fCameraStack.clear();
         AddCameraToStack(pCam);
 #ifdef STATUS_LOG   
-        camLog->AddLine("Camera {} is now the DEFAULT camera for this age", pCam->GetKeyName());
+        camLog->AddLineF("Camera {} is now the DEFAULT camera for this age", pCam->GetKeyName());
 #endif
     }
     SetFOV(GetCurrentStackCamera()); 
@@ -1837,7 +1837,7 @@ void plVirtualCam1::StartTransition(CamTrans* transition)
 
 #ifdef STATUS_LOG
     if (fPrevCam->GetKey() && pCam->GetKey())
-        camLog->AddLine("Starting Camera Transition from {} to {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
+        camLog->AddLineF("Starting Camera Transition from {} to {}",fPrevCam->GetKeyName(), pCam->GetKeyName());
 #endif
     
     if ( (fPythonOverride && plCameraBrain1_Avatar::ConvertNoRef(fPythonOverride->GetBrain())) ||
@@ -2037,16 +2037,16 @@ void plVirtualCam1::IHandleCameraStatusLog(plCameraModifier1* pMod, int action)
     switch(action)
     {
     case kPop:
-        camLog->AddLine("Popped Camera {} from top of stack", pMod->GetKeyName());
+        camLog->AddLineF("Popped Camera {} from top of stack", pMod->GetKeyName());
         break;
     case kBackgroundPop:
-        camLog->AddLine("Popped Camera {} from background", pMod->GetKeyName());
+        camLog->AddLineF("Popped Camera {} from background", pMod->GetKeyName());
         break;
     case kPush:
-        camLog->AddLine("Pushed Camera {}", pMod->GetKeyName());
+        camLog->AddLineF("Pushed Camera {}", pMod->GetKeyName());
         break;
     case kReplacement:
-        camLog->AddLine("Camera {} replacing popped camera", pMod->GetKeyName());
+        camLog->AddLineF("Camera {} replacing popped camera", pMod->GetKeyName());
         break;
     }
     if (pBrain)
@@ -2059,7 +2059,7 @@ void plVirtualCam1::IHandleCameraStatusLog(plCameraModifier1* pMod, int action)
         if (plCameraBrain1_Fixed::ConvertNoRef(pBrain))
         {
             camLog->AddLine("Brain type Fixed");
-            camLog->AddLine("POAOffset {f} {f} {f}", pBrain->GetPOAOffset().fX,pBrain->GetPOAOffset().fY,pBrain->GetPOAOffset().fZ); 
+            camLog->AddLineF("POAOffset {f} {f} {f}", pBrain->GetPOAOffset().fX,pBrain->GetPOAOffset().fY,pBrain->GetPOAOffset().fZ); 
         }
         else
         if (plCameraBrain1_FirstPerson::ConvertNoRef(pBrain))
@@ -2071,7 +2071,7 @@ void plVirtualCam1::IHandleCameraStatusLog(plCameraModifier1* pMod, int action)
         {
             camLog->AddLine("Brain type 3rd Person");
         }
-        camLog->AddLine("FOV {f}",pMod->GetFOVw());
+        camLog->AddLineF("FOV {f}",pMod->GetFOVw());
         camLog->AddLine("..");
     }
 #endif
