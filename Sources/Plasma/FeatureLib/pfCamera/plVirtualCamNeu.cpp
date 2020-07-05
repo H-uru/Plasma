@@ -501,17 +501,17 @@ void plVirtualCam1::SetRender(bool render)
     {
         #ifdef STATUS_LOG
         camLog->AddLine("Virtual Camera Render Updates Enabled");
+        #endif
         if (fEffectPlate)
             fEffectPlate->SetVisible(false);
-        #endif
     }
     else
     {   
         #ifdef STATUS_LOG
         camLog->AddLine("Virtual Camera Render Updates Disabled");
+        #endif
         if (fEffectPlate)
             fEffectPlate->SetVisible(true);
-        #endif
     }
 
 
