@@ -43,6 +43,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 import re
 import time
+import random
 
 # Plasma Engine.
 from Plasma import *
@@ -1435,3 +1436,43 @@ class CommandsProcessor:
             self.chatMgr.AddChatLine(None, "Current Reward: '{}'".format(markerMgr.reward), 0)
         else:
             self.chatMgr.AddChatLine(None, "This game has no associated reward.", 0)
+
+    ## Rolls the specified dice and displays the results
+    def RollDice(self, dice_str):
+        if not dice_str:
+            roll = random.randint(1, 6)
+            PtSendKIMessage(kKIChatStatusMsg, "{} rolled a single six-sided die with a result of {}.".format(PtGetLocalPlayer().getPlayerName(), roll))
+            return
+
+        # Handle special dice types
+        if dice_str.lower() == "fate":
+            fate = [random.randint(-1, 1) for x in range(4)]
+            PtSendKIMessage(kKIChatStatusMsg, "{} rolled fate values of {} for a total of {}.".format(PtGetLocalPlayer().getPlayerName(), fate, sum(fate)))
+            return
+
+        # Parse common dice notation
+        dice_opt = re.match("^(\d+)d(\d+)$", dice_str)
+        if not dice_opt:
+            self.chatMgr.AddChatLine(None, "I'm sorry, I dont know how to roll {}.".format(dice_str), kChat.SystemMessage)
+            return
+        num_dice = int(dice_opt.groups()[0])
+        num_face = int(dice_opt.groups()[1])
+
+        if num_dice < 1:
+            self.chatMgr.AddChatLine(None, "Cannot roll less than a single die.", kChat.SystemMessage)
+            return
+        if num_dice > 10:
+            self.chatMgr.AddChatLine(None, "Cannot roll more than 10 dice at a time.", kChat.SystemMessage)
+            return
+        if num_face < 2:
+            self.chatMgr.AddChatLine(None, "Cannot roll a die with less than two faces.", kChat.SystemMessage)
+            return
+        if num_face > 100:
+            self.chatMgr.AddChatLine(None, "Cannot roll a die with more than 100 faces.", kChat.SystemMessage)
+            return
+
+        roll = [random.randint(1, num_face) for x in range(num_dice)]
+        if num_dice == 1:
+            PtSendKIMessage(kKIChatStatusMsg, "{} rolled a single {}-sided die with a result of {}.".format(PtGetLocalPlayer().getPlayerName(), num_face, roll[0]))
+        else:
+            PtSendKIMessage(kKIChatStatusMsg, "{} rolled {}d{} with a result of {} for a total of {}.".format(PtGetLocalPlayer().getPlayerName(), num_dice, num_face, roll, sum(roll)))        
