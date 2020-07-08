@@ -52,6 +52,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #if defined(HS_BUILD_FOR_UNIX)
 #   include <cstring>
 #   include <sys/stat.h>
+#   include <sys/utsname.h>
 #   include <fcntl.h>
 #   include <unistd.h>
 #   include <signal.h>
@@ -564,6 +565,10 @@ std::vector<ST::string> DisplaySystemVersion()
         }
         break;
     }
+#elif HS_BUILD_FOR_UNIX
+    struct utsname sysinfo;
+    uname(&sysinfo);
+    versionStrs.push_back(ST::format("{} {} ({})\n", sysinfo.sysname, sysinfo.release, sysinfo.machine));
 #endif
     return versionStrs;
 }
