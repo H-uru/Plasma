@@ -266,7 +266,8 @@ class kCommands:
     Other = {"/party" : "PartyTime",
              "/saveclothing" : "SaveClothing",
              "/loadclothing" : "LoadClothing",
-             "/threaten" : "CoopExample"}
+             "/threaten" : "CoopExample",
+             "/roll": "RollDice"}
 
 ## Numeric limits for the KI.
 class kLimits:
