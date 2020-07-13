@@ -8,7 +8,8 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install dependencies
       run: |
-        sudo apt install cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
+        sudo apt-get update
+        sudo apt-get install -y cmake libcurl4-openssl-dev libopenal-dev libssl-dev \
           libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
           libvorbis-dev qtbase5-dev
         sudo pip install -r ${GITHUB_WORKSPACE}/requirements.txt
