@@ -685,19 +685,23 @@ void plAvBrainClimb::IProbeEnvironment()
     // *** would be cool if we could hint that these should be batched for spatial coherence optimization
     plLOSRequestMsg *upReq = new plLOSRequestMsg(ourKey, start, up, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
     upReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kUp));
+    upReq->SetRequestName(ST_LITERAL("Ladder Brain: Climb Up"));
     upReq->Send();
 
     plLOSRequestMsg *downReq = new plLOSRequestMsg(ourKey, start, down, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
     downReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kDown));
+    downReq->SetRequestName(ST_LITERAL("Ladder Brain: Climb Down"));
     downReq->Send();
 
     plLOSRequestMsg *leftReq = new plLOSRequestMsg(ourKey, start, left, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
     leftReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kLeft));
+    leftReq->SetRequestName(ST_LITERAL("Ladder Brain: Climb Left"));
     leftReq->SetRequestType(plSimDefs::kLOSDBCustom);
     leftReq->Send();
 
     plLOSRequestMsg *rightReq = new plLOSRequestMsg(ourKey, start, right, plSimDefs::kLOSDBCustom, plLOSRequestMsg::kTestAny, plLOSRequestMsg::kReportHit);
     rightReq->SetRequestID(static_cast<uint32_t>(plClimbMsg::kRight));
+    rightReq->SetRequestName(ST_LITERAL("Ladder Brain: Climb Right"));
     rightReq->Send();
 
     fOldPhysicallyBlockedDirections = fPhysicallyBlockedDirections;

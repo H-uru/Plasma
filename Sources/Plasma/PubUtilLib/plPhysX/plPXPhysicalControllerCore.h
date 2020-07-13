@@ -39,12 +39,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
       Mead, WA   99021
 
 *==LICENSE==*/
+#include <memory>
 #include "plAvatar/plPhysicalControllerCore.h"
 
-class NxCapsuleController;
-class NxActor;
-class NxCapsule;
-class PXControllerHitReport;
+namespace physx
+{
+    class PxActor;
+    class PxCapsuleController;
+    class PxCapsuleGeometry;
+    class PxRigidDynamic;
+};
+
 class plPhysicalProxy;
 class plDrawableSpans;
 class hsGMaterial;
@@ -70,39 +75,38 @@ public:
 
     // An ArmatureMod has its own idea about when physics should be enabled/disabled.
     // Use plArmatureModBase::EnablePhysics() instead.
-    virtual void Enable(bool enable);
+    void Enable(bool enable) override;
 
     // Subworld
-    virtual void SetSubworld(plKey world);
+    void SetSubworld(const plKey& world) override;
 
     // For the avatar SDL only
-    virtual void GetState(hsPoint3& pos, float& zRot);
-    virtual void SetState(const hsPoint3& pos, float zRot);
+    void GetState(hsPoint3& pos, float& zRot) override;
+    void SetState(const hsPoint3& pos, float zRot) override;
+
+    // The LOS DB this avatar is in (only one)
+    void SetLOSDB(plSimDefs::plLOSDB losDB) override;
 
     // Movement strategy
-    virtual void SetMovementStrategy(plMovementStrategy* strategy);
+    void SetMovementStrategy(plMovementStrategy* strategy) override;
 
     // Global location
-    virtual void SetGlobalLoc(const hsMatrix44& l2w);
+    void SetGlobalLoc(const hsMatrix44& l2w) override;
 
     // Local Sim Position
-    virtual void GetPositionSim(hsPoint3& pos);
+    void GetPositionSim(hsPoint3& pos) override;
 
     // Move kinematic controller
-    virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults);
-
-    // Set linear velocity on dynamic controller
-    virtual void SetLinearVelocitySim(const hsVector3& linearVel);
+    void Move(const hsVector3& displacement, unsigned int collideWith,
+              unsigned int& collisionResults) override;
 
     // Sweep the controller path from startPos through endPos
-    virtual int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics,
-        bool vsStatics, uint32_t& vsSimGroups, std::vector<plControllerSweepRecord>& hits);
+    int SweepControllerPath(const hsPoint3& startPos, const hsPoint3& endPos, bool vsDynamics,
+                            bool vsStatics, uint32_t& vsSimGroups, 
+                            std::vector<plControllerSweepRecord>& hits) override;
 
     // any clean up for the controller should go here
-    virtual void LeaveAge();
-
-    // Capsule
-    void GetWorldSpaceCapsule(NxCapsule& cap) const;
+    void LeaveAge() override;
 
     // Create Proxy for debug rendering
     plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo);
@@ -123,17 +127,6 @@ public:
     // Update controllers when not performing a physics step
     static void UpdateNonPhysical(float alpha);
 
-    // Rebuild the controller cache, required when a static actor in the scene has changed.
-    static void RebuildCache();
-
-    // Returns the plPXPhysicalControllerCore associated with the given NxActor
-    static plPXPhysicalControllerCore* GetController(NxActor& actor);
-
-    // Subworld controller queries
-    static bool AnyControllersInThisWorld(plKey world);
-    static int GetNumberOfControllersInThisSubWorld(plKey world);
-    static int GetControllersInThisSubWorld(plKey world, int maxToReturn, plPXPhysicalControllerCore** bufferout);
-
     // Controller count
     static int NumControllers();
     static void SetMaxNumberOfControllers(int max) { fPXControllersMax = max; }
@@ -144,13 +137,14 @@ public:
 #endif
 
 protected:
-    friend class PXControllerHitReport;
+    friend class plPXControllerBehaviorCallback;
+    friend class plPXControllerHitReport;
 
-    virtual void IHandleEnableChanged();
+    void IHandleEnableChanged() override;
 
     void IInformDetectors(bool entering);
 
-    void ICreateController(const hsPoint3& pos);
+    void ICreateController(hsPoint3 pos);
     void IDeleteController();
 
     void IDispatchQueuedMsgs();
@@ -164,10 +158,10 @@ protected:
     std::vector<plCollideMsg*> fQueuedCollideMsgs;
     std::vector<plPXPhysical*> fDynamicHits;
 
-    NxCapsuleController* fController;
-    NxActor* fActor;
+    std::unique_ptr<class plPXControllerBehaviorCallback> fBehaviorCallback;
+    physx::PxCapsuleController* fController;
+    physx::PxRigidDynamic* fActor;
 
     plPhysicalProxy* fProxyGen;
-    bool fKinematicCCT;
     bool fHuman;
 };

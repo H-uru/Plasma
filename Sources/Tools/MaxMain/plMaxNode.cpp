@@ -686,10 +686,8 @@ bool plMaxNode::MakePhysical(plErrorMsg *pErrMsg, plConvertSettings *settings)
     plMaxMeshExtractor::NeutralMesh mesh;
     plMaxMeshExtractor::Extract(mesh, proxyNode, bounds == plSimDefs::kBoxBounds, this);
 
-    if (subworld)
-        recipe.l2s = subworld->GetWorldToLocal44() * mesh.fL2W;
-    else
-        recipe.l2s = mesh.fL2W;
+    hsMatrix44 l2s = subworld ? (subworld->GetWorldToLocal44() * mesh.fL2W) : mesh.fL2W;
+    l2s.DecompRigid(recipe.l2sP, recipe.l2sQ);
 
     switch (bounds)
     {

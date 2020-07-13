@@ -4873,19 +4873,15 @@ PF_CONSOLE_CMD( SceneObject, Detach,            // Group name, Function name
 #endif // LIMIT_CONSOLE_COMMANDS
 
 //////////////////////////////////////////////////////////////
-// PHYSICS (The Havok Flavour)
+// PHYSICS
 //////////////////////////////////////////////////////////////
 
 #ifndef LIMIT_CONSOLE_COMMANDS
 
 #include "plPhysX/plPXPhysicalControllerCore.h"
+#include "plPhysX/plSimulationMgr.h"
 
 PF_CONSOLE_GROUP( Physics )
-
-PF_CONSOLE_CMD( Physics, Rebuild, "", "Rebuilds the avatars collision cache")
-{
-    plPXPhysicalControllerCore::RebuildCache();
-}
 
 PF_CONSOLE_CMD(Physics, MaxPhysicalAvatars, "int max", "Set the maximum number of avatar physicals allowed. Default = 0 (meaning no limit)")
 {
@@ -5134,36 +5130,6 @@ PF_CONSOLE_CMD(Physics, ExtraProfile, "", "Toggle extra simulation profiling")
     }
     PrintString(str);
 }
-PF_CONSOLE_CMD(Physics, SubworldOptimization, "", "Toggle subworld optimization")
-{
-    const char *str;
-    if (plSimulationMgr::fSubworldOptimization)
-    {
-        plSimulationMgr::fSubworldOptimization = false;
-        str = "Stop subworld optimization";
-    }
-    else
-    {
-        plSimulationMgr::fSubworldOptimization = true;
-        str = "Start subworld optimization";
-    }
-    PrintString(str);
-}
-PF_CONSOLE_CMD(Physics, ClampingOnStep, "", "Toggle whether to clamp the step size on advance")
-{
-    const char *str;
-    if (plSimulationMgr::fDoClampingOnStep)
-    {
-        plSimulationMgr::fDoClampingOnStep = false;
-        str = "Stop clamping the step size";
-    }
-    else
-    {
-        plSimulationMgr::fDoClampingOnStep = true;
-        str = "Start clamping the step size";
-    }
-    PrintString(str);
-}
 
 PF_CONSOLE_CMD(Physics, 
                ShowControllerDebugDisplay,
@@ -5172,21 +5138,7 @@ PF_CONSOLE_CMD(Physics,
 {
     plPXPhysicalControllerCore::fDebugDisplay = !plPXPhysicalControllerCore::fDebugDisplay;
 }
-PF_CONSOLE_CMD(Physics, 
-               ListAwakeActors,
-               "", 
-               "Toggles displaying the list of awake actors")
-{
-    plSimulationMgr::fDisplayAwakeActors= !plSimulationMgr::fDisplayAwakeActors;
-}
 
-/*
-PF_CONSOLE_CMD( Physics, PlayPhysicsSounds, "bool b", "Turn physics sounds on/off.")
-{
-    bool b = params[0];
-    plHKCollision::TogglePhysicsSounds(b);
-}
-*/
 #endif // LIMIT_CONSOLE_COMMANDS
 
 

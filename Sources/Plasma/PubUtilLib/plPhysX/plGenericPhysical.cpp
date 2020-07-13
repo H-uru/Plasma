@@ -40,7 +40,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 *==LICENSE==*/
 #include "plPXPhysical.h"
-#include "plPXStream.h"
 #include "plPXSubWorld.h"
 #include "plSimulationMgr.h"
 
@@ -103,8 +102,8 @@ PhysRecipe::~PhysRecipe()
 }
 
 plPXPhysical::plPXPhysical()
-    : fSDLMod(), fActor(), fLOSDBs(plSimDefs::kLOSDBNone) , fGroup(plSimDefs::kGroupMax),
-      fReportsOn(), fLastSyncTime(), fSndGroup(), fHitForce(), fHitPos()
+    : fActor(), fGroup(plSimDefs::kGroupMax), fReportsOn(), fLOSDBs(plSimDefs::kLOSDBNone),
+      fLastSyncTime(), fSDLMod(), fSndGroup()
 {
 }
 
@@ -147,7 +146,7 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
     uint8_t refCtxt = refMsg->GetContext();
 
     switch (refMsg->fType) {
-    case kPhysRefWorld: {
+    case kPhysRefWorld:
         switch (refCtxt) {
         case plRefMsg::kOnCreate:
         case plRefMsg::kOnRequest:
@@ -185,21 +184,17 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
                 IGetTransformGlobal(fCachedLocal2World);
                 return true;
             }
+            break;
+
+        case plRefMsg::kOnDestroy:
+        case plRefMsg::kOnRemove:
+            fWorldKey = nullptr;
+            IUpdateSubworld();
+            break;
         }
         break;
 
-        case plRefMsg::kOnDestroy: {
-            // our world was deleted out from under us: move to the main world
-            // NOTE: this was not implemented even before the PXSubWorld rewrite.
-            //       not going to bother!
-//          hsAssert(0, "Lost world");
-        }
-        break;
-
-    }
-    break;
-
-    case kPhysRefSndGroup: {
+    case kPhysRefSndGroup:
         switch (refCtxt) {
         case plRefMsg::kOnCreate:
         case plRefMsg::kOnRequest:
@@ -210,8 +205,7 @@ bool plPXPhysical::HandleRefMsg(plGenRefMsg* refMsg)
             fSndGroup = nil;
             break;
         }
-    }
-    break;
+        break;
 
     default:
         hsAssert(0, "Unknown ref type, who sent us this?");
@@ -249,8 +243,6 @@ void plPXPhysical::SetSceneNode(plKey newNode)
 
 void plPXPhysical::InitProxy()
 {
-    hsAssert(!fProxyGen, "Already have proxy gen, double read?");
-
     hsColorRGBA physColor;
     float opac = 1.0f;
 
@@ -283,6 +275,9 @@ void plPXPhysical::InitProxy()
         // if in a subworld... slightly transparent
         if (fRecipe.worldKey)
             opac = 0.6f;
+    } else if (fGroup == plSimDefs::kGroupExcludeRegion) {
+        physColor.Set(.96f, .02f, .99f, 1.f);
+        opac = .6f;
     } else {
         // don't knows are grey
         physColor.Set(0.6f,0.6f,0.6f,1.f);
@@ -312,6 +307,16 @@ void plPXPhysical::InitSDL()
     sceneObj->AddModifier(fSDLMod);
 }
 
+void plPXPhysical::InitRefs() const
+{
+    plNodeRefMsg* nodeRefMsg = new plNodeRefMsg(fSceneNode, plRefMsg::kOnCreate, -1, plNodeRefMsg::kPhysical); 
+    hsgResMgr::ResMgr()->AddViaNotify(GetKey(), nodeRefMsg, plRefFlags::kActiveRef);
+
+    plGenRefMsg* simRefMsg = new plGenRefMsg(plSimulationMgr::GetInstance()->GetKey(),
+                                             plRefMsg::kOnCreate, -1, plSimulationMgr::kPhysical);
+    hsgResMgr::ResMgr()->AddViaNotify(GetKey(), simRefMsg, plRefFlags::kPassiveRef);
+}
+
 // ==========================================================================
 
 void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
@@ -336,22 +341,28 @@ void plPXPhysical::Read(hsStream* stream, hsResMgr* mgr)
     fRecipe.worldKey = mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefWorld), plRefFlags::kActiveRef);
     mgr->ReadKeyNotifyMe(stream, new plGenRefMsg(GetKey(), plRefMsg::kOnCreate, 0, kPhysRefSndGroup), plRefFlags::kActiveRef);
 
-    hsPoint3 pos;
-    hsQuat rot;
-    pos.Read(stream);
-    rot.Read(stream);
-    rot.MakeMatrix(&fRecipe.l2s);
-    fRecipe.l2s.SetTranslate(&pos);
+    fRecipe.l2sP.Read(stream);
+    fRecipe.l2sQ.Read(stream);
+    ISanityCheckRecipe();
 
     fProps.Read(stream);
 
-    if (fRecipe.bounds == plSimDefs::kSphereBounds) {
+    fBounds = fRecipe.bounds;
+    fGroup = fRecipe.group;
+    fObjectKey = fRecipe.objectKey;
+    fReportsOn = fRecipe.reportsOn;
+    fSceneNode = fRecipe.sceneNode;
+
+    // Note that fBounds may not be the same as fRecipe.bounds due to limitations in whatever physics
+    // engine is being used. The readers will compensate for the change by testing fRecipe.bounds.
+    ISanityCheckBounds();
+    if (fBounds == plSimDefs::kSphereBounds) {
         fRecipe.radius = stream->ReadLEScalar();
         fRecipe.offset.Read(stream);
-    } else if (fRecipe.bounds == plSimDefs::kBoxBounds) {
+    } else if (fBounds == plSimDefs::kBoxBounds) {
         fRecipe.bDimensions.Read(stream);
         fRecipe.bOffset.Read(stream);
-    } else if (fRecipe.bounds == plSimDefs::kHullBounds) {
+    } else if (fBounds == plSimDefs::kHullBounds) {
         fRecipe.convexMesh = ICookHull(stream);
     } else {
         fRecipe.triMesh = ICookTriMesh(stream);
@@ -380,11 +391,8 @@ void plPXPhysical::Write(hsStream* stream, hsResMgr* mgr)
     mgr->WriteKey(stream, fWorldKey);
     mgr->WriteKey(stream, fSndGroup);
 
-    hsPoint3 pos;
-    hsQuat rot;
-    fRecipe.l2s.DecompRigid(pos, rot);
-    pos.Write(stream);
-    rot.Write(stream);
+    fRecipe.l2sP.Write(stream);
+    fRecipe.l2sQ.Write(stream);
 
     fProps.Write(stream);
 
@@ -419,8 +427,7 @@ bool plPXPhysical::DirtySynchState(const ST::string& SDLStateName, uint32_t sync
 
 void plPXPhysical::GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV)
 {
-    IGetPositionSim(pos);
-    IGetRotationSim(rot);
+    IGetPoseSim(pos, rot);
     GetLinearVelocitySim(linV);
     GetAngularVelocitySim(angV);
 }
@@ -430,6 +437,7 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     bool isLoading = plNetClientApp::GetInstance()->IsLoadingInitialAgeState();
     bool isFirstIn = plNetClientApp::GetInstance()->GetJoinOrder() == 0;
     bool initialSync = isLoading && isFirstIn;
+    bool wakeup = !(initialSync && GetProperty(plSimulationInterface::kStartInactive));
 
     // If the physical has fallen out of the sim, and this is initial age state, and we're
     // the first person in, reset it to the original position.  (ie, prop the default state
@@ -440,15 +448,11 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
         return;
     }
 
-    if (pos)
-        ISetPositionSim(*pos);
-    if (rot)
-        ISetRotationSim(*rot);
-
+    ISetPoseSim(pos, rot, wakeup);
     if (linV)
-        SetLinearVelocitySim(*linV);
+        SetLinearVelocitySim(*linV, wakeup);
     if (angV)
-        SetAngularVelocitySim(*angV);
+        SetAngularVelocitySim(*angV, wakeup);
 
     SendNewLocation(false, true);
 }
@@ -496,7 +500,7 @@ void plPXPhysical::SetTransform(const hsMatrix44& l2w, const hsMatrix44& w2l, bo
 {
     //  make sure there is some difference between the matrices...
     // ... but not when a subworld... because the subworld maybe animating and if the object is still then it is actually moving within the subworld
-    if (force || (fWorldKey || !l2w.Compare(fCachedLocal2World, .0001f))) {
+    if (force || (!IsStatic() && (fWorldKey || !l2w.Compare(fCachedLocal2World, .0001f)))) {
         ISetTransformGlobal(l2w);
         plProfile_Inc(SetTransforms);
     }

@@ -163,16 +163,6 @@ set_package_properties(BZip2 PROPERTIES
     PURPOSE "Required only if FreeType is built statically against bzip2"
 )
 
-if(WIN32)
-    #TODO: Not required if we aren't building the client
-    find_package(PhysX REQUIRED)
-    set_package_properties(PhysX PROPERTIES
-        URL "https://developer.nvidia.com/physx-sdk"
-        DESCRIPTION "Library for hardware-accelerated physics simulation for gaming"
-        TYPE REQUIRED
-    )
-endif(WIN32)
-
 if(UNIX AND NOT APPLE)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(LIBSECRET libsecret-1)

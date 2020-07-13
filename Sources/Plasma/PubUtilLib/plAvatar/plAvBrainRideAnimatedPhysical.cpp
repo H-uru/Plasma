@@ -57,7 +57,7 @@ void plAvBrainRideAnimatedPhysical::Activate(plArmatureModBase *avMod)
         plSceneObject* avObj = fArmature->GetTarget(0);
         plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
         plPhysicalControllerCore* controller = avMod->GetController();
-        fWalkingStrategy = new plDynamicWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+        fWalkingStrategy = new plRidingWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
         controller->SetMovementStrategy(fWalkingStrategy);
     }
 }

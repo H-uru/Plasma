@@ -41,164 +41,31 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 *==LICENSE==*/
 #include "plSimulationMgr.h"
 
-#include <NxPhysics.h>
-#include <NxCooking.h>
-
 #include <algorithm>
 
 #include "plgDispatch.h"
 #include "hsTimer.h"
 #include "plProfile.h"
+
+#include "plLOSDispatch.h"
+#include "plPXConvert.h"
 #include "plPXPhysical.h"
 #include "plPXPhysicalControllerCore.h"
-#include "plPXConvert.h"
+#include "plPXSimulation.h"
 #include "plPXSubWorld.h"
-#include "plLOSDispatch.h"
-#include "plPhysical/plPhysicsSoundMgr.h"
-#include "plStatusLog/plStatusLog.h"
-#include "pnSceneObject/plSimulationInterface.h"
-#include "pnSceneObject/plCoordinateInterface.h"
-#include "pnNetCommon/plSDLTypes.h"
+
 #include "plMessage/plCollideMsg.h"
 #include "plMessage/plAgeLoadedMsg.h"
-
+#include "pnMessage/plRefMsg.h"
 #include "plModifier/plDetectorLog.h"
-
-#ifndef PLASMA_EXTERNAL_RELEASE
-#include "plPipeline/plDebugText.h"
-bool plSimulationMgr::fDisplayAwakeActors=false;
-#endif //PLASMA_EXTERNAL_RELEASE
-// This gets called by PhysX whenever a trigger gets penetrated.  This is used
-// for any Plasma detectors.
-class SensorReport : public NxUserTriggerReport
-{
-    virtual void onTrigger(NxShape& triggerShape, NxShape& otherShape, NxTriggerFlag status)
-    {
-        plKey otherKey = nil;
-        bool doReport = false;
-
-        // Get our trigger physical.  This should definitely have a plPXPhysical
-        plPXPhysical* triggerPhys = (plPXPhysical*)triggerShape.getActor().userData;
-
-        // Get the triggerer. If it doesn't have a plPXPhyscial, it's an avatar
-        plPXPhysical* otherPhys = (plPXPhysical*)otherShape.getActor().userData;
-        if (otherPhys)
-        {
-            otherKey = otherPhys->GetObjectKey();
-            doReport = triggerPhys->DoReportOn((plSimDefs::Group)otherPhys->GetGroup());
-        }
-        else
-        {
-            plPXPhysicalControllerCore* controller = plPXPhysicalControllerCore::GetController(otherShape.getActor());
-            if (controller)
-            {
-                otherKey = controller->GetOwner();
-                doReport = triggerPhys->DoReportOn(plSimDefs::kGroupAvatar);
-            }
-        }
-
-        if (doReport)
-        {
-            if (status & NX_TRIGGER_ON_ENTER)
-            {
-                if (plSimulationMgr::fExtraProfile)
-                    plDetectorLog::Red("-->Send Collision {} enter",triggerPhys->GetObjectKey()->GetName());
-                plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, true);
-            }
-            else if (status & NX_TRIGGER_ON_LEAVE)
-            {
-                if (plSimulationMgr::fExtraProfile)
-                    plDetectorLog::Red("-->Send Collision {} exit",triggerPhys->GetObjectKey()->GetName());
-                plSimulationMgr::GetInstance()->AddCollisionMsg(triggerPhys->GetObjectKey(), otherKey, false);
-            }
-        }
-    }
-} gSensorReport;
-
-// This gets called by PhysX whenever two actor groups that are set to report
-// have a collision.  We enable this for when a dynamic collides with anything.
-class ContactReport : public NxUserContactReport
-{
-    virtual void onContactNotify(NxContactPair& pair, NxU32 events)
-    {
-        plPXPhysical* phys1 = (plPXPhysical*)pair.actors[0]->userData;
-        plPXPhysical* phys2 = (plPXPhysical*)pair.actors[1]->userData;
-
-        // Normally, these are always valid because the avatar (who doesn't have
-        // a physical) will push other physicals away before they actually touch
-        // his actor.  However, if the avatar is warped to a new position he may
-        // collide with the object for a few frames.  We just ignore it.
-        if (!phys1 || !phys2)
-            return;
-
-        plSimulationMgr::GetInstance()->ConsiderSynch(phys1, phys2);
-
-        if (phys1->GetSoundGroup() && phys2->GetSoundGroup())
-        {
-            hsPoint3 contactPoint(0, 0, 0);
-
-            // Just grab the last contact point
-            NxContactStreamIterator i(pair.stream);
-            while (i.goNextPair())
-            {
-                while (i.goNextPatch())
-                {
-                    const NxVec3& contactNormal = i.getPatchNormal();
-                    while (i.goNextPoint())
-                    {
-                        contactPoint = plPXConvert::Point(i.getPoint());
-                    }
-                }
-            }
-
-            plSimulationMgr::GetInstance()->fSoundMgr->AddContact(
-                phys1, phys2, contactPoint,
-                plPXConvert::Vector(pair.sumNormalForce));
-        }
-    }
-} gContactReport;
-
-// This directs any errors or warnings from PhysX to the simulation log.
-class ErrorStream : public NxUserOutputStream
-{
-    virtual void reportError(NxErrorCode e, const char* message, const char* file, int line)
-    {
-        const char* errorType = nil;
-        switch (e)
-        {
-        case NXE_INVALID_PARAMETER: errorType = "invalid parameter";    break;
-        case NXE_INVALID_OPERATION: errorType = "invalid operation";    break;
-        case NXE_OUT_OF_MEMORY:     errorType = "out of memory";        break;
-        case NXE_DB_INFO:           errorType = "info";                 break;
-        case NXE_DB_WARNING:        errorType = "warning";              break;
-        default:                    errorType = "unknown error";
-        }
-
-        plSimulationMgr::Log("{}({}) : {}: {}", file, line, errorType, message);
-    }
-
-    virtual NxAssertResponse reportAssertViolation(const char* message, const char* file, int line)
-    {
-        plSimulationMgr::Log("access violation : {} ({}({}))", message, file, line);
-        hsAssert(0, "PhysX assert, see simulation log for details");
-        return NX_AR_CONTINUE;
-    }
-
-    virtual void print(const char* message)
-    {
-        plSimulationMgr::Log(message);
-    }
-} gErrorStream;
+#include "plModifier/plExcludeRegionModifier.h"
+#include "pnNetCommon/plSDLTypes.h"
+#include "plPhysical/plPhysicsSoundMgr.h"
+#include "pnSceneObject/plSimulationInterface.h"
+#include "pnSceneObject/plCoordinateInterface.h"
+#include "plStatusLog/plStatusLog.h"
 
 
-/////////////////////////////////////////////////////////////////
-//
-// DEFAULTS
-//
-/////////////////////////////////////////////////////////////////
-
-#define kDefaultMaxDelta    (0.15)        // if the step is greater than .15 seconds, clamp to that
-#define kDefaultStepSize    (1.f / 60.f)  // default simulation freqency is 60hz
 
 /////////////////////////////////////////////////////////////////
 //
@@ -206,60 +73,25 @@ class ErrorStream : public NxUserOutputStream
 //
 /////////////////////////////////////////////////////////////////
 
-// 
-// Alloc all the sim timers here so they make a nice pretty display
-//
-//plProfile_CreateTimer(    "ClearContacts", "Simulation", ClearContacts);
-plProfile_CreateTimer(  "Step", "Simulation", Step);
-// plProfile_CreateTimer(   "  Broadphase", "Simulation", Broadphase);
-plProfile_CreateCounter("  Awake", "Simulation", Awake);
-plProfile_CreateCounter("  Contacts", "Simulation", Contacts);
-plProfile_CreateCounter("  DynActors", "Simulation", DynActors);
-plProfile_CreateCounter("  DynShapes", "Simulation", DynShapes);
-plProfile_CreateCounter("  StaticShapes", "Simulation", StaticShapes);
-plProfile_CreateCounter("  Actors", "Simulation", Actors);
-plProfile_CreateCounter("  PhyScenes", "Simulation", Scenes);
-
-// plProfile_CreateCounter("  Broadphase Rejected", "Simulation", BroadphaseReject);
-// plProfile_CreateCounter("  Broadphase Accepted", "Simulation", BroadphaseAccept);
-// plProfile_CreateCounter("  Impact", "Simulation", Impact);
-// plProfile_CreateCounter("  Penetration", "Simulation", Penetration);
-// plProfile_CreateTimer(   "Narrowphase", "Simulation", Narrowphase);
-// plProfile_CreateTimer(   "ProcessInterpenetration", "Simulation", ProcessInterpenetration);
-plProfile_CreateTimer(  "LineOfSight", "Simulation", LineOfSight);
 plProfile_CreateTimer(  "ProcessSyncs", "Simulation", ProcessSyncs);
 plProfile_CreateTimer(  "UpdateContexts", "Simulation", UpdateContexts);
-// plProfile_CreateCounter("  ContextUpdates", "Simulation", ContextUpdates);
 plProfile_CreateCounter("  MaySendLocation", "Simulation", MaySendLocation);
 plProfile_CreateCounter("  LocationsSent", "Simulation", LocationsSent);
-plProfile_CreateTimer(  "  PhysicsUpdates","Simulation",PhysicsUpdates);
-// plProfile_CreateTimer(   "EntityCleanup", "Simulation", EntityCleanup);
+plProfile_CreateTimer(  "  PhysicsUpdates","Simulation", PhysicsUpdates);
 plProfile_CreateCounter("SetTransforms Accepted", "Simulation", SetTransforms);
-plProfile_CreateCounter("AnimatedPhysicals", "Simulation", AnimatedPhysicals);
-plProfile_CreateCounter("AnimatedActivators", "Simulation", AnimatedActivators);
-plProfile_CreateCounter("Controllers", "Simulation", Controllers);
-// plProfile_CreateCounter("NumSteps", "Simulation", NumSteps);
-plProfile_CreateCounter("StepLength", "Simulation", StepLen);
 
 // declared at file scope so that both GetInstance and the destructor can access it.
-static plSimulationMgr* gTheInstance = NULL;
+static plSimulationMgr* gTheInstance;
 bool plSimulationMgr::fExtraProfile = false;
-bool plSimulationMgr::fSubworldOptimization = false;
-bool plSimulationMgr::fDoClampingOnStep=true;
 
 void plSimulationMgr::Init()
 {
     hsAssert(!gTheInstance, "Initializing the sim when it's already been done");
-    gTheInstance = new plSimulationMgr();
-    if (gTheInstance->InitSimulation())
+    gTheInstance = new plSimulationMgr;
+    if (gTheInstance->fSimulation->Init())
         gTheInstance->RegisterAs(kSimulationMgr_KEY);
     else
-    {
-        // There was an error when creating the PhysX simulation
-        // ...then get rid of the simulation instance
-        delete gTheInstance; // clean up the memory we allocated
-        gTheInstance = nil;
-    }
+        gTheInstance = nullptr;
 }
 
 // when the app is going away completely
@@ -267,10 +99,7 @@ void plSimulationMgr::Shutdown()
 {
     hsAssert(gTheInstance, "Simulation manager missing during shutdown.");
     if (gTheInstance)
-    {
         gTheInstance->UnRegisterAs(kSimulationMgr_KEY);     // this will destroy the instance
-        gTheInstance = nil;
-    }
 }
 
 plSimulationMgr* plSimulationMgr::GetInstance()
@@ -281,39 +110,13 @@ plSimulationMgr* plSimulationMgr::GetInstance()
 //////////////////////////////////////////////////////////////////////////
 
 plSimulationMgr::plSimulationMgr()
-    : fSuspended(true)
-    , fAccumulator(0.0f)
-    , fStepCount(0)
-    , fLOSDispatch(new plLOSDispatch())
-    , fSoundMgr(new plPhysicsSoundMgr)
-    , fLog(nil)
+    : fSimulation(std::make_unique<plPXSimulation>()),
+      fSuspended(true),
+      fLOSDispatch(new plLOSDispatch()),
+      fSoundMgr(new plPhysicsSoundMgr),
+      fLog()
 {
-
-}
-
-bool plSimulationMgr::InitSimulation()
-{
-    fSDK = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, &gErrorStream);
-    if (!fSDK) {
-        return false; // client will handle this and ask user to install
-    }
-
     fLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Simulation.log", plStatusLog::kFilledBackground | plStatusLog::kAlignToTop);
-    fLog->AddLine("Initialized PhysX SDK");
-
-    if (!NxInitCooking(nullptr, &gErrorStream)) {
-        fLog->AddLine("Phailed to init NxCooking");
-        fSDK->release();
-        fSDK = nullptr;
-        return false;
-    }
-
-#ifndef PLASMA_EXTERNAL_RELEASE
-    // If this is an internal build, enable the PhysX debugger
-    fSDK->getFoundationSDK().getRemoteDebugger()->connect("localhost", 5425);
-#endif
-
-    return true;
 }
 
 plSimulationMgr::~plSimulationMgr()
@@ -324,109 +127,42 @@ plSimulationMgr::~plSimulationMgr()
     delete fSoundMgr;
     fSoundMgr = nil;
 
-    hsAssert(fScenes.empty(), "Unreleased scenes at shutdown");
-
-    if (fSDK) {
-        NxCloseCooking();
-        fSDK->release();
-    }
-
     delete fLog;
     fLog = nil;
 }
 
-NxScene* plSimulationMgr::GetScene(plKey world)
-{
-    if (!world)
-        world = GetKey();
-    NxScene* scene = fScenes[world];
+//////////////////////////////////////////////////////////////////////////
 
-    if (!scene) {
-        // The world key is assumed to be loaded (or null for main world) if we are here.
-        // As such, let us grab the plSceneObject's PXSubWorld definition to figure out
-        // what gravity should look like. Who knows, we might be in MC Escher land...
-        NxVec3 gravity(X_GRAVITY, Y_GRAVITY, Z_GRAVITY);
-        if (plSceneObject* so = plSceneObject::ConvertNoRef(world->VerifyLoaded())) {
-            if (plPXSubWorld* subworld = plPXSubWorld::ConvertNoRef(so->GetGenericInterface(plPXSubWorld::Index()))) {
-                gravity = plPXConvert::Vector(subworld->GetGravity());
+bool plSimulationMgr::MsgReceive(plMessage* msg)
+{
+    if (plGenRefMsg* refMsg = plGenRefMsg::ConvertNoRef(msg)) {
+        switch (refMsg->fType) {
+        case kPhysical:
+            switch (refMsg->GetContext()) {
+            case plRefMsg::kOnCreate:
+            case plRefMsg::kOnRequest:
+                fPhysicals.push_back(plPXPhysical::ConvertNoRef(refMsg->GetRef()));
+                break;
+
+            case plRefMsg::kOnDestroy:
+            case plRefMsg::kOnRemove:
+                {
+                    auto it = std::find(fPhysicals.begin(), fPhysicals.end(), refMsg->GetRef());
+                    if (it != fPhysicals.end())
+                        fPhysicals.erase(it);
+                }
+                break;
             }
-        }
+            return true;
 
-        NxSceneDesc sceneDesc;
-        sceneDesc.gravity = gravity;
-        sceneDesc.userTriggerReport = &gSensorReport;
-        sceneDesc.userContactReport = &gContactReport;
-        scene = fSDK->createScene(sceneDesc);
-
-        // See "Advancing The Simulation State" in the PhysX SDK Documentation
-        // This will cause PhysX to only update for our step size. If we call simulate
-        // faster than that, PhysX will return immediately. If we call it slower than that,
-        // PhysX will do some extra steps for us (isn't that nice?).
-        // Anyway, this should be a good way to make us independent of the framerate.
-        // If not, I blame the usual suspects (Tye, eap, etc...)
-        scene->setTiming(kDefaultStepSize);
-
-        // Most physicals use the default friction and restitution values, so we
-        // make them the default.
-        NxMaterial* mat = scene->getMaterialFromIndex(0);
-        float rest = mat->getRestitution();
-        float sfriction = mat->getStaticFriction();
-        float dfriction = mat->getDynamicFriction();
-        mat->setRestitution(0.5);
-        mat->setStaticFriction(0.5);
-        mat->setDynamicFriction(0.5);
-
-        // By default we just leave all the collision groups enabled, since
-        // PhysX already makes sure that things like statics and statics don't
-        // collide.  However, we do make it so the avatar and dynamic blockers
-        // only block avatars and dynamics.
-        for (int i = 0; i < plSimDefs::kGroupMax; i++)
-        {
-            scene->setGroupCollisionFlag(i, plSimDefs::kGroupAvatarBlocker, false);
-            scene->setGroupCollisionFlag(i, plSimDefs::kGroupDynamicBlocker, false);
-            scene->setGroupCollisionFlag(i, plSimDefs::kGroupLOSOnly, false);
-            scene->setGroupCollisionFlag(plSimDefs::kGroupLOSOnly, i, false);
-            scene->setGroupCollisionFlag(i, plSimDefs::kGroupAvatarKinematic, false);
-        }
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatar, false);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupAvatarBlocker, true);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupDynamic, plSimDefs::kGroupDynamicBlocker, true);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupStatic, true);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupStatic, plSimDefs::kGroupAvatar, true);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatar, plSimDefs::kGroupDynamic, true);
-
-        // Kinematically controlled avatars interact with detectors and dynamics
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatarKinematic, plSimDefs::kGroupDetector, true);
-        scene->setGroupCollisionFlag(plSimDefs::kGroupAvatarKinematic, plSimDefs::kGroupDynamic, true);
-
-        // The dynamics are in actor group 1, everything else is in 0.  Request
-        // a callback for whenever a dynamic touches something.
-        scene->setActorGroupPairFlags(0, 1, NX_NOTIFY_ON_TOUCH);
-        scene->setActorGroupPairFlags(1, 1, NX_NOTIFY_ON_TOUCH);
-
-        fScenes[world] = scene;
-    }
-
-    return scene;
-}
-
-void plSimulationMgr::ReleaseScene(plKey world)
-{
-    if (!world)
-        world = GetKey();
-
-    SceneMap::iterator it = fScenes.find(world);
-    hsAssert(it != fScenes.end(), "Unknown scene");
-    if (it != fScenes.end())
-    {
-        NxScene* scene = it->second;
-        if (scene->getNbActors() == 0)
-        {
-            fSDK->releaseScene(*scene);
-            fScenes.erase(it);
+        DEFAULT_FATAL(refMsg->fType);
         }
     }
+
+    return hsKeyedObject::MsgReceive(msg);
 }
+
+//////////////////////////////////////////////////////////////////////////
 
 void plSimulationMgr::AddCollisionMsg(plKey hitee, plKey hitter, bool enter)
 {
@@ -460,106 +196,21 @@ void plSimulationMgr::AddCollisionMsg(plCollideMsg* msg)
     fCollideMsgs.push_back(msg);
 }
 
+void plSimulationMgr::AddContactSound(plPhysical* phys1, plPhysical* phys2,
+                                      const hsPoint3& pos, const hsVector3& normal)
+{
+    fSoundMgr->AddContact(phys1, phys2, pos, normal);
+}
+
 void plSimulationMgr::Advance(float delSecs)
 {
     if (fSuspended)
         return;
 
-    fAccumulator += delSecs;
-    if (fAccumulator < kDefaultStepSize)
-    {
-        // Not enough time has passed to perform a substep.
-        plPXPhysicalControllerCore::UpdateNonPhysical(fAccumulator / kDefaultStepSize);
-        return;
-    }
-    else if (fAccumulator > kDefaultMaxDelta)
-    {
-        if (fExtraProfile)
-            Log("Step clamped from {f} to limit of {f}", fAccumulator, kDefaultMaxDelta);
-        fAccumulator = kDefaultMaxDelta;
-    }
-
-    ++fStepCount;
-
-    // Perform as many whole substeps as possible saving the remainder in our accumulator.
-    int numSubSteps = (int)(fAccumulator / kDefaultStepSize + 0.000001f);
-    float delta = numSubSteps * kDefaultStepSize;
-    fAccumulator -= delta;
-
-    plProfile_IncCount(StepLen, (int)(delta*1000));
-    plProfile_BeginTiming(Step);
-
-    plPXPhysicalControllerCore::Apply(delta);
-    
-    for (SceneMap::iterator it = fScenes.begin(); it != fScenes.end(); it++)
-    {
-        NxScene* scene = it->second;
-        bool do_advance = true;
-        if (fSubworldOptimization)
-        {
-            plKey world = (plKey)it->first;
-            if (world == GetKey())
-                world = nil;
-            do_advance = plPXPhysicalControllerCore::AnyControllersInThisWorld(world);
-        }
-        if (do_advance)
-        {
-            scene->simulate(delta);
-            scene->flushStream();
-            scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
-        }
-    }
-
-    plPXPhysicalControllerCore::Update(numSubSteps, fAccumulator / kDefaultStepSize);
-
-    plProfile_EndTiming(Step);
-#ifndef PLASMA_EXTERNAL_RELEASE
-    if(plSimulationMgr::fDisplayAwakeActors)IDrawActiveActorList();
-#endif 
-    if (fExtraProfile)
-    {
-        int contacts = 0, dynActors = 0, dynShapes = 0, awake = 0, stShapes=0, actors=0, scenes=0, controllers=0 ;
-        for (SceneMap::iterator it = fScenes.begin(); it != fScenes.end(); it++)
-        {
-            bool do_advance = true;
-            if (fSubworldOptimization)
-            {
-                plKey world = (plKey)it->first;
-                if (world == GetKey())
-                    world = nil;
-                do_advance = plPXPhysicalControllerCore::AnyControllersInThisWorld(world);
-            }
-            if (do_advance)
-            {
-                NxScene* scene = it->second;
-                NxSceneStats stats;
-                scene->getStats(stats);
-
-                contacts += stats.numContacts;
-                dynActors += stats.numDynamicActors;
-                dynShapes += stats.numDynamicShapes;
-                awake += stats.numDynamicActorsInAwakeGroups;
-                stShapes += stats.numStaticShapes;
-                actors += stats.numActors;
-                scenes += 1;
-                controllers += plPXPhysicalControllerCore::NumControllers();
-            }
-        }
-
-        plProfile_IncCount(Awake, awake);
-        plProfile_IncCount(Contacts, contacts);
-        plProfile_IncCount(DynActors, dynActors);
-        plProfile_IncCount(DynShapes, dynShapes);
-        plProfile_IncCount(StaticShapes, stShapes);
-        plProfile_IncCount(Actors, actors);
-        plProfile_IncCount(Scenes, scenes);
-        plProfile_IncCount(Controllers, controllers);
-    }
-
-    plProfile_IncCount(AnimatedPhysicals, plPXPhysical::fNumberAnimatedPhysicals);
-    plProfile_IncCount(AnimatedActivators, plPXPhysical::fNumberAnimatedActivators);
-
-    fSoundMgr->Update();
+    // Only pump the sounds if the simulation actually advanced. Otherwise we get fascinating
+    // (read: bad) sounds stopping/starting when the fps is greater than the simulation frequency.
+    if (fSimulation->Advance(delSecs))
+        fSoundMgr->Update();
 
     plProfile_BeginTiming(ProcessSyncs);
     IProcessSynchs();
@@ -572,9 +223,7 @@ void plSimulationMgr::Advance(float delSecs)
 
 void plSimulationMgr::ISendUpdates()
 {
-    for (CollisionVec::iterator it = fCollideMsgs.begin(); it != fCollideMsgs.end(); ++it)
-    {
-        plCollideMsg* pMsg = *it;
+    for (auto pMsg : fCollideMsgs) {
         plDetectorLog::Yellow("Collision: {} was triggered by {}. Sending an {} msg",
                               pMsg->GetReceiver(0)->GetName(),
                               pMsg->fOtherKey ? pMsg->fOtherKey->GetName() : ST_LITERAL("(nil)"),
@@ -583,102 +232,12 @@ void plSimulationMgr::ISendUpdates()
     }
     fCollideMsgs.clear();
 
-    SceneMap::iterator it = fScenes.begin();
-    for (; it != fScenes.end(); it++)
-    {
-        NxScene* scene = it->second;
-        uint32_t numActors = scene->getNbActors();
-        NxActor** actors = scene->getActors();
-
-        for (int i = 0; i < numActors; i++)
-        {
-            plPXPhysical* physical = (plPXPhysical*)actors[i]->userData;
-            if (physical)
-            {
-                if (physical->GetSceneNode())
-                {
-                    physical->SendNewLocation();
-                }
-                else
-                {
-                    // if there's no scene node, it's not active (probably about to be collected)
-                    const plKey physKey = physical->GetKey();
-                    if (physKey)
-                    {
-                        ST::string physName = physical->GetKeyName();
-                        if (!physName.empty())
-                        {
-                            plSimulationMgr::Log("Removing physical <{}> because of missing scene node.\n", physName);
-                        }
-                    }
-//                  Remove(physical);
-                }
-            }
-        }
-
-//      // iterate through the db types, which are powers-of-two enums.
-//      for( plLOSDB db = static_cast<plLOSDB>(1) ;
-//          db < plSimDefs::kLOSDBMax;
-//          db = static_cast<plLOSDB>(db << 1) )
-//      {
-//          fLOSSolvers[db]->Resolve(fSubspace);
-//      }
-//      if(fNeedLOSCullPhase)
-//      {
-//          for( plLOSDB db = static_cast<plLOSDB>(1) ;
-//              db < plSimDefs::kLOSDBMax;
-//              db = static_cast<plLOSDB>(db << 1) )
-//          {
-//              fLOSSolvers[db]->Resolve(fSubspace);
-//          }
-//          fNeedLOSCullPhase = false;
-//      }
+    for (auto physical : fPhysicals) {
+        if (physical->GetSceneNode())
+            physical->SendNewLocation();
     }
 }
 
-/////////////////////////////////////////////////////////////////
-//
-//  RESOLUTION & TIMEOUT PARAMETERS
-//
-/////////////////////////////////////////////////////////////////
-
-int plSimulationMgr::GetMaterialIdx(NxScene* scene, float friction, float restitution)
-{
-    if (friction == 0.5f && restitution == 0.5f)
-        return 0;
-
-    // Use the nutty PhysX method to search for a matching material
-    #define kNumMatsPerCall 32
-    NxMaterial* materials[kNumMatsPerCall];
-    NxU32 iterator = 0;
-    bool getMore = true;
-    while (getMore)
-    {
-        int numMats = scene->getMaterialArray(materials, kNumMatsPerCall, iterator);
-
-        for (int i = 0; i < numMats; i++)
-        {
-            if (materials[i]->getDynamicFriction() == friction &&
-                materials[i]->getRestitution() == restitution)
-            {
-                return materials[i]->getMaterialIndex();
-            }
-        }
-
-        getMore = (numMats == kNumMatsPerCall);
-    }
-
-    // Couldn't find the material, so create it
-    NxMaterialDesc desc;
-    desc.restitution = restitution;
-    desc.dynamicFriction = friction;
-    desc.staticFriction = friction;
-    NxMaterial* mat = scene->createMaterial(desc);
-    if (mat)
-        return mat->getMaterialIndex();
-    else
-        return NULL;
-}
 
 /////////////////////////////////////////////////////////////////
 //
@@ -793,41 +352,3 @@ void plSimulationMgr::ClearLog()
         }
     }
 }
-#ifndef PLASMA_EXTERNAL_RELEASE
-
-void plSimulationMgr::IDrawActiveActorList()
-{
-    plDebugText     &debugTxt = plDebugText::Instance();
-    char            strBuf[ 2048 ];
-    int             lineHeight = debugTxt.GetFontSize() + 4;
-    uint32_t          scrnWidth, scrnHeight;
-
-    debugTxt.GetScreenSize( &scrnWidth, &scrnHeight );
-    int y = 10;
-    int x = 10;
-
-    sprintf(strBuf, "Number of scenes: %d", fScenes.size());
-    debugTxt.DrawString(x, y, strBuf);
-    y += lineHeight;
-    int sceneNumber=1;
-    for (SceneMap::iterator it = fScenes.begin(); it != fScenes.end(); it++)
-    {
-        
-        sprintf(strBuf, "Scene: %s",it->first->GetName().c_str());
-        debugTxt.DrawString(x, y, strBuf);
-        y += lineHeight;
-        uint32_t numActors =it->second->getNbActors();
-        NxActor** actors =it->second->getActors();
-        for(uint32_t i=0;i<numActors;i++)
-        {
-            if(!actors[i]->isSleeping())
-            {
-                sprintf(strBuf,"\t%s",actors[i]->getName());
-                debugTxt.DrawString(x, y, strBuf);
-                y += lineHeight;
-            }
-        }
-        sceneNumber++;
-    }
-}
-#endif //PLASMA_EXTERNAL_RELEASE

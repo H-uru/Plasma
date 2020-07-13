@@ -55,8 +55,9 @@ class plPhysical;
 class plMovementStrategy;
 class plAGApplicator;
 class plSwimRegionInterface;
+class plSceneObject;
 
-#define kSlopeLimit (cosf(hsDegreesToRadians(55.f)))
+#define kSlopeLimit (cosf(hsDegreesToRadians(45.f)))
 
 enum plControllerCollisionFlags
 {
@@ -67,9 +68,16 @@ enum plControllerCollisionFlags
 
 struct plControllerSweepRecord
 {
-    plPhysical *ObjHit;
+    plPhysical* ObjHit;
     hsPoint3 Point;
     hsVector3 Normal;
+
+    plControllerSweepRecord()
+        : ObjHit(), Point(), Normal()
+    { }
+    plControllerSweepRecord(plPhysical* phys, hsPoint3 p, hsVector3 n)
+        : ObjHit(phys), Point(std::move(p)), Normal(std::move(n))
+    { }
 };
 
 class plPhysicalControllerCore
@@ -85,7 +93,7 @@ public:
 
     // Subworld
     virtual plKey GetSubworld() { return fWorldKey; }
-    virtual void SetSubworld(plKey world) = 0;
+    virtual void SetSubworld(const plKey& world) = 0;
     virtual const plCoordinateInterface* GetSubworldCI();
 
     // For the avatar SDL only
@@ -107,10 +115,7 @@ public:
     virtual void GetPositionSim(hsPoint3& pos) = 0;
 
     // Move kinematic controller
-    virtual void Move(hsVector3 displacement, unsigned int collideWith, unsigned int &collisionResults) = 0;
-
-    // Set linear velocity on dynamic controller
-    virtual void SetLinearVelocitySim(const hsVector3& linearVel) = 0;
+    virtual void Move(const hsVector3& displacement, unsigned int collideWith, unsigned int &collisionResults) = 0;
 
     // Sweep the controller path from startPos through endPos
     virtual int SweepControllerPath(const hsPoint3& startPos,const hsPoint3& endPos, bool vsDynamics, bool vsStatics,
@@ -202,7 +207,9 @@ public:
 
     virtual void AddContactNormals(hsVector3& vec) { }
     virtual void Reset(bool newAge);
-    virtual bool IsKinematic() { return true; }
+
+    /** Returns if the CCT should attempt to ride objects it is on top of. */
+    virtual bool Ride() const { return false; }
 
 protected:
     plPhysicalControllerCore* fController;
@@ -237,13 +244,12 @@ public:
     virtual void Apply(float delSecs);
     virtual void Update(float delSecs);
 
-    virtual void AddContactNormals(hsVector3& vec);
     virtual void Reset(bool newAge);
 
     virtual void RecalcVelocity(double timeNow, float elapsed, bool useAnim = true);
 
     bool HitGroundInThisAge() const { return fHitGroundInThisAge; }
-    bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fFalseGround; }
+    bool IsOnGround() const { return fTimeInAir < kAirTimeThreshold || fGroundHit; }
 
     float GetAirTime() const { return fTimeInAir; }
     void ResetAirTime() { fTimeInAir = 0.0f; }
@@ -261,8 +267,6 @@ protected:
     static const float kAirTimeThreshold;
     static const float kControlledFlightThreshold;
 
-    hsTArray<hsVector3> fSlidingNormals;
-
     hsVector3 fImpactVelocity;
     float fImpactTime;
 
@@ -272,9 +276,7 @@ protected:
     int fControlledFlight;
 
     bool fGroundHit;
-    bool fFalseGround;
     bool fHeadHit;
-    bool fSliding;
 
     bool fClearImpact;
     bool fHitGroundInThisAge;
@@ -288,12 +290,9 @@ public:
 
     virtual void Apply(float delSecs);
 
-    virtual void AddContactNormals(hsVector3& vec);
-
     void SetSurface(plSwimRegionInterface* region, float surfaceHeight);
 
     float GetBuoyancy() const { return fBuoyancy; }
-    bool IsOnGround() const { return fOnGround; }
     bool HadContacts() const { return fHadContacts; }
 
 protected:
@@ -304,22 +303,15 @@ protected:
 
     plSwimRegionInterface *fCurrentRegion;
 
-    bool fOnGround;
     bool fHadContacts;
 };
 
-class plDynamicWalkingStrategy : public plWalkingStrategy
+class plRidingWalkingStrategy : public plWalkingStrategy
 {
 public:
-    plDynamicWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
-    virtual ~plDynamicWalkingStrategy() { }
+    plRidingWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller);
 
-    virtual void Apply(float delSecs);
-
-    virtual bool IsKinematic() { return false; }
-
-protected:
-    bool ICheckForGround(float& zVelocity);
+    bool Ride() const override { return true; }
 };
 
 #endif// PLPHYSICALCONTROLLERCORE_H

@@ -42,17 +42,17 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plPXConvert.h"
 
-#define CHECK_OFFSET(NxCls, NxMem, hsCls, hsMem) \
-    static_assert(offsetof(NxCls, NxMem) == offsetof(hsCls, hsMem), \
-    "PhysX Conversion Failure: "#NxCls " and " #hsCls " offsets do not match for " #NxMem "!");
+#define CHECK_OFFSET(PxCls, PxMem, hsCls, hsMem) \
+    static_assert(offsetof(PxCls, PxMem) == offsetof(hsCls, hsMem), \
+    "PhysX Conversion Failure: "#PxCls " and " #hsCls " offsets do not match for " #PxMem "!");
 
-CHECK_OFFSET(NxVec3, x, hsScalarTriple, fX);
-CHECK_OFFSET(NxVec3, y, hsScalarTriple, fY);
-CHECK_OFFSET(NxVec3, z, hsScalarTriple, fZ);
+CHECK_OFFSET(physx::PxVec3, x, hsScalarTriple, fX);
+CHECK_OFFSET(physx::PxVec3, y, hsScalarTriple, fY);
+CHECK_OFFSET(physx::PxVec3, z, hsScalarTriple, fZ);
 
-CHECK_OFFSET(NxQuat, x, hsQuat, fX);
-CHECK_OFFSET(NxQuat, y, hsQuat, fY);
-CHECK_OFFSET(NxQuat, z, hsQuat, fZ);
-CHECK_OFFSET(NxQuat, w, hsQuat, fW);
+CHECK_OFFSET(physx::PxQuat, x, hsQuat, fX);
+CHECK_OFFSET(physx::PxQuat, y, hsQuat, fY);
+CHECK_OFFSET(physx::PxQuat, z, hsQuat, fZ);
+CHECK_OFFSET(physx::PxQuat, w, hsQuat, fW);
 #undef CHECK_OFFSET
 

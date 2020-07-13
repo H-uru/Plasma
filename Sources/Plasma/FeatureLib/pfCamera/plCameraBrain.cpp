@@ -1137,6 +1137,7 @@ void plCameraBrain1_Avatar::CalculatePosition()
     {
         plLOSRequestMsg* pMsg = new plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
             plLOSRequestMsg::kTestClosest, plLOSRequestMsg::kReportHitOrMiss);
+        pMsg->SetRequestName(ST::format("Camera Brain [{}]: Find Blockers", GetKeyName()));
         plgDispatch::MsgSend( pMsg );
     }
     
@@ -1432,6 +1433,7 @@ void plCameraBrain1_FirstPerson::CalculatePosition()
     {
         plLOSRequestMsg* pMsg = new plLOSRequestMsg( GetCamera()->GetKey(), fPOAGoal, fGoal, plSimDefs::kLOSDBCameraBlockers,
             plLOSRequestMsg::kTestClosest, plLOSRequestMsg::kReportHitOrMiss);
+        pMsg->SetRequestName(ST::format("Camera Brain [{}]: Find Blockers", GetKeyName()));
         plgDispatch::MsgSend( pMsg );
     }
     

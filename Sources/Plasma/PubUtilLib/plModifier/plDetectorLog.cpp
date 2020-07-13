@@ -48,8 +48,8 @@ plStatusLog* plDetectorLog::fLog = nullptr;
 plStatusLog* plDetectorLog::fLog = plStatusLogMgr::GetInstance().CreateStatusLog(
     20,
     "Detector.log",
-    plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe |
-    plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
+    plStatusLog::kFilledBackground | /* plStatusLog::kDeleteForMe |
+    plStatusLog::kDontWriteFile |*/ plStatusLog::kAlignToTop);
 #endif
 
 void plDetectorLog::Output()

@@ -479,7 +479,7 @@ bool plAvBrainHuman::MsgReceive(plMessage * msg)
             plSceneObject* avObj = fArmature->GetTarget(0);
             plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
             plPhysicalControllerCore* controller = fAvMod->GetController();
-            fWalkingStrategy = new plDynamicWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
+            fWalkingStrategy = new plRidingWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
             controller->SetMovementStrategy(fWalkingStrategy);
         }
         else
@@ -879,14 +879,11 @@ bool plAvBrainHuman::LeaveAge()
 {
     plPhysicalControllerCore* controller = fAvMod->GetController();
 
-    // If our current walking strategy is dynamic, restore the default kinematic strategy.
-    if (!fWalkingStrategy->IsKinematic())
-    {
-        delete fWalkingStrategy;
-        plSceneObject* avObj = fArmature->GetTarget(0);
-        plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
-        fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
-    }
+    // Restore a clean walking strategy in case of an animated platform.
+    delete fWalkingStrategy;
+    plSceneObject* avObj = fArmature->GetTarget(0);
+    plAGModifier* agMod = const_cast<plAGModifier*>(plAGModifier::ConvertNoRef(FindModifierByClass(avObj, plAGModifier::Index())));
+    fWalkingStrategy = new plWalkingStrategy(agMod->GetApplicator(kAGPinTransform), controller);
 
     fWalkingStrategy->Reset(true);
 

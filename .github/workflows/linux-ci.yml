@@ -23,6 +23,7 @@ jobs:
           libogg-dev libopus-dev libspeex-dev uuid-dev libvpx-dev \
           libvorbis-dev qtbase5-dev
         sudo pip install -r ${GITHUB_WORKSPACE}/requirements.txt
+
     - name: Build string_theory
       run: |
         mkdir -p build_deps && cd build_deps
@@ -31,11 +32,23 @@ jobs:
         cmake -DCMAKE_BUILD_TYPE=Debug -DST_BUILD_TESTS=OFF \
               -DCMAKE_INSTALL_PREFIX="${GITHUB_WORKSPACE}/build_deps/prefix" ..
         make -j2 && make install
+
+    - name: Build PhysX
+      run: |
+        mkdir -p build_deps && cd build_deps
+        git clone -b 4.1 --depth 1 https://github.com/NVIDIAGameWorks/PhysX.git
+        cd PhysX/physx
+        ./generate_projects.sh linux
+        cd compiler/linux-debug
+        cmake -DPX_BUILDPUBLICSAMPLES=OFF -DPX_BUILDSNIPPETS=OFF ../public
+        make -j2 && make install
+
     - name: Build Plasma
       run: |
         cd ${GITHUB_WORKSPACE}
         mkdir -p build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/build_deps/prefix" \
+        cmake -DCMAKE_BUILD_TYPE=Debug \
+          -DCMAKE_PREFIX_PATH="${GITHUB_WORKSPACE}/build_deps/prefix;${GITHUB_WORKSPACE}/build_deps/PhysX/physx/install" \
           -DPython_ADDITIONAL_VERSIONS=2.7 -DPLASMA_BUILD_TESTS=ON \
           -DPLASMA_BUILD_TOOLS=ON -DPLASMA_BUILD_RESOURCE_DAT=ON ..
         make -j2

@@ -374,14 +374,12 @@ void plAnimatedMovementStrategy::IRecalcAngularVelocity(float elapsed, hsMatrix4
 // Walking Strategy
 plWalkingStrategy::plWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller)
     : plAnimatedMovementStrategy(rootApp, controller),
-    fSlidingNormals(),
     fImpactVelocity(0.0f, 0.0f, 0.0f),
     fImpactTime(0.0f),
     fTimeInAir(0.0f),
     fControlledFlightTime(0.0f),
     fControlledFlight(0),
     fGroundHit(false),
-    fFalseGround(false),
     fHeadHit(false),
     fClearImpact(false),
     fHitGroundInThisAge(false)
@@ -413,50 +411,6 @@ void plWalkingStrategy::Apply(float delSecs)
         velocity.fY = achievedVelocity.fY;
     }
 
-    if (!fGroundHit && fSlidingNormals.Count())
-    {
-        // We're not on solid ground, so we should be sliding against whatever
-        // we're hitting (like a rock cliff). Each vector in fSlidingNormals is
-        // the surface normal of a collision that's too steep to be ground, so
-        // we project our current velocity onto that plane and slide along the
-        // wall.
-        //
-        // Also, sometimes PhysX reports a bunch of collisions from the wall,
-        // but nothing from underneath (when there should be). So if we're not
-        // touching ground, we offset the avatar in the direction of the
-        // surface normal(s). This doesn't fix the issue 100%, but it's a hell
-        // of a lot better than nothing, and suitable duct tape until a future
-        // PhysX revision fixes the issue.
-        //
-        // Yes, there's room for optimization here if we care.
-        hsVector3 offset(0.0f, 0.0f, 0.0f);
-        for (int i = 0; i < fSlidingNormals.GetCount(); i++)
-        {
-            offset += fSlidingNormals[i];
-            hsVector3 velNorm = velocity;
-
-            if (velNorm.MagnitudeSquared() > 0.0f)
-                velNorm.Normalize();
-
-            if (velNorm * fSlidingNormals[i] < 0.0f)
-            {
-                hsVector3 proj = (velNorm % fSlidingNormals[i]) % fSlidingNormals[i];
-                if (velNorm * proj < 0.0f)
-                    proj *= -1.0f;
-
-                velocity = velocity.Magnitude() * proj;
-            }
-        }
-        if (offset.MagnitudeSquared() > 0.0f)
-        {
-            // 5 ft/sec is roughly the speed we walk backwards.
-            // The higher the value, the less likely you'll trip
-            // the bug, and this seems reasonable.
-            offset.Normalize();
-            velocity += offset * 5.0f;
-        }
-    }
-
     if (velocity.fZ < kTerminalVelocity)
         velocity.fZ = kTerminalVelocity;
 
@@ -466,25 +420,21 @@ void plWalkingStrategy::Apply(float delSecs)
     // Reset vars and move the controller
     fController->SetPushingPhysical(nil);
     fController->SetFacingPushingPhysical(false);
-    fGroundHit = fFalseGround = fHeadHit = false;
-    fSlidingNormals.SetCount(0);
+    fGroundHit = fHeadHit = false;
 
     unsigned int collideResults = 0;
     unsigned int collideFlags = 1<<plSimDefs::kGroupStatic | 1<<plSimDefs::kGroupAvatarBlocker | 1<<plSimDefs::kGroupDynamic;
     if (!fController->IsSeeking())
         collideFlags |= (1<<plSimDefs::kGroupExcludeRegion);
-
     fController->Move(displacement, collideFlags, collideResults);
-
-    if ((!fGroundHit) && (collideResults & kBottom))
-        fFalseGround = true;
-
+    if (collideResults & kBottom)
+        fGroundHit = true;
     if (collideResults & kTop)
         fHeadHit = true;
 }
 void plWalkingStrategy::Update(float delSecs)
 {
-    if (fGroundHit || fFalseGround)
+    if (fGroundHit)
         fTimeInAir = 0.0f;
     else
     {
@@ -528,15 +478,6 @@ void plWalkingStrategy::Update(float delSecs)
     }
 }
 
-void plWalkingStrategy::AddContactNormals(hsVector3& vec)
-{
-    float dot = vec * kAvatarUp;
-    if (dot >= 0.5f)
-        fGroundHit = true;
-    else
-        fSlidingNormals.Append(vec);
-}
-
 void plWalkingStrategy::Reset(bool newAge)
 {
     plMovementStrategy::Reset(newAge);
@@ -547,7 +488,6 @@ void plWalkingStrategy::Reset(bool newAge)
         fTimeInAir = 0.0f;
         fClearImpact = true;
         fHitGroundInThisAge = false;
-        fSlidingNormals.SetCount(0);
     }
 }
 
@@ -593,7 +533,6 @@ plSwimStrategy::plSwimStrategy(plAGApplicator* rootApp, plPhysicalControllerCore
     fBuoyancy(0.0f),
     fSurfaceHeight(0.0f),
     fCurrentRegion(nil),
-    fOnGround(false),
     fHadContacts(false)
 {
 }
@@ -641,7 +580,7 @@ void plSwimStrategy::Apply(float delSecs)
     // Reset vars and move controller //
     fController->SetPushingPhysical(nil);
     fController->SetFacingPushingPhysical(false);
-    fHadContacts = fOnGround = false;
+    fHadContacts = false;
 
     unsigned int collideResults = 0;
     unsigned int collideFlags = 1<<plSimDefs::kGroupStatic | 1<<plSimDefs::kGroupAvatarBlocker | 1<<plSimDefs::kGroupDynamic;
@@ -652,13 +591,6 @@ void plSwimStrategy::Apply(float delSecs)
 
     if ((collideResults & kBottom) || (collideResults & kSides))
         fHadContacts = true;
-}
-
-void plSwimStrategy::AddContactNormals(hsVector3& vec)
-{
-    float dot = vec * kAvatarUp;
-    if (dot >= kSlopeLimit)
-        fOnGround = true;
 }
 
 void plSwimStrategy::SetSurface(plSwimRegionInterface *region, float surfaceHeight)
@@ -696,77 +628,10 @@ void plSwimStrategy::IAdjustBuoyancy()
 }
 
 
-// Dynamic Walking Strategy
-plDynamicWalkingStrategy::plDynamicWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller)
+// Animated Platform Walking Strategy
+plRidingWalkingStrategy::plRidingWalkingStrategy(plAGApplicator* rootApp, plPhysicalControllerCore* controller)
     : plWalkingStrategy(rootApp, controller)
 {
-}
-
-void plDynamicWalkingStrategy::Apply(float delSecs)
-{
-    hsVector3 velocity = fController->GetLinearVelocity();
-    hsVector3 achievedVelocity = fController->GetAchievedLinearVelocity();
-
-    // Add in gravity if the avatar's z velocity isn't being set explicitly
-    if (fabs(velocity.fZ) < 0.001f)
-    {
-        // Get our previous z velocity.  If we're on the ground, clamp it to zero at
-        // the largest, so we won't launch into the air if we're running uphill.
-        float prevZVel = achievedVelocity.fZ;
-        if (IsOnGround())
-            prevZVel = std::min(prevZVel, 0.f);
-
-        velocity.fZ = prevZVel + (kGravity * delSecs);
-    }
-
-    if (velocity.fZ < kTerminalVelocity)
-        velocity.fZ = kTerminalVelocity;
-
-    fController->SetPushingPhysical(nil);
-    fController->SetFacingPushingPhysical(false);
-    fGroundHit = fFalseGround = false;
-
-    float groundZVelocity;
-    if (ICheckForGround(groundZVelocity))
-        velocity.fZ += groundZVelocity;
-
-    fController->SetLinearVelocitySim(velocity);
-}
-
-bool plDynamicWalkingStrategy::ICheckForGround(float& zVelocity)
-{
-    std::vector<plControllerSweepRecord> groundHits;
-    uint32_t collideFlags = 1<<plSimDefs::kGroupStatic | 1<<plSimDefs::kGroupAvatarBlocker | 1<<plSimDefs::kGroupDynamic;
-
-    hsPoint3 startPos;
-    fController->GetPositionSim(startPos);
-    hsPoint3 endPos = startPos;
-
-    // Set sweep length
-    startPos.fZ += 0.05f;
-    endPos.fZ -= 0.05f;
-
-    int possiblePlatformCount = fController->SweepControllerPath(startPos, endPos, true, true, collideFlags, groundHits);
-    if (possiblePlatformCount)
-    {
-        zVelocity = -FLT_MAX;
-
-        std::vector<plControllerSweepRecord>::iterator curRecord;
-        for (curRecord = groundHits.begin(); curRecord != groundHits.end(); ++curRecord)
-        {
-            if (curRecord->ObjHit != nil)
-            {
-                hsVector3 objVelocity;
-                curRecord->ObjHit->GetLinearVelocitySim(objVelocity);
-                if (objVelocity.fZ > zVelocity)
-                    zVelocity = objVelocity.fZ;
-
-                fGroundHit = true;
-            }
-        }
-    }
-
-    return fGroundHit;
 }
 
 
