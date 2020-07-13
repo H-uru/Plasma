@@ -96,7 +96,7 @@ hsMatrix44::hsMatrix44(const hsScalarTriple &translate, const hsQuat &rotate)
 void hsMatrix44::DecompRigid(hsScalarTriple &translate, hsQuat &rotate) const
 {
     translate = GetTranslate();
-    rotate.QuatFromMatrix44(*this);
+    rotate = hsQuat::QuatFromMatrix44(*this);
 }
 
 static hsMatrix44 mat_mult_fpu(const hsMatrix44 &a, const hsMatrix44 &b)
