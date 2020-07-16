@@ -152,7 +152,6 @@ plVirtualCam1::plVirtualCam1()
     // set initial view position
     fOutputPos.Set(100,100,100);
     fOutputPOA.Set(0,0,0);
-    fEffectPlate = nil;
     fFreezeCounter = 0;
     fFadeCounter = 0;
     fX = fY = 0.5f;
@@ -177,8 +176,6 @@ plVirtualCam1::plVirtualCam1()
         camLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Camera.log", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kAlignToTop);
 //      camLog = plStatusLogMgr::GetInstance().CreateStatusLog(40, "Camera", plStatusLog::kFilledBackground | plStatusLog::kDeleteForMe | plStatusLog::kDontWriteFile | plStatusLog::kAlignToTop);
     #endif
-
-    ICreatePlate();
 
     foutLog = nil;
 #ifndef PLASMA_EXTERNAL_RELEASE
@@ -213,8 +210,6 @@ plVirtualCam1::~plVirtualCam1()
         delete((plCameraModifier1*)pKey->GetObjectPtr())->GetBrain();
         pKey->GetObjectPtr()->UnRegisterAs(kDefaultCameraMod1_KEY); 
     }
-    if (fEffectPlate)
-        plPlateManager::Instance().DestroyPlate(fEffectPlate);
 }
 
 // for saving camera stack
@@ -461,30 +456,6 @@ plCameraModifier1* plVirtualCam1::GetCurrentStackCamera()
         return nil;
 }
 
-void plVirtualCam1::ICreatePlate()
-{
-    int     x, y;
-
-
-    fEffectPlate = nil;
-
-    // +0.01 to deal with the half-pixel antialiasing stuff
-    plPlateManager::Instance().CreatePlate( &fEffectPlate, 0, 0, 2.01, 2.01 );
-
-    // hack for now--create a black layer that we will animate the opacity on
-    plMipmap *ourMip = fEffectPlate->CreateMaterial( 16, 16, true );
-    for( y = 0; y < ourMip->GetHeight(); y++ )
-    {
-        uint32_t  *pixels = ourMip->GetAddr32( 0, y );
-        for( x = 0; x < ourMip->GetWidth(); x++ )
-            pixels[ x ] = 0xff000000;
-    }
-    if( fEffectPlate == nil )
-        ICreatePlate();
-    fEffectPlate->SetVisible( false );
-}
-
-
 void plVirtualCam1::SetCutNextTrans()
 {
     SetFlags(kCutNextTrans);
@@ -502,16 +473,12 @@ void plVirtualCam1::SetRender(bool render)
         #ifdef STATUS_LOG
         camLog->AddLine("Virtual Camera Render Updates Enabled");
         #endif
-        if (fEffectPlate)
-            fEffectPlate->SetVisible(false);
     }
     else
     {   
         #ifdef STATUS_LOG
         camLog->AddLine("Virtual Camera Render Updates Disabled");
         #endif
-        if (fEffectPlate)
-            fEffectPlate->SetVisible(true);
     }
 
 
