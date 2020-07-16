@@ -195,7 +195,6 @@ private:
     void FinishTransition();
     void SetRender(bool render);
     void IHandleCameraStatusLog(plCameraModifier1* pMod, int action);
-    void ICreatePlate();
     void FreezeOutput(int frames) { fFreezeCounter = frames; } // I hate this and I hate myself for doing it
     void UnFadeAvatarIn(int frames) { fFadeCounter = frames; } // ditto
     void FirstPersonOverride();
@@ -212,7 +211,6 @@ private:
     hsVector3           fOutputUp;
     int                 fTransPos;
     plDebugInputInterface*  fCameraDriveInterface;
-    plPlate*            fEffectPlate;
     FILE*               foutLog;
     plCameraVec         fCameraStack;
     int                 fFreezeCounter;
