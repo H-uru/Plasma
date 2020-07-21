@@ -778,7 +778,7 @@ void    plFont::IRenderChar1To32( const plFont::plCharacter &c )
 void    plFont::IRenderChar1To32AA( const plFont::plCharacter &c )
 {
     uint8_t   bitMask, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - ( c.fBaseline >> 1 ) * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - (c.fBaseline >> 1) * int32_t(fRenderInfo.fDestStride));
     uint16_t  x, y;
 
     
@@ -843,7 +843,7 @@ void    plFont::IRenderChar1To32AA( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  srcAlpha, oneMinusAlpha, r, g, b, dR, dG, dB, destAlpha;
     uint8_t   srcR, srcG, srcB;
@@ -918,7 +918,7 @@ void    plFont::IRenderChar8To32( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  destColorOnly;
 
@@ -969,7 +969,7 @@ void    plFont::IRenderChar8To32FullAlpha( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
 {
     uint8_t   val, *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint32_t  destColorOnly, alphaMult, fullAlpha;
 
@@ -1029,7 +1029,7 @@ void    plFont::IRenderChar8To32Alpha( const plFont::plCharacter &c )
 void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c )
 {
     uint8_t   *src = fBMapData + c.fBitmapOff;
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint8_t   srcA, srcR, srcG, srcB;
 
@@ -1087,7 +1087,7 @@ void    plFont::IRenderChar8To32AlphaPremultiplied( const plFont::plCharacter &c
 
 void    plFont::IRenderChar8To32AlphaPremShadow( const plFont::plCharacter &c )
 {
-    uint32_t  *destPtr, *destBasePtr = (uint32_t *)( fRenderInfo.fDestPtr - c.fBaseline * fRenderInfo.fDestStride );
+    uint32_t  *destPtr, *destBasePtr = (uint32_t *)(fRenderInfo.fDestPtr - c.fBaseline * int32_t(fRenderInfo.fDestStride));
     int16_t   x, y, thisHeight, xstart, thisWidth;
     uint8_t   srcA, srcR, srcG, srcB;
 
