@@ -57,7 +57,6 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 
 #include "plModifier/plDetectorLog.h"
 #include "plInputCore/plSceneInputInterface.h"
-#include "pfConditional/plFacingConditionalObject.h"
 #include "pfConditional/plObjectInBoxConditionalObject.h"
 
 
@@ -179,12 +178,7 @@ bool plLogicModifier::MsgReceive(plMessage* msg)
                     {
                         if (!fConditionList[i]->Verify(msg))
                         {
-                            if ( plObjectInBoxConditionalObject::ConvertNoRef(fConditionList[i]) )
-                                plDetectorLog::Red("{}: LogicMod InRegion conditional not met", fConditionList[i]->GetKeyName());
-                            else if ( plFacingConditionalObject::ConvertNoRef(fConditionList[i]) )
-                                plDetectorLog::Red("{}: LogicMod Facing conditional not met", fConditionList[i]->GetKeyName());
-                            else
-                                plDetectorLog::Red("{}: LogicMod <unknown> conditional not met", fConditionList[i]->GetKeyName());
+                            plDetectorLog::Red("{}: LogicMod {} conditional not met", fConditionList[i]->GetKeyName(), fConditionList[i]->ClassName());
                         }
                     }
                 }
