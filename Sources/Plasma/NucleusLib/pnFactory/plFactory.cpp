@@ -130,7 +130,7 @@ plCreatable* plFactory::ICreate(uint16_t hClass)
 
     if (!(hClass & 0x8000))
     {
-        hsAssert( false, "Invalid class index or nil creator : plFactory::Create()" );  
+        hsAssert( false, ST::format("Invalid class index ({04X}) or nil creator : plFactory::Create()", hClass).c_str());
     }
     return nil;
 }
