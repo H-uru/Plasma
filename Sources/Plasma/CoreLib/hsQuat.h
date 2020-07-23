@@ -65,7 +65,8 @@ public:
 
     hsQuat& operator=(const hsQuat& a) = default;
 
-    static hsQuat   QuatFromMatrix44(const hsMatrix44& mat);
+    [[nodiscard]]
+    static hsQuat QuatFromMatrix44(const hsMatrix44& mat);
     hsQuat& SetFromMatrix44(const hsMatrix44& mat);
     void SetFromMatrix(const hsMatrix44 *mat);
     void SetFromSlerp(const hsQuat &q1, const hsQuat &q2, float t, int spin=0);
@@ -73,8 +74,10 @@ public:
         { fX = X; fY = Y; fZ = Z; fW = W; }
     void GetAngleAxis(float *rad, hsVector3 *axis) const;
     void SetAngleAxis(const float rad, const hsVector3 &axis);
+
+    [[nodiscard]]
     hsPoint3 Rotate(const hsScalarTriple* v) const;
-    
+
     // Access operators
     float& operator[](int i) { return (&fX)[i]; }     
     const float& operator[](int i) const { return (&fX)[i]; }  
@@ -92,11 +95,20 @@ public:
     void Normalize();  
     void NormalizeIfNeeded();  
     void MakeMatrix(hsMatrix44 *mat) const;
+
+    [[nodiscard]]
     float Magnitude();
+
+    [[nodiscard]]
     float MagnitudeSquared();
+
+    [[nodiscard]]
     hsQuat Conjugate() const
         { return hsQuat(-fX,-fY,-fZ,fW); }
+
+    [[nodiscard]]
     hsQuat Inverse() const;
+
     // Binary operators
     hsQuat operator-(const hsQuat&) const;
     hsQuat operator+(const hsQuat&) const;
@@ -107,6 +119,7 @@ public:
         { return hsQuat(fX/f,fY/f,fZ/f,fW/f); }
     hsQuat operator/(const hsQuat&) const;
 
+    [[nodiscard]]
     float Dot(const hsQuat &q2) const
         {   return (fX*q2.fX + fY*q2.fY + fZ*q2.fZ + fW*q2.fW); }
 
