@@ -69,7 +69,7 @@ protected:
     void IAddLink(plLinkEffectsTriggerMsg *msg);
     void IAddWait(plLinkEffectsTriggerMsg *msg);
     void IAddDead(plLinkEffectsTriggerMsg *msg);
-    void IAddPsuedo(plPseudoLinkEffectMsg *msg);
+    void IAddPseudo(plPseudoLinkEffectMsg *msg);
     void IRemovePseudo(plKey avatarKey);
     plPseudoLinkEffectMsg* IFindPseudo(plKey avatarKey);
 
