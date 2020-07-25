@@ -74,18 +74,18 @@ PYTHON_INIT_DEFINITION(ptPlayer, args, keywords)
 
     if (pyKey::Check(firstObj))
     {
-        if (!(PyString_CheckEx(secondObj) && PyNumber_Check(thirdObj) && PyFloat_Check(fourthObj)))
+        if (!(PyUnicode_Check(secondObj) && PyNumber_Check(thirdObj) && PyFloat_Check(fourthObj)))
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
             PYTHON_RETURN_INIT_ERROR;
         }
 
         key = pyKey::ConvertFrom(firstObj)->getKey();
-        name = PyString_AsStringEx(secondObj);
+        name = PyUnicode_AsSTString(secondObj);
         pid = PyNumber_AsSsize_t(thirdObj, NULL);
         distSeq = (float)PyFloat_AsDouble(fourthObj);
-    } else if (PyString_CheckEx(firstObj)) {
-        name = PyString_AsStringEx(firstObj);
+    } else if (PyUnicode_Check(firstObj)) {
+        name = PyUnicode_AsSTString(firstObj);
         if (!PyNumber_Check(secondObj) || thirdObj  || fourthObj)
         {
             PyErr_SetString(PyExc_TypeError, "__init__ expects one of two argument lists: (ptKey, string, unsigned long, float) or (string, unsigned long)");
@@ -137,7 +137,7 @@ PYTHON_RICH_COMPARE_DEFINITION(ptPlayer, obj1, obj2, compareType)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerName)
 {
-    return PyString_FromSTString(self->fThis->GetPlayerName());
+    return PyUnicode_FromSTString(self->fThis->GetPlayerName());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptPlayer, getPlayerNameW)
@@ -175,11 +175,12 @@ PYTHON_START_METHODS_TABLE(ptPlayer)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptPlayer_COMPARE        PYTHON_NO_COMPARE
 #define ptPlayer_AS_NUMBER      PYTHON_NO_AS_NUMBER
 #define ptPlayer_AS_SEQUENCE    PYTHON_NO_AS_SEQUENCE
 #define ptPlayer_AS_MAPPING     PYTHON_NO_AS_MAPPING
 #define ptPlayer_STR            PYTHON_NO_STR
+#define ptPlayer_GETATTRO       PYTHON_NO_GETATTRO
+#define ptPlayer_SETATTRO       PYTHON_NO_SETATTRO
 #define ptPlayer_RICH_COMPARE   PYTHON_DEFAULT_RICH_COMPARE(ptPlayer)
 #define ptPlayer_GETSET         PYTHON_NO_GETSET
 #define ptPlayer_BASE           PYTHON_NO_BASE

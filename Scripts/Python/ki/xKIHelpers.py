@@ -234,7 +234,7 @@ def FilterAgeName(ageName):
     # Replace file names with display names - only once, from the right.
     # This fixes a bug in which avatars' names containing words like Garden
     # incorrectly get replaced.
-    for Age, replacement in kAges.Replace.iteritems():
+    for Age, replacement in kAges.Replace.items():
         # Only replace if the replacement is not already in there...
         # Otherwise we wend up with junk like "Eder Eder Gira"
         if ageName.find(replacement) == -1:
@@ -300,7 +300,7 @@ def GetNeighborhood():
     try:
         return ptVault().getLinkToMyNeighborhood().getAgeInfo()
     except AttributeError:
-        PtDebugPrint(u"xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
+        PtDebugPrint("xKIHelpers.GetNeighborhood(): Neighborhood not found.", level=kDebugDumpLevel)
         return None
 
 ## Find the player's neighbors.
@@ -309,7 +309,7 @@ def GetNeighbors():
     try:
         return GetNeighborhood().getAgeOwnersFolder()
     except AttributeError:
-        PtDebugPrint(u"xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
+        PtDebugPrint("xKIHelpers.GetNeighbors(): List of neighbors not found.", level=kDebugDumpLevel)
         return None
 
 ## Sends a notification message to a script.

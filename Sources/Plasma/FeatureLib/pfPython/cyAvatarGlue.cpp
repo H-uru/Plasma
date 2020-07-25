@@ -142,21 +142,19 @@ PYTHON_METHOD_DEFINITION(ptAvatar, runBehaviorSetNotify, args)
 PYTHON_METHOD_DEFINITION(ptAvatar, runCoopAnim, args)
 {
     PyObject* keyObj;
-    PyObject* animAv1;
-    PyObject* animAv2;
+    ST::string animName1;
+    ST::string animName2;
     float range = 6;
     float dist = 3;
     bool move = true;
-    if (!PyArg_ParseTuple(args, "OOO|ffb", &keyObj, &animAv1, &animAv2, &range, &dist, &move) || !pyKey::Check(keyObj) ||
-        !PyString_CheckEx(animAv1) || !PyString_CheckEx(animAv2))
+    if (!PyArg_ParseTuple(args, "OO&O&|ffb", &keyObj, PyUnicode_STStringConverter, &animName1,
+                          PyUnicode_STStringConverter, &animName2, &range, &dist, &move) || !pyKey::Check(keyObj))
     {
         PyErr_SetString(PyExc_TypeError, "runCoopAnim expects a ptkey and two strings and an optional float and boolean");
         PYTHON_RETURN_ERROR;
     }
 
     pyKey* key = pyKey::ConvertFrom(keyObj);
-    ST::string animName1 = PyString_AsStringEx(animAv1);
-    ST::string animName2 = PyString_AsStringEx(animAv2);
     PYTHON_RETURN_BOOL(self->fThis->RunCoopAnim(*key, animName1, animName2, range, dist, move));
 }
 
@@ -247,7 +245,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, getEntireClothingList, args)
     std::vector<ST::string> clothingList = self->fThis->GetEntireClothingList(clothingType);
     PyObject* retVal = PyList_New(clothingList.size());
     for (int i = 0; i < clothingList.size(); i++)
-        PyList_SetItem(retVal, i, PyString_FromSTString(clothingList[i]));
+        PyList_SetItem(retVal, i, PyUnicode_FromSTString(clothingList[i]));
     return retVal;
 }
 
@@ -564,7 +562,7 @@ PYTHON_METHOD_DEFINITION(ptAvatar, setReplyKey, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAvatar, getCurrentMode)
 {
-    return PyInt_FromLong(self->fThis->GetCurrentMode());
+    return PyLong_FromLong(self->fThis->GetCurrentMode());
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, registerForBehaviorNotify, args)
@@ -620,26 +618,26 @@ PYTHON_METHOD_DEFINITION(ptAvatar, playSimpleAnimation, args)
 
 PYTHON_METHOD_DEFINITION(ptAvatar, saveClothingToFile, args)
 {
-    PyObject* filename;
-    if (!PyArg_ParseTuple(args, "O", &filename) || !PyString_CheckEx(filename))
+    plFileName filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "saveClothingToFile expects a string object");
         PYTHON_RETURN_ERROR;
     }
 
-    PYTHON_RETURN_BOOL(self->fThis->SaveClothingToFile(PyString_AsStringEx(filename)));
+    PYTHON_RETURN_BOOL(self->fThis->SaveClothingToFile(filename));
 }
 
 PYTHON_METHOD_DEFINITION(ptAvatar, loadClothingFromFile, args)
 {
-    PyObject* filename;
-    if (!PyArg_ParseTuple(args, "O", &filename) || !PyString_CheckEx(filename))
+    plFileName filename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_PlFileNameDecoder, &filename))
     {
         PyErr_SetString(PyExc_TypeError, "loadClothingFromFile expects a string object");
         PYTHON_RETURN_ERROR;
     }
 
-    PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(PyString_AsStringEx(filename)));
+    PYTHON_RETURN_BOOL(self->fThis->LoadClothingFromFile(filename));
 }
 
 PYTHON_START_METHODS_TABLE(ptAvatar)
@@ -801,14 +799,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtAvatarExitAFK, "Tells the local avatar 
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtAvatarEnterAnimMode, args, "Params: animName\nEnter a custom anim loop (netpropagated)")
 {
-    PyObject* animNameObj;
-    if (!PyArg_ParseTuple(args, "O", &animNameObj) || !PyString_CheckEx(animNameObj))
+    ST::string animName;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &animName))
     {
         PyErr_SetString(PyExc_TypeError, "PtAvatarEnterAnimMode expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    ST::string animName = PyString_AsStringEx(animNameObj);
     PYTHON_RETURN_BOOL(cyAvatar::EnterAnimMode(animName));
 }
 

@@ -42,23 +42,18 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include <Python.h>
 #include "HeadSpin.h"
 
-#include <string>
+#include <vector>
 
 class plFileName;
 namespace ST { class string; }
 
 namespace PythonInterface
 {
-    void initPython(const plFileName& rootDir, FILE* outstream=stdout, FILE* errstream=stderr);
+    void initPython(const plFileName& rootDir, const std::vector<plFileName>& paths, FILE* outstream=stdout, FILE* errstream=stderr);
     void finiPython();
-    // So the Python packer can add extra paths
-    void addPythonPath(const plFileName& dir, FILE* outstream=stdout);
 
     PyObject* CompileString(const char *command, const plFileName& filename);
-    bool DumpObject(PyObject* pyobj, char** pickle, int32_t* size);
-    void getOutputAndReset(ST::string& outmsg);
-    void getErrorAndReset(ST::string& errmsg);
-    PyObject* CreateModule(const char* module);
+    bool DumpObject(PyObject* pyobj, char** pickle, Py_ssize_t* size);
     bool RunPYC(PyObject* code, PyObject* module);
     PyObject* GetModuleItem(const char* item, PyObject* module);
 }

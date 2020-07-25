@@ -47,6 +47,7 @@ namespace ST { class string; }
 
 namespace PythonPack
 {
+    /** Returns new reference of marshalled python code. */
     PyObject* OpenPythonPacked(const ST::string& fileName);
     bool IsItPythonPacked(const ST::string& fileName);
 }

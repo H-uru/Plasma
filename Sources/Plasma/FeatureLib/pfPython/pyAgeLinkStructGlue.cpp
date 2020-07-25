@@ -140,7 +140,7 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setAgeInfo, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getParentAgeFilename)
 {
-    return PyString_FromString(self->fThis->GetParentAgeFilename());
+    return PyUnicode_FromString(self->fThis->GetParentAgeFilename());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setParentAgeFilename, args)
@@ -157,7 +157,7 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setParentAgeFilename, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStruct, getLinkingRules)
 {
-    return PyInt_FromLong(self->fThis->GetLinkingRules());
+    return PyLong_FromLong(self->fThis->GetLinkingRules());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStruct, setLinkingRules, args)
@@ -214,11 +214,12 @@ PYTHON_START_METHODS_TABLE(ptAgeLinkStruct)
 PYTHON_END_METHODS_TABLE;
 
 // type structure definition
-#define ptAgeLinkStruct_COMPARE         PYTHON_NO_COMPARE
 #define ptAgeLinkStruct_AS_NUMBER       PYTHON_NO_AS_NUMBER
 #define ptAgeLinkStruct_AS_SEQUENCE     PYTHON_NO_AS_SEQUENCE
 #define ptAgeLinkStruct_AS_MAPPING      PYTHON_NO_AS_MAPPING
 #define ptAgeLinkStruct_STR             PYTHON_NO_STR
+#define ptAgeLinkStruct_GETATTRO        PYTHON_NO_GETATTRO
+#define ptAgeLinkStruct_SETATTRO        PYTHON_NO_SETATTRO
 #define ptAgeLinkStruct_RICH_COMPARE    PYTHON_DEFAULT_RICH_COMPARE(ptAgeLinkStruct)
 #define ptAgeLinkStruct_GETSET          PYTHON_NO_GETSET
 #define ptAgeLinkStruct_BASE            PYTHON_NO_BASE
@@ -305,7 +306,7 @@ PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setAgeInfo, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAgeLinkStructRef, getLinkingRules)
 {
-    return PyInt_FromLong(self->fThis->GetLinkingRules());
+    return PyLong_FromLong(self->fThis->GetLinkingRules());
 }
 
 PYTHON_METHOD_DEFINITION(ptAgeLinkStructRef, setLinkingRules, args)

@@ -128,7 +128,7 @@ class MarkerGameManager(object):
             return
 
         if not self.IsActive(node):
-            PtDebugPrint(u"xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName()))
+            PtDebugPrint("xMarkerMgr.LoadGame():\tLoading brain for '{}'".format(node.getGameName()))
             self._TeardownMarkerGame()
             ## FIXME: other game types
             self._BeginMarkerGame(UCQuestMarkerGame, node)

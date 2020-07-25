@@ -302,6 +302,13 @@ struct VaultMarker {
     ST::string age;
     hsPoint3 pos;
     ST::string description;
+
+    VaultMarker()
+        : id()
+    { }
+    VaultMarker(uint32_t id, ST::string age, hsPoint3 pos, ST::string description)
+        : id(id), age(std::move(age)), pos(std::move(pos)), description(std::move(description))
+    { }
 };
 
 struct VaultMarkerGameNode : NetVaultNodeAccess {

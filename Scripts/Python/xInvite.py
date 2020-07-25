@@ -137,7 +137,7 @@ def ShowInvitations(params=None):
             i += 1
     else:
         return (1,PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
-    return PtGetLocalizedString("KI.Invitation.Keys") + unicode(passkeys)
+    return PtGetLocalizedString("KI.Invitation.Keys") + str(passkeys)
 
 def DeleteInvitation(params=None):
     "delete invitation"
@@ -169,7 +169,7 @@ def DeleteInvitation(params=None):
             return (1,PtGetLocalizedString("KI.Invitation.MissingInviteFolder"))
     else:
         return (1, PtGetLocalizedString("KI.Invitation.UninviteUsage"))
-    return PtGetLocalizedString("KI.Invitation.DeletedInvitation") + unicode(passkey)
+    return PtGetLocalizedString("KI.Invitation.DeletedInvitation") + str(passkey)
 
 def MeChat(params=None):
     if (params == None):

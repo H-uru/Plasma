@@ -44,6 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #define _pyObjectRef_h_
 
 #include <Python.h>
+#include "HeadSpin.h"
 
 /** RAII reference count helper for Python objects. */
 class pyObjectRef

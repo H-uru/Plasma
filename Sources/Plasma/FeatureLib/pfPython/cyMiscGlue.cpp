@@ -53,7 +53,7 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtFlashWindow, cyMisc::FlashWindow, "Flash
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeName, "DEPRECIATED - use ptDniInfoSource instead")
 {
-    return PyString_FromSTString(cyMisc::GetAgeName());
+    return PyUnicode_FromSTString(cyMisc::GetAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeInfo, "Returns ptAgeInfoStruct of the current Age")
@@ -68,7 +68,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetAgeTime, "DEPRECIATED - use ptDniInf
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeName, "Returns filename of previous age visited")
 {
-    return PyString_FromSTString(cyMisc::GetPrevAgeName());
+    return PyUnicode_FromSTString(cyMisc::GetPrevAgeName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetPrevAgeInfo, "Returns ptAgeInfoStruct of previous age visited")
@@ -115,10 +115,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientName, args, "Params: avatarKey=None\n
             PYTHON_RETURN_ERROR;
         }
         pyKey* key = pyKey::ConvertFrom(keyObj);
-        return PyString_FromSTString(cyMisc::GetClientName(*key));
+        return PyUnicode_FromSTString(cyMisc::GetClientName(*key));
     }
     else
-        return PyString_FromSTString(cyMisc::GetLocalClientName());
+        return PyUnicode_FromSTString(cyMisc::GetLocalClientName());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetLocalAvatar, "This will return a ptSceneobject of the local avatar\n"
@@ -185,7 +185,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetClientIDFromAvatarKey, args, "Params: avata
         PYTHON_RETURN_ERROR;
     }
     pyKey *key = pyKey::ConvertFrom(keyObj);
-    return PyInt_FromLong(cyMisc::GetClientIDFromAvatarKey(*key));
+    return PyLong_FromLong(cyMisc::GetClientIDFromAvatarKey(*key));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetNPCByID, args, "This will return the NPC with a specific ID")
@@ -207,7 +207,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNPCCount, "Returns the number of NPC
 
 PYTHON_GLOBAL_METHOD_DEFINITION_NOARGS(PtGetNumRemotePlayers, "Returns the number of remote players in this Age with you.")
 {
-    return PyInt_FromLong(cyMisc::GetNumRemotePlayers());
+    return PyLong_FromLong(cyMisc::GetNumRemotePlayers());
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtValidateKey, args, "Params: key\nReturns true(1) if 'key' is valid and loaded,\n"
@@ -232,11 +232,12 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
 {
     PyObject* fromPlayerObj = NULL;
     PyObject* toPlayerListObj = NULL;
-    PyObject* message = NULL;
+    ST::string message;
     uint32_t msgFlags = 0;
     const char* err = "PtSendRTChat expects a ptPlayer, a sequence of ptPlayers, a string, and an optional long";
 
-    if (!PyArg_ParseTuple(args, "OOO|l", &fromPlayerObj, &toPlayerListObj, &message, &msgFlags))
+    if (!PyArg_ParseTuple(args, "OOO&|l", &fromPlayerObj, &toPlayerListObj,
+                          PyUnicode_STStringConverter, &message, &msgFlags))
     {
         PyErr_SetString(PyExc_TypeError, err);
         PYTHON_RETURN_ERROR;
@@ -267,13 +268,7 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendRTChat, args, "Params: fromPlayer,toPlayer
         toPlayers.push_back(pyPlayer::ConvertFrom(item));
     }
 
-    if (!PyString_CheckEx(message))
-    {
-        PyErr_SetString(PyExc_TypeError, err);
-        PYTHON_RETURN_ERROR;
-    }
-    ST::string chatmsg = PyString_AsStringEx(message);
-    return PyLong_FromUnsignedLong(cyMisc::SendRTChat(*sender, toPlayers, chatmsg, msgFlags));
+    return PyLong_FromUnsignedLong(cyMisc::SendRTChat(*sender, toPlayers, message, msgFlags));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nSends a command message to the KI frontend.\n"
@@ -286,18 +281,11 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
         PyErr_SetString(PyExc_TypeError, "PtSendKIMessage expects a long and either a float or a string");
         PYTHON_RETURN_ERROR;
     }
-    if (PyString_Check(val))
-    {
-        char* strValue = PyString_AsString(val);
-        wchar_t* temp = hsStringToWString(strValue);
-        cyMisc::SendKIMessageS(command, temp);
-        delete [] temp;
-    }
-    else if (PyUnicode_Check(val))
+    if (PyUnicode_Check(val))
     {
         int len = PyUnicode_GetSize(val);
         wchar_t* buffer = new wchar_t[len + 1];
-        PyUnicode_AsWideChar((PyUnicodeObject*)val, buffer, len);
+        PyUnicode_AsWideChar(val, buffer, len);
         buffer[len] = L'\0';
         cyMisc::SendKIMessageS(command, buffer);
         delete [] buffer;
@@ -307,10 +295,10 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtSendKIMessage, args, "Params: command,value\nS
         float floatValue = (float)PyFloat_AsDouble(val);
         cyMisc::SendKIMessage(command, floatValue);
     }
-    else if (PyInt_Check(val))
+    else if (PyLong_Check(val))
     {
         // accepting an int if people get lazy
-        float floatValue = (float)PyInt_AsLong(val);
+        float floatValue = (float)PyLong_AsLong(val);
         cyMisc::SendKIMessage(command, floatValue);
     }
     else
@@ -339,15 +327,15 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtLoadAvatarModel, args, "Params: modelName, spa
 {
     char* modelName;
     PyObject* keyObj;
-    PyObject* userStr = nullptr;
-    if (!PyArg_ParseTuple(args, "sO|O", &modelName, &keyObj, &userStr) ||
-        !pyKey::Check(keyObj) || (userStr && !PyString_CheckEx(userStr))) {
+    ST::string userStr;
+    if (!PyArg_ParseTuple(args, "sO|O&", &modelName, &keyObj, PyUnicode_STStringConverter, &userStr) ||
+        !pyKey::Check(keyObj)) {
         PyErr_SetString(PyExc_TypeError, "PtLoadAvatarModel expects a string, a ptKey, and an optional string");
         PYTHON_RETURN_ERROR;
     }
     pyKey* key = pyKey::ConvertFrom(keyObj);
 
-    return cyMisc::LoadAvatarModel(modelName, *key, PyString_AsStringEx(userStr));
+    return cyMisc::LoadAvatarModel(modelName, *key, userStr);
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtUnLoadAvatarModel, args, "Params: avatarKey\nForcibly unloads the specified avatar model.\n"
@@ -377,18 +365,16 @@ PYTHON_BASIC_GLOBAL_METHOD_DEFINITION(PtForceCursorShown, cyMisc::ForceCursorSho
 PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, arguments=None\nReturns the localized string specified by name "
             "(format is Age.Set.Name) and substitutes the arguments in the list of strings passed in as arguments.")
 {
-    PyObject* nameObj = NULL;
+    ST::string name;
     PyObject* argObj = NULL;
-    if (!PyArg_ParseTuple(args, "O|O", &nameObj, &argObj))
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &name, &argObj))
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
         PYTHON_RETURN_ERROR;
     }
-    ST::string name;
     std::vector<ST::string> argList;
 
     // convert name from a string
-    name = PyString_AsStringEx(nameObj);
     if (name.empty())
     {
         PyErr_SetString(PyExc_TypeError, "PtGetLocalizedString expects a unicode string and a list of unicode strings");
@@ -411,7 +397,8 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
             ST::string arg = ST_LITERAL("INVALID ARG");
             if (item == Py_None) // none is allowed, but treated as a blank string
                 arg = "";
-            arg = PyString_AsStringEx(item);
+            else if (PyUnicode_Check(item))
+                arg = PyUnicode_AsSTString(item);
             // everything else won't throw an error, but will show up as INVALID ARG in the string
             argList.push_back(arg);
         }
@@ -422,13 +409,13 @@ PYTHON_GLOBAL_METHOD_DEFINITION(PtGetLocalizedString, args, "Params: name, argum
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtDumpLogs, args, "Params: folder\nDumps all current log files to the specified folder (a sub-folder to the log folder)")
 {
-    PyObject* folder;
-    if (!PyArg_ParseTuple(args, "O", &folder) || !PyString_CheckEx(folder)) {
+    ST::string folder;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &folder)) {
         PyErr_SetString(PyExc_TypeError, "PtDumpLogs expects a string");
         PYTHON_RETURN_ERROR;
     }
 
-    PYTHON_RETURN_BOOL(cyMisc::DumpLogs(PyString_AsStringEx(folder)));
+    PYTHON_RETURN_BOOL(cyMisc::DumpLogs(folder));
 }
 
 PYTHON_GLOBAL_METHOD_DEFINITION(PtCloneKey, args, "Params: key, loading=false\nCreates clone of key")

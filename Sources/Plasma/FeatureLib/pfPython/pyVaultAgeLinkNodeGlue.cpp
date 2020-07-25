@@ -149,10 +149,9 @@ PYTHON_METHOD_DEFINITION(ptVaultAgeLinkNode, removeSpawnPoint, args)
         self->fThis->RemoveSpawnPointRef(*spawnPt);
         PYTHON_RETURN_NONE;
     }
-    else if (PyString_Check(spawnPtObj))
+    else if (PyUnicode_Check(spawnPtObj))
     {
-        char* spawnPt = PyString_AsString(spawnPtObj);
-        self->fThis->RemoveSpawnPointByName(spawnPt);
+        self->fThis->RemoveSpawnPointByName(PyUnicode_AsSTString(spawnPtObj));
         PYTHON_RETURN_NONE;
     }
     PyErr_SetString(PyExc_TypeError, "removeSpawnPoint expects a ptSpawnPointInfo, a ptSpawnPointInfoRef, or a string");

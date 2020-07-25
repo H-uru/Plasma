@@ -168,7 +168,7 @@ class islmMemorialImager(ptModifier):
         global kFirstChar
         global kLastUpdate
         #PtDebugPrint("islmMemorialImager: PtGetDniTime: " + str(PtGetDniTime()) + "kLastUpdate: " + str(kLastUpdate))
-        movedSince = int(((long(PtGetDniTime()) - long(kLastUpdate)) / kUpdateTime) * kIncAmount)
+        movedSince = int(((int(PtGetDniTime()) - int(kLastUpdate)) / kUpdateTime) * kIncAmount)
         #PtDebugPrint("islmMemorialImager: Distance to move:" , movedSince)
         kLastUpdate = PtGetDniTime()
         for x in range(4):

@@ -665,23 +665,23 @@ std::vector<PyObject*> cyAvatar::GetClosetClothingList(int32_t clothing_type)
                         PyObject* clothingItem = PyList_New(5);
 
                         // [0] = clothing name
-                        PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
+                        PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));
                         
                         // [1] = clothing type
-                        PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
+                        PyList_SetItem(clothingItem, 1, PyLong_FromLong(item->fType));
 
                         // [2] = description
-                        PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
+                        PyList_SetItem(clothingItem, 2, PyUnicode_FromSTString(item->fDescription));
 
                         // [3] = ptImage of icon
                         if ( item->fThumbnail != nil )
                             // create a ptImage
                             PyList_SetItem(clothingItem, 3, pyImage::New(item->fThumbnail->GetKey()));
                         else
-                            PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
+                            PyList_SetItem(clothingItem, 3, PyLong_FromLong(0));
 
                         // [4] = fCustomText
-                        PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
+                        PyList_SetItem(clothingItem, 4, PyUnicode_FromSTString(item->fCustomText));
 
                         retVal.push_back(clothingItem);
                     }
@@ -727,23 +727,23 @@ std::vector<PyObject*> cyAvatar::GetAvatarClothingList()
                     plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
-                    PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
+                    PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));
 
                     // [1] = clothing type
-                    PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
+                    PyList_SetItem(clothingItem, 1, PyLong_FromLong(item->fType));
 
                     // [2] = description
-                    PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
+                    PyList_SetItem(clothingItem, 2, PyUnicode_FromSTString(item->fDescription));
 
                     // [3] = ptImage of icon
                     if ( item->fThumbnail != nil )
                         // create a ptImage
                         PyList_SetItem(clothingItem, 3, pyImage::New(item->fThumbnail->GetKey()));
                     else
-                        PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
+                        PyList_SetItem(clothingItem, 3, PyLong_FromLong(0));
 
                     // [4] = fCustomText
-                    PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
+                    PyList_SetItem(clothingItem, 4, PyUnicode_FromSTString(item->fCustomText));
 
                     retVal.push_back(clothingItem);
                 }
@@ -775,23 +775,23 @@ std::vector<PyObject*> cyAvatar::GetWardrobeClothingList()
         PyObject* closetItem = PyList_New(7);
 
         // [0] = clothing name
-        PyList_SetItem(closetItem, 0, PyString_FromSTString(closetList[i].fItem->GetName()));
+        PyList_SetItem(closetItem, 0, PyUnicode_FromSTString(closetList[i].fItem->GetName()));
         
         // [1] = clothing type
-        PyList_SetItem(closetItem, 1, PyInt_FromLong(closetList[i].fItem->fType));
+        PyList_SetItem(closetItem, 1, PyLong_FromLong(closetList[i].fItem->fType));
         
         // [2] = description
-        PyList_SetItem(closetItem, 2, PyString_FromSTString(closetList[i].fItem->fDescription));
+        PyList_SetItem(closetItem, 2, PyUnicode_FromSTString(closetList[i].fItem->fDescription));
 
         // [3] = ptImage of icon
         if ( closetList[i].fItem->fThumbnail != nil )
             // create a ptImage
             PyList_SetItem(closetItem, 3, pyImage::New(closetList[i].fItem->fThumbnail->GetKey()));
         else
-            PyList_SetItem(closetItem, 3, PyInt_FromLong(0));
+            PyList_SetItem(closetItem, 3, PyLong_FromLong(0));
 
         // [4] = fCustomText
-        PyList_SetItem(closetItem, 4, PyString_FromSTString(closetList[i].fItem->fCustomText));
+        PyList_SetItem(closetItem, 4, PyUnicode_FromSTString(closetList[i].fItem->fCustomText));
 
         // [5] = fTint1
         PyList_SetItem(closetItem, 5, pyColor::New(closetList[i].fOptions.fTint1));
@@ -870,23 +870,23 @@ std::vector<PyObject*> cyAvatar::GetUniqueMeshList(int32_t clothing_type)
                         PyObject* clothingItem = PyList_New(5);
 
                         // [0] = clothing name
-                        PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
+                        PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));
 
                         // [1] = clothing type
-                        PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
+                        PyList_SetItem(clothingItem, 1, PyLong_FromLong(item->fType));
 
                         // [2] = description
-                        PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
+                        PyList_SetItem(clothingItem, 2, PyUnicode_FromSTString(item->fDescription));
 
                         // [3] = ptImage of icon
                         if ( item->fThumbnail != nil )
                             // create a ptImage
                             PyList_SetItem(clothingItem, 3, pyImage::New(item->fThumbnail->GetKey()));
                         else
-                            PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
+                            PyList_SetItem(clothingItem, 3, PyLong_FromLong(0));
 
                         // [4] = fCustomText
-                        PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
+                        PyList_SetItem(clothingItem, 4, PyUnicode_FromSTString(item->fCustomText));
 
                         retVal.push_back(clothingItem);
                     }
@@ -935,23 +935,23 @@ std::vector<PyObject*> cyAvatar::GetAllWithSameMesh(const ST::string& clothing_n
                     plClothingItem* item = clothingList[i];
 
                     // [0] = clothing name
-                    PyList_SetItem(clothingItem, 0, PyString_FromSTString(item->GetName()));
+                    PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(item->GetName()));
 
                     // [1] = clothing type
-                    PyList_SetItem(clothingItem, 1, PyInt_FromLong(item->fType));
+                    PyList_SetItem(clothingItem, 1, PyLong_FromLong(item->fType));
 
                     // [2] = description
-                    PyList_SetItem(clothingItem, 2, PyString_FromSTString(item->fDescription));
+                    PyList_SetItem(clothingItem, 2, PyUnicode_FromSTString(item->fDescription));
 
                     // [3] = ptImage of icon
                     if ( item->fThumbnail != nil )
                         // create a ptImage
                         PyList_SetItem(clothingItem, 3, pyImage::New(item->fThumbnail->GetKey()));
                     else
-                        PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
+                        PyList_SetItem(clothingItem, 3, PyLong_FromLong(0));
 
                     // [4] = fCustomText
-                    PyList_SetItem(clothingItem, 4, PyString_FromSTString(item->fCustomText));
+                    PyList_SetItem(clothingItem, 4, PyUnicode_FromSTString(item->fCustomText));
 
                     retVal.push_back(clothingItem);
                 }
@@ -979,28 +979,28 @@ PyObject* cyAvatar::GetMatchingClothingItem(const ST::string& clothing_name)
         PyObject* clothingItem = PyList_New(5);
         
         // [0] = clothing name
-        PyList_SetItem(clothingItem, 0, PyString_FromSTString(match->GetName()));
+        PyList_SetItem(clothingItem, 0, PyUnicode_FromSTString(match->GetName()));
 
         // [1] = clothing type
-        PyList_SetItem(clothingItem, 1, PyInt_FromLong(match->fType));
+        PyList_SetItem(clothingItem, 1, PyLong_FromLong(match->fType));
 
         // [2] = description
-        PyList_SetItem(clothingItem, 2, PyString_FromSTString(match->fDescription));
+        PyList_SetItem(clothingItem, 2, PyUnicode_FromSTString(match->fDescription));
 
         // [3] = ptImage of icon
         if ( match->fThumbnail != nil )
             // create a ptImage
             PyList_SetItem(clothingItem, 3, pyImage::New(match->fThumbnail->GetKey()));
         else
-            PyList_SetItem(clothingItem, 3, PyInt_FromLong(0));
+            PyList_SetItem(clothingItem, 3, PyLong_FromLong(0));
 
         // [4] = fCustomText
-        PyList_SetItem(clothingItem, 4, PyString_FromSTString(match->fCustomText));
+        PyList_SetItem(clothingItem, 4, PyUnicode_FromSTString(match->fCustomText));
 
         return clothingItem;
     }
     else
-        return PyInt_FromLong(0);
+        return PyLong_FromLong(0);
 }
 
 

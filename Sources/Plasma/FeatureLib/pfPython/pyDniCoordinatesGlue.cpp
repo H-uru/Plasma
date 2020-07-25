@@ -60,17 +60,17 @@ PYTHON_INIT_DEFINITION(ptDniCoordinates, args, keywords)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getHSpans)
 {
-    return PyInt_FromLong(self->fThis->GetHSpans());
+    return PyLong_FromLong(self->fThis->GetHSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getVSpans)
 {
-    return PyInt_FromLong(self->fThis->GetVSpans());
+    return PyLong_FromLong(self->fThis->GetVSpans());
 }
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptDniCoordinates, getTorans)
 {
-    return PyInt_FromLong(self->fThis->GetTorans());
+    return PyLong_FromLong(self->fThis->GetTorans());
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptDniCoordinates, update, UpdateCoordinates)

@@ -675,7 +675,7 @@ class ptByAnimObject(dict):
     def getParentKeys(self):
         # if we haven't got the parent keys yet, then add them to the dict
         if not self.gotParentKeys:
-            for anim in dict.values(self):
+            for anim in list(dict.values(self)):
                 # get the animation target key
                 aKey = anim.getFirstKey()
                 if aKey:
@@ -719,7 +719,7 @@ class ptAttribAnimation(ptAttribute):
                 self.animation.setAnimName(value)
                 # then if there are animations by object then set those, too
                 if isinstance(self.byObject,ptByAnimObject):
-                    for anim in self.byObject.viewvalues():
+                    for anim in self.byObject.values():
                         anim.setAnimName(value)
             except AttributeError:
                 self.animation = ptAnimation()

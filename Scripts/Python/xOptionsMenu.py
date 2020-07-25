@@ -502,7 +502,7 @@ class xOptionsMenu(ptModifier):
     def OnPageLoad(self,what,room):
         global gFirstReltoVisit
 
-        if room in {u"Personal_psnlMYSTII", u"Personal_District_psnlMYSTII"} and gFirstReltoVisit:
+        if room in {"Personal_psnlMYSTII", "Personal_District_psnlMYSTII"} and gFirstReltoVisit:
             gFirstReltoVisit = False
 
             vault = ptVault()
@@ -726,7 +726,7 @@ class xOptionsMenu(ptModifier):
                 kmID = control.getTagID()
                 if kmID == kKMOkBtn:
                     KeyMapDlg.dialog.hide()
-                elif kmID in gKM1ControlCodesRow1.viewkeys():
+                elif kmID in gKM1ControlCodesRow1.keys():
                     NewKeyMapString = ""
                     # get the new keys and bind
                     km = ptKeyMap()
@@ -761,7 +761,7 @@ class xOptionsMenu(ptModifier):
                     self.IShowMappedKeys(KeyMapDlg.dialog,gKM1ControlCodesRow1,gKM1ControlCodesRow2)
                     # need to re-set the ini file, in case something got unmapped
                     #self.IMatchIniToGame()
-                elif kmID in gKM1ControlCodesRow2.viewkeys():
+                elif kmID in gKM1ControlCodesRow2.keys():
                     NewKeyMapString = ""
                     # get the new keys and bind
                     km = ptKeyMap()
@@ -1605,14 +1605,14 @@ class xOptionsMenu(ptModifier):
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoAntiAliasingSliderTag))
         aaVal = int(videoField.getValue())
         antialias = 0
-        for key in kVideoAntiAliasing.viewkeys():
+        for key in kVideoAntiAliasing.keys():
             if kVideoAntiAliasing[key] == aaVal:
                 antialias = int(key)
         
         videoField = ptGUIControlKnob(GraphicsSettingsDlg.dialog.getControlFromTag(kVideoFilteringSliderTag))
         afVal = int(videoField.getValue())
         aniso = 0
-        for key in kVideoAnisoFiltering.viewkeys():
+        for key in kVideoAnisoFiltering.keys():
             if kVideoAnisoFiltering[key] == afVal:
                 aniso = int(key)
                 break
@@ -1898,7 +1898,7 @@ class xOptionsMenu(ptModifier):
 
     def IShowMappedKeys(self,dlg,mapRow1,mapRow2):
         km = ptKeyMap()
-        for cID in mapRow1.viewkeys():
+        for cID in mapRow1.keys():
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping
@@ -1916,7 +1916,7 @@ class xOptionsMenu(ptModifier):
                 # if the first key is disabled, then the entire line should be! which is 100 less then the first field tag ID
                 ftext = ptGUIControlTextBox(dlg.getControlFromTag(cID-100))
                 ftext.hide()
-        for cID in mapRow2.viewkeys():
+        for cID in mapRow2.keys():
             field = ptGUIControlEditBox(dlg.getControlFromTag(cID))
             field.setSpecialCaptureKeyMode(1)
             # set the mapping

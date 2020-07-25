@@ -1018,7 +1018,7 @@ PyObject* cyMisc::GetNPC(int npcID)
 
 PyObject* cyMisc::GetNPCCount()
 {
-    return PyInt_FromLong(plNetClientMgr::GetInstance()->NPCKeys().size());
+    return PyLong_FromLong(plNetClientMgr::GetInstance()->NPCKeys().size());
 }
 
 #if 1
@@ -2890,7 +2890,7 @@ PyObject* cyMisc::PyGuidGenerate()
 {
     plUUID newGuid = plUUID::Generate();
 
-    return PyString_FromString(newGuid.AsString().c_str());
+    return PyUnicode_FromSTString(newGuid.AsString());
 }
 
 PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
@@ -2908,7 +2908,7 @@ PyObject* cyMisc::GetAIAvatarsByModelName(const char* name)
         {
             PyObject* tuple = PyTuple_New(2);
             PyTuple_SetItem(tuple, 0, pyCritterBrain::New(critterBrain));
-            PyTuple_SetItem(tuple, 1, PyString_FromSTString(armMod->GetUserStr()));
+            PyTuple_SetItem(tuple, 1, PyUnicode_FromSTString(armMod->GetUserStr()));
 
             PyList_Append(avList, tuple);
             Py_DECREF(tuple);

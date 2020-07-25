@@ -88,6 +88,11 @@ private:
     static plCyDebServer debugServer;
 #endif
 
+    static PyObject* initPlasmaModule();
+    static PyObject* initPlasmaConstantsModule();
+    static PyObject* initPlasmaNetConstantsModule();
+    static PyObject* initPlasmaVaultConstantsModule();
+
 public:
 
     // set that we are truly shutting down
@@ -95,6 +100,9 @@ public:
 
     // Initialize the Python dll
     static void initPython();
+
+    /** Initialize the PythonPack module hook */
+    static void initPyPackHook();
 
     // Initialize the Plasma module
     static void AddPlasmaMethods(std::vector<PyMethodDef> &methods);
@@ -202,6 +210,11 @@ public:
     //  PURPOSE    : run a python string in a specific module name
     //
     static bool RunString(const char *command, PyObject* module);
+
+    /**
+     * Runs a python file in any arbitrary module
+     */
+    static bool RunFile(const class plFileName& filename, PyObject* module=nullptr);
 
 
     /////////////////////////////////////////////////////////////////////////////

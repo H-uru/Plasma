@@ -99,7 +99,7 @@ class Enum:
         return len(self.lookup)
 
     def ToString(self, x):
-        for key in self.lookup.viewkeys():
+        for key in self.lookup.keys():
             if self.lookup[key] == x:
                 return key
 

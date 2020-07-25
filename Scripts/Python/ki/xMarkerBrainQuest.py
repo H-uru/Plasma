@@ -53,7 +53,7 @@ class QuestMarkerBrain(object):
     def CaptureAllMarkers(self):
         mgr = ptMarkerMgr()
         captures = {}
-        for i in xrange(self.marker_total):
+        for i in range(self.marker_total):
             mgr.captureQuestMarker(i, True)
             captures[i] = True
         self._captures = captures
@@ -67,7 +67,7 @@ class QuestMarkerBrain(object):
             PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tMarker #{} does not exist. Are you drunk?".format(idx))
             return
 
-        PtDebugPrint(u"QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc), level=kWarningLevel)
+        PtDebugPrint("QuestMarkerBrain.CaptureMarker():\tCapturing marker #{}, '{}'".format(idx, desc), level=kWarningLevel)
         ptMarkerMgr().captureQuestMarker(idx, True)
         msg = PtGetLocalizedString("KI.MarkerGame.FoundMarker", [desc])
         PtSendKIMessage(kKILocalChatStatusMsg, msg)
@@ -94,7 +94,7 @@ class QuestMarkerBrain(object):
 
     @property
     def markers_captured(self):
-        for i, captured in self._captures.iteritems():
+        for i, captured in self._captures.items():
             if captured:
                 age, pos, desc = self._markers[i]
                 yield (i, age, pos, desc)

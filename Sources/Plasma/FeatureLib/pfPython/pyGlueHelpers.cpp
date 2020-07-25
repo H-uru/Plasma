@@ -45,31 +45,41 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 #include "pyGlueHelpers.h"
 #pragma hdrstop
 
-ST::string PyString_AsStringEx(PyObject* obj)
-{
-    if (PyString_Check(obj))
-        return ST::string::from_utf8(PyString_AsString(obj));
+#include "plFileSystem.h"
 
+ST::string PyUnicode_AsSTString(PyObject* obj)
+{
     if (PyUnicode_Check(obj)) {
-#if (Py_UNICODE_SIZE == 2)
-        return ST::string::from_utf16(reinterpret_cast<const char16_t *>(PyUnicode_AsUnicode(obj)));
-#elif (Py_UNICODE_SIZE == 4)
-        return ST::string::from_utf32(reinterpret_cast<const char32_t *>(PyUnicode_AsUnicode(obj)));
-#else
-#       error "Py_UNICODE is an unexpected size"
-#endif
+        Py_ssize_t size;
+        const char* str = PyUnicode_AsUTF8AndSize(obj, &size);
+        if (str)
+            return ST::string::from_utf8(str, size, ST::assume_valid);
     }
 
     return ST::null;
 }
 
-bool PyString_CheckEx(PyObject* obj)
+int PyUnicode_STStringConverter(PyObject* obj, void* str)
 {
-    return (PyString_Check(obj) || PyUnicode_Check(obj));
+    if (PyUnicode_Check(obj)) {
+        *reinterpret_cast<ST::string*>(str) = PyUnicode_AsSTString(obj);
+        return 1;
+    }
+    return 0;
 }
 
-PyObject* PyUnicode_FromSTString(const ST::string& str)
+int PyUnicode_PlFileNameDecoder(PyObject* obj, void* fn)
 {
-    ST::wchar_buffer buf = str.to_wchar();
-    return PyUnicode_FromWideChar(buf.data(), buf.size());
+    if (PyUnicode_Check(obj)) {
+        *reinterpret_cast<plFileName*>(fn) = PyUnicode_AsSTString(obj);
+        return 1;
+    }
+
+    PyObject* fsConvert;
+    if (PyUnicode_FSDecoder(obj, &fsConvert)) {
+        *reinterpret_cast<plFileName*>(fn) = PyUnicode_AsSTString(fsConvert);
+        Py_DECREF(fsConvert);
+        return 1;
+    }
+    return 0;
 }

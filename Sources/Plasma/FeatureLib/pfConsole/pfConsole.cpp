@@ -676,8 +676,7 @@ void    pfConsole::IHandleKey( plKeyEventMsg *msg )
                 if ( fPythonFirstTime )
                 {
                     IAddLine( "" );     // add a blank line
-                    PyObject* mymod = PythonInterface::FindModule("__main__");
-                    PythonInterface::RunStringInteractive("import sys;print 'Python',sys.version",mymod);
+                    PythonInterface::RunStringInteractive("import sys;print(f'Python {sys.version}')", nullptr);
                     std::string output;
                     // get the messages
                     PythonInterface::getOutputAndReset(&output);

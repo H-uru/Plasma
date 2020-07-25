@@ -179,12 +179,12 @@ PYTHON_END_METHODS_TABLE;
 
 PyObject* ptSDL_subscript(ptSDL* self, PyObject* key)
 {
-    if (!PyString_CheckEx(key))
+    if (!PyUnicode_Check(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         PYTHON_RETURN_ERROR;
     }
-    ST::string keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyUnicode_AsSTString(key);
     return pySDLModifier::GetItem(*(self->fThis), keyStr);
 }
 
@@ -195,7 +195,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_RuntimeError, "Cannot remove sdl records");
         return -1; // error return
     }
-    if (!PyString_CheckEx(key))
+    if (!PyUnicode_Check(key))
     {
         PyErr_SetString(PyExc_TypeError, "SDL indexes must be strings");
         return -1; // error return
@@ -205,7 +205,7 @@ int ptSDL_ass_subscript(ptSDL* self, PyObject* key, PyObject* value)
         PyErr_SetString(PyExc_TypeError, "SDL values must be tuples");
         return -1; // error return
     }
-    ST::string keyStr = PyString_AsStringEx(key);
+    ST::string keyStr = PyUnicode_AsSTString(key);
     pySDLModifier::SetItem(*(self->fThis), keyStr, value);
     return 0; // success return
 }
@@ -216,11 +216,12 @@ PYTHON_START_AS_MAPPING_TABLE(ptSDL)
     (objobjargproc)ptSDL_ass_subscript, /* mp_ass_subscript */
 PYTHON_END_AS_MAPPING_TABLE;
 
-#define ptSDL_COMPARE       PYTHON_NO_COMPARE
 #define ptSDL_AS_NUMBER     PYTHON_NO_AS_NUMBER
 #define ptSDL_AS_SEQUENCE   PYTHON_NO_AS_SEQUENCE
 #define ptSDL_AS_MAPPING    PYTHON_DEFAULT_AS_MAPPING(ptSDL)
 #define ptSDL_STR           PYTHON_NO_STR
+#define ptSDL_GETATTRO      PYTHON_NO_GETATTRO
+#define ptSDL_SETATTRO      PYTHON_NO_SETATTRO
 #define ptSDL_RICH_COMPARE  PYTHON_NO_RICH_COMPARE
 #define ptSDL_GETSET        PYTHON_NO_GETSET
 #define ptSDL_BASE          PYTHON_NO_BASE

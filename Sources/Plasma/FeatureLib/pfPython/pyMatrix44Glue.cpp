@@ -399,11 +399,12 @@ PYTHON_START_AS_NUMBER_TABLE(ptMatrix44)
 PYTHON_END_AS_NUMBER_TABLE;
 
 // Type structure definition
-#define ptMatrix44_COMPARE          PYTHON_NO_COMPARE
 #define ptMatrix44_AS_NUMBER        PYTHON_DEFAULT_AS_NUMBER(ptMatrix44)
 #define ptMatrix44_AS_SEQUENCE      PYTHON_NO_AS_SEQUENCE
 #define ptMatrix44_AS_MAPPING       PYTHON_NO_AS_MAPPING
 #define ptMatrix44_STR              PYTHON_NO_STR
+#define ptMatrix44_GETATTRO         PYTHON_NO_GETATTRO
+#define ptMatrix44_SETATTRO         PYTHON_NO_SETATTRO
 #define ptMatrix44_RICH_COMPARE     PYTHON_NO_RICH_COMPARE
 #define ptMatrix44_GETSET           PYTHON_NO_GETSET
 #define ptMatrix44_BASE             PYTHON_NO_BASE

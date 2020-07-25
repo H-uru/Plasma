@@ -45,9 +45,8 @@ import abc
 
 from Plasma import *
 
-class MarkerGameBrain(object):
+class MarkerGameBrain(abc.ABC):
     """ABC for marker games"""
-    __metaclass__ = abc.ABCMeta
 
     @abc.abstractmethod
     def CaptureMarker(self, idx):

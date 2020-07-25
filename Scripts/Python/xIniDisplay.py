@@ -48,8 +48,8 @@ import xIniHelper
 from Plasma import *
 
 gIniFile = None
-gFilename = U"graphics.ini"
-gFilenameAndPath = U""
+gFilename = "graphics.ini"
+gFilenameAndPath = ""
 
 kGraphicsWidth = "Graphics.Width"
 kGraphicsHeight = "Graphics.Height"
@@ -68,17 +68,17 @@ DefaultsList = ["800", "600", "32", "false", "2", "0", "0", "2", "true", "false"
 
 def ConstructFilenameAndPath():
     global gFilenameAndPath
-    if gFilenameAndPath == U"":
+    if gFilenameAndPath == "":
         if PtIsInternalRelease():
             # check for local file
-            localNameAndPath = U"init/" + gFilename
+            localNameAndPath = "init/" + gFilename
             if PtFileExists(localNameAndPath):
                 gFilenameAndPath = localNameAndPath
-                PtDebugPrint(U"xIniDisplay::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + U"\" file")
+                PtDebugPrint("xIniDisplay::ConstructFilenameAndPath(): Using internal \"" + gFilenameAndPath + "\" file")
                 return
         # otherwise, use the standard init path
-        gFilenameAndPath = PtGetInitPath() + U"/" + gFilename
-        PtDebugPrint(U"xIniDisplay::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + U"\" file")
+        gFilenameAndPath = PtGetInitPath() + "/" + gFilename
+        PtDebugPrint("xIniDisplay::ConstructFilenameAndPath(): Using user-level \"" + gFilenameAndPath + "\" file")
 
 def WriteIni():
     global gIniFile

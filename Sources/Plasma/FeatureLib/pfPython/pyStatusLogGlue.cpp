@@ -61,31 +61,21 @@ PYTHON_INIT_DEFINITION(ptStatusLog, args, keywords)
 
 PYTHON_METHOD_DEFINITION(ptStatusLog, open, args)
 {
-    PyObject* logName;
+    ST::string logName;
     unsigned long numLines, flags;
-    if (!PyArg_ParseTuple(args, "Oll", &logName, &numLines, &flags))
+    if (!PyArg_ParseTuple(args, "O&ll", PyUnicode_STStringConverter, &logName, &numLines, &flags))
     {
         PyErr_SetString(PyExc_TypeError, "open expects a string and two unsigned longs");
         PYTHON_RETURN_ERROR;
     }
-    if (!PyString_CheckEx(logName))
-    {
-        PyErr_SetString(PyExc_TypeError, "open expects a string and two unsigned longs");
-        PYTHON_RETURN_ERROR;
-    }
-    PYTHON_RETURN_BOOL(self->fThis->Open(PyString_AsStringEx(logName), numLines, flags));
+    PYTHON_RETURN_BOOL(self->fThis->Open(logName, numLines, flags));
 }
 
 PYTHON_METHOD_DEFINITION(ptStatusLog, write, args)
 {
-    PyObject* text;
+    ST::string text;
     PyObject* colorObj = NULL;
-    if (!PyArg_ParseTuple(args, "O|O", &text, &colorObj))
-    {
-        PyErr_SetString(PyExc_TypeError, "write expects a string and an optional ptColor");
-        PYTHON_RETURN_ERROR;
-    }
-    if (!PyString_CheckEx(text))
+    if (!PyArg_ParseTuple(args, "O&|O", PyUnicode_STStringConverter, &text, &colorObj))
     {
         PyErr_SetString(PyExc_TypeError, "write expects a string and an optional ptColor");
         PYTHON_RETURN_ERROR;
@@ -98,9 +88,9 @@ PYTHON_METHOD_DEFINITION(ptStatusLog, write, args)
             PYTHON_RETURN_ERROR;
         }
         pyColor* color = pyColor::ConvertFrom(colorObj);
-        PYTHON_RETURN_BOOL(self->fThis->WriteColor(PyString_AsStringEx(text), *color));
+        PYTHON_RETURN_BOOL(self->fThis->WriteColor(text, *color));
     }
-    PYTHON_RETURN_BOOL(self->fThis->Write(PyString_AsStringEx(text)));
+    PYTHON_RETURN_BOOL(self->fThis->Write(text));
 }
 
 PYTHON_BASIC_METHOD_DEFINITION(ptStatusLog, close, Close);

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5.1)
+cmake_minimum_required(VERSION 3.12)
 project(Plasma)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -63,9 +63,8 @@ set_package_properties(OpenSSL PROPERTIES
     TYPE REQUIRED
 )
 
-set(Python_ADDITIONAL_VERSIONS 2.7)
-find_package(PythonLibs REQUIRED)
-set_package_properties(PythonLibs PROPERTIES
+find_package(Python3 3.8 REQUIRED Interpreter Development)
+set_package_properties(Python3 PROPERTIES
     URL "http://www.python.org"
     DESCRIPTION "Python Scripting language C bindings"
     TYPE REQUIRED
@@ -317,6 +316,7 @@ endif(MSVC)
 #TODO: Make the OpenSSL includes less promiscuous so this isn't needed
 include_directories(${OPENSSL_INCLUDE_DIR})
 
+add_subdirectory(Scripts)
 add_subdirectory(Sources/Plasma)
 add_subdirectory(Sources/Tools)
 

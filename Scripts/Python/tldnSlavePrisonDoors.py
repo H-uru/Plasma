@@ -159,7 +159,7 @@ class tldnSlavePrisonDoors(ptResponder):
                     if boolCurrentValue:
                         activatorToResp[actid].run(self.key, state="State 1",fastforward=1)
                     # if its false then there is no need to animate the plate up (should already be in the that state)
-            for PadSDL in respToPadSDL.viewkeys():
+            for PadSDL in respToPadSDL.keys():
                 ageSDL.setNotify(self.key,PadSDL,0.0)
             ageSDL.setNotify(self.key,"tldnSlaveCaveSecretDoorOpen",0.0)
             # evaluate plates to paddles and set doors accordingly
@@ -170,7 +170,7 @@ class tldnSlavePrisonDoors(ptResponder):
         PtDebugPrint("tldSlavePrisonDoors.OnSDLNotify:",level=kDebugDumpLevel)
         # is it a var we care about?
         foundSDL = 0
-        for PadSDL in respToPadSDL.viewkeys():
+        for PadSDL in respToPadSDL.keys():
             if VARname == PadSDL:
                 foundSDL = 1
                 break
@@ -217,7 +217,7 @@ class tldnSlavePrisonDoors(ptResponder):
         ageSDL = PtGetAgeSDL()
         # assume plates and paddles match
         theyMatch = 1
-        for PadSDL,resp in respToPadSDL.viewitems():
+        for PadSDL,resp in respToPadSDL.items():
             try:
                 paddle = ageSDL[PadSDL][0]
             except LookupError:

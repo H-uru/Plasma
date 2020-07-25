@@ -301,7 +301,7 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, squelchLevel, args)
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPriorityCutoff)
 {
-    return PyInt_FromLong(self->fThis->GetPriorityCutoff());
+    return PyLong_FromLong(self->fThis->GetPriorityCutoff());
 }
 
 PYTHON_METHOD_DEFINITION(ptAudioControl, setPriorityCutoff, args)
@@ -318,16 +318,15 @@ PYTHON_METHOD_DEFINITION(ptAudioControl, setPriorityCutoff, args)
 
 PYTHON_METHOD_DEFINITION(ptAudioControl, setPlaybackDevice, args)
 {
-    PyObject* devicename;
+    ST::string devicename;
     int restart = 0;
-    if (!PyArg_ParseTuple(args, "O|i", &devicename, &restart) || !PyString_CheckEx(devicename)) {
+    if (!PyArg_ParseTuple(args, "O&|i", PyUnicode_STStringConverter, &devicename, &restart)) {
         PyErr_SetString(PyExc_TypeError, "setPlaybackDevice expects a string and an optional bool");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetPlaybackDevice(PyString_AsStringEx(devicename), restart != 0);
+    self->fThis->SetPlaybackDevice(devicename, restart != 0);
     PYTHON_RETURN_NONE;
 }
-
 
 PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevice)
 {
@@ -345,22 +344,22 @@ PYTHON_METHOD_DEFINITION_NOARGS(ptAudioControl, getPlaybackDevices)
 
 PYTHON_METHOD_DEFINITION(ptAudioControl, getFriendlyDeviceName, args)
 {
-    PyObject* devicename;
-    if (!PyArg_ParseTuple(args, "O", &devicename) || !PyString_CheckEx(devicename)) {
+    ST::string devicename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &devicename)) {
         PyErr_SetString(PyExc_TypeError, "getFriendlyDeviceName expects a string");
         PYTHON_RETURN_ERROR;
     }
-    return PyUnicode_FromSTString(self->fThis->GetFriendlyDeviceName(PyString_AsStringEx(devicename)));
+    return PyUnicode_FromSTString(self->fThis->GetFriendlyDeviceName(devicename));
 }
 
 PYTHON_METHOD_DEFINITION(ptAudioControl, setCaptureDevice, args)
 {
-    PyObject* devicename;
-    if (!PyArg_ParseTuple(args, "O", &devicename) || !PyString_CheckEx(devicename)) {
+    ST::string devicename;
+    if (!PyArg_ParseTuple(args, "O&", PyUnicode_STStringConverter, &devicename)) {
         PyErr_SetString(PyExc_TypeError, "setCaptureDevice expects a string");
         PYTHON_RETURN_ERROR;
     }
-    self->fThis->SetCaptureDevice(PyString_AsStringEx(devicename));
+    self->fThis->SetCaptureDevice(devicename);
     PYTHON_RETURN_NONE;
 }
 

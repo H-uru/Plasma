@@ -284,7 +284,7 @@ class xDialogStartUp(ptResponder):
 
                 elif  tagID == k4bDeleteID: ## Delete Explorer ##
                     if gSelectedSlot:
-                        deleteString = U"Would you like to delete the EXPLORER " + unicode(gPlayerList[gSelectedSlot-gMinusExplorer][0]) + U"?"
+                        deleteString = "Would you like to delete the EXPLORER " + str(gPlayerList[gSelectedSlot-gMinusExplorer][0]) + "?"
                         ptGUIControlTextBox(GUIDiag4c.dialog.getControlFromTag(k4cStaticID)).setStringW(deleteString)
                         self.PlayerListNotify(GUIDiag4b, gExp_HotSpot, 0)
                         PtShowDialog("GUIDialog04c")
@@ -347,7 +347,7 @@ class xDialogStartUp(ptResponder):
                     if ptGUIControlCheckBox(GUIDiag6.dialog.getControlFromTag(k6FemaleID)).isChecked():
                         playerGender = "female"
 
-                    if playerName == U"" or playerName == "":
+                    if playerName == "" or playerName == "":
                         errorString = "Error, you must enter a Name."
                         ptGUIControlTextBox(GUIDiag4d.dialog.getControlFromTag(k4dTextID)).setString(errorString)
                         PtShowDialog("GUIDialog04d")
@@ -533,7 +533,7 @@ class xDialogStartUp(ptResponder):
 
         self.PlayerListNotify(dlgObj, listHotSpot, 1)
         
-        basePath = PtGetUserPath() + U"\\Avatars\\"
+        basePath = PtGetUserPath() + "\\Avatars\\"
 
         TextMaps = [mapPlayer01,mapPlayer02,mapPlayer03,mapPlayer04,mapPlayer05,mapPlayer06]
         for Tex in TextMaps:
@@ -542,9 +542,9 @@ class xDialogStartUp(ptResponder):
 
         for idx in range(1, len(gPlayerList[1:]) + 1): ## Setup The Explorer Slots ##
             player = gPlayerList[idx]
-            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(listTxtBox[idx])).setStringW(unicode(player[0]))
+            ptGUIControlTextBox(dlgObj.dialog.getControlFromTag(listTxtBox[idx])).setStringW(str(player[0]))
             try:
-                filename = basePath + unicode(player[1]) + U".jpg"
+                filename = basePath + str(player[1]) + ".jpg"
                 PtDebugPrint("xDialogStartUp: Trying to load \"" + filename + "\"")
                 theImage = PtLoadJPEGFromDisk(filename, 0, 0)
                 TextMaps[idx].textmap.drawImage(0, 0, theImage, 0)
