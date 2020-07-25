@@ -871,6 +871,18 @@ public:
 };
 
 
+template <class T> void hsLargeArray_CopyForward(const T src[], T dst[], int count)
+{
+    for (int i = 0; i < count; i++)
+        dst[i] = src[i];
+}
+
+template <class T> void hsLargeArray_CopyBackward(const T src[], T dst[], int count)
+{
+    for (int i = count - 1; i >= 0; --i)
+        dst[i] = src[i];
+}
+
 template <class T> class hsLargeArray : public hsLargeArrayBase 
 {
     T*      fArray;
@@ -1146,18 +1158,6 @@ template <class T> bool hsLargeArray<T>::RemoveItem(const T& item)
 }
 
 //////////  These are the private methods for hsLargeArray
-
-template <class T> void hsLargeArray_CopyForward(const T src[], T dst[], int count)
-{
-    for (int i = 0; i < count; i++)
-        dst[i] = src[i];
-}
-
-template <class T> void hsLargeArray_CopyBackward(const T src[], T dst[], int count)
-{
-    for (int i = count - 1; i >= 0; --i)
-        dst[i] = src[i];
-}
 
 template <class T> void hsLargeArray<T>::IncCount(int index, int count)
 {
