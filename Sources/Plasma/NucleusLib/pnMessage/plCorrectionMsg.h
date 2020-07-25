@@ -51,7 +51,7 @@ class plCorrectionMsg : public plMessage
 public:
     plCorrectionMsg() : plMessage(nullptr, nullptr, nullptr) { }
 
-    plCorrectionMsg(plKey& r, const hsMatrix44& l2w, const hsMatrix44& w2l,
+    plCorrectionMsg(const plKey& r, const hsMatrix44& l2w, const hsMatrix44& w2l,
                     bool dirtySynch = false)
         : plMessage(nullptr, r, nullptr),
           fLocalToWorld(l2w),
