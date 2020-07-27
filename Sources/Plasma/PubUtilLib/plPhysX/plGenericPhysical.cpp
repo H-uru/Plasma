@@ -457,6 +457,22 @@ void plPXPhysical::SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsV
     SendNewLocation(false, true);
 }
 
+void plPXPhysical::ResetSyncState()
+{
+    if (fSDLMod) {
+        hsVector3 zero(0.f, 0.f, 0.f);
+        bool wakeup = GetProperty(plSimulationInterface::kStartInactive);
+
+        ISetPoseSim(&fRecipe.l2sP, &fRecipe.l2sQ, wakeup);
+        SetLinearVelocitySim(zero, wakeup);
+        SetAngularVelocitySim(zero);
+        SendNewLocation(true, true);
+        DirtySynchState(kSDLPhysical, plSynchedObject::kBCastToClients |
+                                      plSynchedObject::kSkipLocalOwnershipCheck |
+                                      plSynchedObject::kSendImmediately);
+    }
+}
+
 // ==========================================================================
 
 void plPXPhysical::SendNewLocation(bool synchTransform, bool isSynchUpdate)

@@ -105,6 +105,8 @@ public:
     void AddContactSound(plPhysical* phys1, plPhysical* phys2,
                          const hsPoint3& point, const hsVector3& normal);
 
+    void ResetKickables();
+
 protected:
     void ISendUpdates();
 

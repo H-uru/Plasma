@@ -122,6 +122,9 @@ public:
     virtual void GetSyncState(hsPoint3& pos, hsQuat& rot, hsVector3& linV, hsVector3& angV) = 0;
     virtual void SetSyncState(hsPoint3* pos, hsQuat* rot, hsVector3* linV, hsVector3* angV) = 0;
 
+    /** Resets the physical to its default state. */
+    virtual void ResetSyncState() = 0;
+
     virtual float GetMass() = 0;
 
     virtual plDrawableSpans* CreateProxy(hsGMaterial* mat, hsTArray<uint32_t>& idx, plDrawableSpans* addTo) = 0;

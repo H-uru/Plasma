@@ -5139,6 +5139,14 @@ PF_CONSOLE_CMD(Physics,
     plPXPhysicalControllerCore::fDebugDisplay = !plPXPhysicalControllerCore::fDebugDisplay;
 }
 
+PF_CONSOLE_CMD(Physics,
+               ResetKickables,
+               "",
+               "Reset kickables in this Age to their default poses")
+{
+    plSimulationMgr::GetInstance()->ResetKickables();
+}
+
 #endif // LIMIT_CONSOLE_COMMANDS
 
 

@@ -202,6 +202,14 @@ void plSimulationMgr::AddContactSound(plPhysical* phys1, plPhysical* phys2,
     fSoundMgr->AddContact(phys1, phys2, pos, normal);
 }
 
+void plSimulationMgr::ResetKickables()
+{
+    for (auto i : fPhysicals) {
+        if (i->IsDynamic())
+            i->ResetSyncState();
+    }
+}
+
 void plSimulationMgr::Advance(float delSecs)
 {
     if (fSuspended)
