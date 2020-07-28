@@ -1482,7 +1482,7 @@ class CommandsProcessor:
         # Parse common dice notation
         dice_opt = re.match("^(\d+)d(\d+)$", dice_str)
         if not dice_opt:
-            self.chatMgr.AddChatLine(None, "I'm sorry, I dont know how to roll {}.".format(dice_str), kChat.SystemMessage)
+            self.chatMgr.AddChatLine(None, "I'm sorry, I don't know how to roll {}.".format(dice_str), kChat.SystemMessage)
             return
         num_dice = int(dice_opt.groups()[0])
         num_face = int(dice_opt.groups()[1])
