@@ -100,7 +100,7 @@ kEasterEggs = {
                           "people" : "an old man. Ok, maybe he's not standing. BTW, wasn't he on M*A*S*H?"},
                "GoMePubNew" : {"see" : "You are in a festively yet dimly lit Pub. The echoes of Messenger work and play echo along the walls of the massive main chamber.",
                                "exits" : "... wait, where ARE the exits? Who built this place anyway?",
-                               "people" : "You see many people...unless you are here by yourself...in which case, you don't."},
+                               "people" : "a large group of people...unless you are here by yourself...in which case, you don't."},
                "ChisoPreniv" : {"see" : "All around you are bookshelves upon bookshelves but not a book to read. To the south is a large set of windows that reveal a vast landscape that you'll never be able to access.",
                                 "exits" : " ... I guess in this library, the only exit is through the window, but let's not do that"},
 }
