@@ -54,7 +54,7 @@ from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
 import xRandom
-import xEnum
+import enum
 from xPsnlVaultSDL import *
 
 # define the attributes that will be entered in max
@@ -104,7 +104,11 @@ LocalAvatar = None
 ClothInUse = 0
 CAM_DIVIDER = "~"
 
-TimerID = xEnum.Enum("FadeOut, FadeIn, AddSavePoint, AddJCProgress")
+class TimerID(enum.IntEnum):
+    FadeOut = enum.auto()
+    FadeIn = enum.auto()
+    AddSavePoint = enum.auto()
+    AddJCProgress = enum.auto()
 
 class xJourneyClothsGen2(ptModifier):
     "The Journey Cloth python code"

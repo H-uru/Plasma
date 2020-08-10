@@ -51,7 +51,7 @@ Controls the state of the bahro poles
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
-import xEnum
+import enum
 import xRandom
 import copy
 from xPsnlVaultSDL import *
@@ -128,7 +128,13 @@ kTimerCleftTotemClk = 42
 #GotCleftBook = 0
 boolCleftSolved = 0
 kWriteTimestamps = 8
-BahroPoles = xEnum.Enum("Teledahn = 1, Garrison, Garden, Kadish")
+
+class BahroPoles(enum.IntEnum):
+    Teledahn = enum.auto()
+    Garrison = enum.auto()
+    Garden = enum.auto()
+    Kadish = enum.auto()
+
 HidingPoles = 0
 
 # Bahro pole SDL variable states

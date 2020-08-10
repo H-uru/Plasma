@@ -63,7 +63,6 @@ import math
 import functools
 
 import xLocTools
-import xEnum
 
 # Personal age SDL helper.
 from xPsnlVaultSDL import *

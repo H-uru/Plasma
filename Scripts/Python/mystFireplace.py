@@ -50,7 +50,7 @@ Author: Adam Van Ornum
 from Plasma import *
 from PlasmaTypes import *
 import PlasmaControlKeys
-import xEnum
+import enum
 
 actButton = ptAttribActivator(1, "Fireplace button")
 respPressButton = ptAttribResponder(2, "Fireplace button resp")
@@ -96,7 +96,11 @@ YeeshaPageSolution = ["A01", "A03", "A04", "A05", "A06", "B01", "B02", "B05", "B
 EggSolution = ["A03", "A04", "B02", "B05", "C01", "C03", "C04", "C06", "D01", "D03", "D04", "D06", "E01", "E06", "F02", "F05", "G02", "G05", "H03", "H04"]
 KveerSolution = ["A01", "A05", "B02", "B05", "C01", "C04", "D03", "D06", "E03", "E05", "F01", "F03", "G01", "G03", "G05", "H02", "H05"]
 
-States = xEnum.Enum("DoorOpen, DoorClosed, Rotated")
+class States(enum.IntEnum):
+    DoorOpen = 0
+    DoorClosed = enum.auto()
+    Rotated = enum.auto()
+
 CurrentState = States.DoorClosed
     
 class mystFireplace(ptModifier):

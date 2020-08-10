@@ -52,7 +52,6 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
 import PlasmaControlKeys
-import xEnum
 from math import *
 
 

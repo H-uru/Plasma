@@ -45,14 +45,8 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 
-# Uru modules.
-import xEnum
-
 ## Number of items to scroll through in content list.
 kContentListScrollSize = 5
-
-## Waiting message for marker games.
-kMessageWait = xEnum.Enum("createMarker, changeMarkerName")
 
 ## Python component for the Jalak Age.
 kJalakPythonComponent = "cPythField"
