@@ -763,7 +763,7 @@ class jlakField(ptResponder):
 
 
     def SaveColumns(self,fName):
-        fWrite = file(fName,'w')
+        fWrite = open(fName,'w')
         PtDebugPrint("jlakField.SaveColumns(): writing to presets file '%s'" % (fName))
         i = 0
         for pos in byteColumns:
@@ -775,7 +775,7 @@ class jlakField(ptResponder):
 
     def LoadColumns(self,fName):
         try:
-            fRead = file(fName,'r')
+            fRead = open(fName,'r')
         except:
             PtDebugPrint("jlakField.LoadColumns():  ERROR!  File '%s' not found, load canceled." % (fName))
             #templist = [PtGetLocalPlayer()]
