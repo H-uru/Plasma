@@ -49,7 +49,7 @@ Randomly plays Bahro scream based on SDL value
 
 from Plasma import *
 from PlasmaTypes import *
-from xEnum import Enum
+import enum
 import xRandom
 
 respScream = ptAttribResponder(1, "Scream responder")
@@ -59,7 +59,8 @@ strChanceVar = ptAttribString(2, "Chance Variable")
 AgeStartedIn = ""
 ScreamChanceVar = "islmScreamChance"
 
-TimerID = Enum("TurnOn")
+class TimerID(enum.IntEnum):
+    TurnOn = enum.auto()
 
 class islmRandomBahroScream(ptModifier):
     def __init__(self):

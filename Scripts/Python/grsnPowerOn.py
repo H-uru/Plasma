@@ -44,7 +44,7 @@ You can contact Cyan Worlds, Inc. by email legal@cyan.com
 from Plasma import *
 from PlasmaTypes import *
 
-import xEnum
+import enum
 
 # #############################################################
 # define the attributes/parameters that we need from the 3dsMax scene
@@ -132,7 +132,9 @@ gearStopping = False
 gearStartingDown = False
 weightEngageDisabled = False
 
-TimerID = xEnum.Enum("UpElevatorSwitch, DownElevatorSwitch")
+class TimerID(enum.IntEnum):
+    UpElevatorSwitch = enum.auto()
+    DownElevatorSwitch = enum.auto()
 
 # history
 #

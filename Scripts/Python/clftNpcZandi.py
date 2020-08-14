@@ -53,7 +53,7 @@ from PlasmaTypes import *
 import random
 import time
 import PlasmaControlKeys
-import xEnum
+import enum
 
 # define the attributes that will be entered in max
 Activate = ptAttribActivator(1, "Region Sensor")
@@ -86,9 +86,19 @@ actZandiClick = ptAttribActivator(22, "Zandi clickable")
 IgnoreTime = 120
 PageTurnInterval = 120
 
-TimerID = xEnum.Enum("IgnoreFinished = 10, TurnPage")
+class TimerID(enum.IntEnum):
+    IgnoreFnished = 10
+    TurnPage = enum.auto()
 
-JC = xEnum.Enum("Trailer, Imager, Bedroom, Wahrk, Sign, Bucket, Door")
+class JC(enum.IntEnum):
+    Trailer = 0
+    Imager = enum.auto()
+    Bedroom = enum.auto()
+    Wahrk = enum.auto()
+    Sign = enum.auto()
+    Bucket = enum.auto()
+    Door = enum.auto()
+
 jcDict = {JC.Trailer: 'c', JC.Imager: 'd', JC.Bedroom: 'e', JC.Wahrk: 'b', JC.Sign: 'a', JC.Bucket: 'g', JC.Door: 'f'}
 
 

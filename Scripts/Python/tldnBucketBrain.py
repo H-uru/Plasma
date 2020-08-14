@@ -52,7 +52,7 @@ Handles all aspects of teledahn's bucket system operations
 from Plasma import *
 from PlasmaTypes import *
 import PlasmaControlKeys
-from xEnum import Enum
+import enum
 
 #These variables are global but are necessary for the max inputs:
 kOff = "off"
@@ -149,8 +149,28 @@ kStringAgeSDLBucketAtDump  = "tldnBucketAtDump"
 kStringAgeSDLPowerOn       = "tldnWorkroomPowerOn"
 
 #Bucket States and Inputs
-kBucketStates = Enum("Stop, QRun, QBoardQRun, Run, Dump, QStop, DumpQBoard, DumpQStop, DumpQBoardQStop, QBoard, Boarded")
-kBucketInputs = Enum("Power, Timer, StopCB, Board, BoardCB, Dump, DumpCB, WCPswitch")
+class kBucketStates(enum.IntEnum):
+    Stop = 0
+    QRun = enum.auto()
+    QBoardQRun = enum.auto()
+    Run = enum.auto()
+    Dump = enum.auto()
+    QStop = enum.auto()
+    DumpQBoard = enum.auto()
+    DumpQStop = enum.auto()
+    DumpQBoardQStop = enum.auto()
+    QBoard = enum.auto()
+    Boarded = enum.auto()
+
+class kBucketInputs(enum.IntEnum):
+    Power = 0
+    Timer = enum.auto()
+    StopCB = enum.auto()
+    Board = enum.auto()
+    BoardCB = enum.auto()
+    Dump = enum.auto()
+    DumpCB = enum.auto()
+    WCPswitch = enum.auto()
 
       
 
@@ -466,7 +486,7 @@ class tldnBucketBrain(ptResponder):
         if VARname == kStringAgeSDLBucketState:
             curBucketState = ageSDL[kStringAgeSDLBucketState][0]
             fastforward = ageSDL[kStringAgeSDLBucketState][1]
-            PtDebugPrint ("Debug: tldnBucketBrain.OnSDLNotify(): *****>Changed Bucket State to: %s, with FF = %s"% (kBucketStates.ToString(curBucketState),fastforward),level=kDebugDumpLevel)
+            PtDebugPrint ("Debug: tldnBucketBrain.OnSDLNotify(): *****>Changed Bucket State to: %s, with FF = %s"% (repr(curBucketState),fastforward),level=kDebugDumpLevel)
             self.RunBucketState(curBucketState, fastforward=fastforward)
 
             #Set WCP bucket LED
@@ -689,7 +709,7 @@ class tldnBucketBrain(ptResponder):
             bucketState = ageSDL[kStringAgeSDLBucketState][0]
             boardStates = [kBucketStates.Stop, kBucketStates.QRun, kBucketStates.Dump, kBucketStates.DumpQStop]
             if not(bucketState in boardStates):
-                PtDebugPrint("DEBUG: tldnBucketBrain.OnNotify():\tCannot enter bucket during an improper state: %s" %kBucketStates.ToString(bucketState))
+                PtDebugPrint("DEBUG: tldnBucketBrain.OnNotify():\tCannot enter bucket during an improper state: %s" %repr(bucketState))
                 actBktEnter1.disable()
                 actBktEnter2.disable()
                 return
@@ -756,7 +776,7 @@ class tldnBucketBrain(ptResponder):
                 #This check is to ensure that QRun may be a vaild state if a rider is in the bucket
                 #(used or logic due to simplification)
                 if avaObj == None or bucketState != kBucketStates.QRun:
-                    PtDebugPrint("DEBUG: tldnBucketBrain.OnNotify():\tCannot exit a bucket during an improper state: %s" %kBucketStates.ToString(bucketState))
+                    PtDebugPrint("DEBUG: tldnBucketBrain.OnNotify():\tCannot exit a bucket during an improper state: %s" %repr(bucketState))
                     actBktExit.disable()
                     return
 
@@ -1018,7 +1038,7 @@ class tldnBucketBrain(ptResponder):
         fastforward = 0  #fastforward to state       
         error = 0  #error reporting
 
-        PtDebugPrint("tldnBucketBrain.UpdateBucketState():-->Incomming state change request: state (%s), parameter (%s), value (%s)" % (kBucketStates.ToString(curBucketState), kBucketInputs.ToString(param),val),level=kDebugDumpLevel)
+        PtDebugPrint("tldnBucketBrain.UpdateBucketState():-->Incomming state change request: state (%s), parameter (%s), value (%s)" % (repr(curBucketState), repr(param),val),level=kDebugDumpLevel)
 
 
         ############[ Power ]#############
@@ -1208,10 +1228,10 @@ class tldnBucketBrain(ptResponder):
         #Propigate to all clients if an error did not occur
         #Tye: we could just prop to all clients irregardless of an error?!???
         if error:
-            PtDebugPrint("ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown state (%s), parameter (%s), and value (%s) combo" % (kBucketStates.ToString(curBucketState), kBucketInputs.ToString(param),val),level=kErrorLevel)
+            PtDebugPrint("ERROR: tldnBucketBrain.UpdateBucketState():-->Unknown state (%s), parameter (%s), and value (%s) combo" % (repr(curBucketState), repr(param),val),level=kErrorLevel)
         else:
             #Push state to other clients..
-            PtDebugPrint("tldnBucketBrain.UpdateBucketState(): ----[ Updating EVERYONE\'s State to: %s ]----" % (kBucketStates.ToString(curBucketState)),level=kDebugDumpLevel)
+            PtDebugPrint("tldnBucketBrain.UpdateBucketState(): ----[ Updating EVERYONE\'s State to: %s ]----" % (repr(curBucketState)),level=kDebugDumpLevel)
             ageSDL[kStringAgeSDLBucketState] = (curBucketState, fastforward)
 
 

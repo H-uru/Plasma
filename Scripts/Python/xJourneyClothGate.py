@@ -54,7 +54,7 @@ from Plasma import *
 from PlasmaTypes import *
 from PlasmaVaultConstants import *
 from PlasmaNetConstants import *
-from xEnum import *
+import enum
 
 # ---------
 # max wiring
@@ -87,7 +87,9 @@ PersonInRegion = 0
 AgeStartedIn = None
 AllCloths = ""
 
-TimerID = Enum("kCheckGateFinished, kResetGate")
+class TimerID(enum.IntEnum):
+    kCheckGateFinished = enum.auto()
+    kResetGate = enum.auto()
 
 class xJourneyClothGate(ptResponder):
 
