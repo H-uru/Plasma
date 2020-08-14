@@ -81,7 +81,7 @@ class xEventTrigger(ptResponder):
             if VARname == EventName.value:
                 PtDebugPrint("xEventTrigger: value is %f" % ageSDL[EventName.value])
                 if ageSDL[EventName.value][0]:
-                    #~ PtDebugPrint("Event %s is true!" % (VARname))
+                    # PtDebugPrint("Event %s is true!" % (VARname))
                     # are we paging things in?
                     if PageNames.value:
                         names = PageNames.value.split(",")
@@ -90,7 +90,7 @@ class xEventTrigger(ptResponder):
                     if Responder.value is not None:
                         Responder.run(self.key,state="true")
                 else:
-                    #~ PtDebugPrint("Event %s is false!" % (VARname))
+                    # PtDebugPrint("Event %s is false!" % (VARname))
                     # are we paging things in?
                     if PageNames.value:
                         names = PageNames.value.split(",")

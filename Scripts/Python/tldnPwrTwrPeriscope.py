@@ -309,12 +309,12 @@ class tldnPwrTwrPeriscope(ptResponder):
                     if tag == "towerLowered":
                         PtAtTimeCallback(self.key,5,kTimerIDDelayPowerOff) # delay power off till tower actually coming down
                         actSun.disable()
-                        #~ animScopeLeft.value.stop()
-                        #~ animScopeUp.value.stop()
-                        #~ scopeSpdUp = 0
-                        #~ self.SDL["scopeSpdUp"] = (0,)
-                        #~ scopeSpdLeft = 0
-                        #~ self.SDL["scopeSpdLeft"] = (0,)
+                        # animScopeLeft.value.stop()
+                        # animScopeUp.value.stop()
+                        # scopeSpdUp = 0
+                        # self.SDL["scopeSpdUp"] = (0,)
+                        # scopeSpdLeft = 0
+                        # self.SDL["scopeSpdLeft"] = (0,)
                     else:
                         respPowerOff.run(self.key) # run immediately
                 if boolPwrMain:

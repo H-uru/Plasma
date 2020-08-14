@@ -134,10 +134,10 @@ class ercaCallCar(ptResponder):
 
         ageSDL = PtGetAgeSDL()
         
-        #~ if PtWasLocallyNotified(self.key):
-            #~ fastforward = 0
-        #~ else:
-            #~ fastforward = 1
+        # if PtWasLocallyNotified(self.key):
+        #     fastforward = 0
+        # else:
+        #     fastforward = 1
 
         if (id == clkCallCarBtn.id and state):
             if byteCarPos == 1:

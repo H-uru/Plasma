@@ -160,7 +160,7 @@ class nglnTreeMonkey(ptResponder):
     def RandomBehavior(self):
         ageSDL = PtGetAgeSDL()
         PickABehavior = random.randint(1,100)
-        #~ PtDebugPrint("PickABehavior = ",PickABehavior)
+        # PtDebugPrint("PickABehavior = ",PickABehavior)
         LightsOn = ageSDL["nglnPodLights"][0]
         posMonkeyStates = ['Idle','Eat','Alarmed','Vocalize','Off']
         Cumulative = 0

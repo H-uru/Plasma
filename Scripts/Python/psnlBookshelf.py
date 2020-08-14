@@ -253,11 +253,11 @@ class psnlBookshelf(ptModifier):
         if event == PtVaultCallbackTypes.kVaultConnected:
             PtDebugPrint("psnlBookshelf: kVaultConnected event")
             # tupdata is ()
-            #~ pass
+            # pass
         elif event == PtVaultCallbackTypes.kVaultNodeSaved:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeSaved event (id=%d,type=%d)" % (tupdata[0].getID(),tupdata[0].getType()))
             # tupdata is ( ptVaultNode )
-            #~ pass
+            # pass
         elif event == PtVaultCallbackTypes.kVaultNodeRefAdded:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefAdded event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
@@ -267,19 +267,19 @@ class psnlBookshelf(ptModifier):
         elif event == PtVaultCallbackTypes.kVaultRemovingNodeRef:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
-            #~ pass
+            # pass
         elif event == PtVaultCallbackTypes.kVaultNodeRefRemoved:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeRefRemoved event (childID,parentID) ",tupdata) 
             # tupdata is ( childID, parentID )
-            #~ pass
+            # pass
         elif event == PtVaultCallbackTypes.kVaultNodeInitialized:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultNodeInitialized event (id=%d,type=%d)", (tupdata[0].getID(),tupdata[0].getType()))
             # tupdata is ( ptVaultNode )
-            #~ pass
+            # pass
         elif event == PtVaultCallbackTypes.kVaultOperationFailed:
             PtDebugPrint("psnlBookshelf.OnAgeVaultEvent()\t: kVaultOperationFailed event  (operation,resultCode) ",tupdata)
             #tupdata is ( operation, resultCode )
-            #~ pass
+            # pass
         else:
             PtDebugPrint("psnlBookshelf: OnAgeVaultEvent - unknown event!")
 
@@ -304,7 +304,7 @@ class psnlBookshelf(ptModifier):
         global boolShelfInUse
         global stupidHackForLock
         
-        #~ PtDebugPrint("state:",state," id:",id," events:",events)
+        # PtDebugPrint("state:",state," id:",id," events:",events)
 
         if id == actBookshelfExit.id:
             self.IDisengageShelf()
@@ -338,12 +338,12 @@ class psnlBookshelf(ptModifier):
 ##        if id == actDisengageShelf.id:
 ##            theavatar = PtFindAvatar(events)
 ##            AvatarWhoWalkedAway = PtGetClientIDFromAvatarKey(theavatar.getKey())
-##            #~ PtDebugPrint("psnlBookshelf.OnNotify: Avatar %s walked away from the shelf." % (AvatarWhoWalkedAway))
+##            # PtDebugPrint("psnlBookshelf.OnNotify: Avatar %s walked away from the shelf." % (AvatarWhoWalkedAway))
 ##
 ##            if AgeStartedIn == PtGetAgeName():
 ##                ageSDL = PtGetAgeSDL()
 ##                CurrentBookshelfUser = ageSDL["ShelfAUserID"][0]
-##                #~ PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
+##                # PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
 ##    
 ##                if AvatarWhoWalkedAway == CurrentBookshelfUser:
 ##                    PtDebugPrint ("psnlBookshelf.OnNotify: Player %s is done with the bookshelf." % (CurrentBookshelfUser))
@@ -352,7 +352,7 @@ class psnlBookshelf(ptModifier):
 ##                    avatar = PtGetLocalAvatar()   
 ##                    myID = PtGetClientIDFromAvatarKey(avatar.getKey())
 ##        
-##                    #~ PtDebugPrint("I think my ID is: ", myID)
+##                    # PtDebugPrint("I think my ID is: ", myID)
 ##        
 ##                    if myID == AvatarWhoWalkedAway:
 ##                        PtDebugPrint("I was the Shelf User, and I'm done with the Shelf now.")
@@ -404,11 +404,11 @@ class psnlBookshelf(ptModifier):
                             self.SendNote(0)
                             self.ILink()
                     
-                    #~ stringAgeRequested = event[1]
-                    #~ idRequestor = event[3]
-                    #~ PtDebugPrint("xLinkingBookGUI.OnNotify():\tpsnlBookshelf user id %d selected book %s from the shelf" % (idRequestor, stringAgeRequested))
+                    # stringAgeRequested = event[1]
+                    # idRequestor = event[3]
+                    # PtDebugPrint("xLinkingBookGUI.OnNotify():\tpsnlBookshelf user id %d selected book %s from the shelf" % (idRequestor, stringAgeRequested))
              
-            #~ self.IShelveBook()
+            # self.IShelveBook()
  
         if id == (-1):
             if events[0][1] == 'BookShelfBusy':
@@ -527,7 +527,7 @@ class psnlBookshelf(ptModifier):
                             PtRecenterCamera()
                             LocalAvatar = PtFindAvatar(events)
                             SeekBehavior.run(LocalAvatar)                        
-                            #~ PtDebugPrint ("Bookshelf clicked. Disable it and smartseek.")
+                            # PtDebugPrint ("Bookshelf clicked. Disable it and smartseek.")
                             
                             ShelfABoolOperated = 1  # me! I'm the operator
                             if AgeStartedIn == PtGetAgeName():
@@ -698,7 +698,7 @@ class psnlBookshelf(ptModifier):
         if id==respPresentBook.id and objBookPicked is not None:
             # book is finished presenting - now link
             if boolLinkerIsMe:
-                #~ self.ILink()
+                # self.ILink()
                 # tell linking book GUI which age to present
                 stringShowMeAge = self.IGetAgeFromBook()
                 PtDebugPrint("psnlBookshelf.OnNotify():\tsend message - show client %d age %s" % (ShelfAUserID,stringShowMeAge) )
@@ -709,7 +709,7 @@ class psnlBookshelf(ptModifier):
                 note.send()
 
             # for now, just shelve the book again
-            #~ self.IShelveBook()
+            # self.IShelveBook()
             return
             
         if id==respShelveBook.id:
@@ -737,7 +737,7 @@ class psnlBookshelf(ptModifier):
                                 objLockPicked = None
                                 break
 
-                #~ elif not boolLinkerIsMe:
+                # elif not boolLinkerIsMe:
                 else:
                     boolShelfBusy = False
                     self.IUpdateLinks()
@@ -797,7 +797,7 @@ class psnlBookshelf(ptModifier):
                             objLockPicked = None
                             break
 
-            #~ elif not boolLinkerIsMe:
+            # elif not boolLinkerIsMe:
             else:
                 boolShelfBusy = False
                 self.IUpdateLinks()
@@ -970,7 +970,7 @@ class psnlBookshelf(ptModifier):
             return
         
         if id==respCloseLock.id:
-            #~ if not boolLinkerIsMe:
+            # if not boolLinkerIsMe:
             boolShelfBusy = False
             self.IUpdateLinks() # after someone links, need to run this to reenable clickables
             return
@@ -1301,10 +1301,10 @@ class psnlBookshelf(ptModifier):
                 for rkey,rvalue in respDeleteBook.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
-                        #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
+                        # PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
                         if bookName == parent.getName():
                             respDeleteBook.run(self.key,objectName=rkey,fastforward=1)
-                            #~ PtDebugPrint("got here")
+                            # PtDebugPrint("got here")
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
                 for rkey,rvalue in respReturnTray.byObject.items():
@@ -1368,10 +1368,10 @@ class psnlBookshelf(ptModifier):
                 for rkey,rvalue in respDeleteBook.byObject.items():
                     parent = rvalue.getParentKey()
                     if parent:
-                        #~ PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
+                        # PtDebugPrint(trayName,"==",rkey#[:len(trayName)])
                         if bookName == parent.getName():
                             respDeleteBook.run(self.key,objectName=rkey,fastforward=1)
-                            #~ PtDebugPrint("got here")
+                            # PtDebugPrint("got here")
             else:
                 PtDebugPrint("psnlBookshelf.IUpdateLocksAndTrays():\tsetting booktray to NOT volatile: ",bookName)
                 for rkey,rvalue in respReturnTray.byObject.items():
@@ -1781,7 +1781,7 @@ class psnlBookshelf(ptModifier):
         if AgeStartedIn == PtGetAgeName() and not self.UsingBook:
             ageSDL = PtGetAgeSDL()
             CurrentBookshelfUser = ageSDL["ShelfAUserID"][0]
-            #~ PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
+            # PtDebugPrint("psnlBookshelf.OnNotify: Player %s was previously using the shelf." % (CurrentBookshelfUser))
     
             PtDebugPrint ("psnlBookshelf.OnNotify: Player %s is done with the bookshelf." % (CurrentBookshelfUser))
             self.IResetShelf()             
@@ -1789,7 +1789,7 @@ class psnlBookshelf(ptModifier):
             avatar = PtGetLocalAvatar()   
             myID = PtGetClientIDFromAvatarKey(avatar.getKey())
         
-            #~ PtDebugPrint("I think my ID is: ", myID)
+            # PtDebugPrint("I think my ID is: ", myID)
         
             if myID == CurrentBookshelfUser:
                 PtDebugPrint("I was the Shelf User, and I'm done with the Shelf now.")

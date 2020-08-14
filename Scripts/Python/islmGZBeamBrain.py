@@ -104,7 +104,7 @@ class islmGZBeamBrain(ptResponder):
     def TurnBeamOff(self):
         PtDebugPrint("islmGZBeamBrain.RotateBeam: Trying to turn the beam OFF.")
         Beamlight.sceneobject.draw.disable()
-        #~ respRotateBeam.animation.stop()
+        # respRotateBeam.animation.stop()
 
 
     def OnNotify(self,state,id,events):

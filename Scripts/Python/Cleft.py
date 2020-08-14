@@ -148,17 +148,17 @@ class Cleft(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        #~ # test for first time to play the intro movie
-        #~ vault = ptVault()
-        #~ entry = vault.findChronicleEntry(kIntroPlayedChronicle)
-        #~ if entry is not None:
-            #~ # already played intro sometime in the past... just let 'em play
-            #~ PtSendKIMessage(kEnableKIandBB,0)
-        #~ else:
-            #~ # make sure the KI and blackbar is still diabled
-            #~ PtSendKIMessage(kDisableKIandBB,0)
-            #~ # It's the first time... start the intro movie, just by loading the movie dialog
-            #~ PtLoadDialog("IntroMovieGUI")
+        # # test for first time to play the intro movie
+        # vault = ptVault()
+        # entry = vault.findChronicleEntry(kIntroPlayedChronicle)
+        # if entry is not None:
+        #     # already played intro sometime in the past... just let 'em play
+        #     PtSendKIMessage(kEnableKIandBB,0)
+        # else:
+        #     # make sure the KI and blackbar is still diabled
+        #     PtSendKIMessage(kDisableKIandBB,0)
+        #     # It's the first time... start the intro movie, just by loading the movie dialog
+        #     PtLoadDialog("IntroMovieGUI")
 
 
     def OnServerInitComplete(self):

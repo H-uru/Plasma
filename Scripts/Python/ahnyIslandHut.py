@@ -162,9 +162,9 @@ class ahnyIslandHut(ptResponder):
         global actingAvatarDoor
         ageSDL = PtGetAgeSDL()
         
-        #~ PtDebugPrint("anhySphere1MaintBtn::OnNotify id ",id," state ",state)
-        #~ if (state == 0):
-            #~ return
+        # PtDebugPrint("anhySphere1MaintBtn::OnNotify id ",id," state ",state)
+        # if (state == 0):
+        #     return
 
         #if id == ActRotateSwitch.id and state:
         #    RespRotateSwitch.run(self.key,avatar=PtGetLocalAvatar())

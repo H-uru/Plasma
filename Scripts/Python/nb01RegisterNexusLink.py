@@ -50,8 +50,8 @@ Author: Bill Slease
 from Plasma import *
 from PlasmaTypes import *
 from PlasmaKITypes import *
-#~ from PlasmaVaultConstants import *
-#~ from PlasmaNetConstants import *
+# from PlasmaVaultConstants import *
+# from PlasmaNetConstants import *
 
 
 # define the attributes that will be entered in max

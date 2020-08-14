@@ -89,28 +89,28 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 #8 (YeeshaPage09) music player 
 #9 (YeeshaPage10a - j) treegate tree (multi-swap)
 #11 (YeeshaPage12) weather stuff
-#~ psnlZandiVis (all Ypages, plus chair, shirt, books...) 
-#~ (YeeshaPage20) page the second bookcase (swap)
-#~ (YeeshaPage13) butterflies
-#~ (YeeshaPage14) fireplace
-#~ (YeeshaPage15) bench
-#~ (YeeshaPage16) firemarbles
-#~ (YeeshaPage17) lush
-#~ (YeeshaPage18) clock
-#~ (YeeshaPage19) birds
-#~ (YeeshaPage20) bridge to calendar pinnacle
-#~ (YeeshaPage21) leaf (maple trees)
-#~ (YeeshaPage22) grass
-#~ (YeeshaPage24) thunderstorm
-#~ (YeeshaPage25) Bahro poles/totems
+# psnlZandiVis (all Ypages, plus chair, shirt, books...) 
+# (YeeshaPage20) page the second bookcase (swap)
+# (YeeshaPage13) butterflies
+# (YeeshaPage14) fireplace
+# (YeeshaPage15) bench
+# (YeeshaPage16) firemarbles
+# (YeeshaPage17) lush
+# (YeeshaPage18) clock
+# (YeeshaPage19) birds
+# (YeeshaPage20) bridge to calendar pinnacle
+# (YeeshaPage21) leaf (maple trees)
+# (YeeshaPage22) grass
+# (YeeshaPage24) thunderstorm
+# (YeeshaPage25) Bahro poles/totems
 
 #Meaning of SDL values for each Yeesha Page:
 #
-#~ 0 - Page not found
-#~ 1 - Page found and active
-#~ 2 - Page found and inactive
-#~ 3 - Page found, active, and pending inactive when age emptied
-#~ 4 - Page found, inactive, and pending active when age emptied
+# 0 - Page not found
+# 1 - Page found and active
+# 2 - Page found and inactive
+# 3 - Page found, active, and pending inactive when age emptied
+# 4 - Page found, inactive, and pending active when age emptied
 
 
     def OnFirstUpdate(self):
@@ -268,7 +268,7 @@ class psnlYeeshaPageChanges(ptMultiModifier):
 
 
     def UpdateState(self, state, size, SDLVar, AgeVault, sizechanged):
-        #~ PtDebugPrint("No one else is here. Affecting any YP changes you've queued.")
+        # PtDebugPrint("No one else is here. Affecting any YP changes you've queued.")
         if state == 3:
             state = 2
             PtDebugPrint("psnlYeeshaPageChanges: Updated value of YeeshaPage %s from 3 to 2." % ("YeeshaPage" + str(PageNumber.value)))

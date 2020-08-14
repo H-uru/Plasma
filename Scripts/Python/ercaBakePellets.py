@@ -338,9 +338,9 @@ class ercaBakePellets(ptResponder):
         
         CurTime = PtGetDniTime()
         if CurTime < byteFinishTime:
-            #~ for start in ovenStartList:
-                #~ if start == CurTime:
-                    #~ PtDebugPrint("%s start baking." % (start))
+            # for start in ovenStartList:
+            #     if start == CurTime:
+            #         PtDebugPrint("%s start baking." % (start))
             if fastforward == 0:
                 if boolPelletMachine and ((CurTime+7) >= byteFinishTime) and self.sceneobject.isLocallyOwned():
                     PtDebugPrint("7 seconds or less until baking is done, and the machine is open, so CLOSING...")

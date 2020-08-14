@@ -255,15 +255,15 @@ class kdshTreeRingsSolution(ptModifier):
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         global StillSolved
         ageSDL = PtGetAgeSDL()             
-        #~ PtDebugPrint("kdshTreeRingsSolution.OnSDLNotify():\t VARname:%s, playerID:%s, tag:%s" % (VARname,playerID,tag))
+        # PtDebugPrint("kdshTreeRingsSolution.OnSDLNotify():\t VARname:%s, playerID:%s, tag:%s" % (VARname,playerID,tag))
 
         StillSolved = False
         newbearing = ageSDL[VARname][0]
-        #~ PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
+        # PtDebugPrint("VARname = ", VARname, "newbear = ", newbearing)
         globals()["{id}_0{bearing}".format(id=VARname, bearing=newbearing)].animation.play()
         
         if "3" in VARname: 
-            #~ PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
+            # PtDebugPrint("TRS: Nothing to ff. VARname = ", VARname)
             pass
         else:
             # this runs the animation on the "fake" ring in front of the GUI
@@ -310,10 +310,10 @@ class kdshTreeRingsSolution(ptModifier):
         
         
         if id == actScope2.id:
-            #~ PtDebugPrint("kdshTreeRingsSolution: Scope #2 occupied. Fast forwarding Scope 1 Rings in GUI")
+            # PtDebugPrint("kdshTreeRingsSolution: Scope #2 occupied. Fast forwarding Scope 1 Rings in GUI")
             ScopeNumber = 2
         elif id == actScope3.id:
-            #~ PtDebugPrint("kdshTreeRingsSolution: Scope #3 occupied. Fast forwarding Scope 2 Rings in GUI")
+            # PtDebugPrint("kdshTreeRingsSolution: Scope #3 occupied. Fast forwarding Scope 2 Rings in GUI")
             ScopeNumber = 3
         else:
             PtDebugPrint("ERROR: Not sure who the notify came from.")
@@ -332,8 +332,8 @@ class kdshTreeRingsSolution(ptModifier):
             globals()[attrib_name].animation.skipToEnd()
 
         # this runs the animation on the "fake" ring in front of the GUI
-        #~ animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
-        #~ globals()[animname].animation.play()
+        # animname= "GUI{id}_0{bearing}".format(id="".join(VARname.split("Ring")), bearing=newbearing)
+        # globals()[animname].animation.play()
 
     def OnTimer(self,timer):
         global StillSolved

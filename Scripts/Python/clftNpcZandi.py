@@ -114,12 +114,12 @@ class clftNpcZandi(ptModifier):
         self.PlayOnFinish = 0
 
         vault = ptVault()
-        #~ entry = vault.findChronicleEntry("JourneyClothProgress")
-        #~ if entry is not None:
-            #~ FoundJCs = entry.chronicleGetValue()
-            #~ if "Z" in FoundJCs:
-                #~ PtPageOutNode("clftZandiVis")
-                #~ PtDebugPrint("Zandi seems to have stepped away from the Airstream. Hmmm...")
+        # entry = vault.findChronicleEntry("JourneyClothProgress")
+        # if entry is not None:
+        #     FoundJCs = entry.chronicleGetValue()
+        #     if "Z" in FoundJCs:
+        #         PtPageOutNode("clftZandiVis")
+        #         PtDebugPrint("Zandi seems to have stepped away from the Airstream. Hmmm...")
 
         entry = vault.findChronicleEntry("YeeshaVisionViewed")
         if entry is None:
@@ -154,7 +154,7 @@ class clftNpcZandi(ptModifier):
                         self.ZandiSpeaks()
                 
                 elif event[0]==1 and event[1]==0: # avatar physically stepped away from Zandi
-                    #~ PtDebugPrint("Stepped away")
+                    # PtDebugPrint("Stepped away")
                     self.NearZandi = 0
                     self.PlayWelcome2 = 0
                 
@@ -177,7 +177,7 @@ class clftNpcZandi(ptModifier):
                 self.IsTalking = 0
 
     def OnTimer(self,id):
-        #~ global firstpauserange
+        # global firstpauserange
         if id < 10:
             PtDebugPrint("attempt behavior ", id)
             if not self.DoingBehavior:

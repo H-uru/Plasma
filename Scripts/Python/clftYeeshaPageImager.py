@@ -163,7 +163,7 @@ class clftYeeshaPageImager(ptModifier):
         PtDebugPrint("ImagerUsable: %d" % self.ImagerUsable)
         
         for event in events:
-            #~ PtDebugPrint("YP events: ", event)
+            # PtDebugPrint("YP events: ", event)
             if event[0]==2 and event[1]==1 and id == ActImager.id: # play avatar oneshot, regardless of whether button is going on or off
                 PtDebugPrint("clftYeeshaPageImager.OnNotify():Imager Button pressed. Playfull = ", PlayFull)
                 if PtWasLocallyNotified(self.key):

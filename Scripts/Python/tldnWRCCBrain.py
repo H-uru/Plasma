@@ -461,7 +461,7 @@ class tldnWRCCBrain(ptResponder):
             if AgeStartedIn == PtGetAgeName():
                 ageSDL = PtGetAgeSDL()
                 respHatchOps.run(self.key,events=events,state='close')
-                #~ respHatchLadder.run(self.key,state='disable')
+                # respHatchLadder.run(self.key,state='disable')
                 hatchOpen = 0
                 ageSDL[kStringAgeSDLHatchOpen] = (0,)
                 respHatchGlare.run(self.key,events=events,state='off') #panel glare off - hatch is closed

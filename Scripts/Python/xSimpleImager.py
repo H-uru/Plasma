@@ -159,8 +159,8 @@ class xSimpleImager(ptModifier):
 
     def OnFirstUpdate(self):
 ###==== Cheat
-        #~ global ImagerMembersOnly
-        #~ ImagerMembersOnly.value = 0
+        # global ImagerMembersOnly
+        # ImagerMembersOnly.value = 0
 ###==== Cheat
         global AgeStartedIn
         AgeStartedIn = PtGetAgeName()
@@ -229,7 +229,7 @@ class xSimpleImager(ptModifier):
 
     def OnVaultEvent(self,event,tupdata):
         "An AgeKI event received"
-        #~ PtDebugPrint("xSimpleImager[%s]:OnAgeKIEvent recvd. Event=%d and data= " % (ImagerName.value,event),tupdata)
+        # PtDebugPrint("xSimpleImager[%s]:OnAgeKIEvent recvd. Event=%d and data= " % (ImagerName.value,event),tupdata)
         PtDebugPrint("xSimpleImager.OnVaultEvent[", ImagerName.value, "]: event = ", event, " tupdata = ", tupdata, level=kDebugDumpLevel)
         
         # Sometimes, we randomly get None... O.o
@@ -263,7 +263,7 @@ class xSimpleImager(ptModifier):
             self.IRefreshImagerFolder()
             self.IRefreshImagerContent(tupdata[0])
         elif event == PtVaultCallbackTypes.kVaultRemovingNodeRef:
-            #~ PtDebugPrint("xSimpleImager: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
+            # PtDebugPrint("xSimpleImager: kVaultRemovingNodeRef event (childID=%d,parentID=%d)" % (tupdata[0].getChildID(),tupdata[0].getParentID()))
             # tupdata is ( ptVaultNodeRef )
             self.IRefreshImagerFolder()
 
@@ -272,7 +272,7 @@ class xSimpleImager(ptModifier):
         global CurrentDisplayedElementID
         global RegionMembers
         
-        #~ PtDebugPrint("xSimpleImager: Notify event state=%f,id=%d,events=" % (state,id),events)
+        # PtDebugPrint("xSimpleImager: Notify event state=%f,id=%d,events=" % (state,id),events)
         # is this our activator notifying us?
         if id == ImagerRegion.id:
             if PtWasLocallyNotified(self.key):
@@ -353,7 +353,7 @@ class xSimpleImager(ptModifier):
                 self.IChangeCurrentContent()
         else:
             # there is no folders
-            #~ PtDebugPrint("simpleImager: folder(%s) had nothing in it!" % (ImagerName.value))
+            # PtDebugPrint("simpleImager: folder(%s) had nothing in it!" % (ImagerName.value))
             ImagerContents = []
 
     def IRefreshImagerContent(self,updated_content):
@@ -413,7 +413,7 @@ class xSimpleImager(ptModifier):
             selfnotify.addVarNumber(sname,1.0)
             selfnotify.send()
         else:
-            #~ PtDebugPrint("Not owner of Imager")
+            # PtDebugPrint("Not owner of Imager")
             pass
 
     def IShowCurrentContent(self):

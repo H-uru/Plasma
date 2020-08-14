@@ -154,7 +154,7 @@ class kdshGlowInTheDark(ptResponder):
         if RoofClosed and GlowCharged:
             PtDebugPrint("\tThe floor was glowing when I got here.")
             PtAtTimeCallback(self.key,1,5)
-            #~ respFloorGlow.run(self.key,fastforward=1)
+            # respFloorGlow.run(self.key,fastforward=1)
         else:
             PtDebugPrint("\tThe floor is not charged.")
 
@@ -179,7 +179,7 @@ class kdshGlowInTheDark(ptResponder):
 
         ageSDL = PtGetAgeSDL()
 
-        #~ PtDebugPrint("kdshGlowInTheDark.OnNotify:  state=%f id=%d events=" % (state,id),events)
+        # PtDebugPrint("kdshGlowInTheDark.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
         if not state:
             return
@@ -198,15 +198,15 @@ class kdshGlowInTheDark(ptResponder):
 
                 GlowCharged = ageSDL["GlowCharged"][0]
                 PtDebugPrint("kdshGlowInTheDark: GlowCharged = ", GlowCharged)
-                #~ if GlowCharged:
-                    #~ respFloorLitFromGlow.run(self.key)
-                #~ else:
-                    #~ respFloorLitFromDark.run(self.key)
+                # if GlowCharged:
+                #     respFloorLitFromGlow.run(self.key)
+                # else:
+                #     respFloorLitFromDark.run(self.key)
 
             elif oldstate == 0: # roof was previously open
                 PtDebugPrint("kdshGlowInTheDark: The roof is now closed.")
                 self.CalculateTimeOpen()
-                #~ respFloorDark.run(self.key)
+                # respFloorDark.run(self.key)
 
             else:
                 PtDebugPrint("kdshGlowInTheDark: Unexpected roof state: (%s)" % newstate)
@@ -227,7 +227,7 @@ class kdshGlowInTheDark(ptResponder):
             PtAtTimeCallback(self.key,ElevatorDelay,3) # wait 10 seconds, then lower elevator again
             xRgnTop.releaseNow(self.key)
             rgnEnterSubTop.enable()
-            #~ rgnExitSubTop.enable()
+            # rgnExitSubTop.enable()
             for region in objExitTop.value:
                 region.physics.suppress(0)
             return
@@ -278,7 +278,7 @@ class kdshGlowInTheDark(ptResponder):
 
             elif id == rgnEnterSubTop.id:
                 PtDebugPrint("You stepped on the elevator at the top. Joining subworld.")
-                #~ rgnExitSubTop.disable()
+                # rgnExitSubTop.disable()
                 me.avatar.enterSubWorld(elevatorsubworld.value)
                 return
 
@@ -291,7 +291,7 @@ class kdshGlowInTheDark(ptResponder):
         for event in events:
             if event[0] == kVariableEvent: # Did another player just get out of the bucket by hitting ESC/backspace? (An OnControlKeyEvent I wouldn't have received)
                 TimerID=int(event[3])
-                #~ PtDebugPrint("\tTimer #", TimerID,"callback came through.")
+                # PtDebugPrint("\tTimer #", TimerID,"callback came through.")
 
                 if TimerID==1:
                     PtDebugPrint("kdshGlowInTheDark: Timer 1 Callback. Raising elevator again.")
@@ -343,7 +343,7 @@ class kdshGlowInTheDark(ptResponder):
         global Resetting
         ageSDL = PtGetAgeSDL()
 
-        #~ PtDebugPrint("kdshGlowInTheDark.OnSDLNotify: Variable",VARname,"updated.")
+        # PtDebugPrint("kdshGlowInTheDark.OnSDLNotify: Variable",VARname,"updated.")
 
 
         if VARname == "RoofClosed":
@@ -395,22 +395,22 @@ class kdshGlowInTheDark(ptResponder):
 
         TimeOpened = ageSDL["TimeOpened"][0]
         CurrentTime = PtGetDniTime()
-        #~ PtDebugPrint("Though it's now closed, the roof was once opened at:", TimeOpened)
-        #~ PtDebugPrint("The roof was closed at: ", CurrentTime)
+        # PtDebugPrint("Though it's now closed, the roof was once opened at:", TimeOpened)
+        # PtDebugPrint("The roof was closed at: ", CurrentTime)
 
         ElaspedTime = CurrentTime - TimeOpened
 
-        #~ PtDebugPrint("The roof was open for:", ElaspedTime)
+        # PtDebugPrint("The roof was open for:", ElaspedTime)
 
         if ElaspedTime > SecondsToCharge:
-            #~ PtDebugPrint("The roof was open for:", ElaspedTime)
+            # PtDebugPrint("The roof was open for:", ElaspedTime)
             PtDebugPrint("kdshGlowInTheDark: The floor is now charged")
             ageSDL["GlowCharged"] = (1, )
         else:
             pass
-            #~ PtDebugPrint("Not enough time to charge, because")
-            #~ PtDebugPrint("ElapsedTime = ", ElaspedTime)
-            #~ PtDebugPrint("SecondsToCharge = ", SecondsToCharge)
+            # PtDebugPrint("Not enough time to charge, because")
+            # PtDebugPrint("ElapsedTime = ", ElaspedTime)
+            # PtDebugPrint("SecondsToCharge = ", SecondsToCharge)
 
     def BatonPassCheck(self,id,events):
         global baton
@@ -475,10 +475,10 @@ class kdshGlowInTheDark(ptResponder):
             note.addVarNumber("foo",id)
             note.send()
 
-            #~ PtDebugPrint("kdshGlowInTheDark: Timer 1 Callback. Raising elevator again.")
-            #~ respElevUp.run(self.key)
-            #~ xRgnBottom.clearNow(self.key)
-            #~ rgnExitSubBtm.disable()
+            # PtDebugPrint("kdshGlowInTheDark: Timer 1 Callback. Raising elevator again.")
+            # respElevUp.run(self.key)
+            # xRgnBottom.clearNow(self.key)
+            # rgnExitSubBtm.disable()
 
         if id == 2:
 
@@ -493,9 +493,9 @@ class kdshGlowInTheDark(ptResponder):
                 note.addVarNumber("foo",id)
                 note.send()
 
-            #~ PtDebugPrint("kdshGlowInTheDark: Timer 2 Callback. Clearing top Xrgn")
-            #~ xRgnTop.clearNow(self.key)
-            #~ rgnEnterSubTop.disable()
+            # PtDebugPrint("kdshGlowInTheDark: Timer 2 Callback. Clearing top Xrgn")
+            # xRgnTop.clearNow(self.key)
+            # rgnEnterSubTop.disable()
         if id == 3:
             note = ptNotify(self.key)
             note.clearReceivers()
@@ -504,24 +504,24 @@ class kdshGlowInTheDark(ptResponder):
             note.addVarNumber("foo",id)
             note.send()
 
-            #~ PtDebugPrint("kdshGlowInTheDark: Timer 3 Callback.")
-            #~ ageSDL = PtGetAgeSDL()
-            #~ solved = ageSDL["GlowInTheDarkSolved"][0]
-            #~ if solved:
-                #~ PtDebugPrint("\t Puzzle is still solved. Lowering Elevator again.")
-                #~ respElevDown.run(self.key)
-                #~ PtAtTimeCallback(self.key,1,2) # clear Xrgn in 1 second
+            # PtDebugPrint("kdshGlowInTheDark: Timer 3 Callback.")
+            # ageSDL = PtGetAgeSDL()
+            # solved = ageSDL["GlowInTheDarkSolved"][0]
+            # if solved:
+            #     PtDebugPrint("\t Puzzle is still solved. Lowering Elevator again.")
+            #     respElevDown.run(self.key)
+            #     PtAtTimeCallback(self.key,1,2) # clear Xrgn in 1 second
                 ##!!rgnExitSubTop.disable()
-                #~ for region in objExitTop.value:
-                    #~ region.physics.suppress(1)
+                # for region in objExitTop.value:
+                #     region.physics.suppress(1)
 
-                #~ rgnExitSubBtm.enable()
+                # rgnExitSubBtm.enable()
 
-            #~ else:
-                #~ PtDebugPrint("\t Puzzle has been reset. Leaving elevator alone at top.")
-                #~ rgnEnterSubTop.disable()
-                #~ for region in objExitTop.value:
-                    #~ region.physics.suppress(0)
+            # else:
+            #     PtDebugPrint("\t Puzzle has been reset. Leaving elevator alone at top.")
+            #     rgnEnterSubTop.disable()
+            #     for region in objExitTop.value:
+            #         region.physics.suppress(0)
         if id == 4:
             note = ptNotify(self.key)
             note.clearReceivers()
@@ -530,10 +530,10 @@ class kdshGlowInTheDark(ptResponder):
             note.addVarNumber("foo",id)
             note.send()
 
-            #~ PtDebugPrint("kdshGlowInTheDark: Timer 4 Callback.")
-            #~ PtDebugPrint("\tkdshGlowInTheDark.OnTimer: Running from Lit to Dark.")
-            #~ respFloorDark.run(self.key)
-            #~ Resetting = 0
+            # PtDebugPrint("kdshGlowInTheDark: Timer 4 Callback.")
+            # PtDebugPrint("\tkdshGlowInTheDark.OnTimer: Running from Lit to Dark.")
+            # respFloorDark.run(self.key)
+            # Resetting = 0
 
         if id == 5:
             PtDebugPrint("kdshGlowInTheDark: It's been one second. FF'ing floor to glow state.")

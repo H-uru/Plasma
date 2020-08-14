@@ -512,8 +512,8 @@ class bhroBahroYeeshaCave(ptModifier):
 
 
     def CreateSolution(self):
-        #~ solutionlist = [4,3,6,1]
-        #~ cleftSolList = [4,3,6,1]
+        # solutionlist = [4,3,6,1]
+        # cleftSolList = [4,3,6,1]
         
         solutionlist = [3,2,5,0]
         cleftSolList = [3,2,5,0]

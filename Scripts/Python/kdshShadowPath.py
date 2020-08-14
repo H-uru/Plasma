@@ -266,7 +266,7 @@ class kdshShadowPath(ptResponder):
             
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()        
-        #~ PtDebugPrint("OnSDLNotified.")
+        # PtDebugPrint("OnSDLNotified.")
         
         if VARname == "ShadowPathSolved":
             if ageSDL["ShadowPathSolved"][0] == 1:
@@ -279,7 +279,7 @@ class kdshShadowPath(ptResponder):
         elif VARname[:15] == "ShadowPathLight":
             light = int(VARname[-2:]) #get the last two digits, which is the light number
                 
-            #~ PtDebugPrint("OnSDLNotify: Light ", light," SDL updated.")
+            # PtDebugPrint("OnSDLNotify: Light ", light," SDL updated.")
                 
             newstate = ageSDL["ShadowPathLight0" + str(light)][0] 
 

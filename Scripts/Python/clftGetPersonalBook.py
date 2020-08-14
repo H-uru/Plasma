@@ -92,13 +92,13 @@ class clftGetPersonalBook(ptResponder):
 
     def OnFirstUpdate(self):
         pass
-        #~ vault = ptVault()
-        #~ entry = vault.findChronicleEntry("JourneyClothProgress")
-        #~ if entry is not None:
-            #~ FoundJCs = entry.chronicleGetValue()
-            #~ if "Z" in FoundJCs:
-                #~ PtPageOutNode("clftYeeshaBookVis")
-                #~ PtDebugPrint("clftGetPersonalBook: Paging out the Yeesha Book in the bookroom",level=kDebugDumpLevel)
+        # vault = ptVault()
+        # entry = vault.findChronicleEntry("JourneyClothProgress")
+        # if entry is not None:
+        #     FoundJCs = entry.chronicleGetValue()
+        #     if "Z" in FoundJCs:
+        #         PtPageOutNode("clftYeeshaBookVis")
+        #         PtDebugPrint("clftGetPersonalBook: Paging out the Yeesha Book in the bookroom",level=kDebugDumpLevel)
 
 
     def OnServerInitComplete(self):
@@ -180,10 +180,10 @@ class clftGetPersonalBook(ptResponder):
                         cam.disableFirstPersonOverride()
                         cam.undoFirstPerson()
                         if currentgender == 1:
-                            #~ PtDebugPrint("Playing female book animation")
+                            # PtDebugPrint("Playing female book animation")
                             BookAnimFemale.animation.play()
                         elif currentgender == 0:
-                            #~ PtDebugPrint("Playing male book animation")
+                            # PtDebugPrint("Playing male book animation")
                             BookAnimMale.animation.play()
                         else:
                             PtDebugPrint("clftGetPersonalBook: unreadable gender or special character.",level=kErrorLevel)
@@ -193,7 +193,7 @@ class clftGetPersonalBook(ptResponder):
         global LocalAvatar
         # start the alert of the personal book blinking
         PtSendKIMessage(kStartBookAlert,0)
-        #~ PtDebugPrint("trying to get book.")
+        # PtDebugPrint("trying to get book.")
         MultiBeh.run(LocalAvatar)
         self.SolveCleft()
         PtAtTimeCallback(self.key, 8, kLinkRespID) 

@@ -167,7 +167,7 @@ class kdshVault(ptResponder):
             actButton6.disable()
         if "0" in ButtonsPushed:
             PtDebugPrint("No buttons have been pushed.")
-            #~ "".join(ButtonsPushed.split("0"))
+            # "".join(ButtonsPushed.split("0"))
             ageSDL["ButtonsPushed"] = (0,)
 
 
@@ -220,7 +220,7 @@ class kdshVault(ptResponder):
         
         ageSDL = PtGetAgeSDL()             
         
-        #~ PtDebugPrint("kdshVault:OnNotify  state=%f id=%d events=" % (state,id),events)
+        # PtDebugPrint("kdshVault:OnNotify  state=%f id=%d events=" % (state,id),events)
 
         #Hacked this in to work with the UruLive changes
         avatar = PtFindAvatar(events)
@@ -246,7 +246,7 @@ class kdshVault(ptResponder):
 
 
         elif id == Behavior.id and avatar == PtGetLocalAvatar(): # Smart seek done
-            #~ PtDebugPrint("Done with smart seek")
+            # PtDebugPrint("Done with smart seek")
             LocalAvatar = avatar
             Behavior.gotoStage(LocalAvatar, -1)
             
@@ -258,9 +258,9 @@ class kdshVault(ptResponder):
             virtCam.save(VCPCamera.sceneobject.getKey())            
 
             PtGetControlEvents(True,self.key)
-            #~ PtDisableMovementKeys()
+            # PtDisableMovementKeys()
 
-            #~ PtFadeLocalAvatar(1)
+            # PtFadeLocalAvatar(1)
             # Wait .1 seconds before fading avatar out
             PtAtTimeCallback(self.key,.2,2) 
 
@@ -287,10 +287,10 @@ class kdshVault(ptResponder):
             
             if len(str(ButtonsPushed)) >= 6:
                 PtAtTimeCallback(self.key,1,1) 
-                #~ self.CheckSolution()
+                # self.CheckSolution()
 
         elif state and id == actResetBtn.id:
-            #~ PtDebugPrint("kdshVault.OnNotify: Reset Button clicked.")
+            # PtDebugPrint("kdshVault.OnNotify: Reset Button clicked.")
             LocalAvatar = PtFindAvatar(events)
             respResetBtn.run(self.key,events=events)
             
@@ -354,7 +354,7 @@ class kdshVault(ptResponder):
             ButtonsPushed = str(ButtonsPushed)
             lastbuttonpushed = ButtonsPushed[-1:]
             PtDebugPrint("kdshVault.OnSDLNotify: new ButtonsPushed = ", ButtonsPushed)
-            #~ PtDebugPrint("kdshVault.OnSDLNotify: lastbuttonpushed = ", lastbuttonpushed)
+            # PtDebugPrint("kdshVault.OnSDLNotify: lastbuttonpushed = ", lastbuttonpushed)
             
             #run the animation on the button itself
             globals()["respButton{}".format(lastbuttonpushed)].run(self.key)

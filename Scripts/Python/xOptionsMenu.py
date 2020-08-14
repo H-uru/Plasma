@@ -1023,8 +1023,8 @@ class xOptionsMenu(ptModifier):
 ##
 ###############################################
         elif id == NavigationDlg.id:
-            #~ PtDebugPrint("navigation event = ", event)
-            #~ PtDebugPrint("kShowHide = ",kShowHide, " kAction = ",kAction, " kValueChanged = ", kValueChanged)
+            # PtDebugPrint("navigation event = ", event)
+            # PtDebugPrint("kShowHide = ",kShowHide, " kAction = ",kAction, " kValueChanged = ", kValueChanged)
             if event == kDialogLoaded:
                 PtDebugPrint("Yes, the Navigation dialog loaded.")
                 pass
@@ -1310,7 +1310,7 @@ class xOptionsMenu(ptModifier):
                 elif tagID == kAudioModeID:
                     self.restartAudio = 1
                     audio = ptAudioControl()
-                    #~ PtDebugPrint("Number of Audio Devices: %d" % (audio.getNumAudioDevices()))
+                    # PtDebugPrint("Number of Audio Devices: %d" % (audio.getNumAudioDevices()))
                     audModeNum = len(gAudioDevices)  - 1
                     curSelection = round(control.getValue() * audModeNum)
                     intCurSelection = int(curSelection)
@@ -1782,14 +1782,14 @@ class xOptionsMenu(ptModifier):
         # shadows
         
         # We'll have to do this later, since it's no longer part of the AdvDisplaySettings Dialog
-        #~ shadowDistKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSDisplayShadowDistSlider))
-        #~ setting = PtGetShadowVisDistance()
-        #~ shadowDistKnob.setValue(setting*10.0)
+        # shadowDistKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSDisplayShadowDistSlider))
+        # setting = PtGetShadowVisDistance()
+        # shadowDistKnob.setValue(setting*10.0)
         
         #Will have to wire this into Audio panel later
-        #~ soundPriKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSSoundPrioritySlider))
-        #~ audio = ptAudioControl()
-        #~ soundPriKnob.setValue(audio.getPriorityCutoff()*(11.0/10.0))
+        # soundPriKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSSoundPrioritySlider))
+        # audio = ptAudioControl()
+        # soundPriKnob.setValue(audio.getPriorityCutoff()*(11.0/10.0))
         
         mouseSensKnob = ptGUIControlValue(AdvGameSettingDlg.dialog.getControlFromTag(kGSMouseTurnSensSlider))
         PtDebugPrint("IRefreshAdvSettings: PtGetMouseTurnSensitivity() = %d" % (PtGetMouseTurnSensitivity()))

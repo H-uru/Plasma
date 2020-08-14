@@ -347,8 +347,8 @@ class ercaPelletRoom(ptResponder):
                 RespMachineMode.run(self.key,state="Close",fastforward=InitCorrection)
                 if InitCorrection:
                     InitCorrection = 0
-                #~ if byteChamber == 5:
-                    #~ ageSDL[SDLChamber.value] = (0,)
+                # if byteChamber == 5:
+                #     ageSDL[SDLChamber.value] = (0,)
         if VARname == SDLChamber.value:
             byteChamber = ageSDL[SDLChamber.value][0]
             PtDebugPrint("ercaPelletRoom:OnSDLNotify:  SDL for machine chamber is now %d" % (byteChamber))

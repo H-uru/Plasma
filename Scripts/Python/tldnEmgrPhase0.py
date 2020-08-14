@@ -91,12 +91,12 @@ class tldnEmgrPhase0(ptResponder):
         if AgeStartedIn == PtGetAgeName():
             ageSDL = PtGetAgeSDL()
             for variable in BooleanVARs:
-                #~ PtDebugPrint("Tying together BOOL variable", variable)
+                # PtDebugPrint("Tying together BOOL variable", variable)
                 ageSDL.setNotify(self.key,variable,0.0)
                 self.IManageBOOLs(variable, "")
                 
             for variable in StateVARs:
-                #~ PtDebugPrint("Tying together INT", variable)
+                # PtDebugPrint("Tying together INT", variable)
                 ageSDL.setNotify(self.key,variable,0.0)   
                 StateVARs[variable](variable, ageSDL[variable][0])
        

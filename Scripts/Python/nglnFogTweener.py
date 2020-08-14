@@ -238,7 +238,7 @@ class nglnFogTweener(ptMultiModifier):
         global EndD
         
             
-        #~ PtDebugPrint("nglnFogTweener.CalculateNewFogValues: The battery was updated. Time to update the Fog.")
+        # PtDebugPrint("nglnFogTweener.CalculateNewFogValues: The battery was updated. Time to update the Fog.")
         
         AgeTimeOfDayPercent = PtGetAgeTimeOfDayPercent()      
         
@@ -319,12 +319,12 @@ class nglnFogTweener(ptMultiModifier):
         else: 
             PtDebugPrint("ERROR: I can't tell what time it is.")
         
-        #~ PtDebugPrint("OnSDLNotify: StartR=%s, EndR=%s, StartG=%s, EndG==%s, StartB=%s, EndB=%s" % (StartR, EndR, StartG, EndG, StartB, EndB))
+        # PtDebugPrint("OnSDLNotify: StartR=%s, EndR=%s, StartG=%s, EndG==%s, StartB=%s, EndB=%s" % (StartR, EndR, StartG, EndG, StartB, EndB))
         
         self.UpdateFog(StartR, EndR, StartG, EndG, StartB, EndB, StartS, EndS, StartE, EndE, StartD, EndD, TweenPct)
     
     def UpdateFog(self, StartR, EndR, StartG, EndG, StartB, EndB, StartS, EndS, StartE, EndE, StartD, EndD, TweenPct):
-        #~ PtDebugPrint("TweenPct = ", TweenPct)
+        # PtDebugPrint("TweenPct = ", TweenPct)
         PtDebugPrint("UpdateFog: StartR=%s, EndR=%s, StartG=%s, EndG=%s, StartB=%s, EndB=%s" % (StartR, EndR, StartG, EndG, StartB, EndB))
         PtDebugPrint("UpdateFog: StartS=%s, EndS=%s, StartE=%s, EndE=%s, StartD=%s, EndD=%s" % (StartS, EndS, StartE, EndE, StartD, EndD))
 

@@ -142,7 +142,7 @@ class tldnShroomieBrain(ptResponder):
     def OnNotify(self,state,id,events):
         ageSDL = PtGetAgeSDL()
         
-        #~ PtDebugPrint("tldnShroomieBrain.OnNotify:  state=%f id=%d events=" % (state,id),events)
+        # PtDebugPrint("tldnShroomieBrain.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
         if not state:
             return
@@ -191,7 +191,7 @@ class tldnShroomieBrain(ptResponder):
     def WillShroomieBeSeen(self,probability):
         randnum = random.randint(0,100)
         
-        #~ PtDebugPrint("randnum = ",randnum,"probability = ", probability*100)
+        # PtDebugPrint("randnum = ",randnum,"probability = ", probability*100)
         
         if randnum < (probability*100):
             PtDebugPrint("\t Shroomie WILL be seen.")

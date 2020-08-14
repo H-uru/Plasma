@@ -98,7 +98,7 @@ class kdshTreeRings(ptModifier):
 
     def OnFirstUpdate(self):
         PtLoadDialog("kdshScope0" + str(ScopeNumber.value), self.key, "Kadish")       
-        #~ PtDebugPrint("kdshTreeRings: Loading dialog ", ("kdshScope0" + str(ScopeNumber.value)))
+        # PtDebugPrint("kdshTreeRings: Loading dialog ", ("kdshScope0" + str(ScopeNumber.value)))
     """  ###Commented this out because it was never available anyway (note the 2nd defn)!!!
     def OnServerInitComplete(self):
         ageSDL = PtGetAgeSDL()
@@ -214,14 +214,14 @@ class kdshTreeRings(ptModifier):
             
     def __del__(self):
         "unload the dialog that we loaded"
-        #~ PtUnloadDialog(DialogName)
+        # PtUnloadDialog(DialogName)
         
 
     def OnNotify(self,state,id,events):
         global LocalAvatar
         global boolScopeOperator
         ageSDL = PtGetAgeSDL()                   
-        #~ PtDebugPrint("kdshTreeRings:OnNotify  state=%f id=%d events=" % (state,id),events)
+        # PtDebugPrint("kdshTreeRings:OnNotify  state=%f id=%d events=" % (state,id),events)
         
         if state and id == Activate.id and PtWasLocallyNotified(self.key):
             LocalAvatar = PtFindAvatar(events)
@@ -258,16 +258,16 @@ class kdshTreeRings(ptModifier):
         global OuterRing01
         ageSDL = PtGetAgeSDL()   
         
-        #~ PtDebugPrint("kdshTreeRings: GUI Notify id=%d, event=%d control=" % (id,event),control)
+        # PtDebugPrint("kdshTreeRings: GUI Notify id=%d, event=%d control=" % (id,event),control)
         
-        #~ if event == kExitMode:
-            #~ self.IQuitTelescope()            
+        # if event == kExitMode:
+        #     self.IQuitTelescope()            
         
         if event == kDialogLoaded:
             return
             PtDebugPrint("GUI Notify id=%d, event=%d control=" % (id,event),control)
             # if the dialog was just loaded then show it
-            #~ control.show()
+            # control.show()
             PtShowDialog("kdshScope0" + str(ScopeNumber.value))
             PtDebugPrint("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
             
@@ -284,14 +284,14 @@ class kdshTreeRings(ptModifier):
             if newbearing == 9:
                 newbearing = 1
             ageSDL["OuterRing0" + str(ScopeNumber.value)] = (newbearing,)
-            #~ PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("OuterRing0" + str (ScopeNumber.value)), newbearing))
+            # PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("OuterRing0" + str (ScopeNumber.value)), newbearing))
         
         if btnID == kGUIRingTurnCenter or btnID == kGUIRingTurnLeft:
             newbearing = ageSDL["MiddleRing0" + str(ScopeNumber.value)][0] + 1
             if newbearing == 9:
                 newbearing = 1
             ageSDL["MiddleRing0" + str(ScopeNumber.value)] = (newbearing,)
-            #~ PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("MiddleRing0" + str (ScopeNumber.value)), newbearing))
+            # PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("MiddleRing0" + str (ScopeNumber.value)), newbearing))
 
             
         if btnID == kGUIRingTurnRight or btnID == kGUIRingTurnCenter or btnID == kGUIRingTurnLeft:
@@ -303,7 +303,7 @@ class kdshTreeRings(ptModifier):
             if newbearing == 9:
                 newbearing = 1
             ageSDL["InnerRing0" + str(ScopeNumber.value)] = (newbearing,)
-            #~ PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("InnerRing0" + str (ScopeNumber.value)), newbearing))
+            # PtDebugPrint ("kdshTreeRings: updated SDL %s value to %s" % (("InnerRing0" + str (ScopeNumber.value)), newbearing))
             
     def OnControlKeyEvent(self,controlKey,activeFlag):
         if controlKey == PlasmaControlKeys.kKeyExitMode:
@@ -361,7 +361,7 @@ class kdshTreeRings(ptModifier):
         
         # show the cockpit
         PtShowDialog("kdshScope0" + str(ScopeNumber.value))
-        #~ PtDebugPrint("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
+        # PtDebugPrint("kdshTreeRings: Showing scope dialog ", ("kdshScope0" + str(ScopeNumber.value)))
 
 
     def IQuitTelescope(self):
@@ -393,9 +393,9 @@ class kdshTreeRings(ptModifier):
         cam = ptCamera()
         cam.enableFirstPersonOverride()
         PtAtTimeCallback(self.key,3,1) # wait for player to finish exit one-shot, then reenable clickable
-        #~ PtDebugPrint("kdshTreeRings.IQuitTelescope:\tdelaying clickable reenable")
+        # PtDebugPrint("kdshTreeRings.IQuitTelescope:\tdelaying clickable reenable")
         
     def OnTimer(self,id):
         if id==1:
             Activate.enable()
-            #~ PtDebugPrint("kdshTreeRings.OnTimer:\tScope #%s clickable reenabled" % (ScopeNumber.value))
+            # PtDebugPrint("kdshTreeRings.OnTimer:\tScope #%s clickable reenabled" % (ScopeNumber.value))

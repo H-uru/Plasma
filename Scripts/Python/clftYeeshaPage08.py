@@ -113,7 +113,7 @@ class clftYeeshaPage08(ptModifier):
 
     def __del__(self):
         "destructor - get rid of any dialogs that we might have loaded"
-        #~ PtUnloadDialog(DialogName)
+        # PtUnloadDialog(DialogName)
 
         
     def OnNotify(self,state,id,events):

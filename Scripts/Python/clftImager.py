@@ -268,13 +268,13 @@ class clftImager(ptResponder):
             windmillLocked = self.ageSDL[stringSDLVarLocked.value][0]
             if windmillLocked and visionplaying:
                 PtAtTimeCallback(self.key,3,kLostPowerID)
-                #~ speechKilled = 1
-                #~ self.StopVision()
-                #~ imagerBrokenBtn.disableActivator()
-                #~ imagerLockN.disableActivator()
-                #~ imagerLockS.disableActivator()
-                #~ imagerLockW.disableActivator()
-                #~ imagerLockE.disableActivator()
+                # speechKilled = 1
+                # self.StopVision()
+                # imagerBrokenBtn.disableActivator()
+                # imagerLockN.disableActivator()
+                # imagerLockS.disableActivator()
+                # imagerLockW.disableActivator()
+                # imagerLockE.disableActivator()
 
         # checks if one of the Imager panel/symbol SDL vars has changed, 
         # sets new state of any changed panels and runs corresponding responder
@@ -381,8 +381,8 @@ class clftImager(ptResponder):
             PtDebugPrint("switch to imager close up")
             imagerBtn.disableActivator()
             ImagerBtnInvisible.run(self.key)
-            #~ if visionplaying:
-                #~ self.StopVision()
+            # if visionplaying:
+            #     self.StopVision()
             #PtGetControlEvents(true,self.key)
             PtEnableControlKeyEvents(self.key)
             avatar = PtFindAvatar(events)
@@ -416,9 +416,9 @@ class clftImager(ptResponder):
             imagerLockS.disableActivator()
             imagerLockW.disableActivator()
             imagerLockE.disableActivator()
-            #~ if visionplaying:
-                #~ # how???
-                #~ self.StopVision()
+            # if visionplaying:
+            #     # how???
+            #     self.StopVision()
             #PtGetControlEvents(False,self.key)
             PtDisableControlKeyEvents(self.key)
             avatar = PtFindAvatar(events)
@@ -467,11 +467,11 @@ class clftImager(ptResponder):
                 for event in events:
                     if event[0]==8 and event[1]==1: # toggle vision
                         if visionplaying:
-                            #~ imagerBrokenBtn.disableActivator()
-                            #~ imagerLockN.disableActivator()
-                            #~ imagerLockS.disableActivator()
-                            #~ imagerLockW.disableActivator()
-                            #~ imagerLockE.disableActivator()
+                            # imagerBrokenBtn.disableActivator()
+                            # imagerLockN.disableActivator()
+                            # imagerLockS.disableActivator()
+                            # imagerLockW.disableActivator()
+                            # imagerLockE.disableActivator()
                             PtDebugPrint("Now, killing vision")
                             speechKilled = 1
                             self.StopVision()
@@ -735,15 +735,15 @@ class clftImager(ptResponder):
             imagerLockS.disableActivator()
             imagerLockW.disableActivator()
             imagerLockE.disableActivator()
-        #~ elif visionplaying == 1 and id == kFinished: 
-            #~ PtDebugPrint("\nclftImager.Ontimer:Got kFinished timer callback. Automatically stopping vision.")
-            #~ finalDone = 1
-            #~ self.StopVision()
-            #~ imagerBrokenBtn.disableActivator()
-            #~ imagerLockN.disableActivator()
-            #~ imagerLockS.disableActivator()
-            #~ imagerLockW.disableActivator()
-            #~ imagerLockE.disableActivator()
+        # elif visionplaying == 1 and id == kFinished: 
+        #     PtDebugPrint("\nclftImager.Ontimer:Got kFinished timer callback. Automatically stopping vision.")
+        #     finalDone = 1
+        #     self.StopVision()
+        #     imagerBrokenBtn.disableActivator()
+        #     imagerLockN.disableActivator()
+        #     imagerLockS.disableActivator()
+        #     imagerLockW.disableActivator()
+        #     imagerLockE.disableActivator()
         elif id == imagerBrokenBtn.id:
             PtDebugPrint("\nclftImager.Ontimer:Got timer callback. Setting up Imager button....")
             imagerBtn.disableActivator()

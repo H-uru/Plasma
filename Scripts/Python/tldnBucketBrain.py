@@ -171,7 +171,7 @@ class tldnBucketBrain(ptResponder):
 
         AgeStartedIn = PtGetAgeName()
 
-        #~ SensorAtEntry.value.physics.suppress(1)
+        # SensorAtEntry.value.physics.suppress(1)
         
 
     def OnServerInitComplete(self): 

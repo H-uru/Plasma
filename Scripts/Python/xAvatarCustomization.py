@@ -892,25 +892,25 @@ class xAvatarCustomization(ptModifier):
                             self.ILinkToCloset()
 
                             #Disable other logic... no more going to the cleft from the AVC
-                            #~if entry is not None:
+                            # if entry is not None:
                                 # player has solved the cleft
                                 # just go back to your personal age
-                            #~        self.ILinkToCloset()
-                            #~else:
+                            #        self.ILinkToCloset()
+                            # else:
                                 # player has not solved the cleft, link them to it
-                            #~    ageLink = ptAgeLinkStruct()
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    if PtIsDemoMode():
-                            #~        ageInfo.setAgeFilename("Demo")
-                            #~    else:
-                            #~        ageInfo.setAgeFilename("Cleft")
-                            #~    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr.linkToAge(ageLink)
+                            #    ageLink = ptAgeLinkStruct()
+                            #    ageInfo = ageLink.getAgeInfo()
+                            #    temp = ptAgeInfoStruct()
+                            #    temp.copyFrom(ageInfo)
+                            #    ageInfo = temp
+                            #    if PtIsDemoMode():
+                            #        ageInfo.setAgeFilename("Demo")
+                            #    else:
+                            #        ageInfo.setAgeFilename("Cleft")
+                            #    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
+                            #    ageLink.setAgeInfo(ageInfo)
+                            #    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                            #    linkmgr.linkToAge(ageLink)
                             
                         else:
                             # mark the chonicle that we've been here
@@ -931,37 +931,37 @@ class xAvatarCustomization(ptModifier):
                             linkmgr.linkToAge(ageLink)
                             
                             #Disable other logic... no more going to cleft from the AVC!
-                            #~if entry is not None:
+                            # if entry is not None:
                                 # player has solved the cleft
                                 # just go back to your personal age
-                            #~    linkmgr = ptNetLinkingMgr()
-                            #~    ageLink = ptAgeLinkStruct()
+                            #    linkmgr = ptNetLinkingMgr()
+                            #    ageLink = ptAgeLinkStruct()
                                 
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    ageInfo.setAgeFilename("Personal")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr.linkToAge(ageLink)
+                            #    ageInfo = ageLink.getAgeInfo()
+                            #    temp = ptAgeInfoStruct()
+                            #    temp.copyFrom(ageInfo)
+                            #    ageInfo = temp
+                            #    ageInfo.setAgeFilename("Personal")
+                            #    ageLink.setAgeInfo(ageInfo)
+                            #    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                            #    linkmgr.linkToAge(ageLink)
                             
-                            #~else:
+                            # else:
                                 # this was their first time... go to the cleft
-                            #~    ageLink = ptAgeLinkStruct()
-                            #~    ageInfo = ageLink.getAgeInfo()
-                            #~    temp = ptAgeInfoStruct()
-                            #~    temp.copyFrom(ageInfo)
-                            #~    ageInfo = temp
-                            #~    if PtIsDemoMode():
-                            #~        ageInfo.setAgeFilename("Demo")
-                            #~    else:
-                            #~        ageInfo.setAgeFilename("Cleft")
-                            #~    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
-                            #~    ageLink.setAgeInfo(ageInfo)
-                            #~    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
-                            #~    linkmgr = ptNetLinkingMgr()
-                            #~    linkmgr.linkToAge(ageLink)
+                            #    ageLink = ptAgeLinkStruct()
+                            #    ageInfo = ageLink.getAgeInfo()
+                            #    temp = ptAgeInfoStruct()
+                            #    temp.copyFrom(ageInfo)
+                            #    ageInfo = temp
+                            #    if PtIsDemoMode():
+                            #        ageInfo.setAgeFilename("Demo")
+                            #    else:
+                            #        ageInfo.setAgeFilename("Cleft")
+                            #    ageInfo.setAgeInstanceName("D'ni-Riltagamin")
+                            #    ageLink.setAgeInfo(ageInfo)
+                            #    ageLink.setLinkingRules(PtLinkingRules.kOriginalBook)
+                            #    linkmgr = ptNetLinkingMgr()
+                            #    linkmgr.linkToAge(ageLink)
                             
                     elif btnID == kQuitBtnID:
                         avatar = PtGetLocalAvatar()

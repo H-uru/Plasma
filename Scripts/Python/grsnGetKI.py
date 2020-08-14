@@ -68,7 +68,7 @@ class grsnGetKI(ptModifier):
         self.version = 1
 
     def OnNotify(self,state,id,events):
-        #~PtDebugPrint("grsnGetKI: Notify event state=%f,id=%d,events=" % (state,id),events)
+        # PtDebugPrint("grsnGetKI: Notify event state=%f,id=%d,events=" % (state,id),events)
         # is this our activator notifying us?
         if state and id == clkDispensor.id:
             if PtGetLocalAvatar() == PtFindAvatar(events):

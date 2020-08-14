@@ -111,7 +111,7 @@ class tldnSlavePrisonPanels(ptResponder):
         
     def OnNotify(self,state,id,events):        
         global boolCurrentValue
-        #~ PtDebugPrint("tldnSlavePrisonPanels:OnNotify  state=%f id=%d events=" % (state,id),events)
+        # PtDebugPrint("tldnSlavePrisonPanels:OnNotify  state=%f id=%d events=" % (state,id),events)
         
         if not state:
             return
@@ -122,7 +122,7 @@ class tldnSlavePrisonPanels(ptResponder):
         if id == actTrigger.id:
                
             boolCurrentValue = ageSDL[stringVarName.value][0]
-            #~ PtDebugPrint("SDL variable ", stringVarName.value," = ",  boolCurrentValue)
+            # PtDebugPrint("SDL variable ", stringVarName.value," = ",  boolCurrentValue)
                         
             if boolCurrentValue ==1 :
                 respLeverUp.run(self.key,events=events)

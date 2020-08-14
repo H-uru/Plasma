@@ -55,13 +55,13 @@ respButtonOneshot = ptAttribResponder(2,"resp: Push Podium oneshot")
 
 respSpeech01 = ptAttribResponder(3, "resp: Speech #1")
 
-#~ respSpeech02 = ptAttribResponder(4, "resp: Speech #2")
-#~ respSpeech03 = ptAttribResponder(5, "resp: Speech #3")
+# respSpeech02 = ptAttribResponder(4, "resp: Speech #2")
+# respSpeech03 = ptAttribResponder(5, "resp: Speech #3")
 
 respSilence = ptAttribResponder(4, "resp: Shut all speeches off")
 
-#~ respSpeech04 = ptAttribResponder(6, "Speech #4 Responder")
-#~ respSpeech05 = ptAttribResponder(7, "Speech #5 Responder")
+# respSpeech04 = ptAttribResponder(6, "Speech #4 Responder")
+# respSpeech05 = ptAttribResponder(7, "Speech #5 Responder")
 
 
 

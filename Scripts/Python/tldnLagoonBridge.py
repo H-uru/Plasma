@@ -113,8 +113,8 @@ class tldnLagoonBridge(ptResponder):
         if not state:
             return
 
-        #~ if not PtWasLocallyNotified(self.key):
-            #~ return
+        # if not PtWasLocallyNotified(self.key):
+        #     return
 
         PtDebugPrint("tldnLagoonBridge.OnNotify:  state=%f id=%d events=" % (state,id),events)
 
@@ -145,7 +145,7 @@ class tldnLagoonBridge(ptResponder):
             
     def OnSDLNotify(self,VARname,SDLname,playerID,tag):
         ageSDL = PtGetAgeSDL()
-        #~ PtDebugPrint("tldnLagoonBridge.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID))
+        # PtDebugPrint("tldnLagoonBridge.OnSDLNotify():\t VARname:%s, SDLname:%s, tag:%s, value:%d, playerID:%d" % (VARname,SDLname,tag,ageSDL[VARname][0],playerID))
         
         if VARname == "tldnLagoonBridgeStuck":
             tldnLagoonBridgeStuck = ageSDL["tldnLagoonBridgeStuck"][0]
